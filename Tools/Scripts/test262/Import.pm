@@ -84,7 +84,7 @@ sub processCLI {
         }
     } else {
         $remoteUrl ||= 'git@github.com:tc39/test262.git';
-        $branch ||= 'master';
+        $branch ||= 'main';
     }
 
     print "Settings:\n";
@@ -269,7 +269,7 @@ Specify a remote Test262's repository. Defaults to 'git@github.com:tc39/test262.
 
 =item B<--branch, -b>
 
-Specify a branch to be used for a remote Test262. Defaults to `master`.
+Specify a branch to be used for a remote Test262. Defaults to `main`.
 
 =back
 =cut

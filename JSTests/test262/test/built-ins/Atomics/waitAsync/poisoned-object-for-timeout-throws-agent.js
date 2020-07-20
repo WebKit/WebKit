@@ -46,12 +46,12 @@ $262.agent.start(`
     let status2 = '';
 
     try {
-      Atomics.wait(i32a, 0, 0, poisonedValueOf);
+      Atomics.waitAsync(i32a, 0, 0, poisonedValueOf);
     } catch (error) {
       status1 = 'poisonedValueOf';
     }
     try {
-      Atomics.wait(i32a, 0, 0, poisonedToPrimitive);
+      Atomics.waitAsync(i32a, 0, 0, poisonedToPrimitive);
     } catch (error) {
       status2 = 'poisonedToPrimitive';
     }
@@ -73,13 +73,13 @@ $262.agent.safeBroadcastAsync(i32a, RUNNING, 1).then(async (agentCount) => {
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'poisonedValueOf',
-    'Atomics.wait(i32a, 0, 0, poisonedValueOf) throws'
+    'Atomics.waitAsync(i32a, 0, 0, poisonedValueOf) throws'
   );
 
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'poisonedToPrimitive',
-    'Atomics.wait(i32a, 0, 0, poisonedToPrimitive) throws'
+    'Atomics.waitAsync(i32a, 0, 0, poisonedToPrimitive) throws'
   );
 
   assert.sameValue(Atomics.notify(i32a, 0), 0, 'Atomics.notify(i32a, 0) returns 0');

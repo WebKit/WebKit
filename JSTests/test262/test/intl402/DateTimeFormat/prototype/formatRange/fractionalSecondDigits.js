@@ -13,7 +13,7 @@ const d2 = new Date(2019, 7, 10,  1, 2, 3, 567);
 const d3 = new Date(2019, 7, 10,  1, 2, 13, 987);
 
 let dtf = new Intl.DateTimeFormat(
-    'en', { minute: "numeric", second: "numeric", fractionalSecondDigits: 0});
+    'en', { minute: "numeric", second: "numeric", fractionalSecondDigits: undefined});
 assert.sameValue(dtf.formatRange(d1, d2), "02:03", "no fractionalSecondDigits");
 assert.sameValue(dtf.formatRange(d1, d3), "02:03 – 02:13", "no fractionalSecondDigits");
 

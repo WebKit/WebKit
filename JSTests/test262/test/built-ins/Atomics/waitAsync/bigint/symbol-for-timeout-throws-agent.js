@@ -55,13 +55,13 @@ $262.agent.safeBroadcastAsync(i64a, RUNNING, 1n).then(async agentCount => {
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'A TypeError',
-    'Atomics.wait(i64a, 0, 0n, Symbol("1")) throws TypeError'
+    'Atomics.waitAsync(i64a, 0, 0n, Symbol("1")) throws TypeError'
   );
 
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'B TypeError',
-    'Atomics.wait(i64a, 0, 0n, Symbol("2")) throws TypeError'
+    'Atomics.waitAsync(i64a, 0, 0n, Symbol("2")) throws TypeError'
   );
 
   assert.sameValue(Atomics.notify(i64a, 0), 0, 'Atomics.notify(i64a, 0) returns 0');

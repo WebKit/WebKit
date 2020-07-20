@@ -82,12 +82,12 @@ defines:
  * meet its termination condition and the test will hang indefinitely.
  *
  * Because we've defined $262.agent.broadcast(SAB) in
- * https://github.com/tc39/test262/blob/master/INTERPRETING.md, there are host implementations
+ * https://github.com/tc39/test262/blob/HEAD/INTERPRETING.md, there are host implementations
  * that assume compatibility, which must be maintained.
  *
  *
  * $262.agent.safeBroadcast(TA) should not be included in
- * https://github.com/tc39/test262/blob/master/INTERPRETING.md
+ * https://github.com/tc39/test262/blob/HEAD/INTERPRETING.md
  *
  *
  * @param {(Int32Array|BigInt64Array)} typedArray An Int32Array or BigInt64Array with a SharedArrayBuffer

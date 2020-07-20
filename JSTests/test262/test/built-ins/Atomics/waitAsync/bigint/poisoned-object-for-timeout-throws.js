@@ -34,9 +34,9 @@ const poisonedToPrimitive = {
 };
 
 assert.throws(Test262Error, function() {
-  Atomics.wait(i64a, 0, 0n, poisonedValueOf);
-}, '`Atomics.wait(i64a, 0, 0n, poisonedValueOf)` throws Test262Error');
+  Atomics.waitAsync(i64a, 0, 0n, poisonedValueOf);
+}, '`Atomics.waitAsync(i64a, 0, 0n, poisonedValueOf)` throws Test262Error');
 
 assert.throws(Test262Error, function() {
-  Atomics.wait(i64a, 0, 0n, poisonedToPrimitive);
-}, '`Atomics.wait(i64a, 0, 0n, poisonedToPrimitive)` throws Test262Error');
+  Atomics.waitAsync(i64a, 0, 0n, poisonedToPrimitive);
+}, '`Atomics.waitAsync(i64a, 0, 0n, poisonedToPrimitive)` throws Test262Error');

@@ -17,6 +17,5 @@ class FooPromise extends Promise {
 }
 
 FooPromise.resolve().finally(() => {}).then(() => {
-  assert.sameValue(6, count);
-  $DONE();
-}, $ERROR);
+  assert.sameValue(count, 7);
+}).then($DONE, $DONE);

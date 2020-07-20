@@ -1,5 +1,102 @@
 2020-07-20  Keith Miller  <keith_miller@apple.com>
 
+        [JSC] update test262 (July 2020 edition)
+        https://bugs.webkit.org/show_bug.cgi?id=214575
+
+        Reviewed by Ross Kirsling.
+
+        * test262/expectations.yaml:
+        * test262/harness/atomicsHelper.js:
+        * test262/harness/testIntl.js:
+        (testWithIntlConstructors):
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/Array/prototype/concat/S15.4.4.4_A3_T2.js:
+        * test262/test/built-ins/Array/prototype/concat/S15.4.4.4_A3_T3.js:
+        * test262/test/built-ins/Atomics/exchange/nonshared-int-views.js:
+        (testWithTypedArrayConstructors): Deleted.
+        * test262/test/built-ins/Atomics/waitAsync/bigint/negative-index-throws.js:
+        * test262/test/built-ins/Atomics/waitAsync/bigint/out-of-range-index-throws.js:
+        * test262/test/built-ins/Atomics/waitAsync/bigint/poisoned-object-for-timeout-throws-agent.js:
+        (262.agent.receiveBroadcast):
+        (1n.then.async agentCount):
+        * test262/test/built-ins/Atomics/waitAsync/bigint/poisoned-object-for-timeout-throws.js:
+        * test262/test/built-ins/Atomics/waitAsync/bigint/symbol-for-timeout-throws-agent.js:
+        (1n.then.async agentCount):
+        * test262/test/built-ins/Atomics/waitAsync/negative-index-throws.js:
+        * test262/test/built-ins/Atomics/waitAsync/null-for-timeout.js:
+        * test262/test/built-ins/Atomics/waitAsync/out-of-range-index-throws.js:
+        * test262/test/built-ins/Atomics/waitAsync/poisoned-object-for-timeout-throws-agent.js:
+        (262.agent.receiveBroadcast):
+        (1.then.async agentCount):
+        * test262/test/built-ins/Atomics/waitAsync/poisoned-object-for-timeout-throws.js:
+        * test262/test/built-ins/Atomics/waitAsync/returns-result-object-value-is-promise-resolves-to-ok.js:
+        * test262/test/built-ins/Atomics/waitAsync/returns-result-object-value-is-promise-resolves-to-timed-out.js:
+        * test262/test/built-ins/Atomics/waitAsync/returns-result-object-value-is-string-not-equal.js:
+        * test262/test/built-ins/Atomics/waitAsync/returns-result-object-value-is-string-timed-out.js:
+        * test262/test/built-ins/Atomics/waitAsync/symbol-for-index-throws.js:
+        * test262/test/built-ins/Atomics/waitAsync/symbol-for-timeout-throws-agent.js:
+        (1.then.async agentCount):
+        * test262/test/built-ins/Atomics/waitAsync/validate-arraytype-before-index-coercion.js:
+        * test262/test/built-ins/Atomics/waitAsync/validate-arraytype-before-timeout-coercion.js:
+        * test262/test/built-ins/Atomics/waitAsync/validate-arraytype-before-value-coercion.js:
+        * test262/test/built-ins/JSON/stringify/replacer-array-proxy.js:
+        * test262/test/built-ins/Promise/allSettled/resolve-from-same-thenable.js:
+        * test262/test/built-ins/Promise/any/iter-returns-true-reject.js:
+        * test262/test/built-ins/Promise/any/iter-returns-undefined-reject.js:
+        * test262/test/built-ins/Promise/prototype/finally/resolved-observable-then-calls.js:
+        (then):
+        * test262/test/built-ins/Promise/prototype/finally/species-constructor.js:
+        (then):
+        * test262/test/built-ins/Promise/prototype/finally/species-symbol.js: Removed.
+        * test262/test/built-ins/Promise/prototype/finally/subclass-reject-count.js:
+        (FooPromise.reject.finally):
+        (then.ERROR.catch): Deleted.
+        * test262/test/built-ins/Promise/prototype/finally/subclass-resolve-count.js:
+        (then):
+        * test262/test/intl402/DateTimeFormat/constructor-options-fractionalSecondDigits-valid.js:
+        (toString):
+        (valueOf): Deleted.
+        * test262/test/intl402/DateTimeFormat/prototype/format/fractionalSecondDigits.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/date-undefined-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRange/fractionalSecondDigits.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/date-undefined-throws.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatRangeToParts/fractionalSecondDigits.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatToParts/fractionalSecondDigits.js:
+        * test262/test/intl402/DisplayNames/ctor-custom-prototype.js:
+        * test262/test/intl402/DisplayNames/ctor-default-prototype.js:
+        * test262/test/intl402/DisplayNames/instance-extensible.js:
+        * test262/test/intl402/DisplayNames/locales-symbol-length.js:
+        * test262/test/intl402/DisplayNames/options-fallback-abrupt-throws.js:
+        * test262/test/intl402/DisplayNames/options-fallback-invalid-throws.js:
+        * test262/test/intl402/DisplayNames/options-fallback-toString-abrupt-throws.js:
+        (fallback.toString):
+        (fallback.valueOf):
+        (fallback.Symbol.toPrimitive):
+        (options.fallback.toString): Deleted.
+        (options.fallback.valueOf): Deleted.
+        (options.fallback.Symbol.toPrimitive): Deleted.
+        * test262/test/intl402/DisplayNames/options-fallback-valid.js:
+        * test262/test/intl402/DisplayNames/options-localeMatcher-valid.js:
+        * test262/test/intl402/DisplayNames/options-random-properties-unchecked.js:
+        * test262/test/intl402/DisplayNames/options-style-valid.js:
+        * test262/test/intl402/DisplayNames/options-type-invalid-throws.js:
+        * test262/test/intl402/DisplayNames/options-type-valid.js:
+        * test262/test/intl402/DisplayNames/proto-from-ctor-realm.js:
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/default-option-values.js:
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/option-fallback.js:
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/option-style.js:
+        * test262/test/intl402/DisplayNames/prototype/resolvedOptions/return-object.js:
+        * test262/test/language/computed-property-names/class/static/method-number.js:
+        * test262/test/language/computed-property-names/class/static/method-string.js:
+        * test262/test/language/computed-property-names/class/static/method-symbol.js:
+        * test262/test/language/expressions/optional-chaining/early-errors-tail-position-template-string-esi.js: Removed.
+        * test262/test/language/expressions/optional-chaining/early-errors-tail-position-template-string.js: Removed.
+        * test262/test/language/expressions/optional-chaining/eval-optional-call.js:
+        (fn):
+        * test262/test262-Revision.txt:
+
+2020-07-20  Keith Miller  <keith_miller@apple.com>
+
         Add support for FinalizationRegistries
         https://bugs.webkit.org/show_bug.cgi?id=199888
 

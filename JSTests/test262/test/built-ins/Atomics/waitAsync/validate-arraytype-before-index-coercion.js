@@ -29,6 +29,7 @@ info: |
 
 features: [Atomics.waitAsync, Atomics, TypedArray, SharedArrayBuffer]
 ---*/
+assert.sameValue(typeof Atomics.waitAsync, 'function');
 
 const index = {
   valueOf() {

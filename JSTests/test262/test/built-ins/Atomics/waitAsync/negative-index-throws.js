@@ -39,4 +39,4 @@ assert.throws(RangeError, function() {
 }, '`Atomics.waitAsync(i32a, -1, poisoned, poisoned)` throws RangeError');
 assert.throws(RangeError, function() {
   Atomics.waitAsync(i32a, -300, poisoned, poisoned);
-}, '`Atomics.wait(i32a, -300, poisoned, poisoned)` throws RangeError');
+}, '`Atomics.waitAsync(i32a, -300, poisoned, poisoned)` throws RangeError');

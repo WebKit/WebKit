@@ -29,6 +29,7 @@ info: |
 
 features: [Atomics.waitAsync, Atomics, TypedArray, SharedArrayBuffer]
 ---*/
+assert.sameValue(typeof Atomics.waitAsync, 'function');
 
 const value = {
   valueOf() {
@@ -44,6 +45,6 @@ const nonSharedArrayTypes = [
 for (const nonSharedArrayType of nonSharedArrayTypes) {
   const typedArray = new nonSharedArrayType(new SharedArrayBuffer(8));
   assert.throws(TypeError, function() {
-    Atomics.wait(typedArray, 0, value, 0);
+    Atomics.waitAsync(typedArray, 0, value, 0);
   });
 }

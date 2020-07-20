@@ -6,21 +6,20 @@ esid: sec-Intl.DisplayNames
 description: >
   Return abrupt completion from GetOption fallback
 info: |
-  Intl.DisplayNames ([ locales [ , options ]])
+  Intl.DisplayNames ( locales , options )
 
   1. If NewTarget is undefined, throw a TypeError exception.
   2. Let displayNames be ? OrdinaryCreateFromConstructor(NewTarget, "%DisplayNamesPrototype%",
     « [[InitializedDisplayNames]], [[Locale]], [[Style]], [[Type]], [[Fallback]], [[Fields]] »).
   ...
-  4. If options is undefined, then
-    a. Let options be ObjectCreate(null).
-  5. Else
-    a. Let options be ? ToObject(options).
+  4. Let options be ? ToObject(options).
   ...
   8. Let matcher be ? GetOption(options, "localeMatcher", "string", « "lookup", "best fit" », "best fit").
   ...
-  11. Let style be ? GetOption(options, "style", "string", « "narrow", "short", "long" », "long").
+  10. Let style be ? GetOption(options, "style", "string", « "narrow", "short", "long" », "long").
   ...
+  12. Let type be ? GetOption(options, "type", "string", « "language", "region", "script", "currency" », undefined).
+  13. If type is undefined, throw a TypeError exception.
 
   GetOption ( options, property, type, values, fallback )
 
@@ -30,41 +29,29 @@ features: [Intl.DisplayNames, Symbol]
 locale: [en]
 ---*/
 
-var options = {
-  fallback: {
-    toString() {
-      throw new Test262Error();
-    }
-  }
-};
-
 assert.throws(Test262Error, () => {
-  new Intl.DisplayNames('en', options);
+  new Intl.DisplayNames('en', {
+    type: 'language', fallback: { toString() { throw new Test262Error(); }}
+  });
 }, 'from toString');
 
-options.fallback = {
-  toString: undefined,
-  valueOf() {
-    throw new Test262Error();
-  }
-};
-
 assert.throws(Test262Error, () => {
-  new Intl.DisplayNames('en', options);
+  new Intl.DisplayNames('en', {
+    type: 'language',
+    fallback: {toString: undefined, valueOf() {throw new Test262Error(); }}
+  });
 }, 'from valueOf');
 
-options.fallback = {
-  [Symbol.toPrimitive]() {
-    throw new Test262Error();
-  }
-};
-
 assert.throws(Test262Error, () => {
-  new Intl.DisplayNames('en', options);
+  new Intl.DisplayNames('en', {
+    type: 'language',
+    fallback: { [Symbol.toPrimitive]() { throw new Test262Error(); } }
+  });
 }, 'from ToPrimitive');
 
-options.fallback = Symbol();
-
 assert.throws(TypeError, () => {
-  new Intl.DisplayNames('en', options);
+  new Intl.DisplayNames('en', {
+    type: 'language',
+    fallback: Symbol()
+  });
 }, 'symbol value');

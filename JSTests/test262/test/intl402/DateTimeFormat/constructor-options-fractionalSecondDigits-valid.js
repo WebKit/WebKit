@@ -14,9 +14,6 @@ features: [Intl.DateTimeFormat-fractionalSecondDigits]
 
 const validOptions = [
   [undefined, undefined],
-  [-0, undefined],
-  [0, undefined],
-  ["0", undefined],
   [1, 1],
   ["1", 1],
   [2, 2],
@@ -25,9 +22,8 @@ const validOptions = [
   ["3", 3],
   [2.9, 2],
   ["2.9", 2],
-  [0.00001, undefined],
+  [1.00001, 1],
   [{ toString() { return "3"; } }, 3],
-  [{ valueOf() { return -0; }, toString: undefined }, undefined],
 ];
 for (const [fractionalSecondDigits, expected] of validOptions) {
   const dtf = new Intl.DateTimeFormat("en", { fractionalSecondDigits });

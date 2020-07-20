@@ -6,22 +6,20 @@ esid: sec-Intl.DisplayNames
 description: >
   Return abrupt completion from an invalid type option
 info: |
-  Intl.DisplayNames ([ locales [ , options ]])
+  Intl.DisplayNames ( locales , options )
 
   1. If NewTarget is undefined, throw a TypeError exception.
   2. Let displayNames be ? OrdinaryCreateFromConstructor(NewTarget, "%DisplayNamesPrototype%",
     « [[InitializedDisplayNames]], [[Locale]], [[Style]], [[Type]], [[Fallback]], [[Fields]] »).
   ...
-  4. If options is undefined, then
-    a. Let options be ObjectCreate(null).
-  5. Else
-    a. Let options be ? ToObject(options).
+  4. Let options be ? ToObject(options).
   ...
   8. Let matcher be ? GetOption(options, "localeMatcher", "string", « "lookup", "best fit" », "best fit").
   ...
-  11. Let style be ? GetOption(options, "style", "string", « "narrow", "short", "long" », "long").
+  10. Let style be ? GetOption(options, "style", "string", « "narrow", "short", "long" », "long").
   ...
-  13. Let type be ? GetOption(options, "type", "string", « "language", "region", "script", "currency", "weekday", "month", "quarter", "dayPeriod", "dateTimeField" », "language").
+  12. Let type be ? GetOption(options, "type", "string", « "language", "region", "script", "currency" », undefined).
+  13. If type is undefined, throw a TypeError exception.
   ...
   15. Let fallback be ? GetOption(options, "fallback", "string", « "code", "none" », "code").
   ...
@@ -40,40 +38,39 @@ features: [Intl.DisplayNames]
 locale: [en]
 ---*/
 
-var options = {
-  type: 'lang'
-};
+assert.throws(TypeError, () => {
+  new Intl.DisplayNames('en', undefined);
+}, 'undefined options');
+
+assert.throws(TypeError, () => {
+  new Intl.DisplayNames('en', {});
+}, '{} options');
+
+assert.throws(TypeError, () => {
+  new Intl.DisplayNames('en', {type: undefined});
+}, 'undefined type');
 
 assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
-}, 'lang');
-
-options.type = 'day-period';
+  new Intl.DisplayNames('en', {type: 'lang'});
+}, 'type = lang');
 
 assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
-}, 'day-period, not dayPeriod');
-
-options.type = 'weekDay';
+  new Intl.DisplayNames('en', {type: 'dayPeriod'});
+}, 'dayPeriod not supported yet');
 
 assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
-}, 'weekDay, not weekday');
-
-options.type = null;
+  new Intl.DisplayNames('en', {type: 'weekday'});
+}, 'weekday not supported yet');
 
 assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
-}, 'null');
+  new Intl.DisplayNames('en', {type: null});
+}, 'type = null');
 
-options.type = '';
-
-assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
-}, 'the empty string');
-
-options.type = ['language', 'region', 'script', 'currency', 'weekday', 'month', 'quarter', 'dayPeriod', 'dateTimeField'];
 
 assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
+  new Intl.DisplayNames('en', {type: ''});
+}, 'type = ""');
+
+assert.throws(RangeError, () => {
+  new Intl.DisplayNames('en', {type: ['language', 'region', 'script', 'currency']});
 }, 'an array with the valid options is not necessarily valid');

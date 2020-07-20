@@ -3,7 +3,7 @@
 /*---
 esid: sec-json.stringify
 description: >
-  Array proxy replacer serves as whitelist of object keys.
+  Array proxy replacer serves as a filter of object keys.
 info: |
   JSON.stringify ( value [ , replacer [ , space ] ] )
 

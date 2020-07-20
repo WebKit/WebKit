@@ -1,3 +1,15 @@
+2020-07-20  Keith Miller  <keith_miller@apple.com>
+
+        [JSC] update test262 (July 2020 edition)
+        https://bugs.webkit.org/show_bug.cgi?id=214575
+
+        Reviewed by Ross Kirsling.
+
+        test262 is now using 'main' as the default branch. Fix our import script to reflect that.
+
+        * Scripts/test262/Import.pm:
+        (processCLI):
+
 2020-07-20  Philippe Normand  <pnormand@igalia.com>
 
         [jhbuild] GStreamer broken in minimal environment

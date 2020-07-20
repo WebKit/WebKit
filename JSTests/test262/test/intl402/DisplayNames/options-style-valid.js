@@ -6,24 +6,18 @@ esid: sec-Intl.DisplayNames
 description: >
   Valid options for localeMatcher
 info: |
-  Intl.DisplayNames ([ locales [ , options ]])
+  Intl.DisplayNames ( locales , options )
 
   1. If NewTarget is undefined, throw a TypeError exception.
   2. Let displayNames be ? OrdinaryCreateFromConstructor(NewTarget, "%DisplayNamesPrototype%",
     « [[InitializedDisplayNames]], [[Locale]], [[Style]], [[Type]], [[Fallback]], [[Fields]] »).
   ...
-  4. If options is undefined, then
-    a. Let options be ObjectCreate(null).
-  5. Else
-    a. Let options be ? ToObject(options).
+  4. Let options be ? ToObject(options).
   ...
-  8. Let matcher be ? GetOption(options, "localeMatcher", "string", « "lookup", "best fit" », "best fit").
+  10. Let style be ? GetOption(options, "style", "string", « "narrow", "short", "long" », "long").
   ...
-  11. Let style be ? GetOption(options, "style", "string", « "narrow", "short", "long" », "long").
-  ...
-  13. Let type be ? GetOption(options, "type", "string", « "language", "region", "script", "currency", "weekday", "month", "quarter", "dayPeriod", "dateTimeField" », "language").
-  ...
-  15. Let fallback be ? GetOption(options, "fallback", "string", « "code", "none" », "code").
+  12. Let type be ? GetOption(options, "type", "string", « "language", "region", "script", "currency" », undefined).
+  13. If type is undefined, throw a TypeError exception.
   ...
 
   GetOption ( options, property, type, values, fallback )
@@ -36,20 +30,20 @@ locale: [en]
 
 // results for option values verified in the tests for resolvedOptions
 
-var values = [
+const styles = [
   undefined,
   'narrow',
   'short',
   'long'
 ];
 
-for (let valid of values) {
-  let options = {
-    style: valid
-  };
+const types = ['language', 'region', 'script', 'currency'];
 
-  var obj = new Intl.DisplayNames('en', options);
+types.forEach( type => {
+  styles.forEach(style => {
+    var obj = new Intl.DisplayNames('en', { style, type });
 
-  assert(obj instanceof Intl.DisplayNames, `instanceof check - ${valid}`);
-  assert.sameValue(Object.getPrototypeOf(obj), Intl.DisplayNames.prototype, `proto check - ${valid}`);
-}
+    assert(obj instanceof Intl.DisplayNames, `instanceof check - ${style}`);
+    assert.sameValue(Object.getPrototypeOf(obj), Intl.DisplayNames.prototype, `proto check - ${style}`);
+  });
+});

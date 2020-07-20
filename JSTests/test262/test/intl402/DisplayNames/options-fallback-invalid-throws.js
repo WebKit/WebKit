@@ -6,22 +6,18 @@ esid: sec-Intl.DisplayNames
 description: >
   Return abrupt completion from an invalid fallback option
 info: |
-  Intl.DisplayNames ([ locales [ , options ]])
+  Intl.DisplayNames ( locales , options )
 
   1. If NewTarget is undefined, throw a TypeError exception.
   2. Let displayNames be ? OrdinaryCreateFromConstructor(NewTarget, "%DisplayNamesPrototype%",
     « [[InitializedDisplayNames]], [[Locale]], [[Style]], [[Type]], [[Fallback]], [[Fields]] »).
   ...
-  4. If options is undefined, then
-    a. Let options be ObjectCreate(null).
-  5. Else
-    a. Let options be ? ToObject(options).
+  4. Let options be ? ToObject(options).
   ...
   8. Let matcher be ? GetOption(options, "localeMatcher", "string", « "lookup", "best fit" », "best fit").
   ...
-  11. Let style be ? GetOption(options, "style", "string", « "narrow", "short", "long" », "long").
-  ...
-  13. Let type be ? GetOption(options, "type", "string", « "language", "region", "script", "currency", "weekday", "month", "quarter", "dayPeriod", "dateTimeField" », "language").
+  12. Let type be ? GetOption(options, "type", "string", « "language", "region", "script", "currency" », "language").
+  13. If type is undefined, throw a TypeError exception.
   ...
   15. Let fallback be ? GetOption(options, "fallback", "string", « "code", "none" », "code").
   ...
@@ -40,34 +36,22 @@ features: [Intl.DisplayNames]
 locale: [en]
 ---*/
 
-var options = {
-  fallback: 'err'
-};
-
 assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
+  new Intl.DisplayNames('en', {fallback: 'err', type: 'language'});
 }, 'err');
 
-options.fallback = 'non';
-
 assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
+  new Intl.DisplayNames('en', {fallback: 'non', type: 'language'});
 }, 'non, not none');
 
-options.fallback = null;
-
 assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
+  new Intl.DisplayNames('en', {fallback: null, type: 'language'});
 }, 'null');
 
-options.fallback = '';
-
 assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
+  new Intl.DisplayNames('en', {fallback: '', type: 'language'});
 }, 'the empty string');
 
-options.fallback = ['code', 'none'];
-
 assert.throws(RangeError, () => {
-  new Intl.DisplayNames('en', options);
+  new Intl.DisplayNames('en', {fallback: ['code', 'none'], type: 'language'});
 }, 'an array with the valid options is not necessarily valid');

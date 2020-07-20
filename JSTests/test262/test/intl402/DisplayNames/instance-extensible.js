@@ -6,11 +6,14 @@ esid: sec-Intl.DisplayNames
 description: >
   Instance is extensible
 info: |
-  Intl.DisplayNames ([ locales [ , options ]])
+  Intl.DisplayNames ( locales , options )
 
   1. If NewTarget is undefined, throw a TypeError exception.
   2. Let displayNames be ? OrdinaryCreateFromConstructor(NewTarget, "%DisplayNamesPrototype%",
     « [[InitializedDisplayNames]], [[Locale]], [[Style]], [[Type]], [[Fallback]], [[Fields]] »).
+  ...
+  12. Let type be ? GetOption(options, "type", "string", « "language", "region", "script", "currency" », undefined).
+  13. If type is undefined, throw a TypeError exception.
   ...
 
   OrdinaryCreateFromConstructor ( constructor, intrinsicDefaultProto [ , internalSlotsList ] )
@@ -30,6 +33,6 @@ info: |
 features: [Intl.DisplayNames]
 ---*/
 
-var obj = new Intl.DisplayNames();
+var obj = new Intl.DisplayNames(undefined, {type: 'language'});
 
 assert(Object.isExtensible(obj));

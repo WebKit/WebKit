@@ -44,12 +44,12 @@ $262.agent.start(`
     let status2 = '';
 
     try {
-      Atomics.wait(i64a, 0, 0n, poisonedValueOf);
+      Atomics.waitAsync(i64a, 0, 0n, poisonedValueOf);
     } catch (error) {
       status1 = 'poisonedValueOf';
     }
     try {
-      Atomics.wait(i64a, 0, 0n, poisonedToPrimitive);
+      Atomics.waitAsync(i64a, 0, 0n, poisonedToPrimitive);
     } catch (error) {
       status2 = 'poisonedToPrimitive';
     }
@@ -68,13 +68,13 @@ $262.agent.safeBroadcastAsync(i64a, RUNNING, 1n).then(async agentCount => {
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'poisonedValueOf',
-    'Atomics.wait(i64a, 0, 0n, poisonedValueOf) throws'
+    'Atomics.waitAsync(i64a, 0, 0n, poisonedValueOf) throws'
   );
 
   assert.sameValue(
     await $262.agent.getReportAsync(),
     'poisonedToPrimitive',
-    'Atomics.wait(i64a, 0, 0n, poisonedToPrimitive) throws'
+    'Atomics.waitAsync(i64a, 0, 0n, poisonedToPrimitive) throws'
   );
 
   assert.sameValue(Atomics.notify(i64a, 0), 0, 'Atomics.notify(i64a, 0) returns 0');

@@ -40,7 +40,8 @@ function testWithIntlConstructors(f) {
 
   // Optionally supported Intl constructors.
   // NB: Intl.Locale isn't an Intl service constructor!
-  ["PluralRules", "RelativeTimeFormat", "ListFormat", "DisplayNames"].forEach(function(constructor) {
+  // Intl.DisplayNames cannot be called without type in options.
+  ["PluralRules", "RelativeTimeFormat", "ListFormat"].forEach(function(constructor) {
     if (typeof Intl[constructor] === "function") {
       constructors[constructors.length] = constructor;
     }
