@@ -24,7 +24,7 @@ PASS   panner.coneOuterAngle is equal to 360.
 PASS   panner.coneOuterAngle = 166.5 is equal to 166.5. 
 PASS   panner.coneOuterGain is equal to 0. 
 PASS   panner.coneOuterGain = 0.25 is equal to 0.25. 
-FAIL X panner.panningModel is not equal to equalpower. Got HRTF. assert_true: expected true got false
+PASS   panner.panningModel is equal to equalpower. 
 PASS   inverse is equal to panner.distanceModel. 
 PASS   panner.positionX is equal to 0. 
 PASS   panner.positionY is equal to 0. 
@@ -32,7 +32,7 @@ PASS   panner.positionZ is equal to 0.
 PASS   panner.orientationX is equal to 1. 
 PASS   panner.orientationY is equal to 0. 
 PASS   panner.orientationZ is equal to 0. 
-FAIL < [basic] 1 out of 22 assertions were failed. assert_true: expected true got false
+PASS < [basic] All assertions passed. (total 22 assertions) 
 PASS > [listener]  
 PASS > [panning models]  
 PASS   Set panner.panningModel = "equalpower" did not throw an exception. 
@@ -54,5 +54,5 @@ PASS   panner.distanceModel = "exponential" is equal to exponential.
 PASS   panner.distanceModel = "invalid" did not throw an exception. 
 PASS   panner.distanceModel is equal to exponential. 
 PASS < [distance models] All assertions passed. (total 8 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 5 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

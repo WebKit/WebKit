@@ -523,7 +523,7 @@ ExceptionOr<Ref<PannerNode>> BaseAudioContext::createPanner()
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    return PannerNode::create(*this, sampleRate());
+    return PannerNode::create(*this);
 }
 
 ExceptionOr<Ref<ConvolverNode>> BaseAudioContext::createConvolver()

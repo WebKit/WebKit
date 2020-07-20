@@ -1,3 +1,15 @@
+2020-07-20  Clark Wang  <clark_wang@apple.com>
+
+        Fixes to match BaseAudioContext.idl to spec
+        https://bugs.webkit.org/show_bug.cgi?id=214487
+
+        Reviewed by Chris Dumez.
+
+        Changed test for default panningModel to equalpower to match spec, Chrome and Firefox.
+
+        * webaudio/pannernode-basic-expected.txt:
+        * webaudio/pannernode-basic.html:
+
 2020-07-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, skip flaky test webgl/2.0.0/conformance2/state/gl-object-get-calls.html.

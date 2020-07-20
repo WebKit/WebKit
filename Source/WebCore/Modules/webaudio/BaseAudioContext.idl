@@ -33,10 +33,10 @@
     readonly attribute AudioDestinationNode destination;
 
     // All scheduled times are relative to this time in seconds.
-    readonly attribute unrestricted double currentTime;
+    readonly attribute double currentTime;
 
     // All AudioNodes in the context run at this sample-rate (sample-frames per second).
-    readonly attribute unrestricted float sampleRate;
+    readonly attribute float sampleRate;
 
     // All panning is relative to this listener.
     readonly attribute AudioListener listener;
@@ -44,7 +44,7 @@
     readonly attribute AudioContextState state;
     attribute EventHandler onstatechange;
     
-    [MayThrowException] AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
+    [MayThrowException] AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate);
     [MayThrowException] AudioBuffer createBuffer(ArrayBuffer buffer, boolean mixToMono);
 
     // Asynchronous audio file data decoding.
@@ -56,7 +56,7 @@
 
     // Processing nodes
     [MayThrowException] GainNode createGain();
-    [MayThrowException] DelayNode createDelay(optional unrestricted double maxDelayTime = 1);
+    [MayThrowException] DelayNode createDelay(optional double maxDelayTime = 1);
     [MayThrowException] BiquadFilterNode createBiquadFilter();
     [MayThrowException] WaveShaperNode createWaveShaper();
     [MayThrowException] PannerNode createPanner();

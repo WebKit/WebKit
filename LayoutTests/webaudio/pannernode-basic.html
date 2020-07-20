@@ -156,10 +156,10 @@ function runTest() {
         testPassed("Exception has been thrown correctly when coneOuterGain is set outside [0, 1] (was set to 2).");
     }
 
-    if (panner.panningModel === "HRTF")
-        testPassed("PannerNode defaults to 'HRTF' panningModel.");
+    if (panner.panningModel === "equalpower")
+        testPassed("PannerNode defaults to 'equalpower' panningModel.");
     else
-        testFailed("PannerNode should default to 'HRTF' panningModel.");
+        testFailed("PannerNode should default to 'equalpower' panningModel.");
     
     if (panner.distanceModel === "inverse")
         testPassed("PannerNode defaults to 'inverse' distanceModel.");

@@ -7,7 +7,7 @@ PASS > [test] Tests attribute and maximum allowed delay of DelayNode
 PASS   Setting Delay length to 180 seconds or more threw NotSupportedError: "The operation is not supported.". 
 PASS   Setting Delay length to 0 seconds threw NotSupportedError: "The operation is not supported.". 
 PASS   Setting Delay length to negative threw NotSupportedError: "The operation is not supported.". 
-FAIL X Setting Delay length to NaN did not throw an exception. assert_true: expected true got false
+PASS   Setting Delay length to NaN threw TypeError: "The provided value is non-finite". 
 PASS   delay.delayTime.value = 0.5 is equal to 0.5. 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

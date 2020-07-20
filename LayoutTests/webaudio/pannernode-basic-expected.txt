@@ -25,7 +25,7 @@ PASS coneOuterGain value is set to 1.
 PASS coneOuterGain value is set to 0.35.
 PASS Exception has been thrown correctly when coneOuterGain is set outside [0, 1] (was set to -1).
 PASS Exception has been thrown correctly when coneOuterGain is set outside [0, 1] (was set to 2).
-PASS PannerNode defaults to 'HRTF' panningModel.
+PASS PannerNode defaults to 'equalpower' panningModel.
 PASS PannerNode defaults to 'inverse' distanceModel.
 PASS panningModel: 'equalpower' is settable.
 PASS panningModel: 'HRTF' is settable.

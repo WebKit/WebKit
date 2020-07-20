@@ -49,40 +49,10 @@ static void fixNANs(double &x)
         x = 0.0;
 }
 
-// FIXME: Remove once dependencies on old constructor are removed.
+// FIXME: Remove once dependency from prefixed version is removed
 PannerNodeBase::PannerNodeBase(BaseAudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
 {
-}
-
-// FIXME: Remove once dependencies on old constructor are removed.
-PannerNode::PannerNode(BaseAudioContext& context, float sampleRate)
-    : PannerNodeBase(context, sampleRate)
-    , m_panningModel(PanningModelType::HRTF)
-    , m_positionX(AudioParam::create(context, "positionX"_s, 0, -FLT_MAX, FLT_MAX))
-    , m_positionY(AudioParam::create(context, "positionY"_s, 0, -FLT_MAX, FLT_MAX))
-    , m_positionZ(AudioParam::create(context, "positionZ"_s, 0, -FLT_MAX, FLT_MAX))
-    , m_orientationX(AudioParam::create(context, "orientationX"_s, 1, -FLT_MAX, FLT_MAX))
-    , m_orientationY(AudioParam::create(context, "orientationY"_s, 0, -FLT_MAX, FLT_MAX))
-    , m_orientationZ(AudioParam::create(context, "orientationZ"_s, 0, -FLT_MAX, FLT_MAX))
-{
-    setNodeType(NodeTypePanner);
-    
-    // Load the HRTF database asynchronously so we don't block the Javascript thread while creating the HRTF database.
-    m_hrtfDatabaseLoader = HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(context.sampleRate());
-
-    addInput(makeUnique<AudioNodeInput>(this));
-    addOutput(makeUnique<AudioNodeOutput>(this, 2));
-
-    // Node-specific default mixing rules.
-    m_channelCount = 2;
-    m_channelCountMode = ChannelCountMode::ClampedMax;
-    m_channelInterpretation = ChannelInterpretation::Speakers;
-
-    m_distanceGain = AudioParam::create(context, "distanceGain", 1.0, 0.0, 1.0);
-    m_coneGain = AudioParam::create(context, "coneGain", 1.0, 0.0, 1.0);
-
-    initialize();
 }
 
 PannerNodeBase::PannerNodeBase(BaseAudioContext& context)
