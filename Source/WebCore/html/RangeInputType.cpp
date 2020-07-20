@@ -33,6 +33,7 @@
 #include "RangeInputType.h"
 
 #include "AXObjectCache.h"
+#include "Decimal.h"
 #include "ElementChildIterator.h"
 #include "EventNames.h"
 #include "HTMLCollection.h"
@@ -47,6 +48,7 @@
 #include "ScopedEventQueue.h"
 #include "ShadowRoot.h"
 #include "SliderThumbElement.h"
+#include "StepRange.h"
 #include <limits>
 #include <wtf/MathExtras.h>
 
@@ -203,7 +205,7 @@ auto RangeInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBaseE
     const Decimal current = parseToNumberOrNaN(element()->value());
     ASSERT(current.isFinite());
 
-    StepRange stepRange(createStepRange(RejectAny));
+    auto stepRange = createStepRange(AnyStepHandling::Reject);
 
     // FIXME: We can't use stepUp() for the step value "any". So, we increase
     // or decrease the value by 1/100 of the value range. Is it reasonable?
@@ -353,12 +355,12 @@ void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldE
 
 String RangeInputType::fallbackValue() const
 {
-    return serializeForNumberType(createStepRange(RejectAny).defaultValue());
+    return serializeForNumberType(createStepRange(AnyStepHandling::Reject).defaultValue());
 }
 
 String RangeInputType::sanitizeValue(const String& proposedValue) const
 {
-    StepRange stepRange(createStepRange(RejectAny));
+    StepRange stepRange(createStepRange(AnyStepHandling::Reject));
     const Decimal proposedNumericValue = parseToNumber(proposedValue, stepRange.defaultValue());
     return serializeForNumberType(stepRange.clampValue(proposedNumericValue));
 }

@@ -32,9 +32,11 @@
 #if ENABLE(INPUT_TYPE_MONTH)
 #include "MonthInputType.h"
 
+#include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
+#include "StepRange.h"
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>

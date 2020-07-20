@@ -27,12 +27,12 @@
 #include "DateComponents.h"
 #include "FileChooser.h"
 #include "HTMLTextFormControlElement.h"
-#include "StepRange.h"
 #include <memory>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class Decimal;
 class DragData;
 class FileList;
 class HTMLDataListElement;
@@ -41,6 +41,7 @@ class Icon;
 class InputType;
 class ListAttributeTargetObserver;
 class RadioButtonGroups;
+class StepRange;
 
 struct DateTimeChooserParameters;
 
@@ -50,6 +51,8 @@ struct InputElementClickState {
     bool indeterminate { false };
     RefPtr<HTMLInputElement> checkedRadioButton;
 };
+
+enum class AnyStepHandling;
 
 class HTMLInputElement : public HTMLTextFormControlElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLInputElement);

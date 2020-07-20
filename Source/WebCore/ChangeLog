@@ -1,5 +1,49 @@
 2020-07-20  Rob Buis  <rbuis@igalia.com>
 
+        Make AnyStepHandling an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=214423
+
+        Reviewed by Youenn Fablet.
+
+        Make AnyStepHandling an enum class since this is more readable
+        and allows us to have less includes in header files.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        * html/DateInputType.cpp:
+        * html/DateTimeLocalInputType.cpp:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::rangeUnderflow const):
+        (WebCore::InputType::rangeOverflow const):
+        (WebCore::InputType::minimum const):
+        (WebCore::InputType::maximum const):
+        (WebCore::InputType::isInRange const):
+        (WebCore::InputType::isOutOfRange const):
+        (WebCore::InputType::stepMismatch const):
+        (WebCore::InputType::validationMessage const):
+        (WebCore::InputType::getAllowedValueStep const):
+        (WebCore::InputType::stepUp):
+        (WebCore::InputType::stepUpFromRenderer):
+        * html/InputType.h:
+        * html/MonthInputType.cpp:
+        * html/NumberInputType.cpp:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleKeydownEvent):
+        (WebCore::RangeInputType::fallbackValue const):
+        (WebCore::RangeInputType::sanitizeValue const):
+        * html/StepRange.cpp:
+        (WebCore::StepRange::parseStep):
+        * html/StepRange.h:
+        * html/TimeInputType.cpp:
+        * html/WeekInputType.cpp:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderPosition):
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+
+2020-07-20  Rob Buis  <rbuis@igalia.com>
+
         Setting URL.hash to '#' should set empty fragment
         https://bugs.webkit.org/show_bug.cgi?id=214318
 

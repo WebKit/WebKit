@@ -37,6 +37,7 @@
 #include "DateComponents.h"
 #include "DateInputType.h"
 #include "DateTimeLocalInputType.h"
+#include "Decimal.h"
 #include "EmailInputType.h"
 #include "EventNames.h"
 #include "FileInputType.h"
@@ -65,6 +66,7 @@
 #include "SearchInputType.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StepRange.h"
 #include "SubmitInputType.h"
 #include "TelephoneInputType.h"
 #include "TextControlInnerElements.h"
@@ -284,7 +286,7 @@ bool InputType::rangeUnderflow(const String& value) const
     if (!numericValue.isFinite())
         return false;
 
-    return numericValue < createStepRange(RejectAny).minimum();
+    return numericValue < createStepRange(AnyStepHandling::Reject).minimum();
 }
 
 bool InputType::rangeOverflow(const String& value) const
@@ -296,7 +298,7 @@ bool InputType::rangeOverflow(const String& value) const
     if (!numericValue.isFinite())
         return false;
 
-    return numericValue > createStepRange(RejectAny).maximum();
+    return numericValue > createStepRange(AnyStepHandling::Reject).maximum();
 }
 
 Decimal InputType::defaultValueForStepUp() const
@@ -306,12 +308,12 @@ Decimal InputType::defaultValueForStepUp() const
 
 double InputType::minimum() const
 {
-    return createStepRange(RejectAny).minimum().toDouble();
+    return createStepRange(AnyStepHandling::Reject).minimum().toDouble();
 }
 
 double InputType::maximum() const
 {
-    return createStepRange(RejectAny).maximum().toDouble();
+    return createStepRange(AnyStepHandling::Reject).maximum().toDouble();
 }
 
 bool InputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
@@ -331,7 +333,7 @@ bool InputType::isInRange(const String& value) const
     if (!isSteppable())
         return false;
 
-    StepRange stepRange(createStepRange(RejectAny));
+    StepRange stepRange(createStepRange(AnyStepHandling::Reject));
     if (!stepRange.hasRangeLimitations())
         return false;
     
@@ -347,7 +349,7 @@ bool InputType::isOutOfRange(const String& value) const
     if (!isSteppable() || value.isEmpty())
         return false;
 
-    StepRange stepRange(createStepRange(RejectAny));
+    StepRange stepRange(createStepRange(AnyStepHandling::Reject));
     if (!stepRange.hasRangeLimitations())
         return false;
 
@@ -367,7 +369,7 @@ bool InputType::stepMismatch(const String& value) const
     if (!numericValue.isFinite())
         return false;
 
-    return createStepRange(RejectAny).stepMismatch(numericValue);
+    return createStepRange(AnyStepHandling::Reject).stepMismatch(numericValue);
 }
 
 String InputType::badInputText() const
@@ -418,7 +420,7 @@ String InputType::validationMessage() const
     if (!numericValue.isFinite())
         return emptyString();
 
-    StepRange stepRange(createStepRange(RejectAny));
+    StepRange stepRange(createStepRange(AnyStepHandling::Reject));
 
     if (numericValue < stepRange.minimum())
         return validationMessageRangeUnderflowText(serialize(stepRange.minimum()));
@@ -993,7 +995,7 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
 
 bool InputType::getAllowedValueStep(Decimal* step) const
 {
-    StepRange stepRange(createStepRange(RejectAny));
+    StepRange stepRange(createStepRange(AnyStepHandling::Reject));
     *step = stepRange.step();
     return stepRange.hasStep();
 }
@@ -1008,7 +1010,7 @@ ExceptionOr<void> InputType::stepUp(int n)
 {
     if (!isSteppable())
         return Exception { InvalidStateError };
-    return applyStep(n, RejectAny, DispatchNoEvent);
+    return applyStep(n, AnyStepHandling::Reject, DispatchNoEvent);
 }
 
 void InputType::stepUpFromRenderer(int n)
@@ -1055,7 +1057,7 @@ void InputType::stepUpFromRenderer(int n)
     if (!n)
         return;
 
-    StepRange stepRange(createStepRange(AnyIsDefaultStep));
+    StepRange stepRange(createStepRange(AnyStepHandling::Default));
 
     // FIXME: Not any changes after stepping, even if it is an invalid value, may be better.
     // (e.g. Stepping-up for <input type="number" value="foo" step="any" /> => "foo")
@@ -1106,11 +1108,11 @@ void InputType::stepUpFromRenderer(int n)
 
             setValueAsDecimal(newValue, n == 1 || n == -1 ? DispatchInputAndChangeEvent : DispatchNoEvent);
             if (n > 1)
-                applyStep(n - 1, AnyIsDefaultStep, DispatchInputAndChangeEvent);
+                applyStep(n - 1, AnyStepHandling::Default, DispatchInputAndChangeEvent);
             else if (n < -1)
-                applyStep(n + 1, AnyIsDefaultStep, DispatchInputAndChangeEvent);
+                applyStep(n + 1, AnyStepHandling::Default, DispatchInputAndChangeEvent);
         } else
-            applyStep(n, AnyIsDefaultStep, DispatchInputAndChangeEvent);
+            applyStep(n, AnyStepHandling::Default, DispatchInputAndChangeEvent);
     }
 }
 

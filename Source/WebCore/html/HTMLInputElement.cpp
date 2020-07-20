@@ -62,6 +62,7 @@
 #include "ScopedEventQueue.h"
 #include "SearchInputType.h"
 #include "Settings.h"
+#include "StepRange.h"
 #include "StyleGeneratedImage.h"
 #include "TextControlInnerElements.h"
 #include <wtf/IsoMallocInlines.h>
@@ -2119,7 +2120,7 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
         parameters.locale = computedLocale.isEmpty() ? AtomString(defaultLanguage()) : computedLocale;
     }
 
-    StepRange stepRange = createStepRange(RejectAny);
+    auto stepRange = createStepRange(AnyStepHandling::Reject);
     if (stepRange.hasStep()) {
         parameters.step = stepRange.step().toDouble();
         parameters.stepBase = stepRange.stepBase().toDouble();

@@ -25,7 +25,10 @@
 
 namespace WebCore {
 
-enum AnyStepHandling { RejectAny, AnyIsDefaultStep };
+enum class AnyStepHandling {
+    Reject,
+    Default
+};
 
 enum class RangeLimitations {
     Valid,

@@ -35,7 +35,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "RenderPtr.h"
-#include "StepRange.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -61,10 +60,13 @@ class KeyboardEvent;
 class MouseEvent;
 class Node;
 class RenderStyle;
+class StepRange;
 class TextControlInnerTextElement;
 class TouchEvent;
 
 struct InputElementClickState;
+
+enum class AnyStepHandling;
 
 // An InputType object represents the type-specific part of an HTMLInputElement.
 // Do not expose instances of InputType and classes derived from it to classes

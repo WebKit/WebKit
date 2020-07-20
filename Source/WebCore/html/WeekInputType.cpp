@@ -32,9 +32,11 @@
 #if ENABLE(INPUT_TYPE_WEEK)
 #include "WeekInputType.h"
 
+#include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
+#include "StepRange.h"
 
 namespace WebCore {
 

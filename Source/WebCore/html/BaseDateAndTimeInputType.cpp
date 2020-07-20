@@ -34,6 +34,7 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
+#include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"

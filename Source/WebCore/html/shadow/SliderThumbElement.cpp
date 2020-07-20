@@ -34,6 +34,7 @@
 #include "SliderThumbElement.h"
 
 #include "CSSValueKeywords.h"
+#include "Decimal.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -45,6 +46,7 @@
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
+#include "StepRange.h"
 #include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -64,7 +66,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSliderThumb);
 
 inline static Decimal sliderPosition(HTMLInputElement& element)
 {
-    const StepRange stepRange(element.createStepRange(RejectAny));
+    const StepRange stepRange(element.createStepRange(AnyStepHandling::Reject));
     const Decimal oldValue = parseToDecimalForNumberType(element.value(), stepRange.defaultValue());
     return stepRange.proportionFromValue(stepRange.clampValue(oldValue));
 }
@@ -290,7 +292,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& absolutePoint)
     position = std::max<LayoutUnit>(0, std::min(position, trackLength));
     auto ratio = Decimal::fromDouble(static_cast<double>(position) / trackLength);
     auto fraction = isVertical || !isLeftToRightDirection ? Decimal(1) - ratio : ratio;
-    auto stepRange = input->createStepRange(RejectAny);
+    auto stepRange = input->createStepRange(AnyStepHandling::Reject);
     auto value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
 
 #if ENABLE(DATALIST_ELEMENT)
