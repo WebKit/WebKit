@@ -1,3 +1,13 @@
+2020-07-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Use forward template declarations for ColorComponents instead of including ColorComponents.h
+        https://bugs.webkit.org/show_bug.cgi?id=214540
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/ColorMatrix.h:
+        * platform/graphics/ColorTypes.h:
+
 2020-07-19  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, fix GTK build in Debian/LTS
