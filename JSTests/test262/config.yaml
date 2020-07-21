@@ -6,6 +6,7 @@ flags:
   FinalizationRegistry: useWeakRefs
   class-fields-public: usePublicClassFields
   class-fields-private: usePrivateClassFields
+  Intl.DisplayNames: useIntlDisplayNames
 skip:
   features:
     - SharedArrayBuffer
@@ -26,7 +27,6 @@ skip:
     - Intl.DateTimeFormat-dayPeriod
     - Intl.DateTimeFormat-formatRange
     - Intl.DateTimeFormat-fractionalSecondDigits
-    - Intl.DisplayNames
     - Intl.ListFormat
     - Intl.NumberFormat-unified
     - Intl.Segmenter

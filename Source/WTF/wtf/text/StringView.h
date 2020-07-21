@@ -759,6 +759,12 @@ private:
 class StringView::SplitResult::Iterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = StringView;
+    using difference_type = ptrdiff_t;
+    using pointer = value_type*;
+    using reference = value_type&;
+
     StringView operator*() const;
 
     WTF_EXPORT_PRIVATE Iterator& operator++();

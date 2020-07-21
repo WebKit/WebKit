@@ -202,7 +202,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     String currency = intlStringOption(globalObject, options, Identifier::fromString(vm, "currency"), { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
     if (!currency.isNull()) {
-        if (currency.length() != 3 || !currency.isAllSpecialCharacters<isASCIIAlpha>()) {
+        if (!isWellFormedCurrencyCode(currency)) {
             throwException(globalObject, scope, createRangeError(globalObject, "currency is not a well-formed currency code"_s));
             return;
         }

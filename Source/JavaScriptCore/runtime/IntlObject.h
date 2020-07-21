@@ -82,6 +82,7 @@ String defaultLocale(JSGlobalObject*);
 const HashSet<String>& intlAvailableLocales();
 const HashSet<String>& intlCollatorAvailableLocales();
 inline const HashSet<String>& intlDateTimeFormatAvailableLocales() { return intlAvailableLocales(); }
+inline const HashSet<String>& intlDisplayNamesAvailableLocales() { return intlAvailableLocales(); }
 inline const HashSet<String>& intlNumberFormatAvailableLocales() { return intlAvailableLocales(); }
 inline const HashSet<String>& intlPluralRulesAvailableLocales() { return intlAvailableLocales(); }
 inline const HashSet<String>& intlRelativeTimeFormatAvailableLocales() { return intlAvailableLocales(); }
@@ -110,6 +111,14 @@ template<typename Predicate> String bestAvailableLocale(const String& requestedL
 Vector<String> numberingSystemsForLocale(const String& locale);
 
 bool isUnicodeLocaleIdentifierType(StringView);
+
+bool isUnicodeLanguageSubtag(StringView);
+bool isUnicodeScriptSubtag(StringView);
+bool isUnicodeRegionSubtag(StringView);
+bool isUnicodeVariantSubtag(StringView);
+bool isUnicodeLanguageId(StringView);
+
+bool isWellFormedCurrencyCode(StringView);
 
 struct UFieldPositionIteratorDeleter {
     void operator()(UFieldPositionIterator*) const;

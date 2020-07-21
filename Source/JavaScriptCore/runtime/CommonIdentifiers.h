@@ -34,6 +34,7 @@
     macro(Collator) \
     macro(Date) \
     macro(DateTimeFormat) \
+    macro(DisplayNames) \
     macro(Error) \
     macro(EvalError) \
     macro(FinalizationRegistry) \

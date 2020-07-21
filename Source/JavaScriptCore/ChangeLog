@@ -1,3 +1,84 @@
+2020-07-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [ECMA-402] Implement Intl.DisplayNames
+        https://bugs.webkit.org/show_bug.cgi?id=209779
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements Intl.DisplayNames behind useIntlDisplayNames=1 flag.
+        Intl.DisplayNames can offer readable "display-name" for ICU language, script, region, currency codes.
+        For example, it can offer "United States" string for "US" region code.
+        We use ICU ULocaleDisplayNames to implement it, except for currency since ULocaleDisplayNames is not supporting
+        currency correctly: it ignores "long", "short", and "narrow" style configurations. We need to call ucurr_getName
+        directly.
+
+        This patch appropriately adds unicode-language-id parsing in IntlLocale.cpp so that we can validate language id
+        when it is passed to `Intl.DisplayNames#of` as defined in the spec.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlDisplayNames.cpp: Added.
+        (JSC::IntlDisplayNames::create):
+        (JSC::IntlDisplayNames::createStructure):
+        (JSC::IntlDisplayNames::IntlDisplayNames):
+        (JSC::IntlDisplayNames::finishCreation):
+        (JSC::IntlDisplayNames::initializeDisplayNames):
+        (JSC::IntlDisplayNames::of const):
+        (JSC::IntlDisplayNames::resolvedOptions const):
+        (JSC::IntlDisplayNames::styleString):
+        (JSC::IntlDisplayNames::typeString):
+        (JSC::IntlDisplayNames::fallbackString):
+        * runtime/IntlDisplayNames.h: Copied from Source/JavaScriptCore/runtime/IntlRelativeTimeFormat.h.
+        * runtime/IntlDisplayNamesConstructor.cpp: Added.
+        (JSC::IntlDisplayNamesConstructor::create):
+        (JSC::IntlDisplayNamesConstructor::createStructure):
+        (JSC::IntlDisplayNamesConstructor::IntlDisplayNamesConstructor):
+        (JSC::IntlDisplayNamesConstructor::finishCreation):
+        (JSC::constructIntlDisplayNames):
+        (JSC::callIntlDisplayNames):
+        (JSC::IntlDisplayNamesConstructorSupportedLocalesOf):
+        * runtime/IntlDisplayNamesConstructor.h: Added.
+        * runtime/IntlDisplayNamesPrototype.cpp: Added.
+        (JSC::IntlDisplayNamesPrototype::create):
+        (JSC::IntlDisplayNamesPrototype::createStructure):
+        (JSC::IntlDisplayNamesPrototype::IntlDisplayNamesPrototype):
+        (JSC::IntlDisplayNamesPrototype::finishCreation):
+        (JSC::IntlDisplayNamesPrototypeFuncOf):
+        (JSC::IntlDisplayNamesPrototypeFuncResolvedOptions):
+        * runtime/IntlDisplayNamesPrototype.h: Added.
+        * runtime/IntlLocale.cpp:
+        (JSC::isUnicodeLanguageSubtag): Deleted.
+        (JSC::isUnicodeScriptSubtag): Deleted.
+        (JSC::isUnicodeRegionSubtag): Deleted.
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlObject.cpp:
+        (JSC::createDisplayNamesConstructor):
+        (JSC::IntlObject::finishCreation):
+        (JSC::isUnicodeLanguageSubtag):
+        (JSC::isUnicodeScriptSubtag):
+        (JSC::isUnicodeRegionSubtag):
+        (JSC::isUnicodeVariantSubtag):
+        (JSC::isUnicodeLanguageId):
+        (JSC::isWellFormedCurrencyCode):
+        * runtime/IntlObject.h:
+        (JSC::intlDisplayNamesAvailableLocales):
+        * runtime/IntlRelativeTimeFormat.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::displayNamesStructure):
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2020-07-20  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION (r264242): [ macOS ] imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate.any.html is a flaky crash

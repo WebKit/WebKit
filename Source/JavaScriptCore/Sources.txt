@@ -816,6 +816,9 @@ runtime/IntlCollatorPrototype.cpp
 runtime/IntlDateTimeFormat.cpp
 runtime/IntlDateTimeFormatConstructor.cpp
 runtime/IntlDateTimeFormatPrototype.cpp
+runtime/IntlDisplayNames.cpp
+runtime/IntlDisplayNamesConstructor.cpp
+runtime/IntlDisplayNamesPrototype.cpp
 runtime/IntlLocale.cpp
 runtime/IntlLocaleConstructor.cpp
 runtime/IntlLocalePrototype.cpp

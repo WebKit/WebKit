@@ -158,6 +158,8 @@ OBJECT_LUT_HEADERS = \
     IntlCollatorPrototype.lut.h \
     IntlDateTimeFormatConstructor.lut.h \
     IntlDateTimeFormatPrototype.lut.h \
+    IntlDisplayNamesConstructor.lut.h \
+    IntlDisplayNamesPrototype.lut.h \
     IntlLocalePrototype.lut.h \
     IntlNumberFormatConstructor.lut.h \
     IntlNumberFormatPrototype.lut.h \

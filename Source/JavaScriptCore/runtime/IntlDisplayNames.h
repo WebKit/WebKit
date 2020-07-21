@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,15 +26,21 @@
 #pragma once
 
 #include "JSObject.h"
-#include <unicode/ureldatefmt.h>
+#include <unicode/uldnames.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
-enum class RelevantExtensionKey : uint8_t;
+#if !defined(HAVE_ICU_U_LOCALE_DISPLAY_NAMES)
+// We need 61 or later since part of implementation uses UCURR_NARROW_SYMBOL_NAME.
+#if U_ICU_VERSION_MAJOR_NUM >= 61
+#define HAVE_ICU_U_LOCALE_DISPLAY_NAMES 1
+#endif
+#endif
 
 enum class RelevantExtensionKey : uint8_t;
 
-class IntlRelativeTimeFormat final : public JSNonFinalObject {
+class IntlDisplayNames final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
 
@@ -43,52 +48,46 @@ public:
 
     static void destroy(JSCell* cell)
     {
-        static_cast<IntlRelativeTimeFormat*>(cell)->IntlRelativeTimeFormat::~IntlRelativeTimeFormat();
+        static_cast<IntlDisplayNames*>(cell)->IntlDisplayNames::~IntlDisplayNames();
     }
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
     {
-        return vm.intlRelativeTimeFormatSpace<mode>();
+        return vm.intlDisplayNamesSpace<mode>();
     }
 
-    static IntlRelativeTimeFormat* create(VM&, Structure*);
+    static IntlDisplayNames* create(VM&, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    void initializeRelativeTimeFormat(JSGlobalObject*, JSValue locales, JSValue options);
-    JSValue format(JSGlobalObject*, double, StringView unitString) const;
-    JSValue formatToParts(JSGlobalObject*, double, StringView unitString) const;
+    void initializeDisplayNames(JSGlobalObject*, JSValue localesValue, JSValue optionsValue);
+
+    JSValue of(JSGlobalObject*, JSValue) const;
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
 private:
-    IntlRelativeTimeFormat(VM&, Structure*);
+    IntlDisplayNames(VM&, Structure*);
     void finishCreation(VM&);
-    static void visitChildren(JSCell*, SlotVisitor&);
 
-    static Vector<String> localeData(const String&, RelevantExtensionKey);
-
-    String formatInternal(JSGlobalObject*, double, StringView unit) const;
-
-    enum class Style : uint8_t { Long, Short, Narrow };
-
-    struct URelativeDateTimeFormatterDeleter {
-        void operator()(URelativeDateTimeFormatter*) const;
-    };
-    struct UNumberFormatDeleter {
-        void operator()(UNumberFormat*) const;
-    };
+    enum class Style : uint8_t { Narrow, Short, Long };
+    enum class Type : uint8_t { Language, Region, Script, Currency };
+    enum class Fallback : uint8_t { Code, None };
 
     static ASCIILiteral styleString(Style);
+    static ASCIILiteral typeString(Type);
+    static ASCIILiteral fallbackString(Fallback);
 
-    std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter> m_relativeDateTimeFormatter;
-    std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
-
+    using ULocaleDisplayNamesDeleter = ICUDeleter<uldn_close>;
+    std::unique_ptr<ULocaleDisplayNames, ULocaleDisplayNamesDeleter> m_displayNames;
     String m_locale;
-    String m_numberingSystem;
+    // FIXME: We should store it only when m_type is Currency.
+    // https://bugs.webkit.org/show_bug.cgi?id=213773
+    CString m_localeCString;
     Style m_style { Style::Long };
-    bool m_numeric { true };
+    Type m_type { Type::Language };
+    Fallback m_fallback { Fallback::Code };
 };
 
 } // namespace JSC

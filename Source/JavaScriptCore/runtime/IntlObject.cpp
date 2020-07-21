@@ -35,6 +35,9 @@
 #include "IntlCollatorPrototype.h"
 #include "IntlDateTimeFormatConstructor.h"
 #include "IntlDateTimeFormatPrototype.h"
+#include "IntlDisplayNames.h"
+#include "IntlDisplayNamesConstructor.h"
+#include "IntlDisplayNamesPrototype.h"
 #include "IntlLocale.h"
 #include "IntlLocaleConstructor.h"
 #include "IntlLocalePrototype.h"
@@ -76,6 +79,13 @@ static JSValue createDateTimeFormatConstructor(VM& vm, JSObject* object)
     IntlObject* intlObject = jsCast<IntlObject*>(object);
     JSGlobalObject* globalObject = intlObject->globalObject(vm);
     return IntlDateTimeFormatConstructor::create(vm, IntlDateTimeFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlDateTimeFormatPrototype*>(globalObject->dateTimeFormatStructure()->storedPrototypeObject()));
+}
+
+static JSValue createDisplayNamesConstructor(VM& vm, JSObject* object)
+{
+    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    JSGlobalObject* globalObject = intlObject->globalObject(vm);
+    return IntlDisplayNamesConstructor::create(vm, IntlDisplayNamesConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlDisplayNamesPrototype*>(globalObject->displayNamesStructure()->storedPrototypeObject()));
 }
 
 static JSValue createLocaleConstructor(VM& vm, JSObject* object)
@@ -153,6 +163,12 @@ IntlObject* IntlObject::create(VM& vm, JSGlobalObject* globalObject, Structure* 
 void IntlObject::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
+#if HAVE(ICU_U_LOCALE_DISPLAY_NAMES)
+    if (Options::useIntlDisplayNames())
+        putDirectWithoutTransition(vm, vm.propertyNames->DisplayNames, createDisplayNamesConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
+#else
+    UNUSED_PARAM(createDisplayNamesConstructor);
+#endif
 }
 
 Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -813,6 +829,76 @@ Vector<String> numberingSystemsForLocale(const String& locale)
     Vector<String> numberingSystems({ defaultSystemName });
     numberingSystems.appendVector(availableNumberingSystems);
     return numberingSystems;
+}
+
+// unicode_language_subtag = alpha{2,3} | alpha{5,8} ;
+bool isUnicodeLanguageSubtag(StringView string)
+{
+    auto length = string.length();
+    return length >= 2 && length <= 8 && length != 4 && string.isAllSpecialCharacters<isASCIIAlpha>();
+}
+
+// unicode_script_subtag = alpha{4} ;
+bool isUnicodeScriptSubtag(StringView string)
+{
+    return string.length() == 4 && string.isAllSpecialCharacters<isASCIIAlpha>();
+}
+
+// unicode_region_subtag = alpha{2} | digit{3} ;
+bool isUnicodeRegionSubtag(StringView string)
+{
+    auto length = string.length();
+    return (length == 2 && string.isAllSpecialCharacters<isASCIIAlpha>())
+        || (length == 3 && string.isAllSpecialCharacters<isASCIIDigit>());
+}
+
+// unicode_variant_subtag = (alphanum{5,8} | digit alphanum{3}) ;
+bool isUnicodeVariantSubtag(StringView string)
+{
+    auto length = string.length();
+    if (length >= 5 && length <= 8)
+        return string.isAllSpecialCharacters<isASCIIAlphanumeric>();
+    return length == 4 && isASCIIDigit(string[0]) && string.substring(1).isAllSpecialCharacters<isASCIIAlphanumeric>();
+}
+
+// unicode_language_id, but intersection of BCP47 and UTS35.
+// unicode_language_id =
+//     | unicode_language_subtag (sep unicode_script_subtag)? (sep unicode_region_subtag)? (sep unicode_variant_subtag)* ;
+// https://github.com/tc39/proposal-intl-displaynames/issues/79
+bool isUnicodeLanguageId(StringView string)
+{
+    Vector<StringView, 4> subtags;
+    for (auto subtag : string.splitAllowingEmptyEntries('-'))
+        subtags.append(subtag);
+
+    ASSERT(subtags.size() >= 1);
+    unsigned cursor = 0;
+    if (!isUnicodeLanguageSubtag(subtags[cursor]))
+        return false;
+    ++cursor;
+
+    if (cursor == subtags.size())
+        return true;
+    if (isUnicodeScriptSubtag(subtags[cursor]))
+        ++cursor;
+
+    if (cursor == subtags.size())
+        return true;
+    if (isUnicodeRegionSubtag(subtags[cursor]))
+        ++cursor;
+
+    while (true) {
+        if (cursor == subtags.size())
+            return true;
+        if (!isUnicodeVariantSubtag(subtags[cursor]))
+            return false;
+        ++cursor;
+    }
+}
+
+bool isWellFormedCurrencyCode(StringView currency)
+{
+    return currency.length() == 3 && currency.isAllSpecialCharacters<isASCIIAlpha>();
 }
 
 EncodedJSValue JSC_HOST_CALL intlObjectFuncGetCanonicalLocales(JSGlobalObject* globalObject, CallFrame* callFrame)

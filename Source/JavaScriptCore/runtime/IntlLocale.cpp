@@ -191,27 +191,6 @@ String IntlLocale::keywordValue(ASCIILiteral key, bool isBoolean) const
     return value ? String(value) : emptyString();
 }
 
-// unicode_language_subtag = alpha{2,3} | alpha{5,8} ;
-static bool isUnicodeLanguageSubtag(StringView string)
-{
-    auto length = string.length();
-    return length >= 2 && length <= 8 && length != 4 && string.isAllSpecialCharacters<isASCIIAlpha>();
-}
-
-// unicode_script_subtag = alpha{4} ;
-static bool isUnicodeScriptSubtag(StringView string)
-{
-    return string.length() == 4 && string.isAllSpecialCharacters<isASCIIAlpha>();
-}
-
-// unicode_region_subtag = alpha{2} | digit{3} ;
-static bool isUnicodeRegionSubtag(StringView string)
-{
-    auto length = string.length();
-    return (length == 2 && string.isAllSpecialCharacters<isASCIIAlpha>())
-        || (length == 3 && string.isAllSpecialCharacters<isASCIIDigit>());
-}
-
 // https://tc39.es/ecma402/#sec-Intl.Locale
 void IntlLocale::initializeLocale(JSGlobalObject* globalObject, JSValue tagValue, JSValue optionsValue)
 {
