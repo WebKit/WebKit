@@ -52,7 +52,7 @@ struct InputElementClickState {
     RefPtr<HTMLInputElement> checkedRadioButton;
 };
 
-enum class AnyStepHandling;
+enum class AnyStepHandling : bool;
 
 class HTMLInputElement : public HTMLTextFormControlElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLInputElement);

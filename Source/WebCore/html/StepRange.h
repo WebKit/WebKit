@@ -25,15 +25,9 @@
 
 namespace WebCore {
 
-enum class AnyStepHandling {
-    Reject,
-    Default
-};
+enum class AnyStepHandling : bool { Reject, Default };
 
-enum class RangeLimitations {
-    Valid,
-    Invalid
-};
+enum class RangeLimitations : bool { Valid, Invalid };
 
 class StepRange {
 public:

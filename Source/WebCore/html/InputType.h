@@ -66,7 +66,7 @@ class TouchEvent;
 
 struct InputElementClickState;
 
-enum class AnyStepHandling;
+enum class AnyStepHandling : bool;
 
 // An InputType object represents the type-specific part of an HTMLInputElement.
 // Do not expose instances of InputType and classes derived from it to classes
