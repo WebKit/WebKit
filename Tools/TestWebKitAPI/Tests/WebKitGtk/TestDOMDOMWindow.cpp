@@ -47,7 +47,7 @@ static void signalsNotifyCallback(const gchar *key, const gchar *value, gconstpo
 
     if (g_str_equal(key, "loaded")) {
         status.loaded = TRUE;
-        status.test->showInWindowAndWaitUntilMapped();
+        status.test->showInWindow();
 
         // Click in a known location where the text is
         status.test->clickMouseButton(20, 18, 1, 0);

@@ -481,10 +481,7 @@ public:
 
 static void testWebViewCreateNavigationData(CreateNavigationDataTest* test, gconstpointer)
 {
-#if PLATFORM(GTK)
-    test->showInWindowAndWaitUntilMapped();
-#endif
-
+    test->showInWindow();
     test->loadHTML(
         "<html><body>"
         "<input style=\"position:absolute; left:0; top:0; margin:0; padding:0\" type=\"button\" value=\"click to show a popup\" onclick=\"window.open('data:foo');\"/>"
@@ -590,9 +587,7 @@ static void testWebViewDisallowModalDialogs(ModalDialogsTest* test, gconstpointe
 
 static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 {
-#if PLATFORM(GTK)
-    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
-#endif
+    test->showInWindow();
 
     static const char* htmlOnLoadFormat = "<html><body onLoad=\"%s\"></body></html>";
     static const char* jsAlertFormat = "alert('%s')";
@@ -721,7 +716,7 @@ static void testWebViewOpenWindowNoDefaultSize(UIClientTest* test, gconstpointer
     // If no size specified for window.open(), and new windows are not set to a specific default size with gtk_window_set_default_size()
     // on the create signal, then new windows open with the size of the previous window.
     cairo_rectangle_int_t expectedGeometry = { 0, 0, 527, 671 };
-    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL, expectedGeometry.width, expectedGeometry.height);
+    test->showInWindow(expectedGeometry.width, expectedGeometry.height);
     test->setExpectedWindowProperties(UIClientTest::WindowProperties(&expectedGeometry, false, false, false, false, false, true, false));
     test->loadHtml("<html><body onLoad=\"window.open('', '', 'left=0,top=0,location=no,menubar=no,status=no,toolbar=no,scrollbars=no').close();\"></body></html>", nullptr);
     test->waitUntilMainLoopFinishes();
@@ -731,7 +726,7 @@ static void testWebViewOpenWindowNoDefaultSize(UIClientTest* test, gconstpointer
 #if PLATFORM(GTK)
 static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
+    test->showInWindow();
 
     const char* linksHoveredHTML =
         "<html><head>"
@@ -850,9 +845,7 @@ static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstp
     // to register the error quark twice. See https://bugs.webkit.org/show_bug.cgi?id=89858.
     // Make warnings non-fatal for this test to make it pass.
     Test::removeLogFatalFlag(G_LOG_LEVEL_WARNING);
-#if PLATFORM(GTK)
-    test->showInWindowAndWaitUntilMapped();
-#endif
+    test->showInWindow();
     static const char* geolocationRequestHTML =
         "<html>"
         "  <script>"
@@ -898,9 +891,7 @@ static void testWebViewUserMediaEnumerateDevicesPermissionCheck(UIClientTest* te
     webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, FALSE);
     webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
 
-#if PLATFORM(GTK)
-    test->showInWindowAndWaitUntilMapped();
-#endif
+    test->showInWindow();
     static const char* userMediaRequestHTML =
         "<html>"
         "  <script>"
@@ -943,9 +934,7 @@ static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpoi
     webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
     webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, FALSE);
 
-#if PLATFORM(GTK)
-    test->showInWindowAndWaitUntilMapped();
-#endif
+    test->showInWindow();
     static const char* userMediaRequestHTML = "<html>"
         "  <script>"
         "  function runTest()"
@@ -985,9 +974,7 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
     webkit_settings_set_enable_mock_capture_devices(settings, TRUE);
     webkitSettingsSetMediaCaptureRequiresSecureConnection(settings, FALSE);
 
-#if PLATFORM(GTK)
-    test->showInWindowAndWaitUntilMapped();
-#endif
+    test->showInWindow();
     static const char* userMediaRequestHTML = "<html>"
         "  <script>"
         "  function runTest()"
@@ -1018,10 +1005,7 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
 #if ENABLE(POINTER_LOCK)
 static void testWebViewPointerLockPermissionRequest(UIClientTest* test, gconstpointer)
 {
-#if PLATFORM(GTK)
-    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
-#endif
-
+    test->showInWindow();
     static const char* pointerLockRequestHTML =
         "<html>"
         "  <script>"
@@ -1089,9 +1073,7 @@ private:
 
 static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
 {
-#if PLATFORM(GTK)
-    test->showInWindowAndWaitUntilMapped();
-#endif
+    test->showInWindow();
     static const char* fileChooserHTMLFormat = "<html><body><input style='position:absolute;left:0;top:0;margin:0;padding:0' type='file' %s/></body></html>";
 
     // Multiple selections not allowed, no MIME filtering.
@@ -1240,7 +1222,7 @@ private:
 static void testWebViewColorChooserRequest(ColorChooserTest* test, gconstpointer)
 {
     static const char* colorChooserHTMLFormat = "<html><body><input style='position:absolute;left:1;top:1;margin:0;padding:0;width:45;height:25' type='color' %s/></body></html>";
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
 
     GUniquePtr<char> defaultColorHTML(g_strdup_printf(colorChooserHTMLFormat, ""));
     test->loadHtml(defaultColorHTML.get(), nullptr);

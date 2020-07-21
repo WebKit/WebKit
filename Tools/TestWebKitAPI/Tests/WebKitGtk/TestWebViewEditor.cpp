@@ -34,7 +34,7 @@ public:
         , m_triesCount(0)
         , m_editorState(nullptr)
     {
-        showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
+        showInWindow();
         loadURI("about:blank");
         waitUntilLoadFinished();
         gtk_clipboard_clear(m_clipboard);

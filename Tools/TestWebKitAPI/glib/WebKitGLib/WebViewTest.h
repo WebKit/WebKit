@@ -65,15 +65,10 @@ public:
     void clickMouseButton(int x, int y, unsigned button = 1, unsigned mouseModifiers = 0);
     void keyStroke(unsigned keyVal, unsigned keyModifiers = 0);
 
-#if PLATFORM(GTK)
-    void showInWindow(GtkWindowType = GTK_WINDOW_POPUP);
-    void showInWindowAndWaitUntilMapped(GtkWindowType = GTK_WINDOW_POPUP, int width = 0, int height = 0);
-    void emitPopupMenuSignal();
-#endif
+    void showInWindow(int width = 0, int height = 0);
 
-#if PLATFORM(WPE)
-    void showInWindowAndWaitUntilMapped() { showInWindow(); };
-    void showInWindow();
+#if PLATFORM(GTK)
+    void emitPopupMenuSignal();
 #endif
 
     WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**);
@@ -118,10 +113,5 @@ public:
 
 #if PLATFORM(GTK)
     GtkWidget* m_parentWindow { nullptr };
-#endif
-
-private:
-#if PLATFORM(GTK)
-    void doMouseButtonEvent(GdkEventType, int, int, unsigned, unsigned);
 #endif
 };

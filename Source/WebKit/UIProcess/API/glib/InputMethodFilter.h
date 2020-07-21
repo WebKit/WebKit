@@ -67,6 +67,10 @@ public:
     };
     FilterResult filterKeyEvent(PlatformEventKey*);
 
+#if PLATFORM(GTK)
+    FilterResult filterKeyEvent(unsigned type, unsigned keyval, unsigned keycode, unsigned modifiers);
+#endif
+
     void notifyFocusedIn();
     void notifyFocusedOut();
     void notifyMouseButtonPress();

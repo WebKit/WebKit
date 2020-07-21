@@ -530,8 +530,7 @@ static void prepareContextMenuTestView(ContextMenuDefaultTest* test)
 
 static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
-
+    test->showInWindow();
     prepareContextMenuTestView(test);
 
     // Context menu for selection.
@@ -578,8 +577,7 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
 
 static void testPopupEventSignal(ContextMenuDefaultTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
-
+    test->showInWindow();
     prepareContextMenuTestView(test);
 
     test->m_expectedMenuType = ContextMenuDefaultTest::Selection;
@@ -588,8 +586,7 @@ static void testPopupEventSignal(ContextMenuDefaultTest* test, gconstpointer)
 
 static void testContextMenuKey(ContextMenuDefaultTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
-
+    test->showInWindow();
     prepareContextMenuTestView(test);
 
     test->m_expectedMenuType = ContextMenuDefaultTest::Selection;
@@ -746,8 +743,7 @@ public:
 
 static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
-
+    test->showInWindow();
     test->loadHtml("<html><body>WebKitGTK Context menu tests</body></html>", "file:///");
     test->waitUntilLoadFinished();
 
@@ -869,69 +865,10 @@ public:
 
 static void testContextMenuCustomMenu(ContextMenuCustomFullTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
-
+    test->showInWindow();
     test->loadHtml("<html><body>WebKitGTK Context menu tests</body></html>", "file:///");
     test->waitUntilLoadFinished();
 
-    test->showContextMenuAndWaitUntilFinished();
-}
-
-class ContextMenuDisabledTest: public ContextMenuTest {
-public:
-    MAKE_GLIB_TEST_FIXTURE(ContextMenuDisabledTest);
-
-    enum DisableMode {
-        IgnoreClicks,
-        IgnoreDefaultMenu
-    };
-
-    static gboolean buttonPressEventCallback(GtkWidget*, GdkEvent* event, ContextMenuDisabledTest* test)
-    {
-        if (event->button.button != 3)
-            return FALSE;
-        return test->rightButtonPressed();
-    }
-
-    ContextMenuDisabledTest()
-        : m_disableMode(IgnoreClicks)
-    {
-        g_signal_connect(m_webView, "button-press-event", G_CALLBACK(buttonPressEventCallback), this);
-    }
-
-    bool contextMenu(WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult*)
-    {
-        if (m_disableMode == IgnoreClicks)
-            g_assert_not_reached();
-        else
-            quitMainLoop();
-
-        return true;
-    }
-
-    bool rightButtonPressed()
-    {
-        if (m_disableMode == IgnoreClicks) {
-            quitMainLoopAfterProcessingPendingEvents();
-            return true;
-        }
-        return false;
-    }
-
-    DisableMode m_disableMode;
-};
-
-static void testContextMenuDisableMenu(ContextMenuDisabledTest* test, gconstpointer)
-{
-    test->showInWindowAndWaitUntilMapped();
-
-    test->loadHtml("<html><body>WebKitGTK Context menu tests</body></html>", "file:///");
-    test->waitUntilLoadFinished();
-
-    test->m_disableMode = ContextMenuDisabledTest::IgnoreDefaultMenu;
-    test->showContextMenuAndWaitUntilFinished();
-
-    test->m_disableMode = ContextMenuDisabledTest::IgnoreClicks;
     test->showContextMenuAndWaitUntilFinished();
 }
 
@@ -976,8 +913,7 @@ public:
 
 static void testContextMenuSubMenu(ContextMenuSubmenuTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
-
+    test->showInWindow();
     test->loadHtml("<html><body>WebKitGTK Context menu tests</body></html>", "file:///");
     test->waitUntilLoadFinished();
 
@@ -1017,8 +953,7 @@ public:
 
 static void testContextMenuDismissed(ContextMenuDismissedTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
-
+    test->showInWindow();
     test->loadHtml("<html><body>WebKitGTK Context menu tests</body></html>", "file:///");
     test->waitUntilLoadFinished();
 
@@ -1067,7 +1002,7 @@ public:
 
 static void testContextMenuWebExtensionMenu(ContextMenuWebExtensionTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
     test->loadHtml("<html><body>WebKitGTK Context menu tests<br>"
         "<a style='position:absolute; left:1; top:10' href='http://www.webkitgtk.org'>WebKitGTK Website</a></body></html>",
         "ContextMenuTestDefault");
@@ -1157,7 +1092,7 @@ public:
 
 static void testContextMenuWebExtensionNode(ContextMenuWebExtensionNodeTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
     test->loadHtml("<html><body><p style='position:absolute; left:1; top:1'>WebKitGTK Context menu tests</p><br>"
         "<a style='position:absolute; left:1; top:100' href='http://www.webkitgtk.org'>WebKitGTK Website</a></body></html>",
         "ContextMenuTestNode");
@@ -1227,8 +1162,7 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
 static void testContextMenuLiveStream(ContextMenuDefaultTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
-
+    test->showInWindow();
     test->loadURI(kServer->getURIForPath("/live-stream").data());
     test->waitUntilLoadFinished();
 
@@ -1247,7 +1181,6 @@ void beforeAll()
     ContextMenuDefaultTest::add("WebKitWebView", "live-stream", testContextMenuLiveStream);
     ContextMenuCustomTest::add("WebKitWebView", "populate-menu", testContextMenuPopulateMenu);
     ContextMenuCustomFullTest::add("WebKitWebView", "custom-menu", testContextMenuCustomMenu);
-    ContextMenuDisabledTest::add("WebKitWebView", "disable-menu", testContextMenuDisableMenu);
     ContextMenuSubmenuTest::add("WebKitWebView", "submenu", testContextMenuSubMenu);
     ContextMenuDismissedTest::add("WebKitWebView", "menu-dismissed", testContextMenuDismissed);
     ContextMenuWebExtensionTest::add("WebKitWebPage", "context-menu", testContextMenuWebExtensionMenu);

@@ -21,6 +21,7 @@
 #include "InputMethodFilter.h"
 
 #include "WebKitInputMethodContextPrivate.h"
+#include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/IntRect.h>
 #include <gdk/gdk.h>
 
@@ -39,6 +40,29 @@ IntRect InputMethodFilter::platformTransformCursorRectToViewCoordinates(const In
 bool InputMethodFilter::platformEventKeyIsKeyPress(PlatformEventKey* event) const
 {
     return gdk_event_get_event_type(event) == GDK_KEY_PRESS;
+}
+
+InputMethodFilter::FilterResult InputMethodFilter::filterKeyEvent(unsigned type, unsigned keyval, unsigned keycode, unsigned modifiers)
+{
+    if (!isEnabled() || !m_context)
+        return { };
+
+#if !USE(GTK4)
+    auto* webView = webkitInputMethodContextGetWebView(m_context.get());
+    ASSERT(webView);
+
+    GUniquePtr<GdkEvent> event(gdk_event_new(static_cast<GdkEventType>(type)));
+    event->key.window = gtk_widget_get_window(GTK_WIDGET(webView));
+    g_object_ref(event->key.window);
+    event->key.time = GDK_CURRENT_TIME;
+    event->key.keyval = keyval;
+    event->key.hardware_keycode = keycode;
+    event->key.state = modifiers;
+    gdk_event_set_device(event.get(), gdk_seat_get_keyboard(gdk_display_get_default_seat(gtk_widget_get_display(GTK_WIDGET(webView)))));
+    return filterKeyEvent(event.get());
+#else
+    return { };
+#endif
 }
 
 } // namespace WebKit

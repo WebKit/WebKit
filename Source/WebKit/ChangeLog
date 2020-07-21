@@ -1,3 +1,19 @@
+2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Prepare unit tests for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=214251
+
+        Reviewed by Adrian Perez de Castro.
+
+        Make it possible to test input methods.
+
+        * UIProcess/API/glib/InputMethodFilter.h:
+        * UIProcess/API/gtk/InputMethodFilterGtk.cpp:
+        (WebKit::InputMethodFilter::filterKeyEvent): Added to receive the key event properties instead of the GdkEvent.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSynthesizeMouseEvent): Create a GdkEvent for right clicks since it's needed by GTK3 API.
+        (webkitWebViewBaseSynthesizeKeyEvent): Send key press and release events to the IM filter.
+
 2020-07-20  Megan Gardner  <megan_gardner@apple.com>
 
         Add OK button to Date/Time form controls.

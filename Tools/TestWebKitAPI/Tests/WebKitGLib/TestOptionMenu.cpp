@@ -122,7 +122,7 @@ static void testOptionMenuSimple(OptionMenuTest* test, gconstpointer)
         "    <option selected>Bar</option>"
         "    <option disabled>Baz</option>"
         "  </select></body></html>";
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
     test->loadHtml(html, nullptr);
     test->waitUntilLoadFinished();
 
@@ -171,7 +171,7 @@ static void testOptionMenuGroups(OptionMenuTest* test, gconstpointer)
         "    </optgroup>"
         "    <option>Tail</option>"
         "  </select></body></html>";
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
     test->loadHtml(html, nullptr);
     test->waitUntilLoadFinished();
 
@@ -245,7 +245,7 @@ static void testOptionMenuActivate(OptionMenuTest* test, gconstpointer)
         "    <option>Bar</option>"
         "    <option>Baz</option>"
         "  </select></body></html>";
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
     test->loadHtml(html, nullptr);
     test->waitUntilLoadFinished();
 
@@ -275,7 +275,7 @@ static void testOptionMenuSelect(OptionMenuTest* test, gconstpointer)
         "    <option>Bar</option>"
         "    <option>Baz</option>"
         "  </select></body></html>";
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
     test->loadHtml(html, nullptr);
     test->waitUntilLoadFinished();
 

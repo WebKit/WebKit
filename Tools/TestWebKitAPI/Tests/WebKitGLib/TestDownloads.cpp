@@ -559,8 +559,41 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+#if PLATFORM(GTK)
+    static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult* hitTestResult, WebViewDownloadTest* test)
+    {
+        g_assert_true(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult));
+        GList* items = webkit_context_menu_get_items(contextMenu);
+        for (GList* l = items; l; l = g_list_next(l)) {
+            g_assert_true(WEBKIT_IS_CONTEXT_MENU_ITEM(l->data));
+            auto* item = WEBKIT_CONTEXT_MENU_ITEM(l->data);
+            if (webkit_context_menu_item_get_stock_action(item) == WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_LINK_TO_DISK) {
+                test->m_contextMenuDownloadItem = item;
+                break;
+            }
+        }
+        test->quitMainLoop();
+        return FALSE;
+    }
+
+    WebKitContextMenuItem* showContextMenuAndGetDownloadItem(int x, int y)
+    {
+        m_contextMenuDownloadItem = nullptr;
+        auto id = g_signal_connect(m_webView, "context-menu", G_CALLBACK(contextMenuCallback), this);
+        RunLoop::main().dispatch([this, x, y] {
+            clickMouseButton(x, y, 3);
+        });
+        g_main_loop_run(m_mainLoop);
+        g_signal_handler_disconnect(m_webView, id);
+        return m_contextMenuDownloadItem.get();
+    }
+#endif
+
     GRefPtr<WebKitDownload> m_download;
     bool m_shouldDelayDecideDestination { false };
+#if PLATFORM(GTK)
+    GRefPtr<WebKitContextMenuItem> m_contextMenuDownloadItem;
+#endif
 };
 
 static void testWebViewDownloadURI(WebViewDownloadTest* test, gconstpointer)
@@ -689,51 +722,18 @@ static void testDownloadMIMEType(DownloadTest* test, gconstpointer)
 }
 
 #if PLATFORM(GTK)
-static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult* hitTestResult, WebViewDownloadTest* test)
-{
-    g_assert_true(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult));
-    g_assert_true(webkit_hit_test_result_context_is_link(hitTestResult));
-    GList* items = webkit_context_menu_get_items(contextMenu);
-    GRefPtr<WebKitContextMenuItem> contextMenuItem;
-    for (GList* l = items; l; l = g_list_next(l)) {
-        g_assert_true(WEBKIT_IS_CONTEXT_MENU_ITEM(l->data));
-        auto* item = WEBKIT_CONTEXT_MENU_ITEM(l->data);
-        if (webkit_context_menu_item_get_stock_action(item) == WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_LINK_TO_DISK) {
-            contextMenuItem = item;
-            break;
-        }
-    }
-    g_assert_nonnull(contextMenuItem.get());
-    webkit_context_menu_remove_all(contextMenu);
-    webkit_context_menu_append(contextMenu, contextMenuItem.get());
-    test->quitMainLoop();
-    return FALSE;
-}
-
 static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
 
     static const char* linkHTMLFormat = "<html><body><a style='position:absolute; left:1; top:1' href='%s'>Download Me</a></body></html>";
     GUniquePtr<char> linkHTML(g_strdup_printf(linkHTMLFormat, kServer->getURIForPath("/test.pdf").data()));
     test->loadHtml(linkHTML.get(), kServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
 
-    g_signal_connect(test->m_webView, "context-menu", G_CALLBACK(contextMenuCallback), test);
-    g_idle_add([](gpointer userData) -> gboolean {
-        auto* test = static_cast<WebViewDownloadTest*>(userData);
-        test->clickMouseButton(1, 1, 3);
-        return FALSE;
-    }, test);
-    g_main_loop_run(test->m_mainLoop);
-
-    g_idle_add([](gpointer userData) -> gboolean {
-        auto* test = static_cast<WebViewDownloadTest*>(userData);
-        // Select and activate the context menu action.
-        test->keyStroke(GDK_KEY_Down);
-        test->keyStroke(GDK_KEY_Return);
-        return FALSE;
-    }, test);
+    auto* item = test->showContextMenuAndGetDownloadItem(1, 1);
+    g_assert(WEBKIT_IS_CONTEXT_MENU_ITEM(item));
+    g_action_activate(webkit_context_menu_item_get_gaction(item), nullptr);
     test->waitUntilDownloadStarted();
 
     g_assert_true(test->m_webView == webkit_download_get_web_view(test->m_download.get()));
@@ -755,7 +755,7 @@ static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpoin
 
 static void testBlobDownload(WebViewDownloadTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
 
     static const char* linkBlobHTML =
         "<html><body>"

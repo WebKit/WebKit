@@ -265,7 +265,7 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
     test->loadHtml(testString, 0);
     test->waitUntilLoadFinished();
 
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
 
     cairo_surface_t* originalSurface = cairo_surface_reference(
         test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));

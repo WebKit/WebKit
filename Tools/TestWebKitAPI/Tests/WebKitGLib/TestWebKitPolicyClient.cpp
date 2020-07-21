@@ -311,10 +311,8 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
 static void testAutoplayPolicy(PolicyClientTest* test, gconstpointer)
 {
-#if PLATFORM(GTK)
     // The web view must be realized for the video to start playback.
-    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
-#endif
+    test->showInWindow();
 
     test->m_policyDecisionTypeFilter = WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION;
 

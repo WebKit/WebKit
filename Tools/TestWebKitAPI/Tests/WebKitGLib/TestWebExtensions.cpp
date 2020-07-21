@@ -73,7 +73,7 @@ static gboolean inputElementIsUserEdited(GDBusProxy* proxy, uint64_t pageID, con
 
 static void testWebExtensionInputElementIsUserEdited(WebViewTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
     test->loadHtml("<html><body id='body'><input id='input'></input><textarea id='textarea'></textarea></body></html>", nullptr);
     test->waitUntilLoadFinished();
 
@@ -262,7 +262,7 @@ static void testInstallMissingPluginsPermissionRequest(WebViewTest* test, gconst
     GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(proxy.get(), "RemoveAVPluginsFromGSTRegistry",
         nullptr, G_DBUS_CALL_FLAGS_NONE, -1, nullptr, nullptr));
 
-    test->showInWindowAndWaitUntilMapped();
+    test->showInWindow();
 
     gulong permissionRequestSignalID = g_signal_connect(test->m_webView, "permission-request", G_CALLBACK(permissionRequestCallback), test);
     // FIXME: the base URI needs to finish with / to work, that shouldn't happen.

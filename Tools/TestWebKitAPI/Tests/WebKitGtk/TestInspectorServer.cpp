@@ -138,7 +138,7 @@ static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer
 {
     GUniqueOutPtr<GError> error;
 
-    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
+    test->showInWindow();
     g_assert_true(test->getPageList());
 
     WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.getElementsByClassName('targetname').length;", &error.outPtr());

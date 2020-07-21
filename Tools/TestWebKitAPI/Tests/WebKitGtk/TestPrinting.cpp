@@ -421,8 +421,7 @@ public:
 
 static void testPrintCustomWidget(PrintCustomWidgetTest* test, gconstpointer)
 {
-    test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL, 0, 0);
-
+    test->showInWindow();
     test->loadHtml("<html><body>Text</body></html>", 0);
     test->waitUntilLoadFinished();
 

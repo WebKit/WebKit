@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
+#include "WebKitWebViewBaseInternal.h"
 #include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebKit/WKRetainPtr.h>
@@ -83,26 +84,9 @@ void PlatformWebView::resizeTo(unsigned width, unsigned height)
     gtk_window_resize(GTK_WINDOW(m_window), width, height);
 }
 
-static void doKeyStroke(GtkWidget* viewWidget, unsigned int keyVal)
+static inline WebKitWebViewBase* toWebKitGLibAPI(PlatformWKView view)
 {
-    GUniquePtr<GdkEvent> event(gdk_event_new(GDK_KEY_PRESS));
-    event->key.keyval = keyVal;
-    event->key.time = GDK_CURRENT_TIME;
-    event->key.state = 0;
-    event->key.window = gtk_widget_get_window(viewWidget);
-    g_object_ref(event->key.window);
-    GdkDisplay* display = gtk_widget_get_display(viewWidget);
-    gdk_event_set_device(event.get(), gdk_seat_get_pointer(gdk_display_get_default_seat(display)));
-
-    // When synthesizing an event, an invalid hardware_keycode value can cause it to be badly processed by GTK+.
-    GUniqueOutPtr<GdkKeymapKey> keys;
-    int keysCount;
-    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_for_display(display), keyVal, &keys.outPtr(), &keysCount) && keysCount)
-        event->key.hardware_keycode = keys.get()[0].keycode;
-
-    gtk_main_do_event(event.get());
-    event->key.type = GDK_KEY_RELEASE;
-    gtk_main_do_event(event.get());
+    return const_cast<WebKitWebViewBase*>(reinterpret_cast<const WebKitWebViewBase*>(view));
 }
 
 void PlatformWebView::simulateSpacebarKeyPress()
@@ -110,7 +94,7 @@ void PlatformWebView::simulateSpacebarKeyPress()
     GtkWidget* viewWidget = GTK_WIDGET(m_view);
     if (!gtk_widget_get_realized(viewWidget))
         gtk_widget_show(m_window);
-    doKeyStroke(viewWidget, GDK_KEY_KP_Space);
+    webkitWebViewBaseSynthesizeKeyEvent(toWebKitGLibAPI(m_view), KeyEventType::Insert, GDK_KEY_KP_Space, 0, ShouldTranslateKeyboardState::No);
 }
 
 void PlatformWebView::simulateAltKeyPress()
@@ -118,27 +102,7 @@ void PlatformWebView::simulateAltKeyPress()
     GtkWidget* viewWidget = GTK_WIDGET(m_view);
     if (!gtk_widget_get_realized(viewWidget))
         gtk_widget_show(m_window);
-    doKeyStroke(viewWidget, GDK_KEY_Alt_L);
-}
-
-static void doMouseButtonEvent(GtkWidget* viewWidget, GdkEventType eventType, int x, int y, unsigned int button)
-{
-    GUniquePtr<GdkEvent> event(gdk_event_new(eventType));
-    event->button.x = x;
-    event->button.y = y;
-    event->button.button = button;
-    event->button.time = GDK_CURRENT_TIME;
-    event->button.axes = 0;
-    event->button.state = 0;
-    event->button.window = gtk_widget_get_window(viewWidget);
-    g_object_ref(event->button.window);
-    event->button.device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget)));
-
-    int xRoot, yRoot;
-    gdk_window_get_root_coords(gtk_widget_get_window(viewWidget), x, y, &xRoot, &yRoot);
-    event->button.x_root = xRoot;
-    event->button.y_root = yRoot;
-    gtk_main_do_event(event.get());
+    webkitWebViewBaseSynthesizeKeyEvent(toWebKitGLibAPI(m_view), KeyEventType::Insert, GDK_KEY_Alt_L, 0, ShouldTranslateKeyboardState::No);
 }
 
 void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
@@ -146,31 +110,13 @@ void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
     GtkWidget* viewWidget = GTK_WIDGET(m_view);
     if (!gtk_widget_get_realized(viewWidget))
         gtk_widget_show(m_window);
-    doMouseButtonEvent(viewWidget, GDK_BUTTON_PRESS, x, y, 3);
-    doMouseButtonEvent(viewWidget, GDK_BUTTON_RELEASE, x, y, 3);
+    webkitWebViewBaseSynthesizeMouseEvent(toWebKitGLibAPI(m_view), MouseEventType::Press, 3, 0, x, y, 0, 1);
+    webkitWebViewBaseSynthesizeMouseEvent(toWebKitGLibAPI(m_view), MouseEventType::Release, 3, 0, x, y, 0, 0);
 }
 
 void PlatformWebView::simulateMouseMove(unsigned x, unsigned y, WKEventModifiers)
 {
-    GUniquePtr<GdkEvent> event(gdk_event_new(GDK_MOTION_NOTIFY));
-    event->motion.x = x;
-    event->motion.y = y;
-    event->motion.time = GDK_CURRENT_TIME;
-    event->motion.state = 0;
-    event->motion.axes = 0;
-
-    GtkWidget* viewWidget = GTK_WIDGET(m_view);
-    if (!gtk_widget_get_realized(viewWidget))
-        gtk_widget_show(m_window);
-    event->motion.window = gtk_widget_get_window(viewWidget);
-    g_object_ref(event->motion.window);
-    event->motion.device = gdk_seat_get_pointer(gdk_display_get_default_seat(gtk_widget_get_display(viewWidget)));
-
-    int xRoot, yRoot;
-    gdk_window_get_root_coords(gtk_widget_get_window(viewWidget), x, y, &xRoot, &yRoot);
-    event->motion.x_root = xRoot;
-    event->motion.y_root = yRoot;
-    gtk_main_do_event(event.get());
+    webkitWebViewBaseSynthesizeMouseEvent(toWebKitGLibAPI(m_view), MouseEventType::Motion, 0, 0, x, y, 0, 0);
 }
 
 } // namespace TestWebKitAPI

@@ -1,3 +1,86 @@
+2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Prepare unit tests for GTK4
+        https://bugs.webkit.org/show_bug.cgi?id=214251
+
+        Reviewed by Adrian Perez de Castro.
+
+        In GTK4 there isn't GTK_WINDOW_POPUP and we can't create GdkEvents, so we need to use toplevel windows
+        everywhere and use the new internal api to synthesize events.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (testContextMenuDownloadActions):
+        (testBlobDownload):
+        * TestWebKitAPI/Tests/WebKitGLib/TestInputMethodContext.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestOptionMenu.cpp:
+        (testOptionMenuSimple):
+        (testOptionMenuGroups):
+        (testOptionMenuActivate):
+        (testOptionMenuSelect):
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewCreateNavigationData):
+        (testWebViewJavaScriptDialogs):
+        (testWebViewOpenWindowNoDefaultSize):
+        (testWebViewMouseTarget):
+        (testWebViewGeolocationPermissionRequests):
+        (testWebViewUserMediaEnumerateDevicesPermissionCheck):
+        (testWebViewUserMediaPermissionRequests):
+        (testWebViewAudioOnlyUserMediaPermissionRequests):
+        (testWebViewPointerLockPermissionRequest):
+        (testWebViewFileChooserRequest):
+        (testWebViewColorChooserRequest):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (testWebExtensionInputElementIsUserEdited):
+        (testInstallMissingPluginsPermissionRequest):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFindController.cpp:
+        (testFindControllerHide):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitPolicyClient.cpp:
+        (testAutoplayPolicy):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewFullScreen):
+        (testWebViewSubmitForm):
+        (testWebViewSnapshot):
+        (testWebViewIsPlayingAudio):
+        (testWebViewPreferredSize):
+        * TestWebKitAPI/Tests/WebKitGtk/TestContextMenu.cpp:
+        (testContextMenuDefaultMenu):
+        (testPopupEventSignal):
+        (testContextMenuKey):
+        (testContextMenuPopulateMenu):
+        (testContextMenuCustomMenu):
+        (testContextMenuSubMenu):
+        (testContextMenuDismissed):
+        (testContextMenuWebExtensionMenu):
+        (testContextMenuWebExtensionNode):
+        (testContextMenuLiveStream):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGtk/TestDOMDOMWindow.cpp:
+        (signalsNotifyCallback):
+        * TestWebKitAPI/Tests/WebKitGtk/TestInspector.cpp:
+        (testInspectorDefault):
+        (testInspectorManualAttachDetach):
+        (testInspectorCustomContainerDestroyed):
+        * TestWebKitAPI/Tests/WebKitGtk/TestInspectorServer.cpp:
+        (testInspectorServerPageList):
+        * TestWebKitAPI/Tests/WebKitGtk/TestPrinting.cpp:
+        (testPrintCustomWidget):
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebViewEditor.cpp:
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+        * TestWebKitAPI/glib/WebKitGLib/gtk/WebViewTestGtk.cpp:
+        (WebViewTest::quitMainLoopAfterProcessingPendingEvents):
+        (WebViewTest::showInWindow):
+        (WebViewTest::mouseMoveTo):
+        (WebViewTest::clickMouseButton):
+        (WebViewTest::keyStroke):
+        * TestWebKitAPI/glib/WebKitGLib/wpe/WebViewTestWPE.cpp:
+        (WebViewTest::showInWindow):
+        * TestWebKitAPI/gtk/PlatformWebViewGtk.cpp:
+        (TestWebKitAPI::toWebKitGLibAPI):
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress):
+        (TestWebKitAPI::PlatformWebView::simulateAltKeyPress):
+        (TestWebKitAPI::PlatformWebView::simulateRightClick):
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove):
+
 2020-07-20  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Use -q while unzipping layout-test-results.zip
