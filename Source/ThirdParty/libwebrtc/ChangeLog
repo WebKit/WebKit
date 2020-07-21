@@ -1,3 +1,13 @@
+2020-07-21  Youenn Fablet  <youenn@apple.com>
+
+        Resync filter_analyzer.cc up to upstream libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=214592
+        <rdar://problem/65247051>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/modules/audio_processing/aec3/filter_analyzer.cc:
+
 2020-07-20  Youenn Fablet  <youenn@apple.com>
 
         Fix buggy assert in h265_vps_sps_pps_tracker.cc
