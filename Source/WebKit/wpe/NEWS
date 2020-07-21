@@ -1,4 +1,33 @@
 =================
+WPE WebKit 2.29.1
+=================
+
+What's new in WPE WebKit 2.29.1?
+
+  - Add Intelligent Tracking Prevention (ITP) support.
+  - Add webkit_authentication_request_get_security_origin.
+  - Add support for video formats in img elements.
+  - Add API to handle video autoplay policy that now defaults to disallow autoplay videos with audio.
+  - Add API to mute a web view.
+  - Add API to allow applications to handle the HTTP authentication credential storage.
+  - Add API to configure and handle the DOM cache.
+  - Add API to configure and handle Service Worker registrations.
+  - Add a WebKitSetting to set the media content types requiring hardware support.
+  - Add support for sndio to bubblewrap sandbox.
+  - Add support for website data to the existing permission request API.
+  - Add support for rendering many user interface controls (scroll bars, progress bars,
+    spin buttons, menu lists, sliders, etc.)
+  - Add USER_AGENT_BRANDING build option.
+  - Use a mobile User-Agent string on tablets and handheld devices.
+  - Change the cookies accept policy to always when no-third-party is set and ITP is enabled.
+  - Enable kinetic scrolling with async scrolling.
+  - Bubblewrap sandbox should not attempt to bind empty paths.
+  - Fix several race conditions and threading issues in the media player.
+  - Fix web process hangs on large GitHub pages.
+  - Fix a race condition causing a crash in media player.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.27.4
 =================
 
