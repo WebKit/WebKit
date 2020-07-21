@@ -38,6 +38,7 @@ WEBCORE_EXPORT extern void setOverrideVP9HardwareDecoderDisabledForTesting(bool)
 WEBCORE_EXPORT extern void setOverrideVP9ScreenSizeAndScaleForTesting(float width, float height, float scale);
 WEBCORE_EXPORT extern void resetOverrideVP9ScreenSizeAndScaleForTesting();
 
+WEBCORE_EXPORT extern void registerSupplementalVP9Decoder();
 extern bool validateVPParameters(VPCodecConfigurationRecord&, MediaCapabilitiesInfo&, const VideoConfiguration&);
 
 }

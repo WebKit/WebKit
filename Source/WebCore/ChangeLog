@@ -1,3 +1,18 @@
+2020-07-21  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt VTRegisterSupplementalVideoDecoderIfAvailable
+        https://bugs.webkit.org/show_bug.cgi?id=214585
+        <rdar://problem/65863651>
+
+        Reviewed by Youenn Fablet.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/VideoToolboxSoftLink.cpp:
+        * platform/cocoa/VideoToolboxSoftLink.h:
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.h:
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+        (WebCore::registerSupplementalVP9Decoder):
+
 2020-07-21  Zalan Bujtas  <zalan@apple.com>
 
         [UI Events] Make mousemove cancelable
