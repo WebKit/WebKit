@@ -332,13 +332,19 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         if (event.keyCode !== WI.KeyboardShortcut.Key.Enter.keyCode)
             return;
 
-        this._addClassInput.blur();
+        this._addClassFromInput();
     }
 
     _addClassInputBlur(event)
     {
-        this.domNode.toggleClass(this._addClassInput.value, true);
+        this._addClassFromInput();
+
         this._addClassContainer.classList.remove("active");
+    }
+
+    _addClassFromInput()
+    {
+        this.domNode.toggleClass(this._addClassInput.value, true);
         this._addClassInput.value = null;
     }
 

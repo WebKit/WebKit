@@ -148,7 +148,7 @@
     max-height: 75px;
     padding: 3px 2px;
     background-color: var(--panel-background-color);
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .sidebar > .panel.details.css-style > .content ~ .class-list-container[hidden] {
