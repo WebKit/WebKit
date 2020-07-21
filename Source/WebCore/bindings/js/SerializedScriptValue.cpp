@@ -46,6 +46,7 @@
 #include "JSDOMRect.h"
 #include "JSFile.h"
 #include "JSFileList.h"
+#include "JSIDBSerializationGlobalObject.h"
 #include "JSImageBitmap.h"
 #include "JSImageData.h"
 #include "JSMessagePort.h"
@@ -2003,7 +2004,7 @@ private:
         )
         : CloneBase(lexicalGlobalObject)
         , m_globalObject(globalObject)
-        , m_isDOMGlobalObject(globalObject->inherits<JSDOMGlobalObject>(globalObject->vm()))
+        , m_isJSIDBSerializationGlobalObject(globalObject->inherits<JSIDBSerializationGlobalObject>(globalObject->vm()))
         , m_ptr(buffer.data())
         , m_end(buffer.data() + buffer.size())
         , m_version(0xFFFFFFFF)
@@ -2034,7 +2035,7 @@ private:
         )
         : CloneBase(lexicalGlobalObject)
         , m_globalObject(globalObject)
-        , m_isDOMGlobalObject(globalObject->inherits<JSDOMGlobalObject>(globalObject->vm()))
+        , m_isJSIDBSerializationGlobalObject(globalObject->inherits<JSIDBSerializationGlobalObject>(globalObject->vm()))
         , m_ptr(buffer.data())
         , m_end(buffer.data() + buffer.size())
         , m_version(0xFFFFFFFF)
@@ -2290,8 +2291,10 @@ private:
         if (filePath.isEmpty())
             filePath = path->string();
 
-        if (m_isDOMGlobalObject)
-            file = File::deserialize(filePath, URL(URL(), url->string()), type->string(), name->string(), optionalLastModified);
+        if (m_isJSIDBSerializationGlobalObject)
+            return true;
+
+        file = File::deserialize(filePath, URL(URL(), url->string()), type->string(), name->string(), optionalLastModified);
         return true;
     }
 
@@ -2945,7 +2948,7 @@ private:
             fingerprints.uncheckedAppend(RTCCertificate::DtlsFingerprint { algorithm->string(), value->string() });
         }
 
-        if (!m_isDOMGlobalObject)
+        if (m_isJSIDBSerializationGlobalObject)
             return constructEmptyObject(m_lexicalGlobalObject, m_globalObject->objectPrototype());
 
         auto rtcCertificate = RTCCertificate::create(SecurityOrigin::createFromString(origin->string()), expires, WTFMove(fingerprints), certificate->takeString(), keyedMaterial->takeString());
@@ -3157,7 +3160,7 @@ private:
             RefPtr<File> file;
             if (!readFile(file))
                 return JSValue();
-            if (!m_isDOMGlobalObject)
+            if (m_isJSIDBSerializationGlobalObject)
                 return jsNull();
             return toJS(m_lexicalGlobalObject, jsCast<JSDOMGlobalObject*>(m_globalObject), file.get());
         }
@@ -3165,15 +3168,16 @@ private:
             unsigned length = 0;
             if (!read(length))
                 return JSValue();
+            ASSERT(m_globalObject->inherits<JSDOMGlobalObject>(m_globalObject->vm()));
             Vector<Ref<File>> files;
             for (unsigned i = 0; i < length; i++) {
                 RefPtr<File> file;
                 if (!readFile(file))
                     return JSValue();
-                if (m_isDOMGlobalObject)
+                if (!m_isJSIDBSerializationGlobalObject)
                     files.append(file.releaseNonNull());
             }
-            if (!m_isDOMGlobalObject)
+            if (m_isJSIDBSerializationGlobalObject)
                 return jsNull();
             return getJSValue(FileList::create(WTFMove(files)).get());
         }
@@ -3190,10 +3194,6 @@ private:
             if (static_cast<uint32_t>(m_end - m_ptr) < length) {
                 fail();
                 return JSValue();
-            }
-            if (!m_isDOMGlobalObject) {
-                m_ptr += length;
-                return jsNull();
             }
             IntSize imageSize(width, height);
             RELEASE_ASSERT(!length || (imageSize.area() * 4).unsafeGet() <= length);
@@ -3219,7 +3219,7 @@ private:
             unsigned long long size = 0;
             if (!read(size))
                 return JSValue();
-            if (!m_isDOMGlobalObject)
+            if (m_isJSIDBSerializationGlobalObject)
                 return jsNull();
             return getJSValue(Blob::deserialize(URL(URL(), url->string()), type->string(), size, blobFilePathForBlobURL(url->string())).get());
         }
@@ -3412,7 +3412,7 @@ private:
     }
 
     JSGlobalObject* m_globalObject;
-    bool m_isDOMGlobalObject;
+    bool m_isJSIDBSerializationGlobalObject;
     const uint8_t* m_ptr;
     const uint8_t* m_end;
     unsigned m_version;

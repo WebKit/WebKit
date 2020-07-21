@@ -1,3 +1,22 @@
+2020-07-21  Sihui Liu  <sihui_liu@appe.com>
+
+        REGRESSION(r264486): ASSERTION FAILED: ASSERT_NOT_REACHED() in NetworkProcessPlatformStrategies::createBlobRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=214425
+
+        Reviewed by Youenn Fablet.
+
+        Remove storage/indexeddb/structured-clone-private.html as blob is not supported in IDB for private browsing. 
+        Also storage/indexeddb/structured-clone.html already covers the code paths for structured clone in IDB.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+        * storage/indexeddb/resources/structured-clone.js:
+        (testFile):
+        * storage/indexeddb/structured-clone-expected.txt:
+        * storage/indexeddb/structured-clone-private-expected.txt: Removed.
+        * storage/indexeddb/structured-clone-private.html: Removed.
+
 2020-07-21  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS WK2 ] fast/scrolling/ios/autoscroll-input-when-very-zoomed.html is a flaky failure

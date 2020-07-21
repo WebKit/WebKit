@@ -1072,10 +1072,6 @@ webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCCertific
 webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-generateCertificate.html [ Skip ]
 webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html [ Skip ]
 webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/idlharness.https.window.html [ Skip ]
-webkit.org/b/214478 [ Debug ] storage/indexeddb/modern/blob-simple-workers.html [ Skip ]
-webkit.org/b/214478 [ Debug ] storage/indexeddb/modern/blob-simple.html [ Skip ]
-webkit.org/b/214478 [ Debug ] storage/indexeddb/structured-clone-private.html [ Skip ]
-webkit.org/b/214478 [ Debug ] storage/indexeddb/structured-clone.html [ Skip ]
 webkit.org/b/214478 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched-select.html [ Skip ]
 webkit.org/b/214478 [ Debug ] webrtc/simulcast-h264.html [ Skip ]
 

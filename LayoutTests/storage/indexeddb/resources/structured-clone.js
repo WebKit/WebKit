@@ -3,17 +3,7 @@ if (this.importScripts) {
     importScripts('shared.js');
 }
 
-description("Test structured clone permutations in IndexedDB. File/FileList tests require DumpRenderTree.");
-
-if (self.eventSender && eventSender.beginDragWithFiles) {
-    var fileInput = document.getElementById("fileInput");
-    var fileRect = fileInput.getClientRects()[0];
-    var targetX = fileRect.left + fileRect.width / 2;
-    var targetY = fileRect.top + fileRect.height / 2;
-    eventSender.beginDragWithFiles(['resources/test-data.html', 'resources/test-data.txt']);
-    eventSender.mouseMoveTo(targetX, targetY);
-    eventSender.mouseUp();
-}
+description("Test structured clone permutations in IndexedDB.");
 
 indexedDBTest(prepareDatabase, startTests);
 function prepareDatabase()
@@ -385,12 +375,6 @@ function compareBlobs(blob1, blob2, callback)
 function testBlob(callback)
 {
     debug("Testing Blob");
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=214425
-    debug("Skipping test");
-    callback();
-    return;
-
     shouldBeTrue("FileReader != null");
     evalAndLog("test_content = 'This is a test. This is only a test.'");
     evalAndLog("test_data = new Blob([test_content])");
@@ -411,11 +395,6 @@ function compareFiles(file1, file2, callback)
     shouldBeTrue("file1 !== file2");
     shouldBeEqualToString("Object.prototype.toString.call(file1)", "[object File]");
     shouldBeEqualToString("Object.prototype.toString.call(file2)", "[object File]");
-    debug("file1.size: " + file1.size);
-    shouldBe("file1.size", "file2.size");
-    debug("file1.type: " + file1.type);
-    shouldBe("file1.type", "file2.type");
-    debug("file1.name: " + file1.name);
     shouldBe("file1.name", "file2.name");
     shouldBe("String(file1.lastModifiedDate)", "String(file2.lastModifiedDate)");
     if (callback) {
@@ -426,15 +405,9 @@ function compareFiles(file1, file2, callback)
 function testFile(callback)
 {
     debug("Testing File");
-
-    // FIXME: eventSender.beginDragWithFiles is not supported.
-    debug("Skipping test");
-    callback();
-    return;
-
-    evalAndLog("test_content = fileInput.files[0]");
-
-    self.test_data = test_content;
+    evalAndLog("test_content = 'This is a test. This is only a test.'");
+    evalAndLog("blob = new Blob([test_content])");
+    evalAndLog("test_data = new File([blob], 'fileName')");
     testValue(test_data, function(result) {
         self.result = result;
         compareFiles(result, test_data, callback);
@@ -445,15 +418,7 @@ function testFile(callback)
 function testFileList(callback)
 {
     debug("Testing FileList");
-
-    // FIXME: eventSender.beginDragWithFiles is not supported.
-    debug("Skipping test");
-    callback();
-    return;
-
-    evalAndLog("test_content = fileInput.files");
-
-    self.test_data = test_content;
+    evalAndLog("test_data = document.getElementById('fileInput').files;");
     testValue(test_data, function(result) {
         self.result = result;
         shouldBeTrue("test_data !== result");

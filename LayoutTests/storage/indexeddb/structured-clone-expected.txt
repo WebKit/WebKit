@@ -1,4 +1,4 @@
-Test structured clone permutations in IndexedDB. File/FileList tests require DumpRenderTree.
+Test structured clone permutations in IndexedDB.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -599,13 +599,43 @@ PASS result.data.length is test_data.data.length
 PASS result data matches
 
 Testing Blob
-Skipping test
+PASS FileReader != null is true
+test_content = 'This is a test. This is only a test.'
+test_data = new Blob([test_content])
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object Blob]"
+PASS result.size is test_data.size
+PASS result.type is test_data.type
+PASS text is "This is a test. This is only a test."
 
 Testing File
-Skipping test
+test_content = 'This is a test. This is only a test.'
+blob = new Blob([test_content])
+test_data = new File([blob], 'fileName')
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS file1 !== file2 is true
+PASS Object.prototype.toString.call(file1) is "[object File]"
+PASS Object.prototype.toString.call(file2) is "[object File]"
+PASS file1.name is file2.name
+PASS String(file1.lastModifiedDate) is String(file2.lastModifiedDate)
+PASS text2 is "This is a test. This is only a test."
 
 Testing FileList
-Skipping test
+test_data = document.getElementById('fileInput').files;
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS test_data !== result is true
+PASS Object.prototype.toString.call(result) is "[object FileList]"
+PASS result.length is test_data.length
 
 Testing Object
 test_data = []

@@ -984,9 +984,6 @@ webkit.org/b/214308 http/tests/xmlhttprequest/access-control-basic-allow-preflig
 
 webkit.org/b/214388 [ Mojave ] compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Pass Failure ]
 
-webkit.org/b/214478 [ Debug ] storage/indexeddb/structured-clone-private.html [ Skip ]
-webkit.org/b/214478 [ Debug ] storage/indexeddb/structured-clone.html [ Skip ]
-
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-overflow/overflow-ellipsis-dynamic-001.html [ ImageOnlyFailure ]
