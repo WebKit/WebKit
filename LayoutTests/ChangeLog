@@ -1,3 +1,12 @@
+2020-07-21  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS WK2 ] fast/scrolling/ios/autoscroll-input-when-very-zoomed.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214598
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-07-21  Zalan Bujtas  <zalan@apple.com>
 
         [UI Events] Make mousemove cancelable
