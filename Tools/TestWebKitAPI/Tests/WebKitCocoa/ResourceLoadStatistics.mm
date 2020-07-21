@@ -970,6 +970,13 @@ TEST(ResourceLoadStatistics, GetResourceLoadStatisticsDataSummary)
     [dataStore _setResourceLoadStatisticsEnabled:YES];
 
     static bool doneFlag = false;
+    [dataStore _setUseITPDatabase:false completionHandler: ^(void) {
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    doneFlag = false;
     [dataStore _clearResourceLoadStatistics:^(void) {
         doneFlag = true;
     }];

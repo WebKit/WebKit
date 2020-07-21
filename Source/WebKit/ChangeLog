@@ -1,5 +1,19 @@
 2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Fix ITP data summary when using the memory store and blocking all third-party cookies
+        https://bugs.webkit.org/show_bug.cgi?id=214401
+
+        Reviewed by Michael Catanzaro.
+
+        The memory store behaves differently than the database one, it only includes prevalent resources in the list,
+        while the database store includes all resources when cooking blocking policy is All.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::aggregatedThirdPartyData const): Only check isPrevalentResource if
+        third party cookie blocking mode is not All to decide whether to include the domain in the report.
+
+2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Prepare unit tests for GTK4
         https://bugs.webkit.org/show_bug.cgi?id=214251
 

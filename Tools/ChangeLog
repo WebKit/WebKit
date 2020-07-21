@@ -1,5 +1,17 @@
 2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Fix ITP data summary when using the memory store and blocking all third-party cookies
+        https://bugs.webkit.org/show_bug.cgi?id=214401
+
+        Reviewed by Michael Catanzaro.
+
+        Fix GetResourceLoadStatisticsDataSummary test to actually use the memory store.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
+2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Prepare unit tests for GTK4
         https://bugs.webkit.org/show_bug.cgi?id=214251
 
