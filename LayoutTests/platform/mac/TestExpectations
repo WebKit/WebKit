@@ -1910,8 +1910,6 @@ webkit.org/b/212215 media/video-isplayingtoautomotiveheadunit.html [ Pass Failur
 
 webkit.org/b/212219 media/track/track-cue-missing.html [ Pass Failure ]
 
-webkit.org/b/212218 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Pass Timeout ]
-
 webkit.org/b/212226 imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-008.html [ ImageOnlyFailure ]
 
 webkit.org/b/212488 [ Catalina ] media/video-play-audio-require-user-gesture.html [ Pass Timeout ]

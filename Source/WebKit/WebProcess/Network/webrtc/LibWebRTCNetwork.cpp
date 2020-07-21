@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include "LibWebRTCNetworkMessages.h"
 #include "Logging.h"
+#include "NetworkConnectionToWebProcessMessages.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/MainThread.h>
 
@@ -44,11 +45,8 @@ void LibWebRTCNetwork::setAsActive()
     ASSERT(!m_isActive);
     m_isActive = true;
 #if USE(LIBWEBRTC)
-    if (m_connection) {
-        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, connection = m_connection]() mutable {
-            m_socketFactory.setConnection(WTFMove(connection));
-        });
-    }
+    if (m_connection)
+        setSocketFactoryConnection();
 #endif
 }
 
@@ -66,18 +64,35 @@ void LibWebRTCNetwork::setConnection(RefPtr<IPC::Connection>&& connection)
 #if USE(LIBWEBRTC)
     if (m_connection)
         m_connection->removeThreadMessageReceiver(Messages::LibWebRTCNetwork::messageReceiverName());
-    if (m_isActive) {
-        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, connection]() mutable {
-            m_socketFactory.setConnection(WTFMove(connection));
-        });
-    }
 #endif
     m_connection = WTFMove(connection);
 #if USE(LIBWEBRTC)
+    if (m_isActive)
+        setSocketFactoryConnection();
     if (m_connection)
         m_connection->addThreadMessageReceiver(Messages::LibWebRTCNetwork::messageReceiverName(), this);
 #endif
 }
+
+#if USE(LIBWEBRTC)
+void LibWebRTCNetwork::setSocketFactoryConnection()
+{
+    if (!m_connection) {
+        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this]() mutable {
+            m_socketFactory.setConnection(nullptr);
+        });
+        return;
+    }
+    m_connection->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CreateRTCProvider(), [this, connection = m_connection]() mutable {
+        if (!connection->isValid())
+            return;
+
+        WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, connection = WTFMove(connection)]() mutable {
+            m_socketFactory.setConnection(WTFMove(connection));
+        });
+    }, 0);
+}
+#endif
 
 void LibWebRTCNetwork::dispatchToThread(Function<void()>&& callback)
 {

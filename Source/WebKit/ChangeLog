@@ -1,5 +1,38 @@
 2020-07-21  Youenn Fablet  <youenn@apple.com>
 
+        NetworkConnectionToWebProcess should not handle NetworkRTCProvider messages
+        https://bugs.webkit.org/show_bug.cgi?id=214547
+
+        Reviewed by Alex Christensen.
+
+        Normally NetworkRTCProvider is created when starting to monitor the network.
+        In case network process is crashing though, there might be requests to open RTC socket on the new network process which has not started to monitor the network.
+        In that case, we will go through NetworkConnectionToWebProcess as NetworkRTCProvider is not yet created.
+        To properly handle this case, on web process side, we send an IPC message to explictly create the NetworkRTCProvider.
+        Once done, we set the IPC connection to the socket factory which will start sending messages to open sockets if needed.
+        Until its connection is set, the socket factory will buffer messages to open sockets.
+        Covered by test no longer crashing in debug.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::createRTCProvider):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.cpp:
+        (WebKit::LibWebRTCNetwork::setAsActive):
+        (WebKit::LibWebRTCNetwork::setConnection):
+        (WebKit::LibWebRTCNetwork::setSocketFactoryConnection):
+        * WebProcess/Network/webrtc/LibWebRTCNetwork.h:
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.cpp:
+        (WebKit::LibWebRTCSocketFactory::setConnection):
+        (WebKit::LibWebRTCSocketFactory::createServerTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createUdpSocket):
+        (WebKit::LibWebRTCSocketFactory::createClientTcpSocket):
+        (WebKit::LibWebRTCSocketFactory::createNewConnectionSocket):
+        * WebProcess/Network/webrtc/LibWebRTCSocketFactory.h:
+
+2020-07-21  Youenn Fablet  <youenn@apple.com>
+
         Fetch/XHR loads done by extensions should opt out of response sanitisation done in network process
         https://bugs.webkit.org/show_bug.cgi?id=214588
         <rdar://problem/65060560>

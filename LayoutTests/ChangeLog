@@ -1,3 +1,12 @@
+2020-07-21  Youenn Fablet  <youenn@apple.com>
+
+        NetworkConnectionToWebProcess should not handle NetworkRTCProvider messages
+        https://bugs.webkit.org/show_bug.cgi?id=214547
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac/TestExpectations:
+
 2020-07-21  Sihui Liu  <sihui_liu@appe.com>
 
         REGRESSION(r264486): ASSERTION FAILED: ASSERT_NOT_REACHED() in NetworkProcessPlatformStrategies::createBlobRegistry

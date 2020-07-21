@@ -31,7 +31,6 @@
 #include "LibWebRTCNetwork.h"
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
-#include "NetworkRTCMonitorMessages.h"
 #include "NetworkRTCProviderMessages.h"
 #include "WebProcess.h"
 #include <wtf/MainThread.h>
@@ -51,6 +50,11 @@ void LibWebRTCSocketFactory::setConnection(RefPtr<IPC::Connection>&& connection)
 {
     ASSERT(!WTF::isMainRunLoop());
     m_connection = WTFMove(connection);
+    if (!m_connection)
+        return;
+
+    while (!m_pendingMessageTasks.isEmpty())
+        m_pendingMessageTasks.takeFirst()(*m_connection);
 }
 
 IPC::Connection* LibWebRTCSocketFactory::connection()
@@ -62,35 +66,36 @@ IPC::Connection* LibWebRTCSocketFactory::connection()
 rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createServerTcpSocket(const void* socketGroup, const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, int options)
 {
     ASSERT(!WTF::isMainRunLoop());
-    if (!m_connection) {
-        RELEASE_LOG(WebRTC, "No connection to create server TCP socket");
+    auto socket = makeUnique<LibWebRTCSocket>(*this, socketGroup, LibWebRTCSocket::Type::ServerTCP, address, rtc::SocketAddress());
+
+    if (m_connection)
+        m_connection->send(Messages::NetworkRTCProvider::CreateServerTCPSocket(socket->identifier(), RTCNetwork::SocketAddress(address), minPort, maxPort, options), 0);
+    else {
         callOnMainThread([] {
             WebProcess::singleton().ensureNetworkProcessConnection();
         });
-        return nullptr;
+        m_pendingMessageTasks.append([identifier = socket->identifier(), address = RTCNetwork::SocketAddress(address), minPort, maxPort, options](auto& connection) {
+            connection.send(Messages::NetworkRTCProvider::CreateServerTCPSocket(identifier, address, minPort, maxPort, options), 0);
+        });
     }
-
-    auto socket = makeUnique<LibWebRTCSocket>(*this, socketGroup, LibWebRTCSocket::Type::ServerTCP, address, rtc::SocketAddress());
-
-    m_connection->send(Messages::NetworkRTCProvider::CreateServerTCPSocket(socket->identifier(), RTCNetwork::SocketAddress(address), minPort, maxPort, options), 0);
-
     return socket.release();
 }
 
 rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createUdpSocket(const void* socketGroup, const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort)
 {
     ASSERT(!WTF::isMainRunLoop());
-    if (!m_connection) {
-        RELEASE_LOG(WebRTC, "No connection to create UDP socket");
+    auto socket = makeUnique<LibWebRTCSocket>(*this, socketGroup, LibWebRTCSocket::Type::UDP, address, rtc::SocketAddress());
+
+    if (m_connection)
+        m_connection->send(Messages::NetworkRTCProvider::CreateUDPSocket(socket->identifier(), RTCNetwork::SocketAddress(address), minPort, maxPort), 0);
+    else {
         callOnMainThread([] {
             WebProcess::singleton().ensureNetworkProcessConnection();
         });
-        return nullptr;
+        m_pendingMessageTasks.append([identifier = socket->identifier(), address = RTCNetwork::SocketAddress(address), minPort, maxPort](auto& connection) {
+            connection.send(Messages::NetworkRTCProvider::CreateUDPSocket(identifier, address, minPort, maxPort), 0);
+        });
     }
-
-    auto socket = makeUnique<LibWebRTCSocket>(*this, socketGroup, LibWebRTCSocket::Type::UDP, address, rtc::SocketAddress());
-
-    m_connection->send(Messages::NetworkRTCProvider::CreateUDPSocket(socket->identifier(), RTCNetwork::SocketAddress(address), minPort, maxPort), 0);
 
     return socket.release();
 }
@@ -98,19 +103,21 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createUdpSocket(const void* sock
 rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createClientTcpSocket(const void* socketGroup, const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, String&& userAgent, const rtc::PacketSocketTcpOptions& options)
 {
     ASSERT(!WTF::isMainRunLoop());
-    if (!m_connection) {
-        RELEASE_LOG(WebRTC, "No connection to create client TCP socket");
-        callOnMainThread([] {
-            WebProcess::singleton().ensureNetworkProcessConnection();
-        });
-        return nullptr;
-    }
 
     auto socket = makeUnique<LibWebRTCSocket>(*this, socketGroup, LibWebRTCSocket::Type::ClientTCP, localAddress, remoteAddress);
     socket->setState(LibWebRTCSocket::STATE_CONNECTING);
 
     // FIXME: We only transfer options.opts but should also handle other members.
-    m_connection->send(Messages::NetworkRTCProvider::CreateClientTCPSocket(socket->identifier(), RTCNetwork::SocketAddress(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections)), RTCNetwork::SocketAddress(prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections)), userAgent, options.opts), 0);
+    if (m_connection)
+        m_connection->send(Messages::NetworkRTCProvider::CreateClientTCPSocket(socket->identifier(), RTCNetwork::SocketAddress(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections)), RTCNetwork::SocketAddress(prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections)), userAgent, options.opts), 0);
+    else {
+        callOnMainThread([] {
+            WebProcess::singleton().ensureNetworkProcessConnection();
+        });
+        m_pendingMessageTasks.append([identifier = socket->identifier(), localAddress = RTCNetwork::SocketAddress(prepareSocketAddress(localAddress, m_disableNonLocalhostConnections)), remoteAddress = RTCNetwork::SocketAddress(prepareSocketAddress(remoteAddress, m_disableNonLocalhostConnections)), userAgent, opts = options.opts](auto& connection) {
+            connection.send(Messages::NetworkRTCProvider::CreateClientTCPSocket(identifier, localAddress, remoteAddress, userAgent, opts), 0);
+        });
+    }
 
     return socket.release();
 }
@@ -119,10 +126,8 @@ rtc::AsyncPacketSocket* LibWebRTCSocketFactory::createNewConnectionSocket(LibWeb
 {
     ASSERT(!WTF::isMainRunLoop());
     if (!m_connection) {
+        // No need to enqueue a message in this case since it means the network process handling the incoming socket is gone.
         RELEASE_LOG(WebRTC, "No connection to create incoming TCP socket");
-        callOnMainThread([] {
-            WebProcess::singleton().ensureNetworkProcessConnection();
-        });
         return nullptr;
     }
 

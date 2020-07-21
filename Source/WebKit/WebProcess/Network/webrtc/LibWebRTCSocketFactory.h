@@ -33,6 +33,8 @@
 #include <WebCore/LibWebRTCSocketIdentifier.h>
 #include <webrtc/rtc_base/net_helpers.h>
 #include <webrtc/api/packet_socket_factory.h>
+#include <wtf/Deque.h>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {
@@ -72,6 +74,7 @@ private:
     bool m_disableNonLocalhostConnections { false };
 
     RefPtr<IPC::Connection> m_connection;
+    Deque<Function<void(IPC::Connection&)>> m_pendingMessageTasks;
 };
 
 } // namespace WebKit

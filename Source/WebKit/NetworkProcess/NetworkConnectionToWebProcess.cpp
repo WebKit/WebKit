@@ -215,10 +215,6 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 
 #if USE(LIBWEBRTC)
-    if (decoder.messageReceiverName() == Messages::NetworkRTCProvider::messageReceiverName()) {
-        rtcProvider().didReceiveMessage(connection, decoder);
-        return;
-    }
     if (decoder.messageReceiverName() == Messages::NetworkRTCMonitor::messageReceiverName()) {
         rtcProvider().didReceiveNetworkRTCMonitorMessage(connection, decoder);
         return;
@@ -272,6 +268,14 @@ NetworkRTCProvider& NetworkConnectionToWebProcess::rtcProvider()
     return *m_rtcProvider;
 }
 #endif
+
+void NetworkConnectionToWebProcess::createRTCProvider(CompletionHandler<void()>&& callback)
+{
+#if USE(LIBWEBRTC)
+    rtcProvider();
+#endif
+    callback();
+}
 
 CacheStorageEngineConnection& NetworkConnectionToWebProcess::cacheStorageConnection()
 {

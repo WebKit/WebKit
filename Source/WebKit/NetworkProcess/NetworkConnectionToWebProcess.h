@@ -239,6 +239,8 @@ private:
     void unregisterSWConnection();
 #endif
 
+    void createRTCProvider(CompletionHandler<void()>&&);
+
     void createNewMessagePortChannel(const WebCore::MessagePortIdentifier& port1, const WebCore::MessagePortIdentifier& port2);
     void entangleLocalPortInThisProcessToRemote(const WebCore::MessagePortIdentifier& local, const WebCore::MessagePortIdentifier& remote);
     void messagePortDisentangled(const WebCore::MessagePortIdentifier&);
