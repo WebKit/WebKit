@@ -42,7 +42,7 @@ public:
         auto protectedThis { makeRef(*this) };
         JSC::VM& vm = m_globalObject->vm();
         JSC::JSLockHolder lock(vm);
-        auto scope = DECLARE_THROW_SCOPE(vm);
+        auto scope = DECLARE_CATCH_SCOPE(vm);
         JSExecState::runTask(m_globalObject.get(), m_task);
         scope.assertNoException();
     }

@@ -1,3 +1,14 @@
+2020-07-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use CatchScope in microtask execution
+        https://bugs.webkit.org/show_bug.cgi?id=214600
+        <rdar://problem/65881165>
+
+        Reviewed by Mark Lam.
+
+        * js/dom/microtask-drain-should-use-catch-scope-expected.txt: Added.
+        * js/dom/microtask-drain-should-use-catch-scope.html: Added.
+
 2020-07-21  Youenn Fablet  <youenn@apple.com>
 
         NetworkConnectionToWebProcess should not handle NetworkRTCProvider messages
