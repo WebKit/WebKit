@@ -1,3 +1,9 @@
+2020-07-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreview non-unified source build fix
+
+        * runtime/IntlDisplayNames.cpp: Add missing <unicode/ucurr.h> header.
+
 2020-07-20  Mark Lam  <mark.lam@apple.com>
 
         TryGetById clobberize rules are wrong.
