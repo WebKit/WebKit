@@ -5049,6 +5049,7 @@
 		E785D93424B636FF0014DB21 /* ChannelInterpretation.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D93124B636FF0014DB21 /* ChannelInterpretation.h */; };
 		E785D96124B7F7350014DB21 /* AudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D95F24B7F7340014DB21 /* AudioContextOptions.h */; };
 		E785D96224B7F7350014DB21 /* AudioContextLatencyCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */; };
+		E7CF84A924C6461C00B06B90 /* OfflineAudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7CF84A524C635F400B06B90 /* OfflineAudioContextOptions.h */; };
 		EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */ = {isa = PBXBuildFile; fileRef = EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */; };
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
@@ -15809,6 +15810,8 @@
 		E785D95F24B7F7340014DB21 /* AudioContextOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextOptions.h; sourceTree = "<group>"; };
 		E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextLatencyCategory.h; sourceTree = "<group>"; };
 		E7CF848924C0E05700B06B90 /* AudioScheduledSourceNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioScheduledSourceNode.idl; sourceTree = "<group>"; };
+		E7CF84A524C635F400B06B90 /* OfflineAudioContextOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OfflineAudioContextOptions.h; sourceTree = "<group>"; };
+		E7CF84A724C635F400B06B90 /* OfflineAudioContextOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OfflineAudioContextOptions.idl; sourceTree = "<group>"; };
 		EB081CD81696084400553730 /* TypeConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversions.h; sourceTree = "<group>"; };
 		EB081CD91696084400553730 /* TypeConversions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypeConversions.idl; sourceTree = "<group>"; };
 		EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteStatementAutoResetScope.h; sourceTree = "<group>"; };
@@ -29448,6 +29451,8 @@
 				FDA9325A16703B2A008982DC /* OfflineAudioContext.cpp */,
 				FDA9325B16703B2A008982DC /* OfflineAudioContext.h */,
 				FDA9325C16703B2A008982DC /* OfflineAudioContext.idl */,
+				E7CF84A524C635F400B06B90 /* OfflineAudioContextOptions.h */,
+				E7CF84A724C635F400B06B90 /* OfflineAudioContextOptions.idl */,
 				FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */,
 				FDA3E958134A49EF008D4B5A /* OfflineAudioDestinationNode.h */,
 				FD581FAB1520F91F003A7A75 /* OscillatorNode.cpp */,
@@ -32515,6 +32520,7 @@
 				77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */,
 				FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */,
 				FDA9325E16703B2A008982DC /* OfflineAudioContext.h in Headers */,
+				E7CF84A924C6461C00B06B90 /* OfflineAudioContextOptions.h in Headers */,
 				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
 				314877E31FAA8FE900C05759 /* OffscreenCanvas.h in Headers */,
 				3140C5201FDF151A00D2A873 /* OffscreenCanvasRenderingContext2D.h in Headers */,

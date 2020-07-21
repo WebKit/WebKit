@@ -1,9 +1,9 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "sub-sample accurate start" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "sub-sample accurate stop" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "sub-sample-grain" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "sub-sample accurate start with playbackRate" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "sub-sample accurate start" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "sub-sample accurate stop" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "sub-sample-grain" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "sub-sample accurate start with playbackRate" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [sub-sample accurate start]  
 PASS > [sub-sample accurate stop]  

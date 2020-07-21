@@ -408,6 +408,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/MediaStreamAudioSourceNode.idl \
     $(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
     $(WebCore)/Modules/webaudio/OfflineAudioContext.idl \
+    $(WebCore)/Modules/webaudio/OfflineAudioContextOptions.idl \
     $(WebCore)/Modules/webaudio/OscillatorNode.idl \
     $(WebCore)/Modules/webaudio/PannerNode.idl \
     $(WebCore)/Modules/webaudio/PannerOptions.idl \

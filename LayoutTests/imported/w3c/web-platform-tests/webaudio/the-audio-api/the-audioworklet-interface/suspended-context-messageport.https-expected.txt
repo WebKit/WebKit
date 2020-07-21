@@ -1,5 +1,5 @@
 
 FAIL realtime suspended promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'realtime.audioWorklet.addModule')"
-FAIL offline before start promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL offline before start promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 FAIL offline on complete promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'offline.startRendering')"
 

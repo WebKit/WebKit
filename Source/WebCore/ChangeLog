@@ -1,3 +1,27 @@
+2020-07-21  Clark Wang  <clark_wang@apple.com>
+
+        Added OfflineAudioContext constructor
+        https://bugs.webkit.org/show_bug.cgi?id=214577
+
+        Reviewed by Chris Dumez.
+
+        Added OfflineAudioContext constructor and OfflineAudioContextOptions files.
+
+        Re-baselined existing tests. Lots of failures that fail because of unsupported sampleRate range.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::create):
+        * Modules/webaudio/OfflineAudioContext.h:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webaudio/OfflineAudioContextOptions.h: Added.
+        * Modules/webaudio/OfflineAudioContextOptions.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-07-21  Rob Buis  <rbuis@igalia.com>
 
         Make AnyStepHandling an enum class

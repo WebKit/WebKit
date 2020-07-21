@@ -6,21 +6,21 @@ PASS Executing "options-2"
 FAIL Executing "options-3" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.length')"
 PASS Audit report 
 PASS > [basic] Old-style constructor 
-PASS   new OfflineAudioContext(3) threw TypeError: "Not enough arguments". 
-PASS   new OfflineAudioContext(3, 42) threw TypeError: "Not enough arguments". 
+PASS   new OfflineAudioContext(3) threw TypeError: "Type error". 
+PASS   new OfflineAudioContext(3, 42) threw TypeError: "Type error". 
 FAIL X context = new OfflineAudioContext(3, 42, 12345) incorrectly threw SyntaxError: "The string did not match the expected pattern.". assert_true: expected true got false
 PASS > [options-1] Required options 
 PASS   new OfflineAudioContext() threw TypeError: "Not enough arguments". 
-PASS   new OfflineAudioContext({}) threw TypeError: "Not enough arguments". 
-PASS   new OfflineAudioContext({"length":42}) threw TypeError: "Not enough arguments". 
-PASS   new OfflineAudioContext({"sampleRate":12345}) threw TypeError: "Not enough arguments". 
-FAIL X c2 = new OfflineAudioContext({"length":42,"sampleRate":12345}) incorrectly threw TypeError: "Not enough arguments". assert_true: expected true got false
+PASS   new OfflineAudioContext({}) threw TypeError: "Member OfflineAudioContextOptions.length is required and must be an instance of unsigned long". 
+PASS   new OfflineAudioContext({"length":42}) threw TypeError: "Member OfflineAudioContextOptions.sampleRate is required and must be an instance of float". 
+PASS   new OfflineAudioContext({"sampleRate":12345}) threw TypeError: "Member OfflineAudioContextOptions.length is required and must be an instance of unsigned long". 
+FAIL X c2 = new OfflineAudioContext({"length":42,"sampleRate":12345}) incorrectly threw SyntaxError: "The string did not match the expected pattern.". assert_true: expected true got false
 PASS > [options-2] Invalid options 
-FAIL X new OfflineAudioContext({"length":42,"sampleRate":8000,"numberOfChannels":33}) threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
-FAIL X new OfflineAudioContext({"length":0,"sampleRate":8000}) threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
-FAIL X new OfflineAudioContext({"length":1,"sampleRate":1}) threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
-FAIL < [options-2] 3 out of 3 assertions were failed. assert_true: expected true got false
+PASS   new OfflineAudioContext({"length":42,"sampleRate":8000,"numberOfChannels":33}) threw SyntaxError: "The string did not match the expected pattern.". 
+PASS   new OfflineAudioContext({"length":0,"sampleRate":8000}) threw SyntaxError: "The string did not match the expected pattern.". 
+PASS   new OfflineAudioContext({"length":1,"sampleRate":1}) threw SyntaxError: "The string did not match the expected pattern.". 
+PASS < [options-2] All assertions passed. (total 3 assertions) 
 PASS > [options-3] Valid options 
-FAIL X c = new OfflineAudioContext{"length":1,"sampleRate":8000}) incorrectly threw TypeError: "Not enough arguments". assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 4 out of 4 tasks were failed. assert_true: expected true got false
+FAIL X c = new OfflineAudioContext{"length":1,"sampleRate":8000}) incorrectly threw SyntaxError: "The string did not match the expected pattern.". assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 4 tasks were failed. assert_true: expected true got false
 

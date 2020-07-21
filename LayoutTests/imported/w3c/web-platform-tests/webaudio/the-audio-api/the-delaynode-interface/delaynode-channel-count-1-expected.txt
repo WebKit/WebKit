@@ -1,3 +1,3 @@
 
-FAIL Test that DelayNode output channelCount matches that of the delayed input Not enough arguments
+FAIL Test that DelayNode output channelCount matches that of the delayed input The string did not match the expected pattern.
 

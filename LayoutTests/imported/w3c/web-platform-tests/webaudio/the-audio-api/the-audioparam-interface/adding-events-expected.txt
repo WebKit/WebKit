@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "linearRamp" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "expoRamp" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "linearRamp" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "expoRamp" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [linearRamp] Insert linearRamp after running for some time 
 PASS > [expoRamp] Insert expoRamp after running for some time 

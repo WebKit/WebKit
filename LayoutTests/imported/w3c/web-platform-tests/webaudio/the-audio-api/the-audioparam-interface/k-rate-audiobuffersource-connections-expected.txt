@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "playbackRate" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "detune" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "playbackRate" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "detune" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [playbackRate] AudioBufferSource playbackRate 
 PASS > [detune] AudioBufferSource detune 

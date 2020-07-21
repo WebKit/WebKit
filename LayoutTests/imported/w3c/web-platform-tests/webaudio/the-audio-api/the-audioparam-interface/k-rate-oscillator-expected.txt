@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Oscillator k-rate detune" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Oscillator k-rate frequency" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Oscillator k-rate detune" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Oscillator k-rate frequency" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [Oscillator k-rate detune]  
 PASS > [Oscillator k-rate frequency]  

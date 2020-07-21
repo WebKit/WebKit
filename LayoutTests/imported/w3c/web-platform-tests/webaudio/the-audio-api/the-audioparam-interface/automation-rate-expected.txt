@@ -1,15 +1,15 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "AudioBufferSourceNode" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "BiquadFilterNode" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "ConstantSourceNode" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "DelayNode" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "DynamicsCompressorNode" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "GainNode" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "OscillatorNode" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "PannerNode" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "StereoPannerNode" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "AudioListener" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "AudioBufferSourceNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "BiquadFilterNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "ConstantSourceNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "DelayNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "DynamicsCompressorNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "GainNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "OscillatorNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "PannerNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "StereoPannerNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "AudioListener" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [AudioBufferSourceNode]  
 PASS > [BiquadFilterNode]  

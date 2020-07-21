@@ -1,3 +1,49 @@
+2020-07-21  Clark Wang  <clark_wang@apple.com>
+
+        Added OfflineAudioContext constructor
+        https://bugs.webkit.org/show_bug.cgi?id=214577
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing tests. Lots of failures that fail because of unsupported sampleRate range.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-null-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/buffer-resampling-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-scheduling-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/adding-events-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-close-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/automation-rate-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/cancel-scheduled-values-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/event-insertion-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet-connections.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-constant-source-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-gain-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-oscillator-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-oscillator-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/set-target-conv-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-disconnected-input.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/simple-input-output.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/suspended-context-messageport.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/delaynode-channel-count-1-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/maxdelay-rounding-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/ctor-offlineaudiocontext-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-scriptprocessornode-interface/simple-input-output-expected.txt:
+
 2020-07-20  Clark Wang  <clark_wang@apple.com>
 
         Fixes to match BaseAudioContext.idl to spec

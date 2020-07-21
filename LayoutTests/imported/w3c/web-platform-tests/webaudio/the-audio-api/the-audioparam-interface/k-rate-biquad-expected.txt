@@ -1,10 +1,10 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Biquad k-rate AudioParams (all)" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Biquad k-rate Q" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Biquad k-rate detune" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Biquad k-rate frequency" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Biquad k-rate gain" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Biquad k-rate AudioParams (all)" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Biquad k-rate Q" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Biquad k-rate detune" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Biquad k-rate frequency" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Biquad k-rate gain" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [Biquad k-rate AudioParams (all)]  
 PASS > [Biquad k-rate Q]  

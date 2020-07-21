@@ -1,11 +1,15 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test 0" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Test 0" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {type: 'sine', frequency: freqHz})')"
+FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {type: 'sine', frequency: freqHz})')"
+FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {type: 'sine', frequency: freqHz})')"
+FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {type: 'sine', frequency: freqHz})')"
+FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new PeriodicWave(
+                context,
+                {real: [0, 1], imag: [0, 1], disableNormalization: true})')"
+FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new PeriodicWave(
+                context,
+                {real: [0, 1], imag: [0, 1], disableNormalization: true})')"
 PASS Audit report 
 PASS > [Test 0] Sine wave: 100 Hz 
 PASS > [Test 1] Sine wave: -100 Hz 

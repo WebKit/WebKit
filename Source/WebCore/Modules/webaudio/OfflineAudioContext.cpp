@@ -41,14 +41,14 @@ inline OfflineAudioContext::OfflineAudioContext(Document& document, AudioBuffer*
 {
 }
 
-ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutionContext& context, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
+ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutionContext& context, unsigned numberOfChannels, size_t length, float sampleRate)
 {
     // FIXME: Add support for workers.
     if (!is<Document>(context))
         return Exception { NotSupportedError };
-    if (!numberOfChannels || numberOfChannels > 10 || !numberOfFrames || !isSampleRateRangeGood(sampleRate))
+    if (!numberOfChannels || numberOfChannels > 10 || !length || !isSampleRateRangeGood(sampleRate))
         return Exception { SyntaxError };
-    auto renderTarget = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
+    auto renderTarget = AudioBuffer::create(numberOfChannels, length, sampleRate);
     if (!renderTarget)
         return Exception { SyntaxError };
 
@@ -56,6 +56,12 @@ ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutio
     audioContext->suspendIfNeeded();
     return audioContext;
 }
+
+ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutionContext& context, const OfflineAudioContextOptions& contextOptions)
+{
+    return create(context, contextOptions.numberOfChannels, contextOptions.length, contextOptions.sampleRate);
+}
+
 
 } // namespace WebCore
 

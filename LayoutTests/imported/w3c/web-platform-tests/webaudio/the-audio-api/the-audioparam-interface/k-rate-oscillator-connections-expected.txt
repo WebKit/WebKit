@@ -1,10 +1,10 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [Test 1] k-rate frequency input 
 PASS > [Test 2] k-rate detune input 

@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "no-nan" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "interpolation" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "no-nan" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "interpolation" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
 PASS Audit report 
 PASS > [no-nan] NaN does not occur 
 PASS > [interpolation] Interpolation of linear ramp 

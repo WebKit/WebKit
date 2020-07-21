@@ -1,10 +1,10 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Frequency AudioParam" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Q AudioParam" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Gain AudioParam" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "Detune AudioParam" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
-FAIL Executing "All k-rate inputs" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "Frequency AudioParam" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Q AudioParam" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Gain AudioParam" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Detune AudioParam" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "All k-rate inputs" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [Frequency AudioParam] k-rate input works 
 PASS > [Q AudioParam] k-rate input works 

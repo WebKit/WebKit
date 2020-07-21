@@ -27,8 +27,9 @@
     EnabledBySetting=ModernUnprefixedWebAudio,
     JSGenerateToJSObject,
 ] interface OfflineAudioContext : BaseAudioContext {
-    [CallWith=ScriptExecutionContext, MayThrowException] constructor(unsigned long numberOfChannels, unsigned long numberOfFrames, unrestricted float sampleRate);
-
+    [CallWith=ScriptExecutionContext, MayThrowException] constructor(OfflineAudioContextOptions contextOptions);
+    [CallWith=ScriptExecutionContext, MayThrowException] constructor(unsigned long numberOfChannels, unsigned long length, float sampleRate);
+    
     void startRendering();
 
     [ImplementedAs=resumeRendering] Promise<void> resume();

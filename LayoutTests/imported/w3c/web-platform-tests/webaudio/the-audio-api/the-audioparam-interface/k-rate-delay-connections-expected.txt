@@ -1,6 +1,6 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "delayTime" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+FAIL Executing "delayTime" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [delayTime] DelayNode delayTime k-rate input 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 

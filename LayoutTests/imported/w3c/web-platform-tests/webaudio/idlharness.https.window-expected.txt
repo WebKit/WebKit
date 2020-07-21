@@ -107,7 +107,7 @@ PASS BaseAudioContext interface: context must inherit property "createWaveShaper
 PASS BaseAudioContext interface: context must inherit property "decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?)" with the proper type 
 FAIL BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on context with too few arguments must throw TypeError assert_unreached: Throws "TypeError: Not enough arguments" instead of rejecting promise Reached unreachable code
 PASS OfflineAudioContext interface: existence and properties of interface object 
-FAIL OfflineAudioContext interface object length assert_equals: wrong value for OfflineAudioContext.length expected 1 but got 3
+PASS OfflineAudioContext interface object length 
 PASS OfflineAudioContext interface object name 
 PASS OfflineAudioContext interface: existence and properties of interface prototype object 
 PASS OfflineAudioContext interface: existence and properties of interface prototype object's "constructor" property 

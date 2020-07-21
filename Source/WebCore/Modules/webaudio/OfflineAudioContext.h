@@ -25,13 +25,16 @@
 #pragma once
 
 #include "BaseAudioContext.h"
+#include "OfflineAudioContextOptions.h"
 
 namespace WebCore {
 
 class OfflineAudioContext final : public BaseAudioContext {
     WTF_MAKE_ISO_ALLOCATED(OfflineAudioContext);
 public:
-    static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
+    static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, unsigned numberOfChannels, size_t length, float sampleRate);
+    
+    static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, const OfflineAudioContextOptions&);
 
 private:
     OfflineAudioContext(Document&, AudioBuffer* renderTarget);
