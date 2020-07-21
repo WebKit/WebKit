@@ -1,3 +1,23 @@
+2020-07-21  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][1.18] mediastreamsrc element hits assert in gst -core
+        https://bugs.webkit.org/show_bug.cgi?id=214150
+
+        Reviewed by Philippe Normand.
+
+        As result of this bug
+        fast/mediastream/MediaStream-removeTrack-while-playing.html begins
+        to crash in debug mode in an assertion. When a track is removed
+        the observer is not removed and when it dies there are null
+        objects in the observer weak hash set. Still, if you do a quick
+        patch to remove the observer, things can still crash as track
+        removal is racy and in release there' other crash. All this needs
+        to be taclked as a general approach to fix track removal.
+
+        * platform/glib/TestExpectations: Added
+        fast/mediastream/MediaStream-removeTrack-while-playing.html as
+        Pass Crash for release and crash for debug.
+
 2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Add support for text-underline-offset and text-decoration-thickness

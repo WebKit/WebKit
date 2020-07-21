@@ -100,14 +100,14 @@ class WebKitMediaStreamTrackObserver
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~WebKitMediaStreamTrackObserver() { };
-    WebKitMediaStreamTrackObserver(GRefPtr<GstElement>&& src)
-        : m_src(WTFMove(src)) { }
+    WebKitMediaStreamTrackObserver(GstElement* src)
+        : m_src(src) { }
     void trackStarted(MediaStreamTrackPrivate&) final { };
 
     void trackEnded(MediaStreamTrackPrivate& track) final
     {
         if (m_src)
-            webkitMediaStreamSrcTrackEnded(WEBKIT_MEDIA_STREAM_SRC(m_src.get()), track);
+            webkitMediaStreamSrcTrackEnded(WEBKIT_MEDIA_STREAM_SRC(m_src), track);
     }
 
     void trackEnabledChanged(MediaStreamTrackPrivate& track) final
@@ -125,7 +125,7 @@ public:
             return;
 
         auto* gstSample = static_cast<MediaSampleGStreamer*>(&sample)->platformSample().sample.gstSample;
-        webkitMediaStreamSrcPushVideoSample(WEBKIT_MEDIA_STREAM_SRC(m_src.get()), gstSample);
+        webkitMediaStreamSrcPushVideoSample(WEBKIT_MEDIA_STREAM_SRC(m_src), gstSample);
     }
 
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription&, size_t) final
@@ -134,11 +134,11 @@ public:
             return;
 
         auto data = static_cast<const GStreamerAudioData&>(audioData);
-        webkitMediaStreamSrcPushAudioSample(WEBKIT_MEDIA_STREAM_SRC(m_src.get()), data.getSample());
+        webkitMediaStreamSrcPushAudioSample(WEBKIT_MEDIA_STREAM_SRC(m_src), data.getSample());
     }
 
 private:
-    GRefPtr<GstElement> m_src;
+    GstElement* m_src;
     bool m_enabled { true };
 };
 
@@ -146,30 +146,30 @@ class WebKitMediaStreamObserver : public MediaStreamPrivate::Observer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~WebKitMediaStreamObserver() { };
-    WebKitMediaStreamObserver(GRefPtr<GstElement>&& src)
-        : m_src(WTFMove(src)) { }
+    WebKitMediaStreamObserver(GstElement* src)
+        : m_src(src) { }
 
     void characteristicsChanged() final
     {
         if (m_src)
-            GST_DEBUG_OBJECT(m_src.get(), "renegotiation should happen");
+            GST_DEBUG_OBJECT(m_src, "renegotiation should happen");
     }
     void activeStatusChanged() final { }
 
     void didAddTrack(MediaStreamTrackPrivate& track) final
     {
         if (m_src)
-            webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC(m_src.get()), &track, false);
+            webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC(m_src), &track, false);
     }
 
     void didRemoveTrack(MediaStreamTrackPrivate& track) final
     {
         if (m_src)
-            webkitMediaStreamSrcRemoveTrackByType(WEBKIT_MEDIA_STREAM_SRC(m_src.get()), track.type());
+            webkitMediaStreamSrcRemoveTrackByType(WEBKIT_MEDIA_STREAM_SRC(m_src), track.type());
     }
 
 private:
-    GRefPtr<GstElement> m_src;
+    GstElement* m_src;
 };
 
 class InternalSource {
@@ -340,9 +340,13 @@ static void webkitMediaStreamSrcConstructed(GObject* object)
     WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC(object);
     auto* priv = self->priv;
 
-    priv->mediaStreamTrackObserver = makeUnique<WebKitMediaStreamTrackObserver>(GST_ELEMENT_CAST(gst_object_ref(self)));
-    priv->mediaStreamObserver = makeUnique<WebKitMediaStreamObserver>(GST_ELEMENT_CAST(gst_object_ref(self)));
+    priv->mediaStreamTrackObserver = makeUnique<WebKitMediaStreamTrackObserver>(GST_ELEMENT_CAST(self));
+    priv->mediaStreamObserver = makeUnique<WebKitMediaStreamObserver>(GST_ELEMENT_CAST(self));
     priv->flowCombiner = GUniquePtr<GstFlowCombiner>(gst_flow_combiner_new());
+
+    // https://bugs.webkit.org/show_bug.cgi?id=214150
+    ASSERT(GST_OBJECT_REFCOUNT(self) == 1);
+    ASSERT(g_object_is_floating(self));
 }
 
 static void stopObservingTracks(WebKitMediaStreamSrc* self)
@@ -363,7 +367,7 @@ static void stopObservingTracks(WebKitMediaStreamSrc* self)
     GST_OBJECT_UNLOCK(self);
 }
 
-static void webkitMediaStreamSrcFinalize(GObject* object)
+static void webkitMediaStreamSrcDispose(GObject* object)
 {
     WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC(object);
 
@@ -375,7 +379,10 @@ static void webkitMediaStreamSrcFinalize(GObject* object)
         priv->stream->removeObserver(*priv->mediaStreamObserver);
         priv->stream = nullptr;
     }
+    priv->track = nullptr;
     GST_OBJECT_UNLOCK(self);
+
+    GST_CALL_PARENT(G_OBJECT_CLASS, dispose, (object));
 }
 
 static GstStateChangeReturn webkitMediaStreamSrcChangeState(GstElement* element, GstStateChange transition)
@@ -401,7 +408,7 @@ static void webkit_media_stream_src_class_init(WebKitMediaStreamSrcClass* klass)
     GstElementClass* gstElementClass = GST_ELEMENT_CLASS(klass);
 
     gobjectClass->constructed = webkitMediaStreamSrcConstructed;
-    gobjectClass->finalize = webkitMediaStreamSrcFinalize;
+    gobjectClass->dispose = webkitMediaStreamSrcDispose;
     gobjectClass->get_property = webkitMediaStreamSrcGetProperty;
     gobjectClass->set_property = webkitMediaStreamSrcSetProperty;
 

@@ -1,3 +1,26 @@
+2020-07-21  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][1.18] mediastreamsrc element hits assert in gst -core
+        https://bugs.webkit.org/show_bug.cgi?id=214150
+
+        Reviewed by Philippe Normand.
+
+        Removed track pointers from observers cause the object was
+        self-referencing a couple of times. Observers are 1-1 with the
+        source so there is no need to keep an owned reference and there is
+        no danger of incorrect dereferencing.
+
+        Turned finalize into dispose as the work is doing is more removing
+        the references with other objects, which what the dispose is
+        about. Called the parent on that, which as missing as well.
+
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (WebKitMediaStreamTrackObserver::WebKitMediaStreamTrackObserver):
+        (WebKitMediaStreamObserver::WebKitMediaStreamObserver):
+        (webkitMediaStreamSrcConstructed):
+        (webkitMediaStreamSrcDispose):
+        (webkit_media_stream_src_class_init):
+
 2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Add support for text-underline-offset and text-decoration-thickness
