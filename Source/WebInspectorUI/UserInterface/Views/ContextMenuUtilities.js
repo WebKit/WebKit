@@ -170,6 +170,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
             let saveData = {
                 url: sourceCode.url,
                 content: sourceCode.content,
+                base64Encoded: sourceCode.base64Encoded,
             };
 
             if (sourceCode.urlComponents.path === "/") {

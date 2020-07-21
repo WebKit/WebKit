@@ -1,5 +1,20 @@
 2020-07-21  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: unable to save files that are base64 encoded
+        https://bugs.webkit.org/show_bug.cgi?id=214601
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/SourceCode.js:
+        (WI.SourceCode.prototype.get base64Encoded): Added.
+        Expose if the current content is base64 encoded. The current content is already exposed.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        Include the base64 encoded state in the save data.
+
+2020-07-21  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: Styles: don't blur the add class input when a class is added
         https://bugs.webkit.org/show_bug.cgi?id=214604
 

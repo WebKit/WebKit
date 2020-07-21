@@ -99,6 +99,11 @@ WI.SourceCode = class SourceCode extends WI.Object
         return this._currentRevision.content;
     }
 
+    get base64Encoded()
+    {
+        return this._currentRevision.base64Encoded;
+    }
+
     get url()
     {
         return this._url;
