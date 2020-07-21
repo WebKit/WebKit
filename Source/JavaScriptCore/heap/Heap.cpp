@@ -612,6 +612,8 @@ void Heap::finalizeUnconditionalFinalizers()
         finalizeMarkedUnconditionalFinalizers<JSWeakObjectRef>(*vm().m_weakObjectRefSpace);
     if (vm().m_errorInstanceSpace)
         finalizeMarkedUnconditionalFinalizers<ErrorInstance>(*vm().m_errorInstanceSpace);
+
+    // FinalizationRegistries currently rely on serial finalization because they can post tasks to the deferredWorkTimer, which normally expects tasks to only be posted by the API lock holder.
     if (vm().m_finalizationRegistrySpace)
         finalizeMarkedUnconditionalFinalizers<JSFinalizationRegistry>(*vm().m_finalizationRegistrySpace);
 

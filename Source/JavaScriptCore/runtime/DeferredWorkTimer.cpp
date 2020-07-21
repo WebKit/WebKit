@@ -110,7 +110,7 @@ void DeferredWorkTimer::runRunLoop()
 
 void DeferredWorkTimer::addPendingWork(VM& vm, Ticket ticket, Vector<Strong<JSCell>>&& dependencies)
 {
-    ASSERT(vm.currentThreadIsHoldingAPILock());
+    ASSERT(vm.currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && vm.heap.worldIsStopped()));
     for (unsigned i = 0; i < dependencies.size(); ++i)
         ASSERT(dependencies[i].get() != ticket);
 
@@ -127,13 +127,13 @@ void DeferredWorkTimer::addPendingWork(VM& vm, Ticket ticket, Vector<Strong<JSCe
 
 bool DeferredWorkTimer::hasPendingWork(Ticket ticket)
 {
-    ASSERT(ticket->vm().currentThreadIsHoldingAPILock());
+    ASSERT(ticket->vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket->vm().heap.worldIsStopped()));
     return m_pendingTickets.contains(ticket);
 }
 
 bool DeferredWorkTimer::hasDependancyInPendingWork(Ticket ticket, JSCell* dependency)
 {
-    ASSERT(ticket->vm().currentThreadIsHoldingAPILock());
+    ASSERT(ticket->vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket->vm().heap.worldIsStopped()));
     ASSERT(m_pendingTickets.contains(ticket));
 
     auto result = m_pendingTickets.get(ticket);
@@ -142,7 +142,7 @@ bool DeferredWorkTimer::hasDependancyInPendingWork(Ticket ticket, JSCell* depend
 
 bool DeferredWorkTimer::cancelPendingWork(Ticket ticket)
 {
-    ASSERT(ticket->vm().currentThreadIsHoldingAPILock());
+    ASSERT(ticket->vm().currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && ticket->vm().heap.worldIsStopped()));
     bool result = m_pendingTickets.remove(ticket);
 
     if (result)

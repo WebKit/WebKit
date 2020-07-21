@@ -92,38 +92,51 @@ void JSFinalizationRegistry::finalizeUnconditionally(VM& vm)
 {
     auto locker = holdLock(cellLock());
 
-    auto removeFromVector = [] (auto& vector, size_t position) {
-        std::swap(vector[position], vector.last());
-        return vector.takeLast();
-    };
+#if ASSERT_ENABLED
+    for (const auto& iter : m_deadRegistrations)
+        RELEASE_ASSERT(iter.value.size());
+#endif
 
     bool readiedCell = false;
-    for (unsigned i = 0; i < m_noUnregistrationLive.size(); ++i) {
-        ASSERT(!m_noUnregistrationLive[i].holdings.get().isCell() || vm.heap.isMarked(m_noUnregistrationLive[i].holdings.get().asCell()));
-        if (!vm.heap.isMarked(m_noUnregistrationLive[i].target)) {
-            m_noUnregistrationDead.append(removeFromVector(m_noUnregistrationLive, i).holdings);
+    m_noUnregistrationLive.removeAllMatching([&] (const Registration& reg) {
+        ASSERT(!reg.holdings.get().isCell() || vm.heap.isMarked(reg.holdings.get().asCell()));
+        if (!vm.heap.isMarked(reg.target)) {
+            m_noUnregistrationDead.append(reg.holdings);
             readiedCell = true;
+            return true;
         }
-    }
+        return false;
+    });
 
     m_liveRegistrations.removeIf([&] (auto& bucket) -> bool {
         ASSERT(bucket.value.size());
 
         bool keyIsDead = !vm.heap.isMarked(bucket.key);
+        DeadRegistrations* deadList = nullptr;
+        auto getDeadList = [&] () -> DeadRegistrations& {
+            if (UNLIKELY(!deadList))
+                deadList = &m_deadRegistrations.add(bucket.key, DeadRegistrations()).iterator->value;
+            return *deadList;
+        };
 
-        for (size_t i = 0; i < bucket.value.size(); i++) {
-            ASSERT(!bucket.value[i].holdings.get().isCell() || vm.heap.isMarked(bucket.value[i].holdings.get().asCell()));
-            if (!vm.heap.isMarked(bucket.value[i].target)) {
+        bucket.value.removeAllMatching([&] (const Registration& reg) {
+            ASSERT(!reg.holdings.get().isCell() || vm.heap.isMarked(reg.holdings.get().asCell()));
+            if (!vm.heap.isMarked(reg.target)) {
                 if (keyIsDead)
-                    m_noUnregistrationDead.append(removeFromVector(bucket.value, i).holdings);
-                else {
-                    auto deadList = m_deadRegistrations.add(bucket.key, DeadRegistrations());
-                    deadList.iterator->value.append(removeFromVector(bucket.value, i).holdings);
-                }
+                    m_noUnregistrationDead.append(reg.holdings);
+                else
+                    getDeadList().append(reg.holdings);
                 readiedCell = true;
-            } else if (keyIsDead)
-                m_noUnregistrationLive.append(removeFromVector(bucket.value, i));
-        }
+                return true;
+            }
+
+            if (keyIsDead) {
+                m_noUnregistrationLive.append(reg);
+                return true;
+            }
+
+            return false;
+        });
 
         return !bucket.value.size();
     });
@@ -169,10 +182,10 @@ JSValue JSFinalizationRegistry::takeDeadHoldingsValue()
             m_deadRegistrations.remove(iter);
     }
 
-    if constexpr (ASSERT_ENABLED) {
-        for (const auto& iter : m_deadRegistrations)
-            RELEASE_ASSERT(iter.value.size());
-    }
+#if ASSERT_ENABLED
+    for (const auto& iter : m_deadRegistrations)
+        RELEASE_ASSERT(iter.value.size());
+#endif
 
     return result;
 }

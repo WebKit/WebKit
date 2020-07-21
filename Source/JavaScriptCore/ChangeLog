@@ -1,3 +1,27 @@
+2020-07-21  Keith Miller  <keith_miller@apple.com>
+
+        Fix FinalizationRegistry GC finalizer interation
+        https://bugs.webkit.org/show_bug.cgi?id=214586
+        <rdar://65854264>
+
+        Reviewed by Mark Lam and Yusuke Suzuki.
+
+        Turns out when you remove the ith element from a Vector and you
+        increment the index anyway you skip things...  Use the helper
+        functions instead. This fixes an ASAN crash on our
+        FinalizationRegistry tests.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::addPendingWork):
+        (JSC::DeferredWorkTimer::hasPendingWork):
+        (JSC::DeferredWorkTimer::hasDependancyInPendingWork):
+        (JSC::DeferredWorkTimer::cancelPendingWork):
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::finalizeUnconditionally):
+        (JSC::JSFinalizationRegistry::takeDeadHoldingsValue):
+
 2020-07-21  Saam Barati  <sbarati@apple.com>
 
         Disable NO_SMT by default
