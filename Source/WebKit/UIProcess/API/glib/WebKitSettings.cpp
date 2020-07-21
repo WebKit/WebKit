@@ -954,7 +954,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          _("Enable private browsing"),
                                                          _("Whether to enable private browsing"),
                                                          FALSE,
-                                                         readWriteConstructParamFlags));
+                                                         static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED)));
 #endif
 
     /**
