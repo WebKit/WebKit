@@ -1,3 +1,24 @@
+2020-07-21  James Darpinian  <jdarpinian@chromium.org>
+
+        webgl/2.0.0/conformance2/state/gl-object-get-calls.html results appears to show an out of bounds access bug.
+        https://bugs.webkit.org/show_bug.cgi?id=214557
+
+        Reviewed by Myles C. Maxfield.
+
+        The WebGL 2 function getActiveUniformBlockName was accidentally untested because an
+        unrelated bug caused the test to exit before reaching the part that tested it. The
+        other bug is fixed now, and this change fixes getActiveUniformBlockName to actually
+        work.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockName):
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getActiveUniformBlockName):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+        (WebCore::GraphicsContextGLOpenGL::getActiveUniformBlockName):
+
 2020-07-21  Sihui Liu  <sihui_liu@appe.com>
 
         REGRESSION(r264486): ASSERTION FAILED: ASSERT_NOT_REACHED() in NetworkProcessPlatformStrategies::createBlobRegistry

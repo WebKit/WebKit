@@ -339,20 +339,20 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 336: PASS ] gl.getUniformBlockIndex(noUniformProgram, "u_normal") is gl.INVALID_INDEX
 [ 337: PASS ] gl.getProgramParameter(program, gl.LINK_STATUS) is true
 [ 338: PASS ] gl.getActiveUniformBlockName(program, 0) is "Transform"
-[ 339: FAIL ] gl.getActiveUniformBlockName(program, -1) should be null (of type object). Was (of type string).
+[ 339: PASS ] gl.getActiveUniformBlockName(program, -1) is null
 [ 340: PASS ] getError was expected value: INVALID_VALUE :
-[ 341: FAIL ] gl.getActiveUniformBlockName(program, 1) should be null (of type object). Was (of type string).
+[ 341: PASS ] gl.getActiveUniformBlockName(program, 1) is null
 [ 342: PASS ] getError was expected value: INVALID_VALUE :
-[ 343: FAIL ] gl.getActiveUniformBlockName(program, gl.INVALID_INDEX) should be null (of type object). Was (of type string).
+[ 343: PASS ] gl.getActiveUniformBlockName(program, gl.INVALID_INDEX) is null
 [ 344: PASS ] getError was expected value: INVALID_VALUE :
 [ 345: PASS ] gl.getProgramParameter(noLinkProgram, gl.LINK_STATUS) is false
-[ 346: FAIL ] getError expected: INVALID_OPERATION. Was INVALID_VALUE : after evaluating: gl.getActiveUniformBlockName(noLinkProgram, 0)
+[ 346: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.getActiveUniformBlockName(noLinkProgram, 0)
 [ 347: PASS ] gl.getProgramParameter(noUniformProgram, gl.LINK_STATUS) is true
-[ 348: FAIL ] gl.getActiveUniformBlockName(noUniformProgram, -1) should be null (of type object). Was (of type string).
+[ 348: PASS ] gl.getActiveUniformBlockName(noUniformProgram, -1) is null
 [ 349: PASS ] getError was expected value: INVALID_VALUE :
-[ 350: FAIL ] gl.getActiveUniformBlockName(noUniformProgram, 0) should be null (of type object). Was (of type string).
+[ 350: PASS ] gl.getActiveUniformBlockName(noUniformProgram, 0) is null
 [ 351: PASS ] getError was expected value: INVALID_VALUE :
-[ 352: FAIL ] gl.getActiveUniformBlockName(noUniformProgram, gl.INVALID_INDEX) should be null (of type object). Was (of type string).
+[ 352: PASS ] gl.getActiveUniformBlockName(noUniformProgram, gl.INVALID_INDEX) is null
 [ 353: PASS ] getError was expected value: INVALID_VALUE :
 [ 354: PASS ] gl.getProgramParameter(program, gl.LINK_STATUS) is true
 [ 355: PASS ] gl.getActiveUniformBlockParameter(program, 0, gl.UNIFORM_BLOCK_BINDING) is 0
@@ -364,5 +364,5 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 361: PASS ] getActiveUniformBlockParameter correctly handled invalid pname enums
 [ 362: PASS ] getError was expected value: NO_ERROR :
 [ 363: PASS ] successfullyParsed is true
-[ FAIL ] 45 failures reported
+[ FAIL ] 38 failures reported
 

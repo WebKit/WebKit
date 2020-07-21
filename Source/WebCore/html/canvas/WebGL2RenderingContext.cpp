@@ -2526,7 +2526,14 @@ WebGLAny WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram& program
 #if USE(ANGLE)
     if (isContextLostOrPending() || !validateWebGLObject("getActiveUniformBlockName", &program))
         return String();
-    return m_context->getActiveUniformBlockName(program.object(), index);
+    if (!program.getLinkStatus()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getActiveUniformBlockName", "program not linked");
+        return nullptr;
+    }
+    String name = m_context->getActiveUniformBlockName(program.object(), index);
+    if (name.isNull())
+        return nullptr;
+    return name;
 #else
     UNUSED_PARAM(program);
     UNUSED_PARAM(index);

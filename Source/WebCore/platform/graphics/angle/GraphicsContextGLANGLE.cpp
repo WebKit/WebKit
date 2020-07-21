@@ -1985,9 +1985,16 @@ String GraphicsContextGLOpenGL::getActiveUniformBlockName(PlatformGLObject progr
     makeContextCurrent();
     GLint maxLength = 0;
     gl::GetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH, &maxLength);
+    if (maxLength <= 0) {
+        synthesizeGLError(INVALID_VALUE);
+        return String();
+    }
     Vector<GLchar> buffer(maxLength);
-    gl::GetActiveUniformBlockName(program, uniformBlockIndex, buffer.size(), nullptr, buffer.data());
-    return String(buffer.data());
+    GLsizei length = 0;
+    gl::GetActiveUniformBlockName(program, uniformBlockIndex, buffer.size(), &length, buffer.data());
+    if (!length)
+        return String();
+    return String(buffer.data(), length);
 }
 
 void GraphicsContextGLOpenGL::uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding)

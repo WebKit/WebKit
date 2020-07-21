@@ -143,7 +143,7 @@ fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 
 webkit.org/b/188061 [ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Slow ]
 
-webkit.org/b/214557 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Skip ]
+[ Debug ] webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow ]
 
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
