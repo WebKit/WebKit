@@ -836,7 +836,7 @@ TEST(URLSchemeHandler, CORS)
 TEST(URLSchemeHandler, DisableCORS)
 {
     TestWebKitAPI::HTTPServer server({
-        { "/subresource", { {{ "Content-Type", "application/json" }}, "{\"testkey\":\"testvalue\"}" } }
+        { "/subresource", { {{ "Content-Type", "application/json" }, { "headerName", "headerValue" }}, "{\"testKey\":\"testValue\"}" } }
     });
 
     bool corssuccess = false;
@@ -849,14 +849,13 @@ TEST(URLSchemeHandler, DisableCORS)
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"cors"];
 
     NSString *testJS = [NSString stringWithFormat:
-        @"fetch('http://127.0.0.1:%d/subresource').then(function(r){"
-            "r.json().then(function(object) {"
-                "if (object.testkey == 'testvalue') {"
-                    "fetch('/corssuccess')"
-                "} else {"
-                    "fetch('/corsfailure')"
-                "}"
-            "}).catch(function(){fetch('/corsfailure')})"
+        @"fetch('http://127.0.0.1:%d/subresource').then(async (r) => {"
+            "if (r.headers.get('headerName') != 'headerValue')"
+                "return fetch('/corsfailure');"
+            "const object = await r.json();"
+            "if (object.testKey != 'testValue')"
+                "return fetch('/corsfailure');"
+            "fetch('/corssuccess');"
         "}).catch(function(){fetch('/corsfailure')})"
         , server.port()];
 

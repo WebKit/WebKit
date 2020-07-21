@@ -1148,6 +1148,8 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
         if (!Document::allDocuments().isEmpty())
             m_networkProcessConnection->serviceWorkerConnection().registerServiceWorkerClients();
 #endif
+        for (auto& webPage : m_pageMap.values())
+            webPage->synchronizeCORSDisablingPatternsWithNetworkProcess();
     }
     
     return *m_networkProcessConnection;

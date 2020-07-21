@@ -1148,6 +1148,11 @@ void NetworkConnectionToWebProcess::broadcastConsoleMessage(JSC::MessageSource s
     connection().send(Messages::NetworkProcessConnection::BroadcastConsoleMessage(source, level, message), 0);
 }
 
+void NetworkConnectionToWebProcess::setCORSDisablingPatterns(WebCore::PageIdentifier pageIdentifier, Vector<String>&& patterns)
+{
+    networkProcess().setCORSDisablingPatterns(pageIdentifier, WTFMove(patterns));
+}
+
 } // namespace WebKit
 
 #undef NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION

@@ -94,4 +94,5 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     CheckRemotePortForActivity(struct WebCore::MessagePortIdentifier port) -> (bool hasActivity) Async
     DidDeliverMessagePortMessages(uint64_t messageBatchIdentifier)
     RegisterURLSchemesAsCORSEnabled(Vector<String> schemes);
+    SetCORSDisablingPatterns(WebCore::PageIdentifier pageIdentifier, Vector<String> patterns)
 }

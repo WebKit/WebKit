@@ -1344,6 +1344,8 @@ public:
 
     static void updatePreferencesGenerated(const WebPreferencesStore&);
 
+    void synchronizeCORSDisablingPatternsWithNetworkProcess();
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2132,6 +2134,7 @@ private:
     
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_navigationHasOccured { false };
+    Vector<String> m_corsDisablingPatterns;
 };
 
 #if !PLATFORM(IOS_FAMILY)

@@ -393,12 +393,12 @@ Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& 
     return page;
 }
 
-static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(Vector<String>&& input)
+static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(const Vector<String>& input)
 {
     Vector<UserContentURLPattern> parsedPatterns;
     parsedPatterns.reserveInitialCapacity(input.size());
-    for (auto&& pattern : WTFMove(input)) {
-        UserContentURLPattern parsedPattern(WTFMove(pattern));
+    for (const auto& pattern : input) {
+        UserContentURLPattern parsedPattern(pattern);
         if (parsedPattern.isValid()) {
             WebCore::SecurityPolicy::allowAccessTo(parsedPattern);
             parsedPatterns.uncheckedAppend(WTFMove(parsedPattern));
@@ -548,8 +548,12 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     pageConfiguration.deviceOrientationUpdateProvider = WebDeviceOrientationUpdateProvider::create(*this);
 #endif
-    
-    pageConfiguration.corsDisablingPatterns = parseAndAllowAccessToCORSDisablingPatterns(WTFMove(parameters.corsDisablingPatterns));
+
+    m_corsDisablingPatterns = WTFMove(parameters.corsDisablingPatterns);
+    if (!m_corsDisablingPatterns.isEmpty())
+        synchronizeCORSDisablingPatternsWithNetworkProcess();
+    pageConfiguration.corsDisablingPatterns = parseAndAllowAccessToCORSDisablingPatterns(m_corsDisablingPatterns);
+
     pageConfiguration.userScriptsShouldWaitUntilNotification = parameters.userScriptsShouldWaitUntilNotification;
     pageConfiguration.loadsSubresources = parameters.loadsSubresources;
     pageConfiguration.loadsFromNetwork = parameters.loadsFromNetwork;
@@ -869,6 +873,11 @@ bool WebPage::isThrottleable() const
 WebPage::~WebPage()
 {
     ASSERT(!m_page);
+
+    if (!m_corsDisablingPatterns.isEmpty()) {
+        m_corsDisablingPatterns.clear();
+        synchronizeCORSDisablingPatternsWithNetworkProcess();
+    }
 
     platformDetach();
     
@@ -7126,8 +7135,18 @@ void WebPage::setOverriddenMediaType(const String& mediaType)
 
 void WebPage::updateCORSDisablingPatterns(Vector<String>&& patterns)
 {
-    if (m_page)
-        m_page->setCORSDisablingPatterns(parseAndAllowAccessToCORSDisablingPatterns(WTFMove(patterns)));
+    if (!m_page)
+        return;
+
+    m_corsDisablingPatterns = WTFMove(patterns);
+    synchronizeCORSDisablingPatternsWithNetworkProcess();
+    m_page->setCORSDisablingPatterns(parseAndAllowAccessToCORSDisablingPatterns(m_corsDisablingPatterns));
+}
+
+void WebPage::synchronizeCORSDisablingPatternsWithNetworkProcess()
+{
+    // FIXME: We should probably have this mechanism done between UIProcess and NetworkProcess directly.
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCORSDisablingPatterns(m_identifier, m_corsDisablingPatterns), 0);
 }
 
 bool WebPage::shouldUseRemoteRenderingFor(RenderingPurpose purpose)

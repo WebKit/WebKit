@@ -906,9 +906,19 @@ void NetworkResourceLoader::didFinishWithRedirectResponse(WebCore::ResourceReque
     cleanup(LoadResult::Success);
 }
 
+static bool shouldSanitizeResponse(const NetworkProcess& process, Optional<PageIdentifier> pageIdentifier, const FetchOptions& options, const URL& url)
+{
+    if (!pageIdentifier || options.destination != FetchOptions::Destination::EmptyString || options.mode != FetchOptions::Mode::NoCors)
+        return true;
+    return !process.shouldDisableCORSForRequestTo(*pageIdentifier, url);
+}
+
 ResourceResponse NetworkResourceLoader::sanitizeResponseIfPossible(ResourceResponse&& response, ResourceResponse::SanitizationType type)
 {
-    if (m_parameters.shouldRestrictHTTPResponseAccess)
+    if (!m_parameters.shouldRestrictHTTPResponseAccess)
+        return WTFMove(response);
+
+    if (shouldSanitizeResponse(m_connection->networkProcess(), pageID(), parameters().options, originalRequest().url()))
         response.sanitizeHTTPHeaderFields(type);
 
     return WTFMove(response);

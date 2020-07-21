@@ -83,6 +83,7 @@ class StorageQuotaManager;
 class NetworkStorageSession;
 class ResourceError;
 class SWServer;
+class UserContentURLPattern;
 enum class HTTPCookieAcceptPolicy : uint8_t;
 enum class IncludeHttpOnlyCookies : bool;
 enum class StoredCredentialsPolicy : uint8_t;
@@ -363,6 +364,9 @@ public:
     void updateBundleIdentifier(String&&, CompletionHandler<void()>&&);
     void clearBundleIdentifier(CompletionHandler<void()>&&);
 
+    bool shouldDisableCORSForRequestTo(WebCore::PageIdentifier, const URL&) const;
+    void setCORSDisablingPatterns(WebCore::PageIdentifier, Vector<String>&&);
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
     std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
@@ -599,6 +603,8 @@ private:
 
     static const Seconds defaultServiceWorkerFetchTimeout;
     Seconds m_serviceWorkerFetchTimeout { defaultServiceWorkerFetchTimeout };
+
+    HashMap<WebCore::PageIdentifier, Vector<WebCore::UserContentURLPattern>> m_extensionCORSDisablingPatterns;
 };
 
 } // namespace WebKit

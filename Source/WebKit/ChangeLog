@@ -1,3 +1,37 @@
+2020-07-21  Youenn Fablet  <youenn@apple.com>
+
+        Fetch/XHR loads done by extensions should opt out of response sanitisation done in network process
+        https://bugs.webkit.org/show_bug.cgi?id=214588
+        <rdar://problem/65060560>
+
+        Reviewed by Alex Christensen.
+
+        Send to network process the CORS disabling patterns.
+        Disable sanitization for fetch/xhr loads whose pages have a matching pattern.
+
+        Covered by API test.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::setCORSDisablingPatterns):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::shouldDisableCORSForRequestTo const):
+        (WebKit::NetworkProcess::setCORSDisablingPatterns):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::shouldSanitizeResponse):
+        (WebKit::NetworkResourceLoader::sanitizeResponseIfPossible):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::parseAndAllowAccessToCORSDisablingPatterns):
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::updateCORSDisablingPatterns):
+        (WebKit::WebPage::synchronizeCORSDisablingPatternsWithNetworkProcess):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
 2020-07-21  Eric Carlson  <eric.carlson@apple.com>
 
         Use AVRoutePickerView when available for choosing AirPlay devices

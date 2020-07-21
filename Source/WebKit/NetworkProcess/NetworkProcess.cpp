@@ -80,6 +80,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageQuotaManager.h>
+#include <WebCore/UserContentURLPattern.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/OptionSet.h>
@@ -2826,6 +2827,30 @@ void NetworkProcess::clearBundleIdentifier(CompletionHandler<void()>&& completio
     WebCore::clearApplicationBundleIdentifierTestingOverride();
 #endif
     completionHandler();
+}
+
+bool NetworkProcess::shouldDisableCORSForRequestTo(PageIdentifier pageIdentifier, const URL& url) const
+{
+    return WTF::anyOf(m_extensionCORSDisablingPatterns.get(pageIdentifier), [&] (const auto& pattern) {
+        return pattern.matches(url);
+    });
+}
+
+void NetworkProcess::setCORSDisablingPatterns(PageIdentifier pageIdentifier, Vector<String>&& patterns)
+{
+    Vector<UserContentURLPattern> parsedPatterns;
+    parsedPatterns.reserveInitialCapacity(patterns.size());
+    for (auto&& pattern : WTFMove(patterns)) {
+        UserContentURLPattern parsedPattern(WTFMove(pattern));
+        if (parsedPattern.isValid())
+            parsedPatterns.uncheckedAppend(WTFMove(parsedPattern));
+    }
+    parsedPatterns.shrinkToFit();
+    if (parsedPatterns.isEmpty()) {
+        m_extensionCORSDisablingPatterns.remove(pageIdentifier);
+        return;
+    }
+    m_extensionCORSDisablingPatterns.set(pageIdentifier, WTFMove(parsedPatterns));
 }
 
 } // namespace WebKit

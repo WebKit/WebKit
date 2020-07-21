@@ -248,6 +248,8 @@ private:
     void checkRemotePortForActivity(const WebCore::MessagePortIdentifier, CompletionHandler<void(bool)>&&);
     void didDeliverMessagePortMessages(uint64_t messageBatchIdentifier);
 
+    void setCORSDisablingPatterns(WebCore::PageIdentifier, Vector<String>&&);
+
 #if USE(LIBWEBRTC)
     NetworkRTCProvider& rtcProvider();
 #endif
