@@ -1,3 +1,26 @@
+2020-07-20  Mark Lam  <mark.lam@apple.com>
+
+        TryGetById clobberize rules are wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=163834
+        <rdar://problem/65625807>
+
+        Reviewed by Keith Miller.
+
+        Theoretically, TryGetById can do the same things GetById does i.e. reify lazy
+        properties, read the stack, etc.  Hence, its clobberize rule should be clobberTop
+        just like GetById.  However, in practice, we don't currently use @tryGetById to
+        access anything on the stack (and probably never will).  But as a conservative
+        measure, we'll just treat TryGetById like it can.  In clobberize terms, this
+        means we declare TryGetById as doing read(World) (just like GetById) instead of
+        read(Heap).
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+
 2020-07-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix duplicate forward declaration introduced by merge conflict

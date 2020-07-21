@@ -655,6 +655,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetByIdDirect:
     case GetByIdDirectFlush:
     case GetByValWithThis:
+    case TryGetById:
     case PutById:
     case PutByIdWithThis:
     case PutByValWithThis:
@@ -1301,11 +1302,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         AbstractHeap heap(NamedProperties, identifierNumber);
         read(heap);
         def(HeapLocation(NamedPropertyLoc, heap, node->child2()), LazyNode(node));
-        return;
-    }
-
-    case TryGetById: {
-        read(Heap);
         return;
     }
 

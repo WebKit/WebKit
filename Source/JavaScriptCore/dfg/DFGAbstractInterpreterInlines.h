@@ -3334,6 +3334,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case TryGetById:
         // FIXME: This should constant fold at least as well as the normal GetById case.
         // https://bugs.webkit.org/show_bug.cgi?id=156422
+        clobberWorld();
         makeHeapTopForNode(node);
         break;
 
