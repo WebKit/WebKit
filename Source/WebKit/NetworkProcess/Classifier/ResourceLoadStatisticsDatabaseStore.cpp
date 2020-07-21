@@ -1039,10 +1039,8 @@ static unsigned getMedianOfPrevalentResourcesWithUserInteraction(SQLiteDatabase&
     }
 
     // Step
-    if (medianDaysSinceUIStatement.step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
+    if (medianDaysSinceUIStatement.step() != SQLITE_ROW)
         return 0;
-    }
 
     double rawSeconds = medianDaysSinceUIStatement.getColumnDouble(0);
     WallTime wallTime = WallTime::fromRawSeconds(rawSeconds);
@@ -1068,14 +1066,12 @@ static unsigned getMedianOfPrevalentResourcesWithUserInteraction(SQLiteDatabase&
     }
 
     // Step
-    if (lowerMedianDaysSinceUIStatement.step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::getMedianOfPrevalentResourcesWithUserInteraction, error message: %" PUBLIC_LOG_STRING, database.lastErrorMsg());
-        return 0;
+    if (lowerMedianDaysSinceUIStatement.step() == SQLITE_ROW) {
+        double rawSecondsLower = lowerMedianDaysSinceUIStatement.getColumnDouble(0);
+        WallTime wallTimeLower = WallTime::fromRawSeconds(rawSecondsLower);
+        return ((wallTimeLower <= WallTime() ? 0 : std::floor((WallTime::now() - wallTimeLower) / 24_h)) + median) / 2;
     }
-
-    double rawSecondsLower = lowerMedianDaysSinceUIStatement.getColumnDouble(0);
-    WallTime wallTimeLower = WallTime::fromRawSeconds(rawSecondsLower);
-    return ((wallTimeLower <= WallTime() ? 0 : std::floor((WallTime::now() - wallTimeLower) / 24_h)) + median) / 2;
+    return 0;
 }
 
 unsigned ResourceLoadStatisticsDatabaseStore::getNumberOfPrevalentResources() const
@@ -1128,15 +1124,12 @@ unsigned ResourceLoadStatisticsDatabaseStore::getTopPrevelentResourceDaysSinceUI
     }
     
     // Step
-    if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR(Network, "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to step, error message: %" PUBLIC_LOG_STRING, m_database.lastErrorMsg());
-        return 0;
+    if (topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.step() == SQLITE_ROW) {
+        double rawSeconds = topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.getColumnDouble(0);
+        WallTime wallTime = WallTime::fromRawSeconds(rawSeconds);
+        return wallTime <= WallTime() ? 0 : std::floor((WallTime::now() - wallTime) / 24_h);
     }
-    
-    double rawSeconds = topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement.getColumnDouble(0);
-    WallTime wallTime = WallTime::fromRawSeconds(rawSeconds);
-    
-    return wallTime <= WallTime() ? 0 : std::floor((WallTime::now() - wallTime) / 24_h);
+    return 0;
 }
 
 static unsigned getMedianOfPrevalentResourceWithoutUserInteraction(SQLiteDatabase& database, unsigned bucketSize, PrevalentResourceDatabaseTelemetry::Statistic statistic, unsigned numberOfPrevalentResourcesWithoutUI)

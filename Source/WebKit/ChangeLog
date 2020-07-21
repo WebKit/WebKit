@@ -1,3 +1,20 @@
+2020-07-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Frequent Network error messages: "ResourceLoadStatisticsDatabaseStore::topPrevalentResourceWithUserInteractionDaysSinceUserInteractionStatement query failed to step, error message: no more rows available"
+        https://bugs.webkit.org/show_bug.cgi?id=214597
+        <rdar://65884740>
+
+        Reviewed by John Wilander.
+
+        We should not log an error message when no rows are returned when running
+        telemetry queries, because this is not an error.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::getMedianOfPrevalentResourcesWithUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getTopPrevelentResourceDaysSinceUI const):
+        Remove unnecessary error logging and only check for telemetry results if the
+        query returns a row.
+
 2020-07-21  Youenn Fablet  <youenn@apple.com>
 
         NetworkConnectionToWebProcess should not handle NetworkRTCProvider messages
