@@ -1,3 +1,21 @@
+2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] imported blink large gradient tests are crashing on debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=214192
+
+        Reviewed by Žan Doberšek.
+
+        The assert is:
+            ASSERT(cairo_surface_status(m_surface.get()) == CAIRO_STATUS_SUCCESS);
+
+        and the status we are getting is CAIRO_STATUS_INVALID_SIZE, because we are reaching the cairo image size
+        limit. We should check the size before trying to create the image surface. This patch fixes the crash, but not
+        the tests themselves that will still fail due to the cairo limitation.
+
+        * platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoImageSurfaceBackend::create): Return early if the image size is bigger than the
+        maximum allowed by cairo.
+
 2020-07-20  Alex Christensen  <achristensen@webkit.org>
 
         Revert r262776 for existing apps using UIWebView/WebView

@@ -33,6 +33,7 @@
 #if USE(CAIRO)
 
 #include "Color.h"
+#include "ImageBackingStore.h"
 #include <cairo.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -45,7 +46,7 @@ std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfac
     static cairo_user_data_key_t s_surfaceDataKey;
 
     IntSize backendSize = calculateBackendSize(size, resolutionScale);
-    if (backendSize.isEmpty())
+    if (backendSize.isEmpty() || backendSize.width() > cairoMaxImageSize || backendSize.height() > cairoMaxImageSize)
         return nullptr;
 
     int stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, backendSize.width());
