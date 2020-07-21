@@ -1,3 +1,13 @@
+2020-07-21  Jonathan Bedard  <jbedard@apple.com>
+
+        ImageDiff: Set ALWAYS_SEARCH_USER_PATHS to NO
+        https://bugs.webkit.org/show_bug.cgi?id=214613
+        <rdar://problem/65883815>
+
+        Reviewed by Dan Bernstein.
+
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+
 2020-07-21  Youenn Fablet  <youenn@apple.com>
 
         Fetch/XHR loads done by extensions should opt out of response sanitisation done in network process
