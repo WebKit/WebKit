@@ -1093,7 +1093,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_private_name)
     LLINT_CHECK_EXCEPTION();
     ASSERT(property.isPrivateName());
 
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::GetOwnProperty);
     asObject(baseValue)->getPrivateField(globalObject, property, slot);
     LLINT_CHECK_EXCEPTION();
 

@@ -1,3 +1,30 @@
+2020-07-21  Mark Lam  <mark.lam@apple.com>
+
+        llint_slow_path_get_private_name() should not be using PropertySlot::InternalMethodType::VMInquiry.
+        https://bugs.webkit.org/show_bug.cgi?id=214603
+
+        Reviewed by Yusuke Suzuki.
+
+        VMInquiry means (1) the get operation should not call back into JS, (2) it should
+        not throw any exceptions (except for OutOfMemoryError or StackOverflowError which
+        can be thrown at any time), or have any side effects that is observable from JS
+        code.  In this case, llint_slow_path_get_private_name() is just implementating
+        PrivateFieldGet (https://tc39.es/proposal-class-fields/#sec-privatefieldget) and
+        should actually be using PropertySlot::InternalMethodType::GetOwnProperty
+        (according to https://tc39.es/proposal-class-fields/#sec-privatefieldfind).
+
+        This patch makes the above change, and also adds an assert in JSObject::getPrivateField
+        to ensure that no one calls it for a VMInquiry since it is not supported.
+
+        Also added a PropertySlot::isVMInquiry() convenience query method.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPrivateField):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::isVMInquiry const):
+
 2020-07-21  Keith Miller  <keith_miller@apple.com>
 
         Fix FinalizationRegistry GC finalizer interation

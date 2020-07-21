@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -139,6 +139,7 @@ public:
     bool isTaintedByOpaqueObject() const { return m_isTaintedByOpaqueObject; }
 
     InternalMethodType internalMethodType() const { return m_internalMethodType; }
+    bool isVMInquiry() const { return m_internalMethodType == InternalMethodType::VMInquiry; }
 
     void disableCaching()
     {

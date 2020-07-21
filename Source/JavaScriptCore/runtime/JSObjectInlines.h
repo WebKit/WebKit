@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -603,6 +603,7 @@ inline bool JSObject::getPrivateField(JSGlobalObject* globalObject, PropertyName
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
+    ASSERT(!slot.isVMInquiry());
     if (!JSObject::getPrivateFieldSlot(this, globalObject, propertyName, slot)) {
         throwException(globalObject, scope, createInvalidPrivateNameError(globalObject));
         RELEASE_AND_RETURN(scope, false);
