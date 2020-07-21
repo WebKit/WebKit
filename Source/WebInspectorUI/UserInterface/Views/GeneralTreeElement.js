@@ -335,6 +335,8 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
         } else if (this._mainTitle instanceof Node) {
             this._mainTitleElement.removeChildren();
             this._mainTitleElement.appendChild(this._mainTitle);
+            if (this._mainTitle instanceof DocumentFragment)
+                this._mainTitle = this._mainTitleElement.textContent;
         }
 
         if (typeof this._subtitle === "string" && this._subtitle) {
@@ -346,6 +348,8 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
             this._createSubtitleElementIfNeeded();
             this._subtitleElement.removeChildren();
             this._subtitleElement.appendChild(this._subtitle);
+            if (this._subtitle instanceof DocumentFragment)
+                this._subtitle = this._subtitleElement.textContent;
             this._titlesElement.classList.remove(WI.GeneralTreeElement.NoSubtitleStyleClassName);
         } else {
             if (this._subtitleElement)

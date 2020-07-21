@@ -1,3 +1,24 @@
+2020-07-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(?): file names are not shown in the open resource dialog
+        https://bugs.webkit.org/show_bug.cgi?id=214605
+
+        Reviewed by Brian Burg.
+
+        When a `DocumentFragment` is added to a parent node, the children of the `DocumentFragment`
+        are added as children of the parent instead of the `DocumentFragment` itself, effectively
+        emptying the `DocumentFragment`, meaning that adding that `DocumentFragment` to a parent
+        node again will basically do nothing as there are no children for that `DocumentFragment`.
+
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WI.GeneralTreeElement.prototype._updateTitleElements):
+        Because the `_mainTitleElement`/`_subtitleElement` is cleared (`removeChildren`), if the
+        `_mainTitle`/`_subtitle` is a `DocumentFragment` nothing will be added due to the above.
+        Instead, if the `_mainTitle`/`_subtitle` is a `DocumentFragment`, change it to be the
+        `textContent` of the `_mainTitleElement`/`_subtitleElement` so that the above does not
+        happen and so that future calls to `_updateTitleElements` won't make any changes the
+        `_mainTitle`/`_subtitle` is now a `String` which matches the `textContent`.
+
 2020-07-15  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Tab bar colors of undocked Inspector should match Safari in Big Sur
