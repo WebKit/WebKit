@@ -1,3 +1,15 @@
+2020-07-20  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r262776 for existing apps using UIWebView/WebView
+        https://bugs.webkit.org/show_bug.cgi?id=214528
+        <rdar://problem/65468982>
+
+        Reviewed by Tim Horton.
+
+        * platform/mac-wk1/http/tests/xmlhttprequest/post-blob-content-type-async-expected.txt: Added.
+        * platform/mac-wk1/http/tests/xmlhttprequest/post-blob-content-type-sync-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/xhr/send-blob-with-no-mime-type-expected.txt: Added.
+
 2020-07-20  Keith Miller  <keith_miller@apple.com>
 
         Reduce number of iterations for weakref tests

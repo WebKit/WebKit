@@ -1,3 +1,21 @@
+2020-07-20  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r262776 for existing apps using UIWebView/WebView
+        https://bugs.webkit.org/show_bug.cgi?id=214528
+        <rdar://problem/65468982>
+
+        Reviewed by Tim Horton.
+
+        r262776 removed Content-Type: application/x-www-form-urlencoded from POST requests with unspecified content type.
+        This matches the behavior of Chrome, Firefox, and WKWebView and is a change we want to make.
+        This doesn't match behavior of iOS 13 UIWebView, though, and given its state of being supported for compatibility until removed,
+        we are going to keep it behaving as it always has.
+
+        Updated WK1 test expectations.
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]):
+
 2020-07-20  Peng Liu  <peng.liu6@apple.com>
 
         An airplaying video can enter picture-in-picture
