@@ -1,3 +1,15 @@
+2020-07-20  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Do not use ${DEVELOPER_MODE} directly, as it may be undefined
+
+        Unreviewed build fix.
+
+        Instead of using ${DEVELOPER_MODE} directly, which might be undefined an cause errors, set
+        first ENABLE_DEVELOPER_MODE based on its value with SET_AND_EXPOSE_TO_BUILD(), and then use
+        the ${ENABLE_DEVELOPER_MODE} expansion in the rest of the file.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2020-07-13  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed. Fixed copy&paste typos of gcrypt -> Thunder
