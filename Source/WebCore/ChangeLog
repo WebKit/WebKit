@@ -1,5 +1,19 @@
 2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [FreeType] Add support for text-underline-offset and text-decoration-thickness
+        https://bugs.webkit.org/show_bug.cgi?id=214550
+
+        Reviewed by Adrian Perez de Castro.
+
+        Get the underline position and thickness from the font if it's scalable and set them in font metrics.
+
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::scaledFontScaleFactor):
+        (WebCore::fontUnitsPerEm):
+        (WebCore::Font::platformInit):
+
+2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] imported blink large gradient tests are crashing on debug builds
         https://bugs.webkit.org/show_bug.cgi?id=214192
 

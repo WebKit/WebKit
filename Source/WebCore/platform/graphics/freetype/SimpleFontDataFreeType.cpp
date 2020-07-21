@@ -66,6 +66,37 @@ static RefPtr<cairo_scaled_font_t> scaledFontWithoutMetricsHinting(cairo_scaled_
     return adoptRef(cairo_scaled_font_create(cairo_scaled_font_get_font_face(scaledFont), &fontMatrix, &fontCTM, fontOptions.get()));
 }
 
+static float scaledFontScaleFactor(cairo_scaled_font_t* scaledFont)
+{
+    cairo_matrix_t fontMatrix;
+    cairo_scaled_font_get_font_matrix(scaledFont, &fontMatrix);
+
+    float determinant = fontMatrix.xx * fontMatrix.yy - fontMatrix.yx * fontMatrix.xy;
+    if (!std::isfinite(determinant))
+        return 1;
+
+    determinant = std::abs(determinant);
+    if (!determinant)
+        return 0;
+
+    double x = 1;
+    double y = 0;
+    cairo_matrix_transform_distance(&fontMatrix, &x, &y);
+    double xScale = std::hypot(x, y);
+    return xScale ? narrowPrecisionToFloat(determinant / xScale) : 0.;
+}
+
+static Optional<unsigned> fontUnitsPerEm(FT_Face freeTypeFace)
+{
+    if (freeTypeFace->units_per_EM)
+        return freeTypeFace->units_per_EM;
+
+    if (auto* ttHeader = static_cast<TT_Header*>(FT_Get_Sfnt_Table(freeTypeFace, ft_sfnt_head)))
+        return ttHeader->Units_Per_EM;
+
+    return WTF::nullopt;
+}
+
 void Font::platformInit()
 {
     if (!m_platformData.size())
@@ -84,24 +115,35 @@ void Font::platformInit()
     float capHeight = narrowPrecisionToFloat(fontExtents.height);
     float lineGap = narrowPrecisionToFloat(fontExtents.height - fontExtents.ascent - fontExtents.descent);
     Optional<float> xHeight;
+    Optional<unsigned> unitsPerEm;
+    Optional<float> underlinePosition;
+    Optional<float> underlineThickness;
 
     {
         CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());
+        if (FT_Face freeTypeFace = cairoFtFaceLocker.ftFace()) {
+            unitsPerEm = fontUnitsPerEm(freeTypeFace);
 
-        // If the USE_TYPO_METRICS flag is set in the OS/2 table then we use typo metrics instead.
-        FT_Face freeTypeFace = cairoFtFaceLocker.ftFace();
-        if (freeTypeFace && freeTypeFace->face_flags & FT_FACE_FLAG_SCALABLE) {
-            if (auto* OS2Table = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(freeTypeFace, ft_sfnt_os2))) {
-                const FT_Short kUseTypoMetricsMask = 1 << 7;
-                // FT_Size_Metrics::y_scale is in 16.16 fixed point format.
-                // Its (fractional) value is a factor that converts vertical metrics from design units to units of 1/64 pixels.
-                double yscale = (freeTypeFace->size->metrics.y_scale / 65536.0) / 64.0;
-                if (OS2Table->fsSelection & kUseTypoMetricsMask) {
-                    ascent = narrowPrecisionToFloat(yscale * OS2Table->sTypoAscender);
-                    descent = -narrowPrecisionToFloat(yscale * OS2Table->sTypoDescender);
-                    lineGap = narrowPrecisionToFloat(yscale * OS2Table->sTypoLineGap);
+            if (freeTypeFace->face_flags & FT_FACE_FLAG_SCALABLE) {
+                // If the USE_TYPO_METRICS flag is set in the OS/2 table then we use typo metrics instead.
+                if (auto* OS2Table = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(freeTypeFace, ft_sfnt_os2))) {
+                    const FT_Short kUseTypoMetricsMask = 1 << 7;
+                    // FT_Size_Metrics::y_scale is in 16.16 fixed point format.
+                    // Its (fractional) value is a factor that converts vertical metrics from design units to units of 1/64 pixels.
+                    double yscale = (freeTypeFace->size->metrics.y_scale / 65536.0) / 64.0;
+                    if (OS2Table->fsSelection & kUseTypoMetricsMask) {
+                        ascent = narrowPrecisionToFloat(yscale * OS2Table->sTypoAscender);
+                        descent = -narrowPrecisionToFloat(yscale * OS2Table->sTypoDescender);
+                        lineGap = narrowPrecisionToFloat(yscale * OS2Table->sTypoLineGap);
+                    }
+                    xHeight = narrowPrecisionToFloat(yscale * OS2Table->sxHeight);
                 }
-                xHeight = narrowPrecisionToFloat(yscale * OS2Table->sxHeight);
+
+                if (unitsPerEm) {
+                    float scaleFactor = scaledFontScaleFactor(fontWithoutMetricsHinting.get());
+                    underlinePosition = -((freeTypeFace->underline_position + freeTypeFace->underline_thickness / 2.) / static_cast<float>(unitsPerEm.value())) * scaleFactor;
+                    underlineThickness = (freeTypeFace->underline_thickness / static_cast<float>(unitsPerEm.value())) * scaleFactor;
+                }
             }
         }
     }
@@ -118,17 +160,16 @@ void Font::platformInit()
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setXHeight(xHeight.value());
+    if (unitsPerEm)
+        m_fontMetrics.setUnitsPerEm(unitsPerEm.value());
+    if (underlinePosition)
+        m_fontMetrics.setUnderlinePosition(underlinePosition.value());
+    if (underlineThickness)
+        m_fontMetrics.setUnderlineThickness(underlineThickness.value());
 
     cairo_text_extents_t textExtents;
     cairo_scaled_font_text_extents(m_platformData.scaledFont(), " ", &textExtents);
     m_spaceWidth = narrowPrecisionToFloat((platformData().orientation() == FontOrientation::Horizontal) ? textExtents.x_advance : -textExtents.y_advance);
-
-    if ((platformData().orientation() == FontOrientation::Vertical) && !isTextOrientationFallback()) {
-        CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());
-        FT_Face freeTypeFace = cairoFtFaceLocker.ftFace();
-        m_fontMetrics.setUnitsPerEm(freeTypeFace->units_per_EM);
-    }
-
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 
     FcChar8* fontConfigFamilyName;
