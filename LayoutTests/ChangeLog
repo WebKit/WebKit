@@ -1,3 +1,12 @@
+2020-07-21  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ Release Mac wk2 ] svg/animations/smil-leak-element-instances.svg is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=214579
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-07-21  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed WPE/GTK gardening
