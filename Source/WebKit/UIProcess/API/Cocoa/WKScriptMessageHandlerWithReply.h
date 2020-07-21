@@ -87,7 +87,7 @@ method for receiving messages from JavaScript running in a webpage and replying 
    - The JavaScript promise is fulfilled with the value 42.
    - JavaScript execution continues and the value 42 is returned.
  */
-- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message replyHandler:(void (^)(id reply, NSString *errorMessage))replyHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message replyHandler:(void (^)(id _Nullable reply, NSString *_Nullable errorMessage))replyHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @end
 
 NS_ASSUME_NONNULL_END
