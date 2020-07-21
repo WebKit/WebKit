@@ -654,7 +654,6 @@ constexpr ASCIILiteral relevantExtensionKeyString(RelevantExtensionKey key)
     JSC_INTL_RELEVANT_EXTENSION_KEYS(JSC_RETURN_INTL_RELEVANT_EXTENSION_KEYS)
 #undef JSC_RETURN_INTL_RELEVANT_EXTENSION_KEYS
     }
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(0);
     return ASCIILiteral::null();
 }
 

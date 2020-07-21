@@ -1,3 +1,16 @@
+2020-07-21  Caio Lima  <ticaiolima@gmail.com>
+
+        Debug build is failing after r264537 on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=214596
+
+        Reviewed by Yusuke Suzuki.
+
+        Removing `ASSERT_UNDER_CONTEXPR_CONTEXT(0)` to avoid compilation
+        failure of Debug builds on Linux.
+
+        * runtime/IntlObject.cpp:
+        (JSC::relevantExtensionKeyString):
+
 2020-07-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreview non-unified source build fix
