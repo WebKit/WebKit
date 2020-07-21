@@ -184,7 +184,6 @@ TEST(AVFoundationSoftLink, Constants)
     EXPECT_TRUE([AVAudioSessionInterruptionNotification isEqualToString:@"AVAudioSessionInterruptionNotification"]);
     EXPECT_TRUE([AVAudioSessionInterruptionTypeKey isEqualToString:@"AVAudioSessionInterruptionTypeKey"]);
     EXPECT_TRUE([AVAudioSessionInterruptionOptionKey isEqualToString:@"AVAudioSessionInterruptionOptionKey"]);
-    EXPECT_TRUE([AVRouteDetectorMultipleRoutesDetectedDidChangeNotification isEqualToString:@"AVRouteDetectorMultipleRoutesDetectedDidChangeNotification"]);
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     EXPECT_TRUE([AVCaptureSessionErrorKey isEqualToString:@"AVCaptureSessionErrorKey"]);
     EXPECT_TRUE([AVCaptureSessionRuntimeErrorNotification isEqualToString:@"AVCaptureSessionRuntimeErrorNotification"]);
@@ -194,6 +193,12 @@ TEST(AVFoundationSoftLink, Constants)
 #endif
 
 #endif
+    
+#if HAVE(AVROUTEPICKERVIEW)
+    EXPECT_TRUE([AVRouteDetectorMultipleRoutesDetectedDidChangeNotification isEqualToString:@"AVRouteDetectorMultipleRoutesDetectedDidChangeNotification"]);
+    EXPECT_TRUE([AVOutputContextOutputDevicesDidChangeNotification isEqualToString:@"AVOutputContextOutputDevicesDidChangeNotification"]);
+#endif // PLATFORM(WATCHOS)
+
 }
 
 #endif // PLATFORM(COCOA)

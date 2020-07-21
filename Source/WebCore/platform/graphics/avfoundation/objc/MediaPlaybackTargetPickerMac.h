@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,36 +28,36 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
+#include "AVPlaybackTargetPicker.h"
 #include "MediaPlaybackTargetPicker.h"
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS AVOutputDeviceMenuController;
-OBJC_CLASS WebAVOutputDeviceMenuControllerHelper;
-
 namespace WebCore {
 
-class MediaPlaybackTargetPickerMac final : public MediaPlaybackTargetPicker {
+class MediaPlaybackTargetPickerMac final : public MediaPlaybackTargetPicker, public AVPlaybackTargetPicker::Client {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(MediaPlaybackTargetPickerMac);
 public:
     explicit MediaPlaybackTargetPickerMac(MediaPlaybackTargetPicker::Client&);
-
     virtual ~MediaPlaybackTargetPickerMac();
 
-    void showPlaybackTargetPicker(const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) override;
-    void startingMonitoringPlaybackTargets() override;
-    void stopMonitoringPlaybackTargets() override;
-    void invalidatePlaybackTargets() override;
+    void showPlaybackTargetPicker(PlatformView*, const FloatRect&, bool checkActiveRoute, bool useDarkAppearance) final;
+    void startingMonitoringPlaybackTargets() final;
+    void stopMonitoringPlaybackTargets() final;
+    void invalidatePlaybackTargets() final;
 
 private:
-    bool externalOutputDeviceAvailable() override;
-    Ref<MediaPlaybackTarget> playbackTarget() override;
+    bool externalOutputDeviceAvailable() final;
+    Ref<MediaPlaybackTarget> playbackTarget() final;
 
-    AVOutputDeviceMenuController *devicePicker();
+    // AVPlaybackTargetPicker::Client
+    void pickerWasDismissed() final;
+    void availableDevicesChanged() final;
+    void currentDeviceChanged() final;
 
-    RetainPtr<AVOutputDeviceMenuController> m_outputDeviceMenuController;
-    RetainPtr<WebAVOutputDeviceMenuControllerHelper> m_outputDeviceMenuControllerDelegate;
-    bool m_showingMenu { false };
+    AVPlaybackTargetPicker& routePicker();
+
+    std::unique_ptr<AVPlaybackTargetPicker> m_routePicker;
 };
 
 } // namespace WebCore

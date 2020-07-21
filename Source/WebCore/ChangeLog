@@ -1,3 +1,101 @@
+2020-07-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Use AVRoutePickerView when available for choosing AirPlay devices
+        https://bugs.webkit.org/show_bug.cgi?id=213497
+        <rdar://problem/58610662>
+
+        Reviewed by Jer Noble.
+
+        Use an AVRoutePickerView, the replacement for AVOutputDeviceMenuController, when
+        it is available to allow a user to pick an AirPlay device. To do this, create an 
+        AVPlaybackTargetPicker abstract base and create a concrete class from the 
+        AVOutputDeviceMenuController-specific code from MediaPlaybackTargetPickerMac, and
+        create a new concrete class using AVRoutePickerView.
+
+        Tested manually because these changes require an AirPlay device.
+
+        * Modules/mediasession/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker): Pass the view to the
+        target picker.
+        * Modules/mediasession/WebMediaSessionManagerClient.h:
+
+        * Modules/remoteplayback/RemotePlayback.cpp:
+        (WebCore::RemotePlayback::playbackTargetPickerWasDismissed): Drive-by fix: return
+        early if there are no pending promises.
+
+        * SourcesCocoa.txt: Add new files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/graphics/MediaPlaybackTargetPicker.cpp:
+        (WebCore::MediaPlaybackTargetPicker::showPlaybackTargetPicker): Add new parameter.
+        * platform/graphics/MediaPlaybackTargetPicker.h:
+
+        * platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.h: Copied from Source/WebCore/platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h.
+        * platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.mm: Copied from Source/WebCore/platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm.
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::AVOutputDeviceMenuControllerTargetPicker):
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::~AVOutputDeviceMenuControllerTargetPicker):
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::devicePicker):
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::availableDevicesDidChange):
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::currentDeviceDidChange):
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::showPlaybackTargetPicker):
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::startingMonitoringPlaybackTargets):
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::stopMonitoringPlaybackTargets):
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::invalidatePlaybackTargets):
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::externalOutputDeviceAvailable):
+        (WebCore::AVOutputDeviceMenuControllerTargetPicker::outputContext):
+        (-[WebAVOutputDeviceMenuControllerHelper initWithCallback:]):
+        (-[WebAVOutputDeviceMenuControllerHelper clearCallback]):
+        (-[WebAVOutputDeviceMenuControllerHelper observeValueForKeyPath:ofObject:change:context:]):
+
+        * platform/graphics/avfoundation/objc/AVPlaybackTargetPicker.h: Added.
+        (WebCore::AVPlaybackTargetPicker::AVPlaybackTargetPicker):
+        (WebCore::AVPlaybackTargetPicker::client const):
+
+        * platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.h: Added.
+        * platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm: Added.
+        (WebCore::AVRoutePickerViewTargetPicker::isAvailable):
+        (WebCore::AVRoutePickerViewTargetPicker::AVRoutePickerViewTargetPicker):
+        (WebCore::AVRoutePickerViewTargetPicker::~AVRoutePickerViewTargetPicker):
+        (WebCore::AVRoutePickerViewTargetPicker::outputContextInternal):
+        (WebCore::AVRoutePickerViewTargetPicker::devicePicker):
+        (WebCore::AVRoutePickerViewTargetPicker::routeDetector):
+        (WebCore::AVRoutePickerViewTargetPicker::showPlaybackTargetPicker):
+        (WebCore::AVRoutePickerViewTargetPicker::startingMonitoringPlaybackTargets):
+        (WebCore::AVRoutePickerViewTargetPicker::stopMonitoringPlaybackTargets):
+        (WebCore::AVRoutePickerViewTargetPicker::externalOutputDeviceAvailable):
+        (WebCore::AVRoutePickerViewTargetPicker::outputContext):
+        (WebCore::AVRoutePickerViewTargetPicker::invalidatePlaybackTargets):
+        (WebCore::AVRoutePickerViewTargetPicker::availableDevicesDidChange):
+        (WebCore::AVRoutePickerViewTargetPicker::currentDeviceDidChange):
+        (WebCore::AVRoutePickerViewTargetPicker::devicePickerWasDismissed):
+        (-[WebAVRoutePickerViewHelper initWithCallback:]):
+        (-[WebAVRoutePickerViewHelper dealloc]):
+        (-[WebAVRoutePickerViewHelper clearCallback]):
+        (-[WebAVRoutePickerViewHelper routePickerViewDidEndPresentingRoutes:]):
+        (-[WebAVRoutePickerViewHelper notificationHandler:]):
+
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.h:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        (WebCore::MediaPlaybackTargetPickerMac::MediaPlaybackTargetPickerMac):
+        (WebCore::MediaPlaybackTargetPickerMac::~MediaPlaybackTargetPickerMac):
+        (WebCore::MediaPlaybackTargetPickerMac::externalOutputDeviceAvailable):
+        (WebCore::MediaPlaybackTargetPickerMac::playbackTarget):
+        (WebCore::MediaPlaybackTargetPickerMac::routePicker):
+        (WebCore::MediaPlaybackTargetPickerMac::showPlaybackTargetPicker):
+        (WebCore::MediaPlaybackTargetPickerMac::startingMonitoringPlaybackTargets):
+        (WebCore::MediaPlaybackTargetPickerMac::stopMonitoringPlaybackTargets):
+        (WebCore::MediaPlaybackTargetPickerMac::invalidatePlaybackTargets):
+        (WebCore::MediaPlaybackTargetPickerMac::pickerWasDismissed):
+        (WebCore::MediaPlaybackTargetPickerMac::availableDevicesChanged):
+        (WebCore::MediaPlaybackTargetPickerMac::currentDeviceChanged):
+        (WebCore::MediaPlaybackTargetPickerMac::devicePicker): Deleted.
+        (-[WebAVOutputDeviceMenuControllerHelper initWithCallback:]): Deleted.
+        (-[WebAVOutputDeviceMenuControllerHelper clearCallback]): Deleted.
+        (-[WebAVOutputDeviceMenuControllerHelper observeValueForKeyPath:ofObject:change:context:]): Deleted.
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        (WebCore::MediaPlaybackTargetPickerMock::showPlaybackTargetPicker):
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+
 2020-07-21  James Darpinian  <jdarpinian@chromium.org>
 
         webgl/2.0.0/conformance2/state/gl-object-get-calls.html results appears to show an out of bounds access bug.

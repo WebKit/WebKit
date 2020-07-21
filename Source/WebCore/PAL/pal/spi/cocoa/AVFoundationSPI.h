@@ -74,6 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AVOutputContext : NSObject <NSSecureCoding>
 @property (nonatomic, readonly) NSString *deviceName;
 + (instancetype)outputContext;
++ (instancetype)iTunesAudioContext;
 + (nullable AVOutputContext *)sharedAudioPresentationOutputContext;
 + (nullable AVOutputContext *)outputContextForID:(NSString *)ID;
 @property (readonly) BOOL supportsMultipleOutputDevices;

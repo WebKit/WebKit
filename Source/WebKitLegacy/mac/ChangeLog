@@ -1,3 +1,22 @@
+2020-07-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Use AVRoutePickerView when available for choosing AirPlay devices
+        https://bugs.webkit.org/show_bug.cgi?id=213497
+        <rdar://problem/58610662>
+
+        Reviewed by Jer Noble.
+
+        * WebView/WebMediaPlaybackTargetPicker.h:
+        (WebMediaPlaybackTargetPicker::~WebMediaPlaybackTargetPicker): Deleted.
+        * WebView/WebMediaPlaybackTargetPicker.mm:
+        (WebMediaPlaybackTargetPicker::create):
+        (WebMediaPlaybackTargetPicker::WebMediaPlaybackTargetPicker):
+        (WebMediaPlaybackTargetPicker::invalidate):
+        (WebMediaPlaybackTargetPicker::platformView const): New override.
+
+        * WebView/WebView.mm:
+        (-[WebView _devicePicker]): Pass view to WebMediaPlaybackTargetPicker factory.
+
 2020-07-17  Sam Weinig  <weinig@apple.com>
 
         Remove final vestigates of SimpleColor

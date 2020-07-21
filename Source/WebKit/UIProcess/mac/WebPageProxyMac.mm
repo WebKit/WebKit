@@ -673,6 +673,11 @@ void WebPageProxy::willPerformPasteCommand()
     grantAccessToCurrentPasteboardData(NSPasteboardNameGeneral);
 }
 
+PlatformView* WebPageProxy::platformView() const
+{
+    return [pageClient().platformWindow() contentView];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

@@ -1,3 +1,16 @@
+2020-07-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Use AVRoutePickerView when available for choosing AirPlay devices
+        https://bugs.webkit.org/show_bug.cgi?id=213497
+        <rdar://problem/58610662>
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/AVFoundationSoftLinkTest.mm:
+        (TestWebKitAPI::TEST): Test AVOutputContextOutputDevicesDidChangeNotification.
+        Don't check AVRouteDetectorMultipleRoutesDetectedDidChangeNotification on watchOS,
+        we don't use it there.
+
 2020-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Fix ITP data summary when using the memory store and blocking all third-party cookies

@@ -256,7 +256,7 @@ void WebMediaSessionManager::showPlaybackTargetPicker(WebMediaSessionManagerClie
     ALWAYS_LOG_MEDIASESSIONMANAGER(__func__, m_clientState[index].get());
 
     bool hasActiveRoute = flagsAreSet(m_clientState[index]->flags, MediaProducer::IsPlayingToExternalDevice);
-    targetPicker().showPlaybackTargetPicker(FloatRect(rect), hasActiveRoute, useDarkAppearance);
+    targetPicker().showPlaybackTargetPicker(client.platformView(), FloatRect(rect), hasActiveRoute, useDarkAppearance);
 }
 
 void WebMediaSessionManager::clientStateDidChange(WebMediaSessionManagerClient& client, PlaybackTargetClientContextIdentifier contextId, MediaProducer::MediaStateFlags newFlags)

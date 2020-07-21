@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -228,7 +228,6 @@ NS_ASSUME_NONNULL_END
 #endif // PLATFORM(MAC)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AVKit/AVOutputDeviceMenuController.h>
@@ -256,7 +255,6 @@ NS_CLASS_AVAILABLE_MAC(10_11)
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
-
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 NS_ASSUME_NONNULL_BEGIN
@@ -358,3 +356,35 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #endif // PLATFORM(MAC) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET) && HAVE(AVROUTEPICKERVIEW)
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <AVKit/AVRoutePickerView_Private.h>
+#import <AVKit/AVRoutePickerView_WebKitOnly.h>
+
+#else
+
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol AVRoutePickerViewDelegate;
+
+@interface AVRoutePickerView : NSView
+
+- (void)showRoutePickingControlsForOutputContext:(AVOutputContext *)outputContext relativeToRect:(NSRect)positioningRect ofView:(NSView *)positioningView;
+
+@property (nonatomic, nullable, weak) id<AVRoutePickerViewDelegate> delegate;
+@property (nonatomic) BOOL routeListAlwaysHasDarkAppearance;
+
+@end
+
+@protocol AVRoutePickerViewDelegate <NSObject>
+@optional
+- (void)routePickerViewWillBeginPresentingRoutes:(AVRoutePickerView *)routePickerView;
+- (void)routePickerViewDidEndPresentingRoutes:(AVRoutePickerView *)routePickerView;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif // USE(APPLE_INTERNAL_SDK)
+#endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && HAVE(AVROUTEPICKERVIEW)

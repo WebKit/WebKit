@@ -1534,6 +1534,7 @@ public:
     void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
     bool alwaysOnLoggingAllowed() final { return isAlwaysOnLoggingAllowed(); }
+    PlatformView* platformView() const final;
 #endif
 
     void didChangeBackgroundColor();
