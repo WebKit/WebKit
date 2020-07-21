@@ -1,3 +1,16 @@
+2020-07-21  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit::ColorSpaceData::decode() does not need default: case
+        <https://webkit.org/b/214587>
+        <rdar://problem/65777868>
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::decode):
+        - Remove default: case and add ASSERT_NOT_REACHED() and
+          move `return false;` to bottom of the method.
+
 2020-07-21  James Savage  <james.savage@apple.com>
 
         Unable to call WKScriptMessageHandlerWithReply's replyHandler with a nil errorMessage in Swift

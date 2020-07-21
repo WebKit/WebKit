@@ -87,10 +87,10 @@ bool ColorSpaceData::decode(IPC::Decoder& decoder, ColorSpaceData& colorSpaceDat
         colorSpaceData.cgColorSpace = adoptCF(CGColorSpaceCreateWithICCData(data.get()));
         return true;
     }
-
-    default:
-        return false;
     }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 } // namespace WebKit
