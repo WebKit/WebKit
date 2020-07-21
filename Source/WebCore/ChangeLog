@@ -1,3 +1,13 @@
+2020-07-21  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Update Chrome and Firefox versions in user agent quirks
+        https://bugs.webkit.org/show_bug.cgi?id=214595
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::UserAgentQuirks::stringForQuirk):
+
 2020-07-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use CatchScope in microtask execution
