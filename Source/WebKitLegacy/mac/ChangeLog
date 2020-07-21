@@ -1,3 +1,15 @@
+2020-07-21  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (WebSQL disablement): Fudget app is unresponsive on launch
+        https://bugs.webkit.org/show_bug.cgi?id=214620
+        <rdar://problem/65443085>
+
+        Reviewed by Geoffrey Garen.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        Add Fudget to the list of apps that can use WebSQL until linked on or after iOS 14.
+
 2020-07-21  Eric Carlson  <eric.carlson@apple.com>
 
         Use AVRoutePickerView when available for choosing AirPlay devices

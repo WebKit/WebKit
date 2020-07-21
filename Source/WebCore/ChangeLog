@@ -1,3 +1,15 @@
+2020-07-21  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (WebSQL disablement): Fudget app is unresponsive on launch
+        https://bugs.webkit.org/show_bug.cgi?id=214620
+        <rdar://problem/65443085>
+
+        Reviewed by Geoffrey Garen.
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isFudget):
+
 2020-07-21  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Update Chrome and Firefox versions in user agent quirks
