@@ -1,3 +1,15 @@
+2020-07-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Layout tests exiting early with crashes
+        https://bugs.webkit.org/show_bug.cgi?id=214612
+        <rdar://problem/65897905>
+
+        Reviewed by Brent Fulgham.
+
+        This is caused by the WebContent process making a syscall not allowed by the sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-07-21  David Kilzer  <ddkilzer@apple.com>
 
         WebKit::ColorSpaceData::decode() does not need default: case

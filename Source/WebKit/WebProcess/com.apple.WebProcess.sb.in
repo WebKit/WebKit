@@ -1159,8 +1159,9 @@
 
     (if (equal? (param "CPU") "arm64")
         (allow syscall-unix
-            (syscall-number SYS_mremap_encrypted)
             (syscall-number SYS_fileport_makefd)
+            (syscall-number SYS_guarded_open_dprotected_np) ;; <rdar://problem/65897905>
+            (syscall-number SYS_mremap_encrypted)
         )
     )
 
