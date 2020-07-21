@@ -59,7 +59,7 @@ event type:      mousemove
   target:        <div>
   eventPhase:    3
   bubbles:       1
-  cancelable:    0
+  cancelable:    1
   detail:        0
   view:          OK (document: OK)
   button:        0
@@ -216,7 +216,7 @@ event type:      mousemove
   target:        <div>
   eventPhase:    3
   bubbles:       1
-  cancelable:    0
+  cancelable:    1
   detail:        0
   view:          OK (document: OK)
   button:        0
@@ -273,7 +273,7 @@ event type:      mousemove
   target:        <div>
   eventPhase:    3
   bubbles:       1
-  cancelable:    0
+  cancelable:    1
   detail:        0
   view:          OK (document: OK)
   button:        0
@@ -332,7 +332,7 @@ event type:      mousemove
   target:        <html>
   eventPhase:    3
   bubbles:       1
-  cancelable:    0
+  cancelable:    1
   detail:        0
   view:          OK (document: OK)
   button:        0
@@ -358,7 +358,7 @@ event type:      mousemove
   target:        <html>
   eventPhase:    3
   bubbles:       1
-  cancelable:    0
+  cancelable:    1
   detail:        0
   view:          OK (document: OK)
   button:        0

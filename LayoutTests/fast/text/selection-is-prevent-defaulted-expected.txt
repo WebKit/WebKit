@@ -1,0 +1,4 @@
+Try to select this text.
+Pass if non-selection is visible.
+Try to select this text.
+Pass if non-selection is visible.

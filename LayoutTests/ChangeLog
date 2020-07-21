@@ -1,3 +1,15 @@
+2020-07-21  Zalan Bujtas  <zalan@apple.com>
+
+        [UI Events] Make mousemove cancelable
+        https://bugs.webkit.org/show_bug.cgi?id=214513
+        <rdar://problem/64267520>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/selection-is-prevent-defaulted-expected.txt: Added.
+        * fast/text/selection-is-prevent-defaulted.html: Added.
+        * platform/mac/fast/events/objc-event-api-expected.txt:
+
 2020-07-21  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ Release Mac wk2 ] svg/animations/smil-leak-element-instances.svg is flaky failing

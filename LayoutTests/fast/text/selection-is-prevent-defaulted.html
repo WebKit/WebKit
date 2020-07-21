@@ -1,0 +1,36 @@
+<body onload="test()">
+Try to select this text.<br>Pass if non-selection is visible.
+<pre id=result_with_default_prevent></pre>
+<pre id=result_without_default_prevent></pre>
+</body>
+<script>
+
+function mousemoveFunction(event) {
+  event.preventDefault();
+}
+
+document.body.onmousemove = mousemoveFunction;
+
+function test() {
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  if (!window.eventSender)
+    return;
+
+  eventSender.mouseMoveTo(0, 0);
+  eventSender.mouseDown();
+  eventSender.mouseMoveTo(400, 400);
+  eventSender.mouseUp();
+
+  result_with_default_prevent.innerHTML = window.getSelection();
+
+  document.body.onmousemove = "";
+
+  eventSender.mouseMoveTo(0, 0);
+  eventSender.mouseDown();
+  eventSender.mouseMoveTo(400, 400);
+  eventSender.mouseUp();
+ 
+  result_without_default_prevent.innerHTML = window.getSelection();
+}
+</script>

@@ -1,3 +1,28 @@
+2020-07-21  Zalan Bujtas  <zalan@apple.com>
+
+        [UI Events] Make mousemove cancelable
+        https://bugs.webkit.org/show_bug.cgi?id=214513
+        <rdar://problem/64267520>
+
+        Reviewed by Simon Fraser.
+
+        This patch makes the mousemove event cancelable.
+        The event was initially specified to be non-cancelable in DOM Level 2 Events, but was changed to reflect existing interoperability between browsers.
+        The most user facing behavior change here is that when the mousemove event is prevent-defaulted (canceled) content selection is not possible.
+
+        Chrome is aligned with the latest version of the spec, the mousemove event is cancelable. 
+        However they also have a TODO right at where the drag would happen: 
+        // TODO(crbug.com/346473): Since there is no default action for the mousemove
+        // event we should consider doing drag&drop even when js cancels the
+        // mouse move event.
+
+        Firefox preforms the drag(select) operation but not sure if it’s because their mousemove event is still non-cancelable or whether they already went ahead with what the TODO says.
+
+        Test: fast/text/selection-is-prevent-defaulted.html
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+
 2020-07-21  Clark Wang  <clark_wang@apple.com>
 
         Added OfflineAudioContext constructor
