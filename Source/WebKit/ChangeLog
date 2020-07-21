@@ -1,3 +1,14 @@
+2020-07-21  Tim Horton  <timothy_horton@apple.com>
+
+        watchOS: Web Content process crashes when it tries to open files
+        https://bugs.webkit.org/show_bug.cgi?id=214614
+        <rdar://problem/65900517>
+
+        Reviewed by Darin Adler.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        Allow reading kern.maxfilesperproc, as it is allowed on macOS and in the Network process sandbox, and libc needs it.
+
 2020-07-21  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Layout tests exiting early with crashes
