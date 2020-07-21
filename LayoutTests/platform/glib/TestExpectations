@@ -653,8 +653,6 @@ webkit.org/b/186485 imported/w3c/web-platform-tests/web-animations/animation-mod
 webkit.org/b/186486 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Failure ]
 webkit.org/b/186488 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ Failure ]
 
-webkit.org/b/214541 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
