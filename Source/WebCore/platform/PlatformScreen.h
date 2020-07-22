@@ -88,7 +88,7 @@ enum class DynamicRangeMode : uint8_t {
     HDR10,
     DolbyVisionPQ,
 };
-#if PLATFORM(MAC)
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
 WEBCORE_EXPORT DynamicRangeMode preferredDynamicRangeMode(Widget* = nullptr);
 #else
 constexpr DynamicRangeMode preferredDynamicRangeMode(Widget* = nullptr) { return DynamicRangeMode::Standard; }

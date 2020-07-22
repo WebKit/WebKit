@@ -98,6 +98,7 @@ static NSScreen *screen(Widget* widget)
     return screen(displayID(widget));
 }
 
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
 static DynamicRangeMode convertAVVideoRangeToEnum(NSString* range)
 {
     if (!range)
@@ -114,6 +115,7 @@ static DynamicRangeMode convertAVVideoRangeToEnum(NSString* range)
     ASSERT_NOT_REACHED();
     return DynamicRangeMode::None;
 }
+#endif
 
 ScreenProperties collectScreenProperties()
 {
@@ -140,12 +142,17 @@ ScreenProperties collectScreenProperties()
         float scaleFactor = screen.backingScaleFactor;
         DynamicRangeMode dynamicRangeMode = DynamicRangeMode::None;
 
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
         if (PAL::isAVFoundationFrameworkAvailable() && [PAL::getAVPlayerClass() respondsToSelector:@selector(preferredVideoRangeForDisplays:)]) {
             dynamicRangeMode = convertAVVideoRangeToEnum([PAL::getAVPlayerClass() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
             screenSupportsHighDynamicRange = dynamicRangeMode > DynamicRangeMode::Standard;
         }
+#endif
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE) && USE(MEDIATOOLBOX)
+        else
+#endif
 #if USE(MEDIATOOLBOX)
-        else if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
+        if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
             screenSupportsHighDynamicRange = PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
 #endif
 
@@ -368,6 +375,7 @@ bool screenSupportsHighDynamicRange(Widget* widget)
     return false;
 }
 
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
 DynamicRangeMode preferredDynamicRangeMode(Widget* widget)
 {
     if (auto data = screenProperties(widget))
@@ -381,6 +389,7 @@ DynamicRangeMode preferredDynamicRangeMode(Widget* widget)
 
     return DynamicRangeMode::Standard;
 }
+#endif
 
 FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)
 {

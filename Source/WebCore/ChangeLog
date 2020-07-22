@@ -1,3 +1,12 @@
+2020-07-22  David Kilzer  <ddkilzer@apple.com>
+
+        Unreviewed build fix after r264710, r264719, r264721: use more HAVE_AVPLAYER_VIDEORANGEOVERRIDE.
+
+        * platform/PlatformScreen.h:
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::collectScreenProperties):
+        - Guard more code with HAVE(AVPLAYER_VIDEORANGEOVERRIDE).
+
 2020-07-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Uniscribe] Material icons containing underscore or numbers aren't shown because ScriptItemize splits them apart
