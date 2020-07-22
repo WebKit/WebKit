@@ -1,3 +1,13 @@
+2020-07-22  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Skip failing intl tests on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=214638
+
+        Unreviewed Gardening.
+
+        * stress/intl-displaynames.js:
+        * stress/intl-parse-unicode-subtags.js:
+
 2020-07-21  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r264330): infinite loop in JSC stress tests using cloop

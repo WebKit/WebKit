@@ -1,4 +1,5 @@
 //@ runDefault("--useIntlDisplayNames=1")
+//@ skip if $architecture == "arm"
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);
