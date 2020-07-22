@@ -1,3 +1,16 @@
+2020-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r205826): narrowNoBreakSpace (U+202F) has zero width, regardless of font
+        https://bugs.webkit.org/show_bug.cgi?id=214626
+        <rdar://problem/65193790>
+
+        Reviewed by Timothy Hatcher.
+
+        * fast/text/narrowNoBreakSpace-expected-mismatch.html: Added.
+        * fast/text/narrowNoBreakSpace.html: Added.
+        * fast/text/narrow-non-breaking-space-expected-mismatch.html: Renamed from fast/text/narrow-non-breaking-space-expected.html.
+        * fast/text/narrow-non-breaking-space.html: Made the test more robust.
+
 2020-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling tesla.com on iPad is not smooth

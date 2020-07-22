@@ -1,3 +1,22 @@
+2020-07-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r205826): narrowNoBreakSpace (U+202F) has zero width, regardless of font
+        https://bugs.webkit.org/show_bug.cgi?id=214626
+        <rdar://problem/65193790>
+
+        Reviewed by Timothy Hatcher.
+
+        There's no reason to overwrite narrowNoBreakSpace with zeroWidthSpace.
+
+        This is becoming much more prominent now because a lot of the French unit formatting data in CLDR - and hence in e.g. NSMeasurementFormatter - uses 202F between numeric value and unit, e.g. "37 km"
+
+        It works in native content on macOS, and in all other browsers on macOS, but not in WebKit.
+
+        Test: fast/text/narrowNoBreakSpace.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::overrideControlCharacters):
+
 2020-07-22  James Darpinian  <jdarpinian@chromium.org>
 
         Fix validation of deleted WebGL objects
