@@ -11,6 +11,15 @@
         containing only 0-9, underscore, 'a' and U+E000 glyphs. U+E000 has
         a ligature string "0_a".
 
+2020-07-22  Karl Rackler  <rackler@apple.com>
+
+        Set test expectation for tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html as it is flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=214651
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-07-22  Simon Fraser  <simon.fraser@apple.com>
 
         compositing/repaint/iframes/compositing-iframe-scroll-repaint.html fails on Mojave
