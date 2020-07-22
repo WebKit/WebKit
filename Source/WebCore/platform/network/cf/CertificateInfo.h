@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CertificateInfoBase.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -42,7 +41,9 @@ WTF_DECLARE_CF_TYPE_TRAIT(SecCertificate);
 
 namespace WebCore {
 
-class CertificateInfo : public CertificateInfoBase {
+struct CertificateSummary;
+
+class CertificateInfo {
 public:
      CertificateInfo() = default;
  
@@ -73,7 +74,7 @@ public:
     WEBCORE_EXPORT Type type() const;
     WEBCORE_EXPORT bool containsNonRootSHA1SignedCertificate() const;
 
-    Optional<SummaryInfo> summaryInfo() const;
+    Optional<CertificateSummary> summary() const;
 
     bool isEmpty() const { return type() == Type::None; }
 

@@ -33,6 +33,6 @@
 namespace OpenSSL {
 
 Optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX*);
-Optional<WebCore::CertificateInfo::SummaryInfo> createSummaryInfo(const Vector<uint8_t>& pem);
+Optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_t>& pem);
 
 } // namespace OpenSSL

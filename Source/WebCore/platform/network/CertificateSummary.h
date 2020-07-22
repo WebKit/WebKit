@@ -32,20 +32,12 @@
 
 namespace WebCore {
 
-class CertificateInfoBase {
-public:
-    bool containsNonRootSHA1SignedCertificate() const { return false; };
-
-    struct SummaryInfo {
-        String subject;
-        Seconds validFrom;
-        Seconds validUntil;
-        Vector<String> dnsNames;
-        Vector<String> ipAddresses;
-    };
-    Optional<SummaryInfo> summaryInfo() const { return WTF::nullopt; };
-
-    bool isEmpty() const { return true; };
+struct CertificateSummary {
+    String subject;
+    Seconds validFrom;
+    Seconds validUntil;
+    Vector<String> dnsNames;
+    Vector<String> ipAddresses;
 };
 
 } // namespace WebCore

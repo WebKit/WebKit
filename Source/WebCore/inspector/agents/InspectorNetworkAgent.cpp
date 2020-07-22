@@ -39,6 +39,7 @@
 #include "CachedResourceRequestInitiators.h"
 #include "CachedScript.h"
 #include "CertificateInfo.h"
+#include "CertificateSummary.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
@@ -362,7 +363,7 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
         auto securityPayload = Inspector::Protocol::Security::Security::create()
             .release();
 
-        if (auto certificateSummaryInfo = certificateInfo.value().summaryInfo()) {
+        if (auto certificateSummaryInfo = certificateInfo.value().summary()) {
             auto certificatePayload = Inspector::Protocol::Security::Certificate::create()
                 .release();
 

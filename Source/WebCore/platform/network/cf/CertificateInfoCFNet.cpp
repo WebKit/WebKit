@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CertificateInfo.h"
 
+#include "CertificateSummary.h"
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
 
@@ -96,13 +97,13 @@ bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
     return false;
 }
 
-Optional<CertificateInfo::SummaryInfo> CertificateInfo::summaryInfo() const
+Optional<CertificateSummary> CertificateInfo::summary() const
 {
     auto chain = certificateChain();
     if (!chain)
         return WTF::nullopt;
 
-    SummaryInfo summaryInfo;
+    CertificateSummary summaryInfo;
 
 #if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     auto leafCertificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain, 0));

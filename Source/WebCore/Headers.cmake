@@ -1283,7 +1283,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/BlobRegistryImpl.h
     platform/network/BlobResourceHandle.h
     platform/network/CacheValidation.h
-    platform/network/CertificateInfoBase.h
+    platform/network/CertificateSummary.h
     platform/network/CookieRequestHeaderFieldProxy.h
     platform/network/CookieStorage.h
     platform/network/Credential.h

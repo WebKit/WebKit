@@ -299,14 +299,14 @@ static void getSubjectAltName(const X509* x509, Vector<String>& dnsNames, Vector
     }
 }
 
-Optional<WebCore::CertificateInfo::SummaryInfo> createSummaryInfo(const Vector<uint8_t>& pem)
+Optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_t>& pem)
 {
     BIO bio { pem };
     auto x509 = bio.readX509();
     if (!x509)
         return WTF::nullopt;
 
-    WebCore::CertificateInfo::SummaryInfo summaryInfo;
+    WebCore::CertificateSummary summaryInfo;
 
     summaryInfo.subject = getCommonName(x509.get());
     if (summaryInfo.subject.isNull())

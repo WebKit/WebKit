@@ -1,3 +1,31 @@
+2020-07-21  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unneeded CertificateInfoBase
+        https://bugs.webkit.org/show_bug.cgi?id=214623
+
+        Reviewed by Brady Eidson.
+
+        I need to make CertificateInfo::isolatedCopy and this class was making it messy.
+        It has no shared functionality, so I removed it.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::buildObjectForResourceResponse):
+        * platform/network/CertificateInfoBase.h: Removed.
+        * platform/network/CertificateSummary.h: Copied from Source/WebCore/platform/network/CertificateInfoBase.h.
+        (WebCore::CertificateInfoBase::containsNonRootSHA1SignedCertificate const): Deleted.
+        (WebCore::CertificateInfoBase::summaryInfo const): Deleted.
+        (WebCore::CertificateInfoBase::isEmpty const): Deleted.
+        * platform/network/cf/CertificateInfo.h:
+        * platform/network/cf/CertificateInfoCFNet.cpp:
+        (WebCore::CertificateInfo::summary const):
+        (WebCore::CertificateInfo::summaryInfo const): Deleted.
+        * platform/network/curl/CertificateInfo.h:
+        * platform/network/soup/CertificateInfo.h:
+        (WebCore::CertificateInfo::summary const):
+        (WebCore::CertificateInfo::summaryInfo const): Deleted.
+
 2020-07-21  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add experimental MSE WebM parser
