@@ -240,28 +240,28 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static activateAt(x, y)
+    static activateAt(x, y, modifiers=[])
     {
         if (!this.isWebKit2() || !this.isIOSFamily()) {
             eventSender.mouseMoveTo(x, y);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
+            eventSender.mouseDown(0, modifiers);
+            eventSender.mouseUp(0, modifiers);
             return Promise.resolve();
         }
 
         return new Promise((resolve) => {
             testRunner.runUIScript(`
-                uiController.singleTapAtPoint(${x}, ${y}, function() {
+                uiController.singleTapAtPointWithModifiers(${x}, ${y}, ${JSON.stringify(modifiers)}, function() {
                     uiController.uiScriptComplete();
                 });`, resolve);
         });
     }
 
-    static activateElement(element)
+    static activateElement(element, modifiers=[])
     {
         const x = element.offsetLeft + element.offsetWidth / 2;
         const y = element.offsetTop + element.offsetHeight / 2;
-        return UIHelper.activateAt(x, y);
+        return UIHelper.activateAt(x, y, modifiers);
     }
 
     static async doubleActivateAt(x, y)

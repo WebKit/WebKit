@@ -2332,8 +2332,16 @@ size_t SearchBuffer::length() const
 
 uint64_t characterCount(const SimpleRange& range, TextIteratorBehavior behavior)
 {
+    auto comparisonResult = Range::compareBoundaryPoints(&range.startContainer(), range.startOffset(), &range.endContainer(), range.endOffset());
+    if (comparisonResult.hasException())
+        return 0;
+
+    auto adjustedRange(range);
+    if (comparisonResult.releaseReturnValue() > 0)
+        std::swap(adjustedRange.start, adjustedRange.end);
+
     uint64_t length = 0;
-    for (TextIterator it(range, behavior); !it.atEnd(); it.advance())
+    for (TextIterator it(adjustedRange, behavior); !it.atEnd(); it.advance())
         length += it.text().length();
     return length;
 }

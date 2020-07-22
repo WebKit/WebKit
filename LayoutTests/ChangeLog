@@ -1,3 +1,29 @@
+2020-07-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r258871): Shift + click to extend selection loses currently selected text
+        https://bugs.webkit.org/show_bug.cgi?id=214617
+        <rdar://problem/64980223>
+
+        Reviewed by Megan Gardner.
+
+        Add a new layout test to verify that the bug does not occur.
+
+        * editing/mac/spelling/autocorrection-contraction-expected.txt:
+
+        Rebaseline an existing layout test, restoring the test expectations to what they were prior to r258871. It seems
+        that the more recently added expectations (while not seemingly incorrect) were dependent on `characterCount`
+        computing the number of characters from the start position to the end of the document, rather than the end.
+
+        * editing/selection/shift-click-includes-existing-selection-expected.txt: Added.
+        * editing/selection/shift-click-includes-existing-selection.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.activateAt.return.new.Promise):
+        (window.UIHelper.activateAt):
+        (window.UIHelper.activateElement):
+
+        Add an optional `modifiers` argument to the `activateAt` and `activateElement` helper methods, which can be used
+        to simulate key modifiers being held while synthesizing the "activation" (i.e. tap or click).
+
 2020-07-21  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add experimental MSE WebM parser

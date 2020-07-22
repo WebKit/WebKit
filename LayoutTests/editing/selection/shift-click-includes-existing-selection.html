@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/dump-as-markup.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+p {
+    font-size: 20px;
+}
+
+#start {
+    border: 1px solid blue;
+}
+
+#end {
+    padding-right: 2px;
+    border: 1px solid tomato;
+}
+</style>
+</head>
+<body>
+<div>This test verifies that shift-clicking to extend an existing text selection does not unselect the currently selected text. To test manually, load the page and shift-click the capital letter T on the second line. The text 'lazy dog. T' should be selected.</div>
+<div id="container">
+    <p>The quick brown fox jumped over the <span id="start">lazy dog.</span></p>
+    <p><span id="end">T</span>he quick brown fox jumped over the lazy dog.</p>
+</div>
+<script>
+getSelection().selectAllChildren(document.getElementById("start"));
+Markup.waitUntilDone();
+
+(async function () {
+    if (!window.testRunner)
+        return;
+
+    internals.settings.setEditingBehavior("Mac");
+    Markup.dump(document.getElementById("container"), "Before extending the selection");
+
+    await UIHelper.callFunctionAndWaitForEvent(() => UIHelper.activateElement(document.getElementById("end"), ["shiftKey"]), document.body, "click");
+
+    Markup.dump(document.getElementById("container"), "After extending the selection");
+    Markup.notifyDone();
+})();
+</script>
+</body>
+</html>

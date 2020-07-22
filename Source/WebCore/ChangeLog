@@ -1,3 +1,40 @@
+2020-07-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r258871): Shift + click to extend selection loses currently selected text
+        https://bugs.webkit.org/show_bug.cgi?id=214617
+        <rdar://problem/64980223>
+
+        Reviewed by Megan Gardner.
+
+        After the changes in r258871, shift clicking sometimes fails to preserve the existing selected text range on
+        macOS and iOS. The logic in `EventHandler::handleMousePressEventSingleClick` uses the `textDistance` helper
+        method to count the number of characters between the start of the current selection to the newly selected
+        extent, as well as the number of characters between the end of the current selection and the newly selected
+        extent position. It compares these two character counts, and attempts to choose the new selection extents in
+        such a way that maximizes the amount of selected text.
+
+        However, after r258871, `textDistance` uses `characterCount` instead of `TextIterator::rangeLength`. Unlike the
+        former, `rangeLength` is robust in the case where the start position comes after the end position (in document
+        order), since the process of creating a live `Range` object swaps the start and end if needed. This isn't the
+        case when using `SimpleRange`. Instead, when given a simple range where the start comes after the end,
+        `characterCount` will iterate text in the DOM, starting from the start position and ending at the end of the
+        document rather than the end position. The result is that `characterCount` actually counts the number of
+        characters between the start position and the end of the document, rather than the number of characters between
+        the two positions.
+
+        In the context of this bug, if the start of the current selection is "far away" (in terms of character count)
+        from the end of the document and the new extent position comes after end of the current selection, we will end
+        up choosing the end (instead of the start) as one of the new extents of the updated selection.
+
+        To fix this (as well as other similar issues that might've arisen when replacing uses of
+        `TextIterator::rangeLength` with `characterCount`), simply teach `characterCount` to flip the start and end
+        positions if the end position of the `SimpleRange` comes before the start.
+
+        Test: editing/selection/shift-click-includes-existing-selection.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::characterCount):
+
 2020-07-21  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows build.

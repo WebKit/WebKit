@@ -1,0 +1,36 @@
+
+Before extending the selection:
+| "
+    "
+| <p>
+|   "The quick brown fox jumped over the "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>lazy dog.<#selection-focus>"
+| "
+    "
+| <p>
+|   <span>
+|     id="end"
+|     "T"
+|   "he quick brown fox jumped over the lazy dog."
+| "
+"
+
+After extending the selection:
+| "
+    "
+| <p>
+|   "The quick brown fox jumped over the "
+|   <span>
+|     id="start"
+|     "<#selection-anchor>lazy dog."
+| "
+    "
+| <p>
+|   <span>
+|     id="end"
+|     "T<#selection-focus>"
+|   "he quick brown fox jumped over the lazy dog."
+| "
+"
