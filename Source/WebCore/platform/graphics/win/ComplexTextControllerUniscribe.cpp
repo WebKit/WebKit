@@ -185,6 +185,7 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
     for (;;) {
         SCRIPT_CONTROL control { };
         SCRIPT_STATE state { };
+        control.fMergeNeutralItems = true;
         // Set up the correct direction for the run.
         state.uBidiLevel = m_run.rtl();
         // Lock the correct directional override.
