@@ -1,8 +1,0 @@
-
-PASS getResponseHeader('content-length') expects 0 
-PASS getResponseHeader('content-length') expects 0, 0 
-PASS getResponseHeader('double-trouble') expects ,  
-PASS getResponseHeader('foo-test') expects 1, 2, 3 
-FAIL getResponseHeader('heya') expects , , 1, , , 2 assert_equals: expected ", \v\f, 1, , , 2" but got ", , 1, , , 2"
-PASS getResponseHeader('www-authenticate') expects 1, 2, 3, 4 
-

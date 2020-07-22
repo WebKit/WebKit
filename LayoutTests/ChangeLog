@@ -1,3 +1,61 @@
+2020-07-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, remove old test expectation  directories for iOS 12 since they are unused.
+
+        * platform/ios-12/TestExpectations: Removed.
+        * platform/ios-12/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Removed.
+        * platform/ios-12/css2.1/t0905-c5525-fltblck-00-d-ag-expected.txt: Removed.
+        * platform/ios-12/css2.1/t1202-counter-09-b-expected.txt: Removed.
+        * platform/ios-12/css2.1/t1202-counters-09-b-expected.txt: Removed.
+        * platform/ios-12/editing/deleting/delete-emoji-1-expected.txt: Removed.
+        * platform/ios-12/editing/deleting/delete-emoji-9-expected.txt: Removed.
+        * platform/ios-12/editing/deleting/delete-emoji-expected.txt: Removed.
+        * platform/ios-12/fast/css-generated-content/014-expected.txt: Removed.
+        * platform/ios-12/fast/css/apple-system-colors-expected.txt: Removed.
+        * platform/ios-12/fast/css/beforeSelectorOnCodeElement-expected.txt: Removed.
+        * platform/ios-12/fast/css/line-height-font-order-expected.txt: Removed.
+        * platform/ios-12/fast/events/touch/ios/pointer-events-with-modifiers-expected.txt: Removed.
+        * platform/ios-12/fast/events/updateLayoutForHitTest-expected.txt: Removed.
+        * platform/ios-12/fast/overflow/007-expected.txt: Removed.
+        * platform/ios-12/fast/table/col-and-colgroup-offsets-expected.txt: Removed.
+        * platform/ios-12/fast/text/hyphenate-avoid-orphaned-word-expected.txt: Removed.
+        * platform/ios-12/fast/text/hyphenate-character-expected.txt: Removed.
+        * platform/ios-12/fast/text/hyphens-expected.txt: Removed.
+        * platform/ios-12/imported/w3c/web-platform-tests/cors/access-control-expose-headers-parsing.window-expected.txt: Removed.
+        * platform/ios-12/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any-expected.txt: Removed.
+        * platform/ios-12/imported/w3c/web-platform-tests/fetch/api/basic/header-value-combining.any.worker-expected.txt: Removed.
+        * platform/ios-12/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt: Removed.
+        * platform/ios-12/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt: Removed.
+        * platform/ios-12/imported/w3c/web-platform-tests/fetch/content-type/script.window-expected.txt: Removed.
+        * platform/ios-12/imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window-expected.txt: Removed.
+        * platform/ios-12/imported/w3c/web-platform-tests/xhr/getallresponseheaders-expected.txt: Removed.
+        * platform/ios-12/imported/w3c/web-platform-tests/xhr/getresponseheader.any-expected.txt: Removed.
+        * platform/ios-12/imported/w3c/web-platform-tests/xhr/getresponseheader.any.worker-expected.txt: Removed.
+        * platform/ios-12/platform/ios/ios/fast/text/opticalFont-expected.txt: Removed.
+        * platform/ios-12/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Removed.
+        * platform/ios-12/platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt: Removed.
+        * platform/ios-12/quicklook/excel-expected.txt: Removed.
+        * platform/ios-12/quicklook/excel-legacy-expected.txt: Removed.
+        * platform/ios-12/quicklook/excel-macro-enabled-expected.txt: Removed.
+        * platform/ios-12/quicklook/keynote-09-expected.txt: Removed.
+        * platform/ios-12/quicklook/numbers-09-expected.txt: Removed.
+        * platform/ios-12/quicklook/pages-09-expected.txt: Removed.
+        * platform/ios-12/quicklook/powerpoint-expected.txt: Removed.
+        * platform/ios-12/quicklook/powerpoint-legacy-expected.txt: Removed.
+        * platform/ios-12/svg/custom/object-sizing-expected.txt: Removed.
+        * platform/ios-12/tables/mozilla/bugs/bug10269-2-expected.txt: Removed.
+        * platform/ios-12/tables/mozilla/bugs/bug10296-1-expected.txt: Removed.
+        * platform/ios-12/tables/mozilla/bugs/bug139524-2-expected.txt: Removed.
+        * platform/ios-12/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Removed.
+        * platform/ipad-12/TestExpectations: Removed.
+        * platform/ipad-12/fast/scrolling/ios/overflow-scroll-inherited-expected.txt: Removed.
+        * platform/ipad-12/fast/scrolling/ios/overflow-scrolling-ancestor-clip-expected.txt: Removed.
+        * platform/ipad-12/fast/scrolling/ios/overflow-scrolling-ancestor-clip-size-expected.txt: Removed.
+        * platform/ipad-12/fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor-expected.txt: Removed.
+        * platform/ipad-12/fast/viewport/ios/width-is-device-width-overflowing-body-overflow-hidden-tall-expected.txt: Removed.
+        * platform/ipad-12/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Removed.
+        * platform/ipad-12/scrollingcoordinator/ios/ui-scrolling-tree-expected.txt: Removed.
+
 2020-07-22  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] canPlayType with 'codecs' parameter should never return "maybe"
