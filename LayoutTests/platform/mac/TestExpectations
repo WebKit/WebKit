@@ -1931,3 +1931,5 @@ webkit.org/b/214498 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Pas
 
 webkit.org/b/214512 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit-validate-fixup.html [ Failure ]
 
+webkit.org/b/214643 imported/w3c/web-platform-tests/css/css-pseudo/marker-hit-testing.html [ Pass Failure ]
+
