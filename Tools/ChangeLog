@@ -1,3 +1,12 @@
+2020-07-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Remove version.py
+        https://bugs.webkit.org/show_bug.cgi?id=214580
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/common/version.py: Removed.
+
 2020-07-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] ITP: use the database store unconditionally
