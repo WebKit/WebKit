@@ -1,3 +1,33 @@
+2020-07-22  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] WebKit::ObjCObjectGraph::decode() and encode() should use enum ObjCType type
+        <https://webkit.org/b/214618>
+        <rdar://problem/65777899>
+
+        Reviewed by Youenn Fablet.
+
+        * Shared/mac/ObjCObjectGraph.h:
+        - Drive-by fix to use #pragma once.  This is included in some
+          plain C++ source files.
+
+        * Shared/mac/ObjCObjectGraph.mm:
+        (WebKit::ObjCType):
+        - Move enum definition to the top of the file so that the
+          EnumTraits<> can be defined after it, but before it's used.
+        (WTF::EnumTraits<WebKit::ObjCType>): Add.
+        - Define so that IPC::Decoder and IPC::Encoder can validate enum
+          values.
+        (WebKit::ObjCObjectGraph::encode):
+        - Encode using WebKit::ObjCType value.
+        - Add ObjCType::Null label so that default: label can be
+          removed.  Change break statements to early return statements.
+        - Move ASSERT_NOT_REACHED() to the end of the method.
+        (WebKit::ObjCObjectGraph::decode):
+        - Decode using WebKit::ObjCType value.
+        - Change break statements to early return statements.
+        - Remove default: label, and move `return false` to the end of
+          the method.  Add ASSERT_NOT_REACHED().
+
 2020-07-22  Megan Gardner  <megan_gardner@apple.com>
 
         Tapped DataDetected links present sub-menus from the wrong location.
