@@ -189,6 +189,10 @@
 #include "AudioSessionRoutingArbitrator.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <WebCore/VP9UtilitiesCocoa.h>
+#endif
+
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
@@ -1955,6 +1959,10 @@ void WebProcess::enableVP9Decoder()
 
     m_vp9DecoderEnabled = true;
     LibWebRTCProvider::registerWebKitVP9Decoder();
+
+#if PLATFORM(COCOA)
+    WebCore::registerSupplementalVP9Decoder();
+#endif
 }
 
 } // namespace WebKit
