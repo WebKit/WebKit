@@ -1,3 +1,63 @@
+2020-07-22  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Implement multiple render target entry points
+        https://bugs.webkit.org/show_bug.cgi?id=211156
+
+        Reviewed by Dean Jackson.
+
+        Implement the drawBuffers and clearBuffer entry points.
+
+        Integrate the clearBuffer APIs with preserveDrawingBuffer:false's
+        auto-clearing. Move some auto-clearing state from
+        WebGLRenderingContextBase to GraphicsContextGL and
+        GraphicsContextGLOpenGL.
+
+        Rename setPreserveDrawingBuffer to enablePreserveDrawingBuffer to
+        make it clear that arbitrary changes of preserveDrawingBuffer are
+        not supported. setPreserveDrawingBuffer was previously added for
+        capture of preserveDrawingBuffer:false WebGL canvases.
+
+        Covered by existing WebGL conformance tests and canvas capture
+        layout tests.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasChanged):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::drawBuffers):
+        (WebCore::WebGL2RenderingContext::clearBufferiv):
+        (WebCore::WebGL2RenderingContext::clearBufferuiv):
+        (WebCore::WebGL2RenderingContext::clearBufferfv):
+        (WebCore::WebGL2RenderingContext::clearBufferfi):
+        (WebCore::WebGL2RenderingContext::validateClearBuffer):
+        (WebCore::WebGL2RenderingContext::updateBuffersToAutoClear):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::drawBuffersIfNecessary):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::clearIfComposited):
+        (WebCore::WebGLRenderingContextBase::enablePreserveDrawingBuffer):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::setPreserveDrawingBuffer): Deleted.
+        * platform/graphics/GraphicsContextGL.cpp:
+        (WebCore::GraphicsContextGL::enablePreserveDrawingBuffer):
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::markLayerComposited):
+        (WebCore::GraphicsContextGLOpenGL::drawBuffers):
+        (WebCore::GraphicsContextGLOpenGL::clearBufferiv):
+        (WebCore::GraphicsContextGLOpenGL::clearBufferuiv):
+        (WebCore::GraphicsContextGLOpenGL::clearBufferfv):
+        (WebCore::GraphicsContextGLOpenGL::clearBufferfi):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        (WebCore::GraphicsContextGLOpenGL::resetBuffersToAutoClear):
+        (WebCore::GraphicsContextGLOpenGL::setBuffersToAutoClear):
+        (WebCore::GraphicsContextGLOpenGL::getBuffersToAutoClear const):
+        (WebCore::GraphicsContextGLOpenGL::enablePreserveDrawingBuffer):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+        (WebCore::GraphicsContextGLOpenGL::markLayerComposited):
+        (WebCore::GraphicsContextGLOpenGL::drawBuffers):
+
 2020-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Article headlines are split across multiple lines after translating tagesschau.de

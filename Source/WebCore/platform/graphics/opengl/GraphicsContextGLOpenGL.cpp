@@ -271,6 +271,42 @@ GraphicsContextGL::DataFormat getDataFormat(GCGLenum destinationFormat, GCGLenum
 
 } // anonymous namespace
 
+void GraphicsContextGLOpenGL::resetBuffersToAutoClear()
+{
+    GCGLuint buffers = GraphicsContextGL::COLOR_BUFFER_BIT;
+    // The GraphicsContextGL's attributes (as opposed to
+    // WebGLRenderingContext's) indicate whether there is an
+    // implicitly-allocated stencil buffer, for example.
+    auto attrs = contextAttributes();
+    if (attrs.depth)
+        buffers |= GraphicsContextGL::DEPTH_BUFFER_BIT;
+    if (attrs.stencil)
+        buffers |= GraphicsContextGL::STENCIL_BUFFER_BIT;
+    setBuffersToAutoClear(buffers);
+}
+
+void GraphicsContextGLOpenGL::setBuffersToAutoClear(GCGLbitfield buffers)
+{
+    auto attrs = contextAttributes();
+    if (!attrs.preserveDrawingBuffer)
+        m_buffersToAutoClear = buffers;
+    else
+        ASSERT(!m_buffersToAutoClear);
+}
+
+GCGLbitfield GraphicsContextGLOpenGL::getBuffersToAutoClear() const
+{
+    return m_buffersToAutoClear;
+}
+
+void GraphicsContextGLOpenGL::enablePreserveDrawingBuffer()
+{
+    GraphicsContextGL::enablePreserveDrawingBuffer();
+    // After dynamically transitioning to preserveDrawingBuffer:true
+    // for canvas capture, clear out any buffer auto-clearing state.
+    m_buffersToAutoClear = 0;
+}
+
 bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint unpackAlignment)
 {
     ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);

@@ -40,6 +40,13 @@ GraphicsContextGL::GraphicsContextGL(GraphicsContextGLAttributes attrs, Destinat
 {
 }
 
+void GraphicsContextGL::enablePreserveDrawingBuffer()
+{
+    // Canvas capture should not call this unless necessary.
+    ASSERT(!m_attrs.preserveDrawingBuffer);
+    m_attrs.preserveDrawingBuffer = true;
+}
+
 unsigned GraphicsContextGL::getClearBitsByAttachmentType(GCGLenum attachment)
 {
     switch (attachment) {

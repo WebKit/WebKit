@@ -621,31 +621,31 @@ void WebGLFramebuffer::drawBuffers(const Vector<GCGLenum>& bufs)
 
 void WebGLFramebuffer::drawBuffersIfNecessary(bool force)
 {
-#if ENABLE(WEBGL2)
-    // FIXME: The logic here seems wrong. If we don't have WebGL 2 enabled at all, then
-    // we skip the m_webglDrawBuffers check. But if we do have WebGL 2 enabled, then we
-    // perform this check, for WebGL 1 contexts only.
-    if (!context()->m_webglDrawBuffers && !context()->isWebGL2())
-        return;
-#endif
-    bool reset = force;
-    // This filtering works around graphics driver bugs on Mac OS X.
-    for (size_t i = 0; i < m_drawBuffers.size(); ++i) {
-        if (m_drawBuffers[i] != GraphicsContextGL::NONE && getAttachment(m_drawBuffers[i])) {
-            if (m_filteredDrawBuffers[i] != m_drawBuffers[i]) {
-                m_filteredDrawBuffers[i] = m_drawBuffers[i];
-                reset = true;
-            }
-        } else {
-            if (m_filteredDrawBuffers[i] != GraphicsContextGL::NONE) {
-                m_filteredDrawBuffers[i] = GraphicsContextGL::NONE;
-                reset = true;
+    if (context()->isWebGL2() || context()->m_webglDrawBuffers) {
+        bool reset = force;
+        // This filtering works around graphics driver bugs on macOS.
+        for (size_t i = 0; i < m_drawBuffers.size(); ++i) {
+            if (m_drawBuffers[i] != GraphicsContextGL::NONE && getAttachment(m_drawBuffers[i])) {
+                if (m_filteredDrawBuffers[i] != m_drawBuffers[i]) {
+                    m_filteredDrawBuffers[i] = m_drawBuffers[i];
+                    reset = true;
+                }
+            } else {
+                if (m_filteredDrawBuffers[i] != GraphicsContextGL::NONE) {
+                    m_filteredDrawBuffers[i] = GraphicsContextGL::NONE;
+                    reset = true;
+                }
             }
         }
-    }
-    if (reset) {
-        context()->graphicsContextGL()->getExtensions().drawBuffersEXT(
-            m_filteredDrawBuffers.size(), m_filteredDrawBuffers.data());
+        if (reset) {
+            if (context()->isWebGL2()) {
+                context()->graphicsContextGL()->drawBuffers(
+                    m_filteredDrawBuffers.size(), m_filteredDrawBuffers.data());
+            } else {
+                context()->graphicsContextGL()->getExtensions().drawBuffersEXT(
+                    m_filteredDrawBuffers.size(), m_filteredDrawBuffers.data());
+            }
+        }
     }
 }
 

@@ -433,7 +433,7 @@ public:
 
     void drawRangeElements(GCGLenum mode, GCGLuint start, GCGLuint end, GCGLsizei count, GCGLenum type, GCGLintptr offset) final;
 
-    void drawBuffers(const Vector<GCGLenum>& buffers) final;
+    void drawBuffers(GCGLsizei n, const GCGLenum* bufs) final;
     void clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, const GCGLint* values, GCGLuint srcOffset) final;
     void clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer, const GCGLuint* values, GCGLuint srcOffset) final;
     void clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, const GCGLfloat* values, GCGLuint srcOffset) final;
@@ -522,6 +522,14 @@ public:
     bool layerComposited() const;
     void forceContextLost();
     void recycleContext();
+
+    // Maintenance of auto-clearing of color/depth/stencil buffers. The
+    // reset method is present to keep calling code simpler, so it
+    // doesn't have to know which buffers were allocated.
+    void resetBuffersToAutoClear();
+    void setBuffersToAutoClear(GCGLbitfield);
+    GCGLbitfield getBuffersToAutoClear() const;
+    void enablePreserveDrawingBuffer() override;
 
     void dispatchContextChangedNotification();
     void simulateContextChanged();
@@ -863,6 +871,11 @@ private:
     // Attaches m_texture when m_preserveDrawingBufferTexture is non-zero.
     GCGLuint m_preserveDrawingBufferFBO { 0 };
 #endif
+
+    // A bitmask of GL buffer bits (GL_COLOR_BUFFER_BIT,
+    // GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT) which need to be
+    // auto-cleared.
+    GCGLbitfield m_buffersToAutoClear { 0 };
 
     // Errors raised by synthesizeGLError().
     ListHashSet<GCGLenum> m_syntheticErrors;
