@@ -1,5 +1,11 @@
 2020-07-22  Jer Noble  <jer.noble@apple.com>
 
+        Further unreviewed build fix after r264710; need more HAVE_AVPLAYER_VIDEORANGEOVERRIDE guards.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+
+2020-07-22  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed build fix after r264710; add a HAVE_AVPLAYER_VIDEORANGEOVERRIDE guard.
 
         * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:

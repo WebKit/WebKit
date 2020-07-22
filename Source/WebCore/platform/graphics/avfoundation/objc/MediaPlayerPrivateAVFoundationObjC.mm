@@ -877,6 +877,7 @@ void MediaPlayerPrivateAVFoundationObjC::setAVPlayerItem(AVPlayerItem *item)
     });
 }
 
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
 static NSString* convertDynamicRangeModeEnumToAVVideoRange(DynamicRangeMode mode)
 {
     switch (mode) {
@@ -895,6 +896,7 @@ static NSString* convertDynamicRangeModeEnumToAVVideoRange(DynamicRangeMode mode
     ASSERT_NOT_REACHED();
     return nil;
 }
+#endif
 
 void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 {
