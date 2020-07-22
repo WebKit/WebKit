@@ -203,7 +203,9 @@ bool WebChromeClient::showDataDetectorsUIForElement(const Element& element, cons
 
     // FIXME: Ideally, we would be able to generate InteractionInformationAtPosition without re-hit-testing the element.
     auto& mouseEvent = downcast<MouseEvent>(event);
-    auto positionInformation = m_page.positionInformation(InteractionInformationRequest { roundedIntPoint(mouseEvent.locationInRootViewCoordinates()) });
+    auto request = InteractionInformationRequest { roundedIntPoint(mouseEvent.locationInRootViewCoordinates()) };
+    request.includeLinkIndicator = true;
+    auto positionInformation = m_page.positionInformation(request);
     m_page.send(Messages::WebPageProxy::ShowDataDetectorsUIForPositionInformation(positionInformation));
     return true;
 }

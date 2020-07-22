@@ -1,3 +1,21 @@
+2020-07-22  Megan Gardner  <megan_gardner@apple.com>
+
+        Tapped DataDetected links present sub-menus from the wrong location.
+        https://bugs.webkit.org/show_bug.cgi?id=214628
+        <rdar://problem/64808642>
+
+        When getting the positionInformation associated with presenting DataDetectors UI
+        we were not indicating that we need the linkIndicator data. This caused the
+        resulting CGRect to not be filled out, and we were returning a zeroed out CGRect
+        to the DataDetectors framework for the location that it should present the subMenu from.
+        Setting this bit ensures that all the necessary data is calculated and returned
+        when a DataDetector link is tapped.
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::showDataDetectorsUIForElement):
+
 2020-07-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] ITP: use the database store unconditionally
