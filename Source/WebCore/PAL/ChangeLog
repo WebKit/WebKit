@@ -1,3 +1,9 @@
+2020-07-22  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix internal build with very recent SDKs.
+
+        * pal/spi/cocoa/LaunchServicesSPI.h:
+
 2020-07-22  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r264710; add a HAVE_AVPLAYER_VIDEORANGEOVERRIDE guard.
