@@ -1,5 +1,23 @@
 2020-07-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r264693. rdar://problem/65944676
+
+    Unreviewed build fix after r264685; copy headers to the correct path during a DEPLOYMENT_LOCATION build.
+    
+    * Configurations/libwebm.xcconfig:
+    * libwebrtc.xcodeproj/project.pbxproj:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@264693 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-07-21  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix after r264685; copy headers to the correct path during a DEPLOYMENT_LOCATION build.
+
+            * Configurations/libwebm.xcconfig:
+            * libwebrtc.xcodeproj/project.pbxproj:
+
+2020-07-22  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r264685. rdar://problem/65944676
 
     [Cocoa] Add experimental MSE WebM parser
