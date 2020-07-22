@@ -81,13 +81,8 @@ void DeferredWorkTimer::doWork(VM& vm)
         }
     }
 
-    if (m_pendingTickets.isEmpty() && m_shouldStopRunLoopWhenAllTicketsFinish) {
-#if USE(CF)
-        CFRunLoopStop(vm.runLoop());
-#else
+    if (m_pendingTickets.isEmpty() && m_shouldStopRunLoopWhenAllTicketsFinish)
         RunLoop::current().stop();
-#endif
-    }
 
     m_taskLock.unlock();
 }
@@ -95,17 +90,10 @@ void DeferredWorkTimer::doWork(VM& vm)
 void DeferredWorkTimer::runRunLoop()
 {
     ASSERT(!m_apiLock->vm()->currentThreadIsHoldingAPILock());
-#if USE(CF)
-    ASSERT(CFRunLoopGetCurrent() == m_apiLock->vm()->runLoop());
-#endif
+    ASSERT(&RunLoop::current() == &m_apiLock->vm()->runLoop());
     m_shouldStopRunLoopWhenAllTicketsFinish = true;
-    if (m_pendingTickets.size()) {
-#if USE(CF)
-        CFRunLoopRun();
-#else
+    if (m_pendingTickets.size())
         RunLoop::run();
-#endif
-    }
 }
 
 void DeferredWorkTimer::addPendingWork(VM& vm, Ticket ticket, Vector<Strong<JSCell>>&& dependencies)

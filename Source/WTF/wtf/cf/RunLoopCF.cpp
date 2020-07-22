@@ -121,7 +121,7 @@ void RunLoop::TimerBase::start(Seconds interval, bool repeat)
 
         auto timer = static_cast<TimerBase*>(context);
         if (!CFRunLoopTimerDoesRepeat(cfTimer))
-            timer->stop();
+            CFRunLoopTimerInvalidate(cfTimer);
 
         timer->fired();
     }, this);

@@ -1,3 +1,36 @@
+2020-07-22  Geoffrey Garen  <ggaren@apple.com>
+
+        JSRunLoopTimer should use WTF::RunLoop rather than custom CF code
+        https://bugs.webkit.org/show_bug.cgi?id=214102
+
+        Unreviewed, re-landing r264242 with crash fixed.
+
+        We needed to synchronize timer destruction with timer firing.
+
+        * runtime/DeferredWorkTimer.cpp:
+        (JSC::DeferredWorkTimer::doWork):
+        (JSC::DeferredWorkTimer::runRunLoop):
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::epochTime):
+        (JSC::JSRunLoopTimer::Manager::PerVMData::PerVMData):
+        (JSC::JSRunLoopTimer::Manager::timerDidFireCallback):
+        (JSC::JSRunLoopTimer::Manager::PerVMData::~PerVMData):
+        (JSC::JSRunLoopTimer::Manager::timerDidFire):
+        (JSC::JSRunLoopTimer::Manager::registerVM):
+        (JSC::JSRunLoopTimer::Manager::scheduleTimer):
+        (JSC::JSRunLoopTimer::Manager::cancelTimer):
+        (JSC::JSRunLoopTimer::Manager::PerVMData::setRunLoop): Deleted.
+        (JSC::JSRunLoopTimer::Manager::didChangeRunLoop): Deleted.
+        * runtime/JSRunLoopTimer.h:
+        (JSC::JSRunLoopTimer::Manager::PerVMData::PerVMData): Deleted.
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::create):
+        (JSC::VM::tryCreate):
+        (JSC::VM::setRunLoop): Deleted.
+        * runtime/VM.h:
+        (JSC::VM::runLoop const):
+
 2020-07-21  Mark Lam  <mark.lam@apple.com>
 
         Simplify DisallowScope, DisallowGC, and DisallowVMReentry implementations.
