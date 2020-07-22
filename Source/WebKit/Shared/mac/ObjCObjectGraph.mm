@@ -33,7 +33,7 @@
 #import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"
-#import <wtf/OptionSet.h>
+#import <wtf/EnumTraits.h>
 #import <wtf/Optional.h>
 
 namespace WebKit {
