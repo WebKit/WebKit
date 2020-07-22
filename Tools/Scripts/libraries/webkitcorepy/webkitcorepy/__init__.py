@@ -21,4 +21,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitcorepy.version import Version
-version = Version(0, 0, 1)
+from webkitcorepy.string_utils import BytesIO, StringIO, UnicodeIO, unicode
+
+version = Version(0, 0, 2)
