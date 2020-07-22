@@ -1925,7 +1925,7 @@
 		FE533CA51F217DB30016A1FE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		FE533CA61F217DB30016A1FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		FE533CAD1F217EA50016A1FE /* testmasm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE533CA01F217C310016A1FE /* testmasm.cpp */; };
-		FE54DEFB1E8C6D8800A892C5 /* DisallowVMReentry.h in Headers */ = {isa = PBXBuildFile; fileRef = FE54DEFA1E8C6D7200A892C5 /* DisallowVMReentry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE54DEFB1E8C6D8800A892C5 /* DisallowVMEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = FE54DEFA1E8C6D7200A892C5 /* DisallowVMEntry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE54DEFF1E8D76FA00A892C5 /* DisallowScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE54DEFE1E8D742800A892C5 /* DisallowScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE5628CE1E99513200C49E45 /* AirPrintSpecial.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5628CC1E99512400C49E45 /* AirPrintSpecial.h */; };
 		FE5932A8183C5A2600A1ECCC /* VMEntryScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE5932A6183C5A2600A1ECCC /* VMEntryScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5225,8 +5225,7 @@
 		FE5068661AE25E280009DAB7 /* DeferredSourceDump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredSourceDump.cpp; sourceTree = "<group>"; };
 		FE533CA01F217C310016A1FE /* testmasm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = testmasm.cpp; sourceTree = "<group>"; };
 		FE533CAC1F217DB40016A1FE /* testmasm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testmasm; sourceTree = BUILT_PRODUCTS_DIR; };
-		FE54DEFA1E8C6D7200A892C5 /* DisallowVMReentry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisallowVMReentry.h; sourceTree = "<group>"; };
-		FE54DEFC1E8C6DFF00A892C5 /* DisallowVMReentry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisallowVMReentry.cpp; sourceTree = "<group>"; };
+		FE54DEFA1E8C6D7200A892C5 /* DisallowVMEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisallowVMEntry.h; sourceTree = "<group>"; };
 		FE54DEFE1E8D742800A892C5 /* DisallowScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisallowScope.h; sourceTree = "<group>"; };
 		FE5628CB1E99512400C49E45 /* AirPrintSpecial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirPrintSpecial.cpp; path = b3/air/AirPrintSpecial.cpp; sourceTree = "<group>"; };
 		FE5628CC1E99512400C49E45 /* AirPrintSpecial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirPrintSpecial.h; path = b3/air/AirPrintSpecial.h; sourceTree = "<group>"; };
@@ -7172,8 +7171,7 @@
 				14386A721DD69895008652C4 /* DirectEvalExecutable.cpp */,
 				14386A731DD69895008652C4 /* DirectEvalExecutable.h */,
 				FE54DEFE1E8D742800A892C5 /* DisallowScope.h */,
-				FE54DEFC1E8C6DFF00A892C5 /* DisallowVMReentry.cpp */,
-				FE54DEFA1E8C6D7200A892C5 /* DisallowVMReentry.h */,
+				FE54DEFA1E8C6D7200A892C5 /* DisallowVMEntry.h */,
 				E31618101EC5FE080006A218 /* DOMAnnotation.h */,
 				E31618111EC5FE080006A218 /* DOMAttributeGetterSetter.cpp */,
 				E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */,
@@ -9528,7 +9526,7 @@
 				14386A751DD69895008652C4 /* DirectEvalExecutable.h in Headers */,
 				0F37308F1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h in Headers */,
 				FE54DEFF1E8D76FA00A892C5 /* DisallowScope.h in Headers */,
-				FE54DEFB1E8C6D8800A892C5 /* DisallowVMReentry.h in Headers */,
+				FE54DEFB1E8C6D8800A892C5 /* DisallowVMEntry.h in Headers */,
 				0FF42731158EBD54004CB9FF /* Disassembler.h in Headers */,
 				E31618131EC5FE170006A218 /* DOMAnnotation.h in Headers */,
 				E31618151EC5FE270006A218 /* DOMAttributeGetterSetter.h in Headers */,

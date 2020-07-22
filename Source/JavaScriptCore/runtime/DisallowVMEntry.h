@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,36 @@
 
 #pragma once
 
-#include "DisallowScope.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/ThreadSpecific.h>
-
 namespace JSC {
 
-class DisallowVMReentry : public DisallowScope<DisallowVMReentry> {
-    WTF_MAKE_NONCOPYABLE(DisallowVMReentry);
-    typedef DisallowScope<DisallowVMReentry> Base;
+class VM;
+
+// The only reason we implement DisallowVMEntry as specialization of a template
+// is so that we can work around having to #include VM.h, which can hurt build
+// time. This defers the cost of #include'ing VM.h to only the clients that
+// need it.
+
+template<typename VMType = VM>
+class DisallowVMEntryImpl {
+    WTF_MAKE_NONCOPYABLE(DisallowVMEntryImpl);
 public:
-#ifdef NDEBUG
-
-    ALWAYS_INLINE DisallowVMReentry(bool = false) { }
-    ALWAYS_INLINE static void initialize() { }
-
-#else // not NDEBUG
-
-    DisallowVMReentry(bool enabled = true)
-        : Base(enabled)
-    { }
-
-    static void initialize()
+    DisallowVMEntryImpl(VMType& vm)
+        : m_vm(&vm)
     {
-        s_scopeReentryCount.construct();
+        m_vm->disallowVMEntryCount++;
+    }
+
+    ~DisallowVMEntryImpl()
+    {
+        RELEASE_ASSERT(m_vm->disallowVMEntryCount);
+        m_vm->disallowVMEntryCount--;
+        m_vm = nullptr;
     }
 
 private:
-    static unsigned scopeReentryCount()
-    {
-        return *s_scopeReentryCount.get();
-    }
-    static void setScopeReentryCount(unsigned value)
-    {
-        *s_scopeReentryCount.get() = value;
-    }
-
-    JS_EXPORT_PRIVATE static LazyNeverDestroyed<ThreadSpecific<unsigned, WTF::CanBeGCThread::True>> s_scopeReentryCount;
-
-#endif // NDEBUG
-
-    friend class DisallowScope<DisallowVMReentry>;
+    VMType* m_vm;
 };
+
+using DisallowVMEntry = DisallowVMEntryImpl<VM>;
 
 } // namespace JSC

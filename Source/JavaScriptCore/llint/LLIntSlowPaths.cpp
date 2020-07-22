@@ -2316,6 +2316,16 @@ extern "C" void llint_write_barrier_slow(CallFrame* callFrame, JSCell* cell)
     vm.heap.writeBarrier(cell);
 }
 
+extern "C" SlowPathReturnType llint_check_vm_entry_permission(VM* vm, ProtoCallFrame*)
+{
+    ASSERT_UNUSED(vm, vm->disallowVMEntryCount);
+    if (Options::crashOnDisallowedVMEntry())
+        CRASH();
+
+    // Else return, and let doVMEntry return undefined.
+    return encodeResult(nullptr, nullptr);
+}
+
 extern "C" void llint_dump_value(EncodedJSValue value);
 extern "C" void llint_dump_value(EncodedJSValue value)
 {

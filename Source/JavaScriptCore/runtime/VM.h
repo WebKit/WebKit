@@ -35,6 +35,7 @@
 #include "ControlFlowProfiler.h"
 #include "DateInstanceCache.h"
 #include "DeleteAllCodeEffort.h"
+#include "DisallowVMEntry.h"
 #include "ExceptionEventLocation.h"
 #include "ExecutableAllocator.h"
 #include "FunctionHasExecutedCache.h"
@@ -952,6 +953,7 @@ public:
     bool hasCheckpointOSRSideState() const { return m_checkpointSideState.size(); }
     void scanSideState(ConservativeRoots&) const;
 
+    unsigned disallowVMEntryCount { 0 };
     VMEntryScope* entryScope;
 
     JSObject* stringRecursionCheckFirstObject { nullptr };

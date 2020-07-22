@@ -1,5 +1,102 @@
 2020-07-21  Mark Lam  <mark.lam@apple.com>
 
+        Simplify DisallowScope, DisallowGC, and DisallowVMReentry implementations.
+        https://bugs.webkit.org/show_bug.cgi?id=214539
+        <rdar://problem/65795729>
+
+        Reviewed by Keith Miller.
+
+        Previously, DisallowScope needed to support enabling and disabling.  This was
+        only needed to enable the implementation of ObjectInitializationScope.  Now, we
+        can make the DisallowGC and DisallowVMReentry inside ObjectInitializationScope
+        optional with WTF::Optional.  With that we can simplify these scopes and make
+        them true RAII scope objects.
+
+        This patch also does the following:
+
+        1. Renamed DisallowVMReentry to DisallowVMEntry.
+           The scope can be used to disable VM entry completely.  There's no need to
+           restrict it to only re-entries.
+
+        2. Enforcement of DisallowVMReentry is now done in the LLInt's doVMEntry() instead
+           of the VMEntryScope's constructor.  This is a stronger guarantee.
+
+           If Options::crashOnDisallowedVMEntry() is true, the VM will crash if it sees
+           an attempt to enter the VM while disallowed.
+
+           If Options::crashOnDisallowedVMEntry() is false, an attempt to call into the VM
+           while disallowed will return immediately with an undefined result without
+           invoking any script.
+
+           By default, Options::crashOnDisallowedVMEntry() is true if ASSERT_ENABLED is
+           true.
+
+        3. Change DisallowScope and DisallowGC to be based on ASSERT_ENABLED instead of NEBUG.
+
+        4. Make DisallowVMEntry always enforceable, not just when ASSERT_ENABLED.
+           It's enforcement action depends on Options::crashOnDisallowedVMEntry() as
+           described above.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/DeferGC.cpp:
+        * heap/DeferGC.h:
+        (JSC::DisallowGC::DisallowGC):
+        (JSC::DisallowGC::initialize):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_check_vm_entry_permission):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/DisallowScope.h:
+        (JSC::DisallowScope::DisallowScope):
+        (JSC::DisallowScope::~DisallowScope):
+        (JSC::DisallowScope::isInEffectOnCurrentThread):
+        (JSC::DisallowScope::enable): Deleted.
+        (JSC::DisallowScope::disable): Deleted.
+        (JSC::DisallowScope::enterScope): Deleted.
+        (JSC::DisallowScope::exitScope): Deleted.
+        * runtime/DisallowVMEntry.h: Copied from Source/JavaScriptCore/runtime/DisallowVMReentry.h.
+        (JSC::DisallowVMEntryImpl::DisallowVMEntryImpl):
+        (JSC::DisallowVMEntryImpl::~DisallowVMEntryImpl):
+        (JSC::DisallowVMEntryImpl::isEngaged const):
+        (JSC::DisallowVMEntryImpl::release):
+        (JSC::DisallowVMReentry::DisallowVMReentry): Deleted.
+        (JSC::DisallowVMReentry::initialize): Deleted.
+        (JSC::DisallowVMReentry::scopeReentryCount): Deleted.
+        (JSC::DisallowVMReentry::setScopeReentryCount): Deleted.
+        * runtime/DisallowVMReentry.cpp: Removed.
+        * runtime/DisallowVMReentry.h: Removed.
+        * runtime/InitializeThreading.cpp:
+        (JSC::initialize):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        * runtime/ObjectInitializationScope.cpp:
+        (JSC::ObjectInitializationScope::ObjectInitializationScope):
+        (JSC::ObjectInitializationScope::notifyAllocated):
+        (JSC::ObjectInitializationScope::notifyInitialized):
+        * runtime/ObjectInitializationScope.h:
+        (JSC::ObjectInitializationScope::vm const):
+        (JSC::ObjectInitializationScope::ObjectInitializationScope):
+        (JSC::ObjectInitializationScope::~ObjectInitializationScope):
+        (JSC::ObjectInitializationScope::notifyAllocated):
+        (JSC::ObjectInitializationScope::notifyInitialized):
+        * runtime/OptionsList.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        * runtime/VM.h:
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+
+2020-07-21  Mark Lam  <mark.lam@apple.com>
+
         llint_slow_path_get_private_name() should not be using PropertySlot::InternalMethodType::VMInquiry.
         https://bugs.webkit.org/show_bug.cgi?id=214603
 

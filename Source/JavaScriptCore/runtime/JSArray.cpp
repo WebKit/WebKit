@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -96,8 +96,7 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
 
     JSArray* result = createWithButterfly(vm, deferralContext, structure, butterfly);
 
-    const bool createUninitialized = true;
-    scope.notifyAllocated(result, createUninitialized);
+    scope.notifyAllocated(result);
     return result;
 }
 

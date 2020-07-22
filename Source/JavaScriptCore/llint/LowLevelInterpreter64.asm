@@ -166,6 +166,9 @@ macro doVMEntry(makeCall)
 
     checkStackPointerAlignment(t4, 0xbad0dc01)
 
+    loadi VM::disallowVMEntryCount[vm], t4
+    btinz t4, .checkVMEntryPermission
+
     storep vm, VMEntryRecord::m_vm[sp]
     loadp VM::topCallFrame[vm], t4
     storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
@@ -281,6 +284,17 @@ macro doVMEntry(makeCall)
 
     subp cfr, CalleeRegisterSaveSize, sp
 
+    popCalleeSaves()
+    functionEpilogue()
+    ret
+
+.checkVMEntryPermission:
+    move vm, a0
+    move protoCallFrame, a1
+    cCall2(_llint_check_vm_entry_permission)
+    move ValueUndefined, r0
+
+    subp cfr, CalleeRegisterSaveSize, sp
     popCalleeSaves()
     functionEpilogue()
     ret

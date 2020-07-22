@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -825,15 +825,15 @@ failedJSONP:
         ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
     }
 
-    DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
-
-    RefPtr<JITCode> jitCode = program->generatedJITCode();
-
+    RefPtr<JITCode> jitCode;
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, globalObject, globalCallee, thisObj, 1);
+    {
+        DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+        jitCode = program->generatedJITCode();
+        protoCallFrame.init(codeBlock, globalObject, globalCallee, thisObj, 1);
+    }
 
     // Execute the code:
-    disallowGC.disable();
     throwScope.release();
     ASSERT(jitCode == program->generatedJITCode().ptr());
     JSValue result = jitCode->execute(&vm, &protoCallFrame);
@@ -890,27 +890,24 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
         newCodeBlock->m_shouldAlwaysBeInlined = false;
     }
 
-    DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
-
     RefPtr<JITCode> jitCode;
-    if (isJSCall)
-        jitCode = callData.js.functionExecutable->generatedJITCodeForCall();
-
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(newCodeBlock, globalObject, function, thisValue, argsCount, args.data());
+    {
+        DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+        if (isJSCall)
+            jitCode = callData.js.functionExecutable->generatedJITCodeForCall();
+        protoCallFrame.init(newCodeBlock, globalObject, function, thisValue, argsCount, args.data());
+    }
 
     JSValue result;
-    {
-        // Execute the code:
-        disallowGC.disable();
-        if (isJSCall) {
-            throwScope.release();
-            ASSERT(jitCode == callData.js.functionExecutable->generatedJITCodeForCall().ptr());
-            result = jitCode->execute(&vm, &protoCallFrame);
-        } else {
-            result = JSValue::decode(vmEntryToNative(callData.native.function.rawPointer(), &vm, &protoCallFrame));
-            RETURN_IF_EXCEPTION(throwScope, JSValue());
-        }
+    // Execute the code:
+    if (isJSCall) {
+        throwScope.release();
+        ASSERT(jitCode == callData.js.functionExecutable->generatedJITCodeForCall().ptr());
+        result = jitCode->execute(&vm, &protoCallFrame);
+    } else {
+        result = JSValue::decode(vmEntryToNative(callData.native.function.rawPointer(), &vm, &protoCallFrame));
+        RETURN_IF_EXCEPTION(throwScope, JSValue());
     }
 
     return checkedReturn(result);
@@ -972,28 +969,25 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
         newCodeBlock->m_shouldAlwaysBeInlined = false;
     }
 
-    DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
-
     RefPtr<JITCode> jitCode;
-    if (isJSConstruct)
-        jitCode = constructData.js.functionExecutable->generatedJITCodeForConstruct();
-
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(newCodeBlock, globalObject, constructor, newTarget, argsCount, args.data());
+    {
+        DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+        if (isJSConstruct)
+            jitCode = constructData.js.functionExecutable->generatedJITCodeForConstruct();
+        protoCallFrame.init(newCodeBlock, globalObject, constructor, newTarget, argsCount, args.data());
+    }
 
     JSValue result;
-    {
-        // Execute the code.
-        disallowGC.disable();
-        if (isJSConstruct) {
-            ASSERT(jitCode == constructData.js.functionExecutable->generatedJITCodeForConstruct().ptr());
-            result = jitCode->execute(&vm, &protoCallFrame);
-        } else {
-            result = JSValue::decode(vmEntryToNative(constructData.native.function.rawPointer(), &vm, &protoCallFrame));
+    // Execute the code.
+    if (isJSConstruct) {
+        ASSERT(jitCode == constructData.js.functionExecutable->generatedJITCodeForConstruct().ptr());
+        result = jitCode->execute(&vm, &protoCallFrame);
+    } else {
+        result = JSValue::decode(vmEntryToNative(constructData.native.function.rawPointer(), &vm, &protoCallFrame));
 
-            if (LIKELY(!throwScope.exception()))
-                RELEASE_ASSERT(result.isObject());
-        }
+        if (LIKELY(!throwScope.exception()))
+            RELEASE_ASSERT(result.isObject());
     }
 
     RETURN_IF_EXCEPTION(throwScope, nullptr);
@@ -1193,15 +1187,15 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
         ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
     }
 
-    DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
-
-    RefPtr<JITCode> jitCode = eval->generatedJITCode();
-
+    RefPtr<JITCode> jitCode;
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, globalObject, callee, thisValue, 1);
+    {
+        DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+        jitCode = eval->generatedJITCode();
+        protoCallFrame.init(codeBlock, globalObject, callee, thisValue, 1);
+    }
 
     // Execute the code:
-    disallowGC.disable();
     throwScope.release();
     ASSERT(jitCode == eval->generatedJITCode().ptr());
     JSValue result = jitCode->execute(&vm, &protoCallFrame);
@@ -1251,18 +1245,18 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, J
         ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.
     }
 
-    DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
-
-    RefPtr<JITCode> jitCode = executable->generatedJITCode();
-
-    // The |this| of the module is always `undefined`.
-    // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-hasthisbinding
-    // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-getthisbinding
+    RefPtr<JITCode> jitCode;
     ProtoCallFrame protoCallFrame;
-    protoCallFrame.init(codeBlock, globalObject, callee, jsUndefined(), 1);
+    {
+        DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+        jitCode = executable->generatedJITCode();
+        // The |this| of the module is always `undefined`.
+        // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-hasthisbinding
+        // http://www.ecma-international.org/ecma-262/6.0/#sec-module-environment-records-getthisbinding
+        protoCallFrame.init(codeBlock, globalObject, callee, jsUndefined(), 1);
+    }
 
     // Execute the code:
-    disallowGC.disable();
     throwScope.release();
     ASSERT(jitCode == executable->generatedJITCode().ptr());
     JSValue result = jitCode->execute(&vm, &protoCallFrame);

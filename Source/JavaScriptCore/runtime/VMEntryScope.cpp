@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "config.h"
 #include "VMEntryScope.h"
 
-#include "DisallowVMReentry.h"
 #include "Options.h"
 #include "SamplingProfiler.h"
 #include "VM.h"
@@ -39,7 +38,6 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
     : m_vm(vm)
     , m_globalObject(globalObject)
 {
-    ASSERT(!DisallowVMReentry::isInEffectOnCurrentThread());
     if (!vm.entryScope) {
         vm.entryScope = this;
 

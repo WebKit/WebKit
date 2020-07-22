@@ -29,7 +29,6 @@
 #include "config.h"
 #include "InitializeThreading.h"
 
-#include "DisallowVMReentry.h"
 #include "ExecutableAllocator.h"
 #include "JSCConfig.h"
 #include "JSCPtrTag.h"
@@ -78,10 +77,8 @@ void initialize()
             enableSigillCrashAnalyzer();
 
         LLInt::initialize();
-#ifndef NDEBUG
         DisallowGC::initialize();
-        DisallowVMReentry::initialize();
-#endif
+
         initializeSuperSampler();
         Thread& thread = Thread::current();
         thread.setSavedLastStackTop(thread.stack().origin());

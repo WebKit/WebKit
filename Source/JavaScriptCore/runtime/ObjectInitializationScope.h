@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,36 @@
 #pragma once
 
 #include "DeferGC.h"
-#include "DisallowVMReentry.h"
+#include "DisallowVMEntry.h"
 #include "VM.h"
+#include <wtf/Optional.h>
 
 namespace JSC {
 
 class VM;
 class JSObject;
 
-#ifdef NDEBUG
+#if ASSERT_ENABLED
+
+class ObjectInitializationScope {
+public:
+    JS_EXPORT_PRIVATE ObjectInitializationScope(VM&);
+    JS_EXPORT_PRIVATE ~ObjectInitializationScope();
+
+    VM& vm() const { return m_vm; }
+    void notifyAllocated(JSObject*);
+    void notifyInitialized(JSObject*);
+
+private:
+    void verifyPropertiesAreInitialized(JSObject*);
+
+    VM& m_vm;
+    Optional<DisallowGC> m_disallowGC;
+    Optional<DisallowVMEntry> m_disallowVMEntry;
+    JSObject* m_object { nullptr };
+};
+
+#else // not ASSERT_ENABLED
 
 class ObjectInitializationScope {
 public:
@@ -47,33 +68,13 @@ public:
     }
 
     ALWAYS_INLINE VM& vm() const { return m_vm; }
-    ALWAYS_INLINE void notifyAllocated(JSObject*, bool) { }
+    ALWAYS_INLINE void notifyAllocated(JSObject*) { }
     ALWAYS_INLINE void notifyInitialized(JSObject*) { }
 
 private:
     VM& m_vm;
 };
 
-#else // not NDEBUG
-
-class ObjectInitializationScope {
-public:
-    JS_EXPORT_PRIVATE ObjectInitializationScope(VM&);
-    JS_EXPORT_PRIVATE ~ObjectInitializationScope();
-
-    VM& vm() const { return m_vm; }
-    void notifyAllocated(JSObject*, bool wasCreatedUninitialized);
-    void notifyInitialized(JSObject*);
-
-private:
-    void verifyPropertiesAreInitialized(JSObject*);
-
-    VM& m_vm;
-    DisallowGC m_disallowGC;
-    DisallowVMReentry m_disallowVMReentry;
-    JSObject* m_object { nullptr };
-};
-
-#endif // NDEBUG
+#endif // ASSERT_ENABLED
 
 } // namespace JSC

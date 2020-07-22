@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -170,6 +170,9 @@ macro doVMEntry(makeCall)
     # Since we have the guarantee that tX != aY when X != Y, we are safe from
     # aliasing problems with our arguments.
 
+    loadi VM::disallowVMEntryCount[vm], t4
+    btinz t4, .checkVMEntryPermission
+
     if ARMv7
         vmEntryRecord(cfr, t3)
         move t3, sp
@@ -316,6 +319,18 @@ macro doVMEntry(makeCall)
         subp cfr, CalleeRegisterSaveSize, sp
     end
 
+    popCalleeSaves()
+    functionEpilogue()
+    ret
+
+.checkVMEntryPermission:
+    move vm, a0
+    move protoCallFrame, a1
+    cCall2(_llint_check_vm_entry_permission)
+    move UndefinedTag, r0
+    move 0, r1
+
+    subp cfr, CalleeRegisterSaveSize, sp
     popCalleeSaves()
     functionEpilogue()
     ret
