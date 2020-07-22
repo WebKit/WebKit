@@ -23,25 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SourceBufferParser.h"
 
-#if PLATFORM(COCOA)
+#if ENABLE(MEDIA_SOURCE)
 
-#include "VP9Utilities.h"
+#include "ContentType.h"
+#include "SourceBufferParserAVFObjC.h"
+#include "SourceBufferParserWebM.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct MediaCapabilitiesInfo;
-struct VideoConfiguration;
+MediaPlayerEnums::SupportsType SourceBufferParser::isContentTypeSupported(const ContentType& type)
+{
+    MediaPlayerEnums::SupportsType supports = MediaPlayerEnums::SupportsType::IsNotSupported;
+    supports = std::max(supports, SourceBufferParserWebM::isContentTypeSupported(type));
+    supports = std::max(supports, SourceBufferParserAVFObjC::isContentTypeSupported(type));
+    return supports;
+}
 
-WEBCORE_EXPORT extern void setOverrideVP9HardwareDecoderDisabledForTesting(bool);
-WEBCORE_EXPORT extern void setOverrideVP9ScreenSizeAndScaleForTesting(float width, float height, float scale);
-WEBCORE_EXPORT extern void resetOverrideVP9ScreenSizeAndScaleForTesting();
+RefPtr<SourceBufferParser> SourceBufferParser::create(const ContentType& type)
+{
+    if (SourceBufferParserWebM::isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported)
+        return adoptRef(new SourceBufferParserWebM());
 
-WEBCORE_EXPORT extern void registerSupplementalVP9Decoder();
-extern bool isVP9DecoderAvailable();
-extern bool validateVPParameters(VPCodecConfigurationRecord&, MediaCapabilitiesInfo&, const VideoConfiguration&);
+    if (SourceBufferParserAVFObjC::isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported)
+        return adoptRef(new SourceBufferParserAVFObjC());
+
+    return nullptr;
+}
 
 }
 
-#endif
+#endif // ENABLE(MEDIA_SOURCE)

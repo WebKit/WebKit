@@ -54,24 +54,72 @@ static bool isValidVPLevel(uint8_t level)
     return std::binary_search(std::begin(validLevels), std::end(validLevels), level);
 }
 
-static bool isValidVPcolorPrimaries(uint8_t colorPrimaries)
+static bool isValidVPColorPrimaries(uint8_t colorPrimaries)
 {
     constexpr uint8_t validColorPrimaries[] = {
-        1,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        22,
+        VPConfigurationColorPrimaries::BT_709_6,
+        VPConfigurationColorPrimaries::Unspecified,
+        VPConfigurationColorPrimaries::BT_470_6_M,
+        VPConfigurationColorPrimaries::BT_470_7_BG,
+        VPConfigurationColorPrimaries::BT_601_7,
+        VPConfigurationColorPrimaries::SMPTE_ST_240,
+        VPConfigurationColorPrimaries::Film,
+        VPConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance,
+        VPConfigurationColorPrimaries::SMPTE_ST_428_1,
+        VPConfigurationColorPrimaries::SMPTE_RP_431_2,
+        VPConfigurationColorPrimaries::SMPTE_EG_432_1,
+        VPConfigurationColorPrimaries::EBU_Tech_3213_E,
     };
 
     ASSERT(std::is_sorted(std::begin(validColorPrimaries), std::end(validColorPrimaries)));
     return std::binary_search(std::begin(validColorPrimaries), std::end(validColorPrimaries), colorPrimaries);
+}
+
+static bool isValidVPTransferCharacteristics(uint8_t transferCharacteristics)
+{
+    constexpr uint8_t validTransferCharacteristics[] = {
+        VPConfigurationTransferCharacteristics::BT_709_6,
+        VPConfigurationTransferCharacteristics::Unspecified,
+        VPConfigurationTransferCharacteristics::BT_470_6_M,
+        VPConfigurationTransferCharacteristics::BT_470_7_BG,
+        VPConfigurationTransferCharacteristics::BT_601_7,
+        VPConfigurationTransferCharacteristics::SMPTE_ST_240,
+        VPConfigurationTransferCharacteristics::Linear,
+        VPConfigurationTransferCharacteristics::Logrithmic,
+        VPConfigurationTransferCharacteristics::Logrithmic_Sqrt,
+        VPConfigurationTransferCharacteristics::IEC_61966_2_4,
+        VPConfigurationTransferCharacteristics::BT_1361_0,
+        VPConfigurationTransferCharacteristics::IEC_61966_2_1,
+        VPConfigurationTransferCharacteristics::BT_2020_10bit,
+        VPConfigurationTransferCharacteristics::BT_2020_12bit,
+        VPConfigurationTransferCharacteristics::SMPTE_ST_2084,
+        VPConfigurationTransferCharacteristics::SMPTE_ST_428_1,
+        VPConfigurationTransferCharacteristics::BT_2100_HLG,
+    };
+    ASSERT(std::is_sorted(std::begin(validTransferCharacteristics), std::end(validTransferCharacteristics)));
+    return std::binary_search(std::begin(validTransferCharacteristics), std::end(validTransferCharacteristics), transferCharacteristics);
+}
+
+static bool isValidVPMatrixCoefficients(uint8_t matrixCoefficients)
+{
+    constexpr uint8_t validMatrixCoefficients[] = {
+        VPConfigurationMatrixCoefficients::Identity,
+        VPConfigurationMatrixCoefficients::BT_709_6,
+        VPConfigurationMatrixCoefficients::Unspecified,
+        VPConfigurationMatrixCoefficients::FCC,
+        VPConfigurationMatrixCoefficients::BT_470_7_BG,
+        VPConfigurationMatrixCoefficients::BT_601_7,
+        VPConfigurationMatrixCoefficients::SMPTE_ST_240,
+        VPConfigurationMatrixCoefficients::YCgCo,
+        VPConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance,
+        VPConfigurationMatrixCoefficients::BT_2020_Constant_Luminance,
+        VPConfigurationMatrixCoefficients::SMPTE_ST_2085,
+        VPConfigurationMatrixCoefficients::Chromacity_Constant_Luminance,
+        VPConfigurationMatrixCoefficients::Chromacity_Nonconstant_Luminance,
+        VPConfigurationMatrixCoefficients::BT_2100_ICC,
+    };
+    ASSERT(std::is_sorted(std::begin(validMatrixCoefficients), std::end(validMatrixCoefficients)));
+    return std::binary_search(std::begin(validMatrixCoefficients), std::end(validMatrixCoefficients), matrixCoefficients);
 }
 
 Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView)
@@ -140,7 +188,7 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
     // Fifth element: colorPrimaries. Legal values are defined by  ISO/IEC 23001-8:2016, superceded
     // by ISO/IEC 23091-2:2019.
     auto colorPrimaries = toIntegralType<uint8_t>(*nextElement);
-    if (!colorPrimaries || !isValidVPcolorPrimaries(*colorPrimaries))
+    if (!colorPrimaries || !isValidVPColorPrimaries(*colorPrimaries))
         return WTF::nullopt;
     configuration.colorPrimaries = *colorPrimaries;
 
@@ -150,7 +198,7 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
     // Sixth element: transferCharacteristics. Legal values are defined by  ISO/IEC 23001-8:2016, superceded
     // by ISO/IEC 23091-2:2019.
     auto transferCharacteristics = toIntegralType<uint8_t>(*nextElement);
-    if (!transferCharacteristics || (!*transferCharacteristics || *transferCharacteristics == 2 || *transferCharacteristics == 3 || *transferCharacteristics > 18))
+    if (!transferCharacteristics || !isValidVPTransferCharacteristics(*transferCharacteristics))
         return WTF::nullopt;
     configuration.transferCharacteristics = *transferCharacteristics;
 
@@ -160,7 +208,7 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
     // Seventh element: matrixCoefficients. Legal values are defined by  ISO/IEC 23001-8:2016, superceded
     // by ISO/IEC 23091-2:2019.
     auto matrixCoefficients = toIntegralType<uint8_t>(*nextElement);
-    if (!matrixCoefficients || (*matrixCoefficients == 2 || *matrixCoefficients == 3 || *matrixCoefficients > 14))
+    if (!matrixCoefficients || !isValidVPMatrixCoefficients(*matrixCoefficients))
         return WTF::nullopt;
     configuration.matrixCoefficients = *matrixCoefficients;
 

@@ -25,23 +25,31 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+#if ENABLE(MEDIA_SOURCE)
 
-#include "VP9Utilities.h"
+#include "VideoTrackPrivate.h"
+#include <webm/dom_types.h>
 
 namespace WebCore {
 
-struct MediaCapabilitiesInfo;
-struct VideoConfiguration;
+class VideoTrackPrivateWebM final : public VideoTrackPrivate {
+public:
+    static Ref<VideoTrackPrivateWebM> create(webm::TrackEntry&&);
+    virtual ~VideoTrackPrivateWebM() = default;
 
-WEBCORE_EXPORT extern void setOverrideVP9HardwareDecoderDisabledForTesting(bool);
-WEBCORE_EXPORT extern void setOverrideVP9ScreenSizeAndScaleForTesting(float width, float height, float scale);
-WEBCORE_EXPORT extern void resetOverrideVP9ScreenSizeAndScaleForTesting();
+    AtomString id() const final;
+    AtomString label() const final;
+    AtomString language() const final;
+    int trackIndex() const final;
 
-WEBCORE_EXPORT extern void registerSupplementalVP9Decoder();
-extern bool isVP9DecoderAvailable();
-extern bool validateVPParameters(VPCodecConfigurationRecord&, MediaCapabilitiesInfo&, const VideoConfiguration&);
+private:
+    VideoTrackPrivateWebM(webm::TrackEntry&&);
+    webm::TrackEntry m_track;
+    mutable AtomString m_trackID;
+    mutable AtomString m_label;
+    mutable AtomString m_language;
+};
 
 }
 
-#endif
+#endif // ENABLE(MEDIA_SOURCE)

@@ -391,6 +391,11 @@ public:
     bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+    void setWebMParserEnabled(bool isEnabled) { m_webMParserEnabled = isEnabled; }
+    bool webMParserEnabled() const { return m_webMParserEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures();
@@ -582,6 +587,10 @@ private:
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     bool m_incrementalPDFLoadingEnabled { false };
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    bool m_webMParserEnabled { false };
 #endif
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;

@@ -59,6 +59,60 @@ constexpr uint8_t VideoRange = 0;
 constexpr uint8_t FullRange = 1;
 }
 
+// Ref: ISO/IEC 23091-2:2019
+namespace VPConfigurationColorPrimaries {
+constexpr uint8_t BT_709_6 = 1;
+constexpr uint8_t Unspecified = 2;
+constexpr uint8_t BT_470_6_M = 4;
+constexpr uint8_t BT_470_7_BG = 5;
+constexpr uint8_t BT_601_7 = 6;
+constexpr uint8_t SMPTE_ST_240 = 7;
+constexpr uint8_t Film = 8;
+constexpr uint8_t BT_2020_Nonconstant_Luminance = 9;
+constexpr uint8_t SMPTE_ST_428_1 = 10;
+constexpr uint8_t SMPTE_RP_431_2 = 11;
+constexpr uint8_t SMPTE_EG_432_1 = 12;
+constexpr uint8_t EBU_Tech_3213_E = 22;
+}
+
+// Ref: ISO/IEC 23091-2:2019
+namespace VPConfigurationTransferCharacteristics {
+constexpr uint8_t BT_709_6 = 1;
+constexpr uint8_t Unspecified = 2;
+constexpr uint8_t BT_470_6_M = 4;
+constexpr uint8_t BT_470_7_BG = 5;
+constexpr uint8_t BT_601_7 = 6;
+constexpr uint8_t SMPTE_ST_240 = 7;
+constexpr uint8_t Linear = 8;
+constexpr uint8_t Logrithmic = 9;
+constexpr uint8_t Logrithmic_Sqrt = 10;
+constexpr uint8_t IEC_61966_2_4 = 11;
+constexpr uint8_t BT_1361_0 = 12;
+constexpr uint8_t IEC_61966_2_1 = 13;
+constexpr uint8_t BT_2020_10bit = 14;
+constexpr uint8_t BT_2020_12bit = 15;
+constexpr uint8_t SMPTE_ST_2084 = 16;
+constexpr uint8_t SMPTE_ST_428_1 = 17;
+constexpr uint8_t BT_2100_HLG = 18;
+}
+
+namespace VPConfigurationMatrixCoefficients {
+constexpr uint8_t Identity = 0;
+constexpr uint8_t BT_709_6 = 1;
+constexpr uint8_t Unspecified = 2;
+constexpr uint8_t FCC = 4;
+constexpr uint8_t BT_470_7_BG = 5;
+constexpr uint8_t BT_601_7 = 6;
+constexpr uint8_t SMPTE_ST_240 = 7;
+constexpr uint8_t YCgCo = 8;
+constexpr uint8_t BT_2020_Nonconstant_Luminance = 9;
+constexpr uint8_t BT_2020_Constant_Luminance = 10;
+constexpr uint8_t SMPTE_ST_2085 = 11;
+constexpr uint8_t Chromacity_Constant_Luminance = 12;
+constexpr uint8_t Chromacity_Nonconstant_Luminance = 13;
+constexpr uint8_t BT_2100_ICC = 14;
+}
+
 struct VPCodecConfigurationRecord {
     String codecName;
     uint8_t profile { 0 };
@@ -66,9 +120,9 @@ struct VPCodecConfigurationRecord {
     uint8_t bitDepth { 8 };
     uint8_t chromaSubsampling { VPConfigurationChromaSubsampling::Subsampling_420_Colocated };
     uint8_t videoFullRangeFlag { VPConfigurationRange::VideoRange };
-    uint8_t colorPrimaries { 1 };
-    uint8_t transferCharacteristics { 1 };
-    uint8_t matrixCoefficients { 1 };
+    uint8_t colorPrimaries { VPConfigurationColorPrimaries::BT_709_6 };
+    uint8_t transferCharacteristics { VPConfigurationTransferCharacteristics::BT_709_6 };
+    uint8_t matrixCoefficients { VPConfigurationMatrixCoefficients::BT_709_6 };
 };
 
 WEBCORE_EXPORT Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);

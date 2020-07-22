@@ -1,0 +1,9 @@
+{
+	"url": "content/test-vp9.webm",
+	"type": "video/webm; codecs=\"vp09.00.10.08.01\"",
+	"init": { "offset": 0, "size": 629 },
+	"duration": 2,
+	"media": [ 
+		{ "offset": 629, "size": 43724, "timestamp": 0, "duration": 2}
+	]
+}

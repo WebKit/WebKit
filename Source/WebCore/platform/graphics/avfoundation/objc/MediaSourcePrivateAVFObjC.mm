@@ -34,6 +34,7 @@
 #import "Logging.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
+#import "SourceBufferParserAVFObjC.h"
 #import "SourceBufferPrivateAVFObjC.h"
 #import <objc/runtime.h>
 #import <wtf/Algorithms.h>
@@ -85,7 +86,11 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     if (MediaPlayerPrivateMediaSourceAVFObjC::supportsType(parameters) == MediaPlayer::SupportsType::IsNotSupported)
         return NotSupported;
 
-    auto newSourceBuffer = SourceBufferPrivateAVFObjC::create(this);
+    auto parser = SourceBufferParser::create(contentType);
+    if (!parser)
+        return NotSupported;
+
+    auto newSourceBuffer = SourceBufferPrivateAVFObjC::create(this, parser.releaseNonNull());
 #if ENABLE(ENCRYPTED_MEDIA)
     newSourceBuffer->setCDMInstance(m_cdmInstance.get());
 #endif

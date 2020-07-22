@@ -668,6 +668,15 @@ VP9DecoderEnabled:
   humanReadableDescription: "Enable VP9 decoder"
   category: experimental
 
+WebMParserEnabled:
+  type: bool
+  defaultValue: false
+  webcoreBinding: RuntimeEnabledFeatures
+  humanReadableName: "WebM MSE parser"
+  humanReadableDescription: "Enable WebM MSE parser"
+  category: experimental
+  condition: ENABLE(MEDIA_SOURCE)
+
 UseLegacyTextAlignPositionedElementBehavior:
   type: bool
   defaultValue: false
