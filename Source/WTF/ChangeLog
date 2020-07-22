@@ -1,3 +1,9 @@
+2020-07-22  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r264710; add a HAVE_AVPLAYER_VIDEORANGEOVERRIDE guard.
+
+        * wtf/PlatformHave.h:
+
 2020-07-22  Geoffrey Garen  <ggaren@apple.com>
 
         JSRunLoopTimer should use WTF::RunLoop rather than custom CF code

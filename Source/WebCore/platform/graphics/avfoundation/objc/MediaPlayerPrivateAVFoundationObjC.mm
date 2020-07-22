@@ -912,8 +912,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
     setShouldObserveTimeControlStatus(true);
 
     m_avPlayer.get().appliesMediaSelectionCriteriaAutomatically = NO;
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
     if ([m_avPlayer respondsToSelector:@selector(setVideoRangeOverride:)])
         m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(player()->preferredDynamicRangeMode());
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     updateDisableExternalPlayback();
@@ -3271,8 +3273,12 @@ END_BLOCK_OBJC_EXCEPTIONS
 
 void MediaPlayerPrivateAVFoundationObjC::setPreferredDynamicRangeMode(DynamicRangeMode mode)
 {
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
     if (m_avPlayer && [m_avPlayer respondsToSelector:@selector(setVideoRangeOverride:)])
         m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(mode);
+#else
+    UNUSED_PARAM(mode);
+#endif
 }
 
 NSArray* assetMetadataKeyNames()

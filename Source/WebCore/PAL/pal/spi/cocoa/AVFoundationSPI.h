@@ -64,11 +64,13 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 NS_ASSUME_NONNULL_END
 
+#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
 typedef NSString * AVVideoRange NS_TYPED_ENUM;
 @interface AVPlayer (AVPlayerVideoRangeOverride)
 @property (nonatomic, copy, nullable) AVVideoRange videoRangeOverride;
 + (nullable AVVideoRange)preferredVideoRangeForDisplays:(nonnull NSArray <NSNumber *>*)displays;
 @end
+#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) || PLATFORM(IOS_FAMILY)
 
