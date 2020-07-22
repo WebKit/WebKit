@@ -1,3 +1,183 @@
+2020-07-21  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add experimental MSE WebM parser
+        https://bugs.webkit.org/show_bug.cgi?id=214529
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-webm.html
+
+        Add an experimental MSE WebM parser to SourceBufferPrivateAVFObjC. This will require extensive refactoring
+        of SourceBufferPrivateAVFObjC, to extract out the parser into a new, virtualized class. This new parser can
+        take advantage of new C++>11 features such as lambdas to clean up some problematic existing code. The new
+        virtualized SourceBufferParser class uses passed-in Function objects, rather than pure-virtual Client classes
+        to notify it's parent object when the parser encounters initialization- or media-data.
+        
+        Because SourceBufferPrivateAVFObjC will now have to deal with AudioTrackPrivate and VideoTrackPrivate objects
+        that are not necessarily Audio- and VideoTrackPrivateMediaSourceAVFObjC subclasses, move those classes notification
+        features up into Audio- and VideoTrackPrivate, again using a Function object rather than a client class.
+
+        Add a new SourceBufferParserWebM and associated AudioTrackPrivateWebM and VideoTrackPrivateWebM classes, which
+        use libwebm via libwebrtc to parse appended buffers. SourceBufferParserWebM feeds passed-in data into a
+        libwebm-provided parser of its own. It then builds up tracks and samples based on callbacks from that same parser,
+        constructing CMSampleBuffers and VideoTrackPrivate objects out of the underlying libwebm primitives.
+
+        Because WebM uses a UUID as its track identifier, the representation of a "trackID" inside WebCore must be
+        increased from an int to a uint64_t, or trackIDs will be truncated or zeroed when passed between classes and
+        when converted to and from AtomStrings.
+
+        This early implementation is not yet able to pass the WebM WPT media-source/ tests, as we only have a VP9 decoder
+        available, and those tests use both VP8 and Vorbis.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebMParserEnabled):
+        (WebCore::RuntimeEnabledFeatures::webMParserEnabled const):
+        * platform/graphics/AudioTrackPrivate.h:
+        (WebCore::AudioTrackPrivate::setEnabled):
+        (WebCore::AudioTrackPrivate::setEnabledChangedCallback):
+        * platform/graphics/VP9Utilities.cpp:
+        (WebCore::isValidVPColorPrimaries):
+        (WebCore::isValidVPTransferCharacteristics):
+        (WebCore::isValidVPMatrixCoefficients):
+        (WebCore::parseVPCodecParameters):
+        * platform/graphics/VP9Utilities.h:
+        * platform/graphics/VideoTrackPrivate.h:
+        (WebCore::VideoTrackPrivate::setSelected):
+        (WebCore::VideoTrackPrivate::setSelectedChangedCallback):
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp:
+        (WebCore::AudioTrackPrivateMediaSourceAVFObjC::AudioTrackPrivateMediaSourceAVFObjC):
+        (WebCore::AudioTrackPrivateMediaSourceAVFObjC::setEnabled):
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        (WebCore::CDMSessionAVContentKeySession::update):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::update):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::supportsType):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        (WebCore::MediaSampleAVFObjC::create):
+        (WebCore::MediaSampleAVFObjC::MediaSampleAVFObjC):
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::addSourceBuffer):
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.h: Added.
+        (isType):
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm: Added.
+        (-[WebAVStreamDataParserListener initWithParser:parent:]):
+        (-[WebAVStreamDataParserListener dealloc]):
+        (-[WebAVStreamDataParserListener invalidate]):
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didParseStreamDataAsAsset:withDiscontinuity:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didFailToParseStreamDataWithError:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideMediaData:forTrackID:mediaType:flags:]):
+        (-[WebAVStreamDataParserListener streamDataParserWillProvideContentKeyRequestInitializationData:forTrackID:]):
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeyRequestInitializationData:forTrackID:]):
+        (WebCore::SourceBufferParserAVFObjC::isContentTypeSupported):
+        (WebCore::SourceBufferParserAVFObjC::SourceBufferParserAVFObjC):
+        (WebCore::SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC):
+        (WebCore::SourceBufferParserAVFObjC::appendData):
+        (WebCore::SourceBufferParserAVFObjC::flushPendingMediaData):
+        (WebCore::SourceBufferParserAVFObjC::setShouldProvideMediaDataForTrackID):
+        (WebCore::SourceBufferParserAVFObjC::shouldProvideMediadataForTrackID):
+        (WebCore::SourceBufferParserAVFObjC::resetParserState):
+        (WebCore::SourceBufferParserAVFObjC::didParseStreamDataAsAsset):
+        (WebCore::SourceBufferParserAVFObjC::didFailToParseStreamDataWithError):
+        (WebCore::SourceBufferParserAVFObjC::didProvideMediaDataForTrackID):
+        (WebCore::SourceBufferParserAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferParserAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::create):
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::didParseInitializationData):
+        (WebCore::SourceBufferPrivateAVFObjC::didEncounterErrorDuringParsing):
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::willProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferPrivateAVFObjC::append):
+        (WebCore::SourceBufferPrivateAVFObjC::appendCompleted):
+        (WebCore::SourceBufferPrivateAVFObjC::abort):
+        (WebCore::SourceBufferPrivateAVFObjC::resetParserState):
+        (WebCore::SourceBufferPrivateAVFObjC::destroyParser):
+        (WebCore::SourceBufferPrivateAVFObjC::clearTracks):
+        (WebCore::SourceBufferPrivateAVFObjC::hasSelectedVideo const):
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeSelected):
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        (WebCore::SourceBufferPrivateAVFObjC::parser const):
+        (WebCore::SourceBufferPrivateAVFObjC::attemptToDecrypt):
+        (WebCore::SourceBufferPrivateAVFObjC::flush):
+        (WebCore::SourceBufferPrivateAVFObjC::enqueueSample):
+        (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime const):
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm:
+        (WebCore::VideoTrackPrivateMediaSourceAVFObjC::VideoTrackPrivateMediaSourceAVFObjC):
+        * platform/graphics/cocoa/AudioTrackPrivateWebM.cpp: Copied from Source/WebCore/platform/graphics/cocoa/VP9UtilitiesCocoa.h.
+        (WebCore::AudioTrackPrivateWebM::create):
+        (WebCore::AudioTrackPrivateWebM::AudioTrackPrivateWebM):
+        (WebCore::AudioTrackPrivateWebM::id const):
+        (WebCore::AudioTrackPrivateWebM::label const):
+        (WebCore::AudioTrackPrivateWebM::language const):
+        (WebCore::AudioTrackPrivateWebM::trackIndex const):
+        * platform/graphics/cocoa/AudioTrackPrivateWebM.h: Copied from Source/WebCore/platform/graphics/cocoa/VP9UtilitiesCocoa.h.
+        * platform/graphics/cocoa/SourceBufferParser.cpp: Copied from Source/WebCore/platform/graphics/cocoa/VP9UtilitiesCocoa.h.
+        (WebCore::SourceBufferParser::isContentTypeSupported):
+        (WebCore::SourceBufferParser::create):
+        * platform/graphics/cocoa/SourceBufferParser.h: Added.
+        (WebCore::SourceBufferParser::setDidParseInitializationDataCallback):
+        (WebCore::SourceBufferParser::setDidEncounterErrorDuringParsingCallback):
+        (WebCore::SourceBufferParser::setDidProvideMediaDataCallback):
+        (WebCore::SourceBufferParser::setWillProvideContentKeyRequestInitializationDataForTrackIDCallback):
+        (WebCore::SourceBufferParser::setDidProvideContentKeyRequestInitializationDataForTrackIDCallback):
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp: Added.
+        (WebCore::isWebmParserAvailable):
+        (WebCore::SourceBufferParserWebM::isContentTypeSupported):
+        (WebCore::SourceBufferParserWebM::SourceBufferParserWebM):
+        (WebCore::SourceBufferParserWebM::appendData):
+        (WebCore::SourceBufferParserWebM::flushPendingMediaData):
+        (WebCore::SourceBufferParserWebM::setShouldProvideMediaDataForTrackID):
+        (WebCore::SourceBufferParserWebM::shouldProvideMediadataForTrackID):
+        (WebCore::SourceBufferParserWebM::resetParserState):
+        (WebCore::SourceBufferParserWebM::trackDataForTrackNumber):
+        (WebCore::SourceBufferParserWebM::OnElementBegin):
+        (WebCore::SourceBufferParserWebM::OnEbml):
+        (WebCore::SourceBufferParserWebM::OnSegmentBegin):
+        (WebCore::SourceBufferParserWebM::OnInfo):
+        (WebCore::SourceBufferParserWebM::OnClusterBegin):
+        (WebCore::SourceBufferParserWebM::OnTrackEntry):
+        (WebCore::SourceBufferParserWebM::OnBlockBegin):
+        (WebCore::SourceBufferParserWebM::OnBlockEnd):
+        (WebCore::SourceBufferParserWebM::OnSimpleBlockBegin):
+        (WebCore::SourceBufferParserWebM::OnSimpleBlockEnd):
+        (WebCore::SourceBufferParserWebM::OnBlockGroupBegin):
+        (WebCore::SourceBufferParserWebM::OnBlockGroupEnd):
+        (WebCore::convertToColorPrimaries):
+        (WebCore::convertToTransferCharacteristics):
+        (WebCore::convertToMatrixCoefficients):
+        (WebCore::convertSubsamplingXYToChromaSubsampling):
+        (WebCore::createFormatDescriptionFromVP9HeaderParser):
+        (WebCore::SourceBufferParserWebM::OnFrame):
+        * platform/graphics/cocoa/SourceBufferParserWebM.h: Added.
+        (WebCore::SourceBufferParserWebM::status const):
+        (WebCore::SourceBufferParserWebM::type const):
+        (isType):
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.h:
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+        (WebCore::isVP9DecoderAvailable):
+        (WebCore::validateVPParameters):
+        * platform/graphics/cocoa/VideoTrackPrivateWebM.cpp:
+        (WebCore::VideoTrackPrivateWebM::create):
+        (WebCore::VideoTrackPrivateWebM::VideoTrackPrivateWebM):
+        (WebCore::VideoTrackPrivateWebM::id const):
+        (WebCore::VideoTrackPrivateWebM::label const):
+        (WebCore::VideoTrackPrivateWebM::language const):
+        (WebCore::VideoTrackPrivateWebM::trackIndex const):
+        * platform/graphics/cocoa/VideoTrackPrivateWebM.h:
+
 2020-07-21  Peng Liu  <peng.liu6@apple.com>
 
         Safari is unresponsive after playing a video of youtube.com playlist in picture-in-picture mode

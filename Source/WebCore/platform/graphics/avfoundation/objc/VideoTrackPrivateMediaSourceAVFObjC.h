@@ -42,13 +42,10 @@ class SourceBufferPrivateAVFObjC;
 class VideoTrackPrivateMediaSourceAVFObjC final : public VideoTrackPrivateAVF {
     WTF_MAKE_NONCOPYABLE(VideoTrackPrivateMediaSourceAVFObjC)
 public:
-    static Ref<VideoTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack* track, SourceBufferPrivateAVFObjC* parent)
+    static Ref<VideoTrackPrivateMediaSourceAVFObjC> create(AVAssetTrack* track)
     {
-        return adoptRef(*new VideoTrackPrivateMediaSourceAVFObjC(track, parent));
+        return adoptRef(*new VideoTrackPrivateMediaSourceAVFObjC(track));
     }
-
-    bool selected() const override;
-    void setSelected(bool) override;
 
     void setAssetTrack(AVAssetTrack*);
     AVAssetTrack* assetTrack() const;
@@ -58,14 +55,12 @@ public:
     FloatSize naturalSize() const;
 
 private:
-    explicit VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack*, SourceBufferPrivateAVFObjC* parent);
+    explicit VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack*);
     
     void resetPropertiesFromTrack();
 
     std::unique_ptr<AVTrackPrivateAVFObjCImpl> m_impl;
-    SourceBufferPrivateAVFObjC* m_parent;
     int m_trackID;
-    bool m_selected;
 };
 
 }

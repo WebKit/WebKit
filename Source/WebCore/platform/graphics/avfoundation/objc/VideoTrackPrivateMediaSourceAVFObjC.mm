@@ -34,11 +34,9 @@
 
 namespace WebCore {
 
-VideoTrackPrivateMediaSourceAVFObjC::VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack* track, SourceBufferPrivateAVFObjC* parent)
+VideoTrackPrivateMediaSourceAVFObjC::VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack* track)
     : m_impl(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
-    , m_parent(parent)
     , m_trackID(-1)
-    , m_selected(false)
 {
     resetPropertiesFromTrack();
 }
@@ -63,21 +61,6 @@ void VideoTrackPrivateMediaSourceAVFObjC::setAssetTrack(AVAssetTrack *track)
 AVAssetTrack* VideoTrackPrivateMediaSourceAVFObjC::assetTrack() const
 {
     return m_impl->assetTrack();
-}
-
-
-bool VideoTrackPrivateMediaSourceAVFObjC::selected() const
-{
-    return m_selected;
-}
-
-void VideoTrackPrivateMediaSourceAVFObjC::setSelected(bool selected)
-{
-    if (m_selected == selected)
-        return;
-
-    m_selected = selected;
-    m_parent->trackDidChangeEnabled(this);
 }
 
 FloatSize VideoTrackPrivateMediaSourceAVFObjC::naturalSize() const

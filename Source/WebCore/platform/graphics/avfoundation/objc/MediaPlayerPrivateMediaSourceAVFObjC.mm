@@ -253,22 +253,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
     if (!parameters.isMediaSource)
         return MediaPlayer::SupportsType::IsNotSupported;
 
-    String extendedType = parameters.type.raw();
-    String outputCodecs = parameters.type.parameter(ContentType::codecsParameter());
-    if (!outputCodecs.isEmpty() && [PAL::getAVStreamDataParserClass() respondsToSelector:@selector(outputMIMECodecParameterForInputMIMECodecParameter:)]) {
-        outputCodecs = [PAL::getAVStreamDataParserClass() outputMIMECodecParameterForInputMIMECodecParameter:outputCodecs];
-        extendedType = makeString(parameters.type.containerType(), "; codecs=\"", outputCodecs, "\"");
-    }
-
-    auto supported = MediaPlayer::SupportsType::IsNotSupported;
-    auto& streamDataParserCache = AVStreamDataParserMIMETypeCache::singleton();
-    if (streamDataParserCache.isAvailable())
-        supported = streamDataParserCache.canDecodeType(extendedType);
-    else {
-        auto& assetCache = AVAssetMIMETypeCache::singleton();
-        if (assetCache.isAvailable())
-            supported = assetCache.canDecodeType(extendedType);
-    }
+    auto supported = SourceBufferParser::isContentTypeSupported(parameters.type);
 
     if (supported != MediaPlayer::SupportsType::IsSupported)
         return supported;

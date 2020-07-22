@@ -34,7 +34,7 @@ namespace WebCore {
 
 class MediaSampleAVFObjC : public MediaSample {
 public:
-    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
+    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, uint64_t trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, VideoRotation rotation = VideoRotation::None, bool mirrored = false) { return adoptRef(*new MediaSampleAVFObjC(sample, rotation, mirrored)); }
     static RefPtr<MediaSampleAVFObjC> createImageSample(Vector<uint8_t>&&, unsigned width, unsigned height);
@@ -86,7 +86,7 @@ protected:
         , m_id(trackID)
     {
     }
-    MediaSampleAVFObjC(CMSampleBufferRef sample, int trackID)
+    MediaSampleAVFObjC(CMSampleBufferRef sample, uint64_t trackID)
         : m_sample(sample)
         , m_id(AtomString::number(trackID))
     {

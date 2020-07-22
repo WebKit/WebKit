@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "TrackPrivateBase.h"
+#include <wtf/Function.h>
 
 namespace WebCore {
 
@@ -48,6 +49,8 @@ public:
         m_selected = selected;
         if (m_client)
             m_client->selectedChanged(m_selected);
+        if (m_selectedChangedCallback)
+            m_selectedChangedCallback(*this, m_selected);
     }
     virtual bool selected() const { return m_selected; }
 
@@ -58,12 +61,17 @@ public:
     const char* logClassName() const final { return "VideoTrackPrivate"; }
 #endif
 
+    using SelectedChangedCallback = Function<void(VideoTrackPrivate&, bool selected)>;
+    void setSelectedChangedCallback(SelectedChangedCallback&& callback) { m_selectedChangedCallback = WTFMove(callback); }
+
+
 protected:
     VideoTrackPrivate() = default;
 
 private:
     VideoTrackPrivateClient* m_client { nullptr };
     bool m_selected { false };
+    SelectedChangedCallback m_selectedChangedCallback;
 };
 
 } // namespace WebCore

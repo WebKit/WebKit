@@ -1,3 +1,27 @@
+2020-07-21  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add experimental MSE WebM parser
+        https://bugs.webkit.org/show_bug.cgi?id=214529
+        <rdar://problem/65782467>
+
+        Reviewed by Eric Carlson.
+
+        Add the vp9_header_parser from libwebrtc to the project, and add its
+        symbols to the list of exported symbols. Because this header wants to
+        be installed to a "common/vp9_header_parser.h" path, split up the default
+        CopyHeadersInstallPhase into two separate CopyFiles build phases that
+        put headers into different locations.
+
+        * Configurations/libwebm.xcconfig:
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/third_party/libwebm/common/vp9_header_parser.h:
+        (vp9_parser::Vp9HeaderParser::color_range const):
+        (vp9_parser::Vp9HeaderParser::subsampling_x const):
+        (vp9_parser::Vp9HeaderParser::subsampling_y const):
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2020-07-21  Youenn Fablet  <youenn@apple.com>
 
         Resync filter_analyzer.cc up to upstream libwebrtc

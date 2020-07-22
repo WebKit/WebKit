@@ -1,3 +1,16 @@
+2020-07-21  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add experimental MSE WebM parser
+        https://bugs.webkit.org/show_bug.cgi?id=214529
+        <rdar://problem/65782467>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/content/test-vp9-manifest.json: Added.
+        * media/media-source/content/test-vp9.webm: Added.
+        * media/media-source/media-source-webm-expected.txt: Added.
+        * media/media-source/media-source-webm.html: Added.
+
 2020-07-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: inspector/canvas/memory.html is failing on macOS Apple Silicon

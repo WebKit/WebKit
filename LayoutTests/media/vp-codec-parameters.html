@@ -104,7 +104,7 @@
             testExpectedVPCodecConfigurationRecord(`internals.parseVPCodecParameters("vp09.02.10.10.01.${colorPrimaries.toString().padStart(2, '0')}.16.09.01")`, makeVPCodecConfigurationRecord('vp09', 2, 10, 10, 1, colorPrimaries, 16, 9, 1));
         consoleWrite('');
         consoleWrite('Test invalid colorPrimaries:');
-        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01.02.16.09.01")', null);
+        testExpected('internals.parseVPCodecParameters("vp09.02.10.10.01.03.16.09.01")', null);
         consoleWrite('');
         consoleWrite('Test valid transferCharacteristics:');
         for (let transferCharacteristics of [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])

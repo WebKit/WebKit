@@ -3853,16 +3853,6 @@
 		5CFD53921E4BD3A300482908 /* row_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538A1E4BD3A300482908 /* row_neon64.cc */; };
 		5CFD53931E4BD3A300482908 /* scale_neon.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538B1E4BD3A300482908 /* scale_neon.cc */; };
 		5CFD53941E4BD3A300482908 /* scale_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538C1E4BD3A300482908 /* scale_neon64.cc */; };
-		CDEBB4AC24C0199D00ADBD44 /* webm_parser.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEBB40824C0191A00ADBD44 /* webm_parser.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDEBB4AD24C0199D00ADBD44 /* buffer_reader.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEBB40D24C0191A00ADBD44 /* buffer_reader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDEBB4AE24C0199D00ADBD44 /* id.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEBB40A24C0191A00ADBD44 /* id.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDEBB4AF24C0199D00ADBD44 /* istream_reader.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEBB40924C0191A00ADBD44 /* istream_reader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDEBB4B024C0199D00ADBD44 /* dom_types.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEBB40B24C0191A00ADBD44 /* dom_types.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDEBB4B124C0199D00ADBD44 /* element.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEBB40C24C0191A00ADBD44 /* element.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDEBB4B224C0199D00ADBD44 /* status.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEBB40624C0191A00ADBD44 /* status.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDEBB4B324C0199D00ADBD44 /* reader.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEBB40524C0191A00ADBD44 /* reader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDEBB4B424C0199D00ADBD44 /* file_reader.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEBB40724C0191A00ADBD44 /* file_reader.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CDEBB4B524C0199D00ADBD44 /* callback.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEBB40E24C0191A00ADBD44 /* callback.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDEBB4B624C019C400ADBD44 /* unknown_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB46424C0191A00ADBD44 /* unknown_parser.cc */; };
 		CDEBB4B724C019C400ADBD44 /* master_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB46F24C0191A00ADBD44 /* master_parser.cc */; };
 		CDEBB4B824C019C400ADBD44 /* block_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB47624C0191A00ADBD44 /* block_parser.cc */; };
@@ -3886,6 +3876,18 @@
 		CDEBB4CA24C01A0D00ADBD44 /* libwebm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEBB11924C0187400ADBD44 /* libwebm.a */; };
 		CDEBB4D324C0C8CA00ADBD44 /* bit_utils.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB45124C0191A00ADBD44 /* bit_utils.cc */; };
 		CDEBB4D424C0CB1000ADBD44 /* callback.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB48E24C0191A00ADBD44 /* callback.cc */; };
+		CDFD2FA824C4B34E0048DAC3 /* vp9_header_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDFD2F9A24C4B2F90048DAC3 /* vp9_header_parser.cc */; };
+		CDFD2FC524C4DAF70048DAC3 /* buffer_reader.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40D24C0191A00ADBD44 /* buffer_reader.h */; };
+		CDFD2FC624C4DAF70048DAC3 /* callback.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40E24C0191A00ADBD44 /* callback.h */; };
+		CDFD2FC724C4DAF70048DAC3 /* dom_types.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40B24C0191A00ADBD44 /* dom_types.h */; };
+		CDFD2FC824C4DAF70048DAC3 /* element.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40C24C0191A00ADBD44 /* element.h */; };
+		CDFD2FC924C4DAF70048DAC3 /* file_reader.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40724C0191A00ADBD44 /* file_reader.h */; };
+		CDFD2FCA24C4DAF70048DAC3 /* id.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40A24C0191A00ADBD44 /* id.h */; };
+		CDFD2FCB24C4DAF70048DAC3 /* istream_reader.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40924C0191A00ADBD44 /* istream_reader.h */; };
+		CDFD2FCC24C4DAF70048DAC3 /* reader.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40524C0191A00ADBD44 /* reader.h */; };
+		CDFD2FCD24C4DAF70048DAC3 /* status.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40624C0191A00ADBD44 /* status.h */; };
+		CDFD2FCE24C4DAF70048DAC3 /* webm_parser.h in Copy webm headers */ = {isa = PBXBuildFile; fileRef = CDEBB40824C0191A00ADBD44 /* webm_parser.h */; };
+		CDFD2FD024C4DB2F0048DAC3 /* vp9_header_parser.h in Copy common headers */ = {isa = PBXBuildFile; fileRef = CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -4179,6 +4181,37 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		CDFD2FC424C4D9D10048DAC3 /* Copy webm headers */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = usr/local/include/webm;
+			dstSubfolderSpec = 16;
+			files = (
+				CDFD2FC524C4DAF70048DAC3 /* buffer_reader.h in Copy webm headers */,
+				CDFD2FC624C4DAF70048DAC3 /* callback.h in Copy webm headers */,
+				CDFD2FC724C4DAF70048DAC3 /* dom_types.h in Copy webm headers */,
+				CDFD2FC824C4DAF70048DAC3 /* element.h in Copy webm headers */,
+				CDFD2FC924C4DAF70048DAC3 /* file_reader.h in Copy webm headers */,
+				CDFD2FCA24C4DAF70048DAC3 /* id.h in Copy webm headers */,
+				CDFD2FCB24C4DAF70048DAC3 /* istream_reader.h in Copy webm headers */,
+				CDFD2FCC24C4DAF70048DAC3 /* reader.h in Copy webm headers */,
+				CDFD2FCD24C4DAF70048DAC3 /* status.h in Copy webm headers */,
+				CDFD2FCE24C4DAF70048DAC3 /* webm_parser.h in Copy webm headers */,
+			);
+			name = "Copy webm headers";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CDFD2FCF24C4DB0C0048DAC3 /* Copy common headers */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = usr/local/include/common;
+			dstSubfolderSpec = 16;
+			files = (
+				CDFD2FD024C4DB2F0048DAC3 /* vp9_header_parser.h in Copy common headers */,
+			);
+			name = "Copy common headers";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -8366,6 +8399,8 @@
 		CDEBB49B24C0191A00ADBD44 /* content_enc_aes_settings_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = content_enc_aes_settings_parser.h; sourceTree = "<group>"; };
 		CDEBB49C24C0191A00ADBD44 /* video_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video_parser.h; sourceTree = "<group>"; };
 		CDEBB49D24C0191A00ADBD44 /* master_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = master_parser.h; sourceTree = "<group>"; };
+		CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vp9_header_parser.h; sourceTree = "<group>"; };
+		CDFD2F9A24C4B2F90048DAC3 /* vp9_header_parser.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = vp9_header_parser.cc; sourceTree = "<group>"; };
 		FB39D0D11200F0E300088E69 /* libwebrtc.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libwebrtc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -15247,6 +15282,7 @@
 		CDEBB11F24C0191800ADBD44 /* libwebm */ = {
 			isa = PBXGroup;
 			children = (
+				CDFD2F9224C4B2F90048DAC3 /* common */,
 				CDEBB19224C0191800ADBD44 /* webm_parser */,
 			);
 			path = libwebm;
@@ -15370,6 +15406,15 @@
 				CDEBB45724C0191A00ADBD44 /* webm_parser.cc */,
 			);
 			path = src;
+			sourceTree = "<group>";
+		};
+		CDFD2F9224C4B2F90048DAC3 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				CDFD2F9A24C4B2F90048DAC3 /* vp9_header_parser.cc */,
+				CDFD2F9624C4B2F90048DAC3 /* vp9_header_parser.h */,
+			);
+			path = common;
 			sourceTree = "<group>";
 		};
 		FB39D06E1200ED9200088E69 = {
@@ -15741,16 +15786,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CDEBB4AD24C0199D00ADBD44 /* buffer_reader.h in Headers */,
-				CDEBB4B524C0199D00ADBD44 /* callback.h in Headers */,
-				CDEBB4B024C0199D00ADBD44 /* dom_types.h in Headers */,
-				CDEBB4B124C0199D00ADBD44 /* element.h in Headers */,
-				CDEBB4B424C0199D00ADBD44 /* file_reader.h in Headers */,
-				CDEBB4AE24C0199D00ADBD44 /* id.h in Headers */,
-				CDEBB4AF24C0199D00ADBD44 /* istream_reader.h in Headers */,
-				CDEBB4B324C0199D00ADBD44 /* reader.h in Headers */,
-				CDEBB4B224C0199D00ADBD44 /* status.h in Headers */,
-				CDEBB4AC24C0199D00ADBD44 /* webm_parser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17366,6 +17401,8 @@
 				CDEBB11524C0187400ADBD44 /* Headers */,
 				CDEBB11624C0187400ADBD44 /* Sources */,
 				CDEBB11724C0187400ADBD44 /* Frameworks */,
+				CDFD2FC424C4D9D10048DAC3 /* Copy webm headers */,
+				CDFD2FCF24C4DB0C0048DAC3 /* Copy common headers */,
 			);
 			buildRules = (
 			);
@@ -18534,6 +18571,7 @@
 				CDEBB4C324C019C400ADBD44 /* var_int_parser.cc in Sources */,
 				CDEBB4B924C019C400ADBD44 /* virtual_block_parser.cc in Sources */,
 				CDEBB4C824C019C400ADBD44 /* void_parser.cc in Sources */,
+				CDFD2FA824C4B34E0048DAC3 /* vp9_header_parser.cc in Sources */,
 				CDEBB4BA24C019C400ADBD44 /* webm_parser.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

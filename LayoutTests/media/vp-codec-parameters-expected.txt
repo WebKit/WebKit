@@ -83,7 +83,7 @@ EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.12.16.09.01") === '
 EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.22.16.09.01") === '{ vp09, 2, 10, 10, 1, 22, 16, 9, 1}') OK
 
 Test invalid colorPrimaries:
-EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.02.16.09.01") == 'null') OK
+EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.03.16.09.01") == 'null') OK
 
 Test valid transferCharacteristics:
 EXPECTED (internals.parseVPCodecParameters("vp09.02.10.10.01.09.01.09.01") === '{ vp09, 2, 10, 10, 1, 9, 1, 9, 1}') OK

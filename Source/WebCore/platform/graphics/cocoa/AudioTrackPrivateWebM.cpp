@@ -23,25 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "AudioTrackPrivateWebM.h"
 
-#if PLATFORM(COCOA)
-
-#include "VP9Utilities.h"
+#if ENABLE(MEDIA_SOURCE)
 
 namespace WebCore {
 
-struct MediaCapabilitiesInfo;
-struct VideoConfiguration;
+Ref<AudioTrackPrivateWebM> AudioTrackPrivateWebM::create(webm::TrackEntry&& trackEntry)
+{
+    return adoptRef(*new AudioTrackPrivateWebM(WTFMove(trackEntry)));
+}
 
-WEBCORE_EXPORT extern void setOverrideVP9HardwareDecoderDisabledForTesting(bool);
-WEBCORE_EXPORT extern void setOverrideVP9ScreenSizeAndScaleForTesting(float width, float height, float scale);
-WEBCORE_EXPORT extern void resetOverrideVP9ScreenSizeAndScaleForTesting();
+AudioTrackPrivateWebM::AudioTrackPrivateWebM(webm::TrackEntry&& trackEntry)
+    : m_track(WTFMove(trackEntry))
+{
+    if (m_track.is_enabled.is_present())
+        setEnabled(m_track.is_enabled.value());
+}
 
-WEBCORE_EXPORT extern void registerSupplementalVP9Decoder();
-extern bool isVP9DecoderAvailable();
-extern bool validateVPParameters(VPCodecConfigurationRecord&, MediaCapabilitiesInfo&, const VideoConfiguration&);
+AtomString AudioTrackPrivateWebM::id() const
+{
+    if (m_trackID.isNull())
+        m_trackID = m_track.track_uid.is_present() ? AtomString::number(m_track.track_uid.value()) : emptyAtom();
+    return m_trackID;
+}
+
+AtomString AudioTrackPrivateWebM::label() const
+{
+    if (m_label.isNull())
+        m_label = m_track.name.is_present() ? AtomString::fromUTF8(m_track.name.value().data(), m_track.name.value().length()) : emptyAtom();
+    return m_label;
+}
+
+AtomString AudioTrackPrivateWebM::language() const
+{
+    if (m_language.isNull())
+        m_language = m_track.language.is_present() ? AtomString::fromUTF8(m_track.language.value().data(), m_track.language.value().length()) : emptyAtom();
+    return m_language;
+}
+
+int AudioTrackPrivateWebM::trackIndex() const
+{
+    if (m_track.track_number.is_present())
+        return m_track.track_number.value();
+    return 0;
+}
 
 }
 
-#endif
+#endif // ENABLE(MEDIA_SOURCE)
