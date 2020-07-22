@@ -1,3 +1,15 @@
+2020-07-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] ITP: use the database store unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=214590
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update the unit test to monitor the database file instead of the old log file.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (testWebsiteDataITP):
+
 2020-07-19  Darin Adler  <darin@apple.com>
 
         Remove live ranges from Editor.h and EditorClient.h

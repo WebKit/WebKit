@@ -1,3 +1,20 @@
+2020-07-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] ITP: use the database store unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=214590
+
+        Reviewed by Adrian Perez de Castro.
+
+        The memory store is now considered legacy.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore): Use
+        FileSystem::pathByAppendingComponent() to create the database path.
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase): Ensure the directory exists before trying to
+        open the database.
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess): Always enable the ITP databae by default.
+
 2020-07-19  Darin Adler  <darin@apple.com>
 
         Remove live ranges from Editor.h and EditorClient.h

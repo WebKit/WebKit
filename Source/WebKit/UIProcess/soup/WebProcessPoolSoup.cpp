@@ -46,6 +46,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
     parameters.languages = userPreferredLanguages();
     parameters.proxySettings = m_networkProxySettings;
+    parameters.shouldEnableITPDatabase = true;
 }
 
 void WebProcessPool::setIgnoreTLSErrors(bool ignoreTLSErrors)

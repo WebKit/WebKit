@@ -282,7 +282,7 @@ HashSet<ResourceLoadStatisticsDatabaseStore*>& ResourceLoadStatisticsDatabaseSto
 
 ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, WorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
-    , m_storageDirectoryPath(storageDirectoryPath + "/observations.db")
+    , m_storageDirectoryPath(FileSystem::pathByAppendingComponent(storageDirectoryPath, "observations.db"_s))
     , m_sessionID(sessionID)
 {
     ASSERT(!RunLoop::isMain());
@@ -320,9 +320,13 @@ void ResourceLoadStatisticsDatabaseStore::close()
 
 void ResourceLoadStatisticsDatabaseStore::openITPDatabase()
 {
-    if (!FileSystem::fileExists(m_storageDirectoryPath))
+    if (!FileSystem::fileExists(m_storageDirectoryPath)) {
+        if (!FileSystem::makeAllDirectories(FileSystem::directoryName(m_storageDirectoryPath))) {
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::open failed, error message: Failed to create directory database path: %" PUBLIC_LOG_STRING, this, m_storageDirectoryPath.utf8().data());
+            return;
+        }
         m_isNewResourceLoadStatisticsDatabaseFile = true;
-    else
+    } else
         m_isNewResourceLoadStatisticsDatabaseFile = false;
 
     if (!m_database.open(m_storageDirectoryPath)) {

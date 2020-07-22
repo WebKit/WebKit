@@ -673,10 +673,10 @@ static void testWebsiteDataDeviceIdHashSalt(WebsiteDataTest* test, gconstpointer
 static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
 {
     const char* itpDirectory = webkit_website_data_manager_get_itp_directory(test->m_manager);
-    GUniquePtr<char> itpLogFile(g_build_filename(itpDirectory, "full_browsing_session_resourceLog.plist", nullptr));
+    GUniquePtr<char> itpDatabaseFile(g_build_filename(itpDirectory, "observations.db", nullptr));
 
     // Delete any previous data.
-    g_unlink(itpLogFile.get());
+    g_unlink(itpDatabaseFile.get());
     g_rmdir(itpDirectory);
 
     g_assert_false(webkit_website_data_manager_get_itp_enabled(test->m_manager));
@@ -686,14 +686,17 @@ static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
     webkit_website_data_manager_set_itp_enabled(test->m_manager, TRUE);
     g_assert_true(webkit_website_data_manager_get_itp_enabled(test->m_manager));
     g_assert_false(g_file_test(itpDirectory, G_FILE_TEST_IS_DIR));
-    g_assert_false(g_file_test(itpLogFile.get(), G_FILE_TEST_IS_REGULAR));
+    g_assert_false(g_file_test(itpDatabaseFile.get(), G_FILE_TEST_IS_REGULAR));
 
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
 
-    test->waitUntilFileChanged(itpLogFile.get(), G_FILE_MONITOR_EVENT_CREATED);
+    test->waitUntilFileChanged(itpDatabaseFile.get(), G_FILE_MONITOR_EVENT_CREATED);
     g_assert_true(g_file_test(itpDirectory, G_FILE_TEST_IS_DIR));
-    g_assert_true(g_file_test(itpLogFile.get(), G_FILE_TEST_IS_REGULAR));
+    g_assert_true(g_file_test(itpDatabaseFile.get(), G_FILE_TEST_IS_REGULAR));
+
+    // Give some time for the database to be updated.
+    test->wait(0.5);
 
     GList* dataList = test->fetch(WEBKIT_WEBSITE_DATA_ITP);
     g_assert_nonnull(dataList);
@@ -713,7 +716,7 @@ static void testWebsiteDataITP(WebsiteDataTest* test, gconstpointer)
     // Clear all.
     static const WebKitWebsiteDataTypes cacheAndITP = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_ITP | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
     test->clear(cacheAndITP, 0);
-    test->waitUntilFileChanged(itpLogFile.get(), G_FILE_MONITOR_EVENT_DELETED);
+    test->waitUntilFileChanged(itpDatabaseFile.get(), G_FILE_MONITOR_EVENT_DELETED);
 
     webkit_website_data_manager_set_itp_enabled(test->m_manager, FALSE);
     g_assert_false(webkit_website_data_manager_get_itp_enabled(test->m_manager));
