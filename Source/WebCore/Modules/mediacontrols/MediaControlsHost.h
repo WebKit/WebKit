@@ -67,7 +67,6 @@ public:
     bool isInMediaDocument() const;
     bool userGestureRequired() const;
     bool shouldForceControlsDisplay() const;
-    void setPreparedToReturnVideoLayerToInline(bool);
 
     enum class ForceUpdate { Yes, No };
     void updateCaptionDisplaySizes(ForceUpdate = ForceUpdate::No);

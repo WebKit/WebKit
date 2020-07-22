@@ -215,12 +215,6 @@ bool MediaControlsHost::isInMediaDocument() const
     return m_mediaElement && m_mediaElement->document().isMediaDocument();
 }
 
-void MediaControlsHost::setPreparedToReturnVideoLayerToInline(bool value)
-{
-    if (m_mediaElement)
-        m_mediaElement->setPreparedToReturnVideoLayerToInline(value);
-}
-
 bool MediaControlsHost::userGestureRequired() const
 {
     return m_mediaElement && !m_mediaElement->mediaSession().playbackPermitted();

@@ -510,6 +510,7 @@ void HTMLVideoElement::fullscreenModeChanged(VideoFullscreenMode mode)
     if (mode != fullscreenMode()) {
         INFO_LOG(LOGIDENTIFIER, "changed from ", fullscreenMode(), ", to ", mode);
         scheduleEvent(eventNames().webkitpresentationmodechangedEvent);
+        setPreparedToReturnVideoLayerToInline(mode != HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
     }
 
     if (player())

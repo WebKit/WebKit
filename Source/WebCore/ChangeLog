@@ -1,3 +1,33 @@
+2020-07-21  Peng Liu  <peng.liu6@apple.com>
+
+        Safari is unresponsive after playing a video of youtube.com playlist in picture-in-picture mode
+        https://bugs.webkit.org/show_bug.cgi?id=214616
+
+        Reviewed by Eric Carlson.
+
+        Remove the function setPreparedToReturnVideoLayerToInline() from
+        MediaControlsHost.idl and replace all the calls to that function
+        in Javascript code with a call in HTMLVideoElement::fullscreenModeChanged().
+
+        Calling setPreparedToReturnVideoLayerToInline() in the Javascript code of
+        modern media controls can be problematic because the host object might have
+        been destroyed when the webkitpresentationmodechanged event is fired.
+        During the exit fullscreen/picture-in-picture transaction, missing a call to
+        setPreparedToReturnVideoLayerToInline() will block the transaction,
+        and the UI process will be stuck in a bad state.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::setPreparedToReturnVideoLayerToInline): Deleted.
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * Modules/mediacontrols/mediaControlsApple.js:
+        (Controller.prototype.handlePresentationModeChange):
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.handleEvent):
+        (MediaController.prototype._returnMediaLayerToInlineIfNeeded): Deleted.
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::fullscreenModeChanged):
+
 2020-07-21  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (WebSQL disablement): Fudget app is unresponsive on launch
