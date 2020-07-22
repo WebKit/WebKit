@@ -49,6 +49,7 @@ struct HTTPServer::RequestData : public ThreadSafeRefCounted<RequestData, WTF::D
     
     size_t requestCount { 0 };
     const HashMap<String, HTTPResponse> requestMap;
+    Vector<Connection> connections;
 };
 
 RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, CertificateVerifier&& verifier)
@@ -88,13 +89,29 @@ static void startListening(nw_listener_t listener)
     Util::run(&ready);
 }
 
+void HTTPServer::cancel()
+{
+    __block bool cancelled = false;
+    nw_listener_set_state_changed_handler(m_listener.get(), ^(nw_listener_state_t state, nw_error_t error) {
+        ASSERT_UNUSED(error, !error);
+        if (state == nw_listener_state_cancelled)
+            cancelled = true;
+    });
+    nw_listener_cancel(m_listener.get());
+    Util::run(&cancelled);
+    m_listener = nullptr;
+    for (auto& connection : std::exchange(m_requestData->connections, { }))
+        connection.cancel();
+}
+
 HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> responses, Protocol protocol, CertificateVerifier&& verifier)
-    : m_requestData(adoptRef(new RequestData(responses)))
+    : m_requestData(adoptRef(*new RequestData(responses)))
     , m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, WTFMove(verifier)).get())))
     , m_protocol(protocol)
 {
     nw_listener_set_queue(m_listener.get(), dispatch_get_main_queue());
     nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData](nw_connection_t connection) {
+        requestData->connections.append(Connection(connection));
         nw_connection_set_queue(connection, dispatch_get_main_queue());
         nw_connection_start(connection);
         respondToRequests(Connection(connection), requestData);
@@ -103,11 +120,13 @@ HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> re
 }
 
 HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol protocol)
-    : m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, nullptr).get())))
+    : m_requestData(adoptRef(*new RequestData({ })))
+    , m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, nullptr).get())))
     , m_protocol(protocol)
 {
     nw_listener_set_queue(m_listener.get(), dispatch_get_main_queue());
-    nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([connectionHandler = WTFMove(connectionHandler)] (nw_connection_t connection) {
+    nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData, connectionHandler = WTFMove(connectionHandler)] (nw_connection_t connection) {
+        requestData->connections.append(Connection(connection));
         nw_connection_set_queue(connection, dispatch_get_main_queue());
         nw_connection_start(connection);
         connectionHandler(Connection(connection));
@@ -139,8 +158,6 @@ void HTTPServer::respondWithChallengeThenOK(Connection connection)
 
 size_t HTTPServer::totalRequests() const
 {
-    if (!m_requestData)
-        return 0;
     return m_requestData->requestCount;
 }
 
@@ -187,9 +204,9 @@ static Vector<uint8_t> vectorFromData(dispatch_data_t content)
     return request;
 }
 
-void HTTPServer::respondToRequests(Connection connection, RefPtr<RequestData> requestData)
+void HTTPServer::respondToRequests(Connection connection, Ref<RequestData> requestData)
 {
-    connection.receiveHTTPRequest([connection, requestData] (Vector<char>&& request) {
+    connection.receiveHTTPRequest([connection, requestData] (Vector<char>&& request) mutable {
         if (!request.size())
             return;
         requestData->requestCount++;
@@ -291,9 +308,22 @@ void Connection::send(RetainPtr<dispatch_data_t>&& message, CompletionHandler<vo
     }).get());
 }
 
-void Connection::terminate() const
+void Connection::terminate()
 {
     nw_connection_cancel(m_connection.get());
+}
+
+void Connection::cancel()
+{
+    __block bool cancelled = false;
+    nw_connection_set_state_changed_handler(m_connection.get(), ^(nw_connection_state_t state, nw_error_t error) {
+        ASSERT_UNUSED(error, !error);
+        if (state == nw_connection_state_cancelled)
+            cancelled = true;
+    });
+    nw_connection_cancel(m_connection.get());
+    Util::run(&cancelled);
+    m_connection = nullptr;
 }
 
 void H2::Connection::send(Frame&& frame, CompletionHandler<void()>&& completionHandler) const

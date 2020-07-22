@@ -1,3 +1,24 @@
+2020-07-21  Alex Christensen  <achristensen@webkit.org>
+
+        Safari does not present CertificateInfo for service-worker served documents
+        https://bugs.webkit.org/show_bug.cgi?id=206403
+
+        Reviewed by Brady Eidson.
+
+        This is actually just a failing test that reproduces the issue 100% of the time.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::cancel):
+        (TestWebKitAPI::HTTPServer::HTTPServer):
+        (TestWebKitAPI::m_protocol):
+        (TestWebKitAPI::HTTPServer::totalRequests const):
+        (TestWebKitAPI::HTTPServer::respondToRequests):
+        (TestWebKitAPI::Connection::terminate):
+        (TestWebKitAPI::Connection::cancel):
+        (TestWebKitAPI::Connection::terminate const): Deleted.
+
 2020-07-21  Jonathan Bedard  <jbedard@apple.com>
 
         ImageDiff: Set ALWAYS_SEARCH_USER_PATHS to NO

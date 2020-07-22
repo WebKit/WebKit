@@ -52,14 +52,15 @@ public:
     uint16_t port() const;
     NSURLRequest *request(const String& path = "/"_str) const;
     size_t totalRequests() const;
+    void cancel();
 
     static void respondWithChallengeThenOK(Connection);
     
 private:
     static RetainPtr<nw_parameters_t> listenerParameters(Protocol, CertificateVerifier&&);
-    static void respondToRequests(Connection, RefPtr<RequestData>);
+    static void respondToRequests(Connection, Ref<RequestData>);
 
-    RefPtr<RequestData> m_requestData;
+    Ref<RequestData> m_requestData;
     RetainPtr<nw_listener_t> m_listener;
     Protocol m_protocol { Protocol::Http };
 };
@@ -71,7 +72,8 @@ public:
     void send(RetainPtr<dispatch_data_t>&&, CompletionHandler<void()>&& = nullptr) const;
     void receiveBytes(CompletionHandler<void(Vector<uint8_t>&&)>&&) const;
     void receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&&, Vector<char>&& buffer = { }) const;
-    void terminate() const;
+    void terminate();
+    void cancel();
 
 private:
     friend class HTTPServer;

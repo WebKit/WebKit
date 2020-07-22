@@ -30,6 +30,7 @@
 #import "ServiceWorkerTCPServer.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -2112,3 +2113,114 @@ TEST(ServiceWorkers, ContentRuleList)
     }];
     TestWebKitAPI::Util::run(&doneRemoving);
 }
+
+#if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
+
+static bool isTestServerTrust(SecTrustRef trust)
+{
+    if (!trust)
+        return false;
+    if (SecTrustGetCertificateCount(trust) != 1)
+        return false;
+    if (![adoptNS((NSString *)SecCertificateCopySubjectSummary(SecTrustGetCertificateAtIndex(trust, 0))) isEqualToString:@"Me"])
+        return false;
+    return true;
+}
+
+enum class ResponseType { Synthetic, Cached, Fetched };
+static void runTest(ResponseType responseType)
+{
+    using namespace TestWebKitAPI;
+    
+    __block bool removedAnyExistingData = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        removedAnyExistingData = true;
+    }];
+    TestWebKitAPI::Util::run(&removedAnyExistingData);
+
+    static const char* main =
+    "<script>"
+    "try {"
+    "    navigator.serviceWorker.register('/sw.js').then(function(reg) {"
+    "        if (reg.active) {"
+    "            alert('worker unexpectedly already active');"
+    "            return;"
+    "        }"
+    "        worker = reg.installing;"
+    "        worker.addEventListener('statechange', function() {"
+    "            if (worker.state == 'activated')"
+    "                alert('successfully registered');"
+    "        });"
+    "    }).catch(function(error) {"
+    "        alert('Registration failed with: ' + error);"
+    "    });"
+    "} catch(e) {"
+    "    alert('Exception: ' + e);"
+    "}"
+    "</script>";
+    
+    const char* js = nullptr;
+    const char* expectedAlert = nullptr;
+    size_t expectedServerRequests1 = 0;
+    size_t expectedServerRequests2 = 0;
+
+    switch (responseType) {
+    case ResponseType::Synthetic:
+        js = "self.addEventListener('fetch', (event) => { event.respondWith(new Response(new Blob(['<script>alert(\"synthetic response\")</script>'], {type: 'text/html'}))); })";
+        expectedAlert = "synthetic response";
+        expectedServerRequests1 = 2;
+        expectedServerRequests2 = 2;
+        break;
+    case ResponseType::Cached:
+        js = "self.addEventListener('install', (event) => { event.waitUntil( caches.open('v1').then((cache) => { return cache.addAll(['/cached.html']); }) ); });"
+            "self.addEventListener('fetch', (event) => { event.respondWith(caches.match('/cached.html')) });";
+        expectedAlert = "loaded from cache";
+        expectedServerRequests1 = 3;
+        expectedServerRequests2 = 3;
+        break;
+    case ResponseType::Fetched:
+        js = "self.addEventListener('fetch', (event) => { event.respondWith(fetch('/fetched.html')) });";
+        expectedAlert = "fetched from server";
+        expectedServerRequests1 = 2;
+        expectedServerRequests2 = 3;
+        break;
+    }
+
+    HTTPServer server({
+        { "/", { main } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, js } },
+        { "/cached.html", { "<script>alert('loaded from cache')</script>" } },
+        { "/fetched.html", { "<script>alert('fetched from server')</script>" } },
+    }, HTTPServer::Protocol::Https);
+
+    auto webView = adoptNS([WKWebView new]);
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
+
+    EXPECT_EQ(server.totalRequests(), expectedServerRequests1);
+    EXPECT_TRUE(isTestServerTrust(webView.get().serverTrust));
+    if (responseType != ResponseType::Fetched)
+        server.cancel();
+
+    [webView reload];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], expectedAlert);
+    EXPECT_EQ(server.totalRequests(), expectedServerRequests2);
+    EXPECT_NULL(webView.get().serverTrust); // FIXME: This should be EXPECT_TRUE(isTestServerTrust(webView.get().serverTrust));
+}
+
+TEST(ServiceWorkers, ServerTrust)
+{
+    runTest(ResponseType::Synthetic);
+    runTest(ResponseType::Cached);
+    runTest(ResponseType::Fetched);
+}
+
+#endif // HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
