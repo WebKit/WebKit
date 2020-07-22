@@ -1,3 +1,15 @@
+2020-07-22  Youenn Fablet  <youenn@apple.com>
+
+        KeepAlive fetch should not be blocked in pagehide event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=214630
+        <rdar://problem/65564772>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/fetch/fetch-in-pagehide-expected.txt: Added.
+        * http/wpt/fetch/fetch-in-pagehide.html: Added.
+        * http/wpt/fetch/resources/fetch-in-pagehide-window.html: Added.
+
 2020-07-22  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update test expectations after r264694.

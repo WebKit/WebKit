@@ -1,3 +1,17 @@
+2020-07-22  Youenn Fablet  <youenn@apple.com>
+
+        KeepAlive fetch should not be blocked in pagehide event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=214630
+        <rdar://problem/65564772>
+
+        Reviewed by Chris Dumez.
+
+        Test: http/wpt/fetch/fetch-in-pagehide.html
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        Allow keep alive fetches to proceed similarly to ping loads.
+
 2020-07-22  Geoffrey Garen  <ggaren@apple.com>
 
         JSRunLoopTimer should use WTF::RunLoop rather than custom CF code

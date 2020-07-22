@@ -1,0 +1,53 @@
+<!doctype html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fetch in pagehide</title>
+    <script src=/resources/testharness.js></script>
+    <script src=/resources/testharnessreport.js></script>
+  </head>
+  <body>
+    <script src="/common/utils.js"></script>
+    <script src="/common/get-host-info.sub.js"></script>
+    <script>
+const RESOURCES_DIR = "/beacon/resources/";
+
+function checkUrl(id)
+{
+    return RESOURCES_DIR + "content-type.py?cmd=get&id=" + id;
+}
+
+promise_test(async (test) => {
+    const w1 = open("resources/fetch-in-pagehide-window.html#keepalive");
+    await new Promise(resolve => w1.onload = resolve);
+
+    let id = w1.id;
+    step_timeout(function() {
+        w1.location = "/";
+    }, 0);
+
+    await new Promise(resolve => step_timeout(resolve, 1000));
+
+    const response = await fetch(checkUrl(id));
+    assert_equals(response.status, 200);
+    const result = await response.text();
+    assert_equals(result, "text/plain;charset=UTF-8", "Correct content-type header result");
+}, "Test that fetch sent from pagehide event handler is properly received with keepalive");
+
+promise_test(async (test) => {
+    const w2 = open("resources/fetch-in-pagehide-window.html#nokeepalive");
+    await new Promise(resolve => w2.onload = resolve);
+
+    let id = w2.id;
+    step_timeout(function() {
+      w2.location = "/";
+    }, 0);
+
+    await new Promise(resolve => test.step_timeout(resolve, 50));
+
+    const response = await fetch(checkUrl(id));
+    assert_equals(response.status, 400);
+}, "Test that fetch sent from pagehide event handler is not received with no keepalive");
+    </script>
+  </body>
+</html>

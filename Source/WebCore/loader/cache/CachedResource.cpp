@@ -230,7 +230,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
             break;
         case Document::AboutToEnterBackForwardCache:
             // Beacons are allowed to go through in 'pagehide' event handlers.
-            if (shouldUsePingLoad(type()))
+            if (m_options.keepAlive || shouldUsePingLoad(type()))
                 break;
             RELEASE_LOG_IF_ALLOWED_WITH_FRAME("load: About to enter back/forward cache", frame);
             failBeforeStarting();
@@ -243,7 +243,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     }
 
     FrameLoader& frameLoader = frame.loader();
-    if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !shouldUsePingLoad(type())) {
+    if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !m_options.keepAlive && !shouldUsePingLoad(type())) {
         while (true) {
             if (frameLoader.state() == FrameStateProvisional)
                 RELEASE_LOG_IF_ALLOWED_WITH_FRAME("load: Failed security check -- state is provisional", frame);
