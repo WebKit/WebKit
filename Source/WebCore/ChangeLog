@@ -1,3 +1,47 @@
+2020-07-22  James Darpinian  <jdarpinian@chromium.org>
+
+        Fix validation of deleted WebGL objects
+        https://bugs.webkit.org/show_bug.cgi?id=214622
+
+        Reviewed by Dean Jackson.
+
+        Programs and shaders need to be validated differently than other WebGL objects.
+        Using a deleted WebGL object should cause an INVALID_OPERATION error, except
+        for programs and shaders which should be INVALID_VALUE.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getFragDataLocation):
+        (WebCore::WebGL2RenderingContext::transformFeedbackVaryings):
+        (WebCore::WebGL2RenderingContext::getTransformFeedbackVarying):
+        (WebCore::WebGL2RenderingContext::getUniformIndices):
+        (WebCore::WebGL2RenderingContext::getActiveUniforms):
+        (WebCore::WebGL2RenderingContext::getUniformBlockIndex):
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockParameter):
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockName):
+        (WebCore::WebGL2RenderingContext::uniformBlockBinding):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::attachShader):
+        (WebCore::WebGLRenderingContextBase::bindAttribLocation):
+        (WebCore::WebGLRenderingContextBase::compileShader):
+        (WebCore::WebGLRenderingContextBase::detachShader):
+        (WebCore::WebGLRenderingContextBase::validateWebGLObject):
+        (WebCore::WebGLRenderingContextBase::validateWebGLProgramOrShader):
+        (WebCore::WebGLRenderingContextBase::getActiveAttrib):
+        (WebCore::WebGLRenderingContextBase::getActiveUniform):
+        (WebCore::WebGLRenderingContextBase::getAttachedShaders):
+        (WebCore::WebGLRenderingContextBase::getAttribLocation):
+        (WebCore::WebGLRenderingContextBase::getProgramParameter):
+        (WebCore::WebGLRenderingContextBase::getProgramInfoLog):
+        (WebCore::WebGLRenderingContextBase::getShaderParameter):
+        (WebCore::WebGLRenderingContextBase::getShaderInfoLog):
+        (WebCore::WebGLRenderingContextBase::getShaderSource):
+        (WebCore::WebGLRenderingContextBase::getUniform):
+        (WebCore::WebGLRenderingContextBase::getUniformLocation):
+        (WebCore::WebGLRenderingContextBase::linkProgramWithoutInvalidatingAttribLocations):
+        (WebCore::WebGLRenderingContextBase::shaderSource):
+        (WebCore::WebGLRenderingContextBase::validateProgram):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2020-07-22  Jon Davis  <jond@apple.com>
 
         Update feature status to include the inert attribute

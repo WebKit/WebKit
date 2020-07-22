@@ -461,6 +461,7 @@ protected:
     bool validateVertexAttributes(unsigned elementCount, unsigned primitiveCount = 0);
 
     bool validateWebGLObject(const char*, WebGLObject*);
+    bool validateWebGLProgramOrShader(const char*, WebGLObject*);
 
 #if !USE(ANGLE)
     bool validateDrawArrays(const char* functionName, GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount);

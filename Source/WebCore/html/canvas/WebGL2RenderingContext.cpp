@@ -1499,7 +1499,7 @@ void WebGL2RenderingContext::compressedTexSubImage3D(GCGLenum target, GCGLint le
 
 GCGLint WebGL2RenderingContext::getFragDataLocation(WebGLProgram& program, const String& name)
 {
-    if (isContextLostOrPending() || !validateWebGLObject("getFragDataLocation", &program))
+    if (isContextLostOrPending() || !validateWebGLProgramOrShader("getFragDataLocation", &program))
         return -1;
     return m_context->getFragDataLocation(program.object(), name);
 }
@@ -2260,7 +2260,7 @@ void WebGL2RenderingContext::endTransformFeedback()
 
 void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, const Vector<String>& varyings, GCGLenum bufferMode)
 {
-    if (isContextLostOrPending() || !validateWebGLObject("transformFeedbackVaryings", &program))
+    if (isContextLostOrPending() || !validateWebGLProgramOrShader("transformFeedbackVaryings", &program))
         return;
     
     switch (bufferMode) {
@@ -2283,7 +2283,7 @@ void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram& program, co
 
 RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebGLProgram& program, GCGLuint index)
 {
-    if (isContextLostOrPending() || !validateWebGLObject("getTransformFeedbackVarying", &program))
+    if (isContextLostOrPending() || !validateWebGLProgramOrShader("getTransformFeedbackVarying", &program))
         return nullptr;
 
     GraphicsContextGL::ActiveInfo info;
@@ -2433,7 +2433,7 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
 Optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram& program, const Vector<String>& names)
 {
 #if USE(ANGLE)
-    if (isContextLostOrPending() || !validateWebGLObject("getUniformIndices", &program))
+    if (isContextLostOrPending() || !validateWebGLProgramOrShader("getUniformIndices", &program))
         return WTF::nullopt;
     return m_context->getUniformIndices(program.object(), names);
 #else
@@ -2444,7 +2444,7 @@ Optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgra
 
 WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const Vector<GCGLuint>& uniformIndices, GCGLenum pname)
 {
-    if (isContextLostOrPending() || !validateWebGLObject("getActiveUniforms", &program))
+    if (isContextLostOrPending() || !validateWebGLProgramOrShader("getActiveUniforms", &program))
         return nullptr;
 
     Vector<GCGLint> result(uniformIndices.size(), 0);
@@ -2474,7 +2474,7 @@ WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const 
 GCGLuint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram& program, const String& uniformBlockName)
 {
 #if USE(ANGLE)
-    if (isContextLostOrPending() || !validateWebGLObject("getUniformBlockIndex", &program))
+    if (isContextLostOrPending() || !validateWebGLProgramOrShader("getUniformBlockIndex", &program))
         return 0;
     return m_context->getUniformBlockIndex(program.object(), uniformBlockName);
 #else
@@ -2488,7 +2488,7 @@ GCGLuint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram& program, con
 WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram& program, GCGLuint uniformBlockIndex, GCGLenum pname)
 {
 #if USE(ANGLE)
-    if (isContextLostOrPending() || !validateWebGLObject("getActiveUniformBlockParameter", &program))
+    if (isContextLostOrPending() || !validateWebGLProgramOrShader("getActiveUniformBlockParameter", &program))
         return nullptr;
     GLint result = 0;
     switch (pname) {
@@ -2524,7 +2524,7 @@ WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram& pr
 WebGLAny WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram& program, GCGLuint index)
 {
 #if USE(ANGLE)
-    if (isContextLostOrPending() || !validateWebGLObject("getActiveUniformBlockName", &program))
+    if (isContextLostOrPending() || !validateWebGLProgramOrShader("getActiveUniformBlockName", &program))
         return String();
     if (!program.getLinkStatus()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getActiveUniformBlockName", "program not linked");
@@ -2545,7 +2545,7 @@ WebGLAny WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram& program
 void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram& program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding)
 {
 #if USE(ANGLE)
-    if (isContextLostOrPending() || !validateWebGLObject("uniformBlockBinding", &program))
+    if (isContextLostOrPending() || !validateWebGLProgramOrShader("uniformBlockBinding", &program))
         return;
     m_context->uniformBlockBinding(program.object(), uniformBlockIndex, uniformBlockBinding);
 #else
