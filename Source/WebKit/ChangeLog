@@ -1,5 +1,20 @@
 2020-07-22  David Kilzer  <ddkilzer@apple.com>
 
+        Follow-up: [IPC hardening] WebKit::ObjCObjectGraph::decode() and encode() should use enum ObjCType type
+        <https://webkit.org/b/214618>
+        <rdar://problem/65777899>
+
+        Unreviewed fix to get rid of extra namespace blocks.
+
+        * Shared/mac/ObjCObjectGraph.mm:
+        (enum class WebKit::ObjCType):
+        - Move enum class definition back to its original location.
+        (WTF::EnumTraits<WebKit::ObjCType>):
+        - Move to the end of the file.  Noticed this worked in
+          ColorSpaceData.mm.
+
+2020-07-22  David Kilzer  <ddkilzer@apple.com>
+
         [IPC hardening] WebKit::ObjCObjectGraph::decode() and encode() should use enum ObjCType type
         <https://webkit.org/b/214618>
         <rdar://problem/65777899>

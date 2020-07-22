@@ -38,43 +38,6 @@
 
 namespace WebKit {
 
-enum class ObjCType : uint8_t {
-    Null,
-
-    NSArray,
-    NSData,
-    NSDate,
-    NSDictionary,
-    NSNumber,
-    NSString,
-
-    WKBrowsingContextHandle,
-    WKTypeRefWrapper,
-};
-
-} // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::ObjCType> {
-    using values = EnumValues<
-        WebKit::ObjCType,
-        WebKit::ObjCType::Null,
-        WebKit::ObjCType::NSArray,
-        WebKit::ObjCType::NSData,
-        WebKit::ObjCType::NSDate,
-        WebKit::ObjCType::NSDictionary,
-        WebKit::ObjCType::NSNumber,
-        WebKit::ObjCType::NSString,
-        WebKit::ObjCType::WKBrowsingContextHandle,
-        WebKit::ObjCType::WKTypeRefWrapper
-    >;
-};
-
-} // namespace WTF
-
-namespace WebKit {
-
 static bool shouldTransformGraph(id object, const ObjCObjectGraph::Transformer& transformer)
 {
     if (NSArray *array = dynamic_objc_cast<NSArray>(object)) {
@@ -131,6 +94,20 @@ RetainPtr<id> ObjCObjectGraph::transform(id object, const Transformer& transform
 
     return transformGraph(object, transformer);
 }
+
+enum class ObjCType : uint8_t {
+    Null,
+
+    NSArray,
+    NSData,
+    NSDate,
+    NSDictionary,
+    NSNumber,
+    NSString,
+
+    WKBrowsingContextHandle,
+    WKTypeRefWrapper,
+};
 
 static Optional<ObjCType> typeFromObject(id object)
 {
@@ -370,3 +347,22 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
 }
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::ObjCType> {
+    using values = EnumValues<
+        WebKit::ObjCType,
+        WebKit::ObjCType::Null,
+        WebKit::ObjCType::NSArray,
+        WebKit::ObjCType::NSData,
+        WebKit::ObjCType::NSDate,
+        WebKit::ObjCType::NSDictionary,
+        WebKit::ObjCType::NSNumber,
+        WebKit::ObjCType::NSString,
+        WebKit::ObjCType::WKBrowsingContextHandle,
+        WebKit::ObjCType::WKTypeRefWrapper
+    >;
+};
+
+} // namespace WTF
