@@ -1,3 +1,19 @@
+2020-07-22  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Pass api key in more secure manner
+        https://bugs.webkit.org/show_bug.cgi?id=214639
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-app/ews/common/bugzilla.py:
+        (Bugzilla.get_bugzilla_api_key): Method to read api key from file instead of environment variable.
+        (Bugzilla.fetch_data_from_bugzilla_with_authentication): Method to fetch data from bugzilla using api key.
+        (Bugzilla._fetch_attachment_json): Do not append api key in the url, use new method instead.
+        (Bugzilla._get_bug_json): Ditto.
+        (Bugzilla._get_commit_queue_patches_from_bug): Ditto.
+        * BuildSlaveSupport/ews-app/ews/common/util.py:
+        (fetch_data_from_url): Log the url to help in debugging any possible issues.
+
 2020-07-22  Jer Noble  <jer.noble@apple.com>
 
         [macOS] Adopt AVPlayer.videoRangeOverride

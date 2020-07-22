@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,9 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base64
+import json
 import logging
 import os
 import re
+import requests
 import socket
 import time
 
@@ -75,16 +77,37 @@ class Bugzilla():
             attachment_file.write(attachment_data)
 
     @classmethod
+    def get_bugzilla_api_key(cls):
+        try:
+            passwords = json.load(open('passwords.json'))
+            return passwords.get('BUGZILLA_API_KEY', '')
+        except Exception as e:
+            _log.error('Error in reading Bugzilla api key')
+            return ''
+
+    @classmethod
+    def fetch_data_from_bugzilla_with_authentication(cls, url):
+        _log.info('Fetching from bugzilla: {}'.format(url))
+        response = None
+        try:
+            response = requests.get(url, timeout=10, params={'Bugzilla_api_key': cls.get_bugzilla_api_key()})
+            if response.status_code != 200:
+                _log.error('Accessed {url} with unexpected status code {status_code}.'.format(url=url, status_code=response.status_code))
+                return None
+        except Exception as e:
+            # Catching all exceptions here to safeguard api key.
+            _log.error('Failed to access {}'.format(url))
+            return None
+        return response
+
+    @classmethod
     def _fetch_attachment_json(cls, attachment_id):
         if not Patch.is_valid_patch_id(attachment_id):
             _log.warn('Invalid attachment id: "{}", skipping download.'.format(attachment_id))
             return None
 
         attachment_url = '{}rest/bug/attachment/{}'.format(config.BUG_SERVER_URL, attachment_id)
-        api_key = os.getenv('BUGZILLA_API_KEY', None)
-        if api_key:
-            attachment_url += '?api_key={}'.format(api_key)
-        attachment = util.fetch_data_from_url(attachment_url)
+        attachment = cls.fetch_data_from_bugzilla_with_authentication(attachment_url)
         if not attachment:
             return None
         attachment_json = attachment.json().get('attachments')
@@ -99,10 +122,7 @@ class Bugzilla():
             return []
 
         bug_url = '{}rest/bug/{}'.format(config.BUG_SERVER_URL, bug_id)
-        api_key = os.getenv('BUGZILLA_API_KEY', None)
-        if api_key:
-            bug_url += '?api_key={}'.format(api_key)
-        bug = util.fetch_data_from_url(bug_url)
+        bug = cls.fetch_data_from_bugzilla_with_authentication(bug_url)
         if not bug:
             return None
         bugs_json = bug.json().get('bugs')
@@ -117,10 +137,7 @@ class Bugzilla():
             return []
 
         bug_url = '{}rest/bug/{}/attachment'.format(config.BUG_SERVER_URL, bug_id)
-        api_key = os.getenv('BUGZILLA_API_KEY', None)
-        if api_key:
-            bug_url += '?api_key={}'.format(api_key)
-        bug = util.fetch_data_from_url(bug_url)
+        bug = cls.fetch_data_from_bugzilla_with_authentication(bug_url)
         if not bug:
             return []
         bug_json = bug.json().get('bugs')

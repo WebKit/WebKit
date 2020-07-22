@@ -27,7 +27,7 @@ _log = logging.getLogger(__name__)
 
 
 def fetch_data_from_url(url):
-    _log.debug('Fetching: {}'.format(url))
+    _log.info('Fetching: {}'.format(url))
     response = None
     try:
         response = requests.get(url, timeout=10)
