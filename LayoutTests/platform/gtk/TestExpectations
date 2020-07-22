@@ -2142,6 +2142,8 @@ webkit.org/b/213387 imported/w3c/web-platform-tests/html/browsers/offline/introd
 
 webkit.org/b/213776 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html [ Failure Pass ]
 
+webkit.org/b/214637 js/weakref-finalizationregistry.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

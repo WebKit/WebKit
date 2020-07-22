@@ -1,3 +1,13 @@
+2020-07-22  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update test expectations after r264694.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/encoding/eof-shift_jis-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox-expected.txt:
+        * platform/wpe/TestExpectations:
+
 2020-07-21  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Implement multiple render target entry points
