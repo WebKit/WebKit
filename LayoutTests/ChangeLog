@@ -1,3 +1,16 @@
+2020-07-21  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Implement multiple render target entry points
+        https://bugs.webkit.org/show_bug.cgi?id=211156
+
+        Reviewed by Myles C. Maxfield.
+
+        Rebaseline one layout test which is now fully passing, and another
+        which now properly detects errors.
+
+        * fast/canvas/webgl/webgl2/sequences-expected.txt:
+        * webgl/2.0.0/conformance2/reading/read-pixels-from-fbo-test-expected.txt:
+
 2020-07-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r258871): Shift + click to extend selection loses currently selected text

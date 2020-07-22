@@ -1100,13 +1100,17 @@ bool WebGLRenderingContextBase::clearIfComposited(GCGLbitfield mask)
     if (isContextLostOrPending())
         return false;
 
-    if (!m_context->layerComposited() || m_layerCleared
-        || m_attributes.preserveDrawingBuffer || (mask && m_framebufferBinding)
-        || m_preventBufferClearForInspector)
+    if (!m_context->layerComposited() || m_layerCleared || m_preventBufferClearForInspector)
         return false;
 
-    auto contextAttributes = getContextAttributes();
-    ASSERT(contextAttributes);
+    GCGLbitfield buffersNeedingClearing = m_context->getBuffersToAutoClear();
+
+    if (!buffersNeedingClearing || (mask && m_framebufferBinding))
+        return false;
+
+    // Use the underlying GraphicsContext3D's attributes to take into
+    // account (for example) packed depth/stencil buffers.
+    auto contextAttributes = m_context->contextAttributes();
 
     // Determine if it's possible to combine the clear the user asked for and this clear.
     bool combinedClear = mask && !m_scissorEnabled;
@@ -1121,13 +1125,13 @@ bool WebGLRenderingContextBase::clearIfComposited(GCGLbitfield mask)
         m_context->clearColor(0, 0, 0, 0);
     m_context->colorMask(true, true, true, true);
     GCGLbitfield clearMask = GraphicsContextGL::COLOR_BUFFER_BIT;
-    if (contextAttributes->depth) {
+    if (contextAttributes.depth) {
         if (!combinedClear || !m_depthMask || !(mask & GraphicsContextGL::DEPTH_BUFFER_BIT))
             m_context->clearDepth(1.0f);
         clearMask |= GraphicsContextGL::DEPTH_BUFFER_BIT;
         m_context->depthMask(true);
     }
-    if (contextAttributes->stencil) {
+    if (contextAttributes.stencil) {
         if (combinedClear && (mask & GraphicsContextGL::STENCIL_BUFFER_BIT))
             m_context->clearStencil(m_clearStencil & m_stencilMask);
         else
@@ -1135,11 +1139,15 @@ bool WebGLRenderingContextBase::clearIfComposited(GCGLbitfield mask)
         clearMask |= GraphicsContextGL::STENCIL_BUFFER_BIT;
         m_context->stencilMaskSeparate(GraphicsContextGL::FRONT, 0xFFFFFFFF);
     }
-    
+
     GCGLenum bindingPoint = isWebGL2() ? GraphicsContextGL::DRAW_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
     if (m_framebufferBinding)
         m_context->bindFramebuffer(bindingPoint, 0);
-    m_context->clear(clearMask);
+    // If the WebGL 2.0 clearBuffer APIs already have been used to
+    // selectively clear some of the buffers, don't destroy those
+    // results.
+    m_context->clear(clearMask & buffersNeedingClearing);
+    m_context->setBuffersToAutoClear(0);
 
     restoreStateAfterClear();
     if (m_framebufferBinding)

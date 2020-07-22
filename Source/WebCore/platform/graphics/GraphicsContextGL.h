@@ -1186,7 +1186,7 @@ public:
 
     virtual void drawRangeElements(GCGLenum mode, GCGLuint start, GCGLuint end, GCGLsizei count, GCGLenum type, GCGLintptr offset) = 0;
 
-    virtual void drawBuffers(const Vector<GCGLenum>& buffers) = 0;
+    virtual void drawBuffers(GCGLsizei n, const GCGLenum* bufs) = 0;
     virtual void clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, const GCGLint* values, GCGLuint srcOffset) = 0;
     virtual void clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer, const GCGLuint* values, GCGLuint srcOffset) = 0;
     virtual void clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, const GCGLfloat* values, GCGLuint srcOffset) = 0;

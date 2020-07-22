@@ -1,3 +1,46 @@
+2020-07-21  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Implement multiple render target entry points
+        https://bugs.webkit.org/show_bug.cgi?id=211156
+
+        Reviewed by Myles C. Maxfield.
+
+        Implement the drawBuffers and clearBuffer entry points. Integrate
+        the clearBuffer APIs with preserveDrawingBuffer:false's
+        auto-clearing.
+
+        Covered by existing WebGL conformance tests.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::drawBuffers):
+        (WebCore::WebGL2RenderingContext::clearBufferiv):
+        (WebCore::WebGL2RenderingContext::clearBufferuiv):
+        (WebCore::WebGL2RenderingContext::clearBufferfv):
+        (WebCore::WebGL2RenderingContext::clearBufferfi):
+        (WebCore::WebGL2RenderingContext::validateClearBuffer):
+        (WebCore::WebGL2RenderingContext::updateBuffersToAutoClear):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::drawBuffersIfNecessary):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::clearIfComposited):
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::markLayerComposited):
+        (WebCore::GraphicsContextGLOpenGL::drawBuffers):
+        (WebCore::GraphicsContextGLOpenGL::clearBufferiv):
+        (WebCore::GraphicsContextGLOpenGL::clearBufferuiv):
+        (WebCore::GraphicsContextGLOpenGL::clearBufferfv):
+        (WebCore::GraphicsContextGLOpenGL::clearBufferfi):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        (WebCore::GraphicsContextGLOpenGL::resetBuffersToAutoClear):
+        (WebCore::GraphicsContextGLOpenGL::setBuffersToAutoClear):
+        (WebCore::GraphicsContextGLOpenGL::getBuffersToAutoClear const):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+        (WebCore::GraphicsContextGLOpenGL::markLayerComposited):
+        (WebCore::GraphicsContextGLOpenGL::drawBuffers):
+
 2020-07-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r258871): Shift + click to extend selection loses currently selected text
