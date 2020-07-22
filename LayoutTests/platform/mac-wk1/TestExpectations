@@ -817,6 +817,9 @@ imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_compat-mouse-e
 webkit.org/b/198459 [ Debug ] inspector/canvas/recording-webgl-full.html [ Slow ]
 
 webkit.org/b/196508 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Pass Failure ]
+webkit.org/b/206945 [ Catalina ] compositing/repaint/become-overlay-composited-layer.html [ Pass Failure ]
+webkit.org/b/214647 [ Mojave ] compositing/repaint/iframes/compositing-iframe-scroll-repaint.html [ Failure ]
+webkit.org/b/214388 [ Mojave ] compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Pass Failure ]
 
 webkit.org/b/198676 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Pass Failure ]
 
@@ -873,8 +876,6 @@ webkit.org/b/206668 fast/loader/redirect-to-invalid-url-using-meta-refresh-calls
 webkit.org/b/180760 fast/loader/redirect-to-invalid-url-using-meta-refresh-disallowed-async-delegates.html [ Pass Failure ]
 
 webkit.org/b/190830 [ Debug ] media/track/video-track-addition-and-frame-removal.html [ Pass Crash ]
-
-webkit.org/b/206945 [ Catalina ] compositing/repaint/become-overlay-composited-layer.html [ Pass Failure ]
 
 webkit.org/b/206974 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-xslt-document-in-iframe-with-inherited-policy.html [ Pass Failure ]
 
@@ -981,8 +982,6 @@ webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/sizing
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-change-margin.html [ ImageOnlyFailure ]
 
 webkit.org/b/214308 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html [ Pass Failure ]
-
-webkit.org/b/214388 [ Mojave ] compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Pass Failure ]
 
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-opacity-pause-and-set-time.html [ ImageOnlyFailure ]
 webkit.org/b/214469 imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html [ ImageOnlyFailure ]
