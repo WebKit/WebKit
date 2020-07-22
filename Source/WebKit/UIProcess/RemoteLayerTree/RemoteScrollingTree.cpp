@@ -69,21 +69,20 @@ void RemoteScrollingTree::handleWheelEventPhase(ScrollingNodeID, PlatformWheelEv
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-void RemoteScrollingTree::scrollingTreeNodeWillStartPanGesture()
+void RemoteScrollingTree::scrollingTreeNodeWillStartPanGesture(ScrollingNodeID nodeID)
 {
-    m_scrollingCoordinatorProxy.scrollingTreeNodeWillStartPanGesture();
+    m_scrollingCoordinatorProxy.scrollingTreeNodeWillStartPanGesture(nodeID);
 }
 
-void RemoteScrollingTree::scrollingTreeNodeWillStartScroll()
+void RemoteScrollingTree::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
 {
-    m_scrollingCoordinatorProxy.scrollingTreeNodeWillStartScroll();
+    m_scrollingCoordinatorProxy.scrollingTreeNodeWillStartScroll(nodeID);
 }
 
-void RemoteScrollingTree::scrollingTreeNodeDidEndScroll()
+void RemoteScrollingTree::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeID)
 {
-    m_scrollingCoordinatorProxy.scrollingTreeNodeDidEndScroll();
+    m_scrollingCoordinatorProxy.scrollingTreeNodeDidEndScroll(nodeID);
 }
-
 #endif
 
 void RemoteScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNode& node, ScrollingLayerPositionAction scrollingLayerPositionAction)

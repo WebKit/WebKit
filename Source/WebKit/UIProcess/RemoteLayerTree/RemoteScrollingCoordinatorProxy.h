@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "RemoteScrollingCoordinator.h"
 #include "RemoteScrollingTree.h"
+#include "RemoteScrollingUIState.h"
 #include <WebCore/GraphicsLayer.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -94,9 +95,9 @@ public:
     UIScrollView *scrollViewForScrollingNodeID(WebCore::ScrollingNodeID) const;
 
     WebCore::FloatRect currentLayoutViewport() const;
-    void scrollingTreeNodeWillStartPanGesture();
-    void scrollingTreeNodeWillStartScroll();
-    void scrollingTreeNodeDidEndScroll();
+    void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID);
+    void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID);
+    void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID);
 #if ENABLE(CSS_SCROLL_SNAP)
     void adjustTargetContentOffsetForSnapping(CGSize maxScrollDimensions, CGPoint velocity, CGFloat topInset, CGPoint* targetContentOffset);
     bool hasActiveSnapPoint() const;
@@ -110,6 +111,8 @@ public:
     OptionSet<WebCore::TouchAction> activeTouchActionsForTouchIdentifier(unsigned touchIdentifier) const;
     void setTouchActionsForTouchIdentifier(OptionSet<WebCore::TouchAction>, unsigned);
     void clearTouchActionsForTouchIdentifier(unsigned);
+    
+    void resetStateAfterProcessExited();
 
 private:
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&);
@@ -120,15 +123,18 @@ private:
     float closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float scrollDestination, float velocity, unsigned& closestIndex) const;
 #endif
 
+    void sendUIStateChangedIfNecessary();
+
     WebPageProxy& m_webPageProxy;
     RefPtr<RemoteScrollingTree> m_scrollingTree;
     HashMap<unsigned, OptionSet<WebCore::TouchAction>> m_touchActionsByTouchIdentifier;
-    RequestedScrollInfo* m_requestedScrollInfo;
+    RequestedScrollInfo* m_requestedScrollInfo { nullptr };
+    RemoteScrollingUIState m_uiState;
 #if ENABLE(CSS_SCROLL_SNAP)
     unsigned m_currentHorizontalSnapPointIndex { 0 };
     unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif
-    bool m_propagatesMainFrameScrolls;
+    bool m_propagatesMainFrameScrolls { true };
     HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_layersWithScrollingRelations;
 };
 

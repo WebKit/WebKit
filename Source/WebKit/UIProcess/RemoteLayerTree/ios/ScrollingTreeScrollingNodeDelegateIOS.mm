@@ -308,17 +308,17 @@ void ScrollingTreeScrollingNodeDelegateIOS::repositionScrollingLayers()
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollWillStart() const
 {
-    scrollingTree().scrollingTreeNodeWillStartScroll();
+    scrollingTree().scrollingTreeNodeWillStartScroll(scrollingNode().scrollingNodeID());
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollDidEnd() const
 {
-    scrollingTree().scrollingTreeNodeDidEndScroll();
+    scrollingTree().scrollingTreeNodeDidEndScroll(scrollingNode().scrollingNodeID());
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollViewWillStartPanGesture() const
 {
-    scrollingTree().scrollingTreeNodeWillStartPanGesture();
+    scrollingTree().scrollingTreeNodeWillStartPanGesture(scrollingNode().scrollingNodeID());
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll(const FloatPoint& scrollOffset, bool inUserInteraction)

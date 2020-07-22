@@ -1,0 +1,93 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        
+        .scroller {
+            width: 620px;
+            height: 120px;
+            border: 1px solid black;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+        }
+        
+        .contents {
+            width: 200%;
+        }
+        
+        .box {
+            scroll-snap-align: start;
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            background-color: blue;
+            display: inline-block;
+        }
+        
+        .scroller.changed .box {
+            width: 110px;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/basic-gestures.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var beforeChangeScrollLeft;
+        async function scrollTest()
+        {
+            if (!window.testRunner) {
+                finishJSTest();
+                return;
+            }
+
+            await Promise.all([
+                UIHelper.waitForEvent(scroller, 'scroll'),
+                touchAndDragFromPointToPoint(300, 50, 50, 50)
+            ]);
+
+            await UIHelper.animationFrame();
+
+            beforeChangeScrollLeft = scroller.scrollLeft;
+            shouldBeTrue('beforeChangeScrollLeft > 0');
+
+            scroller.classList.add('changed');
+            await UIHelper.animationFrame();
+
+            shouldBe('beforeChangeScrollLeft', 'scroller.scrollLeft');
+
+            await liftUpAtPoint(50, 50);
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            scroller = document.querySelector('.scroller');
+            setTimeout(scrollTest, 100);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+            <div class="box"></div>
+        </div>
+    </div>
+    <div id="console"></div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

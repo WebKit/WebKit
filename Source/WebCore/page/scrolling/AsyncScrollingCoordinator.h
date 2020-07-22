@@ -130,11 +130,12 @@ private:
 
     WEBCORE_EXPORT bool isUserScrollInProgress(ScrollingNodeID) const override;
     bool isRubberBandInProgress() const override;
-    void setScrollPinningBehavior(ScrollPinningBehavior) override;
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    bool isScrollSnapInProgress(ScrollingNodeID) const override;
+    WEBCORE_EXPORT bool isScrollSnapInProgress(ScrollingNodeID) const override;
 #endif
+
+    void setScrollPinningBehavior(ScrollPinningBehavior) override;
 
     WEBCORE_EXPORT void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction) override;
     WEBCORE_EXPORT void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) override;

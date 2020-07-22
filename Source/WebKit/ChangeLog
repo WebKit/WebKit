@@ -1,3 +1,59 @@
+2020-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling tesla.com on iPad is not smooth
+        https://bugs.webkit.org/show_bug.cgi?id=214627
+        <rdar://problem/65568979>
+
+        Reviewed by Tim Horton.
+
+        This is the iOS equivalent of the fix in r264203; if the user is scrolling (or we're animating for
+        scroll snap), layout should not trigger scroll position changes via computation of the current snap
+        location.
+
+        To fix this, we need to send data from the UI process to the web process about which scrolling tree
+        nodes the user is scrolling. That's done via RemoteScrollingUIState, which will, in the long term,
+        become a more general UI -> WebProcess scrolling state updating mechanism. For now, it just keeps
+        track of nodes undergoing scroll snap and user scrolls (only the latter is hooked up for now).
+
+        * Shared/RemoteLayerTree/RemoteScrollingUIState.cpp: Added.
+        (WebKit::RemoteScrollingUIState::encode const):
+        (WebKit::RemoteScrollingUIState::decode):
+        (WebKit::RemoteScrollingUIState::addNodeWithActiveScrollSnap):
+        (WebKit::RemoteScrollingUIState::removeNodeWithActiveScrollSnap):
+        (WebKit::RemoteScrollingUIState::addNodeWithActiveUserScroll):
+        (WebKit::RemoteScrollingUIState::removeNodeWithActiveUserScroll):
+        * Shared/RemoteLayerTree/RemoteScrollingUIState.h: Added.
+        (WebKit::RemoteScrollingUIState::changes const):
+        (WebKit::RemoteScrollingUIState::clearChanges):
+        (WebKit::RemoteScrollingUIState::nodesWithActiveScrollSnap const):
+        (WebKit::RemoteScrollingUIState::nodesWithActiveUserScrolls const):
+        * SourcesCocoa.txt:
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::RemoteScrollingCoordinatorProxy):
+        (WebKit::RemoteScrollingCoordinatorProxy::sendUIStateChangedIfNecessary):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeWillStartPanGesture):
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeWillStartScroll):
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidEndScroll):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollViewForScrollingNodeID const):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartScroll):
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndScroll):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollWillStart const):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollDidEnd const):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollViewWillStartPanGesture const):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+        (WebKit::RemoteScrollingCoordinator::isUserScrollInProgress const):
+        (WebKit::RemoteScrollingCoordinator::isScrollSnapInProgress const):
+        (WebKit::RemoteScrollingCoordinator::scrollingStateInUIProcessChanged):
+
 2020-07-22  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] WebKit::ObjCObjectGraph::decode() and encode() should use enum ObjCType type

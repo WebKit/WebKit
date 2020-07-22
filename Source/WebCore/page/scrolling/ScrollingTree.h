@@ -133,9 +133,9 @@ public:
     virtual void reportExposedUnfilledArea(MonotonicTime, unsigned /* unfilledArea */) { }
 
 #if PLATFORM(IOS_FAMILY)
-    virtual void scrollingTreeNodeWillStartPanGesture() { }
-    virtual void scrollingTreeNodeWillStartScroll() { }
-    virtual void scrollingTreeNodeDidEndScroll() { }
+    virtual void scrollingTreeNodeWillStartPanGesture(ScrollingNodeID) { }
+    virtual void scrollingTreeNodeWillStartScroll(ScrollingNodeID) { }
+    virtual void scrollingTreeNodeDidEndScroll(ScrollingNodeID) { }
 #endif
 
     WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(const AtomString& eventName, IntPoint);

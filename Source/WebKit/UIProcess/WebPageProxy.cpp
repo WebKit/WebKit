@@ -7695,6 +7695,11 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
     invalidateAllAttachments();
 #endif
 
+#if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
+    if (m_scrollingCoordinatorProxy)
+        m_scrollingCoordinatorProxy->resetStateAfterProcessExited();
+#endif
+
     if (terminationReason != ProcessTerminationReason::NavigationSwap) {
         PageLoadState::Transaction transaction = m_pageLoadState.transaction();
         m_pageLoadState.reset(transaction);

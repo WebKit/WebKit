@@ -63,9 +63,9 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void scrollingTreeNodeWillStartPanGesture() override;
-    void scrollingTreeNodeWillStartScroll() override;
-    void scrollingTreeNodeDidEndScroll() override;
+    void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) override;
+    void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
+    void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
 #endif
 
     Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
