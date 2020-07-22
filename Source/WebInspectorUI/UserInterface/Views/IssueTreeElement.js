@@ -58,15 +58,18 @@ WI.IssueTreeElement = class IssueTreeElement extends WI.GeneralTreeElement
 
     _updateTitles()
     {
-        var displayLineNumber = this._issueMessage.sourceCodeLocation.displayLineNumber;
-        var displayColumnNumber = this._issueMessage.sourceCodeLocation.displayColumnNumber;
-        var title;
-        if (displayColumnNumber > 0)
-            title = WI.UIString("Line %d:%d").format(displayLineNumber + 1, displayColumnNumber + 1); // The user visible line and column numbers are 1-based.
-        else
-            title = WI.UIString("Line %d").format(displayLineNumber + 1); // The user visible line number is 1-based.
+        if (this._issueMessage.sourceCodeLocation) {
+            let displayLineNumber = this._issueMessage.sourceCodeLocation.displayLineNumber;
+            let displayColumnNumber = this._issueMessage.sourceCodeLocation.displayColumnNumber;
+            var lineNumberLabel;
+            if (displayColumnNumber > 0)
+                lineNumberLabel = WI.UIString("Line %d:%d").format(displayLineNumber + 1, displayColumnNumber + 1); // The user visible line and column numbers are 1-based.
+            else
+                lineNumberLabel = WI.UIString("Line %d").format(displayLineNumber + 1); // The user visible line number is 1-based.
 
-        this.mainTitle = title + " " + this._issueMessage.text;
+            this.mainTitle = `${lineNumberLabel} ${this._issueMessage.text}`;
+        } else
+            this.mainTitle = this._issueMessage.text;
     }
 };
 
