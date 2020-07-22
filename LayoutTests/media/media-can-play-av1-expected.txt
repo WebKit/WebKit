@@ -5,7 +5,7 @@ These tests may be expected to fail if the WebKit port does not support the form
 
 EXPECTED (video.canPlayType('video/mp4; codecs=av1') == '') OK
 EXPECTED (video.canPlayType('video/webm; codecs=av1') == '') OK
-EXPECTED (video.canPlayType('video/mp4; codecs=av01.0.04M.08') == 'probably') OK
-EXPECTED (video.canPlayType('video/webm; codecs=av01.0.04M.08') == 'probably') OK
+EXPECTED (video.canPlayType('video/mp4; codecs=av01.0.04M.08') == '') OK
+EXPECTED (video.canPlayType('video/webm; codecs=av01.0.04M.08') == '') OK
 END OF TEST
 

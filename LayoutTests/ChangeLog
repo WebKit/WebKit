@@ -1,3 +1,21 @@
+2020-07-22  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] canPlayType with 'codecs' parameter should never return "maybe"
+        https://bugs.webkit.org/show_bug.cgi?id=214621
+        <rdar://problem/65146785>
+
+        Reviewed by Jer Noble.
+
+        * media/media-can-play-av1-expected.txt:
+        * media/media-can-play-av1.html:
+        * media/vp9.html:
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt: Added.
+        * platform/ios/media/media-can-play-av1-expected.txt: Removed.
+        * platform/ios/media/media-can-play-wav-audio-expected.txt: Copied from LayoutTests/platform/mac/media/media-can-play-wav-audio-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt: Added.
+        * platform/mac/media/media-can-play-av1-expected.txt: Removed.
+        * platform/mac/media/media-can-play-wav-audio-expected.txt:
+
 2020-07-22  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Implement multiple render target entry points

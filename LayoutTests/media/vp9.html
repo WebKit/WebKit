@@ -7,7 +7,7 @@
 // FIXME: Add test for MediaSource.isTypeSupported("video/mp4; codecs=vp9")
 
 test(() => {
-    assert_equals(video.canPlayType("video/mp4; codecs=vp9"), "maybe", "canPlayType");
+    assert_equals(video.canPlayType("video/mp4; codecs=vp9"), "", "canPlayType");
 }, "HTMLMediaElement.canPlay VP9");
 
 promise_test(async() => {

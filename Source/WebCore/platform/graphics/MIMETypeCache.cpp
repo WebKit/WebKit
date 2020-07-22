@@ -75,12 +75,14 @@ MediaPlayerEnums::SupportsType MIMETypeCache::canDecodeType(const String& mimeTy
         if (!supportsContainerType(containerType))
             break;
 
-        result = MediaPlayerEnums::SupportsType::MayBeSupported;
-        if (contentType.codecs().isEmpty())
+        if (contentType.codecs().isEmpty()) {
+            result = MediaPlayerEnums::SupportsType::MayBeSupported;
             break;
+        }
 
         if (canDecodeExtendedType(contentType))
             result = MediaPlayerEnums::SupportsType::IsSupported;
+
     } while (0);
 
     if (!m_cachedResults)
