@@ -1,3 +1,21 @@
+2020-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Article headlines are split across multiple lines after translating tagesschau.de
+        https://bugs.webkit.org/show_bug.cgi?id=214652
+        <rdar://problem/63995571>
+
+        Reviewed by Tim Horton.
+
+        Treat block-level heading elements (`h1` through `h6`) as item boundaries. On this website, we currently vend
+        the main heading and sub-heading as separate tokens in the same item, which sometimes causes the machine
+        translation framework to try and rearrange and split tokens, since it treats the combination of the main heading
+        and sub-heading text as a single sentence to be translated.
+
+        Test: TextManipulation.StartTextManipulationExtractsHeadingElementsAsSeparateItems
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::isEnclosingItemBoundaryElement):
+
 2020-07-22  Alex Christensen  <achristensen@webkit.org>
 
         Safari does not present CertificateInfo for service-worker served documents

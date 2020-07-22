@@ -316,6 +316,10 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
     if (element.hasTagName(HTMLNames::spanTag) && displayType == DisplayType::InlineBlock)
         return true;
 
+    if (displayType == DisplayType::Block && (element.hasTagName(HTMLNames::h1Tag) || element.hasTagName(HTMLNames::h2Tag) || element.hasTagName(HTMLNames::h3Tag)
+        || element.hasTagName(HTMLNames::h4Tag) || element.hasTagName(HTMLNames::h5Tag) || element.hasTagName(HTMLNames::h6Tag)))
+        return true;
+
     return false;
 }
 

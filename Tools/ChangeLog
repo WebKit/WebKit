@@ -1,3 +1,15 @@
+2020-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Article headlines are split across multiple lines after translating tagesschau.de
+        https://bugs.webkit.org/show_bug.cgi?id=214652
+        <rdar://problem/63995571>
+
+        Reviewed by Tim Horton.
+
+        Adds a new API test (a reduced version of article headlines from the front page of tagesschau.de).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+
 2020-07-22  Alex Christensen  <achristensen@webkit.org>
 
         Safari does not present CertificateInfo for service-worker served documents

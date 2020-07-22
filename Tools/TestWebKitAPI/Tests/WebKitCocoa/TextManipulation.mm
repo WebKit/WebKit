@@ -1092,6 +1092,35 @@ TEST(TextManipulation, StartTextManipulationAvoidCrashWhenExtractingOrphanedPosi
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(TextManipulation, StartTextManipulationExtractsHeadingElementsAsSeparateItems)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "  <body>"
+        "    <div style='float: left; width: 300px; height: 150px;'></div>"
+        "    <p style='float: left; width: 600px;'>Hello world</p>"
+        "    <h4 style='float: left; width: 600px;'>This is a heading</h4>"
+        "  </body>"
+        "</html>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("Hello world", items[0].tokens[0].content);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("This is a heading", items[1].tokens[0].content);
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;
