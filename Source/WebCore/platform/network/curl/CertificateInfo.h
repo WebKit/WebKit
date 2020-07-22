@@ -50,7 +50,7 @@ public:
 
     bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
 
-    Optional<CertificateSummary> summaryInfo() const;
+    Optional<CertificateSummary> summary() const;
 
     bool isEmpty() const { return m_certificateChain.isEmpty(); }
 

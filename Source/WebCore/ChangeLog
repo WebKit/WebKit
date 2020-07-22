@@ -1,5 +1,15 @@
 2020-07-21  Alex Christensen  <achristensen@webkit.org>
 
+        Fix Windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=214623
+
+        * platform/network/curl/CertificateInfo.h:
+        * platform/network/curl/CertificateInfoCurl.cpp:
+        (WebCore::CertificateInfo::summary const):
+        (WebCore::CertificateInfo::summaryInfo const): Deleted.
+
+2020-07-21  Alex Christensen  <achristensen@webkit.org>
+
         Remove unneeded CertificateInfoBase
         https://bugs.webkit.org/show_bug.cgi?id=214623
 
