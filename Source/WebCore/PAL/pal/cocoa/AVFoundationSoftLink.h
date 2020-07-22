@@ -249,10 +249,11 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMetadataKeySpaceISOUserData, 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMetadataKeySpaceHLSDateRange, NSString *)
 #define AVMetadataKeySpaceHLSDateRange PAL::get_AVFoundation_AVMetadataKeySpaceHLSDateRange()
 
-#if PLATFORM(MAC)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVStreamDataParserContentKeyRequestProtocolVersionsKey, NSString *)
-#define AVStreamDataParserContentKeyRequestProtocolVersionsKey PAL::get_AVFoundation_AVStreamDataParserContentKeyRequestProtocolVersionsKey()
-#endif
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVVideoRangeSDR, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVVideoRangeHLG, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVVideoRangeHDR10, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVVideoRangeDolbyVisionPQ, NSString *)
 
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVURLAssetBoundNetworkInterfaceName, NSString *)

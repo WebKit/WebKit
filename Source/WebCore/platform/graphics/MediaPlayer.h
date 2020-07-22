@@ -37,6 +37,7 @@
 #include "PlatformLayer.h"
 #include "PlatformMediaResourceLoader.h"
 #include "PlatformMediaSession.h"
+#include "PlatformScreen.h"
 #include "SecurityOriginHash.h"
 #include "Timer.h"
 #include <wtf/URL.h>
@@ -627,6 +628,9 @@ public:
 
     const MediaPlayerPrivateInterface* playerPrivate() const { return m_private.get(); }
 
+    DynamicRangeMode preferredDynamicRangeMode() const { return m_preferredDynamicRangeMode; }
+    void setPreferredDynamicRangeMode(DynamicRangeMode);
+
 private:
     MediaPlayer(MediaPlayerClient&);
     MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
@@ -656,6 +660,7 @@ private:
     bool m_shouldPrepareToRender { false };
     bool m_contentMIMETypeWasInferredFromExtension { false };
     bool m_initializingMediaEngine { false };
+    DynamicRangeMode m_preferredDynamicRangeMode { DynamicRangeMode::Standard };
 
 #if ENABLE(MEDIA_SOURCE)
     RefPtr<MediaSourcePrivateClient> m_mediaSource;

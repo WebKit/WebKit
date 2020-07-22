@@ -1598,6 +1598,10 @@ SecurityOriginData MediaPlayer::documentSecurityOrigin() const
     return client().documentSecurityOrigin();
 }
 
+void MediaPlayer::setPreferredDynamicRangeMode(DynamicRangeMode mode)
+{
+    m_private->setPreferredDynamicRangeMode(mode);
+}
 
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()

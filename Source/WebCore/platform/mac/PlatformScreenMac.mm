@@ -34,7 +34,10 @@
 #import "ScreenProperties.h"
 #import <ColorSync/ColorSync.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/ProcessPrivilege.h>
+
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 #if USE(MEDIATOOLBOX)
 #import <pal/cocoa/MediaToolboxSoftLink.h>
@@ -95,6 +98,23 @@ static NSScreen *screen(Widget* widget)
     return screen(displayID(widget));
 }
 
+static DynamicRangeMode convertAVVideoRangeToEnum(NSString* range)
+{
+    if (!range)
+        return DynamicRangeMode::None;
+    if (PAL::canLoad_AVFoundation_AVVideoRangeSDR() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeSDR()])
+        return DynamicRangeMode::Standard;
+    if (PAL::canLoad_AVFoundation_AVVideoRangeHLG() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeHLG()])
+        return DynamicRangeMode::HLG;
+    if (PAL::canLoad_AVFoundation_AVVideoRangeHDR10() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeHDR10()])
+        return DynamicRangeMode::HDR10;
+    if (PAL::canLoad_AVFoundation_AVVideoRangeDolbyVisionPQ() && [range isEqualTo:PAL::get_AVFoundation_AVVideoRangeDolbyVisionPQ()])
+        return DynamicRangeMode::DolbyVisionPQ;
+
+    ASSERT_NOT_REACHED();
+    return DynamicRangeMode::None;
+}
+
 ScreenProperties collectScreenProperties()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
@@ -118,16 +138,24 @@ ScreenProperties collectScreenProperties()
         IORegistryGPUID gpuID = 0;
         bool screenSupportsHighDynamicRange = false;
         float scaleFactor = screen.backingScaleFactor;
+        DynamicRangeMode dynamicRangeMode = DynamicRangeMode::None;
 
+        if (PAL::isAVFoundationFrameworkAvailable() && [PAL::getAVPlayerClass() respondsToSelector:@selector(preferredVideoRangeForDisplays:)]) {
+            dynamicRangeMode = convertAVVideoRangeToEnum([PAL::getAVPlayerClass() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
+            screenSupportsHighDynamicRange = dynamicRangeMode > DynamicRangeMode::Standard;
+        }
 #if USE(MEDIATOOLBOX)
-        if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
+        else if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
             screenSupportsHighDynamicRange = PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
 #endif
+
+        if (!screenSupportsHighDynamicRange && dynamicRangeMode > DynamicRangeMode::Standard)
+            dynamicRangeMode = DynamicRangeMode::Standard;
 
         if (displayMask)
             gpuID = gpuIDForDisplayMask(displayMask);
 
-        screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenSupportsHighDynamicRange, screenIsMonochrome, displayMask, gpuID, scaleFactor });
+        screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, colorSpace, screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenSupportsHighDynamicRange, screenIsMonochrome, displayMask, gpuID, dynamicRangeMode, scaleFactor });
 
         if (!screenProperties.primaryDisplayID)
             screenProperties.primaryDisplayID = displayID;
@@ -338,6 +366,20 @@ bool screenSupportsHighDynamicRange(Widget* widget)
     }
 #endif
     return false;
+}
+
+DynamicRangeMode preferredDynamicRangeMode(Widget* widget)
+{
+    if (auto data = screenProperties(widget))
+        return data->preferredDynamicRangeMode;
+
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
+    if (PAL::isAVFoundationFrameworkAvailable() && [PAL::getAVPlayerClass() respondsToSelector:@selector(preferredVideoRangeForDisplays:)]) {
+        auto displayID = WebCore::displayID(screen(widget));
+        return convertAVVideoRangeToEnum([PAL::getAVPlayerClass() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
+    }
+
+    return DynamicRangeMode::Standard;
 }
 
 FloatRect toUserSpace(const NSRect& rect, NSWindow *destination)

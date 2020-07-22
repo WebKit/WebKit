@@ -877,6 +877,25 @@ void MediaPlayerPrivateAVFoundationObjC::setAVPlayerItem(AVPlayerItem *item)
     });
 }
 
+static NSString* convertDynamicRangeModeEnumToAVVideoRange(DynamicRangeMode mode)
+{
+    switch (mode) {
+    case DynamicRangeMode::None:
+        return nil;
+    case DynamicRangeMode::Standard:
+        return PAL::canLoad_AVFoundation_AVVideoRangeSDR() ? PAL::get_AVFoundation_AVVideoRangeSDR() : nil;
+    case DynamicRangeMode::HLG:
+        return PAL::canLoad_AVFoundation_AVVideoRangeHLG() ? PAL::get_AVFoundation_AVVideoRangeHLG() : nil;
+    case DynamicRangeMode::HDR10:
+        return PAL::canLoad_AVFoundation_AVVideoRangeHDR10() ? PAL::get_AVFoundation_AVVideoRangeHDR10() : nil;
+    case DynamicRangeMode::DolbyVisionPQ:
+        return PAL::canLoad_AVFoundation_AVVideoRangeDolbyVisionPQ() ? PAL::get_AVFoundation_AVVideoRangeDolbyVisionPQ() : nil;
+    }
+
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
 void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 {
     if (m_avPlayer)
@@ -892,7 +911,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 
     setShouldObserveTimeControlStatus(true);
 
-    [m_avPlayer.get() setAppliesMediaSelectionCriteriaAutomatically:NO];
+    m_avPlayer.get().appliesMediaSelectionCriteriaAutomatically = NO;
+    if ([m_avPlayer respondsToSelector:@selector(setVideoRangeOverride:)])
+        m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(player()->preferredDynamicRangeMode());
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     updateDisableExternalPlayback();
@@ -3246,6 +3267,12 @@ BEGIN_BLOCK_OBJC_EXCEPTIONS
         [m_avPlayer removeObserver:m_objcObserver.get() forKeyPath:@"timeControlStatus"];
 END_BLOCK_OBJC_EXCEPTIONS
     }
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setPreferredDynamicRangeMode(DynamicRangeMode mode)
+{
+    if (m_avPlayer && [m_avPlayer respondsToSelector:@selector(setVideoRangeOverride:)])
+        m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(mode);
 }
 
 NSArray* assetMetadataKeyNames()

@@ -1,3 +1,45 @@
+2020-07-22  Jer Noble  <jer.noble@apple.com>
+
+        [macOS] Adopt AVPlayer.videoRangeOverride
+        https://bugs.webkit.org/show_bug.cgi?id=213902
+        <rdar://problem/63953509>
+
+        Reviewed by Youenn Fablet.
+
+        AVPlayer.videoRangeOverride and also +[AVPlayer preferredVideoRangeForDisplays:] are replacements for the
+        process-global MTShouldPlayHDR() and MTOverrideShouldPlayHDRVideo() and should be used preferentially if
+        present.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        (WebCore::HTMLMediaElement::setPreferredDynamicRangeMode):
+        * html/HTMLMediaElement.h:
+        * page/Page.cpp:
+        (WebCore::Page::screenPropertiesDidChange):
+        (WebCore::Page::windowScreenDidChange):
+        * page/Page.h:
+        * platform/PlatformScreen.h:
+        (WebCore::preferredDynamicRangeMode):
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenData::encode const):
+        (WebCore::ScreenData::decode):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setPreferredDynamicRangeMode):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setPreferredDynamicRangeMode):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::update):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::convertDynamicRangeModeEnumToAVVideoRange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setPreferredDynamicRangeMode):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::convertAVVideoRangeToEnum):
+        (WebCore::collectScreenProperties):
+        (WebCore::preferredDynamicRangeMode):
+
 2020-07-22  Jon Davis  <jond@apple.com>
 
         Update status for Web App Manifest

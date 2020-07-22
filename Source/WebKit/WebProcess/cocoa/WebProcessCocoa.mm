@@ -78,6 +78,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -132,6 +133,8 @@
 #if USE(OS_STATE)
 #import <os/state_private.h>
 #endif
+
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 SOFT_LINK_FRAMEWORK(CoreServices)
 SOFT_LINK_CLASS(CoreServices, _LSDService)
@@ -1011,6 +1014,12 @@ void WebProcess::setScreenProperties(const ScreenProperties& properties)
 #if PLATFORM(MAC)
 void WebProcess::updatePageScreenProperties()
 {
+    // If AVPlayer.videoRangeOverride support is present, there's no need to override HDR mode
+    // at the MediaToolbox level, as the MediaToolbox override functionality is both duplicative
+    // and process global.
+    if (PAL::isAVFoundationFrameworkAvailable() && [PAL::getAVPlayerClass() instancesRespondToSelector:@selector(setVideoRangeOverride:)])
+        return;
+
     if (hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer)) {
         setShouldOverrideScreenSupportsHighDynamicRange(false, false);
         return;

@@ -6532,6 +6532,7 @@ void HTMLMediaElement::createMediaPlayer()
 
     m_player = MediaPlayer::create(*this);
     m_player->setBufferingPolicy(m_bufferingPolicy);
+    m_player->setPreferredDynamicRangeMode(preferredDynamicRangeMode(document().view()));
     schedulePlaybackControlsManagerUpdate();
 
 #if ENABLE(WEB_AUDIO)
@@ -6942,6 +6943,12 @@ String HTMLMediaElement::sourceApplicationIdentifier() const
             return networkingContext->sourceApplicationIdentifier();
     }
     return emptyString();
+}
+
+void HTMLMediaElement::setPreferredDynamicRangeMode(DynamicRangeMode mode)
+{
+    if (m_player)
+        m_player->setPreferredDynamicRangeMode(mode);
 }
 
 Vector<String> HTMLMediaElement::mediaPlayerPreferredAudioCharacteristics() const

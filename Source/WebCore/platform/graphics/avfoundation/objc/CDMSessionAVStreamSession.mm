@@ -227,7 +227,7 @@ bool CDMSessionAVStreamSession::update(Uint8Array* key, RefPtr<Uint8Array>& next
 
         RetainPtr<NSDictionary> options;
         if (!m_protocolVersions.isEmpty()) {
-            options = @{ AVStreamDataParserContentKeyRequestProtocolVersionsKey: createNSArray(m_protocolVersions, [] (int version) -> NSNumber * {
+            options = @{ PAL::get_AVFoundation_AVStreamDataParserContentKeyRequestProtocolVersionsKey(): createNSArray(m_protocolVersions, [] (int version) -> NSNumber * {
                 return version ? @(version) : nil;
             }).get() };
         }

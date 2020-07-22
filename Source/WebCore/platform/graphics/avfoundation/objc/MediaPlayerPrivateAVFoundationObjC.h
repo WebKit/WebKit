@@ -317,6 +317,8 @@ private:
     bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) final;
     void setShouldObserveTimeControlStatus(bool);
 
+    void setPreferredDynamicRangeMode(DynamicRangeMode) final;
+
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;

@@ -1157,6 +1157,18 @@ void Page::setDeviceScaleFactor(float scaleFactor)
     pageOverlayController().didChangeDeviceScaleFactor();
 }
 
+void Page::screenPropertiesDidChange()
+{
+#if ENABLE(VIDEO)
+    auto mode = preferredDynamicRangeMode(mainFrame().view());
+    forEachMediaElement([mode] (auto& element) {
+        element.setPreferredDynamicRangeMode(mode);
+    });
+#endif
+
+    setNeedsRecalcStyleInAllFrames();
+}
+
 void Page::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFramesPerSecond)
 {
     if (displayID == m_displayID && nominalFramesPerSecond == m_displayNominalFramesPerSecond)
@@ -1169,6 +1181,13 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned>
         if (frame->document())
             frame->document()->windowScreenDidChange(displayID);
     }
+
+#if ENABLE(VIDEO)
+    auto mode = preferredDynamicRangeMode(mainFrame().view());
+    forEachMediaElement([mode] (auto& element) {
+        element.setPreferredDynamicRangeMode(mode);
+    });
+#endif
 
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->windowScreenDidChange(displayID, nominalFramesPerSecond);

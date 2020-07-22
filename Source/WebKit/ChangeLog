@@ -1,3 +1,16 @@
+2020-07-22  Jer Noble  <jer.noble@apple.com>
+
+        [macOS] Adopt AVPlayer.videoRangeOverride
+        https://bugs.webkit.org/show_bug.cgi?id=213902
+        <rdar://problem/63953509>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::screenPropertiesDidChange):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::updatePageScreenProperties):
+
 2020-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling tesla.com on iPad is not smooth

@@ -96,6 +96,8 @@ class VideoTrackList;
 class VideoTrackPrivate;
 class WebKitMediaKeys;
 
+enum class DynamicRangeMode : uint8_t;
+
 template<typename> class DOMPromiseDeferred;
 template<typename, typename> class PODInterval;
 
@@ -574,6 +576,8 @@ public:
     MediaSessionIdentifier mediaSessionUniqueIdentifier() const;
     String mediaSessionTitle() const;
     String sourceApplicationIdentifier() const;
+
+    void setPreferredDynamicRangeMode(DynamicRangeMode);
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);

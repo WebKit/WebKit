@@ -1,3 +1,14 @@
+2020-07-22  Jer Noble  <jer.noble@apple.com>
+
+        [macOS] Adopt AVPlayer.videoRangeOverride
+        https://bugs.webkit.org/show_bug.cgi?id=213902
+        <rdar://problem/63953509>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/AVFoundationSoftLinkTest.mm:
+        (TestWebKitAPI::TEST):
+
 2020-07-22  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Remove version.py

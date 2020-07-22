@@ -287,6 +287,8 @@ public:
     virtual bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) { return false; }
 
     virtual bool shouldIgnoreIntrinsicSize() { return false; }
+
+    virtual void setPreferredDynamicRangeMode(DynamicRangeMode) { }
 };
 
 }

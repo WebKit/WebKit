@@ -167,7 +167,7 @@ TEST(AVFoundationSoftLink, Constants)
 #endif
 
 #if PLATFORM(MAC)
-    EXPECT_TRUE([AVStreamDataParserContentKeyRequestProtocolVersionsKey isEqualToString:@"AVContentKeyRequestProtocolVersionsKey"]);
+    EXPECT_TRUE([PAL::get_AVFoundation_AVStreamDataParserContentKeyRequestProtocolVersionsKey() isEqualToString:@"AVContentKeyRequestProtocolVersionsKey"]);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
