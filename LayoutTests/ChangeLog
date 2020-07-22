@@ -1,3 +1,12 @@
+2020-07-22  Karl Rackler  <rackler@apple.com>
+
+        [ macOS debug wk2 ] Set expectation for imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html is a flaky crash.
+        webkit.org/b/214661
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-07-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][Uniscribe] Material icons containing underscore or numbers aren't shown because ScriptItemize splits them apart
@@ -13,8 +22,8 @@
 
 2020-07-22  Karl Rackler  <rackler@apple.com>
 
-        Set test expectation for tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html as it is flaky crash
-        https://bugs.webkit.org/show_bug.cgi?id=214651
+        [ macOS debug wk2 ] Set test expectation for tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html as it is flaky crash
+        webkkit.org/b/214651
 
         Unreviewed test gardening.
 
