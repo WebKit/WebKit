@@ -1,5 +1,12 @@
 2020-07-21  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed build fix after r264685; copy headers to the correct path during a DEPLOYMENT_LOCATION build.
+
+        * Configurations/libwebm.xcconfig:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2020-07-21  Jer Noble  <jer.noble@apple.com>
+
         [Cocoa] Add experimental MSE WebM parser
         https://bugs.webkit.org/show_bug.cgi?id=214529
         <rdar://problem/65782467>

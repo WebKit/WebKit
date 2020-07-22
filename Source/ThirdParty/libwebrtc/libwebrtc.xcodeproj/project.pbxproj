@@ -4185,8 +4185,8 @@
 		CDFD2FC424C4D9D10048DAC3 /* Copy webm headers */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = usr/local/include/webm;
-			dstSubfolderSpec = 16;
+			dstPath = "$(LIBWEBM_HEADERS_FOLDER_PATH)/webm";
+			dstSubfolderSpec = 0;
 			files = (
 				CDFD2FC524C4DAF70048DAC3 /* buffer_reader.h in Copy webm headers */,
 				CDFD2FC624C4DAF70048DAC3 /* callback.h in Copy webm headers */,
@@ -4205,8 +4205,8 @@
 		CDFD2FCF24C4DB0C0048DAC3 /* Copy common headers */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = usr/local/include/common;
-			dstSubfolderSpec = 16;
+			dstPath = "$(LIBWEBM_HEADERS_FOLDER_PATH)/common";
+			dstSubfolderSpec = 0;
 			files = (
 				CDFD2FD024C4DB2F0048DAC3 /* vp9_header_parser.h in Copy common headers */,
 			);
