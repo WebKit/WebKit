@@ -291,7 +291,6 @@ private:
     bool validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired) final;
     bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
     bool validateCapability(const char* functionName, GCGLenum cap) final;
-    bool validateClearBuffer(const char* functionName, GCGLenum buffer, size_t, GCGLuint srcOffset);
     bool validateFramebufferTarget(GCGLenum target) final;
     WebGLFramebuffer* getFramebufferBinding(GCGLenum target) final;
     WebGLFramebuffer* getReadFramebufferBinding() final;
@@ -317,14 +316,6 @@ private:
 #endif
 
     void uncacheDeletedBuffer(WebGLBuffer*) final;
-
-    enum class ClearBufferCaller : uint8_t {
-        ClearBufferiv,
-        ClearBufferuiv,
-        ClearBufferfv,
-        ClearBufferfi
-    };
-    void updateBuffersToAutoClear(ClearBufferCaller, GCGLenum buffer, GCGLint drawbuffer);
 
     RefPtr<WebGLFramebuffer> m_readFramebufferBinding;
     RefPtr<WebGLTransformFeedback> m_boundTransformFeedback;

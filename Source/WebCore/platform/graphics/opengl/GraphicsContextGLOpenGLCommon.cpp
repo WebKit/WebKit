@@ -2019,7 +2019,6 @@ void GraphicsContextGLOpenGL::markContextChanged()
 void GraphicsContextGLOpenGL::markLayerComposited()
 {
     m_layerComposited = true;
-    resetBuffersToAutoClear();
 
     for (auto* client : copyToVector(m_clients))
         client->didComposite();
@@ -2425,10 +2424,9 @@ void GraphicsContextGLOpenGL::drawRangeElements(GCGLenum mode, GCGLuint start, G
     UNUSED_PARAM(offset);
 }
 
-void GraphicsContextGLOpenGL::drawBuffers(GCGLsizei n, const GCGLenum* bufs)
+void GraphicsContextGLOpenGL::drawBuffers(const Vector<GCGLenum>& buffers)
 {
-    UNUSED_PARAM(n);
-    UNUSED_PARAM(bufs);
+    UNUSED_PARAM(buffers);
 }
 
 void GraphicsContextGLOpenGL::clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, const GCGLint* values, GCGLuint srcOffset)

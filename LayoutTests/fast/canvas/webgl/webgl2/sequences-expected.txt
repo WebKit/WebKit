@@ -2,12 +2,6 @@ CONSOLE MESSAGE: WebGL: INVALID_VALUE: vertexAttribI4iv: array too small
 CONSOLE MESSAGE: WebGL: INVALID_VALUE: vertexAttribI4iv: array too small
 CONSOLE MESSAGE: WebGL: INVALID_VALUE: vertexAttribI4uiv: array too small
 CONSOLE MESSAGE: WebGL: INVALID_VALUE: vertexAttribI4uiv: array too small
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: clearBufferiv: invalid array size / srcOffset
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: clearBufferiv: invalid array size / srcOffset
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: clearBufferuiv: invalid array size / srcOffset
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: clearBufferuiv: invalid array size / srcOffset
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: clearBufferfv: invalid array size / srcOffset
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: clearBufferfv: invalid array size / srcOffset
 
 PASS uniform1uiv data with typed array of type ui 
 PASS uniform1uiv data with sequence of type ui 

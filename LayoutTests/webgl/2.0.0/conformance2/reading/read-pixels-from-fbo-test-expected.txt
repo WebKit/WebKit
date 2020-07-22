@@ -1,5 +1,200 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/reading/read-pixels-from-fbo-test.html
-[ PASS ] All tests passed
+[ 1: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 2: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 3: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 4: PASS ] Color read back as expected
+[ 5: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 6: PASS ] Color read back as expected
+[ 7: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 8: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 9: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 10: FAIL ] Expected color = 250,0,0,0, was = 0,0,0,1
+[ 11: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 12: FAIL ] Expected color = 250,0,0,0, was = 0
+[ 13: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 14: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 15: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 16: FAIL ] Expected color = -126,0,0,0, was = 0,0,0,1
+[ 17: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 18: FAIL ] Expected color = -126,0,0,0, was = 0
+[ 19: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 20: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 21: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 22: FAIL ] Expected color = 30001,0,0,0, was = 0,0,0,1
+[ 23: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 24: FAIL ] Expected color = 30001,0,0,0, was = 0
+[ 25: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 26: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 27: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 28: FAIL ] Expected color = -14189,0,0,0, was = 0,0,0,1
+[ 29: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 30: FAIL ] Expected color = -14189,0,0,0, was = 0
+[ 31: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 32: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 33: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 34: FAIL ] Expected color = 126726,0,0,0, was = 0,0,0,1
+[ 35: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 36: FAIL ] Expected color = 126726,0,0,0, was = 0
+[ 37: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 38: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 39: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 40: FAIL ] Expected color = -126726,0,0,0, was = 0,0,0,1
+[ 41: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 42: FAIL ] Expected color = -126726,0,0,0, was = 0
+[ 43: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 44: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 45: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 46: PASS ] Color read back as expected
+[ 47: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 48: PASS ] Color read back as expected
+[ 49: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 50: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 51: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 52: PASS ] Color read back as expected
+[ 53: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 54: PASS ] Color read back as expected
+[ 55: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 56: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 57: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 58: PASS ] Color read back as expected
+[ 59: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 60: PASS ] Color read back as expected
+[ 61: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 62: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 63: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 64: PASS ] Color read back as expected
+[ 65: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 66: PASS ] Color read back as expected
+[ 67: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 68: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 69: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 70: PASS ] Color read back as expected
+[ 71: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 72: PASS ] Color read back as expected
+[ 73: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 74: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 75: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 76: PASS ] Color read back as expected
+[ 77: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 78: PASS ] Color read back as expected
+[ 79: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 80: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 81: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 82: PASS ] Color read back as expected
+[ 83: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 84: PASS ] Color read back as expected
+[ 85: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 86: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 87: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 88: PASS ] Color read back as expected
+[ 89: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 90: PASS ] Color read back as expected
+[ 91: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 92: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 93: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 94: PASS ] Color read back as expected
+[ 95: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 96: PASS ] Color read back as expected
+[ 97: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 98: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 99: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 100: PASS ] Color read back as expected
+[ 101: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 102: PASS ] Color read back as expected
+[ 103: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 104: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 105: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 106: PASS ] Color read back as expected
+[ 107: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 108: PASS ] Color read back as expected
+[ 109: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 110: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 111: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 112: PASS ] Color read back as expected
+[ 113: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 114: PASS ] Color read back as expected
+[ 115: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 116: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 117: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 118: PASS ] Color read back as expected
+[ 119: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 120: PASS ] Color read back as expected
+[ 121: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 122: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 123: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 124: PASS ] Color read back as expected
+[ 125: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 126: PASS ] Color read back as expected
+[ 127: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 128: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 129: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 130: PASS ] Color read back as expected
+[ 131: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 132: PASS ] Color read back as expected
+[ 133: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 134: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 135: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 136: PASS ] Color read back as expected
+[ 137: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 138: PASS ] Color read back as expected
+[ 139: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 140: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 141: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 142: PASS ] Color read back as expected
+[ 143: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 144: PASS ] Color read back as expected
+[ 145: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 146: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 147: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 148: FAIL ] Expected color = 127,0,255,178, was = 0,0,0,0
+[ 149: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 150: FAIL ] Expected color = 127,0,255,178, was = 0,0,0,0
+[ 151: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 152: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 153: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 154: FAIL ] Expected color = -55,56,80,127, was = 0,0,0,0
+[ 155: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 156: FAIL ] Expected color = -55,56,80,127, was = 0,0,0,0
+[ 157: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 158: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 159: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 160: FAIL ] Expected color = 178,0,127,3, was = 0,0,0,0
+[ 161: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 162: FAIL ] Expected color = 178,0,127,3, was = 0,0,0,0
+[ 163: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 164: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 165: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 166: FAIL ] Expected color = 14189,6735,0,19, was = 0,0,0,0
+[ 167: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 168: FAIL ] Expected color = 14189,6735,0,19, was = 0,0,0,0
+[ 169: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 170: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 171: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 172: FAIL ] Expected color = 14189,-6735,0,19, was = 0,0,0,0
+[ 173: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 174: FAIL ] Expected color = 14189,-6735,0,19, was = 0,0,0,0
+[ 175: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 176: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 177: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 178: FAIL ] Expected color = 126726,6726,98765,2015, was = 0,0,0,0
+[ 179: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 180: FAIL ] Expected color = 126726,6726,98765,2015, was = 0,0,0,0
+[ 181: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 182: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 183: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 184: FAIL ] Expected color = 126726,-6726,-98765,2015, was = 0,0,0,0
+[ 185: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 186: FAIL ] Expected color = 126726,-6726,-98765,2015, was = 0,0,0,0
+[ 187: PASS ] getError was expected value: NO_ERROR : Setting up fbo should generate no error
+[ 188: PASS ] getError was expected value: NO_ERROR : Clear color should generate no error
+[ 189: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 190: PASS ] Color read back as expected
+[ 191: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 192: PASS ] Color read back as expected
+[ 193: PASS ] getError was expected value: NO_ERROR : readPixels should generate no error
+[ 194: PASS ] Color read back as expected
+[ 195: PASS ] successfullyParsed is true
+[ FAIL ] 26 failures reported
 
