@@ -1,3 +1,15 @@
+2020-07-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: inspector/canvas/memory.html is failing on macOS Apple Silicon
+        https://bugs.webkit.org/show_bug.cgi?id=214619
+
+        Reviewed by Devin Rousso.
+
+        * inspector/canvas/memory-expected.txt:
+        * inspector/canvas/memory.html:
+        Canvas memory costs are not the same as on Intel macOS. Change the test to
+        simply check that the memory cost increases from zero-ish to not-zero.
+
 2020-07-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use CatchScope in microtask execution

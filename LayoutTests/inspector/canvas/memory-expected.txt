@@ -7,5 +7,5 @@ Memory cost of canvas is NaN.
 
 -- Running test case: Canvas.memory.canvasMemoryChanged
 Change size of canvas to 200x200.
-Memory cost of canvas updated to 166400.
+PASS: Memory cost should increase upon initially resizing canvas.
 

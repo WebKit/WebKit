@@ -53,9 +53,10 @@ function test() {
 
             InspectorTest.assert(canvases.length === 1, "There should only be one canvas-2d.");
 
+            let initialMemoryCost = canvases[0].memoryCost;
             canvases[0].awaitEvent(WI.Canvas.Event.MemoryChanged)
             .then((event) => {
-                InspectorTest.log(`Memory cost of canvas updated to ${event.target.memoryCost}.`);
+                InspectorTest.expectGreaterThan(event.target.memoryCost, isNaN(initialMemoryCost) ? 0 : initialMemoryCost, "Memory cost should increase upon initially resizing canvas.");
             })
             .then(resolve, reject);
 
