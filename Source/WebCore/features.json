@@ -1454,6 +1454,23 @@
         "description": "An an API for securely providing access to Universal Serial Bus devices from web pages."
     },
     {
+        "name": "inert attribute",
+        "status": {
+            "status": "Under Consideration",
+            "enabled-by-default": false
+        },
+        "url": "https://whatpr.org/html/4288/interaction.html#the-inert-attribute",
+        "documentation-url": "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/inert",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=165279",
+        "specification": "DOM",
+        "description": "An attribute that flags a node as inert to tell the user-agent to ignore the node for targeting user interaction events such as selecting text in the node, or find-in-page text search.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "requestIdleCallback",
         "status": {
             "status": "Under Consideration"
