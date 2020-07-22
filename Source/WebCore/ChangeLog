@@ -1,3 +1,12 @@
+2020-07-22  Jon Davis  <jond@apple.com>
+
+        Update status for Web App Manifest
+        https://bugs.webkit.org/show_bug.cgi?id=204863
+
+        Reviewed by Dean Jackson.
+
+        * features.json:
+
 2020-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling tesla.com on iPad is not smooth

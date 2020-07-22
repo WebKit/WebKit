@@ -677,7 +677,7 @@
     {
         "name": "Web App Manifest",
         "status": {
-            "status": "In Development",
+            "status": "Partially Supported",
             "enabled-by-default": false
         },
         "url": "https://www.w3.org/TR/appmanifest/",
