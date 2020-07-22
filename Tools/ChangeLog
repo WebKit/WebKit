@@ -1,3 +1,16 @@
+2020-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        TestWTF.WTF_Packed.PackedAlignedPtr should be adjusted because ARM macOS is using 48 bits for effective address width
+        https://bugs.webkit.org/show_bug.cgi?id=214633
+
+        Reviewed by Mark Lam.
+
+        While PlatformOS.h's condition is updated, the test is not changed. This patch just aligns the condition used in this test
+        to the one in PlatformOS.h.
+
+        * TestWebKitAPI/Tests/WTF/Packed.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-07-22  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add string_utils (Part 1)

@@ -91,7 +91,7 @@ TEST(WTF_Packed, PackedAlignedPtr)
     }
     {
         PackedAlignedPtr<uint8_t, 16> key { nullptr };
-#if OS(DARWIN) && CPU(ARM64)
+#if (OS(IOS) || OS(TVOS) || OS(WATCHOS)) && CPU(ARM64)
         EXPECT_EQ(sizeof(key), 4U);
 #else
         EXPECT_LE(sizeof(key), 6U);
