@@ -37,8 +37,8 @@ class Node;
 class NodeList;
 class Range;
 class NamedNodeMap;
+struct SimpleRange;
 }
-
 
 class DOMObject : public WebScriptObject, public IDOMObject {
 public:
@@ -823,6 +823,7 @@ protected:
 
 public:
     static IDOMRange* createInstance(WebCore::Range*);
+    static IDOMRange* createInstance(const Optional<WebCore::SimpleRange>&);
 
 public:
     // IUnknown

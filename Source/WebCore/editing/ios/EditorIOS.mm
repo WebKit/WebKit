@@ -206,30 +206,26 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType());
     pasteboardImage.resourceData = cachedImage->resourceBuffer();
 
-    if (!pasteboard.isStatic()) {
-        Position beforeImagePosition(&imageElement, Position::PositionIsBeforeAnchor);
-        Position afterImagePosition(&imageElement, Position::PositionIsAfterAnchor);
-        auto imageRange = Range::create(imageElement.document(), beforeImagePosition, afterImagePosition);
-        client()->getClientPasteboardDataForRange(imageRange.ptr(), pasteboardImage.clientTypes, pasteboardImage.clientData);
-    }
+    if (!pasteboard.isStatic())
+        client()->getClientPasteboardData(makeRangeSelectingNode(imageElement), pasteboardImage.clientTypes, pasteboardImage.clientData);
 
     pasteboard.write(pasteboardImage);
 }
 
 void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> options)
 {
-    RefPtr<Range> range = selectedRange();
+    auto range = selectedRange();
     bool allowPlainText = options.contains(PasteOption::AllowPlainText);
     WebContentReader reader(*m_document.frame(), *range, allowPlainText);
     int numberOfPasteboardItems = client()->getPasteboardItemsCount();
     for (int i = 0; i < numberOfPasteboardItems; ++i) {
-        RefPtr<DocumentFragment> fragment = client()->documentFragmentFromDelegate(i);
+        auto fragment = client()->documentFragmentFromDelegate(i);
         if (!fragment)
             continue;
         reader.addFragment(fragment.releaseNonNull());
     }
 
-    RefPtr<DocumentFragment> fragment = reader.fragment;
+    auto fragment = WTFMove(reader.fragment);
     if (!fragment) {
         bool chosePlainTextIgnored;
         fragment = webContentFromPasteboard(*pasteboard, *range, allowPlainText, chosePlainTextIgnored);
@@ -238,7 +234,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
     if (fragment && options.contains(PasteOption::AsQuotation))
         quoteFragmentForPasting(*fragment);
 
-    if (fragment && shouldInsertFragment(*fragment, range.get(), EditorInsertAction::Pasted))
+    if (fragment && shouldInsertFragment(*fragment, range, EditorInsertAction::Pasted))
         pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(*pasteboard), false, options.contains(PasteOption::IgnoreMailBlockquote) ? MailBlockquoteHandling::IgnoreBlockquote : MailBlockquoteHandling::RespectBlockquote);
 }
 

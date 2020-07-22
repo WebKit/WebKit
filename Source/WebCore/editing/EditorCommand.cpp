@@ -176,15 +176,15 @@ static bool executeInsertNode(Frame& frame, Ref<Node>&& content)
 static bool expandSelectionToGranularity(Frame& frame, TextGranularity granularity)
 {
     VisibleSelection selection = frame.selection().selection();
+    auto oldRange = selection.toNormalizedRange();
     selection.expandUsingGranularity(granularity);
     auto newRange = selection.toNormalizedRange();
     if (!newRange || newRange->collapsed())
         return false;
-    auto oldRange = selection.toNormalizedRange();
     auto affinity = selection.affinity();
-    if (!frame.editor().client()->shouldChangeSelectedRange(createLiveRange(oldRange).get(), createLiveRange(newRange).get(), affinity, false))
+    if (!frame.editor().client()->shouldChangeSelectedRange(*oldRange, *newRange, affinity, false))
         return false;
-    frame.selection().setSelectedRange(createLiveRange(newRange).get(), affinity, FrameSelection::ShouldCloseTyping::Yes);
+    frame.selection().setSelectedRange(createLiveRange(*newRange).ptr(), affinity, FrameSelection::ShouldCloseTyping::Yes);
     return true;
 }
 
@@ -226,11 +226,11 @@ static unsigned verticalScrollDistance(Frame& frame)
     return static_cast<unsigned>(Scrollbar::pageStep(height));
 }
 
-static RefPtr<Range> unionDOMRanges(Range& a, Range& b)
+static SimpleRange unionRanges(const SimpleRange& a, const SimpleRange& b)
 {
-    Range& start = a.compareBoundaryPoints(Range::START_TO_START, b).releaseReturnValue() <= 0 ? a : b;
-    Range& end = a.compareBoundaryPoints(Range::END_TO_END, b).releaseReturnValue() <= 0 ? b : a;
-    return Range::create(a.ownerDocument(), &start.startContainer(), start.startOffset(), &end.endContainer(), end.endOffset());
+    auto& start = createLiveRange(a)->compareBoundaryPoints(Range::START_TO_START, createLiveRange(b)).releaseReturnValue() <= 0 ? a : b;
+    auto& end = createLiveRange(a)->compareBoundaryPoints(Range::END_TO_END, createLiveRange(b)).releaseReturnValue() <= 0 ? b : a;
+    return { start.start, end.end };
 }
 
 // Execute command functions
@@ -354,7 +354,7 @@ static bool executeDeleteToMark(Frame& frame, Event*, EditorCommandSource, const
     auto mark = frame.editor().mark().toNormalizedRange();
     auto& selection = frame.selection();
     if (mark && frame.editor().selectedRange()) {
-        bool selected = selection.setSelectedRange(unionDOMRanges(createLiveRange(*mark), *frame.editor().selectedRange()).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+        bool selected = selection.setSelectedRange(createLiveRange(unionRanges(*mark, *frame.editor().selectedRange())).ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
         ASSERT(selected);
         if (!selected)
             return false;
@@ -1056,7 +1056,7 @@ static bool executeSelectToMark(Frame& frame, Event*, EditorCommandSource, const
         PAL::systemBeep();
         return false;
     }
-    frame.selection().setSelectedRange(unionDOMRanges(createLiveRange(*mark), *selection).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+    frame.selection().setSelectedRange(createLiveRange(unionRanges(*mark, *selection)).ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
     return true;
 }
 

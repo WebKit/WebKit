@@ -1,3 +1,183 @@
+2020-07-19  Darin Adler  <darin@apple.com>
+
+        Remove live ranges from Editor.h and EditorClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=214261
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::misspellingRange const): Update since
+        rangeForTextCheckingResult no longer returns a live range.
+        (WebCore::AccessibilityObject::rangeOfStringClosestToRangeInDirection const):
+        Update since rangeOfString no longer returns a live range.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilityTextOperationForParameterizedAttribute): Use makeSimpleRange.
+
+        * dom/Document.cpp:
+        (WebCore::acceptsEditingFocus): Use makeRangeSelectingNodeContents
+        since shouldBeginEditing no longer takes a live range.
+
+        * dom/Range.h: Exxported makeSimpleRange for use outside WebCore.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::makeSimpleRange): Added. Takes two optional boundary points and
+        returns an optional range.
+        * dom/SimpleRange.h: Added the above.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::timerFired): Removed calls to
+        crateLiveRange since markAllMisspellingsAndBadGrammarInRanges no
+        longer takes live ranges.
+        (WebCore::AlternativeTextController::applyDictationAlternative):
+        Updates since shouldInsertText no longer takes a live range.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Updated since
+        shouldMoveRangeAfterDelete no longer takes live ranges.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::canDeleteRange const): Updated to not take a
+        live range.
+        (WebCore::Editor::deleteWithDirection): Updated since
+        addRangeToKillRing no longer takes a live range.
+        (WebCore::Editor::pasteAsPlainTextWithPasteboard): Updated since
+        shouldInsertText no longer takes a live range.
+        (WebCore::Editor::shouldInsertFragment): No longer take a live range.
+        (WebCore::Editor::replaceSelectionWithText): Updated since
+        selectedRange no longer returns a live range.
+        (WebCore::Editor::selectedRange): Do not return a live range.
+        (WebCore::Editor::shouldDeleteRange const): Do not take a live range.
+        (WebCore::Editor::shouldInsertText const): Ditto.
+        (WebCore::Editor::shouldApplyStyle): Ditto. Also take a const& to
+        the style instead of a non-const*.
+        (WebCore::Editor::applyStyleToSelection): Pass a style reference
+        and a non-live range.
+        (WebCore::Editor::applyParagraphStyleToSelection): Updated for
+        the change above.
+        (WebCore::Editor::insertTextWithoutSendingTextEvent): No need to
+        pass a live range any more.
+        (WebCore::Editor::insertLineBreak): Ditto.
+        (WebCore::Editor::insertParagraphSeparator): Ditto.
+        (WebCore::Editor::performCutOrCopy): Updated to not use live range.
+        (WebCore::Editor::performDelete): Ditto.
+        (WebCore::Editor::shouldEndEditing): Do not take a live range.
+        (WebCore::Editor::shouldBeginEditing): Ditto.
+        (WebCore::Editor::willWriteSelectionToPasteboard): Ditto.
+        (WebCore::Editor::selectComposition): Update since compositionRange
+        is not a live range.
+        (WebCore::Editor::markMisspellingsAfterTypingToWord): Update since
+        we don't need to pass live ranges to markAllMisspellingsAndBadGrammarInRanges.
+        (WebCore::Editor::markMisspellingsOrBadGrammar): Don't return a
+        live range in tthe out argument.
+        (WebCore::Editor::markMisspellings): Ditto.
+        (WebCore::Editor::markBadGrammar): Update for the above.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Do not
+        take live ranges for the arguments.
+        (WebCore::Editor::replaceRangeForSpellChecking): Do not take a live range.
+        (WebCore::Editor::markAndReplaceFor): Update since shouldInsertText does
+        not take a live range any more.
+        (WebCore::Editor::changeBackToReplacedString): Update to not use live
+        ranges as much.
+        (WebCore::Editor::markMisspellingsAndBadGrammar): Updae since
+        we don't need to pass live ranges to markAllMisspellingsAndBadGrammarInRanges.
+        (WebCore::Editor::rangeForPoint): Don't return a live range.
+        (WebCore::Editor::compositionRange const): Ditto.
+        (WebCore::Editor::transpose): Updated since we don't pass a live range.
+        (WebCore::Editor::firstRectForRange const): Don't take a live range.
+        (WebCore::Editor::shouldChangeSelection const): Updated since we don't
+        need to pass a live range.
+        (WebCore::Editor::findString): Ditto.
+        (WebCore::start): Added. Helper to make rangeOfString easier to read.
+        (WebCore::end): Ditto.
+        (WebCore::makeBoundaryPointAfterNodeContents): Ditto.
+        (WebCore::makeBoundaryPointAfterNode): Ditto.
+        (WebCore::collapseIfRootsDiffer): Ditto.
+        (WebCore::Editor::rangeOfString): Updated to not take or return a
+        live range and not use it internally either.
+        (WebCore::isFrameInRange): Don't take a live range.
+        (WebCore::Editor::countMatchesForText): Don't take or return live ranges.
+        (WebCore::Editor::contextRangeForCandidateRequest const): Don't return
+        a live range.
+        (WebCore::Editor::rangeForTextCheckingResult const): Ditto.
+        (WebCore::Editor::handleAcceptedCandidate): Update for the above.
+        (WebCore::Editor::adjustedSelectionRange): Don't return a live range.
+
+        * editing/Editor.h: Updated for all the chagnes above.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::expandSelectionToGranularity): Updated to reduce the use of
+        live ranges.
+        (WebCore::unionRanges): Updated to no longer take or return a live
+        range. Still uses live ranges in the algorithm for now.
+        (WebCore::executeDeleteToMark): Updated since selectedRange no longer
+        returns a live range.
+        (WebCore::executeSelectToMark): Update to use the new unionRanges.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::shouldDeleteSelection const): Updated
+        since shouldDeleteRange no longer requires a live range.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::getPasteboardTypesAndDataForAttachment): Updated
+        for changes to use fewer live ranges.
+        (WebCore::Editor::writeSelectionToPasteboard): Ditto.
+        (WebCore::Editor::writeSelection): Ditto.
+        (WebCore::Editor::replaceSelectionWithAttributedString): Ditto.
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::Editor::pasteWithPasteboard): Ditto.
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::writeImageToPasteboard): Ditto.
+        (WebCore::Editor::pasteWithPasteboard): Ditto.
+        * editing/libwpe/EditorLibWPE.cpp:
+        (WebCore::createFragmentFromPasteboardData): Ditto.
+        (WebCore::Editor::pasteWithPasteboard): Ditto.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::pasteWithPasteboard): Ditto.
+        (WebCore::Editor::replaceNodeFromPasteboard): Ditto.
+        (WebCore::Editor::dataSelectionForPasteboard): Ditto.
+        * editing/win/EditorWin.cpp:
+        (WebCore::Editor::pasteWithPasteboard): Ditto.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::createTDForFilename):
+        Removed a WTFMove that messes up the return value optimization.
+        Noticed while fixing errors caused by live range changes.
+
+        * loader/EmptyClients.cpp: Updated for changes to EditorClient.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::insertUnicodeCharacter): Updated to use fewer live ranges.
+        (WebCore::ContextMenuController::contextMenuItemSelected): DItto.
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeEditDrag): Ditto.
+        (WebCore::DragController::startDrag): Ditto.
+
+        * page/EditorClient.h: Don't take or return live ranges.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEventForKey): Simplified
+        since we don't need to use a live range.
+
+        * page/FocusController.cpp:
+        (WebCore::relinquishesEditingFocus): Changed argument type to be
+        more specific, and changed to not use a live range.
+        (WebCore::FocusController::setFocusedElement): Updated for the above.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::rangeForPoint): Updated to not use live ranges.
+
+        * page/Page.cpp:
+        (WebCore::Page::findStringMatchingRanges): Updated to not use
+        live ranges as much.
+        (WebCore::Page::rangeOfString): Ditto.
+        (WebCore::Page::findMatchesForText): Ditto.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::rangeOfString): Updated since return value
+        of the Editor member function is no longer a live range.
+        (WebCore::Internals::countMatchesForText): Ditto.
+
 2020-07-21  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Implement multiple render target entry points

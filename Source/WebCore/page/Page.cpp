@@ -713,34 +713,36 @@ bool Page::findString(const String& target, FindOptions options, DidWrap* didWra
 
 void Page::findStringMatchingRanges(const String& target, FindOptions options, int limit, Vector<RefPtr<Range>>& matchRanges, int& indexForSelection)
 {
+    Vector<SimpleRange> resultRanges;
+
     indexForSelection = 0;
 
     Frame* frame = &mainFrame();
     Frame* frameWithSelection = nullptr;
     do {
-        frame->editor().countMatchesForText(target, 0, options, limit ? (limit - matchRanges.size()) : 0, true, &matchRanges);
+        frame->editor().countMatchesForText(target, { }, options, limit ? (limit - resultRanges.size()) : 0, true, &resultRanges);
         if (frame->selection().isRange())
             frameWithSelection = frame;
         frame = incrementFrame(frame, true, CanWrap::No);
     } while (frame);
 
-    if (matchRanges.isEmpty())
+    if (resultRanges.isEmpty())
         return;
 
     if (frameWithSelection) {
         indexForSelection = NoMatchAfterUserSelection;
         auto selectedRange = frameWithSelection->selection().selection().firstRange();
         if (options.contains(Backwards)) {
-            for (size_t i = matchRanges.size(); i > 0; --i) {
-                auto result = createLiveRange(selectedRange)->compareBoundaryPoints(Range::END_TO_START, *matchRanges[i - 1]);
+            for (size_t i = resultRanges.size(); i > 0; --i) {
+                auto result = createLiveRange(selectedRange)->compareBoundaryPoints(Range::END_TO_START, createLiveRange(resultRanges[i - 1]));
                 if (!result.hasException() && result.releaseReturnValue() > 0) {
                     indexForSelection = i - 1;
                     break;
                 }
             }
         } else {
-            for (size_t i = 0, size = matchRanges.size(); i < size; ++i) {
-                auto result = createLiveRange(selectedRange)->compareBoundaryPoints(Range::START_TO_END, *matchRanges[i]);
+            for (size_t i = 0, size = resultRanges.size(); i < size; ++i) {
+                auto result = createLiveRange(selectedRange)->compareBoundaryPoints(Range::START_TO_END, createLiveRange(resultRanges[i]));
                 if (!result.hasException() && result.releaseReturnValue() < 0) {
                     indexForSelection = i;
                     break;
@@ -749,10 +751,13 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
         }
     } else {
         if (options.contains(Backwards))
-            indexForSelection = matchRanges.size() - 1;
+            indexForSelection = resultRanges.size() - 1;
         else
             indexForSelection = 0;
     }
+
+    for (auto& range : resultRanges)
+        matchRanges.append(createLiveRange(range));
 }
 
 RefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRange, FindOptions options)
@@ -767,17 +772,16 @@ RefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRange, F
     Frame* frame = referenceRange ? referenceRange->ownerDocument().frame() : &mainFrame();
     Frame* startFrame = frame;
     do {
-        if (RefPtr<Range> resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : 0, options - WrapAround))
-            return resultRange;
-
+        if (auto resultRange = frame->editor().rangeOfString(target, frame == startFrame ? makeSimpleRange(referenceRange) : WTF::nullopt, options - WrapAround))
+            return createLiveRange(resultRange);
         frame = incrementFrame(frame, !options.contains(Backwards), canWrap);
     } while (frame && frame != startFrame);
 
     // Search contents of startFrame, on the other side of the reference range that we did earlier.
     // We cheat a bit and just search again with wrap on.
     if (canWrap == CanWrap::Yes && referenceRange) {
-        if (RefPtr<Range> resultRange = startFrame->editor().rangeOfString(target, referenceRange, options | WrapAround | StartInSelection))
-            return resultRange;
+        if (auto resultRange = startFrame->editor().rangeOfString(target, makeSimpleRange(*referenceRange), options | WrapAround | StartInSelection))
+            return createLiveRange(resultRange);
     }
 
     return nullptr;
@@ -794,7 +798,7 @@ unsigned Page::findMatchesForText(const String& target, FindOptions options, uns
     do {
         if (shouldMarkMatches == MarkMatches)
             frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlightMatches == HighlightMatches);
-        matchCount += frame->editor().countMatchesForText(target, 0, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, shouldMarkMatches == MarkMatches, 0);
+        matchCount += frame->editor().countMatchesForText(target, WTF::nullopt, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, shouldMarkMatches == MarkMatches, nullptr);
         frame = incrementFrame(frame, true, CanWrap::No);
     } while (frame);
 

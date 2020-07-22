@@ -155,7 +155,7 @@ Ref<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filen
     auto tdElement = HTMLTableCellElement::create(tdTag, document);
     tdElement->appendChild(anchorElement);
 
-    return WTFMove(tdElement);
+    return tdElement;
 }
 
 static String processFilesizeString(const String& size, bool isDirectory)

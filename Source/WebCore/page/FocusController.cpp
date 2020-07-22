@@ -752,17 +752,16 @@ Element* FocusController::previousFocusableElementOrScopeOwner(const FocusNaviga
     return previousElementWithLowerTabIndex(scope, last, startingTabIndex, event);
 }
 
-static bool relinquishesEditingFocus(Node *node)
+static bool relinquishesEditingFocus(Element& element)
 {
-    ASSERT(node);
-    ASSERT(node->hasEditableStyle());
+    ASSERT(element.hasEditableStyle());
 
-    Node* root = node->rootEditableElement();
-    Frame* frame = node->document().frame();
+    auto root = element.rootEditableElement();
+    auto frame = element.document().frame();
     if (!frame || !root)
         return false;
 
-    return frame->editor().shouldEndEditing(rangeOfContents(*root).ptr());
+    return frame->editor().shouldEndEditing(makeRangeSelectingNodeContents(*root));
 }
 
 static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFrame, Node* newFocusedNode)
@@ -841,7 +840,7 @@ bool FocusController::setFocusedElement(Element* element, Frame& newFocusedFrame
     }
 
     // FIXME: Might want to disable this check for caretBrowsing
-    if (oldFocusedElement && oldFocusedElement->isRootEditableElement() && !relinquishesEditingFocus(oldFocusedElement))
+    if (oldFocusedElement && oldFocusedElement->isRootEditableElement() && !relinquishesEditingFocus(*oldFocusedElement))
         return false;
 
     m_page.editorClient().willSetInputMethodState();

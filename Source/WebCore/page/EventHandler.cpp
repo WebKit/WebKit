@@ -3082,8 +3082,7 @@ bool EventHandler::sendContextMenuEventForKey()
     Position start = selection.start();
 
     if (start.deprecatedNode() && (selection.rootEditableElement() || selection.isRange())) {
-        auto selectionRange = selection.toNormalizedRange();
-        IntRect firstRect = m_frame.editor().firstRectForRange(createLiveRange(selectionRange).get());
+        IntRect firstRect = m_frame.editor().firstRectForRange(*selection.toNormalizedRange());
 
         int x = rightAligned ? firstRect.maxX() : firstRect.x();
         // In a multiline edit, firstRect.maxY() would endup on the next line, so -1.

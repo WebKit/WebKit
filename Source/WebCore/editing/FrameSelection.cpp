@@ -2311,7 +2311,7 @@ bool FrameSelection::shouldDeleteSelection(const VisibleSelection& selection) co
     if (m_document->frame() && m_document->frame()->selectionChangeCallbacksDisabled())
         return true;
 #endif
-    return m_document->editor().client()->shouldDeleteRange(createLiveRange(selection.toNormalizedRange()).get());
+    return m_document->editor().client()->shouldDeleteRange(selection.toNormalizedRange());
 }
 
 FloatRect FrameSelection::selectionBounds(ClipToVisibleContent clipToVisibleContent) const

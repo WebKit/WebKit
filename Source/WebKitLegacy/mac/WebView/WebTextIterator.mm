@@ -95,7 +95,7 @@
     auto& textIterator = *_private->_textIterator;
     if (textIterator.atEnd())
         return nil;
-    return kit(createLiveRange(textIterator.range()).ptr());
+    return kit(textIterator.range());
 }
 
 // FIXME: Consider deprecating this method and creating one that does not require copying 8-bit characters.

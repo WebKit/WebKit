@@ -306,8 +306,8 @@ Optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRange& s
             if (!misspellingRange)
                 continue;
 
-            if (misspellingRange->compareBoundaryPoints(Range::END_TO_END, createLiveRange(start)).releaseReturnValue() > 0)
-                return makeSimpleRange(*misspellingRange);
+            if (createLiveRange(*misspellingRange)->compareBoundaryPoints(Range::END_TO_END, createLiveRange(start)).releaseReturnValue() > 0)
+                return *misspellingRange;
         }
     } else if (direction == AccessibilitySearchDirection::Previous) {
         for (auto rit = misspellings.rbegin(); rit != misspellings.rend(); ++rit) {
@@ -315,8 +315,8 @@ Optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRange& s
             if (!misspellingRange)
                 continue;
 
-            if (misspellingRange->compareBoundaryPoints(Range::START_TO_START, createLiveRange(start)).releaseReturnValue() < 0)
-                return makeSimpleRange(*misspellingRange);
+            if (createLiveRange(*misspellingRange)->compareBoundaryPoints(Range::START_TO_START, createLiveRange(start)).releaseReturnValue() < 0)
+                return *misspellingRange;
         }
     }
 
@@ -601,15 +601,14 @@ Optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirectio
     
     Optional<SimpleRange> closestStringRange;
     for (auto& searchString : searchStrings) {
-        if (auto searchStringRange = frame->editor().rangeOfString(searchString, createLiveRange(referenceRange).ptr(), findOptions)) {
-            auto foundStringRange = makeSimpleRange(*searchStringRange);
+        if (auto foundStringRange = frame->editor().rangeOfString(searchString, referenceRange, findOptions)) {
             if (!closestStringRange)
-                closestStringRange = foundStringRange;
+                closestStringRange = *foundStringRange;
             else {
                 // If searching backward, use the trailing range edges to correctly determine which
                 // range is closest. Similarly, if searching forward, use the leading range edges.
                 auto& closestStringPosition = isBackwardSearch ? closestStringRange->end : closestStringRange->start;
-                auto& foundStringPosition = isBackwardSearch ? foundStringRange.end : foundStringRange.start;
+                auto& foundStringPosition = isBackwardSearch ? foundStringRange->end : foundStringRange->start;
                 
                 auto closestPositionOffset = closestStringPosition.offset;
                 auto searchPositionOffset = foundStringPosition.offset;
@@ -618,7 +617,7 @@ Optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirectio
                 
                 auto result = Range::compareBoundaryPoints(closestContainerNode, closestPositionOffset, searchContainerNode, searchPositionOffset).releaseReturnValue();
                 if ((!isBackwardSearch && result > 0) || (isBackwardSearch && result < 0))
-                    closestStringRange = foundStringRange;
+                    closestStringRange = *foundStringRange;
             }
         }
     }

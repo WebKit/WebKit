@@ -82,6 +82,20 @@ Optional<SimpleRange> makeRangeSelectingNode(Node& node)
     return SimpleRange { { *parent, offset }, { *parent, offset + 1 } };
 }
 
+Optional<SimpleRange> makeSimpleRange(const Optional<BoundaryPoint>& start, const Optional<BoundaryPoint>& end)
+{
+    if (!start || !end)
+        return WTF::nullopt;
+    return { { *start, *end } };
+}
+
+Optional<SimpleRange> makeSimpleRange(Optional<BoundaryPoint>&& start, Optional<BoundaryPoint>&& end)
+{
+    if (!start || !end)
+        return WTF::nullopt;
+    return { { WTFMove(*start), WTFMove(*end) } };
+}
+
 SimpleRange makeRangeSelectingNodeContents(Node& node)
 {
     return { makeBoundaryPointBeforeNodeContents(node), makeBoundaryPointAfterNodeContents(node) };

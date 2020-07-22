@@ -568,7 +568,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
             return false;
         auto style = MutableStyleProperties::create();
         style->setProperty(CSSPropertyColor, serializationForHTML(color), false);
-        if (!innerFrame->editor().shouldApplyStyle(style.ptr(), createLiveRange(innerRange).get()))
+        if (!innerFrame->editor().shouldApplyStyle(style, *innerRange))
             return false;
         client().willPerformDragDestinationAction(DragDestinationAction::Edit, dragData);
         innerFrame->editor().applyStyle(style.ptr(), EditAction::SetColor);
@@ -603,7 +603,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
     if (isMove || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
         RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, *innerFrame, createLiveRange(*range), true, chosePlainText);
-        if (!fragment || !editor.shouldInsertFragment(*fragment, createLiveRange(range).get(), EditorInsertAction::Dropped))
+        if (!fragment || !editor.shouldInsertFragment(*fragment, range, EditorInsertAction::Dropped))
             return false;
 
         client().willPerformDragDestinationAction(DragDestinationAction::Edit, dragData);
@@ -629,7 +629,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         }
     } else {
         String text = dragData.asPlainText();
-        if (text.isEmpty() || !editor.shouldInsertText(text, createLiveRange(*range).ptr(), EditorInsertAction::Dropped))
+        if (text.isEmpty() || !editor.shouldInsertText(text, *range, EditorInsertAction::Dropped))
             return false;
 
         client().willPerformDragDestinationAction(DragDestinationAction::Edit, dragData);
@@ -1022,7 +1022,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
             auto selectionRange = src.selection().selection().toNormalizedRange();
             ASSERT(selectionRange);
 
-            src.editor().willWriteSelectionToPasteboard(createLiveRange(*selectionRange).ptr());
+            src.editor().willWriteSelectionToPasteboard(*selectionRange);
 
             if (enclosingTextFormControl(src.selection().selection().start())) {
                 if (mustUseLegacyDragClient)
@@ -1190,7 +1190,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
 #if PLATFORM(COCOA)
             if (!promisedAttachment && editor.client()) {
                 // Otherwise, if no file URL is specified, call out to the injected bundle to populate the pasteboard with data.
-                editor.willWriteSelectionToPasteboard(createLiveRange(src.selection().selection().toNormalizedRange()).get());
+                editor.willWriteSelectionToPasteboard(src.selection().selection().toNormalizedRange());
                 editor.writeSelectionToPasteboard(dataTransfer.pasteboard());
                 editor.didWriteSelectionToPasteboard();
             }

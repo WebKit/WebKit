@@ -720,13 +720,15 @@ static NSURL *createUniqueWebDataURL();
 
 - (NSRect)_firstRectForDOMRange:(DOMRange *)range
 {
-   return _private->coreFrame->editor().firstRectForRange(core(range));
+    if (!range)
+        return NSZeroRect;
+    return _private->coreFrame->editor().firstRectForRange(*makeSimpleRange(core(range)));
 }
 
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range
 {
     bool insideFixed = false; // FIXME: get via firstRectForRange().
-    NSRect rangeRect = [self _firstRectForDOMRange:range];    
+    NSRect rangeRect = [self _firstRectForDOMRange:range];
     auto* startNode = core([range startContainer]);
         
     if (startNode && startNode->renderer()) {
@@ -784,7 +786,7 @@ static NSURL *createUniqueWebDataURL();
     WebCore::FrameSelection selection;
     selection.setSelection(_private->coreFrame->selection().selection());
     selection.modify(alteration, direction, granularity);
-    return kit(createLiveRange(selection.selection().toNormalizedRange()).get());
+    return kit(selection.selection().toNormalizedRange());
 }
 #endif
 
@@ -853,7 +855,7 @@ static NSURL *createUniqueWebDataURL();
 
 - (DOMRange *)_markDOMRange
 {
-    return kit(createLiveRange(_private->coreFrame->editor().mark().toNormalizedRange()).get());
+    return kit(_private->coreFrame->editor().mark().toNormalizedRange());
 }
 
 - (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
@@ -1106,12 +1108,12 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     auto firstPosition = [self _visiblePositionForPoint:first];
     auto secondPosition = [self _visiblePositionForPoint:second];
-    return kit(createLiveRange(WebCore::VisibleSelection(firstPosition, secondPosition).toNormalizedRange()).get());
+    return kit(WebCore::VisibleSelection(firstPosition, secondPosition).toNormalizedRange());
 }
 
 - (DOMRange *)_selectionRangeForPoint:(CGPoint)point
 {
-    return kit(createLiveRange(WebCore::VisibleSelection([self _visiblePositionForPoint:point]).toNormalizedRange()).get());
+    return kit(WebCore::VisibleSelection([self _visiblePositionForPoint:point]).toNormalizedRange());
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -1454,7 +1456,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (DOMRange *)selectedDOMRange
 {
-    return kit(createLiveRange(core(self)->selection().selection().toNormalizedRange()).get());
+    return kit(core(self)->selection().selection().toNormalizedRange());
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)affinity closeTyping:(BOOL)closeTyping
@@ -1496,7 +1498,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (DOMRange *)elementRangeContainingCaretSelection
 {
-    return kit(createLiveRange(core(self)->selection().elementRangeContainingCaretSelection()).get());
+    return kit(core(self)->selection().elementRangeContainingCaretSelection());
 }
 
 - (void)expandSelectionToWordContainingCaretSelection
@@ -1526,7 +1528,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (DOMRange *)wordRangeContainingCaretSelection
 {
-    return kit(createLiveRange(core(self)->selection().wordRangeContainingCaretSelection()).get());
+    return kit(core(self)->selection().wordRangeContainingCaretSelection());
 }
 
 - (NSString *)wordInRange:(DOMRange *)range
@@ -1589,12 +1591,12 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (DOMRange *)rangeByMovingCurrentSelection:(int)amount
 {
-    return kit(createLiveRange(core(self)->selection().rangeByMovingCurrentSelection(amount)).get());
+    return kit(core(self)->selection().rangeByMovingCurrentSelection(amount));
 }
 
 - (DOMRange *)rangeByExtendingCurrentSelection:(int)amount
 {
-    return kit(createLiveRange(core(self)->selection().rangeByExtendingCurrentSelection(amount)).get());
+    return kit(core(self)->selection().rangeByExtendingCurrentSelection(amount));
 }
 
 - (void)selectNSRange:(NSRange)range onElement:(DOMElement *)element
@@ -1618,7 +1620,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!frame)
         return nil;
 
-    return kit(frame->editor().compositionRange().get());
+    return kit(frame->editor().compositionRange());
 }
 
 - (void)setMarkedText:(NSString *)text selectedRange:(NSRange)newSelRange

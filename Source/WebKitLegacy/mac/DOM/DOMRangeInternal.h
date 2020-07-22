@@ -23,11 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebCore/SimpleRange.h>
 #import <WebKitLegacy/DOMRange.h>
-
-namespace WebCore {
-class Range;
-}
 
 WebCore::Range* core(DOMRange *);
 DOMRange *kit(WebCore::Range*);
+DOMRange *kit(const Optional<WebCore::SimpleRange>&);

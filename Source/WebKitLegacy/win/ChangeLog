@@ -1,3 +1,49 @@
+2020-07-19  Darin Adler  <darin@apple.com>
+
+        Remove live ranges from Editor.h and EditorClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=214261
+
+        Reviewed by Sam Weinig.
+
+        * DOMCoreClasses.cpp:
+        (DOMWindow::DOMWindow): Added ref for underlying WebCore::DOMWindow.
+        (DOMWindow::~DOMWindow): Added deref for underlying WebCore::DOMWindow.
+        (DOMRange::DOMRange): Added ref for underlying live range.
+        (DOMRange::~DOMRange): Added deref for underlying live range.
+        (DOMRange::createInstance): Added overload for creating a DOMRange from
+        a SimpleRange that creates the live range.
+        (DOMNamedNodeMap::DOMNamedNodeMap): Added ref for underlying live range.
+        (DOMNamedNodeMap::~DOMNamedNodeMap): Added deref for underlying live range.
+
+        * DOMCoreClasses.h: Added createInstance overload as described above.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorClient::shouldBeginEditing): Updated for changes to not use
+        live ranges. Also removed unnecessary notImplemented calls.
+        (WebEditorClient::shouldEndEditing): Ditto.
+        (WebEditorClient::discardedComposition): Ditto.
+        (WebEditorClient::canceledComposition): Ditto.
+        (WebEditorClient::didWriteSelectionToPasteboard): Ditto.
+        (WebEditorClient::willWriteSelectionToPasteboard): Ditto.
+        (WebEditorClient::getClientPasteboardData): Ditto.
+        (WebEditorClient::shouldDeleteRange): Ditto.
+        (WebEditorClient::shouldInsertNode): Ditto.
+        (WebEditorClient::shouldInsertText): Ditto.
+        (WebEditorClient::shouldChangeSelectedRange): Ditto.
+        (WebEditorClient::shouldApplyStyle): Ditto.
+        (WebEditorClient::didApplyStyle): Ditto.
+        (WebEditorClient::shouldMoveRangeAfterDelete): Ditto.
+
+        * WebCoreSupport/WebEditorClient.h: Updated for changes to
+        EditorClient.
+
+        * WebView.cpp:
+        (WebView::prepareCandidateWindow): Updated to not use live ranges.
+        (WebView::onIMERequestCharPosition): Ditto.
+        (WebView::compositionRangeForTesting): Ditto.
+        (WebView::firstRectForCharacterRangeForTesting): Ditto.
+        (WebView::selectedRangeForTesting): Ditto.
+
 2020-07-19  Sam Weinig  <weinig@apple.com>
 
         Rename Color::transparent to Color::transparentBlack to more clearly state what it is

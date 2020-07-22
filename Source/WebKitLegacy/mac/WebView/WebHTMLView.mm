@@ -1332,7 +1332,7 @@ static NSControlStateValue kit(TriState state)
 - (DOMRange *)_selectedRange
 {
     auto* coreFrame = core([self _frame]);
-    return coreFrame ? kit(createLiveRange(coreFrame->selection().selection().toNormalizedRange()).get()) : nil;
+    return coreFrame ? kit(coreFrame->selection().selection().toNormalizedRange()) : nil;
 }
 
 #if PLATFORM(MAC)
@@ -6346,7 +6346,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     DOMRange *range = [frame _convertNSRangeToDOMRange:theRange];
     if (!range) {
         LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (0, 0, 0, 0)", theRange.location, theRange.length);
-        return NSMakeRect(0, 0, 0, 0);
+        return NSZeroRect;
     }
     
     ASSERT([range startContainer]);
@@ -7075,7 +7075,7 @@ static CGImageRef selectionImage(WebCore::Frame* frame, bool forceBlackText)
     if (!coreFrame)
         return 0;
 
-    return coreFrame->editor().countMatchesForText(string, core(range), coreOptions(options), limit, markMatches, 0);
+    return coreFrame->editor().countMatchesForText(string, makeSimpleRange(core(range)), coreOptions(options), limit, markMatches, 0);
 }
 
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue

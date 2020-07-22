@@ -1,3 +1,52 @@
+2020-07-19  Darin Adler  <darin@apple.com>
+
+        Remove live ranges from Editor.h and EditorClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=214261
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView rectForPage:]): Use NSZeroRect.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldDeleteRange): Updated for live
+        range changes and also removed gratuitous call to notImplemented
+        since the function is implemented.
+        (WebKit::WebEditorClient::shouldBeginEditing): Ditto.
+        (WebKit::WebEditorClient::shouldEndEditing): Ditto.
+        (WebKit::WebEditorClient::shouldInsertNode): Ditto.
+        (WebKit::WebEditorClient::shouldInsertText): Ditto.
+        (WebKit::WebEditorClient::shouldChangeSelectedRange): Ditto.
+        (WebKit::WebEditorClient::shouldApplyStyle): Ditto.
+        (WebKit::WebEditorClient::shouldMoveRangeAfterDelete): Ditto.
+        (WebKit::WebEditorClient::didBeginEditing): Ditto.
+        (WebKit::WebEditorClient::didEndEditing): Ditto.
+        (WebKit::WebEditorClient::willWriteSelectionToPasteboard): Ditto.
+        (WebKit::WebEditorClient::getClientPasteboardData): Ditto.
+        (WebKit::WebEditorClient::performTwoStepDrop): Ditto.
+        (WebKit::WebEditorClient::overflowScrollPositionChanged): Ditto.
+        (WebKit::WebEditorClient::subFrameScrollPositionChanged): Ditto.
+        (WebKit::WebEditorClient::setInputMethodState): Ditto.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Updated
+        for changes to EditorClient.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getMarkedRangeAsync): Updated to reduce
+        the use of local values and live ranges.
+        (WebKit::WebPage::getSelectedRangeAsync): Ditto.
+        (WebKit::WebPage::characterIndexForPointAsync): Ditto.
+        (WebKit::WebPage::firstRectForCharacterRangeAsync): Ditto.
+        (WebKit::WebPage::setCompositionAsync): Ditto.
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::getPlatformEditorState const): Ditto.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const): Ditto.
+        (WebKit::WebPage::selectWithGesture): Ditto.
+        (WebKit::WebPage::autocorrectionContext): Ditto.
+        (WebKit::focusedElementPositionInformation): Ditto.
+        (WebKit::WebPage::requestDocumentEditingContext): Ditto.
+
 2020-07-21  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add experimental MSE WebM parser

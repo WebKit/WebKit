@@ -5435,43 +5435,36 @@ void WebPage::hasMarkedText(CompletionHandler<void(bool)>&& completionHandler)
 void WebPage::getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    auto editingRange = EditingRange::fromRange(frame, frame.editor().compositionRange().get());
-    completionHandler(editingRange);
+    completionHandler(EditingRange::fromRange(frame, createLiveRange(frame.editor().compositionRange()).get()));
 }
 
 void WebPage::getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    auto editingRange = EditingRange::fromRange(frame, createLiveRange(frame.selection().selection().toNormalizedRange()).get());
-    completionHandler(editingRange);
+    completionHandler(EditingRange::fromRange(frame, createLiveRange(frame.selection().selection().toNormalizedRange()).get()));
 }
 
 void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CallbackID callbackID)
 {
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::DisallowUserAgentShadowContent,  HitTestRequest::AllowChildFrameContent };
-    HitTestResult result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
-    Frame* frame = result.innerNonSharedNode() ? result.innerNodeFrame() : &m_page->focusController().focusedOrMainFrame();
-    
-    RefPtr<Range> range = frame->rangeForPoint(result.roundedPointInInnerNodeFrame());
-    auto editingRange = EditingRange::fromRange(*frame, range.get());
+    auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
+    auto& frame = result.innerNonSharedNode() ? *result.innerNodeFrame() : m_page->focusController().focusedOrMainFrame();
+    auto range = frame.rangeForPoint(result.roundedPointInInnerNodeFrame());
+    auto editingRange = EditingRange::fromRange(frame, range.get());
     send(Messages::WebPageProxy::UnsignedCallback(static_cast<uint64_t>(editingRange.location), callbackID));
 }
 
 void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, CallbackID callbackID)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    IntRect result(IntPoint(0, 0), IntSize(0, 0));
-    
-    RefPtr<Range> range = EditingRange::toRange(frame, editingRange);
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    auto range = EditingRange::toRange(frame, editingRange);
     if (!range) {
-        send(Messages::WebPageProxy::RectForCharacterRangeCallback(result, EditingRange(notFound, 0), callbackID));
+        send(Messages::WebPageProxy::RectForCharacterRangeCallback({ }, { }, callbackID));
         return;
     }
-
-    result = frame.view()->contentsToWindow(frame.editor().firstRectForRange(range.get()));
-
-    // FIXME: Update actualRange to match the range of first rect.
-    send(Messages::WebPageProxy::RectForCharacterRangeCallback(result, editingRange, callbackID));
+    // FIXME: Pass an EditingRange that matches the range of the first rect, rather than the entire passed-in range?
+    auto rect = frame.view()->contentsToWindow(frame.editor().firstRectForRange(*range));
+    send(Messages::WebPageProxy::RectForCharacterRangeCallback(rect, editingRange, callbackID));
 }
 
 void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const EditingRange& selection, const EditingRange& replacementEditingRange)
@@ -5479,15 +5472,11 @@ void WebPage::setCompositionAsync(const String& text, const Vector<CompositionUn
     platformWillPerformEditingCommand();
 
     auto& frame = m_page->focusController().focusedOrMainFrame();
-
     if (frame.selection().selection().isContentEditable()) {
-        RefPtr<Range> replacementRange;
         if (replacementEditingRange.location != notFound) {
-            replacementRange = EditingRange::toRange(frame, replacementEditingRange);
-            if (replacementRange)
+            if (auto replacementRange = EditingRange::toRange(frame, replacementEditingRange))
                 frame.selection().setSelection(VisibleSelection(*replacementRange, SEL_DEFAULT_AFFINITY));
         }
-
         frame.editor().setComposition(text, underlines, highlights, selection.location, selection.location + selection.length);
     }
 }

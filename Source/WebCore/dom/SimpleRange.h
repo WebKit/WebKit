@@ -51,6 +51,10 @@ struct SimpleRange {
     SimpleRange(const Ref<Range>&);
 };
 
+WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(const Optional<BoundaryPoint>&, const Optional<BoundaryPoint>&);
+WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(Optional<BoundaryPoint>&&, Optional<BoundaryPoint>&&);
+
+// FIXME: Would like these to have shorter names; another option is to change prefix to makeSimpleRange.
 WEBCORE_EXPORT Optional<SimpleRange> makeRangeSelectingNode(Node&);
 WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
 

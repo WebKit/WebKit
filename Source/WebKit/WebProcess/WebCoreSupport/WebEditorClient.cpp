@@ -74,11 +74,9 @@ static uint64_t generateTextCheckingRequestID()
     return uniqueTextCheckingRequestID++;
 }
 
-bool WebEditorClient::shouldDeleteRange(Range* range)
+bool WebEditorClient::shouldDeleteRange(const Optional<SimpleRange>& range)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldDeleteRange(*m_page, range);
-    notImplemented();
-    return result;
+    return m_page->injectedBundleEditorClient().shouldDeleteRange(*m_page, createLiveRange(range).get());
 }
 
 bool WebEditorClient::smartInsertDeleteEnabled()
@@ -114,50 +112,37 @@ void WebEditorClient::toggleGrammarChecking()
 int WebEditorClient::spellCheckerDocumentTag()
 {
     notImplemented();
-    return false;
+    return 0;
 }
 
-bool WebEditorClient::shouldBeginEditing(Range* range)
+bool WebEditorClient::shouldBeginEditing(const SimpleRange& range)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldBeginEditing(*m_page, range);
-    notImplemented();
-    return result;
+    return m_page->injectedBundleEditorClient().shouldBeginEditing(*m_page, createLiveRange(range).ptr());
 }
 
-bool WebEditorClient::shouldEndEditing(Range* range)
+bool WebEditorClient::shouldEndEditing(const SimpleRange& range)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldEndEditing(*m_page, range);
-    notImplemented();
-    return result;
+    return m_page->injectedBundleEditorClient().shouldEndEditing(*m_page, createLiveRange(range).ptr());
 }
 
-bool WebEditorClient::shouldInsertNode(Node* node, Range* rangeToReplace, EditorInsertAction action)
+bool WebEditorClient::shouldInsertNode(Node& node, const Optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldInsertNode(*m_page, node, rangeToReplace, action);
-    notImplemented();
-    return result;
+    return m_page->injectedBundleEditorClient().shouldInsertNode(*m_page, &node, createLiveRange(rangeToReplace).get(), action);
 }
 
-bool WebEditorClient::shouldInsertText(const String& text, Range* rangeToReplace, EditorInsertAction action)
+bool WebEditorClient::shouldInsertText(const String& text, const Optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldInsertText(*m_page, text.impl(), rangeToReplace, action);
-    notImplemented();
-    return result;
+    return m_page->injectedBundleEditorClient().shouldInsertText(*m_page, text.impl(), createLiveRange(rangeToReplace).get(), action);
 }
 
-bool WebEditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity affinity, bool stillSelecting)
+bool WebEditorClient::shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, EAffinity affinity, bool stillSelecting)
 {
-    bool result = m_page->injectedBundleEditorClient().shouldChangeSelectedRange(*m_page, fromRange, toRange, affinity, stillSelecting);
-    notImplemented();
-    return result;
+    return m_page->injectedBundleEditorClient().shouldChangeSelectedRange(*m_page, createLiveRange(fromRange).get(), createLiveRange(toRange).get(), affinity, stillSelecting);
 }
     
-bool WebEditorClient::shouldApplyStyle(StyleProperties* style, Range* range)
+bool WebEditorClient::shouldApplyStyle(const StyleProperties& style, const Optional<SimpleRange>& range)
 {
-    Ref<MutableStyleProperties> mutableStyle(style->isMutable() ? Ref<MutableStyleProperties>(static_cast<MutableStyleProperties&>(*style)) : style->mutableCopy());
-    bool result = m_page->injectedBundleEditorClient().shouldApplyStyle(*m_page, &mutableStyle->ensureCSSStyleDeclaration(), range);
-    notImplemented();
-    return result;
+    return m_page->injectedBundleEditorClient().shouldApplyStyle(*m_page, &style.mutableCopy()->ensureCSSStyleDeclaration(), createLiveRange(range).get());
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -211,9 +196,8 @@ void WebEditorClient::didApplyStyle()
     m_page->didApplyStyle();
 }
 
-bool WebEditorClient::shouldMoveRangeAfterDelete(Range*, Range*)
+bool WebEditorClient::shouldMoveRangeAfterDelete(const SimpleRange&, const SimpleRange&)
 {
-    notImplemented();
     return true;
 }
 
@@ -222,7 +206,6 @@ void WebEditorClient::didBeginEditing()
     // FIXME: What good is a notification name, if it's always the same?
     static NeverDestroyed<String> WebViewDidBeginEditingNotification(MAKE_STATIC_STRING_IMPL("WebViewDidBeginEditingNotification"));
     m_page->injectedBundleEditorClient().didBeginEditing(*m_page, WebViewDidBeginEditingNotification.get().impl());
-    notImplemented();
 }
 
 void WebEditorClient::respondToChangedContents()
@@ -275,7 +258,6 @@ void WebEditorClient::didEndEditing()
 {
     static NeverDestroyed<String> WebViewDidEndEditingNotification(MAKE_STATIC_STRING_IMPL("WebViewDidEndEditingNotification"));
     m_page->injectedBundleEditorClient().didEndEditing(*m_page, WebViewDidEndEditingNotification.get().impl());
-    notImplemented();
 }
 
 void WebEditorClient::didWriteSelectionToPasteboard()
@@ -283,19 +265,19 @@ void WebEditorClient::didWriteSelectionToPasteboard()
     m_page->injectedBundleEditorClient().didWriteToPasteboard(*m_page);
 }
 
-void WebEditorClient::willWriteSelectionToPasteboard(Range* range)
+void WebEditorClient::willWriteSelectionToPasteboard(const Optional<SimpleRange>& range)
 {
-    m_page->injectedBundleEditorClient().willWriteToPasteboard(*m_page, range);
+    m_page->injectedBundleEditorClient().willWriteToPasteboard(*m_page, createLiveRange(range).get());
 }
 
-void WebEditorClient::getClientPasteboardDataForRange(Range* range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
+void WebEditorClient::getClientPasteboardData(const Optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
 {
-    m_page->injectedBundleEditorClient().getPasteboardDataForRange(*m_page, range, pasteboardTypes, pasteboardData);
+    m_page->injectedBundleEditorClient().getPasteboardDataForRange(*m_page, createLiveRange(range).get(), pasteboardTypes, pasteboardData);
 }
 
-bool WebEditorClient::performTwoStepDrop(DocumentFragment& fragment, Range& destination, bool isMove)
+bool WebEditorClient::performTwoStepDrop(DocumentFragment& fragment, const SimpleRange& destination, bool isMove)
 {
-    return m_page->injectedBundleEditorClient().performTwoStepDrop(*m_page, fragment, destination, isMove);
+    return m_page->injectedBundleEditorClient().performTwoStepDrop(*m_page, fragment, createLiveRange(destination), isMove);
 }
 
 void WebEditorClient::registerUndoStep(UndoStep& step)
@@ -425,12 +407,10 @@ void WebEditorClient::textDidChangeInTextArea(Element* element)
 
 void WebEditorClient::overflowScrollPositionChanged()
 {
-    notImplemented();
 }
 
 void WebEditorClient::subFrameScrollPositionChanged()
 {
-    notImplemented();
 }
 
 #endif
@@ -618,7 +598,6 @@ void WebEditorClient::setInputMethodState(Element* element)
 #if PLATFORM(GTK) || PLATFORM(WPE)
     m_page->setInputMethodState(element);
 #else
-    notImplemented();
     UNUSED_PARAM(element);
 #endif
 }

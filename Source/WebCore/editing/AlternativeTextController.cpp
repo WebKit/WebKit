@@ -243,7 +243,7 @@ void AlternativeTextController::timerFired()
         VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
         VisibleSelection adjacentWords = VisibleSelection(p, start);
         auto adjacentWordRange = adjacentWords.toNormalizedRange();
-        m_document.editor().markAllMisspellingsAndBadGrammarInRanges({ TextCheckingType::Spelling, TextCheckingType::Replacement, TextCheckingType::ShowCorrectionPanel }, createLiveRange(adjacentWordRange), createLiveRange(adjacentWordRange), nullptr);
+        m_document.editor().markAllMisspellingsAndBadGrammarInRanges({ TextCheckingType::Spelling, TextCheckingType::Replacement, TextCheckingType::ShowCorrectionPanel }, adjacentWordRange, adjacentWordRange, WTF::nullopt);
     }
         break;
     case AlternativeTextTypeReversion: {
@@ -653,7 +653,7 @@ void AlternativeTextController::applyDictationAlternative(const String& alternat
 #if USE(DICTATION_ALTERNATIVES)
     auto& editor = m_document.editor();
     auto selection = editor.selectedRange();
-    if (!selection || !editor.shouldInsertText(alternativeString, selection.get(), EditorInsertAction::Pasted))
+    if (!selection || !editor.shouldInsertText(alternativeString, *selection, EditorInsertAction::Pasted))
         return;
     for (auto* marker : selection->startContainer().document().markers().markersInRange(*selection, DocumentMarker::DictationAlternatives))
         removeDictationAlternativesForMarker(*marker);

@@ -309,4 +309,9 @@ DOMRange *kit(WebCore::Range* value)
     return [wrapper autorelease];
 }
 
+DOMRange *kit(const Optional<WebCore::SimpleRange>& value)
+{
+    return kit(createLiveRange(value).get());
+}
+
 #undef IMPL

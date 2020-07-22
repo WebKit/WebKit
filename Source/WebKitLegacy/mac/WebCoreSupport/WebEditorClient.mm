@@ -234,10 +234,9 @@ int WebEditorClient::spellCheckerDocumentTag()
 
 #endif
 
-bool WebEditorClient::shouldDeleteRange(Range* range)
+bool WebEditorClient::shouldDeleteRange(const Optional<SimpleRange>& range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
-        shouldDeleteDOMRange:kit(range)];
+    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldDeleteDOMRange:kit(range)];
 }
 
 bool WebEditorClient::smartInsertDeleteEnabled()
@@ -256,11 +255,11 @@ bool WebEditorClient::isSelectTrailingWhitespaceEnabled() const
     return page->settings().selectTrailingWhitespaceEnabled();
 }
 
-bool WebEditorClient::shouldApplyStyle(StyleProperties* style, Range* range)
+bool WebEditorClient::shouldApplyStyle(const StyleProperties& style, const Optional<SimpleRange>& range)
 {
-    Ref<MutableStyleProperties> mutableStyle(style->isMutable() ? Ref<MutableStyleProperties>(static_cast<MutableStyleProperties&>(*style)) : style->mutableCopy());
     return [[m_webView _editingDelegateForwarder] webView:m_webView
-        shouldApplyStyle:kit(&mutableStyle->ensureCSSStyleDeclaration()) toElementsInDOMRange:kit(range)];
+        shouldApplyStyle:kit(&style.mutableCopy()->ensureCSSStyleDeclaration())
+        toElementsInDOMRange:kit(range)];
 }
 
 static void updateFontPanel(WebView *webView)
@@ -279,33 +278,29 @@ void WebEditorClient::didApplyStyle()
     updateFontPanel(m_webView);
 }
 
-bool WebEditorClient::shouldMoveRangeAfterDelete(Range* range, Range* rangeToBeReplaced)
+bool WebEditorClient::shouldMoveRangeAfterDelete(const SimpleRange& range, const SimpleRange& rangeToBeReplaced)
 {
     return [[m_webView _editingDelegateForwarder] webView:m_webView
         shouldMoveRangeAfterDelete:kit(range) replacingRange:kit(rangeToBeReplaced)];
 }
 
-bool WebEditorClient::shouldBeginEditing(Range* range)
+bool WebEditorClient::shouldBeginEditing(const SimpleRange& range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
-        shouldBeginEditingInDOMRange:kit(range)];
-
-    return false;
+    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldBeginEditingInDOMRange:kit(range)];
 }
 
-bool WebEditorClient::shouldEndEditing(Range* range)
+bool WebEditorClient::shouldEndEditing(const SimpleRange& range)
 {
-    return [[m_webView _editingDelegateForwarder] webView:m_webView
-                             shouldEndEditingInDOMRange:kit(range)];
+    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldEndEditingInDOMRange:kit(range)];
 }
 
-bool WebEditorClient::shouldInsertText(const String& text, Range* range, EditorInsertAction action)
+bool WebEditorClient::shouldInsertText(const String& text, const Optional<SimpleRange>& range, EditorInsertAction action)
 {
     WebView* webView = m_webView;
     return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:kit(range) givenAction:kit(action)];
 }
 
-bool WebEditorClient::shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity selectionAffinity, bool stillSelecting)
+bool WebEditorClient::shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, EAffinity selectionAffinity, bool stillSelecting)
 {
     return [m_webView _shouldChangeSelectedDOMRange:kit(fromRange) toDOMRange:kit(toRange) affinity:kit(selectionAffinity) stillSelecting:stillSelecting];
 }
@@ -411,12 +406,12 @@ void WebEditorClient::didWriteSelectionToPasteboard()
 #endif
 }
 
-void WebEditorClient::willWriteSelectionToPasteboard(WebCore::Range*)
+void WebEditorClient::willWriteSelectionToPasteboard(const Optional<SimpleRange>&)
 {
     // Not implemented WebKit, only WebKit2.
 }
 
-void WebEditorClient::getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData)
+void WebEditorClient::getClientPasteboardData(const Optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData)
 {
     // Not implemented WebKit, only WebKit2.
 }
@@ -577,9 +572,9 @@ void WebEditorClient::toggleAutomaticSpellingCorrection()
 
 #endif // USE(AUTOMATIC_TEXT_REPLACEMENT)
 
-bool WebEditorClient::shouldInsertNode(Node *node, Range* replacingRange, EditorInsertAction givenAction)
+bool WebEditorClient::shouldInsertNode(Node& node, const Optional<SimpleRange>& replacingRange, EditorInsertAction givenAction)
 { 
-    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldInsertNode:kit(node) replacingDOMRange:kit(replacingRange) givenAction:(WebViewInsertAction)givenAction];
+    return [[m_webView _editingDelegateForwarder] webView:m_webView shouldInsertNode:kit(&node) replacingDOMRange:kit(replacingRange) givenAction:(WebViewInsertAction)givenAction];
 }
 
 void WebEditorClient::registerUndoOrRedoStep(UndoStep& step, bool isRedo)
@@ -856,10 +851,10 @@ bool WebEditorClient::performsTwoStepPaste(WebCore::DocumentFragment* fragment)
     return false;
 }
 
-bool WebEditorClient::performTwoStepDrop(DocumentFragment& fragment, Range& destination, bool isMove)
+bool WebEditorClient::performTwoStepDrop(DocumentFragment& fragment, const SimpleRange& destination, bool isMove)
 {
     if ([[m_webView _UIKitDelegateForwarder] respondsToSelector:@selector(performTwoStepDrop:atDestination:isMove:)])
-        return [[m_webView _UIKitDelegateForwarder] performTwoStepDrop:kit(&fragment) atDestination:kit(&destination) isMove:isMove];
+        return [[m_webView _UIKitDelegateForwarder] performTwoStepDrop:kit(&fragment) atDestination:kit(destination) isMove:isMove];
 
     return false;
 }
@@ -887,7 +882,7 @@ Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stri
 
 #if !PLATFORM(IOS_FAMILY)
 
-bool WebEditorClient::performTwoStepDrop(DocumentFragment&, Range&, bool)
+bool WebEditorClient::performTwoStepDrop(DocumentFragment&, const SimpleRange&, bool)
 {
     return false;
 }

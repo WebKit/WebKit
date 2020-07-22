@@ -1595,6 +1595,7 @@ Position positionInParentAfterNode(Node* node)
     return Position(ancestor, node->computeNodeIndex() + 1, Position::PositionIsOffsetInAnchor);
 }
 
+// FIXME: Rename to use make for the prefix verb instead of create.
 Position createLegacyEditingPosition(const BoundaryPoint& point)
 {
     return createLegacyEditingPosition(point.container.ptr(), point.offset);

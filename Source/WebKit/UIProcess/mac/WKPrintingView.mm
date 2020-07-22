@@ -663,7 +663,7 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
         LOG(Printing, "-[WKPrintingView %p rectForPage:%d] - data is not yet available", self, (int)page);
         if (!_webFrame->page()) {
             // We may have not told AppKit how many pages there are, so it will try to print until a null rect is returned.
-            return NSMakeRect(0, 0, 0, 0);
+            return NSZeroRect;
         }
         // We must be still calculating the page range.
         ASSERT(_expectedComputedPagesCallback);
@@ -674,7 +674,7 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
     // Returning a null rect prevents selecting non-existent pages in preview dialog.
     if (static_cast<unsigned>(page) > _printingPageRects.size()) {
         ASSERT(!_webFrame->page());
-        return NSMakeRect(0, 0, 0, 0);
+        return NSZeroRect;
     }
 
     WebCore::IntRect rect = _printingPageRects[page - 1];

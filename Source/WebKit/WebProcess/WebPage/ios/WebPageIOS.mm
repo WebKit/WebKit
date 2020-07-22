@@ -267,10 +267,10 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
     if (frame.editor().hasComposition()) {
         if (auto compositionRange = frame.editor().compositionRange()) {
-            compositionRange->collectSelectionRects(postLayoutData.markedTextRects);
+            createLiveRange(*compositionRange)->collectSelectionRects(postLayoutData.markedTextRects);
             convertContentToRootViewSelectionRects(view, postLayoutData.markedTextRects);
 
-            postLayoutData.markedText = plainTextForContext(compositionRange.get());
+            postLayoutData.markedText = plainTextForContext(*compositionRange);
             VisibleSelection compositionSelection(*compositionRange);
             postLayoutData.markedTextCaretRectAtStart = view->contentsToRootView(compositionSelection.visibleStart().absoluteCaretBounds(nullptr /* insideFixed */));
             postLayoutData.markedTextCaretRectAtEnd = view->contentsToRootView(compositionSelection.visibleEnd().absoluteCaretBounds(nullptr /* insideFixed */));
@@ -1377,13 +1377,11 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
     {
         if (!frame.editor().hasComposition())
             break;
-        RefPtr<Range> markedRange = frame.editor().compositionRange();
-        if (position < markedRange->startPosition())
-            position = markedRange->startPosition();
-        if (position > markedRange->endPosition())
-            position = markedRange->endPosition();
+        auto markedRange = frame.editor().compositionRange();
+        auto startPosition = VisiblePosition { createLegacyEditingPosition(markedRange->start) };
+        position = std::clamp(position, startPosition, VisiblePosition { createLegacyEditingPosition(markedRange->end) });
         if (wkGestureState != GestureRecognizerState::Began)
-            flags = distanceBetweenPositions(markedRange->startPosition(), frame.selection().selection().start()) != distanceBetweenPositions(markedRange->startPosition(), position) ? PhraseBoundaryChanged : OptionSet<SelectionFlags> { };
+            flags = distanceBetweenPositions(startPosition, frame.selection().selection().start()) != distanceBetweenPositions(startPosition, position) ? PhraseBoundaryChanged : OptionSet<SelectionFlags> { };
         else
             flags = PhraseBoundaryChanged;
         range = Range::create(*frame.document(), position, position);
@@ -2483,7 +2481,6 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     EditingRange markedTextRange;
 
     auto& frame = m_page->focusController().focusedOrMainFrame();
-    RefPtr<Range> range;
     VisiblePosition startPosition = frame.selection().selection().start();
     VisiblePosition endPosition = frame.selection().selection().end();
     const unsigned minContextWordCount = 3;
@@ -2494,14 +2491,12 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
         selectedText = plainTextForContext(frame.selection().selection().toNormalizedRange());
 
     if (auto compositionRange = frame.editor().compositionRange()) {
-        range = Range::create(*frame.document(), compositionRange->startPosition(), startPosition);
         String markedTextBefore;
-        if (range)
-            markedTextBefore = plainTextForContext(range.get());
-        range = Range::create(*frame.document(), endPosition, compositionRange->endPosition());
+        if (auto start = makeBoundaryPoint(startPosition))
+            markedTextBefore = plainTextForContext({ compositionRange->start, *start });
         String markedTextAfter;
-        if (range)
-            markedTextAfter = plainTextForContext(range.get());
+        if (auto end = makeBoundaryPoint(endPosition))
+            markedTextAfter = plainTextForContext({ *end, compositionRange->end });
         markedText = markedTextBefore + selectedText + markedTextAfter;
         if (!markedText.isEmpty()) {
             markedTextRange.location = markedTextBefore.length();
@@ -2617,14 +2612,16 @@ static void focusedElementPositionInformation(WebPage& page, Element& focusedEle
     IntPoint constrainedPoint = constrainPoint(adjustedPoint, frame, focusedElement);
     VisiblePosition position = frame.visiblePositionForPoint(constrainedPoint);
 
-    RefPtr<Range> compositionRange = frame.editor().compositionRange();
+    auto compositionRange = frame.editor().compositionRange();
     if (!compositionRange)
         return;
 
-    if (position < compositionRange->startPosition())
-        position = compositionRange->startPosition();
-    else if (position > compositionRange->endPosition())
-        position = compositionRange->endPosition();
+    auto startPosition = createLegacyEditingPosition(compositionRange->start);
+    auto endPosition = createLegacyEditingPosition(compositionRange->end);
+    if (position < startPosition)
+        position = startPosition;
+    else if (position > endPosition)
+        position = endPosition;
     IntRect caretRect = view.contentsToRootView(position.absoluteCaretBounds());
     float deltaX = abs(caretRect.x() + (caretRect.width() / 2) - request.point.x());
     float deltaYFromTheTop = abs(caretRect.y() - request.point.y());
@@ -4255,8 +4252,8 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         if (wantsMarkedTextRects && compositionRange) {
             // In the case where the client has requested marked text rects make sure that the context
             // range encompasses the entire marked text range so that we don't return a truncated result.
-            auto compositionStart = compositionRange->startPosition();
-            auto compositionEnd = compositionRange->endPosition();
+            auto compositionStart = createLegacyEditingPosition(compositionRange->start);
+            auto compositionEnd = createLegacyEditingPosition(compositionRange->end);
             if (contextBeforeStart > compositionStart)
                 contextBeforeStart = compositionStart;
             if (contextAfterEnd < compositionEnd)
@@ -4276,9 +4273,9 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     context.contextBefore = makeString(contextBeforeStart, startOfRangeOfInterestInSelection);
     context.selectedText = makeString(startOfRangeOfInterestInSelection, endOfRangeOfInterestInSelection);
     context.contextAfter = makeString(endOfRangeOfInterestInSelection, contextAfterEnd);
-    if (compositionRange && rangesOverlap(rangeOfInterest.get(), compositionRange.get())) {
-        VisiblePosition compositionStart(compositionRange->startPosition());
-        VisiblePosition compositionEnd(compositionRange->endPosition());
+    if (compositionRange && rangesOverlap(rangeOfInterest.get(), createLiveRange(*compositionRange).ptr())) {
+        VisiblePosition compositionStart(createLegacyEditingPosition(compositionRange->start));
+        VisiblePosition compositionEnd(createLegacyEditingPosition(compositionRange->end));
         context.markedText = makeString(compositionStart, compositionEnd);
         context.selectedRangeInMarkedText.location = distanceBetweenPositions(startOfRangeOfInterestInSelection, compositionStart);
         context.selectedRangeInMarkedText.length = [context.selectedText.string length];
@@ -4305,10 +4302,8 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
             context.textRects = characterRectsForRange(*contextRange, 0);
     } else if (wantsMarkedTextRects && compositionRange) {
         unsigned compositionStartOffset = 0;
-        if (auto start = makeBoundaryPoint(contextBeforeStart.deepEquivalent())) {
-            if (auto end = makeBoundaryPoint(compositionRange->startPosition()))
-                compositionStartOffset = WebCore::plainText(SimpleRange { WTFMove(*start), WTFMove(*end) }).length();
-        }
+        if (auto start = makeBoundaryPoint(contextBeforeStart.deepEquivalent()))
+            compositionStartOffset = WebCore::plainText({ WTFMove(*start), compositionRange->start }).length();
         context.textRects = characterRectsForRange(*compositionRange, compositionStartOffset);
     }
 

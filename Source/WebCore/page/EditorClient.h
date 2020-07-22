@@ -43,7 +43,6 @@ class Element;
 class Frame;
 class KeyboardEvent;
 class Node;
-class Range;
 class SharedBuffer;
 class StyleProperties;
 class TextCheckerClient;
@@ -51,12 +50,13 @@ class VisibleSelection;
 
 struct GapRects;
 struct GrammarDetail;
+struct SimpleRange;
 
 class EditorClient {
 public:
     virtual ~EditorClient() = default;
 
-    virtual bool shouldDeleteRange(Range*) = 0;
+    virtual bool shouldDeleteRange(const Optional<SimpleRange>&) = 0;
     virtual bool smartInsertDeleteEnabled() = 0; 
     virtual bool isSelectTrailingWhitespaceEnabled() const = 0;
     virtual bool isContinuousSpellCheckingEnabled() = 0;
@@ -65,17 +65,17 @@ public:
     virtual void toggleGrammarChecking() = 0;
     virtual int spellCheckerDocumentTag() = 0;
 
-    virtual bool shouldBeginEditing(Range*) = 0;
-    virtual bool shouldEndEditing(Range*) = 0;
-    virtual bool shouldInsertNode(Node*, Range*, EditorInsertAction) = 0;
-    virtual bool shouldInsertText(const String&, Range*, EditorInsertAction) = 0;
-    virtual bool shouldChangeSelectedRange(Range* fromRange, Range* toRange, EAffinity, bool stillSelecting) = 0;
+    virtual bool shouldBeginEditing(const SimpleRange&) = 0;
+    virtual bool shouldEndEditing(const SimpleRange&) = 0;
+    virtual bool shouldInsertNode(Node&, const Optional<SimpleRange>&, EditorInsertAction) = 0;
+    virtual bool shouldInsertText(const String&, const Optional<SimpleRange>&, EditorInsertAction) = 0;
+    virtual bool shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, EAffinity, bool stillSelecting) = 0;
     virtual bool shouldRevealCurrentSelectionAfterInsertion() const { return true; };
     virtual bool shouldSuppressPasswordEcho() const { return false; };
     
-    virtual bool shouldApplyStyle(StyleProperties*, Range*) = 0;
+    virtual bool shouldApplyStyle(const StyleProperties&, const Optional<SimpleRange>&) = 0;
     virtual void didApplyStyle() = 0;
-    virtual bool shouldMoveRangeAfterDelete(Range*, Range*) = 0;
+    virtual bool shouldMoveRangeAfterDelete(const SimpleRange&, const SimpleRange&) = 0;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual void registerAttachmentIdentifier(const String& /* identifier */, const String& /* contentType */, const String& /* preferredFileName */, Ref<SharedBuffer>&&) { }
@@ -95,9 +95,9 @@ public:
     virtual void didEndUserTriggeredSelectionChanges() = 0;
     virtual void updateEditorStateAfterLayoutIfEditabilityChanged() = 0;
     virtual void didEndEditing() = 0;
-    virtual void willWriteSelectionToPasteboard(Range*) = 0;
+    virtual void willWriteSelectionToPasteboard(const Optional<SimpleRange>&) = 0;
     virtual void didWriteSelectionToPasteboard() = 0;
-    virtual void getClientPasteboardDataForRange(Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData) = 0;
+    virtual void getClientPasteboardData(const Optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData) = 0;
     virtual void requestCandidatesForSelection(const VisibleSelection&) { }
     virtual void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) { }
 
@@ -187,7 +187,7 @@ public:
     // selection as a type of clipboard.
     virtual bool supportsGlobalSelection() { return false; }
 
-    virtual bool performTwoStepDrop(DocumentFragment&, Range& destination, bool isMove) = 0;
+    virtual bool performTwoStepDrop(DocumentFragment&, const SimpleRange& destination, bool isMove) = 0;
 
     virtual bool canShowFontPanel() const = 0;
 

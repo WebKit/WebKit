@@ -45,7 +45,7 @@ public:
     }
 
 private:
-    bool shouldDeleteRange(WebCore::Range*) final;
+    bool shouldDeleteRange(const Optional<WebCore::SimpleRange>&) final;
     bool smartInsertDeleteEnabled() final;
     bool isSelectTrailingWhitespaceEnabled() const final;
     bool isContinuousSpellCheckingEnabled() final;
@@ -54,15 +54,15 @@ private:
     void toggleGrammarChecking() final;
     int spellCheckerDocumentTag() final;
     
-    bool shouldBeginEditing(WebCore::Range*) final;
-    bool shouldEndEditing(WebCore::Range*) final;
-    bool shouldInsertNode(WebCore::Node*, WebCore::Range*, WebCore::EditorInsertAction) final;
-    bool shouldInsertText(const String&, WebCore::Range*, WebCore::EditorInsertAction) final;
-    bool shouldChangeSelectedRange(WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting) final;
+    bool shouldBeginEditing(const WebCore::SimpleRange&) final;
+    bool shouldEndEditing(const WebCore::SimpleRange&) final;
+    bool shouldInsertNode(WebCore::Node&, const Optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) final;
+    bool shouldInsertText(const String&, const Optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) final;
+    bool shouldChangeSelectedRange(const Optional<WebCore::SimpleRange>& fromRange, const Optional<WebCore::SimpleRange>& toRange, WebCore::EAffinity, bool stillSelecting) final;
     
-    bool shouldApplyStyle(WebCore::StyleProperties*, WebCore::Range*) final;
+    bool shouldApplyStyle(const WebCore::StyleProperties&, const Optional<WebCore::SimpleRange>&) final;
     void didApplyStyle() final;
-    bool shouldMoveRangeAfterDelete(WebCore::Range*, WebCore::Range*) final;
+    bool shouldMoveRangeAfterDelete(const WebCore::SimpleRange&, const WebCore::SimpleRange&) final;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&, const String& contentType, const String& preferredFileName, Ref<WebCore::SharedBuffer>&&) final;
@@ -85,9 +85,9 @@ private:
     void canceledComposition() final;
     void didUpdateComposition() final;
     void didEndEditing() final;
-    void willWriteSelectionToPasteboard(WebCore::Range*) final;
+    void willWriteSelectionToPasteboard(const Optional<WebCore::SimpleRange>&) final;
     void didWriteSelectionToPasteboard() final;
-    void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
+    void getClientPasteboardData(const Optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
     
     void registerUndoStep(WebCore::UndoStep&) final;
     void registerRedoStep(WebCore::UndoStep&) final;
@@ -191,7 +191,7 @@ private:
     bool shouldSuppressPasswordEcho() const final;
 #endif
 
-    bool performTwoStepDrop(WebCore::DocumentFragment&, WebCore::Range&, bool isMove) final;
+    bool performTwoStepDrop(WebCore::DocumentFragment&, const WebCore::SimpleRange&, bool isMove) final;
     bool supportsGlobalSelection() final;
 
     bool canShowFontPanel() const final

@@ -140,7 +140,7 @@ using namespace WebCore;
 
     document->updateLayout();
 
-    auto markedTextRange = frame->editor().compositionRange().get();
+    auto markedTextRange = frame->editor().compositionRange();
     auto markedTextRangeSelection = markedTextRange ? VisibleSelection(*markedTextRange) : VisibleSelection();
 
     if (!markedTextRangeSelection.isRange())

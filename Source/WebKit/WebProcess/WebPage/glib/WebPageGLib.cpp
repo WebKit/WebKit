@@ -109,10 +109,10 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         auto surroundingEnd = endOfEditableContent(selectionStart);
         auto surroundingRange = makeRange(surroundingStart, surroundingEnd);
         auto compositionRange = frame.editor().compositionRange();
-        if (compositionRange && surroundingRange && surroundingRange->contains(*compositionRange)) {
+        if (compositionRange && surroundingRange && surroundingRange->contains(createLiveRange(*compositionRange).get())) {
             auto clonedRange = surroundingRange->cloneRange();
-            surroundingRange->setEnd(compositionRange->startPosition());
-            clonedRange->setStart(compositionRange->endPosition());
+            surroundingRange->setEnd(createLegacyEditingPosition(compositionRange->start));
+            clonedRange->setStart(createLegacyEditingPosition(compositionRange->end));
             postLayoutData.surroundingContext = plainText(*surroundingRange) + plainText(clonedRange);
             postLayoutData.surroundingContextCursorPosition = characterCount(*surroundingRange);
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;

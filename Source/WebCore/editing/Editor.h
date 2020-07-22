@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -214,10 +214,10 @@ public:
     WEBCORE_EXPORT void outdent();
     void transpose();
 
-    bool shouldInsertFragment(DocumentFragment&, Range*, EditorInsertAction);
-    bool shouldInsertText(const String&, Range*, EditorInsertAction) const;
-    WEBCORE_EXPORT bool shouldDeleteRange(Range*) const;
-    bool shouldApplyStyle(StyleProperties*, Range*);
+    bool shouldInsertFragment(DocumentFragment&, const Optional<SimpleRange>&, EditorInsertAction);
+    bool shouldInsertText(const String&, const Optional<SimpleRange>&, EditorInsertAction) const;
+    WEBCORE_EXPORT bool shouldDeleteRange(const Optional<SimpleRange>&) const;
+    bool shouldApplyStyle(const StyleProperties&, const SimpleRange&);
 
     void respondToChangedContents(const VisibleSelection& endingSelection);
 
@@ -323,16 +323,16 @@ public:
     bool isSpellCheckingEnabledInFocusedNode() const;
     bool isSpellCheckingEnabledFor(Node*) const;
     WEBCORE_EXPORT void markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement);
-    void markMisspellings(const VisibleSelection&, RefPtr<Range>& firstMisspellingRange);
+    Optional<SimpleRange> markMisspellings(const VisibleSelection&); // Returns first mispelling range.
     void markBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
     void markAndReplaceFor(const SpellCheckRequest&, const Vector<TextCheckingResult>&);
-    WEBCORE_EXPORT void replaceRangeForSpellChecking(Range&, const String&);
+    WEBCORE_EXPORT void replaceRangeForSpellChecking(const SimpleRange&, const String&);
 
     bool isOverwriteModeEnabled() const { return m_overwriteModeEnabled; }
     WEBCORE_EXPORT void toggleOverwriteModeEnabled();
 
-    void markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType>, RefPtr<Range>&& spellingRange, RefPtr<Range>&& automaticReplacementRange, RefPtr<Range>&& grammarRange);
+    void markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType>, const Optional<SimpleRange>& spellingRange, const Optional<SimpleRange>& automaticReplacementRange, const Optional<SimpleRange>& grammarRange);
 #if PLATFORM(IOS_FAMILY)
     NO_RETURN_DUE_TO_ASSERT
 #endif
@@ -344,8 +344,8 @@ public:
     void showSpellingGuessPanel();
     bool spellingPanelIsShowing();
 
-    bool shouldBeginEditing(Range*);
-    bool shouldEndEditing(Range*);
+    bool shouldBeginEditing(const SimpleRange&);
+    bool shouldEndEditing(const SimpleRange&);
 
     void clearUndoRedoOperations();
     bool canUndo() const;
@@ -357,7 +357,7 @@ public:
 
     void didBeginEditing();
     void didEndEditing();
-    void willWriteSelectionToPasteboard(Range*);
+    void willWriteSelectionToPasteboard(const Optional<SimpleRange>&);
     void didWriteSelectionToPasteboard();
 
     void showFontPanel();
@@ -381,7 +381,7 @@ public:
     WEBCORE_EXPORT void confirmComposition(const String&); // if no existing composition, replaces selection
     WEBCORE_EXPORT void cancelComposition();
     bool cancelCompositionIfSelectionIsInvalid();
-    WEBCORE_EXPORT RefPtr<Range> compositionRange() const;
+    WEBCORE_EXPORT Optional<SimpleRange> compositionRange() const;
     WEBCORE_EXPORT bool getCompositionSelection(unsigned& selectionStart, unsigned& selectionEnd) const;
 
     // getting international text input composition state (for use by InlineTextBox)
@@ -401,7 +401,7 @@ public:
     WEBCORE_EXPORT void setIgnoreSelectionChanges(bool, RevealSelection shouldRevealExistingSelection = RevealSelection::Yes);
     bool ignoreSelectionChanges() const { return m_ignoreSelectionChanges; }
 
-    WEBCORE_EXPORT RefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
+    WEBCORE_EXPORT Optional<SimpleRange> rangeForPoint(const IntPoint& windowPoint);
 
     void clear();
 
@@ -412,7 +412,7 @@ public:
 
     EditingBehavior behavior() const;
 
-    RefPtr<Range> selectedRange();
+    Optional<SimpleRange> selectedRange();
 
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void confirmMarkedText();
@@ -447,7 +447,7 @@ public:
     String selectedTextForDataTransfer() const;
     WEBCORE_EXPORT bool findString(const String&, FindOptions);
 
-    WEBCORE_EXPORT RefPtr<Range> rangeOfString(const String&, Range*, FindOptions);
+    WEBCORE_EXPORT Optional<SimpleRange> rangeOfString(const String&, const Optional<SimpleRange>& searchRange, FindOptions);
 
     const VisibleSelection& mark() const; // Mark, to be used as emacs uses it.
     void setMark(const VisibleSelection&);
@@ -456,13 +456,13 @@ public:
     WEBCORE_EXPORT void computeAndSetTypingStyle(StyleProperties& , EditAction = EditAction::Unspecified);
     WEBCORE_EXPORT void applyEditingStyleToBodyElement() const;
 
-    WEBCORE_EXPORT IntRect firstRectForRange(Range*) const;
+    WEBCORE_EXPORT IntRect firstRectForRange(const SimpleRange&) const;
 
     void selectionWillChange();
     void respondToChangedSelection(const VisibleSelection& oldSelection, OptionSet<FrameSelection::SetSelectionOption>);
     WEBCORE_EXPORT void updateEditorUINowIfScheduled();
     bool shouldChangeSelection(const VisibleSelection& oldSelection, const VisibleSelection& newSelection, EAffinity, bool stillSelecting) const;
-    WEBCORE_EXPORT unsigned countMatchesForText(const String&, Range*, FindOptions, unsigned limit, bool markMatches, Vector<RefPtr<Range>>*);
+    WEBCORE_EXPORT unsigned countMatchesForText(const String&, const Optional<SimpleRange>&, FindOptions, unsigned limit, bool markMatches, Vector<SimpleRange>*);
     bool markedTextMatchesAreHighlighted() const;
     WEBCORE_EXPORT void setMarkedTextMatchesAreHighlighted(bool);
 
@@ -546,8 +546,8 @@ public:
 
     WEBCORE_EXPORT String stringForCandidateRequest() const;
     WEBCORE_EXPORT void handleAcceptedCandidate(TextCheckingResult);
-    WEBCORE_EXPORT RefPtr<Range> contextRangeForCandidateRequest() const;
-    RefPtr<Range> rangeForTextCheckingResult(const TextCheckingResult&) const;
+    WEBCORE_EXPORT Optional<SimpleRange> contextRangeForCandidateRequest() const;
+    Optional<SimpleRange> rangeForTextCheckingResult(const TextCheckingResult&) const;
     bool isHandlingAcceptedCandidate() const { return m_isHandlingAcceptedCandidate; }
 
     void setIsGettingDictionaryPopupInfo(bool b) { m_isGettingDictionaryPopupInfo = b; }
@@ -580,7 +580,7 @@ public:
 private:
     Document& document() const { return m_document; }
 
-    bool canDeleteRange(Range*) const;
+    bool canDeleteRange(const SimpleRange&) const;
     bool canSmartReplaceWithPasteboard(Pasteboard&);
     void pasteAsPlainTextWithPasteboard(Pasteboard&);
     void pasteWithPasteboard(Pasteboard*, OptionSet<PasteOption>);
@@ -589,7 +589,7 @@ private:
     void quoteFragmentForPasting(DocumentFragment&);
 
     void revealSelectionAfterEditingOperation(const ScrollAlignment& = ScrollAlignment::alignCenterIfNeeded, RevealExtentOption = DoNotRevealExtent);
-    void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);
+    Optional<SimpleRange> markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling);
     OptionSet<TextCheckingType> resolveTextCheckingTypeMask(const Node& rootEditableElement, OptionSet<TextCheckingType>);
 
     WEBCORE_EXPORT String selectedText(TextIteratorBehavior) const;
@@ -609,7 +609,7 @@ private:
 
     bool unifiedTextCheckerEnabled() const;
 
-    RefPtr<Range> adjustedSelectionRange();
+    Optional<SimpleRange> adjustedSelectionRange();
 
 #if PLATFORM(COCOA)
     RefPtr<SharedBuffer> selectionInWebArchiveFormat();

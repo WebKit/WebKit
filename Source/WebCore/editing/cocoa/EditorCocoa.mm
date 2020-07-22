@@ -88,14 +88,13 @@ String Editor::selectionInHTMLFormat()
 
 void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData)
 {
-    auto& document = element.document();
-    auto elementRange = Range::create(document, { &element, Position::PositionIsBeforeAnchor }, { &element, Position::PositionIsAfterAnchor });
-    client()->getClientPasteboardDataForRange(elementRange.ptr(), outTypes, outData);
+    auto elementRange = makeRangeSelectingNode(element);
+    client()->getClientPasteboardData(elementRange, outTypes, outData);
 
     outTypes.append(PasteboardCustomData::cocoaType());
-    outData.append(PasteboardCustomData { document.originIdentifierForPasteboard(), { } }.createSharedBuffer());
+    outData.append(PasteboardCustomData { element.document().originIdentifierForPasteboard(), { } }.createSharedBuffer());
 
-    if (auto archive = LegacyWebArchive::create(elementRange.ptr())) {
+    if (auto archive = LegacyWebArchive::create(createLiveRange(elementRange).get())) {
         if (auto webArchiveData = archive->rawDataRepresentation()) {
             outTypes.append(WebArchivePboardType);
             outData.append(SharedBuffer::create(webArchiveData.get()));
@@ -123,7 +122,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
         content.dataInRTFDFormat = [string containsAttachments] ? dataInRTFDFormat(string.get()) : nullptr;
         content.dataInRTFFormat = dataInRTFFormat(string.get());
         content.dataInAttributedStringFormat = archivedDataForAttributedString(string.get());
-        client()->getClientPasteboardDataForRange(selectedRange().get(), content.clientTypes, content.clientData);
+        client()->getClientPasteboardData(selectedRange(), content.clientTypes, content.clientData);
     }
     content.dataInHTMLFormat = selectionInHTMLFormat();
     content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
@@ -144,7 +143,7 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
     webContent.dataInAttributedStringFormat = archivedDataForAttributedString(string.get());
     webContent.dataInHTMLFormat = selectionInHTMLFormat();
     webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
-    client()->getClientPasteboardDataForRange(selectedRange().get(), webContent.clientTypes, webContent.clientData);
+    client()->getClientPasteboardData(selectedRange(), webContent.clientTypes, webContent.clientData);
 
     pasteboardWriterData.setWebContent(WTFMove(webContent));
 }
@@ -184,12 +183,12 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
 
     if (m_document.selection().selection().isContentRichlyEditable()) {
         if (auto fragment = createFragmentAndAddResources(*m_document.frame(), attributedString)) {
-            if (shouldInsertFragment(*fragment, selectedRange().get(), EditorInsertAction::Pasted))
+            if (shouldInsertFragment(*fragment, selectedRange(), EditorInsertAction::Pasted))
                 pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
         }
     } else {
         String text = attributedString.string;
-        if (shouldInsertText(text, selectedRange().get(), EditorInsertAction::Pasted))
+        if (shouldInsertText(text, selectedRange(), EditorInsertAction::Pasted))
             pasteAsPlainText(text, false);
     }
 }

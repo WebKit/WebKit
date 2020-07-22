@@ -1,3 +1,58 @@
+2020-07-19  Darin Adler  <darin@apple.com>
+
+        Remove live ranges from Editor.h and EditorClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=214261
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMRange.mm:
+        (kit): Added an overload to convert to a live range so we don't have
+        to touch every call site.
+        * DOM/DOMRangeInternal.h: Added the above.
+
+        * WebCoreSupport/WebEditorClient.h: Updated for changes to EditorClient.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldDeleteRange): Changed types to not use live ranges.
+        (WebEditorClient::shouldApplyStyle): Ditto.
+        (WebEditorClient::shouldMoveRangeAfterDelete): Ditto.
+        (WebEditorClient::shouldBeginEditing): Ditto.
+        (WebEditorClient::shouldEndEditing): Ditto.
+        (WebEditorClient::shouldInsertText): Ditto.
+        (WebEditorClient::shouldChangeSelectedRange): Ditto.
+        (WebEditorClient::willWriteSelectionToPasteboard): Ditto.
+        (WebEditorClient::getClientPasteboardData): Ditto.
+        (WebEditorClient::shouldInsertNode): Ditto.
+        (WebEditorClient::performTwoStepDrop): Ditto.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _firstRectForDOMRange:]): Update to not use live range.
+        (-[WebFrame _scrollDOMRangeToVisible:]): Ditto.
+        (-[WebFrame _rangeByAlteringCurrentSelection:direction:granularity:]): Ditto.
+        (-[WebFrame _markDOMRange]): Ditto.
+        (-[WebFrame _selectionRangeForFirstPoint:secondPoint:]): Ditto.
+        (-[WebFrame _selectionRangeForPoint:]): Ditto.
+        (-[WebFrame selectedDOMRange]): Ditto.
+        (-[WebFrame elementRangeContainingCaretSelection]): Ditto.
+        (-[WebFrame wordRangeContainingCaretSelection]): Ditto.
+        (-[WebFrame rangeByMovingCurrentSelection:]): Ditto.
+        (-[WebFrame rangeByExtendingCurrentSelection:]): Ditto.
+        (-[WebFrame markedTextDOMRange]): Ditto.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectedRange]): Update to not use live range.
+        (-[WebHTMLView firstRectForCharacterRange:]): Use NSZeroRect.
+        (-[WebHTMLView countMatchesForText:inDOMRange:options:limit:markMatches:]):
+        Update to not use live range.
+        * WebView/WebTextCompletionController.mm:
+        (-[WebTextCompletionController doCompletion]): Ditto.
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator currentRange]): Ditto.
+        * WebView/WebView.mm:
+        (-[WebView textIteratorForRect:]): Ditto.
+        (-[WebView editableDOMRangeForPoint:]): Ditto.
+        (-[WebView selectedDOMRange]): Ditto.
+
 2020-07-21  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (WebSQL disablement): Fudget app is unresponsive on launch
