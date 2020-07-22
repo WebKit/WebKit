@@ -49,11 +49,25 @@
 
 namespace WebCore {
 
-static const uint64_t schemaVersion = 4;
+static const uint64_t schemaVersion = 5;
 
 static const String recordsTableSchema(const String& tableName)
 {
-    return makeString("CREATE TABLE ", tableName, " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, origin TEXT NOT NULL ON CONFLICT FAIL, scopeURL TEXT NOT NULL ON CONFLICT FAIL, topOrigin TEXT NOT NULL ON CONFLICT FAIL, lastUpdateCheckTime DOUBLE NOT NULL ON CONFLICT FAIL, updateViaCache TEXT NOT NULL ON CONFLICT FAIL, scriptURL TEXT NOT NULL ON CONFLICT FAIL, script TEXT NOT NULL ON CONFLICT FAIL, workerType TEXT NOT NULL ON CONFLICT FAIL, contentSecurityPolicy BLOB NOT NULL ON CONFLICT FAIL, referrerPolicy TEXT NOT NULL ON CONFLICT FAIL, scriptResourceMap BLOB NOT NULL ON CONFLICT FAIL)");
+    return makeString("CREATE TABLE ", tableName, " ("
+        "key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE"
+        ", origin TEXT NOT NULL ON CONFLICT FAIL"
+        ", scopeURL TEXT NOT NULL ON CONFLICT FAIL"
+        ", topOrigin TEXT NOT NULL ON CONFLICT FAIL"
+        ", lastUpdateCheckTime DOUBLE NOT NULL ON CONFLICT FAIL"
+        ", updateViaCache TEXT NOT NULL ON CONFLICT FAIL"
+        ", scriptURL TEXT NOT NULL ON CONFLICT FAIL"
+        ", script TEXT NOT NULL ON CONFLICT FAIL"
+        ", workerType TEXT NOT NULL ON CONFLICT FAIL"
+        ", contentSecurityPolicy BLOB NOT NULL ON CONFLICT FAIL"
+        ", referrerPolicy TEXT NOT NULL ON CONFLICT FAIL"
+        ", scriptResourceMap BLOB NOT NULL ON CONFLICT FAIL"
+        ", certificateInfo BLOB NOT NULL ON CONFLICT FAIL"
+        ")");
 }
 
 static const String recordsTableSchema()
@@ -321,7 +335,7 @@ void RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
     SQLiteTransaction transaction(*m_database);
     transaction.begin();
 
-    SQLiteStatement sql(*m_database, "INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s);
+    SQLiteStatement sql(*m_database, "INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"_s);
     if (sql.prepare() != SQLITE_OK) {
         RELEASE_LOG_ERROR(ServiceWorker, "Failed to prepare statement to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return;
@@ -344,6 +358,9 @@ void RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
         WTF::Persistence::Encoder scriptResourceMapEncoder;
         scriptResourceMapEncoder << data.scriptResourceMap;
 
+        WTF::Persistence::Encoder certificateInfoEncoder;
+        certificateInfoEncoder << data.certificateInfo;
+
         if (sql.bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
             || sql.bindText(2, data.registration.scopeURL.protocolHostAndPort()) != SQLITE_OK
             || sql.bindText(3, data.registration.scopeURL.path().toString()) != SQLITE_OK
@@ -356,6 +373,7 @@ void RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
             || sql.bindBlob(10, cspEncoder.buffer(), cspEncoder.bufferSize()) != SQLITE_OK
             || sql.bindText(11, data.referrerPolicy) != SQLITE_OK
             || sql.bindBlob(12, scriptResourceMapEncoder.buffer(), scriptResourceMapEncoder.bufferSize()) != SQLITE_OK
+            || sql.bindBlob(13, certificateInfoEncoder.buffer(), certificateInfoEncoder.bufferSize()) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(ServiceWorker, "Failed to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return;
@@ -412,6 +430,15 @@ String RegistrationDatabase::importRecords()
                 continue;
         }
 
+        Vector<uint8_t> certificateInfoData;
+        sql.getColumnBlobAsVector(12, certificateInfoData);
+        Optional<CertificateInfo> certificateInfo;
+
+        WTF::Persistence::Decoder certificateInfoDecoder(certificateInfoData.data(), certificateInfoData.size());
+        certificateInfoDecoder >> certificateInfo;
+        if (!certificateInfo)
+            continue;
+
         // Validate the input for this registration.
         // If any part of this input is invalid, let's skip this registration.
         // FIXME: Should we return an error skipping *all* registrations?
@@ -422,7 +449,7 @@ String RegistrationDatabase::importRecords()
         auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, WTF::nullopt, WTF::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, WTFMove(*scriptResourceMap) };
+        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, WTFMove(*scriptResourceMap) };
 
         callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
             protectedThis->addRegistrationToStore(WTFMove(contextData));

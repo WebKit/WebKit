@@ -1,3 +1,13 @@
+2020-07-22  Alex Christensen  <achristensen@webkit.org>
+
+        Safari does not present CertificateInfo for service-worker served documents
+        https://bugs.webkit.org/show_bug.cgi?id=206403
+        <rdar://problem/65410875>
+
+        Reviewed by Darin Adler and Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2020-07-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         TestWTF.WTF_Packed.PackedAlignedPtr should be adjusted because ARM macOS is using 48 bits for effective address width

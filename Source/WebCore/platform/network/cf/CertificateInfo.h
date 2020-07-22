@@ -69,6 +69,8 @@ public:
     {
     }
 
+    CertificateInfo isolatedCopy() const { return *this; }
+
     WEBCORE_EXPORT CFArrayRef certificateChain() const;
 
     WEBCORE_EXPORT Type type() const;

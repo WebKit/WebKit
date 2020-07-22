@@ -85,6 +85,7 @@ private:
     std::unique_ptr<NetworkCache::Entry> m_cacheEntry;
     RefPtr<WebCore::TextResourceDecoder> m_decoder;
     StringBuilder m_script;
+    WebCore::CertificateInfo m_certificateInfo;
 };
 
 } // namespace WebKit

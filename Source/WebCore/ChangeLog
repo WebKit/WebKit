@@ -1,3 +1,67 @@
+2020-07-22  Alex Christensen  <achristensen@webkit.org>
+
+        Safari does not present CertificateInfo for service-worker served documents
+        https://bugs.webkit.org/show_bug.cgi?id=206403
+        <rdar://problem/65410875>
+
+        Reviewed by Darin Adler and Youenn Fablet.
+
+        When loading a service worker JavaScript resource, we need to tell the network process to include certificate info with the response.
+        We then pass that response to the ServiceWorkerContextData for storage.  When the service worker generates responses to fetches, use that
+        certificate chain for WKWebView.serverTrust when the page is committed.
+
+        Covered by updating a test I wrote in r264687.
+
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::setCertificateInfo):
+        * platform/network/cf/CertificateInfo.h:
+        * platform/network/cf/CertificateInfoCFNet.cpp:
+        (WebCore::CertificateInfo::isolatedCopy const):
+        * platform/network/soup/CertificateInfo.h:
+        (WebCore::CertificateInfo::isolatedCopy const):
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+        (WebCore::WorkerScriptLoader::didReceiveResponse):
+        * workers/WorkerScriptLoader.h:
+        (WebCore::WorkerScriptLoader::certificateInfo const):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerContextData.cpp:
+        (WebCore::ServiceWorkerContextData::isolatedCopy const):
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::encode const):
+        (WebCore::ServiceWorkerContextData::decode):
+        * workers/service/ServiceWorkerFetchResult.h:
+        (WebCore::ServiceWorkerFetchResult::isolatedCopy const):
+        (WebCore::serviceWorkerFetchError):
+        (WebCore::ServiceWorkerFetchResult::encode const):
+        (WebCore::ServiceWorkerFetchResult::decode):
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::fetchScriptWithContext):
+        (WebCore::ServiceWorkerJob::notifyFinished):
+        * workers/service/ServiceWorkerJobClient.h:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::processResponse):
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::importRecords):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::addRegistrationFromStore):
+        Also fix a possible use-after-move bug, depending on parameter evaluation order which is undefined behavior.
+        (WebCore::SWServer::updateWorker):
+        (WebCore::SWServer::installContextData):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::scriptFetchFinished):
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::SWServerWorker):
+        (WebCore::SWServerWorker::contextData const):
+        * workers/service/server/SWServerWorker.h:
+
 2020-07-22  David Kilzer  <ddkilzer@apple.com>
 
         Unreviewed build fix after r264710, r264719, r264721: use more HAVE_AVPLAYER_VIDEORANGEOVERRIDE.

@@ -127,6 +127,8 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
     options.credentials = FetchOptions::Credentials::SameOrigin;
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.contentSecurityPolicyEnforcement = contentSecurityPolicyEnforcement;
+    if (fetchOptions.destination == FetchOptions::Destination::Serviceworker)
+        options.certificateInfoPolicy = CertificateInfoPolicy::IncludeCertificateInfo;
     // A service worker job can be executed from a worker context or a document context.
     options.serviceWorkersMode = serviceWorkerMode;
 #if ENABLE(SERVICE_WORKER)
@@ -180,6 +182,7 @@ void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const Reso
     }
 
     m_responseURL = response.url();
+    m_certificateInfo = response.certificateInfo() ? *response.certificateInfo() : CertificateInfo();
     m_responseMIMEType = response.mimeType();
     m_responseEncoding = response.textEncodingName();
     m_contentSecurityPolicy = ContentSecurityPolicyResponseHeaders { response };

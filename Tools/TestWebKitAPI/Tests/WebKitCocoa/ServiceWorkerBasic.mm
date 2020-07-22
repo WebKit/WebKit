@@ -1952,7 +1952,7 @@ TEST(ServiceWorkers, SuspendNetworkProcess)
     auto path = store._configuration._serviceWorkerRegistrationDirectory.path;
 
     NSURL* directory = [NSURL fileURLWithPath:path isDirectory:YES];
-    NSURL *swDBPath = [directory URLByAppendingPathComponent:@"ServiceWorkerRegistrations-4.sqlite3"];
+    NSURL *swDBPath = [directory URLByAppendingPathComponent:@"ServiceWorkerRegistrations-5.sqlite3"];
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path]);
 
@@ -1979,7 +1979,7 @@ TEST(WebKit, ServiceWorkerDatabaseWithRecordsTableButUnexpectedSchema)
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:swPath.path]);
 
     [[NSFileManager defaultManager] createDirectoryAtURL:swPath withIntermediateDirectories:YES attributes:nil error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:url1 toURL:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-4.sqlite3"] error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:url1 toURL:[swPath URLByAppendingPathComponent:@"ServiceWorkerRegistrations-5.sqlite3"] error:nil];
 
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     websiteDataStoreConfiguration.get()._serviceWorkerRegistrationDirectory = swPath;
@@ -2213,7 +2213,7 @@ static void runTest(ResponseType responseType)
     [webView reload];
     EXPECT_WK_STREQ([webView _test_waitForAlert], expectedAlert);
     EXPECT_EQ(server.totalRequests(), expectedServerRequests2);
-    EXPECT_NULL(webView.get().serverTrust); // FIXME: This should be EXPECT_TRUE(isTestServerTrust(webView.get().serverTrust));
+    EXPECT_TRUE(isTestServerTrust(webView.get().serverTrust));
 }
 
 TEST(ServiceWorkers, ServerTrust)

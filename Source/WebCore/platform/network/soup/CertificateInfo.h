@@ -48,6 +48,8 @@ public:
     explicit CertificateInfo(GTlsCertificate*, GTlsCertificateFlags);
     WEBCORE_EXPORT ~CertificateInfo();
 
+    CertificateInfo isolatedCopy() const { notImplemented(); return { }; }
+
     GTlsCertificate* certificate() const { return m_certificate.get(); }
     void setCertificate(GTlsCertificate* certificate) { m_certificate = certificate; }
     GTlsCertificateFlags tlsErrors() const { return m_tlsErrors; }

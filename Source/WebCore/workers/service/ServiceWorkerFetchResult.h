@@ -38,11 +38,12 @@ struct ServiceWorkerFetchResult {
     ServiceWorkerJobDataIdentifier jobDataIdentifier;
     ServiceWorkerRegistrationKey registrationKey;
     String script;
+    CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     String referrerPolicy;
     ResourceError scriptError;
 
-    ServiceWorkerFetchResult isolatedCopy() const { return { jobDataIdentifier, registrationKey.isolatedCopy(), script.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), scriptError.isolatedCopy() }; }
+    ServiceWorkerFetchResult isolatedCopy() const { return { jobDataIdentifier, registrationKey.isolatedCopy(), script.isolatedCopy(), certificateInfo.isolatedCopy(), contentSecurityPolicy.isolatedCopy(), referrerPolicy.isolatedCopy(), scriptError.isolatedCopy() }; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, ServiceWorkerFetchResult&);
@@ -50,13 +51,14 @@ struct ServiceWorkerFetchResult {
 
 inline ServiceWorkerFetchResult serviceWorkerFetchError(ServiceWorkerJobDataIdentifier jobDataIdentifier, ServiceWorkerRegistrationKey&& registrationKey, ResourceError&& error)
 {
-    return { jobDataIdentifier, WTFMove(registrationKey), { }, { }, { }, WTFMove(error) };
+    return { jobDataIdentifier, WTFMove(registrationKey), { }, { }, { }, { }, WTFMove(error) };
 }
 
 template<class Encoder>
 void ServiceWorkerFetchResult::encode(Encoder& encoder) const
 {
     encoder << jobDataIdentifier << registrationKey << script << contentSecurityPolicy << referrerPolicy << scriptError;
+    encoder << certificateInfo;
 }
 
 template<class Decoder>
@@ -81,6 +83,12 @@ bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult
         return false;
     if (!decoder.decode(result.scriptError))
         return false;
+    
+    Optional<CertificateInfo> certificateInfo;
+    decoder >> certificateInfo;
+    if (!certificateInfo)
+        return false;
+    result.certificateInfo = WTFMove(*certificateInfo);
 
     return true;
 }

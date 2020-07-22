@@ -137,6 +137,8 @@ void ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest(ResourceRequest&&,
 
 void ServiceWorkerSoftUpdateLoader::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
+    // FIXME: If the certificate info changes but the script content does not, treat that as an update.
+    m_certificateInfo = response.certificateInfo() ? *response.certificateInfo() : CertificateInfo();
     if (response.httpStatusCode() == 304 && m_cacheEntry) {
         loadWithCacheEntry(*m_cacheEntry);
         completionHandler(PolicyAction::Ignore);
@@ -186,7 +188,7 @@ void ServiceWorkerSoftUpdateLoader::didFinishLoading(const WebCore::NetworkLoadM
 {
     if (m_decoder)
         m_script.append(m_decoder->flush());
-    m_completionHandler({ m_jobData.identifier(), m_jobData.registrationKey(), m_script.toString(), m_contentSecurityPolicy, m_referrerPolicy, { } });
+    m_completionHandler({ m_jobData.identifier(), m_jobData.registrationKey(), m_script.toString(), m_certificateInfo, m_contentSecurityPolicy, m_referrerPolicy, { } });
     didComplete();
 }
 

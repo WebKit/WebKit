@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CertificateInfo.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
@@ -80,6 +81,7 @@ struct ServiceWorkerContextData {
     ServiceWorkerRegistrationData registration;
     ServiceWorkerIdentifier serviceWorkerIdentifier;
     String script;
+    CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     String referrerPolicy;
     URL scriptURL;
@@ -98,6 +100,7 @@ void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
     encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << referrerPolicy << scriptURL << workerType << loadedFromDisk;
     encoder << scriptResourceMap;
+    encoder << certificateInfo;
 }
 
 template<class Decoder>
@@ -145,7 +148,24 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!decoder.decode(scriptResourceMap))
         return WTF::nullopt;
 
-    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), workerType, loadedFromDisk, WTFMove(scriptResourceMap) }};
+    Optional<CertificateInfo> certificateInfo;
+    decoder >> certificateInfo;
+    if (!certificateInfo)
+        return WTF::nullopt;
+    
+    return {{
+        WTFMove(*jobDataIdentifier),
+        WTFMove(*registration),
+        WTFMove(*serviceWorkerIdentifier),
+        WTFMove(script),
+        WTFMove(*certificateInfo),
+        WTFMove(contentSecurityPolicy),
+        WTFMove(referrerPolicy),
+        WTFMove(scriptURL),
+        workerType,
+        loadedFromDisk,
+        WTFMove(scriptResourceMap)
+    }};
 }
 
 } // namespace WebCore
