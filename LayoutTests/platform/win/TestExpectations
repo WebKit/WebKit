@@ -4525,3 +4525,6 @@ webkit.org/b/214088 webanimations/accelerated-animation-single-keyframe.html [ S
 webkit.org/b/214428 imported/mozilla/svg/blend-saturation.svg [ Failure ]
 
 storage/indexeddb/structured-clone.html [ Skip ]
+
+webkit.org/b/214673 js/weakref-finalizationregistry.html [ Pass Timeout ]
+

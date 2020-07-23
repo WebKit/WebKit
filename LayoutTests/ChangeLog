@@ -1,5 +1,14 @@
 2020-07-22  Ryan Haddad  <ryanhaddad@apple.com>
 
+        [Win10] js/weakref-finalizationregistry.html is frequently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=214673
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations: Mark test as flaky.
+
+2020-07-22  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed test gardening, remove old test expectation  directories for iOS 12 since they are unused.
 
         * platform/ios-12/TestExpectations: Removed.
