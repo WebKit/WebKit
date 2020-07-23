@@ -1424,7 +1424,9 @@ void Page::updateRendering()
         return;
     }
 
-    TraceScope traceScope(RenderingUpdateStart, RenderingUpdateEnd);
+    bool isSVGImagePage = chrome().client().isSVGImageChromeClient();
+    if (!isSVGImagePage)
+        tracePoint(RenderingUpdateStart);
 
     SetForScope<bool> change(m_inUpdateRendering, true);
 
@@ -1494,6 +1496,9 @@ void Page::updateRendering()
 
     layoutIfNeeded();
     doAfterUpdateRendering();
+
+    if (!isSVGImagePage)
+        tracePoint(RenderingUpdateEnd);
 }
 
 void Page::doAfterUpdateRendering()
