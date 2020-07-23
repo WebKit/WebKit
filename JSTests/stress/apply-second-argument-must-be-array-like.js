@@ -18,19 +18,6 @@ function shouldThrow(expr) {
     }
 }
 
-function shouldNotThrow(expr) {
-    let testFunc = new Function(expr);
-    for (let i = 0; i < 10000; i++) {
-        let error;
-        try {
-            testFunc();
-        } catch (e) {
-            error = e;
-        }
-        assert(!error);
-    }
-}
-
 function foo() { }
 
 shouldThrow("foo.apply(undefined, true)");
@@ -42,8 +29,16 @@ shouldThrow("foo.apply(undefined, 1.0/0)");
 shouldThrow("foo.apply(undefined, 'hello')");
 shouldThrow("foo.apply(undefined, Symbol())");
 
-shouldNotThrow("foo.apply(undefined, undefined)");
-shouldNotThrow("foo.apply(undefined, null)");
-shouldNotThrow("foo.apply(undefined, {})");
-shouldNotThrow("foo.apply(undefined, [])");
-shouldNotThrow("foo.apply(undefined, function(){})");
+function bar() {
+    return arguments.length;
+}
+
+for (let i = 0; i < 10000; i++) {
+    new Function(`
+        assert(bar.apply(undefined, undefined) === 0);
+        assert(bar.apply(undefined, null) === 0);
+        assert(bar.apply(undefined, {}) === 0);
+        assert(bar.apply(undefined, []) === 0);
+        assert(bar.apply(undefined, function() {}) === 0);
+    `)();
+}

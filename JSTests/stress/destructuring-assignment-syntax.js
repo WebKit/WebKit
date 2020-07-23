@@ -22,6 +22,11 @@ function testSyntaxError(script, message) {
         throw new Error("Bad error: " + String(error));
 }
 
+testSyntax("[] = []");
+testSyntax("[] = [,]");
+testSyntax("[,] = [,]");
+testSyntax("[,] = []");
+
 testSyntax("({ a: this.a } = {})");
 testSyntax("({ a: this['a'] } = {})");
 testSyntax("({ a: this[\"a\"] } = {})");

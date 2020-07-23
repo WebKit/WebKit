@@ -1,5 +1,36 @@
 2020-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Remove ArrayNode::m_optional
+        https://bugs.webkit.org/show_bug.cgi?id=214294
+
+        Reviewed by Darin Adler.
+
+        m_optional, which dates back to KJS era, means "is this an array with optional trailing comma,
+        with elision, or an empty array". It was used by ArrayNode::streamTo() to preserve a trailing
+        comma when converting array node to source string, as well as in few other places,
+        before ECMA-262 clarified trailing comma in array literals [1].
+
+        Currently, m_optional is used only by ArrayNode::isSimpleArray(), along with m_elision.
+        Checking m_elision is enough since trailing comma doesn't add extra `undefined` element.
+
+        This patch completely removes m_optional, speeding up destructuring and function.apply()
+        with empty arrays and arrays with trailing commas by ~55% and a factor of 11 respectively.
+        Reflect.apply() optimization (https://webkit.org/b/190668) will also benefit from this change.
+
+        Also, this change converts isSpreadExpression() check to an ASSERT (was enabled by r196323).
+
+        [1]: https://tc39.es/ecma262/#sec-array-initializer
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::isSimpleArray const):
+        (JSC::ArrayNode::toArgumentList const):
+        (JSC::ArrayNode::emitDirectBinding):
+        * parser/NodeConstructors.h:
+        (JSC::ArrayNode::ArrayNode):
+        * parser/Nodes.h:
+
+2020-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Remove emitIsUndefined() from ClassExprNode::emitBytecode()
         https://bugs.webkit.org/show_bug.cgi?id=214645
 

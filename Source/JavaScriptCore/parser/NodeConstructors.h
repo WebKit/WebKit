@@ -226,7 +226,6 @@ namespace JSC {
         : ExpressionNode(location)
         , m_element(nullptr)
         , m_elision(elision)
-        , m_optional(true)
     {
     }
 
@@ -234,7 +233,6 @@ namespace JSC {
         : ExpressionNode(location)
         , m_element(element)
         , m_elision(0)
-        , m_optional(false)
     {
     }
 
@@ -242,7 +240,6 @@ namespace JSC {
         : ExpressionNode(location)
         , m_element(element)
         , m_elision(elision)
-        , m_optional(true)
     {
     }
 

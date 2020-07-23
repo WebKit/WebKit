@@ -716,7 +716,6 @@ namespace JSC {
 
         ElementNode* m_element;
         int m_elision;
-        bool m_optional;
     };
 
     enum class ClassElementTag : uint8_t { No, Instance, Static, LastTag };
