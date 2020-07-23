@@ -72,15 +72,13 @@ AbstractInterpreter<AbstractStateType>::~AbstractInterpreter()
 }
 
 template<typename AbstractStateType>
-typename AbstractInterpreter<AbstractStateType>::BooleanResult
-AbstractInterpreter<AbstractStateType>::booleanResult(
-    Node* node, AbstractValue& value)
+TriState AbstractInterpreter<AbstractStateType>::booleanResult(Node* node, AbstractValue& value)
 {
     JSValue childConst = value.value();
     if (childConst) {
         if (childConst.toBoolean(m_codeBlock->globalObjectFor(node->origin.semantic)))
-            return DefinitelyTrue;
-        return DefinitelyFalse;
+            return TriState::True;
+        return TriState::False;
     }
 
     // Next check if we can fold because we know that the source is an object or string and does not equal undefined.
@@ -88,17 +86,16 @@ AbstractInterpreter<AbstractStateType>::booleanResult(
         bool allTrue = true;
         for (unsigned i = value.m_structure.size(); i--;) {
             RegisteredStructure structure = value.m_structure[i];
-            if (structure->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))
-                || structure->typeInfo().type() == StringType) {
+            if (structure->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic)) || structure->typeInfo().type() == StringType || structure->typeInfo().type() == HeapBigIntType) {
                 allTrue = false;
                 break;
             }
         }
         if (allTrue)
-            return DefinitelyTrue;
+            return TriState::True;
     }
     
-    return UnknownBooleanResult;
+    return TriState::Indeterminate;
 }
 
 template<typename AbstractStateType>
@@ -1350,13 +1347,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case LogicalNot: {
         switch (booleanResult(node, forNode(node->child1()))) {
-        case DefinitelyTrue:
+        case TriState::True:
             setConstant(node, jsBoolean(false));
             break;
-        case DefinitelyFalse:
+        case TriState::False:
             setConstant(node, jsBoolean(true));
             break;
-        default:
+        case TriState::Indeterminate:
             setNonCellTypeForNode(node, SpecBoolean);
             break;
         }
@@ -2604,20 +2601,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             
     case Branch: {
         Node* child = node->child1().node();
-        BooleanResult result = booleanResult(node, forNode(child));
-        if (result == DefinitelyTrue) {
+        switch (booleanResult(node, forNode(child))) {
+        case TriState::True:
             m_state.setBranchDirection(TakeTrue);
             break;
-        }
-        if (result == DefinitelyFalse) {
+        case TriState::False:
             m_state.setBranchDirection(TakeFalse);
             break;
+        case TriState::Indeterminate:
+            // FIXME: The above handles the trivial cases of sparse conditional
+            // constant propagation, but we can do better:
+            // We can specialize the source variable's value on each direction of
+            // the branch.
+            m_state.setBranchDirection(TakeBoth);
+            break;
         }
-        // FIXME: The above handles the trivial cases of sparse conditional
-        // constant propagation, but we can do better:
-        // We can specialize the source variable's value on each direction of
-        // the branch.
-        m_state.setBranchDirection(TakeBoth);
         break;
     }
         

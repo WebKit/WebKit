@@ -1,3 +1,21 @@
+2020-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] BigInt can be `false` in boolean context in DFG AI
+        https://bugs.webkit.org/show_bug.cgi?id=214678
+        <rdar://problem/65894751>
+
+        Reviewed by Mark Lam.
+
+        DFG::AbstractInterpreter::booleanResult returns wrong result if finite structure includes HeapBigInt structure
+        since HeapBigInt 0n can be evaluated `false` in boolean context while this function does not care it. This patch
+        fixes it and cleans up code by using WTF/TriState.
+
+        * dfg/DFGAbstractInterpreter.h:
+        (): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::booleanResult):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2020-07-23  Caio Lima  <ticaiolima@gmail.com>
 
         [32-bits] Fixing the return of doVMEntry into LowLevelInterpreter32_64.asm

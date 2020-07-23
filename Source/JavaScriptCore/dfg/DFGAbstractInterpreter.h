@@ -32,6 +32,7 @@
 #include "DFGNode.h"
 #include "DFGNodeFlowProjection.h"
 #include "DFGPhiChildren.h"
+#include <wtf/TriState.h>
 
 namespace JSC { namespace DFG {
 
@@ -232,12 +233,7 @@ public:
     void observeTransitions(unsigned indexInBlock, const TransitionVector&);
 private:
     
-    enum BooleanResult {
-        UnknownBooleanResult,
-        DefinitelyFalse,
-        DefinitelyTrue
-    };
-    BooleanResult booleanResult(Node*, AbstractValue&);
+    TriState booleanResult(Node*, AbstractValue&);
     
     void setBuiltInConstant(Node* node, FrozenValue value)
     {
