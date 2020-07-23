@@ -798,6 +798,21 @@
         }
     },
     {
+        "name": "CSS Selector :focus-visible",
+        "status": {
+            "status": "Under Consideration",
+            "enabled-by-default": false
+        },
+        "url": "https://drafts.csswg.org/selectors-4/#the-focus-visible-pseudo",
+        "specification": "CSS Selectors Level 4",
+        "description": "The selector :focus-visible matches an element that has received focus and the user-agent has determined that the focus should be made visible on the element.",
+        "contact": {
+            "name": "Jonathan Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },
+    {
         "name": "CSS Selector :focus-within",
         "status": {
             "status": "Supported",

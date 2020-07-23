@@ -1,3 +1,12 @@
+2020-07-22  Jon Davis  <jond@apple.com>
+
+        Add feature status for the focus-visible pseudo-selector
+        https://bugs.webkit.org/show_bug.cgi?id=214662
+
+        Reviewed by Darin Adler.
+
+        * features.json:
+
 2020-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, update feature status for async clipboard API
