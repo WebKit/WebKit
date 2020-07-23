@@ -28,6 +28,13 @@ SERVER = 'localhost'
 
 
 def send_email(to_emails, subject, text):
+    if not to_emails:
+        print('Skipping email since no recipient is specified')
+        return
+    if not subject or not text:
+        print('Skipping email since no subject or text is specified')
+        return
+
     email_data = """From: {}\nTo: {}\nSubject: {}\n\n{}""".format(FROM_EMAIL, ', '.join(to_emails), subject, text)
 
     server = smtplib.SMTP(SERVER)

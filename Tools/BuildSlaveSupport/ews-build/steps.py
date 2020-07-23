@@ -29,6 +29,7 @@ from buildbot.steps.worker import CompositeStepMixin
 from twisted.internet import defer
 
 from layout_test_failures import LayoutTestFailures
+from send_email import send_email_to_bot_watchers
 
 import json
 import re
@@ -1866,6 +1867,8 @@ class ReRunWebKitTests(RunWebKitTests):
                 pluralSuffix = 's' if len(flaky_failures) > 1 else ''
                 message = 'Found flaky test{}: {}'.format(pluralSuffix, flaky_failures_string)
             self.setProperty('build_summary', message)
+            for flaky_failure in flaky_failures:
+                self.send_email_for_flaky_failure(flaky_failure)
         else:
             self.setProperty('patchFailedTests', True)
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
@@ -1892,6 +1895,18 @@ class ReRunWebKitTests(RunWebKitTests):
             if second_results.failing_tests:
                 self._addToLog(self.test_failures_log_name, '\n'.join(second_results.failing_tests))
         self._parseRunWebKitTestsOutput(logText)
+
+    def send_email_for_flaky_failure(self, test_name):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+
+            email_subject = 'Flaky test: {}'.format(test_name)
+            email_text = 'Test {} flaked in {}\n\nBuilder: {}'.format(test_name, build_url, builder_name)
+            send_email_to_bot_watchers(email_subject, email_text)
+        except Exception as e:
+            # Catching all exceptions here to ensure that failure to send email doesn't impact the build
+            print('Error in sending email for flaky failures: {}'.format(e))
 
 
 class RunWebKitTestsWithoutPatch(RunWebKitTests):
@@ -1952,12 +1967,18 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
             message = 'Found {} pre-existing test failure{}: {}'.format(len(clean_tree_failures), pluralSuffix, clean_tree_failures_string)
             if len(clean_tree_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'
+            for clean_tree_failure in clean_tree_failures:
+                self.send_email_for_pre_existing_failure(clean_tree_failure)
+
         if flaky_failures:
             flaky_failures_string = ', '.join(sorted(flaky_failures)[:self.NUM_FAILURES_TO_DISPLAY])
             pluralSuffix = 's' if len(flaky_failures) > 1 else ''
             message += ' Found flaky test{}: {}'.format(pluralSuffix, flaky_failures_string)
             if len(flaky_failures) > self.NUM_FAILURES_TO_DISPLAY:
                 message += ' ...'
+            for flaky_failure in flaky_failures:
+                self.send_email_for_flaky_failure(flaky_failure)
+
         self.setProperty('build_summary', message)
         return defer.succeed(None)
 
@@ -1970,6 +1991,28 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
 
     def _results_failed_different_tests(self, first_results_failing_tests, second_results_failing_tests):
         return first_results_failing_tests != second_results_failing_tests
+
+    def send_email_for_flaky_failure(self, test_name):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+
+            email_subject = 'Flaky test: {}'.format(test_name)
+            email_text = 'Test {} flaked in {}\n\nBuilder: {}'.format(test_name, build_url, builder_name)
+            rc = send_email_to_bot_watchers(email_subject, email_text)
+        except Exception as e:
+            print('Error in sending email for flaky failure: {}'.format(e))
+
+    def send_email_for_pre_existing_failure(self, test_name):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+
+            email_subject = 'Pre-existing test failure: {}'.format(test_name)
+            email_text = 'Test {} failed on clean tree run in {}.\nBuilder: {}'.format(test_name, build_url, builder_name)
+            rc = send_email_to_bot_watchers(email_subject, email_text)
+        except Exception as e:
+            print('Error in sending email for pre-existing failure: {}'.format(e))
 
     def _report_flaky_tests(self, flaky_tests):
         #TODO: implement this

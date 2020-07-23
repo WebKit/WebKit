@@ -52,6 +52,9 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    Trigger, TransferToS3, UnApplyPatchIfRequired, UpdateWorkingDirectory, UploadBuiltProduct,
                    UploadTestResults, ValidateCommiterAndReviewer, ValidatePatch)
 
+import send_email
+send_email.BOT_WATCHERS_EMAILS = []
+
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
 FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
@@ -1737,6 +1740,25 @@ class TestReRunWebKitTests(TestRunWebKitTests):
         self.setupStep(ReRunWebKitTests())
         self.property_exceed_failure_limit = 'second_results_exceed_failure_limit'
         self.property_failures = 'second_run_failures'
+        ReRunWebKitTests.send_email_for_flaky_failure = lambda subject, test: None
+
+    def test_flaky_failures_in_first_run(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.setProperty('first_run_failures', ['test1', 'test2'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '30', '--skip-failing-tests'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Passed layout tests')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('build_summary'), 'Found flaky tests: test1, test2')
+        return rc
 
 
 class TestRunWebKitTestsWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
@@ -1867,6 +1889,8 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         return self.tearDownBuildStep()
 
     def configureStep(self):
+        AnalyzeLayoutTestsResults.send_email_for_flaky_failure = lambda subject, test: None
+        AnalyzeLayoutTestsResults.send_email_for_pre_existing_failure = lambda subject, test: None
         self.setupStep(AnalyzeLayoutTestsResults())
         self.setProperty('first_results_exceed_failure_limit', False)
         self.setProperty('second_results_exceed_failure_limit', False)
