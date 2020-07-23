@@ -22,7 +22,7 @@
 
 import smtplib
 
-BOT_WATCHERS_EMAILS = ['webkit-bot-watchers-bugzilla@group.apple.com']
+BOT_WATCHERS_EMAILS = ['webkit-ews-bot-watchers@group.apple.com']
 FROM_EMAIL = 'ews@webkit.org'
 SERVER = 'localhost'
 

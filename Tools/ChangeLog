@@ -1,3 +1,12 @@
+2020-07-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ews] Update bot watcher email address
+        https://bugs.webkit.org/show_bug.cgi?id=214693
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/send_email.py:
+
 2020-07-23  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Override suite name for results database reporting
