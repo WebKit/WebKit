@@ -1,5 +1,26 @@
 2020-07-23  David Kilzer  <ddkilzer@apple.com>
 
+        [IPC hardening] WebKit::ArgumentCoder<BlobPart>::decode() and encode() should use enum BlobPart::Type
+        <https://webkit.org/b/214665>
+        <rdar://problem/65777948>
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<BlobPart>::encode):
+        - Change BlobPart::Type enums to use fully qualified name.
+        - Encode using WebCore::BlobPart::Type value.
+        - Change break statements to early return statements.
+        - Add ASSERT_NOT_REACHED() to catch bugs.
+        (IPC::ArgumentCoder<BlobPart>::decode):
+        - Change BlobPart::Type enums to use fully qualified name.
+        - Decode using Optional<WebCore::BlobPart::Type> variable.
+        - Change break statements to early return statements.
+        - Remove default: label, move `return WTF::nullopt` to the end
+          of the method, and add ASSERT_NOT_REACHED() to catch bugs.
+
+2020-07-23  David Kilzer  <ddkilzer@apple.com>
+
         [IPC hardening] FilterOperation decode/encode should use early returns
         <https://webkit.org/b/214667>
         <rdar://problem/65946400>

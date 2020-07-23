@@ -2478,47 +2478,43 @@ bool ArgumentCoder<FilterOperations>::decode(Decoder& decoder, FilterOperations&
 
 void ArgumentCoder<BlobPart>::encode(Encoder& encoder, const BlobPart& blobPart)
 {
-    encoder << static_cast<uint32_t>(blobPart.type());
+    encoder << blobPart.type();
     switch (blobPart.type()) {
-    case BlobPart::Data:
+    case BlobPart::Type::Data:
         encoder << blobPart.data();
-        break;
-    case BlobPart::Blob:
+        return;
+    case BlobPart::Type::Blob:
         encoder << blobPart.url();
-        break;
+        return;
     }
+    ASSERT_NOT_REACHED();
 }
 
 Optional<BlobPart> ArgumentCoder<BlobPart>::decode(Decoder& decoder)
 {
-    BlobPart blobPart;
-
-    Optional<uint32_t> type;
+    Optional<BlobPart::Type> type;
     decoder >> type;
     if (!type)
         return WTF::nullopt;
 
     switch (*type) {
-    case BlobPart::Data: {
+    case BlobPart::Type::Data: {
         Optional<Vector<uint8_t>> data;
         decoder >> data;
         if (!data)
             return WTF::nullopt;
-        blobPart = BlobPart(WTFMove(*data));
-        break;
+        return BlobPart(WTFMove(*data));
     }
-    case BlobPart::Blob: {
+    case BlobPart::Type::Blob: {
         URL url;
         if (!decoder.decode(url))
             return WTF::nullopt;
-        blobPart = BlobPart(url);
-        break;
+        return BlobPart(url);
     }
-    default:
-        return WTF::nullopt;
     }
 
-    return blobPart;
+    ASSERT_NOT_REACHED();
+    return WTF::nullopt;
 }
 
 void ArgumentCoder<TextIndicatorData>::encode(Encoder& encoder, const TextIndicatorData& textIndicatorData)

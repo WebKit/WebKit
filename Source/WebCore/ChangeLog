@@ -1,3 +1,23 @@
+2020-07-23  David Kilzer  <ddkilzer@apple.com>
+
+        [IPC hardening] WebKit::ArgumentCoder<BlobPart>::decode() and encode() should use enum BlobPart::Type
+        <https://webkit.org/b/214665>
+        <rdar://problem/65777948>
+
+        Reviewed by Darin Adler.
+
+        * platform/network/BlobPart.h:
+        (WebCore::BlobPart::Type):
+        - Convert to an enum class of size `bool`.
+        (WebCore::BlobPart::BlobPart):
+        (WebCore::BlobPart::data const):
+        (WebCore::BlobPart::moveData):
+        (WebCore::BlobPart::url const):
+        - Change BlobPart::Type enums to use fully qualified name.
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        - Change BlobPart::Type enums to use fully qualified name.
+
 2020-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         updateRendering trace point should exclude SVG
