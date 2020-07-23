@@ -30,6 +30,7 @@
 #include "WebKitAudioContext.h"
 
 #include "JSDOMPromiseDeferred.h"
+#include "PeriodicWave.h"
 #include "WebKitAudioPannerNode.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -44,6 +45,8 @@
 #include "HTMLMediaElement.h"
 #include "MediaElementAudioSourceNode.h"
 #endif
+
+const unsigned MaxPeriodicWaveLength = 4096;
 
 namespace WebCore {
 
@@ -165,6 +168,20 @@ ExceptionOr<Ref<WebKitAudioPannerNode>> WebKitAudioContext::createWebKitPanner()
 
     lazyInitialize();
     return WebKitAudioPannerNode::create(*this, sampleRate());
+}
+
+ExceptionOr<Ref<PeriodicWave>> WebKitAudioContext::createPeriodicWave(Float32Array& real, Float32Array& imaginary)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    if (isStopped())
+        return Exception { InvalidStateError };
+
+    if (real.length() != imaginary.length() || real.length() > MaxPeriodicWaveLength || !real.length())
+        return Exception { IndexSizeError };
+    lazyInitialize();
+    return PeriodicWave::create(sampleRate(), real, imaginary);
 }
 
 void WebKitAudioContext::close(DOMPromiseDeferred<void>&& promise)

@@ -5050,6 +5050,8 @@
 		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E71467B324ABAEF200FB2F50 /* AudioNodeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B124ABAEF100FB2F50 /* AudioNodeOptions.h */; };
 		E71467B624ABAF1D00FB2F50 /* PannerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B524ABAF1D00FB2F50 /* PannerOptions.h */; };
+		E755E89224C7434B009F7C23 /* PeriodicWaveConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = E755E88F24C7434B009F7C23 /* PeriodicWaveConstraints.h */; };
+		E755E89924C7461D009F7C23 /* PeriodicWaveOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E755E89624C7461D009F7C23 /* PeriodicWaveOptions.h */; };
 		E785D91524B4D1CA0014DB21 /* ChannelCountMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D91124B4D1B10014DB21 /* ChannelCountMode.h */; };
 		E785D93424B636FF0014DB21 /* ChannelInterpretation.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D93124B636FF0014DB21 /* ChannelInterpretation.h */; };
 		E785D96124B7F7350014DB21 /* AudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D95F24B7F7340014DB21 /* AudioContextOptions.h */; };
@@ -15821,6 +15823,10 @@
 		E71467B424ABAF0B00FB2F50 /* AudioNodeOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioNodeOptions.idl; sourceTree = "<group>"; };
 		E71467B524ABAF1D00FB2F50 /* PannerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PannerOptions.h; sourceTree = "<group>"; };
 		E71467B724ABAF2C00FB2F50 /* PannerOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PannerOptions.idl; sourceTree = "<group>"; };
+		E755E88F24C7434B009F7C23 /* PeriodicWaveConstraints.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeriodicWaveConstraints.h; sourceTree = "<group>"; };
+		E755E89124C7434B009F7C23 /* PeriodicWaveConstraints.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PeriodicWaveConstraints.idl; sourceTree = "<group>"; };
+		E755E89624C7461D009F7C23 /* PeriodicWaveOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeriodicWaveOptions.h; sourceTree = "<group>"; };
+		E755E89824C7461D009F7C23 /* PeriodicWaveOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PeriodicWaveOptions.idl; sourceTree = "<group>"; };
 		E785D91124B4D1B10014DB21 /* ChannelCountMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChannelCountMode.h; sourceTree = "<group>"; };
 		E785D91324B4D1B10014DB21 /* ChannelCountMode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChannelCountMode.idl; sourceTree = "<group>"; };
 		E785D93124B636FF0014DB21 /* ChannelInterpretation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChannelInterpretation.h; sourceTree = "<group>"; };
@@ -29503,6 +29509,10 @@
 				FD581FB11520F93B003A7A75 /* PeriodicWave.cpp */,
 				FD581FB21520F93B003A7A75 /* PeriodicWave.h */,
 				FD581FB31520F93B003A7A75 /* PeriodicWave.idl */,
+				E755E88F24C7434B009F7C23 /* PeriodicWaveConstraints.h */,
+				E755E89124C7434B009F7C23 /* PeriodicWaveConstraints.idl */,
+				E755E89624C7461D009F7C23 /* PeriodicWaveOptions.h */,
+				E755E89824C7461D009F7C23 /* PeriodicWaveOptions.idl */,
 				FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */,
 				FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */,
 				FD315FEB12B0267600C1A359 /* ScriptProcessorNode.cpp */,
@@ -30072,7 +30082,6 @@
 				830030F81B7D3B7800ED3AAC /* CachedHTMLCollection.h in Headers */,
 				BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */,
 				319FBD5F15D2F464009640A6 /* CachedImageClient.h in Headers */,
-				CDAC068324C6A95A002F727F /* VP9UtilitiesCocoa.h in Headers */,
 				E307DED01D81E4C700141CAF /* CachedModuleScriptLoader.h in Headers */,
 				E307DED11D81E4CB00141CAF /* CachedModuleScriptLoaderClient.h in Headers */,
 				510184690B08602A004A825F /* CachedPage.h in Headers */,
@@ -31145,7 +31154,6 @@
 				519DBC6F1DC011A700329BF5 /* IDBGetAllRecordsData.h in Headers */,
 				519DBC721DC10F5200329BF5 /* IDBGetAllResult.h in Headers */,
 				5105F0691D4BA9D900FB80BC /* IDBGetRecordData.h in Headers */,
-				CD9CC58524C6BBEB00CD3C64 /* VP9Utilities.h in Headers */,
 				5185FC8F1BB4C4E80012898F /* IDBGetResult.h in Headers */,
 				5185FC911BB4C4E80012898F /* IDBIndex.h in Headers */,
 				51F798F01BE880E7008AE491 /* IDBIndexInfo.h in Headers */,
@@ -32680,6 +32688,8 @@
 				8AF4E55C11DC5A63000ED3DE /* PerformanceTiming.h in Headers */,
 				A554B5F31E38393A001D4E03 /* PerformanceUserTiming.h in Headers */,
 				FD581FB51520F93B003A7A75 /* PeriodicWave.h in Headers */,
+				E755E89224C7434B009F7C23 /* PeriodicWaveConstraints.h in Headers */,
+				E755E89924C7461D009F7C23 /* PeriodicWaveOptions.h in Headers */,
 				49D5DC2E0F423A73008F20FD /* PerspectiveTransformOperation.h in Headers */,
 				1DBC1B562347B3D200B901AF /* PictureInPictureObserver.h in Headers */,
 				1D2C82B7236A3F6A0055D6C5 /* PictureInPictureSupport.h in Headers */,
@@ -33826,6 +33836,8 @@
 				419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */,
 				1ABA80001897341200DCE9D6 /* VisitedLinkStore.h in Headers */,
 				E44613B60CD6344E00FADA75 /* VoidCallback.h in Headers */,
+				CD9CC58524C6BBEB00CD3C64 /* VP9Utilities.h in Headers */,
+				CDAC068324C6A95A002F727F /* VP9UtilitiesCocoa.h in Headers */,
 				BE20507A18A4586B0080647E /* VTTCue.h in Headers */,
 				7AF9B20318CFB2DF00C64BEF /* VTTRegion.h in Headers */,
 				7AF9B20618CFB2DF00C64BEF /* VTTRegionList.h in Headers */,

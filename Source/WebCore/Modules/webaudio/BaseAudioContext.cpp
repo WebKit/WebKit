@@ -63,6 +63,7 @@
 #include "Page.h"
 #include "PannerNode.h"
 #include "PeriodicWave.h"
+#include "PeriodicWaveOptions.h"
 #include "PlatformMediaSessionManager.h"
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
@@ -90,8 +91,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Scope.h>
 #include <wtf/text/WTFString.h>
-
-const unsigned MaxPeriodicWaveLength = 4096;
 
 namespace WebCore {
 
@@ -635,18 +634,23 @@ ExceptionOr<Ref<OscillatorNode>> BaseAudioContext::createOscillator()
     return node;
 }
 
-ExceptionOr<Ref<PeriodicWave>> BaseAudioContext::createPeriodicWave(Float32Array& real, Float32Array& imaginary)
+ExceptionOr<Ref<PeriodicWave>> BaseAudioContext::createPeriodicWave(Vector<float>&& real, Vector<float>&& imaginary, const PeriodicWaveConstraints& constraints)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
     if (m_isStopScheduled)
         return Exception { InvalidStateError };
-
-    if (real.length() != imaginary.length() || (real.length() > MaxPeriodicWaveLength) || !real.length())
-        return Exception { IndexSizeError };
+    
+    if (real.size() != imaginary.size())
+        return Exception { IndexSizeError, "real and imaginary must have the same length"_s };
+    
+    PeriodicWaveOptions options;
+    options.real = WTFMove(real);
+    options.imag = WTFMove(imaginary);
+    options.disableNormalization = constraints.disableNormalization;
     lazyInitialize();
-    return PeriodicWave::create(sampleRate(), real, imaginary);
+    return PeriodicWave::create(*this, WTFMove(options));
 }
 
 void BaseAudioContext::notifyNodeFinishedProcessing(AudioNode* node)

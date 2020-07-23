@@ -1318,6 +1318,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPerformanceTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWave.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWave.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWaveConstraints.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWaveConstraints.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWaveOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPeriodicWaveOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaybackDirection.cpp

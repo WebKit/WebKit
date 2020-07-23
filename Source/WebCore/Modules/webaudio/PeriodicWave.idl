@@ -27,5 +27,5 @@
     Conditional=WEB_AUDIO,
     ImplementationLacksVTable
 ] interface PeriodicWave {
-
+    [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor(BaseAudioContext context, optional PeriodicWaveOptions options);
 };

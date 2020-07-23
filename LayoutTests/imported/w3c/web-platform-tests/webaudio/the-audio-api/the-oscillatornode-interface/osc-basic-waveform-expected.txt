@@ -4,12 +4,12 @@ FAIL Executing "Test 0" promise_test: Unhandled rejection with value: object "Ty
 FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {type: 'sine', frequency: freqHz})')"
 FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {type: 'sine', frequency: freqHz})')"
 FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {type: 'sine', frequency: freqHz})')"
-FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new PeriodicWave(
+FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(
                 context,
-                {real: [0, 1], imag: [0, 1], disableNormalization: true})')"
-FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new PeriodicWave(
+                {type: 'custom', frequency: freqHz, periodicWave: wave})')"
+FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(
                 context,
-                {real: [0, 1], imag: [0, 1], disableNormalization: true})')"
+                {type: 'custom', frequency: freqHz, periodicWave: wave})')"
 PASS Audit report 
 PASS > [Test 0] Sine wave: 100 Hz 
 PASS > [Test 1] Sine wave: -100 Hz 

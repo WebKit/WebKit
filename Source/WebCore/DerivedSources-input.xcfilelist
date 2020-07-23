@@ -331,6 +331,8 @@ $(PROJECT_DIR)/Modules/webaudio/PannerNode.idl
 $(PROJECT_DIR)/Modules/webaudio/PannerOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/PanningModelType.idl
 $(PROJECT_DIR)/Modules/webaudio/PeriodicWave.idl
+$(PROJECT_DIR)/Modules/webaudio/PeriodicWaveConstraints.idl
+$(PROJECT_DIR)/Modules/webaudio/PeriodicWaveOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/ScriptProcessorNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WaveShaperNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitAudioContext.idl

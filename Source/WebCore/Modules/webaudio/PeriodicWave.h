@@ -29,12 +29,18 @@
 #pragma once
 
 #include "AudioArray.h"
+#include "ExceptionOr.h"
+#include "PeriodicWaveOptions.h"
 #include <JavaScriptCore/Float32Array.h>
 #include <memory>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class BaseAudioContext;
+
+enum class ShouldDisableNormalization : bool { No, Yes };
 
 class PeriodicWave final : public RefCounted<PeriodicWave> {
 public:
@@ -44,7 +50,10 @@ public:
     static Ref<PeriodicWave> createTriangle(float sampleRate);
 
     // Creates an arbitrary wave given the frequency components (Fourier coefficients).
+    // FIXME: Remove once old constructor is phased out
     static Ref<PeriodicWave> create(float sampleRate, Float32Array& real, Float32Array& imag);
+    
+    static ExceptionOr<Ref<PeriodicWave>> create(BaseAudioContext&, PeriodicWaveOptions&& = { });
 
     // Returns pointers to the lower and higher wave data for the pitch range containing
     // the given fundamental frequency. These two tables are in adjacent "pitch" ranges
@@ -92,7 +101,7 @@ private:
     unsigned numberOfPartialsForRange(unsigned rangeIndex) const;
 
     // Creates tables based on numberOfComponents Fourier coefficients.
-    void createBandLimitedTables(const float* real, const float* imag, unsigned numberOfComponents);
+    void createBandLimitedTables(const float* real, const float* imag, unsigned numberOfComponents, ShouldDisableNormalization = ShouldDisableNormalization::No);
     Vector<std::unique_ptr<AudioFloatArray>> m_bandLimitedTables;
 };
 

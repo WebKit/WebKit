@@ -3171,6 +3171,8 @@ JSPerformanceResourceTiming.cpp
 JSPerformanceServerTiming.cpp
 JSPerformanceTiming.cpp
 JSPeriodicWave.cpp
+JSPeriodicWaveConstraints.cpp
+JSPeriodicWaveOptions.cpp
 JSPictureInPictureWindow.cpp
 JSPlaybackDirection.cpp
 JSPointerEvent.cpp

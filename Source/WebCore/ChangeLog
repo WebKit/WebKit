@@ -1,3 +1,42 @@
+2020-07-23  Clark Wang  <clark_wang@apple.com>
+
+        Added PeriodicWave constructor according to spec
+        https://bugs.webkit.org/show_bug.cgi?id=214615
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing tests that now pass.
+
+        Added PeriodicWave constructor according to spec: https://www.w3.org/TR/webaudio/#periodicwave.
+        Added PeriodicWaveConstraints, PeriodicWaveOptions files. Updated PeriodicWave::createBandLimitedTables
+        to normalize waveform based on spec: https://www.w3.org/TR/webaudio/#waveform-normalization.
+        Added updated createPeriodicWave method in BaseAudioContext, and moved old createPeriodicWave method
+        Into WebKitAudioContext.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createPeriodicWave):
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::createPeriodicWave):
+        * Modules/webaudio/BaseAudioContext.idl:
+        * Modules/webaudio/PeriodicWave.cpp:
+        (WebCore::PeriodicWave::create):
+        (WebCore::PeriodicWave::createBandLimitedTables):
+        * Modules/webaudio/PeriodicWave.h:
+        * Modules/webaudio/PeriodicWave.idl:
+        * Modules/webaudio/PeriodicWaveConstraints.h: Added.
+        * Modules/webaudio/PeriodicWaveConstraints.idl: Added.
+        * Modules/webaudio/PeriodicWaveOptions.h: Added.
+        * Modules/webaudio/PeriodicWaveOptions.idl: Added.
+        * Modules/webaudio/WebKitAudioContext.cpp:
+        (WebCore::WebKitAudioContext::createPeriodicWave):
+        * Modules/webaudio/WebKitAudioContext.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-07-23  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] WebKit::ArgumentCoder<BlobPart>::decode() and encode() should use enum BlobPart::Type
