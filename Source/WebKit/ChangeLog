@@ -1,3 +1,25 @@
+2020-07-23  Brady Eidson  <beidson@apple.com>
+
+        Add Gamepad tests that exercise the native frameworks
+        <rdar://problem/65343674> and https://bugs.webkit.org/show_bug.cgi?id=214188
+
+        Reviewed by Tim Horton.
+
+        Add some testing-only SPI for TestWebKitAPI.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _numberOfConnectedGamepadsForTesting]):
+        (-[WKProcessPool _setUsesOnlyHIDGamepadProviderForTesting:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+
+        * UIProcess/Gamepad/UIGamepadProvider.h:
+        (WebKit::UIGamepadProvider::numberOfConnectedGamepads const):
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::numberOfConnectedGamepadsForTesting):
+        (WebKit::WebProcessPool::setUsesOnlyHIDGamepadProviderForTesting):
+        * UIProcess/WebProcessPool.h:
+
 2020-07-22  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add feature flag for WebM & VP9

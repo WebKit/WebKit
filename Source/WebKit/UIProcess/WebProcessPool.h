@@ -370,6 +370,9 @@ public:
     void garbageCollectJavaScriptObjects();
     void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
 
+    size_t numberOfConnectedGamepadsForTesting();
+    void setUsesOnlyHIDGamepadProviderForTesting(bool);
+
 #if PLATFORM(COCOA)
     static bool omitPDFSupport();
 #endif

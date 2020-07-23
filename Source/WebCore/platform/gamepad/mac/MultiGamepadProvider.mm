@@ -51,12 +51,15 @@ void MultiGamepadProvider::startMonitoringGamepads(GamepadProviderClient& client
     ASSERT(!m_clients.contains(&client));
     m_clients.add(&client);
 
-    HIDGamepadProvider::singleton().ignoreGameControllerFrameworkDevices();
-    GameControllerGamepadProvider::singleton().prewarmGameControllerDevicesIfNecessary();
+    if (!m_usesOnlyHIDProvider) {
+        HIDGamepadProvider::singleton().ignoreGameControllerFrameworkDevices();
+        GameControllerGamepadProvider::singleton().prewarmGameControllerDevicesIfNecessary();
+    }
 
     if (monitorOtherProviders) {
         HIDGamepadProvider::singleton().startMonitoringGamepads(*this);
-        GameControllerGamepadProvider::singleton().startMonitoringGamepads(*this);
+        if (!m_usesOnlyHIDProvider)
+            GameControllerGamepadProvider::singleton().startMonitoringGamepads(*this);
     }
 }
 
@@ -68,7 +71,8 @@ void MultiGamepadProvider::stopMonitoringGamepads(GamepadProviderClient& client)
 
     if (shouldStopMonitoringOtherProviders) {
         HIDGamepadProvider::singleton().stopMonitoringGamepads(*this);
-        GameControllerGamepadProvider::singleton().stopMonitoringGamepads(*this);
+        if (!m_usesOnlyHIDProvider)
+            GameControllerGamepadProvider::singleton().stopMonitoringGamepads(*this);
     }
 }
 

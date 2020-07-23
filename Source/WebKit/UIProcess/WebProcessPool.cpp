@@ -127,6 +127,8 @@
 
 #if PLATFORM(COCOA)
 #include "VersionChecks.h"
+#include <WebCore/HIDGamepadProvider.h>
+#include <WebCore/MultiGamepadProvider.h>
 #include <WebCore/PowerSourceNotifier.h>
 #endif
 
@@ -1971,6 +1973,22 @@ void WebProcessPool::gamepadDisconnected(const UIGamepad& gamepad)
 }
 
 #endif // ENABLE(GAMEPAD)
+
+size_t WebProcessPool::numberOfConnectedGamepadsForTesting()
+{
+#if ENABLE(GAMEPAD)
+    return UIGamepadProvider::singleton().numberOfConnectedGamepads();
+#else
+    return 0;
+#endif
+}
+
+void WebProcessPool::setUsesOnlyHIDGamepadProviderForTesting(bool hidProviderOnly)
+{
+#if ENABLE(GAMEPAD) && HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
+    MultiGamepadProvider::singleton().setUsesOnlyHIDGamepadProvider(hidProviderOnly);
+#endif
+}
 
 void WebProcessPool::setJavaScriptConfigurationFileEnabled(bool flag)
 {

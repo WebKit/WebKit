@@ -1,3 +1,14 @@
+2020-07-23  Brady Eidson  <beidson@apple.com>
+
+        Add Gamepad tests that exercise the native frameworks
+        <rdar://problem/65343674> and https://bugs.webkit.org/show_bug.cgi?id=214188
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/Mac/101500/HID.framework/HID.tbd: Added.
+        * WebKitPrivateFrameworkStubs/Mac/101600/HID.framework/HID.tbd: Added.
+        * WebKitPrivateFrameworkStubs/Mac/110000/HID.framework/HID.tbd: Added.
+
 2020-07-17  Jonathan Bedard  <jbedard@apple.com>
 
         Add WebKitPrivateFrameworkStubs for Big Sur

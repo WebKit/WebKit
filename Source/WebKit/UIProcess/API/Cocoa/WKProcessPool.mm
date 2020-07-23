@@ -651,4 +651,14 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->garbageCollectJavaScriptObjects();
 }
 
+- (size_t)_numberOfConnectedGamepadsForTesting
+{
+    return _processPool->numberOfConnectedGamepadsForTesting();
+}
+
+- (void)_setUsesOnlyHIDGamepadProviderForTesting:(BOOL)usesHIDProvider
+{
+    _processPool->setUsesOnlyHIDGamepadProviderForTesting(usesHIDProvider);
+}
+
 @end

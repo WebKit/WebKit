@@ -327,6 +327,8 @@
 		51E5C7031919C3B200D8B3E1 /* simple3.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780371919AFF8001829A2 /* simple3.html */; };
 		51E6A8941D2F1C0A00C004B6 /* LocalStorageClear.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E6A8921D2F1BEC00C004B6 /* LocalStorageClear.mm */; };
 		51E6A8961D2F1CA700C004B6 /* LocalStorageClear.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E6A8951D2F1C7700C004B6 /* LocalStorageClear.html */; };
+		51EB125724C67257000CB030 /* VirtualGamepad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB125624C66FE8000CB030 /* VirtualGamepad.mm */; };
+		51EB125924C68592000CB030 /* HIDGamepads.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB125824C68589000CB030 /* HIDGamepads.mm */; };
 		51EB12941FDF052500A5A1BD /* ServiceWorkerBasic.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */; };
 		520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */; };
 		5245178721B9F57B0082CB34 /* RenderingProgressPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5D6BE21B9F1B20046ABA6 /* RenderingProgressPlugIn.mm */; };
@@ -2022,6 +2024,10 @@
 		51E780361919AFF8001829A2 /* simple2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = simple2.html; sourceTree = "<group>"; };
 		51E780371919AFF8001829A2 /* simple3.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = simple3.html; sourceTree = "<group>"; };
 		51E93016156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageGetScaleFactorNotZero.cpp; sourceTree = "<group>"; };
+		51EB125324C66BCB000CB030 /* TestWebKitAPI-macOS-internal.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = "TestWebKitAPI-macOS-internal.entitlements"; sourceTree = "<group>"; };
+		51EB125424C66FE8000CB030 /* VirtualGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualGamepad.h; sourceTree = "<group>"; };
+		51EB125624C66FE8000CB030 /* VirtualGamepad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VirtualGamepad.mm; sourceTree = "<group>"; };
+		51EB125824C68589000CB030 /* HIDGamepads.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HIDGamepads.mm; sourceTree = "<group>"; };
 		51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServiceWorkerBasic.mm; sourceTree = "<group>"; };
 		51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteURL.mm; sourceTree = "<group>"; };
 		520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebArchive_Bundle.cpp; sourceTree = "<group>"; };
@@ -3902,6 +3908,7 @@
 				A1B89B99221E029F00EB4CEA /* SDKVariant.xcconfig */,
 				5735F0251F3A4EA6000EE801 /* TestWebKitAPI-iOS.entitlements */,
 				7AB0173923FB2BF0002F8366 /* TestWebKitAPI-macOS.entitlements */,
+				51EB125324C66BCB000CB030 /* TestWebKitAPI-macOS-internal.entitlements */,
 				BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */,
 				7CCE7EA31A4115CB00447C4C /* TestWebKitAPILibrary.xcconfig */,
 				7C83E0261D0A5B8D00FEBCF3 /* TestWTF.xcconfig */,
@@ -4266,6 +4273,8 @@
 				F4F5BB5121667BAA002D06B9 /* TestFontOptions.mm */,
 				F45D388F215A7B4B002A2979 /* TestInspectorBar.h */,
 				F45D3890215A7B4B002A2979 /* TestInspectorBar.mm */,
+				51EB125424C66FE8000CB030 /* VirtualGamepad.h */,
+				51EB125624C66FE8000CB030 /* VirtualGamepad.mm */,
 				C08587BE13FE956C001EF4E5 /* WebKitAgnosticTest.h */,
 				C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */,
 			);
@@ -4320,6 +4329,7 @@
 				F456AB1B213EDBA300CB2CEF /* FontManagerTests.mm */,
 				1A7E8B33181208DE00AEB74A /* FragmentNavigation.mm */,
 				CDBFCC431A9FF44800A7B691 /* FullscreenZoomInitialFrame.mm */,
+				51EB125824C68589000CB030 /* HIDGamepads.mm */,
 				9B4F8FA3159D52B1002D9F94 /* HTMLCollectionNamedItem.mm */,
 				9B26FC6B159D061000CC3765 /* HTMLFormCollectionNamedItem.mm */,
 				C507E8A614C6545B005D6B3B /* InspectorBar.mm */,
@@ -5094,6 +5104,7 @@
 				CD5FF49F2162E943004BD86F /* ISOBox.cpp in Sources */,
 				5C69BDD51F82A7EF000F4F4B /* JavaScriptDuringNavigation.mm in Sources */,
 				7CCE7EA51A411A0800447C4C /* JavaScriptTestMac.mm in Sources */,
+				51EB125924C68592000CB030 /* HIDGamepads.mm in Sources */,
 				51820A4D22F4EE7F00DF0A01 /* JavascriptURLNavigation.mm in Sources */,
 				5C0160C121A132460077FA32 /* JITEnabled.mm in Sources */,
 				E35FC7B222B82A7300F32F98 /* JSLockTakesWebThreadLock.mm in Sources */,
@@ -5332,6 +5343,7 @@
 				CD3065E02165682E00E895DF /* VideoQualityDisplayCompositing.mm in Sources */,
 				2D520635245A603D00338F88 /* ViewExposedRect.mm in Sources */,
 				115EB3431EE0BA03003C2C0A /* ViewportSizeForViewportUnits.mm in Sources */,
+				51EB125724C67257000CB030 /* VirtualGamepad.mm in Sources */,
 				6356FB221EC4E0BA0044BF18 /* VisibleContentRect.mm in Sources */,
 				83779C381F82FECE007CDA8A /* VisitedLinkStore.mm in Sources */,
 				0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */,

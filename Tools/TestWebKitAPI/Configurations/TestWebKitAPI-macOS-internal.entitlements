@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.hid.manager.user-access-device</key>
+	<true/>
+	<key>com.apple.private.hid.client.event-filter</key>
+	<true/>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>com.apple.TestWebKitAPI</string>
+	</array>
+	<key>com.apple.security.temporary-exception.sbpl</key>
+	<array>
+		<string>(allow mach-issue-extension (require-all (extension-class &quot;com.apple.webkit.extension.mach&quot;)))</string>
+	</array>
+</dict>
+</plist>

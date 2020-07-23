@@ -40,6 +40,8 @@ public:
 
     WEBCORE_EXPORT static MultiGamepadProvider& singleton();
 
+    void setUsesOnlyHIDGamepadProvider(bool hidProviderOnly) { m_usesOnlyHIDProvider = hidProviderOnly; }
+
     // GamepadProvider
     void startMonitoringGamepads(GamepadProviderClient&) final;
     void stopMonitoringGamepads(GamepadProviderClient&) final;
@@ -87,6 +89,7 @@ private:
 
     HashMap<PlatformGamepad*, std::unique_ptr<PlatformGamepadWrapper>> m_gamepadMap;
     bool m_hidImportComplete { false };
+    bool m_usesOnlyHIDProvider { false };
 };
 
 } // namespace WebCore

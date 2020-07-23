@@ -1,3 +1,33 @@
+2020-07-23  Brady Eidson  <beidson@apple.com>
+
+        Add Gamepad tests that exercise the native frameworks
+        <rdar://problem/65343674> and https://bugs.webkit.org/show_bug.cgi?id=214188
+
+        Reviewed by Tim Horton.
+
+        For Internal builds, we can create HID devices that exercise the native gamepad providers.
+        E.g. Actually exercise the IOHID gamepad provider codepath.
+
+        Give the Internal TestWebKitAPI build some entitlements:        
+        * TestWebKitAPI/Configurations/TestWebKitAPI-macOS-internal.entitlements: Added.
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+        Add a very basic test that connects a device, presses a button, and verifies the web page sees it:
+        * TestWebKitAPI/Tests/mac/HIDGamepads.mm: Added.
+        (-[GamepadMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::handleGamepadConnect):
+
+        Add the beginnings of a VirtualGamepad device that reads in a HID descriptor (just like real gamepads):
+        * TestWebKitAPI/mac/VirtualGamepad.h: Added.
+        * TestWebKitAPI/mac/VirtualGamepad.mm: Added.
+        (TestWebKitAPI::VirtualGamepad::makeVirtualNimbus):
+        (TestWebKitAPI::VirtualGamepad::VirtualGamepad):
+        (TestWebKitAPI::VirtualGamepad::~VirtualGamepad):
+        (TestWebKitAPI::VirtualGamepad::setButtonValue):
+        (TestWebKitAPI::VirtualGamepad::setAxisValue):
+        (TestWebKitAPI::VirtualGamepad::publishReport):
+
 2020-07-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] gst_buffer_unmap: assertion 'GST_IS_BUFFER (buffer)' failed

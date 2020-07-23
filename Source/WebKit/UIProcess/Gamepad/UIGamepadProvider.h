@@ -57,6 +57,8 @@ public:
 
     Vector<GamepadData> snapshotGamepads();
 
+    size_t numberOfConnectedGamepads() const { return m_gamepads.size(); }
+
 private:
     friend NeverDestroyed<UIGamepadProvider>;
     UIGamepadProvider();
