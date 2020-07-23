@@ -298,6 +298,10 @@ void SourceBufferParserWebM::resetParserState()
 {
     m_parser->DidSeek();
     m_state = State::None;
+    m_tracks.clear();
+    m_initializationSegment = nullptr;
+    m_initializationSegmentEncountered = false;
+    m_currentBlock.reset();
 }
 
 void SourceBufferParserWebM::invalidate()
