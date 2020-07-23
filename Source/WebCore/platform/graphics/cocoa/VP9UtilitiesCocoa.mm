@@ -98,12 +98,17 @@ static ResolutionCategory resolutionCategory(const FloatSize& size)
 
 void registerSupplementalVP9Decoder()
 {
+    if (!VideoToolboxLibrary(true))
+        return;
+
     if (canLoad_VideoToolbox_VTRegisterSupplementalVideoDecoderIfAvailable())
         softLink_VideoToolbox_VTRegisterSupplementalVideoDecoderIfAvailable(kCMVideoCodecType_VP9);
 }
 
 bool isVP9DecoderAvailable()
 {
+    if (!VideoToolboxLibrary(true))
+        return false;
     return noErr == VTSelectAndCreateVideoDecoderInstance(kCMVideoCodecType_VP9, kCFAllocatorDefault, nullptr, nullptr);
 }
 
