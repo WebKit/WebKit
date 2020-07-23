@@ -1,3 +1,17 @@
+2020-07-23  Keith Miller  <keith_miller@apple.com>
+
+        iOS simulator does not support WebAssembly
+        https://bugs.webkit.org/show_bug.cgi?id=191064
+
+        Reviewed by Yusuke Suzuki.
+
+        Remove simulator only expectations/failures now that WebAssembly is available in the simulator.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/xhr/send-data-sharedarraybuffer.any-expected.txt:
+        * platform/ios-simulator/imported/w3c/web-platform-tests/xhr/send-data-sharedarraybuffer.any.worker-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/audiobuffer-copy-channel-expected.txt:
+
 2020-07-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ iOS wk2 ] imported/w3c/web-platform-tests/web-share/share-without-user-gesture.https.html is a constant timeout
