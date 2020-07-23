@@ -1,3 +1,21 @@
+2020-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove emitIsUndefined() from ClassExprNode::emitBytecode()
+        https://bugs.webkit.org/show_bug.cgi?id=214645
+
+        Reviewed by Darin Adler.
+
+        This change removes `superclass === undefined` check because it's missing from
+        the spec [1] and isn't a common case. No behavior change: values except `null` are
+        passed to OpIsConstructor, resulting in the same error being thrown for `undefined`.
+
+        Test: LayoutTests/js/class-syntax-extends.html
+
+        [1]: https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation (step 5.e)
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+
 2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Update macOS Version macros
