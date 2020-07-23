@@ -151,7 +151,7 @@ static bool arrayContainsUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers,
 #pragma mark - WKFileUploadPanel
 
 
-@interface WKFileUploadPanel () <UIPopoverControllerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate
+@interface WKFileUploadPanel () <UIPopoverControllerDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate
 #if USE(UICONTEXTMENU)
 , UIContextMenuInteractionDelegate
 #endif
@@ -499,6 +499,7 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     _documentPickerController = adoptNS([[UIDocumentPickerViewController alloc] initWithDocumentTypes:documentTypes inMode:UIDocumentPickerModeImport]);
     [_documentPickerController setAllowsMultipleSelection:_allowMultipleFiles];
     [_documentPickerController setDelegate:self];
+    [_documentPickerController presentationController].delegate = self;
     if ([_delegate respondsToSelector:@selector(fileUploadPanelDestinationIsManaged:)])
         [_documentPickerController _setIsContentManaged:[_delegate fileUploadPanelDestinationIsManaged:self]];
     [self _presentFullscreenViewController:_documentPickerController.get() animated:YES];
@@ -604,6 +605,13 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 
     _presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:_view.getAutoreleased()];
     [_presentationViewController presentViewController:viewController animated:animated completion:nil];
+}
+
+#pragma mark - UIAdaptivePresentationControllerDelegate
+
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
+    [self _cancel];
 }
 
 #pragma mark - UIPopoverControllerDelegate

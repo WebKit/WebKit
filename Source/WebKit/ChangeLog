@@ -1,3 +1,22 @@
+2020-07-23  David Quesada  <david_quesada@apple.com>
+
+        Unable to present file upload picker after interactively dismissing a previously opened picker
+        https://bugs.webkit.org/show_bug.cgi?id=209613
+        rdar://problem/60931009
+
+        Reviewed by Daniel Bates.
+
+        -[<UIDocumentPickerViewController> documentPickerWasCancelled:] doesn't get called if you
+        dismiss the view controller using the interactive swipe dismissal gesture added in iOS 13.
+        As a result, the web view will continue to think it's showing a file picker after dismissing
+        it this way, meaning you can't present any other file pickers from the same web view. Fix
+        this by implementing UIAdaptivePresentationControllerDelegate in WKFileUploadPanel to cancel
+        and tear down the file picker operation when the view controller is interactively dismised.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel showFilePickerMenu]):
+        (-[WKFileUploadPanel presentationControllerDidDismiss:]):
+
 2020-07-23  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Datalist dropdown scrollbar position does not match visible region
