@@ -65,12 +65,12 @@ void HTMLPictureElement::sourcesChanged()
 }
 
 #if USE(SYSTEM_PREVIEW)
-bool HTMLPictureElement::isSystemPreviewImage() const
+bool HTMLPictureElement::isSystemPreviewImage()
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
         return false;
 
-    const auto* parent = parentElement();
+    auto* parent = parentElement();
     if (!is<HTMLAnchorElement>(parent))
         return false;
     return downcast<HTMLAnchorElement>(parent)->isSystemPreviewLink();

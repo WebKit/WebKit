@@ -319,15 +319,15 @@ bool HTMLAnchorElement::hasRel(Relation relation) const
     return m_linkRelations.contains(relation);
 }
 
-DOMTokenList& HTMLAnchorElement::relList() const
+DOMTokenList& HTMLAnchorElement::relList()
 {
     if (!m_relList) {
-        m_relList = makeUnique<DOMTokenList>(const_cast<HTMLAnchorElement&>(*this), HTMLNames::relAttr, [](Document&, StringView token) {
+        m_relList = makeUnique<DOMTokenList>(*this, HTMLNames::relAttr, [](Document&, StringView token) {
 #if USE(SYSTEM_PREVIEW)
-            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener") || equalIgnoringASCIICase(token, "ar");
-#else
-            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener");
+            if (equalIgnoringASCIICase(token, "ar"))
+                return true;
 #endif
+            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener");
         });
     }
     return *m_relList;
@@ -382,7 +382,7 @@ void HTMLAnchorElement::sendPings(const URL& destinationURL)
 }
 
 #if USE(SYSTEM_PREVIEW)
-bool HTMLAnchorElement::isSystemPreviewLink() const
+bool HTMLAnchorElement::isSystemPreviewLink()
 {
     if (!RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
         return false;

@@ -1,3 +1,17 @@
+2020-07-23  Chris Dumez  <cdumez@apple.com>
+
+        Add support for SVGAElement's rel / relList attributes
+        https://bugs.webkit.org/show_bug.cgi?id=214690
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests that are now passing.
+
+        * web-platform-tests/dom/lists/DOMTokenList-coverage-for-attributes-expected.txt:
+        * web-platform-tests/svg/idlharness.window-expected.txt:
+        * web-platform-tests/svg/linking/scripted/a.rel-getter-01-expected.txt:
+        * web-platform-tests/svg/linking/scripted/rellist-feature-detection-expected.txt:
+
 2020-07-23  Clark Wang  <clark_wang@apple.com>
 
         Added PeriodicWave constructor according to spec

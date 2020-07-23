@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGAElement.h"
 
+#include "DOMTokenList.h"
 #include "Document.h"
 #include "EventHandler.h"
 #include "Frame.h"
@@ -79,6 +80,9 @@ void SVGAElement::parseAttribute(const QualifiedName& name, const AtomString& va
     if (name == SVGNames::targetAttr) {
         m_target->setBaseValInternal(value);
         return;
+    } else if (name == SVGNames::relAttr) {
+        if (m_relList)
+            m_relList->associatedAttributeValueChanged(value);
     }
 
     SVGGraphicsElement::parseAttribute(name, value);
@@ -218,6 +222,20 @@ SharedStringHash SVGAElement::visitedLinkHash() const
     if (!m_storedVisitedLinkHash)
         m_storedVisitedLinkHash = computeVisitedLinkHash(document().baseURL(), getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr));
     return *m_storedVisitedLinkHash;
+}
+
+DOMTokenList& SVGAElement::relList()
+{
+    if (!m_relList) {
+        m_relList = makeUnique<DOMTokenList>(*this, SVGNames::relAttr, [](Document&, StringView token) {
+#if USE(SYSTEM_PREVIEW)
+            if (equalIgnoringASCIICase(token, "ar"))
+                return true;
+#endif
+            return equalIgnoringASCIICase(token, "noreferrer") || equalIgnoringASCIICase(token, "noopener");
+        });
+    }
+    return *m_relList;
 }
 
 } // namespace WebCore

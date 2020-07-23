@@ -67,10 +67,10 @@ public:
     
     SharedStringHash visitedLinkHash() const;
 
-    WEBCORE_EXPORT DOMTokenList& relList() const;
+    WEBCORE_EXPORT DOMTokenList& relList();
 
 #if USE(SYSTEM_PREVIEW)
-    WEBCORE_EXPORT bool isSystemPreviewLink() const;
+    WEBCORE_EXPORT bool isSystemPreviewLink();
 #endif
 
     void setReferrerPolicyForBindings(const AtomString&);
@@ -126,7 +126,7 @@ private:
     // This is computed only once and must not be affected by subsequent URL changes.
     mutable Markable<SharedStringHash, SharedStringHashMarkableTraits> m_storedVisitedLinkHash;
 
-    mutable std::unique_ptr<DOMTokenList> m_relList;
+    std::unique_ptr<DOMTokenList> m_relList;
 };
 
 inline SharedStringHash HTMLAnchorElement::visitedLinkHash() const

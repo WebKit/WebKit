@@ -1,3 +1,22 @@
+2020-07-23  Chris Dumez  <cdumez@apple.com>
+
+        Add support for SVGAElement's rel / relList attributes
+        https://bugs.webkit.org/show_bug.cgi?id=214690
+
+        Reviewed by Darin Adler.
+
+        Add support for SVGAElement's rel / relList attributes:
+        https://www.w3.org/TR/SVG/linking.html#InterfaceSVGAElement
+
+        No new tests, rebaselined existing tests.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::parseAttribute):
+        (WebCore::SVGAElement::relList const):
+        * svg/SVGAElement.h:
+        * svg/SVGAElement.idl:
+        * svg/svgattrs.in:
+
 2020-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add exception check for WebCore createRejectedPromiseWithTypeError

@@ -159,6 +159,7 @@ r
 radius
 refX
 refY
+rel
 rendering-intent
 repeatCount
 repeatDur

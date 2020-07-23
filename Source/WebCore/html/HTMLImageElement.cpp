@@ -885,7 +885,7 @@ bool HTMLImageElement::isSystemPreviewImage() const
     if (!RuntimeEnabledFeatures::sharedFeatures().systemPreviewEnabled())
         return false;
 
-    const auto* parent = parentElement();
+    auto* parent = parentElement();
     if (is<HTMLAnchorElement>(parent))
         return downcast<HTMLAnchorElement>(parent)->isSystemPreviewLink();
     if (is<HTMLPictureElement>(parent))

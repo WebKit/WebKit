@@ -38,7 +38,7 @@ public:
     void sourcesChanged();
 
 #if USE(SYSTEM_PREVIEW)
-    WEBCORE_EXPORT bool isSystemPreviewImage() const;
+    WEBCORE_EXPORT bool isSystemPreviewImage();
 #endif
 
 private:

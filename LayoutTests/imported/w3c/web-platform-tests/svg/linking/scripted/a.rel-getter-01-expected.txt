@@ -1,4 +1,4 @@
 
 PASS SVGAElement.rel getter 
-FAIL Test anchor's rel getter assert_equals: expected (string) "noreferrer" but got (undefined) undefined
+PASS Test anchor's rel getter 
 
