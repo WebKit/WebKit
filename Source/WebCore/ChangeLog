@@ -1,5 +1,12 @@
 2020-07-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        Unreviewed, build fix after r264762.
+
+        * platform/graphics/gstreamer/GStreamerCommon.cpp: Added include
+        SharedBuffer.h.
+
+2020-07-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         [GStreamer] gst_buffer_unmap: assertion 'GST_IS_BUFFER (buffer)' failed
         https://bugs.webkit.org/show_bug.cgi?id=213364
 

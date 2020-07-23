@@ -26,6 +26,7 @@
 #include "GLVideoSinkGStreamer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
+#include "SharedBuffer.h"
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
 #include <mutex>
