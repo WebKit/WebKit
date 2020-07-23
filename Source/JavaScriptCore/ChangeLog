@@ -1,3 +1,13 @@
+2020-07-22  Geoffrey Garen  <ggaren@apple.com>
+
+        WTF::Function adoption should be explicit instead of implicit
+        https://bugs.webkit.org/show_bug.cgi?id=214654
+
+        Reviewed by Darin Adler.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::LambdaFinalizerOwner::finalize): Use new adopt function.
+
 2020-07-22  Mark Lam  <mark.lam@apple.com>
 
         Disallow VM entry when doing a VMInquiry.

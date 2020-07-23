@@ -1,3 +1,18 @@
+2020-07-22  Geoffrey Garen  <ggaren@apple.com>
+
+        WTF::Function adoption should be explicit instead of implicit
+        https://bugs.webkit.org/show_bug.cgi?id=214654
+
+        Reviewed by Darin Adler.
+
+        * wtf/Function.h:
+        (WTF::Function<Out):
+        (WTF::adoptImpl): Added an adopt function for Functions and made the
+        adopting constructor private.
+
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::dispatch): Use new adopt function.
+
 2020-07-22  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r264710; add a HAVE_AVPLAYER_VIDEORANGEOVERRIDE guard.

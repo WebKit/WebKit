@@ -2428,7 +2428,7 @@ void Heap::addFinalizer(JSCell* cell, CFinalizer finalizer)
 
 void Heap::addFinalizer(JSCell* cell, LambdaFinalizer function)
 {
-    WeakSet::allocate(cell, &m_lambdaFinalizerOwner, function.leakImpl()); // Balanced by LambdaFinalizerOwner::finalize().
+    WeakSet::allocate(cell, &m_lambdaFinalizerOwner, function.leak()); // Balanced by LambdaFinalizerOwner::finalize().
 }
 
 void Heap::CFinalizerOwner::finalize(Handle<Unknown> handle, void* context)
@@ -2441,8 +2441,7 @@ void Heap::CFinalizerOwner::finalize(Handle<Unknown> handle, void* context)
 
 void Heap::LambdaFinalizerOwner::finalize(Handle<Unknown> handle, void* context)
 {
-    LambdaFinalizer::Impl* impl = bitwise_cast<LambdaFinalizer::Impl*>(context);
-    LambdaFinalizer finalizer(impl);
+    auto finalizer = WTF::adopt(static_cast<LambdaFinalizer::Impl*>(context));
     HandleSlot slot = handle.slot();
     finalizer(slot->asCell());
     WeakSet::deallocate(WeakImpl::asWeakImpl(slot));
