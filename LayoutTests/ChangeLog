@@ -1,3 +1,10 @@
+2020-07-23  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update GTK baseline after r264646.
+
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.png:
+        * platform/gtk/mathml/opentype/opentype-stretchy-expected.txt:
+
 2020-07-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Win10] js/weakref-finalizationregistry.html is frequently timing out
