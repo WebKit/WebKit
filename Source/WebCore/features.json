@@ -73,6 +73,17 @@
         "description": "Allows content to specify colors outside of the sRGB Color Space."
     },
     {
+        "name": "CSS Containment Level 1",
+        "status": {
+            "status": "Under Consideration",
+            "enabled-by-default": false
+        },
+        "url": "https://www.w3.org/TR/css-contain-1/",
+        "keywords": ["css containment", "contain", "content", "layout", "size", "paint"],
+        "category": "css",
+        "description": "Allows content to specify that an element’s subtree is independent of the rest of the page to allow for optimizations by the browser."
+    },
+    {
         "name": "CSS Font Display",
         "status": {
             "status": "Supported",
