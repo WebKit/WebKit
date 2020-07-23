@@ -1,3 +1,16 @@
+2020-07-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][32bit] JPEG2000ImageDecoder.cpp: error C2664: 'std::unique_ptr<...>::unique_ptr(...)': cannot convert argument 2 from 'void (__stdcall *)(opj_codec_t *)' to 'const _Dx &'
+        https://bugs.webkit.org/show_bug.cgi?id=214657
+
+        Reviewed by Darin Adler.
+
+        __cdecl and __stdcall calling conventions don't match.
+        <https://docs.microsoft.com/en-us/cpp/cpp/argument-passing-and-naming-conventions>
+
+        * platform/image-decoders/jpeg2000/JPEG2000ImageDecoder.cpp:
+        (WebCore::JPEG2000ImageDecoder::decode): Use decltype for the second template argument of unique_ptr.
+
 2020-07-22  Jon Davis  <jond@apple.com>
 
         Add feature status for CSS Containment Module Level 1
