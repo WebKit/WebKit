@@ -215,7 +215,7 @@ class Tester(object):
 
             _host.initialize_scm()
             upload = Upload(
-                suite='webkitpy-tests',
+                suite=self._options.suite or 'webkitpy-tests',
                 configuration=Upload.create_configuration(
                     platform=_host.platform.os_name,
                     version=str(_host.platform.os_version),

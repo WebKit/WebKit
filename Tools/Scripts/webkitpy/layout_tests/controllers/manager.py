@@ -285,7 +285,7 @@ class Manager(object):
                 self._printer.write_update('Preparing upload data ...')
 
                 upload = Upload(
-                    suite='layout-tests',
+                    suite=self._options.suite or 'layout-tests',
                     configuration=configuration,
                     details=Upload.create_details(options=self._options),
                     commits=self._port.commits_for_upload(),

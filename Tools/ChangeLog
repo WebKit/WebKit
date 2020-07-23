@@ -1,3 +1,20 @@
+2020-07-23  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Override suite name for results database reporting
+        https://bugs.webkit.org/show_bug.cgi?id=214686
+        <rdar://problem/65997324>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/api_tests/manager.py:
+        (Manager.run): Allow options to override suite name.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Allow options to override suite name.
+        * Scripts/webkitpy/results/options.py:
+        (upload_options): Add --suite flag to override suite name.
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests): Allow options to override suite name.
+
 2020-07-23  Brady Eidson  <beidson@apple.com>
 
         Add Gamepad tests that exercise the native frameworks

@@ -271,7 +271,7 @@ class Manager(object):
                 runner.STATUS_TIMEOUT: Upload.Expectations.TIMEOUT,
             }
             upload = Upload(
-                suite='api-tests',
+                suite=self._options.suite or 'api-tests',
                 configuration=self._port.configuration_for_upload(self._port.target_host(0)),
                 details=Upload.create_details(options=self._options),
                 commits=self._port.commits_for_upload(),
