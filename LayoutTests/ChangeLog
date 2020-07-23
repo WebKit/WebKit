@@ -1,3 +1,12 @@
+2020-07-23  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS Release wk1 ] imported/w3c/web-platform-tests/css/css-overflow/overflow-recalc-001.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214703
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-07-23  Sihui Liu  <sihui_liu@appe.com>
 
         Allow IndexedDB in third-party frames
