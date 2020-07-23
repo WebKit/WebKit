@@ -93,3 +93,5 @@ webkit.org/b/207496 http/wpt/cache-storage/cache-put-keys.https.any.html [ Pass 
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Pass Failure ]
 
 webkit.org/b/214688 editing/selection/shift-click-includes-existing-selection.html [ Pass Failure ]
+
+webkit.org/b/214694 imported/w3c/web-platform-tests/web-share/share-without-user-gesture.https.html [ Pass Timeout ]
