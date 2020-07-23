@@ -61,10 +61,10 @@ rules and resolve the percentage:</p>
   <div class="rect flex-none"></div>
 </div>
 
-<p>auto flex-basis. This is still definite.</p>
+<p>auto flex-basis, we should ignore the percentage height here:</p>
 <div class="flexbox column" style="height: 300px;">
   <div data-expected-height="50">
-    <div style="height: 50%;" data-expected-height="25">
+    <div style="height: 50%;" data-expected-height="50">
       <div class="rect"></div>
     </div>
   </div>
