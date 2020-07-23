@@ -1,3 +1,40 @@
+2020-07-23  Sihui Liu  <sihui_liu@appe.com>
+
+        Allow IndexedDB in third-party frames
+        https://bugs.webkit.org/show_bug.cgi?id=214583
+        <rdar://problem/61278487>
+
+        Reviewed by Geoffrey Garen.
+
+        Match IndexedDB's behavior with localStorage. Third-party iframes now have access to IndexedDB with partitioned
+        in-memory storage. The partitioning key is ClientOrigin, which consists of opening origin and top origin.
+
+        API Test: IndexedDB.IndexedDBThirdPartyFrameHasAccess
+                  IndexedDB.IndexedDBThirdPartyDataRemoval
+                  IndexedDB.IndexedDBThirdPartyWorkerHasAccess
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::IDBDatabaseIdentifier):
+        (WebCore::m_isTransient):
+        (WebCore::IDBDatabaseIdentifier::isolatedCopy const):
+        (WebCore::IDBDatabaseIdentifier::loggingString const):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        (WebCore::IDBDatabaseIdentifier::hash const):
+        (WebCore::IDBDatabaseIdentifier::operator== const):
+        (WebCore::IDBDatabaseIdentifier::isTransient const):
+        (WebCore::IDBDatabaseIdentifier::encode const):
+        (WebCore::IDBDatabaseIdentifier::decode):
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::shouldThrowSecurityException):
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::createBackingStore):
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::canAccessDatabase const):
+
 2020-07-23  Chris Dumez  <cdumez@apple.com>
 
         Add support for SVGAElement's rel / relList attributes

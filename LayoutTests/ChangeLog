@@ -1,3 +1,18 @@
+2020-07-23  Sihui Liu  <sihui_liu@appe.com>
+
+        Allow IndexedDB in third-party frames
+        https://bugs.webkit.org/show_bug.cgi?id=214583
+        <rdar://problem/61278487>
+
+        Reviewed by Geoffrey Garen.
+
+        Update test expectation for new behavior.
+
+        * http/tests/security/cross-origin-indexeddb-expected.txt:
+        * http/tests/security/cross-origin-indexeddb.html:
+        * http/tests/security/cross-origin-worker-indexeddb-expected.txt:
+        * http/tests/security/resources/document-for-cross-origin-worker-indexeddb.html:
+
 2020-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add exception check for WebCore createRejectedPromiseWithTypeError

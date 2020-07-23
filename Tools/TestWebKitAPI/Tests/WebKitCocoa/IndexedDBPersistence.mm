@@ -27,11 +27,13 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestURLSchemeHandler.h"
 #import <WebKit/WebKit.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
@@ -179,3 +181,213 @@ TEST(IndexedDB, IndexedDBDataRemoval)
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
 }
+
+static NSString *mainFrameString = @"<script> \
+    function postResult(event) { \
+        window.webkit.messageHandlers.testHandler.postMessage(event.data); \
+    } \
+    addEventListener('message', postResult, false); \
+    </script> \
+    <iframe src='iframe://'>";
+
+static const char* iframeBytes = R"TESTRESOURCE(
+<script>
+function postResult(result) {
+    if (window.parent != window.top) {
+        parent.postMessage(result, '*');
+    } else {
+        window.webkit.messageHandlers.testHandler.postMessage(result);
+    }
+}
+
+try {
+    var request = window.indexedDB.open('IndexedDBThirdPartyFrameHasAccess');
+    var db = null;
+    request.onupgradeneeded = function(event) {
+        db = event.target.result;
+        var objectStore = db.createObjectStore('TestObjectStore');
+        var putRequest = objectStore.put('TestValue', 'TestKey');
+        putRequest.onsuccess = function(event) {
+            postResult('database is created - put item success');
+        }
+        putRequest.onerror = function(event) {
+            postResult('database is created - put item error: ' + event.target.error.name + ' - ' + event.target.error.message);
+        }
+    }
+    request.onsuccess = function(event) {
+        if (db)
+            return;
+        db = event.target.result;
+        var objectStore = db.transaction(['TestObjectStore']).objectStore('TestObjectStore');
+        var getRequest = objectStore.get('TestKey');
+        getRequest.onsuccess = function(event) {
+            postResult('database exists - get item success: ' + event.target.result);
+        }
+        getRequest.onerror = function(event) {
+            postResult('database exists - get item error: ' + event.target.error.name + ' - ' + event.target.error.message);
+        }
+    }
+    request.onerror = function(event) {
+        if (!db) {
+            postResult('database error: ' + event.target.error.name + ' - ' + event.target.error.message);
+        }
+    }
+} catch(err) {
+    postResult('database error: ' + err.name + ' - ' + err.message);
+}
+</script>
+)TESTRESOURCE";
+
+static void loadTestPageInWebView(WKWebView *webView, NSString *expectedResult)
+{
+    [webView loadHTMLString:mainFrameString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(expectedResult, (NSString *)[lastScriptMessage body]);
+}
+
+TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:iframeBytes length:strlen(iframeBytes)]];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    loadTestPageInWebView(webView.get(), @"database is created - put item success");
+
+    auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    loadTestPageInWebView(secondWebView.get(), @"database exists - get item success: TestValue");
+
+    webView = nil;
+    secondWebView = nil;
+    [configuration.get().processPool _terminateNetworkProcess];
+
+    // Third-party IDB storage is stored in the memory of network process.
+    auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    loadTestPageInWebView(thirdWebView.get(), @"database is created - put item success");
+}
+
+TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
+{
+    auto websiteDataTypes = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeIndexedDBDatabases]]);
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:iframeBytes length:strlen(iframeBytes)]];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    loadTestPageInWebView(webView.get(), @"database is created - put item success");
+
+    auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [secondWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"iframe://"]]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ( @"database is created - put item success", (NSString *)[lastScriptMessage body]);
+
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:websiteDataTypes.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        EXPECT_EQ(1u, dataRecords.count);
+        EXPECT_WK_STREQ("iframe", [[dataRecords firstObject] displayName]);
+        [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes.get() forDataRecords:dataRecords completionHandler:^() {
+            readyToContinue = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    loadTestPageInWebView(thirdWebView.get(), @"database is created - put item success");
+}
+
+static const char* workerBytes = R"TESTRESOURCE(
+try {
+    var request = indexedDB.open('IndexedDBThirdPartyWorkerHasAccess');
+    var db = null;
+    request.onupgradeneeded = function(event) {
+        db = event.target.result;
+        self.postMessage('database is created');
+    }
+    request.onsuccess = function(event) {
+        if (db)
+            return;
+        self.postMessage('database exists');
+    }
+    request.onerror = function(event) {
+        if (!db) {
+            self.postMessage('database error: ' + event.target.error.name + ' - ' + event.target.error.message);
+        }
+    }
+} catch(err) {
+    self.postMessage('database error: ' + err.name + ' - ' + err.message);
+}
+)TESTRESOURCE";
+
+static const char* workerFrameBytes = R"TESTRESOURCE(
+<script>
+    var worker = new Worker('worker.js');
+    worker.onmessage = function(event) {
+        parent.postMessage(event.data, '*');
+    };
+</script>
+)TESTRESOURCE";
+
+TEST(IndexedDB, IndexedDBThirdPartyWorkerHasAccess)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        RetainPtr<NSURLResponse> response;
+        RetainPtr<NSData> data;
+        NSURL *requestURL = task.request.URL;
+        if ([requestURL.absoluteString isEqualToString:@"iframe://"]) {
+            response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+            data = [NSData dataWithBytes:workerFrameBytes length:strlen(workerFrameBytes)];
+        } else {
+            EXPECT_WK_STREQ("iframe://worker.js", requestURL.absoluteString);
+            response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/javascript" expectedContentLength:0 textEncodingName:nil]);
+            data = [NSData dataWithBytes:workerBytes length:strlen(workerBytes)];
+        }
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data.get()];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    loadTestPageInWebView(webView.get(), @"database is created");
+
+    auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    loadTestPageInWebView(webView.get(), @"database exists");
+
+    webView = nil;
+    secondWebView = nil;
+    [configuration.get().processPool _terminateNetworkProcess];
+
+    auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    loadTestPageInWebView(thirdWebView.get(), @"database is created");
+}
+

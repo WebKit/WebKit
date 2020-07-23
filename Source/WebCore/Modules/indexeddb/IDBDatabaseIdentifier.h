@@ -44,7 +44,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin);
+    WEBCORE_EXPORT IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin, bool isTransient = false);
 
     IDBDatabaseIdentifier isolatedCopy() const;
 
@@ -57,8 +57,9 @@ public:
     {
         unsigned nameHash = StringHash::hash(m_databaseName);
         unsigned originHash = m_origin.hash();
+        unsigned transientHash = m_isTransient;
 
-        unsigned hashCodes[2] = { nameHash, originHash };
+        unsigned hashCodes[3] = { nameHash, originHash, transientHash };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }
 
@@ -75,11 +76,12 @@ public:
 
     bool operator==(const IDBDatabaseIdentifier& other) const
     {
-        return other.m_databaseName == m_databaseName && other.m_origin == m_origin;
+        return other.m_databaseName == m_databaseName && other.m_origin == m_origin && other.m_isTransient == m_isTransient;
     }
 
     const String& databaseName() const { return m_databaseName; }
     const ClientOrigin& origin() const { return m_origin; }
+    bool isTransient() const { return m_isTransient; }
 
     String databaseDirectoryRelativeToRoot(const String& rootDirectory, const String& versionString="v1") const;
     static String databaseDirectoryRelativeToRoot(const SecurityOriginData& topLevelOrigin, const SecurityOriginData& openingOrigin, const String& rootDirectory, const String& versionString);
@@ -96,6 +98,7 @@ public:
 private:
     String m_databaseName;
     ClientOrigin m_origin;
+    bool m_isTransient { false };
 };
 
 struct IDBDatabaseIdentifierHash {
@@ -113,7 +116,7 @@ struct IDBDatabaseIdentifierHashTraits : WTF::SimpleClassHashTraits<IDBDatabaseI
 template<class Encoder>
 void IDBDatabaseIdentifier::encode(Encoder& encoder) const
 {
-    encoder << m_databaseName << m_origin;
+    encoder << m_databaseName << m_origin << m_isTransient;
 }
 
 template<class Decoder>
@@ -129,9 +132,15 @@ Optional<IDBDatabaseIdentifier> IDBDatabaseIdentifier::decode(Decoder& decoder)
     if (!origin)
         return WTF::nullopt;
 
+    Optional<bool> isTransient;
+    decoder >> isTransient;
+    if (!isTransient)
+        return WTF::nullopt;
+
     IDBDatabaseIdentifier identifier;
     identifier.m_databaseName = WTFMove(*databaseName); // FIXME: When decoding from IPC, databaseName can be null, and the non-empty constructor asserts that this is not the case.
     identifier.m_origin = WTFMove(*origin);
+    identifier.m_isTransient = *isTransient;
     return identifier;
 }
 

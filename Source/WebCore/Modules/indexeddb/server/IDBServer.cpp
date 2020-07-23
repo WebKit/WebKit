@@ -133,6 +133,10 @@ std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabase
     if (databaseDirectoryPath.isEmpty())
         return makeUnique<MemoryIDBBackingStore>(m_sessionID, identifier);
 
+    ASSERT(!m_sessionID.isEphemeral());
+    if (identifier.isTransient())
+        return makeUnique<MemoryIDBBackingStore>(m_sessionID, identifier);
+
     return makeUnique<SQLiteIDBBackingStore>(m_sessionID, identifier, databaseDirectoryPath);
 }
 

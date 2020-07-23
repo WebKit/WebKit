@@ -1,3 +1,15 @@
+2020-07-23  Sihui Liu  <sihui_liu@appe.com>
+
+        Allow IndexedDB in third-party frames
+        https://bugs.webkit.org/show_bug.cgi?id=214583
+        <rdar://problem/61278487>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBPersistence.mm:
+        (postResult):
+        (catch):
+
 2020-07-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ews] Update bot watcher email address

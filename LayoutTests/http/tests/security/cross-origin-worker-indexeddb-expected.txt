@@ -1,12 +1,12 @@
-The first iframe below should return a security error, and the second should successfully open the database.
+Both frames can successfully open the database.
 
   
 
 --------
 Frame: '<!--frame1-->'
 --------
-self.indexedDB.deleteDatabase() threw an exception: SecurityError
-self.indexedDB.open() threw an exception: SecurityError
+Successfully called self.indexedDB.deleteDatabase().
+Successfully called self.indexedDB.open().
 
 
 --------
