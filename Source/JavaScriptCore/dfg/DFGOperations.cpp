@@ -3757,6 +3757,8 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
             unsigned streamIndex = iter->value;
             if (CodeBlock* entryBlock = jitCode->osrEntryBlock()) {
                 dataLogLnIf(Options::verboseOSR(), "OSR entry: From ", RawPointer(jitCode), " got entry block ", RawPointer(entryBlock));
+                // If FTL::prepareOSREntry returns address, we must perform OSR entry since it already set up environment for FTL.
+                ASSERT(canOSREnterHere);
                 if (void* address = FTL::prepareOSREntry(vm, callFrame, codeBlock, entryBlock, originBytecodeIndex, streamIndex)) {
                     CODEBLOCK_LOG_EVENT(entryBlock, "osrEntry", ("at ", originBytecodeIndex));
                     return retagCodePtr<char*>(address, JSEntryPtrTag, bitwise_cast<PtrTag>(callFrame));
@@ -3909,6 +3911,8 @@ static char* tierUpCommon(VM& vm, CallFrame* callFrame, BytecodeIndex originByte
     // We signal to try again after a while if that happens.
     dataLogLnIf(Options::verboseOSR(), "Immediate OSR entry: From ", RawPointer(jitCode), " got entry block ", RawPointer(jitCode->osrEntryBlock()));
 
+    // If FTL::prepareOSREntry returns address, we must perform OSR entry since it already set up environment for FTL.
+    ASSERT(canOSREnterHere);
     void* address = FTL::prepareOSREntry(vm, callFrame, codeBlock, jitCode->osrEntryBlock(), originBytecodeIndex, streamIndex);
     if (!address)
         return nullptr;

@@ -70,10 +70,17 @@ void* prepareOSREntry(
     
     dataLogLnIf(Options::verboseOSR(), "    Values at entry: ", values);
     
+    Optional<JSValue> reconstructedThis;
     for (int argument = values.numberOfArguments(); argument--;) {
         JSValue valueOnStack = callFrame->r(virtualRegisterForArgumentIncludingThis(argument)).asanUnsafeJSValue();
         Optional<JSValue> reconstructedValue = values.argument(argument);
-        if ((reconstructedValue && valueOnStack == reconstructedValue.value()) || !argument)
+        if (!argument) {
+            // |this| argument can be unboxed. We should store boxed value instead for loop OSR entry since FTL assumes that all arguments are flushed JSValue.
+            // To make this valid, we will modify the stack on the fly: replacing the value with boxed value.
+            reconstructedThis = reconstructedValue;
+            continue;
+        }
+        if (reconstructedValue && valueOnStack == reconstructedValue.value())
             continue;
         dataLog("Mismatch between reconstructed values and the value on the stack for argument arg", argument, " for ", *entryCodeBlock, " at ", bytecodeIndex, ":\n");
         dataLog("    Value on stack: ", valueOnStack, "\n");
@@ -105,6 +112,12 @@ void* prepareOSREntry(
     
     void* result = entryCode->addressForCall(ArityCheckNotRequired).executableAddress();
     dataLogLnIf(Options::verboseOSR(), "    Entry will succeed, going to address ", RawPointer(result));
+
+    // At this point, we're committed to triggering an OSR entry immediately after we return. Hence, it is safe to modify stack here.
+    if (result) {
+        if (reconstructedThis)
+            callFrame->r(virtualRegisterForArgumentIncludingThis(0)) = JSValue::encode(reconstructedThis.value());
+    }
     
     return result;
 }
