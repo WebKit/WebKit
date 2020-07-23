@@ -61,6 +61,9 @@ imported/w3c/web-platform-tests/encoding/textdecoder-copy.any.html [ Skip ]
 imported/w3c/web-platform-tests/encoding/textdecoder-copy.any.worker.html [ Skip ]
 imported/w3c/web-platform-tests/encoding/textdecoder-streaming.any.html [ Skip ]
 imported/w3c/web-platform-tests/encoding/textdecoder-streaming.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/audiobuffer-copy-channel.html [ Skip ]
+imported/w3c/web-platform-tests/xhr/send-data-sharedarraybuffer.any.html [ Skip ]
+imported/w3c/web-platform-tests/xhr/send-data-sharedarraybuffer.any.worker.html [ Skip ]
 
 # These tests seem to fail due pixel rounding errors in the absolute positioned elements used as reference.
 webkit.org/b/170176 fast/inline-block/baseline-vertical-01.html [ ImageOnlyFailure ]
