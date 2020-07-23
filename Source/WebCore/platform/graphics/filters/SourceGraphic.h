@@ -34,7 +34,7 @@ public:
 
 private:
     SourceGraphic(Filter& filter)
-        : FilterEffect(filter)
+        : FilterEffect(filter, Type::SourceGraphic)
     {
         setOperatingColorSpace(ColorSpace::SRGB);
     }

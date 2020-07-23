@@ -101,6 +101,8 @@ public:
     // with textures that are RGB or RGBA format, and UNSIGNED_BYTE type.
     virtual bool copyToPlatformTexture(GraphicsContextGLOpenGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const = 0;
     virtual PlatformLayer* platformLayer() const = 0;
+    
+    virtual bool isAccelerated() const = 0;
 
 protected:
     ImageBuffer() = default;

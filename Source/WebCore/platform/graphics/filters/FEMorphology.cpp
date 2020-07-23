@@ -35,7 +35,7 @@
 namespace WebCore {
 
 FEMorphology::FEMorphology(Filter& filter, MorphologyOperatorType type, float radiusX, float radiusY)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::Morphology)
     , m_type(type)
     , m_radiusX(radiusX)
     , m_radiusY(radiusY)

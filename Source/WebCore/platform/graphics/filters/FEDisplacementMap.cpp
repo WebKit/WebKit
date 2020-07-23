@@ -32,7 +32,7 @@
 namespace WebCore {
 
 FEDisplacementMap::FEDisplacementMap(Filter& filter, ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::DisplacementMap)
     , m_xChannelSelector(xChannelSelector)
     , m_yChannelSelector(yChannelSelector)
     , m_scale(scale)

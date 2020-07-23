@@ -29,7 +29,7 @@
 namespace WebCore {
 
 FEMerge::FEMerge(Filter& filter)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::Merge)
 {
 }
 

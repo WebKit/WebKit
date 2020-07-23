@@ -49,7 +49,7 @@ static const int s_randQ = 127773; // m / a
 static const int s_randR = 2836; // m % a
 
 FETurbulence::FETurbulence(Filter& filter, TurbulenceType type, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::Turbulence)
     , m_type(type)
     , m_baseFrequencyX(baseFrequencyX)
     , m_baseFrequencyY(baseFrequencyY)

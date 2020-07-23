@@ -80,7 +80,7 @@ inline void kernelPosition(int blurIteration, unsigned& radius, int& deltaLeft, 
 }
 
 FEGaussianBlur::FEGaussianBlur(Filter& filter, float x, float y, EdgeModeType edgeMode)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::GaussianBlur)
     , m_stdX(x)
     , m_stdY(y)
     , m_edgeMode(edgeMode)

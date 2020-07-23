@@ -32,7 +32,7 @@
 namespace WebCore {
 
 FETile::FETile(Filter& filter)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::Tile)
 {
 }
 

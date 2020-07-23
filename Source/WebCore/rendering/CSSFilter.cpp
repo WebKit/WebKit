@@ -35,6 +35,7 @@
 #include "FEDropShadow.h"
 #include "FEGaussianBlur.h"
 #include "FEMerge.h"
+#include "FilterEffectRenderer.h"
 #include "Logging.h"
 #include "RenderLayer.h"
 #include "SVGElement.h"
@@ -304,6 +305,9 @@ bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operation
         return false;
 
     setMaxEffectRects(m_sourceDrawingRegion);
+#if USE(CORE_IMAGE)
+    m_filterRenderer = FilterEffectRenderer::tryCreate(renderer.settings().coreImageAcceleratedFilterRenderEnabled(), m_effects.last().get());
+#endif
     return true;
 }
 
@@ -365,6 +369,13 @@ void CSSFilter::clearIntermediateResults()
 void CSSFilter::apply()
 {
     auto& effect = m_effects.last().get();
+    if (m_filterRenderer) {
+        m_filterRenderer->applyEffects(effect);
+        if (m_filterRenderer->hasResult()) {
+            effect.transformResultColorSpace(ColorSpace::SRGB);
+            return;
+        }
+    }
     effect.apply();
     effect.transformResultColorSpace(ColorSpace::SRGB);
 }
@@ -381,6 +392,9 @@ LayoutRect CSSFilter::computeSourceImageRectForDirtyRect(const LayoutRect& filte
 
 ImageBuffer* CSSFilter::output() const
 {
+    if (m_filterRenderer && m_filterRenderer->hasResult())
+        return m_filterRenderer->output();
+    
     return m_effects.last()->imageBufferResult();
 }
 
@@ -401,9 +415,11 @@ void CSSFilter::setMaxEffectRects(const FloatRect& effectRect)
 IntRect CSSFilter::outputRect() const
 {
     auto& lastEffect = m_effects.last().get();
-    if (!lastEffect.hasResult())
-        return { };
-    return lastEffect.requestedRegionOfInputImageData(IntRect { m_filterRegion });
+    
+    if (lastEffect.hasResult() || (m_filterRenderer && m_filterRenderer->hasResult()))
+        return lastEffect.requestedRegionOfInputImageData(IntRect { m_filterRegion });
+    
+    return { };
 }
 
 IntOutsets CSSFilter::outsets() const

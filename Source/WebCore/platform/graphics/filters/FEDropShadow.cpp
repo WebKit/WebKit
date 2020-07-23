@@ -32,7 +32,7 @@
 namespace WebCore {
     
 FEDropShadow::FEDropShadow(Filter& filter, float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::DropShadow)
     , m_stdX(stdX)
     , m_stdY(stdY)
     , m_dx(dx)

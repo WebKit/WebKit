@@ -54,6 +54,28 @@ enum FilterEffectType {
 
 class FilterEffect : public RefCounted<FilterEffect> {
 public:
+    enum class Type : uint8_t {
+        Blend,
+        ColorMatrix,
+        ComponentTransfer,
+        Composite,
+        ConvolveMatrix,
+        DiffuseLighting,
+        DisplacementMap,
+        DropShadow,
+        Flood,
+        GaussianBlur,
+        Image,
+        Lighting,
+        Merge,
+        Morphology,
+        Offset,
+        SpecularLighting,
+        Tile,
+        Turbulence,
+        SourceAlpha,
+        SourceGraphic
+    };
     virtual ~FilterEffect();
 
     void clearResult();
@@ -132,6 +154,8 @@ public:
     void setUnclippedAbsoluteSubregion(const FloatRect& r) { m_absoluteUnclippedSubregion = r; }
     
     FloatPoint mapPointFromUserSpaceToBuffer(FloatPoint) const;
+    
+    Type filterEffectClassType() { return m_filterEffectClassType; }
 
     Filter& filter() { return m_filter; }
     const Filter& filter() const { return m_filter; }
@@ -148,7 +172,7 @@ public:
     void transformResultColorSpace(ColorSpace);
 
 protected:
-    FilterEffect(Filter&);
+    FilterEffect(Filter&, Type);
     
     virtual const char* filterName() const = 0;
 
@@ -219,6 +243,8 @@ private:
 
     ColorSpace m_operatingColorSpace { ColorSpace::LinearRGB };
     ColorSpace m_resultColorSpace { ColorSpace::SRGB };
+    
+    const Type m_filterEffectClassType;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FilterEffect&);

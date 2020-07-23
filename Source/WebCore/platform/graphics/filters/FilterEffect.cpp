@@ -45,8 +45,9 @@
 
 namespace WebCore {
 
-FilterEffect::FilterEffect(Filter& filter)
+FilterEffect::FilterEffect(Filter& filter, Type type)
     : m_filter(filter)
+    , m_filterEffectClassType(type)
 {
 }
 

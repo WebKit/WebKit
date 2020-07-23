@@ -35,8 +35,8 @@
 
 namespace WebCore {
 
-FELighting::FELighting(Filter& filter, LightingType lightingType, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource)
-    : FilterEffect(filter)
+FELighting::FELighting(Filter& filter, LightingType lightingType, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&& lightSource, Type type)
+    : FilterEffect(filter, type)
     , m_lightingType(lightingType)
     , m_lightSource(WTFMove(lightSource))
     , m_lightingColor(lightingColor)

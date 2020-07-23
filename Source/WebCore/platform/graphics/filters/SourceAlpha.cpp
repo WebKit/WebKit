@@ -70,7 +70,7 @@ TextStream& SourceAlpha::externalRepresentation(TextStream& ts, RepresentationTy
 }
 
 SourceAlpha::SourceAlpha(FilterEffect& sourceEffect)
-    : FilterEffect(sourceEffect.filter())
+    : FilterEffect(sourceEffect.filter(), Type::SourceAlpha)
 {
     setOperatingColorSpace(sourceEffect.operatingColorSpace());
     inputEffects().append(&sourceEffect);

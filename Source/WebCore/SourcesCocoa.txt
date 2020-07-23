@@ -367,6 +367,7 @@ platform/graphics/cv/ImageTransferSessionVT.mm
 platform/graphics/cv/PixelBufferConformerCV.cpp
 platform/graphics/cv/TextureCacheCV.mm
 platform/graphics/cv/VideoTextureCopierCV.cpp
+platform/graphics/coreimage/FilterEffectRendererCoreImage.mm
 platform/graphics/gpu/Texture.cpp
 platform/graphics/gpu/TilingData.cpp
 platform/graphics/gpu/cocoa/GPUBindGroupAllocatorMetal.mm

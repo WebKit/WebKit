@@ -118,15 +118,13 @@ WK_OPENGL_LDFLAGS_macosx = -framework OpenGL;
 WK_SYSTEM_CONFIGURATION_LDFLAGS = $(WK_SYSTEM_CONFIGURATION_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_SYSTEM_CONFIGURATION_LDFLAGS_macosx = -framework SystemConfiguration;
 
-WK_SYSTEM_PREVIEW_LDFLAGS = $(WK_SYSTEM_PREVIEW_LDFLAGS_$(WK_PLATFORM_NAME));
-WK_SYSTEM_PREVIEW_LDFLAGS_iphoneos = -framework CoreImage;
-WK_SYSTEM_PREVIEW_LDFLAGS_iphonesimulator = -framework CoreImage;
+WK_CORE_IMAGE_LDFLAGS = -framework CoreImage;
 
 WK_URL_FORMATTING_LDFLAGS = $(WK_URL_FORMATTING_LDFLAGS_$(WK_HAVE_URL_FORMATTING));
 WK_URL_FORMATTING_LDFLAGS_YES = -framework URLFormatting;
 
 // FIXME: Reduce the number of allowable_clients <rdar://problem/31823969>
-OTHER_LDFLAGS = $(inherited) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) $(WK_UNDEFINED_SYMBOLS_LDFLAGS) -lsqlite3 -lobjc -lANGLE -allowable_client WebCoreTestSupport -allowable_client WebKitLegacy -force_load $(BUILT_PRODUCTS_DIR)/libPAL.a -framework CFNetwork -framework CoreAudio -framework CoreGraphics -framework CoreText -framework Foundation -framework IOSurface -framework ImageIO -framework Metal $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) $(OTHER_LDFLAGS_PLATFORM_$(WK_PLATFORM_NAME)) $(WK_APPKIT_LDFLAGS) $(WK_APPSUPPORT_LDFLAGS) $(WK_AUDIO_UNIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_CORE_UI_LDFLAGS) $(WK_DATA_DETECTORS_CORE_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_IOSURFACE_ACCELERATOR_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_SYSTEM_CONFIGURATION_LDFLAGS) $(WK_SYSTEM_PREVIEW_LDFLAGS) $(WK_URL_FORMATTING_LDFLAGS);
+OTHER_LDFLAGS = $(inherited) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) $(WK_UNDEFINED_SYMBOLS_LDFLAGS) -lsqlite3 -lobjc -lANGLE -allowable_client WebCoreTestSupport -allowable_client WebKitLegacy -force_load $(BUILT_PRODUCTS_DIR)/libPAL.a -framework CFNetwork -framework CoreAudio -framework CoreGraphics -framework CoreText -framework Foundation -framework IOSurface -framework ImageIO -framework Metal $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) $(OTHER_LDFLAGS_PLATFORM_$(WK_PLATFORM_NAME)) $(WK_APPKIT_LDFLAGS) $(WK_APPSUPPORT_LDFLAGS) $(WK_AUDIO_UNIT_LDFLAGS) $(WK_CARBON_LDFLAGS) $(WK_CORE_UI_LDFLAGS) $(WK_DATA_DETECTORS_CORE_LDFLAGS) $(WK_GRAPHICS_SERVICES_LDFLAGS) $(WK_IOSURFACE_ACCELERATOR_LDFLAGS) $(WK_LIBWEBRTC_LDFLAGS) $(WK_MOBILE_CORE_SERVICES_LDFLAGS) $(WK_MOBILE_GESTALT_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(WK_SYSTEM_CONFIGURATION_LDFLAGS) $(WK_CORE_IMAGE_LDFLAGS) $(WK_URL_FORMATTING_LDFLAGS);
 
 OTHER_LDFLAGS_PLATFORM_cocoatouch = -allowable_client WebKit -allowable_client iTunesU -allowable_client Casablanca -allowable_client Remote -allowable_client TVBooks -allowable_client DumpRenderTree -allowable_client WebKitTestRunner -allowable_client TestWebKitAPI;
 OTHER_LDFLAGS_PLATFORM_macosx = -sub_library libobjc -umbrella WebKit;

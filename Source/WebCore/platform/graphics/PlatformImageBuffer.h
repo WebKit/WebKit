@@ -61,8 +61,23 @@ using AcceleratedImageBufferBackend = UnacceleratedImageBufferBackend;
 #endif
 
 using UnacceleratedImageBuffer = ConcreteImageBuffer<UnacceleratedImageBufferBackend>;
+
+#if HAVE(IOSURFACE)
+class AcceleratedImageBuffer : public ConcreteImageBuffer<ImageBufferIOSurfaceBackend> {
+    using Base = ConcreteImageBuffer<AcceleratedImageBufferBackend>;
+    using Base::Base;
+public:
+    IOSurface& surface() { return *m_backend->surface(); }
+};
+#else
 using AcceleratedImageBuffer = ConcreteImageBuffer<AcceleratedImageBufferBackend>;
+#endif
+
 using DisplayListUnacceleratedImageBuffer = DisplayList::ImageBuffer<UnacceleratedImageBufferBackend>;
 using DisplayListAcceleratedImageBuffer = DisplayList::ImageBuffer<AcceleratedImageBufferBackend>;
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AcceleratedImageBuffer)
+    static bool isType(const WebCore::ImageBuffer& buffer) { return buffer.isAccelerated(); }
+SPECIALIZE_TYPE_TRAITS_END()

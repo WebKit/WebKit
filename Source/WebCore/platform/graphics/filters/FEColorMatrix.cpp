@@ -36,7 +36,7 @@
 namespace WebCore {
 
 FEColorMatrix::FEColorMatrix(Filter& filter, ColorMatrixType type, const Vector<float>& values)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::ColorMatrix)
     , m_type(type)
     , m_values(values)
 {

@@ -1,3 +1,168 @@
+2020-07-23  Guowei Yang  <guowei_yang@apple.com>
+
+        Infrastructure Work for Integrating CoreImage for Accelerated CSS/SVG Filter Rendering
+        https://bugs.webkit.org/show_bug.cgi?id=213672
+
+        Reviewed by Simon Fraser.
+
+        This patch is the infrastructure work to enable filter rendering using 
+        CoreImage. The design of this code is as follows:
+
+        0) changing WebCore configuration for using CoreImage framework from
+           iOS/mac only to unconditional, so watchOS and tvOS could also use
+           CoreImage
+
+        1) adding a new API to obtain the IOSurface from an AcceleratedImageBuffer 
+           since CoreImage needs to render to an IOSurface
+
+        2) Instead of applying the filters inside FilterEffect, a new class,
+           FilterEffectRendererCoreImage is designed to handle the rendering. We hide
+           the implementation details by subclassing from a generic FilterEffectRenderer class.
+           This also has the benefit of organizing CoreImage obj-c calls in one place. This class
+           owns a FilterEffect node, that is the last FilterEffect of a given filter graph.
+           The filter graph will be traversed backwards and filter parameters is gathered 
+           along the way. Then CIFilters will be created and connected to a larger CIFilter 
+           graph. The output of the CIFilter graph will be rendered to the IOSurface of 
+           a newly created AcceleratedImageBuffer. This image buffer will be returned 
+           to RenderLayerFilters and rendered to the screen
+
+        3) Inside CSSFilter::build, we first try to create a FilterEffectRenderer by passing in
+           a renderer setting. A valid pointer will be returned only when the following two conditions
+           are met:
+               . CoreImage rendering is enabled in settings
+               . All the filters inside the filter graph is implemented using CIFilters
+
+        No new tests are required as this is the 
+        infrastructure code for integrating CoreImage
+        This patch should pass all the existing css3/filters tests
+
+        * Configurations/WebCore.xcconfig: modified flag definition 
+           so that CoreImage is used on all Apple Platforms, not only iPhone.
+        * Sources.txt: Added the generic FilterEffectRenderer class file
+        * SourcesCocoa.txt: added FilterEffectRendererCoreImage.mm
+        * WebCore.xcodeproj/project.pbxproj: Reflecting newly added files,
+           with some ordering changes 
+        * platform/graphics/ConcreteImageBuffer.h: overrides isAccelerated()
+           function that returns true only if the backend is IOSurface
+        * platform/graphics/ImageBuffer.h: defined virtual function isAccelerated()
+        * platform/graphics/ImageBufferBackend.h: defined virtual function 
+          isAccelerated() that returns false in the base class
+        (WebCore::ImageBufferBackend::isAccelerated const): returns false for the base class
+        * platform/graphics/PlatformImageBuffer.h: added SPECIALIZE_TYPE_TRAITS to check 
+          what type of ImageBufferBackend is
+        * platform/graphics/PlatformImageBuffer.h: Added API to obtain 
+          IOSurface from IOSurfaceBackend; added SPECIALIZE_TYPE_TRAITS
+        (WebCore::AcceleratedImageBuffer::surface): Obtain the IOSurface pointer
+          from ImageBufferIOSurfaceBackend
+        (isType): check if a given ImageBuffer is type AcceleratedImageBuffer
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::surface): added an API to get the 
+           IOSurface pointer
+        (WebCore::ImageBufferIOSurfaceBackend::isAccelerated const): returns true
+           because it is an accelerated image buffer
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h: added function surface()
+           and isAccelerated()
+        * platform/graphics/coreimage/FilterEffectRendererCoreImage.h: Added.
+        * platform/graphics/coreimage/FilterEffectRendererCoreImage.mm: Added.
+        (WebCore::FilterEffectRendererCoreImage::tryCreate): creates a FilterEffectRendererCoreImage
+          unique pointer. If the filters inside the graph are not all implemented,
+          we return nullptr
+        (WebCore::FilterEffectRendererCoreImage::supportsCoreImageRendering): 
+          a function that takes in FilterEffect& and returns true if its a filter effect 
+          type that is implemented in CoreImage, false otherwise
+        (WebCore::FilterEffectRendererCoreImage::applyEffects): takes in a FilterEffect pointer,
+           calls FilterEffectRendererCoreImage::connectCIFilters to create the final output CIImage
+        (WebCore::FilterEffectRendererCoreImage::connectCIFilters): recursive 
+           helper function that traverses the FilterEffect graph backwards, 
+           creates CIFilter graph based on the subclass type of current processing 
+           FilterEffect node. It will cache the CIFilter in a hashmap, whose key
+           is the corresponding FilterEffect pointer. 
+        (WebCore::FilterEffectRendererCoreImage::canRenderUsingCIFilters): unction 
+           that takes in the last FilterEffect node and determines whether
+           all of the filters inside the filter graph is already implemented using 
+           CIFilters. It returns false as long as there is one filter that hasn't 
+           been implemented. The rendering procedure will fallback to software mode
+           if this function returns false
+        (WebCore::FilterEffectRendererCoreImage::output const): returns the ImageBuffer
+           that contains the data of the final output image
+        (WebCore::FilterEffectRendererCoreImage::renderToImageBuffer): r
+           enders CIImage* to an ImageBuffer
+        (WebCore::FilterEffectRendererCoreImage::destRect const): calculates the destination
+           bounding box
+        (WebCore::FilterEffectRendererCoreImage::clearResult): clears all the saved results
+        (WebCore::FilterEffectRendererCoreImage::FilterEffectRendererCoreImage): constructor
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::FEBlend): Pass an additional FilterEffect::Type argument
+          to base class constructor
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::FEColorMatrix): ditto
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::FEComponentTransfer): ditto
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::FEComposite): ditto
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::FEConvolveMatrix): ditto
+        * platform/graphics/filters/FEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::FEDiffuseLighting):ditto
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::FEDisplacementMap):ditto
+        * platform/graphics/filters/FEDisplacementMap.h:
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::FEDropShadow):ditto
+        * platform/graphics/filters/FEFlood.cpp:
+        (WebCore::FEFlood::FEFlood):ditto
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::FEGaussianBlur):ditto
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::FELighting):ditto
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/FEMerge.cpp:
+        (WebCore::FEMerge::FEMerge): ditto
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::FEMorphology): ditto
+        * platform/graphics/filters/FEOffset.cpp:
+        (WebCore::FEOffset::FEOffset): ditto
+        * platform/graphics/filters/FESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::FESpecularLighting): ditto
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::FETile): ditto
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::FETurbulence): ditto
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::FilterEffect): ditto
+        * platform/graphics/filters/FilterEffect.h: added a const member, 
+          m_filterEffectType
+        (WebCore::FilterEffect::filterEffectClassType): returns the FilterEffect
+          class type
+        * platform/graphics/filters/FilterEffectRenderer.cpp: Added.
+        (WebCore::FilterEffectRenderer::tryCreate): tries creates a new FilterEffectRenderer 
+           unique pointer. Here, we check whether the renderer setting has 
+           CoreImage accelerated filter rendering enabled; we also check if all the 
+           filters in the given FilterEffect graph is already implemented using 
+           CoreImage. If both conditions are satisfied, create a FilterEffectRendererCoreImage
+           otherwise returns nullptr.
+        * platform/graphics/filters/FilterEffectRenderer.h: Added.
+        * platform/graphics/filters/SourceAlpha.cpp:
+        (WebCore::SourceAlpha::SourceAlpha): Pass an additional FilterEffect::Type argument
+          to base class constructor
+        * platform/graphics/filters/SourceAlpha.h:
+        * platform/graphics/filters/SourceGraphic.h:
+        (WebCore::SourceGraphic::SourceGraphic): ditto
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::build): we try to create a FilterEffectRenderer here by passing 
+           in the state of the CoreImage Accelerated Rendering feature switch
+        (WebCore::CSSFilter::apply): If we have a valid m_filterRenderer pointer, that means 
+           we can render the result image using CoreImage path, thus we don't call effect.apply()
+           fall back to software mode if hasResult() returns false.
+        (WebCore::CSSFilter::output const): if we have a valid m_filterRenderer, then we will 
+           obtain the ImageBuffer result from it, not FilterEffect
+        (WebCore::CSSFilter::outputRect const): if we have a valid m_filterRenderer, then we will 
+           obtain the ImageBuffer result from it, not FilterEffect
+        * rendering/CSSFilter.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::FEImage):  Pass an additional FilterEffect::Type argument
+          to base class constructor
+
 2020-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         We should have exception check after promise operation

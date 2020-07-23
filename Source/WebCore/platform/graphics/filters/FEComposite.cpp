@@ -33,7 +33,7 @@
 namespace WebCore {
 
 FEComposite::FEComposite(Filter& filter, const CompositeOperationType& type, float k1, float k2, float k3, float k4)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::Composite)
     , m_type(type)
     , m_k1(k1)
     , m_k2(k2)

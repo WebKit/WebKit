@@ -184,6 +184,17 @@ void ImageBufferIOSurfaceBackend::putImageData(AlphaPremultiplication inputForma
     m_requiresDrawAfterPutImageData = true;
 }
 
+IOSurface* ImageBufferIOSurfaceBackend::surface()
+{
+    flushContext();
+    return m_surface.get();
+}
+
+bool ImageBufferIOSurfaceBackend::isAccelerated() const
+{
+    return true;
+}
+
 } // namespace WebCore
 
 #endif // HAVE(IOSURFACE)

@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class FilterEffect;
+class FilterEffectRenderer;
 class FilterOperations;
 class GraphicsContext;
 class ReferenceFilterOperation;
@@ -99,6 +100,8 @@ private:
     bool m_graphicsBufferAttached { false };
     bool m_hasFilterThatMovesPixels { false };
     bool m_hasFilterThatShouldBeRestrictedBySecurityOrigin { false };
+    
+    std::unique_ptr<FilterEffectRenderer> m_filterRenderer;
 };
 
 } // namespace WebCore

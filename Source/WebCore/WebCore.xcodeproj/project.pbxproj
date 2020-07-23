@@ -709,6 +709,8 @@
 		29FAF4B6195AB08900A522DC /* TextUndoInsertionMarkupMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 29FAF4B5195AB08900A522DC /* TextUndoInsertionMarkupMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2B365C841525119E0091D27B /* RenderSVGEllipse.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B4235A015250F6000DBBCD8 /* RenderSVGEllipse.h */; };
 		2BE8E2C712A589EC00FAD550 /* HTMLMetaCharsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */; };
+		2C85653424C0F73C00A37673 /* FilterEffectRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C85653324C0F73C00A37673 /* FilterEffectRenderer.h */; };
+		2CAA4A3A24BE18B7009DEE70 /* FilterEffectRendererCoreImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CAA4A3924BE18B7009DEE70 /* FilterEffectRendererCoreImage.h */; };
 		2D0621441DA639B600A7FB26 /* WebKitMediaKeyMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D0621421DA6398800A7FB26 /* WebKitMediaKeyMessageEvent.cpp */; };
 		2D0621451DA639BA00A7FB26 /* WebKitMediaKeyMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0621431DA6398800A7FB26 /* WebKitMediaKeyMessageEvent.h */; };
 		2D06214D1DA63A8B00A7FB26 /* WebKitMediaKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D0621491DA63A7900A7FB26 /* WebKitMediaKeys.cpp */; };
@@ -6828,6 +6830,10 @@
 		2B4235A015250F6000DBBCD8 /* RenderSVGEllipse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGEllipse.h; sourceTree = "<group>"; };
 		2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLMetaCharsetParser.h; sourceTree = "<group>"; };
 		2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLMetaCharsetParser.cpp; sourceTree = "<group>"; };
+		2C85653324C0F73C00A37673 /* FilterEffectRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectRenderer.h; sourceTree = "<group>"; };
+		2C85653824C10B0B00A37673 /* FilterEffectRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FilterEffectRenderer.cpp; sourceTree = "<group>"; };
+		2CAA4A3724BE18A1009DEE70 /* FilterEffectRendererCoreImage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FilterEffectRendererCoreImage.mm; sourceTree = "<group>"; };
+		2CAA4A3924BE18B7009DEE70 /* FilterEffectRendererCoreImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectRendererCoreImage.h; sourceTree = "<group>"; };
 		2D0621421DA6398800A7FB26 /* WebKitMediaKeyMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitMediaKeyMessageEvent.cpp; sourceTree = "<group>"; };
 		2D0621431DA6398800A7FB26 /* WebKitMediaKeyMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitMediaKeyMessageEvent.h; sourceTree = "<group>"; };
 		2D0621471DA63A7900A7FB26 /* WebKitMediaKeyNeededEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitMediaKeyNeededEvent.cpp; sourceTree = "<group>"; };
@@ -18329,6 +18335,15 @@
 			path = isolatedtree;
 			sourceTree = "<group>";
 		};
+		2CE1189824C2402C003770E9 /* coreimage */ = {
+			isa = PBXGroup;
+			children = (
+				2CAA4A3924BE18B7009DEE70 /* FilterEffectRendererCoreImage.h */,
+				2CAA4A3724BE18A1009DEE70 /* FilterEffectRendererCoreImage.mm */,
+			);
+			path = coreimage;
+			sourceTree = "<group>";
+		};
 		2D0621461DA639EC00A7FB26 /* legacy */ = {
 			isa = PBXGroup;
 			children = (
@@ -23740,6 +23755,8 @@
 				845E72F70FD261EE00A87D79 /* Filter.h */,
 				08C925170FCC7C4A00480DEC /* FilterEffect.cpp */,
 				08C925180FCC7C4A00480DEC /* FilterEffect.h */,
+				2C85653824C10B0B00A37673 /* FilterEffectRenderer.cpp */,
+				2C85653324C0F73C00A37673 /* FilterEffectRenderer.h */,
 				49ECEB631499790D00CDD3A4 /* FilterOperation.cpp */,
 				49ECEB641499790D00CDD3A4 /* FilterOperation.h */,
 				49ECEB651499790D00CDD3A4 /* FilterOperations.cpp */,
@@ -25552,6 +25569,7 @@
 				499B3EC0128CCC1800E726C2 /* ca */,
 				B27535290B053814002CE64F /* cg */,
 				B5320D68122A24E9002D1440 /* cocoa */,
+				2CE1189824C2402C003770E9 /* coreimage */,
 				9332AB3B16515D7700D827EC /* cpu */,
 				CD9D827C1C7BB2ED006FF066 /* cv */,
 				0FE5FBC91C3DD5060007A2CA /* displaylists */,
@@ -30825,6 +30843,8 @@
 				712BE4831FE865DD002031CC /* FillMode.h in Headers */,
 				845E72F80FD261EE00A87D79 /* Filter.h in Headers */,
 				08C9251A0FCC7C4A00480DEC /* FilterEffect.h in Headers */,
+				2C85653424C0F73C00A37673 /* FilterEffectRenderer.h in Headers */,
+				2CAA4A3A24BE18B7009DEE70 /* FilterEffectRendererCoreImage.h in Headers */,
 				49ECEB6E1499790D00CDD3A4 /* FilterOperation.h in Headers */,
 				49ECEB701499790D00CDD3A4 /* FilterOperations.h in Headers */,
 				372C00D9129619F8005C9575 /* FindOptions.h in Headers */,

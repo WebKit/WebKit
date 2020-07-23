@@ -36,14 +36,14 @@
 namespace WebCore {
 
 FEImage::FEImage(Filter& filter, RefPtr<Image> image, const SVGPreserveAspectRatioValue& preserveAspectRatio)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::Image)
     , m_image(image)
     , m_preserveAspectRatio(preserveAspectRatio)
 {
 }
 
 FEImage::FEImage(Filter& filter, TreeScope& treeScope, const String& href, const SVGPreserveAspectRatioValue& preserveAspectRatio)
-    : FilterEffect(filter)
+    : FilterEffect(filter, Type::Image)
     , m_treeScope(&treeScope)
     , m_href(href)
     , m_preserveAspectRatio(preserveAspectRatio)
