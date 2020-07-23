@@ -1082,3 +1082,5 @@ webkit.org/b/214579 [ Release ] svg/animations/smil-leak-element-instances.svg [
 webkkit.org/b/214651 [ Debug ] tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html [ Pass Crash ]
 
 webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Crash ]
+
+webkit.org/b/214682 [ Release ] imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html [ Pass Failure ]
