@@ -2187,7 +2187,8 @@ op(checkpoint_osr_exit_from_inlined_call_trampoline, macro ()
             # Given _slow_path_checkpoint_osr_exit_from_inlined_call has
             # parameters as CallFrame* and EncodedJSValue,
             # we need to store call result on a2, a3 and call frame on a0,
-            # leaving a1 as dummy value.
+            # leaving a1 as dummy value (this calling convention is considered only
+            # for little-endian architectures).
             move r1, a3
             move r0, a2
             move cfr, a0

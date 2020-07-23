@@ -1,3 +1,17 @@
+2020-07-23  Caio Lima  <ticaiolima@gmail.com>
+
+        [32-bits] Fixing the return of doVMEntry into LowLevelInterpreter32_64.asm
+        https://bugs.webkit.org/show_bug.cgi?id=214641
+
+        Reviewed by Mark Lam.
+
+        Adjusting the return of `doVMEntry` for 32-bits LLInt to proper set
+        `EncodedJSValue` return in little-endian architectures. It is expected
+        that tag is stored in `r1` and payload is stored in `r0`.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+
 2020-07-23  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove ArrayNode::m_optional

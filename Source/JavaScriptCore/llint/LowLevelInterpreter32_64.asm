@@ -327,8 +327,10 @@ macro doVMEntry(makeCall)
     move vm, a0
     move protoCallFrame, a1
     cCall2(_llint_check_vm_entry_permission)
-    move UndefinedTag, r0
-    move 0, r1
+
+    # Tag is stored in r1 and payload is stored in r0 in little-endian architectures.
+    move UndefinedTag, r1
+    move 0, r0
 
     subp cfr, CalleeRegisterSaveSize, sp
     popCalleeSaves()
