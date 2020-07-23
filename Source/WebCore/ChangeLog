@@ -1,3 +1,18 @@
+2020-07-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake][Win] Build StructuredExceptionHandlerSuppressor.cpp and makesafeseh.asm only for AppleWin
+        https://bugs.webkit.org/show_bug.cgi?id=214671
+
+        Reviewed by Per Arne Vollan.
+
+        StructuredExceptionHandlerSuppressor is used only by AppleWin port
+        in platform/graphics/ca/win/LayerChangesFlusher.cpp.
+        makesafeseh.asm causes a building problem for 32bit WinCairo
+        because it is using OBJECT library type for WebCore.
+
+        * PlatformAppleWin.cmake: Added build rules for them.
+        * PlatformWin.cmake: Removed build rules for them.
+
 2020-07-23  Andres Gonzalez  <andresg_22@apple.com>
 
         Update the isolated tree even when there is no client request.

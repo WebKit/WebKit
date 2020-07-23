@@ -53,6 +53,8 @@ list(APPEND WebCore_SOURCES
     platform/network/cf/SynchronousLoaderClientCFNet.cpp
 
     platform/text/LocaleNone.cpp
+
+    platform/win/StructuredExceptionHandlerSuppressor.cpp
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
@@ -183,4 +185,13 @@ else ()
         platform/graphics/cg/PDFDocumentImage.h
         platform/graphics/cg/UTIRegistry.h
     )
+endif ()
+
+if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/makesafeseh.obj)
+    add_custom_command(
+        OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/makesafeseh.obj
+        DEPENDS ${WEBCORE_DIR}/platform/win/makesafeseh.asm
+        COMMAND ml /safeseh /c /Fo ${WebCore_DERIVED_SOURCES_DIR}/makesafeseh.obj ${WEBCORE_DIR}/platform/win/makesafeseh.asm
+        VERBATIM)
 endif ()

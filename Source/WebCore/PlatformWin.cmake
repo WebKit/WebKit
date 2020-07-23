@@ -97,7 +97,6 @@ list(APPEND WebCore_SOURCES
     platform/win/SearchPopupMenuDB.cpp
     platform/win/SearchPopupMenuWin.cpp
     platform/win/SharedBufferWin.cpp
-    platform/win/StructuredExceptionHandlerSuppressor.cpp
     platform/win/SystemInfo.cpp
     platform/win/UserAgentWin.cpp
     platform/win/WCDataObject.cpp
@@ -200,15 +199,6 @@ else ()
         platform/generic/KeyedDecoderGeneric.cpp
         platform/generic/KeyedEncoderGeneric.cpp
     )
-endif ()
-
-if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/makesafeseh.obj)
-    add_custom_command(
-        OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/makesafeseh.obj
-        DEPENDS ${WEBCORE_DIR}/platform/win/makesafeseh.asm
-        COMMAND ml /safeseh /c /Fo ${WebCore_DERIVED_SOURCES_DIR}/makesafeseh.obj ${WEBCORE_DIR}/platform/win/makesafeseh.asm
-        VERBATIM)
 endif ()
 
 if (${WTF_PLATFORM_WIN_CAIRO})
