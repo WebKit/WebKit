@@ -1,3 +1,26 @@
+2020-07-23  Per Arne Vollan  <pvollan@apple.com>
+
+        Crash in block in WebKit::LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver
+        https://bugs.webkit.org/show_bug.cgi?id=214702
+
+        Reviewed by Chris Dumez.
+
+        Calling xpc_connection_send_message in the block in WebKit::LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver will
+        sometimes crash because the XPC connection object is invalid. The block is called on a secondary thread, and the m_connections
+        member variable needs to be protected by a lock. Also, make sure the XPC connections objects in m_connections are valid by
+        retaining them when captured in a block. This is done by redeclaring a local XPC connection variable as an OSObjectPtr instead
+        of a raw XPC connection object.
+
+        No new tests, since I have not been able to reproduce this issue.
+
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.h:
+        * NetworkProcess/cocoa/LaunchServicesDatabaseObserver.mm:
+        (WebKit::LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver):
+        (WebKit::LaunchServicesDatabaseObserver::startObserving):
+        (WebKit::LaunchServicesDatabaseObserver::handleEvent):
+        * Shared/Cocoa/XPCEndpoint.mm:
+        (WebKit::XPCEndpoint::XPCEndpoint):
+
 2020-07-23  Brian Burg  <bburg@apple.com>
 
         Web Inspector: developerExtrasEnabled should be respected when opening local Web Inspector (part 2)
