@@ -1055,6 +1055,8 @@ webkit.org/b/153883 webgl/1.0.3/conformance/extensions/oes-texture-half-float-li
 
 webkit.org/b/153871 imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Pass Failure ]
 
+webkit.org/b/207146 media/media-source/media-source-seek-redundant-append.html [ Pass Timeout ]
+
 # These tests are already run with run-jsc-stress-tests
 webkit.org/b/153879 js/basic-set.html [ Skip ]
 webkit.org/b/154753 js/basic-map.html [ Skip ]
