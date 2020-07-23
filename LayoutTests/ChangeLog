@@ -1,5 +1,14 @@
 2020-07-23  Karl Rackler  <rackler@apple.com>
 
+        [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214688
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2020-07-23  Karl Rackler  <rackler@apple.com>
+
         [ iOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/audiobuffer-copy-channel.html and imported/w3c/web-platform-tests/xhr/send-data-sharedarraybuffer.any.html and imported/w3c/web-platform-tests/xhr/send-data-sharedarraybuffer.any.worker.html do not support WebAssembly and marking Skip.
         https://bugs.webkit.org/show_bug.cgi?id=214681
 
