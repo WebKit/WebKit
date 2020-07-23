@@ -2344,38 +2344,40 @@ void ArgumentCoder<FilterOperation>::encode(Encoder& encoder, const FilterOperat
     case FilterOperation::NONE:
     case FilterOperation::REFERENCE:
         ASSERT_NOT_REACHED();
-        break;
+        return;
     case FilterOperation::GRAYSCALE:
     case FilterOperation::SEPIA:
     case FilterOperation::SATURATE:
     case FilterOperation::HUE_ROTATE:
         encoder << downcast<BasicColorMatrixFilterOperation>(filter).amount();
-        break;
+        return;
     case FilterOperation::INVERT:
     case FilterOperation::OPACITY:
     case FilterOperation::BRIGHTNESS:
     case FilterOperation::CONTRAST:
         encoder << downcast<BasicComponentTransferFilterOperation>(filter).amount();
-        break;
+        return;
     case FilterOperation::APPLE_INVERT_LIGHTNESS:
         ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
-        break;
+        return;
     case FilterOperation::BLUR:
         encoder << downcast<BlurFilterOperation>(filter).stdDeviation();
-        break;
+        return;
     case FilterOperation::DROP_SHADOW: {
         const auto& dropShadowFilter = downcast<DropShadowFilterOperation>(filter);
         encoder << dropShadowFilter.location();
         encoder << dropShadowFilter.stdDeviation();
         encoder << dropShadowFilter.color();
-        break;
+        return;
     }
     case FilterOperation::DEFAULT:
         encoder << downcast<DefaultFilterOperation>(filter).representedType();
-        break;
+        return;
     case FilterOperation::PASSTHROUGH:
-        break;
+        return;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
@@ -2388,7 +2390,6 @@ bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
     case FilterOperation::NONE:
     case FilterOperation::REFERENCE:
         ASSERT_NOT_REACHED();
-        decoder.markInvalid();
         return false;
     case FilterOperation::GRAYSCALE:
     case FilterOperation::SEPIA:
@@ -2398,7 +2399,7 @@ bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
         if (!decoder.decode(amount))
             return false;
         filter = BasicColorMatrixFilterOperation::create(amount, type);
-        break;
+        return true;
     }
     case FilterOperation::INVERT:
     case FilterOperation::OPACITY:
@@ -2408,17 +2409,17 @@ bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
         if (!decoder.decode(amount))
             return false;
         filter = BasicComponentTransferFilterOperation::create(amount, type);
-        break;
+        return true;
     }
     case FilterOperation::APPLE_INVERT_LIGHTNESS:
         ASSERT_NOT_REACHED(); // APPLE_INVERT_LIGHTNESS is only used in -apple-color-filter.
-        break;
+        return false;
     case FilterOperation::BLUR: {
         Length stdDeviation;
         if (!decoder.decode(stdDeviation))
             return false;
         filter = BlurFilterOperation::create(stdDeviation);
-        break;
+        return true;
     }
     case FilterOperation::DROP_SHADOW: {
         IntPoint location;
@@ -2431,21 +2432,22 @@ bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
         if (!decoder.decode(color))
             return false;
         filter = DropShadowFilterOperation::create(location, stdDeviation, color);
-        break;
+        return true;
     }
     case FilterOperation::DEFAULT: {
         FilterOperation::OperationType representedType;
         if (!decoder.decode(representedType))
             return false;
         filter = DefaultFilterOperation::create(representedType);
-        break;
+        return true;
     }
     case FilterOperation::PASSTHROUGH:
         filter = PassthroughFilterOperation::create();
-        break;
+        return true;
     }
             
-    return true;
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 
