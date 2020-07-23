@@ -610,13 +610,6 @@
 #define ENABLE_FTL_JIT 0
 #endif
 
-/* FIXME: This should be turned into an #error invariant */
-/* The FTL is disabled on the iOS simulator, mostly for simplicity. */
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-#undef ENABLE_FTL_JIT
-#define ENABLE_FTL_JIT 0
-#endif
-
 /* If possible, try to enable a disassembler. This is optional. We proceed in two
    steps: first we try to find some disassembler that we can use, and then we
    decide if the high-level disassembler API can be enabled. */

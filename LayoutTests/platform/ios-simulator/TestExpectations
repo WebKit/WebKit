@@ -41,27 +41,6 @@ webkit.org/b/156718 storage/websql/alter-to-info-table.html [ Failure ]
 # we explicitly disallow this because this font is too slow.
 fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]
 
-# Simulator doesn't support WebAssembly.
-http/tests/security/contentSecurityPolicy/WebAssembly-allowed.html [ Failure ]
-http/tests/security/contentSecurityPolicy/WebAssembly-blocked-in-about-blank-iframe.html [ Failure ]
-http/tests/security/contentSecurityPolicy/WebAssembly-blocked-in-external-script.html [ Failure ]
-http/tests/security/contentSecurityPolicy/WebAssembly-blocked-in-subframe.html [ Failure ]
-http/tests/security/contentSecurityPolicy/WebAssembly-blocked.html [ Failure ]
-imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-failure.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-failure.https.any.serviceworker.html [ Failure ]
-imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-success.any.worker.html [ Failure ]
-wasm/iframe-postmessage.html [ Skip ]
-wasm/iframe-parent-postmessage.html [ Skip ]
-wasm/window-postmessage.html [ Skip ]
-imported/w3c/web-platform-tests/encoding/encodeInto.any.html [ Skip ]
-imported/w3c/web-platform-tests/encoding/encodeInto.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/encoding/streams/decode-utf8.any.html [ Skip ]
-imported/w3c/web-platform-tests/encoding/streams/decode-utf8.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/encoding/textdecoder-copy.any.html [ Skip ]
-imported/w3c/web-platform-tests/encoding/textdecoder-copy.any.worker.html [ Skip ]
-imported/w3c/web-platform-tests/encoding/textdecoder-streaming.any.html [ Skip ]
-imported/w3c/web-platform-tests/encoding/textdecoder-streaming.any.worker.html [ Skip ]
-
 # These tests seem to fail due pixel rounding errors in the absolute positioned elements used as reference.
 webkit.org/b/170176 fast/inline-block/baseline-vertical-01.html [ ImageOnlyFailure ]
 webkit.org/b/170176 fast/inline-block/baseline-vertical-02.html [ ImageOnlyFailure ]
