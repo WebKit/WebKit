@@ -1,3 +1,15 @@
+2020-07-23  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] RELEASE_ASSERT when calling registerSupplementalVP9Decoder() when VideoToolbox.framework is not present
+        https://bugs.webkit.org/show_bug.cgi?id=214697
+        <rdar://problem/66010949>
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+        (WebCore::registerSupplementalVP9Decoder):
+        (WebCore::isVP9DecoderAvailable):
+
 2020-07-23  Sihui Liu  <sihui_liu@appe.com>
 
         Allow IndexedDB in third-party frames
