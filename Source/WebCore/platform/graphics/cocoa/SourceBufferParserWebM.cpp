@@ -42,6 +42,7 @@
 #include <wtf/Algorithms.h>
 #include <wtf/Deque.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/darwin/WeakLinking.h>
 
 WTF_WEAK_LINK_FORCE_IMPORT(webm::swap);
@@ -793,8 +794,16 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
         trackData->currentBlockBuffer = nullptr;
         trackData->currentBlockBufferPosition = 0;
 
-        if (!isSync)
-            CMSetAttachment(sampleBuffer.get(), kCMSampleAttachmentKey_NotSync, kCFBooleanTrue, kCMAttachmentMode_ShouldPropagate);
+        if (!isSync) {
+            auto attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
+            ASSERT(attachmentsArray);
+            if (!attachmentsArray)
+                return Skip(reader, bytesRemaining);
+            for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
+                CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
+                CFDictionarySetValue(attachments, kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);
+            }
+        }
 
         auto trackID = track.track_uid.value();
 

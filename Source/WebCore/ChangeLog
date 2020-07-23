@@ -1,3 +1,38 @@
+2020-07-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r264742. rdar://problem/65995985
+
+    [Cocoa|WebM] Decode error when seeking
+    https://bugs.webkit.org/show_bug.cgi?id=214666
+    
+    Reviewed by Eric Carlson.
+    
+    A decoder error is hit when seeking because we think all samples coming out of the SourceBufferParserWebM are sync-samples.
+    This is because the attachment added with CMSetAttachment() is ignored; the correct way to set sample attachments is by
+    getting the sample attachments array with CMSampleBufferGetSampleAttachmentsArray(), and then iterating over the attachments
+    and adding keys to the underlying mutable CFDictionary.
+    
+    * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+    (WebCore::SourceBufferParserWebM::OnFrame):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@264742 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-07-22  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa|WebM] Decode error when seeking
+            https://bugs.webkit.org/show_bug.cgi?id=214666
+
+            Reviewed by Eric Carlson.
+
+            A decoder error is hit when seeking because we think all samples coming out of the SourceBufferParserWebM are sync-samples.
+            This is because the attachment added with CMSetAttachment() is ignored; the correct way to set sample attachments is by
+            getting the sample attachments array with CMSampleBufferGetSampleAttachmentsArray(), and then iterating over the attachments
+            and adding keys to the underlying mutable CFDictionary.
+
+            * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+            (WebCore::SourceBufferParserWebM::OnFrame):
+
 2020-07-22  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r264685. rdar://problem/65944676
