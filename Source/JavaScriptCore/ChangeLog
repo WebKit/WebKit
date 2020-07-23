@@ -1,3 +1,92 @@
+2020-07-22  Mark Lam  <mark.lam@apple.com>
+
+        Disallow VM entry when doing a VMInquiry.
+        https://bugs.webkit.org/show_bug.cgi?id=214624
+        <rdar://problem/65915314>
+
+        Reviewed by Saam Barati.
+
+        1. In PropertySlot's constructor, automatically install a DisallowVMEntry scope
+           if the passed in internal method type is VMInquiry.  This ensures that we won't
+           be able to enter the VM to call JS code while doing the inquiry.  As a result,
+           the PropertySlot constructor will now take an optional VM pointer, which is 
+           must be passed in in when the internal method type is VMInquiry.
+
+           Note that the handling of attempts to enter the VM depends on
+           Options::crashOnDisallowedVMEntry().
+
+           On Debug build (due to ASSERT_ENABLED), Options::crashOnDisallowedVMEntry()
+           defaults to true and the VM will crash on disallowed entry.
+           On Release build, Options::crashOnDisallowedVMEntry() defaults to false and
+           disallow entry attempts into the VM will be treated like calling an empty
+           function that returns undefined.  This is not new behavior in this patch, but
+           I just want to have a reminder here of how DisallowVMEntry will be enforcing
+           no entry into the VM while doing a VMInquiry.
+
+        2. After VMInquiry gets, sometimes the client code wants to do other work that
+           do entails entering the VM.  In such cases, we need to reset the PropertySlot's
+           disallowVMEntry scope.  Fixed up a few places in client code to do this reset.
+
+        3. Make the DisableVMEntry scope copyable.  At least one place wants to copy 
+           PropertySlot, and as a result, will need to copy its embedded DisableVMEntry
+           scope as well if installed.
+
+           For DisableVMEntry, we'll handle copying semantics as follows: copying a
+           DisableVMEntry will ref the VM::disallowVMEntryCount.  The count will be
+           decremented when both instances are destructed.  As a result, VM entry will
+           be disallowed as long as one of the copies are still alive.
+
+        4. For the setObjectToStringValue() method of Structure and StructureRareData, we
+           were previously passing a PropertySlot by copy.  We don't really need to do
+           this.  Ultimately, only StructureRareData::setObjectToStringValue() needs to
+           access a few of the PropertySlot query methods.  So, we changed these methods
+           to pass a `const PropertySlot&` instead to void the needless copying.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::put):
+        (JSC::JSCallbackObject<Parent>::staticFunctionGetter):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::queryInstances):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/DisallowVMEntry.h:
+        (JSC::DisallowVMEntryImpl::DisallowVMEntryImpl):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::sanitizedToString):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnNonIndexPropertyNames):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::getGetterById):
+        (JSC::JSGlobalObject::defineOwnProperty):
+        (JSC::JSGlobalObject::tryInstallArraySpeciesWatchpoint):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::calculatedClassName):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPrivateFieldSlot):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::PropertySlot):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::nameFromCallee):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::setObjectToStringValue):
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::setObjectToStringValue):
+        * runtime/StructureRareData.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionGetGetterSetter):
+
 2020-07-22  Geoffrey Garen  <ggaren@apple.com>
 
         JSRunLoopTimer should use WTF::RunLoop rather than custom CF code

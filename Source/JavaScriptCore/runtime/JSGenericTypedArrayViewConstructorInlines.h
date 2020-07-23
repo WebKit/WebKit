@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,9 +156,10 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* glo
         else {
             // This getPropertySlot operation should not be observed by the Proxy.
             // So we use VMInquiry. And purge the opaque object cases (proxy and namespace object) by isTaintedByOpaqueObject() guard.
-            PropertySlot lengthSlot(object, PropertySlot::InternalMethodType::VMInquiry);
+            PropertySlot lengthSlot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
             object->getPropertySlot(globalObject, vm.propertyNames->length, lengthSlot);
             RETURN_IF_EXCEPTION(scope, nullptr);
+            lengthSlot.disallowVMEntry.reset();
 
             JSValue iteratorFunc = object->get(globalObject, vm.propertyNames->iteratorSymbol);
             RETURN_IF_EXCEPTION(scope, nullptr);

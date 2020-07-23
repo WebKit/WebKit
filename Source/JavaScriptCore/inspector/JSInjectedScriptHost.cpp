@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -646,7 +646,7 @@ JSValue JSInjectedScriptHost::queryInstances(JSGlobalObject* globalObject, CallF
 
     JSValue prototype = object;
 
-    PropertySlot prototypeSlot(object, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot prototypeSlot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
     if (object->getPropertySlot(globalObject, vm.propertyNames->prototype, prototypeSlot)) {
         RETURN_IF_EXCEPTION(scope, { });
         if (prototypeSlot.isValue()) {
@@ -657,6 +657,7 @@ JSValue JSInjectedScriptHost::queryInstances(JSGlobalObject* globalObject, CallF
             }
         }
     }
+    prototypeSlot.disallowVMEntry.reset();
 
     if (object->inherits<ProxyObject>(vm) || prototype.inherits<ProxyObject>(vm))
         return throwTypeError(globalObject, scope, "queryInstances cannot be called with a Proxy."_s);

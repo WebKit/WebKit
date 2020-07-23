@@ -231,9 +231,11 @@ bool JSTestNamedSetterWithUnforgableProperties::put(JSCell* cell, JSGlobalObject
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     if (!propertyName.isSymbol()) {
-        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };
+        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
         JSValue prototype = thisObject->getPrototypeDirect(JSC::getVM(lexicalGlobalObject));
-        if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot))) {
+        bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);
+        slot.disallowVMEntry.reset();
+        if (!found) {
             auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
             auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
             RETURN_IF_EXCEPTION(throwScope, true);
@@ -252,9 +254,11 @@ bool JSTestNamedSetterWithUnforgableProperties::putByIndex(JSCell* cell, JSGloba
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
     auto propertyName = Identifier::from(vm, index);
-    PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };
+    PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm };
     JSValue prototype = thisObject->getPrototypeDirect(vm);
-    if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot))) {
+    bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);
+    slot.disallowVMEntry.reset();
+    if (!found) {
         auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));
         auto nativeValue = convert<IDLDOMString>(*lexicalGlobalObject, value);
         RETURN_IF_EXCEPTION(throwScope, true);
@@ -277,8 +281,10 @@ static bool isUnforgeablePropertyName(PropertyName propertyName)
 }
 
         if (!isUnforgeablePropertyName(propertyName)) {
-            PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };
-            if (!JSObject::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot)) {
+            PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };
+            bool found = JSObject::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot);
+            slot.disallowVMEntry.reset();
+            if (!found) {
                 if (!propertyDescriptor.isDataDescriptor())
                     return false;
                 auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(lexicalGlobalObject));

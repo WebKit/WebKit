@@ -965,9 +965,11 @@ sub GeneratePut
         
         my $overrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins");
         if (!$overrideBuiltins) {
-            push(@$outputArray, "        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };\n");
+            push(@$outputArray, "        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };\n");
             push(@$outputArray, "        JSValue prototype = thisObject->getPrototypeDirect(JSC::getVM(lexicalGlobalObject));\n");
-            push(@$outputArray, "        if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot))) {\n");
+            push(@$outputArray, "        bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);\n");
+            push(@$outputArray, "        slot.disallowVMEntry.reset();\n");
+            push(@$outputArray, "        if (!found) {\n");
             $additionalIndent .= "    ";
         }
 
@@ -1041,9 +1043,11 @@ sub GeneratePutByIndex
                 
         my $additionalIndent = "";
         if (!$overrideBuiltins) {
-            push(@$outputArray, "    PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };\n");
+            push(@$outputArray, "    PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm };\n");
             push(@$outputArray, "    JSValue prototype = thisObject->getPrototypeDirect(vm);\n");
-            push(@$outputArray, "    if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot))) {\n");
+            push(@$outputArray, "    bool found = prototype.isObject() && asObject(prototype)->getPropertySlot(lexicalGlobalObject, propertyName, slot);\n");
+            push(@$outputArray, "    slot.disallowVMEntry.reset();\n");
+            push(@$outputArray, "    if (!found) {\n");
             $additionalIndent .= "    ";
         }
         
@@ -1176,8 +1180,10 @@ sub GenerateDefineOwnProperty
             # FIXME: Is JSObject::getOwnPropertySlot the right function to call? Is there a function that will
             #        only look at the actual properties, and not call into our implementation of the
             #        [[GetOwnProperty]] hook?
-            push(@$outputArray, $additionalIndent. "        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry };\n");
-            push(@$outputArray, $additionalIndent. "        if (!JSObject::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot)) {\n");
+            push(@$outputArray, $additionalIndent. "        PropertySlot slot { thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };\n");
+            push(@$outputArray, $additionalIndent. "        bool found = JSObject::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot);\n");
+            push(@$outputArray, $additionalIndent. "        slot.disallowVMEntry.reset();\n");
+            push(@$outputArray, $additionalIndent. "        if (!found) {\n");
             $additionalIndent .= "    ";
         }
         if (!$namedSetterOperation) {

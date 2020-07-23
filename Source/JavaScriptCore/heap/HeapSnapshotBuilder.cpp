@@ -409,7 +409,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
             // "Object" in snapshots and not get the name of the prototype's parent.
             JSObject* object = asObject(node.cell);
             if (JSGlobalObject* globalObject = object->globalObject(vm)) {
-                PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry);
+                PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
                 if (!object->getOwnPropertySlot(object, globalObject, vm.propertyNames->constructor, slot))
                     className = JSObject::calculatedClassName(object);
             }

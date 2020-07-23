@@ -21,6 +21,7 @@
 #pragma once
 
 #include "DOMAnnotation.h"
+#include "DisallowVMEntry.h"
 #include "GetVM.h"
 #include "JSCJSValue.h"
 #include "PropertyName.h"
@@ -112,10 +113,12 @@ public:
         ModuleNamespace, // ModuleNamespaceObject's environment access.
     };
 
-    explicit PropertySlot(const JSValue thisValue, InternalMethodType internalMethodType)
+    explicit PropertySlot(const JSValue thisValue, InternalMethodType internalMethodType, VM* vmForInquiry = nullptr)
         : m_thisValue(thisValue)
         , m_internalMethodType(internalMethodType)
     {
+        if (isVMInquiry())
+            disallowVMEntry.emplace(*vmForInquiry);
     }
 
     // FIXME: Remove this slotBase / receiver behavior difference in custom values and custom accessors.
@@ -399,6 +402,9 @@ private:
     InternalMethodType m_internalMethodType;
     AdditionalDataType m_additionalDataType { AdditionalDataType::None };
     bool m_isTaintedByOpaqueObject { false };
+public:
+    Optional<DisallowVMEntry> disallowVMEntry;
+private:
     union {
         DOMAttributeAnnotation domAttribute;
         ModuleNamespaceSlot moduleNamespaceSlot;

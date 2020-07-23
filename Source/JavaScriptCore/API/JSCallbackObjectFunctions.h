@@ -298,8 +298,10 @@ bool JSCallbackObject<Parent>::put(JSCell* cell, JSGlobalObject* globalObject, P
             
             if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(globalObject)) {
                 if (StaticFunctionEntry* entry = staticFunctions->get(name)) {
-                    PropertySlot getSlot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
-                    if (Parent::getOwnPropertySlot(thisObject, globalObject, propertyName, getSlot))
+                    PropertySlot getSlot(thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm);
+                    bool found = Parent::getOwnPropertySlot(thisObject, globalObject, propertyName, getSlot);
+                    getSlot.disallowVMEntry.reset();
+                    if (found)
                         return Parent::put(thisObject, globalObject, propertyName, value, slot);
                     if (entry->attributes & kJSPropertyAttributeReadOnly)
                         return false;
@@ -668,8 +670,10 @@ EncodedJSValue JSCallbackObject<Parent>::staticFunctionGetter(JSGlobalObject* gl
     JSCallbackObject* thisObj = asCallbackObject(thisValue);
     
     // Check for cached or override property.
-    PropertySlot slot2(thisObj, PropertySlot::InternalMethodType::VMInquiry);
-    if (Parent::getOwnPropertySlot(thisObj, globalObject, propertyName, slot2))
+    PropertySlot slot2(thisObj, PropertySlot::InternalMethodType::VMInquiry, &vm);
+    bool found = Parent::getOwnPropertySlot(thisObj, globalObject, propertyName, slot2);
+    slot2.disallowVMEntry.reset();
+    if (found)
         return JSValue::encode(slot2.getValue(globalObject, propertyName));
 
     if (StringImpl* name = propertyName.uid()) {

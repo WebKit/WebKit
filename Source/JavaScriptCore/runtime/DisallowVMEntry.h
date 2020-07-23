@@ -36,10 +36,15 @@ class VM;
 
 template<typename VMType = VM>
 class DisallowVMEntryImpl {
-    WTF_MAKE_NONCOPYABLE(DisallowVMEntryImpl);
 public:
     DisallowVMEntryImpl(VMType& vm)
         : m_vm(&vm)
+    {
+        m_vm->disallowVMEntryCount++;
+    }
+
+    DisallowVMEntryImpl(const DisallowVMEntryImpl& other)
+        : m_vm(other.m_vm)
     {
         m_vm->disallowVMEntryCount++;
     }

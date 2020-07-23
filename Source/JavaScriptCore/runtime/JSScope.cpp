@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -152,8 +152,9 @@ static inline bool abstractAccess(JSGlobalObject* globalObject, JSScope* scope, 
             }
         }
 
-        PropertySlot slot(globalObject, PropertySlot::InternalMethodType::VMInquiry);
+        PropertySlot slot(globalObject, PropertySlot::InternalMethodType::VMInquiry, &vm);
         bool hasOwnProperty = globalObject->getOwnPropertySlot(globalObject, globalObject, ident, slot);
+        slot.disallowVMEntry.reset();
         if (!hasOwnProperty) {
             op = ResolveOp(makeType(UnresolvedProperty, needsVarInjectionChecks), 0, nullptr, nullptr, nullptr, 0);
             return true;

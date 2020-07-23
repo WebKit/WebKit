@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel (eric@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -534,7 +534,7 @@ String JSObject::calculatedClassName(JSObject* object)
 
     // Check for a display name of obj.constructor.
     // This is useful to get `Foo` for the `(class Foo).prototype` object.
-    PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
     if (object->getOwnPropertySlot(object, globalObject, vm.propertyNames->constructor, slot)) {
         EXCEPTION_ASSERT(!scope.exception());
         if (slot.isValue()) {
@@ -558,7 +558,7 @@ String JSObject::calculatedClassName(JSObject* object)
             JSValue protoValue = object->getPrototypeDirect(vm);
             if (protoValue.isObject()) {
                 JSObject* protoObject = asObject(protoValue);
-                PropertySlot slot(protoValue, PropertySlot::InternalMethodType::VMInquiry);
+                PropertySlot slot(protoValue, PropertySlot::InternalMethodType::VMInquiry, &vm);
                 if (protoObject->getPropertySlot(globalObject, vm.propertyNames->constructor, slot)) {
                     EXCEPTION_ASSERT(!scope.exception());
                     if (slot.isValue()) {

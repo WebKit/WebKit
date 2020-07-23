@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -427,7 +427,7 @@ inline size_t nextOutOfLineStorageCapacity(size_t currentCapacity)
     return currentCapacity * outOfLineGrowthFactor;
 }
 
-inline void Structure::setObjectToStringValue(JSGlobalObject* globalObject, VM& vm, JSString* value, PropertySlot toStringTagSymbolSlot)
+inline void Structure::setObjectToStringValue(JSGlobalObject* globalObject, VM& vm, JSString* value, const PropertySlot& toStringTagSymbolSlot)
 {
     if (!hasRareData())
         allocateRareData(vm);

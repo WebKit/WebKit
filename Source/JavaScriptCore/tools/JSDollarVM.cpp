@@ -2895,7 +2895,7 @@ static EncodedJSValue JSC_HOST_CALL functionGetGetterSetter(JSGlobalObject* glob
     auto propertyName = asString(property)->toIdentifier(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    PropertySlot slot(value, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot slot(value, PropertySlot::InternalMethodType::VMInquiry, &vm);
     value.getPropertySlot(globalObject, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, { });
 

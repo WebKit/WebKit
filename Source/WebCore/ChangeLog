@@ -1,3 +1,59 @@
+2020-07-21  Mark Lam  <mark.lam@apple.com>
+
+        Disallow VM entry when doing a VMInquiry.
+        https://bugs.webkit.org/show_bug.cgi?id=214624
+        <rdar://problem/65915314>
+
+        Reviewed by Saam Barati.
+
+        1. Change binding to reset the DisallowVMEntry scope in PropertySlot after doing
+           a VMInquiry.
+        2. Rebase bindings test results to match.
+
+        * bindings/js/JSDOMAbstractOperations.h:
+        (WebCore::isVisibleNamedProperty):
+        (WebCore::accessVisibleNamedProperty):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GeneratePut):
+        (GeneratePutByIndex):
+        (GenerateDefineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::put):
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::putByIndex):
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::put):
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::putByIndex):
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::put):
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::putByIndex):
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedSetterNoIdentifier::put):
+        (WebCore::JSTestNamedSetterNoIdentifier::putByIndex):
+        (WebCore::JSTestNamedSetterNoIdentifier::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedSetterThrowingException::put):
+        (WebCore::JSTestNamedSetterThrowingException::putByIndex):
+        (WebCore::JSTestNamedSetterThrowingException::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedSetterWithIdentifier::put):
+        (WebCore::JSTestNamedSetterWithIdentifier::putByIndex):
+        (WebCore::JSTestNamedSetterWithIdentifier::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetter::put):
+        (WebCore::JSTestNamedSetterWithIndexedGetter::putByIndex):
+        (WebCore::JSTestNamedSetterWithIndexedGetter::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::put):
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::putByIndex):
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        (WebCore::JSTestNamedSetterWithUnforgableProperties::put):
+        (WebCore::JSTestNamedSetterWithUnforgableProperties::putByIndex):
+        (WebCore::JSTestNamedSetterWithUnforgableProperties::defineOwnProperty):
+
 2020-07-22  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] canPlayType with 'codecs' parameter should never return "maybe"

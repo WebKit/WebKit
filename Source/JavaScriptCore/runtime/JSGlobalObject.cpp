@@ -506,8 +506,9 @@ void JSGlobalObject::setGlobalThis(VM& vm, JSObject* globalThis)
 
 static GetterSetter* getGetterById(JSGlobalObject* globalObject, JSObject* base, const Identifier& ident)
 {
+    VM& vm = globalObject->vm();
     JSValue baseValue = JSValue(base);
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry, &vm);
     baseValue.getPropertySlot(globalObject, ident, slot);
     return jsCast<GetterSetter*>(slot.getPureResult());
 }
@@ -1394,11 +1395,13 @@ bool JSGlobalObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyNam
 
 bool JSGlobalObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
+    VM& vm = globalObject->vm();
     JSGlobalObject* thisObject = jsCast<JSGlobalObject*>(object);
-    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm);
     // silently ignore attempts to add accessors aliasing vars.
     if (descriptor.isAccessorDescriptor() && symbolTableGet(thisObject, propertyName, slot))
         return false;
+    slot.disallowVMEntry.reset();
     return Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow);
 }
 
@@ -2065,7 +2068,7 @@ void JSGlobalObject::tryInstallArraySpeciesWatchpoint()
         m_arraySpeciesWatchpointSet.invalidate(vm, StringFireDetail("Was not able to set up array species watchpoint."));
     };
 
-    PropertySlot constructorSlot(arrayPrototype, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot constructorSlot(arrayPrototype, PropertySlot::InternalMethodType::VMInquiry, &vm);
     arrayPrototype->getOwnPropertySlot(arrayPrototype, this, vm.propertyNames->constructor, constructorSlot);
     scope.assertNoException();
     if (constructorSlot.slotBase() != arrayPrototype
@@ -2079,7 +2082,7 @@ void JSGlobalObject::tryInstallArraySpeciesWatchpoint()
     if (constructorStructure->isDictionary())
         constructorStructure = constructorStructure->flattenDictionaryStructure(vm, arrayConstructor);
 
-    PropertySlot speciesSlot(arrayConstructor, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot speciesSlot(arrayConstructor, PropertySlot::InternalMethodType::VMInquiry, &vm);
     arrayConstructor->getOwnPropertySlot(arrayConstructor, this, vm.propertyNames->speciesSymbol, speciesSlot);
     scope.assertNoException();
     if (speciesSlot.slotBase() != arrayConstructor

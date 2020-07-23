@@ -728,7 +728,7 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSGlobalObject* globalObject = callee->globalObject(vm);
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {
-        PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry);
+        PropertySlot slot(callee, PropertySlot::InternalMethodType::VMInquiry, &vm);
         PropertyName propertyName(ident);
         bool hasProperty = callee->getPropertySlot(globalObject, propertyName, slot);
         scope.assertNoException();

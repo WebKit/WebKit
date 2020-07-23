@@ -634,7 +634,7 @@ LLINT_SLOW_PATH_DECL(slow_path_try_get_by_id)
     auto bytecode = pc->as<OpTryGetById>();
     const Identifier& ident = codeBlock->identifier(bytecode.m_property);
     JSValue baseValue = getOperand(callFrame, bytecode.m_base);
-    PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot slot(baseValue, PropertySlot::PropertySlot::InternalMethodType::VMInquiry, &vm);
 
     baseValue.getPropertySlot(globalObject, ident, slot);
     JSValue result = slot.getPureResult();

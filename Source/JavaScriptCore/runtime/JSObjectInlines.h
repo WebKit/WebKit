@@ -584,6 +584,7 @@ ALWAYS_INLINE bool JSObject::getPrivateFieldSlot(JSObject* object, JSGlobalObjec
         return false;
 
     JSValue value = object->getDirect(offset);
+#if ASSERT_ENABLED
     ASSERT(value);
     if (value.isCell()) {
         JSCell* cell = value.asCell();
@@ -594,6 +595,7 @@ ALWAYS_INLINE bool JSObject::getPrivateFieldSlot(JSObject* object, JSGlobalObjec
         // as in JSObject::getOwnNonIndexPropertySlot()
         // https://bugs.webkit.org/show_bug.cgi?id=194435
     }
+#endif
 
     slot.setValue(object, attributes, value, offset);
     return true;

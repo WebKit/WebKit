@@ -174,7 +174,7 @@ EncodedJSValue JIT_OPERATION operationTryGetById(JSGlobalObject* globalObject, S
     stubInfo->tookSlowPath = true;
 
     JSValue baseValue = JSValue::decode(base);
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry, &vm);
     baseValue.getPropertySlot(globalObject, ident, slot);
 
     return JSValue::encode(slot.getPureResult());
@@ -190,7 +190,7 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdGeneric(JSGlobalObject* globalOb
     Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry, &vm);
     baseValue.getPropertySlot(globalObject, ident, slot);
 
     return JSValue::encode(slot.getPureResult());
@@ -206,7 +206,7 @@ EncodedJSValue JIT_OPERATION operationTryGetByIdOptimize(JSGlobalObject* globalO
     Identifier ident = Identifier::fromUid(vm, identifier.uid());
 
     JSValue baseValue = JSValue::decode(base);
-    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot slot(baseValue, PropertySlot::InternalMethodType::VMInquiry, &vm);
 
     baseValue.getPropertySlot(globalObject, ident, slot);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

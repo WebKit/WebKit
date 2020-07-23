@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,7 @@ public:
     void clearPreviousID();
 
     JSString* objectToStringValue() const;
-    void setObjectToStringValue(JSGlobalObject*, VM&, Structure* baseStructure, JSString* value, PropertySlot toStringTagSymbolSlot);
+    void setObjectToStringValue(JSGlobalObject*, VM&, Structure* baseStructure, JSString* value, const PropertySlot& toStringTagSymbolSlot);
     void giveUpOnObjectToStringValueCache() { m_objectToStringValue.setWithoutWriteBarrier(objectToStringCacheGiveUpMarker()); }
     bool canCacheObjectToStringValue() { return m_objectToStringValue.unvalidatedGet() == objectToStringCacheGiveUpMarker(); }
     static JSString* objectToStringCacheGiveUpMarker() { return bitwise_cast<JSString*>(static_cast<uintptr_t>(1)); }

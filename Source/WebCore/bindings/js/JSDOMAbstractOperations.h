@@ -59,7 +59,7 @@ static bool isVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject, JSC
         return false;
     
     // 2. If O has an own property named P, then return false.
-    JSC::PropertySlot slot { &thisObject, JSC::PropertySlot::InternalMethodType::VMInquiry };
+    JSC::PropertySlot slot { &thisObject, JSC::PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject.vm() };
     if (JSC::JSObject::getOwnPropertySlot(&thisObject, &lexicalGlobalObject, propertyName, slot))
         return false;
     
@@ -99,7 +99,7 @@ static auto accessVisibleNamedProperty(JSC::JSGlobalObject& lexicalGlobalObject,
         return WTF::nullopt;
 
     // 2. If O has an own property named P, then return false.
-    JSC::PropertySlot slot { &thisObject, JSC::PropertySlot::InternalMethodType::VMInquiry };
+    JSC::PropertySlot slot { &thisObject, JSC::PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject.vm() };
     if (JSC::JSObject::getOwnPropertySlot(&thisObject, &lexicalGlobalObject, propertyName, slot))
         return WTF::nullopt;
 

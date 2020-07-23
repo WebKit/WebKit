@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *  Copyright (C) 2015 Canon Inc. All rights reserved.
@@ -508,7 +508,7 @@ void JSFunction::getOwnNonIndexPropertyNames(JSObject* object, JSGlobalObject* g
     if (mode.includeDontEnumProperties()) {
         if (!thisObject->isHostOrBuiltinFunction()) {
             // Make sure prototype has been reified.
-            PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
+            PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm);
             thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, globalObject, vm.propertyNames->prototype, slot);
             RETURN_IF_EXCEPTION(scope, void());
 
@@ -563,11 +563,12 @@ bool JSFunction::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName pr
         slot.disableCaching();
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
-        PropertySlot getSlot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
+        PropertySlot getSlot(thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm);
         thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, globalObject, propertyName, getSlot);
         RETURN_IF_EXCEPTION(scope, false);
         if (FunctionRareData* rareData = thisObject->rareData())
             rareData->clear("Store to prototype property of a function");
+        getSlot.disallowVMEntry.reset();
         RELEASE_AND_RETURN(scope, Base::put(thisObject, globalObject, propertyName, value, slot));
     }
 
@@ -642,11 +643,12 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
     if (propertyName == vm.propertyNames->prototype) {
         // Make sure prototype has been reified, such that it can only be overwritten
         // following the rules set out in ECMA-262 8.12.9.
-        PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry);
+        PropertySlot slot(thisObject, PropertySlot::InternalMethodType::VMInquiry, &vm);
         thisObject->methodTable(vm)->getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
         RETURN_IF_EXCEPTION(scope, false);
         if (FunctionRareData* rareData = thisObject->rareData())
             rareData->clear("Store to prototype property of a function");
+        slot.disallowVMEntry.reset();
         RELEASE_AND_RETURN(scope, Base::defineOwnProperty(object, globalObject, propertyName, descriptor, throwException));
     }
 

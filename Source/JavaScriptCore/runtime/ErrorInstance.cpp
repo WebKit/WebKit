@@ -139,7 +139,7 @@ String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
 
     JSValue nameValue;
     auto namePropertName = vm.propertyNames->name;
-    PropertySlot nameSlot(this, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot nameSlot(this, PropertySlot::InternalMethodType::VMInquiry, &vm);
 
     JSValue currentObj = this;
     unsigned prototypeDepth = 0;
@@ -167,7 +167,7 @@ String ErrorInstance::sanitizedToString(JSGlobalObject* globalObject)
 
     JSValue messageValue;
     auto messagePropertName = vm.propertyNames->message;
-    PropertySlot messageSlot(this, PropertySlot::InternalMethodType::VMInquiry);
+    PropertySlot messageSlot(this, PropertySlot::InternalMethodType::VMInquiry, &vm);
     if (JSObject::getOwnPropertySlot(this, globalObject, messagePropertName, messageSlot) && messageSlot.isValue())
         messageValue = messageSlot.getValue(globalObject, messagePropertName);
     scope.assertNoException();
