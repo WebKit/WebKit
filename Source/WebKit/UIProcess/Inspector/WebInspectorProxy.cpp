@@ -673,6 +673,9 @@ void WebInspectorProxy::browserExtensionsDisabled(HashSet<String>&& extensionIDs
 
 void WebInspectorProxy::save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs)
 {
+    if (!m_inspectedPage->preferences().developerExtrasEnabled())
+        return;
+
     ASSERT(!filename.isEmpty());
     if (filename.isEmpty())
         return;
@@ -682,6 +685,9 @@ void WebInspectorProxy::save(const String& filename, const String& content, bool
 
 void WebInspectorProxy::append(const String& filename, const String& content)
 {
+    if (!m_inspectedPage->preferences().developerExtrasEnabled())
+        return;
+
     ASSERT(!filename.isEmpty());
     if (filename.isEmpty())
         return;
