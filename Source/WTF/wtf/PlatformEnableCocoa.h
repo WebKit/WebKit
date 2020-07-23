@@ -204,7 +204,7 @@
 #define ENABLE_FILTERS_LEVEL_2 1
 #endif
 
-#if !defined(ENABLE_FTL_JIT) && !USE(JSVALUE32_64)
+#if !defined(ENABLE_FTL_JIT) && !USE(JSVALUE32_64) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 #define ENABLE_FTL_JIT 1
 #endif
 
