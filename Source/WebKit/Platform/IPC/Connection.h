@@ -448,7 +448,7 @@ private:
         OVERLAPPED& state() { return m_state; }
 
     private:
-        static void callback(void*, BOOLEAN);
+        static void WINAPI callback(void*, BOOLEAN);
 
         OVERLAPPED m_state;
         HANDLE m_waitHandle { INVALID_HANDLE_VALUE };

@@ -1,3 +1,15 @@
+2020-07-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][32bit] ConnectionWin.cpp(327): error C2664: 'BOOL RegisterWaitForSingleObject(...)': cannot convert argument 3 from 'void (__cdecl *)(...)' to 'WAITORTIMERCALLBACK'
+        https://bugs.webkit.org/show_bug.cgi?id=214658
+
+        Reviewed by Darin Adler.
+
+        __cdecl and __stdcall calling conventions don't match.
+        <https://docs.microsoft.com/en-us/cpp/cpp/argument-passing-and-naming-conventions>
+
+        * Platform/IPC/Connection.h: Added WINAPI to Connection::EventListener::callback method.
+
 2020-07-22  David Kilzer  <ddkilzer@apple.com>
 
         Follow-up: [IPC hardening] WebKit::ObjCObjectGraph::decode() and encode() should use enum ObjCType type
