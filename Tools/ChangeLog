@@ -1,3 +1,14 @@
+2020-07-23  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add support to send emails in ews
+        https://bugs.webkit.org/show_bug.cgi?id=214670
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/ews-build/send_email.py: Added script to send emails.
+        (send_email):
+        (send_email_to_bot_watchers):
+
 2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Update macOS Version macros
