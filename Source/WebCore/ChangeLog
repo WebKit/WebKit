@@ -1,3 +1,9 @@
+2020-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, update feature status for async clipboard API
+
+        * features.json: Move from "In Development" to "Supported".
+
 2020-07-21  Mark Lam  <mark.lam@apple.com>
 
         Disallow VM entry when doing a VMInquiry.

@@ -14,7 +14,7 @@
     {
         "name": "Async Clipboard API",
         "status": {
-            "status": "In Development"
+            "status": "Supported"
         },
         "url": "https://www.w3.org/TR/clipboard-apis/#async-clipboard-api",
         "category": "webapps",
