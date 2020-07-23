@@ -282,6 +282,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self setHeaderView:nil];
     [self setBackgroundColor:[NSColor clearColor]];
     [self setIntercellSpacing:NSMakeSize(0, self.intercellSpacing.height)];
+#if HAVE(NSTABLEVIEWSTYLE)
+    [self setStyle:NSTableViewStyleFullWidth];
+#endif
 
     auto column = adoptNS([[NSTableColumn alloc] init]);
     [column setWidth:rect.width()];
@@ -345,9 +348,15 @@ static BOOL shouldShowDividersBetweenCells(const Vector<WebCore::DataListSuggest
     [_scrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
     [_scrollView setDocumentView:_table.get()];
     [_scrollView setDrawsBackground:NO];
-    [[_scrollView contentView] setAutomaticallyAdjustsContentInsets:NO];
-    [[_scrollView contentView] setContentInsets:NSEdgeInsetsMake(dropdownVerticalPadding, 0, dropdownVerticalPadding, 0)];
-    [[_scrollView contentView] scrollToPoint:NSMakePoint(0, -dropdownVerticalPadding)];
+
+    auto insetView =
+#if HAVE(NSTABLEVIEWSTYLE)
+        _scrollView;
+#else
+        [_scrollView contentView];
+#endif
+    [insetView setAutomaticallyAdjustsContentInsets:NO];
+    [insetView setContentInsets:NSEdgeInsetsMake(dropdownVerticalPadding, 0, dropdownVerticalPadding, 0)];
 
     [_table setDelegate:self];
     [_table setDataSource:self];

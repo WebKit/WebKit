@@ -1,3 +1,28 @@
+2020-07-23  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Datalist dropdown scrollbar position does not match visible region
+        https://bugs.webkit.org/show_bug.cgi?id=214656
+
+        Reviewed by Wenson Hsieh.
+
+        Currently, the content insets for the dropdown are set on an NSScrollView's contentView,
+        rather than the NSScrollView itself. On the latest macOS, this results in accurate state
+        within the NSScrollView, leading to an inaccurate scrollbar position. To fix, set the
+        content insets directly on the NSScrollView.
+
+        However, on older macOS, setting content insets on the NSScrollView causes the view to start
+        out slightly scrolled (by a value equal to the top inset). This issue is solved by preserving
+        the existing behavior (setting insets on the contentView) on older macOS.
+
+        Also, set the style of the embedded NSTableView to NSTableViewStyleFullWidth, to ensure the
+        view respects the insets we specify.
+
+        No new tests, as the change is purely visual and affects native UI.
+
+        * UIProcess/mac/WebDataListSuggestionsDropdownMac.mm:
+        (-[WKDataListSuggestionTableView initWithElementRect:]):
+        (-[WKDataListSuggestionsController initWithInformation:inView:]):
+
 2020-07-23  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] WebKit::ArgumentCoder<BlobPart>::decode() and encode() should use enum BlobPart::Type
