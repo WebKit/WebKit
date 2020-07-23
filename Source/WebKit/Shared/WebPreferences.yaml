@@ -662,20 +662,21 @@ WebRTCMDNSICECandidatesEnabled:
 
 VP9DecoderEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: defaultVP9DecoderEnabled()
   webcoreBinding: none
   humanReadableName: "VP9 decoder"
   humanReadableDescription: "Enable VP9 decoder"
   category: experimental
+  condition: ENABLE(VP9)
 
 WebMParserEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: defaultWebMParserEnabled()
   webcoreBinding: RuntimeEnabledFeatures
   humanReadableName: "WebM MSE parser"
   humanReadableDescription: "Enable WebM MSE parser"
   category: experimental
-  condition: ENABLE(MEDIA_SOURCE)
+  condition: ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
 
 UseLegacyTextAlignPositionedElementBehavior:
   type: bool

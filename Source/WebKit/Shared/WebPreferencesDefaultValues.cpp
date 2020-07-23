@@ -243,4 +243,26 @@ bool defaultWebXREnabled()
 
 #endif // ENABLE(WEBXR)
 
+#if ENABLE(VP9)
+bool defaultVP9DecoderEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("vp9_decoder");
+#endif
+
+    return true;
+}
+#endif
+
+#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
+bool defaultWebMParserEnabled()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("webm_parser");
+#endif
+
+    return true;
+}
+#endif
+
 } // namespace WebKit

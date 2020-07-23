@@ -1,3 +1,13 @@
+2020-07-22  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add feature flag for WebM & VP9
+        https://bugs.webkit.org/show_bug.cgi?id=214672
+        <rdar://problem/65959506>
+
+        Reviewed by Beth Dakin.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Update macOS Version macros
