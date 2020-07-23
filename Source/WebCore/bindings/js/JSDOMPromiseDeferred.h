@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -289,7 +289,7 @@ Ref<DeferredPromise> createDeferredPromise(JSC::JSGlobalObject&, JSDOMWindow&);
 void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, const void*, size_t);
-WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&);
+WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject&, JSDOMGlobalObject&, JSC::JSPromise&, JSC::CatchScope&);
 
 enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject&, const String&, RejectedPromiseWithTypeErrorCause);
@@ -300,7 +300,7 @@ template<PromiseFunction promiseFunction>
 inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame)
 {
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
     auto& globalObject = callerGlobalObject(lexicalGlobalObject, callFrame);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
@@ -308,10 +308,10 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
 
     promiseFunction(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise));
 
-    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise);
+    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise, catchScope);
     // FIXME: We could have error since any JS call can throw stack-overflow errors.
     // https://bugs.webkit.org/show_bug.cgi?id=203402
-    RETURN_IF_EXCEPTION(scope, JSC::jsUndefined());
+    RETURN_IF_EXCEPTION(catchScope, JSC::jsUndefined());
     return promise;
 }
 
@@ -319,7 +319,7 @@ template<typename PromiseFunctor>
 inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, PromiseFunctor functor)
 {
     JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
     auto& globalObject = callerGlobalObject(lexicalGlobalObject, callFrame);
     auto* promise = JSC::JSPromise::create(vm, globalObject.promiseStructure());
@@ -327,10 +327,10 @@ inline JSC::JSValue callPromiseFunction(JSC::JSGlobalObject& lexicalGlobalObject
 
     functor(lexicalGlobalObject, callFrame, DeferredPromise::create(globalObject, *promise));
 
-    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise);
+    rejectPromiseWithExceptionIfAny(lexicalGlobalObject, globalObject, *promise, catchScope);
     // FIXME: We could have error since any JS call can throw stack-overflow errors.
     // https://bugs.webkit.org/show_bug.cgi?id=203402
-    RETURN_IF_EXCEPTION(scope, JSC::jsUndefined());
+    RETURN_IF_EXCEPTION(catchScope, JSC::jsUndefined());
     return promise;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,6 +150,7 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
     }
 
     reject(lexicalGlobalObject, error, rejectAsHandled);
+    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
 }
 
 void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHandled rejectAsHandled)
@@ -197,16 +198,14 @@ void DeferredPromise::reject(const JSC::PrivateName& privateName, RejectAsHandle
     reject(*lexicalGlobalObject, JSC::Symbol::create(lexicalGlobalObject->vm(), privateName.uid()), rejectAsHandled);
 }
 
-void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, JSPromise& promise)
+void rejectPromiseWithExceptionIfAny(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, JSPromise& promise, JSC::CatchScope& catchScope)
 {
-    VM& vm = lexicalGlobalObject.vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
-    if (LIKELY(!scope.exception()))
+    UNUSED_PARAM(lexicalGlobalObject);
+    if (LIKELY(!catchScope.exception()))
         return;
 
-    JSValue error = scope.exception()->value();
-    scope.clearException();
+    JSValue error = catchScope.exception()->value();
+    catchScope.clearException();
 
     DeferredPromise::create(globalObject, promise)->reject<IDLAny>(error);
 }

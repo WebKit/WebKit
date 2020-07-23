@@ -1,3 +1,14 @@
+2020-07-23  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception checks below RTCPeerConnection.generateCertificate().
+        https://bugs.webkit.org/show_bug.cgi?id=214668
+        <rdar://problem/65929975>
+
+        Reviewed by Yusuke Suzuki.
+
+        * webrtc/missing-exception-checks-RTCPeerConnection-generateCertificate-expected.txt: Added.
+        * webrtc/missing-exception-checks-RTCPeerConnection-generateCertificate.html: Added.
+
 2020-07-23  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update GTK baseline after r264646.

@@ -1,3 +1,27 @@
+2020-07-23  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception checks below RTCPeerConnection.generateCertificate().
+        https://bugs.webkit.org/show_bug.cgi?id=214668
+        <rdar://problem/65929975>
+
+        Reviewed by Yusuke Suzuki.
+
+        Test: webrtc/missing-exception-checks-RTCPeerConnection-generateCertificate.html
+
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::JSCustomElementRegistry::whenDefined):
+        * bindings/js/JSDOMConvertUnion.h:
+        * bindings/js/JSDOMOperationReturningPromise.h:
+        (WebCore::IDLOperationReturningPromise::call):
+        (WebCore::IDLOperationReturningPromise::callReturningOwnPromise):
+        (WebCore::IDLOperationReturningPromise::callStatic):
+        (WebCore::IDLOperationReturningPromise::callStaticReturningOwnPromise):
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::reject):
+        (WebCore::rejectPromiseWithExceptionIfAny):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::callPromiseFunction):
+
 2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Update macOS Version macros
