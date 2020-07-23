@@ -1,3 +1,62 @@
+2020-07-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] gst_buffer_unmap: assertion 'GST_IS_BUFFER (buffer)' failed
+        https://bugs.webkit.org/show_bug.cgi?id=213364
+
+        Reviewed by Philippe Normand.
+
+        In some cases as in passing init datas around, the InitData that
+        contains a SharedBuffer that contains a non-reffed mapped buffer
+        can outlive the buffer itself, creating this problem.
+
+        In this patch we make a new class called GstMappedOwnedBuffer that
+        is to map read-only buffers and that is used for the InitData
+        SharedBuffer. GstMappedBuffer does not support SharedBuffer
+        anymore and is not ref counted anymore as it is intended for short
+        term and quick usage.
+
+        Test: imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-to-multiple-video-elements.https.html
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::create):
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::DataSegment::data const):
+        (WebCore::SharedBuffer::DataSegment::size const):
+        * platform/SharedBuffer.h:
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcAllocateBuffersAndRenderAudio):
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::GstMappedBuffer::createVector const):
+        (WebCore::GstMappedOwnedBuffer::createSharedBuffer):
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        (WebCore::GstMappedBuffer::GstMappedBuffer):
+        (WebCore::GstMappedBuffer::~GstMappedBuffer):
+        (WebCore::GstMappedBuffer::isValid const):
+        (WebCore::GstMappedBuffer::data):
+        (WebCore::GstMappedBuffer::data const):
+        (WebCore::GstMappedBuffer::size const):
+        (WebCore::GstMappedBuffer::operator bool const):
+        (WebCore::GstMappedBuffer::operator! const):
+        (WebCore::GstMappedOwnedBuffer::create):
+        (WebCore::GstMappedOwnedBuffer::GstMappedOwnedBuffer):
+        (WebCore::operator==):
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfSample):
+        * platform/graphics/gstreamer/eme/CDMProxyThunder.cpp:
+        (WebCore::CDMProxyThunder::getDecryptionSession const):
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.h:
+        (WebCore::InitData::InitData):
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (decrypt):
+        * platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp:
+        (WebCore::MockRealtimeAudioSourceGStreamer::render):
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData):
+        * platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingVideoSourceLibWebRTC::createBlackFrame):
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::Fragmentize):
+
 2020-07-23  Mark Lam  <mark.lam@apple.com>
 
         Fix missing exception checks below RTCPeerConnection.generateCertificate().

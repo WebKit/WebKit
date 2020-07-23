@@ -58,13 +58,12 @@ SharedBuffer::SharedBuffer(Vector<char>&& data)
 }
 
 #if USE(GSTREAMER)
-Ref<SharedBuffer> SharedBuffer::create(GstMappedBuffer& mappedBuffer)
+Ref<SharedBuffer> SharedBuffer::create(GstMappedOwnedBuffer& mappedBuffer)
 {
-    ASSERT(mappedBuffer.isSharable());
     return adoptRef(*new SharedBuffer(mappedBuffer));
 }
 
-SharedBuffer::SharedBuffer(GstMappedBuffer& mappedBuffer)
+SharedBuffer::SharedBuffer(GstMappedOwnedBuffer& mappedBuffer)
     : m_size(mappedBuffer.size())
 {
     m_segments.append({0, DataSegment::create(&mappedBuffer)});
@@ -244,7 +243,7 @@ const char* SharedBuffer::DataSegment::data() const
         [](const GRefPtr<GBytes>& data) { return reinterpret_cast<const char*>(g_bytes_get_data(data.get(), nullptr)); },
 #endif
 #if USE(GSTREAMER)
-        [](const RefPtr<GstMappedBuffer>& data) { return reinterpret_cast<const char*>(data->data()); },
+        [](const RefPtr<GstMappedOwnedBuffer>& data) { return reinterpret_cast<const char*>(data->data()); },
 #endif
         [](const FileSystem::MappedFileData& data) { return reinterpret_cast<const char*>(data.data()); }
     );
@@ -325,7 +324,7 @@ size_t SharedBuffer::DataSegment::size() const
         [](const GRefPtr<GBytes>& data) { return g_bytes_get_size(data.get()); },
 #endif
 #if USE(GSTREAMER)
-        [](const RefPtr<GstMappedBuffer>& data) { return data->size(); },
+        [](const RefPtr<GstMappedOwnedBuffer>& data) { return data->size(); },
 #endif
         [](const FileSystem::MappedFileData& data) { return data.size(); }
     );

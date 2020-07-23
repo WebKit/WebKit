@@ -40,15 +40,15 @@ namespace TestWebKitAPI {
 TEST_F(GStreamerTest, mappedBufferBasics)
 {
     GRefPtr<GstBuffer> buf = adoptGRef(gst_buffer_new_allocate(nullptr, 64, nullptr));
-    auto mappedBuf = GstMappedBuffer::create(buf.get(), GST_MAP_READ);
+    GstMappedBuffer mappedBuf(buf, GST_MAP_READ);
     ASSERT_TRUE(mappedBuf);
-    EXPECT_EQ(mappedBuf->size(), 64);
+    EXPECT_EQ(mappedBuf.size(), 64);
 
-    auto mappedBuf2 = GstMappedBuffer::create(buf.get(), GST_MAP_READ);
+    GstMappedBuffer mappedBuf2(buf, GST_MAP_READ);
     ASSERT_TRUE(mappedBuf2);
-    EXPECT_EQ(*mappedBuf, *mappedBuf2);
-    EXPECT_EQ(buf.get(), *mappedBuf);
-    EXPECT_EQ(*mappedBuf2, buf.get());
+    EXPECT_EQ(mappedBuf, mappedBuf2);
+    EXPECT_EQ(buf.get(), mappedBuf);
+    EXPECT_EQ(mappedBuf2, buf.get());
 }
 
 TEST_F(GStreamerTest, mappedBufferReadSanity)
@@ -56,11 +56,10 @@ TEST_F(GStreamerTest, mappedBufferReadSanity)
     gpointer memory = g_malloc(16);
     memset(memory, 'x', 16);
     GRefPtr<GstBuffer> buf = adoptGRef(gst_buffer_new_wrapped(memory, 16));
-    auto mappedBuf = GstMappedBuffer::create(buf.get(), GST_MAP_READ);
+    GstMappedBuffer mappedBuf(buf, GST_MAP_READ);
     ASSERT_TRUE(mappedBuf);
-    EXPECT_EQ(mappedBuf->size(), 16);
-    EXPECT_EQ(memcmp(memory, mappedBuf->data(), 16), 0);
-    EXPECT_EQ(memcmp(memory, mappedBuf->createSharedBuffer()->data(), 16), 0);
+    EXPECT_EQ(mappedBuf.size(), 16);
+    EXPECT_EQ(memcmp(memory, mappedBuf.data(), 16), 0);
 }
 
 TEST_F(GStreamerTest, mappedBufferWriteSanity)
@@ -69,23 +68,12 @@ TEST_F(GStreamerTest, mappedBufferWriteSanity)
     memset(memory, 'x', 16);
     GRefPtr<GstBuffer> buf = adoptGRef(gst_buffer_new_wrapped(memory, 16));
 
-    auto mappedBuf = GstMappedBuffer::create(buf.get(), GST_MAP_WRITE);
+    GstMappedBuffer mappedBuf(buf.get(), GST_MAP_WRITE);
     ASSERT_TRUE(mappedBuf);
-    EXPECT_EQ(mappedBuf->size(), 16);
-    memset(mappedBuf->data(), 'y', mappedBuf->size());
+    EXPECT_EQ(mappedBuf.size(), 16);
+    memset(mappedBuf.data(), 'y', mappedBuf.size());
 
-    EXPECT_EQ(memcmp(memory, mappedBuf->data(), 16), 0);
-}
-
-TEST_F(GStreamerTest, mappedBufferCachesSharedBuffers)
-{
-    GRefPtr<GstBuffer> buf = adoptGRef(gst_buffer_new_allocate(nullptr, 64, nullptr));
-    auto mappedBuf = GstMappedBuffer::create(buf.get(), GST_MAP_READ);
-    ASSERT_TRUE(mappedBuf);
-    auto sharedBuf = mappedBuf->createSharedBuffer();
-    // We expect the same data pointer wrapped by shared buffer, no
-    // copies need to be made.
-    EXPECT_EQ(sharedBuf->data(), mappedBuf->createSharedBuffer()->data());
+    EXPECT_EQ(memcmp(memory, mappedBuf.data(), 16), 0);
 }
 
 TEST_F(GStreamerTest, mappedBufferDoesNotAddExtraRefs)
@@ -99,8 +87,49 @@ TEST_F(GStreamerTest, mappedBufferDoesNotAddExtraRefs)
 
     ASSERT_EQ(GST_OBJECT_REFCOUNT(buf.get()), 1);
 
-    auto mappedBuf = GstMappedBuffer::create(buf.get(), GST_MAP_READWRITE);
+    GstMappedBuffer mappedBuf(buf, GST_MAP_READWRITE);
     ASSERT_TRUE(mappedBuf);
+
+    ASSERT_EQ(GST_OBJECT_REFCOUNT(buf.get()), 1);
+}
+
+TEST_F(GStreamerTest, mappedOwnedBufferReadSanity)
+{
+    gpointer memory = g_malloc(16);
+    memset(memory, 'x', 16);
+    GRefPtr<GstBuffer> buf = adoptGRef(gst_buffer_new_wrapped(memory, 16));
+    auto mappedBuf = GstMappedOwnedBuffer::create(buf);
+    ASSERT_TRUE(mappedBuf);
+    EXPECT_EQ(mappedBuf->size(), 16);
+    EXPECT_EQ(memcmp(memory, mappedBuf->data(), 16), 0);
+    EXPECT_EQ(memcmp(memory, mappedBuf->createSharedBuffer()->data(), 16), 0);
+}
+
+TEST_F(GStreamerTest, mappedOwnedBufferCachesSharedBuffers)
+{
+    GRefPtr<GstBuffer> buf = adoptGRef(gst_buffer_new_allocate(nullptr, 64, nullptr));
+    auto mappedBuf = GstMappedOwnedBuffer::create(buf);
+    ASSERT_TRUE(mappedBuf);
+    auto sharedBuf = mappedBuf->createSharedBuffer();
+    // We expect the same data pointer wrapped by shared buffer, no
+    // copies need to be made.
+    EXPECT_EQ(sharedBuf->data(), mappedBuf->createSharedBuffer()->data());
+}
+
+TEST_F(GStreamerTest, mappedOwnedBufferDoesAddsExtraRefs)
+{
+    // GstMappedOwnedBuffer needs to bump the buffer reference count
+    // so that it is sure that the buffer outlives the mapped buffer.
+    GRefPtr<GstBuffer> buf = adoptGRef(gst_buffer_new());
+
+    ASSERT_EQ(GST_OBJECT_REFCOUNT(buf.get()), 1);
+
+    {
+        auto mappedBuf = GstMappedOwnedBuffer::create(buf);
+        ASSERT_TRUE(mappedBuf);
+
+        ASSERT_EQ(GST_OBJECT_REFCOUNT(buf.get()), 2);
+    }
 
     ASSERT_EQ(GST_OBJECT_REFCOUNT(buf.get()), 1);
 }

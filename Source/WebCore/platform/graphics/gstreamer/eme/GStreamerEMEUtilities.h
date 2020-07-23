@@ -43,7 +43,7 @@ public:
     InitData(const String& systemId, GstBuffer* initData)
         : m_systemId(systemId)
     {
-        auto mappedInitData = GstMappedBuffer::create(initData, GST_MAP_READ);
+        auto mappedInitData = GstMappedOwnedBuffer::create(initData);
         if (!mappedInitData) {
             GST_ERROR("cannot map %s protection data", systemId.utf8().data());
             ASSERT_NOT_REACHED();

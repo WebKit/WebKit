@@ -82,64 +82,114 @@ inline GstClockTime toGstClockTime(const MediaTime &mediaTime)
     return static_cast<GstClockTime>(toGstUnsigned64Time(mediaTime));
 }
 
-class GstMappedBuffer : public ThreadSafeRefCounted<GstMappedBuffer> {
+class GstMappedBuffer {
+    WTF_MAKE_NONCOPYABLE(GstMappedBuffer);
 public:
-    static RefPtr<GstMappedBuffer> create(const GRefPtr<GstBuffer>& buffer, GstMapFlags flags)
+
+    GstMappedBuffer(GstMappedBuffer&& other)
+        : m_buffer(other.m_buffer)
+        , m_info(other.m_info)
+        , m_isValid(other.m_isValid)
     {
-        return create(buffer.get(), flags);
+        other.m_isValid = false;
     }
 
-    static RefPtr<GstMappedBuffer> create(GstBuffer* buffer, GstMapFlags flags)
+    // This GstBuffer is [ transfer none ], meaning that no reference
+    // is increased. Hence, this buffer must outlive the mapped
+    // buffer.
+    GstMappedBuffer(GstBuffer* buffer, GstMapFlags flags)
+        : m_buffer(buffer)
     {
-        GstMapInfo info;
-        if (!gst_buffer_map(buffer, &info, flags))
-            return nullptr;
-        return adoptRef(new GstMappedBuffer(buffer, WTFMove(info)));
+        ASSERT(GST_IS_BUFFER(buffer));
+        m_isValid = gst_buffer_map(m_buffer, &m_info, flags);
     }
 
     // Unfortunately, GST_MAP_READWRITE is defined out of line from the MapFlags
     // enum as an int, and C++ is careful to not implicity convert it to an enum.
-    static RefPtr<GstMappedBuffer> create(GstBuffer* buffer, int flags)
+    GstMappedBuffer(GstBuffer* buffer, int flags)
+        : GstMappedBuffer(buffer, static_cast<GstMapFlags>(flags)) { }
+    GstMappedBuffer(const GRefPtr<GstBuffer>& buffer, GstMapFlags flags)
+        : GstMappedBuffer(buffer.get(), flags) { }
+
+    virtual ~GstMappedBuffer()
     {
-        return GstMappedBuffer::create(buffer, static_cast<GstMapFlags>(flags));
+        if (m_isValid) {
+            m_isValid = false;
+            gst_buffer_unmap(m_buffer, &m_info);
+        }
     }
 
-    ~GstMappedBuffer()
-    {
-        gst_buffer_unmap(m_buffer, &m_info);
-    }
+    bool isValid() const { return m_isValid; }
+    uint8_t* data() { RELEASE_ASSERT(m_isValid); return static_cast<uint8_t*>(m_info.data); }
+    const uint8_t* data() const { RELEASE_ASSERT(m_isValid); return static_cast<uint8_t*>(m_info.data); }
+    size_t size() const { ASSERT(m_isValid); return m_isValid ? static_cast<size_t>(m_info.size) : 0; }
+    Vector<uint8_t> createVector() const;
 
-    uint8_t* data() { return static_cast<uint8_t*>(m_info.data); }
-    const uint8_t* data() const { return static_cast<uint8_t*>(m_info.data); }
-    size_t size() const { return static_cast<size_t>(m_info.size); }
-    bool isSharable() const { return !(m_info.flags & GST_MAP_WRITE); }
-    Ref<SharedBuffer> createSharedBuffer();
-    Vector<uint8_t> createVector();
+    explicit operator bool() const { return m_isValid; }
+    bool operator!() const { return !m_isValid; }
 
 private:
-    GstMappedBuffer(GstBuffer* buffer, GstMapInfo&& info)
-        : m_buffer(buffer)
-        , m_info(WTFMove(info))
-    {
-    }
-
     friend bool operator==(const GstMappedBuffer&, const GstMappedBuffer&);
     friend bool operator==(const GstMappedBuffer&, const GstBuffer*);
     friend bool operator==(const GstBuffer* a, const GstMappedBuffer& b) { return operator==(b, a); }
 
     GstBuffer* m_buffer { nullptr };
     GstMapInfo m_info;
+    bool m_isValid { false };
+};
+
+// This class maps only buffers in GST_MAP_READ mode to be able to
+// bump the reference count and keep it alive during the life of this
+// object.
+class GstMappedOwnedBuffer : public GstMappedBuffer, public ThreadSafeRefCounted<GstMappedOwnedBuffer> {
+
+public:
+    static RefPtr<GstMappedOwnedBuffer> create(GRefPtr<GstBuffer>&& buffer)
+    {
+        auto* mappedBuffer = new GstMappedOwnedBuffer(WTFMove(buffer));
+        if (!mappedBuffer->isValid()) {
+            delete mappedBuffer;
+            return nullptr;
+        }
+
+        return adoptRef(mappedBuffer);
+    }
+
+    static RefPtr<GstMappedOwnedBuffer> create(const GRefPtr<GstBuffer>& buffer)
+    {
+        return create(GRefPtr(buffer));
+    }
+
+    // This GstBuffer is [ transfer none ], meaning the reference
+    // count is increased during the life of this object.
+    static RefPtr<GstMappedOwnedBuffer> create(GstBuffer* buffer)
+    {
+        return create(GRefPtr(buffer));
+    }
+
+    Ref<SharedBuffer> createSharedBuffer();
+
+private:
+    GstMappedOwnedBuffer(GRefPtr<GstBuffer>&& buffer)
+        : GstMappedBuffer(buffer, GST_MAP_READ)
+        , m_ownedBuffer(WTFMove(buffer)) { }
+
+    GRefPtr<GstBuffer> m_ownedBuffer;
 };
 
 inline bool operator==(const GstMappedBuffer& a, const GstMappedBuffer& b)
 {
-    return a.size() == b.size() && !gst_buffer_memcmp(a.m_buffer, 0, b.data(), b.size());
+    ASSERT(a.isValid());
+    ASSERT(b.isValid());
+    return a.isValid() && b.isValid() && a.size() == b.size() && !gst_buffer_memcmp(a.m_buffer, 0, b.data(), b.size());
 }
 
 inline bool operator==(const GstMappedBuffer& a, const GstBuffer* b)
 {
+    ASSERT(a.isValid());
+    ASSERT(GST_IS_BUFFER(b));
     GstBuffer* nonConstB = const_cast<GstBuffer*>(b);
-    return a.size() == gst_buffer_get_size(nonConstB) && !gst_buffer_memcmp(nonConstB, 0, a.data(), a.size());
+    return a.isValid() && GST_IS_BUFFER(b) && a.size() == gst_buffer_get_size(nonConstB) && !gst_buffer_memcmp(nonConstB, 0, a.data(), a.size());
 }
 
 class GstMappedFrame {

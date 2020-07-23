@@ -84,13 +84,13 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
         GstAudioInfo* info = m_streamFormat->getInfo();
         GRefPtr<GstBuffer> buffer = adoptGRef(gst_buffer_new_allocate(nullptr, bipBopCount * m_streamFormat->bytesPerFrame(), nullptr));
         {
-            auto map = GstMappedBuffer::create(buffer.get(), GST_MAP_WRITE);
+            GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
 
             if (muted())
-                gst_audio_format_fill_silence(info->finfo, map->data(), map->size());
+                gst_audio_format_fill_silence(info->finfo, map.data(), map.size());
             else {
-                memcpy(map->data(), &m_bipBopBuffer[bipBopStart], sizeof(float) * bipBopCount);
-                addHum(s_HumVolume, s_HumFrequency, sampleRate(), m_samplesRendered, reinterpret_cast<float*>(map->data()), bipBopCount);
+                memcpy(map.data(), &m_bipBopBuffer[bipBopStart], sizeof(float) * bipBopCount);
+                addHum(s_HumVolume, s_HumFrequency, sampleRate(), m_samplesRendered, reinterpret_cast<float*>(map.data()), bipBopCount);
             }
         }
 

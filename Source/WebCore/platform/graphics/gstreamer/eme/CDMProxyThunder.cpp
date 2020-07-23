@@ -46,13 +46,13 @@ const WTF::Seconds s_licenseKeyResponseTimeout = WTF::Seconds(6);
 
 BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(const DecryptionContext& in) const
 {
-    auto mappedKeyID = GstMappedBuffer::create(in.keyIDBuffer, GST_MAP_READ);
+    GstMappedBuffer mappedKeyID(in.keyIDBuffer, GST_MAP_READ);
     if (!mappedKeyID) {
         GST_ERROR("Failed to map key ID buffer");
         return nullptr;
     }
 
-    auto keyID = mappedKeyID->createVector();
+    auto keyID = mappedKeyID.createVector();
 
     auto keyHandle = getOrWaitForKeyHandle(keyID);
     if (!keyHandle.hasValue() || !keyHandle.value()->isStatusCurrentlyValid())

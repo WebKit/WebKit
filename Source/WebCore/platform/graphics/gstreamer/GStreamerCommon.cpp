@@ -26,7 +26,6 @@
 #include "GLVideoSinkGStreamer.h"
 #include "GstAllocatorFastMalloc.h"
 #include "IntSize.h"
-#include "SharedBuffer.h"
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
 #include <mutex>
@@ -396,20 +395,16 @@ void connectSimpleBusMessageCallback(GstElement* pipeline)
     g_signal_connect(bus.get(), "message", G_CALLBACK(simpleBusMessageCallback), pipeline);
 }
 
-Ref<SharedBuffer> GstMappedBuffer::createSharedBuffer()
-{
-    // SharedBuffer provides a read-only view on what it expects are
-    // immutable data. Do not create one is writable and hence mutable.
-    RELEASE_ASSERT(isSharable());
-
-    return SharedBuffer::create(*this);
-}
-
-Vector<uint8_t> GstMappedBuffer::createVector()
+Vector<uint8_t> GstMappedBuffer::createVector() const
 {
     Vector<uint8_t> vector;
     vector.append(data(), size());
     return vector;
+}
+
+Ref<SharedBuffer> GstMappedOwnedBuffer::createSharedBuffer()
+{
+    return SharedBuffer::create(*this);
 }
 
 bool isGStreamerPluginAvailable(const char* name)

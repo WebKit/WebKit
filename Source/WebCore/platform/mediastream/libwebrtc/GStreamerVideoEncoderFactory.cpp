@@ -322,21 +322,21 @@ public:
     virtual void Fragmentize(webrtc::EncodedImage* encodedImage, std::unique_ptr<uint8_t[]>* encodedImageBuffer,
         size_t* bufferSize, GstBuffer* buffer, webrtc::RTPFragmentationHeader* fragmentationInfo)
     {
-        auto map = GstMappedBuffer::create(buffer, GST_MAP_READ);
+        GstMappedBuffer map(buffer, GST_MAP_READ);
 
-        if (*bufferSize < map->size()) {
-            encodedImage->set_size(map->size());
-            encodedImage->set_buffer(new uint8_t[map->size()], map->size());
+        if (*bufferSize < map.size()) {
+            encodedImage->set_size(map.size());
+            encodedImage->set_buffer(new uint8_t[map.size()], map.size());
             encodedImageBuffer->reset(encodedImage->data());
-            *bufferSize = map->size();
+            *bufferSize = map.size();
         }
 
-        memcpy(encodedImage->data(), map->data(), map->size());
-        encodedImage->set_size(map->size());
+        memcpy(encodedImage->data(), map.data(), map.size());
+        encodedImage->set_size(map.size());
 
         fragmentationInfo->VerifyAndAllocateFragmentationHeader(1);
         fragmentationInfo->fragmentationOffset[0] = 0;
-        fragmentationInfo->fragmentationLength[0] = map->size();
+        fragmentationInfo->fragmentationLength[0] = map.size();
     }
 
     virtual const gchar* Name() = 0;
@@ -399,9 +399,9 @@ public:
         std::vector<GstH264NalUnit> nals;
 
         const uint8_t startCode[4] = { 0, 0, 0, 1 };
-        auto map = GstMappedBuffer::create(gstbuffer, GST_MAP_READ);
+        GstMappedBuffer map(gstbuffer, GST_MAP_READ);
         while (parserResult == GST_H264_PARSER_OK) {
-            parserResult = gst_h264_parser_identify_nalu(m_parser, map->data(), offset, map->size(), &nalu);
+            parserResult = gst_h264_parser_identify_nalu(m_parser, map.data(), offset, map.size(), &nalu);
 
             nalu.sc_offset = offset;
             nalu.offset = offset + sizeof(startCode);
@@ -417,7 +417,7 @@ public:
             encodedImage->set_size(requiredSize);
             encodedImage->set_buffer(new uint8_t[requiredSize], requiredSize);
             encodedImageBuffer->reset(encodedImage->data());
-            *bufferSize = map->size();
+            *bufferSize = map.size();
         }
 
         // Iterate nal units and fill the Fragmentation info.
@@ -426,15 +426,15 @@ public:
         encodedImage->set_size(0);
         for (std::vector<GstH264NalUnit>::iterator nal = nals.begin(); nal != nals.end(); ++nal, fragmentIndex++) {
 
-            ASSERT(map->data()[nal->sc_offset + 0] == startCode[0]);
-            ASSERT(map->data()[nal->sc_offset + 1] == startCode[1]);
-            ASSERT(map->data()[nal->sc_offset + 2] == startCode[2]);
-            ASSERT(map->data()[nal->sc_offset + 3] == startCode[3]);
+            ASSERT(map.data()[nal->sc_offset + 0] == startCode[0]);
+            ASSERT(map.data()[nal->sc_offset + 1] == startCode[1]);
+            ASSERT(map.data()[nal->sc_offset + 2] == startCode[2]);
+            ASSERT(map.data()[nal->sc_offset + 3] == startCode[3]);
 
             fragmentationHeader->fragmentationOffset[fragmentIndex] = nal->offset;
             fragmentationHeader->fragmentationLength[fragmentIndex] = nal->size;
 
-            memcpy(encodedImage->data() + encodedImage->size(), &map->data()[nal->sc_offset],
+            memcpy(encodedImage->data() + encodedImage->size(), &map.data()[nal->sc_offset],
                 sizeof(startCode) + nal->size);
             encodedImage->set_size(nal->size + sizeof(startCode));
         }

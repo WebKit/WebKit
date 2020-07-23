@@ -113,9 +113,9 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
         if (isSilenced())
             gst_audio_format_fill_silence(m_outputStreamDescription->getInfo()->finfo, m_audioBuffer.data(), outBufferSize);
         else {
-            auto inMap = GstMappedBuffer::create(inBuffer.get(), GST_MAP_READ);
+            GstMappedBuffer inMap(inBuffer.get(), GST_MAP_READ);
 
-            gpointer in[1] = { inMap->data() };
+            gpointer in[1] = { inMap.data() };
             gpointer out[1] = { m_audioBuffer.data() };
             if (!gst_audio_converter_samples(m_sampleConverter.get(), static_cast<GstAudioConverterFlags>(0), in, inChunkSampleCount, out, outChunkSampleCount)) {
                 GST_ERROR("Could not convert samples.");

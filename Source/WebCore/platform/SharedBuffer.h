@@ -100,7 +100,7 @@ public:
 #endif
 
 #if USE(GSTREAMER)
-    static Ref<SharedBuffer> create(GstMappedBuffer&);
+    static Ref<SharedBuffer> create(GstMappedOwnedBuffer&);
 #endif
     // Calling data() causes all the data segments to be copied into one segment if they are not already.
     // Iterate the segments using begin() and end() instead.
@@ -147,7 +147,7 @@ public:
         static Ref<DataSegment> create(GRefPtr<GBytes>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 #endif
 #if USE(GSTREAMER)
-        static Ref<DataSegment> create(RefPtr<GstMappedBuffer>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
+        static Ref<DataSegment> create(RefPtr<GstMappedOwnedBuffer>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 #endif
         static Ref<DataSegment> create(FileSystem::MappedFileData&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 
@@ -171,7 +171,7 @@ public:
             : m_immutableData(WTFMove(data)) { }
 #endif
 #if USE(GSTREAMER)
-        DataSegment(RefPtr<GstMappedBuffer>&& data)
+        DataSegment(RefPtr<GstMappedOwnedBuffer>&& data)
             : m_immutableData(WTFMove(data)) { }
 #endif
         DataSegment(FileSystem::MappedFileData&& data)
@@ -188,7 +188,7 @@ public:
             GRefPtr<GBytes>,
 #endif
 #if USE(GSTREAMER)
-            RefPtr<GstMappedBuffer>,
+            RefPtr<GstMappedOwnedBuffer>,
 #endif
             FileSystem::MappedFileData> m_immutableData;
         friend class SharedBuffer;
@@ -230,7 +230,7 @@ private:
     explicit SharedBuffer(GBytes*);
 #endif
 #if USE(GSTREAMER)
-    explicit SharedBuffer(GstMappedBuffer&);
+    explicit SharedBuffer(GstMappedOwnedBuffer&);
 #endif
 
     void combineIntoOneSegment() const;

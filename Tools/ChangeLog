@@ -1,3 +1,16 @@
+2020-07-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] gst_buffer_unmap: assertion 'GST_IS_BUFFER (buffer)' failed
+        https://bugs.webkit.org/show_bug.cgi?id=213364
+
+        Reviewed by Philippe Normand.
+
+        Reworked tests for GstMappedBuffer and added tests for
+        GstMappedOwnedBuffer.
+
+        * TestWebKitAPI/Tests/WebCore/gstreamer/GstMappedBuffer.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2020-07-23  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add support to send emails in ews

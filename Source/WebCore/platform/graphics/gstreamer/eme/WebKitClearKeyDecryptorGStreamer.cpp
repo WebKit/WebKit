@@ -128,44 +128,43 @@ static bool decrypt(WebKitMediaCommonEncryptionDecrypt* self, GstBuffer* ivBuffe
         return false;
     }
 
-    auto mappedIVBuffer = WebCore::GstMappedBuffer::create(ivBuffer, GST_MAP_READ);
+    WebCore::GstMappedBuffer mappedIVBuffer(ivBuffer, GST_MAP_READ);
     if (!mappedIVBuffer) {
         GST_ERROR_OBJECT(self, "failed to map IV buffer");
         return false;
     }
 
-    auto mappedKeyIdBuffer = WebCore::GstMappedBuffer::create(keyIDBuffer, GST_MAP_READ);
+    WebCore::GstMappedBuffer mappedKeyIdBuffer(keyIDBuffer, GST_MAP_READ);
     if (!mappedKeyIdBuffer) {
         GST_ERROR_OBJECT(self, "Failed to map key id buffer");
         return false;
     }
 
-    auto mappedBuffer = WebCore::GstMappedBuffer::create(buffer, GST_MAP_READWRITE);
+    WebCore::GstMappedBuffer mappedBuffer(buffer, GST_MAP_READWRITE);
     if (!mappedBuffer) {
         GST_ERROR_OBJECT(self, "Failed to map buffer");
         return false;
     }
 
-    RefPtr<GstMappedBuffer> mappedSubsamplesBuffer;
     CDMProxyClearKey::cencDecryptContext context;
-    context.keyID = mappedKeyIdBuffer->data();
-    context.keyIDSizeInBytes = mappedKeyIdBuffer->size();
-    context.iv = mappedIVBuffer->data();
-    context.ivSizeInBytes = mappedIVBuffer->size();
-    context.encryptedBuffer = mappedBuffer->data();
-    context.encryptedBufferSizeInBytes = mappedBuffer->size();
+    context.keyID = mappedKeyIdBuffer.data();
+    context.keyIDSizeInBytes = mappedKeyIdBuffer.size();
+    context.iv = mappedIVBuffer.data();
+    context.ivSizeInBytes = mappedIVBuffer.size();
+    context.encryptedBuffer = mappedBuffer.data();
+    context.encryptedBufferSizeInBytes = mappedBuffer.size();
     context.numSubsamples = subsampleCount;
     if (!subsampleCount)
         context.subsamplesBuffer = nullptr;
     else {
         ASSERT(subsamplesBuffer);
-        mappedSubsamplesBuffer = WebCore::GstMappedBuffer::create(subsamplesBuffer, GST_MAP_READ);
+        WebCore::GstMappedBuffer mappedSubsamplesBuffer(subsamplesBuffer, GST_MAP_READ);
         if (!mappedSubsamplesBuffer) {
             GST_ERROR_OBJECT(self, "Failed to map subsample buffer");
             return false;
         }
-        context.subsamplesBuffer = mappedSubsamplesBuffer->data();
-        context.subsamplesBufferSizeInBytes = mappedSubsamplesBuffer->size();
+        context.subsamplesBuffer = mappedSubsamplesBuffer.data();
+        context.subsamplesBufferSizeInBytes = mappedSubsamplesBuffer.size();
     }
 
     return priv->cdmProxy->cencDecrypt(context);
