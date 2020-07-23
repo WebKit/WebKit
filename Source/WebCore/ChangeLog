@@ -1,3 +1,29 @@
+2020-07-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Update the isolated tree even when there is no client request.
+        https://bugs.webkit.org/show_bug.cgi?id=214692
+
+        Reviewed by Chris Fleizach.
+
+        AXObjectCache::updateIsolatedTree was checking for isIsolatedTreeEnabled,
+        which in turn checks for whether the clientSupportsIsolatedTree. Often
+        at the time updateIsolatedTree is called, there is no client request
+        since client requests and updates occur in separate threads,
+        independently from each other. Thus the isolated tree wasn't being
+        updated. This patch removes the check for isIsolatedTreeEnabled and rely
+        on the presence of an isolated tree for the given PageID to perform the
+        update.
+        In addition, added an update of the isolated tree for AXLoadingEvent::AXLoadingFinished.
+        This fixes several instance of dynamic content page changes that were
+        not being reflected on the isolated tree.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::clientSupportsIsolatedTree): Some logging.
+        (WebCore::AXObjectCache::isIsolatedTreeEnabled): Some logging.
+        (WebCore::AXObjectCache::frameLoadingEventNotification): Calls updateIsolatedTree.
+        (WebCore::AXObjectCache::updateIsolatedTree): Handles AXLoadingEvents.
+        * accessibility/AXObjectCache.h:
+
 2020-07-23  Clark Wang  <clark_wang@apple.com>
 
         Added PeriodicWave constructor according to spec

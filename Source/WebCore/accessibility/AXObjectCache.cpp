@@ -700,19 +700,25 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 bool AXObjectCache::clientSupportsIsolatedTree()
 {
+    AXTRACE("AXObjectCache::clientSupportsIsolatedTree");
+
     if (!RuntimeEnabledFeatures::sharedFeatures().isAccessibilityIsolatedTreeEnabled())
         return false;
 
+    AXLOG(makeString("_AXGetClientForCurrentRequestUntrusted = ", static_cast<unsigned>(_AXGetClientForCurrentRequestUntrusted())));
     return _AXGetClientForCurrentRequestUntrusted() == kAXClientTypeVoiceOver;
 }
 
 bool AXObjectCache::isIsolatedTreeEnabled()
 {
+    AXTRACE("AXObjectCache::isIsolatedTreeEnabled");
+
     if (UNLIKELY(_AXGetClientForCurrentRequestUntrusted() == kAXClientTypeWebKitTesting))
         return true;
 
     // If isolated tree mode is on, return true whether the client supports
     // isolated tree mode or the call is off of the main thread.
+    AXLOG(makeString("_AXSIsolatedTreeMode = ", _AXSIsolatedTreeModeFunctionIsAvailable() ? _AXSIsolatedTreeMode_Soft() : 0));
     return _AXSIsolatedTreeModeFunctionIsAvailable() && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff
         && (!isMainThread() || clientSupportsIsolatedTree());
 }
@@ -1540,6 +1546,11 @@ void AXObjectCache::frameLoadingEventNotification(Frame* frame, AXLoadingEvent l
         return;
 
     AccessibilityObject* obj = getOrCreate(contentRenderer);
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(*obj, loadingEvent);
+#endif
+
     frameLoadingEventPlatformNotification(obj, loadingEvent);
 }
 
@@ -3137,19 +3148,19 @@ Ref<AXIsolatedTree> AXObjectCache::generateIsolatedTree(PageIdentifier pageID, D
 void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification notification)
 {
     AXTRACE("AXObjectCache::updateIsolatedTree");
-
-    if (!isIsolatedTreeEnabled())
-        return;
-
     AXLOG(std::make_pair(&object, notification));
     AXLOG(*this);
 
-    if (!m_pageID || object.objectID() == InvalidAXID)
+    if (!m_pageID || object.objectID() == InvalidAXID) {
+        AXLOG("No pageID or objectID");
         return;
+    }
 
     auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
-    if (!tree)
+    if (!tree) {
+        AXLOG("No isolated tree for m_pageID.");
         return;
+    }
 
     switch (notification) {
     case AXCheckedStateChanged:
@@ -3165,6 +3176,13 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
     }
 }
 
+void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXLoadingEvent notification)
+{
+    AXTRACE("AXObjectCache::updateIsolatedTree");
+    if (notification == AXLoadingFinished)
+        updateIsolatedTree(object, AXChildrenChanged);
+}
+
 // FIXME: should be added to WTF::Vector.
 template<typename T, typename F>
 static bool appendIfNotContainsMatching(Vector<T>& vector, const T& value, F matches)
@@ -3178,18 +3196,18 @@ static bool appendIfNotContainsMatching(Vector<T>& vector, const T& value, F mat
 void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>& notifications)
 {
     AXTRACE("AXObjectCache::updateIsolatedTree");
-
-    if (!isIsolatedTreeEnabled())
-        return;
-
     AXLOG(*this);
 
-    if (!m_pageID)
+    if (!m_pageID) {
+        AXLOG("No pageID.");
         return;
+    }
 
     auto tree = AXIsolatedTree::treeForPageID(*m_pageID);
-    if (!tree)
+    if (!tree) {
+        AXLOG("No isolated tree for m_pageID");
         return;
+    }
 
     // Filter out multiple notifications for the same object. This avoids
     // updating the isolated tree multiple times unnecessarily.
