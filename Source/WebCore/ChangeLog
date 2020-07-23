@@ -1,3 +1,18 @@
+2020-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        We should have exception check after promise operation
+        https://bugs.webkit.org/show_bug.cgi?id=214610
+        <rdar://problem/65881794>
+
+        Reviewed by Youenn Fablet and Mark Lam.
+
+        Test: js/dom/promise-should-have-exception-check-on-operation.html
+
+        Add exception check after promise operations.
+
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::reject):
+
 2020-07-23  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa|WebM] Seeking can leave parser in hung state
