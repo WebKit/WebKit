@@ -1,3 +1,23 @@
+2020-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add exception check for WebCore createRejectedPromiseWithTypeError
+        https://bugs.webkit.org/show_bug.cgi?id=214680
+        <rdar://problem/65925490>
+
+        Reviewed by Mark Lam.
+
+        Test: js/dom/rejected-promise-creation-should-check-exception.html
+
+        Add missing exception checks in createRejectedPromiseWithTypeError.
+
+        * bindings/js/JSDOMAttribute.h:
+        (WebCore::IDLAttribute::get):
+        * bindings/js/JSDOMOperationReturningPromise.h:
+        (WebCore::IDLOperationReturningPromise::call):
+        (WebCore::IDLOperationReturningPromise::callReturningOwnPromise):
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::createRejectedPromiseWithTypeError):
+
 2020-07-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][Win] Build StructuredExceptionHandlerSuppressor.cpp and makesafeseh.asm only for AppleWin

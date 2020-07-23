@@ -74,7 +74,7 @@ public:
             if (shouldThrow == CastedThisErrorBehavior::Throw)
                 return throwGetterTypeError(lexicalGlobalObject, throwScope, JSClass::info()->className, attributeName);
             if (shouldThrow == CastedThisErrorBehavior::RejectPromise)
-                return rejectPromiseWithGetterTypeError(lexicalGlobalObject, JSClass::info()->className, attributeName);
+                RELEASE_AND_RETURN(throwScope, rejectPromiseWithGetterTypeError(lexicalGlobalObject, JSClass::info()->className, attributeName));
             return JSC::JSValue::encode(JSC::jsUndefined());
         }
 

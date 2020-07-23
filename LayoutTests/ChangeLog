@@ -1,3 +1,14 @@
+2020-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add exception check for WebCore createRejectedPromiseWithTypeError
+        https://bugs.webkit.org/show_bug.cgi?id=214680
+        <rdar://problem/65925490>
+
+        Reviewed by Mark Lam.
+
+        * js/dom/rejected-promise-creation-should-check-exception-expected.txt: Added.
+        * js/dom/rejected-promise-creation-should-check-exception.html: Added.
+
 2020-07-23  Karl Rackler  <rackler@apple.com>
 
         [ iOS wk2 ] imported/w3c/web-platform-tests/web-share/share-without-user-gesture.https.html is a constant timeout

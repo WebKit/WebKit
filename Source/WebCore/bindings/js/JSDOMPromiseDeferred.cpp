@@ -220,21 +220,24 @@ Ref<DeferredPromise> createDeferredPromise(JSC::JSGlobalObject&, JSDOMWindow& do
 JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::JSGlobalObject& lexicalGlobalObject, const String& errorMessage, RejectedPromiseWithTypeErrorCause cause)
 {
     auto& globalObject = lexicalGlobalObject;
+    auto& vm = lexicalGlobalObject.vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto promiseConstructor = globalObject.promiseConstructor();
-    auto rejectFunction = promiseConstructor->get(&lexicalGlobalObject, lexicalGlobalObject.vm().propertyNames->builtinNames().rejectPrivateName());
+    auto rejectFunction = promiseConstructor->get(&lexicalGlobalObject, vm.propertyNames->builtinNames().rejectPrivateName());
+    RETURN_IF_EXCEPTION(scope, { });
     auto* rejectionValue = static_cast<ErrorInstance*>(createTypeError(&lexicalGlobalObject, errorMessage));
     if (cause == RejectedPromiseWithTypeErrorCause::NativeGetter)
         rejectionValue->setNativeGetterTypeError();
 
-    auto callData = getCallData(lexicalGlobalObject.vm(), rejectFunction);
+    auto callData = getCallData(vm, rejectFunction);
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
     arguments.append(rejectionValue);
     ASSERT(!arguments.hasOverflowed());
 
-    return JSValue::encode(call(&lexicalGlobalObject, rejectFunction, callData, promiseConstructor, arguments));
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(&lexicalGlobalObject, rejectFunction, callData, promiseConstructor, arguments)));
 }
 
 static inline JSC::JSValue parseAsJSON(JSC::JSGlobalObject* lexicalGlobalObject, const String& data)

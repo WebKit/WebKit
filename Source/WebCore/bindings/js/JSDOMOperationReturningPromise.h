@@ -43,7 +43,7 @@ public:
             
             auto* thisObject = IDLOperation<JSClass>::cast(lexicalGlobalObject, callFrame);
             if (shouldThrow != CastedThisErrorBehavior::Assert && UNLIKELY(!thisObject))
-                return rejectPromiseWithThisTypeError(promise.get(), JSClass::info()->className, operationName);
+                RELEASE_AND_RETURN(throwScope, rejectPromiseWithThisTypeError(promise.get(), JSClass::info()->className, operationName));
             
             ASSERT(thisObject);
             ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
@@ -62,7 +62,7 @@ public:
 
         auto* thisObject = IDLOperation<JSClass>::cast(lexicalGlobalObject, callFrame);
         if (shouldThrow != CastedThisErrorBehavior::Assert && UNLIKELY(!thisObject))
-            return rejectPromiseWithThisTypeError(lexicalGlobalObject, JSClass::info()->className, operationName);
+            RELEASE_AND_RETURN(throwScope, rejectPromiseWithThisTypeError(lexicalGlobalObject, JSClass::info()->className, operationName));
 
         ASSERT(thisObject);
         ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
