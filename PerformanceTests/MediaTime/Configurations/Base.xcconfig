@@ -85,12 +85,13 @@ PREBINDING = NO;
 WARNING_CFLAGS = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla;
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(DSTROOT)/usr/local/include icu $(HEADER_SEARCH_PATHS);
 
-TARGET_MAC_OS_X_VERSION_MAJOR = $(TARGET_MAC_OS_X_VERSION_MAJOR$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier));
-TARGET_MAC_OS_X_VERSION_MAJOR_13 = 101300;
-TARGET_MAC_OS_X_VERSION_MAJOR_14 = 101400;
-TARGET_MAC_OS_X_VERSION_MAJOR_15 = 101500;
-TARGET_MAC_OS_X_VERSION_MAJOR_16 = 101600;
-TARGET_MAC_OS_X_VERISON_MAJOR_17 = 101700;
+TARGET_MAC_OS_X_VERSION_MAJOR = $(TARGET_MAC_OS_X_VERSION_MAJOR_$(MACOSX_DEPLOYMENT_TARGET:base)$(MACOSX_DEPLOYMENT_TARGET:suffix:identifier));
+TARGET_MAC_OS_X_VERSION_MAJOR_10_13 = 101300;
+TARGET_MAC_OS_X_VERSION_MAJOR_10_14 = 101400;
+TARGET_MAC_OS_X_VERSION_MAJOR_10_15 = 101500;
+TARGET_MAC_OS_X_VERSION_MAJOR_10_16 = 101600;
+TARGET_MAC_OS_X_VERSION_MAJOR_11_0 = 110000;
+TARGET_MAC_OS_X_VERSION_MAJOR_12_0 = 120000;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 

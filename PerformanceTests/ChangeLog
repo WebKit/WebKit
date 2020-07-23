@@ -1,3 +1,13 @@
+2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Update macOS Version macros
+        https://bugs.webkit.org/show_bug.cgi?id=214653
+
+        Reviewed by Tim Horton.
+
+        * MediaTime/Configurations/Base.xcconfig:
+        * MediaTime/Configurations/DebugRelease.xcconfig:
+
 2020-07-06  Philippe Normand  <pnormand@igalia.com>
 
         MallocBench: Remove unused private field

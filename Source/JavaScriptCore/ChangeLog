@@ -1,3 +1,15 @@
+2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Update macOS Version macros
+        https://bugs.webkit.org/show_bug.cgi?id=214653
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
 2020-07-22  Geoffrey Garen  <ggaren@apple.com>
 
         WTF::Function adoption should be explicit instead of implicit
