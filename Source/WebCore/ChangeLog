@@ -1,5 +1,19 @@
 2020-07-23  Jer Noble  <jer.noble@apple.com>
 
+        [Cocoa|WebM] Seeking can leave parser in hung state
+        https://bugs.webkit.org/show_bug.cgi?id=214704
+        <rdar://problem/66009420>
+
+        Reviewed by Eric Carlson.
+
+        When the parser is explicitly reset, make sure to clear out all the tracks and initialization datas. Otherwise, a half-filled
+        CMSampleBuffer can be left waiting around for more data, which may never arrive, and no further samples will ever be parsed.
+
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::resetParserState):
+
+2020-07-23  Jer Noble  <jer.noble@apple.com>
+
         [Cocoa] RELEASE_ASSERT when calling registerSupplementalVP9Decoder() when VideoToolbox.framework is not present
         https://bugs.webkit.org/show_bug.cgi?id=214697
         <rdar://problem/66010949>
