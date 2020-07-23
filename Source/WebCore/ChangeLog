@@ -1,3 +1,18 @@
+2020-07-22  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa|WebM] Decode error when seeking
+        https://bugs.webkit.org/show_bug.cgi?id=214666
+
+        Reviewed by Eric Carlson.
+
+        A decoder error is hit when seeking because we think all samples coming out of the SourceBufferParserWebM are sync-samples.
+        This is because the attachment added with CMSetAttachment() is ignored; the correct way to set sample attachments is by
+        getting the sample attachments array with CMSampleBufferGetSampleAttachmentsArray(), and then iterating over the attachments
+        and adding keys to the underlying mutable CFDictionary.
+
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::OnFrame):
+
 2020-07-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][32bit] JPEG2000ImageDecoder.cpp: error C2664: 'std::unique_ptr<...>::unique_ptr(...)': cannot convert argument 2 from 'void (__stdcall *)(opj_codec_t *)' to 'const _Dx &'
