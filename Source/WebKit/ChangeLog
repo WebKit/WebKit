@@ -1,5 +1,18 @@
 2020-07-24  David Kilzer  <ddkilzer@apple.com>
 
+        [IPC hardening] Add nullptr checks for WebPage::m_activeColorChooser
+        <https://webkit.org/b/214699>
+        <rdar://problem/65850975>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didEndColorPicker):
+        (WebKit::WebPage::didChooseColor):
+        - Add nullptr check before dereferencing m_activeColorChooser.
+
+2020-07-24  David Kilzer  <ddkilzer@apple.com>
+
         Add/Update CRASH_WITH_INFO() for invalid IPC message logging
         <https://webkit.org/b/214713>
 

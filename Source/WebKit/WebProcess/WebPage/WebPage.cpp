@@ -4164,12 +4164,14 @@ void WebPage::setActiveColorChooser(WebColorChooser* colorChooser)
 
 void WebPage::didEndColorPicker()
 {
-    m_activeColorChooser->didEndChooser();
+    if (m_activeColorChooser)
+        m_activeColorChooser->didEndChooser();
 }
 
 void WebPage::didChooseColor(const WebCore::Color& color)
 {
-    m_activeColorChooser->didChooseColor(color);
+    if (m_activeColorChooser)
+        m_activeColorChooser->didChooseColor(color);
 }
 
 #endif
