@@ -818,8 +818,7 @@ webkit.org/b/198459 [ Debug ] inspector/canvas/recording-webgl-full.html [ Slow 
 
 webkit.org/b/196508 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Pass Failure ]
 webkit.org/b/206945 [ Catalina ] compositing/repaint/become-overlay-composited-layer.html [ Pass Failure ]
-webkit.org/b/214647 [ Mojave ] compositing/repaint/iframes/compositing-iframe-scroll-repaint.html [ Failure ]
-webkit.org/b/214388 [ Mojave ] compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint.html [ Pass Failure ]
+webkit.org/b/214388 [ Mojave ] compositing/repaint/iframes [ Pass Failure ]
 
 webkit.org/b/198676 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Pass Failure ]
 
