@@ -273,9 +273,8 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
         return false;
 
     default:
-        CString messageName(description(message->messageName()));
-        WebKit::setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Unhandled error code %x, message '%s', hash %d", kr, messageName.data(), messageName.hash()]);
-        CRASH_WITH_INFO(kr, messageName.hash());
+        WebKit::setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Unhandled error code %x, message '%s' (%hu)", kr, description(message->messageName()), message->messageName()]);
+        CRASH_WITH_INFO(kr, static_cast<std::underlying_type_t<IPC::MessageName>>(message->messageName()));
     }
 }
 

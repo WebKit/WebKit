@@ -34,8 +34,8 @@ namespace WebKit {
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
 {
-    setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Received invalid message: '%s'", description(messageName)]);
-    CRASH();
+    setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Received invalid message: '%s' (%hu)", description(messageName), messageName]);
+    CRASH_WITH_INFO(static_cast<std::underlying_type_t<IPC::MessageName>>(messageName));
 }
 
 bool AuxiliaryProcess::parentProcessHasEntitlement(const char* entitlement)
