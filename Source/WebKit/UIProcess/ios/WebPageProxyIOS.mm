@@ -752,9 +752,12 @@ void WebPageProxy::applicationDidBecomeActive()
     m_process->send(Messages::WebPage::ApplicationDidBecomeActive(), m_webPageID);
 }
 
-void WebPageProxy::extendSelection(WebCore::TextGranularity granularity)
+void WebPageProxy::extendSelection(WebCore::TextGranularity granularity, CompletionHandler<void()>&& completionHandler)
 {
-    m_process->send(Messages::WebPage::ExtendSelection(granularity), m_webPageID);
+    sendWithAsyncReply(Messages::WebPage::ExtendSelection(granularity), [completionHandler = WTFMove(completionHandler)]() mutable {
+        if (completionHandler)
+            completionHandler();
+    });
 }
 
 void WebPageProxy::selectWordBackward()

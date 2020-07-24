@@ -1,3 +1,70 @@
+2020-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Tapping QuickType suggestions for a misspelled word does nothing in Mail compose
+        https://bugs.webkit.org/show_bug.cgi?id=214705
+        <rdar://problem/58320785>
+
+        Reviewed by Tim Horton.
+
+        In WebKit2-based editing contexts on iOS (such as Mail compose), tapping on a misspelled word will result in
+        QuickType suggestions in the input accessory row either showing up blank (i.e. with no suggestions), or will
+        show suggestions that are contextual to the text selection prior to selecting the misspelled word. Subsequently,
+        attempting to choose of these suggestions results in no text being inserted. This happens for a couple of
+        reasons:
+
+        1.  UIKit doesn't attempt to re-request the autocorrection context after tapping on a misspelled word. UIKit
+            just uses `-selectWordForReplacement` to extend the selection over the misspelled word, which doesn't
+            currently fire any of the selection change callbacks on UIInputDelegate. As a result, UIKit will instead
+            believe that the selection is collapsed to the start or end of the misspelled word.
+
+        2.  Upon attempting to compute text suggestions for QuickType, `-[UIKeyboardImpl replacementsFromSelectedText]`
+            uses `-textInRange:` to grab the currently selected text, which (in WKContentView) is currently hard-coded
+            to always return `nil`.
+
+        We address (1) by bookending `-selectWordForReplacement` with calls to `-beginSelectionChange` and
+        `-endSelectionChange`, and address (2) by teaching `-textInRange:` to return the current text selection, only in
+        the case where the given `UITextRange` is equal to the current ranged selection.
+
+        Test: SelectionTests.SelectedTextAfterSelectingWordForReplacement
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::extendSelection):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView textInRange:]):
+
+        Special-case the scenario where the input text range is exactly the same as `self.selectedTextRange` by
+        returning the currently selected text that is cached on EditorState. In all other cases, continue to return
+        `nil`.
+
+        (-[WKContentView selectedTextRange]):
+
+        Cache the current selected text range on WKContentView, such that repeated calls to selectedTextRange when the
+        selection has not changed does not require a new WKTextRange to be constructed every time.
+
+        (-[WKContentView _selectionChanged]):
+
+        Invalidate the cached selected text range whenever the selection has changed.
+
+        (-[WKContentView selectWordForReplacement]):
+
+        Use the completion callback added below to bookend this method with `-(begin|end)SelectionChange`.
+
+        (-[WKContentView _updateChangedSelection:]):
+
+        Invalidate the cached selected text range whenever we're about to tell UIKit to repaint the selection.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::extendSelection):
+
+        Add an optional completion callback to `extendSelection`.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::extendSelection):
+
 2020-07-23  Peng Liu  <peng.liu6@apple.com>
 
         Safari Related Leaked Assertions after Playing YouTube Video

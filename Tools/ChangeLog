@@ -1,3 +1,25 @@
+2020-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Tapping QuickType suggestions for a misspelled word does nothing in Mail compose
+        https://bugs.webkit.org/show_bug.cgi?id=214705
+        <rdar://problem/58320785>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/ios/SelectionByWord.mm:
+
+        Add a unit test to exercise the changes in behavior when calling UITextInput API.
+
+        (-[SelectionChangeListener setSelectionWillChangeHandler:]):
+        (-[SelectionChangeListener setSelectionDidChangeHandler:]):
+        (-[SelectionChangeListener selectionWillChangeHandler]):
+        (-[SelectionChangeListener selectionDidChangeHandler]):
+        (-[SelectionChangeListener selectionWillChange:]):
+        (-[SelectionChangeListener selectionDidChange:]):
+        (-[SelectionChangeListener textWillChange:]):
+        (-[SelectionChangeListener textDidChange:]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2020-07-23  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Notify bot watchers about pre-existing and flaky test failures found on ews bots

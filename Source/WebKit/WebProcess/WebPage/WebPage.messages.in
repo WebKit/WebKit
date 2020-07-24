@@ -68,7 +68,7 @@ messages -> WebPage LegacyReceiver {
     SelectWithGesture(WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, WebKit::CallbackID callbackID)
     UpdateSelectionWithTouches(WebCore::IntPoint point, enum:uint8_t WebKit::SelectionTouch touches, bool baseIsStart, WebKit::CallbackID callbackID)
     SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, WebKit::CallbackID callbackID)
-    ExtendSelection(enum:uint8_t WebCore::TextGranularity granularity)
+    ExtendSelection(enum:uint8_t WebCore::TextGranularity granularity) -> () Async
     SelectWordBackward()
     MoveSelectionByOffset(int32_t offset) -> () Async
     SelectTextWithGranularityAtPoint(WebCore::IntPoint point, enum:uint8_t WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement) -> () Async

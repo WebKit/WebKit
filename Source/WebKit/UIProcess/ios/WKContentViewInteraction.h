@@ -108,6 +108,7 @@ class WebPageProxy;
 @class WKHighlightLongPressGestureRecognizer;
 @class WKMouseGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
+@class WKTextRange;
 @class _WKTextInputContext;
 
 @class UITargetedPreview;
@@ -322,6 +323,7 @@ struct WKAutoCorrectionData {
     WebKit::TransactionID _layerTreeTransactionIdAtLastInteractionStart;
 
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
+    RetainPtr<WKTextRange> _cachedSelectedTextRange;
 
     Optional<WebKit::InteractionInformationRequest> _lastOutstandingPositionInformationRequest;
 

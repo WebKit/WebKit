@@ -31,10 +31,7 @@
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
-
-@interface WKContentView (Private)
-- (void)selectWordForReplacement;
-@end
+#import <wtf/BlockPtr.h>
 
 TEST(SelectionTests, ByWordAtEndOfDocument)
 {
@@ -47,7 +44,7 @@ TEST(SelectionTests, ByWordAtEndOfDocument)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
 
     // This method triggers the wordRangeFromPosition() code to be tested.
-    [[webView wkContentView] selectWordForReplacement];
+    [[webView textInputContentView] selectWordForReplacement];
 
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"getSelection().isCollapsed"].boolValue);
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getSelection().anchorNode.nodeValue"], "Paragraph Three");
@@ -56,6 +53,85 @@ TEST(SelectionTests, ByWordAtEndOfDocument)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getSelection().focusOffset"], "15");
 
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getSelection().toString()"], "Three");
+}
+
+@interface SelectionChangeListener : NSObject <UITextInputDelegate>
+@property (nonatomic) dispatch_block_t selectionWillChangeHandler;
+@property (nonatomic) dispatch_block_t selectionDidChangeHandler;
+@end
+
+@implementation SelectionChangeListener {
+    BlockPtr<void()> _selectionWillChangeHandler;
+    BlockPtr<void()> _selectionDidChangeHandler;
+}
+
+- (void)setSelectionWillChangeHandler:(dispatch_block_t)handler
+{
+    _selectionWillChangeHandler = makeBlockPtr(handler);
+}
+
+- (void)setSelectionDidChangeHandler:(dispatch_block_t)handler
+{
+    _selectionDidChangeHandler = makeBlockPtr(handler);
+}
+
+- (dispatch_block_t)selectionWillChangeHandler
+{
+    return _selectionWillChangeHandler.get();
+}
+
+- (dispatch_block_t)selectionDidChangeHandler
+{
+    return _selectionDidChangeHandler.get();
+}
+
+- (void)selectionWillChange:(id <UITextInput>)textInput
+{
+    if (_selectionWillChangeHandler)
+        _selectionWillChangeHandler();
+}
+
+- (void)selectionDidChange:(id <UITextInput>)textInput
+{
+    if (_selectionDidChangeHandler)
+        _selectionDidChangeHandler();
+}
+
+- (void)textWillChange:(id <UITextInput>)textInput
+{
+}
+
+- (void)textDidChange:(id <UITextInput>)textInput
+{
+}
+
+@end
+
+TEST(SelectionTests, SelectedTextAfterSelectingWordForReplacement)
+{
+    auto listener = adoptNS([[SelectionChangeListener alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] init]);
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable><p>Hello</p></body><script>document.body.focus()</script>"];
+
+    auto contentView = [webView textInputContentView];
+    [contentView setInputDelegate:listener.get()];
+
+    __block bool selectionWillChange = false;
+    [listener setSelectionWillChangeHandler:^{
+        selectionWillChange = true;
+    }];
+
+    __block bool selectionDidChange = false;
+    [listener setSelectionDidChangeHandler:^{
+        selectionDidChange = true;
+    }];
+
+    [contentView selectWordForReplacement];
+    [webView waitForNextPresentationUpdate];
+
+    TestWebKitAPI::Util::run(&selectionWillChange);
+    TestWebKitAPI::Util::run(&selectionDidChange);
+    EXPECT_WK_STREQ("Hello", [contentView textInRange:contentView.selectedTextRange]);
 }
 
 #endif // PLATFORM(IOS_FAMILY)

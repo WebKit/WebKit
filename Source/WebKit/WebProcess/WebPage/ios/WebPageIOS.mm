@@ -133,6 +133,7 @@
 #import <WebCore/WebEvent.h>
 #import <wtf/MathExtras.h>
 #import <wtf/MemoryPressureHandler.h>
+#import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -1762,8 +1763,10 @@ void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore:
     send(Messages::WebPageProxy::GestureCallback(from, gestureType, gestureState, { }, callbackID));
 }
 
-void WebPage::extendSelection(WebCore::TextGranularity granularity)
+void WebPage::extendSelection(WebCore::TextGranularity granularity, CompletionHandler<void()>&& completionHandler)
 {
+    auto callCompletionHandlerOnExit = makeScopeExit(WTFMove(completionHandler));
+
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     // For the moment we handle only TextGranularity::WordGranularity.
     if (granularity != TextGranularity::WordGranularity || !frame.selection().isCaret())

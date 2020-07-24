@@ -1063,6 +1063,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _resetPanningPreventionFlags];
     [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
     [self _cancelPendingKeyEventHandler];
+
+    _cachedSelectedTextRange = nil;
 }
 
 - (void)_cancelPendingKeyEventHandler
@@ -4530,6 +4532,13 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (NSString *)textInRange:(UITextRange *)range
 {
+    if (!_page)
+        return nil;
+
+    auto& editorState = _page->editorState();
+    if (self.selectedTextRange == range && !editorState.isMissingPostLayoutData && editorState.selectionIsRange)
+        return editorState.postLayoutData().wordAtSelection;
+
     return nil;
 }
 
@@ -4588,11 +4597,15 @@ static NSArray<WKTextSelectionRect *> *wkTextSelectionRects(const Vector<WebCore
     if (!isContentEditable && !isRange)
         return nil;
 
+    if (_cachedSelectedTextRange)
+        return _cachedSelectedTextRange.get();
+
     auto caretStartRect = [self _scaledCaretRectForSelectionStart:_page->editorState().postLayoutData().caretRectAtStart];
     auto caretEndRect = [self _scaledCaretRectForSelectionEnd:_page->editorState().postLayoutData().caretRectAtEnd];
     auto selectionRects = wkTextSelectionRects(_page->editorState().postLayoutData().selectionRects);
     auto selectedTextLength = editorState.postLayoutData().selectedTextLength;
-    return [WKTextRange textRangeWithState:!hasSelection isRange:isRange isEditable:isContentEditable startRect:caretStartRect endRect:caretEndRect selectionRects:selectionRects selectedTextLength:selectedTextLength];
+    _cachedSelectedTextRange = [WKTextRange textRangeWithState:!hasSelection isRange:isRange isEditable:isContentEditable startRect:caretStartRect endRect:caretEndRect selectionRects:selectionRects selectedTextLength:selectedTextLength];
+    return _cachedSelectedTextRange.get();
 }
 
 - (CGRect)caretRectForPosition:(UITextPosition *)position
@@ -6575,6 +6588,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 {
     [self _updateSelectionAssistantSuppressionState];
 
+    _cachedSelectedTextRange = nil;
     _selectionNeedsUpdate = YES;
     // If we are changing the selection with a gesture there is no need
     // to wait to paint the selection.
@@ -6600,7 +6614,11 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (void)selectWordForReplacement
 {
-    _page->extendSelection(WebCore::TextGranularity::WordGranularity);
+    [self beginSelectionChange];
+    _page->extendSelection(WebCore::TextGranularity::WordGranularity, [weakSelf = WeakObjCPtr<WKContentView>(self)] {
+        if (auto strongSelf = weakSelf.get())
+            [strongSelf endSelectionChange];
+    });
 }
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
@@ -6631,6 +6649,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     if (force || selectionDrawingInfo != _lastSelectionDrawingInfo) {
         LOG_WITH_STREAM(Selection, stream << "_updateChangedSelection " << selectionDrawingInfo);
 
+        _cachedSelectedTextRange = nil;
         _lastSelectionDrawingInfo = selectionDrawingInfo;
 
         // FIXME: We need to figure out what to do if the selection is changed by Javascript.
