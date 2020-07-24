@@ -660,6 +660,8 @@ webkit.org/b/175867 svg/animations/smil-leak-dynamically-added-element-instances
 
 webkit.org/b/175886 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 
+webkit.org/b/214760 imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-mutating.svg [ Pass Failure ]
+
 # <rdar://problem/29201698> DumpRenderTree crashed in com.apple.CoreGraphics: CGDataProviderCopyData + 377
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Crash ]
 

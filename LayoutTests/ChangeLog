@@ -1,3 +1,12 @@
+2020-07-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [macOS WK1] imported/w3c/web-platform-tests/svg/path/distance/pathlength-path-mutating.svg is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214760
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Mark test as flaky.
+
 2020-07-23  Simon Fraser  <simon.fraser@apple.com>
 
         steps() timing function on a transform animation triggers a render every frame
