@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Alexey Shvayka <shvaikalesh@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -748,13 +749,21 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             case ObjectEndVisitMember: {
                 JSObject* object = jsCast<JSObject*>(markedStack.last());
                 Identifier prop = propertyStack.last()[indexStack.last()];
-                PutPropertySlot slot(object);
                 JSValue filteredValue = callReviver(object, jsString(vm, prop.string()), outValue);
                 RETURN_IF_EXCEPTION(scope, { });
                 if (filteredValue.isUndefined())
                     JSCell::deleteProperty(object, m_globalObject, prop);
-                else
-                    object->methodTable(vm)->put(object, m_globalObject, prop, filteredValue, slot);
+                else {
+                    unsigned attributes;
+                    PropertyOffset offset = object->getDirectOffset(vm, prop, attributes);
+                    if (LIKELY(offset != invalidOffset && attributes == static_cast<unsigned>(PropertyAttribute::None)))
+                        object->putDirect(vm, offset, filteredValue);
+                    else {
+                        PropertyDescriptor descriptor(filteredValue, static_cast<unsigned>(PropertyAttribute::None));
+                        bool shouldThrow = false;
+                        object->methodTable(vm)->defineOwnProperty(object, m_globalObject, prop, descriptor, shouldThrow);
+                    }
+                }
                 RETURN_IF_EXCEPTION(scope, { });
                 indexStack.last()++;
                 goto objectStartVisitMember;

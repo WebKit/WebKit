@@ -1,3 +1,12 @@
+2020-07-24  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        JSON.parse should not modify non-configurable properties.
+        https://bugs.webkit.org/show_bug.cgi?id=163446
+
+        Reviewed by Darin Adler.
+
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Do not use hardened Array for Intl supportedLocalesOf

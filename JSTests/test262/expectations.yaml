@@ -900,9 +900,6 @@ test/built-ins/Function/prototype/toString/setter-object.js:
 test/built-ins/Function/prototype/toString/unicode.js:
   default: "Test262Error: Conforms to NativeFunction Syntax: 'function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }'.(function \\u0061(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; })"
   strict mode: "Test262Error: Conforms to NativeFunction Syntax: 'function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }'.(function \\u0061(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; })"
-test/built-ins/JSON/parse/reviver-object-non-configurable-prop-create.js:
-  default: 'Test262Error: Expected SameValue(«22», «2») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«22», «2») to be true'
 test/built-ins/Object/assign/strings-and-symbol-order-proxy.js:
   default: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
   strict mode: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
