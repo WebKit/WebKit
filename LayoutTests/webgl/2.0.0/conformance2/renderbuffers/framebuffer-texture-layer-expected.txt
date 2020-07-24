@@ -1,19 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/renderbuffers/framebuffer-texture-layer.html
-[ 1: PASS ] gl = wtu.create3DContext(undefined, undefined, 2) is non-null.
-[ 2: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : attaching a texture to default framebuffer should generate INVALID_OPERATION.
-[ 3: PASS ] getError was expected value: NO_ERROR : attaching a texture to a framebuffer should succeed.
-[ 4: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_COMPLETE], was FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
-[ 5: PASS ] getError was expected value: NO_ERROR : detaching a texture from a framebuffer should succeed.
-[ 6: PASS ] getError was expected value: NO_ERROR : calling framebufferTextureLayer with an appropriate mipmap level should succeed.
-[ 7: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_INCOMPLETE_ATTACHMENT], was FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
-[ 8: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : calling framebufferTextureLayer with a mipmap level out of range should generate INVALID_VALUE.
-[ 9: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : calling framebufferTextureLayer with a negative texture layer should generate INVALID_VALUE.
-[ 10: FAIL ] getError expected: INVALID_VALUE. Was NO_ERROR : calling framebufferTextureLayer with a texture layer out of range should generate INVALID_VALUE.
-[ 11: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : attaching a 2d texture to a framebuffer should generate INVALID_OPERATION.
-[ 12: PASS ] getError was expected value: NO_ERROR : attaching a depth_stencil texture to a framebuffer should succeed.
-[ 13: FAIL ] checkFramebufferStatus expects [FRAMEBUFFER_COMPLETE], was FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
-[ 14: PASS ] successfullyParsed is true
-[ FAIL ] 8 failures reported
+[ PASS ] All tests passed
 

@@ -1,3 +1,65 @@
+2020-07-24  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Framebuffer and renderbuffer updates
+        https://bugs.webkit.org/show_bug.cgi?id=126448
+
+        Reviewed by Dean Jackson.
+
+        Implement, or finish implementing, the following WebGL 2.0
+        framebuffer and renderbuffer related APIs:
+          framebufferTextureLayer
+          getInternalformatParameter
+          getRenderbufferParameter
+          invalidateFramebuffer
+          invalidateSubFramebuffer
+          readBuffer
+          renderbufferStorage
+          renderbufferStorageMultisample
+
+        Covered by existing WebGL 2.0 conformance tests.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::initializeNewContext):
+        (WebCore::WebGL2RenderingContext::validateTexFuncLayer):
+        (WebCore::WebGL2RenderingContext::maxTextureLevelForTarget):
+        (WebCore::WebGL2RenderingContext::blitFramebuffer):
+        (WebCore::WebGL2RenderingContext::framebufferTextureLayer):
+        (WebCore::WebGL2RenderingContext::getInternalformatParameter):
+        (WebCore::WebGL2RenderingContext::invalidateFramebuffer):
+        (WebCore::WebGL2RenderingContext::invalidateSubFramebuffer):
+        (WebCore::WebGL2RenderingContext::renderbufferStorageMultisample):
+        (WebCore::WebGL2RenderingContext::renderbufferStorageImpl):
+        (WebCore::WebGL2RenderingContext::renderbufferStorageHelper):
+        (WebCore::WebGL2RenderingContext::checkAndTranslateAttachments):
+        (WebCore::WebGL2RenderingContext::renderbufferStorage): Deleted.
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::setAttachmentForBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::attach):
+        (WebCore::WebGLFramebuffer::removeAttachmentFromBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::setAttachmentInternal):
+        (WebCore::WebGLFramebuffer::removeAttachmentInternal):
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::renderbufferStorage): Deleted.
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::framebufferRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::framebufferTexture2D):
+        (WebCore::WebGLRenderingContextBase::getRenderbufferParameter):
+        (WebCore::WebGLRenderingContextBase::renderbufferStorage):
+        (WebCore::WebGLRenderingContextBase::renderbufferStorageImpl):
+        (WebCore::WebGLRenderingContextBase::validateTexFuncLevel):
+        (WebCore::WebGLRenderingContextBase::maxTextureLevelForTarget):
+        (WebCore::WebGLRenderingContextBase::validateFramebufferFuncParameters):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::framebufferTextureLayer):
+        (WebCore::GraphicsContextGLOpenGL::invalidateFramebuffer):
+        (WebCore::GraphicsContextGLOpenGL::invalidateSubFramebuffer):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2020-07-24  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add PerformanceTest tool for measuring raw speed of a video decoder

@@ -95,37 +95,37 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 92: PASS ] getError was expected value: INVALID_OPERATION :
 [ 93: PASS ] getError was expected value: NO_ERROR :
 [ 94: PASS ] getError was expected value: NO_ERROR :
-[ 95: FAIL ] Should be [0, 1, 1, 2], was [0, 0, 0, 255].
+[ 95: PASS ] Should be [0, 1, 1, 2], was [0, 1, 1, 2].
 [ 96: PASS ] getError was expected value: NO_ERROR :
 [ 97: PASS ] getError was expected value: NO_ERROR :
-[ 98: FAIL ] Should be [1, 1, 2, 3], was [0, 0, 0, 255].
+[ 98: PASS ] Should be [1, 1, 2, 3], was [1, 1, 2, 3].
 [ 99: PASS ] getError was expected value: NO_ERROR :
 [ 100: PASS ] getError was expected value: NO_ERROR :
-[ 101: FAIL ] Should be [1, 2, 3, 5], was [0, 0, 0, 255].
+[ 101: PASS ] Should be [1, 2, 3, 5], was [1, 2, 3, 5].
 [ 102: PASS ] getError was expected value: NO_ERROR :
 [ 103: PASS ] getError was expected value: NO_ERROR :
-[ 104: FAIL ] Should be [2, 3, 5, 8], was [0, 0, 0, 255].
+[ 104: PASS ] Should be [2, 3, 5, 8], was [2, 3, 5, 8].
 [ 105: PASS ] getError was expected value: NO_ERROR :
 [ 106: PASS ] getError was expected value: NO_ERROR :
-[ 107: FAIL ] Should be [3, 5, 8, 13], was [0, 0, 0, 255].
+[ 107: PASS ] Should be [3, 5, 8, 13], was [3, 5, 8, 13].
 [ 108: PASS ] getError was expected value: NO_ERROR :
 [ 109: PASS ] getError was expected value: NO_ERROR :
-[ 110: FAIL ] Should be [5, 8, 13, 21], was [0, 0, 0, 255].
+[ 110: PASS ] Should be [5, 8, 13, 21], was [5, 8, 13, 21].
 [ 111: PASS ] getError was expected value: NO_ERROR :
 [ 112: PASS ] getError was expected value: NO_ERROR :
-[ 113: FAIL ] Should be [8, 13, 21, 34], was [0, 0, 0, 255].
+[ 113: PASS ] Should be [8, 13, 21, 34], was [8, 13, 21, 34].
 [ 114: PASS ] getError was expected value: NO_ERROR :
 [ 115: PASS ] getError was expected value: NO_ERROR :
-[ 116: FAIL ] Should be [13, 21, 34, 55], was [0, 0, 0, 255].
+[ 116: PASS ] Should be [13, 21, 34, 55], was [13, 21, 34, 55].
 [ 117: PASS ] getError was expected value: NO_ERROR :
 [ 118: PASS ] getError was expected value: NO_ERROR :
-[ 119: FAIL ] Should be [21, 34, 55, 89], was [0, 0, 0, 255].
+[ 119: PASS ] Should be [21, 34, 55, 89], was [21, 34, 55, 89].
 [ 120: PASS ] getError was expected value: NO_ERROR :
 [ 121: PASS ] getError was expected value: NO_ERROR :
-[ 122: FAIL ] Should be [34, 55, 89, 144], was [0, 0, 0, 255].
+[ 122: PASS ] Should be [34, 55, 89, 144], was [34, 55, 89, 144].
 [ 123: PASS ] getError was expected value: NO_ERROR :
 [ 124: PASS ] getError was expected value: NO_ERROR :
-[ 125: FAIL ] Should be [55, 89, 144, 233], was [0, 0, 0, 255].
+[ 125: PASS ] Should be [55, 89, 144, 233], was [55, 89, 144, 233].
 [ 126: PASS ] getError was expected value: INVALID_OPERATION :
 [ 127: PASS ] getError was expected value: INVALID_OPERATION :
 [ 128: PASS ] getError was expected value: INVALID_OPERATION :
@@ -133,45 +133,45 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 130: PASS ] getError was expected value: INVALID_OPERATION :
 [ 131: PASS ] getError was expected value: NO_ERROR :
 [ 132: PASS ] getError was expected value: NO_ERROR :
-[ 133: FAIL ] Should be 65504, was 0.
+[ 133: PASS ] Should be 65504, was 65504.
 [ 134: PASS ] getError was expected value: NO_ERROR :
 [ 135: PASS ] getError was expected value: NO_ERROR :
-[ 136: FAIL ] Should be 2047, was 0.
+[ 136: PASS ] Should be 2047, was 2047.
 [ 137: PASS ] getError was expected value: INVALID_OPERATION :
 [ 138: PASS ] getError was expected value: INVALID_OPERATION :
 [ 139: PASS ] getError was expected value: NO_ERROR :
 [ 140: PASS ] getError was expected value: NO_ERROR :
-[ 141: FAIL ] Should be [0, 1, 1, 2], was [0, 0, 0, 255].
+[ 141: PASS ] Should be [0, 1, 1, 2], was [0, 1, 1, 2].
 [ 142: PASS ] getError was expected value: NO_ERROR :
 [ 143: PASS ] getError was expected value: NO_ERROR :
-[ 144: FAIL ] Should be [1, 1, 2, 3], was [0, 0, 0, 255].
+[ 144: PASS ] Should be [1, 1, 2, 3], was [1, 1, 2, 3].
 [ 145: PASS ] getError was expected value: NO_ERROR :
 [ 146: PASS ] getError was expected value: NO_ERROR :
-[ 147: FAIL ] Should be [1, 2, 3, 5], was [0, 0, 0, 255].
+[ 147: PASS ] Should be [1, 2, 3, 5], was [1, 2, 3, 5].
 [ 148: PASS ] getError was expected value: NO_ERROR :
 [ 149: PASS ] getError was expected value: NO_ERROR :
-[ 150: FAIL ] Should be [2, 3, 5, 8], was [0, 0, 0, 255].
+[ 150: PASS ] Should be [2, 3, 5, 8], was [2, 3, 5, 8].
 [ 151: PASS ] getError was expected value: NO_ERROR :
 [ 152: PASS ] getError was expected value: NO_ERROR :
-[ 153: FAIL ] Should be [3, 5, 8, 13], was [0, 0, 0, 255].
+[ 153: PASS ] Should be [3, 5, 8, 13], was [3, 5, 8, 13].
 [ 154: PASS ] getError was expected value: NO_ERROR :
 [ 155: PASS ] getError was expected value: NO_ERROR :
-[ 156: FAIL ] Should be [5, 8, 13, 21], was [0, 0, 0, 255].
+[ 156: PASS ] Should be [5, 8, 13, 21], was [5, 8, 13, 21].
 [ 157: PASS ] getError was expected value: NO_ERROR :
 [ 158: PASS ] getError was expected value: NO_ERROR :
-[ 159: FAIL ] Should be [8, 13, 21, 34], was [0, 0, 0, 255].
+[ 159: PASS ] Should be [8, 13, 21, 34], was [8, 13, 21, 34].
 [ 160: PASS ] getError was expected value: NO_ERROR :
 [ 161: PASS ] getError was expected value: NO_ERROR :
-[ 162: FAIL ] Should be [13, 21, 34, 55], was [0, 0, 0, 255].
+[ 162: PASS ] Should be [13, 21, 34, 55], was [13, 21, 34, 55].
 [ 163: PASS ] getError was expected value: NO_ERROR :
 [ 164: PASS ] getError was expected value: NO_ERROR :
-[ 165: FAIL ] Should be [21, 34, 55, 89], was [0, 0, 0, 255].
+[ 165: PASS ] Should be [21, 34, 55, 89], was [21, 34, 55, 89].
 [ 166: PASS ] getError was expected value: NO_ERROR :
 [ 167: PASS ] getError was expected value: NO_ERROR :
-[ 168: FAIL ] Should be [34, 55, 89, 144], was [0, 0, 0, 255].
+[ 168: PASS ] Should be [34, 55, 89, 144], was [34, 55, 89, 144].
 [ 169: PASS ] getError was expected value: NO_ERROR :
 [ 170: PASS ] getError was expected value: NO_ERROR :
-[ 171: FAIL ] Should be [55, 89, 144, 233], was [0, 0, 0, 255].
+[ 171: PASS ] Should be [55, 89, 144, 233], was [55, 89, 144, 233].
 [ 172: PASS ] getError was expected value: INVALID_OPERATION :
 [ 173: PASS ] getError was expected value: INVALID_OPERATION :
 [ 174: PASS ] getError was expected value: INVALID_OPERATION :
@@ -179,10 +179,10 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 176: PASS ] getError was expected value: INVALID_OPERATION :
 [ 177: PASS ] getError was expected value: NO_ERROR :
 [ 178: PASS ] getError was expected value: NO_ERROR :
-[ 179: FAIL ] Should be 65504, was 0.
+[ 179: PASS ] Should be 65504, was 65504.
 [ 180: PASS ] getError was expected value: NO_ERROR :
 [ 181: PASS ] getError was expected value: NO_ERROR :
-[ 182: FAIL ] Should be 2047, was 0.
+[ 182: PASS ] Should be 2047, was 2047.
 [ 183: PASS ] getError was expected value: INVALID_OPERATION :
 [ 184: PASS ] getError was expected value: INVALID_OPERATION :
 [ 185: PASS ] getError was expected value: NO_ERROR :
@@ -241,5 +241,5 @@ Test: ../../resources/webgl_test_files/conformance2/misc/views-with-offsets.html
 [ 238: PASS ] getError was expected value: INVALID_OPERATION :
 [ 239: PASS ] getError was expected value: INVALID_VALUE :
 [ 240: PASS ] successfullyParsed is true
-[ FAIL ] 32 failures reported
+[ FAIL ] 6 failures reported
 

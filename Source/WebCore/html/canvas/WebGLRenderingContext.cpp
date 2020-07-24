@@ -323,50 +323,6 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
     }
 }
 
-void WebGLRenderingContext::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
-{
-    if (isContextLostOrPending())
-        return;
-    if (target != GraphicsContextGL::RENDERBUFFER) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "renderbufferStorage", "invalid target");
-        return;
-    }
-    if (!m_renderbufferBinding || !m_renderbufferBinding->object()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "renderbufferStorage", "no bound renderbuffer");
-        return;
-    }
-    if (!validateSize("renderbufferStorage", width, height))
-        return;
-    switch (internalformat) {
-    case GraphicsContextGL::DEPTH_COMPONENT16:
-    case GraphicsContextGL::RGBA4:
-    case GraphicsContextGL::RGB5_A1:
-    case GraphicsContextGL::RGB565:
-    case GraphicsContextGL::STENCIL_INDEX8:
-    case ExtensionsGL::SRGB8_ALPHA8_EXT:
-        if (internalformat == ExtensionsGL::SRGB8_ALPHA8_EXT && !m_extsRGB) {
-            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
-            return;
-        }
-        m_context->renderbufferStorage(target, internalformat, width, height);
-        m_renderbufferBinding->setInternalFormat(internalformat);
-        m_renderbufferBinding->setIsValid(true);
-        m_renderbufferBinding->setSize(width, height);
-        break;
-    case GraphicsContextGL::DEPTH_STENCIL:
-        if (isDepthStencilSupported())
-            m_context->renderbufferStorage(target, ExtensionsGL::DEPTH24_STENCIL8, width, height);
-        m_renderbufferBinding->setSize(width, height);
-        m_renderbufferBinding->setIsValid(isDepthStencilSupported());
-        m_renderbufferBinding->setInternalFormat(internalformat);
-        break;
-    default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "renderbufferStorage", "invalid internalformat");
-        return;
-    }
-    applyStencilTest();
-}
-
 void WebGLRenderingContext::hint(GCGLenum target, GCGLenum mode)
 {
     if (isContextLostOrPending())

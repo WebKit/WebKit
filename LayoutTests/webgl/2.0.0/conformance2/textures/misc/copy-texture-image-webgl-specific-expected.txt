@@ -1,53 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/copy-texture-image-webgl-specific.html
-[ 1: PASS ] WebGL context exists
-[ 2: FAIL ] framebuffer not complete
-[ 3: FAIL ] framebuffer not complete
-[ 4: FAIL ] framebuffer not complete
-[ 5: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 6: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = -1, y = -1 width = 4, height = 4
-[ 7: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 8: FAIL ] byte comparison failure, byte at 0 was 1, should be 255
-[ 9: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = 0, y = 0 width = 3, height = 3
-[ 10: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 11: FAIL ] byte comparison failure, byte at 8 was 0, should be 255
-[ 12: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = -1, y = -1 width = 3, height = 3
-[ 13: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 14: FAIL ] byte comparison failure, byte at 0 was 1, should be 255
-[ 15: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = -1, y = 0 width = 3, height = 3
-[ 16: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 17: FAIL ] byte comparison failure, byte at 0 was 1, should be 255
-[ 18: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = 0, y = -1 width = 3, height = 3
-[ 19: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 20: FAIL ] byte comparison failure, byte at 0 was 1, should be 255
-[ 21: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = 0, y = 0 width = 2, height = 3
-[ 22: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 23: FAIL ] byte comparison failure, byte at 8 was 0, should be 255
-[ 24: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = 0, y = 0 width = 3, height = 2
-[ 25: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 26: FAIL ] byte comparison failure, byte at 8 was 0, should be 255
-[ 27: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = -1, y = 0 width = 3, height = 2
-[ 28: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 29: FAIL ] byte comparison failure, byte at 0 was 1, should be 255
-[ 30: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = 0, y = -1 width = 2, height = 3
-[ 31: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 32: FAIL ] byte comparison failure, byte at 0 was 1, should be 255
-[ 33: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = -2, y = -2 width = 3, height = 3
-[ 34: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 35: FAIL ] byte comparison failure, byte at 0 was 1, should be 255
-[ 36: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = -2, y = 1 width = 3, height = 3
-[ 37: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 38: FAIL ] byte comparison failure, byte at 0 was 1, should be 255
-[ 39: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = 1, y = -2 width = 3, height = 3
-[ 40: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 41: FAIL ] byte comparison failure, byte at 0 was 1, should be 255
-[ 42: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = 1, y = 1 width = 3, height = 3
-[ 43: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 44: FAIL ] byte comparison failure, byte at 4 was 1, should be 255
-[ 45: PASS ] getError was expected value: NO_ERROR : using copyTexSubImage3D: x = 2, y = 2 width = 3, height = 3
-[ 46: PASS ] getError was expected value: NO_ERROR : readpixel should succeed.
-[ 47: FAIL ] byte comparison failure, byte at 0 was 1, should be 255
-[ 48: PASS ] successfullyParsed is true
-[ FAIL ] 17 failures reported
+[ PASS ] All tests passed
 

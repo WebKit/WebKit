@@ -44,7 +44,6 @@ public:
     Optional<Vector<String>> getSupportedExtensions() final;
 
     WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
-    void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void hint(GCGLenum target, GCGLenum mode) final;
     void clear(GCGLbitfield mask) final;
 

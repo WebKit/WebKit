@@ -2146,27 +2146,17 @@ void GraphicsContextGLOpenGL::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGL
 
 void GraphicsContextGLOpenGL::framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(attachment);
-    UNUSED_PARAM(texture);
-    UNUSED_PARAM(level);
-    UNUSED_PARAM(layer);
+    gl::FramebufferTextureLayer(target, attachment, texture, level, layer);
 }
 
-void GraphicsContextGLOpenGL::invalidateFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments)
+void GraphicsContextGLOpenGL::invalidateFramebuffer(GCGLenum target, GCGLsizei numAttachments, const GCGLenum* attachments)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(attachments);
+    gl::InvalidateFramebuffer(target, numAttachments, attachments);
 }
 
-void GraphicsContextGLOpenGL::invalidateSubFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
+void GraphicsContextGLOpenGL::invalidateSubFramebuffer(GCGLenum target, GCGLsizei numAttachments, const GCGLenum* attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(attachments);
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(width);
-    UNUSED_PARAM(height);
+    gl::InvalidateSubFramebuffer(target, numAttachments, attachments, x, y, width, height);
 }
 
 void GraphicsContextGLOpenGL::readBuffer(GCGLenum src)

@@ -396,8 +396,8 @@ public:
 
     void blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) final;
     void framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer) final;
-    void invalidateFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments) final;
-    void invalidateSubFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) final;
+    void invalidateFramebuffer(GCGLenum target, GCGLsizei numAttachments, const GCGLenum* attachments) final;
+    void invalidateSubFramebuffer(GCGLenum target, GCGLsizei numAttachments, const GCGLenum* attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) final;
     void readBuffer(GCGLenum src) final;
 
     // getInternalFormatParameter

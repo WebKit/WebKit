@@ -183,7 +183,7 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 180: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_GREEN_SIZE) is non-zero.
 [ 181: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_BLUE_SIZE) is non-zero.
 [ 182: PASS ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_ALPHA_SIZE) is non-zero.
-[ 183: FAIL ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_SAMPLES) should be 4 (of type number). Was null (of type object).
+[ 183: FAIL ] gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_SAMPLES) should be 4. Was 0.
 [ 184: PASS ] getRenderbufferParameter correctly handled invalid parameter enums
 [ 185: PASS ] getRenderbufferParameter correctly handled invalid target enums
 [ 186: PASS ] getError was expected value: NO_ERROR :

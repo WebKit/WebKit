@@ -55,8 +55,8 @@ public:
         virtual bool isInitialized() const = 0;
         virtual void setInitialized() = 0;
         virtual void onDetached(GraphicsContextGLOpenGL*) = 0;
-        virtual void attach(GraphicsContextGLOpenGL*, GCGLenum attachment) = 0;
-        virtual void unattach(GraphicsContextGLOpenGL*, GCGLenum attachment) = 0;
+        virtual void attach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) = 0;
+        virtual void unattach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) = 0;
 
     protected:
         WebGLAttachment();
@@ -66,7 +66,7 @@ public:
 
     static Ref<WebGLFramebuffer> create(WebGLRenderingContextBase&);
 
-    void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level);
+    void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level, GCGLint layer);
     void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, WebGLRenderbuffer*);
     // If an object is attached to the currently bound framebuffer, remove it.
     void removeAttachmentFromBoundFramebuffer(GCGLenum target, WebGLSharedObject*);
@@ -123,6 +123,12 @@ private:
 
     // Check if a new drawBuffers call should be issued. This is called when we add or remove an attachment.
     void drawBuffersIfNecessary(bool force);
+
+    void setAttachmentInternal(GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level, GCGLint layer);
+    void setAttachmentInternal(GCGLenum attachment, WebGLRenderbuffer*);
+    // If a given attachment point for the currently bound framebuffer is not
+    // null, remove the attached object.
+    void removeAttachmentInternal(GCGLenum attachment);
 
     typedef WTF::HashMap<GCGLenum, RefPtr<WebGLAttachment>> AttachmentMap;
 

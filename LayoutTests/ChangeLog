@@ -1,3 +1,24 @@
+2020-07-24  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Framebuffer and renderbuffer updates
+        https://bugs.webkit.org/show_bug.cgi?id=126448
+
+        Reviewed by Dean Jackson.
+
+        Rebaseline WebGL 2.0 conformance tests which are improved with
+        this patch. Of these, views-with-offsets.html and
+        gl-object-get-calls.html progress; all of the others now pass
+        fully.
+
+        * webgl/2.0.0/conformance2/misc/views-with-offsets-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/framebuffer-object-attachment-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/framebuffer-texture-layer-expected.txt:
+        * webgl/2.0.0/conformance2/renderbuffers/invalidate-framebuffer-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/framebuffer-unsupported-expected.txt:
+        * webgl/2.0.0/conformance2/state/gl-object-get-calls-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/copy-texture-image-webgl-specific-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-unpack-params-expected.txt:
+
 2020-07-24  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS ] svg/batik/text/textPosition2.svg is passing and expectation needs to be removed

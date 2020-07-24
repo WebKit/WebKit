@@ -2166,15 +2166,17 @@ void GraphicsContextGLOpenGL::framebufferTextureLayer(GCGLenum target, GCGLenum 
     UNUSED_PARAM(layer);
 }
 
-void GraphicsContextGLOpenGL::invalidateFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments)
+void GraphicsContextGLOpenGL::invalidateFramebuffer(GCGLenum target, GCGLsizei numAttachments, const GCGLenum* attachments)
 {
     UNUSED_PARAM(target);
+    UNUSED_PARAM(numAttachments);
     UNUSED_PARAM(attachments);
 }
 
-void GraphicsContextGLOpenGL::invalidateSubFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
+void GraphicsContextGLOpenGL::invalidateSubFramebuffer(GCGLenum target, GCGLsizei numAttachments, const GCGLenum* attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
 {
     UNUSED_PARAM(target);
+    UNUSED_PARAM(numAttachments);
     UNUSED_PARAM(attachments);
     UNUSED_PARAM(x);
     UNUSED_PARAM(y);

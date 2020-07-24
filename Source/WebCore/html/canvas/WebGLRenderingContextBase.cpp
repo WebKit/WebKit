@@ -2650,24 +2650,15 @@ void WebGLRenderingContextBase::framebufferRenderbuffer(GCGLenum target, GCGLenu
         return;
     }
 
-    auto targetFramebuffer = (target == GraphicsContextGL::READ_FRAMEBUFFER) ? getReadFramebufferBinding() : m_framebufferBinding;
-
     // Don't allow the default framebuffer to be mutated; all current
     // implementations use an FBO internally in place of the default
     // FBO.
-    if (!targetFramebuffer || !targetFramebuffer->object()) {
+    WebGLFramebuffer* framebufferBinding = getFramebufferBinding(target);
+    if (!framebufferBinding || !framebufferBinding->object()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "framebufferRenderbuffer", "no framebuffer bound");
         return;
     }
-    PlatformGLObject bufferObject = objectOrZero(buffer);
-#if !USE(ANGLE)
-    if (attachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT) {
-        m_context->framebufferRenderbuffer(target, GraphicsContextGL::DEPTH_ATTACHMENT, renderbuffertarget, bufferObject);
-        m_context->framebufferRenderbuffer(target, GraphicsContextGL::STENCIL_ATTACHMENT, renderbuffertarget, bufferObject);
-    } else
-#endif
-        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, bufferObject);
-    targetFramebuffer->setAttachmentForBoundFramebuffer(target, attachment, buffer);
+    framebufferBinding->setAttachmentForBoundFramebuffer(target, attachment, buffer);
     applyStencilTest();
 }
 
@@ -2684,26 +2675,16 @@ void WebGLRenderingContextBase::framebufferTexture2D(GCGLenum target, GCGLenum a
         return;
     }
 
-    auto targetFramebuffer = (target == GraphicsContextGL::READ_FRAMEBUFFER) ? getReadFramebufferBinding() : m_framebufferBinding;
+    WebGLFramebuffer* framebufferBinding = getFramebufferBinding(target);
 
     // Don't allow the default framebuffer to be mutated; all current
     // implementations use an FBO internally in place of the default
     // FBO.
-    if (!targetFramebuffer || !targetFramebuffer->object()) {
+    if (!framebufferBinding || !framebufferBinding->object()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "framebufferTexture2D", "no framebuffer bound");
         return;
     }
-    PlatformGLObject textureObject = objectOrZero(texture);
-
-#if !USE_ANGLE
-    if (attachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT) {
-        m_context->framebufferTexture2D(target, GraphicsContextGL::DEPTH_ATTACHMENT, textarget, textureObject, level);
-        m_context->framebufferTexture2D(target, GraphicsContextGL::STENCIL_ATTACHMENT, textarget, textureObject, level);
-    } else
-#endif
-        m_context->framebufferTexture2D(target, attachment, textarget, textureObject, level);
-
-    targetFramebuffer->setAttachmentForBoundFramebuffer(target, attachment, textarget, texture, level);
+    framebufferBinding->setAttachmentForBoundFramebuffer(target, attachment, textarget, texture, level, 0);
     applyStencilTest();
 }
 
@@ -3246,6 +3227,12 @@ WebGLAny WebGLRenderingContextBase::getRenderbufferParameter(GCGLenum target, GC
 
     GCGLint value = 0;
     switch (pname) {
+    case GraphicsContextGL::RENDERBUFFER_SAMPLES:
+        if (!isWebGL2()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getRenderbufferParameter", "invalid parameter name");
+            return nullptr;
+        }
+        FALLTHROUGH;
     case GraphicsContextGL::RENDERBUFFER_WIDTH:
     case GraphicsContextGL::RENDERBUFFER_HEIGHT:
     case GraphicsContextGL::RENDERBUFFER_RED_SIZE:
@@ -4293,6 +4280,64 @@ void WebGLRenderingContextBase::releaseShaderCompiler()
     if (isContextLostOrPending())
         return;
     m_context->releaseShaderCompiler();
+}
+
+void WebGLRenderingContextBase::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
+{
+    const char* functionName = "renderbufferStorage";
+    if (isContextLostOrPending())
+        return;
+    if (target != GraphicsContextGL::RENDERBUFFER) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid target");
+        return;
+    }
+    if (!m_renderbufferBinding || !m_renderbufferBinding->object()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "no bound renderbuffer");
+        return;
+    }
+    if (!validateSize(functionName, width, height))
+        return;
+    renderbufferStorageImpl(target, 0, internalformat, width, height, functionName);
+    applyStencilTest();
+}
+
+void WebGLRenderingContextBase::renderbufferStorageImpl(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, const char* functionName)
+{
+#if ASSERT_ENABLED
+    // |samples| > 0 is only valid in WebGL2's renderbufferStorageMultisample().
+    ASSERT(!samples);
+#else
+    UNUSED_PARAM(samples);
+#endif
+    // Make sure this is overridden in WebGL 2.
+    ASSERT(!isWebGL2());
+    switch (internalformat) {
+    case GraphicsContextGL::DEPTH_COMPONENT16:
+    case GraphicsContextGL::RGBA4:
+    case GraphicsContextGL::RGB5_A1:
+    case GraphicsContextGL::RGB565:
+    case GraphicsContextGL::STENCIL_INDEX8:
+    case ExtensionsGL::SRGB8_ALPHA8_EXT:
+        if (internalformat == ExtensionsGL::SRGB8_ALPHA8_EXT && !m_extsRGB) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid internalformat");
+            return;
+        }
+        m_context->renderbufferStorage(target, internalformat, width, height);
+        m_renderbufferBinding->setInternalFormat(internalformat);
+        m_renderbufferBinding->setIsValid(true);
+        m_renderbufferBinding->setSize(width, height);
+        break;
+    case GraphicsContextGL::DEPTH_STENCIL:
+        if (isDepthStencilSupported())
+            m_context->renderbufferStorage(target, ExtensionsGL::DEPTH24_STENCIL8, width, height);
+        m_renderbufferBinding->setSize(width, height);
+        m_renderbufferBinding->setIsValid(isDepthStencilSupported());
+        m_renderbufferBinding->setInternalFormat(internalformat);
+        break;
+    default:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid internalformat");
+        return;
+    }
 }
 
 void WebGLRenderingContextBase::sampleCoverage(GCGLfloat value, GCGLboolean invert)
@@ -6393,40 +6438,34 @@ bool WebGLRenderingContextBase::validateString(const char* functionName, const S
 
 bool WebGLRenderingContextBase::validateTexFuncLevel(const char* functionName, GCGLenum target, GCGLint level)
 {
-#if USE(ANGLE)
-    UNUSED_PARAM(functionName);
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(level);
-    // ANGLE subsumes this validation.
-    return true;
-#else
     if (level < 0) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "level < 0");
         return false;
     }
+    GCGLint maxLevel = maxTextureLevelForTarget(target);
+    if (maxLevel && level >= maxLevel) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "level out of range");
+        return false;
+    }
+    // This function only checks if level is legal, so we return true and don't
+    // generate INVALID_ENUM if target is illegal.
+    return true;
+}
+
+GCGLint WebGLRenderingContextBase::maxTextureLevelForTarget(GCGLenum target)
+{
     switch (target) {
     case GraphicsContextGL::TEXTURE_2D:
-        if (level >= m_maxTextureLevel) {
-            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "level out of range");
-            return false;
-        }
-        break;
+        return m_maxTextureLevel;
     case GraphicsContextGL::TEXTURE_CUBE_MAP_POSITIVE_X:
     case GraphicsContextGL::TEXTURE_CUBE_MAP_NEGATIVE_X:
     case GraphicsContextGL::TEXTURE_CUBE_MAP_POSITIVE_Y:
     case GraphicsContextGL::TEXTURE_CUBE_MAP_NEGATIVE_Y:
     case GraphicsContextGL::TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GraphicsContextGL::TEXTURE_CUBE_MAP_NEGATIVE_Z:
-        if (level >= m_maxCubeMapTextureLevel) {
-            synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "level out of range");
-            return false;
-        }
-        break;
+        return m_maxCubeMapTextureLevel;
     }
-    // This function only checks if level is legal, so we return true and don't
-    // generate INVALID_ENUM if target is illegal.
-    return true;
-#endif // USE(ANGLE)
+    return 0;
 }
 
 #if !USE(ANGLE)
@@ -6849,7 +6888,7 @@ bool WebGLRenderingContextBase::validateFramebufferFuncParameters(const char* fu
         return true;
     default:
         if ((m_webglDrawBuffers || isWebGL2())
-            && attachment >= GraphicsContextGL::COLOR_ATTACHMENT0
+            && attachment > GraphicsContextGL::COLOR_ATTACHMENT0
             && attachment < static_cast<GCGLenum>(GraphicsContextGL::COLOR_ATTACHMENT0 + getMaxColorAttachments()))
             return true;
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid attachment");

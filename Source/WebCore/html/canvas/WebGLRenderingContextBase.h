@@ -245,8 +245,9 @@ public:
     void polygonOffset(GCGLfloat factor, GCGLfloat units);
     // This must be virtual so more validation can be added in WebGL 2.0.
     virtual void readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& pixels);
+    void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height);
     void releaseShaderCompiler();
-    virtual void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
+    virtual void renderbufferStorageImpl(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, const char* functionName);
     void sampleCoverage(GCGLfloat value, GCGLboolean invert);
     void scissor(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height);
     void shaderSource(WebGLShader*, const String&);
@@ -875,6 +876,7 @@ protected:
     // Helper function to check input level for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if level is invalid.
     bool validateTexFuncLevel(const char* functionName, GCGLenum target, GCGLint level);
+    virtual GCGLint maxTextureLevelForTarget(GCGLenum target);
 
     // Helper function for tex{Sub}Image{2|3}D to check if the input format/type/level/target/width/height/depth/border/xoffset/yoffset/zoffset are valid.
     // Otherwise, it would return quickly without doing other work.

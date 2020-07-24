@@ -1149,8 +1149,8 @@ public:
 
     virtual void blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) = 0;
     virtual void framebufferTextureLayer(GCGLenum target, GCGLenum attachment, PlatformGLObject texture, GCGLint level, GCGLint layer) = 0;
-    virtual void invalidateFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments) = 0;
-    virtual void invalidateSubFramebuffer(GCGLenum target, const Vector<GCGLenum>& attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
+    virtual void invalidateFramebuffer(GCGLenum target, GCGLsizei numAttachments, const GCGLenum* attachments) = 0;
+    virtual void invalidateSubFramebuffer(GCGLenum target, GCGLsizei numAttachments, const GCGLenum* attachments, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) = 0;
     virtual void readBuffer(GCGLenum src) = 0;
 
     // getInternalFormatParameter
