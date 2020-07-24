@@ -68,7 +68,7 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
 void FetchBodyConsumer::clean()
 {
     m_buffer = nullptr;
-    m_consumePromise = nullptr;
+    resetConsumePromise();
     if (m_sink) {
         m_sink->clearCallback();
         return;
@@ -107,7 +107,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, ReadableStream* 
     }
 
     if (m_isLoading) {
-        m_consumePromise = WTFMove(promise);
+        setConsumePromise(WTFMove(promise));
         return;
     }
 
@@ -189,7 +189,14 @@ String FetchBodyConsumer::takeAsText()
 void FetchBodyConsumer::setConsumePromise(Ref<DeferredPromise>&& promise)
 {
     ASSERT(!m_consumePromise);
+    m_userGestureToken = UserGestureIndicator::currentUserGesture();
     m_consumePromise = WTFMove(promise);
+}
+
+void FetchBodyConsumer::resetConsumePromise()
+{
+    m_consumePromise = nullptr;
+    m_userGestureToken = nullptr;
 }
 
 void FetchBodyConsumer::setSource(Ref<FetchBodySource>&& source)
@@ -206,7 +213,7 @@ void FetchBodyConsumer::loadingFailed(const Exception& exception)
     m_isLoading = false;
     if (m_consumePromise) {
         m_consumePromise->reject(exception);
-        m_consumePromise = nullptr;
+        resetConsumePromise();
     }
     if (m_source) {
         m_source->error(exception);
@@ -218,8 +225,14 @@ void FetchBodyConsumer::loadingSucceeded()
 {
     m_isLoading = false;
 
-    if (m_consumePromise)
-        resolve(m_consumePromise.releaseNonNull(), nullptr);
+    if (m_consumePromise) {
+        if (!m_userGestureToken || m_userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()) || !m_userGestureToken->processingUserGesture())
+            resolve(m_consumePromise.releaseNonNull(), nullptr);
+        else {
+            UserGestureIndicator gestureIndicator(m_userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::IsPropagatedFromFetch::Yes);
+            resolve(m_consumePromise.releaseNonNull(), nullptr);
+        }
+    }
     if (m_source) {
         m_source->close();
         m_source = nullptr;

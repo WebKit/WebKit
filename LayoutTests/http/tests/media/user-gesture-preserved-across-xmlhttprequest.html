@@ -19,7 +19,7 @@
         {
             var xhr = new XMLHttpRequest();
             if (window.internals)
-                window.internals.setXHRMaximumIntervalForUserGestureForwarding(xhr, timeout);
+                window.internals.setMaximumIntervalForUserGestureForwardingForFetch(timeout);
 
             xhr.open('GET', `/xmlhttprequest/resources/download-with-delay.php?iteration=1&delay=${delay}`, true);
 
@@ -39,6 +39,70 @@
             };
 
             xhr.send(null);
+        }
+
+        function doFetch(delay, timeout, completionHandler)
+        {
+            if (window.internals)
+                window.internals.setMaximumIntervalForUserGestureForwardingForFetch(timeout);
+
+            fetch(`/xmlhttprequest/resources/download-header-with-delay.php?delay=${delay}`, { method: 'GET', cache: "no-cache" }).then(response => {
+                consoleWrite(`FETCH(resolved): status = ${response.status}`);
+                completionHandler();
+            }, error => {
+                consoleWrite(`FETCH(rejected): exception code = ${error.code}`);
+            });
+        }
+
+        function doFetchBlob(delay, timeout, completionHandler)
+        {
+            fetch(`/xmlhttprequest/resources/download-with-delay.php?iteration=1&delay=${delay}`, { method: 'GET', cache: "no-cache" }).then(response => {
+                consoleWrite(`FETCH(resolved): status = ${response.status}`);
+                if (window.internals)
+                    window.internals.setMaximumIntervalForUserGestureForwardingForFetch(timeout);
+                return response.blob();
+            }, error => {
+                consoleWrite(`FETCH(rejected): exception code = ${error.code}`);
+            }).then(response => {
+                consoleWrite(`FETCH(response resolved)`);
+                completionHandler();
+            }, error => {
+                consoleWrite(`FETCH(response rejected): exception code = ${error.code}`);
+            });
+        }
+
+        function doPromise(completionHandler)
+        {
+            const promise = new Promise( (resolutionFunc) => {
+                resolutionFunc();
+            });
+
+            promise.then(() => {
+                consoleWrite(`PROMISE(resolved)`);
+                completionHandler()
+            });
+        }
+
+        function doFetchThenPromise(completionHandler)
+        {
+            fetch(`/xmlhttprequest/resources/download-with-delay.php?iteration=1`, { method: 'GET', cache: "no-cache" }).then(response => {
+                consoleWrite(`FETCH(resolved): status = ${response.status}`);
+                return new Promise( (resolutionFunc) => resolutionFunc() );
+            }).then(() => {
+                consoleWrite(`PROMISE(resolved)`);
+                completionHandler()
+            });
+        }
+
+        function doFetchThenCrypto(completionHandler)
+        {
+            fetch(`/xmlhttprequest/resources/download-with-delay.php?iteration=1`, { method: 'GET', cache: "no-cache" }).then(response => {
+                consoleWrite(`FETCH(resolved): status = ${response.status}`);
+                return crypto.subtle.generateKey({name: "RSA-OAEP", modulusLength: 2048, publicExponent: new Uint8Array([0x01, 0x00, 0x01]), hash: "sha-1"}, false, ["decrypt", "encrypt", "wrapKey", "unwrapKey"]);
+            }).then(key => {
+                consoleWrite(`CRYPTO(key generated)`);
+                completionHandler()
+            });
         }
 
         function testComplete()
@@ -81,8 +145,27 @@
                 consoleWrite(`setting timeout, delay = ${delay}`);
                 setTimeout(() => { runTest(test); }, delay);
                 break;
+            case 'fetch':
+                consoleWrite(`fetching, delay = ${delay}`);
+                doFetch(delay, test.timeout || 0.6, () => runTest(test));
+                break;
+            case 'fetchblob':
+                consoleWrite(`fetching blob, delay = ${delay}`);
+                doFetchBlob(delay, test.timeout || 0.6, () => runTest(test));
+                break;
+            case 'promise':
+                consoleWrite(`promise`);
+                doPromise(() => runTest(test));
+                break;
+            case 'fetchthenpromise':
+                consoleWrite(`fetch then promise`);
+                doFetchThenPromise(() => runTest(test));
+                break;
+            case 'fetchthencrypto':
+                consoleWrite(`fetch then crypto`);
+                doFetchThenCrypto(() => runTest(test));
+                break;
             }
-
         }
 
         let tests = [
@@ -102,14 +185,51 @@
                 action : 'play',  withkey : false,  success : false,  sequence : ['100 XHR', '100 timeout'] },
 
             { title : 'gesture -> "long" XHR -> video playback: should fail',
-                action : 'play',  withkey : false,  success : false,  timeout : 0.1, sequence : ['300 XHR'] },
+                action : 'play',  withkey : true,  success : false,  timeout : 0.1, sequence : ['300 XHR'] },
+
+            { title : 'gesture -> fetch -> window.open: should fail because Fetch only propagates user gesture for media',
+                action : 'popup', withkey : true,  success : false,  sequence : ['100 Fetch'] },
+
+            { title : 'gesture -> fetch -> video playback: should succeed',
+                action : 'play',  withkey : true,  success : true,  sequence : ['100 Fetch'] },
+
+            { title : 'gesture -> "long" Fetch -> video playback: should fail',
+                action : 'play',  withkey : true,  success : false,  timeout : 0.1, sequence : ['300 Fetch'] },
+
+            { title : 'no gesture -> fetch -> video playback: should fail',
+                action : 'play',  withkey : false,  success : false,  sequence : ['100 Fetch'] },
+
+            { title : 'gesture -> fetch -> blob -> window.open: should fail because Fetch only propagates user gesture for media',
+                action : 'popup', withkey : true,  success : false,  sequence : ['100 FetchBlob'] },
+
+            { title : 'gesture -> fetch -> blob -> video playback: should succeed',
+                action : 'play',  withkey : true,  success : true,  sequence : ['100 FetchBlob'] },
+
+            { title : 'gesture -> fetch -> "long" blob -> video playback: should fail',
+                action : 'play',  withkey : true,  success : false,  timeout : 0.1, sequence : ['300 FetchBlob'] },
+
+            { title : 'no gesture -> fetch -> blob -> video playback: should fail',
+                action : 'play',  withkey : false,  success : false,  sequence : ['100 FetchBlob'] },
+
+            { title : 'no gesture -> promise -> video playback: should fail',
+                action : 'play',  withkey : false,  success : false,  sequence : ['0 promise'] },
+
+            { title : 'gesture -> promise -> video playback: should fail because promise only propagates user gesture propagated through Fetch',
+                action : 'play',  withkey : true,  success : false,  sequence : ['0 promise'] },
+
+            { title : 'gesture -> fetch -> promise -> video playback: should succeed',
+                action : 'play',  withkey : true,  success : true,  sequence : ['0 FetchThenPromise'] },
+
+            { title : 'gesture -> fetch -> crypto -> video playback: should fail since the user gesture will not be propagated through other API even though it returns promises',
+                action : 'play',  withkey : true,  success : false,  sequence : ['0 FetchThenCrypto'] },
+
         ];
 
         function nextTest()
         {
             if (!tests.length) {
                 consoleWrite('');
-                endTest()
+                endTest();
                 return;
             }
 

@@ -52,5 +52,91 @@ EVENT(load): readyState = 4
 RUN(shouldReject(mediaElement.play()).then(testComplete, testComplete))
 Promise rejected correctly OK
 
+** gesture -> fetch -> window.open: should fail because Fetch only propagates user gesture for media
+fetching, delay = 100
+FETCH(resolved): status = 200
+EXPECTED (window.open("about:blank") == 'null') OK
+
+** gesture -> fetch -> video playback: should succeed
+EVENT(canplaythrough)
+fetching, delay = 100
+FETCH(resolved): status = 200
+RUN(shouldResolve(mediaElement.play()).then(testComplete, testComplete))
+Promise resolved OK
+
+** gesture -> "long" Fetch -> video playback: should fail
+EVENT(canplaythrough)
+fetching, delay = 300
+FETCH(resolved): status = 200
+RUN(shouldReject(mediaElement.play()).then(testComplete, testComplete))
+Promise rejected correctly OK
+
+** no gesture -> fetch -> video playback: should fail
+EVENT(canplaythrough)
+fetching, delay = 100
+FETCH(resolved): status = 200
+RUN(shouldReject(mediaElement.play()).then(testComplete, testComplete))
+Promise rejected correctly OK
+
+** gesture -> fetch -> blob -> window.open: should fail because Fetch only propagates user gesture for media
+fetching blob, delay = 100
+FETCH(resolved): status = 200
+FETCH(response resolved)
+EXPECTED (window.open("about:blank") == 'null') OK
+
+** gesture -> fetch -> blob -> video playback: should succeed
+EVENT(canplaythrough)
+fetching blob, delay = 100
+FETCH(resolved): status = 200
+FETCH(response resolved)
+RUN(shouldResolve(mediaElement.play()).then(testComplete, testComplete))
+Promise resolved OK
+
+** gesture -> fetch -> "long" blob -> video playback: should fail
+EVENT(canplaythrough)
+fetching blob, delay = 300
+FETCH(resolved): status = 200
+FETCH(response resolved)
+RUN(shouldReject(mediaElement.play()).then(testComplete, testComplete))
+Promise rejected correctly OK
+
+** no gesture -> fetch -> blob -> video playback: should fail
+EVENT(canplaythrough)
+fetching blob, delay = 100
+FETCH(resolved): status = 200
+FETCH(response resolved)
+RUN(shouldReject(mediaElement.play()).then(testComplete, testComplete))
+Promise rejected correctly OK
+
+** no gesture -> promise -> video playback: should fail
+EVENT(canplaythrough)
+promise
+PROMISE(resolved)
+RUN(shouldReject(mediaElement.play()).then(testComplete, testComplete))
+Promise rejected correctly OK
+
+** gesture -> promise -> video playback: should fail because promise only propagates user gesture propagated through Fetch
+EVENT(canplaythrough)
+promise
+PROMISE(resolved)
+RUN(shouldReject(mediaElement.play()).then(testComplete, testComplete))
+Promise rejected correctly OK
+
+** gesture -> fetch -> promise -> video playback: should succeed
+EVENT(canplaythrough)
+fetch then promise
+FETCH(resolved): status = 200
+PROMISE(resolved)
+RUN(shouldResolve(mediaElement.play()).then(testComplete, testComplete))
+Promise resolved OK
+
+** gesture -> fetch -> crypto -> video playback: should fail since the user gesture will not be propagated through other API even though it returns promises
+EVENT(canplaythrough)
+fetch then crypto
+FETCH(resolved): status = 200
+CRYPTO(key generated)
+RUN(shouldReject(mediaElement.play()).then(testComplete, testComplete))
+Promise rejected correctly OK
+
 END OF TEST
 

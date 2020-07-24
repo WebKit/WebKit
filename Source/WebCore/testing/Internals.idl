@@ -907,7 +907,7 @@ enum ContentSizeCategory {
 
     void testDictionaryLogging();
 
-    void setXHRMaximumIntervalForUserGestureForwarding(XMLHttpRequest xhr, double interval);
+    void setMaximumIntervalForUserGestureForwardingForFetch(double interval);
     void setTransientActivationDuration(double seconds);
 
     void setIsPlayingToAutomotiveHeadUnit(boolean value);

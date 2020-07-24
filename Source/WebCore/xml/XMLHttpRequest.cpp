@@ -67,8 +67,6 @@
 
 namespace WebCore {
 
-static const Seconds maximumIntervalForUserGestureForwarding { 10_s };
-
 WTF_MAKE_ISO_ALLOCATED_IMPL(XMLHttpRequest);
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, xmlHttpRequestCounter, ("XMLHttpRequest"));
@@ -121,7 +119,6 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_responseType(static_cast<unsigned>(ResponseType::EmptyString))
     , m_progressEventThrottle(*this)
     , m_timeoutTimer(*this, &XMLHttpRequest::didReachTimeout)
-    , m_maximumIntervalForUserGestureForwarding(maximumIntervalForUserGestureForwarding)
 {
 #ifndef NDEBUG
     xmlHttpRequestCounter.increment();
@@ -1081,7 +1078,7 @@ void XMLHttpRequest::dispatchEvent(Event& event)
 {
     RELEASE_ASSERT(!scriptExecutionContext()->activeDOMObjectsAreSuspended());
 
-    if (m_userGestureToken && m_userGestureToken->hasExpired(m_maximumIntervalForUserGestureForwarding))
+    if (m_userGestureToken && m_userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()))
         m_userGestureToken = nullptr;
 
     if (readyState() != DONE || !m_userGestureToken || !m_userGestureToken->processingUserGesture()) {
@@ -1154,11 +1151,6 @@ void XMLHttpRequest::contextDestroyed()
 {
     ASSERT(!m_loadingActivity);
     ActiveDOMObject::contextDestroyed();
-}
-
-void XMLHttpRequest::setMaximumIntervalForUserGestureForwarding(double interval)
-{
-    m_maximumIntervalForUserGestureForwarding = Seconds(interval);    
 }
 
 void XMLHttpRequest::eventListenersDidChange()

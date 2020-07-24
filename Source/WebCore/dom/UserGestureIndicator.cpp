@@ -49,6 +49,17 @@ UserGestureToken::~UserGestureToken()
         observer(*this);
 }
 
+static Seconds maxIntervalForUserGestureForwardingForFetch { 10 };
+const Seconds& UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()
+{
+    return maxIntervalForUserGestureForwardingForFetch;
+}
+
+void UserGestureToken::setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds value)
+{
+    maxIntervalForUserGestureForwardingForFetch = WTFMove(value);
+}
+
 UserGestureIndicator::UserGestureIndicator(Optional<ProcessingUserGestureState> state, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle)
     : m_previousToken { currentToken() }
 {
@@ -74,7 +85,7 @@ UserGestureIndicator::UserGestureIndicator(Optional<ProcessingUserGestureState> 
     }
 }
 
-UserGestureIndicator::UserGestureIndicator(RefPtr<UserGestureToken> token, UserGestureToken::GestureScope scope)
+UserGestureIndicator::UserGestureIndicator(RefPtr<UserGestureToken> token, UserGestureToken::GestureScope scope, UserGestureToken::IsPropagatedFromFetch isPropagatedFromFetch)
 {
     // Silently ignore UserGestureIndicators on non main threads.
     if (!isMainThread())
@@ -85,6 +96,7 @@ UserGestureIndicator::UserGestureIndicator(RefPtr<UserGestureToken> token, UserG
 
     if (token) {
         token->setScope(scope);
+        token->setIsPropagatedFromFetch(isPropagatedFromFetch);
         currentToken() = token;
     }
 }
@@ -97,6 +109,7 @@ UserGestureIndicator::~UserGestureIndicator()
     if (auto token = currentToken()) {
         token->resetDOMPasteAccess();
         token->resetScope();
+        token->resetIsPropagatedFromFetch();
     }
 
     currentToken() = m_previousToken;

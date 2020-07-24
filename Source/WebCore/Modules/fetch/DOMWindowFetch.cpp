@@ -35,6 +35,7 @@
 #include "FetchResponse.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
+#include "UserGestureIndicator.h"
 
 namespace WebCore {
 
@@ -56,7 +57,13 @@ void DOMWindowFetch::fetch(DOMWindow& window, FetchRequest::Info&& input, FetchR
         return;
     }
 
-    FetchResponse::fetch(*document, request.releaseReturnValue().get(), [promise = WTFMove(promise)](ExceptionOr<FetchResponse&>&& result) mutable {
+    FetchResponse::fetch(*document, request.releaseReturnValue(), [promise = WTFMove(promise), userGestureToken = UserGestureIndicator::currentUserGesture()](ExceptionOr<FetchResponse&>&& result) mutable {
+        if (!userGestureToken || userGestureToken->hasExpired(UserGestureToken::maximumIntervalForUserGestureForwardingForFetch()) || !userGestureToken->processingUserGesture()) {
+            promise.settle(WTFMove(result));
+            return;
+        }
+
+        UserGestureIndicator gestureIndicator(userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::IsPropagatedFromFetch::Yes);
         promise.settle(WTFMove(result));
     });
 }

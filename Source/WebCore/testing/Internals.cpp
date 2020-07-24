@@ -5672,9 +5672,9 @@ void Internals::testDictionaryLogging()
     page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary("testMessage"_s, "testDescription"_s, dictionary, ShouldSample::No);
 }
 
-void Internals::setXHRMaximumIntervalForUserGestureForwarding(XMLHttpRequest& request, double interval)
+void Internals::setMaximumIntervalForUserGestureForwardingForFetch(double interval)
 {
-    request.setMaximumIntervalForUserGestureForwarding(interval);
+    UserGestureToken::setMaximumIntervalForUserGestureForwardingForFetchForTesting(Seconds(interval));
 }
 
 void Internals::setTransientActivationDuration(double seconds)

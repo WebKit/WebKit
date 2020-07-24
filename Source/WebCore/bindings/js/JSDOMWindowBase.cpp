@@ -215,7 +215,17 @@ void JSDOMWindowBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC:
 
     auto callback = JSMicrotaskCallback::create(thisObject, WTFMove(task));
     auto& eventLoop = thisObject.scriptExecutionContext()->eventLoop();
-    eventLoop.queueMicrotask([callback = WTFMove(callback)]() mutable {
+    // Propagating media only user gesture for Fetch API's promise chain.
+    auto userGestureToken = UserGestureIndicator::currentUserGesture();
+    if (userGestureToken && !userGestureToken->isPropagatedFromFetch())
+        userGestureToken = nullptr;
+    eventLoop.queueMicrotask([callback = WTFMove(callback), userGestureToken = WTFMove(userGestureToken)]() mutable {
+        if (!userGestureToken) {
+            callback->call();
+            return;
+        }
+
+        UserGestureIndicator gestureIndicator(userGestureToken, UserGestureToken::GestureScope::MediaOnly, UserGestureToken::IsPropagatedFromFetch::Yes);
         callback->call();
     });
 }

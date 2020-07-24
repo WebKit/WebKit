@@ -334,4 +334,3 @@ const char* FetchRequest::activeDOMObjectName() const
 }
 
 } // namespace WebCore
-

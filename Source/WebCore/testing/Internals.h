@@ -961,7 +961,7 @@ public:
 
     void testDictionaryLogging();
 
-    void setXHRMaximumIntervalForUserGestureForwarding(XMLHttpRequest&, double);
+    void setMaximumIntervalForUserGestureForwardingForFetch(double);
     void setTransientActivationDuration(double seconds);
 
     void setIsPlayingToAutomotiveHeadUnit(bool);

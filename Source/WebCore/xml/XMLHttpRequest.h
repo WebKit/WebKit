@@ -128,8 +128,6 @@ public:
 
     size_t memoryCost() const;
 
-    WEBCORE_EXPORT void setMaximumIntervalForUserGestureForwarding(double);
-
     using EventTarget::dispatchEvent;
     void dispatchEvent(Event&) override;
 
@@ -247,7 +245,6 @@ private:
 
     Optional<ExceptionCode> m_exceptionCode;
     RefPtr<UserGestureToken> m_userGestureToken;
-    Seconds m_maximumIntervalForUserGestureForwarding;
     bool m_hasRelevantEventListener { false };
 };
 

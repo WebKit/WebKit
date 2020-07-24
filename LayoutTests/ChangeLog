@@ -1,3 +1,15 @@
+2020-07-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Propagating user gesture through Fetch API
+        https://bugs.webkit.org/show_bug.cgi?id=214444
+        <rdar://problem/65980953>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/media/user-gesture-preserved-across-xmlhttprequest-expected.txt:
+        * http/tests/media/user-gesture-preserved-across-xmlhttprequest.html:
+        * http/tests/xmlhttprequest/resources/download-header-with-delay.php: Added.
+
 2020-07-24  Karl Rackler  <rackler@apple.com>
 
         [ iOS wk2 ] imported/w3c/web-platform-tests/css/css-fonts/crash-font-face-invalid-descriptor.html is a flaky timeout
