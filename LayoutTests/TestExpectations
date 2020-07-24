@@ -3371,6 +3371,9 @@ webgl/2.0.0/conformance/rendering/clipping-wide-points.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/clipping-wide-points.html [ Pass Failure ]
 webgl/2.0.0/conformance2/textures/misc/tex-3d-size-limit.html [ Pass Failure ]
 
+# webkit.org/b/214763 regression on some hardware
+webgl/2.0.0/conformance2/textures/misc/tex-unpack-params.html [ Pass Failure ]
+
 # WebGL 2 To-be-implemented flaky tests
 webgl/2.0.0/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html [ Pass Failure ]
 
