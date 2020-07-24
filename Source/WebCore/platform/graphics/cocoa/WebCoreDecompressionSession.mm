@@ -214,7 +214,7 @@ void WebCoreDecompressionSession::ensureDecompressionSessionForSample(CMSampleBu
 
     if (!m_decompressionSession) {
         CMVideoFormatDescriptionRef videoFormatDescription = CMSampleBufferGetFormatDescription(sample);
-        auto videoDecoderSpecification = @{ (__bridge NSString *)kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder: @YES };
+        auto videoDecoderSpecification = @{ (__bridge NSString *)kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder: @( m_hardwareDecoderEnabled ) };
 
         NSDictionary *attributes;
         if (m_mode == OpenGL)

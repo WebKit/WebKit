@@ -1,3 +1,20 @@
+2020-07-24  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add PerformanceTest tool for measuring raw speed of a video decoder
+        https://bugs.webkit.org/show_bug.cgi?id=214723
+
+        Reviewed by Darin Adler.
+
+        Export classes used by the DecoderTest performance tool. Drive-by fix: allow the
+        clients to enable or disable the hardware decoder for a given decompression session.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/MediaSample.h:
+        * platform/graphics/cocoa/SourceBufferParserWebM.h:
+        * platform/graphics/cocoa/WebCoreDecompressionSession.h:
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::ensureDecompressionSessionForSample):
+
 2020-07-24  Youenn Fablet  <youenn@apple.com>
 
         Monitor the case of a fetch event not able to register to the respondWith promise

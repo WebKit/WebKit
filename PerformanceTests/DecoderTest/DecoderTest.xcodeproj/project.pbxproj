@@ -1,0 +1,220 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CD89724C24CA485100AF6621 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CD89724B24CA485100AF6621 /* libwebrtc.dylib */; };
+		CDE0C9BF24CA247A00593A83 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDE0C9BE24CA247A00593A83 /* JavaScriptCore.framework */; };
+		CDE0C9C124CA249A00593A83 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDE0C9C024CA249A00593A83 /* WebKit.framework */; };
+		CDE0C9C424CA36CD00593A83 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDE0C9C324CA36CD00593A83 /* CoreMedia.framework */; };
+		CDF1350124C9F99900432E1E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF1350024C9F99900432E1E /* main.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CDF134FB24C9F99900432E1E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		CD89724B24CA485100AF6621 /* libwebrtc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libwebrtc.dylib; path = ../../WebKitBuild/Release/libwebrtc.dylib; sourceTree = "<group>"; };
+		CDE0C9BE24CA247A00593A83 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		CDE0C9C024CA249A00593A83 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		CDE0C9C324CA36CD00593A83 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		CDEB7B2624CAC7420015249E /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		CDF134FD24C9F99900432E1E /* DecoderTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DecoderTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDF1350024C9F99900432E1E /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		CDF1350B24CA02F300432E1E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		CDF1350C24CA034D00432E1E /* DecoderTest.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DecoderTest.xcconfig; sourceTree = "<group>"; };
+		CDF1350D24CA059300432E1E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CDF134FA24C9F99900432E1E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDE0C9C424CA36CD00593A83 /* CoreMedia.framework in Frameworks */,
+				CDE0C9BF24CA247A00593A83 /* JavaScriptCore.framework in Frameworks */,
+				CD89724C24CA485100AF6621 /* libwebrtc.dylib in Frameworks */,
+				CDE0C9C124CA249A00593A83 /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CDE0C9BD24CA247A00593A83 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CDE0C9C324CA36CD00593A83 /* CoreMedia.framework */,
+				CDE0C9BE24CA247A00593A83 /* JavaScriptCore.framework */,
+				CD89724B24CA485100AF6621 /* libwebrtc.dylib */,
+				CDE0C9C024CA249A00593A83 /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CDF134F424C9F99900432E1E = {
+			isa = PBXGroup;
+			children = (
+				CDF1350A24CA02F300432E1E /* Configurations */,
+				CDF134FF24C9F99900432E1E /* DecoderTest */,
+				CDF134FE24C9F99900432E1E /* Products */,
+				CDE0C9BD24CA247A00593A83 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CDF134FE24C9F99900432E1E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CDF134FD24C9F99900432E1E /* DecoderTest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CDF134FF24C9F99900432E1E /* DecoderTest */ = {
+			isa = PBXGroup;
+			children = (
+				CDF1350024C9F99900432E1E /* main.mm */,
+				CDEB7B2624CAC7420015249E /* config.h */,
+			);
+			path = DecoderTest;
+			sourceTree = "<group>";
+		};
+		CDF1350A24CA02F300432E1E /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				CDF1350B24CA02F300432E1E /* Base.xcconfig */,
+				CDF1350D24CA059300432E1E /* DebugRelease.xcconfig */,
+				CDF1350C24CA034D00432E1E /* DecoderTest.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CDF134FC24C9F99900432E1E /* DecoderTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CDF1350424C9F99900432E1E /* Build configuration list for PBXNativeTarget "DecoderTest" */;
+			buildPhases = (
+				CDF134F924C9F99900432E1E /* Sources */,
+				CDF134FA24C9F99900432E1E /* Frameworks */,
+				CDF134FB24C9F99900432E1E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DecoderTest;
+			productName = DecoderTest;
+			productReference = CDF134FD24C9F99900432E1E /* DecoderTest */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CDF134F524C9F99900432E1E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1200;
+				TargetAttributes = {
+					CDF134FC24C9F99900432E1E = {
+						CreatedOnToolsVersion = 12.0;
+					};
+				};
+			};
+			buildConfigurationList = CDF134F824C9F99900432E1E /* Build configuration list for PBXProject "DecoderTest" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CDF134F424C9F99900432E1E;
+			productRefGroup = CDF134FE24C9F99900432E1E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CDF134FC24C9F99900432E1E /* DecoderTest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CDF134F924C9F99900432E1E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDF1350124C9F99900432E1E /* main.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CDF1350224C9F99900432E1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CDF1350D24CA059300432E1E /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		CDF1350324C9F99900432E1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CDF1350D24CA059300432E1E /* DebugRelease.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		CDF1350524C9F99900432E1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CDF1350C24CA034D00432E1E /* DecoderTest.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		CDF1350624C9F99900432E1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CDF1350C24CA034D00432E1E /* DecoderTest.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CDF134F824C9F99900432E1E /* Build configuration list for PBXProject "DecoderTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDF1350224C9F99900432E1E /* Debug */,
+				CDF1350324C9F99900432E1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CDF1350424C9F99900432E1E /* Build configuration list for PBXNativeTarget "DecoderTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDF1350524C9F99900432E1E /* Debug */,
+				CDF1350624C9F99900432E1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CDF134F524C9F99900432E1E /* Project object */;
+}

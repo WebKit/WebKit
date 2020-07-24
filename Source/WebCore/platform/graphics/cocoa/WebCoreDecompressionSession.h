@@ -46,7 +46,7 @@ typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
 
 namespace WebCore {
 
-class WebCoreDecompressionSession : public ThreadSafeRefCounted<WebCoreDecompressionSession> {
+class WEBCORE_EXPORT WebCoreDecompressionSession : public ThreadSafeRefCounted<WebCoreDecompressionSession> {
 public:
     static Ref<WebCoreDecompressionSession> createOpenGL() { return adoptRef(*new WebCoreDecompressionSession(OpenGL)); }
     static Ref<WebCoreDecompressionSession> createRGB() { return adoptRef(*new WebCoreDecompressionSession(RGB)); }
@@ -73,6 +73,9 @@ public:
     unsigned droppedVideoFrames() const { return m_droppedVideoFrames; }
     unsigned corruptedVideoFrames() const { return m_corruptedVideoFrames; }
     MediaTime totalFrameDelay() const { return m_totalFrameDelay; }
+
+    bool hardwareDecoderEnabled() const { return m_hardwareDecoderEnabled; }
+    void setHardwareDecoderEnabled(bool enabled) { m_hardwareDecoderEnabled = enabled; }
 
 private:
     enum Mode {
@@ -122,6 +125,7 @@ private:
     double m_decodeRatioMovingAverage { 0 };
 
     bool m_invalidated { false };
+    bool m_hardwareDecoderEnabled { true };
     int m_framesBeingDecoded { 0 };
     unsigned m_totalVideoFrames { 0 };
     unsigned m_droppedVideoFrames { 0 };

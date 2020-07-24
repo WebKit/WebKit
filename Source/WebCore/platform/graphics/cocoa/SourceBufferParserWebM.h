@@ -34,6 +34,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/MediaTime.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
@@ -49,7 +50,7 @@ class WebmParser;
 
 namespace WebCore {
 
-class SourceBufferParserWebM : public SourceBufferParser, private webm::Callback {
+class WEBCORE_EXPORT SourceBufferParserWebM : public SourceBufferParser, private webm::Callback {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);

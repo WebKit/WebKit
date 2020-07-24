@@ -1,3 +1,20 @@
+2020-07-24  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add PerformanceTest tool for measuring raw speed of a video decoder
+        https://bugs.webkit.org/show_bug.cgi?id=214723
+
+        Reviewed by Darin Adler.
+
+        * DecoderTest/Configurations/Base.xcconfig: Added.
+        * DecoderTest/Configurations/DebugRelease.xcconfig: Added.
+        * DecoderTest/Configurations/DecoderTest.xcconfig: Added.
+        * DecoderTest/DecoderTest.xcodeproj/project.pbxproj: Added.
+        * DecoderTest/DecoderTest/main.mm: Added.
+        (Function<void):
+        (main):
+        * DecoderTest/Makefile: Added.
+        * Makefile.shared: Added.
+
 2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Update macOS Version macros

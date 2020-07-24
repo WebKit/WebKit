@@ -54,7 +54,7 @@ struct PlatformSample {
     } sample;
 };
 
-class MediaSample : public ThreadSafeRefCounted<MediaSample> {
+class WEBCORE_EXPORT MediaSample : public ThreadSafeRefCounted<MediaSample> {
 public:
     virtual ~MediaSample() = default;
 

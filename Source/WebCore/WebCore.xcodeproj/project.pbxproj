@@ -4132,7 +4132,7 @@
 		CD5596911475B678001D0BD0 /* AudioFileReaderIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD55968F1475B678001D0BD0 /* AudioFileReaderIOS.cpp */; };
 		CD5596921475B678001D0BD0 /* AudioFileReaderIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5596901475B678001D0BD0 /* AudioFileReaderIOS.h */; };
 		CD5896E21CD2B15100B3BCC8 /* WebPlaybackControlsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD5D27781E8318E000D80A3D /* WebCoreDecompressionSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5D27761E8318E000D80A3D /* WebCoreDecompressionSession.h */; };
+		CD5D27781E8318E000D80A3D /* WebCoreDecompressionSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5D27761E8318E000D80A3D /* WebCoreDecompressionSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5E5B5E1A15CE54000C609E /* PageConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5FF4972162E2B7004BD86F /* ISOTrackEncryptionBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CD871C661FB52B6800F0B965 /* ISOTrackEncryptionBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD5FF4992162E2BE004BD86F /* ISOBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CD871C621FB52B6500F0B965 /* ISOBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4213,7 +4213,7 @@
 		CDC8B5A7180474F70016E685 /* MediaSourcePrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC8B5A5180474F70016E685 /* MediaSourcePrivateAVFObjC.h */; };
 		CDC8B5AA18047FF10016E685 /* SourceBufferPrivateAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC8B5A818047FF10016E685 /* SourceBufferPrivateAVFObjC.mm */; };
 		CDC8B5AB18047FF10016E685 /* SourceBufferPrivateAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC8B5A918047FF10016E685 /* SourceBufferPrivateAVFObjC.h */; };
-		CDC8B5AD1804AE5D0016E685 /* SourceBufferPrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */; };
+		CDC8B5AD1804AE5D0016E685 /* SourceBufferPrivateClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC8B5AC1804AE5D0016E685 /* SourceBufferPrivateClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDC939A81E9BDFB100BB768D /* VideoToolboxSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC939A61E9BDFB100BB768D /* VideoToolboxSoftLink.h */; };
 		CDC979F51C498C0900DB50D4 /* WebCoreNSErrorExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC979F31C498C0900DB50D4 /* WebCoreNSErrorExtras.h */; };
 		CDCA98EB18B2C8EB00C12FF9 /* LegacyCDMPrivateMediaPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDCA98EA18B2C8EB00C12FF9 /* LegacyCDMPrivateMediaPlayer.cpp */; };
@@ -4246,7 +4246,9 @@
 		CDECA89B1EDF447D00DCB08B /* AVAssetTrackUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CDECA8991EDF447D00DCB08B /* AVAssetTrackUtilities.h */; };
 		CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEF4FD617E85C8F00AEE24B /* GridLength.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDEFA2281E7669E8000AE99C /* PlatformAudioData.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE667A11E4BBA4D00E8154A /* PlatformAudioData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CDF2B004181F059C00F2B424 /* MediaDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B003181F059C00F2B424 /* MediaDescription.h */; };
+		CDF1350824C9FA4400432E1E /* SourceBufferParserWebM.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8F667224C0F208000C421C /* SourceBufferParserWebM.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDF1350924C9FCA300432E1E /* SourceBufferParser.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEB3D7324C41A6E001FBEEF /* SourceBufferParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CDF2B004181F059C00F2B424 /* MediaDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B003181F059C00F2B424 /* MediaDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF2B0101820540600F2B424 /* MockBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF2B0061820540600F2B424 /* MockBox.cpp */; };
 		CDF2B0111820540600F2B424 /* MockBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF2B0071820540600F2B424 /* MockBox.h */; };
 		CDF2B0121820540600F2B424 /* MockMediaPlayerMediaSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDF2B0081820540600F2B424 /* MockMediaPlayerMediaSource.cpp */; };
@@ -33315,6 +33317,8 @@
 				84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */,
 				CD3A496217A9D01B00274E42 /* SourceBuffer.h in Headers */,
 				CD3A496517A9D01B00274E42 /* SourceBufferList.h in Headers */,
+				CDF1350924C9FCA300432E1E /* SourceBufferParser.h in Headers */,
+				CDF1350824C9FA4400432E1E /* SourceBufferParserWebM.h in Headers */,
 				CD641EB41818F5ED00EE4C41 /* SourceBufferPrivate.h in Headers */,
 				CDC8B5AB18047FF10016E685 /* SourceBufferPrivateAVFObjC.h in Headers */,
 				CDC8B5AD1804AE5D0016E685 /* SourceBufferPrivateClient.h in Headers */,
