@@ -1,3 +1,16 @@
+2020-07-24  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit::setCrashReportApplicationSpecificInformation() should also log to WTFLogAlways()
+        <https://webkit.org/b/214756>
+
+        Reviewed by Chris Dumez.
+
+        * Platform/cocoa/WKCrashReporter.mm:
+        (WebKit::setCrashReportApplicationSpecificInformation):
+        - Also output the log information via WTFLogAlways() in case
+          Application Specific Information is overwritten or is not
+          included in the crash log.
+
 2020-07-24  Chris Dumez  <cdumez@apple.com>
 
         Crash under PreconnectTask::start()

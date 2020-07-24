@@ -33,7 +33,9 @@ namespace WebKit {
 
 void setCrashReportApplicationSpecificInformation(CFStringRef infoString)
 {
-    WTF::setCrashLogMessage([(__bridge NSString *)infoString UTF8String]);
+    auto* cInfoString = [(__bridge NSString *)infoString UTF8String];
+    WTFLogAlways("%s", cInfoString);
+    WTF::setCrashLogMessage(cInfoString);
 }
 
 }
