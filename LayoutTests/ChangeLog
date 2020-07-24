@@ -1,3 +1,12 @@
+2020-07-24  Karl Rackler  <rackler@apple.com>
+
+        [ iOS wk2 ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214751
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-07-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS WK1 EWS] compositing/repaint/iframes tests are flaky failures
