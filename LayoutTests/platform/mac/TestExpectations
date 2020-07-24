@@ -880,9 +880,6 @@ imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [
 
 ## --- End W3C Imported Media Source Tests
 
-# This test times out.
-media/media-source/media-source-seek-complete.html [ Timeout ]
-
 # <rdar://problem/18858636>
 media/media-source/media-source-init-segment-duration.html
 # --- End Media Source Tests ---
