@@ -1377,9 +1377,6 @@ imported/w3c/canvas/2d.gradient.radial.touch2.html [ Failure ]
 fast/canvas/canvas-currentColor.html [ Failure ]
 fast/canvas/set-colors.html [ Failure ]
 
-# <rdar://problem/31322425> REGRESSION: LayoutTest media/video-orientation.html is failing
-media/video-orientation.html [ Failure ]
-
 # WebCryptoAPI features that enabled only for High Sierra/iOS 11
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
