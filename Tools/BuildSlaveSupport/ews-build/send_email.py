@@ -20,7 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import smtplib
+
+is_test_mode_enabled = os.getenv('BUILDBOT_PRODUCTION') is None
 
 BOT_WATCHERS_EMAILS = ['webkit-ews-bot-watchers@group.apple.com']
 FROM_EMAIL = 'ews@webkit.org'
@@ -28,6 +31,8 @@ SERVER = 'localhost'
 
 
 def send_email(to_emails, subject, text):
+    if is_test_mode_enabled:
+        return
     if not to_emails:
         print('Skipping email since no recipient is specified')
         return

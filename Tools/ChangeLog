@@ -1,5 +1,15 @@
 2020-07-24  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] Disable email sending on testing instances of ews
+        https://bugs.webkit.org/show_bug.cgi?id=214738
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/send_email.py:
+        (send_email):
+
+2020-07-24  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Notify bot watchers about build being broken
         https://bugs.webkit.org/show_bug.cgi?id=214727
 
