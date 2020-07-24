@@ -44,13 +44,14 @@ public:
         return guarded();
     }
 
-    void whenSettled(std::function<void()>&&);
+    enum class IsCallbackRegistered { No, Yes };
+    IsCallbackRegistered whenSettled(std::function<void()>&&);
     JSC::JSValue result() const;
 
     enum class Status { Pending, Fulfilled, Rejected };
     Status status() const;
 
-    static void whenPromiseIsSettled(JSDOMGlobalObject*, JSC::JSObject* promise, Function<void()>&&);
+    static IsCallbackRegistered whenPromiseIsSettled(JSDOMGlobalObject*, JSC::JSObject* promise, Function<void()>&&);
 
 private:
     DOMPromise(JSDOMGlobalObject& globalObject, JSC::JSPromise& promise)

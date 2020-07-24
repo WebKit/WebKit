@@ -1,5 +1,28 @@
 2020-07-24  Youenn Fablet  <youenn@apple.com>
 
+        Monitor the case of a fetch event not able to register to the respondWith promise
+        https://bugs.webkit.org/show_bug.cgi?id=214631
+
+        Reviewed by Alex Christensen.
+
+        In some cases, the "Fetch event is destroyed" error is received.
+        One possibility is that the fetch event is not able to register to its respondWith promise.
+        Add a specific error message for that case.
+
+        This is difficult to test as we would need to have a fetch event trying to register to the respondWith promise
+        exactly at the time the service worker gets stopped.
+
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DOMPromise::whenSettled):
+        (WebCore::DOMPromise::whenPromiseIsSettled):
+        * bindings/js/JSDOMPromise.h:
+        * workers/service/FetchEvent.cpp:
+        (WebCore::FetchEvent::respondWith):
+        Change from weakThis to makeRef. While this is not strictly needed since addExtendLifetimePromise ref the event while calling whenSettled,
+        this is clearer and more robust.
+
+2020-07-24  Youenn Fablet  <youenn@apple.com>
+
         ASSERT(!m_peerConnection.isClosed()) on imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-operations.https.html
         https://bugs.webkit.org/show_bug.cgi?id=214189
         <rdar://problem/65343941>
