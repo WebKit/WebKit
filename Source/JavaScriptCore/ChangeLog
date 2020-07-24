@@ -1,3 +1,17 @@
+2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not use hardened Array for Intl supportedLocalesOf
+        https://bugs.webkit.org/show_bug.cgi?id=214676
+
+        Reviewed by Mark Lam.
+
+        We do not need to call getOwnPropertyNames & defineOwnProperty because hardening array of Intl.XXX.supportedLocalesOf is removed from the spec.
+        We should just return an array from bestFitSupportedLocales or lookupSupportedLocales, while this change is not observable to users (but it is better
+        for performance). This fully fixes https://github.com/tc39/ecma402/pull/278.
+
+        * runtime/IntlObject.cpp:
+        (JSC::supportedLocales):
+
 2020-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Arrow function |this| resolution should not be trapped by with-scope

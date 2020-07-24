@@ -1,3 +1,13 @@
+2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not use hardened Array for Intl supportedLocalesOf
+        https://bugs.webkit.org/show_bug.cgi?id=214676
+
+        Reviewed by Mark Lam.
+
+        * stress/intl-suppored-locales-of.js: Added.
+        (shouldBe):
+
 2020-07-24  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Skip crashing test on mips

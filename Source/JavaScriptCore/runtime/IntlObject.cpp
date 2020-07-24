@@ -771,26 +771,9 @@ JSValue supportedLocales(JSGlobalObject* globalObject, const HashSet<String>& av
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    JSArray* supportedLocales = localeMatcher == LocaleMatcher::BestFit
-        ? bestFitSupportedLocales(globalObject, availableLocales, requestedLocales)
-        : lookupSupportedLocales(globalObject, availableLocales, requestedLocales);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-
-    PropertyNameArray keys(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
-    supportedLocales->getOwnPropertyNames(supportedLocales, globalObject, keys, EnumerationMode());
-    RETURN_IF_EXCEPTION(scope, JSValue());
-
-    PropertyDescriptor desc;
-
-    size_t len = keys.size();
-    for (size_t i = 0; i < len; ++i) {
-        supportedLocales->defineOwnProperty(supportedLocales, globalObject, keys[i], desc, true);
-        RETURN_IF_EXCEPTION(scope, JSValue());
-    }
-    supportedLocales->defineOwnProperty(supportedLocales, globalObject, vm.propertyNames->length, desc, true);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-
-    return supportedLocales;
+    if (localeMatcher == LocaleMatcher::BestFit)
+        RELEASE_AND_RETURN(scope, bestFitSupportedLocales(globalObject, availableLocales, requestedLocales));
+    RELEASE_AND_RETURN(scope, lookupSupportedLocales(globalObject, availableLocales, requestedLocales));
 }
 
 Vector<String> numberingSystemsForLocale(const String& locale)
