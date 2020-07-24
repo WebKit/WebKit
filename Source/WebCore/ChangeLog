@@ -1,3 +1,17 @@
+2020-07-24  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception check handling below postMessage().
+        https://bugs.webkit.org/show_bug.cgi?id=214761
+        <rdar://problem/65932136>
+
+        Reviewed by Yusuke Suzuki and Keith Miller.
+
+        Test: js/dom/missing-exception-check-below-postMessage.html
+
+        * bindings/js/JSDOMConvertSequences.h:
+        (WebCore::Detail::SequenceConverter::convertArray):
+        (WebCore::Detail::SequenceConverter::convert):
+
 2020-07-24  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Tell AVAssetResourceLoadingContentInformationRequest that asset size is available immediately

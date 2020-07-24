@@ -1,3 +1,14 @@
+2020-07-24  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception check handling below postMessage().
+        https://bugs.webkit.org/show_bug.cgi?id=214761
+        <rdar://problem/65932136>
+
+        Reviewed by Yusuke Suzuki and Keith Miller.
+
+        * js/dom/missing-exception-check-below-postMessage-expected.txt: Added.
+        * js/dom/missing-exception-check-below-postMessage.html: Added.
+
 2020-07-24  Kenneth Russell  <kbr@chromium.org>
 
         REGRESSION (r264845): webgl/2.0.0/conformance2/textures/misc/tex-unpack-params.html is failing

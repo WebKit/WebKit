@@ -195,8 +195,10 @@ struct SequenceConverter {
     using GenericConverter = GenericSequenceConverter<IDLType>;
     using ReturnType = typename GenericConverter::ReturnType;
 
-    static ReturnType convertArray(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, JSC::JSArray* array)
+    static ReturnType convertArray(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSArray* array)
     {
+        auto& vm = lexicalGlobalObject.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         unsigned length = array->length();
 
         ReturnType result;
@@ -249,23 +251,20 @@ struct SequenceConverter {
 
         JSC::JSObject* object = JSC::asObject(value);
         if (Converter<IDLType>::conversionHasSideEffects)
-            return GenericConverter::convert(lexicalGlobalObject, object);
+            RELEASE_AND_RETURN(scope, (GenericConverter::convert(lexicalGlobalObject, object)));
 
         if (!JSC::isJSArray(object))
-            return GenericConverter::convert(lexicalGlobalObject, object);
+            RELEASE_AND_RETURN(scope, (GenericConverter::convert(lexicalGlobalObject, object)));
 
         JSC::JSArray* array = JSC::asArray(object);
         if (!array->isIteratorProtocolFastAndNonObservable())
-            return GenericConverter::convert(lexicalGlobalObject, object);
+            RELEASE_AND_RETURN(scope, (GenericConverter::convert(lexicalGlobalObject, object)));
         
-        return convertArray(lexicalGlobalObject, scope, array);
+        RELEASE_AND_RETURN(scope, (convertArray(lexicalGlobalObject, array)));
     }
 
     static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject* object, JSC::JSValue method)
     {
-        auto& vm = JSC::getVM(&lexicalGlobalObject);
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
         if (Converter<IDLType>::conversionHasSideEffects)
             return GenericConverter::convert(lexicalGlobalObject, object, method);
 
@@ -276,7 +275,7 @@ struct SequenceConverter {
         if (!array->isIteratorProtocolFastAndNonObservable())
             return GenericConverter::convert(lexicalGlobalObject, object, method);
 
-        return convertArray(lexicalGlobalObject, scope, array);
+        return convertArray(lexicalGlobalObject, array);
     }
 };
 
