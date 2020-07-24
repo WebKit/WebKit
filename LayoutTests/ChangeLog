@@ -1,3 +1,13 @@
+2020-07-24  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS iOS ] webarchive/loading/test-loading-archive-subresource-null-mimetype.html is passing and expectations need to be removed
+        https://bugs.webkit.org/show_bug.cgi?id=214740
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-07-24  Karl Rackler  <rackler@apple.com>
 
         [ iOS debug wk2 ] imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-center.html is a flaky timeout

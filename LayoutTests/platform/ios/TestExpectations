@@ -1528,7 +1528,6 @@ webarchive/test-link-rel-icon.html [ Failure ]
 
 # The following two tests are expected to fail until <rdar://problem/34063313> is available on test systems.
 webarchive/loading/cache-expired-subresource.html [ Failure ]
-webarchive/loading/test-loading-archive-subresource-null-mimetype.html [ Crash ]
 
 # Webarchive tests that fail due to <https://bugs.webkit.org/show_bug.cgi?id=82665>:
 http/tests/webarchive/test-css-url-encoding-shift-jis.html

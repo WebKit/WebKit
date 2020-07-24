@@ -204,7 +204,6 @@ webkit.org/b/56685 webarchive/test-link-rel-icon.html [ Failure ]
 
 # The following two tests are expected to fail until <rdar://problem/34063313> is available on test systems.
 webarchive/loading/cache-expired-subresource.html [ Failure ]
-webarchive/loading/test-loading-archive-subresource-null-mimetype.html [ Crash ]
 
 # Quota API is not supported.
 storage/storageinfo-missing-arguments.html
