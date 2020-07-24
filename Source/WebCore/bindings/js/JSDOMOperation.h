@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2006, 2008-2009, 2013, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2009 Google, Inc. All rights reserved.
  *  Copyright (C) 2012 Ericsson AB. All rights reserved.
@@ -32,8 +32,8 @@ template<typename JSClass>
 class IDLOperation {
 public:
     using ClassParameter = JSClass*;
-    using Operation = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, ClassParameter, JSC::ThrowScope&);
-    using StaticOperation = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, JSC::ThrowScope&);
+    using Operation = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*, ClassParameter);
+    using StaticOperation = JSC::EncodedJSValue(JSC::JSGlobalObject*, JSC::CallFrame*);
 
     static JSClass* cast(JSC::JSGlobalObject&, JSC::CallFrame&);
 
@@ -50,16 +50,14 @@ public:
         ASSERT_GC_OBJECT_INHERITS(thisObject, JSClass::info());
         
         // FIXME: We should refactor the binding generated code to use references for lexicalGlobalObject and thisObject.
-        return operation(&lexicalGlobalObject, &callFrame, thisObject, throwScope);
+        RELEASE_AND_RETURN(throwScope, (operation(&lexicalGlobalObject, &callFrame, thisObject)));
     }
 
     template<StaticOperation operation, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
     static JSC::EncodedJSValue callStatic(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, const char*)
     {
-        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
-
         // FIXME: We should refactor the binding generated code to use references for lexicalGlobalObject.
-        return operation(&lexicalGlobalObject, &callFrame, throwScope);
+        return operation(&lexicalGlobalObject, &callFrame);
     }
 };
 

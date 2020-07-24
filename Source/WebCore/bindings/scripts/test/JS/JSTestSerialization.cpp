@@ -237,13 +237,12 @@ bool setJSTestSerializationConstructor(JSGlobalObject* lexicalGlobalObject, Enco
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestSerializationFirstStringAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationFirstStringAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.firstStringAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.firstStringAttribute())));
 }
 
 EncodedJSValue jsTestSerializationFirstStringAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -251,10 +250,10 @@ EncodedJSValue jsTestSerializationFirstStringAttribute(JSGlobalObject* lexicalGl
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationFirstStringAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "firstStringAttribute");
 }
 
-static inline bool setJSTestSerializationFirstStringAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationFirstStringAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -269,13 +268,12 @@ bool setJSTestSerializationFirstStringAttribute(JSGlobalObject* lexicalGlobalObj
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationFirstStringAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "firstStringAttribute");
 }
 
-static inline JSValue jsTestSerializationSecondLongAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationSecondLongAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.secondLongAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.secondLongAttribute())));
 }
 
 EncodedJSValue jsTestSerializationSecondLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -283,10 +281,10 @@ EncodedJSValue jsTestSerializationSecondLongAttribute(JSGlobalObject* lexicalGlo
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationSecondLongAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "secondLongAttribute");
 }
 
-static inline bool setJSTestSerializationSecondLongAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationSecondLongAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -301,13 +299,12 @@ bool setJSTestSerializationSecondLongAttribute(JSGlobalObject* lexicalGlobalObje
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationSecondLongAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "secondLongAttribute");
 }
 
-static inline JSValue jsTestSerializationThirdUnserializableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationThirdUnserializableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestException>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.thirdUnserializableAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestException>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.thirdUnserializableAttribute())));
 }
 
 EncodedJSValue jsTestSerializationThirdUnserializableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -315,10 +312,10 @@ EncodedJSValue jsTestSerializationThirdUnserializableAttribute(JSGlobalObject* l
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationThirdUnserializableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "thirdUnserializableAttribute");
 }
 
-static inline bool setJSTestSerializationThirdUnserializableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationThirdUnserializableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestException>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestSerialization", "thirdUnserializableAttribute", "TestException"); });
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -333,13 +330,12 @@ bool setJSTestSerializationThirdUnserializableAttribute(JSGlobalObject* lexicalG
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationThirdUnserializableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "thirdUnserializableAttribute");
 }
 
-static inline JSValue jsTestSerializationFourthUnrestrictedDoubleAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationFourthUnrestrictedDoubleAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnrestrictedDouble>(lexicalGlobalObject, throwScope, impl.fourthUnrestrictedDoubleAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLUnrestrictedDouble>(lexicalGlobalObject, throwScope, impl.fourthUnrestrictedDoubleAttribute())));
 }
 
 EncodedJSValue jsTestSerializationFourthUnrestrictedDoubleAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -347,10 +343,10 @@ EncodedJSValue jsTestSerializationFourthUnrestrictedDoubleAttribute(JSGlobalObje
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationFourthUnrestrictedDoubleAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "fourthUnrestrictedDoubleAttribute");
 }
 
-static inline bool setJSTestSerializationFourthUnrestrictedDoubleAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationFourthUnrestrictedDoubleAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnrestrictedDouble>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -365,13 +361,12 @@ bool setJSTestSerializationFourthUnrestrictedDoubleAttribute(JSGlobalObject* lex
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationFourthUnrestrictedDoubleAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "fourthUnrestrictedDoubleAttribute");
 }
 
-static inline JSValue jsTestSerializationFifthLongAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationFifthLongAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.fifthLongAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.fifthLongAttribute())));
 }
 
 EncodedJSValue jsTestSerializationFifthLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -379,10 +374,10 @@ EncodedJSValue jsTestSerializationFifthLongAttribute(JSGlobalObject* lexicalGlob
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationFifthLongAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "fifthLongAttribute");
 }
 
-static inline bool setJSTestSerializationFifthLongAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationFifthLongAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -397,13 +392,12 @@ bool setJSTestSerializationFifthLongAttribute(JSGlobalObject* lexicalGlobalObjec
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationFifthLongAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "fifthLongAttribute");
 }
 
-static inline JSValue jsTestSerializationSixthTypedefAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationSixthTypedefAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.sixthTypedefAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDouble>(lexicalGlobalObject, throwScope, impl.sixthTypedefAttribute())));
 }
 
 EncodedJSValue jsTestSerializationSixthTypedefAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -411,10 +405,10 @@ EncodedJSValue jsTestSerializationSixthTypedefAttribute(JSGlobalObject* lexicalG
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationSixthTypedefAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "sixthTypedefAttribute");
 }
 
-static inline bool setJSTestSerializationSixthTypedefAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationSixthTypedefAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDouble>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -429,13 +423,12 @@ bool setJSTestSerializationSixthTypedefAttribute(JSGlobalObject* lexicalGlobalOb
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationSixthTypedefAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "sixthTypedefAttribute");
 }
 
-static inline JSValue jsTestSerializationSeventhDirectlySerializableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationSeventhDirectlySerializableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestSerializationInheritFinal>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.seventhDirectlySerializableAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestSerializationInheritFinal>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.seventhDirectlySerializableAttribute())));
 }
 
 EncodedJSValue jsTestSerializationSeventhDirectlySerializableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -443,10 +436,10 @@ EncodedJSValue jsTestSerializationSeventhDirectlySerializableAttribute(JSGlobalO
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationSeventhDirectlySerializableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "seventhDirectlySerializableAttribute");
 }
 
-static inline bool setJSTestSerializationSeventhDirectlySerializableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationSeventhDirectlySerializableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestSerializationInheritFinal>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestSerialization", "seventhDirectlySerializableAttribute", "TestSerializationInheritFinal"); });
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -461,13 +454,12 @@ bool setJSTestSerializationSeventhDirectlySerializableAttribute(JSGlobalObject* 
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationSeventhDirectlySerializableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "seventhDirectlySerializableAttribute");
 }
 
-static inline JSValue jsTestSerializationEighthIndirectlyAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationEighthIndirectlyAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestSerializationIndirectInheritance>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.eighthIndirectlyAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLInterface<TestSerializationIndirectInheritance>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.eighthIndirectlyAttribute())));
 }
 
 EncodedJSValue jsTestSerializationEighthIndirectlyAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -475,10 +467,10 @@ EncodedJSValue jsTestSerializationEighthIndirectlyAttribute(JSGlobalObject* lexi
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationEighthIndirectlyAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "eighthIndirectlyAttribute");
 }
 
-static inline bool setJSTestSerializationEighthIndirectlyAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationEighthIndirectlyAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestSerializationIndirectInheritance>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestSerialization", "eighthIndirectlyAttribute", "TestSerializationIndirectInheritance"); });
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -493,13 +485,12 @@ bool setJSTestSerializationEighthIndirectlyAttribute(JSGlobalObject* lexicalGlob
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationEighthIndirectlyAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "eighthIndirectlyAttribute");
 }
 
-static inline JSValue jsTestSerializationNinthOptionalDirectlySerializableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationNinthOptionalDirectlySerializableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLInterface<TestSerializationInheritFinal>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.ninthOptionalDirectlySerializableAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLNullable<IDLInterface<TestSerializationInheritFinal>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.ninthOptionalDirectlySerializableAttribute())));
 }
 
 EncodedJSValue jsTestSerializationNinthOptionalDirectlySerializableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -507,10 +498,10 @@ EncodedJSValue jsTestSerializationNinthOptionalDirectlySerializableAttribute(JSG
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationNinthOptionalDirectlySerializableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "ninthOptionalDirectlySerializableAttribute");
 }
 
-static inline bool setJSTestSerializationNinthOptionalDirectlySerializableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationNinthOptionalDirectlySerializableAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLInterface<TestSerializationInheritFinal>>>(lexicalGlobalObject, value, [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwAttributeTypeError(lexicalGlobalObject, scope, "TestSerialization", "ninthOptionalDirectlySerializableAttribute", "TestSerializationInheritFinal"); });
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -525,13 +516,12 @@ bool setJSTestSerializationNinthOptionalDirectlySerializableAttribute(JSGlobalOb
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationNinthOptionalDirectlySerializableAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "ninthOptionalDirectlySerializableAttribute");
 }
 
-static inline JSValue jsTestSerializationTenthFrozenArrayAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationTenthFrozenArrayAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLFrozenArray<IDLBoolean>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.tenthFrozenArrayAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLFrozenArray<IDLBoolean>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.tenthFrozenArrayAttribute())));
 }
 
 EncodedJSValue jsTestSerializationTenthFrozenArrayAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -539,10 +529,10 @@ EncodedJSValue jsTestSerializationTenthFrozenArrayAttribute(JSGlobalObject* lexi
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationTenthFrozenArrayAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "tenthFrozenArrayAttribute");
 }
 
-static inline bool setJSTestSerializationTenthFrozenArrayAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationTenthFrozenArrayAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLFrozenArray<IDLBoolean>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -557,13 +547,12 @@ bool setJSTestSerializationTenthFrozenArrayAttribute(JSGlobalObject* lexicalGlob
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationTenthFrozenArrayAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "tenthFrozenArrayAttribute");
 }
 
-static inline JSValue jsTestSerializationEleventhSequenceAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationEleventhSequenceAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLSequence<IDLDOMString>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.eleventhSequenceAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLSequence<IDLDOMString>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.eleventhSequenceAttribute())));
 }
 
 EncodedJSValue jsTestSerializationEleventhSequenceAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -571,10 +560,10 @@ EncodedJSValue jsTestSerializationEleventhSequenceAttribute(JSGlobalObject* lexi
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationEleventhSequenceAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "eleventhSequenceAttribute");
 }
 
-static inline bool setJSTestSerializationEleventhSequenceAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationEleventhSequenceAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -589,13 +578,12 @@ bool setJSTestSerializationEleventhSequenceAttribute(JSGlobalObject* lexicalGlob
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationEleventhSequenceAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "eleventhSequenceAttribute");
 }
 
-static inline JSValue jsTestSerializationTwelfthInterfaceSequenceAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationTwelfthInterfaceSequenceAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLSequence<IDLInterface<TestSerializationInheritFinal>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.twelfthInterfaceSequenceAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLSequence<IDLInterface<TestSerializationInheritFinal>>>(lexicalGlobalObject, *thisObject.globalObject(), throwScope, impl.twelfthInterfaceSequenceAttribute())));
 }
 
 EncodedJSValue jsTestSerializationTwelfthInterfaceSequenceAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -603,10 +591,10 @@ EncodedJSValue jsTestSerializationTwelfthInterfaceSequenceAttribute(JSGlobalObje
     return IDLAttribute<JSTestSerialization>::get<jsTestSerializationTwelfthInterfaceSequenceAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "twelfthInterfaceSequenceAttribute");
 }
 
-static inline bool setJSTestSerializationTwelfthInterfaceSequenceAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationTwelfthInterfaceSequenceAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSequence<IDLInterface<TestSerializationInheritFinal>>>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -621,63 +609,64 @@ bool setJSTestSerializationTwelfthInterfaceSequenceAttribute(JSGlobalObject* lex
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationTwelfthInterfaceSequenceAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "twelfthInterfaceSequenceAttribute");
 }
 
-JSC::JSObject* JSTestSerialization::serialize(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSDOMGlobalObject& globalObject, ThrowScope& throwScope)
+JSC::JSObject* JSTestSerialization::serialize(JSGlobalObject& lexicalGlobalObject, JSTestSerialization& thisObject, JSDOMGlobalObject& globalObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto* result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());
 
-    auto firstStringAttributeValue = jsTestSerializationFirstStringAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto firstStringAttributeValue = jsTestSerializationFirstStringAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "firstStringAttribute"), firstStringAttributeValue);
 
-    auto secondLongAttributeValue = jsTestSerializationSecondLongAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto secondLongAttributeValue = jsTestSerializationSecondLongAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "secondLongAttribute"), secondLongAttributeValue);
 
-    auto fourthUnrestrictedDoubleAttributeValue = jsTestSerializationFourthUnrestrictedDoubleAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto fourthUnrestrictedDoubleAttributeValue = jsTestSerializationFourthUnrestrictedDoubleAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "fourthUnrestrictedDoubleAttribute"), fourthUnrestrictedDoubleAttributeValue);
 
-    auto fifthLongAttributeValue = jsTestSerializationFifthLongAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto fifthLongAttributeValue = jsTestSerializationFifthLongAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "fifthLongAttribute"), fifthLongAttributeValue);
 
-    auto sixthTypedefAttributeValue = jsTestSerializationSixthTypedefAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto sixthTypedefAttributeValue = jsTestSerializationSixthTypedefAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "sixthTypedefAttribute"), sixthTypedefAttributeValue);
 
-    auto seventhDirectlySerializableAttributeValue = jsTestSerializationSeventhDirectlySerializableAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto seventhDirectlySerializableAttributeValue = jsTestSerializationSeventhDirectlySerializableAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
-    auto* seventhDirectlySerializableAttributeSerializedValue = JSTestSerializationInheritFinal::serialize(lexicalGlobalObject, *jsCast<JSTestSerializationInheritFinal*>(seventhDirectlySerializableAttributeValue), globalObject, throwScope);
+    auto* seventhDirectlySerializableAttributeSerializedValue = JSTestSerializationInheritFinal::serialize(lexicalGlobalObject, *jsCast<JSTestSerializationInheritFinal*>(seventhDirectlySerializableAttributeValue), globalObject);
     result->putDirect(vm, Identifier::fromString(vm, "seventhDirectlySerializableAttribute"), seventhDirectlySerializableAttributeSerializedValue);
 
-    auto eighthIndirectlyAttributeValue = jsTestSerializationEighthIndirectlyAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto eighthIndirectlyAttributeValue = jsTestSerializationEighthIndirectlyAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
-    auto* eighthIndirectlyAttributeSerializedValue = JSTestSerializationIndirectInheritance::serialize(lexicalGlobalObject, *jsCast<JSTestSerializationIndirectInheritance*>(eighthIndirectlyAttributeValue), globalObject, throwScope);
+    auto* eighthIndirectlyAttributeSerializedValue = JSTestSerializationIndirectInheritance::serialize(lexicalGlobalObject, *jsCast<JSTestSerializationIndirectInheritance*>(eighthIndirectlyAttributeValue), globalObject);
     result->putDirect(vm, Identifier::fromString(vm, "eighthIndirectlyAttribute"), eighthIndirectlyAttributeSerializedValue);
 
-    auto ninthOptionalDirectlySerializableAttributeValue = jsTestSerializationNinthOptionalDirectlySerializableAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto ninthOptionalDirectlySerializableAttributeValue = jsTestSerializationNinthOptionalDirectlySerializableAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     if (!ninthOptionalDirectlySerializableAttributeValue.isNull()) {
-        auto* ninthOptionalDirectlySerializableAttributeSerializedValue = JSTestSerializationInheritFinal::serialize(lexicalGlobalObject, *jsCast<JSTestSerializationInheritFinal*>(ninthOptionalDirectlySerializableAttributeValue), globalObject, throwScope);
+        auto* ninthOptionalDirectlySerializableAttributeSerializedValue = JSTestSerializationInheritFinal::serialize(lexicalGlobalObject, *jsCast<JSTestSerializationInheritFinal*>(ninthOptionalDirectlySerializableAttributeValue), globalObject);
         result->putDirect(vm, Identifier::fromString(vm, "ninthOptionalDirectlySerializableAttribute"), ninthOptionalDirectlySerializableAttributeSerializedValue);
     } else
         result->putDirect(vm, Identifier::fromString(vm, "ninthOptionalDirectlySerializableAttribute"), ninthOptionalDirectlySerializableAttributeValue);
 
-    auto tenthFrozenArrayAttributeValue = jsTestSerializationTenthFrozenArrayAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto tenthFrozenArrayAttributeValue = jsTestSerializationTenthFrozenArrayAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "tenthFrozenArrayAttribute"), tenthFrozenArrayAttributeValue);
 
-    auto eleventhSequenceAttributeValue = jsTestSerializationEleventhSequenceAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto eleventhSequenceAttributeValue = jsTestSerializationEleventhSequenceAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "eleventhSequenceAttribute"), eleventhSequenceAttributeValue);
 
     return result;
 }
 
-static inline EncodedJSValue jsTestSerializationPrototypeFunctionToJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestSerialization* thisObject, JSC::ThrowScope& throwScope)
+static inline EncodedJSValue jsTestSerializationPrototypeFunctionToJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestSerialization* thisObject)
 {
-    return JSValue::encode(JSTestSerialization::serialize(*lexicalGlobalObject, *thisObject, *thisObject->globalObject(), throwScope));
+    return JSValue::encode(JSTestSerialization::serialize(*lexicalGlobalObject, *thisObject, *thisObject->globalObject()));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationPrototypeFunctionToJSON(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

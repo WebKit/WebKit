@@ -186,13 +186,12 @@ bool setJSTestSerializationInheritConstructor(JSGlobalObject* lexicalGlobalObjec
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestSerializationInheritInheritLongAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInherit& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationInheritInheritLongAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInherit& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.inheritLongAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.inheritLongAttribute())));
 }
 
 EncodedJSValue jsTestSerializationInheritInheritLongAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -200,10 +199,10 @@ EncodedJSValue jsTestSerializationInheritInheritLongAttribute(JSGlobalObject* le
     return IDLAttribute<JSTestSerializationInherit>::get<jsTestSerializationInheritInheritLongAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "inheritLongAttribute");
 }
 
-static inline bool setJSTestSerializationInheritInheritLongAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInherit& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationInheritInheritLongAttributeSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInherit& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -218,21 +217,22 @@ bool setJSTestSerializationInheritInheritLongAttribute(JSGlobalObject* lexicalGl
     return IDLAttribute<JSTestSerializationInherit>::set<setJSTestSerializationInheritInheritLongAttributeSetter>(*lexicalGlobalObject, thisValue, encodedValue, "inheritLongAttribute");
 }
 
-JSC::JSObject* JSTestSerializationInherit::serialize(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInherit& thisObject, JSDOMGlobalObject& globalObject, ThrowScope& throwScope)
+JSC::JSObject* JSTestSerializationInherit::serialize(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInherit& thisObject, JSDOMGlobalObject& globalObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto* result = JSTestSerialization::serialize(lexicalGlobalObject, thisObject, globalObject, throwScope);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* result = JSTestSerialization::serialize(lexicalGlobalObject, thisObject, globalObject);
 
-    auto inheritLongAttributeValue = jsTestSerializationInheritInheritLongAttributeGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto inheritLongAttributeValue = jsTestSerializationInheritInheritLongAttributeGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "inheritLongAttribute"), inheritLongAttributeValue);
 
     return result;
 }
 
-static inline EncodedJSValue jsTestSerializationInheritPrototypeFunctionToJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestSerializationInherit* thisObject, JSC::ThrowScope& throwScope)
+static inline EncodedJSValue jsTestSerializationInheritPrototypeFunctionToJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestSerializationInherit* thisObject)
 {
-    return JSValue::encode(JSTestSerializationInherit::serialize(*lexicalGlobalObject, *thisObject, *thisObject->globalObject(), throwScope));
+    return JSValue::encode(JSTestSerializationInherit::serialize(*lexicalGlobalObject, *thisObject, *thisObject->globalObject()));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritPrototypeFunctionToJSON(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

@@ -1,3 +1,14 @@
+2020-07-24  Mark Lam  <mark.lam@apple.com>
+
+        Fix JS bindings code to DECLARE_THROW_SCOPE in the functions that can throw instead of passing a ThrowScope around.
+        https://bugs.webkit.org/show_bug.cgi?id=214695
+        <rdar://problem/65927049>
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/missing-exception-check-below-queueMicrotask-expected.txt: Added.
+        * js/dom/missing-exception-check-below-queueMicrotask.html: Added.
+
 2020-07-24  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS ] media/media-source/media-source-seek-complete.html is passing and needs expectation removed

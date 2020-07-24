@@ -201,11 +201,12 @@ bool setJSTestOperationConditionalConstructor(JSGlobalObject* lexicalGlobalObjec
 }
 
 #if ENABLE(ConditionBase)
-static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunctionNonConditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestOperationConditional>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunctionNonConditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestOperationConditional>::ClassParameter castedThis)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(callFrame);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
     impl.nonConditionalOperation();
     return JSValue::encode(jsUndefined());
@@ -219,11 +220,12 @@ EncodedJSValue JSC_HOST_CALL jsTestOperationConditionalPrototypeFunctionNonCondi
 #endif
 
 #if ENABLE(ConditionBase) && ENABLE(ConditionOperation)
-static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunctionConditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestOperationConditional>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunctionConditionalOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestOperationConditional>::ClassParameter castedThis)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(callFrame);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
     impl.conditionalOperation();
     return JSValue::encode(jsUndefined());

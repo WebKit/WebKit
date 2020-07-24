@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2006, 2008-2009, 2013, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2009 Google, Inc. All rights reserved.
  *  Copyright (C) 2012 Ericsson AB. All rights reserved.
@@ -31,10 +31,10 @@ namespace WebCore {
 template<typename JSClass>
 class IDLAttribute {
 public:
-    using Setter = bool(JSC::JSGlobalObject&, JSClass&, JSC::JSValue, JSC::ThrowScope&);
-    using StaticSetter = bool(JSC::JSGlobalObject&, JSC::JSValue, JSC::ThrowScope&);
-    using Getter = JSC::JSValue(JSC::JSGlobalObject&, JSClass&, JSC::ThrowScope&);
-    using StaticGetter = JSC::JSValue(JSC::JSGlobalObject&, JSC::ThrowScope&);
+    using Setter = bool(JSC::JSGlobalObject&, JSClass&, JSC::JSValue);
+    using StaticSetter = bool(JSC::JSGlobalObject&, JSC::JSValue);
+    using Getter = JSC::JSValue(JSC::JSGlobalObject&, JSClass&);
+    using StaticGetter = JSC::JSValue(JSC::JSGlobalObject&);
     
     static JSClass* cast(JSC::JSGlobalObject&, JSC::EncodedJSValue);
 
@@ -47,15 +47,13 @@ public:
         if (UNLIKELY(!thisObject))
             return (shouldThrow == CastedThisErrorBehavior::Throw) ? throwSetterTypeError(lexicalGlobalObject, throwScope, JSClass::info()->className, attributeName) : false;
 
-        return setter(lexicalGlobalObject, *thisObject, JSC::JSValue::decode(encodedValue), throwScope);
+        RELEASE_AND_RETURN(throwScope, (setter(lexicalGlobalObject, *thisObject, JSC::JSValue::decode(encodedValue))));
     }
     
     template<StaticSetter setter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
     static bool setStatic(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue, JSC::EncodedJSValue encodedValue, const char*)
     {
-        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
-        
-        return setter(lexicalGlobalObject, JSC::JSValue::decode(encodedValue), throwScope);
+        return setter(lexicalGlobalObject, JSC::JSValue::decode(encodedValue));
     }
     
     template<Getter getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
@@ -66,7 +64,7 @@ public:
         if (shouldThrow == CastedThisErrorBehavior::Assert) {
             ASSERT(cast(lexicalGlobalObject, thisValue));
             auto* thisObject = JSC::jsCast<JSClass*>(JSC::JSValue::decode(thisValue));
-            return JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject, throwScope));
+            RELEASE_AND_RETURN(throwScope, (JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject))));
         }
 
         auto* thisObject = cast(lexicalGlobalObject, thisValue);
@@ -78,15 +76,13 @@ public:
             return JSC::JSValue::encode(JSC::jsUndefined());
         }
 
-        return JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject, throwScope));
+        RELEASE_AND_RETURN(throwScope, (JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject))));
     }
     
     template<StaticGetter getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
     static JSC::EncodedJSValue getStatic(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue, const char*)
     {
-        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
-        
-        return JSC::JSValue::encode(getter(lexicalGlobalObject, throwScope));
+        return JSC::JSValue::encode(getter(lexicalGlobalObject));
     }
 };
 

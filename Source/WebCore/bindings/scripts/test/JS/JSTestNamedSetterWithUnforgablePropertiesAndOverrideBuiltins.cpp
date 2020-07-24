@@ -315,13 +315,12 @@ bool setJSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor(
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttributeGetter(JSGlobalObject& lexicalGlobalObject, JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.unforgeableAttribute());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.unforgeableAttribute())));
 }
 
 EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttribute(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -329,11 +328,12 @@ EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnfor
     return IDLAttribute<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::get<jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsUnforgeableAttributeGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "unforgeableAttribute");
 }
 
-static inline JSC::EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+static inline JSC::EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsInstanceFunctionUnforgeableOperationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins>::ClassParameter castedThis)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(callFrame);
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
     impl.unforgeableOperation();
     return JSValue::encode(jsUndefined());

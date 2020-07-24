@@ -189,13 +189,12 @@ bool setJSTestSerializationInheritFinalConstructor(JSGlobalObject* lexicalGlobal
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestSerializationInheritFinalFinalLongAttributeFooGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInheritFinal& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationInheritFinalFinalLongAttributeFooGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInheritFinal& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.finalLongAttributeFoo());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.finalLongAttributeFoo())));
 }
 
 EncodedJSValue jsTestSerializationInheritFinalFinalLongAttributeFoo(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -203,10 +202,10 @@ EncodedJSValue jsTestSerializationInheritFinalFinalLongAttributeFoo(JSGlobalObje
     return IDLAttribute<JSTestSerializationInheritFinal>::get<jsTestSerializationInheritFinalFinalLongAttributeFooGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "finalLongAttributeFoo");
 }
 
-static inline bool setJSTestSerializationInheritFinalFinalLongAttributeFooSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInheritFinal& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationInheritFinalFinalLongAttributeFooSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInheritFinal& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -221,13 +220,12 @@ bool setJSTestSerializationInheritFinalFinalLongAttributeFoo(JSGlobalObject* lex
     return IDLAttribute<JSTestSerializationInheritFinal>::set<setJSTestSerializationInheritFinalFinalLongAttributeFooSetter>(*lexicalGlobalObject, thisValue, encodedValue, "finalLongAttributeFoo");
 }
 
-static inline JSValue jsTestSerializationInheritFinalFinalLongAttributeBarGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInheritFinal& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestSerializationInheritFinalFinalLongAttributeBarGetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInheritFinal& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.finalLongAttributeBar());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLLong>(lexicalGlobalObject, throwScope, impl.finalLongAttributeBar())));
 }
 
 EncodedJSValue jsTestSerializationInheritFinalFinalLongAttributeBar(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -235,10 +233,10 @@ EncodedJSValue jsTestSerializationInheritFinalFinalLongAttributeBar(JSGlobalObje
     return IDLAttribute<JSTestSerializationInheritFinal>::get<jsTestSerializationInheritFinalFinalLongAttributeBarGetter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "finalLongAttributeBar");
 }
 
-static inline bool setJSTestSerializationInheritFinalFinalLongAttributeBarSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInheritFinal& thisObject, JSValue value, ThrowScope& throwScope)
+static inline bool setJSTestSerializationInheritFinalFinalLongAttributeBarSetter(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInheritFinal& thisObject, JSValue value)
 {
-    UNUSED_PARAM(lexicalGlobalObject);
-    UNUSED_PARAM(throwScope);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(lexicalGlobalObject, value);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -253,21 +251,22 @@ bool setJSTestSerializationInheritFinalFinalLongAttributeBar(JSGlobalObject* lex
     return IDLAttribute<JSTestSerializationInheritFinal>::set<setJSTestSerializationInheritFinalFinalLongAttributeBarSetter>(*lexicalGlobalObject, thisValue, encodedValue, "finalLongAttributeBar");
 }
 
-JSC::JSObject* JSTestSerializationInheritFinal::serialize(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInheritFinal& thisObject, JSDOMGlobalObject& globalObject, ThrowScope& throwScope)
+JSC::JSObject* JSTestSerializationInheritFinal::serialize(JSGlobalObject& lexicalGlobalObject, JSTestSerializationInheritFinal& thisObject, JSDOMGlobalObject& globalObject)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
-    auto* result = JSTestSerializationInherit::serialize(lexicalGlobalObject, thisObject, globalObject, throwScope);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto* result = JSTestSerializationInherit::serialize(lexicalGlobalObject, thisObject, globalObject);
 
-    auto finalLongAttributeBarValue = jsTestSerializationInheritFinalFinalLongAttributeBarGetter(lexicalGlobalObject, thisObject, throwScope);
+    auto finalLongAttributeBarValue = jsTestSerializationInheritFinalFinalLongAttributeBarGetter(lexicalGlobalObject, thisObject);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(vm, "finalLongAttributeBar"), finalLongAttributeBarValue);
 
     return result;
 }
 
-static inline EncodedJSValue jsTestSerializationInheritFinalPrototypeFunctionToJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestSerializationInheritFinal* thisObject, JSC::ThrowScope& throwScope)
+static inline EncodedJSValue jsTestSerializationInheritFinalPrototypeFunctionToJSONBody(JSGlobalObject* lexicalGlobalObject, CallFrame*, JSTestSerializationInheritFinal* thisObject)
 {
-    return JSValue::encode(JSTestSerializationInheritFinal::serialize(*lexicalGlobalObject, *thisObject, *thisObject->globalObject(), throwScope));
+    return JSValue::encode(JSTestSerializationInheritFinal::serialize(*lexicalGlobalObject, *thisObject, *thisObject->globalObject()));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritFinalPrototypeFunctionToJSON(JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame)

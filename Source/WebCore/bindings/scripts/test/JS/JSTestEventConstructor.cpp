@@ -283,13 +283,12 @@ bool setJSTestEventConstructorConstructor(JSGlobalObject* lexicalGlobalObject, E
     return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
-static inline JSValue jsTestEventConstructorAttr1Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestEventConstructorAttr1Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr1());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr1())));
 }
 
 EncodedJSValue jsTestEventConstructorAttr1(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -297,13 +296,12 @@ EncodedJSValue jsTestEventConstructorAttr1(JSGlobalObject* lexicalGlobalObject, 
     return IDLAttribute<JSTestEventConstructor>::get<jsTestEventConstructorAttr1Getter, CastedThisErrorBehavior::Assert>(*lexicalGlobalObject, thisValue, "attr1");
 }
 
-static inline JSValue jsTestEventConstructorAttr2Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestEventConstructorAttr2Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr2());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr2())));
 }
 
 EncodedJSValue jsTestEventConstructorAttr2(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
@@ -312,13 +310,12 @@ EncodedJSValue jsTestEventConstructorAttr2(JSGlobalObject* lexicalGlobalObject, 
 }
 
 #if ENABLE(SPECIAL_EVENT)
-static inline JSValue jsTestEventConstructorAttr3Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject, ThrowScope& throwScope)
+static inline JSValue jsTestEventConstructorAttr3Getter(JSGlobalObject& lexicalGlobalObject, JSTestEventConstructor& thisObject)
 {
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(lexicalGlobalObject);
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr3());
-    return result;
+    RELEASE_AND_RETURN(throwScope, (toJS<IDLDOMString>(lexicalGlobalObject, throwScope, impl.attr3())));
 }
 
 EncodedJSValue jsTestEventConstructorAttr3(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName)
