@@ -1,3 +1,18 @@
+2020-07-24  Youenn Fablet  <youenn@apple.com>
+
+        ASSERT(!m_peerConnection.isClosed()) on imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-operations.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=214189
+        <rdar://problem/65343941>
+
+        Reviewed by Eric Carlson.
+
+        Covered by unskipped tests.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::addPendingTrackEvent):
+        This can be called in case the connection is closed but should not be in case the connection is stopped.
+        Update the ASSERT accordingly.
+
 2020-07-24  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] gst_buffer_unmap: assertion 'GST_IS_BUFFER (buffer)' failed
