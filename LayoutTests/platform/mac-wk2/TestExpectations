@@ -1073,7 +1073,6 @@ webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCPeerConn
 webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html [ Skip ]
 webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/idlharness.https.window.html [ Skip ]
 webkit.org/b/214478 [ Debug ] tiled-drawing/scrolling/fast-scroll-iframe-latched-select.html [ Skip ]
-webkit.org/b/214478 [ Debug ] webrtc/simulcast-h264.html [ Skip ]
 
 webkit.org/b/214574 [ Release ] svg/animations/smil-leak-list-property-instances.svg [ Pass Failure ]
 

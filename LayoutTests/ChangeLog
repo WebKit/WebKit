@@ -1,3 +1,12 @@
+2020-07-24  Youenn Fablet  <youenn@apple.com>
+
+        Remove assertions in RTCVideoEncoderH264 that are wrong in case of simulcast
+        https://bugs.webkit.org/show_bug.cgi?id=214684
+
+        Reviewed by Darin Adler.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-07-23  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Query Objects

@@ -425,8 +425,6 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
 - (NSInteger)encode:(RTCVideoFrame *)frame
     codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)codecSpecificInfo
            frameTypes:(NSArray<NSNumber *> *)frameTypes {
-  RTC_DCHECK_EQ(frame.width, _width);
-  RTC_DCHECK_EQ(frame.height, _height);
   if (!_callback || ![self hasCompressionSession]) {
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }

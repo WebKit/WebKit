@@ -1,3 +1,15 @@
+2020-07-24  Youenn Fablet  <youenn@apple.com>
+
+        Remove assertions in RTCVideoEncoderH264 that are wrong in case of simulcast
+        https://bugs.webkit.org/show_bug.cgi?id=214684
+
+        Reviewed by Darin Adler.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 encode:codecSpecificInfo:frameTypes:]):
+        In case of simulcast, the session expected width/height and samples width/height are not matching.
+        This is expected and the session handles it properly.
+
 2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Update macOS Version macros
