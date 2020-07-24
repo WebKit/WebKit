@@ -139,14 +139,18 @@ static const char* TestBytes = R"SWRESOURCE(
 
 async function doTest()
 {
-    const cache = await window.caches.open("mycache");
-    const promise = cache.put("http://example.org/test", new Response(new ArrayBuffer(1024 * 500)));
-    window.webkit.messageHandlers.qt.postMessage("start");
-    promise.then(() => {
-        window.webkit.messageHandlers.qt.postMessage("pass");
-    }, () => {
-        window.webkit.messageHandlers.qt.postMessage("fail");
-    });
+    try {
+        const cache = await window.caches.open("mycache");
+        const promise = cache.put("http://example.org/test", new Response(new ArrayBuffer(1024 * 500)));
+        window.webkit.messageHandlers.qt.postMessage("start");
+        promise.then(() => {
+            window.webkit.messageHandlers.qt.postMessage("pass");
+        }, () => {
+            window.webkit.messageHandlers.qt.postMessage("fail");
+        });
+    } catch (e) {
+        window.webkit.messageHandlers.qt.postMessage("fail with exception " + e);
+    }
 }
 doTest();
 
@@ -166,13 +170,17 @@ async function test(num)
     index++;
     url = "http://example.org/test" + index;
 
-    const cache = await window.caches.open("mycache");
-    const promise = cache.put(url, new Response(new ArrayBuffer(num * 1024 * 1024)));
-    promise.then(() => {
-        window.webkit.messageHandlers.qt.postMessage("pass");
-    }, () => {
-        window.webkit.messageHandlers.qt.postMessage("fail");
-    });
+    try {
+        const cache = await window.caches.open("mycache");
+        const promise = cache.put(url, new Response(new ArrayBuffer(num * 1024 * 1024)));
+        promise.then(() => {
+            window.webkit.messageHandlers.qt.postMessage("pass");
+        }, () => {
+            window.webkit.messageHandlers.qt.postMessage("fail");
+        });
+    } catch (e) {
+        window.webkit.messageHandlers.qt.postMessage("fail with exception " + e);
+    }
 }
 
 function doTest(num)
@@ -220,10 +228,14 @@ TEST(WebKit, QuotaDelegate)
     auto delegate1 = adoptNS([[QuotaDelegate alloc] init]);
     [webView1 setUIDelegate:delegate1.get()];
     setVisible(webView1.get());
-    
+
+    NSLog(@"QuotaDelegate 1");
+
     receivedQuotaDelegateCalled = false;
     [webView1 loadRequest:server.request()];
     Util::run(&receivedQuotaDelegateCalled);
+
+    NSLog(@"QuotaDelegate 2");
 
     auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
     auto delegate2 = adoptNS([[QuotaDelegate alloc] init]);
@@ -235,6 +247,8 @@ TEST(WebKit, QuotaDelegate)
     [messageHandler setExpectedMessage: @"start"];
     Util::run(&receivedMessage);
 
+    NSLog(@"QuotaDelegate 3");
+
     EXPECT_FALSE(delegate2.get().quotaDelegateCalled);
     [delegate1 grantQuota];
 
@@ -242,14 +256,20 @@ TEST(WebKit, QuotaDelegate)
     receivedMessage = false;
     Util::run(&receivedMessage);
 
+    NSLog(@"QuotaDelegate 4");
+
     while (!delegate2.get().quotaDelegateCalled)
         TestWebKitAPI::Util::sleep(0.1);
+
+    NSLog(@"QuotaDelegate 5");
 
     [delegate2 denyQuota];
 
     [messageHandler setExpectedMessage: @"fail"];
     receivedMessage = false;
     Util::run(&receivedMessage);
+
+    NSLog(@"QuotaDelegate 6");
 }
 
 TEST(WebKit, QuotaDelegateReload)
