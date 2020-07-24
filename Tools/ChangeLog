@@ -1,3 +1,18 @@
+2020-07-24  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Notify bot watchers about build being broken
+        https://bugs.webkit.org/show_bug.cgi?id=214727
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.start):
+        (AnalyzeCompileWebKitResults.send_email_for_build_failure):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestAnalyzeCompileWebKitResults.setUp):
+        (TestReRunWebKitTests.configureStep):
+        (TestAnalyzeLayoutTestsResults.configureStep):
+
 2020-07-24  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] gst_buffer_unmap: assertion 'GST_IS_BUFFER (buffer)' failed

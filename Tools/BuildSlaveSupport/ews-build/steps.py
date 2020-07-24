@@ -1372,6 +1372,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
             self.finished(FAILURE)
             message = 'Unable to build WebKit without patch, retrying build'
             self.descriptionDone = message
+            self.send_email_for_build_failure()
             self.build.buildFinished([message], RETRY)
             return defer.succeed(None)
 
@@ -1393,6 +1394,17 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
         for step in self.build.executedSteps:
             if step.name == step_name:
                 return step.results
+
+    def send_email_for_build_failure(self):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+
+            email_subject = 'Build failure on trunk on {}'.format(builder_name)
+            email_text = 'Failed to build WebKit without patch in {}\n\nBuilder: {}'.format(build_url, builder_name)
+            send_email_to_bot_watchers(email_subject, email_text)
+        except Exception as e:
+            print('Error in sending email for build failure: {}'.format(e))
 
 
 class CompileJSC(CompileWebKit):
@@ -1999,7 +2011,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
 
             email_subject = 'Flaky test: {}'.format(test_name)
             email_text = 'Test {} flaked in {}\n\nBuilder: {}'.format(test_name, build_url, builder_name)
-            rc = send_email_to_bot_watchers(email_subject, email_text)
+            send_email_to_bot_watchers(email_subject, email_text)
         except Exception as e:
             print('Error in sending email for flaky failure: {}'.format(e))
 
@@ -2010,7 +2022,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
 
             email_subject = 'Pre-existing test failure: {}'.format(test_name)
             email_text = 'Test {} failed on clean tree run in {}.\nBuilder: {}'.format(test_name, build_url, builder_name)
-            rc = send_email_to_bot_watchers(email_subject, email_text)
+            send_email_to_bot_watchers(email_subject, email_text)
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
