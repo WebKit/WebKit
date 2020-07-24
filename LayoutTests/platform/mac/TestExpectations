@@ -1352,7 +1352,6 @@ svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
 svg/batik/text/textPosition2.svg [ Failure ]
 svg/custom/acid3-test-77.html [ Failure ]
 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
-svg/wicd/test-rightsizing-b.xhtml [ Failure ]
 fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure  ]
 
 # <rdar://problem/30493910> REGRESSION: LayoutTest fast/writing-mode/broken-ideograph-small-caps.html failing
