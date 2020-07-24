@@ -862,7 +862,7 @@ bool WebFrame::shouldEnableInAppBrowserPrivacyProtections()
 
     bool treeHasNonAppBoundFrame = m_isNavigatingToAppBoundDomain && m_isNavigatingToAppBoundDomain == NavigatingToAppBoundDomain::No;
     if (!treeHasNonAppBoundFrame) {
-        for (WebFrame* frame = this; !frame->isMainFrame(); frame = frame->parentFrame()) {
+        for (WebFrame* frame = this; frame; frame = frame->parentFrame()) {
             if (frame->isNavigatingToAppBoundDomain() && frame->isNavigatingToAppBoundDomain() == NavigatingToAppBoundDomain::No) {
                 treeHasNonAppBoundFrame = true;
                 break;
