@@ -214,7 +214,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     case _WKElementActionTypeOpenInDefaultBrowser:
         return [UIImage systemImageNamed:@"safari"];
     case _WKElementActionTypeOpenInExternalApplication:
-        return [UIImage systemImageNamed:@"arrow.up.right.app"];
+        return [UIImage systemImageNamed:@"arrow.up.forward.app"];
     case _WKElementActionTypeShare:
         return [UIImage systemImageNamed:@"square.and.arrow.up"];
     case _WKElementActionTypeOpenInNewTab:
