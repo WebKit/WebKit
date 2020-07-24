@@ -1,44 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/query/query.html
-[ 1: PASS ] WebGL context exists
-[ 2: PASS ] gl.ANY_SAMPLES_PASSED is 0x8C2F
-[ 3: PASS ] gl.ANY_SAMPLES_PASSED_CONSERVATIVE is 0x8D6A
-[ 4: PASS ] gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN is 0x8C88
-[ 5: PASS ] getError was expected value: NO_ERROR : ANY_SAMPLES_PASSED query should succeed
-[ 6: PASS ] getError was expected value: NO_ERROR : ANY_SAMPLES_PASSED query should succeed
-[ 7: PASS ] getError was expected value: NO_ERROR : ANY_SAMPLES_PASSED query should succeed
-[ 8: PASS ] gl.getQuery(gl.ANY_SAMPLES_PASSED, gl.CURRENT_QUERY) is null
-[ 9: PASS ] gl.getQuery(gl.ANY_SAMPLES_PASSED_CONSERVATIVE, gl.CURRENT_QUERY) is null
-[ 10: PASS ] gl.getQuery(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, gl.CURRENT_QUERY) is null
-[ 11: PASS ] gl.getQuery(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, gl.CURRENT_QUERY) is null
-[ 12: FAIL ] gl.isQuery(q1) should be true. Was false.
-[ 13: FAIL ] gl.getQuery(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, gl.CURRENT_QUERY) should be [object WebGLQuery]. Was null.
-[ 14: PASS ] getError was expected value: INVALID_OPERATION : Can't begin a query while one is already active
-[ 15: FAIL ] gl.getQuery(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, gl.CURRENT_QUERY) should be [object WebGLQuery]. Was null.
-[ 16: PASS ] gl.getQuery(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, gl.CURRENT_QUERY) is null
-[ 17: PASS ] getError was expected value: INVALID_OPERATION : Can't end a query if one is not active
-[ 18: PASS ] getError was expected value: INVALID_OPERATION : Can't re-use query objects for incompatible targets
-[ 19: PASS ] gl.getQuery(gl.ANY_SAMPLES_PASSED, gl.CURRENT_QUERY) is null
-[ 20: FAIL ] gl.getQuery(gl.ANY_SAMPLES_PASSED, gl.CURRENT_QUERY) should be [object WebGLQuery]. Was null.
-[ 21: PASS ] getError was expected value: INVALID_OPERATION : Can't call beginQuery on an already active query object
-[ 22: PASS ] gl.getQuery(gl.ANY_SAMPLES_PASSED_CONSERVATIVE, gl.CURRENT_QUERY) is null
-[ 23: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : Should be able to have multiple unrelated query types active at once
-[ 24: FAIL ] gl.getQuery(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, gl.CURRENT_QUERY) should be [object WebGLQuery]. Was null.
-[ 25: PASS ] getError was expected value: NO_ERROR : deleting queries should not produce errors
-[ 26: PASS ] gl.getQuery(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, gl.CURRENT_QUERY) is null
-[ 27: PASS ] gl.getQuery(gl.ANY_SAMPLES_PASSED_CONSERVATIVE, gl.CURRENT_QUERY) is null
-[ 28: PASS ] getError was expected value: INVALID_OPERATION : beginning a deleted query object
-[ 29: PASS ] gl.getQuery(gl.TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN, gl.CURRENT_QUERY) is null
-[ 30: PASS ] getError was expected value: NO_ERROR : should have no previous errors
-[ 31: PASS ] getError was expected value: NO_ERROR : createQuery should not set an error
-[ 32: PASS ] q1 is non-null.
-[ 33: PASS ] gl.isQuery(q1) is false
-[ 34: FAIL ] gl.isQuery(q1) should be true. Was false.
-[ 35: FAIL ] gl.isQuery(q1) should be true. Was false.
-[ 36: PASS ] gl.isQuery(q1) is false
-[ 37: PASS ] gl.isQuery(null) is false
-[ 38: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : there should be no errors
-[ 39: PASS ] successfullyParsed is true
-[ FAIL ] 9 failures reported
+[ PASS ] All tests passed
 

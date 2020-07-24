@@ -1830,43 +1830,63 @@ RefPtr<WebGLQuery> WebGL2RenderingContext::createQuery()
     return query;
 }
 
-void WebGL2RenderingContext::deleteQuery(WebGLQuery*)
+void WebGL2RenderingContext::deleteQuery(WebGLQuery* query)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] deleteQuery()");
+    if (isContextLostOrPending() || !query || !query->object() || !validateWebGLObject("deleteQuery", query))
+        return;
+    if (query->target() && query == m_activeQueries.get(query->target())) {
+        m_context->endQuery(query->target());
+        m_activeQueries.remove(query->target());
+    }
+    deleteObject(query);
 }
 
-GCGLboolean WebGL2RenderingContext::isQuery(WebGLQuery*)
+GCGLboolean WebGL2RenderingContext::isQuery(WebGLQuery* query)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] isQuery()");
-    return false;
+    if (isContextLostOrPending() || !query || !query->object() || !validateWebGLObject("isQuery", query))
+        return false;
+    return m_context->isQuery(query->object());
+}
+
+bool WebGL2RenderingContext::validateQueryTarget(const char* functionName, GCGLenum target, GCGLenum* targetKey)
+{
+    if (target != GraphicsContextGL::ANY_SAMPLES_PASSED && target != GraphicsContextGL::ANY_SAMPLES_PASSED_CONSERVATIVE && target != GraphicsContextGL::TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid target");
+        return false;
+    }
+    if (targetKey)
+        *targetKey = (target == GraphicsContextGL::ANY_SAMPLES_PASSED_CONSERVATIVE) ? GraphicsContextGL::ANY_SAMPLES_PASSED : target;
+    return true;
 }
 
 void WebGL2RenderingContext::beginQuery(GCGLenum target, WebGLQuery& query)
 {
-    if (isContextLostOrPending())
+    GCGLenum targetKey;
+    if (isContextLostOrPending() || !validateWebGLObject("beginQuery", &query) || !validateQueryTarget("beginQuery", target, &targetKey))
         return;
 
-    // FIXME: Add validation to prevent bad caching.
-
-    // Only one query object can be active per target.
-    auto targetKey = (target == GraphicsContextGL::ANY_SAMPLES_PASSED_CONSERVATIVE) ? GraphicsContextGL::ANY_SAMPLES_PASSED : target;
+    if (query.target() && query.target() != target) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQuery", "query type does not match target");
+        return;
+    }
 
     auto addResult = m_activeQueries.add(targetKey, makeRefPtr(&query));
 
+    // Only one query object can be active per target.
     if (!addResult.isNewEntry) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "beginQuery", "Query object of target is already active");
         return;
     }
 
     m_context->beginQuery(target, query.object());
+    query.setTarget(target);
 }
 
 void WebGL2RenderingContext::endQuery(GCGLenum target)
 {
-    if (isContextLostOrPending() || !scriptExecutionContext())
+    GCGLenum targetKey;
+    if (isContextLostOrPending() || !scriptExecutionContext() || !validateQueryTarget("beginQuery", target, &targetKey))
         return;
-
-    auto targetKey = (target == GraphicsContextGL::ANY_SAMPLES_PASSED_CONSERVATIVE) ? GraphicsContextGL::ANY_SAMPLES_PASSED : target;
 
     auto query = m_activeQueries.take(targetKey);
     if (!query) {
@@ -1882,22 +1902,36 @@ void WebGL2RenderingContext::endQuery(GCGLenum target)
     });
 }
 
-RefPtr<WebGLQuery> WebGL2RenderingContext::getQuery(GCGLenum, GCGLenum)
+RefPtr<WebGLQuery> WebGL2RenderingContext::getQuery(GCGLenum target, GCGLenum pname)
 {
-    LOG(WebGL, "[[ NOT IMPLEMENTED ]] getquery()");
-    return nullptr;
+    GCGLenum targetKey;
+    if (isContextLostOrPending() || !scriptExecutionContext() || !validateQueryTarget("beginQuery", target, &targetKey))
+        return nullptr;
+
+    if (pname != GraphicsContextGL::CURRENT_QUERY) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQuery", "invalid parameter name");
+        return nullptr;
+    }
+
+    auto query = m_activeQueries.get(targetKey);
+    if (!query || query->target() != target)
+        return nullptr;
+    return query;
 }
 
 WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery& query, GCGLenum pname)
 {
-    if (isContextLostOrPending())
+    if (isContextLostOrPending() || !validateWebGLObject("getQueryParameter", &query))
         return nullptr;
 
     switch (pname) {
     case GraphicsContextGL::QUERY_RESULT:
+        if (!query.isResultAvailable())
+            return false;
+        break;
     case GraphicsContextGL::QUERY_RESULT_AVAILABLE:
         if (!query.isResultAvailable())
-            return 0;
+            return false;
         break;
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getQueryParameter", "Invalid pname");

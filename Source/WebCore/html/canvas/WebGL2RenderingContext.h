@@ -297,6 +297,7 @@ private:
     WebGLFramebuffer* getReadFramebufferBinding() final;
     void restoreCurrentFramebuffer() final;
     bool validateNonDefaultFramebufferAttachment(const char* functionName, GCGLenum attachment);
+    bool validateQueryTarget(const char* functionName, GCGLenum target, GCGLenum* targetKey);
 
     GCGLenum baseInternalFormatFromInternalFormat(GCGLenum internalformat);
     bool isIntegerFormat(GCGLenum internalformat);

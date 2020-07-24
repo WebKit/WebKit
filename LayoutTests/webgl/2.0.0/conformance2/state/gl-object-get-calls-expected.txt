@@ -313,7 +313,7 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 310: PASS ] gl.getSyncParameter(sync, gl.SYNC_CONDITION) is gl.SYNC_GPU_COMMANDS_COMPLETE
 [ 311: PASS ] gl.getSyncParameter(sync, gl.SYNC_FLAGS) is 0
 [ 312: PASS ] getSyncParameter correctly handled invalid pname enums
-[ 313: FAIL ] gl.getQueryParameter(query, gl.QUERY_RESULT_AVAILABLE) should be false (of type boolean). Was 0 (of type number).
+[ 313: PASS ] gl.getQueryParameter(query, gl.QUERY_RESULT_AVAILABLE) is false
 [ 314: PASS ] getQueryParameter correctly handled invalid pname enums
 [ 315: PASS ] gl.getShaderParameter(vertShader, gl.COMPILE_STATUS) is true
 [ 316: PASS ] gl.getShaderParameter(fragShader, gl.COMPILE_STATUS) is true
@@ -364,5 +364,5 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 361: PASS ] getActiveUniformBlockParameter correctly handled invalid pname enums
 [ 362: PASS ] getError was expected value: NO_ERROR :
 [ 363: PASS ] successfullyParsed is true
-[ FAIL ] 38 failures reported
+[ FAIL ] 37 failures reported
 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'instance.expando1')
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/misc/expando-loss-2.html
@@ -327,8 +326,16 @@ Test: ../../resources/webgl_test_files/conformance2/misc/expando-loss-2.html
 [ 323: PASS ] getIndexedParameter(UNIFORM_BUFFER_BINDING, 47): Expect subobject expando to survive despite GC.
 [ 324: PASS ] getIndexedParameter(UNIFORM_BUFFER_BINDING, 47): Expect extra expando to survive despite GC.
 [ 325: PASS ] [object WebGLBuffer] is an instance of WebGLBuffer
-[ 326: FAIL ] CURRENT_QUERY returns instance that was bound.
-[ 327: FAIL ] CURRENT_QUERY returns instance that was bound.
-[ 328: FAIL ] successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
-[ FAIL ] 179 failures reported
+[ 326: PASS ] CURRENT_QUERY returns instance that was bound.
+[ 327: PASS ] CURRENT_QUERY returns instance that was bound.
+[ 328: FAIL ] Query: Expect basic expando to survive despite GC.
+[ 329: FAIL ] Query: Expect subobject expando to survive despite GC.
+[ 330: PASS ] Query: Expect extra expando to survive despite GC.
+[ 331: PASS ] [object WebGLQuery] is an instance of WebGLQuery
+[ 332: FAIL ] Query: Expect basic expando to survive despite GC.
+[ 333: FAIL ] Query: Expect subobject expando to survive despite GC.
+[ 334: PASS ] Query: Expect extra expando to survive despite GC.
+[ 335: PASS ] [object WebGLQuery] is an instance of WebGLQuery
+[ 336: PASS ] successfullyParsed is true
+[ FAIL ] 180 failures reported
 

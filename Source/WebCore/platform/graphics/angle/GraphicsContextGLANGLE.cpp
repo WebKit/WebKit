@@ -2335,22 +2335,22 @@ void GraphicsContextGLOpenGL::clearBufferfi(GCGLenum buffer, GCGLint drawbuffer,
 
 void GraphicsContextGLOpenGL::deleteQuery(PlatformGLObject query)
 {
-    UNUSED_PARAM(query);
+    makeContextCurrent();
+    gl::DeleteQueries(1, &query);
 }
 
 GCGLboolean GraphicsContextGLOpenGL::isQuery(PlatformGLObject query)
 {
-    UNUSED_PARAM(query);
-
-    return false;
+    makeContextCurrent();
+    return gl::IsQuery(query);
 }
 
 PlatformGLObject GraphicsContextGLOpenGL::getQuery(GCGLenum target, GCGLenum pname)
 {
-    UNUSED_PARAM(target);
-    UNUSED_PARAM(pname);
-
-    return 0;
+    makeContextCurrent();
+    GLint value;
+    gl::GetQueryiv(target, pname, &value);
+    return static_cast<PlatformGLObject>(value);
 }
 
 PlatformGLObject GraphicsContextGLOpenGL::createSampler()

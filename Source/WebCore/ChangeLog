@@ -1,3 +1,31 @@
+2020-07-23  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Query Objects
+        https://bugs.webkit.org/show_bug.cgi?id=126940
+
+        Reviewed by Dean Jackson.
+
+        Passes conformance tests webgl/2.0.0/conformance2/query/*
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::deleteQuery):
+        (WebCore::WebGL2RenderingContext::isQuery):
+        (WebCore::WebGL2RenderingContext::validateQueryTarget):
+        (WebCore::WebGL2RenderingContext::beginQuery):
+        (WebCore::WebGL2RenderingContext::endQuery):
+        (WebCore::WebGL2RenderingContext::getQuery):
+        (WebCore::WebGL2RenderingContext::getQueryParameter):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLQuery.cpp:
+        (WebCore::WebGLQuery::deleteObjectImpl):
+        * html/canvas/WebGLQuery.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateWebGLObject):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLOpenGL::deleteQuery):
+        (WebCore::GraphicsContextGLOpenGL::isQuery):
+        (WebCore::GraphicsContextGLOpenGL::getQuery):
+
 2020-07-23  Guowei Yang  <guowei_yang@apple.com>
 
         Infrastructure Work for Integrating CoreImage for Accelerated CSS/SVG Filter Rendering
