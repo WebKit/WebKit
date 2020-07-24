@@ -5,11 +5,11 @@ list(APPEND PAL_PUBLIC_HEADERS
 
     spi/cf/CFLocaleSPI.h
     spi/cf/CFNetworkConnectionCacheSPI.h
-    spi/cf/CFNetworkSPI.h
     spi/cf/CFUtilitiesSPI.h
     spi/cf/CoreAudioSPI.h
     spi/cf/CoreMediaSPI.h
 
+    spi/win/CFNetworkSPIWin.h
     spi/win/CoreTextSPIWin.h
 )
 

@@ -26,7 +26,7 @@
 
 #if PLATFORM(WIN) && USE(CFURLCONNECTION)
 
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 
 const CFStringRef _kCFWindowsSSLLocalCert = CFSTR("_kCFWindowsSSLLocalCert");
 const CFStringRef _kCFWindowsSSLPeerCert = CFSTR("_kCFWindowsSSLPeerCert");

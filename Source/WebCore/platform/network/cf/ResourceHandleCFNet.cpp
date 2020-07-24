@@ -44,7 +44,7 @@
 #include "SharedBuffer.h"
 #include "SynchronousLoaderClient.h"
 #include <CFNetwork/CFNetwork.h>
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <wtf/CompletionHandler.h>

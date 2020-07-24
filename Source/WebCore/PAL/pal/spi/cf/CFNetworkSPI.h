@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,12 @@
 #include <CFNetwork/CFNetwork.h>
 #include <pal/spi/cf/CFNetworkConnectionCacheSPI.h>
 
-#if PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK)
 
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CFNetwork/CFHTTPStream.h>
 #include <CFNetwork/CFProxySupportPriv.h>
+#include <CFNetwork/CFSocketStreamPriv.h>
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLConnectionPriv.h>
 #include <CFNetwork/CFURLCredentialStorage.h>
@@ -42,30 +43,14 @@
 #include <CFNetwork/CFURLRequestPriv.h>
 #include <CFNetwork/CFURLResponsePriv.h>
 #include <CFNetwork/CFURLStorageSession.h>
-
-#if PLATFORM(WIN)
-
-WTF_EXTERN_C_BEGIN
-
-CFN_EXPORT CFStringRef _CFNetworkErrorGetLocalizedDescription(CFIndex);
-
-extern const CFStringRef _kCFWindowsSSLLocalCert;
-extern const CFStringRef _kCFStreamPropertyWindowsSSLCertInfo;
-extern const CFStringRef _kCFWindowsSSLPeerCert;
-
-WTF_EXTERN_C_END
-
-#else // !PLATFORM(WIN)
-#include <CFNetwork/CFSocketStreamPriv.h>
 #include <nw/private.h>
-#endif // PLATFORM(WIN)
 
 // FIXME: Remove the defined(__OBJC__)-guard once we fix <rdar://problem/19033610>.
 #if defined(__OBJC__) && PLATFORM(COCOA)
 #import <CFNetwork/CFNSURLConnection.h>
 #endif
 
-#else // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)
+#else // !USE(APPLE_INTERNAL_SDK)
 
 #if HAVE(PRECONNECT_PING) && defined(__OBJC__)
 
@@ -128,10 +113,6 @@ CF_ENUM(CFHTTPCookieStorageAcceptPolicy)
     CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain = 2,
     CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
 };
-
-#ifdef __BLOCKS__
-typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
-#endif
 
 #if defined(__OBJC__)
 
@@ -311,35 +292,32 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 
 extern NSString * const NSURLAuthenticationMethodOAuth;
 
+enum : NSUInteger {
+    NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
+};
+
 #endif // defined(__OBJC__)
 
-#endif // PLATFORM(WIN) || USE(APPLE_INTERNAL_SDK)
+#endif // USE(APPLE_INTERNAL_SDK)
 
 WTF_EXTERN_C_BEGIN
 
-#if !PLATFORM(WIN)
+#ifdef __BLOCKS__
+typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
+void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef, CFCachedURLResponseCallBackBlock, dispatch_queue_t);
+#endif
 
 CFURLStorageSessionRef _CFURLStorageSessionCreate(CFAllocatorRef, CFStringRef, CFDictionaryRef);
 CFURLCacheRef _CFURLStorageSessionCopyCache(CFAllocatorRef, CFURLStorageSessionRef);
-
 void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);
-
 CFURLCacheRef CFURLCacheCopySharedURLCache();
 void CFURLCacheSetMemoryCapacity(CFURLCacheRef, CFIndex memoryCapacity);
 CFIndex CFURLCacheMemoryCapacity(CFURLCacheRef);
 void CFURLCacheSetDiskCapacity(CFURLCacheRef, CFIndex);
 CFCachedURLResponseRef CFURLCacheCopyResponseForRequest(CFURLCacheRef, CFURLRequestRef);
-
 void CFHTTPCookieStorageDeleteAllCookies(CFHTTPCookieStorageRef);
 void _CFHTTPCookieStorageFlushCookieStores();
-
-#if PLATFORM(COCOA)
 CFDataRef _CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef);
-#endif
-
-#if PLATFORM(COCOA) && defined(__BLOCKS__)
-void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef, CFCachedURLResponseCallBackBlock, dispatch_queue_t);
-#endif
 
 extern CFStringRef const kCFHTTPCookieLocalFileDomain;
 extern const CFStringRef kCFHTTPVersion1_1;
@@ -398,8 +376,6 @@ void CFURLRequestSetProxySettings(CFMutableURLRequestRef, CFDictionaryRef);
 void _CFNetworkSetHSTSStoragePath(CFStringRef);
 #endif
 
-#endif // !PLATFORM(WIN)
-
 CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxy;
 CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyHost;
 CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyPort;
@@ -409,29 +385,15 @@ CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTResponse;
 CFN_EXPORT void _CFHTTPMessageSetResponseURL(CFHTTPMessageRef, CFURLRef);
 CFN_EXPORT void _CFHTTPMessageSetResponseProxyURL(CFHTTPMessageRef, CFURLRef);
 
-WTF_EXTERN_C_END
-
-#if defined(__OBJC__) && !USE(APPLE_INTERNAL_SDK)
-
-enum : NSUInteger {
-    NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
-};
-
-#endif
-
-WTF_EXTERN_C_BEGIN
-
 CFDataRef _CFNetworkCopyATSContext(void);
 Boolean _CFNetworkSetATSContext(CFDataRef);
 
-#if PLATFORM(COCOA)
 extern const CFStringRef _kCFNetworkHSTSPreloaded;
 CFDictionaryRef _CFNetworkCopyHSTSPolicies(CFURLStorageSessionRef);
 void _CFNetworkResetHSTS(CFURLRef, CFURLStorageSessionRef);
 void _CFNetworkResetHSTSHostsSinceDate(CFURLStorageSessionRef, CFDateRef);
 Boolean _CFNetworkIsKnownHSTSHostWithSession(CFURLRef, CFURLStorageSessionRef);
 void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef);
-#endif
 
 CFDataRef CFHTTPCookieStorageCreateIdentifyingData(CFAllocatorRef inAllocator, CFHTTPCookieStorageRef inStorage);
 CFHTTPCookieStorageRef CFHTTPCookieStorageCreateFromIdentifyingData(CFAllocatorRef inAllocator, CFDataRef inData);

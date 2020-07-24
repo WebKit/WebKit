@@ -1,3 +1,14 @@
+2020-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        Split Windows parts from CFNetworkSPI.h to CFNetworkSPIWin.h
+        https://bugs.webkit.org/show_bug.cgi?id=214719
+
+        Reviewed by Tim Horton.
+
+        * pal/PlatformAppleWin.cmake:
+        * pal/spi/cf/CFNetworkSPI.h:
+        * pal/spi/win/CFNetworkSPIWin.h: Added.
+
 2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Update macOS Version macros

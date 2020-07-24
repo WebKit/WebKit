@@ -1,3 +1,17 @@
+2020-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        Split Windows parts from CFNetworkSPI.h to CFNetworkSPIWin.h
+        https://bugs.webkit.org/show_bug.cgi?id=214719
+
+        Reviewed by Tim Horton.
+
+        * WebCache.cpp:
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebError.cpp:
+        * WebURLResponse.cpp:
+        * WebView.cpp:
+
 2020-07-19  Darin Adler  <darin@apple.com>
 
         Remove live ranges from Editor.h and EditorClient.h

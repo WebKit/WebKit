@@ -31,7 +31,7 @@
 #include "AuthenticationCF.h"
 #include "Credential.h"
 #include "ProtectionSpace.h"
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {

@@ -37,7 +37,7 @@
 #include <WebCore/CurlCacheManager.h>
 #elif USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLCachePriv.h>
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #endif
 
 using namespace WebCore;

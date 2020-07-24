@@ -27,7 +27,12 @@
 
 #include "ResourceLoadPriority.h"
 #include "ResourceRequestBase.h"
+
+#if USE(CFURLCONNECTION)
+#include <pal/spi/win/CFNetworkSPIWin.h>
+#elif PLATFORM(COCOA)
 #include <pal/spi/cf/CFNetworkSPI.h>
+#endif
 
 namespace WebCore {
 

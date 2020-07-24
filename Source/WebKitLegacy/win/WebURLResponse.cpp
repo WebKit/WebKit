@@ -36,7 +36,7 @@
 #endif
 
 #if USE(CFURLCONNECTION)
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #endif
 
 #include <WebCore/BString.h>

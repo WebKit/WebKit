@@ -29,7 +29,6 @@
 #include "HTTPHeaderNames.h"
 #include "RegistrableDomain.h"
 #include "ResourceRequest.h"
-#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/cf/TypeCastsCF.h>
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
@@ -39,12 +38,14 @@
 #if USE(CFURLCONNECTION)
 #include "FormDataStreamCFNet.h"
 #include <CFNetwork/CFURLRequestPriv.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #include <wtf/text/CString.h>
 #endif
 
 #if PLATFORM(COCOA)
 #include "ResourceLoadPriority.h"
 #include <dlfcn.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 WTF_DECLARE_CF_TYPE_TRAIT(CFURL);

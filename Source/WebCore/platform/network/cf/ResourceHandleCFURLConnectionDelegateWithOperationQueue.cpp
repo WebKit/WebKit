@@ -37,10 +37,7 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "SynchronousLoaderClient.h"
-#if !PLATFORM(WIN)
-#include "WebCoreURLResponse.h"
-#endif
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>

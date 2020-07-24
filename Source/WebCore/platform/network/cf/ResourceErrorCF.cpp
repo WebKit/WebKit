@@ -30,7 +30,7 @@
 
 #include <CoreFoundation/CFError.h>
 #include <CFNetwork/CFNetworkErrors.h>
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
 

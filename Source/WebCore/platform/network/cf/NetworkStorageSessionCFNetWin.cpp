@@ -32,7 +32,7 @@
 #include "NotImplemented.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #include <windows.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

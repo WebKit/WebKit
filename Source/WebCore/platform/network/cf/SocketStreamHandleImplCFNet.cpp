@@ -51,7 +51,7 @@
 
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -64,7 +64,7 @@ extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 #endif
 
 #if PLATFORM(COCOA)
-#import <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
 #if PLATFORM(WIN)

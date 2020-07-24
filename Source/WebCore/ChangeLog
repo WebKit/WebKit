@@ -1,5 +1,32 @@
 2020-07-23  Alex Christensen  <achristensen@webkit.org>
 
+        Split Windows parts from CFNetworkSPI.h to CFNetworkSPIWin.h
+        https://bugs.webkit.org/show_bug.cgi?id=214719
+
+        Reviewed by Tim Horton.
+
+        No change in behavior.
+        Windows CFNetwork work is not actively developed, but Cocoa is.
+        This makes it easier to find where to put new things.
+
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        * platform/network/cf/NetworkStorageSessionCFNetWin.cpp:
+        * platform/network/cf/ResourceErrorCF.cpp:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegate.cpp:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        * platform/network/cf/ResourceRequestCFNet.h:
+        * platform/network/cf/ResourceResponse.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+
+2020-07-23  Alex Christensen  <achristensen@webkit.org>
+
         Remove dead code in ResourceHandleCFNet.cpp
         https://bugs.webkit.org/show_bug.cgi?id=214717
 

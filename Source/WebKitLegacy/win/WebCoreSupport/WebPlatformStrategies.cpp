@@ -37,7 +37,7 @@
 #include <WebCore/PageGroup.h>
 
 #if USE(CFURLCONNECTION)
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #endif
 
 using namespace WebCore;

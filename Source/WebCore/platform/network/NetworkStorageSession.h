@@ -39,8 +39,13 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
-#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/RetainPtr.h>
+#endif
+
+#if PLATFORM(COCOA)
+#include <pal/spi/cf/CFNetworkSPI.h>
+#elif USE(CFURLCONNECTION)
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #endif
 
 #if USE(SOUP)

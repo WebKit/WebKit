@@ -190,7 +190,7 @@
 #if USE(CFURLCONNECTION)
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
-#include <pal/spi/cf/CFNetworkSPI.h>
+#include <pal/spi/win/CFNetworkSPIWin.h>
 #include <wtf/cf/CFURLExtras.h>
 #elif USE(CURL)
 #include <WebCore/CurlCacheManager.h>
