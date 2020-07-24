@@ -1,3 +1,12 @@
+2020-07-24  Karl Rackler  <rackler@apple.com>
+
+        [ iOS wk2 ] http/tests/navigation/subframe-pagehide-handler-starts-load2.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=214755
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-07-24  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS ] media/video-orientation.html is passing and expectation need to be removed
