@@ -212,12 +212,6 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
         CFDictionarySetValue(streamProperties, CFSTR("_kCFURLConnectionSessionID"), CFSTR("WebKitPrivateSession"));
     }
 
-#if PLATFORM(COCOA)
-    RetainPtr<CFDataRef> sourceApplicationAuditData = d->m_context->sourceApplicationAuditData();
-    if (sourceApplicationAuditData)
-        CFDictionarySetValue(streamProperties, CFSTR("kCFStreamPropertySourceApplication"), sourceApplicationAuditData.get());
-#endif
-
     static const CFStringRef kCFURLConnectionSocketStreamProperties = CFSTR("kCFURLConnectionSocketStreamProperties");
     RetainPtr<CFMutableDictionaryRef> propertiesDictionary;
     if (clientProperties)
@@ -262,10 +256,6 @@ bool ResourceHandle::start()
     d->m_storageSession = d->m_context->storageSession()->platformSession();
 
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
-
-#if PLATFORM(COCOA) && !HAVE(TIMINGDATAOPTIONS)
-    setCollectsTimingData();
-#endif
 
     createCFURLConnection(shouldUseCredentialStorage, d->m_shouldContentSniff, d->m_shouldContentEncodingSniff, nullptr, client()->connectionProperties(this).get());
     ref();
@@ -371,11 +361,7 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
 
     if (!d->m_user.isNull() && !d->m_password.isNull()) {
         auto cfCredential = adoptCF(CFURLCredentialCreate(kCFAllocatorDefault, d->m_user.createCFString().get(), d->m_password.createCFString().get(), 0, kCFURLCredentialPersistenceNone));
-#if PLATFORM(COCOA)
-        Credential credential = Credential(cfCredential.get());
-#else
         Credential credential = core(cfCredential.get());
-#endif
         
         URL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
@@ -405,12 +391,8 @@ bool ResourceHandle::tryHandlePasswordBasedAuthentication(const AuthenticationCh
                     // Store the credential back, possibly adding it as a default for this directory.
                     d->m_context->storageSession()->credentialStorage().set(partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
-#if PLATFORM(COCOA)
-                CFURLConnectionUseCredential(d->m_connection.get(), credential.cfCredential(), challenge.cfURLAuthChallengeRef());
-#else
                 RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
                 CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
-#endif
                 return true;
             }
         }
@@ -456,20 +438,12 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         d->m_context->storageSession()->credentialStorage().set(firstRequest().cachePartition(), webCredential, challenge.protectionSpace(), urlToStore);
 
         if (d->m_connection) {
-#if PLATFORM(COCOA)
-            CFURLConnectionUseCredential(d->m_connection.get(), webCredential.cfCredential(), challenge.cfURLAuthChallengeRef());
-#else
             RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(webCredential));
             CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
-#endif
         }
     } else if (d->m_connection) {
-#if PLATFORM(COCOA)
-        CFURLConnectionUseCredential(d->m_connection.get(), credential.cfCredential(), challenge.cfURLAuthChallengeRef());
-#else
         RetainPtr<CFURLCredentialRef> cfCredential = adoptCF(createCF(credential));
         CFURLConnectionUseCredential(d->m_connection.get(), cfCredential.get(), challenge.cfURLAuthChallengeRef());
-#endif
     }
 
     clearAuthentication();
@@ -636,30 +610,6 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
     else
         CFURLConnectionResume(d->m_connection.get());
 }
-
-#if PLATFORM(COCOA)
-void ResourceHandle::schedule(SchedulePair& pair)
-{
-    CFRunLoopRef runLoop = pair.runLoop();
-    if (!runLoop)
-        return;
-
-    CFURLConnectionScheduleWithRunLoop(d->m_connection.get(), runLoop, pair.mode());
-    if (d->m_startWhenScheduled) {
-        CFURLConnectionStart(d->m_connection.get());
-        d->m_startWhenScheduled = false;
-    }
-}
-
-void ResourceHandle::unschedule(SchedulePair& pair)
-{
-    CFRunLoopRef runLoop = pair.runLoop();
-    if (!runLoop)
-        return;
-
-    CFURLConnectionUnscheduleFromRunLoop(d->m_connection.get(), runLoop, pair.mode());
-}
-#endif
 
 const ResourceRequest& ResourceHandle::currentRequest() const
 {

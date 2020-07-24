@@ -1,3 +1,21 @@
+2020-07-23  Alex Christensen  <achristensen@webkit.org>
+
+        Remove dead code in ResourceHandleCFNet.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=214717
+
+        Reviewed by Darin Adler.
+
+        ResourceHandleCFNet.cpp is not compiled on Cocoa platforms any more.
+        Remove Cocoa-specific code in that file, which was used on iOS before adopting NSURLSession.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::createCFURLConnection):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::tryHandlePasswordBasedAuthentication):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::schedule): Deleted.
+        (WebCore::ResourceHandle::unschedule): Deleted.
+
 2020-07-23  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Query Objects
