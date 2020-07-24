@@ -114,3 +114,5 @@ webkit.org/b/214739 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/ge
 webkit.org/b/214324 fast/visual-viewport/scroll-event-fired-during-scroll-alone.html [ Pass Failure ]
 
 webkit.org/b/214751 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html [ Pass Failure ]
+
+webkit.org/b/214752 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Pass Failure ]
