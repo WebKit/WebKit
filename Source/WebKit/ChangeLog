@@ -1,3 +1,16 @@
+2020-07-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r264858.
+
+        Caused spurious CRASHING TEST logging during layout test runs
+
+        Reverted changeset:
+
+        "WebKit::setCrashReportApplicationSpecificInformation() should
+        also log to WTFLogAlways()"
+        https://bugs.webkit.org/show_bug.cgi?id=214756
+        https://trac.webkit.org/changeset/264858
+
 2020-07-24  Tadeu Zagallo  <tzagallo@apple.com>
 
         WKStringGetMaximumUTF8CStringSize should cast before arithmetic
