@@ -99,3 +99,5 @@ webkit.org/b/214730 [ Debug ] webrtc/simulcast-h264.html [ Skip ]
 
 webkit.org/b/214358 fast/scrolling/ios/programmatic-scroll-while-zoomed.html [ Pass Failure ]
 
+webkit.org/b/214731 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-store-cursors.any.serviceworker.html [ Pass Failure ]
+
