@@ -1,3 +1,15 @@
+2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG::AbstractValue::filterByValue should re-filter configured m_value via m_type
+        https://bugs.webkit.org/show_bug.cgi?id=214721
+        <rdar://problem/65882837>
+
+        Reviewed by Mark Lam.
+
+        * stress/speculation-from-structure-and-classinfo-should-agree.js: Added.
+        (bar):
+        (foo):
+
 2020-07-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSON.parse should not modify non-configurable properties.

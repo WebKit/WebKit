@@ -321,8 +321,15 @@ FiltrationResult AbstractValue::fastForwardToAndFilterSlow(AbstractValueClobberE
 FiltrationResult AbstractValue::filterByValue(const FrozenValue& value)
 {
     FiltrationResult result = filter(speculationFromValue(value.value()));
-    if (m_type)
+    if (m_type) {
         m_value = value.value();
+        // It is possible that SpeculatedType from value is broader than original m_type.
+        // The filter operation can only keep m_type as is or make it narrower.
+        // As a result, the SpeculatedType from m_value can become broader than m_type. This breaks an invariant.
+        // When setting m_value after filtering, we should filter m_value with m_type.
+        filterValueByType();
+    }
+    checkConsistency();
     return result;
 }
 
@@ -353,6 +360,11 @@ FiltrationResult AbstractValue::filter(const AbstractValue& other)
     if (!m_value) {
         // We previously didn't prove a value but now we have done so.
         m_value = other.m_value; 
+        // It is possible that SpeculatedType from other.m_value is broader than original m_type.
+        // The filter operation can only keep m_type as is or make it narrower.
+        // As a result, the SpeculatedType from m_value can become broader than m_type. This breaks an invariant.
+        // When setting m_value after filtering, we should filter m_value with m_type.
+        filterValueByType();
         return FiltrationOK;
     }
     

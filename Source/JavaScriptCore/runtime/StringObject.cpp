@@ -41,6 +41,7 @@ void StringObject::finishCreation(VM& vm, JSString* string)
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     setInternalValue(vm, string);
+    ASSERT_WITH_MESSAGE(type() == StringObjectType || type() == DerivedStringObjectType, "Instance inheriting StringObject should have DerivedStringObjectType");
 }
 
 bool StringObject::getOwnPropertySlot(JSObject* cell, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)

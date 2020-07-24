@@ -588,9 +588,12 @@ private:
             if (isStrictMode)
                 changed |= mergePrediction(node->getHeapPrediction());
             else if (prediction) {
+                SpeculatedType originalPrediction = prediction;
                 if (prediction & ~SpecObject) {
                     // Wrapper objects are created only in sloppy mode.
                     prediction &= SpecObject;
+                    if (originalPrediction & SpecString)
+                        prediction = mergeSpeculations(prediction, SpecStringObject);
                     prediction = mergeSpeculations(prediction, SpecObjectOther);
                 }
                 changed |= mergePrediction(prediction);

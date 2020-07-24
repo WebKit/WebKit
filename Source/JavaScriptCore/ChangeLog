@@ -1,3 +1,31 @@
+2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG::AbstractValue::filterByValue should re-filter configured m_value via m_type
+        https://bugs.webkit.org/show_bug.cgi?id=214721
+        <rdar://problem/65882837>
+
+        Reviewed by Mark Lam.
+
+        Let's consider the following case.
+
+            1. Input AbstractValue is saying SpecObjectOther.
+            2. We have CheckIsConstant with StringPrototype (which is SpecObjectOther | SpecStringObject in the current SpeculatedType).
+            3. We call filterByValue, which filters m_type by SpecObjectOther | SpecStringObject. But the filtered m_type is SpecObjectOther since (2)'s SpeculatedType is broader.
+            4. We store the given constant (StringPrototype) to m_value.
+            5. This AbstractValue's m_type is SpecObjectOther while its m_value's SpeculatedType is SpecObjectOther | SpecStringObject. Contradiction!
+
+        When setting m_value by filterByValue, we should filter m_value with m_type to ensure that m_value is the expected one.
+        This patch also avoid using SpecObjectOther | SpecStringObject for StringPrototype since we can return narrower type for that.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromStructure):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filterByValue):
+        (JSC::DFG::AbstractValue::filter):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::finishCreation):
+
 2020-07-24  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         JSON.parse should not modify non-configurable properties.

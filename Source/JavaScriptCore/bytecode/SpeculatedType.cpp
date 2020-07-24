@@ -517,21 +517,32 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo* classInfo)
 SpeculatedType speculationFromStructure(Structure* structure)
 {
     SpeculatedType filteredResult = SpecNone;
-    if (structure->typeInfo().type() == StringType)
+    switch (structure->typeInfo().type()) {
+    case StringType:
         filteredResult = SpecString;
-    else if (structure->typeInfo().type() == SymbolType)
+        break;
+    case SymbolType:
         filteredResult = SpecSymbol;
-    else if (structure->typeInfo().type() == HeapBigIntType)
+        break;
+    case HeapBigIntType:
         filteredResult = SpecHeapBigInt;
-    else if (structure->typeInfo().type() == DerivedArrayType)
+        break;
+    case DerivedArrayType:
         filteredResult = SpecDerivedArray;
-    else if (structure->typeInfo().type() == ArrayType)
+        break;
+    case ArrayType:
         filteredResult = SpecArray;
-    else if (structure->typeInfo().type() == StringObjectType)
+        break;
+    case StringObjectType:
         filteredResult = SpecStringObject;
-    else
+        break;
+    // We do not want to accept String.prototype in StringObjectUse, so that we do not include it as SpecStringObject.
+    case DerivedStringObjectType:
+        filteredResult = SpecObjectOther;
+        break;
+    default:
         return speculationFromClassInfoInheritance(structure->classInfo());
-
+    }
     ASSERT(filteredResult);
     ASSERT(isSubtypeSpeculation(filteredResult, speculationFromClassInfoInheritance(structure->classInfo())));
     return filteredResult;
