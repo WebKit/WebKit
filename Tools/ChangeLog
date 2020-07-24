@@ -1,3 +1,41 @@
+2020-07-24  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS wk2 ] imported/w3c/web-platform-tests/web-share/share-without-user-gesture.https.html is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=214694
+        <rdar://problem/66001110>
+
+        Reviewed by Tim Horton.
+
+        The test was failing because there was a share sheet still being presented from a previous Web Share test.
+        TestController::platformResetStateToConsistentValues() would wait for that share sheet to get dismiss and
+        would eventually give up and report the test as timing out. The issue is that WebKit layout test were
+        relying on a UIScriptController function to dismiss the share sheet but Web Platform Tests did not.
+        To address the issue, we now always promptly dismiss the share sheet in WebKitTestRunner, without the need
+        for a UIScriptController function call. The Share Sheet now gets dismissed promptly in both WebKit tests
+        and WPT tests.
+
+        For robustness, I also added code in WebKitTestRunner to dismiss any remaining presented view controller
+        after waiting, to avoid failing on the next test in such cases.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::setShareSheetCompletesImmediatelyWithResolution): Deleted.
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.h:
+        * WebKitTestRunner/cocoa/UIScriptControllerCocoa.mm:
+        (WTR::UIScriptControllerCocoa::setShareSheetCompletesImmediatelyWithResolution): Deleted.
+        Delete UIScriptController.setShareSheetCompletesImmediatelyWithResolution() utility function for tests now
+        that it is the default in WebKit TestRunner.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        - Call _setShareSheetCompletesImmediatelyWithResolutionForTesting:YES on the test WKWebView instead of relying
+          on individual tests to do that.
+        - For robustness, if there is still a presented view controller after waiting, we now dismiss it ourselves
+          instead of failing. This otherwise leads to next test to be reported as failing (or timing out) because there
+          is a presented view controller that remains from the previous test. Note that this is not needed to fix the
+          layout test in question since we now properly dismiss the share UI in WPT tests but I still think it is a good
+          thing to do for robustness and avoid test flakiness.
+
 2020-07-24  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Disable email sending on testing instances of ews

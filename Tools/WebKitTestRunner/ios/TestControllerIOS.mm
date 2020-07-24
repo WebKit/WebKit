@@ -232,6 +232,16 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
             [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
             hasPresentedViewController = !![webViewController presentedViewController];
         }
+
+        if (hasPresentedViewController) {
+            // As a last resort, just dismiss the remaining presented view controller ourselves.
+            __block BOOL isDoneDismissingViewController = NO;
+            [webViewController dismissViewControllerAnimated:NO completion:^{
+                isDoneDismissingViewController = YES;
+            }];
+            runUntil(isDoneDismissingViewController, m_currentInvocation->shortTimeout());
+            hasPresentedViewController = !![webViewController presentedViewController];
+        }
         
         if (hasPresentedViewController) {
             TestInvocation::dumpWebProcessUnresponsiveness("TestController::platformResetPreferencesToConsistentValues - Failed to remove presented view controller\n");

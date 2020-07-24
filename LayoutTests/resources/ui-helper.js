@@ -807,12 +807,6 @@ window.UIHelper = class UIHelper {
         }));
     }
 
-    static setShareSheetCompletesImmediatelyWithResolution(resolved)
-    {
-        const resolveShareSheet = `(() => uiController.setShareSheetCompletesImmediatelyWithResolution(${resolved}))()`;
-        return new Promise(resolve => testRunner.runUIScript(resolveShareSheet, resolve));
-    }
-
     static textContentType()
     {
         return new Promise(resolve => {

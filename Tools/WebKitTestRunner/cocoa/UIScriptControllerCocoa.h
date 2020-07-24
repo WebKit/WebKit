@@ -38,7 +38,6 @@ public:
     void becomeFirstResponder() override;
     void resignFirstResponder() override;
     void doAsyncTask(JSValueRef) override;
-    void setShareSheetCompletesImmediatelyWithResolution(bool) override;
     void removeViewFromWindow(JSValueRef) override;
     void addViewToWindow(JSValueRef) override;
     void overridePreference(JSStringRef, JSStringRef) override;

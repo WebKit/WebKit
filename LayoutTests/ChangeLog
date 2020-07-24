@@ -1,3 +1,25 @@
+2020-07-24  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS wk2 ] imported/w3c/web-platform-tests/web-share/share-without-user-gesture.https.html is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=214694
+        <rdar://problem/66001110>
+
+        Reviewed by Tim Horton.
+
+        * fast/web-share/share-transient-activation-expired.html:
+        * fast/web-share/share-transient-activation.html:
+        * fast/web-share/share-with-files.html:
+        * fast/web-share/share-with-no-url.html:
+        * fast/web-share/share.html:
+        * platform/ios/TestExpectations:
+        * resources/ui-helper.js:
+        (window.UIHelper.setShareSheetCompletesImmediatelyWithResolution): Deleted.
+        Update existing layout test so stop calling UIHelper.setShareSheetCompletesImmediatelyWithResolution() now that it
+        is the default in WebKitTestRunner.
+
+        * platform/ios/TestExpectations:
+        Unskip test that is no longer timing out.
+
 2020-07-24  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS ] webarchive/loading/test-loading-archive-subresource-null-mimetype.html is passing and expectations need to be removed

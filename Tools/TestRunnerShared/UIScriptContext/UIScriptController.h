@@ -222,10 +222,6 @@ public:
     virtual JSObjectRef inputViewBounds() const { notImplemented(); return nullptr; }
     virtual void activateDataListSuggestion(unsigned, JSValueRef) { notImplemented(); }
 
-    // Share Sheet
-
-    virtual void setShareSheetCompletesImmediatelyWithResolution(bool resolved) { notImplemented(); }
-
     // Find in Page
 
     virtual void findString(JSStringRef, unsigned long options, unsigned long maxCount) { notImplemented(); }

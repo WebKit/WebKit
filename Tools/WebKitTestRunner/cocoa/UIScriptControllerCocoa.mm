@@ -82,11 +82,6 @@ void UIScriptControllerCocoa::doAsyncTask(JSValueRef callback)
     });
 }
 
-void UIScriptControllerCocoa::setShareSheetCompletesImmediatelyWithResolution(bool resolved)
-{
-    [webView() _setShareSheetCompletesImmediatelyWithResolutionForTesting:resolved];
-}
-
 void UIScriptControllerCocoa::removeViewFromWindow(JSValueRef callback)
 {
     // FIXME: On iOS, we never invoke the completion callback that's passed in. Fixing this causes the layout

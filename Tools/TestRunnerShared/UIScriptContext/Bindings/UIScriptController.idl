@@ -222,9 +222,6 @@ interface UIScriptController {
     readonly attribute double timePickerValueHour;
     readonly attribute double timePickerValueMinute;
 
-    // Share sheet
-    void setShareSheetCompletesImmediatelyWithResolution(boolean resolved);
-
     // <datalist>
     readonly attribute boolean isShowingDataListSuggestions;
     void activateDataListSuggestion(unsigned long index, object callback);

@@ -188,6 +188,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         m_mainWebView->setEditable(true);
 
     m_mainWebView->platformView().allowsLinkPreview = options.allowsLinkPreview;
+    [m_mainWebView->platformView() _setShareSheetCompletesImmediatelyWithResolutionForTesting:YES];
 }
 
 PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
