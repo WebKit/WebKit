@@ -1,3 +1,21 @@
+2020-07-24  David Kilzer  <ddkilzer@apple.com>
+
+        Add/Update CRASH_WITH_INFO() for invalid IPC message logging
+        <https://webkit.org/b/214713>
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::sendMessage):
+        - Simplify logging by removing CString and using
+          IPC::MessageName enum value instead of hash.
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::didReceiveInvalidMessage):
+        - Add IPC::MessageName enum value to
+          setCrashReportApplicationSpecificInformation() output.
+        - Change CRASH() to CRASH_WITH_INFO() and pass IPC::MessageName
+          enum value.
+
 2020-07-24  Youenn Fablet  <youenn@apple.com>
 
         Use one socket server for the whole network process instead of one socket server per web process connection
