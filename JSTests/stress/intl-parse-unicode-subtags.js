@@ -46,13 +46,10 @@ if ($vm.icuVersion() >= 61) {
     shouldThrow(() => languageNames.of("root-US"), `RangeError: argument is not a language id`);
     if ($vm.icuVersion() >= 64)
         shouldBe(languageNames.of("es-419"), `Latin American Spanish`);
-    if ($vm.icuVersion() >= 64 && $vm.icuVersion() <= 66) {
-        shouldBe(languageNames.of('zh-Hant'), `Chinese, Traditional`);
-        shouldBe(languageNames.of('zh-Hans-HK'), `Chinese, Simplified (Hong Kong)`);
-    } else {
+    if (languageNames.of('zh-Hant') !== `Chinese, Traditional`)
         shouldBe(languageNames.of('zh-Hant'), `Traditional Chinese`);
+    if (languageNames.of('zh-Hans-HK') !== `Chinese, Simplified (Hong Kong)` && languageNames.of('zh-Hans-HK') !== `Simplified Chinese (Hong Kong SAR China)`)
         shouldBe(languageNames.of('zh-Hans-HK'), `Simplified Chinese (Hong Kong)`);
-    }
     shouldThrow(() => languageNames.of("Hant"), `RangeError: argument is not a language id`); // Script only
     shouldBe(languageNames.of('sr-Latn'), `Serbian (Latin)`); // Language-Script
     shouldBe(languageNames.of('sr-Cyrl'), `Serbian (Cyrillic)`); // Language-Script

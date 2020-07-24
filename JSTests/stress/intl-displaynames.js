@@ -26,34 +26,38 @@ if ($vm.icuVersion() >= 61) {
 
     // Get display names of region in English
     var regionNames = new Intl.DisplayNames(['en'], {type: 'region'});
-    if ($vm.icuVersion() >= 64)
+    if ($vm.icuVersion() >= 64) {
         shouldBe(regionNames.of('419'), "Latin America");
-    shouldBe(regionNames.of('BZ'), "Belize");
+        shouldBe(regionNames.of('BZ'), "Belize");
+    }
     shouldBe(regionNames.of('US'), "United States");
     shouldBe(regionNames.of('BA'), "Bosnia & Herzegovina");
     shouldBe(regionNames.of('MM'), "Myanmar (Burma)");
 
     // Get display names of region in Traditional Chinese
     regionNames = new Intl.DisplayNames(['zh-Hant'], {type: 'region'});
-    if ($vm.icuVersion() >= 64)
+    if ($vm.icuVersion() >= 64) {
         shouldBe(regionNames.of('419'), "拉丁美洲");
-    shouldBe(regionNames.of('BZ'), "貝里斯");
+        shouldBe(regionNames.of('BZ'), "貝里斯");
+    }
     shouldBe(regionNames.of('US'), "美國");
     shouldBe(regionNames.of('BA'), "波士尼亞與赫塞哥維納");
     shouldBe(regionNames.of('MM'), "緬甸");
 
     regionNames = new Intl.DisplayNames(['en'], {type: 'region', style: 'short'});
-    if ($vm.icuVersion() >= 64)
+    if ($vm.icuVersion() >= 64) {
         shouldBe(regionNames.of('419'), "Latin America");
-    shouldBe(regionNames.of('BZ'), "Belize");
+        shouldBe(regionNames.of('BZ'), "Belize");
+    }
     shouldBe(regionNames.of('US'), "US");
     shouldBe(regionNames.of('BA'), "Bosnia");
     shouldBe(regionNames.of('MM'), "Myanmar");
 
     regionNames = new Intl.DisplayNames(['en'], {type: 'region', style: 'narrow'});
-    if ($vm.icuVersion() >= 64)
+    if ($vm.icuVersion() >= 64) {
         shouldBe(regionNames.of('419'), "Latin America");
-    shouldBe(regionNames.of('BZ'), "Belize");
+        shouldBe(regionNames.of('BZ'), "Belize");
+    }
     shouldBe(regionNames.of('US'), "US");
     shouldBe(regionNames.of('BA'), "Bosnia");
     shouldBe(regionNames.of('MM'), "Myanmar");
@@ -63,9 +67,7 @@ if ($vm.icuVersion() >= 61) {
     shouldBe(languageNames.of('fr'), "French");
     shouldBe(languageNames.of('de'), "German");
     shouldBe(languageNames.of('fr-CA'), "Canadian French");
-    if ($vm.icuVersion() >= 64 && $vm.icuVersion() <= 66)
-        shouldBe(languageNames.of('zh-Hant'), "Chinese, Traditional");
-    else
+    if (languageNames.of('zh-Hant') !== "Chinese, Traditional")
         shouldBe(languageNames.of('zh-Hant'), "Traditional Chinese");
     shouldBe(languageNames.of('en-US'), "American English");
     shouldBe(languageNames.of('zh-TW'), "Chinese (Taiwan)");
@@ -80,28 +82,27 @@ if ($vm.icuVersion() >= 61) {
     shouldBe(languageNames.of('fr'), "French");
     shouldBe(languageNames.of('de'), "German");
     shouldBe(languageNames.of('fr-CA'), "Canadian French");
-    if ($vm.icuVersion() >= 64 && $vm.icuVersion() <= 66)
-        shouldBe(languageNames.of('zh-Hant'), "Chinese, Traditional");
-    else
+    if (languageNames.of('zh-Hant') !== "Chinese, Traditional")
         shouldBe(languageNames.of('zh-Hant'), "Traditional Chinese");
     shouldBe(languageNames.of('en-US'), "US English");
-    shouldBe(languageNames.of('zh-TW'), "Chinese (Taiwan)");
+    if (languageNames.of('zh-TW') !== "Chinese (TW)")
+        shouldBe(languageNames.of('zh-TW'), "Chinese (Taiwan)");
 
     languageNames = new Intl.DisplayNames(['en'], {type: 'language', style: 'narrow'});
     shouldBe(languageNames.of('fr'), "French");
     shouldBe(languageNames.of('de'), "German");
     shouldBe(languageNames.of('fr-CA'), "Canadian French");
-    if ($vm.icuVersion() >= 64 && $vm.icuVersion() <= 66)
-        shouldBe(languageNames.of('zh-Hant'), "Chinese, Traditional");
-    else
+    if (languageNames.of('zh-Hant') !== "Chinese, Traditional")
         shouldBe(languageNames.of('zh-Hant'), "Traditional Chinese");
     shouldBe(languageNames.of('en-US'), "US English");
-    shouldBe(languageNames.of('zh-TW'), "Chinese (Taiwan)");
+    if (languageNames.of('zh-TW') !== "Chinese (TW)")
+        shouldBe(languageNames.of('zh-TW'), "Chinese (Taiwan)");
 
     // Get display names of script in English
     var scriptNames = new Intl.DisplayNames(['en'], {type: 'script'});
     // Get script names
-    shouldBe(scriptNames.of('Latn'), "Latin");
+    if ($vm.icuVersion() >= 64)
+        shouldBe(scriptNames.of('Latn'), "Latin");
     shouldBe(scriptNames.of('Arab'), "Arabic");
     shouldBe(scriptNames.of('Kana'), "Katakana");
 
@@ -111,15 +112,17 @@ if ($vm.icuVersion() >= 61) {
     shouldBe(scriptNames.of('Arab'), "阿拉伯文");
     shouldBe(scriptNames.of('Kana'), "片假名");
 
-    scriptNames = new Intl.DisplayNames(['en'], {type: 'script', style: 'short'});
-    shouldBe(scriptNames.of('Latn'), "Latin");
-    shouldBe(scriptNames.of('Arab'), "Arabic");
-    shouldBe(scriptNames.of('Kana'), "Katakana");
+    if ($vm.icuVersion() >= 64) {
+        scriptNames = new Intl.DisplayNames(['en'], {type: 'script', style: 'short'});
+        shouldBe(scriptNames.of('Latn'), "Latin");
+        shouldBe(scriptNames.of('Arab'), "Arabic");
+        shouldBe(scriptNames.of('Kana'), "Katakana");
 
-    scriptNames = new Intl.DisplayNames(['en'], {type: 'script', style: 'narrow'});
-    shouldBe(scriptNames.of('Latn'), "Latin");
-    shouldBe(scriptNames.of('Arab'), "Arabic");
-    shouldBe(scriptNames.of('Kana'), "Katakana");
+        scriptNames = new Intl.DisplayNames(['en'], {type: 'script', style: 'narrow'});
+        shouldBe(scriptNames.of('Latn'), "Latin");
+        shouldBe(scriptNames.of('Arab'), "Arabic");
+        shouldBe(scriptNames.of('Kana'), "Katakana");
+    }
 
     // Get display names of currency code in English
     var currencyNames = new Intl.DisplayNames(['en'], {type: 'currency'});

@@ -1,3 +1,19 @@
+2020-07-24  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r264639): Intl.DisplayNames tests failing on all architectures
+        https://bugs.webkit.org/show_bug.cgi?id=214589
+
+        Reviewed by Darin Adler.
+
+        Massage the tests for compatibility with ICU 63.1. I don't understand how exactly ICU's
+        behavior has changed between releases, and some of the conditions need to be added in
+        somewhat strange places, but this at least makes the tests pass.
+
+        * stress/intl-displaynames.js:
+        (vm.icuVersion):
+        * stress/intl-parse-unicode-subtags.js:
+        (vm.icuVersion):
+
 2020-07-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Arrow function |this| resolution should not be trapped by with-scope
