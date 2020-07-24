@@ -8918,6 +8918,12 @@ void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newSta
     ASSERT(focusManager);
     focusManager->updatePlaybackAttributesFromMediaState(this, sourceElementID, newState);
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    if (!m_process->throttler().shouldBeRunnable())
+        return;
+#endif
+
     if (!m_isClosed)
         updatePlayingMediaDidChange(newState);
 }

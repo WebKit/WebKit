@@ -1,3 +1,31 @@
+2020-07-23  Peng Liu  <peng.liu6@apple.com>
+
+        Safari Related Leaked Assertions after Playing YouTube Video
+        https://bugs.webkit.org/show_bug.cgi?id=214706
+
+        Reviewed by Jer Noble.
+
+        A 10 second grace period before removing the activity token was introduced in r252692.
+        However, some websites, e.g., youtube.com, requests the video element to play the
+        next video 10 seconds after completing the current one (when the Safari is in the background).
+        That can lead to a race condition between the web process and the UI process. They may send
+        IPC messages to each other at the same time:
+        1) The web process sends a WebPageProxy::IsPlayingMediaDidChange message to the UI process
+        to notify that video/audio is playing, so the UI process will take a MediaPlayback assertion.
+        2) The UI process sends a WebProcess::PrepareToSuspend message to the web process, which
+        will suspend the web process.
+
+        Eventually, the web process will suspend, which means no video/audio playback.
+        But the UI process believes that there is a web process playing video/audio, so it will
+        take a MediaPlayback assertion.
+
+        This patch fixes the race condition by ignoring the WebPageProxy::IsPlayingMediaDidChange
+        message in the UIProcess if the process throttler believes that the process should not be
+        running, so that the MediaPlayback assertion will not be created.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+
 2020-07-23  Per Arne Vollan  <pvollan@apple.com>
 
         Crash in block in WebKit::LaunchServicesDatabaseObserver::LaunchServicesDatabaseObserver
