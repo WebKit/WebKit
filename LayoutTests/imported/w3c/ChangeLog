@@ -1,3 +1,9 @@
+2020-07-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, land baseline for web-platform-tests/encoding/eof-shift_jis.html.
+
+        * web-platform-tests/encoding/eof-shift_jis-expected.html: Added.
+
 2020-07-23  Chris Dumez  <cdumez@apple.com>
 
         Add support for SVGAElement's rel / relList attributes
