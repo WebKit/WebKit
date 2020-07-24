@@ -110,3 +110,5 @@ webkit.org/b/214735 http/tests/security/xssAuditor/cached-frame.html [ Pass Time
 webkit.org/b/214736 imported/w3c/web-platform-tests/css/css-flexbox/align-self-014.html [ Pass Timeout ]
 
 webkit.org/b/214739 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-center.html [ Pass Timeout ]
+
+webkit.org/b/214324 fast/visual-viewport/scroll-event-fired-during-scroll-alone.html [ Pass Failure ]

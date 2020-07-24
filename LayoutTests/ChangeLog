@@ -8,6 +8,15 @@
         * platform/mac-wk1/TestExpectations:
         Mark all compositing/repaint/iframes as failing for Mojave to speed up EWS while we search for the root cause.
 
+2020-07-24  Karl Rackler  <rackler@apple.com>
+
+        [ iOS ] fast/visual-viewport/scroll-event-fired-during-scroll-alone.html is a flakey failure
+        https://bugs.webkit.org/show_bug.cgi?id=214324
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-07-24  Youenn Fablet  <youenn@apple.com>
 
         ASSERT(!m_peerConnection.isClosed()) on imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-operations.https.html
