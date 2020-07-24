@@ -1,3 +1,33 @@
+2020-07-24  Chris Dumez  <cdumez@apple.com>
+
+        Crash under PreconnectTask::start()
+        https://bugs.webkit.org/show_bug.cgi?id=214747
+        <rdar://problem/65989668>
+
+        Reviewed by Geoffrey Garen.
+
+        All user of PreconnectTask construct a PreconnectTask and then call start() on it.
+        start() dereferences m_networkLoad unconditionally. However, the PreconnectTask
+        constructor may return early and not initialize m_networkLoad if there is not
+        NetworkSession for the given sessionID.
+
+        To address the issue, update call sites to pass in a valid NetworkSession, so that
+        the PreconnectTask now always initializes m_networkLoad.
+
+        No new tests, we do not know how to reproduce, likely due to a race between
+        a preconnect request being issued and a network session getting destroyed.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::sendH2Ping):
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        * NetworkProcess/PreconnectTask.cpp:
+        (WebKit::PreconnectTask::PreconnectTask):
+        * NetworkProcess/PreconnectTask.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::preconnectForSubresource):
+
 2020-07-24  David Kilzer  <ddkilzer@apple.com>
 
         [IPC hardening] Add nullptr checks for WebPage::m_activeColorChooser
