@@ -1,3 +1,12 @@
+2020-07-24  Karl Rackler  <rackler@apple.com>
+
+        [ iOS debug wk2 ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html and webrtc/simulcast-h264.html are flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=214730
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-07-24  Youenn Fablet  <youenn@apple.com>
 
         Remove assertions in RTCVideoEncoderH264 that are wrong in case of simulcast

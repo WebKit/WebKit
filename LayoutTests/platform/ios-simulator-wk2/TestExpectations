@@ -94,3 +94,6 @@ webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 webkit.org/b/214688 editing/selection/shift-click-includes-existing-selection.html [ Pass Failure ]
 
+webkit.org/b/214730 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html [ Skip ]
+webkit.org/b/214730 [ Debug ] webrtc/simulcast-h264.html [ Skip ]
+
