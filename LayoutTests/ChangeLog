@@ -1,3 +1,22 @@
+2020-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264690): [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214688
+        <rdar://problem/65993683>
+
+        Reviewed by Darin Adler.
+
+        On iOS, this test simulates a "Shift + tap" and verifies that it extends an existing selection. However, it's
+        possible for this test to fail if the selection view appears before the tap completes, since the tap may be too
+        close to one of the selection handle views, causing `-[UITextRangeView gestureRecognizerShouldBegin:]` to return
+        `NO` and cause the synthetic click gesture to fail in favor of toggling the visibility of the callout bar above
+        the selection view.
+
+        Mitigate this by simply adding a large margin between the existing selection and the tap location, to which the
+        test attempts to extend the selection.
+
+        * editing/selection/shift-click-includes-existing-selection.html:
+
 2020-07-24  Tadeu Zagallo  <tzagallo@apple.com>
 
         WKStringGetMaximumUTF8CStringSize should cast before arithmetic
