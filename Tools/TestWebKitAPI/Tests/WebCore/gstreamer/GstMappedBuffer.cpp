@@ -93,6 +93,15 @@ TEST_F(GStreamerTest, mappedBufferDoesNotAddExtraRefs)
     ASSERT_EQ(GST_OBJECT_REFCOUNT(buf.get()), 1);
 }
 
+TEST_F(GStreamerTest, mappedBufferValidityUnmapEarly)
+{
+    GRefPtr<GstBuffer> buf = adoptGRef(gst_buffer_new());
+    GstMappedBuffer mappedBuf(buf, GST_MAP_READ);
+    ASSERT_TRUE(mappedBuf);
+    mappedBuf.unmapEarly();
+    ASSERT_FALSE(mappedBuf);
+}
+
 TEST_F(GStreamerTest, mappedOwnedBufferReadSanity)
 {
     gpointer memory = g_malloc(16);
@@ -132,6 +141,33 @@ TEST_F(GStreamerTest, mappedOwnedBufferDoesAddsExtraRefs)
     }
 
     ASSERT_EQ(GST_OBJECT_REFCOUNT(buf.get()), 1);
+}
+
+TEST_F(GStreamerTest, mappedOwnedBufferDestruction)
+{
+    GstBuffer* buffer = gst_buffer_new();
+    ASSERT_EQ(GST_OBJECT_REFCOUNT(buffer), 1);
+    auto mappedBuffer = GstMappedOwnedBuffer::create(buffer);
+    ASSERT_TRUE(mappedBuffer);
+    ASSERT_EQ(GST_OBJECT_REFCOUNT(buffer), 2);
+
+    // After this we should not use the buffer anymore but it should
+    // be still alive inside the mapped buffer, so we still can check
+    // the refcount.
+    gst_buffer_unref(buffer);
+    ASSERT_EQ(GST_OBJECT_REFCOUNT(buffer), 1);
+
+    // Now we are going to check if the buffer really outlives the
+    // mapped buffer. For that we check if there is no stderr output
+    // when we unref the mapped buffer. We can't check the ref count
+    // because it should be 0 and the object should be invalid, what
+    // could lead to a crash or other bad things.
+    char capturedStderrBuffer[BUFSIZ];
+    capturedStderrBuffer[0] = 0;
+    setbuf(stderr, capturedStderrBuffer);
+    mappedBuffer = nullptr;
+    setbuf(stderr, nullptr);
+    ASSERT_EQ(capturedStderrBuffer[0], 0);
 }
 
 } // namespace TestWebKitAPI

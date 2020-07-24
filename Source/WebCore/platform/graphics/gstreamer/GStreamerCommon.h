@@ -113,6 +113,11 @@ public:
 
     virtual ~GstMappedBuffer()
     {
+        unmapEarly();
+    }
+
+    void unmapEarly()
+    {
         if (m_isValid) {
             m_isValid = false;
             gst_buffer_unmap(m_buffer, &m_info);
@@ -165,6 +170,11 @@ public:
     static RefPtr<GstMappedOwnedBuffer> create(GstBuffer* buffer)
     {
         return create(GRefPtr(buffer));
+    }
+
+    virtual ~GstMappedOwnedBuffer()
+    {
+        unmapEarly();
     }
 
     Ref<SharedBuffer> createSharedBuffer();

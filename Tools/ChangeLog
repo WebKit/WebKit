@@ -1,3 +1,15 @@
+2020-07-24  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] gst_buffer_unmap: assertion 'GST_IS_BUFFER (buffer)' failed
+        https://bugs.webkit.org/show_bug.cgi?id=213364
+
+        Reviewed by Philippe Normand.
+
+        * TestWebKitAPI/Tests/WebCore/gstreamer/GstMappedBuffer.cpp:
+        (TestWebKitAPI::TEST_F): Added
+        GStreamerTest::mappedOwnedBufferDestruction and
+        GStreamerTest::mappedBufferValidityUnmapEarly tests.
+
 2020-07-24  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Add a GNU parallel runner
