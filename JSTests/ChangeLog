@@ -1,3 +1,12 @@
+2020-07-24  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Skip crashing test on mips
+        https://bugs.webkit.org/show_bug.cgi?id=214729
+
+        Reviewed by Noam Rosenthal.
+
+        * stress/compare-eq-should-use-known-other-use.js:
+
 2020-07-24  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r264639): Intl.DisplayNames tests failing on all architectures
