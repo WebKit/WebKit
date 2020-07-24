@@ -3204,7 +3204,6 @@ svg/custom/subpaths-moveto-only-rendering.svg [ Failure ]
 
 # <rdar://problem/45056204> REGRESSION (iOS 13): Three cookie layout tests failing
 http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
-http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
 
 # <rdar://problem/45468497> REGRESSION (iOS 13): fast/images/pdf-as-image-with-annotations.html is failing the image only test

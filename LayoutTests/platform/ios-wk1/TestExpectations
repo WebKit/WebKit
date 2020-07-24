@@ -1596,7 +1596,6 @@ http/tests/security/javascriptURL/xss-DENIED-from-javascript-url-in-foreign-doma
 http/tests/security/javascriptURL/xss-DENIED-to-javascript-url-in-foreign-domain-window-open.html [ Failure Pass ]
 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml [ Failure Pass ]
 http/tests/storage/callbacks-are-called-in-correct-context.html [ Failure Pass ]
-http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure Pass ]
 http/tests/xmlhttprequest/failed-auth.html [ Failure Pass ]
 ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ImageOnlyFailure ]
 imported/blink/compositing/reorder-z-with-style.html [ Timeout Pass ImageOnlyFailure ]
