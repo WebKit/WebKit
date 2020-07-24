@@ -1,5 +1,14 @@
 2020-07-24  Karl Rackler  <rackler@apple.com>
 
+        [ iOS debug wk2 ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-fetch-error-external-module.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214734
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2020-07-24  Karl Rackler  <rackler@apple.com>
+
         [ iOS wk2 ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-store.any.serviceworker.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=214732
 
