@@ -101,3 +101,4 @@ webkit.org/b/214358 fast/scrolling/ios/programmatic-scroll-while-zoomed.html [ P
 
 webkit.org/b/214731 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-store-cursors.any.serviceworker.html [ Pass Failure ]
 
+webkit.org/b/214732 imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-store.any.serviceworker.html [ Pass Failure ]
