@@ -27,10 +27,11 @@
 
 #if USE(LIBWEBRTC)
 
+#include "RTCNetwork.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <webrtc/rtc_base/network.h>
-#include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 #include <webrtc/rtc_base/thread.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 class Connection;
@@ -41,7 +42,7 @@ namespace WebKit {
 
 class NetworkRTCProvider;
 
-class NetworkRTCMonitor final : public sigslot::has_slots<> {
+class NetworkRTCMonitor final : public CanMakeWeakPtr<NetworkRTCMonitor> {
 public:
     explicit NetworkRTCMonitor(NetworkRTCProvider& rtcProvider) : m_rtcProvider(rtcProvider) { }
     ~NetworkRTCMonitor();
@@ -49,11 +50,12 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     void stopUpdating();
     bool isStarted() const { return m_isStarted; }
+    NetworkRTCProvider& rtcProvider() { return m_rtcProvider; }
+
+    void onNetworksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&);
 
 private:
     void startUpdatingIfNeeded();
-
-    void onNetworksChanged();
 
     NetworkRTCProvider& m_rtcProvider;
     std::unique_ptr<rtc::BasicNetworkManager> m_manager;

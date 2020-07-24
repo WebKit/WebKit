@@ -1,3 +1,43 @@
+2020-07-24  Youenn Fablet  <youenn@apple.com>
+
+        Use one socket server for the whole network process instead of one socket server per web process connection
+        https://bugs.webkit.org/show_bug.cgi?id=214593
+
+        Reviewed by Alex Christensen.
+
+        Instead of a socket server per web process, we will only create one for all web processes.
+        Conversely, we do the same for the network manager.
+        This should allow to reduce our use of sockets in network process and hopefully reduce the occurence of sockets fd above FD_SETSIZE.
+        Covered by existing tests.
+
+        * NetworkProcess/webrtc/NetworkRTCMonitor.cpp:
+        (WebKit::networkManager):
+        (WebKit::NetworkManagerWrapper::addListener):
+        (WebKit::NetworkManagerWrapper::removeListener):
+        (WebKit::NetworkManagerWrapper::onNetworksChanged):
+        (WebKit::NetworkRTCMonitor::~NetworkRTCMonitor):
+        (WebKit::NetworkRTCMonitor::startUpdatingIfNeeded):
+        (WebKit::NetworkRTCMonitor::stopUpdating):
+        (WebKit::NetworkRTCMonitor::onNetworksChanged):
+        * NetworkProcess/webrtc/NetworkRTCMonitor.h:
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::rtcNetworkThread):
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+        (WebKit::NetworkRTCProvider::close):
+        (WebKit::NetworkRTCProvider::createSocket):
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::wrapNewTCPConnection):
+        (WebKit::NetworkRTCProvider::sendToSocket):
+        (WebKit::NetworkRTCProvider::closeSocket):
+        (WebKit::NetworkRTCProvider::setSocketOption):
+        (WebKit::NetworkRTCProvider::addSocket):
+        (WebKit::NetworkRTCProvider::takeSocket):
+        (WebKit::NetworkRTCProvider::newConnection):
+        (WebKit::NetworkRTCProvider::callOnRTCNetworkThread):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        (WebKit::NetworkRTCProvider::connection):
+
 2020-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Tapping QuickType suggestions for a misspelled word does nothing in Mail compose

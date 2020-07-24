@@ -96,6 +96,8 @@ public:
 
     bool canLog() const { return m_canLog; }
 
+    IPC::Connection& connection() { return m_ipcConnection.get(); }
+
 private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
 
@@ -129,7 +131,7 @@ private:
 
     NetworkRTCMonitor m_rtcMonitor;
 
-    std::unique_ptr<rtc::Thread> m_rtcNetworkThread;
+    rtc::Thread& m_rtcNetworkThread;
     UniqueRef<rtc::BasicPacketSocketFactory> m_packetSocketFactory;
 
     HashMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<rtc::AsyncPacketSocket>> m_pendingIncomingSockets;
