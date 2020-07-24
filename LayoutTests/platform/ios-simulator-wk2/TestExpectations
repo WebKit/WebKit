@@ -108,3 +108,5 @@ webkit.org/b/214734 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scr
 webkit.org/b/214735 http/tests/security/xssAuditor/cached-frame.html [ Pass Timeout ]
 
 webkit.org/b/214736 imported/w3c/web-platform-tests/css/css-flexbox/align-self-014.html [ Pass Timeout ]
+
+webkit.org/b/214739 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-center.html [ Pass Timeout ]
