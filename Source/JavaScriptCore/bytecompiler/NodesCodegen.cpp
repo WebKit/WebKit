@@ -1955,7 +1955,7 @@ RegisterID* HasOwnPropertyFunctionCallDotNode::emitBytecode(BytecodeGenerator& g
         if (m_base->isThisNode()) {
             // After generator.ensureThis (which must be invoked in |base|'s materialization), we can ensure that |this| is in local this-register.
             ASSERT(base);
-            return generator.variable(generator.propertyNames().thisIdentifier, ThisResolutionType::Local) == structureContext->baseVariable().value();
+            return generator.variable(generator.propertyNames().builtinNames().thisPrivateName(), ThisResolutionType::Local) == structureContext->baseVariable().value();
         }
         return false;
     };
@@ -3894,7 +3894,7 @@ void ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
     else if (m_expr->isThisNode()) {
         // After generator.ensureThis (which must be invoked in |base|'s materialization), we can ensure that |this| is in local this-register.
         ASSERT(base);
-        baseVariable = generator.variable(generator.propertyNames().thisIdentifier, ThisResolutionType::Local);
+        baseVariable = generator.variable(generator.propertyNames().builtinNames().thisPrivateName(), ThisResolutionType::Local);
     }
 
     // Pause at the assignment expression for each for..in iteration.

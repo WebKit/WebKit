@@ -112,6 +112,7 @@ namespace JSC {
     macro(asyncGeneratorQueueItemNext) \
     macro(dateTimeFormat) \
     macro(intlSubstituteValue) \
+    macro(this) \
     macro(thisTimeValue) \
     macro(newTargetLocal) \
     macro(derivedConstructor) \
