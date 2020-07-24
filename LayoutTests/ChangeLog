@@ -1,3 +1,14 @@
+2020-07-23  Simon Fraser  <simon.fraser@apple.com>
+
+        steps() timing function on a transform animation triggers a render every frame
+        https://bugs.webkit.org/show_bug.cgi?id=214712
+        <rdar://problem/62737868>
+
+        Reviewed by Tim Horton.
+
+        * animations/steps-transform-rendering-updates-expected.txt: Added.
+        * animations/steps-transform-rendering-updates.html: Added.
+
 2020-07-24  Mark Lam  <mark.lam@apple.com>
 
         Fix JS bindings code to DECLARE_THROW_SCOPE in the functions that can throw instead of passing a ThrowScope around.

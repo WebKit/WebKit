@@ -1,3 +1,43 @@
+2020-07-23  Simon Fraser  <simon.fraser@apple.com>
+
+        steps() timing function on a transform animation triggers a render every frame
+        https://bugs.webkit.org/show_bug.cgi?id=214712
+        <rdar://problem/62737868>
+
+        Reviewed by Tim Horton.
+
+        An animation of transform, with a steps() timing function, would schedule a rendering
+        update on every frame. This happened because KeyframeEffect::updateAcceleratedActions()
+        would keep trying, and failing to start the accelerated animation every frame, since
+        GraphicsLayerCA refuses to run accelerated animations with steps timing functions.
+
+        Fix by making m_isRunningAccelerated a tri-state enum, which gets a new value once we've tried
+        to run the animation the first time. Also ensure that we re-try if the timing
+        function changes, via animationDidChangeTimingProperties().
+
+        Test: animations/steps-transform-rendering-updates.html
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::isRunningAcceleratedAnimationForProperty const):
+        (WebCore::KeyframeEffect::updateAcceleratedActions):
+        (WebCore::KeyframeEffect::animationDidChangeTimingProperties):
+        (WebCore::KeyframeEffect::animationWasCanceled):
+        (WebCore::KeyframeEffect::willChangeRenderer):
+        (WebCore::KeyframeEffect::animationSuspensionStateDidChange):
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        * animation/KeyframeEffect.h:
+        (WebCore::KeyframeEffect::isRunningAccelerated const):
+        * page/Page.cpp:
+        (WebCore::Page::startTrackingRenderingUpdates):
+        (WebCore::Page::renderingUpdateCount const):
+        (WebCore::Page::updateRendering):
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::startTrackingRenderingUpdates):
+        (WebCore::Internals::renderingUpdateCount):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2020-07-24  Mark Lam  <mark.lam@apple.com>
 
         Fix JS bindings code to DECLARE_THROW_SCOPE in the functions that can throw instead of passing a ThrowScope around.

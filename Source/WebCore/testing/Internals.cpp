@@ -3542,6 +3542,25 @@ ExceptionOr<unsigned> Internals::compositingUpdateCount()
     return document->renderView()->compositor().compositingUpdateCount();
 }
 
+ExceptionOr<void> Internals::startTrackingRenderingUpdates()
+{
+    Document* document = contextDocument();
+    if (!document)
+        return Exception { InvalidAccessError };
+
+    document->page()->startTrackingRenderingUpdates();
+    return { };
+}
+
+ExceptionOr<unsigned> Internals::renderingUpdateCount()
+{
+    Document* document = contextDocument();
+    if (!document)
+        return Exception { InvalidAccessError };
+
+    return document->page()->renderingUpdateCount();
+}
+
 ExceptionOr<void> Internals::setCompositingPolicyOverride(Optional<CompositingPolicy> policyOverride)
 {
     Document* document = contextDocument();

@@ -138,9 +138,12 @@ public:
     RenderElement* renderer() const override;
     const RenderStyle& currentStyle() const override;
     bool triggersStackingContext() const { return m_triggersStackingContext; }
-    bool isRunningAccelerated() const { return m_isRunningAccelerated; }
+    bool isRunningAccelerated() const { return m_runningAccelerated == RunningAccelerated::Yes; }
+
+    // FIXME: These ignore the fact that some timing functions can prevent acceleration.
     bool isAboutToRunAccelerated() const { return m_acceleratedPropertiesState != AcceleratedProperties::None && m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
     bool isCompletelyAccelerated() const { return m_acceleratedPropertiesState == AcceleratedProperties::All; }
+
     bool filterFunctionListsMatch() const override { return m_filterFunctionListsMatch; }
     bool transformFunctionListsMatch() const override { return m_transformFunctionListsMatch; }
 #if ENABLE(FILTERS_LEVEL_2)
@@ -170,6 +173,7 @@ private:
     enum class AcceleratedAction : uint8_t { Play, Pause, UpdateTiming, Stop };
     enum class BlendingKeyframesSource : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
     enum class AcceleratedProperties : uint8_t { None, Some, All };
+    enum class RunningAccelerated : uint8_t { NotStarted, Yes, No };
 
     Document* document() const;
     void updateEffectStackMembership();
@@ -211,7 +215,7 @@ private:
     CompositeOperation m_compositeOperation { CompositeOperation::Replace };
     AcceleratedProperties m_acceleratedPropertiesState { AcceleratedProperties::None };
     AnimationEffectPhase m_phaseAtLastApplication { AnimationEffectPhase::Idle };
-    bool m_isRunningAccelerated { false };
+    RunningAccelerated m_runningAccelerated;
     bool m_needsForcedLayout { false };
     bool m_triggersStackingContext { false };
     bool m_transformFunctionListsMatch { false };

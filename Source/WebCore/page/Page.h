@@ -493,6 +493,9 @@ public:
     
     WEBCORE_EXPORT void scheduleRenderingUpdate();
     void scheduleTimedRenderingUpdate();
+    
+    WEBCORE_EXPORT void startTrackingRenderingUpdates();
+    WEBCORE_EXPORT unsigned renderingUpdateCount() const;
 
     WEBCORE_EXPORT void suspendScriptedAnimations();
     WEBCORE_EXPORT void resumeScriptedAnimations();
@@ -982,6 +985,9 @@ private:
 #endif
 
     PAL::SessionID m_sessionID;
+
+    unsigned m_renderingUpdateCount { 0 };
+    bool m_isTrackingRenderingUpdates { false };
 
     bool m_isClosing { false };
     bool m_isRestoringCachedPage { false };

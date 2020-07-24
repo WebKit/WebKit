@@ -1415,6 +1415,17 @@ void Page::scheduleTimedRenderingUpdate()
     renderingUpdateScheduler().scheduleTimedRenderingUpdate();
 }
 
+void Page::startTrackingRenderingUpdates()
+{
+    m_isTrackingRenderingUpdates = true;
+    m_renderingUpdateCount = 0;
+}
+
+unsigned Page::renderingUpdateCount() const
+{
+    return m_renderingUpdateCount;
+}
+
 // https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
 void Page::updateRendering()
 {
@@ -1493,6 +1504,9 @@ void Page::updateRendering()
         if (document && document->domWindow())
             document->domWindow()->unfreezeNowTimestamp();
     }
+    
+    if (m_isTrackingRenderingUpdates)
+        ++m_renderingUpdateCount;
 
     layoutIfNeeded();
     doAfterUpdateRendering();

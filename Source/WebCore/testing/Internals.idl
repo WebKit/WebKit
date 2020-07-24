@@ -604,6 +604,9 @@ enum ContentSizeCategory {
     [MayThrowException] void startTrackingCompositingUpdates();
     [MayThrowException] unsigned long compositingUpdateCount();
 
+    [MayThrowException] void startTrackingRenderingUpdates();
+    [MayThrowException] unsigned long renderingUpdateCount();
+
     attribute CompositingPolicy? compositingPolicyOverride;
 
     void updateLayoutAndStyleForAllFrames();

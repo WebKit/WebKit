@@ -541,6 +541,9 @@ public:
     ExceptionOr<void> startTrackingCompositingUpdates();
     ExceptionOr<unsigned> compositingUpdateCount();
 
+    ExceptionOr<void> startTrackingRenderingUpdates();
+    ExceptionOr<unsigned> renderingUpdateCount();
+
     enum CompositingPolicy { Normal, Conservative };
     ExceptionOr<void> setCompositingPolicyOverride(Optional<CompositingPolicy>);
     ExceptionOr<Optional<CompositingPolicy>> compositingPolicyOverride() const;
