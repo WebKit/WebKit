@@ -65,7 +65,7 @@ size_t WKStringGetCharacters(WKStringRef stringRef, WKChar* buffer, size_t buffe
 
 size_t WKStringGetMaximumUTF8CStringSize(WKStringRef stringRef)
 {
-    return WebKit::toImpl(stringRef)->stringView().length() * 3 + 1;
+    return static_cast<size_t>(WebKit::toImpl(stringRef)->stringView().length()) * 3 + 1;
 }
 
 enum StrictType { NonStrict = false, Strict = true };

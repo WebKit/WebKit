@@ -4873,3 +4873,6 @@ webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-logical/logical-valu
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-display/display-first-line-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/214467 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative.html [ ImageOnlyFailure ]
+
+# WebKit2 only.
+js/throw-large-string-oom.html [ Skip ]

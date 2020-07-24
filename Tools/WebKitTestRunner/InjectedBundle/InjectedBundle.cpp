@@ -699,7 +699,11 @@ void InjectedBundle::dumpToStdErr(const String& output)
     if (output.isEmpty())
         return;
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("DumpToStdErr"));
-    WKRetainPtr<WKStringRef> messageBody = adoptWK(WKStringCreateWithUTF8CString(output.utf8().data()));
+    WKRetainPtr<WKStringRef> messageBody;
+    if (auto utf8 = output.tryGetUtf8())
+        messageBody = adoptWK(WKStringCreateWithUTF8CString(utf8->data()));
+    else
+        messageBody = adoptWK(WKStringCreateWithUTF8CString("Out of memory\n"));
     WKBundlePagePostMessage(page()->page(), messageName.get(), messageBody.get());
 }
 
@@ -710,7 +714,11 @@ void InjectedBundle::outputText(const String& output)
     if (output.isEmpty())
         return;
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("TextOutput"));
-    WKRetainPtr<WKStringRef> messageBody = adoptWK(WKStringCreateWithUTF8CString(output.utf8().data()));
+    WKRetainPtr<WKStringRef> messageBody;
+    if (auto utf8 = output.tryGetUtf8())
+        messageBody = adoptWK(WKStringCreateWithUTF8CString(utf8->data()));
+    else
+        messageBody = adoptWK(WKStringCreateWithUTF8CString("Out of memory\n"));
     // We use WKBundlePagePostMessageIgnoringFullySynchronousMode() instead of WKBundlePagePostMessage() to make sure that all text output
     // is done via asynchronous IPC, even if the connection is in fully synchronous mode due to a WKBundlePagePostSynchronousMessageForTesting()
     // call. Otherwise, messages logged via sync and async IPC may end up out of order and cause flakiness.

@@ -1,3 +1,15 @@
+2020-07-24  Tadeu Zagallo  <tzagallo@apple.com>
+
+        WKStringGetMaximumUTF8CStringSize should cast before arithmetic
+        https://bugs.webkit.org/show_bug.cgi?id=214750
+        <rdar://problem/65884455>
+
+        Reviewed by Mark Lam.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::dumpToStdErr):
+        (WTR::InjectedBundle::outputText):
+
 2020-07-24  Youenn Fablet  <youenn@apple.com>
 
         Add some logging to debug WebKit.QuotaDelegate test that times out on a Debug bot

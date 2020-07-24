@@ -802,3 +802,6 @@ imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creatin
 
 # Closed port web socket delays are only supported on wk2.
 http/tests/websocket/tests/hybi/closed-port-delay.html [ Pass ]
+
+# WebKit2 only.
+js/throw-large-string-oom.html [ Pass ]
