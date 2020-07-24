@@ -27,6 +27,7 @@ require 'fileutils'
 require 'getoptlong'
 require 'pathname'
 require 'rbconfig'
+require 'tempfile'
 require 'uri'
 require 'yaml'
 
@@ -86,9 +87,15 @@ def printCommandArray(*cmd)
     $stderr.puts ">> #{commandArray}"
 end
 
+$ignoreNextCommandExecutionExitCode = false
+
 def mysys(*cmd)
-    printCommandArray(*cmd) if $verbosity >= 1
-    raise "Command failed: #{$?.inspect}" unless system(*cmd)
+    begin
+        printCommandArray(*cmd) if $verbosity >= 1
+        raise "Command failed: #{$?.inspect}" unless (system(*cmd) or $ignoreNextCommandExecutionExitCode)
+    ensure
+        $ignoreNextCommandExecutionExitCode = false
+    end
 end
 
 def escapeAll(array)
@@ -187,6 +194,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--shell-runner', GetoptLong::NO_ARGUMENT],
                ['--make-runner', GetoptLong::NO_ARGUMENT],
                ['--ruby-runner', GetoptLong::NO_ARGUMENT],
+               ['--gnu-parallel-runner', GetoptLong::NO_ARGUMENT],
                ['--test-writer', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote-config-file', GetoptLong::REQUIRED_ARGUMENT],
@@ -232,6 +240,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $testRunnerType = :make
     when '--ruby-runner'
         $testRunnerType = :ruby
+    when '--gnu-parallel-runner'
+        $testRunnerType = :gnuparallel
     when '--test-writer'
         $testWriter = arg
     when '--remote'
@@ -499,8 +509,8 @@ if !$testRunnerType
     end
 end
 
-if $remoteHosts.length > 1 and $testRunnerType != :make
-    raise "Multiple remote hosts only supported with make runner"
+if $remoteHosts.length > 1 and ($testRunnerType != :make) and ($testRunnerType != :gnuparallel)
+    raise "Multiple remote hosts only supported with the make or gnu-parallel runners"
 end
 
 if $hostOS == "playstation" && $testWriter == "default"
@@ -1955,6 +1965,8 @@ def prepareTestRunner(remoteIndex=0)
         prepareShellTestRunner
     when :ruby
         prepareRubyTestRunner
+    when :gnuparallel
+        prepareGnuParallelTestRunner
     else
         raise "Unknown test runner type: #{$testRunnerType.to_s}"
     end
@@ -2089,25 +2101,42 @@ def runAndMonitorTestRunnerCommand(*cmd)
     end
 end
 
+def getRemoteDirectoryIfNeeded(remoteIndex)
+    remoteHost = $remoteHosts[remoteIndex]
+    if !remoteHost.remoteDirectory
+        remoteHost.remoteDirectory = JSON::parse(sshRead("cat ~/.bencher", remoteIndex))["tempPath"]
+    end
+end
+
+def copyBundleToRemote(remoteHost)
+    mysys("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}")
+    mysys("scp", "-o", "NoHostAuthenticationForLocalhost=yes", "-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}")
+end
+
+def exportBaseEnvironmentVariables
+    dyldFrameworkPath = "$(cd #{$testingFrameworkPath.dirname}; pwd)"
+    ldLibraryPath = "$(pwd)/#{$outputDir.basename}/#{$jscPath.dirname}"
+    [
+        "export DYLD_FRAMEWORK_PATH=#{Shellwords.shellescape(dyldFrameworkPath)} && ",
+        "export LD_LIBRARY_PATH=#{Shellwords.shellescape(ldLibraryPath)} &&",
+        "export JSCTEST_timeout=#{Shellwords.shellescape(ENV['JSCTEST_timeout'])} && ",
+        "export JSCTEST_hardTimeout=#{Shellwords.shellescape(ENV['JSCTEST_hardTimeout'])} && ",
+        "export JSCTEST_memoryLimit=#{Shellwords.shellescape(ENV['JSCTEST_memoryLimit'])} && ",
+        "export TZ=#{Shellwords.shellescape(ENV['TZ'])} && ",
+    ].join("")
+end
+
 def runTestRunner(remoteIndex=0)
     if $remote
         remoteHost = $remoteHosts[remoteIndex]
-        if !remoteHost.remoteDirectory
-            remoteHost.remoteDirectory = JSON::parse(sshRead("cat ~/.bencher", remoteIndex))["tempPath"]
-        end
-        mysys("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", "mkdir -p #{remoteHost.remoteDirectory}")
-        mysys("scp", "-o", "NoHostAuthenticationForLocalhost=yes", "-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}")
+        getRemoteDirectoryIfNeeded(remoteIndex)
+        copyBundleToRemote(remoteHost)
         remoteScript = "\""
         remoteScript += "cd #{remoteHost.remoteDirectory} && "
         remoteScript += "rm -rf #{$outputDir.basename} && "
         remoteScript += "tar xzf #{$tarFileName} && "
         remoteScript += "cd #{$outputDir.basename}/.runner && "
-        remoteScript += "export DYLD_FRAMEWORK_PATH=\\\"\\$(cd #{$testingFrameworkPath.dirname}; pwd)\\\" && "
-        remoteScript += "export LD_LIBRARY_PATH=#{remoteHost.remoteDirectory}/#{$outputDir.basename}/#{$jscPath.dirname} && "
-        remoteScript += "export JSCTEST_timeout=#{Shellwords.shellescape(ENV['JSCTEST_timeout'])} && "
-        remoteScript += "export JSCTEST_hardTimeout=#{Shellwords.shellescape(ENV['JSCTEST_hardTimeout'])} && "
-        remoteScript += "export JSCTEST_memoryLimit=#{Shellwords.shellescape(ENV['JSCTEST_memoryLimit'])} && "
-        remoteScript += "export TZ=#{Shellwords.shellescape(ENV['TZ'])} && "
+        remoteScript += exportBaseEnvironmentVariables
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
         remoteScript += "#{testRunnerCommand(remoteIndex)}\""
         runAndMonitorTestRunnerCommand("ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript)
@@ -2277,6 +2306,18 @@ def runTarball
     compressBundle
 end
 
+def forEachRemote(&blk)
+    threads = []
+    $remoteHosts.each_index {
+        | index |
+        remoteHost = $remoteHosts[index]
+        threads << Thread.new {
+            blk.call(index, remoteHost)
+        }
+    }
+    threads.each { |thr| thr.join }
+end
+
 def runRemote
     raise unless $remote
 
@@ -2286,22 +2327,158 @@ def runRemote
         prepareTestRunner(index)
     }
     compressBundle
-    threads = []
-    $remoteHosts.each_index {
+    forEachRemote {
         | index |
-        threads << Thread.new {
-            runTestRunner(index)
+        runTestRunner(index)
+    }
+    detectFailures
+end
+
+def prepareGnuParallelTestRunner
+    path = $runnerDir + "parallel-tests"
+    FileUtils.mkdir_p($runnerDir)
+
+    File.open(path, "w") {
+        | outp |
+        $runlist.each {
+            | plan |
+            outp.puts("./test_script_#{plan.index}")
         }
     }
-    threads.each { |thr| thr.join }
+end
+
+def withGnuParallelSshWrapper(&blk)
+    Tempfile.open('ssh-wrapper', $runnerDir) {
+        | wrapper |
+        head =
+<<'EOF'
+#!/bin/sh
+
+remotedir="$1"
+shift
+
+remoteport="$1"
+shift
+
+remoteuser="$1"
+shift
+
+remotehost="$1"
+shift
+
+if test "x$1" != "x--"; then
+   echo "Expected '--' at this position, instead got $1" 1>&2
+   exit 3
+fi
+shift
+EOF
+        wrapper.puts(head +
+                     "echo \"$@\" | ssh -o ControlPath=./%C -o ControlMaster=auto -o ControlPersist=10m -o NoHostAuthenticationForLocalhost=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p \"$remoteport\" -l \"$remoteuser\" -o RemoteCommand=\"cd '$remotedir' && sh -s\" \"$remotehost\""
+        )
+        FileUtils.chmod("ugo=rx", wrapper.path)
+        wrapper.close # Avoid ETXTBUSY
+        blk.call(wrapper.path)
+    }
+end
+
+def withGnuParallelSshLoginFile(&blk)
+    withGnuParallelSshWrapper {
+        | wrapper |
+        Tempfile.open('slf', $runnerDir) {
+            | tf |
+            $remoteHosts.each {
+                | remoteHost |
+                tf.puts("#{wrapper} #{remoteHost.remoteDirectory} #{remoteHost.port} #{remoteHost.user} #{remoteHost.host}")
+            }
+            tf.flush
+            blk.call(tf.path)
+        }
+    }
+end
+
+
+def runSameCommandOnRemotes(cmd)
+    Tempfile.open('gnu-parallel-commands', $runnerDir) {
+        | commands |
+        commands.puts(cmd)
+        commands.flush
+        withGnuParallelSshLoginFile {
+            | slf |
+            cmd = [
+                "parallel",
+                "--nonall",
+                "-j0",
+                "--slf", slf
+            ] + ["-a", commands.path]
+            return mysys(*cmd)
+        }
+    }
+end
+
+def unpackBundleGnuParallel
+    runSameCommandOnRemotes("rm -rf #{$outputDir.basename} && " +
+                            "tar xzf #{$tarFileName}")
+end
+
+def runGnuParallelRunner
+    inputs = $runnerDir + "parallel-tests"
+    timeout = 300
+    if ENV["JSCTEST_timeout"]
+        timeout = ENV["JSCTEST_timeout"].to_f.ceil.to_i
+    end
+    withGnuParallelSshLoginFile {
+        | slf |
+        cmd = [
+            "parallel",
+            # We add 1 to make sure we always have waiting jobs and
+            # don't run into stalls due to ssh latency. However, we
+            # want to respect numChildProcesses, so we don't just use
+            # the -j +1 GNU parallel idiom.
+            "-j", "#{$numChildProcesses + 1}",
+            "--retries 5",
+            "--line-buffer", # we know our output is line-oriented
+            "--slf", slf,
+            "--timeout", timeout.to_s,
+            "-a", inputs,
+            "'cd #{$outputDir.basename}/.runner && " +
+            exportBaseEnvironmentVariables +
+            $envVars.collect { |var | "export #{var} &&"}.join("") +
+            "sh '"
+        ]
+        $ignoreNextCommandExecutionExitCode = true
+        runAndMonitorTestRunnerCommand(*cmd)
+    }
+end
+
+def runGnuParallel
+    raise unless $remote
+    prepareBundle
+    prepareTestRunner
+    compressBundle
+    forEachRemote {
+        |remoteIndex, remoteHost|
+        getRemoteDirectoryIfNeeded(remoteIndex)
+        copyBundleToRemote(remoteHost)
+    }
+    unpackBundleGnuParallel
+    runGnuParallelRunner
     detectFailures
 end
 
 puts
+
+if $testRunnerType == :gnuparallel
+    raise unless $remote
+end
+
 if $bundle
     runBundle
 elsif $remote
-    runRemote
+    if $testRunnerType == :gnuparallel
+        runGnuParallel
+    else
+        runRemote
+    end
 elsif $tarball
     runTarball
 else

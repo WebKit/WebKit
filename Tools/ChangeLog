@@ -1,3 +1,29 @@
+2020-07-24  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Add a GNU parallel runner
+        https://bugs.webkit.org/show_bug.cgi?id=214356
+
+        Reviewed by Keith Miller.
+
+        At the moment, run-jsc-stress-tests uses make as a (local) job scheduling
+        engine (i.e. doesn't make use of the dependency tracking at all). However,
+        this causes problems for the distributed job scheduling we want to do when
+        using --remote.
+
+        If a remote is down, the tests will fail.
+        If a remote goes down during testing, the tests will fail.
+
+        There is no reason not to ignore remotes that are unavailable. What's more,
+        we should be able to reschedule jobs that were in the middle of execution when
+        a remote host goes down.
+
+        This patch tries to leverage GNU parallel as the execution engine to
+        hopefully transparently handle some of those failure scenarios.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * Scripts/run-jsc-stress-tests:
+
 2020-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Tapping QuickType suggestions for a misspelled word does nothing in Mail compose

@@ -60,6 +60,7 @@ my $childProcesses;
 my $shellRunner;
 my $makeRunner;
 my $rubyRunner;
+my $gnuParallelRunner;
 my $testWriter;
 my $memoryLimited;
 my $reportExecutionTime;
@@ -338,6 +339,7 @@ GetOptions(
     'shell-runner' => \$shellRunner,
     'make-runner' => \$makeRunner,
     'ruby-runner' => \$rubyRunner,
+    'gnu-parallel-runner' => \$gnuParallelRunner,
     'test-writer=s' => \$testWriter,
     'memory-limited' => \$memoryLimited,
     'report-execution-time' => \$reportExecutionTime,
@@ -825,6 +827,10 @@ sub runJSCStressTests
 
     if ($rubyRunner) {
         push(@jscStressDriverCmd, "--ruby-runner");
+    }
+
+    if ($gnuParallelRunner) {
+        push(@jscStressDriverCmd, "--gnu-parallel-runner");
     }
 
     if ($testWriter) {
