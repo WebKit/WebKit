@@ -1,3 +1,21 @@
+2020-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264690): [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214688
+        <rdar://problem/65993683>
+
+        Reviewed by Tim Horton.
+
+        Attempt a second speculative fix that waits for the keydown HID event to be dequeued and handled by
+        `UIApplication` when simulating a shift-tap, to guarantee that the synthetic click gesture recognizer has
+        up-to-date modifier flags upon dispatching the synthetic HID events on tap.
+
+        It's unclear how or why the current implementation might result in the gesture recognizer not being updated with
+        the right modifier flags, since events in the HID event queue should be handled in order.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::singleTapAtPointWithModifiers):
+
 2020-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r264690): [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure
