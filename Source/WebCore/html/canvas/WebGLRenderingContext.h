@@ -44,15 +44,12 @@ public:
     Optional<Vector<String>> getSupportedExtensions() final;
 
     WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) final;
-    void hint(GCGLenum target, GCGLenum mode) final;
-    void clear(GCGLbitfield mask) final;
 
     GCGLint getMaxDrawBuffers() final;
     GCGLint getMaxColorAttachments() final;
     void initializeVertexArrayObjects() final;
     bool validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired) final;
     bool validateBlendEquation(const char* functionName, GCGLenum mode) final;
-    bool validateCapability(const char* functionName, GCGLenum cap) final;
 
 private:
     WebGLRenderingContext(CanvasBase&, GraphicsContextGLAttributes);

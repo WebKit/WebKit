@@ -1653,6 +1653,26 @@ GCGLenum WebGLRenderingContextBase::checkFramebufferStatus(GCGLenum target)
 #endif
 }
 
+void WebGLRenderingContextBase::clear(GCGLbitfield mask)
+{
+    if (isContextLostOrPending())
+        return;
+#if !USE(ANGLE)
+    if (mask & ~(GraphicsContextGL::COLOR_BUFFER_BIT | GraphicsContextGL::DEPTH_BUFFER_BIT | GraphicsContextGL::STENCIL_BUFFER_BIT)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "clear", "invalid mask");
+        return;
+    }
+    const char* reason = "framebuffer incomplete";
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(m_context.get(), &reason)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
+        return;
+    }
+#endif
+    if (!clearIfComposited(mask))
+        m_context->clear(mask);
+    markContextChangedAndNotifyCanvasObserver();
+}
+
 void WebGLRenderingContextBase::clearColor(GCGLfloat r, GCGLfloat g, GCGLfloat b, GCGLfloat a)
 {
     if (isContextLostOrPending())
@@ -3689,6 +3709,27 @@ void WebGLRenderingContextBase::enablePreserveDrawingBuffer()
     m_attributes.preserveDrawingBuffer = true;
     // Must send this notification down to the GraphicsContextGL as well.
     m_context->enablePreserveDrawingBuffer();
+}
+
+void WebGLRenderingContextBase::hint(GCGLenum target, GCGLenum mode)
+{
+    if (isContextLostOrPending())
+        return;
+    bool isValid = false;
+    switch (target) {
+    case GraphicsContextGL::GENERATE_MIPMAP_HINT:
+        isValid = true;
+        break;
+    case ExtensionsGL::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives, or core in WebGL 2.0
+        if (m_oesStandardDerivatives || isWebGL2())
+            isValid = true;
+        break;
+    }
+    if (!isValid) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "hint", "invalid target");
+        return;
+    }
+    m_context->hint(target, mode);
 }
 
 GCGLboolean WebGLRenderingContextBase::isBuffer(WebGLBuffer* buffer)
@@ -6906,6 +6947,25 @@ bool WebGLRenderingContextBase::validateBlendFuncFactors(const char* functionNam
         return false;
     }
     return true;
+}
+
+bool WebGLRenderingContextBase::validateCapability(const char* functionName, GCGLenum cap)
+{
+    switch (cap) {
+    case GraphicsContextGL::BLEND:
+    case GraphicsContextGL::CULL_FACE:
+    case GraphicsContextGL::DEPTH_TEST:
+    case GraphicsContextGL::DITHER:
+    case GraphicsContextGL::POLYGON_OFFSET_FILL:
+    case GraphicsContextGL::SAMPLE_ALPHA_TO_COVERAGE:
+    case GraphicsContextGL::SAMPLE_COVERAGE:
+    case GraphicsContextGL::SCISSOR_TEST:
+    case GraphicsContextGL::STENCIL_TEST:
+        return true;
+    default:
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid capability");
+        return false;
+    }
 }
 
 bool WebGLRenderingContextBase::validateUniformParameters(const char* functionName, const WebGLUniformLocation* location, const Float32List& v, GCGLsizei requiredMinSize, GCGLuint srcOffset, GCGLuint srcLength)

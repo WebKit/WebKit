@@ -141,7 +141,7 @@ public:
     void bufferSubData(GCGLenum target, long long offset, Optional<BufferDataSource>&&);
 
     GCGLenum checkFramebufferStatus(GCGLenum target);
-    virtual void clear(GCGLbitfield mask) = 0;
+    void clear(GCGLbitfield mask);
     void clearColor(GCGLfloat red, GCGLfloat green, GCGLfloat blue, GCGLfloat alpha);
     void clearDepth(GCGLfloat);
     void clearStencil(GCGLint);
@@ -223,7 +223,7 @@ public:
     bool preventBufferClearForInspector() const { return m_preventBufferClearForInspector; }
     void setPreventBufferClearForInspector(bool value) { m_preventBufferClearForInspector = value; }
 
-    virtual void hint(GCGLenum target, GCGLenum mode) = 0;
+    void hint(GCGLenum target, GCGLenum mode);
     GCGLboolean isBuffer(WebGLBuffer*);
     bool isContextLost() const;
     GCGLboolean isEnabled(GCGLenum cap);
@@ -963,7 +963,7 @@ protected:
     bool validateBlendFuncFactors(const char* functionName, GCGLenum src, GCGLenum dst);
 
     // Helper function to validate a GL capability.
-    virtual bool validateCapability(const char* functionName, GCGLenum) = 0;
+    virtual bool validateCapability(const char* functionName, GCGLenum);
 
     // Helper function to validate input parameters for uniform functions.
     bool validateUniformLocation(const char* functionName, const WebGLUniformLocation*);

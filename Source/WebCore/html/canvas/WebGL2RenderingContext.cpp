@@ -1715,30 +1715,6 @@ void WebGL2RenderingContext::vertexAttribIPointer(GCGLuint index, GCGLint size, 
     m_context->vertexAttribIPointer(index, size, type, stride, offset);
 }
 
-void WebGL2RenderingContext::clear(GCGLbitfield mask)
-{
-    if (isContextLostOrPending())
-        return;
-#if !USE(ANGLE)
-    if (mask & ~(GraphicsContextGL::COLOR_BUFFER_BIT | GraphicsContextGL::DEPTH_BUFFER_BIT | GraphicsContextGL::STENCIL_BUFFER_BIT)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "clear", "invalid mask");
-        return;
-    }
-    const char* reason = "framebuffer incomplete";
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess(graphicsContextGL(), &reason)) {
-        synthesizeGLError(GraphicsContextGL::INVALID_FRAMEBUFFER_OPERATION, "clear", reason);
-        return;
-    }
-    if (m_framebufferBinding && (mask & GraphicsContextGL::COLOR_BUFFER_BIT) && m_framebufferBinding->getColorBufferFormat() && isIntegerFormat(m_framebufferBinding->getColorBufferFormat())) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "clear", "cannot clear an integer buffer");
-        return;
-    }
-#endif
-    if (!clearIfComposited(mask))
-        m_context->clear(mask);
-    markContextChangedAndNotifyCanvasObserver();
-}
-
 void WebGL2RenderingContext::vertexAttribDivisor(GCGLuint index, GCGLuint divisor)
 {
     if (isContextLostOrPending())
@@ -2965,24 +2941,6 @@ void WebGL2RenderingContext::renderbufferStorageHelper(GCGLenum target, GCGLsize
         m_context->renderbufferStorage(target, internalformat, width, height);
 }
 
-void WebGL2RenderingContext::hint(GCGLenum target, GCGLenum mode)
-{
-    if (isContextLostOrPending())
-        return;
-    bool isValid = false;
-    switch (target) {
-    case GraphicsContextGL::GENERATE_MIPMAP_HINT:
-    case GraphicsContextGL::FRAGMENT_SHADER_DERIVATIVE_HINT:
-        isValid = true;
-        break;
-    }
-    if (!isValid) {
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "hint", "invalid target");
-        return;
-    }
-    m_context->hint(target, mode);
-}
-
 GCGLuint WebGL2RenderingContext::maxTransformFeedbackSeparateAttribs() const
 {
     return m_maxTransformFeedbackSeparateAttribs;
@@ -3347,20 +3305,10 @@ bool WebGL2RenderingContext::validateBlendEquation(const char* functionName, GCG
 bool WebGL2RenderingContext::validateCapability(const char* functionName, GCGLenum cap)
 {
     switch (cap) {
-    case GraphicsContextGL::BLEND:
-    case GraphicsContextGL::CULL_FACE:
-    case GraphicsContextGL::DEPTH_TEST:
-    case GraphicsContextGL::DITHER:
-    case GraphicsContextGL::POLYGON_OFFSET_FILL:
-    case GraphicsContextGL::SAMPLE_ALPHA_TO_COVERAGE:
-    case GraphicsContextGL::SAMPLE_COVERAGE:
-    case GraphicsContextGL::SCISSOR_TEST:
-    case GraphicsContextGL::STENCIL_TEST:
     case GraphicsContextGL::RASTERIZER_DISCARD:
         return true;
     default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid capability");
-        return false;
+        return WebGLRenderingContextBase::validateCapability(functionName, cap);
     }
 }
 

@@ -178,7 +178,6 @@ public:
     void uniformMatrix4fv(WebGLUniformLocation* location, GLboolean transpose, Float32List data, GLuint srcOffset, GLuint srcLength);
 
     // Writing to the drawing buffer
-    void clear(GCGLbitfield mask) final;
     void vertexAttribDivisor(GCGLuint index, GCGLuint divisor);
     void drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei instanceCount);
     void drawElementsInstanced(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLint64 offset, GCGLsizei instanceCount);
@@ -255,7 +254,6 @@ public:
     void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLintptr offset);
     void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, ArrayBufferView& dstData, GLuint dstOffset);
 
-    void hint(GCGLenum target, GCGLenum mode) final;
     GCGLuint maxTransformFeedbackSeparateAttribs() const;
 
     GraphicsContextGLOpenGL::PixelStoreParams getPackPixelStoreParams() const override;

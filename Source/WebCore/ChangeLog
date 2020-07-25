@@ -1,3 +1,31 @@
+2020-07-25  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Context state updates
+        https://bugs.webkit.org/show_bug.cgi?id=209513
+
+        Reviewed by Dean Jackson.
+
+        Refactor a few methods related to context state to reduce
+        duplicated code between WebGL 1.0 and 2.0. No behavioral changes.
+
+        Covered by existing WebGL conformance tests.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::validateCapability):
+        (WebCore::WebGL2RenderingContext::clear): Deleted.
+        (WebCore::WebGL2RenderingContext::hint): Deleted.
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::hint): Deleted.
+        (WebCore::WebGLRenderingContext::clear): Deleted.
+        (WebCore::WebGLRenderingContext::validateCapability): Deleted.
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::clear):
+        (WebCore::WebGLRenderingContextBase::hint):
+        (WebCore::WebGLRenderingContextBase::validateCapability):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2020-07-24  Brady Eidson  <beidson@apple.com>
 
         Throw another one on the pile take 2.
