@@ -1,3 +1,13 @@
+2020-07-24  Jonathan Bedard  <jbedard@apple.com>
+
+        pep8.py:110: FutureWarning: Possible nested set at position 1 (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=214531
+
+        Unreviewed test fix.
+
+        * Scripts/webkitpy/thirdparty/__init___unittest.py:
+        (ThirdpartyTest.test_imports): Auto-import of pep8 has been removed.
+
 2020-07-24  Tadeu Zagallo  <tzagallo@apple.com>
 
         WKStringGetMaximumUTF8CStringSize should cast before arithmetic
