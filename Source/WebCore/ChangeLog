@@ -1,5 +1,13 @@
 2020-07-24  Brady Eidson  <beidson@apple.com>
 
+        Yet another (bizarre?) attempted build fix after r264874
+
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::controllerDidConnect): The last attempt revealed the real
+          problem - missing declaration for this function. *sigh*
+
+2020-07-24  Brady Eidson  <beidson@apple.com>
+
         Another (bizarre?) attempted build fix after r264874
 
         * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:

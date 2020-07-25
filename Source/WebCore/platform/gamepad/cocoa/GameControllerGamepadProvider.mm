@@ -34,6 +34,10 @@
 #import <GameController/GameController.h>
 #import <wtf/NeverDestroyed.h>
 
+#if HAVE(MULTIGAMEPADPROVIDER_SUPPORT) && !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+#import <IOKit/hid/IOHIDServiceClient.h>
+#endif
+
 #import "GameControllerSoftLink.h"
 
 namespace WebCore {
@@ -109,8 +113,8 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
         if (!serviceInfo.service)
             continue;
 
-        auto cfVendorID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, (__bridge CFStringRef)@(kIOHIDVendorIDKey)));
-        auto cfProductID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, (__bridge CFStringRef)@(kIOHIDProductIDKey)));
+        auto cfVendorID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDVendorIDKey)));
+        auto cfProductID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDProductIDKey)));
 
         int vendorID, productID;
         CFNumberGetValue(cfVendorID.get(), kCFNumberIntType, &vendorID);
