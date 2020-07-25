@@ -1,3 +1,12 @@
+2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Skip unrelated / too-compute-heavy tests in Apple Watch Series 3
+        https://bugs.webkit.org/show_bug.cgi?id=214768
+
+        Reviewed by Mark Lam.
+
+        * js/script-tests/math-denorm.js:
+
 2020-07-24  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macO iOS ] http/tests/xmlhttprequest/cross-origin-cookie-storage.html is passing and needs expectations removed

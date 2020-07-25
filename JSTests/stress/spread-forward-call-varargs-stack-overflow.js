@@ -1,3 +1,5 @@
+//@ skip if $model == "Apple Watch Series 3" # Takes very long time to reproduce failure.
+
 function assert(b) {
     if (!b)
         throw new Error("Bad assertion");

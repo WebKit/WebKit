@@ -1,3 +1,4 @@
+//@ skip if $model == "Apple Watch Series 3" # We are not supporting fast for-of for 32bit architecture.
 //@ skip if ["arm", "mips"].include?($architecture)
 function vendIterator() {
     return 1;

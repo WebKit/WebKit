@@ -1,4 +1,4 @@
-//@ skip if $buildType == "debug"
+//@ skip if $buildType == "debug" || $model == "Apple Watch Series 3" # This test takes very long time to reproduce crash.
 
 let code = `
     function foo() {

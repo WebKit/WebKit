@@ -1,5 +1,5 @@
+//@ skip if $model == "Apple Watch Series 3" # This is test for FTL.
 //@ runFTLNoCJIT
-//@ slow! if $model == "Apple Watch Series 3"
 
 // If all goes well, this test module will terminate silently. If not, it will print
 // errors. See binary-op-test.js for debugging options if needed.

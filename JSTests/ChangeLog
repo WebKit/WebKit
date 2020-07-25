@@ -1,5 +1,44 @@
 2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Skip unrelated / too-compute-heavy tests in Apple Watch Series 3
+        https://bugs.webkit.org/show_bug.cgi?id=214768
+
+        Reviewed by Mark Lam.
+
+        We skip following tests in Apple Watch Series 3.
+
+        1. Tests take very long time to reproduce crash.
+        2. Tests for FTL, which are unrelated to Apple Watch Series 3.
+        3. Tests for fast for-of semantics update, which is not supported in 32bit architectures.
+        4. Tests for denormalized numbers where ceil / floor works differently in ARMv7k as expected.
+
+        * ChakraCore.yaml:
+        * stress/for-of-iterator-open-osr-at-inlined-return-non-object.js:
+        * stress/for-of-iterator-open-osr-at-iterator-set-local.js:
+        * stress/for-of-iterator-open-return-non-object.js:
+        * stress/op_bitand.js:
+        * stress/op_bitor.js:
+        * stress/op_bitxor.js:
+        * stress/op_lshift-ConstVar.js:
+        * stress/op_lshift-VarConst.js:
+        * stress/op_lshift-VarVar.js:
+        * stress/op_mul-ConstVar.js:
+        * stress/op_mul-VarConst.js:
+        * stress/op_mul-VarVar.js:
+        * stress/op_rshift-ConstVar.js:
+        * stress/op_rshift-VarConst.js:
+        * stress/op_rshift-VarVar.js:
+        * stress/op_sub-ConstVar.js:
+        * stress/op_sub-VarConst.js:
+        * stress/op_sub-VarVar.js:
+        * stress/op_urshift-ConstVar.js:
+        * stress/op_urshift-VarConst.js:
+        * stress/op_urshift-VarVar.js:
+        * stress/spread-forward-call-varargs-stack-overflow.js:
+        * stress/toctou-having-a-bad-time-new-array.js:
+
+2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] DFG::AbstractValue::filterByValue should re-filter configured m_value via m_type
         https://bugs.webkit.org/show_bug.cgi?id=214721
         <rdar://problem/65882837>

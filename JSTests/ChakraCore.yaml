@@ -924,7 +924,12 @@
 - path: ChakraCore/test/Math/round.js
   cmd: runChakra :pass, "NoException", "", []
 - path: ChakraCore/test/Math/ceilfloor.js
-  cmd: runChakra :baseline, "NoException", "ceilfloor.baseline", []
+  cmd: |
+      if $model == "Apple Watch Series 3" # Denormalized numbers are round to zero in ARMv7k.
+          skip
+      else
+          runChakra :baseline, "NoException", "ceilfloor.baseline", []
+      end
 - path: ChakraCore/test/Math/sin.js
   cmd: runChakra :baseline, "NoException", "sin.baseline", []
 - path: ChakraCore/test/Math/sqrt.js
