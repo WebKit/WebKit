@@ -34,7 +34,7 @@
 @interface GCController ()
 + (void)__openXPC_and_CBApplicationDidBecomeActive__;
 #if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
-@property (nonatomic, retain, readonly, nonnull) NSArray<_GCCControllerHIDServiceInfo *> *hidServices;
+@property (nonatomic, retain, readonly) NSArray<_GCCControllerHIDServiceInfo *> *hidServices;
 #endif
 @end
 
@@ -56,7 +56,7 @@ WTF_EXTERN_C_END
 
 #if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
 @interface _GCCControllerHIDServiceInfo : NSObject
-@property (nonatomic, readonly, nullable) IOHIDServiceClientRef service;
+@property (nonatomic, readonly) IOHIDServiceClientRef service;
 @end
 #endif
 

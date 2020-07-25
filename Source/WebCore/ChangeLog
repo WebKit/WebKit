@@ -1,3 +1,11 @@
+2020-07-24  Brady Eidson  <beidson@apple.com>
+
+        Build fix after r264874
+
+        Remove all nullability specifiers because just having one goes viral.
+
+        * platform/gamepad/cocoa/GameControllerSPI.h:
+
 2020-07-24  Alex Christensen  <achristensen@webkit.org>
 
         Null check frame in Document::dispatchDisabledAdaptationsDidChangeForMainFrame and a few other places
