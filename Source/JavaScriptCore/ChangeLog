@@ -1,3 +1,23 @@
+2020-07-24  Dean Jackson  <dino@apple.com>
+
+        JavaScriptCore Xcode project has some errors
+        https://bugs.webkit.org/show_bug.cgi?id=214775
+
+        Reviewed by Yusuke Suzuki.
+
+        When looking at the build output for JavaScriptCore I noticed two
+        weird errors in the Xcode project file. Firstly, there was a broken
+        group called "runtime" that was causing some files to appear
+        duplicated. Secondly, there was a generated file
+        WebAssemblyCompileErrorConstructor.lut.h whose location was
+        incorrectly identified as being part of the project source.
+
+        Xcode moved a bunch of other things around, but it seems to compile
+        fine. Weirdly, the diff shows that the project file had unusual
+        whitespace. I wonder if it had been edited by hand.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG::AbstractValue::filterByValue should re-filter configured m_value via m_type
