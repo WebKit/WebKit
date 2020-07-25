@@ -12,6 +12,9 @@ indent_style = space
 end_of_line = lf
 insert_final_newline = true
 
+[project.pbxproj]
+indent_style = tab
+
 [.editorconfig]
 indent_style = space
 indent_size = 4

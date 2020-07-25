@@ -1,3 +1,14 @@
+2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add project.pbxproj editorconfig entry
+        https://bugs.webkit.org/show_bug.cgi?id=214778
+
+        Reviewed by Mark Lam.
+
+        We should use tab for project.pbxproj file.
+
+        * .editorconfig:
+
 2020-07-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.29.1 release
