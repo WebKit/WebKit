@@ -1,5 +1,11 @@
 2020-07-24  Brady Eidson  <beidson@apple.com>
 
+        Declare two more things to fix the build after r264874
+
+        * pal/spi/mac/IOKitSPIMac.h:
+
+2020-07-24  Brady Eidson  <beidson@apple.com>
+
         Maybe the last build fix after r264874
 
         * pal/spi/mac/IOKitSPIMac.h:
