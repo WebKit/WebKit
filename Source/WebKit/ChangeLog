@@ -1,3 +1,24 @@
+2020-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264690): [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214688
+        <rdar://problem/65993683>
+
+        Reviewed by Megan Gardner.
+
+        Add more logging to try and see why this test is failing on some post-commit iOS bots. In particular, these logs
+        should test a theory that it's possible for `UIScriptControllerIOS::singleTapAtPointWithModifiers` to try and
+        synthesize and send HID events for the tap before GraphicsServices has registered the fact that a modifier key
+        is being held, which would lead to a regular tap instead of a shift-tap in this test.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _singleTapIdentified:]):
+        (-[WKContentView _singleTapRecognized:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::commitPotentialTap):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+
 2020-07-24  Brady Eidson  <beidson@apple.com>
 
         Hard code some MFi controller devices instead of dynamically managing HID vs GameController.framework.

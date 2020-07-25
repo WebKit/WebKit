@@ -300,8 +300,14 @@ void UIScriptControllerIOS::singleTapAtPointWithModifiers(WebCore::FloatPoint lo
 
     waitForSingleTapToReset();
 
+    if (!modifierFlags.isEmpty())
+        WTFLogAlways("Synthesizing modifier key events.");
+
     for (auto& modifierFlag : modifierFlags)
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
+
+    if (!modifierFlags.isEmpty())
+        WTFLogAlways("Synthesizing tap.");
 
     [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(webView(), location.x(), location.y()) completionBlock:[this, protectedThis = makeRefPtr(*this), modifierFlags = WTFMove(modifierFlags), block = WTFMove(block)] () mutable {
         if (!m_context)

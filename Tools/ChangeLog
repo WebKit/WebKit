@@ -1,3 +1,14 @@
+2020-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264690): [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214688
+        <rdar://problem/65993683>
+
+        Reviewed by Megan Gardner.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::singleTapAtPointWithModifiers):
+
 2020-07-24  Beth Dakin  <bdakin@apple.com>
 
         Adopt inclusive WKBrowsingContextGroup SPI in the API tests

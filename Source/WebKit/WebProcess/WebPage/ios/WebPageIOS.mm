@@ -718,6 +718,7 @@ void WebPage::generateSyntheticEditingCommand(SyntheticEditingCommandType comman
 
 void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, WebCore::PointerID pointerId)
 {
+    WTFLogAlways("Handling synthetic click at (%.0f, %.0f) with modifiers: 0x%02x", location.x(), location.y(), modifiers.toRaw());
     auto& respondingDocument = nodeRespondingToClick.document();
     auto isFirstSyntheticClickOnPage = !m_hasHandledSyntheticClick;
     m_hasHandledSyntheticClick = true;
