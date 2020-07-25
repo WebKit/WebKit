@@ -1,3 +1,15 @@
+2020-07-24  Michael Saboff  <msaboff@apple.com>
+
+        Fixed exception check handling below ScheduledAction::executeFunctionInContext()
+        https://bugs.webkit.org/show_bug.cgi?id=214774
+
+        Reviewed by Mark Lam.
+
+        Test: js/dom/scheduled-action-exception-checks.html
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::executeFunctionInContext):
+
 2020-07-24  Brady Eidson  <beidson@apple.com>
 
         Hard code some MFi controller devices instead of dynamically managing HID vs GameController.framework.
