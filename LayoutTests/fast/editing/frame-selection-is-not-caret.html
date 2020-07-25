@@ -1,0 +1,19 @@
+<script>
+if (window.testRunner) { testRunner.dumpAsText(); }    
+function onBodyLoad() {
+    var observer = new MutationObserver(()=>{ container.replaceWith(undefined) });
+    observer.observe(selectElement, { attributes: true });
+    selectElement.setAttribute("attribute", "observe this attribute change");
+    textAreaElement.setSelectionRange(1, 0);
+    window.getSelection().modify("extend", "backward", "lineboundary");
+    sourceElement.appendChild(document.createElement("frame"));
+}
+</script>
+<body onload=onBodyLoad()>
+    <textarea id="textAreaElement" draggable="true"></textarea>
+    <div id="container">
+        <source id="sourceElement"></source>
+        <select id="selectElement"></select>
+    </div>
+    Test passes if it does not assert.
+</body>

@@ -2230,8 +2230,9 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility)
 void FrameSelection::caretBlinkTimerFired()
 {
 #if ENABLE(TEXT_CARET)
+    if (!isCaret())
+        return;
     ASSERT(caretIsVisible());
-    ASSERT(isCaret());
     bool caretPaint = m_caretPaint;
     if (isCaretBlinkingSuspended() && caretPaint)
         return;

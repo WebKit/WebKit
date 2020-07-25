@@ -332,6 +332,7 @@ RefPtr<Frame> FrameLoader::SubframeLoader::loadSubframe(HTMLFrameOwnerElement& o
     auto frame = m_frame.loader().client().createFrame(name, ownerElement);
     if (!frame)  {
         m_frame.loader().checkCallImplicitClose();
+        document->decrementLoadEventDelayCount();
         return nullptr;
     }
     ReferrerPolicy policy = ownerElement.referrerPolicy();

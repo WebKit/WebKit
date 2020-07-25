@@ -1,3 +1,21 @@
+2020-07-24  Alex Christensen  <achristensen@webkit.org>
+
+        Fix assertion when highlighting in detached frames and make loads complete
+        https://bugs.webkit.org/show_bug.cgi?id=214770
+
+        Reviewed by Geoffrey Garen.
+
+        There's an assertion added in r53218 I think should be an early return.
+        It can be triggered by an interesting test I found while looking into rdar://problem/65467702
+        I also needed to balance the call to incrementLoadEventDelayCount in an early return in order to get the test to finish loading.
+
+        Test: fast/editing/frame-selection-is-not-caret.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::caretBlinkTimerFired):
+        * loader/SubframeLoader.cpp:
+        (WebCore::FrameLoader::SubframeLoader::loadSubframe):
+
 2020-07-24  Michael Saboff  <msaboff@apple.com>
 
         Fixed exception check handling below ScheduledAction::executeFunctionInContext()
