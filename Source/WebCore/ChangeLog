@@ -1,5 +1,13 @@
 2020-07-24  Brady Eidson  <beidson@apple.com>
 
+        Throw another one on the pile take 2.
+
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::controllerDidConnect): Back to the NSString* trick now
+          we know the function is declared.
+
+2020-07-24  Brady Eidson  <beidson@apple.com>
+
         Throw another one on the pile.
 
         * platform/gamepad/cocoa/GameControllerGamepadProvider.mm: (Actually include the SPI header)
