@@ -1,5 +1,11 @@
 2020-07-24  Brady Eidson  <beidson@apple.com>
 
+        Maybe the last build fix after r264874
+
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+
+2020-07-24  Brady Eidson  <beidson@apple.com>
+
         Yet another (bizarre?) attempted build fix after r264874
 
         * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:

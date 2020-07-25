@@ -34,10 +34,6 @@
 #import <GameController/GameController.h>
 #import <wtf/NeverDestroyed.h>
 
-#if HAVE(MULTIGAMEPADPROVIDER_SUPPORT) && !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
-#import <IOKit/hid/IOHIDServiceClient.h>
-#endif
-
 #import "GameControllerSoftLink.h"
 
 namespace WebCore {
