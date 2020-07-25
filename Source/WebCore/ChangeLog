@@ -1,5 +1,13 @@
 2020-07-24  Brady Eidson  <beidson@apple.com>
 
+        Another (bizarre?) attempted build fix after r264874
+
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::controllerDidConnect): The CFSTR macro was wonky
+          for unknown reasons...? Let's try it this way.
+
+2020-07-24  Brady Eidson  <beidson@apple.com>
+
         Build fix after r264874
 
         Remove all nullability specifiers because just having one goes viral.
