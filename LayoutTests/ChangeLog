@@ -1,3 +1,17 @@
+2020-07-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Some scroll snap cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=214788
+
+        Reviewed by Wenson Hsieh.
+        
+        New results.
+
+        * css3/scroll-snap/scroll-snap-children-with-padding-expected.txt:
+        * css3/scroll-snap/scroll-snap-children-with-transforms-expected.txt:
+        * css3/scroll-snap/scroll-snap-offsets-expected.txt:
+        * css3/scroll-snap/scroll-snap-positions-expected.txt:
+
 2020-07-24  Alex Christensen  <achristensen@webkit.org>
 
         Null check frame in Document::dispatchDisabledAdaptationsDidChangeForMainFrame and a few other places

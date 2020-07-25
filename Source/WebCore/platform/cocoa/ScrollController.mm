@@ -841,13 +841,13 @@ void ScrollController::setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis
     setActiveScrollSnapIndexForAxis(axis, activeIndex);
 }
 
-void ScrollController::setActiveScrollSnapIndicesForOffset(int x, int y)
+void ScrollController::setActiveScrollSnapIndicesForOffset(ScrollOffset offset)
 {
     if (!usesScrollSnap())
         return;
 
-    setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, x);
-    setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, y);
+    setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Horizontal, offset.x());
+    setNearestScrollSnapIndexForAxisAndOffset(ScrollEventAxis::Vertical, offset.y());
 }
 #endif
 

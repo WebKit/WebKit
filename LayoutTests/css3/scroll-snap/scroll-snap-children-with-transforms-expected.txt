@@ -1,5 +1,5 @@
-Scroll-snap offsets are: vertical = { 0, 82, 751, 1456, 2233, 2880, 3673 }
-After resizing, the offsets should not have changed: vertical = { 0, 82, 751, 1456, 2233, 2880, 3673 }
-After changing alignment to `start`, the offsets are: vertical = { 0, 688, 1423, 2086, 2880, 3526, 3673 }
-After resizing, the offsets should not have changed: vertical = { 0, 688, 1423, 2086, 2880, 3526, 3673 }
+Scroll-snap offsets are: vertical = { 0, 83, 752, 1457, 2233, 2880, 3673 }
+After resizing, the offsets should not have changed: vertical = { 0, 83, 752, 1457, 2233, 2880, 3673 }
+After changing alignment to `start`, the offsets are: vertical = { 0, 688, 1423, 2087, 2880, 3527, 3673 }
+After resizing, the offsets should not have changed: vertical = { 0, 688, 1423, 2087, 2880, 3527, 3673 }
 

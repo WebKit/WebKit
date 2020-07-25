@@ -201,7 +201,7 @@ void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
 {
 #if ENABLE(CSS_SCROLL_SNAP)
     // FIXME: Needs offset/position disambiguation.
-    m_scrollController.setActiveScrollSnapIndicesForOffset(m_currentPosition.x(), m_currentPosition.y());
+    m_scrollController.setActiveScrollSnapIndicesForOffset(roundedIntPoint(currentPosition()));
     if (m_scrollController.activeScrollSnapIndexDidChange()) {
         m_scrollableArea.setCurrentHorizontalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal));
         m_scrollableArea.setCurrentVerticalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));

@@ -47,11 +47,6 @@ class ScrollAnimator;
 class GraphicsLayer;
 class TiledBacking;
 
-// scrollPosition is in content coordinates (0,0 is at scrollOrigin), so may have negative components.
-typedef IntPoint ScrollPosition;
-// scrollOffset() is the value used by scrollbars (min is 0,0), and should never have negative components.
-typedef IntPoint ScrollOffset;
-
 inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orientation)
 {
     switch (orientation) {

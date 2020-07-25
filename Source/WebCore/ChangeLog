@@ -1,3 +1,32 @@
+2020-07-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Some scroll snap cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=214788
+
+        Reviewed by Wenson Hsieh.
+
+        Mostly cleanup in updateSnapOffsetsForScrollableArea() related to getting the scroll limits,
+        which changes behavior.
+        
+        updateSnapOffsetsForScrollableArea() was manually computing the scroll limits with
+        scrollingElementBox.scrollWidth() - scrollingElementBox.contentWidth(), but needs to use
+        the same computation that scrolling uses, namely scrollableArea.maximumScrollOffset().
+        This changes results, since the old code could compute offsets outside of the scroll limits.
+        It can also get the scrollPosition from the scrollableArea, instead of going via Element.
+        
+        When computing scroll offsets, explicitly round now (which changes some test results).
+
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::updateSnapOffsetsForScrollableArea):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::updateActiveScrollSnapIndexForOffset): Explicitly round.
+        * platform/ScrollTypes.h:
+        * platform/ScrollableArea.h:
+        * platform/cocoa/ScrollController.h:
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::setActiveScrollSnapIndicesForOffset): Use ScrollOffset instead
+        of x,y.
+
 2020-07-25  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Context state updates

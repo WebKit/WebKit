@@ -146,7 +146,7 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateScrollSnapPoints(ScrollEventAxis, const Vector<LayoutUnit>&, const Vector<ScrollOffsetRange<LayoutUnit>>&);
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned);
-    void setActiveScrollSnapIndicesForOffset(int x, int y);
+    void setActiveScrollSnapIndicesForOffset(ScrollOffset);
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }
     void setScrollSnapIndexDidChange(bool state) { m_activeScrollSnapIndexDidChange = state; }
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;

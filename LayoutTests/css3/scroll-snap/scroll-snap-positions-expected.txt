@@ -1,4 +1,4 @@
-Scroll-snap offsets for 'container': vertical = { 0, 72, 100, 330, 445, 560, 675, 762, 790, 992, 1020, 1250, 1310, 1365, 1425, 1480, 4425 }
+Scroll-snap offsets for 'container': vertical = { 0, 73, 100, 330, 445, 560, 675, 763, 790, 993, 1020, 1250, 1310, 1365, 1425, 1480, 4425 }
 PASS successfullyParsed is true
 
 TEST COMPLETE

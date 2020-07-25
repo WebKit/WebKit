@@ -3,12 +3,12 @@ Tests that the scroll-snap feature works properly in overflow regions.
 Scroll-snap offsets for verticalTarget: vertical = { 0, 30, 60, 90, 120, 150 }
 Scroll-snap offsets for horizontalBorderedTarget: horizontal = { 0, 30, 60, 90, 120, 150 }
 Scroll-snap offsets for verticalBorderedTarget: vertical = { 0, 30, 60, 90, 120, 150 }
-Scroll-snap offsets for horizontalPaddedTarget: horizontal = { 0, 20, 50, 80, 110, 140, 170 }
-Scroll-snap offsets for verticalPaddedTarget: vertical = { 0, 15, 45, 75, 105, 135, 165, 174 }
-Scroll-snap offsets for horizontalBorderedPaddedTarget: horizontal = { 0, 20, 50, 80, 110, 140, 170 }
-Scroll-snap offsets for verticalBorderedPaddedTarget: vertical = { 0, 15, 45, 75, 105, 135, 165, 174 }
-Scroll-snap offsets for horizontalRotatedTarget: horizontal = { 0, 20, 50, 80, 110, 140, 170 }
-Scroll-snap offsets for verticalRotatedTarget: vertical = { 0, 15, 45, 75, 105, 135, 165, 174 }
+Scroll-snap offsets for horizontalPaddedTarget: horizontal = { 0, 20, 50, 80, 110, 140 }
+Scroll-snap offsets for verticalPaddedTarget: vertical = { 0, 15, 45, 75, 105, 135, 150 }
+Scroll-snap offsets for horizontalBorderedPaddedTarget: horizontal = { 0, 20, 50, 80, 110, 140 }
+Scroll-snap offsets for verticalBorderedPaddedTarget: vertical = { 0, 15, 45, 75, 105, 135, 150 }
+Scroll-snap offsets for horizontalRotatedTarget: horizontal = { 0, 20, 50, 80, 110, 140 }
+Scroll-snap offsets for verticalRotatedTarget: vertical = { 0, 15, 45, 75, 105, 135, 150 }
 PASS successfullyParsed is true
 
 TEST COMPLETE

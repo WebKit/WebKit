@@ -190,9 +190,9 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
     HashSet<float> seenHorizontalSnapOffsets;
     bool hasHorizontalSnapOffsets = scrollSnapType.axis == ScrollSnapAxis::Both || scrollSnapType.axis == ScrollSnapAxis::XAxis || scrollSnapType.axis == ScrollSnapAxis::Inline;
     bool hasVerticalSnapOffsets = scrollSnapType.axis == ScrollSnapAxis::Both || scrollSnapType.axis == ScrollSnapAxis::YAxis || scrollSnapType.axis == ScrollSnapAxis::Block;
-    auto maxScrollLeft = scrollingElementBox.scrollWidth() - scrollingElementBox.contentWidth();
-    auto maxScrollTop = scrollingElementBox.scrollHeight() - scrollingElementBox.contentHeight();
-    LayoutPoint containerScrollOffset(scrollingElementBox.scrollLeft(), scrollingElementBox.scrollTop());
+
+    auto maxScrollOffset = scrollableArea.maximumScrollOffset();
+    auto scrollPosition = LayoutPoint { scrollableArea.scrollPosition() };
 
     // The bounds of the scrolling container's snap port, where the top left of the scrolling container's border box is the origin.
     auto scrollSnapPort = computeScrollSnapPortOrAreaRect(scrollingElementBox.paddingBoxRect(), scrollingElementStyle.scrollPadding(), InsetOrOutset::Inset);
@@ -204,19 +204,21 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
         // The bounds of the child element's snap area, where the top left of the scrolling container's border box is the origin.
         // The snap area is the bounding box of the child element's border box, after applying transformations.
         auto scrollSnapArea = LayoutRect(child->localToContainerQuad(FloatQuad(child->borderBoundingBox()), scrollingElement.renderBox()).boundingBox());
-        scrollSnapArea.moveBy(containerScrollOffset);
+        scrollSnapArea.moveBy(scrollPosition);
         scrollSnapArea = computeScrollSnapPortOrAreaRect(scrollSnapArea, child->style().scrollSnapMargin(), InsetOrOutset::Outset);
         LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea);
         auto alignment = child->style().scrollSnapAlign();
         if (hasHorizontalSnapOffsets && alignment.x != ScrollSnapAxisAlignType::None) {
-            auto absoluteScrollOffset = clampTo<LayoutUnit>(computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.width(), alignment.x) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.width(), alignment.x), 0, maxScrollLeft);
+            auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.width(), alignment.x) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.width(), alignment.x);
+            auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ roundToInt(absoluteScrollXPosition), 0 }).x(), 0, maxScrollOffset.x());
             if (!seenHorizontalSnapOffsets.contains(absoluteScrollOffset)) {
                 seenHorizontalSnapOffsets.add(absoluteScrollOffset);
                 horizontalSnapOffsets.append(absoluteScrollOffset);
             }
         }
         if (hasVerticalSnapOffsets && alignment.y != ScrollSnapAxisAlignType::None) {
-            auto absoluteScrollOffset = clampTo<LayoutUnit>(computeScrollSnapAlignOffset(scrollSnapArea.y(), scrollSnapArea.height(), alignment.y) - computeScrollSnapAlignOffset(scrollSnapPort.y(), scrollSnapPort.height(), alignment.y), 0, maxScrollTop);
+            auto absoluteScrollYPosition = computeScrollSnapAlignOffset(scrollSnapArea.y(), scrollSnapArea.height(), alignment.y) - computeScrollSnapAlignOffset(scrollSnapPort.y(), scrollSnapPort.height(), alignment.y);
+            auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ 0, roundToInt(absoluteScrollYPosition) }).y(), 0, maxScrollOffset.y());
             if (!seenVerticalSnapOffsets.contains(absoluteScrollOffset)) {
                 seenVerticalSnapOffsets.add(absoluteScrollOffset);
                 verticalSnapOffsets.append(absoluteScrollOffset);
@@ -225,7 +227,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
     }
 
     if (!horizontalSnapOffsets.isEmpty()) {
-        adjustAxisSnapOffsetsForScrollExtent(horizontalSnapOffsets, maxScrollLeft);
+        adjustAxisSnapOffsetsForScrollExtent(horizontalSnapOffsets, maxScrollOffset.x());
         LOG_WITH_STREAM(ScrollSnap, stream << " => Computed horizontal scroll snap offsets: " << horizontalSnapOffsets);
         LOG_WITH_STREAM(ScrollSnap, stream << " => Computed horizontal scroll snap offset ranges: " << horizontalSnapOffsetRanges);
         if (scrollSnapType.strictness == ScrollSnapStrictness::Proximity)
@@ -237,7 +239,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
         scrollableArea.clearHorizontalSnapOffsets();
 
     if (!verticalSnapOffsets.isEmpty()) {
-        adjustAxisSnapOffsetsForScrollExtent(verticalSnapOffsets, maxScrollTop);
+        adjustAxisSnapOffsetsForScrollExtent(verticalSnapOffsets, maxScrollOffset.y());
         LOG_WITH_STREAM(ScrollSnap, stream << " => Computed vertical scroll snap offsets: " << verticalSnapOffsets);
         LOG_WITH_STREAM(ScrollSnap, stream << " => Computed vertical scroll snap offset ranges: " << verticalSnapOffsetRanges);
         if (scrollSnapType.strictness == ScrollSnapStrictness::Proximity)
