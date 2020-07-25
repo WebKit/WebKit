@@ -1,5 +1,16 @@
 2020-07-24  Alex Christensen  <achristensen@webkit.org>
 
+        Null check frame in Document::dispatchDisabledAdaptationsDidChangeForMainFrame and a few other places
+        https://bugs.webkit.org/show_bug.cgi?id=214715
+        <rdar://problem/65467702>
+
+        Reviewed by Geoffrey Garen.
+
+        * security/mutation-observer-frame-detach-expected.txt: Added.
+        * security/mutation-observer-frame-detach.html: Added.
+
+2020-07-24  Alex Christensen  <achristensen@webkit.org>
+
         Fix assertion when highlighting in detached frames and make loads complete
         https://bugs.webkit.org/show_bug.cgi?id=214770
 
