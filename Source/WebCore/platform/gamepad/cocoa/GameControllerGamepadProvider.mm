@@ -32,6 +32,7 @@
 #import "GamepadProviderClient.h"
 #import "Logging.h"
 #import <GameController/GameController.h>
+#import <pal/spi/mac/IOKitSPIMac.h>
 #import <wtf/NeverDestroyed.h>
 
 #import "GameControllerSoftLink.h"
