@@ -1,3 +1,47 @@
+2020-07-24  Brady Eidson  <beidson@apple.com>
+
+        Hard code some MFi controller devices instead of dynamically managing HID vs GameController.framework.
+        rdar://problem/65961406 and https://bugs.webkit.org/show_bug.cgi?id=214664
+
+        Reviewed by Tim Horton.
+
+        Covered by API tests.
+        
+        I'd added code to dynamically tell whether a device would be handled by GameController.framework or IOHID.
+        On macOS Big Sur, it works flawlessly.
+        On Catalina, it doesn't.
+        
+        The key problem being that GameController.framework will try to handle some controllers it should not.
+        
+        Instead, we can use a hard coded list of the controllers that are most important to support using GCF.
+        
+        The GCF provider and HID provider coordinate on that list when deciding if they should handle a new device.
+        
+        The worst case scenario for that list missing an important controller is that it would be handled in HID
+        instead of GCF, so some features may be missing.
+
+        * Modules/gamepad/GamepadManager.cpp:
+        (WebCore::GamepadManager::makeGamepadVisible):
+
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.h:
+        (WebCore::GameControllerGamepadProvider::numberOfConnectedGamepads const):
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::willHandleVendorAndProduct):
+        (WebCore::GameControllerGamepadProvider::controllerDidConnect):
+
+        * platform/gamepad/cocoa/GameControllerSPI.h:
+
+        * platform/gamepad/mac/HIDGamepadProvider.h:
+        (WebCore::HIDGamepadProvider::numberOfConnectedGamepads const):
+        * platform/gamepad/mac/HIDGamepadProvider.mm:
+        (WebCore::deviceAddedCallback):
+        (WebCore::gameControllerFrameworkWillHandleHIDDevice):
+        (WebCore::HIDGamepadProvider::deviceAdded):
+        (WebCore::HIDGamepadProvider::deviceRemoved):
+        (WebCore::HIDGamepadProvider::waitForManagementDecisionForDevice): Deleted.
+        (WebCore::HIDGamepadProvider::removeDeviceWaitingForManagementDecision): Deleted.
+        (WebCore::HIDGamepadProvider::gamePadServiceWasPublished): Deleted.
+
 2020-07-24  Mark Lam  <mark.lam@apple.com>
 
         Fix exception check handling below postMessage().

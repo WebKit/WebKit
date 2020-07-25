@@ -329,6 +329,11 @@
 		51E6A8961D2F1CA700C004B6 /* LocalStorageClear.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E6A8951D2F1C7700C004B6 /* LocalStorageClear.html */; };
 		51EB125724C67257000CB030 /* VirtualGamepad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB125624C66FE8000CB030 /* VirtualGamepad.mm */; };
 		51EB125924C68592000CB030 /* HIDGamepads.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB125824C68589000CB030 /* HIDGamepads.mm */; };
+		51EB126224CA6B66000CB030 /* MicrosoftXboxOne.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB126024CA6B5F000CB030 /* MicrosoftXboxOne.mm */; };
+		51EB126324CA6B66000CB030 /* ShenzhenLongshengweiTechnologyGamepad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB125E24CA6B5F000CB030 /* ShenzhenLongshengweiTechnologyGamepad.mm */; };
+		51EB126424CA6B66000CB030 /* SonyDualShock4.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB125F24CA6B5F000CB030 /* SonyDualShock4.mm */; };
+		51EB126524CA6B66000CB030 /* SteelSeriesNimbus.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB126124CA6B5F000CB030 /* SteelSeriesNimbus.mm */; };
+		51EB126724CB8753000CB030 /* SunLightApplicationGenericNES.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB126624CB8493000CB030 /* SunLightApplicationGenericNES.mm */; };
 		51EB12941FDF052500A5A1BD /* ServiceWorkerBasic.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */; };
 		520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */; };
 		5245178721B9F57B0082CB34 /* RenderingProgressPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5D6BE21B9F1B20046ABA6 /* RenderingProgressPlugIn.mm */; };
@@ -2028,6 +2033,11 @@
 		51EB125424C66FE8000CB030 /* VirtualGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualGamepad.h; sourceTree = "<group>"; };
 		51EB125624C66FE8000CB030 /* VirtualGamepad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VirtualGamepad.mm; sourceTree = "<group>"; };
 		51EB125824C68589000CB030 /* HIDGamepads.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HIDGamepads.mm; sourceTree = "<group>"; };
+		51EB125E24CA6B5F000CB030 /* ShenzhenLongshengweiTechnologyGamepad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShenzhenLongshengweiTechnologyGamepad.mm; sourceTree = "<group>"; };
+		51EB125F24CA6B5F000CB030 /* SonyDualShock4.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SonyDualShock4.mm; sourceTree = "<group>"; };
+		51EB126024CA6B5F000CB030 /* MicrosoftXboxOne.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MicrosoftXboxOne.mm; sourceTree = "<group>"; };
+		51EB126124CA6B5F000CB030 /* SteelSeriesNimbus.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SteelSeriesNimbus.mm; sourceTree = "<group>"; };
+		51EB126624CB8493000CB030 /* SunLightApplicationGenericNES.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SunLightApplicationGenericNES.mm; sourceTree = "<group>"; };
 		51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServiceWorkerBasic.mm; sourceTree = "<group>"; };
 		51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteURL.mm; sourceTree = "<group>"; };
 		520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebArchive_Bundle.cpp; sourceTree = "<group>"; };
@@ -3440,6 +3450,18 @@
 			path = WebCore;
 			sourceTree = "<group>";
 		};
+		51EB125D24CA6B3E000CB030 /* GamepadMappings */ = {
+			isa = PBXGroup;
+			children = (
+				51EB126024CA6B5F000CB030 /* MicrosoftXboxOne.mm */,
+				51EB125E24CA6B5F000CB030 /* ShenzhenLongshengweiTechnologyGamepad.mm */,
+				51EB126624CB8493000CB030 /* SunLightApplicationGenericNES.mm */,
+				51EB125F24CA6B5F000CB030 /* SonyDualShock4.mm */,
+				51EB126124CA6B5F000CB030 /* SteelSeriesNimbus.mm */,
+			);
+			path = GamepadMappings;
+			sourceTree = "<group>";
+		};
 		53FCDE69229EFF6800598ECF /* bmalloc */ = {
 			isa = PBXGroup;
 			children = (
@@ -4251,6 +4273,7 @@
 		BCA61C3A11700B9400460D1E /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				51EB125D24CA6B3E000CB030 /* GamepadMappings */,
 				F46128B6211C8ED500D9FADB /* DragAndDropSimulatorMac.mm */,
 				1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */,
 				C081224013FC172400DC39AE /* JavaScriptTestMac.mm */,
@@ -4981,6 +5004,7 @@
 				7CCE7EBA1A411A7E00447C4C /* DeviceScaleFactorOnBack.mm in Sources */,
 				7C83E04D1D0A641800FEBCF3 /* DFACombiner.cpp in Sources */,
 				7C83E04E1D0A641800FEBCF3 /* DFAMinimizer.cpp in Sources */,
+				51EB126324CA6B66000CB030 /* ShenzhenLongshengweiTechnologyGamepad.mm in Sources */,
 				7CCE7EE91A411AE600447C4C /* DidAssociateFormControls.cpp in Sources */,
 				7CCE7EEA1A411AE600447C4C /* DidNotHandleKeyDown.cpp in Sources */,
 				AD57AC211DA7465B00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache.cpp in Sources */,
@@ -5107,6 +5131,7 @@
 				51EB125924C68592000CB030 /* HIDGamepads.mm in Sources */,
 				51820A4D22F4EE7F00DF0A01 /* JavascriptURLNavigation.mm in Sources */,
 				5C0160C121A132460077FA32 /* JITEnabled.mm in Sources */,
+				51EB126424CA6B66000CB030 /* SonyDualShock4.mm in Sources */,
 				E35FC7B222B82A7300F32F98 /* JSLockTakesWebThreadLock.mm in Sources */,
 				14CC42E624B8D8FA00E64F48 /* JSRunLoopTimer.mm in Sources */,
 				7CCE7EC41A411A7E00447C4C /* JSWrapperForNodeInWebFrame.mm in Sources */,
@@ -5212,6 +5237,7 @@
 				41882F0321010C0D002FF288 /* ProcessPreWarming.mm in Sources */,
 				CDA4438E21F7A47700379489 /* ProcessSuspendMediaBuffering.mm in Sources */,
 				83A2CFDE2481B3520018B2D3 /* ProcessSuspension.mm in Sources */,
+				51EB126724CB8753000CB030 /* SunLightApplicationGenericNES.mm in Sources */,
 				518C1153205B0504001FF4AE /* ProcessSwapOnNavigation.mm in Sources */,
 				7C83E0C11D0A652F00FEBCF3 /* ProvisionalURLNotChange.mm in Sources */,
 				5CFACF65226FD2DC0056C7D0 /* Proxy.mm in Sources */,
@@ -5223,6 +5249,7 @@
 				7C83E0C31D0A653A00FEBCF3 /* RemoteObjectRegistry.mm in Sources */,
 				7CCE7EC91A411A7E00447C4C /* RenderedImageFromDOMNode.mm in Sources */,
 				7CCE7ECA1A411A7E00447C4C /* RenderedImageFromDOMRange.mm in Sources */,
+				51EB126524CA6B66000CB030 /* SteelSeriesNimbus.mm in Sources */,
 				A12DDBFB1E836F0700CF6CAE /* RenderedImageWithOptions.mm in Sources */,
 				52D5D6C021B9F1B30046ABA6 /* RenderingProgress.mm in Sources */,
 				F464AF9220BB66EA007F9B18 /* RenderingProgressTests.mm in Sources */,
@@ -5353,6 +5380,7 @@
 				57A79857224AB34E00A7F6F1 /* WebCryptoMasterKey.mm in Sources */,
 				C1FF9EDB244644F000839AE4 /* WebFilter.mm in Sources */,
 				5C973F5C1F58EF8B00359C27 /* WebGLPolicy.mm in Sources */,
+				51EB126224CA6B66000CB030 /* MicrosoftXboxOne.mm in Sources */,
 				31E9BDA1247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm in Sources */,
 				7CCE7EAB1A411A2400447C4C /* WebKitAgnosticTest.mm in Sources */,
 				51714EB81CF8CA17004723C4 /* WebProcessKillIDBCleanup.mm in Sources */,

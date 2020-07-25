@@ -58,6 +58,12 @@ public:
 
     void makeInvisibleGamepadsVisible();
 
+    size_t numberOfConnectedGamepads() const { return m_gamepadMap.size(); };
+
+#if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+    static bool willHandleVendorAndProduct(uint16_t vendorID, uint16_t productID);
+#endif
+
 private:
     GameControllerGamepadProvider();
 

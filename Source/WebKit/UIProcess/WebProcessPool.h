@@ -370,7 +370,12 @@ public:
     void garbageCollectJavaScriptObjects();
     void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
 
-    size_t numberOfConnectedGamepadsForTesting();
+    enum class GamepadType {
+        All,
+        HID,
+        GameControllerFramework,
+    };
+    size_t numberOfConnectedGamepadsForTesting(GamepadType);
     void setUsesOnlyHIDGamepadProviderForTesting(bool);
 
 #if PLATFORM(COCOA)

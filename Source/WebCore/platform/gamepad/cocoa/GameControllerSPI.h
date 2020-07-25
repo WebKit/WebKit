@@ -27,8 +27,15 @@
 
 #import <GameController/GCController.h>
 
+#if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+@class _GCCControllerHIDServiceInfo;
+#endif
+
 @interface GCController ()
 + (void)__openXPC_and_CBApplicationDidBecomeActive__;
+#if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+@property (nonatomic, retain, readonly, nonnull) NSArray<_GCCControllerHIDServiceInfo *> *hidServices;
+#endif
 @end
 
 #if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
@@ -46,5 +53,12 @@ Class ControllerClassForService(IOHIDServiceClientRef);
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
+@interface _GCCControllerHIDServiceInfo : NSObject
+@property (nonatomic, readonly, nullable) IOHIDServiceClientRef service;
+@end
+#endif
+
 #endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if HAVE(HID_FRAMEWORK) && USE(APPLE_INTERNAL_SDK)
 
 #include <dispatch/dispatch.h>
@@ -31,21 +33,60 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
-
 OBJC_CLASS HIDDevice;
 OBJC_CLASS HIDUserDevice;
 OBJC_CLASS NSString;
 
 namespace TestWebKitAPI {
 
+enum class HIDVendorID : uint16_t {
+    Microsoft = 0x045e,
+    ShenzhenLongshengweiTechnology = 0x0079,
+    Sony = 0x054c,
+    SteelSeries1 = 0x0111,
+    SteelSeries2 = 0x1038,
+    SunLightApplication = 0x12bd,
+    Fake = 0xffff,
+};
+
+// Technically different products from different vendors can have the same product ID,
+// But in practice that probably won't happen.
+enum class HIDProductID : uint16_t {
+    StratusXL1 = 0x1418,
+    StratusXL2 = 0x1419,
+    Nimbus = 0x1420,
+    Gamepad = 0x0011,
+    GenericNES = 0xd015,
+    XboxOne1 = 0x02ea,
+    XboxOne2 = 0x02e0,
+    XboxOne3 = 0x02fd,
+    Dualshock4_1 = 0x05c4,
+    Dualshock4_2 = 0x09cc,
+};
+
+typedef void (*PublishReportCallback)(Vector<float>&, Vector<float>&, HIDUserDevice*);
+
+struct GamepadMapping {
+    const uint8_t* descriptorData;
+    size_t descriptorDataSize;
+    const char* name;
+    HIDVendorID vendorID;
+    HIDProductID productID;
+    size_t buttonCount;
+    size_t axisCount;
+    PublishReportCallback publishReportCallback;
+};
+
 class VirtualGamepad {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<VirtualGamepad> makeVirtualNimbus();
-    enum class Layout {
-        Nimbus,
-    };
-    VirtualGamepad(Layout);
+    static GamepadMapping microsoftXboxOneMapping();
+    static GamepadMapping shenzhenLongshengweiTechnologyGamepadMapping();
+    static GamepadMapping sonyDualshock4Mapping();
+    static GamepadMapping steelSeriesNimbusMapping();
+    static GamepadMapping sunLightApplicationGenericNESMapping();
+
+    VirtualGamepad(const GamepadMapping&);
     ~VirtualGamepad();
 
     size_t buttonCount() const;
@@ -65,10 +106,10 @@ private:
     RetainPtr<HIDDevice> m_device;
     OSObjectPtr<dispatch_queue_t> m_dispatchQueue;
 
-    Layout m_layout;
     Vector<float> m_buttonValues;
     Vector<float> m_axisValues;
 
+    GamepadMapping m_gamepadMapping;
 };
 } // namespace TestWebKitAPI
 

@@ -127,6 +127,7 @@
 
 #if PLATFORM(COCOA)
 #include "VersionChecks.h"
+#include <WebCore/GameControllerGamepadProvider.h>
 #include <WebCore/HIDGamepadProvider.h>
 #include <WebCore/MultiGamepadProvider.h>
 #include <WebCore/PowerSourceNotifier.h>
@@ -1974,10 +1975,21 @@ void WebProcessPool::gamepadDisconnected(const UIGamepad& gamepad)
 
 #endif // ENABLE(GAMEPAD)
 
-size_t WebProcessPool::numberOfConnectedGamepadsForTesting()
+size_t WebProcessPool::numberOfConnectedGamepadsForTesting(GamepadType gamepadType)
 {
 #if ENABLE(GAMEPAD)
-    return UIGamepadProvider::singleton().numberOfConnectedGamepads();
+    switch (gamepadType) {
+    case GamepadType::All:
+        return UIGamepadProvider::singleton().numberOfConnectedGamepads();
+    case GamepadType::HID:
+#if PLATFORM(MAC)
+        return HIDGamepadProvider::singleton().numberOfConnectedGamepads();
+#else
+        return 0;
+#endif
+    case GamepadType::GameControllerFramework:
+        return GameControllerGamepadProvider::singleton().numberOfConnectedGamepads();
+    }
 #else
     return 0;
 #endif

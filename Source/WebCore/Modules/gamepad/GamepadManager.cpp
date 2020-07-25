@@ -135,6 +135,8 @@ void GamepadManager::platformGamepadInputActivity(EventMakesGamepadsVisible even
 
 void GamepadManager::makeGamepadVisible(PlatformGamepad& platformGamepad, HashSet<NavigatorGamepad*>& navigatorSet, HashSet<DOMWindow*>& domWindowSet)
 {
+    LOG(Gamepad, "GamepadManager::makeGamepadVisible - New gamepad '%s' is visible", platformGamepad.id().utf8().data());
+
     if (navigatorSet.isEmpty() && domWindowSet.isEmpty())
         return;
 
@@ -158,6 +160,8 @@ void GamepadManager::makeGamepadVisible(PlatformGamepad& platformGamepad, HashSe
             continue;
 
         Ref<Gamepad> gamepad(navigator->gamepadFromPlatformGamepad(platformGamepad));
+
+        LOG(Gamepad, "GamepadManager::makeGamepadVisible - Dispatching gamepadconnected event for gamepad '%s'", platformGamepad.id().utf8().data());
         window->dispatchEvent(GamepadEvent::create(eventNames().gamepadconnectedEvent, gamepad.get()), window->document());
     }
 }

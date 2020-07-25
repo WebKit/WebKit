@@ -54,15 +54,13 @@ public:
     WEBCORE_EXPORT void stopMonitoringInput();
     WEBCORE_EXPORT void startMonitoringInput();
 
-    enum class AllowManagementDecisionDelay : bool {
-        No,
-        Yes
-    };
-    void deviceAdded(IOHIDDeviceRef, AllowManagementDecisionDelay);
+    void deviceAdded(IOHIDDeviceRef);
     void deviceRemoved(IOHIDDeviceRef);
     void valuesChanged(IOHIDValueRef);
 
     void ignoreGameControllerFrameworkDevices() { m_ignoresGameControllerFrameworkDevices = true; }
+
+    size_t numberOfConnectedGamepads() const { return m_gamepadMap.size(); };
 
 private:
     HIDGamepadProvider();
@@ -90,15 +88,6 @@ private:
 
 #if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
     HashSet<IOHIDDeviceRef> m_gameControllerManagedGamepads;
-#if !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
-    void waitForManagementDecisionForDevice(IOHIDDeviceRef);
-    bool removeDeviceWaitingForManagementDecision(IOHIDDeviceRef);
-    void gamePadServiceWasPublished();
-
-    HashSet<IOHIDDeviceRef> m_devicesWaitingManagementDecision;
-    RefPtr<WorkQueue> m_delayManagementDecisionQueue;
-    RetainPtr<IOHIDEventSystemClientRef> m_eventSystemClient;
-#endif // !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
 #endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 };
 

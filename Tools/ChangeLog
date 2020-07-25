@@ -1,3 +1,48 @@
+2020-07-24  Brady Eidson  <beidson@apple.com>
+
+        Hard code some MFi controller devices instead of dynamically managing HID vs GameController.framework.
+        rdar://problem/65961406 and https://bugs.webkit.org/show_bug.cgi?id=214664
+
+        Reviewed by Tim Horton.
+
+        Now that we have more than 1 kind of virtual gamepad (5 to be precise), refactor the VirtualGamepad
+        mechanism to support easily configurable gamepad mappings.
+        
+        Each gamepad mapping has its own descriptor and a report derived from it.
+        
+        The virtual devices trigger the correct "HID vs GCF" behavior via their complete descriptors.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+        * TestWebKitAPI/Tests/mac/HIDGamepads.mm:
+        (-[GamepadMessageHandler userContentController:didReceiveScriptMessage:]):
+
+        * TestWebKitAPI/mac/GamepadMappings/MicrosoftXboxOne.mm: Added.
+        (TestWebKitAPI::publishReportCallback):
+        (TestWebKitAPI::VirtualGamepad::microsoftXboxOneMapping):
+
+        * TestWebKitAPI/mac/GamepadMappings/ShenzhenLongshengweiTechnologyGamepad.mm: Added.
+        (TestWebKitAPI::publishReportCallback):
+        (TestWebKitAPI::VirtualGamepad::shenzhenLongshengweiTechnologyGamepadMapping):
+
+        * TestWebKitAPI/mac/GamepadMappings/SonyDualShock4.mm: Added.
+        (TestWebKitAPI::publishReportCallback):
+        (TestWebKitAPI::VirtualGamepad::sonyDualshock4Mapping):
+
+        * TestWebKitAPI/mac/GamepadMappings/SteelSeriesNimbus.mm: Copied from Tools/TestWebKitAPI/mac/VirtualGamepad.mm.
+        (TestWebKitAPI::publishReportCallback):
+        (TestWebKitAPI::VirtualGamepad::steelSeriesNimbusMapping):
+
+        * TestWebKitAPI/mac/GamepadMappings/SunLightApplicationGenericNES.mm: Added.
+        (TestWebKitAPI::publishReportCallback):
+        (TestWebKitAPI::VirtualGamepad::sunLightApplicationGenericNESMapping):
+
+        * TestWebKitAPI/mac/VirtualGamepad.h:
+        * TestWebKitAPI/mac/VirtualGamepad.mm:
+        (TestWebKitAPI::VirtualGamepad::VirtualGamepad):
+        (TestWebKitAPI::VirtualGamepad::publishReport):
+        (TestWebKitAPI::VirtualGamepad::makeVirtualNimbus): Deleted.
+
 2020-07-24  Jonathan Bedard  <jbedard@apple.com>
 
         pep8.py:110: FutureWarning: Possible nested set at position 1 (Follow-up fix)
