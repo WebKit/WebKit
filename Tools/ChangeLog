@@ -1,3 +1,14 @@
+2020-07-24  Beth Dakin  <bdakin@apple.com>
+
+        Adopt inclusive WKBrowsingContextGroup SPI in the API tests
+        https://bugs.webkit.org/show_bug.cgi?id=214766
+
+        Reviewed by Darin Adler.
+
+        Adopt the newer version of this SPI, added in https://trac.webkit.org/changeset/263099/webkit
+        * TestWebKitAPI/Tests/WebKitObjC/UserContentTest.mm:
+        (TEST_F):
+
 2020-07-24  Brady Eidson  <beidson@apple.com>
 
         Hard code some MFi controller devices instead of dynamically managing HID vs GameController.framework.

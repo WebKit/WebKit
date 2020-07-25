@@ -121,7 +121,7 @@ static void runJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, R
 TEST_F(WebKit2UserContentTest, AddUserStyleSheetBeforeCreatingView)
 {
     testFinished = false;
-    [browsingContextGroup addUserStyleSheet:userStyleSheet baseURL:nil whitelistedURLPatterns:nil blacklistedURLPatterns:nil mainFrameOnly:YES];
+    [browsingContextGroup addUserStyleSheet:userStyleSheet baseURL:nil includeMatchPatternStrings:nil excludeMatchPatternStrings:nil mainFrameOnly:YES];
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
@@ -151,8 +151,8 @@ TEST_F(WebKit2UserContentTest, AddUserStyleSheetAfterCreatingView)
             WKRelease(backgroundColorQuery);
         });
     }];
-    
-    [browsingContextGroup addUserStyleSheet:userStyleSheet baseURL:nil whitelistedURLPatterns:nil blacklistedURLPatterns:nil mainFrameOnly:YES];
+
+    [browsingContextGroup addUserStyleSheet:userStyleSheet baseURL:nil includeMatchPatternStrings:nil excludeMatchPatternStrings:nil mainFrameOnly:YES];
     
     [wkView.browsingContextController loadHTMLString:htmlString baseURL:nil];
 
@@ -162,7 +162,7 @@ TEST_F(WebKit2UserContentTest, AddUserStyleSheetAfterCreatingView)
 TEST_F(WebKit2UserContentTest, RemoveAllUserStyleSheets)
 {
     testFinished = false;
-    [browsingContextGroup addUserStyleSheet:userStyleSheet baseURL:nil whitelistedURLPatterns:nil blacklistedURLPatterns:nil mainFrameOnly:YES];
+    [browsingContextGroup addUserStyleSheet:userStyleSheet baseURL:nil includeMatchPatternStrings:nil excludeMatchPatternStrings:nil mainFrameOnly:YES];
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
@@ -184,7 +184,7 @@ TEST_F(WebKit2UserContentTest, RemoveAllUserStyleSheets)
 TEST_F(WebKit2UserContentTest, AddUserScriptBeforeCreatingView)
 {
     testFinished = false;
-    [browsingContextGroup addUserScript:[NSString stringWithFormat:@"%s = true;", userScriptTestProperty] baseURL:nil whitelistedURLPatterns:nil blacklistedURLPatterns:nil injectionTime:kWKInjectAtDocumentStart mainFrameOnly:YES];
+    [browsingContextGroup addUserScript:[NSString stringWithFormat:@"%s = true;", userScriptTestProperty] baseURL:nil includeMatchPatternStrings:nil excludeMatchPatternStrings:nil injectionTime:kWKInjectAtDocumentStart mainFrameOnly:YES];
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef userScriptTestPropertyString = WKStringCreateWithUTF8CString(userScriptTestProperty);
@@ -215,7 +215,7 @@ TEST_F(WebKit2UserContentTest, AddUserScriptAfterCreatingView)
         });
     }];
     
-    [browsingContextGroup addUserScript:[NSString stringWithFormat:@"%s = true;", userScriptTestProperty] baseURL:nil whitelistedURLPatterns:nil blacklistedURLPatterns:nil injectionTime:kWKInjectAtDocumentStart mainFrameOnly:YES];
+    [browsingContextGroup addUserScript:[NSString stringWithFormat:@"%s = true;", userScriptTestProperty] baseURL:nil includeMatchPatternStrings:nil excludeMatchPatternStrings:nil injectionTime:kWKInjectAtDocumentStart mainFrameOnly:YES];
     
     [wkView.browsingContextController loadHTMLString:@"" baseURL:nil];
     
@@ -225,7 +225,7 @@ TEST_F(WebKit2UserContentTest, AddUserScriptAfterCreatingView)
 TEST_F(WebKit2UserContentTest, RemoveAllUserScripts)
 {
     testFinished = false;
-    [browsingContextGroup addUserScript:[NSString stringWithFormat:@"%s = true;", userScriptTestProperty] baseURL:nil whitelistedURLPatterns:nil blacklistedURLPatterns:nil injectionTime:kWKInjectAtDocumentStart mainFrameOnly:YES];
+    [browsingContextGroup addUserScript:[NSString stringWithFormat:@"%s = true;", userScriptTestProperty] baseURL:nil includeMatchPatternStrings:nil excludeMatchPatternStrings:nil injectionTime:kWKInjectAtDocumentStart mainFrameOnly:YES];
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef userScriptTestPropertyString = WKStringCreateWithUTF8CString(userScriptTestProperty);
