@@ -1379,6 +1379,7 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 
 @interface UIApplication (IPI)
 - (GSKeyboardRef)_hardwareKeyboard:(BOOL)createIfNeeded;
+- (GSKeyboardRef)GSKeyboardForHWLayout:(NSString *)layout forceRebuild:(BOOL)forceRebuild createIfNeeded:(BOOL)createIfNeeded;
 @end
 
 WTF_EXTERN_C_BEGIN

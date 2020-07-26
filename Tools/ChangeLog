@@ -1,3 +1,18 @@
+2020-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, add even more logging to try and diagnose a flaky test
+        https://bugs.webkit.org/show_bug.cgi?id=214688
+        <rdar://problem/65993683>
+
+        Evidence so far suggests that this test fails when the process of dispatching a keydown event for a modifier
+        (in this case, the shift key) causes the UIApplication's hardware keyboard (`GSKeyboardRef`) to be regenerated.
+        This may happen in one of two ways: either a rebuild is forced by logic in `-[UIApplication handleKeyHIDEvent:]`,
+        or `forceRebuild` is `NO`, but the keyboard is rebuilt anyways due to a mismatched layout and/or keyboard type.
+
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (-[WebKitTestRunnerApp GSKeyboardForHWLayout:forceRebuild:createIfNeeded:]):
+        (-[WebKitTestRunnerApp handleKeyHIDEvent:]):
+
 2020-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Crash under ValidationBubble::setAnchorRect when showing form validation UI in unparented view

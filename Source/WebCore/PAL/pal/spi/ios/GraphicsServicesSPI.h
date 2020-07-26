@@ -48,6 +48,8 @@ uint32_t GSKeyboardGetModifierState(GSKeyboardRef);
 uint32_t GSKeyboardGetLiveModifierState(GSKeyboardRef);
 Boolean GSEventIsHardwareKeyboardAttached();
 void GSEventSetHardwareKeyboardAttached(Boolean attached, uint8_t country);
+CFStringRef GSKeyboardGetLayout(GSKeyboardRef);
+uint32_t GSKeyboardGetHWKeyboardType(GSKeyboardRef);
 
 extern const char *kGSEventHardwareKeyboardAvailabilityChangedNotification;
 

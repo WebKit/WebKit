@@ -8,5 +8,6 @@ exports:
     archs:           [ i386, x86_64, arm64, arm64e, arm64_32, armv7k ]
     symbols:         [ _GSCurrentEventTimestamp, _GSEventIsHardwareKeyboardAttached, _GSEventSetHardwareKeyboardAttached,
                        _GSFontInitialize, _GSFontPurgeFontCache, _GSInitialize, _GSKeyboardGetModifierState,
-                       _GSKeyboardGetLiveModifierState, _GSSystemRootDirectory, _kGSEventHardwareKeyboardAvailabilityChangedNotification ]
+                       _GSKeyboardGetLiveModifierState, _GSSystemRootDirectory, _kGSEventHardwareKeyboardAvailabilityChangedNotification,
+                       _GSKeyboardGetLayout, _GSKeyboardGetHWKeyboardType ]
 ...

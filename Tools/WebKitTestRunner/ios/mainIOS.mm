@@ -55,16 +55,23 @@ static const char **_argv;
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+- (GSKeyboardRef)GSKeyboardForHWLayout:(NSString *)layout forceRebuild:(BOOL)forceRebuild createIfNeeded:(BOOL)createIfNeeded
+{
+    auto keyboard = [super GSKeyboardForHWLayout:layout forceRebuild:forceRebuild createIfNeeded:createIfNeeded];
+    WTFLogAlways("-[%@ GSKeyboardForHWLayout:%@ forceRebuild:%@ createIfNeeded:%@] => %p", self.class, layout, forceRebuild ? @"YES" : @"NO", createIfNeeded ? @"YES" : @"NO", keyboard);
+    return keyboard;
+}
+
 - (void)handleKeyHIDEvent:(IOHIDEventRef)event
 {
     {
         auto keyboard = [self _hardwareKeyboard:NO];
-        WTFLogAlways("(Before): keyboard %p has modifier state: 0x%02x", keyboard, GSKeyboardGetLiveModifierState(keyboard));
+        WTFLogAlways("(Before): keyboard %p has modifier state: 0x%02x; layout:%@; type: %d", keyboard, GSKeyboardGetLiveModifierState(keyboard), (__bridge NSString *)GSKeyboardGetLayout(keyboard), GSKeyboardGetHWKeyboardType(keyboard));
     }
     [super handleKeyHIDEvent:event];
     {
         auto keyboard = [self _hardwareKeyboard:NO];
-        WTFLogAlways("(After): keyboard %p has modifier state: 0x%02x", keyboard, GSKeyboardGetLiveModifierState(keyboard));
+        WTFLogAlways("(After): keyboard %p has modifier state: 0x%02x; layout:%@; type: %d", keyboard, GSKeyboardGetLiveModifierState(keyboard), (__bridge NSString *)GSKeyboardGetLayout(keyboard), GSKeyboardGetHWKeyboardType(keyboard));
     }
 }
 
