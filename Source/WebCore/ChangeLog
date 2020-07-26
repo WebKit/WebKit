@@ -1,3 +1,24 @@
+2020-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Crash under ValidationBubble::setAnchorRect when showing form validation UI in unparented view
+        https://bugs.webkit.org/show_bug.cgi?id=214789
+        <rdar://problem/66104012>
+
+        Reviewed by Tim Horton.
+
+        On iOS, in the case where `WKWebView` is unparented (or is otherwise missing a root view controller, or the
+        private WKUIDelegate method `-_presentingViewControllerForWebView:` returns `nil`), we end up crashing under
+        `ValidationBubble::setAnchorRect` while attempting to add `presentingViewController.view` (which is `nil`) to an
+        array of passthrough views.
+
+        Since `fallbackViewController` is not guaranteed to successfully find a view controller anyways, make this
+        scenario fail gracefully with a null check, instead of crashing the app.
+
+        Test: FormValidation.PresentingFormValidationUIWithoutViewControllerDoesNotCrash
+
+        * platform/ios/ValidationBubbleIOS.mm:
+        (WebCore::ValidationBubble::setAnchorRect):
+
 2020-07-25  Simon Fraser  <simon.fraser@apple.com>
 
         Some scroll snap cleanup

@@ -216,6 +216,9 @@ void ValidationBubble::setAnchorRect(const IntRect& anchorRect, UIViewController
     if (!presentingViewController)
         presentingViewController = fallbackViewController(m_view);
 
+    if (!presentingViewController)
+        return;
+
     UIPopoverPresentationController *presentationController = [m_popoverController popoverPresentationController];
     m_popoverDelegate = adoptNS([[WebValidationBubbleDelegate alloc] init]);
     presentationController.delegate = m_popoverDelegate.get();
