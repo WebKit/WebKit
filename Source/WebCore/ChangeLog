@@ -1,3 +1,13 @@
+2020-07-26  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wunused-parameter in FilterEffectRenderer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=214808
+
+        Unreviewed.
+
+        * platform/graphics/filters/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::tryCreate):
+
 2020-07-22  Darin Adler  <darin@apple.com>
 
         Stop using live ranges in SpellChecker.h and TextCheckingHelper.h

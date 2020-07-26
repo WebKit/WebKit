@@ -37,6 +37,9 @@ std::unique_ptr<FilterEffectRenderer> FilterEffectRenderer::tryCreate(bool accel
 #if USE(CORE_IMAGE)
     if (acceleratedFilterRenderingEnabled)
         return FilterEffectRendererCoreImage::tryCreate(lastEffect);
+#else
+    UNUSED_PARAM(acceleratedFilterRenderingEnabled);
+    UNUSED_PARAM(lastEffect);
 #endif
     return nullptr;
 }
