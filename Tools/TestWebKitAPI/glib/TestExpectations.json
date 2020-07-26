@@ -45,7 +45,10 @@
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/205380"}}
             },
             "/webkit/WebKitWebExtension/user-messages": {
-                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"}}
+                "expected": {
+                    "gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"},
+                    "wpe": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"}
+                }
             }
         }
     },
@@ -64,7 +67,10 @@
                 "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/205441"}}
             },
             "/webkit/WebKitWebsiteData/dom-cache": {
-                "expected": {"gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"}}
+                "expected": {
+                    "gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"},
+                    "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"}
+                }
             }
         }
     },
@@ -85,6 +91,9 @@
             },
             "/webkit/WebKitWebView/page-visibility": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/214804"}}
+            },
+            "/webkit/WebKitWebView/fullscreen": {
+                "expected": {"wpe": {"status": ["TIMEOUT", "PASS"]}}
             }
         }
     },
@@ -181,7 +190,7 @@
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_DateMath.calculateLocalTimeOffset": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
+                "expected": {"wpe": {"status": ["FAIL", "PASS"]}}
             },
             "WTF_Lock.ContendedShortSection": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
@@ -230,6 +239,9 @@
     "TestResources": {
         "subtests": {
             "/webkit/WebKitWebResource/get-data-error": {
+                "expected": {"wpe": {"status": ["FAIL"]}}
+            },
+            "/webkit/WebKitWebResource/get-data-empty": {
                 "expected": {"wpe": {"status": ["FAIL"]}}
             }
         }

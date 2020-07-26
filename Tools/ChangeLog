@@ -1,5 +1,11 @@
 2020-07-26  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Update API test expectations.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2020-07-26  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Update API tests expectations.
 
         * TestWebKitAPI/glib/TestExpectations.json:
