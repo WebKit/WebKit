@@ -300,35 +300,19 @@ void UIScriptControllerIOS::singleTapAtPointWithModifiers(WebCore::FloatPoint lo
 
     waitForSingleTapToReset();
 
-    if (!modifierFlags.isEmpty())
-        WTFLogAlways("Synthesizing modifier keydown events.");
-
     for (auto& modifierFlag : modifierFlags)
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
 
-    auto dispatchTap = [this, protectedThis = makeRef(*this), modifierFlags = WTFMove(modifierFlags), block = WTFMove(block), location]() mutable {
-        if (!modifierFlags.isEmpty())
-            WTFLogAlways("Synthesizing tap.");
+    [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(webView(), location.x(), location.y()) completionBlock:[this, protectedThis = makeRef(*this), modifierFlags = WTFMove(modifierFlags), block = WTFMove(block)] () mutable {
+        if (!m_context)
+            return;
 
-        [[HIDEventGenerator sharedHIDEventGenerator] tap:globalToContentCoordinates(webView(), location.x(), location.y()) completionBlock:[protectedThis, modifierFlags = WTFMove(modifierFlags), block = WTFMove(block)] () mutable {
-            if (!protectedThis->m_context)
-                return;
-
-            if (!modifierFlags.isEmpty())
-                WTFLogAlways("Synthesizing modifier keyup events.");
-
-            for (size_t i = modifierFlags.size(); i; ) {
-                --i;
-                [[HIDEventGenerator sharedHIDEventGenerator] keyUp:modifierFlags[i]];
-            }
-            [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:block.get()];
-        }];
-    };
-
-    if (modifierFlags.isEmpty())
-        dispatchTap();
-    else
-        [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:dispatchTap];
+        for (size_t i = modifierFlags.size(); i; ) {
+            --i;
+            [[HIDEventGenerator sharedHIDEventGenerator] keyUp:modifierFlags[i]];
+        }
+        [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:block.get()];
+    }];
 }
 
 void UIScriptControllerIOS::doubleTapAtPoint(long x, long y, float delay, JSValueRef callback)

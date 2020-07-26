@@ -2736,7 +2736,6 @@ static Class tapAndAHalfRecognizerClass()
     if (shouldRequestMagnificationInformation)
         RELEASE_LOG(ViewGestures, "Single tap identified. Request details on potential zoom. (%p)", self);
 
-    WTFLogAlways("%s - modifier flags: 0x%02x", __PRETTY_FUNCTION__, WebEvent.modifierFlags);
     _page->potentialTapAtPosition(gestureRecognizer.location, shouldRequestMagnificationInformation, ++_latestTapID);
     _potentialTapInProgress = YES;
     _isTapHighlightIDValid = YES;
@@ -2829,7 +2828,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         pointerId = [singleTapTouchIdentifier unsignedIntValue];
         m_commitPotentialTapPointerId = pointerId;
     }
-    WTFLogAlways("%s - modifier flags: 0x%02x", __PRETTY_FUNCTION__, WebEvent.modifierFlags);
     _page->commitPotentialTap(WebKit::webEventModifierFlags(gestureRecognizerModifierFlags(gestureRecognizer)), _layerTreeTransactionIdAtLastInteractionStart, pointerId);
 
     if (!_isExpectingFastSingleTapCommit)

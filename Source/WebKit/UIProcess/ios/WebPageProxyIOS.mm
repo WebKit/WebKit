@@ -895,7 +895,6 @@ void WebPageProxy::potentialTapAtPosition(const WebCore::FloatPoint& position, b
 
 void WebPageProxy::commitPotentialTap(OptionSet<WebEvent::Modifier> modifiers, TransactionID layerTreeTransactionIdAtLastTouchStart, WebCore::PointerID pointerId)
 {
-    WTFLogAlways("Committing potential tap with modifiers: 0x%02x", modifiers.toRaw());
     send(Messages::WebPage::CommitPotentialTap(modifiers, layerTreeTransactionIdAtLastTouchStart, pointerId));
 }
 

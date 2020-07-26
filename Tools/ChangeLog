@@ -1,3 +1,46 @@
+2020-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264690): [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214688
+        <rdar://problem/65993683>
+
+        Reviewed by Darin Adler.
+
+        Attempt another speculative fix for this flaky test, motivated by logging introduced in r264896. This recently
+        introduced telemetry would suggest that this test fails when the act of handling a synthetic modifier keydown
+        fails to update `GSKeyboardRef`'s live modifier flags if the keyboard layout changes mid-event, forcing the
+        existing `GSKeyboardRef` to be destroyed and rebuilt.
+
+        In this case, the keyboard layout changes from "Hebrew" to "US" when this test fails. There is only one (sane)
+        explanation for this, which is that one of the `editing/input/ios/rtl-keyboard-input-*.html` tests switch to an
+        RTL keyboard ("he_IL" in both cases) by swizzling out `-currentInputMode` and `-currentInputModeInPreference` on
+        `UIKeyboardInputModeController`. While the swizzling is torn down in between test runs via logic in
+        `TestController::platformResetStateToConsistentValues`, it's possible that this change hasn't propagated to
+        the UIKit or GraphicsServices layers -- in other words, `UIApplication`'s `GSKeyboardRef` remains stuck in the
+        Hebrew layout until the next time `-GSKeyboardForHWLayout:forceRebuild:createIfNeeded:` forces the keyboard to
+        be rebuilt, which (in this case) seems to happen while running `shift-click-includes-existing-selection.html`.
+
+        For reasons that are still unclear, this lazy regeneration of the `GSKeyboardRef` causes GraphicsServices' live
+        modifier state to not update when handling a shift key down HID event. However, we might be able to fix this by
+        forcing UIKit to sync the default (unswizzled) keyboard layout back to its `GSKeyboardRef` immediately when we
+        stop swizzling `UIKeyboardInputModeController` after running a test that attempts to simulate changing keyboard
+        input modes.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Call `-prepareKeyboardInputModeFromPreferences:` to force the UIApp to update its hardware keyboard state (i.e.
+        `GSKeyboardRef`).
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::singleTapAtPointWithModifiers):
+
+        Also, restore this method to how it was prior to r264890, as it doesn't seem like waiting for the HID marker
+        event after synthesizing a keydown had any effect.
+
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (-[WebKitTestRunnerApp handleKeyHIDEvent:]): Deleted.
+
 2020-07-26  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Update API test expectations.

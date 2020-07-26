@@ -1,5 +1,17 @@
 2020-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        REGRESSION (r264690): [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214688
+        <rdar://problem/65993683>
+
+        Reviewed by Darin Adler.
+
+        Remove logging added in r264882, r264890, r264892, and r264896.
+
+        * pal/spi/ios/GraphicsServicesSPI.h:
+
+2020-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, add even more logging to try and diagnose a flaky test
         https://bugs.webkit.org/show_bug.cgi?id=214688
         <rdar://problem/65993683>

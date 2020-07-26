@@ -182,8 +182,11 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         m_keyboardDelegateSupportsImagePasteSwizzler = makeUnique<InstanceMethodSwizzler>(UIKeyboardImpl.class, @selector(delegateSupportsImagePaste), reinterpret_cast<IMP>(overrideKeyboardDelegateSupportsImagePaste));
 #endif
 
-    m_inputModeSwizzlers.clear();
-    m_overriddenKeyboardInputMode = nil;
+    if (m_overriddenKeyboardInputMode) {
+        m_overriddenKeyboardInputMode = nil;
+        m_inputModeSwizzlers.clear();
+        [UIKeyboardImpl.sharedInstance prepareKeyboardInputModeFromPreferences:nil];
+    }
 
     m_presentPopoverSwizzlers.clear();
     if (!options.shouldPresentPopovers) {

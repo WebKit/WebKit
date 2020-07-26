@@ -28,7 +28,6 @@
 #import "HIDEventGenerator.h"
 #import "TestController.h"
 #import "UIKitSPI.h"
-#import <pal/spi/ios/GraphicsServicesSPI.h>
 
 static int _argc;
 static const char **_argv;
@@ -53,19 +52,6 @@ static const char **_argv;
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
     RELEASE_ASSERT_NOT_REACHED();
-}
-
-- (void)handleKeyHIDEvent:(IOHIDEventRef)event
-{
-    {
-        auto keyboard = [self _hardwareKeyboard:NO];
-        WTFLogAlways("(Before): keyboard %p has modifier state: 0x%02x; layout:%@; type: %d", keyboard, GSKeyboardGetLiveModifierState(keyboard), (__bridge NSString *)GSKeyboardGetLayout(keyboard), GSKeyboardGetHWKeyboardType(keyboard));
-    }
-    [super handleKeyHIDEvent:event];
-    {
-        auto keyboard = [self _hardwareKeyboard:NO];
-        WTFLogAlways("(After): keyboard %p has modifier state: 0x%02x; layout:%@; type: %d", keyboard, GSKeyboardGetLiveModifierState(keyboard), (__bridge NSString *)GSKeyboardGetLayout(keyboard), GSKeyboardGetHWKeyboardType(keyboard));
-    }
 }
 
 - (void)_handleHIDEvent:(IOHIDEventRef)event
