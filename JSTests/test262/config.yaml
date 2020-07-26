@@ -19,6 +19,7 @@ skip:
     - class-static-fields-public
     - class-static-fields-private
     - class-static-methods-private
+    - cleanupSome
     - host-gc-required
     # https://bugs.webkit.org/show_bug.cgi?id=202475
     - regexp-match-indices
@@ -31,8 +32,6 @@ skip:
     - Intl.NumberFormat-unified
     - Intl.Segmenter
   paths:
-    - test/built-ins/FinalizationRegistry/prototype/cleanupSome
-
     - test/built-ins/DataView/prototype/getBigInt64
     - test/built-ins/DataView/prototype/getBigUint64
     - test/built-ins/DataView/prototype/setBigInt64

@@ -8,7 +8,7 @@ description: >
 info: |
   FinalizationRegistry.prototype.cleanupSome ( [ callback ] )
 
-features: [FinalizationRegistry, host-gc-required]
+features: [cleanupSome, FinalizationRegistry, host-gc-required]
 includes: [async-gc.js]
 flags: [async, non-deterministic]
 ---*/

@@ -29,7 +29,7 @@ info: |
       i. Remove cell from finalizationRegistry.[[Cells]].
       ii. Set removed to true.
   3. Return removed.
-features: [FinalizationRegistry, host-gc-required]
+features: [cleanupSome, FinalizationRegistry, host-gc-required]
 includes: [async-gc.js]
 flags: [async, non-deterministic]
 ---*/

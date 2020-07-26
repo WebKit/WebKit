@@ -25,7 +25,7 @@ info: |
   2. For each FinalizationRegistry finalizationRegistry such that finalizationRegistry.[[Cells]] contains cell, such that cell.[[Target]] is obj,
     a. Set cell.[[Target]] to empty.
     b. Optionally, perform ! HostCleanupFinalizationRegistry(finalizationRegistry).
-features: [FinalizationRegistry, async-functions, host-gc-required]
+features: [cleanupSome, FinalizationRegistry, async-functions, host-gc-required]
 flags: [async, non-deterministic]
 includes: [async-gc.js]
 ---*/

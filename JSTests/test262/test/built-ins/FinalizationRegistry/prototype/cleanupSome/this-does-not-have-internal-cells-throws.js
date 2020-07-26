@@ -12,7 +12,7 @@ info: |
   3. If finalizationRegistry does not have a [[Cells]] internal slot, throw a TypeError exception.
   4. If callback is not undefined and IsCallable(callback) is false, throw a TypeError exception.
   ...
-features: [WeakSet, WeakMap, FinalizationRegistry, WeakRef]
+features: [cleanupSome, WeakSet, WeakMap, FinalizationRegistry, WeakRef]
 ---*/
 
 assert.sameValue(typeof FinalizationRegistry.prototype.cleanupSome, 'function');

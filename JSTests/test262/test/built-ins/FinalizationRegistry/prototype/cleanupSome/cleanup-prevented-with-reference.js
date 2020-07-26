@@ -13,7 +13,7 @@ info: |
   4. If callback is not undefined and IsCallable(callback) is false, throw a TypeError exception.
   5. Perform ? CleanupFinalizationRegistry(finalizationRegistry, callback).
   6. Return undefined.
-features: [FinalizationRegistry, host-gc-required]
+features: [cleanupSome, FinalizationRegistry, host-gc-required]
 includes: [async-gc.js]
 flags: [async, non-deterministic]
 ---*/

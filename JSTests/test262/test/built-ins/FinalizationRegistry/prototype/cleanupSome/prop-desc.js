@@ -12,7 +12,7 @@ info: |
   has the attributes { [[Writable]]: true, [[Enumerable]]: false,
   [[Configurable]]: true } unless otherwise specified.
 includes: [propertyHelper.js]
-features: [FinalizationRegistry]
+features: [cleanupSome, FinalizationRegistry]
 ---*/
 
 assert.sameValue(typeof FinalizationRegistry.prototype.cleanupSome, 'function');

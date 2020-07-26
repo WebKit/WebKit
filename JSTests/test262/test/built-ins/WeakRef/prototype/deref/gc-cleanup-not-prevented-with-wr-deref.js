@@ -13,7 +13,7 @@ info: |
     a. Perform ! KeepDuringJob(target).
     b. Return target.
   6. Return undefined.
-features: [WeakRef, host-gc-required]
+features: [cleanupSome, WeakRef, host-gc-required]
 includes: [async-gc.js]
 flags: [async, non-deterministic]
 ---*/

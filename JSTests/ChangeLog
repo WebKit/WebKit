@@ -1,3 +1,34 @@
+2020-07-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=214791
+
+        Reviewed by Ross Kirsling.
+
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+        * test262/harness/async-gc.js:
+        * test262/latest-changes-summary.txt:
+        * test262/test/annexB/language/expressions/typeof/emulates-undefined.js: Added.
+        * test262/test/built-ins/FinalizationRegistry/gc-has-one-chance-to-call-cleanupCallback.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/callback-not-callable-throws.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/cleanup-prevented-with-reference.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/cleanup-prevented-with-unregister.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/custom-this.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/holdings-multiple-values.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/length.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/name.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/prop-desc.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/reentrancy.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/return-undefined-with-gc.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/return-undefined.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/this-does-not-have-internal-cells-throws.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/cleanupSome/this-not-object-throws.js:
+        * test262/test/built-ins/FinalizationRegistry/prototype/unregister/unregister-cleaned-up-cell.js:
+        * test262/test/built-ins/WeakRef/prototype/deref/gc-cleanup-not-prevented-with-wr-deref.js:
+        * test262/test/intl402/DisplayNames/length.js:
+        * test262/test262-Revision.txt:
+
 2020-07-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Skip unrelated / too-compute-heavy tests in Apple Watch Series 3
