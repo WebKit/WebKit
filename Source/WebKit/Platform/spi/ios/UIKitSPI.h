@@ -194,6 +194,7 @@ WTF_EXTERN_C_END
 - (BOOL)isSuspendedUnderLock;
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
+- (void)handleKeyHIDEvent:(IOHIDEventRef)event;
 - (void)handleKeyUIEvent:(UIEvent *)event;
 - (BOOL)_appAdoptsUISceneLifecycle;
 @end
@@ -1374,6 +1375,10 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 
 @interface UIDevice ()
 @property (nonatomic, setter=_setBacklightLevel:) float _backlightLevel;
+@end
+
+@interface UIApplication (IPI)
+- (GSKeyboardRef)_hardwareKeyboard:(BOOL)createIfNeeded;
 @end
 
 WTF_EXTERN_C_BEGIN

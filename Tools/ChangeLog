@@ -6,6 +6,20 @@
 
         Reviewed by Tim Horton.
 
+        Continue to add logging in an attempt to debug this flaky test.
+
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (-[WebKitTestRunnerApp handleKeyHIDEvent:]):
+        (-[WebKitTestRunnerApp _handleHIDEvent:]): Drive-by fix: add a missing call to the superclass method.
+
+2020-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264690): [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214688
+        <rdar://problem/65993683>
+
+        Reviewed by Tim Horton.
+
         Attempt a second speculative fix that waits for the keydown HID event to be dequeued and handled by
         `UIApplication` when simulating a shift-tap, to guarantee that the synthetic click gesture recognizer has
         up-to-date modifier flags upon dispatching the synthetic HID events on tap.
