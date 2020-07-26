@@ -654,6 +654,8 @@ webkit.org/b/213235 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-01.html [ Pass ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-03.html [ ImageOnlyFailure ]
 
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html  [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1503,7 +1505,6 @@ webkit.org/b/173419 fast/events/mouseup-from-button2.html [ Failure ]
 webkit.org/b/173419 fast/events/no-scroll-on-input-text-selection.html [ Failure ]
 webkit.org/b/173419 fast/events/node-event-anchor-lock.html [ Failure ]
 webkit.org/b/173419 fast/events/option-tab.html [ Failure ]
-webkit.org/b/173419 fast/events/platform-wheelevent-in-scrolling-div.html [ Failure ]
 webkit.org/b/173419 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure ]
 webkit.org/b/173419 fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html [ Failure ]
 webkit.org/b/173419 fast/events/platform-wheelevent-paging-x-in-scrolling-div.html [ Failure ]

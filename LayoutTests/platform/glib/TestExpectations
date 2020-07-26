@@ -80,6 +80,8 @@ webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Fai
 webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
 webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
 
+webkit.org/b/209102 accessibility/accessibility-node-memory-management.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -218,7 +220,7 @@ webkit.org/b/214031 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/207547 media/media-can-play-av1.html [ Failure ]
 
-webkit.org/b/214636 media/media-source/media-source-webm.html [ Failure ]
+webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -614,7 +616,6 @@ webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/availa
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-016.html [ Pass ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-018.html [ Pass ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/available-size-019.html [ Pass ]
-webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html  [ Pass ]
 webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/inline-box-border-vlr-001.html [ Pass ]
 
 # Overrides over general expectations that are shared between GTK and WPE after updating css-text WPT tests

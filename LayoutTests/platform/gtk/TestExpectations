@@ -1235,6 +1235,8 @@ webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.h
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.tentative.html [ ImageOnlyFailure ]
 
+webkit.org/b/214636 media/media-source/media-source-webm.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -2097,7 +2099,6 @@ webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transfor
 
 webkit.org/b/209044 http/tests/media/hls/video-controls-live-stream.html [ Failure Pass ]
 
-webkit.org/b/209102 accessibility/accessibility-node-memory-management.html [ Failure Pass ]
 
 webkit.org/b/210233 http/tests/media/media-stream/device-change-event-in-iframe.html [ Failure Pass ]
 
@@ -3770,6 +3771,7 @@ fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Pass ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Pass ]
 
+webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/baseline-with-orthogonal-flow-001.html  [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.

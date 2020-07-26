@@ -1,3 +1,21 @@
+2020-07-26  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed test gardening. Update test expectations and baselines after r264899.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox-expected.txt.
+        * platform/glib/mathml/opentype/opentype-stretchy-expected.txt: Renamed from LayoutTests/platform/gtk/mathml/opentype/opentype-stretchy-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/wpe/fast/table/cell-absolute-child-expected.txt:
+        * platform/wpe/fast/table/empty-cells-expected.txt:
+        * platform/wpe/fast/table/prepend-in-anonymous-table-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug10633-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1302-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug16012-expected.txt:
+
 2020-07-26  Youenn Fablet  <youenn@apple.com>
 
         Update capture MediaStreamTrack frameRate and aspectRatio capabilities
