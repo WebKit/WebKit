@@ -55,13 +55,6 @@ static const char **_argv;
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-- (GSKeyboardRef)GSKeyboardForHWLayout:(NSString *)layout forceRebuild:(BOOL)forceRebuild createIfNeeded:(BOOL)createIfNeeded
-{
-    auto keyboard = [super GSKeyboardForHWLayout:layout forceRebuild:forceRebuild createIfNeeded:createIfNeeded];
-    WTFLogAlways("-[%@ GSKeyboardForHWLayout:%@ forceRebuild:%@ createIfNeeded:%@] => %p", self.class, layout, forceRebuild ? @"YES" : @"NO", createIfNeeded ? @"YES" : @"NO", keyboard);
-    return keyboard;
-}
-
 - (void)handleKeyHIDEvent:(IOHIDEventRef)event
 {
     {
