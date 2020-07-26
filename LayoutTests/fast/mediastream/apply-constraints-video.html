@@ -56,8 +56,8 @@
                 },
                 {
                     message: "frameRate value is less than track capabilities, should be clamped to the minimum values.",
-                    constraint: { width: 100, height: 100, frameRate: 4 },
-                    expected: { width: 100, height: 100, frameRate: 5 },
+                    constraint: { width: 100, height: 100, frameRate: 0.5 },
+                    expected: { width: 100, height: 100, frameRate: 1 },
                 },
                 {
                     message: "set frame rate, width and height should remain unchanged",

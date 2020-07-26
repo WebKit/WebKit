@@ -52,10 +52,10 @@ PASS settings['height'] is 720
 ** Constraint: {"width":5000} - ideal width is greater than track capability, should be clamped to the maximum value.
 PASS settings['width'] is 2560
 
-** Constraint: {"width":100,"height":100,"frameRate":4} - frameRate value is less than track capabilities, should be clamped to the minimum values.
+** Constraint: {"width":100,"height":100,"frameRate":0.5} - frameRate value is less than track capabilities, should be clamped to the minimum values.
 PASS settings['width'] is 100
 PASS settings['height'] is 100
-PASS settings['frameRate'] is 5
+PASS settings['frameRate'] is 1
 
 ** Constraint: {"frameRate":20} - set frame rate, width and height should remain unchanged
 PASS settings['width'] is 100

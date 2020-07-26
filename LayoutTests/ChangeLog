@@ -1,3 +1,14 @@
+2020-07-26  Youenn Fablet  <youenn@apple.com>
+
+        Update capture MediaStreamTrack frameRate and aspectRatio capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=214741
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStreamTrack-getCapabilities-expected.txt:
+        * fast/mediastream/apply-constraints-video-expected.txt:
+        * fast/mediastream/apply-constraints-video.html:
+
 2020-07-26  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Garden flaky failures after r264897.

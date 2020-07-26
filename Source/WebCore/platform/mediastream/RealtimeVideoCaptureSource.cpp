@@ -158,7 +158,8 @@ void RealtimeVideoCaptureSource::updateCapabilities(RealtimeMediaSourceCapabilit
     int maximumHeight = 0;
     double minimumAspectRatio = std::numeric_limits<double>::max();
     double maximumAspectRatio = 0;
-    double minimumFrameRate = std::numeric_limits<double>::max();
+    // RealtimeVideoSource will decimate frame rate if the source cannot go below a given value.
+    double minimumFrameRate = 1;
     double maximumFrameRate = 0;
     for (const auto& preset : presets()) {
         const auto& size = preset->size;
@@ -166,15 +167,15 @@ void RealtimeVideoCaptureSource::updateCapabilities(RealtimeMediaSourceCapabilit
         updateMinMax(minimumHeight, maximumHeight, size.height());
         updateMinMax(minimumAspectRatio, maximumAspectRatio, static_cast<double>(size.width()) / size.height());
 
-        for (const auto& rate : preset->frameRateRanges) {
-            updateMinMax(minimumFrameRate, maximumFrameRate, rate.minimum);
-            updateMinMax(minimumFrameRate, maximumFrameRate, rate.maximum);
-        }
+        for (const auto& rate : preset->frameRateRanges)
+            maximumFrameRate = std::max(maximumFrameRate, rate.maximum);
     }
 
     if (canResizeVideoFrames()) {
         minimumWidth = 1;
         minimumHeight = 1;
+        minimumAspectRatio = 1.0 / maximumHeight;
+        maximumAspectRatio = maximumWidth;
     }
 
     capabilities.setWidth({ minimumWidth, maximumWidth });

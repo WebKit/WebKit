@@ -1,3 +1,19 @@
+2020-07-26  Youenn Fablet  <youenn@apple.com>
+
+        Update capture MediaStreamTrack frameRate and aspectRatio capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=214741
+
+        Reviewed by Eric Carlson.
+
+        We support frame decimation to decrease the frame rate.
+        This allows to get a frame rate down to 1.
+        We support resizing up to max width/height resolution.
+        This allows very wide aspect ratios.
+        Covered by updated tests.
+
+        * platform/mediastream/RealtimeVideoCaptureSource.cpp:
+        (WebCore::RealtimeVideoCaptureSource::updateCapabilities):
+
 2020-07-24  Mark Lam  <mark.lam@apple.com>
 
         pluginElementCustomGetOwnPropertySlot() should support VMInquiry requests.
