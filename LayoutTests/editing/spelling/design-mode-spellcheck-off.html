@@ -3,11 +3,11 @@
 <body spellcheck="false">
 <script src="../editing.js"></script>
 <script src="../../resources/js-test-pre.js"></script>
-<div id="misspelled" onmouseup="checkSpellingMarker()">asdf is misspelled.</div>
+<div id="misspelled" onmouseup="checkSpellingMarker()">tyop is misspelled.</div>
 <script>
 description("This tests whether WebKit does not spell check in 'designMode' "
-    + "when spellcheck='false'. To test manually, click arround 'asdf'. "
-    + "There should be no spelling marker for 'asdf' after the click.");
+    + "when spellcheck='false'. To test manually, click arround 'tyop'. "
+    + "There should be no spelling marker for 'tyop' after the click.");
 
 jsTestIsAsync = true;
 
@@ -21,7 +21,7 @@ document.designMode = "on";
 function checkSpellingMarker()
 {
     // First, verify spelling with spellcheck attribute off.
-    // Move selection to the next word to notify WebKit that "asdf" has been typed/changed
+    // Move selection to the next word to notify WebKit that "tyop" has been typed/changed
     // to give a chance to spellcheck.
     moveSelectionForwardByWordCommand();
 

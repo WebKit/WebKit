@@ -75,6 +75,12 @@ struct TextCheckingResult {
     String replacement;
 };
 
+struct TextCheckingGuesses {
+    Vector<String> guesses;
+    bool misspelled { false };
+    bool ungrammatical { false };
+};
+
 enum TextCheckingRequestIdentifierType { };
 using TextCheckingRequestIdentifier = ObjectIdentifier<TextCheckingRequestIdentifierType>;
 

@@ -1,3 +1,20 @@
+2020-07-23  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in SpellChecker.h and TextCheckingHelper.h
+        https://bugs.webkit.org/show_bug.cgi?id=214648
+
+        Reviewed by Sam Weinig.
+
+        * editing/spelling/design-mode-spellcheck-off-expected.txt: Updated to use the misspelling
+        "tyop" instead of "asdf", otherwise spell checking thinks the text is in Romanian,
+        rather than misspelled US English.
+        * editing/spelling/design-mode-spellcheck-off.html: Ditto.
+
+        * platform/mac/editing/pasteboard/drop-text-without-selection-expected.html: Added.
+        Changed this test into a reference test.
+        * platform/mac/editing/pasteboard/drop-text-without-selection-expected.png: Removed.
+        * platform/mac/editing/pasteboard/drop-text-without-selection-expected.txt: Removed.
+
 2020-07-26  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Update test expectations and baselines after r264899.

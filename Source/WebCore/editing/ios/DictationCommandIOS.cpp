@@ -62,7 +62,7 @@ void DictationCommandIOS::doApply()
         if (interpretations.size() > 1) {
             auto alternatives = interpretations;
             alternatives.remove(0);
-            document().markers().addMarker(*endingSelection().toNormalizedRange(), DocumentMarker::DictationPhraseWithAlternatives, WTFMove(alternatives));
+            addMarker(*endingSelection().toNormalizedRange(), DocumentMarker::DictationPhraseWithAlternatives, WTFMove(alternatives));
         }
 
         setEndingSelection(VisibleSelection(endingSelection().visibleEnd()));
@@ -81,7 +81,7 @@ void DictationCommandIOS::doApply()
         return;
 
     auto resultRange = resolveCharacterRange(makeRangeSelectingNodeContents(*root), { endOffset - resultLength, endOffset });
-    document().markers().addMarker(resultRange, DocumentMarker::DictationResult, m_metadata);
+    addMarker(resultRange, DocumentMarker::DictationResult, m_metadata);
 }
 
 } // namespace WebCore

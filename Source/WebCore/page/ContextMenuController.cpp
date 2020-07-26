@@ -972,9 +972,7 @@ void ContextMenuController::populate()
             if (spellCheckingEnabled) {
                 // Consider adding spelling-related or grammar-related context menu items (never both, since a single selected range
                 // is never considered a misspelling and bad grammar at the same time)
-                bool misspelling;
-                bool badGrammar;
-                Vector<String> guesses = frame->editor().guessesForMisspelledOrUngrammatical(misspelling, badGrammar);
+                auto [guesses, misspelling, badGrammar] = frame->editor().guessesForMisspelledOrUngrammatical();
                 if (misspelling || badGrammar) {
                     if (guesses.isEmpty()) {
                         // If there's bad grammar but no suggestions (e.g., repeated word), just leave off the suggestions

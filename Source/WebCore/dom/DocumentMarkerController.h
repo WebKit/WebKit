@@ -41,6 +41,8 @@ class Text;
 
 struct SimpleRange;
 
+enum class RemovePartiallyOverlappingMarker : bool { No, Yes };
+
 class DocumentMarkerController {
     WTF_MAKE_NONCOPYABLE(DocumentMarkerController); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -60,12 +62,11 @@ public:
     // When a marker partially overlaps with range, if removePartiallyOverlappingMarkers is true, we completely
     // remove the marker. If the argument is false, we will adjust the span of the marker so that it retains
     // the portion that is outside of the range.
-    enum RemovePartiallyOverlappingMarkerOrNot { DoNotRemovePartiallyOverlappingMarker, RemovePartiallyOverlappingMarker };
-    WEBCORE_EXPORT void removeMarkers(const SimpleRange&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
-    void removeMarkers(Node&, OffsetRange, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), const Function<bool(const DocumentMarker&)>& filterFunction = nullptr, RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    WEBCORE_EXPORT void removeMarkers(const SimpleRange&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
+    void removeMarkers(Node&, OffsetRange, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), const Function<bool(const DocumentMarker&)>& filterFunction = nullptr, RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
     // Return false from filterFunction to remove the marker.
-    WEBCORE_EXPORT void filterMarkers(const SimpleRange&, const Function<bool(const DocumentMarker&)>& filterFunction, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    WEBCORE_EXPORT void filterMarkers(const SimpleRange&, const Function<bool(const DocumentMarker&)>& filterFunction, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
     WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
     void removeMarkers(Node&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
@@ -109,6 +110,10 @@ private:
     OptionSet<DocumentMarker::MarkerType> m_possiblyExistingMarkerTypes;
     Document& m_document;
 };
+
+void addMarker(const SimpleRange&, DocumentMarker::MarkerType, const DocumentMarker::Data& = { });
+void addMarker(Text&, unsigned startOffset, unsigned length, DocumentMarker::MarkerType, DocumentMarker::Data&& = { });
+void removeMarkers(const SimpleRange&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
 inline bool DocumentMarkerController::hasMarkers() const
 {

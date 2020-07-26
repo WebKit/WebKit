@@ -50,6 +50,7 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <WebCore/Range.h>
 #include <WebCore/SerializedAttachmentData.h>
 #include <WebCore/SpellChecker.h>
 #include <WebCore/StyleProperties.h>

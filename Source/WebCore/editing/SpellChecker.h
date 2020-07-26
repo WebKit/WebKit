@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,53 +27,47 @@
 #pragma once
 
 #include "Element.h"
-#include "Range.h"
 #include "TextChecking.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
-#include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Frame;
-class Node;
-class TextCheckerClient;
 class SpellChecker;
+class TextCheckerClient;
 
-class SpellCheckRequest : public TextCheckingRequest {
+class SpellCheckRequest final : public TextCheckingRequest {
 public:
-    static RefPtr<SpellCheckRequest> create(OptionSet<TextCheckingType>, TextCheckingProcessType, Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange);
+    static RefPtr<SpellCheckRequest> create(OptionSet<TextCheckingType>, TextCheckingProcessType, const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange);
     virtual ~SpellCheckRequest();
 
-    Range& checkingRange() const { return m_checkingRange.get(); }
-    Range& paragraphRange() const { return m_paragraphRange.get(); }
-    Range& automaticReplacementRange() const { return m_automaticReplacementRange.get(); }
+    const SimpleRange& checkingRange() const { return m_checkingRange; }
+    const SimpleRange& paragraphRange() const { return m_paragraphRange; }
+    const SimpleRange& automaticReplacementRange() const { return m_automaticReplacementRange; }
     Element* rootEditableElement() const { return m_rootEditableElement.get(); }
 
     void setCheckerAndIdentifier(SpellChecker*, TextCheckingRequestIdentifier);
     void requesterDestroyed();
     bool isStarted() const { return m_checker; }
 
-    const TextCheckingRequestData& data() const override;
-    void didSucceed(const Vector<TextCheckingResult>&) override;
-    void didCancel() override;
+    const TextCheckingRequestData& data() const final;
 
 private:
-    SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange, const String&, OptionSet<TextCheckingType>, TextCheckingProcessType);
+    void didSucceed(const Vector<TextCheckingResult>&) final;
+    void didCancel() final;
+
+    SpellCheckRequest(const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange, const String&, OptionSet<TextCheckingType>, TextCheckingProcessType);
 
     SpellChecker* m_checker { nullptr };
-    Ref<Range> m_checkingRange;
-    Ref<Range> m_automaticReplacementRange;
-    Ref<Range> m_paragraphRange;
+    SimpleRange m_checkingRange;
+    SimpleRange m_automaticReplacementRange;
+    SimpleRange m_paragraphRange;
     RefPtr<Element> m_rootEditableElement;
     TextCheckingRequestData m_requestData;
 };
 
 class SpellChecker {
-    WTF_MAKE_NONCOPYABLE(SpellChecker); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     friend class SpellCheckRequest;
 
@@ -80,24 +75,15 @@ public:
     ~SpellChecker();
 
     bool isAsynchronousEnabled() const;
-    bool isCheckable(Range&) const;
+    bool isCheckable(const SimpleRange&) const;
 
     void requestCheckingFor(Ref<SpellCheckRequest>&&);
 
-    TextCheckingRequestIdentifier lastRequestIdentifier() const
-    {
-        return m_lastRequestIdentifier;
-    }
-
-    TextCheckingRequestIdentifier lastProcessedIdentifier() const
-    {
-        return m_lastProcessedIdentifier;
-    }
+    TextCheckingRequestIdentifier lastRequestIdentifier() const { return m_lastRequestIdentifier; }
+    TextCheckingRequestIdentifier lastProcessedIdentifier() const { return m_lastProcessedIdentifier; }
 
 private:
-    typedef Deque<Ref<SpellCheckRequest>> RequestQueue;
-
-    bool canCheckAsynchronously(Range&) const;
+    bool canCheckAsynchronously(const SimpleRange&) const;
     TextCheckerClient* client() const;
     void timerFiredToProcessQueuedRequest();
     void invokeRequest(Ref<SpellCheckRequest>&&);
@@ -113,7 +99,7 @@ private:
     Timer m_timerToProcessQueuedRequest;
 
     RefPtr<SpellCheckRequest> m_processingRequest;
-    RequestQueue m_requestQueue;
+    Deque<Ref<SpellCheckRequest>> m_requestQueue;
 };
 
 } // namespace WebCore

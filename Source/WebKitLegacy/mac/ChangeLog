@@ -1,3 +1,14 @@
+2020-07-23  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in SpellChecker.h and TextCheckingHelper.h
+        https://bugs.webkit.org/show_bug.cgi?id=214648
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::requestCheckingOfString): Pass the specific types of
+        results we expect, rather than NSTextCheckingAllSystemTypes.
+
 2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Update macOS Version macros

@@ -297,12 +297,12 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
         if (interpretations.size() > 1) {
             auto alternatives = interpretations;
             alternatives.remove(0);
-            document().markers().addMarker(textNode, previousDictationPhraseStart, dictationPhraseLength, DocumentMarker::DictationPhraseWithAlternatives, WTFMove(alternatives));
+            addMarker(textNode, previousDictationPhraseStart, dictationPhraseLength, DocumentMarker::DictationPhraseWithAlternatives, WTFMove(alternatives));
         }
         previousDictationPhraseStart += dictationPhraseLength;
     }
 
-    document().markers().addMarker(textNode, 0, textNode.length(), DocumentMarker::DictationResult, retainPtr(metadata));
+    addMarker(textNode, 0, textNode.length(), DocumentMarker::DictationResult, retainPtr(metadata));
 
     client()->respondToChangedContents();
 }

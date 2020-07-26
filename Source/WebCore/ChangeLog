@@ -1,3 +1,132 @@
+2020-07-22  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in SpellChecker.h and TextCheckingHelper.h
+        https://bugs.webkit.org/show_bug.cgi?id=214648
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        Removed unneeded include of TextCheckingHelper.h.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::removeMarkers): Updated for change
+        to the argument type name.
+        (WebCore::DocumentMarkerController::filterMarkers): Ditto.
+        (WebCore::addMarker): Added. Convenience so call doesn't have to get
+        the document to call this.
+        (WebCore::removeMarkers): Ditto.
+
+        * dom/DocumentMarkerController.h: Moved RemovePartiallyOverlappingMarker
+        out of the DocumentMarkerController class, tweaked its name and changed
+        it into an enum class. Added conveniences functions for add/removeMarker.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::respondToUnappliedSpellCorrection):
+        Use convenience versions of removeMarkers and addMarker.
+        (WebCore::AlternativeTextController::handleAlternativeTextUIResult): Ditto.
+        (WebCore::AlternativeTextController::respondToUnappliedEditing): Ditto.
+        (WebCore::AlternativeTextController::markReversed): Ditto.
+        (WebCore::AlternativeTextController::markCorrection): Ditto.
+        (WebCore::AlternativeTextController::recordSpellcheckerResponseForModifiedCorrection): Ditto.
+        (WebCore::AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand): Ditto.
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange): Ditto.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers): Ditto.
+        * editing/Editor.cpp:
+        (WebCore::Editor::ignoreSpelling): Ditto.
+        (WebCore::Editor::learnSpelling): Ditto.
+        (WebCore::Editor::advanceToNextMisspelling): Rewrote to not use a live
+        range and for the changes to the TextCheckingHelper.
+        (WebCore::Editor::isSelectionUngrammatical): Deleted.
+        (WebCore::Editor::guessesForMisspelledOrUngrammatical): Changed to use a
+        return value instead of out arguments.
+        (WebCore::Editor::clearMisspellingsAndBadGrammar): Use convenience
+        versions of removeMarkers.
+        (WebCore::Editor::markMisspellingsAfterTypingToWord): Ditto.
+        (WebCore::Editor::markMisspellingsOrBadGrammar): Updated for change to
+        TextCheckingHelper.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Do not use
+        live ranges.
+        (WebCore::correctSpellcheckingPreservingTextCheckingParagraph): Take a
+        range that isn't a live range.
+        (WebCore::Editor::markAndReplaceFor): Tweak for changes to text checking
+        and to use convenience version of addMarker.
+        (WebCore::Editor::changeBackToReplacedString): Use convenience versions of
+        removeMarkers and addMarker.
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing): Ditto.
+        (WebCore::Editor::countMatchesForText): Ditto.
+        (WebCore::Editor::scanSelectionForTelephoneNumbers): Ditto.
+        (WebCore::Editor::editorUIUpdateTimerFired): Ditto.
+        (WebCore::Editor::handleAcceptedCandidate): Ditto.
+        * editing/Editor.h: Update for the above.
+
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellCheckRequest::SpellCheckRequest): No longer take live ranges.
+        (WebCore::SpellCheckRequest::create): Ditto.
+        (WebCore::SpellChecker::canCheckAsynchronously const): Ditto.
+        (WebCore::SpellChecker::isCheckable const): Ditto.
+        (WebCore::SpellChecker::didCheckSucceed): Use convenience versions of
+        removeMarkers.
+        * editing/SpellChecker.h: Remove the use of live ranges. Removed many
+        unneeded includes and forward declarations.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::expandToParagraphBoundary): Take and return non-live ranges.
+        (WebCore::TextCheckingParagraph::TextCheckingParagraph): Ditto.
+        (WebCore::TextCheckingParagraph::expandRangeToNextEnd): Updated to use
+        non-live ranges.
+        (WebCore::TextCheckingParagraph::invalidateParagraphRangeValues): Ditto.
+        (WebCore::TextCheckingParagraph::paragraphRange const): Ditto.
+        (WebCore::TextCheckingParagraph::subrange const): Ditto.
+        (WebCore::TextCheckingParagraph::offsetTo const): Ditto.
+        (WebCore::TextCheckingParagraph::offsetAsRange const): Ditto.
+        (WebCore::TextCheckingParagraph::automaticReplacementStart const): Ditto.
+        (WebCore::TextCheckingParagraph::automaticReplacementLength const): Ditto.
+        (WebCore::TextCheckingHelper::~TextCheckingHelper): Deleted.
+        (WebCore::TextCheckingHelper::findMispelledWords const): Renamed from
+        findFirstMispelling, and made this private function since it has confusing
+        argument and return types. Reimplemented to use non-live ranges and to use
+        return values and the addMarker convenience function. Also changed this to
+        not mark when called just to find the first mispelled word. The old version
+        always marked, which didn't make logical sense, but was harmless because
+        the caller always marked the same way. Now this does what it says.
+        (WebCore::TextCheckingHelper::findFirstMisspelledWord const): Added.
+        Replaces findFirstMispelling as a public function, and returns a structure
+        instead of using out arguments.
+        (WebCore::TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase const):
+        Renamed from findFirstMisspellingOrBadGrammar and changed to return a structure
+        instead of using out arguments.
+        (WebCore::TextCheckingHelper::findUngrammaticalPhrases const): Renamed from
+        findFirstGrammarDetail and findFirstBadGrammar. Both functions are now private
+        and use the new Operation enum class to distinguish the "find first" from
+        "mark all" usage. Also use the convience version of addMarker and return results
+        in a structure instead of using out arguments.
+        (WebCore::TextCheckingHelper::findFirstUngrammaticalPhrase const): Added.
+        Replaces findFirstBadGrammar as a public function, returns a structure
+        instead of using out arguments.
+        (WebCore::TextCheckingHelper::guessesForMisspelledWordOrUngrammaticalPhrase const):
+        Renamed from guessesForMisspelledOrUngrammaticalRange and changed to return
+        a structure instead of out arguments.
+        (WebCore::TextCheckingHelper::markAllMisspelledWords const): Renamed from
+        markAllMisspellings and changed to use a return value instead of an out argument.
+        (WebCore::TextCheckingHelper::markAllUngrammaticalPhrases const): Renamed
+        from markAllBadGrammar.
+
+        * editing/TextCheckingHelper.h: Removed unneed include of "EditorClient.h".
+        Use non-live ranges. Updated for the other changes above.
+
+        * editing/ios/DictationCommandIOS.cpp:
+        (WebCore::DictationCommandIOS::doApply): Use the convenience version of addMarker.
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setDictationPhrasesAsChildOfElement): Ditto.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate): Updated for the change to
+        Editor::guessesForMisspelledOrUngrammatical.
+
+        * platform/text/TextChecking.h: Added a TextCheckingGuesses structure here
+        used both by Editor and TextCheckingHelper.
+
 2020-07-26  Youenn Fablet  <youenn@apple.com>
 
         Update capture MediaStreamTrack frameRate and aspectRatio capabilities

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,34 +31,33 @@
 #include "DocumentMarkerController.h"
 #include "Editing.h"
 #include "Editor.h"
+#include "EditorClient.h"
 #include "Frame.h"
 #include "Page.h"
 #include "PositionIterator.h"
 #include "RenderObject.h"
 #include "Settings.h"
 #include "TextCheckerClient.h"
-#include "TextCheckingHelper.h"
 
 namespace WebCore {
 
-SpellCheckRequest::SpellCheckRequest(Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange, const String& text, OptionSet<TextCheckingType> mask, TextCheckingProcessType processType)
-    : m_checkingRange(WTFMove(checkingRange))
-    , m_automaticReplacementRange(WTFMove(automaticReplacementRange))
-    , m_paragraphRange(WTFMove(paragraphRange))
-    , m_rootEditableElement(m_checkingRange->startContainer().rootEditableElement())
-    , m_requestData(WTF::nullopt, text, mask, processType)
+SpellCheckRequest::SpellCheckRequest(const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange, const String& text, OptionSet<TextCheckingType> options, TextCheckingProcessType type)
+    : m_checkingRange(checkingRange)
+    , m_automaticReplacementRange(automaticReplacementRange)
+    , m_paragraphRange(paragraphRange)
+    , m_rootEditableElement(m_checkingRange.start.container->rootEditableElement())
+    , m_requestData(WTF::nullopt, text, options, type)
 {
 }
 
 SpellCheckRequest::~SpellCheckRequest() = default;
 
-RefPtr<SpellCheckRequest> SpellCheckRequest::create(OptionSet<TextCheckingType> textCheckingOptions, TextCheckingProcessType processType, Ref<Range>&& checkingRange, Ref<Range>&& automaticReplacementRange, Ref<Range>&& paragraphRange)
+RefPtr<SpellCheckRequest> SpellCheckRequest::create(OptionSet<TextCheckingType> options, TextCheckingProcessType type, const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const SimpleRange& paragraphRange)
 {
-    String text = checkingRange->text();
-    if (!text.length())
+    String text = plainText(checkingRange);
+    if (text.isEmpty())
         return nullptr;
-
-    return adoptRef(*new SpellCheckRequest(WTFMove(checkingRange), WTFMove(automaticReplacementRange), WTFMove(paragraphRange), text, textCheckingOptions, processType));
+    return adoptRef(*new SpellCheckRequest(checkingRange, automaticReplacementRange, paragraphRange, text, options, type));
 }
 
 const TextCheckingRequestData& SpellCheckRequest::data() const
@@ -134,19 +134,18 @@ bool SpellChecker::isAsynchronousEnabled() const
     return m_document.settings().asynchronousSpellCheckingEnabled();
 }
 
-bool SpellChecker::canCheckAsynchronously(Range& range) const
+bool SpellChecker::canCheckAsynchronously(const SimpleRange& range) const
 {
     return client() && isCheckable(range) && isAsynchronousEnabled();
 }
 
-bool SpellChecker::isCheckable(Range& range) const
+bool SpellChecker::isCheckable(const SimpleRange& range) const
 {
-    if (!range.firstNode() || !range.firstNode()->renderer())
+    auto firstNode = createLiveRange(range)->firstNode();
+    if (!firstNode || !firstNode->renderer())
         return false;
-    const Node& node = range.startContainer();
-    if (is<Element>(node) && !downcast<Element>(node).isSpellCheckingEnabled())
-        return false;
-    return true;
+    auto& node = range.start.container.get();
+    return !is<Element>(node) || downcast<Element>(node).isSpellCheckingEnabled();
 }
 
 void SpellChecker::requestCheckingFor(Ref<SpellCheckRequest>&& request)
@@ -219,7 +218,7 @@ void SpellChecker::didCheckSucceed(TextCheckingRequestIdentifier identifier, con
         if (requestData.checkingTypes().contains(TextCheckingType::Grammar))
             markerTypes.add(DocumentMarker::Grammar);
         if (!markerTypes.isEmpty())
-            m_document.markers().removeMarkers(m_processingRequest->checkingRange(), markerTypes);
+            removeMarkers(m_processingRequest->checkingRange(), markerTypes);
     }
     didCheck(identifier, results);
 }

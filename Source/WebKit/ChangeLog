@@ -1,3 +1,13 @@
+2020-07-22  Darin Adler  <darin@apple.com>
+
+        Stop using live ranges in SpellChecker.h and TextCheckingHelper.h
+        https://bugs.webkit.org/show_bug.cgi?id=214648
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp: Added an include
+        of Range.h, no longer pulled in indirectly by another header.
+
 2020-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, partially revert r264896.

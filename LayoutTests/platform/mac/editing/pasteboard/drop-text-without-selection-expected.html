@@ -1,0 +1,27 @@
+<script>
+if (window.testRunner)
+     testRunner.dumpEditingCallbacks();
+</script>
+<body onload="runTest()">
+<p>
+    This is a test for <i><a href="https://bugs.webkit.org/show_bug.cgi?id=8394">http://bugzilla.opendarwin.org/show_bug.cgi?id=8394</a>
+    Editable region does not accept dropped text if there is no selection</i>.
+</p>
+<p>
+    The text field should accept drag-and-dropped text, such as the link, even if
+    no text is currently selected.
+</p>
+<hr>
+<input id="field" value="http://www.ibm.com/">
+<a id="link" href="http://www.ibm.com/">drop me into the text field</a>
+
+<script>
+
+function runTest() {
+    var field = document.getElementById("field");
+    field.focus();
+}
+
+</script>
+
+</body>

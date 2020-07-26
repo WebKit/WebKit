@@ -87,12 +87,12 @@ void DocumentMarkerController::addDraggedContentMarker(const SimpleRange& range)
         addMarker(textPiece.node, { DocumentMarker::DraggedContent, textPiece.range, RefPtr<Node> { textPiece.node.ptr() } });
 }
 
-void DocumentMarkerController::removeMarkers(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types, RemovePartiallyOverlappingMarkerOrNot overlapRule)
+void DocumentMarkerController::removeMarkers(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types, RemovePartiallyOverlappingMarker overlapRule)
 {
     filterMarkers(range, nullptr, types, overlapRule);
 }
 
-void DocumentMarkerController::filterMarkers(const SimpleRange& range, const Function<bool(const DocumentMarker&)>& filter, OptionSet<DocumentMarker::MarkerType> types, RemovePartiallyOverlappingMarkerOrNot overlapRule)
+void DocumentMarkerController::filterMarkers(const SimpleRange& range, const Function<bool(const DocumentMarker&)>& filter, OptionSet<DocumentMarker::MarkerType> types, RemovePartiallyOverlappingMarker overlapRule)
 {
     for (auto& textPiece : collectTextRanges(range)) {
         if (!possiblyHasMarkers(types))
@@ -366,7 +366,7 @@ void DocumentMarkerController::copyMarkers(Node& source, OffsetRange range, Node
     }
 }
 
-void DocumentMarkerController::removeMarkers(Node& node, OffsetRange range, OptionSet<DocumentMarker::MarkerType> types, const Function<bool(const DocumentMarker&)>& filter, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
+void DocumentMarkerController::removeMarkers(Node& node, OffsetRange range, OptionSet<DocumentMarker::MarkerType> types, const Function<bool(const DocumentMarker&)>& filter, RemovePartiallyOverlappingMarker overlapRule)
 {
     if (range.start >= range.end)
         return;
@@ -403,7 +403,7 @@ void DocumentMarkerController::removeMarkers(Node& node, OffsetRange range, Opti
 
         DocumentMarker copiedMarker = marker;
         list->remove(i);
-        if (shouldRemovePartiallyOverlappingMarker)
+        if (overlapRule == RemovePartiallyOverlappingMarker::Yes)
             continue;
 
         // Add either of the resulting slices that remain after removing target.
@@ -646,6 +646,21 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(const 
         marker.clearData();
         return false;
     });
+}
+
+void addMarker(const SimpleRange& range, DocumentMarker::MarkerType type, const DocumentMarker::Data& data)
+{
+    range.start.container->document().markers().addMarker(range, type, data);
+}
+
+void addMarker(Text& node, unsigned startOffset, unsigned length, DocumentMarker::MarkerType type, DocumentMarker::Data&& data)
+{
+    node.document().markers().addMarker(node, startOffset, length, type, WTFMove(data));
+}
+
+void removeMarkers(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types, RemovePartiallyOverlappingMarker policy)
+{
+    range.start.container->document().markers().removeMarkers(range, types, policy);
 }
 
 #if ENABLE(TREE_DEBUGGING)

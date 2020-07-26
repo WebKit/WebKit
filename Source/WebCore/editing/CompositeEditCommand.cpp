@@ -777,7 +777,7 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsign
     replaceTextInNode(node, offset, count, replacementText);
     range.end.offset = range.start.offset + replacementText.length();
     for (auto& marker : markers)
-        document().markers().addMarker(range, marker.type(), marker.data());
+        addMarker(range, marker.type(), marker.data());
 }
 
 Position CompositeEditCommand::positionOutsideTabSpan(const Position& position)
