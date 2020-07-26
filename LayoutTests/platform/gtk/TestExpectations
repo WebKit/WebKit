@@ -390,7 +390,7 @@ webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-position.htm
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/video/video-clip-change-src.html [ ImageOnlyFailure ]
+webkit.org/b/169918 compositing/video/video-clip-change-src.html [ Crash ImageOnlyFailure Timeout ]
 webkit.org/b/169918 compositing/reflections/compositing-change-inside-reflection.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/deeply-nested-reflections.html [ Missing Failure ]
 webkit.org/b/169918 compositing/reflections/load-video-in-reflection.html [ Missing Failure ]
@@ -1272,7 +1272,7 @@ webkit.org/b/175575 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 # See also webkit.org/b/141699
 webkit.org/b/177534 fast/attachment/attachment-respects-css-size.html [ Crash ImageOnlyFailure ]
 # See also webkit.org/b/163528 Threaded compositor failures caused by one of r203496, r203497, or r203498
-webkit.org/b/177536 media/video-object-fit.html [ Crash ImageOnlyFailure ]
+webkit.org/b/177536 media/video-object-fit.html [ Crash ImageOnlyFailure Timeout ]
 
 webkit.org/b/185546 media/video-playbackrate.html [ Crash Pass Timeout ]
 
@@ -2142,7 +2142,21 @@ webkit.org/b/213387 imported/w3c/web-platform-tests/html/browsers/offline/introd
 
 webkit.org/b/213776 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation-data-url.tentative.sub.html [ Failure Pass ]
 
+webkit.org/b/214155 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ Failure Pass ]
+
+webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Failure Pass ]
+
 webkit.org/b/214637 js/weakref-finalizationregistry.html [ Timeout Pass ]
+
+webkit.org/b/214797 http/tests/images/jpeg-partial-load.html [ ImageOnlyFailure Timeout Pass ]
+
+webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeout Pass ]
+
+webkit.org/b/214800 imported/w3c/web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/214801 fast/forms/datalist/datalist-show-hide.html [ Failure Pass ]
+
+webkit.org/b/214802 http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2351,7 +2365,7 @@ webkit.org/b/163780 media/media-controls-drag-timeline-set-controls-property.htm
 
 webkit.org/b/168373 http/tests/media/track-in-band-hls-metadata-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
-webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
+webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Crash Timeout ]
 
 webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.html [ Timeout ]
 

@@ -1,5 +1,12 @@
 2020-07-26  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Garden flaky failures after r264897.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2020-07-26  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Added baseline for WebGL test after r264845.
 
         * platform/glib/webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment-expected.txt: Added.
