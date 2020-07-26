@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2020 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -332,8 +332,10 @@ bool ProxyObject::getOwnPropertySlotCommon(JSGlobalObject* globalObject, Propert
     slot.disableCaching();
     slot.setIsTaintedByOpaqueObject();
 
-    if (slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry)
+    if (slot.isVMInquiry()) {
+        slot.setValue(this, static_cast<unsigned>(JSC::PropertyAttribute::None), jsUndefined());
         return false;
+    }
 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

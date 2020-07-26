@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,6 +157,7 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(JSGlobalObject* globalObj
     }
 
     case PropertySlot::InternalMethodType::VMInquiry:
+        slot.setValue(this, static_cast<unsigned>(JSC::PropertyAttribute::None), jsUndefined());
         return false;
     }
 

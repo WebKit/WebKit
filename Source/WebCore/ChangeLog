@@ -1,3 +1,29 @@
+2020-07-24  Mark Lam  <mark.lam@apple.com>
+
+        pluginElementCustomGetOwnPropertySlot() should support VMInquiry requests.
+        https://bugs.webkit.org/show_bug.cgi?id=214555
+        <rdar://problem/65855400>
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Add handling for VMInquiry failure in CodeGeneratorJS.
+
+        2. Fix pluginElementCustomGetOwnPropertySlot() to setIsTaintedByOpaqueObject().
+
+        3. Fix pluginElementCustomGetOwnPropertySlot() handle a VMInquiry failure case
+           and if so, to initialize the PropertySlot to a jsUndefined() value.  The client
+           shouldn't be reading the value if the VMInquiry failed, but as a defensive
+           action, we'll initialize the slot to effectively return an undefined value.
+
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginElementCustomGetOwnPropertySlot):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlot):
+        (GenerateGetOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::JSTestPluginInterface::getOwnPropertySlot):
+        (WebCore::JSTestPluginInterface::getOwnPropertySlotByIndex):
+
 2020-07-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Crash under ValidationBubble::setAnchorRect when showing form validation UI in unparented view

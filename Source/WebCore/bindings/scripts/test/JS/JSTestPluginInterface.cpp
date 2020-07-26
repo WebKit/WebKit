@@ -156,6 +156,9 @@ bool JSTestPluginInterface::getOwnPropertySlot(JSObject* object, JSGlobalObject*
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     if (pluginElementCustomGetOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))
         return true;
+    ASSERT(slot.isTaintedByOpaqueObject());
+    if (slot.isVMInquiry())
+        return false;
     return JSObject::getOwnPropertySlot(object, lexicalGlobalObject, propertyName, slot);
 }
 
@@ -167,6 +170,9 @@ bool JSTestPluginInterface::getOwnPropertySlotByIndex(JSObject* object, JSGlobal
     auto propertyName = Identifier::from(vm, index);
     if (pluginElementCustomGetOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))
         return true;
+    ASSERT(slot.isTaintedByOpaqueObject());
+    if (slot.isVMInquiry())
+        return false;
     return JSObject::getOwnPropertySlotByIndex(object, lexicalGlobalObject, index, slot);
 }
 

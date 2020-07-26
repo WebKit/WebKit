@@ -706,6 +706,9 @@ sub GenerateGetOwnPropertySlot
         AddToImplIncludes("JSPluginElementFunctions.h");
         push(@$outputArray, "    if (pluginElementCustomGetOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))\n");
         push(@$outputArray, "        return true;\n");
+        push(@$outputArray, "    ASSERT(slot.isTaintedByOpaqueObject());\n");
+        push(@$outputArray, "    if (slot.isVMInquiry())\n");
+        push(@$outputArray, "        return false;\n");
     }
 
     # 3. Return OrdinaryGetOwnProperty(O, P).
@@ -819,6 +822,9 @@ sub GenerateGetOwnPropertySlotByIndex
         AddToImplIncludes("JSPluginElementFunctions.h");
         push(@$outputArray, "    if (pluginElementCustomGetOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot))\n");
         push(@$outputArray, "        return true;\n");
+        push(@$outputArray, "    ASSERT(slot.isTaintedByOpaqueObject());\n");
+        push(@$outputArray, "    if (slot.isVMInquiry())\n");
+        push(@$outputArray, "        return false;\n");
     }
 
     # 3. Return OrdinaryGetOwnProperty(O, P).

@@ -133,6 +133,8 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(JSGlobalObject* globalObject, unsig
         RETURN_IF_EXCEPTION(scope, false);
         if (hasSlot)
             return true;
+        if (UNLIKELY(slot.isVMInquiry() && slot.isTaintedByOpaqueObject()))
+            return false;
         if (object->type() == ProxyObjectType && slot.internalMethodType() == PropertySlot::InternalMethodType::HasProperty)
             return false;
         JSValue prototype;
@@ -174,6 +176,8 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(JSGlobalObject* globalObjec
             RETURN_IF_EXCEPTION(scope, false);
             if (hasSlot)
                 return true;
+            if (UNLIKELY(slot.isVMInquiry() && slot.isTaintedByOpaqueObject()))
+                return false;
             if (object->type() == ProxyObjectType && slot.internalMethodType() == PropertySlot::InternalMethodType::HasProperty)
                 return false;
         }

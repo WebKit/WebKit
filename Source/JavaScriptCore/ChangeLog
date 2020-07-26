@@ -1,3 +1,29 @@
+2020-07-24  Mark Lam  <mark.lam@apple.com>
+
+        pluginElementCustomGetOwnPropertySlot() should support VMInquiry requests.
+        https://bugs.webkit.org/show_bug.cgi?id=214555
+        <rdar://problem/65855400>
+
+        Reviewed by Yusuke Suzuki.
+
+        1. Add handling for VMInquiry failure in JSObject::getPropertySlot() and
+           JSObject::getNonIndexPropertySlot().  Basically, if the query isTaintedByOpaqueObject,
+           then we should treat the false result as a failed VMInquiry.
+
+        2. Fix JSModuleNamespaceObject::getOwnPropertySlotCommon() and
+           ProxyObject::getOwnPropertySlotCommon() to initialize the PropertySlot to a
+           jsUndefined() value if we have a failed VMInquiry.  The client shouldn't
+           be reading the value if the VMInquiry failed, but as a defensive action, we'll
+           initialize the slot to effectively return an undefined value.
+
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::getOwnPropertySlotCommon):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::getNonIndexPropertySlot):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::getOwnPropertySlotCommon):
+
 2020-07-24  Dean Jackson  <dino@apple.com>
 
         JavaScriptCore Xcode project has some errors
