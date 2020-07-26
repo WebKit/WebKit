@@ -82,6 +82,9 @@
         "subtests": {
             "/webkit/WebKitWebView/is-playing-audio": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/210635"}}
+            },
+            "/webkit/WebKitWebView/page-visibility": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/214804"}}
             }
         }
     },
@@ -135,13 +138,22 @@
                 "expected": {"wpe": {"status": ["TIMEOUT"]}}
             },
             "WebKit.FocusedFrameAfterCrash": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/205336"}}
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205336"}}
+            },
+            "WebKit.OnDeviceChangeCrash": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/214805"}}
             }
         }
     },
     "TestWTF": {
         "subtests": {
             "ThreadMessage.MultipleSenders": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_Condition.TenProducersOneConsumerHundredSlotsNotifyOne": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_Condition.TenProducersOneConsumerHundredSlotsNotifyAll": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_Condition.TenProducersTenConsumersHundredSlotsNotifyOne": {
@@ -163,6 +175,9 @@
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_Condition.OneProducerOneConsumerOneSlotTimeout": {
+                "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF_Condition.OneProducerTenConsumersOneSlot": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
             },
             "WTF_DateMath.calculateLocalTimeOffset": {
@@ -206,6 +221,9 @@
             },
             "WTF_WordLock.ManyContendedShortSections": {
                 "expected": {"all": {"slow": true, "status": ["TIMEOUT", "PASS"]}}
+            },
+            "WTF.WorkerPoolDecrease": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/214803"}}
             }
         }
     },
