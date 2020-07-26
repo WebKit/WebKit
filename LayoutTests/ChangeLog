@@ -1,3 +1,9 @@
+2020-07-26  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Added baseline for WebGL test after r264845.
+
+        * platform/glib/webgl/1.0.3/conformance/renderbuffers/framebuffer-object-attachment-expected.txt: Added.
+
 2020-07-25  Simon Fraser  <simon.fraser@apple.com>
 
         Some scroll snap cleanup
