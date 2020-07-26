@@ -13,6 +13,8 @@
 
 #include "absl/types/optional.h"
 
+#include <cstdint>
+
 namespace rtc {
 class BitBuffer;
 }

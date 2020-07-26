@@ -1,3 +1,20 @@
+2020-07-26  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        libwebrtc uint64_t build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=214806
+
+        Reviewed by Darin Adler.
+
+        WebKitGTK currently fails to build with -DENABLE_EXPERIMENTAL_FEATURES=ON because a bunch of
+        libwebrtc headers use integer typedefs without declaring them:
+
+        * Source/webrtc/call/rtx_receive_stream.h:
+        * Source/webrtc/common_video/h264/pps_parser.h:
+        * Source/webrtc/common_video/h264/sps_parser.h:
+        * Source/webrtc/modules/audio_processing/aec3/clockdrift_detector.h:
+        * Source/webrtc/modules/include/module_common_types_public.h:
+        * Source/webrtc/modules/video_coding/decoding_state.h:
+
 2020-07-24  Youenn Fablet  <youenn@apple.com>
 
         Do not require hardware H264 encoder in case of HAVE_VTB_REQUIREDLOWLATENCY

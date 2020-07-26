@@ -11,6 +11,7 @@
 #ifndef MODULES_INCLUDE_MODULE_COMMON_TYPES_PUBLIC_H_
 #define MODULES_INCLUDE_MODULE_COMMON_TYPES_PUBLIC_H_
 
+#include <cstdint>
 #include <limits>
 
 #include "absl/types/optional.h"
