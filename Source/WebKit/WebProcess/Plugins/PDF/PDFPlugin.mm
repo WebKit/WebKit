@@ -710,6 +710,8 @@ void PDFPlugin::receivedNonLinearizedPDFSentinel()
         pdfLog("Disabling incremental PDF loading on background thread");
 #endif
         callOnMainThread([this, protectedThis = makeRef(*this)] {
+            if (m_hasBeenDestroyed)
+                return;
             receivedNonLinearizedPDFSentinel();
         });
         return;
@@ -885,6 +887,8 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
     [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:firstPageQueue->dispatchQueue() completion:[&firstPageSemaphore, this] (NSIndexSet *) mutable {
         if (m_incrementalPDFLoadingEnabled) {
             callOnMainThread([this] {
+                if (m_hasBeenDestroyed)
+                    return;
                 adoptBackgroundThreadDocument();
             });
         } else
@@ -1432,6 +1436,9 @@ void PDFPlugin::scrollbarStyleChanged(ScrollbarStyle style, bool forceUpdate)
     if (!forceUpdate)
         return;
 
+    if (m_hasBeenDestroyed)
+        return;
+
     // If the PDF was scrolled all the way to bottom right and scrollbars change to overlay style, we don't want to display white rectangles where scrollbars were.
     IntPoint newScrollOffset = IntPoint(m_scrollOffset).shrunkTo(maximumScrollPosition());
     setScrollOffset(newScrollOffset);
@@ -1790,6 +1797,7 @@ void PDFPlugin::willDetachRenderer()
 
 void PDFPlugin::destroy()
 {
+    m_hasBeenDestroyed = true;
     m_documentFinishedLoading = true;
 
 #if HAVE(INCREMENTAL_PDF_APIS)

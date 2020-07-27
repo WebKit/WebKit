@@ -331,6 +331,7 @@ private:
     RetainPtr<PDFDocument> m_pdfDocument;
 
     bool m_documentFinishedLoading { false };
+    bool m_hasBeenDestroyed { false };
     unsigned m_firstPageHeight { 0 };
     WebCore::IntSize m_pdfDocumentSize; // All pages, including gaps.
 
