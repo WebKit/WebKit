@@ -1,3 +1,36 @@
+2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK] Add API to support "Privacy Report"
+        https://bugs.webkit.org/show_bug.cgi?id=213493
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add WebKitITPFirstParty and WebKitITPThirdParty boxed types to expose the data returned by the ITP summary.
+
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (_WebKitITPFirstParty::_WebKitITPFirstParty):
+        (webkitITPFirstPartyCreate):
+        (webkit_itp_first_party_ref):
+        (webkit_itp_first_party_unref):
+        (webkit_itp_first_party_get_domain):
+        (webkit_itp_first_party_get_website_data_access_allowed):
+        (webkit_itp_first_party_get_last_update_time):
+        (_WebKitITPThirdParty::_WebKitITPThirdParty):
+        (_WebKitITPThirdParty::~_WebKitITPThirdParty):
+        (webkitITPThirdPartyCreate):
+        (webkit_itp_third_party_ref):
+        (webkit_itp_third_party_unref):
+        (webkit_itp_third_party_get_domain):
+        (webkit_itp_third_party_get_first_parties):
+        (webkit_website_data_manager_get_itp_summary):
+        (webkit_website_data_manager_get_itp_summary_finish):
+        * UIProcess/API/gtk/WebKitAutocleanups.h:
+        * UIProcess/API/gtk/WebKitWebsiteDataManager.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitAutocleanups.h:
+        * UIProcess/API/wpe/WebKitWebsiteDataManager.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+
 2020-07-27  Youenn Fablet  <youenn@apple.com>
 
         Fix null pointer crash in NetworkRTCProvider::createServerTCPSocket

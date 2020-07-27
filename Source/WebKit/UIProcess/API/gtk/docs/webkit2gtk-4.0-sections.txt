@@ -1479,6 +1479,23 @@ webkit_website_data_manager_remove_finish
 webkit_website_data_manager_clear
 webkit_website_data_manager_clear_finish
 
+<SUBSECTION ITP Summary>
+WebKitITPFirstParty
+webkit_itp_first_party_ref
+webkit_itp_first_party_unref
+webkit_itp_first_party_get_domain
+webkit_itp_first_party_get_website_data_access_allowed
+webkit_itp_first_party_get_last_update_time
+
+WebKitITPThirdParty
+webkit_itp_third_party_ref
+webkit_itp_third_party_unref
+webkit_itp_third_party_get_domain
+webkit_itp_third_party_get_first_parties
+
+webkit_website_data_manager_get_itp_summary
+webkit_website_data_manager_get_itp_summary_finish
+
 <SUBSECTION Standard>
 WebKitWebsiteDataManagerClass
 WEBKIT_TYPE_WEBSITE_DATA_MANAGER
@@ -1487,10 +1504,14 @@ WEBKIT_IS_WEBSITE_DATA_MANAGER
 WEBKIT_WEBSITE_DATA_MANAGER_CLASS
 WEBKIT_IS_WEBSITE_DATA_MANAGER_CLASS
 WEBKIT_WEBSITE_DATA_MANAGER_GET_CLASS
+WEBKIT_TYPE_ITP_FIRST_PARTY
+WEBKIT_TYPE_ITP_THIRD_PARTY
 
 <SUBSECTION Private>
 WebKitWebsiteDataManagerPrivate
 webkit_website_data_manager_get_type
+webkit_itp_first_party_get_type
+webkit_itp_third_party_get_type
 </SECTION>
 
 <SECTION>

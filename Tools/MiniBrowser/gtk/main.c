@@ -467,6 +467,61 @@ static void aboutDataHandleRequest(WebKitURISchemeRequest *request, WebKitWebCon
     webkit_website_data_manager_fetch(manager, WEBKIT_WEBSITE_DATA_ALL, NULL, (GAsyncReadyCallback)gotWebsiteDataCallback, dataRequest);
 }
 
+typedef struct {
+    WebKitURISchemeRequest *request;
+    GList *thirdPartyList;
+} AboutITPRequest;
+
+static AboutITPRequest *aboutITPRequestNew(WebKitURISchemeRequest *request)
+{
+    AboutITPRequest *itpRequest = g_new0(AboutITPRequest, 1);
+    itpRequest->request = g_object_ref(request);
+    return itpRequest;
+}
+
+static void aboutITPRequestFree(AboutITPRequest *itpRequest)
+{
+    g_clear_object(&itpRequest->request);
+    g_list_free_full(itpRequest->thirdPartyList, (GDestroyNotify)webkit_itp_third_party_unref);
+    g_free(itpRequest);
+}
+
+static void gotITPSummaryCallback(WebKitWebsiteDataManager *manager, GAsyncResult *asyncResult, AboutITPRequest *itpRequest)
+{
+    GList *thirdPartyList = webkit_website_data_manager_get_itp_summary_finish(manager, asyncResult, NULL);
+    GString *result = g_string_new("<html><body>\n<h1>Trackers</h1>\n");
+    GList *l;
+    for (l = thirdPartyList; l && l->data; l = g_list_next(l)) {
+        WebKitITPThirdParty *thirdParty = (WebKitITPThirdParty *)l->data;
+        result = g_string_append(result, "<details>\n");
+        g_string_append_printf(result, "<summary>%s</summary>\n", webkit_itp_third_party_get_domain(thirdParty));
+        result = g_string_append(result, "<table border='1'><tr><th>First Party</th><th>Website data access granted</th><th>Last updated</th></tr>\n");
+        GList *firstPartyList = webkit_itp_third_party_get_first_parties(thirdParty);
+        GList *ll;
+        for (ll = firstPartyList; ll && ll->data; ll = g_list_next(ll)) {
+            WebKitITPFirstParty *firstParty = (WebKitITPFirstParty *)ll->data;
+            char *updatedTime = g_date_time_format_iso8601(webkit_itp_first_party_get_last_update_time(firstParty));
+            g_string_append_printf(result, "<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n", webkit_itp_first_party_get_domain(firstParty),
+                webkit_itp_first_party_get_website_data_access_allowed(firstParty) ? "yes" : "no", updatedTime);
+            g_free(updatedTime);
+        }
+        result = g_string_append(result, "</table></details>\n");
+    }
+
+    result = g_string_append(result, "</body></html>");
+    gsize streamLength = result->len;
+    GInputStream *stream = g_memory_input_stream_new_from_data(g_string_free(result, FALSE), streamLength, g_free);
+    webkit_uri_scheme_request_finish(itpRequest->request, stream, streamLength, "text/html");
+    aboutITPRequestFree(itpRequest);
+}
+
+static void aboutITPHandleRequest(WebKitURISchemeRequest *request, WebKitWebContext *webContext)
+{
+    AboutITPRequest *itpRequest = aboutITPRequestNew(request);
+    WebKitWebsiteDataManager *manager = webkit_web_context_get_website_data_manager(webContext);
+    webkit_website_data_manager_get_itp_summary(manager, NULL, (GAsyncReadyCallback)gotITPSummaryCallback, itpRequest);
+}
+
 static void aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, WebKitWebContext *webContext)
 {
     GInputStream *stream;
@@ -488,6 +543,8 @@ static void aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, WebKi
         g_object_unref(stream);
     } else if (!g_strcmp0(path, "data"))
         aboutDataHandleRequest(request, webContext);
+    else if (!g_strcmp0(path, "itp"))
+        aboutITPHandleRequest(request, webContext);
     else {
         error = g_error_new(MINI_BROWSER_ERROR, MINI_BROWSER_ERROR_INVALID_ABOUT_PATH, "Invalid about:%s page.", path);
         webkit_uri_scheme_request_finish_error(request, error);

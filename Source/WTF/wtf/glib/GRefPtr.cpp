@@ -182,6 +182,19 @@ template <> void derefGPtr(GMappedFile* ptr)
         g_mapped_file_unref(ptr);
 }
 
+template <> GDateTime* refGPtr(GDateTime* ptr)
+{
+    if (ptr)
+        g_date_time_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(GDateTime* ptr)
+{
+    if (ptr)
+        g_date_time_unref(ptr);
+}
+
 } // namespace WTF
 
 #endif // USE(GLIB)

@@ -1,3 +1,19 @@
+2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK] Add API to support "Privacy Report"
+        https://bugs.webkit.org/show_bug.cgi?id=213493
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add about:itp to show the ITP summary.
+
+        * MiniBrowser/gtk/main.c:
+        (aboutITPRequestNew):
+        (aboutITPRequestFree):
+        (gotITPSummaryCallback):
+        (aboutITPHandleRequest):
+        (aboutURISchemeRequestCallback):
+
 2020-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r264690): [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure

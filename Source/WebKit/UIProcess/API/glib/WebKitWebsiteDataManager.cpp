@@ -1112,3 +1112,275 @@ gboolean webkit_website_data_manager_clear_finish(WebKitWebsiteDataManager* mana
 
     return g_task_propagate_boolean(G_TASK(result), error);
 }
+
+struct _WebKitITPFirstParty {
+    explicit _WebKitITPFirstParty(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty&& data)
+        : domain(data.firstPartyDomain.string().utf8())
+        , storageAccessGranted(data.storageAccessGranted)
+        , lastUpdated(adoptGRef(g_date_time_new_from_unix_utc(data.timeLastUpdated.secondsAs<gint64>())))
+    {
+    }
+
+    CString domain;
+    bool storageAccessGranted { false };
+    GRefPtr<GDateTime> lastUpdated;
+    int referenceCount { 1 };
+};
+
+G_DEFINE_BOXED_TYPE(WebKitITPFirstParty, webkit_itp_first_party, webkit_itp_first_party_ref, webkit_itp_first_party_unref)
+
+static WebKitITPFirstParty* webkitITPFirstPartyCreate(WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty&& data)
+{
+    auto* firstParty = static_cast<WebKitITPFirstParty*>(fastMalloc(sizeof(WebKitITPFirstParty)));
+    new (firstParty) WebKitITPFirstParty(WTFMove(data));
+    return firstParty;
+}
+
+
+/**
+ * webkit_itp_first_party_ref:
+ * @itp_first_party: a #WebKitITPFirstParty
+ *
+ * Atomically increments the reference count of @itp_first_party by one.
+ * This function is MT-safe and may be called from any thread.
+ *
+ * Returns: The passed #WebKitITPFirstParty
+ *
+ * Since: 2.30
+ */
+WebKitITPFirstParty* webkit_itp_first_party_ref(WebKitITPFirstParty* firstParty)
+{
+    g_return_val_if_fail(firstParty, nullptr);
+
+    g_atomic_int_inc(&firstParty->referenceCount);
+    return firstParty;
+}
+
+/**
+ * webkit_itp_first_party_unref:
+ * @itp_first_party: a #WebKitITPFirstParty
+ *
+ * Atomically decrements the reference count of @itp_first_party by one.
+ * If the reference count drops to 0, all memory allocated by
+ * #WebKitITPFirstParty is released. This function is MT-safe and may be
+ * called from any thread.
+ *
+ * Since: 2.30
+ */
+void webkit_itp_first_party_unref(WebKitITPFirstParty* firstParty)
+{
+    g_return_if_fail(firstParty);
+
+    if (g_atomic_int_dec_and_test(&firstParty->referenceCount)) {
+        firstParty->~WebKitITPFirstParty();
+        fastFree(firstParty);
+    }
+}
+
+/**
+ * webkit_itp_first_party_get_domain:
+ * @itp_first_party: a #WebKitITPFirstParty
+ *
+ * Get the domain name of @itp_first_party
+ *
+ * Returns: the domain name
+ *
+ * Since: 2.30
+ */
+const char* webkit_itp_first_party_get_domain(WebKitITPFirstParty* firstParty)
+{
+    g_return_val_if_fail(firstParty, nullptr);
+
+    return firstParty->domain.data();
+}
+
+/**
+ * webkit_itp_first_party_get_website_data_access_allowed:
+ * @itp_first_party: a #WebKitITPFirstParty
+ *
+ * Get whether @itp_first_party has granted website data access to its #WebKitITPThirdParty.
+ * Each @WebKitITPFirstParty is created by webkit_itp_third_party_get_first_parties() and
+ * therefore corresponds to exactly one #WebKitITPThirdParty.
+ *
+ * Returns: %TRUE if website data access has been granted, or %FALSE otherwise
+ *
+ * Since: 2.30
+ */
+gboolean webkit_itp_first_party_get_website_data_access_allowed(WebKitITPFirstParty* firstParty)
+{
+    g_return_val_if_fail(firstParty, FALSE);
+
+    return firstParty->storageAccessGranted;
+}
+
+/**
+ * webkit_itp_first_party_get_last_update_time:
+ * @itp_first_party: a #WebKitITPFirstParty
+ *
+ * Get the last time a #WebKitITPThirdParty has been seen under @itp_first_party.
+ * Each @WebKitITPFirstParty is created by webkit_itp_third_party_get_first_parties() and
+ * therefore corresponds to exactly one #WebKitITPThirdParty.
+ *
+ * Returns: (transfer none): the last update time as a #GDateTime
+ *
+ * Since: 2.30
+ */
+GDateTime* webkit_itp_first_party_get_last_update_time(WebKitITPFirstParty* firstParty)
+{
+    g_return_val_if_fail(firstParty, nullptr);
+
+    return firstParty->lastUpdated.get();
+}
+
+struct _WebKitITPThirdParty {
+    explicit _WebKitITPThirdParty(WebResourceLoadStatisticsStore::ThirdPartyData&& data)
+        : domain(data.thirdPartyDomain.string().utf8())
+    {
+        while (!data.underFirstParties.isEmpty())
+            firstParties = g_list_prepend(firstParties, webkitITPFirstPartyCreate(data.underFirstParties.takeLast()));
+    }
+
+    ~_WebKitITPThirdParty()
+    {
+        g_list_free_full(firstParties, reinterpret_cast<GDestroyNotify>(webkit_itp_first_party_unref));
+    }
+
+    CString domain;
+    GList* firstParties { nullptr };
+    int referenceCount { 1 };
+};
+
+G_DEFINE_BOXED_TYPE(WebKitITPThirdParty, webkit_itp_third_party, webkit_itp_third_party_ref, webkit_itp_third_party_unref)
+
+static WebKitITPThirdParty* webkitITPThirdPartyCreate(WebResourceLoadStatisticsStore::ThirdPartyData&& data)
+{
+    auto* thirdParty = static_cast<WebKitITPThirdParty*>(fastMalloc(sizeof(WebKitITPThirdParty)));
+    new (thirdParty) WebKitITPThirdParty(WTFMove(data));
+    return thirdParty;
+}
+
+/**
+ * webkit_itp_third_party_ref:
+ * @itp_third_party: a #WebKitITPThirdParty
+ *
+ * Atomically increments the reference count of @itp_third_party by one.
+ * This function is MT-safe and may be called from any thread.
+ *
+ * Returns: The passed #WebKitITPThirdParty
+ *
+ * Since: 2.30
+ */
+WebKitITPThirdParty* webkit_itp_third_party_ref(WebKitITPThirdParty* thirdParty)
+{
+    g_return_val_if_fail(thirdParty, nullptr);
+
+    g_atomic_int_inc(&thirdParty->referenceCount);
+    return thirdParty;
+}
+
+/**
+ * webkit_itp_third_party_unref:
+ * @itp_third_party: a #WebKitITPThirdParty
+ *
+ * Atomically decrements the reference count of @itp_third_party by one.
+ * If the reference count drops to 0, all memory allocated by
+ * #WebKitITPThirdParty is released. This function is MT-safe and may be
+ * called from any thread.
+ *
+ * Since: 2.30
+ */
+void webkit_itp_third_party_unref(WebKitITPThirdParty* thirdParty)
+{
+    g_return_if_fail(thirdParty);
+
+    if (g_atomic_int_dec_and_test(&thirdParty->referenceCount)) {
+        thirdParty->~WebKitITPThirdParty();
+        fastFree(thirdParty);
+    }
+}
+
+/**
+ * webkit_itp_third_party_get_domain:
+ * @itp_third_party: a #WebKitITPThirdParty
+ *
+ * Get the domain name of @itp_third_party
+ *
+ * Returns: the domain name
+ *
+ * Since: 2.30
+ */
+const char* webkit_itp_third_party_get_domain(WebKitITPThirdParty* thirdParty)
+{
+    g_return_val_if_fail(thirdParty, nullptr);
+
+    return thirdParty->domain.data();
+}
+
+/**
+ * webkit_itp_third_party_get_first_parties:
+ * @itp_third_party: a #WebKitITPThirdParty
+ *
+ * Get the list of #WebKitITPFirstParty under which @itp_third_party has been seen.
+ *
+ * Returns: (transfer none) (element-type WebKitITPFirstParty): a #GList of #WebKitITPFirstParty
+ *
+ * Since: 2.30
+ */
+GList* webkit_itp_third_party_get_first_parties(WebKitITPThirdParty* thirdParty)
+{
+    g_return_val_if_fail(thirdParty, nullptr);
+
+    return thirdParty->firstParties;
+}
+
+/**
+ * webkit_website_data_manager_get_itp_summary:
+ * @manager: a #WebKitWebsiteDataManager
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously get the list of #WebKitITPThirdParty seen for @manager. Every #WebKitITPThirdParty
+ * contains the list of #WebKitITPFirstParty under which it has been seen.
+ *
+ * When the operation is finished, @callback will be called. You can then call
+ * webkit_website_data_manager_get_itp_summary_finish() to get the result of the operation.
+ *
+ * Since: 2.30
+ */
+void webkit_website_data_manager_get_itp_summary(WebKitWebsiteDataManager* manager, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
+
+    GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
+    manager->priv->websiteDataStore->getResourceLoadStatisticsDataSummary([task = WTFMove(task)](Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&& thirdPartyList) {
+        GList* result = nullptr;
+        while (!thirdPartyList.isEmpty())
+            result = g_list_prepend(result, webkitITPThirdPartyCreate(thirdPartyList.takeLast()));
+        g_task_return_pointer(task.get(), result, [](gpointer data) {
+            g_list_free_full(static_cast<GList*>(data), reinterpret_cast<GDestroyNotify>(webkit_itp_third_party_unref));
+        });
+    });
+}
+
+/**
+ * webkit_website_data_manager_get_itp_summary_finish:
+ * @manager: a #WebKitWebsiteDataManager
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_website_data_manager_get_itp_summary().
+ *
+ * Returns: (transfer full) (element-type WebKitITPThirdParty): a #GList of #WebKitITPThirdParty.
+ *    You must free the #GList with g_list_free() and unref the #WebKitITPThirdParty<!-- -->s with
+ *    webkit_itp_third_party_unref() when you're done with them.
+ *
+ * Since: 2.30
+ */
+GList* webkit_website_data_manager_get_itp_summary_finish(WebKitWebsiteDataManager* manager, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, manager), nullptr);
+
+    return static_cast<GList*>(g_task_propagate_pointer(G_TASK(result), error));
+}

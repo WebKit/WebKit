@@ -155,6 +155,60 @@ webkit_website_data_manager_clear_finish                               (WebKitWe
                                                                         GAsyncResult             *result,
                                                                         GError                  **error);
 
+
+#define WEBKIT_TYPE_ITP_FIRST_PARTY   (webkit_itp_first_party_get_type())
+
+typedef struct _WebKitITPFirstParty WebKitITPFirstParty;
+
+WEBKIT_API GType
+webkit_itp_first_party_get_type                        (void);
+
+WEBKIT_API WebKitITPFirstParty *
+webkit_itp_first_party_ref                             (WebKitITPFirstParty      *itp_first_party);
+
+WEBKIT_API void
+webkit_itp_first_party_unref                           (WebKitITPFirstParty      *itp_first_party);
+
+WEBKIT_API const char *
+webkit_itp_first_party_get_domain                      (WebKitITPFirstParty      *itp_first_party);
+
+WEBKIT_API gboolean
+webkit_itp_first_party_get_website_data_access_allowed (WebKitITPFirstParty      *itp_first_party);
+
+WEBKIT_API GDateTime *
+webkit_itp_first_party_get_last_update_time            (WebKitITPFirstParty      *itp_first_party);
+
+
+#define WEBKIT_TYPE_ITP_THIRD_PARTY   (webkit_itp_third_party_get_type())
+
+typedef struct _WebKitITPThirdParty WebKitITPThirdParty;
+
+WEBKIT_API GType
+webkit_itp_third_party_get_type                        (void);
+
+WEBKIT_API WebKitITPThirdParty *
+webkit_itp_third_party_ref                             (WebKitITPThirdParty      *itp_third_party);
+
+WEBKIT_API void
+webkit_itp_third_party_unref                           (WebKitITPThirdParty      *itp_third_party);
+
+WEBKIT_API const char *
+webkit_itp_third_party_get_domain                      (WebKitITPThirdParty      *itp_third_party);
+
+WEBKIT_API GList *
+webkit_itp_third_party_get_first_parties               (WebKitITPThirdParty      *itp_third_party);
+
+
+WEBKIT_API void
+webkit_website_data_manager_get_itp_summary            (WebKitWebsiteDataManager *manager,
+                                                        GCancellable             *cancellable,
+                                                        GAsyncReadyCallback       callback,
+                                                        gpointer                  user_data);
+WEBKIT_API GList *
+webkit_website_data_manager_get_itp_summary_finish     (WebKitWebsiteDataManager *manager,
+                                                        GAsyncResult             *result,
+                                                        GError                  **error);
+
 G_END_DECLS
 
 #endif
