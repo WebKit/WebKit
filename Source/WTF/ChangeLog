@@ -1,3 +1,22 @@
+2020-07-27  Geoffrey Garen  <ggaren@apple.com>
+
+        WebCoreResourceHandleAsOperationQueueDelegate can use RunLoop::dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=214771
+
+        Reviewed by Darin Adler.
+
+        * wtf/cf/RunLoopCF.cpp:
+        (WTF::RunLoop::dispatch): Migrated the optimization from
+        WebCoreResourceHandleAsOperationQueueDelegate. All Cocoa WebViews begin
+        life with a single SchedulePair scheduled in kCFRunLoopCommonModes, so
+        this optimization is the common case.
+
+        (Note that I did not copy the kCFRunLoopDefaultMode clause from
+        the WebCoreResourceHandleAsOperationQueueDelegate optimization. That's
+        because it's not the common case, and also because it's not correct to
+        do a vanilla disptach() in the case of kCFRunLoopDefaultMode because a
+        vanilla dispatch() would use kCFRunLoopCommonModes.)
+
 2020-07-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Disable BIGINT32 optimization temporarily because of SP2 / JS2 regression

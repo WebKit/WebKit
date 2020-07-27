@@ -40,20 +40,9 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
+#import <wtf/RunLoop.h>
 
 using namespace WebCore;
-
-static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& pairs)
-{
-    if (!pairs)
-        return false;
-    for (auto& pair : *pairs) {
-        auto mode = pair->mode();
-        if (mode != kCFRunLoopCommonModes && mode != kCFRunLoopDefaultMode)
-            return true;
-    }
-    return false;
-}
 
 @implementation WebCoreResourceHandleAsOperationQueueDelegate
 
@@ -63,20 +52,10 @@ static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& 
     if (m_messageQueue)
         return m_messageQueue->append(makeUnique<Function<void()>>(WTFMove(function)));
 
-    // This is the common case.
-    if (!scheduledWithCustomRunLoopMode(m_scheduledPairs))
+    if (!m_scheduledPairs)
         return callOnMainThread(WTFMove(function));
 
-    // If we have been scheduled in a custom run loop mode, schedule a block in that mode.
-    auto block = makeBlockPtr([alreadyCalled = false, function = WTFMove(function)] () mutable {
-        if (alreadyCalled)
-            return;
-        alreadyCalled = true;
-        function();
-        function = nullptr;
-    });
-    for (auto& pair : *m_scheduledPairs)
-        CFRunLoopPerformBlock(pair->runLoop(), pair->mode(), block.get());
+    RunLoop::dispatch(*m_scheduledPairs, WTFMove(function));
 }
 
 - (id)initWithHandle:(WebCore::ResourceHandle*)handle messageQueue:(RefPtr<WebCore::SynchronousLoaderMessageQueue>&&)messageQueue

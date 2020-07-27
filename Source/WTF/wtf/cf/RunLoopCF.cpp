@@ -86,6 +86,12 @@ void RunLoop::stop()
 
 void RunLoop::dispatch(const SchedulePairHashSet& schedulePairs, Function<void()>&& function)
 {
+    if (schedulePairs.size() == 1) {
+        auto& schedulePair = *schedulePairs.begin();
+        if (schedulePair->mode() == kCFRunLoopCommonModes && schedulePair->runLoop() == RunLoop::main().m_runLoop)
+            return RunLoop::main().dispatch(WTFMove(function));
+    }
+
     auto timer = createTimer(0_s, false, [] (CFRunLoopTimerRef timer, void* context) {
         AutodrainedPool pool;
 
