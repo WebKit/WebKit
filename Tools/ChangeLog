@@ -1,3 +1,14 @@
+2020-07-27  Sihui Liu  <sihui_liu@appe.com>
+
+        Text manipulation should not extract non-breaking spaces
+        https://bugs.webkit.org/show_bug.cgi?id=214839
+        <rdar://problem/64113531>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-07-27  Aakash Jain  <aakash_jain@apple.com>
 
         ews email notification should include bot name and link to results database

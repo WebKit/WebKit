@@ -1,3 +1,20 @@
+2020-07-27  Sihui Liu  <sihui_liu@appe.com>
+
+        Text manipulation should not extract non-breaking spaces
+        https://bugs.webkit.org/show_bug.cgi?id=214839
+        <rdar://problem/64113531>
+
+        Reviewed by Wenson Hsieh.
+
+        Spaces are very likely to be dropped during translation. And non-breaking space, if dropped, is likely to affect
+        layout of web page.
+
+        API test: TextManipulation.StartTextManipulationIgnoresSpaces
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::isNotSpace):
+        (WebCore::TextManipulationController::parse):
+
 2020-07-27  Chris Dumez  <cdumez@apple.com>
 
         ASSERT([filteredCookies.get() count] <= 1) on  imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html

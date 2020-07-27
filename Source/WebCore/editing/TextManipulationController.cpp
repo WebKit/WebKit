@@ -143,6 +143,14 @@ static bool isTokenDelimiter(UChar character)
     return isHTMLLineBreak(character) || isInPrivateUseArea(character);
 }
 
+static bool isNotSpace(UChar character)
+{
+    if (character == noBreakSpace)
+        return false;
+
+    return isNotHTMLSpace(character);
+}
+
 class ParagraphContentIterator {
 public:
     ParagraphContentIterator(const Position& start, const Position& end)
@@ -388,7 +396,7 @@ void TextManipulationController::parse(ManipulationUnit& unit, const String& tex
             unit.tokens.append(ManipulationToken { m_tokenIdentifier.generate(), stringForToken, tokenInfo(&textNode), true });
             startPositionOfCurrentToken = index + 1;
             unit.lastTokenContainsDelimiter = true;
-        } else if (isNotHTMLSpace(character)) {
+        } else if (isNotSpace(character)) {
             if (!isNodeExcluded)
                 unit.areAllTokensExcluded = false;
             positionOfLastNonHTMLSpace = index;

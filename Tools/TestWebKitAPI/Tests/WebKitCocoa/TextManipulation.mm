@@ -1121,6 +1121,31 @@ TEST(TextManipulation, StartTextManipulationExtractsHeadingElementsAsSeparateIte
     EXPECT_WK_STREQ("This is a heading", items[1].tokens[0].content);
 }
 
+TEST(TextManipulation, StartTextManipulationIgnoresSpaces)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "Hello"
+        "<div style='background-color: lightblue;'>&nbsp;</div>"
+        "World"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("Hello", items[0].tokens[0].content);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("World", items[1].tokens[0].content);
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;
