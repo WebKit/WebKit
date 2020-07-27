@@ -73,6 +73,10 @@ TreeResolver::Scope::Scope(Document& document)
     , sharingResolver(document, resolver.ruleSets(), selectorFilter)
 {
     document.setIsResolvingTreeStyle(true);
+
+    // Ensure all shadow tree resolvers exist so their construction doesn't depend on traversal.
+    for (auto* shadowRoot : document.inDocumentShadowRoots())
+        shadowRoot->styleScope().resolver();
 }
 
 TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
