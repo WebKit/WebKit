@@ -1,3 +1,14 @@
+2020-07-27  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Update test expectations. Update baselines after r263855.
+
+        * platform/glib/tables/mozilla/bugs/bug222336-expected.txt: Renamed from LayoutTests/platform/gtk/tables/mozilla/bugs/bug222336-expected.txt.
+        * platform/wpe/fast/css/acid2-expected.txt:
+        * platform/wpe/fast/css/acid2-pixel-expected.txt:
+        * platform/wpe/http/tests/misc/acid2-expected.txt:
+        * platform/wpe/http/tests/misc/acid2-pixel-expected.txt:
+        * platform/wpe/http/tests/misc/acid3-expected.txt:
+
 2020-07-27  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS ] fast/canvas/canvas-blending-global-alpha.html is passing and expectations need to be removed
