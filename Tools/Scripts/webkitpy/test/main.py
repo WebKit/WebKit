@@ -37,15 +37,15 @@ import traceback
 import unittest
 
 from webkitpy.common.system.logutils import configure_logging
-from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.host import Host
-from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.test.finder import Finder
 from webkitpy.test.printer import Printer
 from webkitpy.test.runner import Runner, unit_test_name
 from webkitpy.results.upload import Upload
 from webkitpy.results.options import upload_options
+
+from webkitcorepy import StringIO
 
 _log = logging.getLogger(__name__)
 

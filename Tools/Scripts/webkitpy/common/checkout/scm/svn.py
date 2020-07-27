@@ -36,14 +36,13 @@ import string
 import sys
 import tempfile
 
-from webkitcorepy import Version
+from webkitcorepy import Version, string_utils
 
 from webkitpy.common.checkout.scm.scm import AuthenticationError, SCM, commit_error_handler
 from webkitpy.common.config.urls import svn_server_host, svn_server_realm
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.common.unicode_compatibility import encode_if_necessary
 
 
 _log = logging.getLogger(__name__)
@@ -416,4 +415,4 @@ class SVN(SCM, SVNRepository):
 
     def propget(self, pname, path):
         dir, base = os.path.split(path)
-        return encode_if_necessary(self._run_svn(['pget', pname, base], cwd=dir).rstrip("\n"))
+        return string_utils.encode(self._run_svn(['pget', pname, base], cwd=dir).rstrip("\n"))

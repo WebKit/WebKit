@@ -29,8 +29,9 @@
 
 import datetime
 import logging
-import os
 import re
+
+from webkitcorepy import string_utils
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import Executive, ScriptError
@@ -38,7 +39,6 @@ from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.checkout.scm.commitmessage import CommitMessage
 from webkitpy.common.checkout.scm.scm import AuthenticationError, SCM, commit_error_handler
 from webkitpy.common.checkout.scm.svn import SVNRepository
-from webkitpy.common.unicode_compatibility import decode_for, encode_if_necessary
 
 _log = logging.getLogger(__name__)
 
@@ -348,7 +348,7 @@ class Git(SCM, SVNRepository):
         if not revision:
             return diff
 
-        return encode_if_necessary("Subversion Revision: ") + encode_if_necessary(revision) + encode_if_necessary('\n') + encode_if_necessary(diff)
+        return string_utils.encode("Subversion Revision: ") + string_utils.encode(revision) + string_utils.encode('\n') + string_utils.encode(diff)
 
     def create_patch(self, git_commit=None, changed_files=None, git_index=False):
         """Returns a byte array (str()) representing the patch file.

@@ -29,9 +29,8 @@
 
 import logging
 import re
-import time
 
-from webkitpy.common.unicode_compatibility import decode_for
+from webkitcorepy import string_utils
 from webkitpy.layout_tests.controllers import test_result_writer
 from webkitpy.port.driver import DriverInput, DriverOutput
 from webkitpy.layout_tests.models import test_expectations
@@ -215,7 +214,7 @@ class SingleTestRunner(object):
         elif driver_output.error:
             _log.debug("%s %s output stderr lines:" % (self._worker_name, testname))
         for line in driver_output.error.splitlines():
-            _log.debug("  {}".format(decode_for(line, str)))
+            _log.debug("  {}".format(string_utils.decode(line, target_type=str)))
         return failures
 
     def _compare_output(self, expected_driver_output, driver_output):

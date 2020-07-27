@@ -35,7 +35,6 @@ import unittest
 
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.port.driver import DriverOutput
 from webkitpy.port.test import TestPort
 from webkitpy.performance_tests.perftest import PerfTest

@@ -28,11 +28,11 @@
 
 """Unit tests for MockDRT."""
 
-import sys
 import unittest
 
+from webkitcorepy import StringIO
+
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.port import mock_drt
 from webkitpy.port import port_testcase
 from webkitpy.port import test

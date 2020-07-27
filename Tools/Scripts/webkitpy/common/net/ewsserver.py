@@ -20,9 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitcorepy import unicode
+
 from webkitpy.common.config.urls import ewsserver_default_host
 from webkitpy.common.net.networktransaction import NetworkTransaction
-from webkitpy.common.unicode_compatibility import unicode
 
 import logging
 

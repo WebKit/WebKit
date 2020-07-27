@@ -36,9 +36,10 @@ import subprocess
 import sys
 import time
 
+from webkitcorepy import StringIO, string_utils, unicode
+
 from webkitpy.common.system.abstractexecutive import AbstractExecutive
 from webkitpy.common.system.outputtee import Tee
-from webkitpy.common import unicode_compatibility
 
 
 _log = logging.getLogger(__name__)
@@ -71,7 +72,7 @@ class ScriptError(Exception):
                 return u"%s\n\nLast %s characters of output:\n%s" % \
                     (self, output_limit, self.output[-output_limit:])
             return u"%s\n\n%s" % (self, self.output)
-        return unicode_compatibility.unicode(self)
+        return unicode(self)
 
     def command_name(self):
         command_path = self.script_args
@@ -127,7 +128,7 @@ class Executive(AbstractExecutive):
             # FIXME: This could be improved not to flatten output to stdout.
             while child_process.poll() is None:
                 output_line = child_process.stdout.readline()
-                teed_output.write(unicode_compatibility.decode_for(output_line, str))
+                teed_output.write(string_utils.decode(output_line, target_type=str))
             return child_process.poll()
 
     # FIXME: Remove this deprecated method and move callers to run_command.
@@ -137,7 +138,7 @@ class Executive(AbstractExecutive):
     # but still have the output to stuff into a log file.
     def run_and_throw_if_fail(self, args, quiet=False, decode_output=True, **kwargs):
         # Cache the child's output locally so it can be used for error reports.
-        child_out_file = unicode_compatibility.StringIO()
+        child_out_file = StringIO()
         tee_stdout = sys.stdout
         try:
             if quiet:
@@ -153,9 +154,9 @@ class Executive(AbstractExecutive):
         child_out_file.close()
 
         if decode_output:
-            child_output = unicode_compatibility.decode_if_necessary(child_output, self._child_process_encoding())
+            child_output = string_utils.decode(child_output, encoding=self._child_process_encoding())
         else:
-            child_output = unicode_compatibility.encode_if_necessary(child_output, self._child_process_encoding())
+            child_output = string_utils.encode(child_output, encoding=self._child_process_encoding())
 
         if exit_code:
             raise ScriptError(script_args=args,
@@ -306,7 +307,7 @@ class Executive(AbstractExecutive):
                         # In some cases the line can contain one or more
                         # leading white-spaces, so strip it before split.
                         pid, process_name = line.strip().split(b' ', 1)
-                        if process_name_filter(unicode_compatibility.decode_for(process_name, str)):
+                        if process_name_filter(string_utils.decode(process_name, target_type=str)):
                             running_pids.append(int(pid))
                     except ValueError as e:
                         pass
@@ -374,7 +375,7 @@ class Executive(AbstractExecutive):
         # See https://bugs.webkit.org/show_bug.cgi?id=37528
         # for an example of a regresion caused by passing a unicode string directly.
         # FIXME: We may need to encode differently on different platforms.
-        input = unicode_compatibility.encode_if_necessary(input, self._child_process_encoding())
+        input = string_utils.encode(input, encoding=self._child_process_encoding())
         return (self.PIPE, input)
 
     # FIXME: run_and_throw_if_fail should be merged into this method.
@@ -407,11 +408,11 @@ class Executive(AbstractExecutive):
             if not string_to_communicate:
                 output = process.communicate()[0]
             else:
-                output = process.communicate(unicode_compatibility.encode_if_necessary(string_to_communicate, 'utf-8'))[0]
+                output = process.communicate(string_utils.encode(string_to_communicate, encoding='utf-8'))[0]
 
             # run_command automatically decodes to unicode() and converts CRLF to LF unless explicitly told not to.
             if decode_output:
-                output = unicode_compatibility.decode_if_necessary(output, self._child_process_encoding()).replace('\r\n', '\n')
+                output = string_utils.decode(output, encoding=self._child_process_encoding()).replace('\r\n', '\n')
 
             # wait() is not threadsafe and can throw OSError due to:
             # http://bugs.python.org/issue1731717
@@ -464,11 +465,11 @@ class Executive(AbstractExecutive):
     def _encode_argument_if_needed(self, argument):
         if not self._should_encode_child_process_arguments():
             return argument
-        return unicode_compatibility.encode_if_necessary(argument, self._child_process_encoding())
+        return string_utils.encode(argument, encoding=self._child_process_encoding())
 
     def _stringify_args(self, args):
         # Popen will throw an exception if args are non-strings (like int())
-        string_args = map(unicode_compatibility.unicode, args)
+        string_args = map(unicode, args)
         # The Windows implementation of Popen cannot handle unicode strings. :(
         return map(self._encode_argument_if_needed, string_args)
 

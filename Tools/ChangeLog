@@ -1,3 +1,107 @@
+2020-07-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add string_utils (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=214405
+
+        Reviewed by Dewei Zhu.
+
+        Use webkitcorepy.string_utils instead of unicode_compatibility for unicode conversions.
+
+        * Scripts/webkitpy/api_tests/runner.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/bindings/main.py: Replace unicode_compatibility with string_utils,
+        remove unused imports.
+        * Scripts/webkitpy/common/checkout/changelog.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py: Make imports explicit.
+        * Scripts/webkitpy/common/checkout/checkout.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py: Replace unicode_compatibility with
+        string_utils, remove unused imports
+        * Scripts/webkitpy/common/checkout/diff_parser_unittest.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/checkout/scm/git.py: Replace unicode_compatibility with string_utils,
+        remove unused imports.
+        * Scripts/webkitpy/common/checkout/scm/scm.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py: Replace unicode_compatibility with string_utils,
+        remove unused imports.
+        * Scripts/webkitpy/common/checkout/scm/svn.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/config/committers.py: Replace unicode_compatibility with string_utils,
+        remove unused imports.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py: Replace unicode_compatibility with
+        string_utils, remove unused imports.
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py: Ditto.
+        * Scripts/webkitpy/common/net/ewsserver.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/net/web_mock.py: Ditto.
+        * Scripts/webkitpy/common/prettypatch.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/read_checksum_from_png.py: Ditto.
+        * Scripts/webkitpy/common/read_checksum_from_png_unittest.py: Ditto
+        * Scripts/webkitpy/common/system/abstractexecutive.py: Ditto.
+        * Scripts/webkitpy/common/system/crashlogs.py: Ditto.
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py: Ditto.
+        * Scripts/webkitpy/common/system/executive.py: Ditto.
+        * Scripts/webkitpy/common/system/executive_mock.py: Ditto.
+        * Scripts/webkitpy/common/system/executive_unittest.py: Replace unicode_compatibility with string_utils,
+        remove unused imports.
+        * Scripts/webkitpy/common/system/filesystem.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/system/filesystem_mock.py: Replace unicode_compatibility with string_utils,
+        remove unused imports.
+        * Scripts/webkitpy/common/system/outputcapture.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/system/outputtee_unittest.py: Ditto.
+        * Scripts/webkitpy/common/wavediff.py: Replace unicode_compatibility with string_utils, remove
+        unused imports.
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py: Replace unicode_compatibility with
+        string_utils, remove unused imports.
+        * Scripts/webkitpy/layout_tests/lint_test_expectations_unittest.py: Replace unicode_compatibility with
+        string_utils.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py: Ditto.
+        * Scripts/webkitpy/layout_tests/views/buildbot_results_unittest.py: Replace unicode_compatibility with
+        string_utils, remove unused imports.
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py: Replace unicode_compatibility with
+        string_utils.
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py: Replace unicode_compatibility with
+        string_utils, remove unused imports.
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py: Remove unused imports.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py: Ditto.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py: Replace unicode_compatibility with
+        string_utils, remove unused imports.
+        * Scripts/webkitpy/port/base.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/port/driver.py: Replace unicode_compatibility with string_utils, remove unused imports.
+        * Scripts/webkitpy/port/image_diff.py: Ditto.
+        * Scripts/webkitpy/port/leakdetector.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/port/leakdetector_valgrind.py: Replace unicode_compatibility with string_utils, remove
+        unused imports.
+        * Scripts/webkitpy/port/leakdetector_valgrind_unittest.py: Ditto.
+        * Scripts/webkitpy/port/linux_get_crash_log.py: Ditto.
+        * Scripts/webkitpy/port/mock_drt.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/port/mock_drt_unittest.py: Replace unicode_compatibility with string_utils, remove
+        unused imports.
+        * Scripts/webkitpy/port/server_process.py: Ditto.
+        * Scripts/webkitpy/port/server_process_mock.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/port/test.py: Ditto.
+        * Scripts/webkitpy/results/upload_unittest.py: Ditto.
+        * Scripts/webkitpy/style/checkers/cpp.py: Replace unicode_compatibility with string_utils, remove
+        unused imports.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/style/checkers/python.py: Ditto.
+        * Scripts/webkitpy/style/patchreader.py: Ditto.
+        * Scripts/webkitpy/test/main.py: Replace unicode_compatibility with string_utils, remove unused imports.
+        * Scripts/webkitpy/test/main_unittest.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/test/printer.py: Ditto.
+        * Scripts/webkitpy/test/runner_unittest.py: Ditto.
+        * Scripts/webkitpy/test/skip_unittest.py: Ditto.
+        * Scripts/webkitpy/tool/bot/irc_command.py: Replace unicode_compatibility with string_utils, remove
+        unused imports.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py: Ditto.
+        * Scripts/webkitpy/tool/commands/queues.py: Remove unused imports.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py: Ditto.
+        * Scripts/webkitpy/tool/steps/haslanded.py: Replace unicode_compatibility with string_utils, remove
+        unused imports.
+        * Scripts/webkitpy/w3c/test_converter_unittest.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/w3c/test_exporter.py: Replace unicode_compatibility with string_utils, remove unused
+        imports.
+        * Scripts/webkitpy/w3c/wpt_github.py: Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/w3c/wpt_github_unittest.py: Replace unicode_compatibility with string_utils, remove
+        unused imports.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py: Replace unicode_compatibility with string_utils.
+
 2020-07-27  Sihui Liu  <sihui_liu@appe.com>
 
         Text manipulation should not extract non-breaking spaces

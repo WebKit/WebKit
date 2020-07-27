@@ -41,7 +41,9 @@ import os.path
 import random
 import re
 import unittest
-from webkitpy.common.unicode_compatibility import decode_if_necessary
+
+from webkitcorepy import string_utils
+
 from webkitpy.style.checkers import cpp as cpp_style
 from webkitpy.style.checkers.cpp import CppChecker
 from webkitpy.style.filter import FilterConfiguration
@@ -2465,7 +2467,7 @@ class CppStyleTest(CppStyleTestBase):
         def do_test(self, raw_bytes, has_invalid_utf8):
             error_collector = ErrorCollector(self.assertTrue)
             self.process_file_data('foo.cpp', 'cpp',
-                                   decode_if_necessary(raw_bytes, encoding='utf8', errors='replace').split('\n'),
+                                   string_utils.decode(raw_bytes, encoding='utf8', errors='replace').split('\n'),
                                    error_collector)
             # The warning appears only once.
             self.assertEqual(

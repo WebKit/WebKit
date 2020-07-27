@@ -28,13 +28,10 @@
 
 import unittest
 
-from webkitpy.common.host_mock import MockHost
-from webkitpy.common.unicode_compatibility import StringIO
-from webkitpy.tool.mocktool import MockOptions
+from webkitcorepy import StringIO
 
-from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.models import test_failures
-from webkitpy.layout_tests.models import test_run_results
+from webkitpy.common.host_mock import MockHost
+from webkitpy.tool.mocktool import MockOptions
 from webkitpy.layout_tests.models import test_run_results
 from webkitpy.layout_tests.models import test_run_results_unittest
 from webkitpy.layout_tests.views import buildbot_results

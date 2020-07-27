@@ -28,10 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import operator
 import re
 import sys
-import urllib
+
+from webkitcorepy import string_utils, unicode
 
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.memoized import memoized
@@ -40,7 +40,6 @@ from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.logutils import get_logger
-from webkitpy.common.unicode_compatibility import decode_for, unicode
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
@@ -50,7 +49,6 @@ if sys.version_info > (3, 0):
     from urllib.request import urlopen
 else:
     from urllib2 import HTTPError, quote, URLError, urlopen
-
 
 
 _log = get_logger(__file__)
@@ -319,8 +317,8 @@ class BuildBot(object):
             # FIXME: We treat slave lost as green even though it is not to
             # work around the Qts bot being on a broken internet connection.
             # The real fix is https://bugs.webkit.org/show_bug.cgi?id=37099
-            builder['is_green'] = not re.search('fail', decode_for(cell.renderContents(), str)) or \
-                                 bool(re.search('lost', decode_for(cell.renderContents(), str)))
+            builder['is_green'] = not re.search('fail', string_utils.decode(cell.renderContents(), target_type=str)) or \
+                bool(re.search('lost', string_utils.decode(cell.renderContents(), target_type=str)))
 
             status_link_regexp = r"builders/(?P<builder_name>.*)/builds/(?P<build_number>\d+)"
             link_match = re.match(status_link_regexp, status_link['href'])
@@ -336,7 +334,7 @@ class BuildBot(object):
 
     def _parse_current_build_cell(self, builder, cell):
         # Convert rendered contents to native string
-        rendered = decode_for(cell.renderContents(), str)
+        rendered = string_utils.decode(cell.renderContents(), target_type=str)
 
         # BeautifulSoup and bs4 render differently
         if '<br/>' in rendered:

@@ -24,7 +24,8 @@ import logging
 import re
 import unittest
 
-from webkitpy.common.unicode_compatibility import StringIO
+from webkitcorepy import StringIO
+
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.test.printer import Printer
 from webkitpy.test.runner import Runner

@@ -33,9 +33,10 @@ import logging
 import re
 import sys
 
+from webkitcorepy import unicode
+
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.unicode_compatibility import unicode
 
 _log = logging.getLogger(__name__)
 

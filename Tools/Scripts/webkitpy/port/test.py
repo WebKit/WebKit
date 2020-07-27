@@ -28,11 +28,12 @@
 
 import time
 
+from webkitcorepy import string_utils
+
 from webkitpy.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
-from webkitpy.common.unicode_compatibility import decode_for, encode_if_necessary
 
 
 # This sets basic expectations for a test. Each individual expectation
@@ -442,8 +443,8 @@ class TestPort(Port):
         return 'Release'
 
     def diff_image(self, expected_contents, actual_contents, tolerance=None):
-        expected_contents = encode_if_necessary(expected_contents)
-        actual_contents = encode_if_necessary(actual_contents)
+        expected_contents = string_utils.encode(expected_contents)
+        actual_contents = string_utils.encode(actual_contents)
         diffed = actual_contents != expected_contents
         if not actual_contents and not expected_contents:
             return (None, 0, None)
@@ -453,8 +454,8 @@ class TestPort(Port):
             assert tolerance == 0
         if diffed:
             return ("< {}\n---\n> {}\n".format(
-                decode_for(expected_contents, str),
-                decode_for(actual_contents, str),
+                string_utils.decode(expected_contents, target_type=str),
+                string_utils.decode(actual_contents, target_type=str),
             ), 1, None)
         return (None, 0, None)
 

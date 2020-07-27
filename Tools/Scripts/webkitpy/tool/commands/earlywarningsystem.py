@@ -29,20 +29,17 @@
 
 import json
 import logging
-import os
 from optparse import make_option
 import sys
 
-from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.config.ports import DeprecatedPort
+from webkitcorepy import string_utils
+
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.unicode_compatibility import encode_for
 from webkitpy.tool.bot.earlywarningsystemtask import EarlyWarningSystemTask, EarlyWarningSystemTaskDelegate
 from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
 from webkitpy.tool.bot.jsctestresultsreader import JSCTestResultsReader
 from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid, PatchIsNotApplicable
-from webkitpy.tool.bot.queueengine import QueueEngine
 from webkitpy.tool.commands.queues import AbstractReviewQueue
 
 _log = logging.getLogger(__name__)
@@ -156,9 +153,9 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         classes = []
         for name, config in ewses.items():
             if sys.version_info > (3, 0):
-                translated = encode_for(name, str).translate(' -')
+                translated = string_utils.encode(name, target_type=str).translate(' -')
             else:
-                translated = encode_for(name, str).translate(None, ' -')
+                translated = string_utils.encode(name, target_type=str).translate(None, ' -')
 
             classes.append(type(translated, (cls,), {
                 'name': config.get('name', config['port'] + '-ews'),

@@ -29,7 +29,8 @@
 import logging
 import os
 
-from webkitpy.common.unicode_compatibility import BytesIO, decode_for, encode_if_necessary, unicode
+from webkitcorepy import BytesIO, string_utils, unicode
+
 from webkitpy.common.system.executive import ScriptError
 
 _log = logging.getLogger(__name__)
@@ -38,8 +39,8 @@ _log = logging.getLogger(__name__)
 class MockProcess(object):
     def __init__(self, stdout='MOCK STDOUT\n', stderr=''):
         self.pid = 42
-        self.stdout = BytesIO(encode_if_necessary(stdout))
-        self.stderr = BytesIO(encode_if_necessary(stderr))
+        self.stdout = BytesIO(string_utils.encode(stdout))
+        self.stderr = BytesIO(string_utils.encode(stderr))
         self.stdin = BytesIO()
         self.returncode = 0
         self._is_running = False
@@ -138,7 +139,7 @@ class MockExecutive(object):
                 env_string = ", env={" + env_string + "}"
             input_string = ""
             if input:
-                input_string = ", input=%s" % decode_for(input, str)
+                input_string = ", input=%s" % string_utils.decode(input, target_type=str)
             _log.info("MOCK run_command: %s, cwd=%s%s%s" % (args, cwd, env_string, input_string))
         output = "MOCK output of child process"
 

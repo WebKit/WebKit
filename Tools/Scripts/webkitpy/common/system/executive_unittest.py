@@ -28,7 +28,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import errno
 import signal
 import subprocess
 import sys
@@ -46,7 +45,8 @@ if third_party_py not in sys.path:
 
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common import unicode_compatibility
+
+from webkitcorepy import string_utils
 
 
 class ScriptErrorTest(unittest.TestCase):
@@ -139,11 +139,11 @@ class ExecutiveTest(unittest.TestCase):
             encoding = 'mbcs'
         else:
             encoding = 'utf-8'
-        encoded_tor = unicode_compatibility.encode_if_necessary(unicode_tor_input, encoding)
+        encoded_tor = string_utils.encode(unicode_tor_input, encoding=encoding)
         # On Windows, we expect the unicode->mbcs->unicode roundtrip to be
         # lossy. On other platforms, we expect a lossless roundtrip.
         if sys.platform.startswith('win'):
-            unicode_tor_output = unicode_compatibility.decode_if_necessary(encoded_tor, encoding)
+            unicode_tor_output = string_utils.decode(encoded_tor, encoding=encoding)
         else:
             unicode_tor_output = unicode_tor_input
 

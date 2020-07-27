@@ -22,8 +22,10 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+
+from webkitcorepy import StringIO
+
 from webkitpy.common import read_checksum_from_png
-from webkitpy.common.unicode_compatibility import StringIO
 
 
 class ReadChecksumFromPngTest(unittest.TestCase):

@@ -21,11 +21,9 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import struct
-import sys
-import tempfile
 import wave
 
-from webkitpy.common.unicode_compatibility import BytesIO, StringIO
+from webkitcorepy import BytesIO, StringIO
 
 
 class WaveDiff(object):

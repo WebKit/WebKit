@@ -33,11 +33,11 @@ import fnmatch
 import json
 import sys
 
+from webkitcorepy import string_utils, unicode
+
 from functools import reduce
 from webkitpy.common.editdistance import edit_distance
-from webkitpy.common.memoized import memoized
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.unicode_compatibility import encode_for, unicode
 
 
 class Contributor(object):
@@ -73,7 +73,7 @@ class Contributor(object):
         return self.emails[0]
 
     def __str__(self):
-        return encode_for(u'"{}" <{}>'.format(unicode(self.full_name), unicode(self.emails[0])), str)
+        return string_utils.encode(u'"{}" <{}>'.format(unicode(self.full_name), unicode(self.emails[0])), target_type=str)
 
     def __unicode__(self):
         return u'"{}" <{}>'.format(unicode(self.full_name), unicode(self.emails[0]))

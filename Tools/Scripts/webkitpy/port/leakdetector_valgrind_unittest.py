@@ -23,13 +23,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
 import unittest
+
+from webkitcorepy import string_utils
 
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.common.unicode_compatibility import decode_for
 from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
 
 
@@ -808,7 +808,7 @@ Suppressions used:
 
 def mock_run_cppfilt_command(args):
     if args[0] == 'c++filt':
-        return valgrind_output_cppfilt_map[decode_for(args[2], str)]
+        return valgrind_output_cppfilt_map[string_utils.decode(args[2], target_type=str)]
     return ""
 
 

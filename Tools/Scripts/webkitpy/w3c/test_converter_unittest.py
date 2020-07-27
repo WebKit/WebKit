@@ -29,10 +29,11 @@ import os
 import re
 import unittest
 
+from webkitcorepy import unicode
+
 from webkitpy.common.host import Host
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.common.unicode_compatibility import unicode
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 from webkitpy.w3c.test_converter import _W3CTestConverter
 

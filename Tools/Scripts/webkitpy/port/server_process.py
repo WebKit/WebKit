@@ -35,8 +35,7 @@ import signal
 import sys
 import time
 
-from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.unicode_compatibility import encode_if_necessary
+from webkitcorepy import string_utils
 
 # Note that although win32 python does provide an implementation of
 # the win32 select API, it only works on sockets, and not on the named pipes
@@ -185,7 +184,7 @@ class ServerProcess(object):
         if not self._proc:
             self._start()
         try:
-            self._proc.stdin.write(encode_if_necessary(bytes))
+            self._proc.stdin.write(string_utils.encode(bytes))
             self._proc.stdin.flush()
         except (IOError, ValueError) as e:
             self.stop(0.0)

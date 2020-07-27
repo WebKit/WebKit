@@ -41,6 +41,7 @@ import sys
 
 from collections import OrderedDict
 from functools import partial
+from webkitcorepy import string_utils
 
 from webkitpy.common import find_files
 from webkitpy.common import read_checksum_from_png
@@ -52,7 +53,6 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, VersionNameMap
 from webkitpy.common.wavediff import WaveDiff
 from webkitpy.common.webkit_finder import WebKitFinder
-from webkitpy.common.unicode_compatibility import encode_for, encode_if_necessary, decode_for
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port import config as port_config
 from webkitpy.port import driver
@@ -326,8 +326,8 @@ class Port(object):
     def diff_text(self, expected_text, actual_text, expected_filename, actual_filename):
         """Returns a string containing the diff of the two text strings
         in 'unified diff' format."""
-        expected_filename = decode_for(encode_if_necessary(expected_filename), str)
-        actual_filename = decode_for(encode_if_necessary(actual_filename), str)
+        expected_filename = string_utils.decode(string_utils.encode(expected_filename), target_type=str)
+        actual_filename = string_utils.decode(string_utils.encode(actual_filename), target_type=str)
         diff = difflib.unified_diff(expected_text.splitlines(True),
                                     actual_text.splitlines(True),
                                     expected_filename,
@@ -488,7 +488,7 @@ class Port(object):
             baseline_path = self.expected_filename(test_name, '.webarchive', device_type=device_type)
             if not self._filesystem.exists(baseline_path):
                 return None
-        text = decode_for(self._filesystem.read_binary_file(baseline_path), str)
+        text = string_utils.decode(self._filesystem.read_binary_file(baseline_path), target_type=str)
         return text.replace("\r\n", "\n")
 
     def _get_reftest_list(self, test_name):
@@ -1492,7 +1492,7 @@ class Port(object):
         if args:
             run_script_command.extend(args)
         output = self._executive.run_command(run_script_command, cwd=self.webkit_base(), decode_output=decode_output, env=env)
-        _log.debug('Output of %s:\n%s' % (run_script_command, encode_for(output, str) if decode_output else output))
+        _log.debug('Output of %s:\n%s' % (run_script_command, string_utils.encode(output, target_type=str) if decode_output else output))
         return output
 
     def _build_driver(self):

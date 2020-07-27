@@ -26,8 +26,9 @@
 import re
 import sys
 
+from webkitcorepy import StringIO
+
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.common.system.outputcapture import OutputCaptureScope
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.thirdparty.autoinstalled import pycodestyle

@@ -30,8 +30,8 @@
 import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.unicode_compatibility import StringIO
-from webkitpy.common.checkout.changelog import *
+from webkitpy.common.checkout.changelog import ChangeLog, ChangeLogEntry, CommitterList, parse_bug_id_from_changelog
+from webkitcorepy import StringIO
 
 
 class ChangeLogTest(unittest.TestCase):

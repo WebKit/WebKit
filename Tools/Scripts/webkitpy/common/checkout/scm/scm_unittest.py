@@ -56,9 +56,8 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.checkout.scm.git import Git, AmbiguousCommitError
 from webkitpy.common.checkout.scm.detection import detect_scm_system
-from webkitpy.common.checkout.scm.scm import SCM, CheckoutNeedsUpdate, commit_error_handler, AuthenticationError
+from webkitpy.common.checkout.scm.scm import CheckoutNeedsUpdate, commit_error_handler, AuthenticationError
 from webkitpy.common.checkout.scm.svn import SVN
-from webkitpy.common.unicode_compatibility import decode_if_necessary
 
 
 # We cache the mock SVN repo so that we don't create it again for each call to an SVNTest or GitTest test_ method.

@@ -29,9 +29,9 @@
 import re
 import unittest
 
-import webkitpy.common.checkout.diff_parser as diff_parser
+from webkitcorepy import StringIO
 
-from webkitpy.common.unicode_compatibility import StringIO
+import webkitpy.common.checkout.diff_parser as diff_parser
 from webkitpy.common.checkout.diff_test_data import DIFF_TEST_DATA
 
 

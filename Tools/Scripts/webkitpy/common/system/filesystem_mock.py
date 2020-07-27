@@ -30,10 +30,8 @@ import errno
 import hashlib
 import os
 import re
-import sys
 
-from webkitpy.common import unicode_compatibility
-from webkitpy.common.system import path
+from webkitcorepy import UnicodeIO, string_utils
 
 class MockFileSystem(object):
     sep = '/'
@@ -48,7 +46,7 @@ class MockFileSystem(object):
                 value of None is used to indicate that the file should
                 not exist.
         """
-        self.files = {name: unicode_compatibility.encode_if_necessary(contents) for name, contents in (files or {}).items()}
+        self.files = {name: string_utils.encode(contents) for name, contents in (files or {}).items()}
         self.written_files = {}
         self.last_tmpdir = None
         self.current_tmpno = 0
@@ -329,8 +327,8 @@ class MockFileSystem(object):
     def write_binary_file(self, path, contents):
         # FIXME: should this assert if dirname(path) doesn't exist?
         self.maybe_make_directory(self.dirname(path))
-        self.files[path] = unicode_compatibility.encode_for(contents, bytes)
-        self.written_files[path] = unicode_compatibility.encode_for(contents, bytes)
+        self.files[path] = string_utils.encode(contents)
+        self.written_files[path] = string_utils.encode(contents)
 
     def open_text_file_for_reading(self, path, errors='strict'):
         if self.files.get(path) is None:
@@ -344,7 +342,7 @@ class MockFileSystem(object):
         return self.read_binary_file(path).decode('utf-8', errors=errors)
 
     def write_text_file(self, path, contents, errors='strict'):
-        return self.write_binary_file(path, unicode_compatibility.encode_if_necessary(contents, 'utf-8', errors=errors))
+        return self.write_binary_file(path, string_utils.encode(contents, encoding='utf-8', errors=errors))
 
     def sha1(self, path):
         contents = self.read_binary_file(path)
@@ -453,13 +451,13 @@ class WritableBinaryFileObject(object):
         self.closed = True
 
     def write(self, string):
-        self.fs.files[self.path] += unicode_compatibility.encode_if_necessary(string, 'utf-8')
+        self.fs.files[self.path] += string_utils.encode(string, encoding='utf-8')
         self.fs.written_files[self.path] = self.fs.files[self.path]
 
 
 class WritableTextFileObject(WritableBinaryFileObject):
     def write(self, str):
-        WritableBinaryFileObject.write(self, unicode_compatibility.encode_if_necessary(str, 'utf-8'))
+        WritableBinaryFileObject.write(self, string_utils.encode(str, encoding='utf-8'))
 
 
 class ReadableBinaryFileObject(object):
@@ -492,7 +490,7 @@ class ReadableBinaryFileObject(object):
 
 class ReadableTextFileObject(ReadableBinaryFileObject):
     def __init__(self, fs, path, data):
-        super(ReadableTextFileObject, self).__init__(fs, path, unicode_compatibility.UnicodeIO(unicode_compatibility.decode_for(data, unicode_compatibility.unicode)))
+        super(ReadableTextFileObject, self).__init__(fs, path, UnicodeIO(string_utils.decode(data)))
 
     def close(self):
         self.data.close()

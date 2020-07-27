@@ -27,9 +27,10 @@
 import argparse
 import logging
 import os
-import time
 import json
 import sys
+
+from webkitcorepy import string_utils
 
 from webkitpy.common.checkout.scm.git import Git
 from webkitpy.common.host import Host
@@ -39,7 +40,6 @@ from webkitpy.w3c.wpt_github import WPTGitHub
 from webkitpy.w3c.wpt_linter import WPTLinter
 from webkitpy.w3c.common import WPT_GH_ORG, WPT_GH_REPO_NAME, WPT_GH_URL, WPTPaths
 from webkitpy.common.memoized import memoized
-from webkitpy.common.unicode_compatibility import encode_if_necessary, decode_for
 
 if sys.version_info > (3, 0):
     from urllib.error import HTTPError
@@ -160,7 +160,7 @@ class WebPlatformTestExporter(object):
         return line.split(b' ')[-1]
 
     def _is_ignored_file(self, filename):
-        filename = decode_for(filename, str)
+        filename = string_utils.decode(filename, target_type=str)
         for suffix in EXCLUDED_FILE_SUFFIXES:
             if filename.endswith(suffix):
                 return True
@@ -185,10 +185,10 @@ class WebPlatformTestExporter(object):
         _, patch_file = self._filesystem.open_binary_tempfile('wpt_export_patch')
         patch_data = self._wpt_patch
         if b'diff' not in patch_data:
-            _log.info('No changes to upstream, patch data is: "{}"'.format(decode_for(patch_data, str)))
+            _log.info('No changes to upstream, patch data is: "{}"'.format(string_utils.decode(patch_data, target_type=str)))
             return b''
         # FIXME: We can probably try to use --relative git parameter to not do that replacement.
-        patch_data = patch_data.replace(encode_if_necessary(WEBKIT_WPT_DIR) + b'/', b'')
+        patch_data = patch_data.replace(string_utils.encode(WEBKIT_WPT_DIR) + b'/', b'')
 
         # FIXME: Support stripping of <!-- webkit-test-runner --> comments.
         self.has_webkit_test_runner_specific_changes = b'webkit-test-runner' in patch_data

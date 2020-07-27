@@ -32,14 +32,13 @@ import json
 import sys
 import unittest
 
-from webkitpy.common.unicode_compatibility import StringIO
+from webkitcorepy import StringIO
+
 from webkitpy.common.system import outputcapture, path
 from webkitpy.common.system.crashlogs_unittest import make_mock_crash_report_darwin
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.unicode_compatibility import StringIO
-
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
 from webkitpy.port import test

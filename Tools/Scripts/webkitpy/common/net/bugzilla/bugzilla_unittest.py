@@ -27,15 +27,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import datetime
-import sys
 import unittest
+
+from webkitcorepy import StringIO
 
 from webkitpy.common.config import urls
 from webkitpy.common.config.committers import Reviewer, Committer, Contributor, CommitterList
 from webkitpy.common.net.web_mock import MockBrowser
 from webkitpy.common.net.bugzilla.bugzilla import Bugzilla, BugzillaQueries, CommitQueueFlag, EditUsersParser
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 from webkitpy.thirdparty.mock import Mock
 

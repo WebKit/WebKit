@@ -24,11 +24,12 @@ import os
 import logging
 import time
 
+from webkitcorepy import string_utils
+
 from webkitpy.common import message_pool
 from webkitpy.common.iteration_compatibility import iteritems
 from webkitpy.port.server_process import ServerProcess, _log as server_process_logger
 from webkitpy.xcode.simulated_device import SimulatedDeviceManager
-from webkitpy.common.unicode_compatibility import decode_for
 
 
 class Runner(object):
@@ -179,11 +180,11 @@ class _Worker(object):
                     break
 
                 if stderr_line:
-                    stderr_line = decode_for(stderr_line, str)
+                    stderr_line = string_utils.decode(stderr_line, target_type=str)
                     stderr_buffer += stderr_line
                     self.post('log', output=stderr_line[:-1])
                 if stdout_line:
-                    stdout_line = decode_for(stdout_line, str)
+                    stdout_line = string_utils.decode(stdout_line, target_type=str)
                     if '**PASS**' in stdout_line:
                         status = Runner.STATUS_PASSED
                     elif '**FAIL**' in stdout_line:
@@ -202,8 +203,8 @@ class _Worker(object):
                 status = Runner.STATUS_FAILED
 
         finally:
-            remaining_stderr = decode_for(server_process.pop_all_buffered_stderr(), str)
-            remaining_stdout = decode_for(server_process.pop_all_buffered_stdout(), str)
+            remaining_stderr = string_utils.decode(server_process.pop_all_buffered_stderr(), target_type=str)
+            remaining_stdout = string_utils.decode(server_process.pop_all_buffered_stdout(), target_type=str)
             self.post('log', output=remaining_stderr + remaining_stdout)
             output_buffer = stderr_buffer + stdout_buffer + remaining_stderr + remaining_stdout
             server_process.stop()

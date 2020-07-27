@@ -31,11 +31,12 @@ import json
 import logging
 import re
 import sys
+
 from collections import namedtuple
+from webkitcorepy import string_utils
 
 from webkitpy.common.memoized import memoized
 from webkitpy.w3c.common import WPT_GH_ORG, WPT_GH_REPO_NAME, EXPORT_PR_LABEL
-from webkitpy.common.unicode_compatibility import encode_if_necessary, decode_for
 
 if sys.version_info > (3, 0):
     from urllib.error import HTTPError
@@ -68,7 +69,7 @@ class WPTGitHub(object):
 
     def auth_token(self):
         assert self.has_credentials()
-        return decode_for(base64.b64encode(encode_if_necessary('{}:{}'.format(self.user, self.token))), str)
+        return string_utils.decode(base64.b64encode(string_utils.encode('{}:{}'.format(self.user, self.token))), target_type=str)
 
     def request(self, path, method, body=None):
         """Sends a request to GitHub API and deserializes the response.

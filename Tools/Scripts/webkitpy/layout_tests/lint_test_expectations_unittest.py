@@ -29,8 +29,9 @@
 import optparse
 import unittest
 
+from webkitcorepy import StringIO
+
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.unicode_compatibility import StringIO
 from webkitpy.layout_tests import lint_test_expectations
 
 

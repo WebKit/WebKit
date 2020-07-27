@@ -31,7 +31,7 @@ import datetime
 import logging
 import re
 
-from webkitpy.common import unicode_compatibility
+from webkitcorepy import string_utils
 
 
 _log = logging.getLogger(__name__)
@@ -111,7 +111,7 @@ class CrashLogs(object):
         for path in reversed(sorted(logs)):
             try:
                 if not newer_than or self._host.filesystem.mtime(path) > newer_than:
-                    log_file = unicode_compatibility.decode_if_necessary(self._host.filesystem.read_binary_file(path), 'ascii', 'ignore')
+                    log_file = string_utils.decode(self._host.filesystem.read_binary_file(path), encoding='ascii', errors='ignore')
                     match = self.GLOBAL_PID_REGEX.search(log_file)
                     if match:
                         if int(match.group('pid')) == pid:

@@ -43,12 +43,12 @@ import os
 import os.path
 import re
 import string
-import sys
 import unicodedata
+
+from webkitcorepy import unicode
 
 from webkitpy.style.checkers.common import match, search, sub, subn
 from webkitpy.common.memoized import memoized
-from webkitpy.common.unicode_compatibility import unicode
 
 # The key to use to provide a class to fake loading a header file.
 INCLUDE_IO_INJECTION_KEY = 'include_header_io'

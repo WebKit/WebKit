@@ -27,14 +27,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import sys
 import re
 import tempfile
 
-from webkitpy.tool.steps.abstractstep import AbstractStep
+from webkitcorepy import StringIO
+
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.checkout import diff_parser
-from webkitpy.common.unicode_compatibility import StringIO
 
 from webkitpy.tool.steps import confirmdiff
 

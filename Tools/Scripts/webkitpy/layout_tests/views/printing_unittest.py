@@ -30,15 +30,11 @@
 
 import optparse
 import sys
-import time
 import unittest
 
-from webkitpy.common.host_mock import MockHost
+from webkitcorepy import StringIO
 
-from webkitpy.common.system import logtesting
-from webkitpy.common.unicode_compatibility import StringIO
-from webkitpy import port
-from webkitpy.layout_tests.controllers import manager
+from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results

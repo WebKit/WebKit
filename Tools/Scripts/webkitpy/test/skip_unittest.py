@@ -23,7 +23,8 @@
 import logging
 import unittest
 
-from webkitpy.common.unicode_compatibility import StringIO
+from webkitcorepy import StringIO
+
 from webkitpy.test.skip import skip_if
 
 

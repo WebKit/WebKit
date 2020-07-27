@@ -31,11 +31,10 @@ from collections import defaultdict
 import hashlib
 import logging
 import re
-import subprocess
 from xml.dom.minidom import parseString
 from xml.parsers.expat import ExpatError
 
-from webkitpy.common.unicode_compatibility import encode_if_necessary, decode_for
+from webkitcorepy import string_utils
 
 _log = logging.getLogger(__name__)
 
@@ -198,7 +197,7 @@ class ValgrindError:
         # This is a device-independent hash identifying the suppression.
         # By printing out this hash we can find duplicate reports between tests and
         # different shards running on multiple buildbots
-        return int(hashlib.md5(encode_if_necessary(self.unique_string())).hexdigest()[:16], 16)
+        return int(hashlib.md5(string_utils.encode(self.unique_string())).hexdigest()[:16], 16)
 
     def __hash__(self):
         return hash(self.unique_string())
@@ -224,7 +223,7 @@ class LeakDetectorValgrind(object):
             parsed_string = parseString(leaks_output)
         except ExpatError as e:
             parse_failed = True
-            _log.error("could not parse %s: %s" % (decode_for(leaks_output, str), e))
+            _log.error("could not parse %s: %s" % (string_utils.decode(leaks_output, target_type=str), e))
             return
 
         cur_report_errors = set()

@@ -27,12 +27,13 @@ import json
 import os
 import os.path
 import shutil
-import subprocess
 import sys
 import tempfile
+
+from webkitcorepy import string_utils
+
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.unicode_compatibility import encode_if_necessary
 
 
 class BindingsTests:
@@ -77,7 +78,7 @@ class BindingsTests:
             (name, extension) = os.path.splitext(input_file)
             if extension != '.idl':
                 continue
-            os.write(idl_files_list[0], encode_if_necessary(os.path.join(input_directory, input_file) + "\n"))
+            os.write(idl_files_list[0], string_utils.encode(os.path.join(input_directory, input_file) + "\n"))
         os.close(idl_files_list[0])
 
         cmd = ['perl', '-w',

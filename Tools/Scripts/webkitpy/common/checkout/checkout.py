@@ -28,8 +28,7 @@
 
 import sys
 
-if sys.version_info > (3, 0):
-    from functools import reduce
+from webkitcorepy import StringIO
 
 from webkitpy.common.config import urls
 from webkitpy.common.checkout.changelog import ChangeLog, parse_bug_id_from_changelog
@@ -37,7 +36,9 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.unicode_compatibility import StringIO
+
+if sys.version_info > (3, 0):
+    from functools import reduce
 
 
 # This class represents the WebKit-specific parts of the checkout (like ChangeLogs).

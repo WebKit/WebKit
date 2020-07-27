@@ -39,9 +39,8 @@ import sys
 import urllib
 
 from datetime import datetime  # used in timestamp()
+from webkitcorepy import BytesIO, StringIO, string_utils, unicode
 
-from webkitpy.common.unicode_compatibility import BytesIO, StringIO, unicode, decode_for
-from webkitpy.common.net.bugzilla.attachment import Attachment
 from webkitpy.common.net.bugzilla.bug import Bug
 
 from webkitpy.common.config import committers
@@ -295,7 +294,7 @@ class BugzillaQueries(object):
     def is_invalid_bugzilla_email(self, search_string):
         review_queue_url = "request.cgi?action=queue&requester=%s&product=&type=review&requestee=&component=&group=requestee" % urllib.quote(search_string)
         results_page = self._load_query(review_queue_url)
-        return bool(re.search('did not match anything', decode_for(results_page.read(), str)))
+        return bool(re.search('did not match anything', string_utils.decode(results_page.read(), target_type=str)))
 
 
 class CommitQueueFlag(object):
@@ -565,7 +564,7 @@ class Bugzilla(object):
             # If the resulting page has a title, and it contains the word
             # "invalid" assume it's the login failure page.
             if match and re.search(b'Invalid', match.group(1), re.IGNORECASE):
-                errorMessage = "Bugzilla login failed: {}".format(decode_for(match.group(1), str))
+                errorMessage = "Bugzilla login failed: {}".format(string_utils.decode(match.group(1), target_type=str))
                 # raise an exception only if this was the last attempt
                 if attempts < 5:
                     _log.error(errorMessage)
@@ -640,7 +639,7 @@ class Bugzilla(object):
 
     @staticmethod
     def _parse_attachment_id_from_add_patch_to_bug_response(response_html):
-        response_html = decode_for(response_html, str)
+        response_html = string_utils.decode(response_html, target_type=str)
         match = re.search('<title>Attachment (?P<attachment_id>\d+) added to Bug \d+</title>', response_html)
         if match:
             return match.group('attachment_id')
@@ -684,7 +683,7 @@ class Bugzilla(object):
 
     # FIXME: There has to be a more concise way to write this method.
     def _check_create_bug_response(self, response_html):
-        response_html = decode_for(response_html, str)
+        response_html = string_utils.decode(response_html, target_type=str)
         match = re.search('<title>Bug (?P<bug_id>\d+) Submitted[^<]*</title>', response_html)
         if match:
             return match.group('bug_id')

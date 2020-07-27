@@ -27,27 +27,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import codecs
 import logging
 import os
-import re
 import sys
-import time
 import traceback
 
 from optparse import make_option
 
 from webkitpy.common.config.ports import DeprecatedPort
-from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.unicode_compatibility import BytesIO
 from webkitpy.tool.bot.botinfo import BotInfo
-from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
-from webkitpy.tool.bot.layouttestresultsreader import LayoutTestResultsReader
-from webkitpy.tool.bot.patchanalysistask import UnableToApplyPatch, PatchIsNotValid
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
-from webkitpy.tool.multicommandtool import Command, TryAgain
+from webkitpy.tool.multicommandtool import Command
 
 _log = logging.getLogger(__name__)
 

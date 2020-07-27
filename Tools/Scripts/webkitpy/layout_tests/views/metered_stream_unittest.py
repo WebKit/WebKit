@@ -33,7 +33,8 @@ import re
 import sys
 import unittest
 
-from webkitpy.common.unicode_compatibility import StringIO
+from webkitcorepy import StringIO
+
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 
 

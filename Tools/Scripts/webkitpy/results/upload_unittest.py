@@ -29,9 +29,10 @@ import sys
 import time
 import unittest
 
+from webkitcorepy import BytesIO
+
 from webkitpy.results.upload import Upload
 from webkitpy.thirdparty import mock
-from webkitpy.common.unicode_compatibility import BytesIO
 
 if sys.version_info > (3, 0):
     basestring = str

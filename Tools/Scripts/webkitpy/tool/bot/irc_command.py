@@ -30,12 +30,12 @@ import itertools
 import random
 import re
 
+from webkitcorepy import unicode
+
 from webkitpy.common.config import irc as config_irc
 from webkitpy.common.config import urls
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.net.web import Web
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.unicode_compatibility import unicode
 from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.tool.grammar import join_with_separators
 from webkitpy.tool.grammar import pluralize

@@ -26,11 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import codecs
 import os
-import shutil
-import tempfile
 import unittest
+
+from webkitcorepy import string_utils
 
 from webkitpy.common.checkout.checkout import Checkout
 from webkitpy.common.checkout.changelog import ChangeLogEntry
@@ -42,7 +41,6 @@ from webkitpy.common.system.filesystem import FileSystem  # FIXME: This should n
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.outputcapture import OutputCapture
-from webkitpy.common.unicode_compatibility import encode_if_necessary
 from webkitpy.thirdparty.mock import Mock
 
 
@@ -344,7 +342,7 @@ class CheckoutTest(unittest.TestCase):
             # so we encode our unicode ChangeLog down to a utf-8 stream.
             # The ChangeLog utf-8 decoding should ignore invalid codepoints.
             invalid_utf8 = b'\255'
-            return encode_if_necessary(_changelog1) + invalid_utf8
+            return string_utils.encode(_changelog1) + invalid_utf8
         checkout = self._make_checkout()
         checkout._scm.contents_at_revision = mock_contents_at_revision
         entry = checkout._latest_entry_for_changelog_at_revision("foo", "bar")
