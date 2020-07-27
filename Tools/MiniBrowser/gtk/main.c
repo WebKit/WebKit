@@ -500,7 +500,7 @@ static void gotITPSummaryCallback(WebKitWebsiteDataManager *manager, GAsyncResul
         GList *ll;
         for (ll = firstPartyList; ll && ll->data; ll = g_list_next(ll)) {
             WebKitITPFirstParty *firstParty = (WebKitITPFirstParty *)ll->data;
-            char *updatedTime = g_date_time_format_iso8601(webkit_itp_first_party_get_last_update_time(firstParty));
+            char *updatedTime = g_date_time_format(webkit_itp_first_party_get_last_update_time(firstParty), "%Y-%m-%d %H:%M:%S");
             g_string_append_printf(result, "<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n", webkit_itp_first_party_get_domain(firstParty),
                 webkit_itp_first_party_get_website_data_access_allowed(firstParty) ? "yes" : "no", updatedTime);
             g_free(updatedTime);

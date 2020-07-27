@@ -1,5 +1,14 @@
 2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK build with GLib < 2.62
+
+        Do not use g_date_time_format_iso8601(), use g_date_time_format() instead with a format string.
+
+        * MiniBrowser/gtk/main.c:
+        (gotITPSummaryCallback):
+
+2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE][GTK] Add API to support "Privacy Report"
         https://bugs.webkit.org/show_bug.cgi?id=213493
 
