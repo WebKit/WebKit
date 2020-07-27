@@ -42,6 +42,7 @@
 #import <WebCore/LocalizedStrings.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
+#import <pal/spi/mac/NSWindowSPI.h>
 #import <wtf/RetainPtr.h>
 
 @interface WKUserDataWrapper : NSObject {
@@ -345,9 +346,21 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         completionHandler(menu.get());
         return;
     }
+    
+    Vector<WebContextMenuItemData> filteredItems;
+    filteredItems.reserveInitialCapacity(items.size());
+    auto webView = m_webView.get();
+    
+    bool isPopover = webView.get().window._childWindowOrderingPriority == NSWindowChildOrderingPriorityPopover;
+    bool isLookupDisabled = [NSUserDefaults.standardUserDefaults boolForKey:@"LULookupDisabled"];
+
+    for (auto& item : items) {
+        if (item.action() != ContextMenuItemTagLookUpInDictionary || (!isLookupDisabled && !isPopover))
+            filteredItems.uncheckedAppend(item);
+    }
 
     auto sparseMenuItems = retainPtr([NSPointerArray strongObjectsPointerArray]);
-    auto insertMenuItem = makeBlockPtr([completionHandler = WTFMove(completionHandler), itemsRemaining = items.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
+    auto insertMenuItem = makeBlockPtr([completionHandler = WTFMove(completionHandler), itemsRemaining = filteredItems.size(), menu = WTFMove(menu), sparseMenuItems](NSMenuItem *item, NSUInteger index) mutable {
         ASSERT(index < [sparseMenuItems count]);
         ASSERT(![sparseMenuItems pointerAtIndex:index]);
         [sparseMenuItems replacePointerAtIndex:index withPointer:item];
@@ -358,9 +371,9 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         completionHandler(menu.get());
     });
 
-    for (size_t i = 0; i < items.size(); ++i) {
+    for (size_t i = 0; i < filteredItems.size(); ++i) {
         [sparseMenuItems addPointer:nullptr];
-        getContextMenuItem(items[i], [insertMenuItem, i](NSMenuItem *menuItem) {
+        getContextMenuItem(filteredItems[i], [insertMenuItem, i](NSMenuItem *menuItem) {
             insertMenuItem(menuItem, i);
         });
     }

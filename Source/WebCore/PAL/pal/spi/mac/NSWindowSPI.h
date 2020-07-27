@@ -42,6 +42,11 @@
 - (void)_setCursorForMouseLocation:(NSPoint)point;
 - (void)exitFullScreenMode:(id)sender;
 - (void)enterFullScreenMode:(id)sender;
+
+enum {
+    NSWindowChildOrderingPriorityPopover = 20,
+};
+- (NSInteger)_childWindowOrderingPriority;
 @end
 
 enum {

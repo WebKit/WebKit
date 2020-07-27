@@ -1,3 +1,19 @@
+2020-07-27  Megan Gardner  <megan_gardner@apple.com>
+
+        Trying to lookup when WebView is in a popover causes process to hang.
+        https://bugs.webkit.org/show_bug.cgi?id=214773
+        <rdar://problem/52317762>
+
+        Reviewed by Devin Rousso.
+
+        The Lookup framework does not populate the menus that it vends with the option to 'lookup'
+        words that are selected in popovers. WebKit should follow the pattern and not put the
+        item in the menu as Lookup is not able to handle this situation. Also if Lookup is disabled
+        via defaults, we should not show it in the menu.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+
 2020-07-27  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove API::Object::Type::RenderLayer and API::Object::Type::RenderObject
