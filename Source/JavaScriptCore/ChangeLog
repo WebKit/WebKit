@@ -1,3 +1,15 @@
+2020-07-27  Caio Lima  <ticaiolima@gmail.com>
+
+        DoesGC failures in debug mode in 32bits
+        https://bugs.webkit.org/show_bug.cgi?id=214449
+
+        Reviewed by Mark Lam.
+
+        Adding the DoesGC update code into OSRExit::compileExit for 32-bits.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+
 2020-07-24  Mark Lam  <mark.lam@apple.com>
 
         pluginElementCustomGetOwnPropertySlot() should support VMInquiry requests.
