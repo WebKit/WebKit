@@ -142,7 +142,9 @@
 #endif
 
 #if USE(JSVALUE64)
-#define USE_BIGINT32 1
+/* FIXME: Enable BIGINT32 optimization again after we ensure Speedometer2 and JetStream2 regressions are fixed. */
+/* https://bugs.webkit.org/show_bug.cgi?id=214777 */
+#define USE_BIGINT32 0
 #endif
 
 /* FIXME: This name should be more specific if it is only for use with CallFrame* */

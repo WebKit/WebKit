@@ -1,3 +1,15 @@
+2020-07-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Disable BIGINT32 optimization temporarily because of SP2 / JS2 regression
+        https://bugs.webkit.org/show_bug.cgi?id=214776
+
+        Reviewed by Darin Adler.
+
+        We disable BIGINT32 optimization because it causes 1% regression in JetStream2 and Speedometer2.
+        We should enable it after we fix the cause of regression.
+
+        * wtf/PlatformUse.h:
+
 2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][GTK] Add API to support "Privacy Report"
