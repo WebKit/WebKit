@@ -94,6 +94,7 @@ webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 webkit.org/b/214730 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-constructor.html [ Skip ]
 webkit.org/b/214730 [ Debug ] webrtc/simulcast-h264.html [ Skip ]
+webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Skip ]
 
 webkit.org/b/214358 fast/scrolling/ios/programmatic-scroll-while-zoomed.html [ Pass Failure ]
 

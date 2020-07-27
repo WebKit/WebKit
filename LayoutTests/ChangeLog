@@ -1,3 +1,12 @@
+2020-07-27  Karl Rackler  <rackler@apple.com>
+
+        [ iOS debug wk2 ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html is a consistant crash.
+        https://bugs.webkit.org/show_bug.cgi?id=214661
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-07-25  Simon Fraser  <simon.fraser@apple.com>
 
         Scroll Snap broken when using RTL layout
