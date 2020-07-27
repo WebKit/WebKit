@@ -1,3 +1,14 @@
+2020-07-27  Dean Jackson  <dino@apple.com>
+
+        Repeatable WebContent crash: WebCore::jsWebGLRenderingContextPrototypeFunctionGetError
+        https://bugs.webkit.org/show_bug.cgi?id=214814
+        rdar://59290537
+
+        Reviewed by Anders Carlsson.
+
+        * fast/canvas/webgl/recycle-contexts-expected.html: Added.
+        * fast/canvas/webgl/recycle-contexts.html: Added.
+
 2020-07-27  Youenn Fablet  <youenn@apple.com>
 
         scaleResolutionDownBy has no effect on RTCRtpSender

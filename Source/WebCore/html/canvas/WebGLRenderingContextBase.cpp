@@ -2879,7 +2879,7 @@ Optional<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttributes
 
 GCGLenum WebGLRenderingContextBase::getError()
 {
-    if (m_isPendingPolicyResolution)
+    if (!m_context || m_isPendingPolicyResolution)
         return GraphicsContextGL::NO_ERROR;
     return m_context->getError();
 }

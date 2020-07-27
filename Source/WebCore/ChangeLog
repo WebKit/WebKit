@@ -1,3 +1,23 @@
+2020-07-27  Dean Jackson  <dino@apple.com>
+
+        Repeatable WebContent crash: WebCore::jsWebGLRenderingContextPrototypeFunctionGetError
+        https://bugs.webkit.org/show_bug.cgi?id=214814
+        rdar://59290537
+
+        Reviewed by Anders Carlsson.
+
+        If a WebGL context was killed due to too many contexts
+        in the page, we would get a null pointer crash if
+        the page called getError() more than once on it.
+        This is an edge case not covered by the WebGL conformance
+        suite since the recyling behaviour is specific to our
+        implementation.
+
+        Test: fast/canvas/webgl/recycle-contexts.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::getError): Add a null check.
+
 2020-07-27  Youenn Fablet  <youenn@apple.com>
 
         scaleResolutionDownBy has no effect on RTCRtpSender
