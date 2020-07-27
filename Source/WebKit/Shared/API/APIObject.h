@@ -321,8 +321,6 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::PageHandle,
         API::Object::Type::PageGroupHandle,
         API::Object::Type::ProtectionSpace,
-        API::Object::Type::RenderLayer,
-        API::Object::Type::RenderObject,
         API::Object::Type::ResourceLoadInfo,
         API::Object::Type::SecurityOrigin,
         API::Object::Type::SessionState,

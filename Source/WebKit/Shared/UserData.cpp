@@ -47,8 +47,6 @@
 #include "WebCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebImage.h"
-#include "WebRenderLayer.h"
-#include "WebRenderObject.h"
 #include <wtf/CheckedArithmetic.h>
 
 #if PLATFORM(COCOA)
@@ -248,38 +246,6 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         static_cast<const API::Rect&>(object).encode(encoder);
         break;
 
-    case API::Object::Type::RenderLayer: {
-        auto& renderLayer = static_cast<const WebRenderLayer&>(object);
-
-        encode(encoder, renderLayer.renderer());
-        encoder << renderLayer.isReflection();
-        encoder << renderLayer.isClipping();
-        encoder << renderLayer.isClipped();
-        encoder << static_cast<uint32_t>(renderLayer.compositingLayerType());
-        encoder << renderLayer.absoluteBoundingBox();
-        encoder << renderLayer.backingStoreMemoryEstimate();
-        encode(encoder, renderLayer.negativeZOrderList());
-        encode(encoder, renderLayer.normalFlowList());
-        encode(encoder, renderLayer.positiveZOrderList());
-        encode(encoder, renderLayer.frameContentsLayer());
-        break;
-    }
-
-    case API::Object::Type::RenderObject: {
-        auto& renderObject = static_cast<const WebRenderObject&>(object);
-
-        encoder << renderObject.name();
-        encoder << renderObject.elementTagName();
-        encoder << renderObject.elementID();
-        encode(encoder, renderObject.elementClassNames());
-        encoder << renderObject.absolutePosition();
-        encoder << renderObject.frameRect();
-        encoder << renderObject.textSnippet();
-        encoder << renderObject.textLength();
-        encode(encoder, renderObject.children());
-        break;
-    }
-
     case API::Object::Type::SerializedScriptValue: {
         auto& serializedScriptValue = static_cast<const API::SerializedScriptValue&>(object);
         encoder << serializedScriptValue.dataReference();
@@ -468,83 +434,6 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         if (!API::Rect::decode(decoder, result))
             return false;
         break;
-
-    case API::Object::Type::RenderLayer: {
-        RefPtr<API::Object> renderer;
-        bool isReflection;
-        bool isClipping;
-        bool isClipped;
-        uint32_t compositingLayerTypeAsUInt32;
-        WebCore::IntRect absoluteBoundingBox;
-        double backingStoreMemoryEstimate;
-        RefPtr<API::Object> negativeZOrderList;
-        RefPtr<API::Object> normalFlowList;
-        RefPtr<API::Object> positiveZOrderList;
-        RefPtr<API::Object> frameContentsLayer;
-
-        if (!decode(decoder, renderer))
-            return false;
-        if (renderer->type() != API::Object::Type::RenderObject)
-            return false;
-        if (!decoder.decode(isReflection))
-            return false;
-        if (!decoder.decode(isClipping))
-            return false;
-        if (!decoder.decode(isClipped))
-            return false;
-        if (!decoder.decode(compositingLayerTypeAsUInt32))
-            return false;
-        if (!decoder.decode(absoluteBoundingBox))
-            return false;
-        if (!decoder.decode(backingStoreMemoryEstimate))
-            return false;
-        if (!decode(decoder, negativeZOrderList))
-            return false;
-        if (!decode(decoder, normalFlowList))
-            return false;
-        if (!decode(decoder, positiveZOrderList))
-            return false;
-        if (!decode(decoder, frameContentsLayer))
-            return false;
-
-        result = WebRenderLayer::create(static_pointer_cast<WebRenderObject>(renderer), isReflection, isClipping, isClipped, static_cast<WebRenderLayer::CompositingLayerType>(compositingLayerTypeAsUInt32), absoluteBoundingBox, backingStoreMemoryEstimate, static_pointer_cast<API::Array>(negativeZOrderList), static_pointer_cast<API::Array>(normalFlowList), static_pointer_cast<API::Array>(positiveZOrderList), static_pointer_cast<WebRenderLayer>(frameContentsLayer));
-        break;
-    }
-
-    case API::Object::Type::RenderObject: {
-        String name;
-        String textSnippet;
-        String elementTagName;
-        String elementID;
-        unsigned textLength;
-        RefPtr<API::Object> elementClassNames;
-        WebCore::IntPoint absolutePosition;
-        WebCore::IntRect frameRect;
-        RefPtr<API::Object> children;
-
-        if (!decoder.decode(name))
-            return false;
-        if (!decoder.decode(elementTagName))
-            return false;
-        if (!decoder.decode(elementID))
-            return false;
-        if (!decode(decoder, elementClassNames))
-            return false;
-        if (!decoder.decode(absolutePosition))
-            return false;
-        if (!decoder.decode(frameRect))
-            return false;
-        if (!decoder.decode(textSnippet))
-            return false;
-        if (!decoder.decode(textLength))
-            return false;
-        if (!decode(decoder, children))
-            return false;
-        if (children && children->type() != API::Object::Type::Array)
-            return false;
-        result = WebRenderObject::create(name, elementTagName, elementID, static_pointer_cast<API::Array>(elementClassNames), absolutePosition, frameRect, textSnippet, textLength, static_pointer_cast<API::Array>(children));
-        break;
-    }
 
     case API::Object::Type::SerializedScriptValue: {
         IPC::DataReference dataReference;

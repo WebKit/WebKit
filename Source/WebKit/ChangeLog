@@ -1,3 +1,34 @@
+2020-07-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove API::Object::Type::RenderLayer and API::Object::Type::RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=214772
+        <rdar://problem/52734803>
+
+        Reviewed by Simon Fraser.
+
+        These APIs are no longer used, so we should remove them.
+
+        * Shared/API/APIObject.h:
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/WKRenderLayer.cpp: Removed.
+        * Shared/API/c/WKRenderLayer.h: Removed.
+        * Shared/API/c/WKRenderObject.cpp: Removed.
+        * Shared/API/c/WKRenderObject.h: Removed.
+        * Shared/UserData.cpp:
+        (WebKit::UserData::encode):
+        (WebKit::UserData::decode):
+        * Shared/WebRenderLayer.cpp: Removed.
+        * Shared/WebRenderLayer.h: Removed.
+        * Shared/WebRenderObject.cpp: Removed.
+        * Shared/WebRenderObject.h: Removed.
+        * Sources.txt:
+        * UIProcess/API/C/WKAPICast.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyRenderTree): Deleted.
+        (WKBundlePageCopyRenderLayerTree): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2020-07-27  Youenn Fablet  <youenn@apple.com>
 
         Check m_connection in NetworkRTCProvider::createResolver/stopResolver

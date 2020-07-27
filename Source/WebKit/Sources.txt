@@ -206,8 +206,6 @@ Shared/WebPopupItem.cpp
 Shared/WebPreferencesDefaultValues.cpp
 Shared/WebPreferencesStore.cpp
 Shared/WebProcessCreationParameters.cpp
-Shared/WebRenderLayer.cpp
-Shared/WebRenderObject.cpp
 Shared/WebTouchEvent.cpp @no-unify
 Shared/WebUserContentControllerDataTypes.cpp
 Shared/WebWheelEvent.cpp @no-unify
@@ -240,8 +238,6 @@ Shared/API/c/WKMutableArray.cpp
 Shared/API/c/WKMutableDictionary.cpp
 Shared/API/c/WKNumber.cpp
 Shared/API/c/WKPluginInformation.cpp
-Shared/API/c/WKRenderLayer.cpp
-Shared/API/c/WKRenderObject.cpp
 Shared/API/c/WKSecurityOriginRef.cpp
 Shared/API/c/WKSerializedScriptValue.cpp
 Shared/API/c/WKString.cpp
