@@ -788,17 +788,24 @@ void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableAre
 
 void ScrollController::updateScrollSnapPoints(ScrollEventAxis axis, const Vector<LayoutUnit>& snapPoints, const Vector<ScrollOffsetRange<LayoutUnit>>& snapRanges)
 {
+    bool shouldComputeCurrentSnapIndices = false;
     if (!m_scrollSnapState) {
         if (snapPoints.isEmpty())
             return;
 
         m_scrollSnapState = makeUnique<ScrollSnapAnimatorState>();
+        shouldComputeCurrentSnapIndices = true;
     }
 
     if (snapPoints.isEmpty() && m_scrollSnapState->snapOffsetsForAxis(otherScrollEventAxis(axis)).isEmpty())
         m_scrollSnapState = nullptr;
-    else
+    else {
         m_scrollSnapState->setSnapOffsetsAndPositionRangesForAxis(axis, snapPoints, snapRanges);
+        if (shouldComputeCurrentSnapIndices) {
+            setActiveScrollSnapIndicesForOffset(roundedIntPoint(m_client.scrollOffset()));
+            LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController::updateScrollSnapPoints - computed initial snap indices: x " << m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Horizontal) << ", y " << m_scrollSnapState->activeSnapIndexForAxis(ScrollEventAxis::Vertical));
+        }
+    }
 }
 
 unsigned ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const

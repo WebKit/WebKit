@@ -1,0 +1,97 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .bordered {
+            border-top: 20px solid black;
+            border-bottom: 10px solid black;
+            border-left: 15px solid black;
+            border-right: 9px solid black;
+        }
+        .padded {
+            padding-left: 20px;
+            padding-right: 10px;
+            padding-top: 15px;
+            padding-bottom: 9px;
+        }
+        .horizontalGallery {
+            border: 1px solid black;
+            direction: rtl;
+            width: 300px;
+            height: 300px;
+            overflow-y: hidden;
+            overflow-x: auto;
+            margin: 2px;
+            scroll-snap-type: x mandatory;
+        }
+        .horizontalGalleryDrawer {
+            width: 1600px;
+            height: 100%;
+        }
+        .colorBox {
+            scroll-snap-align: start;
+            padding: 20px;
+            font-size: 16pt;
+            text-align: center;
+            height: 300px;
+            width: 300px;
+            box-sizing: border-box;
+            float: left;
+        }
+        .narrow {
+            width: 200px;
+        }
+        .rtl {
+            direction: rtl;
+        }
+        .ltr {
+            direction: ltr;
+        }
+
+        #itemH0 { background-color: red; }
+        #itemH1 { background-color: green; }
+        #itemH2 { background-color: blue; }
+        #itemH3 { background-color: aqua; }
+        #itemH4 { background-color: yellow; }
+        #itemH5 { background-color: fuchsia; }
+    </style>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+    function reportResult(horizontalTargetID, verticalTargetID)
+    {
+        let horizontalTarget = document.getElementById(horizontalTargetID);
+        debug("Scroll-snap offsets for " + horizontalTargetID + ": " + window.internals.scrollSnapOffsets(horizontalTarget));
+    }
+
+    function runTest()
+    {
+        reportResult('horizontalTarget', 'verticalTarget');
+
+        finishJSTest();
+    }
+
+    function onLoad()
+    {
+        jsTestIsAsync = true;
+        if (window.testRunner)
+            setTimeout(runTest, 0);
+    }
+    </script>
+</head>
+<body onload="onLoad();">
+    <div style="position: relative; width: 300px">
+        <div>Tests that the scroll-snap feature works properly in overflow regions.</div>
+        <div class="horizontalGallery" id="horizontalTarget">
+            <div class="horizontalGalleryDrawer">
+                <div id="itemH0" class="rtl colorBox">rtl</div>
+                <div id="itemH1" class="rtl narrow colorBox">rtl</div>
+                <div id="itemH2" class="ltr colorBox">ltr</div>
+                <div id="itemH3" class="rtl colorBox">rtl</div>
+                <div id="itemH4" class="ltr narrow colorBox">ltr</div>
+                <div id="itemH5" class="rtl colorBox">rtl</div>
+            </div>
+        </div>
+    </div>
+    <div id="console"></div>
+</body>
+</html>

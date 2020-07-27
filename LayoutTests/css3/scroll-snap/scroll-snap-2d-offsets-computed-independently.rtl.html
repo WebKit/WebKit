@@ -4,6 +4,7 @@
         <style>
             #container {
                 position: absolute;
+                direction: rtl;
                 width: 400px;
                 height: 400px;
                 overflow: auto;
@@ -66,14 +67,14 @@
     <body onload=run()>
         <div id="container">
             <div style="top: 0px; left: 0px;" class="cell green" id="top-left"></div>
-            <div style="top: 0px; left: 400px;" class="cell red"></div>
-            <div style="top: 0px; left: 800px;" class="cell green"></div><br/>
+            <div style="top: 0px; left: -400px;" class="cell red"></div>
+            <div style="top: 0px; left: -800px;" class="cell green"></div><br/>
             <div style="top: 400px; left: 0px;" class="cell red"></div>
-            <div style="top: 400px; left: 400px;" class="cell green" id="middle"></div>
-            <div style="top: 400px; left: 800px;" class="cell red"></div><br/>
+            <div style="top: 400px; left: -400px;" class="cell green" id="middle"></div>
+            <div style="top: 400px; left: -800px;" class="cell red"></div><br/>
             <div style="top: 800px; left: 0px;" class="cell green"></div>
-            <div style="top: 800px; left: 400px;" class="cell red"></div>
-            <div style="top: 800px; left: 800px;" class="cell green" id="bottom-right"></div>
+            <div style="top: 800px; left: -400px;" class="cell red"></div>
+            <div style="top: 800px; left: -800px;" class="cell green" id="bottom-right"></div>
         </div>
         <div id="output"></div>
     </body>

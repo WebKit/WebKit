@@ -1,3 +1,31 @@
+2020-07-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Scroll Snap broken when using RTL layout
+        https://bugs.webkit.org/show_bug.cgi?id=193671
+        <rdar://problem/47457471>
+
+        Reviewed by Wenson Hsieh.
+
+        There were various places in the scroll snapping code which confused scroll offsets (zero-based)
+        with scroll positions (relative to scroll origin, can be negative). This broke snapping in
+        `direction: rtl` content.
+        
+        The computation of snap locations in updateSnapOffsetsForScrollableArea() was also broken
+        in RTL; we need to snap the right edge of boxes to the right edge of the scroller for the 'start'
+        alignment. (Snapping for LTR boxes in an RTL scroller is poorly defined; for now, follow Gecko.)
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (WebKit::dump):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _updateVisibleContentRects]):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::shouldSnapForMainFrameScrolling const):
+        (WebKit::RemoteScrollingCoordinatorProxy::closestSnapOffsetForMainFrameScrolling const):
+        (WebKit::RemoteScrollingCoordinatorProxy::hasActiveSnapPoint const):
+        (WebKit::RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapOffset const):
+        (WebKit::RemoteScrollingCoordinatorProxy::nearestActiveContentInsetAdjustedSnapPoint const): Deleted.
+
 2020-07-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r264690): [ iOS wk2 ] editing/selection/shift-click-includes-existing-selection.html is a flaky failure

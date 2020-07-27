@@ -1,3 +1,37 @@
+2020-07-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Scroll Snap broken when using RTL layout
+        https://bugs.webkit.org/show_bug.cgi?id=193671
+        <rdar://problem/47457471>
+
+        Reviewed by Wenson Hsieh.
+
+        There were various places in the scroll snapping code which confused scroll offsets (zero-based)
+        with scroll positions (relative to scroll origin, can be negative). This broke snapping in
+        `direction: rtl` content.
+        
+        The computation of snap locations in updateSnapOffsetsForScrollableArea() was also broken
+        in RTL; we need to snap the right edge of boxes to the right edge of the scroller for the 'start'
+        alignment. (Snapping for LTR boxes in an RTL scroller is poorly defined; for now, follow Gecko.)
+
+        Tests: css3/scroll-snap/scroll-snap-2d-change-axis-type-rtl.html
+               css3/scroll-snap/scroll-snap-2d-offsets-computed-independently.rtl.html
+               css3/scroll-snap/scroll-snap-elements-container-larger-than-children-rtl.html
+               css3/scroll-snap/scroll-snap-iframe-rtl.html
+               css3/scroll-snap/scroll-snap-offsets-mixed-rtl.html
+               css3/scroll-snap/scroll-snap-offsets-rtl.html
+
+        * page/scrolling/AxisScrollSnapOffsets.cpp:
+        (WebCore::computeScrollSnapAlignOffset):
+        (WebCore::updateSnapOffsetsForScrollableArea):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::scrollOffset const):
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::updateActiveScrollSnapIndexForOffset):
+        (WebCore::ScrollAnimator::scrollOffset const):
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::updateScrollSnapPoints):
+
 2020-07-26  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wunused-parameter in FilterEffectRenderer.cpp

@@ -632,6 +632,20 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
         ts.dumpProperty("scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
+
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::HorizontalSnapOffsets))
+        ts.dumpProperty("horizontal snap offsets", node.horizontalSnapOffsets());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::VerticalSnapOffsets))
+        ts.dumpProperty("vertical snap offsets", node.verticalSnapOffsets());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::CurrentHorizontalSnapOffsetIndex))
+        ts.dumpProperty("current horizontal snap point index", node.currentHorizontalSnapPointIndex());
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::CurrentVerticalSnapOffsetIndex))
+        ts.dumpProperty("current vertical snap point index", node.currentVerticalSnapPointIndex());
+#endif
 }
 
 static void dump(TextStream& ts, const ScrollingStateFrameHostingNode& node, bool changedPropertiesOnly)

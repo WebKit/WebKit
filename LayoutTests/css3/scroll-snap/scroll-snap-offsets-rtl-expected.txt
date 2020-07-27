@@ -1,0 +1,10 @@
+Tests that the scroll-snap feature works properly in overflow regions.
+Scroll-snap offsets for horizontalTarget: horizontal = { 0, 100, 200, 300, 400, 500 }
+Scroll-snap offsets for horizontalBorderedTarget: horizontal = { 0, 100, 200, 300, 400, 500 }
+Scroll-snap offsets for horizontalPaddedTarget: horizontal = { 0, 70, 170, 270, 370, 470, 480 }
+Scroll-snap offsets for horizontalBorderedPaddedTarget: horizontal = { 0, 70, 170, 270, 370, 470, 480 }
+Scroll-snap offsets for horizontalRotatedTarget: horizontal = { 0, 70, 170, 270, 370, 470, 480 }
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

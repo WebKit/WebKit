@@ -334,7 +334,7 @@ void ScrollingTreeScrollingNodeDelegateMac::adjustScrollPositionToBoundsIfNecess
 #if ENABLE(CSS_SCROLL_SNAP)
 FloatPoint ScrollingTreeScrollingNodeDelegateMac::scrollOffset() const
 {
-    return currentScrollPosition();
+    return ScrollableArea::scrollOffsetFromPosition(currentScrollPosition(), scrollOrigin());
 }
 
 void ScrollingTreeScrollingNodeDelegateMac::immediateScrollOnAxis(ScrollEventAxis axis, float delta)

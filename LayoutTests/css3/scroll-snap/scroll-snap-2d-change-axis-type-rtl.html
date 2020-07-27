@@ -4,10 +4,11 @@
         <style>
             #container {
                 position: absolute;
+                direction: rtl;
                 width: 400px;
                 height: 400px;
                 overflow: auto;
-                scroll-snap-type: both mandatory;
+                scroll-snap-type: x mandatory;
                 left: 0px;
                 top: 0px;
                 margin: 0;
@@ -24,18 +25,7 @@
                 margin: 0px;
                 padding: 0px;
                 position: absolute;
-            }
-
-            #top-left {
-                scroll-snap-align: end;
-            }
-
-            #middle {
                 scroll-snap-align: center;
-            }
-
-            #bottom-right {
-                scroll-snap-align: start;
             }
 
             .green {
@@ -65,16 +55,19 @@
     </head>
     <body onload=run()>
         <div id="container">
-            <div style="top: 0px; left: 0px;" class="cell green" id="top-left"></div>
-            <div style="top: 0px; left: 400px;" class="cell red"></div>
-            <div style="top: 0px; left: 800px;" class="cell green"></div><br/>
+            <div style="top: 0px; left: 0px;" class="cell green"></div>
+            <div style="top: 0px; left: -400px;" class="cell red"></div>
+            <div style="top: 0px; left: -800px;" class="cell green"></div><br/>
             <div style="top: 400px; left: 0px;" class="cell red"></div>
-            <div style="top: 400px; left: 400px;" class="cell green" id="middle"></div>
-            <div style="top: 400px; left: 800px;" class="cell red"></div><br/>
+            <div style="top: 400px; left: -400px;" class="cell green"></div>
+            <div style="top: 400px; left: -800px;" class="cell red"></div><br/>
             <div style="top: 800px; left: 0px;" class="cell green"></div>
-            <div style="top: 800px; left: 400px;" class="cell red"></div>
-            <div style="top: 800px; left: 800px;" class="cell green" id="bottom-right"></div>
+            <div style="top: 800px; left: -400px;" class="cell red"></div>
+            <div style="top: 800px; left: -800px;" class="cell green"></div>
         </div>
+        <script>
+            container.style.scrollSnapType = "both mandatory";
+        </script>
         <div id="output"></div>
     </body>
 </html>

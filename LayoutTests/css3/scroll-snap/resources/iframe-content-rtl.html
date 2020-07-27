@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html dir="rtl">
+    <head>
+        <style>
+            .horizontalGallery {
+                border: 1px solid black;
+                width: 400px;
+                height: 50px;
+                overflow-y: hidden;
+                overflow-x: auto;
+            }
+            .horizontalGalleryDrawer {
+                width: 3000px;
+                height: 50px;
+            }
+            .colorBox {
+                height: 50px;
+                width: 400px;
+                float: left;
+                scroll-snap-align: start;
+            }
+
+            .noInitial {
+                scroll-snap-type: x mandatory;
+            }
+
+            #item0 { background-color: red; }
+            #item1 { background-color: green; }
+            #item2 { background-color: blue; }
+            #item3 { background-color: aqua; }
+            #item4 { background-color: yellow; }
+            #item5 { background-color: fuchsia; }
+        </style>
+        <script>
+        top.succeeded = true;
+        </script>
+    </head>
+    <body>
+        <div style="width: 400px">
+            <div id="noInitial" class="horizontalGallery noInitial">
+                <div class="horizontalGalleryDrawer">
+                    <div id="item0" class="colorBox"></div>
+                    <div id="item1" class="colorBox"></div>
+                    <div id="item2" class="colorBox"></div>
+                    <div id="item3" class="colorBox"></div>
+                    <div id="item4" class="colorBox"></div>
+                    <div id="item5" class="colorBox"></div>
+                </div>
+            </div>
+        </div>
+        <div id="console"></div>
+        <script>
+
+        function shouldMatch(_a, _b, result)
+        {
+            if (typeof _a !== "string" || typeof _b !== "string")
+                top.debug("WARN: shouldMatch() expects string arguments");
+
+            var _av;
+            try {
+                _av = eval(_a);
+            } catch (e) {
+                return false;
+            }
+ 
+            return top.isResultCorrect(_av, _b);      
+        }
+
+        var noInitial = document.getElementById('noInitial');
+        top.succeeded = shouldMatch("window.getComputedStyle(noInitial).getPropertyValue('scroll-snap-type')", "both mandatory");
+        document.querySelectorAll(".colorBox").forEach(colorBox => {
+            window.colorBox = colorBox;
+            top.succeeded = shouldMatch("getComputedStyle(colorBox).getPropertyValue('scroll-snap-align')", "start start");
+        });
+        if (top.succeeded)
+            top.debug("iframe processed all tests successfully.");
+        else
+            top.debug("iframe processing failed.");
+        </script>
+    </body>
+</html>
+

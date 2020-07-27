@@ -200,8 +200,8 @@ void ScrollAnimator::setCurrentPosition(const FloatPoint& position)
 void ScrollAnimator::updateActiveScrollSnapIndexForOffset()
 {
 #if ENABLE(CSS_SCROLL_SNAP)
-    // FIXME: Needs offset/position disambiguation.
-    m_scrollController.setActiveScrollSnapIndicesForOffset(roundedIntPoint(currentPosition()));
+    auto scrollOffset = m_scrollableArea.scrollOffsetFromPosition(roundedIntPoint(currentPosition()));
+    m_scrollController.setActiveScrollSnapIndicesForOffset(scrollOffset);
     if (m_scrollController.activeScrollSnapIndexDidChange()) {
         m_scrollableArea.setCurrentHorizontalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal));
         m_scrollableArea.setCurrentVerticalSnapPointIndex(m_scrollController.activeScrollSnapIndexForAxis(ScrollEventAxis::Vertical));
@@ -224,7 +224,7 @@ void ScrollAnimator::updateScrollSnapState()
 
 FloatPoint ScrollAnimator::scrollOffset() const
 {
-    return m_currentPosition;
+    return m_scrollableArea.scrollOffsetFromPosition(roundedIntPoint(currentPosition()));
 }
 
 void ScrollAnimator::immediateScrollOnAxis(ScrollEventAxis axis, float delta)

@@ -56,15 +56,15 @@ static LayoutRect computeScrollSnapPortOrAreaRect(const LayoutRect& rect, const 
     return snapPortOrArea;
 }
 
-static LayoutUnit computeScrollSnapAlignOffset(const LayoutUnit& leftOrTop, const LayoutUnit& widthOrHeight, ScrollSnapAxisAlignType alignment)
+static LayoutUnit computeScrollSnapAlignOffset(LayoutUnit minLocation, LayoutUnit maxLocation, ScrollSnapAxisAlignType alignment, bool axisIsFlipped)
 {
     switch (alignment) {
     case ScrollSnapAxisAlignType::Start:
-        return leftOrTop;
+        return axisIsFlipped ? maxLocation : minLocation;
     case ScrollSnapAxisAlignType::Center:
-        return leftOrTop + widthOrHeight / 2;
+        return (minLocation + maxLocation) / 2;
     case ScrollSnapAxisAlignType::End:
-        return leftOrTop + widthOrHeight;
+        return axisIsFlipped ? minLocation : maxLocation;
     default:
         ASSERT_NOT_REACHED();
         return 0;
@@ -193,6 +193,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
 
     auto maxScrollOffset = scrollableArea.maximumScrollOffset();
     auto scrollPosition = LayoutPoint { scrollableArea.scrollPosition() };
+    bool scrollerIsRTL = !scrollingElementBox.style().isLeftToRightDirection();
 
     // The bounds of the scrolling container's snap port, where the top left of the scrolling container's border box is the origin.
     auto scrollSnapPort = computeScrollSnapPortOrAreaRect(scrollingElementBox.paddingBoxRect(), scrollingElementStyle.scrollPadding(), InsetOrOutset::Inset);
@@ -203,13 +204,14 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
 
         // The bounds of the child element's snap area, where the top left of the scrolling container's border box is the origin.
         // The snap area is the bounding box of the child element's border box, after applying transformations.
+        // FIXME: For now, just consider whether the scroller is RTL. The behavior of LTR boxes inside a RTL scroller is poorly defined: https://github.com/w3c/csswg-drafts/issues/5361.
         auto scrollSnapArea = LayoutRect(child->localToContainerQuad(FloatQuad(child->borderBoundingBox()), scrollingElement.renderBox()).boundingBox());
         scrollSnapArea.moveBy(scrollPosition);
         scrollSnapArea = computeScrollSnapPortOrAreaRect(scrollSnapArea, child->style().scrollSnapMargin(), InsetOrOutset::Outset);
         LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea);
         auto alignment = child->style().scrollSnapAlign();
         if (hasHorizontalSnapOffsets && alignment.x != ScrollSnapAxisAlignType::None) {
-            auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.width(), alignment.x) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.width(), alignment.x);
+            auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.maxX(), alignment.x, scrollerIsRTL) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.maxX(), alignment.x, scrollerIsRTL);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ roundToInt(absoluteScrollXPosition), 0 }).x(), 0, maxScrollOffset.x());
             if (!seenHorizontalSnapOffsets.contains(absoluteScrollOffset)) {
                 seenHorizontalSnapOffsets.add(absoluteScrollOffset);
@@ -217,7 +219,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, HTMLElem
             }
         }
         if (hasVerticalSnapOffsets && alignment.y != ScrollSnapAxisAlignType::None) {
-            auto absoluteScrollYPosition = computeScrollSnapAlignOffset(scrollSnapArea.y(), scrollSnapArea.height(), alignment.y) - computeScrollSnapAlignOffset(scrollSnapPort.y(), scrollSnapPort.height(), alignment.y);
+            auto absoluteScrollYPosition = computeScrollSnapAlignOffset(scrollSnapArea.y(), scrollSnapArea.maxY(), alignment.y, false) - computeScrollSnapAlignOffset(scrollSnapPort.y(), scrollSnapPort.maxY(), alignment.y, false);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ 0, roundToInt(absoluteScrollYPosition) }).y(), 0, maxScrollOffset.y());
             if (!seenVerticalSnapOffsets.contains(absoluteScrollOffset)) {
                 seenVerticalSnapOffsets.add(absoluteScrollOffset);
