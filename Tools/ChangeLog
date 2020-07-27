@@ -1,3 +1,21 @@
+2020-07-27  Mark Lam  <mark.lam@apple.com>
+
+        DisallowVMEntry needs a copy assignment operator, detected by gcc's -Wdeprecated-copy warning
+        https://bugs.webkit.org/show_bug.cgi?id=214809
+
+        Reviewed by Yusuke Suzuki.
+
+        Added test case for JSC's DisallowVMEntry and PropertySlot mainly for the copy
+        assignment operation used in JSDOMWindow::getOwnPropertySlot().
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/JavaScriptCore/DisallowVMEntry.cpp: Added.
+        (TestWebKitAPI::enterScope):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/JavaScriptCore/PropertySlot.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK build with GLib < 2.62

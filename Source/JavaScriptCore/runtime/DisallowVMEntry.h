@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/ForbidHeapAllocation.h>
+
 namespace JSC {
 
 class VM;
@@ -36,6 +38,7 @@ class VM;
 
 template<typename VMType = VM>
 class DisallowVMEntryImpl {
+    WTF_FORBID_HEAP_ALLOCATION;
 public:
     DisallowVMEntryImpl(VMType& vm)
         : m_vm(&vm)
@@ -54,6 +57,18 @@ public:
         RELEASE_ASSERT(m_vm->disallowVMEntryCount);
         m_vm->disallowVMEntryCount--;
         m_vm = nullptr;
+    }
+
+    DisallowVMEntryImpl& operator=(const DisallowVMEntryImpl& other)
+    {
+        RELEASE_ASSERT(m_vm && m_vm == other.m_vm);
+        RELEASE_ASSERT(m_vm->disallowVMEntryCount);
+        // Conceptually, we need to decrement the disallowVMEntryCount of the
+        // old m_vm, and increment the disallowVMEntryCount of the new m_vm.
+        // But since the old and the new m_vm should always be the same, the
+        // decrementing and incrementing cancels out, and there's nothing more
+        // to do here.
+        return *this;
     }
 
 private:

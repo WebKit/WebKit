@@ -1,3 +1,22 @@
+2020-07-27  Mark Lam  <mark.lam@apple.com>
+
+        DisallowVMEntry needs a copy assignment operator, detected by gcc's -Wdeprecated-copy warning
+        https://bugs.webkit.org/show_bug.cgi?id=214809
+
+        Reviewed by Yusuke Suzuki.
+
+        Added handling of a possible VMInquiry failure in JSDOMWindow::getOwnPropertySlot()
+        after returning from Base::getOwnPropertySlot().  If a VMInquiry is requested and
+        Base::getOwnPropertySlot() returns false with slot.isTaintedByOpaqueObject() set,
+        then it means that Base::getOwnPropertySlot() failed to execute the VMInquiry,
+        not that it successfully determined that the property doesn't exist.
+
+        This issue was noticed while studying how JSDOMWindow::getOwnPropertySlot() uses
+        copy assignment of JSC::PropertySlots.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+
 2020-07-27  Dean Jackson  <dino@apple.com>
 
         Repeatable WebContent crash: WebCore::jsWebGLRenderingContextPrototypeFunctionGetError

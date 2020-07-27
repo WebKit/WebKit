@@ -1,3 +1,24 @@
+2020-07-27  Mark Lam  <mark.lam@apple.com>
+
+        DisallowVMEntry needs a copy assignment operator, detected by gcc's -Wdeprecated-copy warning
+        https://bugs.webkit.org/show_bug.cgi?id=214809
+
+        Reviewed by Yusuke Suzuki.
+
+        According to https://en.cppreference.com/w/cpp/language/copy_assignment,
+        "The generation of the implicitly-defined copy assignment operator is deprecated
+        (since C++11) if T has a user-declared destructor or user-declared copy constructor."
+        DisallowVMEntry has both a user-declared destructor and a user-declared copy
+        constructor.  Hence, it needs to define its own copy assignment operator to placate
+        the compiler.
+
+        This patch also adds back WTF_FORBID_HEAP_ALLOCATION to DisallowVMEntry.
+        DisallowVMEntry should always have forbid heap allocation.  It was accidentally
+        removed in a prior patch.
+
+        * runtime/DisallowVMEntry.h:
+        (JSC::DisallowVMEntryImpl::operator=):
+
 2020-07-27  Caio Lima  <ticaiolima@gmail.com>
 
         DoesGC failures in debug mode in 32bits

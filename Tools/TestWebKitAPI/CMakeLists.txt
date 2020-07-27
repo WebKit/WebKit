@@ -122,6 +122,31 @@ set(TestWTF_LIBRARIES
 
 WEBKIT_EXECUTABLE_DECLARE(TestWTF)
 
+# TestJavaScriptCore definitions
+if (ENABLE_JAVASCRIPTCORE)
+    set(TestJavaScriptCore_SOURCES
+        TestsController.cpp
+        WTFStringUtilities.cpp
+
+        Tests/JavaScriptCore/DisallowVMEntry.cpp
+        Tests/JavaScriptCore/PropertySlot.cpp
+    )
+
+    set(TestJavaScriptCore_LIBRARIES
+        WebKit::JavaScriptCore
+        gtest
+    )
+
+    set(TestJavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
+        ${CMAKE_BINARY_DIR}
+        ${TESTWEBKITAPI_DIR}
+        ${THIRDPARTY_DIR}/gtest/include
+        ${JavaScriptCoreCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+    )
+
+    WEBKIT_EXECUTABLE_DECLARE(TestJavaScriptCore)
+endif ()
+
 # TestWebCore definitions
 if (ENABLE_WEBCORE)
     set(TestWebCore_SOURCES
@@ -355,6 +380,11 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 # TestWTF target
 WEBKIT_TEST(TestWTF)
+
+# TestJavaScriptCore target
+if (ENABLE_JAVASCRIPTCORE)
+    WEBKIT_TEST(TestJavaScriptCore)
+endif ()
 
 # TestWebCore target
 if (ENABLE_WEBCORE)
