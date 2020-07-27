@@ -248,6 +248,8 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
 {
     if (!isMainThread()) {
         callOnMainThread([this, protectedThis = makeRef(*this), identifier, address = WTFMove(address).isolatedCopy()]() mutable {
+            if (!m_connection)
+                return;
             createResolver(identifier, WTFMove(address));
         });
         return;
@@ -284,6 +286,8 @@ void NetworkRTCProvider::stopResolver(LibWebRTCResolverIdentifier identifier)
 {
     if (!isMainThread()) {
         callOnMainThread([this, protectedThis = makeRef(*this), identifier] {
+            if (!m_connection)
+                return;
             stopResolver(identifier);
         });
         return;
