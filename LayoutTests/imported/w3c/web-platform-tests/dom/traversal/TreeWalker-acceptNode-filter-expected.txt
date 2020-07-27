@@ -10,4 +10,5 @@ PASS Testing with filter function that throws
 PASS rethrows errors when getting `acceptNode` 
 PASS performs `Get` on every traverse 
 PASS Testing with filter object that throws 
+PASS Testing with filter object: this value and `node` argument 
 Test JS objects as NodeFilters

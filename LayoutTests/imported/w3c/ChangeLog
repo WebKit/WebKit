@@ -1,3 +1,16 @@
+2020-07-27  Chris Dumez  <cdumez@apple.com>
+
+        thisValue is not always set correctly when calling JS callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=214847
+
+        Reviewed by Darin Adler.
+
+        Import layout test coverage from upstream WPT. We were failing this new subtest
+        before my fix.
+
+        * web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter-expected.txt:
+        * web-platform-tests/dom/traversal/TreeWalker-acceptNode-filter.html:
+
 2020-07-27  Clark Wang  <clark_wang@apple.com>
 
         Added Constructor method to OscillatorNode
