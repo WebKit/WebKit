@@ -2,24 +2,62 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
 PASS Executing "invalid constructor" 
-FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
-FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.channelCount')"
-FAIL Executing "constructor options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.type')"
+PASS Executing "default constructor" 
+PASS Executing "test AudioNodeOptions" 
+PASS Executing "constructor options" 
 PASS Audit report 
 PASS > [initialize]  
 PASS   context = new OfflineAudioContext(...) did not throw an exception. 
 PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [invalid constructor]  
-PASS   new OscillatorNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
-PASS   new OscillatorNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
-PASS   new OscillatorNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS   new OscillatorNode() threw TypeError: "Not enough arguments". 
+PASS   new OscillatorNode(1) threw TypeError: "Argument 1 ('context') to the OscillatorNode constructor must be an instance of BaseAudioContext". 
+PASS   new OscillatorNode(context, 42) threw TypeError: "Type error". 
 PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
 PASS > [default constructor]  
-FAIL X node0 = new OscillatorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
-FAIL X node0 instanceof OscillatorNode is not equal to true. Got false. assert_true: expected true got false
+PASS   node0 = new OscillatorNode(context) did not throw an exception. 
+PASS   node0 instanceof OscillatorNode is equal to true. 
+PASS   node0.numberOfInputs is equal to 0. 
+PASS   node0.numberOfOutputs is equal to 1. 
+PASS   node0.channelCount is equal to 2. 
+PASS   node0.channelCountMode is equal to max. 
+PASS   node0.channelInterpretation is equal to speakers. 
+PASS   node0.type is equal to sine. 
+PASS   node0.frequency.value is equal to 440. 
+PASS < [default constructor] All assertions passed. (total 9 assertions) 
 PASS > [test AudioNodeOptions]  
-FAIL X new OscillatorNode(c, {channelCount: 17}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[nodeName]')". assert_true: expected true got false
+PASS   new OscillatorNode(c, {channelCount: 17}) did not throw an exception. 
+PASS   node.channelCount is equal to 17. 
+PASS   new OscillatorNode(c, {channelCount: 0}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new OscillatorNode(c, {channelCount: 99}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new OscillatorNode(c, {channelCountMode: "max"} did not throw an exception. 
+PASS   node.channelCountMode is equal to max. 
+PASS   new OscillatorNode(c, {channelCountMode: "max"}) did not throw an exception. 
+PASS   node.channelCountMode after valid setter is equal to max. 
+PASS   new OscillatorNode(c, {channelCountMode: "clamped-max"}) did not throw an exception. 
+PASS   node.channelCountMode after valid setter is equal to clamped-max. 
+PASS   new OscillatorNode(c, {channelCountMode: "explicit"}) did not throw an exception. 
+PASS   node.channelCountMode after valid setter is equal to explicit. 
+PASS   new OscillatorNode(c, {channelCountMode: "foobar"} threw TypeError: "Type error". 
+PASS   node.channelCountMode after invalid setter is equal to explicit. 
+PASS   new OscillatorNode(c, {channelInterpretation: "speakers"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to speakers. 
+PASS   new OscillatorNode(c, {channelInterpretation: "discrete"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to discrete. 
+PASS   new OscillatorNode(c, {channelInterpretation: "foobar"}) threw TypeError: "Type error". 
+PASS   node.channelInterpretation after invalid setter is equal to discrete. 
+PASS < [test AudioNodeOptions] All assertions passed. (total 20 assertions) 
 PASS > [constructor options]  
-FAIL X node1 = new OscillatorNode(c, {"type":"sawtooth","detune":7,"frequency":918}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new OscillatorNode(context, options)')". assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 5 tasks were failed. assert_true: expected true got false
+PASS   node1 = new OscillatorNode(c, {"type":"sawtooth","detune":7,"frequency":918}) did not throw an exception. 
+PASS   node1.type is equal to sawtooth. 
+PASS   node1.detune.value is equal to 7. 
+PASS   node1.frequency.value is equal to 918. 
+PASS   node1.channelCount is equal to 2. 
+PASS   node1.channelCountMode is equal to max. 
+PASS   node1.channelInterpretation is equal to speakers. 
+PASS   new OscillatorNode(c, {"type":"sine","periodicWave":{}}) did not throw an exception. 
+PASS   new OscillatorNode(c, {"type":"custom"}) threw InvalidStateError: "Must provide periodicWave when using custom type.". 
+PASS   new OscillatorNode(, {"type":"custom","periodicWave":{}}) did not throw an exception. 
+PASS < [constructor options] All assertions passed. (total 10 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

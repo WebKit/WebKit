@@ -625,13 +625,15 @@ ExceptionOr<Ref<OscillatorNode>> BaseAudioContext::createOscillator()
 
     lazyInitialize();
 
-    Ref<OscillatorNode> node = OscillatorNode::create(*this, sampleRate());
+    auto node = OscillatorNode::create(*this);
+    if (node.hasException())
+        return node.releaseException();
 
     // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
     // When this happens, AudioScheduledSourceNode::finish() calls BaseAudioContext::notifyNodeFinishedProcessing().
-    refNode(node);
-
-    return node;
+    auto nodeValue = node.releaseReturnValue();
+    refNode(nodeValue);
+    return nodeValue;
 }
 
 ExceptionOr<Ref<PeriodicWave>> BaseAudioContext::createPeriodicWave(Vector<float>&& real, Vector<float>&& imaginary, const PeriodicWaveConstraints& constraints)

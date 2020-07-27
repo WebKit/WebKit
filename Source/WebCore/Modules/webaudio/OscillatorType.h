@@ -25,19 +25,14 @@
 
 #pragma once
 
-#if ENABLE(WEB_AUDIO)
-
-#include "PeriodicWaveConstraints.h"
-#include <wtf/Optional.h>
-#include <wtf/Vector.h>
-
 namespace WebCore {
 
-struct PeriodicWaveOptions : PeriodicWaveConstraints {
-    Optional<Vector<float>> real;
-    Optional<Vector<float>> imag;
+enum class OscillatorType : uint8_t {
+    Sine,
+    Square,
+    Sawtooth,
+    Triangle,
+    Custom,
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(WEB_AUDIO)

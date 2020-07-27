@@ -25,6 +25,8 @@
 #pragma once
 
 #include "AudioScheduledSourceNode.h"
+#include "OscillatorOptions.h"
+#include "OscillatorType.h"
 #include <wtf/Lock.h>
 
 namespace WebCore {
@@ -36,23 +38,14 @@ class PeriodicWave;
 class OscillatorNode final : public AudioScheduledSourceNode {
     WTF_MAKE_ISO_ALLOCATED(OscillatorNode);
 public:
-    // The waveform type.
-    enum class Type {
-        Sine,
-        Square,
-        Sawtooth,
-        Triangle,
-        Custom
-    };
-
-    static Ref<OscillatorNode> create(BaseAudioContext&, float sampleRate);
+    static ExceptionOr<Ref<OscillatorNode>> create(BaseAudioContext&, const OscillatorOptions& = { });
 
     virtual ~OscillatorNode();
 
     const char* activeDOMObjectName() const override { return "OscillatorNode"; }
 
-    Type type() const { return m_type; }
-    ExceptionOr<void> setType(Type);
+    OscillatorType type() const { return m_type; }
+    ExceptionOr<void> setType(OscillatorType);
 
     AudioParam* frequency() { return m_frequency.get(); }
     AudioParam* detune() { return m_detune.get(); }
@@ -60,7 +53,7 @@ public:
     void setPeriodicWave(PeriodicWave*);
 
 private:
-    OscillatorNode(BaseAudioContext&, float sampleRate);
+    explicit OscillatorNode(BaseAudioContext&, const OscillatorOptions& = { });
 
     void process(size_t framesToProcess) final;
     void reset() final;
@@ -74,7 +67,7 @@ private:
     bool propagatesSilence() const final;
 
     // One of the waveform types defined in the enum.
-    Type m_type { Type::Sine };
+    OscillatorType m_type;
     
     // Frequency value in Hertz.
     RefPtr<AudioParam> m_frequency;
@@ -82,18 +75,18 @@ private:
     // Detune value (deviating from the frequency) in Cents.
     RefPtr<AudioParam> m_detune;
 
-    bool m_firstRender;
+    bool m_firstRender { true };
 
     // m_virtualReadIndex is a sample-frame index into our buffer representing the current playback position.
     // Since it's floating-point, it has sub-sample accuracy.
-    double m_virtualReadIndex;
+    double m_virtualReadIndex { 0 };
 
     // This synchronizes process().
     mutable Lock m_processMutex;
 
     // Stores sample-accurate values calculated according to frequency and detune.
-    AudioFloatArray m_phaseIncrements;
-    AudioFloatArray m_detuneValues;
+    AudioFloatArray m_phaseIncrements { AudioNode::ProcessingSizeInFrames };
+    AudioFloatArray m_detuneValues { AudioNode::ProcessingSizeInFrames };
     
     RefPtr<PeriodicWave> m_periodicWave;
 
@@ -104,14 +97,14 @@ private:
     static PeriodicWave* s_periodicWaveTriangle;
 };
 
-String convertEnumerationToString(OscillatorNode::Type); // In JSOscillatorNode.cpp
+String convertEnumerationToString(OscillatorType); // In JSOscillatorNode.cpp
 
 } // namespace WebCore
 
 namespace WTF {
 
-template<> struct LogArgument<WebCore::OscillatorNode::Type> {
-    static String toString(WebCore::OscillatorNode::Type type) { return convertEnumerationToString(type); }
+template<> struct LogArgument<WebCore::OscillatorType> {
+    static String toString(WebCore::OscillatorType type) { return convertEnumerationToString(type); }
 };
 
 } // namespace WTF

@@ -1,3 +1,21 @@
+2020-07-27  Clark Wang  <clark_wang@apple.com>
+
+        Added Constructor method to OscillatorNode
+        https://bugs.webkit.org/show_bug.cgi?id=214746
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing tests that now pass, or fail further along.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/processing-model/cycle-without-delay-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/ctor-oscillator-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping-expected.txt:
+
 2020-07-24  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, land baseline for web-platform-tests/encoding/eof-shift_jis.html.

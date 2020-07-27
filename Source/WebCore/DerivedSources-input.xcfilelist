@@ -327,6 +327,8 @@ $(PROJECT_DIR)/Modules/webaudio/OfflineAudioCompletionEvent.idl
 $(PROJECT_DIR)/Modules/webaudio/OfflineAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/OfflineAudioContextOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/OscillatorNode.idl
+$(PROJECT_DIR)/Modules/webaudio/OscillatorOptions.idl
+$(PROJECT_DIR)/Modules/webaudio/OscillatorType.idl
 $(PROJECT_DIR)/Modules/webaudio/PannerNode.idl
 $(PROJECT_DIR)/Modules/webaudio/PannerOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/PanningModelType.idl

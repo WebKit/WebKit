@@ -2,7 +2,8 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 FAIL Executing "detune limits" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
                 context, {numberOfInputs: context.destination.channelCount})')"
-FAIL Executing "detune automation" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {frequency: baseFrequency})')"
+FAIL Executing "detune automation" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+                .then')"
 PASS Audit report 
 PASS > [detune limits] Oscillator with detune and frequency at Nyquist or above 
 PASS > [detune automation] Oscillator output with detune automation should be zero above Nyquist 

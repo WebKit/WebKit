@@ -2,14 +2,8 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "ref-distance-error" 
 PASS Executing "max-distance-error" 
-FAIL Executing "min-distance" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {
-          type: 'sawtooth',
-          frequency: 20 * 440,
-        })')"
-FAIL Executing "max-distance" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new OscillatorNode(context, {
-          type: 'sawtooth',
-          frequency: 20 * 440,
-        })')"
+FAIL Executing "min-distance" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelSplitterNode(context, {numberOfOutputs: 2})')"
+FAIL Executing "max-distance" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelSplitterNode(context, {numberOfOutputs: 2})')"
 PASS Audit report 
 PASS > [ref-distance-error]  
 PASS   new PannerNode(c, {refDistance: -1}) threw RangeError: "refDistance cannot be set to a negative value". 

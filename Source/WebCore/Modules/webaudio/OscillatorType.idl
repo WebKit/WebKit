@@ -22,22 +22,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#pragma once
-
-#if ENABLE(WEB_AUDIO)
-
-#include "PeriodicWaveConstraints.h"
-#include <wtf/Optional.h>
-#include <wtf/Vector.h>
-
-namespace WebCore {
-
-struct PeriodicWaveOptions : PeriodicWaveConstraints {
-    Optional<Vector<float>> real;
-    Optional<Vector<float>> imag;
+ 
+[
+    Conditional=WEB_AUDIO,
+] enum OscillatorType {
+    "sine",
+    "square",
+    "sawtooth",
+    "triangle",
+    "custom"
 };
-
-} // namespace WebCore
-
-#endif // ENABLE(WEB_AUDIO)

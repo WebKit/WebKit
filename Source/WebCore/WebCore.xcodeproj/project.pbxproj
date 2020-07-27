@@ -5058,6 +5058,7 @@
 		E71467B624ABAF1D00FB2F50 /* PannerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B524ABAF1D00FB2F50 /* PannerOptions.h */; };
 		E755E89224C7434B009F7C23 /* PeriodicWaveConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = E755E88F24C7434B009F7C23 /* PeriodicWaveConstraints.h */; };
 		E755E89924C7461D009F7C23 /* PeriodicWaveOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E755E89624C7461D009F7C23 /* PeriodicWaveOptions.h */; };
+		E755E8B324CA271E009F7C23 /* OscillatorOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E755E8AF24CA270A009F7C23 /* OscillatorOptions.h */; };
 		E785D91524B4D1CA0014DB21 /* ChannelCountMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D91124B4D1B10014DB21 /* ChannelCountMode.h */; };
 		E785D93424B636FF0014DB21 /* ChannelInterpretation.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D93124B636FF0014DB21 /* ChannelInterpretation.h */; };
 		E785D96124B7F7350014DB21 /* AudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D95F24B7F7340014DB21 /* AudioContextOptions.h */; };
@@ -15837,6 +15838,10 @@
 		E755E89124C7434B009F7C23 /* PeriodicWaveConstraints.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PeriodicWaveConstraints.idl; sourceTree = "<group>"; };
 		E755E89624C7461D009F7C23 /* PeriodicWaveOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeriodicWaveOptions.h; sourceTree = "<group>"; };
 		E755E89824C7461D009F7C23 /* PeriodicWaveOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PeriodicWaveOptions.idl; sourceTree = "<group>"; };
+		E755E8AF24CA270A009F7C23 /* OscillatorOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscillatorOptions.h; sourceTree = "<group>"; };
+		E755E8B124CA270A009F7C23 /* OscillatorOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OscillatorOptions.idl; sourceTree = "<group>"; };
+		E755E8B424CA2796009F7C23 /* OscillatorType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscillatorType.h; sourceTree = "<group>"; };
+		E755E8B624CA2796009F7C23 /* OscillatorType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OscillatorType.idl; sourceTree = "<group>"; };
 		E785D91124B4D1B10014DB21 /* ChannelCountMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChannelCountMode.h; sourceTree = "<group>"; };
 		E785D91324B4D1B10014DB21 /* ChannelCountMode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChannelCountMode.idl; sourceTree = "<group>"; };
 		E785D93124B636FF0014DB21 /* ChannelInterpretation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChannelInterpretation.h; sourceTree = "<group>"; };
@@ -29521,6 +29526,10 @@
 				FD581FAB1520F91F003A7A75 /* OscillatorNode.cpp */,
 				FD581FAC1520F91F003A7A75 /* OscillatorNode.h */,
 				FD581FAD1520F91F003A7A75 /* OscillatorNode.idl */,
+				E755E8AF24CA270A009F7C23 /* OscillatorOptions.h */,
+				E755E8B124CA270A009F7C23 /* OscillatorOptions.idl */,
+				E755E8B424CA2796009F7C23 /* OscillatorType.h */,
+				E755E8B624CA2796009F7C23 /* OscillatorType.idl */,
 				FD315FCF12B0267500C1A359 /* PannerNode.cpp */,
 				FD315FD012B0267500C1A359 /* PannerNode.h */,
 				FD315FD112B0267500C1A359 /* PannerNode.idl */,
@@ -32604,6 +32613,7 @@
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 				FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */,
 				FD581FAF1520F91F003A7A75 /* OscillatorNode.h in Headers */,
+				E755E8B324CA271E009F7C23 /* OscillatorOptions.h in Headers */,
 				BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */,
 				7A29F57218C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h in Headers */,
 				0704A4081D6DE9F10086DCDB /* OverconstrainedError.h in Headers */,

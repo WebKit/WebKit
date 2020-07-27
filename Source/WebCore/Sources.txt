@@ -3128,6 +3128,8 @@ JSOffscreenCanvas.cpp
 JSOffscreenCanvasRenderingContext2D.cpp
 JSOptionalEffectTiming.cpp
 JSOscillatorNode.cpp
+JSOscillatorOptions.cpp
+JSOscillatorType.cpp
 JSOverconstrainedError.cpp
 JSOverconstrainedErrorEvent.cpp
 JSOverflowEvent.cpp

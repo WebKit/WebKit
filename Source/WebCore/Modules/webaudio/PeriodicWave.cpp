@@ -45,7 +45,6 @@ namespace WebCore {
     
 using namespace VectorMath;
 
-// FIXME: Remove once old constructor is phased out
 Ref<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array& real, Float32Array& imaginary)
 {
     ASSERT(real.length() == imaginary.length());

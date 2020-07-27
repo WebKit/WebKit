@@ -410,6 +410,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/OfflineAudioContext.idl \
     $(WebCore)/Modules/webaudio/OfflineAudioContextOptions.idl \
     $(WebCore)/Modules/webaudio/OscillatorNode.idl \
+    $(WebCore)/Modules/webaudio/OscillatorOptions.idl \
+    $(WebCore)/Modules/webaudio/OscillatorType.idl \
     $(WebCore)/Modules/webaudio/PannerNode.idl \
     $(WebCore)/Modules/webaudio/PannerOptions.idl \
     $(WebCore)/Modules/webaudio/PanningModelType.idl \

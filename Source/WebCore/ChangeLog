@@ -1,3 +1,43 @@
+2020-07-27  Clark Wang  <clark_wang@apple.com>
+
+        Added Constructor method to OscillatorNode
+        https://bugs.webkit.org/show_bug.cgi?id=214746
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing tests that now pass, or fail further along.
+
+        Added ctor to OscillatorNode, added OscillatorOptions, OscillatorType files all according to spec:
+        https://www.w3.org/TR/webaudio/#OscillatorNode-constructors. Updated createOscillator() method in 
+        BaseAudioContext.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioContextOptions.h:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createOscillator):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::create):
+        (WebCore::OscillatorNode::OscillatorNode):
+        (WebCore::OscillatorNode::setType):
+        (WebCore::OscillatorNode::setPeriodicWave):
+        * Modules/webaudio/OscillatorNode.h:
+        (WTF::LogArgument<WebCore::OscillatorType>::toString):
+        (WTF::LogArgument<WebCore::OscillatorNode::Type>::toString): Deleted.
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/webaudio/OscillatorOptions.h: Copied from Source/WebCore/Modules/webaudio/PeriodicWaveConstraints.h.
+        * Modules/webaudio/OscillatorOptions.idl: Copied from Source/WebCore/Modules/webaudio/PeriodicWaveConstraints.h.
+        * Modules/webaudio/OscillatorType.h: Copied from Source/WebCore/Modules/webaudio/PeriodicWaveConstraints.h.
+        * Modules/webaudio/OscillatorType.idl: Copied from Source/WebCore/Modules/webaudio/PeriodicWaveConstraints.h.
+        * Modules/webaudio/PannerOptions.h:
+        * Modules/webaudio/PeriodicWave.cpp:
+        * Modules/webaudio/PeriodicWaveConstraints.h:
+        * Modules/webaudio/PeriodicWaveOptions.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-07-27  Mark Lam  <mark.lam@apple.com>
 
         DisallowVMEntry needs a copy assignment operator, detected by gcc's -Wdeprecated-copy warning

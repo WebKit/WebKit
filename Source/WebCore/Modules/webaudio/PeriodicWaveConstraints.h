@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct PeriodicWaveConstraints {
-    bool disableNormalization = false;
+    bool disableNormalization { false };
 };
 
 } // namespace WebCore

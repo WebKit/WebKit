@@ -478,6 +478,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/OfflineAudioContext.idl
     Modules/webaudio/OfflineAudioContextOptions.idl
     Modules/webaudio/OscillatorNode.idl
+    Modules/webaudio/OscillatorOptions.idl
+    Modules/webaudio/OscillatorType.idl
     Modules/webaudio/PannerNode.idl
     Modules/webaudio/PannerOptions.idl
     Modules/webaudio/PanningModelType.idl

@@ -1230,6 +1230,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOptionalEffectTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOptionalEffectTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverconstrainedError.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverconstrainedError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverconstrainedErrorEvent.cpp

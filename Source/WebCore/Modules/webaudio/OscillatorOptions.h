@@ -27,15 +27,19 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "PeriodicWaveConstraints.h"
-#include <wtf/Optional.h>
-#include <wtf/Vector.h>
+#include "AudioNodeOptions.h"
+#include "OscillatorType.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-struct PeriodicWaveOptions : PeriodicWaveConstraints {
-    Optional<Vector<float>> real;
-    Optional<Vector<float>> imag;
+class PeriodicWave;
+    
+struct OscillatorOptions : AudioNodeOptions {
+    OscillatorType type { OscillatorType::Sine };
+    float frequency { 440 };
+    float detune { 0 };
+    RefPtr<PeriodicWave> periodicWave;
 };
 
 } // namespace WebCore
