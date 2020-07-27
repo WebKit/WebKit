@@ -35,9 +35,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern const NSImageHintKey NSImageHintSymbolFont;
-extern const NSImageHintKey NSImageHintSymbolScale;
-
 @interface NSImage ()
 - (void)lockFocusWithRect:(NSRect)rect context:(nullable NSGraphicsContext *)context hints:(nullable NSDictionary *)hints flipped:(BOOL)flipped;
 @end
@@ -48,6 +45,11 @@ extern const NSImageHintKey NSImageHintSymbolScale;
 
 NS_ASSUME_NONNULL_END
 
+#endif
+
+#if HAVE(ALTERNATE_ICONS)
+extern const NSImageHintKey NSImageHintSymbolFont;
+extern const NSImageHintKey NSImageHintSymbolScale;
 #endif
 
 #endif

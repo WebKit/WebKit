@@ -1,3 +1,13 @@
+2020-07-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [Big Sur] Wrap SPI in feature guards
+        https://bugs.webkit.org/show_bug.cgi?id=214844
+        <rdar://problem/66178527>
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/mac/NSImageSPI.h:
+
 2020-07-27  Chris Dumez  <cdumez@apple.com>
 
         ASSERT([filteredCookies.get() count] <= 1) on  imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html
