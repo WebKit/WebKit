@@ -1,3 +1,15 @@
+2020-05-05  Antoine Quint  <graouts@apple.com>
+
+        Fix animation ordering to make imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations.tentative.html pass
+        https://bugs.webkit.org/show_bug.cgi?id=211468
+        <rdar://problem/62732578>
+
+        Reviewed by David Kilzer.
+
+        Mark the final two failures in imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations.tentative.html as PASS.
+
+        * web-platform-tests/css/css-animations/Element-getAnimations.tentative-expected.txt:
+
 2020-02-21  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Value sanitization for input[type=text] should not truncate a value at a control character

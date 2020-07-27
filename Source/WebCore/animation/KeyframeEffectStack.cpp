@@ -80,7 +80,7 @@ void KeyframeEffectStack::ensureEffectsAreSorted()
     if (m_isSorted || m_effects.size() < 2)
         return;
 
-    std::sort(m_effects.begin(), m_effects.end(), [&](auto& lhs, auto& rhs) {
+    std::stable_sort(m_effects.begin(), m_effects.end(), [&](auto& lhs, auto& rhs) {
         auto* lhsAnimation = lhs->animation();
         auto* rhsAnimation = rhs->animation();
 

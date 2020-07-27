@@ -142,7 +142,7 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
     Vector<RefPtr<WebAnimation>> webAnimations;
 
     // First, let's get all qualifying animations in their right group.
-    for (const auto& animation : m_allAnimations) {
+    for (const auto& animation : m_animations) {
         if (!animation || !animation->isRelevant() || animation->timeline() != this || !is<KeyframeEffect>(animation->effect()))
             continue;
 
@@ -151,15 +151,15 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
             continue;
 
         if (is<CSSTransition>(animation.get()) && downcast<CSSTransition>(animation.get())->owningElement())
-            cssTransitions.append(animation.get());
+            cssTransitions.append(animation);
         else if (is<CSSAnimation>(animation.get()) && downcast<CSSAnimation>(animation.get())->owningElement())
-            cssAnimations.append(animation.get());
+            cssAnimations.append(animation);
         else
-            webAnimations.append(animation.get());
+            webAnimations.append(animation);
     }
 
     // Now sort CSS Transitions by their composite order.
-    std::sort(cssTransitions.begin(), cssTransitions.end(), [](auto& lhs, auto& rhs) {
+    std::stable_sort(cssTransitions.begin(), cssTransitions.end(), [](auto& lhs, auto& rhs) {
         // https://drafts.csswg.org/css-transitions-2/#animation-composite-order
         auto* lhsTransition = downcast<CSSTransition>(lhs.get());
         auto* rhsTransition = downcast<CSSTransition>(rhs.get());
@@ -181,7 +181,7 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
     });
 
     // Now sort CSS Animations by their composite order.
-    std::sort(cssAnimations.begin(), cssAnimations.end(), [](auto& lhs, auto& rhs) {
+    std::stable_sort(cssAnimations.begin(), cssAnimations.end(), [](auto& lhs, auto& rhs) {
         // https://drafts.csswg.org/css-animations-2/#animation-composite-order
         auto* lhsOwningElement = downcast<CSSAnimation>(lhs.get())->owningElement();
         auto* rhsOwningElement = downcast<CSSAnimation>(rhs.get())->owningElement();
@@ -194,7 +194,7 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
         return compareAnimationsByCompositeOrder(*lhs, *rhs, lhsOwningElement->ensureKeyframeEffectStack().cssAnimationList());
     });
 
-    std::sort(webAnimations.begin(), webAnimations.end(), [](auto& lhs, auto& rhs) {
+    std::stable_sort(webAnimations.begin(), webAnimations.end(), [](auto& lhs, auto& rhs) {
         return lhs->globalPosition() < rhs->globalPosition();
     });
 

@@ -37,6 +37,11 @@ namespace WebCore {
 
 bool compareAnimationsByCompositeOrder(WebAnimation& lhsAnimation, WebAnimation& rhsAnimation, const AnimationList* cssAnimationList)
 {
+    // We should not ever be calling this function with two WebAnimation objects that are the same. If that were the case,
+    // then comparing objects of this kind would yield inconsistent results when comparing A == B and B == A. As such,
+    // this function should be called with std::stable_sort().
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&lhsAnimation != &rhsAnimation);
+
     bool lhsHasOwningElement = is<DeclarativeAnimation>(lhsAnimation) && downcast<DeclarativeAnimation>(lhsAnimation).owningElement();
     bool rhsHasOwningElement = is<DeclarativeAnimation>(rhsAnimation) && downcast<DeclarativeAnimation>(rhsAnimation).owningElement();
 
