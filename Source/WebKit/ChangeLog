@@ -1,3 +1,16 @@
+2020-07-27  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] GeoclueGeolocationProvider uses very low accuracy setting (city) as default geolocation API
+        https://bugs.webkit.org/show_bug.cgi?id=214566
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests needed.
+
+        * UIProcess/geoclue/GeoclueGeolocationProvider.cpp:
+        (WebKit::GeoclueGeolocationProvider::requestAccuracyLevel): Use
+        GeoclueAccuracySteetLevel when high accuracy was not requested.
+
 2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][GTK] Add API to support "Privacy Report"

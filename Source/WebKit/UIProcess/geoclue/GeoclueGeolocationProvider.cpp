@@ -232,8 +232,16 @@ void GeoclueGeolocationProvider::requestAccuracyLevel()
     if (!m_client)
         return;
 
-    // GeoclueAccuracyLevelCity = 4, GeoclueAccuracyLevelExact = 8.
-    unsigned accuracy = m_isHighAccuracyEnabled ? 8 : 4;
+    // From https://bugs.webkit.org/show_bug.cgi?id=214566:
+    //
+    //   "Websites like OpenStreetMap or Google Maps do not use the
+    //    enableHighAccuracy position options for simple location, which
+    //    not very useful with only a city level of accuracy. They appear
+    //    to assume that at least a street level of accuracy could be given
+    //    without enabling a GPS on the device."
+    //
+    // GeoclueAccuracyLevelStreetLevel = 6, GeoclueAccuracyLevelExact = 8.
+    unsigned accuracy = m_isHighAccuracyEnabled ? 8 : 6;
     g_dbus_proxy_call(m_client.get(), "org.freedesktop.DBus.Properties.Set",
         g_variant_new("(ssv)", "org.freedesktop.GeoClue2.Client", "RequestedAccuracyLevel", g_variant_new_uint32(accuracy)),
         G_DBUS_CALL_FLAGS_NONE, -1, nullptr, nullptr, nullptr);
