@@ -22,7 +22,6 @@ fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html [ S
 webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 
 fast/events/document-elementFromPoint.html [ Failure ]
-fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 
 media/track/track-in-band-legacy-api.html [ Failure ]
 media/track/video-track-alternate-groups.html [ Failure ]
