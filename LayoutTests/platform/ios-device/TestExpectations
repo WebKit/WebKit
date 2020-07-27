@@ -6,7 +6,6 @@
 compositing/canvas/accelerated-canvas-compositing-size-limit.html [ Failure ]
 compositing/canvas/accelerated-canvas-compositing.html [ Failure ]
 compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
-compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ ImageOnlyFailure ]
 
 css3/filters/backdrop/backdrop-filter-with-reflection-add-backdrop.html [ ImageOnlyFailure ]

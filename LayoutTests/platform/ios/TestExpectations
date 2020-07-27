@@ -3196,9 +3196,6 @@ fast/images/animated-heics-verify.html [ Pass ]
 # <rdar://problem/40172428> REGRESSION: LayoutTests fast/text/font-collection.html and fast/text/woff2.html are failing
 webkit.org/b/212172 fast/text/font-collection.html [ ImageOnlyFailure ]
 
-# <rdar://problem/41546587> REGRESSION: LayoutTest compositing/contents-scale/non-decomposable-matrix.html is failing
-compositing/contents-scale/non-decomposable-matrix.html [ ImageOnlyFailure ]
-
 # <rdar://problem/36639117> REGRESSION: LayoutTest svg/custom/subpaths-moveto-only-rendering.svg is failing
 svg/custom/subpaths-moveto-only-rendering.svg [ Failure ]
 

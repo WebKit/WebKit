@@ -1,3 +1,13 @@
+2020-07-27  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS ] compositing/contents-scale/non-decomposable-matrix.html is passing and needs expectations removed
+        https://bugs.webkit.org/show_bug.cgi?id=214829
+
+        Unreviewed test gardening.
+
+        * platform/ios-device/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2020-07-27  Karl Rackler  <rackler@apple.com>
 
         [ iOS Mac debug wk2 ] js/throw-large-string-oom.html is a constant timeout
