@@ -212,6 +212,10 @@ def main(argv):
   parser.add_option(
       "-e", "--generate-expectations", action="store_true",
       help="generatet the test expectations")
+  parser.add_option(
+      "-o", "--output-dir", dest="output_dir",
+      help="base directory for output. defaults to \'.\'",
+      default=".")
 
   (options, args) = parser.parse_args(args=argv)
 
@@ -222,8 +226,8 @@ def main(argv):
   os.chdir(os.path.dirname(__file__) or '.')
 
   source_dir = options.source_dir;
-  webgl_tests_dir = "resources/webgl_test_files"
-  base_path = "."
+  output_dir = options.output_dir;
+  webgl_tests_dir = os.path.join(output_dir, "resources/webgl_test_files")
 
   # copy all the files from the WebGL conformance tests.
   if not options.no_copy:
@@ -240,10 +244,10 @@ def main(argv):
 
   for test in tests:
     url = os.path.relpath(test["url"], source_dir)
-    dst = url
+    dst = os.path.join(output_dir, url)
     dst_dir = os.path.dirname(dst)
     src = os.path.relpath(os.path.join(webgl_tests_dir, url), dst_dir).replace("\\", "/")
-    base_url = os.path.relpath(base_path, dst_dir).replace("\\", "/")
+    base_url = os.path.relpath(output_dir, dst_dir).replace("\\", "/")
     subs = {
       "url": src,
       "url_name": os.path.basename(url),

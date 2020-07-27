@@ -1,3 +1,16 @@
+2020-07-27  Kenneth Russell  <kbr@chromium.org>
+
+        Add output directory option to WebGL conformance import script
+        https://bugs.webkit.org/show_bug.cgi?id=214856
+
+        Reviewed by Dean Jackson.
+
+        Add an -o / --ouptut-dir option to support revising the
+        LayoutTests/webgl/2.0.0 snapshot.
+
+        * webgl/generate-webgl-tests.py:
+        (main):
+
 2020-07-24  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add test expectations and baselines for iOS 14
