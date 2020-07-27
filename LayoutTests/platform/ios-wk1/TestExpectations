@@ -1786,7 +1786,6 @@ transitions/cancel-transition.html [ Pass Failure ]
 
 # Flaky as of 09/14/2016 after migrating bots to iOS 10.
 css3/blending/blend-mode-isolation-flags-turn-off-blending.html [ Pass Failure ]
-css3/font-variant-small-caps-synthesis-coverage.html [ Pass ImageOnlyFailure ]
 css3/font-variant-synthesis-jdaggett.html [ Pass ImageOnlyFailure ]
 css3/masking/mask-base64.html [ Pass ImageOnlyFailure ]
 editing/deleting/delete-image-001.html [ Pass Failure ]
