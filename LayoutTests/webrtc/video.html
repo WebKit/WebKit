@@ -121,6 +121,24 @@ promise_test(async (test) => {
 
     await checkVideoIsUpdated(true);
 }, "Call setParameters to reenable sending a given encoding");
+
+promise_test(async (test) => {
+    const sender = pc1.getSenders()[0];
+    let p = sender.getParameters();
+    p.encodings[0].scaleResolutionDownBy = 2;
+    await sender.setParameters(p);
+
+    assert_equals(sender.getParameters().encodings[0].scaleResolutionDownBy, 2, "encodings[0].scaleResolutionDownBy should be 2");
+    assert_equals(video.videoWidth, 640);
+    assert_equals(video.videoHeight, 480);
+
+    let counter = 0;
+    while (++counter < 20 && video.videoWidth == 640)
+        await waitFor(200);
+
+    assert_equals(video.videoWidth, 320);
+    assert_equals(video.videoHeight, 240);
+}, "Call setParameters to reduce size by two");
         </script>
     </body>
 </html>
