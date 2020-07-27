@@ -1,5 +1,15 @@
 2020-07-27  Karl Rackler  <rackler@apple.com>
 
+        [ iOS Mac debug wk2 ] js/throw-large-string-oom.html is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=214824
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
+2020-07-27  Karl Rackler  <rackler@apple.com>
+
         [ iOS debug wk2 ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html is a consistant crash.
         https://bugs.webkit.org/show_bug.cgi?id=214661
 

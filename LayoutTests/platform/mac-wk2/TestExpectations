@@ -1085,3 +1085,5 @@ webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTran
 webkit.org/b/214682 [ Release ] imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html [ Pass Failure ]
 
 webkit.org/b/214683 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
+
+webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]

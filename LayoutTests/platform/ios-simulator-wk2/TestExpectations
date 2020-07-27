@@ -119,3 +119,5 @@ webkit.org/b/214752 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/214755 http/tests/navigation/subframe-pagehide-handler-starts-load2.html [ Pass Timeout ]
 
 webkit.org/b/214757 imported/w3c/web-platform-tests/css/css-fonts/crash-font-face-invalid-descriptor.html [ Pass Timeout ]
+
+webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
