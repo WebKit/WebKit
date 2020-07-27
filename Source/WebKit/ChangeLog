@@ -1,3 +1,33 @@
+2020-07-27  Tim Horton  <timothy_horton@apple.com>
+
+        Occasional crashes under PDFPlugin::createScrollbar and PDFPlugin::updateScrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=214845
+        <rdar://problem/59293598>
+
+        Reviewed by Brady Eidson.
+
+        No new tests; timing is such that I can't reproduce without inserting
+        intentional delays into the main thread hops, which is further than
+        I'm willing to go for a test.
+
+        This is a speculative fix due to the aforementioned reproducibility issue.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::destroy):
+        Keep track of when destroy() has been called.
+
+        (WebKit::PDFPlugin::receivedNonLinearizedPDFSentinel):
+        (WebKit::PDFPlugin::threadEntry):
+        If the PDFPlugin is destroyed (explicit destroy(), not the destructor, which won't run since we're protecting `this`)
+        during the window in which the PDF thread is dispatching to the main thread, just ignore
+        the callback. We don't want to run it, because many of the things we depend on (like PluginView)
+        are disconnected at this point.
+
+        (WebKit::PDFPlugin::scrollbarStyleChanged):
+        It appears that in some much rarer case, even before the PDF thread existed, WebScrollerImpPairDelegate could
+        call us back after being destroy()'d but before being deallocated. Use the new bit to guard scrollbarStyleChanged().
+
 2020-07-27  Megan Gardner  <megan_gardner@apple.com>
 
         Trying to lookup when WebView is in a popover causes process to hang.
