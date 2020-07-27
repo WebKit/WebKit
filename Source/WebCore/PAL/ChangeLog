@@ -1,3 +1,12 @@
+2020-07-27  Saagar Jha  <saagar@saagarjha.com>
+
+        Remove definition of NSImageSymbolScale, which is part of the beta 3 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=214707
+
+        Reviewed by Jonathan Bedard.
+
+        * pal/spi/mac/NSImageSPI.h: Remove NSImageSymbolScale.
+
 2020-07-27  Megan Gardner  <megan_gardner@apple.com>
 
         Trying to lookup when WebView is in a popover causes process to hang.
