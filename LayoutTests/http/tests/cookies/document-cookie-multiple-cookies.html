@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/cookies-test-pre.js"></script>
+</head>
+<body>
+<script>
+description('Tests trying to set multiple cookies at once using document.cookie');
+
+clearAllCookies();
+
+shouldBeEqualToString("document.cookie", "");
+
+document.cookie="samesite-unspecified=0;, samesite-lax=1; SameSite=Lax, samesite-strict=2; SameSite=Strict, samesite-none=3; SameSite=None; Secure";
+
+// Only the first cookie should have been set.
+shouldBeEqualToString("document.cookie", "samesite-unspecified=0");
+
+clearCookies();
+</script>
+<script src="resources/cookies-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,18 @@
+2020-07-27  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT([filteredCookies.get() count] <= 1) on  imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=214222
+        <rdar://problem/65587120>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/cookies/document-cookie-multiple-cookies-expected.txt: Added.
+        * http/tests/cookies/document-cookie-multiple-cookies.html: Added.
+        Add better layout test coverage.
+
+        * platform/ios-wk2/TestExpectations:
+        Unskip tests that is no longer crashing on iOS.
+
 2020-07-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r264926.

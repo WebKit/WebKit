@@ -308,40 +308,6 @@ NSArray *NetworkStorageSession::httpCookiesForURL(CFHTTPCookieStorageRef cookieS
     return WebCore::cookiesForURL(nsCookieStorage.get(), url, firstParty, sameSiteInfo);
 }
 
-static RetainPtr<NSArray> filterCookies(NSArray *unfilteredCookies, Optional<Seconds> cappedLifetime)
-{
-    NSUInteger count = [unfilteredCookies count];
-    RetainPtr<NSMutableArray> filteredCookies = adoptNS([[NSMutableArray alloc] initWithCapacity:count]);
-
-    for (NSUInteger i = 0; i < count; ++i) {
-        NSHTTPCookie *cookie = (NSHTTPCookie *)[unfilteredCookies objectAtIndex:i];
-
-        // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
-        // which would be sent as "Cookie: =". We have a workaround in setCookies() to prevent
-        // that, but we also need to avoid sending cookies that were previously stored, and
-        // there's no harm to doing this check because such a cookie is never valid.
-        if (![[cookie name] length])
-            continue;
-
-        if ([cookie isHTTPOnly])
-            continue;
-
-        // Cap lifetime of persistent, client-side cookies to a week.
-        if (cappedLifetime && ![cookie isSessionOnly]) {
-            if (!cookie.expiresDate || cookie.expiresDate.timeIntervalSinceNow > cappedLifetime->seconds()) {
-                RetainPtr<NSMutableDictionary<NSHTTPCookiePropertyKey, id>> properties = adoptNS([[cookie properties] mutableCopy]);
-                RetainPtr<NSDate> dateInAWeek = adoptNS([[NSDate alloc] initWithTimeIntervalSinceNow:cappedLifetime->seconds()]);
-                [properties setObject:dateInAWeek.get() forKey:NSHTTPCookieExpires];
-                cookie = [NSHTTPCookie cookieWithProperties:properties.get()];
-            }
-        }
-
-        [filteredCookies.get() addObject:cookie];
-    }
-
-    return filteredCookies;
-}
-
 NSArray *NetworkStorageSession::cookiesForURL(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP shouldAskITP, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -426,7 +392,45 @@ std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(con
     return cookiesForSession(headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, headerFieldProxy.frameID, headerFieldProxy.pageID, IncludeHTTPOnly, headerFieldProxy.includeSecureCookies, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No);
 }
 
-void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP shouldAskITP, const String& cookieStr, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
+static NSHTTPCookie *parseDOMCookie(String cookieString, NSURL* cookieURL, Optional<Seconds> cappedLifetime)
+{
+    // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
+    // which would be sent as "Cookie: =".
+    if (cookieString.isEmpty())
+        return nil;
+
+    // <http://bugs.webkit.org/show_bug.cgi?id=6531>, <rdar://4409034>
+    // cookiesWithResponseHeaderFields doesn't parse cookies without a value
+    cookieString = cookieString.contains('=') ? cookieString : cookieString + "=";
+
+    NSHTTPCookie *cookie = [NSHTTPCookie _cookieForSetCookieString:cookieString forURL:cookieURL partition:nil];
+    if (!cookie)
+        return nil;
+
+    // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
+    // which would be sent as "Cookie: =". We have a workaround in setCookies() to prevent
+    // that, but we also need to avoid sending cookies that were previously stored, and
+    // there's no harm to doing this check because such a cookie is never valid.
+    if (![[cookie name] length])
+        return nil;
+
+    if ([cookie isHTTPOnly])
+        return nil;
+
+    // Cap lifetime of persistent, client-side cookies to a week.
+    if (cappedLifetime && ![cookie isSessionOnly]) {
+        if (!cookie.expiresDate || cookie.expiresDate.timeIntervalSinceNow > cappedLifetime->seconds()) {
+            auto properties = adoptNS([[cookie properties] mutableCopy]);
+            auto dateInAWeek = adoptNS([[NSDate alloc] initWithTimeIntervalSinceNow:cappedLifetime->seconds()]);
+            [properties setObject:dateInAWeek.get() forKey:NSHTTPCookieExpires];
+            return [NSHTTPCookie cookieWithProperties:properties.get()];
+        }
+    }
+
+    return cookie;
+}
+
+void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP shouldAskITP, const String& cookieString, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
@@ -441,32 +445,18 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     UNUSED_PARAM(shouldAskITP);
 #endif
 
-    // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
-    // which would be sent as "Cookie: =".
-    if (cookieStr.isEmpty())
+    NSURL *cookieURL = url;
+
+    Optional<Seconds> cookieCap;
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    cookieCap = clientSideCookieCap(RegistrableDomain { firstParty }, pageID);
+#endif
+
+    NSHTTPCookie *cookie = parseDOMCookie(cookieString, cookieURL, cookieCap);
+    if (!cookie)
         return;
 
-    // <http://bugs.webkit.org/show_bug.cgi?id=6531>, <rdar://4409034>
-    // cookiesWithResponseHeaderFields doesn't parse cookies without a value
-    String cookieString = cookieStr.contains('=') ? cookieStr : cookieStr + "=";
-
-    NSURL *cookieURL = url;
-    NSDictionary *headerFields = @{ @"Set-Cookie": cookieString };
-
-#if PLATFORM(MAC)
-    NSArray *unfilteredCookies = [NSHTTPCookie _parsedCookiesWithResponseHeaderFields:headerFields forURL:cookieURL];
-#else
-    NSArray *unfilteredCookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headerFields forURL:cookieURL];
-#endif
-
-#if ENABLE(RESOURCE_LOAD_STATISTICS)
-    RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, clientSideCookieCap(RegistrableDomain { firstParty }, pageID));
-#else
-    RetainPtr<NSArray> filteredCookies = filterCookies(unfilteredCookies, WTF::nullopt);
-#endif
-    ASSERT([filteredCookies.get() count] <= 1);
-
-    setHTTPCookiesForURL(cookieStorage().get(), filteredCookies.get(), cookieURL, firstParty, sameSiteInfo);
+    setHTTPCookiesForURL(cookieStorage().get(), @[cookie], cookieURL, firstParty, sameSiteInfo);
 
     END_BLOCK_OBJC_EXCEPTIONS
 }

@@ -1,3 +1,14 @@
+2020-07-27  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT([filteredCookies.get() count] <= 1) on  imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=214222
+        <rdar://problem/65587120>
+
+        Reviewed by Alex Christensen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+        Replace deprecated _parsedCookiesWithResponseHeaderFields with newer _cookieForSetCookieString alternative.
+
 2020-07-27  Saagar Jha  <saagar@saagarjha.com>
 
         Remove definition of NSImageSymbolScale, which is part of the beta 3 SDK

@@ -407,9 +407,7 @@ WTF_EXTERN_C_END
 // Apple internal SDK builds use headers instead.
 
 @interface NSHTTPCookie ()
-#if PLATFORM(MAC)
-+ (NSArray *)_parsedCookiesWithResponseHeaderFields:(NSDictionary *)headerFields forURL:(NSURL *)aURL;
-#endif
++ (NSHTTPCookie *)_cookieForSetCookieString:(NSString *)setCookieString forURL:(NSURL *)aURL partition:(NSString *) partition;
 + (NSArray *)_cf2nsCookies:(CFArrayRef)cfCookies;
 @end
 

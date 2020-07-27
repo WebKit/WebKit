@@ -1,3 +1,31 @@
+2020-07-27  Chris Dumez  <cdumez@apple.com>
+
+        ASSERT([filteredCookies.get() count] <= 1) on  imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=214222
+        <rdar://problem/65587120>
+
+        Reviewed by Alex Christensen.
+
+        Per the HTML specification [1], upon setting document.cookie, we should act as we would when receiving a Set-Cookie string [2].
+        This means that you can only set one cookie at a time (you cannot comma-separate several cookies).
+
+        We were behaving correctly on macOS because we were using the [NSHTTPCookie _parsedCookiesWithResponseHeaderFields] SPI that was
+        made specifically for this purpose. However, we would set multiple cookies (in release), and crash in debug on iOS because iOS
+        was using a different API to parse the cookies ([NSHTTPCookie cookiesWithResponseHeaderFields:).
+
+        Note that [NSHTTPCookie _parsedCookiesWithResponseHeaderFields] was deprecated in CFNetwork, in favor of
+        [NSHTTPCookie _cookieForSetCookieString:]. As a result, I updated both macOS and iOS to use the same new CFNetwork SPI, which
+        gives us the standard behavior.
+
+        [1] https://html.spec.whatwg.org/#dom-document-cookie
+        [2] https://tools.ietf.org/html/rfc6265#section-4.1
+
+        Test: http/tests/cookies/document-cookie-multiple-cookies.html
+
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::parseDOMCookie):
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+
 2020-07-27  Clark Wang  <clark_wang@apple.com>
 
         Added Constructor method to OscillatorNode
