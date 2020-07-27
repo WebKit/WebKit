@@ -1,3 +1,18 @@
+2020-07-27  Youenn Fablet  <youenn@apple.com>
+
+        Fix null pointer crash in NetworkRTCProvider::createServerTCPSocket
+        https://bugs.webkit.org/show_bug.cgi?id=214796
+
+        Reviewed by Darin Adler.
+
+        In case of creating a TCP socket, NetworkRTCProvider will hop to the main thread before creating the socket.
+        In that case, NetworkRTCProvider may actually be closed between the time of receiving the message and hoping to the main thread.
+        Protect from this by adding nullptr checks.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+
 2020-07-25  Simon Fraser  <simon.fraser@apple.com>
 
         Scroll Snap broken when using RTL layout
