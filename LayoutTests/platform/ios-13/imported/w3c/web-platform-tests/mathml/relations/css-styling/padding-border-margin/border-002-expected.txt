@@ -1,0 +1,51 @@
+
+PASS Border properties on maction 
+PASS Border properties on maction (rtl) 
+FAIL Border properties on menclose assert_approx_equals: bottom border expected 60 +/- 1 but got -4.1875
+FAIL Border properties on menclose (rtl) assert_approx_equals: bottom border expected 60 +/- 1 but got -4.1875
+PASS Border properties on merror 
+PASS Border properties on merror (rtl) 
+FAIL Border properties on mfrac assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on mfrac (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
+PASS Border properties on mi 
+PASS Border properties on mi (rtl) 
+FAIL Border properties on mmultiscripts assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on mmultiscripts (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
+PASS Border properties on mn 
+PASS Border properties on mn (rtl) 
+PASS Border properties on mo 
+PASS Border properties on mo (rtl) 
+FAIL Border properties on mover assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on mover (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on mpadded assert_approx_equals: bottom border expected 60 +/- 1 but got -0.21875
+FAIL Border properties on mpadded (rtl) assert_approx_equals: bottom border expected 60 +/- 1 but got -0.21875
+PASS Border properties on mphantom 
+PASS Border properties on mphantom (rtl) 
+FAIL Border properties on mroot assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on mroot (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
+PASS Border properties on mrow 
+PASS Border properties on mrow (rtl) 
+PASS Border properties on ms 
+PASS Border properties on ms (rtl) 
+FAIL Border properties on mspace assert_approx_equals: left/right border expected 70 +/- 1 but got 0
+FAIL Border properties on msqrt assert_approx_equals: bottom border expected 60 +/- 1 but got -10.71875
+FAIL Border properties on msqrt (rtl) assert_approx_equals: bottom border expected 60 +/- 1 but got -10.71875
+PASS Border properties on mstyle 
+PASS Border properties on mstyle (rtl) 
+FAIL Border properties on msub assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on msub (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on msubsup assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on msubsup (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on msup assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on msup (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
+PASS Border properties on mtable 
+PASS Border properties on mtable (rtl) 
+PASS Border properties on mtext 
+PASS Border properties on mtext (rtl) 
+FAIL Border properties on munder assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on munder (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on munderover assert_approx_equals: left border expected 30 +/- 1 but got 0
+FAIL Border properties on munderover (rtl) assert_approx_equals: left border expected 30 +/- 1 but got 0
+PASS Border properties on semantics 
+PASS Border properties on semantics (rtl) 
+

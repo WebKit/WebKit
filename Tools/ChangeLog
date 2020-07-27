@@ -1,3 +1,23 @@
+2020-07-23  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add test expectations and baselines for iOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=214709
+
+        Reviewed by Jonathan Bedard.
+
+        Change current version to 14 and update unit tests.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort):
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest.make_port):
+        (IOSSimulatorTest.test_layout_test_searchpath_with_apple_additions):
+        (IOSSimulatorTest.test_layout_test_searchpath_without_apple_additions):
+        (IOSSimulatorTest.test_layout_searchpath_wih_device_type):
+        * Scripts/webkitpy/port/ios_testcase.py:
+        (IOSTest.make_port):
+
 2020-07-27  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add string_utils (Part 2)

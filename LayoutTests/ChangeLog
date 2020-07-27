@@ -1,3 +1,56 @@
+2020-07-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add test expectations and baselines for iOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=214709
+
+        Reviewed by Jonathan Bedard.
+
+        * platform/ios-13/TestExpectations: Added.
+        * platform/ios-13/fast/backgrounds/body-generated-image-propagated-to-root-expected.txt: Added.
+        * platform/ios-13/fast/forms/input-double-click-selection-gap-bug-expected.txt: Added.
+        * platform/ios-13/fast/forms/slider-thumb-shared-style-expected.txt: Added.
+        * platform/ios-13/fast/inline/br-text-decoration-expected.txt: Added.
+        * platform/ios-13/fast/layers/inline-dirty-z-order-lists-expected.txt: Added.
+        * platform/ios-13/fast/replaced/percent-height-in-anonymous-block-widget-expected.txt: Added.
+        * platform/ios-13/fast/text/international/bidi-LDB-2-CSS-expected.txt: Added.
+        * platform/ios-13/fast/text/international/bidi-LDB-2-HTML-expected.txt: Added.
+        * platform/ios-13/fast/text/international/bidi-LDB-2-formatting-characters-expected.txt: Added.
+        * platform/ios-13/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt: Copied from LayoutTests/platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt.
+        * platform/ios-13/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Added.
+        * platform/ios-13/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Added.
+        * platform/ios-13/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Added.
+        * platform/ios-13/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Added.
+        * platform/ios-13/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt: Copied from LayoutTests/platform/ios/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt.
+        * platform/ios-13/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt: Added.
+        * platform/ios-13/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt: Added.
+        * platform/ios-13/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt: Copied from LayoutTests/platform/ios/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt.
+        * platform/ios-13/platform/TestExpectations: Added.
+        * platform/ios-13/platform/ios/ios/fast/text/opticalFont-expected.txt: Copied from LayoutTests/platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt.
+        * platform/ios-13/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Copied from LayoutTests/platform/ios/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt.
+        * platform/ios-13/platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt: Copied from LayoutTests/platform/ios/platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt.
+        * platform/ios/TestExpectations:
+        * platform/ios/http/tests/xmlhttprequest/methods-async-expected.txt: Added.
+        * platform/ios/http/tests/xmlhttprequest/methods-expected.txt: Added.
+        * platform/ios/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Added.
+        * platform/ios/http/tests/xmlhttprequest/workers/methods-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/encoding/eof-shift_jis-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt:
+        * platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt:
+        * platform/ios/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt:
+        * platform/ios/platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt:
+        * platform/ipad-13/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Copied from LayoutTests/platform/ipad/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt.
+        * platform/ipad/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/encoding/eof-shift_jis-expected.txt: Added.
+
 2020-07-27  Chris Dumez  <cdumez@apple.com>
 
         ASSERT([filteredCookies.get() count] <= 1) on  imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html

@@ -1,0 +1,17 @@
+
+PASS Response.redirected should be false on not-redirected responses 
+PASS Redirect 301 with GET 
+PASS Redirect 301 with POST 
+FAIL Redirect 301 with HEAD assert_equals: Request Content-Length after redirection is NO expected "NO" but got "0"
+PASS Redirect 302 with GET 
+PASS Redirect 302 with POST 
+FAIL Redirect 302 with HEAD assert_equals: Request Content-Length after redirection is NO expected "NO" but got "0"
+PASS Redirect 303 with GET 
+PASS Redirect 303 with POST 
+FAIL Redirect 303 with HEAD assert_equals: Request Content-Length after redirection is NO expected "NO" but got "0"
+PASS Redirect 303 with TESTING 
+PASS Redirect 307 with GET 
+PASS Redirect 307 with POST (string body) 
+PASS Redirect 307 with POST (blob body) 
+FAIL Redirect 307 with HEAD assert_equals: Request Content-Length after redirection is NO expected "NO" but got "0"
+

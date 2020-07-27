@@ -36,7 +36,7 @@ _log = logging.getLogger(__name__)
 class IOSPort(DevicePort):
     port_name = "ios"
 
-    CURRENT_VERSION = Version(13)
+    CURRENT_VERSION = Version(14)
     DEVICE_TYPE = DeviceType(software_variant='iOS')
 
     def __init__(self, host, port_name, **kwargs):

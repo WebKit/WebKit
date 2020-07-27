@@ -362,6 +362,7 @@ PASS -webkit-overflow-scrolling
 PASS -webkit-print-color-adjust 
 PASS -webkit-rtl-ordering 
 PASS -webkit-ruby-position 
+PASS -webkit-tap-highlight-color 
 PASS -webkit-text-combine 
 PASS -webkit-text-emphasis-color 
 PASS -webkit-text-emphasis-position 

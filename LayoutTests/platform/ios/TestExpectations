@@ -3431,7 +3431,8 @@ webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-009.html [ Skip ]
 
 # Certain versions of iOS use different text security characters.
-webkit.org/b/209692 platform/ios/fast/text/text-security-disc-bullet-pua-ios-new.html [ ImageOnlyFailure ]
+webkit.org/b/209692 platform/ios/fast/text/text-security-disc-bullet-pua-ios-new.html [ Pass ]
+webkit.org/b/209692 platform/ios/fast/text/text-security-disc-bullet-pua-ios-old.html [ ImageOnlyFailure ]
 webkit.org/b/209692 fast/text/text-security-disc-bullet-pua.html [ ImageOnlyFailure ]
 
 webkit.org/b/210517 storage/indexeddb/result-request-cycle.html [ Pass Failure ]
@@ -3472,3 +3473,41 @@ webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/outline-with-padd
 webkit.org/b/214498 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Pass ]
 
 fast/text/selection-is-prevent-defaulted.html [ Failure ]
+
+# <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Failure ]
+
+# <rdar://problem/57029120> Reenable crypto/workers/subtle/rsa-postMessage-worker.html and crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html for iOS
+crypto/workers/subtle/rsa-postMessage-worker.html [ Skip ]
+crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html [ Skip ]
+
+# <rdar://problem/63448168> [ macOS iOS  Debug ] media/video-source-moved.html is a super flkay timeout
+media/video-source-moved.html [ Pass Timeout ]
+
+# <rdar://problem/64273358> REGRESSION: [ iOS ] imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html is flaky timing out.
+imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html [ Slow ]
+
+# <rdar://problem/64546452> [ iOS ] mathml/opentype/munderover-stretch-width.html is flaky failing.
+mathml/opentype/munderover-stretch-width.html [ Pass Failure ]
+
+# <rdar://problem/64701357> REGRESSION: [ iOS wk2 ] webgl/1.0.3/conformance/glsl/functions/glsl-function-sign.html and webgl/1.0.3/conformance/glsl/misc/glsl-function-nodes.html are failing consistently.
+webgl/1.0.3/conformance/glsl/functions/glsl-function-sign.html [ Failure ]
+webgl/1.0.3/conformance/glsl/misc/glsl-function-nodes.html [ Failure ]
+
+# <rdar://problem/64816264> [ iOS wk2 ] streams/pipe-to.html is flaky failing.
+streams/pipe-to.html [ Pass Failure ]
+
+# <rdar://problem/63255266> [ iOS wk2 ] animations/suspend-resume-animation-events.html is a flaky failure
+animations/suspend-resume-animation-events.html [ Pass Failure ]
+
+# <rdar://problem/63399079> [ iOS Debug ] imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm is a flaky failure
+imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm [ Pass Failure ]
+
+# <rdar://problem/64047392> REGRESSION: 5 fast/text/international/system-language/navigator-language/navigator-language tests are contant failures
+fast/text/international/system-language/navigator-language/navigator-language-en-US.html [ Failure ]
+fast/text/international/system-language/navigator-language/navigator-language-es-ES.html [ Failure ]
+fast/text/international/system-language/navigator-language/navigator-language-es-MX.html [ Failure ]
+fast/text/international/system-language/navigator-language/navigator-language-pt-BR.html [ Failure ]
+fast/text/international/system-language/navigator-language/navigator-language-zh-Hant.html [ Failure ]
+fast/text/international/system-language/navigator-language/navigator-language-zh-Hans.html [ Failure ]

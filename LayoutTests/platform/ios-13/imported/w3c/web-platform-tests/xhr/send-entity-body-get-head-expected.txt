@@ -1,0 +1,4 @@
+
+PASS XMLHttpRequest: send() - non-empty data argument and GET/HEAD (GET) 
+FAIL XMLHttpRequest: send() - non-empty data argument and GET/HEAD (HEAD) assert_equals: expected "NO" but got "0"
+

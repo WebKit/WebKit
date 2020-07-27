@@ -28,7 +28,7 @@ from webkitpy.port import darwin_testcase
 class IOSTest(darwin_testcase.DarwinTest):
     disable_setup = True
 
-    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=Version(13), **kwargs):
+    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=Version(14), **kwargs):
         port = super(IOSTest, self).make_port(host=host, port_name=port_name, options=options, os_name=os_name, os_version=None, kwargs=kwargs)
         port.set_option('version', str(os_version))
         return port
