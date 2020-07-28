@@ -1,3 +1,16 @@
+2020-07-28  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Enable more multiple render target layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=214780
+
+        Reviewed by Dean Jackson.
+
+        Re-enable two WebGL 2.0 layout tests that are now passing after
+        the fix for Bug 211156.
+
+        * TestExpectations:
+        * webgl/2.0.0/conformance2/rendering/clear-func-buffer-type-match-expected.txt:
+
 2020-07-28  Rob Buis  <rbuis@igalia.com>
 
         PerformanceObserver should work with 'type' and not just `entryTypes`

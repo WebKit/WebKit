@@ -1,27 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/clear-func-buffer-type-match.html
-[ 1: PASS ] context exists
-[ 2: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-[ 3: PASS ] getError was expected value: INVALID_OPERATION : clear and INT buffer
-[ 4: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferfv and INT buffer
-[ 5: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferuiv and INT buffer
-[ 6: PASS ] getError was expected value: NO_ERROR : clear and INT buffer is NONE
-[ 7: PASS ] getError was expected value: NO_ERROR : clearBufferfv and INT buffer is NONE
-[ 8: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferuiv and float buffer
-[ 9: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-[ 10: PASS ] getError was expected value: INVALID_OPERATION : clear and UINT buffer
-[ 11: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferfv and UINT buffer
-[ 12: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferiv and UINT buffer
-[ 13: PASS ] getError was expected value: NO_ERROR : clear and UINT buffer is NONE
-[ 14: PASS ] getError was expected value: NO_ERROR : clearBufferfv and UINT buffer is NONE
-[ 15: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferiv and float buffer
-[ 16: PASS ] gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
-[ 17: PASS ] getError was expected value: NO_ERROR : clear and RGBA8 buffer
-[ 18: PASS ] getError was expected value: NO_ERROR : clearBufferfv and RGBA8 buffer
-[ 19: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferiv and RGBA8 buffer
-[ 20: FAIL ] getError expected: INVALID_OPERATION. Was NO_ERROR : clearBufferuiv and RGBA8 buffer
-[ 21: PASS ] getError was expected value: NO_ERROR : should be no error
-[ 22: PASS ] successfullyParsed is true
-[ FAIL ] 8 failures reported
+[ PASS ] All tests passed
 
