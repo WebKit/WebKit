@@ -291,7 +291,10 @@
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebPageProxyAdditions.h>
 #else
-#define WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN true
+static bool isFullWebBrowser() { return true; }
+#if PLATFORM(IOS_FAMILY)
+static bool hasProhibitedUsageStrings() { return false; }
+#endif
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -1393,7 +1396,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "loadData:");
 
-    if (MIMEType == "text/html"_s && !WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN)
+    if (MIMEType == "text/html"_s && !isFullWebBrowser())
         m_limitsNavigationsToAppBoundDomains = true;
 
     if (m_isClosed) {
@@ -3134,8 +3137,11 @@ static bool shouldTreatURLProtocolAsAppBound(const URL& requestURL)
 bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMainFrame, const URL& requestURL, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
 #if PLATFORM(IOS_FAMILY)
-    if (WEB_PAGE_PROXY_ADDITIONS_SETISNAVIGATINGTOAPPBOUNDDOMAIN)
+    if (isFullWebBrowser()) {
+        if (hasProhibitedUsageStrings())
+            m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;
         return true;
+    }
     if (!isNavigatingToAppBoundDomain) {
         m_isNavigatingToAppBoundDomain = WTF::nullopt;
         return true;

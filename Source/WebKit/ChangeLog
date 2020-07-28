@@ -1,3 +1,33 @@
+2020-07-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        Handle full browser apps that try to use prohibited Info.plist strings
+        https://bugs.webkit.org/show_bug.cgi?id=214852
+        <rdar://problem/66023860>
+
+        Reviewed by Brent Fulgham.
+
+        Full-web browsing applications which also use prohibited Info.plist
+        strings should be restricted from using certain powerful APIs like
+        JavaScript injection. These apps will have the equivalent privileges
+        of an app that opts into App-Bound Domains with an empty
+        WKAppBoundDomains key.
+
+        No new tests. Writing a test for this would require being able to
+        change TestWebKitAPI's Info.plist between tests, which we do not
+        support. I manually tested this by adding a prohibited
+        string to the TestWebKitAPI Info.plist then verified that restricted APIs, 
+        like JS injection, were blocked.
+
+        * UIProcess/WebPageProxy.cpp:
+        (isFullWebBrowser):
+        (hasProhibitedUsageStrings):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted):
+        We do not need to set m_isNavigatingToAppBoundDomain in the case where
+        a full web browser does not use prohibited strings. In this case, we
+        want m_isNavigatingToAppBoundDomain to stay as WTF::nullopt so no API
+        restriction is enabled.
+
 2020-07-27  David Kilzer  <ddkilzer@apple.com>
 
         WebKit::setCrashReportApplicationSpecificInformation() should also log to WTFLogAlways()
