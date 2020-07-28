@@ -1,5 +1,14 @@
 2020-07-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        [GStreamer] Use GST_PLUGIN_FEATURE_RANK env var to have Thunder ranked higher in runtime instead of current custom one
+        https://bugs.webkit.org/show_bug.cgi?id=214826
+
+        * platform/graphics/gstreamer/GStreamerCommon.cpp: Unreviewed,
+        added comment about delaying because of the dependency on
+        GStreamer 1.16.
+
+2020-07-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         [GStreamer] media/vp9.html failing since check-in in r263894
         https://bugs.webkit.org/show_bug.cgi?id=213947
 

@@ -287,6 +287,9 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
 // to set this environment variable to Thunder and that decryptor will
 // be ranked higher when there is no protection system set (as in
 // WebM).
+// FIXME: In https://bugs.webkit.org/show_bug.cgi?id=214826 we say we
+// should migrate to use GST_PLUGIN_FEATURE_RANK but we can't yet
+// because our lowest dependency is 1.16.
 bool isThunderRanked()
 {
     const char* value = g_getenv("WEBKIT_GST_EME_RANK_PRIORITY");
