@@ -1,3 +1,14 @@
+2020-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Null check inlineStyle in StyledElement::invalidateStyleAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=214782
+        <rdar://problem/66052987>
+
+        Reviewed by Geoffrey Garen.
+
+        * fast/dom/null-inline-style-expected.txt: Added.
+        * fast/dom/null-inline-style.html: Added.
+
 2020-07-27  Zalan Bujtas  <zalan@apple.com>
 
         Extension is sized incorrectly, content is cut off.

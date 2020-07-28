@@ -1,0 +1,17 @@
+<style>
+    :not(anything) { -webkit-user-modify: read-write }
+</style>
+<script>
+    if (window.testRunner) { testRunner.dumpAsText() }
+    function doStuff() {
+        var s = document.getElementById("s");
+        document.execCommand("selectAll", false);
+        document.execCommand("strikeThrough", false);
+        var style = s.style;
+        document.execCommand("undo", false);
+        style.setProperty("transform", "rotatez(0)");
+    }
+</script>
+<body onload=doStuff()>
+    <s id="s">This test passes if it does not crash.</s>
+</body>

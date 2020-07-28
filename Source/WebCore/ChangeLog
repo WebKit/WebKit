@@ -1,3 +1,18 @@
+2020-07-27  Alex Christensen  <achristensen@webkit.org>
+
+        Null check inlineStyle in StyledElement::invalidateStyleAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=214782
+        <rdar://problem/66052987>
+
+        Reviewed by Geoffrey Garen.
+
+        This fixes a reachable crash.
+
+        Test: fast/dom/null-inline-style.html
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::invalidateStyleAttribute):
+
 2020-07-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Drag and drop does not preserve file names that contain periods
