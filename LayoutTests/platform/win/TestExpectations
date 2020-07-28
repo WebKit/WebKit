@@ -4528,3 +4528,4 @@ storage/indexeddb/structured-clone.html [ Skip ]
 
 webkit.org/b/214673 js/weakref-finalizationregistry.html [ Pass Timeout ]
 
+js/dom/promise-rejection-might-stack-overflow.html [ Skip ]

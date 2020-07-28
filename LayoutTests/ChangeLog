@@ -1,3 +1,16 @@
+2020-07-28  Saam Barati  <sbarati@apple.com>
+
+        JSPromise::reject might throw more than an unterminated exception
+        https://bugs.webkit.org/show_bug.cgi?id=214854
+        <rdar://problem/66152648>
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/promise-rejection-might-stack-overflow-expected.txt: Added.
+        * js/dom/promise-rejection-might-stack-overflow.html: Added.
+        * js/dom/script-tests/promise-rejection-might-stack-overflow.js: Added.
+        (foo):
+
 2020-07-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add test expectations and baselines for iOS 14

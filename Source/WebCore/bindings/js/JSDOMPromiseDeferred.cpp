@@ -142,15 +142,15 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
         return;
     }
 
-    auto scope = DECLARE_CATCH_SCOPE(lexicalGlobalObject.vm());
+    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
     auto error = createDOMException(lexicalGlobalObject, WTFMove(exception));
     if (UNLIKELY(scope.exception())) {
         ASSERT(isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
         return;
     }
 
+    scope.release();
     reject(lexicalGlobalObject, error, rejectAsHandled);
-    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
 }
 
 void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHandled rejectAsHandled)
@@ -175,16 +175,15 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHa
         return;
     }
 
-    auto scope = DECLARE_CATCH_SCOPE(lexicalGlobalObject.vm());
+    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
     auto error = createDOMException(&lexicalGlobalObject, ec, message);
     if (UNLIKELY(scope.exception())) {
         ASSERT(isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
         return;
     }
 
-
+    scope.release();
     reject(lexicalGlobalObject, error, rejectAsHandled);
-    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
 }
 
 void DeferredPromise::reject(const JSC::PrivateName& privateName, RejectAsHandled rejectAsHandled)

@@ -1,3 +1,23 @@
+2020-07-28  Saam Barati  <sbarati@apple.com>
+
+        JSPromise::reject might throw more than an unterminated exception
+        https://bugs.webkit.org/show_bug.cgi?id=214854
+        <rdar://problem/66152648>
+
+        Reviewed by Yusuke Suzuki.
+
+        Before, we were assuming the only exception that could be thrown
+        was an early termination exception. However, it's tenuous to assume
+        the types of exceptions that can be thrown. This particular test was
+        throwing a stack overflow exception. It's better form to just propagate
+        the exception upwards instead of attempting to enumerate the list of
+        valid exceptions.
+
+        Test: js/dom/promise-rejection-might-stack-overflow.html
+
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::reject):
+
 2020-07-28  Alex Christensen  <achristensen@webkit.org>
 
         Add null checks in ResourceLoader
