@@ -1,3 +1,15 @@
+2020-07-28  Chris Dumez  <cdumez@apple.com>
+
+        [EventSource] WebKit fails to UTF-8 encode the Last-Event-ID HTTP header value
+        https://bugs.webkit.org/show_bug.cgi?id=214860
+
+        Reviewed by Alex Christensen and Darin Adler.
+
+        Rebaseline a couple of web-platform-tests that are now passing.
+
+        * web-platform-tests/eventsource/format-field-id-2-expected.txt:
+        * web-platform-tests/eventsource/format-field-id-expected.txt:
+
 2020-07-28  Clark Wang  <clark_wang@apple.com>
 
         Added constructor methods to ChannelMergerNode, ChannelSplitterNode

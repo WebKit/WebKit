@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "HTTPHeaderMap.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceRequestBase.h"
 
@@ -81,6 +82,16 @@ inline CFURLRequestPriority toPlatformRequestPriority(ResourceLoadPriority prior
 
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+inline RetainPtr<CFStringRef> httpHeaderValueUsingSuitableEncoding(HTTPHeaderMap::const_iterator::KeyValue header)
+{
+    if (header.keyAsHTTPHeaderName && *header.keyAsHTTPHeaderName == HTTPHeaderName::LastEventID && !header.value.isAllASCII()) {
+        auto utf8Value = header.value.utf8();
+        // Constructing a string with the UTF-8 bytes but claiming that it’s Latin-1 is the way to get CFNetwork to put those UTF-8 bytes on the wire.
+        return adoptCF(CFStringCreateWithBytes(nullptr, reinterpret_cast<const UInt8*>(utf8Value.data()), utf8Value.length(), kCFStringEncodingISOLatin1, false));
+    }
+    return header.value.createCFString();
 }
 
 } // namespace WebCore

@@ -193,8 +193,10 @@ void ResourceRequest::doUpdatePlatformRequest()
     // Cannot just use setAllHTTPHeaderFields here, because it does not remove headers.
     for (NSString *oldHeaderName in [nsRequest allHTTPHeaderFields])
         [nsRequest setValue:nil forHTTPHeaderField:oldHeaderName];
-    for (const auto& header : httpHeaderFields())
-        [nsRequest setValue:header.value forHTTPHeaderField:header.key];
+    for (const auto& header : httpHeaderFields()) {
+        auto encodedValue = httpHeaderValueUsingSuitableEncoding(header);
+        [nsRequest setValue:(__bridge NSString *)encodedValue.get() forHTTPHeaderField:header.key];
+    }
 
     [nsRequest setContentDispositionEncodingFallbackArray:createNSArray(m_responseContentDispositionEncodingFallbackArray, [] (auto& name) -> NSNumber * {
         auto encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(name.createCFString().get()));

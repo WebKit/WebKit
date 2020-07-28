@@ -120,7 +120,7 @@ static inline void setHeaderFields(CFMutableURLRequestRef request, const HTTPHea
     }
 
     for (const auto& header : requestHeaders)
-        CFURLRequestSetHTTPHeaderFieldValue(request, header.key.createCFString().get(), header.value.createCFString().get());
+        CFURLRequestSetHTTPHeaderFieldValue(request, header.key.createCFString().get(), httpHeaderValueUsingSuitableEncoding(header).get());
 }
 
 static inline CFURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceRequestCachePolicy policy)

@@ -1,3 +1,26 @@
+2020-07-28  Chris Dumez  <cdumez@apple.com>
+
+        [EventSource] WebKit fails to UTF-8 encode the Last-Event-ID HTTP header value
+        https://bugs.webkit.org/show_bug.cgi?id=214860
+
+        Reviewed by Alex Christensen and Darin Adler.
+
+        WebKit fails to UTF-8 encode the Last-Event-ID HTTP header value for EventSource.
+
+        The specification is here:
+        https://html.spec.whatwg.org/multipage/server-sent-events.html#reestablish-the-connection (step 5.3.)
+
+        This is causing us to fail a couple of EventSource web-platform-tests which are passing in both Chrome & Firefox.
+
+        No new tests, rebaselined existing tests.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::setHeaderFields):
+        * platform/network/cf/ResourceRequestCFNet.h:
+        (WebCore::httpHeaderValueUsingSuitableEncoding):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2020-07-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] ANGLE D3D renderer can crash when PlatformDisplayWin is destructed in IPC thread
