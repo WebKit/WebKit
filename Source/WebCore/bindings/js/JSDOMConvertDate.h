@@ -31,12 +31,12 @@
 namespace WebCore {
 
 JSC::JSValue jsDate(JSC::JSGlobalObject&, double value);
-double valueToDate(JSC::JSGlobalObject&, JSC::JSValue); // NaN if the value can't be converted to a date.
+double valueToDate(JSC::VM&, JSC::JSValue); // NaN if the value can't be converted to a date.
 
 template<> struct Converter<IDLDate> : DefaultConverter<IDLDate> {
     static double convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
     {
-        return valueToDate(lexicalGlobalObject, value);
+        return valueToDate(lexicalGlobalObject.vm(), value);
     }
 };
 

@@ -917,9 +917,8 @@ inline JSString* jsOwnedString(VM& vm, const String& s)
     return JSString::createHasOtherOwner(vm, *s.impl());
 }
 
-ALWAYS_INLINE JSString* jsStringWithCache(JSGlobalObject* globalObject, const String& s)
+ALWAYS_INLINE JSString* jsStringWithCache(VM& vm, const String& s)
 {
-    VM& vm = getVM(globalObject);
     StringImpl* stringImpl = s.impl();
     if (!stringImpl || !stringImpl->length())
         return jsEmptyString(vm);

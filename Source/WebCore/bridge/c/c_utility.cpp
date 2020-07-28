@@ -124,7 +124,7 @@ JSValue convertNPVariantToValue(JSGlobalObject* exec, const NPVariant* variant, 
     if (type == NPVariantType_Double)
         return jsNumber(NPVARIANT_TO_DOUBLE(*variant));
     if (type == NPVariantType_String)
-        return jsStringWithCache(exec, convertNPStringToUTF16(&variant->value.stringValue));
+        return jsStringWithCache(exec->vm(), convertNPStringToUTF16(&variant->value.stringValue));
     if (type == NPVariantType_Object) {
         NPObject* obj = variant->value.objectValue;
         

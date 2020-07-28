@@ -48,15 +48,15 @@ class IDBValue;
 class IndexKey;
 class JSDOMGlobalObject;
 
-RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSC::JSGlobalObject&, const JSC::JSValue&, const IDBKeyPath&);
-bool canInjectIDBKeyIntoScriptValue(JSC::JSGlobalObject&, const JSC::JSValue&, const IDBKeyPath&);
+RefPtr<IDBKey> maybeCreateIDBKeyFromScriptValueAndKeyPath(JSC::JSGlobalObject&, JSC::JSValue, const IDBKeyPath&);
+bool canInjectIDBKeyIntoScriptValue(JSC::JSGlobalObject&, JSC::JSValue, const IDBKeyPath&);
 bool injectIDBKeyIntoScriptValue(JSC::JSGlobalObject&, const IDBKeyData&, JSC::JSValue, const IDBKeyPath&);
 
 void generateIndexKeyForValue(JSC::JSGlobalObject&, const IDBIndexInfo&, JSC::JSValue, IndexKey& outKey, const Optional<IDBKeyPath>&, const IDBKeyData&);
 
 IndexIDToIndexKeyMap generateIndexKeyMapForValue(JSC::JSGlobalObject&, const IDBObjectStoreInfo&, const IDBKeyData&, const IDBValue&);
 
-Ref<IDBKey> scriptValueToIDBKey(JSC::JSGlobalObject&, const JSC::JSValue&);
+Ref<IDBKey> scriptValueToIDBKey(JSC::JSGlobalObject&, JSC::JSValue);
 
 JSC::JSValue deserializeIDBValueToJSValue(JSC::JSGlobalObject&, const IDBValue&, Vector<std::pair<String, String>>&);
 JSC::JSValue deserializeIDBValueToJSValue(JSC::JSGlobalObject&, const IDBValue&);

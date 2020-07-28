@@ -138,7 +138,7 @@ String convertEnumerationToString(TestObj::EnumType enumerationValue)
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestObj::EnumType enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(JSGlobalObject& lexicalGlobalObject, JSValue value)
@@ -178,7 +178,7 @@ String convertEnumerationToString(TestObj::Optional enumerationValue)
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestObj::Optional enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(JSGlobalObject& lexicalGlobalObject, JSValue value)
@@ -214,7 +214,7 @@ String convertEnumerationToString(AlternateEnumName enumerationValue)
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, AlternateEnumName enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(JSGlobalObject& lexicalGlobalObject, JSValue value)
@@ -246,7 +246,7 @@ String convertEnumerationToString(TestObj::EnumA enumerationValue)
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestObj::EnumA enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(JSGlobalObject& lexicalGlobalObject, JSValue value)
@@ -278,7 +278,7 @@ String convertEnumerationToString(TestObj::EnumB enumerationValue)
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestObj::EnumB enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(JSGlobalObject& lexicalGlobalObject, JSValue value)
@@ -310,7 +310,7 @@ String convertEnumerationToString(TestObj::EnumC enumerationValue)
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestObj::EnumC enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(JSGlobalObject& lexicalGlobalObject, JSValue value)
@@ -342,7 +342,7 @@ String convertEnumerationToString(TestObj::Kind enumerationValue)
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestObj::Kind enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(JSGlobalObject& lexicalGlobalObject, JSValue value)
@@ -374,7 +374,7 @@ String convertEnumerationToString(TestObj::Size enumerationValue)
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestObj::Size enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<TestObj::Size> parseEnumeration<TestObj::Size>(JSGlobalObject& lexicalGlobalObject, JSValue value)
@@ -406,7 +406,7 @@ String convertEnumerationToString(TestObj::Confidence enumerationValue)
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestObj::Confidence enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(JSGlobalObject& lexicalGlobalObject, JSValue value)

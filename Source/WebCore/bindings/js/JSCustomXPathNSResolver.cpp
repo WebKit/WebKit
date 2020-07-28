@@ -88,7 +88,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     Ref<JSCustomXPathNSResolver> protectedThis(*this);
 
     MarkedArgumentBuffer args;
-    args.append(jsStringWithCache(lexicalGlobalObject, prefix));
+    args.append(jsStringWithCache(vm, prefix));
     ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> exception;

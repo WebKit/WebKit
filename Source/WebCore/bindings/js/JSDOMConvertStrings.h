@@ -63,7 +63,7 @@ template<> struct JSConverter<IDLDOMString> {
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
     {
-        return JSC::jsStringWithCache(&lexicalGlobalObject, value);
+        return JSC::jsStringWithCache(JSC::getVM(&lexicalGlobalObject), value);
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const UncachedString& value)
@@ -95,7 +95,7 @@ template<> struct JSConverter<IDLByteString> {
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
     {
-        return JSC::jsStringWithCache(&lexicalGlobalObject, value);
+        return JSC::jsStringWithCache(JSC::getVM(&lexicalGlobalObject), value);
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const UncachedString& value)
@@ -126,7 +126,7 @@ template<> struct JSConverter<IDLUSVString> {
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const String& value)
     {
-        return JSC::jsStringWithCache(&lexicalGlobalObject, value);
+        return JSC::jsStringWithCache(JSC::getVM(&lexicalGlobalObject), value);
     }
 
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const UncachedString& value)

@@ -2120,7 +2120,7 @@ sub GenerateEnumerationImplementationContent
     # FIXME: Change to take VM& instead of JSGlobalObject*.
     $result .= "template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, $className enumerationValue)\n";
     $result .= "{\n";
-    $result .= "    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));\n";
+    $result .= "    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));\n";
     $result .= "}\n\n";
 
     # FIXME: Change to take VM& instead of JSGlobalObject&.

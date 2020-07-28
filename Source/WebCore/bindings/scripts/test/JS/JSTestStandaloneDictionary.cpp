@@ -328,7 +328,7 @@ String convertEnumerationToString(TestStandaloneDictionary::EnumInStandaloneDict
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestStandaloneDictionary::EnumInStandaloneDictionaryFile enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<TestStandaloneDictionary::EnumInStandaloneDictionaryFile> parseEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(JSGlobalObject& lexicalGlobalObject, JSValue value)

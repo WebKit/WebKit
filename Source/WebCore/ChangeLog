@@ -1,3 +1,60 @@
+2020-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        IndexedDB binding utilities miss exception checks
+        https://bugs.webkit.org/show_bug.cgi?id=214820
+        <rdar://problem/66152374>
+
+        Reviewed by Mark Lam.
+
+        Test: js/dom/indexed-db-operations-exception-checks.html
+
+        This patch appropriately inserts exception checking code into IndexedDB binding utilities.
+
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        (WebCore::IDBKeyRange::includes):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::get):
+        (WebCore::set):
+        (WebCore::toJS):
+        (WebCore::createIDBKeyFromValue):
+        (WebCore::internalCreateIDBKeyFromScriptValueAndKeyPath):
+        (WebCore::ensureNthValueOnKeyPath):
+        (WebCore::injectIDBKeyIntoScriptValue):
+        (WebCore::maybeCreateIDBKeyFromScriptValueAndKeyPath):
+        (WebCore::canInjectIDBKeyIntoScriptValue):
+        (WebCore::scriptValueToIDBKey):
+        * bindings/js/IDBBindingUtilities.h:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMConvertDate.cpp:
+        (WebCore::valueToDate):
+        * bindings/js/JSDOMConvertDate.h:
+        (WebCore::Converter<IDLDate>::convert):
+        * bindings/js/JSDOMConvertStrings.h:
+        (WebCore::JSConverter<IDLDOMString>::convert):
+        (WebCore::JSConverter<IDLByteString>::convert):
+        (WebCore::JSConverter<IDLUSVString>::convert):
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction const):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEnumerationImplementationContent):
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        (WebCore::convertEnumerationToJS):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertEnumerationToJS):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertEnumerationToJS):
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.cpp:
+        (WebCore::convertEnumerationToJS):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertNPVariantToValue):
+
 2020-07-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Crash in Nicosia::GC3DLayer::makeContextCurrent due to failure in EGL display creation

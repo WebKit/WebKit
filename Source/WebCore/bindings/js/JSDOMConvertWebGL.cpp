@@ -93,7 +93,7 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
             return jsNumber(value);
         },
         [&] (const String& value) {
-            return jsStringWithCache(&lexicalGlobalObject, value);
+            return jsStringWithCache(lexicalGlobalObject.vm(), value);
         },
         [&] (const Vector<bool>& values) {
             MarkedArgumentBuffer list;

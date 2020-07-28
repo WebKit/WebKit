@@ -150,7 +150,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
 
     MarkedArgumentBuffer args;
     args.append(jsNontrivialString(vm, m_eventParameterName));
-    args.append(jsStringWithCache(lexicalGlobalObject, m_code));
+    args.append(jsStringWithCache(vm, m_code));
     ASSERT(!args.hasOverflowed());
 
     // We want all errors to refer back to the line on which our attribute was

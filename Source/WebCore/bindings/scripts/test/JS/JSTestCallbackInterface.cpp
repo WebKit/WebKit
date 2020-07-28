@@ -61,7 +61,7 @@ String convertEnumerationToString(TestCallbackInterface::Enum enumerationValue)
 
 template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestCallbackInterface::Enum enumerationValue)
 {
-    return jsStringWithCache(&lexicalGlobalObject, convertEnumerationToString(enumerationValue));
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
 }
 
 template<> Optional<TestCallbackInterface::Enum> parseEnumeration<TestCallbackInterface::Enum>(JSGlobalObject& lexicalGlobalObject, JSValue value)
