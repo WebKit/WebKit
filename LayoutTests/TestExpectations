@@ -3362,6 +3362,8 @@ webgl/2.0.0/deqp [ Skip ]
 webgl/2.0.0/conformance/more/functions/texImage2DHTML.html [ Skip ]
 webgl/2.0.0/conformance/more/functions/texSubImage2DHTML.html [ Skip ]
 
+webkit.org/b/214893 [ Debug ] webgl/2.0.0/conformance/uniforms/gl-uniform-arrays.html [ Slow ]
+
 # webkit.org/b/208078 To-be-addressed WebGL 2 tests that generate inconsistent results between devices
 webgl/2.0.0/conformance2/renderbuffers/multisample-with-full-sample-counts.html [ Pass Failure ]
 webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Pass Failure ]
