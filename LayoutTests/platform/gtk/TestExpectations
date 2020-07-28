@@ -401,6 +401,7 @@ webkit.org/b/169918 compositing/webgl/webgl-reflection.html [ Missing Failure ]
 webkit.org/b/169918 compositing/plugins/composited-plugin.html [ Missing Failure ]
 webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Crash ]
 webkit.org/b/169918 compositing/video/video-background-color.html [ Crash Pass ]
+webkit.org/b/214868 compositing/clipping/border-radius-stacking-context-clip.html [ ImageOnlyFailure ]
 
 # WebGL related failures
 webkit.org/b/169917 fast/canvas/webgl/antialiasing-enabled.html [ Failure Pass ]
