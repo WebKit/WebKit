@@ -411,6 +411,9 @@ bool WebInspectorProxy::platformCanAttach(bool webProcessCanAttach)
     if ([WKInspectorViewController viewIsInspectorWebView:inspectedView])
         return webProcessCanAttach;
 
+    if (inspectedView.hidden)
+        return false;
+
     static const float minimumAttachedHeight = 250;
     static const float maximumAttachedHeightRatio = 0.75;
     static const float minimumAttachedWidth = 500;

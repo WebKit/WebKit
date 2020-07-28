@@ -279,7 +279,7 @@ void WebInspectorProxy::attachLeft()
 void WebInspectorProxy::attach(AttachmentSide side)
 {
     ASSERT(m_inspectorPage);
-    if (!m_inspectedPage || !m_inspectorPage || !canAttach())
+    if (!m_inspectedPage || !m_inspectorPage || !platformCanAttach(canAttach()))
         return;
 
     m_isAttached = true;
@@ -311,7 +311,7 @@ void WebInspectorProxy::attach(AttachmentSide side)
 
 void WebInspectorProxy::detach()
 {
-    if (!m_inspectedPage || !m_inspectorPage)
+    if (!m_inspectedPage || !m_inspectorPage || (!m_isAttached && m_isVisible))
         return;
 
     m_isAttached = false;
