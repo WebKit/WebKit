@@ -1,3 +1,18 @@
+2020-07-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add test expectations and baselines for iOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=214709
+
+        Unreviewed test gardening.
+
+        Add a few missing baselines for failures that weren't caught by EWS
+        due to pre-existing flaky expectations.
+
+        * platform/ios-13/http/tests/xmlhttprequest/methods-async-expected.txt: Added.
+        * platform/ios-13/http/tests/xmlhttprequest/methods-expected.txt: Added.
+        * platform/ios-13/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Added.
+        * platform/ios-13/http/tests/xmlhttprequest/workers/methods-expected.txt: Added.
+
 2020-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         IndexedDB binding utilities miss exception checks
