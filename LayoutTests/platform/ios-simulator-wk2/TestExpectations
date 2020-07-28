@@ -112,8 +112,6 @@ webkit.org/b/214736 imported/w3c/web-platform-tests/css/css-flexbox/align-self-0
 
 webkit.org/b/214739 [ Debug ] imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-center.html [ Pass Timeout ]
 
-webkit.org/b/214324 fast/visual-viewport/scroll-event-fired-during-scroll-alone.html [ Pass Failure ]
-
 webkit.org/b/214751 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/security.pattern.fillStyle.sub.html [ Pass Failure ]
 
 webkit.org/b/214752 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Pass Failure ]

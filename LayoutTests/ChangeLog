@@ -1,3 +1,17 @@
+2020-07-27  Antoine Quint  <graouts@webkit.org>
+
+        Test landed flaky: [ iOS ] fast/visual-viewport/scroll-event-fired-during-scroll-alone.html is a flakey failure
+        https://bugs.webkit.org/show_bug.cgi?id=214324
+        <rdar://problem/65566127>
+
+        Reviewed by Simon Fraser.
+
+        Use UIHelper.ensureStablePresentationUpdate() and an additional animation frame to determine that
+        scroll has completed after the call to `window.scrollTo()`.
+
+        * fast/visual-viewport/scroll-event-fired-during-scroll-alone.html:
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-07-27  Alex Christensen  <achristensen@webkit.org>
 
         Null check inlineStyle in StyledElement::invalidateStyleAttribute
