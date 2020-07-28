@@ -1,6 +1,8 @@
 {
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
+                    { "name": "bot279", "platform": "mac-bigsur"},
+
                     { "name": "bot121", "platform": "mac-catalina" },
                     { "name": "bot157", "platform": "mac-catalina" },
                     { "name": "bot187", "platform": "mac-catalina" },
@@ -101,7 +103,11 @@
                     { "name": "wpe-linux-bot-6", "platform": "wpe" }
                   ],
 
-    "builders":   [ 
+    "builders":   [
+                    { "name": "Apple-BigSur-Release-Build", "type": "Build", "builddir": "bigsur-release",
+                      "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "slavenames": ["bot279"]
+                    },
                     { "name": "Apple-Catalina-Debug-Build", "type": "Build", "builddir": "catalina-debug",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
                       "triggers": ["catalina-debug-tests-jsc", "catalina-debug-tests-test262", "catalina-debug-tests-wk1", "catalina-debug-tests-wk2", "catalina-debug-tests-wk2-webgl", "catalina-debug-tests-wk2-gpuprocess"],
@@ -451,6 +457,9 @@
                                        "JSCOnly Linux MIPS32el Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",
                                        "WinCairo 64-bit WKL Release (Build)", "WinCairo 64-bit WKL Debug (Build)",
                                        "WPE Linux 64-bit Release (Build)", "WPE Linux 64-bit Debug (Build)"]
+                    },
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-bigsur", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-BigSur-Release-Build"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-catalina", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-Catalina-Release-Build", "Apple-Catalina-Debug-Build", "Apple-Catalina-LLINT-CLoop-BuildAndTest"]

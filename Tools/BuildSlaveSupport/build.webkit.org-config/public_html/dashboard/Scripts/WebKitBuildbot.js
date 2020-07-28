@@ -26,6 +26,7 @@
 WebKitBuildbot = function()
 {
     const queueInfo = {
+        "Apple-BigSur-Release-Build": {platform: Dashboard.Platform.macOSBigSur, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Catalina-Debug-Build": {platform: Dashboard.Platform.macOSCatalina, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Catalina-Release-Build": {platform: Dashboard.Platform.macOSCatalina, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Catalina-Debug-WK1-Tests": {platform: Dashboard.Platform.macOSCatalina, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit1},
