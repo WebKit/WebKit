@@ -15,7 +15,19 @@ function print_rebase_message_and_exit {
 function cleanup_after_successful_rebase_and_exit {
     cd "$ANGLE_DIR"
     echo
-    echo "Regenerating changes.diff"
+    echo "Regenerating changes.diff."
+    git diff origin/master --diff-filter=a > changes.diff
+    echo "Pausing to let you examine changes.diff, and the files in"
+    echo "Source/ThirdParty/ANGLE relative to upstream, using git tools."
+    echo "At this point you may undo any undesired changes that you see in"
+    echo "changes.diff."
+    echo "To see the current changes relative to upstream ANGLE, run the"
+    echo "following command in Source/ThirdParty/ANGLE:"
+    echo "    git diff origin/master --diff-filter=a"
+    echo "changes.diff will be regenerated again when this script proceeds;"
+    echo "it isn't necessary to do it manually."
+    read -p "Press ENTER to continue: "
+    echo "Regenerating changes.diff again."
     git diff origin/master --diff-filter=a > changes.diff
     rm -rf .git
     git add -A .
@@ -43,7 +55,7 @@ echo "branch."
 echo
 echo "This will clobber any changes you have made in:"
 echo "$ANGLE_DIR"
-read -p "Are you sure? [y/N] " -n 1 -r
+read -p "Are you sure? [y/N] "
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo "Canceled."

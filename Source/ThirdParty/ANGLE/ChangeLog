@@ -1,3 +1,16 @@
+2020-07-28  Kenneth Russell  <kbr@chromium.org>
+
+        Pause during ANGLE roll script after rebasing and before deleting temporary Git repo
+        https://bugs.webkit.org/show_bug.cgi?id=212717
+
+        Reviewed by Dean Jackson.
+
+        Give the user the opportunity to manually examine the changes
+        relative to upstream ANGLE, and to undo any accidental or
+        undesired ones, before finishing the roll.
+
+        * update-angle.sh:
+
 2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Update macOS Version macros
