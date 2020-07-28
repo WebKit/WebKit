@@ -2178,8 +2178,8 @@ TEST(WKAttachmentTestsIOS, InsertDroppedImageWithNonImageFileExtension)
         _WKAttachment *attachment = [dragAndDropSimulator insertedAttachments].firstObject;
         _WKAttachmentInfo *info = attachment.info;
         EXPECT_WK_STREQ("image/png", info.contentType);
-        EXPECT_WK_STREQ("image.hello", info.filePath.lastPathComponent);
-        EXPECT_WK_STREQ("image.hello", info.name);
+        EXPECT_WK_STREQ("image.hello.png", info.filePath.lastPathComponent);
+        EXPECT_WK_STREQ("image.hello.png", info.name);
         [webView expectElementCount:1 querySelector:@"IMG"];
     });
 }

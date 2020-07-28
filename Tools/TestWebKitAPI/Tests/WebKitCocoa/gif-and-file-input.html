@@ -16,13 +16,16 @@
 
 <body>
     <div><img src="apple.gif"></img></div>
-    <div><input id="input" type="file"></input></div>
+    <div><input multiple id="input" type="file"></input></div>
     <div id="output"></div>
 </body>
 
 <script>
 input.addEventListener("change", () => {
-    let file = input.files[0];
-    output.textContent = `${file.name} (${file.type})`;
+    for (let file of input.files) {
+        let pre = document.createElement("pre");
+        pre.textContent = `${file.name} (${file.type})`;
+        output.appendChild(pre);
+    }
 });
 </script>

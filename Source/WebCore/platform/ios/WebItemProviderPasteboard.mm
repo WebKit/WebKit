@@ -708,7 +708,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     if (!suggestedName)
         suggestedName = url.lastPathComponent ?: (isFolder ? defaultDropFolderName : defaultDropFileName);
 
-    if (![suggestedName containsString:@"."] && !isFolder)
+    if ([suggestedName.pathExtension caseInsensitiveCompare:url.pathExtension] != NSOrderedSame && !isFolder)
         suggestedName = [suggestedName stringByAppendingPathExtension:url.pathExtension];
 
     destination = [NSURL fileURLWithPath:[temporaryDropDataDirectory stringByAppendingPathComponent:suggestedName]];

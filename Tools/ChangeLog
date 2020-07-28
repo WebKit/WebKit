@@ -1,3 +1,24 @@
+2020-07-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Drag and drop does not preserve file names that contain periods
+        https://bugs.webkit.org/show_bug.cgi?id=214701
+        <rdar://problem/66014009>
+
+        Reviewed by Tim Horton.
+
+        Add an API test to exercise both scenarios where the suggested name does and does not contain the extension.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+
+        Rebaseline an existing API test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/gif-and-file-input.html:
+
+        Adjust this test case to support handling multiple uploaded files.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2020-07-27  Chris Dumez  <cdumez@apple.com>
 
         Update release*() functions on ExceptionOr() to always release the member

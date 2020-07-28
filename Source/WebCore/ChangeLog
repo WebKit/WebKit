@@ -1,3 +1,26 @@
+2020-07-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Drag and drop does not preserve file names that contain periods
+        https://bugs.webkit.org/show_bug.cgi?id=214701
+        <rdar://problem/66014009>
+
+        Reviewed by Tim Horton.
+
+        Cocoa documentation does not make it clear whether the `-suggestedName` property on `NSItemProvider` should or
+        should not include the file extension. To avoid adding a redundant file extension, logic in
+        `WebItemProviderPasteboard` attempts to deduce whether the suggested name already contains an extension, and
+        only appends a file extension (taken from name of the original file) if the suggested name does not have one.
+
+        Unfortunately, since this logic only checks whether or not there is a period in the filename, it will
+        incorrectly avoid adding a file extension when the suggested name contains a period. To fix this, instead of
+        checking for the presence of a period, check to see whether the file extension of the suggested name is the
+        same, and append the extension if it isn't.
+
+        Test: DragAndDropTests.SuggestedNameContainsDot
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (linkTemporaryItemProviderFilesToDropStagingDirectory):
+
 2020-07-27  Zalan Bujtas  <zalan@apple.com>
 
         Extension is sized incorrectly, content is cut off.

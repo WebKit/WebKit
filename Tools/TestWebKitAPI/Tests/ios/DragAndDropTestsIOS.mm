@@ -2136,6 +2136,26 @@ TEST(DragAndDropTests, DropPreviewForImageInEditableArea)
     EXPECT_FALSE(isCompletelyWhite([(UIImageView *)finalPreview.view image]));
 }
 
+TEST(DragAndDropTests, SuggestedNameContainsDot)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"gif-and-file-input"];
+
+    auto firstItem = adoptNS([[NSItemProvider alloc] init]);
+    [firstItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG withData:testIconImageData()];
+    [firstItem setSuggestedName:@"one.foo"];
+
+    auto secondItem = adoptNS([[NSItemProvider alloc] init]);
+    [secondItem registerDataRepresentationForTypeIdentifier:(__bridge NSString *)kUTTypePNG withData:testIconImageData()];
+    [secondItem setSuggestedName:@"two.foo.PNG"];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setExternalItemProviders:@[ firstItem.get(), secondItem.get() ]];
+    [simulator runFrom:CGPointMake(0, 0) to:CGPointMake(100, 300)];
+
+    EXPECT_WK_STREQ("one.foo.png (image/png)\ntwo.foo.PNG (image/png)", [webView stringByEvaluatingJavaScript:@"output.innerText"]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
