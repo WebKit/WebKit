@@ -13,10 +13,10 @@ PASS new PerformanceObserver(1) threw exception TypeError: Argument 1 ('callback
 PASS observer = new PerformanceObserver(function() {}) did not throw exception.
 PASS observer.observe() threw exception TypeError: Not enough arguments.
 PASS observer.observe("mark") threw exception TypeError: Type error.
-PASS observer.observe({}) threw exception TypeError: Member PerformanceObserverInit.entryTypes is required and must be an instance of sequence.
+PASS observer.observe({}) threw exception TypeError: no type or entryTypes were provided.
 PASS observer.observe({entryTypes:"mark"}) threw exception TypeError: Value is not a sequence.
-PASS observer.observe({entryTypes:[]}) threw exception TypeError: entryTypes cannot be an empty list.
-PASS observer.observe({entryTypes:["not-real"]}) threw exception TypeError: entryTypes contained only unsupported types.
+PASS observer.observe({entryTypes:[]}) did not throw exception.
+PASS observer.observe({entryTypes:["not-real"]}) did not throw exception.
 PASS observer.observe({entryTypes:["mark"]}) did not throw exception.
 PASS observer.observe({entryTypes:["mark", "not-real"]}) did not throw exception.
 PASS observer.observe({entryTypes:["mark", "measure"]}) did not throw exception.
@@ -41,10 +41,10 @@ PASS [Worker] new PerformanceObserver(1) threw exception TypeError: Argument 1 (
 PASS [Worker] observer = new PerformanceObserver(function() {}) did not throw exception.
 PASS [Worker] observer.observe() threw exception TypeError: Not enough arguments.
 PASS [Worker] observer.observe("mark") threw exception TypeError: Type error.
-PASS [Worker] observer.observe({}) threw exception TypeError: Member PerformanceObserverInit.entryTypes is required and must be an instance of sequence.
+PASS [Worker] observer.observe({}) threw exception TypeError: no type or entryTypes were provided.
 PASS [Worker] observer.observe({entryTypes:"mark"}) threw exception TypeError: Value is not a sequence.
-PASS [Worker] observer.observe({entryTypes:[]}) threw exception TypeError: entryTypes cannot be an empty list.
-PASS [Worker] observer.observe({entryTypes:["not-real"]}) threw exception TypeError: entryTypes contained only unsupported types.
+PASS [Worker] observer.observe({entryTypes:[]}) did not throw exception.
+PASS [Worker] observer.observe({entryTypes:["not-real"]}) did not throw exception.
 PASS [Worker] observer.observe({entryTypes:["mark"]}) did not throw exception.
 PASS [Worker] observer.observe({entryTypes:["mark", "not-real"]}) did not throw exception.
 PASS [Worker] observer.observe({entryTypes:["mark", "measure"]}) did not throw exception.

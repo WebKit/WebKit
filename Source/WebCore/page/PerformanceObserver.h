@@ -41,7 +41,8 @@ class ScriptExecutionContext;
 class PerformanceObserver : public RefCounted<PerformanceObserver> {
 public:
     struct Init {
-        Vector<String> entryTypes;
+        Optional<Vector<String>> entryTypes;
+        Optional<String> type;
     };
 
     static Ref<PerformanceObserver> create(ScriptExecutionContext& context, Ref<PerformanceObserverCallback>&& callback)

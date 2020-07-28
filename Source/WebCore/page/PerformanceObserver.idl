@@ -40,5 +40,6 @@
 };
 
 dictionary PerformanceObserverInit {
-    required sequence<DOMString> entryTypes;
+    sequence<DOMString> entryTypes;
+    DOMString type;
 };

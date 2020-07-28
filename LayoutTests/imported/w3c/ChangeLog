@@ -1,3 +1,31 @@
+2020-07-28  Rob Buis  <rbuis@igalia.com>
+
+        PerformanceObserver should work with 'type' and not just `entryTypes`
+        https://bugs.webkit.org/show_bug.cgi?id=209216
+
+        Reviewed by Youenn Fablet.
+
+        Add po-observe-type.any.html and po-observe-type.any.worker.html tests and
+        update improved test expectations.
+
+        * web-platform-tests/performance-timeline/performanceobservers.js: Added.
+        (findMatch):
+        (checkEntries):
+        (wait):
+        (checkSorted):
+        * web-platform-tests/performance-timeline/po-observe-type.any-expected.txt: Added.
+        * web-platform-tests/performance-timeline/po-observe-type.any.html: Added.
+        * web-platform-tests/performance-timeline/po-observe-type.any.js: Added.
+        (test):
+        (async_test):
+        * web-platform-tests/performance-timeline/po-observe-type.any.worker-expected.txt: Added.
+        * web-platform-tests/performance-timeline/po-observe-type.any.worker.html: Added.
+        * web-platform-tests/resource-timing/buffered-flag.any-expected.txt:
+        * web-platform-tests/resource-timing/buffered-flag.any.worker-expected.txt:
+        * web-platform-tests/resource-timing/object-not-found-adds-entry-expected.txt:
+        * web-platform-tests/user-timing/buffered-flag.any-expected.txt:
+        * web-platform-tests/user-timing/buffered-flag.any.worker-expected.txt:
+
 2020-07-27  Chris Dumez  <cdumez@apple.com>
 
         thisValue is not always set correctly when calling JS callbacks

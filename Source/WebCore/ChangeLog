@@ -1,3 +1,22 @@
+2020-07-28  Rob Buis  <rbuis@igalia.com>
+
+        PerformanceObserver should work with 'type' and not just `entryTypes`
+        https://bugs.webkit.org/show_bug.cgi?id=209216
+
+        Reviewed by Youenn Fablet.
+
+        Add support for 'type' attribute as specified here [1].
+
+        Tests: imported/w3c/web-platform-tests/performance-timeline/po-observe-type.any.html
+               imported/w3c/web-platform-tests/performance-timeline/po-observe-type.any.worker.html
+
+        [1] https://w3c.github.io/performance-timeline/#dom-performanceobserverinit
+
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::observe):
+        * page/PerformanceObserver.h:
+        * page/PerformanceObserver.idl:
+
 2020-07-28  Karl Rackler  <rackler@apple.com>
 
         Unreviewed, reverting r264955.

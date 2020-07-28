@@ -60,17 +60,24 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
     if (!m_performance)
         return Exception { TypeError };
 
-    if (init.entryTypes.isEmpty())
-        return Exception { TypeError, "entryTypes cannot be an empty list"_s };
-
     OptionSet<PerformanceEntry::Type> filter;
-    for (const String& entryType : init.entryTypes) {
-        if (auto type = PerformanceEntry::parseEntryTypeString(entryType))
+    if (init.entryTypes) {
+        if (init.type)
+            return Exception { TypeError, "either entryTypes or type must be provided"_s };
+        for (auto& entryType : *init.entryTypes) {
+            if (auto type = PerformanceEntry::parseEntryTypeString(entryType))
+                filter.add(*type);
+        }
+        if (filter.isEmpty())
+            return { };
+    } else {
+        if (!init.type)
+            return Exception { TypeError, "no type or entryTypes were provided"_s };
+        if (auto type = PerformanceEntry::parseEntryTypeString(*init.type))
             filter.add(*type);
+        else
+            return { };
     }
-
-    if (filter.isEmpty())
-        return Exception { TypeError, "entryTypes contained only unsupported types"_s };
 
     m_typeFilter = filter;
 

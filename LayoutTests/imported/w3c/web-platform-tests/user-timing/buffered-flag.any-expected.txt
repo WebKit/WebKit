@@ -1,12 +1,5 @@
-CONSOLE MESSAGE: TypeError: Member PerformanceObserverInit.entryTypes is required and must be an instance of sequence
-CONSOLE MESSAGE: TypeError: Member PerformanceObserverInit.entryTypes is required and must be an instance of sequence
 
-Harness Error (FAIL), message = TypeError: Member PerformanceObserverInit.entryTypes is required and must be an instance of sequence
-
-TIMEOUT PerformanceObserver with buffered flag sees previous marks Test timed out
-TIMEOUT PerformanceObserver with buffered flag sees previous measures Test timed out
-
-Harness Error (FAIL), message = TypeError: Member PerformanceObserverInit.entryTypes is required and must be an instance of sequence
+Harness Error (TIMEOUT), message = null
 
 TIMEOUT PerformanceObserver with buffered flag sees previous marks Test timed out
 TIMEOUT PerformanceObserver with buffered flag sees previous measures Test timed out
