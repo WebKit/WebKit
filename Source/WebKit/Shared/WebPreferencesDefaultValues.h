@@ -370,4 +370,8 @@ bool defaultVP9DecoderEnabled();
 bool defaultWebMParserEnabled();
 #endif
 
+#if ENABLE(WEB_RTC)
+bool defaultWebRTCH264LowLatencyEncoderEnabled();
+#endif
+
 } // namespace WebKit

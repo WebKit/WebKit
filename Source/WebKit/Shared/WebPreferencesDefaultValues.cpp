@@ -265,4 +265,15 @@ bool defaultWebMParserEnabled()
 }
 #endif
 
+#if ENABLE(WEB_RTC)
+bool defaultWebRTCH264LowLatencyEncoderEnabled()
+{
+#if PLATFORM(IOS_FAMILY)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
 } // namespace WebKit

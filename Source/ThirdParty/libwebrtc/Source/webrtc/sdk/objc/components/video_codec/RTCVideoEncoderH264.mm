@@ -364,16 +364,12 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
     _packetizationMode = RTCH264PacketizationModeNonInterleaved;
     _profile_level_id =
         webrtc::H264::ParseSdpProfileLevelId([codecInfo nativeSdpVideoFormat].parameters);
-#if ENABLE_VCP_VTB_ENCODER
     if (_profile_level_id) {
       auto profile = ExtractProfile(*_profile_level_id);
       _useVCP = [(__bridge NSString *)profile containsString: @"High"];
     } else {
       _useVCP = false;
     }
-#else
-    _useVCP = false;
-#endif
     RTC_DCHECK(_profile_level_id);
     RTC_LOG(LS_INFO) << "Using profile " << CFStringToString(ExtractProfile(*_profile_level_id));
     RTC_CHECK([codecInfo.name isEqualToString:kRTCVideoCodecH264Name]);
@@ -700,7 +696,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
 #endif
   }
 #elif HAVE_VTB_REQUIREDLOWLATENCY
-  if (webrtc::isH264LowLatencyEncoderEnabled())
+  if (webrtc::isH264LowLatencyEncoderEnabled() && _useVCP)
     CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
 #endif
 
@@ -749,7 +745,34 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
                                nullptr,
                                &_vcpCompressionSession);
   }
-#elif !HAVE_VTB_REQUIREDLOWLATENCY
+#elif HAVE_VTB_REQUIREDLOWLATENCY
+  // In case VCP is disabled, we will use it anyway if using software encoder.
+  if (webrtc::isH264LowLatencyEncoderEnabled() && !_useVCP) {
+    CFBooleanRef hwaccl_enabled = nullptr;
+    if (status == noErr) {
+      status = VTSessionCopyProperty(_vtCompressionSession,
+                               kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder,
+                               nullptr,
+                               &hwaccl_enabled);
+    }
+    if (status == noErr && (CFBooleanGetValue(hwaccl_enabled))) {
+      RTC_LOG(LS_INFO) << "Compression session created with hw accl enabled";
+    } else {
+      [self destroyCompressionSession];
+      CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
+      status = VTCompressionSessionCreate(nullptr,  // use default allocator
+                                 _width,
+                                 _height,
+                                 kCMVideoCodecType_H264,
+                                 encoderSpecs,  // use hardware accelerated encoder if available
+                                 sourceAttributes,
+                                 nullptr,  // use default compressed data allocator
+                                 compressionOutputCallback,
+                                 nullptr,
+                                 &_vtCompressionSession);
+    }
+  }
+#else
   if (status != noErr) {
     if (encoderSpecs) {
         CFRelease(encoderSpecs);

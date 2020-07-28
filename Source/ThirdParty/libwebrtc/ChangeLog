@@ -1,3 +1,18 @@
+2020-07-28  Youenn Fablet  <youenn@apple.com>
+
+        Disable low latency code path for H264 constrained baseline
+        https://bugs.webkit.org/show_bug.cgi?id=214830
+
+        Reviewed by Eric Carlson.
+
+        In case of baseline profile, use straight VTB encoder.
+        In case of high profile, use low latency code path if enabled.
+        In case of MacOS software code path, enable low latency code path as straight VTB encoder buffers frames.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 initWithCodecInfo:]):
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+
 2020-07-26  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         libwebrtc uint64_t build fixes
