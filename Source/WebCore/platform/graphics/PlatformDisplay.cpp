@@ -126,6 +126,12 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 
 PlatformDisplay& PlatformDisplay::sharedDisplay()
 {
+#if PLATFORM(WIN)
+    // ANGLE D3D renderer isn't thread-safe. Don't destruct it on non-main threads which calls _exit().
+    ASSERT(isMainThread());
+    static PlatformDisplay* display = createPlatformDisplay().release();
+    return *display;
+#else
     static std::once_flag onceFlag;
     IGNORE_CLANG_WARNINGS_BEGIN("exit-time-destructors")
     static std::unique_ptr<PlatformDisplay> display;
@@ -134,6 +140,7 @@ PlatformDisplay& PlatformDisplay::sharedDisplay()
         display = createPlatformDisplay();
     });
     return *display;
+#endif
 }
 
 static PlatformDisplay* s_sharedDisplayForCompositing;

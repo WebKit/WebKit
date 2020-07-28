@@ -1,3 +1,20 @@
+2020-07-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] ANGLE D3D renderer can crash when PlatformDisplayWin is destructed in IPC thread
+        https://bugs.webkit.org/show_bug.cgi?id=214241
+
+        Reviewed by Don Olmstead.
+
+        Web process calls _exit() in IPC thread when the IPC connection is
+        closed. PlatformDisplay::sharedDisplay has a static variable of
+        std::unique_ptr<PlatformDisplay> to ensure it will be destructed
+        on the process termination. This rarely causes crashes in ANGLE
+        because ANGLE D3D renderer isn't thread-safe at the moment.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::sharedDisplay): Don't destruct
+        PlatformDisplay for PLATFORM(WIN). Use unique_ptr::release to leak it.
+
 2020-07-28  Clark Wang  <clark_wang@apple.com>
 
         Added constructor methods to ChannelMergerNode, ChannelSplitterNode
