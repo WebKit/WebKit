@@ -38,7 +38,8 @@ enum class GetByKind {
     NormalByVal,
     Try,
     WithThis,
-    Direct
+    Direct,
+    PrivateName,
 };
 
 enum class DelByKind {

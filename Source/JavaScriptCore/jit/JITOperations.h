@@ -273,6 +273,9 @@ int32_t JIT_OPERATION operationSizeFrameForVarargs(JSGlobalObject*, EncodedJSVal
 CallFrame* JIT_OPERATION operationSetupForwardArgumentsFrame(JSGlobalObject*, CallFrame*, EncodedJSValue, int32_t, int32_t length) WTF_INTERNAL;
 CallFrame* JIT_OPERATION operationSetupVarargsFrame(JSGlobalObject*, CallFrame*, EncodedJSValue arguments, int32_t firstVarArgOffset, int32_t length) WTF_INTERNAL;
 
+EncodedJSValue JIT_OPERATION operationGetPrivateName(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetPrivateNameOptimize(JSGlobalObject*, StructureStubInfo*, EncodedJSValue encodedBase, EncodedJSValue encodedFieldName) WTF_INTERNAL;
+
 char* JIT_OPERATION operationSwitchCharWithUnknownKeyType(JSGlobalObject*, EncodedJSValue key, size_t tableIndex) WTF_INTERNAL;
 char* JIT_OPERATION operationSwitchImmWithUnknownKeyType(VM*, EncodedJSValue key, size_t tableIndex) WTF_INTERNAL;
 char* JIT_OPERATION operationSwitchStringWithUnknownKeyType(JSGlobalObject*, EncodedJSValue key, size_t tableIndex) WTF_INTERNAL;

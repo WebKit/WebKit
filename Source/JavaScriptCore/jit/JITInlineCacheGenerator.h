@@ -232,7 +232,7 @@ public:
     JITGetByValGenerator() { }
 
     JITGetByValGenerator(
-        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters,
+        CodeBlock*, CodeOrigin, CallSiteIndex, AccessType, const RegisterSet& usedRegisters,
         JSValueRegs base, JSValueRegs property, JSValueRegs result);
 
     MacroAssembler::Jump slowPathJump() const

@@ -162,6 +162,8 @@ inline FunctionPtr<CFunctionPtrTag> appropriateOptimizingGetByFunction(GetByKind
         return operationGetByIdDirectOptimize;
     case GetByKind::NormalByVal:
         return operationGetByValOptimize;
+    case GetByKind::PrivateName:
+        return operationGetPrivateNameOptimize;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -179,6 +181,8 @@ inline FunctionPtr<CFunctionPtrTag> appropriateGetByFunction(GetByKind kind)
         return operationGetByIdDirect;
     case GetByKind::NormalByVal:
         return operationGetByValGeneric;
+    case GetByKind::PrivateName:
+        return operationGetPrivateName;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -198,6 +202,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
         if (!baseValue.isCell())
             return GiveUpOnCache;
         JSCell* baseCell = baseValue.asCell();
+        const bool isPrivate = kind == GetByKind::PrivateName;
 
         std::unique_ptr<AccessCase> newCase;
 
@@ -253,6 +258,8 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
 
             bool loadTargetFromProxy = false;
             if (baseCell->type() == PureForwardingProxyType) {
+                if (isPrivate)
+                    return GiveUpOnCache;
                 baseValue = jsCast<JSProxy*>(baseCell)->target();
                 baseCell = baseValue.asCell();
                 structure = baseCell->structure(vm);
@@ -308,9 +315,9 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 if (slot.isUnset() && structure->typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence())
                     return GiveUpOnCache;
 
-                // If a kind is GetByKind::Direct, we do not need to investigate prototype chains further.
+                // If a kind is GetByKind::Direct or GetByKind::PrivateName, we do not need to investigate prototype chains further.
                 // Cacheability just depends on the head structure.
-                if (kind != GetByKind::Direct) {
+                if (kind != GetByKind::Direct && !isPrivate) {
                     auto cacheStatus = prepareChainForCaching(globalObject, baseCell, slot);
                     if (!cacheStatus)
                         return GiveUpOnCache;
@@ -374,7 +381,14 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
             } else if (!loadTargetFromProxy && getter && IntrinsicGetterAccessCase::canEmitIntrinsicGetter(getter, structure))
                 newCase = IntrinsicGetterAccessCase::create(vm, codeBlock, propertyName, slot.cachedOffset(), structure, conditionSet, getter, WTFMove(prototypeAccessChain));
             else {
-                if (slot.isCacheableValue() || slot.isUnset()) {
+                if (isPrivate) {
+                    RELEASE_ASSERT(!slot.isUnset());
+                    constexpr bool isProxy = false;
+                    if (!slot.isCacheable())
+                        return GiveUpOnCache;
+                    newCase = ProxyableAccessCase::create(vm, codeBlock, AccessCase::Load, propertyName, offset, structure,
+                        conditionSet, isProxy, slot.watchpointSet(), WTFMove(prototypeAccessChain));
+                } else if (slot.isCacheableValue() || slot.isUnset()) {
                     newCase = ProxyableAccessCase::create(vm, codeBlock, slot.isUnset() ? AccessCase::Miss : AccessCase::Load,
                         propertyName, offset, structure, conditionSet, loadTargetFromProxy, slot.watchpointSet(), WTFMove(prototypeAccessChain));
                 } else {

@@ -509,6 +509,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpTailCallForwardArguments, profile)
         LINK(OpConstructVarargs, profile)
         LINK(OpGetByVal, profile)
+        LINK(OpGetPrivateName, profile)
 
         LINK(OpGetDirectPname, profile)
         LINK(OpGetByIdWithThis, profile)

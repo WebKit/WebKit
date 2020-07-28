@@ -1,3 +1,56 @@
+2020-07-28  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] add IC support for op_get_private_name
+        https://bugs.webkit.org/show_bug.cgi?id=213545
+
+        Reviewed by Saam Barati.
+
+        The baseline JIT now supports a fast path for op_private_name,
+        using a variant of GetByVal IC.
+
+        The generated AccessCase has the following qualities:
+          - Always "direct", relying only on the current structure for cachebility
+          - Never impure (DOM properties are not supported at this time, ProxyObjects are treated as JSObjects)
+
+        Based on the microbenchmark reviewed on https://bugs.webkit.org/show_bug.cgi?id=213544, this sees
+        an improvement of roughly 50% on average.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::reset):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        * jit/ICStats.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITGetByValGenerator::JITGetByValGenerator):
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITOperations.cpp:
+        (JSC::getPrivateName):
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_get_private_name):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_get_private_name):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        * jit/Repatch.cpp:
+        (JSC::appropriateOptimizingGetByFunction):
+        (JSC::appropriateGetByFunction):
+        (JSC::tryCacheGetBy):
+        * jit/Repatch.h:
+
 2020-07-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC][wasm] Truncating slightly less than INT32_MIN is incorrect

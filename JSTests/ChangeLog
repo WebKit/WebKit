@@ -1,3 +1,14 @@
+2020-07-28  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] add IC support for op_get_private_name
+        https://bugs.webkit.org/show_bug.cgi?id=213545
+
+        Reviewed by Saam Barati.
+
+        Add a crashtest for a crash in an earlier edition of the GPN IC patch.
+
+        * stress/get-private-name-cache-failure.js: Added.
+
 2020-07-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC][wasm] Truncating slightly less than INT32_MIN is incorrect

@@ -291,8 +291,8 @@ void JITInstanceOfGenerator::finalize(LinkBuffer& fastPath, LinkBuffer& slowPath
     fastPath.link(m_jump.m_jump, slowPath.locationOf<NoPtrTag>(m_slowPathBegin));
 }
 
-JITGetByValGenerator::JITGetByValGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result)
-    : Base(codeBlock, codeOrigin, callSiteIndex, AccessType::GetByVal, usedRegisters)
+JITGetByValGenerator::JITGetByValGenerator(CodeBlock* codeBlock, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, AccessType accessType, const RegisterSet& usedRegisters, JSValueRegs base, JSValueRegs property, JSValueRegs result)
+    : Base(codeBlock, codeOrigin, callSiteIndex, accessType, usedRegisters)
     , m_base(base)
     , m_result(result)
 {

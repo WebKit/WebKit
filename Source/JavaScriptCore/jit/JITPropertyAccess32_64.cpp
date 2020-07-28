@@ -255,7 +255,7 @@ void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
         emitArrayProfilingSiteWithCell(regT0, regT4, profile);
 
         JITGetByValGenerator gen(
-            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+            m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
             JSValueRegs::payloadOnly(regT0), JSValueRegs(regT3, regT2), JSValueRegs(regT1, regT0));
         if (isOperandConstantInt(property))
             gen.stubInfo()->propertyIsInt32 = true;
@@ -286,6 +286,50 @@ void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<S
         gen.reportSlowPathCall(coldPathBegin, call);
     }
 }
+
+void JIT::emit_op_get_private_name(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpGetPrivateName>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
+    auto baseGPR = JSValueRegs::payloadOnly(regT0);
+    auto propertyGPR = JSValueRegs(regT3, regT2);
+
+    emitLoad2(base, regT1, regT0, property, regT3, regT2);
+
+    emitJumpSlowCaseIfNotJSCell(base, regT1);
+
+    JITGetByValGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetPrivateName,
+        RegisterSet::stubUnavailableRegisters(), baseGPR, propertyGPR, JSValueRegs(regT1, regT0));
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_getByVals.append(gen);
+
+    emitValueProfilingSite(bytecode.metadata(m_codeBlock));
+    emitStore(dst, regT1, regT0);
+}
+
+
+void JIT::emitSlow_op_get_private_name(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    ASSERT(hasAnySlowCases(iter));
+    auto bytecode = currentInstruction->as<OpGetPrivateName>();
+    VirtualRegister dst = bytecode.m_dst;
+
+    linkAllSlowCases(iter);
+
+    JITGetByValGenerator& gen = m_getByVals[m_getByValIndex];
+    ++m_getByValIndex;
+    Label coldPathBegin = label();
+
+    auto baseGPR = JSValueRegs(regT1, regT0);
+    auto propertyGPR = JSValueRegs(regT3, regT2);
+    Call call = callOperationWithProfile(bytecode.metadata(m_codeBlock), operationGetPrivateNameOptimize, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), baseGPR, propertyGPR);
+    gen.reportSlowPathCall(coldPathBegin, call);
+}
+
 
 void JIT::emit_op_put_by_val_direct(const Instruction* currentInstruction)
 {
