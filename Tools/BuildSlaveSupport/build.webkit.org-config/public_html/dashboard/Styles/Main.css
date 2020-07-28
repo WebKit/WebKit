@@ -229,6 +229,10 @@ table.queue-grid tr.platform.macos-catalina img.logo {
     content: -webkit-image-set(url(../Images/Catalina@2x.png) 2x, url(../Images/Catalina.png) 1x);
 }
 
+table.queue-grid tr.platform.macos-bigsur img.logo {
+    content: -webkit-image-set(url(../Images/BigSur@2x.png) 2x, url(../Images/BigSur.png) 1x);
+}
+
 table.queue-grid tr.platform.wincairo-windows-10 img.logo {
     content: -webkit-image-set(url(../Images/Windows10@2x.png) 2x, url(../Images/Windows10.png) 1x);
 }

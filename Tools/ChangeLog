@@ -1,3 +1,16 @@
+2020-07-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [Big Sur] Add Seed 3 to bot watcher's dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=214863
+        <rdar://problem/66198642>
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/BigSur.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/BigSur@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js: Add Big Sur.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css: Ditto.
+
 2020-07-28  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add string_utils (Part 3)
