@@ -626,7 +626,6 @@ webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigati
 webkit.org/b/211563 fast/text-indicator/text-indicator-estimated-color-with-implicit-newline.html [ Failure ]
 
 # Not yet supported on WPE
-webkit.org/b/169988 css3/filters/backdrop [ Skip ]
 Bug(WPE) css3/scroll-snap [ Skip ]
 
 # Only enabled on Mac/iOS so far.

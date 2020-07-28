@@ -1,3 +1,41 @@
+2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Support for backdrop-filter
+        https://bugs.webkit.org/show_bug.cgi?id=169988
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add initial support for backdrop filters to coordinated graphics.
+
+        * platform/graphics/nicosia/NicosiaPlatformLayer.h:
+        (Nicosia::CompositionLayer::flushState): Update the backdrop layer.
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::computeTransformsRecursive): Call it on backdrop layer too.
+        (WebCore::TextureMapperLayer::paintSelfAndChildren): Paint the backdrop layer before current layer to apply
+        backdrop filters on previous contents, then the layer is painted on top.
+        (WebCore::TextureMapperLayer::paintIntoSurface): In case of backdrop layer paint the root layer up to the target
+        layer into the intermediate surface.
+        (WebCore::TextureMapperLayer::setBackdropLayer): Set the bakdrop layer and mark it as such.
+        (WebCore::TextureMapperLayer::applyAnimationsRecursively): Also call syncAnimations on backdrop layer to get the
+        filters updated.
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::didChangeBackdropFilters):
+        (WebCore::CoordinatedGraphicsLayer::didChangeBackdropFiltersRect):
+        (WebCore::CoordinatedGraphicsLayer::setShouldUpdateVisibleRect): Also call it for backdrop layer.
+        (WebCore::CoordinatedGraphicsLayer::setContentsVisible): Ditto.
+        (WebCore::CoordinatedGraphicsLayer::setBackdropFilters):
+        (WebCore::CoordinatedGraphicsLayer::setBackdropFiltersRect):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingState): Also call it for backdrop layer.
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly): Handle the changes in backdrop
+        filters and the rect, creating the backdrop layer or updating it.
+        (WebCore::CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers): Also call it for backdrop layer.
+        (WebCore::CoordinatedGraphicsLayer::addAnimation): Handle AnimatedPropertyWebkitBackdropFilter property.
+        (WebCore::dumpInnerLayer): Dump internal layer info.
+        (WebCore::CoordinatedGraphicsLayer::dumpAdditionalProperties const): Dump backdrop layer.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
 2020-07-28  Youenn Fablet  <youenn@apple.com>
 
         ReadableStreamDefaultController should use private JS built-in methods

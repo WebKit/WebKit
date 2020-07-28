@@ -654,9 +654,6 @@ webkit.org/b/131347 http/tests/loading/hidpi-preload-picture-sizes.html [ Failur
 webkit.org/b/131347 svg/custom/hidpi-masking-clipping.svg [ Failure ImageOnlyFailure Timeout ]
 webkit.org/b/131347 svg/text/hidpi-text-selection-rect-position.html [ ImageOnlyFailure ]
 
-# No support for Filters Level 2 on GTK yet
-webkit.org/b/169988 css3/filters/backdrop [ Skip ]
-
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
 
 webkit.org/b/141467 fast/multicol/pagination/LeftToRight-tb-hittest.html [ Failure ]

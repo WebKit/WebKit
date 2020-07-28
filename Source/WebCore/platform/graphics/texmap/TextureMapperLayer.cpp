@@ -38,6 +38,8 @@ public:
     RefPtr<BitmapTexture> surface;
     float opacity { 1 };
     IntSize offset;
+    TextureMapperLayer* backdropLayer { nullptr };
+    bool isReplica { false };
 };
 
 TextureMapperLayer::TextureMapperLayer() = default;
@@ -111,6 +113,8 @@ void TextureMapperLayer::computeTransformsRecursive()
         m_state.maskLayer->computeTransformsRecursive();
     if (m_state.replicaLayer)
         m_state.replicaLayer->computeTransformsRecursive();
+    if (m_state.backdropLayer)
+        m_state.backdropLayer->computeTransformsRecursive();
     for (auto* child : m_children) {
         ASSERT(child->m_parent == this);
         child->computeTransformsRecursive();
@@ -215,6 +219,19 @@ void TextureMapperLayer::sortByZOrder(Vector<TextureMapperLayer* >& array)
 
 void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& options)
 {
+    if (m_state.backdropLayer && m_state.backdropLayer == options.backdropLayer)
+        return;
+
+    if (m_state.backdropLayer && !options.backdropLayer) {
+        TransformationMatrix clipTransform;
+        clipTransform.translate(options.offset.width(), options.offset.height());
+        clipTransform.multiply(options.transform);
+        clipTransform.multiply(m_layerTransforms.combined);
+        options.textureMapper.beginClip(clipTransform, layerRect());
+        m_state.backdropLayer->paintRecursive(options);
+        options.textureMapper.endClip();
+    }
+
     paintSelf(options);
 
     if (m_children.isEmpty())
@@ -272,6 +289,7 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPain
 {
     if (m_state.replicaLayer) {
         TextureMapperPaintOptions replicaOptions(options);
+        replicaOptions.isReplica = true;
         replicaOptions.transform
             .multiply(m_state.replicaLayer->m_layerTransforms.combined)
             .multiply(m_layerTransforms.combined.inverse().valueOr(TransformationMatrix()));
@@ -421,7 +439,12 @@ RefPtr<BitmapTexture> TextureMapperLayer::paintIntoSurface(const TextureMapperPa
     TextureMapperPaintOptions paintOptions(options);
     paintOptions.surface = surface;
     options.textureMapper.bindSurface(surface.get());
-    paintSelfAndChildren(paintOptions);
+    if (m_isBackdrop) {
+        paintOptions.backdropLayer = this;
+        rootLayer().paintSelfAndChildren(paintOptions);
+        paintOptions.backdropLayer = nullptr;
+    } else
+        paintSelfAndChildren(paintOptions);
     if (m_state.maskLayer)
         m_state.maskLayer->applyMask(options);
     surface = surface->applyFilters(options.textureMapper, m_currentFilters);
@@ -447,8 +470,10 @@ void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOp
     paintOptions.opacity = 1;
     paintOptions.transform = TransformationMatrix();
     if (m_state.replicaLayer) {
+        paintOptions.isReplica = true;
         paintOptions.transform = replicaTransform();
         replicaSurface = paintIntoSurface(paintOptions, rect.size());
+        paintOptions.isReplica = false;
         paintOptions.transform = TransformationMatrix();
         if (m_state.replicaLayer->m_state.maskLayer)
             m_state.replicaLayer->m_state.maskLayer->applyMask(paintOptions);
@@ -458,6 +483,9 @@ void TextureMapperLayer::paintWithIntermediateSurface(const TextureMapperPaintOp
         commitSurface(options, *replicaSurface, rect, 1);
         replicaSurface = nullptr;
     }
+
+    if (m_isBackdrop && m_effectTarget->m_state.replicaLayer && options.isReplica)
+        paintOptions.transform = m_effectTarget->replicaTransform();
 
     mainSurface = paintIntoSurface(paintOptions, rect.size());
     if (replicaSurface) {
@@ -546,6 +574,16 @@ void TextureMapperLayer::setReplicaLayer(TextureMapperLayer* replicaLayer)
         m_state.replicaLayer = makeWeakPtr(*replicaLayer);
     } else
         m_state.replicaLayer = nullptr;
+}
+
+void TextureMapperLayer::setBackdropLayer(TextureMapperLayer* backdropLayer)
+{
+    if (backdropLayer) {
+        backdropLayer->m_isBackdrop = true;
+        backdropLayer->m_effectTarget = makeWeakPtr(*this);
+        m_state.backdropLayer = makeWeakPtr(*backdropLayer);
+    } else
+        m_state.backdropLayer = nullptr;
 }
 
 void TextureMapperLayer::setPosition(const FloatPoint& position)
@@ -694,6 +732,8 @@ bool TextureMapperLayer::applyAnimationsRecursively(MonotonicTime time)
     bool hasRunningAnimations = syncAnimations(time);
     if (m_state.replicaLayer)
         hasRunningAnimations |= m_state.replicaLayer->applyAnimationsRecursively(time);
+    if (m_state.backdropLayer)
+        hasRunningAnimations |= m_state.backdropLayer->syncAnimations(time);
     for (auto* child : m_children)
         hasRunningAnimations |= child->applyAnimationsRecursively(time);
     return hasRunningAnimations;

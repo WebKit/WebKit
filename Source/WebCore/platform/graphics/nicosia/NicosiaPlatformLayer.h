@@ -121,6 +121,8 @@ public:
                     bool opacityChanged : 1;
                     bool solidColorChanged : 1;
                     bool filtersChanged : 1;
+                    bool backdropFiltersChanged : 1;
+                    bool backdropFiltersRectChanged : 1;
                     bool animationsChanged : 1;
                     bool childrenChanged : 1;
                     bool maskChanged : 1;
@@ -180,6 +182,7 @@ public:
         Vector<RefPtr<CompositionLayer>> children;
         RefPtr<CompositionLayer> replica;
         RefPtr<CompositionLayer> mask;
+        RefPtr<CompositionLayer> backdropLayer;
 
         RefPtr<ContentLayer> contentLayer;
         RefPtr<BackingStore> backingStore;
@@ -243,6 +246,8 @@ public:
 
         if (pending.delta.filtersChanged)
             staging.filters = pending.filters;
+        if (pending.delta.backdropFiltersChanged)
+            staging.backdropLayer = pending.backdropLayer;
         if (pending.delta.animationsChanged)
             staging.animations = pending.animations;
 

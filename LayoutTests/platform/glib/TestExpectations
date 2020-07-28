@@ -170,6 +170,16 @@ webkit.org/b/213114 fast/flexbox/line-clamp-with-anchor-content-only.html [ Imag
 # Pass instead of removing this line.
 webkit.org/b/214259 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
 
+webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-uneven-corner-radii.html [ ImageOnlyFailure ]
+webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
+webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
+webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius-value-change.html [ ImageOnlyFailure ]
+webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius.html [ ImageOnlyFailure ]
+webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-reflection-add-backdrop.html [ ImageOnlyFailure ]
+webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-reflection-value-change.html [ ImageOnlyFailure ]
+webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-reflection.html [ ImageOnlyFailure ]
+webkit.org/b/169988 css3/filters/backdrop/effect-hw.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

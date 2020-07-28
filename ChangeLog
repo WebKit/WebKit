@@ -1,3 +1,15 @@
+2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Support for backdrop-filter
+        https://bugs.webkit.org/show_bug.cgi?id=169988
+
+        Reviewed by Adrian Perez de Castro.
+
+        Enable FILTERS_LEVEL_2 by default for WPE and GTK.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2020-07-27  Alberto Garcia  <berto@igalia.com>
 
         [GTK] Default to OpenGL ES in arm

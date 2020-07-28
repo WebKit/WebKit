@@ -1,3 +1,27 @@
+2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Support for backdrop-filter
+        https://bugs.webkit.org/show_bug.cgi?id=169988
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update test expectations.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/css3/filters/backdrop/backdrop-filter-does-not-size-properly-absolute-expected.txt: Added.
+        * platform/glib/css3/filters/backdrop/backdrop-filter-does-not-size-properly-border-and-padding-expected.txt: Added.
+        * platform/glib/css3/filters/backdrop/backdrop-filter-with-clip-path-expected.txt: Added.
+        * platform/glib/css3/filters/backdrop/backdrop-filter-with-cliprect-expected.txt: Added.
+        * platform/glib/css3/filters/backdrop/backdrop-filter-with-mask-expected.txt: Added.
+        * platform/glib/css3/filters/backdrop/backdrop-with-visibility-hidden-changing-expected.txt: Added.
+        * platform/glib/css3/filters/backdrop/backdrop-with-visibility-hidden-expected.txt: Added.
+        * platform/glib/css3/filters/backdrop/resource-use-add-more-layers-expected.txt: Added.
+        * platform/glib/css3/filters/backdrop/resource-use-excessive-expected.txt: Added.
+        * platform/glib/css3/filters/backdrop/resource-use-ok-expected.txt: Added.
+        * platform/glib/css3/filters/backdrop/resource-use-remove-some-layers-expected.txt: Added.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-07-28  Youenn Fablet  <youenn@apple.com>
 
         ReadableStreamDefaultController should use private JS built-in methods
