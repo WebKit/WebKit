@@ -1,5 +1,15 @@
 2020-07-28  Ryan Haddad  <ryanhaddad@apple.com>
 
+        REGRESSION: (r264950): [ iOS wk2 ] broke 4 xmlhttprequest tests
+        https://bugs.webkit.org/show_bug.cgi?id=214873
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Remove flaky
+        expectation since I rebaselined these tests with r264989.
+
+2020-07-28  Ryan Haddad  <ryanhaddad@apple.com>
+
         Test landed broken(?): [ macOS wk1 ] fast/dynamic/size-to-content-autosize-with-percent-document-height.html is a constant image failure
         https://bugs.webkit.org/show_bug.cgi?id=214876
 
