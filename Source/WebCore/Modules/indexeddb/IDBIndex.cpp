@@ -158,7 +158,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenCursor(JSGlobalObject& execState, I
     if (keyRange.hasException())
         return keyRange.releaseException();
 
-    IDBKeyRangeData rangeData = keyRange.returnValue() ? keyRange.releaseReturnValue().get() : nullptr;
+    IDBKeyRangeData rangeData = keyRange.returnValue().get();
     if (rangeData.lowerKey.isNull())
         rangeData.lowerKey = IDBKeyData::minimum();
     if (rangeData.upperKey.isNull())
@@ -201,7 +201,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenKeyCursor(JSGlobalObject& execState
     if (keyRange.hasException())
         return keyRange.releaseException();
 
-    auto* keyRangePointer = keyRange.returnValue() ? keyRange.releaseReturnValue().get() : nullptr;
+    auto* keyRangePointer = keyRange.returnValue().get();
     auto info = IDBCursorInfo::indexCursor(m_objectStore.transaction(), m_objectStore.info().identifier(), m_info.identifier(), keyRangePointer, direction, IndexedDB::CursorType::KeyOnly);
     return m_objectStore.transaction().requestOpenCursor(execState, *this, info);
 }
@@ -351,7 +351,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAll(JSGlobalObject& execState, Optio
     if (keyRange.hasException())
         return keyRange.releaseException();
 
-    auto* keyRangePointer = keyRange.returnValue() ? keyRange.releaseReturnValue().get() : nullptr;
+    auto keyRangePointer = keyRange.returnValue().get();
     return m_objectStore.transaction().requestGetAllIndexRecords(execState, *this, keyRangePointer, IndexedDB::GetAllType::Values, count);
 }
 
@@ -388,7 +388,7 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAllKeys(JSGlobalObject& execState, O
     if (keyRange.hasException())
         return keyRange.releaseException();
 
-    auto* keyRangePointer = keyRange.returnValue() ? keyRange.releaseReturnValue().get() : nullptr;
+    auto* keyRangePointer = keyRange.returnValue().get();
     return m_objectStore.transaction().requestGetAllIndexRecords(execState, *this, keyRangePointer, IndexedDB::GetAllType::Keys, count);
 }
 

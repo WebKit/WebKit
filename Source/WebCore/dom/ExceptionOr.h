@@ -42,12 +42,15 @@ public:
 
     bool hasException() const;
     const Exception& exception() const;
-    Exception&& releaseException();
+    Exception releaseException();
     const ReturnType& returnValue() const;
-    ReturnType&& releaseReturnValue();
+    ReturnType releaseReturnValue();
     
 private:
     Expected<ReturnType, Exception> m_value;
+#if ASSERT_ENABLED
+    bool m_wasReleased { false };
+#endif
 };
 
 template<typename T> class ExceptionOr<T&> {
@@ -60,7 +63,7 @@ public:
 
     bool hasException() const;
     const Exception& exception() const;
-    Exception&& releaseException();
+    Exception releaseException();
     const ReturnReferenceType& returnValue() const;
     ReturnReferenceType& releaseReturnValue();
     
@@ -77,10 +80,13 @@ public:
 
     bool hasException() const;
     const Exception& exception() const;
-    Exception&& releaseException();
+    Exception releaseException();
 
 private:
     Expected<void, Exception> m_value;
+#if ASSERT_ENABLED
+    bool m_wasReleased { false };
+#endif
 };
 
 ExceptionOr<void> isolatedCopy(ExceptionOr<void>&&);
@@ -107,21 +113,25 @@ template<typename ReturnType> inline bool ExceptionOr<ReturnType>::hasException(
 
 template<typename ReturnType> inline const Exception& ExceptionOr<ReturnType>::exception() const
 {
+    ASSERT(!m_wasReleased);
     return m_value.error();
 }
 
-template<typename ReturnType> inline Exception&& ExceptionOr<ReturnType>::releaseException()
+template<typename ReturnType> inline Exception ExceptionOr<ReturnType>::releaseException()
 {
+    ASSERT(!std::exchange(m_wasReleased, true));
     return WTFMove(m_value.error());
 }
 
 template<typename ReturnType> inline const ReturnType& ExceptionOr<ReturnType>::returnValue() const
 {
+    ASSERT(!m_wasReleased);
     return m_value.value();
 }
 
-template<typename ReturnType> inline ReturnType&& ExceptionOr<ReturnType>::releaseReturnValue()
+template<typename ReturnType> inline ReturnType ExceptionOr<ReturnType>::releaseReturnValue()
 {
+    ASSERT(!std::exchange(m_wasReleased, true));
     return WTFMove(m_value.value());
 }
 
@@ -145,7 +155,7 @@ template<typename ReturnReferenceType> inline const Exception& ExceptionOr<Retur
     return m_value.exception();
 }
 
-template<typename ReturnReferenceType> inline Exception&& ExceptionOr<ReturnReferenceType&>::releaseException()
+template<typename ReturnReferenceType> inline Exception ExceptionOr<ReturnReferenceType&>::releaseException()
 {
     return m_value.releaseException();
 }
@@ -172,11 +182,13 @@ inline bool ExceptionOr<void>::hasException() const
 
 inline const Exception& ExceptionOr<void>::exception() const
 {
+    ASSERT(!m_wasReleased);
     return m_value.error();
 }
 
-inline Exception&& ExceptionOr<void>::releaseException()
+inline Exception ExceptionOr<void>::releaseException()
 {
+    ASSERT(!std::exchange(m_wasReleased, true));
     return WTFMove(m_value.error());
 }
 

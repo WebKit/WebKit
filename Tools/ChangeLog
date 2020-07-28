@@ -1,3 +1,15 @@
+2020-07-27  Chris Dumez  <cdumez@apple.com>
+
+        Update release*() functions on ExceptionOr() to always release the member
+        https://bugs.webkit.org/show_bug.cgi?id=214835
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/LoggedInStatus.cpp:
+        (TestWebKitAPI::TEST):
+        Fix unsafe code in API test which was storing a raw pointer to something held inside an ExpectedOr,
+        after calling releaseReturnValue().
+
 2020-07-27  David Kilzer  <ddkilzer@apple.com>
 
         WebKit::setCrashReportApplicationSpecificInformation() should also log to WTFLogAlways()

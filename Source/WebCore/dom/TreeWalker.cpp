@@ -239,7 +239,7 @@ Children:
         if (filterResult.hasException())
             return filterResult.releaseException();
 
-        if (filterResult.releaseReturnValue() == NodeFilter::FILTER_ACCEPT)
+        if (filterResult.returnValue() == NodeFilter::FILTER_ACCEPT)
             return setCurrent(node.releaseNonNull());
         if (filterResult.returnValue() == NodeFilter::FILTER_REJECT)
             break;

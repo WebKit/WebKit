@@ -1,3 +1,41 @@
+2020-07-27  Chris Dumez  <cdumez@apple.com>
+
+        Update release*() functions on ExceptionOr() to always release the member
+        https://bugs.webkit.org/show_bug.cgi?id=214835
+
+        Reviewed by Darin Adler.
+
+        Update release*() functions on ExceptionOr() to always release the member instead of
+        simply doing a cast to an rvalue reference and leaving it up to the caller.
+
+        Also add assertions to make sure we don't release those members more than once and to
+        make sure we don't try to access the member after releasing it.
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::doOpenCursor):
+        (WebCore::IDBIndex::doOpenKeyCursor):
+        (WebCore::IDBIndex::doGetAll):
+        (WebCore::IDBIndex::doGetAllKeys):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::doOpenCursor):
+        (WebCore::IDBObjectStore::doOpenKeyCursor):
+        (WebCore::IDBObjectStore::doDelete):
+        (WebCore::IDBObjectStore::doGetAll):
+        (WebCore::IDBObjectStore::doGetAllKeys):
+        Fix issues found in existing code by new assertions.
+
+        * dom/ExceptionOr.h:
+        (WebCore::ExceptionOr<ReturnType>::exception const):
+        (WebCore::ExceptionOr<ReturnType>::releaseException):
+        (WebCore::ExceptionOr<ReturnType>::returnValue const):
+        (WebCore::ExceptionOr<ReturnType>::releaseReturnValue):
+        (WebCore::>::releaseException):
+        (WebCore::ExceptionOr<void>::exception const):
+        (WebCore::ExceptionOr<void>::releaseException):
+
+        * dom/TreeWalker.cpp:
+        Fix issues found in existing code by new assertions.
+
 2020-07-27  Geoffrey Garen  <ggaren@apple.com>
 
         WebCoreResourceHandleAsOperationQueueDelegate can use RunLoop::dispatch
