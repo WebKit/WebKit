@@ -1,3 +1,17 @@
+2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r230479): [TextureMapper] replica layer is not rendered
+        https://bugs.webkit.org/show_bug.cgi?id=214827
+
+        Reviewed by Adrian Perez de Castro.
+
+        Since r230479 the replica layer transform is not applied because m_layerTransforms.localTransform is never set
+        for the replica layer. We need to call applyAnimationsRecursively() on the replica layer to initialize the
+        localTransform (even when we know the replica layer won't have animations).
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::applyAnimationsRecursively):
+
 2020-07-27  Alex Christensen  <achristensen@webkit.org>
 
         Null check inlineStyle in StyledElement::invalidateStyleAttribute

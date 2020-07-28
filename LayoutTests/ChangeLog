@@ -1,3 +1,63 @@
+2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r230479): [TextureMapper] replica layer is not rendered
+        https://bugs.webkit.org/show_bug.cgi?id=214827
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add missing expectations for compositing/reflections tests and rebaseline the existing ones.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/compositing/reflections/animation-inside-reflection-expected.png: Added.
+        * platform/gtk/compositing/reflections/animation-inside-reflection-expected.txt: Added.
+        * platform/gtk/compositing/reflections/backface-hidden-reflection-expected.png: Added.
+        * platform/gtk/compositing/reflections/become-simple-composited-reflection-expected.png: Added.
+        * platform/gtk/compositing/reflections/compositing-change-inside-reflection-expected.png: Added.
+        * platform/gtk/compositing/reflections/compositing-change-inside-reflection-expected.txt: Added.
+        * platform/gtk/compositing/reflections/deeply-nested-reflections-expected.png: Added.
+        * platform/gtk/compositing/reflections/deeply-nested-reflections-expected.txt: Added.
+        * platform/gtk/compositing/reflections/direct-image-object-fit-reflected-expected.txt: Added.
+        * platform/gtk/compositing/reflections/load-video-in-reflection-expected.png: Added.
+        * platform/gtk/compositing/reflections/load-video-in-reflection-expected.txt: Added.
+        * platform/gtk/compositing/reflections/masked-reflection-on-composited-expected.png: Added.
+        * platform/gtk/compositing/reflections/masked-reflection-on-composited-expected.txt: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-anchor-point-expected.png: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-anchor-point-expected.txt: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-animated-expected.png: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-animated-expected.txt: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-expected.png: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-expected.txt: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-mask-change-expected.png: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-mask-change-expected.txt: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-on-overflow-expected.png: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-on-overflow-expected.txt: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-opacity-expected.png: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-opacity-expected.txt: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-size-change-expected.png: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-size-change-expected.txt: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-transformed-expected.png: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-transformed-expected.txt: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-transformed2-expected.png: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-transformed2-expected.txt: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-transition-expected.png: Added.
+        * platform/gtk/compositing/reflections/nested-reflection-transition-expected.txt: Added.
+        * platform/gtk/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/gtk/compositing/reflections/reflection-on-composited-expected.png: Added.
+        * platform/gtk/compositing/reflections/reflection-on-composited-expected.txt: Added.
+        * platform/gtk/compositing/reflections/reflection-opacity-expected.png: Added.
+        * platform/gtk/compositing/reflections/reflection-opacity-expected.txt: Added.
+        * platform/gtk/compositing/reflections/reflection-ordering-expected.png: Added.
+        * platform/gtk/compositing/reflections/reflection-ordering-expected.txt: Added.
+        * platform/gtk/compositing/reflections/reflection-positioning-expected.png: Added.
+        * platform/gtk/compositing/reflections/reflection-positioning-expected.txt: Added.
+        * platform/gtk/compositing/reflections/reflection-positioning2-expected.png: Added.
+        * platform/gtk/compositing/reflections/reflection-positioning2-expected.txt: Added.
+        * platform/gtk/compositing/reflections/remove-add-reflection-expected.png: Added.
+        * platform/gtk/compositing/reflections/simple-composited-reflections-expected.png: Added.
+        * platform/gtk/compositing/reflections/simple-composited-reflections-expected.txt: Added.
+        * platform/gtk/compositing/reflections/transform-inside-reflection-expected.png: Added.
+        * platform/gtk/compositing/reflections/transform-inside-reflection-expected.txt: Added.
+
 2020-07-27  Antoine Quint  <graouts@webkit.org>
 
         Test landed flaky: [ iOS ] fast/visual-viewport/scroll-event-fired-during-scroll-alone.html is a flakey failure

@@ -692,6 +692,8 @@ bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const
 bool TextureMapperLayer::applyAnimationsRecursively(MonotonicTime time)
 {
     bool hasRunningAnimations = syncAnimations(time);
+    if (m_state.replicaLayer)
+        hasRunningAnimations |= m_state.replicaLayer->applyAnimationsRecursively(time);
     for (auto* child : m_children)
         hasRunningAnimations |= child->applyAnimationsRecursively(time);
     return hasRunningAnimations;
