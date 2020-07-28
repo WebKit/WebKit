@@ -1,5 +1,14 @@
 2020-07-28  Karl Rackler  <rackler@apple.com>
 
+        REGRESSION: (r264950): [ iOS wk2 ] broke 4 xmlhttprequest tests 
+        https://bugs.webkit.org/show_bug.cgi?id=214873
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2020-07-28  Karl Rackler  <rackler@apple.com>
+
         REGRESSION: (r264492) Broke 4 WebRTC tests and 1 webrtc tests
         https://bugs.webkit.org/show_bug.cgi?id=214730
 
