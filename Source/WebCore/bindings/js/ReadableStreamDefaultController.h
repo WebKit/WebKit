@@ -43,17 +43,11 @@ class ReadableStreamDefaultController {
 public:
     explicit ReadableStreamDefaultController(JSReadableStreamDefaultController* controller) : m_jsController(controller) { }
 
-    static JSC::JSValue invoke(JSC::JSGlobalObject&, JSC::JSObject&, const char*, JSC::JSValue);
-
     bool enqueue(RefPtr<JSC::ArrayBuffer>&&);
-
     void error(const Exception&);
-
-    void close() { invoke(globalObject(), jsController(), "close", JSC::jsUndefined()); }
+    void close();
 
 private:
-    void error(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value) { invoke(lexicalGlobalObject, jsController(), "error", value); }
-    void enqueue(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value) { invoke(lexicalGlobalObject, jsController(), "enqueue", value); }
     JSReadableStreamDefaultController& jsController() const;
 
     JSDOMGlobalObject& globalObject() const;
@@ -73,37 +67,6 @@ inline JSDOMGlobalObject& ReadableStreamDefaultController::globalObject() const
     ASSERT(m_jsController);
     ASSERT(m_jsController->globalObject());
     return *static_cast<JSDOMGlobalObject*>(m_jsController->globalObject());
-}
-
-inline bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
-{
-    auto& globalObject = this->globalObject();
-    JSC::VM& vm = globalObject.vm();
-    JSC::JSLockHolder locker(vm);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSC::JSGlobalObject& lexicalGlobalObject = globalObject;
-
-    if (!buffer) {
-        error(lexicalGlobalObject, createOutOfMemoryError(&lexicalGlobalObject));
-        return false;
-    }
-    auto length = buffer->byteLength();
-    auto chunk = JSC::Uint8Array::create(WTFMove(buffer), 0, length);
-    enqueue(lexicalGlobalObject, toJS(&lexicalGlobalObject, &globalObject, chunk.ptr()));
-
-    if (UNLIKELY(scope.exception())) {
-        ASSERT(isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
-        return false;
-    }
-
-    return true;
-}
-
-inline void ReadableStreamDefaultController::error(const Exception& exception)
-{
-    JSC::JSGlobalObject& lexicalGlobalObject = globalObject();
-    JSC::JSLockHolder locker(&lexicalGlobalObject);
-    error(lexicalGlobalObject, createDOMException(&lexicalGlobalObject, exception.code(), exception.message()));
 }
 
 } // namespace WebCore

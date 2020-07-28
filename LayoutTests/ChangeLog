@@ -1,3 +1,14 @@
+2020-07-28  Youenn Fablet  <youenn@apple.com>
+
+        ReadableStreamDefaultController should use private JS built-in methods
+        https://bugs.webkit.org/show_bug.cgi?id=214819
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/fetch/readableStreamDefaultController-overwriting-expected.txt: Added.
+        * http/wpt/fetch/readableStreamDefaultController-overwriting.html: Added.
+        * http/wpt/fetch/resources/lengthy-pass.py: Added.
+
 2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r230479): [TextureMapper] replica layer is not rendered

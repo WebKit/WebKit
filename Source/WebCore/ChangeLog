@@ -1,3 +1,22 @@
+2020-07-28  Youenn Fablet  <youenn@apple.com>
+
+        ReadableStreamDefaultController should use private JS built-in methods
+        https://bugs.webkit.org/show_bug.cgi?id=214819
+
+        Reviewed by Darin Adler.
+
+        Call directly private buitl-in methods instead of getting close/error/enqueue methods from the controller.
+        Test: http/wpt/fetch/readableStreamDefaultController-overwriting.html
+
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        (WebCore::invokeReadableStreamDefaultControllerFunction):
+        (WebCore::ReadableStreamDefaultController::close):
+        (WebCore::ReadableStreamDefaultController::error):
+        (WebCore::ReadableStreamDefaultController::enqueue):
+        * bindings/js/ReadableStreamDefaultController.h:
+        (WebCore::ReadableStreamDefaultController::enqueue):
+        (WebCore::ReadableStreamDefaultController::error):
+
 2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r230479): [TextureMapper] replica layer is not rendered

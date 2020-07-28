@@ -39,32 +39,84 @@
 
 namespace WebCore {
 
-static inline JSC::JSValue readableStreamCallFunction(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue jsFunction, JSC::JSValue thisValue, const JSC::ArgList& arguments)
-{
-    auto callData = JSC::getCallData(lexicalGlobalObject.vm(), jsFunction);
-    return call(&lexicalGlobalObject, jsFunction, callData, thisValue, arguments);
-}
-
-JSC::JSValue ReadableStreamDefaultController::invoke(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& object, const char* propertyName, JSC::JSValue parameter)
+static bool invokeReadableStreamDefaultControllerFunction(JSC::JSGlobalObject& lexicalGlobalObject, const Identifier& identifier, const MarkedArgumentBuffer& arguments)
 {
     JSC::VM& vm = lexicalGlobalObject.vm();
     JSC::JSLockHolder lock(vm);
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto function = object.get(&lexicalGlobalObject, JSC::Identifier::fromString(vm, propertyName));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
+    auto function = lexicalGlobalObject.get(&lexicalGlobalObject, identifier);
+    ASSERT(function.isCallable(lexicalGlobalObject.vm()));
 
-    if (!function.isCallable(vm)) {
-        if (!function.isUndefined())
-            throwTypeError(&lexicalGlobalObject, scope, "ReadableStream trying to call a property that is not callable"_s);
-        return JSC::jsUndefined();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto callData = JSC::getCallData(vm, function);
+    call(&lexicalGlobalObject, function, callData, JSC::jsUndefined(), arguments);
+    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
+    return !scope.exception();
+}
+
+void ReadableStreamDefaultController::close()
+{
+    MarkedArgumentBuffer arguments;
+    arguments.append(&jsController());
+
+    auto* clientData = static_cast<JSVMClientData*>(globalObject().vm().clientData);
+    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamDefaultControllerClosePrivateName();
+
+    invokeReadableStreamDefaultControllerFunction(globalObject(), privateName, arguments);
+}
+
+
+void ReadableStreamDefaultController::error(const Exception& exception)
+{
+    JSC::JSGlobalObject& lexicalGlobalObject = this->globalObject();
+    auto& vm = lexicalGlobalObject.vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto value = createDOMException(&lexicalGlobalObject, exception.code(), exception.message());
+
+    if (UNLIKELY(scope.exception())) {
+        ASSERT(isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
+        return;
     }
 
-    JSC::MarkedArgumentBuffer arguments;
-    arguments.append(parameter);
-    ASSERT(!arguments.hasOverflowed());
+    MarkedArgumentBuffer arguments;
+    arguments.append(&jsController());
+    arguments.append(value);
 
-    return readableStreamCallFunction(lexicalGlobalObject, function, &object, arguments);
+    auto* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
+    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamDefaultControllerErrorPrivateName();
+
+    invokeReadableStreamDefaultControllerFunction(globalObject(), privateName, arguments);
+}
+
+bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
+{
+    if (!buffer) {
+        error(Exception { OutOfMemoryError });
+        return false;
+    }
+
+    JSC::JSGlobalObject& lexicalGlobalObject = this->globalObject();
+    auto& vm = lexicalGlobalObject.vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    auto length = buffer->byteLength();
+    auto chunk = JSC::Uint8Array::create(WTFMove(buffer), 0, length);
+    auto value = toJS(&lexicalGlobalObject, &lexicalGlobalObject, chunk.get());
+
+    if (UNLIKELY(scope.exception())) {
+        ASSERT(isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
+        return false;
+    }
+
+    MarkedArgumentBuffer arguments;
+    arguments.append(&jsController());
+    arguments.append(value);
+
+    auto* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
+    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamDefaultControllerEnqueuePrivateName();
+
+    return invokeReadableStreamDefaultControllerFunction(globalObject(), privateName, arguments);
 }
 
 } // namespace WebCore
