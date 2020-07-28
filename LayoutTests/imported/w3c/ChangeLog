@@ -1,3 +1,26 @@
+2020-07-28  Clark Wang  <clark_wang@apple.com>
+
+        Added constructor methods to ChannelMergerNode, ChannelSplitterNode
+        https://bugs.webkit.org/show_bug.cgi?id=214851
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing tests that now pass, or fail further along. 
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/buffer-resampling-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/simple-input-output.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/audiochannelmerger-basic-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelmergernode-interface/ctor-channelmerger-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelsplitternode-interface/audiochannelsplitter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-channelsplitternode-interface/ctor-channelsplitter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-scriptprocessornode-interface/simple-input-output-expected.txt:
+
 2020-07-28  Rob Buis  <rbuis@igalia.com>
 
         PerformanceObserver should work with 'type' and not just `entryTypes`

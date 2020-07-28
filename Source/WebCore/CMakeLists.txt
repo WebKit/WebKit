@@ -465,7 +465,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/ChannelCountMode.idl
     Modules/webaudio/ChannelInterpretation.idl
     Modules/webaudio/ChannelMergerNode.idl
+    Modules/webaudio/ChannelMergerOptions.idl
     Modules/webaudio/ChannelSplitterNode.idl
+    Modules/webaudio/ChannelSplitterOptions.idl
     Modules/webaudio/ConvolverNode.idl
     Modules/webaudio/DelayNode.idl
     Modules/webaudio/DistanceModelType.idl

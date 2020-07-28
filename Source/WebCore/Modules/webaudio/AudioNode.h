@@ -180,7 +180,7 @@ public:
     virtual ExceptionOr<void> setChannelCountMode(ChannelCountMode);
 
     ChannelInterpretation channelInterpretation() const { return m_channelInterpretation; }
-    ExceptionOr<void> setChannelInterpretation(ChannelInterpretation);
+    virtual ExceptionOr<void> setChannelInterpretation(ChannelInterpretation);
 
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.

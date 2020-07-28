@@ -36,13 +36,27 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ChannelSplitterNode);
-    
-RefPtr<ChannelSplitterNode> ChannelSplitterNode::create(BaseAudioContext& context, float sampleRate, unsigned numberOfOutputs)
-{
-    if (!numberOfOutputs || numberOfOutputs > AudioContext::maxNumberOfChannels())
-        return nullptr;
 
-    return adoptRef(*new ChannelSplitterNode(context, sampleRate, numberOfOutputs));      
+ExceptionOr<Ref<ChannelSplitterNode>> ChannelSplitterNode::create(BaseAudioContext& context, const ChannelSplitterOptions& options)
+{
+    if (options.numberOfOutputs > AudioContext::maxNumberOfChannels() || !options.numberOfOutputs)
+        return Exception { IndexSizeError, "Number of outputs is not in the allowed range"_s };
+    
+    auto splitter = adoptRef(*new ChannelSplitterNode(context, context.sampleRate(), options.numberOfOutputs));
+    
+    auto result = splitter->setChannelCount(options.channelCount.valueOr(options.numberOfOutputs));
+    if (result.hasException())
+        return result.releaseException();
+    
+    result = splitter->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::Explicit));
+    if (result.hasException())
+        return result.releaseException();
+    
+    result = splitter->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Discrete));
+    if (result.hasException())
+        return result.releaseException();
+    
+    return splitter;
 }
 
 ChannelSplitterNode::ChannelSplitterNode(BaseAudioContext& context, float sampleRate, unsigned numberOfOutputs)
@@ -84,6 +98,30 @@ void ChannelSplitterNode::process(size_t framesToProcess)
 
 void ChannelSplitterNode::reset()
 {
+}
+
+ExceptionOr<void> ChannelSplitterNode::setChannelCount(unsigned channelCount)
+{
+    if (channelCount != numberOfOutputs())
+        return Exception { IndexSizeError, "Channel count must be set to number of outputs."_s };
+    
+    return AudioNode::setChannelCount(channelCount);
+}
+
+ExceptionOr<void> ChannelSplitterNode::setChannelCountMode(ChannelCountMode mode)
+{
+    if (mode != ChannelCountMode::Explicit)
+        return Exception { InvalidStateError, "Channel count mode cannot be changed from explicit."_s };
+    
+    return AudioNode::setChannelCountMode(mode);
+}
+
+ExceptionOr<void> ChannelSplitterNode::setChannelInterpretation(ChannelInterpretation interpretation)
+{
+    if (interpretation != ChannelInterpretation::Discrete)
+        return Exception { InvalidStateError, "Channel interpretation cannot be changed from discrete."_s };
+    
+    return AudioNode::setChannelInterpretation(interpretation);
 }
 
 } // namespace WebCore

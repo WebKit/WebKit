@@ -313,8 +313,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelInterpretation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelInterpretation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelMergerNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelMergerNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelMergerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelMergerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelSplitterNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelSplitterNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelSplitterOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelSplitterOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCharacterData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCharacterData.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChildNode.cpp

@@ -5,8 +5,8 @@ FAIL Executing "functionality" promise_test: Unhandled rejection with value: obj
                 .then')"
 PASS Audit report 
 PASS > [construction] Construction of ChannelSplitterNode 
-PASS   createChannelSplitter(0) threw IndexSizeError: "The index is not in the allowed range.". 
-PASS   createChannelSplitter(33) threw IndexSizeError: "The index is not in the allowed range.". 
+PASS   createChannelSplitter(0) threw IndexSizeError: "Number of outputs is not in the allowed range". 
+PASS   createChannelSplitter(33) threw IndexSizeError: "Number of outputs is not in the allowed range". 
 PASS   splitternode = context.createChannelSplitter(32) did not throw an exception. 
 PASS   splitternode.numberOfOutputs is equal to 32. 
 PASS   splitternode.numberOfInputs is equal to 1. 

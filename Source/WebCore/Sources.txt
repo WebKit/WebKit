@@ -2709,7 +2709,9 @@ JSCanvasUserInterface.cpp
 JSChannelCountMode.cpp
 JSChannelInterpretation.cpp
 JSChannelMergerNode.cpp
+JSChannelMergerOptions.cpp
 JSChannelSplitterNode.cpp
+JSChannelSplitterOptions.cpp
 JSCharacterData.cpp
 JSChildNode.cpp
 JSClipboard.cpp
