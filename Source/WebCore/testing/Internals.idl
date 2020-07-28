@@ -860,6 +860,7 @@ enum ContentSizeCategory {
     boolean isSystemPreviewImage(Element element);
 
     boolean usingAppleInternalSDK();
+    boolean usingGStreamer();
 
     void postTask(VoidCallback callback);
     [CallWith=ScriptExecutionContext, MayThrowException] void queueTask(DOMString source, VoidCallback callback);

@@ -839,6 +839,7 @@ public:
     void markContextAsInsecure();
 
     bool usingAppleInternalSDK() const;
+    bool usingGStreamer() const;
 
     struct NowPlayingState {
         String title;

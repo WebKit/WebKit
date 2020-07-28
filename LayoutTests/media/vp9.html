@@ -7,11 +7,14 @@
 // FIXME: Add test for MediaSource.isTypeSupported("video/mp4; codecs=vp9")
 
 test(() => {
-    assert_equals(video.canPlayType("video/mp4; codecs=vp9"), "", "canPlayType");
+    let expectedVP9Support = ""
+    if (window.internals && window.internals.usingGStreamer())
+        expectedVP9Support = "probably"
+    assert_equals(video.canPlayType("video/mp4; codecs=vp9"), expectedVP9Support, "canPlayType");
 }, "HTMLMediaElement.canPlay VP9");
 
 promise_test(async() => {
-    if (window.internals && !window.internals.usingAppleInternalSDK())
+    if (window.internals && !window.internals.usingGStreamer() && !window.internals.usingAppleInternalSDK())
         return;
     await video.play();
     assert_equals(video.videoWidth, 640);

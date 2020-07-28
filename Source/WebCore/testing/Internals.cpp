@@ -5541,6 +5541,15 @@ bool Internals::usingAppleInternalSDK() const
 #endif
 }
 
+bool Internals::usingGStreamer() const
+{
+#if USE(GSTREAMER)
+    return true;
+#else
+    return false;
+#endif
+}
+
 void Internals::setCaptureExtraNetworkLoadMetricsEnabled(bool value)
 {
     platformStrategies()->loaderStrategy()->setCaptureExtraNetworkLoadMetricsEnabled(value);
