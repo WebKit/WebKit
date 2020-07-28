@@ -55,7 +55,7 @@ webkit.org/b/201270 [ Debug ] http/tests/security/showModalDialog-sync-cross-ori
 
 # Workers
 ## Also timeouts sometimes in Wayland
-webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Crash ]
+webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Crash Slow ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
@@ -1184,6 +1184,7 @@ webkit.org/b/211693 editing/input/caret-at-the-edge-of-input.html [ Failure Pass
 
 # The test is failing since r261576 and crashing occasionally
 webkit.org/b/211833 compositing/video/video-poster.html [ Failure Crash ]
+webkit.org/b/211833 compositing/video/video-reflection.html [ Crash Pass ]
 
 # The first one is also crashing for both GTK and WPE debug
 webkit.org/b/211887 [ Release ] fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Failure ]
