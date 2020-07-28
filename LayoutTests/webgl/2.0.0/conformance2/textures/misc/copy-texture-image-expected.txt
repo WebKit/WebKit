@@ -89,33 +89,33 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/copy-textur
 [ 86: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
 [ 87: PASS ] getError was expected value: INVALID_OPERATION : copyTexImage2D should fail for good internalformat with unmatched component sizes RGBA16UI
 [ 88: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 89: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat R8_SNORM
+[ 89: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for snorm internalformat R8_SNORM
 [ 90: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 91: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RG8_SNORM
+[ 91: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for snorm internalformat RG8_SNORM
 [ 92: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 93: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RGB8_SNORM
+[ 93: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for snorm internalformat RGB8_SNORM
 [ 94: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 95: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RGBA8_SNORM
+[ 95: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for snorm internalformat RGBA8_SNORM
 [ 96: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 97: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RGB8I
+[ 97: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat R16F
 [ 98: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 99: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RGB16I
+[ 99: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RG16F
 [ 100: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 101: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : copyTexImage2D should fail for bad internalformat RGB32I
+[ 101: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat R11F_G11F_B10F
 [ 102: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 103: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RGB8UI
+[ 103: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RGB9_E5
 [ 104: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 105: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RGB16UI
+[ 105: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RGB16F
 [ 106: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 107: FAIL ] getError expected: INVALID_ENUM. Was NO_ERROR : copyTexImage2D should fail for bad internalformat RGB32UI
+[ 107: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat RGBA16F
 [ 108: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 109: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat DEPTH_COMPONENT16
+[ 109: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat DEPTH_COMPONENT16
 [ 110: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 111: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat DEPTH_COMPONENT24
+[ 111: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat DEPTH_COMPONENT24
 [ 112: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 113: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat DEPTH_COMPONENT32F
+[ 113: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat DEPTH_COMPONENT32F
 [ 114: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
-[ 115: FAIL ] getError expected: INVALID_ENUM. Was INVALID_OPERATION : copyTexImage2D should fail for bad internalformat DEPTH24_STENCIL8
+[ 115: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat DEPTH24_STENCIL8
 [ 116: PASS ] successfullyParsed is true
-[ FAIL ] 14 failures reported
+[ FAIL ] 4 failures reported
 

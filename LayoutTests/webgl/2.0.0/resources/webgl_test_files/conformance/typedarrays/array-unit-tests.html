@@ -185,9 +185,9 @@ function testInheritanceHierarchy() {
 
   try {
     var foo = ArrayBufferView;
-    testFailed('ArrayBufferView has [NoInterfaceObject] extended attribute and should not be defined');
+    testFailed('ArrayBufferView is a typedef and should not be defined');
   } catch (e) {
-    testPassed('ArrayBufferView has [NoInterfaceObject] extended attribute and was (correctly) not defined');
+    testPassed('ArrayBufferView is a typedef and was (correctly) not defined');
   }
 
   // Uint8ClampedArray inherited from Uint8Array in earlier versions

@@ -56,29 +56,7 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-storage
 [ 53: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed on immutable texture as long as the format is compatible
 [ 54: PASS ] getError was expected value: INVALID_OPERATION : texSubImage3D should fail for too-high level
 [ 55: PASS ] getError was expected value: INVALID_VALUE : texSubImage3D should fail for dimension out of range
-[ 56: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 57: PASS ] getError was expected value: NO_ERROR : levels=levels
-[ 58: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 59: PASS ] getError was expected value: NO_ERROR : levels=levels
-[ 60: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 61: PASS ] getError was expected value: NO_ERROR : levels=levels
-[ 62: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 63: PASS ] getError was expected value: NO_ERROR : levels=levels
-[ 64: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 65: PASS ] getError was expected value: NO_ERROR : levels=levels
-[ 66: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 67: PASS ] getError was expected value: NO_ERROR : levels=levels
-[ 68: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 69: PASS ] getError was expected value: NO_ERROR : levels=levels
-[ 70: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 71: PASS ] getError was expected value: NO_ERROR : levels=levels
-[ 72: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 73: PASS ] getError was expected value: NO_ERROR : levels=levels
-[ 74: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 75: PASS ] getError was expected value: NO_ERROR : levels=levels
-[ 76: PASS ] getError was expected value: INVALID_OPERATION : levels=levels+1
-[ 77: PASS ] getError was expected value: INVALID_OPERATION : levels=levels
-[ 78: PASS ] getError was expected value: NO_ERROR : there should be no errors
-[ 79: PASS ] successfullyParsed is true
+[ 56: PASS ] getError was expected value: NO_ERROR : there should be no errors
+[ 57: PASS ] successfullyParsed is true
 [ FAIL ] 6 failures reported
 

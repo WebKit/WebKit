@@ -1,5 +1,50 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/tricky-loop-conditions.html
-[ PASS ] All tests passed
+[ 1: PASS ] should be green
+[ 2: PASS ] should be green
+[ 3: PASS ] should be green
+[ 4: PASS ] should be green
+[ 5: PASS ] should be green
+[ 6: PASS ] should be green
+[ 7: PASS ] should be green
+[ 8: PASS ] should be green
+[ 9: PASS ] should be green
+[ 10: PASS ] should be green
+[ 11: PASS ] should be green
+[ 12: PASS ] should be green
+[ 13: FAIL ] [unexpected fragment shader compile status] (expected: true) Test indexing an array constructor inside a sequence operator: bool(c = (func(), (int[2](c + 1, c + 2))[1])) inside a for loop condition
+[ 14: FAIL ] [unexpected fragment shader compile status] (expected: true) Test indexing an array constructor inside a sequence operator: bool(c = (func(), (int[2](c + 1, c + 2))[1])) inside a while loop condition
+[ 15: FAIL ] [unexpected fragment shader compile status] (expected: true) Test indexing an array constructor inside a sequence operator: bool(c = (func(), (int[2](c + 1, c + 2))[1])) inside a do-while loop condition
+[ 16: FAIL ] [unexpected fragment shader compile status] (expected: true) Test indexing an array constructor inside a sequence operator: c = (func(), (int[2](c + 1, c + 2))[1]) inside a for loop expression
+[ 17: PASS ] should be green
+[ 18: PASS ] should be green
+[ 19: PASS ] should be green
+[ 20: PASS ] should be green
+[ 21: PASS ] should be green
+[ 22: PASS ] should be green
+[ 23: PASS ] should be green
+[ 24: PASS ] should be green
+[ 25: PASS ] should be green
+[ 26: PASS ] should be green
+[ 27: PASS ] should be green
+[ 28: PASS ] should be green
+[ 29: PASS ] should be green
+[ 30: PASS ] should be green
+[ 31: PASS ] should be green
+[ 32: PASS ] should be green
+[ 33: PASS ] should be green
+[ 34: PASS ] should be green
+[ 35: PASS ] should be green
+[ 36: PASS ] should be green
+[ 37: PASS ] should be green
+[ 38: PASS ] should be green
+[ 39: PASS ] should be green
+[ 40: PASS ] should be green
+[ 41: PASS ] should be green
+[ 42: PASS ] should be green
+[ 43: PASS ] should be green
+[ 44: PASS ] should be green
+[ 45: PASS ] successfullyParsed is true
+[ FAIL ] 4 failures reported
 

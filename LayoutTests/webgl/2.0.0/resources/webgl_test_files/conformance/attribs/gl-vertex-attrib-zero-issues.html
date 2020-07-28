@@ -128,7 +128,7 @@ for (var ii = 0; ii < 5; ++ii) {
   wtu.checkCanvas(gl, [0, 255, 0, 255], "canvas should be green");
   gl.disableVertexAttribArray(3);
 
-  // This second test of drawing without attrib0 uncovered a bug in chrome
+  // This second test of drawing without attrib0 unconvered a bug in chrome
   // where after the draw without attrib0 the attrib 0 emulation code disabled
   // attrib 0 and it was never re-enabled so this next draw failed.
   gl.useProgram(p3);

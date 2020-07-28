@@ -1,48 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/vertex_arrays/vertex-array-object.html
-[ 1: PASS ] WebGL context exists
-[ 2: PASS ] gl.VERTEX_ARRAY_BINDING is 0x85B5
-[ 3: PASS ] getError was expected value: NO_ERROR : VERTEX_ARRAY_BINDING query should succeed
-[ 4: PASS ] Default value of VERTEX_ARRAY_BINDING is null
-[ 5: PASS ] gl.getParameter(gl.VERTEX_ARRAY_BINDING) is null
-[ 6: PASS ] gl.getParameter(gl.VERTEX_ARRAY_BINDING) is expected VAO
-[ 7: PASS ] gl.getParameter(gl.VERTEX_ARRAY_BINDING) is expected VAO
-[ 8: PASS ] gl.getParameter(gl.VERTEX_ARRAY_BINDING) is null
-[ 9: PASS ] getError was expected value: INVALID_OPERATION : binding a deleted vertex array object
-[ 10: PASS ] gl.getParameter(gl.VERTEX_ARRAY_BINDING) is null
-[ 11: PASS ] getError was expected value: NO_ERROR : createVertexArray should not set an error
-[ 12: PASS ] vao is non-null.
-[ 13: PASS ] gl.isVertexArray(vao) is false
-[ 14: PASS ] gl.isVertexArray(vao) is true
-[ 15: PASS ] gl.isVertexArray(vao) is true
-[ 16: PASS ] gl.isVertexArray(null) is false
-[ 17: PASS ] All attributes preserved across bindings
-[ 18: PASS ] Vertex attribute values are not attached to bindings
-[ 19: PASS ] Draw 0 passed pixel test
-[ 20: PASS ] Draw 1 passed pixel test
-[ 21: PASS ] Draw 2 passed pixel test
-[ 22: PASS ] should be green
-[ 23: PASS ] should be green
-[ 24: PASS ] should be 255,0,0,255
-[ 25: PASS ] should be 0,255,0,255
-[ 26: PASS ] should be 0,0,255,255
-[ 27: PASS ] should be 0,255,255,255
-[ 28: PASS ] getError was expected value: INVALID_OPERATION : Draw call should fail.
-[ 29: FAIL ] References from unbound VAOs keep Position buffer alive.
-[ 30: FAIL ] References from unbound VAOs keep Color buffer alive
-[ 31: PASS ] getError was expected value: NO_ERROR : Draw call should not fail.
-[ 32: FAIL ] References from unbound VAOs keep Position buffer alive.
-[ 33: FAIL ] References from unbound VAOs keep Color buffer alive
-[ 34: PASS ] getError was expected value: NO_ERROR : Draw call should not fail.
-[ 35: FAIL ] References from unbound VAOs keep Position buffer alive.
-[ 36: FAIL ] References from unbound VAOs keep Color buffer alive
-[ 37: PASS ] getError was expected value: NO_ERROR : Draw call should not fail.
-[ 38: FAIL ] References from unbound VAOs keep Position buffer alive.
-[ 39: FAIL ] References from unbound VAOs keep Color buffer alive
-[ 40: PASS ] should be red
-[ 41: PASS ] should be green
-[ 42: PASS ] getError was expected value: NO_ERROR : there should be no errors
-[ 43: PASS ] successfullyParsed is true
-[ FAIL ] 8 failures reported
+[ PASS ] All tests passed
 

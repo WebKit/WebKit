@@ -99,8 +99,8 @@ var testReadBufferOnFBO = function() {
 
   var maxColorAttachments = gl.getParameter(gl.MAX_COLOR_ATTACHMENTS);
   gl.readBuffer(gl.COLOR_ATTACHMENT0 + maxColorAttachments);
-  wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION,
-      "calling readBuffer with GL_COLOR_ATTACHMENTi that exceeds MAX_COLOR_ATTACHMENT on fbo should generate INVALID_OPERATION.");
+  wtu.glErrorShouldBe(gl, [gl.INVALID_ENUM, gl.INVALID_OPERATION],
+      "calling readBuffer with GL_COLOR_ATTACHMENTi that exceeds MAX_COLOR_ATTACHMENT on fbo should generate INVALID_ENUM or INVALID_OPERATION.");
   gl.readBuffer(gl.COLOR_ATTACHMENT1);
   wtu.glErrorShouldBe(gl, gl.NO_ERROR,
       "calling readBuffer with GL_COLOR_ATTACHMENT1 on the fbo should succeed.");

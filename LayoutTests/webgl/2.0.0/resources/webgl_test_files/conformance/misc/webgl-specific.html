@@ -43,7 +43,7 @@
 var wtu = WebGLTestUtils;
 description("Tests the few differences between WebGL and GLES2");
 
-var gl = wtu.create3DContext();
+var gl = wtu.create3DContext(undefined, {stencil:true});
 var program = wtu.loadStandardProgram(gl);
 gl.useProgram(program);
 var vertexObject = gl.createBuffer();
@@ -75,6 +75,28 @@ wtu.shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.blendFuncSeparate(gl.ONE
 debug("");
 debug("Verify that in depthRange zNear <= zFar");
 wtu.shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.depthRange(20, 10)");
+
+debug("");
+debug("Verify that front/back settings should be the same for stenclMask and stencilFunc");
+gl.enable(gl.STENCIL_TEST);
+shouldBe("!!gl.getParameter(gl.STENCIL_BITS)", "true");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilMask(255)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilMaskSeparate(gl.FRONT, 1)");
+wtu.shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilMaskSeparate(gl.BACK, 1)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFunc(gl.ALWAYS, 0, 255)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFuncSeparate(gl.BACK, gl.ALWAYS, 1, 255)");
+wtu.shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFuncSeparate(gl.FRONT, gl.ALWAYS, 1, 255)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFuncSeparate(gl.BACK, gl.ALWAYS, 1, 1)");
+wtu.shouldGenerateGLError(gl, gl.INVALID_OPERATION, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.stencilFuncSeparate(gl.FRONT, gl.ALWAYS, 1, 1)");
+wtu.shouldGenerateGLError(gl, gl.NO_ERROR, "gl.drawArrays(gl.TRIANGLES, 0, 0)");
 
 debug("");
 debug("Verify that *LENGTH are undefined");

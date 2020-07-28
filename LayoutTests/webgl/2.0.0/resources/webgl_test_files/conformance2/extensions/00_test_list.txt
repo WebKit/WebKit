@@ -2,6 +2,3 @@ ext-color-buffer-float.html
 ext-disjoint-timer-query-webgl2.html
 promoted-extensions.html
 promoted-extensions-in-shaders.html
-webgl-get-buffer-sub-data-async.html
-webgl-get-buffer-sub-data-async-lose-context.html
-webgl-get-buffer-sub-data-async-stress.html

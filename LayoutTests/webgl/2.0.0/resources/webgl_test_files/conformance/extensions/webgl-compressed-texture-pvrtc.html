@@ -273,7 +273,7 @@ function testPVRTCTexture(test) {
     wtu.glErrorShouldBe(gl, gl.NO_ERROR, "uploading compressed texture");
     gl.generateMipmap(gl.TEXTURE_2D);
     wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "trying to generate mipmaps from compressed texture");
-    wtu.drawQuad(gl);
+    wtu.clearAndDrawUnitQuad(gl);
     compareRect(width, height, test.channels, width, height, uncompressedData, data, format, undefined, "NEAREST");
     // Test again with linear filtering.
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);

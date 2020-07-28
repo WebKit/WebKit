@@ -1,3 +1,409 @@
+2020-07-28  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Update WebGL 2.0.0 conformance suite snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=214792
+
+        Reviewed by Dean Jackson.
+
+        WebKit's snapshot of the WebGL 2.0.0 conformance suite was taken
+        in 2018, before the suite was finalized. Since then many bug fixes
+        were made to the tests. This new snapshot was taken by running the
+        conformance suite importing script:
+
+        python generate-webgl-tests.py -w \
+            ~/[...]/WebGL/conformance-suites/2.0.0 -o 2.0.0
+
+        This update changes the expectations for a few tests. These are
+        all progressions except for one test,
+        conformance2/glsl3/tricky-loop-conditions.html, which contains a
+        few new sub-tests which will have to be fixed.
+
+        * TestExpectations:
+        * webgl/2.0.0/conformance/context/constants-and-properties-expected.txt:
+        * webgl/2.0.0/conformance/context/context-lost-restored-expected.txt:
+        * webgl/2.0.0/conformance/extensions/ext-sRGB-expected.txt:
+        * webgl/2.0.0/conformance/extensions/oes-vertex-array-object-expected.txt:
+        * webgl/2.0.0/conformance2/context/constants-and-properties-2-expected.txt:
+        * webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/copy-texture-image-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap-expected.txt:
+        * webgl/2.0.0/conformance2/textures/misc/tex-storage-and-subimage-3d-expected.txt:
+        * webgl/2.0.0/conformance2/vertex_arrays/vertex-array-object-expected.txt:
+        * webgl/2.0.0/resources/webgl_test_files/README.md:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/attribs/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/attribs/gl-bindAttribLocation-aliasing.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/attribs/gl-vertex-attrib-zero-issues.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/attribs/gl-vertexattribpointer.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/buffers/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/canvas/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/canvas/canvas-test.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/context/constants-and-properties.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/context/context-attributes-alpha-depth-stencil-antialias.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/context/context-lost-restored.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/angle-instanced-arrays.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/ext-disjoint-timer-query.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/ext-sRGB.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/oes-texture-float.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/oes-texture-half-float.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/oes-vertex-array-object.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-etc.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-pvrtc.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/webgl-compressed-texture-size-limit.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/webgl-depth-texture.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/extensions/webgl-draw-buffers.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/angle-ambiguous-function-call.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/compare-loop-index-to-uniform.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/constant-precision-qualifier.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/floored-division-accuracy.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/logic-inside-block-without-braces.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/modulo-arithmetic-accuracy.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/multiplication-assignment.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/sampler-struct-function-arg.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/sequence-operator-evaluation-order.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/bugs/struct-constructor-highp-bug.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/misc/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/misc/global-variable-init.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/glsl/misc/shaders-with-invariance.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/misc/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/misc/webgl-specific.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/more/functions/texImage2DHTML.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/more/functions/texSubImage2DHTML.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/more/functions/vertexAttribPointerBadArgs.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/ogles/GL/struct/nestedstructcomb_various_frag.frag:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/ogles/GL/struct/nestedstructcomb_various_vert.vert:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/reading/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/renderbuffers/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/renderbuffers/framebuffer-object-attachment.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/rendering/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/rendering/polygon-offset.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/state/gl-enable-enum-test.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/canvas/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/canvas_sub_rectangle/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/image/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/image_bitmap_from_blob/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/image_bitmap_from_canvas/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/image_bitmap_from_image/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/image_bitmap_from_image_bitmap/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/image_bitmap_from_image_data/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/image_bitmap_from_video/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/image_data/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/misc/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/misc/texture-size-limit.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/misc/texture-size.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/svg_image/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/video/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/textures/webgl_canvas/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/typedarrays/array-unit-tests.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/uniforms/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance/uniforms/gl-uniform-arrays.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/attribs/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/attribs/gl-vertexattribipointer-offsets.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/attribs/gl-vertexattribipointer.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/buffers/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/buffers/one-large-uniform-buffer.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/buffers/uniform-buffers.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/context/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/context/constants-and-properties-2.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/extensions/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/extensions/ext-color-buffer-float.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/glsl3/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/glsl3/array-assign-constructor.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/glsl3/array-in-complex-expression.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/glsl3/compare-structs-containing-arrays.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/glsl3/short-circuiting-in-loop-condition.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/glsl3/tricky-loop-conditions.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/glsl3/vector-dynamic-indexing.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/programs/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/renderbuffers/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/renderbuffers/framebuffer-object-attachment.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/renderbuffers/multisampled-renderbuffer-initialization.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/renderbuffers/readbuffer.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/blitframebuffer-filter-outofbounds.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/blitframebuffer-filter-srgb.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/blitframebuffer-multisampled-readbuffer.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/blitframebuffer-outside-readbuffer.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/blitframebuffer-scissor-enabled.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/blitframebuffer-size-overflow.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/blitframebuffer-srgb-and-linear-drawbuffers.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/blitframebuffer-stencil-only.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/blitframebuffer-test.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/clear-srgb-color-buffer.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/draw-buffers.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/element-index-uint.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/framebuffer-completeness-unaffected.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/instanced-arrays.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/rendering/uniform-block-buffer-size.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/samplers/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/sync/sync-webgl-specific.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/canvas/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/canvas_sub_rectangle/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/image/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/image_bitmap_from_blob/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/image_bitmap_from_canvas/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/image_bitmap_from_image/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/image_bitmap_from_image_bitmap/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/image_bitmap_from_image_data/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/image_bitmap_from_video/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/image_data/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/copy-texture-image-luma-format.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/copy-texture-image.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/tex-image-with-bad-args.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/tex-image-with-different-data-source.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/tex-mipmap-levels.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/tex-srgb-mipmap.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/tex-storage-2d.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/tex-storage-and-subimage-3d.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/misc/texel-fetch-undefined.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/svg_image/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/video/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/textures/webgl_canvas/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/transform_feedback/00_test_list.txt:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/transform_feedback/transform_feedback.html:
+        * webgl/2.0.0/resources/webgl_test_files/conformance2/vertex_arrays/vertex-array-object.html:
+        * webgl/2.0.0/resources/webgl_test_files/deqp/framework/common/tcuFloat.js:
+        (goog.scope.tcuFloat.deFloat):
+        (goog.scope.tcuFloat.deFloat.prototype.deFloatBuffer):
+        (goog.scope.tcuFloat.deFloat.prototype.deFloatParametersNumber):
+        (goog.scope.tcuFloat.deFloat.prototype.deFloatParameters):
+        (goog.scope.tcuFloat.deFloat.prototype.getBitRange):
+        (goog.scope.tcuFloat.newFloat10):
+        (goog.scope.tcuFloat.newFloat64):
+        (goog.scope):
+        (goog.scope.tcuFloat.deFloat.prototype.array32): Deleted.
+        (goog.scope.tcuFloat.deFloat.prototype.deFloatNumber64): Deleted.
+        * webgl/2.0.0/resources/webgl_test_files/deqp/framework/common/tcuFuzzyImageCompare.js:
+        (goog.scope.tcuFuzzyImageCompare.bilinearSample):
+        * webgl/2.0.0/resources/webgl_test_files/deqp/framework/common/tcuSkipList.js:
+        * webgl/2.0.0/resources/webgl_test_files/deqp/framework/common/tcuTestCase.js:
+        (goog.scope.tcuTestCase.getQueryVal):
+        (goog.scope.tcuTestCase.Runner.prototype.terminate):
+        (goog.scope.tcuTestCase.getFilter): Deleted.
+        * webgl/2.0.0/resources/webgl_test_files/deqp/framework/delibs/debase/deMath.js:
+        (goog.scope.deMath.arrayToNumber):
+        (goog.scope.deMath.numberToArray):
+        (goog.scope.deMath.getBitRange):
+        (goog.scope.DE_ASSERT): Deleted.
+        (goog.scope.deMath.getArray32BitRange): Deleted.
+        * webgl/2.0.0/resources/webgl_test_files/deqp/functional/gles3/es3fFboColorbufferTests.js:
+        (goog.scope.es3fFboColorbufferTests.FboColorMultiTex2DCase.prototype.render):
+        (goog.scope.es3fFboColorbufferTests.FboColorTexCubeCase.prototype.render):
+        (goog.scope.es3fFboColorbufferTests.FboColorTex2DArrayCase.prototype.render):
+        (goog.scope.es3fFboColorbufferTests.FboColorTex3DCase.prototype.render):
+        (goog.scope.es3fFboColorbufferTests.FboBlendCase.prototype.render):
+        (goog.scope.es3fFboColorbufferTests.FboColorbufferTests.prototype.init):
+        (goog.scope.es3fFboColorbufferTests.run):
+        (goog.scope):
+        * webgl/2.0.0/resources/webgl_test_files/deqp/functional/gles3/es3fLifetimeTests.js:
+        (goog.scope.es3fLifetimeTests.ScaleProgram.prototype.setPos):
+        * webgl/2.0.0/resources/webgl_test_files/deqp/functional/gles3/es3fMultisampleTests.js:
+        (goog.scope.es3fMultisampleTests.MultisampleCase.prototype.init):
+        (goog.scope.es3fMultisampleTests.NumSamplesCase.prototype.iterate):
+        * webgl/2.0.0/resources/webgl_test_files/deqp/functional/gles3/es3fNegativeVertexArrayApiTests.js:
+        (goog.scope.es3fNegativeVertexArrayApiTests.init):
+        * webgl/2.0.0/resources/webgl_test_files/deqp/functional/gles3/es3fPixelBufferObjectTest.js:
+        (goog.scope.es3fPixelBufferObjectTest.ReadPixelsTest.prototype.iterate):
+        * webgl/2.0.0/resources/webgl_test_files/deqp/functional/gles3/es3fShaderOperatorTests.js:
+        (goog.scope.es3fShaderOperatorTests.run):
+        (goog.scope):
+        * webgl/2.0.0/resources/webgl_test_files/deqp/functional/gles3/es3fShaderPrecisionTests.js:
+        (goog.scope.es3fShaderPrecisionTests.add):
+        (goog.scope.es3fShaderPrecisionTests.sub):
+        (goog.scope.es3fShaderPrecisionTests.mul):
+        (goog.scope.es3fShaderPrecisionTests.mul32):
+        (goog.scope.es3fShaderPrecisionTests.div):
+        (goog.scope.es3fShaderPrecisionTests.createFloatPrecisionEvalProgram):
+        (goog.scope.es3fShaderPrecisionTests.createIntUintPrecisionEvalProgram):
+        (goog.scope.es3fShaderPrecisionTests.ShaderFloatPrecisionCase):
+        (goog.scope.es3fShaderPrecisionTests.ShaderFloatPrecisionCase.prototype.init):
+        (goog.scope.es3fShaderPrecisionTests.ShaderFloatPrecisionCase.prototype.deinit):
+        (goog.scope.es3fShaderPrecisionTests.ShaderFloatPrecisionCase.prototype.compare):
+        (goog.scope.es3fShaderPrecisionTests.ShaderFloatPrecisionCase.prototype.iterate):
+        (goog.scope.es3fShaderPrecisionTests.ShaderIntPrecisionCase):
+        (goog.scope.es3fShaderPrecisionTests.ShaderIntPrecisionCase.prototype.init):
+        (goog.scope.es3fShaderPrecisionTests.ShaderIntPrecisionCase.prototype.deinit):
+        (goog.scope.es3fShaderPrecisionTests.extendTo32Bit):
+        (goog.scope.es3fShaderPrecisionTests.ShaderIntPrecisionCase.prototype.iterate):
+        (goog.scope.es3fShaderPrecisionTests.ShaderUintPrecisionCase):
+        (goog.scope.es3fShaderPrecisionTests.ShaderUintPrecisionCase.prototype.init):
+        (goog.scope.es3fShaderPrecisionTests.ShaderUintPrecisionCase.prototype.deinit):
+        (goog.scope.es3fShaderPrecisionTests.ShaderUintPrecisionCase.prototype.iterate):
+        (goog.scope.FloatCase):
+        (goog.scope.IntCase):
+        (goog.scope.UintCase):
+        (goog.scope.es3fShaderPrecisionTests.ShaderPrecisionTests.prototype.init):
+        * webgl/2.0.0/resources/webgl_test_files/deqp/functional/gles3/es3fShaderTextureFunctionTests.js:
+        (goog.scope.es3fShaderTextureFunctionTests.TextureSizeCase.prototype.testTextureSize):
+        (goog.scope.es3fShaderTextureFunctionTests.run):
+        (goog.scope):
+        * webgl/2.0.0/resources/webgl_test_files/deqp/functional/gles3/es3fTextureFilteringTests.js:
+        (goog.scope.es3fTextureFilteringTests.run):
+        (goog.scope):
+        * webgl/2.0.0/resources/webgl_test_files/deqp/temp_externs/html5.js:
+        * webgl/2.0.0/resources/webgl_test_files/extra/50x50pixel-black-with-red-triangle.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/extra/canvas-compositing-test.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/extra/sample-100.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/extra/sample-200.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/extra/sample-400.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/extra/webgl-translate-shader.html:
+        * webgl/2.0.0/resources/webgl_test_files/js/js-test-pre.js:
+        (nonKhronosFrameworkNotifyDone):
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/iterable-test.js:
+        (doNextTest):
+        (run):
+        (IterableTest):
+        (createPreserveDrawingBufferLeakTest): Deleted.
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/out-of-bounds-test.js:
+        (runDrawArraysTest):
+        (runDrawElementsTest):
+        (runInstancedTest):
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-2d-with-canvas-sub-rectangle.js:
+        (init):
+        (runTestOnBindingTarget):
+        (generateTest):
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-2d-with-canvas.js:
+        (init):
+        (setCanvasToRedGreen):
+        (checkSourceCanvasImageData):
+        (runOneIteration):
+        (runTest.runTexImageTest.):
+        (runTest.runTexImageTest):
+        (runTest):
+        (generateTest):
+        (replicateRedChannel): Deleted.
+        (zapColorChannels): Deleted.
+        (setAlphaChannelTo1): Deleted.
+        (replicateAllRedChannels): Deleted.
+        (setAllAlphaChannelsTo1): Deleted.
+        (repeatCountForTextureFormat): Deleted.
+        (setCanvasToSemiTransparentRedGreen): Deleted.
+        (setCanvasTo257x257SemiTransparent): Deleted.
+        (setCanvasToMinSemiTransparent): Deleted.
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-2d-with-image-data.js:
+        (init):
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-2d-with-image.js:
+        (init):
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-2d-with-svg-image.js:
+        (init):
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-2d-with-video.js:
+        (init):
+        (runOneIteration):
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-2d-with-webgl-canvas.js:
+        (init):
+        (runOneIteration):
+        (runTest.runTexImageTest.):
+        (runTest.runTexImageTest):
+        (runTest):
+        (generateTest):
+        (shouldRepeatTestForTextureFormat): Deleted.
+        (): Deleted.
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-3d-with-canvas.js:
+        (runTest.runTexImageTest.):
+        (runTest.runTexImageTest):
+        (runTest):
+        (generateTest):
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-3d-with-video.js:
+        (runOneIteration):
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-3d-with-webgl-canvas.js:
+        (runOneIteration):
+        (runTest.runTexImageTest.):
+        (runTest.runTexImageTest):
+        (runTest):
+        (generateTest):
+        * webgl/2.0.0/resources/webgl_test_files/js/tests/tex-image-and-sub-image-with-image-bitmap-utils.js:
+        (runOneIterationImageBitmapTest):
+        (runOneIterationImageBitmapTestSubSource):
+        * webgl/2.0.0/resources/webgl_test_files/js/webgl-test-utils.js:
+        (glEnumToString):
+        (setupTransformFeedbackProgram):
+        (setupUnitQuad):
+        (setupUnitQuadWithTexCoords):
+        (setupTexturedQuad):
+        (setupColorQuad):
+        (setupTexturedQuadWithTexCoords):
+        (setupTexturedQuadWithCubeMap):
+        (glTypeToTypedArrayType):
+        (getBytesPerComponent):
+        (fillTexture):
+        (checkCanvasRectColor):
+        (checkCanvasRect):
+        (shouldThrowOrGenerateGLError):
+        (loadShader):
+        (getRequestVidFrameCallback):
+        (setZeroTimeout):
+        (maybeCallCallback):
+        (playingListener):
+        (timeupdateListener):
+        (startPlayingAndWaitForVideo):
+        (linearChannelToSRGB):
+        (WebGLTestUtils):
+        (setupQuadWithTexCoords): Deleted.
+        (dummySetProgramAndDrawNothing): Deleted.
+        (comparePixels): Deleted.
+        (displayImageDiff): Deleted.
+        (createImageFromPixel): Deleted.
+        * webgl/2.0.0/resources/webgl_test_files/py/lint/README.md:
+        * webgl/2.0.0/resources/webgl_test_files/py/lint/lint.allowlist: Added.
+        * webgl/2.0.0/resources/webgl_test_files/py/lint/lint.py:
+        (parse_allowlist_file):
+        (parse_allowlist_file.inner):
+        (allowlist_errors):
+        (main.run_lint):
+        (parse_whitelist_file): Deleted.
+        (parse_whitelist_file.inner): Deleted.
+        (whitelist_errors): Deleted.
+        * webgl/2.0.0/resources/webgl_test_files/py/tex_image_test_generator.py:
+        * webgl/2.0.0/resources/webgl_test_files/resources/1-channel.jpg: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/3x3.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/blue-1x1.jpg: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/bug-32888-texture.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/gray-1024x1024.jpg: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/gray-ramp-256-with-128-alpha.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/gray-ramp-256.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/gray-ramp-default-gamma.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/gray-ramp-gamma0.1.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/gray-ramp-gamma1.0.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/gray-ramp-gamma2.0.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/gray-ramp-gamma4.0.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/gray-ramp-gamma9.0.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/gray-ramp.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/green-2x2-16bit.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/npot-video.mp4: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/npot-video.theora.ogv: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/npot-video.webmvp8.webm: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/opengl_logo.jpg: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/red-green-blue-cyan-4x4.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/red-green-blue-cyan-4x4.psd: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/red-green-semi-transparent.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/red-green.bt601.vp9.webm: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/red-green.mp4: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/red-green.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/red-green.theora.ogv: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/red-green.webmvp8.webm: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/red-indexed.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/small-square-with-cie-rgb-profile.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/small-square-with-colormatch-profile.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/small-square-with-colorspin-profile.jpg: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/small-square-with-colorspin-profile.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/small-square-with-e-srgb-profile.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/small-square-with-smpte-c-profile.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/small-square-with-srgb-iec61966-2.1-profile.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/thunderbird-logo-64x64.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/transparent-on-left-indexed.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/webgl-logo.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/resources/zero-alpha.png: Added.
+        * webgl/2.0.0/resources/webgl_test_files/test-guidelines.md:
+        * webgl/2.0.0/resources/webgl_test_files/webgl-conformance-tests.html:
+
 2020-07-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION: (r264950): [ iOS wk2 ] broke 4 xmlhttprequest tests

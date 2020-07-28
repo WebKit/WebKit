@@ -1,10 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/context/constants-and-properties-2.html
-[ 1: PASS ] All WebGL constants found to have correct values.
-[ 2: PASS ] All constants removed from WebGL spec were absent from WebGL context.
-[ 3: FAIL ] Also found the following extra properties:
-[ 4: FAIL ] STENCIL_INDEX
-[ 5: PASS ] successfullyParsed is true
-[ FAIL ] 2 failures reported
+[ PASS ] All tests passed
 

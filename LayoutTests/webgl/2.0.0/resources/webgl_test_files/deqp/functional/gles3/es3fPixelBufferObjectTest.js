@@ -426,21 +426,13 @@ var tcuImageCompare = framework.common.tcuImageCompare;
         var isOk = false;
 
         if (floatCompare) {
-            // When converting between integers and floats, certain GPUs might have different behaviors
-            // from javascript in rounding (up vs down). Increase tolerance to allow both behaviors.
-            // Detailed discussion in Mesa upstream can be found at:
-            //   https://bugs.freedesktop.org/show_bug.cgi?id=89314.
+            // The result of rgb10_a2 from Intel GPU would have slight difference with the one from CPU, so some tolerance is added here.
+            // Detailed discussion in Mesa upstream can be found at https://bugs.freedesktop.org/show_bug.cgi?id=89314.
             var threshold;
-            switch (this.m_renderbufferFormat) {
-              case gl.RGB10_A2:
-              case gl.RGB5_A1:
-              case gl.RGB565:
+            if (this.m_renderbufferFormat == gl.RGB10_A2)
                 threshold = [0.004, 0.004, 0.004, 0.0];
-                break;
-              default:
+            else
                 threshold = [0.0, 0.0, 0.0, 0.0];
-                break;
-            }
             isOk = tcuImageCompare.floatThresholdCompare('Result comparison', 'Result of read pixels to memory compared with result of read pixels to buffer', readReference.getLevel(0), readResult, threshold);
         }
         else

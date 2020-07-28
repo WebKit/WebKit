@@ -10,9 +10,9 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-mipmap-
 [ 7: PASS ] getError was expected value: NO_ERROR : texParameter(TEXTURE_MAG_FILTER) should succeed
 [ 8: PASS ] getError was expected value: NO_ERROR : texParameter(TEXTURE_MIN_FILTER) should succeed
 [ 9: PASS ] getError was expected value: NO_ERROR : clearAndDrawQuad should succeed
-[ 10: PASS ] filling partial levels: should draw with [0, 0, 255, 255]
+[ 10: PASS ] should draw with [0, 0, 255, 255]
 [ 11: PASS ] getError was expected value: NO_ERROR : generateMipmap should succeed
-[ 12: FAIL ] generateMipmap with partial levels: should draw with [255, 0, 0, 255] at (0, 0) expected: 255,0,0,255 was 0,0,0,255
+[ 12: FAIL ] should draw with [255, 0, 0, 255] at (0, 0) expected: 255,0,0,255 was 0,0,0,255
 [ 13: PASS ] getError was expected value: NO_ERROR : fillTexture(8x8, level=2) should succeed
 [ 14: PASS ] getError was expected value: NO_ERROR : fillTexture(4x4, level=3) should succeed
 [ 15: PASS ] getError was expected value: NO_ERROR : texParameter(TEXTURE_BASE_LEVEL) should succeed
@@ -29,18 +29,18 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-mipmap-
 [ 26: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed
 [ 27: PASS ] getError was expected value: NO_ERROR : generateMipmap should succeed
 [ 28: PASS ] getError was expected value: NO_ERROR : texSubImage3D should succeed
-[ 29: PASS ] getError was expected value: INVALID_OPERATION : generateMipmap should fail for zero-size texture
+[ 29: PASS ] getError was one of: NO_ERROR or INVALID_OPERATION : generateMipmap should fail for zero-size texture
 [ 30: PASS ] getError was expected value: NO_ERROR : generateMipmap should succeed
 [ 31: PASS ] getError was expected value: INVALID_OPERATION : generateMipmap should fail for non-texture-filterable format
 [ 32: PASS ] getError was expected value: INVALID_OPERATION : generateMipmap should fail for float texture
-[ 33: PASS ] getError was expected value: INVALID_OPERATION : generateMipmap should fail for zero-size texture
+[ 33: PASS ] getError was one of: NO_ERROR or INVALID_OPERATION : generateMipmap should fail for zero-size texture
 [ 34: PASS ] getError was expected value: NO_ERROR : generateMipmap should succeed
 [ 35: PASS ] getError was expected value: NO_ERROR : texParameter(TEXTURE_MAG_FILTER) should succeed
 [ 36: PASS ] getError was expected value: NO_ERROR : texParameter(TEXTURE_MIN_FILTER) should succeed
 [ 37: PASS ] getError was expected value: NO_ERROR : texParameter(TEXTURE_BASE_LEVEL) should succeed
 [ 38: PASS ] getError was expected value: NO_ERROR : texStorage2D should succeed
 [ 39: PASS ] getError was expected value: NO_ERROR : clearAndDrawQuad should succeed
-[ 40: PASS ] non-zero base level texStorage2D: should draw with [255, 0, 0, 255]
+[ 40: PASS ] should draw with [255, 0, 0, 255]
 [ 41: PASS ] successfullyParsed is true
 [ FAIL ] 1 failures reported
 

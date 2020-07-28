@@ -82,7 +82,6 @@ var gl = wtu.create3DContext(canvas);
 var halfFloatOESEnum = 0x8D61;
 var ext = null;
 
-
 if (!gl) {
     testFailed("WebGL context does not exists");
 } else {
@@ -158,8 +157,8 @@ if (!gl) {
         // Next check that values outside the 0-1 range can be written.
         var halfFloatTenK = 0x70E2; // Half float 10000
         var uint16Formats2 = [
-          { format: gl.RGBA, subtractor: [10000, 10000, 10000, 10000], requireRenderable: true},
-          { format: gl.RGB,  subtractor: [10000, 10000, 10000, 1], requireRenderable: false},
+          { format: gl.RGBA, subtractor: [10000, 10000, 10000, 10000], },
+          { format: gl.RGB,  subtractor: [10000, 10000, 10000, 1], },
         ];
 
         uint16Formats2.forEach(function(f) {
@@ -171,45 +170,18 @@ if (!gl) {
             for (var ii = 0; ii <  uint16Data.length; ii++) {
                 uint16Data[ii] = halfFloatTenK;
             }
-            runRenderTest(format, f.subtractor, uint16Data, f.requireRenderable);
+            runRenderTest(format, f.subtractor, uint16Data);
         });
 
-        (function() {
-            debug("");
-            var renderable = isRenderable(gl, ext);
-            var renderableExtName = "EXT_color_buffer_half_float";
-            var supported = gl.getSupportedExtensions().includes(renderableExtName);
-            if (renderable && !supported) {
-                testFailed("RGBA/HALF_FLOAT_OES is color renderable but " + renderableExtName + " not exposed");
-            } else if (supported && !renderable) {
-                testFailed(renderableExtName + " is exposed but RGBA/HALF_FLOAT_OES is not color renderable");
-            }
-            if (supported) {
-                runRenderTest(gl.RGBA, [10000, 10000, 10000, 10000], null, true);
-                runRenderTest(gl.RGB, [10000, 10000, 10000, 1], null, false);
-                runFramebufferTest();
-            }
-        })();
+        // Check if attaching texture as FBO target succeeds (Not mandatory)
+        runRenderTest(gl.RGBA, [10000, 10000, 10000, 10000], null);
+        runRenderTest(gl.RGB, [10000, 10000, 10000, 1], null);
+
+        runFramebufferTest();
 
         // Check of getExtension() returns same object
         runUniqueObjectTest();
     }
-}
-
-function isRenderable(gl, ext) {
-    var tex = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, ext.HALF_FLOAT_OES, null);
-
-    var fb = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-
-    var status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-    gl.deleteFramebuffer(fb);
-    gl.deleteTexture(tex);
-
-    return status == gl.FRAMEBUFFER_COMPLETE;
 }
 
 function getNumberOfChannels(format)
@@ -306,7 +278,7 @@ function checkRenderingResults()
     wtu.checkCanvas(gl, [0, 255, 0, 255], "should be green");
 }
 
-function runRenderTest(format, subtractor, data, requireRenderable)
+function runRenderTest(format, subtractor, data)
 {
     var formatString = wtu.glEnumToString(gl, format);
 
@@ -335,11 +307,7 @@ function runRenderTest(format, subtractor, data, requireRenderable)
         // It is legal for a WebGL implementation exposing the OES_texture_half_float extension to
         // support half floating point textures but not as attachments to framebuffer objects.
         if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
-            if (requireRenderable) {
-                testFailed(formatString + " render targets not supported.");
-            } else {
-                debug(formatString + " render targets not supported -- this is legal");
-            }
+            debug("Half floating point render targets not supported -- this is legal");
             return;
         }
 
@@ -429,12 +397,16 @@ function runFramebufferTest() {
 
     var texture = allocateTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, ext.HALF_FLOAT_OES, null);
 
     var fbo = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
     gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
-
-    debug("Ensure non-color-renderable formats [LUMINANCE, LUMINANCE_ALPHA, ALPHA] fail.");
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
+        debug("Half floating point render targets not supported -- this is legal");
+        return;
+    }
+    debug("Ensure non-color-renderable formats [LUMINANCE, LUMINANCE_ALPHA, ALPHA] fail");
     var arrayBufferFloatOutput = new Float32Array(4); // 4 color channels
     [gl.LUMINANCE, gl.LUMINANCE_ALPHA, gl.ALPHA].forEach(function(badFormat) {
         debug(getFormatName(badFormat) + " framebuffer");
@@ -465,49 +437,51 @@ function runFramebufferTest() {
         debug("");
 
         gl.texImage2D(gl.TEXTURE_2D, 0, goodFormat, 1, 1, 0, goodFormat, ext.HALF_FLOAT_OES, arrayBufferHalfFloatInput);
-        if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) == gl.FRAMEBUFFER_COMPLETE) {
-            // Per the OES_color_buffer_half_float, RGBA/FLOAT should always succeed for readPixels
+        shouldBe("gl.checkFramebufferStatus(gl.FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
+
+        // To avoid GPU idiosyncrasies, dispense with clearing or rendering to the texture. Go straight to readPixels.
+
+        // Per the OES_color_buffer_half_float, RGBA/FLOAT should always succeed for readPixels
+        verifyReadPixelsColors(
+            0.00, // red
+            0.25, // green
+            0.50, // blue
+            0.75, // alpha
+            1.0,  // alphaRGB
+            goodFormat,
+            gl.FLOAT,
+            Float32Array);
+
+        var implementationColorReadFormat = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
+        assertMsg(implementationColorReadFormat === gl.RGBA || implementationColorReadFormat === gl.RGB,
+            "IMPLEMENTATION_COLOR_READ_FORMAT should be color renderable: RGBA or RGB. Received: " + getFormatName(implementationColorReadFormat));
+
+        var implementationColorReadType = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE);
+
+        // There is nothing in the specifications that keeps the
+        // implementation color read format and type from being the
+        // same as the implicitly supported one. For this reason, keep
+        // gl.FLOAT as one of the valid options.
+        assertMsg(implementationColorReadType === gl.UNSIGNED_BYTE ||
+                  implementationColorReadType === gl.FLOAT ||
+                  implementationColorReadType === ext.HALF_FLOAT_OES ||
+                  implementationColorReadType === gl.UNSIGNED_SHORT_4_4_4_4 ||
+                  implementationColorReadType === gl.UNSIGNED_SHORT_5_5_5_1 ||
+                  implementationColorReadType === gl.UNSIGNED_SHORT_5_6_5,
+                  "IMPLEMENTATION_COLOR_READ_TYPE must be one of UNSIGNED_BYTE, UNSIGNED_SHORT_4_4_4_4, UNSIGNED_SHORT_5_5_5_1, UNSIGNED_SHORT_5_6_5, FLOAT, or HALF_FLOAT_OES. " +
+                  "Received: " + getTypeName(implementationColorReadType));
+
+        // Test the RGBA/HALF_FLOAT_OES combination
+        if (implementationColorReadFormat === gl.RGBA && implementationColorReadType === ext.HALF_FLOAT_OES) {
             verifyReadPixelsColors(
-                0.00, // red
-                0.25, // green
-                0.50, // blue
-                0.75, // alpha
-                1.0,  // alphaRGB
+                0,      // red
+                0x3400, // green
+                0x3800, // blue
+                0x3A00, // alpha
+                0x3C00, // alphaRGB
                 goodFormat,
-                gl.FLOAT,
-                Float32Array);
-
-            var implementationColorReadFormat = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
-            assertMsg(implementationColorReadFormat === gl.RGBA || implementationColorReadFormat === gl.RGB,
-                "IMPLEMENTATION_COLOR_READ_FORMAT should be color renderable: RGBA or RGB. Received: " + getFormatName(implementationColorReadFormat));
-
-            var implementationColorReadType = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE);
-
-            // There is nothing in the specifications that keeps the
-            // implementation color read format and type from being the
-            // same as the implicitly supported one. For this reason, keep
-            // gl.FLOAT as one of the valid options.
-            assertMsg(implementationColorReadType === gl.UNSIGNED_BYTE ||
-                      implementationColorReadType === gl.FLOAT ||
-                      implementationColorReadType === ext.HALF_FLOAT_OES ||
-                      implementationColorReadType === gl.UNSIGNED_SHORT_4_4_4_4 ||
-                      implementationColorReadType === gl.UNSIGNED_SHORT_5_5_5_1 ||
-                      implementationColorReadType === gl.UNSIGNED_SHORT_5_6_5,
-                      "IMPLEMENTATION_COLOR_READ_TYPE must be one of UNSIGNED_BYTE, UNSIGNED_SHORT_4_4_4_4, UNSIGNED_SHORT_5_5_5_1, UNSIGNED_SHORT_5_6_5, FLOAT, or HALF_FLOAT_OES. " +
-                      "Received: " + getTypeName(implementationColorReadType));
-
-            // Test the RGBA/HALF_FLOAT_OES combination
-            if (implementationColorReadFormat === gl.RGBA && implementationColorReadType === ext.HALF_FLOAT_OES) {
-                verifyReadPixelsColors(
-                    0,      // red
-                    0x3400, // green
-                    0x3800, // blue
-                    0x3A00, // alpha
-                    0x3C00, // alphaRGB
-                    goodFormat,
-                    ext.HALF_FLOAT_OES,
-                    Uint16Array);
-            }
+                ext.HALF_FLOAT_OES,
+                Uint16Array);
         }
         debug("");
     });

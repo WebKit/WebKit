@@ -89,8 +89,7 @@ if (!gl) {
         testPassed("Successfully enabled WEBGL_depth_texture extension");
 
         runSupportedTest(true);
-        runTestExtension(true);
-        runTestExtension(false);
+        runTestExtension();
     }
 }
 
@@ -139,8 +138,8 @@ function dumpIt(gl, res, msg) {
     debug(strs.join(" "));
   }
 }
-function runTestExtension(unpackFlipY) {
-    debug("Testing WEBGL_depth_texture. UNPACK_FLIP_Y_WEBGL: " + unpackFlipY);
+function runTestExtension() {
+    debug("Testing WEBGL_depth_texture");
 
     var res = 8;
 
@@ -172,8 +171,6 @@ function runTestExtension(unpackFlipY) {
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
 
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, unpackFlipY);
-
     var types = [
         {obj: 'gl',  attachment: 'DEPTH_ATTACHMENT',         format: 'DEPTH_COMPONENT', type: 'UNSIGNED_SHORT',          data: 'new Uint16Array(1)', depthBits: "16"},
         {obj: 'gl',  attachment: 'DEPTH_ATTACHMENT',         format: 'DEPTH_COMPONENT', type: 'UNSIGNED_INT',            data: 'new Uint32Array(1)', depthBits: "16"},
@@ -200,7 +197,7 @@ function runTestExtension(unpackFlipY) {
           'TEXTURE_CUBE_MAP_NEGATIVE_Z'
         ];
         for (var tt = 0; tt < targets.length; ++tt) {
-            wtu.shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texImage2D(gl.' + targets[ii] + ', 0, gl.' + typeInfo.format + ', 1, 1, 0, gl.' + typeInfo.format + ', ' + typeStr + ', null)');
+            wtu.shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texImage2D(gl.' + targets[ii] + ', 1, gl.' + typeInfo.format + ', 1, 1, 0, gl.' + typeInfo.format + ', ' + typeStr + ', null)');
         }
 
         // The WebGL_depth_texture extension supports both NEAREST and

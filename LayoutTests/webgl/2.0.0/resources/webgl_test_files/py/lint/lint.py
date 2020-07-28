@@ -62,7 +62,7 @@ def check_permission(path):
     return []
 
 
-def parse_whitelist_file(filename):
+def parse_allowlist_file(filename):
     data = defaultdict(lambda:defaultdict(set))
 
     with open(filename) as f:
@@ -80,29 +80,29 @@ def parse_whitelist_file(filename):
             data[file_match][error_type].add(line_number)
 
     def inner(path, errors):
-        whitelisted = [False for item in xrange(len(errors))]
+        allowlisted = [False for item in xrange(len(errors))]
 
-        for file_match, whitelist_errors in data.iteritems():
+        for file_match, allowlist_errors in data.iteritems():
             if fnmatch.fnmatch(path, file_match):
                 for i, (error_type, msg, line) in enumerate(errors):
-                    if "*" in whitelist_errors:
-                        whitelisted[i] = True
-                    elif error_type in whitelist_errors:
-                        allowed_lines = whitelist_errors[error_type]
+                    if "*" in allowlist_errors:
+                        allowlisted[i] = True
+                    elif error_type in allowlist_errors:
+                        allowed_lines = allowlist_errors[error_type]
                         if None in allowed_lines or line in allowed_lines:
-                            whitelisted[i] = True
+                            allowlisted[i] = True
 
-        return [item for i, item in enumerate(errors) if not whitelisted[i]]
+        return [item for i, item in enumerate(errors) if not allowlisted[i]]
     return inner
 
 
-_whitelist_fn = None
-def whitelist_errors(path, errors):
-    global _whitelist_fn
+_allowlist_fn = None
+def allowlist_errors(path, errors):
+    global _allowlist_fn
 
-    if _whitelist_fn is None:
-        _whitelist_fn = parse_whitelist_file(os.path.join(lint_root, "lint.whitelist"))
-    return _whitelist_fn(path, errors)
+    if _allowlist_fn is None:
+        _allowlist_fn = parse_allowlist_file(os.path.join(lint_root, "lint.allowlist"))
+    return _allowlist_fn(path, errors)
 
 
 class Regexp(object):
@@ -189,7 +189,7 @@ def main():
     repo_root = repo_root.replace("WebGL/sdk/tests", options.repo)
 
     def run_lint(path, fn, *args):
-        errors = whitelist_errors(path, fn(path, *args))
+        errors = allowlist_errors(path, fn(path, *args))
         output_errors(errors)
         for error_type, error, line in errors:
             error_count[error_type] += 1

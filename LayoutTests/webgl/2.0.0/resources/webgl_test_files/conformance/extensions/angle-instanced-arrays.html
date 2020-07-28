@@ -119,8 +119,6 @@ if (!gl) {
         runDrawArraysWithOffsetTest();
         runVAOInstancingInteractionTest();
         runANGLECorruptionTest();
-        // Note that the ANGLE corruption test leaves vertex attrib divisors dirty at the moment.
-        // This should be cleaned up if more subtests are added after it.
     }
 }
 
@@ -180,9 +178,6 @@ function runDivisorTestEnabled() {
     else{
         testFailed("Set value of VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE should be: 2, returned value was: " + queried_value);
     }
-
-    // Reset vertex attrib divisors so they cannot affect following subtests.
-    ext.vertexAttribDivisorANGLE(max_vertex_attribs-1, 0);
 }
 
 function setupCanvas() {
@@ -356,10 +351,6 @@ function runOutputTests() {
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "drawElementsInstancedANGLE with QUADS should return INVALID_ENUM");
     ext.drawElementsInstancedANGLE(desktopGL['POLYGON'], 6, gl.UNSIGNED_SHORT, 0, instanceCount);
     wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "drawElementsInstancedANGLE with POLYGON should return INVALID_ENUM");
-
-    // Reset vertex attrib divisors so they cannot affect following subtests.
-    ext.vertexAttribDivisorANGLE(colorLoc, 0);
-    ext.vertexAttribDivisorANGLE(offsetLoc, 0);
 }
 
 function runDrawArraysTest(program, first, count, instanceCount, offset)
@@ -413,9 +404,6 @@ function runDrawArraysTest(program, first, count, instanceCount, offset)
     // Do the instanced draw
     ext.drawArraysInstancedANGLE(gl.TRIANGLES, first, count, instanceCount);
     wtu.glErrorShouldBe(gl, gl.NO_ERROR, "drawArraysInstancedANGLE should succeed");
-
-    // Reset vertex attrib divisors so they cannot affect following subtests.
-    ext.vertexAttribDivisorANGLE(instancePosLoc, 0);
 }
 
 function runDrawArraysWithOffsetTest()

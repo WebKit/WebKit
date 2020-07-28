@@ -1,20 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-srgb-mipmap.html
-[ 1: FAIL ] Pixel 31: expected (128,6,27,255), got (55,3,13,255)
-[ 2: FAIL ] Pixel 95: expected (128,6,27,255), got (55,3,13,255)
-[ 3: FAIL ] Pixel 159: expected (128,6,27,255), got (55,3,13,255)
-[ 4: FAIL ] Pixel 223: expected (128,6,27,255), got (55,3,13,255)
-[ 5: FAIL ] Pixel 287: expected (128,6,27,255), got (55,3,13,255)
-[ 6: FAIL ] Pixel 351: expected (128,6,27,255), got (55,3,13,255)
-[ 7: FAIL ] Pixel 415: expected (128,6,27,255), got (55,3,13,255)
-[ 8: FAIL ] Pixel 479: expected (128,6,27,255), got (55,3,13,255)
-[ 9: FAIL ] Pixel 543: expected (128,6,27,255), got (55,3,13,255)
-[ 10: FAIL ] Pixel 607: expected (128,6,27,255), got (55,3,13,255)
-[ 11: FAIL ] Generate wrong mipmaps for sRGB texture.
-[ 12: PASS ] getError was expected value: NO_ERROR : GenerateMipmap should succeed.
-[ 13: PASS ] getError was expected value: NO_ERROR : GenerateMipmap should succeed.
-[ 14: PASS ] should be 0,13,54,255
-[ 15: PASS ] successfullyParsed is true
-[ FAIL ] 11 failures reported
+[ 1: FAIL ] Generate wrong mipmaps for sRGB texture.
+[ 2: PASS ] successfullyParsed is true
+[ FAIL ] 1 failures reported
 

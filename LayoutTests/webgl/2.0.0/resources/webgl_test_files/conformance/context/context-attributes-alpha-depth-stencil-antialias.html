@@ -302,8 +302,7 @@ function testAntialias(antialias)
 {
     debug("Testing antialias = " + antialias);
     // Both the width and height of canvas are N.
-    // Note that "N = 2" doesn't work for some post processing AA per the discussion at https://github.com/KhronosGroup/WebGL/pull/1977.
-    var N = 3;
+    var N = 2;
     if (antialias)
         shouldBeNonNull("gl = getWebGL(" + N + ", " + N + ", { depth: false, stencil: false, alpha: false, antialias: true }, [ 0, 0, 0, 1 ], 1, 0)");
     else

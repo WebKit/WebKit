@@ -13,4 +13,3 @@ shader-precision-format.html
 type-conversion-test.html
 uninitialized-test.html
 webgl-specific.html
---min-version 1.0.4 webgl-specific-stencil-settings.html

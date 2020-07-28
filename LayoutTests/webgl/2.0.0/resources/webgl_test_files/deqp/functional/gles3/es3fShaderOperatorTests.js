@@ -38,6 +38,11 @@ var tcuMatrix = framework.common.tcuMatrix;
 
 /** @const */ es3fShaderOperatorTests.MAX_INPUTS = 3;
 
+let canvasWH = 256;
+if (tcuTestCase.isQuickMode()) {
+    canvasWH = 32;
+}
+
 es3fShaderOperatorTests.stringJoin = function(elems, delim) {
     var result = '';
     for (var i = 0; i < elems.length; i++)
@@ -3196,6 +3201,11 @@ es3fShaderOperatorTests.ShaderOperatorTests.prototype.init = function() {
 */
 es3fShaderOperatorTests.run = function(context, range) {
     gl = context;
+
+    const canvas = gl.canvas;
+    canvas.width = canvasWH;
+    canvas.height = canvasWH;
+
     //Set up Test Root parameters
     var state = tcuTestCase.runner;
     state.setRoot(new es3fShaderOperatorTests.ShaderOperatorTests());

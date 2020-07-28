@@ -76,8 +76,8 @@ Tests.testVertexAttribPointerVBO = function(gl) {
   assertFail("bad index (big positive)",
       function(){gl.vertexAttribPointer(8693948, 3, gl.FLOAT, false, 0, 0);});
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
-  assertOk("binding to null buffer with offset=0",
-      function(){gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);});
+  //assertOk("binding to null buffer with offset=0",
+  //    function(){gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);});
   assertFail("binding to null buffer with offset!=0",
       function(){gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 16);});
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);

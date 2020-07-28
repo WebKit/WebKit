@@ -13,7 +13,6 @@ gl-scissor-test.html
 --min-version 1.0.2 gl-scissor-fbo-test.html
 --min-version 1.0.3 gl-scissor-canvas-dimensions.html
 --min-version 1.0.3 gl-viewport-test.html
---min-version 1.0.4 line-rendering-quality.html
 --min-version 1.0.3 many-draw-calls.html
 more-than-65536-indices.html
 multisample-corruption.html
@@ -24,12 +23,6 @@ point-size.html
 --min-version 1.0.4 point-specific-shader-variables.html
 --min-version 1.0.3 point-with-gl-pointcoord-in-fragment-shader.html
 --min-version 1.0.3 polygon-offset.html
---min-version 1.0.4 preservedrawingbuffer-leak.html
---min-version 1.0.4 scissor-rect-repeated-rendering.html
 --min-version 1.0.2 simple.html
 triangle.html
 line-loop-tri-fan.html
---min-version 1.0.4 framebuffer-texture-clear.html
---min-version 1.0.4 clear-after-copyTexImage2D.html
---min-version 1.0.4 texture-switch-performance.html
---min-version 1.0.4 rendering-stencil-large-viewport.html

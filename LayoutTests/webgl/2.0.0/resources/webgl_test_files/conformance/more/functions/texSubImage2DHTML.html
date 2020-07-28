@@ -110,7 +110,6 @@ Tests.testTexImage2D = function(gl) {
 
 Tests.testTexImage2DNonSOP = function(gl) {
     var img = document.getElementById('i2');
-    while (!img.complete) {}
     var c = document.getElementById('c');
     var ctx = c.getContext('2d');
     ctx.drawImage(img,0,0);
@@ -127,7 +126,11 @@ Tests.testTexImage2DNonSOP = function(gl) {
 Tests.endUnit = function(gl) {
 }
 
-wtu.setupImageForCrossOriginTest("#i2", defaultImgUrl, localImgUrl, initTests);
+wtu.setupImageForCrossOriginTest("#i2", defaultImgUrl, localImgUrl, async function() {
+    const img = document.getElementById('i2');
+    await img.decode();
+    initTests();
+});
 </script>
 <script id="identity-flip-vert" type="x-shader/x-vertex">
 attribute vec3 Vertex;

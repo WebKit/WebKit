@@ -33,11 +33,18 @@
 <link rel="stylesheet" href="../../../resources/js-test-style.css"/>
 <script src="../../../js/js-test-pre.js"></script>
 <script src="../../../js/webgl-test-utils.js"></script>
-<script src="../../../js/glsl-conformance-test.js"></script>
 </head>
 <body>
+<canvas id="canvas" width="256" height="256"> </canvas>
 <div id="description"></div>
 <div id="console"></div>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec3 aPosition;
+
+void main() {
+    gl_Position = vec4(aPosition, 1);
+}
+</script>
 <script id="fshader" type="x-shader/x-fragment">
 // It is assumed that uTest is set to 0. It's here to make the expression not constant.
 uniform mediump float uTest;
@@ -89,48 +96,49 @@ void main() {
 <script type="application/javascript">
 "use strict";
 description();
+var wtu = WebGLTestUtils;
 
 function test() {
-  var wtu = WebGLTestUtils;
-  var gl = wtu.create3DContext();
+  var gl = wtu.create3DContext("canvas");
   if (!gl) {
     testFailed("context does not exist");
-    finishTest();
     return;
   }
   if (gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision == 0) {
     testPassed("highp precision not supported");
-    finishTest();
   } else {
-    GLSLConformanceTester.runRenderTests([
-    {
-      fShaderId: 'fshader',
-      fShaderSuccess: true,
-      linkSuccess: true,
-      passMsg: 'The precision qualifier of a constant affects built-in function results',
-      uniforms: [{name: "uTest", functionName: "uniform1f", value: 0}]
-    },
-    {
-      fShaderId: 'fshaderNoConstants',
-      fShaderSuccess: true,
-      linkSuccess: true,
-      passMsg: 'The precision qualifier of a variable affects built-in function results',
-      uniforms: [{name: "uTest", functionName: "uniform1f", value: 0},
-                 {name: "uTestHigh", functionName: "uniform1f", value: 0}]
-    },
-    {
-      fShaderId: 'fshaderAllHighp',
-      fShaderSuccess: true,
-      linkSuccess: true,
-      passMsg: 'All variables are qualified as highp',
-      uniforms: [{name: "uTest", functionName: "uniform1f", value: 0}]
-    },
-    ]);
+    wtu.setupUnitQuad(gl);
+
+    debug("Testing shader where the precision qualifier of a constant affects built-in function results");
+    var program = wtu.setupProgram(gl, ["vshader", "fshader"], ["aPosition"], undefined, true);
+    var uniformLoc = gl.getUniformLocation(program, 'uTest');
+    gl.uniform1f(uniformLoc, 0);
+    wtu.drawUnitQuad(gl);
+    wtu.checkCanvasRect(gl, 0, 0, 256, 256, [0, 255, 0, 255]);
+
+    debug("");
+    debug("Testing shader where the precision qualifier of a variable affects built-in function results");
+    program = wtu.setupProgram(gl, ["vshader", "fshaderNoConstants"], ["aPosition"], undefined, true);
+    uniformLoc = gl.getUniformLocation(program, 'uTest');
+    gl.uniform1f(uniformLoc, 0);
+    uniformLoc = gl.getUniformLocation(program, 'uTestHigh');
+    gl.uniform1f(uniformLoc, 0);
+    wtu.drawUnitQuad(gl);
+    wtu.checkCanvasRect(gl, 0, 0, 256, 256, [0, 255, 0, 255]);
+
+    debug("");
+    debug("Testing shader where all variables are qualified as highp");
+    program = wtu.setupProgram(gl, ["vshader", "fshaderAllHighp"], ["aPosition"], undefined, true);
+    uniformLoc = gl.getUniformLocation(program, 'uTest');
+    gl.uniform1f(uniformLoc, 0);
+    wtu.drawUnitQuad(gl);
+    wtu.checkCanvasRect(gl, 0, 0, 256, 256, [0, 255, 0, 255]);
   }
 };
 
 test();
 var successfullyParsed = true;
+finishTest();
 </script>
 </body>
 </html>

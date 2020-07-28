@@ -3355,6 +3355,11 @@ fast/history/page-cache-media-recorder.html [ Skip ]
 # DEQP is skipped on the main fleet of bots because of the long run time.
 webgl/2.0.0/deqp [ Skip ]
 
+# The layout tests run from the local file system. These tests, which
+# rely on creating a cross-origin image, can not work in this environment.
+webgl/2.0.0/conformance/more/functions/texImage2DHTML.html [ Skip ]
+webgl/2.0.0/conformance/more/functions/texSubImage2DHTML.html [ Skip ]
+
 # webkit.org/b/211156 clearBuffer entry points are not implemented
 webgl/2.0.0/conformance2/reading/format-r11f-g11f-b10f.html [ Skip ]
 webgl/2.0.0/conformance2/rendering/clear-func-buffer-type-match.html [ Skip ]

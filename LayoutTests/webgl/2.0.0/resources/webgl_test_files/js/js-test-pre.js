@@ -102,7 +102,6 @@ if (typeof quietMode == 'undefined') {
 function nonKhronosFrameworkNotifyDone() {
   // WebKit Specific code. Add your code here.
   if (window.layoutTestController) {
-    window.console.log("TestController exists");
     window.layoutTestController.notifyDone();
   }
 }

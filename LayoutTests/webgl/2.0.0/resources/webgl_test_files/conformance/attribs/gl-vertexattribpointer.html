@@ -73,10 +73,10 @@ if (!gl) {
   gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 0, 0);
   wtu.glErrorShouldBe(gl, gl.NO_ERROR);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
-  gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 0, 0);
-  wtu.glErrorShouldBe(gl, gl.NO_ERROR,
-      "vertexAttribPointer should succeed if no buffer is bound and `offset` is zero.");
+  //gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  //gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 0, 0);
+  //wtu.glErrorShouldBe(gl, gl.NO_ERROR,
+  //    "vertexAttribPointer should succeed if no buffer is bound and `offset` is zero.");
 
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexObject);
 

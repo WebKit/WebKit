@@ -67,15 +67,6 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
           case gl.RED_INTEGER:
             greenColor = [0, 0, 0];
             break;
-          case gl.LUMINANCE:
-          case gl.LUMINANCE_ALPHA:
-            redColor = [255, 255, 255];
-            greenColor = [0, 0, 0];
-            break;
-          case gl.ALPHA:
-            redColor = [0, 0, 0];
-            greenColor = [0, 0, 0];
-            break;
           default:
             break;
         }
@@ -190,7 +181,7 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
             wtu.clearAndDrawUnitQuad(gl, [0, 0, 0, 255]);
             // Check a few pixels near the top and bottom and make sure they have
             // the right color.
-            var tolerance = 5;
+            const tolerance = 6;
             debug("Checking lower left corner");
             wtu.checkCanvasRect(gl, 4, 4, 2, 2, bottomColor,
                                 "shouldBe " + bottomColor, tolerance);

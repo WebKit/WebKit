@@ -171,7 +171,7 @@ window.onbeforeunload = function() {
   return false;
 }
 
-var DEFAULT_CONFORMANCE_TEST_VERSION = "1.0.4 (beta)";
+var DEFAULT_CONFORMANCE_TEST_VERSION = "2.0.0";
 
 var OPTIONS = {
   version: DEFAULT_CONFORMANCE_TEST_VERSION,
@@ -182,8 +182,7 @@ var OPTIONS = {
 };
 
 var testVersions = [
-  "1.0.4 (beta)",
-  "2.0.1 (beta)"
+  "2.0.0"
 ];
 
 function start() {
@@ -230,6 +229,7 @@ function start() {
   var folderCount = 0;
   var autoScrollEnabled = true; // Whether the user prefers to auto scroll
   var autoScroll = true; // Whether auto scroll is actually performed
+  let quickTestMode = true;
 
   var Page = function(reporter, folder, testIndex, url) {
     this.reporter = reporter;
@@ -241,7 +241,7 @@ function start() {
     this.totalSkipped = 0;
     this.totalFailed = 0;
     this.testIndex = testIndex;
-    this.startTime = new Date();
+    this.startTime = 0;
     this.totalTime = 0;
     var that = this;
 
@@ -276,7 +276,8 @@ function start() {
     var a = reporter.localDoc.createElement('a');
     a.href = WebGLTestHarnessModule.getURLWithOptions(url, {
       webglVersion: reporter.selectedWebGLVersion,
-      quiet: OPTIONS.quiet
+      quiet: OPTIONS.quiet,
+      quick: quickTestMode ? 1 : 0,
     });
     a.target = "_blank";
     var node = reporter.localDoc.createTextNode(url);
@@ -305,17 +306,15 @@ function start() {
       var result = "timeout";
       var css = "timeout";
     } else if (success) {
-      ++this.totalSuccessful;
+      if(skipped) {
+        ++this.totalSkipped;
+      } else {
+        ++this.totalSuccessful;
+      }
       // don't report success.
       return;
     } else {
       ++this.totalFailed;
-      if (skipped) {
-        // Skipped tests are counted as both skips and failures (because we
-        // don't want to accidentally accept a conformance submission with
-        // skipped tests).
-        ++this.totalSkipped;
-      }
       var result = "failed";
       var css = "fail";
     }
@@ -412,18 +411,6 @@ function start() {
       this.check.checked = false;
     }
   };
-
-  Page.prototype.toJSON = function() {
-    return {
-      'subtests': this.totalTests,
-      'successful': this.totalSuccessful,
-      'skipped': this.totalSkipped,
-      'failed': this.totalFailed,
-      'timedOut': this.totalTimeouts,
-      'totalTime': this.totalTime,
-    };
-  };
-
 
   var Folder = function(reporter, folder, depth, opt_name) {
     this.reporter = reporter;
@@ -742,7 +729,7 @@ function start() {
     this.root = new Folder(this, null, 0, "all");
     this.resultElem.appendChild(this.root.elem);
     this.callbacks = { };
-    this.startTime = new Date();
+    this.startTime = 0;
 
     if (ctx) {
       this.contextInfo["VENDOR"] = ctx.getParameter(ctx.VENDOR);
@@ -829,60 +816,35 @@ function start() {
   Reporter.prototype.displayFinalResults = function(msg, success) {
     if (success) {
       var totalTests = 0;
-      var testsSucceeded = 0;
-      var testsFailed = 0;
-      var testsSkipped = 0;
-      var testsTimedOut = 0;
-
-      var subtestsHit = 0;
-      var subtestsSucceeded = 0;
-      var subtestsTimedOut = 0;
-      var subtestsSkipped = 0;
-      var subtestsFailed = 0;
-
+      var totalSuccessful = 0;
+      var totalTimeouts = 0;
+      var totalSkipped = 0;
+      var totalFailed = 0;
       var totalTime = Date.now() - this.startTime;
-
       for (var url in this.pagesByURL) {
         var page = this.pagesByURL[url];
-        totalTests += 1;
-        if (page.totalSkipped) {
-          testsSkipped += 1;
-        }
-        if (page.totalFailed) {
-          testsFailed += 1;
-        } else if (page.totalTimeouts) {
-          testsTimedOut += 1;
-        } else if (page.totalSuccessful) {
-          if (page.totalSuccessful != page.totalTests)
-            throw successes_not_equal_total;
-          testsSucceeded += 1;
-        }
-
-        subtestsHit += page.totalTests;
-        subtestsSucceeded += page.totalSuccessful;
-        subtestsTimedOut += page.totalTimeouts;
-        subtestsSkipped += page.totalSkipped;
-        subtestsFailed += page.totalFailed;
+        totalTests += page.totalTests;
+        totalSuccessful += page.totalSuccessful;
+        totalTimeouts += page.totalTimeouts;
+        totalSkipped += page.totalSkipped;
+        totalFailed += page.totalFailed;
       }
-
-      function ratio_str(x, y, name) {
-        return x + '/' + y + ' ' + name + ' (' + (x / y * 100).toFixed(2) + '%)';
+      var passedMsg = 'Passed ' + totalSuccessful + '/' + totalTests + ' (' + (totalSuccessful * 100.0 / totalTests).toFixed(2) + '%)';
+      var timeout = '';
+      if (totalTimeouts > 0) {
+        timeout = ', ' + totalTimeouts + ' timed out';
       }
-      var testsSucceededRatio = ratio_str(testsSucceeded, totalTests, 'tests');
-      var passedMsg = 'Passed ' + testsSucceededRatio + ', ' +
-                      ratio_str(subtestsSucceeded, subtestsHit, 'subtests');
       var skippedMsg = '';
-      if (testsSkipped > 0) {
-        skippedMsg = ' Skipped ' + ratio_str(testsSkipped, totalTests, 'tests');
+      if (totalSkipped > 0) {
+        skippedMsg = ' Skipped ' + totalSkipped + '/' + totalTests + ' (' + (totalSkipped * 100.0 / totalTests).toFixed(2) + '%)';
       }
       var failedMsg = '';
-      if (testsFailed > 0) {
-        failedMsg = ' Failed ' + ratio_str(testsFailed, totalTests, 'tests') + ', ' +
-                    ratio_str(subtestsFailed, subtestsHit, 'subtests');
+      if (totalFailed > 0) {
+        failedMsg = ' Failed ' + totalFailed + '/' + totalTests + ' (' + (totalFailed * 100.0 / totalTests).toFixed(2) + '%)';
       }
       var timeoutMsg = '';
-      if (testsTimedOut > 0) {
-        timeoutMsg = ' Timeout ' + ratio_str(testsTimedOut, totalTests, 'tests');
+      if (totalTimeouts > 0) {
+        timeoutMsg = ' Timeout ' + totalTimeouts + '/' + totalTests + ' (' + (totalTimeouts * 100.0 / totalTests).toFixed(2) + '%)';
       }
       var msg = passedMsg + skippedMsg + failedMsg + timeoutMsg;
       this.fullResultsNode.textContent = msg;
@@ -891,7 +853,6 @@ function start() {
       var tx = "";
       tx += "WebGL Conformance Test Results\n";
       tx += "Version " + OPTIONS.version + "\n";
-      tx += "Generated on: " + (new Date()).toString() + "\n";
       tx += "\n";
       tx += "-------------------\n\n";
       tx += "User Agent: " + (navigator.userAgent ? navigator.userAgent : "(navigator.userAgent is null)") + "\n";
@@ -901,67 +862,47 @@ function start() {
       tx += "Unmasked VENDOR: " + this.contextInfo["UNMASKED_VENDOR"] + "\n";
       tx += "Unmasked RENDERER: " + this.contextInfo["UNMASKED_RENDERER"] + "\n";
       tx += "WebGL R/G/B/A/Depth/Stencil bits (default config): " + this.contextInfo["RED_BITS"] + "/" + this.contextInfo["GREEN_BITS"] + "/" + this.contextInfo["BLUE_BITS"] + "/" + this.contextInfo["ALPHA_BITS"] + "/" + this.contextInfo["DEPTH_BITS"] + "/" + this.contextInfo["STENCIL_BITS"] + "\n";
-      tx += "\n-------------------\n\n";
-
-      var result;
-      if (totalTests && testsSucceeded == totalTests) {
-        result = 'PASS';
+      tx += "\n";
+      tx += "-------------------\n\n";
+      tx += "Test Summary (" + totalTests + " total tests):\n";
+      tx += "Tests ran in " + (totalTime / 1000.0).toFixed(2) + " seconds\n";
+      tx += "Tests PASSED: " + totalSuccessful + "\n";
+      tx += "Tests FAILED: " + (totalTests - totalSuccessful - totalSkipped) + "\n";
+      tx += "Tests TIMED OUT: " + totalTimeouts + "\n";
+      tx += "Tests SKIPPED: " + totalSkipped + "\n";
+      tx += "\n";
+      tx += "-------------------\n\n";
+      if (totalSuccessful < totalTests) {
+        tx += "Failures:\n\n";
+        for (var url in this.pagesByURL) {
+            var page = this.pagesByURL[url];
+            var pageTotalFail = page.totalTests - page.totalSuccessful - page.totalSkipped;
+            if (!(page.totalTests == 0 && page.totalTimeouts == 0) &&
+                pageTotalFail > 0)
+            {
+            tx += url + ": " + pageTotalFail + " tests failed";
+            if (page.totalTimeouts)
+                tx += " (" + page.totalTimeouts + " timed out)";
+            tx += "\n";
+            }
+        }
       } else {
-        result = 'FAIL';
+        tx += "All tests PASSED\n\n";
       }
-      tx += "Test Summary: " + result + " (" + totalTests + " tests):\n";
-      tx += subtestsHit + " subtests ran in " + (totalTime / 1000.0).toFixed(2) + " seconds\n";
-      function record(what, tests, subtests) {
-        tx += what + ": " + tests + " tests, " + subtests + " subtests\n";
-      }
-      record('PASSED', testsSucceeded, subtestsSucceeded);
-      record('NOT PASSED', totalTests - testsSucceeded, subtestsHit - subtestsSucceeded);
-
-      record('FAILED', testsFailed, subtestsFailed);
-      record('TIMED OUT', testsTimedOut, subtestsTimedOut);
-      record('SKIPPED', testsSkipped, subtestsSkipped);
-
-      tx += "\n-------------------\n\n";
-
-      const failureLines = [];
-      const timeoutLines = [];
-      const resultLines = [];
-
+      tx += "\n";
+      tx += "-------------------\n\n";
+      tx += "Complete Test Results (total / pass / fail / timeout / skipped):\n\n";
       for (var url in this.pagesByURL) {
         var page = this.pagesByURL[url];
-        resultLines.push('    "' + url + '":' + JSON.stringify(page.toJSON()));
-
-        if (page.totalFailed) {
-          failureLines.push('    "' + url + '",');
-        }
-        if (page.totalTimeouts) {
-          timeoutLines.push('    "' + url + '",');
+        var pageTotalFail = page.totalTests - page.totalSuccessful - page.totalSkipped;
+        if (!(page.totalTests == 0 && page.totalTimeouts == 0)) {
+          tx += url + ": " + page.totalTests + " / " +
+              page.totalSuccessful + " / " + pageTotalFail + " / " + page.totalTimeouts + " / " + page.totalSkipped + "\n";
         }
       }
-
-      const lines = [].concat(
-        [
-          '{',
-          '  "failures": [',
-        ],
-        failureLines,
-        [
-          '  ],',
-          '  "timeouts": [',
-        ],
-        timeoutLines,
-        [
-          '  ],',
-          '  "results": {',
-        ],
-        resultLines,
-        [
-        '  },',
-        '}',
-        ]
-      );
-
-      tx += lines.join('\n');
+      tx += "\n";
+      tx += "-------------------\n\n";
+      tx += "Generated on: " + (new Date()).toString() + "\n";
 
       var r = document.getElementById("testResultsAsText");
       while (r.firstChild) r.removeChild(r.firstChild);
@@ -1227,6 +1168,12 @@ function start() {
     }
   };
 
+  var quickTestModeCheckbox = document.getElementById("quickTestModeCheckbox");
+  quickTestModeCheckbox.checked = quickTestMode;
+  quickTestModeCheckbox.onclick = function() {
+    quickTestMode = quickTestModeCheckbox.checked;
+  };
+
   var textbutton = document.getElementById("showTextSummary");
   textbutton.onclick = function() {
     log("click");
@@ -1311,6 +1258,9 @@ function start() {
               <br/>
               <input type="checkbox" id="hidePassedCheckbox"/>
               <label for="hidePassedCheckbox">hide passed tests</label>
+              <br/>
+              <input type="checkbox" id="quickTestModeCheckbox"/>
+              <label for="quickTestModeCheckbox">quick test mode</label>
               <br/>
               <input type="button" style="visibility: hidden;" value="display text summary" id="showTextSummary"/>
               <br/>

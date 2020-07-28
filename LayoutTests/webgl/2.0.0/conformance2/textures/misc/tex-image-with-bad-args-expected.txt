@@ -1,14 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-image-with-bad-args.html
-[ 1: PASS ] WebGL context exists
-[ 2: PASS ] getError was expected value: NO_ERROR : TexImage2D taking RGBA/RGBA/UNSIGNED_BYTE
-[ 3: PASS ] getError was expected value: INVALID_OPERATION : TexImage2D taking RGBA/RGBA/FLOAT
-[ 4: PASS ] getError was expected value: INVALID_OPERATION : TexImage2D taking RGBA/RGBA/HALF_FLOAT
-[ 5: PASS ] getError was expected value: INVALID_OPERATION : TexImage2D taking LUMINANCE/LUMINANCE/FLOAT
-[ 6: PASS ] getError was expected value: INVALID_OPERATION : TexImage2D taking LUMINANCE_ALPHA/LUMINANCE_ALPHA/HALF_FLOAT
-[ 7: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : TexImage2D taking 0x822a/RED/UNSIGNED_SHORT
-[ 8: PASS ] getError was one of: INVALID_VALUE or INVALID_OPERATION : TexImage2D taking RED/RED/UNSIGNED_SHORT
-[ 9: PASS ] successfullyParsed is true
-[ FAIL ] 1 failures reported
+[ PASS ] All tests passed
 

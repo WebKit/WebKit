@@ -215,7 +215,7 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
                             return;
                         }
                     }
-                    wtu.waitForComposite(runNextTest);
+                    wtu.dispatchTask(runNextTest);
                 }
                 runNextTest();
             });

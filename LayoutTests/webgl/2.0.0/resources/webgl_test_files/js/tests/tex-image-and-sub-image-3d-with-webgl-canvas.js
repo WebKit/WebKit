@@ -88,10 +88,8 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
 
     function runOneIteration(canvas, flipY, program, bindingTarget, opt_texture)
     {
-        debug('Testing flipY=' + flipY + ' visible=' + (canvas.parentNode ? true : false) +
-              ' bindingTarget=' + (bindingTarget == gl.TEXTURE_3D ? 'TEXTURE_3D' : 'TEXTURE_2D_ARRAY') +
+        debug('Testing ' + flipY + ' bindingTarget=' + (bindingTarget == gl.TEXTURE_3D ? 'TEXTURE_3D' : 'TEXTURE_2D_ARRAY') +
               ' canvas size: ' + canvas.width + 'x' + canvas.height + ' with red-green');
-
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         if (!opt_texture) {
             var texture = gl.createTexture();
@@ -149,22 +147,12 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
     {
         var ctx = wtu.create3DContext();
         var canvas = ctx.canvas;
-        // Note: We use preserveDrawingBuffer:true to prevent canvas
-        // visibility from interfering with the tests.
-        var visibleCtx = wtu.create3DContext(null, { preserveDrawingBuffer:true });
-        var visibleCanvas = visibleCtx.canvas;
-        visibleCanvas.width = visibleCanvas.height = 32;
-        setCanvasToRedGreen(visibleCtx);
-        var descriptionNode = document.getElementById("description");
-        document.body.insertBefore(visibleCanvas, descriptionNode);
 
         var cases = [
-            { flipY: true,  canvas: canvas, init: setCanvasToMin },
-            { flipY: false, canvas: canvas },
-            { flipY: true,  canvas: canvas, init: setCanvasTo257x257 },
-            { flipY: false, canvas: canvas },
-            { flipY: true,  canvas: visibleCanvas },
-            { flipY: false, canvas: visibleCanvas },
+            { flipY: true, init: setCanvasToMin },
+            { flipY: false },
+            { flipY: true, init: setCanvasTo257x257 },
+            { flipY: false },
         ];
 
         function runTexImageTest(bindingTarget) {
@@ -184,7 +172,7 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
                     if (c.init) {
                       c.init(ctx, bindingTarget);
                     }
-                    texture = runOneIteration(c.canvas, c.flipY, program, bindingTarget, texture);
+                    texture = runOneIteration(canvas, c.flipY, program, bindingTarget, texture);
                     // for the first 2 iterations always make a new texture.
                     if (count > 2) {
                       texture = undefined;
@@ -198,7 +186,7 @@ function generateTest(internalFormat, pixelFormat, pixelType, prologue, resource
                             return;
                         }
                     }
-                    wtu.waitForComposite(runNextTest);
+                    wtu.dispatchTask(runNextTest);
                 }
                 runNextTest();
             });

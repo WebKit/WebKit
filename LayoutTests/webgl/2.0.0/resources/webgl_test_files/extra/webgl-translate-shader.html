@@ -62,13 +62,9 @@ function main() {
   translateButton = document.getElementById('translate');
   extButton = document.getElementById('getExts');
 
+  var canvas = document.getElementById("example");
   var wtu = WebGLTestUtils;
-  // Prioritize creating a WebGL 2 context if possible - if not, fall back to WebGL 1.
-  gl = wtu.create3DContext(undefined, undefined, 2);
-  if (!gl || !gl.getExtension('WEBGL_debug_shaders'))
-  {
-    gl = wtu.create3DContext();
-  }
+  gl = wtu.create3DContext(canvas);
   if (!gl) {
     disable();
     return;
@@ -169,6 +165,7 @@ is changed before being passed on to the underlying platform's graphics driver.<
 <p id="enabled-extensions">None</p>
 <h2>Shader info log</h2>
 <textarea id="info-log"></textarea>
+<canvas id="example" width="256" height="16" style="width: 256px; height: 48px;"></canvas>
 </body>
 </html>
 
