@@ -1,3 +1,10 @@
+2020-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK gardening. Rebaseline tests after r264968
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+
 2020-07-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] media/vp9.html failing since check-in in r263894
