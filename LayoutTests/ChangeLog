@@ -1,3 +1,12 @@
+2020-07-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Test landed broken(?): [ macOS wk1 ] fast/dynamic/size-to-content-autosize-with-percent-document-height.html is a constant image failure
+        https://bugs.webkit.org/show_bug.cgi?id=214876
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Mark the test as failing while the cause is investigated.
+
 2020-07-28  Saam Barati  <sbarati@apple.com>
 
         JSPromise::reject might throw more than an unterminated exception

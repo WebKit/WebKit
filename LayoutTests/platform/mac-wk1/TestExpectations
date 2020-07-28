@@ -968,6 +968,8 @@ webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-consol
 
 webkit.org/b/213896 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-008.html [ Pass Failure ]
 
+webkit.org/b/214876 fast/dynamic/size-to-content-autosize-with-percent-document-height.html [ ImageOnlyFailure ]
+
 # ENABLE_INPUT_TYPE_* are not enabled on wk1.
 fast/forms/date
 fast/forms/datetimelocal
