@@ -1,3 +1,25 @@
+2020-07-28  Peng Liu  <peng.liu6@apple.com>
+
+        Clean up PlaybackSessionInterface[Mac|AVKit]
+        https://bugs.webkit.org/show_bug.cgi?id=214895
+
+        Reviewed by Eric Carlson.
+
+        No new tests, no functional change.
+
+        * platform/ios/PlaybackSessionInterfaceAVKit.h:
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit):
+        (WebCore::PlaybackSessionInterfaceAVKit::playbackSessionModel const):
+        Remove unnecessary WEBCORE_EXPORT.
+        Include the correct header for Ref.
+        Replace "protected" with "private".
+        Use WeakPtr of PlaybackSessionModel instead of a raw pointer.
+
+        * platform/mac/PlaybackSessionInterfaceMac.h:
+        Add "final" to ensureControlsManager().
+        Some small cleanup.
+
 2020-07-28  Chris Dumez  <cdumez@apple.com>
 
         [EventSource] WebKit fails to UTF-8 encode the Last-Event-ID HTTP header value

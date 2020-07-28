@@ -35,9 +35,10 @@
 #include <functional>
 #include <objc/objc.h>
 #include <wtf/Forward.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS WebAVPlayerController;
 
@@ -59,29 +60,28 @@ public:
     PlaybackSessionModel* playbackSessionModel() const;
 
     // PlaybackSessionModelClient
-    WEBCORE_EXPORT void durationChanged(double) override;
-    WEBCORE_EXPORT void currentTimeChanged(double currentTime, double anchorTime) override;
-    WEBCORE_EXPORT void bufferedTimeChanged(double) override;
-    WEBCORE_EXPORT void rateChanged(bool isPlaying, float playbackRate) override;
-    WEBCORE_EXPORT void seekableRangesChanged(const TimeRanges&, double lastModifiedTime, double liveUpdateInterval) override;
-    WEBCORE_EXPORT void canPlayFastReverseChanged(bool) override;
-    WEBCORE_EXPORT void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
-    WEBCORE_EXPORT void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
-    WEBCORE_EXPORT void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
-    WEBCORE_EXPORT void wirelessVideoPlaybackDisabledChanged(bool) override;
-    WEBCORE_EXPORT void mutedChanged(bool) override;
-    WEBCORE_EXPORT void volumeChanged(double) override;
-    WEBCORE_EXPORT void modelDestroyed() override;
+    void durationChanged(double) override;
+    void currentTimeChanged(double currentTime, double anchorTime) override;
+    void bufferedTimeChanged(double) override;
+    void rateChanged(bool isPlaying, float playbackRate) override;
+    void seekableRangesChanged(const TimeRanges&, double lastModifiedTime, double liveUpdateInterval) override;
+    void canPlayFastReverseChanged(bool) override;
+    void audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
+    void legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex) override;
+    void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName) override;
+    void wirelessVideoPlaybackDisabledChanged(bool) override;
+    void mutedChanged(bool) override;
+    void volumeChanged(double) override;
+    void modelDestroyed() override;
 
-    WEBCORE_EXPORT virtual void invalidate();
+    void invalidate();
 
     WebAVPlayerController *playerController() const { return m_playerController.get(); }
 
-protected:
-    WEBCORE_EXPORT PlaybackSessionInterfaceAVKit(PlaybackSessionModel&);
-
+private:
+    PlaybackSessionInterfaceAVKit(PlaybackSessionModel&);
     RetainPtr<WebAVPlayerController> m_playerController;
-    PlaybackSessionModel* m_playbackSessionModel { nullptr };
+    WeakPtr<PlaybackSessionModel> m_playbackSessionModel;
 };
 
 }
