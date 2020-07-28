@@ -1,3 +1,13 @@
+2020-07-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [Big Sur] Wrap SPI in feature guards (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=214844
+        <rdar://problem/66178527>
+
+        Unreviewed build fix.
+
+        * pal/spi/mac/NSImageSPI.h: Guard SPI with NS_ASSUME_NONNULL.
+
 2020-07-27  Jonathan Bedard  <jbedard@apple.com>
 
         [Big Sur] Wrap SPI in feature guards

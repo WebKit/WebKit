@@ -48,8 +48,14 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #if HAVE(ALTERNATE_ICONS)
+
+NS_ASSUME_NONNULL_BEGIN
+
 extern const NSImageHintKey NSImageHintSymbolFont;
 extern const NSImageHintKey NSImageHintSymbolScale;
+
+NS_ASSUME_NONNULL_END
+
 #endif
 
 #endif
