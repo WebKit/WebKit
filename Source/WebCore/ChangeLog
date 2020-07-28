@@ -1,3 +1,22 @@
+2020-07-27  Zalan Bujtas  <zalan@apple.com>
+
+        Extension is sized incorrectly, content is cut off.
+        https://bugs.webkit.org/show_bug.cgi?id=214858
+        <rdar://problem/64135680>
+
+        Reviewed by Simon Fraser.
+
+        Autosizing uses an 1px tall viewport to layout the content initially. When the document renderer's height is set to a percent value, this
+        1px tall viewport will drive the available height for the descendants and we pretty much end up with overflow content.
+        Autosizing takes the overflow into account when computing the final content size, however this overflow depends on the type of the layout context (e.g. flex vs. block).
+
+        Let's replace percent height values on the document renderer with the initial "height: auto".
+
+        Test: fast/dynamic/size-to-content-autosize-with-percent-document-height.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performSizeToContentAutoSize):
+
 2020-07-27  Chris Dumez  <cdumez@apple.com>
 
         Update release*() functions on ExceptionOr() to always release the member

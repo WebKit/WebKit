@@ -3487,23 +3487,36 @@ void FrameView::performFixedWidthAutoSize()
 
 void FrameView::performSizeToContentAutoSize()
 {
+    // Do the resizing twice. The first time is basically a rough calculation using the preferred width
+    // which may result in a height change during the second iteration.
+    // Let's ignore renderers with viewport units first and resolve these boxes during the second phase of the autosizing.
     LOG(Layout, "FrameView %p performSizeToContentAutoSize", this);
+    ASSERT(frame().document() && frame().document()->renderView());
 
-    auto* document = frame().document();
-    auto* renderView = document->renderView();
+    auto& document = *frame().document();
+    auto& renderView = *document.renderView();
+    auto layoutWithAdjustedStyleIfNeeded = [&] {
+        document.updateStyleIfNeeded();
+        if (auto* documentRenderer = downcast<RenderElement>(renderView.firstChild())) {
+            auto& style = documentRenderer->mutableStyle();
+            if (style.logicalHeight().isPercent()) {
+                // Percent height values on the document renderer when we don't really have a proper viewport size can
+                // result incorrect rendering in certain layout contexts (e.g flex).
+                style.setLogicalHeight({ });
+            }
+        }
+        document.updateLayout();
+    };
 
+    resetOverriddenViewportWidthForCSSViewportUnits();
     // Start from the minimum size and allow it to grow.
     auto minAutoSize = IntSize { 1, 1 };
     resize(minAutoSize);
     auto size = frameRect().size();
-    // Do the resizing twice. The first time is basically a rough calculation using the preferred width
-    // which may result in a height change during the second iteration.
-    // Let's ignore renderers with viewport units first and resolve these boxes during the second phase of the autosizing.
-    resetOverriddenViewportWidthForCSSViewportUnits();
     for (int i = 0; i < 2; i++) {
+        layoutWithAdjustedStyleIfNeeded();
         // Update various sizes including contentsSize, scrollHeight, etc.
-        document->updateLayoutIgnorePendingStylesheets();
-        auto newSize = IntSize { renderView->minPreferredLogicalWidth(), renderView->documentRect().height() };
+        auto newSize = IntSize { renderView.minPreferredLogicalWidth(), renderView.documentRect().height() };
 
         // Check to see if a scrollbar is needed for a given dimension and
         // if so, increase the other dimension to account for the scrollbar.
@@ -3563,9 +3576,8 @@ void FrameView::performSizeToContentAutoSize()
         setScrollbarModes(horizonalScrollbarMode, verticalScrollbarMode, true, true);
     }
     // All the resizing above may have invalidated style (for example if viewport units are being used).
-    document->updateStyleIfNeeded();
     // FIXME: Use the final layout's result as the content size (webkit.org/b/173561).
-    document->updateLayoutIgnorePendingStylesheets();
+    layoutWithAdjustedStyleIfNeeded();
     m_autoSizeContentSize = contentsSize();
 }
 

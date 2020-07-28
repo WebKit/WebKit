@@ -1,3 +1,14 @@
+2020-07-27  Zalan Bujtas  <zalan@apple.com>
+
+        Extension is sized incorrectly, content is cut off.
+        https://bugs.webkit.org/show_bug.cgi?id=214858
+        <rdar://problem/64135680>
+
+        Reviewed by Simon Fraser.
+
+        * fast/dynamic/size-to-content-autosize-with-percent-document-height-expected.html: Added.
+        * fast/dynamic/size-to-content-autosize-with-percent-document-height.html: Added.
+
 2020-07-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ MacOS Debug ] Layout Test webgl/2.0.0/conformance2/textures/misc/tex-unpack-params.html is flaky timeout
