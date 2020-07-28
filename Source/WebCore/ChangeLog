@@ -1,3 +1,33 @@
+2020-07-28  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] Crash in Nicosia::GC3DLayer::makeContextCurrent due to failure in EGL display creation
+        https://bugs.webkit.org/show_bug.cgi?id=201507
+
+        Reviewed by Carlos Garcia Campos.
+
+        Ensure that EGL context and display creation failures are always
+        logged using RELEASE_LOG_INFO(), even for intermediate failures for
+        which a fallback will be tried next, in order to ease diagnosis of
+        related issues. Failure to create contexts at the end of the public
+        methods ::createContext() and ::createSharingContext() is still
+        logged with WTFLogAlways() to write a notice to standard error, and
+        let users/developers know that something failed and checking the
+        complete logs (e.g. with "journalctl" on Linux) may reveal more
+        information.
+
+        This also replaces the chains of "if" statements with a single
+        "switch" on the PlatformDisplay::Type enum, which makes the code
+        easier to follow and should be more robust as well.
+
+        No new tests needed.
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::getEGLConfig):
+        (WebCore::GLContextEGL::createWindowContext):
+        (WebCore::GLContextEGL::createSurfacelessContext):
+        (WebCore::GLContextEGL::createContext):
+        (WebCore::GLContextEGL::createSharingContext):
+
 2020-07-28  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Use GST_PLUGIN_FEATURE_RANK env var to have Thunder ranked higher in runtime instead of current custom one
