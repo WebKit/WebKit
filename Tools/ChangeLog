@@ -1,3 +1,13 @@
+2020-07-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Add macOS Big Sur support in PrintConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=214903
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (PrintConfiguration.convert_build_to_os_name):
+
 2020-07-28  Jonathan Bedard  <jbedard@apple.com>
 
         [build.webkit.org] Add Big Sur builder
