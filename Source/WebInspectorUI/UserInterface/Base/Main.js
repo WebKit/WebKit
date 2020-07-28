@@ -147,14 +147,14 @@ WI.loaded = function()
     WI._showingSplitConsoleSetting = new WI.Setting("showing-split-console", false);
     WI._openTabsSetting = new WI.Setting("open-tab-types", [
         WI.ElementsTabContentView.Type,
-        WI.NetworkTabContentView.Type,
+        WI.ConsoleTabContentView.Type,
         WI.SourcesTabContentView.Type,
+        WI.NetworkTabContentView.Type,
         WI.TimelineTabContentView.Type,
         WI.StorageTabContentView.Type,
         WI.GraphicsTabContentView.Type,
         WI.LayersTabContentView.Type,
         WI.AuditTabContentView.Type,
-        WI.ConsoleTabContentView.Type,
     ]);
     WI._selectedTabIndexSetting = new WI.Setting("selected-tab-index", 0);
 
