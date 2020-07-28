@@ -1,3 +1,19 @@
+2020-07-28  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: isSymbol() in Source/JavaScriptCore/runtime/JSCell.cpp(188)
+        https://bugs.webkit.org/show_bug.cgi?id=214837
+
+        Reviewed by Darin Adler.
+
+        The issue found by this bug was that jsc shell test properties were enumerable.
+        These properties are only meant for test development use.  They will never be
+        present in a productized JavaScript environment.
+
+        This patch helps reduce the change of users of the jsc shell tripping up on these
+        test properties when enumerating the global object.
+
+        * jsc.cpp:
+
 2020-07-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         IndexedDB binding utilities miss exception checks
