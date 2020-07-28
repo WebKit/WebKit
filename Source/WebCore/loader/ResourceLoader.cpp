@@ -123,29 +123,17 @@ void ResourceLoader::releaseResources()
 
 void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<void(bool)>&& completionHandler)
 {
-#if PLATFORM(IOS_FAMILY)
-    if (!m_documentLoader) {
-        // We should always have a DocumentLoader at this point, but crash reports indicate that it is sometimes null.
-        // See https://bugs.webkit.org/show_bug.cgi?id=187360
-        ASSERT_NOT_REACHED();
+    if (!m_documentLoader || !m_documentLoader->frame()) {
+        cancel();
         return completionHandler(false);
     }
-#endif
+
     ASSERT(!m_handle);
     ASSERT(m_request.isNull());
     ASSERT(m_deferredRequest.isNull());
     ASSERT(!m_documentLoader->isSubstituteLoadPending(this));
     
     m_loadTiming.markStartTimeAndFetchStart();
-
-#if PLATFORM(IOS_FAMILY)
-    // If the documentLoader was detached while this ResourceLoader was waiting its turn
-    // in ResourceLoadScheduler queue, don't continue.
-    if (!m_documentLoader->frame()) {
-        cancel();
-        return completionHandler(false);
-    }
-#endif
     
     m_defersLoading = m_options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && m_frame->page()->defersLoading();
 
@@ -645,7 +633,8 @@ void ResourceLoader::cancel(const ResourceError& error)
         if (m_handle)
             m_handle->clearAuthentication();
 
-        m_documentLoader->cancelPendingSubstituteLoad(this);
+        if (m_documentLoader)
+            m_documentLoader->cancelPendingSubstituteLoad(this);
         if (m_handle) {
             m_handle->cancel();
             m_handle = nullptr;

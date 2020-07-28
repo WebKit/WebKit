@@ -1,3 +1,14 @@
+2020-07-28  Alex Christensen  <achristensen@webkit.org>
+
+        Add null checks in ResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=214786
+        <rdar://problem/61106685>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::getResourceBytesAtPosition):
+
 2020-07-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Support for backdrop-filter

@@ -964,6 +964,8 @@ void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, Complet
 #endif
 
     WebProcess::singleton().webLoaderStrategy().schedulePluginStreamLoad(*coreFrame, *this, WTFMove(resourceRequest), [this, protectedThis = makeRef(*this), identifier] (RefPtr<WebCore::NetscapePlugInStreamLoader>&& loader) {
+        if (!loader)
+            return;
         auto iterator = m_outstandingByteRangeRequests.find(identifier);
         if (iterator == m_outstandingByteRangeRequests.end()) {
             loader->cancel(loader->cancelledError());
