@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing H.264 high with various resolutions</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <script src ="routines.js"></script>
+        <script>
+const resolutions = [
+ [320, 240],
+ [640, 480],
+ [1024, 768],
+ [1280, 960],
+ [1600, 1200],
+
+ [320, 180],
+ [640, 360],
+ [1280, 720],
+ [1920, 1080]
+];
+
+function setH264HighCodec(sdp)
+{
+    const lines = sdp.split('\r\n');
+    const h264Lines = lines.filter(line => line.indexOf("a=fmtp") === 0 && line.indexOf("640c1f") !== -1);
+    const baselineNumber = h264Lines[0].substring(6).split(' ')[0];
+    return lines.filter(line => {
+        return (line.indexOf('a=fmtp') === -1 && line.indexOf('a=rtcp-fb') === -1 && line.indexOf('a=rtpmap') === -1) || line.indexOf(baselineNumber) !== -1;
+    }).join('\r\n');
+}
+
+async function waitForVideoSize(width, height)
+{
+    let counter = 0;
+    while (++counter < 50 && video.videoWidth != width && video.videoHeight != height)
+        await waitFor(200);
+
+    if (counter === 20)
+        return Promise.reject("Video size not expected : " + video.videoWidth + " " + video.videoHeight);
+}
+
+let pc1, pc2;
+let localVideoTrack;
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    localVideoTrack = localStream.getVideoTracks()[0];
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            pc1 = firstConnection;
+            firstConnection.addTrack(localVideoTrack, localStream);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        }, { observeOffer : (offer) => {
+            offer.sdp = setH264HighCodec(offer.sdp);
+            return offer;
+        }
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    await video.play();
+}, "High video exchange");
+
+resolutions.forEach(resolution => {
+    promise_test(async (test) => {
+        await localVideoTrack.applyConstraints({ width : resolution[0], height : resolution[1] });
+        return waitForVideoSize(resolution[0], resolution[1]);
+    }, "Video resolution test: " + resolution[0] + " " + resolution[1]);
+});
+
+resolutions.forEach(resolution => {
+    promise_test(async (test) => {
+        const parameters = pc1.getSenders()[0].getParameters();
+        parameters.encodings[0].maxBitrate = 100000;
+        pc1.getSenders()[0].setParameters(parameters);
+
+        await localVideoTrack.applyConstraints({ width : resolution[0], height : resolution[1] });
+        return waitForVideoSize(resolution[0], resolution[1]);
+    }, "Video resolution test with maxBitrate: " + resolution[0] + " " + resolution[1]);
+});
+        </script>
+    </body>
+</html>

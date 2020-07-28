@@ -1,3 +1,18 @@
+2020-07-28  Youenn Fablet  <youenn@apple.com>
+
+        Add WebRTC tests exercising H264 with various resolutions and bitrates.
+        https://bugs.webkit.org/show_bug.cgi?id=214867
+
+        Reviewed by Eric Carlson.
+
+        Add additional tests to better cover underlying H264 codecs.
+
+        * TestExpectations: Mark tests as slow.
+        * webrtc/h264-baseline-expected.txt: Added.
+        * webrtc/h264-baseline.html: Added.
+        * webrtc/h264-high-expected.txt: Added.
+        * webrtc/h264-high.html: Added.
+
 2020-07-28  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Enable more multiple render target layout tests
