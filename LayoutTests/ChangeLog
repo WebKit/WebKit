@@ -1,3 +1,14 @@
+2020-07-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App-Bound Domains code from WebKit Additions
+        https://bugs.webkit.org/show_bug.cgi?id=214889
+        <rdar://problem/66075857>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/ios-wk2/TestExpectations:
+        These tests are now expected to pass.
+
 2020-07-28  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (r264522): [ macOS wk1 ] imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html is a flaky failure

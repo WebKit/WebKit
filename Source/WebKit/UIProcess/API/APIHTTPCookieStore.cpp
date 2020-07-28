@@ -26,6 +26,10 @@
 #include "config.h"
 #include "APIHTTPCookieStore.h"
 
+#if PLATFORM(IOS_FAMILY)
+#include "DefaultWebBrowserChecks.h"
+#endif
+
 #include "WebCookieManagerProxy.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
@@ -34,12 +38,6 @@
 #include <WebCore/CookieStorage.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/NetworkStorageSession.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/HTTPCookieStoreAdditions.h>
-#else
-#define IMPLEMENT_IN_APP_BROWSER_PRIVACY_ENABLED false
-#endif
 
 using namespace WebKit;
 
@@ -66,7 +64,7 @@ void HTTPCookieStore::filterAppBoundCookies(const Vector<WebCore::Cookie>& cooki
     Vector<WebCore::Cookie> appBoundCookies;
 #if PLATFORM(IOS_FAMILY)
     m_owningDataStore->getAppBoundDomains([cookies, appBoundCookies = WTFMove(appBoundCookies), completionHandler = WTFMove(completionHandler)] (auto& domains) mutable {
-        if (!domains.isEmpty() && IMPLEMENT_IN_APP_BROWSER_PRIVACY_ENABLED) {
+        if (!domains.isEmpty() && !isFullWebBrowser()) {
             for (auto& cookie : cookies) {
                 if (domains.contains(WebCore::RegistrableDomain::uncheckedCreateFromHost(cookie.domain)))
                     appBoundCookies.append(cookie);
