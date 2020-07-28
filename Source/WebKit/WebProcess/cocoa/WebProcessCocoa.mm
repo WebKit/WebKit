@@ -25,7 +25,6 @@
 
 #import "config.h"
 #import "WebProcess.h"
-#import "WebProcessCocoa.h"
 
 #import "LaunchServicesDatabaseManager.h"
 #import "LaunchServicesDatabaseXPCConstants.h"
@@ -38,7 +37,6 @@
 #import "SandboxInitializationParameters.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
-#import "WKCrashReporter.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WKTypeRefWrapper.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
@@ -819,12 +817,6 @@ void WebProcess::destroyRenderingResources()
     MonotonicTime endTime = MonotonicTime::now();
 #endif
     RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "destroyRenderingResources: took %.2fms", (endTime - startTime).milliseconds());
-}
-
-// FIXME: This should live somewhere else, and it should have the implementation in line instead of calling out to WKSI.
-void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString)
-{
-    return setCrashReportApplicationSpecificInformation((__bridge CFStringRef)infoString);
 }
 
 #if PLATFORM(IOS_FAMILY)

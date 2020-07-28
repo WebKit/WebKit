@@ -65,7 +65,6 @@
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
-#import <WebKit/WKCrashReporter.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKString.h>
 #import <WebKit/WKStringCF.h>
@@ -99,6 +98,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 #import <wtf/UniqueArray.h>
+#import <wtf/cocoa/CrashReporter.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
@@ -1645,9 +1645,9 @@ static void dumpBackForwardListForWebView(WebView *view)
 }
 
 #if !PLATFORM(IOS_FAMILY)
-static void changeWindowScaleIfNeeded(const char* testPathOrUR)
+static void changeWindowScaleIfNeeded(const char* testPathOrUrl)
 {
-    WTF::String localPathOrUrl = String(testPathOrUR);
+    auto localPathOrUrl = String(testPathOrUrl);
     float currentScaleFactor = [[[mainFrame webView] window] backingScaleFactor];
     float requiredScaleFactor = 1;
     if (localPathOrUrl.containsIgnoringASCIICase("/hidpi-3x-"))
@@ -2031,8 +2031,8 @@ static void runTest(const string& inputLine)
     if (!testPath)
         testPath = [url absoluteString];
 
-    NSString *informationString = [@"CRASHING TEST: " stringByAppendingString:testPath];
-    WebKit::setCrashReportApplicationSpecificInformation((__bridge CFStringRef)informationString);
+    auto message = makeString("CRASHING TEST: ", testPath.UTF8String);
+    WTF::setCrashLogMessage(message.utf8().data());
 
     TestOptions options { [url isFileURL] ? [url fileSystemRepresentation] : pathOrURL, command.absolutePath };
 

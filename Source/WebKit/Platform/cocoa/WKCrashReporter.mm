@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +31,10 @@
 
 namespace WebKit {
 
-void setCrashReportApplicationSpecificInformation(CFStringRef infoString)
+void logAndSetCrashLogMessage(const char* infoString)
 {
-    WTF::setCrashLogMessage([(__bridge NSString *)infoString UTF8String]);
+    WTFLogAlways("%s", infoString);
+    WTF::setCrashLogMessage(infoString);
 }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,9 +24,9 @@
  */
 
 #import "config.h"
-#import "WebProcessCocoa.h"
-#import "XPCServiceEntryPoint.h"
 
+#import "WKCrashReporter.h"
+#import "XPCServiceEntryPoint.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
@@ -156,8 +156,8 @@ int XPCServiceMain(int argc, const char** argv)
         String webKitBundleVersion = xpc_dictionary_get_string(bootstrap.get(), "WebKitBundleVersion");
         String expectedBundleVersion = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].infoDictionary[(__bridge NSString *)kCFBundleVersionKey];
         if (!webKitBundleVersion.isNull() && !expectedBundleVersion.isNull() && webKitBundleVersion != expectedBundleVersion) {
-            WTFLogAlways("WebKit framework version mismatch: %s != %s", webKitBundleVersion.utf8().data(), expectedBundleVersion.utf8().data());
-            _WKSetCrashReportApplicationSpecificInformation([NSString stringWithFormat:@"WebKit framework version mismatch: '%s'", webKitBundleVersion.utf8().data()]);
+            auto errorMessage = makeString("WebKit framework version mismatch: ", webKitBundleVersion, " != ", expectedBundleVersion);
+            logAndSetCrashLogMessage(errorMessage.utf8().data());
             crashDueWebKitFrameworkVersionMismatch();
         }
 #endif

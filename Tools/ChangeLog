@@ -1,3 +1,31 @@
+2020-07-27  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit::setCrashReportApplicationSpecificInformation() should also log to WTFLogAlways()
+        <https://webkit.org/b/214756>
+        <rdar://problem/66085705>
+
+        Reviewed by Darin Adler.
+
+        This also makes the following changes:
+        - Replaces _WKSetCrashReportApplicationSpecificInformation()
+          with WebKit::setCrashReportApplicationSpecificInformation().
+        - Calls WTF::setCrashLogMessage() in DumpRenderTree and
+          WebKitTestRunner to avoid new WTFLogAlways() calls, which
+          broke internal tests and caused the first patch to be rolled
+          out.
+        - Changes WebKit::setCrashReportApplicationSpecificInformation()
+          to take a const char* argument instead of CFStringRef.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (changeWindowScaleIfNeeded):
+        - Drive-by fix for misspelling in parameter name.
+        (runTest):
+        * WebKitTestRunner/cocoa/CrashReporterInfo.mm:
+        (WTR::setCrashReportApplicationSpecificInformationToURL):
+        - Switch from calling
+          WebKit::setCrashReportApplicationSpecificInformation() to
+          calling WTF::setCrashLogMessage() directly.
+
 2020-07-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add test expectations and baselines for iOS 14

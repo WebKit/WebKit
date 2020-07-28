@@ -36,6 +36,7 @@
 #import <mach/mach_error.h>
 #import <mach/vm_map.h>
 #import <sys/mman.h>
+#import <wtf/HexNumber.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/RunLoop.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -273,8 +274,11 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
         return false;
 
     default:
-        WebKit::setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Unhandled error code %x, message '%s' (%hu)", kr, description(message->messageName()), message->messageName()]);
-        CRASH_WITH_INFO(kr, static_cast<std::underlying_type_t<IPC::MessageName>>(message->messageName()));
+        auto messageName = message->messageName();
+        auto messageNameValue = static_cast<std::underlying_type_t<IPC::MessageName>>(messageName);
+        auto errorMessage = makeString("Unhandled error code 0x", hex(kr), ", message '", description(messageName), "' (", messageNameValue, ')');
+        WebKit::logAndSetCrashLogMessage(errorMessage.utf8().data());
+        CRASH_WITH_INFO(kr, messageNameValue);
     }
 }
 
@@ -490,7 +494,8 @@ static mach_msg_header_t* readFromMachPort(mach_port_t machPort, ReceiveBuffer& 
 
     if (kr != MACH_MSG_SUCCESS) {
 #if ASSERT_ENABLED
-        WebKit::setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Unhandled error code %x from mach_msg, receive port is %x", kr, machPort]);
+        auto errorMessage = makeString("Unhandled error code 0x", hex(kr), " from mach_msg, receive port is 0x", hex(machPort));
+        WebKit::logAndSetCrashLogMessage(errorMessage.utf8().data());
 #endif
         ASSERT_NOT_REACHED();
         return nullptr;

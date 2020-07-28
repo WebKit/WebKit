@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,10 @@ namespace WebKit {
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
 {
-    setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Received invalid message: '%s' (%hu)", description(messageName), messageName]);
-    CRASH_WITH_INFO(static_cast<std::underlying_type_t<IPC::MessageName>>(messageName));
+    auto messageNameValue = static_cast<std::underlying_type_t<IPC::MessageName>>(messageName);
+    auto errorMessage = makeString("Received invalid message: '", description(messageName), "' (", messageNameValue, ')');
+    logAndSetCrashLogMessage(errorMessage.utf8().data());
+    CRASH_WITH_INFO(messageNameValue);
 }
 
 bool AuxiliaryProcess::parentProcessHasEntitlement(const char* entitlement)

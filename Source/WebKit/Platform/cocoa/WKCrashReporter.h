@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,6 @@
 
 namespace WebKit {
 
-WK_EXPORT void setCrashReportApplicationSpecificInformation(CFStringRef);
+WK_EXPORT void logAndSetCrashLogMessage(const char*);
 
 }

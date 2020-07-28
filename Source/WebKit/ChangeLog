@@ -1,3 +1,58 @@
+2020-07-27  David Kilzer  <ddkilzer@apple.com>
+
+        WebKit::setCrashReportApplicationSpecificInformation() should also log to WTFLogAlways()
+        <https://webkit.org/b/214756>
+        <rdar://problem/66085705>
+
+        Reviewed by Darin Adler.
+
+        This also makes the following changes:
+        - Renames setCrashReportApplicationSpecificInformation() to
+          logAndSetCrashLogMessage().
+        - Replaces _WKSetCrashReportApplicationSpecificInformation()
+          with WebKit::logAndSetCrashLogMessage().
+        - Calls WTF::setCrashLogMessage() in DumpRenderTree and
+          WebKitTestRunner to avoid new WTFLogAlways() calls, which
+          broke internal tests and caused the first patch to be rolled
+          out.
+        - Changes WebKit::logAndSetCrashLogMessage() to take a
+          const char* argument instead of CFStringRef.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::sendMessage):
+        (IPC::readFromMachPort):
+        - Update call to logAndSetCrashLogMessage() to pass const char*
+          value.
+
+        * Platform/cocoa/WKCrashReporter.h:
+        (WebKit::logAndSetCrashLogMessage):
+        - Rename from setCrashReportApplicationSpecificInformation().
+        - Update function signature to use `const char*`.
+        * Platform/cocoa/WKCrashReporter.mm:
+        (WebKit::logAndSetCrashLogMessage):
+        - Rename from setCrashReportApplicationSpecificInformation().
+        - Update function signature to use `const char*`.
+        - Call WTFLogAlways() in addition to setting the Application
+          Specific Information.
+
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::didReceiveInvalidMessage):
+        - Update call to logAndSetCrashLogMessage() to pass const char*
+          value.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceMain):
+        - Update call to logAndSetCrashLogMessage() instead of both
+          WTFLogAlways() and
+          _WKSetCrashReportApplicationSpecificInformation().
+
+        * WebKit.xcodeproj/project.pbxproj:
+        - Remove WebProcessCocoa.h from the project.
+        * WebProcess/cocoa/WebProcessCocoa.h: Remove.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::_WKSetCrashReportApplicationSpecificInformation): Delete.
+
 2020-07-27  Tim Horton  <timothy_horton@apple.com>
 
         Occasional crashes under PDFPlugin::createScrollbar and PDFPlugin::updateScrollbars
