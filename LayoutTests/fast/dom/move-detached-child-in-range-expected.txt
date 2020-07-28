@@ -1,1 +1,1 @@
-Final end container, offset: [object HTMLHeadingElement], 1
+Final end container, offset: [object HTMLHeadingElement], 0
