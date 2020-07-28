@@ -1,3 +1,18 @@
+2020-07-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC][wasm] Truncating slightly less than INT32_MIN is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=214834
+
+        Reviewed by Darin Adler.
+
+        Wasm trunc_f64_s should handle (INT32_MIN - 1.0, INT32_MIN) range too.
+
+        * llint/WebAssembly.asm:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::I32TruncSF64>):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addOp<OpType::I32TruncSF64>):
+
 2020-07-28  Mark Lam  <mark.lam@apple.com>
 
         ASSERTION FAILED: isSymbol() in Source/JavaScriptCore/runtime/JSCell.cpp(188)

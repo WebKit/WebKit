@@ -1102,7 +1102,7 @@ end)
 wasmOp(i32_trunc_s_f32, WasmI32TruncSF32, macro (ctx)
     mloadf(ctx, m_operand, ft0)
 
-    move 0xcf000000, t0 # INT32_MIN
+    move 0xcf000000, t0 # INT32_MIN (Note that INT32_MIN - 1.0 in float is the same as INT32_MIN in float).
     fi2f t0, ft1
     bfltun ft0, ft1, .outOfBoundsTrunc
 
@@ -1120,9 +1120,9 @@ end)
 wasmOp(i32_trunc_s_f64, WasmI32TruncSF64, macro (ctx)
     mloadd(ctx, m_operand, ft0)
 
-    move 0xc1e0000000000000, t0 # INT32_MIN
+    move 0xc1e0000000200000, t0 # INT32_MIN - 1.0
     fq2d t0, ft1
-    bdltun ft0, ft1, .outOfBoundsTrunc
+    bdltequn ft0, ft1, .outOfBoundsTrunc
 
     move 0x41e0000000000000, t0 # -INT32_MIN
     fq2d t0, ft1
