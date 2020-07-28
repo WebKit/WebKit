@@ -3042,6 +3042,7 @@ webkit.org/b/198543 imported/w3c/web-platform-tests/css/css-text/line-break/line
 # unsupported
 fast/dynamic/mail-autosize-viewport-unit.html [ Failure ]
 fast/dynamic/size-to-content-autosize-with-viewport-units.html [ Failure ]
+fast/dynamic/size-to-content-autosize-with-percent-document-height.html [ Failure ]
 
 # LFC
 fast/block/basic/inline-content-with-floating-image.html [ Failure ]

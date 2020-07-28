@@ -10,6 +10,8 @@ html {
 <script>
 if (window.internals)
     internals.enableSizeToContentAutoSizeMode(true, 200, 600);
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 </head>
 <body style="height: 100%;">
@@ -22,4 +24,9 @@ if (window.internals)
     </div>
 </div>
 </body>
+<script>
+document.body.innerText = "PASS if body is 200px: " + document.body.offsetHeight;
+if (window.internals)
+    internals.enableSizeToContentAutoSizeMode(false, 0, 0, 0, 0);
+</script>
 </html>

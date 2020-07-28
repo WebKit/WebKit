@@ -1,3 +1,20 @@
+2020-07-28  Zalan Bujtas  <zalan@apple.com>
+
+        Regression (r264960): [mac-wk1] fast/dynamic/size-to-content-autosize-with-percent-document-height.html is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=214885
+        <rdar://problem/66218218>
+
+        Unreviewed.
+
+        Make the autosizing test case work with WK1.
+
+        * fast/dynamic/size-to-content-autosize-with-percent-document-height-expected.html: Removed.
+        * fast/dynamic/size-to-content-autosize-with-percent-document-height-expected.txt: Added.
+        * fast/dynamic/size-to-content-autosize-with-percent-document-height.html:
+        * platform/glib/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2020-07-28  Youenn Fablet  <youenn@apple.com>
 
         Add WebRTC tests exercising H264 with various resolutions and bitrates.
