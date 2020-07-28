@@ -127,3 +127,5 @@ webkit.org/b/214873 http/tests/xmlhttprequest/methods-async.html [ Pass Failure 
 webkit.org/b/214873 http/tests/xmlhttprequest/methods.html [ Pass Failure ]
 webkit.org/b/214873 http/tests/xmlhttprequest/workers/methods-async.html [ Pass Failure ]
 webkit.org/b/214873 http/tests/xmlhttprequest/workers/methods.html [ Pass Failure ]
+
+webkit.org/b/214877 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]

@@ -1,5 +1,14 @@
 2020-07-28  Karl Rackler  <rackler@apple.com>
 
+        REGRESSION (r262539): [ iOS wk2 ] imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214877
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2020-07-28  Karl Rackler  <rackler@apple.com>
+
         REGRESSION: (r264950): [ iOS wk2 ] broke 4 xmlhttprequest tests 
         https://bugs.webkit.org/show_bug.cgi?id=214873
 
