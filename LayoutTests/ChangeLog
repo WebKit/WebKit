@@ -1,3 +1,12 @@
+2020-07-28  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION: (r264492) Broke 4 WebRTC tests and 1 webrtc tests
+        https://bugs.webkit.org/show_bug.cgi?id=214730
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK gardening. Rebaseline tests after r264968
