@@ -1,3 +1,19 @@
+2020-07-28  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r262716) Web Inspector: start button is misaligned in Audit content view
+        https://bugs.webkit.org/show_bug.cgi?id=214891
+
+        Reviewed by Devin Rousso.
+
+        In r262716, a rendering defect related to flexbox was fixed. Web Inspector
+        layout inadvertently relied on the defect. Now that it's fixed, a CSS rule is
+        pushing the outline for navigation help buttons out of vertical alignment
+        with surrounding textt.
+
+        * UserInterface/Views/Main.css:
+        (.navigation-item-help): Remove line-height. It was previously ignored
+        due to a layout bug, and now its presence messes up vertical alignment.
+
 2020-07-27  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Change default tab order to display most commonly used tabs first

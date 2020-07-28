@@ -225,7 +225,6 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
 
 .navigation-item-help {
     display: block;
-    line-height: 22px;
 }
 
 .navigation-item-help > .navigation-bar {
