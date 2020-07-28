@@ -303,7 +303,7 @@ Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElemen
     URL upgradedRequestURL = requestURL;
     initiatingDocument.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(upgradedRequestURL, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    auto* frame = ownerElement.contentFrame();
+    RefPtr<Frame> frame = makeRefPtr(ownerElement.contentFrame());
     if (frame)
         frame->navigationScheduler().scheduleLocationChange(initiatingDocument, initiatingDocument.securityOrigin(), upgradedRequestURL, m_frame.loader().outgoingReferrer(), lockHistory, lockBackForwardList);
     else
@@ -316,7 +316,7 @@ Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement& ownerElemen
     return ownerElement.contentFrame();
 }
 
-Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const String& name, const String& referrer)
+RefPtr<Frame> SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const URL& url, const String& name, const String& referrer)
 {
     Ref<Frame> protect(m_frame);
     auto document = makeRef(ownerElement.document());
@@ -376,7 +376,10 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement& ownerElement, const U
     if (frame->loader().state() == FrameStateComplete && !frame->loader().policyDocumentLoader())
         frame->loader().checkCompleted();
 
-    return frame.get();
+    if (!frame->tree().parent())
+        return nullptr;
+
+    return frame;
 }
 
 bool SubframeLoader::allowPlugins()
