@@ -45,6 +45,7 @@
 #include "SVGViewSpec.h"
 #include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
@@ -53,7 +54,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGRoot);
 
 RenderSVGRoot::RenderSVGRoot(SVGSVGElement& element, RenderStyle&& style)
     : RenderReplaced(element, WTFMove(style))
-    , m_objectBoundingBoxValid(false)
     , m_isLayoutSizeChanged(false)
     , m_needsBoundariesOrTransformUpdate(true)
     , m_hasBoxDecorations(false)
@@ -140,6 +140,7 @@ LayoutUnit RenderSVGRoot::computeReplacedLogicalHeight(Optional<LayoutUnit> esti
 
 void RenderSVGRoot::layout()
 {
+    SetForScope<bool> change(m_inLayout, true);
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
