@@ -39,8 +39,8 @@ import sys
 import codecs
 
 from webkitpy.common.system.logutils import configure_logging
-from webkitpy.common.unicode_compatibility import decode_if_necessary, unicode
 from webkitpy.tool.main import WebKitPatch
+from webkitcorepy import string_utils, unicode
 
 # If our str type isn't unicode, we need to standardize output format
 if str != unicode:
@@ -53,7 +53,7 @@ if str != unicode:
     # input that it can handle.
     class ForgivingUTF8Writer(codecs.lookup('utf-8')[-1]):
         def write(self, value):
-            return codecs.StreamWriter.write(self, decode_if_necessary(value))
+            return codecs.StreamWriter.write(self, string_utils.decode(value, target_type=str))
 
     # By default, sys.stdout assumes ascii encoding.  Since our messages can
     # contain unicode strings (as with some peoples' names) we need to apply

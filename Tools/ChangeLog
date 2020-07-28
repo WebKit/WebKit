@@ -1,3 +1,14 @@
+2020-07-28  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add string_utils (Part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=214405
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkit-patch:
+        (ForgivingUTF8Writer.write): Replace unicode_compatibility with string_utils.
+        * Scripts/webkitpy/common/unicode_compatibility.py: Removed.
+
 2020-07-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Drag and drop does not preserve file names that contain periods
