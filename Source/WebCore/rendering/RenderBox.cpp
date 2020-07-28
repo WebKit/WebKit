@@ -3249,7 +3249,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
 
 LayoutUnit RenderBox::availableLogicalHeight(AvailableLogicalHeightType heightType) const
 {
-    return constrainLogicalHeightByMinMax(availableLogicalHeightUsing(style().logicalHeight(), heightType), WTF::nullopt);
+    return constrainContentBoxLogicalHeightByMinMax(availableLogicalHeightUsing(style().logicalHeight(), heightType), WTF::nullopt);
 }
 
 LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogicalHeightType heightType) const

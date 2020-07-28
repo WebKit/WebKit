@@ -1,3 +1,24 @@
+2020-07-28  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Fix 'align-content' in grid containers with small content area
+        https://bugs.webkit.org/show_bug.cgi?id=214370
+
+        Reviewed by Darin Adler.
+
+        In order to properly obey 'align-content', grid containers need to know
+        the available grid space for the block axis. But there was a bug when
+        the sum of border and padding sizes in the block axis were bigger than
+        the content area. Then the available space was considered to be that sum.
+
+        This patch fixes it so that the available grid space is the size of its
+        content box when that is definite.
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/alignment/grid-place-content-001.html
+               imported/w3c/web-platform-tests/css/css-sizing/available-height-for-replaced-content-001.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::availableLogicalHeight const):
+
 2020-07-28  Peng Liu  <peng.liu6@apple.com>
 
         Clean up PlaybackSessionInterface[Mac|AVKit]

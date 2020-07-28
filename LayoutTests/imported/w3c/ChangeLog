@@ -1,3 +1,18 @@
+2020-07-28  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Fix 'align-content' in grid containers with small content area
+        https://bugs.webkit.org/show_bug.cgi?id=214370
+
+        Reviewed by Darin Adler.
+
+        Create a WPT test and import another one.
+
+        * web-platform-tests/css/css-grid/alignment/grid-place-content-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-place-content-001.html: Added.
+        * web-platform-tests/css/css-sizing/available-height-for-replaced-content-001-expected.txt: Added.
+        * web-platform-tests/css/css-sizing/available-height-for-replaced-content-001.html: Added.
+        * web-platform-tests/css/css-sizing/w3c-import.log:
+
 2020-07-28  Chris Dumez  <cdumez@apple.com>
 
         [EventSource] WebKit fails to UTF-8 encode the Last-Event-ID HTTP header value
