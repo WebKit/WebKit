@@ -1,3 +1,9 @@
+2020-07-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, remove duplicate TestExpectations entry.
+
+        * platform/win/TestExpectations:
+
 2020-07-28  Karl Rackler  <rackler@apple.com>
 
         [ Win10 ] http/tests/cookies/document-cookie-multiple-cookies.html is failing on Windows
