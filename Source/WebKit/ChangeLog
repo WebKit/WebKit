@@ -1,3 +1,42 @@
+2020-07-28  Tim Horton  <timothy_horton@apple.com>
+
+        Web Share API Level 2: Can only perform one share action per share sheet invocation
+        https://bugs.webkit.org/show_bug.cgi?id=214894
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests; our WKShareSheet testing mechanism intentionally bypasses
+        actually presenting the share sheet, which is the only way to test this.
+
+        WKShareSheet assumes that UIActivityViewController's completionWithItemsHandler
+        is only called once, when the share sheet is dismissed, and uses it to 
+        clean up the temporary file written to disk, and send the success state
+        to the API.
+
+        However, it is actually called per share action, of which an arbitrary number
+        can be performed per UIActivityViewController invocation.
+
+        Defer cleanup until the share sheet is actually dismissed (which we observe
+        using UIAdaptivePresentationControllerDelegate's -presentationControllerDidDismiss: callback),
+        and respond to the Web Share API with success if *any* attempted share action
+        succeeded.
+
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        (-[WKShareSheet presentWithParameters:inRect:completionHandler:]):
+        (-[WKShareSheet presentWithShareDataArray:inRect:]):
+        (-[WKShareSheet sharingServicePicker:didChooseSharingService:]):
+        (-[WKShareSheet sharingService:didFailToShareItems:error:]):
+        (-[WKShareSheet sharingService:didShareItems:]):
+        (-[WKShareSheet presentationControllerDidDismiss:]):
+        (-[WKShareSheet dismiss]):
+        Fold dispatchDidDismiss and _didCompleteWithSuccess into -dismiss,
+        so we only have one "dismiss if needed and also do the requisite cleanup"
+        path. -dismiss should only be called when it is no longer possible to do
+        additional sharing actions for the current share sheet invocation.
+
+        (-[WKShareSheet _didCompleteWithSuccess:]): Deleted.
+        (-[WKShareSheet dispatchDidDismiss]): Deleted.
+
 2020-07-28  Timothy Hatcher  <timothy@apple.com>
 
         Web Inspector: Don't allow docking to a hidden web view

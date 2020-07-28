@@ -48,6 +48,9 @@
 #if PLATFORM(MAC)
 @interface WKShareSheet () <NSSharingServiceDelegate, NSSharingServicePickerDelegate>
 @end
+#else
+@interface WKShareSheet () <UIAdaptivePresentationControllerDelegate>
+@end
 #endif
 
 @implementation WKShareSheet {
@@ -62,6 +65,8 @@
     RetainPtr<UIActivityViewController> _shareSheetViewController;
     RetainPtr<UIViewController> _presentationViewController;
 #endif
+
+    BOOL _didShareSuccessfully;
 }
 
 - (id<WKShareSheetDelegate>)delegate
@@ -106,7 +111,7 @@
     _completionHandler = WTFMove(completionHandler);
 
     if (auto resolution = [_webView _resolutionForShareSheetImmediateCompletionForTesting]) {
-        [self _didCompleteWithSuccess:*resolution];
+        _didShareSuccessfully = *resolution;
         [self dismiss];
         return;
     }
@@ -136,7 +141,6 @@
         
         dispatch_group_notify(fileWriteGroup.get(), dispatch_get_main_queue(), ^{
             if (!successful) {
-                [self _didCompleteWithSuccess:NO];
                 [self dismiss];
                 return;
             }
@@ -151,7 +155,7 @@
 - (void)presentWithShareDataArray:(NSArray *)sharingItems inRect:(WTF::Optional<WebCore::FloatRect>)rect
 {
     WKWebView *webView = _webView.getAutoreleased();
-    
+
 #if PLATFORM(MAC)
     _sharingServicePicker = adoptNS([[NSSharingServicePicker alloc] initWithItems:sharingItems]);
     _sharingServicePicker.get().delegate = self;
@@ -172,16 +176,17 @@
 #else
     _shareSheetViewController = adoptNS([[UIActivityViewController alloc] initWithActivityItems:sharingItems applicationActivities:nil]);
     [_shareSheetViewController setCompletionWithItemsHandler:^(NSString *, BOOL completed, NSArray *, NSError *) {
-        [self _didCompleteWithSuccess:completed];
-        [self dispatchDidDismiss];
+        _didShareSuccessfully |= completed;
     }];
-    
+
     UIPopoverPresentationController *popoverController = [_shareSheetViewController popoverPresentationController];
     if (rect) {
         popoverController.sourceView = webView;
         popoverController.sourceRect = *rect;
     } else
         popoverController._centersPopoverIfSourceViewNotSet = YES;
+
+    [_shareSheetViewController presentationController].delegate = self;
 
     if ([_delegate respondsToSelector:@selector(shareSheet:willShowActivityItems:)])
         [_delegate shareSheet:self willShowActivityItems:sharingItems];
@@ -194,11 +199,8 @@
 #if PLATFORM(MAC)
 - (void)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker didChooseSharingService:(NSSharingService *)service
 {
-    if (service)
-        return;
-
-    [self _didCompleteWithSuccess:NO];
-    [self dispatchDidDismiss];
+    if (!service)
+        [self dismiss];
 }
 
 - (id <NSSharingServiceDelegate>)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker delegateForSharingService:(NSSharingService *)sharingService
@@ -213,25 +215,30 @@
 
 - (void)sharingService:(NSSharingService *)sharingService didFailToShareItems:(NSArray *)items error:(NSError *)error
 {
-    [self _didCompleteWithSuccess:NO];
-    [self dispatchDidDismiss];
+    [self dismiss];
 }
 
 - (void)sharingService:(NSSharingService *)sharingService didShareItems:(NSArray *)items
 {
-    [self _didCompleteWithSuccess:YES];
-    [self dispatchDidDismiss];
+    _didShareSuccessfully = YES;
+    [self dismiss];
 }
-
 #endif
 
-- (void)_didCompleteWithSuccess:(BOOL)success
+#if PLATFORM(IOS_FAMILY)
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
+    [self dismiss];
+}
+#endif
+
+- (void)dismiss
 {
     auto completionHandler = WTFMove(_completionHandler);
     if (completionHandler)
-        completionHandler(success);
+        completionHandler(_didShareSuccessfully);
     
-    if (success) {
+    if (_didShareSuccessfully) {
         // <rdar://problem/63030288>: didShareItems callback for NSSharingServiceDelegate currently is called
         // before the temporary files are copied, so we can't delete them here. UIActivityViewController doesn't
         // have this problem, so we can delete immediately for iOS.
@@ -242,17 +249,15 @@
         [[NSFileManager defaultManager] removeItemAtURL:_temporaryFileShareDirectory.get() error:nil];
 
     _temporaryFileShareDirectory = nullptr;
-}
 
-- (void)dismiss
-{
-    // If programmatically dismissed without having already called the
-    // completion handler, call it assuming failure.
-    [self _didCompleteWithSuccess:NO];
+    auto dispatchDidDismiss = ^{
+        if ([_delegate respondsToSelector:@selector(shareSheetDidDismiss:)])
+            [_delegate shareSheetDidDismiss:self];
+    };
 
 #if PLATFORM(MAC)
     [_sharingServicePicker hide];
-    [self dispatchDidDismiss];
+    dispatchDidDismiss();
 #else
     if (!_presentationViewController)
         return;
@@ -262,16 +267,10 @@
         return;
 
     [currentPresentedViewController dismissViewControllerAnimated:YES completion:^{
-        [self dispatchDidDismiss];
+        dispatchDidDismiss();
         _presentationViewController = nil;
     }];
 #endif
-}
-
-- (void)dispatchDidDismiss
-{
-    if ([_delegate respondsToSelector:@selector(shareSheetDidDismiss:)])
-        [_delegate shareSheetDidDismiss:self];
 }
 
 #if PLATFORM(MAC)
