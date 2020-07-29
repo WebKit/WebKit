@@ -1166,6 +1166,7 @@
 		F4F405BD1D4C0D1C007A9707 /* skinny-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */; };
 		F4F5BB5221667BAA002D06B9 /* TestFontOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4F5BB5121667BAA002D06B9 /* TestFontOptions.mm */; };
 		F4FA282A24CD012700618A46 /* FormValidation.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FA282924CD012700618A46 /* FormValidation.mm */; };
+		F4FA2A4F24D1F05700618A46 /* AttributedSubstringForProposedRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2A4E24D1F05700618A46 /* AttributedSubstringForProposedRange.mm */; };
 		F4FA91811E61849B007B8C1D /* WKWebViewMacEditingTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */; };
 		F4FA91831E61857B007B8C1D /* double-click-does-not-select-trailing-space.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4FA91821E618566007B8C1D /* double-click-does-not-select-trailing-space.html */; };
 		F4FC077720F013B600CA043C /* significant-text-milestone.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4FC077620F0108100CA043C /* significant-text-milestone.html */; };
@@ -2879,6 +2880,7 @@
 		F4F5BB5021667BAA002D06B9 /* TestFontOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestFontOptions.h; sourceTree = "<group>"; };
 		F4F5BB5121667BAA002D06B9 /* TestFontOptions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestFontOptions.mm; sourceTree = "<group>"; };
 		F4FA282924CD012700618A46 /* FormValidation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FormValidation.mm; sourceTree = "<group>"; };
+		F4FA2A4E24D1F05700618A46 /* AttributedSubstringForProposedRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedSubstringForProposedRange.mm; sourceTree = "<group>"; };
 		F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewMacEditingTests.mm; sourceTree = "<group>"; };
 		F4FA91821E618566007B8C1D /* double-click-does-not-select-trailing-space.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = "double-click-does-not-select-trailing-space.html"; path = "Tests/WebKitCocoa/double-click-does-not-select-trailing-space.html"; sourceTree = SOURCE_ROOT; };
 		F4FC077620F0108100CA043C /* significant-text-milestone.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "significant-text-milestone.html"; sourceTree = "<group>"; };
@@ -4337,6 +4339,7 @@
 				379028B514FABD92007E6B43 /* AcceptsFirstMouse.mm */,
 				55F9D2E42205031800A9AB38 /* AdditionalSupportedImageTypes.mm */,
 				B55F119F1516834F00915916 /* AttributedString.mm */,
+				F4FA2A4E24D1F05700618A46 /* AttributedSubstringForProposedRange.mm */,
 				00CD9F6215BE312C002DA2CE /* BackForwardList.mm */,
 				1C7FEB1F207C0F2D00D23278 /* BackgroundColor.mm */,
 				26DF5A5D15A29BAA003689C2 /* CancelLoadFromResourceLoadDelegate.mm */,
@@ -4936,6 +4939,7 @@
 				51B40D9E23AC962400E05241 /* AsyncFunction.mm in Sources */,
 				834138C7203261CA00F26960 /* AsyncPolicyForNavigationResponse.mm in Sources */,
 				7CCE7EB41A411A7E00447C4C /* AttributedString.mm in Sources */,
+				F4FA2A4F24D1F05700618A46 /* AttributedSubstringForProposedRange.mm in Sources */,
 				3760C4F1211249AF00233ACC /* AttrStyle.mm in Sources */,
 				CDED342F249DDE0E0002AE7A /* AudioRoutingArbitration.mm in Sources */,
 				CDC8E48D1BC5CB4500594FEC /* AudioSessionCategoryIOS.mm in Sources */,
@@ -5016,6 +5020,7 @@
 				7CCE7EE91A411AE600447C4C /* DidAssociateFormControls.cpp in Sources */,
 				7CCE7EEA1A411AE600447C4C /* DidNotHandleKeyDown.cpp in Sources */,
 				AD57AC211DA7465B00FF1BDE /* DidRemoveFrameFromHiearchyInPageCache.cpp in Sources */,
+				FEC2A85424CE975F00ADBC35 /* DisallowVMEntry.cpp in Sources */,
 				73BD731823A846500020F450 /* DisplayName.mm in Sources */,
 				518EE51B20A78D0000E024F3 /* DoAfterNextPresentationUpdateAfterCrash.mm in Sources */,
 				2D7FD19322419087007887F1 /* DocumentEditingContext.mm in Sources */,
@@ -5247,10 +5252,10 @@
 				CDA4438E21F7A47700379489 /* ProcessSuspendMediaBuffering.mm in Sources */,
 				83A2CFDE2481B3520018B2D3 /* ProcessSuspension.mm in Sources */,
 				518C1153205B0504001FF4AE /* ProcessSwapOnNavigation.mm in Sources */,
+				FEC2A85624CEB65F00ADBC35 /* PropertySlot.cpp in Sources */,
 				7C83E0C11D0A652F00FEBCF3 /* ProvisionalURLNotChange.mm in Sources */,
 				5CFACF65226FD2DC0056C7D0 /* Proxy.mm in Sources */,
 				041A1E34216FFDBC00789E0A /* PublicSuffix.cpp in Sources */,
-				FEC2A85424CE975F00ADBC35 /* DisallowVMEntry.cpp in Sources */,
 				7C83E0C21D0A653500FEBCF3 /* QuickLook.mm in Sources */,
 				6B4E861C2220A5520022F389 /* RegistrableDomain.cpp in Sources */,
 				7CCE7F0D1A411AE600447C4C /* ReloadPageAfterCrash.cpp in Sources */,
@@ -5435,7 +5440,6 @@
 				7C83E0B51D0A649300FEBCF3 /* WKRetainPtr.cpp in Sources */,
 				5E4B1D2E1D404C6100053621 /* WKScrollViewDelegate.mm in Sources */,
 				F43E3BBF20DADA1E00A4E7ED /* WKScrollViewTests.mm in Sources */,
-				FEC2A85624CEB65F00ADBC35 /* PropertySlot.cpp in Sources */,
 				4628C8E92367ABD100B073F0 /* WKSecurityOrigin.cpp in Sources */,
 				7CCE7F221A411AE600447C4C /* WKString.cpp in Sources */,
 				7CCE7F1E1A411AE600447C4C /* WKStringJSString.cpp in Sources */,

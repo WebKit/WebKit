@@ -1,3 +1,40 @@
+2020-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Inspector bar in Mail compose shows incorrect text alignment style for ranged selections
+        https://bugs.webkit.org/show_bug.cgi?id=214930
+        <rdar://problem/66185224>
+
+        Reviewed by Tim Horton.
+
+        When a range of text is selected, AppKit consults `-attributedSubstringForProposedRange:completionHandler:` (or
+        just `-attributedSubstringFromRange:` in WebKitLegacy) to update the inspector bar with new style information.
+        Among this information is the paragraph style (an `NSParagraphStyle` corresponding to the attribute key
+        `NSParagraphStyleAttributeName`), which AppKit uses to select either the left, center or right text alignment
+        segmented control.
+
+        However, in both WebKitLegacy and modern WebKit, we don't include this information at all in HTMLConverter,
+        so AppKit just defaults to using `-[NSParagraphStyle defaultParagraphStyle]`, with a default text alignment of
+        `NSTextAlignmentNatural`.
+
+        To fix this, include a new paragraph style object in the case where the text alignment is not equal to natural
+        (in other words, either a direction has been explicitly specified, or the text alignment style is not equal to
+        "start"). This paragraph style matches the default paragraph style, except for the `alignment` property which
+        is set to the corresponding `NSTextAlignment` value.
+
+        Tests:  AttributedSubstringForProposedRange.TextAlignmentParagraphStyles
+                FontAttributes.FontAttributesAfterChangingSelection
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::fontAttributesAtSelectionStart const):
+
+        Also fixes an existing bug in `Editor::fontAttributesAtSelectionStart`, where `NSTextAlignmentNatural` is
+        currently always used for `text-align: start;`, even if the direction is specified as RTL. Instead, change this
+        so that we only fall back to "natural" if no direction is specified; otherwise, go with the explicit "left" or
+        "right" values.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (WebCore::editingAttributedString):
+
 2020-07-29  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r264476): Calling systemHasAC() regresses launch time performance

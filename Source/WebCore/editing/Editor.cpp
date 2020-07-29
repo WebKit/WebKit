@@ -4034,7 +4034,10 @@ FontAttributes Editor::fontAttributesAtSelectionStart() const
         attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Justify;
         break;
     case TextAlignMode::Start:
-        attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Natural;
+        if (style->hasExplicitlySetDirection())
+            attributes.horizontalAlignment = style->isLeftToRightDirection() ? FontAttributes::HorizontalAlignment::Left : FontAttributes::HorizontalAlignment::Right;
+        else
+            attributes.horizontalAlignment = FontAttributes::HorizontalAlignment::Natural;
         break;
     case TextAlignMode::End:
         attributes.horizontalAlignment = style->isLeftToRightDirection() ? FontAttributes::HorizontalAlignment::Right : FontAttributes::HorizontalAlignment::Left;

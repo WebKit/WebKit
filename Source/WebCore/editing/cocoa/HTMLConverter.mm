@@ -2409,6 +2409,41 @@ AttributedString editingAttributedString(const SimpleRange& range, IncludeImages
         else
             [attrs setObject:[fontManager convertFont:WebDefaultFont() toSize:style.fontCascade().primaryFont().platformData().size()] forKey:NSFontAttributeName];
 
+        auto textAlignment = NSTextAlignmentNatural;
+        switch (style.textAlign()) {
+        case TextAlignMode::Right:
+        case TextAlignMode::WebKitRight:
+            textAlignment = NSTextAlignmentRight;
+            break;
+        case TextAlignMode::Left:
+        case TextAlignMode::WebKitLeft:
+            textAlignment = NSTextAlignmentLeft;
+            break;
+        case TextAlignMode::Center:
+        case TextAlignMode::WebKitCenter:
+            textAlignment = NSTextAlignmentCenter;
+            break;
+        case TextAlignMode::Justify:
+            textAlignment = NSTextAlignmentJustified;
+            break;
+        case TextAlignMode::Start:
+            if (style.hasExplicitlySetDirection())
+                textAlignment = style.isLeftToRightDirection() ? NSTextAlignmentLeft : NSTextAlignmentRight;
+            break;
+        case TextAlignMode::End:
+            textAlignment = style.isLeftToRightDirection() ? NSTextAlignmentRight : NSTextAlignmentLeft;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        if (textAlignment != NSTextAlignmentNatural) {
+            auto paragraphStyle = adoptNS(NSParagraphStyle.defaultParagraphStyle.mutableCopy);
+            [paragraphStyle setAlignment:textAlignment];
+            [attrs setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
+        }
+
         Color foregroundColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
         if (foregroundColor.isVisible())
             [attrs setObject:nsColor(foregroundColor) forKey:NSForegroundColorAttributeName];

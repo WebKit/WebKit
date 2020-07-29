@@ -337,6 +337,18 @@ TEST(FontAttributes, FontAttributesAfterChangingSelection)
         EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
         EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
     }
+    {
+        [webView selectElementWithIdentifier:@"eleven"];
+        NSDictionary *attributes = [webView fontAttributesAfterNextPresentationUpdate];
+        checkColor(attributes[NSForegroundColorAttributeName], { });
+        checkColor(attributes[NSBackgroundColorAttributeName], { });
+        checkFont(attributes[NSFontAttributeName], { "Menlo-Regular", 20 });
+        checkShadow(attributes[NSShadowAttributeName], { });
+        checkParagraphStyles(attributes[NSParagraphStyleAttributeName], { NSTextAlignmentRight, { } });
+        EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSStrikethroughStyleAttributeName] integerValue]);
+        EXPECT_EQ(NSUnderlineStyleNone, [attributes[NSUnderlineStyleAttributeName] integerValue]);
+        EXPECT_EQ(0, [attributes[NSSuperscriptAttributeName] integerValue]);
+    }
 }
 
 TEST(FontAttributes, NestedTextListsWithHorizontalAlignment)

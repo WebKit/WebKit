@@ -1,3 +1,21 @@
+2020-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Inspector bar in Mail compose shows incorrect text alignment style for ranged selections
+        https://bugs.webkit.org/show_bug.cgi?id=214930
+        <rdar://problem/66185224>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test and adjust an existing test to verify the codechange.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/TestWebKitAPI/mac/AppKitSPI.h:
+        * TestWebKitAPI/Tests/WebKitCocoa/FontAttributes.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/rich-text-attributes.html:
+        * TestWebKitAPI/Tests/mac/AttributedSubstringForProposedRange.mm: Added.
+        (TEST):
+
 2020-07-29  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add an auto-installer (Unreviewed follow-up fix)

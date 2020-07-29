@@ -39,6 +39,7 @@
 - (void)selectedRangeWithCompletionHandler:(void(^)(NSRange selectedRange))completionHandler;
 - (void)markedRangeWithCompletionHandler:(void(^)(NSRange markedRange))completionHandler;
 - (void)hasMarkedTextWithCompletionHandler:(void(^)(BOOL hasMarkedText))completionHandler;
+- (void)attributedSubstringForProposedRange:(NSRange)range completionHandler:(void(^)(NSAttributedString *, NSRange actualRange))completionHandler;
 @end
 
 @protocol NSInspectorBarClient <NSObject>
