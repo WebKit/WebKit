@@ -1,3 +1,12 @@
+2020-07-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win Debug] Unreviewed build fix
+
+        > JavaScriptCore/runtime/JSArrayBufferView.cpp(51): error C2660: 'Gigacage::isEnabled': function does not take 0 arguments
+
+        * wtf/Gigacage.h:
+        (Gigacage::isEnabled): Added isEnabled taking no argument which was adeed to bmalloc in r249556 (Bug 201521).
+
 2020-07-29  Don Olmstead  <don.olmstead@sony.com>
 
         Remove USE(ZLIB)
