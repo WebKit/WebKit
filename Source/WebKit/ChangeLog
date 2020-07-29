@@ -1,3 +1,9 @@
+2020-07-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.29.2 release
+
+        * wpe/NEWS: Add release notes for 2.29.2.
+
 2020-07-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r265018.

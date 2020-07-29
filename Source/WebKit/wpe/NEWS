@@ -1,4 +1,16 @@
 =================
+WPE WebKit 2.29.2
+=================
+
+What's new in WPE WebKit 2.29.2?
+
+  - Add support for backdrop filters.
+  - Add support for text-underline-offset and text-decoration-thickness.
+  - Add OpenCDM and AV1 support to media backend.
+  - Add new API to get ITP data summary.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.29.1
 =================
 
