@@ -2,24 +2,52 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
 PASS Executing "invalid constructor" 
-FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
-FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.channelCount')"
-FAIL Executing "constructor options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
+PASS Executing "default constructor" 
+PASS Executing "test AudioNodeOptions" 
+PASS Executing "constructor options" 
 PASS Audit report 
 PASS > [initialize]  
 PASS   context = new OfflineAudioContext(...) did not throw an exception. 
 PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [invalid constructor]  
-PASS   new ChannelMergerNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
-PASS   new ChannelMergerNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
-PASS   new ChannelMergerNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS   new ChannelMergerNode() threw TypeError: "Not enough arguments". 
+PASS   new ChannelMergerNode(1) threw TypeError: "Argument 1 ('context') to the ChannelMergerNode constructor must be an instance of BaseAudioContext". 
+PASS   new ChannelMergerNode(context, 42) threw TypeError: "Type error". 
 PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
 PASS > [default constructor]  
-FAIL X node0 = new ChannelMergerNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
-FAIL X node0 instanceof ChannelMergerNode is not equal to true. Got false. assert_true: expected true got false
+PASS   node0 = new ChannelMergerNode(context) did not throw an exception. 
+PASS   node0 instanceof ChannelMergerNode is equal to true. 
+PASS   node0.numberOfInputs is equal to 6. 
+PASS   node0.numberOfOutputs is equal to 1. 
+PASS   node0.channelCount is equal to 1. 
+PASS   node0.channelCountMode is equal to explicit. 
+PASS   node0.channelInterpretation is equal to speakers. 
+PASS < [default constructor] All assertions passed. (total 7 assertions) 
 PASS > [test AudioNodeOptions]  
-FAIL X new ChannelMergerNode(c, {channelCount: 1}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[nodeName]')". assert_true: expected true got false
+PASS   new ChannelMergerNode(c, {channelCount: 1}) did not throw an exception. 
+PASS   node.channelCount is equal to 1. 
+PASS   new ChannelMergerNode(c, {channelCount: 2}) threw InvalidStateError: "Channel count cannot be changed from 1.". 
+PASS   (new ChannelMergerNode(c, {channelCount: 1})).channelCount = 1 did not throw an exception. 
+PASS   new ChannelMergerNode(c, {channelCountMode: "explicit"} did not throw an exception. 
+PASS   node.channelCountMode is equal to explicit. 
+PASS   new ChannelMergerNode(c, {channelCountMode: "max"}) threw InvalidStateError: "Channel count mode cannot be changed from explicit.". 
+PASS   new ChannelMergerNode(c, {channelCountMode: "clamped-max"}) threw InvalidStateError: "Channel count mode cannot be changed from explicit.". 
+PASS   (new ChannelMergerNode(c, {channelCountMode: "explicit"})).channelCountMode = "explicit" did not throw an exception. 
+PASS   new ChannelMergerNode(c, {channelInterpretation: "speakers"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to speakers. 
+PASS   new ChannelMergerNode(c, {channelInterpretation: "discrete"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to discrete. 
+PASS   new ChannelMergerNode(c, {channelInterpretation: "foobar"}) threw TypeError: "Type error". 
+PASS   node.channelInterpretation after invalid setter is equal to discrete. 
+PASS < [test AudioNodeOptions] All assertions passed. (total 15 assertions) 
 PASS > [constructor options]  
-FAIL X node1 = new ChannelMergerNode(context, {"numberOfInputs":3,"numberOfOutputs":9,"channelInterpretation":"discrete"}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new ChannelMergerNode(context, options)')". assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 5 tasks were failed. assert_true: expected true got false
+PASS   node1 = new ChannelMergerNode(context, {"numberOfInputs":3,"numberOfOutputs":9,"channelInterpretation":"discrete"}) did not throw an exception. 
+PASS   node1.numberOfInputs is equal to 3. 
+PASS   node1.numberOfOutputs is equal to 1. 
+PASS   node1.channelInterpretation is equal to discrete. 
+PASS   new ChannelMergerNode(c, {"numberOfInputs":99}) threw IndexSizeError: "Number of inputs is not in the allowed range.". 
+PASS   new ChannelMergerNode(c, {"channelCount":3}) threw InvalidStateError: "Channel count cannot be changed from 1.". 
+PASS   new ChannelMergerNode(c, {"channelCountMode":"max"}) threw InvalidStateError: "Channel count mode cannot be changed from explicit.". 
+PASS < [constructor options] All assertions passed. (total 7 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

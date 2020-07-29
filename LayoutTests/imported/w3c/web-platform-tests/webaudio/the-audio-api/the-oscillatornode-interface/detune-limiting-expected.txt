@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "detune limits" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
-                context, {numberOfInputs: context.destination.channelCount})')"
+FAIL Executing "detune limits" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+                .then')"
 FAIL Executing "detune automation" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
                 .then')"
 PASS Audit report 

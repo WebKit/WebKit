@@ -1,9 +1,9 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "buffer-stitching-1" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
-            context, {numberOfInputs: context.destination.channelCount})')"
-FAIL Executing "buffer-stitching-2" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
-            context, {numberOfInputs: context.destination.channelCount})')"
+FAIL Executing "buffer-stitching-1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'testBufferStitching(sampleRate, bufferRate, bufferLength)
+                .then')"
+FAIL Executing "buffer-stitching-2" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'testBufferStitching(sampleRate, bufferRate, bufferLength)
+                .then')"
 PASS Audit report 
 PASS > [buffer-stitching-1] Subsample buffer stitching, same rates 
 PASS   Test 1: context.sampleRate is equal to 44100. 

@@ -1,20 +1,20 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "attack" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
-            context, {numberOfInputs: context.destination.channelCount})')"
-FAIL Executing "knee" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
-            context, {numberOfInputs: context.destination.channelCount})')"
-FAIL Executing "ratio" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
-            context, {numberOfInputs: context.destination.channelCount})')"
-FAIL Executing "release" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
-            context, {numberOfInputs: context.destination.channelCount})')"
-FAIL Executing "threshold" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new ChannelMergerNode(
-            context, {numberOfInputs: context.destination.channelCount})')"
+FAIL Executing "attack" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'refNode[paramName]')"
+FAIL Executing "knee" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'refNode[paramName]')"
+FAIL Executing "ratio" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'refNode[paramName]')"
+FAIL Executing "release" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'refNode[paramName]')"
+FAIL Executing "threshold" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'refNode[paramName]')"
 PASS Audit report 
 PASS > [attack] Dynamics compressor attack 
+FAIL X attack: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')". assert_true: expected true got false
 PASS > [knee] Dynamics compressor knee 
+FAIL X knee: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')". assert_true: expected true got false
 PASS > [ratio] Dynamics compressor ratio 
+FAIL X ratio: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')". assert_true: expected true got false
 PASS > [release] Dynamics compressor release 
+FAIL X release: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')". assert_true: expected true got false
 PASS > [threshold] Dynamics compressor threshold 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+FAIL X threshold: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')". assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 5 out of 5 tasks were failed. assert_true: expected true got false
 

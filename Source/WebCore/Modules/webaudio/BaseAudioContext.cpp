@@ -40,7 +40,9 @@
 #include "AudioSession.h"
 #include "BiquadFilterNode.h"
 #include "ChannelMergerNode.h"
+#include "ChannelMergerOptions.h"
 #include "ChannelSplitterNode.h"
+#include "ChannelSplitterOptions.h"
 #include "ConvolverNode.h"
 #include "DefaultAudioDestinationNode.h"
 #include "DelayNode.h"
@@ -586,14 +588,10 @@ ExceptionOr<Ref<ChannelSplitterNode>> BaseAudioContext::createChannelSplitter(si
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
 
-    lazyInitialize();
-    auto node = ChannelSplitterNode::create(*this, sampleRate(), numberOfOutputs);
-    if (!node)
-        return Exception { IndexSizeError };
-    return node.releaseNonNull();
+    ChannelSplitterOptions options;
+    options.numberOfOutputs = numberOfOutputs;
+    return ChannelSplitterNode::create(*this, options);
 }
 
 ExceptionOr<Ref<ChannelMergerNode>> BaseAudioContext::createChannelMerger(size_t numberOfInputs)
@@ -601,14 +599,10 @@ ExceptionOr<Ref<ChannelMergerNode>> BaseAudioContext::createChannelMerger(size_t
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
 
-    lazyInitialize();
-    auto node = ChannelMergerNode::create(*this, sampleRate(), numberOfInputs);
-    if (!node)
-        return Exception { IndexSizeError };
-    return node.releaseNonNull();
+    ChannelMergerOptions options;
+    options.numberOfInputs = numberOfInputs;
+    return ChannelMergerNode::create(*this, options);
 }
 
 ExceptionOr<Ref<OscillatorNode>> BaseAudioContext::createOscillator()

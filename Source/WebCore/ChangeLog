@@ -1,5 +1,48 @@
 2020-07-29  Clark Wang  <clark_wang@apple.com>
 
+        Added constructor methods to ChannelMergerNode, ChannelSplitterNode
+        https://bugs.webkit.org/show_bug.cgi?id=214851
+        <rdar://problem/66233763>
+
+        Reviewed by Chris Dumez.
+
+        Added constructors for ChannelMergerNode, ChannelSplitterNode according to spec:
+        https://www.w3.org/TR/webaudio/#ChannelMergerNode-constructors. Added new files
+        for ChannelMergerOptions and ChannelSplitterOptions. This patch also ensures that
+        BaseAudioContext::create*() and *Node::create() methods behave the same.
+
+        Re-baselined existing tests that now pass, or fail further along.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createChannelSplitter):
+        (WebCore::BaseAudioContext::createChannelMerger):
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::create):
+        (WebCore::ChannelMergerNode::setChannelCount):
+        (WebCore::ChannelMergerNode::setChannelCountMode):
+        * Modules/webaudio/ChannelMergerNode.h:
+        * Modules/webaudio/ChannelMergerNode.idl:
+        * Modules/webaudio/ChannelMergerOptions.h: Added.
+        * Modules/webaudio/ChannelMergerOptions.idl: Added.
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::create):
+        (WebCore::ChannelSplitterNode::setChannelCount):
+        (WebCore::ChannelSplitterNode::setChannelCountMode):
+        (WebCore::ChannelSplitterNode::setChannelInterpretation):
+        * Modules/webaudio/ChannelSplitterNode.h:
+        * Modules/webaudio/ChannelSplitterNode.idl:
+        * Modules/webaudio/ChannelSplitterOptions.h: Added.
+        * Modules/webaudio/ChannelSplitterOptions.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2020-07-29  Clark Wang  <clark_wang@apple.com>
+
         Added copyFromChannel, copyToChannel to AudioBuffer
         https://bugs.webkit.org/show_bug.cgi?id=214926
 
