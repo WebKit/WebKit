@@ -48,9 +48,6 @@ def main(argv):
                                help='Website URL to load')
     options, args = option_parser.parse_known_args(argv)
 
-    if not options.configuration:
-        options.configuration = "Release"
-
     if not options.platform:
         options.platform = "mac"
 

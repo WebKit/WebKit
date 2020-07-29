@@ -1,3 +1,17 @@
+2020-07-28  Dean Jackson  <dino@apple.com>
+
+        run-minibrowser doesn't respect webkit configuration
+        https://bugs.webkit.org/show_bug.cgi?id=214857
+        <rdar://problem/66187636>
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/minibrowser/run_webkit_app.py:
+        (main): Don't force a Release configuration if none was given.
+        * Scripts/webkitpy/port/config.py:
+        (Config.flag_for_configuration): Look at the default configuration if we didn't
+        pass one in.
+
 2020-07-28  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App-Bound Domains code from WebKit Additions

@@ -105,6 +105,8 @@ class Config(object):
         return self._build_directories[configuration]
 
     def flag_for_configuration(self, configuration):
+        if not configuration:
+            configuration = self.default_configuration()
         return self._FLAGS_FROM_CONFIGURATIONS[configuration]
 
     def default_configuration(self):
