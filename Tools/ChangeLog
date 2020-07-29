@@ -1,3 +1,14 @@
+2020-07-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [build.webkit.org] Add Big Sur builder (Follow-up Fix)
+        https://bugs.webkit.org/show_bug.cgi?id=214879
+        <rdar://problem/66221071>
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        (_should_file_trigger_build): Add Big Sur.
+
 2020-07-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r265018.
