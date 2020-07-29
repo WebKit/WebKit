@@ -1,4 +1,4 @@
-//@ skip if $memoryLimited
+//@ skip if $memoryLimited || $buildType == "debug"
 //@ runDefault("--returnEarlyFromInfiniteLoopsForFuzzing=1")
 //@ slow!
 

@@ -1,3 +1,17 @@
+2020-07-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Skip too heavy tests for Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=214939
+
+        Reviewed by Mark Lam.
+
+        They are taking too much time in Debug build and cause timeout. We should skip them.
+
+        * ChakraCore.yaml:
+        * stress/codeblock-destructor-access-unlinkedcodeblock.js:
+        * stress/dfg-to-string-on-string-object-does-not-gc.js:
+        * stress/rest-parameter-many-arguments.js:
+
 2020-07-29  Tadeu Zagallo  <tzagallo@apple.com>
 
         WebAssembly validation for call_indirect is incorrect

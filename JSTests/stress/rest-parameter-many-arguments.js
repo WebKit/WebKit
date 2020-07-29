@@ -1,4 +1,4 @@
-//@ skip if $architecture == "x86"
+//@ skip if $architecture == "x86" || $buildType == "debug"
 
 function assert(b) {
     if (!b)

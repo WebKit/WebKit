@@ -1007,7 +1007,12 @@
 - path: ChakraCore/test/Object/var.js
   cmd: runChakra :baseline, "NoException", "var.baseline-jsc", []
 - path: ChakraCore/test/Object/Slow.js
-  cmd: runChakra :pass, "NoException", "", []
+  cmd: |
+      if $buildType == "debug"
+          skip
+      else
+          runChakra :pass, "NoException", "", []
+      end
 - path: ChakraCore/test/Object/NumericPropertyIsEnumerable.js
   cmd: runChakra :baseline, "NoException", "NumericPropertyIsEnumerable.baseline", []
 - path: ChakraCore/test/Object/defineProperty.js

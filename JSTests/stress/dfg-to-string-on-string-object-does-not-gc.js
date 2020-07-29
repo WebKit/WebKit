@@ -1,3 +1,4 @@
+//@ skip if $buildType == "debug"
 //@ requireOptions("--exceptionStackTraceLimit=0", "--defaultErrorStackTraceLimit=0", "--forceRAMSize=1000000", "--forceDebuggerBytecodeGeneration=1", "--useZombieMode=1", "--jitPolicyScale=0", "--collectContinuously=1", "--useConcurrentJIT=0")
 
 function assert(b) {
