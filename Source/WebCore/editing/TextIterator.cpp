@@ -46,6 +46,7 @@
 #include "HTMLTextFormControlElement.h"
 #include "InlineTextBox.h"
 #include "NodeTraversal.h"
+#include "Range.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
 #include "RenderTableCell.h"

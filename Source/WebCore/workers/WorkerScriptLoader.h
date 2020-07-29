@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CertificateInfo.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "FetchOptions.h"
 #include "ResourceError.h"

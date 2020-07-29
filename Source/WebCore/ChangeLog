@@ -1,3 +1,28 @@
+2020-07-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late July 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=214918
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * Modules/webaudio/WebKitOscillatorNode.h: Add missing WebKitAudioContext.h header to make
+        the constructor of WebKitOscillatorNode that WebKitAudioContext inherits from the base
+        context, otherwise the compiler does not know which base class constructor to invoke.
+        * bindings/js/JSDOMConvertDate.h: Add missing JSGlobalObject.h header.
+        * bindings/js/ReadableStreamDefaultController.cpp: Sprinkle missing JSC:: namespace
+        prefixes where needed.
+        (WebCore::invokeReadableStreamDefaultControllerFunction):
+        (WebCore::ReadableStreamDefaultController::close):
+        (WebCore::ReadableStreamDefaultController::error):
+        (WebCore::ReadableStreamDefaultController::enqueue):
+        * editing/SpellChecker.cpp: Add missing inclusion of TextIterator.h.
+        * editing/SpellChecker.h: Add missing inclusion of SimpleRange.h.
+        * editing/TextCheckingHelper.h: Forward declare Frame and VisibleSelection.
+        * editing/TextIterator.cpp: Add missing inclusion of Range.h.
+        * workers/WorkerScriptLoader.h: Add missing inclusion of CertificateInfo.h.
+
 2020-07-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r265002.

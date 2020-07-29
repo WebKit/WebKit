@@ -27,8 +27,10 @@
 namespace WebCore {
 
 class EditorClient;
+class Frame;
 class Position;
 class TextCheckerClient;
+class VisibleSelection;
 
 struct TextCheckingResult;
 

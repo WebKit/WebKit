@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static bool invokeReadableStreamDefaultControllerFunction(JSC::JSGlobalObject& lexicalGlobalObject, const Identifier& identifier, const MarkedArgumentBuffer& arguments)
+static bool invokeReadableStreamDefaultControllerFunction(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier, const JSC::MarkedArgumentBuffer& arguments)
 {
     JSC::VM& vm = lexicalGlobalObject.vm();
     JSC::JSLockHolder lock(vm);
@@ -56,7 +56,7 @@ static bool invokeReadableStreamDefaultControllerFunction(JSC::JSGlobalObject& l
 
 void ReadableStreamDefaultController::close()
 {
-    MarkedArgumentBuffer arguments;
+    JSC::MarkedArgumentBuffer arguments;
     arguments.append(&jsController());
 
     auto* clientData = static_cast<JSVMClientData*>(globalObject().vm().clientData);
@@ -79,7 +79,7 @@ void ReadableStreamDefaultController::error(const Exception& exception)
         return;
     }
 
-    MarkedArgumentBuffer arguments;
+    JSC::MarkedArgumentBuffer arguments;
     arguments.append(&jsController());
     arguments.append(value);
 
@@ -109,7 +109,7 @@ bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
         return false;
     }
 
-    MarkedArgumentBuffer arguments;
+    JSC::MarkedArgumentBuffer arguments;
     arguments.append(&jsController());
     arguments.append(value);
 

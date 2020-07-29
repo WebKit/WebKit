@@ -27,6 +27,7 @@
 #pragma once
 
 #include "Element.h"
+#include "SimpleRange.h"
 #include "TextChecking.h"
 #include "Timer.h"
 #include <wtf/Deque.h>

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "OscillatorNode.h"
+#include "WebKitAudioContext.h"
 
 namespace WebCore {
 
