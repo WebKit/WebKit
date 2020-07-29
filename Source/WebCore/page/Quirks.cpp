@@ -366,7 +366,7 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
             return true;
         if (host == "naver.com")
             return true;
-        if (host == "nhl.com" || host.endsWith(".nhl.com"))
+        if (host == "nhl.com" || (host.endsWith(".nhl.com") && !host.startsWith("account.")))
             return true;
         if (host == "nba.com" || host.endsWith(".nba.com"))
             return true;
