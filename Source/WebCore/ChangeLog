@@ -1,3 +1,24 @@
+2020-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION: ASSERTION FAILED: !needsLayout() on tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html flakily
+        https://bugs.webkit.org/show_bug.cgi?id=214651
+        <rdar://problem/65952371>
+
+        Reviewed by Zalan Bujtas.
+
+        Page::doAfterUpdateRendering() is expected to only call functions that can't trigger layout. However,
+        it could cause the firing of the "monitorWheelEvent" callback which can run arbitrary JS, so move that
+        earlier in the rendering update, before we do the final layout.
+
+        Also assert that the main frame doesn't need layout at the end of Page::doAfterUpdateRendering();
+        we were only checking subframes.
+
+        Tested by lots of existing tests.
+
+        * page/Page.cpp:
+        (WebCore::Page::updateRendering):
+        (WebCore::Page::doAfterUpdateRendering):
+
 2020-07-29  Chris Dumez  <cdumez@apple.com>
 
         Make sure playback state constants remain on OscillatorNode for backward compatibility

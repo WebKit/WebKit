@@ -1,3 +1,15 @@
+2020-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION: ASSERTION FAILED: !needsLayout() on tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html flakily
+        https://bugs.webkit.org/show_bug.cgi?id=214651
+
+        Reviewed by Zalan Bujtas.
+
+        De-flake this test.
+
+        * fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-hovered-expected.txt:
+        * fast/scrolling/mac/scrollbars/overflow-in-iframe-overlay-scrollbar-hovered.html:
+
 2020-07-29  Chris Dumez  <cdumez@apple.com>
 
         Make sure playback state constants remain on OscillatorNode for backward compatibility

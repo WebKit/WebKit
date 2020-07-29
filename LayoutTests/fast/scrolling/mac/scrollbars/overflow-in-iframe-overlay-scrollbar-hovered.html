@@ -48,9 +48,10 @@
             await UIHelper.mouseWheelScrollAt(x, y);
             await UIHelper.waitForCondition(() => {
                 let state = iframeWindow.internals.verticalScrollbarState(scroller);
+                let enabled = state.indexOf('enabled') != -1;
                 let expanded = state.indexOf('expanded') != -1;
-                if (expanded)
-                    testPassed('Scrollbar state: ' + state);
+                if (enabled && expanded)
+                    testPassed('Scrollbar state contains: enabled and expanded');
                 return expanded;
             });
 

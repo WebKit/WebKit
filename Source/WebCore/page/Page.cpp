@@ -1504,7 +1504,10 @@ void Page::updateRendering()
         if (document && document->domWindow())
             document->domWindow()->unfreezeNowTimestamp();
     }
-    
+
+    if (UNLIKELY(isMonitoringWheelEvents()))
+        wheelEventTestMonitor()->checkShouldFireCallbacks();
+
     if (m_isTrackingRenderingUpdates)
         ++m_renderingUpdateCount;
 
@@ -1547,13 +1550,11 @@ void Page::doAfterUpdateRendering()
 
     DebugPageOverlays::doAfterUpdateRendering(*this);
 
-    if (UNLIKELY(isMonitoringWheelEvents()))
-        wheelEventTestMonitor()->checkShouldFireCallbacks();
-
     forEachDocument([] (Document& document) {
         document.prepareCanvasesForDisplayIfNeeded();
     });
 
+    ASSERT(!mainFrame().view() || !mainFrame().view()->needsLayout());
 #if ASSERT_ENABLED
     for (Frame* child = mainFrame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
         auto* frameView = child->view();

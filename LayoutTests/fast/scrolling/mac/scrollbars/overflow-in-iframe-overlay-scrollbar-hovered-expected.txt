@@ -7,7 +7,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Initial state
 enabled
 Hovering vertical scrollbar should show expanded scrollbar
-PASS Scrollbar state: enabled,expanded,visible_track,visible_thumb
+PASS Scrollbar state contains: enabled and expanded
 Unhovering vertical scrollbar should hide it
 PASS Thumb and track hidden
 PASS successfullyParsed is true
