@@ -1,3 +1,12 @@
+2020-07-29  Darin Adler  <darin@apple.com>
+
+        Add script to help us count uses of non-inclusive terms
+        https://bugs.webkit.org/show_bug.cgi?id=214942
+
+        Reviewed by Beth Dakin.
+
+        * Scripts/report-non-inclusive-language: Added.
+
 2020-07-29  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App-Bound Domains code from WebKit Additions
