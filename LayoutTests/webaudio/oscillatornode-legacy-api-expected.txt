@@ -4,14 +4,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS OscillatorNode.prototype.playbackState is undefined.
-PASS OscillatorNode.UNSCHEDULED_STATE is undefined.
-PASS OscillatorNode.SCHEDULED_STATE is undefined.
-PASS OscillatorNode.PLAYING_STATE is undefined.
-PASS OscillatorNode.FINISHED_STATE is undefined.
-PASS webkitOscillatorNode.UNSCHEDULED_STATE is 0
-PASS webkitOscillatorNode.SCHEDULED_STATE is 1
-PASS webkitOscillatorNode.PLAYING_STATE is 2
-PASS webkitOscillatorNode.FINISHED_STATE is 3
+PASS OscillatorNode.UNSCHEDULED_STATE is 0
+PASS OscillatorNode.SCHEDULED_STATE is 1
+PASS OscillatorNode.PLAYING_STATE is 2
+PASS OscillatorNode.FINISHED_STATE is 3
+PASS legacyOscillator.playbackState is defined.
+PASS legacyOscillator.UNSCHEDULED_STATE is 0
+PASS legacyOscillator.SCHEDULED_STATE is 1
+PASS legacyOscillator.PLAYING_STATE is 2
+PASS legacyOscillator.FINISHED_STATE is 3
 PASS successfullyParsed is true
 
 TEST COMPLETE

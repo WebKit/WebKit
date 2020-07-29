@@ -28,7 +28,7 @@
     Conditional=WEB_AUDIO,
     EnabledBySetting=WebAudio&PrefixedWebAudio,
     JSGenerateToJSObject,
-    InterfaceName=webkitOscillatorNode,
+    NoInterfaceObject,
 ] interface WebKitOscillatorNode : AudioScheduledSourceNode {
     attribute OscillatorType type;
 

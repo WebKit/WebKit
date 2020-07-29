@@ -1,5 +1,17 @@
 2020-07-29  Chris Dumez  <cdumez@apple.com>
 
+        Make sure playback state constants remain on OscillatorNode for backward compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=214925
+
+        Reviewed by Eric Carlson.
+
+        Improve layout test coverage.
+
+        * webaudio/oscillatornode-legacy-api-expected.txt:
+        * webaudio/oscillatornode-legacy-api.html:
+
+2020-07-29  Chris Dumez  <cdumez@apple.com>
+
         http/tests/cookies/document-cookie-multiple-cookies.html is failing on Windows
         https://bugs.webkit.org/show_bug.cgi?id=214880
 

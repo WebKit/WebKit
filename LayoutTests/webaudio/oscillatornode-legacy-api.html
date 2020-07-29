@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="../resources/js-test-pre.js"></script>
+    <script src="../resources/js-test.js"></script>
 </head>
 <body>
     <script>
         description("Testing that the legacy OscillatorNode API is not exposed on the unprefixed OscillatorNode");
 
         shouldBeUndefined("OscillatorNode.prototype.playbackState");
-        shouldBeUndefined("OscillatorNode.UNSCHEDULED_STATE");
-        shouldBeUndefined("OscillatorNode.SCHEDULED_STATE");
-        shouldBeUndefined("OscillatorNode.PLAYING_STATE");
-        shouldBeUndefined("OscillatorNode.FINISHED_STATE");
 
-        shouldBe("webkitOscillatorNode.UNSCHEDULED_STATE", "0");
-        shouldBe("webkitOscillatorNode.SCHEDULED_STATE", "1");
-        shouldBe("webkitOscillatorNode.PLAYING_STATE", "2");
-        shouldBe("webkitOscillatorNode.FINISHED_STATE", "3");
+        // Tests backward compatibility for prefixed API.
+        shouldBe("OscillatorNode.UNSCHEDULED_STATE", "0");
+        shouldBe("OscillatorNode.SCHEDULED_STATE", "1");
+        shouldBe("OscillatorNode.PLAYING_STATE", "2");
+        shouldBe("OscillatorNode.FINISHED_STATE", "3");
+
+        let legacyContext = new webkitAudioContext;
+        let legacyOscillator = legacyContext.createOscillator();
+        shouldBeDefined("legacyOscillator.playbackState");
+        shouldBe("legacyOscillator.UNSCHEDULED_STATE", "0");
+        shouldBe("legacyOscillator.SCHEDULED_STATE", "1");
+        shouldBe("legacyOscillator.PLAYING_STATE", "2");
+        shouldBe("legacyOscillator.FINISHED_STATE", "3");
     </script>
-    <script src="../resources/js-test-post.js"></script>
 </body>
 </html>
