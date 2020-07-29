@@ -53,6 +53,7 @@
 #import "Page.h"
 #import "PublicURLManager.h"
 #import "Quirks.h"
+#import "Range.h"
 #import "RenderView.h"
 #import "RuntimeEnabledFeatures.h"
 #import "SerializedAttachmentData.h"

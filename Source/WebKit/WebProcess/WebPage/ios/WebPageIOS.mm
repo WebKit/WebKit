@@ -114,6 +114,7 @@
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/PointerCaptureController.h>
 #import <WebCore/Quirks.h>
+#import <WebCore/Range.h>
 #import <WebCore/RenderBlock.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
@@ -1374,8 +1375,7 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
     OptionSet<SelectionFlags> flags;
     GestureRecognizerState wkGestureState = static_cast<GestureRecognizerState>(gestureState);
     switch (static_cast<GestureType>(gestureType)) {
-    case GestureType::PhraseBoundary:
-    {
+    case GestureType::PhraseBoundary: {
         if (!frame.editor().hasComposition())
             break;
         auto markedRange = frame.editor().compositionRange();
@@ -4265,12 +4265,11 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     }
 
     auto makeString = [] (const VisiblePosition& start, const VisiblePosition& end) -> AttributedString {
-        auto startBoundary = makeBoundaryPoint(start.deepEquivalent());
-        auto endBoundary = makeBoundaryPoint(end.deepEquivalent());
-        if (!startBoundary || !endBoundary || *startBoundary == *endBoundary)
+        auto range = makeSimpleRange(start, end);
+        if (!range || range->collapsed())
             return { };
         // FIXME: This should return editing-offset-compatible attributed strings if that option is requested.
-        return { adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace({ WTFMove(*startBoundary), WTFMove(*endBoundary) })]), nil };
+        return { adoptNS([[NSAttributedString alloc] initWithString:WebCore::plainTextReplacingNoBreakSpace(*range)]), nil };
     };
 
     context.contextBefore = makeString(contextBeforeStart, startOfRangeOfInterestInSelection);
@@ -4305,8 +4304,8 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
             context.textRects = characterRectsForRange(*contextRange, 0);
     } else if (wantsMarkedTextRects && compositionRange) {
         unsigned compositionStartOffset = 0;
-        if (auto start = makeBoundaryPoint(contextBeforeStart.deepEquivalent()))
-            compositionStartOffset = WebCore::plainText({ WTFMove(*start), compositionRange->start }).length();
+        if (auto range = makeSimpleRange(contextBeforeStart, compositionRange->start))
+            compositionStartOffset = characterCount(*range);
         context.textRects = characterRectsForRange(*compositionRange, compositionStartOffset);
     }
 

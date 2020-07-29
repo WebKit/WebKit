@@ -41,6 +41,7 @@ class RenderElement;
 class Text;
 
 struct BoundaryPoint;
+struct SimpleRange;
 
 enum PositionMoveType {
     CodePoint,       // Move by a single code point.
@@ -248,6 +249,13 @@ bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode);
 RefPtr<Node> commonShadowIncludingAncestor(const Position&, const Position&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Position&);
+
+struct PositionRange {
+    Position start;
+    Position end;
+};
+
+Optional<SimpleRange> makeSimpleRange(const PositionRange&);
 
 // inlines
 

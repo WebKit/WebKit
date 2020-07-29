@@ -131,7 +131,7 @@ static String stringForVisiblePositionIndexRange(const VisiblePositionIndexRange
         return String();
     VisiblePosition start = visiblePositionForIndex(range.startIndex.value, range.startIndex.scope.get());
     VisiblePosition end = visiblePositionForIndex(range.endIndex.value, range.endIndex.scope.get());
-    return AccessibilityObject::stringForVisiblePositionRange(VisiblePositionRange(start, end));
+    return AccessibilityObject::stringForVisiblePositionRange({ WTFMove(start), WTFMove(end) });
 }
 
 String AccessibilityUndoReplacedText::textDeletedByUnapply()
@@ -1420,18 +1420,14 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
             
             startIndex = 0;
             if (startInParagraph) {
-                auto paragraphStart = makeBoundaryPoint(startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent());
-                auto selectionStart = makeBoundaryPoint(visibleStart.deepEquivalent().parentAnchoredEquivalent());
-                if (paragraphStart && selectionStart)
-                    startIndex = characterCount({ *paragraphStart, *selectionStart }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+                if (auto rangeToSelectionStart = makeSimpleRange(startOfParagraphToMove, visibleStart))
+                    startIndex = characterCount(*rangeToSelectionStart, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
             }
 
             endIndex = 0;
             if (endInParagraph) {
-                auto paragraphStart = makeBoundaryPoint(startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent());
-                auto selectionEnd = makeBoundaryPoint(visibleEnd.deepEquivalent().parentAnchoredEquivalent());
-                if (paragraphStart && selectionEnd)
-                    endIndex = characterCount({ *paragraphStart, *selectionEnd }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+                if (auto rangeToSelectionEnd = makeSimpleRange(startOfParagraphToMove, visibleEnd))
+                    endIndex = characterCount(*rangeToSelectionEnd, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
             }
         }
     }
@@ -1504,7 +1500,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     if (!editableRoot)
         editableRoot = &document();
 
-    auto destinationIndex = characterCount({ { *editableRoot, 0 }, *makeBoundaryPoint(destination.deepEquivalent().parentAnchoredEquivalent()) }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    auto destinationIndex = characterCount({ { *editableRoot, 0 }, *makeBoundaryPoint(destination) }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 
     setEndingSelection(VisibleSelection(destination, originalIsDirectional));
     ASSERT(endingSelection().isCaretOrRange());

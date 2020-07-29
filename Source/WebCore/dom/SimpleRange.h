@@ -51,12 +51,32 @@ struct SimpleRange {
     SimpleRange(const Ref<Range>&);
 };
 
+SimpleRange makeSimpleRange(const BoundaryPoint&);
+SimpleRange makeSimpleRange(BoundaryPoint&&);
+SimpleRange makeSimpleRange(const BoundaryPoint&, const BoundaryPoint&);
+SimpleRange makeSimpleRange(BoundaryPoint&&, BoundaryPoint&&);
+Optional<SimpleRange> makeSimpleRange(const Optional<BoundaryPoint>&);
+WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(Optional<BoundaryPoint>&&);
 WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(const Optional<BoundaryPoint>&, const Optional<BoundaryPoint>&);
 WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(Optional<BoundaryPoint>&&, Optional<BoundaryPoint>&&);
+
+inline BoundaryPoint makeBoundaryPointHelper(const BoundaryPoint& point) { return point; }
+inline BoundaryPoint makeBoundaryPointHelper(BoundaryPoint&& point) { return WTFMove(point); }
+template<typename T> auto makeBoundaryPointHelper(T&& argument) -> decltype(makeBoundaryPoint(std::forward<T>(argument)))
+{
+    return makeBoundaryPoint(std::forward<T>(argument));
+}
+
+template<typename ...T> auto makeSimpleRange(T&& ...arguments) -> decltype(makeSimpleRange(makeBoundaryPointHelper(std::forward<T>(arguments))...))
+{
+    return makeSimpleRange(makeBoundaryPointHelper(std::forward<T>(arguments))...);
+}
 
 // FIXME: Would like these to have shorter names; another option is to change prefix to makeSimpleRange.
 WEBCORE_EXPORT Optional<SimpleRange> makeRangeSelectingNode(Node&);
 WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
+
+RefPtr<Node> commonInclusiveAncestor(const SimpleRange&);
 
 bool operator==(const SimpleRange&, const SimpleRange&);
 

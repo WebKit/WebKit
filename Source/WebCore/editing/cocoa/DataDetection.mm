@@ -73,7 +73,7 @@ static Optional<DetectedItem> detectItem(const VisiblePosition& position, const 
     if (position.isNull())
         return { };
     String fullPlainTextString = plainText(contextRange);
-    CFIndex hitLocation = characterCount({ contextRange.start, *makeBoundaryPoint(position) });
+    CFIndex hitLocation = characterCount(*makeSimpleRange(contextRange.start, position));
 
     auto scanner = adoptCF(DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
     auto scanQuery = adoptCF(DDScanQueryCreateFromString(kCFAllocatorDefault, fullPlainTextString.createCFString().get(), CFRangeMake(0, fullPlainTextString.length())));
@@ -272,16 +272,14 @@ static void removeResultLinksFromAnchor(Element& element)
     elementParent->removeChild(element);
 }
 
-static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode, bool& didModifyDOM)
+static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode)
 {
-    didModifyDOM = false;
     for (Node* node = &startNode; node; node = NodeTraversal::next(*node)) {
         if (is<HTMLAnchorElement>(*node)) {
             auto& anchor = downcast<HTMLAnchorElement>(*node);
             if (!equalIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
                 return true;
             removeResultLinksFromAnchor(anchor);
-            didModifyDOM = true;
         }
         
         if (node == &endNode) {
@@ -291,7 +289,6 @@ static bool searchForLinkRemovingExistingDDLinks(Node& startNode, Node& endNode,
                 if (!equalIgnoringASCIICase(anchor.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
                     return true;
                 removeResultLinksFromAnchor(anchor);
-                didModifyDOM = true;
             }
             return false;
         }
@@ -553,29 +550,12 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Da
         if (resultRanges.isEmpty())
             continue;
         
-        // Store the range boundaries as Position, because the DOM could change if we find
-        // old data detector link.
-        Vector<std::pair<Position, Position>> rangeBoundaries;
-        rangeBoundaries.reserveInitialCapacity(resultRanges.size());
-        for (auto& range : resultRanges)
-            rangeBoundaries.uncheckedAppend({ createLegacyEditingPosition(range.start), createLegacyEditingPosition(range.end) });
-
         NSString *identifier = dataDetectorStringForPath(indexPaths[resultIndex].get());
         NSString *correspondingURL = constructURLStringForResult(coreResult, identifier, referenceDate, (NSTimeZone *)tz.get(), types);
-        bool didModifyDOM = false;
 
-        if (!correspondingURL || searchForLinkRemovingExistingDDLinks(resultRanges.first().start.container, resultRanges.last().end.container, didModifyDOM))
+        if (!correspondingURL || searchForLinkRemovingExistingDDLinks(resultRanges.first().start.container, resultRanges.last().end.container))
             continue;
-        
-        if (didModifyDOM) {
-            // If the DOM was modified because some old links were removed,
-            // we need to recreate the ranges because they could no longer be valid.
-            ASSERT(resultRanges.size() == rangeBoundaries.size());
-            resultRanges.shrink(0); // Keep capacity as we are going to repopulate the Vector right away with the same number of items.
-            for (auto& rangeBoundary : rangeBoundaries)
-                resultRanges.uncheckedAppend({ *makeBoundaryPoint(rangeBoundary.first), *makeBoundaryPoint(rangeBoundary.second) });
-        }
-        
+
         lastModifiedQueryOffset = queryRange.end;
         BOOL shouldUseLightLinks = softLink_DataDetectorsCore_DDShouldUseLightLinksForResult(coreResult, [indexPaths[resultIndex] length] > 1);
 

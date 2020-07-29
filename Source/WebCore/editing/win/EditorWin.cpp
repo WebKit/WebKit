@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "Pasteboard.h"
+#include "Range.h"
 #include "windows.h"
 
 namespace WebCore {

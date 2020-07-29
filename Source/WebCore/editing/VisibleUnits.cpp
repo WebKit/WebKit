@@ -1905,9 +1905,7 @@ std::ptrdiff_t distanceBetweenPositions(const VisiblePosition& a, const VisibleP
 {
     if (a.isNull() || b.isNull())
         return 0;
-    return a < b
-        ? -characterCount({ *makeBoundaryPoint(a), *makeBoundaryPoint(b) })
-        : characterCount({ *makeBoundaryPoint(b), *makeBoundaryPoint(a) });
+    return a < b ? -characterCount(*makeSimpleRange(a, b)) : characterCount(*makeSimpleRange(b, a));
 }
 
 void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore)
@@ -1934,7 +1932,7 @@ void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter
     }
 
     if (startPosition != endPosition) {
-        String characterString = plainText({ *makeBoundaryPoint(startPosition), *makeBoundaryPoint(endPosition) }).replace(noBreakSpace, ' ');
+        String characterString = plainText(*makeSimpleRange(startPosition, endPosition)).replace(noBreakSpace, ' ');
         for (int i = characterString.length() - 1, index = 0; i >= 0 && index < maxCharacters; --i) {
             if (!index && nextPosition.isNull())
                 index++;
@@ -1948,7 +1946,6 @@ void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter
 
 RefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
 {
-    // The selection could be in a non visible element and we don't have a VisiblePosition.
     if (position.isNull())
         return nullptr;
 
@@ -1966,7 +1963,6 @@ RefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
     do {
         currentPosition = positionOfNextBoundaryOfGranularity(currentPosition, TextGranularity::WordGranularity, SelectionDirection::Backward);
     } while (currentPosition.isNotNull() && !atBoundaryOfGranularity(currentPosition, TextGranularity::WordGranularity, SelectionDirection::Backward));
-
     if (currentPosition.isNull())
         currentPosition = positionOfNextBoundaryOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward);
 
@@ -1981,8 +1977,6 @@ RefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
 VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position)
 {
     VisiblePosition result;
-
-    // move the position at the end of the word
     if (atBoundaryOfGranularity(position, TextGranularity::LineGranularity, SelectionDirection::Forward)) {
         // Don't cross line boundaries.
         result = position;

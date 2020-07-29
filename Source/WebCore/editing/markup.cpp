@@ -451,12 +451,8 @@ String StyledMarkupAccumulator::renderedTextRespectingRange(const Text& text)
             behavior = TextIteratorBehavesAsIfNodesFollowing;
     }
 
-    auto startBoundary = makeBoundaryPoint(start);
-    auto endBoundary = makeBoundaryPoint(end);
-    if (!startBoundary || !endBoundary)
-        return emptyString();
-
-    return plainText({ WTFMove(*startBoundary), WTFMove(*endBoundary) }, behavior);
+    auto range = makeSimpleRange(start, end);
+    return range ? plainText(*range, behavior) : emptyString();
 }
 
 String StyledMarkupAccumulator::textContentRespectingRange(const Text& text)

@@ -30,7 +30,6 @@
 #include "Editing.h"
 #include "Element.h"
 #include "HTMLInputElement.h"
-#include "Range.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "TextIterator.h"
@@ -132,11 +131,8 @@ Optional<SimpleRange> VisibleSelection::firstRange() const
 {
     if (isNoneOrOrphaned())
         return WTF::nullopt;
-    Position start = m_start.parentAnchoredEquivalent();
-    Position end = m_end.parentAnchoredEquivalent();
-    if (start.isNull() || start.isOrphan() || end.isNull() || end.isOrphan())
-        return WTF::nullopt;
-    return SimpleRange { *makeBoundaryPoint(start), *makeBoundaryPoint(end) };
+    // FIXME: Seems likely we don't need to call parentAnchoredEquivalent here.
+    return makeSimpleRange(m_start.parentAnchoredEquivalent(), m_end.parentAnchoredEquivalent());
 }
 
 Optional<SimpleRange> VisibleSelection::toNormalizedRange() const
@@ -179,18 +175,13 @@ Optional<SimpleRange> VisibleSelection::toNormalizedRange() const
         if (comparePositions(s, e) > 0) {
             // Make sure the start is before the end.
             // The end can wind up before the start if collapsed whitespace is the only thing selected.
-            Position tmp = s;
-            s = e;
-            e = tmp;
+            std::swap(s, e);
         }
         s = s.parentAnchoredEquivalent();
         e = e.parentAnchoredEquivalent();
     }
 
-    if (s.isNull() || e.isNull())
-        return WTF::nullopt;
-
-    return SimpleRange { *makeBoundaryPoint(s), *makeBoundaryPoint(e) };
+    return makeSimpleRange(s, e);
 }
 
 bool VisibleSelection::expandUsingGranularity(TextGranularity granularity)
@@ -202,18 +193,6 @@ bool VisibleSelection::expandUsingGranularity(TextGranularity granularity)
     return true;
 }
 
-static Optional<SimpleRange> makeSearchRange(const Position& position)
-{
-    auto node = position.deprecatedNode();
-    auto scope = deprecatedEnclosingBlockFlowElement(node);
-    if (!scope)
-        return { };
-    auto start = makeBoundaryPoint(position.parentAnchoredEquivalent());
-    if (!start)
-        return { };
-    return { { WTFMove(*start), makeBoundaryPointAfterNodeContents(*scope) } };
-}
-
 bool VisibleSelection::isAll(EditingBoundaryCrossingRule rule) const
 {
     return !nonBoundaryShadowTreeRootNode() && visibleStart().previous(rule).isNull() && visibleEnd().next(rule).isNull();
@@ -221,12 +200,11 @@ bool VisibleSelection::isAll(EditingBoundaryCrossingRule rule) const
 
 void VisibleSelection::appendTrailingWhitespace()
 {
-    auto searchRange = makeSearchRange(m_end);
-    if (!searchRange)
+    auto scope = deprecatedEnclosingBlockFlowElement(m_end.deprecatedNode());
+    if (!scope)
         return;
 
-    CharacterIterator charIt(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
-
+    CharacterIterator charIt(*makeSimpleRange(m_end, makeBoundaryPointAfterNodeContents(*scope)), TextIteratorEmitsCharactersBetweenAllVisiblePositions);
     for (; !charIt.atEnd() && charIt.text().length(); charIt.advance(1)) {
         UChar c = charIt.text()[0];
         if ((!isSpaceOrNewline(c) && c != noBreakSpace) || c == '\n')

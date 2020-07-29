@@ -176,15 +176,13 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
 
 WebCore::AttributedString TextCheckingControllerProxy::annotatedSubstringBetweenPositions(const WebCore::VisiblePosition& start, const WebCore::VisiblePosition& end)
 {
-    auto startBoundary = makeBoundaryPoint(start);
-    auto endBoundary = makeBoundaryPoint(end);
-    if (!startBoundary || !endBoundary)
+    auto entireRange = makeSimpleRange(start, end);
+    if (!entireRange)
         return { };
-    auto entireRange = SimpleRange { *startBoundary, *endBoundary };
 
     auto string = adoptNS([[NSMutableAttributedString alloc] init]);
 
-    for (TextIterator it(entireRange); !it.atEnd(); it.advance()) {
+    for (TextIterator it(*entireRange); !it.atEnd(); it.advance()) {
         if (!it.text().length())
             continue;
         [string appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:it.text().createNSStringWithoutCopying().get()]).get()];
@@ -192,7 +190,7 @@ WebCore::AttributedString TextCheckingControllerProxy::annotatedSubstringBetween
         for (auto* marker : range.start.document().markers().markersInRange(range, DocumentMarker::PlatformTextChecking)) {
             auto& data = WTF::get<DocumentMarker::PlatformTextCheckingData>(marker->data());
             auto subrange = resolveCharacterRange(range, { marker->startOffset(), marker->endOffset() - marker->startOffset() });
-            [string addAttribute:data.key value:data.value range:characterRange(entireRange, subrange)];
+            [string addAttribute:data.key value:data.value range:characterRange(*entireRange, subrange)];
         }
     }
 

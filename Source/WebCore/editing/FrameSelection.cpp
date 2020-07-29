@@ -2618,34 +2618,6 @@ UChar FrameSelection::characterAfterCaretSelection() const
     return visiblePosition.characterAfter();
 }
 
-int FrameSelection::wordOffsetInRange(const Range *range) const
-{
-    if (!range)
-        return -1;
-
-    VisibleSelection selection = m_selection;
-    if (!selection.isCaret())
-        return -1;
-
-    // FIXME: This will only work in cases where the selection remains in
-    // the same node after it is expanded. Improve to handle more complicated
-    // cases.
-    int result = selection.start().deprecatedEditingOffset() - range->startOffset();
-    if (result < 0)
-        result = 0;
-    return result;
-}
-
-bool FrameSelection::spaceFollowsWordInRange(const Range *range) const
-{
-    if (!range)
-        return false;
-    Node& node = range->endContainer();
-    int endOffset = range->endOffset();
-    VisiblePosition pos(createLegacyEditingPosition(&node, endOffset), VP_DEFAULT_AFFINITY);
-    return isSpaceOrNewline(pos.characterAfter());
-}
-
 bool FrameSelection::selectionAtDocumentStart() const
 {
     VisibleSelection selection = m_selection;
@@ -2658,15 +2630,6 @@ bool FrameSelection::selectionAtDocumentStart() const
         return false;
 
     return isStartOfDocument(pos);
-}
-
-bool FrameSelection::selectionAtSentenceStart() const
-{
-    VisibleSelection selection = m_selection;
-    if (selection.isNone())
-        return false;
-
-    return actualSelectionAtSentenceStart(selection);
 }
 
 bool FrameSelection::selectionAtWordStart() const
@@ -2834,9 +2797,12 @@ VisibleSelection FrameSelection::wordSelectionContainingCaretSelection(const Vis
     return VisibleSelection(startVisiblePos, endVisiblePos);    
 }
 
-bool FrameSelection::actualSelectionAtSentenceStart(const VisibleSelection& sel) const
+bool FrameSelection::selectionAtSentenceStart() const
 {
-    Position startPos(sel.start());
+    if (m_selection.isNone())
+        return false;
+
+    Position startPos(m_selection.start());
     VisiblePosition pos(createLegacyEditingPosition(startPos.deprecatedNode(), startPos.deprecatedEditingOffset()), VP_DEFAULT_AFFINITY);
     if (pos.isNull())
         return false;

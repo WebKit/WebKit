@@ -1,3 +1,20 @@
+2020-07-29  Darin Adler  <darin@apple.com>
+
+        Improve range idioms and other changes to prepare the way for more reduction in live range use
+        https://bugs.webkit.org/show_bug.cgi?id=214882
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (insertionPointFromCurrentSelection): Simplify with makeSimpleRange.
+        (WebEditorClient::requestCandidatesForSelection): Ditto.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _convertToDOMRange:rangeIsRelativeTo:]): Get rid of
+        unnecessary construction of a range just to get an end point.
+        (-[WebFrame wordOffsetInRange:]): Moved logic here from VisibleSelection.
+        (-[WebFrame spaceFollowsWordInRange:]): Ditto.
+
 2020-07-23  Darin Adler  <darin@apple.com>
 
         Stop using live ranges in SpellChecker.h and TextCheckingHelper.h

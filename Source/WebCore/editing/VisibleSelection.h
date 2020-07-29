@@ -72,6 +72,8 @@ public:
     VisiblePosition visibleBase() const { return VisiblePosition(m_base, isRange() ? (isBaseFirst() ? UPSTREAM : DOWNSTREAM) : affinity()); }
     VisiblePosition visibleExtent() const { return VisiblePosition(m_extent, isRange() ? (isBaseFirst() ? DOWNSTREAM : UPSTREAM) : affinity()); }
 
+    operator VisiblePositionRange() const { return { visibleStart(), visibleEnd() }; }
+
     bool isNone() const { return selectionType() == NoSelection; }
     bool isCaret() const { return selectionType() == CaretSelection; }
     bool isRange() const { return selectionType() == RangeSelection; }

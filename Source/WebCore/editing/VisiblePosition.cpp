@@ -849,6 +849,11 @@ TextStream& operator<<(TextStream& stream, const VisiblePosition& visiblePositio
     return stream;
 }
 
+Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange& range)
+{
+    return makeSimpleRange(range.start, range.end);
+}
+
 }  // namespace WebCore
 
 #if ENABLE(TREE_DEBUGGING)

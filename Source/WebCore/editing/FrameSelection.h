@@ -232,8 +232,6 @@ public:
     WEBCORE_EXPORT UChar characterInRelationToCaretSelection(int amount) const;
     WEBCORE_EXPORT UChar characterBeforeCaretSelection() const;
     WEBCORE_EXPORT UChar characterAfterCaretSelection() const;
-    WEBCORE_EXPORT int wordOffsetInRange(const Range*) const;
-    WEBCORE_EXPORT bool spaceFollowsWordInRange(const Range*) const;
     WEBCORE_EXPORT bool selectionAtDocumentStart() const;
     WEBCORE_EXPORT bool selectionAtSentenceStart() const;
     WEBCORE_EXPORT bool selectionAtWordStart() const;
@@ -333,7 +331,6 @@ private:
     bool dispatchSelectStart();
 
 #if PLATFORM(IOS_FAMILY)
-    bool actualSelectionAtSentenceStart(const VisibleSelection&) const;
     Optional<SimpleRange> rangeByAlteringCurrentSelection(EAlteration, int amount) const;
 #endif
 

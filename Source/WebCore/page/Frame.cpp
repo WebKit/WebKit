@@ -819,24 +819,19 @@ Document* Frame::documentAtPoint(const IntPoint& point)
 RefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
 {
     auto position = visiblePositionForPoint(framePoint);
-    auto positionBoundary = makeBoundaryPoint(position);
-    if (!positionBoundary)
-        return nullptr;
 
     auto containerText = position.deepEquivalent().containerText();
     if (!containerText || !containerText->renderer() || containerText->renderer()->style().userSelect() == UserSelect::None)
         return nullptr;
 
-    if (auto previous = makeBoundaryPoint(position.previous())) {
-        auto previousCharacterRange = SimpleRange { *previous, *positionBoundary };
-        if (editor().firstRectForRange(previousCharacterRange).contains(framePoint))
-            return createLiveRange(previousCharacterRange);
+    if (auto previousCharacterRange = makeSimpleRange(position.previous(), position)) {
+        if (editor().firstRectForRange(*previousCharacterRange).contains(framePoint))
+            return createLiveRange(*previousCharacterRange);
     }
 
-    if (auto next = makeBoundaryPoint(position.next())) {
-        auto nextCharacterRange = SimpleRange { *positionBoundary, *next };
-        if (editor().firstRectForRange(nextCharacterRange).contains(framePoint))
-            return createLiveRange(nextCharacterRange);
+    if (auto nextCharacterRange = makeSimpleRange(position, position.next())) {
+        if (editor().firstRectForRange(*nextCharacterRange).contains(framePoint))
+            return createLiveRange(*nextCharacterRange);
     }
 
     return nullptr;

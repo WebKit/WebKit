@@ -1,3 +1,196 @@
+2020-07-29  Darin Adler  <darin@apple.com>
+
+        Improve range idioms and other changes to prepare the way for more reduction in live range use
+        https://bugs.webkit.org/show_bug.cgi?id=214882
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AccessibilityReplacedText::AccessibilityReplacedText): Call the
+        VisiblePosition versions of start and end instead of converting to Position
+        and then back to VisiblePosition.
+        (WebCore::AXObjectCache::rangeMatchesTextNearRange): Simplify with makeSimpleRange.
+        (WebCore::AXObjectCache::characterOffsetForPoint): Ditto.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::visiblePositionRangeForUnorderedPositions const):
+        Update idiom for creating VisiblePositionRange since it's just a struct now
+        without explicit constructors.
+        (WebCore::AccessibilityObject::positionOfLeftWord const): Ditto.
+        (WebCore::AccessibilityObject::positionOfRightWord const): Ditto.
+        (WebCore::AccessibilityObject::leftLineVisiblePositionRange const): Ditto.
+        (WebCore::AccessibilityObject::rightLineVisiblePositionRange const): Ditto.
+        (WebCore::AccessibilityObject::sentenceForPosition const): Ditto.
+        (WebCore::AccessibilityObject::paragraphForPosition const): Ditto.
+        (WebCore::AccessibilityObject::styleRangeForPosition const): Ditto.
+        (WebCore::AccessibilityObject::visiblePositionRangeForRange const): Ditto.
+        (WebCore::AccessibilityObject::lineRangeForPosition const): Ditto.
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange): Ditto.
+        (WebCore::AccessibilityObject::lengthForVisiblePositionRange const): Ditto.
+        (WebCore::AccessibilityObject::nextSentenceEndPosition const): Ditto.
+        (WebCore::AccessibilityObject::previousSentenceStartPosition const): Ditto.
+
+        * accessibility/AccessibilityObjectInterface.h: Moved VisiblePositionRange
+        to VisiblePosition.h for wider use. Also removed constructors.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::textUnderElement const): Simplify with
+        makeSimpleRange.
+        (WebCore::AccessibilityRenderObject::linkClickPoint): Ditto.
+        (WebCore::AccessibilityRenderObject::clickPoint): Ditto.
+        (WebCore::AccessibilityRenderObject::visiblePositionRange const): Updated
+        for removal of VisiblePositionRange constructor.
+        (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine const):
+        Remove unnecessary explicit conversion to VisiblePositionRange.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (visiblePositionRangeForTextMarkerRange): Added, replacing separate functions
+        for start and end.
+        (-[WebAccessibilityObjectWrapper visiblePositionRangeForTextMarkerRange:]):
+        Simplify using visiblePositionRangeForTextMarkerRange.
+
+        * dom/Document.cpp: Added include of "Range.h", may not be needed right now,
+        but highly likely to be needed after future live range work.
+        * dom/Node.cpp: Removed include of "Range.h".
+
+        * dom/Position.h: Added PositionRange. This will be a more efficient
+        alternative to SimpleRange that can avoid computing node offets for positions
+        before and after anchor nodes in some cases. Not used yet.
+
+        * dom/RadioButtonGroups.cpp: Removed include of "Range.h".
+
+        * dom/Range.h: Export makeSimpleRange overload now used outside WebCore.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::makeSimpleRange): Added overloads for ranges that consist of just
+        a single boundary point, so the argument does not have to be passed twice.
+        (WebCore::commonInclusiveAncestor): Added overload so caller can just pass
+        a simple range rather than passing two boundary point container nodes.
+
+        * dom/SimpleRange.h: Added makeSimpleRange overloads that take one or more
+        argument that can be passed to makeBoundaryPoint or actual boundary points.
+
+        * dom/StaticRange.cpp: Removed include of "Range.h".
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand):
+        Simplify with makeSimpleRange.
+        (WebCore::AlternativeTextController::processMarkersOnTextToBeReplacedByResult):
+        Ditto.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle): Ditto.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::stringForVisiblePositionIndexRange): Updated for removal of
+        VisiblePositionRange constructor; also use move to reduce reference count
+        churn a tiny bit.
+        (WebCore::CompositeEditCommand::moveParagraphs): Simplify with makeSimpleRange.
+
+        * editing/DeleteSelectionCommand.cpp: Added include of "Range.h", may not be needed now,
+        but highly likely to be needed after future live range work.
+
+        * editing/Editing.cpp:
+        (WebCore::indexForVisiblePosition): Simplify using makeSimpleRange and
+        makeBoundaryPointBeforeNodeContents.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectedText const): Simplify using VisibleSelection::firstRange.
+        (WebCore::extendSelection): Simplify using makeSimpleRange.
+        (WebCore::Editor::contextRangeForCandidateRequest const): Ditto.
+        (WebCore::Editor::adjustedSelectionRange): Simplify with the new overload
+        of commonInclusiveAncestor.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::wordOffsetInRange const): Deleted. Moved the code
+        into the iOS-specific part of WebKitLegacy WebFrame.
+        (WebCore::FrameSelection::spaceFollowsWordInRange const): Deleted. Moved the
+        code into the iOS-specific part of WebKitLegacy WebFrame.
+        (WebCore::FrameSelection::selectionAtSentenceStart const): Merged in with
+        actualSelectionAtSentenceStart.
+        (WebCore::FrameSelection::actualSelectionAtSentenceStart const): Deleted.
+        * editing/FrameSelection.h: Updated for the above deletion.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingParagraph::offsetTo const): Simplify with makeSimpleRange.
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::ParagraphContentIterator::ParagraphContentIterator): Simplify with
+        makeSimpleRange.
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::postTextStateChangeNotificationForDeletion): Pass
+        visibleStart/End instead of converting to Position and back to VisiblePosition.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::makeSimpleRange): Added. Converts a VisiblePositionRange into
+        a SimpleRange.
+        * editing/VisiblePosition.h: Moved VisiblePositionRange here.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::firstRange const): Simplify using makeSimpleRange.
+        (WebCore::VisibleSelection::toNormalizedRange const): Ditto.
+        (WebCore::makeSearchRange): Deleted. This was confusingly named given that
+        it was only used in appendTrailingWhitespace.
+        (WebCore::VisibleSelection::appendTrailingWhitespace): Merged makeSearchRange
+        in here and simplified using makeSimpleRange.
+
+        * editing/VisibleSelection.h: Added conversion to VisiblePositionRange.
+        Previously this was implemented as a constructor for VisiblePositionRange,
+        but that was a layering inversion since this is built on top of VisiblePosition.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::distanceBetweenPositions): Simplified using makeSimpleRange.
+        (WebCore::charactersAroundPosition): Ditto.
+        (WebCore::wordRangeFromPosition): Removed an unhelpful comment.
+        (WebCore::closestWordBoundaryForPosition): Ditto.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::detectItem): Simplify using makeSimpleRange.
+        (WebCore::searchForLinkRemovingExistingDDLinks): Removed out argument
+        about modifying the DOM. This was used to work around a problem caused by
+        using live ranges. The problem no longer exists because the code does not
+        use live ranges any more.
+        (WebCore::DataDetection::detectContentInRange): Removed the workaround.
+
+        * editing/cocoa/DictionaryLookup.mm:
+        (WebCore::DictionaryLookup::rangeForSelection): Simplify using makeSimpleRange.
+        (WebCore::DictionaryLookup::rangeAtHitTestResult): Ditto.
+
+        * editing/cocoa/WebContentReaderCocoa.mm: Added include of "Range.h", may
+        not be needed now, but highly likely to be needed after future live range work.
+
+        * editing/ios/DictationCommandIOS.cpp: Removed include of "Range.h".
+
+        * editing/mac/DictionaryLookupLegacy.mm:
+        (WebCore::DictionaryLookup::rangeForSelection): Simplify using makeSimpleRange.
+        (WebCore::DictionaryLookup::rangeAtHitTestResult): Ditto.
+
+        * editing/mac/EditorMac.mm: Removed include of "Range.h".
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::renderedTextRespectingRange): Simplify
+        using makeSimpleRange.
+
+        * editing/win/EditorWin.cpp: Added include of "Range.h", may not be needed now,
+        but highly likely to be needed after future live range work.
+
+        * html/shadow/mac/ImageControlsButtonElementMac.cpp: Removed include of "Range.h".
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::addRange): Call setSelection instead of moveTo.
+        No need to have two functions that do the same thing.
+
+        * page/EventHandler.cpp:
+        (WebCore::textDistance): Simplify using makeSimpleRange.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::rangeForPoint): Simplify using makeSimpleRange.
+
+        * page/TextIndicator.cpp:
+        (WebCore::estimatedBackgroundColorForRange): Simplify using the
+        commonInclusiveAncestor overload that takes a range.
+        (WebCore::initializeIndicator): Ditto.
+
 2020-07-29  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late July 2020 edition

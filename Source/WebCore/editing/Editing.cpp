@@ -1104,27 +1104,15 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
             scope = &document;
     }
 
-    auto start = makeBoundaryPoint(firstPositionInNode(scope.get()));
-    if (!start)
-        return 0;
-    auto end = makeBoundaryPoint(position.parentAnchoredEquivalent());
-    if (!end)
-        return 0;
-
-    return characterCount({ *start, *end }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    auto range = *makeSimpleRange(makeBoundaryPointBeforeNodeContents(*scope), position);
+    return characterCount(range, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 }
 
 // FIXME: Merge this function with the one above.
 int indexForVisiblePosition(Node& node, const VisiblePosition& visiblePosition, bool forSelectionPreservation)
 {
-    auto start = makeBoundaryPoint(firstPositionInNode(&node));
-    if (!start)
-        return 0;
-    auto end = makeBoundaryPoint(visiblePosition.deepEquivalent().parentAnchoredEquivalent());
-    if (!end)
-        return 0;
-
-    return characterCount({ *start, *end }, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior);
+    auto range = makeSimpleRange(makeBoundaryPointBeforeNodeContents(node), visiblePosition);
+    return range ? characterCount(*range, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior) : 0;
 }
 
 VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& position, int offset)

@@ -1025,11 +1025,10 @@ static Vector<TextCheckingResult> core(NSArray *incomingResults, OptionSet<TextC
 static NSUInteger insertionPointFromCurrentSelection(const VisibleSelection& selection)
 {
     auto selectionStart = selection.visibleStart();
-    auto selectionStartBoundary = makeBoundaryPoint(selectionStart);
-    auto paragraphStart = makeBoundaryPoint(startOfParagraph(selectionStart));
-    if (!selectionStartBoundary || !paragraphStart)
+    auto range = makeSimpleRange(startOfParagraph(selectionStart), selectionStart);
+    if (!range)
         return 0;
-    return characterCount({ *paragraphStart, *selectionStartBoundary });
+    return characterCount(*range);
 }
 
 Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView string, OptionSet<TextCheckingType> coreCheckingTypes, const VisibleSelection& currentSelection)
@@ -1110,8 +1109,8 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
     m_lastSelectionForRequestedCandidates = selection;
 
     auto selectionStart = selection.visibleStart();
-    auto selectionStartOffsetInParagraph = characterCount({ *makeBoundaryPoint(startOfParagraph(selectionStart)), *makeBoundaryPoint(selectionStart) });
-    auto selectionLength = characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selection.visibleEnd()) });
+    auto selectionStartOffsetInParagraph = characterCount(*makeSimpleRange(startOfParagraph(selectionStart), selectionStart));
+    auto selectionLength = characterCount(*makeSimpleRange(selectionStart, selection.visibleEnd()));
     auto contextRangeForCandidateRequest = frame->editor().contextRangeForCandidateRequest();
     String contextForCandidateReqeuest = contextRangeForCandidateRequest ? plainText(*contextRangeForCandidateRequest) : String();
 

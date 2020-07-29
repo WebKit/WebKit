@@ -675,11 +675,10 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
 
 static uint64_t textDistance(const Position& start, const Position& end)
 {
-    auto startBoundary = makeBoundaryPoint(start);
-    auto endBoundary = makeBoundaryPoint(end);
-    if (!startBoundary || !endBoundary)
+    auto range = makeSimpleRange(start, end);
+    if (!range)
         return 0;
-    return characterCount({ *startBoundary, *endBoundary }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    return characterCount(*range, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 }
 
 bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)

@@ -32,6 +32,7 @@
 #include "EditorClient.h"
 #include "Frame.h"
 #include "FrameSelection.h"
+#include "Range.h"
 #include "Settings.h"
 #include "TextCheckerClient.h"
 #include "TextIterator.h"
@@ -160,10 +161,10 @@ SimpleRange TextCheckingParagraph::subrange(CharacterRange range) const
 
 ExceptionOr<uint64_t> TextCheckingParagraph::offsetTo(const Position& position) const
 {
-    auto end = makeBoundaryPoint(position);
-    if (!end)
+    auto range = makeSimpleRange(paragraphRange().start, position);
+    if (!range)
         return Exception { TypeError };
-    return characterCount({ paragraphRange().start, *end });
+    return characterCount(*range);
 }
 
 bool TextCheckingParagraph::isEmpty() const

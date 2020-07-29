@@ -3259,12 +3259,8 @@ String Editor::selectedTextForDataTransfer() const
 String Editor::selectedText(TextIteratorBehavior behavior) const
 {
     // We remove '\0' characters because they are not visibly rendered to the user.
-    auto& selection = m_document.selection().selection();
-    auto start = selection.start();
-    auto end = selection.end();
-    if (start.isNull() || start.isOrphan() || end.isNull() || end.isOrphan())
-        return emptyString();
-    return plainText(SimpleRange { *makeBoundaryPoint(start), *makeBoundaryPoint(end) }, behavior).replaceWithLiteral('\0', "");
+    auto range = m_document.selection().selection().firstRange();
+    return range ? plainText(*range, behavior).replaceWithLiteral('\0', "") : emptyString();
 }
 
 RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size)
@@ -3682,7 +3678,7 @@ static SimpleRange extendSelection(const SimpleRange& range, unsigned characters
         start = start.previous(Character);
         end = end.next(Character);
     }
-    return { *makeBoundaryPoint(start), *makeBoundaryPoint(end)};
+    return *makeSimpleRange(start, end);
 }
 
 void Editor::scanSelectionForTelephoneNumbers()
@@ -3909,11 +3905,7 @@ String Editor::stringForCandidateRequest() const
 Optional<SimpleRange> Editor::contextRangeForCandidateRequest() const
 {
     auto& selection = m_document.selection().selection();
-    auto start = makeBoundaryPoint(startOfParagraph(selection.visibleStart()));
-    auto end = makeBoundaryPoint(endOfParagraph(selection.visibleEnd()));
-    if (!start || !end)
-        return WTF::nullopt;
-    return { { *start, *end } };
+    return makeSimpleRange(startOfParagraph(selection.visibleStart()), endOfParagraph(selection.visibleEnd()));
 }
 
 Optional<SimpleRange> Editor::rangeForTextCheckingResult(const TextCheckingResult& result) const
@@ -4231,7 +4223,7 @@ Optional<SimpleRange> Editor::adjustedSelectionRange()
     // FIXME: Why do we need to adjust the selection to include the anchor tag it's in? Whoever wrote this code originally forgot to leave us a comment explaining the rationale.
     auto range = selectedRange();
     if (range) {
-        if (auto enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonInclusiveAncestor(range->start.container, range->end.container).get()), HTMLNames::aTag)) {
+        if (auto enclosingAnchor = enclosingElementWithTag(firstPositionInNode(commonInclusiveAncestor(*range).get()), HTMLNames::aTag)) {
             if (comparePositions(firstPositionInOrBeforeNode(range->start.container.ptr()), createLegacyEditingPosition(range->start)) >= 0)
                 range->start = makeBoundaryPointBeforeNodeContents(*enclosingAnchor);
         }

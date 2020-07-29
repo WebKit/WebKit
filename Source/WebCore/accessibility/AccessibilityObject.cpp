@@ -63,6 +63,7 @@
 #include "NodeList.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "Range.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -980,21 +981,19 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForUnorderedPositi
         endPos = visiblePos1;
     }
 
-    return VisiblePositionRange(startPos, endPos);
+    return { startPos, endPos };
 }
 
 VisiblePositionRange AccessibilityObject::positionOfLeftWord(const VisiblePosition& visiblePos) const
 {
-    VisiblePosition startPosition = startOfWord(visiblePos, LeftWordIfOnBoundary);
-    VisiblePosition endPosition = endOfWord(startPosition);
-    return VisiblePositionRange(startPosition, endPosition);
+    auto start = startOfWord(visiblePos, LeftWordIfOnBoundary);
+    return { start, endOfWord(start) };
 }
 
 VisiblePositionRange AccessibilityObject::positionOfRightWord(const VisiblePosition& visiblePos) const
 {
-    VisiblePosition startPosition = startOfWord(visiblePos, RightWordIfOnBoundary);
-    VisiblePosition endPosition = endOfWord(startPosition);
-    return VisiblePositionRange(startPosition, endPosition);
+    auto start = startOfWord(visiblePos, RightWordIfOnBoundary);
+    return { start, endOfWord(start) };
 }
 
 static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition& visiblePosition)
@@ -1044,8 +1043,7 @@ VisiblePositionRange AccessibilityObject::leftLineVisiblePositionRange(const Vis
     } else
         startPosition = updateAXLineStartForVisiblePosition(startPosition);
 
-    VisiblePosition endPosition = endOfLine(prevVisiblePos);
-    return VisiblePositionRange(startPosition, endPosition);
+    return { startPosition, endOfLine(prevVisiblePos) };
 }
 
 VisiblePositionRange AccessibilityObject::rightLineVisiblePositionRange(const VisiblePosition& visiblePos) const
@@ -1078,23 +1076,21 @@ VisiblePositionRange AccessibilityObject::rightLineVisiblePositionRange(const Vi
         endPosition = endOfLine(nextVisiblePos);
     }
 
-    return VisiblePositionRange(startPosition, endPosition);
+    return { startPosition, endPosition };
 }
 
 VisiblePositionRange AccessibilityObject::sentenceForPosition(const VisiblePosition& visiblePos) const
 {
     // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
-    VisiblePosition startPosition = startOfSentence(visiblePos);
-    VisiblePosition endPosition = endOfSentence(startPosition);
-    return VisiblePositionRange(startPosition, endPosition);
+    auto startPosition = startOfSentence(visiblePos);
+    return { startPosition, endOfSentence(startPosition) };
 }
 
 VisiblePositionRange AccessibilityObject::paragraphForPosition(const VisiblePosition& visiblePos) const
 {
-    VisiblePosition startPosition = startOfParagraph(visiblePos);
-    VisiblePosition endPosition = endOfParagraph(startPosition);
-    return VisiblePositionRange(startPosition, endPosition);
+    auto startPosition = startOfParagraph(visiblePos);
+    return { startPosition, endOfParagraph(startPosition) };
 }
 
 static VisiblePosition startOfStyleRange(const VisiblePosition& visiblePos)
@@ -1146,9 +1142,9 @@ static VisiblePosition endOfStyleRange(const VisiblePosition& visiblePos)
 VisiblePositionRange AccessibilityObject::styleRangeForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
-        return VisiblePositionRange();
+        return { };
 
-    return VisiblePositionRange(startOfStyleRange(visiblePos), endOfStyleRange(visiblePos));
+    return { startOfStyleRange(visiblePos), endOfStyleRange(visiblePos) };
 }
 
 // NOTE: Consider providing this utility method as AX API
@@ -1156,12 +1152,11 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForRange(const Pla
 {
     unsigned textLength = getLengthForTextRange();
     if (range.start + range.length > textLength)
-        return VisiblePositionRange();
+        return { };
 
-    VisiblePosition startPosition = visiblePositionForIndex(range.start);
+    auto startPosition = visiblePositionForIndex(range.start);
     startPosition.setAffinity(DOWNSTREAM);
-    VisiblePosition endPosition = visiblePositionForIndex(range.start + range.length);
-    return VisiblePositionRange(startPosition, endPosition);
+    return { startPosition, visiblePositionForIndex(range.start + range.length) };
 }
 
 Optional<SimpleRange> AccessibilityObject::rangeForPlainTextRange(const PlainTextRange& range) const
@@ -1183,9 +1178,7 @@ Optional<SimpleRange> AccessibilityObject::rangeForPlainTextRange(const PlainTex
 
 VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosition& visiblePosition) const
 {
-    VisiblePosition startPosition = startOfLine(visiblePosition);
-    VisiblePosition endPosition = endOfLine(visiblePosition);
-    return VisiblePositionRange(startPosition, endPosition);
+    return { startOfLine(visiblePosition), endOfLine(visiblePosition) };
 }
 
 bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
@@ -1271,15 +1264,12 @@ String AccessibilityObject::stringForRange(const SimpleRange& range) const
 
 String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange)
 {
-    auto start = makeBoundaryPoint(visiblePositionRange.start);
-    if (!start)
-        return { };
-    auto end = makeBoundaryPoint(visiblePositionRange.end);
-    if (!end)
+    auto range = makeSimpleRange(visiblePositionRange);
+    if (!range)
         return { };
 
     StringBuilder builder;
-    for (TextIterator it({ *start, *end }); !it.atEnd(); it.advance()) {
+    for (TextIterator it(*range); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length()) {
             // Add a textual representation for list marker text.
@@ -1298,16 +1288,13 @@ int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRang
 {
     // FIXME: Multi-byte support
 
-    auto start = makeBoundaryPoint(visiblePositionRange.start);
-    if (!start)
-        return -1; // FIXME: Why not return 0?
-    auto end = makeBoundaryPoint(visiblePositionRange.end);
-    if (!end)
+    auto range = makeSimpleRange(visiblePositionRange);
+    if (!range)
         return -1; // FIXME: Why not return 0?
 
     // FIXME: Use characterCount instead of writing our own loop?
     int length = 0;
-    for (TextIterator it({ *start, *end }); !it.atEnd(); it.advance()) {
+    for (TextIterator it(*range); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length())
             length += it.text().length();
@@ -1431,16 +1418,13 @@ VisiblePosition AccessibilityObject::nextSentenceEndPosition(const VisiblePositi
 
     // Make sure we move off of a sentence end.
     auto nextPosition = position.next();
-    auto start = makeBoundaryPoint(startOfLine(nextPosition));
-    if (!start)
-        return { };
-    auto end = makeBoundaryPoint(endOfLine(nextPosition));
-    if (!end)
+    auto range = makeSimpleRange(startOfLine(nextPosition), endOfLine(nextPosition));
+    if (!range)
         return { };
 
     // An empty line is considered a sentence. If it's skipped, then the sentence parser will not
     // see this empty line. Instead, return the end position of the empty line.
-    return hasAnyPlainText({ *start, *end }) ? endOfSentence(nextPosition) : nextPosition;
+    return hasAnyPlainText(*range) ? endOfSentence(nextPosition) : nextPosition;
 }
 
 VisiblePosition AccessibilityObject::previousSentenceStartPosition(const VisiblePosition& position) const
@@ -1450,15 +1434,12 @@ VisiblePosition AccessibilityObject::previousSentenceStartPosition(const Visible
 
     // Make sure we move off of a sentence start.
     auto previousPosition = position.previous();
-    auto start = makeBoundaryPoint(startOfLine(previousPosition));
-    if (!start)
-        return { };
-    auto end = makeBoundaryPoint(endOfLine(previousPosition));
-    if (!end)
+    auto range = makeSimpleRange(startOfLine(previousPosition), endOfLine(previousPosition));
+    if (!range)
         return { };
 
     // Treat empty line as a separate sentence.
-    return hasAnyPlainText({ *start, *end }) ? startOfSentence(previousPosition) : previousPosition;
+    return hasAnyPlainText(*range) ? startOfSentence(previousPosition) : previousPosition;
 }
 
 VisiblePosition AccessibilityObject::nextParagraphEndPosition(const VisiblePosition& position) const

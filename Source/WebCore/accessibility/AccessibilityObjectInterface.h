@@ -430,24 +430,6 @@ enum class AccessibilityVisiblePositionForBounds {
     Last,
 };
 
-struct VisiblePositionRange {
-    VisiblePosition start;
-    VisiblePosition end;
-
-    VisiblePositionRange() = default;
-    VisiblePositionRange(const VisiblePosition& s, const VisiblePosition& e)
-        : start(s)
-        , end(e)
-    { }
-
-    VisiblePositionRange(const VisibleSelection& selection)
-        : start(selection.start())
-        , end(selection.end())
-    { }
-
-    bool isNull() const { return start.isNull() || end.isNull(); }
-};
-
 enum class AccessibilityMathScriptObjectType { Subscript, Superscript };
 enum class AccessibilityMathMultiscriptObjectType { PreSubscript, PreSuperscript, PostSubscript, PostSuperscript };
 

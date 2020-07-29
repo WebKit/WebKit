@@ -279,8 +279,8 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSele
     if (paragraphStart.isNull() || paragraphEnd.isNull())
         return WTF::nullopt;
 
-    auto lengthToSelectionStart = characterCount({ *makeBoundaryPoint(paragraphStart), *makeBoundaryPoint(selectionStart) });
-    auto selectionCharacterCount = characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) });
+    auto lengthToSelectionStart = characterCount(*makeSimpleRange(paragraphStart, selectionStart));
+    auto selectionCharacterCount = characterCount(*makeSimpleRange(selectionStart, selectionEnd));
     NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, selectionCharacterCount);
 
     RefPtr<Range> fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
@@ -328,15 +328,13 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
         auto selectionEnd = selection.visibleEnd();
 
         // As context, we are going to use the surrounding paragraphs of text.
-        auto paragraphStart = makeBoundaryPoint(startOfParagraph(selectionStart));
-        auto paragraphEnd = makeBoundaryPoint(endOfParagraph(selectionEnd));
-        if (!paragraphStart || !paragraphEnd)
+        fullCharacterRange = makeSimpleRange(startOfParagraph(selectionStart), endOfParagraph(selectionEnd));
+        if (!fullCharacterRange)
             return WTF::nullopt;
 
-        fullCharacterRange = { { *paragraphStart, *paragraphEnd } };
-        selectionRange = NSMakeRange(characterCount({ *paragraphStart, *makeBoundaryPoint(selectionStart) }),
-            characterCount({ *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) }));
-        hitIndex = characterCount({ *paragraphStart, *makeBoundaryPoint(position) });
+        selectionRange = NSMakeRange(characterCount(*makeSimpleRange(fullCharacterRange->start, selectionStart)),
+            characterCount(*makeSimpleRange(selectionStart, selectionEnd)));
+        hitIndex = characterCount(*makeSimpleRange(fullCharacterRange->start, position));
     } else {
         VisibleSelection selectionAccountingForLineRules { position };
         selectionAccountingForLineRules.expandUsingGranularity(TextGranularity::WordGranularity);
@@ -350,7 +348,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
         fullCharacterRange = { *expandedRange };
 
         selectionRange = NSMakeRange(NSNotFound, 0);
-        hitIndex = characterCount({ fullCharacterRange->start, *makeBoundaryPoint(position) });
+        hitIndex = characterCount(*makeSimpleRange(fullCharacterRange->start, position));
     }
 
     NSRange selectedRange = [getRVSelectionClass() revealRangeAtIndex:hitIndex selectedRanges:@[[NSValue valueWithRange:selectionRange]] shouldUpdateSelection:nil];

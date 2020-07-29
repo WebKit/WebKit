@@ -163,6 +163,7 @@
 #include "ProcessingInstruction.h"
 #include "PublicSuffix.h"
 #include "Quirks.h"
+#include "Range.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RenderChildIterator.h"
 #include "RenderInline.h"

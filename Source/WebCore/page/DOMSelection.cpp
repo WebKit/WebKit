@@ -337,7 +337,7 @@ void DOMSelection::addRange(Range& range)
 
     auto& selection = frame->selection();
     if (selection.isNone()) {
-        selection.moveTo(&range);
+        selection.setSelection(SimpleRange { range });
         return;
     }
 
@@ -356,7 +356,7 @@ void DOMSelection::addRange(Range& range)
                 selection.moveTo(range.startPosition(), normalizedRange->endPosition(), DOWNSTREAM);
             } else {
                 // The new range contains the original range.
-                selection.moveTo(&range);
+                selection.setSelection(SimpleRange { range });
             }
         }
     } else {
@@ -366,7 +366,7 @@ void DOMSelection::addRange(Range& range)
             result = range.compareBoundaryPoints(Range::END_TO_END, *normalizedRange);
             if (!result.hasException() && result.releaseReturnValue() == -1) {
                 // The original range contains the new range.
-                selection.moveTo(normalizedRange.get());
+                selection.setSelection(SimpleRange { *normalizedRange });
             } else {
                 // The ranges intersect.
                 selection.moveTo(normalizedRange->startPosition(), range.endPosition(), DOWNSTREAM);

@@ -66,6 +66,7 @@
 #import "Page.h"
 #import "PluginDocument.h"
 #import "PluginViewBase.h"
+#import "Range.h"
 #import "RenderInline.h"
 #import "RenderTextControl.h"
 #import "RenderView.h"
@@ -923,29 +924,25 @@ static CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, CFType
 static VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, CFTypeRef textMarker)
 {
     ASSERT(cache);
-    
     if (!textMarker)
         return VisiblePosition();
     TextMarkerData textMarkerData;
     if (!getBytesFromAXTextMarker(textMarker, &textMarkerData, sizeof(textMarkerData)))
         return VisiblePosition();
-    
     return cache->visiblePositionForTextMarkerData(textMarkerData);
+}
+
+static VisiblePositionRange visiblePositionRangeForTextMarkerRange(AXObjectCache* cache, id textMarkerRange)
+{
+    return {
+        visiblePositionForTextMarker(cache, (__bridge CFTypeRef)AXTextMarkerRangeStart(textMarkerRange)),
+        visiblePositionForTextMarker(cache, (__bridge CFTypeRef)AXTextMarkerRangeEnd(textMarkerRange))
+    };
 }
 
 - (VisiblePosition)visiblePositionForTextMarker:(id)textMarker
 {
     return visiblePositionForTextMarker(self.axBackingObject->axObjectCache(), (__bridge CFTypeRef)textMarker);
-}
-
-static VisiblePosition visiblePositionForStartOfTextMarkerRange(AXObjectCache* cache, id textMarkerRange)
-{
-    return visiblePositionForTextMarker(cache, (__bridge CFTypeRef)AXTextMarkerRangeStart(textMarkerRange));
-}
-
-static VisiblePosition visiblePositionForEndOfTextMarkerRange(AXObjectCache* cache, id textMarkerRange)
-{
-    return visiblePositionForTextMarker(cache, (__bridge CFTypeRef)AXTextMarkerRangeEnd(textMarkerRange));
 }
 
 // When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
@@ -1847,10 +1844,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (VisiblePositionRange)visiblePositionRangeForTextMarkerRange:(id)textMarkerRange
 {
-    if (!textMarkerRange)
-        return VisiblePositionRange();
-    AXObjectCache* cache = self.axBackingObject->axObjectCache();
-    return VisiblePositionRange(visiblePositionForStartOfTextMarkerRange(cache, textMarkerRange), visiblePositionForEndOfTextMarkerRange(cache, textMarkerRange));
+    return visiblePositionRangeForTextMarkerRange(self.axBackingObject->axObjectCache(), textMarkerRange);
 }
 
 - (NSArray*)renderWidgetChildren

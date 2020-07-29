@@ -1,3 +1,42 @@
+2020-07-29  Darin Adler  <darin@apple.com>
+
+        Improve range idioms and other changes to prepare the way for more reduction in live range use
+        https://bugs.webkit.org/show_bug.cgi?id=214882
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleGetRenderRect): Emptied out this unused function and added
+        ASSERT_NOT_REACHED. Later, we can delete this once we deal with any link-time
+        dependencies. I believe Safari may link with this but never calls it.
+        (WKBundleNodeHandleCopyVisibleRange): Ditto.
+        (WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled): Ditto.
+        (WKBundleNodeHandleGetHTMLInputElementAutoFilled): Ditto.
+        (WKBundleNodeHandleGetHTMLInputElementAutoFillButtonEnabled): Ditto.
+        (WKBundleNodeHandleGetHTMLInputElementAutoFillAvailable): Ditto.
+        (WKBundleNodeHandleGetHTMLInputElementAutoFillButtonBounds): Ditto.
+        (WKBundleNodeHandleCopyHTMLTableCellElementCellAbove): Ditto.
+        (WKBundleNodeHandleCopyHTMLFrameElementContentFrame): Ditto.
+        (WKBundleNodeHandleGetHTMLInputElementAutofilled): Ditto.
+        (WKBundleNodeHandleSetHTMLInputElementAutofilled): Ditto.
+        (WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled): Ditto.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::annotatedSubstringBetweenPositions):
+        Simplify with makeSimpleRange.
+
+        * WebProcess/WebPage/glib/WebPageGLib.cpp: Added include of "Range.h",
+        may not be needed right now, but highly likely to be needed after
+        future live range work.
+        * WebProcess/WebPage/ios/WebPageIOS.mm: Ditto.
+        (WebKit::WebPage::selectWithGesture): Simplify with makeSimpleRange.
+        (WebKit::WebPage::requestDocumentEditingContext): Ditto.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::attributedSubstringForCharacterRangeAsync):
+        Use auto for range to prepare for possible change of type from live
+        range to SimpleRange.
+
 2020-07-29  Noam Rosenthal  <noam@webkit.org>
 
         Enable paint timing by default

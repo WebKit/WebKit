@@ -98,7 +98,10 @@ HRESULT AccessibleText::get_characterExtents(long offset, enum IA2CoordinateType
     if (!node)
         return E_POINTER;
 
-    IntRect boundingRect = m_object->boundsForVisiblePositionRange(VisiblePositionRange(VisiblePosition(Position(node, offset, Position::PositionIsOffsetInAnchor)), VisiblePosition(Position(node, offset+1, Position::PositionIsOffsetInAnchor))));
+    IntRect boundingRect = m_object->boundsForVisiblePositionRange({
+        VisiblePosition(Position(node, offset, Position::PositionIsOffsetInAnchor)),
+        VisiblePosition(Position(node, offset + 1, Position::PositionIsOffsetInAnchor))
+    });
     *width = boundingRect.width();
     *height = boundingRect.height();
     switch (coordType) {

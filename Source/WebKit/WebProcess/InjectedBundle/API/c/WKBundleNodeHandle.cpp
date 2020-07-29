@@ -28,7 +28,6 @@
 #include "WKBundleNodeHandlePrivate.h"
 
 #include "InjectedBundleNodeHandle.h"
-#include "InjectedBundleRangeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
@@ -90,7 +89,8 @@ WKBundleNodeHandleRef WKBundleNodeHandleCopyDocument(WKBundleNodeHandleRef nodeH
 
 WKRect WKBundleNodeHandleGetRenderRect(WKBundleNodeHandleRef nodeHandleRef, bool* isReplaced)
 {
-    return WebKit::toAPI(WebKit::toImpl(nodeHandleRef)->renderRect(isReplaced));
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 WKImageRef WKBundleNodeHandleCopySnapshotWithOptions(WKBundleNodeHandleRef nodeHandleRef, WKSnapshotOptions options)
@@ -99,10 +99,10 @@ WKImageRef WKBundleNodeHandleCopySnapshotWithOptions(WKBundleNodeHandleRef nodeH
     return toAPI(image.leakRef());
 }
 
-WKBundleRangeHandleRef WKBundleNodeHandleCopyVisibleRange(WKBundleNodeHandleRef nodeHandleRef)
+WKBundleRangeHandleRef WKBundleNodeHandleCopyVisibleRange(WKBundleNodeHandleRef)
 {
-    RefPtr<WebKit::InjectedBundleRangeHandle> rangeHandle = WebKit::toImpl(nodeHandleRef)->visibleRange();
-    return toAPI(rangeHandle.leakRef());
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef elementHandleRef)
@@ -115,14 +115,15 @@ void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htm
     WebKit::toImpl(htmlInputElementHandleRef)->setHTMLInputElementValueForUser(WebKit::toWTFString(valueRef));
 }
 
-void WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool enabled)
+void WKBundleNodeHandleSetHTMLInputElementSpellcheckEnabled(WKBundleNodeHandleRef, bool)
 {
-    WebKit::toImpl(htmlInputElementHandleRef)->setHTMLInputElementSpellcheckEnabled(enabled);
+    // FIXME: Would put ASSERT_NOT_REACHED() here but some compilers are warning the function is "noreturn".
 }
 
-bool WKBundleNodeHandleGetHTMLInputElementAutoFilled(WKBundleNodeHandleRef htmlInputElementHandleRef)
+bool WKBundleNodeHandleGetHTMLInputElementAutoFilled(WKBundleNodeHandleRef)
 {
-    return WebKit::toImpl(htmlInputElementHandleRef)->isHTMLInputElementAutoFilled();
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void WKBundleNodeHandleSetHTMLInputElementAutoFilled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool filled)
@@ -135,9 +136,10 @@ void WKBundleNodeHandleSetHTMLInputElementAutoFilledAndViewable(WKBundleNodeHand
     WebKit::toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFilledAndViewable(autoFilledAndViewable);
 }
 
-bool WKBundleNodeHandleGetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef htmlInputElementHandleRef)
+bool WKBundleNodeHandleGetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef)
 {
-    return WebKit::toImpl(htmlInputElementHandleRef)->isHTMLInputElementAutoFillButtonEnabled();
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabledWithButtonType(WKBundleNodeHandleRef htmlInputElementHandleRef, WKAutoFillButtonType autoFillButtonType)
@@ -155,9 +157,10 @@ WKAutoFillButtonType WKBundleNodeHandleGetHTMLInputElementLastAutoFillButtonType
     return toWKAutoFillButtonType(WebKit::toImpl(htmlInputElementHandleRef)->htmlInputElementLastAutoFillButtonType());
 }
 
-bool WKBundleNodeHandleGetHTMLInputElementAutoFillAvailable(WKBundleNodeHandleRef htmlInputElementHandleRef)
+bool WKBundleNodeHandleGetHTMLInputElementAutoFillAvailable(WKBundleNodeHandleRef)
 {
-    return WebKit::toImpl(htmlInputElementHandleRef)->isAutoFillAvailable();
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 void WKBundleNodeHandleSetHTMLInputElementAutoFillAvailable(WKBundleNodeHandleRef htmlInputElementHandleRef, bool autoFillAvailable)
@@ -165,9 +168,10 @@ void WKBundleNodeHandleSetHTMLInputElementAutoFillAvailable(WKBundleNodeHandleRe
     WebKit::toImpl(htmlInputElementHandleRef)->setAutoFillAvailable(autoFillAvailable);
 }
 
-WKRect WKBundleNodeHandleGetHTMLInputElementAutoFillButtonBounds(WKBundleNodeHandleRef htmlInputElementHandleRef)
+WKRect WKBundleNodeHandleGetHTMLInputElementAutoFillButtonBounds(WKBundleNodeHandleRef)
 {
-    return WebKit::toAPI(WebKit::toImpl(htmlInputElementHandleRef)->htmlInputElementAutoFillButtonBounds());
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 bool WKBundleNodeHandleGetHTMLInputElementLastChangeWasUserEdit(WKBundleNodeHandleRef htmlInputElementHandleRef)
@@ -180,10 +184,10 @@ bool WKBundleNodeHandleGetHTMLTextAreaElementLastChangeWasUserEdit(WKBundleNodeH
     return WebKit::toImpl(htmlTextAreaElementHandleRef)->htmlTextAreaElementLastChangeWasUserEdit();
 }
 
-WKBundleNodeHandleRef WKBundleNodeHandleCopyHTMLTableCellElementCellAbove(WKBundleNodeHandleRef htmlTableCellElementHandleRef)
+WKBundleNodeHandleRef WKBundleNodeHandleCopyHTMLTableCellElementCellAbove(WKBundleNodeHandleRef)
 {
-    RefPtr<WebKit::InjectedBundleNodeHandle> nodeHandle = WebKit::toImpl(htmlTableCellElementHandleRef)->htmlTableCellElementCellAbove();
-    return toAPI(nodeHandle.leakRef());
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 WKBundleFrameRef WKBundleNodeHandleCopyDocumentFrame(WKBundleNodeHandleRef documentHandleRef)
@@ -194,8 +198,8 @@ WKBundleFrameRef WKBundleNodeHandleCopyDocumentFrame(WKBundleNodeHandleRef docum
 
 WKBundleFrameRef WKBundleNodeHandleCopyHTMLFrameElementContentFrame(WKBundleNodeHandleRef htmlFrameElementHandleRef)
 {
-    RefPtr<WebKit::WebFrame> frame = WebKit::toImpl(htmlFrameElementHandleRef)->htmlFrameElementContentFrame();
-    return toAPI(frame.leakRef());
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 WKBundleFrameRef WKBundleNodeHandleCopyHTMLIFrameElementContentFrame(WKBundleNodeHandleRef htmlIFrameElementHandleRef)
@@ -204,22 +208,18 @@ WKBundleFrameRef WKBundleNodeHandleCopyHTMLIFrameElementContentFrame(WKBundleNod
     return toAPI(frame.leakRef());
 }
 
-// Deprecated - use WKBundleNodeHandleGetHTMLInputElementAutoFilled(WKBundleNodeHandleRef).
 bool WKBundleNodeHandleGetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandleRef)
 {
-    return WebKit::toImpl(htmlInputElementHandleRef)->isHTMLInputElementAutoFilled();
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
-// Deprecated - use WKBundleNodeHandleSetHTMLInputElementAutoFilled(WKBundleNodeHandleRef, bool).
-void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool filled)
+void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef handle, bool enabled)
 {
-    WebKit::toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFilled(filled);
+    WKBundleNodeHandleSetHTMLInputElementAutoFilled(handle, enabled);
 }
 
-// Deprecated - use WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabledWithButtonType(WKBundleNodeHandleRef, WKAutoFillButtonType).
-void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool enabled)
+void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef, bool)
 {
-    WebCore::AutoFillButtonType autoFillButtonType = enabled ? WebCore::AutoFillButtonType::Credentials : WebCore::AutoFillButtonType::None;
-
-    WebKit::toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFillButtonEnabled(autoFillButtonType);
+    // FIXME: Would put ASSERT_NOT_REACHED() here but some compilers are warning the function is "noreturn".
 }

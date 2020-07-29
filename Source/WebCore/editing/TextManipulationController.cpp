@@ -40,7 +40,6 @@
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
 #include "PseudoElement.h"
-#include "Range.h"
 #include "ScriptDisallowedScope.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -154,7 +153,7 @@ static bool isNotSpace(UChar character)
 class ParagraphContentIterator {
 public:
     ParagraphContentIterator(const Position& start, const Position& end)
-        : m_iterator({ *makeBoundaryPoint(start), *makeBoundaryPoint(end) }, TextIteratorIgnoresStyleVisibility)
+        : m_iterator(*makeSimpleRange(start, end), TextIteratorIgnoresStyleVisibility)
         , m_node(start.firstNode())
         , m_pastEndNode(end.firstNode())
     {

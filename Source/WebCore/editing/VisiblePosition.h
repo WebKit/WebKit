@@ -32,6 +32,8 @@ namespace WebCore {
 
 class Range;
 
+struct SimpleRange;
+
 // VisiblePosition default affinity is downstream because
 // the callers do not really care (they just want the
 // deep position without regard to line position), and this
@@ -139,6 +141,15 @@ bool areVisiblePositionsInSameTreeScope(const VisiblePosition&, const VisiblePos
 
 WTF::TextStream& operator<<(WTF::TextStream&, EAffinity);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const VisiblePosition&);
+
+struct VisiblePositionRange {
+    VisiblePosition start;
+    VisiblePosition end;
+
+    bool isNull() const { return start.isNull() || end.isNull(); }
+};
+
+Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange&);
 
 // inlines
 

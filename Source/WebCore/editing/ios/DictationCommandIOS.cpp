@@ -32,7 +32,6 @@
 #include "DocumentMarkerController.h"
 #include "Element.h"
 #include "Position.h"
-#include "Range.h"
 #include "SmartReplace.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"

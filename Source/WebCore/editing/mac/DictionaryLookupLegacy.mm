@@ -86,16 +86,14 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSele
     auto selectionEnd = selection.visibleEnd();
 
     // As context, we are going to use the surrounding paragraphs of text.
-    auto paragraphStart = makeBoundaryPoint(startOfParagraph(selectionStart));
-    auto paragraphEnd = makeBoundaryPoint(endOfParagraph(selectionEnd));
-    if (!paragraphStart || !paragraphEnd)
+    auto paragraphRange = makeSimpleRange(startOfParagraph(selectionStart), endOfParagraph(selectionEnd));
+    if (!paragraphRange)
         return WTF::nullopt;
 
-    auto selectionRange = SimpleRange { *makeBoundaryPoint(selectionStart), *makeBoundaryPoint(selectionEnd) };
-    auto paragraphRange = SimpleRange { *paragraphStart, *paragraphEnd };
+    auto selectionRange = *makeSimpleRange(selectionStart, selectionEnd);
 
     NSDictionary *options = nil;
-    tokenRange(plainText(paragraphRange), characterRange(paragraphRange, selectionRange), &options);
+    tokenRange(plainText(*paragraphRange), characterRange(*paragraphRange, selectionRange), &options);
 
     return { { *selectedRange, options } };
 }
@@ -133,12 +131,11 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
     if (!fullCharacterRange)
         return WTF::nullopt;
 
-    auto fullCharacterStart = makeBoundaryPoint(fullCharacterRange->startPosition());
-    auto positionBoundary = makeBoundaryPoint(position);
-    if (!fullCharacterStart || !positionBoundary)
+    auto rangeToPosition = makeSimpleRange(fullCharacterRange->startPosition(), position);
+    if (!rangeToPosition)
         return WTF::nullopt;
 
-    NSRange rangeToPass = NSMakeRange(characterCount({ *fullCharacterStart, *positionBoundary }), 0);
+    NSRange rangeToPass = NSMakeRange(characterCount(*rangeToPosition), 0);
     NSDictionary *options = nil;
     auto extractedRange = tokenRange(plainText(*fullCharacterRange), rangeToPass, &options);
 

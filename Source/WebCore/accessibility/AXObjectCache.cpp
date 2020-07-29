@@ -83,6 +83,7 @@
 #include "InlineElementBox.h"
 #include "MathMLElement.h"
 #include "Page.h"
+#include "Range.h"
 #include "RenderAttachment.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
@@ -166,10 +167,10 @@ void AXComputedObjectAttributeCache::setIgnored(AXID id, AccessibilityObjectIncl
 AccessibilityReplacedText::AccessibilityReplacedText(const VisibleSelection& selection)
 {
     if (AXObjectCache::accessibilityEnabled()) {
-        m_replacedRange.startIndex.value = indexForVisiblePosition(selection.start(), m_replacedRange.startIndex.scope);
+        m_replacedRange.startIndex.value = indexForVisiblePosition(selection.visibleStart(), m_replacedRange.startIndex.scope);
         if (selection.isRange()) {
             m_replacedText = AccessibilityObject::stringForVisiblePositionRange(selection);
-            m_replacedRange.endIndex.value = indexForVisiblePosition(selection.end(), m_replacedRange.endIndex.scope);
+            m_replacedRange.endIndex.value = indexForVisiblePosition(selection.visibleEnd(), m_replacedRange.endIndex.scope);
         } else
             m_replacedRange.endIndex = m_replacedRange.startIndex;
     }
@@ -1985,12 +1986,12 @@ Optional<SimpleRange> AXObjectCache::rangeMatchesTextNearRange(const SimpleRange
     if (endPosition.isNull())
         endPosition = lastPositionInOrAfterNode(originalRange.end.container.ptr());
 
-    auto searchRange = SimpleRange { *makeBoundaryPoint(startPosition), *makeBoundaryPoint(endPosition) };
-    if (searchRange.collapsed())
+    auto searchRange = makeSimpleRange(startPosition, endPosition);
+    if (!searchRange || searchRange->collapsed())
         return WTF::nullopt;
 
-    auto targetOffset = characterCount({ searchRange.start, originalRange.start }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
-    return findClosestPlainText(searchRange, matchText, { }, targetOffset);
+    auto targetOffset = characterCount({ searchRange->start, originalRange.start }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    return findClosestPlainText(*searchRange, matchText, { }, targetOffset);
 }
 
 static bool isReplacedNodeOrBR(Node* node)
@@ -2880,18 +2881,18 @@ CharacterOffset AXObjectCache::characterOffsetForPoint(const IntPoint& point, AX
 {
     if (!object)
         return { };
-    auto boundary = makeBoundaryPoint(object->visiblePositionForPoint(point));
-    if (!boundary)
+    auto range = makeSimpleRange(object->visiblePositionForPoint(point));
+    if (!range)
         return { };
-    return startOrEndCharacterOffsetForRange({ *boundary, *boundary }, true);
+    return startOrEndCharacterOffsetForRange(*range, true);
 }
 
 CharacterOffset AXObjectCache::characterOffsetForPoint(const IntPoint& point)
 {
-    auto boundary = m_document.caretPositionFromPoint(point);
-    if (!boundary)
+    auto range = makeSimpleRange(m_document.caretPositionFromPoint(point));
+    if (!range)
         return { };
-    return startOrEndCharacterOffsetForRange({ *boundary, *boundary }, true);
+    return startOrEndCharacterOffsetForRange(*range, true);
 }
 
 CharacterOffset AXObjectCache::characterOffsetForBounds(const IntRect& rect, bool first)

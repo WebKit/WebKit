@@ -338,7 +338,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
         return;
     }
 
-    RefPtr<Range> range = EditingRange::toRange(frame, editingRange);
+    auto range = EditingRange::toRange(frame, editingRange);
     if (!range) {
         send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback({ }, EditingRange(), callbackID));
         return;

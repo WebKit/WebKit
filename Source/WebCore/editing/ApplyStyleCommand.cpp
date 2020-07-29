@@ -241,18 +241,14 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
     // Save and restore the selection endpoints using their indices in the editable root, since
     // addBlockStyleIfNeeded may moveParagraphs, which can remove these endpoints.
     // Calculate start and end indices from the start of the tree that they're in.
-    auto scope = makeRefPtr(highestEditableRoot(visibleStart.deepEquivalent()));
-    if (!scope)
+    auto scopeRoot = makeRefPtr(highestEditableRoot(visibleStart.deepEquivalent()));
+    if (!scopeRoot)
         return;
 
-    auto scopeStart = BoundaryPoint { *scope, 0 };
-    auto startBoundaryPoint = makeBoundaryPoint(visibleStart.deepEquivalent().parentAnchoredEquivalent());
-    auto endBoundaryPoint = makeBoundaryPoint(visibleEnd.deepEquivalent().parentAnchoredEquivalent());
-    if (!startBoundaryPoint || !endBoundaryPoint)
-        return;
-
-    auto startIndex = characterCount({ scopeStart, *startBoundaryPoint }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
-    auto endIndex = characterCount({ scopeStart, *endBoundaryPoint }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    auto scope = makeRangeSelectingNodeContents(*scopeRoot);
+    auto range = *makeSimpleRange(visibleStart, visibleEnd);
+    auto startIndex = characterCount({ scope.start, range.start }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    auto endIndex = characterCount({ scope.start, range.end }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 
     VisiblePosition paragraphStart(startOfParagraph(visibleStart));
     VisiblePosition nextParagraphStart(endOfParagraph(paragraphStart).next());
@@ -283,8 +279,8 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
         nextParagraphStart = endOfParagraph(paragraphStart).next();
     }
     
-    auto startPosition = createLegacyEditingPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), startIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
-    auto endPosition = createLegacyEditingPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), endIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
+    auto startPosition = createLegacyEditingPosition(resolveCharacterLocation(scope, startIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
+    auto endPosition = createLegacyEditingPosition(resolveCharacterLocation(scope, endIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
     updateStartEnd(startPosition, endPosition);
 }
 

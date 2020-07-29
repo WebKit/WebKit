@@ -837,7 +837,7 @@ static NSURL *createUniqueWebDataURL();
     if (!paragraphStart)
         return nullptr;
 
-    auto scopeEnd = makeRangeSelectingNodeContents(paragraphStart->container->treeScope().rootNode()).end;
+    auto scopeEnd = makeBoundaryPointAfterNodeContents(paragraphStart->container->treeScope().rootNode());
     return createLiveRange(WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range));
 }
 
@@ -1540,12 +1540,20 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (int)wordOffsetInRange:(DOMRange *)range
 {
-    return core(self)->selection().wordOffsetInRange(core(range));
+    if (!range)
+        return -1;
+
+    auto selection = core(self)->selection().selection();
+    if (!selection.isCaret())
+        return -1;
+
+    // FIXME: This will only work in cases where the selection remains in the same node after it is expanded.
+    return std::max<int>(0, selection.start().deprecatedEditingOffset() - core(range)->startOffset());
 }
 
 - (BOOL)spaceFollowsWordInRange:(DOMRange *)range
 {
-    return core(self)->selection().spaceFollowsWordInRange(core(range));
+    return range && isSpaceOrNewline(WebCore::VisiblePosition(createLegacyEditingPosition(makeSimpleRange(core(range))->end)).characterAfter());
 }
 
 - (NSArray *)wordsInCurrentParagraph

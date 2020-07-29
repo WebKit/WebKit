@@ -188,7 +188,6 @@
 		5C7E787622D95FE20006A230 /* UnifiedSource11-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7E786922D95FE20006A230 /* UnifiedSource11-mm.mm */; };
 		5C97EF632342C534006020D4 /* UnifiedSource19-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C97EF612342C534006020D4 /* UnifiedSource19-mm.mm */; };
 		5C97EF642342C534006020D4 /* UnifiedSource20-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C97EF622342C534006020D4 /* UnifiedSource20-mm.mm */; };
-		5C9A4E5322DE4627007DB353 /* DOMUIKitExtensions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93D436371D57ABEE00AB85EA /* DOMUIKitExtensions.mm */; };
 		5C9D925A22D7E8AD008E9266 /* Sources.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D925822D7E8AD008E9266 /* Sources.txt */; };
 		5C9D925B22D7E8AD008E9266 /* SourcesCocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */; };
 		5C9EF2F521F061BE003BDC56 /* PageStorageSessionProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9EF2F421F061BE003BDC56 /* PageStorageSessionProvider.h */; };
@@ -3400,7 +3399,6 @@
 				1A9119F61DB0470A0087D1FD /* BackForwardList.mm in Sources */,
 				1A60519117502A5D00BC62F5 /* BinaryPropertyList.cpp in Sources */,
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
-				5C9A4E5322DE4627007DB353 /* DOMUIKitExtensions.mm in Sources */,
 				1A60519317502A5D00BC62F5 /* HistoryPropertyList.mm in Sources */,
 				1A8DED510EE88B8A00F25022 /* HostedNetscapePluginStream.mm in Sources */,
 				9364006E23996E81001E185E /* InProcessIDBServer.cpp in Sources */,

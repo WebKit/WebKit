@@ -332,8 +332,8 @@ void TypingCommand::postTextStateChangeNotificationForDeletion(const VisibleSele
         return;
     postTextStateChangeNotification(AXTextEditTypeDelete, AccessibilityObject::stringForVisiblePositionRange(selection), selection.start());
     VisiblePositionIndexRange range;
-    range.startIndex.value = indexForVisiblePosition(selection.start(), range.startIndex.scope);
-    range.endIndex.value = indexForVisiblePosition(selection.end(), range.endIndex.scope);
+    range.startIndex.value = indexForVisiblePosition(selection.visibleStart(), range.startIndex.scope);
+    range.endIndex.value = indexForVisiblePosition(selection.visibleEnd(), range.endIndex.scope);
     composition()->setRangeDeletedByUnapply(range);
 }
 
