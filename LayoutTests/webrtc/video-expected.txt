@@ -3,4 +3,5 @@
 PASS Basic video exchange 
 PASS Call setParameters to disable sending a given encoding 
 PASS Call setParameters to reenable sending a given encoding 
+PASS Call setParameters to reduce size by two 
 

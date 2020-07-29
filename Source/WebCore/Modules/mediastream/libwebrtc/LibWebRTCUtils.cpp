@@ -162,6 +162,8 @@ void updateRTCRtpSendParameters(const RTCRtpSendParameters& parameters, webrtc::
             rtcParameters.encodings[i].max_bitrate_bps = parameters.encodings[i].maxBitrate;
         if (parameters.encodings[i].maxFramerate)
             rtcParameters.encodings[i].max_framerate = parameters.encodings[i].maxFramerate;
+        if (parameters.encodings[i].scaleResolutionDownBy)
+            rtcParameters.encodings[i].scale_resolution_down_by = parameters.encodings[i].scaleResolutionDownBy;
     }
 
     rtcParameters.header_extensions.clear();
