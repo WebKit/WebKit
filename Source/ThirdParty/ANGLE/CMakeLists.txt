@@ -131,6 +131,7 @@ if (USE_ANGLE_EGL)
 else ()
     add_library(ANGLE STATIC ${ANGLE_SOURCES})
     target_include_directories(ANGLE PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
+    target_link_libraries(ANGLE PRIVATE ${CMAKE_DL_LIBS})
     target_compile_definitions(ANGLE PRIVATE
         ${ANGLE_DEFINITIONS}
         ${no_gl_prototypes}

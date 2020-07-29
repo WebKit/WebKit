@@ -1,3 +1,14 @@
+2020-07-29  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] 2.29.4 fails to link on armv7hl
+        https://bugs.webkit.org/show_bug.cgi?id=214934
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Link ANGLE to with -ldl
+
+        * CMakeLists.txt:
+
 2020-07-29  Kenneth Russell  <kbr@chromium.org>
 
         Roll ANGLE to 2020-07-28
