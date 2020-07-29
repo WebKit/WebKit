@@ -425,6 +425,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/WebKitAudioContext.idl \
     $(WebCore)/Modules/webaudio/WebKitAudioPannerNode.idl \
     $(WebCore)/Modules/webaudio/WebKitOfflineAudioContext.idl \
+    $(WebCore)/Modules/webaudio/WebKitOscillatorNode.idl \
     $(WebCore)/Modules/webauthn/AttestationConveyancePreference.idl \
     $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientInputs.idl \
     $(WebCore)/Modules/webauthn/AuthenticationExtensionsClientOutputs.idl \

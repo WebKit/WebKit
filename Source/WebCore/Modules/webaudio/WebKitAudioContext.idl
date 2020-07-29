@@ -79,7 +79,7 @@
     [MayThrowException] DynamicsCompressorNode createDynamicsCompressor();
     [MayThrowException] AnalyserNode createAnalyser();
     [MayThrowException] ScriptProcessorNode createScriptProcessor(optional unsigned long bufferSize = 0, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
-    [MayThrowException] OscillatorNode createOscillator();
+    [MayThrowException, ImplementedAs=createWebKitOscillator] WebKitOscillatorNode createOscillator();
     [MayThrowException] PeriodicWave createPeriodicWave(Float32Array real, Float32Array imag);
 
     // Channel splitting and merging

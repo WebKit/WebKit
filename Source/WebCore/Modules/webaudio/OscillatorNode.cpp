@@ -64,8 +64,8 @@ ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& contex
     if (result.hasException())
         return result.releaseException();
     
-    if (options.periodicWave.get())
-        oscillator->setPeriodicWave(options.periodicWave.get());
+    if (options.periodicWave)
+        oscillator->setPeriodicWave(*options.periodicWave);
     else {
         result = oscillator->setType(options.type);
         if (result.hasException())
@@ -125,7 +125,7 @@ ExceptionOr<void> OscillatorNode::setType(OscillatorType type)
         return { };
     }
 
-    setPeriodicWave(periodicWave);
+    setPeriodicWave(*periodicWave);
     m_type = type;
 
     return { };
@@ -314,14 +314,14 @@ void OscillatorNode::reset()
     m_virtualReadIndex = 0;
 }
 
-void OscillatorNode::setPeriodicWave(PeriodicWave* periodicWave)
+void OscillatorNode::setPeriodicWave(PeriodicWave& periodicWave)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "sample rate = ", periodicWave ? periodicWave->sampleRate() : 0, ", wave size = ", periodicWave ? periodicWave->periodicWaveSize() : 0, ", rate scale = ", periodicWave ? periodicWave->rateScale() : 0);
+    ALWAYS_LOG(LOGIDENTIFIER, "sample rate = ", periodicWave.sampleRate(), ", wave size = ", periodicWave.periodicWaveSize(), ", rate scale = ", periodicWave.rateScale());
     ASSERT(isMainThread());
     
     // This synchronizes with process().
     auto locker = holdLock(m_processMutex);
-    m_periodicWave = periodicWave;
+    m_periodicWave = &periodicWave;
     m_type = OscillatorType::Custom;
 }
 

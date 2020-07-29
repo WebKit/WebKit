@@ -32,6 +32,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "PeriodicWave.h"
 #include "WebKitAudioPannerNode.h"
+#include "WebKitOscillatorNode.h"
 #include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -168,6 +169,27 @@ ExceptionOr<Ref<WebKitAudioPannerNode>> WebKitAudioContext::createWebKitPanner()
 
     lazyInitialize();
     return WebKitAudioPannerNode::create(*this, sampleRate());
+}
+
+ExceptionOr<Ref<WebKitOscillatorNode>> WebKitAudioContext::createWebKitOscillator()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    ASSERT(isMainThread());
+    if (isStopped())
+        return Exception { InvalidStateError };
+
+    lazyInitialize();
+
+    auto node = WebKitOscillatorNode::create(*this);
+    if (node.hasException())
+        return node.releaseException();
+
+    // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
+    // When this happens, AudioScheduledSourceNode::finish() calls BaseAudioContext::notifyNodeFinishedProcessing().
+    auto nodeValue = node.releaseReturnValue();
+    refNode(nodeValue);
+    return nodeValue;
 }
 
 ExceptionOr<Ref<PeriodicWave>> WebKitAudioContext::createPeriodicWave(Float32Array& real, Float32Array& imaginary)

@@ -22,19 +22,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-[
-    Conditional=WEB_AUDIO,
-    JSGenerateToJSObject,
-    ActiveDOMObject,
-    EnabledBySetting=ModernUnprefixedWebAudio
-] interface OscillatorNode : AudioScheduledSourceNode {
-    [MayThrowException] constructor (BaseAudioContext context, optional OscillatorOptions options);
 
+[
+    ActiveDOMObject,
+    Conditional=WEB_AUDIO,
+    EnabledBySetting=WebAudio&PrefixedWebAudio,
+    JSGenerateToJSObject,
+    InterfaceName=webkitOscillatorNode,
+] interface WebKitOscillatorNode : AudioScheduledSourceNode {
     attribute OscillatorType type;
+
+    // Playback state constants.
+    const unsigned short UNSCHEDULED_STATE = 0;
+    const unsigned short SCHEDULED_STATE = 1;
+    const unsigned short PLAYING_STATE = 2;
+    const unsigned short FINISHED_STATE = 3;
+
+    readonly attribute unsigned short playbackState;
 
     readonly attribute AudioParam frequency; // in Hertz
     readonly attribute AudioParam detune; // in Cents
 
-    void setPeriodicWave(PeriodicWave wave);
+    [ImplementedAs=setWebKitPeriodicWave] void setPeriodicWave(PeriodicWave? wave);
 };

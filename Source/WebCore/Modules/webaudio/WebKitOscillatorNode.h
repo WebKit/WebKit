@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012, Google Inc. All rights reserved.
- * Copyright (C) 2016-2020, Apple Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,19 +22,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-[
-    Conditional=WEB_AUDIO,
-    JSGenerateToJSObject,
-    ActiveDOMObject,
-    EnabledBySetting=ModernUnprefixedWebAudio
-] interface OscillatorNode : AudioScheduledSourceNode {
-    [MayThrowException] constructor (BaseAudioContext context, optional OscillatorOptions options);
 
-    attribute OscillatorType type;
+#pragma once
 
-    readonly attribute AudioParam frequency; // in Hertz
-    readonly attribute AudioParam detune; // in Cents
+#include "OscillatorNode.h"
 
-    void setPeriodicWave(PeriodicWave wave);
+namespace WebCore {
+
+class WebKitOscillatorNode final : public OscillatorNode {
+public:
+    static ExceptionOr<Ref<WebKitOscillatorNode>> create(WebKitAudioContext& context)
+    {
+        return adoptRef(*new WebKitOscillatorNode(context));
+    }
+
+    void setWebKitPeriodicWave(PeriodicWave* wave)
+    {
+        if (!wave)
+            return;
+        setPeriodicWave(*wave);
+    }
+
+private:
+    explicit WebKitOscillatorNode(WebKitAudioContext& context)
+        : OscillatorNode(context)
+    {
+        setType(OscillatorType::Sine);
+    }
+
+    const char* activeDOMObjectName() const final { return "WebKitOscillatorNode"; }
 };
+
+} // namespace WebCore

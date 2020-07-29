@@ -35,7 +35,7 @@ class PeriodicWave;
 
 // OscillatorNode is an audio generator of periodic waveforms.
 
-class OscillatorNode final : public AudioScheduledSourceNode {
+class OscillatorNode : public AudioScheduledSourceNode {
     WTF_MAKE_ISO_ALLOCATED(OscillatorNode);
 public:
     static ExceptionOr<Ref<OscillatorNode>> create(BaseAudioContext&, const OscillatorOptions& = { });
@@ -50,11 +50,12 @@ public:
     AudioParam* frequency() { return m_frequency.get(); }
     AudioParam* detune() { return m_detune.get(); }
 
-    void setPeriodicWave(PeriodicWave*);
+    void setPeriodicWave(PeriodicWave&);
 
-private:
+protected:
     explicit OscillatorNode(BaseAudioContext&, const OscillatorOptions& = { });
 
+private:
     void process(size_t framesToProcess) final;
     void reset() final;
 

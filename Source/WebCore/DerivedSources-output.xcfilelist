@@ -2136,6 +2136,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNamespace.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitNamespace.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitOfflineAudioContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitOfflineAudioContext.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitOscillatorNode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitOscillatorNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPlaybackTargetAvailabilityEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitPoint.cpp

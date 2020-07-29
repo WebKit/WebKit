@@ -493,6 +493,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/WebKitAudioContext.idl
     Modules/webaudio/WebKitAudioPannerNode.idl
     Modules/webaudio/WebKitOfflineAudioContext.idl
+    Modules/webaudio/WebKitOscillatorNode.idl
 
     Modules/webauthn/AttestationConveyancePreference.idl
     Modules/webauthn/AuthenticationExtensionsClientInputs.idl

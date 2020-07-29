@@ -170,6 +170,7 @@ namespace WebCore {
     macro(OfflineAudioContext) \
     macro(OffscreenCanvas) \
     macro(OffscreenCanvasRenderingContext2D) \
+    macro(OscillatorNode) \
     macro(PaintRenderingContext2D) \
     macro(PannerNode) \
     macro(PaymentAddress) \
@@ -402,6 +403,7 @@ namespace WebCore {
     macro(webkitIDBTransaction) \
     macro(webkitIndexedDB) \
     macro(webkitOfflineAudioContext) \
+    macro(webkitOscillatorNode) \
     macro(window) \
     macro(writing) \
     WEBCORE_ADDITIONAL_PRIVATE_IDENTIFIERS(macro) \

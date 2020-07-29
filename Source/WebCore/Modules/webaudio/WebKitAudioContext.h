@@ -38,6 +38,7 @@ class MediaStreamAudioDestinationNode;
 class MediaStreamAudioSourceNode;
 class PeriodicWave;
 class WebKitAudioPannerNode;
+class WebKitOscillatorNode;
 
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism.
@@ -61,6 +62,7 @@ public:
     ExceptionOr<Ref<MediaStreamAudioDestinationNode>> createMediaStreamDestination();
 #endif
     ExceptionOr<Ref<WebKitAudioPannerNode>> createWebKitPanner();
+    ExceptionOr<Ref<WebKitOscillatorNode>> createWebKitOscillator();
     ExceptionOr<Ref<PeriodicWave>> createPeriodicWave(Float32Array& real, Float32Array& imaginary);
 
 protected:

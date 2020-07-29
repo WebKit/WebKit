@@ -342,6 +342,7 @@ $(PROJECT_DIR)/Modules/webaudio/WaveShaperNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitAudioPannerNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitOfflineAudioContext.idl
+$(PROJECT_DIR)/Modules/webaudio/WebKitOscillatorNode.idl
 $(PROJECT_DIR)/Modules/webauthn/AttestationConveyancePreference.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticationExtensionsClientInputs.idl
 $(PROJECT_DIR)/Modules/webauthn/AuthenticationExtensionsClientOutputs.idl

@@ -3569,6 +3569,7 @@ JSWebKitMediaKeySession.cpp
 JSWebKitMediaKeys.cpp
 JSWebKitNamespace.cpp
 JSWebKitOfflineAudioContext.cpp
+JSWebKitOscillatorNode.cpp
 JSWebKitPlaybackTargetAvailabilityEvent.cpp
 JSWebKitPoint.cpp
 JSWebKitTransitionEvent.cpp

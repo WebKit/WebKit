@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <script>
+        description("Testing that the legacy OscillatorNode API is not exposed on the unprefixed OscillatorNode");
+
+        shouldBeUndefined("OscillatorNode.prototype.playbackState");
+        shouldBeUndefined("OscillatorNode.UNSCHEDULED_STATE");
+        shouldBeUndefined("OscillatorNode.SCHEDULED_STATE");
+        shouldBeUndefined("OscillatorNode.PLAYING_STATE");
+        shouldBeUndefined("OscillatorNode.FINISHED_STATE");
+
+        shouldBe("webkitOscillatorNode.UNSCHEDULED_STATE", "0");
+        shouldBe("webkitOscillatorNode.SCHEDULED_STATE", "1");
+        shouldBe("webkitOscillatorNode.PLAYING_STATE", "2");
+        shouldBe("webkitOscillatorNode.FINISHED_STATE", "3");
+    </script>
+    <script src="../resources/js-test-post.js"></script>
+</body>
+</html>
