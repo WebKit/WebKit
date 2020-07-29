@@ -1,3 +1,11 @@
+2020-07-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] REGRESSION(r264986) Unreviewed crash fix
+        https://bugs.webkit.org/show_bug.cgi?id=201507
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createWindowContext): Initialize a variable 'surface' as EGL_NO_SURFACE for WinCairo.
+
 2020-07-28  Chris Dumez  <cdumez@apple.com>
 
         Move non standard OscillatorNode API to new webKitOscillatorNode interface

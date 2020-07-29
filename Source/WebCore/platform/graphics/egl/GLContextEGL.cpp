@@ -181,7 +181,7 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(GLNativeWindowTy
         return nullptr;
     }
 
-    EGLSurface surface;
+    EGLSurface surface = EGL_NO_SURFACE;
     switch (platformDisplay.type()) {
 #if PLATFORM(X11)
     case PlatformDisplay::Type::X11:
