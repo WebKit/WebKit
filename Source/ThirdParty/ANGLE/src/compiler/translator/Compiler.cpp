@@ -1087,6 +1087,8 @@ void TCompiler::setResourceString()
         << ":ANGLE_multi_draw:" << mResources.ANGLE_multi_draw
         << ":ANGLE_base_vertex_base_instance:" << mResources.ANGLE_base_vertex_base_instance
         << ":APPLE_clip_distance:" << mResources.APPLE_clip_distance
+        << ":OES_texture_cube_map_array:" << mResources.OES_texture_cube_map_array
+        << ":EXT_texture_cube_map_array:" << mResources.EXT_texture_cube_map_array
         << ":MinProgramTextureGatherOffset:" << mResources.MinProgramTextureGatherOffset
         << ":MaxProgramTextureGatherOffset:" << mResources.MaxProgramTextureGatherOffset
         << ":MaxImageUnits:" << mResources.MaxImageUnits

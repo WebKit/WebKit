@@ -182,10 +182,58 @@ class CopyTexture3DTest : public ANGLETest
 
         if (renderType == GL_RGBA8)
         {
+            uint32_t tolerance = 1;
+            // The destination formats may be emulated, so the precision may be higher than
+            // required.  Increase the tolerance to 2^(8-width).  8 is for the 8-bit format used for
+            // emulation.  Even though Vulkan recommends round to nearest, it's not a requirement
+            // so the full-range of precision is used as tolerance.
+            switch (destType)
+            {
+                case GL_UNSIGNED_SHORT_5_6_5:
+                    tolerance = 8;
+                    break;
+                case GL_UNSIGNED_SHORT_5_5_5_1:
+                    tolerance = 8;
+                    break;
+                case GL_UNSIGNED_SHORT_4_4_4_4:
+                    tolerance = 16;
+                    break;
+                default:
+                    break;
+            }
+            switch (destInternalFormat)
+            {
+                case GL_RGB565:
+                    tolerance = 8;
+                    break;
+                case GL_RGB5_A1:
+                    tolerance = 8;
+                    break;
+                case GL_RGBA4:
+                    tolerance = 16;
+                    break;
+                default:
+                    break;
+            }
+
+            // If destination is SNORM, values in between representable values could round either
+            // way.
+            switch (destInternalFormat)
+            {
+                case GL_R8_SNORM:
+                case GL_RG8_SNORM:
+                case GL_RGB8_SNORM:
+                case GL_RGBA8_SNORM:
+                    tolerance *= 2;
+                    break;
+                default:
+                    break;
+            }
+
             GLColor actual;
             glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &actual.R);
             EXPECT_GL_NO_ERROR();
-            EXPECT_COLOR_NEAR(expectedColor, actual, 1);
+            EXPECT_COLOR_NEAR(expectedColor, actual, tolerance);
             return;
         }
         else if (renderType == GL_RGBA32F)
@@ -197,7 +245,7 @@ class CopyTexture3DTest : public ANGLETest
             EXPECT_PIXEL_COLOR32F_NEAR(0, 0,
                                        GLColor32F(expectedColorFloat[0], expectedColorFloat[1],
                                                   expectedColorFloat[2], expectedColorFloat[3]),
-                                       0.01);
+                                       0.015);
             return;
         }
         else if (renderType == GL_RGBA8UI)
@@ -225,6 +273,13 @@ class CopyTexture3DTest : public ANGLETest
             ASSERT_TRUE(false);
         }
     }
+
+    void testUnsizedFormats(const GLenum testTarget);
+    void testSnormFormats(const GLenum testTarget);
+    void testUnsignedByteFormats(const GLenum testTarget);
+    void testFloatFormats(const GLenum testTarget);
+    void testIntFormats(const GLenum testTarget);
+    void testUintFormats(const GLenum testTarget);
 
     virtual const char *getFragmentShaderSource() = 0;
 
@@ -472,67 +527,118 @@ TEST_P(Texture3DCopy, FlipY)
     EXPECT_PIXEL_COLOR_EQ(width, height, GLColor::green);
 }
 
+void CopyTexture3DTest::testUnsizedFormats(const GLenum testTarget)
+{
+    const GLColor kColorNoAlpha(250, 200, 150, 100);
+    const GLColor kColorPreAlpha(250, 200, 150, 100);
+    const GLColor kColorUnAlpha(101, 150, 200, 200);
+
+    testCopy(testTarget, kColorNoAlpha, GL_RGB, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(250, 200, 150, 255));
+    testCopy(testTarget, kColorPreAlpha, GL_RGB, GL_UNSIGNED_BYTE, false, true, false,
+             GLColor(98, 78, 59, 255));
+    testCopy(testTarget, kColorUnAlpha, GL_RGB, GL_UNSIGNED_BYTE, false, false, true,
+             GLColor(128, 191, 255, 255));
+
+    testCopy(testTarget, kColorNoAlpha, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, false, false, false,
+             GLColor(247, 199, 148, 255));
+    testCopy(testTarget, kColorPreAlpha, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, false, true, false,
+             GLColor(99, 77, 57, 255));
+    testCopy(testTarget, kColorUnAlpha, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, false, false, true,
+             GLColor(132, 190, 255, 255));
+
+    testCopy(testTarget, kColorNoAlpha, GL_RGBA, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(250, 200, 150, 100));
+    testCopy(testTarget, kColorPreAlpha, GL_RGBA, GL_UNSIGNED_BYTE, false, true, false,
+             GLColor(98, 78, 59, 100));
+    testCopy(testTarget, kColorUnAlpha, GL_RGBA, GL_UNSIGNED_BYTE, false, false, true,
+             GLColor(128, 191, 255, 200));
+
+    testCopy(testTarget, kColorNoAlpha, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, false, false, false,
+             GLColor(255, 204, 153, 102));
+    testCopy(testTarget, kColorPreAlpha, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, false, true, false,
+             GLColor(102, 85, 51, 102));
+    testCopy(testTarget, kColorUnAlpha, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, false, false, true,
+             GLColor(136, 187, 255, 204));
+
+    testCopy(testTarget, kColorNoAlpha, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, false, false, false,
+             GLColor(247, 198, 148, 0));
+    testCopy(testTarget, kColorPreAlpha, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, false, true, false,
+             GLColor(99, 82, 57, 0));
+    testCopy(testTarget, kColorUnAlpha, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, false, false, true,
+             GLColor(132, 189, 255, 255));
+
+    testCopy(testTarget, kColorNoAlpha, GL_LUMINANCE, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(250, 250, 250, 255));
+    testCopy(testTarget, kColorPreAlpha, GL_LUMINANCE, GL_UNSIGNED_BYTE, false, true, false,
+             GLColor(98, 98, 98, 255));
+    testCopy(testTarget, kColorUnAlpha, GL_LUMINANCE, GL_UNSIGNED_BYTE, false, false, true,
+             GLColor(128, 128, 128, 255));
+
+    testCopy(testTarget, kColorNoAlpha, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(250, 250, 250, 100));
+    testCopy(testTarget, kColorPreAlpha, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, false, true, false,
+             GLColor(98, 98, 98, 100));
+    testCopy(testTarget, kColorUnAlpha, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, false, false, true,
+             GLColor(128, 128, 128, 200));
+
+    testCopy(testTarget, kColorNoAlpha, GL_ALPHA, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(0, 0, 0, 100));
+    testCopy(testTarget, kColorNoAlpha, GL_ALPHA, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(0, 0, 0, 100));
+    testCopy(testTarget, kColorNoAlpha, GL_ALPHA, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(0, 0, 0, 100));
+}
+
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_3D with unsized
 // formats.
 TEST_P(Texture3DCopy, UnsizedFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGB, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(250, 200, 150, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGB, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(98, 78, 59, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 200, 200), GL_RGB, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(128, 191, 255, 255));
+    testUnsizedFormats(GL_TEXTURE_3D);
+}
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGB, GL_UNSIGNED_SHORT_5_6_5, false,
-             false, false, GLColor(247, 199, 148, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGB, GL_UNSIGNED_SHORT_5_6_5, false,
-             true, false, GLColor(99, 77, 57, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 200, 200), GL_RGB, GL_UNSIGNED_SHORT_5_6_5, false,
-             false, true, GLColor(132, 190, 255, 255));
+void CopyTexture3DTest::testSnormFormats(const GLenum testTarget)
+{
+    const GLColor kColorNoAlpha(250, 200, 150, 190);
+    const GLColor kColorPreAlpha(250, 200, 150, 190);
+    const GLColor kColorUnAlpha(200, 150, 100, 230);
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(250, 200, 150, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(98, 78, 59, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 200, 200), GL_RGBA, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(128, 191, 255, 200));
+    testCopy(testTarget, kColorNoAlpha, GL_R8_SNORM, GL_BYTE, false, false, false,
+             GLColor(251, 0, 0, 255));
+    testCopy(testTarget, kColorPreAlpha, GL_R8_SNORM, GL_BYTE, false, true, false,
+             GLColor(187, 0, 0, 255));
+    testCopy(testTarget, kColorUnAlpha, GL_R8_SNORM, GL_BYTE, false, false, true,
+             GLColor(221, 0, 0, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, false,
-             false, false, GLColor(255, 204, 153, 102));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, false,
-             true, false, GLColor(102, 85, 51, 102));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 200, 200), GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, false,
-             false, true, GLColor(136, 187, 255, 204));
+    testCopy(testTarget, kColorNoAlpha, GL_RG8_SNORM, GL_BYTE, false, false, false,
+             GLColor(251, 201, 0, 255));
+    testCopy(testTarget, kColorPreAlpha, GL_RG8_SNORM, GL_BYTE, false, true, false,
+             GLColor(187, 149, 0, 255));
+    testCopy(testTarget, kColorUnAlpha, GL_RG8_SNORM, GL_BYTE, false, false, true,
+             GLColor(221, 167, 0, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, false,
-             false, false, GLColor(247, 198, 148, 0));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, false,
-             true, false, GLColor(99, 82, 57, 0));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 200, 200), GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, false,
-             false, true, GLColor(132, 189, 255, 255));
+    testCopy(testTarget, kColorNoAlpha, GL_RGB8_SNORM, GL_BYTE, false, false, false,
+             GLColor(251, 201, 151, 255));
+    testCopy(testTarget, kColorPreAlpha, GL_RGB8_SNORM, GL_BYTE, false, true, false,
+             GLColor(187, 149, 112, 255));
+    testCopy(testTarget, kColorUnAlpha, GL_RGB8_SNORM, GL_BYTE, false, false, true,
+             GLColor(221, 167, 110, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_LUMINANCE, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(250, 250, 250, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_LUMINANCE, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(98, 98, 98, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 200, 200), GL_LUMINANCE, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(128, 128, 128, 255));
+    testCopy(testTarget, kColorNoAlpha, GL_RGBA8_SNORM, GL_BYTE, false, false, false,
+             GLColor(251, 201, 151, 191));
+    testCopy(testTarget, kColorPreAlpha, GL_RGBA8_SNORM, GL_BYTE, false, true, false,
+             GLColor(187, 149, 112, 191));
+    testCopy(testTarget, kColorUnAlpha, GL_RGBA8_SNORM, GL_BYTE, false, false, true,
+             GLColor(221, 167, 110, 231));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
-             false, false, false, GLColor(250, 250, 250, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
-             false, true, false, GLColor(98, 98, 98, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 200, 200), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
-             false, false, true, GLColor(128, 128, 128, 200));
-
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_ALPHA, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(0, 0, 0, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_ALPHA, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(0, 0, 0, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_ALPHA, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(0, 0, 0, 100));
+    testCopy(testTarget, GLColor(250, 200, 150, 100), GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV,
+             false, false, false, GLColor(250, 200, 150, 85));
+    testCopy(testTarget, GLColor(250, 200, 150, 200), GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV,
+             false, true, false, GLColor(196, 157, 118, 170));
+    testCopy(testTarget, GLColor(101, 150, 190, 200), GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV,
+             false, false, true, GLColor(128, 191, 242, 170));
 }
 
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_3D with snorm
@@ -541,40 +647,113 @@ TEST_P(Texture3DCopy, SnormFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 190), GL_R8_SNORM, GL_BYTE, false, false, false,
-             GLColor(251, 0, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 190), GL_R8_SNORM, GL_BYTE, false, true, false,
-             GLColor(187, 0, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(200, 150, 100, 230), GL_R8_SNORM, GL_BYTE, false, false, true,
-             GLColor(221, 0, 0, 255));
+    testSnormFormats(GL_TEXTURE_3D);
+}
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 190), GL_RG8_SNORM, GL_BYTE, false, false, false,
-             GLColor(251, 201, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 190), GL_RG8_SNORM, GL_BYTE, false, true, false,
-             GLColor(187, 149, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(200, 150, 100, 230), GL_RG8_SNORM, GL_BYTE, false, false, true,
-             GLColor(221, 167, 0, 255));
+void CopyTexture3DTest::testUnsignedByteFormats(const GLenum testTarget)
+{
+    {
+        const GLColor kColorNoAlpha(250, 200, 150, 100);
+        const GLColor kColorPreAlpha(250, 200, 150, 100);
+        const GLColor kColorUnAlpha(200, 150, 100, 230);
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 190), GL_RGB8_SNORM, GL_BYTE, false, false,
-             false, GLColor(251, 201, 151, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 190), GL_RGB8_SNORM, GL_BYTE, false, true, false,
-             GLColor(187, 149, 112, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(200, 150, 100, 230), GL_RGB8_SNORM, GL_BYTE, false, false, true,
-             GLColor(221, 167, 110, 255));
+        testCopy(testTarget, kColorNoAlpha, GL_R8, GL_UNSIGNED_BYTE, false, false, false,
+                 GLColor(250, 0, 0, 255));
+        testCopy(testTarget, kColorPreAlpha, GL_R8, GL_UNSIGNED_BYTE, false, true, false,
+                 GLColor(98, 0, 0, 255));
+        testCopy(testTarget, kColorUnAlpha, GL_R8, GL_UNSIGNED_BYTE, false, false, true,
+                 GLColor(221, 0, 0, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 190), GL_RGBA8_SNORM, GL_BYTE, false, false,
-             false, GLColor(251, 201, 151, 191));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 190), GL_RGBA8_SNORM, GL_BYTE, false, true,
-             false, GLColor(187, 149, 112, 191));
-    testCopy(GL_TEXTURE_3D, GLColor(200, 150, 100, 230), GL_RGBA8_SNORM, GL_BYTE, false, false,
-             true, GLColor(221, 167, 110, 231));
+        testCopy(testTarget, kColorNoAlpha, GL_RG8, GL_UNSIGNED_BYTE, false, false, false,
+                 GLColor(250, 200, 0, 255));
+        testCopy(testTarget, kColorPreAlpha, GL_RG8, GL_UNSIGNED_BYTE, false, true, false,
+                 GLColor(98, 78, 0, 255));
+        testCopy(testTarget, kColorUnAlpha, GL_RG8, GL_UNSIGNED_BYTE, false, false, true,
+                 GLColor(221, 167, 0, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGB10_A2,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, false, false, GLColor(250, 200, 150, 85));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 200), GL_RGB10_A2,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, true, false, GLColor(196, 157, 118, 170));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 250, 200), GL_RGB10_A2,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, false, true, GLColor(128, 191, 255, 170));
+        testCopy(testTarget, kColorNoAlpha, GL_RGB8, GL_UNSIGNED_BYTE, false, false, false,
+                 GLColor(250, 200, 150, 255));
+        testCopy(testTarget, kColorPreAlpha, GL_RGB8, GL_UNSIGNED_BYTE, false, true, false,
+                 GLColor(98, 78, 59, 255));
+        testCopy(testTarget, kColorUnAlpha, GL_RGB8, GL_UNSIGNED_BYTE, false, false, true,
+                 GLColor(221, 167, 110, 255));
+
+        testCopy(testTarget, kColorNoAlpha, GL_RGBA8, GL_UNSIGNED_BYTE, false, false, false,
+                 GLColor(250, 200, 150, 100));
+        testCopy(testTarget, kColorPreAlpha, GL_RGBA8, GL_UNSIGNED_BYTE, false, true, false,
+                 GLColor(98, 78, 59, 100));
+        testCopy(testTarget, kColorUnAlpha, GL_RGBA8, GL_UNSIGNED_BYTE, false, false, true,
+                 GLColor(221, 167, 110, 230));
+
+        testCopy(testTarget, kColorNoAlpha, GL_RGBA4, GL_UNSIGNED_BYTE, false, false, false,
+                 GLColor(255, 204, 153, 102));
+        testCopy(testTarget, kColorPreAlpha, GL_RGBA4, GL_UNSIGNED_BYTE, false, true, false,
+                 GLColor(102, 85, 51, 102));
+        testCopy(testTarget, GLColor(100, 150, 200, 210), GL_RGBA4, GL_UNSIGNED_BYTE, false, false,
+                 true, GLColor(119, 187, 238, 204));
+
+        testCopy(testTarget, kColorNoAlpha, GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4, false, false,
+                 false, GLColor(255, 204, 153, 102));
+        testCopy(testTarget, kColorPreAlpha, GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4, false, true,
+                 false, GLColor(102, 85, 51, 102));
+        testCopy(testTarget, GLColor(100, 150, 200, 210), GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4,
+                 false, false, true, GLColor(119, 187, 238, 204));
+
+        testCopy(testTarget, kColorNoAlpha, GL_SRGB8, GL_UNSIGNED_BYTE, false, false, false,
+                 GLColor(244, 148, 78, 255));
+        testCopy(testTarget, kColorPreAlpha, GL_SRGB8, GL_UNSIGNED_BYTE, false, true, false,
+                 GLColor(31, 19, 11, 255));
+        testCopy(testTarget, GLColor(100, 150, 200, 210), GL_SRGB8, GL_UNSIGNED_BYTE, false, false,
+                 true, GLColor(49, 120, 228, 255));
+
+        testCopy(testTarget, kColorNoAlpha, GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE, false, false, false,
+                 GLColor(244, 148, 78, 100));
+        testCopy(testTarget, kColorPreAlpha, GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE, false, true, false,
+                 GLColor(31, 19, 11, 100));
+        testCopy(testTarget, GLColor(100, 150, 200, 210), GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE, false,
+                 false, true, GLColor(49, 120, 228, 210));
+
+        testCopy(testTarget, GLColor(250, 200, 150, 200), GL_RGB5_A1, GL_UNSIGNED_BYTE, false,
+                 false, false, GLColor(247, 198, 148, 255));
+        testCopy(testTarget, kColorPreAlpha, GL_RGB5_A1, GL_UNSIGNED_BYTE, false, true, false,
+                 GLColor(99, 82, 57, 0));
+        testCopy(testTarget, kColorUnAlpha, GL_RGB5_A1, GL_UNSIGNED_BYTE, false, false, true,
+                 GLColor(221, 167, 110, 255));
+    }
+
+    {
+        const GLColor kColorNoAlpha(250, 200, 150, 200);
+        const GLColor kColorPreAlpha(250, 200, 150, 200);
+        const GLColor kColorUnAlpha(101, 150, 190, 200);
+
+        testCopy(testTarget, kColorNoAlpha, GL_RGB5_A1, GL_UNSIGNED_INT_2_10_10_10_REV, false,
+                 false, false, GLColor(247, 198, 148, 255));
+        testCopy(testTarget, kColorPreAlpha, GL_RGB5_A1, GL_UNSIGNED_INT_2_10_10_10_REV, false,
+                 true, false, GLColor(198, 156, 115, 255));
+        testCopy(testTarget, kColorUnAlpha, GL_RGB5_A1, GL_UNSIGNED_INT_2_10_10_10_REV, false,
+                 false, true, GLColor(132, 189, 242, 255));
+
+        testCopy(testTarget, kColorNoAlpha, GL_RGB5_A1, GL_UNSIGNED_SHORT_5_5_5_1, false, false,
+                 false, GLColor(247, 198, 148, 255));
+        testCopy(testTarget, kColorPreAlpha, GL_RGB5_A1, GL_UNSIGNED_SHORT_5_5_5_1, false, true,
+                 false, GLColor(198, 156, 115, 255));
+        testCopy(testTarget, kColorUnAlpha, GL_RGB5_A1, GL_UNSIGNED_SHORT_5_5_5_1, false, false,
+                 true, GLColor(132, 189, 242, 255));
+
+        testCopy(testTarget, kColorNoAlpha, GL_RGB565, GL_UNSIGNED_BYTE, false, false, false,
+                 GLColor(247, 199, 148, 255));
+        testCopy(testTarget, kColorPreAlpha, GL_RGB565, GL_UNSIGNED_BYTE, false, true, false,
+                 GLColor(198, 158, 115, 255));
+        testCopy(testTarget, kColorUnAlpha, GL_RGB565, GL_UNSIGNED_BYTE, false, false, true,
+                 GLColor(132, 190, 242, 255));
+
+        testCopy(testTarget, kColorNoAlpha, GL_RGB565, GL_UNSIGNED_SHORT_5_6_5, false, false, false,
+                 GLColor(247, 199, 148, 255));
+        testCopy(testTarget, kColorPreAlpha, GL_RGB565, GL_UNSIGNED_SHORT_5_6_5, false, true, false,
+                 GLColor(198, 158, 115, 255));
+        testCopy(testTarget, kColorUnAlpha, GL_RGB565, GL_UNSIGNED_SHORT_5_6_5, false, false, true,
+                 GLColor(132, 190, 242, 255));
+    }
 }
 
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_3D with unsigned
@@ -583,96 +762,93 @@ TEST_P(Texture3DCopy, UnsignedByteFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_R8, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(250, 0, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_R8, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(98, 0, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_R8, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(255, 0, 0, 255));
+    testUnsignedByteFormats(GL_TEXTURE_3D);
+}
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RG8, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(250, 200, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RG8, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(98, 78, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RG8, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(255, 255, 0, 255));
+void CopyTexture3DTest::testFloatFormats(const GLenum testTarget)
+{
+    std::vector<GLenum> floatTypes = {GL_FLOAT, GL_HALF_FLOAT, GL_UNSIGNED_INT_10F_11F_11F_REV,
+                                      GL_UNSIGNED_INT_5_9_9_9_REV};
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGB8, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(250, 200, 150, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGB8, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(98, 78, 59, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGB8, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(255, 255, 255, 255));
+    const GLColor kColor(210, 200, 150, 235);
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA8, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(250, 200, 150, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA8, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(98, 78, 59, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA8, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(255, 255, 255, 100));
+    for (GLenum floatType : floatTypes)
+    {
+        if (floatType != GL_UNSIGNED_INT_5_9_9_9_REV &&
+            floatType != GL_UNSIGNED_INT_10F_11F_11F_REV)
+        {
+            testCopy(testTarget, kColor, GL_R16F, floatType, false, false, false,
+                     GLColor(210, 0, 0, 255));
+            testCopy(testTarget, kColor, GL_R16F, floatType, false, true, false,
+                     GLColor(191, 0, 0, 255));
+            testCopy(testTarget, kColor, GL_R16F, floatType, false, false, true,
+                     GLColor(227, 0, 0, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA4, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(255, 204, 153, 102));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA4, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(102, 85, 51, 102));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 200, 210), GL_RGBA4, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(119, 187, 238, 204));
+            testCopy(testTarget, kColor, GL_RG16F, floatType, false, false, false,
+                     GLColor(210, 200, 0, 255));
+            testCopy(testTarget, kColor, GL_RG16F, floatType, false, true, false,
+                     GLColor(191, 184, 0, 255));
+            testCopy(testTarget, kColor, GL_RG16F, floatType, false, false, true,
+                     GLColor(227, 217, 0, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4, false,
-             false, false, GLColor(255, 204, 153, 102));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4, false,
-             true, false, GLColor(102, 85, 51, 102));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 200, 210), GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4, false,
-             false, true, GLColor(119, 187, 238, 204));
+            testCopy(testTarget, kColor, GL_RGB16F, floatType, false, false, false,
+                     GLColor(210, 200, 150, 255));
+            testCopy(testTarget, kColor, GL_RGB16F, floatType, false, true, false,
+                     GLColor(191, 184, 138, 255));
+            testCopy(testTarget, kColor, GL_RGB16F, floatType, false, false, true,
+                     GLColor(227, 217, 161, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_SRGB8, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(244, 148, 78, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_SRGB8, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(31, 19, 11, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_SRGB8, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(52, 253, 53, 255));
+            testCopy(testTarget, kColor, GL_RGBA16F, floatType, false, false, false,
+                     GLColor(210, 200, 150, 235));
+            testCopy(testTarget, kColor, GL_RGBA16F, floatType, false, true, false,
+                     GLColor(191, 184, 138, 235));
+            testCopy(testTarget, kColor, GL_RGBA16F, floatType, false, false, true,
+                     GLColor(227, 217, 161, 235));
+        }
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(244, 148, 78, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(31, 19, 11, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(52, 253, 53, 100));
+        if (floatType != GL_UNSIGNED_INT_5_9_9_9_REV)
+        {
+            testCopy(testTarget, kColor, GL_R11F_G11F_B10F, floatType, false, false, false,
+                     GLColor(210, 200, 148, 255));
+            testCopy(testTarget, kColor, GL_R11F_G11F_B10F, floatType, false, true, false,
+                     GLColor(191, 184, 138, 255));
+            testCopy(testTarget, kColor, GL_R11F_G11F_B10F, floatType, false, false, true,
+                     GLColor(227, 217, 161, 255));
+        }
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 200), GL_RGB5_A1, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(247, 198, 148, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGB5_A1, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(99, 82, 57, 0));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 100), GL_RGB5_A1, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(255, 255, 255, 0));
+        if (floatType != GL_UNSIGNED_INT_10F_11F_11F_REV)
+        {
+            testCopy(testTarget, kColor, GL_RGB9_E5, floatType, false, false, false,
+                     GLColor(210, 200, 148, 255));
+            testCopy(testTarget, kColor, GL_RGB9_E5, floatType, false, true, false,
+                     GLColor(192, 184, 138, 255));
+            testCopy(testTarget, kColor, GL_RGB9_E5, floatType, false, false, true,
+                     GLColor(227, 217, 161, 255));
+        }
+    }
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 200), GL_RGB5_A1, GL_UNSIGNED_INT_2_10_10_10_REV,
-             false, false, false, GLColor(247, 198, 148, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 200), GL_RGB5_A1, GL_UNSIGNED_INT_2_10_10_10_REV,
-             false, true, false, GLColor(198, 156, 115, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 250, 200), GL_RGB5_A1, GL_UNSIGNED_INT_2_10_10_10_REV,
-             false, false, true, GLColor(132, 189, 255, 255));
+    testCopy(testTarget, kColor, GL_R32F, GL_FLOAT, false, false, false, GLColor(210, 0, 0, 255));
+    testCopy(testTarget, kColor, GL_R32F, GL_FLOAT, false, true, false, GLColor(191, 0, 0, 255));
+    testCopy(testTarget, kColor, GL_R32F, GL_FLOAT, false, false, true, GLColor(227, 0, 0, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 200), GL_RGB5_A1, GL_UNSIGNED_SHORT_5_5_5_1,
-             false, false, false, GLColor(247, 198, 148, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 200), GL_RGB5_A1, GL_UNSIGNED_SHORT_5_5_5_1,
-             false, true, false, GLColor(198, 156, 115, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 250, 200), GL_RGB5_A1, GL_UNSIGNED_SHORT_5_5_5_1,
-             false, false, true, GLColor(132, 189, 255, 255));
+    testCopy(testTarget, kColor, GL_RG32F, GL_FLOAT, false, false, false,
+             GLColor(210, 200, 0, 255));
+    testCopy(testTarget, kColor, GL_RG32F, GL_FLOAT, false, true, false, GLColor(191, 184, 0, 255));
+    testCopy(testTarget, kColor, GL_RG32F, GL_FLOAT, false, false, true, GLColor(227, 217, 0, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 200), GL_RGB565, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(247, 199, 148, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 200), GL_RGB565, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(198, 158, 115, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 250, 200), GL_RGB565, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(132, 190, 255, 255));
+    testCopy(testTarget, kColor, GL_RGB32F, GL_FLOAT, false, false, false,
+             GLColor(210, 200, 150, 255));
+    testCopy(testTarget, kColor, GL_RGB32F, GL_FLOAT, false, true, false,
+             GLColor(191, 184, 138, 255));
+    testCopy(testTarget, kColor, GL_RGB32F, GL_FLOAT, false, false, true,
+             GLColor(227, 217, 161, 255));
 
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 200), GL_RGB565, GL_UNSIGNED_SHORT_5_6_5, false,
-             false, false, GLColor(247, 199, 148, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(250, 200, 150, 200), GL_RGB565, GL_UNSIGNED_SHORT_5_6_5, false,
-             true, false, GLColor(198, 158, 115, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(100, 150, 250, 200), GL_RGB565, GL_UNSIGNED_SHORT_5_6_5, false,
-             false, true, GLColor(132, 190, 255, 255));
+    testCopy(testTarget, kColor, GL_RGBA32F, GL_FLOAT, false, false, false,
+             GLColor(210, 200, 150, 235));
+    testCopy(testTarget, kColor, GL_RGBA32F, GL_FLOAT, false, true, false,
+             GLColor(191, 184, 138, 235));
+    testCopy(testTarget, kColor, GL_RGBA32F, GL_FLOAT, false, false, true,
+             GLColor(227, 217, 161, 235));
 }
 
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_3D with float
@@ -681,91 +857,70 @@ TEST_P(Texture3DCopy, FloatFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    std::vector<GLenum> floatTypes = {GL_FLOAT, GL_HALF_FLOAT, GL_UNSIGNED_INT_10F_11F_11F_REV,
-                                      GL_UNSIGNED_INT_5_9_9_9_REV};
+    // http://anglebug.com/4756
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
-    for (GLenum floatType : floatTypes)
-    {
-        if (floatType != GL_UNSIGNED_INT_5_9_9_9_REV &&
-            floatType != GL_UNSIGNED_INT_10F_11F_11F_REV)
-        {
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_R16F, floatType, false, false,
-                     false, GLColor(210, 0, 0, 255));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_R16F, floatType, false, true,
-                     false, GLColor(191, 0, 0, 255));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_R16F, floatType, false, false,
-                     true, GLColor(227, 0, 0, 255));
+    testFloatFormats(GL_TEXTURE_3D);
+}
 
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RG16F, floatType, false, false,
-                     false, GLColor(210, 200, 0, 255));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RG16F, floatType, false, true,
-                     false, GLColor(191, 184, 0, 255));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RG16F, floatType, false, false,
-                     true, GLColor(227, 217, 0, 255));
+void CopyTexture3DTest::testIntFormats(const GLenum testTarget)
+{
+    const GLColor kColor(255, 140, 150, 230);
 
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGB16F, floatType, false, false,
-                     false, GLColor(210, 200, 150, 255));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGB16F, floatType, false, true,
-                     false, GLColor(191, 184, 138, 255));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGB16F, floatType, false, false,
-                     true, GLColor(227, 217, 161, 255));
+    // Pixels will be read as if the most significant bit is data, not the sign. The expected colors
+    // reflect this.
+    testCopy(testTarget, kColor, GL_R8I, GL_BYTE, false, false, false, GLColor(127, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R8I, GL_BYTE, false, true, false, GLColor(115, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R8I, GL_BYTE, false, false, true, GLColor(127, 0, 0, 1));
 
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGBA16F, floatType, false,
-                     false, false, GLColor(210, 200, 150, 235));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGBA16F, floatType, false, true,
-                     false, GLColor(191, 184, 138, 235));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGBA16F, floatType, false,
-                     false, true, GLColor(227, 217, 161, 235));
-        }
+    testCopy(testTarget, kColor, GL_R16I, GL_SHORT, false, false, false, GLColor(127, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R16I, GL_SHORT, false, true, false, GLColor(115, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R16I, GL_SHORT, false, false, true, GLColor(127, 0, 0, 1));
 
-        if (floatType != GL_UNSIGNED_INT_5_9_9_9_REV)
-        {
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_R11F_G11F_B10F, floatType,
-                     false, false, false, GLColor(210, 200, 148, 255));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_R11F_G11F_B10F, floatType,
-                     false, true, false, GLColor(191, 184, 138, 255));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_R11F_G11F_B10F, floatType,
-                     false, false, true, GLColor(227, 217, 161, 255));
-        }
+    testCopy(testTarget, kColor, GL_R32I, GL_INT, false, false, false, GLColor(127, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R32I, GL_INT, false, true, false, GLColor(115, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R32I, GL_INT, false, false, true, GLColor(127, 0, 0, 1));
 
-        if (floatType != GL_UNSIGNED_INT_10F_11F_11F_REV)
-        {
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGB9_E5, floatType, false,
-                     false, false, GLColor(210, 200, 148, 255));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGB9_E5, floatType, false, true,
-                     false, GLColor(192, 184, 138, 255));
-            testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGB9_E5, floatType, false,
-                     false, true, GLColor(227, 217, 161, 255));
-        }
-    }
+    testCopy(testTarget, kColor, GL_RG8I, GL_BYTE, false, false, false, GLColor(127, 70, 0, 1));
+    testCopy(testTarget, kColor, GL_RG8I, GL_BYTE, false, true, false, GLColor(115, 63, 0, 1));
+    testCopy(testTarget, kColor, GL_RG8I, GL_BYTE, false, false, true, GLColor(127, 77, 0, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_R32F, GL_FLOAT, false, false, false,
-             GLColor(210, 0, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_R32F, GL_FLOAT, false, true, false,
-             GLColor(191, 0, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_R32F, GL_FLOAT, false, false, true,
-             GLColor(227, 0, 0, 255));
+    testCopy(testTarget, kColor, GL_RG16I, GL_SHORT, false, false, false, GLColor(127, 70, 0, 1));
+    testCopy(testTarget, kColor, GL_RG16I, GL_SHORT, false, true, false, GLColor(115, 63, 0, 1));
+    testCopy(testTarget, kColor, GL_RG16I, GL_SHORT, false, false, true, GLColor(127, 77, 0, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RG32F, GL_FLOAT, false, false, false,
-             GLColor(210, 200, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RG32F, GL_FLOAT, false, true, false,
-             GLColor(191, 184, 0, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RG32F, GL_FLOAT, false, false, true,
-             GLColor(227, 217, 0, 255));
+    testCopy(testTarget, kColor, GL_RG32I, GL_INT, false, false, false, GLColor(127, 70, 0, 1));
+    testCopy(testTarget, kColor, GL_RG32I, GL_INT, false, true, false, GLColor(115, 63, 0, 1));
+    testCopy(testTarget, kColor, GL_RG32I, GL_INT, false, false, true, GLColor(127, 77, 0, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGB32F, GL_FLOAT, false, false, false,
-             GLColor(210, 200, 150, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGB32F, GL_FLOAT, false, true, false,
-             GLColor(191, 184, 138, 255));
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGB32F, GL_FLOAT, false, false, true,
-             GLColor(227, 217, 161, 255));
+    testCopy(testTarget, kColor, GL_RGB8I, GL_BYTE, false, false, false, GLColor(127, 70, 75, 1));
+    testCopy(testTarget, kColor, GL_RGB8I, GL_BYTE, false, true, false, GLColor(115, 63, 67, 1));
+    testCopy(testTarget, kColor, GL_RGB8I, GL_BYTE, false, false, true, GLColor(127, 77, 83, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGBA32F, GL_FLOAT, false, false, false,
-             GLColor(210, 200, 150, 235));
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGBA32F, GL_FLOAT, false, true, false,
-             GLColor(191, 184, 138, 235));
-    testCopy(GL_TEXTURE_3D, GLColor(210, 200, 150, 235), GL_RGBA32F, GL_FLOAT, false, false, true,
-             GLColor(227, 217, 161, 235));
+    testCopy(testTarget, kColor, GL_RGB16I, GL_SHORT, false, false, false, GLColor(127, 70, 75, 1));
+    testCopy(testTarget, kColor, GL_RGB16I, GL_SHORT, false, true, false, GLColor(115, 63, 67, 1));
+    testCopy(testTarget, kColor, GL_RGB16I, GL_SHORT, false, false, true, GLColor(127, 77, 83, 1));
+
+    testCopy(testTarget, kColor, GL_RGB32I, GL_INT, false, false, false, GLColor(127, 70, 75, 1));
+    testCopy(testTarget, kColor, GL_RGB32I, GL_INT, false, true, false, GLColor(115, 63, 67, 1));
+    testCopy(testTarget, kColor, GL_RGB32I, GL_INT, false, false, true, GLColor(127, 77, 83, 1));
+
+    testCopy(testTarget, kColor, GL_RGBA8I, GL_BYTE, false, false, false,
+             GLColor(127, 70, 75, 115));
+    testCopy(testTarget, kColor, GL_RGBA8I, GL_BYTE, false, true, false, GLColor(115, 63, 67, 115));
+    testCopy(testTarget, kColor, GL_RGBA8I, GL_BYTE, false, false, true, GLColor(127, 77, 83, 115));
+
+    testCopy(testTarget, kColor, GL_RGBA16I, GL_SHORT, false, false, false,
+             GLColor(127, 70, 75, 115));
+    testCopy(testTarget, kColor, GL_RGBA16I, GL_SHORT, false, true, false,
+             GLColor(115, 63, 67, 115));
+    testCopy(testTarget, kColor, GL_RGBA16I, GL_SHORT, false, false, true,
+             GLColor(127, 77, 83, 115));
+
+    testCopy(testTarget, kColor, GL_RGBA32I, GL_INT, false, false, false,
+             GLColor(127, 70, 75, 115));
+    testCopy(testTarget, kColor, GL_RGBA32I, GL_INT, false, true, false, GLColor(115, 63, 67, 115));
+    testCopy(testTarget, kColor, GL_RGBA32I, GL_INT, false, false, true, GLColor(127, 77, 83, 115));
 }
 
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_3D with integer
@@ -773,6 +928,10 @@ TEST_P(Texture3DCopy, FloatFormats)
 TEST_P(Texture3DCopy, IntFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
+
+    // Vulkan multiplies source by 255 unconditionally, which is wrong for signed integer formats.
+    // http://anglebug.com/4741
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kFS[] =
         "#version 300 es\n"
@@ -791,91 +950,103 @@ TEST_P(Texture3DCopy, IntFormats)
 
     glUseProgram(mProgram);
 
-    // Pixels will be read as if the most significant bit is data, not the sign. The expected colors
-    // reflect this.
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_R8I, GL_BYTE, false, false, false,
-             GLColor(127, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_R8I, GL_BYTE, false, true, false,
-             GLColor(115, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_R8I, GL_BYTE, false, false, true,
-             GLColor(127, 0, 0, 1));
+    testIntFormats(GL_TEXTURE_3D);
+}
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_R16I, GL_SHORT, false, false, false,
-             GLColor(127, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_R16I, GL_SHORT, false, true, false,
-             GLColor(115, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_R16I, GL_SHORT, false, false, true,
-             GLColor(127, 0, 0, 1));
+void CopyTexture3DTest::testUintFormats(const GLenum testTarget)
+{
+    const GLColor kColor(128, 84, 32, 100);
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_R32I, GL_INT, false, false, false,
-             GLColor(127, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_R32I, GL_INT, false, true, false,
-             GLColor(115, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_R32I, GL_INT, false, false, true,
-             GLColor(127, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R8UI, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(128, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R8UI, GL_UNSIGNED_BYTE, false, true, false,
+             GLColor(50, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R8UI, GL_UNSIGNED_BYTE, false, false, true,
+             GLColor(255, 0, 0, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RG8I, GL_BYTE, false, false, false,
-             GLColor(127, 70, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RG8I, GL_BYTE, false, true, false,
-             GLColor(115, 63, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RG8I, GL_BYTE, false, false, true,
-             GLColor(127, 77, 0, 1));
+    testCopy(testTarget, kColor, GL_R16UI, GL_UNSIGNED_SHORT, false, false, false,
+             GLColor(128, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R16UI, GL_UNSIGNED_SHORT, false, true, false,
+             GLColor(50, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R16UI, GL_UNSIGNED_SHORT, false, false, true,
+             GLColor(255, 0, 0, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RG16I, GL_SHORT, false, false, false,
-             GLColor(127, 70, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RG16I, GL_SHORT, false, true, false,
-             GLColor(115, 63, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RG16I, GL_SHORT, false, false, true,
-             GLColor(127, 77, 0, 1));
+    testCopy(testTarget, kColor, GL_R32UI, GL_UNSIGNED_INT, false, false, false,
+             GLColor(128, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R32UI, GL_UNSIGNED_INT, false, true, false,
+             GLColor(50, 0, 0, 1));
+    testCopy(testTarget, kColor, GL_R32UI, GL_UNSIGNED_INT, false, false, true,
+             GLColor(255, 0, 0, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RG32I, GL_INT, false, false, false,
-             GLColor(127, 70, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RG32I, GL_INT, false, true, false,
-             GLColor(115, 63, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RG32I, GL_INT, false, false, true,
-             GLColor(127, 77, 0, 1));
+    testCopy(testTarget, kColor, GL_RG8UI, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(128, 84, 0, 1));
+    testCopy(testTarget, kColor, GL_RG8UI, GL_UNSIGNED_BYTE, false, true, false,
+             GLColor(50, 32, 0, 1));
+    testCopy(testTarget, kColor, GL_RG8UI, GL_UNSIGNED_BYTE, false, false, true,
+             GLColor(255, 214, 0, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGB8I, GL_BYTE, false, false, false,
-             GLColor(127, 70, 75, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGB8I, GL_BYTE, false, true, false,
-             GLColor(115, 63, 67, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGB8I, GL_BYTE, false, false, true,
-             GLColor(127, 77, 83, 1));
+    testCopy(testTarget, kColor, GL_RG16UI, GL_UNSIGNED_SHORT, false, false, false,
+             GLColor(128, 84, 0, 1));
+    testCopy(testTarget, kColor, GL_RG16UI, GL_UNSIGNED_SHORT, false, true, false,
+             GLColor(50, 32, 0, 1));
+    testCopy(testTarget, kColor, GL_RG16UI, GL_UNSIGNED_SHORT, false, false, true,
+             GLColor(255, 214, 0, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGB16I, GL_SHORT, false, false, false,
-             GLColor(127, 70, 75, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGB16I, GL_SHORT, false, true, false,
-             GLColor(115, 63, 67, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGB16I, GL_SHORT, false, false, true,
-             GLColor(127, 77, 83, 1));
+    testCopy(testTarget, kColor, GL_RG32UI, GL_UNSIGNED_INT, false, false, false,
+             GLColor(128, 84, 0, 1));
+    testCopy(testTarget, kColor, GL_RG32UI, GL_UNSIGNED_INT, false, true, false,
+             GLColor(50, 32, 0, 1));
+    testCopy(testTarget, kColor, GL_RG32UI, GL_UNSIGNED_INT, false, false, true,
+             GLColor(255, 214, 0, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGB32I, GL_INT, false, false, false,
-             GLColor(127, 70, 75, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGB32I, GL_INT, false, true, false,
-             GLColor(115, 63, 67, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGB32I, GL_INT, false, false, true,
-             GLColor(127, 77, 83, 1));
+    testCopy(testTarget, kColor, GL_RGB8UI, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(128, 84, 32, 1));
+    testCopy(testTarget, kColor, GL_RGB8UI, GL_UNSIGNED_BYTE, false, true, false,
+             GLColor(50, 32, 12, 1));
+    testCopy(testTarget, kColor, GL_RGB8UI, GL_UNSIGNED_BYTE, false, false, true,
+             GLColor(255, 214, 81, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGBA8I, GL_BYTE, false, false, false,
-             GLColor(127, 70, 75, 115));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGBA8I, GL_BYTE, false, true, false,
-             GLColor(115, 63, 67, 115));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGBA8I, GL_BYTE, false, false, true,
-             GLColor(127, 77, 83, 115));
+    testCopy(testTarget, kColor, GL_RGB16UI, GL_UNSIGNED_SHORT, false, false, false,
+             GLColor(128, 84, 32, 1));
+    testCopy(testTarget, kColor, GL_RGB16UI, GL_UNSIGNED_SHORT, false, true, false,
+             GLColor(50, 32, 12, 1));
+    testCopy(testTarget, kColor, GL_RGB16UI, GL_UNSIGNED_SHORT, false, false, true,
+             GLColor(255, 214, 81, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGBA16I, GL_SHORT, false, false, false,
-             GLColor(127, 70, 75, 115));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGBA16I, GL_SHORT, false, true, false,
-             GLColor(115, 63, 67, 115));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGBA16I, GL_SHORT, false, false, true,
-             GLColor(127, 77, 83, 115));
+    testCopy(testTarget, kColor, GL_RGB32UI, GL_UNSIGNED_INT, false, false, false,
+             GLColor(128, 84, 32, 1));
+    testCopy(testTarget, kColor, GL_RGB32UI, GL_UNSIGNED_INT, false, true, false,
+             GLColor(50, 32, 12, 1));
+    testCopy(testTarget, kColor, GL_RGB32UI, GL_UNSIGNED_INT, false, false, true,
+             GLColor(255, 214, 81, 1));
 
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGBA32I, GL_INT, false, false, false,
-             GLColor(127, 70, 75, 115));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGBA32I, GL_INT, false, true, false,
-             GLColor(115, 63, 67, 115));
-    testCopy(GL_TEXTURE_3D, GLColor(255, 140, 150, 230), GL_RGBA32I, GL_INT, false, false, true,
-             GLColor(127, 77, 83, 115));
+    testCopy(testTarget, kColor, GL_RGBA8UI, GL_UNSIGNED_BYTE, false, false, false,
+             GLColor(128, 84, 32, 100));
+    testCopy(testTarget, kColor, GL_RGBA8UI, GL_UNSIGNED_BYTE, false, true, false,
+             GLColor(50, 32, 12, 100));
+    testCopy(testTarget, kColor, GL_RGBA8UI, GL_UNSIGNED_BYTE, false, false, true,
+             GLColor(255, 214, 81, 100));
+
+    testCopy(testTarget, kColor, GL_RGBA16UI, GL_UNSIGNED_SHORT, false, false, false,
+             GLColor(128, 84, 32, 100));
+    testCopy(testTarget, kColor, GL_RGBA16UI, GL_UNSIGNED_SHORT, false, true, false,
+             GLColor(50, 32, 12, 100));
+    testCopy(testTarget, kColor, GL_RGBA16UI, GL_UNSIGNED_SHORT, false, false, true,
+             GLColor(255, 214, 81, 100));
+
+    testCopy(testTarget, kColor, GL_RGBA32UI, GL_UNSIGNED_INT, false, false, false,
+             GLColor(128, 84, 32, 100));
+    testCopy(testTarget, kColor, GL_RGBA32UI, GL_UNSIGNED_INT, false, true, false,
+             GLColor(50, 32, 12, 100));
+    testCopy(testTarget, kColor, GL_RGBA32UI, GL_UNSIGNED_INT, false, false, true,
+             GLColor(255, 214, 81, 100));
+
+    testCopy(testTarget, kColor, GL_RGB10_A2UI, GL_UNSIGNED_INT_2_10_10_10_REV, false, false, false,
+             GLColor(128, 84, 32, 3));
+    testCopy(testTarget, kColor, GL_RGB10_A2UI, GL_UNSIGNED_INT_2_10_10_10_REV, false, true, false,
+             GLColor(50, 32, 12, 3));
+    testCopy(testTarget, kColor, GL_RGB10_A2UI, GL_UNSIGNED_INT_2_10_10_10_REV, false, false, true,
+             GLColor(255, 214, 81, 3));
 }
 
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_3D with unsigned
@@ -883,6 +1054,10 @@ TEST_P(Texture3DCopy, IntFormats)
 TEST_P(Texture3DCopy, UintFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
+
+    // Vulkan multiplies source by 255 unconditionally, which is wrong for non-8-bit integer
+    // formats.  http://anglebug.com/4741
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kFS[] =
         "#version 300 es\n"
@@ -901,96 +1076,7 @@ TEST_P(Texture3DCopy, UintFormats)
 
     glUseProgram(mProgram);
 
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_R8UI, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(128, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_R8UI, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(50, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_R8UI, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(255, 0, 0, 1));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_R16UI, GL_UNSIGNED_SHORT, false, false,
-             false, GLColor(128, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_R16UI, GL_UNSIGNED_SHORT, false, true,
-             false, GLColor(50, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_R16UI, GL_UNSIGNED_SHORT, false, false,
-             true, GLColor(255, 0, 0, 1));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_R32UI, GL_UNSIGNED_INT, false, false,
-             false, GLColor(128, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_R32UI, GL_UNSIGNED_INT, false, true,
-             false, GLColor(50, 0, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_R32UI, GL_UNSIGNED_INT, false, false,
-             true, GLColor(255, 0, 0, 1));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RG8UI, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(128, 84, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RG8UI, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(50, 32, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RG8UI, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(255, 214, 0, 1));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RG16UI, GL_UNSIGNED_SHORT, false, false,
-             false, GLColor(128, 84, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RG16UI, GL_UNSIGNED_SHORT, false, true,
-             false, GLColor(50, 32, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RG16UI, GL_UNSIGNED_SHORT, false, false,
-             true, GLColor(255, 214, 0, 1));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RG32UI, GL_UNSIGNED_INT, false, false,
-             false, GLColor(128, 84, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RG32UI, GL_UNSIGNED_INT, false, true,
-             false, GLColor(50, 32, 0, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RG32UI, GL_UNSIGNED_INT, false, false,
-             true, GLColor(255, 214, 0, 1));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB8UI, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(128, 84, 32, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB8UI, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(50, 32, 12, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB8UI, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(255, 214, 81, 1));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB16UI, GL_UNSIGNED_SHORT, false, false,
-             false, GLColor(128, 84, 32, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB16UI, GL_UNSIGNED_SHORT, false, true,
-             false, GLColor(50, 32, 12, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB16UI, GL_UNSIGNED_SHORT, false, false,
-             true, GLColor(255, 214, 81, 1));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB32UI, GL_UNSIGNED_INT, false, false,
-             false, GLColor(128, 84, 32, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB32UI, GL_UNSIGNED_INT, false, true,
-             false, GLColor(50, 32, 12, 1));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB32UI, GL_UNSIGNED_INT, false, false,
-             true, GLColor(255, 214, 81, 1));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGBA8UI, GL_UNSIGNED_BYTE, false, false,
-             false, GLColor(128, 84, 32, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGBA8UI, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(50, 32, 12, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGBA8UI, GL_UNSIGNED_BYTE, false, false,
-             true, GLColor(255, 214, 81, 100));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGBA16UI, GL_UNSIGNED_SHORT, false, false,
-             false, GLColor(128, 84, 32, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGBA16UI, GL_UNSIGNED_SHORT, false, true,
-             false, GLColor(50, 32, 12, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGBA16UI, GL_UNSIGNED_SHORT, false, false,
-             true, GLColor(255, 214, 81, 100));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGBA32UI, GL_UNSIGNED_INT, false, false,
-             false, GLColor(128, 84, 32, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGBA32UI, GL_UNSIGNED_INT, false, true,
-             false, GLColor(50, 32, 12, 100));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGBA32UI, GL_UNSIGNED_INT, false, false,
-             true, GLColor(255, 214, 81, 100));
-
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB10_A2UI,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, false, false, GLColor(128, 84, 32, 3));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB10_A2UI,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, true, false, GLColor(50, 32, 12, 3));
-    testCopy(GL_TEXTURE_3D, GLColor(128, 84, 32, 100), GL_RGB10_A2UI,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, false, true, GLColor(255, 214, 81, 3));
+    testUintFormats(GL_TEXTURE_3D);
 }
 
 // Test that glCopySubTexture3DANGLE correctly copies to and from a GL_TEXTURE_2D_ARRAY texture.
@@ -1206,61 +1292,7 @@ TEST_P(Texture2DArrayCopy, UnsizedFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGB, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(250, 200, 150, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGB, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(98, 78, 59, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 200, 200), GL_RGB, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(128, 191, 255, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
-             false, false, false, GLColor(247, 199, 148, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
-             false, true, false, GLColor(99, 77, 57, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 200, 200), GL_RGB, GL_UNSIGNED_SHORT_5_6_5,
-             false, false, true, GLColor(132, 190, 255, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(250, 200, 150, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(98, 78, 59, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 200, 200), GL_RGBA, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(128, 191, 255, 200));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4,
-             false, false, false, GLColor(255, 204, 153, 102));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4,
-             false, true, false, GLColor(102, 85, 51, 102));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 200, 200), GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4,
-             false, false, true, GLColor(136, 187, 255, 204));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
-             false, false, false, GLColor(247, 198, 148, 0));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
-             false, true, false, GLColor(99, 82, 57, 0));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 200, 200), GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1,
-             false, false, true, GLColor(132, 189, 255, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_LUMINANCE, GL_UNSIGNED_BYTE,
-             false, false, false, GLColor(250, 250, 250, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_LUMINANCE, GL_UNSIGNED_BYTE,
-             false, true, false, GLColor(98, 98, 98, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 200, 200), GL_LUMINANCE, GL_UNSIGNED_BYTE,
-             false, false, true, GLColor(128, 128, 128, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
-             false, false, false, GLColor(250, 250, 250, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
-             false, true, false, GLColor(98, 98, 98, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 200, 200), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,
-             false, false, true, GLColor(128, 128, 128, 200));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_ALPHA, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(0, 0, 0, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_ALPHA, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(0, 0, 0, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_ALPHA, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(0, 0, 0, 100));
+    testUnsizedFormats(GL_TEXTURE_2D_ARRAY);
 }
 
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_2D_ARRAY with
@@ -1269,40 +1301,7 @@ TEST_P(Texture2DArrayCopy, SnormFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 190), GL_R8_SNORM, GL_BYTE, false, false,
-             false, GLColor(251, 0, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 190), GL_R8_SNORM, GL_BYTE, false, true,
-             false, GLColor(187, 0, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(200, 150, 100, 230), GL_R8_SNORM, GL_BYTE, false, false,
-             true, GLColor(221, 0, 0, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 190), GL_RG8_SNORM, GL_BYTE, false, false,
-             false, GLColor(251, 201, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 190), GL_RG8_SNORM, GL_BYTE, false, true,
-             false, GLColor(187, 149, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(200, 150, 100, 230), GL_RG8_SNORM, GL_BYTE, false, false,
-             true, GLColor(221, 167, 0, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 190), GL_RGB8_SNORM, GL_BYTE, false, false,
-             false, GLColor(251, 201, 151, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 190), GL_RGB8_SNORM, GL_BYTE, false, true,
-             false, GLColor(187, 149, 112, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(200, 150, 100, 230), GL_RGB8_SNORM, GL_BYTE, false, false,
-             true, GLColor(221, 167, 110, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 190), GL_RGBA8_SNORM, GL_BYTE, false,
-             false, false, GLColor(251, 201, 151, 191));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 190), GL_RGBA8_SNORM, GL_BYTE, false, true,
-             false, GLColor(187, 149, 112, 191));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(200, 150, 100, 230), GL_RGBA8_SNORM, GL_BYTE, false,
-             false, true, GLColor(221, 167, 110, 231));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGB10_A2,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, false, false, GLColor(250, 200, 150, 85));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 200), GL_RGB10_A2,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, true, false, GLColor(196, 157, 118, 170));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 250, 200), GL_RGB10_A2,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, false, true, GLColor(128, 191, 255, 170));
+    testSnormFormats(GL_TEXTURE_2D_ARRAY);
 }
 
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_2D_ARRAY with
@@ -1314,98 +1313,7 @@ TEST_P(Texture2DArrayCopy, UnsignedByteFormats)
     // Flay on Windows D3D11. http://anglebug.com/2896
     ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
 
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_R8, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(250, 0, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_R8, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(98, 0, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_R8, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(255, 0, 0, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RG8, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(250, 200, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RG8, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(98, 78, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RG8, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(255, 255, 0, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGB8, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(250, 200, 150, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGB8, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(98, 78, 59, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGB8, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(255, 255, 255, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA8, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(250, 200, 150, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA8, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(98, 78, 59, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA8, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(255, 255, 255, 100));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA4, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(255, 204, 153, 102));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA4, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(102, 85, 51, 102));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 200, 210), GL_RGBA4, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(119, 187, 238, 204));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4,
-             false, false, false, GLColor(255, 204, 153, 102));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4,
-             false, true, false, GLColor(102, 85, 51, 102));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 200, 210), GL_RGBA4, GL_UNSIGNED_SHORT_4_4_4_4,
-             false, false, true, GLColor(119, 187, 238, 204));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 200), GL_RGB5_A1, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(247, 198, 148, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGB5_A1, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(99, 82, 57, 0));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_RGB5_A1, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(255, 255, 255, 0));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 200), GL_RGB5_A1,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, false, false, GLColor(247, 198, 148, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 200), GL_RGB5_A1,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, true, false, GLColor(198, 156, 115, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 250, 200), GL_RGB5_A1,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, false, true, GLColor(132, 189, 255, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 200), GL_RGB5_A1,
-             GL_UNSIGNED_SHORT_5_5_5_1, false, false, false, GLColor(247, 198, 148, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 200), GL_RGB5_A1,
-             GL_UNSIGNED_SHORT_5_5_5_1, false, true, false, GLColor(198, 156, 115, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 250, 200), GL_RGB5_A1,
-             GL_UNSIGNED_SHORT_5_5_5_1, false, false, true, GLColor(132, 189, 255, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 200), GL_RGB565, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(247, 199, 148, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 200), GL_RGB565, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(198, 158, 115, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 250, 200), GL_RGB565, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(132, 190, 255, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 200), GL_RGB565, GL_UNSIGNED_SHORT_5_6_5,
-             false, false, false, GLColor(247, 199, 148, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 200), GL_RGB565, GL_UNSIGNED_SHORT_5_6_5,
-             false, true, false, GLColor(198, 158, 115, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(100, 150, 250, 200), GL_RGB565, GL_UNSIGNED_SHORT_5_6_5,
-             false, false, true, GLColor(132, 190, 255, 255));
-
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsWindows() && IsD3D11());
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_SRGB8, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(244, 148, 78, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_SRGB8, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(31, 19, 11, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_SRGB8, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(52, 253, 53, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE,
-             false, false, false, GLColor(244, 148, 78, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE,
-             false, true, false, GLColor(31, 19, 11, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(250, 200, 150, 100), GL_SRGB8_ALPHA8, GL_UNSIGNED_BYTE,
-             false, false, true, GLColor(52, 253, 53, 100));
+    testUnsignedByteFormats(GL_TEXTURE_2D_ARRAY);
 }
 
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_2D_ARRAY with
@@ -1414,91 +1322,10 @@ TEST_P(Texture2DArrayCopy, FloatFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
 
-    std::vector<GLenum> floatTypes = {GL_FLOAT, GL_HALF_FLOAT, GL_UNSIGNED_INT_10F_11F_11F_REV,
-                                      GL_UNSIGNED_INT_5_9_9_9_REV};
+    // http://anglebug.com/4756
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
 
-    for (GLenum floatType : floatTypes)
-    {
-        if (floatType != GL_UNSIGNED_INT_5_9_9_9_REV &&
-            floatType != GL_UNSIGNED_INT_10F_11F_11F_REV)
-        {
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_R16F, floatType, false,
-                     false, false, GLColor(210, 0, 0, 255));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_R16F, floatType, false,
-                     true, false, GLColor(191, 0, 0, 255));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_R16F, floatType, false,
-                     false, true, GLColor(227, 0, 0, 255));
-
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RG16F, floatType, false,
-                     false, false, GLColor(210, 200, 0, 255));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RG16F, floatType, false,
-                     true, false, GLColor(191, 184, 0, 255));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RG16F, floatType, false,
-                     false, true, GLColor(227, 217, 0, 255));
-
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGB16F, floatType, false,
-                     false, false, GLColor(210, 200, 150, 255));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGB16F, floatType, false,
-                     true, false, GLColor(191, 184, 138, 255));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGB16F, floatType, false,
-                     false, true, GLColor(227, 217, 161, 255));
-
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGBA16F, floatType, false,
-                     false, false, GLColor(210, 200, 150, 235));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGBA16F, floatType, false,
-                     true, false, GLColor(191, 184, 138, 235));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGBA16F, floatType, false,
-                     false, true, GLColor(227, 217, 161, 235));
-        }
-
-        if (floatType != GL_UNSIGNED_INT_5_9_9_9_REV)
-        {
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_R11F_G11F_B10F, floatType,
-                     false, false, false, GLColor(210, 200, 148, 255));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_R11F_G11F_B10F, floatType,
-                     false, true, false, GLColor(191, 184, 138, 255));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_R11F_G11F_B10F, floatType,
-                     false, false, true, GLColor(227, 217, 161, 255));
-        }
-
-        if (floatType != GL_UNSIGNED_INT_10F_11F_11F_REV)
-        {
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGB9_E5, floatType, false,
-                     false, false, GLColor(210, 200, 148, 255));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGB9_E5, floatType, false,
-                     true, false, GLColor(192, 184, 138, 255));
-            testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGB9_E5, floatType, false,
-                     false, true, GLColor(227, 217, 161, 255));
-        }
-    }
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_R32F, GL_FLOAT, false, false,
-             false, GLColor(210, 0, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_R32F, GL_FLOAT, false, true,
-             false, GLColor(191, 0, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_R32F, GL_FLOAT, false, false,
-             true, GLColor(227, 0, 0, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RG32F, GL_FLOAT, false, false,
-             false, GLColor(210, 200, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RG32F, GL_FLOAT, false, true,
-             false, GLColor(191, 184, 0, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RG32F, GL_FLOAT, false, false,
-             true, GLColor(227, 217, 0, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGB32F, GL_FLOAT, false, false,
-             false, GLColor(210, 200, 150, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGB32F, GL_FLOAT, false, true,
-             false, GLColor(191, 184, 138, 255));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGB32F, GL_FLOAT, false, false,
-             true, GLColor(227, 217, 161, 255));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGBA32F, GL_FLOAT, false, false,
-             false, GLColor(210, 200, 150, 235));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGBA32F, GL_FLOAT, false, true,
-             false, GLColor(191, 184, 138, 235));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(210, 200, 150, 235), GL_RGBA32F, GL_FLOAT, false, false,
-             true, GLColor(227, 217, 161, 235));
+    testFloatFormats(GL_TEXTURE_2D_ARRAY);
 }
 
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_2D_ARRAY with
@@ -1506,6 +1333,10 @@ TEST_P(Texture2DArrayCopy, FloatFormats)
 TEST_P(Texture2DArrayCopy, IntFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
+
+    // Vulkan multiplies source by 255 unconditionally, which is wrong for signed integer formats.
+    // http://anglebug.com/4741
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kFS[] =
         "#version 300 es\n"
@@ -1524,91 +1355,7 @@ TEST_P(Texture2DArrayCopy, IntFormats)
 
     glUseProgram(mProgram);
 
-    // Pixels will be read as if the most significant bit is data, not the sign. The expected colors
-    // reflect this.
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_R8I, GL_BYTE, false, false, false,
-             GLColor(127, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_R8I, GL_BYTE, false, true, false,
-             GLColor(115, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_R8I, GL_BYTE, false, false, true,
-             GLColor(127, 0, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_R16I, GL_SHORT, false, false,
-             false, GLColor(127, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_R16I, GL_SHORT, false, true,
-             false, GLColor(115, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_R16I, GL_SHORT, false, false,
-             true, GLColor(127, 0, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_R32I, GL_INT, false, false, false,
-             GLColor(127, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_R32I, GL_INT, false, true, false,
-             GLColor(115, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_R32I, GL_INT, false, false, true,
-             GLColor(127, 0, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RG8I, GL_BYTE, false, false,
-             false, GLColor(127, 70, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RG8I, GL_BYTE, false, true, false,
-             GLColor(115, 63, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RG8I, GL_BYTE, false, false, true,
-             GLColor(127, 77, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RG16I, GL_SHORT, false, false,
-             false, GLColor(127, 70, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RG16I, GL_SHORT, false, true,
-             false, GLColor(115, 63, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RG16I, GL_SHORT, false, false,
-             true, GLColor(127, 77, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RG32I, GL_INT, false, false,
-             false, GLColor(127, 70, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RG32I, GL_INT, false, true, false,
-             GLColor(115, 63, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RG32I, GL_INT, false, false, true,
-             GLColor(127, 77, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGB8I, GL_BYTE, false, false,
-             false, GLColor(127, 70, 75, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGB8I, GL_BYTE, false, true,
-             false, GLColor(115, 63, 67, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGB8I, GL_BYTE, false, false,
-             true, GLColor(127, 77, 83, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGB16I, GL_SHORT, false, false,
-             false, GLColor(127, 70, 75, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGB16I, GL_SHORT, false, true,
-             false, GLColor(115, 63, 67, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGB16I, GL_SHORT, false, false,
-             true, GLColor(127, 77, 83, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGB32I, GL_INT, false, false,
-             false, GLColor(127, 70, 75, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGB32I, GL_INT, false, true,
-             false, GLColor(115, 63, 67, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGB32I, GL_INT, false, false,
-             true, GLColor(127, 77, 83, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGBA8I, GL_BYTE, false, false,
-             false, GLColor(127, 70, 75, 115));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGBA8I, GL_BYTE, false, true,
-             false, GLColor(115, 63, 67, 115));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGBA8I, GL_BYTE, false, false,
-             true, GLColor(127, 77, 83, 115));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGBA16I, GL_SHORT, false, false,
-             false, GLColor(127, 70, 75, 115));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGBA16I, GL_SHORT, false, true,
-             false, GLColor(115, 63, 67, 115));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGBA16I, GL_SHORT, false, false,
-             true, GLColor(127, 77, 83, 115));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGBA32I, GL_INT, false, false,
-             false, GLColor(127, 70, 75, 115));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGBA32I, GL_INT, false, true,
-             false, GLColor(115, 63, 67, 115));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(255, 140, 150, 230), GL_RGBA32I, GL_INT, false, false,
-             true, GLColor(127, 77, 83, 115));
+    testIntFormats(GL_TEXTURE_2D_ARRAY);
 }
 
 // Test passthrough, premultiply alpha, and unmultiply alpha copies for GL_TEXTURE_2D_ARRAY with
@@ -1616,6 +1363,10 @@ TEST_P(Texture2DArrayCopy, IntFormats)
 TEST_P(Texture2DArrayCopy, UintFormats)
 {
     ANGLE_SKIP_TEST_IF(!checkExtensions());
+
+    // Vulkan multiplies source by 255 unconditionally, which is wrong for non-8-bit integer
+    // formats.  http://anglebug.com/4741
+    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     constexpr char kFS[] =
         "#version 300 es\n"
@@ -1634,96 +1385,7 @@ TEST_P(Texture2DArrayCopy, UintFormats)
 
     glUseProgram(mProgram);
 
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_R8UI, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(128, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_R8UI, GL_UNSIGNED_BYTE, false, true,
-             false, GLColor(50, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_R8UI, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(255, 0, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_R16UI, GL_UNSIGNED_SHORT, false,
-             false, false, GLColor(128, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_R16UI, GL_UNSIGNED_SHORT, false,
-             true, false, GLColor(50, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_R16UI, GL_UNSIGNED_SHORT, false,
-             false, true, GLColor(255, 0, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_R32UI, GL_UNSIGNED_INT, false,
-             false, false, GLColor(128, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_R32UI, GL_UNSIGNED_INT, false, true,
-             false, GLColor(50, 0, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_R32UI, GL_UNSIGNED_INT, false,
-             false, true, GLColor(255, 0, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RG8UI, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(128, 84, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RG8UI, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(50, 32, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RG8UI, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(255, 214, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RG16UI, GL_UNSIGNED_SHORT, false,
-             false, false, GLColor(128, 84, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RG16UI, GL_UNSIGNED_SHORT, false,
-             true, false, GLColor(50, 32, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RG16UI, GL_UNSIGNED_SHORT, false,
-             false, true, GLColor(255, 214, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RG32UI, GL_UNSIGNED_INT, false,
-             false, false, GLColor(128, 84, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RG32UI, GL_UNSIGNED_INT, false,
-             true, false, GLColor(50, 32, 0, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RG32UI, GL_UNSIGNED_INT, false,
-             false, true, GLColor(255, 214, 0, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB8UI, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(128, 84, 32, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB8UI, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(50, 32, 12, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB8UI, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(255, 214, 81, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB16UI, GL_UNSIGNED_SHORT, false,
-             false, false, GLColor(128, 84, 32, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB16UI, GL_UNSIGNED_SHORT, false,
-             true, false, GLColor(50, 32, 12, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB16UI, GL_UNSIGNED_SHORT, false,
-             false, true, GLColor(255, 214, 81, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB32UI, GL_UNSIGNED_INT, false,
-             false, false, GLColor(128, 84, 32, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB32UI, GL_UNSIGNED_INT, false,
-             true, false, GLColor(50, 32, 12, 1));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB32UI, GL_UNSIGNED_INT, false,
-             false, true, GLColor(255, 214, 81, 1));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGBA8UI, GL_UNSIGNED_BYTE, false,
-             false, false, GLColor(128, 84, 32, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGBA8UI, GL_UNSIGNED_BYTE, false,
-             true, false, GLColor(50, 32, 12, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGBA8UI, GL_UNSIGNED_BYTE, false,
-             false, true, GLColor(255, 214, 81, 100));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGBA16UI, GL_UNSIGNED_SHORT, false,
-             false, false, GLColor(128, 84, 32, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGBA16UI, GL_UNSIGNED_SHORT, false,
-             true, false, GLColor(50, 32, 12, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGBA16UI, GL_UNSIGNED_SHORT, false,
-             false, true, GLColor(255, 214, 81, 100));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGBA32UI, GL_UNSIGNED_INT, false,
-             false, false, GLColor(128, 84, 32, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGBA32UI, GL_UNSIGNED_INT, false,
-             true, false, GLColor(50, 32, 12, 100));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGBA32UI, GL_UNSIGNED_INT, false,
-             false, true, GLColor(255, 214, 81, 100));
-
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB10_A2UI,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, false, false, GLColor(128, 84, 32, 3));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB10_A2UI,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, true, false, GLColor(50, 32, 12, 3));
-    testCopy(GL_TEXTURE_2D_ARRAY, GLColor(128, 84, 32, 100), GL_RGB10_A2UI,
-             GL_UNSIGNED_INT_2_10_10_10_REV, false, false, true, GLColor(255, 214, 81, 3));
+    testUintFormats(GL_TEXTURE_2D_ARRAY);
 }
 
 ANGLE_INSTANTIATE_TEST_ES3(Texture3DCopy);

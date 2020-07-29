@@ -32,6 +32,11 @@ class TranslatorMetal : public TranslatorVulkan
 
     ANGLE_NO_DISCARD bool transformDepthBeforeCorrection(TIntermBlock *root,
                                                          const TVariable *driverUniforms) override;
+
+    void createAdditionalGraphicsDriverUniformFields(std::vector<TField *> *fieldsOut) override;
+
+    ANGLE_NO_DISCARD bool insertSampleMaskWritingLogic(TIntermBlock *root,
+                                                       const TVariable *driverUniforms);
 };
 
 }  // namespace sh

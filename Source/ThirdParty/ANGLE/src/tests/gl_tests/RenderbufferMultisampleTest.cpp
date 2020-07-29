@@ -50,6 +50,9 @@ class RenderbufferMultisampleTest : public ANGLETest
 // MAX_INTEGER_SAMPLES should be at least 1.
 TEST_P(RenderbufferMultisampleTest, IntegerInternalformat)
 {
+    // Fixed in recent mesa.  http://crbug.com/1071142
+    ANGLE_SKIP_TEST_IF(IsVulkan() && IsLinux() && (IsIntel() || IsAMD()));
+
     glBindRenderbuffer(GL_RENDERBUFFER, mRenderbuffer);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, 1, GL_RGBA8I, 64, 64);
     if (getClientMajorVersion() < 3 || getClientMinorVersion() < 1)

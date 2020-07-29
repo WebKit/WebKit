@@ -60,7 +60,7 @@ ANGLE_REENABLE_EXTRA_SEMI_WARNING
 #    include "vulkan/vk_sdk_platform.h"
 #endif
 
-#include "libANGLE/renderer/vulkan/vk_headers.h"
+#include "common/vulkan/vk_headers.h"
 
 /* Number of descriptor sets needs to be the same at alloc,       */
 /* pipeline layout creation, and descriptor set layout creation   */

@@ -8,7 +8,7 @@
 #ifndef ANGLE_TESTS_TESTUTILS_VULKANEXTERNALHELPER_H_
 #define ANGLE_TESTS_TESTUTILS_VULKANEXTERNALHELPER_H_
 
-#include "libANGLE/renderer/vulkan/vk_headers.h"
+#include "common/vulkan/vk_headers.h"
 #include "vulkan/vulkan_fuchsia_ext.h"
 
 namespace angle

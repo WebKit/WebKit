@@ -73,6 +73,8 @@ Some simple environment variables control frame capture:
            foo::ReplayContext1Frame(i);
        }
        ```
+ * `ANGLE_CAPTURE_SERIALIZE_STATE`:
+   * Set to `1` to enable GL state serialization. Default is `0`.
 
 A good way to test out the capture is to use environment variables in conjunction with the sample
 template. For example:
@@ -164,3 +166,24 @@ as the GLES driver for your application.
     $ autoninja -C out/Release capture_replay_sample
     $ out/Release/capture_replay_sample
     ```
+
+## Testing
+
+### Regression Testing Architecture
+The [python script][link_to_python_script] uses the job queue pattern. We spawn n-1 independent
+worker processes, where n is the value returned by multiprocessing.cpu_count(). Whenever a worker
+process finishes a job and becomes available, it grabs the next job from a shared job queue and
+runs that job on its CPU core. When there are no more jobs in the queue, the worker processes
+terminate and the main process reports results.
+
+![Point-in-time snapshot of the job queue](img/RegressionTestingArchitecture.png)
+
+### Job unit
+A job unit is a test batch. Each test has to go through 3 stages: capture run, replay build, and
+replay run. The test batch batches the replay build stage of multiple tests together, and the
+replay run stage of multiple tests together.
+
+![A test batch as a job unit](img/JobUnit.png)
+
+[link_to_python_script]:https://chromium.googlesource.com/angle/angle/+/refs/heads/master/src/tests/capture_replay_tests.py
+

@@ -80,6 +80,7 @@ angle_unittests_sources = [
   "compiler_tests/IntermNode_test.cpp",
   "compiler_tests/NV_draw_buffers_test.cpp",
   "compiler_tests/OES_standard_derivatives_test.cpp",
+  "compiler_tests/OES_texture_cube_map_array_test.cpp",
   "compiler_tests/OVR_multiview2_test.cpp",
   "compiler_tests/OVR_multiview_test.cpp",
   "compiler_tests/Pack_Unpack_test.cpp",

@@ -91,8 +91,11 @@ angle::Result GlslangWrapperVk::TransformSpirV(
     const SpirvBlob &initialSpirvBlob,
     SpirvBlob *shaderCodeOut)
 {
+    const bool removeDebugInfo = !context->getRenderer()->getEnableValidationLayers();
+
     return GlslangTransformSpirvCode(
         [context](GlslangError error) { return ErrorHandler(context, error); }, shaderType,
-        removeEarlyFragmentTestsOptimization, variableInfoMap, initialSpirvBlob, shaderCodeOut);
+        removeEarlyFragmentTestsOptimization, removeDebugInfo, variableInfoMap, initialSpirvBlob,
+        shaderCodeOut);
 }
 }  // namespace rx

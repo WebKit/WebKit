@@ -175,7 +175,6 @@ TEST_P(EGLContextSharingTest, DisplayShareGroupObjectSharing)
     ASSERT_GL_TRUE(glIsTexture(textureFromCtx0));
 
     ASSERT_GL_FALSE(glIsBuffer(bufferFromCtx0));
-    glDeleteBuffers(1, &bufferFromCtx0);
     ASSERT_GL_NO_ERROR();
 
     // Call readpixels on the texture to verify that the backend has proper support

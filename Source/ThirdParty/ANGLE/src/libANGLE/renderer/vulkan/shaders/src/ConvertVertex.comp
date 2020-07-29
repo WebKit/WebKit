@@ -46,55 +46,41 @@
 //     * UnormToFloat: Similar to UintToFloat, but normalized.
 //     * FixedToFloat: 16.16 signed fixed-point to floating point.
 //     * FloatToFloat: float.
-//     * A2BGR10SintToSint: covers the signed int type of component when format is only A2BGR10.
-//     * A2BGR10UintToUint: covers the unsigned int type of component when format is only A2BGR10.
-//     * A2BGR10SintToFloat: Same types as A2BGR10SintToSint for source (including scaled).
-//                           Converts to float.
-//     * A2BGR10UintToFloat: Same types as A2BGR10UintToUint for source (including uscaled).
-//                           Converts to float.
-//     * A2BGR10SnormToFloat: Similar to IntToFloat, but normalized and only for A2BGR10.
-//     * RGB10A2SintToFloat: Same types as RGB10A2SintToSint for source (including scaled).
-//                           Converts to float.
-//     * RGB10A2UintToFloat: Same types as RGB10A2UintToUint for source (including uscaled).
-//                           Converts to float.
-//     * RGB10A2SnormToFloat: Similar to IntToFloat, but normalized and only for RGB10A2.
-//     * RGB10A2UnormToFloat: Similar to UintToFloat, but normalized and only for RGB10A2.
 //
 // SintToSint, UintToUint and FloatToFloat correspond to CopyNativeVertexData() and
-// Copy8SintTo16SintVertexData() in renderer/copyvertex.inc, FixedToFloat corresponds to
-// Copy32FixedTo32FVertexData, SintToFloat and UintToFloat correspond to CopyTo32FVertexData with
-// normalized=false and SnormToFloat and UnormToFloat correspond to CopyTo32FVertexData with
-// normalized=true. A2BGR10SintToSint, A2BGR10UintToUint, A2BGR10SintToFloat, A2BGR10UintToFloat
-// and A2BGR10SnormToFloat correspond to CopyXYZ10W2ToXYZW32FVertexData with the proper options.
-// RGB10A2SintToFloat, RGB10A2UintToFloat and RGB10A2SnormToFloat correspond to
-// CopyW2XYZ10ToXYZW32FVertexData. RGB10UintToFloat corresponds to CopyXYZ10ToXYZW32FVertexData
-// with the proper options.
+// Copy8SintTo16SintVertexData() in renderer/copyvertex.inc.
+//
+// FixedToFloat corresponds to Copy32FixedTo32FVertexData.
+//
+// SintToFloat and UintToFloat correspond to CopyTo32FVertexData with normalized=false.
+//
+// SnormToFloat and UnormToFloat correspond to CopyTo32FVertexData with normalized=true.
+//
+// If isSrcHDR, SintToSint, UintToUint, SintToFloat, UintToFloat and SnormToFloat
+// correspond to CopyXYZ10W2ToXYZW32FVertexData (if isSrcA2BGR10) or CopyW2XYZ10ToXYZW32FVertexData
+// (if !isSrcA2BGR10) with the proper options.
 
 #version 450 core
 
 // Source type
-#if SintToSint || SintToFloat || A2BGR10SintToSint || A2BGR10SintToFloat || RGB10A2SintToFloat
+#if SintToSint || SintToFloat
 #define SrcType int
-#elif UintToUint || UintToFloat || A2BGR10UintToUint || A2BGR10UintToFloat || \
-    RGB10A2UintToFloat
+#elif UintToUint || UintToFloat
 #define SrcType uint
-#elif SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat || A2BGR10SnormToFloat || \
-    RGB10A2SnormToFloat || RGB10A2UnormToFloat
+#elif SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat
 #define SrcType float
 #else
 #error "Not all conversions are accounted for"
 #endif
 
 // Destination type
-#if SintToSint || A2BGR10SintToSint
+#if SintToSint
 #define DestType int
 #define IsDestFloat 0
-#elif UintToUint || A2BGR10UintToUint
+#elif UintToUint
 #define DestType uint
 #define IsDestFloat 0
-#elif SintToFloat || UintToFloat || SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat || \
-    A2BGR10SintToFloat || A2BGR10UintToFloat || A2BGR10SnormToFloat || \
-    RGB10A2SintToFloat || RGB10A2UintToFloat || RGB10A2SnormToFloat || RGB10A2UnormToFloat
+#elif SintToFloat || UintToFloat || SnormToFloat || UnormToFloat || FixedToFloat || FloatToFloat
 #define DestType float
 #define IsDestFloat 1
 #else
@@ -138,6 +124,9 @@ layout (push_constant) uniform PushConstants
     uint Bd;       // Destination component byte size
     uint Sd;       // Precalculated Nd*Bd
     uint Ed;       // Precalculated 4/Bd
+
+    bool isSrcHDR; // Whether source is either of A2BGR10 or RGB10A2
+    bool isSrcA2BGR10;  // Whether source is A2BGR10
 } params;
 
 // Define shorthands for more readable formulas:
@@ -221,36 +210,45 @@ SrcType loadSourceComponent(uint cd)
     // Load the source component
     uint offset = getSourceComponentOffset(vertex, component);
     uint block = srcData[offset / 4];
-    // A2B10G10R10's components are not byte-aligned, hardcoding values for efficiency.
-#if A2BGR10SintToSint || A2BGR10UintToUint || A2BGR10SnormToFloat || A2BGR10SintToFloat || \
-    A2BGR10UintToFloat
-    uint valueBits = component == 3 ? 2 : 10;
-    uint shiftBits = 10 * component;
-    uint valueMask = component == 3 ? 0x03 : 0x3FF;
-#elif RGB10A2SintToFloat || RGB10A2UintToFloat || RGB10A2SnormToFloat || RGB10A2UnormToFloat
-    uint valueBits = component == 3 ? 2 : 10;
-    // channel order is reversed
-    uint shiftBits = component == 3 ? 0 : (valueBits * (2 - component) + 2);
-    uint valueMask = component == 3 ? 0x03 : 0x3FF;
-#else
-    uint shiftBits = getShiftBits(offset, Bs);
-    uint valueBits = Bs * 8;
-    uint valueMask = valueBits == 32 ? -1 : (1 << valueBits) - 1;
-#endif
+
+    uint shiftBits;
+    uint valueBits;
+    uint valueMask;
+
+    // A2B10G10R10's components are not byte-aligned, so they are especially handled.
+    if (params.isSrcHDR)
+    {
+        valueBits = component == 3 ? 2 : 10;
+        valueMask = component == 3 ? 0x03 : 0x3FF;
+        if (params.isSrcA2BGR10)
+        {
+            shiftBits = 10 * component;
+        }
+        else
+        {
+            // channel order is reversed
+            shiftBits = component == 3 ? 0 : (valueBits * (2 - component) + 2);
+        }
+    }
+    else
+    {
+        shiftBits = getShiftBits(offset, Bs);
+        valueBits = Bs * 8;
+        valueMask = valueBits == 32 ? -1 : (1 << valueBits) - 1;
+    }
 
     uint valueAsUint;
 
     if (component >= Ns && component == 3)
     {
         // See GLES3.0 section 2.9.1 Transferring Array Elements
-#if SintToSint || SintToFloat || A2BGR10SintToSint || A2BGR10SintToFloat || RGB10A2SintToFloat || \
-    UintToUint || UintToFloat || A2BGR10UintToUint || A2BGR10UintToFloat || RGB10A2UintToFloat
+#if SintToSint || SintToFloat || UintToUint || UintToFloat
         // For integers, alpha should take a value of 1.
         valueAsUint = 1;
-#elif SnormToFloat || A2BGR10SnormToFloat || RGB10A2SnormToFloat
+#elif SnormToFloat
         // The largest signed number is 0b011...1 which is valueMask >> 1
         valueAsUint = valueMask >> 1;
-#elif UnormToFloat || RGB10A2UnormToFloat
+#elif UnormToFloat
         // The largest unsigned number is 0b11...1 which is valueMask
         valueAsUint = valueMask;
 #elif FixedToFloat
@@ -268,7 +266,7 @@ SrcType loadSourceComponent(uint cd)
     }
 
     // Convert to SrcType
-#if SintToSint || SintToFloat || A2BGR10SintToSint || A2BGR10SintToFloat || RGB10A2SintToFloat
+#if SintToSint || SintToFloat
     if (valueBits < 32)
     {
         bool isNegative = (valueAsUint & (1 << (valueBits - 1))) != 0;
@@ -279,9 +277,9 @@ SrcType loadSourceComponent(uint cd)
         valueAsUint |= signExtension;
     }
     SrcType value = SrcType(valueAsUint);
-#elif UintToUint || UintToFloat || A2BGR10UintToUint || A2BGR10UintToFloat || RGB10A2UintToFloat
+#elif UintToUint || UintToFloat
     SrcType value = valueAsUint;
-#elif SnormToFloat || A2BGR10SnormToFloat || RGB10A2SnormToFloat
+#elif SnormToFloat
     if (valueBits < 32)
     {
         bool isNegative = (valueAsUint & (1 << (valueBits - 1))) != 0;
@@ -291,7 +289,7 @@ SrcType loadSourceComponent(uint cd)
     int valueAsInt = int(valueAsUint);
     SrcType value = float(valueAsInt) / (valueMask >> 1);
     value = max(value, float(-1));
-#elif UnormToFloat || RGB10A2UnormToFloat
+#elif UnormToFloat
     float positiveMax = valueMask;
     // Scale [0, P] to [0, 1]
     SrcType value = valueAsUint / positiveMax;
@@ -319,7 +317,7 @@ uint makeDestinationComponent(uint cd, DestType value)
     // Return valueAsUint, shifted to the right spot.  Multiple calls to this function should be |ed
     // and eventually written to the destination.
 
-#if SintToSint || UintToUint || A2BGR10SintToSint || A2BGR10UintToUint
+#if SintToSint || UintToUint
     uint vertex = cd / Nd;
     uint component = cd % Nd;
 

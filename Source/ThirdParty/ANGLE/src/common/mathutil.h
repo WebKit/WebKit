@@ -504,6 +504,7 @@ inline float normalizedToFloat(T input)
 {
     static_assert(std::numeric_limits<T>::is_integer, "T must be an integer.");
     static_assert(inputBitCount < (sizeof(T) * 8), "T must have more bits than inputBitCount.");
+    ASSERT((input & ~((1 << inputBitCount) - 1)) == 0);
 
     if (inputBitCount > 23)
     {

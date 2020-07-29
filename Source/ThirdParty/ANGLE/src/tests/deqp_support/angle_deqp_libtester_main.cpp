@@ -13,7 +13,7 @@
 #include "common/system_utils.h"
 #include "deMath.h"
 #include "deUniquePtr.hpp"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 #include "tcuApp.hpp"
 #include "tcuCommandLine.hpp"
 #include "tcuDefs.hpp"

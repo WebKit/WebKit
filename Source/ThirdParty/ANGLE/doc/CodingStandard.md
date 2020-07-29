@@ -30,9 +30,6 @@ This will catch most of the trivial formatting errors and save you time.
 
 ### [Other C++ Features](https://google.github.io/styleguide/cppguide.html#Other_C++_Features)
 
-*   {DEV} all parameters passed by reference, except for STL containers (e.g.
-    std::vector, std::list), must be labeled `const`. For return parameters
-    other than STL containers, use a pointer.
 *   {DO} avoid use of default arguments.
 *   {DONT} use C++ exceptions, they are disabled in the builds and not caught.
 *   {DO} use nullptr (instead of 0 or NULL) for pointers.

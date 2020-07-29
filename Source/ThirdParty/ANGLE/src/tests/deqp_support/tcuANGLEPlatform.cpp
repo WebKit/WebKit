@@ -68,7 +68,7 @@ ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc)
     }
 #endif  // (DE_OS == DE_OS_WIN32)
 
-#if defined(ANGLE_USE_OZONE) || (DE_OS == DE_OS_ANDROID) || (DE_OS == DE_OS_WIN32)
+#if defined(ANGLE_USE_GBM) || (DE_OS == DE_OS_ANDROID) || (DE_OS == DE_OS_WIN32)
     {
         std::vector<eglw::EGLAttrib> glesAttribs =
             initAttribs(EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE);

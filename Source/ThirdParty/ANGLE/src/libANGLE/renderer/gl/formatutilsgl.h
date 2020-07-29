@@ -63,9 +63,9 @@ const InternalFormat &GetInternalFormatInfo(GLenum internalFormat, StandardGL st
 
 struct TexImageFormat
 {
-    GLenum internalFormat;
-    GLenum format;
-    GLenum type;
+    GLenum internalFormat = GL_NONE;
+    GLenum format         = GL_NONE;
+    GLenum type           = GL_NONE;
 };
 TexImageFormat GetTexImageFormat(const FunctionsGL *functions,
                                  const angle::FeaturesGL &features,
@@ -75,8 +75,8 @@ TexImageFormat GetTexImageFormat(const FunctionsGL *functions,
 
 struct TexSubImageFormat
 {
-    GLenum format;
-    GLenum type;
+    GLenum format = GL_NONE;
+    GLenum type   = GL_NONE;
 };
 TexSubImageFormat GetTexSubImageFormat(const FunctionsGL *functions,
                                        const angle::FeaturesGL &features,
@@ -85,7 +85,7 @@ TexSubImageFormat GetTexSubImageFormat(const FunctionsGL *functions,
 
 struct CompressedTexImageFormat
 {
-    GLenum internalFormat;
+    GLenum internalFormat = GL_NONE;
 };
 CompressedTexImageFormat GetCompressedTexImageFormat(const FunctionsGL *functions,
                                                      const angle::FeaturesGL &features,
@@ -93,7 +93,7 @@ CompressedTexImageFormat GetCompressedTexImageFormat(const FunctionsGL *function
 
 struct CompressedTexSubImageFormat
 {
-    GLenum format;
+    GLenum format = GL_NONE;
 };
 CompressedTexSubImageFormat GetCompressedSubTexImageFormat(const FunctionsGL *functions,
                                                            const angle::FeaturesGL &features,
@@ -101,7 +101,7 @@ CompressedTexSubImageFormat GetCompressedSubTexImageFormat(const FunctionsGL *fu
 
 struct CopyTexImageImageFormat
 {
-    GLenum internalFormat;
+    GLenum internalFormat = GL_NONE;
 };
 CopyTexImageImageFormat GetCopyTexImageImageFormat(const FunctionsGL *functions,
                                                    const angle::FeaturesGL &features,
@@ -110,7 +110,7 @@ CopyTexImageImageFormat GetCopyTexImageImageFormat(const FunctionsGL *functions,
 
 struct TexStorageFormat
 {
-    GLenum internalFormat;
+    GLenum internalFormat = GL_NONE;
 };
 TexStorageFormat GetTexStorageFormat(const FunctionsGL *functions,
                                      const angle::FeaturesGL &features,
@@ -118,7 +118,7 @@ TexStorageFormat GetTexStorageFormat(const FunctionsGL *functions,
 
 struct RenderbufferFormat
 {
-    GLenum internalFormat;
+    GLenum internalFormat = GL_NONE;
 };
 RenderbufferFormat GetRenderbufferFormat(const FunctionsGL *functions,
                                          const angle::FeaturesGL &features,
@@ -126,8 +126,8 @@ RenderbufferFormat GetRenderbufferFormat(const FunctionsGL *functions,
 
 struct ReadPixelsFormat
 {
-    GLenum format;
-    GLenum type;
+    GLenum format = GL_NONE;
+    GLenum type   = GL_NONE;
 };
 ReadPixelsFormat GetReadPixelsFormat(const FunctionsGL *functions,
                                      const angle::FeaturesGL &features,

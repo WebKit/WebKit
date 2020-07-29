@@ -32,12 +32,12 @@ class SamplerVk : public SamplerImpl
         return mSampler.get();
     }
 
-    Serial getSerial() const { return mSerial; }
+    SamplerSerial getSerial() const { return mSerial; }
 
   private:
     vk::BindingPointer<vk::Sampler> mSampler;
     // The serial is used for cache indexing.
-    Serial mSerial;
+    SamplerSerial mSerial;
 };
 
 }  // namespace rx

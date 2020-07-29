@@ -188,6 +188,7 @@
         "External": "GL_TEXTURE_EXTERNAL_OES",
         "Rectangle": "GL_TEXTURE_RECTANGLE_ANGLE",
         "CubeMap": "GL_TEXTURE_CUBE_MAP",
+        "CubeMapArray": "GL_TEXTURE_CUBE_MAP_ARRAY",
         "VideoImage": "GL_TEXTURE_VIDEO_IMAGE_WEBGL"
     },
     "TextureTarget":
@@ -205,6 +206,7 @@
         "CubeMapNegativeY": "GL_TEXTURE_CUBE_MAP_NEGATIVE_Y",
         "CubeMapPositiveZ": "GL_TEXTURE_CUBE_MAP_POSITIVE_Z",
         "CubeMapNegativeZ": "GL_TEXTURE_CUBE_MAP_NEGATIVE_Z",
+        "CubeMapArray": "GL_TEXTURE_CUBE_MAP_ARRAY",
         "VideoImage": "GL_TEXTURE_VIDEO_IMAGE_WEBGL"
     },
     "VertexArrayType":

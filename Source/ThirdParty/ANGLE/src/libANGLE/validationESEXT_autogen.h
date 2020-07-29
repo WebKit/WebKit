@@ -1009,6 +1009,8 @@ bool ValidateImportSemaphoreFdEXT(const Context *context,
 
 // GL_EXT_texture_compression_s3tc_srgb
 
+// GL_EXT_texture_cube_map_array
+
 // GL_EXT_texture_filter_anisotropic
 
 // GL_EXT_texture_format_BGRA8888
@@ -1405,6 +1407,8 @@ bool ValidateTexGeniOES(const Context *context, GLenum coord, GLenum pname, GLin
 bool ValidateTexGenivOES(const Context *context, GLenum coord, GLenum pname, const GLint *params);
 bool ValidateTexGenxOES(const Context *context, GLenum coord, GLenum pname, GLfixed param);
 bool ValidateTexGenxvOES(const Context *context, GLenum coord, GLenum pname, const GLfixed *params);
+
+// GL_OES_texture_cube_map_array
 
 // GL_OES_texture_half_float
 

@@ -232,6 +232,13 @@ Error ValidateConfigAttribute(const Display *display, EGLAttrib attribute)
             }
             break;
 
+        case EGL_Y_INVERTED_NOK:
+            if (!display->getExtensions().textureFromPixmapNOK)
+            {
+                return EglBadAttribute() << "EGL_NOK_texture_from_pixmap is not enabled.";
+            }
+            break;
+
         default:
             return EglBadAttribute() << "Unknown attribute.";
     }
@@ -1863,6 +1870,10 @@ Error ValidateCreatePbufferFromClientBuffer(Display *display,
                 {
                     return EglBadAttribute() << "<buftype> doesn't support setting texture offset";
                 }
+                if (value < 0)
+                {
+                    return EglBadAttribute() << "Texture offset cannot be negative";
+                }
                 break;
 
             default:
@@ -1945,6 +1956,85 @@ Error ValidateCreatePbufferFromClientBuffer(Display *display,
     }
 
     ANGLE_TRY(display->validateClientBuffer(config, buftype, buffer, attributes));
+
+    return NoError();
+}
+
+Error ValidateCreatePixmapSurface(Display *display,
+                                  Config *config,
+                                  EGLNativePixmapType pixmap,
+                                  const AttributeMap &attributes)
+{
+    ANGLE_TRY(ValidateConfig(display, config));
+
+    const DisplayExtensions &displayExtensions = display->getExtensions();
+
+    for (AttributeMap::const_iterator attributeIter = attributes.begin();
+         attributeIter != attributes.end(); attributeIter++)
+    {
+        EGLAttrib attribute = attributeIter->first;
+        EGLAttrib value     = attributeIter->second;
+
+        switch (attribute)
+        {
+            case EGL_GL_COLORSPACE:
+                ANGLE_TRY(ValidateColorspaceAttribute(displayExtensions, value));
+                break;
+
+            case EGL_VG_COLORSPACE:
+                break;
+            case EGL_VG_ALPHA_FORMAT:
+                break;
+
+            case EGL_TEXTURE_FORMAT:
+                if (!displayExtensions.textureFromPixmapNOK)
+                {
+                    return EglBadAttribute() << "EGL_NOK_texture_from_pixmap is not enabled.";
+                }
+                switch (value)
+                {
+                    case EGL_NO_TEXTURE:
+                    case EGL_TEXTURE_RGB:
+                    case EGL_TEXTURE_RGBA:
+                        break;
+                    default:
+                        return EglBadAttribute();
+                }
+                break;
+
+            case EGL_TEXTURE_TARGET:
+                if (!displayExtensions.textureFromPixmapNOK)
+                {
+                    return EglBadAttribute() << "EGL_NOK_texture_from_pixmap is not enabled.";
+                }
+                switch (value)
+                {
+                    case EGL_NO_TEXTURE:
+                    case EGL_TEXTURE_2D:
+                        break;
+                    default:
+                        return EglBadAttribute();
+                }
+                break;
+
+            case EGL_MIPMAP_TEXTURE:
+                if (!displayExtensions.textureFromPixmapNOK)
+                {
+                    return EglBadAttribute() << "EGL_NOK_texture_from_pixmap is not enabled.";
+                }
+                break;
+
+            default:
+                return EglBadAttribute() << "Unknown attribute";
+        }
+    }
+
+    if (!(config->surfaceType & EGL_PIXMAP_BIT))
+    {
+        return EglBadMatch() << "Congfig does not suport pixmaps.";
+    }
+
+    ANGLE_TRY(display->valdiatePixmap(config, pixmap, attributes));
 
     return NoError();
 }

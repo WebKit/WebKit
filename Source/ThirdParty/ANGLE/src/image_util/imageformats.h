@@ -699,6 +699,21 @@ struct R10G10B10X2
 };
 static_assert(sizeof(R10G10B10X2) == 4, "R10G10B10X2 struct not 32-bits.");
 
+struct B10G10R10A2
+{
+    uint32_t B : 10;
+    uint32_t G : 10;
+    uint32_t R : 10;
+    uint32_t A : 2;
+
+    static void readColor(gl::ColorF *dst, const B10G10R10A2 *src);
+    static void readColor(gl::ColorUI *dst, const B10G10R10A2 *src);
+    static void writeColor(B10G10R10A2 *dst, const gl::ColorF *src);
+    static void writeColor(B10G10R10A2 *dst, const gl::ColorUI *src);
+    static void average(B10G10R10A2 *dst, const B10G10R10A2 *src1, const B10G10R10A2 *src2);
+};
+static_assert(sizeof(B10G10R10A2) == 4, "B10G10R10A2 struct not 32-bits.");
+
 struct R9G9B9E5
 {
     uint32_t R : 9;
@@ -751,7 +766,8 @@ struct D16
 
 struct D24X8
 {
-    uint32_t D;
+    uint32_t D : 24;
+    uint32_t X : 8;
 
     static void ReadDepthStencil(DepthStencil *dst, const D24X8 *src);
     static void WriteDepthStencil(D24X8 *dst, const DepthStencil *src);

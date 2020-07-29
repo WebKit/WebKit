@@ -27,6 +27,8 @@
 #    include "angle_gl.h"
 #endif  // defined(ANGLE_USE_UTIL_LOADER)
 
+#include <string>
+
 namespace angle
 {
 inline bool CheckExtensionExists(const char *allExtensions, const std::string &extName)

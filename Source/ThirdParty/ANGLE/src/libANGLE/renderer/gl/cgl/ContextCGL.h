@@ -15,19 +15,25 @@
 
 namespace rx
 {
+class DisplayCGL;
 
 class ContextCGL : public ContextGL
 {
   public:
-    ContextCGL(const gl::State &state,
+    ContextCGL(DisplayCGL *display,
+               const gl::State &state,
                gl::ErrorSet *errorSet,
                const std::shared_ptr<RendererGL> &renderer,
                bool usesDiscreteGPU);
 
     void onDestroy(const gl::Context *context) override;
 
+    egl::Error releaseHighPowerGPU(gl::Context *context) override;
+    egl::Error reacquireHighPowerGPU(gl::Context *context) override;
+
   private:
     bool mUsesDiscreteGpu;
+    bool mReleasedDiscreteGpu;
 };
 
 }  // namespace rx

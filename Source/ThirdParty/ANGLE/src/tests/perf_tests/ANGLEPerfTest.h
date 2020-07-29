@@ -16,7 +16,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 #include "test_utils/angle_test_configs.h"
 #include "test_utils/angle_test_instantiate.h"
 #include "test_utils/angle_test_platform.h"
@@ -88,6 +88,9 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     // Overriden in trace perf tests.
     virtual void saveScreenshot(const std::string &screenshotName) {}
 
+    double printResults();
+    void calibrateStepsToRun();
+
     std::string mName;
     std::string mBackend;
     std::string mStory;
@@ -95,14 +98,16 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     uint64_t mGPUTimeNs;
     bool mSkipTest;
     std::unique_ptr<perf_test::PerfResultReporter> mReporter;
-
-  private:
-    double printResults();
-
-    unsigned int mStepsToRun;
-    unsigned int mNumStepsPerformed;
-    unsigned int mIterationsPerStep;
+    int mStepsToRun;
+    int mNumStepsPerformed;
+    int mIterationsPerStep;
     bool mRunning;
+};
+
+enum class SurfaceType
+{
+    Window,
+    Offscreen,
 };
 
 struct RenderTestParams : public angle::PlatformParameters
@@ -117,6 +122,7 @@ struct RenderTestParams : public angle::PlatformParameters
     EGLint windowHeight            = 64;
     unsigned int iterationsPerStep = 0;
     bool trackGpuTime              = false;
+    SurfaceType surfaceType        = SurfaceType::Window;
 };
 
 class ANGLERenderTest : public ANGLEPerfTest
@@ -155,6 +161,8 @@ class ANGLERenderTest : public ANGLEPerfTest
     void beginGLTraceEvent(const char *name, double hostTimeSec);
     void endGLTraceEvent(const char *name, double hostTimeSec);
 
+    void disableTestHarnessSwap() { mSwapEnabled = false; }
+
     bool mIsTimestampQueryAvailable;
 
   private:
@@ -172,6 +180,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     std::vector<const char *> mExtensionPrerequisites;
     angle::PlatformMethods mPlatformMethods;
     ConfigParameters mConfigParams;
+    bool mSwapEnabled;
 
     GLuint mTimestampQuery;
 
@@ -188,8 +197,8 @@ namespace params
 template <typename ParamsT>
 ParamsT Offscreen(const ParamsT &input)
 {
-    ParamsT output   = input;
-    output.offscreen = true;
+    ParamsT output     = input;
+    output.surfaceType = SurfaceType::Offscreen;
     return output;
 }
 

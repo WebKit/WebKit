@@ -14,6 +14,7 @@
 
 #include "common/mathutil.h"
 #include "common/platform.h"
+#include "gpu_info_util/SystemInfo.h"
 #include "libANGLE/Buffer.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/Context.h"
@@ -35,6 +36,10 @@ using angle::CheckedNumeric;
 
 namespace rx
 {
+
+SwapControlData::SwapControlData()
+    : targetSwapInterval(0), maxSwapInterval(-1), currentSwapInterval(-1)
+{}
 
 VendorID GetVendorID(const FunctionsGL *functions)
 {
@@ -1126,6 +1131,22 @@ void GenerateCaps(const FunctionsGL *functions,
         LimitVersion(maxSupportedESVersion, gl::Version(2, 0));
     }
 
+    // GL_OES_texture_cube_map_array
+    if (functions->isAtLeastGL(gl::Version(4, 0)) ||
+        functions->hasGLESExtension("GL_OES_texture_cube_map_array") ||
+        functions->hasGLESExtension("GL_EXT_texture_cube_map_array") ||
+        functions->hasGLExtension("GL_ARB_texture_cube_map_array") ||
+        functions->isAtLeastGLES(gl::Version(3, 2)))
+    {
+        extensions->textureCubeMapArrayOES = true;
+        extensions->textureCubeMapArrayEXT = true;
+    }
+    else
+    {
+        // Can't support ES3.2 without cube map array textures
+        LimitVersion(maxSupportedESVersion, gl::Version(3, 1));
+    }
+
     // Extension support
     extensions->setTextureExtensionSupport(*textureCapsMap);
     extensions->textureCompressionASTCHDRKHR =
@@ -1259,9 +1280,10 @@ void GenerateCaps(const FunctionsGL *functions,
 
     extensions->eglSyncOES = functions->hasGLESExtension("GL_OES_EGL_sync");
 
-    if (functions->isAtLeastGL(gl::Version(3, 3)) ||
-        functions->hasGLExtension("GL_ARB_timer_query") ||
-        functions->hasGLESExtension("GL_EXT_disjoint_timer_query"))
+    if (!features.disableTimestampQueries.enabled &&
+        (functions->isAtLeastGL(gl::Version(3, 3)) ||
+         functions->hasGLExtension("GL_ARB_timer_query") ||
+         functions->hasGLESExtension("GL_EXT_disjoint_timer_query")))
     {
         extensions->disjointTimerQuery = true;
 
@@ -1534,6 +1556,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     bool isIntel    = IsIntel(vendor);
     bool isNvidia   = IsNvidia(vendor);
     bool isQualcomm = IsQualcomm(vendor);
+    bool isVMWare   = IsVMWare(vendor);
 
     std::array<int, 3> mesaVersion = {0, 0, 0};
     bool isMesa                    = IsMesa(functions, &mesaVersion);
@@ -1720,6 +1743,11 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
         features, disableSemaphoreFd,
         IsLinux() && isAMD && isMesa && mesaVersion < (std::array<int, 3>{19, 3, 5}));
 
+    ANGLE_FEATURE_CONDITION(features, disableTimestampQueries, IsLinux() && isVMWare);
+
+    ANGLE_FEATURE_CONDITION(features, encodeAndDecodeSRGBForGenerateMipmap,
+                            IsApple() && functions->standard == STANDARD_GL_DESKTOP);
+
     // anglebug.com/4674
     // The (redundant) explicit exclusion of Windows AMD is because the workaround fails
     // Texture2DRGTest.TextureRGUNormTest on that platform, and the test is skipped. If
@@ -1727,6 +1755,35 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(
         features, emulateCopyTexImage2DFromRenderbuffers,
         IsApple() && functions->standard == STANDARD_GL_ES && !(isAMD && IsWindows()));
+
+    // Don't attempt to use the discrete GPU on NVIDIA-based MacBook Pros, since the
+    // driver is unstable in this situation.
+    //
+    // Note that this feature is only set here in order to advertise this workaround
+    // externally. GPU switching support must be enabled or disabled early, during display
+    // initialization, before these features are set up.
+    bool isDualGPUMacWithNVIDIA = false;
+    if (IsApple() && functions->standard == STANDARD_GL_DESKTOP)
+    {
+        angle::SystemInfo info;
+        if (angle::GetSystemInfo(&info))
+        {
+            // The full system information must be queried to see whether it's a dual-GPU
+            // NVIDIA MacBook Pro since it's likely that the integrated GPU will be active
+            // when these features are initialized.
+            isDualGPUMacWithNVIDIA = info.isMacSwitchable && info.hasNVIDIAGPU();
+        }
+    }
+    ANGLE_FEATURE_CONDITION(features, disableGPUSwitchingSupport, isDualGPUMacWithNVIDIA);
+
+    // Workaround issue in NVIDIA GL driver on Linux when TSAN is enabled
+    // http://crbug.com/1094869
+    bool isTSANBuild = false;
+#ifdef THREAD_SANITIZER
+    isTSANBuild = true;
+#endif
+    ANGLE_FEATURE_CONDITION(features, disableNativeParallelCompile,
+                            isTSANBuild && IsLinux() && isNvidia);
 
     // anglebug.com/4849
     // This workaround is definitely needed on Intel and AMD GPUs. To
@@ -1831,7 +1888,8 @@ bool UseTexImage2D(gl::TextureType textureType)
 bool UseTexImage3D(gl::TextureType textureType)
 {
     return textureType == gl::TextureType::_2DArray || textureType == gl::TextureType::_3D ||
-           textureType == gl::TextureType::_2DMultisampleArray;
+           textureType == gl::TextureType::_2DMultisampleArray ||
+           textureType == gl::TextureType::CubeMapArray;
 }
 
 GLenum GetTextureBindingQuery(gl::TextureType textureType)
@@ -1854,6 +1912,8 @@ GLenum GetTextureBindingQuery(gl::TextureType textureType)
             return GL_TEXTURE_BINDING_RECTANGLE;
         case gl::TextureType::CubeMap:
             return GL_TEXTURE_BINDING_CUBE_MAP;
+        case gl::TextureType::CubeMapArray:
+            return GL_TEXTURE_BINDING_CUBE_MAP_ARRAY_OES;
         default:
             UNREACHABLE();
             return 0;

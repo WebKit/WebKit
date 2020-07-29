@@ -11,6 +11,7 @@
 
 #include <map>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "libANGLE/renderer/gl/DisplayGL.h"
@@ -127,6 +128,13 @@ class DisplayEGL : public DisplayGL
     EGLConfig mConfig;
     egl::AttributeMap mDisplayAttributes;
     std::vector<EGLint> mConfigAttribList;
+
+    struct CurrentNativeContext
+    {
+        EGLSurface surface = EGL_NO_SURFACE;
+        EGLContext context = EGL_NO_CONTEXT;
+    };
+    std::unordered_map<std::thread::id, CurrentNativeContext> mCurrentNativeContexts;
 
   private:
     void generateCaps(egl::Caps *outCaps) const override;

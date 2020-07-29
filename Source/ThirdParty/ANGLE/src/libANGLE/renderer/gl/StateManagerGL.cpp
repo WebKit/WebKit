@@ -133,6 +133,7 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
       mClearColor(0.0f, 0.0f, 0.0f, 0.0f),
       mClearDepth(1.0f),
       mClearStencil(0),
+      mFramebufferSRGBAvailable(extensions.sRGBWriteControl),
       mFramebufferSRGBEnabled(false),
       mDitherEnabled(true),
       mTextureCubemapSeamlessEnabled(false),
@@ -2071,7 +2072,7 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
 
 void StateManagerGL::setFramebufferSRGBEnabled(const gl::Context *context, bool enabled)
 {
-    if (!context->getExtensions().sRGBWriteControl)
+    if (!mFramebufferSRGBAvailable)
     {
         return;
     }

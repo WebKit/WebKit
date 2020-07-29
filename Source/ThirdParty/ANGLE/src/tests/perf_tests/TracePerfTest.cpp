@@ -13,7 +13,7 @@
 #include "tests/perf_tests/ANGLEPerfTest.h"
 #include "tests/perf_tests/DrawCallPerfParams.h"
 #include "util/egl_loader_autogen.h"
-#include "util/frame_capture_utils.h"
+#include "util/frame_capture_test_utils.h"
 #include "util/png_utils.h"
 
 #include "restricted_traces/restricted_traces_autogen.h"
@@ -27,8 +27,6 @@ using namespace egl_platform;
 
 namespace
 {
-void FramebufferChangeCallback(void *userData, GLenum target, GLuint framebuffer);
-
 struct TracePerfParams final : public RenderTestParams
 {
     // Common default options
@@ -36,9 +34,9 @@ struct TracePerfParams final : public RenderTestParams
     {
         majorVersion = 3;
         minorVersion = 0;
-        windowWidth  = 1920;
-        windowHeight = 1080;
-        trackGpuTime = true;
+
+        // Tracking GPU time adds overhead to native traces. http://anglebug.com/4879
+        trackGpuTime = false;
 
         // Display the frame after every drawBenchmark invocation
         iterationsPerStep = 1;
@@ -47,7 +45,7 @@ struct TracePerfParams final : public RenderTestParams
     std::string story() const override
     {
         std::stringstream strstr;
-        strstr << RenderTestParams::story() << "_" << kTraceInfos[testID].name;
+        strstr << RenderTestParams::story() << "_" << GetTraceInfo(testID).name;
         return strstr.str();
     }
 
@@ -69,7 +67,7 @@ class TracePerfTest : public ANGLERenderTest, public ::testing::WithParamInterfa
     void destroyBenchmark() override;
     void drawBenchmark() override;
 
-    void onFramebufferChange(GLenum target, GLuint framebuffer);
+    void onReplayFramebufferChange(GLenum target, GLuint framebuffer);
 
     uint32_t mStartFrame;
     uint32_t mEndFrame;
@@ -104,13 +102,24 @@ class TracePerfTest : public ANGLERenderTest, public ::testing::WithParamInterfa
 TracePerfTest::TracePerfTest()
     : ANGLERenderTest("TracePerf", GetParam()), mStartFrame(0), mEndFrame(0)
 {
-    // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
-    if (IsWindows() && IsIntel() &&
-        GetParam().getRenderer() == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE &&
-        GetParam().testID == RestrictedTraceID::manhattan_10)
+    const TracePerfParams &param = GetParam();
+
+    // TODO: http://anglebug.com/4533 This fails after the upgrade to the 26.20.100.7870 driver.
+    if (IsWindows() && IsIntel() && param.getRenderer() == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE &&
+        param.testID == RestrictedTraceID::manhattan_10)
     {
         mSkipTest = true;
     }
+
+    // TODO: http://anglebug.com/4731 Fails on older Intel drivers. Passes in newer.
+    if (IsWindows() && IsIntel() && param.driver != GLESDriverType::AngleEGL &&
+        param.testID == RestrictedTraceID::angry_birds_2_1500)
+    {
+        mSkipTest = true;
+    }
+
+    // We already swap in TracePerfTest::drawBenchmark, no need to swap again in the harness.
+    disableTestHarnessSwap();
 }
 
 void TracePerfTest::initializeBenchmark()
@@ -126,7 +135,7 @@ void TracePerfTest::initializeBenchmark()
         angle::SetCWD(exeDir.c_str());
     }
 
-    const TraceInfo &traceInfo = kTraceInfos[params.testID];
+    const TraceInfo &traceInfo = GetTraceInfo(params.testID);
     mStartFrame                = traceInfo.startFrame;
     mEndFrame                  = traceInfo.endFrame;
     SetBinaryDataDecompressCallback(params.testID, DecompressBinaryData);
@@ -136,8 +145,15 @@ void TracePerfTest::initializeBenchmark()
     std::string testDataDir = testDataDirStr.str();
     SetBinaryDataDir(params.testID, testDataDir.c_str());
 
+    if (IsAndroid())
+    {
+        // On Android, set the orientation used by the app, based on width/height
+        getWindow()->setOrientation(mTestParams.windowWidth, mTestParams.windowHeight);
+    }
+
     // Potentially slow. Can load a lot of resources.
     SetupReplay(params.testID);
+    glFinish();
 
     ASSERT_TRUE(mEndFrame > mStartFrame);
 
@@ -178,7 +194,7 @@ void TracePerfTest::drawBenchmark()
 
     startGpuTimer();
 
-    for (uint32_t frame = mStartFrame; frame < mEndFrame; ++frame)
+    for (uint32_t frame = mStartFrame; frame <= mEndFrame; ++frame)
     {
         char frameName[32];
         sprintf(frameName, "Frame %u", frame);
@@ -270,8 +286,8 @@ double TracePerfTest::getHostTimeFromGLTime(GLint64 glTime)
     return mTimeline[firstSampleIndex].hostTime + hostRange * t;
 }
 
-// Callback from the perf tests.
-void TracePerfTest::onFramebufferChange(GLenum target, GLuint framebuffer)
+// Triggered when the replay calls glBindFramebuffer.
+void TracePerfTest::onReplayFramebufferChange(GLenum target, GLuint framebuffer)
 {
     if (!mIsTimestampQueryAvailable)
         return;
@@ -300,7 +316,7 @@ void TracePerfTest::saveScreenshot(const std::string &screenshotName)
 {
     // Render a single frame.
     RestrictedTraceID testID   = GetParam().testID;
-    const TraceInfo &traceInfo = kTraceInfos[testID];
+    const TraceInfo &traceInfo = GetTraceInfo(testID);
     ReplayFrame(testID, traceInfo.startFrame);
 
     // RGBA 4-byte data.
@@ -335,11 +351,6 @@ void TracePerfTest::saveScreenshot(const std::string &screenshotName)
     glFinish();
 }
 
-ANGLE_MAYBE_UNUSED void FramebufferChangeCallback(void *userData, GLenum target, GLuint framebuffer)
-{
-    reinterpret_cast<TracePerfTest *>(userData)->onFramebufferChange(target, framebuffer);
-}
-
 TEST_P(TracePerfTest, Run)
 {
     run();
@@ -347,8 +358,12 @@ TEST_P(TracePerfTest, Run)
 
 TracePerfParams CombineTestID(const TracePerfParams &in, RestrictedTraceID id)
 {
+    const TraceInfo &traceInfo = GetTraceInfo(id);
+
     TracePerfParams out = in;
     out.testID          = id;
+    out.windowWidth     = traceInfo.drawSurfaceWidth;
+    out.windowHeight    = traceInfo.drawSurfaceHeight;
     return out;
 }
 
@@ -357,7 +372,7 @@ using P = TracePerfParams;
 
 std::vector<P> gTestsWithID =
     CombineWithValues({P()}, AllEnums<RestrictedTraceID>(), CombineTestID);
-std::vector<P> gTestsWithRenderer = CombineWithFuncs(gTestsWithID, {Vulkan<P>, EGL<P>});
+std::vector<P> gTestsWithRenderer = CombineWithFuncs(gTestsWithID, {Vulkan<P>, Native<P>});
 ANGLE_INSTANTIATE_TEST_ARRAY(TracePerfTest, gTestsWithRenderer);
 
 }  // anonymous namespace

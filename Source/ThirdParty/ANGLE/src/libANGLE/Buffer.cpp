@@ -76,6 +76,19 @@ angle::Result Buffer::bufferData(Context *context,
 {
     const void *dataForImpl = data;
 
+    if (mState.isMapped())
+    {
+        // Per the OpenGL ES 3.0 spec, buffers are implicity unmapped when a call to
+        // BufferData happens on a mapped buffer:
+        //
+        //     If any portion of the buffer object is mapped in the current context or any context
+        //     current to another thread, it is as though UnmapBuffer (see section 2.10.3) is
+        //     executed in each such context prior to deleting the existing data store.
+        //
+        GLboolean dontCare = GL_FALSE;
+        ANGLE_TRY(unmap(context, &dontCare));
+    }
+
     // If we are using robust resource init, make sure the buffer starts cleared.
     // Note: the Context is checked for nullptr because of some testing code.
     // TODO(jmadill): Investigate lazier clearing.
@@ -87,7 +100,17 @@ angle::Result Buffer::bufferData(Context *context,
         dataForImpl = scratchBuffer->data();
     }
 
-    ANGLE_TRY(mImpl->setData(context, target, dataForImpl, size, usage));
+    if (mImpl->setData(context, target, dataForImpl, size, usage) == angle::Result::Stop)
+    {
+        // If setData fails, the buffer contents are undefined. Set a zero size to indicate that.
+        mIndexRangeCache.clear();
+        mState.mSize = 0;
+
+        // Notify when storage changes.
+        onStateChange(angle::SubjectMessage::SubjectChanged);
+
+        return angle::Result::Stop;
+    }
 
     mIndexRangeCache.clear();
     mState.mUsage = usage;
@@ -266,6 +289,14 @@ void Buffer::onTFBindingChanged(const Context *context, bool bound, bool indexed
     {
         mState.mTransformFeedbackGenericBindingCount += bound ? 1 : -1;
     }
+}
+
+angle::Result Buffer::getSubData(const gl::Context *context,
+                                 GLintptr offset,
+                                 GLsizeiptr size,
+                                 void *outData)
+{
+    return mImpl->getSubData(context, offset, size, outData);
 }
 
 void Buffer::onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message)

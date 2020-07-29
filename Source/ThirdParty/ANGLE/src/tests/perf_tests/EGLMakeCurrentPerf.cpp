@@ -10,7 +10,7 @@
 #include "ANGLEPerfTest.h"
 #include "common/platform.h"
 #include "common/system_utils.h"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 #include "test_utils/angle_test_configs.h"
 #include "test_utils/angle_test_instantiate.h"
 
@@ -106,7 +106,7 @@ void EGLMakeCurrentPerfTest::SetUp()
                             EGL_RENDERABLE_TYPE,
                             GetParam().majorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT,
                             EGL_SURFACE_TYPE,
-                            EGL_PBUFFER_BIT,
+                            EGL_WINDOW_BIT,
                             EGL_NONE};
 
     ASSERT_TRUE(eglChooseConfig(mDisplay, configAttrs, &mConfig, 1, &numConfigs));

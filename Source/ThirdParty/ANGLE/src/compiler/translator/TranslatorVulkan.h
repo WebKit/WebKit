@@ -30,7 +30,7 @@ class TranslatorVulkan : public TCompiler
                                     PerformanceDiagnostics *perfDiagnostics) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
 
-    TIntermBinary *getDriverUniformNegViewportYScaleRef(const TVariable *driverUniforms) const;
+    TIntermSwizzle *getDriverUniformNegFlipYRef(const TVariable *driverUniforms) const;
     TIntermBinary *getDriverUniformDepthRangeReservedFieldRef(
         const TVariable *driverUniforms) const;
     // Subclass can call this method to transform the AST before writing the final output.
@@ -48,6 +48,9 @@ class TranslatorVulkan : public TCompiler
     {
         return true;
     }
+
+    // Back-end specific fields to be added to driver uniform. See TranslatorMetal.cpp.
+    virtual void createAdditionalGraphicsDriverUniformFields(std::vector<TField *> *fieldsOut) {}
 };
 
 }  // namespace sh

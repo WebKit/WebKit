@@ -108,12 +108,13 @@ Additions to Chapter 3 of the EGL 1.4 Specification (EGL Functions and Errors)
     ---------------------------------------------------------------------------
     Texture Type               Texture Internal Format
     ---------------------------------------------------------------------------
-    GL_UNSIGNED_BYTE           GL_RED
-    GL_UNSIGNED_SHORT          GL_R16UI
-    GL_UNSIGNED_BYTE           GL_RG
-    GL_UNSIGNED_BYTE           GL_RGB
-    GL_UNSIGNED_BYTE           GL_BGRA_EXT
-    GL_HALF_FLOAT              GL_RGBA
+    GL_UNSIGNED_BYTE               GL_RED
+    GL_UNSIGNED_SHORT              GL_R16UI
+    GL_UNSIGNED_BYTE               GL_RG
+    GL_UNSIGNED_BYTE               GL_RGB
+    GL_UNSIGNED_BYTE               GL_BGRA_EXT
+    GL_UNSIGNED_INT_2_10_10_10_REV GL_RGB10_A2
+    GL_HALF_FLOAT                  GL_RGBA
     ---------------------------------------------------------------------------
     Table egl.iosurface.formats - Valid combinations of format, type and
     internal format for IOSurface-backed pbuffers.
@@ -148,3 +149,4 @@ Revision History
     Version 3, 2019/08/13 - Allow RGB internal formats
     Version 4, 2019/12/28 - Add usage hint; require TEXTURE_RECTANGLE on macOS
                             and TEXTURE_2D on iOS
+    Version 5, 2020/06/30 - Allow RGB10_A2 internal formats

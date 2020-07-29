@@ -12,6 +12,7 @@ angle_perf_tests_sources = [
   "perf_tests/DrawElementsPerf.cpp",
   "perf_tests/DynamicPromotionPerfTest.cpp",
   "perf_tests/EGLMakeCurrentPerf.cpp",
+  "perf_tests/GenerateMipmapPerf.cpp",
   "perf_tests/IndexConversionPerf.cpp",
   "perf_tests/InstancingPerf.cpp",
   "perf_tests/InterleavedAttributeData.cpp",

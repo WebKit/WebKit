@@ -13,8 +13,6 @@
 
 #include <sstream>
 
-#include <spirv_msl.hpp>
-
 #include "common/debug.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/ProgramLinkedResources.h"
@@ -32,85 +30,7 @@ namespace
 {
 
 #define SHADER_ENTRY_NAME @"main0"
-
-spv::ExecutionModel ShaderTypeToSpvExecutionModel(gl::ShaderType shaderType)
-{
-    switch (shaderType)
-    {
-        case gl::ShaderType::Vertex:
-            return spv::ExecutionModelVertex;
-        case gl::ShaderType::Fragment:
-            return spv::ExecutionModelFragment;
-        default:
-            UNREACHABLE();
-            return spv::ExecutionModelMax;
-    }
-}
-
-// Some GLSL variables need 2 binding points in metal. For example,
-// glsl sampler will be converted to 2 metal objects: texture and sampler.
-// Thus we need to set 2 binding points for one glsl sampler variable.
-using BindingField = uint32_t spirv_cross::MSLResourceBinding::*;
-template <BindingField bindingField1, BindingField bindingField2 = bindingField1>
-angle::Result BindResources(spirv_cross::CompilerMSL *compiler,
-                            const spirv_cross::SmallVector<spirv_cross::Resource> &resources,
-                            gl::ShaderType shaderType)
-{
-    auto &compilerMsl = *compiler;
-
-    for (const spirv_cross::Resource &resource : resources)
-    {
-        spirv_cross::MSLResourceBinding resBinding;
-        resBinding.stage = ShaderTypeToSpvExecutionModel(shaderType);
-
-        if (compilerMsl.has_decoration(resource.id, spv::DecorationDescriptorSet))
-        {
-            resBinding.desc_set =
-                compilerMsl.get_decoration(resource.id, spv::DecorationDescriptorSet);
-        }
-
-        if (!compilerMsl.has_decoration(resource.id, spv::DecorationBinding))
-        {
-            continue;
-        }
-
-        resBinding.binding = compilerMsl.get_decoration(resource.id, spv::DecorationBinding);
-
-        uint32_t bindingPoint;
-        // NOTE(hqle): We use separate discrete binding point for now, in future, we should use
-        // one argument buffer for each descriptor set.
-        switch (resBinding.desc_set)
-        {
-            case 0:
-                // Use resBinding.binding as binding point.
-                bindingPoint = resBinding.binding;
-                break;
-            case mtl::kDriverUniformsBindingIndex:
-                bindingPoint = mtl::kDriverUniformsBindingIndex;
-                break;
-            case mtl::kDefaultUniformsBindingIndex:
-                // NOTE(hqle): Properly handle transform feedbacks and UBO binding once ES 3.0 is
-                // implemented.
-                bindingPoint = mtl::kDefaultUniformsBindingIndex;
-                break;
-            default:
-                // We don't support this descriptor set.
-                continue;
-        }
-
-        // bindingField can be buffer or texture, which will be translated to [[buffer(d)]] or
-        // [[texture(d)]] or [[sampler(d)]]
-        resBinding.*bindingField1 = bindingPoint;
-        if (bindingField1 != bindingField2)
-        {
-            resBinding.*bindingField2 = bindingPoint;
-        }
-
-        compilerMsl.add_msl_resource_binding(resBinding);
-    }
-
-    return angle::Result::Continue;
-}
+constexpr char kSpirvCrossSpecConstSuffix[] = "_tmp";
 
 void InitDefaultUniformBlock(const std::vector<sh::Uniform> &uniforms,
                              gl::Shader *shader,
@@ -173,35 +93,6 @@ void UpdateDefaultUniformBlock(GLsizei count,
     }
 }
 
-void BindNullSampler(const gl::Context *glContext,
-                     mtl::RenderCommandEncoder *encoder,
-                     gl::ShaderType shaderType,
-                     gl::TextureType textureType,
-                     int bindingPoint)
-{
-    ContextMtl *contextMtl = mtl::GetImpl(glContext);
-
-    const mtl::TextureRef &nullTex =
-        contextMtl->getDisplay()->getNullTexture(glContext, textureType);
-
-    mtl::AutoObjCPtr<id<MTLSamplerState>> nullSampler =
-        contextMtl->getDisplay()->getStateCache().getNullSamplerState(contextMtl);
-
-    switch (shaderType)
-    {
-        case gl::ShaderType::Vertex:
-            encoder->setVertexTexture(nullTex, bindingPoint);
-            encoder->setVertexSamplerState(nullSampler, 0, 0, bindingPoint);
-            break;
-        case gl::ShaderType::Fragment:
-            encoder->setFragmentTexture(nullTex, bindingPoint);
-            encoder->setFragmentSamplerState(nullSampler, 0, 0, bindingPoint);
-            break;
-        default:
-            UNREACHABLE();
-    }
-}
-
 template <typename T>
 void ReadFromDefaultUniformBlock(int componentCount,
                                  uint32_t arrayIndex,
@@ -234,14 +125,59 @@ class Std140BlockLayoutEncoderFactory : public gl::CustomBlockLayoutEncoderFacto
     sh::BlockLayoutEncoder *makeEncoder() override { return new sh::Std140BlockEncoder(); }
 };
 
+angle::Result CreateMslShader(mtl::Context *context,
+                              id<MTLLibrary> shaderLib,
+                              MTLFunctionConstantValues *funcConstants,
+                              mtl::AutoObjCPtr<id<MTLFunction>> *shaderOut)
+{
+    NSError *nsErr = nil;
+
+    id<MTLFunction> mtlShader;
+
+    if (funcConstants)
+    {
+        mtlShader = [shaderLib newFunctionWithName:SHADER_ENTRY_NAME
+                                    constantValues:funcConstants
+                                             error:&nsErr];
+    }
+    else
+    {
+        mtlShader = [shaderLib newFunctionWithName:SHADER_ENTRY_NAME];
+    }
+
+    [mtlShader ANGLE_MTL_AUTORELEASE];
+    if (nsErr && !mtlShader)
+    {
+        std::ostringstream ss;
+        ss << "Internal error compiling Metal shader:\n"
+           << nsErr.localizedDescription.UTF8String << "\n";
+
+        ERR() << ss.str();
+
+        ANGLE_MTL_CHECK(context, false, GL_INVALID_OPERATION);
+    }
+
+    shaderOut->retainAssign(mtlShader);
+
+    return angle::Result::Continue;
+}
+
 }  // namespace
+
+// ProgramShaderVariantMtl implementation
+void ProgramShaderVariantMtl::reset(ContextMtl *contextMtl)
+{
+    metalShader = nil;
+}
 
 // ProgramMtl implementation
 ProgramMtl::DefaultUniformBlock::DefaultUniformBlock() {}
 
 ProgramMtl::DefaultUniformBlock::~DefaultUniformBlock() = default;
 
-ProgramMtl::ProgramMtl(const gl::ProgramState &state) : ProgramImpl(state) {}
+ProgramMtl::ProgramMtl(const gl::ProgramState &state)
+    : ProgramImpl(state), mMetalRenderPipelineCache(this)
+{}
 
 ProgramMtl::~ProgramMtl() {}
 
@@ -257,6 +193,26 @@ void ProgramMtl::reset(ContextMtl *context)
     for (auto &block : mDefaultUniformBlocks)
     {
         block.uniformLayout.clear();
+    }
+
+    for (gl::ShaderType shaderType : gl::AllShaderTypes())
+    {
+        mMslShaderLibrary[shaderType] = nil;
+
+        for (mtl::SamplerBinding &binding :
+             mMslShaderTranslateInfo[shaderType].actualSamplerBindings)
+        {
+            binding.textureBinding = mtl::kMaxShaderSamplers;
+        }
+    }
+
+    for (ProgramShaderVariantMtl &var : mVertexShaderVariants)
+    {
+        var.reset(context);
+    }
+    for (ProgramShaderVariantMtl &var : mFragmentShaderVariants)
+    {
+        var.reset(context);
     }
 
     mMetalRenderPipelineCache.clear();
@@ -322,10 +278,15 @@ angle::Result ProgramMtl::linkImpl(const gl::Context *glContext,
         shaderSources, variableInfoMap, &shaderCodes));
 
     // Convert spirv code to MSL
-    ANGLE_TRY(convertToMsl(glContext, gl::ShaderType::Vertex, infoLog,
-                           &shaderCodes[gl::ShaderType::Vertex]));
-    ANGLE_TRY(convertToMsl(glContext, gl::ShaderType::Fragment, infoLog,
-                           &shaderCodes[gl::ShaderType::Fragment]));
+    ANGLE_TRY(mtl::SpirvCodeToMsl(contextMtl, mState, &shaderCodes, &mMslShaderTranslateInfo,
+                                  &mTranslatedMslShader));
+
+    for (gl::ShaderType shaderType : gl::AllGLES2ShaderTypes())
+    {
+        // Create actual Metal shader
+        ANGLE_TRY(
+            createMslShaderLib(glContext, shaderType, infoLog, mTranslatedMslShader[shaderType]));
+    }
 
     return angle::Result::Continue;
 }
@@ -421,63 +382,76 @@ angle::Result ProgramMtl::initDefaultUniformBlocks(const gl::Context *glContext)
     return angle::Result::Continue;
 }
 
-angle::Result ProgramMtl::convertToMsl(const gl::Context *glContext,
-                                       gl::ShaderType shaderType,
-                                       gl::InfoLog &infoLog,
-                                       std::vector<uint32_t> *sprivCode)
+angle::Result ProgramMtl::getSpecializedShader(mtl::Context *context,
+                                               gl::ShaderType shaderType,
+                                               const mtl::RenderPipelineDesc &renderPipelineDesc,
+                                               id<MTLFunction> *shaderOut)
 {
-    ContextMtl *contextMtl = mtl::GetImpl(glContext);
+    static_assert(YES == 1, "YES should have value of 1");
 
-    spirv_cross::CompilerMSL compilerMsl(std::move(*sprivCode));
+    mtl::AutoObjCPtr<id<MTLLibrary>> mtlShaderLib = mMslShaderLibrary[shaderType];
 
-    spirv_cross::CompilerMSL::Options compOpt;
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-    compOpt.platform = spirv_cross::CompilerMSL::Options::macOS;
-#else
-    compOpt.platform = spirv_cross::CompilerMSL::Options::iOS;
-#endif
-
-    if (ANGLE_APPLE_AVAILABLE_XCI(10.14, 13.0, 12))
+    if (shaderType == gl::ShaderType::Vertex)
     {
-        // Use Metal 2.1
-        compOpt.set_msl_version(2, 1);
+        // NOTE(hqle): Only one vertex shader variant for now. In future, there should be a variant
+        // with rasterization discard enabled.
+        ProgramShaderVariantMtl &shaderVariant = mVertexShaderVariants[0];
+        if (shaderVariant.metalShader)
+        {
+            // Already created.
+            *shaderOut = shaderVariant.metalShader;
+            return angle::Result::Continue;
+        }
+
+        ANGLE_MTL_OBJC_SCOPE
+        {
+            ANGLE_TRY(CreateMslShader(context, mtlShaderLib, nil, &shaderVariant.metalShader));
+        }
+
+        *shaderOut = shaderVariant.metalShader;
     }
-    else
+    else if (shaderType == gl::ShaderType::Fragment)
     {
-        // Always use at least Metal 2.0.
-        compOpt.set_msl_version(2);
-    }
+        // For fragment shader, we need to create 2 variants, one with sample coverage mask
+        // disabled, one with the mask enabled.
+        BOOL emulateCoverageMask               = renderPipelineDesc.emulateCoverageMask;
+        ProgramShaderVariantMtl &shaderVariant = mFragmentShaderVariants[emulateCoverageMask];
+        if (shaderVariant.metalShader)
+        {
+            // Already created.
+            *shaderOut = shaderVariant.metalShader;
+            return angle::Result::Continue;
+        }
 
-    compilerMsl.set_msl_options(compOpt);
+        ANGLE_MTL_OBJC_SCOPE
+        {
+            NSString *coverageMaskEnabledStr =
+                [NSString stringWithFormat:@"%s%s", sh::mtl::kCoverageMaskEnabledConstName,
+                                           kSpirvCrossSpecConstSuffix];
 
-    // Tell spirv-cross to map default & driver uniform blocks & samplers as we want
-    spirv_cross::ShaderResources mslRes = compilerMsl.get_shader_resources();
+            auto funcConstants = [[[MTLFunctionConstantValues alloc] init] ANGLE_MTL_AUTORELEASE];
+            [funcConstants setConstantValue:&emulateCoverageMask
+                                       type:MTLDataTypeBool
+                                   withName:coverageMaskEnabledStr];
 
-    ANGLE_TRY(BindResources<&spirv_cross::MSLResourceBinding::msl_buffer>(
-        &compilerMsl, mslRes.uniform_buffers, shaderType));
+            ANGLE_TRY(
+                CreateMslShader(context, mtlShaderLib, funcConstants, &shaderVariant.metalShader));
+        }
 
-    ANGLE_TRY((BindResources<&spirv_cross::MSLResourceBinding::msl_sampler,
-                             &spirv_cross::MSLResourceBinding::msl_texture>(
-        &compilerMsl, mslRes.sampled_images, shaderType)));
-
-    // NOTE(hqle): spirv-cross uses exceptions to report error, what should we do here
-    // in case of error?
-    std::string translatedMsl = compilerMsl.compile();
-    if (translatedMsl.size() == 0)
-    {
-        ANGLE_MTL_CHECK(contextMtl, false, GL_INVALID_OPERATION);
-    }
-
-    // Create actual Metal shader
-    ANGLE_TRY(createMslShader(glContext, shaderType, infoLog, translatedMsl));
-
+        *shaderOut = shaderVariant.metalShader;
+    }  // gl::ShaderType::Fragment
     return angle::Result::Continue;
 }
+bool ProgramMtl::hasSpecializedShader(gl::ShaderType shaderType,
+                                      const mtl::RenderPipelineDesc &renderPipelineDesc)
+{
+    return true;
+}
 
-angle::Result ProgramMtl::createMslShader(const gl::Context *glContext,
-                                          gl::ShaderType shaderType,
-                                          gl::InfoLog &infoLog,
-                                          const std::string &translatedMsl)
+angle::Result ProgramMtl::createMslShaderLib(const gl::Context *glContext,
+                                             gl::ShaderType shaderType,
+                                             gl::InfoLog &infoLog,
+                                             const std::string &translatedMsl)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -487,9 +461,8 @@ angle::Result ProgramMtl::createMslShader(const gl::Context *glContext,
 
         // Convert to actual binary shader
         mtl::AutoObjCPtr<NSError *> err = nil;
-        mtl::AutoObjCPtr<id<MTLLibrary>> mtlShaderLib =
-            mtl::CreateShaderLibrary(mtlDevice, translatedMsl, &err);
-        if (err && !mtlShaderLib)
+        mMslShaderLibrary[shaderType]   = mtl::CreateShaderLibrary(mtlDevice, translatedMsl, &err);
+        if (err && !mMslShaderLibrary[shaderType])
         {
             std::ostringstream ss;
             ss << "Internal error compiling Metal shader:\n"
@@ -500,18 +473,6 @@ angle::Result ProgramMtl::createMslShader(const gl::Context *glContext,
             infoLog << ss.str();
 
             ANGLE_MTL_CHECK(contextMtl, false, GL_INVALID_OPERATION);
-        }
-
-        auto mtlShader = [mtlShaderLib.get() newFunctionWithName:SHADER_ENTRY_NAME];
-        [mtlShader ANGLE_MTL_AUTORELEASE];
-        ASSERT(mtlShader);
-        if (shaderType == gl::ShaderType::Vertex)
-        {
-            mMetalRenderPipelineCache.setVertexShader(contextMtl, mtlShader);
-        }
-        else if (shaderType == gl::ShaderType::Fragment)
-        {
-            mMetalRenderPipelineCache.setFragmentShader(contextMtl, mtlShader);
         }
 
         return angle::Result::Continue;
@@ -842,21 +803,8 @@ angle::Result ProgramMtl::commitUniforms(ContextMtl *context, mtl::RenderCommand
         {
             continue;
         }
-        switch (shaderType)
-        {
-            case gl::ShaderType::Vertex:
-                cmdEncoder->setVertexBytes(uniformBlock.uniformData.data(),
-                                           uniformBlock.uniformData.size(),
-                                           mtl::kDefaultUniformsBindingIndex);
-                break;
-            case gl::ShaderType::Fragment:
-                cmdEncoder->setFragmentBytes(uniformBlock.uniformData.data(),
-                                             uniformBlock.uniformData.size(),
-                                             mtl::kDefaultUniformsBindingIndex);
-                break;
-            default:
-                UNREACHABLE();
-        }
+        cmdEncoder->setBytes(shaderType, uniformBlock.uniformData.data(),
+                             uniformBlock.uniformData.size(), mtl::kDefaultUniformsBindingIndex);
 
         mDefaultUniformBlocksDirty.reset(shaderType);
     }
@@ -868,7 +816,8 @@ angle::Result ProgramMtl::updateTextures(const gl::Context *glContext,
                                          mtl::RenderCommandEncoder *cmdEncoder,
                                          bool forceUpdate)
 {
-    const auto &glState = glContext->getState();
+    ContextMtl *contextMtl = mtl::GetImpl(glContext);
+    const auto &glState    = glContext->getState();
 
     const gl::ActiveTexturesCache &completeTextures = glState.getActiveTexturesCache();
 
@@ -886,35 +835,32 @@ angle::Result ProgramMtl::updateTextures(const gl::Context *glContext,
 
             ASSERT(!samplerBinding.unreferenced);
 
+            const mtl::SamplerBinding &mslBinding =
+                mMslShaderTranslateInfo[shaderType].actualSamplerBindings[textureIndex];
+            if (mslBinding.textureBinding >= mtl::kMaxShaderSamplers)
+            {
+                // No binding assigned
+                continue;
+            }
+
+            gl::TextureType textureType = samplerBinding.textureType;
+
             for (uint32_t arrayElement = 0; arrayElement < samplerBinding.boundTextureUnits.size();
                  ++arrayElement)
             {
-                GLuint textureUnit    = samplerBinding.boundTextureUnits[arrayElement];
-                gl::Texture *texture  = completeTextures[textureUnit];
-                auto destBindingPoint = textureIndex + arrayElement;
+                GLuint textureUnit   = samplerBinding.boundTextureUnits[arrayElement];
+                gl::Texture *texture = completeTextures[textureUnit];
+                uint32_t textureSlot = mslBinding.textureBinding + arrayElement;
+                uint32_t samplerSlot = mslBinding.samplerBinding + arrayElement;
                 if (!texture)
                 {
-                    BindNullSampler(glContext, cmdEncoder, shaderType, samplerBinding.textureType,
-                                    destBindingPoint);
-
-                    continue;
+                    ANGLE_TRY(contextMtl->getIncompleteTexture(glContext, textureType, &texture));
                 }
 
                 TextureMtl *textureMtl = mtl::GetImpl(texture);
 
-                switch (shaderType)
-                {
-                    case gl::ShaderType::Vertex:
-                        ANGLE_TRY(textureMtl->bindVertexShader(glContext, cmdEncoder,
-                                                               destBindingPoint, destBindingPoint));
-                        break;
-                    case gl::ShaderType::Fragment:
-                        ANGLE_TRY(textureMtl->bindFragmentShader(
-                            glContext, cmdEncoder, destBindingPoint, destBindingPoint));
-                        break;
-                    default:
-                        UNREACHABLE();
-                }
+                ANGLE_TRY(textureMtl->bindToShader(glContext, cmdEncoder, shaderType, textureSlot,
+                                                   samplerSlot));
             }  // for array elements
         }      // for sampler bindings
     }          // for shader types

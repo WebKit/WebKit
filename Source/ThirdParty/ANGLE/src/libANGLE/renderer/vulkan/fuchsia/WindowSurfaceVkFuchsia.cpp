@@ -9,10 +9,10 @@
 
 #include "libANGLE/renderer/vulkan/fuchsia/WindowSurfaceVkFuchsia.h"
 
-#include <fuchsia_egl.h>
-#include <fuchsia_egl_backend.h>
 #include <zircon/syscalls.h>
 #include <zircon/syscalls/object.h>
+#include "common/fuchsia_egl/fuchsia_egl.h"
+#include "common/fuchsia_egl/fuchsia_egl_backend.h"
 
 #include "libANGLE/renderer/vulkan/RendererVk.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"

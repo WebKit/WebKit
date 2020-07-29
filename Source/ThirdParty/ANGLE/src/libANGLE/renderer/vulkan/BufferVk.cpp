@@ -33,33 +33,6 @@ static_assert(gl::isPow2(kBufferSizeGranularity), "use as alignment, must be pow
 // Start with a fairly small buffer size. We can increase this dynamically as we convert more data.
 constexpr size_t kConvertedArrayBufferInitialSize = 1024 * 8;
 
-// Base size for all staging buffers
-constexpr size_t kStagingBufferBaseSize = 1024;
-// Fix the staging buffer size multiplier for unpack buffers, for now
-constexpr size_t kUnpackBufferStagingBufferMultiplier = 1024;
-
-size_t CalculateStagingBufferSize(gl::BufferBinding target, size_t size, size_t alignment)
-{
-    size_t alignedSize = rx::roundUp(size, alignment);
-    int multiplier     = std::max(gl::log2(alignedSize), 1);
-
-    switch (target)
-    {
-        case gl::BufferBinding::Array:
-        case gl::BufferBinding::DrawIndirect:
-        case gl::BufferBinding::ElementArray:
-        case gl::BufferBinding::Uniform:
-            return kStagingBufferBaseSize * multiplier;
-
-        case gl::BufferBinding::PixelUnpack:
-            return std::max(alignedSize,
-                            (kStagingBufferBaseSize * kUnpackBufferStagingBufferMultiplier));
-
-        default:
-            return kStagingBufferBaseSize;
-    }
-}
-
 // Buffers that have a static usage pattern will be allocated in
 // device local memory to speed up access to and from the GPU.
 // Dynamic usage patterns or that are frequently mapped
@@ -163,7 +136,6 @@ void BufferVk::destroy(const gl::Context *context)
 void BufferVk::release(ContextVk *contextVk)
 {
     RendererVk *renderer = contextVk->getRenderer();
-    mStagingBuffer.release(renderer);
     mShadowBuffer.release();
     mBufferPool.release(renderer);
     mBuffer = nullptr;
@@ -174,22 +146,15 @@ void BufferVk::release(ContextVk *contextVk)
     }
 }
 
-void BufferVk::initializeStagingBuffer(ContextVk *contextVk, gl::BufferBinding target, size_t size)
-{
-    RendererVk *rendererVk = contextVk->getRenderer();
-
-    constexpr VkImageUsageFlags kBufferUsageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-    size_t alignment =
-        static_cast<size_t>(rendererVk->getPhysicalDeviceProperties().limits.minMemoryMapAlignment);
-    size_t stagingBufferSize = CalculateStagingBufferSize(target, size, alignment);
-
-    mStagingBuffer.init(rendererVk, kBufferUsageFlags, alignment, stagingBufferSize, true);
-}
-
 angle::Result BufferVk::initializeShadowBuffer(ContextVk *contextVk,
                                                gl::BufferBinding target,
                                                size_t size)
 {
+    if (!contextVk->getRenderer()->getFeatures().shadowBuffers.enabled)
+    {
+        return angle::Result::Continue;
+    }
+
     // For now, enable shadow buffers only for pixel unpack buffers.
     // If usecases present themselves, we can enable them for other buffer types.
     if (target == gl::BufferBinding::PixelUnpack)
@@ -252,9 +217,6 @@ angle::Result BufferVk::setData(const gl::Context *context,
                                   kBufferHelperPoolInitialSize, memoryPropertyFlags);
 
         ANGLE_TRY(acquireBufferHelper(contextVk, size, &mBuffer));
-
-        // Initialize the staging buffer
-        initializeStagingBuffer(contextVk, target, size);
 
         // Initialize the shadow buffer
         ANGLE_TRY(initializeShadowBuffer(contextVk, target, size));
@@ -344,6 +306,7 @@ angle::Result BufferVk::mapRange(const gl::Context *context,
                                  GLbitfield access,
                                  void **mapPtr)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "BufferVk::mapRange");
     return mapRangeImpl(vk::GetImpl(context), offset, length, access, mapPtr);
 }
 
@@ -427,6 +390,36 @@ angle::Result BufferVk::unmapImpl(ContextVk *contextVk)
     return angle::Result::Continue;
 }
 
+angle::Result BufferVk::getSubData(const gl::Context *context,
+                                   GLintptr offset,
+                                   GLsizeiptr size,
+                                   void *outData)
+{
+    ASSERT(offset + size <= getSize());
+    if (!mShadowBuffer.valid())
+    {
+        ASSERT(mBuffer && mBuffer->valid());
+        ContextVk *contextVk = vk::GetImpl(context);
+        ANGLE_TRY(mBuffer->waitForIdle(contextVk));
+        if (mBuffer->isMapped())
+        {
+            memcpy(outData, mBuffer->getMappedMemory() + offset, size);
+        }
+        else
+        {
+            uint8_t *mappedPtr = nullptr;
+            ANGLE_TRY(mBuffer->mapWithOffset(contextVk, &mappedPtr, offset));
+            memcpy(outData, mappedPtr, size);
+            mBuffer->unmap(contextVk->getRenderer());
+        }
+    }
+    else
+    {
+        memcpy(outData, mShadowBuffer.getCurrentBuffer() + offset, size);
+    }
+    return angle::Result::Continue;
+}
+
 angle::Result BufferVk::getIndexRange(const gl::Context *context,
                                       gl::DrawElementsType type,
                                       size_t offset,
@@ -494,29 +487,23 @@ angle::Result BufferVk::stagedUpdate(ContextVk *contextVk,
                                      size_t offset)
 {
     // Acquire a "new" staging buffer
-    bool needToReleasePreviousBuffers = false;
-    uint8_t *mapPointer               = nullptr;
-    VkDeviceSize stagingBufferOffset  = 0;
+    uint8_t *mapPointer              = nullptr;
+    VkDeviceSize stagingBufferOffset = 0;
 
-    ANGLE_TRY(mStagingBuffer.allocate(contextVk, size, &mapPointer, nullptr, &stagingBufferOffset,
-                                      &needToReleasePreviousBuffers));
-    if (needToReleasePreviousBuffers)
-    {
-        // Release previous staging buffers
-        mStagingBuffer.releaseInFlightBuffers(contextVk);
-    }
+    vk::DynamicBuffer *stagingBuffer = contextVk->getStagingBufferStorage();
+    ANGLE_TRY(stagingBuffer->allocate(contextVk, size, &mapPointer, nullptr, &stagingBufferOffset,
+                                      nullptr));
     ASSERT(mapPointer);
 
     memcpy(mapPointer, data, size);
-    ASSERT(!mStagingBuffer.isCoherent());
-    ANGLE_TRY(mStagingBuffer.flush(contextVk));
-    mStagingBuffer.getCurrentBuffer()->onExternalWrite(VK_ACCESS_HOST_WRITE_BIT);
+    ASSERT(!stagingBuffer->isCoherent());
+    ANGLE_TRY(stagingBuffer->flush(contextVk));
+    stagingBuffer->getCurrentBuffer()->onExternalWrite(VK_ACCESS_HOST_WRITE_BIT);
 
     // Enqueue a copy command on the GPU.
     VkBufferCopy copyRegion = {stagingBufferOffset, offset, size};
     ANGLE_TRY(
-        mBuffer->copyFromBuffer(contextVk, mStagingBuffer.getCurrentBuffer(), 1, &copyRegion));
-    mStagingBuffer.getCurrentBuffer()->retain(&contextVk->getResourceUseList());
+        mBuffer->copyFromBuffer(contextVk, stagingBuffer->getCurrentBuffer(), 1, &copyRegion));
 
     return angle::Result::Continue;
 }

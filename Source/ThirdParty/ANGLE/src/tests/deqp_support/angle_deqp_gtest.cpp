@@ -20,7 +20,7 @@
 #include "common/platform.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 #include "tests/test_expectations/GPUTestConfig.h"
 #include "tests/test_expectations/GPUTestExpectationsParser.h"
 #include "util/test_utils.h"
@@ -33,10 +33,6 @@ bool gGlobalError = false;
 bool gExpectError = false;
 
 constexpr char kInfoTag[] = "*RESULT";
-
-// Stored as globals to work around a Clang bug. http://crbug.com/951458
-std::vector<std::string> gUnexpectedFailed;
-std::vector<std::string> gUnexpectedPasses;
 
 void HandlePlatformError(PlatformMethods *platform, const char *errorMessage)
 {
@@ -398,13 +394,13 @@ class dEQPTest : public testing::TestWithParam<size_t>
 
             if (!testSucceeded)
             {
-                gUnexpectedFailed.push_back(caseInfo.mDEQPName);
+                sUnexpectedFailed.push_back(caseInfo.mDEQPName);
             }
         }
         else if (testSucceeded)
         {
             std::cout << "Test expected to fail but passed!" << std::endl;
-            gUnexpectedPasses.push_back(caseInfo.mDEQPName);
+            sUnexpectedPasses.push_back(caseInfo.mDEQPName);
         }
     }
 
@@ -444,21 +440,21 @@ class dEQPTest : public testing::TestWithParam<size_t>
         std::cout << GetTestStatLine("Exception", std::to_string(sTestExceptionCount));
         std::cout << GetTestStatLine("Crashed", std::to_string(crashedCount));
 
-        if (!gUnexpectedPasses.empty())
+        if (!sUnexpectedPasses.empty())
         {
             std::cout << GetTestStatLine("Unexpected Passed Count",
-                                         std::to_string(gUnexpectedPasses.size()));
-            for (const std::string &testName : gUnexpectedPasses)
+                                         std::to_string(sUnexpectedPasses.size()));
+            for (const std::string &testName : sUnexpectedPasses)
             {
                 std::cout << GetTestStatLine("Unexpected Passed Tests", testName);
             }
         }
 
-        if (!gUnexpectedFailed.empty())
+        if (!sUnexpectedFailed.empty())
         {
             std::cout << GetTestStatLine("Unexpected Failed Count",
-                                         std::to_string(gUnexpectedFailed.size()));
-            for (const std::string &testName : gUnexpectedFailed)
+                                         std::to_string(sUnexpectedFailed.size()));
+            for (const std::string &testName : sUnexpectedFailed)
             {
                 std::cout << GetTestStatLine("Unexpected Failed Tests", testName);
             }
@@ -471,6 +467,9 @@ class dEQPTest : public testing::TestWithParam<size_t>
     static uint32_t sTestExceptionCount;
     static uint32_t sNotSupportedTestCount;
     static uint32_t sSkippedTestCount;
+
+    static std::vector<std::string> sUnexpectedFailed;
+    static std::vector<std::string> sUnexpectedPasses;
 };
 
 template <size_t TestModuleIndex>
@@ -485,6 +484,10 @@ template <size_t TestModuleIndex>
 uint32_t dEQPTest<TestModuleIndex>::sNotSupportedTestCount = 0;
 template <size_t TestModuleIndex>
 uint32_t dEQPTest<TestModuleIndex>::sSkippedTestCount = 0;
+template <size_t TestModuleIndex>
+std::vector<std::string> dEQPTest<TestModuleIndex>::sUnexpectedFailed;
+template <size_t TestModuleIndex>
+std::vector<std::string> dEQPTest<TestModuleIndex>::sUnexpectedPasses;
 
 // static
 template <size_t TestModuleIndex>
@@ -496,8 +499,8 @@ void dEQPTest<TestModuleIndex>::SetUpTestCase()
     sTestExceptionCount    = 0;
     sTestCount             = 0;
     sSkippedTestCount      = 0;
-    gUnexpectedPasses.clear();
-    gUnexpectedFailed.clear();
+    sUnexpectedPasses.clear();
+    sUnexpectedFailed.clear();
 
     std::vector<const char *> argv;
 

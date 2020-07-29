@@ -26,7 +26,7 @@ class ANGLE_UTIL_EXPORT OSPixmap
     virtual bool initialize(EGLNativeDisplayType display,
                             size_t width,
                             size_t height,
-                            int depth) = 0;
+                            int nativeVisual) = 0;
 
     virtual EGLNativePixmapType getNativePixmap() const = 0;
 };

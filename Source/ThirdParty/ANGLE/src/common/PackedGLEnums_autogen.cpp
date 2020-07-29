@@ -1993,6 +1993,8 @@ TextureTarget FromGLenum<TextureTarget>(GLenum from)
             return TextureTarget::CubeMapPositiveZ;
         case GL_TEXTURE_CUBE_MAP_NEGATIVE_Z:
             return TextureTarget::CubeMapNegativeZ;
+        case GL_TEXTURE_CUBE_MAP_ARRAY:
+            return TextureTarget::CubeMapArray;
         case GL_TEXTURE_VIDEO_IMAGE_WEBGL:
             return TextureTarget::VideoImage;
         default:
@@ -2030,6 +2032,8 @@ GLenum ToGLenum(TextureTarget from)
             return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
         case TextureTarget::CubeMapNegativeZ:
             return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+        case TextureTarget::CubeMapArray:
+            return GL_TEXTURE_CUBE_MAP_ARRAY;
         case TextureTarget::VideoImage:
             return GL_TEXTURE_VIDEO_IMAGE_WEBGL;
         default:
@@ -2081,6 +2085,9 @@ std::ostream &operator<<(std::ostream &os, TextureTarget value)
         case TextureTarget::CubeMapNegativeZ:
             os << "GL_TEXTURE_CUBE_MAP_NEGATIVE_Z";
             break;
+        case TextureTarget::CubeMapArray:
+            os << "GL_TEXTURE_CUBE_MAP_ARRAY";
+            break;
         case TextureTarget::VideoImage:
             os << "GL_TEXTURE_VIDEO_IMAGE_WEBGL";
             break;
@@ -2112,6 +2119,8 @@ TextureType FromGLenum<TextureType>(GLenum from)
             return TextureType::Rectangle;
         case GL_TEXTURE_CUBE_MAP:
             return TextureType::CubeMap;
+        case GL_TEXTURE_CUBE_MAP_ARRAY:
+            return TextureType::CubeMapArray;
         case GL_TEXTURE_VIDEO_IMAGE_WEBGL:
             return TextureType::VideoImage;
         default:
@@ -2139,6 +2148,8 @@ GLenum ToGLenum(TextureType from)
             return GL_TEXTURE_RECTANGLE_ANGLE;
         case TextureType::CubeMap:
             return GL_TEXTURE_CUBE_MAP;
+        case TextureType::CubeMapArray:
+            return GL_TEXTURE_CUBE_MAP_ARRAY;
         case TextureType::VideoImage:
             return GL_TEXTURE_VIDEO_IMAGE_WEBGL;
         default:
@@ -2174,6 +2185,9 @@ std::ostream &operator<<(std::ostream &os, TextureType value)
             break;
         case TextureType::CubeMap:
             os << "GL_TEXTURE_CUBE_MAP";
+            break;
+        case TextureType::CubeMapArray:
+            os << "GL_TEXTURE_CUBE_MAP_ARRAY";
             break;
         case TextureType::VideoImage:
             os << "GL_TEXTURE_VIDEO_IMAGE_WEBGL";

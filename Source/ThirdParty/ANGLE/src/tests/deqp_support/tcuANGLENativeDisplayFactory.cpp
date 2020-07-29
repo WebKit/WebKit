@@ -50,6 +50,16 @@ namespace tcu
 namespace
 {
 
+template <typename destType, typename sourceType>
+destType bitCast(sourceType source)
+{
+    constexpr size_t copySize =
+        sizeof(destType) < sizeof(sourceType) ? sizeof(destType) : sizeof(sourceType);
+    destType output(0);
+    memcpy(&output, &source, copySize);
+    return output;
+}
+
 enum
 {
     DEFAULT_SURFACE_WIDTH  = 400,
@@ -74,16 +84,14 @@ constexpr eglu::NativeWindow::Capability kWindowCapabilities =
 class ANGLENativeDisplay : public eglu::NativeDisplay
 {
   public:
-    explicit ANGLENativeDisplay(std::vector<eglw::EGLAttrib> attribs);
+    explicit ANGLENativeDisplay(EGLNativeDisplayType display, std::vector<eglw::EGLAttrib> attribs);
     ~ANGLENativeDisplay() override = default;
 
     void *getPlatformNative() override
     {
         // On OSX 64bits mDeviceContext is a 32 bit integer, so we can't simply
         // use reinterpret_cast<void*>.
-        void *result = nullptr;
-        memcpy(&result, &mDeviceContext, sizeof(mDeviceContext));
-        return result;
+        return bitCast<void *>(mDeviceContext);
     }
     const eglw::EGLAttrib *getPlatformAttributes() const override
     {
@@ -169,9 +177,9 @@ class NativeWindow : public eglu::NativeWindow
 
 // ANGLE NativeDisplay
 
-ANGLENativeDisplay::ANGLENativeDisplay(std::vector<EGLAttrib> attribs)
+ANGLENativeDisplay::ANGLENativeDisplay(EGLNativeDisplayType display, std::vector<EGLAttrib> attribs)
     : eglu::NativeDisplay(kDisplayCapabilities, EGL_PLATFORM_ANGLE_ANGLE, "EGL_EXT_platform_base"),
-      mDeviceContext(EGL_DEFAULT_DISPLAY),
+      mDeviceContext(display),
       mLibrary(ANGLE_EGL_LIBRARY_FULL_NAME),
       mPlatformAttributes(std::move(attribs))
 {}
@@ -220,24 +228,15 @@ eglu::NativePixmap *NativePixmapFactory::createPixmap(eglu::NativeDisplay *nativ
                                                       int height) const
 {
     const eglw::Library &egl = nativeDisplay->getLibrary();
-    int redBits              = 0;
-    int greenBits            = 0;
-    int blueBits             = 0;
-    int alphaBits            = 0;
-    int bitSum               = 0;
+    int nativeVisual         = 0;
 
     DE_ASSERT(display != EGL_NO_DISPLAY);
 
-    egl.getConfigAttrib(display, config, EGL_RED_SIZE, &redBits);
-    egl.getConfigAttrib(display, config, EGL_GREEN_SIZE, &greenBits);
-    egl.getConfigAttrib(display, config, EGL_BLUE_SIZE, &blueBits);
-    egl.getConfigAttrib(display, config, EGL_ALPHA_SIZE, &alphaBits);
+    egl.getConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &nativeVisual);
     EGLU_CHECK_MSG(egl, "eglGetConfigAttrib()");
 
-    bitSum = redBits + greenBits + blueBits + alphaBits;
-
     return new NativePixmap(dynamic_cast<ANGLENativeDisplay *>(nativeDisplay)->getDeviceContext(),
-                            width, height, bitSum);
+                            width, height, nativeVisual);
 }
 
 eglu::NativePixmap *NativePixmapFactory::createPixmap(eglu::NativeDisplay *nativeDisplay,
@@ -364,8 +363,15 @@ ANGLENativeDisplayFactory::ANGLENativeDisplayFactory(
                                  kDisplayCapabilities,
                                  EGL_PLATFORM_ANGLE_ANGLE,
                                  "EGL_EXT_platform_base"),
+      mNativeDisplay(bitCast<eglw::EGLNativeDisplayType>(EGL_DEFAULT_DISPLAY)),
       mPlatformAttributes(std::move(platformAttributes))
 {
+#if (DE_OS == DE_OS_UNIX)
+    // Make sure to only open the X display once so that it can be used by the EGL display as well
+    // as pixmaps
+    mNativeDisplay = bitCast<eglw::EGLNativeDisplayType>(XOpenDisplay(nullptr));
+#endif  // (DE_OS == DE_OS_UNIX)
+
     m_nativeWindowRegistry.registerFactory(new NativeWindowFactory(eventState));
     m_nativePixmapRegistry.registerFactory(new NativePixmapFactory());
 }
@@ -376,7 +382,8 @@ eglu::NativeDisplay *ANGLENativeDisplayFactory::createDisplay(
     const eglw::EGLAttrib *attribList) const
 {
     DE_UNREF(attribList);
-    return new ANGLENativeDisplay(mPlatformAttributes);
+    return new ANGLENativeDisplay(bitCast<EGLNativeDisplayType>(mNativeDisplay),
+                                  mPlatformAttributes);
 }
 
 }  // namespace tcu

@@ -54,6 +54,8 @@ const char *getBasicString(TBasicType t)
             return "sampler2DMS";
         case EbtSampler2DMSArray:
             return "sampler2DMSArray";
+        case EbtSamplerCubeArray:
+            return "samplerCubeArray";
         case EbtISampler2D:
             return "isampler2D";
         case EbtISampler3D:
@@ -66,6 +68,8 @@ const char *getBasicString(TBasicType t)
             return "isampler2DMS";
         case EbtISampler2DMSArray:
             return "isampler2DMSArray";
+        case EbtISamplerCubeArray:
+            return "isamplerCubeArray";
         case EbtUSampler2D:
             return "usampler2D";
         case EbtUSampler3D:
@@ -78,12 +82,16 @@ const char *getBasicString(TBasicType t)
             return "usampler2DMS";
         case EbtUSampler2DMSArray:
             return "usampler2DMSArray";
+        case EbtUSamplerCubeArray:
+            return "usamplerCubeArray";
         case EbtSampler2DShadow:
             return "sampler2DShadow";
         case EbtSamplerCubeShadow:
             return "samplerCubeShadow";
         case EbtSampler2DArrayShadow:
             return "sampler2DArrayShadow";
+        case EbtSamplerCubeArrayShadow:
+            return "samplerCubeArrayShadow";
         case EbtStruct:
             return "structure";
         case EbtInterfaceBlock:
@@ -112,6 +120,12 @@ const char *getBasicString(TBasicType t)
             return "iimageCube";
         case EbtUImageCube:
             return "uimageCube";
+        case EbtImageCubeArray:
+            return "imageCubeArray";
+        case EbtIImageCubeArray:
+            return "iimageCubeArray";
+        case EbtUImageCubeArray:
+            return "uimageCubeArray";
         case EbtAtomicCounter:
             return "atomic_uint";
         case EbtSamplerVideoWEBGL:

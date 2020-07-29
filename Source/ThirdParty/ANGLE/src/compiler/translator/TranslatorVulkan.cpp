@@ -174,9 +174,9 @@ constexpr ImmutableString kLineRasterEmulationSpecConstVarName =
     ImmutableString("ANGLELineRasterEmulation");
 
 constexpr const char kViewport[]             = "viewport";
-constexpr const char kHalfRenderAreaHeight[] = "halfRenderAreaHeight";
-constexpr const char kViewportYScale[]       = "viewportYScale";
-constexpr const char kNegViewportYScale[]    = "negViewportYScale";
+constexpr const char kHalfRenderArea[]       = "halfRenderArea";
+constexpr const char kFlipXY[]               = "flipXY";
+constexpr const char kNegFlipXY[]            = "negFlipXY";
 constexpr const char kClipDistancesEnabled[] = "clipDistancesEnabled";
 constexpr const char kXfbActiveUnpaused[]    = "xfbActiveUnpaused";
 constexpr const char kXfbVerticesPerDraw[]   = "xfbVerticesPerDraw";
@@ -184,29 +184,17 @@ constexpr const char kXfbBufferOffsets[]     = "xfbBufferOffsets";
 constexpr const char kAcbBufferOffsets[]     = "acbBufferOffsets";
 constexpr const char kDepthRange[]           = "depthRange";
 constexpr const char kPreRotation[]          = "preRotation";
+constexpr const char kFragRotation[]         = "fragRotation";
 
-constexpr size_t kNumGraphicsDriverUniforms                                                = 11;
+constexpr size_t kNumGraphicsDriverUniforms                                                = 12;
 constexpr std::array<const char *, kNumGraphicsDriverUniforms> kGraphicsDriverUniformNames = {
-    {kViewport, kHalfRenderAreaHeight, kViewportYScale, kNegViewportYScale, kClipDistancesEnabled,
-     kXfbActiveUnpaused, kXfbVerticesPerDraw, kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange,
-     kPreRotation}};
+    {kViewport, kHalfRenderArea, kFlipXY, kNegFlipXY, kClipDistancesEnabled, kXfbActiveUnpaused,
+     kXfbVerticesPerDraw, kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange, kPreRotation,
+     kFragRotation}};
 
 constexpr size_t kNumComputeDriverUniforms                                               = 1;
 constexpr std::array<const char *, kNumComputeDriverUniforms> kComputeDriverUniformNames = {
     {kAcbBufferOffsets}};
-
-size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName)
-{
-    for (size_t fieldIndex = 0; fieldIndex < fieldList.size(); ++fieldIndex)
-    {
-        if (strcmp(fieldList[fieldIndex]->name().data(), fieldName) == 0)
-        {
-            return fieldIndex;
-        }
-    }
-    UNREACHABLE();
-    return 0;
-}
 
 TIntermBinary *CreateDriverUniformRef(const TVariable *driverUniforms, const char *fieldName)
 {
@@ -221,22 +209,23 @@ TIntermBinary *CreateDriverUniformRef(const TVariable *driverUniforms, const cha
     return new TIntermBinary(EOpIndexDirectInterfaceBlock, angleUniformsRef, indexRef);
 }
 
-// Replaces a builtin variable with a version that corrects the Y coordinate.
-ANGLE_NO_DISCARD bool FlipBuiltinVariable(TCompiler *compiler,
-                                          TIntermBlock *root,
-                                          TIntermSequence *insertSequence,
-                                          TIntermTyped *viewportYScale,
-                                          TSymbolTable *symbolTable,
-                                          const TVariable *builtin,
-                                          const ImmutableString &flippedVariableName,
-                                          TIntermTyped *pivot)
+// Replaces a builtin variable with a version that is rotated and corrects the X and Y coordinates.
+ANGLE_NO_DISCARD bool RotateAndFlipBuiltinVariable(TCompiler *compiler,
+                                                   TIntermBlock *root,
+                                                   TIntermSequence *insertSequence,
+                                                   TIntermTyped *flipXY,
+                                                   TSymbolTable *symbolTable,
+                                                   const TVariable *builtin,
+                                                   const ImmutableString &flippedVariableName,
+                                                   TIntermTyped *pivot,
+                                                   TIntermTyped *fragRotation)
 {
     // Create a symbol reference to 'builtin'.
     TIntermSymbol *builtinRef = new TIntermSymbol(builtin);
 
-    // Create a swizzle to "builtin.y"
-    TVector<int> swizzleOffsetY = {1};
-    TIntermSwizzle *builtinY    = new TIntermSwizzle(builtinRef, swizzleOffsetY);
+    // Create a swizzle to "builtin.xy"
+    TVector<int> swizzleOffsetXY = {0, 1};
+    TIntermSwizzle *builtinXY    = new TIntermSwizzle(builtinRef, swizzleOffsetXY);
 
     // Create a symbol reference to our new variable that will hold the modified builtin.
     const TType *type = StaticType::GetForVec<EbtFloat>(
@@ -252,10 +241,14 @@ ANGLE_NO_DISCARD bool FlipBuiltinVariable(TCompiler *compiler,
         return false;
     }
 
-    // Create the expression "(builtin.y - pivot) * viewportYScale + pivot
-    TIntermBinary *removePivot = new TIntermBinary(EOpSub, builtinY, pivot);
-    TIntermBinary *inverseY    = new TIntermBinary(EOpMul, removePivot, viewportYScale);
-    TIntermBinary *plusPivot   = new TIntermBinary(EOpAdd, inverseY, pivot->deepCopy());
+    // Create the expression "(builtin.xy * fragRotation)"
+    TIntermBinary *rotatedXY =
+        new TIntermBinary(EOpMatrixTimesVector, fragRotation->deepCopy(), builtinXY->deepCopy());
+
+    // Create the expression "(builtin.xy - pivot) * flipXY + pivot
+    TIntermBinary *removePivot = new TIntermBinary(EOpSub, rotatedXY, pivot);
+    TIntermBinary *inverseXY   = new TIntermBinary(EOpMul, removePivot, flipXY);
+    TIntermBinary *plusPivot   = new TIntermBinary(EOpAdd, inverseXY, pivot->deepCopy());
 
     // Create the corrected variable and copy the value of the original builtin.
     TIntermSequence *sequence = new TIntermSequence();
@@ -263,9 +256,10 @@ ANGLE_NO_DISCARD bool FlipBuiltinVariable(TCompiler *compiler,
     TIntermAggregate *aggregate = TIntermAggregate::CreateConstructor(builtin->getType(), sequence);
     TIntermBinary *assignment   = new TIntermBinary(EOpInitialize, flippedBuiltinRef, aggregate);
 
-    // Create an assignment to the replaced variable's y.
-    TIntermSwizzle *correctedY = new TIntermSwizzle(flippedBuiltinRef->deepCopy(), swizzleOffsetY);
-    TIntermBinary *assignToY   = new TIntermBinary(EOpAssign, correctedY, plusPivot);
+    // Create an assignment to the replaced variable's .xy.
+    TIntermSwizzle *correctedXY =
+        new TIntermSwizzle(flippedBuiltinRef->deepCopy(), swizzleOffsetXY);
+    TIntermBinary *assignToY = new TIntermBinary(EOpAssign, correctedXY, plusPivot);
 
     // Add this assigment at the beginning of the main function
     insertSequence->insert(insertSequence->begin(), assignToY);
@@ -382,7 +376,9 @@ ANGLE_NO_DISCARD bool AppendVertexShaderTransformFeedbackOutputToMain(TCompiler 
 // variable.
 //
 // There are Graphics and Compute variations as they require different uniforms.
-const TVariable *AddGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbolTable *symbolTable)
+const TVariable *AddGraphicsDriverUniformsToShader(TIntermBlock *root,
+                                                   TSymbolTable *symbolTable,
+                                                   const std::vector<TField *> &additionalFields)
 {
     // Init the depth range type.
     TFieldList *depthRangeParamsFields = new TFieldList();
@@ -415,16 +411,17 @@ const TVariable *AddGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbolTa
 
     const std::array<TType *, kNumGraphicsDriverUniforms> kDriverUniformTypes = {{
         new TType(EbtFloat, 4),
-        new TType(EbtFloat),
-        new TType(EbtFloat),
-        new TType(EbtFloat),
+        new TType(EbtFloat, 2),
+        new TType(EbtFloat, 2),
+        new TType(EbtFloat, 2),
         new TType(EbtUInt),  // uint clipDistancesEnabled;  // 32 bits for 32 clip distances max
         new TType(EbtUInt),
         new TType(EbtUInt),
-        // NOTE: There's a vec2 gap here that can be used in the future
+        // NOTE: There's a vec3 gap here that can be used in the future
         new TType(EbtInt, 4),
         new TType(EbtUInt, 4),
         emulatedDepthRangeType,
+        new TType(EbtFloat, 2, 2),
         new TType(EbtFloat, 2, 2),
     }};
 
@@ -436,6 +433,10 @@ const TVariable *AddGraphicsDriverUniformsToShader(TIntermBlock *root, TSymbolTa
                        SymbolType::AngleInternal);
         driverFieldList->push_back(driverUniformField);
     }
+
+    // Back-end specific fields
+    driverFieldList->insert(driverFieldList->end(), additionalFields.begin(),
+                            additionalFields.end());
 
     // Define a driver uniform block "ANGLEUniformBlock" with instance name "ANGLEUniforms".
     return DeclareInterfaceBlock(
@@ -575,10 +576,12 @@ ANGLE_NO_DISCARD bool InsertFragCoordCorrection(TCompiler *compiler,
                                                 TSymbolTable *symbolTable,
                                                 const TVariable *driverUniforms)
 {
-    TIntermBinary *viewportYScale = CreateDriverUniformRef(driverUniforms, kViewportYScale);
-    TIntermBinary *pivot          = CreateDriverUniformRef(driverUniforms, kHalfRenderAreaHeight);
-    return FlipBuiltinVariable(compiler, root, insertSequence, viewportYScale, symbolTable,
-                               BuiltInVariable::gl_FragCoord(), kFlippedFragCoordName, pivot);
+    TIntermBinary *flipXY       = CreateDriverUniformRef(driverUniforms, kFlipXY);
+    TIntermBinary *pivot        = CreateDriverUniformRef(driverUniforms, kHalfRenderArea);
+    TIntermBinary *fragRotation = CreateDriverUniformRef(driverUniforms, kFragRotation);
+    return RotateAndFlipBuiltinVariable(compiler, root, insertSequence, flipXY, symbolTable,
+                                        BuiltInVariable::gl_FragCoord(), kFlippedFragCoordName,
+                                        pivot, fragRotation);
 }
 
 // This block adds OpenGL line segment rasterization emulation behind a specialization constant
@@ -855,7 +858,10 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
     }
     else
     {
-        driverUniforms = AddGraphicsDriverUniformsToShader(root, &getSymbolTable());
+        std::vector<TField *> additionalFields;
+        createAdditionalGraphicsDriverUniformFields(&additionalFields);
+        driverUniforms =
+            AddGraphicsDriverUniformsToShader(root, &getSymbolTable(), additionalFields);
     }
 
     if (atomicCounterCount > 0)
@@ -964,12 +970,12 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
 
         if (usesPointCoord)
         {
-            TIntermBinary *viewportYScale =
-                CreateDriverUniformRef(driverUniforms, kNegViewportYScale);
+            TIntermBinary *flipXY       = CreateDriverUniformRef(driverUniforms, kNegFlipXY);
             TIntermConstantUnion *pivot = CreateFloatNode(0.5f);
-            if (!FlipBuiltinVariable(this, root, GetMainSequence(root), viewportYScale,
-                                     &getSymbolTable(), BuiltInVariable::gl_PointCoord(),
-                                     kFlippedPointCoordName, pivot))
+            TIntermBinary *fragRotation = CreateDriverUniformRef(driverUniforms, kFragRotation);
+            if (!RotateAndFlipBuiltinVariable(this, root, GetMainSequence(root), flipXY,
+                                              &getSymbolTable(), BuiltInVariable::gl_PointCoord(),
+                                              kFlippedPointCoordName, pivot, fragRotation))
             {
                 return false;
             }
@@ -985,8 +991,10 @@ bool TranslatorVulkan::translateImpl(TIntermBlock *root,
         }
 
         {
-            TIntermBinary *viewportYScale = CreateDriverUniformRef(driverUniforms, kViewportYScale);
-            if (!RewriteDfdy(this, root, getSymbolTable(), getShaderVersion(), viewportYScale))
+            TIntermBinary *flipXY       = CreateDriverUniformRef(driverUniforms, kFlipXY);
+            TIntermBinary *fragRotation = CreateDriverUniformRef(driverUniforms, kFragRotation);
+            if (!RewriteDfdy(this, root, getSymbolTable(), getShaderVersion(), flipXY,
+                             fragRotation))
             {
                 return false;
             }
@@ -1104,10 +1112,13 @@ bool TranslatorVulkan::shouldFlattenPragmaStdglInvariantAll()
     return false;
 }
 
-TIntermBinary *TranslatorVulkan::getDriverUniformNegViewportYScaleRef(
-    const TVariable *driverUniforms) const
+TIntermSwizzle *TranslatorVulkan::getDriverUniformNegFlipYRef(const TVariable *driverUniforms) const
 {
-    return CreateDriverUniformRef(driverUniforms, kNegViewportYScale);
+    // Create a swizzle to "negFlipXY.y"
+    TIntermBinary *negFlipXY    = CreateDriverUniformRef(driverUniforms, kNegFlipXY);
+    TVector<int> swizzleOffsetY = {1};
+    TIntermSwizzle *negFlipY    = new TIntermSwizzle(negFlipXY, swizzleOffsetY);
+    return negFlipY;
 }
 
 TIntermBinary *TranslatorVulkan::getDriverUniformDepthRangeReservedFieldRef(

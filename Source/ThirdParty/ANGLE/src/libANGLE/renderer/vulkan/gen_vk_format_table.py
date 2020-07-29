@@ -144,7 +144,7 @@ def gen_format_case(angle, internal_format, vk_json_data):
     args = dict(
         format_id=angle, internal_format=internal_format, image_template="", buffer_template="")
 
-    if ((angle not in vk_map) and (angle not in vk_fallbacks)) or angle == 'NONE':
+    if ((angle not in vk_map) and (angle not in vk_fallbacks)):
         return empty_format_entry_template.format(**args)
 
     # get_formats returns override format (if any) + fallbacks

@@ -54,6 +54,7 @@ set(ANGLE_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/KHR"
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/common/third_party/base"
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib/google"
     "${CMAKE_CURRENT_BINARY_DIR}/include"
 )
 
@@ -90,6 +91,7 @@ if (USE_ANGLE_EGL)
         ${libangle_image_util_sources}
         ${libangle_image_util_headers}
         ${xxhash_sources}
+        ${zlib_wrapper_sources}
     )
     target_include_directories(ANGLE PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
     target_compile_definitions(ANGLE PRIVATE

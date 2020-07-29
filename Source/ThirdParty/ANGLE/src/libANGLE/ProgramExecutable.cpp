@@ -17,9 +17,7 @@ namespace gl
 {
 
 ProgramExecutable::ProgramExecutable()
-    : mProgramState(nullptr),
-      mProgramPipelineState(nullptr),
-      mMaxActiveAttribLocation(0),
+    : mMaxActiveAttribLocation(0),
       mAttributesTypeMask(0),
       mAttributesMask(0),
       mActiveSamplersMask(0),
@@ -27,16 +25,28 @@ ProgramExecutable::ProgramExecutable()
       mActiveImagesMask(0),
       mCanDrawWith(false),
       mTransformFeedbackBufferMode(GL_INTERLEAVED_ATTRIBS),
+      mDefaultUniformRange(0, 0),
       mSamplerUniformRange(0, 0),
-      mImageUniformRange(0, 0)
+      mImageUniformRange(0, 0),
+      mPipelineHasGraphicsUniformBuffers(false),
+      mPipelineHasComputeUniformBuffers(false),
+      mPipelineHasGraphicsStorageBuffers(false),
+      mPipelineHasComputeStorageBuffers(false),
+      mPipelineHasGraphicsAtomicCounterBuffers(false),
+      mPipelineHasComputeAtomicCounterBuffers(false),
+      mPipelineHasGraphicsDefaultUniforms(false),
+      mPipelineHasComputeDefaultUniforms(false),
+      mPipelineHasGraphicsTextures(false),
+      mPipelineHasComputeTextures(false),
+      mPipelineHasGraphicsImages(false),
+      mPipelineHasComputeImages(false),
+      mIsCompute(false)
 {
     reset();
 }
 
 ProgramExecutable::ProgramExecutable(const ProgramExecutable &other)
-    : mProgramState(other.mProgramState),
-      mProgramPipelineState(other.mProgramPipelineState),
-      mLinkedGraphicsShaderStages(other.mLinkedGraphicsShaderStages),
+    : mLinkedGraphicsShaderStages(other.mLinkedGraphicsShaderStages),
       mLinkedComputeShaderStages(other.mLinkedComputeShaderStages),
       mActiveAttribLocationsMask(other.mActiveAttribLocationsMask),
       mMaxActiveAttribLocation(other.mMaxActiveAttribLocation),
@@ -57,11 +67,25 @@ ProgramExecutable::ProgramExecutable(const ProgramExecutable &other)
       mTransformFeedbackStrides(other.mTransformFeedbackStrides),
       mTransformFeedbackBufferMode(other.mTransformFeedbackBufferMode),
       mUniforms(other.mUniforms),
+      mDefaultUniformRange(other.mDefaultUniformRange),
       mSamplerUniformRange(other.mSamplerUniformRange),
       mUniformBlocks(other.mUniformBlocks),
       mAtomicCounterBuffers(other.mAtomicCounterBuffers),
       mImageUniformRange(other.mImageUniformRange),
-      mShaderStorageBlocks(other.mShaderStorageBlocks)
+      mShaderStorageBlocks(other.mShaderStorageBlocks),
+      mPipelineHasGraphicsUniformBuffers(other.mPipelineHasGraphicsUniformBuffers),
+      mPipelineHasComputeUniformBuffers(other.mPipelineHasComputeUniformBuffers),
+      mPipelineHasGraphicsStorageBuffers(other.mPipelineHasGraphicsStorageBuffers),
+      mPipelineHasComputeStorageBuffers(other.mPipelineHasComputeStorageBuffers),
+      mPipelineHasGraphicsAtomicCounterBuffers(other.mPipelineHasGraphicsAtomicCounterBuffers),
+      mPipelineHasComputeAtomicCounterBuffers(other.mPipelineHasComputeAtomicCounterBuffers),
+      mPipelineHasGraphicsDefaultUniforms(other.mPipelineHasGraphicsDefaultUniforms),
+      mPipelineHasComputeDefaultUniforms(other.mPipelineHasComputeDefaultUniforms),
+      mPipelineHasGraphicsTextures(other.mPipelineHasGraphicsTextures),
+      mPipelineHasComputeTextures(other.mPipelineHasComputeTextures),
+      mPipelineHasGraphicsImages(other.mPipelineHasGraphicsImages),
+      mPipelineHasComputeImages(other.mPipelineHasComputeImages),
+      mIsCompute(other.mIsCompute)
 {
     reset();
 }
@@ -91,6 +115,19 @@ void ProgramExecutable::reset()
     mAtomicCounterBuffers.clear();
     mOutputVariables.clear();
     mOutputLocations.clear();
+    mSamplerBindings.clear();
+    mImageBindings.clear();
+
+    mPipelineHasGraphicsUniformBuffers       = false;
+    mPipelineHasComputeUniformBuffers        = false;
+    mPipelineHasGraphicsStorageBuffers       = false;
+    mPipelineHasComputeStorageBuffers        = false;
+    mPipelineHasGraphicsAtomicCounterBuffers = false;
+    mPipelineHasComputeAtomicCounterBuffers  = false;
+    mPipelineHasGraphicsDefaultUniforms      = false;
+    mPipelineHasComputeDefaultUniforms       = false;
+    mPipelineHasGraphicsTextures             = false;
+    mPipelineHasComputeTextures              = false;
 }
 
 void ProgramExecutable::load(gl::BinaryInputStream *stream)
@@ -105,6 +142,18 @@ void ProgramExecutable::load(gl::BinaryInputStream *stream)
 
     mLinkedGraphicsShaderStages = ShaderBitSet(stream->readInt<uint8_t>());
     mLinkedComputeShaderStages  = ShaderBitSet(stream->readInt<uint8_t>());
+    mIsCompute                  = stream->readBool();
+
+    mPipelineHasGraphicsUniformBuffers       = stream->readBool();
+    mPipelineHasComputeUniformBuffers        = stream->readBool();
+    mPipelineHasGraphicsStorageBuffers       = stream->readBool();
+    mPipelineHasComputeStorageBuffers        = stream->readBool();
+    mPipelineHasGraphicsAtomicCounterBuffers = stream->readBool();
+    mPipelineHasComputeAtomicCounterBuffers  = stream->readBool();
+    mPipelineHasGraphicsDefaultUniforms      = stream->readBool();
+    mPipelineHasComputeDefaultUniforms       = stream->readBool();
+    mPipelineHasGraphicsTextures             = stream->readBool();
+    mPipelineHasComputeTextures              = stream->readBool();
 }
 
 void ProgramExecutable::save(gl::BinaryOutputStream *stream) const
@@ -118,46 +167,18 @@ void ProgramExecutable::save(gl::BinaryOutputStream *stream) const
 
     stream->writeInt(mLinkedGraphicsShaderStages.bits());
     stream->writeInt(mLinkedComputeShaderStages.bits());
-}
+    stream->writeInt(static_cast<bool>(mIsCompute));
 
-const ProgramState *ProgramExecutable::getProgramState(ShaderType shaderType) const
-{
-    if (mProgramState &&
-        (hasLinkedShaderStage(shaderType) || mProgramState->getAttachedShader(shaderType)))
-    {
-        return mProgramState;
-    }
-    else if (mProgramPipelineState && (hasLinkedShaderStage(shaderType) ||
-                                       mProgramPipelineState->getShaderProgram(shaderType)))
-    {
-        return &mProgramPipelineState->getShaderProgram(shaderType)->getState();
-    }
-
-    return nullptr;
-}
-
-bool ProgramExecutable::isCompute() const
-{
-    ASSERT(mProgramState || mProgramPipelineState);
-
-    if (mProgramState)
-    {
-        return mProgramState->isCompute();
-    }
-
-    return mProgramPipelineState->isCompute();
-}
-
-void ProgramExecutable::setIsCompute(bool isComputeIn)
-{
-    // A Program can only either be graphics or compute, but never both, so it can answer
-    // isCompute() based on which shaders it has. However, a PPO can have both graphics and compute
-    // programs attached, so we don't know if the PPO is a 'graphics' or 'compute' PPO until the
-    // actual draw/dispatch call, which is why only PPOs need to record the type of call here.
-    if (mProgramPipelineState)
-    {
-        mProgramPipelineState->setIsCompute(isComputeIn);
-    }
+    stream->writeInt(static_cast<bool>(mPipelineHasGraphicsUniformBuffers));
+    stream->writeInt(static_cast<bool>(mPipelineHasComputeUniformBuffers));
+    stream->writeInt(static_cast<bool>(mPipelineHasGraphicsStorageBuffers));
+    stream->writeInt(static_cast<bool>(mPipelineHasComputeStorageBuffers));
+    stream->writeInt(static_cast<bool>(mPipelineHasGraphicsAtomicCounterBuffers));
+    stream->writeInt(static_cast<bool>(mPipelineHasComputeAtomicCounterBuffers));
+    stream->writeInt(static_cast<bool>(mPipelineHasGraphicsDefaultUniforms));
+    stream->writeInt(static_cast<bool>(mPipelineHasComputeDefaultUniforms));
+    stream->writeInt(static_cast<bool>(mPipelineHasGraphicsTextures));
+    stream->writeInt(static_cast<bool>(mPipelineHasComputeTextures));
 }
 
 int ProgramExecutable::getInfoLogLength() const
@@ -192,92 +213,47 @@ AttributesMask ProgramExecutable::getAttributesMask() const
 
 bool ProgramExecutable::hasDefaultUniforms() const
 {
-    ASSERT(mProgramState || mProgramPipelineState);
-    if (mProgramState)
-    {
-        return mProgramState->hasDefaultUniforms();
-    }
-
-    return mProgramPipelineState->hasDefaultUniforms();
+    return !getDefaultUniformRange().empty() ||
+           (isCompute() ? mPipelineHasComputeDefaultUniforms : mPipelineHasGraphicsDefaultUniforms);
 }
 
 bool ProgramExecutable::hasTextures() const
 {
-    ASSERT(mProgramState || mProgramPipelineState);
-    if (mProgramState)
-    {
-        return mProgramState->hasTextures();
-    }
-
-    return mProgramPipelineState->hasTextures();
+    return !getSamplerBindings().empty() ||
+           (isCompute() ? mPipelineHasComputeTextures : mPipelineHasGraphicsTextures);
 }
 
+// TODO: http://anglebug.com/3570: Remove mHas*UniformBuffers once PPO's have valid data in
+// mUniformBlocks
 bool ProgramExecutable::hasUniformBuffers() const
 {
-    ASSERT(mProgramState || mProgramPipelineState);
-    if (mProgramState)
-    {
-        return mProgramState->hasUniformBuffers();
-    }
-
-    return mProgramPipelineState->hasUniformBuffers();
+    return !getUniformBlocks().empty() ||
+           (isCompute() ? mPipelineHasComputeUniformBuffers : mPipelineHasGraphicsUniformBuffers);
 }
 
 bool ProgramExecutable::hasStorageBuffers() const
 {
-    ASSERT(mProgramState || mProgramPipelineState);
-    if (mProgramState)
-    {
-        return mProgramState->hasStorageBuffers();
-    }
-
-    return mProgramPipelineState->hasStorageBuffers();
+    return !getShaderStorageBlocks().empty() ||
+           (isCompute() ? mPipelineHasComputeStorageBuffers : mPipelineHasGraphicsStorageBuffers);
 }
 
 bool ProgramExecutable::hasAtomicCounterBuffers() const
 {
-    ASSERT(mProgramState || mProgramPipelineState);
-    if (mProgramState)
-    {
-        return mProgramState->hasAtomicCounterBuffers();
-    }
-
-    return mProgramPipelineState->hasAtomicCounterBuffers();
+    return !getAtomicCounterBuffers().empty() ||
+           (isCompute() ? mPipelineHasComputeAtomicCounterBuffers
+                        : mPipelineHasGraphicsAtomicCounterBuffers);
 }
 
 bool ProgramExecutable::hasImages() const
 {
-    ASSERT(mProgramState || mProgramPipelineState);
-    if (mProgramState)
-    {
-        return mProgramState->hasImages();
-    }
-
-    return mProgramPipelineState->hasImages();
+    return !getImageBindings().empty() ||
+           (isCompute() ? mPipelineHasComputeImages : mPipelineHasGraphicsImages);
 }
 
-bool ProgramExecutable::hasTransformFeedbackOutput() const
+GLuint ProgramExecutable::getUniformIndexFromImageIndex(GLuint imageIndex) const
 {
-    ASSERT(mProgramState || mProgramPipelineState);
-    if (mProgramState)
-    {
-        return mProgramState->hasTransformFeedbackOutput();
-    }
-
-    return mProgramPipelineState->hasTransformFeedbackOutput();
-}
-
-size_t ProgramExecutable::getTransformFeedbackBufferCount(const gl::State &glState) const
-{
-    ASSERT(mProgramState || mProgramPipelineState);
-    if (mProgramState)
-    {
-        return mProgramState->getTransformFeedbackBufferCount();
-    }
-
-    // TODO(timvp): http://anglebug.com/3570: Support program pipelines
-
-    return 0;
+    ASSERT(imageIndex < mImageUniformRange.length());
+    return imageIndex + mImageUniformRange.low();
 }
 
 void ProgramExecutable::updateActiveSamplers(const ProgramState &programState)
@@ -317,25 +293,30 @@ void ProgramExecutable::updateActiveSamplers(const ProgramState &programState)
     }
 }
 
-void ProgramExecutable::updateActiveImages(std::vector<ImageBinding> &imageBindings)
+void ProgramExecutable::updateActiveImages(const ProgramExecutable &executable)
 {
-    const bool compute = isCompute() ? true : false;
-    for (uint32_t imageIndex = 0; imageIndex < imageBindings.size(); ++imageIndex)
+    for (uint32_t imageIndex = 0; imageIndex < mImageBindings.size(); ++imageIndex)
     {
-        const gl::ImageBinding &imageBinding = imageBindings[imageIndex];
+        const gl::ImageBinding &imageBinding = mImageBindings[imageIndex];
         if (imageBinding.unreferenced)
+        {
             continue;
+        }
 
-        uint32_t uniformIndex = mProgramState->getUniformIndexFromImageIndex(imageIndex);
-        const gl::LinkedUniform &imageUniform = mProgramState->getUniforms()[uniformIndex];
+        uint32_t uniformIndex = executable.getUniformIndexFromImageIndex(imageIndex);
+        const gl::LinkedUniform &imageUniform = executable.getUniforms()[uniformIndex];
         const ShaderBitSet shaderBits         = imageUniform.activeShaders();
         for (GLint imageUnit : imageBinding.boundImageUnits)
         {
             mActiveImagesMask.set(imageUnit);
-            if (compute)
+            if (isCompute())
+            {
                 mActiveImageShaderBits[imageUnit].set(gl::ShaderType::Compute);
+            }
             else
+            {
                 mActiveImageShaderBits[imageUnit] = shaderBits;
+            }
         }
     }
 }
@@ -384,7 +365,9 @@ void ProgramExecutable::setSamplerUniformTextureTypeAndFormat(
     mActiveSamplerFormats[textureUnitIndex] = foundFormat;
 }
 
-bool ProgramExecutable::linkValidateGlobalNames(InfoLog &infoLog) const
+bool ProgramExecutable::linkValidateGlobalNames(
+    InfoLog &infoLog,
+    const ShaderMap<const ProgramState *> &programStates) const
 {
     std::unordered_map<std::string, const sh::ShaderVariable *> uniformMap;
     using BlockAndFieldPair = std::pair<const sh::InterfaceBlock *, const sh::ShaderVariable *>;
@@ -392,7 +375,7 @@ bool ProgramExecutable::linkValidateGlobalNames(InfoLog &infoLog) const
 
     for (ShaderType shaderType : kAllGraphicsShaderTypes)
     {
-        const ProgramState *programState = getProgramState(shaderType);
+        const ProgramState *programState = programStates[shaderType];
         if (!programState)
         {
             continue;
@@ -472,7 +455,7 @@ bool ProgramExecutable::linkValidateGlobalNames(InfoLog &infoLog) const
     }
 
     // Validate no uniform names conflict with attribute names
-    const ProgramState *programState = getProgramState(ShaderType::Vertex);
+    const ProgramState *programState = programStates[ShaderType::Vertex];
     if (programState)
     {
         Shader *vertexShader = programState->getAttachedShader(ShaderType::Vertex);
@@ -509,14 +492,11 @@ void ProgramExecutable::updateCanDrawWith()
         (hasLinkedShaderStage(ShaderType::Vertex) && hasLinkedShaderStage(ShaderType::Fragment));
 }
 
-void ProgramExecutable::saveLinkedStateInfo()
+void ProgramExecutable::saveLinkedStateInfo(const ProgramState &state)
 {
-    // Only a Program's linked data needs to be saved, not a ProgramPipeline's
-    ASSERT(mProgramState);
-
     for (ShaderType shaderType : getLinkedShaderStages())
     {
-        Shader *shader = mProgramState->getAttachedShader(shaderType);
+        Shader *shader = state.getAttachedShader(shaderType);
         ASSERT(shader);
         mLinkedOutputVaryings[shaderType] = shader->getOutputVaryings();
         mLinkedInputVaryings[shaderType]  = shader->getInputVaryings();

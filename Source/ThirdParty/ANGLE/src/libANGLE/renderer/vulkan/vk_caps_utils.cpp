@@ -84,10 +84,12 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.framebufferBlit        = true;
     mNativeExtensions.framebufferMultisample = true;
     mNativeExtensions.copyTexture            = true;
+    mNativeExtensions.copyTexture3d          = true;
     mNativeExtensions.copyCompressedTexture  = true;
     mNativeExtensions.debugMarker            = true;
     mNativeExtensions.robustness =
-        !IsSwiftshader(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID);
+        !IsSwiftshader(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID) &&
+        !IsARM(mPhysicalDeviceProperties.vendorID);
     mNativeExtensions.textureBorderClampOES  = false;  // not implemented yet
     mNativeExtensions.translatedShaderSource = true;
     mNativeExtensions.discardFramebuffer     = true;
@@ -162,6 +164,9 @@ void RendererVk::ensureCapsInitialized() const
     // Vulkan natively supports standard derivatives
     mNativeExtensions.standardDerivativesOES = true;
 
+    // Vulkan natively supports texture LOD
+    mNativeExtensions.shaderTextureLOD = true;
+
     // Vulkan natively supports noperspective interpolation
     mNativeExtensions.noperspectiveInterpolationNV = true;
 
@@ -217,11 +222,8 @@ void RendererVk::ensureCapsInitialized() const
         limitsVk.sampledImageColorSampleCounts & vk_gl::kSupportedSampleCounts;
     mNativeCaps.maxDepthTextureSamples =
         limitsVk.sampledImageDepthSampleCounts & vk_gl::kSupportedSampleCounts;
-    // TODO (ianelliott): Should mask this with vk_gl::kSupportedSampleCounts, but it causes
-    // end2end test failures with SwiftShader because SwiftShader returns a sample count of 1 in
-    // sampledImageIntegerSampleCounts.
-    // See: http://anglebug.com/4197
-    mNativeCaps.maxIntegerSamples = limitsVk.sampledImageIntegerSampleCounts;
+    mNativeCaps.maxIntegerSamples =
+        limitsVk.sampledImageIntegerSampleCounts & vk_gl::kSupportedSampleCounts;
 
     mNativeCaps.maxVertexAttributes     = LimitToInt(limitsVk.maxVertexInputAttributes);
     mNativeCaps.maxVertexAttribBindings = LimitToInt(limitsVk.maxVertexInputBindings);
@@ -448,9 +450,13 @@ void RendererVk::ensureCapsInitialized() const
     // There is no additional limit to the combined number of components.  We can have up to a
     // maximum number of uniform buffers, each having the maximum number of components.  Note that
     // this limit includes both components in and out of uniform buffers.
-    const uint32_t maxCombinedUniformComponents =
-        (maxPerStageUniformBuffers + kReservedPerStageDefaultUniformBindingCount) *
-        maxUniformComponents;
+    //
+    // This value is limited to INT_MAX to avoid overflow when queried from glGetIntegerv().
+    const uint64_t maxCombinedUniformComponents =
+        std::min<uint64_t>(static_cast<uint64_t>(maxPerStageUniformBuffers +
+                                                 kReservedPerStageDefaultUniformBindingCount) *
+                               maxUniformComponents,
+                           std::numeric_limits<GLint>::max());
     for (gl::ShaderType shaderType : gl::AllShaderTypes())
     {
         mNativeCaps.maxCombinedShaderUniformComponents[shaderType] = maxCombinedUniformComponents;

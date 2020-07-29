@@ -1,3 +1,28 @@
+2020-07-29  Kenneth Russell  <kbr@chromium.org>
+
+        Roll ANGLE to 2020-07-28
+        https://bugs.webkit.org/show_bug.cgi?id=214897
+
+        Reviewed by Alex Christensen.
+
+        Roll to current ANGLE revision. Large ChangeLog below has been
+        truncated except for a few significant files.
+
+        Add dependency on zlib wrapper in third_party/zlib/google for both
+        Xcode and CMake builds. Small change to this wrapper for the
+        WinCairo build's system zlib, which doesn't define z_const.
+
+        * .gitignore:
+        * ANGLE.plist:
+        * ANGLE.xcodeproj/project.pbxproj:
+        * CMakeLists.txt:
+        * Configurations/ANGLE-dynamic.xcconfig:
+        * Configurations/ANGLE-static.xcconfig:
+        * GLESv2.cmake:
+        * PlatformWin.cmake:
+        * third_party/zlib/google/compression_utils_portable.cc: Added.
+        * third_party/zlib/google/compression_utils_portable.h: Added.
+
 2020-07-28  Kenneth Russell  <kbr@chromium.org>
 
         Pause during ANGLE roll script after rebasing and before deleting temporary Git repo

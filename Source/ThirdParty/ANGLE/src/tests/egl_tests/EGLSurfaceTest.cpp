@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#include "common/Color.h"
 #include "common/platform.h"
 #include "test_utils/ANGLETest.h"
 #include "util/EGLWindow.h"
@@ -132,24 +133,34 @@ class EGLSurfaceTest : public ANGLETest
     {
         mConfig = config;
 
+        EGLint surfaceType = EGL_NONE;
+        eglGetConfigAttrib(mDisplay, mConfig, EGL_SURFACE_TYPE, &surfaceType);
+
         std::vector<EGLint> windowAttributes;
         windowAttributes.push_back(EGL_NONE);
 
-        // Create first window surface
-        mWindowSurface = eglCreateWindowSurface(mDisplay, mConfig, mOSWindow->getNativeWindow(),
-                                                windowAttributes.data());
-        ASSERT_EGL_SUCCESS();
+        if (surfaceType & EGL_WINDOW_BIT)
+        {
+            // Create first window surface
+            mWindowSurface = eglCreateWindowSurface(mDisplay, mConfig, mOSWindow->getNativeWindow(),
+                                                    windowAttributes.data());
+            ASSERT_EGL_SUCCESS();
+        }
 
-        // Give pbuffer non-zero dimensions.
-        std::vector<EGLint> pbufferAttributes;
-        pbufferAttributes.push_back(EGL_WIDTH);
-        pbufferAttributes.push_back(64);
-        pbufferAttributes.push_back(EGL_HEIGHT);
-        pbufferAttributes.push_back(64);
-        pbufferAttributes.push_back(EGL_NONE);
+        if (surfaceType & EGL_PBUFFER_BIT)
+        {
+            // Give pbuffer non-zero dimensions.
+            std::vector<EGLint> pbufferAttributes;
+            pbufferAttributes.push_back(EGL_WIDTH);
+            pbufferAttributes.push_back(64);
+            pbufferAttributes.push_back(EGL_HEIGHT);
+            pbufferAttributes.push_back(64);
+            pbufferAttributes.push_back(EGL_NONE);
 
-        mPbufferSurface = eglCreatePbufferSurface(mDisplay, mConfig, pbufferAttributes.data());
-        ASSERT_EGL_SUCCESS();
+            mPbufferSurface = eglCreatePbufferSurface(mDisplay, mConfig, pbufferAttributes.data());
+            ASSERT_EGL_SUCCESS();
+        }
+
         initializeContext();
     }
 
@@ -169,6 +180,8 @@ class EGLSurfaceTest : public ANGLETest
                                            EGL_DONT_CARE,
                                            EGL_SAMPLE_BUFFERS,
                                            0,
+                                           EGL_SURFACE_TYPE,
+                                           EGL_DONT_CARE,
                                            EGL_NONE};
 
         EGLint configCount;
@@ -377,6 +390,7 @@ TEST_P(EGLSurfaceTest, MessageLoopBugContext)
     initializeDisplay();
     initializeSurfaceWithDefaultConfig();
 
+    ANGLE_SKIP_TEST_IF(!mPbufferSurface);
     runMessageLoopTest(mPbufferSurface, mSecondContext);
 }
 
@@ -415,6 +429,7 @@ TEST_P(EGLSurfaceTest, ResizeWindow)
     initializeDisplay();
     initializeSurfaceWithDefaultConfig();
     initializeContext();
+    ANGLE_SKIP_TEST_IF(!mWindowSurface);
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
     eglSwapBuffers(mDisplay, mWindowSurface);
@@ -465,6 +480,7 @@ TEST_P(EGLSurfaceTest, ResizeWindowWithDraw)
     initializeDisplay();
     initializeSurfaceWithDefaultConfig();
     initializeContext();
+    ANGLE_SKIP_TEST_IF(!mWindowSurface);
 
     int size      = 64;
     EGLint height = 0;
@@ -540,289 +556,6 @@ TEST_P(EGLSurfaceTest, ResizeWindowWithDraw)
     EXPECT_PIXEL_COLOR_EQ(size, size, GLColor::transparentBlack);
 }
 
-// A slight variation of EGLSurfaceTest, where the initial window size is 256x256.  This allows
-// each pixel to have a unique and predictable value, which will help in testing pre-rotation.
-// The red channel will increment with the x axis, and the green channel will increment with the y
-// axis.  The four corners will have the following values:
-//
-// Where                 GLES Render &  ReadPixels coords       Color    (in Hex)
-// Lower-left,  which is (-1.0,-1.0) & (  0,   0) in GLES will be black  (0x00, 0x00, 0x00, 0xFF)
-// Lower-right, which is ( 1.0,-1.0) & (256,   0) in GLES will be red    (0xFF, 0x00, 0x00, 0xFF)
-// Upper-left,  which is (-1.0, 1.0) & (  0, 256) in GLES will be green  (0x00, 0xFF, 0x00, 0xFF)
-// Upper-right, which is ( 1.0, 1.0) & (256, 256) in GLES will be yellow (0xFF, 0xFF, 0x00, 0xFF)
-class EGLPreRotationSurfaceTest : public EGLSurfaceTest
-{
-  protected:
-    EGLPreRotationSurfaceTest() : mSize(256) {}
-
-    void testSetUp() override
-    {
-        mOSWindow = OSWindow::New();
-        mOSWindow->initialize("EGLSurfaceTest", mSize, mSize);
-    }
-
-    void initializeSurfaceWithRGBA8888Config()
-    {
-        const EGLint configAttributes[] = {
-            EGL_RED_SIZE,   8, EGL_GREEN_SIZE,   8, EGL_BLUE_SIZE,      8, EGL_ALPHA_SIZE, 8,
-            EGL_DEPTH_SIZE, 0, EGL_STENCIL_SIZE, 0, EGL_SAMPLE_BUFFERS, 0, EGL_NONE};
-
-        EGLint configCount;
-        EGLConfig config;
-        ASSERT_TRUE(eglChooseConfig(mDisplay, configAttributes, &config, 1, &configCount) ||
-                    (configCount != 1) == EGL_TRUE);
-
-        initializeSurface(config);
-    }
-
-    void testDrawingAndReadPixels()
-    {
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
-        EXPECT_PIXEL_COLOR_EQ(0, mSize - 1, GLColor::green);
-        EXPECT_PIXEL_COLOR_EQ(mSize - 1, 0, GLColor::red);
-        EXPECT_PIXEL_COLOR_EQ(mSize - 1, mSize - 1, GLColor::yellow);
-        ASSERT_GL_NO_ERROR();
-
-        eglSwapBuffers(mDisplay, mWindowSurface);
-        ASSERT_EGL_SUCCESS();
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
-        EXPECT_PIXEL_COLOR_EQ(0, mSize - 1, GLColor::green);
-        EXPECT_PIXEL_COLOR_EQ(mSize - 1, 0, GLColor::red);
-        EXPECT_PIXEL_COLOR_EQ(mSize - 1, mSize - 1, GLColor::yellow);
-        ASSERT_GL_NO_ERROR();
-
-        {
-            // Now, test a 4x4 area in the center of the window, which should tell us if a non-1x1
-            // ReadPixels is oriented correctly for the device's orientation:
-            GLint xOffset  = 126;
-            GLint yOffset  = 126;
-            GLsizei width  = 4;
-            GLsizei height = 4;
-            std::vector<GLColor> pixels(width * height);
-            glReadPixels(xOffset, yOffset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-            EXPECT_GL_NO_ERROR();
-            // Expect that all red values equate to x and green values equate to y
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    int index = (y * width) + x;
-                    GLColor expectedPixel(xOffset + x, yOffset + y, 0, 255);
-                    GLColor actualPixel = pixels[index];
-                    EXPECT_EQ(expectedPixel, actualPixel);
-                }
-            }
-        }
-
-        {
-            // Now, test a 8x4 area off-the-center of the window, just to make sure that works too:
-            GLint xOffset  = 13;
-            GLint yOffset  = 26;
-            GLsizei width  = 8;
-            GLsizei height = 4;
-            std::vector<GLColor> pixels2(width * height);
-            glReadPixels(xOffset, yOffset, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &pixels2[0]);
-            EXPECT_GL_NO_ERROR();
-            // Expect that all red values equate to x and green values equate to y
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    int index = (y * width) + x;
-                    GLColor expectedPixel(xOffset + x, yOffset + y, 0, 255);
-                    GLColor actualPixel = pixels2[index];
-                    EXPECT_EQ(expectedPixel, actualPixel);
-                }
-            }
-        }
-
-        eglSwapBuffers(mDisplay, mWindowSurface);
-        ASSERT_EGL_SUCCESS();
-    }
-
-    int mSize;
-};
-
-// Provide a predictable pattern for testing pre-rotation
-TEST_P(EGLPreRotationSurfaceTest, OrientedWindowWithDraw)
-{
-    // http://anglebug.com/4453
-    ANGLE_SKIP_TEST_IF(isVulkanRenderer() && IsLinux() && IsIntel());
-
-    // Flaky on Linux SwANGLE http://anglebug.com/4453
-    ANGLE_SKIP_TEST_IF(IsLinux() && isSwiftshader());
-
-    // To aid in debugging, we want this window visible
-    setWindowVisible(mOSWindow, true);
-
-    initializeDisplay();
-    initializeSurfaceWithRGBA8888Config();
-    initializeContext();
-
-    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
-    ASSERT_EGL_SUCCESS();
-
-    // Init program
-    constexpr char kVS[] =
-        "attribute vec2 position;\n"
-        "attribute vec2 redGreen;\n"
-        "varying vec2 v_data;\n"
-        "void main() {\n"
-        "  gl_Position = vec4(position, 0, 1);\n"
-        "  v_data = redGreen;\n"
-        "}";
-
-    constexpr char kFS[] =
-        "varying highp vec2 v_data;\n"
-        "void main() {\n"
-        "  gl_FragColor = vec4(v_data, 0, 1);\n"
-        "}";
-
-    GLuint program = CompileProgram(kVS, kFS);
-    ASSERT_NE(0u, program);
-    glUseProgram(program);
-
-    GLint positionLocation = glGetAttribLocation(program, "position");
-    ASSERT_NE(-1, positionLocation);
-
-    GLint redGreenLocation = glGetAttribLocation(program, "redGreen");
-    ASSERT_NE(-1, redGreenLocation);
-
-    GLuint indexBuffer;
-    glGenBuffers(1, &indexBuffer);
-
-    GLuint vertexArray;
-    glGenVertexArrays(1, &vertexArray);
-
-    std::vector<GLuint> vertexBuffers(2);
-    glGenBuffers(2, &vertexBuffers[0]);
-
-    glBindVertexArray(vertexArray);
-
-    std::vector<GLushort> indices = {0, 1, 2, 2, 3, 0};
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * indices.size(), &indices[0],
-                 GL_STATIC_DRAW);
-
-    std::vector<GLfloat> positionData = {// quad vertices
-                                         -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * positionData.size(), &positionData[0],
-                 GL_STATIC_DRAW);
-    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 2, nullptr);
-    glEnableVertexAttribArray(positionLocation);
-
-    std::vector<GLfloat> redGreenData = {// green(0,1), black(0,0), red(1,0), yellow(1,1)
-                                         0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f};
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * redGreenData.size(), &redGreenData[0],
-                 GL_STATIC_DRAW);
-    glVertexAttribPointer(redGreenLocation, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 2, nullptr);
-    glEnableVertexAttribArray(redGreenLocation);
-
-    ASSERT_GL_NO_ERROR();
-
-    testDrawingAndReadPixels();
-}
-
-// A slight variation of EGLPreRotationSurfaceTest, where the initial window size is 400x300, yet
-// the drawing is still 256x256.  In addition, gl_FragCoord is used in a "clever" way, as the color
-// of the 256x256 drawing area, which reproduces an interesting pre-rotation case from the
-// following dEQP tests:
-//
-// - dEQP.GLES31/functional_texture_multisample_samples_*_sample_position
-//
-// This will test the rotation of gl_FragCoord, as well as the viewport, scissor, and rendering
-// area calculations, especially when the Android device is rotated.
-class EGLPreRotationLargeSurfaceTest : public EGLPreRotationSurfaceTest
-{
-  protected:
-    EGLPreRotationLargeSurfaceTest() : mSize(256) {}
-
-    void testSetUp() override
-    {
-        mOSWindow = OSWindow::New();
-        mOSWindow->initialize("EGLSurfaceTest", 400, 300);
-    }
-
-    int mSize;
-};
-
-// Provide a predictable pattern for testing pre-rotation
-TEST_P(EGLPreRotationLargeSurfaceTest, OrientedWindowWithDraw)
-{
-    // http://anglebug.com/4453
-    ANGLE_SKIP_TEST_IF(isVulkanRenderer() && IsLinux() && IsIntel());
-
-    // Flaky on Linux SwANGLE http://anglebug.com/4453
-    ANGLE_SKIP_TEST_IF(IsLinux() && isSwiftshader());
-
-    // To aid in debugging, we want this window visible
-    setWindowVisible(mOSWindow, true);
-
-    initializeDisplay();
-    initializeSurfaceWithRGBA8888Config();
-    initializeContext();
-
-    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
-    ASSERT_EGL_SUCCESS();
-
-    // Init program
-    constexpr char kVS[] =
-        "attribute vec2 position;\n"
-        "void main() {\n"
-        "  gl_Position = vec4(position, 0, 1);\n"
-        "}";
-
-    constexpr char kFS[] =
-        "void main() {\n"
-        "  gl_FragColor = vec4(gl_FragCoord.x / 256.0, gl_FragCoord.y / 256.0, 0.0, 1.0);\n"
-        "}";
-
-    GLuint program = CompileProgram(kVS, kFS);
-    ASSERT_NE(0u, program);
-    glUseProgram(program);
-
-    GLint positionLocation = glGetAttribLocation(program, "position");
-    ASSERT_NE(-1, positionLocation);
-
-    GLuint indexBuffer;
-    glGenBuffers(1, &indexBuffer);
-
-    GLuint vertexArray;
-    glGenVertexArrays(1, &vertexArray);
-
-    GLuint vertexBuffer;
-    glGenBuffers(1, &vertexBuffer);
-
-    glBindVertexArray(vertexArray);
-
-    std::vector<GLushort> indices = {0, 1, 2, 2, 3, 0};
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * indices.size(), &indices[0],
-                 GL_STATIC_DRAW);
-
-    std::vector<GLfloat> positionData = {// quad vertices
-                                         -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * positionData.size(), &positionData[0],
-                 GL_STATIC_DRAW);
-    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 2, nullptr);
-    glEnableVertexAttribArray(positionLocation);
-
-    ASSERT_GL_NO_ERROR();
-
-    glViewport(0, 0, mSize, mSize);
-
-    testDrawingAndReadPixels();
-}
-
 // Test that the window can be reset repeatedly before surface creation.
 TEST_P(EGLSurfaceTest, ResetNativeWindow)
 {
@@ -837,6 +570,7 @@ TEST_P(EGLSurfaceTest, ResetNativeWindow)
 
     initializeSurfaceWithDefaultConfig();
     initializeContext();
+    ANGLE_SKIP_TEST_IF(!mWindowSurface);
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
 
@@ -1135,7 +869,17 @@ TEST_P(EGLSurfaceTestD3D11, CreateDirectCompositionSurface)
     EGLConfig config;
     ASSERT_EGL_TRUE(EGLWindow::FindEGLConfig(mDisplay, configAttributes, &config));
 
-    const EGLint surfaceAttributes[] = {EGL_WIDTH, 64, EGL_HEIGHT, 64, EGL_NONE};
+    const EGLint surfaceAttributes[] = {EGL_WIDTH,
+                                        100,
+                                        EGL_HEIGHT,
+                                        100,
+                                        EGL_FLEXIBLE_SURFACE_COMPATIBILITY_SUPPORTED_ANGLE,
+                                        EGL_TRUE,
+                                        EGL_TEXTURE_OFFSET_X_ANGLE,
+                                        updateOffset.x,
+                                        EGL_TEXTURE_OFFSET_Y_ANGLE,
+                                        updateOffset.y,
+                                        EGL_NONE};
 
     EGLClientBuffer buffer = reinterpret_cast<EGLClientBuffer>(texture.Get());
     mPbufferSurface = eglCreatePbufferFromClientBuffer(mDisplay, EGL_D3D_TEXTURE_ANGLE, buffer,
@@ -1153,6 +897,136 @@ TEST_P(EGLSurfaceTestD3D11, CreateDirectCompositionSurface)
     drawWithProgram(program);
     EXPECT_GL_NO_ERROR();
     glDeleteProgram(program);
+}
+
+TEST_P(EGLSurfaceTestD3D11, CreateSurfaceWithTextureOffset)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_ANGLE_platform_angle_d3d"));
+    initializeDisplay();
+
+    const EGLint configAttributes[] = {
+        EGL_RED_SIZE,   8, EGL_GREEN_SIZE,   8, EGL_BLUE_SIZE,      8, EGL_ALPHA_SIZE, 8,
+        EGL_DEPTH_SIZE, 0, EGL_STENCIL_SIZE, 0, EGL_SAMPLE_BUFFERS, 0, EGL_NONE};
+
+    EGLConfig config;
+    ASSERT_EGL_TRUE(EGLWindow::FindEGLConfig(mDisplay, configAttributes, &config));
+
+    mConfig = config;
+    initializeContext();
+
+    EGLAttrib device       = 0;
+    EGLAttrib newEglDevice = 0;
+    ASSERT_EGL_TRUE(eglQueryDisplayAttribEXT(mDisplay, EGL_DEVICE_EXT, &newEglDevice));
+    ASSERT_EGL_TRUE(eglQueryDeviceAttribEXT(reinterpret_cast<EGLDeviceEXT>(newEglDevice),
+                                            EGL_D3D11_DEVICE_ANGLE, &device));
+    angle::ComPtr<ID3D11Device> d3d11Device(reinterpret_cast<ID3D11Device *>(device));
+    ASSERT_TRUE(!!d3d11Device);
+
+    constexpr UINT kTextureWidth  = 100;
+    constexpr UINT kTextureHeight = 100;
+    constexpr Color<uint8_t> kOpaqueBlack(0, 0, 0, 255);
+    std::vector<Color<uint8_t>> textureData(kTextureWidth * kTextureHeight, kOpaqueBlack);
+
+    D3D11_SUBRESOURCE_DATA initialData = {};
+    initialData.pSysMem                = textureData.data();
+    initialData.SysMemPitch            = kTextureWidth * sizeof(kOpaqueBlack);
+
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Format               = DXGI_FORMAT_B8G8R8A8_UNORM;
+    desc.Width                = kTextureWidth;
+    desc.Height               = kTextureHeight;
+    desc.ArraySize            = 1;
+    desc.MipLevels            = 1;
+    desc.SampleDesc.Count     = 1;
+    desc.Usage                = D3D11_USAGE_DEFAULT;
+    desc.BindFlags            = D3D11_BIND_RENDER_TARGET;
+    angle::ComPtr<ID3D11Texture2D> texture;
+    HRESULT hr = d3d11Device->CreateTexture2D(&desc, &initialData, &texture);
+    ASSERT_TRUE(SUCCEEDED(hr));
+
+    angle::ComPtr<ID3D11DeviceContext> d3d11Context;
+    d3d11Device->GetImmediateContext(&d3d11Context);
+
+    // Specify a texture offset of (50, 50) when rendering to the pbuffer surface.
+    const EGLint surfaceAttributes[] = {EGL_WIDTH,
+                                        kTextureWidth,
+                                        EGL_HEIGHT,
+                                        kTextureHeight,
+                                        EGL_FLEXIBLE_SURFACE_COMPATIBILITY_SUPPORTED_ANGLE,
+                                        EGL_TRUE,
+                                        EGL_TEXTURE_OFFSET_X_ANGLE,
+                                        50,
+                                        EGL_TEXTURE_OFFSET_Y_ANGLE,
+                                        50,
+                                        EGL_NONE};
+    EGLClientBuffer buffer           = reinterpret_cast<EGLClientBuffer>(texture.Get());
+    mPbufferSurface = eglCreatePbufferFromClientBuffer(mDisplay, EGL_D3D_TEXTURE_ANGLE, buffer,
+                                                       config, surfaceAttributes);
+    ASSERT_EGL_SUCCESS();
+
+    eglMakeCurrent(mDisplay, mPbufferSurface, mPbufferSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+
+    // glClear should only clear subrect at offset (50, 50) without explicit scissor.
+    glClearColor(0, 0, 1, 1);  // Blue
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_EQ(25, 25, 0, 0, 0, 255);
+    EXPECT_PIXEL_EQ(75, 75, 0, 0, 255, 255);
+    EXPECT_GL_NO_ERROR();
+
+    // Drawing with a shader should also update the same subrect only without explicit viewport.
+    GLuint program = createProgram();  // Red
+    ASSERT_NE(0u, program);
+    GLint positionLocation = glGetAttribLocation(program, angle::essl1_shaders::PositionAttrib());
+    glUseProgram(program);
+    const GLfloat vertices[] = {
+        -1.0f, 1.0f, 0.5f, -1.0f, -1.0f, 0.5f, 1.0f, -1.0f, 0.5f,
+        -1.0f, 1.0f, 0.5f, 1.0f,  -1.0f, 0.5f, 1.0f, 1.0f,  0.5f,
+    };
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+    glEnableVertexAttribArray(positionLocation);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDisableVertexAttribArray(positionLocation);
+    glVertexAttribPointer(positionLocation, 4, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    EXPECT_PIXEL_EQ(25, 25, 0, 0, 0, 255);
+    EXPECT_PIXEL_EQ(75, 75, 255, 0, 0, 255);
+    EXPECT_GL_NO_ERROR();
+
+    glDeleteProgram(program);
+    EXPECT_GL_NO_ERROR();
+
+    // Blit framebuffer should also blit to the same subrect despite the dstX/Y arguments.
+    GLuint renderBuffer = 0;
+    glGenRenderbuffers(1u, &renderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, renderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 50, 50);
+    EXPECT_GL_NO_ERROR();
+
+    GLuint framebuffer = 0;
+    glGenFramebuffers(1u, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderBuffer);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(0, 1, 0, 1);  // Green
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_EQ(25, 25, 0, 255, 0, 255);
+    EXPECT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0u);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+    glBlitFramebuffer(0, 0, 50, 50, 0, 0, 50, 50, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, 0u);
+    EXPECT_PIXEL_EQ(25, 25, 0, 0, 0, 255);
+    EXPECT_PIXEL_EQ(75, 75, 0, 255, 0, 255);
+    EXPECT_GL_NO_ERROR();
+
+    glDeleteFramebuffers(1u, &framebuffer);
+    glDeleteRenderbuffers(1u, &renderBuffer);
+    EXPECT_GL_NO_ERROR();
 }
 
 TEST_P(EGLSurfaceTestD3D11, CreateSurfaceWithMSAA)
@@ -1238,12 +1112,6 @@ ANGLE_INSTANTIATE_TEST(EGLSurfaceTest,
                        WithNoFixture(ES3_VULKAN()),
                        WithNoFixture(ES2_VULKAN_SWIFTSHADER()),
                        WithNoFixture(ES3_VULKAN_SWIFTSHADER()));
-ANGLE_INSTANTIATE_TEST(EGLPreRotationSurfaceTest,
-                       WithNoFixture(ES2_VULKAN()),
-                       WithNoFixture(ES3_VULKAN()));
-ANGLE_INSTANTIATE_TEST(EGLPreRotationLargeSurfaceTest,
-                       WithNoFixture(ES2_VULKAN()),
-                       WithNoFixture(ES3_VULKAN()));
 ANGLE_INSTANTIATE_TEST(EGLFloatSurfaceTest,
                        WithNoFixture(ES2_OPENGL()),
                        WithNoFixture(ES3_OPENGL()),

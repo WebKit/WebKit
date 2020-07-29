@@ -76,6 +76,7 @@ enum class FormatID
     ASTC_8x6_UNORM_BLOCK,
     ASTC_8x8_SRGB_BLOCK,
     ASTC_8x8_UNORM_BLOCK,
+    B10G10R10A2_UNORM,
     B4G4R4A4_UNORM,
     B5G5R5A1_UNORM,
     B5G6R5_UNORM,
@@ -242,7 +243,7 @@ enum class FormatID
     X2R10G10B10_USCALED_VERTEX
 };
 
-constexpr uint32_t kNumANGLEFormats = 223;
+constexpr uint32_t kNumANGLEFormats = 224;
 
 }  // namespace angle
 

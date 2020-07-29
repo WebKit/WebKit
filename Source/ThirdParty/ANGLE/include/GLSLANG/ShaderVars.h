@@ -120,6 +120,10 @@ struct ShaderVariable
                               const ShaderVariable **leafVar,
                               std::string *originalFullName) const;
 
+    // Find the child field which matches 'fullName' == var.name + "." + field.name.
+    // Return nullptr if not found.
+    const sh::ShaderVariable *findField(const std::string &fullName, uint32_t *fieldIndexOut) const;
+
     bool isBuiltIn() const;
     bool isEmulatedBuiltIn() const;
 

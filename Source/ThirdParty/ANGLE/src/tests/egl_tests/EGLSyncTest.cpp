@@ -294,7 +294,7 @@ TEST_P(EGLSyncTest, AndroidNativeFence_ClientWait)
     // Create work to do
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glFinish();
+    glFlush();
 
     // Wait for draw to complete
     EXPECT_EQ(EGL_CONDITION_SATISFIED,
@@ -312,7 +312,7 @@ TEST_P(EGLSyncTest, AndroidNativeFence_ClientWait)
 TEST_P(EGLSyncTest, AndroidNativeFence_WaitSync)
 {
     ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension());
-    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension() || !hasGLSyncExtension());
+    ANGLE_SKIP_TEST_IF(!hasWaitSyncExtension() || !hasGLSyncExtension());
     ANGLE_SKIP_TEST_IF(!hasAndroidNativeFenceSyncExtension());
 
     EGLint value       = 0;
@@ -332,7 +332,7 @@ TEST_P(EGLSyncTest, AndroidNativeFence_WaitSync)
     // Create work to do
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glFinish();
+    glFlush();
 
     /*- Second Context ------------------------*/
     if (fd > EGL_NO_NATIVE_FENCE_FD_ANDROID)
@@ -354,7 +354,7 @@ TEST_P(EGLSyncTest, AndroidNativeFence_WaitSync)
             // Create work to do
             glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
-            glFinish();
+            glFlush();
         }
 
         // Wait for second draw to complete
@@ -389,7 +389,7 @@ TEST_P(EGLSyncTest, AndroidNativeFence_WaitSync)
 TEST_P(EGLSyncTest, AndroidNativeFence_withFences)
 {
     ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension());
-    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension() || !hasGLSyncExtension());
+    ANGLE_SKIP_TEST_IF(!hasWaitSyncExtension() || !hasGLSyncExtension());
     ANGLE_SKIP_TEST_IF(!hasAndroidNativeFenceSyncExtension());
 
     EGLint value       = 0;

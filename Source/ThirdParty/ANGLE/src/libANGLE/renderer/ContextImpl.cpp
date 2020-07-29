@@ -50,4 +50,14 @@ egl::ContextPriority ContextImpl::getContextPriority() const
     return egl::ContextPriority::Medium;
 }
 
+egl::Error ContextImpl::releaseHighPowerGPU(gl::Context *)
+{
+    return egl::NoError();
+}
+
+egl::Error ContextImpl::reacquireHighPowerGPU(gl::Context *)
+{
+    return egl::NoError();
+}
+
 }  // namespace rx

@@ -19,6 +19,41 @@ struct android_app *sApp = nullptr;
 pthread_mutex_t sInitWindowMutex;
 pthread_cond_t sInitWindowCond;
 bool sInitWindowDone = false;
+JNIEnv *gJni         = nullptr;
+
+// SCREEN_ORIENTATION_LANDSCAPE and SCREEN_ORIENTATION_PORTRAIT are
+// available from Android API level 1
+// https://developer.android.com/reference/android/app/Activity#setRequestedOrientation(int)
+const int kScreenOrientationLandscape = 0;
+const int kScreenOrientationPortrait  = 1;
+
+JNIEnv *GetJniEnv()
+{
+    if (gJni)
+        return gJni;
+
+    sApp->activity->vm->AttachCurrentThread(&gJni, NULL);
+    return gJni;
+}
+
+int SetScreenOrientation(struct android_app *app, int orientation)
+{
+    // Use reverse JNI to call the Java entry point that rotates the
+    // display to respect width and height
+    JNIEnv *jni = GetJniEnv();
+    if (!jni)
+    {
+        WARN() << "Failed to get JNI env for screen rotation";
+        return JNI_ERR;
+    }
+
+    jclass clazz       = jni->GetObjectClass(app->activity->clazz);
+    jmethodID methodID = jni->GetMethodID(clazz, "setRequestedOrientation", "(I)V");
+    jni->CallVoidMethod(app->activity->clazz, methodID, orientation);
+
+    return 0;
+}
+
 }  // namespace
 
 AndroidWindow::AndroidWindow() {}
@@ -30,6 +65,8 @@ bool AndroidWindow::initialize(const std::string &name, int width, int height)
     return resize(width, height);
 }
 void AndroidWindow::destroy() {}
+
+void AndroidWindow::disableErrorMessageDialog() {}
 
 void AndroidWindow::resetNativeWindow() {}
 
@@ -56,6 +93,14 @@ void AndroidWindow::setMousePosition(int x, int y)
     UNIMPLEMENTED();
 }
 
+bool AndroidWindow::setOrientation(int width, int height)
+{
+    // Set tests to run in correct orientation
+    int32_t err = SetScreenOrientation(
+        sApp, (width > height) ? kScreenOrientationLandscape : kScreenOrientationPortrait);
+
+    return err == 0;
+}
 bool AndroidWindow::setPosition(int x, int y)
 {
     UNIMPLEMENTED();
@@ -98,6 +143,14 @@ static void onAppCmd(struct android_app *app, int32_t cmd)
             pthread_cond_broadcast(&sInitWindowCond);
             pthread_mutex_unlock(&sInitWindowMutex);
             break;
+        case APP_CMD_DESTROY:
+            if (gJni)
+            {
+                sApp->activity->vm->DetachCurrentThread();
+            }
+            gJni = nullptr;
+            break;
+
             // TODO: process other commands and pass them to AndroidWindow for handling
             // TODO: figure out how to handle APP_CMD_PAUSE,
             // which should immediately halt all the rendering,

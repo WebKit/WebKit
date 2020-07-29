@@ -104,6 +104,16 @@ DepthStencilState::DepthStencilState(const DepthStencilState &other)
     memcpy(this, &other, sizeof(DepthStencilState));
 }
 
+bool DepthStencilState::isDepthMaskedOut() const
+{
+    return !depthMask;
+}
+
+bool DepthStencilState::isStencilMaskedOut() const
+{
+    return (stencilMask & stencilWritemask) == 0;
+}
+
 bool operator==(const DepthStencilState &a, const DepthStencilState &b)
 {
     return memcmp(&a, &b, sizeof(DepthStencilState)) == 0;
@@ -584,6 +594,12 @@ Rectangle Box::toRect() const
 {
     ASSERT(z == 0 && depth == 1);
     return Rectangle(x, y, width, height);
+}
+
+bool Box::coversSameExtent(const Extents &size) const
+{
+    return x == 0 && y == 0 && z == 0 && width == size.width && height == size.height &&
+           depth == size.depth;
 }
 
 bool operator==(const Offset &a, const Offset &b)

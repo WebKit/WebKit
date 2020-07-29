@@ -18,8 +18,8 @@ namespace egl
 {
 using ProcEntry = std::pair<const char *, __eglMustCastToProperFunctionPointerType>;
 
-extern ProcEntry g_procTable[];
-extern size_t g_numProcs;
+extern const ProcEntry g_procTable[];
+extern const size_t g_numProcs;
 }  // namespace egl
 
 #endif  // LIBGLESV2_PROC_TABLE_H_

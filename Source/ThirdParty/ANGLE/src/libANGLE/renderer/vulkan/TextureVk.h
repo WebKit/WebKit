@@ -85,7 +85,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                               const gl::ImageIndex &index,
                               GLenum internalFormat,
                               GLenum type,
-                              size_t sourceLevel,
+                              size_t sourceLevelGL,
                               bool unpackFlipY,
                               bool unpackPremultiplyAlpha,
                               bool unpackUnmultiplyAlpha,
@@ -93,7 +93,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     angle::Result copySubTexture(const gl::Context *context,
                                  const gl::ImageIndex &index,
                                  const gl::Offset &destOffset,
-                                 size_t sourceLevel,
+                                 size_t sourceLevelGL,
                                  const gl::Box &sourceBox,
                                  bool unpackFlipY,
                                  bool unpackPremultiplyAlpha,
@@ -140,7 +140,8 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                             FramebufferAttachmentRenderTarget **rtOut) override;
 
     angle::Result syncState(const gl::Context *context,
-                            const gl::Texture::DirtyBits &dirtyBits) override;
+                            const gl::Texture::DirtyBits &dirtyBits,
+                            gl::TextureCommand source) override;
 
     angle::Result setStorageMultisample(const gl::Context *context,
                                         gl::TextureType type,
@@ -151,22 +152,6 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     angle::Result initializeContents(const gl::Context *context,
                                      const gl::ImageIndex &imageIndex) override;
-
-    ANGLE_INLINE bool isFastUnpackPossible(const vk::Format &vkFormat, size_t offset)
-    {
-        // Conditions to determine if fast unpacking is possible
-        // 1. Image must be well defined to unpack directly to it
-        //    TODO(http://anglebug.com/3777) Create and stage a temp image instead
-        // 2. Can't perform a fast copy for emulated formats
-        // 3. vkCmdCopyBufferToImage requires byte offset to be a multiple of 4
-        if (mImage->valid() && (vkFormat.intendedFormatID == vkFormat.actualImageFormatID) &&
-            ((offset & (kBufferOffsetMultiple - 1)) == 0))
-        {
-            return true;
-        }
-
-        return false;
-    }
 
     const vk::ImageHelper &getImage() const
     {
@@ -191,10 +176,10 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // A special view for cube maps as a 2D array, used with shaders that do texelFetch() and for
     // seamful cube map emulation.
     const vk::ImageView &getFetchImageViewAndRecordUse(ContextVk *contextVk) const;
+    // A special view used for texture copies that shouldn't perform swizzle.
+    const vk::ImageView &getCopyImageViewAndRecordUse(ContextVk *contextVk) const;
     angle::Result getStorageImageView(ContextVk *contextVk,
-                                      bool allLayers,
-                                      size_t level,
-                                      size_t singleLayer,
+                                      const gl::ImageUnit &binding,
                                       const vk::ImageView **imageViewOut);
 
     const vk::Sampler &getSampler() const
@@ -206,7 +191,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // Normally, initialize the image with enabled mipmap level counts.
     angle::Result ensureImageInitialized(ContextVk *contextVk, ImageMipLevels mipLevels);
 
-    Serial getSerial() const { return mSerial; }
+    TextureSerial getSerial() const { return mSerial; }
 
     void overrideStagingBufferSizeForTesting(size_t initialSizeForTesting)
     {
@@ -247,9 +232,16 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                         uint32_t imageLayerOffset,
                         uint32_t imageBaseLevel,
                         bool selfOwned);
-    void updateImageHelper(ContextVk *contextVk, const vk::Format &internalFormat);
+    void updateImageHelper(ContextVk *contextVk, size_t imageCopyBufferAlignment);
 
-    angle::Result redefineImage(const gl::Context *context,
+    // Redefine a mip level of the texture.  If the new size and format don't match the allocated
+    // image, the image may be released.  When redefining a mip of a multi-level image, updates are
+    // forced to be staged, as another mip of the image may be bound to a framebuffer.  For example,
+    // assume texture has two mips, and framebuffer is bound to mip 0.  Redefining mip 1 to an
+    // incompatible size shouldn't affect the framebuffer, especially if the redefinition comes from
+    // something like glCopyTexSubImage2D() (which simultaneously is reading from said framebuffer,
+    // i.e. mip 0 of the texture).
+    angle::Result redefineLevel(const gl::Context *context,
                                 const gl::ImageIndex &index,
                                 const vk::Format &format,
                                 const gl::Extents &size);
@@ -273,7 +265,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                   const vk::Format &vkFormat);
 
     angle::Result copyImageDataToBufferAndGetData(ContextVk *contextVk,
-                                                  size_t sourceLevel,
+                                                  size_t sourceLevelGL,
                                                   uint32_t layerCount,
                                                   const gl::Box &sourceArea,
                                                   uint8_t **outDataPtr);
@@ -285,6 +277,13 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                         uint32_t imageHeight,
                                         const gl::Box &sourceArea,
                                         size_t offset);
+
+    // Called from syncState to prepare the image for mipmap generation.
+    void prepareForGenerateMipmap(ContextVk *contextVk);
+
+    // Generate mipmaps from level 0 into the rest of the mips.  This requires the image to have
+    // STORAGE usage.
+    angle::Result generateMipmapsWithCompute(ContextVk *contextVk);
 
     angle::Result generateMipmapsWithCPU(const gl::Context *context);
 
@@ -311,8 +310,8 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                      const gl::ImageIndex &index,
                                      const gl::Offset &destOffset,
                                      const gl::InternalFormat &destFormat,
-                                     size_t sourceLevel,
-                                     const gl::Rectangle &sourceArea,
+                                     size_t sourceLevelGL,
+                                     const gl::Box &sourceBox,
                                      bool unpackFlipY,
                                      bool unpackPremultiplyAlpha,
                                      bool unpackUnmultiplyAlpha,
@@ -322,23 +321,24 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                                const gl::ImageIndex &index,
                                                const gl::Offset &destOffset,
                                                const vk::Format &destFormat,
-                                               size_t sourceLevel,
+                                               size_t sourceLevelGL,
                                                size_t sourceLayer,
-                                               const gl::Rectangle &sourceArea,
+                                               const gl::Box &sourceBox,
                                                vk::ImageHelper *srcImage);
 
     angle::Result copySubImageImplWithDraw(ContextVk *contextVk,
                                            const gl::ImageIndex &index,
                                            const gl::Offset &destOffset,
                                            const vk::Format &destFormat,
-                                           size_t sourceLevel,
-                                           const gl::Rectangle &sourceArea,
+                                           size_t sourceLevelGL,
+                                           const gl::Box &sourceBox,
                                            bool isSrcFlipY,
                                            bool unpackFlipY,
                                            bool unpackPremultiplyAlpha,
                                            bool unpackUnmultiplyAlpha,
                                            vk::ImageHelper *srcImage,
-                                           const vk::ImageView *srcView);
+                                           const vk::ImageView *srcView,
+                                           SurfaceRotation srcFramebufferRotation);
 
     angle::Result initImage(ContextVk *contextVk,
                             const vk::Format &format,
@@ -353,11 +353,10 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // each subresource of the image and stage it for another subresource.  When all subresources
     // are taken care of, the image is recreated.
     angle::Result copyAndStageImageSubresource(ContextVk *contextVk,
-                                               const gl::ImageDesc &desc,
                                                bool ignoreLayerCount,
                                                uint32_t currentLayer,
-                                               uint32_t sourceLevel,
-                                               uint32_t stagingDstMipLevel);
+                                               uint32_t srcLevelVk,
+                                               uint32_t dstLevelGL);
     angle::Result initImageViews(ContextVk *contextVk,
                                  const vk::Format &format,
                                  const bool sized,
@@ -369,10 +368,8 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                          size_t layer,
                                          const vk::ImageView **imageViewOut);
 
-    angle::Result ensureImageInitializedImpl(ContextVk *contextVk,
-                                             const gl::Extents &baseLevelExtents,
-                                             uint32_t levelCount,
-                                             const vk::Format &format);
+    // Flush image's staged updates for all levels and layers.
+    angle::Result flushImageStagedUpdates(ContextVk *contextVk);
 
     const gl::InternalFormat &getImplementationSizedFormat(const gl::Context *context) const;
     const vk::Format &getBaseLevelFormat(RendererVk *renderer) const;
@@ -387,11 +384,21 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // Update base and max levels, and re-create image if needed.
     angle::Result updateBaseMaxLevels(ContextVk *contextVk, GLuint baseLevel, GLuint maxLevel);
 
+    bool isFastUnpackPossible(const vk::Format &vkFormat, size_t offset) const;
+
+    bool shouldUpdateBeStaged(uint32_t textureLevelIndexGL) const;
+
     // We monitor the staging buffer and set dirty bits if the staging buffer changes. Note that we
     // support changes in the staging buffer even outside the TextureVk class.
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
+    ANGLE_INLINE VkImageTiling getTilingMode()
+    {
+        return (mImage->valid()) ? mImage->getTilingMode() : VK_IMAGE_TILING_OPTIMAL;
+    }
+
     bool mOwnsImage;
+    bool mRequiresSRGBViews;
 
     gl::TextureType mImageNativeType;
 
@@ -413,7 +420,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // reallocated independently of |mImage| on state changes.
     vk::ImageViewHelper mImageViews;
 
-    // |mSampler| contains the relevant Vulkan sampler states reprensenting the OpenGL Texture
+    // |mSampler| contains the relevant Vulkan sampler states representing the OpenGL Texture
     // sampling states for the Texture.
     vk::BindingPointer<vk::Sampler> mSampler;
 
@@ -421,8 +428,8 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     // Level is first dimension, layer is second
     std::vector<RenderTargetVector> mRenderTargets;
 
-    // The serial is used for cache indexing.
-    Serial mSerial;
+    // The unique object id is used for cache indexing.
+    TextureSerial mSerial;
 
     // Overridden in some tests.
     size_t mStagingBufferInitialSize;
@@ -432,6 +439,18 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     // Additional image create flags
     VkImageCreateFlags mImageCreateFlags;
+
+    // If an image level is incompatibly redefined, the image lives through the call that did this
+    // (i.e. set and copy levels), because the image may be used by the framebuffer in the very same
+    // call.  As a result, updates to this redefined level are staged (in both the call that
+    // redefines it, and any future calls such as subimage updates).  This bitset flags redefined
+    // levels so that their updates will be force-staged until image is recreated.
+    //
+    // In common cases with mipmapped textures, the base/max level would need adjusting as the
+    // texture is no longer mip-complete.  However, if every level is redefined such that at the end
+    // the image becomes mip-complete again, no reinitialization of the image is done.  This bitset
+    // is additionally used to ensure the image is recreated in the next syncState, if not already.
+    gl::TexLevelMask mRedefinedLevels;
 
     angle::ObserverBinding mImageObserverBinding;
 };

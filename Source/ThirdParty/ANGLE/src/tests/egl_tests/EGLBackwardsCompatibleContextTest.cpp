@@ -57,13 +57,22 @@ class EGLBackwardsCompatibleContextTest : public ANGLETest
                 break;
             }
         }
+        if (!mConfig)
+        {
+            mConfig = configs[0];
+        }
         ASSERT_NE(nullptr, mConfig);
 
-        const EGLint pbufferAttribs[] = {
-            EGL_WIDTH, 500, EGL_HEIGHT, 500, EGL_NONE,
-        };
-        mPbuffer = eglCreatePbufferSurface(mDisplay, mConfig, pbufferAttribs);
-        EXPECT_TRUE(mPbuffer != EGL_NO_SURFACE);
+        EGLint surfaceType = EGL_NONE;
+        eglGetConfigAttrib(mDisplay, mConfig, EGL_SURFACE_TYPE, &surfaceType);
+        if (surfaceType & EGL_PBUFFER_BIT)
+        {
+            const EGLint pbufferAttribs[] = {
+                EGL_WIDTH, 500, EGL_HEIGHT, 500, EGL_NONE,
+            };
+            mPbuffer = eglCreatePbufferSurface(mDisplay, mConfig, pbufferAttribs);
+            EXPECT_TRUE(mPbuffer != EGL_NO_SURFACE);
+        }
     }
 
     void testTearDown() override
@@ -95,6 +104,7 @@ TEST_P(EGLBackwardsCompatibleContextTest, BackwardsCompatibleDisbled)
 {
     ANGLE_SKIP_TEST_IF(
         !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANGLE_create_context_backwards_compatible"));
+    ANGLE_SKIP_TEST_IF(!mPbuffer);
 
     std::pair<EGLint, EGLint> testVersions[] = {
         {1, 0}, {1, 1}, {2, 0}, {3, 0}, {3, 1}, {3, 2},
@@ -133,6 +143,7 @@ TEST_P(EGLBackwardsCompatibleContextTest, BackwardsCompatibleEnabledES3)
 {
     ANGLE_SKIP_TEST_IF(
         !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANGLE_create_context_backwards_compatible"));
+    ANGLE_SKIP_TEST_IF(!mPbuffer);
 
     EGLint es3ContextAttribs[] = {
         EGL_CONTEXT_MAJOR_VERSION, 3, EGL_CONTEXT_MINOR_VERSION, 0, EGL_NONE, EGL_NONE};
@@ -162,6 +173,7 @@ TEST_P(EGLBackwardsCompatibleContextTest, BackwardsCompatibleEnabledES1)
 {
     ANGLE_SKIP_TEST_IF(
         !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANGLE_create_context_backwards_compatible"));
+    ANGLE_SKIP_TEST_IF(!mPbuffer);
 
     EGLint es11ContextAttribs[] = {
         EGL_CONTEXT_MAJOR_VERSION, 1, EGL_CONTEXT_MINOR_VERSION, 1, EGL_NONE, EGL_NONE};

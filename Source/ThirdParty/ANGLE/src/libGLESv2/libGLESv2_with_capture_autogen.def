@@ -718,6 +718,8 @@ EXPORTS
 
     ; GL_EXT_texture_compression_s3tc_srgb
 
+    ; GL_EXT_texture_cube_map_array
+
     ; GL_EXT_texture_filter_anisotropic
 
     ; GL_EXT_texture_format_BGRA8888
@@ -853,6 +855,8 @@ EXPORTS
     glTexGenivOES
     glTexGenxOES
     glTexGenxvOES
+
+    ; GL_OES_texture_cube_map_array
 
     ; GL_OES_texture_half_float
 
@@ -1659,6 +1663,11 @@ EXPORTS
     ; EGL_ANGLE_feature_control
     EGL_QueryDisplayAttribANGLE
     EGL_QueryStringiANGLE
+
+    ; EGL_ANGLE_power_preference
+    EGL_HandleGPUSwitchANGLE
+    EGL_ReacquireHighPowerGPUANGLE
+    EGL_ReleaseHighPowerGPUANGLE
 
     ; EGL_ANGLE_program_cache_control
     EGL_ProgramCacheGetAttribANGLE

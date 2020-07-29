@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 229
+#define ANGLE_SH_VERSION 231
 
 enum ShShaderSpec
 {
@@ -399,6 +399,8 @@ struct ShBuiltInResources
     int ANGLE_base_vertex_base_instance;
     int WEBGL_video_texture;
     int APPLE_clip_distance;
+    int OES_texture_cube_map_array;
+    int EXT_texture_cube_map_array;
 
     // Set to 1 to enable replacing GL_EXT_draw_buffers #extension directives
     // with GL_NV_draw_buffers in ESSL output. This flag can be used to emulate
@@ -788,6 +790,12 @@ extern const char kAtomicCountersBlockName[];
 extern const char kLineRasterEmulationPosition[];
 
 }  // namespace vk
+
+namespace mtl
+{
+// Specialization constant to enable GL_SAMPLE_COVERAGE_VALUE emulation.
+extern const char kCoverageMaskEnabledConstName[];
+}  // namespace mtl
 }  // namespace sh
 
 #endif  // GLSLANG_SHADERLANG_H_

@@ -9,12 +9,13 @@
 #ifndef COMPILER_TRANSLATOR_EXTENSIONBEHAVIOR_H_
 #define COMPILER_TRANSLATOR_EXTENSIONBEHAVIOR_H_
 
+#include <cstdint>
 #include <map>
 
 namespace sh
 {
 
-enum class TExtension
+enum class TExtension : uint8_t
 {
     UNDEFINED,  // Special value used to indicate no extension.
 
@@ -44,9 +45,11 @@ enum class TExtension
     ANGLE_base_vertex_base_instance,
     WEBGL_video_texture,
     APPLE_clip_distance,
+    OES_texture_cube_map_array,
+    EXT_texture_cube_map_array,
 };
 
-enum TBehavior
+enum TBehavior : uint8_t
 {
     EBhRequire,
     EBhEnable,

@@ -433,6 +433,59 @@ MTLIndexType GetIndexType(gl::DrawElementsType type)
     }
 }
 
+MTLColorWriteMask GetEmulatedColorWriteMask(const mtl::Format &mtlFormat, bool *isEmulatedOut)
+{
+    const angle::Format &intendedFormat = mtlFormat.intendedAngleFormat();
+    const angle::Format &actualFormat   = mtlFormat.actualAngleFormat();
+    bool isFormatEmulated               = false;
+    MTLColorWriteMask colorWritableMask = MTLColorWriteMaskAll;
+    if (intendedFormat.alphaBits == 0 && actualFormat.alphaBits)
+    {
+        isFormatEmulated = true;
+        // Disable alpha write to this texture
+        colorWritableMask = colorWritableMask & (~MTLColorWriteMaskAlpha);
+    }
+    if (intendedFormat.luminanceBits == 0)
+    {
+        if (intendedFormat.redBits == 0 && actualFormat.redBits)
+        {
+            isFormatEmulated = true;
+            // Disable red write to this texture
+            colorWritableMask = colorWritableMask & (~MTLColorWriteMaskRed);
+        }
+        if (intendedFormat.greenBits == 0 && actualFormat.greenBits)
+        {
+            isFormatEmulated = true;
+            // Disable green write to this texture
+            colorWritableMask = colorWritableMask & (~MTLColorWriteMaskGreen);
+        }
+        if (intendedFormat.blueBits == 0 && actualFormat.blueBits)
+        {
+            isFormatEmulated = true;
+            // Disable blue write to this texture
+            colorWritableMask = colorWritableMask & (~MTLColorWriteMaskBlue);
+        }
+    }
+
+    *isEmulatedOut = isFormatEmulated;
+
+    return colorWritableMask;
+}
+
+MTLColorWriteMask GetEmulatedColorWriteMask(const mtl::Format &mtlFormat)
+{
+    // Ignore isFormatEmulated boolean value
+    bool isFormatEmulated;
+    return GetEmulatedColorWriteMask(mtlFormat, &isFormatEmulated);
+}
+
+bool IsFormatEmulated(const mtl::Format &mtlFormat)
+{
+    bool isFormatEmulated;
+    (void)GetEmulatedColorWriteMask(mtlFormat, &isFormatEmulated);
+    return isFormatEmulated;
+}
+
 MTLClearColor EmulatedAlphaClearColor(MTLClearColor color, MTLColorWriteMask colorMask)
 {
     MTLClearColor re = color;

@@ -13,7 +13,7 @@
 #include <string.h>
 
 #include "common/system_utils.h"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 #include "util/OSWindow.h"
 
 // ConfigParameters implementation.
@@ -658,6 +658,11 @@ bool EGLWindow::setSwapInterval(EGLint swapInterval)
 bool EGLWindow::hasError() const
 {
     return eglGetError() != EGL_SUCCESS;
+}
+
+angle::GenericProc EGLWindow::getProcAddress(const char *name)
+{
+    return eglGetProcAddress(name);
 }
 
 // static

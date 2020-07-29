@@ -123,6 +123,10 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state)
     // WEBGL_video_texture
     mResources.WEBGL_video_texture = extensions.webglVideoTexture;
 
+    // OES_texture_cube_map_array
+    mResources.OES_texture_cube_map_array = extensions.textureCubeMapArrayOES;
+    mResources.EXT_texture_cube_map_array = extensions.textureCubeMapArrayEXT;
+
     // GLSL ES 3.0 constants
     mResources.MaxVertexOutputVectors  = caps.maxVertexOutputComponents / 4;
     mResources.MaxFragmentInputVectors = caps.maxFragmentInputComponents / 4;

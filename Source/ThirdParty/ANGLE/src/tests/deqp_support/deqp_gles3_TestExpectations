@@ -2,32 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// This file contains a list of defective dEQP conformance tests. The expected
-// format is:
-//  {BUG#} {MODIFIERS} : {TEST_NAME} = {PASS,FAIL,FLAKY,TIMEOUT,SKIP}
-//
-// MODIFIERS can be a combination of the below list, combined with a logical AND:
-//  WIN XP VISTA WIN7 WIN8 WIN10
-//  MAC LEOPARD SNOWLEOPARD LION MOUNTAINLION MAVERICKS YOSEMITE ELCAPITAN SIERRA HIGHSIERRA MOJAVE
-//  LINUX CHROMEOS ANDROID
-//  NVIDIA AMD INTEL
-//  DEBUG RELEASE
-//  D3D9 D3D11 OPENGL GLES VULKAN
-//  NEXUS5X PIXEL2ORXL
-//  QUADROP400
-//
-//
-// TEST_NAME can be a specific test name, or have a '*' in the end, which
-// indicates a prefix matching.
-//
-// Examples:
-// fails on both windows and mac (crash)
-//  91530 WIN : context_lost_restored = SKIP
-//  91530 MAC : context_lost_restored = SKIP
-// fails on windows using NVIDIA GPUs
-//  91533 WIN NVIDIA : gl_min_uniforms = FAIL
-// fails on Nexus5X with GLES backend (hangs)
-//  91531 NEXUS5X GLES : conformance_more_* = SKIP
+// See README.md for format.
 
 // Don't run these tests for faster turnover
 1101 : dEQP-GLES3.functional.flush_finish.* = SKIP
@@ -551,8 +526,17 @@
 3970 VULKAN NVIDIA : dEQP-GLES3.functional.polygon_offset.float32_result_depth_clamp = FAIL
 3970 VULKAN NVIDIA : dEQP-GLES3.functional.polygon_offset.float32_factor_1_slope = FAIL
 
+// Transform Feedback
+4666 VULKAN NVIDIA : dEQP-GLES3.functional.transform_feedback.array_element.interleaved.* = SKIP
+4666 VULKAN NVIDIA : dEQP-GLES3.functional.transform_feedback.array_element.separate.* = SKIP
+4666 VULKAN NVIDIA : dEQP-GLES3.functional.transform_feedback.random.* = SKIP
+
 // Flat shading:
 3430 VULKAN : dEQP-GLES3.functional.rasterization.flatshading.* = FAIL
+
+// Vertex attribute aliasing generates invalid SPIRV
+4249 VULKAN : dEQP-GLES3.functional.attribute_location.bind_aliasing.cond* = SKIP
+4249 VULKAN : dEQP-GLES3.functional.attribute_location.bind_aliasing.max_cond* = SKIP
 
 // Misc unimplemented:
 
@@ -573,6 +557,57 @@
 4024 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.draw.random.49 = SKIP
 4024 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.draw.random.96 = FAIL
 
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.color_clear.masked_rgb = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.color_clear.masked_rgba = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.depth_stencil_clear.depth_stencil_masked = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.5 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.7 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.23 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.57 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.67 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.71 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.83 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.lifetime.attach.deleted_output.buffer_transform_feedback = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.4 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.7 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.11 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.13 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.14 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.16 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.19 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.20 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.24 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.30 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.34 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.37 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.38 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.42 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.44 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.46 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.47 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.48 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.55 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.58 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.60 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.61 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.64 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.65 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.66 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.67 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.69 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.71 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.74 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.76 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.79 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.80 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.82 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.83 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.86 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.87 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.94 = FAIL
+161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.97 = FAIL
+
+
 // Fixed in later driver versions.
 2727 VULKAN ANDROID : dEQP-GLES3.functional.shaders.builtin_variable.pointcoord = FAIL
 
@@ -582,11 +617,18 @@
 3816 VULKAN PIXEL2ORXL : dEQP-GLES3.functional.texture.specification.texstorage3d.format.rg32* = FAIL
 
 // Failing on the Pixel 2 due to Qualcomm Vulkan driver
-4344 VULKAN ANDROID : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.54 = FAIL
-4344 VULKAN ANDROID : dEQP-GLES3.functional.fragment_ops.random.35 = FAIL
 4344 VULKAN ANDROID : dEQP-GLES3.functional.fragment_ops.random.56 = FAIL
 4344 VULKAN ANDROID : dEQP-GLES3.functional.fragment_ops.random.62 = FAIL
 4344 VULKAN ANDROID : dEQP-GLES3.functional.fragment_ops.random.68 = FAIL
+// 161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.68 = FAIL
+// Pixel 4 XL update (6/30/20): The previous 3 tests pass on Pixel 4 XL.  The following only fail
+// when the device is rotated 90 or 270 degrees, due to the same Qualcomm driver bug.  As before,
+// the driver bug can be worked around by immediately ending a render pass that does a clear.
+4344 VULKAN ANDROID : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.54 = FAIL
+// 161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.54 = FAIL
+4344 VULKAN ANDROID : dEQP-GLES3.functional.fragment_ops.random.35 = FAIL
+// 161540999 PIXEL2ORXL VULKAN : dEQP-GLES3.functional.fragment_ops.random.35 = FAIL
+4344 VULKAN ANDROID : dEQP-GLES3.functional.fragment_ops.random.73 = FAIL
 
 
 // Fails only with SwiftShader:

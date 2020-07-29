@@ -64,8 +64,8 @@ class SyncHelper : public vk::Resource
 class SyncHelperNativeFence : public SyncHelper
 {
   public:
-    SyncHelperNativeFence() {}
-    ~SyncHelperNativeFence() override {}
+    SyncHelperNativeFence();
+    ~SyncHelperNativeFence() override;
 
     void releaseToRenderer(RendererVk *renderer) override;
 
@@ -81,6 +81,7 @@ class SyncHelperNativeFence : public SyncHelper
 
   private:
     vk::Fence mFenceWithFd;
+    int mNativeFenceFd;
 };
 
 }  // namespace vk

@@ -36,6 +36,10 @@ namespace rx
 {
 namespace
 {
+// Pick an arbitrary value to initialize non-zero memory for sanitization.  Note that 0x3F3F3F3F
+// as float is about 0.75.
+constexpr int kNonZeroInitValue = 0x3F;
+
 VkImageUsageFlags GetStagingBufferUsageFlags(vk::StagingUsage usage)
 {
     switch (usage)
@@ -60,9 +64,6 @@ angle::Result FindAndAllocateCompatibleMemory(vk::Context *context,
                                               const void *extraAllocationInfo,
                                               vk::DeviceMemory *deviceMemoryOut)
 {
-    // Pick an arbitrary value to initialize non-zero memory for sanitization.
-    constexpr int kNonZeroInitValue = 55;
-
     VkDevice device = context->getDevice();
 
     uint32_t memoryTypeIndex = 0;
@@ -409,17 +410,28 @@ angle::Result StagingBuffer::init(Context *context, VkDeviceSize size, StagingUs
     createInfo.queueFamilyIndexCount = 0;
     createInfo.pQueueFamilyIndices   = nullptr;
 
-    VkMemoryPropertyFlags memoryPropertyOutFlags;
     VkMemoryPropertyFlags preferredFlags = 0;
     VkMemoryPropertyFlags requiredFlags =
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 
-    mAllocation.createBufferAndMemory(
-        context->getRenderer()->getAllocator(), &createInfo, requiredFlags, preferredFlags,
-        context->getRenderer()->getFeatures().persistentlyMappedBuffers.enabled, &mBuffer,
-        &memoryPropertyOutFlags);
+    RendererVk *renderer           = context->getRenderer();
+    const vk::Allocator &allocator = renderer->getAllocator();
 
+    uint32_t memoryTypeIndex = 0;
+    ANGLE_VK_TRY(context,
+                 allocator.createBuffer(createInfo, requiredFlags, preferredFlags,
+                                        renderer->getFeatures().persistentlyMappedBuffers.enabled,
+                                        &memoryTypeIndex, &mBuffer, &mAllocation));
     mSize = static_cast<size_t>(size);
+
+    // Wipe memory to an invalid value when the 'allocateNonZeroMemory' feature is enabled. The
+    // invalid values ensures our testing doesn't assume zero-initialized memory.
+    if (renderer->getFeatures().allocateNonZeroMemory.enabled)
+    {
+        ANGLE_TRY(vk::InitMappableAllocation(context, allocator, &mAllocation, size,
+                                             kNonZeroInitValue, requiredFlags));
+    }
+
     return angle::Result::Continue;
 }
 
@@ -441,14 +453,15 @@ void StagingBuffer::collectGarbage(RendererVk *renderer, Serial serial)
     renderer->collectGarbage(std::move(sharedUse), std::move(garbageList));
 }
 
-angle::Result InitMappableAllocation(VmaAllocator allocator,
+angle::Result InitMappableAllocation(Context *context,
+                                     const vk::Allocator &allocator,
                                      Allocation *allocation,
                                      VkDeviceSize size,
                                      int value,
                                      VkMemoryPropertyFlags memoryPropertyFlags)
 {
     uint8_t *mapPointer;
-    allocation->map(allocator, &mapPointer);
+    ANGLE_VK_TRY(context, allocation->map(allocator, &mapPointer));
     memset(mapPointer, value, static_cast<size_t>(size));
 
     if ((memoryPropertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) == 0)
@@ -503,13 +516,13 @@ angle::Result AllocateBufferMemory(vk::Context *context,
 
 angle::Result AllocateImageMemory(vk::Context *context,
                                   VkMemoryPropertyFlags memoryPropertyFlags,
+                                  VkMemoryPropertyFlags *memoryPropertyFlagsOut,
                                   const void *extraAllocationInfo,
                                   Image *image,
                                   DeviceMemory *deviceMemoryOut,
                                   VkDeviceSize *sizeOut)
 {
-    VkMemoryPropertyFlags memoryPropertyFlagsOut = 0;
-    return AllocateBufferOrImageMemory(context, memoryPropertyFlags, &memoryPropertyFlagsOut,
+    return AllocateBufferOrImageMemory(context, memoryPropertyFlags, memoryPropertyFlagsOut,
                                        extraAllocationInfo, image, deviceMemoryOut, sizeOut);
 }
 
@@ -591,6 +604,7 @@ GarbageObject &GarbageObject::operator=(GarbageObject &&rhs)
 //  which fails to compile with reinterpret_cast, requiring static_cast.
 void GarbageObject::destroy(RendererVk *renderer)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "GarbageObject::destroy");
     VkDevice device = renderer->getDevice();
     switch (mHandleType)
     {
@@ -653,7 +667,7 @@ void GarbageObject::destroy(RendererVk *renderer)
             vkDestroyQueryPool(device, (VkQueryPool)mHandle, nullptr);
             break;
         case HandleType::Allocation:
-            vma::FreeMemory(renderer->getAllocator(), (VmaAllocation)mHandle);
+            vma::FreeMemory(renderer->getAllocator().getHandle(), (VmaAllocation)mHandle);
             break;
         default:
             UNREACHABLE();
@@ -761,6 +775,10 @@ PFN_vkImportFenceFdKHR vkImportFenceFdKHR = nullptr;
 PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR
     vkGetPhysicalDeviceExternalSemaphorePropertiesKHR = nullptr;
 
+// VK_KHR_sampler_ycbcr_conversion
+PFN_vkCreateSamplerYcbcrConversionKHR vkCreateSamplerYcbcrConversionKHR   = nullptr;
+PFN_vkDestroySamplerYcbcrConversionKHR vkDestroySamplerYcbcrConversionKHR = nullptr;
+
 #    if defined(ANGLE_PLATFORM_FUCHSIA)
 // VK_FUCHSIA_imagepipe_surface
 PFN_vkCreateImagePipeSurfaceFUCHSIA vkCreateImagePipeSurfaceFUCHSIA = nullptr;
@@ -821,6 +839,13 @@ void InitTransformFeedbackEXTFunctions(VkDevice device)
     GET_DEVICE_FUNC(vkCmdDrawIndirectByteCountEXT);
 }
 
+// VK_KHR_sampler_ycbcr_conversion
+void InitSamplerYcbcrKHRFunctions(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkCreateSamplerYcbcrConversionKHR);
+    GET_DEVICE_FUNC(vkDestroySamplerYcbcrConversionKHR);
+}
+
 #    if defined(ANGLE_PLATFORM_FUCHSIA)
 void InitImagePipeSurfaceFUCHSIAFunctions(VkInstance instance)
 {
@@ -876,6 +901,15 @@ void InitExternalSemaphoreCapabilitiesFunctions(VkInstance instance)
 #    undef GET_DEVICE_FUNC
 
 #endif  // !defined(ANGLE_SHARED_LIBVULKAN)
+
+GLenum CalculateGenerateMipmapFilter(ContextVk *contextVk, const vk::Format &format)
+{
+    const bool formatSupportsLinearFiltering = contextVk->getRenderer()->hasImageFormatFeatureBits(
+        format.vkImageFormat, VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT);
+    const bool hintFastest = contextVk->getState().getGenerateMipmapHint() == GL_FASTEST;
+
+    return formatSupportsLinearFiltering && !hintFastest ? GL_LINEAR : GL_NEAREST;
+}
 
 namespace gl_vk
 {
@@ -1005,6 +1039,8 @@ VkSampleCountFlagBits GetSamples(GLint sampleCount)
     switch (sampleCount)
     {
         case 0:
+            UNREACHABLE();
+            return VK_SAMPLE_COUNT_1_BIT;
         case 1:
             return VK_SAMPLE_COUNT_1_BIT;
         case 2:

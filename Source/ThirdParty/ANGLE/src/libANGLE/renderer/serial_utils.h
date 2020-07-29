@@ -100,6 +100,46 @@ class SerialFactoryBase final : angle::NonCopyable
 
 using SerialFactory       = SerialFactoryBase<uint64_t>;
 using AtomicSerialFactory = SerialFactoryBase<std::atomic<uint64_t>>;
+
+// Clang Format doesn't like the following X macro.
+// clang-format off
+#define OBJECT_SERIAL_TYPES_OP(X)    \
+    X(Buffer)                           \
+    X(Texture)                          \
+    X(Sampler)                          \
+    X(ImageView)
+// clang-format on
+
+#define DEFINE_UNIQUE_OBJECT_SERIAL_TYPE(Type)                       \
+    class Type##Serial                                               \
+    {                                                                \
+      public:                                                        \
+        constexpr Type##Serial() : mSerial(kInvalid) {}              \
+        Type##Serial(uint32_t serial) : mSerial(serial) {}           \
+                                                                     \
+        constexpr bool operator==(const Type##Serial &other) const   \
+        {                                                            \
+            ASSERT(mSerial != kInvalid);                             \
+            ASSERT(other.mSerial != kInvalid);                       \
+            return mSerial == other.mSerial;                         \
+        }                                                            \
+        constexpr bool operator!=(const Type##Serial &other) const   \
+        {                                                            \
+            ASSERT(mSerial != kInvalid);                             \
+            ASSERT(other.mSerial != kInvalid);                       \
+            return mSerial != other.mSerial;                         \
+        }                                                            \
+        constexpr uint32_t getValue() const { return mSerial; }      \
+        constexpr bool valid() const { return mSerial != kInvalid; } \
+                                                                     \
+      private:                                                       \
+        uint32_t mSerial;                                            \
+        static constexpr uint32_t kInvalid = 0;                      \
+    };                                                               \
+    static constexpr Type##Serial kInvalid##Type##Serial = Type##Serial();
+
+OBJECT_SERIAL_TYPES_OP(DEFINE_UNIQUE_OBJECT_SERIAL_TYPE)
+
 }  // namespace rx
 
 #endif  // LIBANGLE_RENDERER_SERIAL_UTILS_H_

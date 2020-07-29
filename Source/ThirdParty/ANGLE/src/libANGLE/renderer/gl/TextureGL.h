@@ -190,7 +190,8 @@ class TextureGL : public TextureImpl
     gl::TextureType getType() const;
 
     angle::Result syncState(const gl::Context *context,
-                            const gl::Texture::DirtyBits &dirtyBits) override;
+                            const gl::Texture::DirtyBits &dirtyBits,
+                            gl::TextureCommand source) override;
     bool hasAnyDirtyBit() const;
 
     angle::Result setBaseLevel(const gl::Context *context, GLuint baseLevel) override;

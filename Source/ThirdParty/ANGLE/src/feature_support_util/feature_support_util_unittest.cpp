@@ -131,7 +131,7 @@ TEST_F(FeatureSupportUtilTest, TestRuleProcessing)
                         {
                             "Vendor" : "GPUVendorA",
                             "DeviceId" : 234,
-                            "VerMajor" : 1, "VerMinor" : 2, "VerSubMinor" : 3, "VerPatch" : 4}
+                            "VerMajor" : 1, "VerMinor" : 2, "VerSubMinor" : 3, "VerPatch" : 4
                         }
                     ]
                 }

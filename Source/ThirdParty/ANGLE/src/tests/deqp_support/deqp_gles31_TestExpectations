@@ -2,34 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// This file contains a list of defective dEQP conformance tests. The expected
-// format is:
-//  {BUG#} {MODIFIERS} : {TEST_NAME} = {PASS,FAIL,FLAKY,TIMEOUT,SKIP}
-//
-// MODIFIERS can be a combination of the below list, combined with a logical AND:
-//  WIN XP VISTA WIN7 WIN8 WIN10
-//  MAC LEOPARD SNOWLEOPARD LION MOUNTAINLION MAVERICKS YOSEMITE ELCAPITAN SIERRA HIGHSIERRA MOJAVE
-//  LINUX CHROMEOS ANDROID
-//  NVIDIA AMD INTEL
-//  DEBUG RELEASE
-//  D3D9 D3D11 OPENGL GLES VULKAN
-//  NEXUS5X PIXEL2ORXL
-//  QUADROP400
-//  SWIFTSHADER
-//
-//
-// TEST_NAME can be a specific test name, or have a '*' in the end, which
-// indicates a prefix matching.
-//
-// Examples:
-// fails on both windows and mac (crash)
-//  91530 WIN : context_lost_restored = SKIP
-//  91530 MAC : context_lost_restored = SKIP
-// fails on windows using NVIDIA GPUs
-//  91533 WIN NVIDIA : gl_min_uniforms = FAIL
-// fails on Nexus5X with GLES backend (hangs)
-//  91531 NEXUS5X GLES : conformance_more_* = SKIP
-
+// See README.md for format.
 
 ////
 //// Desktop expectations
@@ -147,6 +120,8 @@
 1442 OPENGL : dEQP-GLES31.functional.state_query.program_pipeline.* = SKIP
 1442 D3D11 : dEQP-GLES31.functional.state_query.program_pipeline.* = SKIP
 
+3584 OPENGL : dEQP-GLES31.functional.shaders.opaque_type_indexing.sampler.*samplercubearray* = PASS
+
 // These tests are failing because of compile errors with SSBOs in compute shaders.
 
 1442 D3D11 : dEQP-GLES31.functional.stencil_texturing.* = SKIP
@@ -204,9 +179,6 @@
 
 // Tessellation geometry interaction:
 3572 VULKAN : dEQP-GLES31.functional.tessellation_geometry_interaction.* = FAIL
-
-// Vulkan creates the image view with the same format as the texture.
-3885 VULKAN : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.* = FAIL
 
 // Cannot create 2D (array) view of 3D texture.
 3886 VULKAN : dEQP-GLES31.functional.image_load_store.3d.*layer = FAIL

@@ -100,6 +100,7 @@ using EglBadDevice         = priv::ErrorStream<EGL_BAD_DEVICE_EXT>;
 using EglBadDisplay        = priv::ErrorStream<EGL_BAD_DISPLAY>;
 using EglBadMatch          = priv::ErrorStream<EGL_BAD_MATCH>;
 using EglBadNativeWindow   = priv::ErrorStream<EGL_BAD_NATIVE_WINDOW>;
+using EglBadNativePixmap   = priv::ErrorStream<EGL_BAD_NATIVE_PIXMAP>;
 using EglBadParameter      = priv::ErrorStream<EGL_BAD_PARAMETER>;
 using EglBadState          = priv::ErrorStream<EGL_BAD_STATE_KHR>;
 using EglBadStream         = priv::ErrorStream<EGL_BAD_STREAM_KHR>;

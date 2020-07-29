@@ -200,6 +200,18 @@ LoadImageFunctionInfo ALPHA8_EXT_to_R8_UNORM(GLenum type)
     }
 }
 
+LoadImageFunctionInfo BGR10_A2_ANGLEX_to_B10G10R10A2_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_INT_2_10_10_10_REV:
+            return LoadImageFunctionInfo(LoadToNative<GLuint, 1>, false);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
 LoadImageFunctionInfo BGR565_ANGLEX_to_B5G6R5_UNORM(GLenum type)
 {
     switch (type)
@@ -3186,6 +3198,17 @@ LoadFunctionMap GetLoadFunctionsMap(GLenum internalFormat, FormatID angleFormat)
                     return ALPHA8_EXT_to_R8G8B8A8_UNORM;
                 case FormatID::R8_UNORM:
                     return ALPHA8_EXT_to_R8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_BGR10_A2_ANGLEX:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::B10G10R10A2_UNORM:
+                    return BGR10_A2_ANGLEX_to_B10G10R10A2_UNORM;
                 default:
                     break;
             }

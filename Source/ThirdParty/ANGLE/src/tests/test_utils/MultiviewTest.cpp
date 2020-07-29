@@ -219,7 +219,7 @@ void AttachMultiviewTextures(GLenum target,
 std::ostream &operator<<(std::ostream &os, const MultiviewImplementationParams &params)
 {
     const PlatformParameters &base = static_cast<const PlatformParameters &>(params);
-    os << base;
+    os << base << "_";
     if (params.mForceUseGeometryShaderOnD3D)
     {
         os << "_force_geom_shader";

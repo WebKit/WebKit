@@ -36,6 +36,7 @@ ANGLE_REENABLE_EXTRA_SEMI_WARNING
 #include "common/utilities.h"
 #include "libANGLE/Caps.h"
 #include "libANGLE/ProgramLinkedResources.h"
+#include "libANGLE/trace.h"
 
 #define ANGLE_GLSLANG_CHECK(CALLBACK, TEST, ERR) \
     do                                           \
@@ -97,6 +98,29 @@ void GetBuiltInResourcesFromCaps(const gl::Caps &caps, TBuiltInResource *outBuil
     outBuiltInResources->maxVertexOutputComponents        = caps.maxVertexOutputComponents;
     outBuiltInResources->maxVertexUniformVectors          = caps.maxVertexUniformVectors;
     outBuiltInResources->maxClipDistances                 = caps.maxClipDistances;
+}
+
+// Run at startup to warm up glslang's internals to avoid hitches on first shader compile.
+void GlslangWarmup()
+{
+    ANGLE_TRACE_EVENT0("gpu.angle,startup", "GlslangWarmup");
+
+    EShMessages messages = static_cast<EShMessages>(EShMsgSpvRules | EShMsgVulkanRules);
+    // EShMessages messages = EShMsgDefault;
+
+    TBuiltInResource builtInResources(glslang::DefaultTBuiltInResource);
+    glslang::TShader dummyShader(EShLangVertex);
+
+    const char *kShaderString = R"(#version 450 core
+        void main(){}
+    )";
+    const int kShaderLength   = static_cast<int>(strlen(kShaderString));
+
+    dummyShader.setStringsWithLengths(&kShaderString, &kShaderLength, 1);
+    dummyShader.setEntryPoint("main");
+
+    bool result = dummyShader.parse(&builtInResources, 450, ECoreProfile, false, false, messages);
+    ASSERT(result);
 }
 
 // Test if there are non-zero indices in the uniform name, returning false in that case.  This
@@ -660,11 +684,12 @@ void AssignTransformFeedbackExtensionQualifiers(const gl::ProgramExecutable &pro
             SetXfbInfo(variableInfoMapOut, xfbVaryingName, bufferIndex, currentOffset,
                        currentStride);
         }
-        else if (!tfVarying.isArray() || tfVarying.arrayIndex == 0)
+        else if (!tfVarying.isArray() || tfVarying.arrayIndex == GL_INVALID_INDEX)
         {
             // Note: capturing individual array elements using the Vulkan transform feedback
             // extension is not supported, and it unlikely to be ever supported (on the contrary, it
             // may be removed from the GLES spec).  http://anglebug.com/4140
+            // ANGLE should support capturing the whole array.
 
             // Find the varying with this name.  If a struct is captured, we would be iterating over
             // its fields, and the name of the varying is found through parentStructMappedName.  Not
@@ -875,77 +900,6 @@ constexpr gl::ShaderMap<EShLanguage> kShLanguageMap = {
     {gl::ShaderType::Compute, EShLangCompute},
 };
 
-angle::Result GetShaderSpirvCode(GlslangErrorCallback callback,
-                                 const gl::Caps &glCaps,
-                                 const gl::ShaderMap<std::string> &shaderSources,
-                                 gl::ShaderMap<std::vector<uint32_t>> *spirvBlobsOut)
-{
-    // Enable SPIR-V and Vulkan rules when parsing GLSL
-    EShMessages messages = static_cast<EShMessages>(EShMsgSpvRules | EShMsgVulkanRules);
-
-    TBuiltInResource builtInResources(glslang::DefaultTBuiltInResource);
-    GetBuiltInResourcesFromCaps(glCaps, &builtInResources);
-
-    glslang::TShader vertexShader(EShLangVertex);
-    glslang::TShader fragmentShader(EShLangFragment);
-    glslang::TShader geometryShader(EShLangGeometry);
-    glslang::TShader computeShader(EShLangCompute);
-
-    gl::ShaderMap<glslang::TShader *> shaders = {
-        {gl::ShaderType::Vertex, &vertexShader},
-        {gl::ShaderType::Fragment, &fragmentShader},
-        {gl::ShaderType::Geometry, &geometryShader},
-        {gl::ShaderType::Compute, &computeShader},
-    };
-    glslang::TProgram program;
-
-    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
-    {
-        if (shaderSources[shaderType].empty())
-        {
-            continue;
-        }
-
-        const char *shaderString = shaderSources[shaderType].c_str();
-        int shaderLength         = static_cast<int>(shaderSources[shaderType].size());
-
-        glslang::TShader *shader = shaders[shaderType];
-        shader->setStringsWithLengths(&shaderString, &shaderLength, 1);
-        shader->setEntryPoint("main");
-
-        bool result = shader->parse(&builtInResources, 450, ECoreProfile, false, false, messages);
-        if (!result)
-        {
-            ERR() << "Internal error parsing Vulkan shader corresponding to " << shaderType << ":\n"
-                  << shader->getInfoLog() << "\n"
-                  << shader->getInfoDebugLog() << "\n";
-            ANGLE_GLSLANG_CHECK(callback, false, GlslangError::InvalidShader);
-        }
-
-        program.addShader(shader);
-    }
-
-    bool linkResult = program.link(messages);
-    if (!linkResult)
-    {
-        ERR() << "Internal error linking Vulkan shaders:\n" << program.getInfoLog() << "\n";
-        ANGLE_GLSLANG_CHECK(callback, false, GlslangError::InvalidShader);
-    }
-
-    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
-    {
-        if (shaderSources[shaderType].empty())
-        {
-            continue;
-        }
-
-        glslang::TIntermediate *intermediate = program.getIntermediate(kShLanguageMap[shaderType]);
-        glslang::GlslangToSpv(*intermediate, (*spirvBlobsOut)[shaderType]);
-    }
-
-    return angle::Result::Continue;
-}
-
 void ValidateSpirvMessage(spv_message_level_t level,
                           const char *source,
                           const spv_position_t &position,
@@ -978,6 +932,7 @@ class SpirvTransformer final : angle::NonCopyable
   public:
     SpirvTransformer(const std::vector<uint32_t> &spirvBlobIn,
                      bool removeEarlyFragmentTestsOptimization,
+                     bool removeDebugInfo,
                      const ShaderInterfaceVariableInfoMap &variableInfoMap,
                      gl::ShaderType shaderType,
                      SpirvBlob *spirvBlobOut)
@@ -990,6 +945,7 @@ class SpirvTransformer final : angle::NonCopyable
         gl::ShaderBitSet allStages;
         allStages.set();
         mRemoveEarlyFragmentTestsOptimization = removeEarlyFragmentTestsOptimization;
+        mRemoveDebugInfo                      = removeDebugInfo;
         mBuiltinVariableInfo.activeStages     = allStages;
     }
 
@@ -1040,6 +996,7 @@ class SpirvTransformer final : angle::NonCopyable
     bool mHasTransformFeedbackOutput;
 
     bool mRemoveEarlyFragmentTestsOptimization;
+    bool mRemoveDebugInfo;
 
     // Input shader variable info map:
     const ShaderInterfaceVariableInfoMap &mVariableInfoMap;
@@ -1225,6 +1182,21 @@ void SpirvTransformer::transformInstruction()
         // Look at global declaration opcodes.
         switch (opCode)
         {
+            case spv::OpSourceContinued:
+            case spv::OpSource:
+            case spv::OpSourceExtension:
+            case spv::OpName:
+            case spv::OpMemberName:
+            case spv::OpString:
+            case spv::OpLine:
+            case spv::OpNoLine:
+            case spv::OpModuleProcessed:
+                if (mRemoveDebugInfo)
+                {
+                    // Strip debug info to reduce binary size.
+                    transformed = true;
+                }
+                break;
             case spv::OpCapability:
                 transformed = transformCapability(instruction, wordCount);
                 break;
@@ -1757,6 +1729,7 @@ void GlslangInitialize()
 {
     int result = ShInitialize();
     ASSERT(result != 0);
+    GlslangWarmup();
 }
 
 void GlslangRelease()
@@ -1937,6 +1910,7 @@ void GlslangGetShaderSource(GlslangSourceOptions &options,
 angle::Result GlslangTransformSpirvCode(const GlslangErrorCallback &callback,
                                         const gl::ShaderType shaderType,
                                         bool removeEarlyFragmentTestsOptimization,
+                                        bool removeDebugInfo,
                                         const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                         const SpirvBlob &initialSpirvBlob,
                                         SpirvBlob *spirvBlobOut)
@@ -1948,7 +1922,7 @@ angle::Result GlslangTransformSpirvCode(const GlslangErrorCallback &callback,
 
     // Transform the SPIR-V code by assigning location/set/binding values.
     SpirvTransformer transformer(initialSpirvBlob, removeEarlyFragmentTestsOptimization,
-                                 variableInfoMap, shaderType, spirvBlobOut);
+                                 removeDebugInfo, variableInfoMap, shaderType, spirvBlobOut);
     ANGLE_GLSLANG_CHECK(callback, transformer.transform(), GlslangError::InvalidSpirv);
 
     ASSERT(ValidateSpirv(*spirvBlobOut));
@@ -1963,24 +1937,72 @@ angle::Result GlslangGetShaderSpirvCode(const GlslangErrorCallback &callback,
                                         const ShaderMapInterfaceVariableInfoMap &variableInfoMap,
                                         gl::ShaderMap<SpirvBlob> *spirvBlobsOut)
 {
-    gl::ShaderMap<SpirvBlob> initialSpirvBlobs;
-    ANGLE_TRY(GetShaderSpirvCode(callback, glCaps, shaderSources, &initialSpirvBlobs));
+    // Enable SPIR-V and Vulkan rules when parsing GLSL
+    EShMessages messages = static_cast<EShMessages>(EShMsgSpvRules | EShMsgVulkanRules);
 
-    for (const gl::ShaderType shaderType : linkedShaderStages)
+    TBuiltInResource builtInResources(glslang::DefaultTBuiltInResource);
+    GetBuiltInResourcesFromCaps(glCaps, &builtInResources);
+
+    glslang::TShader vertexShader(EShLangVertex);
+    glslang::TShader fragmentShader(EShLangFragment);
+    glslang::TShader geometryShader(EShLangGeometry);
+    glslang::TShader computeShader(EShLangCompute);
+
+    gl::ShaderMap<glslang::TShader *> shaders = {
+        {gl::ShaderType::Vertex, &vertexShader},
+        {gl::ShaderType::Fragment, &fragmentShader},
+        {gl::ShaderType::Geometry, &geometryShader},
+        {gl::ShaderType::Compute, &computeShader},
+    };
+    glslang::TProgram program;
+
+    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
     {
-        // we pass in false here to skip modifications related to  early fragment tests
-        // optimizations and line rasterization. These are done in the initProgram time since they
-        // are related to context state. We must keep original untouched spriv blobs here because we
-        // do not have ability to add back in at initProgram time.
-        angle::Result status =
-            GlslangTransformSpirvCode(callback, shaderType, false, variableInfoMap[shaderType],
-                                      initialSpirvBlobs[shaderType], &(*spirvBlobsOut)[shaderType]);
-        if (status != angle::Result::Continue)
+        if (shaderSources[shaderType].empty())
         {
-            return status;
+            continue;
         }
+
+        ANGLE_TRACE_EVENT0("gpu.angle", "GlslangGetShaderSpirvCode TShader::parse");
+
+        const char *shaderString = shaderSources[shaderType].c_str();
+        int shaderLength         = static_cast<int>(shaderSources[shaderType].size());
+
+        glslang::TShader *shader = shaders[shaderType];
+        shader->setStringsWithLengths(&shaderString, &shaderLength, 1);
+        shader->setEntryPoint("main");
+
+        bool result = shader->parse(&builtInResources, 450, ECoreProfile, false, false, messages);
+        if (!result)
+        {
+            ERR() << "Internal error parsing Vulkan shader corresponding to " << shaderType << ":\n"
+                  << shader->getInfoLog() << "\n"
+                  << shader->getInfoDebugLog() << "\n";
+            ANGLE_GLSLANG_CHECK(callback, false, GlslangError::InvalidShader);
+        }
+
+        program.addShader(shader);
+    }
+
+    bool linkResult = program.link(messages);
+    if (!linkResult)
+    {
+        ERR() << "Internal error linking Vulkan shaders:\n" << program.getInfoLog() << "\n";
+        ANGLE_GLSLANG_CHECK(callback, false, GlslangError::InvalidShader);
+    }
+
+    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
+    {
+        if (shaderSources[shaderType].empty())
+        {
+            continue;
+        }
+
+        glslang::TIntermediate *intermediate = program.getIntermediate(kShLanguageMap[shaderType]);
+        glslang::GlslangToSpv(*intermediate, (*spirvBlobsOut)[shaderType]);
     }
 
     return angle::Result::Continue;
 }
+
 }  // namespace rx

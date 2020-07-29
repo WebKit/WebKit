@@ -10,6 +10,7 @@
 
 #include "libANGLE/capture_gles_2_0_autogen.h"
 #include "libANGLE/capture_gles_3_0_autogen.h"
+#include "libANGLE/capture_gles_3_2_autogen.h"
 
 using namespace angle;
 
@@ -2364,7 +2365,7 @@ void CaptureGetQueryObjectuivEXT_params(const State &glState,
                                         GLuint *params,
                                         ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    paramCapture->readBufferSizeBytes = sizeof(GLuint);
 }
 
 void CaptureGetQueryivEXT_params(const State &glState,
@@ -3143,7 +3144,8 @@ void CaptureGetSamplerParameterIivOES_params(const State &glState,
                                              GLint *params,
                                              ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureGetSamplerParameterIiv_params(glState, isCallValid, sampler, pname, params,
+                                         paramCapture);
 }
 
 void CaptureGetSamplerParameterIuivOES_params(const State &glState,
@@ -3153,7 +3155,8 @@ void CaptureGetSamplerParameterIuivOES_params(const State &glState,
                                               GLuint *params,
                                               ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureGetSamplerParameterIuiv_params(glState, isCallValid, sampler, pname, params,
+                                          paramCapture);
 }
 
 void CaptureGetTexParameterIivOES_params(const State &glState,
@@ -3163,7 +3166,8 @@ void CaptureGetTexParameterIivOES_params(const State &glState,
                                          GLint *params,
                                          ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureGetTexParameterIiv_params(glState, isCallValid, targetPacked, pname, params,
+                                     paramCapture);
 }
 
 void CaptureGetTexParameterIuivOES_params(const State &glState,
@@ -3173,7 +3177,8 @@ void CaptureGetTexParameterIuivOES_params(const State &glState,
                                           GLuint *params,
                                           ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureGetTexParameterIuiv_params(glState, isCallValid, targetPacked, pname, params,
+                                      paramCapture);
 }
 
 void CaptureSamplerParameterIivOES_param(const State &glState,
@@ -3183,7 +3188,7 @@ void CaptureSamplerParameterIivOES_param(const State &glState,
                                          const GLint *param,
                                          ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureSamplerParameterIiv_param(glState, isCallValid, sampler, pname, param, paramCapture);
 }
 
 void CaptureSamplerParameterIuivOES_param(const State &glState,
@@ -3193,7 +3198,7 @@ void CaptureSamplerParameterIuivOES_param(const State &glState,
                                           const GLuint *param,
                                           ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureSamplerParameterIuiv_param(glState, isCallValid, sampler, pname, param, paramCapture);
 }
 
 void CaptureTexParameterIivOES_params(const State &glState,
@@ -3203,7 +3208,7 @@ void CaptureTexParameterIivOES_params(const State &glState,
                                       const GLint *params,
                                       ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureTexParameterIiv_params(glState, isCallValid, targetPacked, pname, params, paramCapture);
 }
 
 void CaptureTexParameterIuivOES_params(const State &glState,
@@ -3213,7 +3218,7 @@ void CaptureTexParameterIuivOES_params(const State &glState,
                                        const GLuint *params,
                                        ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureTexParameterIuiv_params(glState, isCallValid, targetPacked, pname, params, paramCapture);
 }
 
 void CaptureGetTexGenfvOES_params(const State &glState,

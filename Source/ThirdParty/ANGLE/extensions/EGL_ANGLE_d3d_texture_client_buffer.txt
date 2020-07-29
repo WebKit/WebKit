@@ -84,7 +84,8 @@ Additions to Chapter 2 of the EGL 1.2 Specification (EGL Operation)
     egl.restrictions for acceptable texture object types and formats.
 
     If EGL_TEXTURE_OFFSET_X_ANGLE or EGL_TEXTURE_OFFSET_Y_ANGLE are specified,
-    they are used to offset all rendering into the surface.
+    they must be non-negative and are used to offset all rendering into the
+    surface including blits, clears and draws.
 
     If the EGL_ANGLE_device_d3d extension is present, the provided D3D11 texture
     object must have been created by the same D3D11 device queried from the
@@ -202,9 +203,10 @@ Issues
 
     RESOLVED: The texture offsets specified by EGL_TEXTURE_OFFSET_X_ANGLE and
     EGL_TEXTURE_OFFSET_Y_ANGLE affect only rendering into the surface.
-    Specifically these affect the internal D3D viewport and scissor rect states.
-    This is needed to apply the update offset returned by calling BeginDraw() on
-    IDCompositionSurface, and is needed for correct rendering in that case.
+    Specifically these affect the internal D3D viewport and scissor rect states
+    for draws, clears, and blits. This is needed to apply the update offset
+    returned by calling BeginDraw() on IDCompositionSurface, and is needed for
+    correct rendering in that case.
 
 Revision History
 

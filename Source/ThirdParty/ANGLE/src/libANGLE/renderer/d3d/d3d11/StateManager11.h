@@ -44,7 +44,7 @@ class ShaderConstants11 : angle::NonCopyable
                           const D3D11_VIEWPORT &dxViewport,
                           bool is9_3,
                           bool presentPathFast);
-    bool onFirstVertexChange(GLint firstVertex, GLint baseVertex);
+    bool onFirstVertexChange(GLint firstVertex);
     void onImageLayerChange(gl::ShaderType shaderType, unsigned int imageIndex, int layer);
     void onSamplerChange(gl::ShaderType shaderType,
                          unsigned int samplerIndex,
@@ -239,7 +239,9 @@ class StateManager11 final : angle::NonCopyable
                               gl::DrawElementsType indexTypeOrInvalid,
                               const void *indices,
                               GLsizei instanceCount,
-                              GLint baseVertex);
+                              GLint baseVertex,
+                              GLuint baseInstance,
+                              bool promoteDynamic);
 
     void setShaderResourceShared(gl::ShaderType shaderType,
                                  UINT resourceSlot,

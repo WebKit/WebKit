@@ -62,6 +62,8 @@ class FunctionsGLX
     glx::Pbuffer createPbuffer(glx::FBConfig config, const int *attribList) const;
     void destroyPbuffer(glx::Pbuffer pbuffer) const;
     void queryDrawable(glx::Drawable drawable, int attribute, unsigned int *value) const;
+    glx::Pixmap createPixmap(glx::FBConfig config, Pixmap pixmap, const int *attribList) const;
+    void destroyPixmap(Pixmap pixmap) const;
 
     // GLX_ARB_create_context
     glx::Context createContextAttribsARB(glx::FBConfig config,
@@ -81,6 +83,10 @@ class FunctionsGLX
     // GLX_OML_sync_control
     bool getSyncValuesOML(glx::Drawable drawable, int64_t *ust, int64_t *msc, int64_t *sbc) const;
     bool getMscRateOML(glx::Drawable drawable, int32_t *numerator, int32_t *denominator) const;
+
+    // GLX_EXT_texture_from_pixmap
+    void bindTexImageEXT(glx::Drawable drawable, int buffer, const int *attribList) const;
+    void releaseTexImageEXT(glx::Drawable drawable, int buffer) const;
 
   private:
     // So as to isolate GLX from angle we do not include angleutils.h and cannot

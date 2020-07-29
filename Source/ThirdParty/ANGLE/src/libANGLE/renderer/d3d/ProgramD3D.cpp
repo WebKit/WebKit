@@ -29,6 +29,7 @@
 #include "libANGLE/renderer/d3d/ShaderExecutableD3D.h"
 #include "libANGLE/renderer/d3d/VertexDataManager.h"
 #include "libANGLE/renderer/renderer_utils.h"
+#include "libANGLE/trace.h"
 
 using namespace angle;
 
@@ -898,6 +899,7 @@ class ProgramD3D::LoadBinaryTask : public ProgramD3D::GetExecutableTask
 
     angle::Result run() override
     {
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::LoadBinaryTask::run");
         if (!mDataCopySucceeded)
         {
             mInfoLog << "Failed to copy program binary data to local buffer.";
@@ -1685,6 +1687,7 @@ class ProgramD3D::GetVertexExecutableTask : public ProgramD3D::GetExecutableTask
     GetVertexExecutableTask(ProgramD3D *program) : GetExecutableTask(program) {}
     angle::Result run() override
     {
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::GetVertexExecutableTask::run");
         if (!mProgram->mState.getAttachedShader(gl::ShaderType::Vertex))
         {
             return angle::Result::Continue;
@@ -1712,6 +1715,7 @@ class ProgramD3D::GetPixelExecutableTask : public ProgramD3D::GetExecutableTask
     GetPixelExecutableTask(ProgramD3D *program) : GetExecutableTask(program) {}
     angle::Result run() override
     {
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::GetPixelExecutableTask::run");
         if (!mProgram->mState.getAttachedShader(gl::ShaderType::Fragment))
         {
             return angle::Result::Continue;
@@ -1747,6 +1751,7 @@ class ProgramD3D::GetGeometryExecutableTask : public ProgramD3D::GetExecutableTa
 
     angle::Result run() override
     {
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::GetGeometryExecutableTask::run");
         // Auto-generate the geometry shader here, if we expect to be using point rendering in
         // D3D11.
         if (mProgram->usesGeometryShader(mState, gl::PrimitiveMode::Points))
@@ -1768,6 +1773,7 @@ class ProgramD3D::GetComputeExecutableTask : public ProgramD3D::GetExecutableTas
     GetComputeExecutableTask(ProgramD3D *program) : GetExecutableTask(program) {}
     angle::Result run() override
     {
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::GetComputeExecutableTask::run");
         mProgram->updateCachedImage2DBindLayoutFromComputeShader();
         ShaderExecutableD3D *computeExecutable = nullptr;
         ANGLE_TRY(mProgram->getComputeExecutableForImage2DBindLayout(this, &computeExecutable,
@@ -1806,6 +1812,7 @@ class ProgramD3D::GraphicsProgramLinkEvent final : public LinkEvent
 
     angle::Result wait(const gl::Context *context) override
     {
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::GraphicsProgramLinkEvent::wait");
         WaitableEvent::WaitMany(&mWaitEvents);
 
         ANGLE_TRY(checkTask(context, mVertexTask.get()));
@@ -1906,6 +1913,7 @@ class ProgramD3D::ComputeProgramLinkEvent final : public LinkEvent
 
     angle::Result wait(const gl::Context *context) override
     {
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::ComputeProgramLinkEvent::wait");
         mWaitEvent->wait();
 
         angle::Result result = mComputeTask->getResult();
@@ -1925,6 +1933,7 @@ class ProgramD3D::ComputeProgramLinkEvent final : public LinkEvent
 std::unique_ptr<LinkEvent> ProgramD3D::compileProgramExecutables(const gl::Context *context,
                                                                  gl::InfoLog &infoLog)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::compileProgramExecutables");
     // Ensure the compiler is initialized to avoid race conditions.
     angle::Result result = mRenderer->ensureHLSLCompilerInitialized(GetImplAs<ContextD3D>(context));
     if (result != angle::Result::Continue)
@@ -1950,6 +1959,7 @@ std::unique_ptr<LinkEvent> ProgramD3D::compileProgramExecutables(const gl::Conte
 std::unique_ptr<LinkEvent> ProgramD3D::compileComputeExecutable(const gl::Context *context,
                                                                 gl::InfoLog &infoLog)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::compileComputeExecutable");
     // Ensure the compiler is initialized to avoid race conditions.
     angle::Result result = mRenderer->ensureHLSLCompilerInitialized(GetImplAs<ContextD3D>(context));
     if (result != angle::Result::Continue)
@@ -1982,6 +1992,7 @@ angle::Result ProgramD3D::getComputeExecutableForImage2DBindLayout(
     ShaderExecutableD3D **outExecutable,
     gl::InfoLog *infoLog)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::getComputeExecutableForImage2DBindLayout");
     if (mCachedComputeExecutableIndex.valid())
     {
         *outExecutable =
@@ -2023,6 +2034,7 @@ std::unique_ptr<LinkEvent> ProgramD3D::link(const gl::Context *context,
                                             const gl::ProgramLinkedResources &resources,
                                             gl::InfoLog &infoLog)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramD3D::link");
     const auto &data = context->getState();
 
     reset();

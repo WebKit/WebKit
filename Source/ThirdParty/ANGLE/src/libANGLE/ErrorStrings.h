@@ -73,6 +73,7 @@ MSG kContextLost = "Context has been lost.";
 MSG kCopyAlias = "The read and write copy regions alias memory.";
 MSG kCubemapFacesEqualDimensions = "Each cubemap face must have equal width and height.";
 MSG kCubemapIncomplete = "Texture is not cubemap complete. All cubemaps faces must be defined and be the same size.";
+MSG kCubemapInvalidDepth = "The cubemap depth must be a multiple of 6.";
 MSG kDataTypeNotAligned = "Data is not evenly divisible into the number of bytes needed to store in memory a datum indicated by type.";
 MSG kDefaultFramebuffer = "Default framebuffer is bound.";
 MSG kDefaultFramebufferInvalidAttachment = "Invalid attachment when the default framebuffer is bound.";

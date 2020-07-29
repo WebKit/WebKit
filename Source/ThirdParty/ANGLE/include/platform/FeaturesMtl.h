@@ -41,6 +41,10 @@ struct FeaturesMtl : FeatureSetBase
         "Some Apple platforms such as iOS allows separate depth & stencil buffers, "
         "whereas others such as macOS don't",
         &members};
+
+    Feature allowMultisampleStoreAndResolve = {
+        "allow_msaa_store_and_resolve", FeatureCategory::MetalFeatures,
+        "The renderer supports MSAA store and resolve in the same pass", &members};
 };
 
 }  // namespace angle

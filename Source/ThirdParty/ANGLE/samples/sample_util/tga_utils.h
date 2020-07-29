@@ -8,6 +8,7 @@
 #define SAMPLE_UTIL_TGA_UTILS_HPP
 
 #include <array>
+#include <string>
 #include <vector>
 
 #include "util/gles_loader_autogen.h"

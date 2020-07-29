@@ -309,6 +309,7 @@ ANGLE_INLINE void ActiveTexturesCache::set(ContextID contextID,
 }
 
 State::State(const State *shareContextState,
+             egl::ShareGroup *shareGroup,
              TextureManager *shareTextures,
              const OverlayType *overlay,
              const EGLenum clientType,
@@ -323,6 +324,7 @@ State::State(const State *shareContextState,
       mClientType(clientType),
       mContextPriority(contextPriority),
       mClientVersion(clientVersion),
+      mShareGroup(shareGroup),
       mBufferManager(AllocateOrGetSharedResourceManager(shareContextState, &State::mBufferManager)),
       mShaderProgramManager(
           AllocateOrGetSharedResourceManager(shareContextState, &State::mShaderProgramManager)),
@@ -470,6 +472,10 @@ void State::initialize(Context *context)
         mShaderStorageBuffers.resize(caps.maxShaderStorageBufferBindings);
         mImageUnits.resize(caps.maxImageUnits);
     }
+    if (extensions.textureCubeMapArrayAny())
+    {
+        mSamplerTextures[TextureType::CubeMapArray].resize(caps.maxCombinedTextureImageUnits);
+    }
     if (nativeExtensions.textureRectangle)
     {
         mSamplerTextures[TextureType::Rectangle].resize(caps.maxCombinedTextureImageUnits);
@@ -564,7 +570,9 @@ void State::reset(const Context *context)
     mExecutable = nullptr;
 
     if (mTransformFeedback.get())
+    {
         mTransformFeedback->onBindingChanged(context, false);
+    }
     mTransformFeedback.set(context, nullptr);
 
     for (QueryType type : angle::AllEnums<QueryType>())
@@ -626,7 +634,7 @@ ANGLE_INLINE void State::updateActiveTextureState(const Context *context,
         }
     }
 
-    if (texture && mProgram)
+    if (texture && mExecutable)
     {
         const SamplerState &samplerState =
             sampler ? sampler->getSamplerState() : texture->getSamplerState();
@@ -1433,6 +1441,11 @@ void State::setGenerateMipmapHint(GLenum hint)
     mDirtyBits.set(DIRTY_BIT_EXTENDED);
 }
 
+GLenum State::getGenerateMipmapHint() const
+{
+    return mGenerateMipmapHint;
+}
+
 void State::setTextureFilteringHint(GLenum hint)
 {
     mTextureFilteringHint = hint;
@@ -1577,7 +1590,9 @@ void State::invalidateTexture(TextureType type)
 void State::setSamplerBinding(const Context *context, GLuint textureUnit, Sampler *sampler)
 {
     if (mSamplers[textureUnit].get() == sampler)
+    {
         return;
+    }
 
     mSamplers[textureUnit].set(context, sampler);
     mDirtyBits.set(DIRTY_BIT_SAMPLER_BINDINGS);
@@ -1882,7 +1897,6 @@ angle::Result State::setProgramPipelineBinding(const Context *context, ProgramPi
 
     if (mProgramPipeline.get())
     {
-        mProgramPipeline->bind();
         ANGLE_TRY(onProgramPipelineExecutableChange(context, mProgramPipeline.get()));
 
         if (mProgramPipeline->hasAnyDirtyBit())
@@ -2728,6 +2742,12 @@ angle::Result State::getIntegerv(const Context *context, GLenum pname, GLint *pa
                                           TextureType::_2DMultisampleArray)
                           .value;
             break;
+        case GL_TEXTURE_BINDING_CUBE_MAP_ARRAY:
+            ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
+            *params = getSamplerTextureId(static_cast<unsigned int>(mActiveSampler),
+                                          TextureType::CubeMapArray)
+                          .value;
+            break;
         case GL_TEXTURE_BINDING_EXTERNAL_OES:
             ASSERT(mActiveSampler < mMaxCombinedTextureImageUnits);
             *params = getSamplerTextureId(static_cast<unsigned int>(mActiveSampler),
@@ -3119,7 +3139,7 @@ angle::Result State::syncTextures(const Context *context)
         Texture *texture = mActiveTexturesCache[textureIndex];
         if (texture && texture->hasAnyDirtyBit())
         {
-            ANGLE_TRY(texture->syncState(context));
+            ANGLE_TRY(texture->syncState(context, TextureCommand::Other));
         }
     }
 
@@ -3137,7 +3157,7 @@ angle::Result State::syncImages(const Context *context)
         Texture *texture = mImageUnits[imageUnitIndex].texture.get();
         if (texture && texture->hasAnyDirtyBit())
         {
-            ANGLE_TRY(texture->syncState(context));
+            ANGLE_TRY(texture->syncState(context, TextureCommand::Other));
         }
     }
 
@@ -3293,7 +3313,7 @@ angle::Result State::onProgramExecutableChange(const Context *context, Program *
 
         if (image->hasAnyDirtyBit())
         {
-            ANGLE_TRY(image->syncState(context));
+            ANGLE_TRY(image->syncState(context, TextureCommand::Other));
         }
 
         if (mRobustResourceInit && image->initState() == InitState::MayNeedInit)
@@ -3338,7 +3358,7 @@ angle::Result State::onProgramPipelineExecutableChange(const Context *context,
 
         if (image->hasAnyDirtyBit())
         {
-            ANGLE_TRY(image->syncState(context));
+            ANGLE_TRY(image->syncState(context, TextureCommand::Other));
         }
 
         if (mRobustResourceInit && image->initState() == InitState::MayNeedInit)
@@ -3395,19 +3415,21 @@ void State::setImageUnit(const Context *context,
 // Handle a dirty texture event.
 void State::onActiveTextureChange(const Context *context, size_t textureUnit)
 {
-    if (mProgram)
+    if (mExecutable)
     {
         TextureType type       = mExecutable->getActiveSamplerTypes()[textureUnit];
         Texture *activeTexture = (type != TextureType::InvalidEnum)
                                      ? getTextureForActiveSampler(type, textureUnit)
                                      : nullptr;
         updateActiveTexture(context, textureUnit, activeTexture);
+
+        mExecutable->onStateChange(angle::SubjectMessage::SubjectChanged);
     }
 }
 
 void State::onActiveTextureStateChange(const Context *context, size_t textureUnit)
 {
-    if (mProgram)
+    if (mExecutable)
     {
         TextureType type       = mExecutable->getActiveSamplerTypes()[textureUnit];
         Texture *activeTexture = (type != TextureType::InvalidEnum)
@@ -3420,7 +3442,7 @@ void State::onActiveTextureStateChange(const Context *context, size_t textureUni
 
 void State::onImageStateChange(const Context *context, size_t unit)
 {
-    if (mProgram)
+    if (mExecutable)
     {
         const ImageUnit &image = mImageUnits[unit];
 
@@ -3438,6 +3460,8 @@ void State::onImageStateChange(const Context *context, size_t unit)
         {
             mDirtyObjects.set(DIRTY_OBJECT_IMAGES_INIT);
         }
+
+        mExecutable->onStateChange(angle::SubjectMessage::SubjectChanged);
     }
 }
 

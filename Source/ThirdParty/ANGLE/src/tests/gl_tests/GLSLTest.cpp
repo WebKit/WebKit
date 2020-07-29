@@ -2276,6 +2276,47 @@ void main()
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
 }
 
+// Test that array of structs containing array of samplers work as expected.
+TEST_P(GLSLTest, ArrayOfStructContainingArrayOfSamplers)
+{
+    constexpr char kFS[] =
+        "precision mediump float;\n"
+        "struct Data { mediump sampler2D data[2]; };\n"
+        "uniform Data test[2];\n"
+        "void main() {\n"
+        "    gl_FragColor = vec4(texture2D(test[1].data[1], vec2(0.0, 0.0)).r,\n"
+        "                        texture2D(test[1].data[0], vec2(0.0, 0.0)).r,\n"
+        "                        texture2D(test[0].data[1], vec2(0.0, 0.0)).r,\n"
+        "                        texture2D(test[0].data[0], vec2(0.0, 0.0)).r);\n"
+        "}\n";
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
+    glUseProgram(program.get());
+    GLTexture textures[4];
+    GLColor expected = MakeGLColor(32, 64, 96, 255);
+    GLubyte data[8]  = {};  // 4 bytes of padding, so that texture can be initialized with 4 bytes
+    memcpy(data, expected.data(), sizeof(expected));
+    for (int i = 0; i < 4; i++)
+    {
+        int outerIdx = i % 2;
+        int innerIdx = i / 2;
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, textures[i]);
+        // Each element provides two components.
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data + i);
+        std::stringstream uniformName;
+        uniformName << "test[" << innerIdx << "].data[" << outerIdx << "]";
+        // Then send it as a uniform
+        GLint uniformLocation = glGetUniformLocation(program.get(), uniformName.str().c_str());
+        // The uniform should be active.
+        EXPECT_NE(uniformLocation, -1);
+
+        glUniform1i(uniformLocation, 3 - i);
+    }
+    drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, expected);
+}
+
 // Test that two constructors which have vec4 and mat2 parameters get disambiguated (issue in
 // HLSL).
 TEST_P(GLSLTest_ES3, AmbiguousConstructorCall2x2)
@@ -4581,6 +4622,34 @@ TEST_P(GLSLTest, StructsWithSameMembersDisambiguatedByName)
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
     drawQuad(program.get(), essl1_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that an inactive varying in vertex shader but used in fragment shader can be linked
+// successfully.
+TEST_P(GLSLTest, InactiveVaryingInVertexActiveInFragment)
+{
+    // http://anglebug.com/4820
+    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+
+    constexpr char kVS[] =
+        "attribute vec4 inputAttribute;\n"
+        "varying vec4 varColor;\n"
+        "void main()\n"
+        "{\n"
+        "    gl_Position = inputAttribute;\n"
+        "}\n";
+
+    constexpr char kFS[] =
+        "precision mediump float;\n"
+        "varying vec4 varColor;\n"
+        "void main()\n"
+        "{\n"
+        "    gl_FragColor = varColor;\n"
+        "}\n";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    drawQuad(program.get(), "inputAttribute", 0.5f);
+    ASSERT_GL_NO_ERROR();
 }
 
 // Test that a varying struct that's not statically used in the fragment shader works.

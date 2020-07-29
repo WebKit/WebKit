@@ -31,13 +31,13 @@
 #include "libGL/entry_points_gl_4_5_autogen.h"
 #include "libGL/entry_points_gl_4_6_autogen.h"
 #include "libGL/entry_points_wgl.h"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 
 #define P(FUNC) reinterpret_cast<PROC>(FUNC)
 
 namespace wgl
 {
-ProcEntry g_procTable[] = {
+const ProcEntry g_procTable[] = {
     {"glAccum", P(gl::Accum)},
     {"glActiveShaderProgram", P(gl::ActiveShaderProgram)},
     {"glActiveTexture", P(gl::ActiveTexture)},
@@ -1114,5 +1114,5 @@ ProcEntry g_procTable[] = {
     {"wglUseFontOutlinesA", P(wglUseFontOutlinesA)},
     {"wglUseFontOutlinesW", P(wglUseFontOutlinesW)}};
 
-size_t g_numProcs = 1074;
+const size_t g_numProcs = 1074;
 }  // namespace wgl

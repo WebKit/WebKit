@@ -7,10 +7,12 @@
 #ifndef COMPILER_TRANSLATOR_OPERATOR_H_
 #define COMPILER_TRANSLATOR_OPERATOR_H_
 
+#include <cstdint>
+
 //
 // Operators used by the high-level (parse tree) representation.
 //
-enum TOperator
+enum TOperator : uint8_t
 {
     EOpNull,  // if in a node, should only mean a node is still being built
 

@@ -315,7 +315,7 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
                 }
                 desc.layouts[bufferIdx].stride = mCurrentArrayBufferStrides[v];
 
-                cmdEncoder->setVertexBuffer(mCurrentArrayBuffers[v]->getCurrentBuffer(glContext),
+                cmdEncoder->setVertexBuffer(mCurrentArrayBuffers[v]->getCurrentBuffer(),
                                             bufferOffset, bufferIdx);
             }
             else
@@ -487,7 +487,7 @@ angle::Result VertexArrayMtl::getIndexBuffer(const gl::Context *context,
         {
             // No conversion needed:
             BufferMtl *bufferMtl = mtl::GetImpl(glElementArrayBuffer);
-            *idxBufferOut        = bufferMtl->getCurrentBuffer(context);
+            *idxBufferOut        = bufferMtl->getCurrentBuffer();
             *idxBufferOffsetOut  = convertedOffset;
         }
     }
@@ -555,10 +555,11 @@ angle::Result VertexArrayMtl::convertIndexBufferGPU(const gl::Context *glContext
                                         &conversion->convertedOffset));
 
     // Do the conversion on GPU.
-    ANGLE_TRY(display->getUtils().convertIndexBuffer(
-        glContext, indexType, static_cast<uint32_t>(indexCount),
-        idxBuffer->getCurrentBuffer(glContext), static_cast<uint32_t>(offset),
-        conversion->convertedBuffer, static_cast<uint32_t>(conversion->convertedOffset)));
+    ANGLE_TRY(display->getUtils().convertIndexBufferGPU(
+        mtl::GetImpl(glContext),
+        {indexType, static_cast<uint32_t>(indexCount), idxBuffer->getCurrentBuffer(),
+         static_cast<uint32_t>(offset), conversion->convertedBuffer,
+         static_cast<uint32_t>(conversion->convertedOffset)}));
 
     ANGLE_TRY(conversion->data.commit(contextMtl));
 
@@ -659,14 +660,13 @@ angle::Result VertexArrayMtl::convertVertexBufferCPU(const gl::Context *glContex
 
     // Cache the last converted results to be re-used later if the buffer's content won't ever be
     // changed.
-    conversion->convertedBuffer =
-        mConvertedArrayBufferHolders[attribIndex].getCurrentBuffer(glContext);
+    conversion->convertedBuffer = mConvertedArrayBufferHolders[attribIndex].getCurrentBuffer();
     conversion->convertedOffset = mCurrentArrayBufferOffsets[attribIndex];
 
 #ifndef NDEBUG
     ANGLE_MTL_OBJC_SCOPE
     {
-        mConvertedArrayBufferHolders[attribIndex].getCurrentBuffer(glContext)->get().label =
+        mConvertedArrayBufferHolders[attribIndex].getCurrentBuffer()->get().label =
             [NSString stringWithFormat:@"Converted from %p offset=%zu stride=%u", srcBuffer,
                                        binding.getOffset(), binding.getStride()];
     }

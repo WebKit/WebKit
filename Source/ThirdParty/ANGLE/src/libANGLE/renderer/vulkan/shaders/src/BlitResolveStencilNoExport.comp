@@ -54,6 +54,7 @@ layout(push_constant) uniform PushConstants {
     // Flip control.
     bool flipX;
     bool flipY;
+    bool rotateXY;
 } params;
 
 layout (set = 0, binding = 0) buffer dest
@@ -98,6 +99,8 @@ void main()
         srcImageCoords.x = -srcImageCoords.x;
     if (params.flipY)
         srcImageCoords.y = -srcImageCoords.y;
+    if (params.rotateXY)
+        srcImageCoords.xy = srcImageCoords.yx;
 
     int xDir = params.flipX ? -1 : 1;
 

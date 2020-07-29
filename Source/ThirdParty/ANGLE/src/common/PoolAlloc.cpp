@@ -37,7 +37,14 @@ PoolAllocator::PoolAllocator(int growthIncrement, int allocationAlignment)
 #endif
       mLocked(false)
 {
+    initialize(growthIncrement, allocationAlignment);
+}
+
+void PoolAllocator::initialize(int pageSize, int alignment)
+{
+    mAlignment = alignment;
 #if !defined(ANGLE_DISABLE_POOL_ALLOC)
+    mPageSize = pageSize;
     if (mAlignment == 1)
     {
         // This is a special fast-path where fastAllocation() is enabled

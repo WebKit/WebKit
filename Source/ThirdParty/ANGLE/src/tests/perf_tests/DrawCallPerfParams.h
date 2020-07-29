@@ -25,7 +25,6 @@ struct DrawCallPerfParams : public RenderTestParams
 
     double runTimeSeconds;
     int numTris;
-    bool offscreen;
 };
 
 namespace params
@@ -84,6 +83,16 @@ ParamsT EGL(const ParamsT &in)
     ParamsT out = in;
     out.driver  = angle::GLESDriverType::SystemEGL;
     return out;
+}
+
+template <typename ParamsT>
+ParamsT Native(const ParamsT &in)
+{
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    return WGL(in);
+#else
+    return EGL(in);
+#endif
 }
 }  // namespace params
 

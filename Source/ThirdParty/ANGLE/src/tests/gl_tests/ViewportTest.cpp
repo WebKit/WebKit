@@ -322,6 +322,66 @@ TEST_P(ViewportTest, DrawLineWithLargeViewport)
     }
 }
 
+// Test very large viewport sizes so sanitizers can verify there is no undefined behaviour
+TEST_P(ViewportTest, Overflow)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glUseProgram(program);
+
+    std::vector<Vector3> vertices = {{-1.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}};
+
+    const GLint positionLocation = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    constexpr int kMaxSize            = std::numeric_limits<int>::max();
+    const int kTestViewportSizes[][4] = {
+        {
+            kMaxSize,
+            kMaxSize,
+            1,
+            1,
+        },
+        {
+            0,
+            0,
+            kMaxSize,
+            kMaxSize,
+        },
+        {
+            1,
+            1,
+            kMaxSize,
+            kMaxSize,
+        },
+        {
+            kMaxSize,
+            kMaxSize,
+            kMaxSize,
+            kMaxSize,
+        },
+    };
+
+    for (const int *viewportSize : kTestViewportSizes)
+    {
+        // Set the viewport.
+        glViewport(viewportSize[0], viewportSize[1], viewportSize[2], viewportSize[3]);
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertices.size()));
+
+        glDisableVertexAttribArray(positionLocation);
+
+        ASSERT_GL_NO_ERROR();
+    }
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against. D3D11 Feature Level 9 and D3D9 emulate large and negative viewports
 // in the vertex shader. We should test both of these as well as D3D11 Feature Level 10_0+.

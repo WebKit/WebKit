@@ -15,6 +15,7 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/SurfaceMtl.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
+#include "libANGLE/renderer/metal/shaders/compiled/mtl_default_shaders_autogen.inc"
 #include "platform/Platform.h"
 
 #include "EGL/eglext.h"
@@ -25,7 +26,11 @@ namespace rx
 bool IsMetalDisplayAvailable()
 {
     // We only support macos 10.13+ and 11 for now. Since they are requirements for Metal 2.0.
+#if TARGET_OS_SIMULATOR
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.13, 13.0, 13))
+#else
     if (ANGLE_APPLE_AVAILABLE_XCI(10.13, 13.0, 11))
+#endif
     {
         return true;
     }
@@ -81,6 +86,7 @@ angle::Result DisplayMtl::initializeImpl(egl::Display *display)
         }
 
         ANGLE_TRY(mFormatTable.initialize(this));
+        ANGLE_TRY(initializeShaderLibrary());
 
         return mUtils.initialize();
     }
@@ -88,12 +94,9 @@ angle::Result DisplayMtl::initializeImpl(egl::Display *display)
 
 void DisplayMtl::terminate()
 {
-    for (mtl::TextureRef &nullTex : mNullTextures)
-    {
-        nullTex.reset();
-    }
     mUtils.onDestroy();
     mCmdQueue.reset();
+    mDefaultShaders  = nil;
     mMetalDevice     = nil;
     mCapsInitialized = false;
 
@@ -157,7 +160,7 @@ SurfaceImpl *DisplayMtl::createWindowSurface(const egl::SurfaceState &state,
                                              EGLNativeWindowType window,
                                              const egl::AttributeMap &attribs)
 {
-    return new SurfaceMtl(this, state, window, attribs);
+    return new WindowSurfaceMtl(this, state, window, attribs);
 }
 
 SurfaceImpl *DisplayMtl::createPbufferSurface(const egl::SurfaceState &state,
@@ -208,6 +211,11 @@ StreamProducerImpl *DisplayMtl::createStreamProducerD3DTexture(
 {
     UNIMPLEMENTED();
     return nullptr;
+}
+
+ShareGroupImpl *DisplayMtl::createShareGroup()
+{
+    return new ShareGroupMtl();
 }
 
 gl::Version DisplayMtl::getMaxSupportedESVersion() const
@@ -286,8 +294,13 @@ egl::ConfigSet DisplayMtl::generateConfigs()
 
     config.surfaceType = EGL_WINDOW_BIT;
 
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+    config.minSwapInterval = 0;
+    config.maxSwapInterval = 1;
+#else
     config.minSwapInterval = 1;
     config.maxSwapInterval = 1;
+#endif
 
     config.renderTargetFormat = GL_RGBA8;
     config.depthStencilFormat = GL_DEPTH24_STENCIL8;
@@ -299,40 +312,52 @@ egl::ConfigSet DisplayMtl::generateConfigs()
 
     config.colorComponentType = EGL_COLOR_COMPONENT_TYPE_FIXED_EXT;
 
-    // Buffer sizes
-    config.redSize    = 8;
-    config.greenSize  = 8;
-    config.blueSize   = 8;
-    config.alphaSize  = 8;
-    config.bufferSize = config.redSize + config.greenSize + config.blueSize + config.alphaSize;
+    constexpr int samplesSupported[] = {0, 4};
 
-    // With DS
-    config.depthSize   = 24;
-    config.stencilSize = 8;
-    configs.add(config);
+    for (int samples : samplesSupported)
+    {
+        config.samples       = samples;
+        config.sampleBuffers = (samples == 0) ? 0 : 1;
 
-    // With D
-    config.depthSize   = 24;
-    config.stencilSize = 0;
-    configs.add(config);
+        // Buffer sizes
+        config.redSize    = 8;
+        config.greenSize  = 8;
+        config.blueSize   = 8;
+        config.alphaSize  = 8;
+        config.bufferSize = config.redSize + config.greenSize + config.blueSize + config.alphaSize;
 
-    // With S
-    config.depthSize   = 0;
-    config.stencilSize = 8;
-    configs.add(config);
+        // With DS
+        config.depthSize   = 24;
+        config.stencilSize = 8;
 
-    // No DS
-    config.depthSize   = 0;
-    config.stencilSize = 0;
-    configs.add(config);
+        configs.add(config);
+
+        // With D
+        config.depthSize   = 24;
+        config.stencilSize = 0;
+        configs.add(config);
+
+        // With S
+        config.depthSize   = 0;
+        config.stencilSize = 8;
+        configs.add(config);
+
+        // No DS
+        config.depthSize   = 0;
+        config.stencilSize = 0;
+        configs.add(config);
+    }
 
     return configs;
 }
 
 bool DisplayMtl::isValidNativeWindow(EGLNativeWindowType window) const
 {
-    NSObject *layer = (__bridge NSObject *)(window);
-    return [layer isKindOfClass:[CALayer class]];
+    ANGLE_MTL_OBJC_SCOPE
+    {
+        NSObject *layer = (__bridge NSObject *)(window);
+        return [layer isKindOfClass:[CALayer class]];
+    }
 }
 
 std::string DisplayMtl::getRendererDescription() const
@@ -365,45 +390,6 @@ const gl::Extensions &DisplayMtl::getNativeExtensions() const
 {
     ensureCapsInitialized();
     return mNativeExtensions;
-}
-
-const mtl::TextureRef &DisplayMtl::getNullTexture(const gl::Context *context, gl::TextureType type)
-{
-    // TODO(hqle): Use rx::IncompleteTextureSet.
-    ContextMtl *contextMtl = mtl::GetImpl(context);
-    if (!mNullTextures[type])
-    {
-        // initialize content with zeros
-        MTLRegion region           = MTLRegionMake2D(0, 0, 1, 1);
-        const uint8_t zeroPixel[4] = {0, 0, 0, 255};
-
-        const auto &rgbaFormat = getPixelFormat(angle::FormatID::R8G8B8A8_UNORM);
-
-        switch (type)
-        {
-            case gl::TextureType::_2D:
-                (void)(mtl::Texture::Make2DTexture(contextMtl, rgbaFormat, 1, 1, 1, false, false,
-                                                   &mNullTextures[type]));
-                mNullTextures[type]->replaceRegion(contextMtl, region, 0, 0, zeroPixel,
-                                                   sizeof(zeroPixel));
-                break;
-            case gl::TextureType::CubeMap:
-                (void)(mtl::Texture::MakeCubeTexture(contextMtl, rgbaFormat, 1, 1, false, false,
-                                                     &mNullTextures[type]));
-                for (int f = 0; f < 6; ++f)
-                {
-                    mNullTextures[type]->replaceRegion(contextMtl, region, 0, f, zeroPixel,
-                                                       sizeof(zeroPixel));
-                }
-                break;
-            default:
-                UNREACHABLE();
-                // NOTE(hqle): Support more texture types.
-        }
-        ASSERT(mNullTextures[type]);
-    }
-
-    return mNullTextures[type];
 }
 
 void DisplayMtl::ensureCapsInitialized() const
@@ -449,7 +435,11 @@ void DisplayMtl::ensureCapsInitialized() const
     mNativeCaps.maxCubeMapTextureSize = mNativeCaps.max2DTextureSize;
     mNativeCaps.maxRenderbufferSize   = mNativeCaps.max2DTextureSize;
     mNativeCaps.minAliasedPointSize   = 1;
-    mNativeCaps.maxAliasedPointSize   = 511;
+    // NOTE(hqle): Metal has some problems drawing big point size even though
+    // Metal-Feature-Set-Tables.pdf says that max supported point size is 511. We limit it to 64 for
+    // now.
+    // http://anglebug.com/4816
+    mNativeCaps.maxAliasedPointSize = 64;
 
     mNativeCaps.minAliasedLineWidth = 1.0f;
     mNativeCaps.maxAliasedLineWidth = 1.0f;
@@ -508,7 +498,7 @@ void DisplayMtl::ensureCapsInitialized() const
 
     // Note that we currently implement textures as combined image+samplers, so the limit is
     // the minimum of supported samplers and sampled images.
-    mNativeCaps.maxCombinedTextureImageUnits                         = mtl::kMaxShaderSamplers;
+    mNativeCaps.maxCombinedTextureImageUnits                         = mtl::kMaxGLSamplerBindings;
     mNativeCaps.maxShaderTextureImageUnits[gl::ShaderType::Fragment] = mtl::kMaxShaderSamplers;
     mNativeCaps.maxShaderTextureImageUnits[gl::ShaderType::Vertex]   = mtl::kMaxShaderSamplers;
 
@@ -602,8 +592,7 @@ void DisplayMtl::initializeExtensions() const
     mNativeExtensions.textureFilterAnisotropic = true;
     mNativeExtensions.maxTextureAnisotropy     = 16;
 
-    // NOTE(hqle): Support true NPOT textures.
-    mNativeExtensions.textureNPOTOES = false;
+    mNativeExtensions.textureNPOTOES = true;
 
     mNativeExtensions.texture3DOES = false;
 
@@ -641,7 +630,8 @@ void DisplayMtl::initializeFeatures()
     mFeatures.allowSeparatedDepthStencilBuffers.enabled = false;
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-    mFeatures.hasDepthTextureFiltering.enabled = true;
+    mFeatures.hasDepthTextureFiltering.enabled        = true;
+    mFeatures.allowMultisampleStoreAndResolve.enabled = true;
 
     // Texture swizzle is only supported if macos sdk 10.15 is present
 #    if defined(__MAC_10_15)
@@ -660,6 +650,9 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), hasNonUniformDispatch,
                             [getMetalDevice() supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily4_v1]);
 
+    ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
+                            [getMetalDevice() supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily3_v1]);
+
 #    if !TARGET_OS_SIMULATOR
     mFeatures.allowSeparatedDepthStencilBuffers.enabled = true;
 #    endif
@@ -667,6 +660,38 @@ void DisplayMtl::initializeFeatures()
 
     angle::PlatformMethods *platform = ANGLEPlatformCurrent();
     platform->overrideFeaturesMtl(platform, &mFeatures);
+
+    ApplyFeatureOverrides(&mFeatures, getState());
+}
+
+angle::Result DisplayMtl::initializeShaderLibrary()
+{
+    mtl::AutoObjCObj<NSError> err = nil;
+
+    const uint8_t *compiled_shader_binary;
+    size_t compiled_shader_binary_len;
+
+#if !defined(NDEBUG)
+    compiled_shader_binary     = compiled_default_metallib_debug;
+    compiled_shader_binary_len = compiled_default_metallib_debug_len;
+#else
+    compiled_shader_binary                              = compiled_default_metallib;
+    compiled_shader_binary_len                          = compiled_default_metallib_len;
+#endif
+
+    mDefaultShaders = CreateShaderLibraryFromBinary(getMetalDevice(), compiled_shader_binary,
+                                                    compiled_shader_binary_len, &err);
+
+    if (err && !mDefaultShaders)
+    {
+        ANGLE_MTL_OBJC_SCOPE
+        {
+            ERR() << "Internal error: " << err.get().localizedDescription.UTF8String;
+        }
+        return angle::Result::Stop;
+    }
+
+    return angle::Result::Continue;
 }
 
 }  // namespace rx

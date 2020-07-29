@@ -17,16 +17,22 @@ namespace angle
 // MemoryBuffer implementation.
 MemoryBuffer::~MemoryBuffer()
 {
-    free(mData);
-    mData = nullptr;
+    if (mData)
+    {
+        free(mData);
+        mData = nullptr;
+    }
 }
 
 bool MemoryBuffer::resize(size_t size)
 {
     if (size == 0)
     {
-        free(mData);
-        mData = nullptr;
+        if (mData)
+        {
+            free(mData);
+            mData = nullptr;
+        }
         mSize = 0;
         return true;
     }

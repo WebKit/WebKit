@@ -19,7 +19,7 @@
 #include "common/angleutils.h"
 #include "common/system_utils.h"
 #include "common/vector_utils.h"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 #include "util/EGLWindow.h"
 #include "util/shader_utils.h"
 #include "util/util_gl.h"
@@ -142,6 +142,7 @@ struct GLColor32F
     GLfloat R, G, B, A;
 };
 
+static constexpr GLColor32F kFloatBlack = {0.0f, 0.0f, 0.0f, 1.0f};
 static constexpr GLColor32F kFloatRed   = {1.0f, 0.0f, 0.0f, 1.0f};
 static constexpr GLColor32F kFloatGreen = {0.0f, 1.0f, 0.0f, 1.0f};
 static constexpr GLColor32F kFloatBlue  = {0.0f, 0.0f, 1.0f, 1.0f};

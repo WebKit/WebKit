@@ -19,7 +19,10 @@
 #include "libANGLE/Uniform.h"
 #include "libANGLE/histogram_macros.h"
 #include "libANGLE/renderer/ProgramImpl.h"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
+
+#define USE_SYSTEM_ZLIB
+#include "compression_utils_portable.h"
 
 namespace gl
 {
@@ -140,11 +143,27 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
 
     ComputeHash(context, program, hashOut);
     egl::BlobCache::Value binaryProgram;
-    if (get(context, *hashOut, &binaryProgram))
+    size_t programSize = 0;
+    if (get(context, *hashOut, &binaryProgram, &programSize))
     {
+        uint32_t uncompressedSize =
+            zlib_internal::GetGzipUncompressedSize(binaryProgram.data(), programSize);
+
+        std::vector<uint8_t> uncompressedData(uncompressedSize);
+        uLong destLen = uncompressedSize;
+        int zResult   = zlib_internal::GzipUncompressHelper(uncompressedData.data(), &destLen,
+                                                          binaryProgram.data(),
+                                                          static_cast<uLong>(programSize));
+
+        if (zResult != Z_OK)
+        {
+            ERR() << "Failure to decompressed binary data: " << zResult << "\n";
+            return angle::Result::Incomplete;
+        }
+
         angle::Result result =
-            program->loadBinary(context, GL_PROGRAM_BINARY_ANGLE, binaryProgram.data(),
-                                static_cast<int>(binaryProgram.size()));
+            program->loadBinary(context, GL_PROGRAM_BINARY_ANGLE, uncompressedData.data(),
+                                static_cast<int>(uncompressedData.size()));
         ANGLE_HISTOGRAM_BOOLEAN("GPU.ANGLE.ProgramCache.LoadBinarySuccess",
                                 result == angle::Result::Continue);
         ANGLE_TRY(result);
@@ -170,9 +189,10 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
 
 bool MemoryProgramCache::get(const Context *context,
                              const egl::BlobCache::Key &programHash,
-                             egl::BlobCache::Value *programOut)
+                             egl::BlobCache::Value *programOut,
+                             size_t *programSizeOut)
 {
-    return mBlobCache.get(context->getScratchBuffer(), programHash, programOut);
+    return mBlobCache.get(context->getScratchBuffer(), programHash, programOut, programSizeOut);
 }
 
 bool MemoryProgramCache::getAt(size_t index,
@@ -200,16 +220,45 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
     angle::MemoryBuffer serializedProgram;
     ANGLE_TRY(program->serialize(context, &serializedProgram));
 
+    // Compress the program data
+    uLong uncompressedSize       = static_cast<uLong>(serializedProgram.size());
+    uLong expectedCompressedSize = zlib_internal::GzipExpectedCompressedSize(uncompressedSize);
+
+    angle::MemoryBuffer compressedData;
+    if (!compressedData.resize(expectedCompressedSize))
+    {
+        ERR() << "Failed to allocate enough memory to hold compressed program. ("
+              << expectedCompressedSize << " bytes )";
+        return angle::Result::Incomplete;
+    }
+
+    int zResult = zlib_internal::GzipCompressHelper(compressedData.data(), &expectedCompressedSize,
+                                                    serializedProgram.data(), uncompressedSize,
+                                                    nullptr, nullptr);
+
+    if (zResult != Z_OK)
+    {
+        FATAL() << "Error compressing binary data: " << zResult;
+        return angle::Result::Incomplete;
+    }
+
+    // Resize the buffer to the actual compressed size
+    if (!compressedData.resize(expectedCompressedSize))
+    {
+        ERR() << "Failed to resize to actual compressed program size. (" << expectedCompressedSize
+              << " bytes )";
+        return angle::Result::Incomplete;
+    }
+
     ANGLE_HISTOGRAM_COUNTS("GPU.ANGLE.ProgramCache.ProgramBinarySizeBytes",
-                           static_cast<int>(serializedProgram.size()));
+                           static_cast<int>(compressedData.size()));
 
     // TODO(syoussefi): to be removed.  Compatibility for Chrome until it supports
     // EGL_ANDROID_blob_cache. http://anglebug.com/2516
     auto *platform = ANGLEPlatformCurrent();
-    platform->cacheProgram(platform, programHash, serializedProgram.size(),
-                           serializedProgram.data());
+    platform->cacheProgram(platform, programHash, compressedData.size(), compressedData.data());
 
-    mBlobCache.put(programHash, std::move(serializedProgram));
+    mBlobCache.put(programHash, std::move(compressedData));
     return angle::Result::Continue;
 }
 

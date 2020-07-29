@@ -13,8 +13,8 @@
 
 #include <windows.h>
 
+#include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
-#include "libANGLE/renderer/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/win32/WindowSurfaceVkWin32.h"
 
 namespace rx

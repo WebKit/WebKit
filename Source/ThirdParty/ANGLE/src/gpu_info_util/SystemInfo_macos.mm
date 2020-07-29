@@ -21,51 +21,8 @@ namespace angle
 namespace
 {
 
-using PlatformDisplayID = uint32_t;
-
 constexpr CGLRendererProperty kCGLRPRegistryIDLow  = static_cast<CGLRendererProperty>(140);
 constexpr CGLRendererProperty kCGLRPRegistryIDHigh = static_cast<CGLRendererProperty>(141);
-
-// Code from WebKit to get the active GPU's ID given a display ID.
-uint64_t GetGpuIDFromDisplayID(PlatformDisplayID displayID)
-{
-    GLuint displayMask              = CGDisplayIDToOpenGLDisplayMask(displayID);
-    GLint numRenderers              = 0;
-    CGLRendererInfoObj rendererInfo = nullptr;
-    CGLError error = CGLQueryRendererInfo(displayMask, &rendererInfo, &numRenderers);
-    if (!numRenderers || !rendererInfo || error != kCGLNoError)
-        return 0;
-
-    // The 0th renderer should not be the software renderer.
-    GLint isAccelerated;
-    error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPAccelerated, &isAccelerated);
-    if (!isAccelerated || error != kCGLNoError)
-    {
-        CGLDestroyRendererInfo(rendererInfo);
-        return 0;
-    }
-
-    GLint gpuIDLow  = 0;
-    GLint gpuIDHigh = 0;
-
-    error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPRegistryIDLow, &gpuIDLow);
-
-    if (error != kCGLNoError || gpuIDLow < 0)
-    {
-        CGLDestroyRendererInfo(rendererInfo);
-        return 0;
-    }
-
-    error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPRegistryIDHigh, &gpuIDHigh);
-    if (error != kCGLNoError || gpuIDHigh < 0)
-    {
-        CGLDestroyRendererInfo(rendererInfo);
-        return 0;
-    }
-
-    CGLDestroyRendererInfo(rendererInfo);
-    return static_cast<uint64_t>(gpuIDHigh) << 32 | gpuIDLow;
-}
 
 std::string GetMachineModel()
 {
@@ -195,6 +152,61 @@ void SetActiveGPUIndex(SystemInfo *info)
 }
 
 }  // anonymous namespace
+
+// Code from WebKit to get the active GPU's ID given a Core Graphics display ID.
+// https://trac.webkit.org/browser/webkit/trunk/Source/WebCore/platform/mac/PlatformScreenMac.mm
+// Used with permission.
+uint64_t GetGpuIDFromDisplayID(uint32_t displayID)
+{
+    return GetGpuIDFromOpenGLDisplayMask(CGDisplayIDToOpenGLDisplayMask(displayID));
+}
+
+// Code from WebKit to query the GPU ID given an OpenGL display mask.
+// https://trac.webkit.org/browser/webkit/trunk/Source/WebCore/platform/mac/PlatformScreenMac.mm
+// Used with permission.
+uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask)
+{
+    if (@available(macOS 10.13, *))
+    {
+        GLint numRenderers              = 0;
+        CGLRendererInfoObj rendererInfo = nullptr;
+        CGLError error = CGLQueryRendererInfo(displayMask, &rendererInfo, &numRenderers);
+        if (!numRenderers || !rendererInfo || error != kCGLNoError)
+            return 0;
+
+        // The 0th renderer should not be the software renderer.
+        GLint isAccelerated;
+        error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPAccelerated, &isAccelerated);
+        if (!isAccelerated || error != kCGLNoError)
+        {
+            CGLDestroyRendererInfo(rendererInfo);
+            return 0;
+        }
+
+        GLint gpuIDLow  = 0;
+        GLint gpuIDHigh = 0;
+
+        error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPRegistryIDLow, &gpuIDLow);
+        if (error != kCGLNoError)
+        {
+            CGLDestroyRendererInfo(rendererInfo);
+            return 0;
+        }
+
+        error = CGLDescribeRenderer(rendererInfo, 0, kCGLRPRegistryIDHigh, &gpuIDHigh);
+        if (error != kCGLNoError)
+        {
+            CGLDestroyRendererInfo(rendererInfo);
+            return 0;
+        }
+
+        CGLDestroyRendererInfo(rendererInfo);
+        return (static_cast<uint64_t>(static_cast<uint32_t>(gpuIDHigh)) << 32) |
+               static_cast<uint64_t>(static_cast<uint32_t>(gpuIDLow));
+    }
+
+    return 0;
+}
 
 bool GetSystemInfo(SystemInfo *info)
 {

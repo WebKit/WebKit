@@ -433,4 +433,15 @@ int NumberOfProcessors()
 
     return static_cast<int>(res);
 }
+
+const char *GetNativeEGLLibraryNameWithExtension()
+{
+#if defined(ANGLE_PLATFORM_ANDROID)
+    return "libEGL.so";
+#elif defined(ANGLE_PLATFORM_LINUX)
+    return "libEGL.so.1";
+#else
+    return "unknown_libegl";
+#endif
+}
 }  // namespace angle

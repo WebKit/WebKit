@@ -60,6 +60,13 @@ enum class SurfaceRotation
     EnumCount = InvalidEnum,
 };
 
+void RotateRectangle(const SurfaceRotation rotation,
+                     const bool flipY,
+                     const int framebufferWidth,
+                     const int framebufferHeight,
+                     const gl::Rectangle &incoming,
+                     gl::Rectangle *outgoing);
+
 using MipGenerationFunction = void (*)(size_t sourceWidth,
                                        size_t sourceHeight,
                                        size_t sourceDepth,
@@ -342,6 +349,102 @@ void CopyLineLoopIndicesWithRestart(GLsizei indexCount, const uint8_t *srcPtr, u
 }
 
 void GetSamplePosition(GLsizei sampleCount, size_t index, GLfloat *xy);
+
+angle::Result MultiDrawArraysGeneral(ContextImpl *contextImpl,
+                                     const gl::Context *context,
+                                     gl::PrimitiveMode mode,
+                                     const GLint *firsts,
+                                     const GLsizei *counts,
+                                     GLsizei drawcount);
+angle::Result MultiDrawArraysInstancedGeneral(ContextImpl *contextImpl,
+                                              const gl::Context *context,
+                                              gl::PrimitiveMode mode,
+                                              const GLint *firsts,
+                                              const GLsizei *counts,
+                                              const GLsizei *instanceCounts,
+                                              GLsizei drawcount);
+angle::Result MultiDrawElementsGeneral(ContextImpl *contextImpl,
+                                       const gl::Context *context,
+                                       gl::PrimitiveMode mode,
+                                       const GLsizei *counts,
+                                       gl::DrawElementsType type,
+                                       const GLvoid *const *indices,
+                                       GLsizei drawcount);
+angle::Result MultiDrawElementsInstancedGeneral(ContextImpl *contextImpl,
+                                                const gl::Context *context,
+                                                gl::PrimitiveMode mode,
+                                                const GLsizei *counts,
+                                                gl::DrawElementsType type,
+                                                const GLvoid *const *indices,
+                                                const GLsizei *instanceCounts,
+                                                GLsizei drawcount);
+angle::Result MultiDrawArraysInstancedBaseInstanceGeneral(ContextImpl *contextImpl,
+                                                          const gl::Context *context,
+                                                          gl::PrimitiveMode mode,
+                                                          const GLint *firsts,
+                                                          const GLsizei *counts,
+                                                          const GLsizei *instanceCounts,
+                                                          const GLuint *baseInstances,
+                                                          GLsizei drawcount);
+angle::Result MultiDrawElementsInstancedBaseVertexBaseInstanceGeneral(ContextImpl *contextImpl,
+                                                                      const gl::Context *context,
+                                                                      gl::PrimitiveMode mode,
+                                                                      const GLsizei *counts,
+                                                                      gl::DrawElementsType type,
+                                                                      const GLvoid *const *indices,
+                                                                      const GLsizei *instanceCounts,
+                                                                      const GLint *baseVertices,
+                                                                      const GLuint *baseInstances,
+                                                                      GLsizei drawcount);
+
+// RAII object making sure reset uniforms is called no matter whether there's an error in draw calls
+class ResetBaseVertexBaseInstance : angle::NonCopyable
+{
+  public:
+    ResetBaseVertexBaseInstance(gl::Program *programObject,
+                                bool resetBaseVertex,
+                                bool resetBaseInstance);
+
+    ~ResetBaseVertexBaseInstance();
+
+  private:
+    gl::Program *mProgramObject;
+    bool mResetBaseVertex;
+    bool mResetBaseInstance;
+};
+
 }  // namespace rx
+
+// MultiDraw macro patterns
+// These macros are to avoid too much code duplication as we don't want to have if detect for
+// hasDrawID/BaseVertex/BaseInstance inside for loop in a multiDraw call Part of these are put in
+// the header as we want to share with specialized context impl on some platforms for multidraw
+#define ANGLE_SET_DRAW_ID_UNIFORM_0(drawID) \
+    {}
+#define ANGLE_SET_DRAW_ID_UNIFORM_1(drawID) programObject->setDrawIDUniform(drawID)
+#define ANGLE_SET_DRAW_ID_UNIFORM(cond) ANGLE_SET_DRAW_ID_UNIFORM_##cond
+
+#define ANGLE_SET_BASE_VERTEX_UNIFORM_0(baseVertex) \
+    {}
+#define ANGLE_SET_BASE_VERTEX_UNIFORM_1(baseVertex) programObject->setBaseVertexUniform(baseVertex);
+#define ANGLE_SET_BASE_VERTEX_UNIFORM(cond) ANGLE_SET_BASE_VERTEX_UNIFORM_##cond
+
+#define ANGLE_SET_BASE_INSTANCE_UNIFORM_0(baseInstance) \
+    {}
+#define ANGLE_SET_BASE_INSTANCE_UNIFORM_1(baseInstance) \
+    programObject->setBaseInstanceUniform(baseInstance)
+#define ANGLE_SET_BASE_INSTANCE_UNIFORM(cond) ANGLE_SET_BASE_INSTANCE_UNIFORM_##cond
+
+#define ANGLE_NOOP_DRAW_ context->noopDraw(mode, counts[drawID])
+#define ANGLE_NOOP_DRAW_INSTANCED \
+    context->noopDrawInstanced(mode, counts[drawID], instanceCounts[drawID])
+#define ANGLE_NOOP_DRAW(_instanced) ANGLE_NOOP_DRAW##_instanced
+
+#define ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE_ \
+    gl::MarkTransformFeedbackBufferUsage(context, counts[drawID], 1)
+#define ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE_INSTANCED \
+    gl::MarkTransformFeedbackBufferUsage(context, counts[drawID], instanceCounts[drawID])
+#define ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE(instanced) \
+    ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE##instanced
 
 #endif  // LIBANGLE_RENDERER_RENDERER_UTILS_H_

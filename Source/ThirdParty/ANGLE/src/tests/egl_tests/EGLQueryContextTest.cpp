@@ -32,8 +32,6 @@ class EGLQueryContextTest : public ANGLETest
                              8,
                              EGL_RENDERABLE_TYPE,
                              clientVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT,
-                             EGL_SURFACE_TYPE,
-                             EGL_PBUFFER_BIT,
                              EGL_NONE};
         EXPECT_TRUE(eglChooseConfig(mDisplay, cfgattrs, &mConfig, 1, &ncfg) != EGL_FALSE);
         EXPECT_TRUE(ncfg == 1);
@@ -42,9 +40,14 @@ class EGLQueryContextTest : public ANGLETest
         mContext          = eglCreateContext(mDisplay, mConfig, nullptr, ctxattrs);
         EXPECT_TRUE(mContext != EGL_NO_CONTEXT);
 
-        EGLint surfattrs[] = {EGL_WIDTH, 16, EGL_HEIGHT, 16, EGL_NONE};
-        mSurface           = eglCreatePbufferSurface(mDisplay, mConfig, surfattrs);
-        EXPECT_TRUE(mSurface != EGL_NO_SURFACE);
+        EGLint surfaceType = EGL_NONE;
+        eglGetConfigAttrib(mDisplay, mConfig, EGL_SURFACE_TYPE, &surfaceType);
+        if (surfaceType & EGL_PBUFFER_BIT)
+        {
+            EGLint surfattrs[] = {EGL_WIDTH, 16, EGL_HEIGHT, 16, EGL_NONE};
+            mSurface           = eglCreatePbufferSurface(mDisplay, mConfig, surfattrs);
+            EXPECT_TRUE(mSurface != EGL_NO_SURFACE);
+        }
     }
 
     void testTearDown() override
@@ -53,16 +56,19 @@ class EGLQueryContextTest : public ANGLETest
         {
             eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
             eglDestroyContext(mDisplay, mContext);
-            eglDestroySurface(mDisplay, mSurface);
+            if (mSurface)
+            {
+                eglDestroySurface(mDisplay, mSurface);
+            }
             eglTerminate(mDisplay);
         }
         ASSERT_EGL_SUCCESS() << "Error during test TearDown";
     }
 
-    EGLDisplay mDisplay;
-    EGLConfig mConfig;
-    EGLContext mContext;
-    EGLSurface mSurface;
+    EGLDisplay mDisplay = EGL_NO_DISPLAY;
+    EGLConfig mConfig   = EGL_NO_CONFIG_KHR;
+    EGLContext mContext = EGL_NO_CONTEXT;
+    EGLSurface mSurface = EGL_NO_SURFACE;
 };
 
 TEST_P(EGLQueryContextTest, GetConfigID)
@@ -98,6 +104,8 @@ TEST_P(EGLQueryContextTest, GetRenderBufferNoSurface)
 
 TEST_P(EGLQueryContextTest, GetRenderBufferBoundSurface)
 {
+    ANGLE_SKIP_TEST_IF(!mSurface);
+
     EGLint renderBuffer, contextRenderBuffer;
     EXPECT_TRUE(eglQuerySurface(mDisplay, mSurface, EGL_RENDER_BUFFER, &renderBuffer) != EGL_FALSE);
     EXPECT_TRUE(eglMakeCurrent(mDisplay, mSurface, mSurface, mContext) != EGL_FALSE);

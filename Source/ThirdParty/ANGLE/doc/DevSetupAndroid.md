@@ -7,62 +7,34 @@ From a Linux platform (the only platform that Chromium for Android supports), fo
 
 Name your output directories `out/Debug` and `out/Release`, because Chromium GPU tests look for browser binaries in these folders. Replacing '[Debug|Release]' with other names seems to be OK when working with multiple build configurations.
 
-The following GN args are known to work well for Release and Debug configurations.
 
-Debug:
+## ANGLE GN args for Android
+The following command will open a text editor to populate GN args for a Debug build:
 ```
-$ gn args out/Debug
+gn args out/Debug
 ```
-```
-target_os = "android"
-target_cpu = "arm64"
-android32_ndk_api_level = 26
-android64_ndk_api_level = 26
-angle_libs_suffix = "_angle"
-ffmpeg_branding = "Chrome"
-is_component_build = false
-symbol_level = 1
-is_debug = true
-dcheck_always_on = true
-angle_enable_vulkan = true
-angle_enable_vulkan_validation_layers = true
-angle_enable_gl = false
-```
-Release:
-```
-$ gn args out/Release
-```
+
+Once the editor is up, paste the following GN args to generate an Android build, and save the file.
 ```
 target_os = "android"
 target_cpu = "arm64"
 android32_ndk_api_level = 26
 android64_ndk_api_level = 26
 angle_libs_suffix = "_angle"
-ffmpeg_branding = "Chrome"
 is_component_build = false
-symbol_level = 0
-strip_debug_info = true
-is_debug = false
-is_official_build = true # enables level of optimization beyond release
-dcheck_always_on = false
-angle_enable_vulkan = true
-angle_enable_vulkan_validation_layers = false
-angle_enable_gl = false
-enable_resource_whitelist_generation = false
 ```
+
+More targeted GN arg combinations can be found [below](#android-gn-args-combinations).
 
 If you run into any problems with the above, you may be able to pull newer GN args from an official Android bot on [GPU.FYI waterfall](https://ci.chromium.org/p/chromium/g/chromium.gpu.fyi/console).
  - Look for `generate_build_files` step output of that bot.
  - Remove `goma_dir` flag.
 
+## Building ANGLE for Android
 Build an ANGLE target using the following command:
 
 ```
 autoninja -C out/Debug <target>
-```
-or
-```
-autoninja -C out/Release <target>
 ```
 
 The following ANGLE build targets are supported:
@@ -182,3 +154,38 @@ E GraphicsEnvironment: Invalid number of ANGLE packages. Required: 1, Found: 0
 E GraphicsEnvironment: Failed to find ANGLE package.
 ```
 Double check that you are root, or that your application is [marked debuggable](https://developer.android.com/guide/topics/manifest/application-element#debug).
+
+## Android GN args combinations
+
+The [above](#angle-gn-args-for-android) GN args only modify default values to generate a Debug build for Android. Below are some common configurations used for different scenarios.
+
+To determine what is different from default, you can point the following command at your target directory. It will show the list of gn args in use, where they came from, their current value, and their default values.
+```
+gn args --list <dir>
+```
+### Performance config
+This config is designed to get maximum performance by disabling debug configs and validation layers.
+Note: The oddly named `is_official_build` is a more aggressive optimization level than `Release`. Its names is historical.
+```
+target_os = "android"
+target_cpu = "arm64"
+android32_ndk_api_level = 26
+android64_ndk_api_level = 26
+angle_libs_suffix = "_angle"
+is_component_build = false
+is_official_build = true
+is_debug = false
+```
+### Release with asserts config
+This config is useful for quickly ensuring Vulkan is running cleanly. It disables debug, but enables asserts and allows validation errors.
+```
+target_os = "android"
+target_cpu = "arm64"
+android32_ndk_api_level = 26
+android64_ndk_api_level = 26
+angle_libs_suffix = "_angle"
+is_component_build = false
+is_official_build = true
+is_debug = false
+dcheck_always_on = true
+```

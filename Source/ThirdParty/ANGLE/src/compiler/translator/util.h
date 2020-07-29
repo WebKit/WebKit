@@ -88,6 +88,8 @@ bool IsSpecWithFunctionBodyNewScope(ShShaderSpec shaderSpec, int shaderVersion);
 ImplicitTypeConversion GetConversion(TBasicType t1, TBasicType t2);
 
 bool IsValidImplicitConversion(ImplicitTypeConversion conversion, TOperator op);
+
+size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_UTIL_H_

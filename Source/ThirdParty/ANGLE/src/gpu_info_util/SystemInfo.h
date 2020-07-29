@@ -101,6 +101,7 @@ constexpr VendorID kVendorID_Kazan       = 0x10003;
 
 // Known device IDs
 constexpr DeviceID kDeviceID_Swiftshader = 0xC0DE;
+constexpr DeviceID kDeviceID_Adreno540   = 0x5040001;
 
 // Predicates on vendor IDs
 bool IsAMD(VendorID vendorId);
@@ -126,6 +127,15 @@ void GetDualGPUInfo(SystemInfo *info);
 void PrintSystemInfo(const SystemInfo &info);
 
 VersionInfo ParseNvidiaDriverVersion(uint32_t version);
+
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+// Helper to get the active GPU ID from a given Core Graphics display ID.
+uint64_t GetGpuIDFromDisplayID(uint32_t displayID);
+
+// Helper to get the active GPU ID from an OpenGL display mask.
+uint64_t GetGpuIDFromOpenGLDisplayMask(uint32_t displayMask);
+#endif
+
 }  // namespace angle
 
 #endif  // GPU_INFO_UTIL_SYSTEM_INFO_H_

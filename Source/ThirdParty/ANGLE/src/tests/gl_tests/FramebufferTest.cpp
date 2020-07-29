@@ -362,15 +362,34 @@ TEST_P(FramebufferFormatsTest, ReadDrawCompleteness)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
+// Test that a renderbuffer with RGB565 format works as expected. This test is intended for some
+// back-end having no support for native RGB565 renderbuffer and thus having to emulate using RGBA
+// format.
+TEST_P(FramebufferFormatsTest, RGB565Renderbuffer)
+{
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB565, 1, 1);
+
+    GLFramebuffer completeFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, completeFBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+    ASSERT_GL_NO_ERROR();
+
+    glClearColor(1, 0, 0, 0.5f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
 class FramebufferTest_ES3 : public ANGLETest
 {};
 
 // Covers invalidating an incomplete framebuffer. This should be a no-op, but should not error.
 TEST_P(FramebufferTest_ES3, InvalidateIncomplete)
 {
-    // TODO: anglebug.com/3971
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     GLFramebuffer framebuffer;
     GLRenderbuffer renderbuffer;
 
@@ -463,6 +482,75 @@ TEST_P(FramebufferTest_ES3, TextureAttachmentMipLevels)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 6);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 6);
     ExpectFramebufferCompleteOrUnsupported(GL_FRAMEBUFFER);
+}
+
+TEST_P(FramebufferTest_ES3, TextureAttachmentMipLevelsReadBack)
+{
+#if defined(ADDRESS_SANITIZER)
+    // http://anglebug.com/4737
+    ANGLE_SKIP_TEST_IF(IsOSX());
+#endif
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    const std::array<GLColor, 2 * 2> mip0Data = {GLColor::red, GLColor::red, GLColor::red,
+                                                 GLColor::red};
+    const std::array<GLColor, 1 * 1> mip1Data = {GLColor::green};
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, mip0Data.data());
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, mip1Data.data());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 1);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glClearColor(0, 0, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+}
+
+// TextureAttachmentMipLevelsReadBackWithDraw is a copy of TextureAttachmentMipLevelsReadBack except
+// for adding a draw after the last clear. The draw forces ANGLE's Vulkan backend to use the
+// framebuffer that is level 1 of the texture which will trigger the mismatch use of the GL level
+// and Vulkan level in referring to that rendertarget.
+TEST_P(FramebufferTest_ES3, TextureAttachmentMipLevelsReadBackWithDraw)
+{
+#if defined(ADDRESS_SANITIZER)
+    // http://anglebug.com/4737
+    ANGLE_SKIP_TEST_IF(IsOSX());
+#endif
+
+    ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    const std::array<GLColor, 2 * 2> mip0Data = {GLColor::red, GLColor::red, GLColor::red,
+                                                 GLColor::red};
+    const std::array<GLColor, 1 * 1> mip1Data = {GLColor::green};
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, mip0Data.data());
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, mip1Data.data());
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 1);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glClearColor(0, 0, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // This draw triggers the use of the framebuffer
+    glUseProgram(greenProgram);
+    drawQuad(greenProgram.get(), std::string(essl1_shaders::PositionAttrib()), 0.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 // Test that passing an attachment COLOR_ATTACHMENTm where m is equal to MAX_COLOR_ATTACHMENTS
@@ -902,9 +990,6 @@ class FramebufferTest_ES31 : public ANGLETest
 // FRAMEBUFFER_DEFAULT_HEIGHT parameters is zero, the framebuffer is incomplete.
 TEST_P(FramebufferTest_ES31, IncompleteMissingAttachmentDefaultParam)
 {
-    // anglebug.com/3565
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     GLFramebuffer mFramebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
 
@@ -933,9 +1018,6 @@ TEST_P(FramebufferTest_ES31, IncompleteMissingAttachmentDefaultParam)
 // Test that the sample count of a mix of texture and renderbuffer should be same.
 TEST_P(FramebufferTest_ES31, IncompleteMultisampleSampleCountMix)
 {
-    // anglebug.com/3565
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     GLFramebuffer mFramebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
 
@@ -972,9 +1054,6 @@ TEST_P(FramebufferTest_ES31, IncompleteMultisampleSampleCountMix)
 // Test that the sample count of texture attachments should be same.
 TEST_P(FramebufferTest_ES31, IncompleteMultisampleSampleCountTex)
 {
-    // anglebug.com/3565
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     GLFramebuffer mFramebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
 
@@ -1009,9 +1088,6 @@ TEST_P(FramebufferTest_ES31, IncompleteMultisampleSampleCountTex)
 // TEXTURE_FIXED_SAMPLE_LOCATIONS must be TRUE for all attached textures.
 TEST_P(FramebufferTest_ES31, IncompleteMultisampleFixedSampleLocationsMix)
 {
-    // anglebug.com/3565
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     GLFramebuffer mFramebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
 
@@ -1035,9 +1111,6 @@ TEST_P(FramebufferTest_ES31, IncompleteMultisampleFixedSampleLocationsMix)
 // Test that the value of TEXTURE_FIXED_SAMPLE_LOCATIONS is the same for all attached textures.
 TEST_P(FramebufferTest_ES31, IncompleteMultisampleFixedSampleLocationsTex)
 {
-    // anglebug.com/3565
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     GLFramebuffer mFramebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, mFramebuffer.get());
 

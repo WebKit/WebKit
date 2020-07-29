@@ -13,6 +13,7 @@
 #include "common/angleutils.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/angletypes.h"
+#include "libANGLE/renderer/gl/formatutilsgl.h"
 
 #include <map>
 
@@ -154,6 +155,12 @@ class BlitGL : angle::NonCopyable
                                                    gl::TextureTarget target,
                                                    size_t level);
 
+    angle::Result generateSRGBMipmap(const gl::Context *context,
+                                     TextureGL *source,
+                                     GLuint baseLevel,
+                                     GLuint levelCount,
+                                     const gl::Extents &sourceBaseLevelSize);
+
     angle::Result initializeResources(const gl::Context *context);
 
   private:
@@ -191,6 +198,8 @@ class BlitGL : angle::NonCopyable
 
     GLuint mVAO;
     GLuint mVertexBuffer;
+
+    nativegl::TexImageFormat mSRGBMipmapGenerationFormat;
 };
 }  // namespace rx
 

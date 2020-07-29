@@ -136,17 +136,33 @@ class RunningGraph : public Widget
     // Out of line constructor to satisfy chromium-style.
     RunningGraph(size_t n);
     ~RunningGraph() override;
-    void add(size_t n) { runningValues[lastValueIndex] += n; }
+
+    void add(size_t n)
+    {
+        if (!ignoreFirstValue)
+        {
+            runningValues[lastValueIndex] += n;
+        }
+    }
+
     void next()
     {
-        lastValueIndex                = (lastValueIndex + 1) % runningValues.size();
-        runningValues[lastValueIndex] = 0;
+        if (ignoreFirstValue)
+        {
+            ignoreFirstValue = false;
+        }
+        else
+        {
+            lastValueIndex                = (lastValueIndex + 1) % runningValues.size();
+            runningValues[lastValueIndex] = 0;
+        }
     }
 
   protected:
     std::vector<size_t> runningValues;
     size_t lastValueIndex = 0;
     Text description;
+    bool ignoreFirstValue = true;
 
     friend class gl::Overlay;
     friend class gl::OverlayState;

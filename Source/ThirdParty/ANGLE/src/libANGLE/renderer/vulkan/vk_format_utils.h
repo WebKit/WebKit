@@ -9,11 +9,11 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_VK_FORMAT_UTILS_H_
 #define LIBANGLE_RENDERER_VULKAN_VK_FORMAT_UTILS_H_
 
+#include "common/vulkan/vk_headers.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/Format.h"
 #include "libANGLE/renderer/copyvertex.h"
 #include "libANGLE/renderer/renderer_utils.h"
-#include "libANGLE/renderer/vulkan/vk_headers.h"
 #include "platform/FeaturesVk.h"
 
 #include <array>
@@ -84,6 +84,7 @@ struct Format final : private angle::NonCopyable
 
     // Returns buffer alignment for image-copy operations (to or from a buffer).
     size_t getImageCopyBufferAlignment() const;
+    size_t getValidImageCopyBufferAlignment() const;
 
     // Returns true if the Image format has more channels than the ANGLE format.
     bool hasEmulatedImageChannels() const;
@@ -163,11 +164,14 @@ bool HasNonRenderableTextureFormatSupport(RendererVk *renderer, VkFormat vkForma
 // calculation is listed in the Vulkan spec at the end of the section 'Vertex Input Description'.
 size_t GetVertexInputAlignment(const vk::Format &format);
 
-void MapSwizzleState(const ContextVk *contextVk,
-                     const vk::Format &format,
-                     const bool sized,
-                     const gl::SwizzleState &swizzleState,
-                     gl::SwizzleState *swizzleStateOut);
+// Get the swizzle state based on format's requirements and emulations.
+gl::SwizzleState GetFormatSwizzle(const ContextVk *contextVk,
+                                  const vk::Format &format,
+                                  const bool sized);
+
+// Apply application's swizzle to the swizzle implied by format as received from GetFormatSwizzle.
+gl::SwizzleState ApplySwizzle(const gl::SwizzleState &formatSwizzle,
+                              const gl::SwizzleState &toApply);
 
 namespace vk
 {

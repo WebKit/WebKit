@@ -292,12 +292,8 @@ angle::Result QueryVk::isResultAvailable(const gl::Context *context, bool *avail
     return angle::Result::Continue;
 }
 
-void QueryVk::onTransformFeedbackEnd(const gl::Context *context)
+void QueryVk::onTransformFeedbackEnd(GLsizeiptr primitivesDrawn)
 {
-    gl::TransformFeedback *transformFeedback = context->getState().getCurrentTransformFeedback();
-    ASSERT(transformFeedback);
-
-    mTransformFeedbackPrimitivesDrawn += transformFeedback->getPrimitivesDrawn();
+    mTransformFeedbackPrimitivesDrawn += primitivesDrawn;
 }
-
 }  // namespace rx

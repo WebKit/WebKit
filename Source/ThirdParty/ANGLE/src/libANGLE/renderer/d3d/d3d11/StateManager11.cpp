@@ -541,9 +541,10 @@ void ShaderConstants11::onViewportChange(const gl::Rectangle &glViewport,
 }
 
 // Update the ShaderConstants with a new first vertex and return whether the update dirties them.
-ANGLE_INLINE bool ShaderConstants11::onFirstVertexChange(GLint firstVertex, GLint baseVertex)
+ANGLE_INLINE bool ShaderConstants11::onFirstVertexChange(GLint firstVertex)
 {
-    uint32_t newFirstVertex = static_cast<uint32_t>(firstVertex + baseVertex);
+    // firstVertex should already include baseVertex, if any.
+    uint32_t newFirstVertex = static_cast<uint32_t>(firstVertex);
 
     bool firstVertexDirty = (mVertex.firstVertex != newFirstVertex);
     if (firstVertexDirty)
@@ -1378,7 +1379,7 @@ void StateManager11::syncScissorRectangle(const gl::Context *context)
     const gl::Rectangle &scissor = glState.getScissor();
     const bool enabled           = glState.isScissorTestEnabled();
 
-    mCurScissorOffset = framebuffer->getTextureOffset();
+    mCurScissorOffset = framebuffer->getSurfaceTextureOffset();
 
     int scissorX = scissor.x + mCurScissorOffset.x;
     int scissorY = scissor.y + mCurScissorOffset.y;
@@ -1435,7 +1436,7 @@ void StateManager11::syncViewport(const gl::Context *context)
     int dxViewportWidth    = 0;
     int dxViewportHeight   = 0;
 
-    mCurViewportOffset = framebuffer->getTextureOffset();
+    mCurViewportOffset = framebuffer->getSurfaceTextureOffset();
 
     dxViewportTopLeftX =
         gl::clamp(viewport.x + mCurViewportOffset.x, dxMinViewportBoundsX, dxMaxViewportBoundsX);
@@ -1521,11 +1522,11 @@ void StateManager11::processFramebufferInvalidation(const gl::Context *context)
     ASSERT(fbo);
 
     // Dirty scissor and viewport because surface texture offset might have changed.
-    if (mCurViewportOffset != fbo->getTextureOffset())
+    if (mCurViewportOffset != fbo->getSurfaceTextureOffset())
     {
         mInternalDirtyBits.set(DIRTY_BIT_VIEWPORT_STATE);
     }
-    if (mCurScissorOffset != fbo->getTextureOffset())
+    if (mCurScissorOffset != fbo->getSurfaceTextureOffset())
     {
         mInternalDirtyBits.set(DIRTY_BIT_SCISSOR_STATE);
     }
@@ -2167,7 +2168,9 @@ angle::Result StateManager11::updateState(const gl::Context *context,
                                           gl::DrawElementsType indexTypeOrInvalid,
                                           const void *indices,
                                           GLsizei instanceCount,
-                                          GLint baseVertex)
+                                          GLint baseVertex,
+                                          GLuint baseInstance,
+                                          bool promoteDynamic)
 {
     const gl::State &glState = context->getState();
 
@@ -2211,7 +2214,7 @@ angle::Result StateManager11::updateState(const gl::Context *context,
 
     ANGLE_TRY(mVertexArray11->syncStateForDraw(context, firstVertex, vertexOrIndexCount,
                                                indexTypeOrInvalid, indices, instanceCount,
-                                               baseVertex));
+                                               baseVertex, baseInstance, promoteDynamic));
 
     // Changes in the draw call can affect the vertex buffer translations.
     if (!mLastFirstVertex.valid() || mLastFirstVertex.value() != firstVertex)
@@ -2223,7 +2226,18 @@ angle::Result StateManager11::updateState(const gl::Context *context,
     // The ShaderConstants only need to be updated when the program uses vertexID
     if (mProgramD3D->usesVertexID())
     {
-        if (mShaderConstants.onFirstVertexChange(firstVertex, baseVertex))
+        GLint firstVertexOnChange = firstVertex + baseVertex;
+        ASSERT(mVertexArray11);
+        if (mVertexArray11->hasActiveDynamicAttrib(context) &&
+            indexTypeOrInvalid != gl::DrawElementsType::InvalidEnum)
+        {
+            // drawElements with Dynamic attribute
+            // the firstVertex is already including baseVertex when
+            // doing ComputeStartVertex
+            firstVertexOnChange = firstVertex;
+        }
+
+        if (mShaderConstants.onFirstVertexChange(firstVertexOnChange))
         {
             mInternalDirtyBits.set(DIRTY_BIT_DRIVER_UNIFORMS);
         }

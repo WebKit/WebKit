@@ -8,10 +8,10 @@
 #include "libANGLE/renderer/vulkan/MemoryObjectVk.h"
 
 #include "common/debug.h"
+#include "common/vulkan/vk_headers.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
-#include "libANGLE/renderer/vulkan/vk_headers.h"
 #include "vulkan/vulkan_fuchsia_ext.h"
 
 #if !defined(ANGLE_PLATFORM_WINDOWS)
@@ -245,7 +245,7 @@ angle::Result MemoryObjectVk::createImage(ContextVk *contextVk,
 
     VkMemoryPropertyFlags flags = 0;
     ANGLE_TRY(image->initExternalMemory(contextVk, renderer->getMemoryProperties(),
-                                        externalMemoryRequirements, importMemoryInfo,
+                                        externalMemoryRequirements, nullptr, importMemoryInfo,
                                         renderer->getQueueFamilyIndex(), flags));
 
     return angle::Result::Continue;

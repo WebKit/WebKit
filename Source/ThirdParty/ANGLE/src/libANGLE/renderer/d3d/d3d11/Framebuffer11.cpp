@@ -252,12 +252,12 @@ angle::Result Framebuffer11::readPixelsImpl(const gl::Context *context,
                                             GLenum type,
                                             size_t outputPitch,
                                             const gl::PixelPackState &pack,
+                                            gl::Buffer *packBuffer,
                                             uint8_t *pixels)
 {
     const gl::FramebufferAttachment *readAttachment = mState.getReadPixelsAttachment(format);
     ASSERT(readAttachment);
 
-    gl::Buffer *packBuffer = context->getState().getTargetBuffer(gl::BufferBinding::PixelPack);
     if (packBuffer != nullptr)
     {
         Buffer11 *packBufferStorage      = GetImplAs<Buffer11>(packBuffer);
@@ -318,6 +318,11 @@ angle::Result Framebuffer11::blitImpl(const gl::Context *context,
 
                 const bool invertColorDest   = UsePresentPathFast(mRenderer, &drawBuffer);
                 gl::Rectangle actualDestArea = destArea;
+
+                const auto &surfaceTextureOffset = mState.getSurfaceTextureOffset();
+                actualDestArea.x                 = actualDestArea.x + surfaceTextureOffset.x;
+                actualDestArea.y                 = actualDestArea.y + surfaceTextureOffset.y;
+
                 if (invertColorDest)
                 {
                     RenderTarget11 *drawRenderTarget11 = GetAs<RenderTarget11>(drawRenderTarget);

@@ -38,7 +38,11 @@ void CaptureDrawArraysIndirect_indirect(const State &glState,
                                         const void *indirect,
                                         ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    // DrawArraysIndirect requires that all data sourced for the command,
+    // including the DrawArraysIndirectCommand structure, be in buffer objects,
+    // and may not be called when the default vertex array object is bound.
+    // Indirect pointer is automatically captured in capture_gles_3_1_autogen.cpp
+    assert(!isCallValid || glState.getTargetBuffer(gl::BufferBinding::DrawIndirect));
 }
 
 void CaptureDrawElementsIndirect_indirect(const State &glState,
@@ -48,7 +52,11 @@ void CaptureDrawElementsIndirect_indirect(const State &glState,
                                           const void *indirect,
                                           ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    // DrawElementsIndirect requires that all data sourced for the command,
+    // including the DrawElementsIndirectCommand structure, be in buffer objects,
+    // and may not be called when the default vertex array object is bound
+    // Indirect pointer is automatically captured in capture_gles_3_1_autogen.cpp
+    assert(!isCallValid || glState.getTargetBuffer(gl::BufferBinding::DrawIndirect));
 }
 
 void CaptureGenProgramPipelines_pipelinesPacked(const State &glState,
@@ -98,7 +106,7 @@ void CaptureGetProgramInterfaceiv_params(const State &glState,
                                          GLint *params,
                                          ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureMemory(params, sizeof(GLint), paramCapture);
 }
 
 void CaptureGetProgramPipelineInfoLog_length(const State &glState,
@@ -163,7 +171,7 @@ void CaptureGetProgramResourceName_length(const State &glState,
                                           GLchar *name,
                                           ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    paramCapture->readBufferSizeBytes = sizeof(GLsizei);
 }
 
 void CaptureGetProgramResourceName_name(const State &glState,
@@ -176,7 +184,7 @@ void CaptureGetProgramResourceName_name(const State &glState,
                                         GLchar *name,
                                         ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureString(name, paramCapture);
 }
 
 void CaptureGetProgramResourceiv_props(const State &glState,
@@ -191,7 +199,7 @@ void CaptureGetProgramResourceiv_props(const State &glState,
                                        GLint *params,
                                        ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    CaptureMemory(props, sizeof(GLenum) * propCount, paramCapture);
 }
 
 void CaptureGetProgramResourceiv_length(const State &glState,
@@ -206,7 +214,7 @@ void CaptureGetProgramResourceiv_length(const State &glState,
                                         GLint *params,
                                         ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    paramCapture->readBufferSizeBytes = sizeof(GLsizei);
 }
 
 void CaptureGetProgramResourceiv_params(const State &glState,
@@ -221,7 +229,18 @@ void CaptureGetProgramResourceiv_params(const State &glState,
                                         GLint *params,
                                         ParamCapture *paramCapture)
 {
-    UNIMPLEMENTED();
+    // See QueryProgramResourceiv for details on how these are handled
+    for (int i = 0; i < propCount; ++i)
+    {
+        if (props[i] == GL_ACTIVE_VARIABLES)
+        {
+            // This appears to be the only property that isn't a single integer
+            UNIMPLEMENTED();
+            return;
+        }
+    }
+
+    CaptureMemory(props, sizeof(GLint) * propCount, paramCapture);
 }
 
 void CaptureGetTexLevelParameterfv_params(const State &glState,

@@ -18,13 +18,17 @@
 
 namespace rx
 {
+namespace mtl
+{
+class RenderCommandEncoder;
+}  // namespace mtl
 class ContextMtl;
-class SurfaceMtl;
+class WindowSurfaceMtl;
 
 class FramebufferMtl : public FramebufferImpl
 {
   public:
-    explicit FramebufferMtl(const gl::FramebufferState &state, bool flipY);
+    FramebufferMtl(const gl::FramebufferState &state, bool flipY, WindowSurfaceMtl *backbuffer);
     ~FramebufferMtl() override;
     void destroy(const gl::Context *context) override;
 
@@ -64,6 +68,8 @@ class FramebufferMtl : public FramebufferImpl
                              const gl::Rectangle &area,
                              GLenum format,
                              GLenum type,
+                             const gl::PixelPackState &pack,
+                             gl::Buffer *packBuffer,
                              void *pixels) override;
 
     angle::Result blit(const gl::Context *context,
@@ -82,19 +88,26 @@ class FramebufferMtl : public FramebufferImpl
                                     size_t index,
                                     GLfloat *xy) const override;
 
-    RenderTargetMtl *getColorReadRenderTarget() const;
+    RenderTargetMtl *getColorReadRenderTarget(const gl::Context *context) const;
+    RenderTargetMtl *getDepthRenderTarget() const { return mDepthRenderTarget; }
+    RenderTargetMtl *getStencilRenderTarget() const { return mStencilRenderTarget; }
 
     bool flipY() const { return mFlipY; }
 
     gl::Rectangle getCompleteRenderArea() const;
+    int getSamples() const;
+    WindowSurfaceMtl *getAttachedBackbuffer() const { return mBackbuffer; }
 
-    const mtl::RenderPassDesc &getRenderPassDesc(ContextMtl *context);
+    bool renderPassHasStarted(ContextMtl *contextMtl) const;
+    mtl::RenderCommandEncoder *ensureRenderPassStarted(const gl::Context *context);
 
     // Call this to notify FramebufferMtl whenever its render pass has started.
     void onStartedDrawingToFrameBuffer(const gl::Context *context);
+    void onFrameEnd(const gl::Context *context);
 
     // The actual area will be adjusted based on framebuffer flipping property.
-    gl::Rectangle getReadPixelArea(const gl::Rectangle &glArea);
+    gl::Rectangle getCorrectFlippedReadArea(const gl::Context *context,
+                                            const gl::Rectangle &glArea) const;
 
     // NOTE: this method doesn't do the flipping of area. Caller must do it if needed before
     // callling this. See getReadPixelsArea().
@@ -119,9 +132,17 @@ class FramebufferMtl : public FramebufferImpl
                                 gl::DrawBufferMask clearColorBuffers,
                                 const mtl::ClearRectParams &clearOpts);
 
-    angle::Result prepareRenderPass(const gl::Context *context,
-                                    gl::DrawBufferMask drawColorBuffers,
-                                    mtl::RenderPassDesc *descOut);
+    // Initialize load store options for a render pass's first start (i.e. not render pass resuming
+    // from interruptions such as those caused by a conversion compute pass)
+    void setLoadStoreActionOnRenderPassFirstStart(mtl::RenderPassAttachmentDesc *attachmentOut);
+
+    // Fill RenderPassDesc with relevant attachment's info from GL front end.
+    angle::Result prepareRenderPass(const gl::Context *context, mtl::RenderPassDesc *descOut);
+
+    // Check if a render pass specified by the given RenderPassDesc has started or not, if not this
+    // method will start the render pass and return its render encoder.
+    mtl::RenderCommandEncoder *ensureRenderPassStarted(const gl::Context *context,
+                                                       const mtl::RenderPassDesc &desc);
 
     void overrideClearColor(const mtl::TextureRef &texture,
                             MTLClearColor clearColor,
@@ -141,7 +162,13 @@ class FramebufferMtl : public FramebufferImpl
     RenderTargetMtl *mDepthRenderTarget   = nullptr;
     RenderTargetMtl *mStencilRenderTarget = nullptr;
     mtl::RenderPassDesc mRenderPassDesc;
-    const bool mFlipY = false;
+
+    // Flag indicating the render pass start is a clean start or a resume from interruption such
+    // as by a compute pass.
+    bool mRenderPassCleanStart = false;
+
+    WindowSurfaceMtl *mBackbuffer = nullptr;
+    const bool mFlipY             = false;
 };
 }  // namespace rx
 

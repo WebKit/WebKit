@@ -66,3 +66,12 @@ If there are conflicts, however, follow these steps:
 Have the cherry-pick reviewed, and then land it. It's also OK to skip
 the review and land it yourself with TBR= in the issue description, if
 you have that ability.
+
+There is one final step to pick up the ANGLE change into a Chromium Beta or
+Stable branch. A Skia auto-roller updates the DEPS file in the corresponding
+Chromium branch automatically once the ANGLE change is merged into an ANGLE
+branch. To make sure that your change has made it into Chromium you can check
+these auto-rollers:
+
+1. https://autoroll.skia.org/r/angle-chromium-beta-autoroll
+1. https://autoroll.skia.org/r/angle-chromium-stable-autoroll

@@ -24,6 +24,8 @@ class DrawElementsTest : public ANGLETest
         setWindowHeight(64);
         setConfigRedBits(8);
         setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
     }
 
     ~DrawElementsTest()
@@ -111,8 +113,6 @@ TEST_P(DrawElementsTest, ClientSideNullptrArrayZeroCount)
 // deleting the applied index buffer.
 TEST_P(DrawElementsTest, DeletingAfterStreamingIndexes)
 {
-    // http://anglebug.com/4575 - Test skipped on D3D11 (alpha channel not correct)
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D11());
     // Init program
     constexpr char kVS[] =
         "attribute vec2 position;\n"
@@ -239,9 +239,6 @@ TEST_P(DrawElementsTest, DeletingAfterStreamingIndexes)
 // Test drawing to part of the indices in an index buffer, and then all of them.
 TEST_P(DrawElementsTest, PartOfIndexBufferThenAll)
 {
-    // http://anglebug.com/4575 - Test skipped on D3D11 (alpha channel not correct)
-    // http://anglebug.com/4576 - Test skipped on SwiftShader (alpha channel not drawn)
-    ANGLE_SKIP_TEST_IF(IsWindows() && (IsD3D11() || isSwiftshader()));
     // Init program
     constexpr char kVS[] =
         "attribute vec2 position;\n"

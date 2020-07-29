@@ -358,6 +358,7 @@
     /* GL_EXT_texture_compression_rgtc */                                                          \
     /* GL_EXT_texture_compression_s3tc */                                                          \
     /* GL_EXT_texture_compression_s3tc_srgb */                                                     \
+    /* GL_EXT_texture_cube_map_array */                                                            \
     /* GL_EXT_texture_filter_anisotropic */                                                        \
     /* GL_EXT_texture_format_BGRA8888 */                                                           \
     /* GL_EXT_texture_sRGB_R8 */                                                                   \
@@ -388,6 +389,7 @@
     void framebufferTexture3D(GLenum target, GLenum attachment, TextureTarget textargetPacked,     \
                               TextureID texturePacked, GLint level, GLint zoffset);                \
     /* GL_OES_texture_border_clamp */                                                              \
+    /* GL_OES_texture_cube_map_array */                                                            \
     /* GL_OES_texture_half_float */                                                                \
     /* GL_OES_texture_storage_multisample_2d_array */                                              \
     /* GL_OES_vertex_array_object */                                                               \

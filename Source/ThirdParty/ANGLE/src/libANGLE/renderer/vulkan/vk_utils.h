@@ -46,6 +46,7 @@ namespace egl
 {
 class Display;
 class Image;
+class ShareGroup;
 }  // namespace egl
 
 namespace gl
@@ -67,12 +68,12 @@ ANGLE_GL_OBJECTS_X(ANGLE_PRE_DECLARE_OBJECT)
 
 namespace rx
 {
-class CommandGraphResource;
 class DisplayVk;
 class ImageVk;
 class RenderTargetVk;
 class RendererVk;
 class RenderPassCache;
+class ShareGroupVk;
 }  // namespace rx
 
 namespace angle
@@ -180,6 +181,12 @@ template <>
 struct ImplTypeHelper<egl::Image>
 {
     using ImplType = ImageVk;
+};
+
+template <>
+struct ImplTypeHelper<egl::ShareGroup>
+{
+    using ImplType = ShareGroupVk;
 };
 
 template <typename T>
@@ -292,6 +299,12 @@ class MemoryProperties final : angle::NonCopyable
                                             uint32_t *indexOut) const;
     void destroy();
 
+    VkDeviceSize getHeapSizeForMemoryType(uint32_t memoryType) const
+    {
+        uint32_t heapIndex = mMemoryProperties.memoryTypes[memoryType].heapIndex;
+        return mMemoryProperties.memoryHeaps[heapIndex].size;
+    }
+
   private:
     VkPhysicalDeviceMemoryProperties mMemoryProperties;
 };
@@ -317,13 +330,14 @@ class StagingBuffer final : angle::NonCopyable
     size_t mSize;
 };
 
-angle::Result InitMappableAllocation(VmaAllocator allocator,
-                                     Allocation *allcation,
+angle::Result InitMappableAllocation(Context *context,
+                                     const vk::Allocator &allocator,
+                                     Allocation *allocation,
                                      VkDeviceSize size,
                                      int value,
                                      VkMemoryPropertyFlags memoryPropertyFlags);
 
-angle::Result InitMappableDeviceMemory(vk::Context *context,
+angle::Result InitMappableDeviceMemory(Context *context,
                                        vk::DeviceMemory *deviceMemory,
                                        VkDeviceSize size,
                                        int value,
@@ -339,6 +353,7 @@ angle::Result AllocateBufferMemory(Context *context,
 
 angle::Result AllocateImageMemory(Context *context,
                                   VkMemoryPropertyFlags memoryPropertyFlags,
+                                  VkMemoryPropertyFlags *memoryPropertyFlagsOut,
                                   const void *extraAllocationInfo,
                                   Image *image,
                                   DeviceMemory *deviceMemoryOut,
@@ -473,6 +488,12 @@ class BindingPointer final : angle::NonCopyable
     BindingPointer() : mRefCounted(nullptr) {}
 
     ~BindingPointer() { reset(); }
+
+    BindingPointer(BindingPointer &&other)
+    {
+        set(other.mRefCounted);
+        other.reset();
+    }
 
     void set(RefCounted<T> *refCounted)
     {
@@ -677,6 +698,7 @@ void InitDebugUtilsEXTFunctions(VkInstance instance);
 void InitDebugReportEXTFunctions(VkInstance instance);
 void InitGetPhysicalDeviceProperties2KHRFunctions(VkInstance instance);
 void InitTransformFeedbackEXTFunctions(VkDevice device);
+void InitSamplerYcbcrKHRFunctions(VkDevice device);
 
 #    if defined(ANGLE_PLATFORM_FUCHSIA)
 // VK_FUCHSIA_imagepipe_surface
@@ -709,6 +731,8 @@ void InitExternalFenceFdFunctions(VkInstance instance);
 void InitExternalSemaphoreCapabilitiesFunctions(VkInstance instance);
 
 #endif  // !defined(ANGLE_SHARED_LIBVULKAN)
+
+GLenum CalculateGenerateMipmapFilter(ContextVk *contextVk, const vk::Format &format);
 
 namespace gl_vk
 {

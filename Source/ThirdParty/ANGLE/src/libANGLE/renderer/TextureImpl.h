@@ -187,7 +187,8 @@ class TextureImpl : public FramebufferAttachmentObjectImpl
     virtual GLint getNativeID() const;
 
     virtual angle::Result syncState(const gl::Context *context,
-                                    const gl::Texture::DirtyBits &dirtyBits) = 0;
+                                    const gl::Texture::DirtyBits &dirtyBits,
+                                    gl::TextureCommand source) = 0;
 
     virtual GLenum getColorReadFormat(const gl::Context *context);
     virtual GLenum getColorReadType(const gl::Context *context);

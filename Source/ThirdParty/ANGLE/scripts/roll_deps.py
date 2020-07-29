@@ -93,6 +93,10 @@ class RollError(Exception):
     pass
 
 
+def StrExpansion():
+    return lambda str_value: str_value
+
+
 def VarLookup(local_scope):
     return lambda var_name: local_scope['vars'][var_name]
 
@@ -100,6 +104,7 @@ def VarLookup(local_scope):
 def ParseDepsDict(deps_content):
     local_scope = {}
     global_scope = {
+        'Str': StrExpansion(),
         'Var': VarLookup(local_scope),
         'deps_os': {},
     }

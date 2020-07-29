@@ -18,12 +18,27 @@ X11Pixmap::~X11Pixmap()
     }
 }
 
-bool X11Pixmap::initialize(EGLNativeDisplayType display, size_t width, size_t height, int depth)
+bool X11Pixmap::initialize(EGLNativeDisplayType display,
+                           size_t width,
+                           size_t height,
+                           int nativeVisual)
 {
-    mDisplay = display;
+    mDisplay = reinterpret_cast<Display *>(display);
 
     int screen  = DefaultScreen(mDisplay);
     Window root = RootWindow(mDisplay, screen);
+    int depth   = 0;
+
+    XVisualInfo visualTemplate;
+    visualTemplate.visualid = nativeVisual;
+
+    int numVisuals    = 0;
+    XVisualInfo *info = XGetVisualInfo(mDisplay, VisualIDMask, &visualTemplate, &numVisuals);
+    if (numVisuals == 1)
+    {
+        depth = info->depth;
+    }
+    XFree(info);
 
     mPixmap = XCreatePixmap(mDisplay, root, static_cast<unsigned int>(width),
                             static_cast<unsigned int>(height), depth);

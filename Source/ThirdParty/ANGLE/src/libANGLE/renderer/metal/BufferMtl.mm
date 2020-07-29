@@ -228,8 +228,7 @@ angle::Result BufferMtl::getIndexRange(const gl::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result BufferMtl::getFirstLastIndices(const gl::Context *context,
-                                             gl::DrawElementsType type,
+angle::Result BufferMtl::getFirstLastIndices(gl::DrawElementsType type,
                                              size_t offset,
                                              size_t count,
                                              std::pair<uint32_t, uint32_t> *outIndices) const

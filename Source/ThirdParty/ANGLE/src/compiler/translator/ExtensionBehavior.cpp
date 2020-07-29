@@ -38,7 +38,9 @@
     OP(ANGLE_multi_draw)                            \
     OP(ANGLE_base_vertex_base_instance)             \
     OP(WEBGL_video_texture)                         \
-    OP(APPLE_clip_distance)
+    OP(APPLE_clip_distance)                         \
+    OP(OES_texture_cube_map_array)                  \
+    OP(EXT_texture_cube_map_array)
 
 namespace sh
 {

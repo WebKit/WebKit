@@ -67,7 +67,8 @@
         </activity>
 
         <receiver android:name="com.android.angle.common.Receiver"
-                  android:directBootAware="true">
+                  android:directBootAware="true"
+                  android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />

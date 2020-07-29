@@ -278,6 +278,8 @@ void DisplayEGL::terminate()
 
     mRenderer.reset();
 
+    mCurrentNativeContexts.clear();
+
     egl::Error result = mEGL->terminate();
     if (result.isError())
     {
@@ -438,6 +440,9 @@ egl::ConfigSet DisplayEGL::generateConfigs()
                                    &config.colorComponentType, "EGL_EXT_pixel_format_float",
                                    EGL_COLOR_COMPONENT_TYPE_FIXED_EXT);
 
+        // Pixmaps are not supported on EGL, make sure the config doesn't expose them.
+        config.surfaceType &= ~EGL_PIXMAP_BIT;
+
         if (config.colorBufferType == EGL_RGB_BUFFER)
         {
             ASSERT(config.colorComponentType == EGL_COLOR_COMPONENT_TYPE_FIXED_EXT);
@@ -551,6 +556,8 @@ egl::Error DisplayEGL::makeCurrent(egl::Surface *drawSurface,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
+    CurrentNativeContext &currentContext = mCurrentNativeContexts[std::this_thread::get_id()];
+
     EGLSurface newSurface = EGL_NO_SURFACE;
     if (drawSurface)
     {
@@ -565,9 +572,14 @@ egl::Error DisplayEGL::makeCurrent(egl::Surface *drawSurface,
         newContext             = contextEGL->getContext();
     }
 
-    if (mEGL->makeCurrent(newSurface, newContext) == EGL_FALSE)
+    if (newSurface != currentContext.surface || newContext != currentContext.context)
     {
-        return egl::Error(mEGL->getError(), "eglMakeCurrent failed");
+        if (mEGL->makeCurrent(newSurface, newContext) == EGL_FALSE)
+        {
+            return egl::Error(mEGL->getError(), "eglMakeCurrent failed");
+        }
+        currentContext.surface = newSurface;
+        currentContext.context = newContext;
     }
 
     return DisplayGL::makeCurrent(drawSurface, readSurface, context);
@@ -580,6 +592,17 @@ gl::Version DisplayEGL::getMaxSupportedESVersion() const
 
 void DisplayEGL::destroyNativeContext(EGLContext context)
 {
+    // If this context is current, remove it from the tracking of current contexts to make sure we
+    // don't try to make it current again.
+    for (auto &currentContext : mCurrentNativeContexts)
+    {
+        if (currentContext.second.context == context)
+        {
+            currentContext.second.surface = EGL_NO_SURFACE;
+            currentContext.second.context = EGL_NO_CONTEXT;
+        }
+    }
+
     mEGL->destroyContext(context);
 }
 
@@ -685,6 +708,10 @@ egl::Error DisplayEGL::createRenderer(EGLContext shareContext,
         return egl::EglNotInitialized()
                << "eglMakeCurrent failed with " << egl::Error(mEGL->getError());
     }
+
+    CurrentNativeContext &currentContext = mCurrentNativeContexts[std::this_thread::get_id()];
+    currentContext.surface               = EGL_NO_SURFACE;
+    currentContext.context               = context;
 
     std::unique_ptr<FunctionsGL> functionsGL(mEGL->makeFunctionsGL());
     functionsGL->initialize(mDisplayAttributes);

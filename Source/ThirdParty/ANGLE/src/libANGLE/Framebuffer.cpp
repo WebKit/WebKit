@@ -262,49 +262,6 @@ angle::Result InitAttachment(const Context *context, FramebufferAttachment *atta
     }
     return angle::Result::Continue;
 }
-
-bool IsColorMaskedOut(const BlendState &blend)
-{
-    return (!blend.colorMaskRed && !blend.colorMaskGreen && !blend.colorMaskBlue &&
-            !blend.colorMaskAlpha);
-}
-
-bool IsDepthMaskedOut(const DepthStencilState &depthStencil)
-{
-    return !depthStencil.depthMask;
-}
-
-bool IsStencilMaskedOut(const DepthStencilState &depthStencil)
-{
-    return ((depthStencil.stencilMask & depthStencil.stencilWritemask) == 0);
-}
-
-bool IsClearBufferMaskedOut(const Context *context, GLenum buffer, GLint drawbuffer)
-{
-    switch (buffer)
-    {
-        case GL_COLOR:
-            ASSERT(static_cast<size_t>(drawbuffer) <
-                   context->getState().getBlendStateArray().size());
-            return IsColorMaskedOut(context->getState().getBlendStateArray()[drawbuffer]);
-        case GL_DEPTH:
-            return IsDepthMaskedOut(context->getState().getDepthStencilState());
-        case GL_STENCIL:
-            return IsStencilMaskedOut(context->getState().getDepthStencilState());
-        case GL_DEPTH_STENCIL:
-            return IsDepthMaskedOut(context->getState().getDepthStencilState()) &&
-                   IsStencilMaskedOut(context->getState().getDepthStencilState());
-        default:
-            UNREACHABLE();
-            return true;
-    }
-}
-
-bool IsClearBufferDisabled(const FramebufferState &mState, GLenum buffer, GLint drawbuffer)
-{
-    return buffer == GL_COLOR && !mState.getEnabledDrawBuffers()[drawbuffer];
-}
-
 }  // anonymous namespace
 
 // This constructor is only used for default framebuffers.
@@ -357,7 +314,7 @@ FramebufferState::FramebufferState(const Caps &caps, FramebufferID id, ContextID
 
 FramebufferState::~FramebufferState() {}
 
-const std::string &FramebufferState::getLabel()
+const std::string &FramebufferState::getLabel() const
 {
     return mLabel;
 }
@@ -804,6 +761,8 @@ Framebuffer::Framebuffer(const Context *context, egl::Surface *surface, egl::Sur
                           FramebufferAttachment::kDefaultRenderToTextureSamples);
     }
     SetComponentTypeMask(getDrawbufferWriteType(0), 0, &mState.mDrawBufferTypeMask);
+
+    mState.mSurfaceTextureOffset = surface->getTextureOffset();
 
     // Ensure the backend has a chance to synchronize its content for a new backbuffer.
     mDirtyBits.set(DIRTY_BIT_COLOR_BUFFER_CONTENTS_0);
@@ -1499,39 +1458,9 @@ angle::Result Framebuffer::invalidateSub(const Context *context,
 
 angle::Result Framebuffer::clear(const Context *context, GLbitfield mask)
 {
-    const auto &glState = context->getState();
-    if (glState.isRasterizerDiscardEnabled())
-    {
-        return angle::Result::Continue;
-    }
+    ASSERT(mask && !context->getState().isRasterizerDiscardEnabled());
 
-    // Remove clear bits that are ineffective. An effective clear changes at least one fragment. If
-    // color/depth/stencil masks make the clear ineffective we skip it altogether.
-
-    // If all color channels in all draw buffers are masked, don't attempt to clear color.
-    if (context->getState().allActiveDrawBufferChannelsMasked())
-    {
-        mask &= ~GL_COLOR_BUFFER_BIT;
-    }
-
-    // If depth write is disabled, don't attempt to clear depth.
-    if (!context->getState().getDepthStencilState().depthMask)
-    {
-        mask &= ~GL_DEPTH_BUFFER_BIT;
-    }
-
-    // If all stencil bits are masked, don't attempt to clear stencil.
-    if (context->getState().getDepthStencilState().stencilWritemask == 0)
-    {
-        mask &= ~GL_STENCIL_BUFFER_BIT;
-    }
-
-    if (mask != 0)
-    {
-        ANGLE_TRY(mImpl->clear(context, mask));
-    }
-
-    return angle::Result::Continue;
+    return mImpl->clear(context, mask);
 }
 
 angle::Result Framebuffer::clearBufferfv(const Context *context,
@@ -1539,16 +1468,7 @@ angle::Result Framebuffer::clearBufferfv(const Context *context,
                                          GLint drawbuffer,
                                          const GLfloat *values)
 {
-    if (IsClearBufferDisabled(mState, buffer, drawbuffer) ||
-        context->getState().isRasterizerDiscardEnabled() ||
-        IsClearBufferMaskedOut(context, buffer, drawbuffer))
-    {
-        return angle::Result::Continue;
-    }
-
-    ANGLE_TRY(mImpl->clearBufferfv(context, buffer, drawbuffer, values));
-
-    return angle::Result::Continue;
+    return mImpl->clearBufferfv(context, buffer, drawbuffer, values);
 }
 
 angle::Result Framebuffer::clearBufferuiv(const Context *context,
@@ -1556,16 +1476,7 @@ angle::Result Framebuffer::clearBufferuiv(const Context *context,
                                           GLint drawbuffer,
                                           const GLuint *values)
 {
-    if (IsClearBufferDisabled(mState, buffer, drawbuffer) ||
-        context->getState().isRasterizerDiscardEnabled() ||
-        IsClearBufferMaskedOut(context, buffer, drawbuffer))
-    {
-        return angle::Result::Continue;
-    }
-
-    ANGLE_TRY(mImpl->clearBufferuiv(context, buffer, drawbuffer, values));
-
-    return angle::Result::Continue;
+    return mImpl->clearBufferuiv(context, buffer, drawbuffer, values);
 }
 
 angle::Result Framebuffer::clearBufferiv(const Context *context,
@@ -1573,16 +1484,7 @@ angle::Result Framebuffer::clearBufferiv(const Context *context,
                                          GLint drawbuffer,
                                          const GLint *values)
 {
-    if (IsClearBufferDisabled(mState, buffer, drawbuffer) ||
-        context->getState().isRasterizerDiscardEnabled() ||
-        IsClearBufferMaskedOut(context, buffer, drawbuffer))
-    {
-        return angle::Result::Continue;
-    }
-
-    ANGLE_TRY(mImpl->clearBufferiv(context, buffer, drawbuffer, values));
-
-    return angle::Result::Continue;
+    return mImpl->clearBufferiv(context, buffer, drawbuffer, values);
 }
 
 angle::Result Framebuffer::clearBufferfi(const Context *context,
@@ -1591,12 +1493,6 @@ angle::Result Framebuffer::clearBufferfi(const Context *context,
                                          GLfloat depth,
                                          GLint stencil)
 {
-    if (context->getState().isRasterizerDiscardEnabled() ||
-        IsClearBufferMaskedOut(context, buffer, drawbuffer))
-    {
-        return angle::Result::Continue;
-    }
-
     bool clearDepth   = context->getState().getDepthStencilState().depthMask;
     bool clearStencil = context->getState().getDepthStencilState().stencilWritemask != 0;
 
@@ -1633,14 +1529,15 @@ angle::Result Framebuffer::readPixels(const Context *context,
                                       const Rectangle &area,
                                       GLenum format,
                                       GLenum type,
+                                      const PixelPackState &pack,
+                                      Buffer *packBuffer,
                                       void *pixels)
 {
-    ANGLE_TRY(mImpl->readPixels(context, area, format, type, pixels));
+    ANGLE_TRY(mImpl->readPixels(context, area, format, type, pack, packBuffer, pixels));
 
-    Buffer *unpackBuffer = context->getState().getTargetBuffer(BufferBinding::PixelUnpack);
-    if (unpackBuffer)
+    if (packBuffer)
     {
-        unpackBuffer->onDataChanged();
+        packBuffer->onDataChanged();
     }
 
     return angle::Result::Continue;
@@ -1652,31 +1549,29 @@ angle::Result Framebuffer::blit(const Context *context,
                                 GLbitfield mask,
                                 GLenum filter)
 {
-    GLbitfield blitMask = mask;
+    ASSERT(mask != 0);
 
-    // Note that blitting is called against draw framebuffer.
-    // See the code in gl::Context::blitFramebuffer.
-    if ((mask & GL_COLOR_BUFFER_BIT) && !hasEnabledDrawBuffer())
+    ANGLE_TRY(mImpl->blit(context, sourceArea, destArea, mask, filter));
+
+    // Mark the contents of the attachments dirty
+    if ((mask & GL_COLOR_BUFFER_BIT) != 0)
     {
-        blitMask &= ~GL_COLOR_BUFFER_BIT;
+        for (size_t colorIndex : mState.mEnabledDrawBuffers)
+        {
+            mDirtyBits.set(DIRTY_BIT_COLOR_BUFFER_CONTENTS_0 + colorIndex);
+        }
     }
-
-    if ((mask & GL_STENCIL_BUFFER_BIT) && mState.getStencilAttachment() == nullptr)
+    if ((mask & GL_DEPTH_BUFFER_BIT) != 0)
     {
-        blitMask &= ~GL_STENCIL_BUFFER_BIT;
+        mDirtyBits.set(DIRTY_BIT_DEPTH_BUFFER_CONTENTS);
     }
-
-    if ((mask & GL_DEPTH_BUFFER_BIT) && mState.getDepthAttachment() == nullptr)
+    if ((mask & GL_STENCIL_BUFFER_BIT) != 0)
     {
-        blitMask &= ~GL_DEPTH_BUFFER_BIT;
+        mDirtyBits.set(DIRTY_BIT_STENCIL_BUFFER_CONTENTS);
     }
+    onStateChange(angle::SubjectMessage::DirtyBitsFlagged);
 
-    if (!blitMask)
-    {
-        return angle::Result::Continue;
-    }
-
-    return mImpl->blit(context, sourceArea, destArea, blitMask, filter);
+    return angle::Result::Continue;
 }
 
 int Framebuffer::getSamples(const Context *context) const
@@ -1727,13 +1622,9 @@ bool Framebuffer::hasValidDepthStencil() const
     return mState.getDepthStencilAttachment() != nullptr;
 }
 
-gl::Offset Framebuffer::getTextureOffset() const
+const gl::Offset &Framebuffer::getSurfaceTextureOffset() const
 {
-    if (isDefault() && getFirstColorAttachment()->getSurface())
-    {
-        return getFirstColorAttachment()->getSurface()->getTextureOffset();
-    }
-    return gl::Offset();
+    return mState.getSurfaceTextureOffset();
 }
 
 void Framebuffer::setAttachment(const Context *context,
@@ -2184,8 +2075,8 @@ angle::Result Framebuffer::ensureClearAttachmentsInitialized(const Context *cont
     const DepthStencilState &depthStencil = glState.getDepthStencilState();
 
     bool color = (mask & GL_COLOR_BUFFER_BIT) != 0 && !glState.allActiveDrawBufferChannelsMasked();
-    bool depth = (mask & GL_DEPTH_BUFFER_BIT) != 0 && !IsDepthMaskedOut(depthStencil);
-    bool stencil = (mask & GL_STENCIL_BUFFER_BIT) != 0 && !IsStencilMaskedOut(depthStencil);
+    bool depth = (mask & GL_DEPTH_BUFFER_BIT) != 0 && !depthStencil.isDepthMaskedOut();
+    bool stencil = (mask & GL_STENCIL_BUFFER_BIT) != 0 && !depthStencil.isStencilMaskedOut();
 
     if (!color && !depth && !stencil)
     {
@@ -2211,7 +2102,7 @@ angle::Result Framebuffer::ensureClearBufferAttachmentsInitialized(const Context
 {
     if (!context->isRobustResourceInitEnabled() ||
         context->getState().isRasterizerDiscardEnabled() ||
-        IsClearBufferMaskedOut(context, buffer, drawbuffer))
+        context->isClearBufferMaskedOut(buffer, drawbuffer))
     {
         return angle::Result::Continue;
     }

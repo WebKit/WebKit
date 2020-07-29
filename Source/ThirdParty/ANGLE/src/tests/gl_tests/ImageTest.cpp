@@ -11,22 +11,31 @@
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
 
+#include "common/android_util.h"
+
+#if defined(ANGLE_PLATFORM_ANDROID) && __ANDROID_API__ >= 26
+#    define ANGLE_AHARDWARE_BUFFER_SUPPORT
+// NDK header file for access to Android Hardware Buffers
+#    include <android/hardware_buffer.h>
+#endif
+
 namespace angle
 {
 namespace
 {
-constexpr char kOESExt[]               = "GL_OES_EGL_image";
-constexpr char kExternalExt[]          = "GL_OES_EGL_image_external";
-constexpr char kExternalESSL3Ext[]     = "GL_OES_EGL_image_external_essl3";
-constexpr char kBaseExt[]              = "EGL_KHR_image_base";
-constexpr char k2DTextureExt[]         = "EGL_KHR_gl_texture_2D_image";
-constexpr char k3DTextureExt[]         = "EGL_KHR_gl_texture_3D_image";
-constexpr char kPixmapExt[]            = "EGL_KHR_image_pixmap";
-constexpr char kRenderbufferExt[]      = "EGL_KHR_gl_renderbuffer_image";
-constexpr char kCubemapExt[]           = "EGL_KHR_gl_texture_cubemap_image";
-constexpr char kImageGLColorspaceExt[] = "EGL_EXT_image_gl_colorspace";
-constexpr char kEGLImageArrayExt[]     = "GL_EXT_EGL_image_array";
-constexpr EGLint kDefaultAttribs[]     = {
+constexpr char kOESExt[]                         = "GL_OES_EGL_image";
+constexpr char kExternalExt[]                    = "GL_OES_EGL_image_external";
+constexpr char kExternalESSL3Ext[]               = "GL_OES_EGL_image_external_essl3";
+constexpr char kBaseExt[]                        = "EGL_KHR_image_base";
+constexpr char k2DTextureExt[]                   = "EGL_KHR_gl_texture_2D_image";
+constexpr char k3DTextureExt[]                   = "EGL_KHR_gl_texture_3D_image";
+constexpr char kPixmapExt[]                      = "EGL_KHR_image_pixmap";
+constexpr char kRenderbufferExt[]                = "EGL_KHR_gl_renderbuffer_image";
+constexpr char kCubemapExt[]                     = "EGL_KHR_gl_texture_cubemap_image";
+constexpr char kImageGLColorspaceExt[]           = "EGL_EXT_image_gl_colorspace";
+constexpr char kEGLImageArrayExt[]               = "GL_EXT_EGL_image_array";
+constexpr char kEGLAndroidImageNativeBufferExt[] = "EGL_ANDROID_image_native_buffer";
+constexpr EGLint kDefaultAttribs[]               = {
     EGL_IMAGE_PRESERVED,
     EGL_TRUE,
     EGL_NONE,
@@ -382,6 +391,90 @@ class ImageTest : public ANGLETest
         *outTargetTexture = target;
     }
 
+    AHardwareBuffer *createAndroidHardwareBuffer(size_t width,
+                                                 size_t height,
+                                                 size_t depth,
+                                                 int androidFormat,
+                                                 const GLubyte *data,
+                                                 size_t bytesPerPixel)
+    {
+#if defined(ANGLE_AHARDWARE_BUFFER_SUPPORT)
+        // The height and width are number of pixels of size format
+        AHardwareBuffer_Desc aHardwareBufferDescription = {};
+        aHardwareBufferDescription.width                = width;
+        aHardwareBufferDescription.height               = height;
+        aHardwareBufferDescription.layers               = depth;
+        aHardwareBufferDescription.format               = androidFormat;
+        aHardwareBufferDescription.usage =
+            AHARDWAREBUFFER_USAGE_CPU_WRITE_RARELY | AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE;
+        aHardwareBufferDescription.stride = 0;
+        aHardwareBufferDescription.rfu0   = 0;
+        aHardwareBufferDescription.rfu1   = 0;
+
+        // Allocate memory from Android Hardware Buffer
+        AHardwareBuffer *aHardwareBuffer = nullptr;
+        EXPECT_EQ(0, AHardwareBuffer_allocate(&aHardwareBufferDescription, &aHardwareBuffer));
+
+        void *mappedMemory = nullptr;
+        EXPECT_EQ(0, AHardwareBuffer_lock(aHardwareBuffer, AHARDWAREBUFFER_USAGE_CPU_WRITE_RARELY,
+                                          -1, nullptr, &mappedMemory));
+
+        // Need to grab the stride the implementation might have enforced
+        AHardwareBuffer_describe(aHardwareBuffer, &aHardwareBufferDescription);
+        const uint32_t stride = aHardwareBufferDescription.stride;
+
+        const uint32_t rowSize = bytesPerPixel * width;
+        for (uint32_t i = 0; i < height; i++)
+        {
+            uint32_t dstPtrOffset = stride * i * bytesPerPixel;
+            uint32_t srcPtrOffset = width * i * bytesPerPixel;
+
+            void *dst = reinterpret_cast<uint8_t *>(mappedMemory) + dstPtrOffset;
+            memcpy(dst, data + srcPtrOffset, rowSize);
+        }
+
+        EXPECT_EQ(0, AHardwareBuffer_unlock(aHardwareBuffer, nullptr));
+        return aHardwareBuffer;
+#else
+        return nullptr;
+#endif  // ANGLE_PLATFORM_ANDROID
+    }
+
+    void destroyAndroidHardwareBuffer(AHardwareBuffer *aHardwarebuffer)
+    {
+#if defined(ANGLE_AHARDWARE_BUFFER_SUPPORT)
+        AHardwareBuffer_release(aHardwarebuffer);
+#endif
+    }
+
+    void createEGLImageAndroidHardwareBufferSource(size_t width,
+                                                   size_t height,
+                                                   size_t depth,
+                                                   GLenum sizedInternalFormat,
+                                                   const EGLint *attribs,
+                                                   const GLubyte *data,
+                                                   size_t bytesPerPixel,
+                                                   AHardwareBuffer **outSourceAHB,
+                                                   EGLImageKHR *outSourceImage)
+    {
+        // Set Android Memory
+        AHardwareBuffer *aHardwareBuffer = createAndroidHardwareBuffer(
+            width, height, depth,
+            angle::android::GLInternalFormatToNativePixelFormat(sizedInternalFormat), data,
+            bytesPerPixel);
+        EXPECT_NE(aHardwareBuffer, nullptr);
+
+        // Create an image from the source AHB
+        EGLWindow *window = getEGLWindow();
+
+        EGLImageKHR image = eglCreateImageKHR(
+            window->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+            angle::android::AHardwareBufferToClientBuffer(aHardwareBuffer), attribs);
+        ASSERT_EGL_SUCCESS();
+
+        *outSourceAHB   = aHardwareBuffer;
+        *outSourceImage = image;
+    }
     void createEGLImageTargetRenderbuffer(EGLImageKHR image, GLuint *outTargetRenderbuffer)
     {
         // Create a target texture from the image
@@ -396,6 +489,10 @@ class ImageTest : public ANGLETest
     }
 
     void ValidationGLEGLImage_helper(const EGLint *attribs);
+    void SourceAHBTarget2D_helper(const EGLint *attribs);
+    void SourceAHBTarget2DArray_helper(const EGLint *attribs);
+    void SourceAHBTargetExternal_helper(const EGLint *attribs);
+    void SourceAHBTargetExternalESSL3_helper(const EGLint *attribs);
     void Source2DTarget2D_helper(const EGLint *attribs);
     void Source2DTarget2DArray_helper(const EGLint *attribs);
     void Source2DTargetRenderbuffer_helper(const EGLint *attribs);
@@ -470,6 +567,58 @@ class ImageTest : public ANGLETest
         glDeleteFramebuffers(1, &framebuffer);
     }
 
+    void verifyResultAHB(AHardwareBuffer *source,
+                         GLubyte *referenceData,
+                         size_t dataSize,
+                         size_t bytesPerPixel)
+    {
+#if defined(ANGLE_AHARDWARE_BUFFER_SUPPORT)
+        void *mappedMemory = nullptr;
+        GLubyte externalMemoryData[dataSize];
+        AHardwareBuffer_Desc aHardwareBufferDescription = {};
+
+        ASSERT_EQ(0, AHardwareBuffer_lock(source, AHARDWAREBUFFER_USAGE_CPU_WRITE_RARELY, -1,
+                                          nullptr, &mappedMemory));
+
+        AHardwareBuffer_describe(source, &aHardwareBufferDescription);
+        const uint32_t width    = aHardwareBufferDescription.width;
+        const uint32_t height   = aHardwareBufferDescription.height;
+        const uint32_t stride   = aHardwareBufferDescription.stride;
+        const uint32_t rowSize  = bytesPerPixel * width;
+        const size_t bufferSize = rowSize * height;
+
+        EXPECT_EQ(dataSize, bufferSize);
+
+        for (uint32_t i = 0; i < height; i++)
+        {
+            uint32_t srcPtrOffset = stride * i * bytesPerPixel;
+            uint32_t dstPtrOffset = width * i * bytesPerPixel;
+            size_t copySize       = rowSize;
+
+            if (dstPtrOffset > dataSize)
+            {
+                // Current destination ptr offset is out of range
+                break;
+            }
+            else if (dstPtrOffset + copySize > dataSize)
+            {
+                // Copy data only until the end of the buffer
+                copySize = dataSize - dstPtrOffset;
+            }
+
+            void *src = reinterpret_cast<uint8_t *>(mappedMemory) + srcPtrOffset;
+            memcpy(externalMemoryData + dstPtrOffset, src, copySize);
+        }
+
+        ASSERT_EQ(0, AHardwareBuffer_unlock(source, nullptr));
+
+        for (uint32_t i = 0; i < dataSize; i++)
+        {
+            EXPECT_EQ(externalMemoryData[i], referenceData[i]);
+        }
+#endif
+    }
+
     template <typename destType, typename sourcetype>
     destType reinterpretHelper(sourcetype source)
     {
@@ -482,6 +631,21 @@ class ImageTest : public ANGLETest
     bool hasImageGLColorspaceExt() const
     {
         return IsEGLDisplayExtensionEnabled(getEGLWindow()->getDisplay(), kImageGLColorspaceExt);
+    }
+
+    bool hasAndroidImageNativeBufferExt() const
+    {
+        return IsEGLDisplayExtensionEnabled(getEGLWindow()->getDisplay(),
+                                            kEGLAndroidImageNativeBufferExt);
+    }
+
+    bool hasAndroidHardwareBufferSupport() const
+    {
+#if defined(ANGLE_AHARDWARE_BUFFER_SUPPORT)
+        return true;
+#else
+        return false;
+#endif
     }
 
     bool hasEglImageArrayExt() const { return IsGLExtensionEnabled(kEGLImageArrayExt); }
@@ -1242,6 +1406,7 @@ TEST_P(ImageTest, Source2DTarget2DArray_Colorspace)
     ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
     Source2DTarget2DArray_helper(kColorspaceAttribs);
 }
+
 void ImageTest::Source2DTarget2DArray_helper(const EGLint *attribs)
 {
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
@@ -1267,6 +1432,260 @@ void ImageTest::Source2DTarget2DArray_helper(const EGLint *attribs)
     glDeleteTextures(1, &source);
     eglDestroyImageKHR(window->getDisplay(), image);
     glDeleteTextures(1, &target);
+}
+
+// Testing source AHB EGL image, target 2D texture
+TEST_P(ImageTest, SourceAHBTarget2D)
+{
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+    SourceAHBTarget2D_helper(kDefaultAttribs);
+}
+
+// Testing source AHB EGL image with colorspace, target 2D texture
+TEST_P(ImageTest, SourceAHBTarget2D_Colorspace)
+{
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_EXT_sRGB"));
+    ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
+    SourceAHBTarget2D_helper(kColorspaceAttribs);
+}
+
+void ImageTest::SourceAHBTarget2D_helper(const EGLint *attribs)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    GLubyte data[4] = {7, 51, 197, 231};
+
+    // Create the Image
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, GL_RGBA8, attribs, data, 4, &source, &image);
+
+    // Create a texture target to bind the egl image
+    GLuint target;
+    createEGLImageTargetTexture2D(image, &target);
+
+    // Use texture target bound to egl image as source and render to framebuffer
+    // Verify that data in framebuffer matches that in the egl image
+    verifyResults2D(target, data);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+    glDeleteTextures(1, &target);
+}
+
+// Testing source AHB EGL image, target 2D array texture
+TEST_P(ImageTest, SourceAHBTarget2DArray)
+{
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+    SourceAHBTarget2DArray_helper(kDefaultAttribs);
+}
+
+// Testing source AHB EGL image with colorspace, target 2D array texture
+TEST_P(ImageTest, SourceAHBTarget2DArray_Colorspace)
+{
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_EXT_sRGB"));
+    ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
+    SourceAHBTarget2DArray_helper(kColorspaceAttribs);
+}
+
+void ImageTest::SourceAHBTarget2DArray_helper(const EGLint *attribs)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
+                       !hasEglImageArrayExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    GLubyte data[4] = {7, 51, 197, 231};
+
+    // Create the Image
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, GL_RGBA8, attribs, data, 4, &source, &image);
+
+    // Create a texture target to bind the egl image
+    GLuint target;
+    createEGLImageTargetTexture2DArray(image, &target);
+
+    // Use texture target bound to egl image as source and render to framebuffer
+    // Verify that data in framebuffer matches that in the egl image
+    verifyResults2DArray(target, data);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+    glDeleteTextures(1, &target);
+}
+
+// Testing source AHB EGL image, target external texture
+TEST_P(ImageTest, SourceAHBTargetExternal)
+{
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+    SourceAHBTargetExternal_helper(kDefaultAttribs);
+}
+
+// Testing source AHB EGL image with colorspace, target external texture
+TEST_P(ImageTest, SourceAHBTargetExternal_Colorspace)
+{
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_EXT_sRGB"));
+    ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
+    SourceAHBTargetExternal_helper(kColorspaceAttribs);
+}
+
+void ImageTest::SourceAHBTargetExternal_helper(const EGLint *attribs)
+{
+    EGLWindow *window = getEGLWindow();
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() || !hasExternalExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    // Ozone only supports external target for images created with EGL_EXT_image_dma_buf_import
+    ANGLE_SKIP_TEST_IF(IsOzone());
+
+    GLubyte data[4] = {7, 51, 197, 231};
+
+    // Create the Image
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, GL_RGBA8, attribs, data, 4, &source, &image);
+
+    // Create a texture target to bind the egl image
+    GLuint target;
+    createEGLImageTargetTextureExternal(image, &target);
+
+    // Use texture target bound to egl image as source and render to framebuffer
+    // Verify that data in framebuffer matches that in the egl image
+    verifyResultsExternal(target, data);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+    glDeleteTextures(1, &target);
+}
+
+// Testing source AHB EGL image, target external ESSL3 texture
+TEST_P(ImageTestES3, SourceAHBTargetExternalESSL3)
+{
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+    SourceAHBTargetExternalESSL3_helper(kDefaultAttribs);
+}
+
+// Testing source AHB EGL image with colorspace, target external ESSL3 texture
+TEST_P(ImageTestES3, SourceAHBTargetExternalESSL3_Colorspace)
+{
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_EXT_sRGB"));
+    ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
+    SourceAHBTargetExternalESSL3_helper(kColorspaceAttribs);
+}
+
+void ImageTest::SourceAHBTargetExternalESSL3_helper(const EGLint *attribs)
+{
+    EGLWindow *window = getEGLWindow();
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
+                       !hasExternalESSL3Ext());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    GLubyte data[4] = {7, 51, 197, 231};
+
+    // Create the Image
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, GL_RGBA8, attribs, data, 4, &source, &image);
+
+    // Create a texture target to bind the egl image
+    GLuint target;
+    createEGLImageTargetTextureExternal(image, &target);
+
+    // Use texture target bound to egl image as source and render to framebuffer
+    // Verify that data in framebuffer matches that in the egl image
+    verifyResultsExternalESSL3(target, data);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+    glDeleteTextures(1, &target);
+}
+
+// Create a depth format AHB backed EGL image and verify that the image's aspect is honored
+TEST_P(ImageTest, SourceAHBTarget2DDepth)
+{
+    // TODO - Support for depth formats in AHB is missing (http://anglebug.com/4818)
+    ANGLE_SKIP_TEST_IF(true);
+
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    GLint level             = 0;
+    GLsizei width           = 1;
+    GLsizei height          = 1;
+    GLsizei depth           = 1;
+    GLint depthStencilValue = 0;
+
+    // Create the Image
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(
+        width, height, depth, GL_DEPTH_COMPONENT24, kDefaultAttribs,
+        reinterpret_cast<GLubyte *>(&depthStencilValue), 3, &source, &image);
+
+    // Create a texture target to bind the egl image
+    GLuint depthTextureTarget;
+    createEGLImageTargetTexture2D(image, &depthTextureTarget);
+
+    // Create a color texture and fill it with red
+    GLTexture colorTexture;
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 GLColor::red.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+
+    // Attach the color and depth texture to the FBO
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+    EXPECT_GL_NO_ERROR();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTextureTarget,
+                           0);
+    EXPECT_GL_NO_ERROR();
+
+    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+    // Clear the color texture to red
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
+
+    // Enable Depth test but disable depth writes. The depth function is set to ">".
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    glDepthFunc(GL_GREATER);
+
+    // Fill any fragment of the color attachment with blue if it passes the depth test.
+    ANGLE_GL_PROGRAM(colorFillProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Blue());
+    drawQuad(colorFillProgram, essl1_shaders::PositionAttrib(), 1.0f, 1.0f);
+
+    // Since 1.0f > 0.0f, all fragments of the color attachment should be blue.
+    EXPECT_PIXEL_EQ(0, 0, 0, 0, 255, 255);
+
+    // Clean up
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
 }
 
 TEST_P(ImageTest, Source2DTargetRenderbuffer)
@@ -2325,6 +2744,73 @@ TEST_P(ImageTest, UpdatedData)
     eglDestroyImageKHR(window->getDisplay(), image);
     glDeleteTextures(1, &targetTexture);
     glDeleteRenderbuffers(1, &targetRenderbuffer);
+}
+
+// Check that the external texture is successfully updated when only glTexSubImage2D is called.
+TEST_P(ImageTest, UpdatedExternalTexture)
+{
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    GLubyte originalData[4]      = {255, 0, 255, 255};
+    GLubyte updateData[4]        = {0, 255, 0, 255};
+    const uint32_t bytesPerPixel = 4;
+
+    // Create the Image
+    AHardwareBuffer *source;
+    EGLImageKHR image;
+    createEGLImageAndroidHardwareBufferSource(1, 1, 1, GL_RGBA8, kDefaultAttribs, originalData,
+                                              bytesPerPixel, &source, &image);
+
+    // Create target
+    GLuint targetTexture;
+    createEGLImageTargetTexture2D(image, &targetTexture);
+
+    // Expect that both the target have the original data
+    verifyResults2D(targetTexture, originalData);
+
+    // Update the data of the source
+    glBindTexture(GL_TEXTURE_2D, targetTexture);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, updateData);
+
+    // Set sync object and flush the GL commands
+    EGLSyncKHR fence = eglCreateSyncKHR(window->getDisplay(), EGL_SYNC_FENCE_KHR, NULL);
+    ASSERT_NE(fence, EGL_NO_SYNC_KHR);
+    glFlush();
+
+    // Delete the target texture
+    glDeleteTextures(1, &targetTexture);
+
+    // Wait that the flush command is finished
+    EGLint result = eglClientWaitSyncKHR(window->getDisplay(), fence, 0, 1000000000);
+    ASSERT_EQ(result, EGL_CONDITION_SATISFIED_KHR);
+    ASSERT_EGL_TRUE(eglDestroySyncKHR(window->getDisplay(), fence));
+
+    // Delete the EGL image
+    eglDestroyImageKHR(window->getDisplay(), image);
+
+    // Access the android hardware buffer directly to check the data is updated
+    verifyResultAHB(source, updateData, 4, bytesPerPixel);
+
+    // Create the EGL image again
+    image =
+        eglCreateImageKHR(window->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                          angle::android::AHardwareBufferToClientBuffer(source), kDefaultAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Create the target texture again
+    createEGLImageTargetTexture2D(image, &targetTexture);
+
+    // Expect that the target have the update data
+    verifyResults2D(targetTexture, updateData);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+    destroyAndroidHardwareBuffer(source);
+    glDeleteTextures(1, &targetTexture);
 }
 
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these

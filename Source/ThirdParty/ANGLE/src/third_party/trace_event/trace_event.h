@@ -454,10 +454,9 @@
 #define INTERNALTRACEEVENTUID(name_prefix) INTERNAL_TRACE_EVENT_UID2(name_prefix, __LINE__)
 
 // Implementation detail: internal macro to create static category.
-#define INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO(platform, category)    \
-    static const unsigned char *INTERNALTRACEEVENTUID(catstatic) = 0; \
-    if (!INTERNALTRACEEVENTUID(catstatic))                            \
-        INTERNALTRACEEVENTUID(catstatic) = TRACE_EVENT_API_GET_CATEGORY_ENABLED(platform, category);
+#define INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO(platform, category) \
+    static const unsigned char *INTERNALTRACEEVENTUID(catstatic) = \
+        TRACE_EVENT_API_GET_CATEGORY_ENABLED(platform, category);
 
 // Implementation detail: internal macro to create static category and add
 // event if the category is enabled.

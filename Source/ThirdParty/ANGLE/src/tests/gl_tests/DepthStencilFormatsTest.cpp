@@ -416,9 +416,6 @@ TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UShort)
 // This test will initialize a depth texture, clear it and read it back, if possible
 TEST_P(DepthStencilFormatsTest, DepthStencilReadback_UInt)
 {
-    // http://anglebug.com/4573
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsVulkan());
-
     GLuint fakeData[10]    = {0};
     ReadbackTestParam type = {
         GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, fakeData, 16, 0};

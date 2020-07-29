@@ -8,6 +8,9 @@
 #ifndef UTIL_EXPORT_H_
 #define UTIL_EXPORT_H_
 
+// How to get the right import/export annotations on Windows:
+// We define "IMPLEMENTATION" to get the dllexport label when compiling the
+// util library. Consumers get the dllimport label by default.
 #if !defined(ANGLE_UTIL_EXPORT)
 #    if defined(_WIN32)
 #        if defined(LIBANGLE_UTIL_IMPLEMENTATION)

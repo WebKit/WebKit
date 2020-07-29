@@ -116,6 +116,47 @@ class ContextNULL : public ContextImpl
                                        gl::DrawElementsType type,
                                        const void *indirect) override;
 
+    angle::Result multiDrawArrays(const gl::Context *context,
+                                  gl::PrimitiveMode mode,
+                                  const GLint *firsts,
+                                  const GLsizei *counts,
+                                  GLsizei drawcount) override;
+    angle::Result multiDrawArraysInstanced(const gl::Context *context,
+                                           gl::PrimitiveMode mode,
+                                           const GLint *firsts,
+                                           const GLsizei *counts,
+                                           const GLsizei *instanceCounts,
+                                           GLsizei drawcount) override;
+    angle::Result multiDrawElements(const gl::Context *context,
+                                    gl::PrimitiveMode mode,
+                                    const GLsizei *counts,
+                                    gl::DrawElementsType type,
+                                    const GLvoid *const *indices,
+                                    GLsizei drawcount) override;
+    angle::Result multiDrawElementsInstanced(const gl::Context *context,
+                                             gl::PrimitiveMode mode,
+                                             const GLsizei *counts,
+                                             gl::DrawElementsType type,
+                                             const GLvoid *const *indices,
+                                             const GLsizei *instanceCounts,
+                                             GLsizei drawcount) override;
+    angle::Result multiDrawArraysInstancedBaseInstance(const gl::Context *context,
+                                                       gl::PrimitiveMode mode,
+                                                       const GLint *firsts,
+                                                       const GLsizei *counts,
+                                                       const GLsizei *instanceCounts,
+                                                       const GLuint *baseInstances,
+                                                       GLsizei drawcount) override;
+    angle::Result multiDrawElementsInstancedBaseVertexBaseInstance(const gl::Context *context,
+                                                                   gl::PrimitiveMode mode,
+                                                                   const GLsizei *counts,
+                                                                   gl::DrawElementsType type,
+                                                                   const GLvoid *const *indices,
+                                                                   const GLsizei *instanceCounts,
+                                                                   const GLint *baseVertices,
+                                                                   const GLuint *baseInstances,
+                                                                   GLsizei drawcount) override;
+
     // Device loss
     gl::GraphicsResetStatus getResetStatus() override;
 

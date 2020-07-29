@@ -16,7 +16,16 @@ using namespace angle;
 class EGLFeatureControlTest : public ANGLETest
 {
   public:
-    void testSetUp() override { mDisplay = EGL_NO_DISPLAY; }
+    void testSetUp() override
+    {
+        // All tests are skipped on old AMD Linux Vulkan driver. See http://crbug.com/1097750
+        if (IsLinux() && IsAMD() && IsVulkan())
+        {
+            GTEST_SKIP();
+        }
+
+        mDisplay = EGL_NO_DISPLAY;
+    }
 
     void testTearDown() override
     {

@@ -19,5 +19,6 @@ angle_white_box_tests_win_sources = [
 ]
 angle_white_box_tests_vulkan_sources = [
   "gl_tests/VulkanFormatTablesTest.cpp",
+  "gl_tests/VulkanFramebufferTest.cpp",
   "gl_tests/VulkanUniformUpdatesTest.cpp",
 ]

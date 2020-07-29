@@ -173,9 +173,13 @@ extern void yyerror(YYLTYPE* yylloc, TParseContext* context, void *scanner, cons
 %token <lex> SAMPLER2DMS ISAMPLER2DMS USAMPLER2DMS
 %token <lex> SAMPLER2DMSARRAY ISAMPLER2DMSARRAY USAMPLER2DMSARRAY
 %token <lex> SAMPLER3D SAMPLER3DRECT SAMPLER2DSHADOW SAMPLERCUBESHADOW SAMPLER2DARRAYSHADOW SAMPLERVIDEOWEBGL
+%token <lex> SAMPLERCUBEARRAYOES SAMPLERCUBEARRAYSHADOWOES ISAMPLERCUBEARRAYOES USAMPLERCUBEARRAYOES
+%token <lex> SAMPLERCUBEARRAYEXT SAMPLERCUBEARRAYSHADOWEXT ISAMPLERCUBEARRAYEXT USAMPLERCUBEARRAYEXT
 %token <lex> SAMPLEREXTERNAL2DY2YEXT
 %token <lex> IMAGE2D IIMAGE2D UIMAGE2D IMAGE3D IIMAGE3D UIMAGE3D IMAGE2DARRAY IIMAGE2DARRAY UIMAGE2DARRAY
 %token <lex> IMAGECUBE IIMAGECUBE UIMAGECUBE
+%token <lex> IMAGECUBEARRAYOES IIMAGECUBEARRAYOES UIMAGECUBEARRAYOES
+%token <lex> IMAGECUBEARRAYEXT IIMAGECUBEARRAYEXT UIMAGECUBEARRAYEXT
 %token <lex> ATOMICUINT
 %token <lex> LAYOUT
 %token <lex> YUVCSCSTANDARDEXT YUVCSCSTANDARDEXTCONSTANT
@@ -1102,6 +1106,22 @@ type_specifier_nonarray
     | SAMPLER2DMSARRAY {
         $$.initialize(EbtSampler2DMSArray, @1);
     }
+    | SAMPLERCUBEARRAYOES {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::OES_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__samplerCubeArray");
+        }
+        $$.initialize(EbtSamplerCubeArray, @1);
+    }
+    | SAMPLERCUBEARRAYEXT {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::EXT_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__samplerCubeArray");
+        }
+        $$.initialize(EbtSamplerCubeArray, @1);
+    }
     | ISAMPLER2D {
         $$.initialize(EbtISampler2D, @1);
     }
@@ -1119,6 +1139,22 @@ type_specifier_nonarray
     }
     | ISAMPLER2DMSARRAY {
         $$.initialize(EbtISampler2DMSArray, @1);
+    }
+    | ISAMPLERCUBEARRAYOES {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::OES_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__isamplerCubeArray");
+        }
+        $$.initialize(EbtISamplerCubeArray, @1);
+    }
+    | ISAMPLERCUBEARRAYEXT {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::EXT_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__isamplerCubeArray");
+        }
+        $$.initialize(EbtISamplerCubeArray, @1);
     }
     | USAMPLER2D {
         $$.initialize(EbtUSampler2D, @1);
@@ -1138,6 +1174,22 @@ type_specifier_nonarray
     | USAMPLER2DMSARRAY {
         $$.initialize(EbtUSampler2DMSArray, @1);
     }
+    | USAMPLERCUBEARRAYOES {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::OES_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__usamplerCubeArray");
+        }
+        $$.initialize(EbtUSamplerCubeArray, @1);
+    }
+    | USAMPLERCUBEARRAYEXT {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::EXT_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__usamplerCubeArray");
+        }
+        $$.initialize(EbtUSamplerCubeArray, @1);
+    }
     | SAMPLER2DSHADOW {
         $$.initialize(EbtSampler2DShadow, @1);
     }
@@ -1146,6 +1198,22 @@ type_specifier_nonarray
     }
     | SAMPLER2DARRAYSHADOW {
         $$.initialize(EbtSampler2DArrayShadow, @1);
+    }
+    | SAMPLERCUBEARRAYSHADOWOES {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::OES_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__samplerCubeArrayShadow");
+        }
+        $$.initialize(EbtSamplerCubeArrayShadow, @1);
+    }
+    | SAMPLERCUBEARRAYSHADOWEXT {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::EXT_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__samplerCubeArrayShadow");
+        }
+        $$.initialize(EbtSamplerCubeArrayShadow, @1);
     }
     | SAMPLERVIDEOWEBGL {
         if (!context->checkCanUseExtension(@1, TExtension::WEBGL_video_texture))
@@ -1213,6 +1281,54 @@ type_specifier_nonarray
     }
     | UIMAGECUBE {
         $$.initialize(EbtUImageCube, @1);
+    }
+    | IMAGECUBEARRAYOES {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::OES_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__imageCubeArray");
+        }
+        $$.initialize(EbtImageCubeArray, @1);
+    }
+    | IMAGECUBEARRAYEXT {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::EXT_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__imageCubeArray");
+        }
+        $$.initialize(EbtImageCubeArray, @1);
+    }
+    | IIMAGECUBEARRAYOES {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::OES_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__iimageCubeArray");
+        }
+        $$.initialize(EbtIImageCubeArray, @1);
+    }
+    | IIMAGECUBEARRAYEXT {
+        if (context->getShaderVersion() < 320
+        && !context->checkCanUseExtension(@1, TExtension::EXT_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__iimageCubeArray");
+        }
+        $$.initialize(EbtIImageCubeArray, @1);
+    }
+    | UIMAGECUBEARRAYOES {
+       if (context->getShaderVersion() < 320
+       && !context->checkCanUseExtension(@1, TExtension::OES_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__uimageCubeArray");
+        }
+        $$.initialize(EbtUImageCubeArray, @1);
+    }
+    | UIMAGECUBEARRAYEXT {
+       if (context->getShaderVersion() < 320
+       && !context->checkCanUseExtension(@1, TExtension::EXT_texture_cube_map_array))
+        {
+            context->error(@1, "unsupported type", "__uimageCubeArray");
+        }
+        $$.initialize(EbtUImageCubeArray, @1);
     }
     | ATOMICUINT {
         $$.initialize(EbtAtomicCounter, @1);

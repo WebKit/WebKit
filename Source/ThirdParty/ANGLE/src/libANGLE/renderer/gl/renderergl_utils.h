@@ -47,6 +47,20 @@ enum class MultiviewImplementationTypeGL
     UNSPECIFIED
 };
 
+// State-tracking data for the swap control to allow DisplayGL to remember per
+// drawable information for swap control.
+struct SwapControlData
+{
+    SwapControlData();
+
+    // Set by the drawable
+    int targetSwapInterval;
+
+    // DisplayGL-side state-tracking
+    int maxSwapInterval;
+    int currentSwapInterval;
+};
+
 VendorID GetVendorID(const FunctionsGL *functions);
 
 // Helpers for extracting the GL helper objects out of a context

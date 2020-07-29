@@ -20,7 +20,10 @@ class X11Pixmap : public OSPixmap
     X11Pixmap();
     ~X11Pixmap() override;
 
-    bool initialize(EGLNativeDisplayType display, size_t width, size_t height, int depth) override;
+    bool initialize(EGLNativeDisplayType display,
+                    size_t width,
+                    size_t height,
+                    int nativeVisual) override;
 
     EGLNativePixmapType getNativePixmap() const override;
 

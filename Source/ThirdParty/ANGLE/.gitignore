@@ -56,7 +56,6 @@
 /third_party/vulkan-tools/src
 /third_party/vulkan-validation-layers/src
 /third_party/vulkan_memory_allocator
-/third_party/zlib
 /tools/clang
 /tools/flex-bison/linux/bison
 /tools/flex-bison/linux/flex

@@ -236,7 +236,7 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
         HRESULT result         = S_OK;
 
         {
-            ANGLE_TRACE_EVENT0("gpu.angle", "D3DCompile");
+            ANGLE_TRACE_EVENT1("gpu.angle", "D3DCompile", "source", hlsl);
             SCOPED_ANGLE_HISTOGRAM_TIMER("GPU.ANGLE.D3DCompileMS");
             result = mD3DCompileFunc(hlsl.c_str(), hlsl.length(), gl::g_fakepath, macros, nullptr,
                                      "main", profile.c_str(), configs[i].flags, 0, &binary,
@@ -247,6 +247,7 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
         {
             std::string message = static_cast<const char *>(errorMessage->GetBufferPointer());
             SafeRelease(errorMessage);
+            ANGLE_TRACE_EVENT1("gpu.angle", "D3DCompile::Error", "error", errorMessage);
 
             infoLog.appendSanitized(message.c_str());
 

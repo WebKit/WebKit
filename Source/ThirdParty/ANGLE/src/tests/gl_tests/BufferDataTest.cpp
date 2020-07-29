@@ -698,6 +698,47 @@ TEST_P(BufferDataTestES3, NoBufferInitDataCopyBug)
     ASSERT_GL_NO_ERROR();
 }
 
+// Ensures that calling glBufferData on a mapped buffer results in an unmapped buffer
+TEST_P(BufferDataTestES3, BufferDataUnmap)
+{
+    // Per the OpenGL ES 3.0 spec, buffers are implicity unmapped when a call to
+    // BufferData happens on a mapped buffer:
+    //
+    //    If any portion of the buffer object is mapped in the current context or
+    //    any context current to another thread, it is as though UnmapBuffer
+    //    (see section 2.10.3) is executed in each such context prior to deleting
+    //    the existing data store.
+    //
+
+    std::vector<uint8_t> data1(16);
+    std::vector<uint8_t> data2(16);
+
+    GLBuffer dataBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, dataBuffer);
+    glBufferData(GL_ARRAY_BUFFER, data1.size(), data1.data(), GL_STATIC_DRAW);
+
+    // Map the buffer once
+    void *mappedBuffer =
+        glMapBufferRange(GL_ARRAY_BUFFER, 0, data1.size(),
+                         GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT |
+                             GL_MAP_FLUSH_EXPLICIT_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+
+    // Then repopulate the buffer. This should cause the buffer to become unmapped.
+    glBufferData(GL_ARRAY_BUFFER, data2.size(), data2.data(), GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    // Try to unmap the buffer, this should fail
+    bool result = glUnmapBuffer(GL_ARRAY_BUFFER);
+    ASSERT_EQ(result, false);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Try to map the buffer again, which should succeed
+    mappedBuffer = glMapBufferRange(GL_ARRAY_BUFFER, 0, data2.size(),
+                                    GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT |
+                                        GL_MAP_FLUSH_EXPLICIT_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2(BufferDataTest);

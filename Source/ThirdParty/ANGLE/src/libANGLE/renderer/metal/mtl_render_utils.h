@@ -15,6 +15,7 @@
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
+#include "libANGLE/renderer/metal/shaders/constants.h"
 
 namespace rx
 {
@@ -62,6 +63,18 @@ struct TriFanFromArrayParams
     uint32_t dstOffset;
 };
 
+struct IndexConversionParams
+{
+
+    gl::DrawElementsType srcType;
+    uint32_t indexCount;
+    const BufferRef &srcBuffer;
+    uint32_t srcOffset;
+    const BufferRef &dstBuffer;
+    // Must be multiples of kIndexBufferOffsetAlignment
+    uint32_t dstOffset;
+};
+
 struct IndexGenerationParams
 {
     gl::DrawElementsType srcType;
@@ -71,6 +84,142 @@ struct IndexGenerationParams
     uint32_t dstOffset;
 };
 
+// Utils class for clear & blitting
+class ClearUtils
+{
+  public:
+    ClearUtils();
+
+    void onDestroy();
+
+    // Clear current framebuffer
+    angle::Result clearWithDraw(const gl::Context *context,
+                                RenderCommandEncoder *cmdEncoder,
+                                const ClearRectParams &params);
+
+  private:
+    // Defer loading of render pipeline state cache.
+    void ensureRenderPipelineStateCacheInitialized(ContextMtl *ctx);
+
+    void setupClearWithDraw(const gl::Context *context,
+                            RenderCommandEncoder *cmdEncoder,
+                            const ClearRectParams &params);
+    id<MTLDepthStencilState> getClearDepthStencilState(const gl::Context *context,
+                                                       const ClearRectParams &params);
+    id<MTLRenderPipelineState> getClearRenderPipelineState(const gl::Context *context,
+                                                           RenderCommandEncoder *cmdEncoder,
+                                                           const ClearRectParams &params);
+
+    // Render pipeline cache for clear with draw:
+    RenderPipelineCache mClearRenderPipelineCache;
+};
+
+class ColorBlitUtils
+{
+  public:
+    ColorBlitUtils();
+
+    void onDestroy();
+
+    // Blit texture data to current framebuffer
+    angle::Result blitWithDraw(const gl::Context *context,
+                               RenderCommandEncoder *cmdEncoder,
+                               const BlitParams &params);
+
+  private:
+    // Defer loading of render pipeline state cache.
+    void ensureRenderPipelineStateCacheInitialized(ContextMtl *ctx,
+                                                   int alphaPremultiplyType,
+                                                   int textureType,
+                                                   RenderPipelineCache *cacheOut);
+
+    void setupBlitWithDraw(const gl::Context *context,
+                           RenderCommandEncoder *cmdEncoder,
+                           const BlitParams &params);
+
+    id<MTLRenderPipelineState> getBlitRenderPipelineState(const gl::Context *context,
+                                                          RenderCommandEncoder *cmdEncoder,
+                                                          const BlitParams &params);
+
+    // Blit with draw pipeline caches:
+    // - array dimension: source texture type (2d, ms, array, 3d, etc)
+    using ColorBlitRenderPipelineCacheArray =
+        std::array<RenderPipelineCache, mtl_shader::kTextureTypeCount>;
+    ColorBlitRenderPipelineCacheArray mBlitRenderPipelineCache;
+    ColorBlitRenderPipelineCacheArray mBlitPremultiplyAlphaRenderPipelineCache;
+    ColorBlitRenderPipelineCacheArray mBlitUnmultiplyAlphaRenderPipelineCache;
+};
+
+// util class for generating index buffer
+class IndexGeneratorUtils
+{
+  public:
+    void onDestroy();
+
+    // Convert index buffer.
+    angle::Result convertIndexBufferGPU(ContextMtl *contextMtl,
+                                        const IndexConversionParams &params);
+    // Generate triangle fan index buffer for glDrawArrays().
+    angle::Result generateTriFanBufferFromArrays(ContextMtl *contextMtl,
+                                                 const TriFanFromArrayParams &params);
+    // Generate triangle fan index buffer for glDrawElements().
+    angle::Result generateTriFanBufferFromElementsArray(ContextMtl *contextMtl,
+                                                        const IndexGenerationParams &params);
+
+    // Generate line loop's last segment index buffer for glDrawArrays().
+    angle::Result generateLineLoopLastSegment(ContextMtl *contextMtl,
+                                              uint32_t firstVertex,
+                                              uint32_t lastVertex,
+                                              const BufferRef &dstBuffer,
+                                              uint32_t dstOffset);
+    // Generate line loop's last segment index buffer for glDrawElements().
+    angle::Result generateLineLoopLastSegmentFromElementsArray(ContextMtl *contextMtl,
+                                                               const IndexGenerationParams &params);
+
+  private:
+    // Index generator compute pipelines:
+    //  - First dimension: index type.
+    //  - second dimension: source buffer's offset is aligned or not.
+    using IndexConversionPipelineArray =
+        std::array<std::array<AutoObjCPtr<id<MTLComputePipelineState>>, 2>,
+                   angle::EnumSize<gl::DrawElementsType>()>;
+
+    // Get compute pipeline to convert index between buffers.
+    AutoObjCPtr<id<MTLComputePipelineState>> getIndexConversionPipeline(
+        ContextMtl *contextMtl,
+        gl::DrawElementsType srcType,
+        uint32_t srcOffset);
+    // Get compute pipeline to generate tri fan index for glDrawElements().
+    AutoObjCPtr<id<MTLComputePipelineState>> getTriFanFromElemArrayGeneratorPipeline(
+        ContextMtl *contextMtl,
+        gl::DrawElementsType srcType,
+        uint32_t srcOffset);
+    // Defer loading of compute pipeline to generate tri fan index for glDrawArrays().
+    void ensureTriFanFromArrayGeneratorInitialized(ContextMtl *contextMtl);
+
+    angle::Result generateTriFanBufferFromElementsArrayGPU(
+        ContextMtl *contextMtl,
+        gl::DrawElementsType srcType,
+        uint32_t indexCount,
+        const BufferRef &srcBuffer,
+        uint32_t srcOffset,
+        const BufferRef &dstBuffer,
+        // Must be multiples of kIndexBufferOffsetAlignment
+        uint32_t dstOffset);
+    angle::Result generateTriFanBufferFromElementsArrayCPU(ContextMtl *contextMtl,
+                                                           const IndexGenerationParams &params);
+
+    angle::Result generateLineLoopLastSegmentFromElementsArrayCPU(
+        ContextMtl *contextMtl,
+        const IndexGenerationParams &params);
+
+    IndexConversionPipelineArray mIndexConversionPipelineCaches;
+
+    IndexConversionPipelineArray mTriFanFromElemArrayGeneratorPipelineCaches;
+    AutoObjCPtr<id<MTLComputePipelineState>> mTriFanFromArraysGeneratorPipeline;
+};
+
+// RenderUtils: container class of various util classes above
 class RenderUtils : public Context, angle::NonCopyable
 {
   public:
@@ -81,39 +230,33 @@ class RenderUtils : public Context, angle::NonCopyable
     void onDestroy();
 
     // Clear current framebuffer
-    void clearWithDraw(const gl::Context *context,
-                       RenderCommandEncoder *cmdEncoder,
-                       const ClearRectParams &params);
+    angle::Result clearWithDraw(const gl::Context *context,
+                                RenderCommandEncoder *cmdEncoder,
+                                const ClearRectParams &params);
     // Blit texture data to current framebuffer
-    void blitWithDraw(const gl::Context *context,
-                      RenderCommandEncoder *cmdEncoder,
-                      const BlitParams &params);
+    angle::Result blitWithDraw(const gl::Context *context,
+                               RenderCommandEncoder *cmdEncoder,
+                               const BlitParams &params);
+    // Same as above but blit the whole texture to the whole of current framebuffer.
+    // This function assumes the framebuffer and the source texture have same size.
+    angle::Result blitWithDraw(const gl::Context *context,
+                               RenderCommandEncoder *cmdEncoder,
+                               const TextureRef &srcTexture);
 
-    angle::Result convertIndexBuffer(const gl::Context *context,
-                                     gl::DrawElementsType srcType,
-                                     uint32_t indexCount,
-                                     const BufferRef &srcBuffer,
-                                     uint32_t srcOffset,
-                                     const BufferRef &dstBuffer,
-                                     // Must be multiples of kIndexBufferOffsetAlignment
-                                     uint32_t dstOffset);
-    angle::Result generateTriFanBufferFromArrays(const gl::Context *context,
+    // See IndexGeneratorUtils
+    angle::Result convertIndexBufferGPU(ContextMtl *contextMtl,
+                                        const IndexConversionParams &params);
+    angle::Result generateTriFanBufferFromArrays(ContextMtl *contextMtl,
                                                  const TriFanFromArrayParams &params);
-    angle::Result generateTriFanBufferFromElementsArray(const gl::Context *context,
+    angle::Result generateTriFanBufferFromElementsArray(ContextMtl *contextMtl,
                                                         const IndexGenerationParams &params);
-
-    angle::Result generateLineLoopLastSegment(const gl::Context *context,
+    angle::Result generateLineLoopLastSegment(ContextMtl *contextMtl,
                                               uint32_t firstVertex,
                                               uint32_t lastVertex,
                                               const BufferRef &dstBuffer,
                                               uint32_t dstOffset);
-    angle::Result generateLineLoopLastSegmentFromElementsArray(const gl::Context *context,
+    angle::Result generateLineLoopLastSegmentFromElementsArray(ContextMtl *contextMtl,
                                                                const IndexGenerationParams &params);
-
-    angle::Result dispatchCompute(const gl::Context *context,
-                                  ComputeCommandEncoder *encoder,
-                                  id<MTLComputePipelineState> pipelineState,
-                                  size_t numThreads);
 
   private:
     // override ErrorHandler
@@ -126,71 +269,9 @@ class RenderUtils : public Context, angle::NonCopyable
                      const char *function,
                      unsigned int line) override;
 
-    angle::Result initShaderLibrary();
-    void initClearResources();
-    void initBlitResources();
-
-    void setupClearWithDraw(const gl::Context *context,
-                            RenderCommandEncoder *cmdEncoder,
-                            const ClearRectParams &params);
-    void setupBlitWithDraw(const gl::Context *context,
-                           RenderCommandEncoder *cmdEncoder,
-                           const BlitParams &params);
-    id<MTLDepthStencilState> getClearDepthStencilState(const gl::Context *context,
-                                                       const ClearRectParams &params);
-    id<MTLRenderPipelineState> getClearRenderPipelineState(const gl::Context *context,
-                                                           RenderCommandEncoder *cmdEncoder,
-                                                           const ClearRectParams &params);
-    id<MTLRenderPipelineState> getBlitRenderPipelineState(const gl::Context *context,
-                                                          RenderCommandEncoder *cmdEncoder,
-                                                          const BlitParams &params);
-    void setupBlitWithDrawUniformData(RenderCommandEncoder *cmdEncoder, const BlitParams &params);
-
-    void setupDrawCommonStates(RenderCommandEncoder *cmdEncoder);
-
-    AutoObjCPtr<id<MTLComputePipelineState>> getIndexConversionPipeline(
-        ContextMtl *context,
-        gl::DrawElementsType srcType,
-        uint32_t srcOffset);
-    AutoObjCPtr<id<MTLComputePipelineState>> getTriFanFromElemArrayGeneratorPipeline(
-        ContextMtl *context,
-        gl::DrawElementsType srcType,
-        uint32_t srcOffset);
-    angle::Result ensureTriFanFromArrayGeneratorInitialized(ContextMtl *context);
-    angle::Result generateTriFanBufferFromElementsArrayGPU(
-        const gl::Context *context,
-        gl::DrawElementsType srcType,
-        uint32_t indexCount,
-        const BufferRef &srcBuffer,
-        uint32_t srcOffset,
-        const BufferRef &dstBuffer,
-        // Must be multiples of kIndexBufferOffsetAlignment
-        uint32_t dstOffset);
-    angle::Result generateTriFanBufferFromElementsArrayCPU(const gl::Context *context,
-                                                           const IndexGenerationParams &params);
-    angle::Result generateLineLoopLastSegmentFromElementsArrayCPU(
-        const gl::Context *context,
-        const IndexGenerationParams &params);
-
-    AutoObjCPtr<id<MTLLibrary>> mDefaultShaders = nil;
-    RenderPipelineCache mClearRenderPipelineCache;
-    RenderPipelineCache mBlitRenderPipelineCache;
-    RenderPipelineCache mBlitPremultiplyAlphaRenderPipelineCache;
-    RenderPipelineCache mBlitUnmultiplyAlphaRenderPipelineCache;
-
-    struct IndexConvesionPipelineCacheKey
-    {
-        gl::DrawElementsType srcType;
-        bool srcBufferOffsetAligned;
-
-        bool operator==(const IndexConvesionPipelineCacheKey &other) const;
-        bool operator<(const IndexConvesionPipelineCacheKey &other) const;
-    };
-    std::map<IndexConvesionPipelineCacheKey, AutoObjCPtr<id<MTLComputePipelineState>>>
-        mIndexConversionPipelineCaches;
-    std::map<IndexConvesionPipelineCacheKey, AutoObjCPtr<id<MTLComputePipelineState>>>
-        mTriFanFromElemArrayGeneratorPipelineCaches;
-    AutoObjCPtr<id<MTLComputePipelineState>> mTriFanFromArraysGeneratorPipeline;
+    ClearUtils mClearUtils;
+    ColorBlitUtils mColorBlitUtils;
+    IndexGeneratorUtils mIndexUtils;
 };
 
 }  // namespace mtl

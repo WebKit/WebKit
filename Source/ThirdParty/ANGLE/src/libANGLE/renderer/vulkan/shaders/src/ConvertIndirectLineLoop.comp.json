@@ -6,7 +6,6 @@
         "",
         "ConvertArrayIndirectLineLoop.comp.json: Build parameters for ConvertArrayIndirectLineLoop.comp."
     ],
-        "Flags": [
+    "Flags": [
     ]
 }
-

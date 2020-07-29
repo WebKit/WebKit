@@ -1230,6 +1230,8 @@ angle::CallCapture CaptureImportSemaphoreFdEXT(const State &glState,
 
 // GL_EXT_texture_compression_s3tc_srgb
 
+// GL_EXT_texture_cube_map_array
+
 // GL_EXT_texture_filter_anisotropic
 
 // GL_EXT_texture_format_BGRA8888
@@ -1777,6 +1779,8 @@ angle::CallCapture CaptureTexGenxvOES(const State &glState,
                                       GLenum coord,
                                       GLenum pname,
                                       const GLfixed *params);
+
+// GL_OES_texture_cube_map_array
 
 // GL_OES_texture_half_float
 

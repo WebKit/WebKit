@@ -27,6 +27,7 @@ class DisplayMtl;
 class FramebufferMtl;
 class VertexArrayMtl;
 class ProgramMtl;
+class WindowSurfaceMtl;
 
 class ContextMtl : public ContextImpl, public mtl::Context
 {
@@ -113,6 +114,46 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                        gl::PrimitiveMode mode,
                                        gl::DrawElementsType type,
                                        const void *indirect) override;
+    angle::Result multiDrawArrays(const gl::Context *context,
+                                  gl::PrimitiveMode mode,
+                                  const GLint *firsts,
+                                  const GLsizei *counts,
+                                  GLsizei drawcount) override;
+    angle::Result multiDrawArraysInstanced(const gl::Context *context,
+                                           gl::PrimitiveMode mode,
+                                           const GLint *firsts,
+                                           const GLsizei *counts,
+                                           const GLsizei *instanceCounts,
+                                           GLsizei drawcount) override;
+    angle::Result multiDrawElements(const gl::Context *context,
+                                    gl::PrimitiveMode mode,
+                                    const GLsizei *counts,
+                                    gl::DrawElementsType type,
+                                    const GLvoid *const *indices,
+                                    GLsizei drawcount) override;
+    angle::Result multiDrawElementsInstanced(const gl::Context *context,
+                                             gl::PrimitiveMode mode,
+                                             const GLsizei *counts,
+                                             gl::DrawElementsType type,
+                                             const GLvoid *const *indices,
+                                             const GLsizei *instanceCounts,
+                                             GLsizei drawcount) override;
+    angle::Result multiDrawArraysInstancedBaseInstance(const gl::Context *context,
+                                                       gl::PrimitiveMode mode,
+                                                       const GLint *firsts,
+                                                       const GLsizei *counts,
+                                                       const GLsizei *instanceCounts,
+                                                       const GLuint *baseInstances,
+                                                       GLsizei drawcount) override;
+    angle::Result multiDrawElementsInstancedBaseVertexBaseInstance(const gl::Context *context,
+                                                                   gl::PrimitiveMode mode,
+                                                                   const GLsizei *counts,
+                                                                   gl::DrawElementsType type,
+                                                                   const GLvoid *const *indices,
+                                                                   const GLsizei *instanceCounts,
+                                                                   const GLint *baseVertices,
+                                                                   const GLuint *baseInstances,
+                                                                   GLsizei drawcount) override;
 
     // Device loss
     gl::GraphicsResetStatus getResetStatus() override;
@@ -226,6 +267,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     // Call this to notify ContextMtl whenever FramebufferMtl's state changed
     void onDrawFrameBufferChange(const gl::Context *context, FramebufferMtl *framebuffer);
+    void onBackbufferResized(const gl::Context *context, WindowSurfaceMtl *backbuffer);
 
     const MTLClearColor &getClearColorValue() const;
     MTLColorWriteMask getColorMask() const;
@@ -240,6 +282,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
     const mtl::VertexFormat &getVertexFormat(angle::FormatID angleFormatId,
                                              bool tightlyPacked) const;
 
+    angle::Result getIncompleteTexture(const gl::Context *context,
+                                       gl::TextureType type,
+                                       gl::Texture **textureOut);
+
     // Recommended to call these methods to end encoding instead of invoking the encoder's
     // endEncoding() directly.
     void endEncoding(mtl::RenderCommandEncoder *encoder);
@@ -252,12 +298,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
 
     // Check whether compatible render pass has been started.
     bool hasStartedRenderPass(const mtl::RenderPassDesc &desc);
-    bool hasStartedRenderPass(FramebufferMtl *framebuffer);
 
     // Get current render encoder. May be nullptr if no render pass has been started.
     mtl::RenderCommandEncoder *getRenderCommandEncoder();
-
-    mtl::RenderCommandEncoder *getCurrentFramebufferRenderCommandEncoder();
 
     // Will end current command encoder if it is valid, then start new encoder.
     // Unless hasStartedRenderPass(desc) returns true.
@@ -281,7 +324,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
     mtl::ComputeCommandEncoder *getComputeCommandEncoder();
 
   private:
-    void ensureCommandBufferValid();
+    void ensureCommandBufferReady();
+    angle::Result ensureIncompleteTexturesCreated(const gl::Context *context);
     angle::Result setupDraw(const gl::Context *context,
                             gl::PrimitiveMode mode,
                             GLint firstVertex,
@@ -377,9 +421,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
     {
         float viewport[4];
 
-        float halfRenderAreaHeight;
-        float viewportYScale;
-        float negViewportYScale;
+        float halfRenderArea[2];
+        float flipXY[2];
+        float negFlipXY[2];
 
         // 32 bits for 32 clip distances
         uint32_t enabledClipDistances;
@@ -388,7 +432,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
         uint32_t xfbActiveUnpaused;
         uint32_t xfbVerticesPerDraw;
         // NOTE: Explicit padding. Fill in with useful data when needed in the future.
-        int32_t padding[2];
+        int32_t padding[3];
 
         int32_t xfbBufferOffsets[4];
         uint32_t acbBufferOffsets[4];
@@ -399,6 +443,14 @@ class ContextMtl : public ContextImpl, public mtl::Context
         // Used to pre-rotate gl_Position for Vulkan swapchain images on Android (a mat2, which is
         // padded to the size of two vec4's).
         float preRotation[8];
+
+        // Used to pre-rotate gl_FragCoord for Vulkan swapchain images on Android (a mat2, which is
+        // padded to the size of two vec4's).
+        float fragRotation[8];
+
+        uint32_t coverageMask;
+
+        float padding2[3];
     };
 
     struct DefaultAttribute
@@ -416,12 +468,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     FramebufferMtl *mDrawFramebuffer = nullptr;
     VertexArrayMtl *mVertexArray     = nullptr;
     ProgramMtl *mProgram             = nullptr;
-
-    // Special flag to indicate current draw framebuffer is default framebuffer.
-    // We need this instead of calling mDrawFramebuffer->getState().isDefault() because
-    // mDrawFramebuffer might point to a deleted object, ContextMtl only knows about this very late,
-    // only during syncState() function call.
-    bool mDrawFramebufferIsDefault = true;
 
     using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
 
@@ -451,6 +497,9 @@ class ContextMtl : public ContextImpl, public mtl::Context
     DriverUniforms mDriverUniforms;
 
     DefaultAttribute mDefaultAttributes[mtl::kMaxVertexAttribs];
+
+    IncompleteTextureSet mIncompleteTextures;
+    bool mIncompleteTexturesInitialized = false;
 };
 
 }  // namespace rx

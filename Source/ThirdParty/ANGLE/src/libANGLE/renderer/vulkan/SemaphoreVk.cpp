@@ -149,7 +149,7 @@ angle::Result SemaphoreVk::wait(gl::Context *context,
         }
     }
 
-    contextVk->insertWaitSemaphore(&mSemaphore);
+    contextVk->addWaitSemaphore(mSemaphore.getHandle(), VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
     return angle::Result::Continue;
 }
 

@@ -54,8 +54,8 @@ _metal_backend_sources = [
   "mtl_state_cache.mm",
   "mtl_utils.h",
   "mtl_utils.mm",
-  "shaders/compiled/mtl_default_shaders.inc",
-  "shaders/mtl_default_shaders_src_autogen.inc",
+  "shaders/compiled/mtl_default_shaders_autogen.inc",
+  "shaders/constants.h",
 ]
 
 config("angle_metal_backend_config") {
@@ -94,7 +94,7 @@ angle_source_set("angle_metal_backend") {
   cflags_objcc += objc_flags
 
   if (is_mac) {
-    libs += [
+    frameworks = [
       "Cocoa.framework",
       "IOSurface.framework",
       "QuartzCore.framework",

@@ -320,7 +320,9 @@ class StateManagerGL final : angle::NonCopyable
     float mClearDepth;
     GLint mClearStencil;
 
+    bool mFramebufferSRGBAvailable;
     bool mFramebufferSRGBEnabled;
+
     bool mDitherEnabled;
     bool mTextureCubemapSeamlessEnabled;
 

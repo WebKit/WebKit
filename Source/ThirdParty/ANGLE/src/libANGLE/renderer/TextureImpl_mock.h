@@ -129,7 +129,10 @@ class MockTextureImpl : public TextureImpl
 
     MOCK_METHOD2(setBaseLevel, angle::Result(const gl::Context *, GLuint));
 
-    MOCK_METHOD2(syncState, angle::Result(const gl::Context *, const gl::Texture::DirtyBits &));
+    MOCK_METHOD3(syncState,
+                 angle::Result(const gl::Context *,
+                               const gl::Texture::DirtyBits &,
+                               gl::TextureCommand source));
 
     MOCK_METHOD0(destructor, void());
 

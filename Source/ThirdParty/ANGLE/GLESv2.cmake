@@ -72,6 +72,12 @@ set(xxhash_sources
 )
 
 
+set(zlib_wrapper_sources
+    "third_party/zlib/google/compression_utils_portable.cc"
+    "third_party/zlib/google/compression_utils_portable.h"
+)
+
+
 set(angle_system_utils_sources
     "src/common/Optional.h"
     "src/common/angleutils.h"
@@ -197,6 +203,7 @@ set(libangle_includes
     "include/platform/FeaturesVk.h"
     "include/platform/FrontendFeatures.h"
     "include/platform/Platform.h"
+    "include/platform/PlatformMethods.h"
     "include/vulkan/vulkan_fuchsia_ext.h"
 )
 
@@ -434,6 +441,7 @@ set(libangle_sources
     "src/libANGLE/formatutils.cpp"
     "src/libANGLE/queryconversions.cpp"
     "src/libANGLE/queryutils.cpp"
+    "src/libANGLE/renderer/BufferImpl.cpp"
     "src/libANGLE/renderer/ContextImpl.cpp"
     "src/libANGLE/renderer/DeviceImpl.cpp"
     "src/libANGLE/renderer/DisplayImpl.cpp"
@@ -648,9 +656,6 @@ set(libangle_d3d11_sources
     "src/libANGLE/renderer/d3d/d3d11/VertexArray11.h"
     "src/libANGLE/renderer/d3d/d3d11/VertexBuffer11.cpp"
     "src/libANGLE/renderer/d3d/d3d11/VertexBuffer11.h"
-    "src/libANGLE/renderer/d3d/d3d11/dxgi_format_map_autogen.cpp"
-    "src/libANGLE/renderer/d3d/d3d11/dxgi_support_table.h"
-    "src/libANGLE/renderer/d3d/d3d11/dxgi_support_table_autogen.cpp"
     "src/libANGLE/renderer/d3d/d3d11/formatutils11.cpp"
     "src/libANGLE/renderer/d3d/d3d11/formatutils11.h"
     "src/libANGLE/renderer/d3d/d3d11/renderer11_utils.cpp"
@@ -721,6 +726,10 @@ set(libangle_d3d11_win32_sources
     "src/libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.h"
     "src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.cpp"
     "src/libANGLE/renderer/d3d/d3d11/win32/NativeWindow11Win32.h"
+)
+
+
+set(libangle_d3d_win32_sources
     "src/third_party/systeminfo/SystemInfo.cpp"
     "src/third_party/systeminfo/SystemInfo.h"
 )
@@ -831,6 +840,13 @@ set(libangle_gl_wgl_sources
 )
 
 
+set(libangle_gl_wgl_d3d11_common_sources
+    "src/libANGLE/renderer/d3d/d3d11/dxgi_format_map_autogen.cpp"
+    "src/libANGLE/renderer/d3d/d3d11/dxgi_support_table.h"
+    "src/libANGLE/renderer/d3d/d3d11/dxgi_support_table_autogen.cpp"
+)
+
+
 set(libangle_gl_glx_sources
     "src/libANGLE/renderer/gl/glx/DisplayGLX.cpp"
     "src/libANGLE/renderer/gl/glx/DisplayGLX.h"
@@ -838,12 +854,16 @@ set(libangle_gl_glx_sources
     "src/libANGLE/renderer/gl/glx/FunctionsGLX.h"
     "src/libANGLE/renderer/gl/glx/PbufferSurfaceGLX.cpp"
     "src/libANGLE/renderer/gl/glx/PbufferSurfaceGLX.h"
+    "src/libANGLE/renderer/gl/glx/PixmapSurfaceGLX.cpp"
+    "src/libANGLE/renderer/gl/glx/PixmapSurfaceGLX.h"
     "src/libANGLE/renderer/gl/glx/RendererGLX.cpp"
     "src/libANGLE/renderer/gl/glx/RendererGLX.h"
     "src/libANGLE/renderer/gl/glx/SurfaceGLX.h"
     "src/libANGLE/renderer/gl/glx/WindowSurfaceGLX.cpp"
     "src/libANGLE/renderer/gl/glx/WindowSurfaceGLX.h"
     "src/libANGLE/renderer/gl/glx/functionsglx_typedefs.h"
+    "src/libANGLE/renderer/gl/glx/glx_utils.cpp"
+    "src/libANGLE/renderer/gl/glx/glx_utils.h"
     "src/libANGLE/renderer/gl/glx/platform_glx.h"
 )
 
@@ -880,11 +900,11 @@ set(libangle_gl_egl_dl_sources
 )
 
 
-set(libangle_gl_ozone_sources
-    "src/libANGLE/renderer/gl/egl/ozone/DisplayOzone.cpp"
-    "src/libANGLE/renderer/gl/egl/ozone/DisplayOzone.h"
-    "src/libANGLE/renderer/gl/egl/ozone/SurfaceOzone.cpp"
-    "src/libANGLE/renderer/gl/egl/ozone/SurfaceOzone.h"
+set(libangle_gl_gbm_sources
+    "src/libANGLE/renderer/gl/egl/gbm/DisplayGbm.cpp"
+    "src/libANGLE/renderer/gl/egl/gbm/DisplayGbm.h"
+    "src/libANGLE/renderer/gl/egl/gbm/SurfaceGbm.cpp"
+    "src/libANGLE/renderer/gl/egl/gbm/SurfaceGbm.h"
 )
 
 
@@ -946,6 +966,8 @@ set(libangle_capture_sources
     "src/libANGLE/capture_gles_ext_autogen.cpp"
     "src/libANGLE/capture_gles_ext_params.cpp"
     "src/libANGLE/frame_capture_replay_autogen.cpp"
+    "src/libANGLE/frame_capture_utils.cpp"
+    "src/libANGLE/frame_capture_utils.h"
     "src/libANGLE/frame_capture_utils_autogen.cpp"
     "src/libANGLE/gl_enum_utils.cpp"
     "src/libANGLE/gl_enum_utils_autogen.cpp"

@@ -2,32 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// This file contains a list of defective dEQP conformance tests. The expected
-// format is:
-//  {BUG#} {MODIFIERS} : {TEST_NAME} = {PASS,FAIL,FLAKY,TIMEOUT,SKIP}
-//
-// MODIFIERS can be a combination of the below list, combined with a logical AND:
-//  WIN XP VISTA WIN7 WIN8 WIN10
-//  MAC LEOPARD SNOWLEOPARD LION MOUNTAINLION MAVERICKS YOSEMITE ELCAPITAN SIERRA HIGHSIERRA MOJAVE
-//  LINUX CHROMEOS ANDROID
-//  NVIDIA AMD INTEL
-//  DEBUG RELEASE
-//  D3D9 D3D11 OPENGL GLES VULKAN
-//  NEXUS5X PIXEL2ORXL
-//  QUADROP400
-//
-//
-// TEST_NAME can be a specific test name, or have a '*' in the end, which
-// indicates a prefix matching.
-//
-// Examples:
-// fails on both windows and mac (crash)
-//  91530 WIN : context_lost_restored = SKIP
-//  91530 MAC : context_lost_restored = SKIP
-// fails on windows using NVIDIA GPUs
-//  91533 WIN NVIDIA : gl_min_uniforms = FAIL
-// fails on Nexus5X with GLES backend (hangs)
-//  91531 NEXUS5X GLES : conformance_more_* = SKIP
+// See README.md for format.
 
 // Globally disable Metal testing for now
 4235 METAL : dEQP-EGL.* = SKIP
@@ -131,28 +106,8 @@
 2716 WIN VULKAN : dEQP-EGL.functional.preserve_swap.no_preserve.* = FAIL
 
 // Linux failures
-2546 LINUX : dEQP-EGL.functional.color_clears.multi_context.gles1.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.color_clears.multi_context.gles1_gles2.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.color_clears.multi_context.gles1_gles2_gles3.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.color_clears.multi_context.gles2.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.color_clears.multi_context.gles3.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.color_clears.single_context.gles1.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.color_clears.single_context.gles2.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.color_clears.single_context.gles3.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.create_surface.pixmap.rgba8888_depth_stencil = SKIP
-2546 LINUX : dEQP-EGL.functional.create_surface.pixmap.rgba8888_no_depth_no_stencil = SKIP
 2546 LINUX : dEQP-EGL.functional.negative_api.copy_buffers = SKIP
-2546 LINUX : dEQP-EGL.functional.query_context.get_current_context.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.query_context.get_current_display.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.query_context.get_current_surface.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.query_context.query_context.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.query_surface.set_attribute.pixmap.rgba8888_depth_stencil = SKIP
-2546 LINUX : dEQP-EGL.functional.query_surface.set_attribute.pixmap.rgba8888_no_depth_no_stencil = SKIP
-2546 LINUX : dEQP-EGL.functional.query_surface.simple.pixmap.rgba8888_depth_stencil = SKIP
-2546 LINUX : dEQP-EGL.functional.query_surface.simple.pixmap.rgba8888_no_depth_no_stencil = SKIP
 2546 LINUX : dEQP-EGL.functional.render.multi_context.* = SKIP
-2546 LINUX : dEQP-EGL.functional.render.single_context.gles2.rgba8888_pixmap = SKIP
-2546 LINUX : dEQP-EGL.functional.render.single_context.gles3.rgba8888_pixmap = SKIP
 2546 LINUX : dEQP-EGL.functional.thread_cleanup.* = SKIP
 2546 LINUX : dEQP-EGL.functional.native_color_mapping.native_window.* = FAIL
 2546 LINUX : dEQP-EGL.functional.native_coord_mapping.native_window.* = FAIL

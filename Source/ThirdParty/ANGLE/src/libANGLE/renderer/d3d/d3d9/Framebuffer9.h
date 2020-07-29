@@ -65,6 +65,7 @@ class Framebuffer9 : public FramebufferD3D
                                  GLenum type,
                                  size_t outputPitch,
                                  const gl::PixelPackState &pack,
+                                 gl::Buffer *packPixels,
                                  uint8_t *pixels) override;
 
     angle::Result blitImpl(const gl::Context *context,

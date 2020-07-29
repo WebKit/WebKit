@@ -30,8 +30,8 @@ namespace wgl
 {
 using ProcEntry = std::pair<const char *, PROC>;
 
-extern wgl::ProcEntry g_procTable[];
-extern size_t g_numProcs;
+extern const wgl::ProcEntry g_procTable[];
+extern const size_t g_numProcs;
 }  // namespace wgl
 
 #endif  // LIBGL_PROC_TABLE_H_

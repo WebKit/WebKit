@@ -24,8 +24,8 @@ Status
 
 Version
 
-    Last Modified Date: August 13, 2019
-    Author Revision: 1
+    Last Modified Date: July 14, 2020
+    Author Revision: 2
 
 Number
 
@@ -95,7 +95,7 @@ New Procedures and Functions
                                                 const GLint* firsts,
                                                 const GLsizei* counts,
                                                 const GLsizei* instanceCounts,
-                                                const GLint* baseInstances,
+                                                const GLuint* baseInstances,
                                                 const GLsizei drawcount);
 
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(enum mode,
@@ -104,7 +104,7 @@ New Procedures and Functions
                                                 const GLvoid* const* indices,
                                                 const GLsizei* instanceCounts,
                                                 const GLint* baseVertices,
-                                                const GLint* baseInstances,
+                                                const GLuint* baseInstances,
                                                 const GLsizei drawcount);
 
 New Tokens
@@ -249,3 +249,4 @@ Revision History
     Rev.    Date    Author       Changes
     ----  --------  ----------   --------------------------------------------
     1     08/13/19   Shrek Shao   First revision.
+    2     07/14/20   Shrek Shao   Fix baseInstance type from GLint to GLuint.

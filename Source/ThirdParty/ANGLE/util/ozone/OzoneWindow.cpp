@@ -8,6 +8,8 @@
 
 #include "util/ozone/OzoneWindow.h"
 
+#include "common/debug.h"
+
 int OzoneWindow::sLastDepth = 0;
 
 OzoneWindow::OzoneWindow() {}
@@ -27,6 +29,8 @@ bool OzoneWindow::initialize(const std::string &name, int width, int height)
     return true;
 }
 
+void OzoneWindow::disableErrorMessageDialog() {}
+
 void OzoneWindow::destroy() {}
 
 void OzoneWindow::resetNativeWindow() {}
@@ -44,6 +48,12 @@ EGLNativeDisplayType OzoneWindow::getNativeDisplay() const
 void OzoneWindow::messageLoop() {}
 
 void OzoneWindow::setMousePosition(int x, int y) {}
+
+bool OzoneWindow::setOrientation(int width, int height)
+{
+    UNIMPLEMENTED();
+    return false;
+}
 
 bool OzoneWindow::setPosition(int x, int y)
 {

@@ -24,6 +24,13 @@ root_targets = [
 sdk_version = '28'
 stl = 'libc++_static'
 
+abi_arm = 'arm'
+abi_arm64 = 'arm64'
+abi_x86 = 'x86'
+abi_x64 = 'x86_64'
+
+abi_targets = [abi_arm, abi_arm64, abi_x86, abi_x64]
+
 
 def tabs(indent):
     return ' ' * (indent * 4)
@@ -84,9 +91,9 @@ def gn_target_to_blueprint_target(target, target_info):
 
     # Split the gn target name (in the form of //gn_file_path:target_name) into gn_file_path and
     # target_name
-    target_regex = re.compile(r"^//([a-zA-Z0-9\-_/]*):([a-zA-Z0-9\-_\.]+)$")
+    target_regex = re.compile(r"^//([a-zA-Z0-9\-_/]*):([a-zA-Z0-9\-_.]+)$")
     match = re.match(target_regex, target)
-    assert match != None
+    assert match is not None
 
     gn_file_path = match.group(1)
     target_name = match.group(2)
@@ -96,7 +103,8 @@ def gn_target_to_blueprint_target(target, target_info):
     gn_file_path = gn_file_path.replace("/", "_").replace(".", "_").replace("-", "_")
 
     # Generate a blueprint target name by merging the gn path and target so each target is unique.
-    # Prepend the 'angle' prefix to all targets in the root path (empty gn_file_path). Skip this step if the target name already starts with 'angle' to avoid target names such as 'angle_angle_common'.
+    # Prepend the 'angle' prefix to all targets in the root path (empty gn_file_path).
+    # Skip this step if the target name already starts with 'angle' to avoid target names such as 'angle_angle_common'.
     root_prefix = "angle"
     if len(gn_file_path) == 0 and not target_name.startswith(root_prefix):
         gn_file_path = root_prefix
@@ -152,9 +160,11 @@ def gn_sources_to_blueprint_sources(sources):
 
 target_blackist = [
     '//build/config:shared_library_deps',
+    '//third_party/vulkan-validation-layers/src:vulkan_clean_old_validation_layer_objects',
 ]
 
 include_blacklist = [
+    '//out/Android/gen/third_party/glslang/src/include/',
 ]
 
 
@@ -164,11 +174,11 @@ def gn_deps_to_blueprint_deps(target_info, build_info):
     defaults = []
     generated_headers = []
     header_libs = []
-    if not 'deps' in target_info:
-        return (static_libs, defaults)
+    if 'deps' not in target_info:
+        return static_libs, defaults
 
     for dep in target_info['deps']:
-        if not dep in target_blackist:
+        if dep not in target_blackist:
             dep_info = build_info[dep]
             blueprint_dep_name = gn_target_to_blueprint_target(dep, dep_info)
 
@@ -195,18 +205,19 @@ def gn_deps_to_blueprint_deps(target_info, build_info):
             # headers up the dependency stack.
             generated_headers += child_generated_headers
 
-    return (static_libs, shared_libs, defaults, generated_headers, header_libs)
+    return static_libs, shared_libs, defaults, generated_headers, header_libs
 
 
 def gn_libs_to_blueprint_shared_libraries(target_info):
     lib_blackist = [
         'android_support',
+        'unwind',
     ]
 
     result = []
     if 'libs' in target_info:
         for lib in target_info['libs']:
-            if not lib in lib_blackist:
+            if lib not in lib_blackist:
                 android_lib = lib if '@' in lib else 'lib' + lib
                 result.append(android_lib)
     return result
@@ -216,13 +227,13 @@ def gn_include_dirs_to_blueprint_include_dirs(target_info):
     result = []
     if 'include_dirs' in target_info:
         for include_dir in target_info['include_dirs']:
-            if not include_dir in include_blacklist:
+            if len(include_dir) > 0 and include_dir not in include_blacklist:
                 result.append(gn_path_to_blueprint_path(include_dir))
     return result
 
 
-def escape_quotes(str):
-    return str.replace("\"", "\\\"").replace("\'", "\\\'")
+def escape_quotes(string):
+    return string.replace("\"", "\\\"").replace("\'", "\\\'")
 
 
 angle_cpu_bits_define = r'^ANGLE_IS_[0-9]+_BIT_CPU$'
@@ -231,14 +242,18 @@ angle_cpu_bits_define = r'^ANGLE_IS_[0-9]+_BIT_CPU$'
 def gn_cflags_to_blueprint_cflags(target_info):
     result = []
 
-    # Only forward cflags that disable warnings
-    cflag_whitelist = r'^-Wno-.*$'
+    # regexs of whitelisted cflags
+    cflag_whitelist = [
+        r'^-Wno-.*$',  # forward cflags that disable warnings
+        r'-mpclmul'  # forward "-mpclmul" (used by zlib)
+    ]
 
     for cflag_type in ['cflags', 'cflags_c', 'cflags_cc']:
         if cflag_type in target_info:
             for cflag in target_info[cflag_type]:
-                if re.search(cflag_whitelist, cflag):
-                    result.append(cflag)
+                for whitelisted_cflag in cflag_whitelist:
+                    if re.search(whitelisted_cflag, cflag):
+                        result.append(cflag)
 
     # Chrome and Android use different versions of Clang which support differnt warning options.
     # Ignore errors about unrecognized warning flags.
@@ -248,38 +263,7 @@ def gn_cflags_to_blueprint_cflags(target_info):
         for define in target_info['defines']:
             # Don't emit ANGLE's CPU-bits define here, it will be part of the arch-specific
             # information later
-            if not re.search(angle_cpu_bits_define, define):
-                result.append('-D%s' % escape_quotes(define))
-
-    return result
-
-
-def gn_arch_specific_to_blueprint(target_info):
-    arch_infos = {
-        'arm': {
-            'bits': 32
-        },
-        'arm64': {
-            'bits': 64
-        },
-        'x86': {
-            'bits': 32
-        },
-        'x86_64': {
-            'bits': 64
-        },
-    }
-
-    result = {}
-    for (arch_name, arch_info) in arch_infos.items():
-        result[arch_name] = {'cflags': []}
-
-    # If the target has ANGLE's CPU-bits define, replace it with the arch-specific bits here.
-    if 'defines' in target_info:
-        for define in target_info['defines']:
-            if re.search(angle_cpu_bits_define, define):
-                for (arch_name, arch_info) in arch_infos.items():
-                    result[arch_name]['cflags'].append('-DANGLE_IS_%d_BIT_CPU' % arch_info['bits'])
+            result.append('-D%s' % escape_quotes(define))
 
     return result
 
@@ -292,36 +276,83 @@ blueprint_library_target_types = {
 }
 
 
+def merge_bps(bps_for_abis):
+    common_bp = {}
+    for abi in abi_targets:
+        for key in bps_for_abis[abi]:
+            if isinstance(bps_for_abis[abi][key], list):
+                # Find list values that are common to all ABIs
+                for value in bps_for_abis[abi][key]:
+                    value_in_all_abis = True
+                    for abi2 in abi_targets:
+                        if key == 'defaults':
+                            # arch-specific defaults are not supported
+                            break
+                        value_in_all_abis = value_in_all_abis and (key in bps_for_abis[abi2].keys(
+                        )) and (value in bps_for_abis[abi2][key])
+                    if value_in_all_abis:
+                        if key in common_bp.keys():
+                            common_bp[key].append(value)
+                        else:
+                            common_bp[key] = [value]
+                    else:
+                        if 'arch' not in common_bp.keys():
+                            # Make sure there is an 'arch' entry to hold ABI-specific values
+                            common_bp['arch'] = {}
+                            for abi3 in abi_targets:
+                                common_bp['arch'][abi3] = {}
+                        if key in common_bp['arch'][abi].keys():
+                            common_bp['arch'][abi][key].append(value)
+                        else:
+                            common_bp['arch'][abi][key] = [value]
+            else:
+                # Assume everything that's not a list is common to all ABIs
+                common_bp[key] = bps_for_abis[abi][key]
+
+    return common_bp
+
+
 def library_target_to_blueprint(target, build_info):
-    target_info = build_info[target]
+    bps_for_abis = {}
+    blueprint_type = ""
+    for abi in abi_targets:
+        if target not in build_info[abi].keys():
+            bps_for_abis[abi] = {}
+            continue
 
-    blueprint_type = blueprint_library_target_types[target_info['type']]
+        target_info = build_info[abi][target]
 
-    bp = {}
-    bp['name'] = gn_target_to_blueprint_target(target, target_info)
+        blueprint_type = blueprint_library_target_types[target_info['type']]
 
-    if 'sources' in target_info:
-        bp['srcs'] = gn_sources_to_blueprint_sources(target_info['sources'])
+        bp = {'name': gn_target_to_blueprint_target(target, target_info)}
 
-    (bp['static_libs'], bp['shared_libs'], bp['defaults'], bp['generated_headers'],
-     bp['header_libs']) = gn_deps_to_blueprint_deps(target_info, build_info)
-    bp['shared_libs'] += gn_libs_to_blueprint_shared_libraries(target_info)
+        if 'sources' in target_info:
+            bp['srcs'] = gn_sources_to_blueprint_sources(target_info['sources'])
 
-    bp['local_include_dirs'] = gn_include_dirs_to_blueprint_include_dirs(target_info)
+        (bp['static_libs'], bp['shared_libs'], bp['defaults'], bp['generated_headers'],
+         bp['header_libs']) = gn_deps_to_blueprint_deps(target_info, build_info[abi])
+        bp['shared_libs'] += gn_libs_to_blueprint_shared_libraries(target_info)
 
-    bp['cflags'] = gn_cflags_to_blueprint_cflags(target_info)
-    bp['arch'] = gn_arch_specific_to_blueprint(target_info)
+        bp['local_include_dirs'] = gn_include_dirs_to_blueprint_include_dirs(target_info)
 
-    bp['sdk_version'] = sdk_version
-    bp['stl'] = stl
+        bp['cflags'] = gn_cflags_to_blueprint_cflags(target_info)
 
-    return (blueprint_type, bp)
+        bp['sdk_version'] = sdk_version
+        bp['stl'] = stl
+        bps_for_abis[abi] = bp
+
+    common_bp = merge_bps(bps_for_abis)
+
+    return blueprint_type, common_bp
 
 
 def gn_action_args_to_blueprint_args(blueprint_inputs, blueprint_outputs, args):
     # TODO: pass the gn gen folder as an arg so we know how to get from the gen path to the root
     # path. b/150457277
     remap_folders = [
+        # Specific special-cases first, since the other will strip the prefixes.
+        ('gen/third_party/glslang/src/include/glslang/build_info.h', 'glslang/build_info.h'),
+        ('third_party/glslang/src', 'external/angle/third_party/glslang/src'),
         ('../../', ''),
         ('gen/', ''),
     ]
@@ -350,19 +381,39 @@ blueprint_gen_types = {
 }
 
 
+inputs_blacklist = [
+    '//.git/HEAD',
+]
+
+outputs_remap = {
+    'build_info.h': 'glslang/build_info.h',
+}
+
+
+def is_input_in_tool_files(tool_files, input):
+    return input in tool_files
+
+
 def action_target_to_blueprint(target, build_info):
     target_info = build_info[target]
     blueprint_type = blueprint_gen_types[target_info['type']]
 
-    bp = {}
-    bp['name'] = gn_target_to_blueprint_target(target, target_info)
+    bp = {'name': gn_target_to_blueprint_target(target, target_info)}
 
     # Blueprints use only one 'srcs', merge all gn inputs into one list.
     gn_inputs = []
     if 'inputs' in target_info:
-        gn_inputs += target_info['inputs']
+        for input in target_info['inputs']:
+            if input not in inputs_blacklist:
+                gn_inputs.append(input)
     if 'sources' in target_info:
         gn_inputs += target_info['sources']
+    # Filter out the 'script' entry since Android.bp doesn't like the duplicate entries
+    if 'script' in target_info:
+        gn_inputs = [
+            input for input in gn_inputs
+            if not is_input_in_tool_files(target_info['script'], input)
+        ]
     bp_srcs = gn_paths_to_blueprint_paths(gn_inputs)
 
     bp['srcs'] = bp_srcs
@@ -371,7 +422,10 @@ def action_target_to_blueprint(target, build_info):
     # file name.
     bp_outputs = []
     for gn_output in target_info['outputs']:
-        bp_outputs.append(os.path.basename(gn_output))
+        output = os.path.basename(gn_output)
+        if output in outputs_remap.keys():
+            output = outputs_remap[output]
+        bp_outputs.append(output)
 
     bp['out'] = bp_outputs
 
@@ -384,29 +438,30 @@ def action_target_to_blueprint(target, build_info):
 
     bp['sdk_version'] = sdk_version
 
-    return (blueprint_type, bp)
+    return blueprint_type, bp
 
 
 def gn_target_to_blueprint(target, build_info):
-    gn_type = build_info[target]['type']
-    if gn_type in blueprint_library_target_types:
-        return library_target_to_blueprint(target, build_info)
-    elif gn_type in blueprint_gen_types:
-        return action_target_to_blueprint(target, build_info)
-    else:
-        raise RuntimeError("Unknown gn target type: " + gn_type)
+    for abi in abi_targets:
+        gn_type = build_info[abi][target]['type']
+        if gn_type in blueprint_library_target_types:
+            return library_target_to_blueprint(target, build_info)
+        elif gn_type in blueprint_gen_types:
+            return action_target_to_blueprint(target, build_info[abi])
+        else:
+            # Target is not used by this ABI
+            continue
 
 
 def get_gn_target_dependencies(output_dependencies, build_info, target):
-    output_dependencies.insert(0, target)
+    if target not in output_dependencies:
+        output_dependencies.insert(0, target)
+
     for dep in build_info[target]['deps']:
         if dep in target_blackist:
             # Blacklisted dep
             continue
-        if dep in output_dependencies:
-            # Already added this dep
-            continue
-        if not dep in build_info:
+        if dep not in build_info:
             # No info for this dep, skip it
             continue
 
@@ -417,20 +472,31 @@ def get_gn_target_dependencies(output_dependencies, build_info, target):
 def main():
     parser = argparse.ArgumentParser(
         description='Generate Android blueprints from gn descriptions.')
-    parser.add_argument(
-        'gn_json',
-        help='gn desc in json format. Generated with \'gn desc <out_dir> --format=json "*"\'.')
-    args = parser.parse_args()
 
-    with open(args.gn_json, 'r') as f:
-        build_info = json.load(f)
+    for abi in abi_targets:
+        fixed_abi = abi
+        if abi == abi_x64:
+            fixed_abi = 'x64'  # gn uses x64, rather than x86_64
+        parser.add_argument(
+            'gn_json_' + fixed_abi,
+            help=fixed_abi +
+            'gn desc in json format. Generated with \'gn desc <out_dir> --format=json "*"\'.')
+    args = vars(parser.parse_args())
+
+    build_info = {}
+    for abi in abi_targets:
+        fixed_abi = abi
+        if abi == abi_x64:
+            fixed_abi = 'x64'  # gn uses x64, rather than x86_64
+        with open(args['gn_json_' + fixed_abi], 'r') as f:
+            build_info[abi] = json.load(f)
 
     targets_to_write = []
-    for root_target in root_targets:
-        get_gn_target_dependencies(targets_to_write, build_info, root_target)
+    for abi in abi_targets:
+        for root_target in root_targets:
+            get_gn_target_dependencies(targets_to_write, build_info[abi], root_target)
 
     blueprint_targets = []
-
     for target in targets_to_write:
         blueprint_targets.append(gn_target_to_blueprint(target, build_info))
 
@@ -443,18 +509,14 @@ def main():
     blueprint_targets.append((
         'java_defaults',
         {
-            'name':
-                'ANGLE_java_defaults',
-            'sdk_version':
-                'system_current',
-            'min_sdk_version':
-                sdk_version,
-            'compile_multilib':
-                'both',
-            'use_embedded_native_libs':
-                True,
+            'name': 'ANGLE_java_defaults',
+            'sdk_version': 'system_current',
+            'min_sdk_version': sdk_version,
+            'compile_multilib': 'both',
+            'use_embedded_native_libs': True,
             'jni_libs': [
-                gn_target_to_blueprint_target(target, build_info[target])
+                # hack: assume abi_arm
+                gn_target_to_blueprint_target(target, build_info[abi_arm][target])
                 for target in root_targets
             ],
             'aaptflags': [
@@ -465,10 +527,8 @@ def main():
             ],
             'srcs': [':ANGLE_srcs'],
             'plugins': ['java_api_finder',],
-            'privileged':
-                True,
-            'owner':
-                'google',
+            'privileged': True,
+            'owner': 'google',
         }))
 
     blueprint_targets.append((
@@ -492,7 +552,6 @@ def main():
         'defaults': ['ANGLE_java_defaults'],
         'static_libs': ['ANGLE_library'],
         'manifest': 'src/android_system_settings/src/com/android/angle/AndroidManifest.xml',
-        'required': ['privapp_whitelist_com.android.angle'],
     }))
 
     output = [

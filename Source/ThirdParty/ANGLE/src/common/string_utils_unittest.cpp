@@ -202,17 +202,68 @@ TEST_F(BeginsWithTest, Strings)
     runTest();
 }
 
-// Test that EndsWith works correctly.
-TEST(EndsWithTest, EndsWith)
+class EndsWithTest : public testing::Test
 {
-    ASSERT_FALSE(EndsWith("foo", "bar"));
-    ASSERT_FALSE(EndsWith("", "bar"));
-    ASSERT_FALSE(EndsWith("foo", "foobar"));
+  public:
+    EndsWithTest() : mMode(TestMode::CHAR_ARRAY) {}
 
-    ASSERT_TRUE(EndsWith("foobar", "bar"));
-    ASSERT_TRUE(EndsWith("foobar", ""));
-    ASSERT_TRUE(EndsWith("bar", "bar"));
-    ASSERT_TRUE(EndsWith("", ""));
+    enum class TestMode
+    {
+        CHAR_ARRAY,
+        STRING_AND_CHAR_ARRAY,
+        STRING
+    };
+
+    void setMode(TestMode mode) { mMode = mode; }
+
+    bool runEndsWith(const char *str, const char *suffix)
+    {
+        if (mMode == TestMode::CHAR_ARRAY)
+        {
+            return EndsWith(str, suffix);
+        }
+        if (mMode == TestMode::STRING_AND_CHAR_ARRAY)
+        {
+            return EndsWith(std::string(str), suffix);
+        }
+        return EndsWith(std::string(str), std::string(suffix));
+    }
+
+    void runTest()
+    {
+        ASSERT_FALSE(EndsWith("foo", "bar"));
+        ASSERT_FALSE(EndsWith("", "bar"));
+        ASSERT_FALSE(EndsWith("foo", "foobar"));
+
+        ASSERT_TRUE(EndsWith("foobar", "bar"));
+        ASSERT_TRUE(EndsWith("foobar", ""));
+        ASSERT_TRUE(EndsWith("bar", "bar"));
+        ASSERT_TRUE(EndsWith("", ""));
+    }
+
+  private:
+    TestMode mMode;
+};
+
+// Test that EndsWith works correctly for const char * arguments.
+TEST_F(EndsWithTest, CharArrays)
+{
+    setMode(TestMode::CHAR_ARRAY);
+    runTest();
+}
+
+// Test that EndsWith works correctly for std::string and const char * arguments.
+TEST_F(EndsWithTest, StringAndCharArray)
+{
+    setMode(TestMode::STRING_AND_CHAR_ARRAY);
+    runTest();
+}
+
+// Test that EndsWith works correctly for std::string arguments.
+TEST_F(EndsWithTest, Strings)
+{
+    setMode(TestMode::STRING);
+    runTest();
 }
 
 }  // anonymous namespace

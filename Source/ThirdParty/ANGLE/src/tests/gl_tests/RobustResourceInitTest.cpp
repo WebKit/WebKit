@@ -733,6 +733,48 @@ TEST_P(RobustResourceInitTest, DrawWithTexture)
     checkFramebufferNonZeroPixels(0, 0, 0, 0, GLColor::black);
 }
 
+// Tests that drawing with an uninitialized mipped texture works as expected.
+TEST_P(RobustResourceInitTestES3, DrawWithMippedTexture)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 1, GL_RGBA, kWidth / 2, kHeight / 2, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 2, GL_RGBA, kWidth / 4, kHeight / 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 3, GL_RGBA, kWidth / 8, kHeight / 8, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 3);
+
+    EXPECT_GL_NO_ERROR();
+
+    constexpr char kVS[] =
+        "attribute vec2 position;\n"
+        "varying vec2 texCoord;\n"
+        "void main() {\n"
+        "    gl_Position = vec4(position, 0, 1);\n"
+        "    texCoord = (position * 0.5) + 0.5;\n"
+        "}";
+    constexpr char kFS[] =
+        "precision mediump float;\n"
+        "varying vec2 texCoord;\n"
+        "uniform sampler2D tex;\n"
+        "void main() {\n"
+        "    gl_FragColor = texture2D(tex, texCoord);\n"
+        "}";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    drawQuad(program, "position", 0.5f);
+
+    checkFramebufferNonZeroPixels(0, 0, 0, 0, GLColor::black);
+}
+
 // Reading a partially initialized texture (texImage2D) should succeed with all uninitialized bytes
 // set to 0 and initialized bytes untouched.
 TEST_P(RobustResourceInitTest, ReadingPartiallyInitializedTexture)
@@ -1137,6 +1179,59 @@ TEST_P(RobustResourceInitTestES3, GenerateMipmap)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 
     // Set viewport to resize the texture and draw.
+    glViewport(0, 0, 2, 2);
+    drawQuad(program, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
+}
+
+// Tests creating mipmaps with robust resource init multiple times.
+TEST_P(RobustResourceInitTestES3, GenerateMipmapAfterRedefine)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    constexpr GLint kTextureSize = 16;
+    const std::vector<GLColor> kInitData(kTextureSize * kTextureSize, GLColor::blue);
+
+    // Initialize a 16x16 RGBA8 texture with blue.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTextureSize, kTextureSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, kInitData.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    std::string shader = GetSimpleTextureFragmentShader("");
+    ANGLE_GL_PROGRAM(program, kSimpleTextureVertexShader, shader.c_str());
+
+    // Generate mipmaps.
+    glGenerateMipmap(GL_TEXTURE_2D);
+    ASSERT_GL_NO_ERROR();
+
+    // Validate a small mip.
+    glClearColor(1, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Set viewport to resize the texture and draw.
+    glViewport(0, 0, 2, 2);
+    drawQuad(program, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    // Redefine mip 0 with no data.
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kTextureSize, kTextureSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+
+    // Generate mipmaps again.  Mip 0 must be cleared before the mipmaps are regenerated.
+    glGenerateMipmap(GL_TEXTURE_2D);
+    EXPECT_GL_NO_ERROR();
+
+    // Validate a small mip.
+    glClearColor(1, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
     glViewport(0, 0, 2, 2);
     drawQuad(program, "position", 0.5f);
     ASSERT_GL_NO_ERROR();
@@ -1837,8 +1932,6 @@ TEST_P(RobustResourceInitTest, SurfaceInitializedAfterSwap)
 TEST_P(RobustResourceInitTestES31, Multisample2DTexture)
 {
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(IsVulkan());
 
     GLTexture texture;
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texture);

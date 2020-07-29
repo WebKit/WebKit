@@ -47,10 +47,17 @@ class EGLSurfacelessContextTest : public ANGLETest
             eglGetConfigAttrib(mDisplay, config, EGL_SURFACE_TYPE, &surfaceType);
             if (surfaceType & EGL_PBUFFER_BIT)
             {
-                mConfig = config;
+                mConfig           = config;
+                mSupportsPbuffers = true;
                 break;
             }
         }
+
+        if (!mConfig)
+        {
+            mConfig = configs[0];
+        }
+
         ASSERT_NE(nullptr, mConfig);
     }
 
@@ -83,6 +90,11 @@ class EGLSurfacelessContextTest : public ANGLETest
 
     EGLSurface createPbuffer(int width, int height)
     {
+        if (!mSupportsPbuffers)
+        {
+            return EGL_NO_SURFACE;
+        }
+
         const EGLint pbufferAttribs[] = {
             EGL_WIDTH, 500, EGL_HEIGHT, 500, EGL_NONE,
         };
@@ -116,10 +128,11 @@ class EGLSurfacelessContextTest : public ANGLETest
         return true;
     }
 
-    EGLContext mContext = EGL_NO_CONTEXT;
-    EGLSurface mPbuffer = EGL_NO_SURFACE;
-    EGLConfig mConfig   = 0;
-    EGLDisplay mDisplay = EGL_NO_DISPLAY;
+    EGLContext mContext    = EGL_NO_CONTEXT;
+    EGLSurface mPbuffer    = EGL_NO_SURFACE;
+    bool mSupportsPbuffers = false;
+    EGLConfig mConfig      = 0;
+    EGLDisplay mDisplay    = EGL_NO_DISPLAY;
 };
 
 // Test surfaceless MakeCurrent returns the correct value.
@@ -214,10 +227,8 @@ TEST_P(EGLSurfacelessContextTest, ClearReadPixelsInFBO)
 // Test clear+readpixels in an FBO in surfaceless and in the default FBO in a pbuffer
 TEST_P(EGLSurfacelessContextTest, Switcheroo)
 {
-    if (!checkExtension())
-    {
-        return;
-    }
+    ANGLE_SKIP_TEST_IF(!checkExtension());
+    ANGLE_SKIP_TEST_IF(!mSupportsPbuffers);
 
     EGLContext context = createContext();
     EGLSurface pbuffer = createPbuffer(500, 500);

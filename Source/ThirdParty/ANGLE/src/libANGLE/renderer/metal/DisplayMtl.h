@@ -27,6 +27,9 @@ class Surface;
 
 namespace rx
 {
+class ShareGroupMtl : public ShareGroupImpl
+{};
+
 class ContextMtl;
 
 class DisplayMtl : public DisplayImpl
@@ -75,6 +78,8 @@ class DisplayMtl : public DisplayImpl
     StreamProducerImpl *createStreamProducerD3DTexture(egl::Stream::ConsumerType consumerType,
                                                        const egl::AttributeMap &attribs) override;
 
+    ShareGroupImpl *createShareGroup() override;
+
     gl::Version getMaxSupportedESVersion() const override;
     gl::Version getMaxConformantESVersion() const override;
 
@@ -104,6 +109,8 @@ class DisplayMtl : public DisplayImpl
     mtl::RenderUtils &getUtils() { return mUtils; }
     mtl::StateCache &getStateCache() { return mStateCache; }
 
+    id<MTLLibrary> getDefaultShadersLib() const { return mDefaultShaders; }
+
     id<MTLDepthStencilState> getDepthStencilState(const mtl::DepthStencilDesc &desc)
     {
         return mStateCache.getDepthStencilState(getMetalDevice(), desc);
@@ -112,8 +119,6 @@ class DisplayMtl : public DisplayImpl
     {
         return mStateCache.getSamplerState(getMetalDevice(), desc);
     }
-
-    const mtl::TextureRef &getNullTexture(const gl::Context *context, gl::TextureType type);
 
     const mtl::Format &getPixelFormat(angle::FormatID angleFormatId) const
     {
@@ -138,6 +143,7 @@ class DisplayMtl : public DisplayImpl
     void initializeExtensions() const;
     void initializeTextureCaps() const;
     void initializeFeatures();
+    angle::Result initializeShaderLibrary();
 
     mtl::AutoObjCPtr<id<MTLDevice>> mMetalDevice = nil;
 
@@ -147,7 +153,8 @@ class DisplayMtl : public DisplayImpl
     mtl::StateCache mStateCache;
     mtl::RenderUtils mUtils;
 
-    angle::PackedEnumMap<gl::TextureType, mtl::TextureRef> mNullTextures;
+    // Built-in Shaders
+    mtl::AutoObjCPtr<id<MTLLibrary>> mDefaultShaders = nil;
 
     mutable bool mCapsInitialized;
     mutable gl::TextureCapsMap mNativeTextureCaps;

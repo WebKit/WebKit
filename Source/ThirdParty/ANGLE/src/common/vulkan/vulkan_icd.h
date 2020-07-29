@@ -12,7 +12,7 @@
 
 #include "common/Optional.h"
 #include "common/angleutils.h"
-#include "libANGLE/renderer/vulkan/vk_headers.h"
+#include "common/vulkan/vk_headers.h"
 
 namespace angle
 {
@@ -38,6 +38,7 @@ class ScopedVkLoaderEnvironment : angle::NonCopyable
 
   private:
     bool setICDEnvironment(const char *icd);
+    bool setCustomExtensionsEnvironment();
 
     bool mEnableValidationLayers;
     vk::ICD mICD;
@@ -45,6 +46,7 @@ class ScopedVkLoaderEnvironment : angle::NonCopyable
     Optional<std::string> mPreviousCWD;
     bool mChangedICDEnv;
     Optional<std::string> mPreviousICDEnv;
+    Optional<std::string> mPreviousCustomExtensionsEnv;
 };
 
 void ChoosePhysicalDevice(const std::vector<VkPhysicalDevice> &physicalDevices,

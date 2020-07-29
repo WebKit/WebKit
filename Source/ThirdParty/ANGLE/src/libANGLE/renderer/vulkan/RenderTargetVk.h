@@ -10,9 +10,9 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_RENDERTARGETVK_H_
 #define LIBANGLE_RENDERER_VULKAN_RENDERTARGETVK_H_
 
+#include "common/vulkan/vk_headers.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/renderer/renderer_utils.h"
-#include "libANGLE/renderer/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
 namespace rx
@@ -44,28 +44,33 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     void init(vk::ImageHelper *image,
               vk::ImageViewHelper *imageViews,
-              uint32_t levelIndex,
+              uint32_t levelIndexGL,
               uint32_t layerIndex);
     void reset();
-    // This returns the serial from underlying ImageHelper, first assigning one if required
-    vk::AttachmentSerial getAssignSerial(ContextVk *contextVk);
+    // This returns the serial from underlying ImageViewHelper, first assigning one if required
+    ImageViewSerial getAssignImageViewSerial(ContextVk *contextVk) const;
 
     // Note: RenderTargets should be called in order, with the depth/stencil onRender last.
     angle::Result onColorDraw(ContextVk *contextVk);
     angle::Result onDepthStencilDraw(ContextVk *contextVk);
 
-    vk::ImageHelper &getImage();
-    const vk::ImageHelper &getImage() const;
+    vk::ImageHelper &getImageForRenderPass();
+    const vk::ImageHelper &getImageForRenderPass() const;
 
-    // getImageForRead will also transition the resource to the given layout.
-    vk::ImageHelper *getImageForWrite(ContextVk *contextVk) const;
+    vk::ImageHelper &getImageForCopy() const;
+    vk::ImageHelper &getImageForWrite() const;
 
     // For cube maps we use single-level single-layer 2D array views.
     angle::Result getImageView(ContextVk *contextVk, const vk::ImageView **imageViewOut) const;
 
+    // For 3D textures, the 2D view created for render target is invalid to read from.  The
+    // following will return a view to the whole image (for all types, including 3D and 2DArray).
+    angle::Result getAndRetainCopyImageView(ContextVk *contextVk,
+                                            const vk::ImageView **imageViewOut) const;
+
     const vk::Format &getImageFormat() const;
     gl::Extents getExtents() const;
-    uint32_t getLevelIndex() const { return mLevelIndex; }
+    uint32_t getLevelIndex() const { return mLevelIndexGL; }
     uint32_t getLayerIndex() const { return mLayerIndex; }
 
     gl::ImageIndex getImageIndex() const;
@@ -76,21 +81,23 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
 
     angle::Result flushStagedUpdates(ContextVk *contextVk,
                                      vk::ClearValuesArray *deferredClears,
-                                     uint32_t deferredClearIndex) const;
+                                     uint32_t deferredClearIndex);
 
     void retainImageViews(ContextVk *contextVk) const;
 
     bool hasDefinedContent() const { return mContentDefined; }
-    // mark content as undefined so that certain optimizations are possible
-    void invalidateContent() { mContentDefined = false; }
+    // Mark content as undefined so that certain optimizations are possible such as using DONT_CARE
+    // as loadOp of the render target in the next renderpass.
+    void invalidateEntireContent() { mContentDefined = false; }
 
   private:
     vk::ImageHelper *mImage;
     vk::ImageViewHelper *mImageViews;
-    uint32_t mLevelIndex;
+    uint32_t mLevelIndexGL;
     uint32_t mLayerIndex;
-    // Right now we are only tracking depth/stencil buffer. We could expand it to cover color
-    // buffers if needed in future.
+
+    // Whether the render target has been invalidated.  If so, DONT_CARE is used instead of LOAD for
+    // loadOp of this attachment.
     bool mContentDefined;
 };
 

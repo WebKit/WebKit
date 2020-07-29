@@ -64,6 +64,19 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
                                               &mTexture));
 
         mRenderTarget.set(mTexture, 0, 0, mFormat);
+
+        // For emulated channels that GL texture intends to not have,
+        // we need to initialize their content.
+        bool emulatedChannels;
+        mTexture->setColorWritableMask(mtl::GetEmulatedColorWriteMask(mFormat, &emulatedChannels));
+        if (emulatedChannels)
+        {
+            gl::ImageIndex index;
+
+            index = gl::ImageIndex::Make2D(0);
+
+            ANGLE_TRY(mtl::InitializeTextureContents(context, mTexture, mFormat, index));
+        }
     }
 
     return angle::Result::Continue;

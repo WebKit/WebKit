@@ -82,6 +82,8 @@ class FramebufferD3D : public FramebufferImpl
                              const gl::Rectangle &area,
                              GLenum format,
                              GLenum type,
+                             const gl::PixelPackState &pack,
+                             gl::Buffer *packBuffer,
                              void *pixels) override;
 
     angle::Result blit(const gl::Context *context,
@@ -115,6 +117,7 @@ class FramebufferD3D : public FramebufferImpl
                                          GLenum type,
                                          size_t outputPitch,
                                          const gl::PixelPackState &pack,
+                                         gl::Buffer *packBuffer,
                                          uint8_t *pixels) = 0;
 
     virtual angle::Result blitImpl(const gl::Context *context,

@@ -14,8 +14,12 @@ if (USE_ANGLE_EGL)
         ${angle_translator_hlsl_sources}
 
         ${libangle_d3d_shared_sources}
+        ${libangle_d3d_win32_sources}
         ${libangle_d3d11_sources}
         ${libangle_d3d11_win32_sources}
+        ${libangle_gl_wgl_d3d11_common_sources}
+        ${libangle_gpu_info_util_sources}
+        ${libangle_gpu_info_util_win_sources}
     )
 
     list(APPEND ANGLE_DEFINITIONS
@@ -23,7 +27,8 @@ if (USE_ANGLE_EGL)
         ANGLE_ENABLE_D3D11
     )
 
-    list(APPEND ANGLEGLESv2_LIBRARIES dxguid dxgi)
+    find_package(ZLIB 1.2.11 REQUIRED)
+    list(APPEND ANGLEGLESv2_LIBRARIES dxguid dxgi ZLIB::ZLIB)
 
     # DirectX 9 support should be optional but ANGLE will not compile without it
     list(APPEND ANGLE_SOURCES ${libangle_d3d9_sources})

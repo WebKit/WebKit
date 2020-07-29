@@ -61,20 +61,44 @@ egl::Error CreateRendererD3D(egl::Display *display, RendererD3D **outRenderer)
             attribMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE));
 
 #if defined(ANGLE_ENABLE_D3D11)
-        if (nativeDisplay == EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE ||
-            nativeDisplay == EGL_D3D11_ONLY_DISPLAY_ANGLE ||
-            requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE)
-        {
-            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer11>);
-        }
+        const auto addD3D11 = nativeDisplay == EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE ||
+                              nativeDisplay == EGL_D3D11_ONLY_DISPLAY_ANGLE ||
+                              requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_D3D11_ANGLE;
 #endif
 
 #if defined(ANGLE_ENABLE_D3D9)
-        if (nativeDisplay == EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE ||
-            requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE)
+        const auto addD3D9 = nativeDisplay == EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE ||
+                             requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_D3D9_ANGLE;
+#endif
+
+#if ANGLE_DEFAULT_D3D11
+#    if defined(ANGLE_ENABLE_D3D11)
+        if (addD3D11)
+        {
+            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer11>);
+        }
+#    endif
+
+#    if defined(ANGLE_ENABLE_D3D9)
+        if (addD3D9)
         {
             rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer9>);
         }
+#    endif
+#else
+#    if defined(ANGLE_ENABLE_D3D9)
+        if (addD3D9)
+        {
+            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer9>);
+        }
+#    endif
+
+#    if defined(ANGLE_ENABLE_D3D11)
+        if (addD3D11)
+        {
+            rendererCreationFunctions.push_back(CreateTypedRendererD3D<Renderer11>);
+        }
+#    endif
 #endif
 
         if (nativeDisplay != EGL_D3D11_ELSE_D3D9_DISPLAY_ANGLE &&
@@ -223,6 +247,11 @@ ExternalImageSiblingImpl *DisplayD3D::createExternalImageSibling(const gl::Conte
 {
     ASSERT(mRenderer != nullptr);
     return mRenderer->createExternalImageSibling(context, target, buffer, attribs);
+}
+
+ShareGroupImpl *DisplayD3D::createShareGroup()
+{
+    return new ShareGroupD3D();
 }
 
 egl::Error DisplayD3D::makeCurrent(egl::Surface *drawSurface,

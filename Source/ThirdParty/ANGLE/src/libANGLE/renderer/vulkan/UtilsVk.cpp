@@ -17,7 +17,6 @@
 namespace rx
 {
 
-namespace BufferUtils_comp                  = vk::InternalShader::BufferUtils_comp;
 namespace ConvertVertex_comp                = vk::InternalShader::ConvertVertex_comp;
 namespace ImageClear_frag                   = vk::InternalShader::ImageClear_frag;
 namespace ImageCopy_frag                    = vk::InternalShader::ImageCopy_frag;
@@ -26,13 +25,13 @@ namespace BlitResolveStencilNoExport_comp   = vk::InternalShader::BlitResolveSte
 namespace OverlayCull_comp                  = vk::InternalShader::OverlayCull_comp;
 namespace OverlayDraw_comp                  = vk::InternalShader::OverlayDraw_comp;
 namespace ConvertIndexIndirectLineLoop_comp = vk::InternalShader::ConvertIndexIndirectLineLoop_comp;
+namespace GenerateMipmap_comp               = vk::InternalShader::GenerateMipmap_comp;
 
 namespace
 {
 // All internal shaders assume there is only one descriptor set, indexed at 0
 constexpr uint32_t kSetIndex = 0;
 
-constexpr uint32_t kBufferClearOutputBinding                 = 0;
 constexpr uint32_t kConvertIndexDestinationBinding           = 0;
 constexpr uint32_t kConvertVertexDestinationBinding          = 0;
 constexpr uint32_t kConvertVertexSourceBinding               = 1;
@@ -50,42 +49,17 @@ constexpr uint32_t kOverlayDrawTextWidgetsBinding            = 1;
 constexpr uint32_t kOverlayDrawGraphWidgetsBinding           = 2;
 constexpr uint32_t kOverlayDrawCulledWidgetsBinding          = 3;
 constexpr uint32_t kOverlayDrawFontBinding                   = 4;
-
-uint32_t GetBufferUtilsFlags(size_t dispatchSize, const vk::Format &format)
-{
-    uint32_t flags                    = dispatchSize % 64 == 0 ? BufferUtils_comp::kIsAligned : 0;
-    const angle::Format &bufferFormat = format.actualBufferFormat();
-
-    if (bufferFormat.isSint())
-    {
-        flags |= BufferUtils_comp::kIsSint;
-    }
-    else if (bufferFormat.isUint())
-    {
-        flags |= BufferUtils_comp::kIsUint;
-    }
-    else
-    {
-        flags |= BufferUtils_comp::kIsFloat;
-    }
-
-    return flags;
-}
+constexpr uint32_t kGenerateMipmapDestinationBinding         = 0;
+constexpr uint32_t kGenerateMipmapSourceBinding              = 1;
 
 uint32_t GetConvertVertexFlags(const UtilsVk::ConvertVertexParameters &params)
 {
-    bool srcIsSint  = params.srcFormat->isSint();
-    bool srcIsUint  = params.srcFormat->isUint();
-    bool srcIsSnorm = params.srcFormat->isSnorm();
-    bool srcIsUnorm = params.srcFormat->isUnorm();
-    bool srcIsFixed = params.srcFormat->isFixed;
-    bool srcIsFloat = params.srcFormat->isFloat();
-    bool srcIsA2BGR10 =
-        params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt2101010 ||
-        params.srcFormat->vertexAttribType == gl::VertexAttribType::Int2101010;
-    bool srcIsRGB10A2 =
-        params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt1010102 ||
-        params.srcFormat->vertexAttribType == gl::VertexAttribType::Int1010102;
+    bool srcIsSint      = params.srcFormat->isSint();
+    bool srcIsUint      = params.srcFormat->isUint();
+    bool srcIsSnorm     = params.srcFormat->isSnorm();
+    bool srcIsUnorm     = params.srcFormat->isUnorm();
+    bool srcIsFixed     = params.srcFormat->isFixed;
+    bool srcIsFloat     = params.srcFormat->isFloat();
     bool srcIsHalfFloat = params.srcFormat->isVertexTypeHalfFloat();
 
     bool destIsSint      = params.destFormat->isSint();
@@ -113,57 +87,7 @@ uint32_t GetConvertVertexFlags(const UtilsVk::ConvertVertexParameters &params)
 
     uint32_t flags = 0;
 
-    if (srcIsA2BGR10)
-    {
-        if (srcIsSint && destIsSint)
-        {
-            flags |= ConvertVertex_comp::kA2BGR10SintToSint;
-        }
-        else if (srcIsUint && destIsUint)
-        {
-            flags |= ConvertVertex_comp::kA2BGR10UintToUint;
-        }
-        else if (srcIsSint)
-        {
-            flags |= ConvertVertex_comp::kA2BGR10SintToFloat;
-        }
-        else if (srcIsUint)
-        {
-            flags |= ConvertVertex_comp::kA2BGR10UintToFloat;
-        }
-        else if (srcIsSnorm)
-        {
-            flags |= ConvertVertex_comp::kA2BGR10SnormToFloat;
-        }
-        else
-        {
-            UNREACHABLE();
-        }
-    }
-    else if (srcIsRGB10A2)
-    {
-        if (srcIsSint)
-        {
-            flags |= ConvertVertex_comp::kRGB10A2SintToFloat;
-        }
-        else if (srcIsUint)
-        {
-            flags |= ConvertVertex_comp::kRGB10A2UintToFloat;
-        }
-        else if (srcIsSnorm)
-        {
-            flags |= ConvertVertex_comp::kRGB10A2SnormToFloat;
-        }
-        else if (srcIsUnorm)
-        {
-            flags |= ConvertVertex_comp::kRGB10A2UnormToFloat;
-        }
-        else
-        {
-            UNREACHABLE();
-        }
-    }
-    else if (srcIsHalfFloat && destIsHalfFloat)
+    if (srcIsHalfFloat && destIsHalfFloat)
     {
         // Note that HalfFloat conversion uses the same shader as Uint.
         flags |= ConvertVertex_comp::kUintToUint;
@@ -314,6 +238,39 @@ uint32_t GetConvertIndexIndirectLineLoopFlag(uint32_t indicesBitsWidth)
     }
 }
 
+uint32_t GetGenerateMipmapFlags(ContextVk *contextVk, const vk::Format &format)
+{
+    const angle::Format &actualFormat = format.actualImageFormat();
+
+    uint32_t flags = 0;
+
+    // Note: If bits-per-component is 8 or 16 and float16 is supported in the shader, use that for
+    // faster math.
+    const bool hasShaderFloat16 =
+        contextVk->getRenderer()->getFeatures().supportsShaderFloat16.enabled;
+
+    if (actualFormat.redBits <= 8)
+    {
+        flags = hasShaderFloat16 ? GenerateMipmap_comp::kIsRGBA8_UseHalf
+                                 : GenerateMipmap_comp::kIsRGBA8;
+    }
+    else if (actualFormat.redBits <= 16)
+    {
+        flags = hasShaderFloat16 ? GenerateMipmap_comp::kIsRGBA16_UseHalf
+                                 : GenerateMipmap_comp::kIsRGBA16;
+    }
+    else
+    {
+        flags = GenerateMipmap_comp::kIsRGBA32F;
+    }
+
+    flags |= UtilsVk::GetGenerateMipmapMaxLevels(contextVk) == UtilsVk::kGenerateMipmapMaxLevels
+                 ? GenerateMipmap_comp::kDestSize6
+                 : GenerateMipmap_comp::kDestSize4;
+
+    return flags;
+}
+
 uint32_t GetFormatDefaultChannelMask(const vk::Format &format)
 {
     uint32_t mask = 0;
@@ -353,16 +310,38 @@ void CalculateResolveOffset(const UtilsVk::BlitResolveParameters &params, int32_
 }
 }  // namespace
 
+const uint32_t UtilsVk::kGenerateMipmapMaxLevels;
+
 UtilsVk::ConvertVertexShaderParams::ConvertVertexShaderParams() = default;
 
 UtilsVk::ImageCopyShaderParams::ImageCopyShaderParams() = default;
+
+uint32_t UtilsVk::GetGenerateMipmapMaxLevels(ContextVk *contextVk)
+{
+    RendererVk *renderer = contextVk->getRenderer();
+
+    uint32_t maxPerStageDescriptorStorageImages =
+        renderer->getPhysicalDeviceProperties().limits.maxPerStageDescriptorStorageImages;
+
+    // Vulkan requires that there be support for at least 4 storage images per stage.
+    constexpr uint32_t kMinimumStorageImagesLimit = 4;
+    ASSERT(maxPerStageDescriptorStorageImages >= kMinimumStorageImagesLimit);
+
+    // If fewer than max-levels are supported, use 4 levels (which is the minimum required number
+    // of storage image bindings).
+    return maxPerStageDescriptorStorageImages < kGenerateMipmapMaxLevels
+               ? kMinimumStorageImagesLimit
+               : kGenerateMipmapMaxLevels;
+}
 
 UtilsVk::UtilsVk() = default;
 
 UtilsVk::~UtilsVk() = default;
 
-void UtilsVk::destroy(VkDevice device)
+void UtilsVk::destroy(RendererVk *renderer)
 {
+    VkDevice device = renderer->getDevice();
+
     for (Function f : angle::AllEnums<Function>())
     {
         for (auto &descriptorSetLayout : mDescriptorSetLayouts[f])
@@ -373,10 +352,6 @@ void UtilsVk::destroy(VkDevice device)
         mDescriptorPools[f].destroy(device);
     }
 
-    for (vk::ShaderProgramHelper &program : mBufferUtilsPrograms)
-    {
-        program.destroy(device);
-    }
     for (vk::ShaderProgramHelper &program : mConvertIndexPrograms)
     {
         program.destroy(device);
@@ -418,6 +393,10 @@ void UtilsVk::destroy(VkDevice device)
     {
         program.destroy(device);
     }
+    for (vk::ShaderProgramHelper &program : mGenerateMipmapPrograms)
+    {
+        program.destroy(device);
+    }
 
     mPointSampler.destroy(device);
     mLinearSampler.destroy(device);
@@ -440,8 +419,8 @@ angle::Result UtilsVk::ensureResourcesInitialized(ContextVk *contextVk,
     for (size_t i = 0; i < setSizesCount; ++i)
     {
         descriptorSetDesc.update(currentBinding, setSizes[i].type, setSizes[i].descriptorCount,
-                                 descStages);
-        currentBinding += setSizes[i].descriptorCount;
+                                 descStages, nullptr);
+        ++currentBinding;
     }
 
     ANGLE_TRY(renderer->getDescriptorSetLayout(contextVk, descriptorSetDesc,
@@ -471,21 +450,6 @@ angle::Result UtilsVk::ensureResourcesInitialized(ContextVk *contextVk,
     }
 
     return angle::Result::Continue;
-}
-
-angle::Result UtilsVk::ensureBufferClearResourcesInitialized(ContextVk *contextVk)
-{
-    if (mPipelineLayouts[Function::BufferClear].valid())
-    {
-        return angle::Result::Continue;
-    }
-
-    VkDescriptorPoolSize setSizes[1] = {
-        {VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1},
-    };
-
-    return ensureResourcesInitialized(contextVk, Function::BufferClear, setSizes,
-                                      ArraySize(setSizes), sizeof(BufferUtilsShaderParams));
 }
 
 angle::Result UtilsVk::ensureConvertIndexResourcesInitialized(ContextVk *contextVk)
@@ -671,6 +635,22 @@ angle::Result UtilsVk::ensureOverlayDrawResourcesInitialized(ContextVk *contextV
     return ensureSamplersInitialized(contextVk);
 }
 
+angle::Result UtilsVk::ensureGenerateMipmapResourcesInitialized(ContextVk *contextVk)
+{
+    if (mPipelineLayouts[Function::GenerateMipmap].valid())
+    {
+        return angle::Result::Continue;
+    }
+
+    VkDescriptorPoolSize setSizes[2] = {
+        {VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, GetGenerateMipmapMaxLevels(contextVk)},
+        {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1},
+    };
+
+    return ensureResourcesInitialized(contextVk, Function::GenerateMipmap, setSizes,
+                                      ArraySize(setSizes), sizeof(GenerateMipmapShaderParams));
+}
+
 angle::Result UtilsVk::ensureSamplersInitialized(ContextVk *contextVk)
 {
     VkSamplerCreateInfo samplerInfo     = {};
@@ -783,56 +763,6 @@ angle::Result UtilsVk::setupProgram(ContextVk *contextVk,
         commandBuffer->pushConstants(pipelineLayout.get(), pushConstantsShaderStage, 0,
                                      static_cast<uint32_t>(pushConstantsSize), pushConstants);
     }
-
-    return angle::Result::Continue;
-}
-
-angle::Result UtilsVk::clearBuffer(ContextVk *contextVk,
-                                   vk::BufferHelper *dest,
-                                   const ClearParameters &params)
-{
-    ANGLE_TRY(ensureBufferClearResourcesInitialized(contextVk));
-
-    vk::CommandBuffer *commandBuffer;
-    // Tell the context dest that we are writing to dest.
-    ANGLE_TRY(contextVk->onBufferComputeShaderWrite(dest));
-    ANGLE_TRY(contextVk->endRenderPassAndGetCommandBuffer(&commandBuffer));
-
-    const vk::Format &destFormat = dest->getViewFormat();
-
-    uint32_t flags = BufferUtils_comp::kIsClear | GetBufferUtilsFlags(params.size, destFormat);
-
-    BufferUtilsShaderParams shaderParams;
-    shaderParams.destOffset = static_cast<uint32_t>(params.offset);
-    shaderParams.size       = static_cast<uint32_t>(params.size);
-    shaderParams.clearValue = params.clearValue;
-
-    VkDescriptorSet descriptorSet;
-    vk::RefCountedDescriptorPoolBinding descriptorPoolBinding;
-    ANGLE_TRY(allocateDescriptorSet(contextVk, Function::BufferClear, &descriptorPoolBinding,
-                                    &descriptorSet));
-
-    VkWriteDescriptorSet writeInfo = {};
-
-    writeInfo.sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    writeInfo.dstSet           = descriptorSet;
-    writeInfo.dstBinding       = kBufferClearOutputBinding;
-    writeInfo.descriptorCount  = 1;
-    writeInfo.descriptorType   = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
-    writeInfo.pTexelBufferView = dest->getBufferView().ptr();
-
-    vkUpdateDescriptorSets(contextVk->getDevice(), 1, &writeInfo, 0, nullptr);
-
-    vk::RefCounted<vk::ShaderAndSerial> *shader = nullptr;
-    ANGLE_TRY(contextVk->getShaderLibrary().getBufferUtils_comp(contextVk, flags, &shader));
-
-    ANGLE_TRY(setupProgram(contextVk, Function::BufferClear, shader, nullptr,
-                           &mBufferUtilsPrograms[flags], nullptr, descriptorSet, &shaderParams,
-                           sizeof(shaderParams), commandBuffer));
-
-    commandBuffer->dispatch(UnsignedCeilDivide(static_cast<uint32_t>(params.size), 64), 1, 1);
-
-    descriptorPoolBinding.reset();
 
     return angle::Result::Continue;
 }
@@ -1116,6 +1046,16 @@ angle::Result UtilsVk::convertVertexBuffer(ContextVk *contextVk,
     shaderParams.srcOffset   = static_cast<uint32_t>(params.srcOffset);
     shaderParams.destOffset  = static_cast<uint32_t>(params.destOffset);
 
+    bool isSrcA2BGR10 =
+        params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt2101010 ||
+        params.srcFormat->vertexAttribType == gl::VertexAttribType::Int2101010;
+    bool isSrcRGB10A2 =
+        params.srcFormat->vertexAttribType == gl::VertexAttribType::UnsignedInt1010102 ||
+        params.srcFormat->vertexAttribType == gl::VertexAttribType::Int1010102;
+
+    shaderParams.isSrcHDR     = isSrcA2BGR10 || isSrcRGB10A2;
+    shaderParams.isSrcA2BGR10 = isSrcA2BGR10;
+
     uint32_t flags = GetConvertVertexFlags(params);
 
     VkDescriptorSet descriptorSet;
@@ -1175,12 +1115,6 @@ angle::Result UtilsVk::startRenderPass(ContextVk *contextVk,
     framebufferInfo.width           = renderArea.x + renderArea.width;
     framebufferInfo.height          = renderArea.y + renderArea.height;
     framebufferInfo.layers          = 1;
-    if (contextVk->isRotatedAspectRatioForDrawFBO())
-    {
-        // The surface is rotated 90/270 degrees.  This changes the aspect ratio of
-        // the surface.  Swap the width and height of the framebuffer.
-        std::swap(framebufferInfo.width, framebufferInfo.height);
-    }
 
     vk::Framebuffer framebuffer;
     ANGLE_VK_TRY(contextVk, framebuffer.init(contextVk->getDevice(), framebufferInfo));
@@ -1244,7 +1178,7 @@ angle::Result UtilsVk::clearFramebuffer(ContextVk *contextVk,
     }
 
     VkViewport viewport;
-    gl::Rectangle completeRenderArea = framebuffer->getCompleteRenderArea();
+    gl::Rectangle completeRenderArea = framebuffer->getRotatedCompleteRenderArea(contextVk);
     bool invertViewport              = contextVk->isViewportFlipEnabledForDrawFBO();
     gl_vk::GetViewport(completeRenderArea, 0.0f, 1.0f, invertViewport, completeRenderArea.height,
                        &viewport);
@@ -1340,6 +1274,8 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     bool isResolve = src->getSamples() > 1;
 
     BlitResolveShaderParams shaderParams;
+    // Note: adjustments made for pre-rotatation in FramebufferVk::blit() affect these
+    // Calculate*Offset() functions.
     if (isResolve)
     {
         CalculateResolveOffset(params, shaderParams.offset.resolve);
@@ -1357,8 +1293,48 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     shaderParams.invSamples      = 1.0f / shaderParams.samples;
     shaderParams.outputMask =
         static_cast<uint32_t>(framebuffer->getState().getEnabledDrawBuffers().to_ulong());
-    shaderParams.flipX = params.flipX;
-    shaderParams.flipY = params.flipY;
+    shaderParams.flipX    = params.flipX;
+    shaderParams.flipY    = params.flipY;
+    shaderParams.rotateXY = 0;
+
+    // Potentially make adjustments for pre-rotatation.  Depending on the angle some of the
+    // shaderParams need to be adjusted.
+    switch (params.rotation)
+    {
+        case SurfaceRotation::Identity:
+            break;
+        case SurfaceRotation::Rotated90Degrees:
+            shaderParams.rotateXY = 1;
+            break;
+        case SurfaceRotation::Rotated180Degrees:
+            if (isResolve)
+            {
+                shaderParams.offset.resolve[0] += params.rotatedOffsetFactor[0];
+                shaderParams.offset.resolve[1] += params.rotatedOffsetFactor[1];
+            }
+            else
+            {
+                shaderParams.offset.blit[0] += params.rotatedOffsetFactor[0];
+                shaderParams.offset.blit[1] += params.rotatedOffsetFactor[1];
+            }
+            break;
+        case SurfaceRotation::Rotated270Degrees:
+            if (isResolve)
+            {
+                shaderParams.offset.resolve[0] += params.rotatedOffsetFactor[0];
+                shaderParams.offset.resolve[1] += params.rotatedOffsetFactor[1];
+            }
+            else
+            {
+                shaderParams.offset.blit[0] += params.rotatedOffsetFactor[0];
+                shaderParams.offset.blit[1] += params.rotatedOffsetFactor[1];
+            }
+            shaderParams.rotateXY = 1;
+            break;
+        default:
+            UNREACHABLE();
+            break;
+    }
 
     bool blitColor   = srcColorView != nullptr;
     bool blitDepth   = srcDepthView != nullptr;
@@ -1419,7 +1395,7 @@ angle::Result UtilsVk::blitResolveImpl(ContextVk *contextVk,
     }
 
     VkViewport viewport;
-    gl::Rectangle completeRenderArea = framebuffer->getCompleteRenderArea();
+    gl::Rectangle completeRenderArea = framebuffer->getRotatedCompleteRenderArea(contextVk);
     gl_vk::GetViewport(completeRenderArea, 0.0f, 1.0f, false, completeRenderArea.height, &viewport);
     pipelineDesc.setViewport(viewport);
 
@@ -1537,6 +1513,8 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     blitBuffer.get().retain(&contextVk->getResourceUseList());
 
     BlitResolveStencilNoExportShaderParams shaderParams;
+    // Note: adjustments made for pre-rotatation in FramebufferVk::blit() affect these
+    // Calculate*Offset() functions.
     if (isResolve)
     {
         CalculateResolveOffset(params, shaderParams.offset.resolve);
@@ -1558,6 +1536,46 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     shaderParams.blitArea[3]     = params.blitArea.height;
     shaderParams.flipX           = params.flipX;
     shaderParams.flipY           = params.flipY;
+    shaderParams.rotateXY        = 0;
+
+    // Potentially make adjustments for pre-rotatation.  Depending on the angle some of the
+    // shaderParams need to be adjusted.
+    switch (params.rotation)
+    {
+        case SurfaceRotation::Identity:
+            break;
+        case SurfaceRotation::Rotated90Degrees:
+            shaderParams.rotateXY = 1;
+            break;
+        case SurfaceRotation::Rotated180Degrees:
+            if (isResolve)
+            {
+                shaderParams.offset.resolve[0] += params.rotatedOffsetFactor[0];
+                shaderParams.offset.resolve[1] += params.rotatedOffsetFactor[1];
+            }
+            else
+            {
+                shaderParams.offset.blit[0] += params.rotatedOffsetFactor[0];
+                shaderParams.offset.blit[1] += params.rotatedOffsetFactor[1];
+            }
+            break;
+        case SurfaceRotation::Rotated270Degrees:
+            if (isResolve)
+            {
+                shaderParams.offset.resolve[0] += params.rotatedOffsetFactor[0];
+                shaderParams.offset.resolve[1] += params.rotatedOffsetFactor[1];
+            }
+            else
+            {
+                shaderParams.offset.blit[0] += params.rotatedOffsetFactor[0];
+                shaderParams.offset.blit[1] += params.rotatedOffsetFactor[1];
+            }
+            shaderParams.rotateXY = 1;
+            break;
+        default:
+            UNREACHABLE();
+            break;
+    }
 
     // Linear sampling is only valid with color blitting.
     ASSERT(!params.linear);
@@ -1567,7 +1585,7 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
 
     RenderTargetVk *depthStencilRenderTarget = framebuffer->getDepthStencilRenderTarget();
     ASSERT(depthStencilRenderTarget != nullptr);
-    vk::ImageHelper *depthStencilImage = &depthStencilRenderTarget->getImage();
+    vk::ImageHelper *depthStencilImage = &depthStencilRenderTarget->getImageForWrite();
 
     vk::CommandBuffer *commandBuffer;
     // Change source layout prior to computation.
@@ -1651,6 +1669,12 @@ angle::Result UtilsVk::stencilBlitResolveNoShaderExport(ContextVk *contextVk,
     region.imageExtent.width               = params.blitArea.width;
     region.imageExtent.height              = params.blitArea.height;
     region.imageExtent.depth               = 1;
+    if ((params.rotation == SurfaceRotation::Rotated270Degrees) && (params.blitArea.width > 32))
+    {
+        // TODO(ianelliott): Figure out why this adjustment is needed
+        // https://issuetracker.google.com/issues/159995959
+        region.imageOffset.x += 2;
+    }
 
     commandBuffer->copyBufferToImage(blitBuffer.get().getBuffer().getHandle(),
                                      depthStencilImage->getImage(),
@@ -1673,6 +1697,7 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
     const angle::Format &dstIntendedFormat = dstFormat.intendedFormat();
 
     ImageCopyShaderParams shaderParams;
+    shaderParams.flipX            = 0;
     shaderParams.flipY            = params.srcFlipY || params.destFlipY;
     shaderParams.premultiplyAlpha = params.srcPremultiplyAlpha;
     shaderParams.unmultiplyAlpha  = params.srcUnmultiplyAlpha;
@@ -1685,6 +1710,21 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
     shaderParams.srcOffset[1]            = params.srcOffset[1];
     shaderParams.destOffset[0]           = params.destOffset[0];
     shaderParams.destOffset[1]           = params.destOffset[1];
+    shaderParams.rotateXY                = 0;
+
+    shaderParams.srcIsSRGB =
+        gl::GetSizedInternalFormatInfo(srcFormat.internalFormat).colorEncoding == GL_SRGB;
+    shaderParams.destIsSRGB =
+        gl::GetSizedInternalFormatInfo(dstFormat.internalFormat).colorEncoding == GL_SRGB;
+
+    // If both src and dest are sRGB, and there is no alpha multiplication/division necessary, then
+    // the shader can work with sRGB data and pretend they are linear.
+    if (shaderParams.srcIsSRGB && shaderParams.destIsSRGB && !shaderParams.premultiplyAlpha &&
+        !shaderParams.unmultiplyAlpha)
+    {
+        shaderParams.srcIsSRGB  = false;
+        shaderParams.destIsSRGB = false;
+    }
 
     ASSERT(!(params.srcFlipY && params.destFlipY));
     if (params.srcFlipY)
@@ -1700,8 +1740,46 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
         shaderParams.srcOffset[1] = params.srcOffset[1] + params.srcExtents[1] - 1;
     }
 
+    switch (params.srcRotation)
+    {
+        case SurfaceRotation::Identity:
+            break;
+        case SurfaceRotation::Rotated90Degrees:
+            shaderParams.rotateXY = 1;
+            break;
+        case SurfaceRotation::Rotated180Degrees:
+            shaderParams.flipX = true;
+            ASSERT(shaderParams.flipY);
+            shaderParams.flipY = false;
+            shaderParams.srcOffset[0] += params.srcExtents[0];
+            shaderParams.srcOffset[1] -= params.srcExtents[1];
+            break;
+        case SurfaceRotation::Rotated270Degrees:
+            shaderParams.flipX = true;
+            ASSERT(!shaderParams.flipY);
+            shaderParams.flipY = true;
+            shaderParams.srcOffset[0] += params.srcExtents[0];
+            shaderParams.srcOffset[1] += params.srcExtents[1];
+            shaderParams.rotateXY = 1;
+            break;
+        default:
+            UNREACHABLE();
+            break;
+    }
+
     uint32_t flags = GetImageCopyFlags(srcFormat, dstFormat);
-    flags |= src->getLayerCount() > 1 ? ImageCopy_frag::kSrcIsArray : 0;
+    if (src->getType() == VK_IMAGE_TYPE_3D)
+    {
+        flags |= ImageCopy_frag::kSrcIs3D;
+    }
+    else if (src->getLayerCount() > 1)
+    {
+        flags |= ImageCopy_frag::kSrcIs2DArray;
+    }
+    else
+    {
+        flags |= ImageCopy_frag::kSrcIs2D;
+    }
 
     VkDescriptorSet descriptorSet;
     vk::RefCountedDescriptorPoolBinding descriptorPoolBinding;
@@ -1725,6 +1803,13 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
     renderArea.y      = params.destOffset[1];
     renderArea.width  = params.srcExtents[0];
     renderArea.height = params.srcExtents[1];
+    if ((params.srcRotation == SurfaceRotation::Rotated90Degrees) ||
+        (params.srcRotation == SurfaceRotation::Rotated270Degrees))
+    {
+        // The surface is rotated 90/270 degrees.  This changes the aspect ratio of the surface.
+        std::swap(renderArea.x, renderArea.y);
+        std::swap(renderArea.width, renderArea.height);
+    }
 
     VkViewport viewport;
     gl_vk::GetViewport(renderArea, 0.0f, 1.0f, false, dest->getExtents().height, &viewport);
@@ -1767,6 +1852,84 @@ angle::Result UtilsVk::copyImage(ContextVk *contextVk,
                            &mImageCopyPrograms[flags], &pipelineDesc, descriptorSet, &shaderParams,
                            sizeof(shaderParams), commandBuffer));
     commandBuffer->draw(6, 0);
+    descriptorPoolBinding.reset();
+
+    return angle::Result::Continue;
+}
+
+angle::Result UtilsVk::generateMipmap(ContextVk *contextVk,
+                                      vk::ImageHelper *src,
+                                      const vk::ImageView *srcLevelZeroView,
+                                      vk::ImageHelper *dest,
+                                      const GenerateMipmapDestLevelViews &destLevelViews,
+                                      const vk::Sampler &sampler,
+                                      const GenerateMipmapParameters &params)
+{
+    ANGLE_TRY(ensureGenerateMipmapResourcesInitialized(contextVk));
+
+    const gl::Extents &srcExtents = src->getLevelExtents(params.srcLevel);
+    ASSERT(srcExtents.depth == 1);
+
+    // Each workgroup processes a 64x64 tile of the image.
+    constexpr uint32_t kPixelWorkgroupRatio = 64;
+    const uint32_t workGroupX = UnsignedCeilDivide(srcExtents.width, kPixelWorkgroupRatio);
+    const uint32_t workGroupY = UnsignedCeilDivide(srcExtents.height, kPixelWorkgroupRatio);
+
+    GenerateMipmapShaderParams shaderParams;
+    shaderParams.levelCount      = params.destLevelCount;
+    shaderParams.numWorkGroups   = workGroupX * workGroupY;
+    shaderParams.invSrcExtent[0] = 1.0f / srcExtents.width;
+    shaderParams.invSrcExtent[1] = 1.0f / srcExtents.height;
+
+    uint32_t flags = GetGenerateMipmapFlags(contextVk, src->getFormat());
+
+    VkDescriptorSet descriptorSet;
+    vk::RefCountedDescriptorPoolBinding descriptorPoolBinding;
+    ANGLE_TRY(allocateDescriptorSet(contextVk, Function::GenerateMipmap, &descriptorPoolBinding,
+                                    &descriptorSet));
+
+    VkDescriptorImageInfo destImageInfos[kGenerateMipmapMaxLevels] = {};
+    for (uint32_t level = 0; level < kGenerateMipmapMaxLevels; ++level)
+    {
+        destImageInfos[level].imageView   = destLevelViews[level]->getHandle();
+        destImageInfos[level].imageLayout = dest->getCurrentLayout();
+    }
+
+    VkDescriptorImageInfo srcImageInfo = {};
+    srcImageInfo.imageView             = srcLevelZeroView->getHandle();
+    srcImageInfo.imageLayout           = src->getCurrentLayout();
+    srcImageInfo.sampler               = sampler.getHandle();
+
+    VkWriteDescriptorSet writeInfos[2] = {};
+    writeInfos[0].sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    writeInfos[0].dstSet               = descriptorSet;
+    writeInfos[0].dstBinding           = kGenerateMipmapDestinationBinding;
+    writeInfos[0].descriptorCount      = GetGenerateMipmapMaxLevels(contextVk);
+    writeInfos[0].descriptorType       = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+    writeInfos[0].pImageInfo           = destImageInfos;
+
+    writeInfos[1].sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    writeInfos[1].dstSet          = descriptorSet;
+    writeInfos[1].dstBinding      = kGenerateMipmapSourceBinding;
+    writeInfos[1].descriptorCount = 1;
+    writeInfos[1].descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    writeInfos[1].pImageInfo      = &srcImageInfo;
+
+    vkUpdateDescriptorSets(contextVk->getDevice(), 2, writeInfos, 0, nullptr);
+
+    vk::RefCounted<vk::ShaderAndSerial> *shader = nullptr;
+    ANGLE_TRY(contextVk->getShaderLibrary().getGenerateMipmap_comp(contextVk, flags, &shader));
+
+    // Note: onImageRead/onImageWrite is expected to be called by the caller.  This avoids inserting
+    // barriers between calls for each layer of the image.
+    vk::CommandBuffer *commandBuffer;
+    ANGLE_TRY(contextVk->endRenderPassAndGetCommandBuffer(&commandBuffer));
+
+    ANGLE_TRY(setupProgram(contextVk, Function::GenerateMipmap, shader, nullptr,
+                           &mGenerateMipmapPrograms[flags], nullptr, descriptorSet, &shaderParams,
+                           sizeof(shaderParams), commandBuffer));
+
+    commandBuffer->dispatch(workGroupX, workGroupY, 1);
     descriptorPoolBinding.reset();
 
     return angle::Result::Continue;

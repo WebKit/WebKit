@@ -20,8 +20,10 @@
 #include "libANGLE/Surface.h"
 #include "libANGLE/renderer/gl/ContextGL.h"
 #include "libANGLE/renderer/gl/glx/PbufferSurfaceGLX.h"
+#include "libANGLE/renderer/gl/glx/PixmapSurfaceGLX.h"
 #include "libANGLE/renderer/gl/glx/RendererGLX.h"
 #include "libANGLE/renderer/gl/glx/WindowSurfaceGLX.h"
+#include "libANGLE/renderer/gl/glx/glx_utils.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
 
 namespace
@@ -42,10 +44,6 @@ static int IgnoreX11Errors(Display *, XErrorEvent *)
 {
     return 0;
 }
-
-SwapControlData::SwapControlData()
-    : targetSwapInterval(0), maxSwapInterval(-1), currentSwapInterval(-1)
-{}
 
 class FunctionsGLGLX : public FunctionsGL
 {
@@ -92,13 +90,13 @@ DisplayGLX::~DisplayGLX() {}
 egl::Error DisplayGLX::initialize(egl::Display *display)
 {
     mEGLDisplay           = display;
-    mXDisplay             = display->getNativeDisplayId();
+    mXDisplay             = reinterpret_cast<Display *>(display->getNativeDisplayId());
     const auto &attribMap = display->getAttributeMap();
 
     // ANGLE_platform_angle allows the creation of a default display
     // using EGL_DEFAULT_DISPLAY (= nullptr). In this case just open
     // the display specified by the DISPLAY environment variable.
-    if (mXDisplay == EGL_DEFAULT_DISPLAY)
+    if (mXDisplay == reinterpret_cast<Display *>(EGL_DEFAULT_DISPLAY))
     {
         mUsesNewXDisplay = true;
         mXDisplay        = XOpenDisplay(nullptr);
@@ -259,6 +257,8 @@ egl::Error DisplayGLX::initialize(egl::Display *display)
     }
     ASSERT(mContext);
 
+    mCurrentContexts[std::this_thread::get_id()] = mContext;
+
     // FunctionsGL and DisplayGL need to make a few GL calls, for example to
     // query the version of the context so we need to make the context current.
     // glXMakeCurrent requires a GLXDrawable so we create a temporary Pbuffer
@@ -354,6 +354,8 @@ void DisplayGLX::terminate()
     }
     mWorkerPbufferPool.clear();
 
+    mCurrentContexts.clear();
+
     if (mContext)
     {
         mGLX.destroyContext(mContext);
@@ -380,15 +382,25 @@ egl::Error DisplayGLX::makeCurrent(egl::Surface *drawSurface,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
-    glx::Drawable drawable =
+    glx::Drawable newDrawable =
         (drawSurface ? GetImplAs<SurfaceGLX>(drawSurface)->getDrawable() : mDummyPbuffer);
-    if (drawable != mCurrentDrawable)
+    glx::Context newContext = mContext;
+    // If the thread calling makeCurrent does not have the correct context current (either mContext
+    // or 0), we need to set it current.
+    if (!context)
     {
-        if (mGLX.makeCurrent(drawable, mContext) != True)
+        newDrawable = 0;
+        newContext  = 0;
+    }
+    if (newDrawable != mCurrentDrawable ||
+        newContext != mCurrentContexts[std::this_thread::get_id()])
+    {
+        if (mGLX.makeCurrent(newDrawable, newContext) != True)
         {
             return egl::EglContextLost() << "Failed to make the GLX context current";
         }
-        mCurrentDrawable = drawable;
+        mCurrentContexts[std::this_thread::get_id()] = newContext;
+        mCurrentDrawable                             = newDrawable;
     }
 
     return DisplayGL::makeCurrent(drawSurface, readSurface, context);
@@ -430,8 +442,31 @@ SurfaceImpl *DisplayGLX::createPixmapSurface(const egl::SurfaceState &state,
                                              NativePixmapType nativePixmap,
                                              const egl::AttributeMap &attribs)
 {
-    UNIMPLEMENTED();
-    return nullptr;
+    ASSERT(configIdToGLXConfig.count(state.config->configID) > 0);
+    glx::FBConfig fbConfig = configIdToGLXConfig[state.config->configID];
+    return new PixmapSurfaceGLX(state, nativePixmap, mGLX.getDisplay(), mGLX, fbConfig);
+}
+
+egl::Error DisplayGLX::validatePixmap(egl::Config *config,
+                                      EGLNativePixmapType pixmap,
+                                      const egl::AttributeMap &attributes) const
+{
+    Window rootWindow;
+    int x                    = 0;
+    int y                    = 0;
+    unsigned int width       = 0;
+    unsigned int height      = 0;
+    unsigned int borderWidth = 0;
+    unsigned int depth       = 0;
+    int status = XGetGeometry(mGLX.getDisplay(), pixmap, &rootWindow, &x, &y, &width, &height,
+                              &borderWidth, &depth);
+    if (!status)
+    {
+        return egl::EglBadNativePixmap() << "Invalid native pixmap, XGetGeometry failed: "
+                                         << x11::XErrorToString(mXDisplay, status);
+    }
+
+    return egl::NoError();
 }
 
 ContextImpl *DisplayGLX::createContext(const gl::State &state,
@@ -658,14 +693,6 @@ egl::ConfigSet DisplayGLX::generateConfigs()
         // Misc
         config.level = getGLXFBConfigAttrib(glxConfig, GLX_LEVEL);
 
-        config.bindToTextureRGB  = EGL_FALSE;
-        config.bindToTextureRGBA = EGL_FALSE;
-
-        int glxDrawable    = getGLXFBConfigAttrib(glxConfig, GLX_DRAWABLE_TYPE);
-        config.surfaceType = 0 | (glxDrawable & GLX_WINDOW_BIT ? EGL_WINDOW_BIT : 0) |
-                             (glxDrawable & GLX_PBUFFER_BIT ? EGL_PBUFFER_BIT : 0) |
-                             (glxDrawable & GLX_PIXMAP_BIT ? EGL_PIXMAP_BIT : 0);
-
         config.minSwapInterval = mMinSwapInterval;
         config.maxSwapInterval = mMaxSwapInterval;
 
@@ -682,6 +709,39 @@ egl::ConfigSet DisplayGLX::generateConfigs()
 
         config.colorComponentType = EGL_COLOR_COMPONENT_TYPE_FIXED_EXT;
 
+        // GLX doesn't support binding pbuffers to textures and there is no way to differentiate in
+        // EGL that pixmaps can be bound but pbuffers cannot.  If both pixmaps and pbuffers are
+        // supported, generate extra configs with either pbuffer or pixmap support.
+        int glxDrawable     = getGLXFBConfigAttrib(glxConfig, GLX_DRAWABLE_TYPE);
+        bool pbufferSupport = (glxDrawable & EGL_PBUFFER_BIT) != 0;
+        bool pixmapSupport  = (glxDrawable & GLX_PIXMAP_BIT) != 0;
+        bool pixmapBindToTextureSupport =
+            pixmapSupport && mGLX.hasExtension("GLX_EXT_texture_from_pixmap");
+
+        if (pbufferSupport && pixmapBindToTextureSupport)
+        {
+            // Generate the pixmap-only config
+            config.surfaceType = (glxDrawable & GLX_WINDOW_BIT ? EGL_WINDOW_BIT : 0) |
+                                 (pixmapSupport ? EGL_PIXMAP_BIT : 0);
+
+            config.bindToTextureRGB = getGLXFBConfigAttrib(glxConfig, GLX_BIND_TO_TEXTURE_RGB_EXT);
+            config.bindToTextureRGBA =
+                getGLXFBConfigAttrib(glxConfig, GLX_BIND_TO_TEXTURE_RGBA_EXT);
+            config.yInverted = getGLXFBConfigAttrib(glxConfig, GLX_Y_INVERTED_EXT);
+
+            int id                  = configs.add(config);
+            configIdToGLXConfig[id] = glxConfig;
+        }
+
+        // Generate the pbuffer config. It can support pixmaps but not bind-to-texture.
+        config.surfaceType = (glxDrawable & GLX_WINDOW_BIT ? EGL_WINDOW_BIT : 0) |
+                             (pbufferSupport ? EGL_PBUFFER_BIT : 0) |
+                             (pixmapSupport ? EGL_PIXMAP_BIT : 0);
+
+        config.bindToTextureRGB  = false;
+        config.bindToTextureRGBA = false;
+        config.yInverted         = false;
+
         int id                  = configs.add(config);
         configIdToGLXConfig[id] = glxConfig;
     }
@@ -693,11 +753,6 @@ egl::ConfigSet DisplayGLX::generateConfigs()
 
 bool DisplayGLX::testDeviceLost()
 {
-    if (mHasARBCreateContextRobustness)
-    {
-        return mRenderer->getResetStatus() != gl::GraphicsResetStatus::NoError;
-    }
-
     return false;
 }
 
@@ -833,6 +888,8 @@ void DisplayGLX::generateExtensions(egl::DisplayExtensions *outExtensions) const
     const bool hasSyncControlOML        = mGLX.hasExtension("GLX_OML_sync_control");
     outExtensions->syncControlCHROMIUM  = hasSyncControlOML;
     outExtensions->syncControlRateANGLE = hasSyncControlOML;
+
+    outExtensions->textureFromPixmapNOK = mGLX.hasExtension("GLX_EXT_texture_from_pixmap");
 
     DisplayGL::generateExtensions(outExtensions);
 }

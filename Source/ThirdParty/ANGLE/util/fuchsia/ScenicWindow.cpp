@@ -114,6 +114,8 @@ bool ScenicWindow::initialize(const std::string &name, int width, int height)
     return true;
 }
 
+void ScenicWindow::disableErrorMessageDialog() {}
+
 void ScenicWindow::destroy()
 {
     while (mInFlightPresents != 0 && !mLostSession)
@@ -161,6 +163,12 @@ void ScenicWindow::messageLoop()
 void ScenicWindow::setMousePosition(int x, int y)
 {
     UNIMPLEMENTED();
+}
+
+bool ScenicWindow::setOrientation(int width, int height)
+{
+    UNIMPLEMENTED();
+    return false;
 }
 
 bool ScenicWindow::setPosition(int x, int y)

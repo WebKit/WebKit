@@ -94,6 +94,20 @@
             <param><ptype>EGLSurface</ptype> <name>surface</name></param>
             <param><ptype>EGLFrameTokenANGLE</ptype> <name>frametoken</name></param>
         </command>
+        <command>
+            <proto><pytpe>void</pytpe> <name>eglReleaseHighPowerGPUANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLContext</ptype> <name>ctx</name></param>
+        </command>
+        <command>
+            <proto><pytpe>void</pytpe> <name>eglReacquireHighPowerGPUANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLContext</ptype> <name>ctx</name></param>
+        </command>
+        <command>
+            <proto><pytpe>void</pytpe> <name>eglHandleGPUSwitchANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+        </command>
     </commands>
     <!-- SECTION: ANGLE extension interface definitions -->
     <extensions>
@@ -136,6 +150,13 @@
         <extension name="EGL_ANGLE_swap_with_frame_token" supported="egl">
             <require>
                 <command name="eglSwapBuffersWithFrameTokenANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_power_preference" supported="egl">
+            <require>
+                <command name="eglReleaseHighPowerGPUANGLE"/>
+                <command name="eglReacquireHighPowerGPUANGLE"/>
+                <command name="eglHandleGPUSwitchANGLE"/>
             </require>
         </extension>
     </extensions>

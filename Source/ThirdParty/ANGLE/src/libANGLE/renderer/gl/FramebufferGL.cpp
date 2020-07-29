@@ -26,7 +26,7 @@
 #include "libANGLE/renderer/gl/formatutilsgl.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
 #include "platform/FeaturesGL.h"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 
 using namespace gl;
 using angle::CheckedNumeric;
@@ -97,7 +97,8 @@ void BindFramebufferAttachment(const FunctionsGL *functions,
                 TextureType textureType = texture->getType();
                 ASSERT(textureType == TextureType::_2DArray || textureType == TextureType::_3D ||
                        textureType == TextureType::CubeMap ||
-                       textureType == TextureType::_2DMultisampleArray);
+                       textureType == TextureType::_2DMultisampleArray ||
+                       textureType == TextureType::CubeMapArray);
                 functions->framebufferTexture(GL_FRAMEBUFFER, attachmentPoint,
                                               textureGL->getTextureID(), attachment->mipLevel());
             }
@@ -109,7 +110,8 @@ void BindFramebufferAttachment(const FunctionsGL *functions,
             }
             else if (texture->getType() == TextureType::_2DArray ||
                      texture->getType() == TextureType::_3D ||
-                     texture->getType() == TextureType::_2DMultisampleArray)
+                     texture->getType() == TextureType::_2DMultisampleArray ||
+                     texture->getType() == TextureType::CubeMapArray)
             {
                 if (attachment->isMultiview())
                 {
@@ -611,12 +613,15 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
                                         const gl::Rectangle &area,
                                         GLenum format,
                                         GLenum type,
+                                        const gl::PixelPackState &pack,
+                                        gl::Buffer *packBuffer,
                                         void *pixels)
 {
     ContextGL *contextGL              = GetImplAs<ContextGL>(context);
     const FunctionsGL *functions      = GetFunctionsGL(context);
     StateManagerGL *stateManager      = GetStateManagerGL(context);
     const angle::FeaturesGL &features = GetFeaturesGL(context);
+    gl::PixelPackState packState      = pack;
 
     // Clip read area to framebuffer.
     const auto *readAttachment = mState.getReadPixelsAttachment(format);
@@ -628,10 +633,6 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
         // nothing to read
         return angle::Result::Continue;
     }
-
-    PixelPackState packState = context->getState().getPackState();
-    const gl::Buffer *packBuffer =
-        context->getState().getTargetBuffer(gl::BufferBinding::PixelPack);
 
     GLenum attachmentReadFormat =
         readAttachment->getFormat().info->getReadPixelsFormat(context->getExtensions());
@@ -681,7 +682,7 @@ angle::Result FramebufferGL::readPixels(const gl::Context *context,
         packState.rowLength && !GetImplAs<ContextGL>(context)->getNativeExtensions().packSubimage;
 
     bool usePackSkipWorkaround = features.emulatePackSkipRowsAndPackSkipPixels.enabled &&
-            (packState.skipRows != 0 || packState.skipPixels != 0);
+                                 (packState.skipRows != 0 || packState.skipPixels != 0);
 
     if (cannotSetDesiredRowLength || useOverlappingRowsWorkaround || usePackSkipWorkaround)
     {

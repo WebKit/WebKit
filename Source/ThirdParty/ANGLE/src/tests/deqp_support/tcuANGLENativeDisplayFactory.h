@@ -51,6 +51,7 @@ class ANGLENativeDisplayFactory : public eglu::NativeDisplayFactory
     eglu::NativeDisplay *createDisplay(const eglw::EGLAttrib *attribList) const override;
 
   private:
+    eglw::EGLNativeDisplayType mNativeDisplay;
     std::vector<eglw::EGLAttrib> mPlatformAttributes;
 };
 

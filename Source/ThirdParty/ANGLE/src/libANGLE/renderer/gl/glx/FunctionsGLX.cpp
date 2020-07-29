@@ -56,12 +56,16 @@ struct FunctionsGLX::GLXFunctionTable
           createPbufferPtr(nullptr),
           destroyPbufferPtr(nullptr),
           queryDrawablePtr(nullptr),
+          createPixmapPtr(nullptr),
+          destroyPixmapPtr(nullptr),
           createContextAttribsARBPtr(nullptr),
           swapIntervalEXTPtr(nullptr),
           swapIntervalMESAPtr(nullptr),
           swapIntervalSGIPtr(nullptr),
           getSyncValuesOMLPtr(nullptr),
-          getMscRateOMLPtr(nullptr)
+          getMscRateOMLPtr(nullptr),
+          bindTexImageEXTPtr(nullptr),
+          releaseTexImageEXTPtr(nullptr)
     {}
 
     // GLX 1.0
@@ -90,6 +94,8 @@ struct FunctionsGLX::GLXFunctionTable
     PFNGLXCREATEPBUFFERPROC createPbufferPtr;
     PFNGLXDESTROYPBUFFERPROC destroyPbufferPtr;
     PFNGLXQUERYDRAWABLEPROC queryDrawablePtr;
+    PFNGLXCREATEPIXMAPPROC createPixmapPtr;
+    PFNGLXDESTROYPIXMAPPROC destroyPixmapPtr;
 
     // GLX_ARB_create_context
     PFNGLXCREATECONTEXTATTRIBSARBPROC createContextAttribsARBPtr;
@@ -106,6 +112,10 @@ struct FunctionsGLX::GLXFunctionTable
     // GLX_OML_sync_control
     PFNGLXGETSYNCVALUESOMLPROC getSyncValuesOMLPtr;
     PFNGLXGETMSCRATEOMLPROC getMscRateOMLPtr;
+
+    // GLX_EXT_texture_from_pixmap
+    PFNGLXBINDTEXIMAGEEXTPROC bindTexImageEXTPtr;
+    PFNGLXRELEASETEXIMAGEEXTPROC releaseTexImageEXTPtr;
 };
 
 FunctionsGLX::FunctionsGLX()
@@ -228,6 +238,8 @@ bool FunctionsGLX::initialize(Display *xDisplay, int screen, std::string *errorS
     GET_FNPTR_OR_ERROR(&mFnPtrs->createPbufferPtr, glXCreatePbuffer);
     GET_FNPTR_OR_ERROR(&mFnPtrs->destroyPbufferPtr, glXDestroyPbuffer);
     GET_FNPTR_OR_ERROR(&mFnPtrs->queryDrawablePtr, glXQueryDrawable);
+    GET_FNPTR_OR_ERROR(&mFnPtrs->createPixmapPtr, glXCreatePixmap);
+    GET_FNPTR_OR_ERROR(&mFnPtrs->destroyPixmapPtr, glXDestroyPixmap);
 
     // Extensions
     if (hasExtension("GLX_ARB_create_context"))
@@ -250,6 +262,11 @@ bool FunctionsGLX::initialize(Display *xDisplay, int screen, std::string *errorS
     {
         GET_PROC_OR_ERROR(&mFnPtrs->getSyncValuesOMLPtr, glXGetSyncValuesOML);
         GET_PROC_OR_ERROR(&mFnPtrs->getMscRateOMLPtr, glXGetMscRateOML);
+    }
+    if (hasExtension("GLX_EXT_texture_from_pixmap"))
+    {
+        GET_PROC_OR_ERROR(&mFnPtrs->bindTexImageEXTPtr, glXBindTexImageEXT);
+        GET_PROC_OR_ERROR(&mFnPtrs->releaseTexImageEXTPtr, glXReleaseTexImageEXT);
     }
 
 #undef GET_FNPTR_OR_ERROR
@@ -383,6 +400,18 @@ void FunctionsGLX::queryDrawable(glx::Drawable drawable, int attribute, unsigned
     mFnPtrs->queryDrawablePtr(mXDisplay, drawable, attribute, value);
 }
 
+glx::Pixmap FunctionsGLX::createPixmap(glx::FBConfig config,
+                                       Pixmap pixmap,
+                                       const int *attribList) const
+{
+    GLXFBConfig cfg = reinterpret_cast<GLXFBConfig>(config);
+    return mFnPtrs->createPixmapPtr(mXDisplay, cfg, pixmap, attribList);
+}
+void FunctionsGLX::destroyPixmap(Pixmap pixmap) const
+{
+    mFnPtrs->destroyPixmapPtr(mXDisplay, pixmap);
+}
+
 // GLX_ARB_create_context
 glx::Context FunctionsGLX::createContextAttribsARB(glx::FBConfig config,
                                                    glx::Context shareContext,
@@ -426,4 +455,12 @@ bool FunctionsGLX::getMscRateOML(glx::Drawable drawable,
     return mFnPtrs->getMscRateOMLPtr(mXDisplay, drawable, numerator, denominator);
 }
 
+void FunctionsGLX::bindTexImageEXT(glx::Drawable drawable, int buffer, const int *attribList) const
+{
+    mFnPtrs->bindTexImageEXTPtr(mXDisplay, drawable, buffer, attribList);
+}
+void FunctionsGLX::releaseTexImageEXT(glx::Drawable drawable, int buffer) const
+{
+    mFnPtrs->releaseTexImageEXTPtr(mXDisplay, drawable, buffer);
+}
 }  // namespace rx

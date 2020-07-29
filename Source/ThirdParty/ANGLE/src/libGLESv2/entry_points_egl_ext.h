@@ -229,6 +229,13 @@ EGL_SwapBuffersWithFrameTokenANGLE(EGLDisplay dpy,
                                    EGLSurface surface,
                                    EGLFrameTokenANGLE frametoken);
 
+// EGL_ANGLE_power_preference
+ANGLE_EXPORT void EGLAPIENTRY EGL_ReleaseHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx);
+
+ANGLE_EXPORT void EGLAPIENTRY EGL_ReacquireHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx);
+
+ANGLE_EXPORT void EGLAPIENTRY EGL_HandleGPUSwitchANGLE(EGLDisplay dpy);
+
 }  // extern "C"
 
 #endif  // LIBGLESV2_ENTRYPOINTSEGLEXT_H_

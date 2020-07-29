@@ -421,6 +421,11 @@
       "GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT": "LoadToNative<GLushort, 1>"
     }
   },
+  "GL_BGR10_A2_ANGLEX": {
+    "B10G10R10A2_UNORM": {
+      "GL_UNSIGNED_INT_2_10_10_10_REV": "LoadToNative<GLuint, 1>"
+    }
+  },
   "GL_BGRA8_SRGB_ANGLEX" : {
      "B8G8R8A8_UNORM_SRGB": {
       "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 4>"

@@ -282,6 +282,39 @@ bool ShaderVariable::findInfoByMappedName(const std::string &mappedFullName,
     }
 }
 
+const sh::ShaderVariable *ShaderVariable::findField(const std::string &fullName,
+                                                    uint32_t *fieldIndexOut) const
+{
+    if (fields.empty())
+    {
+        return nullptr;
+    }
+    size_t pos = fullName.find_first_of(".");
+    if (pos == std::string::npos)
+    {
+        return nullptr;
+    }
+    std::string topName = fullName.substr(0, pos);
+    if (topName != name)
+    {
+        return nullptr;
+    }
+    std::string fieldName = fullName.substr(pos + 1);
+    if (fieldName.empty())
+    {
+        return nullptr;
+    }
+    for (size_t field = 0; field < fields.size(); ++field)
+    {
+        if (fields[field].name == fieldName)
+        {
+            *fieldIndexOut = static_cast<GLuint>(field);
+            return &fields[field];
+        }
+    }
+    return nullptr;
+}
+
 bool ShaderVariable::isBuiltIn() const
 {
     return (name.size() >= 4 && name[0] == 'g' && name[1] == 'l' && name[2] == '_');

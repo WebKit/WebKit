@@ -904,6 +904,8 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcPackedPixelsTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcParallelShaderCompileTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcParallelShaderCompileTests.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcPixelStorageModesTests.cpp",
+  "$deqp_path/external/openglcts/modules/common/glcPixelStorageModesTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcPolygonOffsetClampTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcPolygonOffsetClampTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcRobustBufferAccessBehaviorTests.cpp",

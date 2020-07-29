@@ -41,6 +41,8 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type)
             {
                 case GL_UNSIGNED_BYTE:
                     return GL_BGRA8_EXT;
+                case GL_UNSIGNED_INT_2_10_10_10_REV:
+                    return GL_BGR10_A2_ANGLEX;
                 case GL_UNSIGNED_SHORT_1_5_5_5_REV_EXT:
                     return GL_BGR5_A1_ANGLEX;
                 case GL_UNSIGNED_SHORT_4_4_4_4_REV_EXT:

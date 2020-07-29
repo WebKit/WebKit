@@ -32,21 +32,33 @@ class RenderTargetMtl final : public FramebufferAttachmentRenderTarget
     // Used in std::vector initialization.
     RenderTargetMtl(RenderTargetMtl &&other);
 
-    void set(const mtl::TextureRef &texture, size_t level, size_t layer, const mtl::Format &format);
-    void set(const mtl::TextureRef &texture);
+    void set(const mtl::TextureRef &texture,
+             uint32_t level,
+             uint32_t layer,
+             const mtl::Format &format);
+    void set(const mtl::TextureRef &texture,
+             const mtl::TextureRef &implicitMSTexture,
+             uint32_t level,
+             uint32_t layer,
+             const mtl::Format &format);
+    void setTexture(const mtl::TextureRef &texture);
+    void setImplicitMSTexture(const mtl::TextureRef &implicitMSTexture);
     void reset();
 
-    const mtl::TextureRef &getTexture() const { return mTexture; }
-    size_t getLevelIndex() const { return mLevelIndex; }
-    size_t getLayerIndex() const { return mLayerIndex; }
+    mtl::TextureRef getTexture() const { return mTexture; }
+    mtl::TextureRef getImplicitMSTexture() const { return mImplicitMSTexture; }
+    uint32_t getLevelIndex() const { return mLevelIndex; }
+    uint32_t getLayerIndex() const { return mLayerIndex; }
+    uint32_t getRenderSamples() const;
     const mtl::Format *getFormat() const { return mFormat; }
 
     void toRenderPassAttachmentDesc(mtl::RenderPassAttachmentDesc *rpaDescOut) const;
 
   private:
     mtl::TextureRef mTexture;
-    size_t mLevelIndex         = 0;
-    size_t mLayerIndex         = 0;
+    mtl::TextureRef mImplicitMSTexture;
+    uint32_t mLevelIndex       = 0;
+    uint32_t mLayerIndex       = 0;
     const mtl::Format *mFormat = nullptr;
 };
 }  // namespace rx

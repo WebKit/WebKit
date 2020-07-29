@@ -5,18 +5,18 @@ PRODUCT_NAME = ANGLE;
 EXECUTABLE_PREFIX = lib;
 
 ANGLE_OTHER_LDFLAGS = -allowable_client WebCore -allowable_client WebCoreTestSupport $(ANGLE_OTHER_LDFLAGS_$(WK_PLATFORM_NAME));
-ANGLE_OTHER_LDFLAGS_iphoneos = -framework IOSurface -framework OpenGLES;
+ANGLE_OTHER_LDFLAGS_iphoneos = -framework IOSurface -framework OpenGLES -lz;
 ANGLE_OTHER_LDFLAGS_iphonesimulator = $(ANGLE_OTHER_LDFLAGS_iphoneos);
 ANGLE_OTHER_LDFLAGS_watchos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
 ANGLE_OTHER_LDFLAGS_watchsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
 ANGLE_OTHER_LDFLAGS_appletvos = $(ANGLE_OTHER_LDFLAGS_iphoneos);
 ANGLE_OTHER_LDFLAGS_appletvsimulator = $(ANGLE_OTHER_LDFLAGS_iphonesimulator);
-ANGLE_OTHER_LDFLAGS_maccatalyst = -framework IOKit -framework IOSurface -framework OpenGL;
-ANGLE_OTHER_LDFLAGS_macosx = -framework IOKit -framework IOSurface -framework OpenGL;
+ANGLE_OTHER_LDFLAGS_maccatalyst = -framework IOKit -framework IOSurface -framework OpenGL -lz;
+ANGLE_OTHER_LDFLAGS_macosx = -framework IOKit -framework IOSurface -framework OpenGL -lz;
 
 INSTALL_PATH = $(ANGLE_INSTALL_PATH_PREFIX)/usr/local/lib;
 
-HEADER_SEARCH_PATHS = include src src/common/third_party/numerics third_party/base src/common/third_party/base;
+HEADER_SEARCH_PATHS = include src src/common/third_party/numerics third_party/base src/common/third_party/base third_party/zlib/google;
 
 ANGLE_HEADERS_FOLDER_PATH = /usr/local/include/ANGLE;
 

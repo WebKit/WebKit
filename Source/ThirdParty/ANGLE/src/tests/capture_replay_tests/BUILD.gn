@@ -1,0 +1,62 @@
+# Copyright 2020 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("../../../gni/angle.gni")
+declare_args() {
+  # Determines if we build the capture_replay_tests. Off by default.
+  angle_build_capture_replay_tests = false
+
+  # Decide which context to replay, starting with desktop default
+  angle_capture_replay_test_context_id = 1
+
+  #Set the trace directory. Default is traces
+  angle_capture_replay_test_trace_dir = "traces"
+}
+
+if (angle_build_capture_replay_tests) {
+  # TODO (nguyenmh): http://anglebug.com/4758:
+  # turn angle_executable into angle_test when adding android support
+  angle_executable("capture_replay_tests") {
+    testonly = true
+    _contextid = angle_capture_replay_test_context_id
+    _trace_folder_relative_path = "./" + angle_capture_replay_test_trace_dir
+    _trace_sources =
+        read_file(_trace_folder_relative_path +
+                      "/angle_capture_context${_contextid}_files.txt",
+                  "list lines") +
+        [
+          "angle_capture_context${_contextid}.cpp",
+          "angle_capture_context${_contextid}.h",
+        ]
+    sources = rebase_path(_trace_sources, ".", _trace_folder_relative_path) +
+              [ "CaptureReplayTest.cpp" ]
+    deps = [
+      "$angle_root:angle_common",
+      "$angle_root:angle_compression",
+      "$angle_root:libEGL_with_capture_static",
+      "$angle_root/util:angle_util_static",
+    ]
+    configs += [
+      "$angle_root:library_name_config",
+      "$angle_root:libANGLE_config",
+    ]
+
+    suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
+
+    # Disable optimization to avoid optimizing huge files.
+    if (!is_debug) {
+      suppressed_configs += [ "//build/config/compiler:default_optimization" ]
+      configs += [ "//build/config/compiler:no_optimize" ]
+    }
+    _data_path = rebase_path(_trace_folder_relative_path, root_out_dir)
+    defines = [
+      "ANGLE_CAPTURE_REPLAY_TEST_DATA_DIR=\"${_data_path}\"",
+      "ANGLE_CAPTURE_REPLAY_TEST_CONTEXT_ID=${_contextid}",
+      "ANGLE_CAPTURE_REPLAY_TEST_HEADER=" + "${angle_capture_replay_test_trace_dir}/angle_capture_context${_contextid}.h",
+    ]
+  }
+} else {
+  group("capture_replay_tests") {
+  }
+}

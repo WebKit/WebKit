@@ -78,7 +78,7 @@ angle::Result VertexBuffer9::storeVertexAttributes(const gl::Context *context,
 
     unsigned int mapSize = 0;
     ANGLE_TRY(
-        mRenderer->getVertexSpaceRequired(context, attrib, binding, count, instances, &mapSize));
+        mRenderer->getVertexSpaceRequired(context, attrib, binding, count, instances, 0, &mapSize));
 
     HRESULT result =
         mVertexBuffer->Lock(offset, mapSize, reinterpret_cast<void **>(&mapPtr), lockFlags);

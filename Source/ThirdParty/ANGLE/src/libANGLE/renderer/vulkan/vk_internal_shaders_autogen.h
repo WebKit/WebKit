@@ -48,26 +48,6 @@ enum flags
 constexpr size_t kArrayLen = 0x00000004;
 }  // namespace BlitResolveStencilNoExport_comp
 
-namespace BufferUtils_comp
-{
-enum flags
-{
-    kIsAligned = 0x00000001,
-};
-enum Function
-{
-    kIsClear = 0x00000000,
-    kIsCopy  = 0x00000002,
-};
-enum Format
-{
-    kIsFloat = 0x00000000,
-    kIsSint  = 0x00000004,
-    kIsUint  = 0x00000008,
-};
-constexpr size_t kArrayLen = 0x0000000C;
-}  // namespace BufferUtils_comp
-
 namespace ConvertIndex_comp
 {
 enum flags
@@ -98,31 +78,40 @@ namespace ConvertVertex_comp
 {
 enum Conversion
 {
-    kSintToSint          = 0x00000000,
-    kUintToUint          = 0x00000001,
-    kSintToFloat         = 0x00000002,
-    kUintToFloat         = 0x00000003,
-    kSnormToFloat        = 0x00000004,
-    kUnormToFloat        = 0x00000005,
-    kFixedToFloat        = 0x00000006,
-    kFloatToFloat        = 0x00000007,
-    kA2BGR10SintToSint   = 0x00000008,
-    kA2BGR10UintToUint   = 0x00000009,
-    kA2BGR10SintToFloat  = 0x0000000A,
-    kA2BGR10UintToFloat  = 0x0000000B,
-    kA2BGR10SnormToFloat = 0x0000000C,
-    kRGB10A2SintToFloat  = 0x0000000D,
-    kRGB10A2UintToFloat  = 0x0000000E,
-    kRGB10A2SnormToFloat = 0x0000000F,
-    kRGB10A2UnormToFloat = 0x00000010,
+    kSintToSint   = 0x00000000,
+    kUintToUint   = 0x00000001,
+    kSintToFloat  = 0x00000002,
+    kUintToFloat  = 0x00000003,
+    kSnormToFloat = 0x00000004,
+    kUnormToFloat = 0x00000005,
+    kFixedToFloat = 0x00000006,
+    kFloatToFloat = 0x00000007,
 };
-constexpr size_t kArrayLen = 0x00000011;
+constexpr size_t kArrayLen = 0x00000008;
 }  // namespace ConvertVertex_comp
 
 namespace FullScreenQuad_vert
 {
 constexpr size_t kArrayLen = 0x00000001;
 }  // namespace FullScreenQuad_vert
+
+namespace GenerateMipmap_comp
+{
+enum MaxSupportedDest
+{
+    kDestSize4 = 0x00000000,
+    kDestSize6 = 0x00000001,
+};
+enum Format
+{
+    kIsRGBA8          = 0x00000000,
+    kIsRGBA8_UseHalf  = 0x00000002,
+    kIsRGBA16         = 0x00000004,
+    kIsRGBA16_UseHalf = 0x00000006,
+    kIsRGBA32F        = 0x00000008,
+};
+constexpr size_t kArrayLen = 0x0000000A;
+}  // namespace GenerateMipmap_comp
 
 namespace ImageClear_frag
 {
@@ -148,23 +137,25 @@ constexpr size_t kArrayLen = 0x00000018;
 
 namespace ImageCopy_frag
 {
-enum flags
+enum DestFormat
 {
-    kSrcIsArray = 0x00000001,
+    kDestIsFloat = 0x00000000,
+    kDestIsSint  = 0x00000001,
+    kDestIsUint  = 0x00000002,
 };
 enum SrcFormat
 {
     kSrcIsFloat = 0x00000000,
-    kSrcIsSint  = 0x00000002,
-    kSrcIsUint  = 0x00000004,
+    kSrcIsSint  = 0x00000004,
+    kSrcIsUint  = 0x00000008,
 };
-enum DestFormat
+enum SrcType
 {
-    kDestIsFloat = 0x00000000,
-    kDestIsSint  = 0x00000008,
-    kDestIsUint  = 0x00000010,
+    kSrcIs2D      = 0x00000000,
+    kSrcIs2DArray = 0x00000010,
+    kSrcIs3D      = 0x00000020,
 };
-constexpr size_t kArrayLen = 0x00000016;
+constexpr size_t kArrayLen = 0x0000002B;
 }  // namespace ImageCopy_frag
 
 namespace OverlayCull_comp
@@ -209,9 +200,6 @@ class ShaderLibrary final : angle::NonCopyable
     angle::Result getBlitResolveStencilNoExport_comp(Context *context,
                                                      uint32_t shaderFlags,
                                                      RefCounted<ShaderAndSerial> **shaderOut);
-    angle::Result getBufferUtils_comp(Context *context,
-                                      uint32_t shaderFlags,
-                                      RefCounted<ShaderAndSerial> **shaderOut);
     angle::Result getConvertIndex_comp(Context *context,
                                        uint32_t shaderFlags,
                                        RefCounted<ShaderAndSerial> **shaderOut);
@@ -225,6 +213,9 @@ class ShaderLibrary final : angle::NonCopyable
                                         uint32_t shaderFlags,
                                         RefCounted<ShaderAndSerial> **shaderOut);
     angle::Result getFullScreenQuad_vert(Context *context,
+                                         uint32_t shaderFlags,
+                                         RefCounted<ShaderAndSerial> **shaderOut);
+    angle::Result getGenerateMipmap_comp(Context *context,
                                          uint32_t shaderFlags,
                                          RefCounted<ShaderAndSerial> **shaderOut);
     angle::Result getImageClear_frag(Context *context,
@@ -246,8 +237,6 @@ class ShaderLibrary final : angle::NonCopyable
     RefCounted<ShaderAndSerial> mBlitResolveStencilNoExport_comp_shaders
         [InternalShader::BlitResolveStencilNoExport_comp::kArrayLen];
     RefCounted<ShaderAndSerial>
-        mBufferUtils_comp_shaders[InternalShader::BufferUtils_comp::kArrayLen];
-    RefCounted<ShaderAndSerial>
         mConvertIndex_comp_shaders[InternalShader::ConvertIndex_comp::kArrayLen];
     RefCounted<ShaderAndSerial> mConvertIndexIndirectLineLoop_comp_shaders
         [InternalShader::ConvertIndexIndirectLineLoop_comp::kArrayLen];
@@ -257,6 +246,8 @@ class ShaderLibrary final : angle::NonCopyable
         mConvertVertex_comp_shaders[InternalShader::ConvertVertex_comp::kArrayLen];
     RefCounted<ShaderAndSerial>
         mFullScreenQuad_vert_shaders[InternalShader::FullScreenQuad_vert::kArrayLen];
+    RefCounted<ShaderAndSerial>
+        mGenerateMipmap_comp_shaders[InternalShader::GenerateMipmap_comp::kArrayLen];
     RefCounted<ShaderAndSerial>
         mImageClear_frag_shaders[InternalShader::ImageClear_frag::kArrayLen];
     RefCounted<ShaderAndSerial> mImageCopy_frag_shaders[InternalShader::ImageCopy_frag::kArrayLen];

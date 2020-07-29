@@ -9,6 +9,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <queue>
 #include <string>
 #include <thread>
 
@@ -109,6 +110,8 @@ struct ProcessInfo : angle::NonCopyable
     std::string commandLine;
 };
 
+using TestQueue = std::queue<std::vector<TestIdentifier>>;
+
 class TestSuite
 {
   public:
@@ -127,16 +130,18 @@ class TestSuite
 
     std::string mTestExecutableName;
     std::string mTestSuiteName;
-    std::vector<TestIdentifier> mTestQueue;
+    TestQueue mTestQueue;
     std::string mFilterString;
     std::string mFilterFile;
     std::string mResultsDirectory;
     std::string mResultsFile;
+    std::string mHistogramJsonFile;
     int mShardCount;
     int mShardIndex;
     angle::CrashCallback mCrashCallback;
     TestResults mTestResults;
     bool mBotMode;
+    bool mDebugTestGroups;
     int mBatchSize;
     int mCurrentResultCount;
     int mTotalResultCount;

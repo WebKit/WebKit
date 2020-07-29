@@ -111,6 +111,19 @@ To change the default D3D backend:
  1. Open `src/libANGLE/renderer/d3d/DisplayD3D.cpp`
  2. Locate the definition of `ANGLE_DEFAULT_D3D11` near the head of the file, and set it to your preference.
 
+To remove any backend entirely:
+
+ 1. Run `gn args <path/to/build/dir>`
+ 2. Set the appropriate variable to `false`. Options are:
+   - `angle_enable_d3d9`
+   - `angle_enable_d3d11`
+   - `angle_enable_gl`
+   - `angle_enable_metal`
+   - `angle_enable_null`
+   - `angle_enable_vulkan`
+   - `angle_enable_essl`
+   - `angle_enable_glsl`
+
 ### To Use ANGLE in Your Application
 On Windows:
 

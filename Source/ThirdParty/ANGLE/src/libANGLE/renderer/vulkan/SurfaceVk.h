@@ -10,9 +10,9 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_SURFACEVK_H_
 #define LIBANGLE_RENDERER_VULKAN_SURFACEVK_H_
 
+#include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/SurfaceImpl.h"
 #include "libANGLE/renderer/vulkan/RenderTargetVk.h"
-#include "libANGLE/renderer/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
 namespace rx

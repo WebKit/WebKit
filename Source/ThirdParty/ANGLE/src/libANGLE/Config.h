@@ -74,6 +74,9 @@ struct Config
     EGLBoolean framebufferTarget;  // EGL_TRUE if the config supports rendering to a ANativeWindow
                                    // for which the buffers are passed to the HWComposer HAL as a
                                    // framebuffer target layer.
+    EGLBoolean yInverted;  // True if the drawable's framebuffer is y-inverted.  This can be used to
+                           // determine if y-inverted texture coordinates need to be used when
+                           // texturing from this drawable when it is bound to a texture target.
 };
 
 class ConfigSet

@@ -24,6 +24,9 @@ namespace angle
 template <typename BitsT, typename ParamT>
 constexpr static BitsT Bit(ParamT x)
 {
+    // It's undefined behavior if the shift size is equal to or larger than the width of the type.
+    ASSERT(static_cast<size_t>(x) < sizeof(BitsT) * 8);
+
     return (static_cast<BitsT>(1) << static_cast<size_t>(x));
 }
 
@@ -81,6 +84,8 @@ class BitSetT final
         BitSetT mBitsCopy;
         std::size_t mCurrentBit;
     };
+
+    using value_type = BitsT;
 
     BitSetT();
     constexpr explicit BitSetT(BitsT value);
@@ -455,8 +460,8 @@ BitSetT<N, BitsT, ParamT>::Iterator::Iterator(const BitSetT &bits) : mBitsCopy(b
 }
 
 template <size_t N, typename BitsT, typename ParamT>
-ANGLE_INLINE typename BitSetT<N, BitsT, ParamT>::Iterator &BitSetT<N, BitsT, ParamT>::Iterator::
-operator++()
+ANGLE_INLINE typename BitSetT<N, BitsT, ParamT>::Iterator &
+BitSetT<N, BitsT, ParamT>::Iterator::operator++()
 {
     ASSERT(mBitsCopy.any());
     mBitsCopy.reset(static_cast<ParamT>(mCurrentBit));

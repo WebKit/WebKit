@@ -37,11 +37,11 @@ template_cpp = """// GENERATED FILE - DO NOT EDIT.
 
 namespace {namespace}
 {{
-ProcEntry g_procTable[] = {{
+const ProcEntry g_procTable[] = {{
 {proc_data}
 }};
 
-size_t g_numProcs = {num_procs};
+const size_t g_numProcs = {num_procs};
 }}  // namespace {namespace}
 """
 
@@ -55,7 +55,7 @@ includes_gles = """#include "libGLESv2/proc_table_egl.h"
 #include "libGLESv2/entry_points_gles_3_1_autogen.h"
 #include "libGLESv2/entry_points_gles_3_2_autogen.h"
 #include "libGLESv2/entry_points_gles_ext_autogen.h"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 """
 
 includes_gl = """#include "libGL/proc_table_wgl.h"
@@ -80,7 +80,7 @@ includes_gl = """#include "libGL/proc_table_wgl.h"
 #include "libGL/entry_points_gl_4_4_autogen.h"
 #include "libGL/entry_points_gl_4_5_autogen.h"
 #include "libGL/entry_points_gl_4_6_autogen.h"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 """
 
 sys.path.append('../src/libANGLE/renderer')

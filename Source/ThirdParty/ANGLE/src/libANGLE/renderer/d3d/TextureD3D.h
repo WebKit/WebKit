@@ -107,7 +107,8 @@ class TextureD3D : public TextureImpl, public angle::ObserverInterface
     angle::Result setBaseLevel(const gl::Context *context, GLuint baseLevel) override;
 
     angle::Result syncState(const gl::Context *context,
-                            const gl::Texture::DirtyBits &dirtyBits) override;
+                            const gl::Texture::DirtyBits &dirtyBits,
+                            gl::TextureCommand source) override;
 
     angle::Result initializeContents(const gl::Context *context,
                                      const gl::ImageIndex &imageIndex) override;

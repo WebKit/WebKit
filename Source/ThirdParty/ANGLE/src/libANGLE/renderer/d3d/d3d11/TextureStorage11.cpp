@@ -533,9 +533,7 @@ angle::Result TextureStorage11::updateSubresourceLevel(const gl::Context *contex
 
     gl::Extents texSize(getLevelWidth(level), getLevelHeight(level), getLevelDepth(level));
 
-    bool fullCopy = copyArea.x == 0 && copyArea.y == 0 && copyArea.z == 0 &&
-                    copyArea.width == texSize.width && copyArea.height == texSize.height &&
-                    copyArea.depth == texSize.depth;
+    bool fullCopy = copyArea.coversSameExtent(texSize);
 
     const TextureHelper11 *dstTexture = nullptr;
 

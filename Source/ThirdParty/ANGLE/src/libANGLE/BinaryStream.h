@@ -236,8 +236,10 @@ class BinaryOutputStream : angle::NonCopyable
 
     const void *data() const { return mData.size() ? &mData[0] : nullptr; }
 
+    const std::vector<uint8_t> &getData() const { return mData; }
+
   private:
-    std::vector<char> mData;
+    std::vector<uint8_t> mData;
 
     template <typename T>
     void write(const T *v, size_t num)

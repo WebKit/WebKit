@@ -176,6 +176,8 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->ANGLE_base_vertex_base_instance             = 0;
     resources->WEBGL_video_texture                         = 0;
     resources->APPLE_clip_distance                         = 0;
+    resources->OES_texture_cube_map_array                  = 0;
+    resources->EXT_texture_cube_map_array                  = 0;
 
     resources->NV_draw_buffers = 0;
 

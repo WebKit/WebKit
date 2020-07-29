@@ -1309,8 +1309,18 @@
 		5CCD81B01DBFEA5C006066B8 /* ConstantUnion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD81991DBFEA5C006066B8 /* ConstantUnion.cpp */; };
 		5CCD81B51DBFEA5C006066B8 /* QualifierTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD819E1DBFEA5C006066B8 /* QualifierTypes.cpp */; };
 		5CCD81B61DBFEA5C006066B8 /* QualifierTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD819F1DBFEA5C006066B8 /* QualifierTypes.h */; };
+		6E1D0D6624D0EAF50060DA31 /* compression_utils_portable.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D0D6424D0EAF40060DA31 /* compression_utils_portable.cc */; };
+		6E1D0D6724D0EAF50060DA31 /* compression_utils_portable.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D0D6424D0EAF40060DA31 /* compression_utils_portable.cc */; };
+		6E1D0D6824D0EAF50060DA31 /* compression_utils_portable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E1D0D6524D0EAF50060DA31 /* compression_utils_portable.h */; };
+		6E1D0D6924D0EAF50060DA31 /* compression_utils_portable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E1D0D6524D0EAF50060DA31 /* compression_utils_portable.h */; };
 		6E31A0A3234EEED400C84784 /* DeviceCGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E31A0A1234EEED400C84784 /* DeviceCGL.cpp */; };
 		6E31A0A4234EEED400C84784 /* DeviceCGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E31A0A2234EEED400C84784 /* DeviceCGL.h */; };
+		6E33E8E824D0D1EB002309AC /* BufferImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E33E8E724D0D196002309AC /* BufferImpl.cpp */; };
+		6E33E8E924D0D1EC002309AC /* BufferImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E33E8E724D0D196002309AC /* BufferImpl.cpp */; };
+		6E33E8EC24D0D209002309AC /* frame_capture_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E33E8EA24D0D208002309AC /* frame_capture_utils.cpp */; };
+		6E33E8ED24D0D209002309AC /* frame_capture_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E33E8EA24D0D208002309AC /* frame_capture_utils.cpp */; };
+		6E33E8EE24D0D209002309AC /* frame_capture_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E33E8EB24D0D208002309AC /* frame_capture_utils.h */; };
+		6E33E8EF24D0D209002309AC /* frame_capture_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E33E8EB24D0D208002309AC /* frame_capture_utils.h */; };
 		6EA0D69323515A5C00B8651F /* FrameCapture_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EA0D69223515A5C00B8651F /* FrameCapture_mock.cpp */; };
 		6EB01C1D2477279A00E50B35 /* EarlyFragmentTestsOptimization.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EB01C1B2477279900E50B35 /* EarlyFragmentTestsOptimization.h */; };
 		6EB01C1E2477279A00E50B35 /* EarlyFragmentTestsOptimization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EB01C1C2477279900E50B35 /* EarlyFragmentTestsOptimization.cpp */; };
@@ -2108,8 +2118,13 @@
 		5CCD819F1DBFEA5C006066B8 /* QualifierTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QualifierTypes.h; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		6E1D0D6424D0EAF40060DA31 /* compression_utils_portable.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = compression_utils_portable.cc; path = third_party/zlib/google/compression_utils_portable.cc; sourceTree = "<group>"; };
+		6E1D0D6524D0EAF50060DA31 /* compression_utils_portable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compression_utils_portable.h; path = third_party/zlib/google/compression_utils_portable.h; sourceTree = "<group>"; };
 		6E31A0A1234EEED400C84784 /* DeviceCGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceCGL.cpp; sourceTree = "<group>"; };
 		6E31A0A2234EEED400C84784 /* DeviceCGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceCGL.h; sourceTree = "<group>"; };
+		6E33E8E724D0D196002309AC /* BufferImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BufferImpl.cpp; sourceTree = "<group>"; };
+		6E33E8EA24D0D208002309AC /* frame_capture_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = frame_capture_utils.cpp; sourceTree = "<group>"; };
+		6E33E8EB24D0D208002309AC /* frame_capture_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = frame_capture_utils.h; sourceTree = "<group>"; };
 		6EA0D69223515A5C00B8651F /* FrameCapture_mock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameCapture_mock.cpp; sourceTree = "<group>"; };
 		6EB01C1B2477279900E50B35 /* EarlyFragmentTestsOptimization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EarlyFragmentTestsOptimization.h; sourceTree = "<group>"; };
 		6EB01C1C2477279900E50B35 /* EarlyFragmentTestsOptimization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EarlyFragmentTestsOptimization.cpp; sourceTree = "<group>"; };
@@ -2615,6 +2630,8 @@
 				A30307132305F7C3002DA972 /* format_map_desktop.cpp */,
 				5C1DBC681B0438D200235552 /* formatutils.cpp */,
 				5C1DBC691B0438D200235552 /* formatutils.h */,
+				6E33E8EA24D0D208002309AC /* frame_capture_utils.cpp */,
+				6E33E8EB24D0D208002309AC /* frame_capture_utils.h */,
 				5C1DBC6A1B0438D200235552 /* Framebuffer.cpp */,
 				5C1DBC6B1B0438D200235552 /* Framebuffer.h */,
 				5C1DBC6C1B0438D200235552 /* FramebufferAttachment.cpp */,
@@ -2835,6 +2852,7 @@
 			isa = PBXGroup;
 			children = (
 				5CB300DF1DE39F0300D2C405 /* gl */,
+				6E33E8E724D0D196002309AC /* BufferImpl.cpp */,
 				5CB304AA1DE4164800D2C405 /* BufferImpl.h */,
 				5CB304AB1DE4164800D2C405 /* CompilerImpl.h */,
 				5CB304AC1DE4164800D2C405 /* ContextImpl.cpp */,
@@ -3212,6 +3230,15 @@
 			path = Configurations;
 			sourceTree = "<group>";
 		};
+		6E1D0D6A24D0EAFC0060DA31 /* third_party */ = {
+			isa = PBXGroup;
+			children = (
+				6E1D0D6424D0EAF40060DA31 /* compression_utils_portable.cc */,
+				6E1D0D6524D0EAF50060DA31 /* compression_utils_portable.h */,
+			);
+			name = third_party;
+			sourceTree = "<group>";
+		};
 		6ED70A0822CD62E8008688CE /* GLES */ = {
 			isa = PBXGroup;
 			children = (
@@ -3268,6 +3295,7 @@
 		FB39D06E1200ED9200088E69 = {
 			isa = PBXGroup;
 			children = (
+				6E1D0D6A24D0EAFC0060DA31 /* third_party */,
 				5D7C59C41208C68B001C873E /* Configurations */,
 				5CB3048A1DE4143400D2C405 /* Frameworks */,
 				A29B15E916978B7D00111D97 /* include */,
@@ -3396,6 +3424,7 @@
 				31CDFFE7249184A700486F27 /* Compiler.h in Headers */,
 				31CD0015249184E700486F27 /* CompilerGL.h in Headers */,
 				31CD003F249184F400486F27 /* CompilerImpl.h in Headers */,
+				6E1D0D6924D0EAF50060DA31 /* compression_utils_portable.h in Headers */,
 				31CD0078249184FD00486F27 /* Config.h in Headers */,
 				31CD0067249184FC00486F27 /* Constants.h in Headers */,
 				31CDFFF4249184A700486F27 /* ConstantUnion.h in Headers */,
@@ -3468,6 +3497,7 @@
 				31CD0040249184F400486F27 /* Format.h in Headers */,
 				31CD0080249184FD00486F27 /* formatutils.h in Headers */,
 				31CD0010249184E700486F27 /* formatutilsgl.h in Headers */,
+				6E33E8EF24D0D209002309AC /* frame_capture_utils.h in Headers */,
 				31CD0062249184FC00486F27 /* Framebuffer.h in Headers */,
 				31CD0091249184FD00486F27 /* FramebufferAttachment.h in Headers */,
 				31CD003E249184F400486F27 /* FramebufferAttachmentObjectImpl.h in Headers */,
@@ -3799,6 +3829,7 @@
 				5C1DBC2C1B04375F00235552 /* Compiler.h in Headers */,
 				5CB3011B1DE39F1A00D2C405 /* CompilerGL.h in Headers */,
 				5CB304DC1DE4164800D2C405 /* CompilerImpl.h in Headers */,
+				6E1D0D6824D0EAF50060DA31 /* compression_utils_portable.h in Headers */,
 				5C1DBDE01B0438D300235552 /* Config.h in Headers */,
 				5C1DBDE11B0438D300235552 /* Constants.h in Headers */,
 				31012E1A18B97B9B0039062F /* ConstantUnion.h in Headers */,
@@ -3871,6 +3902,7 @@
 				5CB304E81DE4164800D2C405 /* Format.h in Headers */,
 				5C1DBDF21B0438D300235552 /* formatutils.h in Headers */,
 				5CB301261DE39F1A00D2C405 /* formatutilsgl.h in Headers */,
+				6E33E8EE24D0D209002309AC /* frame_capture_utils.h in Headers */,
 				5C1DBDF41B0438D300235552 /* Framebuffer.h in Headers */,
 				5C1DBDF61B0438D300235552 /* FramebufferAttachment.h in Headers */,
 				5CB304E91DE4164800D2C405 /* FramebufferAttachmentObjectImpl.h in Headers */,
@@ -4283,6 +4315,7 @@
 				31CDFE5D2491842E00486F27 /* BreakVariableAliasingInInnerLoops.cpp in Sources */,
 				31CDFF212491846000486F27 /* Buffer.cpp in Sources */,
 				31CDFED62491845300486F27 /* BufferGL.cpp in Sources */,
+				6E33E8E924D0D1EC002309AC /* BufferImpl.cpp in Sources */,
 				31CDFE712491843900486F27 /* BuiltInFunctionEmulator.cpp in Sources */,
 				31CDFEAC2491843A00486F27 /* BuiltInFunctionEmulatorGLSL.cpp in Sources */,
 				31CDFE882491843A00486F27 /* BuiltInFunctionEmulatorHLSL.cpp in Sources */,
@@ -4297,6 +4330,7 @@
 				31CDFF102491845F00486F27 /* Compiler.cpp in Sources */,
 				31CDFEA12491843A00486F27 /* Compiler.cpp in Sources */,
 				31CDFED52491845300486F27 /* CompilerGL.cpp in Sources */,
+				6E1D0D6724D0EAF50060DA31 /* compression_utils_portable.cc in Sources */,
 				31CDFF392491846000486F27 /* Config.cpp in Sources */,
 				31CDFEA52491843A00486F27 /* ConstantUnion.cpp in Sources */,
 				31CDFF142491845F00486F27 /* Context.cpp in Sources */,
@@ -4363,6 +4397,7 @@
 				31CDFEDE2491845800486F27 /* Format_table_autogen.cpp in Sources */,
 				31CDFF2E2491846000486F27 /* formatutils.cpp in Sources */,
 				31CDFED72491845300486F27 /* formatutilsgl.cpp in Sources */,
+				6E33E8ED24D0D209002309AC /* frame_capture_utils.cpp in Sources */,
 				31CDFF3E2491846000486F27 /* Framebuffer.cpp in Sources */,
 				31CDFEEC2491845F00486F27 /* FramebufferAttachment.cpp in Sources */,
 				31CDFECA2491845300486F27 /* FramebufferGL.cpp in Sources */,
@@ -4613,6 +4648,7 @@
 				5C55D6AB22826BC800B5BA2C /* BreakVariableAliasingInInnerLoops.cpp in Sources */,
 				5C1DBDD81B0438D300235552 /* Buffer.cpp in Sources */,
 				5CB301181DE39F1A00D2C405 /* BufferGL.cpp in Sources */,
+				6E33E8E824D0D1EB002309AC /* BufferImpl.cpp in Sources */,
 				31012E1318B97B9B0039062F /* BuiltInFunctionEmulator.cpp in Sources */,
 				5C1DBC281B04375F00235552 /* BuiltInFunctionEmulatorGLSL.cpp in Sources */,
 				315EBD841FCE443600AC7A89 /* BuiltInFunctionEmulatorHLSL.cpp in Sources */,
@@ -4627,6 +4663,7 @@
 				31012E1718B97B9B0039062F /* Compiler.cpp in Sources */,
 				5C1DBDDC1B0438D300235552 /* Compiler.cpp in Sources */,
 				5CB3011A1DE39F1A00D2C405 /* CompilerGL.cpp in Sources */,
+				6E1D0D6624D0EAF50060DA31 /* compression_utils_portable.cc in Sources */,
 				5C1DBDDF1B0438D300235552 /* Config.cpp in Sources */,
 				5CCD81B01DBFEA5C006066B8 /* ConstantUnion.cpp in Sources */,
 				5C1DBDE21B0438D300235552 /* Context.cpp in Sources */,
@@ -4693,6 +4730,7 @@
 				315EBDCA1FCE44E400AC7A89 /* Format_table_autogen.cpp in Sources */,
 				5C1DBDF11B0438D300235552 /* formatutils.cpp in Sources */,
 				5CB301251DE39F1A00D2C405 /* formatutilsgl.cpp in Sources */,
+				6E33E8EC24D0D209002309AC /* frame_capture_utils.cpp in Sources */,
 				5C1DBDF31B0438D300235552 /* Framebuffer.cpp in Sources */,
 				5C1DBDF51B0438D300235552 /* FramebufferAttachment.cpp in Sources */,
 				5CB301271DE39F1A00D2C405 /* FramebufferGL.cpp in Sources */,

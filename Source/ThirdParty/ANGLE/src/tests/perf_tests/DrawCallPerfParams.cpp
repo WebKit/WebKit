@@ -26,7 +26,6 @@ DrawCallPerfParams::DrawCallPerfParams()
 #endif
     runTimeSeconds = 10.0;
     numTris        = 1;
-    offscreen      = false;
 }
 
 DrawCallPerfParams::~DrawCallPerfParams() = default;
@@ -36,11 +35,6 @@ std::string DrawCallPerfParams::story() const
     std::stringstream strstr;
 
     strstr << RenderTestParams::story();
-
-    if (offscreen)
-    {
-        strstr << "_offscreen";
-    }
 
     return strstr.str();
 }

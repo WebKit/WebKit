@@ -1750,6 +1750,46 @@ void R10G10B10X2::average(R10G10B10X2 *dst, const R10G10B10X2 *src1, const R10G1
     dst->B = gl::average(src1->B, src2->B);
 }
 
+void B10G10R10A2::readColor(gl::ColorUI *dst, const B10G10R10A2 *src)
+{
+    dst->red   = src->R;
+    dst->green = src->G;
+    dst->blue  = src->B;
+    dst->alpha = src->A;
+}
+
+void B10G10R10A2::readColor(gl::ColorF *dst, const B10G10R10A2 *src)
+{
+    dst->red   = gl::normalizedToFloat<10>(src->R);
+    dst->green = gl::normalizedToFloat<10>(src->G);
+    dst->blue  = gl::normalizedToFloat<10>(src->B);
+    dst->alpha = gl::normalizedToFloat<2>(src->A);
+}
+
+void B10G10R10A2::writeColor(B10G10R10A2 *dst, const gl::ColorUI *src)
+{
+    dst->R = static_cast<uint32_t>(src->red);
+    dst->G = static_cast<uint32_t>(src->green);
+    dst->B = static_cast<uint32_t>(src->blue);
+    dst->A = static_cast<uint32_t>(src->alpha);
+}
+
+void B10G10R10A2::writeColor(B10G10R10A2 *dst, const gl::ColorF *src)
+{
+    dst->R = gl::floatToNormalized<10, uint32_t>(src->red);
+    dst->G = gl::floatToNormalized<10, uint32_t>(src->green);
+    dst->B = gl::floatToNormalized<10, uint32_t>(src->blue);
+    dst->A = gl::floatToNormalized<2, uint32_t>(src->alpha);
+}
+
+void B10G10R10A2::average(B10G10R10A2 *dst, const B10G10R10A2 *src1, const B10G10R10A2 *src2)
+{
+    dst->R = gl::average(src1->R, src2->R);
+    dst->G = gl::average(src1->G, src2->G);
+    dst->B = gl::average(src1->B, src2->B);
+    dst->A = gl::average(src1->A, src2->A);
+}
+
 void R9G9B9E5::readColor(gl::ColorF *dst, const R9G9B9E5 *src)
 {
     gl::convert999E5toRGBFloats(gl::bitCast<uint32_t>(*src), &dst->red, &dst->green, &dst->blue);
@@ -1832,7 +1872,7 @@ void D16::WriteDepthStencil(D16 *dst, const DepthStencil *src)
 
 void D24X8::ReadDepthStencil(DepthStencil *dst, const D24X8 *src)
 {
-    dst->depth = gl::normalizedToFloat<24>(src->D);
+    dst->depth = gl::normalizedToFloat<24>(src->D & 0x00ffffff);
 }
 
 void D24X8::WriteDepthStencil(D24X8 *dst, const DepthStencil *src)

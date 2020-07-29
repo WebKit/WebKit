@@ -92,6 +92,13 @@ PrimitiveTopologyClass GetPrimitiveTopologyClass(gl::PrimitiveMode mode);
 MTLPrimitiveType GetPrimitiveType(gl::PrimitiveMode mode);
 MTLIndexType GetIndexType(gl::DrawElementsType type);
 
+// Get color write mask for a specified format. Some formats such as RGB565 doesn't have alpha
+// channel but is emulated by a RGBA8 format, we need to disable alpha write for this format.
+// - isFormatEmulated: if the format is emulated, this pointer will store a true value.
+MTLColorWriteMask GetEmulatedColorWriteMask(const mtl::Format &mtlFormat, bool *isFormatEmulated);
+MTLColorWriteMask GetEmulatedColorWriteMask(const mtl::Format &mtlFormat);
+bool IsFormatEmulated(const mtl::Format &mtlFormat);
+
 // Useful to set clear color for texture originally having no alpha in GL, but backend's format
 // has alpha channel.
 MTLClearColor EmulatedAlphaClearColor(MTLClearColor color, MTLColorWriteMask colorMask);

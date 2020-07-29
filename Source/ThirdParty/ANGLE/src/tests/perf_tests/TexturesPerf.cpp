@@ -297,6 +297,14 @@ TexturesParams OpenGLOrGLESParams(bool webglCompat)
     return params;
 }
 
+TexturesParams VulkanParams(bool webglCompat)
+{
+    TexturesParams params;
+    params.eglParameters = egl_platform::VULKAN_NULL();
+    params.webgl         = webglCompat;
+    return params;
+}
+
 TEST_P(TexturesBenchmark, Run)
 {
     run();
@@ -307,5 +315,7 @@ ANGLE_INSTANTIATE_TEST(TexturesBenchmark,
                        D3D11Params(true),
                        D3D9Params(true),
                        OpenGLOrGLESParams(false),
-                       OpenGLOrGLESParams(true));
+                       OpenGLOrGLESParams(true),
+                       VulkanParams(false),
+                       VulkanParams(true));
 }  // namespace angle

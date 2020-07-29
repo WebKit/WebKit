@@ -157,6 +157,12 @@ std::string MaskedScissoredClearVariationsTestPrint(
     ParseMaskedScissoredClearVariationsTestParams(params, &clearColor, &clearDepth, &clearStencil,
                                                   &maskColor, &maskDepth, &maskStencil, &scissor);
 
+    if (scissor || clearColor || clearDepth || clearStencil || maskColor || maskDepth ||
+        maskStencil)
+    {
+        out << "_";
+    }
+
     if (scissor)
     {
         out << "_scissored";
@@ -611,6 +617,65 @@ TEST_P(ClearTest, MaskedClearThenDrawWithUniform)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Clear with a mask to verify that masked clear is done properly
+// (can't use inline or RenderOp clear when some color channels are masked)
+TEST_P(ClearTestES3, ClearPlusMaskDrawAndClear)
+{
+    // Initialize a program with a uniform.
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+
+    GLint uniLoc = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+    ASSERT_NE(-1, uniLoc);
+    glUniform4f(uniLoc, 0.0f, 1.0f, 0.0f, 1.0f);
+
+    // Initialize position attribute.
+    GLint posLoc = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLoc);
+    setupQuadVertexBuffer(0.5f, 1.0f);
+    glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posLoc);
+
+    // Initialize a simple FBO.
+    constexpr GLsizei kSize = 2;
+    GLTexture clearTexture;
+    glBindTexture(GL_TEXTURE_2D, clearTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, clearTexture, 0);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kSize, kSize);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    ASSERT_GL_NO_ERROR();
+
+    glViewport(0, 0, kSize, kSize);
+
+    // Clear and draw to flush out dirty bits.
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearDepthf(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Draw green rectangle
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Enable color mask and draw again to trigger the bug.
+    glColorMask(GL_TRUE, GL_FALSE, GL_TRUE, GL_TRUE);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Draw purple-ish rectangle, green should be masked off
+    glUniform4f(uniLoc, 1.0f, 0.25f, 1.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
+}
+
 // Test that clearing all buffers through glClearColor followed by a clear of a specific buffer
 // clears to the correct values.
 TEST_P(ClearTestES3, ClearMultipleAttachmentsFollowedBySpecificOne)
@@ -681,6 +746,8 @@ TEST_P(ClearTestES3, ClearMultipleAttachmentsFollowedBySpecificOne)
 // done in a single render pass.
 TEST_P(ClearTestES3, ClearMultipleAttachmentsIndividually)
 {
+    // https://issuetracker.google.com/issues/161553839
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsVulkan());
     constexpr uint32_t kSize             = 16;
     constexpr uint32_t kAttachmentCount  = 2;
     constexpr float kDepthClearValue     = 0.125f;
@@ -919,6 +986,9 @@ TEST_P(ClearTestES3, MaskedIndexedClearMultipleAttachments)
 // and the relevant internal shaders.
 TEST_P(ClearTestES3, MaskedClearHeterogeneousAttachments)
 {
+    // https://issuetracker.google.com/issues/161553839
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsVulkan());
+
     constexpr uint32_t kSize                              = 16;
     constexpr uint32_t kAttachmentCount                   = 3;
     constexpr float kDepthClearValue                      = 0.256f;

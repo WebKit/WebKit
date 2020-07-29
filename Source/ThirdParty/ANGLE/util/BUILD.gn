@@ -15,7 +15,7 @@ _util_sources = [
   "OSWindow.cpp",
   "OSWindow.h",
   "com_utils.h",
-  "frame_capture_utils.h",
+  "frame_capture_test_utils.h",
   "geometry_utils.cpp",
   "geometry_utils.h",
   "keyboard.h",
@@ -51,6 +51,8 @@ if (angle_use_x11) {
 
 if (is_fuchsia) {
   _util_sources += [
+    "fuchsia/FuchsiaPixmap.cpp",
+    "fuchsia/FuchsiaPixmap.h",
     "fuchsia/ScenicWindow.cpp",
     "fuchsia/ScenicWindow.h",
   ]
@@ -156,7 +158,6 @@ foreach(is_shared_library,
   target(library_type, library_name) {
     testonly = true
     sources = _util_sources
-    deps = [ "$angle_root:angle_common" ]
     public_deps = [
       ":angle_test_utils",
       ":angle_util_loader_headers",
@@ -171,7 +172,7 @@ foreach(is_shared_library,
     }
 
     if (is_mac) {
-      libs += [
+      frameworks = [
         "AppKit.framework",
         "QuartzCore.framework",
       ]
@@ -268,7 +269,8 @@ config("angle_test_util_config") {
 
 angle_source_set("angle_test_utils") {
   public_configs = [ ":angle_test_util_config" ]
-  deps = [ "$angle_root:angle_common" ]
+  public_deps = [ "$angle_root:angle_common" ]
+  deps = []
   sources = [
     "Timer.cpp",
     "Timer.h",

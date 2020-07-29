@@ -56,12 +56,13 @@ class MockBufferFactoryD3D : public rx::BufferFactoryD3D
     MOCK_METHOD0(createVertexBuffer, rx::VertexBuffer *());
     MOCK_CONST_METHOD1(getVertexConversionType, rx::VertexConversionType(angle::FormatID));
     MOCK_CONST_METHOD1(getVertexComponentType, GLenum(angle::FormatID));
-    MOCK_CONST_METHOD6(getVertexSpaceRequired,
+    MOCK_CONST_METHOD7(getVertexSpaceRequired,
                        angle::Result(const gl::Context *,
                                      const gl::VertexAttribute &,
                                      const gl::VertexBinding &,
                                      size_t,
                                      GLsizei,
+                                     GLuint,
                                      unsigned int *));
 
     // Dependency injection

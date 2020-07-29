@@ -485,9 +485,6 @@ TEST_P(CopyTexImageTest, CopyTexSubImageToNonCubeCompleteDestination)
 // Deleting textures after copying to them. http://anglebug.com/4267
 TEST_P(CopyTexImageTest, DeleteAfterCopyingToTextures)
 {
-    // Asserts on Vulkan backend. http://anglebug.com/4274
-    ANGLE_SKIP_TEST_IF(IsVulkan());
-
     GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
@@ -626,7 +623,13 @@ TEST_P(CopyTexImageTestES3, 2DArraySubImage)
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 0);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, 0, 1);
-    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+    for (int x = 0; x < kTexSize; x++)
+    {
+        for (int y = 0; y < kTexSize; y++)
+        {
+            EXPECT_PIXEL_COLOR_EQ(x, y, GLColor::green);
+        }
+    }
     ASSERT_GL_NO_ERROR();
 }
 

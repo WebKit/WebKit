@@ -447,6 +447,14 @@ const char *PositionAttrib()
 {
     return "a_position";
 }
+const char *Texture2DUniform()
+{
+    return "u_tex2D";
+}
+const char *LodUniform()
+{
+    return "u_lod";
+}
 
 namespace vs
 {
@@ -483,6 +491,21 @@ void main()
 {
     gl_Position = a_position;
     v_position = a_position;
+})";
+}
+
+// A shader that simply passes through attribute a_position, setting it to gl_Position and varying
+// texcoord.
+const char *Texture2DLod()
+{
+    return R"(#version 300 es
+in vec4 a_position;
+out vec2 v_texCoord;
+
+void main()
+{
+    gl_Position = vec4(a_position.xy, 0.0, 1.0);
+    v_texCoord = a_position.xy * 0.5 + vec2(0.5);
 })";
 }
 
@@ -524,6 +547,22 @@ out vec4 my_FragColor;
 void main()
 {
     my_FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+})";
+}
+
+// A shader that samples the texture at a given lod.
+const char *Texture2DLod()
+{
+    return R"(#version 300 es
+precision mediump float;
+uniform sampler2D u_tex2D;
+uniform float u_lod;
+in vec2 v_texCoord;
+out vec4 my_FragColor;
+
+void main()
+{
+    my_FragColor = textureLod(u_tex2D, v_texCoord, u_lod);
 })";
 }
 

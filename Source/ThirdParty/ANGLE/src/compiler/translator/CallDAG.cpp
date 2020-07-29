@@ -190,7 +190,7 @@ class CallDAG::CallDAGCreator : public TIntermTraverser
             if (!function->definitionNode)
             {
                 errorStream << "Undefined function '" << function->name
-                            << ")' used in the following call chain:";
+                            << "()' used in the following call chain:";
                 result = INITDAG_UNDEFINED;
                 break;
             }

@@ -21,13 +21,15 @@ namespace sh
 class TCompiler;
 class TIntermNode;
 class TIntermBinary;
+class TIntermTyped;
 class TSymbolTable;
 
 ANGLE_NO_DISCARD bool RewriteDfdy(TCompiler *compiler,
                                   TIntermNode *root,
                                   const TSymbolTable &symbolTable,
                                   int shaderVersion,
-                                  TIntermBinary *viewportYScale);
+                                  TIntermBinary *flipXY,
+                                  TIntermTyped *fragRotation);
 
 }  // namespace sh
 

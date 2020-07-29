@@ -16,6 +16,7 @@
 #include "image_util/imageformats.h"
 #include "libANGLE/AttributeMap.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/Context.inl.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/formatutils.h"
 #include "libANGLE/renderer/ContextImpl.h"
@@ -206,6 +207,50 @@ void SetFloatUniformMatrixFast(unsigned int arrayElementOffset,
     memcpy(targetData, valueData, matrixSize * count);
 }
 }  // anonymous namespace
+
+void RotateRectangle(const SurfaceRotation rotation,
+                     const bool flipY,
+                     const int framebufferWidth,
+                     const int framebufferHeight,
+                     const gl::Rectangle &incoming,
+                     gl::Rectangle *outgoing)
+{
+    // GLES's y-axis points up; Vulkan's points down.
+    switch (rotation)
+    {
+        case SurfaceRotation::Identity:
+            // Do not rotate gl_Position (surface matches the device's orientation):
+            outgoing->x     = incoming.x;
+            outgoing->y     = flipY ? framebufferHeight - incoming.y - incoming.height : incoming.y;
+            outgoing->width = incoming.width;
+            outgoing->height = incoming.height;
+            break;
+        case SurfaceRotation::Rotated90Degrees:
+            // Rotate gl_Position 90 degrees:
+            outgoing->x      = incoming.y;
+            outgoing->y      = flipY ? incoming.x : framebufferWidth - incoming.x - incoming.width;
+            outgoing->width  = incoming.height;
+            outgoing->height = incoming.width;
+            break;
+        case SurfaceRotation::Rotated180Degrees:
+            // Rotate gl_Position 180 degrees:
+            outgoing->x     = framebufferWidth - incoming.x - incoming.width;
+            outgoing->y     = flipY ? incoming.y : framebufferHeight - incoming.y - incoming.height;
+            outgoing->width = incoming.width;
+            outgoing->height = incoming.height;
+            break;
+        case SurfaceRotation::Rotated270Degrees:
+            // Rotate gl_Position 270 degrees:
+            outgoing->x      = framebufferHeight - incoming.y - incoming.height;
+            outgoing->y      = flipY ? framebufferWidth - incoming.x - incoming.width : incoming.x;
+            outgoing->width  = incoming.height;
+            outgoing->height = incoming.width;
+            break;
+        default:
+            UNREACHABLE();
+            break;
+    }
+}
 
 PackPixelsParams::PackPixelsParams()
     : destFormat(nullptr),
@@ -577,7 +622,7 @@ angle::Result IncompleteTextureSet::getIncompleteTexture(
                                  GL_UNSIGNED_BYTE, color));
     }
 
-    ANGLE_TRY(t->syncState(context));
+    ANGLE_TRY(t->syncState(context, gl::TextureCommand::Other));
 
     mIncompleteTextures[type].set(context, t.release());
     *textureOut = mIncompleteTextures[type].get();
@@ -891,4 +936,257 @@ void GetSamplePosition(GLsizei sampleCount, size_t index, GLfloat *xy)
         xy[1] = kSamplePositions[indexKey][2 * index + 1];
     }
 }
+
+// These macros are to avoid code too much duplication for variations of multi draw types
+#define DRAW_ARRAYS__ contextImpl->drawArrays(context, mode, firsts[drawID], counts[drawID])
+#define DRAW_ARRAYS_INSTANCED_                                                      \
+    contextImpl->drawArraysInstanced(context, mode, firsts[drawID], counts[drawID], \
+                                     instanceCounts[drawID])
+#define DRAW_ELEMENTS__ \
+    contextImpl->drawElements(context, mode, counts[drawID], type, indices[drawID])
+#define DRAW_ELEMENTS_INSTANCED_                                                             \
+    contextImpl->drawElementsInstanced(context, mode, counts[drawID], type, indices[drawID], \
+                                       instanceCounts[drawID])
+#define DRAW_ARRAYS_INSTANCED_BASE_INSTANCE                                                     \
+    contextImpl->drawArraysInstancedBaseInstance(context, mode, firsts[drawID], counts[drawID], \
+                                                 instanceCounts[drawID], baseInstances[drawID])
+#define DRAW_ELEMENTS_INSTANCED_BASE_VERTEX_BASE_INSTANCE                             \
+    contextImpl->drawElementsInstancedBaseVertexBaseInstance(                         \
+        context, mode, counts[drawID], type, indices[drawID], instanceCounts[drawID], \
+        baseVertices[drawID], baseInstances[drawID])
+#define DRAW_CALL(drawType, instanced, bvbi) DRAW_##drawType##instanced##bvbi
+
+#define MULTI_DRAW_BLOCK(drawType, instanced, bvbi, hasDrawID, hasBaseVertex, hasBaseInstance) \
+    for (GLsizei drawID = 0; drawID < drawcount; ++drawID)                                     \
+    {                                                                                          \
+        if (ANGLE_NOOP_DRAW(instanced))                                                        \
+        {                                                                                      \
+            continue;                                                                          \
+        }                                                                                      \
+        ANGLE_SET_DRAW_ID_UNIFORM(hasDrawID)(drawID);                                          \
+        ANGLE_SET_BASE_VERTEX_UNIFORM(hasBaseVertex)(baseVertices[drawID]);                    \
+        ANGLE_SET_BASE_INSTANCE_UNIFORM(hasBaseInstance)(baseInstances[drawID]);               \
+        ANGLE_TRY(DRAW_CALL(drawType, instanced, bvbi));                                       \
+        ANGLE_MARK_TRANSFORM_FEEDBACK_USAGE(instanced);                                        \
+        gl::MarkShaderStorageUsage(context);                                                   \
+    }
+
+angle::Result MultiDrawArraysGeneral(ContextImpl *contextImpl,
+                                     const gl::Context *context,
+                                     gl::PrimitiveMode mode,
+                                     const GLint *firsts,
+                                     const GLsizei *counts,
+                                     GLsizei drawcount)
+{
+    gl::Program *programObject = context->getState().getLinkedProgram(context);
+    const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
+    if (hasDrawID)
+    {
+        MULTI_DRAW_BLOCK(ARRAYS, _, _, 1, 0, 0)
+    }
+    else
+    {
+        MULTI_DRAW_BLOCK(ARRAYS, _, _, 0, 0, 0)
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result MultiDrawArraysInstancedGeneral(ContextImpl *contextImpl,
+                                              const gl::Context *context,
+                                              gl::PrimitiveMode mode,
+                                              const GLint *firsts,
+                                              const GLsizei *counts,
+                                              const GLsizei *instanceCounts,
+                                              GLsizei drawcount)
+{
+    gl::Program *programObject = context->getState().getLinkedProgram(context);
+    const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
+    if (hasDrawID)
+    {
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 1, 0, 0)
+    }
+    else
+    {
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _, 0, 0, 0)
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result MultiDrawElementsGeneral(ContextImpl *contextImpl,
+                                       const gl::Context *context,
+                                       gl::PrimitiveMode mode,
+                                       const GLsizei *counts,
+                                       gl::DrawElementsType type,
+                                       const GLvoid *const *indices,
+                                       GLsizei drawcount)
+{
+    gl::Program *programObject = context->getState().getLinkedProgram(context);
+    const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
+    if (hasDrawID)
+    {
+        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 1, 0, 0)
+    }
+    else
+    {
+        MULTI_DRAW_BLOCK(ELEMENTS, _, _, 0, 0, 0)
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result MultiDrawElementsInstancedGeneral(ContextImpl *contextImpl,
+                                                const gl::Context *context,
+                                                gl::PrimitiveMode mode,
+                                                const GLsizei *counts,
+                                                gl::DrawElementsType type,
+                                                const GLvoid *const *indices,
+                                                const GLsizei *instanceCounts,
+                                                GLsizei drawcount)
+{
+    gl::Program *programObject = context->getState().getLinkedProgram(context);
+    const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
+    if (hasDrawID)
+    {
+        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 1, 0, 0)
+    }
+    else
+    {
+        MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _, 0, 0, 0)
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result MultiDrawArraysInstancedBaseInstanceGeneral(ContextImpl *contextImpl,
+                                                          const gl::Context *context,
+                                                          gl::PrimitiveMode mode,
+                                                          const GLint *firsts,
+                                                          const GLsizei *counts,
+                                                          const GLsizei *instanceCounts,
+                                                          const GLuint *baseInstances,
+                                                          GLsizei drawcount)
+{
+    gl::Program *programObject = context->getState().getLinkedProgram(context);
+    const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
+    const bool hasBaseInstance = programObject && programObject->hasBaseInstanceUniform();
+    ResetBaseVertexBaseInstance resetUniforms(programObject, false, hasBaseInstance);
+
+    if (hasDrawID && hasBaseInstance)
+    {
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 1)
+    }
+    else if (hasDrawID)
+    {
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 1, 0, 0)
+    }
+    else if (hasBaseInstance)
+    {
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 1)
+    }
+    else
+    {
+        MULTI_DRAW_BLOCK(ARRAYS, _INSTANCED, _BASE_INSTANCE, 0, 0, 0)
+    }
+
+    return angle::Result::Continue;
+}
+
+angle::Result MultiDrawElementsInstancedBaseVertexBaseInstanceGeneral(ContextImpl *contextImpl,
+                                                                      const gl::Context *context,
+                                                                      gl::PrimitiveMode mode,
+                                                                      const GLsizei *counts,
+                                                                      gl::DrawElementsType type,
+                                                                      const GLvoid *const *indices,
+                                                                      const GLsizei *instanceCounts,
+                                                                      const GLint *baseVertices,
+                                                                      const GLuint *baseInstances,
+                                                                      GLsizei drawcount)
+{
+    gl::Program *programObject = context->getState().getLinkedProgram(context);
+    const bool hasDrawID       = programObject && programObject->hasDrawIDUniform();
+    const bool hasBaseVertex   = programObject && programObject->hasBaseVertexUniform();
+    const bool hasBaseInstance = programObject && programObject->hasBaseInstanceUniform();
+    ResetBaseVertexBaseInstance resetUniforms(programObject, hasBaseVertex, hasBaseInstance);
+
+    if (hasDrawID)
+    {
+        if (hasBaseVertex)
+        {
+            if (hasBaseInstance)
+            {
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 1)
+            }
+            else
+            {
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 1, 0)
+            }
+        }
+        else
+        {
+            if (hasBaseInstance)
+            {
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 1)
+            }
+            else
+            {
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 1, 0, 0)
+            }
+        }
+    }
+    else
+    {
+        if (hasBaseVertex)
+        {
+            if (hasBaseInstance)
+            {
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 1)
+            }
+            else
+            {
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 1, 0)
+            }
+        }
+        else
+        {
+            if (hasBaseInstance)
+            {
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 1)
+            }
+            else
+            {
+                MULTI_DRAW_BLOCK(ELEMENTS, _INSTANCED, _BASE_VERTEX_BASE_INSTANCE, 0, 0, 0)
+            }
+        }
+    }
+
+    return angle::Result::Continue;
+}
+
+ResetBaseVertexBaseInstance::ResetBaseVertexBaseInstance(gl::Program *programObject,
+                                                         bool resetBaseVertex,
+                                                         bool resetBaseInstance)
+    : mProgramObject(programObject),
+      mResetBaseVertex(resetBaseVertex),
+      mResetBaseInstance(resetBaseInstance)
+{}
+
+ResetBaseVertexBaseInstance::~ResetBaseVertexBaseInstance()
+{
+    if (mProgramObject)
+    {
+        // Reset emulated uniforms to zero to avoid affecting other draw calls
+        if (mResetBaseVertex)
+        {
+            mProgramObject->setBaseVertexUniform(0);
+        }
+
+        if (mResetBaseInstance)
+        {
+            mProgramObject->setBaseInstanceUniform(0);
+        }
+    }
+}
+
 }  // namespace rx

@@ -34,7 +34,7 @@ class QueryVk : public QueryImpl
     angle::Result getResult(const gl::Context *context, GLuint64 *params) override;
     angle::Result isResultAvailable(const gl::Context *context, bool *available) override;
 
-    void onTransformFeedbackEnd(const gl::Context *context);
+    void onTransformFeedbackEnd(GLsizeiptr primitivesDrawn);
     vk::QueryHelper *getQueryHelper() { return &mQueryHelper; }
     angle::Result stashQueryHelper(ContextVk *contextVk);
     angle::Result retrieveStashedQueryResult(ContextVk *contextVk, uint64_t *result);

@@ -42,7 +42,7 @@
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/SymbolTable_autogen.h"
 
-enum class Shader
+enum class Shader : uint8_t
 {
     ALL,
     FRAGMENT,      // GL_FRAGMENT_SHADER
@@ -66,7 +66,7 @@ struct UnmangledBuiltIn
 using VarPointer        = TSymbol *(TSymbolTableBase::*);
 using ValidateExtension = int ShBuiltInResources::*;
 
-enum class Spec
+enum class Spec : uint8_t
 {
     GLSL,
     ESSL

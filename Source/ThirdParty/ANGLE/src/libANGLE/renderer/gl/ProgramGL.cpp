@@ -23,8 +23,9 @@
 #include "libANGLE/renderer/gl/RendererGL.h"
 #include "libANGLE/renderer/gl/ShaderGL.h"
 #include "libANGLE/renderer/gl/StateManagerGL.h"
+#include "libANGLE/trace.h"
 #include "platform/FeaturesGL.h"
-#include "platform/Platform.h"
+#include "platform/PlatformMethods.h"
 
 namespace rx
 {
@@ -59,6 +60,7 @@ std::unique_ptr<LinkEvent> ProgramGL::load(const gl::Context *context,
                                            gl::BinaryInputStream *stream,
                                            gl::InfoLog &infoLog)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::load");
     preLink();
 
     // Read the binary format, size and blob
@@ -135,7 +137,12 @@ class ProgramGL::LinkTask final : public angle::Closure
     LinkTask(LinkImplFunctor &&functor) : mLinkImplFunctor(functor), mFallbackToMainContext(false)
     {}
 
-    void operator()() override { mFallbackToMainContext = mLinkImplFunctor(mInfoLog); }
+    void operator()() override
+    {
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::LinkTask::run");
+        mFallbackToMainContext = mLinkImplFunctor(mInfoLog);
+    }
+
     bool fallbackToMainContext() { return mFallbackToMainContext; }
     const std::string &getInfoLog() { return mInfoLog; }
 
@@ -159,6 +166,8 @@ class ProgramGL::LinkEventNativeParallel final : public LinkEvent
 
     angle::Result wait(const gl::Context *context) override
     {
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::LinkEventNativeParallel::wait");
+
         GLint linkStatus = GL_FALSE;
         mFunctions->getProgramiv(mProgramID, GL_LINK_STATUS, &linkStatus);
         if (linkStatus == GL_TRUE)
@@ -196,6 +205,8 @@ class ProgramGL::LinkEventGL final : public LinkEvent
 
     angle::Result wait(const gl::Context *context) override
     {
+        ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::LinkEventGL::wait");
+
         mWaitableEvent->wait();
         return mPostLinkImplFunctor(mLinkTask->fallbackToMainContext(), mLinkTask->getInfoLog());
     }
@@ -212,6 +223,8 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                                            const gl::ProgramLinkedResources &resources,
                                            gl::InfoLog &infoLog)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::link");
+
     preLink();
 
     if (mState.getAttachedShader(gl::ShaderType::Compute))
@@ -354,12 +367,12 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
                     {
                         const sh::ShaderVariable &outputVar =
                             mState.getOutputVariables()[outputLocation.index];
-                        if (outputVar.location == -1)
+                        if (outputVar.location == -1 || outputVar.index == -1)
                         {
                             // We only need to assign the location and index via the API in case the
-                            // variable doesn't have its location set in the shader. If a variable
-                            // doesn't have its location set in the shader it doesn't have the index
-                            // set either.
+                            // variable doesn't have a shader-assigned location and index. If a
+                            // variable doesn't have its location set in the shader it doesn't have
+                            // the index set either.
                             ASSERT(outputVar.index == -1);
                             mFunctions->bindFragDataLocationIndexed(
                                 mProgramID, static_cast<int>(outputLocationIndex), 0,
@@ -462,6 +475,8 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
     if (mRenderer->hasNativeParallelCompile())
     {
         mFunctions->linkProgram(mProgramID);
+        // Verify the link
+        checkLinkStatus(infoLog);
         return std::make_unique<LinkEventNativeParallel>(postLinkImplTask, mFunctions, mProgramID);
     }
     else if (workerPool->isAsync() &&

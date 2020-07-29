@@ -83,6 +83,11 @@ Error ValidateCreatePbufferFromClientBuffer(Display *display,
                                             Config *config,
                                             const AttributeMap &attributes);
 
+Error ValidateCreatePixmapSurface(Display *display,
+                                  Config *config,
+                                  EGLNativePixmapType pixmap,
+                                  const AttributeMap &attributes);
+
 Error ValidateMakeCurrent(Display *display, Surface *draw, Surface *read, gl::Context *context);
 
 Error ValidateCreateImage(const Display *display,

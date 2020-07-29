@@ -34,6 +34,11 @@ const egl::DisplayExtensions &DisplayImpl::getExtensions() const
     return mExtensions;
 }
 
+egl::Error DisplayImpl::handleGPUSwitch()
+{
+    return egl::NoError();
+}
+
 egl::Error DisplayImpl::validateClientBuffer(const egl::Config *configuration,
                                              EGLenum buftype,
                                              EGLClientBuffer clientBuffer,
@@ -50,6 +55,14 @@ egl::Error DisplayImpl::validateImageClientBuffer(const gl::Context *context,
 {
     UNREACHABLE();
     return egl::EglBadDisplay() << "DisplayImpl::validateImageClientBuffer unimplemented.";
+}
+
+egl::Error DisplayImpl::validatePixmap(egl::Config *config,
+                                       EGLNativePixmapType pixmap,
+                                       const egl::AttributeMap &attributes) const
+{
+    UNREACHABLE();
+    return egl::EglBadDisplay() << "DisplayImpl::valdiatePixmap unimplemented.";
 }
 
 const egl::Caps &DisplayImpl::getCaps() const

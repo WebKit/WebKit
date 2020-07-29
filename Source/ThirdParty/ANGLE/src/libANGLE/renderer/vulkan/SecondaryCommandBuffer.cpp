@@ -10,6 +10,7 @@
 #include "libANGLE/renderer/vulkan/SecondaryCommandBuffer.h"
 #include "common/debug.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
+#include "libANGLE/trace.h"
 
 namespace rx
 {
@@ -144,6 +145,7 @@ void SecondaryCommandBuffer::executeQueuedResetQueryPoolCommands(VkCommandBuffer
 // Parse the cmds in this cmd buffer into given primary cmd buffer
 void SecondaryCommandBuffer::executeCommands(VkCommandBuffer cmdBuffer)
 {
+    ANGLE_TRACE_EVENT0("gpu.angle", "SecondaryCommandBuffer::executeCommands");
     for (const CommandHeader *command : mCommands)
     {
         for (const CommandHeader *currentCommand                      = command;

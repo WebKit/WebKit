@@ -23,8 +23,10 @@
 namespace rx
 {
 // FramebufferMtl implementation
-FramebufferMtl::FramebufferMtl(const gl::FramebufferState &state, bool flipY)
-    : FramebufferImpl(state), mFlipY(flipY)
+FramebufferMtl::FramebufferMtl(const gl::FramebufferState &state,
+                               bool flipY,
+                               WindowSurfaceMtl *backbuffer)
+    : FramebufferImpl(state), mBackbuffer(backbuffer), mFlipY(flipY)
 {
     reset();
 }
@@ -150,6 +152,8 @@ angle::Result FramebufferMtl::readPixels(const gl::Context *context,
                                          const gl::Rectangle &area,
                                          GLenum format,
                                          GLenum type,
+                                         const gl::PixelPackState &pack,
+                                         gl::Buffer *packBuffer,
                                          void *pixels)
 {
     // Clip read area to framebuffer.
@@ -162,35 +166,33 @@ angle::Result FramebufferMtl::readPixels(const gl::Context *context,
         // nothing to read
         return angle::Result::Continue;
     }
-    gl::Rectangle flippedArea = getReadPixelArea(clippedArea);
+    gl::Rectangle flippedArea = getCorrectFlippedReadArea(context, clippedArea);
 
-    ContextMtl *contextMtl              = mtl::GetImpl(context);
-    const gl::State &glState            = context->getState();
-    const gl::PixelPackState &packState = glState.getPackState();
+    ContextMtl *contextMtl = mtl::GetImpl(context);
 
     const gl::InternalFormat &sizedFormatInfo = gl::GetInternalFormatInfo(format, type);
 
     GLuint outputPitch = 0;
     ANGLE_CHECK_GL_MATH(contextMtl,
-                        sizedFormatInfo.computeRowPitch(type, area.width, packState.alignment,
-                                                        packState.rowLength, &outputPitch));
+                        sizedFormatInfo.computeRowPitch(type, area.width, pack.alignment,
+                                                        pack.rowLength, &outputPitch));
     GLuint outputSkipBytes = 0;
-    ANGLE_CHECK_GL_MATH(contextMtl, sizedFormatInfo.computeSkipBytes(
-                                        type, outputPitch, 0, packState, false, &outputSkipBytes));
+    ANGLE_CHECK_GL_MATH(contextMtl, sizedFormatInfo.computeSkipBytes(type, outputPitch, 0, pack,
+                                                                     false, &outputSkipBytes));
 
     outputSkipBytes += (clippedArea.x - area.x) * sizedFormatInfo.pixelBytes +
                        (clippedArea.y - area.y) * outputPitch;
 
     const angle::Format &angleFormat = GetFormatFromFormatType(format, type);
 
-    PackPixelsParams params(flippedArea, angleFormat, outputPitch, packState.reverseRowOrder,
-                            glState.getTargetBuffer(gl::BufferBinding::PixelPack), 0);
+    PackPixelsParams params(flippedArea, angleFormat, outputPitch, pack.reverseRowOrder, packBuffer,
+                            0);
     if (mFlipY)
     {
         params.reverseRowOrder = !params.reverseRowOrder;
     }
 
-    ANGLE_TRY(readPixelsImpl(context, flippedArea, params, getColorReadRenderTarget(),
+    ANGLE_TRY(readPixelsImpl(context, flippedArea, params, getColorReadRenderTarget(context),
                              static_cast<uint8_t *>(pixels) + outputSkipBytes));
 
     return angle::Result::Continue;
@@ -273,7 +275,7 @@ angle::Result FramebufferMtl::syncState(const gl::Context *context,
 
     auto oldRenderPassDesc = mRenderPassDesc;
 
-    ANGLE_TRY(prepareRenderPass(context, mState.getEnabledDrawBuffers(), &mRenderPassDesc));
+    ANGLE_TRY(prepareRenderPass(context, &mRenderPassDesc));
 
     if (!oldRenderPassDesc.equalIgnoreLoadStoreOptions(mRenderPassDesc))
     {
@@ -296,13 +298,27 @@ angle::Result FramebufferMtl::getSamplePosition(const gl::Context *context,
     return angle::Result::Stop;
 }
 
-RenderTargetMtl *FramebufferMtl::getColorReadRenderTarget() const
+RenderTargetMtl *FramebufferMtl::getColorReadRenderTarget(const gl::Context *context) const
 {
     if (mState.getReadIndex() >= mColorRenderTargets.size())
     {
         return nullptr;
     }
+
+    if (mBackbuffer)
+    {
+        if (IsError(mBackbuffer->ensureCurrentDrawableObtained(context)))
+        {
+            return nullptr;
+        }
+    }
+
     return mColorRenderTargets[mState.getReadIndex()];
+}
+
+int FramebufferMtl::getSamples() const
+{
+    return mRenderPassDesc.sampleCount;
 }
 
 gl::Rectangle FramebufferMtl::getCompleteRenderArea() const
@@ -310,48 +326,138 @@ gl::Rectangle FramebufferMtl::getCompleteRenderArea() const
     return gl::Rectangle(0, 0, mState.getDimensions().width, mState.getDimensions().height);
 }
 
-const mtl::RenderPassDesc &FramebufferMtl::getRenderPassDesc(ContextMtl *context)
+bool FramebufferMtl::renderPassHasStarted(ContextMtl *contextMtl) const
 {
-    return mRenderPassDesc;
+    return contextMtl->hasStartedRenderPass(mRenderPassDesc);
+}
+
+mtl::RenderCommandEncoder *FramebufferMtl::ensureRenderPassStarted(const gl::Context *context)
+{
+    return ensureRenderPassStarted(context, mRenderPassDesc);
+}
+
+mtl::RenderCommandEncoder *FramebufferMtl::ensureRenderPassStarted(const gl::Context *context,
+                                                                   const mtl::RenderPassDesc &desc)
+{
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+
+    if (renderPassHasStarted(contextMtl))
+    {
+        return contextMtl->getRenderCommandEncoder();
+    }
+
+    if (mBackbuffer)
+    {
+        // Backbuffer might obtain new drawable, which means it might change the
+        // the native texture used as the target of the render pass.
+        // We need to call this before creating render encoder.
+        if (IsError(mBackbuffer->ensureCurrentDrawableObtained(context)))
+        {
+            return nullptr;
+        }
+    }
+
+    // Only support ensureRenderPassStarted() with different load & store options.
+    // The texture, level, slice must be the same.
+    ASSERT(desc.equalIgnoreLoadStoreOptions(mRenderPassDesc));
+
+    mtl::RenderCommandEncoder *encoder = contextMtl->getRenderCommandEncoder(desc);
+
+    if (mRenderPassCleanStart)
+    {
+        // After a clean start we should reset the loadOp to MTLLoadActionLoad in case this render
+        // pass could be interrupted by a conversion compute shader pass then being resumed later.
+        mRenderPassCleanStart = false;
+        for (mtl::RenderPassColorAttachmentDesc &colorAttachment : mRenderPassDesc.colorAttachments)
+        {
+            colorAttachment.loadAction = MTLLoadActionLoad;
+        }
+        mRenderPassDesc.depthAttachment.loadAction   = MTLLoadActionLoad;
+        mRenderPassDesc.stencilAttachment.loadAction = MTLLoadActionLoad;
+    }
+
+    return encoder;
+}
+
+void FramebufferMtl::setLoadStoreActionOnRenderPassFirstStart(
+    mtl::RenderPassAttachmentDesc *attachmentOut)
+{
+    ASSERT(mRenderPassCleanStart);
+
+    mtl::RenderPassAttachmentDesc &attachment = *attachmentOut;
+
+    if (attachment.storeAction == MTLStoreActionDontCare ||
+        attachment.storeAction == MTLStoreActionMultisampleResolve)
+    {
+        // If we previously discarded attachment's content, then don't need to load it.
+        attachment.loadAction = MTLLoadActionDontCare;
+    }
+    else
+    {
+        attachment.loadAction = MTLLoadActionLoad;
+    }
+
+    if (attachment.hasImplicitMSTexture())
+    {
+        if (mBackbuffer)
+        {
+            // Default action for default framebuffer is resolve and keep MS texture's content.
+            // We only discard MS texture's content at the end of the frame. See onFrameEnd().
+            attachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
+        }
+        else
+        {
+            // Default action is resolve but don't keep MS texture's content.
+            attachment.storeAction = MTLStoreActionMultisampleResolve;
+        }
+    }
+    else
+    {
+        attachment.storeAction = MTLStoreActionStore;  // Default action is store
+    }
 }
 
 void FramebufferMtl::onStartedDrawingToFrameBuffer(const gl::Context *context)
 {
+    mRenderPassCleanStart = true;
+
     // Compute loadOp based on previous storeOp and reset storeOp flags:
     for (mtl::RenderPassColorAttachmentDesc &colorAttachment : mRenderPassDesc.colorAttachments)
     {
-        if (colorAttachment.storeAction == MTLStoreActionDontCare)
-        {
-            // If we previously discarded attachment's content, then don't need to load it.
-            colorAttachment.loadAction = MTLLoadActionDontCare;
-        }
-        else
-        {
-            colorAttachment.loadAction = MTLLoadActionLoad;
-        }
-        colorAttachment.storeAction = MTLStoreActionStore;  // Default action is store
+        setLoadStoreActionOnRenderPassFirstStart(&colorAttachment);
     }
     // Depth load/store
-    if (mRenderPassDesc.depthAttachment.storeAction == MTLStoreActionDontCare)
-    {
-        mRenderPassDesc.depthAttachment.loadAction = MTLLoadActionDontCare;
-    }
-    else
-    {
-        mRenderPassDesc.depthAttachment.loadAction = MTLLoadActionLoad;
-    }
-    mRenderPassDesc.depthAttachment.storeAction = MTLStoreActionStore;
+    setLoadStoreActionOnRenderPassFirstStart(&mRenderPassDesc.depthAttachment);
 
     // Stencil load/store
-    if (mRenderPassDesc.stencilAttachment.storeAction == MTLStoreActionDontCare)
+    setLoadStoreActionOnRenderPassFirstStart(&mRenderPassDesc.stencilAttachment);
+}
+
+void FramebufferMtl::onFrameEnd(const gl::Context *context)
+{
+    if (!mBackbuffer)
     {
-        mRenderPassDesc.stencilAttachment.loadAction = MTLLoadActionDontCare;
+        return;
     }
-    else
+
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    // Always discard default FBO's depth stencil & multisample buffers at the end of the frame:
+    if (this->renderPassHasStarted(contextMtl))
     {
-        mRenderPassDesc.stencilAttachment.loadAction = MTLLoadActionLoad;
+        mtl::RenderCommandEncoder *encoder = contextMtl->getRenderCommandEncoder();
+
+        constexpr GLenum dsAttachments[] = {GL_DEPTH, GL_STENCIL};
+        (void)invalidateImpl(contextMtl, 2, dsAttachments);
+        if (mBackbuffer->getSamples() > 1)
+        {
+            encoder->setColorStoreAction(MTLStoreActionMultisampleResolve, 0);
+        }
+
+        contextMtl->endEncoding(false);
+
+        // Reset discard flag.
+        onStartedDrawingToFrameBuffer(context);
     }
-    mRenderPassDesc.stencilAttachment.storeAction = MTLStoreActionStore;
 }
 
 angle::Result FramebufferMtl::updateColorRenderTarget(const gl::Context *context,
@@ -394,36 +500,53 @@ angle::Result FramebufferMtl::updateCachedRenderTarget(const gl::Context *contex
 }
 
 angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
-                                                gl::DrawBufferMask drawColorBuffers,
                                                 mtl::RenderPassDesc *pDescOut)
 {
-    auto &desc = *pDescOut;
+    gl::DrawBufferMask enabledBuffer = mState.getEnabledDrawBuffers();
 
-    desc.numColorAttachments = static_cast<uint32_t>(drawColorBuffers.count());
-    size_t attachmentIdx     = 0;
+    mtl::RenderPassDesc &desc = *pDescOut;
 
-    for (size_t colorIndexGL : drawColorBuffers)
+    uint32_t maxColorAttachments = static_cast<uint32_t>(mState.getColorAttachments().size());
+    desc.numColorAttachments     = 0;
+    desc.sampleCount             = 1;
+    for (uint32_t colorIndexGL = 0; colorIndexGL < maxColorAttachments; ++colorIndexGL)
     {
-        if (colorIndexGL >= mtl::kMaxRenderTargets)
-        {
-            continue;
-        }
-        const RenderTargetMtl *colorRenderTarget = mColorRenderTargets[colorIndexGL];
-        ASSERT(colorRenderTarget);
+        ASSERT(colorIndexGL < mtl::kMaxRenderTargets);
 
-        mtl::RenderPassColorAttachmentDesc &colorAttachment =
-            desc.colorAttachments[attachmentIdx++];
-        colorRenderTarget->toRenderPassAttachmentDesc(&colorAttachment);
+        mtl::RenderPassColorAttachmentDesc &colorAttachment = desc.colorAttachments[colorIndexGL];
+        const RenderTargetMtl *colorRenderTarget            = mColorRenderTargets[colorIndexGL];
+
+        if (colorRenderTarget && enabledBuffer.test(colorIndexGL))
+        {
+            colorRenderTarget->toRenderPassAttachmentDesc(&colorAttachment);
+
+            desc.numColorAttachments = std::max(desc.numColorAttachments, colorIndexGL + 1);
+            desc.sampleCount = std::max(desc.sampleCount, colorRenderTarget->getRenderSamples());
+        }
+        else
+        {
+            colorAttachment.reset();
+        }
     }
 
     if (mDepthRenderTarget)
     {
         mDepthRenderTarget->toRenderPassAttachmentDesc(&desc.depthAttachment);
+        desc.sampleCount = std::max(desc.sampleCount, mDepthRenderTarget->getRenderSamples());
+    }
+    else
+    {
+        desc.depthAttachment.reset();
     }
 
     if (mStencilRenderTarget)
     {
         mStencilRenderTarget->toRenderPassAttachmentDesc(&desc.stencilAttachment);
+        desc.sampleCount = std::max(desc.sampleCount, mStencilRenderTarget->getRenderSamples());
+    }
+    else
+    {
+        desc.stencilAttachment.reset();
     }
 
     return angle::Result::Continue;
@@ -519,7 +642,7 @@ angle::Result FramebufferMtl::clearWithLoadOp(const gl::Context *context,
     }
 
     // Start new render encoder with loadOp=Clear
-    contextMtl->getRenderCommandEncoder(tempDesc);
+    ensureRenderPassStarted(context, tempDesc);
 
     return angle::Result::Continue;
 }
@@ -532,11 +655,9 @@ angle::Result FramebufferMtl::clearWithDraw(const gl::Context *context,
     DisplayMtl *display    = contextMtl->getDisplay();
 
     // Start new render encoder if not already.
-    mtl::RenderCommandEncoder *encoder = contextMtl->getRenderCommandEncoder(mRenderPassDesc);
+    mtl::RenderCommandEncoder *encoder = ensureRenderPassStarted(context, mRenderPassDesc);
 
-    display->getUtils().clearWithDraw(context, encoder, clearOpts);
-
-    return angle::Result::Continue;
+    return display->getUtils().clearWithDraw(context, encoder, clearOpts);
 }
 
 angle::Result FramebufferMtl::clearImpl(const gl::Context *context,
@@ -661,9 +782,10 @@ angle::Result FramebufferMtl::invalidateImpl(ContextMtl *contextMtl,
     return angle::Result::Continue;
 }
 
-gl::Rectangle FramebufferMtl::getReadPixelArea(const gl::Rectangle &glArea)
+gl::Rectangle FramebufferMtl::getCorrectFlippedReadArea(const gl::Context *context,
+                                                        const gl::Rectangle &glArea) const
 {
-    RenderTargetMtl *colorReadRT = getColorReadRenderTarget();
+    RenderTargetMtl *colorReadRT = getColorReadRenderTarget(context);
     ASSERT(colorReadRT);
     gl::Rectangle flippedArea = glArea;
     if (mFlipY)
@@ -692,11 +814,20 @@ angle::Result FramebufferMtl::readPixelsImpl(const gl::Context *context,
     {
         return angle::Result::Continue;
     }
-    const mtl::TextureRef &texture = renderTarget->getTexture();
 
-    if (!texture)
+    mtl::Texture *texture;
+    if (mBackbuffer)
     {
-        return angle::Result::Continue;
+        // Backbuffer might have MSAA texture as render target, needs to obtain the
+        // resolved texture to be able to read pixels.
+        ANGLE_TRY(mBackbuffer->ensureColorTextureReadyForReadPixels(context));
+        texture = mBackbuffer->getColorTexture().get();
+    }
+    else
+    {
+        texture = renderTarget->getTexture().get();
+        // For non-default framebuffer, MSAA read pixels is disallowed.
+        ANGLE_MTL_CHECK(contextMtl, texture->samples() == 1, GL_INVALID_OPERATION);
     }
 
     const mtl::Format &readFormat        = *renderTarget->getFormat();

@@ -1,34 +1,5 @@
-diff --git a/include/platform/FeaturesGL.h b/include/platform/FeaturesGL.h
-index 4c7595bb4..5756029fb 100644
---- a/include/platform/FeaturesGL.h
-+++ b/include/platform/FeaturesGL.h
-@@ -418,6 +418,12 @@ struct FeaturesGL : FeatureSetBase
-         "Rewrite row major matrices in shaders as column major as a driver bug workaround",
-         &members, "http://anglebug.com/2273"};
- 
-+    // Flush before glBindFramebuffer as a driver bug workaround if necessary.
-+    Feature flushBeforeBindFramebuffer = {
-+        "flush_before_bindframebuffer", FeatureCategory::OpenGLWorkarounds,
-+        "Flush before glBindFramebuffer as a driver bug workaround",
-+        &members, "https://bugs.webkit.org/show_bug.cgi?id=206625"};
-+
-     // Bugs exist in various OpenGL Intel drivers on Windows that produce incorrect
-     // values for GL_COMPRESSED_SRGB_S3TC_DXT1_EXT format. Replace it with
-     // GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT as it's the closest option allowed by
-diff --git a/include/platform/Platform.h b/include/platform/Platform.h
-index 131674008..d065c3a9f 100644
---- a/include/platform/Platform.h
-+++ b/include/platform/Platform.h
-@@ -9,6 +9,7 @@
- #ifndef ANGLE_PLATFORM_H
- #define ANGLE_PLATFORM_H
- 
-+#include <stdlib.h>
- #include <stdint.h>
- #include <stdlib.h>
- #include <array>
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
-index e745806a4..46b05b082 100644
+index bcaba611c..4c68efc0a 100644
 --- a/src/common/utilities.cpp
 +++ b/src/common/utilities.cpp
 @@ -6,6 +6,11 @@
@@ -41,8 +12,8 @@ index e745806a4..46b05b082 100644
 +#endif
 +
  #include "common/utilities.h"
- #include <GLSLANG/ShaderVars.h>
  #include "GLES3/gl3.h"
+ #include "common/mathutil.h"
 diff --git a/src/common/version.h b/src/common/version.h
 index 1aa31fd46..56d6be09c 100644
 --- a/src/common/version.h
@@ -69,7 +40,7 @@ index 4711774cd..cf25e4823 100644
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
-index 2fcd81ec1..56ea8e1d4 100644
+index 5e855f9c3..12531ac24 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
 +++ b/src/compiler/translator/glslang_tab_autogen.cpp
 @@ -1,5 +1,7 @@
@@ -81,7 +52,7 @@ index 2fcd81ec1..56ea8e1d4 100644
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_tab_autogen.h b/src/compiler/translator/glslang_tab_autogen.h
-index 6a1136162..037833680 100644
+index a538b391c..bfc009133 100644
 --- a/src/compiler/translator/glslang_tab_autogen.h
 +++ b/src/compiler/translator/glslang_tab_autogen.h
 @@ -1,5 +1,7 @@
@@ -92,8 +63,24 @@ index 6a1136162..037833680 100644
  /* Bison interface for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+diff --git a/src/gpu_info_util/SystemInfo_macos.mm b/src/gpu_info_util/SystemInfo_macos.mm
+index 25fce1ea6..a8ed7af26 100644
+--- a/src/gpu_info_util/SystemInfo_macos.mm
++++ b/src/gpu_info_util/SystemInfo_macos.mm
+@@ -222,11 +222,6 @@ bool GetSystemInfo(SystemInfo *info)
+         return false;
+     }
+ 
+-    if (info->gpus.empty())
+-    {
+-        return false;
+-    }
+-
+     // Call the generic GetDualGPUInfo function to initialize info fields
+     // such as isOptimus, isAMDSwitchable, and the activeGPUIndex
+     GetDualGPUInfo(info);
 diff --git a/src/libANGLE/Caps.cpp b/src/libANGLE/Caps.cpp
-index ba3d4d9b7..7f7f49266 100644
+index d150fb901..ee4f09e01 100644
 --- a/src/libANGLE/Caps.cpp
 +++ b/src/libANGLE/Caps.cpp
 @@ -625,7 +625,11 @@ static bool DetermineDepthTextureANGLESupport(const TextureCapsMap &textureCaps)
@@ -121,7 +108,7 @@ index ba3d4d9b7..7f7f49266 100644
  
      return GetFormatSupport(textureCaps, requiredFormats, true, true, true, true, false);
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index dbbf869e6..1ace53334 100644
+index c3955f254..cf717e260 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -134,25 +121,30 @@ index dbbf869e6..1ace53334 100644
  #include "libANGLE/State.h"
  
  #include <string.h>
-diff --git a/src/libANGLE/renderer/gl/StateManagerGL.cpp b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-index e2a10cbfd..25306cfa2 100644
---- a/src/libANGLE/renderer/gl/StateManagerGL.cpp
-+++ b/src/libANGLE/renderer/gl/StateManagerGL.cpp
-@@ -580,6 +580,9 @@ void StateManagerGL::setPixelPackBuffer(const gl::Buffer *pixelBuffer)
+diff --git a/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp b/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp
+index af167090d..cf4da9c81 100644
+--- a/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp
++++ b/src/libANGLE/renderer/gl/cgl/ContextCGL.cpp
+@@ -9,6 +9,8 @@
  
- void StateManagerGL::bindFramebuffer(GLenum type, GLuint framebuffer)
- {
-+    if (mFeatures.flushBeforeBindFramebuffer.enabled)
-+        mFunctions->flush();
+ #include "libANGLE/renderer/gl/cgl/ContextCGL.h"
+ 
++#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 +
-     switch (type)
-     {
-         case GL_FRAMEBUFFER:
+ #include "libANGLE/Context.h"
+ #include "libANGLE/Display.h"
+ #include "libANGLE/renderer/gl/cgl/DisplayCGL.h"
+@@ -63,3 +65,5 @@ void ContextCGL::onDestroy(const gl::Context *context)
+ }
+ 
+ }  // namespace rx
++
++#endif  // defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
 diff --git a/src/libANGLE/renderer/gl/cgl/DisplayCGL.mm b/src/libANGLE/renderer/gl/cgl/DisplayCGL.mm
-index 226269909..ae90776da 100644
+index 19bb894b4..79a11d4d2 100644
 --- a/src/libANGLE/renderer/gl/cgl/DisplayCGL.mm
 +++ b/src/libANGLE/renderer/gl/cgl/DisplayCGL.mm
-@@ -294,7 +294,7 @@ egl::Error DisplayCGL::restoreLostDevice(const egl::Display *display)
+@@ -394,7 +394,7 @@ egl::Error DisplayCGL::restoreLostDevice(const egl::Display *display)
  
  bool DisplayCGL::isValidNativeWindow(EGLNativeWindowType window) const
  {
@@ -174,8 +166,71 @@ index d6a86f525..0fa57be43 100644
        mContext(context),
        mFunctions(renderer->getFunctions()),
        mStateManager(renderer->getStateManager()),
+diff --git a/src/libANGLE/renderer/gl/eagl/DeviceEAGL.cpp b/src/libANGLE/renderer/gl/eagl/DeviceEAGL.cpp
+index 9155657d7..a98346192 100644
+--- a/src/libANGLE/renderer/gl/eagl/DeviceEAGL.cpp
++++ b/src/libANGLE/renderer/gl/eagl/DeviceEAGL.cpp
+@@ -8,7 +8,7 @@
+ 
+ #import "common/platform.h"
+ 
+-#if defined(ANGLE_PLATFORM_IOS)
++#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+ 
+ #    include "libANGLE/renderer/gl/eagl/DeviceEAGL.h"
+ 
+@@ -56,4 +56,4 @@ void DeviceEAGL::generateExtensions(egl::DeviceExtensions *outExtensions) const
+ 
+ }  // namespace rx
+ 
+-#endif  // defined(ANGLE_PLATFORM_IOS)
++#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
+diff --git a/src/libANGLE/renderer/gl/eagl/DeviceEAGL.h b/src/libANGLE/renderer/gl/eagl/DeviceEAGL.h
+index 1b4a2db56..57696921e 100644
+--- a/src/libANGLE/renderer/gl/eagl/DeviceEAGL.h
++++ b/src/libANGLE/renderer/gl/eagl/DeviceEAGL.h
+@@ -9,6 +9,10 @@
+ #ifndef LIBANGLE_RENDERER_GL_EAGL_DEVICEEAGL_H_
+ #define LIBANGLE_RENDERER_GL_EAGL_DEVICEEAGL_H_
+ 
++#import "common/platform.h"
++
++#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
++
+ #include "libANGLE/Device.h"
+ #include "libANGLE/renderer/DeviceImpl.h"
+ 
+@@ -30,4 +34,6 @@ class DeviceEAGL : public DeviceImpl
+ 
+ }  // namespace rx
+ 
++#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
++
+ #endif  // LIBANGLE_RENDERER_GL_EAGL_DEVICEEAGL_H_
+diff --git a/src/libANGLE/renderer/gl/eagl/DisplayEAGL.h b/src/libANGLE/renderer/gl/eagl/DisplayEAGL.h
+index f4091f3a7..261ba407d 100644
+--- a/src/libANGLE/renderer/gl/eagl/DisplayEAGL.h
++++ b/src/libANGLE/renderer/gl/eagl/DisplayEAGL.h
+@@ -9,6 +9,10 @@
+ #ifndef LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_
+ #define LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_
+ 
++#import "common/platform.h"
++
++#if defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
++
+ #include "libANGLE/renderer/gl/DisplayGL.h"
+ 
+ #ifdef __OBJC__
+@@ -93,4 +97,6 @@ class DisplayEAGL : public DisplayGL
+ 
+ }  // namespace rx
+ 
++#endif // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
++
+ #endif  // LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_
 diff --git a/src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm b/src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm
-index 29e83871c..85804411d 100644
+index 29e83871c..babc2c463 100644
 --- a/src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm
 +++ b/src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm
 @@ -107,6 +107,7 @@ void DisplayEAGL::terminate()
@@ -203,6 +258,12 @@ index 29e83871c..85804411d 100644
      mContext = nullptr;
  }
  
+@@ -376,4 +378,4 @@ void DisplayEAGL::populateFeatureList(angle::FeatureList *features)
+ }
+ }
+ 
+-#endif  // defined(ANGLE_PLATFORM_IOS)
++#endif  // defined(ANGLE_PLATFORM_IOS) && !defined(ANGLE_PLATFORM_MACCATALYST)
 diff --git a/src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm b/src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm
 index 59c5c2f00..38d253ebd 100644
 --- a/src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm
@@ -223,33 +284,6 @@ index 59c5c2f00..38d253ebd 100644
 +        [mSwapLayer release];
          mSwapLayer = nil;
      }
- 
-diff --git a/src/libANGLE/renderer/gl/formatutilsgl.cpp b/src/libANGLE/renderer/gl/formatutilsgl.cpp
-index 3269cc5bc..8ee04b94a 100644
---- a/src/libANGLE/renderer/gl/formatutilsgl.cpp
-+++ b/src/libANGLE/renderer/gl/formatutilsgl.cpp
-@@ -256,7 +256,7 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
-     InsertFormatMapping(&map, GL_R16F,              VersionOrExts(3, 0, "GL_ARB_texture_rg ARB_texture_float"),    AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float GL_ARB_color_buffer_float"), VersionOrExts(3, 0, "GL_OES_texture_half_float GL_EXT_texture_rg"), VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), ExtsOnly("GL_EXT_texture_storage GL_OES_texture_half_float GL_EXT_texture_rg GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"), ExtsOnly("GL_EXT_texture_rg GL_OES_texture_half_float GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"));
-     InsertFormatMapping(&map, GL_RG16F,             VersionOrExts(3, 0, "GL_ARB_texture_rg ARB_texture_float"),    AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float GL_ARB_color_buffer_float"), VersionOrExts(3, 0, "GL_OES_texture_half_float GL_EXT_texture_rg"), VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), ExtsOnly("GL_EXT_texture_storage GL_OES_texture_half_float GL_EXT_texture_rg GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"), ExtsOnly("GL_EXT_texture_rg GL_OES_texture_half_float GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"));
-     InsertFormatMapping(&map, GL_RGB16F,            VersionOrExts(3, 0, "GL_ARB_texture_float"),                   AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_float GL_ARB_color_buffer_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), ExtsOnly("GL_EXT_texture_storage GL_OES_texture_half_float GL_EXT_color_buffer_half_float"),                                                ExtsOnly("GL_OES_texture_half_float GL_EXT_color_buffer_half_float")                                               );
--    InsertFormatMapping(&map, GL_RGBA16F,           VersionOrExts(3, 0, "GL_ARB_texture_float"),                   AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_float GL_ARB_color_buffer_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), ExtsOnly("GL_OES_texture_half_float GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"),                                          ExtsOnly("GL_OES_texture_half_float GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float")                  );
-+    InsertFormatMapping(&map, GL_RGBA16F,           VersionOrExts(3, 0, "GL_ARB_texture_float"),                   AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_float GL_ARB_color_buffer_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float"),                   VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), ExtsOnly("GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float"),                                                                    ExtsOnly("GL_EXT_color_buffer_half_float", "GL_EXT_color_buffer_float")                                            );
-     InsertFormatMapping(&map, GL_R32F,              VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float"), AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float GL_ARB_color_buffer_float"), VersionOrExts(3, 0, "GL_OES_texture_float GL_EXT_texture_rg"),      ExtsOnly("GL_OES_texture_float_linear"),                 ExtsOnly("GL_EXT_color_buffer_float"),                                                                                                      ExtsOnly("GL_EXT_color_buffer_float")                                                                              );
-     InsertFormatMapping(&map, GL_RG32F,             VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float"), AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_rg GL_ARB_texture_float GL_ARB_color_buffer_float"), VersionOrExts(3, 0, "GL_OES_texture_float GL_EXT_texture_rg"),      ExtsOnly("GL_OES_texture_float_linear"),                 ExtsOnly("GL_EXT_color_buffer_float"),                                                                                                      ExtsOnly("GL_EXT_color_buffer_float")                                                                              );
-     InsertFormatMapping(&map, GL_RGB32F,            VersionOrExts(3, 0, "GL_ARB_texture_float"),                   AlwaysSupported(), VersionOrExts(3, 0, "GL_ARB_texture_float GL_ARB_color_buffer_float"),                   VersionOrExts(3, 0, "GL_OES_texture_float"),                        ExtsOnly("GL_OES_texture_float_linear"),                 NeverSupported(),                                                                                                                           NeverSupported()                                                                                                   );
-diff --git a/src/libANGLE/renderer/gl/renderergl_utils.cpp b/src/libANGLE/renderer/gl/renderergl_utils.cpp
-index c7a8a5498..e9df550b9 100644
---- a/src/libANGLE/renderer/gl/renderergl_utils.cpp
-+++ b/src/libANGLE/renderer/gl/renderergl_utils.cpp
-@@ -1711,6 +1711,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
-                             // TODO(anglebug.com/2273): diagnose crashes with this workaround.
-                             false);
- 
-+    // bugs.webkit.org/show_bug.cgi?id=206625
-+    ANGLE_FEATURE_CONDITION(features, flushBeforeBindFramebuffer, IsApple() && isIntel);
-+
-     // Workaround for incorrect sampling from DXT1 sRGB textures in Intel OpenGL on Windows.
-     ANGLE_FEATURE_CONDITION(features, avoidDXT1sRGBTextureFormat, IsWindows() && isIntel);
  
 diff --git a/src/third_party/volk/volk.c b/src/third_party/volk/volk.c
 index 3517cb4f6..bbc099bdf 100644

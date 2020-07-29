@@ -10,8 +10,8 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_VK_CAPS_UTILS_H_
 #define LIBANGLE_RENDERER_VULKAN_VK_CAPS_UTILS_H_
 
+#include "common/vulkan/vk_headers.h"
 #include "libANGLE/Config.h"
-#include "libANGLE/renderer/vulkan/vk_headers.h"
 
 namespace gl
 {

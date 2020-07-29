@@ -48,6 +48,8 @@ class Sampler;
 class State;
 class Texture;
 
+constexpr GLuint kInitialMaxLevel = 1000;
+
 bool IsMipmapFiltered(const SamplerState &samplerState);
 
 struct ImageDesc final
@@ -97,6 +99,14 @@ struct ContextBindingCount
     ContextID contextID;
     uint32_t samplerBindingCount;
     uint32_t imageBindingCount;
+};
+
+// The source of the syncState call.  Knowing why syncState is being called can help the back-end
+// make more-informed decisions.
+enum class TextureCommand
+{
+    GenerateMipmap,
+    Other,
 };
 
 // State from Table 6.9 (state per texture object) in the OpenGL ES 3.0.2 spec.
@@ -580,7 +590,7 @@ class Texture final : public RefCountObject<TextureID>,
     };
     using DirtyBits = angle::BitSet<DIRTY_BIT_COUNT>;
 
-    angle::Result syncState(const Context *context);
+    angle::Result syncState(const Context *context, TextureCommand source);
     bool hasAnyDirtyBit() const { return mDirtyBits.any(); }
 
     // ObserverInterface implementation.

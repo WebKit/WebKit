@@ -225,7 +225,7 @@ PROC GL_APIENTRY wglGetProcAddress(LPCSTR lpszProc)
     FUNC_EVENT("const char *procname = \"%s\"", lpszProc);
     egl::Thread *thread = egl::GetCurrentThread();
 
-    ProcEntry *entry =
+    const ProcEntry *entry =
         std::lower_bound(&g_procTable[0], &g_procTable[g_numProcs], lpszProc, CompareProc);
 
     thread->setSuccess();

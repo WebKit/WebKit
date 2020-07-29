@@ -13,15 +13,20 @@ The ANGLE test harness is a harness around GoogleTest that provides functionalit
 The ANGLE test harness accepts all standard GoogleTest arguments. The harness also accepts the
 following additional command-line arguments:
 
- * `--shard-count` and `--shard-index` control the test sharding
- * `--bot-mode` enables multi-process execution and test batching
  * `--batch-size` limits the number of tests to run in each batch
  * `--batch-timeout` limits the amount of time spent in each batch
- * `--max-processes` limits the number of simuntaneous processes
- * `--test-timeout` limits the amount of time spent in each test
- * `--results-file` specifies a location for the JSON test result output
- * `--results-directory` specifies a directory to write test results to
+ * `--bot-mode` enables multi-process execution and test batching
+ * `--debug-test-groups` dumps the test config categories when using `bot-mode`
  * `--filter-file` allows passing a larget `gtest_filter` via a file
+ * `--histogram-json-file` outputs a [formatted JSON file][HistogramSet] for perf dashboards
+ * `--max-processes` limits the number of simuntaneous processes
+ * `--results-directory` specifies a directory to write test results to
+ * `--results-file` specifies a location for the JSON test result output
+ * `--shard-count` and `--shard-index` control the test sharding
+ * `--test-timeout` limits the amount of time spent in each test
+
+`--isolated-script-test-output` and `--isolated-script-perf-test-output` mirror `--results-file`
+and `--histogram-json-file` respectively.
 
 As well as the custom command-line arguments we support a few standard GoogleTest arguments:
 
@@ -52,3 +57,4 @@ See the source code for more details: [TestSuite.h](TestSuite.h) and [TestSuite.
 
 [BaseTest]: https://chromium.googlesource.com/chromium/src/+/refs/heads/master/base/test/
 [JSONFormat]: https://chromium.googlesource.com/chromium/src/+/master/docs/testing/json_test_results_format.md
+[HistogramSet]: https://chromium.googlesource.com/catapult/+/HEAD/docs/histogram-set-json-format.md

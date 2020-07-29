@@ -258,10 +258,16 @@ class ProgramState final : angle::NonCopyable
         return mExecutable->getShaderStorageBlocks();
     }
     const std::vector<BufferVariable> &getBufferVariables() const { return mBufferVariables; }
-    const std::vector<SamplerBinding> &getSamplerBindings() const { return mSamplerBindings; }
-    const std::vector<ImageBinding> &getImageBindings() const { return mImageBindings; }
+    const std::vector<SamplerBinding> &getSamplerBindings() const
+    {
+        return mExecutable->getSamplerBindings();
+    }
+    const std::vector<ImageBinding> &getImageBindings() const
+    {
+        return mExecutable->getImageBindings();
+    }
     const sh::WorkGroupSize &getComputeShaderLocalSize() const { return mComputeShaderLocalSize; }
-    const RangeUI &getDefaultUniformRange() const { return mDefaultUniformRange; }
+    const RangeUI &getDefaultUniformRange() const { return mExecutable->getDefaultUniformRange(); }
     const RangeUI &getSamplerUniformRange() const { return mExecutable->getSamplerUniformRange(); }
     const RangeUI &getImageUniformRange() const { return mExecutable->getImageUniformRange(); }
     const RangeUI &getAtomicCounterUniformRange() const { return mAtomicCounterUniformRange; }
@@ -279,9 +285,6 @@ class ProgramState final : angle::NonCopyable
         return mExecutable->getAtomicCounterBuffers();
     }
 
-    // Count the number of uniform and storage buffer declarations, counting arrays as one.
-    size_t getTransformFeedbackBufferCount() const;
-
     GLuint getUniformIndexFromName(const std::string &name) const;
     GLuint getUniformIndexFromLocation(UniformLocation location) const;
     Optional<GLuint> getSamplerIndex(UniformLocation location) const;
@@ -290,7 +293,6 @@ class ProgramState final : angle::NonCopyable
     GLuint getUniformIndexFromSamplerIndex(GLuint samplerIndex) const;
     bool isImageUniformIndex(GLuint index) const;
     GLuint getImageIndexFromUniformIndex(GLuint uniformIndex) const;
-    GLuint getUniformIndexFromImageIndex(GLuint imageIndex) const;
     GLuint getAttributeLocation(const std::string &name) const;
 
     GLuint getBufferVariableIndexFromName(const std::string &name) const;
@@ -319,16 +321,7 @@ class ProgramState final : angle::NonCopyable
         return *mExecutable;
     }
 
-    bool hasDefaultUniforms() const { return !getDefaultUniformRange().empty(); }
-    bool hasTextures() const { return !getSamplerBindings().empty(); }
-    bool hasUniformBuffers() const { return !getUniformBlocks().empty(); }
-    bool hasStorageBuffers() const { return !getShaderStorageBlocks().empty(); }
-    bool hasAtomicCounterBuffers() const { return !getAtomicCounterBuffers().empty(); }
     bool hasImages() const { return !getImageBindings().empty(); }
-    bool hasTransformFeedbackOutput() const
-    {
-        return !getLinkedTransformFeedbackVaryings().empty();
-    }
     bool hasEarlyFragmentTestsOptimization() const { return mEarlyFramentTestsOptimization; }
 
     bool isShaderMarkedForDetach(gl::ShaderType shaderType) const
@@ -346,7 +339,6 @@ class ProgramState final : angle::NonCopyable
 
     void updateTransformFeedbackStrides();
     void updateActiveSamplers();
-    void updateActiveImages();
     void updateProgramInterfaceInputs();
     void updateProgramInterfaceOutputs();
 
@@ -368,14 +360,7 @@ class ProgramState final : angle::NonCopyable
 
     std::vector<VariableLocation> mUniformLocations;
     std::vector<BufferVariable> mBufferVariables;
-    RangeUI mDefaultUniformRange;
     RangeUI mAtomicCounterUniformRange;
-
-    // An array of the samplers that are used by the program
-    std::vector<SamplerBinding> mSamplerBindings;
-
-    // An array of the images that are used by the program
-    std::vector<ImageBinding> mImageBindings;
 
     // EXT_blend_func_extended secondary outputs (ones with index 1) in ESSL 3.00 shaders.
     std::vector<VariableLocation> mSecondaryOutputLocations;
@@ -435,7 +420,7 @@ struct ProgramVaryingRef
 
 using ProgramMergedVaryings = std::vector<ProgramVaryingRef>;
 
-class Program final : angle::NonCopyable, public LabeledObject
+class Program final : public LabeledObject, public angle::Subject
 {
   public:
     Program(rx::GLImplFactory *factory, ShaderProgramManager *manager, ShaderProgramID handle);
@@ -716,11 +701,10 @@ class Program final : angle::NonCopyable, public LabeledObject
     Optional<bool> getCachedValidateSamplersResult() { return mCachedValidateSamplersResult; }
     void setCachedValidateSamplersResult(bool result) { mCachedValidateSamplersResult = result; }
 
-    const std::vector<SamplerBinding> &getSamplerBindings() const;
     const std::vector<ImageBinding> &getImageBindings() const
     {
         ASSERT(!mLinkingState);
-        return mState.mImageBindings;
+        return mState.mExecutable->getImageBindings();
     }
     const sh::WorkGroupSize &getComputeShaderLocalSize() const;
     PrimitiveMode getGeometryShaderInputPrimitiveType() const;
@@ -837,6 +821,8 @@ class Program final : angle::NonCopyable, public LabeledObject
                                             const std::vector<sh::ShaderVariable> &fragmentVaryings,
                                             int vertexShaderVersion,
                                             InfoLog &infoLog);
+
+    void fillProgramStateMap(ShaderMap<const ProgramState *> *programStatesOut);
 
   private:
     struct LinkingState;

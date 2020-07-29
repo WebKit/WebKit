@@ -81,6 +81,13 @@ New Tokens
         EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE      0x320A
         EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE          0x345E
 
+    Accepted as values for the EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE
+    attribute:
+
+        EGL_PLATFORM_X11_EXT                               0x31D5
+        EGL_PLATFORM_DEVICE_EXT                            0x313F
+        EGL_PLATFORM_SURFACELESS_MESA                      0x31DD
+
 Additions to the EGL Specification
 
     None.
@@ -137,6 +144,12 @@ New Behavior
     default setting depends on the implementation. Any value other than these
     will result in an error.
 
+    EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE is an additional optional
+    attribute that helps ANGLE to identify what native underlaying platform
+    it should use. If no display matching the requested type of native platform
+    found, EGL_NO_DISPLAY should be returned. if no <attrib_list> is specified
+    to eglGetPlatformDisplayEXT, ANGLE is free to make the choice.
+
 Issues
 
     1) Should the validation layers default to on, off, or no guarantee?
@@ -161,3 +174,5 @@ Revision History
       - Add a debug layers enabled attribute to control runtime validation.
     Version 5, 2017-12-28 (Jamie Madill)
       - Expose device type selection.
+    Version 6, 2020-05-28 (Maksim Sisov)
+      - Add EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE attribute.

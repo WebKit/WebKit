@@ -115,6 +115,15 @@
     "fallbackFormat": "R8G8B8A8_UNORM",
     "glInternalFormat": "GL_BGRX8_ANGLEX"
   },
+  "B10G10R10A2_UNORM": {
+    "texFormat": "DXGI_FORMAT_R10G10B10A2_UNORM",
+    "srvFormat": "DXGI_FORMAT_R10G10B10A2_UNORM",
+    "rtvFormat": "DXGI_FORMAT_R10G10B10A2_UNORM",
+    "channels": "rgba",
+    "componentType": "unorm",
+    "bits": { "red": 10, "green": 10, "blue": 10, "alpha": 2 },
+    "glInternalFormat": "GL_RGB10_A2"
+  },
   "BC1_RGBA_UNORM_BLOCK": {
     "texFormat": "DXGI_FORMAT_BC1_UNORM",
     "srvFormat": "DXGI_FORMAT_BC1_UNORM",

@@ -15,6 +15,29 @@
 #include "common/debug.h"
 #include "common/system_utils.h"
 
+#include "common/vulkan/vk_ext_provoking_vertex.h"
+#include "common/vulkan/vk_google_filtering_precision.h"
+
+namespace
+{
+void ResetEnvironmentVar(const char *variableName, const Optional<std::string> &value)
+{
+    if (!value.valid())
+    {
+        return;
+    }
+
+    if (value.value().empty())
+    {
+        angle::UnsetEnvironmentVar(variableName);
+    }
+    else
+    {
+        angle::SetEnvironmentVar(variableName, value.value().c_str());
+    }
+}
+}  // namespace
+
 namespace angle
 {
 
@@ -40,8 +63,9 @@ const std::string WrapICDEnvironment(const char *icdEnvironment)
 constexpr char kLoaderLayersPathEnv[] = "VK_LAYER_PATH";
 #endif
 
-constexpr char kLoaderICDFilenamesEnv[]   = "VK_ICD_FILENAMES";
-constexpr char kANGLEPreferredDeviceEnv[] = "ANGLE_PREFERRED_DEVICE";
+constexpr char kLoaderICDFilenamesEnv[]              = "VK_ICD_FILENAMES";
+constexpr char kANGLEPreferredDeviceEnv[]            = "ANGLE_PREFERRED_DEVICE";
+constexpr char kValidationLayersCustomSTypeListEnv[] = "VK_LAYER_CUSTOM_STYPE_LIST";
 
 constexpr uint32_t kMockVendorID = 0xba5eba11;
 constexpr uint32_t kMockDeviceID = 0xf005ba11;
@@ -143,6 +167,12 @@ ScopedVkLoaderEnvironment::ScopedVkLoaderEnvironment(bool enableValidationLayers
             ERR() << "Error setting environment for Vulkan layers init.";
             mEnableValidationLayers = false;
         }
+
+        if (!setCustomExtensionsEnvironment())
+        {
+            ERR() << "Error setting custom list for custom extensions for Vulkan layers init.";
+            mEnableValidationLayers = false;
+        }
     }
 #endif  // !defined(ANGLE_PLATFORM_ANDROID)
 }
@@ -158,15 +188,10 @@ ScopedVkLoaderEnvironment::~ScopedVkLoaderEnvironment()
     }
     if (mChangedICDEnv)
     {
-        if (mPreviousICDEnv.value().empty())
-        {
-            angle::UnsetEnvironmentVar(kLoaderICDFilenamesEnv);
-        }
-        else
-        {
-            angle::SetEnvironmentVar(kLoaderICDFilenamesEnv, mPreviousICDEnv.value().c_str());
-        }
+        ResetEnvironmentVar(kLoaderICDFilenamesEnv, mPreviousICDEnv);
     }
+
+    ResetEnvironmentVar(kValidationLayersCustomSTypeListEnv, mPreviousCustomExtensionsEnv);
 }
 
 bool ScopedVkLoaderEnvironment::setICDEnvironment(const char *icd)
@@ -181,6 +206,40 @@ bool ScopedVkLoaderEnvironment::setICDEnvironment(const char *icd)
         mICD = vk::ICD::Default;
     }
     return mChangedICDEnv;
+}
+
+bool ScopedVkLoaderEnvironment::setCustomExtensionsEnvironment()
+{
+    struct CustomExtension
+    {
+        VkStructureType type;
+        size_t size;
+    };
+
+    CustomExtension customExtensions[] = {
+
+        {VK_STRUCTURE_TYPE_SAMPLER_FILTERING_PRECISION_GOOGLE,
+         sizeof(VkSamplerFilteringPrecisionGOOGLE)},
+
+        {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT,
+         sizeof(VkPhysicalDeviceProvokingVertexFeaturesEXT)},
+    };
+
+    mPreviousCustomExtensionsEnv = angle::GetEnvironmentVar(kValidationLayersCustomSTypeListEnv);
+
+    std::stringstream strstr;
+    for (CustomExtension &extension : customExtensions)
+    {
+        if (strstr.tellp() != std::streampos(0))
+        {
+            strstr << angle::GetPathSeparatorForEnvironmentVar();
+        }
+
+        strstr << extension.type << angle::GetPathSeparatorForEnvironmentVar() << extension.size;
+    }
+
+    return angle::PrependPathToEnvironmentVar(kValidationLayersCustomSTypeListEnv,
+                                              strstr.str().c_str());
 }
 
 void ChoosePhysicalDevice(const std::vector<VkPhysicalDevice> &physicalDevices,

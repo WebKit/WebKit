@@ -437,15 +437,38 @@ struct FeaturesGL : FeatureSetBase
                                   "Disable GL_EXT_semaphore_fd extension", &members,
                                   "https://crbug.com/1046462"};
 
+    // GL_EXT_disjoint_timer_query doesn't work properly with Linux VMWare drivers.
+    Feature disableTimestampQueries = {
+        "disable_timestamp_queries", FeatureCategory::OpenGLWorkarounds,
+        "Disable GL_EXT_disjoint_timer_query extension", &members, "https://crbug.com/811661"};
+
+    // Some drivers use linear blending when generating mipmaps for sRGB textures. Work around this
+    // by generating mipmaps in a linear texture and copying back to sRGB.
+    Feature encodeAndDecodeSRGBForGenerateMipmap = {
+        "decode_encode_srgb_for_generatemipmap", FeatureCategory::OpenGLWorkarounds,
+        "Decode and encode before generateMipmap for srgb format textures.", &members,
+        "http://anglebug.com/4646"};
+
     Feature emulateCopyTexImage2DFromRenderbuffers = {
         "emulate_copyteximage2d_from_renderbuffers", FeatureCategory::OpenGLWorkarounds,
         "CopyTexImage2D spuriously returns errors on iOS when copying from renderbuffers.",
         &members, "https://anglebug.com/4674"};
 
+    Feature disableGPUSwitchingSupport = {
+        "disable_gpu_switching_support", FeatureCategory::OpenGLWorkarounds,
+        "Disable GPU switching support (use only the low-power GPU) on older MacBook Pros.",
+        &members, "https://crbug.com/1091824"};
+
+    // KHR_parallel_shader_compile fails TSAN on Linux, so we avoid using it with this workaround.
+    Feature disableNativeParallelCompile = {
+        "disable_native_parallel_compile", FeatureCategory::OpenGLWorkarounds,
+        "Do not use native KHR_parallel_shader_compile even when available.", &members,
+        "http://crbug.com/1094869"};
+
     Feature emulatePackSkipRowsAndPackSkipPixels = {
         "emulate_pack_skip_rows_and_pack_skip_pixels", FeatureCategory::OpenGLWorkarounds,
-        "GL_PACK_SKIP_ROWS and GL_PACK_SKIP_PIXELS are ignored in Apple's OpenGL driver.",
-        &members, "https://anglebug.com/4849"};
+        "GL_PACK_SKIP_ROWS and GL_PACK_SKIP_PIXELS are ignored in Apple's OpenGL driver.", &members,
+        "https://anglebug.com/4849"};
 };
 
 inline FeaturesGL::FeaturesGL()  = default;

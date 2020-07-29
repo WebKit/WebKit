@@ -39,11 +39,11 @@ angle::Result SamplerVk::syncState(const gl::Context *context, const bool dirty)
         mSampler.reset();
     }
 
-    vk::SamplerDesc desc(mState, false);
+    vk::SamplerDesc desc(mState, false, 0);
     ANGLE_TRY(renderer->getSamplerCache().getSampler(contextVk, desc, &mSampler));
 
     // Regenerate the serial on a sampler change.
-    mSerial = contextVk->generateTextureSerial();
+    mSerial = contextVk->generateSamplerSerial();
     return angle::Result::Continue;
 }
 

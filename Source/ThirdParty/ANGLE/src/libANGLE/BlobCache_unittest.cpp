@@ -58,7 +58,8 @@ TEST(BlobCacheTest, MaxSizedValue)
     EXPECT_FALSE(blobCache.empty());
 
     Blob blob;
-    EXPECT_FALSE(blobCache.get(nullptr, MakeKey(0), &blob));
+    size_t blobSize;
+    EXPECT_FALSE(blobCache.get(nullptr, MakeKey(0), &blob, &blobSize));
 
     blobCache.clear();
     EXPECT_TRUE(blobCache.empty());
@@ -75,7 +76,8 @@ TEST(BlobCacheTest, ManySmallValues)
         blobCache.populate(MakeKey(value), MakeBlob(1, value));
 
         Blob qvalue;
-        EXPECT_TRUE(blobCache.get(nullptr, MakeKey(value), &qvalue));
+        size_t blobSize;
+        EXPECT_TRUE(blobCache.get(nullptr, MakeKey(value), &qvalue, &blobSize));
         if (qvalue.size() > 0)
         {
             EXPECT_EQ(value, qvalue[0]);
@@ -89,7 +91,8 @@ TEST(BlobCacheTest, ManySmallValues)
     blobCache.populate(MakeKey(kSize), MakeBlob(1, kSize));
 
     Blob qvalue;
-    EXPECT_FALSE(blobCache.get(nullptr, MakeKey(0), &qvalue));
+    size_t blobSize;
+    EXPECT_FALSE(blobCache.get(nullptr, MakeKey(0), &qvalue, &blobSize));
 
     // Putting one large element cleans out the whole stack.
     blobCache.populate(MakeKey(kSize + 1), MakeBlob(kSize, kSize + 1));
@@ -98,9 +101,9 @@ TEST(BlobCacheTest, ManySmallValues)
 
     for (size_t value = 0; value <= kSize; ++value)
     {
-        EXPECT_FALSE(blobCache.get(nullptr, MakeKey(value), &qvalue));
+        EXPECT_FALSE(blobCache.get(nullptr, MakeKey(value), &qvalue, &blobSize));
     }
-    EXPECT_TRUE(blobCache.get(nullptr, MakeKey(kSize + 1), &qvalue));
+    EXPECT_TRUE(blobCache.get(nullptr, MakeKey(kSize + 1), &qvalue, &blobSize));
     if (qvalue.size() > 0)
     {
         EXPECT_EQ(kSize + 1, qvalue[0]);
@@ -124,7 +127,8 @@ TEST(BlobCacheTest, OversizeValue)
     blobCache.populate(MakeKey(5), MakeBlob(100));
 
     Blob qvalue;
-    EXPECT_FALSE(blobCache.get(nullptr, MakeKey(5), &qvalue));
+    size_t blobSize;
+    EXPECT_FALSE(blobCache.get(nullptr, MakeKey(5), &qvalue, &blobSize));
 }
 
 }  // namespace egl
