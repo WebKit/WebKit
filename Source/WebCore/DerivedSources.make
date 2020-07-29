@@ -397,9 +397,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/ChannelCountMode.idl \
     $(WebCore)/Modules/webaudio/ChannelInterpretation.idl \
     $(WebCore)/Modules/webaudio/ChannelMergerNode.idl \
-    $(WebCore)/Modules/webaudio/ChannelMergerOptions.idl \
     $(WebCore)/Modules/webaudio/ChannelSplitterNode.idl \
-	$(WebCore)/Modules/webaudio/ChannelSplitterOptions.idl \
     $(WebCore)/Modules/webaudio/ConvolverNode.idl \
     $(WebCore)/Modules/webaudio/DelayNode.idl \
     $(WebCore)/Modules/webaudio/DistanceModelType.idl \

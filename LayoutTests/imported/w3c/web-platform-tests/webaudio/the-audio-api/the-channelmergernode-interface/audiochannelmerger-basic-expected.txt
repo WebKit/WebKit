@@ -5,15 +5,15 @@ PASS Executing "exceptions-properties"
 PASS Audit report 
 PASS > [exceptions-channels]  
 PASS   context.createChannelMerger() did not throw an exception. 
-PASS   context.createChannelMerger(0) threw IndexSizeError: "Number of inputs is not in the allowed range.". 
+PASS   context.createChannelMerger(0) threw IndexSizeError: "The index is not in the allowed range.". 
 PASS   context.createChannelMerger(32) did not throw an exception. 
-PASS   context.createChannelMerger(33) threw IndexSizeError: "Number of inputs is not in the allowed range.". 
+PASS   context.createChannelMerger(33) threw IndexSizeError: "The index is not in the allowed range.". 
 PASS < [exceptions-channels] All assertions passed. (total 4 assertions) 
 PASS > [exceptions-properties]  
-PASS   merger.channelCount is equal to 1. 
-PASS   merger.channelCount = 3 threw InvalidStateError: "Channel count cannot be changed from 1.". 
-PASS   merger.channelCountMode is equal to explicit. 
-PASS   merger.channelCountMode = "max" threw InvalidStateError: "Channel count mode cannot be changed from explicit.". 
-PASS < [exceptions-properties] All assertions passed. (total 4 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+FAIL X merger.channelCount is not equal to 1. Got 2. assert_true: expected true got false
+FAIL X merger.channelCount = 3 did not throw an exception. assert_true: expected true got false
+FAIL X merger.channelCountMode is not equal to explicit. Got max. assert_true: expected true got false
+FAIL X merger.channelCountMode = "max" did not throw an exception. assert_true: expected true got false
+FAIL < [exceptions-properties] 4 out of 4 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
 

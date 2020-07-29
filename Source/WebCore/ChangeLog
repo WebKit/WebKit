@@ -1,3 +1,18 @@
+2020-07-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r265002.
+        https://bugs.webkit.org/show_bug.cgi?id=214919
+
+        Broke imported/w3c/web-platform-tests/webaudio/the-audio-api
+        /the-scriptprocessornode-interface/simple-input-output.html
+
+        Reverted changeset:
+
+        "Added constructor methods to ChannelMergerNode,
+        ChannelSplitterNode"
+        https://bugs.webkit.org/show_bug.cgi?id=214851
+        https://trac.webkit.org/changeset/265002
+
 2020-07-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] REGRESSION(r264986) Unreviewed crash fix

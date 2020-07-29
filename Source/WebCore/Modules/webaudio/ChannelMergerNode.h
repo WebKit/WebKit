@@ -29,7 +29,6 @@
 #pragma once
 
 #include "AudioNode.h"
-#include "ChannelMergerOptions.h"
 
 namespace WebCore {
 
@@ -38,18 +37,15 @@ class AudioContext;
 class ChannelMergerNode final : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(ChannelMergerNode);
 public:
-    static ExceptionOr<Ref<ChannelMergerNode>> create(BaseAudioContext&, const ChannelMergerOptions& = { });
-    
+    static RefPtr<ChannelMergerNode> create(BaseAudioContext&, float sampleRate, unsigned numberOfInputs);
+
     // AudioNode
     void process(size_t framesToProcess) override;
     void reset() override;
 
     // Called in the audio thread (pre-rendering task) when the number of channels for an input may have changed.
     void checkNumberOfChannelsForInput(AudioNodeInput*) override;
-    
-    ExceptionOr<void> setChannelCount(unsigned) final;
-    ExceptionOr<void> setChannelCountMode(ChannelCountMode) final;
-    
+
 private:
     unsigned m_desiredNumberOfOutputChannels;
 
