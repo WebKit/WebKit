@@ -1,3 +1,16 @@
+2020-07-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r265018.
+        https://bugs.webkit.org/show_bug.cgi?id=214917
+
+        Broke various ios-wk2 tests.
+
+        Reverted changeset:
+
+        "Migrate App-Bound Domains code from WebKit Additions"
+        https://bugs.webkit.org/show_bug.cgi?id=214889
+        https://trac.webkit.org/changeset/265018
+
 2020-07-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (r264930): [ iOS debug wk2 ] webrtc/video.html is a constant failure

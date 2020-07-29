@@ -312,7 +312,6 @@ public:
 private:
     enum class ForceReinitialization : bool { No, Yes };
     void initializeAppBoundDomains(ForceReinitialization = ForceReinitialization::No);
-    void addTestDomains() const;
 
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 

@@ -29,7 +29,6 @@
 #import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationManager.h"
 #import "DataReference.h"
-#import "DefaultWebBrowserChecks.h"
 #import "Download.h"
 #import "LegacyCustomProtocolManager.h"
 #import "Logging.h"
@@ -64,6 +63,7 @@
 #import <WebKitAdditions/NetworkSessionCocoaAdditions.h>
 #else
 #define NETWORK_SESSION_COCOA_ADDITIONS_1
+#define NETWORK_SESSION_COCOA_ADDITIONS_2 true
 #endif
 
 #import "DeviceManagementSoftLink.h"
@@ -1152,29 +1152,6 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
 }
 
-#if HAVE(SESSION_CLEANUP)
-static void activateSessionCleanup(NetworkSessionCocoa& session, const NetworkSessionCreationParameters& parameters)
-{
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000)
-    // Don't override an explicitly set value.
-    if (parameters.resourceLoadStatisticsParameters.isItpStateExplicitlySet)
-        return;
-
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    auto parentAuditToken = session.networkProcess().parentProcessConnection()->getAuditToken();
-    RELEASE_ASSERT(parentAuditToken); // This should be impossible.
-
-    bool itpEnabled = doesParentProcessHaveITPEnabled(parentAuditToken);
-    bool passedEnabledState = session.isResourceLoadStatisticsEnabled();
-
-    if (itpEnabled != passedEnabledState)
-        WTFLogAlways("Passed ITP enabled state (%d) does not match TCC setting (%d)\n", itpEnabled, passedEnabledState);
-    session.setResourceLoadStatisticsEnabled(passedEnabledState);
-#endif
-#endif
-}
-#endif
-
 NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, NetworkSessionCreationParameters&& parameters)
     : NetworkSession(networkProcess, parameters)
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
@@ -1315,7 +1292,7 @@ void NetworkSessionCocoa::initializeEphemeralStatelessSession(NavigatingToAppBou
 SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
-    if (isParentProcessAFullWebBrowser(networkProcess().parentProcessConnection()->getAuditToken()))
+    if (NETWORK_SESSION_COCOA_ADDITIONS_2)
         shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* storageSession = networkStorageSession()) {

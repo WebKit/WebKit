@@ -27,7 +27,6 @@
 #import "WebsiteDataStore.h"
 
 #import "CookieStorageUtilsCF.h"
-#import "DefaultWebBrowserChecks.h"
 #import "SandboxUtilities.h"
 #import "StorageManager.h"
 #import "WebFramePolicyListenerProxy.h"
@@ -45,6 +44,12 @@
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
 #import <wtf/text/StringBuilder.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebsiteDataStoreAdditions.h>
+#else
+#define WEBSITE_DATA_STORE_ADDITIONS
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIApplication.h>
@@ -458,23 +463,11 @@ void WebsiteDataStore::initializeAppBoundDomains(ForceReinitialization forceRein
     });
 }
 
-void WebsiteDataStore::addTestDomains() const
-{
-    if (appBoundDomains().isEmpty()) {
-        auto bundleID = WebCore::applicationBundleIdentifier();
-        auto appBoundDomainsTesting = getAppBoundDomainsTesting(bundleID);
-        if (appBoundDomainsTesting) {
-            for (auto& domain : *appBoundDomainsTesting)
-                appBoundDomains().add(domain);
-        }
-    }
-}
-
 void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&, const HashSet<String>&)>&& completionHandler) const
 {
     if (hasInitializedAppBoundDomains) {
         if (m_isInAppBrowserPrivacyTestModeEnabled) {
-            addTestDomains();
+            WEBSITE_DATA_STORE_ADDITIONS;
         }
         completionHandler(appBoundDomains(), appBoundSchemes());
         return;
@@ -486,7 +479,7 @@ void WebsiteDataStore::ensureAppBoundDomains(CompletionHandler<void(const HashSe
         RunLoop::main().dispatch([this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(hasInitializedAppBoundDomains);
             if (m_isInAppBrowserPrivacyTestModeEnabled) {
-                addTestDomains();
+                WEBSITE_DATA_STORE_ADDITIONS;
             }
             completionHandler(appBoundDomains(), appBoundSchemes());
         });

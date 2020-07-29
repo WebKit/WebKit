@@ -45,6 +45,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/InAppBrowserPrivacyTestAdditions.h>
+
 static bool isDone;
 
 @interface AppBoundDomainDelegate : NSObject <WKNavigationDelegate>
@@ -128,14 +131,14 @@ static bool subFrameReceivedScriptSource = false;
 static void cleanUpInAppBrowserPrivacyTestSettings()
 {
     WebCore::clearApplicationBundleIdentifierTestingOverride();
-    WebCore::setApplicationBundleIdentifier("com.apple.WebKit.TestWebKitAPI");
+    IN_APP_BROWSER_PRIVACY_ADDITIONS_2
 }
 
 static void initializeInAppBrowserPrivacyTestSettings()
 {
     WTF::initializeMainThread();
     WebCore::clearApplicationBundleIdentifierTestingOverride();
-    WebCore::setApplicationBundleIdentifier("inAppBrowserPrivacyTestIdentifier");
+    IN_APP_BROWSER_PRIVACY_ADDITIONS
 }
 
 TEST(InAppBrowserPrivacy, NonAppBoundDomainFailedUserScriptAtStart)
@@ -1334,5 +1337,7 @@ TEST(InAppBrowserPrivacy, AppBoundCustomScheme)
     
     TestWebKitAPI::Util::run(&isDone);
 }
+
+#endif // USE(APPLE_INTERNAL_SDK)
 
 #endif // PLATFORM(IOS_FAMILY)
