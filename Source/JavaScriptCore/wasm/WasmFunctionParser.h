@@ -636,14 +636,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
         for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i) {
             TypedExpression arg = m_expressionStack.at(i);
-            if (i < calleeSignature.argumentCount())
+            if (i < m_expressionStack.size() - 1)
                 WASM_VALIDATOR_FAIL_IF(!isSubtype(arg.type(), calleeSignature.argument(i - firstArgumentIndex)), "argument type mismatch in call_indirect, got ", arg.type(), ", expected ", calleeSignature.argument(i - firstArgumentIndex));
             args.uncheckedAppend(arg);
             m_context.didPopValueFromStack();
         }
         m_expressionStack.shrink(firstArgumentIndex);
-
-
 
         ResultList results;
         WASM_TRY_ADD_TO_CONTEXT(addCallIndirect(tableIndex, calleeSignature, args, results));
