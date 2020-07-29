@@ -356,7 +356,7 @@
       "name": "iOS-13-Build-EWS",
       "shortname": "ios",
       "icon": "buildOnly",
-      "factory": "iOSBuildFactory",
+      "factory": "iOSEmbeddedBuildFactory",
       "platform": "ios-13",
       "configuration": "release",
       "architectures": ["arm64"],

@@ -171,7 +171,20 @@ class TestBuildFactory(TestCase):
         ])
 
     def test_ios_build_factory(self):
-        factory = factories.iOSBuildFactory(platform='ios-13', configuration='release', architectures=["arm64"])
+        factory = factories.iOSBuildFactory(platform='ios-simulator-13', configuration='release', architectures=["x86_64"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='ios-simulator-13', configuration='release', architectures=["x86_64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=False),
+        ])
+
+    def test_ios_embedded_build_factory(self):
+        factory = factories.iOSEmbeddedBuildFactory(platform='ios-13', configuration='release', architectures=["arm64"])
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='ios-13', configuration='release', architectures=["arm64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.ValidatePatch),
@@ -180,7 +193,7 @@ class TestBuildFactory(TestCase):
             _BuildStepFactory(steps.CheckOutSpecificRevision),
             _BuildStepFactory(steps.ApplyPatch),
             _BuildStepFactory(steps.KillOldProcesses),
-            _BuildStepFactory(steps.CompileWebKit, skipUpload=False),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=True),
         ])
 
     def test_watchos_build_factory(self):

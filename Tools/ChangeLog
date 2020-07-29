@@ -1,5 +1,16 @@
 2020-07-29  Jonathan Bedard  <jbedard@apple.com>
 
+        [ews.webkit.org] Skip build upload for embedded iOS builds
+        https://bugs.webkit.org/show_bug.cgi?id=214923
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/config.json: Skip upload for iOS Embedded builds.
+        * BuildSlaveSupport/ews-build/factories.py:
+        (iOSEmbeddedBuildFactory): Skip building and uploading product archive.
+
+2020-07-29  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitcorepy] Add an auto-installer
         https://bugs.webkit.org/show_bug.cgi?id=214606
 
