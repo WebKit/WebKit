@@ -33,6 +33,7 @@ WEBCORE_EXPORT bool systemHasBattery();
 WEBCORE_EXPORT void resetSystemHasAC();
 WEBCORE_EXPORT void setSystemHasAC(bool);
 WEBCORE_EXPORT bool systemHasAC();
+WEBCORE_EXPORT Optional<bool> cachedSystemHasAC();
 
 WEBCORE_EXPORT void setOverrideSystemHasBatteryForTesting(Optional<bool>&&);
 WEBCORE_EXPORT void setOverrideSystemHasACForTesting(Optional<bool>&&);

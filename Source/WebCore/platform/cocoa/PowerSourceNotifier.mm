@@ -36,11 +36,20 @@ PowerSourceNotifier::PowerSourceNotifier(PowerSourceNotifierCallback&& callback)
     : m_callback(WTFMove(callback))
 {
     int token = 0;
-    auto status = notify_register_dispatch(kIOPSNotifyPowerSource, &token, dispatch_get_main_queue(), ^(int) {
-        notifyPowerSourceChanged();
+    auto status = notify_register_dispatch(kIOPSNotifyPowerSource, &token, dispatch_get_main_queue(), [weakThis = makeWeakPtr(*this)] (int) {
+        if (weakThis)
+            weakThis->notifyPowerSourceChanged();
     });
     if (status == NOTIFY_STATUS_OK)
         m_tokenID = token;
+
+    // If the current value of systemHasAC() is uncached, force a notification.
+    if (!cachedSystemHasAC()) {
+        dispatch_async(dispatch_get_main_queue(), [weakThis = makeWeakPtr(*this)] {
+            if (weakThis)
+                weakThis->notifyPowerSourceChanged();
+        });
+    }
 }
 
 PowerSourceNotifier::~PowerSourceNotifier()

@@ -26,10 +26,11 @@
 #pragma once
 
 #include <wtf/Function.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class PowerSourceNotifier {
+class PowerSourceNotifier : public CanMakeWeakPtr<PowerSourceNotifier> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using PowerSourceNotifierCallback = WTF::Function<void(bool hasAC)>;

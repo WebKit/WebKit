@@ -116,6 +116,11 @@ bool systemHasAC()
     return *hasAC;
 }
 
+Optional<bool> cachedSystemHasAC()
+{
+    return hasAC;
+}
+
 void setOverrideSystemHasBatteryForTesting(Optional<bool>&& hasBattery)
 {
     hasBatteryOverrideForTesting = WTFMove(hasBattery);

@@ -1,3 +1,26 @@
+2020-07-29  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r264476): Calling systemHasAC() regresses launch time performance
+        https://bugs.webkit.org/show_bug.cgi?id=214907
+        <rdar://problem/66191430>
+
+        Reviewed by Eric Carlson.
+
+        Because calling into IOPS can block, delay queries about AC state during WebProcessPool creation until
+        the next run-loop.
+
+        Simultaneously, we don't need to check HDR state in the UI process for IOS, so send a default value
+        there as well.
+
+        * platform/cocoa/PowerSourceNotifier.h:
+        * platform/cocoa/PowerSourceNotifier.mm:
+        (WebCore::PowerSourceNotifier::PowerSourceNotifier):
+        * platform/cocoa/SystemBattery.h:
+        * platform/cocoa/SystemBattery.mm:
+        (WebCore::cachedSystemHasAC):
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::collectScreenProperties):
+
 2020-07-29  Don Olmstead  <don.olmstead@sony.com>
 
         Remove USE(ZLIB)
