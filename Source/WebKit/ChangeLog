@@ -1,3 +1,9 @@
+2020-07-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.29.4 release
+
+        * gtk/NEWS: Add release notes for 2.29.4.
+
 2020-07-28  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App-Bound Domains code from WebKit Additions

@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.29.4
+================
+
+What's new in WebKitGTK 2.29.4?
+
+  - Add support for backdrop filters.
+  - Add support for text-underline-offset and text-decoration-thickness.
+  - Add OpenCDM and AV1 support to media backend.
+  - Add new API to get ITP data summary.
+  - Use mobile user-agent on tablets.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.29.3
 ================
 
