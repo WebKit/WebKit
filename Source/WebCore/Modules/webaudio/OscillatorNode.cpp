@@ -47,6 +47,11 @@ PeriodicWave* OscillatorNode::s_periodicWaveTriangle = nullptr;
 
 ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& context, const OscillatorOptions& options)
 {
+    if (context.isStopped())
+        return Exception { InvalidStateError };
+
+    context.lazyInitialize();
+
     if (options.type == OscillatorType::Custom && !options.periodicWave)
         return Exception { InvalidStateError, "Must provide periodicWave when using custom type."_s };
     
@@ -71,7 +76,11 @@ ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& contex
         if (result.hasException())
             return result.releaseException();
     }
-    
+
+    // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
+    // When this happens, AudioScheduledSourceNode::finish() calls BaseAudioContext::notifyNodeFinishedProcessing().
+    context.refNode(oscillator);
+
     return oscillator;
 }
 

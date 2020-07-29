@@ -1,3 +1,28 @@
+2020-07-29  Chris Dumez  <cdumez@apple.com>
+
+        Calling AudioNode constructors should have identical behavior to using create*() function on BaseAudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=214931
+
+        Reviewed by Eric Carlson.
+
+        Calling AudioNode constructors should have identical behavior to using create*() function on BaseAudioContext.
+        Otherwise, this leads to assertion hits on the bots like we saw for Bug 214851.
+
+        We need to make sure that the AudioContext gets initialized when an AudioNode constructor gets called. We also
+        need to make sure refNode() gets called if necessary.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createPanner):
+        (WebCore::BaseAudioContext::createOscillator):
+        (WebCore::BaseAudioContext::createPeriodicWave):
+        * Modules/webaudio/BaseAudioContext.h:
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::create):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::create):
+        * Modules/webaudio/PeriodicWave.cpp:
+        (WebCore::PeriodicWave::create):
+
 2020-07-29  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION: ASSERTION FAILED: !needsLayout() on tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html flakily

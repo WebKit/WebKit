@@ -518,10 +518,6 @@ ExceptionOr<Ref<PannerNode>> BaseAudioContext::createPanner()
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
     return PannerNode::create(*this);
 }
 
@@ -620,20 +616,7 @@ ExceptionOr<Ref<OscillatorNode>> BaseAudioContext::createOscillator()
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
-
-    auto node = OscillatorNode::create(*this);
-    if (node.hasException())
-        return node.releaseException();
-
-    // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
-    // When this happens, AudioScheduledSourceNode::finish() calls BaseAudioContext::notifyNodeFinishedProcessing().
-    auto nodeValue = node.releaseReturnValue();
-    refNode(nodeValue);
-    return nodeValue;
+    return OscillatorNode::create(*this);
 }
 
 ExceptionOr<Ref<PeriodicWave>> BaseAudioContext::createPeriodicWave(Vector<float>&& real, Vector<float>&& imaginary, const PeriodicWaveConstraints& constraints)
@@ -641,17 +624,11 @@ ExceptionOr<Ref<PeriodicWave>> BaseAudioContext::createPeriodicWave(Vector<float
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-    
-    if (real.size() != imaginary.size())
-        return Exception { IndexSizeError, "real and imaginary must have the same length"_s };
     
     PeriodicWaveOptions options;
     options.real = WTFMove(real);
     options.imag = WTFMove(imaginary);
     options.disableNormalization = constraints.disableNormalization;
-    lazyInitialize();
     return PeriodicWave::create(*this, WTFMove(options));
 }
 

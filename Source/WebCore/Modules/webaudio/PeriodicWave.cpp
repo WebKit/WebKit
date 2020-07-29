@@ -56,6 +56,11 @@ Ref<PeriodicWave> PeriodicWave::create(float sampleRate, Float32Array& real, Flo
 
 ExceptionOr<Ref<PeriodicWave>> PeriodicWave::create(BaseAudioContext& context, PeriodicWaveOptions&& options)
 {
+    if (context.isStopped())
+        return Exception { InvalidStateError };
+
+    context.lazyInitialize();
+
     Vector<float> real;
     Vector<float> imag;
     
