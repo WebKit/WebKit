@@ -1,3 +1,53 @@
+2020-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App-Bound Domains code from WebKit Additions
+        https://bugs.webkit.org/show_bug.cgi?id=214889
+        <rdar://problem/66075857>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests, this is just code migration and will be tested
+        by existing App-Bound Domains tests.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::activateSessionCleanup):
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        * Shared/Cocoa/DefaultWebBrowserChecks.h: Added.
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm: Added.
+        Holds all functions related to full browser checks and
+        App-Bound Domains.
+
+        (WebKit::shouldBeTreatedAsFullBrowser):
+        (WebKit::getAppBoundDomainsTesting):
+        These functions allow us to treat our test runners as full browsers
+        while triggering non-browser mode for testing other App-Bound Domains
+        functionality.
+
+        (WebKit::isInWebKitChildProcess):
+        (WebKit::hasRequestedCrossWebsiteTrackingPermission):
+        (WebKit::determineITPStateInternal):
+        (WebKit::determineITPState):
+        (WebKit::doesAppHaveITPEnabled):
+        (WebKit::doesParentProcessHaveITPEnabled):
+        (WebKit::hasProhibitedUsageStrings):
+        (WebKit::isParentProcessAFullWebBrowser):
+        (WebKit::isFullWebBrowser):
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::filterAppBoundCookies):
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::PageConfiguration):
+        (): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::addTestDomains const):
+        (WebKit::WebsiteDataStore::ensureAppBoundDomains const):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2020-07-29  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r264476): Calling systemHasAC() regresses launch time performance

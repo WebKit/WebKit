@@ -126,6 +126,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "DefaultWebBrowserChecks.h"
 #include "VersionChecks.h"
 #include <WebCore/GameControllerGamepadProvider.h>
 #include <WebCore/HIDGamepadProvider.h>
@@ -139,15 +140,6 @@
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebProcessPoolAdditions.h>
-#else
-#define WEB_PROCESS_POOL_ADDITIONS
-#define WEB_PROCESS_POOL_ADDITIONS_2
-#define WEB_PROCESS_POOL_ADDITIONS_3
-#define WEB_PROCESS_POOL_ADDITIONS_4
 #endif
 
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
@@ -255,7 +247,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
     , m_alwaysRunsAtBackgroundPriority(m_configuration->alwaysRunsAtBackgroundPriority())
     , m_shouldTakeUIBackgroundAssertion(m_configuration->shouldTakeUIBackgroundAssertion())
-    WEB_PROCESS_POOL_ADDITIONS
     , m_userObservablePageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
     , m_processSuppressionDisabledForPageCounter([this](RefCounterEvent) { updateProcessSuppressionState(); })
     , m_hiddenPageThrottlingAutoIncreasesCounter([this](RefCounterEvent) { m_hiddenPageThrottlingTimer.startOneShot(0_s); })
@@ -271,7 +262,9 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         WTF::setProcessPrivileges(allPrivileges());
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
-        WEB_PROCESS_POOL_ADDITIONS_4
+#if PLATFORM(COCOA)
+        determineITPState();
+#endif
     });
 
     if (!m_websiteDataStore && WebKit::WebsiteDataStore::defaultDataStoreExists())
@@ -613,7 +606,22 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     WebCore::RegistrableDomain standaloneApplicationDomain;
     HashSet<WebCore::RegistrableDomain> appBoundDomains;
     WebCore::RegistrableDomain manualPrevalentResource;
-    WEB_PROCESS_POOL_ADDITIONS_2
+
+#if PLATFORM(COCOA)
+    m_tccPreferenceEnabled = doesAppHaveITPEnabled();
+    if (withWebsiteDataStore && !withWebsiteDataStore->isItpStateExplicitlySet()) {
+        enableResourceLoadStatistics = m_tccPreferenceEnabled;
+        withWebsiteDataStore->setResourceLoadStatisticsEnabled(enableResourceLoadStatistics);
+    } else if (m_websiteDataStore && !m_websiteDataStore->isItpStateExplicitlySet()) {
+        enableResourceLoadStatistics = m_tccPreferenceEnabled;
+        m_websiteDataStore->setResourceLoadStatisticsEnabled(enableResourceLoadStatistics);
+    } else if (WebsiteDataStore::defaultDataStoreExists() && !WebsiteDataStore::defaultDataStore()->isItpStateExplicitlySet()) {
+        enableResourceLoadStatistics = m_tccPreferenceEnabled;
+        WebsiteDataStore::defaultDataStore()->setResourceLoadStatisticsEnabled(enableResourceLoadStatistics);
+    } else
+        enableResourceLoadStatistics = m_tccPreferenceEnabled;
+#endif
+
     if (withWebsiteDataStore) {
         enableResourceLoadStatistics = withWebsiteDataStore->resourceLoadStatisticsEnabled();
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -884,7 +892,12 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
 
 WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
 {
-    WEB_PROCESS_POOL_ADDITIONS_3
+#if PLATFORM(COCOA)
+    m_tccPreferenceEnabled = doesAppHaveITPEnabled();
+    if (websiteDataStore && !websiteDataStore->isItpStateExplicitlySet())
+        websiteDataStore->setResourceLoadStatisticsEnabled(m_tccPreferenceEnabled);
+#endif
+
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, isPrewarmed);
     auto& process = processProxy.get();
     initializeNewWebProcess(process, websiteDataStore, isPrewarmed);

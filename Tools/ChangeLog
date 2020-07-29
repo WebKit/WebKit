@@ -1,3 +1,20 @@
+2020-07-29  Kate Cheney  <katherine_cheney@apple.com>
+
+        Migrate App-Bound Domains code from WebKit Additions
+        https://bugs.webkit.org/show_bug.cgi?id=214889
+        <rdar://problem/66075857>
+
+        Reviewed by Brent Fulgham.
+
+        Replace WebKit Additions macros with code to set a different bundle
+        identifier indicating that we want to run an App-Bound Domains test.
+
+        Remove #if USE(APPLE_INTERNAL_SDK) check so we run these tests on EWS.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        (cleanUpInAppBrowserPrivacyTestSettings):
+        (initializeInAppBrowserPrivacyTestSettings):
+
 2020-07-29  Simon Fraser  <simon.fraser@apple.com>
 
         Make the lock icon update correctly in MiniBrowser

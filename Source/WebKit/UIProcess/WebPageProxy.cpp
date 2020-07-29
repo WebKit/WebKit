@@ -166,6 +166,7 @@
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/ResourceLoadStatistics.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SSLKeyGenerator.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
@@ -288,13 +289,8 @@
 #include "MediaUsageManager.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageProxyAdditions.h>
-#else
-static bool isFullWebBrowser() { return true; }
-#if PLATFORM(IOS_FAMILY)
-static bool hasProhibitedUsageStrings() { return false; }
-#endif
+#if PLATFORM(COCOA)
+#include "DefaultWebBrowserChecks.h"
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -1396,8 +1392,10 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "loadData:");
 
+#if PLATFORM(IOS_FAMILY)
     if (MIMEType == "text/html"_s && !isFullWebBrowser())
         m_limitsNavigationsToAppBoundDomains = true;
+#endif
 
     if (m_isClosed) {
         RELEASE_LOG_IF_ALLOWED(Loading, "loadData: page is closed");
@@ -3142,6 +3140,7 @@ bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMai
             m_isNavigatingToAppBoundDomain = NavigatingToAppBoundDomain::No;
         return true;
     }
+
     if (!isNavigatingToAppBoundDomain) {
         m_isNavigatingToAppBoundDomain = WTF::nullopt;
         return true;
