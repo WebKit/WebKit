@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17132" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17132"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -10,9 +10,9 @@
                 <outlet property="backButton" destination="40" id="46"/>
                 <outlet property="containerView" destination="9" id="37"/>
                 <outlet property="forwardButton" destination="42" id="47"/>
+                <outlet property="lockButton" destination="mWN-r5-XQb" id="49"/>
                 <outlet property="progressIndicator" destination="21" id="33"/>
                 <outlet property="reloadButton" destination="23" id="34"/>
-                <outlet property="lockButton" destination="mWN-r5-XQb" id="49"/>
                 <outlet property="share" destination="1hB-AH-eUl" id="si4-8e-DsM"/>
                 <outlet property="toggleUseShrinkToFitButton" destination="82" id="9w7-AB-Ye3"/>
                 <outlet property="toolbar" destination="48" id="67"/>
@@ -26,7 +26,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="517" y="330" width="776" height="608"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1415"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="776" height="608"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -87,14 +87,14 @@
                             </connections>
                         </button>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="F9C3B2C4-B22D-4E12-92BC-EA326711BBC1" label="Lock" paletteLabel="Lock" image="NSLockLockedTemplate" id="Ky3-6Y-3U1" userLabel="Lock" customClass="MBToolbarItem">
+                    <toolbarItem implicitItemIdentifier="F9C3B2C4-B22D-4E12-92BC-EA326711BBC1" label="Lock" paletteLabel="Lock" image="NSLockUnlockedTemplate" id="Ky3-6Y-3U1" userLabel="Lock" customClass="MBToolbarItem">
                         <nil key="toolTip"/>
                         <size key="minSize" width="29" height="25"/>
                         <size key="maxSize" width="29" height="27"/>
                         <button key="view" verticalHuggingPriority="750" id="mWN-r5-XQb">
                             <rect key="frame" x="2" y="14" width="29" height="25"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSLockLockedTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iRv-ey-QZe">
+                            <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="NSLockUnlockedTemplate" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iRv-ey-QZe">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -177,11 +177,11 @@
         </window>
     </objects>
     <resources>
-        <image name="NSEnterFullScreenTemplate" width="16" height="15"/>
-        <image name="NSLockLockedTemplate" width="10" height="14"/>
-        <image name="NSGoLeftTemplate" width="10" height="14"/>
-        <image name="NSGoRightTemplate" width="10" height="14"/>
-        <image name="NSRefreshTemplate" width="14" height="16"/>
-        <image name="NSShareTemplate" width="15" height="17"/>
+        <image name="NSEnterFullScreenTemplate" width="15" height="15"/>
+        <image name="NSGoLeftTemplate" width="9" height="12"/>
+        <image name="NSGoRightTemplate" width="9" height="12"/>
+        <image name="NSLockUnlockedTemplate" width="10" height="14"/>
+        <image name="NSRefreshTemplate" width="11" height="15"/>
+        <image name="NSShareTemplate" width="11" height="16"/>
     </resources>
 </document>

@@ -191,10 +191,13 @@ static BOOL areEssentiallyEqual(double a, double b)
 
     if (action == @selector(goBack:))
         return [_webView canGoBack];
-    
+
     if (action == @selector(goForward:))
         return [_webView canGoForward];
-    
+
+    if (action == @selector(showCertificate:))
+        return NO;
+
     return YES;
 }
 

@@ -1,3 +1,22 @@
+2020-07-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Make the lock icon update correctly in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=214933
+
+        Reviewed by Alex Christensen.
+
+        Various fixes to the MiniBrowser lock icon. Set the initial state to unlocked in the XIB.
+        Dim the icon when there is no certificate to display. Dim it and show unlocked for WK1 windows.
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController showCertificate:]):
+        * MiniBrowser/mac/WK1BrowserWindowController.m:
+        (-[WK1BrowserWindowController validateUserInterfaceItem:]):
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController validateUserInterfaceItem:]):
+
 2020-07-29  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add an auto-installer (Unreviewed follow-up fix 2)

@@ -396,6 +396,9 @@ static BOOL areEssentiallyEqual(double a, double b)
     if (action == @selector(goBack:) || action == @selector(goForward:))
         return [_webView validateUserInterfaceItem:item];
 
+    if (action == @selector(showCertificate:))
+        return _webView.serverTrust != nil;
+
     return YES;
 }
 

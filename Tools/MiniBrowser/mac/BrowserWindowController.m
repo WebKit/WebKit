@@ -103,6 +103,11 @@
     [self doesNotRecognizeSelector:_cmd];
 }
 
+- (IBAction)showCertificate:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
 - (IBAction)forceRepaint:(id)sender
 {
     [self doesNotRecognizeSelector:_cmd];

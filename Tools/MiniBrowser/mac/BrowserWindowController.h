@@ -53,6 +53,7 @@
 - (IBAction)fetch:(id)sender;
 - (IBAction)share:(id)sender;
 - (IBAction)reload:(id)sender;
+- (IBAction)showCertificate:(id)sender;
 - (IBAction)forceRepaint:(id)sender;
 - (IBAction)goBack:(id)sender;
 - (IBAction)goForward:(id)sender;
