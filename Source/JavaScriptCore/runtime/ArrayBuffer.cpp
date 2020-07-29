@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,6 +210,7 @@ Ref<ArrayBuffer> ArrayBuffer::create(ArrayBufferContents&& contents)
 //   from the cage.
 Ref<ArrayBuffer> ArrayBuffer::createAdopted(const void* data, unsigned byteLength)
 {
+    ASSERT(!Gigacage::isEnabled() || (Gigacage::contains(data) && Gigacage::contains(static_cast<const uint8_t*>(data) + byteLength - 1)));
     return createFromBytes(data, byteLength, ArrayBuffer::primitiveGigacageDestructor());
 }
 

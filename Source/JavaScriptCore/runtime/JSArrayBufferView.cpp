@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     , m_mode(FastTypedArray)
     , m_butterfly(nullptr)
 {
+    ASSERT(!Gigacage::isEnabled() || (Gigacage::contains(vector) && Gigacage::contains(static_cast<const uint8_t*>(vector) + length - 1)));
     ASSERT(vector == removeArrayPtrTag(vector));
     RELEASE_ASSERT(length <= fastSizeLimit);
 }
@@ -190,6 +191,10 @@ ArrayBuffer* JSArrayBufferView::unsharedBuffer()
 void JSArrayBufferView::finalize(JSCell* cell)
 {
     JSArrayBufferView* thisObject = static_cast<JSArrayBufferView*>(cell);
+
+    // This JSArrayBufferView could be an OversizeTypedArray that was converted
+    // to a WastefulTypedArray via slowDownAndWasteMemory(). Hence, it is possible
+    // to get to this finalizer and found the mode to be WastefulTypedArray.
     ASSERT(thisObject->m_mode == OversizeTypedArray || thisObject->m_mode == WastefulTypedArray);
     if (thisObject->m_mode == OversizeTypedArray)
         Gigacage::free(Gigacage::Primitive, thisObject->vector());
