@@ -4189,7 +4189,7 @@ void BytecodeGenerator::emitGenericEnumeration(ThrowableExpressionData* node, Ex
 
 void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, ExpressionNode* subjectNode, const ScopedLambda<void(BytecodeGenerator&, RegisterID*)>& callBack, ForOfNode* forLoopNode, RegisterID* forLoopSymbolTable)
 {
-    if (!Options::useIterationIntrinsics() || is32Bit() || (forLoopNode && forLoopNode->isForAwait())) {
+    if (!Options::useIterationIntrinsics() || (forLoopNode && forLoopNode->isForAwait())) {
         emitGenericEnumeration(node, subjectNode, callBack, forLoopNode, forLoopSymbolTable);
         return;
     }

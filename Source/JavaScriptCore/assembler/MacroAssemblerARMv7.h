@@ -362,9 +362,22 @@ public:
         m_assembler.neg(dest, src);
     }
 
-    void or32(RegisterID src, RegisterID dest)
+    void or8(TrustedImm32 imm, AbsoluteAddress address)
     {
-        m_assembler.orr(dest, dest, src);
+        ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
+        if (armImm.isValid()) {
+            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+            load8(addressTempRegister, dataTempRegister);
+            m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
+            store8(dataTempRegister, addressTempRegister);
+        } else {
+            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+            load8(addressTempRegister, dataTempRegister);
+            move(imm, addressTempRegister);
+            m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
+            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+            store8(dataTempRegister, addressTempRegister);
+        }
     }
 
     void or16(TrustedImm32 imm, AbsoluteAddress dest)
@@ -384,7 +397,12 @@ public:
             store16(dataTempRegister, addressTempRegister);
         }
     }
-    
+
+    void or32(RegisterID src, RegisterID dest)
+    {
+        m_assembler.orr(dest, dest, src);
+    }
+
     void or32(RegisterID src, AbsoluteAddress dest)
     {
         move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
@@ -897,13 +915,13 @@ public:
         store8(src, setupArmAddress(address));
     }
     
-    void store8(RegisterID src, void* address)
+    void store8(RegisterID src, const void *address)
     {
         move(TrustedImmPtr(address), addressTempRegister);
         store8(src, ArmAddress(addressTempRegister, 0));
     }
     
-    void store8(TrustedImm32 imm, void* address)
+    void store8(TrustedImm32 imm, const void *address)
     {
         TrustedImm32 imm8(static_cast<int8_t>(imm.m_value));
         move(imm8, dataTempRegister);
@@ -917,6 +935,11 @@ public:
         store8(dataTempRegister, address);
     }
 
+    void store8(RegisterID src, RegisterID addrreg)
+    {
+        store8(src, ArmAddress(addrreg, 0));
+    }
+    
     void store16(RegisterID src, ImplicitAddress address)
     {
         store16(src, setupArmAddress(address));

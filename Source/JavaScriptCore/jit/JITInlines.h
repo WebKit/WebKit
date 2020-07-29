@@ -616,11 +616,6 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfJSCell(RegisterID reg)
     addSlowCase(branchIfCell(reg));
 }
 
-ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg)
-{
-    addSlowCase(branchIfNotCell(reg));
-}
-
 ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg, VirtualRegister vReg)
 {
     if (!m_codeBlock->isKnownCell(vReg))
@@ -655,6 +650,11 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotNumber(RegisterID reg)
 }
 
 #endif // USE(JSVALUE32_64)
+
+ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotJSCell(RegisterID reg)
+{
+    addSlowCase(branchIfNotCell(reg));
+}
 
 ALWAYS_INLINE int JIT::jumpTarget(const Instruction* instruction, int target)
 {

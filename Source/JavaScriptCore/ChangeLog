@@ -1,3 +1,48 @@
+2020-07-29  Paulo Matos  <pmatos@igalia.com>
+
+        for..of intrinsics implementation for 32bits
+        https://bugs.webkit.org/show_bug.cgi?id=214737
+
+        Reviewed by Yusuke Suzuki.
+
+        Joint work with Caio Lima <ticaiolima@gmail.com>.
+
+        Implements for..of intrinsics for 32bits.
+        Adds or8 instruction to ARMv7 and MIPS Macro Assembler.
+        Adds intrinsic operations to LLInt and Baseline for 32bits.
+        Fixes DFG OSR Exit bug, where checkpoint temporary value is
+        incorrectly recreated for Baseline.
+        Refactors code in DFG OSR Exit to be easier to modify and
+        maintain by separating the switch cases for 32 and 64bits.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::or8): Adds or8(TrustedImm, AbsoluteAddress)
+        (JSC::MacroAssemblerARMv7::or32):
+        (JSC::MacroAssemblerARMv7::store8):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::or8): Adds or8(TrustedImm, AbsoluteAddress)
+        (JSC::MacroAssemblerMIPS::store8):
+        * assembler/testmasm.cpp:
+        (JSC::testOrImmMem): Tests or8
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEnumeration):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit): Fixes DFG OSR Exit bug, where checkpoint temporary value is
+        incorrectly recreated for Baseline. Refactors code in DFG OSR Exit to be easier to modify and
+        maintain by separating the switch cases for 32 and 64bits.
+        * jit/JIT.h:
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emitPutCallResult):
+        (JSC::JIT::compileSetupFrame):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emitSlow_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        (JSC::JIT::emitSlow_op_iterator_next):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        * llint/LowLevelInterpreter32_64.asm:
+
 2020-07-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Reflect object should have toStringTag with "Reflect"

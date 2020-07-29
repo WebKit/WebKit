@@ -443,6 +443,7 @@ namespace JSC {
 
         void emitJumpSlowCaseIfNotJSCell(VirtualRegister);
         void emitJumpSlowCaseIfNotJSCell(VirtualRegister, RegisterID tag);
+        void emitJumpSlowCaseIfNotJSCell(RegisterID);
 
         void compileGetByIdHotPath(const Identifier*);
 

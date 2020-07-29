@@ -599,34 +599,24 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                     auto& recovery = values[i + tmpOffset];
                     // FIXME: We should do what the FTL does and materialize all the JSValues into the scratch buffer.
                     switch (recovery.technique()) {
+
                     case Constant:
                         sideState->tmps[i] = recovery.constant();
                         break;
-
+                        
+#if USE(JSVALUE64)
                     case UnboxedInt32InGPR:
                     case Int32DisplacedInJSStack: {
                         sideState->tmps[i] = jsNumber(static_cast<int32_t>(tmpScratch[i + tmpOffset]));
                         break;
                     }
 
-#if USE(JSVALUE32_64)
-                    case InPair:
-#endif
-                    case InGPR:
                     case BooleanDisplacedInJSStack:
                     case CellDisplacedInJSStack:
+                    case UnboxedCellInGPR:
+                    case InGPR:
                     case DisplacedInJSStack: {
                         sideState->tmps[i] = reinterpret_cast<JSValue*>(tmpScratch)[i + tmpOffset];
-                        break;
-                    }
-
-                    case UnboxedCellInGPR: {
-#if USE(JSVALUE64)
-                        sideState->tmps[i] = reinterpret_cast<JSValue*>(tmpScratch)[i + tmpOffset];
-#else
-                        EncodedValueDescriptor* valueDescriptor = bitwise_cast<EncodedValueDescriptor*>(tmpScratch + i + tmpOffset);
-                        sideState->tmps[i] = JSValue(JSValue::CellTag, valueDescriptor->asBits.payload);
-#endif
                         break;
                     }
 
@@ -634,6 +624,34 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                         sideState->tmps[i] = jsBoolean(static_cast<bool>(tmpScratch[i + tmpOffset]));
                         break;
                     }
+
+#else // USE(JSVALUE32_64)
+                    case UnboxedInt32InGPR:
+                    case Int32DisplacedInJSStack: {
+                        sideState->tmps[i] = jsNumber(static_cast<int32_t>(tmpScratch[i + tmpOffset]));
+                        break;
+                    }
+
+                    case InPair:
+                    case DisplacedInJSStack: {
+                        sideState->tmps[i] = reinterpret_cast<JSValue*>(tmpScratch)[i + tmpOffset];
+                        break;
+                    }
+
+                    case CellDisplacedInJSStack:
+                    case UnboxedCellInGPR: {
+                        EncodedValueDescriptor* valueDescriptor = bitwise_cast<EncodedValueDescriptor*>(tmpScratch + i + tmpOffset);
+                        sideState->tmps[i] = JSValue(JSValue::CellTag, valueDescriptor->asBits.payload);
+                        break;
+                    }
+
+                    case BooleanDisplacedInJSStack:
+                    case UnboxedBooleanInGPR: {
+                        sideState->tmps[i] = jsBoolean(static_cast<bool>(tmpScratch[i + tmpOffset]));
+                        break;
+                    }
+                        
+#endif // USE(JSVALUE64)
 
                     default: 
                         RELEASE_ASSERT_NOT_REACHED();
