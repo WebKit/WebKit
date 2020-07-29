@@ -1,5 +1,16 @@
 2020-07-29  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitcorepy] Add an auto-installer (Unreviewed follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=214606
+
+        Unreviewed infrastructure fix.
+
+        svn:ignore was not correctly set when the patch was landed.
+
+        * Scripts/libraries: Added property svn:ignore.
+
+2020-07-29  Jonathan Bedard  <jbedard@apple.com>
+
         [ews.webkit.org] Skip build upload for embedded iOS builds
         https://bugs.webkit.org/show_bug.cgi?id=214923
 
