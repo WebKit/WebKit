@@ -235,11 +235,19 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     vertical-align: -3px;
 }
 
-.navigation-item-help > .navigation-bar > .item {
+.navigation-item-help > .navigation-bar > .item.button {
     height: 100%;
-    padding: 0 4px !important;
     font-size: 11px;
     border-radius: 4px;
+    border: solid 1px var(--border-color);
+}
+
+.navigation-item-help > .navigation-bar > .item.button:not(.text-only) {
+    padding: 0 4px !important;
+}
+
+/* Note: this is necessary due to the specificity of `.navigation-bar .item.button.text-only` */
+.navigation-item-help > .navigation-bar > .item.button.text-only {
     border: solid 1px var(--border-color);
 }
 

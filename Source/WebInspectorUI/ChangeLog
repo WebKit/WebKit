@@ -1,5 +1,27 @@
 2020-07-28  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: REGRESSION(r255396): Audit: button to exit edit mode in main content area is missing border
+        https://bugs.webkit.org/show_bug.cgi?id=214898
+        <rdar://problem/66238391>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Main.js: codify that this function only accepts ButtonNavigationItems.
+        Future developers, you'll need to adjust the CSS for non-button navigation items to work out.
+
+        * UserInterface/Views/Main.css:
+        (.navigation-item-help > .navigation-bar > .item.button):
+        (.navigation-item-help > .navigation-bar > .item.button:not(.text-only)):
+        (.navigation-item-help > .navigation-bar > .item.button.text-only):
+        (.navigation-item-help > .navigation-bar > .item): Deleted.
+        (.navigation-item-help > .navigation-bar > .item:not(.text-only)): Deleted.
+        (.navigation-item-help > .navigation-bar > .item.text-only): Deleted.
+        Split out the rules for text-only buttons. The regressing change added more specificity
+        for the text + image case which made the border transparent and removed extra padding.
+        Also add .button since we only expect buttons to be used in this context.
+
+2020-07-28  Brian Burg  <bburg@apple.com>
+
         REGRESSION(r262716) Web Inspector: start button is misaligned in Audit content view
         https://bugs.webkit.org/show_bug.cgi?id=214891
 

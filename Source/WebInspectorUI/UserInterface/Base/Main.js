@@ -2939,7 +2939,7 @@ WI.createMessageTextView = function(message, isError)
 WI.createNavigationItemHelp = function(formatString, navigationItem)
 {
     console.assert(typeof formatString === "string");
-    console.assert(navigationItem instanceof WI.NavigationItem);
+    console.assert(navigationItem instanceof WI.ButtonNavigationItem);
 
     function append(a, b) {
         a.append(b);
