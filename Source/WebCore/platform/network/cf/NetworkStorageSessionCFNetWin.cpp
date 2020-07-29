@@ -188,38 +188,53 @@ static RetainPtr<CFArrayRef> copyCookiesForURLWithFirstPartyURL(const NetworkSto
     return adoptCF(CFHTTPCookieStorageCopyCookiesForURL(session.cookieStorage().get(), url.createCFURL().get(), secure));
 }
 
-static CFArrayRef createCookies(CFDictionaryRef headerFields, CFURLRef url)
+static RetainPtr<CFHTTPCookieRef> parseDOMCookie(String cookieString, CFURLRef url)
 {
-    CFArrayRef parsedCookies = CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault, headerFields, url);
-    if (!parsedCookies)
-        parsedCookies = CFArrayCreate(kCFAllocatorDefault, 0, 0, &kCFTypeArrayCallBacks);
-    
-    return parsedCookies;
-}
-
-void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP, const String& value, ShouldRelaxThirdPartyCookieBlocking) const
-{
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(pageID);
     // <rdar://problem/5632883> CFHTTPCookieStorage stores an empty cookie, which would be sent as "Cookie: =".
-    if (value.isEmpty())
-        return;
-    
-    RetainPtr<CFURLRef> urlCF = url.createCFURL();
-    RetainPtr<CFURLRef> firstPartyForCookiesCF = firstParty.createCFURL();
-    
+    if (cookieString.isEmpty())
+        return nullptr;
+
     // <http://bugs.webkit.org/show_bug.cgi?id=6531>, <rdar://4409034>
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
-    String cookieString = value.contains('=') ? value : value + "=";
-    
-    RetainPtr<CFStringRef> cookieStringCF = cookieString.createCFString();
+    cookieString = cookieString.contains('=') ? cookieString : cookieString + "=";
+
+    auto cookieStringCF = cookieString.createCFString();
     auto cookieStringCFPtr = cookieStringCF.get();
-    RetainPtr<CFDictionaryRef> headerFieldsCF = adoptCF(CFDictionaryCreate(kCFAllocatorDefault,
+    auto headerFieldsCF = adoptCF(CFDictionaryCreate(kCFAllocatorDefault,
         (const void**)&s_setCookieKeyCF, (const void**)&cookieStringCFPtr, 1,
         &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    
-    RetainPtr<CFArrayRef> unfilteredCookies = adoptCF(createCookies(headerFieldsCF.get(), urlCF.get()));
-    CFHTTPCookieStorageSetCookies(cookieStorage().get(), filterCookies(unfilteredCookies.get()).get(), urlCF.get(), firstPartyForCookiesCF.get());
+    // FIXME: _CFHTTPCookieCreateWithStringAndPartition() is currently unavailable on Windows (rdar://problem/66248550).
+    auto parsedCookies = adoptCF(CFHTTPCookieCreateWithResponseHeaderFields(kCFAllocatorDefault, headerFieldsCF.get(), url));
+    if (!parsedCookies || !CFArrayGetCount(parsedCookies.get()))
+        return nullptr;
+
+    auto cookie = checked_cf_cast<CFHTTPCookieRef>(CFArrayGetValueAtIndex(parsedCookies.get(), 0));
+
+    // <rdar://problem/5632883> CFHTTPCookieStorage would store an empty cookie,
+    // which would be sent as "Cookie: =". We have a workaround in setCookies() to prevent
+    // that, but we also need to avoid sending cookies that were previously stored, and
+    // there's no harm to doing this check because such a cookie is never valid.
+    if (!CFStringGetLength(cookieName(cookie).get()))
+        return nullptr;
+
+    if (CFHTTPCookieIsHTTPOnly(cookie))
+        return nullptr;
+
+    return cookie;
+}
+
+void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier>, Optional<PageIdentifier>, ShouldAskITP, const String& cookieString, ShouldRelaxThirdPartyCookieBlocking) const
+{
+    auto urlCF = url.createCFURL();
+    auto cookie = parseDOMCookie(cookieString, urlCF.get());
+    if (!cookie)
+        return;
+
+    auto firstPartyForCookiesCF = firstParty.createCFURL();
+
+    CFTypeRef cookies[] = { cookie.get() };
+    RetainPtr<CFArrayRef> cookieArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, cookies, 1, &kCFTypeArrayCallBacks));
+    CFHTTPCookieStorageSetCookies(cookieStorage().get(), cookieArray.get(), urlCF.get(), firstPartyForCookiesCF.get());
 }
 
 static bool containsSecureCookies(CFArrayRef cookies)

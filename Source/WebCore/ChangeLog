@@ -1,3 +1,18 @@
+2020-07-29  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/cookies/document-cookie-multiple-cookies.html is failing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=214880
+
+        Reviewed by Darin Adler.
+
+        Fix same bug as in r264943 but on Windows.
+
+        No new tests, covered by http/tests/cookies/document-cookie-multiple-cookies.html.
+
+        * platform/network/cf/NetworkStorageSessionCFNetWin.cpp:
+        (WebCore::parseDOMCookie):
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+
 2020-07-29  Youenn Fablet  <youenn@apple.com>
 
         scaleResolutionDownBy has no effect on RTCRtpSender

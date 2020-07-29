@@ -782,9 +782,6 @@ http/tests/security/cross-frame-access-port.html [ Skip ]
 # <rdar://5723121>
 http/tests/xmlhttprequest/cookies.html [ Skip ]
 
-#Failing on Windows
-webkit.org/b/214880 http/tests/cookies/document-cookie-multiple-cookies.html [ Pass Failure ]
-
 # <rdar://5723191>
 http/tests/navigation/javascriptlink-frames.html [ Skip ]
 

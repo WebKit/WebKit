@@ -1,3 +1,14 @@
+2020-07-29  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/cookies/document-cookie-multiple-cookies.html is failing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=214880
+
+        Reviewed by Darin Adler.
+
+        Unskip test that is no longer failing on Windows.
+
+        * platform/win/TestExpectations:
+
 2020-07-29  Youenn Fablet  <youenn@apple.com>
 
         scaleResolutionDownBy has no effect on RTCRtpSender
