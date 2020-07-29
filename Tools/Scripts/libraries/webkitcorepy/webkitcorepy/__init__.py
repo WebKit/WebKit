@@ -20,7 +20,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+import sys
+
+log = logging.getLogger('webkitcorepy')
+
 from webkitcorepy.version import Version
 from webkitcorepy.string_utils import BytesIO, StringIO, UnicodeIO, unicode
 
-version = Version(0, 0, 2)
+version = Version(0, 0, 3)
+
+from webkitcorepy.autoinstall import Package, AutoInstall
+if sys.version_info > (3, 0):
+    AutoInstall.register(Package('mock', Version(4)))
+else:
+    AutoInstall.register(Package('mock', Version(3, 0, 5)))
+
+AutoInstall.register(Package('certifi', Version(2020, 6, 20)))
+AutoInstall.register(Package('requests', Version(2, 24)))

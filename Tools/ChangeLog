@@ -1,5 +1,59 @@
 2020-07-29  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitcorepy] Add an auto-installer
+        https://bugs.webkit.org/show_bug.cgi?id=214606
+
+        Reviewed by Darin Adler.
+
+        Add an autoinstaller to webkitcorepy. This is eventually intended to replace the
+        autoinstaller in webkitpy.
+
+        * Scripts/libraries: Added property svn:ignore.
+        * Scripts/libraries/webkitcorepy/README.md:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py: Added.
+        (Package): Class representing a single Python module.
+        (Package.Archive): Class representing a zip file containing a package.
+        (Package.Archive.__init__): Construct representation with a name, version and
+        downloadable link.
+        (Package.Archive.__repr__): Archives are named based on their package name
+        and version.
+        (Package.Archive.path): The location of  a downloaded archive on disk.
+        (Package.Archive.download): Download archive and write contents to disk.
+        (Package.Archive.unpack): Unpack archive on disk into package.
+        (Package.__init__): Packages are constructed with a name, version and name on
+        PyPi, which is assumed to be the package name unless specified.
+        (Package.location): Location of the package on disk.
+        (Package.do_post_install): Some packages have post-install actions, execute
+        those.
+        (Package.archives): Return a list of archives which match the specified
+        package parameters.
+        (Package.is_cached): Check the AutoInstall manifest to see if a package has
+        already been installed.
+        (Package.install): If needed, find a compatible archive for the specified
+        package, download and install it.
+        (AutoInstall): Namespace for auto-install functionality.
+        (AutoInstall._request): Make a request to the package index specified.
+        (AutoInstall.enable): Enable the auto-installer.
+        (AutoInstall.disable): Disable the auto-installer.
+        (AutoInstall.set_directory): Set the directory to save auto-installed libraries to.
+        (AutoInstall.set_index): Use a different package index.
+        (AutoInstall.set_timeout): Set the default timeout.
+        (AutoInstall.register): Add a package to the list of packages to be installed
+        when encountered.
+        (AutoInstall.install): Given a package, register and install that package.
+        (AutoInstall.install_everything): Install all registered packages if they are not
+        already.
+        (AutoInstall.find_module): Check and see if a requested module has been registered,
+        if it has, install that module if needed.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/cacert.pem: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/rootcerts.p7b: Added.
+        * Scripts/webkitpy/__init__.py: Add logger, autoinstalled requests and certifi.
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests): Include webkitcorepy.AutoInstall when installing everything.
+
+2020-07-29  Jonathan Bedard  <jbedard@apple.com>
+
         [build.webkit.org] Add Big Sur builder (Follow-up Fix)
         https://bugs.webkit.org/show_bug.cgi?id=214879
         <rdar://problem/66221071>

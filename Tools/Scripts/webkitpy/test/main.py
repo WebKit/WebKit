@@ -156,6 +156,9 @@ class Tester(object):
         from webkitpy.thirdparty import autoinstall_everything
         autoinstall_everything()
 
+        from webkitcorepy import AutoInstall
+        AutoInstall.install_everything()
+
         start_time = time.time()
 
         if getattr(self._options, 'coverage', False):

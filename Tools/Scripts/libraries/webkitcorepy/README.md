@@ -2,7 +2,10 @@
 
 Provides a number of utilities intended to support intermediate to advanced Python programming.
 
+## Requirements
 
+The mock and requests libraries.
+ 
 ## Usage
 
 Version representation
@@ -22,4 +25,11 @@ from webkitcorepy import string_utils
 
 string_utils.encode(...)
 string_utils.decode(...)
+```
+
+Automatically install libraries on import.
+```
+from webkitcorepy import AutoInstall
+AutoInstall.register(Package('requests', Version(2, 24)))
+import requests
 ```

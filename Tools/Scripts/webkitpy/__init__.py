@@ -17,3 +17,6 @@ import sys
 
 libraries = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))), 'libraries')
 sys.path.insert(0, os.path.join(libraries, 'webkitcorepy'))
+
+from webkitcorepy import AutoInstall
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
