@@ -1,3 +1,14 @@
+2020-07-29  Youenn Fablet  <youenn@apple.com>
+
+        TestWebKitAPI.WebKit.QuotaDelegate flaky times out
+        https://bugs.webkit.org/show_bug.cgi?id=214842
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/StorageQuota.mm:
+        In case the page is not visible, quota increase delegate will be denied.
+        Delay the cache storage hence the quota increase until the page is visible.
+
 2020-07-28  Dean Jackson  <dino@apple.com>
 
         run-minibrowser doesn't respect webkit configuration

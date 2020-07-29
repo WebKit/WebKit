@@ -152,7 +152,17 @@ async function doTest()
         window.webkit.messageHandlers.qt.postMessage("fail with exception " + e);
     }
 }
-doTest();
+
+window.onload = () => {
+    if (document.visibilityState === 'visible')
+        doTest();
+    else {
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === 'visible')
+                doTest();
+        });
+    }
+}
 
 function doTestAgain()
 {
@@ -229,13 +239,9 @@ TEST(WebKit, QuotaDelegate)
     [webView1 setUIDelegate:delegate1.get()];
     setVisible(webView1.get());
 
-    NSLog(@"QuotaDelegate 1");
-
     receivedQuotaDelegateCalled = false;
     [webView1 loadRequest:server.request()];
     Util::run(&receivedQuotaDelegateCalled);
-
-    NSLog(@"QuotaDelegate 2");
 
     auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
     auto delegate2 = adoptNS([[QuotaDelegate alloc] init]);
@@ -247,8 +253,6 @@ TEST(WebKit, QuotaDelegate)
     [messageHandler setExpectedMessage: @"start"];
     Util::run(&receivedMessage);
 
-    NSLog(@"QuotaDelegate 3");
-
     EXPECT_FALSE(delegate2.get().quotaDelegateCalled);
     [delegate1 grantQuota];
 
@@ -256,12 +260,8 @@ TEST(WebKit, QuotaDelegate)
     receivedMessage = false;
     Util::run(&receivedMessage);
 
-    NSLog(@"QuotaDelegate 4");
-
     while (!delegate2.get().quotaDelegateCalled)
         TestWebKitAPI::Util::sleep(0.1);
-
-    NSLog(@"QuotaDelegate 5");
 
     [delegate2 denyQuota];
 
