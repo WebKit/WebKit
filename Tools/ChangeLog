@@ -1,3 +1,14 @@
+2020-07-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add an auto-installer (Unreviewed follow-up fix 2)
+        https://bugs.webkit.org/show_bug.cgi?id=214606
+
+        Unreviewed infrastructure fix.
+
+        webkit-patch just ignores svn:ignore, and lands the patch with only a changelog.
+
+        * Scripts/libraries: Added property svn:ignore.
+
 2020-07-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Inspector bar in Mail compose shows incorrect text alignment style for ranged selections
