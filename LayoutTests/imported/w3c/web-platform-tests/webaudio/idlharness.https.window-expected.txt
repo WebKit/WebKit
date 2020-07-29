@@ -180,8 +180,8 @@ PASS AudioBuffer interface: attribute length
 PASS AudioBuffer interface: attribute duration 
 PASS AudioBuffer interface: attribute numberOfChannels 
 PASS AudioBuffer interface: operation getChannelData(unsigned long) 
-FAIL AudioBuffer interface: operation copyFromChannel(Float32Array, unsigned long, optional unsigned long) assert_own_property: interface prototype object missing non-static operation expected property "copyFromChannel" missing
-FAIL AudioBuffer interface: operation copyToChannel(Float32Array, unsigned long, optional unsigned long) assert_own_property: interface prototype object missing non-static operation expected property "copyToChannel" missing
+PASS AudioBuffer interface: operation copyFromChannel(Float32Array, unsigned long, optional unsigned long) 
+PASS AudioBuffer interface: operation copyToChannel(Float32Array, unsigned long, optional unsigned long) 
 FAIL AudioBuffer must be primary interface of buffer assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
 FAIL Stringification of buffer assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
 FAIL AudioBuffer interface: buffer must inherit property "sampleRate" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"

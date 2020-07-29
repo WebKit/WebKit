@@ -113,7 +113,7 @@ void AudioBuffer::releaseMemory()
 ExceptionOr<Ref<Float32Array>> AudioBuffer::getChannelData(unsigned channelIndex)
 {
     if (channelIndex >= m_channels.size())
-        return Exception { SyntaxError };
+        return Exception { IndexSizeError, "Index must be less than number of channels."_s };
     auto& channelData = *m_channels[channelIndex];
     return Float32Array::create(channelData.unsharedBuffer(), channelData.byteOffset(), channelData.length());
 }
@@ -123,6 +123,62 @@ Float32Array* AudioBuffer::channelData(unsigned channelIndex)
     if (channelIndex >= m_channels.size())
         return nullptr;
     return m_channels[channelIndex].get();
+}
+
+ExceptionOr<void> AudioBuffer::copyFromChannel(Ref<Float32Array>&& destination, unsigned channelNumber, unsigned bufferOffset)
+{
+    if (destination->isShared())
+        return Exception { TypeError, "Destination may not be a shared buffer."_s };
+    
+    if (channelNumber < 0 || channelNumber >= m_channels.size())
+        return Exception { IndexSizeError, "Not a valid channelNumber."_s };
+    
+    Float32Array* channelData = m_channels[channelNumber].get();
+    
+    size_t dataLength = channelData->length();
+    
+    if (bufferOffset >= dataLength)
+        return { };
+    
+    unsigned count = dataLength - bufferOffset;
+    count = std::min(destination.get().length(), count);
+    
+    const float* src = channelData->data();
+    float* dst = destination->data();
+    
+    ASSERT(src);
+    ASSERT(dst);
+    
+    memmove(dst, src + bufferOffset, count * sizeof(*src));
+    return { };
+}
+
+ExceptionOr<void> AudioBuffer::copyToChannel(Ref<Float32Array>&& source, unsigned channelNumber, unsigned bufferOffset)
+{
+    if (source->isShared())
+        return Exception { TypeError, "Source may not be a shared buffer."_s };
+    
+    if (channelNumber < 0 || channelNumber >= m_channels.size())
+        return Exception { IndexSizeError, "Not a valid channelNumber."_s };
+    
+    Float32Array* channelData = m_channels[channelNumber].get();
+    
+    size_t dataLength = channelData->length();
+    
+    if (bufferOffset >= dataLength)
+        return { };
+    
+    unsigned count = dataLength - bufferOffset;
+    count = std::min(source.get().length(), count);
+    
+    const float* src = source->data();
+    float* dst = channelData->data();
+    
+    ASSERT(src);
+    ASSERT(dst);
+    
+    memmove(dst + bufferOffset, src, count * sizeof(*dst));
+    return { };
 }
 
 void AudioBuffer::zero()

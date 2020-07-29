@@ -53,6 +53,8 @@ public:
     // Channel data access
     unsigned numberOfChannels() const { return m_channels.size(); }
     ExceptionOr<Ref<Float32Array>> getChannelData(unsigned channelIndex);
+    ExceptionOr<void> copyFromChannel(Ref<Float32Array>&&, unsigned channelNumber, unsigned bufferOffset);
+    ExceptionOr<void> copyToChannel(Ref<Float32Array>&&, unsigned channelNumber, unsigned startInChannel);
     Float32Array* channelData(unsigned channelIndex);
     void zero();
 

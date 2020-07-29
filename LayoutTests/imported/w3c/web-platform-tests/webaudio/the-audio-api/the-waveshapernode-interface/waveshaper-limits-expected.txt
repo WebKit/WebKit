@@ -1,6 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: buffer.copyToChannel is not a function. (In 'buffer.copyToChannel(bufferData, 0)', 'buffer.copyToChannel' is undefined)"
+FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
+                .then')"
 PASS Audit report 
 PASS > [test] WaveShaperNode including values outside the range of [-1,1] 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
