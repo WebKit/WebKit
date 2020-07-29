@@ -1391,6 +1391,8 @@ bool Structure::canAccessPropertiesQuicklyForEnumeration() const
         return false;
     if (hasGetterSetterProperties())
         return false;
+    if (hasCustomGetterSetterProperties())
+        return false;
     if (isUncacheableDictionary())
         return false;
     return true;
