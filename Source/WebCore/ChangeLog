@@ -1,3 +1,26 @@
+2020-07-29  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove USE(ZLIB)
+        https://bugs.webkit.org/show_bug.cgi?id=214929
+
+        Reviewed by Darin Adler.
+
+        Remove USE(ZLIB) guards in WebSocket code. Since WebSocketDeflateFramer::canDeflate
+        is always true remove it and the callsite checking it in WebSocketChannel.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+        * Modules/websockets/WebSocketDeflateFramer.cpp:
+        (WebCore::WebSocketExtensionDeflateFrame::processResponse):
+        (WebCore::WebSocketDeflateFramer::enableDeflate):
+        (WebCore::WebSocketDeflateFramer::deflate):
+        (WebCore::WebSocketDeflateFramer::resetDeflateContext):
+        (WebCore::WebSocketDeflateFramer::inflate):
+        (WebCore::WebSocketDeflateFramer::resetInflateContext):
+        (WebCore::WebSocketDeflateFramer::canDeflate const): Deleted.
+        * Modules/websockets/WebSocketDeflateFramer.h:
+        * Modules/websockets/WebSocketDeflater.cpp:
+
 2020-07-29  Chris Dumez  <cdumez@apple.com>
 
         Calling AudioNode constructors should have identical behavior to using create*() function on BaseAudioContext

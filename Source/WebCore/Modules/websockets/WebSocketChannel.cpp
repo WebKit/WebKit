@@ -99,8 +99,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& requestedUR
     String clientOrigin = m_document->securityOrigin().toString();
     m_handshake = makeUnique<WebSocketHandshake>(validatedURL->url, protocol, userAgent, clientOrigin, m_allowCookies);
     m_handshake->reset();
-    if (m_deflateFramer.canDeflate())
-        m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
+    m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
     if (m_identifier)
         InspectorInstrumentation::didCreateWebSocket(m_document.get(), m_identifier, validatedURL->url);
 

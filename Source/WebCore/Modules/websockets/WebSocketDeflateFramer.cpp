@@ -69,7 +69,6 @@ String WebSocketExtensionDeflateFrame::handshakeString()
 
 bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, String>& serverParameters)
 {
-#if USE(ZLIB)
     if (m_responseProcessed) {
         m_failureReason = "Received duplicate deflate-frame response";
         return false;
@@ -106,10 +105,6 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
 
     m_framer->enableDeflate(windowBits, mode);
     return true;
-#else
-    ASSERT_NOT_REACHED();
-    return false;
-#endif
 }
 
 DeflateResultHolder::DeflateResultHolder(WebSocketDeflateFramer* framer)
@@ -158,16 +153,6 @@ std::unique_ptr<WebSocketExtensionProcessor> WebSocketDeflateFramer::createExten
     return makeUnique<WebSocketExtensionDeflateFrame>(this);
 }
 
-bool WebSocketDeflateFramer::canDeflate() const
-{
-#if USE(ZLIB)
-    return true;
-#else
-    return false;
-#endif
-}
-
-#if USE(ZLIB)
 void WebSocketDeflateFramer::enableDeflate(int windowBits, WebSocketDeflater::ContextTakeOverMode mode)
 {
     m_deflater = makeUnique<WebSocketDeflater>(windowBits, mode);
@@ -179,11 +164,9 @@ void WebSocketDeflateFramer::enableDeflate(int windowBits, WebSocketDeflater::Co
     }
     m_enabled = true;
 }
-#endif
 
 std::unique_ptr<DeflateResultHolder> WebSocketDeflateFramer::deflate(WebSocketFrame& frame)
 {
-#if USE(ZLIB)
     auto result = makeUnique<DeflateResultHolder>(this);
     if (!enabled() || !WebSocketFrame::isNonControlOpCode(frame.opCode) || !frame.payloadLength)
         return result;
@@ -195,17 +178,12 @@ std::unique_ptr<DeflateResultHolder> WebSocketDeflateFramer::deflate(WebSocketFr
     frame.payload = m_deflater->data();
     frame.payloadLength = m_deflater->size();
     return result;
-#else
-    return makeUnique<DeflateResultHolder>(this);
-#endif
 }
 
 void WebSocketDeflateFramer::resetDeflateContext()
 {
-#if USE(ZLIB)
     if (m_deflater)
         m_deflater->reset();
-#endif
 }
 
 std::unique_ptr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFrame& frame)
@@ -215,7 +193,6 @@ std::unique_ptr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFr
         result->fail("Compressed bit must be 0 if no negotiated deflate-frame extension");
         return result;
     }
-#if USE(ZLIB)
     if (!frame.compress)
         return result;
     if (!WebSocketFrame::isNonControlOpCode(frame.opCode)) {
@@ -230,17 +207,12 @@ std::unique_ptr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFr
     frame.payload = m_inflater->data();
     frame.payloadLength = m_inflater->size();
     return result;
-#else
-    return result;
-#endif
 }
 
 void WebSocketDeflateFramer::resetInflateContext()
 {
-#if USE(ZLIB)
     if (m_inflater)
         m_inflater->reset();
-#endif
 }
 
 void WebSocketDeflateFramer::didFail()
