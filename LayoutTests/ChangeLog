@@ -1,3 +1,13 @@
+2020-07-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r264930): [ iOS debug wk2 ] webrtc/video.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=214888
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Remove test expectation
+        since the change that caused the failure was reverted.
+
 2020-07-28  Chris Dumez  <cdumez@apple.com>
 
         Move non standard OscillatorNode API to new WebKitOscillatorNode interface
