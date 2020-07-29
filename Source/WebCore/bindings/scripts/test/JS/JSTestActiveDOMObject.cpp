@@ -247,6 +247,7 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionExciting
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto nextChild = convert<IDLInterface<Node>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "nextChild", "TestActiveDOMObject", "excitingFunction", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.excitingFunction(*nextChild);
     return JSValue::encode(jsUndefined());
 }
@@ -268,6 +269,7 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionPostMess
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto message = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.postMessage(WTFMove(message));
     return JSValue::encode(jsUndefined());
 }
@@ -288,6 +290,7 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionOverload
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto param = convert<IDLDOMString>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.overloadedMethod(WTFMove(param));
     return JSValue::encode(jsUndefined());
 }
@@ -305,6 +308,7 @@ static inline JSC::EncodedJSValue jsTestActiveDOMObjectPrototypeFunctionOverload
     EnsureStillAliveScope argument1 = callFrame->uncheckedArgument(1);
     auto param2 = convert<IDLInterface<Node>>(*lexicalGlobalObject, argument1.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 1, "param2", "TestActiveDOMObject", "overloadedMethod", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.overloadedMethod(*param1, *param2);
     return JSValue::encode(jsUndefined());
 }

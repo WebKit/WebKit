@@ -423,6 +423,7 @@ static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCE
     UNUSED_PARAM(callFrame);
     CustomElementReactionStack customElementReactionStack(*lexicalGlobalObject);
     auto& impl = castedThis->wrapped();
+    throwScope.release();
     impl.methodWithCEReactions();
     return JSValue::encode(jsUndefined());
 }
@@ -440,6 +441,7 @@ static inline JSC::EncodedJSValue jsTestCEReactionsPrototypeFunctionMethodWithCE
     UNUSED_PARAM(callFrame);
     CustomElementReactionDisallowedScope customElementReactionDisallowedScope;
     auto& impl = castedThis->wrapped();
+    throwScope.release();
     impl.methodWithCEReactionsNotNeeded();
     return JSValue::encode(jsUndefined());
 }

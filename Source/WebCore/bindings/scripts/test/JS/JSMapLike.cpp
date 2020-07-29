@@ -351,6 +351,7 @@ static inline JSC::EncodedJSValue jsMapLikePrototypeFunctionClearBody(JSC::JSGlo
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
+    throwScope.release();
     forwardClearToMapLike(*lexicalGlobalObject, *callFrame, *castedThis);
     return JSValue::encode(jsUndefined());
 }

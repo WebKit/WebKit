@@ -323,6 +323,7 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionTestWorkerPromiseBo
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
+    throwScope.release();
     impl.testWorkerPromise(WTFMove(promise));
     return JSValue::encode(jsUndefined());
 }
@@ -339,6 +340,7 @@ static inline JSC::EncodedJSValue jsTestNodePrototypeFunctionCalculateSecretResu
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
+    throwScope.release();
     impl.calculateSecretResult(WTFMove(promise));
     return JSValue::encode(jsUndefined());
 }

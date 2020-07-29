@@ -6481,10 +6481,12 @@ sub GenerateImplementationFunctionCall
     my $hasWriteBarriersForArguments = GenerateWriteBarriersForArguments($outputArray, $operation, $indent, $dryRun);
     my $returnArgumentName = GetOperationReturnedArgumentName($operation);
     if ($returnArgumentName) {
+        push(@$outputArray, $indent . "throwScope.release();\n") if ($hasThrowScope);
         push(@$outputArray, $indent . "$functionString;\n");
         GenerateWriteBarriersForArguments($outputArray, $operation, $indent);
         push(@$outputArray, $indent . "return JSValue::encode($returnArgumentName.value());\n");
     } elsif ($operation->type->name eq "void" || ($codeGenerator->IsPromiseType($operation->type) && !$operation->extendedAttributes->{PromiseProxy})) {
+        push(@$outputArray, $indent . "throwScope.release();\n") if ($hasThrowScope);
         push(@$outputArray, $indent . "$functionString;\n");
         GenerateWriteBarriersForArguments($outputArray, $operation, $indent);
         push(@$outputArray, $indent . "return JSValue::encode(jsUndefined());\n");

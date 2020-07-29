@@ -888,6 +888,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionImplementsMeth
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
+    throwScope.release();
     impl.implementsMethod1();
     return JSValue::encode(jsUndefined());
 }
@@ -952,6 +953,7 @@ static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionImplementsMe
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
+    throwScope.release();
     TestInterface::implementsMethod4();
     return JSValue::encode(jsUndefined());
 }
@@ -990,6 +992,7 @@ static inline JSC::EncodedJSValue jsTestInterfacePrototypeFunctionSupplementalMe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
+    throwScope.release();
     WebCore::TestSupplemental::supplementalMethod1(impl);
     return JSValue::encode(jsUndefined());
 }
@@ -1054,6 +1057,7 @@ static inline JSC::EncodedJSValue jsTestInterfaceConstructorFunctionSupplemental
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
+    throwScope.release();
     WebCore::TestSupplemental::supplementalMethod4();
     return JSValue::encode(jsUndefined());
 }

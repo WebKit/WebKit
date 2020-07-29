@@ -509,6 +509,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncBody(JSC::J
     EnsureStillAliveScope argument0 = callFrame->argument(0);
     auto x = argument0.value().isUndefined() ? Converter<IDLSequence<IDLLong>>::ReturnType{ } : convert<IDLSequence<IDLLong>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.func(WTFMove(x));
     return JSValue::encode(jsUndefined());
 }
@@ -542,6 +543,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSetShadowBody(J
     EnsureStillAliveScope argument4 = callFrame->argument(4);
     auto alpha = argument4.value().isUndefined() ? Optional<Converter<IDLUnrestrictedFloat>::ReturnType>() : Optional<Converter<IDLUnrestrictedFloat>::ReturnType>(convert<IDLUnrestrictedFloat>(*lexicalGlobalObject, argument4.value()));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.setShadow(WTFMove(width), WTFMove(height), WTFMove(blur), WTFMove(color), WTFMove(alpha));
     return JSValue::encode(jsUndefined());
 }
@@ -583,6 +585,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto sequenceArg = convert<IDLNullable<IDLSequence<IDLDOMString>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.nullableSequenceArg(WTFMove(sequenceArg));
     return JSValue::encode(jsUndefined());
 }
@@ -604,6 +607,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionSequenceOfNulla
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto sequenceArg = convert<IDLSequence<IDLNullable<IDLDOMString>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.sequenceOfNullablesArg(WTFMove(sequenceArg));
     return JSValue::encode(jsUndefined());
 }
@@ -625,6 +629,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto sequenceArg = convert<IDLNullable<IDLSequence<IDLNullable<IDLDOMString>>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.nullableSequenceOfNullablesArg(WTFMove(sequenceArg));
     return JSValue::encode(jsUndefined());
 }
@@ -646,6 +651,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionNullableSequenc
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto sequenceArg = convert<IDLNullable<IDLSequence<IDLUnion<IDLDOMString, IDLSequence<IDLDOMString>>>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.nullableSequenceOfUnionsArg(WTFMove(sequenceArg));
     return JSValue::encode(jsUndefined());
 }
@@ -667,6 +673,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionUnionArgBody(JS
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto unionArg = convert<IDLUnion<IDLDOMString, IDLLong>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.unionArg(WTFMove(unionArg));
     return JSValue::encode(jsUndefined());
 }
@@ -691,6 +698,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampBo
     EnsureStillAliveScope argument1 = callFrame->argument(1);
     auto arg2 = argument1.value().isUndefined() ? Optional<Converter<IDLClampAdaptor<IDLUnsignedLongLong>>::ReturnType>() : Optional<Converter<IDLClampAdaptor<IDLUnsignedLongLong>>::ReturnType>(convert<IDLClampAdaptor<IDLUnsignedLongLong>>(*lexicalGlobalObject, argument1.value()));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.funcWithClamp(WTFMove(arg1), WTFMove(arg2));
     return JSValue::encode(jsUndefined());
 }
@@ -712,6 +720,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionFuncWithClampIn
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
     auto arg = convert<IDLClampAdaptor<IDLLong>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    throwScope.release();
     impl.funcWithClampInTypedef(WTFMove(arg));
     return JSValue::encode(jsUndefined());
 }
@@ -803,6 +812,7 @@ static inline JSC::EncodedJSValue jsTestTypedefsPrototypeFunctionMethodWithExcep
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
+    throwScope.release();
     propagateException(*lexicalGlobalObject, throwScope, impl.methodWithException());
     return JSValue::encode(jsUndefined());
 }

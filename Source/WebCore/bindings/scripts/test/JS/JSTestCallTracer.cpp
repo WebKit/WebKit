@@ -362,6 +362,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerInterface(impl, "testOperationInterface"_s);
+    throwScope.release();
     impl.testOperationInterface();
     return JSValue::encode(jsUndefined());
 }
@@ -380,6 +381,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     auto& impl = castedThis->wrapped();
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerOperation(impl, "testOperationSpecified"_s);
+    throwScope.release();
     impl.testOperationSpecified();
     return JSValue::encode(jsUndefined());
 }
@@ -409,6 +411,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerInterface(impl, "testOperationWithArguments"_s, { a, b, c });
+    throwScope.release();
     impl.testOperationWithArguments(WTFMove(a), WTFMove(b), WTFMove(c));
     return JSValue::encode(jsUndefined());
 }
@@ -432,6 +435,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerInterface(impl, "testOperationWithNullableArgument"_s, { nodeNullableArg });
+    throwScope.release();
     impl.testOperationWithNullableArgument(WTFMove(nodeNullableArg));
     return JSValue::encode(jsUndefined());
 }
@@ -455,6 +459,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerInterface(impl, "testOperationWithVariantArgument"_s, { variantArg });
+    throwScope.release();
     impl.testOperationWithVariantArgument(WTFMove(variantArg));
     return JSValue::encode(jsUndefined());
 }
@@ -478,6 +483,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerInterface(impl, "testOperationWithNullableVariantArgument"_s, { variantNullableArg });
+    throwScope.release();
     impl.testOperationWithNullableVariantArgument(WTFMove(variantNullableArg));
     return JSValue::encode(jsUndefined());
 }
@@ -499,6 +505,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerInterface(impl, "testOperationWithOptionalVariantArgument"_s, { variantOptionalArg });
+    throwScope.release();
     impl.testOperationWithOptionalVariantArgument(WTFMove(variantOptionalArg));
     return JSValue::encode(jsUndefined());
 }
@@ -520,6 +527,7 @@ static inline JSC::EncodedJSValue jsTestCallTracerPrototypeFunctionTestOperation
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerInterface(impl, "testOperationWithDefaultVariantArgument"_s, { variantDefaultArg });
+    throwScope.release();
     impl.testOperationWithDefaultVariantArgument(WTFMove(variantDefaultArg));
     return JSValue::encode(jsUndefined());
 }

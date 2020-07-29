@@ -208,6 +208,7 @@ static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunctionNon
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
+    throwScope.release();
     impl.nonConditionalOperation();
     return JSValue::encode(jsUndefined());
 }
@@ -227,6 +228,7 @@ static inline JSC::EncodedJSValue jsTestOperationConditionalPrototypeFunctionCon
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
+    throwScope.release();
     impl.conditionalOperation();
     return JSValue::encode(jsUndefined());
 }

@@ -327,6 +327,7 @@ static inline JSC::EncodedJSValue jsSetLikePrototypeFunctionClearBody(JSC::JSGlo
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
+    throwScope.release();
     forwardClearToSetLike(*lexicalGlobalObject, *callFrame, *castedThis);
     return JSValue::encode(jsUndefined());
 }

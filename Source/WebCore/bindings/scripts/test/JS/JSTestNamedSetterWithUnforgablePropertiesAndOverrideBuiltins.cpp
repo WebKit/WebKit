@@ -335,6 +335,7 @@ static inline JSC::EncodedJSValue jsTestNamedSetterWithUnforgablePropertiesAndOv
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
+    throwScope.release();
     impl.unforgeableOperation();
     return JSValue::encode(jsUndefined());
 }
