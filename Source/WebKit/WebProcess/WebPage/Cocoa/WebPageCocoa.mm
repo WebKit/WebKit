@@ -64,10 +64,12 @@ namespace WebKit {
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
+#if HAVE(LSDATABASECONTEXT)
     bool databaseUpdated = LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate(5_s);
     ASSERT_UNUSED(databaseUpdated, databaseUpdated);
     if (!databaseUpdated)
         WTFLogAlways("Timed out waiting for Launch Services database update.");
+#endif
 
     m_dataDetectionContext = parameters.dataDetectionContext;
 

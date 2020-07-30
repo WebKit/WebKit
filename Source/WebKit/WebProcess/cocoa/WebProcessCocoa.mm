@@ -188,11 +188,13 @@ void WebProcess::handleXPCEndpointMessages() const
         if (messageName.isEmpty())
             return;
 
+#if HAVE(LSDATABASECONTEXT)
         if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
             auto endpoint = xpc_dictionary_get_value(event, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointNameKey);
             LaunchServicesDatabaseManager::singleton().setEndpoint(endpoint);
             return;
         }
+#endif
     });
 
     xpc_connection_resume(connection);

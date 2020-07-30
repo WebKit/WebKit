@@ -1,3 +1,24 @@
+2020-07-30  Per Arne Vollan  <pvollan@apple.com>
+
+        Remember to check entitlement before communicating over XPC
+        https://bugs.webkit.org/show_bug.cgi?id=214825
+
+        Reviewed by Brent Fulgham.
+
+        Remember to check entitlement before communicating over XPC with another WebKit process. This needs to be done
+        to make sure that it really is a WebKit process on the other end.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::m_messagePortChannelRegistry):
+        * Shared/Cocoa/XPCEndpoint.mm:
+        (WebKit::XPCEndpoint::XPCEndpoint):
+        * Shared/Cocoa/XPCEndpointClient.mm:
+        (WebKit::XPCEndpointClient::setEndpoint):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::handleXPCEndpointMessages const):
+
 2020-07-30  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (r264925): run-safari --debug no longer works

@@ -56,12 +56,11 @@ void XPCEndpointClient::setEndpoint(xpc_endpoint_t endpoint)
             auto connection = xpc_dictionary_get_remote_connection(message);
             if (!connection)
                 return;
-            audit_token_t auditToken;
-            xpc_connection_get_audit_token(connection, &auditToken);
-            if (!WTF::hasEntitlement(auditToken, "com.apple.private.webkit.use-xpc-endpoint")) {
-                // Uncomment before landing; this is commented out because the bots does not seem to update the entitlements on incremental builds.
-                // WTFLogAlways("Audit token does not have required entitlement");
-                // return;
+
+            auto pid = xpc_connection_get_pid(connection);
+            if (pid != getpid() && !WTF::hasEntitlement(connection, "com.apple.private.webkit.use-xpc-endpoint")) {
+                WTFLogAlways("Audit token does not have required entitlement com.apple.private.webkit.use-xpc-endpoint");
+                return;
             }
             handleEvent(message);
         });
