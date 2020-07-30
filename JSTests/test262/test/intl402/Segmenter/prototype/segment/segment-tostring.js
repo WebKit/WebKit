@@ -26,7 +26,8 @@ const tests = [
 const segmenter = new Intl.Segmenter("en", { "granularity": "word" });
 for (const [args, expected] of tests) {
   const segments = segmenter.segment(...args);
-  assert.sameValue(segments.string, expected, `Expected segment "${expected}", found "${segments.segment}" for arguments ${args}`);
+  const actual = [...segments][0].segment;
+  assert.sameValue(actual, expected, `Expected segment "${expected}", found "${actual}" for arguments ${args}`);
 }
 
 const symbol = Symbol();

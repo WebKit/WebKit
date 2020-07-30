@@ -121,11 +121,6 @@ skip:
     - test/built-ins/TypedArrayConstructors/prototype/toString/bigint-inherited.js
     - test/built-ins/TypedArrayConstructors/prototype/values/bigint-inherited.js
 
-    # These tests require macOS system ICU to actually update its CLDR data >:(
-    # https://bugs.webkit.org/show_bug.cgi?id=209783
-    - test/intl402/DateTimeFormat/prototype/format/related-year-zh.js
-    - test/intl402/DateTimeFormat/prototype/formatToParts/related-year-zh.js
-
     # requires ICU 65 (https://unicode-org.atlassian.net/browse/ICU-20654)
     - test/intl402/RelativeTimeFormat/prototype/format/en-us-numeric-auto.js
     - test/intl402/RelativeTimeFormat/prototype/formatToParts/en-us-numeric-auto.js

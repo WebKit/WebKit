@@ -1,4 +1,5 @@
 // Copyright 2018 the V8 project authors. All rights reserved.
+// Copyright 2020 Apple Inc. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
@@ -31,8 +32,11 @@ for (const text of [
   let segments = [];
   for (const v of seg.segment(text)) {
     assert.sameValue("boolean", typeof v.isWordLike);
+    assert.sameValue(true, v.hasOwnProperty("isWordLike"));
     assert.sameValue("string", typeof v.segment);
     assert(v.segment.length > 0);
+    assert.sameValue("string", typeof v.input);
+    assert.sameValue(text, v.input);
     segments.push(v.segment);
   }
   assert.sameValue(text, segments.join(''));

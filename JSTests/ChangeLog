@@ -1,5 +1,33 @@
 2020-07-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Upgrade test262
+        https://bugs.webkit.org/show_bug.cgi?id=214949
+
+        Reviewed by Ross Kirsling.
+
+        related-year-zh.js tests are updated and passing.
+
+        * test262/config.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/intl402/DateTimeFormat/prototype/format/related-year-zh.js:
+        * test262/test/intl402/DateTimeFormat/prototype/formatToParts/related-year-zh.js:
+        (actual.forEach):
+        (verifyFormatParts): Deleted.
+        (verifyFormatParts.df.formatToParts): Deleted.
+        * test262/test/intl402/Segmenter/prototype/segment/segment-grapheme-iterable.js:
+        (const.v.of.seg.segment):
+        * test262/test/intl402/Segmenter/prototype/segment/segment-grapheme.js: Removed.
+        * test262/test/intl402/Segmenter/prototype/segment/segment-sentence-iterable.js:
+        (const.v.of.seg.segment):
+        * test262/test/intl402/Segmenter/prototype/segment/segment-sentence.js: Removed.
+        * test262/test/intl402/Segmenter/prototype/segment/segment-tostring.js:
+        * test262/test/intl402/Segmenter/prototype/segment/segment-word-iterable.js:
+        (const.v.of.seg.segment):
+        * test262/test/intl402/Segmenter/prototype/segment/segment-word.js: Removed.
+        * test262/test262-Revision.txt:
+
+2020-07-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Skip too heavy tests for Debug build
         https://bugs.webkit.org/show_bug.cgi?id=214939
 
