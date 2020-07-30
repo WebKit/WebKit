@@ -1,3 +1,30 @@
+2020-07-30  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Enable conformance2/textures/{image,video} and related layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=214977
+
+        Reviewed by Dean Jackson.
+
+        Enable dozens more WebGL 2.0 conformance tests, most
+        significantly:
+            webgl/2.0.0/conformance/textures/image/*
+            webgl/2.0.0/conformance[2]/textures/video/*
+        which are now passing completely.
+
+        * TestExpectations:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r16f-red-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-r32f-red-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rg16f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rg16f-rg-half_float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rg32f-rg-float-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rg8-rg-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rg8ui-rg_integer-unsigned_byte-expected.txt:
+        * webgl/2.0.0/conformance2/textures/video/tex-2d-rgb5_a1-rgba-unsigned_byte-expected.txt:
+
 2020-07-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Clicking on a shadow DOM does not move the selection to the focused element when delegatesFocus is set to true

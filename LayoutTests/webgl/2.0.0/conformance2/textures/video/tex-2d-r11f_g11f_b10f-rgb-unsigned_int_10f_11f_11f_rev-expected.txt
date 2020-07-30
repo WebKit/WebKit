@@ -1,5 +1,5 @@
-#PID UNRESPONSIVE - WebKitTestRunner (pid 33990)
-FAIL: Timed out waiting for notifyDone to be called
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
-#EOF
-#EOF
+Test: ../../../resources/webgl_test_files/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev.html
+[ PASS ] All tests passed
+
