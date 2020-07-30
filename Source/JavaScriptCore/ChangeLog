@@ -1,3 +1,24 @@
+2020-07-30  Saam Barati  <sbarati@apple.com>
+
+        Strip pointers instead of authing for byteOffset to not allow for a possible way to guess data pac
+        https://bugs.webkit.org/show_bug.cgi?id=214952
+
+        Reviewed by Keith Miller.
+
+        In the old way of doing things, we would auth the vector pointer before subtracting
+        the base from it. Since we never validated the auth, this allowed for a
+        potential data-PAC bypass by just repeatedly calling byteOffset in a loop
+        and observing the integer result of the operation.
+        
+        Since byteOffset does no loads/stores, it suffices to just strip the PAC
+        bits before doing the subtraction. This eliminates any such attacks like
+        the above because the PAC bits are ignored.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayByteOffset):
+
 2020-07-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add B3::BottomTupleValue node
