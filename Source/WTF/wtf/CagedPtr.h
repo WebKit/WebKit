@@ -39,7 +39,7 @@ template<Gigacage::Kind passedKind, typename T, bool shouldTag = false, typename
 class CagedPtr {
 public:
     static constexpr Gigacage::Kind kind = passedKind;
-    static constexpr unsigned numberOfPACBits = 25;
+    static constexpr unsigned numberOfPACBits = maximumNumberOfPointerAuthenticationBits;
     static constexpr uintptr_t nonPACBitsMask = (1ull << ((sizeof(T*) * CHAR_BIT) - numberOfPACBits)) - 1;
 
     CagedPtr() : CagedPtr(nullptr) { }
