@@ -3854,8 +3854,10 @@ void WebViewImpl::setThumbnailView(_WKThumbnailView *thumbnailView)
 
     if (thumbnailView)
         updateThumbnailViewLayer();
-    else
+    else {
         setAcceleratedCompositingRootLayer(m_rootLayer.get());
+        m_page->activityStateDidChange(WebCore::ActivityState::allFlags());
+    }
 }
 
 void WebViewImpl::reparentLayerTreeInThumbnailView()

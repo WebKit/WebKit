@@ -160,7 +160,7 @@ bool PageClientImpl::isViewWindowActive()
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     NSWindow *activeViewWindow = activeWindow();
-    return activeViewWindow.isKeyWindow || [NSApp keyWindow] == activeViewWindow;
+    return activeViewWindow.isKeyWindow || (activeViewWindow && [NSApp keyWindow] == activeViewWindow);
 }
 
 bool PageClientImpl::isViewFocused()

@@ -34,6 +34,7 @@
 - (instancetype)initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)style backing:(NSBackingStoreType)backingStoreType defer:(BOOL)flag screen:(NSScreen *)screen NS_UNAVAILABLE;
 
 - (instancetype)initWithSize:(CGSize)size;
+- (instancetype)initWithSize:(CGSize)size isKeyWindow:(BOOL)isKeyWindow;
 
 @end
 

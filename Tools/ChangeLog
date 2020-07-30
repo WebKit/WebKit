@@ -1,3 +1,23 @@
+2020-07-30  Tim Horton  <timothy_horton@apple.com>
+
+        Web content gets stuck in an inactive state (no cursor updates or text insertion caret) when activating a tab with a thumbnail visible
+        https://bugs.webkit.org/show_bug.cgi?id=214962
+        <rdar://problem/65670984>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKit/WKThumbnailView.mm:
+        (TestWebKitAPI::TEST):
+        Add a test ensuring that we go back to the active-window state after
+        unparenting a WKThumbnailView that was installed in an inactive window.
+
+        (-[WKThumbnailViewDelegate webView:didFinishNavigation:]): Deleted.
+        * TestWebKitAPI/mac/OffscreenWindow.h:
+        * TestWebKitAPI/mac/OffscreenWindow.mm:
+        (-[OffscreenWindow initWithSize:]):
+        (-[OffscreenWindow initWithSize:isKeyWindow:]):
+        (-[OffscreenWindow isKeyWindow]):
+
 2020-07-30  Jonathan Bedard  <jbedard@apple.com>
 
         [Big Sur] Add limited Seed 3 support to EWS

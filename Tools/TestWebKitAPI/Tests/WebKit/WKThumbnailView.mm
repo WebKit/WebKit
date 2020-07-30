@@ -28,9 +28,11 @@
 #if PLATFORM(MAC)
 
 #import "JavaScriptTest.h"
+#import "OffscreenWindow.h"
 #import "PlatformUtilities.h"
 #import "PlatformWebView.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKViewPrivate.h>
 #import <WebKit/_WKThumbnailView.h>
 #import <wtf/RetainPtr.h>
@@ -57,19 +59,6 @@ static void *snapshotSizeChangeKVOContext = &snapshotSizeChangeKVOContext;
     }
 
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-}
-
-@end
-
-
-@interface WKThumbnailViewDelegate : NSObject <WKNavigationDelegate>
-@end
-
-@implementation WKThumbnailViewDelegate
-
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    didFinishLoad = true;
 }
 
 @end
@@ -199,10 +188,7 @@ TEST(WebKit, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperviewWKWebView)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     WKPageSetCustomBackingScaleFactor([webView _pageForTesting], 1);
-    auto delegate = adoptNS([[WKThumbnailViewDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-    [webView  loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    Util::run(&didFinishLoad);
+    [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
 
     RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKWebView:webView.get()]);
     
@@ -241,10 +227,7 @@ TEST(WebKit, WKThumbnailViewMaximumSnapshotSizeWKWebView)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     WKPageSetCustomBackingScaleFactor([webView _pageForTesting], 1);
-    auto delegate = adoptNS([[WKThumbnailViewDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-    [webView  loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"lots-of-text" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    Util::run(&didFinishLoad);
+    [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
 
     auto thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKWebView:webView.get()]);
 
@@ -285,6 +268,41 @@ TEST(WebKit, WKThumbnailViewMaximumSnapshotSizeWKWebView)
     [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
 }
 
+TEST(WebKit, WKThumbnailViewResetsViewStateWhenUnparented)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView removeFromSuperview];
+    [webView synchronouslyLoadTestPageNamed:@"lots-of-text"];
+
+    auto thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKWebView:webView.get()]);
+
+    auto observer = adoptNS([[SnapshotSizeObserver alloc] init]);
+
+    [thumbnailView addObserver:observer.get() forKeyPath:@"snapshotSize" options:NSKeyValueObservingOptionNew context:snapshotSizeChangeKVOContext];
+
+    RetainPtr<NSWindow> otherWindow = adoptNS([[OffscreenWindow alloc] initWithSize:CGSizeMake(100, 100) isKeyWindow:NO]);
+    [[otherWindow contentView] addSubview:thumbnailView.get()];
+    [otherWindow orderFront:nil];
+    [[webView hostWindow] makeKeyAndOrderFront:nil];
+    Util::run(&didTakeSnapshot);
+    didTakeSnapshot = false;
+    EXPECT_FALSE([thumbnailView layer].contents == nil);
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.internals.isPageActive()"] boolValue]);
+
+    [webView addToTestWindow];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.internals.isPageActive()"] boolValue]);
+
+    [thumbnailView removeFromSuperview];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.internals.isPageActive()"] boolValue]);
+
+    [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
+}
+
+
 } // namespace TestWebKitAPI
 
-#endif
+#endif // PLATFORM(MAC)

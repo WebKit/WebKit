@@ -1,3 +1,33 @@
+2020-07-30  Tim Horton  <timothy_horton@apple.com>
+
+        Web content gets stuck in an inactive state (no cursor updates or text insertion caret) when activating a tab with a thumbnail visible
+        https://bugs.webkit.org/show_bug.cgi?id=214962
+        <rdar://problem/65670984>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setThumbnailView):
+        When WKThumbnailView is unparented, invalidate all activity state bits.
+        We do this because many of the functions that compute activity state bits
+        use the WKThumbnailView's window while it is parented. When it is unparented,
+        and we switch back to using the WKWebView's window, we mustn't get stuck
+        with activity state bits from WKThumbnailView's window.
+
+        This was particularly problematic in the case of the WKThumbnailViews
+        used for tab hover previews, because that window is not key, so we'd get
+        stuck with the inactive-window state, resulting in a lack of cursor updates,
+        a hidden text caret, the wrong selection color, etc.
+
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::isViewWindowActive):
+        While writing the API test for this, I noticed that isViewWindowActive
+        returns YES if there is no key window AND WKWebView is unparented
+        ([NSApp keyWindow] == activeWindow() == nil).
+        This seems completely insane (how can the window be active if it doesn't
+        exist?), and breaks the test, so ensure that we only say YES if we actually
+        have a window.
+
 2020-07-30  Peng Liu  <peng.liu6@apple.com>
 
         ASSERTION FAILED: !isInRoutingArbitrationForArbitrator(proxy) in WebKit::SharedArbitrator::beginRoutingArbitrationForArbitrator

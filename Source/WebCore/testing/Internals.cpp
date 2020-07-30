@@ -5171,6 +5171,15 @@ void Internals::setPageIsFocusedAndActive(bool isFocusedAndActive)
     page.setActivityState(state);
 }
 
+bool Internals::isPageActive() const
+{
+    auto* document = contextDocument();
+    if (!document || !document->page())
+        return false;
+    auto& page = *document->page();
+    return page.activityState().contains(ActivityState::WindowIsActive);
+}
+
 #if ENABLE(WEB_RTC)
 void Internals::setH264HardwareEncoderAllowed(bool allowed)
 {

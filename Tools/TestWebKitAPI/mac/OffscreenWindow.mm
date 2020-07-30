@@ -26,10 +26,19 @@
 #import "config.h"
 #import "OffscreenWindow.h"
 
-@implementation OffscreenWindow
+@implementation OffscreenWindow {
+    BOOL _isKeyWindow;
+}
 
 - (instancetype)initWithSize:(CGSize)size
 {
+    return [self initWithSize:size isKeyWindow:YES];
+}
+
+- (instancetype)initWithSize:(CGSize)size isKeyWindow:(BOOL)isKeyWindow
+{
+    _isKeyWindow = isKeyWindow;
+
     NSRect rect = NSMakeRect(0, 0, size.width, size.height);
     NSRect windowRect = NSOffsetRect(rect, -10000, [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height - rect.size.height + 10000);
     self = [super initWithContentRect:windowRect styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES];
@@ -46,7 +55,7 @@
 
 - (BOOL)isKeyWindow
 {
-    return YES;
+    return _isKeyWindow;
 }
 
 - (BOOL)isVisible
