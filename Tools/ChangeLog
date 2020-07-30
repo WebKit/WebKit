@@ -1,3 +1,39 @@
+2020-07-30  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style should enforce acronym capitalization at start/end of an identifier
+        <https://webkit.org/b/214954>
+
+        Reviewed by Jonathan Bedard.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (shouldIgnoreWebCoreNodeLeaks):
+        (changeWindowScaleIfNeeded):
+        - Fix case issues in variables using URL acronym.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_check_identifier_name_for_acronyms): Add.
+        - This contains the logic to report acronyms with invalid case
+          at the start and at the end of an identifer.
+        (check_identifier_name_in_declaration):
+        - Keep track of whether the identifer came from a class,
+          namespace or struct.
+        - Fix bug where `auto` variables would not be checked because
+          `auto` was removed with other non-type keywords like `inline`,
+          leaving no type for the variable.  Add a comment to describe
+          what this line is doing.
+        - Fix bug when removing "new" that changed an identifier named
+          "newURL" to "URL".
+        - Add call to _check_identifier_name_for_acronyms() to implement
+          the check.
+        (CppChecker):
+        - Add 'readability/naming/acronym' to the list of active
+          checkers.
+
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_identifier_names_with_acronyms):
+        - Add tests.  About half of the tests were taken from actual
+          code that initially caused false positives during development.
+
 2020-07-30  Beth Dakin  <bdakin@apple.com>
 
         Make report-non-inclusive-language ignore xcuserstate

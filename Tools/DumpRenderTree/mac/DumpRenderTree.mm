@@ -294,7 +294,7 @@ void setPersistentUserStyleSheetLocation(CFStringRef url)
     persistentUserStyleSheetLocation = url;
 }
 
-static bool shouldIgnoreWebCoreNodeLeaks(const string& URLString)
+static bool shouldIgnoreWebCoreNodeLeaks(const string& urlString)
 {
     static char* const ignoreSet[] = {
         // Keeping this infrastructure around in case we ever need it again.
@@ -304,8 +304,8 @@ static bool shouldIgnoreWebCoreNodeLeaks(const string& URLString)
     for (int i = 0; i < ignoreSetCount; i++) {
         // FIXME: ignore case
         string curIgnore(ignoreSet[i]);
-        // Match at the end of the URLString
-        if (!URLString.compare(URLString.length() - curIgnore.length(), curIgnore.length(), curIgnore))
+        // Match at the end of the urlString.
+        if (!urlString.compare(urlString.length() - curIgnore.length(), curIgnore.length(), curIgnore))
             return true;
     }
     return false;
@@ -1645,14 +1645,14 @@ static void dumpBackForwardListForWebView(WebView *view)
 }
 
 #if !PLATFORM(IOS_FAMILY)
-static void changeWindowScaleIfNeeded(const char* testPathOrUrl)
+static void changeWindowScaleIfNeeded(const char* testPathOrURL)
 {
-    auto localPathOrUrl = String(testPathOrUrl);
+    auto localPathOrURL = String(testPathOrURL);
     float currentScaleFactor = [[[mainFrame webView] window] backingScaleFactor];
     float requiredScaleFactor = 1;
-    if (localPathOrUrl.containsIgnoringASCIICase("/hidpi-3x-"))
+    if (localPathOrURL.containsIgnoringASCIICase("/hidpi-3x-"))
         requiredScaleFactor = 3;
-    else if (localPathOrUrl.containsIgnoringASCIICase("/hidpi-"))
+    else if (localPathOrURL.containsIgnoringASCIICase("/hidpi-"))
         requiredScaleFactor = 2;
     if (currentScaleFactor == requiredScaleFactor)
         return;

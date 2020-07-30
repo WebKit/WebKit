@@ -1796,6 +1796,40 @@ def _check_parameter_name_against_text(parameter, text, error):
     return True
 
 
+def _check_identifier_name_for_acronyms(identifier, line_number, is_class_or_namespace_or_struct_name, error):
+    """Checks to see if the identifier name contains an acronym with improper case.
+
+    Using "url" is okay at the start of an identifier name, and "URL" is okay in the
+    middle or at the end of an identifier name, but "Url" is never okay.
+    """
+    acronyms = '|'.join(['MIME', 'URL'])
+
+    start_re = re.compile('^(%s)(|$)' % acronyms, re.IGNORECASE)
+    start_expected_re = re.compile('^(%s)([^:]|$)' % acronyms.lower())
+    # Identifiers that start with an acronym must be all lowercase, except for class/namespace/struct names.
+    if start_re.search(identifier) and not start_expected_re.search(identifier):
+        start_uppercase_re = re.compile('^(%s)' % acronyms)
+        # Ignore class/namespace/struct names that start with all-uppercase acronyms.
+        if start_uppercase_re.search(identifier) and \
+                (is_class_or_namespace_or_struct_name or identifier.find('::') != -1):
+            return True
+        error(line_number, 'readability/naming/acronym', 5,
+              'The identifier name "%s" starts with a acronym that is not all lowercase.' % identifier)
+        return False
+
+    # FIXME: Hard to check middle words without knowing that the word to the left doesn't end with an acronym.
+
+    # Identifiers that end with an acronym must be all uppercase, except for variables like 'm_url' and 'Class::url()'.
+    end_re = re.compile('[^_:](%s)$' % acronyms, re.IGNORECASE)
+    end_expected_re = re.compile('[^_:](%s)$' % acronyms)
+    if end_re.search(identifier) and not end_expected_re.search(identifier):
+        error(line_number, 'readability/naming/acronym', 5,
+              'The identifier name "%s" ends with a acronym that is not all uppercase.' % identifier)
+        return False
+
+    return True
+
+
 def _error_redundant_specifier(line_number, redundant_specifier, good_specifier, error):
     error(line_number, 'readability/inheritance', 4,
           '"%s" is redundant since function is already declared as "%s"'
@@ -3700,7 +3734,7 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
 
 
 def check_identifier_name_in_declaration(filename, line_number, line, file_state, error):
-    """Checks if identifier names contain any underscores.
+    """Checks if identifier names contain any anti-patterns like underscores.
 
     As identifiers in libraries we are using have a bunch of
     underscores, we only warn about the declarations of identifiers
@@ -3745,10 +3779,18 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
     line = sub(r'long (long )?(?=long|double|int)', '', line)
     # Convert unsigned/signed types to simple types, too.
     line = sub(r'(unsigned|signed) (?=char|short|int|long)', '', line)
-    line = sub(r'\b(inline|using|static|const|volatile|auto|register|extern|typedef|restrict|struct|class|virtual)(?=\W)', '', line)
+
+    is_class_or_namespace_or_struct_name = False
+    class_namespace_struct_name_re = re.compile('\\b(class|explicit|namespace|struct|%s)(?=\\W)' % '|'.join(_EXPORT_MACROS))
+    if class_namespace_struct_name_re.search(line):
+        is_class_or_namespace_or_struct_name = True
+
+    # Remove keywords that aren't types.
+    line = sub(r'\b(inline|using|static|const|volatile|register|extern|typedef|restrict|struct|class|virtual)(?=\W)', '', line)
 
     # Remove "new" and "new (expr)" to simplify, too.
-    line = sub(r'new\s*(\([^)]*\))?', '', line)
+    line = sub(r'new\s+', '', line)
+    line = sub(r'new\s*(\([^)]*\))', '', line)
 
     # Remove all template parameters by removing matching < and >.
     # Loop until no templates are removed to remove nested templates.
@@ -3837,6 +3879,8 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
         # Check for variables named 'l', these are too easy to confuse with '1' in some fonts
         if modified_identifier == 'l':
             error(line_number, 'readability/naming', 4, identifier + " is incorrectly named. Don't use the single letter 'l' as an identifier name.")
+
+        _check_identifier_name_for_acronyms(identifier, line_number, is_class_or_namespace_or_struct_name, error)
 
         # There can be only one declaration in non-for-control statements.
         if control_statement:
@@ -4321,6 +4365,7 @@ class CppChecker(object):
         'readability/multiline_string',
         'readability/parameter_name',
         'readability/naming',
+        'readability/naming/acronym',
         'readability/naming/protected',
         'readability/naming/underscores',
         'readability/null',
