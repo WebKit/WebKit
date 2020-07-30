@@ -304,10 +304,13 @@ static void testOptionMenuSelect(OptionMenuTest* test, gconstpointer)
 
 void beforeAll()
 {
+#if !PLATFORM(GTK) || !USE(GTK4)
+    // FIXME: Rework option menu API in GTK4 to not expose GdkEvent.
     OptionMenuTest::add("WebKitWebView", "option-menu-simple", testOptionMenuSimple);
     OptionMenuTest::add("WebKitWebView", "option-menu-groups", testOptionMenuGroups);
     OptionMenuTest::add("WebKitWebView", "option-menu-activate", testOptionMenuActivate);
     OptionMenuTest::add("WebKitWebView", "option-menu-select", testOptionMenuSelect);
+#endif
 }
 
 void afterAll()

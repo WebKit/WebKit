@@ -21,23 +21,102 @@
 #include "WebViewTest.h"
 #include <wtf/glib/GRefPtr.h>
 
+class Clipboard {
+public:
+    Clipboard(GMainLoop* loop)
+        : m_mainLoop(loop)
+#if USE(GTK4)
+        , m_clipboard(gdk_display_get_clipboard(gdk_display_get_default()))
+#else
+        , m_clipboard(gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD))
+#endif
+    {
+    }
+
+    void clear()
+    {
+#if USE(GTK4)
+        g_assert_true(gdk_clipboard_set_content(m_clipboard, nullptr));
+#else
+        gtk_clipboard_clear(m_clipboard);
+#endif
+        m_text = nullptr;
+    }
+
+    bool containsText() const
+    {
+#if USE(GTK4)
+        return gdk_content_formats_contain_gtype(gdk_clipboard_get_formats(m_clipboard), G_TYPE_STRING);
+#else
+        return gtk_clipboard_wait_is_text_available(m_clipboard);
+#endif
+    }
+
+    bool waitForText()
+    {
+        // There's no way to know when the selection has been written to
+        // the clipboard, so use a timeout source to query the clipboard.
+        static const unsigned kClipboardWaitTimeout = 50;
+        static const unsigned kClipboardWaitMaxTries = 2;
+        m_triesCount = 0;
+        g_timeout_add(kClipboardWaitTimeout, [](gpointer userData) -> gboolean {
+            auto* clipboard = static_cast<Clipboard*>(userData);
+            clipboard->m_triesCount++;
+            if (clipboard->containsText() || clipboard->m_triesCount > kClipboardWaitMaxTries) {
+                g_main_loop_quit(clipboard->m_mainLoop);
+                return FALSE;
+            }
+            return TRUE;
+        }, this);
+        g_main_loop_run(m_mainLoop);
+        return containsText();
+    }
+
+    const char* readText()
+    {
+        m_text = nullptr;
+        if (waitForText()) {
+#if USE(GTK4)
+            gdk_clipboard_read_text_async(m_clipboard, nullptr, [](GObject* gdkClipboard, GAsyncResult* result, gpointer userData) {
+                auto* clipboard = static_cast<Clipboard*>(userData);
+                clipboard->m_text.reset(gdk_clipboard_read_text_finish(GDK_CLIPBOARD(gdkClipboard), result, nullptr));
+                g_main_loop_quit(clipboard->m_mainLoop);
+            }, this);
+            g_main_loop_run(m_mainLoop);
+#else
+            m_text.reset(gtk_clipboard_wait_for_text(m_clipboard));
+#endif
+        }
+        return m_text.get();
+    }
+
+private:
+    GMainLoop* m_mainLoop { nullptr };
+#if USE(GTK4)
+    GdkClipboard* m_clipboard { nullptr };
+#else
+    GtkClipboard* m_clipboard { nullptr };
+#endif
+    GUniquePtr<char> m_text;
+    unsigned m_triesCount { 0 };
+};
+
 class EditorTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(EditorTest);
 
-    static const unsigned kClipboardWaitTimeout = 50;
-    static const unsigned kClipboardWaitMaxTries = 2;
-
     EditorTest()
-        : m_clipboard(gtk_clipboard_get(GDK_SELECTION_CLIPBOARD))
-        , m_canExecuteEditingCommand(false)
-        , m_triesCount(0)
-        , m_editorState(nullptr)
+        : m_clipboard(m_mainLoop)
     {
         showInWindow();
+        m_clipboard.clear();
         loadURI("about:blank");
         waitUntilLoadFinished();
-        gtk_clipboard_clear(m_clipboard);
+    }
+
+    ~EditorTest()
+    {
+        m_clipboard.clear();
     }
 
     static gboolean webViewDrawCallback(GMainLoop* mainLoop)
@@ -48,10 +127,20 @@ public:
 
     void flushEditorState()
     {
+#if USE(GTK4)
+        auto* surface = gtk_native_get_surface(gtk_widget_get_native(GTK_WIDGET(m_webView)));
+        auto* clock = gdk_surface_get_frame_clock(surface);
+        auto signalID = g_signal_connect_swapped(clock, "paint", G_CALLBACK(webViewDrawCallback), m_mainLoop);
+#else
         auto signalID = g_signal_connect_swapped(m_webView, "draw", G_CALLBACK(webViewDrawCallback), m_mainLoop);
+#endif
         gtk_widget_queue_draw(GTK_WIDGET(m_webView));
         g_main_loop_run(m_mainLoop);
+#if USE(GTK4)
+        g_signal_handler_disconnect(clock, signalID);
+#else
         g_signal_handler_disconnect(m_webView, signalID);
+#endif
     }
 
     static void canExecuteEditingCommandReadyCallback(GObject*, GAsyncResult* result, EditorTest* test)
@@ -84,41 +173,20 @@ public:
         return m_canExecuteEditingCommand;
     }
 
-    static gboolean waitForClipboardText(EditorTest* test)
-    {
-        test->m_triesCount++;
-        if (gtk_clipboard_wait_is_text_available(test->m_clipboard) || test->m_triesCount > kClipboardWaitMaxTries) {
-            g_main_loop_quit(test->m_mainLoop);
-            return FALSE;
-        }
-
-        return TRUE;
-    }
-
-    void copyClipboard()
+    const char* copyClipboard()
     {
         webkit_web_view_execute_editing_command(m_webView, WEBKIT_EDITING_COMMAND_COPY);
-        // There's no way to know when the selection has been copied to
-        // the clipboard, so use a timeout source to query the clipboard.
-        m_triesCount = 0;
-        g_timeout_add(kClipboardWaitTimeout, reinterpret_cast<GSourceFunc>(waitForClipboardText), this);
-        g_main_loop_run(m_mainLoop);
+        return m_clipboard.readText();
     }
 
-    gchar* cutSelection()
+    const char* cutSelection()
     {
         g_assert_true(canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
         g_assert_true(canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
         g_assert_true(canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT));
 
         webkit_web_view_execute_editing_command(m_webView, WEBKIT_EDITING_COMMAND_CUT);
-        // There's no way to know when the selection has been cut to
-        // the clipboard, so use a timeout source to query the clipboard.
-        m_triesCount = 0;
-        g_timeout_add(kClipboardWaitTimeout, reinterpret_cast<GSourceFunc>(waitForClipboardText), this);
-        g_main_loop_run(m_mainLoop);
-
-        return gtk_clipboard_wait_for_text(m_clipboard);
+        return m_clipboard.readText();
     }
 
     WebKitEditorState* editorState()
@@ -149,10 +217,9 @@ public:
         return typingAttributes();
     }
 
-    GtkClipboard* m_clipboard;
-    bool m_canExecuteEditingCommand;
-    size_t m_triesCount;
-    WebKitEditorState* m_editorState;
+    Clipboard m_clipboard;
+    bool m_canExecuteEditingCommand { false };
+    WebKitEditorState* m_editorState { nullptr };
 };
 
 static const char* selectedSpanHTMLFormat =
@@ -182,9 +249,7 @@ static void testWebViewEditorCutCopyPasteNonEditable(EditorTest* test, gconstpoi
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT));
 
-    test->copyClipboard();
-    GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
-    g_assert_cmpstr(clipboardText.get(), ==, "make Jack a dull");
+    g_assert_cmpstr(test->copyClipboard(), ==, "make Jack a dull");
 }
 
 static void testWebViewEditorCutCopyPasteEditable(EditorTest* test, gconstpointer)
@@ -210,9 +275,7 @@ static void testWebViewEditorCutCopyPasteEditable(EditorTest* test, gconstpointe
     g_assert_true(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE));
     g_assert_true(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_PASTE_AS_PLAIN_TEXT));
 
-    test->copyClipboard();
-    GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
-    g_assert_cmpstr(clipboardText.get(), ==, "make Jack a dull");
+    g_assert_cmpstr(test->copyClipboard(), ==, "make Jack a dull");
 }
 
 static void testWebViewEditorSelectAllNonEditable(EditorTest* test, gconstpointer)
@@ -226,18 +289,12 @@ static void testWebViewEditorSelectAllNonEditable(EditorTest* test, gconstpointe
 
     g_assert_true(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_SELECT_ALL));
 
-    test->copyClipboard();
-    GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
-
     // Initially only the subspan is selected.
-    g_assert_cmpstr(clipboardText.get(), ==, "make Jack a dull");
+    g_assert_cmpstr(test->copyClipboard(), ==, "make Jack a dull");
 
     webkit_web_view_execute_editing_command(test->m_webView, WEBKIT_EDITING_COMMAND_SELECT_ALL);
-    test->copyClipboard();
-    clipboardText.reset(gtk_clipboard_wait_for_text(test->m_clipboard));
-
     // The mainspan should be selected after calling SELECT_ALL.
-    g_assert_cmpstr(clipboardText.get(), ==, "All work and no play make Jack a dull boy.");
+    g_assert_cmpstr(test->copyClipboard(), ==, "All work and no play make Jack a dull boy.");
 }
 
 static void testWebViewEditorSelectAllEditable(EditorTest* test, gconstpointer)
@@ -255,18 +312,12 @@ static void testWebViewEditorSelectAllEditable(EditorTest* test, gconstpointer)
 
     g_assert_true(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_SELECT_ALL));
 
-    test->copyClipboard();
-    GUniquePtr<char> clipboardText(gtk_clipboard_wait_for_text(test->m_clipboard));
-
     // Initially only the subspan is selected.
-    g_assert_cmpstr(clipboardText.get(), ==, "make Jack a dull");
+    g_assert_cmpstr(test->copyClipboard(), ==, "make Jack a dull");
 
     webkit_web_view_execute_editing_command(test->m_webView, WEBKIT_EDITING_COMMAND_SELECT_ALL);
-    test->copyClipboard();
-    clipboardText.reset(gtk_clipboard_wait_for_text(test->m_clipboard));
-
     // The mainspan should be selected after calling SELECT_ALL.
-    g_assert_cmpstr(clipboardText.get(), ==, "All work and no play make Jack a dull boy.");
+    g_assert_cmpstr(test->copyClipboard(), ==, "All work and no play make Jack a dull boy.");
 }
 
 static void loadContentsAndTryToCutSelection(EditorTest* test, bool contentEditable)
@@ -286,8 +337,7 @@ static void loadContentsAndTryToCutSelection(EditorTest* test, bool contentEdita
     test->flushEditorState();
 
     // Cut the selection to the clipboard to see if the view is indeed editable.
-    GUniquePtr<char> clipboardText(test->cutSelection());
-    g_assert_cmpstr(clipboardText.get(), ==, "make Jack a dull");
+    g_assert_cmpstr(test->cutSelection(), ==, "make Jack a dull");
 
     // Reset the editable for next test.
     test->setEditable(false);

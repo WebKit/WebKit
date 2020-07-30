@@ -226,28 +226,40 @@ public:
 
     ~CustomInspectorTest()
     {
+#if USE(GTK4)
+        if (m_inspectorWindow)
+            gtk_window_destroy(GTK_WINDOW(m_inspectorWindow));
+#else
         if (m_inspectorWindow)
             gtk_widget_destroy(m_inspectorWindow);
+#endif
     }
 
     bool openWindow()
     {
         g_assert_null(m_inspectorWindow);
-        m_inspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         WebKitWebViewBase* inspectorView = webkit_web_inspector_get_web_view(m_inspector);
         g_assert_nonnull(inspectorView);
+#if USE(GTK4)
+        m_inspectorWindow = gtk_window_new();
+        gtk_window_set_child(GTK_WINDOW(m_inspectorWindow), GTK_WIDGET(inspectorView));
+#else
+        m_inspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         gtk_container_add(GTK_CONTAINER(m_inspectorWindow), GTK_WIDGET(inspectorView));
-        gtk_widget_show_all(m_inspectorWindow);
+        gtk_widget_show(GTK_WIDGET(inspectorView));
+#endif
+        gtk_widget_show(m_inspectorWindow);
 
         return InspectorTest::openWindow();
     }
 
     void closed()
     {
-        if (m_inspectorWindow) {
-            gtk_widget_destroy(m_inspectorWindow);
-            m_inspectorWindow = 0;
-        }
+#if USE(GTK4)
+        g_clear_pointer(&m_inspectorWindow, gtk_window_destroy);
+#else
+        g_clear_pointer(&m_inspectorWindow, gtk_widget_destroy);
+#endif
 
         return InspectorTest::closed();
     }
@@ -256,12 +268,29 @@ public:
     {
         GRefPtr<WebKitWebViewBase> inspectorView = webkit_web_inspector_get_web_view(m_inspector);
         if (m_inspectorWindow) {
+#if USE(GTK4)
+            gtk_window_set_child(GTK_WINDOW(m_inspectorWindow), nullptr);
+            gtk_window_destroy(GTK_WINDOW(m_inspectorWindow));
+#else
             gtk_container_remove(GTK_CONTAINER(m_inspectorWindow), GTK_WIDGET(inspectorView.get()));
             gtk_widget_destroy(m_inspectorWindow);
-            m_inspectorWindow = 0;
+#endif
+            m_inspectorWindow = nullptr;
         }
 
         GtkWidget* pane;
+#if USE(GTK4)
+        if (gtk_window_get_child(GTK_WINDOW(m_parentWindow)) == GTK_WIDGET(m_webView)) {
+            GRefPtr<WebKitWebView> inspectedView = m_webView;
+            gtk_window_set_child(GTK_WINDOW(m_parentWindow), nullptr);
+            pane = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+            gtk_paned_set_start_child(GTK_PANED(pane), GTK_WIDGET(m_webView));
+            gtk_window_set_child(GTK_WINDOW(m_parentWindow), pane);
+        } else
+            pane = gtk_window_get_child(GTK_WINDOW(m_parentWindow));
+        gtk_paned_set_position(GTK_PANED(pane), webkit_web_inspector_get_attached_height(m_inspector));
+        gtk_paned_set_end_child(GTK_PANED(pane), GTK_WIDGET(inspectorView.get()));
+#else
         if (gtk_bin_get_child(GTK_BIN(m_parentWindow)) == GTK_WIDGET(m_webView)) {
             GRefPtr<WebKitWebView> inspectedView = m_webView;
             gtk_container_remove(GTK_CONTAINER(m_parentWindow), GTK_WIDGET(m_webView));
@@ -273,6 +302,7 @@ public:
             pane = gtk_bin_get_child(GTK_BIN(m_parentWindow));
         gtk_paned_set_position(GTK_PANED(pane), webkit_web_inspector_get_attached_height(m_inspector));
         gtk_paned_add2(GTK_PANED(pane), GTK_WIDGET(inspectorView.get()));
+#endif
 
         return InspectorTest::attach();
     }
@@ -280,17 +310,26 @@ public:
     bool detach()
     {
         GRefPtr<WebKitWebViewBase> inspectorView = webkit_web_inspector_get_web_view(m_inspector);
+#if USE(GTK4)
+        GtkWidget* pane = gtk_window_get_child(GTK_WINDOW(m_parentWindow));
+        g_assert_true(GTK_IS_PANED(pane));
+        gtk_paned_set_end_child(GTK_PANED(pane), nullptr);
+#else
         GtkWidget* pane = gtk_bin_get_child(GTK_BIN(m_parentWindow));
         g_assert_true(GTK_IS_PANED(pane));
         gtk_container_remove(GTK_CONTAINER(pane), GTK_WIDGET(inspectorView.get()));
+#endif
         return InspectorTest::detach();
     }
 
     void destroyWindow()
     {
         g_assert_nonnull(m_inspectorWindow);
-        gtk_widget_destroy(m_inspectorWindow);
-        m_inspectorWindow = 0;
+#if USE(GTK4)
+        g_clear_pointer(&m_inspectorWindow, gtk_window_destroy);
+#else
+        g_clear_pointer(&m_inspectorWindow, gtk_widget_destroy);
+#endif
     }
 
     GtkWidget* m_inspectorWindow;

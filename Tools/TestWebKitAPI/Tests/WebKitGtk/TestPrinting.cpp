@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "WebViewTest.h"
+#include <WebCore/GtkVersioning.h>
 #include <glib/gstdio.h>
 #include <wtf/glib/GRefPtr.h>
 

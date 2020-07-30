@@ -83,8 +83,8 @@ static void testWebExtensionInputElementIsUserEdited(WebViewTest* test, gconstpo
     g_assert_false(inputElementIsUserEdited(proxy.get(), pageID, "input"));
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('input').focus()", nullptr);
     test->keyStroke(GDK_KEY_a);
-    while (gtk_events_pending())
-        gtk_main_iteration();
+    while (g_main_context_pending(nullptr))
+        g_main_context_iteration(nullptr, TRUE);
     GUniquePtr<char> resultString;
     do {
         auto* result = test->runJavaScriptAndWaitUntilFinished("document.getElementById('input').value", nullptr);
@@ -95,8 +95,8 @@ static void testWebExtensionInputElementIsUserEdited(WebViewTest* test, gconstpo
     g_assert_false(inputElementIsUserEdited(proxy.get(), pageID, "textarea"));
     test->runJavaScriptAndWaitUntilFinished("document.getElementById('textarea').focus()", nullptr);
     test->keyStroke(GDK_KEY_b);
-    while (gtk_events_pending())
-        gtk_main_iteration();
+    while (g_main_context_pending(nullptr))
+        g_main_context_iteration(nullptr, TRUE);
     do {
         auto* result = test->runJavaScriptAndWaitUntilFinished("document.getElementById('textarea').value", nullptr);
         resultString.reset(WebViewTest::javascriptResultToCString(result));

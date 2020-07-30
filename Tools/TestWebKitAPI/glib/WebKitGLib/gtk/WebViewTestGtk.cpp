@@ -28,8 +28,13 @@
 
 void WebViewTest::platformDestroy()
 {
+#if USE(GTK4)
+    if (m_parentWindow)
+        gtk_window_destroy(GTK_WINDOW(m_parentWindow));
+#else
     if (m_parentWindow)
         gtk_widget_destroy(m_parentWindow);
+#endif
 }
 
 void WebViewTest::platformInitializeWebView()
@@ -65,11 +70,18 @@ void WebViewTest::hideView()
 void WebViewTest::showInWindow(int width, int height)
 {
     g_assert_null(m_parentWindow);
+#if USE(GTK4)
+    m_parentWindow = gtk_window_new();
+    gtk_window_set_child(GTK_WINDOW(m_parentWindow), GTK_WIDGET(m_webView));
+#else
     m_parentWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    if (width && height)
-        gtk_window_set_default_size(GTK_WINDOW(m_parentWindow), width, height);
     gtk_container_add(GTK_CONTAINER(m_parentWindow), GTK_WIDGET(m_webView));
     gtk_widget_show(GTK_WIDGET(m_webView));
+#endif
+
+    if (width && height)
+        gtk_window_set_default_size(GTK_WINDOW(m_parentWindow), width, height);
+
     gtk_widget_show(m_parentWindow);
 
     while (g_main_context_pending(nullptr))

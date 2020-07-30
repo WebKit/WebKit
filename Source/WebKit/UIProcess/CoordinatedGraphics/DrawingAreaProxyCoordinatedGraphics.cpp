@@ -411,8 +411,12 @@ void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::start(WTF::Function<vo
     m_callback = WTFMove(callback);
 #if PLATFORM(GTK)
     gtk_widget_queue_draw(m_webPage.viewWidget());
+#if USE(GTK4)
+    m_timer.startOneShot(16_ms);
+#else
     g_signal_connect_swapped(m_webPage.viewWidget(), "draw", reinterpret_cast<GCallback>(webViewDrawCallback), this);
     m_timer.startOneShot(100_ms);
+#endif
 #else
     m_timer.startOneShot(0_s);
 #endif
@@ -421,7 +425,7 @@ void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::start(WTF::Function<vo
 void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::stop()
 {
     m_timer.stop();
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
     g_signal_handlers_disconnect_by_func(m_webPage.viewWidget(), reinterpret_cast<gpointer>(webViewDrawCallback), this);
 #endif
     m_startTime = MonotonicTime();

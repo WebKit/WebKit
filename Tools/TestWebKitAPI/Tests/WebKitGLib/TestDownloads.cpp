@@ -807,7 +807,10 @@ void beforeAll()
     DownloadTest::add("Downloads", "mime-type", testDownloadMIMEType);
     // FIXME: Implement keyStroke in WPE.
 #if PLATFORM(GTK)
+#if !USE(GTK4)
+    // FIXME: Rework context menu API in GTK4 to not expose GdkEvent.
     WebViewDownloadTest::add("Downloads", "contex-menu-download-actions", testContextMenuDownloadActions);
+#endif
     // FIXME: Implement mouse click in WPE.
     WebViewDownloadTest::add("Downloads", "blob-download", testBlobDownload);
 #endif

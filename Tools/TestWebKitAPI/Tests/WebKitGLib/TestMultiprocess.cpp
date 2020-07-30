@@ -99,7 +99,11 @@ public:
         auto* connection = s_dbusConnectionPageMap.get(webkit_web_view_get_page_id(m_webViews[index].get()));
         g_assert_nonnull(connection);
         g_signal_connect_swapped(connection, "closed", G_CALLBACK(g_main_loop_quit), m_mainLoop);
+#if USE(GTK4)
+        g_object_run_dispose(G_OBJECT(m_webViews[index].get()));
+#else
         gtk_widget_destroy(GTK_WIDGET(m_webViews[index].get()));
+#endif
         g_main_loop_run(m_mainLoop);
     }
 #endif

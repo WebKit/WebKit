@@ -27,6 +27,12 @@
 
 typedef struct _WebKitWebViewBase WebKitWebViewBase;
 
+struct KeyEvent {
+    unsigned type { 0 };
+    unsigned keyval { 0 };
+    unsigned modifiers { 0 };
+};
+
 enum class MouseEventType { Press, Release, Motion };
 void webkitWebViewBaseSynthesizeMouseEvent(WebKitWebViewBase*, MouseEventType type, unsigned button, unsigned short buttons, int x, int y, unsigned modifiers, int clickCount);
 

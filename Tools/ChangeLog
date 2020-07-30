@@ -1,3 +1,57 @@
+2020-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Enable API tests
+        https://bugs.webkit.org/show_bug.cgi?id=214344
+
+        Reviewed by Adrian Perez de Castro.
+
+        Port API tests to GTK4. Context menu and option menu tests are still disabled for GTK4 because we plan to change
+        the API for GTK4 in those cases.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestInputMethodContext.cpp:
+        (webkitInputMethodContextMockFilterKeyEvent):
+        * TestWebKitAPI/Tests/WebKitGLib/TestMultiprocess.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestOptionMenu.cpp:
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (checkMimeTypeForFilter):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (testWebExtensionInputElementIsUserEdited):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        * TestWebKitAPI/Tests/WebKitGtk/AccessibilityTestServer.cpp:
+        * TestWebKitAPI/Tests/WebKitGtk/InspectorTestServer.cpp:
+        (main):
+        * TestWebKitAPI/Tests/WebKitGtk/TestContextMenu.cpp:
+        (testContextMenuPopulateMenu):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGtk/TestInspector.cpp:
+        * TestWebKitAPI/Tests/WebKitGtk/TestPrinting.cpp:
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebViewEditor.cpp:
+        (Clipboard::Clipboard):
+        (Clipboard::clear):
+        (Clipboard::containsText const):
+        (Clipboard::waitForText):
+        (Clipboard::readText):
+        (testWebViewEditorCutCopyPasteNonEditable):
+        (testWebViewEditorCutCopyPasteEditable):
+        (testWebViewEditorSelectAllNonEditable):
+        (testWebViewEditorSelectAllEditable):
+        (loadContentsAndTryToCutSelection):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::Test):
+        * TestWebKitAPI/glib/WebKitGLib/gtk/WebViewTestGtk.cpp:
+        (WebViewTest::platformDestroy):
+        (WebViewTest::showInWindow):
+        * TestWebKitAPI/gtk/PlatformUtilitiesGtk.cpp:
+        (TestWebKitAPI::Util::isKeyDown):
+        * TestWebKitAPI/gtk/PlatformWebViewGtk.cpp:
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::initialize):
+
 2020-07-30  Brady Eidson  <beidson@apple.com>
 
         Refactor HID gamepad code to be much less fragile and much easier to hack on.

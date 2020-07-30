@@ -317,8 +317,8 @@ public:
     void setCreateNewWebViewsInWindowsWithDefaultSize(int width = 800, int height = 600)
     {
         m_shouldCreateWebViewsInNewWindowsAutomatically = true;
-        m_DefaultGeometryNewWindows.width = width;
-        m_DefaultGeometryNewWindows.height = height;
+        m_defaultGeometryNewWindows.width = width;
+        m_defaultGeometryNewWindows.height = height;
     }
 #endif
 
@@ -338,8 +338,8 @@ public:
 #if PLATFORM(GTK)
         keyStroke(GDK_KEY_a);
         keyStroke(GDK_KEY_b);
-        while (gtk_events_pending())
-            gtk_main_iteration();
+        while (g_main_context_pending(nullptr))
+            g_main_context_iteration(nullptr, TRUE);
 #endif
     }
 
@@ -367,10 +367,15 @@ public:
 #if PLATFORM(GTK)
         if (m_shouldCreateWebViewsInNewWindowsAutomatically) {
             g_assert_null(m_parentWindow);
+#if USE(GTK4)
+            m_parentWindow = gtk_window_new();
+            gtk_window_set_child(GTK_WINDOW(m_parentWindow), GTK_WIDGET(newWebView));
+#else
             m_parentWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-            gtk_window_set_default_size(GTK_WINDOW(m_parentWindow), m_DefaultGeometryNewWindows.width, m_DefaultGeometryNewWindows.height);
             gtk_container_add(GTK_CONTAINER(m_parentWindow), GTK_WIDGET(newWebView));
             gtk_widget_show(GTK_WIDGET(newWebView));
+#endif
+            gtk_window_set_default_size(GTK_WINDOW(m_parentWindow), m_defaultGeometryNewWindows.width, m_defaultGeometryNewWindows.height);
             gtk_widget_show(m_parentWindow);
         }
 #endif
@@ -416,7 +421,7 @@ public:
 
 #if PLATFORM(GTK)
     bool m_shouldCreateWebViewsInNewWindowsAutomatically { false };
-    cairo_rectangle_int_t m_DefaultGeometryNewWindows;
+    cairo_rectangle_int_t m_defaultGeometryNewWindows;
 #endif
 };
 
@@ -521,10 +526,16 @@ static void testWebViewCreateNavigationData(CreateNavigationDataTest* test, gcon
 #if PLATFORM(GTK)
 static gboolean checkMimeTypeForFilter(GtkFileFilter* filter, const gchar* mimeType)
 {
+#if USE(GTK4)
+    GRefPtr<GFileInfo> filterInfo = adoptGRef(g_file_info_new());
+    g_file_info_set_content_type(filterInfo.get(), mimeType);
+    return gtk_filter_match(GTK_FILTER(filter), filterInfo.get());
+#else
     GtkFileFilterInfo filterInfo;
     filterInfo.contains = GTK_FILE_FILTER_MIME_TYPE;
     filterInfo.mime_type = mimeType;
     return gtk_file_filter_filter(filter, &filterInfo);
+#endif
 }
 #endif
 

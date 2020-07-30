@@ -26,30 +26,6 @@
 
 static WebKitTestServer* kServer;
 
-#if USE(GTK4)
-struct LookupWidgetsData {
-    void (*walkChildren)(GtkContainer*, GtkCallback, void*);
-    Function<bool(GtkWidget*)> predicate;
-    Vector<GtkWidget*> result;
-};
-
-static void lookupWidgetsWalkChild(GtkWidget* child, void* userdata)
-{
-    auto& data = *reinterpret_cast<LookupWidgetsData*>(userdata);
-    if (data.predicate(child))
-        data.result.append(child);
-    else if (GTK_IS_CONTAINER(child))
-        data.walkChildren(GTK_CONTAINER(child), lookupWidgetsWalkChild, userdata);
-}
-
-static Vector<GtkWidget*> lookupWidgets(GtkWidget* widget, Function<bool(GtkWidget*)>&& predicate, bool internal = false)
-{
-    LookupWidgetsData data = {internal ? gtk_container_forall : gtk_container_foreach, WTFMove(predicate)};
-    lookupWidgetsWalkChild(widget, &data);
-    return WTFMove(data.result);
-}
-#endif // USE(GTK4)
-
 class ContextMenuTest: public WebViewTest {
 public:
     enum ContextMenuItemStateFlags {
@@ -61,6 +37,7 @@ public:
     void checkContextMenuEvent(GdkEvent* event)
     {
         g_assert_nonnull(event);
+#if !USE(GTK4)
         g_assert_cmpint(event->type, ==, m_expectedEventType);
 
         switch (m_expectedEventType) {
@@ -79,6 +56,7 @@ public:
         default:
             g_assert_not_reached();
         }
+#endif
     }
 
     static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, GdkEvent* event, WebKitHitTestResult* hitTestResult, ContextMenuTest* test)
@@ -126,18 +104,7 @@ public:
                 continue;
 
 #if USE(GTK4)
-            // Popovers are internal to the GtkContainer where the webview resides,
-            // gtk_container_forall() is the only way to enumerate internal children.
-            GtkPopover *popover = nullptr;
-            gtk_container_forall(GTK_CONTAINER(iter->data),
-                [](GtkWidget* child, void* data) {
-                    auto** popover = reinterpret_cast<GtkPopover**>(data);
-                    if (GTK_IS_POPOVER_MENU(child) && !*popover)
-                        *popover = GTK_POPOVER(child);
-                }, &popover);
-
-            if (popover && gtk_popover_get_relative_to(popover) == GTK_WIDGET(m_webView))
-                return popover;
+            return nullptr;
 #else
             GtkWidget* child = gtk_bin_get_child(GTK_BIN(iter->data));
             if (!GTK_IS_MENU(child))
@@ -176,10 +143,12 @@ public:
         WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(items->data);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(item));
 
+#if !USE(GTK4)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GtkAction* action = webkit_context_menu_item_get_action(item);
         g_assert_true(GTK_IS_ACTION(action));
         G_GNUC_END_IGNORE_DEPRECATIONS;
+#endif
 
         GAction* gAction = webkit_context_menu_item_get_gaction(item);
         g_assert_true(G_IS_ACTION(gAction));
@@ -199,12 +168,15 @@ public:
         WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(items->data);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(item));
 
+#if !USE(GTK4)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GtkAction* action = webkit_context_menu_item_get_action(item);
         g_assert_true(GTK_IS_ACTION(action));
+#endif
 
         GAction* gAction = webkit_context_menu_item_get_gaction(item);
         g_assert_true(G_IS_ACTION(gAction));
+#if !USE(GTK4)
         g_assert_cmpstr(gtk_action_get_name(action), ==, g_action_get_name(gAction));
         g_assert_cmpint(gtk_action_get_sensitive(action), ==, g_action_get_enabled(gAction));
         if (GTK_IS_TOGGLE_ACTION(action)) {
@@ -217,6 +189,7 @@ public:
         g_assert_cmpint(webkit_context_menu_item_get_stock_action(item), ==, WEBKIT_CONTEXT_MENU_ACTION_CUSTOM);
         g_assert_cmpstr(gtk_action_get_label(action), ==, label);
         G_GNUC_END_IGNORE_DEPRECATIONS;
+#endif
 
         checkActionState(gAction, state);
 
@@ -231,11 +204,13 @@ public:
         WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(items->data);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(item));
 
+#if !USE(GTK4)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GtkAction* action = webkit_context_menu_item_get_action(item);
         g_assert_true(GTK_IS_ACTION(action));
         g_assert_cmpstr(gtk_action_get_label(action), ==, label);
         G_GNUC_END_IGNORE_DEPRECATIONS;
+#endif
 
         GAction* gAction = webkit_context_menu_item_get_gaction(item);
         g_assert_true(G_IS_ACTION(gAction));
@@ -301,7 +276,9 @@ public:
 
     void showContextMenuTriggeredByPopupEventAndWaitUntilFinished()
     {
+#if !USE(GTK4)
         m_expectedEventType = GDK_NOTHING;
+#endif
         g_idle_add(reinterpret_cast<GSourceFunc>(emitPopupMenuSignalIdleCallback), this);
         g_main_loop_run(m_mainLoop);
     }
@@ -600,12 +577,14 @@ public:
     bool contextMenu(WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult* hitTestResult)
     {
         // Append our custom item to the default menu.
+#if !USE(GTK4)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         if (m_action)
             webkit_context_menu_append(contextMenu, webkit_context_menu_item_new(m_action.get()));
         else if (m_gAction)
             webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_from_gaction(m_gAction.get(), m_gActionTitle.data(), m_expectedTarget.get()));
         G_GNUC_END_IGNORE_DEPRECATIONS;
+#endif
         quitMainLoop();
 
         return false;
@@ -614,22 +593,7 @@ public:
 #if USE(GTK4)
     GtkButton* getMenuItem(GtkWidget* popover, const gchar* itemLabel)
     {
-        auto items = lookupWidgets(popover,
-            [itemLabel](GtkWidget* widget) {
-                if (!GTK_IS_BUTTON(widget))
-                    return false;
-                const char* label = gtk_button_get_label(GTK_BUTTON(widget));
-                if (!label) {
-                    const auto labels = lookupWidgets(GTK_WIDGET(widget),
-                        [](GtkWidget* child) { return GTK_IS_LABEL(child); });
-                    g_assert_cmpuint(1, ==, labels.size());
-                    label = gtk_label_get_label(GTK_LABEL(labels[0]));
-                }
-                return GTK_IS_BUTTON(widget) && g_strcmp0(label, itemLabel) == 0;
-            }, true);
-
-        g_assert_cmpuint(items.size(), >, 0);
-        return items.size() ? GTK_BUTTON(items[0]) : nullptr;
+        return nullptr;
     }
 #else
     GtkMenuItem* getMenuItem(GtkWidget* menu, const gchar* itemLabel)
@@ -651,8 +615,7 @@ public:
         auto* menu = getContextMenuWidget();
         auto* item = getMenuItem(menu, m_itemToActivateLabel);
 #if USE(GTK4)
-        // GTK4 uses a popover, which contains buttons.
-        gtk_button_clicked(item);
+
 #else
         // GTK3 uses a menu, which contains menu items.
         gtk_menu_shell_activate_item(GTK_MENU_SHELL(menu), GTK_WIDGET(item), TRUE);
@@ -700,12 +663,6 @@ public:
     static void actionToggledCallback(ContextMenuCustomTest* test)
     {
         test->m_toggled = true;
-
-#if USE(GTK4)
-        // For toggle actions the popover menu is NOT dismissed automatically, as to show visual feedback to the user
-        // (i.e. the check marker). Dismiss it here to trigger contextMenuDismissedCallback() and continue the test.
-        gtk_popover_popdown(test->getPopoverMenu());
-#endif // USE(GTK4)
     }
 
     void setAction(GtkAction* action)
@@ -713,12 +670,14 @@ public:
         m_action = action;
         m_gAction = nullptr;
         m_expectedTarget = nullptr;
+#if !USE(GTK4)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         if (GTK_IS_TOGGLE_ACTION(action))
             g_signal_connect_swapped(action, "toggled", G_CALLBACK(actionToggledCallback), this);
         else
             g_signal_connect_swapped(action, "activate", G_CALLBACK(actionActivatedCallback), this);
         G_GNUC_END_IGNORE_DEPRECATIONS;
+#endif
     }
 
     void setAction(GAction* action, const char* title, GVariant* target = nullptr)
@@ -747,6 +706,7 @@ static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpoint
     test->loadHtml("<html><body>WebKitGTK Context menu tests</body></html>", "file:///");
     test->waitUntilLoadFinished();
 
+#if !USE(GTK4)
     G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
     // Create a custom menu item.
     GRefPtr<GtkAction> action = adoptGRef(gtk_action_new("WebKitGTKCustomAction", "Custom _Action", nullptr, nullptr));
@@ -764,6 +724,7 @@ static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpoint
     g_assert_false(test->m_activated);
     g_assert_true(test->m_toggled);
     G_GNUC_END_IGNORE_DEPRECATIONS;
+#endif
 
     // Create a custom menu item using GAction.
     GRefPtr<GAction> gAction = adoptGRef(G_ACTION(g_simple_action_new("WebKitGTKCustomGAction", nullptr)));
@@ -805,6 +766,7 @@ public:
         webkit_context_menu_insert(contextMenu, webkit_context_menu_item_new_separator(), 2);
 
         // Add custom actions.
+#if !USE(GTK4)
         G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
         GRefPtr<GtkAction> action = adoptGRef(gtk_action_new("WebKitGTKCustomAction", "Custom _Action", nullptr, nullptr));
         gtk_action_set_sensitive(action.get(), FALSE);
@@ -813,6 +775,7 @@ public:
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(toggleAction.get()), TRUE);
         webkit_context_menu_append(contextMenu, webkit_context_menu_item_new(toggleAction.get()));
         webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+#endif
         GRefPtr<GAction> gAction = adoptGRef(G_ACTION(g_simple_action_new("WebKitGTKCustomGAction", nullptr)));
         g_simple_action_set_enabled(G_SIMPLE_ACTION(gAction.get()), FALSE);
         webkit_context_menu_insert(contextMenu, webkit_context_menu_item_new_from_gaction(gAction.get(), "Custom _GAction", nullptr), -1);
@@ -1175,6 +1138,8 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
+#if !USE(GTK4)
+    // FIXME: Rework context menu API in GTK4 to not expose GdkEvent.
     ContextMenuDefaultTest::add("WebKitWebView", "default-menu", testContextMenuDefaultMenu);
     ContextMenuDefaultTest::add("WebKitWebView", "context-menu-key", testContextMenuKey);
     ContextMenuDefaultTest::add("WebKitWebView", "popup-event-signal", testPopupEventSignal);
@@ -1185,6 +1150,7 @@ void beforeAll()
     ContextMenuDismissedTest::add("WebKitWebView", "menu-dismissed", testContextMenuDismissed);
     ContextMenuWebExtensionTest::add("WebKitWebPage", "context-menu", testContextMenuWebExtensionMenu);
     ContextMenuWebExtensionNodeTest::add("WebKitWebPage", "context-menu-node", testContextMenuWebExtensionNode);
+#endif
 }
 
 void afterAll()

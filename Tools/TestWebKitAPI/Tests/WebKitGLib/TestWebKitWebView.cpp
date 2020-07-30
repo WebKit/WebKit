@@ -444,9 +444,10 @@ public:
 
     static gboolean leaveFullScreenIdle(FullScreenClientTest* test)
     {
-        // FIXME: Implement key strokes in WPE
 #if PLATFORM(GTK)
         test->keyStroke(GDK_KEY_Escape);
+#else
+        test->keyStroke(WPE_KEY_Escape);
 #endif
         return FALSE;
     }

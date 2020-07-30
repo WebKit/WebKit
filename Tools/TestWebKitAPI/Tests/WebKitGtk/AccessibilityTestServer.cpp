@@ -21,6 +21,7 @@
 
 #include <WebCore/GtkVersioning.h>
 #include <webkit2/webkit2.h>
+#include <wtf/glib/GRefPtr.h>
 
 static const char introspectionXML[] =
     "<node>"
@@ -70,11 +71,16 @@ int main(int argc, char** argv)
     gtk_init(&argc, &argv);
 
     GtkWidget* webView = webkit_web_view_new();
-
+#if USE(GTK4)
+    GtkWidget* window = gtk_window_new();
+    gtk_window_set_child(GTK_WINDOW(window), GTK_WIDGET(webView));
+#else
     GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), nullptr);
     gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(webView));
-    gtk_widget_show_all(window);
+    gtk_widget_show(GTK_WIDGET(webView));
+#endif
+    gtk_widget_show(window);
 
     g_dbus_connection_new_for_address(argv[1], G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT, nullptr, nullptr,
         [](GObject*, GAsyncResult* result, gpointer userData) {
@@ -88,5 +94,10 @@ int main(int argc, char** argv)
                 &interfaceVirtualTable, userData, nullptr, nullptr);
         }, webView);
 
+#if USE(GTK4)
+    GRefPtr<GMainLoop> loop = adoptGRef(g_main_loop_new(nullptr, TRUE));
+    g_main_loop_run(loop.get());
+#else
     gtk_main();
+#endif
 }

@@ -112,6 +112,9 @@ private:
     struct {
         bool isActive { false };
         bool preeditChanged { false };
+#if PLATFORM(GTK) && USE(GTK4)
+        bool isFakeKeyEventForTesting { false };
+#endif
     } m_filteringContext;
 
     String m_compositionResult;

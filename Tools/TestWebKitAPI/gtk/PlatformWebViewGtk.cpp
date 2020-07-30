@@ -62,15 +62,24 @@ PlatformWebView::PlatformWebView(WKPageRef relatedPage)
 
 PlatformWebView::~PlatformWebView()
 {
+#if USE(GTK4)
+    gtk_window_destroy(GTK_WINDOW(m_window));
+#else
     gtk_widget_destroy(m_window);
+#endif
 }
 
 void PlatformWebView::initialize(WKPageConfigurationRef configuration)
 {
-    m_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     m_view = WKViewCreate(configuration);
+#if USE(GTK4)
+    m_window = gtk_window_new();
+    gtk_window_set_child(GTK_WINDOW(m_window), GTK_WIDGET(m_view));
+#else
+    m_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_container_add(GTK_CONTAINER(m_window), GTK_WIDGET(m_view));
     gtk_widget_show(GTK_WIDGET(m_view));
+#endif
     gtk_widget_show(m_window);
 }
 

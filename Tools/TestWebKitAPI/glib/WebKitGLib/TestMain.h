@@ -138,7 +138,9 @@ public:
             "website-data-manager", websiteDataManager.get(),
 #if PLATFORM(GTK)
             "process-swap-on-cross-site-navigation-enabled", TRUE,
+#if !USE(GTK4)
             "use-system-appearance-for-scrollbars", FALSE,
+#endif
 #endif
             nullptr)));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webContext.get()));
