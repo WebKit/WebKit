@@ -1,3 +1,16 @@
+2020-07-30  Peng Liu  <peng.liu6@apple.com>
+
+        ASSERTION FAILED: !isInRoutingArbitrationForArbitrator(proxy) in WebKit::SharedArbitrator::beginRoutingArbitrationForArbitrator
+        https://bugs.webkit.org/show_bug.cgi?id=214904
+
+        Reviewed by Jer Noble.
+
+        Only add an AudioSessionRoutingArbitratorProxy to the WeakHashSet (m_arbitrators)
+        if the routing arbitration is completed successfully.
+
+        * UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm:
+        (WebKit::SharedArbitrator::beginRoutingArbitrationForArbitrator):
+
 2020-07-30  Per Arne Vollan  <pvollan@apple.com>
 
         Remember to check entitlement before communicating over XPC

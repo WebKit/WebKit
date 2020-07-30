@@ -74,10 +74,15 @@ bool SharedArbitrator::isInRoutingArbitrationForArbitrator(AudioSessionRoutingAr
 void SharedArbitrator::beginRoutingArbitrationForArbitrator(AudioSessionRoutingArbitratorProxy& proxy, ArbitrationCallback&& callback)
 {
     ASSERT(!isInRoutingArbitrationForArbitrator(proxy));
-    m_arbitrators.add(proxy);
 
     if (m_setupArbitrationOngoing) {
-        m_enqueuedCallbacks.append(WTFMove(callback));
+        m_enqueuedCallbacks.append([this, weakProxy = makeWeakPtr(proxy), callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
+            if (error == RoutingArbitrationError::None && weakProxy)
+                m_arbitrators.add(*weakProxy);
+
+            callback(error, routeChanged);
+        });
+
         return;
     }
 
@@ -85,6 +90,7 @@ void SharedArbitrator::beginRoutingArbitrationForArbitrator(AudioSessionRoutingA
 
     if (m_currentCategory) {
         if (*m_currentCategory >= requestedCategory) {
+            m_arbitrators.add(proxy);
             callback(RoutingArbitrationError::None, DefaultRouteChanged::No);
             return;
         }
@@ -110,7 +116,12 @@ void SharedArbitrator::beginRoutingArbitrationForArbitrator(AudioSessionRoutingA
     }
 
     m_setupArbitrationOngoing = true;
-    m_enqueuedCallbacks.append(WTFMove(callback));
+    m_enqueuedCallbacks.append([this, weakProxy = makeWeakPtr(proxy), callback = WTFMove(callback)] (RoutingArbitrationError error, DefaultRouteChanged routeChanged) mutable {
+        if (error == RoutingArbitrationError::None && weakProxy)
+            m_arbitrators.add(*weakProxy);
+
+        callback(error, routeChanged);
+    });
 
     [[PAL::getAVAudioRoutingArbiterClass() sharedRoutingArbiter] beginArbitrationWithCategory:arbitrationCategory completionHandler:[this](BOOL defaultDeviceChanged, NSError * _Nullable error) {
         callOnMainRunLoop([this, defaultDeviceChanged, error = retainPtr(error)] {
