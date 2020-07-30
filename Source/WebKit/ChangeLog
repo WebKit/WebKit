@@ -1,3 +1,32 @@
+2020-07-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Two taps are required to choose a country/region when creating an account on ea.com
+        https://bugs.webkit.org/show_bug.cgi?id=214984
+        <rdar://problem/66261490>
+
+        Reviewed by Devin Rousso.
+
+        On the desktop version of the account creation page on ea.com, tapping a custom selection menu element
+        programmatically focuses a real `select` element that is positioned far outside the viewport. As a result, on
+        iPad, we still attempt to show a popover for this focused select at the element location. This popover is not
+        visible to the user, but on iOS 13, it still steals modal focus from the web view, which means that an
+        additional tap anywhere in the window is required to dismiss the (invisible) popover before the user can choose
+        one of the options in the custom in-page menu that is shown.
+
+        Furthermore, upon choosing one of these options, the page programmatically focuses the offscreen select again.
+        This causes us to re-present the offscreen popover, which requires yet another tap to dismiss on iOS 13.
+        However, on iOS 14, this actually results in a crash when attempting to scroll the popover's inner UITableView
+        to the selected row.
+
+        To fix both the crash on iOS 14 and the multiple redundant taps required to dismiss the popover on iOS 13, avoid
+        showing popovers altogether if the popover's presentation rect is outside the bounds of the content view, since
+        we cannot reasonably expect a user to interact with such a popover anyways.
+
+        Test: fast/forms/ios/repeatedly-focus-offscreen-select.html
+
+        * UIProcess/ios/forms/WKFormPopover.mm:
+        (-[WKRotatingPopover presentPopoverAnimated:]):
+
 2020-07-30  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt -[AVContentKeyRequest willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:]

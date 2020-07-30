@@ -1,3 +1,17 @@
+2020-07-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iPadOS] Two taps are required to choose a country/region when creating an account on ea.com
+        https://bugs.webkit.org/show_bug.cgi?id=214984
+        <rdar://problem/66261490>
+
+        Reviewed by Devin Rousso.
+
+        Add a test that exercises both the crash and the UI bug on iPadOS. Note that this test already passes on iOS,
+        where we don't use popovers for focused selects.
+
+        * fast/forms/ios/repeatedly-focus-offscreen-select-expected.txt: Added.
+        * fast/forms/ios/repeatedly-focus-offscreen-select.html: Added.
+
 2020-07-30  Antoine Quint  <graouts@webkit.org>
 
         [ iOS ] webanimations/accelerated-animation-with-easing.html is still flaky

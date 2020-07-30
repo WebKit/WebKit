@@ -133,26 +133,22 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 - (void)presentPopoverAnimated:(BOOL)animated
 {
+    auto directions = [self popoverArrowDirections];
+    CGRect presentationRect;
+    if (CGPointEqualToPoint(self.presentationPoint, CGPointZero))
+        presentationRect = _view.focusedElementInformation.interactionRect;
+    else {
+        auto scale = _view.page->pageScaleFactor();
+        presentationRect = CGRectMake(self.presentationPoint.x * scale, self.presentationPoint.y * scale, 1, 1);
+    }
+
+    if (!CGRectIntersectsRect(presentationRect, _view.bounds))
+        return;
+
 #if PLATFORM(MACCATALYST)
     [_view startRelinquishingFirstResponderToFocusedElement];
 #endif
-
-    UIPopoverArrowDirection directions = [self popoverArrowDirections];
-
-    BOOL presentWithPoint = !CGPointEqualToPoint(self.presentationPoint, CGPointZero);
-    if (presentWithPoint) {
-        CGFloat scale = [_view page]->pageScaleFactor();
-        [_popoverController presentPopoverFromRect:CGRectIntegral(CGRectMake(self.presentationPoint.x * scale, self.presentationPoint.y * scale, 1, 1))
-                                            inView:_view
-                          permittedArrowDirections:directions
-                                          animated:animated];
-    } else {
-        CGRect boundingBoxOfDOMNode = _view.focusedElementInformation.interactionRect;
-        [_popoverController presentPopoverFromRect:CGRectIntegral(boundingBoxOfDOMNode)
-                                            inView:_view
-                          permittedArrowDirections:directions
-                                          animated:animated];
-    }
+    [_popoverController presentPopoverFromRect:CGRectIntegral(presentationRect) inView:_view permittedArrowDirections:directions animated:animated];
 }
 
 - (void)dismissPopoverAnimated:(BOOL)animated
