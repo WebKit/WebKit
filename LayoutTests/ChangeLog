@@ -1,3 +1,17 @@
+2020-07-30  Antoine Quint  <graouts@webkit.org>
+
+        [ iOS ] webanimations/accelerated-animation-with-easing.html is still flaky
+        https://bugs.webkit.org/show_bug.cgi?id=214327
+        <rdar://problem/65569237>
+
+        Reviewed by Dean Jackson.
+
+        Remove the flaky expectation and remove the extra tolerance added in r263761 when it was thought that
+        this test was merely flaky and not completely broken on iOS as it turned out to be.
+
+        * platform/ios-wk2/TestExpectations:
+        * webanimations/accelerated-animation-with-easing.html:
+
 2020-07-30  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Enable conformance2/textures/{image,video} and related layout tests

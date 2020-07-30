@@ -276,6 +276,7 @@ public:
 
         PlatformCAAnimation::FillModeType fillMode;
         PlatformCAAnimation::ValueFunctionType valueFunction;
+        RefPtr<WebCore::TimingFunction> timingFunction;
 
         bool autoReverses;
         bool removedOnCompletion;

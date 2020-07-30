@@ -1772,8 +1772,6 @@ webkit.org/b/214084 [ Release ] webrtc/libwebrtc/descriptionGetters.html [ Pass 
 
 webkit.org/b/214322 [ Debug ] http/tests/workers/worker-importScripts-banned-mimetype.html [ Pass Crash ]
 
-webkit.org/b/214327 webanimations/accelerated-animation-with-easing.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/214363 [ Debug ] fast/text-indicator/text-indicator-empty-link.html [ Pass Crash ]
 
 webkit.org/b/214382 [ Release ] imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.html [ Pass Failure ]

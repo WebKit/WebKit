@@ -1,3 +1,34 @@
+2020-07-30  Antoine Quint  <graouts@webkit.org>
+
+        [ iOS ] webanimations/accelerated-animation-with-easing.html is still flaky
+        https://bugs.webkit.org/show_bug.cgi?id=214327
+        <rdar://problem/65569237>
+
+        Reviewed by Dean Jackson.
+
+        When we fixed bug 213495 in r263506, we started calling PlatformCAAnimation::setTimingFunction()
+        to set the animation-wide timing function of CSS Animations and JS-originated animations alike.
+        However, we neglected to update PlatformCAAnimationRemote, used on iOS, to be able to handle
+        both animation-wide timing functions as well as keyframe-specific timing functions. This patch
+        adds a new "timingFunction" member to PlatformCAAnimationRemote::Properties to allow for this
+        and this new member is used in setTimingFunction() and copyTimingFunctionFrom(). Finally, after
+        the animation is decoded in the UI process, we call -[CAKeyframeAnimation setTimingFunction:]
+        inside addAnimationToLayer() to use this animation-wide timing function.
+
+        This fixes the test added originally in r263506 which would only work flakily, a symptom of this
+        missing implementation on iOS.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::encodeTimingFunction):
+        (WebKit::decodeTimingFunction):
+        (WebKit::PlatformCAAnimationRemote::Properties::encode const):
+        (WebKit::PlatformCAAnimationRemote::Properties::decode):
+        (WebKit::PlatformCAAnimationRemote::setTimingFunction):
+        (WebKit::PlatformCAAnimationRemote::copyTimingFunctionFrom):
+        (WebKit::addAnimationToLayer):
+        (WebKit::operator<<):
+
 2020-07-30  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make DecoderTest run against .mp4 files; add rate-limiting.
