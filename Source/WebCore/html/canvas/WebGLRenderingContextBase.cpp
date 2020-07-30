@@ -1188,13 +1188,13 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     if (!canvas)
         return;
 
-    if (canvas->document().printing())
+    if (canvas->document().printing() || (canvas->isSnapshotting() && canvas->document().page()->isVisible()))
         canvas->clearPresentationCopy();
 
     // Until the canvas is written to by the application, the clear that
     // happened after it was composited should be ignored by the compositor.
     if (m_context->layerComposited() && !m_attributes.preserveDrawingBuffer) {
-        m_context->paintCompositedResultsToCanvas(canvas->buffer());
+        m_context->paintRenderingResultsToCanvas(canvas->buffer());
 
         canvas->makePresentationCopy();
     } else

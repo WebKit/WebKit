@@ -132,6 +132,9 @@ public:
     bool needsPreparationForDisplay();
     void prepareForDisplay();
 
+    void setIsSnapshotting(bool isSnapshotting) { m_isSnapshotting = isSnapshotting; }
+    bool isSnapshotting() const { return m_isSnapshotting; }
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
@@ -187,6 +190,8 @@ private:
 #if ENABLE(WEBGL)
     bool m_hasRelevantWebGLEventListener { false };
 #endif
+
+    bool m_isSnapshotting { false };
 
     mutable RefPtr<Image> m_presentedImage;
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).

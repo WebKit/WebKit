@@ -92,7 +92,10 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
         page().addRelevantRepaintedObject(this, intersection(replacedContentRect, contentBoxRect));
 
     InterpolationQualityMaintainer interpolationMaintainer(context, ImageQualityController::interpolationQualityFromStyle(style()));
+
+    canvasElement().setIsSnapshotting(paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting));
     canvasElement().paint(context, replacedContentRect);
+    canvasElement().setIsSnapshotting(false);
 }
 
 void RenderHTMLCanvas::canvasSizeChanged()

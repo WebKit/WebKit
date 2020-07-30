@@ -1,3 +1,21 @@
+2020-07-30  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Safari snapshots of WebGL content in the tab picker don't work
+        https://bugs.webkit.org/show_bug.cgi?id=214452
+        <rdar://problem/21243082>
+
+        Original patch by Justin Fan. Reviewed by Darin Adler.
+
+        Test is in TestWebKitAPI/Tests/WebKitCocoa/WKWebViewSnapshot.mm.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint): Will properly request a paint when a snapshot is requested.
+        * html/HTMLCanvasElement.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::paintRenderingResultsToCanvas): Only clear the last snapshot if readPixels will succeed.
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+
 2020-07-30  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt -[AVContentKeyRequest willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:]

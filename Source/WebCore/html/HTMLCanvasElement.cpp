@@ -635,7 +635,7 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
         bool shouldPaint = true;
 
         if (m_context) {
-            shouldPaint = paintsIntoCanvasBuffer() || document().printing();
+            shouldPaint = paintsIntoCanvasBuffer() || document().printing() || m_isSnapshotting;
             if (shouldPaint)
                 m_context->paintRenderingResultsToCanvas();
         }
