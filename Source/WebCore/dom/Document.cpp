@@ -6465,6 +6465,11 @@ void Document::windowScreenDidChange(PlatformDisplayID displayID)
         if (view->usesCompositing())
             view->compositor().windowScreenDidChange(displayID);
     }
+
+    for (auto& observer : copyToVector(m_displayChangedObservers)) {
+        if (observer)
+            (*observer)(displayID);
+    }
 }
 
 String Document::displayStringModifiedByEncoding(const String& string) const
@@ -6517,6 +6522,12 @@ MediaCanStartListener* Document::takeAnyMediaCanStartListener()
     m_mediaCanStartListeners.remove(*listener);
 
     return listener;
+}
+
+void Document::addDisplayChangedObserver(const DisplayChangedObserver& observer)
+{
+    ASSERT(!m_displayChangedObservers.contains(observer));
+    m_displayChangedObservers.add(observer);
 }
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)

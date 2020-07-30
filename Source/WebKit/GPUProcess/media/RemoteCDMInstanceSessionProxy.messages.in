@@ -32,6 +32,7 @@ messages -> RemoteCDMInstanceSessionProxy NotRefCounted {
     CloseSession(String sessionId) -> () Async
     RemoveSessionData(String sessionId, WebCore::CDMInstanceSession::LicenseType type) -> (WebCore::CDMInstanceSession::KeyStatusVector changedKeys, Optional<IPC::SharedBufferDataReference> message, bool succeeded) Async
     StoreRecordOfKeyUsage(String sessionId)
+    DisplayIDChanged(uint32_t displayID)
 }
 
 #endif

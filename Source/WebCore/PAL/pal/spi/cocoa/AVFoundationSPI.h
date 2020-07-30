@@ -196,6 +196,12 @@ NS_ASSUME_NONNULL_END
 @interface AVContentKeySession (AVContentKeyGroup_Support)
 - (nonnull AVContentKeyReportGroup *)makeContentKeyGroup;
 @end
+
+@interface AVContentKeyRequest (OutputObscured)
+NS_ASSUME_NONNULL_BEGIN
+- (BOOL)willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:(NSArray<NSNumber *> *)displays;
+NS_ASSUME_NONNULL_END
+@end
 #endif // HAVE(AVCONTENTKEYSESSION)
 
 #if ENABLE(MEDIA_SOURCE) && !USE(APPLE_INTERNAL_SDK)

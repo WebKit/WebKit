@@ -1,3 +1,15 @@
+2020-07-30  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt -[AVContentKeyRequest willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:]
+        https://bugs.webkit.org/show_bug.cgi?id=214659
+        <rdar://problem/63555006>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Observer.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2020-07-30  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style should enforce acronym capitalization at start/end of an identifier

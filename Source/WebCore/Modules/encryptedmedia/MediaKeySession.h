@@ -37,6 +37,7 @@
 #include "MediaKeyMessageType.h"
 #include "MediaKeySessionType.h"
 #include "MediaKeyStatus.h"
+#include <wtf/Observer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -99,6 +100,7 @@ private:
     void updateKeyStatuses(CDMInstanceSessionClient::KeyStatusVector&&) override;
     void sendMessage(CDMMessageType, Ref<SharedBuffer>&& message) final;
     void sessionIdChanged(const String&) final;
+    PlatformDisplayID displayID() final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const override { return MediaKeySessionEventTargetInterfaceType; }
@@ -109,6 +111,9 @@ private:
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
+
+    // DisplayChangedObserver
+    void displayChanged(PlatformDisplayID);
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper
@@ -137,6 +142,9 @@ private:
     double m_firstDecryptTime { 0 };
     double m_latestDecryptTime { 0 };
     Vector<std::pair<Ref<SharedBuffer>, MediaKeyStatus>> m_statuses;
+
+    using DisplayChangedObserver = Observer<void(PlatformDisplayID)>;
+    DisplayChangedObserver m_displayChangedObserver;
 };
 
 } // namespace WebCore

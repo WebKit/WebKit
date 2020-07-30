@@ -73,15 +73,18 @@ private:
     void closeSession(const String& sessionId, CloseSessionCallback&&);
     void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&&);
     void storeRecordOfKeyUsage(const String& sessionId);
+    void displayIDChanged(PlatformDisplayID);
 
     // CDMInstanceSessionClient
     void updateKeyStatuses(KeyStatusVector&&) final;
     void sendMessage(WebCore::CDMMessageType, Ref<WebCore::SharedBuffer>&& message) final;
     void sessionIdChanged(const String&) final;
+    PlatformDisplayID displayID() final { return m_displayID; }
 
     WeakPtr<RemoteCDMProxy> m_cdm;
     Ref<WebCore::CDMInstanceSession> m_session;
     RemoteCDMInstanceSessionIdentifier m_identifier;
+    PlatformDisplayID m_displayID { 0 };
 };
 
 }

@@ -1,3 +1,18 @@
+2020-07-30  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt -[AVContentKeyRequest willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:]
+        https://bugs.webkit.org/show_bug.cgi?id=214659
+        <rdar://problem/63555006>
+
+        Reviewed by Darin Adler.
+        
+        Support clients in the GPU process asking for (and receiving updates to) the current displayID.
+
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp:
+        (WebKit::RemoteCDMInstanceSessionProxy::displayIDChanged):
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in:
+
 2020-07-30  Antoine Quint  <graouts@webkit.org>
 
         [ iOS ] webanimations/accelerated-animation-with-easing.html is still flaky

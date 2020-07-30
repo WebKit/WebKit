@@ -76,6 +76,7 @@ MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, 
     , m_sessionType(sessionType)
     , m_implementation(WTFMove(implementation))
     , m_instanceSession(WTFMove(instanceSession))
+    , m_displayChangedObserver([this] (auto displayID) { displayChanged(displayID); })
 {
     // https://w3c.github.io/encrypted-media/#dom-mediakeys-createsession
     // W3C Editor's Draft 09 November 2016
@@ -105,6 +106,8 @@ MediaKeySession::MediaKeySession(Document& document, WeakPtr<MediaKeys>&& keys, 
     m_instanceSession->setLogger(m_logger, m_logIdentifier);
 #endif
     m_instanceSession->setClient(makeWeakPtr(*this));
+
+    document.addDisplayChangedObserver(m_displayChangedObserver);
 }
 
 MediaKeySession::~MediaKeySession()
@@ -722,6 +725,18 @@ void MediaKeySession::sessionIdChanged(const String& sessionId)
     m_sessionId = sessionId;
 }
 
+PlatformDisplayID MediaKeySession::displayID()
+{
+    auto* document = downcast<Document>(scriptExecutionContext());
+    if (!document)
+        return 0;
+
+    if (auto* page = document->page())
+        return page->displayID();
+
+    return 0;
+}
+
 void MediaKeySession::updateExpiration(double)
 {
     notImplemented();
@@ -789,6 +804,11 @@ WTFLogChannel& MediaKeySession::logChannel() const
     return LogEME;
 }
 #endif
+
+void MediaKeySession::displayChanged(PlatformDisplayID displayID)
+{
+    m_instanceSession->displayChanged(displayID);
+}
 
 } // namespace WebCore
 

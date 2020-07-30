@@ -1,3 +1,22 @@
+2020-07-30  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt -[AVContentKeyRequest willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:]
+        https://bugs.webkit.org/show_bug.cgi?id=214659
+        <rdar://problem/63555006>
+
+        Reviewed by Darin Adler.
+        
+        Add a new Observer template class. This allows classes to provide support for listeners without requiring
+        those listeners to subclass from a pure-virtual (and CanMakeWeakPtr capable) client class. Instead, clients
+        can just create one of these Observer objects, and pass a WeakPtr to that observer to the notifying object.
+        When the client object destroys the observer, it is automatically unregistered when the observing object
+        uses a WeakHashSet.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Observer.h: Added.
+        (WTF::Observer<Out):
+
 2020-07-30  Keith Miller  <keith_miller@apple.com>
 
         Compute number of PAC bits from what the OS says its address space is

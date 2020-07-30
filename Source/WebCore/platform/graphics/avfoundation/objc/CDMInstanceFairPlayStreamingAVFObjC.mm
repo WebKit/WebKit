@@ -159,6 +159,13 @@ static const NSInteger SecurityLevelError = -42811;
         _parent->groupSessionIdentifierChanged(reportGroup, reportGroup.contentProtectionSessionIdentifier);
 }
 
+- (void)contentKeySession:(AVContentKeySession *)session externalProtectionStatusDidChangeForContentKeyRequest:(AVContentKeyRequest *)keyRequest
+{
+    UNUSED_PARAM(session);
+    if (_parent)
+        _parent->externalProtectionStatusDidChangeForContentKeyRequest(keyRequest);
+}
+
 @end
 
 namespace WebCore {
@@ -515,6 +522,17 @@ void CDMInstanceFairPlayStreamingAVFObjC::outputObscuredDueToInsufficientExterna
         if (sessionInterface)
             sessionInterface->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
     }
+}
+
+void CDMInstanceFairPlayStreamingAVFObjC::externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest* request)
+{
+    if (auto* session = sessionForRequest(request)) {
+        session->externalProtectionStatusDidChangeForContentKeyRequest(request);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+    ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "- no responsible session; dropping");
 }
 
 CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC::sessionForKeyIDs(const Keys& keyIDs) const
@@ -981,6 +999,11 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::storeRecordOfKeyUsage(const Str
     // no-op; key usage data is stored automatically.
 }
 
+void CDMInstanceSessionFairPlayStreamingAVFObjC::displayChanged(PlatformDisplayID displayID)
+{
+    updateProtectionStatusForDisplayID(displayID);
+}
+
 void CDMInstanceSessionFairPlayStreamingAVFObjC::setClient(WeakPtr<CDMInstanceSessionClient>&& client)
 {
     m_client = WTFMove(client);
@@ -1345,6 +1368,32 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::outputObscuredDueToInsufficient
 
     if (m_client)
         m_client->updateKeyStatuses(keyStatuses());
+}
+
+void CDMInstanceSessionFairPlayStreamingAVFObjC::externalProtectionStatusDidChangeForContentKeyRequest(AVContentKeyRequest* request)
+{
+    UNUSED_PARAM(request);
+    if (!m_client)
+        return;
+
+    updateProtectionStatusForDisplayID(m_client->displayID());
+}
+
+void CDMInstanceSessionFairPlayStreamingAVFObjC::updateProtectionStatusForDisplayID(PlatformDisplayID displayID)
+{
+    if (m_requests.isEmpty())
+        return;
+
+    auto keyRequestHasInsufficientProtectionForDisplayID = [displayID] (auto& request) -> bool {
+        if ([request respondsToSelector:@selector(willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:)])
+            return [request willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:@[ @(displayID) ]];
+        return false;
+    };
+
+    bool outputWillBeObscured = WTF::anyOf(m_requests, [&](Request& request) {
+        return WTF::anyOf(request.requests, keyRequestHasInsufficientProtectionForDisplayID);
+    });
+    outputObscuredDueToInsufficientExternalProtectionChanged(outputWillBeObscured);
 }
 
 bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup()
