@@ -1,3 +1,17 @@
+2020-07-30  Antoine Quint  <graouts@webkit.org>
+
+        [iOS] Unable to swipe on IMDB.com after long press on image
+        https://bugs.webkit.org/show_bug.cgi?id=214968
+        <rdar://problem/66234421>
+
+        Reviewed by Wenson Hsieh.
+
+        Add a test that triggers a long press gesture on an <img> and checks a single "pointerdown" event
+        was dispatched. Prior to the WebCore change in this patch, two events would be dispatched.
+
+        * pointerevents/ios/long-press-yields-single-pointerdown-event-expected.txt: Added.
+        * pointerevents/ios/long-press-yields-single-pointerdown-event.html: Added.
+
 2020-07-30  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk1 ] imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers.html is a flaky failure

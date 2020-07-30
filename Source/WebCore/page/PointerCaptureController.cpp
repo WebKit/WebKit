@@ -301,6 +301,13 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 
 RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const MouseEvent& mouseEvent)
 {
+    // If we already have known touches then we cannot dispatch a mouse event,
+    // for instance in the case of a long press to initiate a system drag.
+    for (auto& capturingData : m_activePointerIdsToCapturingData.values()) {
+        if (capturingData.pointerType != PointerEvent::mousePointerType())
+            return nullptr;
+    }
+
     const auto& type = mouseEvent.type();
     const auto& names = eventNames();
 

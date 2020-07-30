@@ -1,3 +1,29 @@
+2020-07-30  Antoine Quint  <graouts@webkit.org>
+
+        [iOS] Unable to swipe on IMDB.com after long press on image
+        https://bugs.webkit.org/show_bug.cgi?id=214968
+        <rdar://problem/66234421>
+
+        Reviewed by Wenson Hsieh.
+
+        When a long press occurs on an <img>, a system drag interaction is initiated on iOS. In WebCore,
+        EventHandler::tryToBeginDragAtPoint() is called and a synthetic mouse event is produced, causing
+        handleMousePressEvent() to be called. Further down the call chain, dispatchPointerEventIfNeeded()
+        is called and a valid PointerEvent is generated in PointerCaptureController::pointerEventForMouseEvent()
+        with "pointerType" set to "mouse", even though there is already a touch interaction initiated.
+
+        We now check whether there are known touches before generating a PointerEvent for a MouseEvent.
+
+        In the case of IMDb, the page would keep track of "pointerdown" events to track whether a multi-touch
+        user gesture is in progress so that their slide shows can support two-finger zooming as well as
+        single-finger swiping. In the case of a long press, the second "pointerdown" event would trick
+        the code in thinking a zoom gesture was initiated and it never recovered.
+
+        Test: pointerevents/ios/long-press-yields-single-pointerdown-event.html
+
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::pointerEventForMouseEvent):
+
 2020-07-30  Chris Dumez  <cdumez@apple.com>
 
         OfflineAudioContext.startRendering() should return a Promise
