@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-body .timeline-view.memory {
-    overflow: scroll;
+.timeline-view.memory {
+    overflow: auto !important;
 }
 
 .timeline-view.memory > .content .subtitle {

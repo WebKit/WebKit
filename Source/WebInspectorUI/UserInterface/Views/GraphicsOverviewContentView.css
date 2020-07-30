@@ -25,7 +25,7 @@
 
 .content-view.graphics-overview {
     background-color: var(--background-color-content);
-    overflow-y: scroll;
+    overflow-y: auto;
     padding-bottom: var(--navigation-bar-height);
     background-color: hsl(0, 0%, 90%);
 }

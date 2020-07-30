@@ -31,7 +31,7 @@
     bottom: 0;
     z-index: var(--z-index-uncaught-exception-sheet);
     background-color: hsl(0, 0%, 96%);
-    overflow: scroll;
+    overflow: auto;
 }
 
 .uncaught-exception-sheet {

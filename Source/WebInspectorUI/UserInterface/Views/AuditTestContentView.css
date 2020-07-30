@@ -24,7 +24,7 @@
  */
 
 .content-view-container > .content-view.audit-test {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .content-view-container > .content-view.audit-test > header {

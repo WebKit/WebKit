@@ -186,7 +186,7 @@
 }
 
 .content-view.canvas-overview > .content-view.canvas.saved-recordings .tree-outline {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .content-view.canvas-overview > .content-view.canvas.saved-recordings .tree-outline > .item.recording > .icon {

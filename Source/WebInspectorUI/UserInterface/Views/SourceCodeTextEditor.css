@@ -150,7 +150,7 @@
 .popover .debugger-popover-content > .body {
     padding-top: 2px;
     border-top: 1px solid var(--text-color-quaternary);
-    overflow: scroll;
+    overflow: auto;
 }
 
 .popover .debugger-popover-content.function > .body {

@@ -49,7 +49,7 @@
 
 .sidebar > .panel.navigation.canvas.has-recordings > .content > .recording-content {
     flex-grow: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .sidebar > .panel.navigation.canvas.showing-recording > .content > .tree-outline.canvas {

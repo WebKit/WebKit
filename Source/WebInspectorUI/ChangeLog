@@ -1,3 +1,45 @@
+2020-07-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: only show scrollbars when needed
+        https://bugs.webkit.org/show_bug.cgi?id=214980
+
+        Reviewed by Brian Burg.
+
+        Prefer `overflow: auto;` instead of `overflow: scroll;` wherever possible, as when using a
+        hardware mouse scrollbars are always shown for the latter, even when the content fits.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.css:
+        (.sheet-container):
+        * UserInterface/Views/AuditTestContentView.css:
+        (.content-view-container > .content-view.audit-test):
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview > .content-view.canvas.saved-recordings .tree-outline):
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (.sidebar > .panel.navigation.canvas.has-recordings > .content > .recording-content):
+        * UserInterface/Views/DOMEventsBreakdownView.css:
+        (.waterfall-popover-content .dom-events-breakdown):
+        * UserInterface/Views/DOMNodeEventsContentView.css:
+        (.dom-node-details.dom-events):
+        * UserInterface/Views/GraphicsOverviewContentView.css:
+        (.content-view.graphics-overview):
+        * UserInterface/Views/LocalRemoteObjectContentView.css:
+        (.content-view.local-remote-object):
+        * UserInterface/Views/NetworkResourceDetailView.css:
+        (.content-view.resource-details):
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog > .tree-outline):
+        * UserInterface/Views/SourceCodeTextEditor.css:
+        (.popover .debugger-popover-content > .body):
+
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu): Added.
+        (body .timeline-view.cpu): Deleted.
+        * UserInterface/Views/MemoryTimelineView.css:
+        (.timeline-view.memory): Added.
+        (body .timeline-view.memory): Deleted.
+        Although `!important` is kind of a "hack", adding `body` to the selector is more of a "hack"
+        and is easier to unintentionally break.
+
 2020-07-28  Brian Burg  <bburg@apple.com>
 
         Web Inspector: REGRESSION(r255396): Audit: button to exit edit mode in main content area is missing border

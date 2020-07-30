@@ -26,7 +26,7 @@
 .waterfall-popover-content .dom-events-breakdown {
     -webkit-user-select: text;
     max-height: 210px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .dom-events-breakdown {

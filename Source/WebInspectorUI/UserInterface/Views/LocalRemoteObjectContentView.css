@@ -25,5 +25,5 @@
 
 .content-view.local-remote-object {
     padding: 10px;
-    overflow: scroll;
+    overflow: auto;
 }

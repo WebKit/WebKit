@@ -31,7 +31,7 @@
     bottom: 0;
 
     padding: 12px 20px 0 20px;
-    overflow: scroll;
+    overflow: auto;
 
     -webkit-user-select: text;
     white-space: nowrap;
