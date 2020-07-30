@@ -169,6 +169,10 @@ class macOSBuildFactory(BuildFactory):
     pass
 
 
+class macOSBuildOnlyFactory(BuildFactory):
+    skipUpload = True
+
+
 class watchOSBuildFactory(BuildFactory):
     skipUpload = True
 

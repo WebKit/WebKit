@@ -170,6 +170,19 @@ class TestBuildFactory(TestCase):
             _BuildStepFactory(steps.CompileWebKit, skipUpload=False),
         ])
 
+    def test_macos_build_only_factory(self):
+        factory = factories.macOSBuildOnlyFactory(platform='mac-bigsur', configuration='release', architectures=["arm64"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='mac-bigsur', configuration='release', architectures=["arm64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=True),
+        ])
+
     def test_ios_build_factory(self):
         factory = factories.iOSBuildFactory(platform='ios-simulator-13', configuration='release', architectures=["x86_64"])
         self.assertBuildSteps(factory.steps, [
