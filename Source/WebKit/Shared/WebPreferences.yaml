@@ -879,7 +879,7 @@ ModernMediaControlsEnabled:
 
 PaintTimingEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: false
   humanReadableName: "Paint Timing"
   humanReadableDescription: "Enable PaintTiming API"
   webcoreBinding: RuntimeEnabledFeatures
