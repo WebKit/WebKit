@@ -2769,8 +2769,7 @@ end)
 llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch, metadata, return)
         
     loadVariable(get, m_next, t0, t1, t0)
-    bieq t1, UndefinedTag, .iteratorNextGeneric
-    btinz t0, .iteratorNextGeneric
+    bineq t1, EmptyValueTag, .iteratorNextGeneric
 
     macro fastNarrow()
         callSlowPath(_iterator_next_try_fast_narrow)

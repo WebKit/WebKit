@@ -1,3 +1,18 @@
+2020-07-30  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC][32-bits] interator_next should check for EmptyValue instead of undefined to execute LLInt fast path
+        https://bugs.webkit.org/show_bug.cgi?id=214963
+
+        Reviewed by Yusuke Suzuki.
+
+        There was a bug in previous implementation that allows execution of
+        `interator_next` fast path if we set ArrayIterator.prototype.next to
+        0. This happened because we were not properly checking `ValueEmpty`
+        from `m_next`. This patch is fixing such issue and doing the proper
+        verification.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2020-07-30  Saam Barati  <sbarati@apple.com>
 
         Strip pointers instead of authing for byteOffset to not allow for a possible way to guess data pac
