@@ -235,7 +235,7 @@ void HIDGamepadProvider::deviceAdded(IOHIDDeviceRef device)
     LOG(Gamepad, "HIDGamepadProvider device %p added", device);
 
     unsigned index = indexForNewlyConnectedDevice();
-    std::unique_ptr<HIDGamepad> gamepad = makeUnique<HIDGamepad>(device, index);
+    auto gamepad = HIDGamepad::create(device, index);
 
     if (m_gamepadVector.size() <= index)
         m_gamepadVector.grow(index + 1);

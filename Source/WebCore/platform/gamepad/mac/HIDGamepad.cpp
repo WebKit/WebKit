@@ -28,145 +28,41 @@
 
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
+#include "GenericHIDGamepad.h"
+#include "Logging.h"
 #include <IOKit/hid/IOHIDElement.h>
 #include <IOKit/hid/IOHIDUsageTables.h>
 #include <IOKit/hid/IOHIDValue.h>
-#include <wtf/HexNumber.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/CString.h>
 
-WTF_DECLARE_CF_TYPE_TRAIT(IOHIDElement);
-
 namespace WebCore {
 
-HIDGamepad::HIDGamepad(IOHIDDeviceRef hidDevice, unsigned index)
+std::unique_ptr<HIDGamepad> HIDGamepad::create(IOHIDDeviceRef rawDevice, unsigned index)
+{
+    auto device = HIDDevice { rawDevice };
+
+    // When we support specific mapping for a particular device, here is where we'll decide what kind of HIDGamepad to make.
+    // For now, it's only the GenericHIDGamepad
+    auto newGamepad = makeUnique<GenericHIDGamepad>(WTFMove(device), index);
+
+    newGamepad->initialize();
+    return WTFMove(newGamepad);
+}
+
+HIDGamepad::HIDGamepad(HIDDevice&& device, unsigned index)
     : PlatformGamepad(index)
-    , m_hidDevice(hidDevice)
+    , m_device(WTFMove(device))
 {
     m_connectTime = m_lastUpdateTime = MonotonicTime::now();
-
-    CFNumberRef cfVendorID = (CFNumberRef)IOHIDDeviceGetProperty(hidDevice, CFSTR(kIOHIDVendorIDKey));
-    CFNumberRef cfProductID = (CFNumberRef)IOHIDDeviceGetProperty(hidDevice, CFSTR(kIOHIDProductIDKey));
-
-    int vendorID, productID;
-    CFNumberGetValue(cfVendorID, kCFNumberIntType, &vendorID);
-    CFNumberGetValue(cfProductID, kCFNumberIntType, &productID);
-
-    CFStringRef cfProductName = (CFStringRef)IOHIDDeviceGetProperty(hidDevice, CFSTR(kIOHIDProductKey));
-    String productName(cfProductName);
-
-    // Currently the spec has no formatting for the id string.
-    // This string formatting matches Firefox.
-    m_id = makeString(hex(vendorID, Lowercase), '-', hex(productID, Lowercase), '-', productName);
-
-    initElements();
 }
 
-void HIDGamepad::getCurrentValueForElement(const HIDGamepadElement& gamepadElement)
+void HIDGamepad::initialize()
 {
-    IOHIDElementRef element = gamepadElement.iohidElement.get();
-    IOHIDValueRef value;
-    if (IOHIDDeviceGetValue(IOHIDElementGetDevice(element), element, &value) == kIOReturnSuccess)
-        valueChanged(value);
-}
+    m_id = id();
 
-void HIDGamepad::initElements()
-{
-    RetainPtr<CFArrayRef> elements = adoptCF(IOHIDDeviceCopyMatchingElements(m_hidDevice.get(), NULL, kIOHIDOptionsTypeNone));
-    initElementsFromArray(elements.get());
-
-    // Buttons are specified to appear highest priority first in the array.
-    std::sort(m_buttons.begin(), m_buttons.end(), [](auto& a, auto& b) {
-        return a->priority < b->priority;
-    });
-
-    LOG(Gamepad, "HIDGamepad initialized with %zu buttons and %zu axes", m_buttons.size(), m_axes.size());
-
-    m_axisValues.resize(m_axes.size());
-    m_buttonValues.resize(m_buttons.size());
-
-    for (auto& button : m_buttons)
-        getCurrentValueForElement(button.get());
-
-    for (auto& axis : m_axes)
-        getCurrentValueForElement(axis.get());
-}
-
-void HIDGamepad::initElementsFromArray(CFArrayRef elements)
-{
-    for (CFIndex i = 0, count = CFArrayGetCount(elements); i < count; ++i) {
-        IOHIDElementRef element = checked_cf_cast<IOHIDElementRef>(CFArrayGetValueAtIndex(elements, i));
-        if (CFGetTypeID(element) != IOHIDElementGetTypeID())
-            continue;
-
-        // As a physical element can appear in the device twice (in different collections) and can be
-        // represented by different IOHIDElementRef objects, we look at the IOHIDElementCookie which
-        // is meant to be unique for each physical element.
-        IOHIDElementCookie cookie = IOHIDElementGetCookie(element);
-        if (m_elementMap.contains(cookie))
-            continue;
-
-        IOHIDElementType type = IOHIDElementGetType(element);
-
-        if ((type == kIOHIDElementTypeInput_Misc || type == kIOHIDElementTypeInput_Button)) {
-            if (maybeAddButton(element))
-                continue;
-        }
-
-        if ((type == kIOHIDElementTypeInput_Misc || type == kIOHIDElementTypeInput_Axis) && maybeAddAxis(element))
-            continue;
-
-        if (type == kIOHIDElementTypeCollection)
-            initElementsFromArray(IOHIDElementGetChildren(element));
-    }
-}
-
-bool HIDGamepad::maybeAddButton(IOHIDElementRef element)
-{
-    uint32_t usagePage = IOHIDElementGetUsagePage(element);
-    if (usagePage != kHIDPage_Button && usagePage != kHIDPage_GenericDesktop)
-        return false;
-
-    uint32_t usage = IOHIDElementGetUsage(element);
-
-    if (usagePage == kHIDPage_GenericDesktop) {
-        if (usage < kHIDUsage_GD_DPadUp || usage > kHIDUsage_GD_DPadLeft)
-            return false;
-        usage = std::numeric_limits<uint32_t>::max();
-    } else if (!usage)
-        return false;
-
-    CFIndex min = IOHIDElementGetLogicalMin(element);
-    CFIndex max = IOHIDElementGetLogicalMax(element);
-
-    m_buttons.append(makeUniqueRef<HIDGamepadButton>(usage, min, max, element));
-
-    IOHIDElementCookie cookie = IOHIDElementGetCookie(element);
-    m_elementMap.set(cookie, &m_buttons.last().get());
-
-    return true;
-}
-
-bool HIDGamepad::maybeAddAxis(IOHIDElementRef element)
-{
-    uint32_t usagePage = IOHIDElementGetUsagePage(element);
-    if (usagePage != kHIDPage_GenericDesktop)
-        return false;
-
-    uint32_t usage = IOHIDElementGetUsage(element);
-    // This range covers the standard axis usages.
-    if (usage < kHIDUsage_GD_X || usage > kHIDUsage_GD_Rz)
-        return false;
-
-    CFIndex min = IOHIDElementGetPhysicalMin(element);
-    CFIndex max = IOHIDElementGetPhysicalMax(element);
-
-    m_axes.append(makeUniqueRef<HIDGamepadAxis>(min, max, element));
-
-    IOHIDElementCookie cookie = IOHIDElementGetCookie(element);
-    m_elementMap.set(cookie, &m_axes.last().get());
-
-    return true;
+    for (auto& element : m_elementMap.values())
+        element->refreshCurrentValue();
 }
 
 HIDInputType HIDGamepad::valueChanged(IOHIDValueRef value)
@@ -178,28 +74,9 @@ HIDInputType HIDGamepad::valueChanged(IOHIDValueRef value)
     if (!element)
         return HIDInputType::NotAButtonPress;
 
-    element->rawValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
-
-    if (element->isButton()) {
-        for (unsigned i = 0; i < m_buttons.size(); ++i) {
-            if (&m_buttons[i].get() == element) {
-                m_buttonValues[i] = element->normalizedValue();
-                break;
-            }
-        }
-    } else if (element->isAxis()) {
-        for (unsigned i = 0; i < m_axes.size(); ++i) {
-            if (&m_axes[i].get() == element) {
-                m_axisValues[i] = element->normalizedValue();
-                break;
-            }
-        }
-    } else
-        ASSERT_NOT_REACHED();
-
     m_lastUpdateTime = MonotonicTime::now();
 
-    return element->isButton() ? HIDInputType::ButtonPress : HIDInputType::NotAButtonPress;
+    return element->gamepadValueChanged(value);
 }
 
 } // namespace WebCore

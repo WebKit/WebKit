@@ -63,7 +63,7 @@ private:
     size_t m_initialGamepadsCount { 0 };
     Vector<PlatformGamepad*> m_gamepadVector;
 
-    // We create our own Gamepad type - to wrap both HID and GameControler gamepads -
+    // We create our own Gamepad type - to wrap both HID and GameController gamepads -
     // because MultiGamepadProvider needs to manage the indexes of its own gamepads
     // no matter what the HID or GameController index is.
     class PlatformGamepadWrapper : public PlatformGamepad {
@@ -78,8 +78,8 @@ private:
         }
 
         MonotonicTime lastUpdateTime() const final { return m_platformGamepad->lastUpdateTime(); }
-        const Vector<double>& axisValues() const final { return m_platformGamepad->axisValues(); }
-        const Vector<double>& buttonValues() const final { return m_platformGamepad->buttonValues(); }
+        const Vector<SharedGamepadValue>& axisValues() const final { return m_platformGamepad->axisValues(); }
+        const Vector<SharedGamepadValue>& buttonValues() const final { return m_platformGamepad->buttonValues(); }
 
         const char* source() const final { return m_platformGamepad->source(); }
 

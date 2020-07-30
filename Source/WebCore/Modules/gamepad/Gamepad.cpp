@@ -62,9 +62,9 @@ const Vector<Ref<GamepadButton>>& Gamepad::buttons() const
 void Gamepad::updateFromPlatformGamepad(const PlatformGamepad& platformGamepad)
 {
     for (unsigned i = 0; i < m_axes.size(); ++i)
-        m_axes[i] = platformGamepad.axisValues()[i];
+        m_axes[i] = platformGamepad.axisValues()[i].value();
     for (unsigned i = 0; i < m_buttons.size(); ++i)
-        m_buttons[i]->setValue(platformGamepad.buttonValues()[i]);
+        m_buttons[i]->setValue(platformGamepad.buttonValues()[i].value());
 
     m_timestamp = platformGamepad.lastUpdateTime();
 }

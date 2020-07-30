@@ -31,22 +31,24 @@
 #include "ArgumentCoders.h"
 #include <wtf/text/StringBuilder.h>
 
+using WebCore::SharedGamepadValue;
+
 namespace WebKit {
 
-GamepadData::GamepadData(unsigned index, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime)
+GamepadData::GamepadData(unsigned index, const Vector<SharedGamepadValue>& axisValues, const Vector<SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime)
     : m_index(index)
-    , m_axisValues(axisValues)
-    , m_buttonValues(buttonValues)
+    , m_axisValues(WTF::map(axisValues, [](const auto& value) { return value.value(); }))
+    , m_buttonValues(WTF::map(buttonValues, [](const auto& value) { return value.value(); }))
     , m_lastUpdateTime(lastUpdateTime)
 {
 }
 
-GamepadData::GamepadData(unsigned index, const String& id, const String& mapping, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime)
+GamepadData::GamepadData(unsigned index, const String& id, const String& mapping, const Vector<SharedGamepadValue>& axisValues, const Vector<SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime)
     : m_index(index)
     , m_id(id)
     , m_mapping(mapping)
-    , m_axisValues(axisValues)
-    , m_buttonValues(buttonValues)
+    , m_axisValues(WTF::map(axisValues, [](const auto& value) { return value.value(); }))
+    , m_buttonValues(WTF::map(buttonValues, [](const auto& value) { return value.value(); }))
     , m_lastUpdateTime(lastUpdateTime)
 {
 }

@@ -38,6 +38,7 @@
 #include "SharedBuffer.h"
 #include "VP9UtilitiesCocoa.h"
 #include "VideoTrackPrivateWebM.h"
+#include "VideoToolboxSoftLink.h"
 #include <JavaScriptCore/DataView.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 #include <webm/webm_parser.h>

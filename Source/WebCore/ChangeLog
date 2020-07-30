@@ -1,3 +1,132 @@
+2020-07-30  Brady Eidson  <beidson@apple.com>
+
+        Refactor HID gamepad code to be much less fragile and much easier to hack on.
+        https://bugs.webkit.org/show_bug.cgi?id=214910
+
+        Reviewed by Darin Adler.
+
+        Covered by API tests.
+                
+        Currently - for HID device gamepads - we throw all buttons and axes against the wall and see what sticks.
+        Instead, for specific popular devices, we'd like to have device-specific mappings so the representation makes sense.
+        
+        To support that work, this is a major refactoring of the HID gamepad code. It does the following:
+
+        - Breaks out logic specific to IOHIDDeviceRef into HIDDevice
+        
+        - Breaks out logic specific to IOHIDElementRef into HIDElement
+        
+        - Moves responsibities of managing things to the right places (e.g. HIDElement manages its own current value directly)
+        
+        - Makes HIDGamepadElement derive from HIDElement directly
+          
+        - Moves device specific logic from HIDGamepad into a subclass of HID gamepad. Currently the only subclass is "generic"
+          which encompasses HIDGamepad's old behavior
+
+        - Changes button/value vectors from Vector<double> to Vector<SharedGamepadValue> so multiple objects can reference
+          the value at once.
+          e.g. HIDGamepadButton can simply update it's own SharedGamepadValue without knowing which HIDGamepad owns it or which index
+          into the gamepad's value vector it should be mutating.
+
+          This will be critical in the "specific device mapping" work as some types of HIDElements actually drive more than one
+          gamepad button value.
+          e.g. a "direction pad axis" actually manages 2 button values, or a "hat-switch" direction pad manages 4 button values
+          
+        This patch doesn't change any current behavior.
+
+        * Modules/gamepad/Gamepad.cpp:
+        (WebCore::Gamepad::updateFromPlatformGamepad):
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * platform/Logging.h:
+
+        * platform/gamepad/PlatformGamepad.h:
+
+        * platform/gamepad/SharedGamepadValue.h: Copied from Source/WebKit/UIProcess/Gamepad/UIGamepad.h.
+        (WebCore::SharedGamepadValue::SharedGamepadValue):
+        (WebCore::SharedGamepadValue::setValue):
+        (WebCore::SharedGamepadValue::value const):
+        (WebCore::SharedGamepadValue::Data::Data):
+
+        * platform/gamepad/cocoa/GameControllerGamepad.h:
+        * platform/gamepad/cocoa/GameControllerGamepad.mm:
+        (WebCore::GameControllerGamepad::setupAsExtendedGamepad):
+        (WebCore::GameControllerGamepad::setupAsGamepad):
+
+        * platform/gamepad/mac/GenericHIDGamepad.cpp: Added.
+        (WebCore::GenericHIDGamepad::GenericHIDGamepad):
+        (WebCore::GenericHIDGamepad::id):
+        (WebCore::GenericHIDGamepad::maybeAddGenericDesktopElement):
+        (WebCore::GenericHIDGamepad::maybeAddButtonElement):
+        * platform/gamepad/mac/GenericHIDGamepad.h: Copied from Source/WebKit/WebProcess/Gamepad/WebGamepad.h.
+
+        * platform/gamepad/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::create):
+        (WebCore::HIDGamepad::HIDGamepad):
+        (WebCore::HIDGamepad::initialize):
+        (WebCore::HIDGamepad::valueChanged):
+        (WebCore::HIDGamepad::getCurrentValueForElement): Deleted.
+        (WebCore::HIDGamepad::initElements): Deleted.
+        (WebCore::HIDGamepad::initElementsFromArray): Deleted.
+        (WebCore::HIDGamepad::maybeAddButton): Deleted.
+        (WebCore::HIDGamepad::maybeAddAxis): Deleted.
+        * platform/gamepad/mac/HIDGamepad.h:
+        (WebCore::HIDGamepad::hidDevice const):
+        (WebCore::HIDGamepadElement::HIDGamepadElement): Deleted.
+        (WebCore::HIDGamepadElement::~HIDGamepadElement): Deleted.
+        (WebCore::HIDGamepadElement::isButton const): Deleted.
+        (WebCore::HIDGamepadElement::isAxis const): Deleted.
+        (WebCore::HIDGamepadButton::HIDGamepadButton): Deleted.
+        (WebCore::HIDGamepadAxis::HIDGamepadAxis): Deleted.
+
+        * platform/gamepad/mac/HIDGamepadElement.cpp: Added.
+        (WebCore::HIDGamepadElement::HIDGamepadElement):
+        (WebCore::HIDGamepadElement::refreshCurrentValue):
+        (WebCore::HIDGamepadElement::normalizedValue):
+        (WebCore::HIDGamepadButton::gamepadValueChanged):
+        (WebCore::HIDGamepadAxis::gamepadValueChanged):
+        (WebCore::HIDGamepadAxis::normalizedValue):
+        * platform/gamepad/mac/HIDGamepadElement.h: Copied from Source/WebCore/platform/gamepad/PlatformGamepad.h.
+        (WebCore::HIDGamepadElement::~HIDGamepadElement):
+        (WebCore::HIDGamepadElement::isButton const):
+        (WebCore::HIDGamepadElement::isAxis const):
+
+        * platform/gamepad/mac/HIDGamepadProvider.mm:
+        (WebCore::HIDGamepadProvider::deviceAdded):
+        * platform/gamepad/mac/MultiGamepadProvider.h:
+
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+
+        * platform/mac/HIDDevice.cpp: Added.
+        (WebCore::HIDDevice::HIDDevice):
+        (WebCore::HIDDevice::uniqueInputElementsInDeviceTreeOrder const):
+        * platform/mac/HIDDevice.h: Copied from Source/WebCore/platform/gamepad/PlatformGamepad.h.
+        (WebCore::HIDDevice::rawElement const):
+        (WebCore::HIDDevice::vendorID const):
+        (WebCore::HIDDevice::productID const):
+        (WebCore::HIDDevice::productName const):
+
+        * platform/mac/HIDElement.cpp: Copied from Source/WebKit/UIProcess/Gamepad/UIGamepad.h.
+        (WebCore::HIDElement::HIDElement):
+        (WebCore::HIDElement::valueChanged):
+        * platform/mac/HIDElement.h: Copied from Source/WebKit/UIProcess/Gamepad/UIGamepad.h.
+        (WebCore::HIDElement::rawElement const):
+        (WebCore::HIDElement::physicalMin const):
+        (WebCore::HIDElement::physicalMax const):
+        (WebCore::HIDElement::physicalValue const):
+        (WebCore::HIDElement::usage const):
+        (WebCore::HIDElement::usagePage const):
+        (WebCore::HIDElement::cookie const):
+
+        * testing/MockGamepad.cpp:
+        (WebCore::MockGamepad::updateDetails):
+        (WebCore::MockGamepad::setAxisValue):
+        (WebCore::MockGamepad::setButtonValue):
+        * testing/MockGamepad.h:
+
 2020-07-29  Joonghun Park  <jh718.park@samsung.com>
 
         Unreviewed. Remove the build warning below since r265062.

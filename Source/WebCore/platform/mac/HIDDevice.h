@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,41 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD)
+#if PLATFORM(MAC)
 
-#include "PlatformGamepad.h"
+#include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 
-OBJC_CLASS GCController;
-OBJC_CLASS GCControllerAxisInput;
-OBJC_CLASS GCControllerButtonInput;
-OBJC_CLASS GCControllerElement;
-OBJC_CLASS GCExtendedGamepad;
-OBJC_CLASS GCGamepad;
+typedef struct CF_BRIDGED_TYPE(id) __IOHIDDevice * IOHIDDeviceRef;
 
 namespace WebCore {
 
-class GameControllerGamepad : public PlatformGamepad {
-    WTF_MAKE_NONCOPYABLE(GameControllerGamepad);
+class HIDElement;
+
+class HIDDevice {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    GameControllerGamepad(GCController *, unsigned index);
+    explicit HIDDevice(IOHIDDeviceRef);
 
-    const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
-    const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
+    IOHIDDeviceRef rawElement() const { return m_rawDevice.get(); }
 
-    const char* source() const final { return "GameController"_s; }
+    // Walks the collection tree of all elements in the device as presented by IOKit.
+    // Adds each unique input element to the vector in the tree traversal order it was encountered.
+    // "Unique" is defined as "having a different IOHIDElementCookie from any previously added element"
+    Vector<HIDElement> uniqueInputElementsInDeviceTreeOrder() const;
+
+    uint16_t vendorID() const { return m_vendorID; }
+    uint16_t productID() const { return m_productID; }
+    const String& productName() const { return m_productName; }
 
 private:
-    void setupAsExtendedGamepad();
-    void setupAsGamepad();
+    RetainPtr<IOHIDDeviceRef> m_rawDevice;
 
-    RetainPtr<GCController> m_gcController;
-
-    Vector<SharedGamepadValue> m_axisValues;
-    Vector<SharedGamepadValue> m_buttonValues;
-
-    RetainPtr<GCGamepad> m_gamepad;
-    RetainPtr<GCExtendedGamepad> m_extendedGamepad;
-
-    bool m_hadButtonPresses { false };
+    uint16_t m_vendorID;
+    uint16_t m_productID;
+    String m_productName;
 };
-
-
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // PLATFORM(MAC)

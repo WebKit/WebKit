@@ -1815,6 +1815,8 @@ platform/encryptedmedia/CDMFactory.cpp
 platform/encryptedmedia/CDMLogging.cpp
 platform/encryptedmedia/CDMPrivate.cpp
 platform/encryptedmedia/CDMProxy.cpp
+platform/gamepad/EmptyGamepadProvider.cpp
+platform/gamepad/GamepadProvider.cpp
 platform/graphics/ANGLEWebKitBridge.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/Color.cpp

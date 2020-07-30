@@ -1,3 +1,14 @@
+2020-07-30  Brady Eidson  <beidson@apple.com>
+
+        Refactor HID gamepad code to be much less fragile and much easier to hack on.
+        https://bugs.webkit.org/show_bug.cgi?id=214910
+
+        Reviewed by Darin Adler.
+
+        Add a test that verifies connect, basic button/axis changes, and disconnect of a HID gamepad.
+        
+        * TestWebKitAPI/Tests/mac/HIDGamepads.mm:
+
 2020-07-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Replace 'http://svn.webkit.org' with 'https://svn.webkit.org' in webkitpy scripts

@@ -41,8 +41,12 @@ void MockGamepad::updateDetails(const String& gamepadID, const String& mapping, 
 {
     m_id = gamepadID;
     m_mapping = mapping;
-    m_axisValues = Vector<double>(axisCount, 0.0);
-    m_buttonValues = Vector<double>(buttonCount, 0.0);
+    m_axisValues.clear();
+    for (size_t i = 0; i < axisCount; ++i)
+        m_axisValues.append({ });
+    m_buttonValues.clear();
+    for (size_t i = 0; i < buttonCount; ++i)
+        m_buttonValues.append({ });
     m_lastUpdateTime = MonotonicTime::now();
 }
 
@@ -53,7 +57,7 @@ bool MockGamepad::setAxisValue(unsigned index, double value)
         return false;
     }
 
-    m_axisValues[index] = value;
+    m_axisValues[index].setValue(value);
     m_lastUpdateTime = MonotonicTime::now();
     return true;
 }
@@ -65,7 +69,7 @@ bool MockGamepad::setButtonValue(unsigned index, double value)
         return false;
     }
 
-    m_buttonValues[index] = value;
+    m_buttonValues[index].setValue(value);
     m_lastUpdateTime = MonotonicTime::now();
     return true;
 }

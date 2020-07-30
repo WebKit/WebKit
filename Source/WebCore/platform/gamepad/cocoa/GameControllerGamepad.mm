@@ -110,9 +110,9 @@ void GameControllerGamepad::setupAsExtendedGamepad()
     };
 
     auto bindButton = ^(GCControllerButtonInput *button, GamepadButtons index) {
-        m_buttonValues[(size_t)index] = button.value;
+        m_buttonValues[(size_t)index].setValue(button.value);
         button.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-            m_buttonValues[(size_t)index] = value;
+            m_buttonValues[(size_t)index].setValue(value);
             if (pressed)
                 m_hadButtonPresses = true;
         };
@@ -158,22 +158,22 @@ void GameControllerGamepad::setupAsExtendedGamepad()
 #endif
 
     m_axisValues.resize(4);
-    m_axisValues[0] = m_extendedGamepad.get().leftThumbstick.xAxis.value;
-    m_axisValues[1] = -m_extendedGamepad.get().leftThumbstick.yAxis.value;
-    m_axisValues[2] = m_extendedGamepad.get().rightThumbstick.xAxis.value;
-    m_axisValues[3] = -m_extendedGamepad.get().rightThumbstick.yAxis.value;
+    m_axisValues[0].setValue(m_extendedGamepad.get().leftThumbstick.xAxis.value);
+    m_axisValues[1].setValue(-m_extendedGamepad.get().leftThumbstick.yAxis.value);
+    m_axisValues[2].setValue(m_extendedGamepad.get().rightThumbstick.xAxis.value);
+    m_axisValues[3].setValue(-m_extendedGamepad.get().rightThumbstick.yAxis.value);
 
     m_extendedGamepad.get().leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[0] = value;
+        m_axisValues[0].setValue(value);
     };
     m_extendedGamepad.get().leftThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[1] = -value;
+        m_axisValues[1].setValue(-value);
     };
     m_extendedGamepad.get().rightThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[2] = value;
+        m_axisValues[2].setValue(value);
     };
     m_extendedGamepad.get().rightThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[3] = -value;
+        m_axisValues[3].setValue(-value);
     };
 }
 
@@ -192,53 +192,53 @@ void GameControllerGamepad::setupAsGamepad()
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     m_buttonValues.resize(6);
-    m_buttonValues[0] = m_extendedGamepad.get().buttonA.value;
-    m_buttonValues[1] = m_extendedGamepad.get().buttonB.value;
-    m_buttonValues[2] = m_extendedGamepad.get().buttonX.value;
-    m_buttonValues[3] = m_extendedGamepad.get().buttonY.value;
-    m_buttonValues[4] = m_extendedGamepad.get().leftShoulder.value;
-    m_buttonValues[5] = m_extendedGamepad.get().rightShoulder.value;
+    m_buttonValues[0].setValue(m_extendedGamepad.get().buttonA.value);
+    m_buttonValues[1].setValue(m_extendedGamepad.get().buttonB.value);
+    m_buttonValues[2].setValue(m_extendedGamepad.get().buttonX.value);
+    m_buttonValues[3].setValue(m_extendedGamepad.get().buttonY.value);
+    m_buttonValues[4].setValue(m_extendedGamepad.get().leftShoulder.value);
+    m_buttonValues[5].setValue(m_extendedGamepad.get().rightShoulder.value);
 
     m_axisValues.resize(2);
-    m_axisValues[0] = m_extendedGamepad.get().dpad.xAxis.value;
-    m_axisValues[1] = m_extendedGamepad.get().dpad.yAxis.value;
+    m_axisValues[0].setValue(m_extendedGamepad.get().dpad.xAxis.value);
+    m_axisValues[1].setValue(m_extendedGamepad.get().dpad.yAxis.value);
 
     m_extendedGamepad.get().buttonA.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[0] = value;
+        m_buttonValues[0].setValue(value);
         if (pressed)
             m_hadButtonPresses = true;
     };
     m_extendedGamepad.get().buttonB.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[1] = value;
+        m_buttonValues[1].setValue(value);
         if (pressed)
             m_hadButtonPresses = true;
     };
     m_extendedGamepad.get().buttonX.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[2] = value;
+        m_buttonValues[2].setValue(value);
         if (pressed)
             m_hadButtonPresses = true;
     };
     m_extendedGamepad.get().buttonY.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[3] = value;
+        m_buttonValues[3].setValue(value);
         if (pressed)
             m_hadButtonPresses = true;
     };
     m_extendedGamepad.get().leftShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[4] = value;
+        m_buttonValues[4].setValue(value);
         if (pressed)
             m_hadButtonPresses = true;
     };
     m_extendedGamepad.get().rightShoulder.valueChangedHandler = ^(GCControllerButtonInput *, float value, BOOL pressed) {
-        m_buttonValues[5] = value;
+        m_buttonValues[5].setValue(value);
         if (pressed)
             m_hadButtonPresses = true;
     };
 
     m_extendedGamepad.get().leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[0] = value;
+        m_axisValues[0].setValue(value);
     };
     m_extendedGamepad.get().leftThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput *, float value) {
-        m_axisValues[1] = value;
+        m_axisValues[1].setValue(value);
     };
 }
 

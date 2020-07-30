@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,23 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
-#include "PlatformGamepad.h"
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS GCController;
-OBJC_CLASS GCControllerAxisInput;
-OBJC_CLASS GCControllerButtonInput;
-OBJC_CLASS GCControllerElement;
-OBJC_CLASS GCExtendedGamepad;
-OBJC_CLASS GCGamepad;
+#include "HIDGamepad.h"
 
 namespace WebCore {
 
-class GameControllerGamepad : public PlatformGamepad {
-    WTF_MAKE_NONCOPYABLE(GameControllerGamepad);
+class GenericHIDGamepad final : public HIDGamepad {
 public:
-    GameControllerGamepad(GCController *, unsigned index);
-
-    const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
-    const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
-
-    const char* source() const final { return "GameController"_s; }
+    GenericHIDGamepad(HIDDevice&&, unsigned index);
 
 private:
-    void setupAsExtendedGamepad();
-    void setupAsGamepad();
+    String id() final;
 
-    RetainPtr<GCController> m_gcController;
-
-    Vector<SharedGamepadValue> m_axisValues;
-    Vector<SharedGamepadValue> m_buttonValues;
-
-    RetainPtr<GCGamepad> m_gamepad;
-    RetainPtr<GCExtendedGamepad> m_extendedGamepad;
-
-    bool m_hadButtonPresses { false };
+    void maybeAddGenericDesktopElement(HIDElement&);
+    void maybeAddButtonElement(HIDElement&);
 };
-
-
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && PLATFORM(MAC)

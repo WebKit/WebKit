@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,40 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD)
+#if PLATFORM(MAC)
 
-#include "PlatformGamepad.h"
+#include <IOKit/hid/IOHIDDevice.h>
 #include <wtf/RetainPtr.h>
-
-OBJC_CLASS GCController;
-OBJC_CLASS GCControllerAxisInput;
-OBJC_CLASS GCControllerButtonInput;
-OBJC_CLASS GCControllerElement;
-OBJC_CLASS GCExtendedGamepad;
-OBJC_CLASS GCGamepad;
 
 namespace WebCore {
 
-class GameControllerGamepad : public PlatformGamepad {
-    WTF_MAKE_NONCOPYABLE(GameControllerGamepad);
+class HIDElement {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    GameControllerGamepad(GCController *, unsigned index);
+    explicit HIDElement(IOHIDElementRef);
 
-    const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
-    const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
+    IOHIDElementRef rawElement() const { return m_rawElement.get(); }
 
-    const char* source() const final { return "GameController"_s; }
+    CFIndex physicalMin() const { return m_physicalMin; }
+    CFIndex physicalMax() const { return m_physicalMax; }
+    CFIndex physicalValue() const { return m_physicalValue; }
+    uint32_t usage() const { return m_usage; }
+    uint32_t usagePage() const { return m_usagePage; }
+    IOHIDElementCookie cookie() const { return m_cookie; }
+
+    void valueChanged(IOHIDValueRef);
 
 private:
-    void setupAsExtendedGamepad();
-    void setupAsGamepad();
-
-    RetainPtr<GCController> m_gcController;
-
-    Vector<SharedGamepadValue> m_axisValues;
-    Vector<SharedGamepadValue> m_buttonValues;
-
-    RetainPtr<GCGamepad> m_gamepad;
-    RetainPtr<GCExtendedGamepad> m_extendedGamepad;
-
-    bool m_hadButtonPresses { false };
+    CFIndex m_physicalMin;
+    CFIndex m_physicalMax;
+    CFIndex m_physicalValue;
+    uint32_t m_usage;
+    uint32_t m_usagePage;
+    IOHIDElementCookie m_cookie;
+    RetainPtr<IOHIDElementRef> m_rawElement;
 };
-
 
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // PLATFORM(MAC)

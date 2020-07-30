@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <WebCore/SharedGamepadValue.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -55,8 +56,8 @@ private:
     unsigned m_index;
     String m_id;
     String m_mapping;
-    Vector<double> m_axisValues;
-    Vector<double> m_buttonValues;
+    Vector<WebCore::SharedGamepadValue> m_axisValues;
+    Vector<WebCore::SharedGamepadValue> m_buttonValues;
     MonotonicTime m_lastUpdateTime;
 };
 

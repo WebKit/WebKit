@@ -27,6 +27,7 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <WebCore/SharedGamepadValue.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -45,8 +46,8 @@ public:
     {
     }
 
-    GamepadData(unsigned index, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime);
-    GamepadData(unsigned index, const String& id, const String& mapping, const Vector<double>& axisValues, const Vector<double>& buttonValues, MonotonicTime lastUpdateTime);
+    GamepadData(unsigned index, const Vector<WebCore::SharedGamepadValue>& axisValues, const Vector<WebCore::SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime);
+    GamepadData(unsigned index, const String& id, const String& mapping, const Vector<WebCore::SharedGamepadValue>& axisValues, const Vector<WebCore::SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime);
 
     void encode(IPC::Encoder&) const;
     static Optional<GamepadData> decode(IPC::Decoder&);

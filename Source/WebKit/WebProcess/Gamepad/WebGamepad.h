@@ -39,14 +39,14 @@ class WebGamepad : public WebCore::PlatformGamepad {
 public:
     WebGamepad(const GamepadData&);
 
-    const Vector<double>& axisValues() const override;
-    const Vector<double>& buttonValues() const override;
+    const Vector<WebCore::SharedGamepadValue>& axisValues() const override;
+    const Vector<WebCore::SharedGamepadValue>& buttonValues() const override;
 
     void updateValues(const GamepadData&);
 
 private:
-    Vector<double> m_axisValues;
-    Vector<double> m_buttonValues;
+    Vector<WebCore::SharedGamepadValue> m_axisValues;
+    Vector<WebCore::SharedGamepadValue> m_buttonValues;
 };
 
 }

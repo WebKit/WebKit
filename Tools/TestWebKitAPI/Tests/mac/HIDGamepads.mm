@@ -29,6 +29,7 @@
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "Test.h"
 #import "TestURLSchemeHandler.h"
 #import "TestWKWebView.h"
 #import "VirtualGamepad.h"
@@ -59,7 +60,13 @@ function handleGamepadConnect(evt)
     window.webkit.messageHandlers.gamepad.postMessage(JSON.stringify(evt.gamepad.id));
 }
 
+function handleGamepadDisconnect(evt)
+{
+    window.webkit.messageHandlers.gamepad.postMessage("Disconnect: " + JSON.stringify(evt.gamepad.id));
+}
+
 addEventListener("gamepadconnected", handleGamepadConnect);
+addEventListener("gamepaddisconnected", handleGamepadDisconnect);
 
 </script>
 )GAMEPADRESOURCE";
@@ -194,6 +201,161 @@ TEST(Gamepad, GCFVersusHID)
 
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], 2u);
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], 3u);
+}
+
+static const char* pollGamepadStateFunction = R"GAMEPADRESOURCE(
+var result = new Object();
+var gamepads = navigator.getGamepads();
+result.gamepadCount = gamepads.length;
+result.gamepadButtons = new Array;
+result.gamepadAxes = new Array;
+
+for (var i = 0; i < gamepads.length; ++i) {
+    result.gamepadButtons[i] = new Array;
+    for (var j = 0; j < gamepads[i].buttons.length; ++j)
+        result.gamepadButtons[i][j] = gamepads[i].buttons[j].value;
+
+    result.gamepadAxes[i] = new Array;
+    for (var j = 0; j < gamepads[i].axes.length; ++j)
+        result.gamepadAxes[i][j] = gamepads[i].axes[j];
+}
+
+return result;
+
+)GAMEPADRESOURCE";
+
+TEST(Gamepad, GamepadState)
+{
+    auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[GamepadMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gamepad"];
+
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"gamepad"];
+
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:mainBytes length:strlen(mainBytes)]];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    keyWindowForTesting = [webView window];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"gamepad://host/main.html"]]];
+
+    [[webView window] makeFirstResponder:webView.get()];
+
+    // Resigning/reinstating the key window state triggers the "key window did change" notification that WKWebView currently
+    // needs to convince it to monitor gamepad devices
+    [[webView window] resignKeyWindow];
+    [[webView window] makeKeyWindow];
+
+    // Connect a gamepad and make it visible to the page
+    auto gamepad = makeUnique<VirtualGamepad>(VirtualGamepad::shenzhenLongshengweiTechnologyGamepadMapping());
+    while (![webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting])
+        Util::sleep(0.01);
+
+    Vector<double> expectedButtons = { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    Vector<double> expectedAxes = { -0.9921568627450981, -0.003921568627450966, -0.003921568627450966, -0.003921568627450966, -0.003921568627450966 };
+
+    auto updateStateAndPublish = [&] {
+        for (size_t i = 0; i < expectedButtons.size(); ++i)
+            gamepad->setButtonValue(i, expectedButtons[i]);
+        for (size_t i = 0; i < 5; ++i)
+            gamepad->setAxisValue(i, expectedAxes[i]);
+        gamepad->publishReport();
+    };
+
+    updateStateAndPublish();
+
+    // Wait for the page to tell us a gamepad connected
+    Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    EXPECT_EQ(messageHandler.get().messages.size(), 1u);
+    EXPECT_TRUE([messageHandler.get().messages[0] isEqualToString:@"\"79-11-Virtual Shenzhen Longshengwei Technology Gamepad\""]);
+
+    bool done = false;
+    bool gotNewValues = false;
+    auto resultBlock = [&] (id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result[@"gamepadCount"] isEqualToNumber:@(1)]);
+
+        bool areEqual = true;
+
+        for (size_t i = 0; i < 10; ++i) {
+            if (!WTF::areEssentiallyEqual([(NSNumber *)result[@"gamepadButtons"][0][i] doubleValue], expectedButtons[i]))
+                areEqual = false;
+        }
+
+        for (size_t i = 0; i < 5; ++i) {
+            if (!WTF::areEssentiallyEqual([(NSNumber *)result[@"gamepadAxes"][0][i] doubleValue], expectedAxes[i]))
+                areEqual = false;
+        }
+
+        if (areEqual)
+            gotNewValues = true;
+
+        done = true;
+    };
+
+    // Change some buttons, polling state to confirm
+    NSDate *start = [NSDate date];
+    while (!gotNewValues) {
+        [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
+        Util::run(&done);
+        done = false;
+
+        if ([[NSDate date] timeIntervalSinceDate:start] > 1.0)
+            break;
+    }
+    EXPECT_TRUE(gotNewValues);
+    gotNewValues = false;
+
+    expectedButtons = { 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0 };
+    updateStateAndPublish();
+
+    start = [NSDate date];
+    while (!gotNewValues) {
+        [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
+        Util::run(&done);
+        done = false;
+
+        if ([[NSDate date] timeIntervalSinceDate:start] > 1.0)
+            break;
+    }
+    EXPECT_TRUE(gotNewValues);
+    gotNewValues = false;
+
+    expectedAxes = { -1.0, -1.0, -1.0, -1.0, 1.0 };
+    updateStateAndPublish();
+
+    // Even though we set -1.0 for each "X" axis, the first 3 axes on this controller are always constant
+    expectedAxes = { -0.9921568627450981, -0.003921568627450966, -0.003921568627450966, -1.0, 1.0 };
+
+    start = [NSDate date];
+    while (!gotNewValues) {
+        [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
+        Util::run(&done);
+        done = false;
+
+        if ([[NSDate date] timeIntervalSinceDate:start] > 1.0)
+            break;
+    }
+    EXPECT_TRUE(gotNewValues);
+    gotNewValues = false;
+
+    // Disconnect the gamepad
+    gamepad = nullptr;
+
+    Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    EXPECT_EQ(messageHandler.get().messages.size(), 2u);
+    EXPECT_TRUE([messageHandler.get().messages[1] isEqualToString:@"Disconnect: \"79-11-Virtual Shenzhen Longshengwei Technology Gamepad\""]);
 }
 
 } // namespace TestWebKitAPI

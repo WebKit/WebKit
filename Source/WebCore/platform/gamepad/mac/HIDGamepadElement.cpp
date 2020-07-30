@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +23,57 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "HIDGamepadElement.h"
 
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
-#include "HIDDevice.h"
-#include "HIDGamepadElement.h"
-#include "PlatformGamepad.h"
-#include <IOKit/hid/IOHIDDevice.h>
-#include <wtf/HashMap.h>
-
 namespace WebCore {
 
-class HIDGamepad : public PlatformGamepad {
-public:
-    static std::unique_ptr<HIDGamepad> create(IOHIDDeviceRef, unsigned index);
+#pragma mark HIDGamepadElement
 
-    const HIDDevice& hidDevice() const { return m_device; }
+HIDGamepadElement::HIDGamepadElement(const HIDElement& element, SharedGamepadValue& value)
+    : HIDElement(element)
+    , m_value(value)
+{
+}
 
-    void initialize();
-    HIDInputType valueChanged(IOHIDValueRef);
+void HIDGamepadElement::refreshCurrentValue()
+{
+    IOHIDValueRef value;
+    if (IOHIDDeviceGetValue(IOHIDElementGetDevice(rawElement()), rawElement(), &value) == kIOReturnSuccess)
+        gamepadValueChanged(value);
+}
 
-    const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
-    const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
+double HIDGamepadElement::normalizedValue()
+{
+    // Default normalization (and the normalization buttons will use) is 0 to 1.0
+    return (double)(physicalValue() - physicalMin()) / (double)(physicalMax() - physicalMin());
+}
 
-    const char* source() const final { return "HID"_s; }
+#pragma mark HIDGamepadButton
 
-protected:
-    HIDGamepad(HIDDevice&&, unsigned index);
+HIDInputType HIDGamepadButton::gamepadValueChanged(IOHIDValueRef value)
+{
+    valueChanged(value);
+    m_value.setValue(normalizedValue());
+    return m_value.value() > 0.5 ? HIDInputType::ButtonPress : HIDInputType::NotAButtonPress;
+}
 
-    virtual String id() = 0;
+#pragma mark HIDGamepadAxis
 
-    HashMap<IOHIDElementCookie, std::unique_ptr<HIDGamepadElement>> m_elementMap;
-    Vector<SharedGamepadValue> m_buttonValues;
-    Vector<SharedGamepadValue> m_axisValues;
+HIDInputType HIDGamepadAxis::gamepadValueChanged(IOHIDValueRef value)
+{
+    valueChanged(value);
+    m_value.setValue(normalizedValue());
+    return HIDInputType::NotAButtonPress;
+}
 
-private:
-    HIDDevice m_device;
-};
+double HIDGamepadAxis::normalizedValue()
+{
+    // Web Gamepad axes have a value of -1.0 to 1.0
+    return (HIDGamepadElement::normalizedValue() * 2.0) - 1.0;
+}
 
 } // namespace WebCore
 

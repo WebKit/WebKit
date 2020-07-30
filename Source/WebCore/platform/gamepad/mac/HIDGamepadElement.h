@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,67 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
+#include "HIDElement.h"
 #include "SharedGamepadValue.h"
-#include <wtf/Forward.h>
-#include <wtf/MonotonicTime.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
-class PlatformGamepad {
+enum class HIDInputType {
+    ButtonPress,
+    NotAButtonPress,
+};
+
+class HIDGamepadElement : public HIDElement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~PlatformGamepad() = default;
+    virtual ~HIDGamepadElement() { }
 
-    const String& id() const { return m_id; }
-    const String& mapping() const { return m_mapping; }
-    unsigned index() const { return m_index; }
-    virtual MonotonicTime lastUpdateTime() const { return m_lastUpdateTime; }
-    MonotonicTime connectTime() const { return m_connectTime; }
-    
-    virtual const Vector<SharedGamepadValue>& axisValues() const = 0;
-    virtual const Vector<SharedGamepadValue>& buttonValues() const = 0;
+    virtual double normalizedValue();
+    virtual HIDInputType gamepadValueChanged(IOHIDValueRef) = 0;
 
-    virtual const char* source() const { return "Unknown"_s; }
+    void refreshCurrentValue();
 
 protected:
-    explicit PlatformGamepad(unsigned index)
-        : m_index(index)
+    HIDGamepadElement(const HIDElement&, SharedGamepadValue&);
+
+    virtual bool isButton() const { return false; }
+    virtual bool isAxis() const { return false; }
+
+    SharedGamepadValue m_value;
+};
+
+class HIDGamepadButton final : public HIDGamepadElement {
+public:
+    HIDGamepadButton(const HIDElement& element, SharedGamepadValue& value)
+        : HIDGamepadElement(element, value)
     {
     }
 
-    String m_id;
-    String m_mapping;
-    unsigned m_index;
-    MonotonicTime m_lastUpdateTime;
-    MonotonicTime m_connectTime;
+    bool isButton() const final { return true; }
+
+private:
+    HIDInputType gamepadValueChanged(IOHIDValueRef) override;
+};
+
+class HIDGamepadAxis final : public HIDGamepadElement {
+public:
+    HIDGamepadAxis(const HIDElement& element, SharedGamepadValue& value)
+        : HIDGamepadElement(element, value)
+    {
+    }
+
+    bool isAxis() const final { return true; }
+    double normalizedValue() final;
+
+private:
+    HIDInputType gamepadValueChanged(IOHIDValueRef) override;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && PLATFORM(MAC)

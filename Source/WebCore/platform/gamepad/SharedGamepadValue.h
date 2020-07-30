@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGamepad.h"
+#pragma once
 
 #if ENABLE(GAMEPAD)
 
-#include "GamepadData.h"
-#include "Logging.h"
+#include <wtf/FastMalloc.h>
+#include <wtf/Nonmovable.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
-using WebCore::SharedGamepadValue;
+namespace WebCore {
 
-namespace WebKit {
+class SharedGamepadValue {
+public:
+    SharedGamepadValue()
+        : m_data(adoptRef(*new Data(0.0)))
+    {
+    }
 
-WebGamepad::WebGamepad(const GamepadData& gamepadData)
-    : PlatformGamepad(gamepadData.index())
-{
-    LOG(Gamepad, "Connecting WebGamepad %u", gamepadData.index());
+    explicit SharedGamepadValue(double value)
+        : m_data(adoptRef(*new Data(value)))
+    {
+    }
 
-    m_id = gamepadData.id();
-    m_mapping = gamepadData.mapping();
-    m_axisValues.resize(gamepadData.axisValues().size());
-    m_buttonValues.resize(gamepadData.buttonValues().size());
+    void setValue(double value) { m_data->value = value; }
+    double value() const { return m_data->value; }
 
-    updateValues(gamepadData);
-}
+private:
+    struct Data : RefCounted<Data> {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-const Vector<SharedGamepadValue>& WebGamepad::axisValues() const
-{
-    return m_axisValues;
-}
+        Data(double theValue)
+            : value(theValue)
+        {
+        }
 
-const Vector<SharedGamepadValue>& WebGamepad::buttonValues() const
-{
-    return m_buttonValues;
-}
+        double value;
+    };
 
-void WebGamepad::updateValues(const GamepadData& gamepadData)
-{
-    ASSERT(!gamepadData.isNull());
-    ASSERT(gamepadData.index() == index());
-    ASSERT(m_axisValues.size() == gamepadData.axisValues().size());
-    ASSERT(m_buttonValues.size() == gamepadData.buttonValues().size());
+    Ref<Data> m_data;
+};
 
-
-    m_axisValues = WTF::map(gamepadData.axisValues(), [](auto value) { return SharedGamepadValue(value); });
-    m_buttonValues = WTF::map(gamepadData.buttonValues(), [](auto value) { return SharedGamepadValue(value); });
-    m_lastUpdateTime = gamepadData.lastUpdateTime();
-}
-
-}
+} // namespace WebCore
 
 #endif // ENABLE(GAMEPAD)

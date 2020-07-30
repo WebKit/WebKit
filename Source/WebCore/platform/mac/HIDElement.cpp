@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "HIDElement.h"
 
-#if ENABLE(GAMEPAD)
+#if PLATFORM(MAC)
 
-#include "PlatformGamepad.h"
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS GCController;
-OBJC_CLASS GCControllerAxisInput;
-OBJC_CLASS GCControllerButtonInput;
-OBJC_CLASS GCControllerElement;
-OBJC_CLASS GCExtendedGamepad;
-OBJC_CLASS GCGamepad;
+#include <IOKit/hid/IOHIDValue.h>
 
 namespace WebCore {
 
-class GameControllerGamepad : public PlatformGamepad {
-    WTF_MAKE_NONCOPYABLE(GameControllerGamepad);
-public:
-    GameControllerGamepad(GCController *, unsigned index);
+HIDElement::HIDElement(IOHIDElementRef element)
+    : m_physicalMin(IOHIDElementGetPhysicalMin(element))
+    , m_physicalMax(IOHIDElementGetPhysicalMax(element))
+    , m_physicalValue(m_physicalMin)
+    , m_usage(IOHIDElementGetUsage(element))
+    , m_usagePage(IOHIDElementGetUsagePage(element))
+    , m_cookie(IOHIDElementGetCookie(element))
+    , m_rawElement(element)
+{
+}
 
-    const Vector<SharedGamepadValue>& axisValues() const final { return m_axisValues; }
-    const Vector<SharedGamepadValue>& buttonValues() const final { return m_buttonValues; }
+void HIDElement::valueChanged(IOHIDValueRef value)
+{
+    if (IOHIDValueGetElement(value) != m_rawElement.get()) {
+        LOG(HID, "HIDElement: Changed value whose IOHIDElement %p doesn't match %p", IOHIDValueGetElement(value), m_rawElement.get());
+        return;
+    }
 
-    const char* source() const final { return "GameController"_s; }
-
-private:
-    void setupAsExtendedGamepad();
-    void setupAsGamepad();
-
-    RetainPtr<GCController> m_gcController;
-
-    Vector<SharedGamepadValue> m_axisValues;
-    Vector<SharedGamepadValue> m_buttonValues;
-
-    RetainPtr<GCGamepad> m_gamepad;
-    RetainPtr<GCExtendedGamepad> m_extendedGamepad;
-
-    bool m_hadButtonPresses { false };
-};
-
-
+    m_physicalValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // PLATFORM(MAC)
