@@ -1,3 +1,20 @@
+2020-07-29  Megan Gardner  <megan_gardner@apple.com>
+
+        Highlight color does not switch after being set it system preferences.
+        https://bugs.webkit.org/show_bug.cgi?id=214938
+        <rdar://problem/65270586>
+
+        Reviewed by Tim Horton.
+
+        After the changes to the sandbox and how defaults are being transferred to the web process
+        (https://trac.webkit.org/changeset/258064/webkit), the highlight color was not being updated 
+        immediately. We need to send the proper notification after setting the defaults so that the 
+        color cache is invalidated after it is actually set and we do not end up with a stale value.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::userHighlightColorPreferenceKey):
+        (WebKit::dispatchSimulatedNotificationsForPreferenceChange):
+
 2020-07-29  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App-Bound Domains code from WebKit Additions

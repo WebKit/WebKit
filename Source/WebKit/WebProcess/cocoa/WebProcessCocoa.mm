@@ -922,6 +922,12 @@ static const WTF::String& userAccentColorPreferenceKey()
     static NeverDestroyed<WTF::String> userAccentColorPreferenceKey(MAKE_STATIC_STRING_IMPL("AppleAccentColor"));
     return userAccentColorPreferenceKey;
 }
+
+static const WTF::String& userHighlightColorPreferenceKey()
+{
+    static NeverDestroyed<WTF::String> userHighlightColorPreferenceKey(MAKE_STATIC_STRING_IMPL("AppleHighlightColor"));
+    return userHighlightColorPreferenceKey;
+}
 #endif
 
 static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
@@ -930,8 +936,18 @@ static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
     // Ordinarily, other parts of the system ensure that this notification is posted after this default is changed.
     // However, since we synchronize defaults to the Web Content process using a mechanism not known to the rest
     // of the system, we must re-post the notification in the Web Content process after updating the default.
-    if (key == userAccentColorPreferenceKey())
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"kCUINotificationAquaColorVariantChanged" object:nil];
+    
+    if (key == userAccentColorPreferenceKey()) {
+        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+        [notificationCenter postNotificationName:@"kCUINotificationAquaColorVariantChanged" object:nil];
+        [notificationCenter postNotificationName:@"NSSystemColorsWillChangeNotification" object:nil];
+        [notificationCenter postNotificationName:NSSystemColorsDidChangeNotification object:nil];
+    }
+    if (key == userHighlightColorPreferenceKey()) {
+        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+        [notificationCenter postNotificationName:@"NSSystemColorsWillChangeNotification" object:nil];
+        [notificationCenter postNotificationName:NSSystemColorsDidChangeNotification object:nil];
+    }
 #endif
 }
 
