@@ -13,14 +13,10 @@ let buffer = new Uint8Array([
   65,0,65,0,11,0,14,4,110,97,109,101,1,7,1,0,4,109,97,105,110
 ]);
 
-var error = undefined;
 try {
     let module = new WebAssembly.Module(buffer);
     let instance = new WebAssembly.Instance(module);
     main = function() { return instance.exports.main(); };
     main();
-} catch (err) {
-    error = err;
+} catch {
 }
-if (!error || error.message !== "Maximum call stack size exceeded.")
-    throw "Expected stack overflow error";
