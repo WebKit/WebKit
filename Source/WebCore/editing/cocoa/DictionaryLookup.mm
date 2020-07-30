@@ -50,6 +50,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/RevealSPI.h>
 #import <pal/spi/ios/UIKitSPI.h>
+#import <WebCore/Range.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 
