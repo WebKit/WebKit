@@ -30,7 +30,7 @@
     [CallWith=ScriptExecutionContext, MayThrowException] constructor(OfflineAudioContextOptions contextOptions);
     [CallWith=ScriptExecutionContext, MayThrowException] constructor(unsigned long numberOfChannels, unsigned long length, float sampleRate);
     
-    void startRendering();
+    [ImplementedAs=startOfflineRendering] Promise<AudioBuffer> startRendering();
 
     [ImplementedAs=resumeRendering] Promise<void> resume();
     [ImplementedAs=suspendRendering] Promise<void> suspend(); // FIXME: Missing suspendTime parameter.

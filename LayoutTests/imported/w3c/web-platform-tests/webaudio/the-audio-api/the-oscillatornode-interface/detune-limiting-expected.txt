@@ -1,11 +1,24 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "detune limits" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
-                .then')"
-FAIL Executing "detune automation" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
-                .then')"
+PASS Executing "detune limits" 
+PASS Executing "detune automation" 
 PASS Audit report 
 PASS > [detune limits] Oscillator with detune and frequency at Nyquist or above 
+PASS   Context sample rate is equal to 44100. 
+PASS   Reference oscillator frequency is greater than or equal to 22050. 
+PASS   Osc(freq: 44100.00390625) output contains only the constant 0. 
+PASS   Osc(freq: 1, detune: 18514.189453125) output equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [detune limits] All assertions passed. (total 4 assertions) 
 PASS > [detune automation] Oscillator output with detune automation should be zero above Nyquist 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS   Frame where detuned oscillator reaches Nyquist is equal to 5. 
+PASS   osc[0:4] is not constantly 0 (contains 4 different values). 
+FAIL X osc[5:]: Expected 0 for all values but found 5506 unexpected values: 
+	Index	Actual
+	[0]	0.0007123813265934587
+	[1]	0.0008548574987798929
+	[2]	0.000997333787381649
+	[3]	0.0011398100759834051
+	...and 5502 more errors. assert_true: expected true got false
+FAIL < [detune automation] 1 out of 3 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
 

@@ -1,13 +1,17 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "buffer-stitching-1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'testBufferStitching(sampleRate, bufferRate, bufferLength)
-                .then')"
-FAIL Executing "buffer-stitching-2" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'testBufferStitching(sampleRate, bufferRate, bufferLength)
-                .then')"
+PASS Executing "buffer-stitching-1" 
+PASS Executing "buffer-stitching-2" 
 PASS Audit report 
 PASS > [buffer-stitching-1] Subsample buffer stitching, same rates 
 PASS   Test 1: context.sampleRate is equal to 44100. 
+PASS   Stitched sine-wave buffers at sample rate 44100 equals [0,0.057564035058021545,0.11493717133998871,0.17192906141281128,0.22835084795951843,0.2840152382850647,0.3387378752231598,0.39233696460723877,0.44463497400283813,0.4954586327075958,0.5446387529373169,0.5920130610466003,0.6374237537384033,0.6807206869125366,0.7217600345611572,0.7604058980941772...] with an element-wise tolerance of {"absoluteThreshold":0.000090957,"relativeThreshold":0}. 
+PASS   SNR (Infinity dB) is greater than or equal to 85.58. 
+PASS < [buffer-stitching-1] All assertions passed. (total 3 assertions) 
 PASS > [buffer-stitching-2] Subsample buffer stitching, different rates 
 PASS   Test 2: context.sampleRate is equal to 44100. 
+PASS   Stitched sine-wave buffers at sample rate 43800 equals [0,0.057564035058021545,0.11493717133998871,0.17192906141281128,0.22835084795951843,0.2840152382850647,0.3387378752231598,0.39233696460723877,0.44463497400283813,0.4954586327075958,0.5446387529373169,0.5920130610466003,0.6374237537384033,0.6807206869125366,0.7217600345611572,0.7604058980941772...] with an element-wise tolerance of {"absoluteThreshold":0.0038986,"relativeThreshold":0}. 
+PASS   SNR (Infinity dB) is greater than or equal to 65.737. 
+PASS < [buffer-stitching-2] All assertions passed. (total 3 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

@@ -108,11 +108,14 @@ void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)
     }
 }
 
-void DefaultAudioDestinationNode::startRendering()
+ExceptionOr<void> DefaultAudioDestinationNode::startRendering()
 {
     ASSERT(isInitialized());
-    if (isInitialized())
-        m_destination->start();
+    if (!isInitialized())
+        return Exception { InvalidStateError };
+
+    m_destination->start();
+    return { };
 }
 
 void DefaultAudioDestinationNode::resume(Function<void ()>&& function)

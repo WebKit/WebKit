@@ -1,13 +1,21 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "absn-set-onended" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "absn-add-listener" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "osc-set-onended" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "osc-add-listener" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+PASS Executing "absn-set-onended" 
+PASS Executing "absn-add-listener" 
+PASS Executing "osc-set-onended" 
+PASS Executing "osc-add-listener" 
 PASS Audit report 
 PASS > [absn-set-onended]  
+PASS   AudioBufferSource.onended called when ended set directly is equal to true. 
+PASS < [absn-set-onended] All assertions passed. (total 1 assertions) 
 PASS > [absn-add-listener]  
+PASS   AudioBufferSource.onended called when using addEventListener is equal to true. 
+PASS < [absn-add-listener] All assertions passed. (total 1 assertions) 
 PASS > [osc-set-onended]  
+PASS   Oscillator.onended called when ended set directly is equal to true. 
+PASS < [osc-set-onended] All assertions passed. (total 1 assertions) 
 PASS > [osc-add-listener]  
+PASS   Oscillator.onended called when using addEventListener is equal to true. 
+PASS < [osc-add-listener] All assertions passed. (total 1 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
 

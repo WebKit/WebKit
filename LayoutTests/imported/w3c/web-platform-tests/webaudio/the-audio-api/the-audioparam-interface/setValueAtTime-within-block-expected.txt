@@ -1,4 +1,3 @@
 
-FAIL Test setValueAtTime with start time not on a block boundary undefined is not an object (evaluating 'context.startRendering().
-    then')
+FAIL Test setValueAtTime with start time not on a block boundary assert_equals: default gain at sample 0 expected 1 but got 0
 

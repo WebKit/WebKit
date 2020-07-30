@@ -1,8 +1,10 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "interpolate" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
-                .then')"
+PASS Executing "interpolate" 
 PASS Audit report 
 PASS > [interpolate] Interpolation of AudioBuffers to context sample rate 
+PASS   Interpolated sine wave equals [0,0.057564035058021545,0.11493717133998871,0.17192906141281128,0.22835084795951843,0.2840152382850647,0.3387378752231598,0.39233696460723877,0.44463497400283813,0.4954586327075958,0.5446387529373169,0.5920130610466003,0.6374237537384033,0.6807206869125366,0.7217600345611572,0.7604058980941772...] with an element-wise tolerance of {"absoluteThreshold":0.090348,"relativeThreshold":0}. 
+PASS   SNR (Infinity dB) is greater than or equal to 37.17. 
+PASS < [interpolate] All assertions passed. (total 2 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

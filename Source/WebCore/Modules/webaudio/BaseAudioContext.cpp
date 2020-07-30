@@ -71,6 +71,7 @@
 #include "ScriptProcessorNode.h"
 #include "WaveShaperNode.h"
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <wtf/Scope.h>
 
 #if DEBUG_AUDIONODE_REFERENCES
 #include <stdio.h>
@@ -1078,6 +1079,10 @@ void BaseAudioContext::finishedRendering(bool didRendering)
 {
     ASSERT(isOfflineContext());
     ASSERT(isMainThread());
+    auto finishedRenderingScope = WTF::makeScopeExit([this] {
+        didFinishOfflineRendering(Exception { InvalidStateError });
+    });
+
     if (!isMainThread())
         return;
 
@@ -1091,7 +1096,7 @@ void BaseAudioContext::finishedRendering(bool didRendering)
     if (!didRendering)
         return;
 
-    AudioBuffer* renderedBuffer = m_renderTarget.get();
+    RefPtr<AudioBuffer> renderedBuffer = m_renderTarget.get();
     setState(State::Closed);
 
     ASSERT(renderedBuffer);
@@ -1103,7 +1108,10 @@ void BaseAudioContext::finishedRendering(bool didRendering)
         return;
 
     clearPendingActivityIfExitEarly.release();
-    m_eventQueue->enqueueEvent(OfflineAudioCompletionEvent::create(renderedBuffer));
+    m_eventQueue->enqueueEvent(OfflineAudioCompletionEvent::create(renderedBuffer.get()));
+
+    finishedRenderingScope.release();
+    didFinishOfflineRendering(renderedBuffer.releaseNonNull());
 }
 
 void BaseAudioContext::dispatchEvent(Event& event)

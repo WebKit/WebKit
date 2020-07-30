@@ -1,11 +1,71 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "silent-channel" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "stereo-down-mixing" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "undefined-channel-layout" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
+PASS Executing "silent-channel" 
+PASS Executing "stereo-down-mixing" 
+PASS Executing "undefined-channel-layout" 
 PASS Audit report 
 PASS > [silent-channel]  
+FAIL X 1-channel source: Channel #0: Expected 0 for all values but found 128 unexpected values: 
+	Index	Actual
+	[0]	1
+	[1]	1
+	[2]	1
+	[3]	1
+	...and 124 more errors. assert_true: expected true got false
+PASS   1-channel source: Channel #1 contains only the constant 0. 
+PASS   1-channel source: Channel #2 contains only the constant 0. 
+PASS   1-channel source: Channel #3 contains only the constant 0. 
+PASS   1-channel source: Channel #4 contains only the constant 0. 
+PASS   1-channel source: Channel #5 contains only the constant 0. 
+FAIL X 1-channel source: Channel #6: Expected 1 for all values but found 128 unexpected values: 
+	Index	Actual
+	[0]	0
+	[1]	0
+	[2]	0
+	[3]	0
+	...and 124 more errors. assert_true: expected true got false
+FAIL < [silent-channel] 2 out of 7 assertions were failed. assert_true: expected true got false
 PASS > [stereo-down-mixing]  
+FAIL X 2-channel source: Channel #0: Expected 0 for all values but found 128 unexpected values: 
+	Index	Actual
+	[0]	1.5
+	[1]	1.5
+	[2]	1.5
+	[3]	1.5
+	...and 124 more errors. assert_true: expected true got false
+PASS   2-channel source: Channel #1 contains only the constant 0. 
+PASS   2-channel source: Channel #2 contains only the constant 0. 
+PASS   2-channel source: Channel #3 contains only the constant 0. 
+PASS   2-channel source: Channel #4 contains only the constant 0. 
+PASS   2-channel source: Channel #5 contains only the constant 0. 
+FAIL X 2-channel source: Channel #6: Expected 1.5 for all values but found 128 unexpected values: 
+	Index	Actual
+	[0]	0
+	[1]	0
+	[2]	0
+	[3]	0
+	...and 124 more errors. assert_true: expected true got false
+FAIL < [stereo-down-mixing] 2 out of 7 assertions were failed. assert_true: expected true got false
 PASS > [undefined-channel-layout]  
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+FAIL X 3-channel source: Channel #0: Expected 0 for all values but found 128 unexpected values: 
+	Index	Actual
+	[0]	1
+	[1]	1
+	[2]	1
+	[3]	1
+	...and 124 more errors. assert_true: expected true got false
+PASS   3-channel source: Channel #1 contains only the constant 0. 
+PASS   3-channel source: Channel #2 contains only the constant 0. 
+PASS   3-channel source: Channel #3 contains only the constant 0. 
+PASS   3-channel source: Channel #4 contains only the constant 0. 
+PASS   3-channel source: Channel #5 contains only the constant 0. 
+FAIL X 3-channel source: Channel #6: Expected 1 for all values but found 128 unexpected values: 
+	Index	Actual
+	[0]	0
+	[1]	0
+	[2]	0
+	[3]	0
+	...and 124 more errors. assert_true: expected true got false
+FAIL < [undefined-channel-layout] 2 out of 7 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 3 tasks were failed. assert_true: expected true got false
 

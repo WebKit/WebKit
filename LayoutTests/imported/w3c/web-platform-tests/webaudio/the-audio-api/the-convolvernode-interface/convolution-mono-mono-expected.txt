@@ -1,8 +1,12 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
-            .then')"
+PASS Executing "test" 
 PASS Audit report 
 PASS > [test]  
+PASS   Deviation (in dB) of triangular portion of convolution is less than or equal to -124.41. 
+PASS   Deviation in first part of tail of convolutions is less than or equal to -129.7. 
+PASS   Rendered signal after tail of convolution is silent is true. 
+PASS   Test signal convolved correctly 
+PASS < [test] All assertions passed. (total 4 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

@@ -1,11 +1,11 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test 0" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'renderedBuffer.getChannelData')"
-FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'renderedBuffer.getChannelData')"
-FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'renderedBuffer.getChannelData')"
-FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'renderedBuffer.getChannelData')"
-FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'renderedBuffer.getChannelData')"
-FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'renderedBuffer.getChannelData')"
+FAIL Executing "Test 0" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
+FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
+FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
+FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
+FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
+FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
 PASS Audit report 
 PASS > [Test 0] Sine wave: 100 Hz 
 PASS > [Test 1] Sine wave: -100 Hz 

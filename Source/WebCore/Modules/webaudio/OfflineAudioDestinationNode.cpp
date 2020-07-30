@@ -75,17 +75,17 @@ void OfflineAudioDestinationNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-void OfflineAudioDestinationNode::startRendering()
+ExceptionOr<void> OfflineAudioDestinationNode::startRendering()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT(isMainThread());
     ASSERT(m_renderTarget.get());
     if (!m_renderTarget.get())
-        return;
+        return Exception { InvalidStateError };
     
     if (m_startedRendering)
-        return;
+        return Exception { InvalidStateError, "Already started rendering"_s };
 
     m_startedRendering = true;
     ref();
@@ -98,6 +98,7 @@ void OfflineAudioDestinationNode::startRendering()
             deref();
         });
     }, ThreadType::Audio);
+    return { };
 }
 
 bool OfflineAudioDestinationNode::offlineRender()

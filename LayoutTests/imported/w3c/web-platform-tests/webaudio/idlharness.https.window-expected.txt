@@ -112,7 +112,7 @@ PASS OfflineAudioContext interface object name
 PASS OfflineAudioContext interface: existence and properties of interface prototype object 
 PASS OfflineAudioContext interface: existence and properties of interface prototype object's "constructor" property 
 PASS OfflineAudioContext interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL OfflineAudioContext interface: operation startRendering() assert_unreached: Throws "TypeError: Can only call OfflineAudioContext.startRendering on instances of OfflineAudioContext" instead of rejecting promise Reached unreachable code
+PASS OfflineAudioContext interface: operation startRendering() 
 PASS OfflineAudioContext interface: operation resume() 
 FAIL OfflineAudioContext interface: operation suspend(double) assert_equals: property has wrong .length expected 1 but got 0
 FAIL OfflineAudioContext interface: attribute length assert_true: The prototype object must have a property "length" expected true got false

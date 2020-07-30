@@ -1,11 +1,13 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "linearRamp" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'graph.context.startRendering()
-            .then')"
-FAIL Executing "exponentialRamp" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'graph.context.startRendering()
-            .then')"
+PASS Executing "linearRamp" 
+PASS Executing "exponentialRamp" 
 PASS Audit report 
 PASS > [linearRamp]  
+PASS   linearRampToValue(0.1, 1e+300) successfully rendered 
+PASS < [linearRamp] All assertions passed. (total 1 assertions) 
 PASS > [exponentialRamp]  
+PASS   exponentialRampToValue(0.1, 1e+300) successfully rendered 
+PASS < [exponentialRamp] All assertions passed. (total 1 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

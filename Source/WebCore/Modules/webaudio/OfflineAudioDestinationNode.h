@@ -50,7 +50,7 @@ public:
 
     // AudioDestinationNode
     void enableInput(const String&) override { }
-    void startRendering() override;
+    ExceptionOr<void> startRendering() override;
 
     float sampleRate() const override { return m_renderTarget->sampleRate(); }
 

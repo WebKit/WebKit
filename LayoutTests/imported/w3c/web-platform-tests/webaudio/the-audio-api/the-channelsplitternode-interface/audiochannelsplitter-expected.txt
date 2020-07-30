@@ -1,8 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "construction" 
-FAIL Executing "functionality" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
-                .then')"
+PASS Executing "functionality" 
 PASS Audit report 
 PASS > [construction] Construction of ChannelSplitterNode 
 PASS   createChannelSplitter(0) threw IndexSizeError: "Number of outputs is not in the allowed range". 
@@ -14,5 +13,9 @@ PASS   splitternode = context.createChannelSplitter() did not throw an exception
 PASS   splitternode.numberOfOutputs is equal to 6. 
 PASS < [construction] All assertions passed. (total 7 assertions) 
 PASS > [functionality] Functionality of ChannelSplitterNode 
+PASS   Left channel contains only the constant -1. 
+PASS   Right channel contains only the constant 1. 
+PASS   Left and right channels were exchanged correctly 
+PASS < [functionality] All assertions passed. (total 3 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

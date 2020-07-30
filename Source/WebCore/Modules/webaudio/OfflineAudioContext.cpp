@@ -30,6 +30,7 @@
 
 #include "AudioBuffer.h"
 #include "Document.h"
+#include "JSAudioBuffer.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -62,6 +63,36 @@ ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutio
     return create(context, contextOptions.numberOfChannels, contextOptions.length, contextOptions.sampleRate);
 }
 
+void OfflineAudioContext::startOfflineRendering(Ref<DeferredPromise>&& promise)
+{
+    if (isStopped() || !willBeginPlayback()) {
+        promise->reject(Exception { InvalidStateError });
+        return;
+    }
+
+    auto result = destination()->startRendering();
+    if (result.hasException()) {
+        promise->reject(result.releaseException());
+        return;
+    }
+
+    makePendingActivity();
+    m_pendingOfflineRenderingPromise = WTFMove(promise);
+    setState(State::Running);
+}
+
+void OfflineAudioContext::didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>>&& result)
+{
+    if (!m_pendingOfflineRenderingPromise)
+        return;
+
+    auto promise = std::exchange(m_pendingOfflineRenderingPromise, nullptr);
+    if (result.hasException()) {
+        promise->reject(result.releaseException());
+        return;
+    }
+    promise->resolve<IDLInterface<AudioBuffer>>(result.releaseReturnValue());
+}
 
 } // namespace WebCore
 

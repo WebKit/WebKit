@@ -1,8 +1,28 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
-                .then')"
+PASS Executing "test" 
 PASS Audit report 
 PASS > [test] ScriptProcessor with stopped input source 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS   ScriptProcessor output[0:1023] contains only the constant 0. 
+FAIL X ScriptProcessor output[1024:1151] does not equal [1,1.0575640201568604,1.11493718624115,1.171929121017456,1.2283508777618408,1.28401517868042,1.3387378454208374,1.3923369646072388,1.4446349143981934,1.4954586029052734,1.544638752937317,1.5920131206512451,1.6374237537384033,1.6807206869125366,1.7217600345611572,1.7604058980941772...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	0.0000000000000000e+0	1.0000000000000000e+0	1.0000000000000000e+0	1.0000000000000000e+0	0.0000000000000000e+0
+	[1]	0.0000000000000000e+0	1.0575640201568604e+0	1.0575640201568604e+0	1.0000000000000000e+0	0.0000000000000000e+0
+	[2]	0.0000000000000000e+0	1.1149371862411499e+0	1.1149371862411499e+0	1.0000000000000000e+0	0.0000000000000000e+0
+	[3]	0.0000000000000000e+0	1.1719291210174561e+0	1.1719291210174561e+0	1.0000000000000000e+0	0.0000000000000000e+0
+	[4]	0.0000000000000000e+0	1.2283508777618408e+0	1.2283508777618408e+0	1.0000000000000000e+0	0.0000000000000000e+0
+	...and 123 more errors.
+	Max AbsError of 1.9998764991760254e+0 at index of 27.
+	[27]	0.0000000000000000e+0	1.9998764991760254e+0	1.9998764991760254e+0	1.0000000000000000e+0	0.0000000000000000e+0
+	Max RelError of 1.0000000000000000e+0 at index of 0.
+ assert_true: expected true got false
+FAIL X ScriptProcessor output[1152:]: Expected 1 for all values but found 46848 unexpected values: 
+	Index	Actual
+	[0]	0
+	[1]	0
+	[2]	0
+	[3]	0
+	...and 46844 more errors. assert_true: expected true got false
+FAIL < [test] 2 out of 3 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

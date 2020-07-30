@@ -1,4 +1,3 @@
 
-FAIL Test setTargetAtTime after an event in the same processing block undefined is not an object (evaluating 'context.startRendering().
-    then')
+FAIL Test setTargetAtTime after an event in the same processing block assert_equals: default gain at sample 0 expected 1 but got 0
 

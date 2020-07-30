@@ -2,7 +2,7 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "test-suspend" 
 PASS Executing "test-resume" 
-FAIL Executing "test-after-close" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'p3.then')"
+PASS Executing "test-after-close" 
 PASS Executing "resume-running-context" 
 PASS Audit report 
 PASS > [test-suspend] Test suspend() for offline context 
@@ -20,6 +20,10 @@ PASS   p2 rejected correctly with InvalidStateError: The object is in an invalid
 PASS < [test-resume] All assertions passed. (total 4 assertions) 
 PASS > [test-after-close] Test state after context closed 
 PASS   p3 = offlineContext.startRendering() did not throw an exception. 
+PASS   After close, offlineContext.state is equal to closed. 
+PASS   offlineContext.suspend() rejected correctly with InvalidStateError: The object is in an invalid state.. 
+PASS   offlineContext.resume() rejected correctly with InvalidStateError: The object is in an invalid state.. 
+PASS < [test-after-close] All assertions passed. (total 4 assertions) 
 PASS > [resume-running-context] Test resuming a running context 
 PASS   Create online context did not throw an exception. 
 FAIL X context.state is not equal to running. Got suspended. assert_true: expected true got false

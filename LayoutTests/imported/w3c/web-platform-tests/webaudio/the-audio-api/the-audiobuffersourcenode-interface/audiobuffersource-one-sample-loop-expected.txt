@@ -1,8 +1,15 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "one-sample-loop" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
-            .then')"
+PASS Executing "one-sample-loop" 
 PASS Audit report 
 PASS > [one-sample-loop]  
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+FAIL X Rendered data: Expected 1 for all values but found 1000 unexpected values: 
+	Index	Actual
+	[0]	0
+	[1]	0
+	[2]	0
+	[3]	0
+	...and 996 more errors. assert_true: expected true got false
+FAIL < [one-sample-loop] 1 out of 1 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

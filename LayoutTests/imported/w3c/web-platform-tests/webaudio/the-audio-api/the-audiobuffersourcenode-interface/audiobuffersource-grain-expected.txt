@@ -1,8 +1,9 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test setting the source buffer after starting the grain" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
-                .then')"
+PASS Executing "Test setting the source buffer after starting the grain" 
 PASS Audit report 
 PASS > [Test setting the source buffer after starting the grain]  
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+FAIL X Buffer was played is not true. Got false. assert_true: expected true got false
+FAIL < [Test setting the source buffer after starting the grain] 1 out of 1 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

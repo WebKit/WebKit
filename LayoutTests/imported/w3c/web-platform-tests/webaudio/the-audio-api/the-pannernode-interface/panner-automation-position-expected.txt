@@ -1,21 +1,16 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'context.listener.positionX.value')
+
+Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'context.listener.positionX.value')
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "0: 1-channel inverse rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "0: 2-channel inverse rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "1: 1-channel inverse rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "1: 2-channel inverse rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "2: 1-channel exponential rolloff: 1.5" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "2: 2-channel exponential rolloff: 1.5" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "3: 1-channel linear rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-FAIL Executing "3: 2-channel linear rolloff: 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering().then')"
-PASS Audit report 
+TIMEOUT Executing "0: 1-channel inverse rolloff: 1" Test timed out
+NOTRUN Executing "0: 2-channel inverse rolloff: 1" 
+NOTRUN Executing "1: 1-channel inverse rolloff: 1" 
+NOTRUN Executing "1: 2-channel inverse rolloff: 1" 
+NOTRUN Executing "2: 1-channel exponential rolloff: 1.5" 
+NOTRUN Executing "2: 2-channel exponential rolloff: 1.5" 
+NOTRUN Executing "3: 1-channel linear rolloff: 1" 
+NOTRUN Executing "3: 2-channel linear rolloff: 1" 
+NOTRUN Audit report 
 PASS > [0: 1-channel inverse rolloff: 1]  
-PASS > [0: 2-channel inverse rolloff: 1]  
-PASS > [1: 1-channel inverse rolloff: 1]  
-PASS > [1: 2-channel inverse rolloff: 1]  
-PASS > [2: 1-channel exponential rolloff: 1.5]  
-PASS > [2: 2-channel exponential rolloff: 1.5]  
-PASS > [3: 1-channel linear rolloff: 1]  
-PASS > [3: 2-channel linear rolloff: 1]  
-PASS # AUDIT TASK RUNNER FINISHED: 8 tasks ran successfully. 
 

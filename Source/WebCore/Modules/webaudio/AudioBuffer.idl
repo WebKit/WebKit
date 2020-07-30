@@ -29,6 +29,7 @@
 [
     Conditional=WEB_AUDIO,
     ImplementationLacksVTable,
+    JSGenerateToJSObject,
     ReportExtraMemoryCost,
 ] interface AudioBuffer {
     readonly attribute long length; // in sample-frames

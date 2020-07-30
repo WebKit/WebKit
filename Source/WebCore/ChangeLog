@@ -1,3 +1,36 @@
+2020-07-30  Chris Dumez  <cdumez@apple.com>
+
+        OfflineAudioContext.startRendering() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=214940
+
+        Reviewed by Eric Carlson.
+
+        OfflineAudioContext.startRendering() should return a Promise:
+        - https://www.w3.org/TR/webaudio/#dom-offlineaudiocontext-startrendering
+
+        This is important as it was preventing a lot of web-platform-tests from running
+        properly and our test coverage was therefore really poor.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioDestinationNode.h:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::finishedRendering):
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::didFinishOfflineRendering):
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::startRendering):
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::startOfflineRendering):
+        (WebCore::OfflineAudioContext::didFinishOfflineRendering):
+        * Modules/webaudio/OfflineAudioContext.h:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::startRendering):
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+
 2020-07-30  Darin Adler  <darin@apple.com>
 
         Further reduction in the use of live ranges, particularly in headers

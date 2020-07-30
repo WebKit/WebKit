@@ -49,7 +49,7 @@ private:
     ExceptionOr<void> setChannelCount(unsigned) final;
 
     void enableInput(const String& inputDeviceId) final;
-    void startRendering() final;
+    ExceptionOr<void> startRendering() final;
     void resume(Function<void ()>&&) final;
     void suspend(Function<void ()>&&) final;
     void close(Function<void ()>&&) final;

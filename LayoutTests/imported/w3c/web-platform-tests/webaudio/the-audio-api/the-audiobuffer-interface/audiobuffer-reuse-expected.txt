@@ -1,4 +1,3 @@
 
-FAIL AudioBuffer can be reused between AudioBufferSourceNodes undefined is not an object (evaluating 'render_audio_context()
-    .then')
+PASS AudioBuffer can be reused between AudioBufferSourceNodes 
 

@@ -1,3 +1,3 @@
 
-FAIL PannerNode AudioParam automation works properly undefined is not an object (evaluating 'ac.startRendering().then')
+FAIL PannerNode AudioParam automation works properly assert_true: index 1111 should be on the right expected true got false
 

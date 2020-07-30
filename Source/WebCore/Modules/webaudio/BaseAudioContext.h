@@ -304,6 +304,8 @@ protected:
 
     AudioDestinationNode* destinationNode() const { return m_destinationNode.get(); }
 
+    bool willBeginPlayback();
+
     void uninitialize();
 
 #if !RELEASE_LOG_DISABLED
@@ -313,10 +315,11 @@ protected:
     void addReaction(State, DOMPromiseDeferred<void>&&);
     void setState(State);
 
+    virtual void didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>>&&) { }
+
 private:
     void constructCommon();
 
-    bool willBeginPlayback();
     bool willPausePlayback();
 
     bool userGestureRequiredForAudioStart() const { return !isOfflineContext() && m_restrictions & RequireUserGestureForAudioStartRestriction; }

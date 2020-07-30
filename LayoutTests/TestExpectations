@@ -314,6 +314,14 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourc
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Pass Failure ]
 
+# Some of the subchecks are failing and print out a different value every time.
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/buffer-resampling.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-scriptprocessornode-interface/simple-input-output.html [ Pass Failure ]
+
 webkit.org/b/176929 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
 
 # Requires BroadcastChannel.

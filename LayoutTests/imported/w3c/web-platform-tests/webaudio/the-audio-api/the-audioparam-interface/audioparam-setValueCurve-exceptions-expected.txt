@@ -2,8 +2,7 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "setValueCurve" 
 PASS Executing "automations" 
-FAIL Executing "catch-exception" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering()
-            .then')"
+PASS Executing "catch-exception" 
 PASS Executing "start-end" 
 PASS Executing "curve overlap" 
 PASS Executing "curve lengths" 
@@ -32,6 +31,14 @@ FAIL X delayTime.setValueCurveAtTime([1, 5, Infinity], 0.043750000000000004, 0.0
 FAIL X setValueCurveAtTime(curve, 0.031415926535897934, 0.01) did not throw an exception. assert_true: expected true got false
 FAIL < [automations] 8 out of 13 assertions were failed. assert_true: expected true got false
 PASS > [catch-exception]  
+FAIL X Handled setValueCurve exception so output: Expected 1 for all values but found 6000 unexpected values: 
+	Index	Actual
+	[0]	0
+	[1]	0
+	[2]	0
+	[3]	0
+	...and 5996 more errors. assert_true: expected true got false
+FAIL < [catch-exception] 1 out of 1 assertions were failed. assert_true: expected true got false
 PASS > [start-end]  
 PASS   setValueAtTime(1, 0) did not throw an exception. 
 PASS   linearRampToValueAtTime(0, 0.0025) did not throw an exception. 
@@ -58,5 +65,5 @@ FAIL X setValueCurveAtTime([], 0, 0.01) did not throw an exception. assert_true:
 FAIL X setValueCurveAtTime([1], 0, 0.01) did not throw an exception. assert_true: expected true got false
 PASS   setValueCurveAtTime([1,2], 0, 0.01) did not throw an exception. 
 FAIL < [curve lengths] 2 out of 3 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 4 out of 6 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 5 out of 6 tasks were failed. assert_true: expected true got false
 
