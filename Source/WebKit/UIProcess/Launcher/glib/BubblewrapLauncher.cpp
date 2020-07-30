@@ -581,8 +581,8 @@ static int setupSeccomp()
     // can do, and we should support code portability between different
     // container tools.
     //
-    // This syscall blacklist is copied from linux-user-chroot, which was in turn
-    // clearly influenced by the Sandstorm.io blacklist.
+    // This syscall block list is copied from linux-user-chroot, which was in turn
+    // clearly influenced by the Sandstorm.io block list.
     //
     // If you make any changes here, I suggest sending the changes along
     // to other sandbox maintainers. Using the libseccomp list is also
@@ -590,7 +590,7 @@ static int setupSeccomp()
     // https://groups.google.com/forum/#!topic/libseccomp
     //
     // A non-exhaustive list of links to container tooling that might
-    // want to share this blacklist:
+    // want to share this block list:
     //
     //  https://github.com/sandstorm-io/sandstorm
     //    in src/sandstorm/supervisor.c++
@@ -603,7 +603,7 @@ static int setupSeccomp()
     struct {
         int scall;
         struct scmp_arg_cmp* arg;
-    } syscallBlacklist[] = {
+    } syscallBlockList[] = {
         // Block dmesg
         { SCMP_SYS(syslog), nullptr },
         // Useless old syscall.
@@ -649,7 +649,7 @@ static int setupSeccomp()
     if (!seccomp)
         g_error("Failed to init seccomp");
 
-    for (auto& rule : syscallBlacklist) {
+    for (auto& rule : syscallBlockList) {
         int scall = rule.scall;
         int r;
         if (rule.arg)

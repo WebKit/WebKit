@@ -81,16 +81,16 @@ WEBKIT_API WebKitUserStyleSheet *
 webkit_user_style_sheet_new           (const gchar                    *source,
                                        WebKitUserContentInjectedFrames injected_frames,
                                        WebKitUserStyleLevel            level,
-                                       const gchar* const             *whitelist,
-                                       const gchar* const             *blacklist);
+                                       const gchar* const             *allow_list,
+                                       const gchar* const             *block_list);
 
 WEBKIT_API WebKitUserStyleSheet *
 webkit_user_style_sheet_new_for_world (const gchar                    *source,
                                        WebKitUserContentInjectedFrames injected_frames,
                                        WebKitUserStyleLevel            level,
                                        const gchar                    *world_name,
-                                       const gchar* const             *whitelist,
-                                       const gchar* const             *blacklist);
+                                       const gchar* const             *allow_list,
+                                       const gchar* const             *block_list);
 
 /**
  * WebKitUserScriptInjectionTime:
@@ -125,16 +125,16 @@ WEBKIT_API WebKitUserScript *
 webkit_user_script_new           (const gchar                    *source,
                                   WebKitUserContentInjectedFrames injected_frames,
                                   WebKitUserScriptInjectionTime   injection_time,
-                                  const gchar* const             *whitelist,
-                                  const gchar* const             *blacklist);
+                                  const gchar* const             *allow_list,
+                                  const gchar* const             *block_list);
 
 WEBKIT_API WebKitUserScript *
 webkit_user_script_new_for_world (const gchar                    *source,
                                   WebKitUserContentInjectedFrames injected_frames,
                                   WebKitUserScriptInjectionTime   injection_time,
                                   const gchar                    *world_name,
-                                  const gchar* const             *whitelist,
-                                  const gchar* const             *blacklist);
+                                  const gchar* const             *allow_list,
+                                  const gchar* const             *block_list);
 
 #define WEBKIT_TYPE_USER_CONTENT_FILTER   (webkit_user_content_filter_get_type())
 

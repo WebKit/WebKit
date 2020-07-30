@@ -628,7 +628,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 
     WKBundleClearAllDatabases(m_bundle);
     WKBundlePageClearApplicationCache(page()->page());
-    WKBundleResetOriginAccessWhitelists(m_bundle);
+    WKBundleResetOriginAccessAllowLists(m_bundle);
     WKBundleClearResourceLoadStatistics(m_bundle);
 
     // [WK2] REGRESSION(r128623): It made layout tests extremely slow

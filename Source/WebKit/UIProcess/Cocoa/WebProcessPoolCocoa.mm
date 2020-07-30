@@ -333,7 +333,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.containerTemporaryDirectory, SandboxExtension::Type::ReadWrite, parameters.containerTemporaryDirectoryExtensionHandle);
 #endif
 
-    parameters.fontWhitelist = m_fontWhitelist;
+    parameters.fontAllowList = m_fontAllowList;
 
     if (m_bundleParameters) {
         auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);

@@ -1,3 +1,62 @@
+2020-07-30  Alex Christensen  <achristensen@webkit.org>
+
+        Remove non-inclusive terminology from WebKit variable names and test-only SPI
+        https://bugs.webkit.org/show_bug.cgi?id=214941
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::addOriginAccessAllowListEntry):
+        (WebKit::NetworkConnectionToWebProcess::removeOriginAccessAllowListEntry):
+        (WebKit::NetworkConnectionToWebProcess::resetOriginAccessAllowLists):
+        (WebKit::NetworkConnectionToWebProcess::addOriginAccessWhitelistEntry): Deleted.
+        (WebKit::NetworkConnectionToWebProcess::removeOriginAccessWhitelistEntry): Deleted.
+        (WebKit::NetworkConnectionToWebProcess::resetOriginAccessWhitelists): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/glib/WebKitUserContent.cpp:
+        (_WebKitUserStyleSheet::_WebKitUserStyleSheet):
+        (webkit_user_style_sheet_new):
+        (webkit_user_style_sheet_new_for_world):
+        (_WebKitUserScript::_WebKitUserScript):
+        (webkit_user_script_new):
+        (webkit_user_script_new_for_world):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (pathIsBlocked):
+        (webkit_web_context_add_path_to_sandbox):
+        (pathIsBlacklisted): Deleted.
+        * UIProcess/API/gtk/WebKitUserContent.h:
+        * UIProcess/API/wpe/WebKitUserContent.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::setupSeccomp):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setFontAllowList):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleAddOriginAccessAllowListEntry):
+        (WKBundleRemoveOriginAccessAllowListEntry):
+        (WKBundleResetOriginAccessAllowLists):
+        (WKBundleAddOriginAccessWhitelistEntry): Deleted.
+        (WKBundleRemoveOriginAccessWhitelistEntry): Deleted.
+        (WKBundleResetOriginAccessWhitelists): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addOriginAccessAllowListEntry):
+        (WebKit::InjectedBundle::removeOriginAccessAllowListEntry):
+        (WebKit::InjectedBundle::resetOriginAccessAllowLists):
+        (WebKit::InjectedBundle::addOriginAccessWhitelistEntry): Deleted.
+        (WebKit::InjectedBundle::removeOriginAccessWhitelistEntry): Deleted.
+        (WebKit::InjectedBundle::resetOriginAccessWhitelists): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Enable API tests

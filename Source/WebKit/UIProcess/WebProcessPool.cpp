@@ -2104,11 +2104,11 @@ void WebProcessPool::setMemoryCacheDisabled(bool disabled)
 
 void WebProcessPool::setFontAllowList(API::Array* array)
 {
-    m_fontWhitelist.clear();
+    m_fontAllowList.clear();
     if (array) {
         for (size_t i = 0; i < array->size(); ++i) {
             if (API::String* font = array->at<API::String>(i))
-                m_fontWhitelist.append(font->string());
+                m_fontAllowList.append(font->string());
         }
     }
 }

@@ -245,7 +245,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     [NSURLCache setSharedURLCache:urlCache.get()];
 
 #if PLATFORM(MAC)
-    WebCore::FontCache::setFontAllowlist(parameters.fontWhitelist);
+    WebCore::FontCache::setFontAllowlist(parameters.fontAllowList);
 #endif
 
     m_compositingRenderServerPort = WTFMove(parameters.acceleratedCompositingPort);

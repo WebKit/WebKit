@@ -107,9 +107,9 @@ public:
     void setPopupBlockingEnabled(WebPageGroupProxy*, bool);
     void setAuthorAndUserStylesEnabled(WebPageGroupProxy*, bool);
     void setSpatialNavigationEnabled(WebPageGroupProxy*, bool);
-    void addOriginAccessWhitelistEntry(const String&, const String&, const String&, bool);
-    void removeOriginAccessWhitelistEntry(const String&, const String&, const String&, bool);
-    void resetOriginAccessWhitelists();
+    void addOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
+    void removeOriginAccessAllowListEntry(const String&, const String&, const String&, bool);
+    void resetOriginAccessAllowLists();
     void setAsynchronousSpellCheckingEnabled(WebPageGroupProxy*, bool);
     int numberOfPages(WebFrame*, double, double);
     int pageNumberForElementById(WebFrame*, const String&, double, double);

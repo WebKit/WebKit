@@ -1316,9 +1316,9 @@ void webkit_web_context_set_sandbox_enabled(WebKitWebContext* context, gboolean 
     context->priv->processPool->setSandboxEnabled(enabled);
 }
 
-static bool pathIsBlacklisted(const char* path)
+static bool pathIsBlocked(const char* path)
 {
-    static const Vector<CString, 4> blacklistedPrefixes = {
+    static const Vector<CString, 4> blockedPrefixes = {
         // These are recreated by bwrap and it doesn't make sense to try and rebind them.
         "sys", "proc", "dev",
         "", // All of `/` isn't acceptable.
@@ -1328,7 +1328,7 @@ static bool pathIsBlacklisted(const char* path)
         return true;
 
     GUniquePtr<char*> splitPath(g_strsplit(path, G_DIR_SEPARATOR_S, 3));
-    return blacklistedPrefixes.contains(splitPath.get()[1]);
+    return blockedPrefixes.contains(splitPath.get()[1]);
 }
 
 /**
@@ -1352,7 +1352,7 @@ void webkit_web_context_add_path_to_sandbox(WebKitWebContext* context, const cha
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    if (pathIsBlacklisted(path)) {
+    if (pathIsBlocked(path)) {
         g_critical("Attempted to add disallowed path to sandbox: %s", path);
         return;
     }

@@ -1,3 +1,16 @@
+2020-07-30  Alex Christensen  <achristensen@webkit.org>
+
+        Remove non-inclusive terminology from WebKit variable names and test-only SPI
+        https://bugs.webkit.org/show_bug.cgi?id=214941
+
+        Reviewed by Michael Catanzaro.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::addOriginAccessWhitelistEntry):
+        (WTR::TestRunner::removeOriginAccessWhitelistEntry):
+
 2020-07-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Enable API tests
