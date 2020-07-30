@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "AudioTrackPrivateWebM.h"
+#include "CoreVideoSoftLink.h"
 #include "InbandTextTrackPrivate.h"
 #include "MediaDescription.h"
 #include "MediaSampleAVFObjC.h"
@@ -38,6 +39,7 @@
 #include "VP9UtilitiesCocoa.h"
 #include "VideoTrackPrivateWebM.h"
 #include <JavaScriptCore/DataView.h>
+#include <pal/cf/CoreMediaSoftLink.h>
 #include <webm/webm_parser.h>
 #include <wtf/Algorithms.h>
 #include <wtf/Deque.h>
@@ -48,6 +50,8 @@
 WTF_WEAK_LINK_FORCE_IMPORT(webm::swap);
 
 namespace WebCore {
+
+using namespace PAL;
 
 static bool isWebmParserAvailable()
 {
@@ -533,6 +537,27 @@ static uint8_t convertToColorPrimaries(const Primaries& coefficients)
     }
 }
 
+static CFStringRef convertToCMColorPrimaries(uint8_t primaries)
+{
+    switch (primaries) {
+    case VPConfigurationColorPrimaries::BT_709_6:
+        return kCVImageBufferColorPrimaries_ITU_R_709_2;
+    case VPConfigurationColorPrimaries::EBU_Tech_3213_E:
+        return kCVImageBufferColorPrimaries_EBU_3213;
+    case VPConfigurationColorPrimaries::BT_601_7:
+    case VPConfigurationColorPrimaries::SMPTE_ST_240:
+        return kCVImageBufferColorPrimaries_SMPTE_C;
+    case VPConfigurationColorPrimaries::SMPTE_RP_431_2:
+        return kCMFormatDescriptionColorPrimaries_DCI_P3;
+    case VPConfigurationColorPrimaries::SMPTE_EG_432_1:
+        return kCMFormatDescriptionColorPrimaries_P3_D65;
+    case VPConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance:
+        return kCMFormatDescriptionColorPrimaries_ITU_R_2020;
+    }
+
+    return nullptr;
+}
+
 static uint8_t convertToTransferCharacteristics(const TransferCharacteristics& characteristics)
 {
     switch (characteristics) {
@@ -573,6 +598,31 @@ static uint8_t convertToTransferCharacteristics(const TransferCharacteristics& c
     }
 }
 
+static CFStringRef convertToCMTransferFunction(uint8_t characteristics)
+{
+    switch (characteristics) {
+    case VPConfigurationTransferCharacteristics::BT_709_6:
+        return kCVImageBufferTransferFunction_ITU_R_709_2;
+    case VPConfigurationTransferCharacteristics::SMPTE_ST_240:
+        return kCVImageBufferTransferFunction_SMPTE_240M_1995;
+    case VPConfigurationTransferCharacteristics::SMPTE_ST_2084:
+        return kCMFormatDescriptionTransferFunction_SMPTE_ST_2084_PQ;
+    case VPConfigurationTransferCharacteristics::BT_2020_10bit:
+    case VPConfigurationTransferCharacteristics::BT_2020_12bit:
+        return kCMFormatDescriptionTransferFunction_ITU_R_2020;
+    case VPConfigurationTransferCharacteristics::SMPTE_ST_428_1:
+        return kCMFormatDescriptionTransferFunction_SMPTE_ST_428_1;
+    case VPConfigurationTransferCharacteristics::BT_2100_HLG:
+        return kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG;
+    case VPConfigurationTransferCharacteristics::IEC_61966_2_1:
+        return PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() ? get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() : nullptr;
+    case VPConfigurationTransferCharacteristics::Linear:
+        return kCMFormatDescriptionTransferFunction_Linear;
+    }
+
+    return nullptr;
+}
+
 static uint8_t convertToMatrixCoefficients(const MatrixCoefficients& coefficients)
 {
     switch (coefficients) {
@@ -597,6 +647,23 @@ static uint8_t convertToMatrixCoefficients(const MatrixCoefficients& coefficient
     case MatrixCoefficients::kBt2020ConstantLuminance:
         return VPConfigurationMatrixCoefficients::BT_2020_Constant_Luminance;
     }
+}
+
+static CFStringRef convertToCMYCbCRMatrix(uint8_t coefficients)
+{
+    switch (coefficients) {
+    case VPConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance:
+        return kCMFormatDescriptionYCbCrMatrix_ITU_R_2020;
+    case VPConfigurationMatrixCoefficients::BT_470_7_BG:
+    case VPConfigurationMatrixCoefficients::BT_601_7:
+        return kCVImageBufferYCbCrMatrix_ITU_R_601_4;
+    case VPConfigurationMatrixCoefficients::BT_709_6:
+        return kCVImageBufferYCbCrMatrix_ITU_R_709_2;
+    case VPConfigurationMatrixCoefficients::SMPTE_ST_240:
+        return kCVImageBufferYCbCrMatrix_SMPTE_240M_1995;
+    }
+
+    return nullptr;
 }
 
 static uint8_t convertSubsamplingXYToChromaSubsampling(uint64_t x, uint64_t y)
@@ -691,12 +758,33 @@ static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderPar
     CFTypeRef configurationValues[] = { data.get() };
     auto configurationDict = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, configurationKeys, configurationValues, WTF_ARRAY_LENGTH(configurationKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    Vector<CFTypeRef> atomsKeys { kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms };
-    Vector<CFTypeRef> atomsValues = { configurationDict.get() };
-    auto atoms = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, atomsKeys.data(), atomsValues.data(), atomsKeys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    Vector<CFTypeRef> extensionsKeys { kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms };
+    Vector<CFTypeRef> extensionsValues = { configurationDict.get() };
+
+    if (record.videoFullRangeFlag == VPConfigurationRange::FullRange) {
+        extensionsKeys.append(kCMFormatDescriptionExtension_FullRangeVideo);
+        extensionsValues.append(kCFBooleanTrue);
+    }
+
+    if (auto cmColorPrimaries = convertToCMColorPrimaries(record.colorPrimaries)) {
+        extensionsKeys.append(kCVImageBufferColorPrimariesKey);
+        extensionsValues.append(cmColorPrimaries);
+    }
+
+    if (auto cmTransferFunction = convertToCMTransferFunction(record.transferCharacteristics)) {
+        extensionsKeys.append(kCVImageBufferTransferFunctionKey);
+        extensionsValues.append(cmTransferFunction);
+    }
+
+    if (auto cmMatrix = convertToCMYCbCRMatrix(record.matrixCoefficients)) {
+        extensionsKeys.append(kCVImageBufferYCbCrMatrixKey);
+        extensionsValues.append(cmMatrix);
+    }
+
+    auto extensions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, extensionsKeys.data(), extensionsValues.data(), extensionsKeys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     CMVideoFormatDescriptionRef formatDescription = nullptr;
-    if (noErr != CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCMVideoCodecType_VP9, parser.width(), parser.height(), atoms.get(), &formatDescription))
+    if (noErr != CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCMVideoCodecType_VP9, parser.width(), parser.height(), extensions.get(), &formatDescription))
         return nullptr;
     return adoptCF(formatDescription);
 }
@@ -720,12 +808,6 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
     });
     if (!block)
         return Status(Status::kInvalidElementId);
-
-    auto isSync = WTF::switchOn(*m_currentBlock, [](Block&) {
-        return false;
-    }, [](SimpleBlock& block) {
-        return block.is_key_frame;
-    });
 
     auto trackNumber = block->track_number;
 
@@ -798,7 +880,7 @@ webm::Status SourceBufferParserWebM::OnFrame(const FrameMetadata& metadata, Read
         trackData->currentBlockBuffer = nullptr;
         trackData->currentBlockBufferPosition = 0;
 
-        if (!isSync) {
+        if (!headerParser.key()) {
             auto attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
             ASSERT(attachmentsArray);
             if (!attachmentsArray)

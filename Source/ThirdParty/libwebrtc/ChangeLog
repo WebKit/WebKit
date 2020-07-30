@@ -1,3 +1,27 @@
+2020-07-29  Jer Noble  <jer.noble@apple.com>
+
+        Support HDR decode in SW VP9
+        https://bugs.webkit.org/show_bug.cgi?id=214928
+
+        Reviewed by Eric Carlson.
+
+        Support converting I010 buffers (full-planar, 10-bit data packed into the LSB of a 16-bit int)
+        into CVPixelBuffers (bi-planar, 10-bit data packed into the MSB of a 16-bit int). This requires
+        using functions from libyuv to merge and scale 16-bit planar data, optimized for AVX2. To know
+        that incoming buffers are 10-bit, and whether they're full-range, parse the 'vpcC' atom attached
+        to the CMFormatDescription.
+
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+        (webrtc::MergeUVPlane_16):
+        (webrtc::CopyPlane_16):
+        (webrtc::CopyVideoFrameToPixelBuffer):
+        (webrtc::pixelBufferFromFrame):
+        * Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp:
+        (webrtc::createWebKitVP9Decoder):
+        (webrtc::startVP9DecoderSession):
+        (webrtc::WebKitVP9DecoderReceiver::createPixelBufferPoolForFormatDescription):
+        (webrtc::WebKitVP9DecoderReceiver::Decoded):
+
 2020-07-28  Youenn Fablet  <youenn@apple.com>
 
         Disable low latency code path for H264 constrained baseline

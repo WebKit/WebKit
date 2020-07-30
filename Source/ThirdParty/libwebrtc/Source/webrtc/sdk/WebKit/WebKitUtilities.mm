@@ -27,6 +27,8 @@
 
 #include "native/src/objc_frame_buffer.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
+#include "libyuv/cpu_id.h"
+#include "libyuv/row.h"
 #include "Framework/Headers/WebRTC/RTCVideoFrameBuffer.h"
 
 namespace webrtc {
@@ -77,14 +79,135 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I420BufferInterface* frame
     return true;
 }
 
+// MergeUVPlane_16 merges two separate U and V planes into a single, interleaved
+// plane, while simultaneously scaling the output. Use '64' in the scale field to
+// shift 10-bit data from the LSB of the 16-bit int to the MSB.
+// NOTE: This method is based on libyuv::MergeUVPlane. If libyuv ever supports
+// this operation directly, we should replace the below with it.
+// NOTE: libyuv only has an opmitization of MergeUVRow_16 for AVX2 intrinsics.
+// Calling this method on a CPU without AVX2 will fall back to a standard C
+// implementation, and will probably be super slow. Add new MergeUVRow_16
+// implementations as they become available in libyuv.
+void MergeUVPlane_16(const uint16_t* src_u, int src_stride_u, const uint16_t* src_v, int src_stride_v, uint16_t* dst_uv, int dst_stride_uv, int width, int height, int scale) {
+    void (*MergeUVRow_16)(const uint16_t* src_u, const uint16_t* src_v, uint16_t* dst_uv, int scale, int width) = libyuv::MergeUVRow_16_C;
+    // Negative height means invert the image.
+    if (height < 0) {
+        height = -height;
+        dst_uv = dst_uv + (height - 1) * dst_stride_uv;
+        dst_stride_uv = -dst_stride_uv;
+    }
+    // Coalesce rows.
+    if (src_stride_u == width && src_stride_v == width && dst_stride_uv == width * 2) {
+        width *= height;
+        height = 1;
+        src_stride_u = src_stride_v = dst_stride_uv = 0;
+    }
+#if defined(HAS_MERGEUVROW_16_AVX2)
+    if (libyuv::TestCpuFlag(libyuv::kCpuHasAVX2))
+        MergeUVRow_16 = libyuv::MergeUVRow_16_AVX2;
+#endif
+
+    for (int y = 0; y < height; ++y) {
+        // Merge a row of U and V into a row of UV.
+        MergeUVRow_16(src_u, src_v, dst_uv, scale, width);
+        src_u += src_stride_u / sizeof(uint16_t);
+        src_v += src_stride_v / sizeof(uint16_t);
+        dst_uv += dst_stride_uv / sizeof(uint16_t);
+    }
+}
+
+// CopyPlane_16 will copy a plane of 16-bit data from one location to another,
+// while simultaneously scaling the output. Use '64' in the scale field to
+// shift 10-bit data from the LSB of a 16-bit int to the MSB.
+// NOTE: This method is based on MergeUVPlane_16 above, but operates on a
+// single plane, rater than interleaving two planes. If libyuv ever supports
+// this operation directly, we should replace the below with it.
+// NOTE: libyuv only has an opmitization of MergeUVRow_16 for AVX2 intrinsics.
+// Calling this method on a CPU without AVX2 will fall back to a standard C
+// implementation, and will probably be super slow. Add new MergeUVRow_16
+// implementations as they become available in libyuv.
+void CopyPlane_16(const uint16_t* src, int src_stride, uint16_t* dst, int dst_stride, int width, int height, int scale)
+{
+    void (*MultiplyRow_16)(const uint16_t* src_y, uint16_t* dst_y, int scale, int width) = libyuv::MultiplyRow_16_C;
+    // Negative height means invert the image.
+    if (height < 0) {
+        height = -height;
+        dst = dst + (height - 1) * dst_stride;
+        dst_stride = -dst_stride;
+    }
+    // Coalesce rows.
+    if (src_stride == width && dst_stride == width * 2) {
+        width *= height;
+        height = 1;
+        src_stride = dst_stride = 0;
+    }
+#if defined(HAS_MERGEUVROW_16_AVX2)
+    if (libyuv::TestCpuFlag(libyuv::kCpuHasAVX2))
+        MultiplyRow_16 = libyuv::MultiplyRow_16_AVX2;
+#endif
+
+    for (int y = 0; y < height; ++y) {
+        MultiplyRow_16(src, dst, scale, width);
+        src += src_stride / sizeof(uint16_t);
+        dst += dst_stride / sizeof(uint16_t);
+    }
+}
+
+static bool CopyVideoFrameToPixelBuffer(const webrtc::I010BufferInterface* frame, CVPixelBufferRef pixel_buffer)
+{
+    RTC_DCHECK(pixel_buffer);
+    RTC_DCHECK(CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange || CVPixelBufferGetPixelFormatType(pixel_buffer) == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange);
+    RTC_DCHECK_EQ(CVPixelBufferGetHeightOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->height()));
+    RTC_DCHECK_EQ(CVPixelBufferGetWidthOfPlane(pixel_buffer, 0), static_cast<size_t>(frame->width()));
+
+    if (CVPixelBufferLockBaseAddress(pixel_buffer, 0) != kCVReturnSuccess)
+        return false;
+
+    auto src_y = const_cast<uint16_t*>(frame->DataY());
+    auto src_u = const_cast<uint16_t*>(frame->DataU());
+    auto src_v = const_cast<uint16_t*>(frame->DataV());
+    auto src_width_y = frame->width();
+    auto src_height_y = frame->height();
+    auto src_stride_y = frame->StrideY() * sizeof(uint16_t);
+    auto src_width_uv = frame->ChromaWidth();
+    auto src_height_uv = frame->ChromaHeight();
+    auto src_stride_u = frame->StrideU() * sizeof(uint16_t);
+    auto src_stride_v = frame->StrideV() * sizeof(uint16_t);
+
+    auto* dst_y = reinterpret_cast<uint16_t*>(CVPixelBufferGetBaseAddressOfPlane(pixel_buffer, 0));
+    auto dst_stride_y = CVPixelBufferGetBytesPerRowOfPlane(pixel_buffer, 0);
+    auto dst_width_y = CVPixelBufferGetWidthOfPlane(pixel_buffer, 0);
+    auto dst_height_y = CVPixelBufferGetHeightOfPlane(pixel_buffer, 0);
+
+    auto* dst_uv = reinterpret_cast<uint16_t*>(CVPixelBufferGetBaseAddressOfPlane(pixel_buffer, 1));
+    auto dst_stride_uv = CVPixelBufferGetBytesPerRowOfPlane(pixel_buffer, 1);
+    auto dst_width_uv = CVPixelBufferGetWidthOfPlane(pixel_buffer, 1);
+    auto dst_height_uv = CVPixelBufferGetHeightOfPlane(pixel_buffer, 1);
+
+    if (src_width_y != dst_width_y
+        || src_height_y != dst_height_y
+        || src_width_uv != dst_width_uv
+        || src_height_uv != dst_height_uv)
+        return false;
+
+    CopyPlane_16(src_y, src_stride_y, dst_y, dst_stride_y, dst_width_y, dst_height_y, 64);
+    MergeUVPlane_16(src_u, src_stride_u, src_v, src_stride_v, dst_uv, dst_stride_uv, dst_width_uv, dst_height_uv, 64);
+
+    CVPixelBufferUnlockBaseAddress(pixel_buffer, 0);
+    return true;
+}
+
 CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame, const std::function<CVPixelBufferRef(size_t, size_t)>& makePixelBuffer)
 {
     if (frame.video_frame_buffer()->type() != VideoFrameBuffer::Type::kNative) {
-        rtc::scoped_refptr<const I420BufferInterface> buffer = frame.video_frame_buffer()->GetI420();
+        auto pixelBuffer = makePixelBuffer(frame.video_frame_buffer()->width(), frame.video_frame_buffer()->height());
+        if (!pixelBuffer)
+            return nullptr;
 
-        auto pixelBuffer = makePixelBuffer(buffer->width(), buffer->height());
-        if (pixelBuffer)
+        if (frame.video_frame_buffer()->type() == VideoFrameBuffer::Type::kI420)
             CopyVideoFrameToPixelBuffer(frame.video_frame_buffer()->GetI420(), pixelBuffer);
+        else if (frame.video_frame_buffer()->type() == VideoFrameBuffer::Type::kI010)
+            CopyVideoFrameToPixelBuffer(frame.video_frame_buffer()->GetI010(), pixelBuffer);
         return pixelBuffer;
     }
 

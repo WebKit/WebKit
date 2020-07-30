@@ -1,3 +1,14 @@
+2020-07-29  Jer Noble  <jer.noble@apple.com>
+
+        Support HDR decode in SW VP9
+        https://bugs.webkit.org/show_bug.cgi?id=214928
+        <rdar://problem/66284848>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+
 2020-07-28  Jonathan Bedard  <jbedard@apple.com>
 
         [Big Sur] Wrap SPI in feature guards (Follow-up fix)

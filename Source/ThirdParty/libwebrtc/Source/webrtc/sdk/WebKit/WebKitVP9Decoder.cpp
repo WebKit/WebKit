@@ -58,6 +58,8 @@ public:
     void setCurrentFrame(VTVideoDecoderFrame currentFrame) { m_currentFrame = currentFrame; }
     OSStatus decoderFailed(int error);
 
+    void createPixelBufferPoolForFormatDescription(CMFormatDescriptionRef);
+
 private:
     int32_t Decoded(VideoFrame&) final;
     int32_t Decoded(VideoFrame&, int64_t decode_time_ms) final;
@@ -169,6 +171,7 @@ OSStatus startVP9DecoderSession(VTVideoDecoderRef instance, VTVideoDecoderSessio
 
     decoder->m_instance = std::make_unique<VP9DecoderImpl>();
     decoder->m_receiver = std::make_unique<WebKitVP9DecoderReceiver>(session);
+    decoder->m_receiver->createPixelBufferPoolForFormatDescription(formatDescription);
 
     decoder->m_instance->RegisterDecodeCompleteCallback(decoder->m_receiver.get());
 
@@ -253,6 +256,93 @@ WebKitVP9DecoderReceiver::~WebKitVP9DecoderReceiver()
         CFRelease(m_pixelBufferPool);
 }
 
+void WebKitVP9DecoderReceiver::createPixelBufferPoolForFormatDescription(CMFormatDescriptionRef formatDescription)
+{
+    // CoreAnimation doesn't support full-planar YUV, so we must convert the buffers output
+    // by libvpx to bi-planar YUV. Create pixel buffer attributes and give those to the
+    // decoder session for use in creating its own internal CVPixelBufferPool, which we
+    // will use post-decode.
+    bool isFullRange = false;
+    bool is10Bit = false;
+
+    do {
+        auto extensions = CMFormatDescriptionGetExtensions(formatDescription);
+        if (!extensions)
+            break;
+
+        CFTypeRef extensionAtoms = CFDictionaryGetValue(extensions, kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms);
+        if (!extensionAtoms || CFGetTypeID(extensionAtoms) != CFDictionaryGetTypeID())
+            break;
+
+        auto configurationRecord = static_cast<CFDataRef>(CFDictionaryGetValue((CFDictionaryRef)extensionAtoms, CFSTR("vpcC")));
+        if (!configurationRecord || CFGetTypeID(configurationRecord) != CFDataGetTypeID())
+            break;
+
+        auto configurationRecordSize = CFDataGetLength(configurationRecord);
+        if (configurationRecordSize < 12)
+            break;
+
+        auto configurationRecordData = CFDataGetBytePtr(configurationRecord);
+        auto bitDepthChromaAndRange = *(configurationRecordData + 6);
+
+        if ((bitDepthChromaAndRange >> 4) == 10)
+            is10Bit = true;
+
+        if (bitDepthChromaAndRange & 0x1)
+            isFullRange = true;
+    } while (false);
+
+    OSType pixelFormat;
+    if (is10Bit)
+        pixelFormat = isFullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+    else
+        pixelFormat = isFullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+
+    auto createPixelFormatAttributes = [] (OSType pixelFormat, int32_t borderPixels) {
+        auto createNumber = [] (int32_t format) -> CFNumberRef {
+            return CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &format);
+        };
+        auto cfPixelFormats = CFArrayCreateMutable(kCFAllocatorDefault, 2, &kCFTypeArrayCallBacks);
+        auto formatNumber = createNumber(pixelFormat);
+        CFArrayAppendValue(cfPixelFormats, formatNumber);
+        CFRelease(formatNumber);
+
+        auto borderPixelsValue = createNumber(32);
+
+        const void* keys[] = {
+            kCVPixelBufferPixelFormatTypeKey,
+            kCVPixelBufferExtendedPixelsLeftKey,
+            kCVPixelBufferExtendedPixelsRightKey,
+            kCVPixelBufferExtendedPixelsTopKey,
+            kCVPixelBufferExtendedPixelsBottomKey,
+        };
+        const void* values[] = {
+            cfPixelFormats,
+            borderPixelsValue,
+            borderPixelsValue,
+            borderPixelsValue,
+            borderPixelsValue,
+        };
+        auto attributes = CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        CFRelease(borderPixelsValue);
+        CFRelease(cfPixelFormats);
+        return attributes;
+    };
+
+    auto pixelBufferAttributes = createPixelFormatAttributes(pixelFormat, 32);
+    VTDecoderSessionSetPixelBufferAttributes(m_session, pixelBufferAttributes);
+    CFRelease(pixelBufferAttributes);
+
+    if (m_pixelBufferPool) {
+        CFRelease(m_pixelBufferPool);
+        m_pixelBufferPool = nullptr;
+    }
+
+    m_pixelBufferPool = VTDecoderSessionGetPixelBufferPool(m_session);
+    if (m_pixelBufferPool)
+        CFRetain(m_pixelBufferPool);
+}
+
 OSStatus WebKitVP9DecoderReceiver::decoderFailed(int error)
 {
     OSStatus vtError = kVTVideoDecoderBadDataErr;
@@ -271,33 +361,17 @@ OSStatus WebKitVP9DecoderReceiver::decoderFailed(int error)
 
 int32_t WebKitVP9DecoderReceiver::Decoded(VideoFrame& frame)
 {
-    CVPixelBufferRef newPixelBuffer { nullptr };
-    auto pixelBuffer = pixelBufferFromFrame(frame, [this, &newPixelBuffer](size_t width, size_t height) -> CVPixelBufferRef {
-        if (!m_pixelBufferPool || m_pixelBufferWidth != width || m_pixelBufferHeight != height) {
-            if (m_pixelBufferPool)
-                CFRelease(m_pixelBufferPool);
-            m_pixelBufferPool = createPixelBufferPool(width, height);
-            if (!m_pixelBufferPool) {
-                RTC_LOG(LS_ERROR) << "VP9 decoder: unable to create pixel buffer pool";
-                return nullptr;
-            }
-            m_pixelBufferWidth = width;
-            m_pixelBufferHeight = height;
-        }
-
-        auto status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, m_pixelBufferPool, &newPixelBuffer);
-        if (status != kCVReturnSuccess) {
-            RTC_LOG(LS_ERROR) << "VP9 decoder: unable to create pixel buffer from pool";
-            return nullptr;
-        }
-
-        return newPixelBuffer;
+    auto pixelBuffer = pixelBufferFromFrame(frame, [this](size_t width, size_t height) -> CVPixelBufferRef {
+        CVPixelBufferRef pixelBuffer = nullptr;
+        if (CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, m_pixelBufferPool, &pixelBuffer) == kCVReturnSuccess)
+            return pixelBuffer;
+        return nullptr;
     });
 
     VTDecoderSessionEmitDecodedFrame(m_session, m_currentFrame, pixelBuffer ? noErr : -1, 0, pixelBuffer);
     m_currentFrame = nullptr;
-    if (newPixelBuffer)
-        CFRelease(newPixelBuffer);
+    if (pixelBuffer)
+        CFRelease(pixelBuffer);
     return 0;
 }
 
