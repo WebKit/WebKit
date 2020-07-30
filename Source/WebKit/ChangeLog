@@ -1,3 +1,128 @@
+2020-07-30  Darin Adler  <darin@apple.com>
+
+        Further reduction in the use of live ranges, particularly in headers
+        https://bugs.webkit.org/show_bug.cgi?id=214793
+
+        Reviewed by Sam Weinig.
+
+        * Shared/API/c/mac/WKWebArchiveRef.cpp:
+        (WKWebArchiveCreateFromRange): Use makeSimpleRange.
+
+        * Shared/APIWebArchive.h: Use SimpleRange.
+        * Shared/APIWebArchive.mm:
+        (API::WebArchive::create): Take SimpleRange.
+
+        * Shared/EditingRange.cpp:
+        (WebKit::EditingRange::toRange): Don't call createLiveRange.
+        (WebKit::EditingRange::fromRange): Take SimpleRange.
+        * Shared/EditingRange.h: Updated for above.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundleEditorClient.h:
+        Take SimpleRange, String, StyleProperties instead of
+        Range, StringImpl, CSSStyleDeclaration.
+
+        * WebProcess/InjectedBundle/API/glib/WebKitWebEditor.cpp:
+        String instead of StringImpl.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm:
+        (-[WKDOMDocument createDocumentFragmentWithText:]): Use SimpleRange.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange rangeByExpandingToWordBoundaryByCharacters:inDirection:]):
+        Use SimpleRange and createLiveRange.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setEditingDelegate:]):
+        Updated for changes to bundle editor client.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::create): Deleted. Moved the
+        code into InjectedBundleRangeHandle::getOrCreate.
+        (WebKit::createHandle): Added. Makes a handle for a SimpleRange.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h:
+        Updated for above.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::createHandle): Added. Makes a handle for a CSSStyleDeclaration.
+        (WebKit::InjectedBundlePageEditorClient::shouldBeginEditing):
+        Updated for changes to bundle editor client.
+        (WebKit::InjectedBundlePageEditorClient::shouldEndEditing): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertNode): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::shouldInsertText): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::shouldDeleteRange): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::shouldChangeSelectedRange): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::shouldApplyStyle): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::didBeginEditing): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::didEndEditing): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::didChange): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::didChangeSelection): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::willWriteToPasteboard): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::getPasteboardDataForRange): Ditto.
+        (WebKit::InjectedBundlePageEditorClient::performTwoStepDrop): Ditto.
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        Updated for above.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::shouldDeleteRange): Updated to call new
+        revised bundle editor client.
+        (WebKit::WebEditorClient::shouldBeginEditing): Ditto.
+        (WebKit::WebEditorClient::shouldEndEditing): Ditto.
+        (WebKit::WebEditorClient::shouldInsertNode): Ditto.
+        (WebKit::WebEditorClient::shouldInsertText): Ditto.
+        (WebKit::WebEditorClient::shouldChangeSelectedRange): Ditto.
+        (WebKit::WebEditorClient::shouldApplyStyle): Ditto.
+        (WebKit::WebEditorClient::willWriteSelectionToPasteboard): Ditto.
+        (WebKit::WebEditorClient::getClientPasteboardData): Ditto.
+        (WebKit::WebEditorClient::performTwoStepDrop): Ditto.
+        (WebKit::insertionPointFromCurrentSelection): Use SimpleRange.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::replaceMatches): Use SimpleRange.
+        (WebKit::FindController::findString): Updated for change to
+        Page::findTextMatches function.
+        (WebKit::FindController::findStringMatches): Ditto.
+        (WebKit::FindController::getImageForFindMatch): Use SimpleRange.
+        (WebKit::FindController::selectFindMatch): Ditto.
+        * WebProcess/WebPage/FindController.h: Updated for above.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getMarkedRangeAsync): Do not call createLiveRange.
+        (WebKit::WebPage::getSelectedRangeAsync): Ditto.
+        (WebKit::WebPage::characterIndexForPointAsync): Call makeSimpleRange.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::plainTextForContext): Changed overloads a bit to work
+        better with Optional<SimpleRange> and removed the ones that explicitly
+        take a Range, updating callers to compensate.
+        (WebKit::plainTextForDisplay): Ditto.
+        (WebKit::WebPage::getPlatformEditorState const): Use SimpleRange.
+        (WebKit::WebPage::getSelectionContext): Ditto.
+        (WebKit::WebPage::didConcludeEditDrag): Ditto.
+        (WebKit::WebPage::handleStylusSingleTapAtPoint): Ditto.
+        (WebKit::WebPage::selectWithGesture): Ditto.
+        (WebKit::rangeForPointInRootViewCoordinates): Return SimpleRange.
+        (WebKit::rangeAtWordBoundaryForPosition): Ditto.
+        (WebKit::WebPage::updateSelectionWithTouches): Use SimpleRange.
+        (WebKit::WebPage::selectWithTwoTouches): Ditto.
+        (WebKit::WebPage::extendSelection): Ditto.
+        (WebKit::WebPage::selectWordBackward): Ditto.
+        (WebKit::WebPage::moveSelectionByOffset): Ditto.
+        (WebKit::WebPage::getRectsForGranularityWithSelectionOffset): Ditto.
+        (WebKit::WebPage::selectPositionAtPoint): Ditto.
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection): Ditto.
+        (WebKit::WebPage::moveSelectionAtBoundaryWithDirection): Ditto.
+        (WebKit::WebPage::rangeForGranularityAtPoint): Ditto.
+        (WebKit::WebPage::selectTextWithGranularityAtPoint): Ditto.
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary): Ditto.
+        (WebKit::WebPage::updateSelectionWithExtentPoint): Ditto.
+        (WebKit::WebPage::replaceSelectedText): Ditto.
+        (WebKit::WebPage::replaceDictatedText): Ditto.
+        (WebKit::WebPage::requestAutocorrectionData): Ditto.
+        (WebKit::WebPage::applyAutocorrectionInternal): Ditto.
+        (WebKit::WebPage::autocorrectionContext): Ditto.
+        (WebKit::dataDetectorLinkPositionInformation): Ditto.
+        (WebKit::WebPage::updateSelectionWithDelta): Ditto.
+        (WebKit::WebPage::focusTextInputContextAndPlaceCaret): Ditto.
+
 2020-07-30  Alex Christensen  <achristensen@webkit.org>
 
         Remove non-inclusive terminology from WebKit variable names and test-only SPI

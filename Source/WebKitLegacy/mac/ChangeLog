@@ -1,3 +1,30 @@
+2020-07-30  Darin Adler  <darin@apple.com>
+
+        Further reduction in the use of live ranges, particularly in headers
+        https://bugs.webkit.org/show_bug.cgi?id=214793
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLDocument createDocumentFragmentWithText:]): Use SimpleRange.
+        * DOM/DOMUIKitExtensions.mm:
+        (-[DOMRange move:inDirection:]): Ditto.
+        (-[DOMRange extend:inDirection:]): Ditto.
+        * DOM/WebDOMOperations.mm:
+        (-[DOMRange webArchive]): Ditto.
+        * WebView/WebFrame.mm:
+        (-[WebFrame _firstRectForDOMRange:]): Moved a "*" to save a little work.
+        (-[WebFrame setSelectedDOMRange:affinity:closeTyping:userTriggered:]):
+        Use SimpleRange.
+        (-[WebFrame _replaceSelectionWithText:selectReplacement:smartReplace:matchStyle:]):
+        Ditto.
+        (-[WebFrame _replaceSelectionWithText:selectReplacement:smartReplace:]):
+        Ditto.
+        (-[WebFrame _documentFragmentForText:]): Ditto.
+        * WebView/WebView.mm:
+        (-[WebView DOMRangeOfString:relativeTo:options:]): Ditto.
+        (-[WebView setSelectedDOMRange:affinity:]): Ditto.
+
 2020-07-29  Darin Adler  <darin@apple.com>
 
         Improve range idioms and other changes to prepare the way for more reduction in live range use

@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-RefPtr<WebCore::Range> EditingRange::toRange(WebCore::Frame& frame, const EditingRange& editingRange, EditingRangeIsRelativeTo base)
+Optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::Frame& frame, const EditingRange& editingRange, EditingRangeIsRelativeTo base)
 {
     ASSERT(editingRange.location != notFound);
     WebCore::CharacterRange range { editingRange.location, editingRange.length };
@@ -47,21 +47,21 @@ RefPtr<WebCore::Range> EditingRange::toRange(WebCore::Frame& frame, const Editin
         // That fits with AppKit's idea of an input context.
         auto* element = frame.selection().rootEditableElementOrDocumentElement();
         if (!element)
-            return nullptr;
-        return createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(*element), range));
+            return WTF::nullopt;
+        return resolveCharacterRange(makeRangeSelectingNodeContents(*element), range);
     }
 
     ASSERT(base == EditingRangeIsRelativeTo::Paragraph);
 
     auto paragraphStart = makeBoundaryPoint(startOfParagraph(frame.selection().selection().visibleStart()));
     if (!paragraphStart)
-        return nullptr;
+        return WTF::nullopt;
 
-    auto scopeEnd = makeRangeSelectingNodeContents(paragraphStart->container->treeScope().rootNode()).end;
-    return createLiveRange(WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range));
+    auto scopeEnd = makeBoundaryPointAfterNodeContents(paragraphStart->container->treeScope().rootNode());
+    return WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range);
 }
 
-EditingRange EditingRange::fromRange(WebCore::Frame& frame, const WebCore::Range* range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
+EditingRange EditingRange::fromRange(WebCore::Frame& frame, const Optional<WebCore::SimpleRange>& range, EditingRangeIsRelativeTo editingRangeIsRelativeTo)
 {
     ASSERT(editingRangeIsRelativeTo == EditingRangeIsRelativeTo::EditableRoot);
 

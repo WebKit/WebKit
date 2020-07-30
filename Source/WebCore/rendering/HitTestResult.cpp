@@ -579,11 +579,8 @@ bool HitTestResult::isOverTextInsideFormControlElement() const
     if (position.isNull())
         return false;
 
-    RefPtr<Range> wordRange = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward);
-    if (!wordRange)
-        return false;
-
-    return !wordRange->text().isEmpty();
+    auto wordRange = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward);
+    return wordRange && hasAnyPlainText(*wordRange);
 }
 
 URL HitTestResult::absoluteLinkURL() const

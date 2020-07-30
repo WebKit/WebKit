@@ -44,6 +44,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderTextControl.h>
 #import <WebCore/Settings.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/markup.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -152,7 +153,7 @@
 - (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text
 {
     // FIXME: Since this is not a contextual fragment, it won't handle whitespace properly.
-    return kit(createFragmentFromText(core(self)->createRange(), text).ptr());
+    return kit(createFragmentFromText(makeRangeSelectingNodeContents(*core(self)), text).ptr());
 }
 
 @end

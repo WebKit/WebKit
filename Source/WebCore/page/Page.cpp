@@ -98,6 +98,7 @@
 #include "PointerCaptureController.h"
 #include "PointerLockController.h"
 #include "ProgressTracker.h"
+#include "Range.h"
 #include "RenderDescendantIterator.h"
 #include "RenderLayerCompositor.h"
 #include "RenderTheme.h"
@@ -711,80 +712,77 @@ bool Page::findString(const String& target, FindOptions options, DidWrap* didWra
     return false;
 }
 
-void Page::findStringMatchingRanges(const String& target, FindOptions options, int limit, Vector<RefPtr<Range>>& matchRanges, int& indexForSelection)
+auto Page::findTextMatches(const String& target, FindOptions options, unsigned limit) -> MatchingRanges
 {
-    Vector<SimpleRange> resultRanges;
-
-    indexForSelection = 0;
+    MatchingRanges result;
 
     Frame* frame = &mainFrame();
     Frame* frameWithSelection = nullptr;
     do {
-        frame->editor().countMatchesForText(target, { }, options, limit ? (limit - resultRanges.size()) : 0, true, &resultRanges);
+        frame->editor().countMatchesForText(target, { }, options, limit ? (limit - result.ranges.size()) : 0, true, &result.ranges);
         if (frame->selection().isRange())
             frameWithSelection = frame;
         frame = incrementFrame(frame, true, CanWrap::No);
     } while (frame);
 
-    if (resultRanges.isEmpty())
-        return;
+    if (result.ranges.isEmpty())
+        return result;
 
     if (frameWithSelection) {
-        indexForSelection = NoMatchAfterUserSelection;
+        result.indexForSelection = NoMatchAfterUserSelection;
         auto selectedRange = frameWithSelection->selection().selection().firstRange();
         if (options.contains(Backwards)) {
-            for (size_t i = resultRanges.size(); i > 0; --i) {
-                auto result = createLiveRange(selectedRange)->compareBoundaryPoints(Range::END_TO_START, createLiveRange(resultRanges[i - 1]));
-                if (!result.hasException() && result.releaseReturnValue() > 0) {
-                    indexForSelection = i - 1;
+            for (size_t i = result.ranges.size(); i > 0; --i) {
+                auto comparisonResult = createLiveRange(selectedRange)->compareBoundaryPoints(Range::END_TO_START, createLiveRange(result.ranges[i - 1]));
+                if (!comparisonResult.hasException() && comparisonResult.returnValue() > 0) {
+                    result.indexForSelection = i - 1;
                     break;
                 }
             }
         } else {
-            for (size_t i = 0, size = resultRanges.size(); i < size; ++i) {
-                auto result = createLiveRange(selectedRange)->compareBoundaryPoints(Range::START_TO_END, createLiveRange(resultRanges[i]));
-                if (!result.hasException() && result.releaseReturnValue() < 0) {
-                    indexForSelection = i;
+            for (size_t i = 0, size = result.ranges.size(); i < size; ++i) {
+                auto comparisonResult = createLiveRange(selectedRange)->compareBoundaryPoints(Range::START_TO_END, createLiveRange(result.ranges[i]));
+                if (!comparisonResult.hasException() && comparisonResult.returnValue() < 0) {
+                    result.indexForSelection = i;
                     break;
                 }
             }
         }
     } else {
         if (options.contains(Backwards))
-            indexForSelection = resultRanges.size() - 1;
+            result.indexForSelection = result.ranges.size() - 1;
         else
-            indexForSelection = 0;
+            result.indexForSelection = 0;
     }
 
-    for (auto& range : resultRanges)
-        matchRanges.append(createLiveRange(range));
+    return result;
 }
 
-RefPtr<Range> Page::rangeOfString(const String& target, Range* referenceRange, FindOptions options)
+Optional<SimpleRange> Page::rangeOfString(const String& target, const Optional<SimpleRange>& referenceRange, FindOptions options)
 {
     if (target.isEmpty())
-        return nullptr;
+        return WTF::nullopt;
 
-    if (referenceRange && referenceRange->ownerDocument().page() != this)
-        return nullptr;
+    if (referenceRange && referenceRange->start.container->document().page() != this)
+        return WTF::nullopt;
 
     CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
-    Frame* frame = referenceRange ? referenceRange->ownerDocument().frame() : &mainFrame();
+    Frame* frame = referenceRange ? referenceRange->start.container->document().frame() : &mainFrame();
     Frame* startFrame = frame;
     do {
-        if (auto resultRange = frame->editor().rangeOfString(target, frame == startFrame ? makeSimpleRange(referenceRange) : WTF::nullopt, options - WrapAround))
-            return createLiveRange(resultRange);
+        if (auto resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : WTF::nullopt, options - WrapAround))
+            return resultRange;
         frame = incrementFrame(frame, !options.contains(Backwards), canWrap);
     } while (frame && frame != startFrame);
 
     // Search contents of startFrame, on the other side of the reference range that we did earlier.
     // We cheat a bit and just search again with wrap on.
     if (canWrap == CanWrap::Yes && referenceRange) {
-        if (auto resultRange = startFrame->editor().rangeOfString(target, makeSimpleRange(*referenceRange), options | WrapAround | StartInSelection))
-            return createLiveRange(resultRange);
+        if (auto resultRange = startFrame->editor().rangeOfString(target, *referenceRange, options | WrapAround | StartInSelection))
+            return resultRange;
     }
 
-    return nullptr;
+    return WTF::nullopt;
 }
 
 unsigned Page::findMatchesForText(const String& target, FindOptions options, unsigned maxMatchCount, ShouldHighlightMatches shouldHighlightMatches, ShouldMarkMatches shouldMarkMatches)
@@ -879,24 +877,22 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
             if (range.collapsed())
                 continue;
 
-            frame->selection().setSelectedRange(createLiveRange(range).ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+            frame->selection().setSelectedRange(range, DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
             frame->editor().replaceSelectionWithText(replacementText, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, EditAction::InsertReplacement);
         }
     }
 }
 
-uint32_t Page::replaceRangesWithText(const Vector<Ref<Range>>& rangesToReplace, const String& replacementText, bool selectionOnly)
+uint32_t Page::replaceRangesWithText(const Vector<SimpleRange>& rangesToReplace, const String& replacementText, bool /*selectionOnly*/)
 {
-    // FIXME: In the future, we should respect the `selectionOnly` flag by checking whether each range being replaced is
-    // contained within its frame's selection.
-    UNUSED_PARAM(selectionOnly);
+    // FIXME: In the future, we should respect the `selectionOnly` flag by checking whether each range being replaced is contained within its frame's selection.
 
     Vector<FindReplacementRange> replacementRanges;
     replacementRanges.reserveInitialCapacity(rangesToReplace.size());
 
     for (auto& range : rangesToReplace) {
-        auto highestRoot = makeRefPtr(highestEditableRoot(range->startPosition()));
-        if (!highestRoot || highestRoot != highestEditableRoot(range->endPosition()) || !highestRoot->document().frame())
+        auto highestRoot = makeRefPtr(highestEditableRoot(createLegacyEditingPosition(range.start)));
+        if (!highestRoot || highestRoot != highestEditableRoot(createLegacyEditingPosition(range.end)) || !highestRoot->document().frame())
             continue;
         auto scope = makeRangeSelectingNodeContents(*highestRoot);
         replacementRanges.append({ WTFMove(highestRoot), characterRange(scope, range) });

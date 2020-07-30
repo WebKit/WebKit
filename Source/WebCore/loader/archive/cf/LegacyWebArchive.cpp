@@ -48,7 +48,6 @@
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "Page.h"
-#include "Range.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SerializedAttachmentData.h"
 #include "Settings.h"
@@ -417,7 +416,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, WTF::Function<bool
     if (!frame)
         return create();
 
-    // If the page was loaded with javascript enabled, we don't want to archive <noscript> tags
+    // If the page was loaded with JavaScript enabled, we don't want to archive <noscript> tags
     // In practice we don't actually know whether scripting was enabled when the page was originally loaded
     // but we can approximate that by checking if scripting is enabled right now.
     std::unique_ptr<Vector<QualifiedName>> tagNamesToFilter;
@@ -454,19 +453,16 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame& frame)
     return create(mainResource.releaseNonNull(), documentLoader->subresources(), WTFMove(subframeArchives));
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const SimpleRange& range)
 {
-    if (!range)
-        return nullptr;
-        
-    auto& document = range->startContainer().document();
+    auto& document = range.start.container->document();
     auto* frame = document.frame();
     if (!frame)
         return nullptr;
 
     // FIXME: This is always "for interchange". Is that right?
     Vector<Node*> nodeList;
-    String markupString = documentTypeString(document) + serializePreservingVisualAppearance(*range, &nodeList, AnnotateForInterchange::Yes);
+    String markupString = documentTypeString(document) + serializePreservingVisualAppearance(range, &nodeList, AnnotateForInterchange::Yes);
     return create(markupString, *frame, nodeList, nullptr);
 }
 

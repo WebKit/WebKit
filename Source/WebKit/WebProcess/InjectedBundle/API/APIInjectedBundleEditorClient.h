@@ -31,11 +31,11 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class CSSStyleDeclaration;
 class DocumentFragment;
 class Node;
-class Range;
 class SharedBuffer;
+class StyleProperties;
+struct SimpleRange;
 }
 
 namespace WebKit {
@@ -51,21 +51,21 @@ class EditorClient {
 public:
     virtual ~EditorClient() { }
 
-    virtual bool shouldBeginEditing(WebKit::WebPage&, WebCore::Range*) { return true; }
-    virtual bool shouldEndEditing(WebKit::WebPage&, WebCore::Range*) { return true; }
-    virtual bool shouldInsertNode(WebKit::WebPage&, WebCore::Node*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction) { return true; }
-    virtual bool shouldInsertText(WebKit::WebPage&, StringImpl*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction) { return true; }
-    virtual bool shouldDeleteRange(WebKit::WebPage&, WebCore::Range*) { return true; }
-    virtual bool shouldChangeSelectedRange(WebKit::WebPage&, WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity affinity, bool stillSelecting) { return true; }
-    virtual bool shouldApplyStyle(WebKit::WebPage&, WebCore::CSSStyleDeclaration*, WebCore::Range*) { return true; }
-    virtual void didBeginEditing(WebKit::WebPage&, StringImpl* notificationName) { }
-    virtual void didEndEditing(WebKit::WebPage&, StringImpl* notificationName) { }
-    virtual void didChange(WebKit::WebPage&, StringImpl* notificationName) { }
-    virtual void didChangeSelection(WebKit::WebPage&, StringImpl* notificationName) { }
-    virtual void willWriteToPasteboard(WebKit::WebPage&, WebCore::Range*) { }
-    virtual void getPasteboardDataForRange(WebKit::WebPage&, WebCore::Range*, Vector<WTF::String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) { }
+    virtual bool shouldBeginEditing(WebKit::WebPage&, const WebCore::SimpleRange&) { return true; }
+    virtual bool shouldEndEditing(WebKit::WebPage&, const WebCore::SimpleRange&) { return true; }
+    virtual bool shouldInsertNode(WebKit::WebPage&, WebCore::Node&, const Optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) { return true; }
+    virtual bool shouldInsertText(WebKit::WebPage&, const WTF::String&, const Optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) { return true; }
+    virtual bool shouldDeleteRange(WebKit::WebPage&, const Optional<WebCore::SimpleRange>&) { return true; }
+    virtual bool shouldChangeSelectedRange(WebKit::WebPage&, const Optional<WebCore::SimpleRange>&, const Optional<WebCore::SimpleRange>&, WebCore::EAffinity, bool) { return true; }
+    virtual bool shouldApplyStyle(WebKit::WebPage&, const WebCore::StyleProperties&, const Optional<WebCore::SimpleRange>&) { return true; }
+    virtual void didBeginEditing(WebKit::WebPage&, const WTF::String&) { }
+    virtual void didEndEditing(WebKit::WebPage&, const WTF::String&) { }
+    virtual void didChange(WebKit::WebPage&, const WTF::String&) { }
+    virtual void didChangeSelection(WebKit::WebPage&, const WTF::String&) { }
+    virtual void willWriteToPasteboard(WebKit::WebPage&, const Optional<WebCore::SimpleRange>&) { }
+    virtual void getPasteboardDataForRange(WebKit::WebPage&, const Optional<WebCore::SimpleRange>&, Vector<WTF::String>&, Vector<RefPtr<WebCore::SharedBuffer>>&) { }
     virtual void didWriteToPasteboard(WebKit::WebPage&) { }
-    virtual bool performTwoStepDrop(WebKit::WebPage&, WebCore::DocumentFragment&, WebCore::Range&, bool) { return false; }
+    virtual bool performTwoStepDrop(WebKit::WebPage&, WebCore::DocumentFragment&, const WebCore::SimpleRange&, bool) { return false; }
 };
 
 } // namespace InjectedBundle

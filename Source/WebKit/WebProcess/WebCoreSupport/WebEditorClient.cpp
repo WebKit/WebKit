@@ -77,7 +77,7 @@ static uint64_t generateTextCheckingRequestID()
 
 bool WebEditorClient::shouldDeleteRange(const Optional<SimpleRange>& range)
 {
-    return m_page->injectedBundleEditorClient().shouldDeleteRange(*m_page, createLiveRange(range).get());
+    return m_page->injectedBundleEditorClient().shouldDeleteRange(*m_page, range);
 }
 
 bool WebEditorClient::smartInsertDeleteEnabled()
@@ -118,32 +118,32 @@ int WebEditorClient::spellCheckerDocumentTag()
 
 bool WebEditorClient::shouldBeginEditing(const SimpleRange& range)
 {
-    return m_page->injectedBundleEditorClient().shouldBeginEditing(*m_page, createLiveRange(range).ptr());
+    return m_page->injectedBundleEditorClient().shouldBeginEditing(*m_page, range);
 }
 
 bool WebEditorClient::shouldEndEditing(const SimpleRange& range)
 {
-    return m_page->injectedBundleEditorClient().shouldEndEditing(*m_page, createLiveRange(range).ptr());
+    return m_page->injectedBundleEditorClient().shouldEndEditing(*m_page, range);
 }
 
 bool WebEditorClient::shouldInsertNode(Node& node, const Optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
-    return m_page->injectedBundleEditorClient().shouldInsertNode(*m_page, &node, createLiveRange(rangeToReplace).get(), action);
+    return m_page->injectedBundleEditorClient().shouldInsertNode(*m_page, node, rangeToReplace, action);
 }
 
 bool WebEditorClient::shouldInsertText(const String& text, const Optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
-    return m_page->injectedBundleEditorClient().shouldInsertText(*m_page, text.impl(), createLiveRange(rangeToReplace).get(), action);
+    return m_page->injectedBundleEditorClient().shouldInsertText(*m_page, text, rangeToReplace, action);
 }
 
 bool WebEditorClient::shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, EAffinity affinity, bool stillSelecting)
 {
-    return m_page->injectedBundleEditorClient().shouldChangeSelectedRange(*m_page, createLiveRange(fromRange).get(), createLiveRange(toRange).get(), affinity, stillSelecting);
+    return m_page->injectedBundleEditorClient().shouldChangeSelectedRange(*m_page, fromRange, toRange, affinity, stillSelecting);
 }
     
 bool WebEditorClient::shouldApplyStyle(const StyleProperties& style, const Optional<SimpleRange>& range)
 {
-    return m_page->injectedBundleEditorClient().shouldApplyStyle(*m_page, &style.mutableCopy()->ensureCSSStyleDeclaration(), createLiveRange(range).get());
+    return m_page->injectedBundleEditorClient().shouldApplyStyle(*m_page, style, range);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -268,17 +268,17 @@ void WebEditorClient::didWriteSelectionToPasteboard()
 
 void WebEditorClient::willWriteSelectionToPasteboard(const Optional<SimpleRange>& range)
 {
-    m_page->injectedBundleEditorClient().willWriteToPasteboard(*m_page, createLiveRange(range).get());
+    m_page->injectedBundleEditorClient().willWriteToPasteboard(*m_page, range);
 }
 
 void WebEditorClient::getClientPasteboardData(const Optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
 {
-    m_page->injectedBundleEditorClient().getPasteboardDataForRange(*m_page, createLiveRange(range).get(), pasteboardTypes, pasteboardData);
+    m_page->injectedBundleEditorClient().getPasteboardDataForRange(*m_page, range, pasteboardTypes, pasteboardData);
 }
 
 bool WebEditorClient::performTwoStepDrop(DocumentFragment& fragment, const SimpleRange& destination, bool isMove)
 {
-    return m_page->injectedBundleEditorClient().performTwoStepDrop(*m_page, fragment, createLiveRange(destination), isMove);
+    return m_page->injectedBundleEditorClient().performTwoStepDrop(*m_page, fragment, destination, isMove);
 }
 
 void WebEditorClient::registerUndoStep(UndoStep& step)
@@ -537,11 +537,8 @@ void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::Gram
 static uint64_t insertionPointFromCurrentSelection(const VisibleSelection& currentSelection)
 {
     auto selectionStart = currentSelection.visibleStart();
-    auto selectionStartBoundary = makeBoundaryPoint(selectionStart);
-    auto paragraphStart = makeBoundaryPoint(startOfParagraph(selectionStart));
-    if (!selectionStartBoundary || !paragraphStart)
-        return 0;
-    return characterCount({ *paragraphStart, *selectionStartBoundary });
+    auto range = makeSimpleRange(selectionStart, startOfParagraph(selectionStart));
+    return range ? characterCount(*range) : 0;
 }
 
 #if USE(UNIFIED_TEXT_CHECKING)

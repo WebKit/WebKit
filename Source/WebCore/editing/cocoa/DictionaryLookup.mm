@@ -41,7 +41,6 @@
 #import "HitTestResult.h"
 #import "NotImplemented.h"
 #import "Page.h"
-#import "Range.h"
 #import "RenderObject.h"
 #import "TextIterator.h"
 #import "VisiblePosition.h"
@@ -283,11 +282,11 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSele
     auto selectionCharacterCount = characterCount(*makeSimpleRange(selectionStart, selectionEnd));
     NSRange rangeToPass = NSMakeRange(lengthToSelectionStart, selectionCharacterCount);
 
-    RefPtr<Range> fullCharacterRange = makeRange(paragraphStart, paragraphEnd);
-    String itemString = plainText(*fullCharacterRange);
+    auto fullCharacterRange = *makeSimpleRange(paragraphStart, paragraphEnd);
+    String itemString = plainText(fullCharacterRange);
     NSRange highlightRange = adoptNS([allocRVItemInstance() initWithText:itemString selectedRange:rangeToPass]).get().highlightRange;
 
-    return { { resolveCharacterRange(*fullCharacterRange, highlightRange), nil } };
+    return { { resolveCharacterRange(fullCharacterRange, highlightRange), nil } };
 
     END_BLOCK_OBJC_EXCEPTIONS
 
@@ -341,11 +340,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
         position = selectionAccountingForLineRules.start();
 
         // As context, we are going to use 250 characters of text before and after the point.
-        auto expandedRange = rangeExpandedAroundPositionByCharacters(position, 250);
-        if (!expandedRange)
-            return WTF::nullopt;
-
-        fullCharacterRange = { *expandedRange };
+        fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
 
         selectionRange = NSMakeRange(NSNotFound, 0);
         hitIndex = characterCount(*makeSimpleRange(fullCharacterRange->start, position));

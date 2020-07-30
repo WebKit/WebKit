@@ -35,7 +35,8 @@ namespace WebCore {
 
 class Frame;
 class Node;
-class Range;
+
+struct SimpleRange;
 
 class LegacyWebArchive final : public Archive {
 public:
@@ -46,7 +47,7 @@ public:
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, WTF::Function<bool(Frame&)>&& frameFilter = { });
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Frame&);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> createFromSelection(Frame*);
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Range*);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const SimpleRange&);
 
     WEBCORE_EXPORT RetainPtr<CFDataRef> rawDataRepresentation();
 

@@ -54,6 +54,7 @@
 #import "PageTransitionEvent.h"
 #import "PlatformScreen.h"
 #import "PropertySetCSSStyleDeclaration.h"
+#import "Range.h"
 #import "RenderLayer.h"
 #import "RenderLayerCompositor.h"
 #import "RenderTextControl.h"
@@ -116,19 +117,18 @@ NSArray *Frame::wordsInCurrentParagraph() const
 
     VisiblePosition position(page()->selection().start(), page()->selection().affinity());
     VisiblePosition end(position);
+
     if (!isStartOfParagraph(end)) {
         VisiblePosition previous = end.previous();
         UChar c(previous.characterAfter());
+        // FIXME: Should use something from ICU or ASCIICType that is not subject to POSIX current language rather than iswpunct.
         if (!iswpunct(c) && !isSpaceOrNewline(c) && c != noBreakSpace)
             end = startOfWord(end);
     }
     VisiblePosition start(startOfParagraph(end));
 
-    RefPtr<Range> searchRange(rangeOfContents(*document()));
-    setStart(searchRange.get(), start);
-    setEnd(searchRange.get(), end);
-
-    if (searchRange->collapsed())
+    auto searchRange = makeSimpleRange(start, end);
+    if (!searchRange || searchRange->collapsed())
         return nil;
 
     NSMutableArray *words = [NSMutableArray array];

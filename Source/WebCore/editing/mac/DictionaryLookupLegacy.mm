@@ -131,7 +131,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
     if (!fullCharacterRange)
         return WTF::nullopt;
 
-    auto rangeToPosition = makeSimpleRange(fullCharacterRange->startPosition(), position);
+    auto rangeToPosition = makeSimpleRange(fullCharacterRange->start, position);
     if (!rangeToPosition)
         return WTF::nullopt;
 

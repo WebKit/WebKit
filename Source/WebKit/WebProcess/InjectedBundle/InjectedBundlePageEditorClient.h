@@ -39,7 +39,7 @@ namespace WebCore {
 class CSSStyleDeclaration;
 class DocumentFragment;
 class Node;
-class Range;
+struct SimpleRange;
 }
 
 namespace WebKit {
@@ -52,21 +52,21 @@ public:
     explicit InjectedBundlePageEditorClient(const WKBundlePageEditorClientBase&);
 
 private:
-    bool shouldBeginEditing(WebPage&, WebCore::Range*) final;
-    bool shouldEndEditing(WebPage&, WebCore::Range*) final;
-    bool shouldInsertNode(WebPage&, WebCore::Node*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction) final;
-    bool shouldInsertText(WebPage&, StringImpl*, WebCore::Range* rangeToReplace, WebCore::EditorInsertAction) final;
-    bool shouldDeleteRange(WebPage&, WebCore::Range*) final;
-    bool shouldChangeSelectedRange(WebPage&, WebCore::Range* fromRange, WebCore::Range* toRange, WebCore::EAffinity, bool stillSelecting) final;
-    bool shouldApplyStyle(WebPage&, WebCore::CSSStyleDeclaration*, WebCore::Range*) final;
-    void didBeginEditing(WebPage&, StringImpl* notificationName) final;
-    void didEndEditing(WebPage&, StringImpl* notificationName) final;
-    void didChange(WebPage&, StringImpl* notificationName) final;
-    void didChangeSelection(WebPage&, StringImpl* notificationName) final;
-    void willWriteToPasteboard(WebPage&, WebCore::Range*) final;
-    void getPasteboardDataForRange(WebPage&, WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
+    bool shouldBeginEditing(WebPage&, const WebCore::SimpleRange&) final;
+    bool shouldEndEditing(WebPage&, const WebCore::SimpleRange&) final;
+    bool shouldInsertNode(WebPage&, WebCore::Node&, const Optional<WebCore::SimpleRange>& rangeToReplace, WebCore::EditorInsertAction) final;
+    bool shouldInsertText(WebPage&, const String&, const Optional<WebCore::SimpleRange>& rangeToReplace, WebCore::EditorInsertAction) final;
+    bool shouldDeleteRange(WebPage&, const Optional<WebCore::SimpleRange>&) final;
+    bool shouldChangeSelectedRange(WebPage&, const Optional<WebCore::SimpleRange>& fromRange, const Optional<WebCore::SimpleRange>& toRange, WebCore::EAffinity, bool stillSelecting) final;
+    bool shouldApplyStyle(WebPage&, const WebCore::StyleProperties&, const Optional<WebCore::SimpleRange>&) final;
+    void didBeginEditing(WebPage&, const String& notificationName) final;
+    void didEndEditing(WebPage&, const String& notificationName) final;
+    void didChange(WebPage&, const String& notificationName) final;
+    void didChangeSelection(WebPage&, const String& notificationName) final;
+    void willWriteToPasteboard(WebPage&, const Optional<WebCore::SimpleRange>&) final;
+    void getPasteboardDataForRange(WebPage&, const Optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
     void didWriteToPasteboard(WebPage&) final;
-    bool performTwoStepDrop(WebPage&, WebCore::DocumentFragment&, WebCore::Range& destination, bool isMove) final;
+    bool performTwoStepDrop(WebPage&, WebCore::DocumentFragment&, const WebCore::SimpleRange& destination, bool isMove) final;
 };
 
 } // namespace WebKit

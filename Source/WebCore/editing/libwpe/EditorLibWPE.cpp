@@ -55,7 +55,7 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
 
     if (types.contains("text/plain;charset=utf-8")) {
         chosePlainText = true;
-        return createFragmentFromText(createLiveRange(range).get(), pasteboard.readString("text/plain;charset=utf-8"));
+        return createFragmentFromText(range, pasteboard.readString("text/plain;charset=utf-8"));
     }
 
     return nullptr;

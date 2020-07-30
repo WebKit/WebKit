@@ -331,9 +331,8 @@ private:
     bool m_inMSOList { false };
 };
 
-inline StyledMarkupAccumulator::StyledMarkupAccumulator(const Position& start, const Position& end, Vector<Node*>* nodes, ResolveURLs urlsToResolve, SerializeComposedTree serializeComposedTree,
-    AnnotateForInterchange annotate, StandardFontFamilySerializationMode standardFontFamilySerializationMode, MSOListMode msoListMode, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized)
-    : MarkupAccumulator(nodes, urlsToResolve)
+inline StyledMarkupAccumulator::StyledMarkupAccumulator(const Position& start, const Position& end, Vector<Node*>* nodes, ResolveURLs resolveURLs, SerializeComposedTree serializeComposedTree, AnnotateForInterchange annotate, StandardFontFamilySerializationMode standardFontFamilySerializationMode, MSOListMode msoListMode, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized)
+    : MarkupAccumulator(nodes, resolveURLs)
     , m_start(start)
     , m_end(end)
     , m_annotate(annotate)
@@ -835,7 +834,7 @@ static Node* highestAncestorToWrapMarkup(const Position& start, const Position& 
     return specialCommonAncestor;
 }
 
-static String serializePreservingVisualAppearanceInternal(const Position& start, const Position& end, Vector<Node*>* nodes, ResolveURLs urlsToResolve, SerializeComposedTree serializeComposedTree,
+static String serializePreservingVisualAppearanceInternal(const Position& start, const Position& end, Vector<Node*>* nodes, ResolveURLs resolveURLs, SerializeComposedTree serializeComposedTree,
     AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, StandardFontFamilySerializationMode standardFontFamilySerializationMode, MSOListMode msoListMode)
 {
     static NeverDestroyed<const String> interchangeNewlineString(MAKE_STATIC_STRING_IMPL("<br class=\"" AppleInterchangeNewline "\">"));
@@ -862,7 +861,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 
     Node* specialCommonAncestor = highestAncestorToWrapMarkup(start, end, *commonAncestor, annotate);
 
-    StyledMarkupAccumulator accumulator(start, end, nodes, urlsToResolve, serializeComposedTree, annotate, standardFontFamilySerializationMode, msoListMode, needsPositionStyleConversion, specialCommonAncestor);
+    StyledMarkupAccumulator accumulator(start, end, nodes, resolveURLs, serializeComposedTree, annotate, standardFontFamilySerializationMode, msoListMode, needsPositionStyleConversion, specialCommonAncestor);
 
     Position startAdjustedForInterchangeNewline = start;
     if (annotate == AnnotateForInterchange::Yes && needInterchangeNewlineAfter(visibleStart)) {
@@ -934,9 +933,10 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
     return accumulator.takeResults();
 }
 
-String serializePreservingVisualAppearance(const Range& range, Vector<Node*>* nodes, AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, ResolveURLs urlsToReslve)
+String serializePreservingVisualAppearance(const SimpleRange& range, Vector<Node*>* nodes, AnnotateForInterchange annotate, ConvertBlocksToInlines convertBlocksToInlines, ResolveURLs resolveURLs)
 {
-    return serializePreservingVisualAppearanceInternal(range.startPosition(), range.endPosition(), nodes, urlsToReslve, SerializeComposedTree::No,
+    return serializePreservingVisualAppearanceInternal(createLegacyEditingPosition(range.start), createLegacyEditingPosition(range.end),
+        nodes, resolveURLs, SerializeComposedTree::No,
         annotate, convertBlocksToInlines, StandardFontFamilySerializationMode::Keep, MSOListMode::DoNotPreserve);
 }
 
@@ -1043,9 +1043,9 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
     return fragment;
 }
 
-String serializeFragment(const Node& node, SerializedNodes root, Vector<Node*>* nodes, ResolveURLs urlsToResolve, Vector<QualifiedName>* tagNamesToSkip, SerializationSyntax serializationSyntax)
+String serializeFragment(const Node& node, SerializedNodes root, Vector<Node*>* nodes, ResolveURLs resolveURLs, Vector<QualifiedName>* tagNamesToSkip, SerializationSyntax serializationSyntax)
 {
-    MarkupAccumulator accumulator(nodes, urlsToResolve, serializationSyntax);
+    MarkupAccumulator accumulator(nodes, resolveURLs, serializationSyntax);
     return accumulator.serializeNodes(const_cast<Node&>(node), root, tagNamesToSkip);
 }
 
@@ -1112,20 +1112,16 @@ bool isPlainTextMarkup(Node* node)
     return isTabSpanTextNode(firstChild->firstChild()) && secondChild->isTextNode();
 }
 
-static bool contextPreservesNewline(const Range& context)
+static bool contextPreservesNewline(const SimpleRange& context)
 {
-    VisiblePosition position(context.startPosition());
-    Node* container = position.deepEquivalent().containerNode();
-    if (!container || !container->renderer())
-        return false;
-
-    return container->renderer()->style().preserveNewline();
+    auto container = VisiblePosition(createLegacyEditingPosition(context.start)).deepEquivalent().containerNode();
+    return container && container->renderer() && container->renderer()->style().preserveNewline();
 }
 
-Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
+Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const String& text)
 {
-    Document& document = context.ownerDocument();
-    Ref<DocumentFragment> fragment = document.createDocumentFragment();
+    auto& document = context.start.container->document();
+    auto fragment = document.createDocumentFragment();
     
     if (text.isEmpty())
         return fragment;
@@ -1161,14 +1157,14 @@ Ref<DocumentFragment> createFragmentFromText(Range& context, const String& text)
     }
 
     // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
-    Node* blockNode = enclosingBlock(context.firstNode());
+    Node* blockNode = enclosingBlock(createLiveRange(context)->firstNode());
     Element* block = downcast<Element>(blockNode);
     bool useClonesOfEnclosingBlock = blockNode
         && blockNode->isElementNode()
         && !block->hasTagName(bodyTag)
         && !block->hasTagName(htmlTag)
-        && block != editableRootForPosition(context.startPosition());
-    bool useLineBreak = enclosingTextFormControl(context.startPosition());
+        && block != editableRootForPosition(createLegacyEditingPosition(context.start));
+    bool useLineBreak = enclosingTextFormControl(createLegacyEditingPosition(context.start));
 
     Vector<String> list = string.splitAllowingEmptyEntries('\n');
     size_t numLines = list.size();

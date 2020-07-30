@@ -128,7 +128,7 @@ Optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const HitTes
         return { };
 
     VisiblePosition position;
-    RefPtr<Range> contextRange;
+    Optional<SimpleRange> contextRange;
 
     if (!is<HTMLTextFormControlElement>(*node)) {
         position = renderer->positionForPoint(hitTestResult.localPoint(), nullptr);

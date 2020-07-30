@@ -93,6 +93,7 @@
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/PrintContext.h>
+#import <WebCore/Range.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
@@ -722,7 +723,7 @@ static NSURL *createUniqueWebDataURL();
 {
     if (!range)
         return NSZeroRect;
-    return _private->coreFrame->editor().firstRectForRange(*makeSimpleRange(core(range)));
+    return _private->coreFrame->editor().firstRectForRange(makeSimpleRange(*core(range)));
 }
 
 - (void)_scrollDOMRangeToVisible:(DOMRange *)range
@@ -1479,7 +1480,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
     auto coreCloseTyping = closeTyping ? FrameSelection::ShouldCloseTyping::Yes : FrameSelection::ShouldCloseTyping::No;
     auto coreUserTriggered = userTriggered ? UserTriggered : NotUserTriggered;
-    frame.selection().setSelectedRange(core(range), core(affinity), coreCloseTyping, coreUserTriggered);
+    frame.selection().setSelectedRange(makeSimpleRange(core(range)), core(affinity), coreCloseTyping, coreUserTriggered);
     if (!closeTyping)
         frame.editor().ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
 }
@@ -1879,7 +1880,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
     auto range = _private->coreFrame->selection().selection().toNormalizedRange();
-    DOMDocumentFragment* fragment = range ? kit(createFragmentFromText(createLiveRange(*range), text).ptr()) : nil;
+    DOMDocumentFragment* fragment = range ? kit(createFragmentFromText(*range, text).ptr()) : nil;
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:matchStyle];
 }
 
@@ -1962,7 +1963,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 - (void)_replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
     auto range = _private->coreFrame->selection().selection().toNormalizedRange();
-    DOMDocumentFragment* fragment = range ? kit(createFragmentFromText(createLiveRange(*range), text).ptr()) : nil;
+    DOMDocumentFragment* fragment = range ? kit(createFragmentFromText(*range, text).ptr()) : nil;
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 
@@ -2271,7 +2272,8 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (DOMDocumentFragment *)_documentFragmentForText:(NSString *)text
 {
-    return kit(createFragmentFromText(*createLiveRange(_private->coreFrame->selection().selection().toNormalizedRange()), text).ptr());
+    auto range = _private->coreFrame->selection().selection().toNormalizedRange();
+    return range ? kit(createFragmentFromText(*range, text).ptr()) : nil;
 }
 
 - (DOMDocumentFragment *)_documentFragmentForWebArchive:(WebArchive *)webArchive

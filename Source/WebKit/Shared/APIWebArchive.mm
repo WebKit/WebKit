@@ -52,9 +52,9 @@ Ref<WebArchive> WebArchive::create(RefPtr<LegacyWebArchive>&& legacyWebArchive)
     return adoptRef(*new WebArchive(legacyWebArchive.releaseNonNull()));
 }
 
-Ref<WebArchive> WebArchive::create(Range& range)
+Ref<WebArchive> WebArchive::create(const SimpleRange& range)
 {
-    return adoptRef(*new WebArchive(LegacyWebArchive::create(&range)));
+    return adoptRef(*new WebArchive(LegacyWebArchive::create(range)));
 }
 
 WebArchive::WebArchive(WebArchiveResource* mainResource, RefPtr<API::Array>&& subresources, RefPtr<API::Array>&& subframeArchives)

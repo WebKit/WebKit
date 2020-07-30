@@ -46,6 +46,7 @@
 #include <WebCore/PathUtilities.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginDocument.h>
+#include <WebCore/Range.h>
 #include <WebCore/SimpleRange.h>
 
 #if PLATFORM(COCOA)
@@ -111,11 +112,11 @@ uint32_t FindController::replaceMatches(const Vector<uint32_t>& matchIndices, co
     // periodically update an NSProgress in the UI process when a batch of find-in-page matches are replaced.
     const uint32_t maximumNumberOfMatchesToReplace = 1000;
 
-    Vector<Ref<Range>> rangesToReplace;
+    Vector<SimpleRange> rangesToReplace;
     rangesToReplace.reserveCapacity(std::min<uint32_t>(maximumNumberOfMatchesToReplace, matchIndices.size()));
     for (auto index : matchIndices) {
         if (index < m_findMatches.size())
-            rangesToReplace.uncheckedAppend(*m_findMatches[index]);
+            rangesToReplace.uncheckedAppend(m_findMatches[index]);
         if (rangesToReplace.size() >= maximumNumberOfMatchesToReplace)
             break;
     }
@@ -243,12 +244,10 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
     bool foundStringStartsAfterSelection = false;
     if (!pluginView) {
         if (Frame* selectedFrame = frameWithSelection(m_webPage->corePage())) {
-            FrameSelection& fs = selectedFrame->selection();
-            if (fs.selectionBounds().isEmpty()) {
-                m_findMatches.clear();
-                int indexForSelection;
-                m_webPage->corePage()->findStringMatchingRanges(string, coreOptions, maxMatchCount, m_findMatches, indexForSelection);
-                m_foundStringMatchIndex = indexForSelection;
+            if (selectedFrame->selection().selectionBounds().isEmpty()) {
+                auto result = m_webPage->corePage()->findTextMatches(string, coreOptions, maxMatchCount);
+                m_findMatches = WTFMove(result.ranges);
+                m_foundStringMatchIndex = result.indexForSelection;
                 foundStringStartsAfterSelection = true;
             }
         }
@@ -284,16 +283,14 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
 
 void FindController::findStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
 {
-    m_findMatches.clear();
-    int indexForSelection;
-
-    m_webPage->corePage()->findStringMatchingRanges(string, core(options), maxMatchCount, m_findMatches, indexForSelection);
+    auto result = m_webPage->corePage()->findTextMatches(string, core(options), maxMatchCount);
+    m_findMatches = WTFMove(result.ranges);
 
     Vector<Vector<IntRect>> matchRects;
     for (auto& range : m_findMatches)
-        matchRects.append(RenderObject::absoluteTextRects(*range));
+        matchRects.append(RenderObject::absoluteTextRects(range));
 
-    m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, indexForSelection));
+    m_webPage->send(Messages::WebPageProxy::DidFindStringMatches(string, matchRects, result.indexForSelection));
 
     if (!options.contains(FindOptions::ShowOverlay) && !options.contains(FindOptions::ShowFindIndicator))
         return;
@@ -308,12 +305,12 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
         return;
-    Frame* frame = m_findMatches[matchIndex]->startContainer().document().frame();
+    Frame* frame = m_findMatches[matchIndex].start.container->document().frame();
     if (!frame)
         return;
 
     VisibleSelection oldSelection = frame->selection().selection();
-    frame->selection().setSelection(VisibleSelection(*m_findMatches[matchIndex]));
+    frame->selection().setSelection(m_findMatches[matchIndex]);
 
     RefPtr<ShareableBitmap> selectionSnapshot = WebFrame::fromCoreFrame(*frame)->createSelectionSnapshot();
 
@@ -339,10 +336,10 @@ void FindController::selectFindMatch(uint32_t matchIndex)
 {
     if (matchIndex >= m_findMatches.size())
         return;
-    Frame* frame = m_findMatches[matchIndex]->startContainer().document().frame();
+    Frame* frame = m_findMatches[matchIndex].start.container->document().frame();
     if (!frame)
         return;
-    frame->selection().setSelection(VisibleSelection(*m_findMatches[matchIndex]));
+    frame->selection().setSelection(m_findMatches[matchIndex]);
 }
 
 void FindController::indicateFindMatch(uint32_t matchIndex)

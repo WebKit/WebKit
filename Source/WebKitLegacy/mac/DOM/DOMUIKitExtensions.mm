@@ -78,9 +78,10 @@ using WebCore::VisiblePosition;
 
 - (void)move:(UInt32)amount inDirection:(WebTextAdjustmentDirection)direction
 {
-    Range *range = core(self);
+    auto& range = *core(self);
+
     WebCore::FrameSelection frameSelection;
-    frameSelection.moveTo(range);
+    frameSelection.setSelection(makeSimpleRange(range));
     
     WebCore::TextGranularity granularity = WebCore::TextGranularity::CharacterGranularity;
     // Until WebKit supports vertical layout, "down" is equivalent to "forward by a line" and
@@ -92,33 +93,34 @@ using WebCore::VisiblePosition;
         direction = WebTextAdjustmentBackward;
         granularity = WebCore::TextGranularity::LineGranularity;
     }
-    
+
     for (UInt32 i = 0; i < amount; i++)
         frameSelection.modify(WebCore::FrameSelection::AlterationMove, (WebCore::SelectionDirection)direction, granularity);
-    
+
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();
     if (start.containerNode())
-        range->setStart(*start.containerNode(), start.offsetInContainerNode());
+        range.setStart(*start.containerNode(), start.offsetInContainerNode());
     if (end.containerNode())
-        range->setEnd(*end.containerNode(), end.offsetInContainerNode());
+        range.setEnd(*end.containerNode(), end.offsetInContainerNode());
 }
 
 - (void)extend:(UInt32)amount inDirection:(WebTextAdjustmentDirection)direction
 {
-    Range *range = core(self);
+    auto& range = *core(self);
+
     WebCore::FrameSelection frameSelection;
-    frameSelection.moveTo(range);
-    
+    frameSelection.setSelection(makeSimpleRange(range));
+
     for (UInt32 i = 0; i < amount; i++)
         frameSelection.modify(WebCore::FrameSelection::AlterationExtend, (WebCore::SelectionDirection)direction, WebCore::TextGranularity::CharacterGranularity);
-    
+
     Position start = frameSelection.selection().start().parentAnchoredEquivalent();
     Position end = frameSelection.selection().end().parentAnchoredEquivalent();
     if (start.containerNode())
-        range->setStart(*start.containerNode(), start.offsetInContainerNode());
+        range.setStart(*start.containerNode(), start.offsetInContainerNode());
     if (end.containerNode())
-        range->setEnd(*end.containerNode(), end.offsetInContainerNode());
+        range.setEnd(*end.containerNode(), end.offsetInContainerNode());
 }
 
 - (DOMNode *)firstNode

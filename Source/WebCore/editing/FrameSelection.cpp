@@ -205,12 +205,6 @@ void FrameSelection::moveTo(const Position &pos, EAffinity affinity, EUserTrigge
     setSelection(VisibleSelection(pos, affinity, m_selection.isDirectional()), defaultSetSelectionOptions(userTriggered));
 }
 
-void FrameSelection::moveTo(const Range* range)
-{
-    VisibleSelection selection = range ? VisibleSelection(range->startPosition(), range->endPosition()) : VisibleSelection();
-    setSelection(selection);
-}
-
 void FrameSelection::moveTo(const Position &base, const Position &extent, EAffinity affinity, EUserTriggered userTriggered)
 {
     const bool selectionHasDirection = true;
@@ -2034,11 +2028,13 @@ void FrameSelection::selectAll()
     }
 }
 
-bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, ShouldCloseTyping closeTyping, EUserTriggered userTriggered)
+bool FrameSelection::setSelectedRange(const Optional<SimpleRange>& range, EAffinity affinity, ShouldCloseTyping closeTyping, EUserTriggered userTriggered)
 {
     if (!range)
         return false;
-    ASSERT(&range->startContainer().document() == &range->endContainer().document());
+
+    if (&range->start.container->document() != &range->end.container->document())
+        return false;
 
     VisibleSelection newSelection(*range, affinity);
 

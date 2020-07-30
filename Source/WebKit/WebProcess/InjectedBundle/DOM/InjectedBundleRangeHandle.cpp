@@ -54,7 +54,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-typedef HashMap<Range*, InjectedBundleRangeHandle*> DOMRangeHandleCache;
+using DOMRangeHandleCache = HashMap<Range*, InjectedBundleRangeHandle*>;
 
 static DOMRangeHandleCache& domRangeHandleCache()
 {
@@ -64,27 +64,19 @@ static DOMRangeHandleCache& domRangeHandleCache()
 
 RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(JSContextRef context, JSObjectRef object)
 {
-    Range* range = JSRange::toWrapped(toJS(context)->vm(), toJS(object));
-    return getOrCreate(range);
+    return getOrCreate(JSRange::toWrapped(toJS(context)->vm(), toJS(object)));
 }
 
 RefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Range* range)
 {
     if (!range)
         return nullptr;
-
-    DOMRangeHandleCache::AddResult result = domRangeHandleCache().add(range, nullptr);
+    auto result = domRangeHandleCache().add(range, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value;
-
-    auto rangeHandle = InjectedBundleRangeHandle::create(*range);
+    auto rangeHandle = adoptRef(*new InjectedBundleRangeHandle(*range));
     result.iterator->value = rangeHandle.ptr();
     return rangeHandle;
-}
-
-Ref<InjectedBundleRangeHandle> InjectedBundleRangeHandle::create(Range& range)
-{
-    return adoptRef(*new InjectedBundleRangeHandle(range));
 }
 
 InjectedBundleRangeHandle::InjectedBundleRangeHandle(Range& range)
@@ -176,6 +168,11 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
 String InjectedBundleRangeHandle::text() const
 {
     return m_range->text();
+}
+
+RefPtr<InjectedBundleRangeHandle> createHandle(const Optional<WebCore::SimpleRange>& range)
+{
+    return InjectedBundleRangeHandle::getOrCreate(createLiveRange(range).get());
 }
 
 } // namespace WebKit

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleRangeHandle_h
-#define InjectedBundleRangeHandle_h
+#pragma once
 
 #include "APIObject.h"
 #include "ImageOptions.h"
@@ -35,6 +34,7 @@
 namespace WebCore {
 class IntRect;
 class Range;
+struct SimpleRange;
 }
 
 namespace WebKit {
@@ -59,12 +59,11 @@ public:
     WebCore::Range& coreRange() const;
 
 private:
-    static Ref<InjectedBundleRangeHandle> create(WebCore::Range&);
     InjectedBundleRangeHandle(WebCore::Range&);
 
     Ref<WebCore::Range> m_range;
 };
 
-} // namespace WebKit
+RefPtr<InjectedBundleRangeHandle> createHandle(const Optional<WebCore::SimpleRange>&);
 
-#endif // InjectedBundleRangeHandle_h
+} // namespace WebKit

@@ -29,6 +29,7 @@
 #include "DragImage.h"
 #include "IntPoint.h"
 #include "IntRect.h"
+#include "SimpleRange.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -89,7 +90,7 @@ public:
     WEBCORE_EXPORT void placeDragCaret(const IntPoint&);
 
     const Vector<Ref<HTMLImageElement>>& droppedImagePlaceholders() const { return m_droppedImagePlaceholders; }
-    const RefPtr<Range>& droppedImagePlaceholderRange() const { return m_droppedImagePlaceholderRange; }
+    const Optional<SimpleRange>& droppedImagePlaceholderRange() const { return m_droppedImagePlaceholderRange; }
 
     WEBCORE_EXPORT void finalizeDroppedImagePlaceholder(HTMLImageElement&);
     WEBCORE_EXPORT void insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>& imageSizes);
@@ -161,7 +162,7 @@ private:
     URL m_draggingImageURL;
     bool m_isPerformingDrop { false };
     Vector<Ref<HTMLImageElement>> m_droppedImagePlaceholders;
-    RefPtr<Range> m_droppedImagePlaceholderRange;
+    Optional<SimpleRange> m_droppedImagePlaceholderRange;
 };
 
 WEBCORE_EXPORT bool isDraggableLink(const Element&);

@@ -292,7 +292,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 // is enclosed depends on the given direction, using the same rule as -[WebVisiblePosition withinTextUnitOfGranularity:inDirectionAtBoundary:].
 - (DOMRange *)enclosingTextUnitOfGranularity:(WebTextGranularity)granularity inDirectionIfAtBoundary:(WebTextAdjustmentDirection)direction
 {
-    return kit(enclosingTextUnitOfGranularity([self _visiblePosition], toTextGranularity(granularity), toSelectionDirection(direction)).get());
+    return kit(enclosingTextUnitOfGranularity([self _visiblePosition], toTextGranularity(granularity), toSelectionDirection(direction)));
 }
 
 - (WebVisiblePosition *)positionAtStartOrEndOfWord

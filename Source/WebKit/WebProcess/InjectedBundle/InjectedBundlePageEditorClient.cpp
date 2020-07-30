@@ -38,123 +38,111 @@
 #include "WKString.h"
 #include "WebPage.h"
 #include <WebCore/DocumentFragment.h>
+#include <WebCore/StyleProperties.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 using namespace WebCore;
+
+static RefPtr<InjectedBundleCSSStyleDeclarationHandle> createHandle(const StyleProperties& style)
+{
+    return InjectedBundleCSSStyleDeclarationHandle::getOrCreate(&style.mutableCopy()->ensureCSSStyleDeclaration());
+}
 
 InjectedBundlePageEditorClient::InjectedBundlePageEditorClient(const WKBundlePageEditorClientBase& client)
 {
     initialize(&client);
 }
 
-bool InjectedBundlePageEditorClient::shouldBeginEditing(WebPage& page, Range* range)
+bool InjectedBundlePageEditorClient::shouldBeginEditing(WebPage& page, const SimpleRange& range)
 {
-    if (m_client.shouldBeginEditing) {
-        RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(range);
-        return m_client.shouldBeginEditing(toAPI(&page), toAPI(rangeHandle.get()), m_client.base.clientInfo);
-    }
+    if (m_client.shouldBeginEditing)
+        return m_client.shouldBeginEditing(toAPI(&page), toAPI(createHandle(range).get()), m_client.base.clientInfo);
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldEndEditing(WebPage& page, Range* range)
+bool InjectedBundlePageEditorClient::shouldEndEditing(WebPage& page, const SimpleRange& range)
 {
-    if (m_client.shouldEndEditing) {
-        RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(range);
-        return m_client.shouldEndEditing(toAPI(&page), toAPI(rangeHandle.get()), m_client.base.clientInfo);
-    }
+    if (m_client.shouldEndEditing)
+        return m_client.shouldEndEditing(toAPI(&page), toAPI(createHandle(range).get()), m_client.base.clientInfo);
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldInsertNode(WebPage& page, Node* node, Range* rangeToReplace, EditorInsertAction action)
+bool InjectedBundlePageEditorClient::shouldInsertNode(WebPage& page, Node& node, const Optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
     if (m_client.shouldInsertNode) {
         RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(node);
-        RefPtr<InjectedBundleRangeHandle> rangeToReplaceHandle = InjectedBundleRangeHandle::getOrCreate(rangeToReplace);
-        return m_client.shouldInsertNode(toAPI(&page), toAPI(nodeHandle.get()), toAPI(rangeToReplaceHandle.get()), toAPI(action), m_client.base.clientInfo);
+        return m_client.shouldInsertNode(toAPI(&page), toAPI(nodeHandle.get()), toAPI(createHandle(rangeToReplace).get()), toAPI(action), m_client.base.clientInfo);
     }
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldInsertText(WebPage& page, StringImpl* text, Range* rangeToReplace, EditorInsertAction action)
+bool InjectedBundlePageEditorClient::shouldInsertText(WebPage& page, const String& text, const Optional<SimpleRange>& rangeToReplace, EditorInsertAction action)
 {
-    if (m_client.shouldInsertText) {
-        RefPtr<InjectedBundleRangeHandle> rangeToReplaceHandle = InjectedBundleRangeHandle::getOrCreate(rangeToReplace);
-        return m_client.shouldInsertText(toAPI(&page), toAPI(text), toAPI(rangeToReplaceHandle.get()), toAPI(action), m_client.base.clientInfo);
-    }
+    if (m_client.shouldInsertText)
+        return m_client.shouldInsertText(toAPI(&page), toAPI(text.impl()), toAPI(createHandle(rangeToReplace).get()), toAPI(action), m_client.base.clientInfo);
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldDeleteRange(WebPage& page, Range* range)
+bool InjectedBundlePageEditorClient::shouldDeleteRange(WebPage& page, const Optional<WebCore::SimpleRange>& range)
 {
-    if (m_client.shouldDeleteRange) {
-        RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(range);
-        return m_client.shouldDeleteRange(toAPI(&page), toAPI(rangeHandle.get()), m_client.base.clientInfo);
-    }
+    if (m_client.shouldDeleteRange)
+        return m_client.shouldDeleteRange(toAPI(&page), toAPI(createHandle(range).get()), m_client.base.clientInfo);
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldChangeSelectedRange(WebPage& page, Range* fromRange, Range* toRange, EAffinity affinity, bool stillSelecting)
+bool InjectedBundlePageEditorClient::shouldChangeSelectedRange(WebPage& page, const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, EAffinity affinity, bool stillSelecting)
 {
-    if (m_client.shouldChangeSelectedRange) {
-        RefPtr<InjectedBundleRangeHandle> fromRangeHandle = InjectedBundleRangeHandle::getOrCreate(fromRange);
-        RefPtr<InjectedBundleRangeHandle> toRangeHandle = InjectedBundleRangeHandle::getOrCreate(toRange);
-        return m_client.shouldChangeSelectedRange(toAPI(&page), toAPI(fromRangeHandle.get()), toAPI(toRangeHandle.get()), toAPI(affinity), stillSelecting, m_client.base.clientInfo);
-    }
+    if (m_client.shouldChangeSelectedRange)
+        return m_client.shouldChangeSelectedRange(toAPI(&page), toAPI(createHandle(fromRange).get()), toAPI(createHandle(toRange).get()), toAPI(affinity), stillSelecting, m_client.base.clientInfo);
     return true;
 }
 
-bool InjectedBundlePageEditorClient::shouldApplyStyle(WebPage& page, CSSStyleDeclaration* style, Range* range)
+bool InjectedBundlePageEditorClient::shouldApplyStyle(WebPage& page, const StyleProperties& style, const Optional<SimpleRange>& range)
 {
-    if (m_client.shouldApplyStyle) {
-        RefPtr<InjectedBundleCSSStyleDeclarationHandle> styleHandle = InjectedBundleCSSStyleDeclarationHandle::getOrCreate(style);
-        RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(range);
-        return m_client.shouldApplyStyle(toAPI(&page), toAPI(styleHandle.get()), toAPI(rangeHandle.get()), m_client.base.clientInfo);
-    }
+    if (m_client.shouldApplyStyle)
+        return m_client.shouldApplyStyle(toAPI(&page), toAPI(createHandle(style).get()), toAPI(createHandle(range).get()), m_client.base.clientInfo);
     return true;
 }
 
-void InjectedBundlePageEditorClient::didBeginEditing(WebPage& page, StringImpl* notificationName)
+void InjectedBundlePageEditorClient::didBeginEditing(WebPage& page, const String& notificationName)
 {
     if (m_client.didBeginEditing)
-        m_client.didBeginEditing(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
+        m_client.didBeginEditing(toAPI(&page), toAPI(notificationName.impl()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::didEndEditing(WebPage& page, StringImpl* notificationName)
+void InjectedBundlePageEditorClient::didEndEditing(WebPage& page, const String& notificationName)
 {
     if (m_client.didEndEditing)
-        m_client.didEndEditing(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
+        m_client.didEndEditing(toAPI(&page), toAPI(notificationName.impl()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::didChange(WebPage& page, StringImpl* notificationName)
+void InjectedBundlePageEditorClient::didChange(WebPage& page, const String& notificationName)
 {
     if (m_client.didChange)
-        m_client.didChange(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
+        m_client.didChange(toAPI(&page), toAPI(notificationName.impl()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::didChangeSelection(WebPage& page, StringImpl* notificationName)
+void InjectedBundlePageEditorClient::didChangeSelection(WebPage& page, const String& notificationName)
 {
     if (m_client.didChangeSelection)
-        m_client.didChangeSelection(toAPI(&page), toAPI(notificationName), m_client.base.clientInfo);
+        m_client.didChangeSelection(toAPI(&page), toAPI(notificationName.impl()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::willWriteToPasteboard(WebPage& page, Range* range)
+void InjectedBundlePageEditorClient::willWriteToPasteboard(WebPage& page, const Optional<SimpleRange>& range)
 {
-    if (m_client.willWriteToPasteboard) {
-        RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(range);
-        m_client.willWriteToPasteboard(toAPI(&page), toAPI(rangeHandle.get()), m_client.base.clientInfo);
-    }
+    if (m_client.willWriteToPasteboard)
+        m_client.willWriteToPasteboard(toAPI(&page), toAPI(createHandle(range).get()), m_client.base.clientInfo);
 }
 
-void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, Range* range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
+void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, const Optional<SimpleRange>& range, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData)
 {
     if (m_client.getPasteboardDataForRange) {
-        RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(range);
-        WKArrayRef types = 0;
-        WKArrayRef data = 0;
-        m_client.getPasteboardDataForRange(toAPI(&page), toAPI(rangeHandle.get()), &types, &data, m_client.base.clientInfo);
-        RefPtr<API::Array> typesArray = adoptRef(toImpl(types));
-        RefPtr<API::Array> dataArray = adoptRef(toImpl(data));
+        WKArrayRef types = nullptr;
+        WKArrayRef data = nullptr;
+        m_client.getPasteboardDataForRange(toAPI(&page), toAPI(createHandle(range).get()), &types, &data, m_client.base.clientInfo);
+        auto typesArray = adoptRef(toImpl(types));
+        auto dataArray = adoptRef(toImpl(data));
 
         pasteboardTypes.clear();
         pasteboardData.clear();
@@ -174,14 +162,13 @@ void InjectedBundlePageEditorClient::getPasteboardDataForRange(WebPage& page, Ra
     }
 }
 
-bool InjectedBundlePageEditorClient::performTwoStepDrop(WebPage& page, DocumentFragment& fragment, Range& destination, bool isMove)
+bool InjectedBundlePageEditorClient::performTwoStepDrop(WebPage& page, DocumentFragment& fragment, const SimpleRange& destination, bool isMove)
 {
     if (!m_client.performTwoStepDrop)
         return false;
 
-    auto rangeHandle = InjectedBundleRangeHandle::getOrCreate(&destination);
     auto nodeHandle = InjectedBundleNodeHandle::getOrCreate(&fragment);
-    return m_client.performTwoStepDrop(toAPI(&page), toAPI(nodeHandle.get()), toAPI(rangeHandle.get()), isMove, m_client.base.clientInfo);
+    return m_client.performTwoStepDrop(toAPI(&page), toAPI(nodeHandle.get()), toAPI(createHandle(destination).get()), isMove, m_client.base.clientInfo);
 }
 
 void InjectedBundlePageEditorClient::didWriteToPasteboard(WebPage& page)

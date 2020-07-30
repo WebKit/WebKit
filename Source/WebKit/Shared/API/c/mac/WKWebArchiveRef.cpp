@@ -33,6 +33,8 @@
 #include "InjectedBundleRangeHandle.h"
 #include "WKBundleAPICast.h"
 #include "WKSharedAPICast.h"
+#include <WebCore/Range.h>
+#include <WebCore/SimpleRange.h>
 
 WKTypeID WKWebArchiveGetTypeID()
 {
@@ -53,7 +55,7 @@ WKWebArchiveRef WKWebArchiveCreateWithData(WKDataRef dataRef)
 
 WKWebArchiveRef WKWebArchiveCreateFromRange(WKBundleRangeHandleRef rangeHandleRef)
 {
-    auto webArchive = API::WebArchive::create(WebKit::toImpl(rangeHandleRef)->coreRange());
+    auto webArchive = API::WebArchive::create(makeSimpleRange(WebKit::toImpl(rangeHandleRef)->coreRange()));
     return WebKit::toAPI(&webArchive.leakRef());
 }
 

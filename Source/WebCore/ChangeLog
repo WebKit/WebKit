@@ -1,3 +1,117 @@
+2020-07-30  Darin Adler  <darin@apple.com>
+
+        Further reduction in the use of live ranges, particularly in headers
+        https://bugs.webkit.org/show_bug.cgi?id=214793
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::performTextOperation): Do not call createLiveRange.
+        (WebCore::AccessibilityObject::replaceTextInRange): Ditto.
+
+        * dom/SimpleRange.cpp: Moved makeSimpleRange functions to the header.
+        * dom/SimpleRange.h: Reworked the makeSimpleRange implementation to avoid a mistake
+        which made template expansion infinitely recurse while compiling and crash the compiler.
+        Ended up moving all the code to the header. Should be a good thing; I expect it will
+        optimize well inlined.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Use makeSimpleRange.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithText): Do not call createLiveRange.
+        (WebCore::Editor::setComposition): Use SimpleRange.
+        (WebCore::Editor::stringForCandidateRequest const): Do not call createLiveRange.
+        (WebCore::Editor::handleAcceptedCandidate): Use auto intead of RefPtr<Range>.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::expandSelectionToGranularity): Do not call createLiveRange.
+        (WebCore::executeDeleteToMark): Ditto.
+        (WebCore::executeSelectToMark): Ditto.
+        (WebCore::valueFormatBlock): Ditto.
+
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::formatRange): Use makeSimpleRange.
+        (WebCore::FormatBlockCommand::elementForFormatBlockCommand): Take a
+        SimpleRange.
+        * editing/FormatBlockCommand.h: Updated for above.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::moveTo): Deleted overload taking a live range.
+        (WebCore::FrameSelection::setSelectedRange): Take a SimpleRange.
+        * editing/FrameSelection.h: Updated for above.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): Do not call
+        createLiveRange.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::enclosingTextUnitOfGranularity): Return SimpleRange.
+        (WebCore::wordRangeFromPosition): Ditto.
+        (WebCore::closestWordBoundaryForPosition): Use SimpleRange.
+        (WebCore::rangeExpandedByCharactersInDirectionAtWordBoundary): Return
+        a SimpleRange.
+        (WebCore::rangeExpandedAroundPositionByCharacters): Ditto.
+        (WebCore::wordBoundaryForPositionWithoutCrossingLine): Use SimpleRange.
+        * editing/VisibleUnits.h: Updated for above.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::detectItemAroundHitTestResult):
+        Use SimpleRange.
+
+        * editing/cocoa/DictionaryLookup.mm:
+        (WebCore::DictionaryLookup::rangeForSelection): Use SimpleRange.
+        (WebCore::DictionaryLookup::rangeAtHitTestResult): Ditto.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::getPasteboardTypesAndDataForAttachment):
+        Do not call createLiveRange.
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readPlainText): Ditto.
+        * editing/gtk/WebContentReaderGtk.cpp:
+        (WebCore::WebContentReader::readPlainText): Ditto.
+        * editing/libwpe/EditorLibWPE.cpp:
+        (WebCore::createFragmentFromPasteboardData): Ditto.
+
+        * editing/mac/DictionaryLookupLegacy.mm:
+        (WebCore::DictionaryLookup::rangeAtHitTestResult): Use SimpleRange.
+
+        * editing/markup.cpp:
+        (WebCore::serializePreservingVisualAppearance): Take SimpleRange.
+        (WebCore::contextPreservesNewline): Ditto.
+        (WebCore::createFragmentFromText): Ditto.
+        * editing/markup.h: Updated for above.
+
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::create): Take SimpleRange.
+        * loader/archive/cf/LegacyWebArchive.h: Updated for above.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation): Use SimpleRange.
+        (WebCore::DragController::concludeEditDrag): Do not call createLiveRange.
+        (WebCore::selectElement): Use SimpleRange.
+        (WebCore::DragController::removeAllDroppedImagePlaceholders): Ditto.
+        (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret): Ditto.
+
+        * page/DragController.h: Use SimpleRange.
+
+        * page/Page.cpp:
+        (WebCore::Page::findTextMatches): Return vector of SimpleRange, in
+        structure so we have one return value instead of two out arguments.
+        Also renamed from findStringMatchingRanges.
+        (WebCore::Page::rangeOfString): Return SimpleRange.
+        (WebCore::replaceRanges): Do not call createLiveRange.
+        (WebCore::Page::replaceRangesWithText): Take SimpleRange.
+        * page/Page.h: Updated for above.
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::wordsInCurrentParagraph const): Use SimpleRange.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::isOverTextInsideFormControlElement const):
+        Use SimpleRange, and also use hasAnyPlainText instead of computing
+        the plain text string and checking if it's empty.
+
 2020-07-30  Brady Eidson  <beidson@apple.com>
 
         Refactor HID gamepad code to be much less fragile and much easier to hack on.

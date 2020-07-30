@@ -5437,13 +5437,13 @@ void WebPage::hasMarkedText(CompletionHandler<void(bool)>&& completionHandler)
 void WebPage::getMarkedRangeAsync(CompletionHandler<void(const EditingRange&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    completionHandler(EditingRange::fromRange(frame, createLiveRange(frame.editor().compositionRange()).get()));
+    completionHandler(EditingRange::fromRange(frame, frame.editor().compositionRange()));
 }
 
 void WebPage::getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
-    completionHandler(EditingRange::fromRange(frame, createLiveRange(frame.selection().selection().toNormalizedRange()).get()));
+    completionHandler(EditingRange::fromRange(frame, frame.selection().selection().toNormalizedRange()));
 }
 
 void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CallbackID callbackID)
@@ -5452,8 +5452,8 @@ void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, Callba
     auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
     auto& frame = result.innerNonSharedNode() ? *result.innerNodeFrame() : m_page->focusController().focusedOrMainFrame();
     auto range = frame.rangeForPoint(result.roundedPointInInnerNodeFrame());
-    auto editingRange = EditingRange::fromRange(frame, range.get());
-    send(Messages::WebPageProxy::UnsignedCallback(static_cast<uint64_t>(editingRange.location), callbackID));
+    auto editingRange = EditingRange::fromRange(frame, makeSimpleRange(range));
+    send(Messages::WebPageProxy::UnsignedCallback(editingRange.location, callbackID));
 }
 
 void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, CallbackID callbackID)

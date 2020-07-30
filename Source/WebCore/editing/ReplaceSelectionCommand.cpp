@@ -207,7 +207,7 @@ ReplacementFragment::ReplacementFragment(DocumentFragment* fragment, const Visib
         if (!range)
             return;
 
-        m_fragment = createFragmentFromText(createLiveRange(*range), event->text());
+        m_fragment = createFragmentFromText(*range, event->text());
         if (!m_fragment->firstChild())
             return;
 

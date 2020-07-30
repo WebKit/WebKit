@@ -725,7 +725,7 @@ void Editor::replaceSelectionWithText(const String& text, SelectReplacement sele
     if (!range)
         return;
 
-    replaceSelectionWithFragment(createFragmentFromText(createLiveRange(*range), text), selectReplacement, smartReplace, MatchStyle::Yes, editingAction);
+    replaceSelectionWithFragment(createFragmentFromText(*range, text), selectReplacement, smartReplace, MatchStyle::Yes, editingAction);
 }
 
 Optional<SimpleRange> Editor::selectedRange()
@@ -2120,8 +2120,8 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
 
             unsigned start = std::min(baseOffset + selectionStart, extentOffset);
             unsigned end = std::min(std::max(start, baseOffset + selectionEnd), extentOffset);
-            auto selectedRange = Range::create(baseNode->document(), baseNode, start, baseNode, end);
-            m_document.selection().setSelectedRange(selectedRange.ptr(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::No);
+            auto range = SimpleRange { { *baseNode, start }, { *baseNode, end } };
+            m_document.selection().setSelectedRange(range, DOWNSTREAM, FrameSelection::ShouldCloseTyping::No);
         }
     }
 
@@ -3893,8 +3893,8 @@ String Editor::stringForCandidateRequest() const
 {
     auto& selection = m_document.selection().selection();
     auto range = selection.isCaret()
-    ? wordRangeFromPosition(selection.start())
-    : createLiveRange(selection.toNormalizedRange());
+        ? wordRangeFromPosition(selection.start())
+        : selection.toNormalizedRange();
     if (!range)
         return { };
     if (!candidateWouldReplaceText(selection))
@@ -4193,8 +4193,7 @@ void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
     } else
         insertText(acceptedCandidate.replacement, nullptr);
 
-    RefPtr<Range> insertedCandidateRange = rangeExpandedByCharactersInDirectionAtWordBoundary(selection.visibleStart(), acceptedCandidate.replacement.length(), SelectionDirection::Backward);
-    if (insertedCandidateRange)
+    if (auto insertedCandidateRange = rangeExpandedByCharactersInDirectionAtWordBoundary(selection.visibleStart(), acceptedCandidate.replacement.length(), SelectionDirection::Backward))
         addMarker(*insertedCandidateRange, DocumentMarker::AcceptedCandidate, acceptedCandidate.replacement);
 
     m_isHandlingAcceptedCandidate = false;

@@ -30,6 +30,7 @@
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/HTMLElement.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/Text.h>
 #import <WebCore/markup.h>
 #import <wtf/NakedRef.h>
@@ -79,7 +80,7 @@
 
 - (WKDOMNode *)createDocumentFragmentWithText:(NSString *)text
 {
-    return WebKit::toWKDOMNode(createFragmentFromText(downcast<WebCore::Document>(*_impl).createRange().get(), text).ptr());
+    return WebKit::toWKDOMNode(createFragmentFromText(makeRangeSelectingNodeContents(downcast<WebCore::Document>(*_impl)), text).ptr());
 }
 
 - (id)parserYieldToken

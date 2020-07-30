@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebArchive_h
-#define WebArchive_h
+#pragma once
 
 #if PLATFORM(COCOA)
 
@@ -38,7 +37,7 @@ class Data;
 
 namespace WebCore {
 class LegacyWebArchive;
-class Range;
+struct SimpleRange;
 }
 
 namespace API {
@@ -52,7 +51,7 @@ public:
     static Ref<WebArchive> create(WebArchiveResource* mainResource, RefPtr<API::Array>&& subresources, RefPtr<API::Array>&& subframeArchives);
     static Ref<WebArchive> create(API::Data*);
     static Ref<WebArchive> create(RefPtr<WebCore::LegacyWebArchive>&&);
-    static Ref<WebArchive> create(WebCore::Range&);
+    static Ref<WebArchive> create(const WebCore::SimpleRange&);
 
     WebArchiveResource* mainResource();
     API::Array* subresources();
@@ -76,5 +75,3 @@ private:
 } // namespace API
 
 #endif // PLATFORM(COCOA)
-
-#endif // WebArchive_h

@@ -1,3 +1,14 @@
+2020-07-30  Darin Adler  <darin@apple.com>
+
+        Further reduction in the use of live ranges, particularly in headers
+        https://bugs.webkit.org/show_bug.cgi?id=214793
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition enclosingTextUnitOfGranularity:inDirectionIfAtBoundary:]):
+        Use SimpleRange.
+
 2020-07-19  Darin Adler  <darin@apple.com>
 
         Remove live ranges from Editor.h and EditorClient.h

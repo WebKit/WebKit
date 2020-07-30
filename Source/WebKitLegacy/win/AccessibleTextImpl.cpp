@@ -36,6 +36,7 @@
 #include <WebCore/HTMLTextFormControlElement.h>
 #include <WebCore/Node.h>
 #include <WebCore/Position.h>
+#include <WebCore/Range.h>
 #include <WebCore/RenderTextControl.h>
 #include <WebCore/VisibleSelection.h>
 #include <WebCore/VisibleUnits.h>

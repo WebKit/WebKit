@@ -65,7 +65,7 @@ bool WebContentReader::readPlainText(const String& text)
     if (!allowPlainText)
         return false;
 
-    addFragment(createFragmentFromText(createLiveRange(context), text));
+    addFragment(createFragmentFromText(context, text));
 
     madeFragmentFromPlainText = true;
     return true;

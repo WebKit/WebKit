@@ -1833,11 +1833,11 @@ VisiblePosition positionOfNextBoundaryOfGranularity(const VisiblePosition& vp, T
     }
 }
 
-RefPtr<Range> enclosingTextUnitOfGranularity(const VisiblePosition& vp, TextGranularity granularity, SelectionDirection direction)
+Optional<SimpleRange> enclosingTextUnitOfGranularity(const VisiblePosition& vp, TextGranularity granularity, SelectionDirection direction)
 {
     // This is particularly inefficient.  We could easily obtain the answer with the boundaries computed below.
     if (!withinTextUnitOfGranularity(vp, granularity, direction))
-        return nullptr;
+        return WTF::nullopt;
 
     VisiblePosition prevBoundary;
     VisiblePosition nextBoundary;
@@ -1889,16 +1889,16 @@ RefPtr<Range> enclosingTextUnitOfGranularity(const VisiblePosition& vp, TextGran
 
         default:
             ASSERT_NOT_REACHED();
-            return nullptr;
+            return WTF::nullopt;
     }
 
     if (prevBoundary.isNull() || nextBoundary.isNull())
-        return nullptr;
+        return WTF::nullopt;
 
     if (vp < prevBoundary || vp > nextBoundary)
-        return nullptr;
+        return WTF::nullopt;
 
-    return Range::create(prevBoundary.deepEquivalent().deprecatedNode()->document(), prevBoundary, nextBoundary);
+    return makeSimpleRange(prevBoundary, nextBoundary);
 }
 
 std::ptrdiff_t distanceBetweenPositions(const VisiblePosition& a, const VisiblePosition& b)
@@ -1944,19 +1944,14 @@ void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter
     twoBefore = characters[2];
 }
 
-RefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
+Optional<SimpleRange> wordRangeFromPosition(const VisiblePosition& position)
 {
     if (position.isNull())
-        return nullptr;
+        return WTF::nullopt;
 
-    RefPtr<Range> range = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Backward);
-
-    if (!range) {
-        // We could be at the start of a word, try forward.
-        range = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward);
-    }
-
-    if (range)
+    if (auto range = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Backward))
+        return range;
+    if (auto range = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward))
         return range;
 
     VisiblePosition currentPosition = position;
@@ -1965,13 +1960,7 @@ RefPtr<Range> wordRangeFromPosition(const VisiblePosition& position)
     } while (currentPosition.isNotNull() && !atBoundaryOfGranularity(currentPosition, TextGranularity::WordGranularity, SelectionDirection::Backward));
     if (currentPosition.isNull())
         currentPosition = positionOfNextBoundaryOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward);
-
-    if (currentPosition.isNotNull()) {
-        range = Range::create(position.deepEquivalent().deprecatedNode()->document(), currentPosition, position);
-        ASSERT(range);
-    }
-
-    return range;
+    return makeSimpleRange(currentPosition, position);
 }
 
 VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position)
@@ -1982,11 +1971,11 @@ VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position)
         result = position;
     } else if (withinTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward)) {
         // The position lies within a word.
-        RefPtr<Range> wordRange = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward);
-
-        result = wordRange->startPosition();
-        if (distanceBetweenPositions(position, result) > 1)
-            result = wordRange->endPosition();
+        if (auto wordRange = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward)) {
+            result = createLegacyEditingPosition(wordRange->start);
+            if (distanceBetweenPositions(position, result) > 1)
+                result = createLegacyEditingPosition(wordRange->end);
+        }
     } else if (atBoundaryOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Backward)) {
         // The position is at the end of a word.
         result = position;
@@ -2002,7 +1991,7 @@ VisiblePosition closestWordBoundaryForPosition(const VisiblePosition& position)
     return result;
 }
 
-RefPtr<Range> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePosition& position, int numberOfCharactersToExpand, SelectionDirection direction)
+Optional<SimpleRange> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePosition& position, int numberOfCharactersToExpand, SelectionDirection direction)
 {
     Position start = position.deepEquivalent();
     Position end = position.deepEquivalent();
@@ -2018,10 +2007,10 @@ RefPtr<Range> rangeExpandedByCharactersInDirectionAtWordBoundary(const VisiblePo
     if (direction == SelectionDirection::Forward && !atBoundaryOfGranularity(end, TextGranularity::WordGranularity, SelectionDirection::Forward))
         end = endOfWord(end).deepEquivalent();
 
-    return makeRange(start, end);
+    return makeSimpleRange(start, end);
 }    
 
-RefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition& position, int numberOfCharactersToExpand)
+Optional<SimpleRange> rangeExpandedAroundPositionByCharacters(const VisiblePosition& position, int numberOfCharactersToExpand)
 {
     Position start = position.deepEquivalent();
     Position end = position.deepEquivalent();
@@ -2029,8 +2018,7 @@ RefPtr<Range> rangeExpandedAroundPositionByCharacters(const VisiblePosition& pos
         start = start.previous(Character);
         end = end.next(Character);
     }
-    
-    return makeRange(start, end);
+    return makeSimpleRange(start, end);
 }
 
 std::pair<VisiblePosition, WithinWordBoundary> wordBoundaryForPositionWithoutCrossingLine(const VisiblePosition& position)
@@ -2041,9 +2029,9 @@ std::pair<VisiblePosition, WithinWordBoundary> wordBoundaryForPositionWithoutCro
     if (withinTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward)) {
         auto adjustedPosition = position;
         if (auto wordRange = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Forward)) {
-            adjustedPosition = wordRange->startPosition();
+            adjustedPosition = createLegacyEditingPosition(wordRange->start);
             if (distanceBetweenPositions(position, adjustedPosition) > 1)
-                adjustedPosition = wordRange->endPosition();
+                adjustedPosition = createLegacyEditingPosition(wordRange->end);
         }
         return { adjustedPosition, WithinWordBoundary::Yes };
     }

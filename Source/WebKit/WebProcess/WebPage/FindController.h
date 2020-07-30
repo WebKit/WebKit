@@ -106,7 +106,7 @@ private:
     // the find indicator isn't showing, but it will never be false when it is showing.
     bool m_isShowingFindIndicator { false };
     WebCore::IntRect m_findIndicatorRect;
-    Vector<RefPtr<WebCore::Range>> m_findMatches;
+    Vector<WebCore::SimpleRange> m_findMatches;
     // Index value is -1 if not found or if number of matches exceeds provided maximum.
     int m_foundStringMatchIndex { -1 };
 
