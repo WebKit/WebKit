@@ -1,3 +1,12 @@
+2020-07-30  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk1 ] imported/w3c/web-platform-tests/pointerevents/pointerevent_attributes_hoverable_pointers.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214967
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-07-29  Kate Cheney  <katherine_cheney@apple.com>
 
         Migrate App-Bound Domains code from WebKit Additions
