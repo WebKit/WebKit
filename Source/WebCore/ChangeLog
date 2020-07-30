@@ -1,3 +1,20 @@
+2020-07-30  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make DecoderTest run against .mp4 files; add rate-limiting.
+        https://bugs.webkit.org/show_bug.cgi?id=214807
+
+        Reviewed by Darin Adler.
+
+        Export registerWebKitVP9Decoder() from VP9UtilitiesCocoa instead of LibWebRTCProvider to make it easier
+        for DecodeTest to import, as LibWebRTCProvider also pulls in a bunch of libwebrtc headers. Also, export
+        SourceBufferParser.h so DecoderTest can create parsers for fMP4 files.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.h:
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+        (WebCore::registerWebKitVP9Decoder):
+
 2020-07-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Clicking on a shadow DOM does not move the selection to the focused element when delegatesFocus is set to true

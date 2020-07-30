@@ -29,6 +29,7 @@
 #if PLATFORM(COCOA)
 
 #import "FourCC.h"
+#import "LibWebRTCProvider.h"
 #import "MediaCapabilitiesInfo.h"
 #import "PlatformScreen.h"
 #import "ScreenProperties.h"
@@ -94,6 +95,11 @@ static ResolutionCategory resolutionCategory(const FloatSize& size)
     if (pixels > 640 * 480)
         return ResolutionCategory::R_720p;
     return ResolutionCategory::R_480p;
+}
+
+void registerWebKitVP9Decoder()
+{
+    LibWebRTCProvider::registerWebKitVP9Decoder();
 }
 
 void registerSupplementalVP9Decoder()

@@ -1960,9 +1960,9 @@ void WebProcess::enableVP9Decoder()
         return;
 
     m_vp9DecoderEnabled = true;
-    LibWebRTCProvider::registerWebKitVP9Decoder();
 
 #if PLATFORM(COCOA)
+    WebCore::registerWebKitVP9Decoder();
     WebCore::registerSupplementalVP9Decoder();
 #endif
 }

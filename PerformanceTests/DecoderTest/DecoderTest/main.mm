@@ -28,18 +28,22 @@
 #import <CoreMedia/CMBufferQueue.h>
 #import <CoreMedia/CMFormatDescription.h>
 #import <CoreMedia/CMSampleBuffer.h>
+#import <CoreServices/CoreServices.h>
 #import <Foundation/Foundation.h>
+#import <WebCore/ContentType.h>
 #import <WebCore/MediaSample.h>
 #import <WebCore/RuntimeEnabledFeatures.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SourceBufferParserWebM.h>
+#import <WebCore/UTIUtilities.h>
 #import <WebCore/VP9UtilitiesCocoa.h>
 #import <WebCore/WebCoreDecompressionSession.h>
 #import <getopt.h>
-#import <webrtc/sdk/WebKit/WebKitVP9Decoder.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <wtf/CPUTime.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/URL.h>
 #import <wtf/WTFSemaphore.h>
 #import <wtf/cf/TypeCastsCF.h>
 
@@ -54,9 +58,11 @@ static Function<void()>& updateOutputFunction()
 int main(int argc, char* argv[])
 {
     int enableHardwareDecoder = true;
+    int rateLimit = false;
     static struct option longopts[] = {
         { "hardware",    no_argument, &enableHardwareDecoder, 1 },
         { "no-hardware", no_argument, &enableHardwareDecoder, 0 },
+        { "rate-limit",  no_argument, &rateLimit, 1 },
         { NULL,          0,           NULL, 0 }
     };
 
@@ -64,6 +70,7 @@ int main(int argc, char* argv[])
         fprintf(stderr, "Usage: %s [options] <file>\n", argv[0]);
         fprintf(stderr, "\tOptions:\n"
             "\t\t--[no-]hardware     # Enable or disable the hardware decoder\n"
+            "\t\t--rate-limit        # Rate limit the decoder to decode samples at the natural frame rate\n"
         );
     };
 
@@ -88,9 +95,25 @@ int main(int argc, char* argv[])
 
     @autoreleasepool {
         WTF::initializeMainThread();
-        webrtc::registerWebKitVP9Decoder();
+        registerWebKitVP9Decoder();
         registerSupplementalVP9Decoder();
         RuntimeEnabledFeatures::sharedFeatures().setWebMParserEnabled(true);
+
+        auto mdItem = adoptCF(MDItemCreate(kCFAllocatorDefault, filename.createCFString().get()));
+        auto mdContentType = adoptCF(checked_cf_cast<CFStringRef>(MDItemCopyAttribute(mdItem.get(), kMDItemContentType)));
+        if (!mdContentType) {
+            fprintf(stderr, "Could not discover file type of file \"%s\"\n", filename.utf8().data());
+            return -1;
+        }
+
+        auto mimeType = MIMETypeFromUTI(mdContentType.get());
+        if (mimeType.isEmpty() && filename.endsWith(".webm"))
+            mimeType = "video/webm";
+
+        if (mimeType.isEmpty()) {
+            fprintf(stderr, "Could not discover file type of file \"%s\"\n", filename.utf8().data());
+            return -1;
+        }
 
         auto buffer = SharedBuffer::createWithContentsOfFile(filename.utf8().data());
         if (!buffer) {
@@ -100,8 +123,13 @@ int main(int argc, char* argv[])
 
         fprintf(stdout, "Parsing \"%s\"...\n", filename.utf8().data());
 
-        SourceBufferParserWebM parser;
-        parser.setDidEncounterErrorDuringParsingCallback([&] (uint64_t errorCode) {
+        auto parser = SourceBufferParser::create(ContentType(mimeType));
+        if (!buffer) {
+            fprintf(stderr, "Could not create parser for file of type \"%s\"\n", mimeType.utf8().data());
+            return -1;
+        }
+
+        parser->setDidEncounterErrorDuringParsingCallback([&] (uint64_t errorCode) {
             fprintf(stderr, "Parser encountered error %llu, exiting", errorCode);
             exit(-1);
         });
@@ -124,20 +152,25 @@ int main(int argc, char* argv[])
             float fps = decodedSamples / duration.value();
 
             fprintf(stdout, "Decoded %llu samples in %g seconds (%g fps)\n", decodedSamples, duration.value(), fps);
-            if (startCPUTime && endCPUTime)
-                fprintf(stdout, "CPU Usage: %g %%\n", endCPUTime->percentageCPUUsageSince(*startCPUTime));
+            if (startCPUTime && endCPUTime) {
+                auto percentage = endCPUTime->percentageCPUUsageSince(*startCPUTime);
+                fprintf(stdout, "CPU Usage: %g %%, (%g %% per frame)\n", percentage, percentage / decodedSamples);
+            }
         };
 
         struct sigaction action { };
         action.sa_flags = SA_SIGINFO;
-        action.sa_sigaction = [] (int, siginfo_t*, void*) {
+        action.sa_sigaction = [] (int signal, siginfo_t*, void*) {
             if (updateOutputFunction())
                 updateOutputFunction()();
+            if (signal == SIGINT)
+                exit(-1);
         };
         sigaction(SIGINFO, &action, nullptr);
+        sigaction(SIGINT, &action, nullptr);
 
         WTF::Semaphore sampleSemaphore { 0 };
-        parser.setDidProvideMediaDataCallback([&] (Ref<MediaSample>&& sample, uint64_t, const String&) {
+        parser->setDidProvideMediaDataCallback([&] (Ref<MediaSample>&& sample, uint64_t, const String&) {
             auto platformSample = sample->platformSample();
             if (platformSample.type != PlatformSample::CMSampleBufferType)
                 return;
@@ -152,6 +185,7 @@ int main(int argc, char* argv[])
                 auto size = sample->presentationSize();
                 startTime = MonotonicTime::now();
                 startCPUTime = CPUTime::get();
+
                 fprintf(stdout, "Size: %g x %g\n", size.width(), size.height());
                 firstSample = false;
             }
@@ -167,16 +201,16 @@ int main(int argc, char* argv[])
             Vector<unsigned char> bytes;
             bytes.resize(buffer->size());
             memcpy(bytes.data(), buffer->data(), buffer->size());
-            parser.appendData(WTFMove(bytes));
+            parser->appendData(WTFMove(bytes));
             dispatch_async(dispatch_get_main_queue(), [&] {
                 finishedParsingSemaphore.signal();
             });
         });
 
+        auto decompressionSession = WebCoreDecompressionSession::createOpenGL();
         Semaphore finishedDecodingSemaphore { 0 };
         auto decoderQueue = dispatch_queue_create("decoder queue", DISPATCH_QUEUE_CONCURRENT);
         dispatch_async(decoderQueue, [&] {
-            auto decompressionSession = WebCoreDecompressionSession::createOpenGL();
             decompressionSession->setHardwareDecoderEnabled(enableHardwareDecoder);
 
             do {
@@ -187,7 +221,14 @@ int main(int argc, char* argv[])
                 }
 
                 auto sample = adoptCF((CMSampleBufferRef)(const_cast<void*>(CMBufferQueueDequeueAndRetain(bufferQueue))));
+                auto decodeStartTime = MonotonicTime::now();
+                auto duration = PAL::toMediaTime(CMSampleBufferGetOutputDuration(sample.get()));
                 decompressionSession->decodeSampleSync(sample.get());
+                auto decodeEndTime = MonotonicTime::now();
+                auto remainingTime = Seconds(duration.toDouble()) - (decodeEndTime - decodeStartTime);
+
+                if (rateLimit && remainingTime > Seconds(0))
+                    sleep(remainingTime);
                 ++decodedSamples;
             } while (true);
         });

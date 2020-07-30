@@ -1,3 +1,18 @@
+2020-07-30  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Make DecoderTest run against .mp4 files; add rate-limiting.
+        https://bugs.webkit.org/show_bug.cgi?id=214807
+
+        Reviewed by Darin Adler.
+
+        Look up the UTI type of the specified file, and create the appropriate SourceBufferParser
+        by passing in the ContentType (converted from UTI). Also, add a --rate-limit flag which
+        causes the decompression session to run at the same FPS as the underlying media.
+
+        * DecoderTest/DecoderTest.xcodeproj/project.pbxproj:
+        * DecoderTest/DecoderTest/main.mm:
+        (main):
+
 2020-07-24  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add PerformanceTest tool for measuring raw speed of a video decoder

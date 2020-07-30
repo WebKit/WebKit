@@ -37,7 +37,7 @@ namespace WebCore {
 class ContentType;
 class MediaSample;
 
-class SourceBufferParser : public ThreadSafeRefCounted<SourceBufferParser> {
+class WEBCORE_EXPORT SourceBufferParser : public ThreadSafeRefCounted<SourceBufferParser> {
 public:
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
 

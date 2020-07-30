@@ -4249,6 +4249,7 @@
 		CDEA7C841276230400B846DD /* RenderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEA7C821276230400B846DD /* RenderFullScreen.h */; };
 		CDECA89A1EDF447D00DCB08B /* AVAssetTrackUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDECA8981EDF447D00DCB08B /* AVAssetTrackUtilities.mm */; };
 		CDECA89B1EDF447D00DCB08B /* AVAssetTrackUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CDECA8991EDF447D00DCB08B /* AVAssetTrackUtilities.h */; };
+		CDED1C3C24CD305700934E12 /* VP9UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD6FE5B824BCE645009FCDA4 /* VP9UtilitiesCocoa.mm */; };
 		CDEF4FD717E85C8F00AEE24B /* GridLength.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEF4FD617E85C8F00AEE24B /* GridLength.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDEFA2281E7669E8000AE99C /* PlatformAudioData.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE667A11E4BBA4D00E8154A /* PlatformAudioData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF1350824C9FA4400432E1E /* SourceBufferParserWebM.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8F667224C0F208000C421C /* SourceBufferParserWebM.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -35048,6 +35049,7 @@
 				DECA80391F9FED6A00E3B661 /* UnifiedSource248.cpp in Sources */,
 				DECA803A1F9FED6A00E3B661 /* UnifiedSource249.cpp in Sources */,
 				DECA803B1F9FED6A00E3B661 /* UnifiedSource250.cpp in Sources */,
+				CDED1C3C24CD305700934E12 /* VP9UtilitiesCocoa.mm in Sources */,
 				DECA803C1F9FED6A00E3B661 /* UnifiedSource251.cpp in Sources */,
 				DECA803D1F9FED6A00E3B661 /* UnifiedSource252.cpp in Sources */,
 				DECA803E1F9FED6A00E3B661 /* UnifiedSource253.cpp in Sources */,

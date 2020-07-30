@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CD89724C24CA485100AF6621 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CD89724B24CA485100AF6621 /* libwebrtc.dylib */; };
-		CDE0C9BF24CA247A00593A83 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDE0C9BE24CA247A00593A83 /* JavaScriptCore.framework */; };
 		CDE0C9C124CA249A00593A83 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDE0C9C024CA249A00593A83 /* WebKit.framework */; };
 		CDE0C9C424CA36CD00593A83 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDE0C9C324CA36CD00593A83 /* CoreMedia.framework */; };
+		CDEB7B2924CB558C0015249E /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEB7B2824CB558C0015249E /* CoreServices.framework */; };
+		CDEB7B2B24CB68E90015249E /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEB7B2A24CB68E90015249E /* VideoToolbox.framework */; };
+		CDED1C3E24CD350600934E12 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDE0C9BE24CA247A00593A83 /* JavaScriptCore.framework */; };
 		CDF1350124C9F99900432E1E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF1350024C9F99900432E1E /* main.mm */; };
 /* End PBXBuildFile section */
 
@@ -27,11 +28,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		CD89724B24CA485100AF6621 /* libwebrtc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libwebrtc.dylib; path = ../../WebKitBuild/Release/libwebrtc.dylib; sourceTree = "<group>"; };
 		CDE0C9BE24CA247A00593A83 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		CDE0C9C024CA249A00593A83 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		CDE0C9C324CA36CD00593A83 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		CDEB7B2624CAC7420015249E /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		CDEB7B2824CB558C0015249E /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
+		CDEB7B2A24CB68E90015249E /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		CDF134FD24C9F99900432E1E /* DecoderTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DecoderTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDF1350024C9F99900432E1E /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		CDF1350B24CA02F300432E1E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -45,8 +47,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDE0C9C424CA36CD00593A83 /* CoreMedia.framework in Frameworks */,
-				CDE0C9BF24CA247A00593A83 /* JavaScriptCore.framework in Frameworks */,
-				CD89724C24CA485100AF6621 /* libwebrtc.dylib in Frameworks */,
+				CDEB7B2924CB558C0015249E /* CoreServices.framework in Frameworks */,
+				CDED1C3E24CD350600934E12 /* JavaScriptCore.framework in Frameworks */,
+				CDEB7B2B24CB68E90015249E /* VideoToolbox.framework in Frameworks */,
 				CDE0C9C124CA249A00593A83 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,8 +61,9 @@
 			isa = PBXGroup;
 			children = (
 				CDE0C9C324CA36CD00593A83 /* CoreMedia.framework */,
+				CDEB7B2824CB558C0015249E /* CoreServices.framework */,
 				CDE0C9BE24CA247A00593A83 /* JavaScriptCore.framework */,
-				CD89724B24CA485100AF6621 /* libwebrtc.dylib */,
+				CDEB7B2A24CB68E90015249E /* VideoToolbox.framework */,
 				CDE0C9C024CA249A00593A83 /* WebKit.framework */,
 			);
 			name = Frameworks;
@@ -86,8 +90,8 @@
 		CDF134FF24C9F99900432E1E /* DecoderTest */ = {
 			isa = PBXGroup;
 			children = (
-				CDF1350024C9F99900432E1E /* main.mm */,
 				CDEB7B2624CAC7420015249E /* config.h */,
+				CDF1350024C9F99900432E1E /* main.mm */,
 			);
 			path = DecoderTest;
 			sourceTree = "<group>";
