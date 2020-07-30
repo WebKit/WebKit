@@ -1,4 +1,4 @@
-//@ runDefault("--useConcurrentJIT=0")
+//@ requireOptions("--useConcurrentJIT=0")
 
 let buffer = new Uint8Array([
   0,97,115,109,1,0,0,0,1,7,1,96,0,3,127,127,127,3,2,1,0,4,6,
