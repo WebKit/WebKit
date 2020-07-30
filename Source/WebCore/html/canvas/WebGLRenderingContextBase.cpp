@@ -1553,10 +1553,6 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, long long size, GCGL
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferData", "size < 0");
         return;
     }
-    if (!size) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferData", "size == 0");
-        return;
-    }
     if (!buffer->associateBufferData(static_cast<GCGLsizeiptr>(size))) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferData", "invalid buffer");
         return;
@@ -1597,7 +1593,7 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, Optional<BufferDataS
     }, data.value());
 }
 
-void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset, Optional<BufferDataSource>&& data)
+void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset, BufferDataSource&& data)
 {
     if (isContextLostOrPending())
         return;
@@ -1608,8 +1604,6 @@ void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset,
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferSubData", "offset < 0");
         return;
     }
-    if (!data)
-        return;
 
     WTF::visit([&](auto& data) {
         if (!buffer->associateBufferSubData(static_cast<GCGLintptr>(offset), data.get())) {
@@ -1623,7 +1617,7 @@ void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset,
             // The bufferSubData function failed. Tell the buffer it doesn't have the data it thinks it does.
             buffer->disassociateBufferData();
         }
-    }, data.value());
+    }, data);
 }
 
 GCGLenum WebGLRenderingContextBase::checkFramebufferStatus(GCGLenum target)

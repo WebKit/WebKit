@@ -138,7 +138,7 @@ public:
     using BufferDataSource = WTF::Variant<RefPtr<ArrayBuffer>, RefPtr<ArrayBufferView>>;
     void bufferData(GCGLenum target, long long size, GCGLenum usage);
     void bufferData(GCGLenum target, Optional<BufferDataSource>&&, GCGLenum usage);
-    void bufferSubData(GCGLenum target, long long offset, Optional<BufferDataSource>&&);
+    void bufferSubData(GCGLenum target, long long offset, BufferDataSource&&);
 
     GCGLenum checkFramebufferStatus(GCGLenum target);
     void clear(GCGLbitfield mask);

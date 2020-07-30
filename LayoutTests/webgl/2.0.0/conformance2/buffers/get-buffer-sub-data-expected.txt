@@ -1,39 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/buffers/get-buffer-sub-data.html
-[ 1: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
-[ 2: PASS ] getError was expected value: NO_ERROR : Should be no errors from buffer setup.
-[ 3: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 0, retArray)
-[ 4: PASS ] gl.getBufferSubData(gl.ARRAY_BUFFER, 0, new ArrayBuffer(4)) threw exception TypeError: Argument 3 ('dstData') to WebGL2RenderingContext.getBufferSubData must be an instance of ArrayBufferView.
-[ 5: PASS ] getError was expected value: NO_ERROR : Should not generate GL error
-[ 6: PASS ] gl.getBufferSubData(gl.ARRAY_BUFFER, 0, null) threw exception TypeError: Argument 3 ('dstData') to WebGL2RenderingContext.getBufferSubData must be an instance of ArrayBufferView.
-[ 7: PASS ] getError was expected value: NO_ERROR : Should not generate GL error
-[ 8: PASS ] The returned array buffer matches original data
-[ 9: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 0, retArray, 2)
-[ 10: PASS ] areArraysEqual(retArray.slice(0, 2), [0, 0]) is true
-[ 11: PASS ] areArraysEqual(retArray.slice(2), floatArray.slice(0, floatArray.length - 2)) is true
-[ 12: FAIL ] getError expected: NO_ERROR. Was INVALID_OPERATION : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 0, retArray, retArray.length)
-[ 13: PASS ] areArraysEqual(retArray, [0, 0, 0, 0, 0, 0, 0, 0, 0]) is true
-[ 14: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 0, retArray, retArray.length + 1)
-[ 15: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 0, retArray, 2, 2)
-[ 16: PASS ] areArraysEqual(retArray.slice(0, 2), [0, 0]) is true
-[ 17: PASS ] areArraysEqual(retArray.slice(2, 4), floatArray.slice(0, 2)) is true
-[ 18: PASS ] areArraysEqual(retArray.slice(4), [0, 0, 0, 0, 0]) is true
-[ 19: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 0, retArray, retArray.length - 1, 1)
-[ 20: PASS ] areArraysEqual(retArray.slice(0, 8), [0, 0, 0, 0, 0, 0, 0, 0]) is true
-[ 21: PASS ] areArraysEqual(retArray.slice(8), floatArray.slice(0, 1)) is true
-[ 22: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 0, retArray, retArray.length - 1, 2)
-[ 23: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : Extra length should generate INVALID_VALUE.
-[ 24: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, retArray.byteLength + 1, retArray)
-[ 25: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 1, retArray)
-[ 26: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.getBufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, retArray)
-[ 27: FAIL ] getError expected: INVALID_VALUE. Was INVALID_OPERATION : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, -1, retArray)
-[ 28: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 0, retArray)
-[ 29: PASS ] areArraysEqual(retArray, [0, 0, 0, 0, 0, 0, 0, 0, 0]) is true
-[ 30: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 0, retArray)
-[ 31: PASS ] areArraysEqual(retArray, floatArray) is true
-[ 32: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.getBufferSubData(gl.ARRAY_BUFFER, 0, retArray)
-[ 33: PASS ] areArraysEqual(retArray, floatArray) is true
-[ 34: PASS ] successfullyParsed is true
-[ FAIL ] 7 failures reported
+[ PASS ] All tests passed
 

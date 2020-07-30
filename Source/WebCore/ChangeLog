@@ -1,3 +1,21 @@
+2020-07-30  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Buffer updates
+        https://bugs.webkit.org/show_bug.cgi?id=209511
+
+        Reviewed by Dean Jackson.
+
+        Various fixes in bufferData, bufferSubData, and getBufferSubData. Passes all WebGL conformance tests in conformance/buffers/* and conformance2/buffers/*.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::sliceArrayBufferView):
+        (WebCore::WebGL2RenderingContext::getBufferSubData):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::bufferData):
+        (WebCore::WebGLRenderingContextBase::bufferSubData):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.idl:
+
 2020-07-30  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Make DecoderTest run against .mp4 files; add rate-limiting.

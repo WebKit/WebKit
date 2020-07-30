@@ -495,7 +495,7 @@ typedef (HTMLCanvasElement) WebGLCanvas;
     void blendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
     void bufferData(GLenum target, BufferDataSource? data, GLenum usage);
     void bufferData(GLenum target, GLsizeiptr size, GLenum usage);
-    void bufferSubData(GLenum target, GLintptr offset, BufferDataSource? data);
+    void bufferSubData(GLenum target, GLintptr offset, BufferDataSource data);
 
     GLenum checkFramebufferStatus(GLenum target);
     void clear(GLbitfield mask);
