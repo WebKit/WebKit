@@ -576,6 +576,16 @@ uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef pageRef)
     return WebKit::toImpl(pageRef)->renderTreeSize();
 }
 
+// This function should be kept around for compatibility with SafariForWebKitDevelopment.
+void WKBundlePageCopyRenderTree(WKBundlePageRef pageRef)
+{
+}
+
+// This function should be kept around for compatibility with SafariForWebKitDevelopment.
+void WKBundlePageCopyRenderLayerTree(WKBundlePageRef pageRef)
+{
+}
+
 void WKBundlePageSetPaintedObjectsCounterThreshold(WKBundlePageRef, uint64_t)
 {
     // FIXME: This function is only still here to keep open source Mac builds building.
