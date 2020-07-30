@@ -396,6 +396,7 @@ public:
 
     static AXTextStateChangeIntent defaultFocusTextStateChangeIntent() { return AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, true }); }
     virtual void focus(bool restorePreviousSelection = true, FocusDirection = FocusDirectionNone);
+    void revealFocusedElement(SelectionRestorationMode);
     virtual RefPtr<Element> focusAppearanceUpdateTarget();
     virtual void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode = SelectionRevealMode::Reveal);
     virtual void blur();

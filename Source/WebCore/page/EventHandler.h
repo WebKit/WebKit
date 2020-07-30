@@ -524,6 +524,7 @@ private:
     bool m_dragMayStartSelectionInstead { false };
 #endif
 
+    bool m_mouseDownDelegatedFocus { false };
     bool m_mouseDownWasSingleClickInSelection { false };
     enum SelectionInitiationState { HaveNotStartedSelection, PlacedCaret, ExtendedSelection };
     SelectionInitiationState m_selectionInitiationState { HaveNotStartedSelection };

@@ -1,3 +1,29 @@
+2020-07-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Clicking on a shadow DOM does not move the selection to the focused element when delegatesFocus is set to true
+        https://bugs.webkit.org/show_bug.cgi?id=214859
+        <rdar://problem/66192901>
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by EventHandler moving the selection to where the user had clicked, not to where the focus
+        had been delegated, which is a uniquely WebKit behavior. Fixed the bug by revealing the focused element as done
+        in Element::focus in EventHandler::dispatchMouseEvent and avoid updating the selection to the clicked point
+        later in EventHandler::handleMousePressEventSingleClick by adding an early exit.
+
+        Test: fast/shadow-dom/delegates-focus-and-types-into-input.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        (WebCore::Element::revealFocusedElement): Extracted from Element::focus.
+        * dom/Element.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEventSingleClick): Added an early exit when dispatchMouseEvent had
+        delegated the focus to an element different from the one the user had clicked.
+        (WebCore::EventHandler::dispatchMouseEvent): Added a code to reveal the newly focused element when the focus
+        had been delegated.
+        * page/EventHandler.h:
+
 2020-07-30  Tim Horton  <timothy_horton@apple.com>
 
         Web content gets stuck in an inactive state (no cursor updates or text insertion caret) when activating a tab with a thumbnail visible
