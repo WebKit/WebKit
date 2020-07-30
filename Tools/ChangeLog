@@ -1,3 +1,13 @@
+2020-07-30  Beth Dakin  <bdakin@apple.com>
+
+        Make report-non-inclusive-language ignore xcuserstate
+        https://bugs.webkit.org/show_bug.cgi?id=214985
+
+        Reviewed by Darin Adler.
+
+        Ignore xcuserstate since it introduces random noise.
+        * Scripts/report-non-inclusive-language:
+
 2020-07-30  Tim Horton  <timothy_horton@apple.com>
 
         Web content gets stuck in an inactive state (no cursor updates or text insertion caret) when activating a tab with a thumbnail visible
