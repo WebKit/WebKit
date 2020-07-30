@@ -1,3 +1,14 @@
+2020-07-29  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warning below since r265062.
+        warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
+
+        No new tests, no new behaviors.
+
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::copyFromChannel):
+        (WebCore::AudioBuffer::copyToChannel):
+
 2020-07-29  Jer Noble  <jer.noble@apple.com>
 
         Support HDR decode in SW VP9

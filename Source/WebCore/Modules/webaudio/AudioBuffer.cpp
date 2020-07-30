@@ -130,7 +130,7 @@ ExceptionOr<void> AudioBuffer::copyFromChannel(Ref<Float32Array>&& destination, 
     if (destination->isShared())
         return Exception { TypeError, "Destination may not be a shared buffer."_s };
     
-    if (channelNumber < 0 || channelNumber >= m_channels.size())
+    if (channelNumber >= m_channels.size())
         return Exception { IndexSizeError, "Not a valid channelNumber."_s };
     
     Float32Array* channelData = m_channels[channelNumber].get();
@@ -158,7 +158,7 @@ ExceptionOr<void> AudioBuffer::copyToChannel(Ref<Float32Array>&& source, unsigne
     if (source->isShared())
         return Exception { TypeError, "Source may not be a shared buffer."_s };
     
-    if (channelNumber < 0 || channelNumber >= m_channels.size())
+    if (channelNumber >= m_channels.size())
         return Exception { IndexSizeError, "Not a valid channelNumber."_s };
     
     Float32Array* channelData = m_channels[channelNumber].get();
