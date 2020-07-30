@@ -52,7 +52,7 @@ class AbstractCommitLogCommand(Command):
     _patch_by_regexp = re.compile(r'^Patch by (?P<name>.+?)\s+<(?P<email>[^<>]+)> on (?P<date>\d{4}-\d{2}-\d{2})$', re.MULTILINE)
     _committer_regexp = re.compile(r'^Author: (?P<email>\S+)\s+<[^>]+>$', re.MULTILINE)
     _date_regexp = re.compile(r'^Date:   (?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}) [\+\-]\d{4}$', re.MULTILINE)
-    _revision_regexp = re.compile(r'^git-svn-id: http://svn.webkit.org/repository/webkit/trunk@(?P<svnid>\d+) (?P<gitid>[0-9a-f\-]{36})$', re.MULTILINE)
+    _revision_regexp = re.compile(r'^git-svn-id: https?://svn.webkit.org/repository/webkit/trunk@(?P<svnid>\d+) (?P<gitid>[0-9a-f\-]{36})$', re.MULTILINE)
 
     def __init__(self, options=None):
         options = options or []

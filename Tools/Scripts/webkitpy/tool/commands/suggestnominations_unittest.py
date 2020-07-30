@@ -43,7 +43,7 @@ Date:   2011-09-15 19:56:21 +0000
 
     Reviewed by Geoffrey Garen.
 
-    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@95219 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@95219 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 """
     mock_same_author_commit_message = """Author: fpizlo@apple.com <fpizlo@apple.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
 Date:   2011-09-15 19:56:21 +0000
@@ -53,7 +53,7 @@ https://bugs.webkit.org/show_bug.cgi?id=68143
 
 Reviewed by Geoffrey Garen.
 
-git-svn-id: http://svn.webkit.org/repository/webkit/trunk@95219 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+git-svn-id: https://svn.webkit.org/repository/webkit/trunk@95219 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 """
 
     def _make_options(self, verbose=False, **kwargs):
@@ -91,7 +91,7 @@ Source/WebKit/chromium:
 
 * WebKit.gyp:
 
-git-svn-id: http://svn.webkit.org/repository/webkit/trunk@95188 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+git-svn-id: https://svn.webkit.org/repository/webkit/trunk@95188 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 """
 
     def test_basic(self):

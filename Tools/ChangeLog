@@ -1,3 +1,21 @@
+2020-07-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Replace 'http://svn.webkit.org' with 'https://svn.webkit.org' in webkitpy scripts
+        https://bugs.webkit.org/show_bug.cgi?id=214957
+
+        Reviewed by Daniel Bates.
+
+        SVNRepository.has_authorization_for_realm failed to find the realm
+        string.
+
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        (ChangeLogEntry): Removed a unused variable 'svn_id_regexp'.
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/config/urls.py:
+        * Scripts/webkitpy/tool/commands/suggestnominations.py:
+        (AbstractCommitLogCommand): Changed _revision_regexp to use 'https?' to accept 'https'.
+        * Scripts/webkitpy/tool/commands/suggestnominations_unittest.py:
+
 2020-07-29  Darin Adler  <darin@apple.com>
 
         Add script to help us count uses of non-inclusive terms

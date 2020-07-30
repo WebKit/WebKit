@@ -103,9 +103,6 @@ class ChangeLogEntry(object):
     # e.g. == Rolled over to ChangeLog-2011-02-16 ==
     rolled_over_regexp = r'^== Rolled over to ChangeLog-\d{4}-\d{2}-\d{2} ==$'
 
-    # e.g. git-svn-id: http://svn.webkit.org/repository/webkit/trunk@96161 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-    svn_id_regexp = r'git-svn-id: http://svn.webkit.org/repository/webkit/trunk@(?P<svnid>\d+) '
-
     split_names_regexp = r'\s*(?:,(?:\s+and\s+|&)?|(?:^|\s+)and\s+|&&|[/+&])\s*'
 
     def __init__(self, contents, committer_list=None, revision=None):

@@ -808,7 +808,7 @@ keychain
 K 15
 svn:realmstring
 V 39
-<http://svn.webkit.org:80> Mac OS Forge
+<https://svn.webkit.org:443> Mac OS Forge
 K 8
 username
 V 17
@@ -822,7 +822,7 @@ END
 K 15
 svn:realmstring
 V 39
-<http://svn.webkit.org:80> Mac OS Forge
+<https://svn.webkit.org:443> Mac OS Forge
 K 8
 username
 V 17
@@ -852,7 +852,7 @@ END
 K 15
 svn:realmstring
 V 39
-<http://svn.webkit.org:80> Mac OS Forge
+<https://svn.webkit.org:443> Mac OS Forge
 K 8
 username
 V 17
@@ -1769,7 +1769,12 @@ MOCK run_command: ['git', 'log', '-1', '--grep=git-svn-id:', '--date=iso', './MO
         self.assertEqual(scm.svn_branch(scm.checkout_root), 'trunk')
         self.assertEqual(scm.svn_url(scm.checkout_root), 'http://svn.webkit.org/repository/webkit/trunk')
 
-        scm._most_recent_log_matching = lambda grep_str, path: 'git-svn-id: http://svn.webkit.org/repository/webkit/branch/specialSubmission@258000 268f45cc-cd09-0410-ab3c-d52691b4dbfc'
+        scm._most_recent_log_matching = lambda grep_str, path: 'git-svn-id: https://svn.webkit.org/repository/webkit/trunk@258024 268f45cc-cd09-0410-ab3c-d52691b4dbfc'
+        self.assertEqual(scm.svn_revision(scm.checkout_root), '258024')
+        self.assertEqual(scm.svn_branch(scm.checkout_root), 'trunk')
+        self.assertEqual(scm.svn_url(scm.checkout_root), 'https://svn.webkit.org/repository/webkit/trunk')
+
+        scm._most_recent_log_matching = lambda grep_str, path: 'git-svn-id: https://svn.webkit.org/repository/webkit/branch/specialSubmission@258000 268f45cc-cd09-0410-ab3c-d52691b4dbfc'
         self.assertEqual(scm.svn_revision(scm.checkout_root), '258000')
         self.assertEqual(scm.svn_branch(scm.checkout_root), 'specialSubmission')
-        self.assertEqual(scm.svn_url(scm.checkout_root), 'http://svn.webkit.org/repository/webkit/branch/specialSubmission')
+        self.assertEqual(scm.svn_url(scm.checkout_root), 'https://svn.webkit.org/repository/webkit/branch/specialSubmission')
