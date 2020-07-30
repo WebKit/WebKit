@@ -150,6 +150,8 @@ Value* Procedure::addConstant(Origin origin, Type type, uint64_t bits)
 
 Value* Procedure::addBottom(Origin origin, Type type)
 {
+    if (type.isTuple())
+        return add<BottomTupleValue>(origin, type);
     return addIntConstant(origin, type, 0);
 }
 

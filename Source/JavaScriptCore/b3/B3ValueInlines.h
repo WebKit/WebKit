@@ -29,6 +29,7 @@
 
 #include "B3ArgumentRegValue.h"
 #include "B3AtomicValue.h"
+#include "B3BottomTupleValue.h"
 #include "B3CCallValue.h"
 #include "B3CheckValue.h"
 #include "B3Const32Value.h"
@@ -119,6 +120,8 @@ namespace JSC { namespace B3 {
         return MACRO(ConstFloatValue); \
     case ConstDouble: \
         return MACRO(ConstDoubleValue); \
+    case BottomTuple: \
+        return MACRO(BottomTupleValue); \
     case Fence: \
         return MACRO(FenceValue); \
     case SlotBase: \

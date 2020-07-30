@@ -1611,6 +1611,55 @@ static void testSimpleTuplePairStack(unsigned first, int64_t second)
     CHECK_EQ(compileAndRun<int64_t>(proc), first + second);
 }
 
+template<B3::TypeKind kind, typename ResultType>
+static void testBottomTupleValue()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    auto* tuple = root->appendNew<BottomTupleValue>(proc, Origin(), proc.addTuple({
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+    }));
+    Value* result = root->appendNew<ExtractValue>(proc, Origin(), kind, tuple, 0);
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    CHECK_EQ(compileAndRun<ResultType>(proc), 0);
+}
+
+template<B3::TypeKind kind, typename ResultType>
+static void testTouchAllBottomTupleValue()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Type tupleType = proc.addTuple({
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+        kind, kind, kind, kind, kind,
+    });
+    auto* tuple = root->appendNew<BottomTupleValue>(proc, Origin(), tupleType);
+    Value* result = root->appendNew<ExtractValue>(proc, Origin(), kind, tuple, 0);
+    for (unsigned index = 1; index < proc.resultCount(tupleType); ++index)
+        result = root->appendNew<Value>(proc, Add, Origin(), result, root->appendNew<ExtractValue>(proc, Origin(), kind, tuple, index));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    CHECK_EQ(compileAndRun<ResultType>(proc), 0);
+}
+
 template<bool shouldFixSSA>
 static void tailDupedTuplePair(unsigned first, double second)
 {
@@ -1811,6 +1860,14 @@ void addTupleTests(const char* filter, Deque<RefPtr<SharedTask<void()>>>& tasks)
     RUN_BINARY(testSimpleTuplePair, int32Operands(), int64Operands());
     RUN_BINARY(testSimpleTuplePairUnused, int32Operands(), int64Operands());
     RUN_BINARY(testSimpleTuplePairStack, int32Operands(), int64Operands());
+    RUN((testBottomTupleValue<Int32, int32_t>)());
+    RUN((testBottomTupleValue<Int64, int64_t>)());
+    RUN((testBottomTupleValue<Float, float>)());
+    RUN((testBottomTupleValue<Double, double>)());
+    RUN((testTouchAllBottomTupleValue<Int32, int32_t>)());
+    RUN((testTouchAllBottomTupleValue<Int64, int64_t>)());
+    RUN((testTouchAllBottomTupleValue<Float, float>)());
+    RUN((testTouchAllBottomTupleValue<Double, double>)());
     // use int64 as second argument because checking for NaN is annoying and doesn't really matter for this test.
     RUN_BINARY(tailDupedTuplePair<true>, int32Operands(), int64Operands());
     RUN_BINARY(tailDupedTuplePair<false>, int32Operands(), int64Operands());

@@ -391,6 +391,7 @@ protected:
         case Const64:
         case ConstFloat:
         case ConstDouble:
+        case BottomTuple:
         case Fence:
         case SlotBase:
         case Get:

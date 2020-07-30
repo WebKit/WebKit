@@ -109,6 +109,7 @@ b3/B3AtomicValue.cpp
 b3/B3Bank.cpp
 b3/B3BasicBlock.cpp
 b3/B3BlockInsertionSet.cpp
+b3/B3BottomTupleValue.cpp
 b3/B3BreakCriticalEdges.cpp
 b3/B3CCallValue.cpp
 b3/B3CaseCollection.cpp

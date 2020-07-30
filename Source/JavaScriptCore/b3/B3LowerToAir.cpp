@@ -142,7 +142,8 @@ public:
                 break;
             }
             case Get:
-            case Patchpoint: {
+            case Patchpoint:
+            case BottomTuple: {
                 if (value->type().isTuple())
                     ensureTupleTmps(value, m_tupleValueToTmps);
                 break;
@@ -436,7 +437,8 @@ private:
 
         switch (tupleValue->opcode()) {
         case Phi:
-        case Patchpoint: {
+        case Patchpoint:
+        case BottomTuple: {
             return m_tupleValueToTmps.find(tupleValue)->value;
         }
         case Get:
@@ -2972,6 +2974,27 @@ private:
             RELEASE_ASSERT(m_value->opcode() == ConstFloat || isIdentical(m_value->asDouble(), 0.0));
             RELEASE_ASSERT(m_value->opcode() == ConstDouble || isIdentical(m_value->asFloat(), 0.0f));
             append(MoveZeroToDouble, tmp(m_value));
+            return;
+        }
+
+        case BottomTuple: {
+            forEachImmOrTmp(m_value, [&] (Arg tmp, Type type, unsigned) {
+                switch (type.kind()) {
+                case Void:
+                case Tuple:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                case Int32:
+                case Int64:
+                    ASSERT(Arg::isValidImmForm(0));
+                    append(Move, imm(static_cast<int64_t>(0)), tmp.tmp());
+                    break;
+                case Float:
+                case Double:
+                    append(MoveZeroToDouble, tmp.tmp());
+                    break;
+                }
+            });
             return;
         }
 

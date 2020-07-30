@@ -116,6 +116,8 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
         return proc.add<ConstDoubleValue>(origin, doubleValue());
     case ConstFloat:
         return proc.add<ConstFloatValue>(origin, floatValue());
+    case BottomTuple:
+        return proc.add<BottomTupleValue>(origin, type());
     case ArgumentReg:
         return proc.add<ArgumentRegValue>(origin, Reg::fromIndex(static_cast<unsigned>(value())));
     case SlotBase:

@@ -1844,6 +1844,8 @@
 		E38652E3237CA0C900E1D5EE /* BlockDirectoryBits.h in Headers */ = {isa = PBXBuildFile; fileRef = E38652E2237CA0C800E1D5EE /* BlockDirectoryBits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3893A1D2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E3893A1C2203A7C600E79A74 /* AsyncFromSyncIteratorPrototype.lut.h */; };
 		E39006212208BFC4001019CF /* SubspaceAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = E39006202208BFC3001019CF /* SubspaceAccess.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E392E6F824D25FA600B20767 /* B3BottomTupleValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E392E6F624D25FA600B20767 /* B3BottomTupleValue.cpp */; };
+		E392E6F924D25FA900B20767 /* B3BottomTupleValue.h in Headers */ = {isa = PBXBuildFile; fileRef = E392E6F724D25FA600B20767 /* B3BottomTupleValue.h */; };
 		E393ADD81FE702D00022D681 /* WeakMapImplInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E393ADD71FE702CC0022D681 /* WeakMapImplInlines.h */; };
 		E39BF39922A2288B00BD183E /* SymbolTableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39BF39822A2288B00BD183E /* SymbolTableInlines.h */; };
 		E39D45F51D39005600B3B377 /* InterpreterInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E39D9D841D39000600667282 /* InterpreterInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5042,6 +5044,8 @@
 		E38D060D1F8E814100649CF2 /* JSScriptFetchParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSScriptFetchParameters.cpp; sourceTree = "<group>"; };
 		E39006202208BFC3001019CF /* SubspaceAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubspaceAccess.h; sourceTree = "<group>"; };
 		E3915C062309682900CB2561 /* WasmContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmContext.cpp; sourceTree = "<group>"; };
+		E392E6F624D25FA600B20767 /* B3BottomTupleValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3BottomTupleValue.cpp; path = b3/B3BottomTupleValue.cpp; sourceTree = "<group>"; };
+		E392E6F724D25FA600B20767 /* B3BottomTupleValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3BottomTupleValue.h; path = b3/B3BottomTupleValue.h; sourceTree = "<group>"; };
 		E393ADD71FE702CC0022D681 /* WeakMapImplInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakMapImplInlines.h; sourceTree = "<group>"; };
 		E3963CEC1B73F75000EB4CE5 /* NodesAnalyzeModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodesAnalyzeModule.cpp; sourceTree = "<group>"; };
 		E39BF39822A2288B00BD183E /* SymbolTableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolTableInlines.h; sourceTree = "<group>"; };
@@ -5658,6 +5662,8 @@
 				0F338E181BF286EA0013C88F /* B3BlockInsertionSet.h */,
 				0FEC84BA1BDACDAC0080FF74 /* B3BlockWorklist.h */,
 				DCFDFBD71D1F5D9800FE3D72 /* B3BottomProvider.h */,
+				E392E6F624D25FA600B20767 /* B3BottomTupleValue.cpp */,
+				E392E6F724D25FA600B20767 /* B3BottomTupleValue.h */,
 				0F6B8ADE1C4EFE1700969052 /* B3BreakCriticalEdges.cpp */,
 				0F6B8ADF1C4EFE1700969052 /* B3BreakCriticalEdges.h */,
 				DC9A0C1C1D2D94EF0085124E /* B3CaseCollection.cpp */,
@@ -9073,6 +9079,7 @@
 				0F338E1C1BF286EA0013C88F /* B3BlockInsertionSet.h in Headers */,
 				0FEC85041BDACDAC0080FF74 /* B3BlockWorklist.h in Headers */,
 				DCFDFBD91D1F5D9B00FE3D72 /* B3BottomProvider.h in Headers */,
+				E392E6F924D25FA900B20767 /* B3BottomTupleValue.h in Headers */,
 				0F6B8AE31C4EFE1700969052 /* B3BreakCriticalEdges.h in Headers */,
 				DC9A0C201D2D9CB30085124E /* B3CaseCollection.h in Headers */,
 				DC9A0C1F1D2D9CB10085124E /* B3CaseCollectionInlines.h in Headers */,
@@ -11175,6 +11182,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E392E6F824D25FA600B20767 /* B3BottomTupleValue.cpp in Sources */,
 				0FEC85AF1BDB5D5E0080FF74 /* testb3_1.cpp in Sources */,
 				5C3A77BA22F2480F003827FF /* testb3_2.cpp in Sources */,
 				5C3A77B922F2480B003827FF /* testb3_3.cpp in Sources */,

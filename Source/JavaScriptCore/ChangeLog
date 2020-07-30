@@ -1,3 +1,50 @@
+2020-07-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add B3::BottomTupleValue node
+        https://bugs.webkit.org/show_bug.cgi?id=214956
+        <rdar://problem/65192877>
+
+        Reviewed by Keith Miller.
+
+        In B3 strength reduction, we convert B3 values to bottom value based on type after Oops kind, and then they are *typically* removed later.
+        While we support bottom values for usual types, we do not have a bottom value for tuple type. So when replaceWithBottom is called, we
+        fail to replace Patchpoints producing tuples with bottom values.
+
+        This patch newly adds B3 BottomTupleValue, which is just a BottomValue for tuple. We can extend it to generate arbitrary constant
+        tuple values, but for now, we just support bottom tuple values. We add a new node instead of generating patchpoint which generates bottom
+        values since BottomTupleValues implementation is simpler: BottomTupleValue just emits bunch of zero clear for Air tmps and Air does everything
+        automatically. On the other hand, implementing a patchpoint needs to add code which clears things with zero while checking the ValueRep. And
+        since we have Const32, Const64, etc. values, having this kind of value for tuple too is natural. Plus, this design allows us to remove bunch
+        of unnecessary instructions after lowering this to Air since Air knows what instructions will be emitted by this BottomTupleValue, and Air
+        can remove a lot of zero clear instructions if they are not read later by Extract.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/B3BottomTupleValue.cpp: Copied from Source/JavaScriptCore/b3/B3InsertionSet.cpp.
+        (JSC::B3::BottomTupleValue::dumpMeta const):
+        * b3/B3BottomTupleValue.h: Copied from Source/JavaScriptCore/b3/B3InsertionSet.cpp.
+        * b3/B3InsertionSet.cpp:
+        (JSC::B3::InsertionSet::insertBottom):
+        * b3/B3LowerToAir.cpp:
+        * b3/B3Opcode.cpp:
+        (WTF::printInternal):
+        * b3/B3Opcode.h:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addBottom):
+        * b3/B3TypeMap.h:
+        (JSC::B3::TypeMap::TypeMap): Deleted.
+        * b3/B3Validate.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::effects const):
+        (JSC::B3::Value::key const):
+        * b3/B3Value.h:
+        * b3/B3ValueInlines.h:
+        * b3/B3ValueKey.cpp:
+        (JSC::B3::ValueKey::materialize const):
+        * b3/testb3_7.cpp:
+        (testBottomTupleValue):
+        (addTupleTests):
+
 2020-07-29  Tadeu Zagallo  <tzagallo@apple.com>
 
         WebAssembly validation for call_indirect is incorrect

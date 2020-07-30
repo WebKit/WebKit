@@ -171,6 +171,11 @@ public:
                 VALIDATE(!value->numChildren(), ("At ", *value));
                 VALIDATE(value->type() == Float, ("At ", *value));
                 break;
+            case BottomTuple:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(!value->numChildren(), ("At ", *value));
+                VALIDATE(value->type().isTuple(), ("At ", *value));
+                break;
             case Set:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(value->numChildren() == 1, ("At ", *value));

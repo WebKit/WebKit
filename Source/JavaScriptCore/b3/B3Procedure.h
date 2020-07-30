@@ -119,7 +119,7 @@ public:
     const Vector<Vector<Type>>& tuples() const { return m_tuples; };
     bool isValidTuple(Type tuple) const;
     Type extractFromTuple(Type tuple, unsigned index) const;
-    const Vector<Type>& tupleForType(Type tuple) const;
+    JS_EXPORT_PRIVATE const Vector<Type>& tupleForType(Type tuple) const;
 
     unsigned resultCount(Type type) const { return type.isTuple() ? tupleForType(type).size() : type.isNumeric(); }
     Type typeAtOffset(Type type, unsigned index) const { ASSERT(index < resultCount(type)); return type.isTuple() ? extractFromTuple(type, index) : type; }

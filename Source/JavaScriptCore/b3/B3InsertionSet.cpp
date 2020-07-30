@@ -47,6 +47,8 @@ Value* InsertionSet::insertIntConstant(size_t index, Value* likeValue, int64_t v
 
 Value* InsertionSet::insertBottom(size_t index, Origin origin, Type type)
 {
+    if (type.isTuple())
+        return insertValue(index, m_procedure.addBottom(origin, type));
     Value*& bottom = m_bottomForType[type];
     if (!bottom)
         bottom = insertValue(index, m_procedure.addBottom(origin, type));

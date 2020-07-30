@@ -533,6 +533,7 @@ Effects Value::effects() const
     case Const64:
     case ConstDouble:
     case ConstFloat:
+    case BottomTuple:
     case SlotBase:
     case ArgumentReg:
     case FramePointer:
@@ -748,6 +749,8 @@ ValueKey Value::key() const
         return ValueKey(ConstDouble, type(), asDouble());
     case ConstFloat:
         return ValueKey(ConstFloat, type(), asFloat());
+    case BottomTuple:
+        return ValueKey(BottomTuple, type());
     case ArgumentReg:
         return ValueKey(
             ArgumentReg, type(),
