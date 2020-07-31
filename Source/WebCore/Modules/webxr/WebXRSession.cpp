@@ -52,10 +52,8 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_activeRenderState(WebXRRenderState::create(mode))
     , m_animationTimer(*this, &WebXRSession::animationTimerFired)
 {
-    // TODO: If no other features of the user agent have done so already,
-    // perform the necessary platform-specific steps to initialize the device's
-    // tracking and rendering capabilities, including showing any necessary
-    // instructions to the user.
+    // FIXME: If no other features of the user agent have done so already, perform the necessary platform-specific steps to
+    // initialize the device's tracking and rendering capabilities, including showing any necessary instructions to the user.
     suspendIfNeeded();
 }
 

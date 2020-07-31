@@ -1,3 +1,41 @@
+2020-07-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Retrieve supported reference spaces from actual XR systems
+        https://bugs.webkit.org/show_bug.cgi?id=214187
+
+        Reviewed by Carlos Garcia Campos.
+
+        Each XR system supports a set of reference spaces which are used by WebXR to stablish
+        a spatial relationship with user's physical environment. The list of supported reference
+        spaces determine whether or not a session request succeeds or not, as it will refuse to
+        start a session with an unsupported reference space.
+
+        So far, no reference spaces were retrieved from the actual devices. This patch adds the
+        required OpenXR machinery to retrieve them. In particular, we have to create a XrSession
+        (although we don't have to start it) in order to retrieve the reference spaces. Since we
+        don't need it to show content to the user we can create it in headless mode and then discard
+        it afterwards when no longer needed.
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::WebXRSession): Clarify a comment. Also s/TODO/FIXME/g.
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        (PlatformXR::isExtensionSupported): New method to check whether a specific extension
+        is supported.
+        (PlatformXR::Instance::Impl::checkInstanceExtensionProperties const): renamed from
+        enumerateInstanceExtensionProperties(). Returns whether or not the call succeeded.
+        (PlatformXR::Instance::Impl::Impl): Pass the list of enabled extensions to the instance.
+        (PlatformXR::Instance::enumerateImmersiveXRDevices): Log the systems found.
+        (PlatformXR::OpenXRDevice::OpenXRDevice):
+        (PlatformXR::OpenXRDevice::enumerateReferenceSpaces const): New method to list the
+        supported reference spaces by the XR system.
+        (PlatformXR::OpenXRDevice::collectSupportedSessionModes): Store reference spaces as
+        enabled features for supported modes.
+        (PlatformXR::OpenXRDevice::collectConfigurationViews): Renamed from
+        enumerateConfigurationViews().
+        (PlatformXR::Instance::Impl::enumerateInstanceExtensionProperties const): Deleted.
+        (PlatformXR::OpenXRDevice::enumerateConfigurationViews): Deleted.
+        * platform/xr/openxr/PlatformXROpenXR.h:
+
 2020-07-31  Youenn Fablet  <youenn@apple.com>
 
         Add LibWebRTCAudioModule logging

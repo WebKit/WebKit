@@ -47,7 +47,9 @@ public:
     XrSystemId xrSystemId() const { return m_systemId; }
 private:
     void collectSupportedSessionModes();
-    void enumerateConfigurationViews();
+    void collectConfigurationViews();
+
+    ListOfEnabledFeatures enumerateReferenceSpaces(XrSession&) const;
 
     WebCore::IntSize recommendedResolution(SessionMode) final;
 
@@ -58,6 +60,7 @@ private:
 
     XrSystemId m_systemId;
     XrInstance m_instance;
+    XrSession m_session;
 };
 
 } // namespace PlatformXR

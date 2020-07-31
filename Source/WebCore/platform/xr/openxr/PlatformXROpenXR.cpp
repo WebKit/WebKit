@@ -24,6 +24,7 @@
 
 #include "Logging.h"
 #if USE_OPENXR
+#include <openxr/openxr_platform.h>
 #include <wtf/Optional.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
@@ -55,10 +56,10 @@ String resultToString(XrResult value, XrInstance instance)
     return makeString("<unknown ", int(value), ">");
 }
 
-#define RETURN_IF_FAILED(result, call, instance)                                                    \
+#define RETURN_IF_FAILED(result, call, instance, ...)                                               \
     if (XR_FAILED(result)) {                                                                        \
-        LOG(XR, "%s %s: %s\n", __func__, call, resultToString(result, instance).utf8().data()); \
-        return;                                                                                     \
+        LOG(XR, "%s %s: %s\n", __func__, call, resultToString(result, instance).utf8().data());     \
+        return __VA_ARGS__;                                                                         \
     }                                                                                               \
 
 #endif // USE_OPENXR
@@ -76,7 +77,7 @@ public:
 private:
 #if USE_OPENXR
     void enumerateApiLayerProperties() const;
-    void enumerateInstanceExtensionProperties() const;
+    bool checkInstanceExtensionProperties() const;
 
     XrInstance m_instance { XR_NULL_HANDLE };
 #endif // USE_OPENXR
@@ -107,14 +108,23 @@ void Instance::Impl::enumerateApiLayerProperties() const
     LOG(XR, "xrEnumerateApiLayerProperties(): %zu properties\n", properties.size());
 }
 
-void Instance::Impl::enumerateInstanceExtensionProperties() const
+static bool isExtensionSupported(const char* extensionName, Vector<XrExtensionProperties>& instanceExtensionProperties)
+{
+    auto position = instanceExtensionProperties.findMatching([extensionName](auto& property) {
+        return !strcmp(property.extensionName, extensionName);
+    });
+    return position != notFound;
+}
+
+bool Instance::Impl::checkInstanceExtensionProperties() const
 {
     uint32_t propertyCountOutput { 0 };
     XrResult result = xrEnumerateInstanceExtensionProperties(nullptr, 0, &propertyCountOutput, nullptr);
-    RETURN_IF_FAILED(result, "xrEnumerateInstanceExtensionProperties()", m_instance);
+    RETURN_IF_FAILED(result, "xrEnumerateInstanceExtensionProperties", m_instance, false);
+
     if (!propertyCountOutput) {
         LOG(XR, "xrEnumerateInstanceExtensionProperties(): no properties\n");
-        return;
+        return false;
     }
 
     Vector<XrExtensionProperties> properties(propertyCountOutput,
@@ -127,14 +137,18 @@ void Instance::Impl::enumerateInstanceExtensionProperties() const
 
     uint32_t propertyCountWritten { 0 };
     result = xrEnumerateInstanceExtensionProperties(nullptr, propertyCountOutput, &propertyCountWritten, properties.data());
-    RETURN_IF_FAILED(result, "xrEnumerateInstanceExtensionProperties()", m_instance);
+    RETURN_IF_FAILED(result, "xrEnumerateInstanceExtensionProperties", m_instance, false);
 #if !LOG_DISABLED
     LOG(XR, "xrEnumerateInstanceExtensionProperties(): %zu extension properties\n", properties.size());
-    for (auto& property : properties) {
-        LOG(XR, "  extension '%s', version %u\n",
-            property.extensionName, property.extensionVersion);
-    }
+    for (auto& property : properties)
+        LOG(XR, "  extension '%s', version %u\n", property.extensionName, property.extensionVersion);
 #endif
+    if (!isExtensionSupported(XR_MND_HEADLESS_EXTENSION_NAME, properties)) {
+        LOG(XR, "Required extension %s not supported", XR_MND_HEADLESS_EXTENSION_NAME);
+        return false;
+    }
+
+    return true;
 }
 #endif // USE_OPENXR
 
@@ -144,10 +158,16 @@ Instance::Impl::Impl()
     LOG(XR, "OpenXR: initializing\n");
 
     enumerateApiLayerProperties();
-    enumerateInstanceExtensionProperties();
+
+    if (!checkInstanceExtensionProperties())
+        return;
 
     static const char* s_applicationName = "WebXR (WebKit)";
     static const uint32_t s_applicationVersion = 1;
+
+    const char* const enabledExtensions[] = {
+        XR_MND_HEADLESS_EXTENSION_NAME,
+    };
 
     auto createInfo = createStructure<XrInstanceCreateInfo, XR_TYPE_INSTANCE_CREATE_INFO>();
     createInfo.createFlags = 0;
@@ -155,7 +175,8 @@ Instance::Impl::Impl()
     createInfo.applicationInfo.apiVersion = XR_CURRENT_API_VERSION;
     createInfo.applicationInfo.applicationVersion = s_applicationVersion;
     createInfo.enabledApiLayerCount = 0;
-    createInfo.enabledExtensionCount = 0;
+    createInfo.enabledExtensionCount = WTF_ARRAY_LENGTH(enabledExtensions);
+    createInfo.enabledExtensionNames = enabledExtensions;
 
     XrInstance instance;
     XrResult result = xrCreateInstance(&createInfo, &instance);
@@ -204,6 +225,13 @@ void Instance::enumerateImmersiveXRDevices()
     XrResult result = xrGetSystem(m_impl->xrInstance(), &systemGetInfo, &systemId);
     RETURN_IF_FAILED(result, "xrGetSystem", m_impl->xrInstance());
 
+#if !LOG_DISABLED
+    auto systemProperties = createStructure<XrSystemProperties, XR_TYPE_SYSTEM_PROPERTIES>();
+    result = xrGetSystemProperties(m_impl->xrInstance(), systemId, &systemProperties);
+    if (result == XR_SUCCESS)
+        LOG(XR, "Found XRSystem %lu: \"%s\", vendor ID %d\n", systemProperties.systemId, systemProperties.systemName, systemProperties.vendorId);
+#endif
+
     m_immersiveXRDevices.append(makeUnique<OpenXRDevice>(systemId, m_impl->xrInstance()));
 #endif // USE_OPENXR
 }
@@ -221,7 +249,46 @@ OpenXRDevice::OpenXRDevice(XrSystemId id, XrInstance instance)
         LOG(XR, "xrGetSystemProperties(): error %s\n", resultToString(result, m_instance).utf8().data());
 
     collectSupportedSessionModes();
-    enumerateConfigurationViews();
+    collectConfigurationViews();
+}
+
+Device::ListOfEnabledFeatures OpenXRDevice::enumerateReferenceSpaces(XrSession& session) const
+{
+    uint32_t referenceSpacesCount;
+    auto result = xrEnumerateReferenceSpaces(session, 0, &referenceSpacesCount, nullptr);
+    RETURN_IF_FAILED(result, "xrEnumerateReferenceSpaces", m_instance, { });
+
+    Vector<XrReferenceSpaceType> referenceSpaces(referenceSpacesCount);
+    referenceSpaces.fill(XR_REFERENCE_SPACE_TYPE_VIEW, referenceSpacesCount);
+    result = xrEnumerateReferenceSpaces(session, referenceSpacesCount, &referenceSpacesCount, referenceSpaces.data());
+    RETURN_IF_FAILED(result, "xrEnumerateReferenceSpaces", m_instance, { });
+
+    ListOfEnabledFeatures enabledFeatures;
+    for (auto& referenceSpace : referenceSpaces) {
+        switch (referenceSpace) {
+        case XR_REFERENCE_SPACE_TYPE_VIEW:
+            enabledFeatures.append(ReferenceSpaceType::Viewer);
+            LOG(XR, "\tDevice supports VIEW reference space");
+            break;
+        case XR_REFERENCE_SPACE_TYPE_LOCAL:
+            enabledFeatures.append(ReferenceSpaceType::Local);
+            LOG(XR, "\tDevice supports LOCAL reference space");
+            break;
+        case XR_REFERENCE_SPACE_TYPE_STAGE:
+            enabledFeatures.append(ReferenceSpaceType::LocalFloor);
+            enabledFeatures.append(ReferenceSpaceType::BoundedFloor);
+            LOG(XR, "\tDevice supports STAGE reference space");
+            break;
+        case XR_REFERENCE_SPACE_TYPE_UNBOUNDED_MSFT:
+            enabledFeatures.append(ReferenceSpaceType::Unbounded);
+            LOG(XR, "\tDevice supports UNBOUNDED reference space");
+            break;
+        default:
+            continue;
+        }
+    }
+
+    return enabledFeatures;
 }
 
 void OpenXRDevice::collectSupportedSessionModes()
@@ -234,6 +301,15 @@ void OpenXRDevice::collectSupportedSessionModes()
     result = xrEnumerateViewConfigurations(m_instance, m_systemId, viewConfigurationCount, &viewConfigurationCount, viewConfigurations);
     RETURN_IF_FAILED(result, "xrEnumerateViewConfigurations", m_instance);
 
+    // Retrieving the supported reference spaces requires an initialized session. There is no need to initialize all the graphics
+    // stuff so we'll use a headless session that will be discarded after getting the info we need.
+    auto sessionCreateInfo = createStructure<XrSessionCreateInfo, XR_TYPE_SESSION_CREATE_INFO>();
+    sessionCreateInfo.systemId = m_systemId;
+    XrSession ephemeralSession;
+    result = xrCreateSession(m_instance, &sessionCreateInfo, &ephemeralSession);
+    RETURN_IF_FAILED(result, "xrCreateSession", m_instance);
+
+    ListOfEnabledFeatures features = enumerateReferenceSpaces(ephemeralSession);
     for (uint32_t i = 0; i < viewConfigurationCount; ++i) {
         auto viewConfigurationProperties = createStructure<XrViewConfigurationProperties, XR_TYPE_VIEW_CONFIGURATION_PROPERTIES>();
         result = xrGetViewConfigurationProperties(m_instance, m_systemId, viewConfigurations[i], &viewConfigurationProperties);
@@ -244,19 +320,20 @@ void OpenXRDevice::collectSupportedSessionModes()
         auto configType = viewConfigurationProperties.viewConfigurationType;
         switch (configType) {
         case XR_VIEW_CONFIGURATION_TYPE_PRIMARY_MONO:
-            setEnabledFeatures(SessionMode::Inline, { });
+            setEnabledFeatures(SessionMode::Inline, features);
             break;
         case XR_VIEW_CONFIGURATION_TYPE_PRIMARY_STEREO:
-            setEnabledFeatures(SessionMode::ImmersiveVr, { });
+            setEnabledFeatures(SessionMode::ImmersiveVr, features);
             break;
         default:
             continue;
         };
         m_viewConfigurationProperties.add(configType, WTFMove(viewConfigurationProperties));
     }
+    xrDestroySession(ephemeralSession);
 }
 
-void OpenXRDevice::enumerateConfigurationViews()
+void OpenXRDevice::collectConfigurationViews()
 {
     for (auto& config : m_viewConfigurationProperties.values()) {
         uint32_t viewCount;
@@ -289,7 +366,6 @@ WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
         return { static_cast<int>(viewsIterator->value[0].recommendedImageRectWidth), static_cast<int>(viewsIterator->value[0].recommendedImageRectHeight) };
     return Device::recommendedResolution(mode);
 }
-
 
 #endif // USE_OPENXR
 
