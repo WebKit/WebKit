@@ -182,12 +182,17 @@ class Package(object):
             os.remove(archive.path)
             shutil.rmtree(temp_location, ignore_errors=True)
 
+            AutoInstall.userspace_should_own(self.location)
+
             AutoInstall.manifest[self.name] = {
                 'index': AutoInstall.index,
                 'version': str(archive.version),
             }
-            with open(os.path.join(AutoInstall.directory, 'manifest.json'), 'w') as file:
+
+            manifest = os.path.join(AutoInstall.directory, 'manifest.json')
+            with open(manifest, 'w') as file:
                 json.dump(AutoInstall.manifest, file)
+            AutoInstall.userspace_should_own(manifest)
 
             log.warning('Installed {}!'.format(archive))
         except Exception:
@@ -227,15 +232,45 @@ class AutoInstall(object):
         cls.enabled = False
 
     @classmethod
+    def userspace_should_own(cls, path):
+        # Windows doesn't have sudo
+        if not hasattr(os, "geteuid"):
+            return
+
+        # If we aren't root, the default behavior is correct
+        if os.geteuid() != 0:
+            return
+
+        # If running as sudo, we really want the caller of sudo to own the autoinstall directory
+        uid = int(os.environ.get('SUDO_UID', -1))
+        gid = int(os.environ.get('SUDO_GID', -1))
+
+        os.chown(path, uid, gid)
+        if not os.path.isdir(path):
+            return
+
+        for root, directories, files in os.walk(path):
+            for directory in directories:
+                os.chown(os.path.join(root, directory), uid, gid)
+            for file in files:
+                os.chown(os.path.join(root, file), uid, gid)
+
+    @classmethod
     def set_directory(cls, directory):
         if not directory or not isinstance(directory, str):
             raise ValueError('{} is an invalid autoinstall directory'.format(directory))
 
         directory = os.path.abspath(directory)
         if not os.path.isdir(directory):
+            creation_root = directory
+            while not os.path.isdir(os.path.dirname(creation_root)):
+                creation_root = os.path.dirname(creation_root)
+
             if os.path.exists(directory):
                 raise ValueError('{} is not a directory and cannot be used as the autoinstall location')
             os.makedirs(directory)
+
+            cls.userspace_should_own(creation_root)
 
         try:
             with open(os.path.join(directory, 'manifest.json'), 'r') as file:
