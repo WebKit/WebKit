@@ -266,24 +266,6 @@ bool IOSApplication::isDumpRenderTree()
     return isDumpRenderTree;
 }
 
-bool IOSApplication::isJesusCalling()
-{
-    static bool isJesusCalling = applicationBundleIsEqualTo("com.thomasnelson.jesuscalling"_s);
-    return isJesusCalling;
-}
-
-bool IOSApplication::isFudget()
-{
-    static bool isFudget = applicationBundleIsEqualTo("com.dannyconnell.fudget"_s);
-    return isFudget;
-}
-
-bool IOSApplication::isFamilyHealthApp()
-{
-    static bool isFamilyHealthApp = applicationBundleStartsWith("com.wildflowerhealth.Grow"_s) || applicationBundleStartsWith("com.wildflowerhealth.UGROW");
-    return isFamilyHealthApp;
-}
-
 bool IOSApplication::isMobileStore()
 {
     static bool isMobileStore = applicationBundleIsEqualTo("com.apple.MobileStore"_s);
