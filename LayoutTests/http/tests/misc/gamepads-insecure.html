@@ -1,0 +1,11 @@
+<body>
+<p>Test that accessing navigator.getGamepads from an insecure context logs a warning</p>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+if (window.internals)
+    internals.markContextAsInsecure();
+
+navigator.getGamepads();
+</script>
+</body>

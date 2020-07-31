@@ -1,3 +1,16 @@
+2020-07-31  Brady Eidson  <beidson@apple.com>
+
+        Log a warning to the dev console when gamepads are accessed from an insecure context.
+        https://bugs.webkit.org/show_bug.cgi?id=214995
+
+        Reviewed by Tim Horton.
+
+        Test: http/tests/misc/gamepads-insecure.html
+
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::getGamepads): Insecure contexts should log that getGamepads() will
+          be going away in a future release. Just do it once, because getGamepads() is called frequently.
+
 2020-07-31  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Date/time input types should have a textfield appearance

@@ -1,3 +1,13 @@
+2020-07-31  Brady Eidson  <beidson@apple.com>
+
+        Log a warning to the dev console when gamepads are accessed from an insecure context.
+        https://bugs.webkit.org/show_bug.cgi?id=214995
+
+        Reviewed by Tim Horton.
+
+        * http/tests/misc/gamepads-insecure-expected.txt: Added.
+        * http/tests/misc/gamepads-insecure.html: Added.
+
 2020-07-31  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Date/time input types should have a textfield appearance
