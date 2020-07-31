@@ -109,6 +109,22 @@ private:
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
 #endif
 
+#if ENABLE(INPUT_TYPE_DATE)
+    String dateInputStyleSheet() const final;
+#endif
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+    String dateTimeLocalInputStyleSheet() const final;
+#endif
+#if ENABLE(INPUT_TYPE_MONTH)
+    String monthInputStyleSheet() const final;
+#endif
+#if ENABLE(INPUT_TYPE_TIME)
+    String timeInputStyleSheet() const final;
+#endif
+#if ENABLE(INPUT_TYPE_WEEK)
+    String weekInputStyleSheet() const final;
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
     String imageControlsStyleSheet() const final;
 #endif

@@ -1,3 +1,23 @@
+2020-07-31  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Date/time input types should have a textfield appearance
+        https://bugs.webkit.org/show_bug.cgi?id=214978
+
+        Reviewed by Wenson Hsieh.
+
+        On iOS, date/time input types have a menulist-button appearance. However, this appearance
+        does not match the style of native date controls on macOS. The textfield appearance
+        with no focus ring brings us closer to a natively styled control.
+
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::dateInputStyleSheet const):
+        (WebCore::RenderThemeMac::dateTimeLocalInputStyleSheet const):
+        (WebCore::RenderThemeMac::monthInputStyleSheet const):
+        (WebCore::RenderThemeMac::timeInputStyleSheet const):
+        (WebCore::RenderThemeMac::weekInputStyleSheet const):
+
 2020-07-31  Brady Eidson  <beidson@apple.com>
 
         Special HID mapping for the Dualshock 3 controller
