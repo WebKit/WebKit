@@ -1624,22 +1624,15 @@ void WebPageProxy::processWillBecomeForeground()
     }
 }
 
+#if PLATFORM(MACCATALYST)
 void WebPageProxy::isUserFacingChanged(bool isUserFacing)
 {
-#if PLATFORM(MACCATALYST)
     if (!isUserFacing)
         suspendAllMediaPlayback();
     else
         resumeAllMediaPlayback();
-#else
-    UNUSED_PARAM(isUserFacing);
+}
 #endif
-}
-
-void WebPageProxy::isVisibleChanged(bool isVisible)
-{
-    UNUSED_PARAM(isVisible);
-}
 
 #if PLATFORM(IOS)
 void WebPageProxy::grantAccessToAssetServices()

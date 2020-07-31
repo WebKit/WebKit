@@ -30,6 +30,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakHashSet.h>
 
+OBJC_CLASS NSSet;
 OBJC_CLASS RBSProcessMonitor;
 
 namespace WebKit {
@@ -40,7 +41,6 @@ class EndowmentStateTracker {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static EndowmentStateTracker& singleton();
-    ~EndowmentStateTracker();
 
     class Client : public CanMakeWeakPtr<Client> {
     public:
@@ -49,8 +49,8 @@ public:
         virtual void isVisibleChanged(bool) { }
     };
 
-    bool isVisible() const { return m_isVisible; }
-    bool isUserFacing() const { return m_isUserFacing; }
+    bool isVisible() const { return ensureState().isVisible; }
+    bool isUserFacing() const { return ensureState().isUserFacing; }
 
     void addClient(Client&);
     void removeClient(Client&);
@@ -59,14 +59,21 @@ public:
 
 private:
     friend class NeverDestroyed<EndowmentStateTracker>;
-    EndowmentStateTracker();
-    void setIsUserFacing(bool);
-    void setIsVisible(bool);
+    EndowmentStateTracker() = default;
+
+    void registerMonitorIfNecessary();
+
+    struct State {
+        bool isUserFacing;
+        bool isVisible;
+    };
+    static State stateFromEndowments(NSSet *endowments);
+    const State& ensureState() const;
+    void setState(State&&);
 
     WeakHashSet<Client> m_clients;
     RetainPtr<RBSProcessMonitor> m_processMonitor;
-    bool m_isUserFacing;
-    bool m_isVisible;
+    mutable Optional<State> m_state;
 };
 
 }

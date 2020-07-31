@@ -1,5 +1,47 @@
 2020-07-31  Chris Dumez  <cdumez@apple.com>
 
+        Launch time regression due to EndowmentStateTracker initialization in WebPageProxy constructor
+        https://bugs.webkit.org/show_bug.cgi?id=215029
+        <rdar://problem/66362333>
+
+        Reviewed by Geoffrey Garen.
+
+        EndowmentStateTracker was expensive and in a critical code path during MobileSafari app launch. Since
+        this code is new, this was a net app launch time regression. To address the regression, the following
+        changes were made:
+        1. We only need the EndowmentStateTracker to monitor if the app is user-facing or not, so that we can
+           suspend / resume media playback as needed. As a result, it is unnecessary to start monitoring
+           user-facing state changes as soon as the WebPageProxy is constructed. Instead, we now wait until
+           media plays on the page for the first time.
+        2. It turns out that over 70% of CPU time in the EndowmentStateTracker constructor was spent getting
+           the current endownment for the process. As a result, I updated the code to lazy populate those
+           until they are requested for the first time.
+        3. The remaining 30% of CPU time in the EndowmentStateTracker constructor was spent constructing the
+           RBSProcessMonitor. I moved the initialization of the RBSProcessMonitor from the constructor to
+           EndowmentStateTracker::addClient() so that we only construct a monitor when we actually have our
+           first client.
+        4. All this code was actually only useful for Catalyst app and was therefore doing work on iOS for no
+           reason. I properly #ifdef'd out this code so that it now only applies to Catalyst apps.
+
+        * UIProcess/EndowmentStateTracker.h:
+        (WebKit::EndowmentStateTracker::isVisible const):
+        (WebKit::EndowmentStateTracker::isUserFacing const):
+        * UIProcess/EndowmentStateTracker.mm:
+        (WebKit::EndowmentStateTracker::stateFromEndowments):
+        (WebKit::EndowmentStateTracker::registerMonitorIfNecessary):
+        (WebKit::EndowmentStateTracker::addClient):
+        (WebKit::EndowmentStateTracker::ensureState const const):
+        (WebKit::EndowmentStateTracker::setState):
+        (WebKit::EndowmentStateTracker::EndowmentStateTracker): Deleted.
+        (WebKit::EndowmentStateTracker::setIsUserFacing): Deleted.
+        (WebKit::EndowmentStateTracker::setIsVisible): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_transcodingQueue):
+        (WebKit::WebPageProxy::updatePlayingMediaDidChange):
+        * UIProcess/WebPageProxy.h:
+
+2020-07-31  Chris Dumez  <cdumez@apple.com>
+
         Drop ProcessAssertion::Client and replace with a simple invalidation handler
         https://bugs.webkit.org/show_bug.cgi?id=214976
 

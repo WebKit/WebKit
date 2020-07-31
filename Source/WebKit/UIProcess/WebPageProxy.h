@@ -121,9 +121,12 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "EndowmentStateTracker.h"
 #include "GestureTypes.h"
 #include "WebAutocorrectionContext.h"
+#endif
+
+#if PLATFORM(MACCATALYST)
+#include "EndowmentStateTracker.h"
 #endif
 
 OBJC_CLASS NSView;
@@ -434,7 +437,7 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
     , public WebCore::PlatformSpeechSynthesisUtteranceClient
     , public WebCore::PlatformSpeechSynthesizerClient
 #endif
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(MACCATALYST)
     , public EndowmentStateTracker::Client
 #else
     , public CanMakeWeakPtr<WebPageProxy>
@@ -1188,8 +1191,9 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void processWillBecomeSuspended();
     void processWillBecomeForeground();
+#endif
+#if PLATFORM(MACCATALYST)
     void isUserFacingChanged(bool) final;
-    void isVisibleChanged(bool) final;
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -2472,6 +2476,9 @@ private:
 
     OptionSet<WebCore::ActivityState::Flag> m_activityState;
     bool m_viewWasEverInWindow { false };
+#if PLATFORM(MACCATALYST)
+    bool m_isListeningForUserFacingStateChangeNotification { false };
+#endif
 #if PLATFORM(IOS_FAMILY)
     bool m_allowsMediaDocumentInlinePlayback { false };
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_isVisibleActivity;

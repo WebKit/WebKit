@@ -72,6 +72,14 @@ static NSSet<NSString *> *endowmentsForHandle(RBSProcessHandle *processHandle)
     return [state endowmentNamespaces];
 }
 
+inline auto EndowmentStateTracker::stateFromEndowments(NSSet *endowments) -> State
+{
+    return State {
+        [endowments containsObject:userfacingEndowment],
+        [endowments containsObject:visibilityEndowment]
+    };
+}
+
 bool EndowmentStateTracker::isApplicationForeground(pid_t pid)
 {
     return [endowmentsForHandle(handleForPID(pid)) containsObject:visibilityEndowment];
@@ -83,28 +91,21 @@ EndowmentStateTracker& EndowmentStateTracker::singleton()
     return tracker;
 }
 
-EndowmentStateTracker::EndowmentStateTracker()
+void EndowmentStateTracker::registerMonitorIfNecessary()
 {
-    auto processHandle = [RBSProcessHandle currentProcess];
-    auto endowmentNamespaces = endowmentsForHandle(processHandle);
+    if (m_processMonitor)
+        return;
 
-    m_isUserFacing = [endowmentNamespaces containsObject:userfacingEndowment];
-    m_isVisible = [endowmentNamespaces containsObject:visibilityEndowment];
-
-    m_processMonitor = [RBSProcessMonitor monitorWithConfiguration:[this, processHandle = retainPtr(processHandle)] (id<RBSProcessMonitorConfiguring> config) {
-
-        RBSProcessPredicate *processPredicate = [RBSProcessPredicate predicateMatchingHandle:processHandle.get()];
+    m_processMonitor = [RBSProcessMonitor monitorWithConfiguration:[this] (id<RBSProcessMonitorConfiguring> config) {
+        [config setPredicates:@[[RBSProcessPredicate predicateMatchingHandle:[RBSProcessHandle currentProcess]]]];
 
         RBSProcessStateDescriptor *stateDescriptor = [RBSProcessStateDescriptor descriptor];
         stateDescriptor.endowmentNamespaces = @[visibilityEndowment, userfacingEndowment];
-
-        [config setPredicates:@[processPredicate]];
         [config setStateDescriptor:stateDescriptor];
 
         [config setUpdateHandler:[this] (RBSProcessMonitor * _Nonnull monitor, RBSProcessHandle * _Nonnull process, RBSProcessStateUpdate * _Nonnull update) mutable {
-            dispatch_async(dispatch_get_main_queue(), [this, endowmentNamespaces = retainPtr(update.state.endowmentNamespaces)] {
-                setIsUserFacing([endowmentNamespaces containsObject:userfacingEndowment]);
-                setIsVisible([endowmentNamespaces containsObject:visibilityEndowment]);
+            dispatch_async(dispatch_get_main_queue(), [this, state = stateFromEndowments(update.state.endowmentNamespaces)]() mutable {
+                setState(WTFMove(state));
             });
         }];
     }];
@@ -113,6 +114,7 @@ EndowmentStateTracker::EndowmentStateTracker()
 void EndowmentStateTracker::addClient(Client& client)
 {
     m_clients.add(client);
+    registerMonitorIfNecessary();
 }
 
 void EndowmentStateTracker::removeClient(Client& client)
@@ -120,31 +122,29 @@ void EndowmentStateTracker::removeClient(Client& client)
     m_clients.remove(client);
 }
 
-void EndowmentStateTracker::setIsUserFacing(bool isUserFacing)
+auto EndowmentStateTracker::ensureState() const -> const State&
 {
-    if (m_isUserFacing == isUserFacing)
-        return;
-    m_isUserFacing = isUserFacing;
-
-    RELEASE_LOG(ViewState, "%p - EndowmentStateTracker::setIsUserFacing(%{public}s)", this, isUserFacing ? "true" : "false");
-
-    for (auto& client : copyToVector(m_clients)) {
-        if (client)
-            client->isUserFacingChanged(m_isUserFacing);
-    }
+    if (!m_state)
+        m_state = stateFromEndowments(endowmentsForHandle([RBSProcessHandle currentProcess]));
+    return *m_state;
 }
 
-void EndowmentStateTracker::setIsVisible(bool isVisible)
+void EndowmentStateTracker::setState(State&& state)
 {
-    if (m_isVisible == isVisible)
+    bool isUserFacingChanged = !m_state || m_state->isUserFacing != state.isUserFacing;
+    bool isVisibleChanged = !m_state || m_state->isVisible != state.isVisible;
+    if (!isUserFacingChanged && !isVisibleChanged)
         return;
-    m_isVisible = isVisible;
 
-    RELEASE_LOG(ViewState, "%p - EndowmentStateTracker::setIsVisible(%{public}s)", this, isVisible ? "true" : "false");
+    m_state = WTFMove(state);
+
+    RELEASE_LOG(ViewState, "%p - EndowmentStateTracker::setState() isUserFacing: %{public}s isVisible: %{public}s", this, m_state->isUserFacing ? "true" : "false", m_state->isVisible ? "true" : "false");
 
     for (auto& client : copyToVector(m_clients)) {
-        if (client)
-            client->isVisibleChanged(m_isVisible);
+        if (isUserFacingChanged && client)
+            client->isUserFacingChanged(m_state->isUserFacing);
+        if (isVisibleChanged && client)
+            client->isVisibleChanged(m_state->isVisible);
     }
 }
 

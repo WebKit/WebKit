@@ -532,8 +532,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     
     if (m_configuration->preferences()->serviceWorkerEntitlementDisabledForTesting())
         disableServiceWorkerEntitlementInNetworkProcess();
-
-    EndowmentStateTracker::singleton().addClient(*this);
 #endif
 
 #if PLATFORM(COCOA)
@@ -576,7 +574,7 @@ WebPageProxy::~WebPageProxy()
     webPageProxyCounter.decrement();
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(MACCATALYST)
     EndowmentStateTracker::singleton().removeClient(*this);
 #endif
 }
@@ -8937,6 +8935,16 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
 {
     if (newState == m_mediaState)
         return;
+
+#if PLATFORM(MACCATALYST)
+    // When the page starts playing media for the first time, make sure we register with
+    // the EndowmentStateTracker to get notifications when the application is no longer
+    // user-facing, so that we can appropriately suspend all media playback.
+    if (!m_isListeningForUserFacingStateChangeNotification) {
+        EndowmentStateTracker::singleton().addClient(*this);
+        m_isListeningForUserFacingStateChangeNotification = true;
+    }
+#endif
 
 #if ENABLE(MEDIA_STREAM)
     WebCore::MediaProducer::MediaStateFlags oldMediaCaptureState = m_mediaState & WebCore::MediaProducer::MediaCaptureMask;
