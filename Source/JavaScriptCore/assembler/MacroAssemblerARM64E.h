@@ -90,21 +90,52 @@ public:
         m_assembler.pacdb(target, length);
     }
 
-    ALWAYS_INLINE void untagArrayPtr(RegisterID length, RegisterID target)
+    ALWAYS_INLINE void untagArrayPtr(RegisterID length, RegisterID target, bool validateAuth, RegisterID scratch)
     {
+        if (validateAuth) {
+            ASSERT(scratch != InvalidGPRReg);
+            move(target, scratch);
+        }
+
         m_assembler.autdb(target, length);
+
+        if (validateAuth) {
+            ASSERT(target != ARM64Registers::sp);
+            ASSERT(scratch != ARM64Registers::sp);
+            removeArrayPtrTag(scratch);
+            auto isValidPtr = branch64(Equal, scratch, target);
+            breakpoint(0xabcd);
+            isValidPtr.link(this);
+        }
     }
 
-    ALWAYS_INLINE void untagArrayPtr(Address length, RegisterID target)
+    ALWAYS_INLINE void untagArrayPtr(Address length, RegisterID target, bool validateAuth)
     {
         auto lengthGPR = getCachedDataTempRegisterIDAndInvalidate();
         load32(length, lengthGPR);
+        auto scratch = InvalidGPRReg; 
+        if (validateAuth) {
+            scratch = getCachedMemoryTempRegisterIDAndInvalidate();
+            move(target, scratch);
+        }
+
         m_assembler.autdb(target, lengthGPR);
+
+        if (validateAuth) {
+            ASSERT(target != ARM64Registers::sp);
+            removeArrayPtrTag(scratch);
+            auto isValidPtr = branch64(Equal, scratch, target);
+            breakpoint(0xabcd);
+            isValidPtr.link(this);
+        }
     }
 
     ALWAYS_INLINE void removeArrayPtrTag(RegisterID target)
     {
-        m_assembler.xpacd(target);
+        // If we couldn't fit this into a single instruction, we'd be better
+        // off emitting two shifts to mask off the top bits.
+        ASSERT(LogicalImmediate::create64(nonPACBitsMask).isValid());
+        and64(TrustedImmPtr(nonPACBitsMask), target);
     }
 
     static constexpr RegisterID InvalidGPR  = static_cast<RegisterID>(-1);

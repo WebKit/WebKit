@@ -1630,7 +1630,7 @@ JIT::JumpList JIT::emitIntTypedArrayPutByVal(Op bytecode, PatchableJump& badType
     // We would be loading this into base as in get_by_val, except that the slow
     // path expects the base to be unclobbered.
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), lateScratch);
-    cageConditionally(Gigacage::Primitive, lateScratch, lateScratch2, lateScratch2);
+    cageConditionallyAndUntag(Gigacage::Primitive, lateScratch, lateScratch2, lateScratch2, false);
     
     if (isClamped(type)) {
         ASSERT(elementSize(type) == 1);
@@ -1719,7 +1719,7 @@ JIT::JumpList JIT::emitFloatTypedArrayPutByVal(Op bytecode, PatchableJump& badTy
     // We would be loading this into base as in get_by_val, except that the slow
     // path expects the base to be unclobbered.
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), lateScratch);
-    cageConditionally(Gigacage::Primitive, lateScratch, lateScratch2, lateScratch2);
+    cageConditionallyAndUntag(Gigacage::Primitive, lateScratch, lateScratch2, lateScratch2, false);
     
     switch (elementSize(type)) {
     case 4:

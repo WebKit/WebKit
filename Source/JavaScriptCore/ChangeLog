@@ -1,3 +1,53 @@
+2020-07-31  Saam Barati  <sbarati@apple.com>
+
+        validate untagArrayPtr
+        https://bugs.webkit.org/show_bug.cgi?id=214953
+
+        Reviewed by Keith Miller.
+
+        This patch adds validation to untagArrayPtr along paths where we don't
+        immediately store/load from the result.
+        
+        This patch also changes the removeArrayPtrTag macro assembler function to
+        use shifts instead of xpacd to strip the tag, because it's faster.
+
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::untagArrayPtr):
+        (JSC::MacroAssemblerARM64E::removeArrayPtrTag):
+        * assembler/testmasm.cpp:
+        (JSC::testCagePreservesPACFailureBit):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::untagArrayPtr):
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::cageWithoutUntagging):
+        (JSC::AssemblyHelpers::cageConditionallyAndUntag):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cageWithoutUntagging): Deleted.
+        (JSC::AssemblyHelpers::cageConditionally): Deleted.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
 2020-07-31  Keith Miller  <keith_miller@apple.com>
 
         Reduce over include usage in JSC

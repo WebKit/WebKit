@@ -7239,12 +7239,13 @@ void SpeculativeJIT::compileConstantStoragePointer(Node* node)
     storageResult(storageGPR, node);
 }
 
-void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg)
+void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg, bool validateAuth)
 {
     auto untagArrayPtr = [&]() {
 #if CPU(ARM64E)
-        m_jit.untagArrayPtr(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg);
+        m_jit.untagArrayPtr(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg, validateAuth);
 #else
+        UNUSED_PARAM(validateAuth);
         UNUSED_PARAM(baseReg);
         UNUSED_PARAM(storageReg);
 #endif

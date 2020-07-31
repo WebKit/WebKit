@@ -1660,7 +1660,7 @@ public:
     template<bool strict>
     GPRReg fillSpeculateInt32Internal(Edge, DataFormat& returnFormat);
     
-    void cageTypedArrayStorage(GPRReg, GPRReg);
+    void cageTypedArrayStorage(GPRReg, GPRReg, bool validateAuth = true);
     
     void recordSetLocal(
         Operand bytecodeReg, VirtualRegister machineReg, DataFormat format)

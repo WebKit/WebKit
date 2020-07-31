@@ -1732,76 +1732,9 @@ public:
         ok.link(this);
     }
 
-    void cageWithoutUntagging(Gigacage::Kind kind, GPRReg storage)
-    {
-#if GIGACAGE_ENABLED
-        if (!Gigacage::isEnabled(kind))
-            return;
-
-#if CPU(ARM64E)
-        RegisterID tempReg = InvalidGPRReg;
-        if (kind == Gigacage::Primitive) {
-            tempReg = getCachedMemoryTempRegisterIDAndInvalidate();
-            move(storage, tempReg);
-            // Flip the registers since bitFieldInsert only inserts into the low bits.
-            std::swap(storage, tempReg);
-        }
-#endif
-        andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
-        addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
-#if CPU(ARM64E)
-        if (kind == Gigacage::Primitive)
-            bitFieldInsert64(storage, 0, 64 - numberOfPACBits, tempReg);
-#endif
-
-#else
-        UNUSED_PARAM(kind);
-        UNUSED_PARAM(storage);
-#endif
-    }
-
+    JS_EXPORT_PRIVATE void cageWithoutUntagging(Gigacage::Kind, GPRReg storage);
     // length may be the same register as scratch.
-    void cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg length, GPRReg scratch)
-    {
-#if GIGACAGE_ENABLED
-        if (Gigacage::isEnabled(kind)) {
-            if (kind != Gigacage::Primitive || Gigacage::disablingPrimitiveGigacageIsForbidden())
-                cageWithoutUntagging(kind, storage);
-            else {
-#if CPU(ARM64E)
-                if (length == scratch)
-                    scratch = getCachedMemoryTempRegisterIDAndInvalidate();
-#endif
-                JumpList done;
-                done.append(branchTest8(NonZero, AbsoluteAddress(&Gigacage::disablePrimitiveGigacageRequested)));
-
-                loadPtr(Gigacage::addressOfBasePtr(kind), scratch);
-                done.append(branchTest64(Zero, scratch));
-#if CPU(ARM64E)
-                GPRReg tempReg = getCachedDataTempRegisterIDAndInvalidate();
-                move(storage, tempReg);
-                ASSERT(LogicalImmediate::create64(Gigacage::mask(kind)).isValid());
-                andPtr(TrustedImmPtr(Gigacage::mask(kind)), tempReg);
-                addPtr(scratch, tempReg);
-                bitFieldInsert64(tempReg, 0, 64 - numberOfPACBits, storage);
-#else
-                andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
-                addPtr(scratch, storage);
-#endif // CPU(ARM64E)
-                done.link(this);
-            }
-        }
-#endif
-
-#if CPU(ARM64E)
-        if (kind == Gigacage::Primitive)
-            untagArrayPtr(length, storage);
-#endif
-        UNUSED_PARAM(kind);
-        UNUSED_PARAM(storage);
-        UNUSED_PARAM(length);
-        UNUSED_PARAM(scratch);
-    }
+    JS_EXPORT_PRIVATE void cageConditionallyAndUntag(Gigacage::Kind, GPRReg storage, GPRReg length, GPRReg scratch, bool validateAuth = true);
 
     void emitComputeButterflyIndexingMask(GPRReg vectorLengthGPR, GPRReg scratchGPR, GPRReg resultGPR)
     {
