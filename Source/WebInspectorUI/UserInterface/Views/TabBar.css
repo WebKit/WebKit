@@ -91,6 +91,10 @@ body.docked.bottom .tab-bar > .border.top {
     filter: brightness(80%);
 }
 
+body.big-sur.docked .tab-bar > .border.bottom {
+    background-color: var(--border-color);
+}
+
 body.window-inactive .tab-bar > .border {
     background-color: var(--tab-item-light-border-color);
 }

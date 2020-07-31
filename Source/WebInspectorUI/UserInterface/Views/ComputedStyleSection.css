@@ -41,7 +41,7 @@
 
 .computed-style-section .computed-property-item.expanded {
     padding-bottom: 2px;
-    background-color: hsl(0, 0%, 97%);
+    background-color: var(--background-color-intermediate);
     border-top: 0.5px solid var(--text-color-quaternary);
     border-bottom: 0.5px solid var(--text-color-quaternary);
 }
@@ -157,10 +157,4 @@
 .computed-style-properties.details-section > .content,
 .computed-style-properties.details-section > .content > .group {
     display: block;
-}
-
-@media (prefers-color-scheme: dark) {
-    .computed-style-section .computed-property-item.expanded {
-        background-color: var(--background-color-code);
-    }
 }

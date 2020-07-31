@@ -26,17 +26,5 @@
 .navigation-bar .item.divider {
     width: 1px;
     height: 16px;
-    background-color: hsl(0, 0%, 74%);
-}
-
-@media (-webkit-min-device-pixel-ratio: 2) {
-    .navigation-bar .item.divider {
-        width: 0.5px;
-    }
-}
-
-@media (prefers-color-scheme: dark) {
-    .navigation-bar .item.divider {
-        background-color: hsl(0, 0%, 40%);
-    }
+    background-color: var(--separator-color);
 }

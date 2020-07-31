@@ -28,7 +28,7 @@
 }
 
 .sidebar > .panel.details.animation > .content > .details-section.animation-keyframes .details-section {
-    background-color: hsl(0, 0%, 97%);
+    background-color: var(--background-color-intermediate);
 }
 
 .sidebar > .panel.details.animation > .content > .details-section.animation-keyframes .details-section .row.styles {
@@ -39,10 +39,4 @@
     height: auto;
     padding: 4px 0;
     background-color: transparent;
-}
-
-@media (prefers-color-scheme: dark) {
-    .sidebar > .panel.details.animation > .content > .details-section.animation-keyframes .details-section {
-        background-color: hsl(0, 0%, 18%);
-    }
 }

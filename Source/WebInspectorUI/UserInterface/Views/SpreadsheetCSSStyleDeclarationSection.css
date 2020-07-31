@@ -29,7 +29,7 @@
     font-family: Menlo, monospace;
     font-size: 11px;
     color: var(--text-color-tertiary);
-    background: var(--background-color-code);
+    background: var(--background-color-content);
     border-bottom: 0.5px solid var(--text-color-quaternary);
     -webkit-user-select: text;
 }
@@ -132,7 +132,7 @@
 }
 
 .spreadsheet-css-declaration.locked {
-    background-color: hsl(0, 0%, 97%)
+    background-color: var(--background-color-intermediate);
 }
 
 .spreadsheet-css-declaration .locked-icon {
@@ -157,10 +157,6 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .spreadsheet-css-declaration.locked {
-        background: var(--background-color);
-    }
-
     .spreadsheet-css-declaration .selector.style-attribute {
         color: var(--text-color-secondary);
     }

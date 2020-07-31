@@ -139,7 +139,7 @@
 
     .cm-s-default,
     .CodeMirror {
-        background-color: var(--background-color-code);
+        background-color: var(--background-color-content);
     }
 
     .cm-s-default .cm-attribute {

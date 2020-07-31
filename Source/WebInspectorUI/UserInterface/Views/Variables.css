@@ -45,10 +45,12 @@
     /* Dividers, separators, background fills */
     --text-color-quaternary: hsl(0, 0%, 85%);
 
+    --separator-color: hsla(0, 0%, var(--foreground-lightness), 0.15);
+
     --background-color: white;
 
     --background-color-content: white;
-    --background-color-code: white;
+    --background-color-intermediate: hsl(0, 0%, 97%);
 
     --background-color-unfocused: hsla(0, 0%, calc(100% - var(--foreground-lightness)), 0.8);
     --background-color-alternate: hsla(0, 0%, var(--foreground-lightness), 0.05);
@@ -80,7 +82,7 @@
     --glyph-opacity: 1;
 
     --border-color: hsl(0, 0%, 70%);
-    --border-color-dark: hsl(0, 0%, 57%);
+    --border-color-secondary: hsl(0, 0%, 87%);
 
     --button-background-color: white;
     --button-background-color-hover: hsl(0, 0%, 88%);
@@ -201,6 +203,8 @@
     --diff-addition-border-color: hsl(90, 100%, 40%);
 
     --color-picker-width: 256px;
+
+    --sorted-header-font-weight: 500;
 }
 
 body.window-inactive {
@@ -210,11 +214,24 @@ body.window-inactive {
     --glyph-color: hsla(0, 0%, 30%, 0.65);
     --glyph-color-disabled: hsla(0, 0%, 30%, 0.35);
     --glyph-opacity: 0.6;
+
+    --border-color: hsl(0, 0%, 85%);
 }
 
-body.window-inactive * {
-    --border-color: hsl(0, 0%, 85%);
-    --border-color-dark: hsl(0, 0%, 72%);
+body.big-sur {
+    --text-color: hsl(0, 0%, 15%);
+
+    --background-color-intermediate: hsl(0, 0%, 98.5%);
+
+    --panel-background-color: hsl(0, 0%, 96%);
+    --panel-background-color-light: hsl(0, 0%, 98%);
+
+    --separator-color: hsla(0, 0%, var(--foreground-lightness), 0.1);
+
+    --border-color: hsl(0, 0%, 87%);
+    --border-color-secondary: hsl(0, 0%, 91%);
+
+    --sorted-header-font-weight: 700;
 }
 
 body.mac-platform:not(.big-sur):not(.docked) {
@@ -250,7 +267,7 @@ body.mac-platform.big-sur:not(.docked) {
         --background-color-tertiary: hsl(0, 0%, 31%);
 
         --background-color-content: hsl(0, 0%, 21%);
-        --background-color-code: hsl(0, 0%, 21%);
+        --background-color-intermediate: hsl(0, 0%, 23%);
 
         --gray-background-color: hsl(0, 0%, 50%);
 
@@ -358,20 +375,35 @@ body.mac-platform.big-sur:not(.docked) {
         --diff-deletion-background-color: hsl(5, 40%, 28%);
     }
 
+    body.big-sur {
+        --glyph-color: hsl(0, 0%, 69%);
+        --glyph-color-pressed: hsl(0, 0%, 100%);
+    }
+
     body.window-inactive {
+        --border-color: hsl(0, 0%, 33%);
+
         --selected-background-color: hsla(212, 92%, 64%, 0.5);
 
         --glyph-color: hsl(0, 0%, 52%);
         --glyph-color-disabled: hsla(0, 0%, 52%, 0.4);
     }
 
-    body.window-inactive * {
-        /* These properties are duplicated so that they have higher specificity than WebKit's stylesheet.
-        Otherwise, the variable definition inside 'body.window-inactive *' in OpenSource overrides with a lighter color.
-        When merging to open source, we should guard the existing .window-inactive style with
-        '@media not all' to avoid applying the definition too broadly. */
-        --border-color: hsl(0, 0%, 33%);
-        --border-color-dark: hsl(0, 0%, 37%); /* non-semantic variable names */
+    body.big-sur {
+        --text-color: hsl(0, 0%, 85%);
+
+        --background-color: hsl(0, 0%, 20%);
+        --background-color-secondary: hsl(0, 0%, 23%);
+        --background-color-tertiary: hsl(0, 0%, 27%);
+
+        --background-color-content: hsl(0, 0%, 17%);
+        --background-color-intermediate: hsl(0, 0%, 19%);
+
+        --panel-background-color: hsl(0, 0%, 20%);
+        --panel-background-color-light: hsl(0, 0%, 25%);
+
+        --border-color: hsl(0, 0%, 30%);
+        --border-color-secondary: hsl(0, 0%, 24%);
     }
 }
 

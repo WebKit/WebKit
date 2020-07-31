@@ -51,7 +51,7 @@
     width: 100%;
     padding: 3px 4px 2px;
     font-family: Menlo, monospace;
-    background-color: var(--background-color-code);
+    background-color: var(--background-color-content);
     border: 1px solid var(--text-color-quaternary);
     -webkit-appearance: none;
 }

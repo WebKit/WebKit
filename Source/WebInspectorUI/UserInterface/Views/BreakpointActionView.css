@@ -111,6 +111,6 @@ body[dir=rtl] .breakpoint-action-button-container {
     }
 
     .breakpoint-action-eval-editor {
-        background: var(--background-color-code);
+        background: var(--background-color-content);
     }
 }

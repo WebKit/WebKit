@@ -1,3 +1,87 @@
+2020-07-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: on Big Sur, match OS background, text, and border colors
+        https://bugs.webkit.org/show_bug.cgi?id=214366
+        <rdar://problem/65617290>
+
+        Reviewed by Devin Rousso.
+
+        Refactoring:
+        - Remove --background-color-code because it was always the same value as --background-color-content.
+        - Replace commonly hardcoded `hsl(0, 0%, 97%)` background with --background-color-intermediate.
+
+        * UserInterface/Views/AnimationDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.animation > .content > .details-section.animation-keyframes .details-section):
+        (.sidebar > .panel.details.animation > .content > .details-section.animation-keyframes .details-section .row.styles .CodeMirror):
+        * UserInterface/Views/BoxShadowEditor.css:
+        (.box-shadow-editor > table > tr > td > input[type="text"]):
+        * UserInterface/Views/BreakpointActionView.css:
+        (@media (prefers-color-scheme: dark) .breakpoint-action-eval-editor):
+        * UserInterface/Views/BreakpointPopoverController.css:
+        (.edit-breakpoint-popover-condition):
+        * UserInterface/Views/ChangesDetailsSidebarPanel.css:
+        (.sidebar > .panel.changes-panel .css-rule):
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.computed-style-section .computed-property-item.expanded):
+        (.computed-style-properties.details-section > .content,):
+        * UserInterface/Views/ConsolePrompt.css:
+        (.console-prompt):
+        (.console-prompt > .CodeMirror-scroll):
+        * UserInterface/Views/CookiePopover.css:
+        (.popover .cookie-popover-content > table > tr > td > input:matches([type="text"], [type="datetime-local"])):
+
+        * UserInterface/Views/DetailsSection.css:
+        (.details-section .details-section):
+        (.details-section .details-section > .header):
+        Refactor. --background-color-content is the same color value.
+
+        (.details-section .details-section:not(.collapsed) > .header):
+        Refactor. --border-color-secondary is the same color value.
+
+        (.details-section > .content > .group:nth-child(even)):
+        (.details-section > .content > .group > .row:matches(.empty, .text)):
+        (@media (prefers-color-scheme: dark) .details-section > .header > label,):
+
+        * UserInterface/Views/DividerNavigationItem.css:
+        (.navigation-bar .item.divider):
+        Don't use hairline dividers. MacOS Catalina and Big Sur don't use hairline borders.
+
+        * UserInterface/Views/GraphicsOverviewContentView.css:
+        (.content-view.graphics-overview > section > .header):
+        (@media (prefers-color-scheme: dark) .content-view.graphics-overview):
+        * UserInterface/Views/LocalResourceOverridePopover.css:
+        (.popover .local-resource-override-popover-content .editor):
+        * UserInterface/Views/LogContentView.css:
+        (@media (prefers-color-scheme: dark) .console-messages):
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console):
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.css:
+        (@media (prefers-color-scheme: dark) .watch-expression-editor):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration):
+        (.spreadsheet-css-declaration.locked):
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (@media (prefers-color-scheme: dark) .cm-s-default,):
+        * UserInterface/Views/TabBar.css:
+        (body.big-sur.docked .tab-bar > .border.bottom):
+        * UserInterface/Views/URLBreakpointPopover.css:
+        (.popover .url-breakpoint-content > .editor-wrapper > .editor):
+
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Add --separator-color, which has the same semantics as `separator` color from Apple HIG
+        (https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/color/#dynamic-system-colors).
+        --border-color-secondary was only defined in the dark mode. Define it in the light mode, too.
+
+        (body.window-inactive):
+        Remove unused variable.
+
+        (body.big-sur):
+        (@media (prefers-color-scheme: dark) :root):
+        (@media (prefers-color-scheme: dark) body.big-sur):
+        (@media (prefers-color-scheme: dark) body.window-inactive):
+        (body.window-inactive *): Remove unnecessarily greedy selector.
+
 2020-07-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: only show scrollbars when needed

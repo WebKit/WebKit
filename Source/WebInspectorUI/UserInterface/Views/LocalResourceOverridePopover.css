@@ -57,7 +57,7 @@
     padding: 4px 0 2px;
     -webkit-appearance: unset;
     border: 1px solid hsl(0, 0%, 78%);
-    background: var(--background-color-code);
+    background: var(--background-color-content);
     border-color: var(--text-color-quaternary);
 }
 

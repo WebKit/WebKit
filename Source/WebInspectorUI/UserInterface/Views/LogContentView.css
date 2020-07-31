@@ -242,7 +242,7 @@ body[dir=rtl] .console-group-title::before {
 
 @media (prefers-color-scheme: dark) {
     .console-messages {
-        background-color: var(--background-color-code);
+        background-color: var(--background-color-content);
     }
 
     .console-item {

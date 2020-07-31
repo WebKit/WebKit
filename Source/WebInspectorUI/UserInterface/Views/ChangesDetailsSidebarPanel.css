@@ -32,7 +32,7 @@
     padding: var(--css-declaration-vertical-padding) 0;
     font: 11px Menlo, monospace;
     color: var(--text-color-secondary);
-    background-color: var(--background-color-code);
+    background-color: var(--background-color-content);
     -webkit-user-select: text;
 }
 

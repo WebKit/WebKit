@@ -33,7 +33,7 @@
 }
 
 .details-section .details-section {
-    background-color: hsl(0, 0%, 100%);
+    background-color: var(--background-color-content);
     border-color: var(--text-color-quaternary);
 }
 
@@ -89,7 +89,7 @@ body[dir=rtl] .details-section > .header > .options {
 
 .details-section .details-section > .header {
     top: 21px;
-    background-color: hsl(0, 0%, 100%);
+    background-color: var(--background-color-content);
     font-weight: 500;
 
     /* Ensure these headers are displayed below the parent header but above scrollbars. */
@@ -97,7 +97,7 @@ body[dir=rtl] .details-section > .header > .options {
 }
 
 .details-section .details-section:not(.collapsed) > .header {
-    border-bottom: 1px solid hsl(0, 0%, 87%);
+    border-bottom: 1px solid var(--border-color-secondary);
 }
 
 .details-section > .header::before {
@@ -182,7 +182,7 @@ body[dir=rtl] .details-section > .header::before {
 }
 
 .details-section > .content > .group:nth-child(even) {
-    background-color: hsl(0, 0%, 97%);
+    background-color: var(--background-color-intermediate);
 }
 
 .details-section > .content > .group:nth-child(even) > .row:matches(.simple:first-child > *, :not(.simple):first-child) {
@@ -256,7 +256,7 @@ body[dir=rtl] .details-section > .header::before {
 .details-section > .content > .group > .row:matches(.empty, .text) {
     padding: 0 6px 7px 6px;
     text-align: center;
-    color: gray;
+    color: var(--text-color-secondary);
 }
 
 .details-section > .content > .group > .row.text {
@@ -303,28 +303,8 @@ body[dir=rtl] .details-section > .header::before {
         color: var(--text-color);
     }
 
-    .details-section > .header > label {
-        color: var(--text-color-secondary);
-    }
-
-    .details-section .details-section,
-    .details-section .details-section > .header {
-        background-color: var(--background-color-content);
-    }
-
-    .details-section .details-section:not(.collapsed) > .header {
-        border-bottom-color: var(--border-color-secondary);
-    }
-
+    .details-section > .header > label,
     .details-section > .content > .group > .row.simple > .label {
-        color: var(--text-color-secondary);
-    }
-
-    .details-section > .content > .group:nth-child(even) {
-        background-color: unset;
-    }
-
-    .details-section > .content > .group > .row:matches(.empty, .text) {
         color: var(--text-color-secondary);
     }
 }

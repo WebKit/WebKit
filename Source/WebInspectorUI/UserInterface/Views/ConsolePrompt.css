@@ -24,7 +24,7 @@
  */
 
 .console-prompt {
-    background-color: white;
+    background-color: var(--background-color-content);
 }
 
 .console-prompt > .CodeMirror {
@@ -34,10 +34,4 @@
 
 .console-prompt > .CodeMirror-scroll {
     overflow: hidden;
-}
-
-@media (prefers-color-scheme: dark) {
-    .console-prompt {
-        background-color: var(--background-color-code);
-    }
 }
