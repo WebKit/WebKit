@@ -1487,6 +1487,13 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return nil;
 }
 
+- (BOOL)accessibilityIsIndeterminate
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    return self.axBackingObject->isIndeterminate();
+}
+
 - (BOOL)accessibilityIsAttachmentElement
 {
     if (![self _prepareAccessibilityCall])
@@ -1508,9 +1515,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return NO;
 
-    return Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
+    return !!Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
         return object.roleValue() == AccessibilityRole::DescriptionListTerm;
-    }) != nullptr;
+    });
 }
 
 - (BOOL)accessibilityIsInDescriptionListDefinition
@@ -1518,9 +1525,9 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return NO;
 
-    return Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
+    return !!Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, false, [] (const AXCoreObject& object) {
         return object.roleValue() == AccessibilityRole::DescriptionListDetail;
-    }) != nullptr;
+    });
 }
 
 - (NSString *)accessibilityHint
