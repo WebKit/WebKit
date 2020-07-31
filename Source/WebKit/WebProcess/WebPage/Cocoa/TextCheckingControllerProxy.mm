@@ -39,6 +39,7 @@
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/Range.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextIterator.h>
