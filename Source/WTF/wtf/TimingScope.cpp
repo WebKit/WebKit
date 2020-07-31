@@ -41,6 +41,7 @@ public:
     struct CallData {
         Seconds totalDuration;
         unsigned callCount { 0 };
+        Seconds maxDuration;
         
         Seconds meanDuration() const { return totalDuration / callCount; }
     };
@@ -52,6 +53,7 @@ public:
         auto locker = holdLock(lock);
         auto& result = totals.add(name, CallData()).iterator->value;
         ++result.callCount;
+        result.maxDuration = std::max(result.maxDuration, duration);
         result.totalDuration += duration;
         return result;
     }
@@ -73,7 +75,7 @@ void TimingScope::scopeDidEnd()
 {
     const auto& data = state().addToTotal(m_name, MonotonicTime::now() - m_startTime);
     if (!(data.callCount % m_logIterationInterval))
-        WTFLogAlways("%s: %u calls, mean duration: %.6fms, total duration: %.6fms", m_name, data.callCount, data.meanDuration().milliseconds(), data.totalDuration.milliseconds());
+        WTFLogAlways("%s: %u calls, mean duration: %.6fms, total duration: %.6fms, max duration %.6fms", m_name, data.callCount, data.meanDuration().milliseconds(), data.totalDuration.milliseconds(), data.maxDuration.milliseconds());
 }
 
 } // namespace WebCore

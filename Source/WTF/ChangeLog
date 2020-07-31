@@ -1,3 +1,16 @@
+2020-07-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Have TimingScope track the max event duration
+        https://bugs.webkit.org/show_bug.cgi?id=215006
+
+        Reviewed by Tim Horton.
+
+        Have TimingScope track and print the longest event, as well as the count and
+        mean duration.
+
+        * wtf/TimingScope.cpp:
+        (WTF::TimingScope::scopeDidEnd):
+
 2020-07-30  Keith Miller  <keith_miller@apple.com>
 
         Remove UB from nonPACBitsMask computation
