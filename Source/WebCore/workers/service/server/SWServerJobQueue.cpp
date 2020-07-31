@@ -57,6 +57,16 @@ bool SWServerJobQueue::isCurrentlyProcessingJob(const ServiceWorkerJobDataIdenti
     return !m_jobQueue.isEmpty() && firstJob().identifier() == jobDataIdentifier;
 }
 
+static bool doCertificatesMatch(const CertificateInfo& first, const CertificateInfo& second)
+{
+#if PLATFORM(COCOA) && HAVE(SEC_TRUST_SERIALIZATION)
+    return first.trust() == second.trust() || certificatesMatch(first.trust(), second.trust());
+#else
+    // FIXME: Add support for certificate matching in CertificateInfo.
+    return true;
+#endif
+}
+
 void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerFetchResult& result)
 {
     if (!isCurrentlyProcessingJob(result.jobDataIdentifier))
@@ -88,7 +98,8 @@ void SWServerJobQueue::scriptFetchFinished(const ServiceWorkerFetchResult& resul
     // If newestWorker is not null, newestWorker's script url equals job's script url with the exclude fragments
     // flag set, and script's source text is a byte-for-byte match with newestWorker's script resource's source
     // text, then:
-    if (newestWorker && equalIgnoringFragmentIdentifier(newestWorker->scriptURL(), job.scriptURL) && result.script == newestWorker->script()) {
+    if (newestWorker && equalIgnoringFragmentIdentifier(newestWorker->scriptURL(), job.scriptURL) && result.script == newestWorker->script() && doCertificatesMatch(result.certificateInfo, newestWorker->certificateInfo())) {
+        RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::scriptFetchFinished, script and certificate are matching for registration ID: %llu", this, registration->identifier().toUInt64());
         // FIXME: for non classic scripts, check the script’s module record's [[ECMAScriptCode]].
 
         // Invoke Resolve Job Promise with job and registration.

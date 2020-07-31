@@ -81,6 +81,7 @@ public:
     const ServiceWorkerRegistrationKey& registrationKey() const { return m_registrationKey; }
     const URL& scriptURL() const { return m_data.scriptURL; }
     const String& script() const { return m_script; }
+    const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
     WorkerType type() const { return m_data.type; }
 
     ServiceWorkerIdentifier identifier() const { return m_data.identifier; }

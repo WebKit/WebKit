@@ -125,6 +125,7 @@ void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, Res
     parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
     parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
     parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Sniff;
+    parameters.needsCertificateInfo = true;
     parameters.request = WTFMove(request);
     m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), session);
     m_networkLoad->start();
@@ -137,8 +138,7 @@ void ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest(ResourceRequest&&,
 
 void ServiceWorkerSoftUpdateLoader::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
-    // FIXME: If the certificate info changes but the script content does not, treat that as an update.
-    m_certificateInfo = response.certificateInfo() ? *response.certificateInfo() : CertificateInfo();
+    m_certificateInfo = *response.certificateInfo();
     if (response.httpStatusCode() == 304 && m_cacheEntry) {
         loadWithCacheEntry(*m_cacheEntry);
         completionHandler(PolicyAction::Ignore);

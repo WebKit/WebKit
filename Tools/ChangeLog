@@ -1,3 +1,30 @@
+2020-07-31  Youenn Fablet  <youenn@apple.com>
+
+        Update service worker if certificate info does not match when soft updating
+        https://bugs.webkit.org/show_bug.cgi?id=214988
+
+        Reviewed by Alex Christensen.
+
+        Update HTTPServer to pass two optional parameters:
+        - A port number to listen to if provided
+        - A custom server identity to use if provided
+
+        The API test is loading an URL on a first server.
+        This triggers registration of a service worker.
+        It then stops this server and launches a second server on the same port with a different certificate.
+        A second page is loaded on the same URL.
+        This triggers the case of updating a service worker certificate info.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (createTestIdentity):
+        (testIdentity):
+        (testIdentity2):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::listenerParameters):
+        (TestWebKitAPI::HTTPServer::HTTPServer):
+
 2020-07-31  Sihui Liu  <sihui_liu@appe.com>
 
         -[WKWebsiteDataStore _renameOrigin:] needs to support IndexedDB renames

@@ -1471,28 +1471,6 @@ void NetworkSessionCocoa::clearCredentials()
 #endif
 }
 
-static bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
-{
-    if (!trust1 || !trust2)
-        return false;
-
-    CFIndex count1 = SecTrustGetCertificateCount(trust1);
-    CFIndex count2 = SecTrustGetCertificateCount(trust2);
-    if (count1 != count2)
-        return false;
-
-    for (CFIndex i = 0; i < count1; i++) {
-        auto cert1 = SecTrustGetCertificateAtIndex(trust1, i);
-        auto cert2 = SecTrustGetCertificateAtIndex(trust2, i);
-        RELEASE_ASSERT(cert1);
-        RELEASE_ASSERT(cert2);
-        if (!CFEqual(cert1, cert2))
-            return false;
-    }
-
-    return true;
-}
-
 bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge& challenge)
 {
     const String& host = challenge.protectionSpace().host();
@@ -1508,7 +1486,7 @@ bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::A
         return false;
     RetainPtr<SecTrustRef> trust = adoptCF(trustRef);
 
-    return certificatesMatch(trust.get(), challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust);
+    return WebCore::certificatesMatch(trust.get(), challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust);
 }
 
 void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWrapper, const WebCore::AuthenticationChallenge& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa* networkDataTask, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)

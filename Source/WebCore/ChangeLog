@@ -1,3 +1,23 @@
+2020-07-31  Youenn Fablet  <youenn@apple.com>
+
+        Update service worker if certificate info does not match when soft updating
+        https://bugs.webkit.org/show_bug.cgi?id=214988
+
+        Reviewed by Alex Christensen.
+
+        In case service worker certificate info does not match, treat it as if the script changed.
+        This is a convenient way to update the service worker and the stored registration database.
+        Covered by API test.
+
+        * platform/network/cf/CertificateInfo.h:
+        * platform/network/cf/CertificateInfoCFNet.cpp:
+        (WebCore::certificatesMatch):
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::doCertificatesMatch):
+        (WebCore::SWServerJobQueue::scriptFetchFinished):
+        * workers/service/server/SWServerWorker.h:
+        (WebCore::SWServerWorker::certificateInfo const):
+
 2020-07-31  Sihui Liu  <sihui_liu@appe.com>
 
         -[WKWebsiteDataStore _renameOrigin:] needs to support IndexedDB renames

@@ -52,12 +52,14 @@ struct HTTPServer::RequestData : public ThreadSafeRefCounted<RequestData, WTF::D
     Vector<Connection> connections;
 };
 
-RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, CertificateVerifier&& verifier)
+RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, CertificateVerifier&& verifier, RetainPtr<SecIdentityRef>&& customTestIdentity, Optional<uint16_t> port)
 {
-    auto configureTLS = protocol == Protocol::Http ? makeBlockPtr(NW_PARAMETERS_DISABLE_PROTOCOL) : makeBlockPtr([protocol, verifier = WTFMove(verifier)] (nw_protocol_options_t protocolOptions) mutable {
+    if (protocol != Protocol::Http && !customTestIdentity)
+        customTestIdentity = testIdentity();
+    auto configureTLS = protocol == Protocol::Http ? makeBlockPtr(NW_PARAMETERS_DISABLE_PROTOCOL) : makeBlockPtr([protocol, verifier = WTFMove(verifier), testIdentity = WTFMove(customTestIdentity)] (nw_protocol_options_t protocolOptions) mutable {
 #if HAVE(TLS_PROTOCOL_VERSION_T)
         auto options = adoptNS(nw_tls_copy_sec_protocol_options(protocolOptions));
-        auto identity = adoptNS(sec_identity_create(testIdentity().get()));
+        auto identity = adoptNS(sec_identity_create(testIdentity.get()));
         sec_protocol_options_set_local_identity(options.get(), identity.get());
         if (protocol == Protocol::HttpsWithLegacyTLS)
             sec_protocol_options_set_max_tls_protocol_version(options.get(), tls_protocol_version_TLSv10);
@@ -74,7 +76,10 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
         ASSERT_UNUSED(protocol, protocol != Protocol::HttpsWithLegacyTLS);
 #endif
     });
-    return adoptNS(nw_parameters_create_secure_tcp(configureTLS.get(), NW_PARAMETERS_DEFAULT_CONFIGURATION));
+    auto parameters = adoptNS(nw_parameters_create_secure_tcp(configureTLS.get(), NW_PARAMETERS_DEFAULT_CONFIGURATION));
+    if (port)
+        nw_parameters_set_local_endpoint(parameters.get(), nw_endpoint_create_host("::", makeString(*port).utf8().data()));
+    return parameters;
 }
 
 static void startListening(nw_listener_t listener)
@@ -104,9 +109,9 @@ void HTTPServer::cancel()
         connection.cancel();
 }
 
-HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> responses, Protocol protocol, CertificateVerifier&& verifier)
+HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> responses, Protocol protocol, CertificateVerifier&& verifier, RetainPtr<SecIdentityRef>&& identity, Optional<uint16_t> port)
     : m_requestData(adoptRef(*new RequestData(responses)))
-    , m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, WTFMove(verifier)).get())))
+    , m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, WTFMove(verifier), WTFMove(identity), port).get())))
     , m_protocol(protocol)
 {
     nw_listener_set_queue(m_listener.get(), dispatch_get_main_queue());
@@ -121,7 +126,7 @@ HTTPServer::HTTPServer(std::initializer_list<std::pair<String, HTTPResponse>> re
 
 HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol protocol)
     : m_requestData(adoptRef(*new RequestData({ })))
-    , m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, nullptr).get())))
+    , m_listener(adoptNS(nw_listener_create(listenerParameters(protocol, nullptr, nullptr, { }).get())))
     , m_protocol(protocol)
 {
     nw_listener_set_queue(m_listener.get(), dispatch_get_main_queue());

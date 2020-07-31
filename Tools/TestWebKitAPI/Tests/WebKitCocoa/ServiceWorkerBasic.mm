@@ -2223,4 +2223,77 @@ TEST(ServiceWorkers, ServerTrust)
     runTest(ResponseType::Fetched);
 }
 
+TEST(ServiceWorkers, ChangeOfServerCertificate)
+{
+    __block bool removedAnyExistingData = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        removedAnyExistingData = true;
+    }];
+    TestWebKitAPI::Util::run(&removedAnyExistingData);
+
+    static const char* main =
+    "<script>"
+    "async function test() {"
+    "    try {"
+    "        const registration = await navigator.serviceWorker.register('/sw.js');"
+    "        if (registration.active) {"
+    "            registration.onupdatefound = () => alert('new worker');"
+    "            setTimeout(() => alert('no update found'), 5000);"
+    "            return;"
+    "        }"
+    "        worker = registration.installing;"
+    "        worker.addEventListener('statechange', () => {"
+    "            if (worker.state == 'activated')"
+    "                alert('successfully registered');"
+    "        });"
+    "    } catch(e) {"
+    "        alert('Exception: ' + e);"
+    "    }"
+    "}"
+    "window.onload = test;"
+    "</script>";
+    static const char* js = "";
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    webView1.get().navigationDelegate = delegate.get();
+    webView2.get().navigationDelegate = delegate.get();
+
+    uint16_t serverPort;
+
+    // Load webView1 with a first server.
+    {
+        TestWebKitAPI::HTTPServer server1({
+            { "/", { main } },
+            { "/sw.js", { {{ "Content-Type", "application/javascript" }}, js } }
+        }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, testIdentity());
+        serverPort = server1.port();
+
+        [webView1 loadRequest:server1.request()];
+        EXPECT_WK_STREQ([webView1 _test_waitForAlert], "successfully registered");
+
+        server1.cancel();
+    }
+
+    // Load webView2 with a second server on same port with a different certificate
+    // This should trigger installing a new worker.
+    {
+        TestWebKitAPI::HTTPServer server2({
+            { "/", { main } },
+            { "/sw.js", { {{ "Content-Type", "application/javascript" }}, js } }
+        }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, testIdentity2(), serverPort);
+
+        [webView2 loadRequest:server2.request()];
+        EXPECT_WK_STREQ([webView2 _test_waitForAlert], "new worker");
+    }
+}
+
 #endif // HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)

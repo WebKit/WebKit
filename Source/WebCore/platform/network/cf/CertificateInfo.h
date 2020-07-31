@@ -97,6 +97,8 @@ private:
     mutable RetainPtr<CFArrayRef> m_certificateChain;
 };
 
+WEBCORE_EXPORT bool certificatesMatch(SecTrustRef, SecTrustRef);
+
 } // namespace WebCore
 
 namespace WTF {

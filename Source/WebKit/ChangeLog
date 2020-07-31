@@ -1,3 +1,18 @@
+2020-07-31  Youenn Fablet  <youenn@apple.com>
+
+        Update service worker if certificate info does not match when soft updating
+        https://bugs.webkit.org/show_bug.cgi?id=214988
+
+        Reviewed by Alex Christensen.
+
+        Make sure service worker soft updater gathers certificate info.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::loadFromNetwork):
+        (WebKit::ServiceWorkerSoftUpdateLoader::didReceiveResponse):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost):
+
 2020-07-31  Sihui Liu  <sihui_liu@appe.com>
 
         -[WKWebsiteDataStore _renameOrigin:] needs to support IndexedDB renames
