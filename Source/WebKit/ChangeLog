@@ -1,3 +1,17 @@
+2020-07-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        SOAuthorizationSession::dismissViewController could crash on calling WebPageProxy::platformWindow
+        https://bugs.webkit.org/show_bug.cgi?id=214816
+        <rdar://problem/65681530>
+
+        Reviewed by Youenn Fablet.
+
+        pageClient() called in WebPageProxy::platformWindow() could be null. Therefore, platformWindow()
+        needs to check m_pageClient instead.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::platformWindow):
+
 2020-07-31  Youenn Fablet  <youenn@apple.com>
 
         Update service worker if certificate info does not match when soft updating

@@ -625,7 +625,7 @@ void WebPageProxy::startWindowDrag()
 
 NSWindow *WebPageProxy::platformWindow()
 {
-    return pageClient().platformWindow();
+    return m_pageClient ? m_pageClient->platformWindow() : nullptr;
 }
 
 void WebPageProxy::rootViewToWindow(const WebCore::IntRect& viewRect, WebCore::IntRect& windowRect)
