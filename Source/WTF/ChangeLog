@@ -1,3 +1,14 @@
+2020-07-30  Keith Miller  <keith_miller@apple.com>
+
+        Remove UB from nonPACBitsMask computation
+        https://bugs.webkit.org/show_bug.cgi?id=214996
+
+        Reviewed by Tadeu Zagallo.
+
+        For non-ARM64E we now set numberOfPACBits to zero, which was causing UB in our computation of the nonPACBitsMask.
+
+        * wtf/CagedPtr.h:
+
 2020-07-30  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt -[AVContentKeyRequest willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:]
