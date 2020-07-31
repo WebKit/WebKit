@@ -45,6 +45,7 @@ static const CFStringRef kMGQiPadCapability = CFSTR("ipad");
 static const CFStringRef kMGQDeviceName = CFSTR("DeviceName");
 static const CFStringRef kMGQDeviceClassNumber = CFSTR("DeviceClassNumber");
 static const CFStringRef kMGQHasExtendedColorDisplay = CFSTR("HasExtendedColorDisplay");
+static const CFStringRef kMGQDeviceCornerRadius = CFSTR("DeviceCornerRadius");
 
 typedef enum {
     MGDeviceClassInvalid = -1,

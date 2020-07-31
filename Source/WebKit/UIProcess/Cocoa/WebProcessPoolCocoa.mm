@@ -165,6 +165,14 @@ void WebProcessPool::platformInitialize()
         installMemoryPressureHandler();
 
     setLegacyCustomProtocolManagerClient(makeUnique<LegacyCustomProtocolManagerClient>());
+
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+    if (!_MGCacheValid()) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            [adoptNS([[objc_getClass("MobileGestaltHelperProxy") alloc] init]) proxyRebuildCache];
+        });
+    }
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -447,8 +455,11 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-    if (!_MGCacheValid())
-        [adoptNS([[objc_getClass("MobileGestaltHelperProxy") alloc] init]) proxyRebuildCache];
+    if (!_MGCacheValid()) {
+        SandboxExtension::Handle handle;
+        SandboxExtension::createHandleForMachLookup("com.apple.mobilegestalt.xpc"_s, WTF::nullopt, handle);
+        parameters.mobileGestaltExtensionHandle = WTFMove(handle);
+    }
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(CFPREFS_DIRECT_MODE)

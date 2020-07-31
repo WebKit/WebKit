@@ -887,6 +887,7 @@
     (iokit-property "vendor-id")
     (iokit-property "udid-version") ;; <rdar://problem/52903475>
     (iokit-property "ui-pip") ;; <rdar://problem/48867037>
+    (iokit-property "platform-name")
 )
 
 ;; Read-only preferences and data
@@ -946,6 +947,10 @@
     (global-name "com.apple.containermanagerd")
 )
 
+(deny mach-lookup (with telemetry-backtrace)
+    (global-name "com.apple.mobilegestalt.xpc")
+)
+
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
@@ -957,6 +962,7 @@
             "com.apple.iphone.axserver-systemwide"
             "com.apple.lsd.mapdb"
             "com.apple.mobileassetd.v2"
+            "com.apple.mobilegestalt.xpc"
             "com.apple.nehelper"
             "com.apple.nesessionmanager.content-filter"
             "com.apple.osanalytics.osanalyticshelper"

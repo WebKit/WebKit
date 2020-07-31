@@ -204,6 +204,7 @@ struct WebProcessCreationParameters {
 #endif
 
     Optional<SandboxExtension::Handle> containerManagerExtensionHandle;
+    Optional<SandboxExtension::Handle> mobileGestaltExtensionHandle;
 
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::HandleArray diagnosticsExtensionHandles;

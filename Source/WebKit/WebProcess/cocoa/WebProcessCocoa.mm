@@ -109,6 +109,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIAccessibility.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
+#import <pal/spi/ios/MobileGestaltSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY) && USE(APPLE_INTERNAL_SDK)
@@ -202,6 +203,26 @@ void WebProcess::handleXPCEndpointMessages() const
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+    if (parameters.mobileGestaltExtensionHandle) {
+        if (auto extension = SandboxExtension::create(WTFMove(*parameters.mobileGestaltExtensionHandle))) {
+            bool ok = extension->consume();
+            ASSERT_UNUSED(ok, ok);
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+            MGGetFloat32Answer(kMGQMainScreenScale, 0);
+            MGGetSInt32Answer(kMGQMainScreenPitch, 0);
+            MGGetSInt32Answer(kMGQMainScreenClass, MGScreenClassPad2);
+            MGGetBoolAnswer(kMGQAppleInternalInstallCapability);
+            MGGetBoolAnswer(kMGQiPadCapability);
+            auto deviceName = adoptCF(MGCopyAnswer(kMGQDeviceName, nullptr));
+            MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
+            MGGetBoolAnswer(kMGQHasExtendedColorDisplay);
+            MGGetFloat32Answer(kMGQDeviceCornerRadius, 0);
+#endif
+            ok = extension->revoke();
+            ASSERT_UNUSED(ok, ok);
+        }
+    }
+
 #if HAVE(LSDATABASECONTEXT)
     // FIXME: Remove this entire section when the selector observeDatabaseChange4WebKit is present
     auto context = [NSClassFromString(@"LSDatabaseContext") sharedDatabaseContext];
