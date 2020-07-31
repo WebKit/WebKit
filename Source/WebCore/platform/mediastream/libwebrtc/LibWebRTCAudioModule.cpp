@@ -40,12 +40,16 @@ LibWebRTCAudioModule::LibWebRTCAudioModule()
 
 int32_t LibWebRTCAudioModule::RegisterAudioCallback(webrtc::AudioTransport* audioTransport)
 {
+    RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::RegisterAudioCallback %d", !!audioTransport);
+
     m_audioTransport = audioTransport;
     return 0;
 }
 
 int32_t LibWebRTCAudioModule::StartPlayout()
 {
+    RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::StartPlayout %d", m_isPlaying);
+
     if (m_isPlaying)
         return 0;
 
@@ -59,8 +63,9 @@ int32_t LibWebRTCAudioModule::StartPlayout()
 
 int32_t LibWebRTCAudioModule::StopPlayout()
 {
-    if (m_isPlaying)
-        m_isPlaying = false;
+    RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::StopPlayout %d", m_isPlaying);
+
+    m_isPlaying = false;
     return 0;
 }
 

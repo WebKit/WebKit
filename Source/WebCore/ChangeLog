@@ -1,3 +1,15 @@
+2020-07-31  Youenn Fablet  <youenn@apple.com>
+
+        Add LibWebRTCAudioModule logging
+        https://bugs.webkit.org/show_bug.cgi?id=214987
+
+        Reviewed by Eric Carlson.
+
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp:
+        (WebCore::LibWebRTCAudioModule::RegisterAudioCallback):
+        (WebCore::LibWebRTCAudioModule::StartPlayout):
+        (WebCore::LibWebRTCAudioModule::StopPlayout):
+
 2020-07-30  Simon Fraser  <simon.fraser@apple.com>
 
         Minor RenderLayerCompositor::updateBackingAndHierarchy() cleanup
