@@ -126,3 +126,5 @@ webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
 webkit.org/b/214877 imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]
 
 webkit.org/b/215025 imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-maxChannels.html [ Crash ]
+
+webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html [ Pass Failure ]
