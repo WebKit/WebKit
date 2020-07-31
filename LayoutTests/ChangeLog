@@ -1,5 +1,14 @@
 2020-07-31  Hector Lopez  <hector_i_lopez@apple.com>
 
+        [ macOS ] imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215039
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-07-31  Hector Lopez  <hector_i_lopez@apple.com>
+
         [ macOS wk1 iOS wk2 Release ] imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html  is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=215033
 
