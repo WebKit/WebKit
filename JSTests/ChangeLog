@@ -1,3 +1,14 @@
+2020-07-30  Saam Barati  <sbarati@apple.com>
+
+        Skip stress/operand-should-fit-in-abstract-heap-encoded-payload-format.js
+        https://bugs.webkit.org/show_bug.cgi?id=215001
+
+        Reviewed by Darin Adler.
+
+        The test takes > 4 minutes when run on an idle machine. That's too long.
+
+        * stress/operand-should-fit-in-abstract-heap-encoded-payload-format.js:
+
 2020-07-30  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC][32-bits] interator_next should check for EmptyValue instead of undefined to execute LLInt fast path

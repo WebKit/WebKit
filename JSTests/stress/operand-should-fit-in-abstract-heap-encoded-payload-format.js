@@ -1,4 +1,4 @@
-//@ skip if $buildType == "debug" or ["arm", "mips"].include?($architecture)
+//@ skip
 //@ runDefault("--useConcurrentJIT=0", "--jitPolicyScale=0")
 const a = [];
 a.length = 65532;
