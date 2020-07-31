@@ -297,7 +297,8 @@ class CheckPatchRelevance(buildstep.BuildStep):
     ]
 
     webkitpy_paths = [
-        'Tools/Scripts/webkitpy/',
+        'Tools/Scripts/webkitpy',
+        'Tools/Scripts/libraries',
     ]
 
     group_to_paths_mapping = {

@@ -2304,6 +2304,20 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
+    def test_relevant_webkitpy_patch(self):
+        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Tools/Scripts/webkitpy'
+        self.setupStep(CheckPatchRelevance())
+        self.setProperty('buildername', 'WebKitPy-Tests-EWS')
+        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.runStep()
+
+    def test_relevant_libraries_patch(self):
+        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Tools/Scripts/libraries'
+        self.setupStep(CheckPatchRelevance())
+        self.setProperty('buildername', 'WebKitPy-Tests-EWS')
+        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.runStep()
+
     def test_queues_without_relevance_info(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
         queues = ['Commit-Queue', 'Style-EWS', 'Apply-WatchList-EWS', 'GTK-Build-EWS', 'GTK-WK2-Tests-EWS',
