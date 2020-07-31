@@ -130,7 +130,7 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
-    static bool isTypeSupported(const String& type, Vector<ContentType>&& contentTypesRequiringHardwareSupport);
+    static bool isTypeSupported(ScriptExecutionContext&, const String& type, Vector<ContentType>&& contentTypesRequiringHardwareSupport);
 
     void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) final;
     void seekToTime(const MediaTime&) final;

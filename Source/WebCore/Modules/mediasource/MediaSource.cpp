@@ -42,6 +42,7 @@
 #include "Logging.h"
 #include "MediaSourcePrivate.h"
 #include "MediaSourceRegistry.h"
+#include "Quirks.h"
 #include "Settings.h"
 #include "SourceBuffer.h"
 #include "SourceBufferList.h"
@@ -659,6 +660,36 @@ void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
     }
 }
 
+static ContentType addVP9FullRangeVideoFlagToContentType(const ContentType& type)
+{
+    auto countPeriods = [] (const String& codec) {
+        unsigned count = 0;
+        unsigned position = 0;
+
+        while (codec.find('.', position) != notFound) {
+            ++count;
+            ++position;
+        }
+
+        return count;
+    };
+
+    for (auto codec : type.codecs()) {
+        if (!codec.startsWith("vp09") || countPeriods(codec) != 7)
+            continue;
+
+        auto rawType = type.raw();
+        auto position = rawType.find(codec);
+        ASSERT(position != notFound);
+        if (position == notFound)
+            continue;
+
+        rawType.insert(".00", position + codec.length());
+        return ContentType(rawType);
+    }
+    return type;
+}
+
 ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 {
     DEBUG_LOG(LOGIDENTIFIER, type);
@@ -676,7 +707,11 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
     if (m_mediaElement)
         mediaContentTypesRequiringHardwareSupport.appendVector(m_mediaElement->document().settings().mediaContentTypesRequiringHardwareSupport());
 
-    if (!isTypeSupported(type, WTFMove(mediaContentTypesRequiringHardwareSupport)))
+    auto context = scriptExecutionContext();
+    if (!context)
+        return Exception { NotAllowedError };
+
+    if (!isTypeSupported(*context, type, WTFMove(mediaContentTypesRequiringHardwareSupport)))
         return Exception { NotSupportedError };
 
     // 4. If the readyState attribute is not in the "open" state then throw an
@@ -686,6 +721,9 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 
     // 5. Create a new SourceBuffer object and associated resources.
     ContentType contentType(type);
+    if (context->isDocument() && downcast<Document>(context)->quirks().needsVP9FullRangeFlagQuirk())
+        contentType = addVP9FullRangeVideoFlagToContentType(contentType);
+
     auto sourceBufferPrivate = createSourceBufferPrivate(contentType);
 
     if (sourceBufferPrivate.hasException()) {
@@ -876,10 +914,10 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
         mediaContentTypesRequiringHardwareSupport.appendVector(document.settings().mediaContentTypesRequiringHardwareSupport());
     }
 
-    return isTypeSupported(type, WTFMove(mediaContentTypesRequiringHardwareSupport));
+    return isTypeSupported(context, type, WTFMove(mediaContentTypesRequiringHardwareSupport));
 }
 
-bool MediaSource::isTypeSupported(const String& type, Vector<ContentType>&& contentTypesRequiringHardwareSupport)
+bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String& type, Vector<ContentType>&& contentTypesRequiringHardwareSupport)
 {
     // Section 2.2 isTypeSupported() method steps.
     // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-isTypeSupported-boolean-DOMString-type
@@ -888,6 +926,9 @@ bool MediaSource::isTypeSupported(const String& type, Vector<ContentType>&& cont
         return false;
 
     ContentType contentType(type);
+    if (context.isDocument() && downcast<Document>(context).quirks().needsVP9FullRangeFlagQuirk())
+        contentType = addVP9FullRangeVideoFlagToContentType(contentType);
+
     String codecs = contentType.parameter("codecs");
 
     // 2. If type does not contain a valid MIME type string, then return false.
@@ -1032,8 +1073,14 @@ Vector<PlatformTimeRanges> MediaSource::activeRanges() const
     return activeRanges;
 }
 
-ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(const ContentType& type)
+ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(const ContentType& incomingType)
 {
+    ContentType type { incomingType };
+
+    auto context = scriptExecutionContext();
+    if (context && context->isDocument() && downcast<Document>(context)->quirks().needsVP9FullRangeFlagQuirk())
+        type = addVP9FullRangeVideoFlagToContentType(incomingType);
+
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
     switch (m_private->addSourceBuffer(type, sourceBufferPrivate)) {
     case MediaSourcePrivate::Ok:

@@ -1,3 +1,51 @@
+2020-07-31  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] YouTube does not offer HDR variants to devices which support HDR
+        https://bugs.webkit.org/show_bug.cgi?id=215022
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/mac/media/media-source/is-type-supported-vp9-codec-check.html
+
+        There are three separate issues which block YouTube from offering HDR:
+
+        1) YouTube checks both valid and invalid VP9 strings through MediaSource.isTypeSupported(), and UAs
+           which answer `true` to even invalid VP9 strings are blocked from HDR. To solve this, we will now
+           send isTypeSupported() through the same code path as Media Capabilities.
+
+        2) YouTube's standard valid and invalid VP9 strings do not include the fullRangeVideoFlag field, which
+           would normally be tossed as invalid. We shouldn't relax our requirements globally, so we will
+           add a Quirk which relaxes the requriement that VP9 strings contain a fullRangeVideoFlag.
+
+        3) YouTube's HDR query checks that window.screen.pixelDepth is > 24. We obviously don't want to change
+           the value of this field globally, so we will add separate Quirk which sets window.screen.pixelDepth
+           to 25 (a totally nonsensical value) when HDR is available.
+
+        Each of these Quirks has a path towards removal for YouTube. The fullRangeVideoFlag field involves
+        YouTube updating their compatibility check to inculde the fullRangeVideoFlag. The pixelDepth check
+        can be replaced by the `dynamic-range:high` Media Query.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::addVP9FullRangeVideoFlagToContentType):
+        (WebCore::MediaSource::addSourceBuffer):
+        (WebCore::MediaSource::removeSourceBuffer):
+        (WebCore::MediaSource::isTypeSupported):
+        (WebCore::MediaSource::onReadyStateChange):
+        (WebCore::MediaSource::activeRanges const):
+        * Modules/mediasource/MediaSource.h:
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsVP9FullRangeFlagQuirk const):
+        (WebCore::Quirks::needsHDRPixelDepthQuirk const):
+        * page/Quirks.h:
+        * page/Screen.cpp:
+        (WebCore::Screen::pixelDepth const):
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::isContentTypeSupported):
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.h:
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+        (WebCore::isVPCodecConfigurationRecordSupported):
+        (WebCore::validateVPParameters):
+
 2020-07-31  Chris Dumez  <cdumez@apple.com>
 
         Add linked-on-after check to keep WebSQL working in UIWebView until apps are rebuilt with iOS 14 SDK

@@ -243,8 +243,13 @@ MediaPlayerEnums::SupportsType SourceBufferParserWebM::isContentTypeSupported(co
     auto splitResults = StringView(codecsParameter).split(',');
     for (auto split : splitResults) {
         if (split.startsWith("vp09")) {
-            if (!isVP9DecoderAvailable())
+            auto codecParameters = parseVPCodecParameters(split);
+            if (!codecParameters)
                 return MediaPlayerEnums::SupportsType::IsNotSupported;
+
+            if (!isVPCodecConfigurationRecordSupported(*codecParameters))
+                return MediaPlayerEnums::SupportsType::IsNotSupported;
+
             continue;
         }
         // FIXME: Add Opus Support

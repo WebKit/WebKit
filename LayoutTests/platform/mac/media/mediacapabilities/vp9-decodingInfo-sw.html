@@ -6,6 +6,31 @@
     var promise;
     var info;
 
+    function MediaCapabilitiesInfoToString(info) {
+        try {
+            return `{ supported: ${ info.supported }, powerEfficient: ${ info.powerEfficient }, smooth: ${ info.smooth } }`;
+        } catch(e) {
+            return `{ ${set} }`;
+        }
+    }
+
+    function isEqualMediaCapabilitiesInfo(infoA, infoB) {
+        try {
+            return infoA.supported === infoB.supported
+                && infoA.powerEfficient === infoB.powerEfficient
+                && infoA.smooth === infoB.smooth;
+        } catch(e) {
+            return false;
+        }
+    }
+
+    function testExpectedMediaCapabilitiesInfo(testFuncString, expected)
+    {
+        let observed = eval(testFuncString);
+        let success = isEqualMediaCapabilitiesInfo(observed, expected);
+        reportExpected(success, testFuncString, '===', MediaCapabilitiesInfoToString(expected), MediaCapabilitiesInfoToString(observed));
+    }
+
     async function doTest()
     {
         if (!window.internals) {
@@ -22,36 +47,59 @@
         consoleWrite('Test that 4k @ 30fps is supported, smooth, but not powerEfficient');
         run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08\"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});");
         info = await shouldResolve(promise);
-        testExpected('info.supported', true);
-        testExpected('info.powerEfficient', false);
-        testExpected('info.smooth', true);
+        testExpectedMediaCapabilitiesInfo('info', {supported: true, powerEfficient: false, smooth: true});
 
         consoleWrite('');
         consoleWrite('Test that 4k @ 60fps is supported, but not smooth or powerEfficient');
 
         run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08\"', height: 1080, bitrate: 800000, width: 3180, framerate: 60 }});");
         info = await shouldResolve(promise);
-        testExpected('info.supported', true);
-        testExpected('info.powerEfficient', false);
-        testExpected('info.smooth', false);
+        testExpectedMediaCapabilitiesInfo('info', {supported: true, powerEfficient: false, smooth: false});
+
+        consoleWrite('');
+        consoleWrite('Test unsupported codec configurations.');
+        consoleWrite('Profiles 1 and 3 should be unsupported.');
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.01.41.08\"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});");
+        info = await shouldResolve(promise);
+        testExpectedMediaCapabilitiesInfo('info', {supported: false, powerEfficient: false, smooth: false});
+
+        consoleWrite('');
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.03.41.08\"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});");
+        info = await shouldResolve(promise);
+        testExpectedMediaCapabilitiesInfo('info', {supported: false, powerEfficient: false, smooth: false});
+
+        consoleWrite('');
+        consoleWrite('Pixel depths above 10 are unsupported.');
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.12\"', height: 1080, bitrate: 800000, width: 3180, framerate: 60 }});");
+        info = await shouldResolve(promise);
+        testExpectedMediaCapabilitiesInfo('info', {supported: false, powerEfficient: false, smooth: false});
+
+        consoleWrite('');
+        consoleWrite('Chroma subsampling 422 or 444 are unsupported.');
+
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08.02.01.01.01.01\"', height: 1080, bitrate: 800000, width: 3180, framerate: 60 }});");
+        info = await shouldResolve(promise);
+        testExpectedMediaCapabilitiesInfo('info', {supported: false, powerEfficient: false, smooth: false});
+
+        consoleWrite('');
+        run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08.03.01.01.01.01\"', height: 1080, bitrate: 800000, width: 3180, framerate: 60 }});");
+        info = await shouldResolve(promise);
+        testExpectedMediaCapabilitiesInfo('info', {supported: false, powerEfficient: false, smooth: false});
 
         consoleWrite('');
         consoleWrite('Test that SW VP9 decoder is not supported on battery power when screen is not 4k resolution');
         run('internals.setSystemHasACForTesting(false)');
         run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08\"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});");
         info = await shouldResolve(promise);
-        testExpected('info.supported', false);
-        testExpected('info.powerEfficient', false);
-        testExpected('info.smooth', false);
+        testExpectedMediaCapabilitiesInfo('info', {supported: false, powerEfficient: false, smooth: false});
 
         consoleWrite('');
         consoleWrite('Test that SW VP9 decoder is supported on battery power when screen is at least 4k resolution');
         run('internals.setVP9ScreenSizeAndScaleForTesting(3840, 2160, 1)');
         run("promise = navigator.mediaCapabilities.decodingInfo({ type: 'media-source', video: { contentType: 'video/mp4; codecs=\"vp09.00.41.08\"', height: 1080, bitrate: 800000, width: 3180, framerate: 30 }});");
         info = await shouldResolve(promise);
-        testExpected('info.supported', true);
-        testExpected('info.powerEfficient', false);
-        testExpected('info.smooth', true);
+        testExpectedMediaCapabilitiesInfo('info', {supported: true, powerEfficient: false, smooth: true});
 
         endTest();
     }

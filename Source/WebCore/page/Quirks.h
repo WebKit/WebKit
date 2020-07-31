@@ -108,6 +108,9 @@ public:
     enum StorageAccessResult : bool { ShouldNotCancelEvent, ShouldCancelEvent };
     StorageAccessResult triggerOptionalStorageAccessQuirk(const Element&, const AtomString& eventType) const;
 
+    bool needsVP9FullRangeFlagQuirk() const;
+    bool needsHDRPixelDepthQuirk() const;
+
 private:
     bool needsQuirks() const;
 
@@ -133,6 +136,8 @@ private:
 #endif
     mutable Optional<bool> m_needsCanPlayAfterSeekedQuirk;
     mutable Optional<bool> m_shouldBypassAsyncScriptDeferring;
+    mutable Optional<bool> m_needsVP9FullRangeFlagQuirk;
+    mutable Optional<bool> m_needsHDRPixelDepthQuirk;
 };
 
 }

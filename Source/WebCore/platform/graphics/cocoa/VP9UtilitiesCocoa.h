@@ -41,6 +41,7 @@ WEBCORE_EXPORT extern void resetOverrideVP9ScreenSizeAndScaleForTesting();
 WEBCORE_EXPORT extern void registerWebKitVP9Decoder();
 WEBCORE_EXPORT extern void registerSupplementalVP9Decoder();
 extern bool isVP9DecoderAvailable();
+extern bool isVPCodecConfigurationRecordSupported(VPCodecConfigurationRecord&);
 extern bool validateVPParameters(VPCodecConfigurationRecord&, MediaCapabilitiesInfo&, const VideoConfiguration&);
 
 }

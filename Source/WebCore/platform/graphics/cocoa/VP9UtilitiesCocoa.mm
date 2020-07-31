@@ -118,9 +118,61 @@ bool isVP9DecoderAvailable()
     return noErr == VTSelectAndCreateVideoDecoderInstance(kCMVideoCodecType_VP9, kCFAllocatorDefault, nullptr, nullptr);
 }
 
-bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaCapabilitiesInfo& info, const VideoConfiguration& videoConfiguration)
+bool isVPCodecConfigurationRecordSupported(VPCodecConfigurationRecord& codecConfiguration)
 {
     if (!isVP9DecoderAvailable())
+        return false;
+
+    // HW & SW VP9 Decoders support Profile 0 & 2:
+    if (codecConfiguration.profile && codecConfiguration.profile != 2)
+        return false;
+
+    // HW & SW VP9 Decoders support only 420 chroma subsampling:
+    if (codecConfiguration.chromaSubsampling > VPConfigurationChromaSubsampling::Subsampling_420_Colocated)
+        return false;
+
+    // HW & SW VP9 Decoders support 8 or 10 bit color:
+    if (codecConfiguration.bitDepth > 10)
+        return false;
+
+    // HW & SW VP9 Decoders support up to Level 6:
+    if (codecConfiguration.level > VPConfigurationLevel::Level_6)
+        return false;
+
+    // Hardware decoders are always available.
+    if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9) && !hardwareVP9DecoderDisabledForTesting)
+        return true;
+
+    // For wall-powered devices, always report VP9 as supported, even if not powerEfficient.
+    if (!systemHasBattery())
+        return true;
+
+    // For battery-powered devices, always report VP9 as supported when running on AC power,
+    // but only on battery when there is an attached screen whose resolution is large enough
+    // to support 4K video.
+    if (systemHasAC())
+        return true;
+
+    bool has4kScreen = false;
+
+    if (screenSizeAndScaleForTesting) {
+        auto screenSize = FloatSize(screenSizeAndScaleForTesting->width, screenSizeAndScaleForTesting->height).scaled(screenSizeAndScaleForTesting->scale);
+        has4kScreen = resolutionCategory(screenSize) >= ResolutionCategory::R_4K;
+    } else {
+        for (auto& screenData : getScreenProperties().screenDataMap.values()) {
+            if (resolutionCategory(screenData.screenRect.size().scaled(screenData.scaleFactor)) >= ResolutionCategory::R_4K) {
+                has4kScreen = true;
+                break;
+            }
+        }
+    }
+
+    return has4kScreen;
+}
+
+bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaCapabilitiesInfo& info, const VideoConfiguration& videoConfiguration)
+{
+    if (!isVPCodecConfigurationRecordSupported(codecConfiguration))
         return false;
 
     // VideoConfiguration and VPCodecConfigurationRecord can have conflicting values for HDR properties. If so, reject.
@@ -140,24 +192,6 @@ bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaC
     }
 
     if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9) && !hardwareVP9DecoderDisabledForTesting) {
-        info.powerEfficient = true;
-
-        // HW VP9 Decoder supports Profile 0 & 2:
-        if (codecConfiguration.profile && codecConfiguration.profile != 2)
-            return false;
-
-        // HW VP9 Decoder supports up to Level 6:
-        if (codecConfiguration.level > VPConfigurationLevel::Level_6)
-            return false;
-
-        // HW VP9 Decoder supports 8 or 10 bit color:
-        if (codecConfiguration.bitDepth > 10)
-            return false;
-
-        // HW VP9 Decoder suports only 420 chroma subsampling:
-        if (codecConfiguration.chromaSubsampling > VPConfigurationChromaSubsampling::Subsampling_420_Colocated)
-            return false;
-
         // HW VP9 Decoder does not support alpha channel:
         if (videoConfiguration.alphaChannel && *videoConfiguration.alphaChannel)
             return false;
@@ -173,8 +207,12 @@ bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaC
         else
             info.smooth = true;
 
+        info.powerEfficient = true;
+        info.supported = true;
         return true;
     }
+
+    info.powerEfficient = false;
 
     // SW VP9 Decoder has much more variable capabilities depending on CPU characteristics.
     // FIXME: Add a lookup table for device-to-capabilities. For now, assume that the SW VP9
@@ -214,11 +252,10 @@ bool validateVPParameters(VPCodecConfigurationRecord& codecConfiguration, MediaC
         }
     }
 
-    if (!has4kScreen) {
-        info.supported = false;
+    if (!has4kScreen)
         return false;
-    }
 
+    info.supported = true;
     return true;
 }
 

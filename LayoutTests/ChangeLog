@@ -1,3 +1,15 @@
+2020-07-31  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] YouTube does not offer HDR variants to devices which support HDR
+        https://bugs.webkit.org/show_bug.cgi?id=215022
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac/media/media-source/is-type-supported-vp9-codec-check-expected.txt: Added.
+        * platform/mac/media/media-source/is-type-supported-vp9-codec-check.html: Added.
+        * platform/mac/media/mediacapabilities/vp9-decodingInfo-sw-expected.txt:
+        * platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html:
+
 2020-07-31  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS ] imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html is a flaky failure
