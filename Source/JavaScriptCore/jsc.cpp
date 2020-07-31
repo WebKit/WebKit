@@ -2675,10 +2675,6 @@ int main(int argc, char** argv)
     // have a chance to parse options.
     WTF::initialize();
 
-#if PLATFORM(IOS_FAMILY)
-    Options::crashIfCantAllocateJITMemory() = true;
-#endif
-
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling
     int res = EXIT_SUCCESS;
@@ -3024,6 +3020,10 @@ void CommandLine::parseArguments(int argc, char** argv)
     Options::AllowUnfinalizedAccessScope scope;
     Options::initialize();
     
+#if PLATFORM(IOS_FAMILY)
+    Options::crashIfCantAllocateJITMemory() = true;
+#endif
+
     if (Options::dumpOptions()) {
         printf("Command line:");
 #if PLATFORM(COCOA)

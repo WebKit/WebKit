@@ -1,3 +1,16 @@
+2020-07-31  Keith Miller  <keith_miller@apple.com>
+
+        Move Options setter to where we allow access to the Options object
+        https://bugs.webkit.org/show_bug.cgi?id=215028
+
+        Reviewed by Saam Barati.
+
+        Right now jsc CLI crashes when assertions are enabled on iOS.
+
+        * jsc.cpp:
+        (main):
+        (CommandLine::parseArguments):
+
 2020-07-31  Saam Barati  <sbarati@apple.com>
 
         Re-enable NO_SMT on Catalina
