@@ -1,3 +1,15 @@
+2020-07-31  Keith Miller  <keith_miller@apple.com>
+
+        Fix build around broken internal SDK for iOS 13
+        https://bugs.webkit.org/show_bug.cgi?id=215009
+
+        Reviewed by Mark Lam.
+
+        We need to manually include the private headers because the system tries to hide them from us even on internal builds...
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/Configurations/TestWebKitAPILibrary.xcconfig:
+
 2020-07-31  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add unit-tests for various builder factories
