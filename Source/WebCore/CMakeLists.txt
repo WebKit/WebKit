@@ -482,6 +482,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/OscillatorNode.idl
     Modules/webaudio/OscillatorOptions.idl
     Modules/webaudio/OscillatorType.idl
+    Modules/webaudio/OverSampleType.idl
     Modules/webaudio/PannerNode.idl
     Modules/webaudio/PannerOptions.idl
     Modules/webaudio/PanningModelType.idl
@@ -490,6 +491,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/PeriodicWaveOptions.idl
     Modules/webaudio/ScriptProcessorNode.idl
     Modules/webaudio/WaveShaperNode.idl
+    Modules/webaudio/WaveShaperOptions.idl
     Modules/webaudio/WebKitAudioContext.idl
     Modules/webaudio/WebKitAudioPannerNode.idl
     Modules/webaudio/WebKitOfflineAudioContext.idl

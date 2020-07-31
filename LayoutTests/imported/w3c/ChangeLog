@@ -1,3 +1,16 @@
+2020-07-31  Chris Dumez  <cdumez@apple.com>
+
+        Add constructor for WaveShaperNode
+        https://bugs.webkit.org/show_bug.cgi?id=214989
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/ctor-waveshaper-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-simple-expected.txt:
+
 2020-07-30  Chris Dumez  <cdumez@apple.com>
 
         OfflineAudioContext.startRendering() should return a Promise

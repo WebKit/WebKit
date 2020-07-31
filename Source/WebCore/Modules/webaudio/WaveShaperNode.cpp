@@ -28,12 +28,54 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioContext.h"
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WaveShaperNode);
+
+ExceptionOr<Ref<WaveShaperNode>> WaveShaperNode::create(BaseAudioContext& context, const WaveShaperOptions& options)
+{
+    if (context.isStopped())
+        return Exception { InvalidStateError };
+
+    context.lazyInitialize();
+    UNUSED_PARAM(options);
+
+    RefPtr<Float32Array> curve;
+    if (options.curve) {
+        curve = Float32Array::tryCreate(options.curve->data(), options.curve->size());
+        if (!curve)
+            return Exception { InvalidStateError, "Invalid curve parameter" };
+    }
+
+    auto node = adoptRef(*new WaveShaperNode(context));
+
+    auto result = node->setChannelCount(options.channelCount.valueOr(2));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = node->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::Max));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = node->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
+    if (result.hasException())
+        return result.releaseException();
+
+    if (curve) {
+        result = node->setCurve(WTFMove(curve));
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    node->setOversample(options.oversample);
+
+    return node;
+}
 
 WaveShaperNode::WaveShaperNode(BaseAudioContext& context)
     : AudioBasicProcessorNode(context, context.sampleRate())
@@ -44,11 +86,15 @@ WaveShaperNode::WaveShaperNode(BaseAudioContext& context)
     initialize();
 }
 
-void WaveShaperNode::setCurve(Float32Array& curve)
+ExceptionOr<void> WaveShaperNode::setCurve(RefPtr<Float32Array>&& curve)
 {
     ASSERT(isMainThread()); 
     DEBUG_LOG(LOGIDENTIFIER);
-    waveShaperProcessor()->setCurve(&curve);
+    if (curve && curve->length() < 2)
+        return Exception { InvalidStateError, "Length of curve array cannot be less than 2" };
+
+    waveShaperProcessor()->setCurve(curve.get());
+    return { };
 }
 
 Float32Array* WaveShaperNode::curve()
@@ -56,14 +102,14 @@ Float32Array* WaveShaperNode::curve()
     return waveShaperProcessor()->curve();
 }
 
-static inline WaveShaperProcessor::OverSampleType processorType(WaveShaperNode::OverSampleType type)
+static inline WaveShaperProcessor::OverSampleType processorType(OverSampleType type)
 {
     switch (type) {
-    case WaveShaperNode::OverSampleType::None:
+    case OverSampleType::None:
         return WaveShaperProcessor::OverSampleNone;
-    case WaveShaperNode::OverSampleType::_2x:
+    case OverSampleType::_2x:
         return WaveShaperProcessor::OverSample2x;
-    case WaveShaperNode::OverSampleType::_4x:
+    case OverSampleType::_4x:
         return WaveShaperProcessor::OverSample4x;
     }
     ASSERT_NOT_REACHED();

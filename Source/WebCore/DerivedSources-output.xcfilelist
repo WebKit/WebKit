@@ -1238,6 +1238,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOscillatorType.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverSampleType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverSampleType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverconstrainedError.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverconstrainedError.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOverconstrainedErrorEvent.cpp
@@ -1976,6 +1978,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVoidCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVoidCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebAnimation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebAnimation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRDevice.cpp

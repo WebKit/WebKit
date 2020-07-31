@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,44 +26,17 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioBasicProcessorNode.h"
+#include "AudioNodeOptions.h"
 #include "OverSampleType.h"
-#include "WaveShaperOptions.h"
-#include "WaveShaperProcessor.h"
-#include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class WaveShaperNode final : public AudioBasicProcessorNode {
-    WTF_MAKE_ISO_ALLOCATED(WaveShaperNode);
-public:
-    static ExceptionOr<Ref<WaveShaperNode>> create(BaseAudioContext&, const WaveShaperOptions& = { });
-
-    // setCurve() is called on the main thread.
-    ExceptionOr<void> setCurve(RefPtr<Float32Array>&&);
-    Float32Array* curve();
-
-    void setOversample(OverSampleType);
-    OverSampleType oversample() const;
-
-    double latency() const { return latencyTime(); }
-
-private:    
-    explicit WaveShaperNode(BaseAudioContext&);
-
-    WaveShaperProcessor* waveShaperProcessor() { return static_cast<WaveShaperProcessor*>(processor()); }
+struct WaveShaperOptions : AudioNodeOptions {
+    Optional<Vector<float>> curve;
+    OverSampleType oversample { OverSampleType::None };
 };
 
-String convertEnumerationToString(WebCore::OverSampleType); // in JSOverSampleType.cpp
-
-} // namespace WebCore
-
-namespace WTF {
-    
-template<> struct LogArgument<WebCore::OverSampleType> {
-    static String toString(WebCore::OverSampleType type) { return convertEnumerationToString(type); }
-};
-    
-} // namespace WTF
+}
 
 #endif // ENABLE(WEB_AUDIO)

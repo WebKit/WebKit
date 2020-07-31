@@ -509,10 +509,6 @@ ExceptionOr<Ref<WaveShaperNode>> BaseAudioContext::createWaveShaper()
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
     return WaveShaperNode::create(*this);
 }
 

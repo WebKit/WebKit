@@ -1044,40 +1044,40 @@ FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "c
 FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
 FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
 PASS WaveShaperNode interface: existence and properties of interface object 
-FAIL WaveShaperNode interface object length assert_equals: wrong value for WaveShaperNode.length expected 1 but got 0
+PASS WaveShaperNode interface object length 
 PASS WaveShaperNode interface object name 
 PASS WaveShaperNode interface: existence and properties of interface prototype object 
 PASS WaveShaperNode interface: existence and properties of interface prototype object's "constructor" property 
 PASS WaveShaperNode interface: existence and properties of interface prototype object's @@unscopables property 
 PASS WaveShaperNode interface: attribute curve 
 PASS WaveShaperNode interface: attribute oversample 
-FAIL WaveShaperNode must be primary interface of new WaveShaperNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL Stringification of new WaveShaperNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL WaveShaperNode interface: new WaveShaperNode(context) must inherit property "curve" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL WaveShaperNode interface: new WaveShaperNode(context) must inherit property "oversample" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: calling connect(AudioParam, optional unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: calling disconnect(unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(AudioNode)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode) on new WaveShaperNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(AudioParam)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioParam) on new WaveShaperNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioParam, unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "context" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "numberOfInputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "numberOfOutputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "channelCount" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
-FAIL AudioNode interface: new WaveShaperNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new WaveShaperNode(context)')"
+PASS WaveShaperNode must be primary interface of new WaveShaperNode(context) 
+PASS Stringification of new WaveShaperNode(context) 
+PASS WaveShaperNode interface: new WaveShaperNode(context) must inherit property "curve" with the proper type 
+PASS WaveShaperNode interface: new WaveShaperNode(context) must inherit property "oversample" with the proper type 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioParam, optional unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect()" with the proper type 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(AudioNode)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode) on new WaveShaperNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(AudioParam)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam) on new WaveShaperNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam, unsigned long) on new WaveShaperNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "context" with the proper type 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "numberOfInputs" with the proper type 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "numberOfOutputs" with the proper type 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "channelCount" with the proper type 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "channelCountMode" with the proper type 
+PASS AudioNode interface: new WaveShaperNode(context) must inherit property "channelInterpretation" with the proper type 
 FAIL AudioWorklet interface: existence and properties of interface object assert_own_property: self does not have own property "AudioWorklet" expected property "AudioWorklet" missing
 FAIL AudioWorklet interface object length assert_own_property: self does not have own property "AudioWorklet" expected property "AudioWorklet" missing
 FAIL AudioWorklet interface object name assert_own_property: self does not have own property "AudioWorklet" expected property "AudioWorklet" missing

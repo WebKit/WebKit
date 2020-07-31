@@ -3134,6 +3134,7 @@ JSOptionalEffectTiming.cpp
 JSOscillatorNode.cpp
 JSOscillatorOptions.cpp
 JSOscillatorType.cpp
+JSOverSampleType.cpp
 JSOverconstrainedError.cpp
 JSOverconstrainedErrorEvent.cpp
 JSOverflowEvent.cpp
@@ -3495,6 +3496,7 @@ JSVisibilityState.cpp
 JSVisualViewport.cpp
 JSVoidCallback.cpp
 JSWaveShaperNode.cpp
+JSWaveShaperOptions.cpp
 JSWebAnimation.cpp
 JSWebGL2RenderingContext.cpp
 JSWebGLActiveInfo.cpp

@@ -13,8 +13,8 @@ PASS   Setting oversample to "invalid" did not throw an exception.
 PASS   Waveshaper.oversample = "invalid" is equal to 4x. 
 PASS   Setting curve to [-1,0.25,0.75] did not throw an exception. 
 PASS   WaveShaper.curve is identical to the array [-1,0.25,0.75]. 
-FAIL X Setting curve back to null incorrectly threw TypeError: "The WaveShaperNode.curve attribute must be an instance of Float32Array". assert_true: expected true got false
-FAIL X Waveshaper.curve = null is not equal to null. Got [-1,0.25,0.75]. assert_true: expected true got false
-FAIL < [simple] 2 out of 12 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS   Setting curve back to null did not throw an exception. 
+PASS   Waveshaper.curve = null is equal to null. 
+PASS < [simple] All assertions passed. (total 12 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

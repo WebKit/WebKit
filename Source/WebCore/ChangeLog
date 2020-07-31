@@ -1,3 +1,35 @@
+2020-07-31  Chris Dumez  <cdumez@apple.com>
+
+        Add constructor for WaveShaperNode
+        https://bugs.webkit.org/show_bug.cgi?id=214989
+
+        Reviewed by Youenn Fablet.
+
+        Add constructor for WaveShaperNode:
+        - https://www.w3.org/TR/webaudio/#waveshapernode
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createWaveShaper):
+        * Modules/webaudio/OverSampleType.h: Copied from Source/WebCore/Modules/webaudio/WaveShaperNode.idl.
+        * Modules/webaudio/OverSampleType.idl: Copied from Source/WebCore/Modules/webaudio/WaveShaperNode.idl.
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::create):
+        (WebCore::WaveShaperNode::setCurve):
+        (WebCore::processorType):
+        * Modules/webaudio/WaveShaperNode.h:
+        (WTF::LogArgument<WebCore::OverSampleType>::toString):
+        * Modules/webaudio/WaveShaperNode.idl:
+        * Modules/webaudio/WaveShaperOptions.h: Copied from Source/WebCore/Modules/webaudio/WaveShaperNode.idl.
+        * Modules/webaudio/WaveShaperOptions.idl: Copied from Source/WebCore/Modules/webaudio/WaveShaperNode.idl.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-07-31  Youenn Fablet  <youenn@apple.com>
 
         Update service worker if certificate info does not match when soft updating

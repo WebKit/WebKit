@@ -2432,6 +2432,8 @@
 		831B61762499A5BB00C07C79 /* WebKitAudioPannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 831B61742499A59C00C07C79 /* WebKitAudioPannerNode.h */; };
 		831B61772499A5BF00C07C79 /* WebKitOfflineAudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 831B61752499A59D00C07C79 /* WebKitOfflineAudioContext.h */; };
 		8321507E1F27EA1B0095B136 /* NavigatorBeacon.h in Headers */ = {isa = PBXBuildFile; fileRef = 8321507B1F27EA150095B136 /* NavigatorBeacon.h */; };
+		8326BF8E24D35C33001F8A85 /* OverSampleType.h in Headers */ = {isa = PBXBuildFile; fileRef = 8326BF8924D35C20001F8A85 /* OverSampleType.h */; };
+		8326BF8F24D35C39001F8A85 /* WaveShaperOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8326BF8C24D35C20001F8A85 /* WaveShaperOptions.h */; };
 		832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 832B843319D8E55100B26055 /* SVGAnimateElementBase.h */; };
 		833B9E321F508D8500E0E428 /* JSFileSystemDirectoryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B9E2F1F508D8000E0E428 /* JSFileSystemDirectoryEntry.h */; };
 		833B9E341F508D8500E0E428 /* JSFileSystemEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B9E2A1F508D8000E0E428 /* JSFileSystemEntry.h */; };
@@ -10415,6 +10417,10 @@
 		8321507A1F27EA150095B136 /* NavigatorBeacon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorBeacon.cpp; sourceTree = "<group>"; };
 		8321507B1F27EA150095B136 /* NavigatorBeacon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatorBeacon.h; sourceTree = "<group>"; };
 		8321507C1F27EA150095B136 /* NavigatorBeacon.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigatorBeacon.idl; sourceTree = "<group>"; };
+		8326BF8924D35C20001F8A85 /* OverSampleType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverSampleType.h; sourceTree = "<group>"; };
+		8326BF8B24D35C20001F8A85 /* OverSampleType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OverSampleType.idl; sourceTree = "<group>"; };
+		8326BF8C24D35C20001F8A85 /* WaveShaperOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WaveShaperOptions.h; sourceTree = "<group>"; };
+		8326BF8D24D35C21001F8A85 /* WaveShaperOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WaveShaperOptions.idl; sourceTree = "<group>"; };
 		8329A4171EC25B2B008ED4BE /* DocumentAndElementEventHandlers.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DocumentAndElementEventHandlers.idl; sourceTree = "<group>"; };
 		8329DCC21C7A6AE300730B33 /* HTMLHyperlinkElementUtils.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLHyperlinkElementUtils.idl; sourceTree = "<group>"; };
 		832B843319D8E55100B26055 /* SVGAnimateElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimateElementBase.h; sourceTree = "<group>"; };
@@ -29566,6 +29572,8 @@
 				E755E8B124CA270A009F7C23 /* OscillatorOptions.idl */,
 				E755E8B424CA2796009F7C23 /* OscillatorType.h */,
 				E755E8B624CA2796009F7C23 /* OscillatorType.idl */,
+				8326BF8924D35C20001F8A85 /* OverSampleType.h */,
+				8326BF8B24D35C20001F8A85 /* OverSampleType.idl */,
 				FD315FCF12B0267500C1A359 /* PannerNode.cpp */,
 				FD315FD012B0267500C1A359 /* PannerNode.h */,
 				FD315FD112B0267500C1A359 /* PannerNode.idl */,
@@ -29590,6 +29598,8 @@
 				FD7F298C13D4C0CB00AD9535 /* WaveShaperNode.cpp */,
 				FD7F298D13D4C0CB00AD9535 /* WaveShaperNode.h */,
 				FD7F298E13D4C0CB00AD9535 /* WaveShaperNode.idl */,
+				8326BF8C24D35C20001F8A85 /* WaveShaperOptions.h */,
+				8326BF8D24D35C21001F8A85 /* WaveShaperOptions.idl */,
 				FD7F298F13D4C0CB00AD9535 /* WaveShaperProcessor.cpp */,
 				FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */,
 				83003E2B249997A80060AF94 /* WebKitAudioContext.cpp */,
@@ -32661,6 +32671,7 @@
 				072A70401D6E8F6200DF0AFC /* OverconstrainedErrorEvent.h in Headers */,
 				1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */,
 				3774ABA50FA21EB400AD7DE9 /* OverlapTestRequestClient.h in Headers */,
+				8326BF8E24D35C33001F8A85 /* OverSampleType.h in Headers */,
 				65A21468097A329100B9050A /* Page.h in Headers */,
 				91278D5E21DEDAD600B57184 /* PageAuditAgent.h in Headers */,
 				CD5E5B5F1A15CE54000C609E /* PageConfiguration.h in Headers */,
@@ -33931,6 +33942,7 @@
 				A14832BB187F643200DA63A6 /* WAKWindow.h in Headers */,
 				FD7F299213D4C0CB00AD9535 /* WaveShaperDSPKernel.h in Headers */,
 				FD7F299413D4C0CB00AD9535 /* WaveShaperNode.h in Headers */,
+				8326BF8F24D35C39001F8A85 /* WaveShaperOptions.h in Headers */,
 				FD7F299713D4C0CB00AD9535 /* WaveShaperProcessor.h in Headers */,
 				29A812490FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.h in Headers */,
 				AAA728F716D1D8BC00D3BBC6 /* WebAccessibilityObjectWrapperIOS.h in Headers */,
@@ -35049,7 +35061,6 @@
 				DECA80391F9FED6A00E3B661 /* UnifiedSource248.cpp in Sources */,
 				DECA803A1F9FED6A00E3B661 /* UnifiedSource249.cpp in Sources */,
 				DECA803B1F9FED6A00E3B661 /* UnifiedSource250.cpp in Sources */,
-				CDED1C3C24CD305700934E12 /* VP9UtilitiesCocoa.mm in Sources */,
 				DECA803C1F9FED6A00E3B661 /* UnifiedSource251.cpp in Sources */,
 				DECA803D1F9FED6A00E3B661 /* UnifiedSource252.cpp in Sources */,
 				DECA803E1F9FED6A00E3B661 /* UnifiedSource253.cpp in Sources */,
@@ -35339,6 +35350,7 @@
 				CD336F6717FA0AC600DDDCD0 /* VideoTrackPrivateAVFObjC.cpp in Sources */,
 				CD8B5A42180D149A008B8E65 /* VideoTrackPrivateMediaSourceAVFObjC.mm in Sources */,
 				26F9A83818A046AC00AEB88A /* ViewportConfiguration.cpp in Sources */,
+				CDED1C3C24CD305700934E12 /* VP9UtilitiesCocoa.mm in Sources */,
 				A14832B1187F61E100DA63A6 /* WAKAppKitStubs.m in Sources */,
 				A14832B3187F629100DA63A6 /* WAKClipView.m in Sources */,
 				A14832B5187F62FC00DA63A6 /* WAKResponder.m in Sources */,
