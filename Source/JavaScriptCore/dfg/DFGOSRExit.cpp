@@ -603,20 +603,10 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                     case Constant:
                         sideState->tmps[i] = recovery.constant();
                         break;
-                        
-#if USE(JSVALUE64)
+
                     case UnboxedInt32InGPR:
                     case Int32DisplacedInJSStack: {
                         sideState->tmps[i] = jsNumber(static_cast<int32_t>(tmpScratch[i + tmpOffset]));
-                        break;
-                    }
-
-                    case BooleanDisplacedInJSStack:
-                    case CellDisplacedInJSStack:
-                    case UnboxedCellInGPR:
-                    case InGPR:
-                    case DisplacedInJSStack: {
-                        sideState->tmps[i] = reinterpret_cast<JSValue*>(tmpScratch)[i + tmpOffset];
                         break;
                     }
 
@@ -625,13 +615,16 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                         break;
                     }
 
-#else // USE(JSVALUE32_64)
-                    case UnboxedInt32InGPR:
-                    case Int32DisplacedInJSStack: {
-                        sideState->tmps[i] = jsNumber(static_cast<int32_t>(tmpScratch[i + tmpOffset]));
+#if USE(JSVALUE64)
+                    case BooleanDisplacedInJSStack:
+                    case CellDisplacedInJSStack:
+                    case UnboxedCellInGPR:
+                    case InGPR:
+                    case DisplacedInJSStack: {
+                        sideState->tmps[i] = reinterpret_cast<JSValue*>(tmpScratch)[i + tmpOffset];
                         break;
                     }
-
+#else // USE(JSVALUE32_64)
                     case InPair:
                     case DisplacedInJSStack: {
                         sideState->tmps[i] = reinterpret_cast<JSValue*>(tmpScratch)[i + tmpOffset];
@@ -645,15 +638,13 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                         break;
                     }
 
-                    case BooleanDisplacedInJSStack:
-                    case UnboxedBooleanInGPR: {
+                    case BooleanDisplacedInJSStack: {
                         sideState->tmps[i] = jsBoolean(static_cast<bool>(tmpScratch[i + tmpOffset]));
                         break;
                     }
-                        
 #endif // USE(JSVALUE64)
 
-                    default: 
+                    default:
                         RELEASE_ASSERT_NOT_REACHED();
                         break;
                     }

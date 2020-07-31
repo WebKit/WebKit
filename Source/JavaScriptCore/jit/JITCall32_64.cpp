@@ -389,13 +389,12 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
 
     compileOpCall<OpIteratorOpen>(instruction, m_callLinkInfoIndex++);
 
-    VirtualRegister vr = destinationFor(bytecode, m_bytecodeIndex.checkpoint()).virtualRegister();
     advanceToNextCheckpoint();
     
     // call result (iterator) is in regT1 (tag)/regT0 (payload)
     const Identifier* ident = &vm().propertyNames->next;
     
-    emitJumpSlowCaseIfNotJSCell(vr, regT1);
+    emitJumpSlowCaseIfNotJSCell(regT1);
 
     GPRReg tagIteratorGPR = regT1;
     GPRReg payloadIteratorGPR = regT0;

@@ -1,3 +1,15 @@
+2020-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Follow-up changes after r265036
+        https://bugs.webkit.org/show_bug.cgi?id=214982
+
+        Reviewed by Darin Adler.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit): Remove dupe definitions in OSRExit.
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_iterator_open): We should use emitJumpSlowCaseIfNotJSCell(regT1).
+
 2020-07-30  Keith Miller  <keith_miller@apple.com>
 
         Remove UB from nonPACBitsMask computation
