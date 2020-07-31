@@ -1,3 +1,13 @@
+2020-07-30  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Garden three persistent failures from gtk release bot.
+
+        Unreviewed test gardening.
+
+        These were also affecting the debug and WPE bots.
+
+        * platform/glib/TestExpectations:
+
 2020-07-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iPadOS] Two taps are required to choose a country/region when creating an account on ea.com
