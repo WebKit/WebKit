@@ -1,3 +1,20 @@
+2020-07-31  Jonathan Bedard  <jbedard@apple.com>
+
+        [test-webkitpy] Have CI use verbose logging
+        https://bugs.webkit.org/show_bug.cgi?id=215019
+        <rdar://problem/66383986>
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (RunWebKitPyPython2Tests): Add --verbose flag.
+        (RunWebKitPyPython3Tests): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (test_success): Add --verbose flag to test-webkitpy command.
+        (test_unexpected_failure): Ditto.
+        (test_failure): Ditto.
+        (test_errors): Ditto.
+
 2020-07-31  Brady Eidson  <beidson@apple.com>
 
         Special HID mapping for the Dualshock 3 controller
