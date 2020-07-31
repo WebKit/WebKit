@@ -31,25 +31,35 @@
 #include "config.h"
 #include "DateComponents.h"
 
+#include "ParsingUtilities.h"
 #include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
-// HTML5 specification defines minimum week of year is one.
-const int DateComponents::minimumWeekNumber = 1;
+// HTML uses ISO-8601 format with year >= 1. Gregorian calendar started in
+// 1582. However, we need to support 0001-01-01 in Gregorian calendar rule.
+static constexpr int minimumYear = 1;
 
-// HTML5 specification defines maximum week of year is 53.
-const int DateComponents::maximumWeekNumber = 53;
+// Date in ECMAScript can't represent dates later than 275760-09-13T00:00Z.
+// So, we have the same upper limit in HTML5 date/time types.
+static constexpr int maximumYear = 275760;
 
-static const int maximumMonthInMaximumYear = 8; // This is September, since months are 0 based.
-static const int maximumDayInMaximumMonth = 13;
-static const int maximumWeekInMaximumYear = 37; // The week of 275760-09-13
+// HTMLdefines minimum week of year is one.
+static constexpr int minimumWeekNumber = 1;
 
-static const int daysInMonth[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+// HTML defines maximum week of year is 53.
+static constexpr int maximumWeekNumber = 53;
+
+static constexpr int maximumMonthInMaximumYear = 8; // This is September, since months are 0 based.
+static constexpr int maximumDayInMaximumMonth = 13;
+static constexpr int maximumWeekInMaximumYear = 37; // The week of 275760-09-13
+
+static constexpr int daysInMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 static bool isLeapYear(int year)
 {
@@ -96,68 +106,73 @@ int DateComponents::maxWeekNumberInYear() const
     return day == Thursday || (day == Wednesday && isLeapYear(m_year)) ? maximumWeekNumber : maximumWeekNumber - 1;
 }
 
-template<typename CharacterType> static unsigned countDigits(const CharacterType* src, unsigned length, unsigned start)
+template<typename CharacterType> static unsigned countDigits(StringParsingBuffer<CharacterType> buffer)
 {
-    unsigned index = start;
-    for (; index < length; ++index) {
-        if (!isASCIIDigit(src[index]))
-            break;
-    }
-    return index - start;
+    auto begin = buffer.position();
+    skipWhile<CharacterType, isASCIIDigit>(buffer);
+    return buffer.position() - begin;
 }
 
 // Very strict integer parser. Do not allow leading or trailing whitespace unlike charactersToIntStrict().
-template<typename CharacterType> static bool toInt(const CharacterType* src, unsigned length, unsigned parseStart, unsigned parseLength, int& out)
+template<typename CharacterType> static Optional<int> parseInt(StringParsingBuffer<CharacterType>& buffer, unsigned maximumNumberOfDigitsToParse)
 {
-    if (parseStart + parseLength > length || parseLength <= 0)
-        return false;
-    int value = 0;
-    auto current = src + parseStart;
-    auto end = current + parseLength;
+    if (maximumNumberOfDigitsToParse > buffer.lengthRemaining() || !maximumNumberOfDigitsToParse)
+        return WTF::nullopt;
 
     // We don't need to handle negative numbers for ISO 8601.
-    for (; current < end; ++current) {
-        if (!isASCIIDigit(*current))
-            return false;
-        int digit = *current - '0';
+
+    int value = 0;
+    unsigned digitsRemaining = 0;
+    while (digitsRemaining < maximumNumberOfDigitsToParse) {
+        if (!isASCIIDigit(*buffer))
+            return WTF::nullopt;
+        int digit = *buffer - '0';
         if (value > (INT_MAX - digit) / 10) // Check for overflow.
-            return false;
+            return WTF::nullopt;
         value = value * 10 + digit;
+        ++digitsRemaining;
+        ++buffer;
     }
-    out = value;
-    return true;
+    return value;
 }
 
-template<typename CharacterType> bool DateComponents::parseYear(const CharacterType* src, unsigned length, unsigned start, unsigned& end)
+template<typename CharacterType> static Optional<int> parseIntWithinLimits(StringParsingBuffer<CharacterType>& buffer, unsigned maximumNumberOfDigitsToParse, int minimumValue, int maximumValue)
 {
-    unsigned digitsLength = countDigits(src, length, start);
+    auto value = parseInt(buffer, maximumNumberOfDigitsToParse);
+    if (!(value && *value >= minimumValue && *value <= maximumValue))
+        return WTF::nullopt;
+    return value;
+}
+
+template<typename CharacterType> bool DateComponents::parseYear(StringParsingBuffer<CharacterType>& buffer)
+{
+    unsigned digitsLength = countDigits(buffer);
     // Needs at least 4 digits according to the standard.
     if (digitsLength < 4)
         return false;
-    int year;
-    if (!toInt(src, length, start, digitsLength, year))
+
+    auto year = parseIntWithinLimits(buffer, digitsLength, minimumYear, maximumYear);
+    if (!year)
         return false;
-    if (year < minimumYear() || year > maximumYear())
-        return false;
-    m_year = year;
-    end = start + digitsLength;
+
+    m_year = *year;
     return true;
 }
 
 static bool withinHTMLDateLimits(int year, int month)
 {
-    if (year < DateComponents::minimumYear())
+    if (year < minimumYear)
         return false;
-    if (year < DateComponents::maximumYear())
+    if (year < maximumYear)
         return true;
     return month <= maximumMonthInMaximumYear;
 }
 
 static bool withinHTMLDateLimits(int year, int month, int monthDay)
 {
-    if (year < DateComponents::minimumYear())
+    if (year < minimumYear)
         return false;
-    if (year < DateComponents::maximumYear())
+    if (year < maximumYear)
         return true;
     if (month < maximumMonthInMaximumYear)
         return true;
@@ -166,9 +181,9 @@ static bool withinHTMLDateLimits(int year, int month, int monthDay)
 
 static bool withinHTMLDateLimits(int year, int month, int monthDay, int hour, int minute, int second, int millisecond)
 {
-    if (year < DateComponents::minimumYear())
+    if (year < minimumYear)
         return false;
-    if (year < DateComponents::maximumYear())
+    if (year < maximumYear)
         return true;
     if (month < maximumMonthInMaximumYear)
         return true;
@@ -185,52 +200,46 @@ template<typename F> static Optional<DateComponents> createFromString(StringView
     if (source.isEmpty())
         return WTF::nullopt;
 
-    DateComponents result;
-    unsigned end;
-    if (source.is8Bit()) {
-        if (!parseFunction(result, source.characters8(), source.length(), end))
+    return readCharactersForParsing(source, [&](auto buffer) -> Optional<DateComponents> {
+        DateComponents date;
+        if (!parseFunction(buffer, date) || !buffer.atEnd())
             return WTF::nullopt;
-    } else {
-        if (!parseFunction(result, source.characters16(), source.length(), end))
-            return WTF::nullopt;
-    }
-    if (end != source.length())
-        return WTF::nullopt;
-    return result;
+        return date;
+    });
 }
 
 Optional<DateComponents> DateComponents::fromParsingMonth(StringView source)
 {
-    return createFromString(source, [] (auto& date, const auto* src, auto length, auto& end) {
-        return date.parseMonth(src, length, 0, end);
+    return createFromString(source, [] (auto& buffer, auto& date) {
+        return date.parseMonth(buffer);
     });
 }
 
 Optional<DateComponents> DateComponents::fromParsingDate(StringView source)
 {
-    return createFromString(source, [] (auto& date, const auto* src, auto length, auto& end) {
-        return date.parseDate(src, length, 0, end);
+    return createFromString(source, [] (auto& buffer, auto& date) {
+        return date.parseDate(buffer);
     });
 }
 
 Optional<DateComponents> DateComponents::fromParsingWeek(StringView source)
 {
-    return createFromString(source, [] (auto& date, const auto* src, auto length, auto& end) {
-        return date.parseWeek(src, length, 0, end);
+    return createFromString(source, [] (auto& buffer, auto& date) {
+        return date.parseWeek(buffer);
     });
 }
 
 Optional<DateComponents> DateComponents::fromParsingTime(StringView source)
 {
-    return createFromString(source, [] (auto& date, const auto* src, auto length, auto& end) {
-        return date.parseTime(src, length, 0, end);
+    return createFromString(source, [] (auto& buffer, auto& date) {
+        return date.parseTime(buffer);
     });
 }
 
 Optional<DateComponents> DateComponents::fromParsingDateTimeLocal(StringView source)
 {
-    return createFromString(source, [] (auto& date, const auto* src, auto length, auto& end) {
-        return date.parseDateTimeLocal(src, length, 0, end);
+    return createFromString(source, [] (auto& buffer, auto& date) {
+        return date.parseDateTimeLocal(buffer);
     });
 }
 
@@ -337,195 +346,178 @@ bool DateComponents::addMinute(int minute)
 }
 
 // Parses a timezone part, and adjust year, month, monthDay, hour, minute, second, millisecond.
-template<typename CharacterType> bool DateComponents::parseTimeZone(const CharacterType* src, unsigned length, unsigned start, unsigned& end)
+template<typename CharacterType> bool DateComponents::parseTimeZone(StringParsingBuffer<CharacterType>& buffer)
 {
-    if (start >= length)
-        return false;
-    unsigned index = start;
-    if (src[index] == 'Z') {
-        end = index + 1;
+    if (skipExactly(buffer, 'Z'))
         return true;
-    }
 
     bool minus;
-    if (src[index] == '+')
+    if (skipExactly(buffer, '+'))
         minus = false;
-    else if (src[index] == '-')
+    else if (skipExactly(buffer, '-'))
         minus = true;
     else
         return false;
-    ++index;
 
-    int hour;
-    int minute;
-    if (!toInt(src, length, index, 2, hour) || hour < 0 || hour > 23)
+    auto hour = parseIntWithinLimits(buffer, 2, 0, 23);
+    if (!hour)
         return false;
-    index += 2;
 
-    if (index >= length || src[index] != ':')
+    if (!skipExactly(buffer, ':'))
         return false;
-    ++index;
 
-    if (!toInt(src, length, index, 2, minute) || minute < 0 || minute > 59)
+    auto minute = parseIntWithinLimits(buffer, 2, 0, 59);
+    if (!minute)
         return false;
-    index += 2;
 
     if (minus) {
-        hour = -hour;
-        minute = -minute;
+        *hour = -*hour;
+        *minute = -*minute;
     }
 
     // Subtract the timezone offset.
-    if (!addMinute(-(hour * 60 + minute)))
+    if (!addMinute(-(*hour * 60 + *minute)))
         return false;
-    end = index;
     return true;
 }
 
-template<typename CharacterType> bool DateComponents::parseMonth(const CharacterType* src, unsigned length, unsigned start, unsigned& end)
+template<typename CharacterType> bool DateComponents::parseMonth(StringParsingBuffer<CharacterType>& buffer)
 {
-    ASSERT(src);
-    unsigned index;
-    if (!parseYear(src, length, start, index))
+    if (!parseYear(buffer))
         return false;
-    if (index >= length || src[index] != '-')
-        return false;
-    ++index;
 
-    int month;
-    if (!toInt(src, length, index, 2, month) || month < 1 || month > 12)
+    if (!skipExactly(buffer, '-'))
         return false;
-    --month;
-    if (!withinHTMLDateLimits(m_year, month))
+
+    auto month = parseIntWithinLimits(buffer, 2, 1, 12);
+    if (!month)
         return false;
-    m_month = month;
-    end = index + 2;
+    --*month;
+
+    if (!withinHTMLDateLimits(m_year, *month))
+        return false;
+
+    m_month = *month;
     m_type = Month;
     return true;
 }
 
-template<typename CharacterType> bool DateComponents::parseDate(const CharacterType* src, unsigned length, unsigned start, unsigned& end)
+template<typename CharacterType> bool DateComponents::parseDate(StringParsingBuffer<CharacterType>& buffer)
 {
-    ASSERT(src);
-    unsigned index;
-    if (!parseMonth(src, length, start, index))
+    if (!parseMonth(buffer))
         return false;
-    // '-' and 2-digits are needed.
-    if (index + 2 >= length)
-        return false;
-    if (src[index] != '-')
-        return false;
-    ++index;
 
-    int day;
-    if (!toInt(src, length, index, 2, day) || day < 1 || day > maxDayOfMonth(m_year, m_month))
+    if (!skipExactly(buffer, '-'))
         return false;
-    if (!withinHTMLDateLimits(m_year, m_month, day))
+
+    auto day = parseIntWithinLimits(buffer, 2, 1, maxDayOfMonth(m_year, m_month));
+    if (!day)
         return false;
-    m_monthDay = day;
-    end = index + 2;
+
+    if (!withinHTMLDateLimits(m_year, m_month, *day))
+        return false;
+
+    m_monthDay = *day;
     m_type = Date;
     return true;
 }
 
-template<typename CharacterType> bool DateComponents::parseWeek(const CharacterType* src, unsigned length, unsigned start, unsigned& end)
+template<typename CharacterType> bool DateComponents::parseWeek(StringParsingBuffer<CharacterType>& buffer)
 {
-    ASSERT(src);
-    unsigned index;
-    if (!parseYear(src, length, start, index))
+    if (!parseYear(buffer))
         return false;
 
-    // 4 characters ('-' 'W' digit digit) are needed.
-    if (index + 3 >= length)
+    if (!skipExactly(buffer, '-'))
         return false;
-    if (src[index] != '-')
+    if (!skipExactly(buffer, 'W'))
         return false;
-    ++index;
-    if (src[index] != 'W')
-        return false;
-    ++index;
 
-    int week;
-    if (!toInt(src, length, index, 2, week) || week < minimumWeekNumber || week > maxWeekNumberInYear())
+    auto week = parseIntWithinLimits(buffer, 2, minimumWeekNumber, maxWeekNumberInYear());
+    if (!week)
         return false;
-    if (m_year == maximumYear() && week > maximumWeekInMaximumYear)
+
+    if (m_year == maximumYear && *week > maximumWeekInMaximumYear)
         return false;
-    m_week = week;
-    end = index + 2;
+
+    m_week = *week;
     m_type = Week;
     return true;
 }
 
-template<typename CharacterType> bool DateComponents::parseTime(const CharacterType* src, unsigned length, unsigned start, unsigned& end)
+template<typename CharacterType> bool DateComponents::parseTime(StringParsingBuffer<CharacterType>& buffer)
 {
-    ASSERT(src);
-    int hour;
-    if (!toInt(src, length, start, 2, hour) || hour < 0 || hour > 23)
+    auto hour = parseIntWithinLimits(buffer, 2, 0, 23);
+    if (!hour)
         return false;
-    unsigned index = start + 2;
-    if (index >= length)
-        return false;
-    if (src[index] != ':')
-        return false;
-    ++index;
 
-    int minute;
-    if (!toInt(src, length, index, 2, minute) || minute < 0 || minute > 59)
+    if (!skipExactly(buffer, ':'))
         return false;
-    index += 2;
 
-    int second = 0;
-    int millisecond = 0;
+    auto minute = parseIntWithinLimits(buffer, 2, 0, 59);
+    if (!minute)
+        return false;
+
     // Optional second part.
     // Do not return with false because the part is optional.
-    if (index + 2 < length && src[index] == ':') {
-        if (toInt(src, length, index + 1, 2, second) && second >= 0 && second <= 59) {
-            index += 3;
+    Optional<int> second;
+    Optional<int> millisecond;
+
+    auto temporaryBuffer = buffer;
+    if (skipExactly(temporaryBuffer, ':')) {
+        second = parseIntWithinLimits(temporaryBuffer, 2, 0, 59);
+        if (second) {
+            // Only after successfully parsing and validating 'second', do we increment the real buffer.
+            buffer += temporaryBuffer.position() - buffer.position();
 
             // Optional fractional second part.
-            if (index < length && src[index] == '.') {
-                unsigned digitsLength = countDigits(src, length, index + 1);
-                if (digitsLength >  0) {
-                    ++index;
-                    bool ok;
+            if (skipExactly(temporaryBuffer, '.')) {
+                unsigned digitsLength = countDigits(temporaryBuffer);
+                if (digitsLength > 0) {
                     if (digitsLength == 1) {
-                        ok = toInt(src, length, index, 1, millisecond);
-                        millisecond *= 100;
+                        millisecond = parseInt(temporaryBuffer, 1);
+                        *millisecond *= 100;
                     } else if (digitsLength == 2) {
-                        ok = toInt(src, length, index, 2, millisecond);
-                        millisecond *= 10;
-                    } else // digitsLength >= 3
-                        ok = toInt(src, length, index, 3, millisecond);
-                    ASSERT_UNUSED(ok, ok);
-                    index += digitsLength;
+                        millisecond = parseInt(temporaryBuffer, 2);
+                        *millisecond *= 10;
+                    } else {
+                        // Regardless of the number of digits, we only ever parse at most 3. All other
+                        // digits after that are ignored, but the buffer is incremented as if they were
+                        // all parsed.
+                        millisecond = parseInt(temporaryBuffer, 3);
+                    }
+
+                    // Due to the countDigits above, the parseInt calls should all be successful.
+                    ASSERT(millisecond);
+
+                    // Only after successfully parsing and validating 'millisecond', do we increment the real buffer.
+                    buffer += 1 + digitsLength;
                 }
             }
         }
     }
-    m_hour = hour;
-    m_minute = minute;
-    m_second = second;
-    m_millisecond = millisecond;
-    end = index;
+
+    m_hour = *hour;
+    m_minute = *minute;
+    m_second = second.valueOr(0);
+    m_millisecond = millisecond.valueOr(0);
     m_type = Time;
     return true;
 }
 
-template<typename CharacterType> bool DateComponents::parseDateTimeLocal(const CharacterType* src, unsigned length, unsigned start, unsigned& end)
+template<typename CharacterType> bool DateComponents::parseDateTimeLocal(StringParsingBuffer<CharacterType>& buffer)
 {
-    ASSERT(src);
-    unsigned index;
-    if (!parseDate(src, length, start, index))
+    if (!parseDate(buffer))
         return false;
-    if (index >= length)
+
+    if (!skipExactly(buffer, 'T'))
         return false;
-    if (src[index] != 'T')
+
+    if (!parseTime(buffer))
         return false;
-    ++index;
-    if (!parseTime(src, length, index, end))
-        return false;
+
     if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, m_hour, m_minute, m_second, m_millisecond))
         return false;
+
     m_type = DateTimeLocal;
     return true;
 }
@@ -664,7 +656,7 @@ bool DateComponents::setMonthsSinceEpoch(double months)
     months = round(months);
     double doubleMonth = positiveFmod(months, 12);
     double doubleYear = 1970 + (months - doubleMonth) / 12;
-    if (doubleYear < minimumYear() || maximumYear() < doubleYear)
+    if (doubleYear < minimumYear || maximumYear < doubleYear)
         return false;
     int year = static_cast<int>(doubleYear);
     int month = static_cast<int>(doubleMonth);
@@ -694,7 +686,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
     ms = round(ms);
 
     m_year = msToYear(ms);
-    if (m_year < minimumYear() || m_year > maximumYear())
+    if (m_year < minimumYear || m_year > maximumYear)
         return false;
 
     int yearDay = dayInYear(ms, m_year);
@@ -702,7 +694,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
     if (yearDay < offset) {
         // The day belongs to the last week of the previous year.
         m_year--;
-        if (m_year <= minimumYear())
+        if (m_year <= minimumYear)
             return false;
         m_week = maxWeekNumberInYear();
     } else {
@@ -711,7 +703,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
             m_year++;
             m_week = 1;
         }
-        if (m_year > maximumYear() || (m_year == maximumYear() && m_week > maximumWeekInMaximumYear))
+        if (m_year > maximumYear || (m_year == maximumYear && m_week > maximumWeekInMaximumYear))
             return false;
     }
     m_type = Week;

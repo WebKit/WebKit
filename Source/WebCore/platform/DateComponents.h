@@ -137,25 +137,14 @@ public:
     static constexpr inline double maximumTime() { return 86399999; } // 23:59:59.999
     static constexpr inline double maximumWeek() { return 8639999568000000.0; } // 275760-09-08, the Monday of the week including 275760-09-13.
 
-    // HTML5 uses ISO-8601 format with year >= 1. Gregorian calendar started in
-    // 1582. However, we need to support 0001-01-01 in Gregorian calendar rule.
-    static inline int minimumYear() { return 1; }
-
-    // Date in ECMAScript can't represent dates later than 275760-09-13T00:00Z.
-    // So, we have the same upper limit in HTML5 date/time types.
-    static inline int maximumYear() { return 275760; }
-
-    static const int minimumWeekNumber;
-    static const int maximumWeekNumber;
-
 private:
-    template<typename CharacterType> bool parseMonth(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
-    template<typename CharacterType> bool parseDate(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
-    template<typename CharacterType> bool parseWeek(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
-    template<typename CharacterType> bool parseTime(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
-    template<typename CharacterType> bool parseDateTimeLocal(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
-    template<typename CharacterType> bool parseYear(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
-    template<typename CharacterType> bool parseTimeZone(const CharacterType* src, unsigned length, unsigned start, unsigned& end);
+    template<typename CharacterType> bool parseYear(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool parseTimeZone(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool parseMonth(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool parseDate(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool parseWeek(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool parseTime(StringParsingBuffer<CharacterType>&);
+    template<typename CharacterType> bool parseDateTimeLocal(StringParsingBuffer<CharacterType>&);
 
     // The following setMillisecondsSinceEpochFor*() functions take
     // the number of milliseconds since 1970-01-01 00:00:00.000 UTC as

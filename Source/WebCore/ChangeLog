@@ -1,3 +1,45 @@
+2020-07-30  Sam Weinig  <weinig@apple.com>
+
+        Convert DateComponents to use StringParsingBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=213929
+
+        Reviewed by Darin Adler.
+
+        - Switches string parsing in DateComponents to using StringParsingBuffer,
+          making use of ParsingUtilities to streamline / simplify the code.
+        - Moves a few constant values only used in DateComponents.cpp to DateComponents.cpp
+        - Rename toInt in DateComponents.cpp to parseInt, and have use an Optional return
+          value rather than bool + out-parameter.
+        - Add new parseIntWithinLimits that also checks that parsed value is within specfied
+          limits, as this is what almost all of the int parsing in DateComponents needs.
+
+        * platform/DateComponents.cpp:
+        (WebCore::countDigits):
+        (WebCore::parseInt):
+        (WebCore::parseIntWithinLimits):
+        (WebCore::DateComponents::parseYear):
+        (WebCore::withinHTMLDateLimits):
+        (WebCore::createFromString):
+        (WebCore::DateComponents::fromParsingMonth):
+        (WebCore::DateComponents::fromParsingDate):
+        (WebCore::DateComponents::fromParsingWeek):
+        (WebCore::DateComponents::fromParsingTime):
+        (WebCore::DateComponents::fromParsingDateTimeLocal):
+        (WebCore::DateComponents::fromParsingDateTime):
+        (WebCore::DateComponents::parseTimeZone):
+        (WebCore::DateComponents::parseMonth):
+        (WebCore::DateComponents::parseDate):
+        (WebCore::DateComponents::parseWeek):
+        (WebCore::DateComponents::parseTime):
+        (WebCore::DateComponents::parseDateTimeLocal):
+        (WebCore::DateComponents::parseDateTime):
+        (WebCore::DateComponents::setMonthsSinceEpoch):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForWeek):
+        (WebCore::toInt): Deleted.
+        * platform/DateComponents.h:
+        (WebCore::DateComponents::minimumYear): Deleted.
+        (WebCore::DateComponents::maximumYear): Deleted.
+
 2020-07-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed attempt to fix Catalyst build after r265084.
