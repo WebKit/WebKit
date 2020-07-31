@@ -157,6 +157,19 @@ class TestTestsFactory(TestCase):
 
 
 class TestBuildFactory(TestCase):
+    def test_generic_build_factory(self):
+        factory = factories.BuildFactory(platform='mac-mojave', configuration='release', architectures=["x86_64"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='mac-mojave', configuration='release', architectures=["x86_64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=False),
+        ])
+
     def test_macos_build_factory(self):
         factory = factories.macOSBuildFactory(platform='mac-mojave', configuration='release', architectures=["x86_64"])
         self.assertBuildSteps(factory.steps, [
@@ -226,6 +239,47 @@ class TestBuildFactory(TestCase):
         factory = factories.tvOSBuildFactory(platform='tvos-13', configuration='release', architectures=["arm64"])
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='tvos-13', configuration='release', architectures=["arm64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=True),
+        ])
+
+    def test_gtk_build_factory(self):
+        factory = factories.GTKBuildFactory(platform='gtk', configuration='release', architectures=['x86_64'])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='gtk', configuration='release', architectures=['x86_64'], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.InstallGtkDependencies),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=False),
+        ])
+
+    def test_wpe_factory(self):
+        factory = factories.WPEFactory(platform='wpe', configuration='release', architectures=['x86_64'])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='wpe', configuration='release', architectures=['x86_64'], buildOnly=True, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.InstallWpeDependencies),
+            _BuildStepFactory(steps.CompileWebKit, skipUpload=True),
+        ])
+
+    def test_wincairo_factory(self):
+        factory = factories.WinCairoFactory(platform='wincairo', configuration='release', architectures=['x86_64'])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='wincairo', configuration='release', architectures=['x86_64'], buildOnly=True, triggers=None, remotes=None, additionalArguments=None),
             _BuildStepFactory(steps.ValidatePatch),
             _BuildStepFactory(steps.PrintConfiguration),
             _BuildStepFactory(steps.CheckOutSource),
