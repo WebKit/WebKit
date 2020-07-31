@@ -85,7 +85,7 @@ class Host(SystemHost):
         os.environ['LANGUAGE'] = 'en'
         os.environ['LANG'] = 'en_US.UTF-8'
         os.environ['LC_MESSAGES'] = 'en_US.UTF-8'
-        os.environ['LC_ALL'] = ''
+        os.environ['LC_ALL'] = 'en_US.UTF-8'
 
     def initialize_scm(self, patch_directories=None):
         detector = SCMDetector(self.filesystem, self.executive)

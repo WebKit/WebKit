@@ -1,3 +1,23 @@
+2020-07-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        webkitpy: If LC_ALL is set to a empty string, svn doesn't use the password store
+        https://bugs.webkit.org/show_bug.cgi?id=214983
+
+        Reviewed by Darin Adler.
+
+        If LC_ALL is set to a empty string, svn doesn't use the password
+        store in my environment. I'm using svn with gpg-agent on Ubuntu
+        20.04 (svn version 1.13.0, gpg-agent 2.2.19).
+
+        r101274 (Bug 68691) has set LC_ALL to a empty string.
+
+        If I invoke 'svn ci' on my terminal, svn askes gpg-agent my
+        password as expected, but if I invoke 'LC_ALL= svn ci', svn askes
+        my password by itself.
+
+        * Scripts/webkitpy/common/host.py:
+        (Host._engage_awesome_locale_hacks): Set the env var LC_ALL to 'en_US.UTF-8'.
+
 2020-07-30  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Make scripts called with sudo use a userspace autoinstall
