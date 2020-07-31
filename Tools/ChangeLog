@@ -1,3 +1,12 @@
+2020-07-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add an auto-installer (Unreviewed follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=214606
+
+        Unreviewed development nit.
+
+        * .gitignore: Add Scripts/libraries/autoinstalled to .gitignore.
+
 2020-07-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         webkitpy: If LC_ALL is set to a empty string, svn doesn't use the password store
