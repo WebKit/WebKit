@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "LLIntPCRanges.h"
+#include "VMEntryRecord.h"
 #include "WasmContextInlines.h"
 #include "WasmInstance.h"
 #include <wtf/StringPrintStream.h>

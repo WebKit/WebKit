@@ -39,6 +39,7 @@ namespace DOMJIT {
 class GetterSetter;
 }
 
+class CCallHelpers;
 class CodeBlock;
 class PolymorphicAccess;
 class StructureStubInfo;

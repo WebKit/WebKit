@@ -33,6 +33,7 @@
 #include "InspectorRuntimeAgent.h"
 
 #include "Completion.h"
+#include "ControlFlowProfiler.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"

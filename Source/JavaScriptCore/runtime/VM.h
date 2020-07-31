@@ -32,12 +32,10 @@
 #include "CodeSpecializationKind.h"
 #include "CompleteSubspace.h"
 #include "ConcurrentJSLock.h"
-#include "ControlFlowProfiler.h"
 #include "DateInstanceCache.h"
 #include "DeleteAllCodeEffort.h"
 #include "DisallowVMEntry.h"
 #include "ExceptionEventLocation.h"
-#include "ExecutableAllocator.h"
 #include "FunctionHasExecutedCache.h"
 #include "FuzzerAgent.h"
 #include "Heap.h"
@@ -45,7 +43,6 @@
 #include "Intrinsic.h"
 #include "IsoCellSet.h"
 #include "IsoSubspace.h"
-#include "JITThunks.h"
 #include "JSCJSValue.h"
 #include "JSLock.h"
 #include "MacroAssemblerCodeRef.h"
@@ -55,6 +52,7 @@
 #include "Strong.h"
 #include "StructureCache.h"
 #include "SubspaceAccess.h"
+#include "ThunkGenerator.h"
 #include "VMTraps.h"
 #include "WasmContext.h"
 #include "Watchpoint.h"
@@ -102,6 +100,7 @@ using WTF::SimpleStats;
 
 namespace JSC {
 
+class BasicBlockLocation;
 class BuiltinExecutables;
 class BytecodeIntrinsicRegistry;
 class CallFrame;
@@ -111,6 +110,7 @@ class CodeCache;
 class CommonIdentifiers;
 class CompactVariableMap;
 class ConservativeRoots;
+class ControlFlowProfiler;
 class CustomGetterSetter;
 class DOMAttributeGetterSetter;
 class DateInstance;
@@ -120,8 +120,6 @@ class ExceptionScope;
 class FastMallocAlignedMemoryAllocator;
 class GigacageAlignedMemoryAllocator;
 class HandleStack;
-class TypeProfiler;
-class TypeProfilerLog;
 class HasOwnPropertyCache;
 class HeapProfiler;
 class Identifier;
@@ -158,6 +156,7 @@ class JSWebAssemblyInstance;
 class JSWebAssemblyMemory;
 class JSWebAssemblyModule;
 class JSWebAssemblyTable;
+class JITThunks;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
 class ObjCCallbackFunction;
@@ -188,6 +187,8 @@ class UnlinkedModuleProgramCodeBlock;
 class VirtualRegister;
 class VMEntryScope;
 class TopLevelGlobalObjectScope;
+class TypeProfiler;
+class TypeProfilerLog;
 class Watchdog;
 class Watchpoint;
 class WatchpointSet;
@@ -814,10 +815,7 @@ public:
     Interpreter* interpreter;
 #if ENABLE(JIT)
     std::unique_ptr<JITThunks> jitStubs;
-    MacroAssemblerCodeRef<JITThunkPtrTag> getCTIStub(ThunkGenerator generator)
-    {
-        return jitStubs->ctiStub(*this, generator);
-    }
+    MacroAssemblerCodeRef<JITThunkPtrTag> getCTIStub(ThunkGenerator);
 
 #endif // ENABLE(JIT)
 #if ENABLE(FTL_JIT)

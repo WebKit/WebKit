@@ -40,6 +40,7 @@
 #include "CodeBlock.h"
 #include "CodeCache.h"
 #include "CommonIdentifiers.h"
+#include "ControlFlowProfiler.h"
 #include "CustomGetterSetter.h"
 #include "DFGWorklist.h"
 #include "DOMAttributeGetterSetter.h"
@@ -74,6 +75,7 @@
 #include "IsoHeapCellType.h"
 #include "IsoInlinedHeapCellType.h"
 #include "JITCode.h"
+#include "JITThunks.h"
 #include "JITWorklist.h"
 #include "JSAPIGlobalObject.h"
 #include "JSAPIValueWrapper.h"
@@ -788,6 +790,11 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
     default:
         return nullptr;
     }
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> VM::getCTIStub(ThunkGenerator generator)
+{
+    return jitStubs->ctiStub(*this, generator);
 }
 
 #endif // ENABLE(JIT)

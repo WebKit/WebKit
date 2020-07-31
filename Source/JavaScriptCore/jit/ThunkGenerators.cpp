@@ -27,6 +27,7 @@
 #include "ThunkGenerators.h"
 
 #include "JITOperations.h"
+#include "JITThunks.h"
 #include "JSBoundFunction.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SpecializedThunkJIT.h"

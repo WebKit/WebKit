@@ -31,6 +31,7 @@
 #include "BytecodeStructs.h"
 #include "CodeBlock.h"
 #include "CommonSlowPaths.h"
+#include "ControlFlowProfiler.h"
 #include "DirectArguments.h"
 #include "DirectEvalExecutable.h"
 #include "EvalExecutable.h"

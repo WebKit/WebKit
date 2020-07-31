@@ -39,6 +39,7 @@
 #include "BytecodeStructs.h"
 #include "CodeBlockInlines.h"
 #include "CodeBlockSet.h"
+#include "ControlFlowProfiler.h"
 #include "DFGCapabilities.h"
 #include "DFGCommon.h"
 #include "DFGJITCode.h"

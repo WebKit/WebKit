@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TypeLocationCache.h"
 
+#include "ControlFlowProfiler.h"
 #include "TypeProfiler.h"
 #include "VM.h"
 

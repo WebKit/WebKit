@@ -29,6 +29,7 @@
 #include "ArrayPrototype.h"
 #include "BuiltinNames.h"
 #include "CodeBlock.h"
+#include "ControlFlowProfiler.h"
 #include "DOMAttributeGetterSetter.h"
 #include "DOMJITGetterSetter.h"
 #include "Debugger.h"

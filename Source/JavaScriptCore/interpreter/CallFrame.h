@@ -28,7 +28,6 @@
 #include "Register.h"
 #include "StackVisitor.h"
 #include "VM.h"
-#include "VMEntryRecord.h"
 #include <wtf/EnumClassOperatorOverloads.h>
 
 namespace JSC  {

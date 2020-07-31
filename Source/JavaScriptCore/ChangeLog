@@ -1,3 +1,31 @@
+2020-07-31  Keith Miller  <keith_miller@apple.com>
+
+        Reduce over include usage in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=215010
+
+        Reviewed by Mark Lam.
+
+        My first attempt to fix
+        https://bugs.webkit.org/show_bug.cgi?id=215009 by making it so we
+        don't include FastJITPermissions.h in TestWebKitAPI, was
+        unsuccessful. Mostly because I gave up after several hours of
+        building... I figure it's still worth it to land the last working
+        version I was able to get building.
+
+        * assembler/MacroAssemblerCodeRef.h:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/PolymorphicAccess.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        * interpreter/CallFrame.h:
+        * jit/ThunkGenerators.cpp:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * runtime/TypeLocationCache.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::getCTIStub):
+        * runtime/VM.h:
+        (JSC::VM::getCTIStub): Deleted.
+        * tools/JSDollarVM.cpp:
+
 2020-07-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Follow-up changes after r265036

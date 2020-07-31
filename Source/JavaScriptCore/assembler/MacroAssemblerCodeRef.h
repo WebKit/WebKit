@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "ExecutableAllocator.h"
 #include "JSCPtrTag.h"
 #include <wtf/DataLog.h>
+#include <wtf/MetaAllocatorHandle.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
@@ -54,6 +54,7 @@
 
 namespace JSC {
 
+typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
 template<PtrTag> class MacroAssemblerCodePtr;
 
 enum OpcodeID : unsigned;
