@@ -1354,14 +1354,15 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
             if (is<RenderWidget>(layer.renderer()))
                 parented = parentFrameContentLayers(downcast<RenderWidget>(layer.renderer()));
 
-            if (!parented)
-                layerBacking->parentForSublayers()->setChildren(WTFMove(layerChildren));
+            if (!parented) {
+                // If the layer has a clipping layer the overflow controls layers will be siblings of the clipping layer.
+                // Otherwise, the overflow control layers are normal children.
+                if (!layerBacking->hasClippingLayer() && !layerBacking->hasScrollingLayer()) {
+                    if (auto* overflowControlLayer = layerBacking->overflowControlsContainer())
+                        layerChildren.append(*overflowControlLayer);
+                }
 
-            // If the layer has a clipping layer the overflow controls layers will be siblings of the clipping layer.
-            // Otherwise, the overflow control layers are normal children.
-            if (!layerBacking->hasClippingLayer() && !layerBacking->hasScrollingLayer()) {
-                if (auto* overflowControlLayer = layerBacking->overflowControlsContainer())
-                    layerBacking->parentForSublayers()->addChild(*overflowControlLayer);
+                layerBacking->parentForSublayers()->setChildren(WTFMove(layerChildren));
             }
         }
 

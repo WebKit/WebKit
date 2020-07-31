@@ -1,3 +1,18 @@
+2020-07-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Minor RenderLayerCompositor::updateBackingAndHierarchy() cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=215008
+
+        Reviewed by Zalan Bujtas.
+
+        Instead of setting child layers, and then adding another child (overflowControlLayer),
+        append overflowControlLayer to the vector and then set children.
+
+        No behavior change.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+
 2020-07-30  Sam Weinig  <weinig@apple.com>
 
         It would be nice if the predicate taking functions in ParsingUtilities.h didn't require specifying the character type
