@@ -562,26 +562,35 @@ void IDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime)
     }
 }
 
-void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>& origins)
+void IDBServer::closeDatabasesForOrigins(const Vector<SecurityOriginData>& targetOrigins, Function<bool(const SecurityOriginData&, const ClientOrigin&)>&& filter)
 {
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
     HashSet<UniqueIDBDatabase*> openDatabases;
     for (auto& database : m_uniqueIDBDatabaseMap.values()) {
-        const auto& identifier = database->identifier();
-        for (auto& origin : origins) {
-            if (identifier.isRelatedToOrigin(origin)) {
-                openDatabases.add(database.get());
-                break;
-            }
-        }
+        const auto& databaseOrigin = database->identifier().origin();
+        bool filtered = WTF::anyOf(targetOrigins, [&databaseOrigin, &filter](auto& targetOrigin) {
+            return filter(targetOrigin, databaseOrigin);
+        });
+        if (filtered)
+            openDatabases.add(database.get());
     }
 
     for (auto& database : openDatabases) {
         database->immediateClose();
         m_uniqueIDBDatabaseMap.remove(database->identifier());
     }
+}
+
+void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>& origins)
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_lock.isHeld());
+
+    closeDatabasesForOrigins(origins, [](const SecurityOriginData& origin, const ClientOrigin& databaseOrigin) -> bool {
+        return databaseOrigin.isRelated(origin);
+    });
 
     if (!m_databaseDirectoryPath.isEmpty()) {
         removeDatabasesWithOriginsForVersion(origins, "v0");
@@ -692,6 +701,20 @@ void IDBServer::removeDatabasesWithOriginsForVersion(const Vector<SecurityOrigin
             removeAllDatabasesForOriginPath(originPath, -WallTime::infinity());
         }
     }
+}
+
+void IDBServer::renameOrigin(const WebCore::SecurityOriginData& oldOrigin, const WebCore::SecurityOriginData& newOrigin)
+{
+    Vector<SecurityOriginData> targetOrigins = { oldOrigin };
+    closeDatabasesForOrigins(targetOrigins, [](const SecurityOriginData& targetOrigin, const ClientOrigin& databaseOrigin) -> bool {
+        return databaseOrigin.topOrigin == targetOrigin;
+    });
+
+    auto versionPath = FileSystem::pathByAppendingComponent(databaseDirectoryPathIsolatedCopy(), "v1");
+    auto oldOriginPath = FileSystem::pathByAppendingComponent(versionPath, oldOrigin.databaseIdentifier());
+    auto newOriginPath = FileSystem::pathByAppendingComponent(versionPath, newOrigin.databaseIdentifier());
+    if (FileSystem::fileExists(oldOriginPath))
+        FileSystem::moveFile(oldOriginPath, newOriginPath);
 }
 
 StorageQuotaManager::Decision IDBServer::requestSpace(const ClientOrigin& origin, uint64_t taskSize)

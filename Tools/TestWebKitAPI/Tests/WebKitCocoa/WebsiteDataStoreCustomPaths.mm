@@ -548,6 +548,72 @@ TEST(WebKit, WebsiteDataStoreIfExists)
     EXPECT_TRUE(dataStore._configuration.persistent);
 }
 
+TEST(WebKit, WebsiteDataStoreRenameOriginForIndexedDatabase)
+{
+    // Reset defaultDataStore before test.
+    __block bool done = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    NSString *testString = @"<script> \
+        var request = window.indexedDB.open('testDB'); \
+        var db; \
+        request.onupgradeneeded = function(event) { \
+            db = event.target.result; \
+            window.webkit.messageHandlers.testHandler.postMessage('database is created'); \
+            db.onclose = function(event) { \
+                window.webkit.messageHandlers.testHandler.postMessage('database is closed'); \
+            } \
+        }; \
+        request.onsuccess = function(event) { \
+            if (!db) { \
+                db = event.target.result; \
+                window.webkit.messageHandlers.testHandler.postMessage('database exists'); \
+            } \
+        }; \
+        request.onerror = function(event) { \
+            if (!db) { \
+                window.webkit.messageHandlers.testHandler.postMessage('database error: ' + event.target.error.name + ' - ' + event.target.error.message); \
+            } \
+        }; \
+        </script>";
+
+    NSURL *exampleURL = [NSURL URLWithString:@"http://example.com/"];
+    NSURL *webKitURL = [NSURL URLWithString:@"https://webkit.org/"];
+
+    [webView loadHTMLString:testString baseURL:exampleURL];
+    EXPECT_WK_STREQ("database is created", getNextMessage().body);
+
+    auto dataStore = webView.get().configuration.websiteDataStore;
+    auto indexedDBType = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
+    [dataStore _renameOrigin:exampleURL to:webKitURL forDataOfTypes:indexedDBType.get() completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_WK_STREQ("database is closed", getNextMessage().body);
+    
+    [webView loadHTMLString:testString baseURL:webKitURL];
+    EXPECT_WK_STREQ("database exists", getNextMessage().body);
+
+    [webView loadHTMLString:testString baseURL:exampleURL];
+    EXPECT_WK_STREQ("database is created", getNextMessage().body);
+
+    // Clean up defaultDataStore after test.
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(WebKit, WebsiteDataStoreRenameOrigin)
 {
     TestWKWebView *webView = [[[TestWKWebView alloc] init] autorelease];

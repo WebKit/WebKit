@@ -1,3 +1,19 @@
+2020-07-31  Sihui Liu  <sihui_liu@appe.com>
+
+        -[WKWebsiteDataStore _renameOrigin:] needs to support IndexedDB renames
+        https://bugs.webkit.org/show_bug.cgi?id=214905
+        <rdar://problem/66247978>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::renameOrigin):
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::renameOriginInWebsiteData):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _renameOrigin:to:forDataOfTypes:completionHandler:]):
+
 2020-07-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed Catalyst build fix.

@@ -89,6 +89,19 @@ void WebIDBServer::closeAndDeleteDatabasesForOrigins(const Vector<WebCore::Secur
     });
 }
 
+void WebIDBServer::renameOrigin(const WebCore::SecurityOriginData& oldOrigin, const WebCore::SecurityOriginData& newOrigin, CompletionHandler<void()>&& callback)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, protectedThis = makeRef(*this), oldOrigin = oldOrigin.isolatedCopy(), newOrigin = newOrigin.isolatedCopy(), callback = WTFMove(callback)] () mutable {
+        ASSERT(!RunLoop::isMain());
+
+        LockHolder locker(m_server->lock());
+        m_server->renameOrigin(oldOrigin, newOrigin);
+        postTaskReply(CrossThreadTask(WTFMove(callback)));
+    });
+}
+
 void WebIDBServer::suspend(ShouldForceStop shouldForceStop)
 {
     ASSERT(RunLoop::isMain());

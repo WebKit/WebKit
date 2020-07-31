@@ -1,3 +1,14 @@
+2020-07-31  Sihui Liu  <sihui_liu@appe.com>
+
+        -[WKWebsiteDataStore _renameOrigin:] needs to support IndexedDB renames
+        https://bugs.webkit.org/show_bug.cgi?id=214905
+        <rdar://problem/66247978>
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2020-07-31  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Changes to Tools/Scripts/libraries should trigger EWS
