@@ -36,6 +36,8 @@ namespace WebCore {
 GenericHIDGamepad::GenericHIDGamepad(HIDDevice&& device, unsigned index)
     : HIDGamepad(WTFMove(device), index)
 {
+    LOG(Gamepad, "Creating GenericHIDGamepad %p", this);
+
     auto inputElements = hidDevice().uniqueInputElementsInDeviceTreeOrder();
 
     for (auto& element : inputElements) {
@@ -50,13 +52,6 @@ GenericHIDGamepad::GenericHIDGamepad(HIDDevice&& device, unsigned index)
             continue;
         }
     }
-}
-
-String GenericHIDGamepad::id()
-{
-    // Currently the spec has no formatting for the id string.
-    // This string formatting matches Firefox.
-    return makeString(hex(hidDevice().vendorID(), Lowercase), '-', hex(hidDevice().productID(), Lowercase), '-', hidDevice().productName());
 }
 
 void GenericHIDGamepad::maybeAddGenericDesktopElement(HIDElement& element)

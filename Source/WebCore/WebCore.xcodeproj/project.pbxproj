@@ -1402,6 +1402,9 @@
 		510A91DC24CF46FE00BFD89C /* SharedGamepadValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91DB24CF441800BFD89C /* SharedGamepadValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510A91EA24D004C300BFD89C /* HIDElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91E324CFCC1800BFD89C /* HIDElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510A91EB24D004C800BFD89C /* HIDDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91E224CFCC1800BFD89C /* HIDDevice.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		510A91F624D32DDC00BFD89C /* Dualshock3HIDGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91F424D324FF00BFD89C /* Dualshock3HIDGamepad.h */; };
+		510A91FD24D3C16200BFD89C /* GamepadConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 51715FE924CD05DD002C97E6 /* GamepadConstants.h */; };
+		510A91FE24D3C16700BFD89C /* GamepadConstantsMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91FB24D3C0FD00BFD89C /* GamepadConstantsMac.h */; };
 		510D4A34103165EE0049EA54 /* SocketStreamError.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A2E103165EE0049EA54 /* SocketStreamError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A37103165EE0049EA54 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A31103165EE0049EA54 /* SocketStreamHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8228,6 +8231,10 @@
 		510A91E524CFCC1800BFD89C /* HIDDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HIDDevice.cpp; sourceTree = "<group>"; };
 		510A91E724CFEA1700BFD89C /* GenericHIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenericHIDGamepad.cpp; sourceTree = "<group>"; };
 		510A91E924CFEA3200BFD89C /* GenericHIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericHIDGamepad.h; sourceTree = "<group>"; };
+		510A91F224D324C600BFD89C /* KnownGamepads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KnownGamepads.h; sourceTree = "<group>"; };
+		510A91F424D324FF00BFD89C /* Dualshock3HIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dualshock3HIDGamepad.h; sourceTree = "<group>"; };
+		510A91F524D3250000BFD89C /* Dualshock3HIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Dualshock3HIDGamepad.cpp; sourceTree = "<group>"; };
+		510A91FB24D3C0FD00BFD89C /* GamepadConstantsMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadConstantsMac.h; sourceTree = "<group>"; };
 		510D4A2E103165EE0049EA54 /* SocketStreamError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamError.h; sourceTree = "<group>"; };
 		510D4A30103165EE0049EA54 /* SocketStreamHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandle.cpp; sourceTree = "<group>"; };
 		510D4A31103165EE0049EA54 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandle.h; sourceTree = "<group>"; };
@@ -19668,6 +19675,7 @@
 				515BE18A1D54F5F600DD7C68 /* GamepadProvider.cpp */,
 				515BE18B1D54F5F600DD7C68 /* GamepadProvider.h */,
 				515BE18C1D54F5F600DD7C68 /* GamepadProviderClient.h */,
+				510A91F224D324C600BFD89C /* KnownGamepads.h */,
 				515BE18E1D54F5F600DD7C68 /* PlatformGamepad.h */,
 				510A91DB24CF441800BFD89C /* SharedGamepadValue.h */,
 			);
@@ -19677,6 +19685,9 @@
 		515BE1961D54F64500DD7C68 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				510A91F524D3250000BFD89C /* Dualshock3HIDGamepad.cpp */,
+				510A91F424D324FF00BFD89C /* Dualshock3HIDGamepad.h */,
+				510A91FB24D3C0FD00BFD89C /* GamepadConstantsMac.h */,
 				510A91E724CFEA1700BFD89C /* GenericHIDGamepad.cpp */,
 				510A91E924CFEA3200BFD89C /* GenericHIDGamepad.h */,
 				515BE1971D54F6BD00DD7C68 /* HIDGamepad.cpp */,
@@ -30765,6 +30776,7 @@
 				A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */,
 				1AF5E4D91E5677A9004A1F01 /* DragItem.h in Headers */,
 				81F65FF613788FAA00FF6F2D /* DragState.h in Headers */,
+				510A91F624D32DDC00BFD89C /* Dualshock3HIDGamepad.h in Headers */,
 				E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */,
 				FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */,
 				FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */,
@@ -30990,6 +31002,8 @@
 				FD31600D12B0267600C1A359 /* GainNode.h in Headers */,
 				51E399001D6E4750009C8831 /* GameControllerGamepad.h in Headers */,
 				51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */,
+				510A91FD24D3C16200BFD89C /* GamepadConstants.h in Headers */,
+				510A91FE24D3C16700BFD89C /* GamepadConstantsMac.h in Headers */,
 				516C62211950D48700337E75 /* GamepadEvent.h in Headers */,
 				51A9D9EA195B931F001B2B5C /* GamepadManager.h in Headers */,
 				515BE1921D54F5FB00DD7C68 /* GamepadProvider.h in Headers */,

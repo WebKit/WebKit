@@ -276,6 +276,7 @@
 		510477741D298DDD009747EB /* IDBDeleteRecovery.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */; };
 		510477771D298E72009747EB /* IDBDeleteRecovery.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477761D298E57009747EB /* IDBDeleteRecovery.html */; };
 		510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510477751D298E03009747EB /* IDBDeleteRecovery.mm */; };
+		510A91F824D3622100BFD89C /* SonyDualShock3.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A91F724D3621900BFD89C /* SonyDualShock3.mm */; };
 		5110FCF11E01CD64006F8D0B /* IDBIndexUpgradeToV2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */; };
 		5110FCF61E01CD83006F8D0B /* IndexUpgrade.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF31E01CD77006F8D0B /* IndexUpgrade.sqlite3 */; };
 		5110FCF91E01CD8A006F8D0B /* IndexUpgrade.blob in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF21E01CD77006F8D0B /* IndexUpgrade.blob */; };
@@ -1971,6 +1972,7 @@
 		510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IDBDeleteRecovery.sqlite3-wal"; sourceTree = "<group>"; };
 		510477751D298E03009747EB /* IDBDeleteRecovery.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBDeleteRecovery.mm; sourceTree = "<group>"; };
 		510477761D298E57009747EB /* IDBDeleteRecovery.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBDeleteRecovery.html; sourceTree = "<group>"; };
+		510A91F724D3621900BFD89C /* SonyDualShock3.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SonyDualShock3.mm; sourceTree = "<group>"; };
 		5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBIndexUpgradeToV2.mm; sourceTree = "<group>"; };
 		5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBIndexUpgradeToV2.html; sourceTree = "<group>"; };
 		5110FCF21E01CD77006F8D0B /* IndexUpgrade.blob */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IndexUpgrade.blob; sourceTree = "<group>"; };
@@ -3468,6 +3470,7 @@
 			children = (
 				51EB126024CA6B5F000CB030 /* MicrosoftXboxOne.mm */,
 				51EB125E24CA6B5F000CB030 /* ShenzhenLongshengweiTechnologyGamepad.mm */,
+				510A91F724D3621900BFD89C /* SonyDualShock3.mm */,
 				51EB125F24CA6B5F000CB030 /* SonyDualShock4.mm */,
 				51EB126124CA6B5F000CB030 /* SteelSeriesNimbus.mm */,
 				51EB126624CB8493000CB030 /* SunLightApplicationGenericNES.mm */,
@@ -5317,6 +5320,7 @@
 				C149D550242E98DF003EBB12 /* SleepDisabler.mm in Sources */,
 				2DFF7B6D1DA487AF00814614 /* SnapshotStore.mm in Sources */,
 				0F4FFA9E1ED3AA8500F7111F /* SnapshotViaRenderInContext.mm in Sources */,
+				510A91F824D3622100BFD89C /* SonyDualShock3.mm in Sources */,
 				51EB126424CA6B66000CB030 /* SonyDualShock4.mm in Sources */,
 				7CCE7F151A411AE600447C4C /* SpacebarScrolling.cpp in Sources */,
 				57F4AAA0208FAEF000A68E9E /* SSLKeyGenerator.mm in Sources */,

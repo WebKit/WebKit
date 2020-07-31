@@ -30,6 +30,7 @@
 
 #import "GameControllerGamepad.h"
 #import "GamepadProviderClient.h"
+#import "KnownGamepads.h"
 #import "Logging.h"
 #import <GameController/GameController.h>
 #import <pal/spi/mac/IOKitSPIMac.h>
@@ -44,42 +45,27 @@ bool GameControllerGamepadProvider::willHandleVendorAndProduct(uint16_t vendorID
 {
     // Check the vendor/product IDs agains a hard coded list of controllers we expect to work well with
     // GameController.framework on 10.15.
-    enum GameControllerCompatible {
-        Nimbus1 = 0x01111420,
-        Nimbus2 = 0x10381420,
-        StratusXL1 = 0x01111418,
-        StratusXL2 = 0x10381418,
-        StratusXL3 = 0x01111419,
-        StratusXL4 = 0x10381419,
-        HoripadUltimate = 0x0f0d0090,
-        GamesirM2 = 0x0ec20475,
-        XboxOne1 = 0x045e02e0,
-        XboxOne2 = 0x045e02ea,
-        XboxOne3 = 0x045e02fd,
-        Dualshock4_1 = 0x054c05c4,
-        Dualshock4_2 = 0x054c09cc,
-    };
+    static NeverDestroyed<HashSet<uint32_t>> gameControllerCompatibleGamepads;
 
-    GameControllerCompatible fullProductID = (GameControllerCompatible)((vendorID << 16) | (productID & 0xFFFF));
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        gameControllerCompatibleGamepads->add(Nimbus1);
+        gameControllerCompatibleGamepads->add(Nimbus2);
+        gameControllerCompatibleGamepads->add(StratusXL1);
+        gameControllerCompatibleGamepads->add(StratusXL2);
+        gameControllerCompatibleGamepads->add(StratusXL3);
+        gameControllerCompatibleGamepads->add(StratusXL4);
+        gameControllerCompatibleGamepads->add(HoripadUltimate);
+        gameControllerCompatibleGamepads->add(GamesirM2);
+        gameControllerCompatibleGamepads->add(XboxOne1);
+        gameControllerCompatibleGamepads->add(XboxOne2);
+        gameControllerCompatibleGamepads->add(XboxOne3);
+        gameControllerCompatibleGamepads->add(Dualshock4_1);
+        gameControllerCompatibleGamepads->add(Dualshock4_2);
+    });
 
-    switch (fullProductID) {
-    case Nimbus1:
-    case Nimbus2:
-    case StratusXL1:
-    case StratusXL2:
-    case StratusXL3:
-    case StratusXL4:
-    case HoripadUltimate:
-    case GamesirM2:
-    case XboxOne1:
-    case XboxOne2:
-    case XboxOne3:
-    case Dualshock4_1:
-    case Dualshock4_2:
-        return true;
-    default:
-        return false;
-    }
+    uint32_t fullProductID = (((uint32_t)vendorID) << 16) | productID;
+    return gameControllerCompatibleGamepads->contains(fullProductID);
 }
 #endif // !HAVE(GCCONTROLLER_HID_DEVICE_CHECK)
 

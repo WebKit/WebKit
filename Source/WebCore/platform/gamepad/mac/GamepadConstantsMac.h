@@ -25,42 +25,23 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
+#if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
-#include <wtf/Forward.h>
-#include <wtf/RetainPtr.h>
-
-typedef struct CF_BRIDGED_TYPE(id) __IOHIDDevice * IOHIDDeviceRef;
+#import <IOKit/hid/IOHIDUsageTables.h>
 
 namespace WebCore {
 
-class HIDElement;
-
-class HIDDevice {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit HIDDevice(IOHIDDeviceRef);
-
-    IOHIDDeviceRef rawElement() const { return m_rawDevice.get(); }
-
-    // Walks the collection tree of all elements in the device as presented by IOKit.
-    // Adds each unique input element to the vector in the tree traversal order it was encountered.
-    // "Unique" is defined as "having a different IOHIDElementCookie from any previously added element"
-    Vector<HIDElement> uniqueInputElementsInDeviceTreeOrder() const;
-
-    uint16_t vendorID() const { return m_vendorID; }
-    uint16_t productID() const { return m_productID; }
-    uint32_t fullProductIdentifier() const { return m_vendorID << 16 | m_productID; }
-    const String& productName() const { return m_productName; }
-
-private:
-    RetainPtr<IOHIDDeviceRef> m_rawDevice;
-
-    uint16_t m_vendorID;
-    uint16_t m_productID;
-    String m_productName;
-};
+constexpr const uint64_t hidPointerFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_Pointer;
+constexpr const uint64_t hidXAxisFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_X;
+constexpr const uint64_t hidYAxisFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_Y;
+constexpr const uint64_t hidZAxisFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_Z;
+constexpr const uint64_t hidRzAxisFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_Rz;
+constexpr const uint64_t hidButton1FullUsage = ((uint64_t)kHIDPage_Button) << 32 | kHIDUsage_Button_1;
+constexpr const uint64_t hidButton2FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 1);
+constexpr const uint64_t hidButton3FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 2);
+constexpr const uint64_t hidButton4FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 3);
+constexpr const uint64_t hidButton17FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 16);
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(GAMEPAD) && PLATFORM(MAC)

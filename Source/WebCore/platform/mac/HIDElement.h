@@ -44,6 +44,7 @@ public:
     CFIndex physicalValue() const { return m_physicalValue; }
     uint32_t usage() const { return m_usage; }
     uint32_t usagePage() const { return m_usagePage; }
+    uint64_t fullUsage() const { return ((uint64_t)m_usagePage) << 32 | m_usage; }
     IOHIDElementCookie cookie() const { return m_cookie; }
 
     void valueChanged(IOHIDValueRef);

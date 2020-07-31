@@ -25,42 +25,27 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
-
-#include <wtf/Forward.h>
-#include <wtf/RetainPtr.h>
-
-typedef struct CF_BRIDGED_TYPE(id) __IOHIDDevice * IOHIDDeviceRef;
+#if ENABLE(GAMEPAD)
 
 namespace WebCore {
 
-class HIDElement;
-
-class HIDDevice {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit HIDDevice(IOHIDDeviceRef);
-
-    IOHIDDeviceRef rawElement() const { return m_rawDevice.get(); }
-
-    // Walks the collection tree of all elements in the device as presented by IOKit.
-    // Adds each unique input element to the vector in the tree traversal order it was encountered.
-    // "Unique" is defined as "having a different IOHIDElementCookie from any previously added element"
-    Vector<HIDElement> uniqueInputElementsInDeviceTreeOrder() const;
-
-    uint16_t vendorID() const { return m_vendorID; }
-    uint16_t productID() const { return m_productID; }
-    uint32_t fullProductIdentifier() const { return m_vendorID << 16 | m_productID; }
-    const String& productName() const { return m_productName; }
-
-private:
-    RetainPtr<IOHIDDeviceRef> m_rawDevice;
-
-    uint16_t m_vendorID;
-    uint16_t m_productID;
-    String m_productName;
+enum KnownGamepad {
+    Nimbus1 = 0x01111420,
+    Nimbus2 = 0x10381420,
+    StratusXL1 = 0x01111418,
+    StratusXL2 = 0x10381418,
+    StratusXL3 = 0x01111419,
+    StratusXL4 = 0x10381419,
+    HoripadUltimate = 0x0f0d0090,
+    GamesirM2 = 0x0ec20475,
+    XboxOne1 = 0x045e02e0,
+    XboxOne2 = 0x045e02ea,
+    XboxOne3 = 0x045e02fd,
+    Dualshock3 = 0x054c0268,
+    Dualshock4_1 = 0x054c05c4,
+    Dualshock4_2 = 0x054c09cc,
 };
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(GAMEPAD)

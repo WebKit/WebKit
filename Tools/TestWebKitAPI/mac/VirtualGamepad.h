@@ -60,6 +60,7 @@ enum class HIDProductID : uint16_t {
     XboxOne1 = 0x02ea,
     XboxOne2 = 0x02e0,
     XboxOne3 = 0x02fd,
+    Dualshock3 = 0x0268,
     Dualshock4_1 = 0x05c4,
     Dualshock4_2 = 0x09cc,
 };
@@ -82,6 +83,7 @@ class VirtualGamepad {
 public:
     static GamepadMapping microsoftXboxOneMapping();
     static GamepadMapping shenzhenLongshengweiTechnologyGamepadMapping();
+    static GamepadMapping sonyDualshock3Mapping();
     static GamepadMapping sonyDualshock4Mapping();
     static GamepadMapping steelSeriesNimbusMapping();
     static GamepadMapping sunLightApplicationGenericNESMapping();

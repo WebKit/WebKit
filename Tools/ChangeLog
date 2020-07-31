@@ -1,3 +1,19 @@
+2020-07-31  Brady Eidson  <beidson@apple.com>
+
+        Special HID mapping for the Dualshock 3 controller
+        <rdar://problem/66255198> and https://bugs.webkit.org/show_bug.cgi?id=214911
+
+        Reviewed by Tim Horton.
+
+        Add a virtual Dualshock3 and verify a few attributes about it.
+        
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/HIDGamepads.mm:
+        * TestWebKitAPI/mac/GamepadMappings/SonyDualShock3.mm: Added.
+        (TestWebKitAPI::publishReportCallback):
+        (TestWebKitAPI::VirtualGamepad::sonyDualshock3Mapping):
+        * TestWebKitAPI/mac/VirtualGamepad.h:
+
 2020-07-31  Youenn Fablet  <youenn@apple.com>
 
         Update service worker if certificate info does not match when soft updating

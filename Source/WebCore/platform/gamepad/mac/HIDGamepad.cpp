@@ -28,7 +28,9 @@
 
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
+#include "Dualshock3HIDGamepad.h"
 #include "GenericHIDGamepad.h"
+#include "KnownGamepads.h"
 #include "Logging.h"
 #include <IOKit/hid/IOHIDElement.h>
 #include <IOKit/hid/IOHIDUsageTables.h>
@@ -42,12 +44,18 @@ std::unique_ptr<HIDGamepad> HIDGamepad::create(IOHIDDeviceRef rawDevice, unsigne
 {
     auto device = HIDDevice { rawDevice };
 
-    // When we support specific mapping for a particular device, here is where we'll decide what kind of HIDGamepad to make.
-    // For now, it's only the GenericHIDGamepad
-    auto newGamepad = makeUnique<GenericHIDGamepad>(WTFMove(device), index);
+    std::unique_ptr<HIDGamepad> newGamepad;
+
+    switch ((KnownGamepad)device.fullProductIdentifier()) {
+    case Dualshock3:
+        newGamepad = makeUnique<Dualshock3HIDGamepad>(WTFMove(device), index);
+        break;
+    default:
+        newGamepad = makeUnique<GenericHIDGamepad>(WTFMove(device), index);
+    }
 
     newGamepad->initialize();
-    return WTFMove(newGamepad);
+    return newGamepad;
 }
 
 HIDGamepad::HIDGamepad(HIDDevice&& device, unsigned index)
@@ -55,12 +63,14 @@ HIDGamepad::HIDGamepad(HIDDevice&& device, unsigned index)
     , m_device(WTFMove(device))
 {
     m_connectTime = m_lastUpdateTime = MonotonicTime::now();
+
+    // Currently the spec has no formatting for the id string.
+    // This string formatting matches Firefox.
+    m_id = makeString(hex(m_device.vendorID(), Lowercase), '-', hex(m_device.productID(), Lowercase), '-', m_device.productName());
 }
 
 void HIDGamepad::initialize()
 {
-    m_id = id();
-
     for (auto& element : m_elementMap.values())
         element->refreshCurrentValue();
 }

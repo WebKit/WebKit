@@ -36,8 +36,6 @@ public:
     GenericHIDGamepad(HIDDevice&&, unsigned index);
 
 private:
-    String id() final;
-
     void maybeAddGenericDesktopElement(HIDElement&);
     void maybeAddButtonElement(HIDElement&);
 };

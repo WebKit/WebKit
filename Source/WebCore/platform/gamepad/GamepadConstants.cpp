@@ -23,44 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "GamepadConstants.h"
 
-#if PLATFORM(MAC)
+#if ENABLE(GAMEPAD)
 
-#include <wtf/Forward.h>
-#include <wtf/RetainPtr.h>
-
-typedef struct CF_BRIDGED_TYPE(id) __IOHIDDevice * IOHIDDeviceRef;
+#import <wtf/NeverDestroyed.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class HIDElement;
+const GamepadButtonRole maximumGamepadButton = GamepadButtonRole::CenterClusterCenter;
+const size_t numberOfStandardGamepadButtonsWithoutHomeButton = static_cast<size_t>(maximumGamepadButton);
+const size_t numberOfStandardGamepadButtonsWithHomeButton = numberOfStandardGamepadButtonsWithoutHomeButton + 1;
 
-class HIDDevice {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit HIDDevice(IOHIDDeviceRef);
+const WTF::String& standardGamepadMappingString()
+{
+    static NeverDestroyed<String> standardGamepadMapping = "standard";
+    return standardGamepadMapping;
+}
 
-    IOHIDDeviceRef rawElement() const { return m_rawDevice.get(); }
-
-    // Walks the collection tree of all elements in the device as presented by IOKit.
-    // Adds each unique input element to the vector in the tree traversal order it was encountered.
-    // "Unique" is defined as "having a different IOHIDElementCookie from any previously added element"
-    Vector<HIDElement> uniqueInputElementsInDeviceTreeOrder() const;
-
-    uint16_t vendorID() const { return m_vendorID; }
-    uint16_t productID() const { return m_productID; }
-    uint32_t fullProductIdentifier() const { return m_vendorID << 16 | m_productID; }
-    const String& productName() const { return m_productName; }
-
-private:
-    RetainPtr<IOHIDDeviceRef> m_rawDevice;
-
-    uint16_t m_vendorID;
-    uint16_t m_productID;
-    String m_productName;
-};
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(GAMEPAD)

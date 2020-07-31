@@ -257,6 +257,7 @@ platform/cocoa/WebCoreAdditions.mm @no-unify
 platform/cocoa/WebCoreNSErrorExtras.mm
 platform/gamepad/cocoa/GameControllerGamepad.mm
 platform/gamepad/cocoa/GameControllerGamepadProvider.mm
+platform/gamepad/mac/Dualshock3HIDGamepad.cpp
 platform/gamepad/mac/GenericHIDGamepad.cpp
 platform/gamepad/mac/HIDGamepad.cpp
 platform/gamepad/mac/HIDGamepadElement.cpp

@@ -25,42 +25,42 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
+#if ENABLE(GAMEPAD)
 
-#include <wtf/Forward.h>
-#include <wtf/RetainPtr.h>
-
-typedef struct CF_BRIDGED_TYPE(id) __IOHIDDevice * IOHIDDeviceRef;
+namespace WTF {
+class String;
+};
 
 namespace WebCore {
 
-class HIDElement;
-
-class HIDDevice {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit HIDDevice(IOHIDDeviceRef);
-
-    IOHIDDeviceRef rawElement() const { return m_rawDevice.get(); }
-
-    // Walks the collection tree of all elements in the device as presented by IOKit.
-    // Adds each unique input element to the vector in the tree traversal order it was encountered.
-    // "Unique" is defined as "having a different IOHIDElementCookie from any previously added element"
-    Vector<HIDElement> uniqueInputElementsInDeviceTreeOrder() const;
-
-    uint16_t vendorID() const { return m_vendorID; }
-    uint16_t productID() const { return m_productID; }
-    uint32_t fullProductIdentifier() const { return m_vendorID << 16 | m_productID; }
-    const String& productName() const { return m_productName; }
-
-private:
-    RetainPtr<IOHIDDeviceRef> m_rawDevice;
-
-    uint16_t m_vendorID;
-    uint16_t m_productID;
-    String m_productName;
+// Buttons in the "standard" gamepad layout in the Web Gamepad spec
+// https://www.w3.org/TR/gamepad/#dfn-standard-gamepad-layout
+enum class GamepadButtonRole : uint8_t {
+    RightClusterBottom = 0,
+    RightClusterRight = 1,
+    RightClusterLeft = 2,
+    RightClusterTop = 3,
+    LeftShoulderFront = 4,
+    RightShoulderFront = 5,
+    LeftShoulderBack = 6,
+    RightShoulderBack = 7,
+    CenterClusterLeft = 8,
+    CenterClusterRight = 9,
+    LeftStick = 10,
+    RightStick = 11,
+    LeftClusterTop = 12,
+    LeftClusterBottom = 13,
+    LeftClusterLeft = 14,
+    LeftClusterRight = 15,
+    CenterClusterCenter = 16,
 };
+
+extern const size_t numberOfStandardGamepadButtonsWithoutHomeButton;
+extern const size_t numberOfStandardGamepadButtonsWithHomeButton;
+extern const GamepadButtonRole maximumGamepadButton;
+
+const WTF::String& standardGamepadMappingString();
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(GAMEPAD)
