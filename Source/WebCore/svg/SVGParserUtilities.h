@@ -70,13 +70,13 @@ template<typename CharacterType> constexpr bool isSVGSpaceOrComma(CharacterType 
 
 template<typename CharacterType> constexpr bool skipOptionalSVGSpaces(const CharacterType*& ptr, const CharacterType* end)
 {
-    skipWhile<CharacterType, isSVGSpace>(ptr, end);
+    skipWhile<isSVGSpace>(ptr, end);
     return ptr < end;
 }
 
 template<typename CharacterType> constexpr bool skipOptionalSVGSpaces(StringParsingBuffer<CharacterType>& characters)
 {
-    skipWhile<CharacterType, isSVGSpace>(characters);
+    skipWhile<isSVGSpace>(characters);
     return characters.hasCharactersRemaining();
 }
 

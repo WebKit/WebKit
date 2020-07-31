@@ -36,12 +36,10 @@ bool SVGLengthList::parse(StringView value)
     clearItems();
 
     return readCharactersForParsing(value, [&](auto buffer) {
-        using CharacterType = typename decltype(buffer)::CharacterType;
-
         while (buffer.hasCharactersRemaining()) {
             auto start = buffer.position();
 
-            skipUntil<CharacterType, isSVGSpaceOrComma>(buffer);
+            skipUntil<isSVGSpaceOrComma>(buffer);
 
             if (buffer.position() == start)
                 break;

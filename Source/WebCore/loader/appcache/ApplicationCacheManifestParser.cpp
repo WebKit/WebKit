@@ -96,11 +96,11 @@ Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& mani
             return WTF::nullopt;
 
         // Skip to the end of the line.
-        skipUntil<CharacterType, isManifestNewline>(buffer);
+        skipUntil<isManifestNewline>(buffer);
 
         while (1) {
             // Skip whitespace
-            skipWhile<CharacterType, isManifestWhitespaceOrNewline>(buffer);
+            skipWhile<isManifestWhitespaceOrNewline>(buffer);
             
             if (buffer.atEnd())
                 break;
@@ -108,7 +108,7 @@ Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& mani
             auto lineStart = buffer.position();
             
             // Find the end of the line
-            skipUntil<CharacterType, isManifestNewline>(buffer);
+            skipUntil<isManifestNewline>(buffer);
             
             // Line is a comment, skip to the next line.
             if (*lineStart == '#')
@@ -147,7 +147,7 @@ Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& mani
             
             case ApplicationCacheParserMode::Explicit: {
                 // Look for whitespace separating the URL from subsequent ignored tokens.
-                skipUntil<CharacterType, isManifestWhitespace>(lineBuffer);
+                skipUntil<isManifestWhitespace>(lineBuffer);
 
                 auto url = makeManifestURL(manifestURL, lineStart, lineBuffer.position());
                 if (!url.isValid())
@@ -165,7 +165,7 @@ Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& mani
 
             case ApplicationCacheParserMode::OnlineAllowlist: {
                 // Look for whitespace separating the URL from subsequent ignored tokens.
-                skipUntil<CharacterType, isManifestWhitespace>(lineBuffer);
+                skipUntil<isManifestWhitespace>(lineBuffer);
 
                 if (lineBuffer.position() - lineStart == 1 && *lineStart == '*') {
                     // Wildcard was found.
@@ -186,7 +186,7 @@ Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& mani
             
             case ApplicationCacheParserMode::Fallback: {
                 // Look for whitespace separating the two URLs
-                skipUntil<CharacterType, isManifestWhitespace>(lineBuffer);
+                skipUntil<isManifestWhitespace>(lineBuffer);
 
                 if (lineBuffer.atEnd()) {
                     // There was no whitespace separating the URLs.
@@ -207,12 +207,12 @@ Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& mani
                     continue;
 
                 // Skip whitespace separating fallback namespace from URL.
-                skipWhile<CharacterType, isManifestWhitespace>(lineBuffer);
+                skipWhile<isManifestWhitespace>(lineBuffer);
 
                 auto fallbackStart = lineBuffer.position();
 
                 // Look for whitespace separating the URL from subsequent ignored tokens.
-                skipUntil<CharacterType, isManifestWhitespace>(lineBuffer);
+                skipUntil<isManifestWhitespace>(lineBuffer);
 
                 auto fallbackURL = makeManifestURL(manifestURL, fallbackStart, lineBuffer.position());
                 if (!fallbackURL.isValid())

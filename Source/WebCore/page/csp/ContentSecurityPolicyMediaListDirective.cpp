@@ -60,46 +60,44 @@ void ContentSecurityPolicyMediaListDirective::parse(const String& value)
     }
 
     readCharactersForParsing(value, [&](auto buffer) {
-        using CharacterType = typename decltype(buffer)::CharacterType;
-
         while (buffer.hasCharactersRemaining()) {
             // _____ OR _____mime1/mime1
             // ^        ^
-            skipWhile<CharacterType, isASCIISpace>(buffer);
+            skipWhile<isASCIISpace>(buffer);
             if (buffer.atEnd())
                 return;
 
             // mime1/mime1 mime2/mime2
             // ^
             auto begin = buffer.position();
-            if (!skipExactly<CharacterType, isMediaTypeCharacter>(buffer)) {
-                skipWhile<CharacterType, isNotASCIISpace>(buffer);
+            if (!skipExactly<isMediaTypeCharacter>(buffer)) {
+                skipWhile<isNotASCIISpace>(buffer);
                 directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
                 continue;
             }
-            skipWhile<CharacterType, isMediaTypeCharacter>(buffer);
+            skipWhile<isMediaTypeCharacter>(buffer);
 
             // mime1/mime1 mime2/mime2
             //      ^
             if (!skipExactly(buffer, '/')) {
-                skipWhile<CharacterType, isNotASCIISpace>(buffer);
+                skipWhile<isNotASCIISpace>(buffer);
                 directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
                 continue;
             }
 
             // mime1/mime1 mime2/mime2
             //       ^
-            if (!skipExactly<CharacterType, isMediaTypeCharacter>(buffer)) {
-                skipWhile<CharacterType, isNotASCIISpace>(buffer);
+            if (!skipExactly<isMediaTypeCharacter>(buffer)) {
+                skipWhile<isNotASCIISpace>(buffer);
                 directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
                 continue;
             }
-            skipWhile<CharacterType, isMediaTypeCharacter>(buffer);
+            skipWhile<isMediaTypeCharacter>(buffer);
 
             // mime1/mime1 mime2/mime2 OR mime1/mime1  OR mime1/mime1/error
             //            ^                          ^               ^
             if (buffer.hasCharactersRemaining() && isNotASCIISpace(*buffer)) {
-                skipWhile<CharacterType, isNotASCIISpace>(buffer);
+                skipWhile<isNotASCIISpace>(buffer);
                 directiveList().policy().reportInvalidPluginTypes(String(begin, buffer.position() - begin));
                 continue;
             }

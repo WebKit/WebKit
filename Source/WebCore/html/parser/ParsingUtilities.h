@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,8 +31,8 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
 #include <wtf/text/StringCommon.h>
+#include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ template<typename CharacterType, typename DelimiterType> bool skipExactly(String
     return false;
 }
 
-template<typename CharacterType, bool characterPredicate(CharacterType)> bool skipExactly(const CharacterType*& position, const CharacterType* end)
+template<bool characterPredicate(LChar)> bool skipExactly(const LChar*& position, const LChar* end)
 {
     if (position < end && characterPredicate(*position)) {
         ++position;
@@ -67,7 +68,25 @@ template<typename CharacterType, bool characterPredicate(CharacterType)> bool sk
     return false;
 }
 
-template<typename CharacterType, bool characterPredicate(CharacterType)> bool skipExactly(StringParsingBuffer<CharacterType>& buffer)
+template<bool characterPredicate(UChar)> bool skipExactly(const UChar*& position, const UChar* end)
+{
+    if (position < end && characterPredicate(*position)) {
+        ++position;
+        return true;
+    }
+    return false;
+}
+
+template<bool characterPredicate(LChar)> bool skipExactly(StringParsingBuffer<LChar>& buffer)
+{
+    if (buffer.hasCharactersRemaining() && characterPredicate(*buffer)) {
+        ++buffer;
+        return true;
+    }
+    return false;
+}
+
+template<bool characterPredicate(UChar)> bool skipExactly(StringParsingBuffer<UChar>& buffer)
 {
     if (buffer.hasCharactersRemaining() && characterPredicate(*buffer)) {
         ++buffer;
@@ -88,31 +107,62 @@ template<typename CharacterType, typename DelimiterType> void skipUntil(StringPa
         ++buffer;
 }
 
-template<typename CharacterType, bool characterPredicate(CharacterType)> void skipUntil(const CharacterType*& position, const CharacterType* end)
+template<bool characterPredicate(LChar)> void skipUntil(const LChar*& position, const LChar* end)
 {
     while (position < end && !characterPredicate(*position))
         ++position;
 }
 
-template<typename CharacterType, bool characterPredicate(CharacterType)> void skipUntil(StringParsingBuffer<CharacterType>& buffer)
+template<bool characterPredicate(UChar)> void skipUntil(const UChar*& position, const UChar* end)
+{
+    while (position < end && !characterPredicate(*position))
+        ++position;
+}
+
+template<bool characterPredicate(LChar)> void skipUntil(StringParsingBuffer<LChar>& buffer)
 {
     while (buffer.hasCharactersRemaining() && !characterPredicate(*buffer))
         ++buffer;
 }
 
-template<typename CharacterType, bool characterPredicate(CharacterType)> void skipWhile(const CharacterType*& position, const CharacterType* end)
+template<bool characterPredicate(UChar)> void skipUntil(StringParsingBuffer<UChar>& buffer)
+{
+    while (buffer.hasCharactersRemaining() && !characterPredicate(*buffer))
+        ++buffer;
+}
+
+template<bool characterPredicate(LChar)> void skipWhile(const LChar*& position, const LChar* end)
 {
     while (position < end && characterPredicate(*position))
         ++position;
 }
 
-template<typename CharacterType, bool characterPredicate(CharacterType)> void skipWhile(StringParsingBuffer<CharacterType>& buffer)
+template<bool characterPredicate(UChar)> void skipWhile(const UChar*& position, const UChar* end)
+{
+    while (position < end && characterPredicate(*position))
+        ++position;
+}
+
+template<bool characterPredicate(LChar)> void skipWhile(StringParsingBuffer<LChar>& buffer)
 {
     while (buffer.hasCharactersRemaining() && characterPredicate(*buffer))
         ++buffer;
 }
 
-template<typename CharacterType, bool characterPredicate(CharacterType)> void reverseSkipWhile(const CharacterType*& position, const CharacterType* start)
+template<bool characterPredicate(UChar)> void skipWhile(StringParsingBuffer<UChar>& buffer)
+{
+    while (buffer.hasCharactersRemaining() && characterPredicate(*buffer))
+        ++buffer;
+}
+
+
+template<bool characterPredicate(LChar)> void reverseSkipWhile(const LChar*& position, const LChar* start)
+{
+    while (position >= start && characterPredicate(*position))
+        --position;
+}
+
+template<bool characterPredicate(UChar)> void reverseSkipWhile(const UChar*& position, const UChar* start)
 {
     while (position >= start && characterPredicate(*position))
         --position;

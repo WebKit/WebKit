@@ -67,7 +67,7 @@ public:
         // specific options have been specified. Thus, we just parse and ignore
         // them. Their syntax is a '?' follow by any number of VCHARs.
         if (skipExactly(buffer, '?'))
-            skipWhile<CharacterType, isVCHAR>(buffer);
+            skipWhile<isVCHAR>(buffer);
 
         // After the base64 value and options, the current character pointed to by position
         // should either be the end or a space.
@@ -87,12 +87,12 @@ private:
 template <typename CharacterType, typename Functor>
 static inline void splitOnSpaces(StringParsingBuffer<CharacterType> buffer, Functor&& functor)
 {
-    skipWhile<CharacterType, isHTMLSpace>(buffer);
+    skipWhile<isHTMLSpace>(buffer);
 
     while (buffer.hasCharactersRemaining()) {
         if (!functor(buffer))
-            skipWhile<CharacterType, isNotHTMLSpace>(buffer);
-        skipWhile<CharacterType, isHTMLSpace>(buffer);
+            skipWhile<isNotHTMLSpace>(buffer);
+        skipWhile<isHTMLSpace>(buffer);
     }
 }
 

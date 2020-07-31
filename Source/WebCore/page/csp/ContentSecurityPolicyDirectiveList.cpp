@@ -371,18 +371,18 @@ void ContentSecurityPolicyDirectiveList::parse(const String& policy, ContentSecu
 //
 template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseDirective(StringParsingBuffer<CharacterType> buffer) -> Optional<ParsedDirective>
 {
-    skipWhile<CharacterType, isASCIISpace>(buffer);
+    skipWhile<isASCIISpace>(buffer);
 
     // Empty directive (e.g. ";;;"). Exit early.
     if (buffer.atEnd())
         return WTF::nullopt;
 
     auto nameBegin = buffer.position();
-    skipWhile<CharacterType, isDirectiveNameCharacter>(buffer);
+    skipWhile<isDirectiveNameCharacter>(buffer);
 
     // The directive-name must be non-empty.
     if (nameBegin == buffer.position()) {
-        skipWhile<CharacterType, isNotASCIISpace>(buffer);
+        skipWhile<isNotASCIISpace>(buffer);
         m_policy.reportUnsupportedDirective(String(nameBegin, buffer.position() - nameBegin));
         return WTF::nullopt;
     }
@@ -392,16 +392,16 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
     if (buffer.atEnd())
         return ParsedDirective { WTFMove(name), { } };
 
-    if (!skipExactly<CharacterType, isASCIISpace>(buffer)) {
-        skipWhile<CharacterType, isNotASCIISpace>(buffer);
+    if (!skipExactly<isASCIISpace>(buffer)) {
+        skipWhile<isNotASCIISpace>(buffer);
         m_policy.reportUnsupportedDirective(String(nameBegin, buffer.position() - nameBegin));
         return WTF::nullopt;
     }
 
-    skipWhile<CharacterType, isASCIISpace>(buffer);
+    skipWhile<isASCIISpace>(buffer);
 
     auto valueBegin = buffer.position();
-    skipWhile<CharacterType, isDirectiveValueCharacter>(buffer);
+    skipWhile<isDirectiveValueCharacter>(buffer);
 
     if (!buffer.atEnd()) {
         m_policy.reportInvalidDirectiveValueCharacter(name, String(valueBegin, buffer.end() - valueBegin));
@@ -424,14 +424,12 @@ void ContentSecurityPolicyDirectiveList::parseReportURI(ParsedDirective&& direct
     }
 
     readCharactersForParsing(directive.value, [&](auto buffer) {
-        using CharacterType = typename decltype(buffer)::CharacterType;
-
         auto begin = buffer.position();
         while (buffer.hasCharactersRemaining()) {
-            skipWhile<CharacterType, isASCIISpace>(buffer);
+            skipWhile<isASCIISpace>(buffer);
 
             auto urlBegin = buffer.position();
-            skipWhile<CharacterType, isNotASCIISpace>(buffer);
+            skipWhile<isNotASCIISpace>(buffer);
 
             if (urlBegin < buffer.position())
                 m_reportURIs.append(directive.value.substring(urlBegin - begin, buffer.position() - urlBegin));

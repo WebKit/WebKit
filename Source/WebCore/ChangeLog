@@ -1,5 +1,59 @@
 2020-07-30  Sam Weinig  <weinig@apple.com>
 
+        It would be nice if the predicate taking functions in ParsingUtilities.h didn't require specifying the character type
+        https://bugs.webkit.org/show_bug.cgi?id=215002
+
+        Reviewed by Darin Adler.
+
+        Remove the need for specifying the character type by providing overloads for LChar and UChar
+        explicitly.
+
+        * html/parser/HTMLSrcsetParser.cpp:
+        (WebCore::parseImageCandidatesFromSrcsetAttribute):
+        * html/parser/ParsingUtilities.h:
+        (WebCore::characterPredicate):
+        * html/track/VTTScanner.h:
+        (WebCore::characterPredicate):
+        * loader/LinkHeader.cpp:
+        (WebCore::findURLBoundaries):
+        (WebCore::invalidParameterDelimiter):
+        (WebCore::parseParameterDelimiter):
+        (WebCore::parseParameterName):
+        (WebCore::skipQuotesIfNeeded):
+        (WebCore::parseParameterValue):
+        (WebCore::findNextHeader):
+        * loader/ResourceCryptographicDigest.cpp:
+        (WebCore::parseCryptographicDigestImpl):
+        (WebCore::parseEncodedCryptographicDigestImpl):
+        * loader/SubresourceIntegrity.cpp:
+        (WebCore::splitOnSpaces):
+        * loader/appcache/ApplicationCacheManifestParser.cpp:
+        (WebCore::parseApplicationCacheManifest):
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::parseDirective):
+        (WebCore::ContentSecurityPolicyDirectiveList::parseReportURI):
+        * page/csp/ContentSecurityPolicyMediaListDirective.cpp:
+        (WebCore::ContentSecurityPolicyMediaListDirective::parse):
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::isSourceListNone):
+        (WebCore::ContentSecurityPolicySourceList::parse):
+        (WebCore::ContentSecurityPolicySourceList::parseSource):
+        (WebCore::ContentSecurityPolicySourceList::parseScheme):
+        (WebCore::ContentSecurityPolicySourceList::parseHost):
+        (WebCore::ContentSecurityPolicySourceList::parsePath):
+        (WebCore::ContentSecurityPolicySourceList::parsePort):
+        (WebCore::ContentSecurityPolicySourceList::parseNonceSource):
+        * platform/DateComponents.cpp:
+        (WebCore::countDigits):
+        * svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::parse):
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::genericParseNumber):
+        * svg/SVGParserUtilities.h:
+        (WebCore::skipOptionalSVGSpaces):
+
+2020-07-30  Sam Weinig  <weinig@apple.com>
+
         Convert DateComponents to use StringParsingBuffer
         https://bugs.webkit.org/show_bug.cgi?id=213929
 

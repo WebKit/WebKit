@@ -89,16 +89,16 @@ template <typename CharacterType>
 static Optional<String> findURLBoundaries(CharacterType*& position, CharacterType* const end)
 {
     ASSERT(position <= end);
-    skipWhile<CharacterType, isSpaceOrTab>(position, end);
-    if (!skipExactly<CharacterType>(position, end, '<'))
+    skipWhile<isSpaceOrTab>(position, end);
+    if (!skipExactly(position, end, '<'))
         return WTF::nullopt;
-    skipWhile<CharacterType, isSpaceOrTab>(position, end);
+    skipWhile<isSpaceOrTab>(position, end);
 
     CharacterType* urlStart = position;
-    skipWhile<CharacterType, isNotURLTerminatingChar>(position, end);
+    skipWhile<isNotURLTerminatingChar>(position, end);
     CharacterType* urlEnd = position;
-    skipUntil<CharacterType>(position, end, '>');
-    if (!skipExactly<CharacterType>(position, end, '>'))
+    skipUntil(position, end, '>');
+    if (!skipExactly(position, end, '>'))
         return WTF::nullopt;
 
     return String(urlStart, urlEnd - urlStart);
@@ -108,7 +108,7 @@ template <typename CharacterType>
 static bool invalidParameterDelimiter(CharacterType*& position, CharacterType* const end)
 {
     ASSERT(position <= end);
-    return (!skipExactly<CharacterType>(position, end, ';') && (position < end) && (*position != ','));
+    return (!skipExactly(position, end, ';') && (position < end) && (*position != ','));
 }
 
 template <typename CharacterType>
@@ -134,12 +134,12 @@ static bool parseParameterDelimiter(CharacterType*& position, CharacterType* con
 {
     ASSERT(position <= end);
     isValid = true;
-    skipWhile<CharacterType, isSpaceOrTab>(position, end);
+    skipWhile<isSpaceOrTab>(position, end);
     if (invalidParameterDelimiter(position, end)) {
         isValid = false;
         return false;
     }
-    skipWhile<CharacterType, isSpaceOrTab>(position, end);
+    skipWhile<isSpaceOrTab>(position, end);
     if (validFieldEnd(position, end))
         return false;
     return true;
@@ -188,11 +188,11 @@ static bool parseParameterName(CharacterType*& position, CharacterType* const en
 {
     ASSERT(position <= end);
     CharacterType* nameStart = position;
-    skipWhile<CharacterType, isValidParameterNameChar>(position, end);
+    skipWhile<isValidParameterNameChar>(position, end);
     CharacterType* nameEnd = position;
-    skipWhile<CharacterType, isSpaceOrTab>(position, end);
-    bool hasEqual = skipExactly<CharacterType>(position, end, '=');
-    skipWhile<CharacterType, isSpaceOrTab>(position, end);
+    skipWhile<isSpaceOrTab>(position, end);
+    bool hasEqual = skipExactly(position, end, '=');
+    skipWhile<isSpaceOrTab>(position, end);
     name = paramterNameFromString(String(nameStart, nameEnd - nameStart));
     if (hasEqual)
         return true;
@@ -216,9 +216,9 @@ static bool skipQuotesIfNeeded(CharacterType*& position, CharacterType* const en
 {
     ASSERT(position <= end);
     unsigned char quote;
-    if (skipExactly<CharacterType>(position, end, '\''))
+    if (skipExactly(position, end, '\''))
         quote = '\'';
-    else if (skipExactly<CharacterType>(position, end, '"'))
+    else if (skipExactly(position, end, '"'))
         quote = '"';
     else
         return false;
@@ -252,9 +252,9 @@ static bool parseParameterValue(CharacterType*& position, CharacterType* const e
     bool completeQuotes = false;
     bool hasQuotes = skipQuotesIfNeeded(position, end, completeQuotes);
     if (!hasQuotes)
-        skipWhile<CharacterType, isParameterValueChar>(position, end);
+        skipWhile<isParameterValueChar>(position, end);
     valueEnd = position;
-    skipWhile<CharacterType, isSpaceOrTab>(position, end);
+    skipWhile<isSpaceOrTab>(position, end);
     if ((!completeQuotes && valueStart == valueEnd) || (position != end && !isParameterValueEnd(*position))) {
         value = emptyString();
         return false;
@@ -310,8 +310,8 @@ template <typename CharacterType>
 static void findNextHeader(CharacterType*& position, CharacterType* const end)
 {
     ASSERT(position <= end);
-    skipUntil<CharacterType>(position, end, ',');
-    skipExactly<CharacterType>(position, end, ',');
+    skipUntil(position, end, ',');
+    skipExactly(position, end, ',');
 }
 
 template <typename CharacterType>

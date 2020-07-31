@@ -109,7 +109,7 @@ int DateComponents::maxWeekNumberInYear() const
 template<typename CharacterType> static unsigned countDigits(StringParsingBuffer<CharacterType> buffer)
 {
     auto begin = buffer.position();
-    skipWhile<CharacterType, isASCIIDigit>(buffer);
+    skipWhile<isASCIIDigit>(buffer);
     return buffer.position() - begin;
 }
 

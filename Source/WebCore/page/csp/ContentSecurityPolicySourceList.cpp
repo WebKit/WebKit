@@ -84,12 +84,12 @@ template<typename CharacterType> static bool isNotColonOrSlash(CharacterType c)
 
 template<typename CharacterType> static bool isSourceListNone(StringParsingBuffer<CharacterType> buffer)
 {
-    skipWhile<CharacterType, isASCIISpace>(buffer);
+    skipWhile<isASCIISpace>(buffer);
 
     if (!skipExactlyIgnoringASCIICase(buffer, "'none'"))
         return false;
 
-    skipWhile<CharacterType, isASCIISpace>(buffer);
+    skipWhile<isASCIISpace>(buffer);
 
     return buffer.atEnd();
 }
@@ -159,12 +159,12 @@ bool ContentSecurityPolicySourceList::matches(const String& nonce) const
 template<typename CharacterType> void ContentSecurityPolicySourceList::parse(StringParsingBuffer<CharacterType> buffer)
 {
     while (buffer.hasCharactersRemaining()) {
-        skipWhile<CharacterType, isASCIISpace>(buffer);
+        skipWhile<isASCIISpace>(buffer);
         if (buffer.atEnd())
             return;
 
         auto beginSource = buffer.position();
-        skipWhile<CharacterType, isSourceCharacter>(buffer);
+        skipWhile<isSourceCharacter>(buffer);
 
         auto sourceBuffer = StringParsingBuffer { beginSource, buffer.position() };
 
@@ -231,7 +231,7 @@ template<typename CharacterType> Optional<ContentSecurityPolicySourceList::Sourc
     auto beginPath = buffer.end();
     const CharacterType* beginPort = nullptr;
 
-    skipWhile<CharacterType, isNotColonOrSlash>(buffer);
+    skipWhile<isNotColonOrSlash>(buffer);
 
     if (buffer.atEnd()) {
         // host
@@ -287,7 +287,7 @@ template<typename CharacterType> Optional<ContentSecurityPolicySourceList::Sourc
             source.scheme = WTFMove(*scheme);
 
             beginHost = buffer.position();
-            skipWhile<CharacterType, isNotColonOrSlash>(buffer);
+            skipWhile<isNotColonOrSlash>(buffer);
         }
 
         if (buffer.hasCharactersRemaining() && *buffer == ':') {
@@ -343,10 +343,10 @@ template<typename CharacterType> Optional<String> ContentSecurityPolicySourceLis
 
     auto begin = buffer.position();
 
-    if (!skipExactly<CharacterType, isASCIIAlpha>(buffer))
+    if (!skipExactly<isASCIIAlpha>(buffer))
         return WTF::nullopt;
 
-    skipWhile<CharacterType, isSchemeContinuationCharacter>(buffer);
+    skipWhile<isSchemeContinuationCharacter>(buffer);
 
     if (!buffer.atEnd())
         return WTF::nullopt;
@@ -380,10 +380,10 @@ template<typename CharacterType> Optional<ContentSecurityPolicySourceList::Host>
     auto hostBegin = buffer.position();
 
     while (buffer.hasCharactersRemaining()) {
-        if (!skipExactly<CharacterType, isHostCharacter>(buffer))
+        if (!skipExactly<isHostCharacter>(buffer))
             return WTF::nullopt;
 
-        skipWhile<CharacterType, isHostCharacter>(buffer);
+        skipWhile<isHostCharacter>(buffer);
 
         if (buffer.hasCharactersRemaining() && !skipExactly(buffer, '.'))
             return WTF::nullopt;
@@ -399,7 +399,7 @@ template<typename CharacterType> Optional<String> ContentSecurityPolicySourceLis
     ASSERT(buffer.position() <= buffer.end());
     
     auto begin = buffer.position();
-    skipWhile<CharacterType, isPathComponentCharacter>(buffer);
+    skipWhile<isPathComponentCharacter>(buffer);
     // path/to/file.js?query=string || path/to/file.js#anchor
     //                ^                               ^
     if (buffer.hasCharactersRemaining())
@@ -430,7 +430,7 @@ template<typename CharacterType> Optional<ContentSecurityPolicySourceList::Port>
     }
     
     auto begin = buffer.position();
-    skipWhile<CharacterType, isASCIIDigit>(buffer);
+    skipWhile<isASCIIDigit>(buffer);
     
     if (!buffer.atEnd())
         return WTF::nullopt;
@@ -461,7 +461,7 @@ template<typename CharacterType> bool ContentSecurityPolicySourceList::parseNonc
         return false;
 
     auto beginNonceValue = buffer.position();
-    skipWhile<CharacterType, isNonceCharacter>(buffer);
+    skipWhile<isNonceCharacter>(buffer);
     if (buffer.atEnd() || buffer.position() == beginNonceValue || *buffer != '\'')
         return false;
     m_nonces.add(String(beginNonceValue, buffer.position() - beginNonceValue));

@@ -62,7 +62,7 @@ template<typename CharacterType> static Optional<ResourceCryptographicDigest> pa
         return WTF::nullopt;
 
     auto beginHashValue = buffer.position();
-    skipWhile<CharacterType, isBase64OrBase64URLCharacter>(buffer);
+    skipWhile<isBase64OrBase64URLCharacter>(buffer);
     skipExactly(buffer, '=');
     skipExactly(buffer, '=');
 
@@ -102,7 +102,7 @@ template<typename CharacterType> static Optional<EncodedResourceCryptographicDig
         return WTF::nullopt;
 
     auto beginHashValue = buffer.position();
-    skipWhile<CharacterType, isBase64OrBase64URLCharacter>(buffer);
+    skipWhile<isBase64OrBase64URLCharacter>(buffer);
     skipExactly(buffer, '=');
     skipExactly(buffer, '=');
 

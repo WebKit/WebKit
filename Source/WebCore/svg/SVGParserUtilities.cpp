@@ -68,7 +68,7 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
     auto ptrStartIntPart = buffer.position();
     
     // Advance to first non-digit.
-    skipWhile<CharacterType, isASCIIDigit>(buffer);
+    skipWhile<isASCIIDigit>(buffer);
 
     if (buffer.position() != ptrStartIntPart) {
         auto ptrScanIntPart = buffer.position() - 1;
