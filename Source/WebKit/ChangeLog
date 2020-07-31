@@ -1,3 +1,21 @@
+2020-07-30  Alex Christensen  <achristensen@webkit.org>
+
+        Optimize WebsiteDataStoreConfiguration::copy
+        https://bugs.webkit.org/show_bug.cgi?id=215012
+        <rdar://problem/64263406>
+
+        Reviewed by Brady Eidson.
+
+        The WebsiteDataStoreConfiguration constructor does some read/write heavy things.
+        We only want to do these things if we are not just going to overwrite the strings with strings from another WebsiteDataStoreConfiguration.
+        No change in behavior, just making things faster.
+
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::create):
+
 2020-07-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed second attempt to fix Catalyst build after r265084.

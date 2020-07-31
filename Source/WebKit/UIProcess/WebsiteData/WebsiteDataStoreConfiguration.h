@@ -33,11 +33,12 @@
 namespace WebKit {
 
 enum class IsPersistent : bool { No, Yes };
+enum class WillCopyPathsFromExistingConfiguration : bool { No, Yes };
 
 class WebsiteDataStoreConfiguration : public API::ObjectImpl<API::Object::Type::WebsiteDataStoreConfiguration> {
 public:
-    static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent)); }
-    WebsiteDataStoreConfiguration(IsPersistent);
+    static Ref<WebsiteDataStoreConfiguration> create(IsPersistent isPersistent, WillCopyPathsFromExistingConfiguration willCopyPaths = WillCopyPathsFromExistingConfiguration::No) { return adoptRef(*new WebsiteDataStoreConfiguration(isPersistent, willCopyPaths)); }
+    WebsiteDataStoreConfiguration(IsPersistent, WillCopyPathsFromExistingConfiguration = WillCopyPathsFromExistingConfiguration::No);
 
     Ref<WebsiteDataStoreConfiguration> copy() const;
 

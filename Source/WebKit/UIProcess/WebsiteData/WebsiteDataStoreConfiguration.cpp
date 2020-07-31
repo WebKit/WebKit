@@ -30,10 +30,10 @@
 
 namespace WebKit {
 
-WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPersistent)
+WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPersistent, WillCopyPathsFromExistingConfiguration willCopyPaths)
     : m_isPersistent(isPersistent)
 {
-    if (isPersistent == IsPersistent::Yes) {
+    if (isPersistent == IsPersistent::Yes && willCopyPaths == WillCopyPathsFromExistingConfiguration::No) {
         setApplicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory());
         setCacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory());
         setNetworkCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory());
@@ -52,7 +52,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
 
 Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
 {
-    auto copy = WebsiteDataStoreConfiguration::create(m_isPersistent);
+    auto copy = WebsiteDataStoreConfiguration::create(m_isPersistent, WillCopyPathsFromExistingConfiguration::Yes);
 
     copy->m_serviceWorkerProcessTerminationDelayEnabled = this->m_serviceWorkerProcessTerminationDelayEnabled;
     copy->m_fastServerTrustEvaluationEnabled = this->m_fastServerTrustEvaluationEnabled;
