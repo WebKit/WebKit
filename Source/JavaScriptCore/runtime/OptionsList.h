@@ -76,7 +76,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
 // and cannot be modified thereafter.
 
 #define FOR_EACH_JSC_OPTION(v)                                          \
-    v(Bool, useKernTCSM, false, Normal, "Note: this needs to go before other options since they depend on this value.") \
+    v(Bool, useKernTCSM, defaultTCSMValue(), Normal, "Note: this needs to go before other options since they depend on this value.") \
     v(Bool, validateOptions, false, Normal, "crashes if mis-typed JSC options were passed to the VM") \
     v(Unsigned, dumpOptions, 0, Normal, "dumps JSC options (0 = None, 1 = Overridden only, 2 = All, 3 = Verbose)") \
     v(OptionString, configFile, nullptr, Normal, "file to configure JSC options and logging location") \

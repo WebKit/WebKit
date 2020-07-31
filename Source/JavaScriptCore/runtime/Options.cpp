@@ -230,6 +230,15 @@ static unsigned computeNumberOfGCMarkers(unsigned maxNumberOfGCMarkers)
     return computeNumberOfWorkerThreads(maxNumberOfGCMarkers);
 }
 
+static bool defaultTCSMValue()
+{
+#if CPU(X86_64) && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MACCATALYST) && __IPHONE_OS_VERSION_MIN_REQUIRED < 140000))
+    return true;
+#else
+    return false;
+#endif
+}
+
 const char* const OptionRange::s_nullRangeStr = "<null>";
 
 bool OptionRange::init(const char* rangeString)
