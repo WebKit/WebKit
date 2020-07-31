@@ -51,7 +51,7 @@ enum class IsSuspensionImminent : bool { No, Yes };
 
 class ProcessThrottlerClient;
 
-class ProcessThrottler : public CanMakeWeakPtr<ProcessThrottler>, private ProcessAssertion::Client {
+class ProcessThrottler : public CanMakeWeakPtr<ProcessThrottler> {
 public:
     ProcessThrottler(ProcessThrottlerClient&, bool shouldTakeUIBackgroundAssertion);
     ~ProcessThrottler();
@@ -142,9 +142,8 @@ private:
     void invalidateAllActivities();
     String assertionName(ProcessAssertionType) const;
 
-    // ProcessAssertionClient
-    void uiAssertionWillExpireImminently() final;
-    void assertionWasInvalidated() final;
+    void uiAssertionWillExpireImminently();
+    void assertionWasInvalidated();
 
     void clearPendingRequestToSuspend();
 

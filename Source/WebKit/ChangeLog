@@ -1,3 +1,49 @@
+2020-07-31  Chris Dumez  <cdumez@apple.com>
+
+        Drop ProcessAssertion::Client and replace with a simple invalidation handler
+        https://bugs.webkit.org/show_bug.cgi?id=214976
+
+        Reviewed by Brady Eidson.
+
+        ProcessAssertion had a Client class with 2 functions:
+        (1) one to indicate that the assertion was invalidated
+        (2) one to indicate that the UI assertion is about to expire
+
+        While ProcessAssertion is used in several places, only the ProcessThrottler
+        ever sets itself as a client. The reason is that other call sites use
+        assertion types that do not expire. Also, (2) only makes sense for
+        ProcessAndUIAssertion, not for ProcessAssertion. Only the ProcessThrottler
+        is using a ProcessAndUIAssertion.
+
+        I think a better design is to have a simple invalidation handler on
+        the ProcessAssertion, that the call site can set if they are interested
+        in invalidation.
+
+        Similarly, I added a UIAssertion expiration handler on ProcessAndUIAssertion
+        so that the ProcessThrottler can know if the UIAssertion is about to expire.
+
+        This new design also matches more closely the system process assertion API
+        that ProcessAssertion / ProcessAndUIAssertion are wrapping.
+
+        This patch also fixes a bug found by Youenn Fablet where the ProcessThrottler
+        would only set its invalidation handler in didConnectToProcess(), instead of
+        doing it every time a new ProcessAssertion is created in setAssertionType().
+        The assertion type can change (e.g. from foreground to background) after the
+        process has launched.
+
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::setInvalidationHandler):
+        (WebKit::ProcessAssertion::Client::~Client): Deleted.
+        (WebKit::ProcessAssertion::setClient): Deleted.
+        (WebKit::ProcessAssertion::client): Deleted.
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::setAssertionType):
+        (WebKit::ProcessThrottler::didConnectToProcess):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::ProcessAssertion::processAssertionWasInvalidated):
+        (WebKit::ProcessAndUIAssertion::uiAssertionWillExpireImminently):
+
 2020-07-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         SOAuthorizationSession::dismissViewController could crash on calling WebPageProxy::platformWindow

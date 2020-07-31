@@ -452,8 +452,8 @@ void ProcessAssertion::processAssertionWasInvalidated()
     ASSERT(RunLoop::isMain());
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::processAssertionWasInvalidated() PID: %d", this, m_pid);
 
-    if (auto* client = this->client())
-        client->assertionWasInvalidated();
+    if (m_invalidationHandler)
+        m_invalidationHandler();
 }
 
 bool ProcessAssertion::isValid() const
@@ -497,8 +497,8 @@ ProcessAndUIAssertion::~ProcessAndUIAssertion()
 
 void ProcessAndUIAssertion::uiAssertionWillExpireImminently()
 {
-    if (auto* client = this->client())
-        client->uiAssertionWillExpireImminently();
+    if (m_uiAssertionExpirationHandler)
+        m_uiAssertionExpirationHandler();
 }
 
 void ProcessAndUIAssertion::processAssertionWasInvalidated()

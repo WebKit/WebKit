@@ -58,19 +58,10 @@ enum class ProcessAssertionType {
 class ProcessAssertion : public CanMakeWeakPtr<ProcessAssertion> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    class Client {
-    public:
-        virtual ~Client() { }
-
-        virtual void uiAssertionWillExpireImminently() = 0;
-        virtual void assertionWasInvalidated() = 0;
-    };
-
     ProcessAssertion(ProcessID, const String& reason, ProcessAssertionType);
     virtual ~ProcessAssertion();
 
-    void setClient(Client& client) { m_client = &client; }
-    Client* client() { return m_client; }
+    void setInvalidationHandler(Function<void()>&& handler) { m_invalidationHandler = WTFMove(handler); }
 
     ProcessAssertionType type() const { return m_assertionType; }
     ProcessID pid() const { return m_pid; }
@@ -92,10 +83,8 @@ private:
     RetainPtr<BKSProcessAssertion> m_bksAssertion; // Legacy.
 #endif
 #endif
-    Client* m_client { nullptr };
+    Function<void()> m_invalidationHandler;
 };
-
-#if PLATFORM(IOS_FAMILY)
 
 class ProcessAndUIAssertion final : public ProcessAssertion {
 public:
@@ -104,17 +93,16 @@ public:
 
     void uiAssertionWillExpireImminently();
 
+    void setUIAssertionExpirationHandler(Function<void()>&& handler) { m_uiAssertionExpirationHandler = WTFMove(handler); }
+
 private:
+#if PLATFORM(IOS_FAMILY)
     void processAssertionWasInvalidated() final;
+#endif
     void updateRunInBackgroundCount();
 
+    Function<void()> m_uiAssertionExpirationHandler;
     bool m_isHoldingBackgroundTask { false };
 };
-
-#else
-
-using ProcessAndUIAssertion = ProcessAssertion;
-
-#endif // PLATFORM(IOS_FAMILY)
     
 } // namespace WebKit

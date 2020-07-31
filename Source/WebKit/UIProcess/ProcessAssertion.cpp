@@ -45,6 +45,13 @@ bool ProcessAssertion::isValid() const
     return true;
 }
 
+ProcessAndUIAssertion::ProcessAndUIAssertion(ProcessID pid, const String& reason, ProcessAssertionType assertionType)
+    : ProcessAssertion(pid, reason, assertionType)
+{
+}
+
+ProcessAndUIAssertion::~ProcessAndUIAssertion() = default;
+
 } // namespace WebKit
 
 #endif // !PLATFORM(IOS_FAMILY)
