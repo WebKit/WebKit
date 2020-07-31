@@ -97,7 +97,9 @@ private:
     mutable RetainPtr<CFArrayRef> m_certificateChain;
 };
 
+#if PLATFORM(COCOA)
 WEBCORE_EXPORT bool certificatesMatch(SecTrustRef, SecTrustRef);
+#endif
 
 } // namespace WebCore
 

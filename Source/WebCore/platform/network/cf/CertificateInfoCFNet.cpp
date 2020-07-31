@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+#if PLATFORM(COCOA)
 bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
 {
     if (!trust1 || !trust2)
@@ -54,7 +55,6 @@ bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
     return true;
 }
 
-#if PLATFORM(COCOA)
 RetainPtr<CFArrayRef> CertificateInfo::certificateChainFromSecTrust(SecTrustRef trust)
 {
     auto count = SecTrustGetCertificateCount(trust);
