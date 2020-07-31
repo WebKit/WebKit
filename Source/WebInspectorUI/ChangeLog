@@ -1,3 +1,24 @@
+2020-07-30  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r?): Web Inspector: Timelines: blue border below selected timeline when in edit mode
+        https://bugs.webkit.org/show_bug.cgi?id=214979
+        <rdar://problem/66338399>
+
+        Reviewed by Devin Rousso.
+
+        Color the top border after the selected item with the same background as the selected item.
+        When editing, don't color that border with the selected item background.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview.edit-instruments > .tree-outline.timelines .item:not(:first-child),):
+        (body:matches(.window-inactive, .window-docked-inactive) .timeline-overview:not(.edit-instruments) > .tree-outline.timelines .item.selected + .item):
+        (body:not(.window-inactive, .window-docked-inactive) .timeline-overview:not(.edit-instruments) > .tree-outline.timelines:focus-within .item.selected + .item):
+        (@media (prefers-color-scheme: dark) .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even)):
+        (.timeline-overview > .tree-outline.timelines .item.selected + .item): Deleted.
+        (body:not(.window-inactive, .window-docked-inactive) .timeline-overview > .tree-outline.timelines:focus-within .item.selected + .item): Deleted.
+        (@media (prefers-color-scheme: dark) .timeline-overview.edit-instruments > .tree-outline.timelines .item:not(:first-child),): Deleted.
+        (@media (prefers-color-scheme: dark) .timeline-overview > .tree-outline.timelines .item.selected + .item): Deleted.
+
 2020-07-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add another Protocol Version (iOS 14.0)

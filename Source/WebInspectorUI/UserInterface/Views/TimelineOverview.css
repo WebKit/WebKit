@@ -113,15 +113,15 @@ body[dir=rtl] .timeline-overview:not(.frames) > :matches(.scroll-container, .tim
 
 .timeline-overview.edit-instruments > .tree-outline.timelines .item:not(:first-child),
 .timeline-overview > .tree-outline.timelines .item:not(.selected):not(:first-child) {
-    border-top: 1px solid hsla(0, 0%, 0%, 0.09);
+    border-top-color: hsla(0, 0%, var(--foreground-lightness), 0.09);
 }
 
-.timeline-overview > .tree-outline.timelines .item.selected + .item {
-    border-top-color: hsl(0, 0%, 83%);
+body:matches(.window-inactive, .window-docked-inactive) .timeline-overview:not(.edit-instruments) > .tree-outline.timelines .item.selected + .item {
+    border-top-color: var(--selected-background-color-unfocused);
 }
 
-body:not(.window-inactive, .window-docked-inactive) .timeline-overview > .tree-outline.timelines:focus-within .item.selected + .item {
-    border-top-color: hsl(209, 100%, 49%);
+body:not(.window-inactive, .window-docked-inactive) .timeline-overview:not(.edit-instruments) > .tree-outline.timelines:focus-within .item.selected + .item {
+    border-top-color: var(--selected-background-color);
 }
 
 .timeline-overview > .scroll-container {
@@ -237,14 +237,5 @@ body[dir=rtl] .timeline-overview > .scroll-container > .scroll-width-sizer {
 @media (prefers-color-scheme: dark) {
     .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:nth-child(even) {
         background: var(--background-color-alternate);
-    }
-
-    .timeline-overview.edit-instruments > .tree-outline.timelines .item:not(:first-child),
-    .timeline-overview > .tree-outline.timelines .item:not(.selected):not(:first-child) {
-        border-top-color: hsla(0, 0%, var(--foreground-lightness), 0.09);
-    }
-
-    .timeline-overview > .tree-outline.timelines .item.selected + .item {
-        border-top-color: hsla(0, 0%, var(--foreground-lightness), 0.09);
     }
 }
