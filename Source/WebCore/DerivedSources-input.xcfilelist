@@ -326,6 +326,7 @@ $(PROJECT_DIR)/Modules/webaudio/MediaElementAudioSourceNode.idl
 $(PROJECT_DIR)/Modules/webaudio/MediaStreamAudioDestinationNode.idl
 $(PROJECT_DIR)/Modules/webaudio/MediaStreamAudioSourceNode.idl
 $(PROJECT_DIR)/Modules/webaudio/OfflineAudioCompletionEvent.idl
+$(PROJECT_DIR)/Modules/webaudio/OfflineAudioCompletionEventInit.idl
 $(PROJECT_DIR)/Modules/webaudio/OfflineAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/OfflineAudioContextOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/OscillatorNode.idl

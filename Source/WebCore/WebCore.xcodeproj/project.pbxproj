@@ -2438,6 +2438,7 @@
 		8326BF8E24D35C33001F8A85 /* OverSampleType.h in Headers */ = {isa = PBXBuildFile; fileRef = 8326BF8924D35C20001F8A85 /* OverSampleType.h */; };
 		8326BF8F24D35C39001F8A85 /* WaveShaperOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8326BF8C24D35C20001F8A85 /* WaveShaperOptions.h */; };
 		832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 832B843319D8E55100B26055 /* SVGAnimateElementBase.h */; };
+		833AE52924D386F200017C4B /* OfflineAudioCompletionEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 833AE52824D386E100017C4B /* OfflineAudioCompletionEventInit.h */; };
 		833B9E321F508D8500E0E428 /* JSFileSystemDirectoryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B9E2F1F508D8000E0E428 /* JSFileSystemDirectoryEntry.h */; };
 		833B9E341F508D8500E0E428 /* JSFileSystemEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B9E2A1F508D8000E0E428 /* JSFileSystemEntry.h */; };
 		833B9E361F508D8500E0E428 /* JSFileSystemFileEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B9E2C1F508D8000E0E428 /* JSFileSystemFileEntry.h */; };
@@ -10432,6 +10433,8 @@
 		8329DCC21C7A6AE300730B33 /* HTMLHyperlinkElementUtils.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLHyperlinkElementUtils.idl; sourceTree = "<group>"; };
 		832B843319D8E55100B26055 /* SVGAnimateElementBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimateElementBase.h; sourceTree = "<group>"; };
 		832B843519D8E57400B26055 /* SVGAnimateElementBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimateElementBase.cpp; sourceTree = "<group>"; };
+		833AE52624D386E100017C4B /* OfflineAudioCompletionEventInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OfflineAudioCompletionEventInit.idl; sourceTree = "<group>"; };
+		833AE52824D386E100017C4B /* OfflineAudioCompletionEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OfflineAudioCompletionEventInit.h; sourceTree = "<group>"; };
 		833B9E2A1F508D8000E0E428 /* JSFileSystemEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileSystemEntry.h; sourceTree = "<group>"; };
 		833B9E2B1F508D8000E0E428 /* JSFileSystemDirectoryEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemDirectoryEntry.cpp; sourceTree = "<group>"; };
 		833B9E2C1F508D8000E0E428 /* JSFileSystemFileEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileSystemFileEntry.h; sourceTree = "<group>"; };
@@ -29569,6 +29572,8 @@
 				FDA3E955134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp */,
 				FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */,
 				FDA3E95D134A49FF008D4B5A /* OfflineAudioCompletionEvent.idl */,
+				833AE52824D386E100017C4B /* OfflineAudioCompletionEventInit.h */,
+				833AE52624D386E100017C4B /* OfflineAudioCompletionEventInit.idl */,
 				FDA9325A16703B2A008982DC /* OfflineAudioContext.cpp */,
 				FDA9325B16703B2A008982DC /* OfflineAudioContext.h */,
 				FDA9325C16703B2A008982DC /* OfflineAudioContext.idl */,
@@ -32664,6 +32669,7 @@
 				31078CC81880AABB008099DC /* OESTextureHalfFloatLinear.h in Headers */,
 				77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */,
 				FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */,
+				833AE52924D386F200017C4B /* OfflineAudioCompletionEventInit.h in Headers */,
 				FDA9325E16703B2A008982DC /* OfflineAudioContext.h in Headers */,
 				E7CF84A924C6461C00B06B90 /* OfflineAudioContextOptions.h in Headers */,
 				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,

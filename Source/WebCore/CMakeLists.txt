@@ -477,6 +477,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/MediaStreamAudioDestinationNode.idl
     Modules/webaudio/MediaStreamAudioSourceNode.idl
     Modules/webaudio/OfflineAudioCompletionEvent.idl
+    Modules/webaudio/OfflineAudioCompletionEventInit.idl
     Modules/webaudio/OfflineAudioContext.idl
     Modules/webaudio/OfflineAudioContextOptions.idl
     Modules/webaudio/OscillatorNode.idl

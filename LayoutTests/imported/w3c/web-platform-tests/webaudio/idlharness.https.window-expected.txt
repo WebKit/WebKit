@@ -160,7 +160,7 @@ PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?)" with the proper type 
 FAIL BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError assert_unreached: Throws "TypeError: Not enough arguments" instead of rejecting promise Reached unreachable code
 PASS OfflineAudioCompletionEvent interface: existence and properties of interface object 
-FAIL OfflineAudioCompletionEvent interface object length assert_equals: wrong value for OfflineAudioCompletionEvent.length expected 2 but got 0
+PASS OfflineAudioCompletionEvent interface object length 
 PASS OfflineAudioCompletionEvent interface object name 
 PASS OfflineAudioCompletionEvent interface: existence and properties of interface prototype object 
 PASS OfflineAudioCompletionEvent interface: existence and properties of interface prototype object's "constructor" property 

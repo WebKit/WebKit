@@ -1222,6 +1222,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOESVertexArrayObject.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOESVertexArrayObject.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOfflineAudioCompletionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOfflineAudioCompletionEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOfflineAudioCompletionEventInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOfflineAudioCompletionEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOfflineAudioContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOfflineAudioContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSOfflineAudioContextOptions.cpp

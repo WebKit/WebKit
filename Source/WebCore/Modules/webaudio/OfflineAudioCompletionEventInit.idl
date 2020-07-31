@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,9 +24,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
-] interface OfflineAudioCompletionEvent : Event {
-    constructor (DOMString type, OfflineAudioCompletionEventInit eventInitDict);
-
-    readonly attribute AudioBuffer renderedBuffer;
+] dictionary OfflineAudioCompletionEventInit : EventInit {
+    required AudioBuffer renderedBuffer;
 };

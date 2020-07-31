@@ -1104,7 +1104,7 @@ void BaseAudioContext::finishedRendering(bool didRendering)
         return;
 
     clearPendingActivityIfExitEarly.release();
-    m_eventQueue->enqueueEvent(OfflineAudioCompletionEvent::create(renderedBuffer.get()));
+    m_eventQueue->enqueueEvent(OfflineAudioCompletionEvent::create(*renderedBuffer));
 
     finishedRenderingScope.release();
     didFinishOfflineRendering(renderedBuffer.releaseNonNull());

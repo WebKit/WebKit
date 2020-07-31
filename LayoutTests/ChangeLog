@@ -1,3 +1,15 @@
+2020-07-31  Chris Dumez  <cdumez@apple.com>
+
+        Add OfflineAudioCompletionEvent constructor
+        https://bugs.webkit.org/show_bug.cgi?id=214994
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * webaudio/OfflineAudioCompletionEvent-constructor-expected.txt: Added.
+        * webaudio/OfflineAudioCompletionEvent-constructor.html: Added.
+
 2020-07-31  Jer Noble  <jer.noble@apple.com>
 
         [Mac] YouTube does not offer HDR variants to devices which support HDR

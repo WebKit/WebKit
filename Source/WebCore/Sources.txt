@@ -3127,6 +3127,7 @@ JSOESTextureHalfFloat.cpp
 JSOESTextureHalfFloatLinear.cpp
 JSOESVertexArrayObject.cpp
 JSOfflineAudioCompletionEvent.cpp
+JSOfflineAudioCompletionEventInit.cpp
 JSOfflineAudioContext.cpp
 JSOfflineAudioContextOptions.cpp
 JSOffscreenCanvas.cpp

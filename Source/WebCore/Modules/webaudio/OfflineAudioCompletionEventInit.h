@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,11 +22,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
-] interface OfflineAudioCompletionEvent : Event {
-    constructor (DOMString type, OfflineAudioCompletionEventInit eventInitDict);
+#pragma once
 
-    readonly attribute AudioBuffer renderedBuffer;
+#include "AudioBuffer.h"
+#include "EventInit.h"
+
+namespace WebCore {
+
+struct OfflineAudioCompletionEventInit : EventInit {
+    RefPtr<AudioBuffer> renderedBuffer;
 };
+
+}

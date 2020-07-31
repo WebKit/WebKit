@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests the OfflineAudioCompletionEvent constructor");
+
+shouldThrowErrorName("event = new OfflineAudioCompletionEvent;", "TypeError");
+shouldThrowErrorName("event = new OfflineAudioCompletionEvent('foo');", "TypeError");
+shouldThrowErrorName("event = new OfflineAudioCompletionEvent('foo', { renderedBuffer: null });", "TypeError");
+
+let context = new AudioContext;
+shouldNotThrow("buffer = context.createBuffer(2, 100, 46000);");
+shouldNotThrow("event = new OfflineAudioCompletionEvent('foo', { renderedBuffer: buffer, bubbles: true });");
+shouldBeEqualToString("event.type", "foo");
+shouldBeTrue("event.bubbles");
+shouldBeFalse("event.cancelable");
+shouldBeFalse("event.composed");
+shouldBe("event.renderedBuffer.length", "buffer.length");
+shouldBe("event.renderedBuffer.duration", "buffer.duration");
+shouldBe("event.renderedBuffer.sampleRate", "buffer.sampleRate");
+
+</script>
+</body>
+</html>
