@@ -23,7 +23,6 @@
 
 platform/audio/glib/AudioBusGLib.cpp
 
-platform/glib/EventHandlerGLib.cpp
 platform/glib/FileMonitorGLib.cpp
 platform/glib/KeyedDecoderGlib.cpp
 platform/glib/KeyedEncoderGlib.cpp

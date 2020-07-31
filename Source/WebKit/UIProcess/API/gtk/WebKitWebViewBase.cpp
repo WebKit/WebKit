@@ -268,6 +268,7 @@ struct _WebKitWebViewBasePrivate {
 #endif
     CString tooltipText;
     IntRect tooltipArea;
+    WebHitTestResultData::IsScrollbar mouseIsOverScrollbar;
     GRefPtr<AtkObject> accessible;
     GtkWidget* dialog { nullptr };
     GtkWidget* inspectorView { nullptr };
@@ -1207,6 +1208,21 @@ static void webkitWebViewBaseButtonReleased(WebKitWebViewBase* webViewBase, int 
 }
 #endif
 
+static bool shouldInvertDirectionForScrollEvent(WebHitTestResultData::IsScrollbar isScrollbar, bool isShiftPressed)
+{
+    // Shift+Wheel scrolls in the perpendicular direction, unless we are over a scrollbar
+    // in which case we always want to follow the scrollbar direction.
+    switch (isScrollbar) {
+    case WebHitTestResultData::IsScrollbar::No:
+        return isShiftPressed;
+    case WebHitTestResultData::IsScrollbar::Horizontal:
+        return true;
+    case WebHitTestResultData::IsScrollbar::Vertical:
+        return false;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 #if !USE(GTK4)
 static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, Optional<WebWheelEvent::Phase> phase = WTF::nullopt, Optional<WebWheelEvent::Phase> momentum = WTF::nullopt)
 {
@@ -1233,8 +1249,7 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
     if (priv->dialog)
         return GDK_EVENT_PROPAGATE;
 
-    // Shift+Wheel scrolls in the perpendicular direction.
-    if (event->state & GDK_SHIFT_MASK) {
+    if (shouldInvertDirectionForScrollEvent(priv->mouseIsOverScrollbar, event->state & GDK_SHIFT_MASK)) {
         switch (event->direction) {
         case GDK_SCROLL_UP:
             event->direction = GDK_SCROLL_LEFT;
@@ -1269,8 +1284,7 @@ static gboolean webkitWebViewBaseScroll(WebKitWebViewBase* webViewBase, double d
 
     auto* event = gtk_event_controller_get_current_event(controller);
 
-    // Shift+Wheel scrolls in the perpendicular direction.
-    if (gdk_event_get_modifier_state(event) & GDK_SHIFT_MASK)
+    if (shouldInvertDirectionForScrollEvent(priv->mouseIsOverScrollbar, gdk_event_get_modifier_state(event) & GDK_SHIFT_MASK))
         std::swap(deltaX, deltaY);
 
     priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, priv->lastMotionEvent ? IntPoint(priv->lastMotionEvent->position) : IntPoint(), FloatSize(-deltaX, -deltaY)));
@@ -2064,6 +2078,11 @@ void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char*
 void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase* webViewBase, const IntRect& tooltipArea)
 {
     webViewBase->priv->tooltipArea = tooltipArea;
+}
+
+void webkitWebViewBaseSetMouseIsOverScrollbar(WebKitWebViewBase* webViewBase, WebHitTestResultData::IsScrollbar isScrollbar)
+{
+    webViewBase->priv->mouseIsOverScrollbar = isScrollbar;
 }
 
 #if ENABLE(DRAG_SUPPORT)

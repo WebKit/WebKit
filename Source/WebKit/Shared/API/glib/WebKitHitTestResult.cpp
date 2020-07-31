@@ -238,7 +238,7 @@ WebKitHitTestResult* webkitHitTestResultCreate(const WebHitTestResultData& hitTe
     if (hitTestResult.isContentEditable)
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
 
-    if (hitTestResult.isScrollbar)
+    if (hitTestResult.isScrollbar != WebHitTestResultData::IsScrollbar::No)
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR;
 
     if (hitTestResult.isSelected)
@@ -262,8 +262,9 @@ static bool stringIsEqualToCString(const String& string, const CString& cString)
 bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, const WebHitTestResultData& webHitTestResult)
 {
     WebKitHitTestResultPrivate* priv = hitTestResult->priv;
+    bool isScrollbar = webHitTestResult.isScrollbar != WebHitTestResultData::IsScrollbar::No;
     return webHitTestResult.isContentEditable == webkit_hit_test_result_context_is_editable(hitTestResult)
-        && webHitTestResult.isScrollbar == webkit_hit_test_result_context_is_scrollbar(hitTestResult)
+        && isScrollbar == webkit_hit_test_result_context_is_scrollbar(hitTestResult)
         && webHitTestResult.isSelected == webkit_hit_test_result_context_is_selection(hitTestResult)
         && stringIsEqualToCString(webHitTestResult.absoluteLinkURL, priv->linkURI)
         && stringIsEqualToCString(webHitTestResult.linkTitle, priv->linkTitle)

@@ -35,6 +35,7 @@
 #include "ViewGestureController.h"
 #include "ViewSnapshotStore.h"
 #include "WebContextMenuProxyGtk.h"
+#include "WebHitTestResultData.h"
 #include "WebInspectorProxy.h"
 #include "WebKitInputMethodContext.h"
 #include "WebKitWebViewBase.h"
@@ -48,6 +49,7 @@ WebKit::WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, Ref<API::PageConfiguration>&&);
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase*, const WebCore::IntRect&);
+void webkitWebViewBaseSetMouseIsOverScrollbar(WebKitWebViewBase*, WebKit::WebHitTestResultData::IsScrollbar);
 void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
 void webkitWebViewBaseForwardNextWheelEvent(WebKitWebViewBase*);
 void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebCore::IntRect&);

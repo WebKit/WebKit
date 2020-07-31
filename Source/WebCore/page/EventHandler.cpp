@@ -2778,15 +2778,6 @@ bool EventHandler::isInsideScrollbar(const IntPoint& windowPoint) const
     return false;
 }
 
-#if !USE(GLIB)
-
-bool EventHandler::shouldSwapScrollDirection(const HitTestResult&, const PlatformWheelEvent&) const
-{
-    return false;
-}
-
-#endif
-
 void EventHandler::clearLatchedStateTimerFired()
 {
     LOG(ScrollLatching, "EventHandler %p clearLatchedStateTimerFired()", this);
@@ -2937,20 +2928,17 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
         m_frame.page()->resetLatchingState();
 #endif
 
-    // FIXME: It should not be necessary to do this mutation here.
-    // Instead, the handlers should know convert vertical scrolls appropriately.
-    PlatformWheelEvent adjustedEvent = shouldSwapScrollDirection(result, event) ? event.copySwappingDirection() : event;
-    recordWheelEventForDeltaFilter(adjustedEvent);
+    recordWheelEventForDeltaFilter(event);
 
     if (element) {
         if (isOverWidget) {
             if (WeakPtr<Widget> widget = widgetForElement(*element)) {
                 if (passWheelEventToWidget(event, *widget.get()))
-                    return completeWidgetWheelEvent(adjustedEvent, widget, scrollableArea, scrollableContainer.get());
+                    return completeWidgetWheelEvent(event, widget, scrollableArea, scrollableContainer.get());
             }
         }
 
-        if (!element->dispatchWheelEvent(adjustedEvent)) {
+        if (!element->dispatchWheelEvent(event)) {
             m_isHandlingWheelEvent = false;
             if (scrollableArea && scrollableArea->scrollShouldClearLatchedState()) {
                 // Web developer is controlling scrolling, so don't attempt to latch.
@@ -2958,7 +2946,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
                 scrollableArea->setScrollShouldClearLatchedState(false);
             }
 
-            processWheelEventForScrollSnap(adjustedEvent, scrollableArea);
+            processWheelEventForScrollSnap(event, scrollableArea);
             return true;
         }
     }
@@ -2966,8 +2954,8 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     if (scrollableArea)
         scrollableArea->setScrollShouldClearLatchedState(false);
 
-    bool handledEvent = processWheelEventForScrolling(adjustedEvent, scrollableContainer.get(), scrollableArea);
-    processWheelEventForScrollSnap(adjustedEvent, scrollableArea);
+    bool handledEvent = processWheelEventForScrolling(event, scrollableContainer.get(), scrollableArea);
+    processWheelEventForScrollSnap(event, scrollableArea);
     return handledEvent;
 }
 

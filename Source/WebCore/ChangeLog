@@ -1,3 +1,18 @@
+2020-07-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Mouse wheel events on horizontal scrollbar not correctly handled when AC mode is forced
+        https://bugs.webkit.org/show_bug.cgi?id=207113
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove GTK specific code to invert scroll direction of wheel events.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent):
+        (WebCore::EventHandler::shouldSwapScrollDirection const): Deleted.
+        * platform/SourcesGLib.txt:
+        * platform/glib/EventHandlerGLib.cpp: Removed.
+
 2020-07-10  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Retrieve supported reference spaces from actual XR systems

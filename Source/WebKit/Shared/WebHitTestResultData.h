@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebHitTestResultData_h
-#define WebHitTestResultData_h
+#pragma once
 
 #include "APIObject.h"
 #include "SharedMemory.h"
@@ -26,6 +25,7 @@
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
+#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -53,7 +53,8 @@ struct WebHitTestResultData {
     String linkSuggestedFilename;
     bool isContentEditable;
     WebCore::IntRect elementBoundingBox;
-    bool isScrollbar;
+    enum class IsScrollbar { No, Vertical, Horizontal };
+    IsScrollbar isScrollbar;
     bool isSelected;
     bool isTextNode;
     bool isOverTextInsideFormControlElement;
@@ -90,4 +91,15 @@ struct WebHitTestResultData {
 
 } // namespace WebKit
 
-#endif // WebHitTestResultData_h
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebHitTestResultData::IsScrollbar> {
+    using values = EnumValues<
+    WebKit::WebHitTestResultData::IsScrollbar,
+    WebKit::WebHitTestResultData::IsScrollbar::No,
+    WebKit::WebHitTestResultData::IsScrollbar::Vertical,
+    WebKit::WebHitTestResultData::IsScrollbar::Horizontal
+    >;
+};
+
+} // namespace WTF

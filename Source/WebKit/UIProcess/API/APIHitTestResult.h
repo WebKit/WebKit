@@ -62,7 +62,7 @@ public:
 
     WebCore::IntRect elementBoundingBox() const { return m_data.elementBoundingBox; }
 
-    bool isScrollbar() const { return m_data.isScrollbar; }
+    bool isScrollbar() const { return m_data.isScrollbar != WebKit::WebHitTestResultData::IsScrollbar::No; }
 
     bool isSelected() const { return m_data.isSelected; }
 
