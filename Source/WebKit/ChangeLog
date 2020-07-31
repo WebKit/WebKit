@@ -1,3 +1,10 @@
+2020-07-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed Catalyst build fix.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.h: I should have added the include here.
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+
 2020-07-31  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Issue a temporary extension to the MobileGestalt daemon when the MobileGestalt cache is invalid
