@@ -1,3 +1,14 @@
+2020-07-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add another Protocol Version (iOS 14.0)
+        https://bugs.webkit.org/show_bug.cgi?id=214991
+        <rdar://problem/59156892>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Protocol/Legacy/14.0/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-14.0.json: Added.
+
 2020-07-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: on Big Sur, match OS background, text, and border colors
