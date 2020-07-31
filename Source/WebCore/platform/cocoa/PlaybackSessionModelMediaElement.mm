@@ -426,9 +426,7 @@ const AtomString&  PlaybackSessionModelMediaElement::eventNameAll()
 
 double PlaybackSessionModelMediaElement::duration() const
 {
-    if (!m_mediaElement)
-        return 0;
-    return m_mediaElement->supportsSeeking() ? m_mediaElement->duration() : std::numeric_limits<double>::quiet_NaN();
+    return m_mediaElement ? m_mediaElement->duration() : 0;
 }
 
 double PlaybackSessionModelMediaElement::currentTime() const
@@ -458,7 +456,7 @@ float PlaybackSessionModelMediaElement::playbackRate() const
 
 Ref<TimeRanges> PlaybackSessionModelMediaElement::seekableRanges() const
 {
-    return m_mediaElement ? m_mediaElement->seekable() : TimeRanges::create();
+    return m_mediaElement && m_mediaElement->supportsSeeking() ? m_mediaElement->seekable() : TimeRanges::create();
 }
 
 double PlaybackSessionModelMediaElement::seekableTimeRangesLastModifiedTime() const

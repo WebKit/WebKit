@@ -119,7 +119,7 @@ using WebCore::PlaybackSessionInterfaceMac;
     // quirk means we pretend Netflix is a live stream for Touch Bar.) It's not ideal to return YES all the time for
     // other media. The intent of the API is that we return NO when the media is being scrubbed via the on-screen scrubber.
     // But we can only possibly get the right answer for media that uses the default controls.
-    return std::isfinite(_contentDuration);;
+    return std::isfinite(_contentDuration) && [_seekableTimeRanges count];
 }
 
 - (void)beginTouchBarScrubbing
