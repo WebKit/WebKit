@@ -25,44 +25,18 @@
 
 #pragma once
 
-#if ENABLE(GAMEPAD)
+#if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
-namespace WTF {
-class String;
-};
+#include "HIDGamepad.h"
 
 namespace WebCore {
 
-// Buttons in the "standard" gamepad layout in the Web Gamepad spec
-// https://www.w3.org/TR/gamepad/#dfn-standard-gamepad-layout
-enum class GamepadButtonRole : uint8_t {
-    RightClusterBottom = 0,
-    RightClusterRight = 1,
-    RightClusterLeft = 2,
-    RightClusterTop = 3,
-    LeftShoulderFront = 4,
-    RightShoulderFront = 5,
-    LeftShoulderBack = 6,
-    RightShoulderBack = 7,
-    CenterClusterLeft = 8,
-    CenterClusterRight = 9,
-    LeftStick = 10,
-    RightStick = 11,
-    LeftClusterTop = 12,
-    LeftClusterBottom = 13,
-    LeftClusterLeft = 14,
-    LeftClusterRight = 15,
-    CenterClusterCenter = 16,
-    Nonstandard1 = 17,
-    Nonstandard2 = 18,
+class StadiaHIDGamepad final : public HIDGamepad {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    StadiaHIDGamepad(HIDDevice&&, unsigned index);
 };
-
-extern const size_t numberOfStandardGamepadButtonsWithoutHomeButton;
-extern const size_t numberOfStandardGamepadButtonsWithHomeButton;
-extern const GamepadButtonRole maximumGamepadButton;
-
-const WTF::String& standardGamepadMappingString();
 
 } // namespace WebCore
 
-#endif // ENABLE(GAMEPAD)
+#endif // ENABLE(GAMEPAD) && PLATFORM(MAC)

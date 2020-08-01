@@ -45,24 +45,23 @@ class HIDGamepadElement : public HIDElement {
 public:
     virtual ~HIDGamepadElement() { }
 
-    virtual double normalizedValue();
     virtual HIDInputType gamepadValueChanged(IOHIDValueRef) = 0;
 
     void refreshCurrentValue();
 
 protected:
-    HIDGamepadElement(const HIDElement&, SharedGamepadValue&);
+    HIDGamepadElement(const HIDElement&);
 
+    virtual double normalizedValue();
     virtual bool isButton() const { return false; }
     virtual bool isAxis() const { return false; }
-
-    SharedGamepadValue m_value;
 };
 
 class HIDGamepadButton final : public HIDGamepadElement {
 public:
     HIDGamepadButton(const HIDElement& element, SharedGamepadValue& value)
-        : HIDGamepadElement(element, value)
+        : HIDGamepadElement(element)
+        , m_value(value)
     {
     }
 
@@ -70,20 +69,43 @@ public:
 
 private:
     HIDInputType gamepadValueChanged(IOHIDValueRef) override;
+
+    SharedGamepadValue m_value;
 };
 
 class HIDGamepadAxis final : public HIDGamepadElement {
 public:
     HIDGamepadAxis(const HIDElement& element, SharedGamepadValue& value)
-        : HIDGamepadElement(element, value)
+        : HIDGamepadElement(element)
+        , m_value(value)
     {
     }
 
     bool isAxis() const final { return true; }
-    double normalizedValue() final;
 
 private:
     HIDInputType gamepadValueChanged(IOHIDValueRef) override;
+    double normalizedValue() final;
+
+    SharedGamepadValue m_value;
+};
+
+class HIDGamepadHatswitch : public HIDGamepadElement {
+public:
+    HIDGamepadHatswitch(const HIDElement& element, Vector<SharedGamepadValue>&& buttonValues)
+        : HIDGamepadElement(element)
+        , m_buttonValues(WTFMove(buttonValues))
+    {
+    }
+
+    // Treat hatswitch value changes as a button press
+    bool isButton() const final { return true; }
+
+private:
+    HIDInputType gamepadValueChanged(IOHIDValueRef) final;
+    double normalizedValue() final;
+
+    Vector<SharedGamepadValue> m_buttonValues;
 };
 
 } // namespace WebCore

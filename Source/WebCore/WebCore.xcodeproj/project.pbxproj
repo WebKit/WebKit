@@ -1405,6 +1405,7 @@
 		510A91F624D32DDC00BFD89C /* Dualshock3HIDGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91F424D324FF00BFD89C /* Dualshock3HIDGamepad.h */; };
 		510A91FD24D3C16200BFD89C /* GamepadConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 51715FE924CD05DD002C97E6 /* GamepadConstants.h */; };
 		510A91FE24D3C16700BFD89C /* GamepadConstantsMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91FB24D3C0FD00BFD89C /* GamepadConstantsMac.h */; };
+		510A921224D5E60E00BFD89C /* StadiaHIDGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A921124D5E21700BFD89C /* StadiaHIDGamepad.h */; };
 		510D4A34103165EE0049EA54 /* SocketStreamError.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A2E103165EE0049EA54 /* SocketStreamError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A37103165EE0049EA54 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A31103165EE0049EA54 /* SocketStreamHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8236,6 +8237,8 @@
 		510A91F424D324FF00BFD89C /* Dualshock3HIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dualshock3HIDGamepad.h; sourceTree = "<group>"; };
 		510A91F524D3250000BFD89C /* Dualshock3HIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Dualshock3HIDGamepad.cpp; sourceTree = "<group>"; };
 		510A91FB24D3C0FD00BFD89C /* GamepadConstantsMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadConstantsMac.h; sourceTree = "<group>"; };
+		510A920F24D5E21700BFD89C /* StadiaHIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StadiaHIDGamepad.cpp; sourceTree = "<group>"; };
+		510A921124D5E21700BFD89C /* StadiaHIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StadiaHIDGamepad.h; sourceTree = "<group>"; };
 		510D4A2E103165EE0049EA54 /* SocketStreamError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamError.h; sourceTree = "<group>"; };
 		510D4A30103165EE0049EA54 /* SocketStreamHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandle.cpp; sourceTree = "<group>"; };
 		510D4A31103165EE0049EA54 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandle.h; sourceTree = "<group>"; };
@@ -19701,6 +19704,8 @@
 				515BE1991D54F6BD00DD7C68 /* HIDGamepadProvider.mm */,
 				517E03F424B6B9630054895A /* MultiGamepadProvider.h */,
 				517E03F524B6B9640054895A /* MultiGamepadProvider.mm */,
+				510A920F24D5E21700BFD89C /* StadiaHIDGamepad.cpp */,
+				510A921124D5E21700BFD89C /* StadiaHIDGamepad.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -33452,6 +33457,7 @@
 				1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */,
 				93F1996308245E59001E9ABC /* SSLKeyGenerator.h in Headers */,
 				26B999911803B3C900D01121 /* StackAllocator.h in Headers */,
+				510A921224D5E60E00BFD89C /* StadiaHIDGamepad.h in Headers */,
 				BC7FA62D0D1F0EFF00DB22A9 /* StaticNodeList.h in Headers */,
 				F433E9031DBBDBA200EF0D14 /* StaticPasteboard.h in Headers */,
 				F44EBBD91DB5D21400277334 /* StaticRange.h in Headers */,

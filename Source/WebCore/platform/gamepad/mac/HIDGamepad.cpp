@@ -32,6 +32,7 @@
 #include "GenericHIDGamepad.h"
 #include "KnownGamepads.h"
 #include "Logging.h"
+#include "StadiaHIDGamepad.h"
 #include <IOKit/hid/IOHIDElement.h>
 #include <IOKit/hid/IOHIDUsageTables.h>
 #include <IOKit/hid/IOHIDValue.h>
@@ -49,6 +50,9 @@ std::unique_ptr<HIDGamepad> HIDGamepad::create(IOHIDDeviceRef rawDevice, unsigne
     switch ((KnownGamepad)device.fullProductIdentifier()) {
     case Dualshock3:
         newGamepad = makeUnique<Dualshock3HIDGamepad>(WTFMove(device), index);
+        break;
+    case StadiaA:
+        newGamepad = makeUnique<StadiaHIDGamepad>(WTFMove(device), index);
         break;
     default:
         newGamepad = makeUnique<GenericHIDGamepad>(WTFMove(device), index);

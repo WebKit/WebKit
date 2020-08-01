@@ -31,16 +31,32 @@
 
 namespace WebCore {
 
+constexpr const uint64_t hidHatswitchFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_Hatswitch;
 constexpr const uint64_t hidPointerFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_Pointer;
 constexpr const uint64_t hidXAxisFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_X;
 constexpr const uint64_t hidYAxisFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_Y;
 constexpr const uint64_t hidZAxisFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_Z;
 constexpr const uint64_t hidRzAxisFullUsage = ((uint64_t)kHIDPage_GenericDesktop) << 32 | kHIDUsage_GD_Rz;
+
+constexpr const uint64_t hidAcceleratorFullUsage = ((uint64_t)kHIDPage_Simulation) << 32 | kHIDUsage_Sim_Accelerator;
+constexpr const uint64_t hidBrakeFullUsage = ((uint64_t)kHIDPage_Simulation) << 32 | kHIDUsage_Sim_Brake;
+
 constexpr const uint64_t hidButton1FullUsage = ((uint64_t)kHIDPage_Button) << 32 | kHIDUsage_Button_1;
 constexpr const uint64_t hidButton2FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 1);
 constexpr const uint64_t hidButton3FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 2);
 constexpr const uint64_t hidButton4FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 3);
+constexpr const uint64_t hidButton5FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 4);
+constexpr const uint64_t hidButton7FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 6);
+constexpr const uint64_t hidButton8FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 7);
+constexpr const uint64_t hidButton11FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 10);
+constexpr const uint64_t hidButton12FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 11);
+constexpr const uint64_t hidButton13FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 12);
+constexpr const uint64_t hidButton14FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 13);
+constexpr const uint64_t hidButton15FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 14);
 constexpr const uint64_t hidButton17FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 16);
+constexpr const uint64_t hidButton18FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 17);
+constexpr const uint64_t hidButton19FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 18);
+constexpr const uint64_t hidButton20FullUsage = ((uint64_t)kHIDPage_Button) << 32 | (kHIDUsage_Button_1 + 19);
 
 } // namespace WebCore
 

@@ -263,6 +263,7 @@ platform/gamepad/mac/HIDGamepad.cpp
 platform/gamepad/mac/HIDGamepadElement.cpp
 platform/gamepad/mac/HIDGamepadProvider.mm
 platform/gamepad/mac/MultiGamepadProvider.mm
+platform/gamepad/mac/StadiaHIDGamepad.cpp
 platform/graphics/MediaPlaybackTargetPicker.cpp
 platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm @no-unify
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @no-unify

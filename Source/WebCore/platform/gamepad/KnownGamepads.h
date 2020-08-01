@@ -30,20 +30,21 @@
 namespace WebCore {
 
 enum KnownGamepad {
+    Dualshock3 = 0x054c0268,
+    Dualshock4_1 = 0x054c05c4,
+    Dualshock4_2 = 0x054c09cc,
+    GamesirM2 = 0x0ec20475,
+    HoripadUltimate = 0x0f0d0090,
     Nimbus1 = 0x01111420,
     Nimbus2 = 0x10381420,
+    StadiaA = 0x18d19400,
     StratusXL1 = 0x01111418,
     StratusXL2 = 0x10381418,
     StratusXL3 = 0x01111419,
     StratusXL4 = 0x10381419,
-    HoripadUltimate = 0x0f0d0090,
-    GamesirM2 = 0x0ec20475,
     XboxOne1 = 0x045e02e0,
     XboxOne2 = 0x045e02ea,
     XboxOne3 = 0x045e02fd,
-    Dualshock3 = 0x054c0268,
-    Dualshock4_1 = 0x054c05c4,
-    Dualshock4_2 = 0x054c09cc,
 };
 
 } // namespace WebCore

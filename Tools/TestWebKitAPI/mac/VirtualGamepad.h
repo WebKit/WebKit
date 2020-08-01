@@ -40,6 +40,7 @@ OBJC_CLASS NSString;
 namespace TestWebKitAPI {
 
 enum class HIDVendorID : uint16_t {
+    Google = 0x18d1,
     Microsoft = 0x045e,
     ShenzhenLongshengweiTechnology = 0x0079,
     Sony = 0x054c,
@@ -52,17 +53,18 @@ enum class HIDVendorID : uint16_t {
 // Technically different products from different vendors can have the same product ID,
 // But in practice that probably won't happen.
 enum class HIDProductID : uint16_t {
-    StratusXL1 = 0x1418,
-    StratusXL2 = 0x1419,
-    Nimbus = 0x1420,
-    Gamepad = 0x0011,
-    GenericNES = 0xd015,
-    XboxOne1 = 0x02ea,
-    XboxOne2 = 0x02e0,
-    XboxOne3 = 0x02fd,
     Dualshock3 = 0x0268,
     Dualshock4_1 = 0x05c4,
     Dualshock4_2 = 0x09cc,
+    Gamepad = 0x0011,
+    GenericNES = 0xd015,
+    Nimbus = 0x1420,
+    StadiaA = 0x9400,
+    StratusXL1 = 0x1418,
+    StratusXL2 = 0x1419,
+    XboxOne1 = 0x02ea,
+    XboxOne2 = 0x02e0,
+    XboxOne3 = 0x02fd,
 };
 
 typedef void (*PublishReportCallback)(Vector<float>&, Vector<float>&, HIDUserDevice*);
@@ -81,6 +83,7 @@ struct GamepadMapping {
 class VirtualGamepad {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static GamepadMapping googleStadiaMapping();
     static GamepadMapping microsoftXboxOneMapping();
     static GamepadMapping shenzhenLongshengweiTechnologyGamepadMapping();
     static GamepadMapping sonyDualshock3Mapping();

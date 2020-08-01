@@ -32,9 +32,8 @@ namespace WebCore {
 
 #pragma mark HIDGamepadElement
 
-HIDGamepadElement::HIDGamepadElement(const HIDElement& element, SharedGamepadValue& value)
+HIDGamepadElement::HIDGamepadElement(const HIDElement& element)
     : HIDElement(element)
-    , m_value(value)
 {
 }
 
@@ -73,6 +72,57 @@ double HIDGamepadAxis::normalizedValue()
 {
     // Web Gamepad axes have a value of -1.0 to 1.0
     return (HIDGamepadElement::normalizedValue() * 2.0) - 1.0;
+}
+
+#pragma mark HIDGamepadHatswitch
+
+HIDInputType HIDGamepadHatswitch::gamepadValueChanged(IOHIDValueRef value)
+{
+    valueChanged(value);
+
+    for (size_t i = 0; i < 4; ++i)
+        m_buttonValues[i].setValue(0.0);
+
+    switch (physicalValue()) {
+    case 0:
+        m_buttonValues[0].setValue(1.0);
+        break;
+    case 45:
+        m_buttonValues[0].setValue(1.0);
+        m_buttonValues[1].setValue(1.0);
+        break;
+    case 90:
+        m_buttonValues[1].setValue(1.0);
+        break;
+    case 135:
+        m_buttonValues[1].setValue(1.0);
+        m_buttonValues[2].setValue(1.0);
+        break;
+    case 180:
+        m_buttonValues[2].setValue(1.0);
+        break;
+    case 225:
+        m_buttonValues[2].setValue(1.0);
+        m_buttonValues[3].setValue(1.0);
+        break;
+    case 270:
+        m_buttonValues[3].setValue(1.0);
+        break;
+    case 315:
+        m_buttonValues[3].setValue(1.0);
+        m_buttonValues[0].setValue(1.0);
+        break;
+    default:
+        break;
+    };
+
+    return HIDInputType::ButtonPress;
+}
+
+double HIDGamepadHatswitch::normalizedValue()
+{
+    // Hatswitch normalizedValue should never be accessed.
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

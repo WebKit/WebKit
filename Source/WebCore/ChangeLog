@@ -1,3 +1,33 @@
+2020-08-01  Brady Eidson  <beidson@apple.com>
+
+        Special HID mapping for the Google Stadia controller
+        https://bugs.webkit.org/show_bug.cgi?id=215061
+
+        Reviewed by Tim Horton.
+
+        New API test coverage.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/gamepad/GamepadConstants.h:
+        * platform/gamepad/KnownGamepads.h:
+        * platform/gamepad/mac/GamepadConstantsMac.h:
+
+        * platform/gamepad/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::create):
+
+        * platform/gamepad/mac/HIDGamepadElement.cpp:
+        (WebCore::HIDGamepadElement::HIDGamepadElement):
+        (WebCore::HIDGamepadHatswitch::gamepadValueChanged):
+        (WebCore::HIDGamepadHatswitch::normalizedValue):
+        * platform/gamepad/mac/HIDGamepadElement.h:
+        (WebCore::HIDGamepadElement::isAxis const):
+        (WebCore::HIDGamepadHatswitch::HIDGamepadHatswitch):
+
+        * platform/gamepad/mac/StadiaHIDGamepad.cpp: Added.
+        (WebCore::StadiaHIDGamepad::StadiaHIDGamepad):
+        * platform/gamepad/mac/StadiaHIDGamepad.h: 
+
 2020-08-01  Sam Weinig  <weinig@apple.com>
 
         Convert LinkHeader to use StringParsingBuffer
