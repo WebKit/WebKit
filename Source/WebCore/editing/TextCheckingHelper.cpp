@@ -302,14 +302,13 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
     // Expand the search range to encompass entire paragraphs, since text checking needs that much context.
     // Determine the character offset from the start of the paragraph to the start of the original search range,
     // since we will want to ignore results in this area.
-    Ref<Range> paragraphRange = createLiveRange(m_range);
-    setStart(paragraphRange.ptr(), startOfParagraph(createLegacyEditingPosition(m_range.start)));
+    auto paragraphRange = *makeSimpleRange(startOfParagraph(createLegacyEditingPosition(m_range.start)), m_range.end);
     auto totalRangeLength = characterCount(paragraphRange);
-    setEnd(paragraphRange.ptr(), endOfParagraph(createLegacyEditingPosition(m_range.start)));
+    paragraphRange.end = *makeBoundaryPoint(endOfParagraph(createLegacyEditingPosition(m_range.start)));
     
-    auto rangeStartOffset = characterCount({ *makeBoundaryPoint(paragraphRange->startPosition()), m_range.start });
+    auto rangeStartOffset = characterCount({ paragraphRange.start, m_range.start });
     uint64_t totalLengthProcessed = 0;
-    
+
     bool firstIteration = true;
     bool lastIteration = false;
     while (totalLengthProcessed < totalRangeLength) {
@@ -317,10 +316,10 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
         auto currentLength = characterCount(paragraphRange);
         uint64_t currentStartOffset = firstIteration ? rangeStartOffset : 0;
         uint64_t currentEndOffset = currentLength;
-        if (inSameParagraph(paragraphRange->startPosition(), createLegacyEditingPosition(m_range.end))) {
+        if (inSameParagraph(createLegacyEditingPosition(paragraphRange.start), createLegacyEditingPosition(m_range.end))) {
             // Determine the character offset from the end of the original search range to the end of the paragraph,
             // since we will want to ignore results in this area.
-            currentEndOffset = characterCount({ *makeBoundaryPoint(paragraphRange->startPosition()), m_range.end });
+            currentEndOffset = characterCount({ paragraphRange.start, m_range.end });
             lastIteration = true;
         }
         if (currentStartOffset < currentEndOffset) {
@@ -337,7 +336,7 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                 if (checkGrammar)
                     checkingTypes.add(TextCheckingType::Grammar);
                 VisibleSelection currentSelection;
-                if (Frame* frame = paragraphRange->ownerDocument().frame())
+                if (Frame* frame = paragraphRange.start.container->document().frame())
                     currentSelection = frame->selection().selection();
                 checkTextOfParagraph(*m_client.textChecker(), paragraphString, checkingTypes, results, currentSelection);
 
@@ -379,7 +378,7 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                 if (!misspelledWord.isEmpty() && (!checkGrammar || badGrammarPhrase.isEmpty() || spellingLocation <= grammarDetailLocation)) {
                     uint64_t spellingOffset = spellingLocation - currentStartOffset;
                     if (!firstIteration)
-                        spellingOffset += characterCount({ m_range.start, *makeBoundaryPoint(paragraphRange->startPosition()) });
+                        spellingOffset += characterCount({ m_range.start, paragraphRange.start });
                     firstFoundItem = MisspelledWord {
                         misspelledWord,
                         spellingOffset
@@ -389,7 +388,7 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                 if (checkGrammar && !badGrammarPhrase.isEmpty()) {
                     uint64_t grammarPhraseOffset = grammarPhraseLocation - currentStartOffset;
                     if (!firstIteration)
-                        grammarPhraseOffset += characterCount({ m_range.start, *makeBoundaryPoint(paragraphRange->startPosition()) });
+                        grammarPhraseOffset += characterCount({ m_range.start, paragraphRange.start });
                     firstFoundItem = UngrammaticalPhrase {
                         badGrammarPhrase,
                         grammarPhraseOffset,
@@ -402,12 +401,11 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
         if (lastIteration || totalLengthProcessed + currentLength >= totalRangeLength)
             break;
 
-        VisiblePosition newParagraphStart = startOfNextParagraph(paragraphRange->endPosition());
-        if (!setStart(paragraphRange.ptr(), newParagraphStart))
+        auto nextStart = startOfNextParagraph(createLegacyEditingPosition(paragraphRange.end));
+        auto nextParagraphRange = makeSimpleRange(nextStart, endOfParagraph(nextStart));
+        if (!nextParagraphRange)
             break;
-
-        if (!setEnd(paragraphRange.ptr(), endOfParagraph(newParagraphStart)))
-            break;
+        paragraphRange = WTFMove(*nextParagraphRange);
 
         firstIteration = false;
         totalLengthProcessed += currentLength;

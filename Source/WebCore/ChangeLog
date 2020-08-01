@@ -1,3 +1,180 @@
+2020-08-01  Darin Adler  <darin@apple.com>
+
+        Remove Range::create and many more uses of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=215004
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange const):
+        Use makeSimpleRange.
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification): Use SimpleRange.
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        (rangeLengthForObject): Take SimpleRange.
+        (webkitAccessibleHyperlinkGetStartIndex): Use makeSimpleRange.
+        (webkitAccessibleHyperlinkGetEndIndex): Ditto.
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getSelectionOffsetsForObject): Ditto.
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        (objectFocusedAndCaretOffsetUnignored): Ditto.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (+[WebAccessibilityTextMarker startOrEndTextMarkerForRange:isStart:cache:]):
+        Take SimpleRange.
+        (-[WebAccessibilityObjectWrapper arrayOfTextForTextMarkers:attributed:]):
+        Use makeSimpleRange.
+        (-[WebAccessibilityObjectWrapper _convertToDOMRange:]): Return SimpleRange.
+        (-[WebAccessibilityObjectWrapper textMarkerRange]): Remove createLiveRange.
+        (-[WebAccessibilityObjectWrapper textMarkerForPosition:]): Use auto.
+        (-[WebAccessibilityObjectWrapper misspellingTextMarkerRange:forward:]):
+        Remove createLiveRange.
+        (-[WebAccessibilityObjectWrapper rangeFromMarkers:withText:]): Return SimpleRange.
+        (-[WebAccessibilityObjectWrapper textRectsFromMarkers:withText:]): Add createLiveRange.
+        (-[WebAccessibilityObjectWrapper rangeForTextMarkers:]): Return SimpleRange.
+        (-[WebAccessibilityObjectWrapper startOrEndTextMarkerForTextMarkers:isStart:]):
+        Use auto.
+        (-[WebAccessibilityObjectWrapper textMarkerRangeForMarkers:]): Get rid of local.
+        (-[WebAccessibilityObjectWrapper textMarkersForRange:]): Take SimpleRange.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilityTextOperationForParameterizedAttribute): Remove makeSimpleRange.
+        (accessibilityMisspellingSearchCriteriaForParameterizedAttribute): Return SimpleRange.
+        (-[WebAccessibilityObjectWrapper textMarkerRangeFromRange:]): Take SimpleRange.
+        (textMarkerRangeFromRange): Ditto.
+        (-[WebAccessibilityObjectWrapper startOrEndTextMarkerForRange:isStart:]): Ditto.
+        (startOrEndTextmarkerForRange): Return SimpleRange.
+        (-[WebAccessibilityObjectWrapper rangeForTextMarkerRange:]): Ditto.
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForTextMarkerRange:spellCheck:]):
+        Use auto.
+        (-[WebAccessibilityObjectWrapper doAXAttributedStringForRange:]): Remove createLiveRange.
+        (-[WebAccessibilityObjectWrapper textMarkerRangeAtTextMarker:forUnit:]): Ditto.
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]): Ditto.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::updateRenderedRectsForMarker): Use document marker range function.
+        (WebCore::range): Added.
+        * dom/DocumentMarkerController.h: Update for above.
+
+        * dom/Position.cpp: Removed unneeded Range.h include.
+
+        * dom/Range.cpp:
+        (WebCore::Range::Range): Removed unused overload that takes start/end.
+        (WebCore::Range::create): Removed overloads that take start/end.
+        (WebCore::Range::setStart): Removed overload that takes Position.
+        (WebCore::Range::setEnd): Ditto.
+        (WebCore::Range::cloneRange const): Rewrote to use setStart/End since
+        that's what the constructor used to do.
+        (WebCore::Range::contains const): Use SimpleRange/createLiveRange
+        instead of makeRange. Soon this function will be deleted.
+        (WebCore::rangeOfContents): Deleted.
+        (WebCore::createLiveRange): Rewrote to use setStart/End since that's
+        what the constructor used to do.
+        * dom/Range.h: Update for above removals.
+
+        * dom/SimpleRange.h: Export commonInclusiveAncestor for use outside WebCore.
+
+        * dom/StaticRange.cpp:
+        (WebCore::StaticRange::create): Added overload that copies the SimpleRange.
+        * dom/StaticRange.h: Update for above.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::respondToMarkerAtEndOfWord): Use document
+        marker range function.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::fixRangeAndApplyInlineStyle): Use makeSimpleRange.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::mergeParagraphs): Ditto.
+        (WebCore::DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection):
+        Ditto.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::textDirectionForSelection): Use makeSimpleRange and
+        intersectingNodes.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment): Use makeRangeSelectingNodeContents.
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing): Use makeSimpleRange.
+        (WebCore::Editor::transpose): Ditto.
+        (WebCore::Editor::rangeOfString): Use makeRangeSelectingNodeContents.
+        (WebCore::Editor::handleAcceptedCandidate): Update since rangeForTextCheckingResult
+        now returns an Optional<SimpleRange>.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectRangeOnElement): Use SimpleRange.
+
+        * editing/ReplaceRangeWithTextCommand.cpp:
+        (WebCore::ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand): Take
+        SimpleRange.
+        (WebCore::ReplaceRangeWithTextCommand::willApplyCommand): Update since
+        m_rangeToBeReplaced is a SimpleRange.
+        (WebCore::ReplaceRangeWithTextCommand::doApply): Ditto.
+        (WebCore::ReplaceRangeWithTextCommand::targetRanges const): Ditto.
+        * editing/ReplaceRangeWithTextCommand.h: Update for above.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::insertedContentRange const):
+        Return a SimpleRange.
+        * editing/ReplaceSelectionCommand.h: Update for above.
+
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::SpellingCorrectionCommand):
+        Take a SimpleRange.
+        (WebCore::SpellingCorrectionCommand::create): Moved here from header.
+        * editing/SpellingCorrectionCommand.h: Update for above.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase const):
+        Use makeSimpleRange.
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::markMisspellingsAfterTyping): Use makeSimpleRange.
+        (WebCore::TypingCommand::willAddTypingToOpenCommand): Take SimpleRange.
+        (WebCore::TypingCommand::deleteKeyPressed): Remove createLiveRange.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+        * editing/TypingCommand.h: Update for above.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::makeRange): Deleted.
+        (WebCore::startVisiblePosition): Deleted.
+        (WebCore::endVisiblePosition): Deleted.
+        (WebCore::setStart): Deleted.
+        (WebCore::setEnd): Deleted.
+        * editing/VisiblePosition.h: Update for above. Also export makeSimpleRange
+        for use outside WebCore.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::suffixLengthForRange): Take SimpleRange.
+        (WebCore::prefixLengthForRange): Ditto.
+        (WebCore::previousBoundary): Use makeSimpleRange.
+        (WebCore::nextBoundary): Ditto.
+        * editing/VisibleUnits.h: Update for above.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::buildQuery): Remove unused local variable.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setDictationPhrasesAsChildOfElement): Use makeRangeSelectingNodeContents.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::getRangeAt): Use createLiveRange.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret): Remove makeSimpleRange.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::rangeForPoint): Return SimpleRange.
+        * page/Frame.h: Update for above.
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot const): Use makeRangeSelectingNodeContents,
+        intersectingNodes, and makeSimpleRange.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::markerRangeForNode): Use createLiveRange and the document
+        marker range function.
+
 2020-07-31  Jer Noble  <jer.noble@apple.com>
 
         [Mac] AudioSessionRoutingArbitrator causes a launch time regression checking for CoreAudio muted state

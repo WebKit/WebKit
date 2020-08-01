@@ -723,8 +723,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
         return nil;
 
     auto* root = selection().selection().selectionType() == VisibleSelection::NoSelection ? document()->bodyOrFrameset() : selection().selection().rootEditableElement();
-    unsigned rootChildCount = root->countChildNodes();
-    auto rangeOfRootContents = Range::create(*document(), createLegacyEditingPosition(root, 0), createLegacyEditingPosition(root, rootChildCount));
+    auto rangeOfRootContents = makeRangeSelectingNodeContents(*root);
 
     auto markersInRoot = document()->markers().markersInRange(rangeOfRootContents, DocumentMarker::DictationPhraseWithAlternatives);
 
@@ -745,29 +744,23 @@ NSArray *Frame::interpretationsForCurrentRoot() const
 
     unsigned combinationsSoFar = 1;
 
-    Node* pastLastNode = rangeOfRootContents->pastLastNode();
-    for (Node* node = rangeOfRootContents->firstNode(); node != pastLastNode; node = NodeTraversal::next(*node)) {
-        ASSERT(node);
-        for (auto* marker : document()->markers().markersFor(*node, DocumentMarker::DictationPhraseWithAlternatives)) {
+    for (auto& node : intersectingNodes(rangeOfRootContents)) {
+        for (auto* marker : document()->markers().markersFor(node, DocumentMarker::DictationPhraseWithAlternatives)) {
             auto& alternatives = WTF::get<Vector<String>>(marker->data());
 
-            // First, add text that precede the marker.
-            if (precedingTextStartPosition != createLegacyEditingPosition(node, marker->startOffset())) {
-                auto precedingTextRange = Range::create(*document(), precedingTextStartPosition, createLegacyEditingPosition(node, marker->startOffset()));
-                String precedingText = plainText(precedingTextRange);
+            auto rangeForMarker = range(node, *marker);
+
+            if (auto precedingTextRange = makeSimpleRange(precedingTextStartPosition, rangeForMarker.start)) {
+                String precedingText = plainText(*precedingTextRange);
                 if (!precedingText.isEmpty()) {
                     for (auto& interpretation : interpretations)
                         append(interpretation, precedingText);
                 }
             }
 
-            auto rangeForMarker = Range::create(*document(), createLegacyEditingPosition(node, marker->startOffset()), createLegacyEditingPosition(node, marker->endOffset()));
             String visibleTextForMarker = plainText(rangeForMarker);
             size_t interpretationsCountForCurrentMarker = alternatives.size() + 1;
             for (size_t i = 0; i < interpretationsCount; ++i) {
-                // Determine text for the ith interpretation. It will either be the visible text, or one of its
-                // alternatives stored in the marker.
-
                 size_t indexOfInterpretationForCurrentMarker = (i / combinationsSoFar) % interpretationsCountForCurrentMarker;
                 if (!indexOfInterpretationForCurrentMarker)
                     append(interpretations[i], visibleTextForMarker);
@@ -777,16 +770,17 @@ NSArray *Frame::interpretationsForCurrentRoot() const
 
             combinationsSoFar *= interpretationsCountForCurrentMarker;
 
-            precedingTextStartPosition = createLegacyEditingPosition(node, marker->endOffset());
+            precedingTextStartPosition = createLegacyEditingPosition(rangeForMarker.end);
         }
     }
 
     // Finally, add any text after the last marker.
-    auto afterLastMarkerRange = Range::create(*document(), precedingTextStartPosition, createLegacyEditingPosition(root, rootChildCount));
-    String textAfterLastMarker = plainText(afterLastMarkerRange);
-    if (!textAfterLastMarker.isEmpty()) {
-        for (auto& interpretation : interpretations)
-            append(interpretation, textAfterLastMarker);
+    if (auto range = makeSimpleRange(precedingTextStartPosition, rangeOfRootContents.end)) {
+        String textAfterLastMarker = plainText(*range);
+        if (!textAfterLastMarker.isEmpty()) {
+            for (auto& interpretation : interpretations)
+                append(interpretation, textAfterLastMarker);
+        }
     }
 
     return createNSArray(interpretations, [] (auto& interpretation) {

@@ -51,6 +51,7 @@
 #include <WebCore/Position.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/SimpleRange.h>
 #include <WebCore/VisiblePosition.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -234,12 +235,9 @@ RefPtr<InjectedBundleRangeHandle> InjectedBundleNodeHandle::visibleRange()
 {
     if (!m_node)
         return nullptr;
-
     VisiblePosition start = firstPositionInNode(m_node.get());
     VisiblePosition end = lastPositionInNode(m_node.get());
-
-    RefPtr<Range> range = makeRange(start, end);
-    return InjectedBundleRangeHandle::getOrCreate(range.get());
+    return createHandle(makeSimpleRange(start, end));
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& value)

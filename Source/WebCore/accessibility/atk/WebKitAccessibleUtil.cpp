@@ -246,10 +246,10 @@ AXCoreObject* objectFocusedAndCaretOffsetUnignored(AXCoreObject* referenceObject
     if (startPosition == endPosition)
         offset = 0;
     else if (!isStartOfLine(endPosition)) {
-        RefPtr<Range> range = makeRange(startPosition, endPosition.previous());
+        auto range = makeSimpleRange(startPosition, endPosition.previous());
         offset = (range ? characterCount(*range, TextIteratorEmitsCharactersBetweenAllVisiblePositions) : 0) + 1;
     } else {
-        RefPtr<Range> range = makeRange(startPosition, endPosition);
+        auto range = makeSimpleRange(startPosition, endPosition);
         offset = range ? characterCount(*range, TextIteratorEmitsCharactersBetweenAllVisiblePositions) : 0;
     }
 

@@ -107,26 +107,19 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     if (selection.isContentEditable()) {
         auto selectionStart = selection.visibleStart();
         auto surroundingStart = startOfEditableContent(selectionStart);
-        auto surroundingEnd = endOfEditableContent(selectionStart);
-        auto surroundingRange = makeRange(surroundingStart, surroundingEnd);
+        auto surroundingRange = makeSimpleRange(surroundingStart, endOfEditableContent(selectionStart));
         auto compositionRange = frame.editor().compositionRange();
-        if (compositionRange && surroundingRange && surroundingRange->contains(createLiveRange(*compositionRange).get())) {
-            auto clonedRange = surroundingRange->cloneRange();
-            surroundingRange->setEnd(createLegacyEditingPosition(compositionRange->start));
-            clonedRange->setStart(createLegacyEditingPosition(compositionRange->end));
-            postLayoutData.surroundingContext = plainText(*surroundingRange) + plainText(clonedRange);
-            postLayoutData.surroundingContextCursorPosition = characterCount(*surroundingRange);
+        if (surroundingRange && compositionRange && createLiveRange(surroundingRange)->contains(createLiveRange(*compositionRange).get())) {
+            auto beforeText = plainText({ surroundingRange->start, compositionRange->start });
+            postLayoutData.surroundingContext = beforeText + plainText({ compositionRange->end, surroundingRange->end });
+            postLayoutData.surroundingContextCursorPosition = beforeText.length();
             postLayoutData.surroundingContextSelectionPosition = postLayoutData.surroundingContextCursorPosition;
         } else {
+            auto cursorPositionRange = makeSimpleRange(surroundingStart, selectionStart);
+            auto selectionPositionRange = makeSimpleRange(surroundingStart, selection.visibleEnd());
             postLayoutData.surroundingContext = surroundingRange ? plainText(*surroundingRange) : emptyString();
-            if (surroundingStart.isNull() || selectionStart.isNull())
-                postLayoutData.surroundingContextCursorPosition = 0;
-            else
-                postLayoutData.surroundingContextCursorPosition = characterCount(*makeRange(surroundingStart, selectionStart));
-            if (surroundingStart.isNull() || selection.visibleEnd().isNull())
-                postLayoutData.surroundingContextSelectionPosition = 0;
-            else
-                postLayoutData.surroundingContextSelectionPosition = characterCount(*makeRange(surroundingStart, selection.visibleEnd()));
+            postLayoutData.surroundingContextCursorPosition = cursorPositionRange ? characterCount(*cursorPositionRange) : 0;
+            postLayoutData.surroundingContextSelectionPosition = selectionPositionRange ? characterCount(*selectionPositionRange): 0;
         }
     }
 }

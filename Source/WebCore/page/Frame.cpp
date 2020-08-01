@@ -816,25 +816,25 @@ Document* Frame::documentAtPoint(const IntPoint& point)
     return result.innerNode() ? &result.innerNode()->document() : 0;
 }
 
-RefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
+Optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
 {
     auto position = visiblePositionForPoint(framePoint);
 
     auto containerText = position.deepEquivalent().containerText();
     if (!containerText || !containerText->renderer() || containerText->renderer()->style().userSelect() == UserSelect::None)
-        return nullptr;
+        return WTF::nullopt;
 
     if (auto previousCharacterRange = makeSimpleRange(position.previous(), position)) {
         if (editor().firstRectForRange(*previousCharacterRange).contains(framePoint))
-            return createLiveRange(*previousCharacterRange);
+            return *previousCharacterRange;
     }
 
     if (auto nextCharacterRange = makeSimpleRange(position, position.next())) {
         if (editor().firstRectForRange(*nextCharacterRange).contains(framePoint))
-            return createLiveRange(*nextCharacterRange);
+            return *nextCharacterRange;
     }
 
-    return nullptr;
+    return WTF::nullopt;
 }
 
 void Frame::createView(const IntSize& viewportSize, const Optional<Color>& backgroundColor,

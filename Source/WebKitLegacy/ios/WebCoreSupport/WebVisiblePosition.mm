@@ -416,7 +416,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     for (auto marker : document.markers().markersFor(*node, DocumentMarker::DictationPhraseWithAlternatives)) {
         if (marker->startOffset() <= offset && marker->endOffset() >= offset) {
             *alternatives = createNSArray(WTF::get<Vector<String>>(marker->data())).autorelease();
-            return kit(Range::create(document, node, marker->startOffset(), node, marker->endOffset()).ptr());
+            return kit(range(*node, *marker));
         }
     }
     return nil;
@@ -433,7 +433,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     auto& document = node->document();
     for (auto marker : document.markers().markersFor(*node, DocumentMarker::Spelling)) {
         if (marker->startOffset() <= offset && marker->endOffset() >= offset)
-            return kit(Range::create(document, node, marker->startOffset(), node, marker->endOffset()).ptr());
+            return kit(range(*node, *marker));
     }
     return nil;
 }
@@ -475,23 +475,11 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 
 + (DOMRange *)rangeForFirstPosition:(WebVisiblePosition *)first second:(WebVisiblePosition *)second
 {
-    VisiblePosition firstVP = [first _visiblePosition];
-    VisiblePosition secondVP = [second _visiblePosition];
-    
-    if (firstVP.isNull() || secondVP.isNull())
-        return nil;
-    
-    RefPtr<Range> range;
-    if (firstVP < secondVP) {
-        range = Range::create(firstVP.deepEquivalent().deprecatedNode()->document(),
-                                     firstVP, secondVP);
-    } else {
-        range = Range::create(firstVP.deepEquivalent().deprecatedNode()->document(),
-                                            secondVP, firstVP);
-    }
-    
-    
-    return kit(range.get());
+    auto firstVP = [first _visiblePosition];
+    auto secondVP = [second _visiblePosition];
+    if (firstVP < secondVP)
+        std::swap(firstVP, secondVP);
+    return kit(makeSimpleRange(firstVP, secondVP));
 }
 
 @end

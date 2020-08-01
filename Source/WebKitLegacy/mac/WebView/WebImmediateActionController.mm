@@ -270,8 +270,8 @@ SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)
         if (WTF::protocolIsInHTTPFamily(absoluteURLString)) {
             _type = WebImmediateActionLinkPreview;
 
-            RefPtr<WebCore::Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
-            auto indicator = WebCore::TextIndicator::createWithRange(*linkRange, { WebCore::TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, WebCore::TextIndicatorPresentationTransition::FadeIn);
+            auto linkRange = makeRangeSelectingNodeContents(*_hitTestResult.URLElement());
+            auto indicator = WebCore::TextIndicator::createWithRange(linkRange, { WebCore::TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, WebCore::TextIndicatorPresentationTransition::FadeIn);
             if (indicator)
                 [_webView _setTextIndicator:*indicator withLifetime:WebCore::TextIndicatorWindowLifetime::Permanent];
 
@@ -471,10 +471,8 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     [actionContext setAltMode:YES];
     [actionContext setImmediate:YES];
 
-    RefPtr<WebCore::Range> linkRange = rangeOfContents(*_hitTestResult.URLElement());
-    if (!linkRange)
-        return nullptr;
-    auto indicator = WebCore::TextIndicator::createWithRange(*linkRange, { }, WebCore::TextIndicatorPresentationTransition::FadeIn);
+    auto linkRange = makeRangeSelectingNodeContents(*_hitTestResult.URLElement());
+    auto indicator = WebCore::TextIndicator::createWithRange(linkRange, { }, WebCore::TextIndicatorPresentationTransition::FadeIn);
 
     _currentActionContext = [actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {

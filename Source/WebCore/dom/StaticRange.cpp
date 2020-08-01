@@ -41,6 +41,12 @@ Ref<StaticRange> StaticRange::create(SimpleRange&& range)
     return adoptRef(*new StaticRange(WTFMove(range)));
 }
 
+Ref<StaticRange> StaticRange::create(const SimpleRange& range)
+{
+    auto copiedRange = range;
+    return create(WTFMove(copiedRange));
+}
+
 static bool isDocumentTypeOrAttr(Node& node)
 {
     // Before calling nodeType, do two fast non-virtual checks that cover almost all normal nodes, but are false for DocumentType and Attr.

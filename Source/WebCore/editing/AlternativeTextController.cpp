@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "Page.h"
+#include "Range.h"
 #include "RenderedDocumentMarker.h"
 #include "SpellingCorrectionCommand.h"
 #include "TextCheckerClient.h"
@@ -522,7 +523,7 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
     if (!shouldStartTimerFor(marker, endOfWordPosition.offsetInContainerNode()))
         return false;
     Node* node = endOfWordPosition.containerNode();
-    auto wordRange = SimpleRange { { *node, marker.startOffset() }, { *node, marker.endOffset() } };
+    auto wordRange = range(*node, marker);
     String currentWord = plainText(wordRange);
     if (!currentWord.length())
         return false;

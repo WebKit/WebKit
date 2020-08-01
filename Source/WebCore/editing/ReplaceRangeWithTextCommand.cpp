@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand(RefPtr<Range> rangeToBeReplaced, const String& text)
-    : CompositeEditCommand(rangeToBeReplaced->startContainer().document(), EditAction::InsertReplacement)
+ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand(const SimpleRange& rangeToBeReplaced, const String& text)
+    : CompositeEditCommand(rangeToBeReplaced.start.container->document(), EditAction::InsertReplacement)
     , m_rangeToBeReplaced(rangeToBeReplaced)
     , m_text(text)
 {
@@ -49,21 +49,18 @@ ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand(RefPtr<Range> rangeToBe
 
 bool ReplaceRangeWithTextCommand::willApplyCommand()
 {
-    m_textFragment = createFragmentFromText(*m_rangeToBeReplaced, m_text);
+    m_textFragment = createFragmentFromText(m_rangeToBeReplaced, m_text);
     return CompositeEditCommand::willApplyCommand();
 }
 
 void ReplaceRangeWithTextCommand::doApply()
 {
-    VisibleSelection selection { *m_rangeToBeReplaced };
-
-    if (!m_rangeToBeReplaced)
-        return;
+    VisibleSelection selection { m_rangeToBeReplaced };
 
     if (!document().selection().shouldChangeSelection(selection))
         return;
 
-    if (!characterCount(*m_rangeToBeReplaced))
+    if (!characterCount(m_rangeToBeReplaced))
         return;
 
     applyCommandToComposite(SetSelectionCommand::create(selection, FrameSelection::defaultSetSelectionOptions()));
@@ -88,7 +85,7 @@ RefPtr<DataTransfer> ReplaceRangeWithTextCommand::inputEventDataTransfer() const
 
 Vector<RefPtr<StaticRange>> ReplaceRangeWithTextCommand::targetRanges() const
 {
-    return { 1, StaticRange::create(*m_rangeToBeReplaced) };
+    return { 1, StaticRange::create(m_rangeToBeReplaced) };
 }
 
 } // namespace WebCore

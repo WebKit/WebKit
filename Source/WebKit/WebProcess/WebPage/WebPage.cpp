@@ -5452,7 +5452,7 @@ void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, Callba
     auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
     auto& frame = result.innerNonSharedNode() ? *result.innerNodeFrame() : m_page->focusController().focusedOrMainFrame();
     auto range = frame.rangeForPoint(result.roundedPointInInnerNodeFrame());
-    auto editingRange = EditingRange::fromRange(frame, makeSimpleRange(range));
+    auto editingRange = EditingRange::fromRange(frame, range);
     send(Messages::WebPageProxy::UnsignedCallback(editingRange.location, callbackID));
 }
 
@@ -5533,11 +5533,11 @@ void WebPage::deleteSurrounding(int64_t offset, unsigned characterCount)
         return;
 
     auto selectionStart = selection.visibleStart();
-    auto surroundingRange = makeRange(startOfEditableContent(selectionStart), selectionStart);
+    auto surroundingRange = makeSimpleRange(startOfEditableContent(selectionStart), selectionStart);
     if (!surroundingRange)
         return;
 
-    auto& rootNode = surroundingRange->startContainer().treeScope().rootNode();
+    auto& rootNode = surroundingRange->start.container->treeScope().rootNode();
     auto characterRange = WebCore::CharacterRange(WebCore::characterCount(*surroundingRange) + offset, characterCount);
     auto selectionRange = resolveCharacterRange(makeRangeSelectingNodeContents(rootNode), characterRange);
 

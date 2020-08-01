@@ -486,7 +486,7 @@ static void appendRepeatedCharacter(Vector<UChar, 1024>& buffer, UChar character
         buffer[oldSize + i] = character;
 }
 
-unsigned suffixLengthForRange(const Range& forwardsScanRange, Vector<UChar, 1024>& string)
+unsigned suffixLengthForRange(const SimpleRange& forwardsScanRange, Vector<UChar, 1024>& string)
 {
     unsigned suffixLength = 0;
     TextIterator forwardsIterator(forwardsScanRange);
@@ -502,7 +502,7 @@ unsigned suffixLengthForRange(const Range& forwardsScanRange, Vector<UChar, 1024
     return suffixLength;
 }
 
-unsigned prefixLengthForRange(const Range& backwardsScanRange, Vector<UChar, 1024>& string)
+unsigned prefixLengthForRange(const SimpleRange& backwardsScanRange, Vector<UChar, 1024>& string)
 {
     unsigned prefixLength = 0;
     SimplifiedBackwardsTextIterator backwardsIterator(backwardsScanRange);
@@ -580,74 +580,50 @@ unsigned forwardSearchForBoundaryWithTextIterator(TextIterator& it, Vector<UChar
 }
 
 enum class NeedsContextAtParagraphStart { Yes, No };
-static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearchFunction searchFunction,
+static VisiblePosition previousBoundary(const VisiblePosition& position, BoundarySearchFunction searchFunction,
     NeedsContextAtParagraphStart needsContextAtParagraphStart = NeedsContextAtParagraphStart::No)
 {
-    Position pos = c.deepEquivalent();
-    Node* boundary = pos.parentEditingBoundary();
+    auto boundary = position.deepEquivalent().parentEditingBoundary();
     if (!boundary)
-        return VisiblePosition();
+        return { };
 
-    Document& boundaryDocument = boundary->document();
-    Position start = createLegacyEditingPosition(boundary, 0).parentAnchoredEquivalent();
-    Position end = pos.parentAnchoredEquivalent();
-
-    if (start.isNull() || end.isNull())
-        return VisiblePosition();
-
-    Ref<Range> searchRange = Range::create(boundaryDocument);
-    
     Vector<UChar, 1024> string;
     unsigned suffixLength = 0;
 
-    if (needsContextAtParagraphStart == NeedsContextAtParagraphStart::Yes && isStartOfParagraph(c)) {
-        auto forwardsScanRange = boundaryDocument.createRange();
-        auto endOfCurrentParagraph = endOfParagraph(c);
-        auto result = forwardsScanRange->setEnd(endOfCurrentParagraph.deepEquivalent());
-        if (result.hasException())
+    auto searchRange = makeSimpleRange(makeBoundaryPointBeforeNodeContents(*boundary), position);
+    if (!searchRange)
+        return { };
+
+    if (needsContextAtParagraphStart == NeedsContextAtParagraphStart::Yes && isStartOfParagraph(position)) {
+        auto forwardsScanRange = makeSimpleRange(searchRange->start, endOfParagraph(position));
+        if (!forwardsScanRange)
             return { };
-        result = forwardsScanRange->setStart(start);
-        if (result.hasException())
-            return { };
-        for (TextIterator forwardsIterator(forwardsScanRange); !forwardsIterator.atEnd(); forwardsIterator.advance())
+        for (TextIterator forwardsIterator(*forwardsScanRange); !forwardsIterator.atEnd(); forwardsIterator.advance())
             append(string, forwardsIterator.text());
         suffixLength = string.size();
-    } else if (requiresContextForWordBoundary(c.characterBefore())) {
-        auto forwardsScanRange = boundaryDocument.createRange();
-        auto result = forwardsScanRange->setEndAfter(*boundary);
-        if (result.hasException())
-            return { };
-        result = forwardsScanRange->setStart(*end.deprecatedNode(), end.deprecatedEditingOffset());
-        if (result.hasException())
-            return { };
+    } else if (requiresContextForWordBoundary(position.characterBefore())) {
+        auto forwardsScanRange = makeSimpleRange(searchRange->end, makeBoundaryPointAfterNodeContents(*boundary));
         suffixLength = suffixLengthForRange(forwardsScanRange, string);
     }
 
-    auto result = searchRange->setStart(*start.deprecatedNode(), start.deprecatedEditingOffset());
-    if (result.hasException())
-        return { };
-    result = searchRange->setEnd(*end.deprecatedNode(), end.deprecatedEditingOffset());
-    if (result.hasException())
-        return { };
-
-    SimplifiedBackwardsTextIterator it(searchRange);
+    SimplifiedBackwardsTextIterator it(*searchRange);
     unsigned next = backwardSearchForBoundaryWithTextIterator(it, string, suffixLength, searchFunction);
 
     if (!next)
-        return VisiblePosition(it.atEnd() ? searchRange->startPosition() : pos, DOWNSTREAM);
+        return it.atEnd() ? createLegacyEditingPosition(searchRange->start) : position;
 
-    auto& node = it.atEnd() ? searchRange->startContainer() : it.range().start.container.get();
+    auto& node = (it.atEnd() ? *searchRange : it.range()).start.container.get();
     if ((!suffixLength && is<Text>(node) && next <= downcast<Text>(node).length()) || (node.renderer() && node.renderer()->isBR() && !next)) {
-        // The next variable contains a usable index into a text node
-        return VisiblePosition(createLegacyEditingPosition(&node, next), DOWNSTREAM);
+        // The next variable contains a usable index into a text node.
+        return createLegacyEditingPosition(&node, next);
     }
 
     // Use the character iterator to translate the next value into a DOM position.
-    BackwardsCharacterIterator charIt(searchRange);
+    BackwardsCharacterIterator charIt(*searchRange);
     if (next < string.size() - suffixLength)
         charIt.advance(string.size() - suffixLength - next);
     // FIXME: charIt can get out of shadow host.
-    return { createLegacyEditingPosition(charIt.range().end), DOWNSTREAM };
+    return createLegacyEditingPosition(charIt.range().end);
 }
 
 static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunction searchFunction)
@@ -658,30 +634,29 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
         return VisiblePosition();
 
     Document& boundaryDocument = boundary->document();
-    Ref<Range> searchRange = boundaryDocument.createRange();
-    Position start(pos.parentAnchoredEquivalent());
 
     Vector<UChar, 1024> string;
     unsigned prefixLength = 0;
 
     if (requiresContextForWordBoundary(c.characterAfter())) {
-        auto backwardsScanRange = boundaryDocument.createRange();
-        if (start.deprecatedNode())
-            backwardsScanRange->setEnd(*start.deprecatedNode(), start.deprecatedEditingOffset());
-        prefixLength = prefixLengthForRange(backwardsScanRange, string);
+        auto backwardsScanRange = makeSimpleRange(makeBoundaryPointBeforeNodeContents(boundaryDocument), c);
+        if (!backwardsScanRange)
+            return { };
+        prefixLength = prefixLengthForRange(*backwardsScanRange, string);
     }
 
-    searchRange->selectNodeContents(*boundary);
-    if (start.deprecatedNode())
-        searchRange->setStart(*start.deprecatedNode(), start.deprecatedEditingOffset());
-    TextIterator it(searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    auto searchRange = makeSimpleRange(c, makeBoundaryPointAfterNodeContents(*boundary));
+    if (!searchRange)
+        return { };
+
+    TextIterator it(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
     unsigned next = forwardSearchForBoundaryWithTextIterator(it, string, prefixLength, searchFunction);
     
     if (it.atEnd() && next == string.size())
-        pos = searchRange->endPosition();
+        pos = createLegacyEditingPosition(searchRange->end);
     else if (next > prefixLength) {
         // Use the character iterator to translate the next value into a DOM position.
-        CharacterIterator charIt(searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+        CharacterIterator charIt(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
         charIt.advance(next - prefixLength - 1);
         auto characterRange = charIt.range();
         pos = createLegacyEditingPosition(characterRange.end);

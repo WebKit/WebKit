@@ -88,42 +88,6 @@ Ref<Range> Range::create(Document& ownerDocument)
     return adoptRef(*new Range(ownerDocument));
 }
 
-inline Range::Range(Document& ownerDocument, Node* startContainer, int startOffset, Node* endContainer, int endOffset)
-    : m_ownerDocument(ownerDocument)
-    , m_start(&ownerDocument)
-    , m_end(&ownerDocument)
-{
-#ifndef NDEBUG
-    rangeCounter.increment();
-#endif
-
-    m_ownerDocument->attachRange(*this);
-
-    // Simply setting the containers and offsets directly would not do any of the checking
-    // that setStart and setEnd do, so we call those functions.
-    if (startContainer)
-        setStart(*startContainer, startOffset);
-    if (endContainer)
-        setEnd(*endContainer, endOffset);
-}
-
-Ref<Range> Range::create(Document& ownerDocument, RefPtr<Node>&& startContainer, int startOffset, RefPtr<Node>&& endContainer, int endOffset)
-{
-    return adoptRef(*new Range(ownerDocument, startContainer.get(), startOffset, endContainer.get(), endOffset));
-}
-
-Ref<Range> Range::create(Document& ownerDocument, const Position& start, const Position& end)
-{
-    return adoptRef(*new Range(ownerDocument, start.containerNode(), start.computeOffsetInContainerNode(), end.containerNode(), end.computeOffsetInContainerNode()));
-}
-
-Ref<Range> Range::create(Document& ownerDocument, const VisiblePosition& visibleStart, const VisiblePosition& visibleEnd)
-{
-    Position start = visibleStart.deepEquivalent().parentAnchoredEquivalent();
-    Position end = visibleEnd.deepEquivalent().parentAnchoredEquivalent();
-    return adoptRef(*new Range(ownerDocument, start.anchorNode(), start.deprecatedEditingOffset(), end.anchorNode(), end.deprecatedEditingOffset()));
-}
-
 Range::~Range()
 {
     m_ownerDocument->detachRange(*this);
@@ -193,22 +157,6 @@ ExceptionOr<void> Range::setEnd(Ref<Node>&& refNode, unsigned offset)
         collapse(false);
 
     return { };
-}
-
-ExceptionOr<void> Range::setStart(const Position& start)
-{
-    Position parentAnchored = start.parentAnchoredEquivalent();
-    if (!parentAnchored.containerNode())
-        return Exception { TypeError };
-    return setStart(*parentAnchored.containerNode(), parentAnchored.offsetInContainerNode());
-}
-
-ExceptionOr<void> Range::setEnd(const Position& end)
-{
-    Position parentAnchored = end.parentAnchoredEquivalent();
-    if (!parentAnchored.containerNode())
-        return Exception { TypeError };
-    return setEnd(*parentAnchored.containerNode(), parentAnchored.offsetInContainerNode());
 }
 
 void Range::collapse(bool toStart)
@@ -994,7 +942,10 @@ ExceptionOr<Node*> Range::checkNodeWOffset(Node& node, unsigned offset) const
 
 Ref<Range> Range::cloneRange() const
 {
-    return Range::create(ownerDocument(), &startContainer(), m_start.offset(), &endContainer(), m_end.offset());
+    auto result = create(ownerDocument());
+    result->setStart(startContainer(), m_start.offset());
+    result->setEnd(endContainer(), m_end.offset());
+    return result;
 }
 
 ExceptionOr<void> Range::setStartAfter(Node& refNode)
@@ -1497,10 +1448,10 @@ bool Range::contains(const Range& other) const
 
 bool Range::contains(const VisiblePosition& position) const
 {
-    RefPtr<Range> positionRange = makeRange(position, position);
+    auto positionRange = makeSimpleRange(position);
     if (!positionRange)
         return false;
-    return contains(*positionRange);
+    return contains(createLiveRange(*positionRange));
 }
 
 bool areRangesEqual(const Range* a, const Range* b)
@@ -1539,13 +1490,6 @@ bool rangesOverlap(const Range* a, const Range* b)
         return true;
 
     return false;
-}
-
-Ref<Range> rangeOfContents(Node& node)
-{
-    auto range = Range::create(node.document());
-    range->selectNodeContents(node);
-    return range;
 }
 
 static inline void boundaryNodeChildrenChanged(RangeBoundaryPoint& boundary, ContainerNode& container)
@@ -1857,7 +1801,12 @@ Optional<SimpleRange> makeSimpleRange(const RefPtr<Range>& range)
 
 Ref<Range> createLiveRange(const SimpleRange& range)
 {
-    return Range::create(range.start.document(), range.start.container.ptr(), range.start.offset, range.end.container.ptr(), range.end.offset);
+    auto result = Range::create(range.start.document());
+    auto startContainer = range.start.container;
+    result->setStart(WTFMove(startContainer), range.start.offset);
+    auto endContainer = range.end.container;
+    result->setEnd(WTFMove(endContainer), range.end.offset);
+    return result;
 }
 
 RefPtr<Range> createLiveRange(const Optional<SimpleRange>& range)

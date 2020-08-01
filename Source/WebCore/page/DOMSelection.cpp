@@ -309,7 +309,7 @@ ExceptionOr<Ref<Range>> DOMSelection::getRangeAt(unsigned index)
     if (auto* shadowAncestor = selectionShadowAncestor(*frame)) {
         auto* container = shadowAncestor->parentNodeGuaranteedHostFree();
         unsigned offset = shadowAncestor->computeNodeIndex();
-        return Range::create(shadowAncestor->document(), container, offset, container, offset);
+        return createLiveRange(makeSimpleRange(BoundaryPoint { *container, offset }));
     }
 
     auto firstRange = frame->selection().selection().firstRange();

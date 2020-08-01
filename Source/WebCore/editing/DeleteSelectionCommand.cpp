@@ -748,9 +748,13 @@ void DeleteSelectionCommand::mergeParagraphs()
         return;
     }
     
-    auto range = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), endOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent());
-    auto rangeToBeReplaced = Range::create(document(), mergeDestination.deepEquivalent().parentAnchoredEquivalent(), mergeDestination.deepEquivalent().parentAnchoredEquivalent());
-    if (!document().editor().client()->shouldMoveRangeAfterDelete(range, rangeToBeReplaced))
+    auto range = makeSimpleRange(startOfParagraphToMove, endOfParagraphToMove);
+    if (!range)
+        return;
+    auto rangeToBeReplaced = makeSimpleRange(mergeDestination);
+    if (!rangeToBeReplaced)
+        return;
+    if (!document().editor().client()->shouldMoveRangeAfterDelete(*range, *rangeToBeReplaced))
         return;
 
     // moveParagraphs will insert placeholders if it removes blocks that would require their use, don't let block
@@ -851,12 +855,11 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
     if (!isStartOfWord(startOfSelection))
         return String();
 
-    VisiblePosition nextPosition = startOfSelection.next();
-    if (nextPosition.isNull())
+    auto rangeOfFirstCharacter = makeSimpleRange(startOfSelection, startOfSelection.next());
+    if (!rangeOfFirstCharacter)
         return String();
 
-    auto rangeOfFirstCharacter = Range::create(document(), startOfSelection.deepEquivalent(), nextPosition.deepEquivalent());
-    for (auto* marker : document().markers().markersInRange(rangeOfFirstCharacter, DocumentMarker::Autocorrected)) {
+    for (auto* marker : document().markers().markersInRange(*rangeOfFirstCharacter, DocumentMarker::Autocorrected)) {
         int startOffset = marker->startOffset();
         if (startOffset == startOfSelection.deepEquivalent().offsetInContainerNode())
             return marker->description();

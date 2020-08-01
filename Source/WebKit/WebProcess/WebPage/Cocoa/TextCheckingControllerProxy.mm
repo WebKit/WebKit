@@ -91,7 +91,7 @@ Optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProx
         return WTF::nullopt;
     auto adjustedSelectionCharacterRange = CharacterRange { static_cast<uint64_t>(adjustedStartLocation), length };
 
-    return { { createLiveRange(resolveCharacterRange(scope, adjustedSelectionCharacterRange)), adjustedSelectionCharacterRange.location } };
+    return { { resolveCharacterRange(scope, adjustedSelectionCharacterRange), adjustedSelectionCharacterRange.location } };
 }
 
 void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::AttributedString& annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
@@ -105,30 +105,21 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::Attr
     auto rangeAndOffset = rangeAndOffsetRelativeToSelection(selectionOffset, length);
     if (!rangeAndOffset)
         return;
-    auto range = rangeAndOffset->range;
-    if (!range)
-        return;
     auto locationInRoot = rangeAndOffset->locationInRoot;
 
     auto& markers = frame.document()->markers();
-    markers.removeMarkers(*range, relevantMarkerTypes());
+    markers.removeMarkers(rangeAndOffset->range, relevantMarkerTypes());
 
     if (relativeReplacementLocation != NSNotFound) {
-        auto rangeAndOffsetOfReplacement = rangeAndOffsetRelativeToSelection(selectionOffset + relativeReplacementLocation, relativeReplacementLength);
-        if (rangeAndOffsetOfReplacement) {
-            auto replacementRange = rangeAndOffsetOfReplacement->range;
-            if (replacementRange) {
-                bool restoreSelection = frameSelection.selection().isRange();
+        if (auto rangeAndOffsetOfReplacement = rangeAndOffsetRelativeToSelection(selectionOffset + relativeReplacementLocation, relativeReplacementLength)) {
+            bool restoreSelection = frameSelection.selection().isRange();
 
-                frame.editor().replaceRangeForSpellChecking(*replacementRange, [[annotatedString.string string] substringWithRange:NSMakeRange(relativeReplacementLocation, relativeReplacementLength + [annotatedString.string length] - length)]);
+            frame.editor().replaceRangeForSpellChecking(rangeAndOffsetOfReplacement->range, [[annotatedString.string string] substringWithRange:NSMakeRange(relativeReplacementLocation, relativeReplacementLength + [annotatedString.string length] - length)]);
 
-                if (restoreSelection) {
-                    uint64_t selectionLocationToRestore = locationInRoot - selectionOffset;
-                    if (selectionLocationToRestore > locationInRoot + relativeReplacementLocation + relativeReplacementLength) {
-                        auto selectionToRestore = createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(*root), { selectionLocationToRestore, 0 }));
-                        frameSelection.moveTo(selectionToRestore.ptr());
-                    }
-                }
+            if (restoreSelection) {
+                uint64_t selectionLocationToRestore = locationInRoot - selectionOffset;
+                if (selectionLocationToRestore > locationInRoot + relativeReplacementLocation + relativeReplacementLength)
+                    frameSelection.setSelection(resolveCharacterRange(makeRangeSelectingNodeContents(*root), { selectionLocationToRestore, 0 }));
             }
         }
     }
@@ -161,13 +152,10 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
     auto rangeAndOffset = rangeAndOffsetRelativeToSelection(selectionOffset, length);
     if (!rangeAndOffset)
         return;
-    auto range = rangeAndOffset->range;
-    if (!range)
-        return;
 
     auto removeCoreSpellingMarkers = annotation == "NSSpellingState";
     auto types = removeCoreSpellingMarkers ? relevantMarkerTypes() : WebCore::DocumentMarker::PlatformTextChecking;
-    m_page.corePage()->focusController().focusedOrMainFrame().document()->markers().filterMarkers(*range, [&] (const DocumentMarker& marker) {
+    m_page.corePage()->focusController().focusedOrMainFrame().document()->markers().filterMarkers(rangeAndOffset->range, [&] (const DocumentMarker& marker) {
         if (!WTF::holds_alternative<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()))
             return false;
         return WTF::get<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()).key != annotation;

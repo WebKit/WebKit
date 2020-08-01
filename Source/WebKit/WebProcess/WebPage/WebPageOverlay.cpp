@@ -109,9 +109,9 @@ void WebPageOverlay::didScrollFrame(PageOverlay&, Frame& frame)
 }
 
 #if PLATFORM(MAC)
-DDActionContext *WebPageOverlay::actionContextForResultAtPoint(FloatPoint location, RefPtr<WebCore::Range>& rangeHandle)
+auto WebPageOverlay::actionContextForResultAtPoint(FloatPoint location) -> Optional<ActionContext>
 {
-    return m_client->actionContextForResultAtPoint(*this, location, rangeHandle);
+    return m_client->actionContextForResultAtPoint(*this, location);
 }
 
 void WebPageOverlay::dataDetectorsDidPresentUI()

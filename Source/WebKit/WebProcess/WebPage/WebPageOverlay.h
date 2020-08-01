@@ -23,17 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPageOverlay_h
-#define WebPageOverlay_h
+#pragma once
 
 #include "APIObject.h"
 #include <WebCore/FloatPoint.h>
-#include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
-#include <WebCore/Range.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS DDActionContext;
+
+namespace WebCore {
+class IntRect;
+}
 
 namespace WebKit {
 
@@ -42,6 +43,8 @@ class WebPage;
 
 class WebPageOverlay : public API::ObjectImpl<API::Object::Type::BundlePageOverlay>, private WebCore::PageOverlay::Client {
 public:
+    struct ActionContext;
+
     class Client {
     public:
         virtual ~Client() { }
@@ -53,7 +56,7 @@ public:
         virtual void didScrollFrame(WebPageOverlay&, WebFrame*) { }
 
 #if PLATFORM(MAC)
-        virtual DDActionContext *actionContextForResultAtPoint(WebPageOverlay&, WebCore::FloatPoint location, RefPtr<WebCore::Range>& rangeHandle) { return nullptr; }
+        virtual Optional<ActionContext> actionContextForResultAtPoint(WebPageOverlay&, WebCore::FloatPoint) { return WTF::nullopt; }
         virtual void dataDetectorsDidPresentUI(WebPageOverlay&) { }
         virtual void dataDetectorsDidChangeUI(WebPageOverlay&) { }
         virtual void dataDetectorsDidHideUI(WebPageOverlay&) { }
@@ -77,7 +80,11 @@ public:
     Client& client() const { return *m_client; }
 
 #if PLATFORM(MAC)
-    DDActionContext *actionContextForResultAtPoint(WebCore::FloatPoint, RefPtr<WebCore::Range>&);
+    struct ActionContext {
+        RetainPtr<DDActionContext> context;
+        WebCore::SimpleRange range;
+    };
+    Optional<ActionContext> actionContextForResultAtPoint(WebCore::FloatPoint);
     void dataDetectorsDidPresentUI();
     void dataDetectorsDidChangeUI();
     void dataDetectorsDidHideUI();
@@ -97,11 +104,8 @@ private:
     bool copyAccessibilityAttributeBoolValueForPoint(WebCore::PageOverlay&, String /* attribute */, WebCore::FloatPoint /* parameter */, bool& value) override;
     Vector<String> copyAccessibilityAttributeNames(WebCore::PageOverlay&, bool /* parameterizedNames */) override;
 
-
     RefPtr<WebCore::PageOverlay> m_overlay;
     std::unique_ptr<Client> m_client;
 };
 
 } // namespace WebKit
-
-#endif // WebPageOverlay_h

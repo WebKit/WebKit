@@ -83,12 +83,17 @@ private:
 };
 #endif
 
-SpellingCorrectionCommand::SpellingCorrectionCommand(Range& rangeToBeCorrected, const String& correction)
-    : CompositeEditCommand(rangeToBeCorrected.startContainer().document(), EditAction::InsertReplacement)
+SpellingCorrectionCommand::SpellingCorrectionCommand(const SimpleRange& rangeToBeCorrected, const String& correction)
+    : CompositeEditCommand(rangeToBeCorrected.start.container->document(), EditAction::InsertReplacement)
     , m_rangeToBeCorrected(rangeToBeCorrected)
-    , m_selectionToBeCorrected(m_rangeToBeCorrected.get())
+    , m_selectionToBeCorrected(m_rangeToBeCorrected)
     , m_correction(correction)
 {
+}
+
+Ref<SpellingCorrectionCommand> SpellingCorrectionCommand::create(const SimpleRange& rangeToBeCorrected, const String& correction)
+{
+    return adoptRef(*new SpellingCorrectionCommand(rangeToBeCorrected, correction));
 }
 
 bool SpellingCorrectionCommand::willApplyCommand()

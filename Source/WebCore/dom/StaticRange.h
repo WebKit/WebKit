@@ -41,6 +41,7 @@ public:
     };
 
     static ExceptionOr<Ref<StaticRange>> create(Init&&);
+    static Ref<StaticRange> create(const SimpleRange&);
     static Ref<StaticRange> create(SimpleRange&&);
 
 private:

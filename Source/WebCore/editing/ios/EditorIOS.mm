@@ -267,14 +267,13 @@ void Editor::setDictationPhrasesAsChildOfElement(const Vector<Vector<String>>& d
         return;
     }
 
-    RefPtr<Range> context = document().createRange();
-    context->selectNodeContents(element);
+    auto context = makeRangeSelectingNodeContents(element);
 
     StringBuilder dictationPhrasesBuilder;
     for (auto& interpretations : dictationPhrases)
         dictationPhrasesBuilder.append(interpretations[0]);
 
-    element.appendChild(createFragmentFromText(*context, dictationPhrasesBuilder.toString()));
+    element.appendChild(createFragmentFromText(context, dictationPhrasesBuilder.toString()));
 
     auto weakElement = makeWeakPtr(element);
 

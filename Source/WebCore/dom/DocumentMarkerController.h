@@ -115,6 +115,8 @@ void addMarker(const SimpleRange&, DocumentMarker::MarkerType, const DocumentMar
 void addMarker(Text&, unsigned startOffset, unsigned length, DocumentMarker::MarkerType, DocumentMarker::Data&& = { });
 void removeMarkers(const SimpleRange&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
+WEBCORE_EXPORT SimpleRange range(Node&, const DocumentMarker&);
+
 inline bool DocumentMarkerController::hasMarkers() const
 {
     ASSERT(m_markers.isEmpty() == !m_possiblyExistingMarkerTypes.containsAny(DocumentMarker::allMarkers()));

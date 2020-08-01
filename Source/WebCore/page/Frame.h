@@ -89,7 +89,6 @@ class IntSize;
 class NavigationScheduler;
 class Node;
 class Page;
-class Range;
 class RenderLayer;
 class RenderView;
 class RenderWidget;
@@ -98,6 +97,8 @@ class SecurityOrigin;
 class Settings;
 class VisiblePosition;
 class Widget;
+
+struct SimpleRange;
 
 #if PLATFORM(IOS_FAMILY)
 enum {
@@ -268,7 +269,7 @@ public:
 
     WEBCORE_EXPORT VisiblePosition visiblePositionForPoint(const IntPoint& framePoint) const;
     Document* documentAtPoint(const IntPoint& windowPoint);
-    WEBCORE_EXPORT RefPtr<Range> rangeForPoint(const IntPoint& framePoint);
+    WEBCORE_EXPORT Optional<SimpleRange> rangeForPoint(const IntPoint& framePoint);
 
     WEBCORE_EXPORT String searchForLabelsAboveCell(const JSC::Yarr::RegularExpression&, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
     String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);

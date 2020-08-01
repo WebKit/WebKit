@@ -355,7 +355,6 @@ static void buildQuery(DDScanQueryRef scanQuery, const SimpleRange& contextRange
     CFCharacterSetRef whiteSpacesSet = CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline);
     CFCharacterSetRef newLinesSet = CFCharacterSetGetPredefined(kCFCharacterSetNewline);
     
-    RefPtr<Range> endRange;
     CFIndex iteratorCount = 0;
     CFIndex fragmentCount = 0;
     

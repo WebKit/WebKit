@@ -2151,7 +2151,7 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
         }
     }
     
-    return boundsForRects(rect1, rect2, *makeRange(range.start, range.end));
+    return boundsForRects(rect1, rect2, *makeSimpleRange(range));
 }
 
 IntRect AccessibilityRenderObject::boundsForRange(const SimpleRange& range) const

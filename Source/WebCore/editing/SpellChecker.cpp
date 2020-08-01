@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "Page.h"
 #include "PositionIterator.h"
+#include "Range.h"
 #include "RenderObject.h"
 #include "Settings.h"
 #include "TextCheckerClient.h"

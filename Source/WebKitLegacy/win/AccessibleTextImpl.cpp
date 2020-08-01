@@ -461,11 +461,11 @@ HRESULT AccessibleText::scrollSubstringTo(long startIndex, long endIndex, enum I
     startIndex = convertSpecialOffset(startIndex);
     endIndex = convertSpecialOffset(endIndex);
 
-    VisiblePositionRange textRange = m_object->visiblePositionRangeForRange(PlainTextRange(startIndex, endIndex-startIndex));
-    if (textRange.start.isNull() || textRange.end.isNull())
+    auto textRange = makeSimpleRange(m_object->visiblePositionRangeForRange(PlainTextRange(startIndex, endIndex-startIndex)));
+    if (!textRange)
         return S_FALSE;
 
-    IntRect boundingBox = makeRange(textRange.start, textRange.end)->absoluteBoundingBox();
+    IntRect boundingBox = createLiveRange(*textRange)->absoluteBoundingBox();
     switch (scrollType) {
     case IA2_SCROLL_TYPE_TOP_LEFT:
         m_object->scrollToGlobalPoint(boundingBox.minXMinYCorner());

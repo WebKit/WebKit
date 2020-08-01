@@ -1,3 +1,19 @@
+2020-08-01  Darin Adler  <darin@apple.com>
+
+        Remove Range::create and many more uses of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=215004
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame wordAtPoint:]): Use makeSimpleRange.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition enclosingRangeWithDictationPhraseAlternatives:]): Use document
+        marker range function.
+        (-[WebVisiblePosition enclosingRangeWithCorrectionIndicator]): Ditto.
+        (+[DOMRange rangeForFirstPosition:second:]): Use makeSimpleRange.
+
 2020-07-30  Darin Adler  <darin@apple.com>
 
         Further reduction in the use of live ranges, particularly in headers

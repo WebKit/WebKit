@@ -1457,7 +1457,7 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
     auto command = ReplaceSelectionCommand::create(*document, WTFMove(fragment), { ReplaceSelectionCommand::PreventNesting, ReplaceSelectionCommand::SmartReplace }, EditAction::InsertFromDrop);
     command->apply();
 
-    auto insertedContentRange = makeSimpleRange(command->insertedContentRange());
+    auto insertedContentRange = command->insertedContentRange();
     if (!insertedContentRange) {
         ASSERT_NOT_REACHED();
         return;

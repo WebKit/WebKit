@@ -105,8 +105,7 @@ void DocumentMarkerController::filterMarkers(const SimpleRange& range, const Fun
 static void updateRenderedRectsForMarker(RenderedDocumentMarker& marker, Node& node)
 {
     ASSERT(!node.document().view() || !node.document().view()->needsLayout());
-    auto range = SimpleRange { { node, marker.startOffset() }, { node, marker.endOffset() } };
-    marker.setUnclippedAbsoluteRects(boundingBoxes(RenderObject::absoluteTextQuads(range, true)));
+    marker.setUnclippedAbsoluteRects(boundingBoxes(RenderObject::absoluteTextQuads(range(node, marker), true)));
 }
 
 void DocumentMarkerController::invalidateRectsForAllMarkers()
@@ -661,6 +660,13 @@ void addMarker(Text& node, unsigned startOffset, unsigned length, DocumentMarker
 void removeMarkers(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types, RemovePartiallyOverlappingMarker policy)
 {
     range.start.container->document().markers().removeMarkers(range, types, policy);
+}
+
+SimpleRange range(Node& node, const DocumentMarker& marker)
+{
+    unsigned startOffset = marker.startOffset();
+    unsigned endOffset = marker.endOffset();
+    return { { node, startOffset }, { node, endOffset } };
 }
 
 #if ENABLE(TREE_DEBUGGING)

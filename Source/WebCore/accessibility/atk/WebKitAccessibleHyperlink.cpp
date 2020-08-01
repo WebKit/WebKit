@@ -151,8 +151,11 @@ static AtkObject* webkitAccessibleHyperlinkGetObject(AtkHyperlink* link, gint in
     return ATK_OBJECT(accessibleHyperlink->priv->hyperlinkImpl);
 }
 
-static gint rangeLengthForObject(AccessibilityObject& obj, Range* range)
+static gint rangeLengthForObject(AccessibilityObject& obj, const Optional<SimpleRange>& range)
 {
+    if (!range)
+        return 0;
+
     // This is going to be the actual length in most of the cases
     int baseLength = characterCount(*range, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
 
@@ -196,8 +199,7 @@ static gint webkitAccessibleHyperlinkGetStartIndex(AtkHyperlink* link)
     if (!parentNode)
         return 0;
 
-    auto range = Range::create(node->document(), firstPositionInOrBeforeNode(parentNode), firstPositionInOrBeforeNode(node));
-    return rangeLengthForObject(coreObject, range.ptr());
+    return rangeLengthForObject(coreObject, makeSimpleRange(firstPositionInOrBeforeNode(parentNode), firstPositionInOrBeforeNode(node)));
 }
 
 static gint webkitAccessibleHyperlinkGetEndIndex(AtkHyperlink* link)
@@ -218,8 +220,7 @@ static gint webkitAccessibleHyperlinkGetEndIndex(AtkHyperlink* link)
     if (!parentNode)
         return 0;
 
-    auto range = Range::create(node->document(), firstPositionInOrBeforeNode(parentNode), lastPositionInOrAfterNode(node));
-    return rangeLengthForObject(coreObject, range.ptr());
+    return rangeLengthForObject(coreObject, makeSimpleRange(firstPositionInOrBeforeNode(parentNode), lastPositionInOrAfterNode(node)));
 }
 
 static gboolean webkitAccessibleHyperlinkIsValid(AtkHyperlink* link)

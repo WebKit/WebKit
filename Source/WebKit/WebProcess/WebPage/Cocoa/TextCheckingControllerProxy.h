@@ -30,7 +30,7 @@
 #include "Connection.h"
 #include "EditingRange.h"
 #include "MessageReceiver.h"
-#include <WebCore/Range.h>
+#include <WebCore/SimpleRange.h>
 #include <wtf/Vector.h>
 
 namespace IPC {
@@ -60,7 +60,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     struct RangeAndOffset {
-        RefPtr<WebCore::Range> range;
+        WebCore::SimpleRange range;
         size_t locationInRoot;    
     };
     Optional<RangeAndOffset> rangeAndOffsetRelativeToSelection(int64_t offset, uint64_t length);

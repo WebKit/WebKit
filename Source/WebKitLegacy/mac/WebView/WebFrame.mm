@@ -922,7 +922,7 @@ static NSURL *createUniqueWebDataURL();
 
 - (DOMRange *)_characterRangeAtPoint:(NSPoint)point
 {
-    return kit(_private->coreFrame->rangeForPoint(WebCore::IntPoint(point)).get());
+    return kit(_private->coreFrame->rangeForPoint(WebCore::IntPoint(point)));
 }
 
 - (DOMCSSStyleDeclaration *)_typingStyle
@@ -1741,9 +1741,8 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
             if (!metadata)
                 continue;
             
-            auto range = WebCore::Range::create(*document, node, marker->startOffset(), node, marker->endOffset());
-            DOMRange *domRange = kit(range.ptr());
-            
+            DOMRange *domRange = kit(range(*node, *marker));
+
             if (metadata != previousMetadata) {
                 [metadatas addObject:metadata];
                 [ranges addObject:domRange];

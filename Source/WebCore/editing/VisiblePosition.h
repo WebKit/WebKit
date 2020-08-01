@@ -126,12 +126,6 @@ bool operator>=(const VisiblePosition&, const VisiblePosition&);
 
 WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPoint(const VisiblePosition&);
 
-WEBCORE_EXPORT RefPtr<Range> makeRange(const VisiblePosition&, const VisiblePosition&);
-bool setStart(Range*, const VisiblePosition&);
-bool setEnd(Range*, const VisiblePosition&);
-VisiblePosition startVisiblePosition(const Range*, EAffinity);
-VisiblePosition endVisiblePosition(const Range*, EAffinity);
-
 WEBCORE_EXPORT Element* enclosingBlockFlowElement(const VisiblePosition&);
 
 bool isFirstVisiblePositionInNode(const VisiblePosition&, const Node*);
@@ -149,7 +143,7 @@ struct VisiblePositionRange {
     bool isNull() const { return start.isNull() || end.isNull(); }
 };
 
-Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange&);
+WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange&);
 
 // inlines
 

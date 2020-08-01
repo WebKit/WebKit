@@ -1,3 +1,21 @@
+2020-08-01  Darin Adler  <darin@apple.com>
+
+        Remove Range::create and many more uses of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=215004
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMUIKitExtensions.mm:
+        (-[DOMNode rangeOfContainingParagraph]): Use makeSimpleRange.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _characterRangeAtPoint:]): Update since rangeAtPoint takes a SimpleRange.
+        (-[WebFrame getDictationResultRanges:andMetadatas:]): Use document marker range function.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _defaultAnimationController]): Use makeRangeSelectingNodeContents.
+        (-[WebImmediateActionController _animationControllerForDataDetectedLink]): Ditto.
+
 2020-07-31  Chris Dumez  <cdumez@apple.com>
 
         Add linked-on-after check to keep WebSQL working in UIWebView until apps are rebuilt with iOS 14 SDK
