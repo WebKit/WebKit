@@ -29,6 +29,8 @@
 #include "config.h"
 #include "Screen.h"
 
+#include "DOMWindow.h"
+#include "Document.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"

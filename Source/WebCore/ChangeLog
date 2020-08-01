@@ -1,3 +1,9 @@
+2020-07-31  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed Windows build fix after r265167; add some missing includes.
+
+        * page/Screen.cpp:
+
 2020-07-31  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Clean up text layout code a bit
