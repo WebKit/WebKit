@@ -57,9 +57,8 @@ static AudioDeviceID defaultDevice()
 class AudioSessionPrivate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit AudioSessionPrivate(bool mutedState)
-        : lastMutedState(mutedState) { }
-    bool lastMutedState;
+    explicit AudioSessionPrivate() = default;
+    Optional<bool> lastMutedState;
     AudioSession::CategoryType category { AudioSession::None };
 #if ENABLE(ROUTING_ARBITRATION)
     bool setupArbitrationOngoing { false };
@@ -69,7 +68,7 @@ public:
 };
 
 AudioSession::AudioSession()
-    : m_private(makeUnique<AudioSessionPrivate>(isMuted()))
+    : m_private(makeUnique<AudioSessionPrivate>())
 {
 }
 
@@ -275,7 +274,7 @@ void AudioSession::handleMutedStateChange()
         return;
 
     bool isCurrentlyMuted = isMuted();
-    if (m_private->lastMutedState == isCurrentlyMuted)
+    if (m_private->lastMutedState && *m_private->lastMutedState == isCurrentlyMuted)
         return;
 
     for (auto* observer : m_observers)

@@ -1,5 +1,22 @@
 2020-07-31  Jer Noble  <jer.noble@apple.com>
 
+        [Mac] AudioSessionRoutingArbitrator causes a launch time regression checking for CoreAudio muted state
+        https://bugs.webkit.org/show_bug.cgi?id=214993
+
+        Reviewed by Eric Carlson.
+
+        The initial query of isMuted() is only there to tell whether, when we get a notification that the mute state
+        changed, whether our internal state is dirty and we need to fire a notification. Instead, replace the bool member
+        with an Optional<bool>, so we know we need to fire a changed notification whenever the first mute state change
+        comes in.
+
+        * platform/audio/mac/AudioSessionMac.mm:
+        (WebCore::AudioSession::AudioSession):
+        (WebCore::AudioSession::handleMutedStateChange):
+        (WebCore::AudioSessionPrivate::AudioSessionPrivate): Deleted.
+
+2020-07-31  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed Windows build fix after r265167; add some missing includes.
 
         * page/Screen.cpp:
