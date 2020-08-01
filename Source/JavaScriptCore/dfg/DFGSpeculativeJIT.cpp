@@ -7327,13 +7327,17 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
         TrustedImm32(WastefulTypedArray));
 
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), vectorGPR);
-#if CPU(ARM64E)
-    m_jit.removeArrayPtrTag(vectorGPR);
-#endif
+
+    JITCompiler::Jump nullVector = m_jit.branchPtr(JITCompiler::Equal, vectorGPR, TrustedImmPtr(JSArrayBufferView::nullVectorPtr()));
 
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), dataGPR);
     m_jit.cageWithoutUntagging(Gigacage::JSValue, dataGPR);
+
+    cageTypedArrayStorage(baseGPR, vectorGPR);
+
     m_jit.loadPtr(MacroAssembler::Address(dataGPR, Butterfly::offsetOfArrayBuffer()), arrayBufferGPR);
+    // FIXME: This needs caging.
+    // https://bugs.webkit.org/show_bug.cgi?id=175515
     m_jit.loadPtr(MacroAssembler::Address(arrayBufferGPR, ArrayBuffer::offsetOfData()), dataGPR);
 #if CPU(ARM64E)
     m_jit.removeArrayPtrTag(dataGPR);
@@ -7343,10 +7347,17 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     
     JITCompiler::Jump done = m_jit.jump();
     
+#if CPU(ARM64E)
+    nullVector.link(&m_jit);
+#endif
     emptyByteOffset.link(&m_jit);
     m_jit.move(TrustedImmPtr(nullptr), vectorGPR);
     
     done.link(&m_jit);
+#if !CPU(ARM64E)
+    ASSERT(!JSArrayBufferView::nullVectorPtr());
+    nullVector.link(&m_jit);
+#endif
 
     strictInt32Result(vectorGPR, node);
 }

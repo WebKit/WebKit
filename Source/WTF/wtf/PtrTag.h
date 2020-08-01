@@ -27,16 +27,8 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
-#include <wtf/MathExtras.h>
 
 namespace WTF {
-
-#if CPU(ARM64E)
-constexpr unsigned maximumNumberOfPointerAuthenticationBits = 64 - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
-#else // CPU(ARM64E)
-constexpr unsigned maximumNumberOfPointerAuthenticationBits = 0;
-#endif // CPU(ARM64E)
-
 
 #define FOR_EACH_BASE_WTF_PTRTAG(v) \
     v(NoPtrTag) \

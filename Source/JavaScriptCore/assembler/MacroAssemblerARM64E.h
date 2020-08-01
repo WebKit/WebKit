@@ -39,8 +39,8 @@ using Assembler = TARGET_ASSEMBLER;
 
 class MacroAssemblerARM64E : public MacroAssemblerARM64 {
 public:
-    static constexpr unsigned numberOfPACBits = WTF::maximumNumberOfPointerAuthenticationBits;
-    static constexpr uintptr_t nonPACBitsMask = static_cast<uintptr_t>(-1) >> numberOfPACBits;
+    static constexpr unsigned numberOfPACBits = 25;
+    static constexpr uintptr_t nonPACBitsMask = (1ull << (64 - numberOfPACBits)) - 1;
 
     ALWAYS_INLINE void tagReturnAddress()
     {
