@@ -154,6 +154,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldCaptureDisplayInUIProcess;
     encoder << shouldRenderCanvasInGPUProcess;
     encoder << shouldEnableVP9Decoder;
+    encoder << shouldEnableVP9SWDecoder;
     encoder << needsInAppBrowserPrivacyQuirks;
     encoder << limitsNavigationsToAppBoundDomains;
     encoder << shouldRelaxThirdPartyCookieBlocking;

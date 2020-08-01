@@ -1,3 +1,28 @@
+2020-07-31  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Add Experimental Feature preference for SW VP9
+        https://bugs.webkit.org/show_bug.cgi?id=215043
+        <rdar://problem/66400034>
+
+        Reviewed by Beth Dakin.
+
+        * FeatureFlags/WebKit.plist:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultVP9SWDecoderEnabledOnBattery):
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::enableVP9Decoder):
+        (WebKit::WebProcess::enableVP9SWDecoder):
+        * WebProcess/WebProcess.h:
+
 2020-07-31  Chris Dumez  <cdumez@apple.com>
 
         Launch time regression due to EndowmentStateTracker initialization in WebPageProxy constructor

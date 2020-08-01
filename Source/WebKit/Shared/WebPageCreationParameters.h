@@ -227,6 +227,7 @@ struct WebPageCreationParameters {
     bool shouldCaptureDisplayInUIProcess { false };
     bool shouldRenderCanvasInGPUProcess { false };
     bool shouldEnableVP9Decoder { false };
+    bool shouldEnableVP9SWDecoder { false };
     bool needsInAppBrowserPrivacyQuirks { false };
     bool limitsNavigationsToAppBoundDomains { false };
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };

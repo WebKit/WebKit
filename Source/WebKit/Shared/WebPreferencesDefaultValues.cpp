@@ -254,6 +254,17 @@ bool defaultVP9DecoderEnabled()
 }
 #endif
 
+#if ENABLE(VP9)
+bool defaultVP9SWDecoderEnabledOnBattery()
+{
+#if HAVE(SYSTEM_FEATURE_FLAGS)
+    return isFeatureFlagEnabled("SW_vp9_decoder_on_battery");
+#endif
+
+    return false;
+}
+#endif
+
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
 bool defaultWebMParserEnabled()
 {
