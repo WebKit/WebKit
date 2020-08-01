@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003 - 2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -52,17 +52,8 @@ public:
 
     const TextRun& run() const { return m_run; }
     float runWidthSoFar() const { return m_runWidthSoFar; }
-
-    const FontCascade* m_font;
-
-    const TextRun& m_run;
-
-    unsigned m_currentCharacter;
-    float m_runWidthSoFar;
-    float m_expansion;
-    float m_expansionPerOpportunity;
-    bool m_isAfterExpansion;
-    float m_finalRoundingWidth;
+    float finalRoundingWidth() const { return m_finalRoundingWidth; }
+    unsigned currentCharacter() const { return m_currentCharacter; }
 
 private:
     GlyphData glyphDataForCharacter(UChar32, bool mirror);
@@ -73,15 +64,24 @@ private:
     TransformsType shouldApplyFontTransforms(const GlyphBuffer*, unsigned lastGlyphCount, UChar32 previousCharacter) const;
     float applyFontTransforms(GlyphBuffer*, bool ltr, unsigned& lastGlyphCount, const Font*, UChar32 previousCharacter, bool force, CharactersTreatedAsSpace&);
 
+    const FontCascade* m_font;
+    const TextRun& m_run;
     HashSet<const Font*>* m_fallbackFonts { nullptr };
-    bool m_accountForGlyphBounds { false };
-    bool m_enableKerning { false };
-    bool m_requiresShaping { false };
-    bool m_forTextEmphasis { false };
+
+    unsigned m_currentCharacter { 0 };
+    float m_runWidthSoFar { 0 };
+    float m_expansion { 0 };
+    float m_expansionPerOpportunity { 0 };
+    float m_finalRoundingWidth { 0 };
     float m_maxGlyphBoundingBoxY { std::numeric_limits<float>::min() };
     float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };
     float m_firstGlyphOverflow { 0 };
     float m_lastGlyphOverflow { 0 };
+    bool m_isAfterExpansion { false };
+    bool m_accountForGlyphBounds { false };
+    bool m_enableKerning { false };
+    bool m_requiresShaping { false };
+    bool m_forTextEmphasis { false };
 };
 
 }

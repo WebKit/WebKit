@@ -285,18 +285,19 @@ void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
     m_requiresShaping = computeRequiresShaping();
 }
 
-FloatSize FontCascade::glyphBufferForTextRun(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer) const
+GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ShouldSaveOffsets shouldSaveOffsets, ForTextEmphasisOrNot forTextEmphasis) const
 {
     if (codePathToUse != Complex)
-        return { getGlyphsAndAdvancesForSimpleText(run, from, to, glyphBuffer), 0 };
-    return getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer);
+        return layoutSimpleText(run, from, to, shouldSaveOffsets, forTextEmphasis);
+
+    return layoutComplexText(run, from, to, shouldSaveOffsets, forTextEmphasis);
 }
 
 float FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     unsigned destination = to.valueOr(run.length());
-    GlyphBuffer glyphBuffer;
-    FloatPoint startPoint = point + glyphBufferForTextRun(codePath(run, from, to), run, from, destination, glyphBuffer);
+    auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination);
+    FloatPoint startPoint = point + FloatSize(glyphBuffer.initialAdvance());
     // We couldn't generate any glyphs for the run. Give up.
     if (glyphBuffer.isEmpty())
         return 0;
@@ -312,10 +313,14 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
         return;
 
     unsigned destination = to.valueOr(run.length());
-    if (codePath(run, from, to) != Complex)
-        drawEmphasisMarksForSimpleText(context, run, mark, point, from, destination);
-    else
-        drawEmphasisMarksForComplexText(context, run, mark, point, from, destination);
+
+    auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination, ShouldSaveOffsets::No, ForTextEmphasisOrNot::ForTextEmphasis);
+
+    if (glyphBuffer.isEmpty())
+        return;
+
+    FloatPoint startPoint = point + FloatSize(glyphBuffer.initialAdvance());
+    drawEmphasisMarks(context, glyphBuffer, mark, startPoint);
 }
 
 std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(GraphicsContext& context, const TextRun& run, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
@@ -327,9 +332,9 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
     CodePath codePathToUse = codePath(run);
     if (codePathToUse != Complex && (enableKerning() || requiresShaping()) && (from || destination != run.length()))
         codePathToUse = Complex;
-    
-    GlyphBuffer glyphBuffer;
-    FloatPoint startPoint = toFloatPoint(glyphBufferForTextRun(codePathToUse, run, from, destination, glyphBuffer));
+
+    auto glyphBuffer = layoutText(codePathToUse, run, from, destination);
+    FloatPoint startPoint = toFloatPoint(FloatSize(glyphBuffer.initialAdvance()));
     // We couldn't generate any glyphs for the run. Give up.
     if (glyphBuffer.isEmpty())
         return nullptr;
@@ -1364,39 +1369,45 @@ int FontCascade::emphasisMarkHeight(const AtomString& mark) const
     return markFontData->fontMetrics().height();
 }
 
-float FontCascade::getGlyphsAndAdvancesForSimpleText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, unsigned to, ShouldSaveOffsets shouldSaveOffsets, ForTextEmphasisOrNot forTextEmphasis) const
 {
-    float initialAdvance;
+    GlyphBuffer glyphBuffer;
+    if (shouldSaveOffsets == ShouldSaveOffsets::Yes)
+        glyphBuffer.saveOffsetsInString();
 
     WidthIterator it(this, run, 0, false, forTextEmphasis);
     // FIXME: Using separate glyph buffers for the prefix and the suffix is incorrect when kerning or
     // ligatures are enabled.
     GlyphBuffer localGlyphBuffer;
     it.advance(from, &localGlyphBuffer);
-    float beforeWidth = it.m_runWidthSoFar;
+    float beforeWidth = it.runWidthSoFar();
     it.advance(to, &glyphBuffer);
 
     if (glyphBuffer.isEmpty())
-        return 0;
+        return glyphBuffer;
 
-    float afterWidth = it.m_runWidthSoFar;
+    float afterWidth = it.runWidthSoFar();
 
+    float initialAdvance = 0;
     if (run.rtl()) {
-        float finalRoundingWidth = it.m_finalRoundingWidth;
+        float finalRoundingWidth = it.finalRoundingWidth();
         it.advance(run.length(), &localGlyphBuffer);
-        initialAdvance = finalRoundingWidth + it.m_runWidthSoFar - afterWidth;
+        initialAdvance = finalRoundingWidth + it.runWidthSoFar() - afterWidth;
     } else
         initialAdvance = beforeWidth;
+    glyphBuffer.setInitialAdvance(FloatSize(initialAdvance, 0));
 
     if (run.rtl())
         glyphBuffer.reverse(0, glyphBuffer.size());
 
-    return initialAdvance;
+    return glyphBuffer;
 }
 
-FloatSize FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot forTextEmphasis) const
+GlyphBuffer FontCascade::layoutComplexText(const TextRun& run, unsigned from, unsigned to, ShouldSaveOffsets shouldSaveOffsets, ForTextEmphasisOrNot forTextEmphasis) const
 {
-    FloatSize initialAdvance;
+    GlyphBuffer glyphBuffer;
+    if (shouldSaveOffsets == ShouldSaveOffsets::Yes)
+        glyphBuffer.saveOffsetsInString();
 
     ComplexTextController controller(*this, run, false, 0, forTextEmphasis);
     GlyphBuffer dummyGlyphBuffer;
@@ -1404,35 +1415,28 @@ FloatSize FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, un
     controller.advance(to, &glyphBuffer);
 
     if (glyphBuffer.isEmpty())
-        return { };
+        return glyphBuffer;
 
     if (run.rtl()) {
         // Exploit the fact that the sum of the paint advances is equal to
         // the sum of the layout advances.
-        initialAdvance = controller.totalAdvance();
+        FloatSize initialAdvance = controller.totalAdvance();
         for (unsigned i = 0; i < dummyGlyphBuffer.size(); ++i)
             initialAdvance -= toFloatSize(dummyGlyphBuffer.advanceAt(i));
         for (unsigned i = 0; i < glyphBuffer.size(); ++i)
             initialAdvance -= toFloatSize(glyphBuffer.advanceAt(i));
+        // FIXME: Shouldn't we subtract the other initial advance?
         glyphBuffer.reverse(0, glyphBuffer.size());
+        glyphBuffer.setInitialAdvance(initialAdvance);
     } else {
-        initialAdvance = toFloatSize(dummyGlyphBuffer.initialAdvance());
+        FloatSize initialAdvance = toFloatSize(dummyGlyphBuffer.initialAdvance());
         for (unsigned i = 0; i < dummyGlyphBuffer.size(); ++i)
             initialAdvance += toFloatSize(dummyGlyphBuffer.advanceAt(i));
+        // FIXME: Shouldn't we add the other initial advance?
+        glyphBuffer.setInitialAdvance(initialAdvance);
     }
 
-    return initialAdvance;
-}
-
-void FontCascade::drawEmphasisMarksForSimpleText(GraphicsContext& context, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, unsigned to) const
-{
-    GlyphBuffer glyphBuffer;
-    float initialAdvance = getGlyphsAndAdvancesForSimpleText(run, from, to, glyphBuffer, ForTextEmphasis);
-
-    if (glyphBuffer.isEmpty())
-        return;
-
-    drawEmphasisMarks(context, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
+    return glyphBuffer;
 }
 
 inline bool shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotReadyAction customFontNotReadyAction)
@@ -1531,7 +1535,7 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Fon
         glyphOverflow->right = ceilf(it.lastGlyphOverflow());
     }
 
-    return it.m_runWidthSoFar;
+    return it.runWidthSoFar();
 }
 
 float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
@@ -1551,14 +1555,14 @@ void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRec
     GlyphBuffer glyphBuffer;
     WidthIterator it(this, run);
     it.advance(from, &glyphBuffer);
-    float beforeWidth = it.m_runWidthSoFar;
+    float beforeWidth = it.runWidthSoFar();
     it.advance(to, &glyphBuffer);
-    float afterWidth = it.m_runWidthSoFar;
+    float afterWidth = it.runWidthSoFar();
     float totalWidth = -1;
 
     if (run.rtl()) {
         it.advance(run.length(), &glyphBuffer);
-        totalWidth = it.m_runWidthSoFar;
+        totalWidth = it.runWidthSoFar();
         selectionRect.move(totalWidth - afterWidth, 0);
     } else
         selectionRect.move(beforeWidth, 0);
@@ -1590,7 +1594,7 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
     if (run.rtl()) {
         delta -= floatWidthForSimpleText(run);
         while (1) {
-            offset = it.m_currentCharacter;
+            offset = it.currentCharacter();
             float w;
             if (!it.advanceOneCharacter(w, localGlyphBuffer))
                 break;
@@ -1605,7 +1609,7 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
         }
     } else {
         while (1) {
-            offset = it.m_currentCharacter;
+            offset = it.currentCharacter();
             float w;
             if (!it.advanceOneCharacter(w, localGlyphBuffer))
                 break;
@@ -1643,17 +1647,6 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
     return baseCharacterGlyphData.font;
 }
 #endif
-
-void FontCascade::drawEmphasisMarksForComplexText(GraphicsContext& context, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, unsigned to) const
-{
-    GlyphBuffer glyphBuffer;
-    auto initialAdvance = getGlyphsAndAdvancesForComplexText(run, from, to, glyphBuffer, ForTextEmphasis);
-
-    if (glyphBuffer.isEmpty())
-        return;
-
-    drawEmphasisMarks(context, glyphBuffer, mark, point + initialAdvance);
-}
 
 struct GlyphIterationState {
     FloatPoint startingPoint;
@@ -1784,18 +1777,12 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     if (isLoadingCustomFonts())
         return DashArray();
 
-    GlyphBuffer glyphBuffer;
-    glyphBuffer.saveOffsetsInString();
-    float deltaX;
-    if (codePath(run) != FontCascade::Complex)
-        deltaX = getGlyphsAndAdvancesForSimpleText(run, 0, run.length(), glyphBuffer);
-    else
-        deltaX = getGlyphsAndAdvancesForComplexText(run, 0, run.length(), glyphBuffer).width();
+    auto glyphBuffer = layoutText(codePath(run), run, 0, run.length(), ShouldSaveOffsets::Yes);
 
     if (!glyphBuffer.size())
         return DashArray();
 
-    FloatPoint origin = FloatPoint(textOrigin.x() + deltaX, textOrigin.y());
+    FloatPoint origin = textOrigin + FloatSize(glyphBuffer.initialAdvance());
     GlyphToPathTranslator translator(run, glyphBuffer, origin);
     DashArray result;
     for (unsigned index = 0; translator.containsMorePaths(); ++index, translator.advance()) {

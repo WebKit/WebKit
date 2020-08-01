@@ -1,3 +1,59 @@
+2020-07-31  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Clean up text layout code a bit
+        https://bugs.webkit.org/show_bug.cgi?id=215013
+
+        Reviewed by Zalan Bujtas.
+
+        This is in preparation for https://bugs.webkit.org/show_bug.cgi?id=214769.
+
+        See file-specific ChangeLog entries for more information.
+
+        No tests because there is no behavior change.
+
+        * platform/graphics/Font.h: Remove unnecessary declaration.
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::layoutText const): Rename glyphBufferForTextRun() to layoutText().
+        Also, make it return a GlyphBuffer instead of taking a GlyphBuffer as an out param.
+        Its previous return, the initial advance, is now returned in GlyphBuffer::initialAdvance.
+        (WebCore::FontCascade::drawText const): Update to new signature of layoutText().
+        (WebCore::FontCascade::drawEmphasisMarks const): Inline drawEmphasisMarksForSimpleText()
+        and drawEmphasisMarksForComplexText(), since they're nearly identical. Update to the new
+        signature of layoutText().
+        (WebCore::FontCascade::displayListForTextRun const): Update to the new signature of
+        layoutText().
+        (WebCore::FontCascade::layoutSimpleText const): Make this return a new GlyphBuffer, instead
+        of taking one as an out param. Also, use accessors of WidthIterator instead of reaching
+        into its guts. The previous return value is now returned in GlyphBuffer::initialAdvance.
+        (WebCore::FontCascade::layoutComplexText const): Ditto.
+        (WebCore::FontCascade::floatWidthForSimpleText const): Use accessors of WidthIterator
+        instead of reaching into its guts.
+        (WebCore::FontCascade::adjustSelectionRectForSimpleText const): Ditto.
+        (WebCore::FontCascade::offsetForPositionForSimpleText const): Ditto.
+        (WebCore::FontCascade::dashesForIntersectionsWithRect const): Same as
+        FontCascade::drawEmphasisMarks() above.
+        (WebCore::FontCascade::glyphBufferForTextRun const): Renamed to layoutText().
+        (WebCore::FontCascade::getGlyphsAndAdvancesForSimpleText const): Renamed to
+        layoutSimpleText().
+        (WebCore::FontCascade::getGlyphsAndAdvancesForComplexText const): Renamed to
+        layoutComplexText().
+        (WebCore::FontCascade::drawEmphasisMarksForSimpleText const): Inlined into
+        drawEmphasisMarks().
+        (WebCore::FontCascade::drawEmphasisMarksForComplexText const): Ditto.
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBufferAdvance::GlyphBufferAdvance):
+        (WebCore::GlyphBufferAdvance::operator FloatSize):
+        * platform/graphics/TextRun.h: Remove unnecessary declaration.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator): Update for changes to WidthIterator.h
+        * platform/graphics/WidthIterator.h: Rearrange the class members to sort them by size,
+        to get better packing. Also, make all member variables private, and initialize them
+        all with { } syntax.
+        (WebCore::WidthIterator::finalRoundingWidth const):
+        (WebCore::WidthIterator::currentCharacter const):
+        * rendering/svg/SVGTextMetrics.cpp: Remove unnecessary include.
+
 2020-07-31  Chris Dumez  <cdumez@apple.com>
 
         Add OfflineAudioCompletionEvent constructor

@@ -59,7 +59,6 @@ class GlyphPage;
 class FontDescription;
 class SharedBuffer;
 struct GlyphData;
-struct WidthIterator;
 
 enum FontVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };

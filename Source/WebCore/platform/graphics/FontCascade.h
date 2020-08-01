@@ -203,11 +203,13 @@ public:
 #endif
 private:
     enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };
+    enum class ShouldSaveOffsets : uint8_t {
+        Yes,
+        No
+    };
 
-    FloatSize glyphBufferForTextRun(CodePath, const TextRun&, unsigned from, unsigned to, GlyphBuffer&) const;
-    // Returns the initial in-stream advance.
-    float getGlyphsAndAdvancesForSimpleText(const TextRun&, unsigned from, unsigned to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
-    void drawEmphasisMarksForSimpleText(GraphicsContext&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from, unsigned to) const;
+    GlyphBuffer layoutText(CodePath, const TextRun&, unsigned from, unsigned to, ShouldSaveOffsets = ShouldSaveOffsets::No, ForTextEmphasisOrNot = NotForTextEmphasis) const;
+    GlyphBuffer layoutSimpleText(const TextRun&, unsigned from, unsigned to, ShouldSaveOffsets = ShouldSaveOffsets::No, ForTextEmphasisOrNot = NotForTextEmphasis) const;
     void drawGlyphBuffer(GraphicsContext&, const GlyphBuffer&, FloatPoint&, CustomFontNotReadyAction) const;
     void drawEmphasisMarks(GraphicsContext&, const GlyphBuffer&, const AtomString&, const FloatPoint&) const;
     float floatWidthForSimpleText(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
@@ -219,9 +221,7 @@ private:
     static bool canReturnFallbackFontsForComplexText();
     static bool canExpandAroundIdeographsInComplexText();
 
-    // Returns the initial in-stream advance.
-    FloatSize getGlyphsAndAdvancesForComplexText(const TextRun&, unsigned from, unsigned to, GlyphBuffer&, ForTextEmphasisOrNot = NotForTextEmphasis) const;
-    void drawEmphasisMarksForComplexText(GraphicsContext&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from, unsigned to) const;
+    GlyphBuffer layoutComplexText(const TextRun&, unsigned from, unsigned to, ShouldSaveOffsets = ShouldSaveOffsets::No, ForTextEmphasisOrNot = NotForTextEmphasis) const;
     float floatWidthForComplexText(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
     int offsetForPositionForComplexText(const TextRun&, float position, bool includePartialGlyphs) const;
     void adjustSelectionRectForComplexText(const TextRun&, LayoutRect& selectionRect, unsigned from, unsigned to) const;

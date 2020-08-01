@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003 - 2020 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * This library is free software; you can redistribute it and/or
@@ -38,19 +38,14 @@ using namespace WTF::Unicode;
 WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSet<const Font*>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
     : m_font(font)
     , m_run(run)
-    , m_currentCharacter(0)
-    , m_runWidthSoFar(0)
-    , m_isAfterExpansion((run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion)
-    , m_finalRoundingWidth(0)
     , m_fallbackFonts(fallbackFonts)
+    , m_expansion(run.expansion())
+    , m_isAfterExpansion((run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion)
     , m_accountForGlyphBounds(accountForGlyphBounds)
     , m_enableKerning(font->enableKerning())
     , m_requiresShaping(font->requiresShaping())
     , m_forTextEmphasis(forTextEmphasis)
 {
-    // If the padding is non-zero, count the number of spaces in the run
-    // and divide that by the padding for per space addition.
-    m_expansion = m_run.expansion();
     if (!m_expansion)
         m_expansionPerOpportunity = 0;
     else {

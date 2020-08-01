@@ -21,7 +21,6 @@
 #include "SVGTextMetrics.h"
 
 #include "RenderSVGInlineText.h"
-#include "WidthIterator.h"
 
 namespace WebCore {
 

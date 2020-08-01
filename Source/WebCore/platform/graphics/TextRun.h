@@ -39,7 +39,6 @@ class GlyphBuffer;
 class Font;
 
 struct GlyphData;
-struct WidthIterator;
 
 class TextRun {
     WTF_MAKE_FAST_ALLOCATED;

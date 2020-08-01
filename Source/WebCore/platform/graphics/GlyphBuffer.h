@@ -58,6 +58,10 @@ public:
         : CGSize(size)
     {
     }
+    GlyphBufferAdvance(FloatSize size)
+        : CGSize(size)
+    {
+    }
     GlyphBufferAdvance(float width, float height)
         : CGSize(CGSizeMake(width, height))
     {
@@ -65,6 +69,8 @@ public:
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<GlyphBufferAdvance> decode(Decoder&);
+
+    operator FloatSize() { return { static_cast<float>(this->CGSize::width), static_cast<float>(this->CGSize::height) }; }
 
     void setWidth(CGFloat width) { this->CGSize::width = width; }
     void setHeight(CGFloat height) { this->CGSize::height = height; }
