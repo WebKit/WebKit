@@ -27,7 +27,7 @@ var tests = [
     function() {
         debug('XHR from isolated world with security origin that is whitelisted for XHR target');
         testRunner.setIsolatedWorldSecurityOrigin(2, 'chrome-extension://123');
-        testRunner.addOriginAccessWhitelistEntry('chrome-extension://123', 'http', 'localhost', false);
+        testRunner.addOriginAccessAllowListEntry('chrome-extension://123', 'http', 'localhost', false);
         runTestInWorld(2, 'xhr');
     },
     function() {

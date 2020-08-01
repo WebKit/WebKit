@@ -1,3 +1,15 @@
+2020-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        Use more inclusive terminology in Tools
+        https://bugs.webkit.org/show_bug.cgi?id=214971
+
+        Reviewed by Sam Weinig.
+
+        * Interfaces/IWebViewPrivate.idl:
+        Rename some test-only API.  This should not affect binary compatibility because everything is in the same locations, and the changed API is only used for tests.
+        * WebView.h:
+        * WebView.cpp:
+
 2020-07-30  Darin Adler  <darin@apple.com>
 
         Further reduction in the use of live ranges, particularly in headers

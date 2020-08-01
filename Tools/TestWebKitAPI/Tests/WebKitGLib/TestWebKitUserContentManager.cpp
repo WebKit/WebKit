@@ -120,33 +120,33 @@ static void fillURLListFromPaths(char** list, const char* path, ...)
     }
 }
 
-static void removeOldInjectedContentAndResetLists(WebKitUserContentManager* userContentManager, char** whitelist, char** blacklist)
+static void removeOldInjectedContentAndResetLists(WebKitUserContentManager* userContentManager, char** allowList, char** blockList)
 {
     webkit_user_content_manager_remove_all_style_sheets(userContentManager);
     webkit_user_content_manager_remove_all_scripts(userContentManager);
     webkit_user_content_manager_remove_all_filters(userContentManager);
 
-    while (*whitelist) {
-        g_free(*whitelist);
-        *whitelist = 0;
-        whitelist++;
+    while (*allowList) {
+        g_free(*allowList);
+        *allowList = 0;
+        allowList++;
     }
 
-    while (*blacklist) {
-        g_free(*blacklist);
-        *blacklist = 0;
-        blacklist++;
+    while (*blockList) {
+        g_free(*blockList);
+        *blockList = 0;
+        blockList++;
     }
 }
 
 static void testUserContentManagerInjectedStyleSheet(WebViewTest* test, gconstpointer)
 {
-    char* whitelist[3] = { 0, 0, 0 };
-    char* blacklist[3] = { 0, 0, 0 };
+    char* allowList[3] = { 0, 0, 0 };
+    char* blockList[3] = { 0, 0, 0 };
 
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 
-    // Without a whitelist or a blacklist all URLs should have the injected style sheet.
+    // Without a allowList or a blockList all URLs should have the injected style sheet.
     static const char* randomPath = "somerandompath";
     g_assert_false(isStyleSheetInjectedForURLAtPath(test, randomPath));
     WebKitUserStyleSheet* styleSheet = webkit_user_style_sheet_new(kInjectedStyleSheet, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, nullptr, nullptr);
@@ -154,7 +154,7 @@ static void testUserContentManagerInjectedStyleSheet(WebViewTest* test, gconstpo
     webkit_user_style_sheet_unref(styleSheet);
     g_assert_true(isStyleSheetInjectedForURLAtPath(test, randomPath));
 
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 
     g_assert_false(isStyleSheetInjectedForURLAtPath(test, randomPath, "WebExtensionTestScriptWorld"));
     styleSheet = webkit_user_style_sheet_new_for_world(kInjectedStyleSheet, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, "WebExtensionTestScriptWorld", nullptr, nullptr);
@@ -162,42 +162,42 @@ static void testUserContentManagerInjectedStyleSheet(WebViewTest* test, gconstpo
     webkit_user_style_sheet_unref(styleSheet);
     g_assert_true(isStyleSheetInjectedForURLAtPath(test, randomPath, "WebExtensionTestScriptWorld"));
 
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 
-    fillURLListFromPaths(blacklist, randomPath, 0);
-    styleSheet = webkit_user_style_sheet_new(kInjectedStyleSheet, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, nullptr, blacklist);
+    fillURLListFromPaths(blockList, randomPath, 0);
+    styleSheet = webkit_user_style_sheet_new(kInjectedStyleSheet, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, nullptr, blockList);
     webkit_user_content_manager_add_style_sheet(test->m_userContentManager.get(), styleSheet);
     webkit_user_style_sheet_unref(styleSheet);
     g_assert_false(isStyleSheetInjectedForURLAtPath(test, randomPath));
     g_assert_true(isStyleSheetInjectedForURLAtPath(test, "someotherrandompath"));
 
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 
-    static const char* inTheWhiteList = "inthewhitelist";
-    static const char* notInWhitelist = "notinthewhitelist";
-    static const char* inTheWhiteListAndBlackList = "inthewhitelistandblacklist";
+    static const char* inTheAllowList = "intheallowlist";
+    static const char* notInAllowList = "notintheallowlist";
+    static const char* inTheAllowListAndBlockList = "intheallowlistandblocklist";
 
-    fillURLListFromPaths(whitelist, inTheWhiteList, inTheWhiteListAndBlackList, 0);
-    fillURLListFromPaths(blacklist, inTheWhiteListAndBlackList, 0);
-    styleSheet = webkit_user_style_sheet_new(kInjectedStyleSheet, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, whitelist, blacklist);
+    fillURLListFromPaths(allowList, inTheAllowList, inTheAllowListAndBlockList, 0);
+    fillURLListFromPaths(blockList, inTheAllowListAndBlockList, 0);
+    styleSheet = webkit_user_style_sheet_new(kInjectedStyleSheet, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, allowList, blockList);
     webkit_user_content_manager_add_style_sheet(test->m_userContentManager.get(), styleSheet);
     webkit_user_style_sheet_unref(styleSheet);
-    g_assert_true(isStyleSheetInjectedForURLAtPath(test, inTheWhiteList));
-    g_assert_false(isStyleSheetInjectedForURLAtPath(test, inTheWhiteListAndBlackList));
-    g_assert_false(isStyleSheetInjectedForURLAtPath(test, notInWhitelist));
+    g_assert_true(isStyleSheetInjectedForURLAtPath(test, inTheAllowList));
+    g_assert_false(isStyleSheetInjectedForURLAtPath(test, inTheAllowListAndBlockList));
+    g_assert_false(isStyleSheetInjectedForURLAtPath(test, notInAllowList));
 
     // It's important to clean up the environment before other tests.
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 }
 
 static void testUserContentManagerInjectedScript(WebViewTest* test, gconstpointer)
 {
-    char* whitelist[3] = { 0, 0, 0 };
-    char* blacklist[3] = { 0, 0, 0 };
+    char* allowList[3] = { 0, 0, 0 };
+    char* blockList[3] = { 0, 0, 0 };
 
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 
-    // Without a whitelist or a blacklist all URLs should have the injected script.
+    // Without a allowList or a blockList all URLs should have the injected script.
     static const char* randomPath = "somerandompath";
     g_assert_false(isScriptInjectedForURLAtPath(test, randomPath));
     WebKitUserScript* script = webkit_user_script_new(kInjectedScript, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END, nullptr, nullptr);
@@ -205,7 +205,7 @@ static void testUserContentManagerInjectedScript(WebViewTest* test, gconstpointe
     webkit_user_script_unref(script);
     g_assert_true(isScriptInjectedForURLAtPath(test, randomPath));
 
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 
     g_assert_false(isScriptInjectedForURLAtPath(test, randomPath, "WebExtensionTestScriptWorld"));
     script = webkit_user_script_new_for_world(kInjectedScript, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END, "WebExtensionTestScriptWorld", nullptr, nullptr);
@@ -213,32 +213,32 @@ static void testUserContentManagerInjectedScript(WebViewTest* test, gconstpointe
     webkit_user_script_unref(script);
     g_assert_true(isScriptInjectedForURLAtPath(test, randomPath, "WebExtensionTestScriptWorld"));
 
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 
-    fillURLListFromPaths(blacklist, randomPath, 0);
-    script = webkit_user_script_new(kInjectedScript, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END, nullptr, blacklist);
+    fillURLListFromPaths(blockList, randomPath, 0);
+    script = webkit_user_script_new(kInjectedScript, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END, nullptr, blockList);
     webkit_user_content_manager_add_script(test->m_userContentManager.get(), script);
     webkit_user_script_unref(script);
     g_assert_false(isScriptInjectedForURLAtPath(test, randomPath));
     g_assert_true(isScriptInjectedForURLAtPath(test, "someotherrandompath"));
 
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 
-    static const char* inTheWhiteList = "inthewhitelist";
-    static const char* notInWhitelist = "notinthewhitelist";
-    static const char* inTheWhiteListAndBlackList = "inthewhitelistandblacklist";
+    static const char* inTheAllowList = "intheallowlist";
+    static const char* notInAllowList = "notintheallowlist";
+    static const char* inTheAllowListAndBlockList = "intheallowlistandblockList";
 
-    fillURLListFromPaths(whitelist, inTheWhiteList, inTheWhiteListAndBlackList, 0);
-    fillURLListFromPaths(blacklist, inTheWhiteListAndBlackList, 0);
-    script = webkit_user_script_new(kInjectedScript, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END, whitelist, blacklist);
+    fillURLListFromPaths(allowList, inTheAllowList, inTheAllowListAndBlockList, 0);
+    fillURLListFromPaths(blockList, inTheAllowListAndBlockList, 0);
+    script = webkit_user_script_new(kInjectedScript, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END, allowList, blockList);
     webkit_user_content_manager_add_script(test->m_userContentManager.get(), script);
     webkit_user_script_unref(script);
-    g_assert_true(isScriptInjectedForURLAtPath(test, inTheWhiteList));
-    g_assert_false(isScriptInjectedForURLAtPath(test, inTheWhiteListAndBlackList));
-    g_assert_false(isScriptInjectedForURLAtPath(test, notInWhitelist));
+    g_assert_true(isScriptInjectedForURLAtPath(test, inTheAllowList));
+    g_assert_false(isScriptInjectedForURLAtPath(test, inTheAllowListAndBlockList));
+    g_assert_false(isScriptInjectedForURLAtPath(test, notInAllowList));
 
     // It's important to clean up the environment before other tests.
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 }
 
 class UserScriptMessageTest : public WebViewTest {
@@ -477,10 +477,10 @@ static WebKitUserContentFilter* getUserContentFilter(WebViewTest* test)
 
 static void testUserContentManagerContentFilter(WebViewTest* test, gconstpointer)
 {
-    char* whitelist[] = { nullptr, nullptr, nullptr };
-    char* blacklist[] = { nullptr, nullptr, nullptr };
+    char* allowList[] = { nullptr, nullptr, nullptr };
+    char* blockList[] = { nullptr, nullptr, nullptr };
 
-    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), whitelist, blacklist);
+    removeOldInjectedContentAndResetLists(test->m_userContentManager.get(), allowList, blockList);
 
     static const char* somePath = "somepath";
     g_assert_false(isCSSBlockedForURLAtPath(test, somePath));

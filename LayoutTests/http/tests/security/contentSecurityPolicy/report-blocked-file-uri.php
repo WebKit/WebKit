@@ -5,7 +5,7 @@
 <html>
 <body>
     <script>
-        testRunner.addOriginAccessWhitelistEntry('http://127.0.0.1:8000', 'file', '', true);
+        testRunner.addOriginAccessAllowListEntry('http://127.0.0.1:8000', 'file', '', true);
         var localImageLocation = testRunner.pathToLocalResource('file:///tmp/LayoutTests/http/tests/security/resources/compass.jpg');
 
         var localImageElement = document.createElement('img');

@@ -347,10 +347,10 @@ public:
     HRESULT STDMETHODCALLTYPE setJavaScriptURLsAreAllowed(BOOL) override;
     HRESULT STDMETHODCALLTYPE setCanStartPlugins(BOOL) override;
     HRESULT STDMETHODCALLTYPE addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR source, _In_ BSTR url,
-        unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount,
-        __inout_ecount_full(blacklistCount) BSTR* blacklist, WebUserScriptInjectionTime) override;
+        unsigned allowListCount, __inout_ecount_full(allowListCount) BSTR* allowList, unsigned blockListCount,
+        __inout_ecount_full(blockListCount) BSTR* blockList, WebUserScriptInjectionTime) override;
     HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR source, _In_ BSTR url,
-        unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist) override;
+        unsigned allowListCount, __inout_ecount_full(allowListCount) BSTR* allowList, unsigned blockListCount, __inout_ecount_full(blockListCount) BSTR* blockList) override;
     HRESULT STDMETHODCALLTYPE removeUserScriptFromGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR url) override;
     HRESULT STDMETHODCALLTYPE removeUserStyleSheetFromGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR url) override;
     HRESULT STDMETHODCALLTYPE removeUserScriptsFromGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*) override;
@@ -359,9 +359,9 @@ public:
     HRESULT STDMETHODCALLTYPE unused1() override;
     HRESULT STDMETHODCALLTYPE unused2() override;
     HRESULT STDMETHODCALLTYPE invalidateBackingStore(_In_opt_ const RECT*) override;
-    HRESULT STDMETHODCALLTYPE addOriginAccessWhitelistEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains) override;
-    HRESULT STDMETHODCALLTYPE removeOriginAccessWhitelistEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains) override;
-    HRESULT STDMETHODCALLTYPE resetOriginAccessWhitelists() override;
+    HRESULT STDMETHODCALLTYPE addOriginAccessAllowListEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains) override;
+    HRESULT STDMETHODCALLTYPE removeOriginAccessAllowListEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains) override;
+    HRESULT STDMETHODCALLTYPE resetOriginAccessAllowLists() override;
     HRESULT STDMETHODCALLTYPE setHistoryDelegate(_In_ IWebHistoryDelegate*) override;
     HRESULT STDMETHODCALLTYPE historyDelegate(_COM_Outptr_opt_ IWebHistoryDelegate**) override;
     HRESULT STDMETHODCALLTYPE addVisitedLinks(__inout_ecount_full(visitedURLCount) BSTR* visitedURLs, unsigned visitedURLCount) override;
@@ -391,9 +391,9 @@ public:
     HRESULT STDMETHODCALLTYPE setCustomBackingScaleFactor(double) override;
     HRESULT STDMETHODCALLTYPE backingScaleFactor(_Out_ double*) override;
     HRESULT STDMETHODCALLTYPE addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR source, _In_ BSTR url,
-        unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist, WebUserScriptInjectionTime, WebUserContentInjectedFrames) override;
+        unsigned allowListCount, __inout_ecount_full(allowListCount) BSTR* allowList, unsigned blockListCount, __inout_ecount_full(blockListCount) BSTR* blockList, WebUserScriptInjectionTime, WebUserContentInjectedFrames) override;
     HRESULT STDMETHODCALLTYPE addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld*, _In_ BSTR source, _In_ BSTR url,
-        unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist, WebUserContentInjectedFrames) override;
+        unsigned allowListCount, __inout_ecount_full(allowListCount) BSTR* allowList, unsigned blockListCount, __inout_ecount_full(blockListCount) BSTR* blockList, WebUserContentInjectedFrames) override;
 
     // IWebViewPrivate3
     HRESULT STDMETHODCALLTYPE layerTreeAsString(_Deref_opt_out_ BSTR*) override;

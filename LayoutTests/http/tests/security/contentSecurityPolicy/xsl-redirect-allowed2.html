@@ -7,7 +7,7 @@ if (window.testRunner) {
     testRunner.dumpChildFramesAsText();
 
     // This is a contrived test. We normally do not allow cross-origin XML Stylesheets.
-    testRunner.addOriginAccessWhitelistEntry("http://127.0.0.1:8000", "http", "localhost", false);
+    testRunner.addOriginAccessAllowListEntry("http://127.0.0.1:8000", "http", "localhost", false);
 }
 </script>
 </head>

@@ -1,10 +1,10 @@
-<p>Tests origin whitelisting subdomain behavior.</p>
+<p>Tests the behavior of whitelisting origins using exact matching.</p>
 
 <pre id="console"></pre>
 <script>
 testRunner.dumpAsText();
 testRunner.waitUntilDone();
-testRunner.addOriginAccessWhitelistEntry("http://127.0.0.1:8000", "http", "localhost", true);
+testRunner.addOriginAccessAllowListEntry("http://127.0.0.1:8000", "http", "localhost", false);
 
 function log(message)
 {
@@ -38,11 +38,12 @@ function test(url, expectSuccess)
 }
 
 var tests = [
-    ["http://localhost:8000/xmlhttprequest/resources/get.txt", true]
+    ["http://localhost:8000/xmlhttprequest/resources/get.txt", true],
+    ["http://loCALhost:8000/xmlhttprequest/resources/get.txt", true]
     // FIXME: Is it possible to setup the following tests?
-    // ["http://foo.localhost:8000/xmlhttprequest/resources/get.txt", true]
-    // ["http://bar.foo.localhost:8000/xmlhttprequest/resources/get.txt", true]
-    // ["http://foolocalhost:8000/xmlhttprequest/resources/get.txt", false]
+    // ["http://localhost:8001/xmlhttprequest/resources/get.txt", false],
+    // ["http://foo.localhost:8000/xmlhttprequest/resources/get.txt", false],
+    // ["https://localhost:8000/xmlhttprequest/resources/get.txt", false]
 ];
 
 var currentTest = 0;

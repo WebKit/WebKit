@@ -189,12 +189,12 @@ interface IWebViewPrivate : IUnknown
     HRESULT MIMETypeForExtension([in] BSTR extension, [out, retval] BSTR* mimeType);
 
     HRESULT addUserScriptToGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR source, [in] BSTR url,
-                                 [in] unsigned whitelistCount, [in, size_is(whitelistCount)] BSTR* whitelist,
-                                 [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist,
+                                 [in] unsigned allowListCount, [in, size_is(allowListCount)] BSTR* allowList,
+                                 [in] unsigned blockListCount, [in, size_is(blockListCount)] BSTR* blockList,
                                  [in] WebUserScriptInjectionTime injectionTime);
     HRESULT addUserStyleSheetToGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR source, [in] BSTR url,
-                                     [in] unsigned whitelistCount, [in, size_is(whitelistCount)] BSTR* whitelist,
-                                     [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist);
+                                     [in] unsigned allowListCount, [in, size_is(allowListCount)] BSTR* allowList,
+                                     [in] unsigned blockListCount, [in, size_is(blockListCount)] BSTR* blockList);
     HRESULT removeUserScriptFromGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR url);
     HRESULT removeUserStyleSheetFromGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR url);
     HRESULT removeUserScriptsFromGroup([in] BSTR groupName, [in] IWebScriptWorld*);
@@ -207,17 +207,17 @@ interface IWebViewPrivate : IUnknown
     // If rect is 0, the entire backing store will be invalidated.
     HRESULT invalidateBackingStore([in] const RECT* rect);
 
-    // Whitelists access from an origin (sourceOrigin) to a set of one or more origins described by the parameters:
+    // AllowLists access from an origin (sourceOrigin) to a set of one or more origins described by the parameters:
     // - destinationProtocol: The protocol to grant access to.
     // - destinationHost: The host to grant access to.
-    // - allowDestinationSubdomains: If host is a domain, setting this to YES will whitelist host and all its subdomains, recursively.
-    HRESULT addOriginAccessWhitelistEntry([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
+    // - allowDestinationSubdomains: If host is a domain, setting this to YES will allow host and all its subdomains, recursively.
+    HRESULT addOriginAccessAllowListEntry([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
 
-    // Removes a white list entry created with addOriginAccessWhitelistEntry. See above.
-    HRESULT removeOriginAccessWhitelistEntry([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
+    // Removes a white list entry created with addOriginAccessAllowListEntry. See above.
+    HRESULT removeOriginAccessAllowListEntry([in] BSTR sourceOrigin, [in] BSTR destinationProtocol, [in] BSTR destinationHost, [in] BOOL allowDestinationSubdomains);
 
-    // Removes all white list entries created with addOriginAccessWhitelistEntry.
-    HRESULT resetOriginAccessWhitelists();
+    // Removes all white list entries created with addOriginAccessAllowListEntry.
+    HRESULT resetOriginAccessAllowLists();
 
     HRESULT setHistoryDelegate([in] IWebHistoryDelegate* historyDelegate);
     HRESULT historyDelegate([out,retval] IWebHistoryDelegate** historyDelegate);
@@ -316,13 +316,13 @@ interface IWebViewPrivate2 : IWebViewPrivate
     HRESULT backingScaleFactor([out] double*);
 
     HRESULT addUserScriptToGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR source, [in] BSTR url,
-        [in] unsigned whitelistCount, [in, size_is(whitelistCount)] BSTR* whitelist,
-        [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist,
+        [in] unsigned allowListCount, [in, size_is(allowListCount)] BSTR* allowList,
+        [in] unsigned blockListCount, [in, size_is(blockListCount)] BSTR* blockList,
         [in] WebUserScriptInjectionTime injectionTime, [in] WebUserContentInjectedFrames injectedFrames);
 
     HRESULT addUserStyleSheetToGroup([in] BSTR groupName, [in] IWebScriptWorld*, [in] BSTR source, [in] BSTR url,
-        [in] unsigned whitelistCount, [in, size_is(whitelistCount)] BSTR* whitelist,
-        [in] unsigned blacklistCount, [in, size_is(blacklistCount)] BSTR* blacklist,
+        [in] unsigned allowListCount, [in, size_is(allowListCount)] BSTR* allowList,
+        [in] unsigned blockListCount, [in, size_is(blockListCount)] BSTR* blockList,
         [in] WebUserContentInjectedFrames injectedFrames);
 }
 

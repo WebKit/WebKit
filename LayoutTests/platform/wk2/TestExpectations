@@ -471,9 +471,9 @@ storage/websql/multiple-databases-garbage-collection.html
 # Mysterious failure after enabling paste tests
 editing/mac/pasteboard/text-precomposed.html
 
-# [WK2] http/tests/security/local-image-from-remote-whitelisted.html crashes
+# [WK2] http/tests/security/local-image-from-remote-allow-list.html crashes
 # https://bugs.webkit.org/show_bug.cgi?id=73435
-http/tests/security/local-image-from-remote-whitelisted.html
+http/tests/security/local-image-from-remote-allow-list.html
 
 # Editing input tests that time out unexpectedly.
 # https://bugs.webkit.org/show_bug.cgi?id=81547

@@ -1,3 +1,42 @@
+2020-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        Use more inclusive terminology in Tools
+        https://bugs.webkit.org/show_bug.cgi?id=214971
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (addOriginAccessAllowListEntryCallback):
+        (removeOriginAccessAllowListEntryCallback):
+        (TestRunner::staticFunctions):
+        (addOriginAccessWhitelistEntryCallback): Deleted.
+        (removeOriginAccessWhitelistEntryCallback): Deleted.
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::addOriginAccessAllowListEntry):
+        (TestRunner::removeOriginAccessAllowListEntry):
+        (TestRunner::addOriginAccessWhitelistEntry): Deleted.
+        (TestRunner::removeOriginAccessWhitelistEntry): Deleted.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::addOriginAccessAllowListEntry):
+        (TestRunner::removeOriginAccessAllowListEntry):
+        (TestRunner::addOriginAccessWhitelistEntry): Deleted.
+        (TestRunner::removeOriginAccessWhitelistEntry): Deleted.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        (removeOldInjectedContentAndResetLists):
+        (testUserContentManagerInjectedStyleSheet):
+        (testUserContentManagerInjectedScript):
+        (testUserContentManagerContentFilter):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::addOriginAccessAllowListEntry):
+        (WTR::TestRunner::removeOriginAccessAllowListEntry):
+        (WTR::TestRunner::addOriginAccessWhitelistEntry): Deleted.
+        (WTR::TestRunner::removeOriginAccessWhitelistEntry): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2020-07-31  Jonathan Bedard  <jbedard@apple.com>
 
         [test-webkitpy] Have CI use verbose logging

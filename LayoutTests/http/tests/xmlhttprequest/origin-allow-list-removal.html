@@ -29,11 +29,11 @@ function test(origin, protocol, host, subdomains, url)
 
     loadURL(url, false);
 
-    testRunner.addOriginAccessWhitelistEntry(origin, protocol.toLowerCase(), host.toLowerCase(), subdomains);
+    testRunner.addOriginAccessAllowListEntry(origin, protocol.toLowerCase(), host.toLowerCase(), subdomains);
 
     loadURL(url, true);
 
-    testRunner.removeOriginAccessWhitelistEntry(origin, protocol, host, subdomains);
+    testRunner.removeOriginAccessAllowListEntry(origin, protocol, host, subdomains);
 
     loadURL(url, false);
 

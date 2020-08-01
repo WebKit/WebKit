@@ -5,7 +5,7 @@
 <script>
 
 testRunner.dumpAsText();
-testRunner.addOriginAccessWhitelistEntry('http://127.0.0.1:8000', 'file', '', true);
+testRunner.addOriginAccessAllowListEntry('http://127.0.0.1:8000', 'file', '', true);
 
 var localImageLocation = testRunner.pathToLocalResource('file:///tmp/LayoutTests/http/tests/security/resources/compass.jpg');
 
@@ -24,7 +24,7 @@ window.onload = function() {
 </script>
 
 <p>This test is to see if a remote file can include a local image when the
-access has been white listed using addOriginAccessWhitelistEntry.
+access has been white listed using addOriginAccessAllowListEntry.
 
 <p id=result>Test has not run.
 

@@ -1052,7 +1052,7 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
     if (webViewPrivate && SUCCEEDED(webViewPrivate->viewWindow(&viewWindow)) && viewWindow)
         ::SetFocus(viewWindow);
 
-    webViewPrivate->resetOriginAccessWhitelists();
+    webViewPrivate->resetOriginAccessAllowLists();
 
     sharedUIDelegate->resetUndoManager();
 

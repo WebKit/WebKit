@@ -3,7 +3,7 @@
 <script>
 testRunner.dumpAsText();
 testRunner.waitUntilDone();
-testRunner.addOriginAccessWhitelistEntry("http://localhost:8000", "http", "*.0.0.1", true);
+testRunner.addOriginAccessAllowListEntry("http://localhost:8000", "http", "*.0.0.1", true);
 
 function log(message)
 {

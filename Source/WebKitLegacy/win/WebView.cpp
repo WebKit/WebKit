@@ -6988,11 +6988,11 @@ void WebView::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&)
 }
 
 HRESULT WebView::addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld* iWorld, _In_ BSTR source, _In_ BSTR url,
-    unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist,
-    unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist,
+    unsigned allowListCount, __inout_ecount_full(allowListCount) BSTR* allowList,
+    unsigned blockListCount, __inout_ecount_full(blockListCount) BSTR* blocklist,
     WebUserScriptInjectionTime injectionTime)
 {
-    return addUserScriptToGroup(groupName, iWorld, source, url, whitelistCount, whitelist, blacklistCount, blacklist, injectionTime, WebInjectInAllFrames);
+    return addUserScriptToGroup(groupName, iWorld, source, url, allowListCount, allowList, blockListCount, blocklist, injectionTime, WebInjectInAllFrames);
 }
 
 static Vector<String> toStringVector(BSTR* entries, unsigned count)
@@ -7008,8 +7008,8 @@ static Vector<String> toStringVector(BSTR* entries, unsigned count)
 }
 
 HRESULT WebView::addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld* iWorld, _In_ BSTR source, _In_ BSTR url,
-    unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist,
-    unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist,
+    unsigned allowListCount, __inout_ecount_full(allowListCount) BSTR* allowList,
+    unsigned blockListCount, __inout_ecount_full(blockListCount) BSTR* blocklist,
     WebUserScriptInjectionTime injectionTime, WebUserContentInjectedFrames injectedFrames)
 {
     String group = toString(groupName);
@@ -7022,21 +7022,21 @@ HRESULT WebView::addUserScriptToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWo
         return E_POINTER;
 
     WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
-    auto userScript = makeUnique<UserScript>(source, toURL(url), toStringVector(whitelist, whitelistCount),
-        toStringVector(blacklist, blacklistCount), injectionTime == WebInjectAtDocumentStart ? UserScriptInjectionTime::DocumentStart : UserScriptInjectionTime::DocumentEnd,
+    auto userScript = makeUnique<UserScript>(source, toURL(url), toStringVector(allowList, allowListCount),
+        toStringVector(blocklist, blockListCount), injectionTime == WebInjectAtDocumentStart ? UserScriptInjectionTime::DocumentStart : UserScriptInjectionTime::DocumentEnd,
         injectedFrames == WebInjectInAllFrames ? UserContentInjectedFrames::InjectInAllFrames : UserContentInjectedFrames::InjectInTopFrameOnly, WaitForNotificationBeforeInjecting::No);
     viewGroup->userContentController().addUserScript(world->world(), WTFMove(userScript));
     return S_OK;
 }
 
 HRESULT WebView::addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld* iWorld, _In_ BSTR source, _In_ BSTR url,
-    unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist)
+    unsigned allowListCount, __inout_ecount_full(allowListCount) BSTR* allowList, unsigned blockListCount, __inout_ecount_full(blockListCount) BSTR* blocklist)
 {
-    return addUserStyleSheetToGroup(groupName, iWorld, source, url, whitelistCount, whitelist, blacklistCount, blacklist, WebInjectInAllFrames);
+    return addUserStyleSheetToGroup(groupName, iWorld, source, url, allowListCount, allowList, blockListCount, blocklist, WebInjectInAllFrames);
 }
 
 HRESULT WebView::addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScriptWorld* iWorld, _In_ BSTR source, _In_ BSTR url,
-    unsigned whitelistCount, __inout_ecount_full(whitelistCount) BSTR* whitelist, unsigned blacklistCount, __inout_ecount_full(blacklistCount) BSTR* blacklist,
+    unsigned allowListCount, __inout_ecount_full(allowListCount) BSTR* allowList, unsigned blockListCount, __inout_ecount_full(blockListCount) BSTR* blocklist,
     WebUserContentInjectedFrames injectedFrames)
 {
     String group = toString(groupName);
@@ -7049,7 +7049,7 @@ HRESULT WebView::addUserStyleSheetToGroup(_In_ BSTR groupName, _In_opt_ IWebScri
         return E_POINTER;
 
     WebScriptWorld* world = reinterpret_cast<WebScriptWorld*>(iWorld);
-    auto styleSheet = makeUnique<UserStyleSheet>(source, toURL(url), toStringVector(whitelist, whitelistCount), toStringVector(blacklist, blacklistCount),
+    auto styleSheet = makeUnique<UserStyleSheet>(source, toURL(url), toStringVector(allowList, allowListCount), toStringVector(blocklist, blockListCount),
         injectedFrames == WebInjectInAllFrames ? UserContentInjectedFrames::InjectInAllFrames : UserContentInjectedFrames::InjectInTopFrameOnly, UserStyleUserLevel);
     viewGroup->userContentController().addUserStyleSheet(world->world(), WTFMove(styleSheet), InjectInExistingDocuments);
     return S_OK;
@@ -7160,19 +7160,19 @@ HRESULT WebView::invalidateBackingStore(_In_ const RECT* rect)
     return S_OK;
 }
 
-HRESULT WebView::addOriginAccessWhitelistEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains)
+HRESULT WebView::addOriginAccessAllowListEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains)
 {
     SecurityPolicy::addOriginAccessAllowlistEntry(SecurityOrigin::createFromString(toString(sourceOrigin)).get(), toString(destinationProtocol), toString(destinationHost), allowDestinationSubdomains);
     return S_OK;
 }
 
-HRESULT WebView::removeOriginAccessWhitelistEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains)
+HRESULT WebView::removeOriginAccessAllowListEntry(_In_ BSTR sourceOrigin, _In_ BSTR destinationProtocol, _In_ BSTR destinationHost, BOOL allowDestinationSubdomains)
 {
     SecurityPolicy::removeOriginAccessAllowlistEntry(SecurityOrigin::createFromString(toString(sourceOrigin)).get(), toString(destinationProtocol), toString(destinationHost), allowDestinationSubdomains);
     return S_OK;
 }
 
-HRESULT WebView::resetOriginAccessWhitelists()
+HRESULT WebView::resetOriginAccessAllowLists()
 {
     SecurityPolicy::resetOriginAccessAllowlists();
     return S_OK;

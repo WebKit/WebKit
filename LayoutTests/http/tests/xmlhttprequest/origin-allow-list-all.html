@@ -4,8 +4,8 @@
 <script>
 testRunner.dumpAsText();
 testRunner.waitUntilDone();
-testRunner.addOriginAccessWhitelistEntry("http://127.0.0.1:8000", "http", "", true);
-testRunner.addOriginAccessWhitelistEntry("http://localhost:8000", "http", "", true);
+testRunner.addOriginAccessAllowListEntry("http://127.0.0.1:8000", "http", "", true);
+testRunner.addOriginAccessAllowListEntry("http://localhost:8000", "http", "", true);
 
 function log(message)
 {

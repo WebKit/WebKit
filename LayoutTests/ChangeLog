@@ -1,3 +1,58 @@
+2020-07-31  Alex Christensen  <achristensen@webkit.org>
+
+        Use more inclusive terminology in Tools
+        https://bugs.webkit.org/show_bug.cgi?id=214971
+
+        Reviewed by Sam Weinig.
+
+        * http/tests/security/contentSecurityPolicy/report-blocked-file-uri.php:
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-allowed.html:
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-allowed2.html:
+        * http/tests/security/contentSecurityPolicy/xsl-redirect-blocked.html:
+        * http/tests/security/isolatedWorld/cross-origin-xhr.html:
+        * http/tests/security/local-image-from-remote-allow-list-expected.txt: Copied from http/tests/security/local-image-from-remote-whitelisted-expected.txt.
+        * http/tests/security/local-image-from-remote-allow-list.html: Copied from http/tests/security/local-image-from-remote-whitelisted.html.
+        * http/tests/security/local-image-from-remote-whitelisted-expected.txt: Removed.
+        * http/tests/security/local-image-from-remote-whitelisted.html: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers-expected.txt: Copied from http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers-expected.txt.
+        * http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html: Copied from http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html.
+        * http/tests/xmlhttprequest/access-control-basic-allow-list-response-headers-expected.txt: Copied from http/tests/xmlhttprequest/access-control-basic-whitelist-response-headers-expected.txt.
+        * http/tests/xmlhttprequest/access-control-basic-allow-list-response-headers.html: Copied from http/tests/xmlhttprequest/access-control-basic-whitelist-response-headers.html.
+        * http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers-expected.txt: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-whitelist-response-headers-expected.txt: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-whitelist-response-headers.html: Removed.
+        * http/tests/xmlhttprequest/origin-allow-list-all-expected.txt: Copied from http/tests/xmlhttprequest/origin-whitelisting-all-expected.txt.
+        * http/tests/xmlhttprequest/origin-allow-list-all.html: Copied from http/tests/xmlhttprequest/origin-whitelisting-all.html.
+        * http/tests/xmlhttprequest/origin-allow-list-exact-match-expected.txt: Copied from http/tests/xmlhttprequest/origin-whitelisting-exact-match-expected.txt.
+        * http/tests/xmlhttprequest/origin-allow-list-exact-match.html: Copied from http/tests/xmlhttprequest/origin-whitelisting-exact-match.html.
+        * http/tests/xmlhttprequest/origin-allow-list-https-expected.txt: Copied from http/tests/xmlhttprequest/origin-whitelisting-https-expected.txt.
+        * http/tests/xmlhttprequest/origin-allow-list-https.html: Copied from http/tests/xmlhttprequest/origin-whitelisting-https.html.
+        * http/tests/xmlhttprequest/origin-allow-list-ip-addresses-expected.txt: Copied from http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-expected.txt.
+        * http/tests/xmlhttprequest/origin-allow-list-ip-addresses-with-subdomains-expected.txt: Copied from http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains-expected.txt.
+        * http/tests/xmlhttprequest/origin-allow-list-ip-addresses-with-subdomains.html: Copied from http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains.html.
+        * http/tests/xmlhttprequest/origin-allow-list-ip-addresses.html: Copied from http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html.
+        * http/tests/xmlhttprequest/origin-allow-list-removal-expected.txt: Copied from http/tests/xmlhttprequest/origin-whitelisting-removal-expected.txt.
+        * http/tests/xmlhttprequest/origin-allow-list-removal.html: Copied from http/tests/xmlhttprequest/origin-whitelisting-removal.html.
+        * http/tests/xmlhttprequest/origin-allow-list-subdomains-expected.txt: Copied from http/tests/xmlhttprequest/origin-whitelisting-subdomains-expected.txt.
+        * http/tests/xmlhttprequest/origin-allow-list-subdomains.html: Copied from http/tests/xmlhttprequest/origin-whitelisting-subdomains.html.
+        * http/tests/xmlhttprequest/origin-whitelisting-all-expected.txt: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-all.html: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-exact-match-expected.txt: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-exact-match.html: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-https-expected.txt: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-https.html: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-expected.txt: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains-expected.txt: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses-with-subdomains.html: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-ip-addresses.html: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-removal-expected.txt: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-removal.html: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-subdomains-expected.txt: Removed.
+        * http/tests/xmlhttprequest/origin-whitelisting-subdomains.html: Removed.
+        * platform/win/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2020-07-31  Chris Dumez  <cdumez@apple.com>
 
         Add OfflineAudioCompletionEvent constructor
