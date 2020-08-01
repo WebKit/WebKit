@@ -253,16 +253,26 @@ SCRIPTS = \
 FRAMEWORK_FLAGS := $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) $(SYSTEM_FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
 HEADER_FLAGS := $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) $(SYSTEM_HEADER_SEARCH_PATHS) | perl -e 'print "-I" . join(" -I", split(" ", <>));')
 
+MESSAGE_RECEIVER_FILES := $(addsuffix MessageReceiver.cpp,$(notdir $(MESSAGE_RECEIVERS)))
+MESSAGES_FILES := $(addsufix Messages.h,$(notdir $(MESSAGE_RECEIVERS)))
+MESSAGE_REPLIES_FILES := $(addsuffix MessagesReplies.h,$(notdir $(MESSAGE_RECEIVERS)))
+MESSAGES_IN_FILES := $(addsuffix .messages.in,$(MESSAGE_RECEIVERS))
+
+MESSAGE_RECEIVER_PATTERNS := $(subst .,%,$(MESSAGE_RECEIVER_FILES))
+MESSAGES_PATTERNS := $(subst .,%,$(MESSAGES_FILES))
+MESSAGE_REPLIES_PATTERNS := $(subst .,%,$(MESSAGE_REPLIES_FILES))
+
 .PHONY : all
 
-all : MessageNames.h MessageNames.cpp \
-    $(addsuffix MessageReceiver.cpp,$(notdir $(MESSAGE_RECEIVERS))) \
-    $(addsuffix Messages.h,$(notdir $(MESSAGE_RECEIVERS))) \
-    $(addsuffix MessagesReplies.h,$(notdir $(MESSAGE_RECEIVERS))) \
+all : \
+    $(MESSAGE_RECEIVER_FILES) \
+    $(MESSAGES_FILES) \
+    $(MESSAGE_REPLIES_FILES) \
+    MessageNames.h MessageNames.cpp \
 #
 
-$(addsuffix MessageReceiver.cpp,$(notdir $(MESSAGE_RECEIVERS))) $(addsufix Messages.h,$(notdir $(MESSAGE_RECEIVERS))) $(addsuffix MessagesReplies.h,$(notdir $(MESSAGE_RECEIVERS))) MessageNames.h MessageNames.cpp: $(addsuffix .messages.in,$(MESSAGE_RECEIVERS)) $(SCRIPTS)
-	@python $(WebKit2)/Scripts/generate-message-receiver.py $(WebKit2) $(MESSAGE_RECEIVERS)
+$(MESSAGE_RECEIVER_PATTERNS) $(MESSAGES_PATTERNS) $(MESSAGE_REPLIES_PATTERNS) MessageNames%h MessageNames%cpp : $(MESSAGES_IN_FILES) $(SCRIPTS)
+	python $(WebKit2)/Scripts/generate-message-receiver.py $(WebKit2) $(MESSAGE_RECEIVERS)
 
 TEXT_PREPROCESSOR_FLAGS=-E -P -w
 

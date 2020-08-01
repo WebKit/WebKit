@@ -1,3 +1,28 @@
+2020-08-01  Keith Rollin  <krollin@apple.com>
+
+        Prevent multiple invocations of generate-message-receiver.py
+        https://bugs.webkit.org/show_bug.cgi?id=215054
+
+        Reviewed by Darin Adler.
+
+        WebKit/DerivedSources.make is written such that
+        generate-message-receiver.py can be invoked N times, where N is the
+        value passed to -j. This results in the N invocations of
+        generate-message-receiver.py trying trying to generate the same set of
+        files at the same time, possibly leading to their being corrupted. We
+        have reports of generated files starting with a 4K block of NULs, and
+        this contention may be causing it. Address this by using a "pattern
+        rule" in the makefile, which is documented in GNU make's documentation
+        as the approach to take when there is one build rule that creates
+        multiple outputs, as is the case here.
+
+        See also <https://bugs.webkit.org/show_bug.cgi?id=166814> and
+        <http://trac.webkit.org/changeset/210507>.
+
+        No new tests -- no new or changed functionality.
+
+        * DerivedSources.make:
+
 2020-08-01  Darin Adler  <darin@apple.com>
 
         Remove Range::create and many more uses of live ranges
