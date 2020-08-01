@@ -107,6 +107,7 @@
 #import <WebCore/MediaSessionManagerIOS.h>
 #import <WebCore/Node.h>
 #import <WebCore/NodeList.h>
+#import <WebCore/NodeRenderStyle.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>
@@ -1493,14 +1494,27 @@ static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, co
 
     auto pointInDocument = frame.view()->rootViewToContents(pointInRootViewCoordinates);
 
-    if (baseIsStart) {
-        int startY = selectionStart.absoluteCaretBounds().center().y();
-        if (pointInDocument.y() < startY)
-            pointInDocument.setY(startY);
+    auto node = selectionStart.deepEquivalent().containerNode();
+    if (node && node->renderStyle() && node->renderStyle()->isVerticalWritingMode()) {
+        if (baseIsStart) {
+            int startX = selectionStart.absoluteCaretBounds().center().x();
+            if (pointInDocument.x() > startX)
+                pointInDocument.setX(startX);
+        } else {
+            int endX = selectionEnd.absoluteCaretBounds().center().x();
+            if (pointInDocument.x() < endX)
+                pointInDocument.setX(endX);
+        }
     } else {
-        int endY = selectionEnd.absoluteCaretBounds().center().y();
-        if (pointInDocument.y() > endY)
-            pointInDocument.setY(endY);
+        if (baseIsStart) {
+            int startY = selectionStart.absoluteCaretBounds().center().y();
+            if (pointInDocument.y() < startY)
+                pointInDocument.setY(startY);
+        } else {
+            int endY = selectionEnd.absoluteCaretBounds().center().y();
+            if (pointInDocument.y() > endY)
+                pointInDocument.setY(endY);
+        }
     }
     
     VisiblePosition result;

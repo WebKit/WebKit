@@ -1,3 +1,22 @@
+2020-08-01  Megan Gardner  <megan_gardner@apple.com>
+
+        Unable to select multiple lines of vertical text correctly
+        https://bugs.webkit.org/show_bug.cgi?id=213671
+        <rdar://problem/53753636>
+
+        Reviewed by Darin Adler.
+
+        In order to make for a better text selection experience, we pulled the selection position 
+        down to be on the last line selectable, rather than snap the selection to a single position.
+        This made for a better selection experience on small text, but we failed to take
+        vertical text into account, and a user is locked into only selecting vertical text that ends below the
+        other anchor point of the selection. We should have the same behavior for vertical text, but correctly 
+        calculated for X instead of Y.
+        This does not fix all cases, but it fixes the most glaring cases.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeForPointInRootViewCoordinates):
+
 2020-07-31  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add Experimental Feature preference for SW VP9
