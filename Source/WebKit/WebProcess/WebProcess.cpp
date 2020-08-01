@@ -1967,15 +1967,6 @@ void WebProcess::enableVP9Decoder()
 #endif
 }
 
-void WebProcess::enableVP9SWDecoder()
-{
-    if (m_vp9SWDecoderEnabled)
-        return;
-
-    m_vp9SWDecoderEnabled = true;
-    LibWebRTCProvider::registerWebKitVP9Decoder();
-}
-
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID

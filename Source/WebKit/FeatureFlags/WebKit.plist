@@ -52,11 +52,6 @@
         <key>Enabled</key>
         <true/>
     </dict>
-    <key>sw_vp9_decoder_on_battery</key>
-    <dict>
-        <key>Enabled</key>
-        <false/>
-    </dict>
     <key>webm_parser</key>
     <dict>
         <key>Enabled</key>

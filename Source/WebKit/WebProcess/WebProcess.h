@@ -333,7 +333,6 @@ public:
 #endif
 
     void enableVP9Decoder();
-    void enableVP9SWDecoder();
 
 private:
     WebProcess();
@@ -651,7 +650,6 @@ private:
 
     bool m_useGPUProcessForMedia { false };
     bool m_vp9DecoderEnabled { false };
-    bool m_vp9SWDecoderEnabled { false };
 };
 
 } // namespace WebKit
