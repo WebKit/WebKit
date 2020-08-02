@@ -1,3 +1,14 @@
+2020-08-01  Darin Adler  <darin@apple.com>
+
+        Remove test expectation for a WPT test that was removed
+        https://bugs.webkit.org/show_bug.cgi?id=215066
+        rdar://42904780
+
+        Reviewed by Sam Weinig.
+
+        * platform/mac-wk1/TestExpectations: Removed failure expectation for
+        a WPT WebCryptoAPI test that no longer exists.
+
 2020-07-31  Alex Christensen  <achristensen@webkit.org>
 
         Use more inclusive terminology in Tools
