@@ -55,7 +55,6 @@ public:
     void overrideInitiatorName(const String& name) { m_initiator = name; }
 
 private:
-    ResourceTiming(CachedResource&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const SecurityOrigin&);
     ResourceTiming(const URL&, const String& initiator, const LoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
     ResourceTiming(const URL&, const String& initiator, const LoadTiming&, const ResourceResponse&, const SecurityOrigin&);
     ResourceTiming(URL&& url, String&& initiator, LoadTiming&& loadTiming, NetworkLoadMetrics&& networkLoadMetrics, bool allowTimingDetails, Vector<ServerTiming>&& serverTiming)

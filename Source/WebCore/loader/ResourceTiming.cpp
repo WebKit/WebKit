@@ -64,7 +64,7 @@ ResourceTiming ResourceTiming::fromCache(const URL& url, const String& initiator
 
 ResourceTiming ResourceTiming::fromLoad(CachedResource& resource, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
 {
-    return ResourceTiming(resource, initiator, loadTiming, networkLoadMetrics, securityOrigin);
+    return ResourceTiming(resource.resourceRequest().url(), initiator, loadTiming, networkLoadMetrics, resource.response(), securityOrigin);
 }
 
 ResourceTiming ResourceTiming::fromSynchronousLoad(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
@@ -79,16 +79,6 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const Lo
     , m_allowTimingDetails(passesTimingAllowCheck(response, securityOrigin))
 {
     initServerTiming(response);
-}
-
-ResourceTiming::ResourceTiming(CachedResource& resource, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const SecurityOrigin& securityOrigin)
-    : m_url(resource.resourceRequest().url())
-    , m_initiator(initiator)
-    , m_loadTiming(loadTiming)
-    , m_networkLoadMetrics(networkLoadMetrics)
-    , m_allowTimingDetails(passesTimingAllowCheck(resource.response(), securityOrigin))
-{
-    initServerTiming(resource.response());
 }
 
 ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& securityOrigin)

@@ -1,3 +1,17 @@
+2020-08-01  Rob Buis  <rbuis@igalia.com>
+
+        Remove superfluous ResourceTiming constructor overload
+        https://bugs.webkit.org/show_bug.cgi?id=215063
+
+        Reviewed by Sam Weinig.
+
+        Remove superfluous ResourceTiming constructor overload, we
+        can just call another overload from ResourceTiming::fromLoad.
+
+        * loader/ResourceTiming.cpp:
+        (WebCore::ResourceTiming::fromLoad):
+        * loader/ResourceTiming.h:
+
 2020-08-01  Brady Eidson  <beidson@apple.com>
 
         Special HID mapping for the Logitech F310/F710 controllers.
