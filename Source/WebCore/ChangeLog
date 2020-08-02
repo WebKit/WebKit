@@ -1,3 +1,20 @@
+2020-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Table data is incorrectly translated in some articles on en.wikipedia.org
+        https://bugs.webkit.org/show_bug.cgi?id=215071
+        <rdar://problem/66354013>
+
+        Reviewed by Darin Adler.
+
+        Text in table cells sometimes end up in adjacent cells after translation, since adjacent cells are currently
+        extracted as different tokens in a single item; mitigate this by splitting text in table cells into different
+        text manipulation items instead.
+
+        Test: TextManipulation.StartTextManipulationExtractsTableCellsAsSeparateItems
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::isEnclosingItemBoundaryElement):
+
 2020-08-01  Rob Buis  <rbuis@igalia.com>
 
         Remove superfluous ResourceTiming constructor overload

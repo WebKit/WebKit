@@ -1146,6 +1146,47 @@ TEST(TextManipulation, StartTextManipulationIgnoresSpaces)
     EXPECT_WK_STREQ("World", items[1].tokens[0].content);
 }
 
+TEST(TextManipulation, StartTextManipulationExtractsTableCellsAsSeparateItems)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "  <style>"
+        "    td { border: solid 1px tomato; }"
+        "  </style>"
+        "</head>"
+        "<body>"
+        "  <table>"
+        "    <tbody>"
+        "      <tr>"
+        "        <td>Foo</td>"
+        "        <td>Bar</td>"
+        "        <td>Baz</td>"
+        "      </tr>"
+        "    </tbody>"
+        "  </table>"
+        "</body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto items = [delegate items];
+    EXPECT_EQ(items.count, 3UL);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("Foo", items[0].tokens[0].content);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("Bar", items[1].tokens[0].content);
+    EXPECT_EQ(items[2].tokens.count, 1UL);
+    EXPECT_WK_STREQ("Baz", items[2].tokens[0].content);
+}
+
 struct Token {
     NSString *identifier;
     NSString *content;

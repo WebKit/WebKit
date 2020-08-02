@@ -1,3 +1,16 @@
+2020-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Table data is incorrectly translated in some articles on en.wikipedia.org
+        https://bugs.webkit.org/show_bug.cgi?id=215071
+        <rdar://problem/66354013>
+
+        Reviewed by Darin Adler.
+
+        Add a new API test to exercise the change.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-08-02  Darin Adler  <darin@apple.com>
 
         Write a script to find duplicate files and delete some duplicate tests in LayoutTests
