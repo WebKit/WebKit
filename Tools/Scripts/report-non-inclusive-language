@@ -53,7 +53,7 @@ for term in nonInclusiveTerms:
     term.append(0)
 
 root = os.getcwd()
-for subroot, directories, files in os.walk(os.getcwd()):
+for subroot, directories, files in os.walk(root):
     prefix = subroot[len(root) + 1:]
     for file in files:
         if file.startswith("ChangeLog"):

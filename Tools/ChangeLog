@@ -1,3 +1,15 @@
+2020-08-02  Darin Adler  <darin@apple.com>
+
+        Write a script to find duplicate files and delete some duplicate tests in LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=215073
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/find-duplicate-files: Added. Basic script that uses MD5 digests
+        to find duplicate files.
+
+        * Scripts/report-non-inclusive-language: Tweaked a tiny bit; use a variable.
+
 2020-08-01  Brady Eidson  <beidson@apple.com>
 
         Special HID mapping for the Logitech F310/F710 controllers.

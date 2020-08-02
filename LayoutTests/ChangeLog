@@ -1,3 +1,111 @@
+2020-08-02  Darin Adler  <darin@apple.com>
+
+        Write a script to find duplicate files and delete some duplicate tests in LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=215073
+
+        Reviewed by Anders Carlsson.
+
+        * TestExpectations: Removed expectations for removed tests.
+
+        * css2.1/20110323/abspos-containing-block-initial-004d.htm.1: Removed.
+        The above was just a stray copy of a test with the wrong extension, so ignored.
+
+        * css3/font-variant-petite-caps-synthesis-coverage-expected.html: Removed.
+        * css3/font-variant-petite-caps-synthesis-coverage.html: Removed.
+        * css3/font-variant-small-caps-synthesis-coverage-expected.html: Removed.
+        * css3/font-variant-small-caps-synthesis-coverage.html: Removed.
+        These are duplicates of the same tests without the suffix "coverage".
+
+        * fast/dom/Document/document-close-iframe-load-expected.txt: Removed.
+        * fast/dom/Document/document-close-iframe-load.html: Removed.
+        * fast/dom/Document/document-close-nested-iframe-load-expected.txt: Removed.
+        * fast/dom/Document/document-close-nested-iframe-load.html: Removed.
+        These tests are also in the directory "fast/parser". Chose to delete this copy.
+
+        * fast/forms/label/labels-set-htmlFor-attribute-expected.txt: Removed.
+        * fast/forms/label/labels-set-htmlFor-attribute.html: Removed.
+        This test also exists under the name "labels-change-...".
+
+        * fast/loader/unload-form-about-blank-expected.txt: Removed.
+        * fast/loader/unload-form-about-blank.html: Removed.
+        This test also exists under the name "unload-form-post-about-blank...".
+
+        * fast/ruby/before-table-doesnt-crash-expected.txt: Removed.
+        * fast/ruby/before-table-doesnt-crash.html: Removed.
+        This is just a copy of the test "before-block-...", not a separate test.
+
+        * http/tests/misc/submit-post-in-utf16be.html:
+        Used the iconv tool to turn this into a UTF-16BE input file so it tests
+        what it is intended to test. Before this was a UTF-16LE file.
+
+        * imported/blink/001-a-expected.html: Removed.
+        * imported/blink/001-a.html: Removed.
+        * imported/blink/001-q-expected.html: Removed.
+        * imported/blink/001-q.html: Removed.
+        * imported/blink/001-s-expected.html: Removed.
+        * imported/blink/001-s.html: Removed.
+        These are identical duplicates of tests that are in WPT.
+
+        * imported/blink/animations/animation-events-prefixed-04-expected.txt: Removed.
+        * imported/blink/animations/animation-events-prefixed-04.html: Removed.
+        * imported/blink/animations/animation-events-unprefixed-04-expected.txt: Removed.
+        * imported/blink/animations/animation-events-unprefixed-04.html: Removed.
+        These are duplicates of tests in the directory imported/blink/virtual/stable/animations-unprefixed.
+
+        * imported/blink/css3/flexbox/relpos-with-scrollable-with-abspos-crash-expected.txt: Removed.
+        * imported/blink/css3/flexbox/relpos-with-scrollable-with-abspos-crash.html: Removed.
+        * imported/blink/fast/css-grid-layout/grid-item-before-anonymous-child-crash-expected.txt: Removed.
+        * imported/blink/fast/css-grid-layout/grid-item-before-anonymous-child-crash.html: Removed.
+        * imported/blink/fast/css-grid-layout/grid-item-paddings-and-writing-modes-expected.html: Removed.
+        * imported/blink/fast/css-grid-layout/grid-item-paddings-and-writing-modes.html: Removed.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-script-not-ran-expected.txt: Removed.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-script-not-ran.html: Removed.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-script-unmark-already-started-expected.txt: Removed.
+        * imported/blink/fast/dom/Range/create-contextual-fragment-script-unmark-already-started.html: Removed.
+        * imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-archive-codebase-expected.txt: Removed.
+        * imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-archive-codebase.html: Removed.
+        * imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-archive-expected.txt: Removed.
+        * imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-archive.html: Removed.
+        * imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase-expected.txt: Removed.
+        * imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase.html: Removed.
+        * imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code-expected.txt: Removed.
+        * imported/blink/http/tests/security/contentSecurityPolicy/object-src-applet-code.html: Removed.
+        These are identical duplicates of tests in the same named directories outside "imported/blink".
+        Maybe imported by Blink from WebKit and then back?
+
+        * imported/blink/img_border_percent-expected.xhtml: Removed.
+        * imported/blink/img_border_percent.xhtml: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/bindings/the-textarea-element-0/cols-default-expected.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/bindings/the-textarea-element-0/cols-default.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/bindings/the-textarea-element-0/cols-zero-expected.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/bindings/the-textarea-element-0/cols-zero.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/bindings/the-textarea-element-0/rows-default-expected.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/bindings/the-textarea-element-0/rows-default.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/bindings/the-textarea-element-0/rows-zero-expected.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/bindings/the-textarea-element-0/rows-zero.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/figure-expected.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/non-replaced-elements/flow-content-0/figure.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/non-replaced-elements/tables/table-layout-expected.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/non-replaced-elements/tables/table-layout.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width-150percent-expected.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/non-replaced-elements/tables/table-width-150percent.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/replaced-elements/images/space-expected.html: Removed.
+        * imported/blink/imported/web-platform-tests/html/rendering/replaced-elements/images/space.html: Removed.
+        * imported/blink/object_border_perc-expected.xhtml: Removed.
+        * imported/blink/object_border_perc.xhtml: Removed.
+        * imported/blink/object_border_pixel-expected.xhtml: Removed.
+        * imported/blink/object_border_pixel.xhtml: Removed.
+        These are identical duplicates of tests that are in WPT.
+
+        * platform/gtk/TestExpectations: Removed expectations for removed tests.
+        * platform/ios/TestExpectations: Ditto.
+        * platform/win/TestExpectations: Ditto.
+        * platform/wpe/TestExpectations: Ditto.
+
+        * svg/dom/SVGLengthList-removeItem-expected.txt: Removed.
+        * svg/dom/SVGLengthList-removeItem.xhtml: Removed.
+        This was a duplicate of the SVGLengthList-addItem test.
+
 2020-08-01  Darin Adler  <darin@apple.com>
 
         Remove test expectation for a WPT test that was removed
