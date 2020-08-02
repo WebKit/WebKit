@@ -27,6 +27,7 @@
 #include "SigillCrashAnalyzer.h"
 
 #include "CodeBlock.h"
+#include "ExecutableAllocator.h"
 #include "MachineContext.h"
 #include "VMInspector.h"
 #include <mutex>
