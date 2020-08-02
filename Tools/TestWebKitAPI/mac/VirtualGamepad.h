@@ -41,6 +41,7 @@ namespace TestWebKitAPI {
 
 enum class HIDVendorID : uint16_t {
     Google = 0x18d1,
+    Logitech = 0x046d,
     Microsoft = 0x045e,
     ShenzhenLongshengweiTechnology = 0x0079,
     Sony = 0x054c,
@@ -56,6 +57,8 @@ enum class HIDProductID : uint16_t {
     Dualshock3 = 0x0268,
     Dualshock4_1 = 0x05c4,
     Dualshock4_2 = 0x09cc,
+    F310 = 0xc216,
+    F710 = 0xc219,
     Gamepad = 0x0011,
     GenericNES = 0xd015,
     Nimbus = 0x1420,
@@ -84,6 +87,8 @@ class VirtualGamepad {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static GamepadMapping googleStadiaMapping();
+    static GamepadMapping logitechF310Mapping();
+    static GamepadMapping logitechF710Mapping();
     static GamepadMapping microsoftXboxOneMapping();
     static GamepadMapping shenzhenLongshengweiTechnologyGamepadMapping();
     static GamepadMapping sonyDualshock3Mapping();

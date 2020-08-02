@@ -23,38 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "HIDElement.h"
+#pragma once
 
-#if PLATFORM(MAC)
+#if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
-#include "Logging.h"
-#include <IOKit/hid/IOHIDElement.h>
-#include <IOKit/hid/IOHIDValue.h>
+#include "HIDGamepad.h"
 
 namespace WebCore {
 
-HIDElement::HIDElement(IOHIDElementRef element)
-    : m_physicalMin(IOHIDElementGetPhysicalMin(element))
-    , m_physicalMax(IOHIDElementGetPhysicalMax(element))
-    , m_physicalValue(m_physicalMin)
-    , m_usage(IOHIDElementGetUsage(element))
-    , m_usagePage(IOHIDElementGetUsagePage(element))
-    , m_cookie(IOHIDElementGetCookie(element))
-    , m_rawElement(element)
-{
-}
-
-void HIDElement::valueChanged(IOHIDValueRef value)
-{
-    if (IOHIDValueGetElement(value) != m_rawElement.get()) {
-        LOG(HID, "HIDElement: Changed value whose IOHIDElement %p doesn't match %p", IOHIDValueGetElement(value), m_rawElement.get());
-        return;
-    }
-
-    m_physicalValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypePhysical);
-}
+class LogitechGamepad final : public HIDGamepad {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    LogitechGamepad(HIDDevice&&, unsigned index);
+};
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(GAMEPAD) && PLATFORM(MAC)

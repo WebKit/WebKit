@@ -1406,6 +1406,7 @@
 		510A91FD24D3C16200BFD89C /* GamepadConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 51715FE924CD05DD002C97E6 /* GamepadConstants.h */; };
 		510A91FE24D3C16700BFD89C /* GamepadConstantsMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91FB24D3C0FD00BFD89C /* GamepadConstantsMac.h */; };
 		510A921224D5E60E00BFD89C /* StadiaHIDGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A921124D5E21700BFD89C /* StadiaHIDGamepad.h */; };
+		510A920824D4F49900BFD89C /* LogitechGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A920524D4F07A00BFD89C /* LogitechGamepad.h */; };
 		510D4A34103165EE0049EA54 /* SocketStreamError.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A2E103165EE0049EA54 /* SocketStreamError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A37103165EE0049EA54 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A31103165EE0049EA54 /* SocketStreamHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8239,6 +8240,8 @@
 		510A91FB24D3C0FD00BFD89C /* GamepadConstantsMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadConstantsMac.h; sourceTree = "<group>"; };
 		510A920F24D5E21700BFD89C /* StadiaHIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StadiaHIDGamepad.cpp; sourceTree = "<group>"; };
 		510A921124D5E21700BFD89C /* StadiaHIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StadiaHIDGamepad.h; sourceTree = "<group>"; };
+		510A920524D4F07A00BFD89C /* LogitechGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogitechGamepad.h; sourceTree = "<group>"; };
+		510A920724D4F07A00BFD89C /* LogitechGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogitechGamepad.cpp; sourceTree = "<group>"; };
 		510D4A2E103165EE0049EA54 /* SocketStreamError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamError.h; sourceTree = "<group>"; };
 		510D4A30103165EE0049EA54 /* SocketStreamHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandle.cpp; sourceTree = "<group>"; };
 		510D4A31103165EE0049EA54 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandle.h; sourceTree = "<group>"; };
@@ -19702,6 +19705,8 @@
 				510A91D624CE8EDE00BFD89C /* HIDGamepadElement.h */,
 				515BE19A1D54F6BD00DD7C68 /* HIDGamepadProvider.h */,
 				515BE1991D54F6BD00DD7C68 /* HIDGamepadProvider.mm */,
+				510A920724D4F07A00BFD89C /* LogitechGamepad.cpp */,
+				510A920524D4F07A00BFD89C /* LogitechGamepad.h */,
 				517E03F424B6B9630054895A /* MultiGamepadProvider.h */,
 				517E03F524B6B9640054895A /* MultiGamepadProvider.mm */,
 				510A920F24D5E21700BFD89C /* StadiaHIDGamepad.cpp */,
@@ -32417,6 +32422,7 @@
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
 				9BA273F4172206BB0097CE47 /* LogicalSelectionOffsetCaches.h in Headers */,
 				0FDCD7F31D47E655009F08BC /* LogInitialization.h in Headers */,
+				510A920824D4F49900BFD89C /* LogitechGamepad.h in Headers */,
 				93A806171E03B51C008A1F26 /* LongRange.h in Headers */,
 				46EFAF121E5FB9F100E7F34B /* LowPowerModeNotifier.h in Headers */,
 				7AE6C93C1BE0C60100E19E03 /* MainThreadSharedTimer.h in Headers */,

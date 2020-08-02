@@ -262,6 +262,7 @@ platform/gamepad/mac/GenericHIDGamepad.cpp
 platform/gamepad/mac/HIDGamepad.cpp
 platform/gamepad/mac/HIDGamepadElement.cpp
 platform/gamepad/mac/HIDGamepadProvider.mm
+platform/gamepad/mac/LogitechGamepad.cpp
 platform/gamepad/mac/MultiGamepadProvider.mm
 platform/gamepad/mac/StadiaHIDGamepad.cpp
 platform/graphics/MediaPlaybackTargetPicker.cpp

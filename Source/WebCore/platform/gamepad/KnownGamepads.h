@@ -35,6 +35,8 @@ enum KnownGamepad {
     Dualshock4_2 = 0x054c09cc,
     GamesirM2 = 0x0ec20475,
     HoripadUltimate = 0x0f0d0090,
+    LogitechF310 = 0x046dc216,
+    LogitechF710 = 0x046dc219,
     Nimbus1 = 0x01111420,
     Nimbus2 = 0x10381420,
     StadiaA = 0x18d19400,

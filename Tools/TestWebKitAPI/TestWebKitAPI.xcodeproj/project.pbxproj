@@ -278,6 +278,8 @@
 		510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510477751D298E03009747EB /* IDBDeleteRecovery.mm */; };
 		510A91F824D3622100BFD89C /* SonyDualShock3.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A91F724D3621900BFD89C /* SonyDualShock3.mm */; };
 		510A921424D615B400BFD89C /* GoogleStadia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A921324D60A3E00BFD89C /* GoogleStadia.mm */; };
+		510A920A24D5048900BFD89C /* LogitechF310.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A920924D5048300BFD89C /* LogitechF310.mm */; };
+		510A920C24D5275500BFD89C /* LogitechF710.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A920B24D5275100BFD89C /* LogitechF710.mm */; };
 		5110FCF11E01CD64006F8D0B /* IDBIndexUpgradeToV2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */; };
 		5110FCF61E01CD83006F8D0B /* IndexUpgrade.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF31E01CD77006F8D0B /* IndexUpgrade.sqlite3 */; };
 		5110FCF91E01CD8A006F8D0B /* IndexUpgrade.blob in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF21E01CD77006F8D0B /* IndexUpgrade.blob */; };
@@ -1975,6 +1977,8 @@
 		510477761D298E57009747EB /* IDBDeleteRecovery.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBDeleteRecovery.html; sourceTree = "<group>"; };
 		510A91F724D3621900BFD89C /* SonyDualShock3.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SonyDualShock3.mm; sourceTree = "<group>"; };
 		510A921324D60A3E00BFD89C /* GoogleStadia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GoogleStadia.mm; sourceTree = "<group>"; };
+		510A920924D5048300BFD89C /* LogitechF310.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogitechF310.mm; sourceTree = "<group>"; };
+		510A920B24D5275100BFD89C /* LogitechF710.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogitechF710.mm; sourceTree = "<group>"; };
 		5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBIndexUpgradeToV2.mm; sourceTree = "<group>"; };
 		5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBIndexUpgradeToV2.html; sourceTree = "<group>"; };
 		5110FCF21E01CD77006F8D0B /* IndexUpgrade.blob */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IndexUpgrade.blob; sourceTree = "<group>"; };
@@ -3471,6 +3475,8 @@
 			isa = PBXGroup;
 			children = (
 				510A921324D60A3E00BFD89C /* GoogleStadia.mm */,
+				510A920924D5048300BFD89C /* LogitechF310.mm */,
+				510A920B24D5275100BFD89C /* LogitechF710.mm */,
 				51EB126024CA6B5F000CB030 /* MicrosoftXboxOne.mm */,
 				51EB125E24CA6B5F000CB030 /* ShenzhenLongshengweiTechnologyGamepad.mm */,
 				510A91F724D3621900BFD89C /* SonyDualShock3.mm */,
@@ -5184,6 +5190,8 @@
 				7A6A2C701DCCFA8C00C0D085 /* LocalStorageQuirkTest.mm in Sources */,
 				6BF4A683239ED4CD00E2F45B /* LoggedInStatus.cpp in Sources */,
 				076E507F1F4513D6006E9F5A /* Logging.cpp in Sources */,
+				510A920A24D5048900BFD89C /* LogitechF310.mm in Sources */,
+				510A920C24D5275500BFD89C /* LogitechF710.mm in Sources */,
 				CE1866491F72E8F100A0CAB6 /* MarkedText.cpp in Sources */,
 				07CC7DFE2266330900E39181 /* MediaBufferingPolicy.mm in Sources */,
 				CD0370E324A44D9600BA3CAE /* MediaLoading.mm in Sources */,

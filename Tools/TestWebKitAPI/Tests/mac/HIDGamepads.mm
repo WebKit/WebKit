@@ -489,6 +489,84 @@ TEST(Gamepad, Stadia)
     didReceiveMessage = true;
 }
 
+TEST(Gamepad, LogitechBasic)
+{
+    auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[GamepadMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gamepad"];
+
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"gamepad"];
+
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:mainBytes length:strlen(mainBytes)]];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    keyWindowForTesting = [webView window];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"gamepad://host/main.html"]]];
+
+    [[webView window] makeFirstResponder:webView.get()];
+
+    // Resigning/reinstating the key window state triggers the "key window did change" notification that WKWebView currently
+    // needs to convince it to monitor gamepad devices
+    [[webView window] resignKeyWindow];
+    [[webView window] makeKeyWindow];
+
+    // Connect a gamepad and make it visible to the page
+    auto gamepad1 = makeUnique<VirtualGamepad>(VirtualGamepad::logitechF310Mapping());
+    auto gamepad2 = makeUnique<VirtualGamepad>(VirtualGamepad::logitechF710Mapping());
+    while ([webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting] != 2u)
+        Util::sleep(0.01);
+
+    EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], 2u);
+    EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], 0u);
+
+    gamepad1->setButtonValue(0, 1.0);
+    gamepad2->setButtonValue(0, 1.0);
+    gamepad1->publishReport();
+    gamepad2->publishReport();
+
+    // The page messages back once for each controller
+    while (messageHandler.get().messages.size() < 2) {
+        didReceiveMessage = false;
+        Util::run(&didReceiveMessage);
+    }
+
+    EXPECT_EQ(messageHandler.get().messages.size(), 2u);
+    EXPECT_TRUE([messageHandler.get().messages[0] isEqualToString:@"\"46d-c216-Virtual Logitech F310\""]);
+
+    NSSet *expectedGamepadNames = [NSSet setWithArray:@[
+        @"\"46d-c216-Virtual Logitech F310\"",
+        @"\"46d-c219-Virtual Logitech F710\""]];
+
+    for (size_t i = 0; i < 2; ++i)
+        EXPECT_TRUE([expectedGamepadNames containsObject:messageHandler.get().messages[i].get()]);
+
+    bool done = false;
+    auto resultBlock = [&] (id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result[@"gamepadCount"] isEqualToNumber:@(2)]);
+        EXPECT_EQ(((NSArray *)result[@"gamepadButtons"][0]).count, 16u);
+        EXPECT_EQ(((NSArray *)result[@"gamepadButtons"][1]).count, 16u);
+        EXPECT_EQ(((NSArray *)result[@"gamepadAxes"][0]).count, 4u);
+        EXPECT_EQ(((NSArray *)result[@"gamepadAxes"][1]).count, 4u);
+
+        done = true;
+    };
+
+    [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
+
+    Util::run(&done);
+    didReceiveMessage = true;
+}
+
+
 } // namespace TestWebKitAPI
 
 #endif // HAVE(HID_FRAMEWORK) && USE(APPLE_INTERNAL_SDK)
