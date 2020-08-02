@@ -63,6 +63,8 @@ static bool doCertificatesMatch(const CertificateInfo& first, const CertificateI
     return first.trust() == second.trust() || certificatesMatch(first.trust(), second.trust());
 #else
     // FIXME: Add support for certificate matching in CertificateInfo.
+    UNUSED_PARAM(first);
+    UNUSED_PARAM(second);
     return true;
 #endif
 }

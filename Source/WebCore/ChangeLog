@@ -1,3 +1,13 @@
+2020-08-01  Joonghun Park  <jh718.park@samsung.com>
+
+        Unreviewed. Remove the build warnings below since r265150.
+        warning: unused parameter ‘foo’ [-Wunused-parameter]
+
+        No new tests, no new behaviors.
+
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::doCertificatesMatch):
+
 2020-08-01  Brady Eidson  <beidson@apple.com>
 
         Special HID mapping for the Google Stadia controller
