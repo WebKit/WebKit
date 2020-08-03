@@ -1,3 +1,12 @@
+2020-08-03  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC][MIPS] Test gardening July 31st edition
+        https://bugs.webkit.org/show_bug.cgi?id=215023
+
+        Unreviewed Gardening.
+
+        * stress/typedarray-access-neutered.js:
+
 2020-07-30  Saam Barati  <sbarati@apple.com>
 
         Skip stress/operand-should-fit-in-abstract-heap-encoded-payload-format.js
