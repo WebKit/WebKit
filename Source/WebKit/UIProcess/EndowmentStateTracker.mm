@@ -75,8 +75,8 @@ static NSSet<NSString *> *endowmentsForHandle(RBSProcessHandle *processHandle)
 inline auto EndowmentStateTracker::stateFromEndowments(NSSet *endowments) -> State
 {
     return State {
-        [endowments containsObject:userfacingEndowment],
-        [endowments containsObject:visibilityEndowment]
+        !![endowments containsObject:userfacingEndowment],
+        !![endowments containsObject:visibilityEndowment]
     };
 }
 

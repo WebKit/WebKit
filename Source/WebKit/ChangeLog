@@ -1,3 +1,10 @@
+2020-08-03  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the macCatalyst build
+
+        * UIProcess/EndowmentStateTracker.mm:
+        (WebKit::EndowmentStateTracker::stateFromEndowments):
+
 2020-08-03  Per Arne Vollan  <pvollan@apple.com>
 
         Finalize the list of MobileGestalt queries needed to populate the in-memory cache in the WebContent process
