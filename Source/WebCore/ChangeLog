@@ -1,3 +1,17 @@
+2020-08-03  Rob Buis  <rbuis@igalia.com>
+
+        Remove unused API in HighlightMap
+        https://bugs.webkit.org/show_bug.cgi?id=215078
+
+        Reviewed by Sam Weinig.
+
+        Remove unused API in HighlightMap, this is probably not needed
+        anymore since the maplike code changed at some point.
+
+        * Modules/highlight/HighlightMap.cpp:
+        (WebCore::HighlightMap::getGroupForKey): Deleted.
+        * Modules/highlight/HighlightMap.h:
+
 2020-08-03  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Assert when restoring lost context

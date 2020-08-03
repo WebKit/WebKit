@@ -53,9 +53,4 @@ bool HighlightMap::remove(const String& key)
     return m_map.remove(key);
 }
 
-RefPtr<HighlightRangeGroup> HighlightMap::getGroupForKey(const String& key)
-{
-    return m_map.get(key);
-}
-
 }

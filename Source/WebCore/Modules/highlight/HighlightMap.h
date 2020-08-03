@@ -44,7 +44,6 @@ public:
     void clear();
     bool remove(const String&);
     
-    RefPtr<HighlightRangeGroup> getGroupForKey(const String& key);
     const HashMap<String, Ref<HighlightRangeGroup>>& map() const { return m_map; }
     
 private:
