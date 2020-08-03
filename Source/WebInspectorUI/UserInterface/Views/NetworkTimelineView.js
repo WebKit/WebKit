@@ -102,6 +102,10 @@ WI.NetworkTimelineView = class NetworkTimelineView extends WI.TimelineView
         columns.duration.width = "9%";
         columns.duration.aligned = "right";
 
+        columns.initiator.title = WI.UIString("Initiator");
+        columns.initiator.width = "9%";
+        columns.initiator.hidden = true;
+
         for (let column in columns)
             columns[column].sortable = true;
 
