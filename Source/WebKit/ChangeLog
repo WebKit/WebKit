@@ -1,3 +1,16 @@
+2020-08-03  Alex Christensen  <achristensen@webkit.org>
+
+        Null check parentProcessConnection when creating a NetworkDataTaskCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=215109
+        <rdar://problem/64853922>
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        Null check parentProcessConnection.  Otherwise, we can dereference null and crash between disconnecting with the parent process and terminating,
+        which isn't the worst time to crash because we are trying to terminate anyways.  But we may as well not crash.
+
 2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove the ENABLE_DATA_INTERACTION feature flag
