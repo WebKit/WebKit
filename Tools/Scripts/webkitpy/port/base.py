@@ -153,6 +153,9 @@ class Port(object):
     def supports_per_test_timeout(self):
         return True
 
+    def supports_layout_tests(self):
+        return True
+
     def default_pixel_tests(self):
         # FIXME: Disable until they are run by default on build.webkit.org.
         return False

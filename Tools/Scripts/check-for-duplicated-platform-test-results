@@ -18,9 +18,14 @@
 # Boston, MA 02110-1301, USA.
 
 import hashlib
+import logging
 import optparse
 import os
+import sys
 from webkitpy.common.host import Host
+from webkitpy.common.system.logutils import configure_logging
+
+_log = logging.getLogger(__name__)
 
 host = Host()
 host.initialize_scm()
@@ -28,11 +33,21 @@ checkout_root = host.scm().checkout_root
 layout_tests_directory = os.path.join(checkout_root, 'LayoutTests')
 platform_directory = os.path.join(layout_tests_directory, 'platform')
 
+IGNORED_FILE_NAMES = {
+    'TestExpectations',
+    '.DS_Store'
+}
+
+
+def remove_layout_test_path_prefix(full_path):
+    return os.path.relpath(full_path, layout_tests_directory)
 
 def check_duplicate(platform, baseline_search_path, platform_test_result):
     def sha1(path):
         with file(path, 'rb') as f:
             return hashlib.sha1(f.read()).hexdigest()
+
+    _log.debug('   Looking for duplicates of {0} in {1}'.format(remove_layout_test_path_prefix(platform_test_result), str(baseline_search_path)))
 
     prefix_len = len(os.path.join(platform_directory, platform)) + 1
     test_result_filename = platform_test_result[prefix_len:]
@@ -43,20 +58,27 @@ def check_duplicate(platform, baseline_search_path, platform_test_result):
     for baseline_path in baseline_search_path:
         baseline_test_result = os.path.join(baseline_path, test_result_filename)
         if not os.path.isfile(baseline_test_result):
+            _log.debug('    No result at {0}'.format(remove_layout_test_path_prefix(baseline_test_result)))
             continue
+
+        _log.debug('    Comparing with {0}'.format(remove_layout_test_path_prefix(baseline_test_result)))
 
         baseline_found = True
         if platform_test_result_size is None:
             platform_test_result_size = os.path.getsize(platform_test_result)
         baseline_test_result_size = os.path.getsize(baseline_test_result)
         if platform_test_result_size != baseline_test_result_size:
+            _log.debug('    File size is different')
             return False
 
         if platform_test_result_sha1 is None:
             platform_test_result_sha1 = sha1(platform_test_result)
         baseline_test_result_sha1 = sha1(baseline_test_result)
         if platform_test_result_sha1 != baseline_test_result_sha1:
+            _log.debug('    File hash is different')
             return False
+
+        _log.debug('   Duplicate found: {0} and {1}'.format(remove_layout_test_path_prefix(platform_test_result), remove_layout_test_path_prefix(baseline_test_result)))
 
     return baseline_found
 
@@ -68,50 +90,104 @@ def platform_list(platform):
         return [platform]
     return []
 
-
-option_parser = optparse.OptionParser(usage='usage: %prog [options]')
-option_parser.add_option('-p', '--platform',
-                         action='store', dest='platform', default='all',
-                         help='Platform to check for duplicated results. By the default all platform are checked')
-option_parser.add_option('-n', '--no-delete',
-                         action='store_true', dest='no_delete',
-                         help='Do not delete the duplicated results found from the repository, list them instead')
-options, args = option_parser.parse_args()
-
-total = 0
-baseline_search_paths_checked = set()
-for platform in platform_list(options.platform):
-    try:
-        port = host.port_factory.get(platform)
-        baseline_search_path = tuple([p for p in port.baseline_search_path() if os.path.isdir(p)] + [layout_tests_directory])
-    except:
-        continue
-
-    if baseline_search_path in baseline_search_paths_checked:
-        continue
-    baseline_search_paths_checked.add(baseline_search_path)
-
+def find_duplicates_in_path(baseline_search_path):
     duplicates = []
-    for root, dirs, files in os.walk(baseline_search_path[0]):
-        for file_name in files:
-            platform_test_result = os.path.join(root, file_name)
-            if check_duplicate(baseline_search_path[0], baseline_search_path[1:], platform_test_result):
-                duplicates.append(platform_test_result)
+    remaining_paths = baseline_search_path
 
-    if not duplicates:
-        continue
-    if options.no_delete:
-        print "\n".join(duplicates)
+    def find_duplicates():
+        _log.debug(' comparing files in {0} and {1}'.format(remove_layout_test_path_prefix(remaining_paths[0]), remove_layout_test_path_prefix(remaining_paths[1])))
+        for root, dirs, files in os.walk(remaining_paths[0]):
+            for file_name in files:
+                if file_name in IGNORED_FILE_NAMES:
+                    continue
+
+                platform_test_result = os.path.join(root, file_name)
+                if check_duplicate(remaining_paths[0], remaining_paths[1:], platform_test_result):
+                    duplicates.append(platform_test_result)
+
+    while len(remaining_paths) > 1:
+        find_duplicates()
+        remaining_paths = remaining_paths[1:]
+
+    return duplicates
+
+
+def check_platform(options, baseline_search_paths_checked):
+    total = 0
+
+    for platform in platform_list(options.platform):
+        try:
+            _log.debug('Trying to create port for platform {0}'.format(platform))
+            port = host.port_factory.get(platform, options)
+        except:
+            _log.debug('Failed to create port object for {0}'.format(platform))
+            continue
+
+        if not port.supports_layout_tests():
+            continue
+
+        try:
+            baseline_search_path = tuple([p for p in port.baseline_search_path() if os.path.isdir(p)] + [layout_tests_directory])
+        except:
+            _log.warn('Error computing baseline search paths from {0}'.format(port.baseline_search_path()))
+            continue
+
+        _log.info('Checking search paths [{0}]'.format(', '.join(remove_layout_test_path_prefix(p) for p in baseline_search_path[:-1])))
+
+        if baseline_search_path in baseline_search_paths_checked:
+            continue
+
+        baseline_search_paths_checked.add(baseline_search_path)
+
+        duplicates = find_duplicates_in_path(baseline_search_path)
+        if not duplicates:
+            continue
+
+        if options.no_delete:
+            _log.info('Found the following duplicate results:')
+            _log.info('\n'.join(remove_layout_test_path_prefix(p) for p in duplicates))
+        else:
+            host.scm().delete_list(duplicates)
+
+        duplicates_len = len(duplicates)
+        total += duplicates_len
+        _log.info('{0} found in {1} -> generic\n'.format(duplicates_len, ' -> '.join([os.path.basename(p) for p in baseline_search_path[:-1]])))
+    
+    return total
+
+def main():
+    option_parser = optparse.OptionParser(usage='usage: %prog [options]')
+    option_parser.add_option('-p', '--platform',
+                             action='store', dest='platform', default='all',
+                             help='Platform to check for duplicated results. By the default all platform are checked')
+    option_parser.add_option('-n', '--no-delete',
+                             action='store_true', dest='no_delete',
+                             help='Do not delete the duplicated results found from the repository, list them instead')
+    option_parser.add_option('-v', '--verbose', action='store_true', default=False,
+                             help='Enable verbose printing'),
+
+    options, args = option_parser.parse_args()
+
+    configure_logging(logger=_log)
+    _log.setLevel(logging.DEBUG if options.verbose else logging.INFO)
+
+    total = 0
+    baseline_search_paths_checked = set()
+
+    options.webkit_test_runner = False
+    total += check_platform(options, baseline_search_paths_checked)
+
+    options.webkit_test_runner = True
+    total += check_platform(options, baseline_search_paths_checked)
+
+    if total:
+        if options.no_delete:
+            # FIXME: Without deletion the total isn't accurate, because directories which are parents of wk1 and wk2 dirs will be tested twice.
+            _log.info('Found {0} duplicate results.'.format(total))
+        else:
+            _log.info('{0} files have been removed from the repository. Check the status and commit if everything is correct'.format(total))
     else:
-        host.scm().delete_list(duplicates)
+        _log.info('No duplicated results found.')
 
-    duplicates_len = len(duplicates)
-    total += duplicates_len
-    print '%d found in %s -> generic' % (duplicates_len, ' -> '.join([os.path.basename(p) for p in baseline_search_path[:-1]]))
-
-if total:
-    if not options.no_delete:
-        print '%d files have been removed from the repository, check the status and commit if everything is correct' % (total)
-else:
-    print 'No duplicated results found'
-
+if __name__ == '__main__':
+    sys.exit(main())

@@ -82,6 +82,9 @@ class IOSDevicePort(IOSPort):
                 return (stderr, crashlog)
         return (stderr, None)
 
+    def supports_layout_tests(self):
+        return self.DEVICE_MANAGER is not None
+
     @memoized
     def device_version(self):
         if self.get_option('version'):

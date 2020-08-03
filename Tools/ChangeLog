@@ -1,3 +1,39 @@
+2020-08-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Improve the check-for-duplicated-platform-test-results script
+        https://bugs.webkit.org/show_bug.cgi?id=215072
+
+        Reviewed by Darin Adler.
+        
+        check-for-duplicated-platform-test-results had some problems.
+        
+        First, it defaulted to -wk1 results directories, and didn't check -wk2 directories, so
+        run the logic twice, with options.webkit_test_runner True and False.
+        Second, it only looked for results in the most specific fallback directory, so
+        with a fallback path like 'mac-mojave-wk1 -> mac-mojave -> mac-wk1 -> mac -> generic'
+        it would only remove results in mac-mojave-wk1, not in 'mac-mojave'.
+        Also add some logging to the script.
+
+        * Scripts/check-for-duplicated-platform-test-results:
+        (remove_layout_test_path_prefix):
+        (check_duplicate.sha1):
+        (check_duplicate):
+        (platform_list):
+        (find_duplicates_in_path):
+        (find_duplicates_in_path.find_duplicates):
+        (check_platform):
+        (main):
+        * Scripts/webkitpy/port/base.py:
+        (Port.supports_layout_tests): Some ports (iOS and watch device ports) don't support
+        testing with no associated device. Need to fix errors thrown from default_baseline_search_path().
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.supports_layout_tests):
+        * Scripts/webkitpy/port/watch_device.py:
+        (WatchDevicePort.supports_layout_tests):
+        * Scripts/webkitpy/port/win.py: self._os_version is None when run on another platform.
+        (WinPort.default_baseline_search_path):
+        (WinCairoPort._search_paths):
+
 2020-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Table data is incorrectly translated in some articles on en.wikipedia.org

@@ -119,10 +119,11 @@ class WinPort(ApplePort):
     def default_baseline_search_path(self, **kwargs):
         version_name_map = VersionNameMap.map(self.host.platform)
         if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
-            fallback_versions = [self._os_version]
+            fallback_versions = [self._os_version] if self._os_version else []
         else:
             sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
             fallback_versions = sorted_versions[sorted_versions.index(self._os_version):]
+
         fallback_names = ['win-' + version_name_map.to_name(version, platform=self.port_name).lower().replace(' ', '') for version in fallback_versions]
         fallback_names.append('win')
 
@@ -475,7 +476,7 @@ class WinCairoPort(WinPort):
         paths = []
         version_name_map = VersionNameMap.map(self.host.platform)
         if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
-            versions = [self._os_version]
+            versions = [self._os_version] if self._os_version else []
         else:
             sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())
             versions = sorted_versions[sorted_versions.index(self._os_version):]
