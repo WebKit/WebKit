@@ -2478,6 +2478,7 @@
 		837056901F50915C00D93425 /* JSFileSystemEntryCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 837056891F50915000D93425 /* JSFileSystemEntryCallback.h */; };
 		8371AC3B1F509BE400FBF284 /* ErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 8371AC391F509BDD00FBF284 /* ErrorCallback.h */; };
 		8372DB311A6780A800C697C5 /* DiagnosticLoggingResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 8372DB301A6780A800C697C5 /* DiagnosticLoggingResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83745D0224D899D300FBDCC4 /* GainOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83745CFF24D899C200FBDCC4 /* GainOptions.h */; };
 		83765F951DAC522F00C06537 /* MouseEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83765F941DAC521800C06537 /* MouseEventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8379363F1FBBB0B400C8023C /* ServiceWorkerClientData.h in Headers */ = {isa = PBXBuildFile; fileRef = 8379363E1FBBB0A500C8023C /* ServiceWorkerClientData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		837964CF1F8DB69D00218EA0 /* GeolocationPositionDataIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837964CE1F8DB69A00218EA0 /* GeolocationPositionDataIOS.mm */; };
@@ -10528,6 +10529,8 @@
 		8371AC381F509BDD00FBF284 /* FileCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileCallback.idl; sourceTree = "<group>"; };
 		8371AC391F509BDD00FBF284 /* ErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorCallback.h; sourceTree = "<group>"; };
 		8372DB301A6780A800C697C5 /* DiagnosticLoggingResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticLoggingResultType.h; sourceTree = "<group>"; };
+		83745CFF24D899C200FBDCC4 /* GainOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GainOptions.h; sourceTree = "<group>"; };
+		83745D0124D899C200FBDCC4 /* GainOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GainOptions.idl; sourceTree = "<group>"; };
 		837609C81F54CC13000C122D /* ErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorCallback.cpp; sourceTree = "<group>"; };
 		83765F931DAC521800C06537 /* MouseEventInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MouseEventInit.idl; sourceTree = "<group>"; };
 		83765F941DAC521800C06537 /* MouseEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MouseEventInit.h; sourceTree = "<group>"; };
@@ -29581,6 +29584,8 @@
 				FD315FC212B0267500C1A359 /* GainNode.cpp */,
 				FD315FC312B0267500C1A359 /* GainNode.h */,
 				FD315FC412B0267500C1A359 /* GainNode.idl */,
+				83745CFF24D899C200FBDCC4 /* GainOptions.h */,
+				83745D0124D899C200FBDCC4 /* GainOptions.idl */,
 				FD6F252913F5EF0E0065165F /* MediaElementAudioSourceNode.cpp */,
 				FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */,
 				FD6F252B13F5EF0E0065165F /* MediaElementAudioSourceNode.idl */,
@@ -31031,6 +31036,7 @@
 				CD92F5182261038200F87BB3 /* FullscreenManager.h in Headers */,
 				26B999931803B9D900D01121 /* FunctionCall.h in Headers */,
 				FD31600D12B0267600C1A359 /* GainNode.h in Headers */,
+				83745D0224D899D300FBDCC4 /* GainOptions.h in Headers */,
 				51E399001D6E4750009C8831 /* GameControllerGamepad.h in Headers */,
 				51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */,
 				510A91FD24D3C16200BFD89C /* GamepadConstants.h in Headers */,

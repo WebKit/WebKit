@@ -2901,6 +2901,7 @@ JSGPUVertexAttributeDescriptor.cpp
 JSGPUVertexBufferDescriptor.cpp
 JSGPUVertexInputDescriptor.cpp
 JSGainNode.cpp
+JSGainOptions.cpp
 JSGamepad.cpp
 JSGamepadButton.cpp
 JSGamepadEvent.cpp

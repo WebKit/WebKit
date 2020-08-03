@@ -408,6 +408,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/DistanceModelType.idl \
     $(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
     $(WebCore)/Modules/webaudio/GainNode.idl \
+    $(WebCore)/Modules/webaudio/GainOptions.idl \
     $(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
     $(WebCore)/Modules/webaudio/MediaStreamAudioDestinationNode.idl \
     $(WebCore)/Modules/webaudio/MediaStreamAudioSourceNode.idl \

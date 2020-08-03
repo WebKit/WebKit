@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,42 +24,16 @@
 
 #pragma once
 
-#include "AudioNode.h"
-#include "AudioParam.h"
-#include "GainOptions.h"
-#include <wtf/Threading.h>
+#if ENABLE(WEB_AUDIO)
+
+#include "AudioNodeOptions.h"
 
 namespace WebCore {
 
-class AudioContext;
-
-// GainNode is an AudioNode with one input and one output which applies a gain (volume) change to the audio signal.
-// De-zippering (smoothing) is applied when the gain value is changed dynamically.
-
-class GainNode final : public AudioNode {
-    WTF_MAKE_ISO_ALLOCATED(GainNode);
-public:
-    static ExceptionOr<Ref<GainNode>> create(BaseAudioContext& context, const GainOptions& = { });
-
-    // AudioNode
-    void process(size_t framesToProcess) override;
-    void reset() override;
-
-    // Called in the main thread when the number of channels for the input may have changed.
-    void checkNumberOfChannelsForInput(AudioNodeInput*) override;
-
-    // JavaScript interface
-    AudioParam& gain() { return m_gain.get(); }
-
-private:
-    double tailTime() const override { return 0; }
-    double latencyTime() const override { return 0; }
-
-    explicit GainNode(BaseAudioContext&);
-
-    float m_lastGain { 1.0 }; // for de-zippering
-    AudioFloatArray m_sampleAccurateGainValues;
-    Ref<AudioParam> m_gain;
+struct GainOptions : AudioNodeOptions {
+    float gain { 1.0 };
 };
 
-} // namespace WebCore
+}
+
+#endif // ENABLE(WEB_AUDIO)

@@ -556,11 +556,7 @@ ExceptionOr<Ref<GainNode>> BaseAudioContext::createGain()
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
-    return GainNode::create(*this, sampleRate());
+    return GainNode::create(*this);
 }
 
 ExceptionOr<Ref<DelayNode>> BaseAudioContext::createDelay(double maxDelayTime)

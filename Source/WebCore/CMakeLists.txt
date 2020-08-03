@@ -476,6 +476,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/DistanceModelType.idl
     Modules/webaudio/DynamicsCompressorNode.idl
     Modules/webaudio/GainNode.idl
+    Modules/webaudio/GainOptions.idl
     Modules/webaudio/MediaElementAudioSourceNode.idl
     Modules/webaudio/MediaStreamAudioDestinationNode.idl
     Modules/webaudio/MediaStreamAudioSourceNode.idl

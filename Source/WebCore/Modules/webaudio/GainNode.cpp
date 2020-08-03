@@ -37,14 +37,38 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(GainNode);
 
-GainNode::GainNode(BaseAudioContext& context, float sampleRate)
-    : AudioNode(context, sampleRate)
-    , m_lastGain(1.0)
+ExceptionOr<Ref<GainNode>> GainNode::create(BaseAudioContext& context, const GainOptions& options)
+{
+    if (context.isStopped())
+        return Exception { InvalidStateError };
+
+    context.lazyInitialize();
+
+    auto gainNode = adoptRef(*new GainNode(context));
+
+    auto result = gainNode->setChannelCount(options.channelCount.valueOr(2));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = gainNode->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::Max));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = gainNode->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
+    if (result.hasException())
+        return result.releaseException();
+
+    gainNode->gain().setValue(options.gain);
+
+    return gainNode;
+}
+
+GainNode::GainNode(BaseAudioContext& context)
+    : AudioNode(context, context.sampleRate())
     , m_sampleAccurateGainValues(AudioNode::ProcessingSizeInFrames) // FIXME: can probably share temp buffer in context
+    , m_gain(AudioParam::create(context, "gain"_s, 1.0, -FLT_MAX, FLT_MAX))
 {
     setNodeType(NodeTypeGain);
-
-    m_gain = AudioParam::create(context, "gain", 1.0, 0.0, 1.0);
 
     addInput(makeUnique<AudioNodeInput>(this));
     addOutput(makeUnique<AudioNodeOutput>(this, 1));
@@ -66,12 +90,12 @@ void GainNode::process(size_t framesToProcess)
     else {
         AudioBus* inputBus = input(0)->bus();
 
-        if (gain()->hasSampleAccurateValues()) {
+        if (gain().hasSampleAccurateValues()) {
             // Apply sample-accurate gain scaling for precise envelopes, grain windows, etc.
             ASSERT(framesToProcess <= m_sampleAccurateGainValues.size());
             if (framesToProcess <= m_sampleAccurateGainValues.size()) {
                 float* gainValues = m_sampleAccurateGainValues.data();
-                gain()->calculateSampleAccurateValues(gainValues, framesToProcess);
+                gain().calculateSampleAccurateValues(gainValues, framesToProcess);
                 outputBus->copyWithSampleAccurateGainValuesFrom(*inputBus, gainValues, framesToProcess);
             }
         } else {
@@ -81,7 +105,7 @@ void GainNode::process(size_t framesToProcess)
                 // the silence hint.
                 outputBus->zero();
             } else
-                outputBus->copyWithGainFrom(*inputBus, &m_lastGain, gain()->value());
+                outputBus->copyWithGainFrom(*inputBus, &m_lastGain, gain().value());
         }
     }
 }
@@ -89,7 +113,7 @@ void GainNode::process(size_t framesToProcess)
 void GainNode::reset()
 {
     // Snap directly to desired gain.
-    m_lastGain = gain()->value();
+    m_lastGain = gain().value();
 }
 
 // FIXME: this can go away when we do mixing with gain directly in summing junction of AudioNodeInput

@@ -1,5 +1,35 @@
 2020-08-03  Chris Dumez  <cdumez@apple.com>
 
+        Add constructor for GainNode
+        https://bugs.webkit.org/show_bug.cgi?id=215093
+
+        Reviewed by Eric Carlson.
+
+        Add constructor for GainNode as per:
+        - https://www.w3.org/TR/webaudio/#gainnode
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createGain):
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::create):
+        (WebCore::GainNode::GainNode):
+        (WebCore::GainNode::process):
+        (WebCore::GainNode::reset):
+        * Modules/webaudio/GainNode.h:
+        * Modules/webaudio/GainNode.idl:
+        * Modules/webaudio/GainOptions.h: Copied from Source/WebCore/Modules/webaudio/GainNode.idl.
+        * Modules/webaudio/GainOptions.idl: Copied from Source/WebCore/Modules/webaudio/GainNode.idl.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2020-08-03  Chris Dumez  <cdumez@apple.com>
+
         Add constructor to DelayNode
         https://bugs.webkit.org/show_bug.cgi?id=215083
 
