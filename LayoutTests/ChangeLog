@@ -1,3 +1,12 @@
+2020-08-03  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Regression (r265160): http/tests/misc/gamepads-insecure.html fails consistently on windows
+        https://bugs.webkit.org/show_bug.cgi?id=215099
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations: Skip this test on Windows since gamepad isn't supported.
+
 2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r264170): fast/events/touch/ios/long-press-on-image.html times out

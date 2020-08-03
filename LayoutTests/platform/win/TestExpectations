@@ -348,6 +348,7 @@ fast/forms/file/open-file-panel.html [ Skip ]
 
 # ENABLE_GAMEPAD not enabled.
 gamepad/ [ Skip ]
+http/tests/misc/gamepads-insecure.html [ Skip ]
 
 # TODO Userscripts stuff is not implemented
 webkit.org/b/140258 userscripts/ [ Skip ]
