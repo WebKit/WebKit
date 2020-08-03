@@ -284,7 +284,7 @@ private:
     CGRect pendingFixedPositionLayoutRect;
 #endif
     
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
     RetainPtr<WebUITextIndicatorData> textIndicatorData;
     RetainPtr<WebUITextIndicatorData> dataOperationTextIndicator;
     CGRect dragPreviewFrameInRootViewCoordinates;

@@ -198,7 +198,7 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     [[NSPasteboard pasteboardWithName:pasteboardName] _web_declareAndWriteDragImageForElement:kit(&element) URL:url title:title archive:[kit(&element) webArchive] source:getTopHTMLView(frame)];
 }
 
-#elif !ENABLE(DATA_INTERACTION)
+#elif !PLATFORM(IOS_FAMILY) || !ENABLE(DRAG_SUPPORT)
 
 bool WebDragClient::useLegacyDragClient()
 {

@@ -514,10 +514,6 @@
 #define ENABLE_XSLT 1
 #endif
 
-#if !defined(ENABLE_DATA_INTERACTION)
-#define ENABLE_DATA_INTERACTION 0
-#endif
-
 #if !defined(ENABLE_SERVICE_WORKER)
 #define ENABLE_SERVICE_WORKER 1
 #endif

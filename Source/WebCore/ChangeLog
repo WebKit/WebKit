@@ -1,3 +1,27 @@
+2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove the ENABLE_DATA_INTERACTION feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=215091
+
+        Reviewed by Megan Gardner.
+
+        `ENABLE(DATA_INTERACTION)` is an alias for `PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)`. It was used early on
+        when bringing drag and drop support to iPad in order to hide the feature from open source WebKit code, and has
+        not been necessary for several years.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::shouldUseCachedImageForDragImage const):
+        * page/DragController.h:
+        (WebCore::DragController::canLoadDataFromDraggingPasteboard const):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dragCancelled):
+        (WebCore::EventHandler::didStartDrag):
+        * page/FocusController.cpp:
+        (WebCore::shouldClearSelectionWhenChangingFocusedElement):
+        * page/mac/DragControllerMac.mm:
+        * platform/DragImage.cpp:
+        * platform/ios/WebItemProviderPasteboard.mm:
+
 2020-08-03  Chris Dumez  <cdumez@apple.com>
 
         Add constructor for GainNode

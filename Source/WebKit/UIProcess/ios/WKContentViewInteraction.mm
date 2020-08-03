@@ -828,7 +828,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _updateLongPressAndHighlightLongPressGestures];
 #endif
 
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT)
     [self setUpDragAndDropInteractions];
 #endif
 
@@ -1003,7 +1003,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     _layerTreeTransactionIdAtLastInteractionStart = { };
 
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT)
     [existingLocalDragSessionContext(_dragDropInteractionState.dragSession()) cleanUpTemporaryDirectories];
     [self teardownDragAndDropInteractions];
 #endif
@@ -7014,7 +7014,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     if ([uiDelegate respondsToSelector:@selector(_webView:showCustomSheetForElement:)]) {
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate _webView:self.webView showCustomSheetForElement:element]) {
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT)
             BOOL shouldCancelAllTouches = !_dragDropInteractionState.dragSession();
 #else
             BOOL shouldCancelAllTouches = YES;

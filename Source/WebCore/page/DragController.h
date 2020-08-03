@@ -130,7 +130,7 @@ private:
 
     bool canLoadDataFromDraggingPasteboard() const
     {
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY)
         return m_isPerformingDrop;
 #else
         return true;

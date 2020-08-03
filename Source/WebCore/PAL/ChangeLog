@@ -1,3 +1,12 @@
+2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove the ENABLE_DATA_INTERACTION feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=215091
+
+        Reviewed by Megan Gardner.
+
+        * pal/spi/ios/UIKitSPI.h:
+
 2020-08-03  Per Arne Vollan  <pvollan@apple.com>
 
         Finalize the list of MobileGestalt queries needed to populate the in-memory cache in the WebContent process

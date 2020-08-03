@@ -323,7 +323,7 @@ messages -> WebPageProxy {
     DidPerformDragOperation(bool handled)
 #endif
 
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
     DidHandleDragStartRequest(bool started)
     DidHandleAdditionalDragItemsRequest(bool added)
     WillReceiveEditDragSnapshot()

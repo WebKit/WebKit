@@ -43,12 +43,9 @@ WTF_EXTERN_C_END
 #import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIScreen_Private.h>
 #import <UIKit/UIViewController_Private.h>
-
-#if ENABLE(DATA_INTERACTION)
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
 #import <UIKit/NSURL+UIItemProvider.h>
-#endif
 
 @interface UIApplication ()
 + (UIApplicationSceneClassicMode)_classicMode;

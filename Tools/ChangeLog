@@ -1,5 +1,14 @@
 2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Remove the ENABLE_DATA_INTERACTION feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=215091
+
+        Reviewed by Megan Gardner.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
+2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS 14] editing/selection/ios/select-all-non-editable-text-using-keyboard.html sometimes times out
         https://bugs.webkit.org/show_bug.cgi?id=215089
         <rdar://problem/66282806>

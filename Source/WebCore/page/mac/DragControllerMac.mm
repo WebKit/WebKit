@@ -47,7 +47,7 @@
 #import "Range.h"
 #import "RuntimeEnabledFeatures.h"
 
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
@@ -105,7 +105,7 @@ void DragController::cleanupAfterSystemDrag()
 #endif
 }
 
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY)
 
 DragOperation DragController::platformGenericDragOperation()
 {
@@ -146,7 +146,7 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
     platformStrategies()->pasteboardStrategy()->updateSupportedTypeIdentifiers(supportedTypes, dragData.pasteboardName());
 }
 
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 
 void DragController::declareAndWriteDragImage(DataTransfer& dataTransfer, Element& element, const URL& url, const String& label)
 {

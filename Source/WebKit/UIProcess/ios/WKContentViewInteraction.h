@@ -395,7 +395,7 @@ struct WKAutoCorrectionData {
 
     Optional<UChar32> _lastInsertedCharacterToOverrideCharacterBeforeSelection;
 
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT)
     WebKit::DragDropInteractionState _dragDropInteractionState;
     RetainPtr<UIDragInteraction> _dragInteraction;
     RetainPtr<UIDropInteraction> _dropInteraction;
@@ -428,7 +428,7 @@ struct WKAutoCorrectionData {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     , WKShareSheetDelegate
 #endif
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT)
     , UIDragInteractionDelegate, UIDropInteractionDelegate
 #endif
 #if PLATFORM(IOS_FAMILY)
@@ -566,7 +566,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)doAfterPositionInformationUpdate:(void (^)(WebKit::InteractionInformationAtPosition))action forRequest:(WebKit::InteractionInformationRequest)request;
 - (BOOL)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request;
 
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT)
 - (void)_didChangeDragInteractionPolicy;
 - (void)_didPerformDragOperation:(BOOL)handled;
 - (void)_didHandleDragStartRequest:(BOOL)started;

@@ -120,7 +120,7 @@ DragImageRef createDragImageForNode(Frame& frame, Node& node)
     return createDragImageFromSnapshot(snapshotNode(frame, node), &node);
 }
 
-#if !ENABLE(DATA_INTERACTION)
+#if !PLATFORM(IOS_FAMILY) || !ENABLE(DRAG_SUPPORT)
 
 DragImageRef createDragImageForSelection(Frame& frame, TextIndicatorData&, bool forceBlackText)
 {
@@ -213,7 +213,7 @@ DragImageRef createDragImageForImage(Frame& frame, Node& node, IntRect& imageRec
     return createDragImageFromSnapshot(snapshotNode(frame, node), &node);
 }
 
-#if !ENABLE(DATA_INTERACTION)
+#if !PLATFORM(IOS_FAMILY) || !ENABLE(DRAG_SUPPORT)
 DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef image, float deviceScaleFactor)
 {
     // Later code expects the drag image to be scaled by device's scale factor.

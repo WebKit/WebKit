@@ -1248,7 +1248,7 @@ void WebPageProxy::requestDocumentEditingContext(WebKit::DocumentEditingContextR
     sendWithAsyncReply(Messages::WebPage::RequestDocumentEditingContext(request), WTFMove(completionHandler));
 }
 
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT)
 
 void WebPageProxy::didHandleDragStartRequest(bool started)
 {

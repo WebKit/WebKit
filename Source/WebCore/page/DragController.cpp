@@ -95,7 +95,7 @@
 #include "DataDetection.h"
 #endif
 
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY)
 #include "SelectionRect.h"
 #endif
 
@@ -382,7 +382,7 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     return host ? host : element;
 }
 
-#if !ENABLE(DATA_INTERACTION)
+#if !PLATFORM(IOS_FAMILY)
 
 void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod, const DragData&) const
 {
@@ -1522,7 +1522,7 @@ void DragController::placeDragCaret(const IntPoint& windowPoint)
 
 bool DragController::shouldUseCachedImageForDragImage(const Image& image) const
 {
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(image);
     return true;
 #else

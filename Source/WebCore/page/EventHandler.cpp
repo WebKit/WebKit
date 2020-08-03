@@ -3690,7 +3690,7 @@ static void removeDraggedContentDocumentMarkersFromAllFramesInPage(Page& page)
 
 void EventHandler::dragCancelled()
 {
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY)
     if (auto* page = m_frame.page())
         removeDraggedContentDocumentMarkersFromAllFramesInPage(*page);
 #endif
@@ -3698,7 +3698,7 @@ void EventHandler::dragCancelled()
 
 void EventHandler::didStartDrag()
 {
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY)
     auto dragSource = dragState().source;
     if (!dragSource)
         return;

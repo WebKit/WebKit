@@ -915,7 +915,7 @@ void WebPage::requestFocusedElementInformation(WebKit::CallbackID callbackID)
     send(Messages::WebPageProxy::FocusedElementInformationCallback(info, callbackID));
 }
 
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT)
 void WebPage::requestDragStart(const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask)
 {
     SetForScope<OptionSet<WebCore::DragSourceAction>> allowedActionsForScope(m_allowedDragSourceActions, allowedActionsMask);

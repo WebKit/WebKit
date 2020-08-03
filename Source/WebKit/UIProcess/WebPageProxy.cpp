@@ -2486,7 +2486,7 @@ void WebPageProxy::resetCurrentDragInformation()
     setDragCaretRect({ });
 }
 
-#if !ENABLE(DATA_INTERACTION)
+#if !PLATFORM(IOS_FAMILY) || !ENABLE(DRAG_SUPPORT)
 
 void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
 {

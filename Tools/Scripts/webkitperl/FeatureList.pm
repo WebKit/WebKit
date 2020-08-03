@@ -80,7 +80,6 @@ my (
     $cssTypedOMSupport,
     $cursorVisibilitySupport,
     $darkModeCSSSupport,
-    $dataInteractionSupport,
     $datacueValueSupport,
     $datalistElementSupport,
     $deviceOrientationSupport,
@@ -291,9 +290,6 @@ my @features = (
 
     { option => "datalist-element", desc => "Toggle Datalist Element support",
       define => "ENABLE_DATALIST_ELEMENT", value => \$datalistElementSupport },
-
-    { option => "data-interaction", desc => "Toggle data interaction support",
-      define => "ENABLE_DATA_INTERACTION", value => \$dataInteractionSupport },
 
     { option => "device-orientation", desc => "Toggle Device Orientation support",
       define => "ENABLE_DEVICE_ORIENTATION", value => \$deviceOrientationSupport },

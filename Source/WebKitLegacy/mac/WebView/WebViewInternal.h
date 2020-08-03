@@ -109,7 +109,7 @@ WebCore::FindOptions coreOptions(WebFindOptions);
 OptionSet<WebCore::LayoutMilestone> coreLayoutMilestones(WebLayoutMilestones);
 WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
-#if ENABLE(DATA_INTERACTION) && defined(__cplusplus)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT) && defined(__cplusplus)
 @interface WebUITextIndicatorData (WebUITextIndicatorInternal)
 - (WebUITextIndicatorData *)initWithImage:(CGImageRef)image textIndicatorData:(const WebCore::TextIndicatorData&)indicatorData scale:(CGFloat)scale;
 - (WebUITextIndicatorData *)initWithImage:(CGImageRef)image scale:(CGFloat)scale;
@@ -275,7 +275,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 #endif
 #endif
 
-#if ENABLE(DATA_INTERACTION) && defined(__cplusplus)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT) && defined(__cplusplus)
 - (void)_startDrag:(const WebCore::DragItem&)dragItem;
 - (void)_didConcludeEditDrag;
 #endif

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebItemProviderPasteboard.h"
 
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
 
 #import <Foundation/NSItemProvider.h>
 #import <Foundation/NSProgress.h>
@@ -871,4 +871,4 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
 
 @end
 
-#endif // ENABLE(DATA_INTERACTION)
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)

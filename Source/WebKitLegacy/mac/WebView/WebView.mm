@@ -345,12 +345,9 @@
 #import <WebCore/PlaybackSessionModelMediaElement.h>
 #endif
 
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
-#endif
-
-#if ENABLE(DATA_INTERACTION)
 #import <pal/ios/UIKitSoftLink.h>
 #endif
 
@@ -791,7 +788,7 @@ private:
 
 } // namespace WebKit
 
-#if ENABLE(DATA_INTERACTION)
+#if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
 
 @implementation WebUITextIndicatorData
 
@@ -864,7 +861,7 @@ private:
 #elif !PLATFORM(MAC)
 @implementation WebUITextIndicatorData
 @end
-#endif // ENABLE(DATA_INTERACTION)
+#endif
 
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebElementFrameKey =              @"WebElementFrame";
