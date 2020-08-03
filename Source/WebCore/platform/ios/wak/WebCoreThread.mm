@@ -116,6 +116,7 @@ static BOOL sendingDelegateMessage;
 #endif
 
 static CFRunLoopObserverRef mainRunLoopAutoUnlockObserver;
+static BOOL mainThreadHasPendingAutoUnlock;
 
 static Lock startupLock;
 static StaticCondition startupCondition;
@@ -447,7 +448,11 @@ static void MainRunLoopAutoUnlock(CFRunLoopObserverRef, CFRunLoopActivity, void*
 
     if (sMainThreadModalCount)
         return;
-    
+
+    if (!mainThreadHasPendingAutoUnlock)
+        return;
+
+    mainThreadHasPendingAutoUnlock = NO;
     CFRunLoopRemoveObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver, kCFRunLoopCommonModes);
 
     _WebThreadUnlock();
@@ -458,6 +463,7 @@ static void _WebThreadAutoLock(void)
     ASSERT(!WebThreadIsCurrent());
 
     if (!mainThreadLockCount) {
+        mainThreadHasPendingAutoUnlock = YES;
         CFRunLoopAddObserver(CFRunLoopGetCurrent(), mainRunLoopAutoUnlockObserver, kCFRunLoopCommonModes);    
         _WebThreadLock();
         CFRunLoopWakeUp(CFRunLoopGetMain());

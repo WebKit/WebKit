@@ -1,3 +1,34 @@
+2020-08-03  Tim Horton  <timothy_horton@apple.com>
+
+        Occasional crashes when running nested runloops while using UIWebView
+        https://bugs.webkit.org/show_bug.cgi?id=213067
+        <rdar://problem/64239727>
+
+        Reviewed by Darin Adler.
+
+        New test: WebKitLegacy.NestedRunLoopUnderRunLoopObserverDoubleUnlock
+
+        * platform/ios/wak/WebCoreThread.mm:
+        (MainRunLoopAutoUnlock):
+        (_WebThreadAutoLock):
+        Under certain circumstances, a CFRunLoopObserver that is already removed
+        can fire again (e.g. when removed in a nested runloop, it can be fired again
+        in the main runloop).
+
+        The WebThread code assumes that the auto-unlock observer is called exactly
+        once after being installed. If this is not the case, the main thread lock
+        count can underflow, wreaking havoc the next time we try to lock.
+        Instead of depending on CFRunLoop to do this for us, make it explicit
+        with a global boolean.
+
+        This leaves in place the somewhat-odd behavior that running a nested
+        runloop can cause the main runloop's WebThread lock to be dropped, because
+        a great deal of code (and tests) depend on this behavior (keeping the lock
+        held until the outer runloop spins would result in deadlock if the inner
+        runloop's loop condition depends on the WebThread being able to execute code).
+        However, this is not unique to this underflow case, and appears to be
+        extremely long-standing behavior, so maintaining it seems the best course of action.
+
 2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove the ENABLE_DATA_INTERACTION feature flag

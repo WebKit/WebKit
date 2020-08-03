@@ -1,3 +1,15 @@
+2020-08-03  Tim Horton  <timothy_horton@apple.com>
+
+        Occasional crashes when running nested runloops while using UIWebView
+        https://bugs.webkit.org/show_bug.cgi?id=213067
+        <rdar://problem/64239727>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/WebThreadLock.mm: Added.
+        Add a API test that fails before this change.
+
 2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove the ENABLE_DATA_INTERACTION feature flag
