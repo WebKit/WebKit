@@ -373,18 +373,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
 
 Color TextDecorationPainter::decorationColor(const RenderStyle& style)
 {
-    // Check for text decoration color first.
-    auto result = style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor);
-    if (result.isValid())
-        return result;
-    if (style.hasPositiveStrokeWidth()) {
-        // Prefer stroke color if possible but not if it's fully transparent.
-        result = style.computedStrokeColor();
-        if (result.isVisible())
-            return result;
-    }
-    
-    return style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
+    return style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor);
 }
 
 OptionSet<TextDecoration> TextDecorationPainter::textDecorationsInEffectForStyle(const TextDecorationPainter::Styles& style)

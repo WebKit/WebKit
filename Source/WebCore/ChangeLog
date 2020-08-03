@@ -1,3 +1,27 @@
+2020-08-03  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r259585) Text decoration color with value currentColor miscomputed in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=215079
+
+        Reviewed by Zalan Bujtas.
+
+        r259585 did some refactoring that broke a special case where text decoration color comes from
+        '-webkit-text-fill-color' property.
+
+        Test: fast/text/text-decoration-currentcolor-fill-color.html
+
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::decorationColor):
+
+        Move resolving currentColor to RenderStyle.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::colorResolvingCurrentColor const):
+
+        Handle CSSPropertyTextDecorationColor as a special case here.
+
+        (WebCore::RenderStyle::visitedDependentColor const):
+
 2020-08-03  Clark Wang  <clark_wang@apple.com>
 
         Added Constructor to AnalyserNode
