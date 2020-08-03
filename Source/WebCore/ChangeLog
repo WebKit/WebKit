@@ -1,3 +1,32 @@
+2020-08-03  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorderPrivateWriter should ensure its writer input is ready for more data before appending new samples
+        https://bugs.webkit.org/show_bug.cgi?id=215081
+
+        Reviewed by Eric Carlson.
+
+        After r265192, we were checking whether the writer input was ready.
+        If so, we were pushing pending samples and then the new sample.
+        The issue is that pushing pending samples might make the writer input no longer ready.
+        Update the code to enqueue the sample if its writer input is not ready.
+        Add an ASSERT in appendCompressedVideoSampleBuffer to make sure this is the case.
+
+        Also make sure that we only enqueue the end of segment sample if video writer input is ready.
+
+        Make sure flushCompressedSampleBuffers is called directly by stopRecording only if not already flushing samples.
+        If we are not flushing, we proceed with the stop steps.
+        If not, we wait for the end of flushCompressedSampleBuffers to proceed with the stop steps.
+
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedAudioSampleBufferIfPossible):
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedVideoSampleBufferIfPossible):
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedVideoSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::flushCompressedSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::stopRecording):
+        (WebCore::MediaRecorderPrivateWriter::finishedFlushingSamples):
+        (WebCore::MediaRecorderPrivateWriter::doStopRecording):
+
 2020-08-03  Clark Wang  <clark_wang@apple.com>
 
         Added AudioBuffer Constructor

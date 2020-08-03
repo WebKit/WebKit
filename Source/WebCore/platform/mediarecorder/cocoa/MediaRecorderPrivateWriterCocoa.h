@@ -96,6 +96,8 @@ private:
     void finishAppendingCompressedVideoSampleBuffers(CompletionHandler<void()>&&);
     void flushCompressedSampleBuffers(CompletionHandler<void()>&&);
 
+    void finishedFlushingSamples();
+
     bool m_hasAudio { false };
     bool m_hasVideo { false };
 
@@ -124,6 +126,7 @@ private:
     Deque<RetainPtr<CMSampleBufferRef>> m_pendingAudioSampleQueue;
 
     bool m_isFlushingSamples { false };
+    bool m_shouldStopAfterFlushingSamples { false };
 };
 
 } // namespace WebCore
