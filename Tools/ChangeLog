@@ -1,3 +1,26 @@
+2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS 14] editing/selection/ios/select-all-non-editable-text-using-keyboard.html sometimes times out
+        https://bugs.webkit.org/show_bug.cgi?id=215089
+        <rdar://problem/66282806>
+
+        Reviewed by Tim Horton.
+
+        Add some logging to try and diagnose this flaky test failure. The timeout only happens on iOS 14, and also does
+        not reproduce on my local machine. This patch tests a couple of hypotheses which may explain why the test times
+        out:
+
+        -   The test may be starting in a state where the content view is not first responder, or the view's window is
+            not the key window.
+
+        -   Synthesizing the modifier keydown HID event may be failing to change the live modifier flags on the
+            application's `GSKeyboardRef` (e.g. the issue that was fixed in <https://trac.webkit.org/r264907>).
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::keyDown):
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (-[WebKitTestRunnerApp handleKeyHIDEvent:]):
+
 2020-08-03  Aakash Jain  <aakash_jain@apple.com>
 
         Disable gtk-wk2 queue temporarily

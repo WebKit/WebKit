@@ -195,6 +195,7 @@ WTF_EXTERN_C_END
 - (void)_enqueueHIDEvent:(IOHIDEventRef)event;
 - (void)_handleHIDEvent:(IOHIDEventRef)event;
 - (void)handleKeyUIEvent:(UIEvent *)event;
+- (void)handleKeyHIDEvent:(IOHIDEventRef)event;
 - (BOOL)_appAdoptsUISceneLifecycle;
 @end
 
@@ -1237,6 +1238,10 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic, readonly) UITextInteraction *interactions;
 - (void)willStartScrollingOrZooming;
 - (void)didEndScrollingOrZooming;
+@end
+
+@interface UIApplication (IPI)
+- (GSKeyboardRef)_hardwareKeyboard:(BOOL)createIfNeeded;
 @end
 
 @interface UITextInteraction (IPI)
