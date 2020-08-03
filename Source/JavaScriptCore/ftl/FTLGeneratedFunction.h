@@ -28,6 +28,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "CallFrame.h"
+#include "CodeLocation.h"
 #include "MacroAssemblerCodeRef.h"
 
 namespace JSC { namespace FTL {

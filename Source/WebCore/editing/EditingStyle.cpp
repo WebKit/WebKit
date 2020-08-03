@@ -49,6 +49,7 @@
 #include "Node.h"
 #include "NodeTraversal.h"
 #include "QualifiedName.h"
+#include "Range.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "SimpleRange.h"

@@ -51,6 +51,7 @@
 #include "InsertNestedListCommand.h"
 #include "Page.h"
 #include "Pasteboard.h"
+#include "Range.h"
 #include "RenderBox.h"
 #include "ReplaceSelectionCommand.h"
 #include "Scrollbar.h"

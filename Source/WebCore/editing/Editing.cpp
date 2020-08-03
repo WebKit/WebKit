@@ -47,6 +47,7 @@
 #include "HTMLUListElement.h"
 #include "NodeTraversal.h"
 #include "PositionIterator.h"
+#include "Range.h"
 #include "RenderBlock.h"
 #include "RenderElement.h"
 #include "RenderTableCell.h"

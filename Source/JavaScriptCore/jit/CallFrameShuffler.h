@@ -35,6 +35,8 @@
 
 namespace JSC {
 
+class CCallHelpers;
+
 class CallFrameShuffler {
     WTF_MAKE_FAST_ALLOCATED;
 public:

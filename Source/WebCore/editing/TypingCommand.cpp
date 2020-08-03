@@ -43,6 +43,7 @@
 #include "Logging.h"
 #include "MarkupAccumulator.h"
 #include "MathMLElement.h"
+#include "Range.h"
 #include "RenderElement.h"
 #include "StaticRange.h"
 #include "TextIterator.h"

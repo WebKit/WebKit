@@ -39,6 +39,7 @@
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RootInlineBox.h"
+#include "SimpleRange.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 #include <stdio.h>

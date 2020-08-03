@@ -38,6 +38,7 @@
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
 #include "PseudoElement.h"
+#include "Range.h"
 #include "RenderBlockFlow.h"
 #include "RenderImage.h"
 #include "RenderInline.h"

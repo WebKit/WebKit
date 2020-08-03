@@ -1,3 +1,22 @@
+2020-08-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early August 20202 edition
+        https://bugs.webkit.org/show_bug.cgi?id=215082
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * accessibility/AccessibilityRenderObject.cpp: Add missing inclusion of Range.h.
+        * dom/RadioButtonGroups.cpp: Ditto.
+        * editing/Editing.cpp: Ditto.
+        * editing/EditingStyle.cpp: Ditto.
+        * editing/EditorCommand.cpp: Ditto.
+        * editing/FrameSelection.cpp: Ditto.
+        * editing/TypingCommand.cpp: Ditto.
+        * editing/VisiblePosition.cpp: Add missing inclusion of SimpleRange.h.
+        * rendering/HitTestResult.cpp: Add missing inclusion of Range.h.
+
 2020-08-03  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r259585) Text decoration color with value currentColor miscomputed in some cases

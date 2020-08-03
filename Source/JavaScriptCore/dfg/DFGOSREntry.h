@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CodeLocation.h"
 #include "DFGAbstractValue.h"
 #include "DFGFlushFormat.h"
 #include "MacroAssemblerCodeRef.h"

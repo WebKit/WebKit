@@ -1,3 +1,14 @@
+2020-08-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early August 20202 edition
+        https://bugs.webkit.org/show_bug.cgi?id=215082
+
+        Unreviewed build fix.
+
+        * dfg/DFGOSREntry.h: Add missing inclusion of CodeLocation.h
+        * ftl/FTLGeneratedFunction.h: Ditto.
+        * jit/CallFrameShuffler.h: Forward-declare CCallHelpers.
+
 2020-08-02  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix CLoop build

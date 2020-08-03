@@ -72,6 +72,7 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "ProgressTracker.h"
+#include "Range.h"
 #include "RenderButton.h"
 #include "RenderFileUploadControl.h"
 #include "RenderHTMLCanvas.h"

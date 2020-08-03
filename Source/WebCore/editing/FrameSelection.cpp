@@ -55,6 +55,7 @@
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "Page.h"
+#include "Range.h"
 #include "RenderLayer.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
