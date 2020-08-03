@@ -1,3 +1,15 @@
+2020-08-03  Alberto Garcia  <berto@igalia.com>
+
+        [GTK] 2.29.4 fails to build in armhf
+        https://bugs.webkit.org/show_bug.cgi?id=214966
+
+        Reviewed by Michael Catanzaro.
+
+        SP register cannot be used as a destination register of SUB or ADD
+        on Thumb mode.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2020-08-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early August 20202 edition

@@ -332,7 +332,12 @@ macro doVMEntry(makeCall)
     move UndefinedTag, r1
     move 0, r0
 
-    subp cfr, CalleeRegisterSaveSize, sp
+    if ARMv7
+        subp cfr, CalleeRegisterSaveSize, t3
+        move t3, sp
+    else
+        subp cfr, CalleeRegisterSaveSize, sp
+    end
     popCalleeSaves()
     functionEpilogue()
     ret
