@@ -1,3 +1,12 @@
+2020-08-03  Aakash Jain  <aakash_jain@apple.com>
+
+        Disable gtk-wk2 queue temporarily
+        https://bugs.webkit.org/show_bug.cgi?id=215098
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r264170): fast/events/touch/ios/long-press-on-image.html times out
