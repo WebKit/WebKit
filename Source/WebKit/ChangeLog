@@ -1,3 +1,24 @@
+2020-08-03  Per Arne Vollan  <pvollan@apple.com>
+
+        Finalize the list of MobileGestalt queries needed to populate the in-memory cache in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=215095
+        <rdar://problem/66034080>
+
+        Reviewed by Geoffrey Garen.
+
+        When the MobileGestalt cache is invalid, we issue a temporary extension to the MobileGestalt daemon for the WebContent process,
+        which will populate the in-memory cache by doing a set of MobileGestalt queries before revoking the extension. This patch
+        finalizes the list of MobileGestalt queries needed to populate the in-memory cache in the WebContent process on iOS before
+        revoking the temporary extension to com.apple.mobilegestalt.xpc. This list was compiled by querying every possible MobileGestalt
+        key after the temporary extension was revoked, and make a note of all queries that were contacting the MobileGestalt daemon to
+        get the answer. The added queries in this patch should make the list complete, and ensures that all cachable values are in the
+        in-memory cache before revoking the extension, since every possible MobileGestalt query was tested. This again means that users
+        that have an invalid MobileGestalt cache, will have access to the exact same MobileGestalt values, as those users who have a
+        valid MobileGestalt cache.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS 14] editing/selection/ios/select-all-non-editable-text-using-keyboard.html sometimes times out

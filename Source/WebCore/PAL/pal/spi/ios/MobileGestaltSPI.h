@@ -46,6 +46,14 @@ static const CFStringRef kMGQDeviceName = CFSTR("DeviceName");
 static const CFStringRef kMGQDeviceClassNumber = CFSTR("DeviceClassNumber");
 static const CFStringRef kMGQHasExtendedColorDisplay = CFSTR("HasExtendedColorDisplay");
 static const CFStringRef kMGQDeviceCornerRadius = CFSTR("DeviceCornerRadius");
+static const CFStringRef kMGQMainScreenStaticInfo CFSTR("MainScreenStaticInfo");
+static const CFStringRef kMGQSupportsForceTouch CFSTR("eQd5mlz0BN0amTp/2ccMoA");
+static const CFStringRef kMGQBluetoothCapability CFSTR("bluetooth");
+static const CFStringRef kMGQDeviceProximityCapability CFSTR("DeviceProximityCapability");
+static const CFStringRef kMGQDeviceSupportsARKit CFSTR("arkit");
+static const CFStringRef kMGQTimeSyncCapability CFSTR("LJ8aZhTg8lXUeVxHzT+hMw");
+static const CFStringRef kMGQWAPICapability CFSTR("wapi");
+static const CFStringRef kMGQMainDisplayRotation CFSTR("MainDisplayRotation");
 
 typedef enum {
     MGDeviceClassInvalid = -1,
