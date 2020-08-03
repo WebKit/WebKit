@@ -2114,11 +2114,11 @@ def copyBundleToRemote(remoteHost)
 end
 
 def exportBaseEnvironmentVariables
-    dyldFrameworkPath = "$(cd #{$testingFrameworkPath.dirname}; pwd)"
-    ldLibraryPath = "$(pwd)/#{$outputDir.basename}/#{$jscPath.dirname}"
+    dyldFrameworkPath = "\\$(cd #{$testingFrameworkPath.dirname}; pwd)"
+    ldLibraryPath = "\\$(pwd)/#{$outputDir.basename}/#{$jscPath.dirname}"
     [
-        "export DYLD_FRAMEWORK_PATH=#{Shellwords.shellescape(dyldFrameworkPath)} && ",
-        "export LD_LIBRARY_PATH=#{Shellwords.shellescape(ldLibraryPath)} &&",
+        "export DYLD_FRAMEWORK_PATH=#{dyldFrameworkPath} && ",
+        "export LD_LIBRARY_PATH=#{ldLibraryPath} &&",
         "export JSCTEST_timeout=#{Shellwords.shellescape(ENV['JSCTEST_timeout'])} && ",
         "export JSCTEST_hardTimeout=#{Shellwords.shellescape(ENV['JSCTEST_hardTimeout'])} && ",
         "export JSCTEST_memoryLimit=#{Shellwords.shellescape(ENV['JSCTEST_memoryLimit'])} && ",
