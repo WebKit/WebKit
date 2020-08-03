@@ -1,3 +1,12 @@
+2020-08-03  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS iOS ] fast/images/async-image-body-background-image.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=175193
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-08-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Regression (r265160): http/tests/misc/gamepads-insecure.html fails consistently on windows

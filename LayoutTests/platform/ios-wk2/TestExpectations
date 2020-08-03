@@ -1797,3 +1797,6 @@ webkit.org/b/214512 imported/w3c/web-platform-tests/css/geometry/DOMMatrix2DInit
 webkit.org/b/214598 fast/scrolling/ios/autoscroll-input-when-very-zoomed.html [ Pass Failure ]
 
 http/tests/in-app-browser-privacy/ [ Pass ]
+
+webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
+
