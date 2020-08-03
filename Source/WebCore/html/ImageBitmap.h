@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDLTypes.h"
+#include "ImageBuffer.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 
@@ -43,7 +44,6 @@ class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmapImageObserver;
-class ImageBuffer;
 class ImageData;
 class IntRect;
 class IntSize;
@@ -83,7 +83,7 @@ public:
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, int sx, int sy, int sw, int sh, Promise&&);
 
     static Ref<ImageBitmap> create(IntSize);
-    static Ref<ImageBitmap> create(std::pair<std::unique_ptr<ImageBuffer>, bool>&&);
+    static Ref<ImageBitmap> create(std::pair<std::unique_ptr<ImageBuffer>, ImageBuffer::SerializationState>&&);
 
     ~ImageBitmap();
 
@@ -97,9 +97,11 @@ public:
 
     bool originClean() const { return m_originClean; }
 
+    bool premultiplyAlpha() const { return m_premultiplyAlpha; }
+
     std::unique_ptr<ImageBuffer> transferOwnershipAndClose();
 
-    static Vector<std::pair<std::unique_ptr<ImageBuffer>, bool>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);
+    static Vector<std::pair<std::unique_ptr<ImageBuffer>, ImageBuffer::SerializationState>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);
 
 private:
     friend class ImageBitmapImageObserver;
@@ -126,6 +128,7 @@ private:
     std::unique_ptr<ImageBuffer> m_bitmapData;
     bool m_detached { false };
     bool m_originClean { true };
+    bool m_premultiplyAlpha { false };
 };
 
 }

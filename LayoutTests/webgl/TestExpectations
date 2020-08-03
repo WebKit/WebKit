@@ -2,8 +2,6 @@
 webgl/1.0.3/conformance/more/functions [ Skip ]
 
 # Time outs
-webgl/2.0.0/conformance2/textures/image_bitmap_from_image [ Skip ]
-webgl/2.0.0/conformance2/textures/image_bitmap_from_video [ Skip ]
 webgl/2.0.0/conformance2/textures/video [ Skip ]
 
 # Run as much of DEQP as possible

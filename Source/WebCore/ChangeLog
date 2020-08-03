@@ -1,3 +1,42 @@
+2020-08-03  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] webgl/2.0.0/conformance[2]/textures/image_bitmap* failures
+        https://bugs.webkit.org/show_bug.cgi?id=211484
+
+        Reviewed by Dean Jackson.
+
+        Implement ImageBitmapOptions' ImageOrientation and
+        PremultiplyAlpha settings.
+
+        ImageOrientation="flipY" is supported directly while constructing
+        ImageBitmap's representation, ImageBuffer.
+
+        PremultiplyAlpha="premultiply" can not be supported via
+        ImageBuffer's graphics operations, so this attribute is stored on
+        ImageBitmap, serialized and deserialized when ImageBitmap is
+        transferred, and handled in the WebGL implementation.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpImageBitmap):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::CloneDeserializer::CloneDeserializer):
+        (WebCore::CloneDeserializer::readImageBitmap):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::create):
+        (WebCore::ImageBitmap::detachBitmaps):
+        (WebCore::imageOrientationForOrientation):
+        (WebCore::ImageBitmap::createPromise):
+        (WebCore::ImageBitmap::createFromBuffer):
+        * html/ImageBitmap.h:
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::transferToImageBitmap):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImageSourceHelper):
+        * platform/graphics/ImageBuffer.h:
+
 2020-08-03  Brian Burg  <bburg@apple.com>
 
         [WebDriver] window.print should not invoke native UI

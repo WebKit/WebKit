@@ -4604,7 +4604,8 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
             && type == GraphicsContextGL::UNSIGNED_BYTE) {
             auto textureInternalFormat = texture->getInternalFormat(target, level);
             if (isRGBFormat(textureInternalFormat) || !texture->isValid(target, level)) {
-                if (buffer->copyToPlatformTexture(*m_context.get(), target, texture->object(), internalformat, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
+                // The premultiplyAlpha and flipY pixel unpack parameters are ignored for ImageBitmaps.
+                if (buffer->copyToPlatformTexture(*m_context.get(), target, texture->object(), internalformat, bitmap->premultiplyAlpha(), false)) {
                     texture->setLevelInfo(target, level, internalformat, width, height, type);
                     return { };
                 }
@@ -4614,8 +4615,9 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
 
         // Fallback pure SW path.
         RefPtr<Image> image = buffer->copyImage(DontCopyBackingStore);
+        // The premultiplyAlpha and flipY pixel unpack parameters are ignored for ImageBitmaps.
         if (image)
-            texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Image, m_unpackFlipY, m_unpackPremultiplyAlpha, sourceImageRect, depth, unpackImageHeight);
+            texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, image.get(), GraphicsContextGL::DOMSource::Image, false, bitmap->premultiplyAlpha(), sourceImageRect, depth, unpackImageHeight);
         return { };
     }, [&](const RefPtr<ImageData>& pixels) -> ExceptionOr<void> {
         if (pixels->data()->isNeutered()) {

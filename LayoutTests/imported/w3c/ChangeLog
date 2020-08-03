@@ -1,3 +1,14 @@
+2020-08-03  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] webgl/2.0.0/conformance[2]/textures/image_bitmap* failures
+        https://bugs.webkit.org/show_bug.cgi?id=211484
+
+        Reviewed by Dean Jackson.
+
+        Rebaseline a test which is now passing.
+
+        * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt:
+
 2020-08-03  Clark Wang  <clark_wang@apple.com>
 
         Added Constructor to AnalyserNode
