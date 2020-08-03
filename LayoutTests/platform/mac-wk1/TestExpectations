@@ -935,8 +935,6 @@ webkit.org/b/209180 inspector/script-profiler/event-type-Other.html [ Pass Failu
 
 webkit.org/b/209182 [ Debug ] inspector/debugger/setShouldBlackboxURL.html [ Pass Failure ]
 
-webkit.org/b/209353 [ Release ] media/video-background-tab-playback.html [ Pass Failure ]
-
 webkit.org/b/209560 imported/w3c/web-platform-tests/xhr/send-response-upload-event-progress.htm [ Pass Crash Failure ]
 
 webkit.org/b/209882 [ Debug ] inspector/page/overrideSetting-ICECandidateFilteringEnabled.html [ Pass Timeout ]

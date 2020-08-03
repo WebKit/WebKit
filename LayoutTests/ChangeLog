@@ -1,3 +1,13 @@
+2020-08-03  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk2 Release ] media/video-background-tab-playback.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=209353
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-08-03  Clark Wang  <clark_wang@apple.com>
 
         Added Constructor to AnalyserNode
