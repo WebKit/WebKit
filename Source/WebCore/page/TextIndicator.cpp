@@ -177,20 +177,6 @@ static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapsho
     return true;
 }
 
-#if PLATFORM(IOS_FAMILY)
-
-static Vector<FloatRect> selectionRects(const SimpleRange& range)
-{
-    Vector<SelectionRect> selectionRects;
-    createLiveRange(range)->collectSelectionRects(selectionRects);
-    Vector<FloatRect> rects;
-    for (auto& selectionRect : selectionRects)
-        rects.append(selectionRect.rect());
-    return rects;
-}
-
-#endif
-
 static bool styleContainsComplexBackground(const RenderStyle& style)
 {
     return style.hasBlendMode() || style.hasBackgroundImage() || style.hasBackdropFilter();
@@ -316,8 +302,11 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Sim
     } else if (useBoundingRectAndPaintAllContentForComplexRanges && (treatRangeAsComplexDueToIllegibleTextColors || hasNonInlineOrReplacedElements(range)))
         data.options.add(TextIndicatorOption::PaintAllContent);
 #if PLATFORM(IOS_FAMILY)
-    else if (data.options.contains(TextIndicatorOption::UseSelectionRectForSizing))
-        textRects = selectionRects(range);
+    else if (data.options.contains(TextIndicatorOption::UseSelectionRectForSizing)) {
+        textRects = RenderObject::collectSelectionRects(range).map([&](const auto& rect) -> FloatRect {
+            return rect.rect();
+        });
+    }
 #endif
     else {
         auto textRectHeight = data.options.contains(TextIndicatorOption::TightlyFitContent) ? FrameSelection::TextRectangleHeight::TextHeight : FrameSelection::TextRectangleHeight::SelectionHeight;

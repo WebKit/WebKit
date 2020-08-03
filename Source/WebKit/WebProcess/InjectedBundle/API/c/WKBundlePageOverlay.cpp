@@ -40,6 +40,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PlatformMouseEvent.h>
+#include <WebCore/Range.h>
 
 namespace API {
 
@@ -138,7 +139,7 @@ private:
         if (!actionContext || !apiRange)
             return WTF::nullopt;
 
-        return { { actionContext, WebKit::toImpl(apiRange)->coreRange() } };
+        return { { actionContext, makeSimpleRange(WebKit::toImpl(apiRange)->coreRange()) } };
     }
 
     void dataDetectorsDidPresentUI(WebKit::WebPageOverlay& pageOverlay) override

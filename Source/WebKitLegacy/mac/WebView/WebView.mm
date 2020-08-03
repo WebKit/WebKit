@@ -2137,7 +2137,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     };
     auto& frame = page->focusController().focusedOrMainFrame();
     if (auto range = frame.selection().selection().toNormalizedRange()) {
-        if (auto textIndicator = WebCore::TextIndicator::createWithRange(createLiveRange(*range), defaultEditDragTextIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize()))
+        if (auto textIndicator = WebCore::TextIndicator::createWithRange(*range, defaultEditDragTextIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize()))
             _private->dataOperationTextIndicator = adoptNS([[WebUITextIndicatorData alloc] initWithImage:nil textIndicatorData:textIndicator->data() scale:page->deviceScaleFactor()]);
     }
 }

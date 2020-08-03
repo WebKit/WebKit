@@ -219,7 +219,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
     return image;
 }
 
-DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlackText)
+DragImageRef createDragImageForRange(Frame& frame, const SimpleRange& range, bool forceBlackText)
 {
     if (auto document = frame.document())
         document->updateLayout();
@@ -286,7 +286,7 @@ RetainPtr<CGImageRef> createDragImageFromImage(Image*, ImageOrientation)
     return nullptr;
 }
 
-DragImageRef createDragImageForRange(Frame&, Range&, bool)
+DragImageRef createDragImageForRange(Frame&, const SimpleRange&, bool)
 {
     return nullptr;
 }

@@ -31,8 +31,8 @@
 #import <WebCore/DocumentFragment.h>
 #import "ExceptionHandlers.h"
 #import <WebCore/JSExecState.h>
-#import <WebCore/Node.h>
 #import <WebCore/Range.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>

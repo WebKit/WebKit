@@ -1157,14 +1157,13 @@ Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const S
     }
 
     // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
-    Node* blockNode = enclosingBlock(createLiveRange(context)->firstNode());
-    Element* block = downcast<Element>(blockNode);
-    bool useClonesOfEnclosingBlock = blockNode
-        && blockNode->isElementNode()
+    auto start = createLegacyEditingPosition(context.start);
+    auto block = enclosingBlock(start.firstNode().get());
+    bool useClonesOfEnclosingBlock = block
         && !block->hasTagName(bodyTag)
         && !block->hasTagName(htmlTag)
-        && block != editableRootForPosition(createLegacyEditingPosition(context.start));
-    bool useLineBreak = enclosingTextFormControl(createLegacyEditingPosition(context.start));
+        && block != editableRootForPosition(start);
+    bool useLineBreak = enclosingTextFormControl(start);
 
     Vector<String> list = string.splitAllowingEmptyEntries('\n');
     size_t numLines = list.size();

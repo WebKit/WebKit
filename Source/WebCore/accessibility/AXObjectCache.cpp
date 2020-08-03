@@ -2622,7 +2622,7 @@ CharacterOffset AXObjectCache::nextBoundary(const CharacterOffset& characterOffs
         auto backwardsScanRange = makeRangeSelectingNodeContents(boundary->document());
         if (!setRangeStartOrEndWithCharacterOffset(backwardsScanRange, characterOffset, false))
             return { };
-        prefixLength = prefixLengthForRange(createLiveRange(backwardsScanRange), string);
+        prefixLength = prefixLengthForRange(backwardsScanRange, string);
     }
     
     if (!setRangeStartOrEndWithCharacterOffset(searchRange, characterOffset, true))
@@ -2681,7 +2681,7 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
         forwardsScanRange.start = *afterBoundary;
         if (!setRangeStartOrEndWithCharacterOffset(forwardsScanRange, characterOffset, true))
             return { };
-        suffixLength = suffixLengthForRange(createLiveRange(forwardsScanRange), string);
+        suffixLength = suffixLengthForRange(forwardsScanRange, string);
     }
     
     if (!setRangeStartOrEndWithCharacterOffset(searchRange, characterOffset, false))

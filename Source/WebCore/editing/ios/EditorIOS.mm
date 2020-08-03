@@ -351,9 +351,7 @@ void Editor::setTextAsChildOfElement(const String& text, Element& element)
         if (parent)
             element.remove();
 
-        auto context = document().createRange();
-        context->selectNodeContents(element);
-        element.appendChild(createFragmentFromText(context, text));
+        element.appendChild(createFragmentFromText(makeRangeSelectingNodeContents(element), text));
 
         // restore element to document
         if (parent) {

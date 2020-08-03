@@ -43,7 +43,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         return;
 
     bool chosePlainText;
-    auto fragment = pasteboard->documentFragment(*m_document.frame(), createLiveRange(*range), options.contains(PasteOption::AllowPlainText), chosePlainText);
+    auto fragment = pasteboard->documentFragment(*m_document.frame(), *range, options.contains(PasteOption::AllowPlainText), chosePlainText);
 
     if (fragment && options.contains(PasteOption::AsQuotation))
         quoteFragmentForPasting(*fragment);

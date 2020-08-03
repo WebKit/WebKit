@@ -105,7 +105,7 @@ void DocumentMarkerController::filterMarkers(const SimpleRange& range, const Fun
 static void updateRenderedRectsForMarker(RenderedDocumentMarker& marker, Node& node)
 {
     ASSERT(!node.document().view() || !node.document().view()->needsLayout());
-    marker.setUnclippedAbsoluteRects(boundingBoxes(RenderObject::absoluteTextQuads(range(node, marker), true)));
+    marker.setUnclippedAbsoluteRects(boundingBoxes(RenderObject::absoluteTextQuads(makeSimpleRange(node, marker), true)));
 }
 
 void DocumentMarkerController::invalidateRectsForAllMarkers()
@@ -662,7 +662,7 @@ void removeMarkers(const SimpleRange& range, OptionSet<DocumentMarker::MarkerTyp
     range.start.container->document().markers().removeMarkers(range, types, policy);
 }
 
-SimpleRange range(Node& node, const DocumentMarker& marker)
+SimpleRange makeSimpleRange(Node& node, const DocumentMarker& marker)
 {
     unsigned startOffset = marker.startOffset();
     unsigned endOffset = marker.endOffset();

@@ -1431,7 +1431,7 @@ void Editor::performCutOrCopy(EditorActionSpecifier action)
             writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste());
 #else
             // FIXME: Delete after <http://webkit.org/b/177618> lands.
-            Pasteboard::createForCopyAndPaste()->writeSelection(createLiveRange(*selection).get(), canSmartCopyOrDelete(), *m_document.frame(), IncludeImageAltTextForDataTransfer);
+            Pasteboard::createForCopyAndPaste()->writeSelection(*selection, canSmartCopyOrDelete(), *m_document.frame(), IncludeImageAltTextForDataTransfer);
 #endif
         }
     }
@@ -2677,7 +2677,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType
         return;
 
     auto& rangeToCheck = shouldMarkGrammar ? *grammarRange : *spellingRange;
-    TextCheckingParagraph paragraphToCheck(createLiveRange(rangeToCheck));
+    TextCheckingParagraph paragraphToCheck(rangeToCheck);
     if (paragraphToCheck.isEmpty())
         return;
 
@@ -2723,7 +2723,7 @@ static bool isAutomaticTextReplacementType(TextCheckingType type)
 
 void Editor::replaceRangeForSpellChecking(const SimpleRange& rangeToReplace, const String& replacement)
 {
-    SpellingCorrectionCommand::create(createLiveRange(rangeToReplace), replacement)->apply();
+    SpellingCorrectionCommand::create(rangeToReplace, replacement)->apply();
 }
 
 static void correctSpellcheckingPreservingTextCheckingParagraph(TextCheckingParagraph& paragraph, const SimpleRange& rangeToReplace, const String& replacement, CharacterRange resultCharacterRange)
@@ -2731,7 +2731,7 @@ static void correctSpellcheckingPreservingTextCheckingParagraph(TextCheckingPara
     auto scopeNode = makeRef(downcast<ContainerNode>(paragraph.paragraphRange().startContainer().rootNode()));
     auto paragraphCharacterRange = characterRange(makeBoundaryPointBeforeNodeContents(scopeNode), paragraph.paragraphRange());
 
-    SpellingCorrectionCommand::create(createLiveRange(rangeToReplace), replacement)->apply();
+    SpellingCorrectionCommand::create(rangeToReplace, replacement)->apply();
 
     // TextCheckingParagraph may be orphaned after SpellingCorrectionCommand mutated DOM.
     // See <rdar://10305315>, http://webkit.org/b/89526.
@@ -2921,7 +2921,7 @@ void Editor::changeBackToReplacedString(const String& replacedString)
         return;
     
     m_alternativeTextController->recordAutocorrectionResponse(AutocorrectionResponse::Reverted, replacedString, *selection);
-    TextCheckingParagraph paragraph(createLiveRange(*selection));
+    TextCheckingParagraph paragraph(*selection);
     replaceSelectionWithText(replacedString, SelectReplacement::No, SmartReplace::No, EditAction::Insert);
     auto changedRange = paragraph.subrange(CharacterRange(paragraph.checkingStart(), replacedString.length()));
     addMarker(changedRange, DocumentMarker::Replacement, String());
@@ -3577,7 +3577,7 @@ unsigned Editor::countMatchesForText(const String& target, const Optional<Simple
 
         ++matchCount;
         if (matches)
-            matches->append(createLiveRange(resultRange));
+            matches->append(resultRange);
 
         if (markMatches)
             addMarker(resultRange, DocumentMarker::TextMatch);

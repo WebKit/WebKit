@@ -748,7 +748,7 @@ NSArray *Frame::interpretationsForCurrentRoot() const
         for (auto* marker : document()->markers().markersFor(node, DocumentMarker::DictationPhraseWithAlternatives)) {
             auto& alternatives = WTF::get<Vector<String>>(marker->data());
 
-            auto rangeForMarker = range(node, *marker);
+            auto rangeForMarker = makeSimpleRange(node, *marker);
 
             if (auto precedingTextRange = makeSimpleRange(precedingTextStartPosition, rangeForMarker.start)) {
                 String precedingText = plainText(*precedingTextRange);

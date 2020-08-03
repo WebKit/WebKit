@@ -455,7 +455,7 @@ auto TextCheckingHelper::findUngrammaticalPhrases(Operation operation) const -> 
     // Expand the search range to encompass entire paragraphs, since grammar checking needs that much context.
     // Determine the character offset from the start of the paragraph to the start of the original search range,
     // since we will want to ignore results in this area.
-    TextCheckingParagraph paragraph(createLiveRange(m_range));
+    TextCheckingParagraph paragraph(m_range);
     
     // Start checking from beginning of paragraph, but skip past results that occur before the start of the original search range.
     for (uint64_t startOffset = 0; startOffset < paragraph.checkingEnd(); ) {

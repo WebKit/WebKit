@@ -129,7 +129,7 @@
 - (NSArray *)textRects
 {
     _impl->ownerDocument().updateLayoutIgnorePendingStylesheets();
-    return createNSArray(WebCore::RenderObject::absoluteTextRects(*_impl)).autorelease();
+    return createNSArray(WebCore::RenderObject::absoluteTextRects(makeSimpleRange(*_impl))).autorelease();
 }
 
 - (WKDOMRange *)rangeByExpandingToWordBoundaryByCharacters:(NSUInteger)characters inDirection:(WKDOMRangeDirection)direction

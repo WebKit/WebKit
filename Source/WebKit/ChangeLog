@@ -1,3 +1,33 @@
+2020-08-02  Darin Adler  <darin@apple.com>
+
+        Remove some member functions of Range and many calls to createLiveRange
+        https://bugs.webkit.org/show_bug.cgi?id=215070
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm:
+        (-[WKWebProcessPlugInRangeHandle detectDataWithTypes:context:]): Use makeSimpleRange.
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (API::PageOverlayClientImpl::actionContextForResultAtPoint): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange textRects]): Ditto.
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm:
+        (-[WKDOMTextIterator initWithRange:]): Ditto.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage): Ditto.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::performDictionaryLookupAtLocation): Remove createLiveRange.
+        (WebKit::WebPage::performDictionaryLookupForSelection): Ditto.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll): Ditto.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const): Ditto.
+        (WebKit::WebPage::computeAndSendEditDragSnapshot): Ditto.
+        (WebKit::WebPage::getRectsForGranularityWithSelectionOffset): Ditto.
+        (WebKit::WebPage::getRectsAtSelectionOffsetWithText): Ditto.
+        (WebKit::WebPage::requestAutocorrectionData): Ditto.
+
 2020-08-01  Darin Adler  <darin@apple.com>
 
         Fix and further refine makefile rule for WebKit messages generated files

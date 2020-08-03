@@ -582,7 +582,7 @@ static NSURL *createUniqueWebDataURL();
 {
     if (!range)
         return @"";
-    return plainText(*core(range), WebCore::TextIteratorDefaultBehavior, true);
+    return plainText(makeSimpleRange(*core(range)), WebCore::TextIteratorDefaultBehavior, true);
 }
 
 - (OptionSet<WebCore::PaintBehavior>)_paintBehaviorForDestinationContext:(CGContextRef)context
@@ -809,15 +809,15 @@ static NSURL *createUniqueWebDataURL();
     return characterRange(makeBoundaryPointBeforeNodeContents(*element), range);
 }
 
-- (RefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)nsrange
+- (Optional<WebCore::SimpleRange>)_convertToDOMRange:(NSRange)nsrange
 {
     return [self _convertToDOMRange:nsrange rangeIsRelativeTo:WebRangeIsRelativeTo::EditableRoot];
 }
 
-- (RefPtr<WebCore::Range>)_convertToDOMRange:(NSRange)range rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo
+- (Optional<WebCore::SimpleRange>)_convertToDOMRange:(NSRange)range rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo
 {
     if (range.location == NSNotFound)
-        return nullptr;
+        return WTF::nullopt;
 
     if (rangeIsRelativeTo == WebRangeIsRelativeTo::EditableRoot) {
         // Our critical assumption is that this code path is only called by input methods that
@@ -828,30 +828,30 @@ static NSURL *createUniqueWebDataURL();
         // That fits with AppKit's idea of an input context.
         auto* element = _private->coreFrame->selection().rootEditableElementOrDocumentElement();
         if (!element)
-            return nullptr;
-        return createLiveRange(resolveCharacterRange(makeRangeSelectingNodeContents(*element), range));
+            return WTF::nullopt;
+        return resolveCharacterRange(makeRangeSelectingNodeContents(*element), range);
     }
 
     ASSERT(rangeIsRelativeTo == WebRangeIsRelativeTo::Paragraph);
 
     auto paragraphStart = makeBoundaryPoint(startOfParagraph(_private->coreFrame->selection().selection().visibleStart()));
     if (!paragraphStart)
-        return nullptr;
+        return WTF::nullopt;
 
     auto scopeEnd = makeBoundaryPointAfterNodeContents(paragraphStart->container->treeScope().rootNode());
-    return createLiveRange(WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range));
+    return WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range);
 }
 
 - (DOMRange *)_convertNSRangeToDOMRange:(NSRange)nsrange
 {
-    return kit([self _convertToDOMRange:nsrange].get());
+    return kit([self _convertToDOMRange:nsrange]);
 }
 
 - (NSRange)_convertDOMRangeToNSRange:(DOMRange *)range
 {
     if (!range)
         return NSMakeRange(NSNotFound, 0);
-    return [self _convertToNSRange:*core(range)];
+    return [self _convertToNSRange:makeSimpleRange(*core(range))];
 }
 
 - (DOMRange *)_markDOMRange
@@ -1129,8 +1129,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)_selectNSRange:(NSRange)range
 {
-    RefPtr<WebCore::Range> domRange = [self _convertToDOMRange:range];
-    if (domRange)
+    if (auto domRange = [self _convertToDOMRange:range])
         _private->coreFrame->selection().setSelection(WebCore::VisibleSelection(*domRange, WebCore::SEL_DEFAULT_AFFINITY));
 }
 
@@ -1217,11 +1216,8 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 
 - (void)selectWithoutClosingTypingNSRange:(NSRange)range
 {
-    RefPtr<WebCore::Range> domRange = [self _convertToDOMRange:range];
-    if (domRange) {
-        const auto& newSelection = WebCore::VisibleSelection(*domRange, WebCore::SEL_DEFAULT_AFFINITY);
-        _private->coreFrame->selection().setSelection(newSelection, { });
-        
+    if (auto domRange = [self _convertToDOMRange:range]) {
+        _private->coreFrame->selection().setSelection(*domRange, { });
         _private->coreFrame->editor().ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping();
     }
 }
@@ -1741,7 +1737,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
             if (!metadata)
                 continue;
             
-            DOMRange *domRange = kit(range(*node, *marker));
+            DOMRange *domRange = kit(makeSimpleRange(*node, *marker));
 
             if (metadata != previousMetadata) {
                 [metadatas addObject:metadata];
@@ -1774,7 +1770,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!range)
         return nil;
 
-    auto markers = core(self)->document()->markers().markersInRange(*core(range), WebCore::DocumentMarker::DictationResult);
+    auto markers = core(self)->document()->markers().markersInRange(makeSimpleRange(*core(range)), WebCore::DocumentMarker::DictationResult);
 
     // UIKit should only ever give us a DOMRange for a phrase with alternatives, which should not be part of more than one result.
     ASSERT(markers.size() <= 1);

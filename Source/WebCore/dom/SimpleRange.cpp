@@ -28,7 +28,6 @@
 
 #include "CharacterData.h"
 #include "NodeTraversal.h"
-#include "Range.h"
 
 namespace WebCore {
 
@@ -41,12 +40,6 @@ SimpleRange::SimpleRange(const BoundaryPoint& start, const BoundaryPoint& end)
 SimpleRange::SimpleRange(BoundaryPoint&& start, BoundaryPoint&& end)
     : start(WTFMove(start))
     , end(WTFMove(end))
-{
-}
-
-SimpleRange::SimpleRange(const Range& other)
-    : start(other.startContainer(), other.startOffset())
-    , end(other.endContainer(), other.endOffset())
 {
 }
 

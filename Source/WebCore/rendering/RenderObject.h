@@ -547,6 +547,8 @@ public:
 #if PLATFORM(IOS_FAMILY)
     virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max());
     virtual void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const { absoluteQuads(quads); }
+    WEBCORE_EXPORT static Vector<SelectionRect> collectSelectionRects(const SimpleRange&);
+    WEBCORE_EXPORT static Vector<SelectionRect> collectSelectionRectsWithoutUnionInteriorLines(const SimpleRange&);
 #endif
 
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint&) const { }
@@ -757,6 +759,14 @@ private:
     void addAbsoluteRectForLayer(LayoutRect& result);
     void setLayerNeedsFullRepaint();
     void setLayerNeedsFullRepaintForPositionedMovementLayout();
+
+#if PLATFORM(IOS_FAMILY)
+    struct SelectionRects {
+        Vector<SelectionRect> rects;
+        int maxLineNumber;
+    };
+    WEBCORE_EXPORT static SelectionRects collectSelectionRectsInternal(const SimpleRange&);
+#endif
 
     Node* generatingPseudoHostElement() const;
 

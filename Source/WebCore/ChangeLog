@@ -1,3 +1,138 @@
+2020-08-02  Darin Adler  <darin@apple.com>
+
+        Remove some member functions of Range and many calls to createLiveRange
+        https://bugs.webkit.org/show_bug.cgi?id=215070
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::nextBoundary): Remove createLiveRange.
+        (WebCore::AXObjectCache::previousBoundary): Ditto.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _convertToNSRange:]): Take SimpleRange.
+        (-[WebAccessibilityObjectWrapper positionForTextMarker:]): Remove createLiveRange.
+        (-[WebAccessibilityObjectWrapper textRectsFromMarkers:withText:]): Ditto.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper _convertToNSRange:]): Take SimpleRange.
+        (-[WebAccessibilityObjectWrapper _indexForTextMarker:]): Remove createLiveRange.
+        (-[WebAccessibilityObjectWrapper _textMarkerForIndex:]): Ditto.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::updateRenderedRectsForMarker): Renamed range to makeSimpleRange.
+        (WebCore::makeSimpleRange): Ditto.
+        * dom/DocumentMarkerController.h: Update for the above.
+
+        * dom/Range.cpp:
+        (WebCore::Range::text const): Use makeSimpleRange.
+        (WebCore::Range::shadowRoot const): Deleted.
+        (WebCore::intervalsSufficientlyOverlap): Deleted.
+        (WebCore::adjustLineHeightOfSelectionRects): Deleted.
+        (WebCore::coalesceSelectionRects): Deleted.
+        (WebCore::Range::collectSelectionRectsWithoutUnionInteriorLines const): Deleted.
+        (WebCore::Range::collectSelectionRects const): Deleted.
+        * dom/Range.h: Update for the above. Also make pastLastNode private since it is
+        only used inside the Range class's implementation.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::SimpleRange::SimpleRange): Removed overload that takes a Range.
+        * dom/SimpleRange.h: Update for the above. Removed both constructor overloads
+        that take a Range.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::timerFired): Remove createLiveRange.
+        (WebCore::AlternativeTextController::respondToMarkerAtEndOfWord): Use
+        makeSimpleRange.
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        Remove createLiveRange.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::styleAtSelectionStart): Remove createLiveRange.
+        * editing/Editor.cpp:
+        (WebCore::Editor::performCutOrCopy): Ditto.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Ditto.
+        (WebCore::Editor::replaceRangeForSpellChecking): Ditto.
+        (WebCore::correctSpellcheckingPreservingTextCheckingParagraph): Ditto.
+        (WebCore::Editor::changeBackToReplacedString): Ditto.
+        (WebCore::Editor::countMatchesForText): Ditto.
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply): Ditto.
+        (WebCore::InsertListCommand::doApplyForSingleParagraph): Change out
+        argument type to SimpleRange.
+        * editing/InsertListCommand.h: Update for above.
+
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::isCheckable const): Rewrite questionable logic
+        to use intersectingNodes instead of firstNode.
+
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findUngrammaticalPhrases const): Remove createLiveRange.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Ditto.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromText): Ditto.
+
+        * editing/ios/EditorIOS.mm:
+        (WebCore::Editor::setTextAsChildOfElement): Use makeRangeSelectingNodeContents.
+
+        * editing/win/EditorWin.cpp:
+        (WebCore::Editor::pasteWithPasteboard): Remove createLiveRange.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::addRange): Use makeSimpleRange.
+        (WebCore::DOMSelection::deleteFromDocument): Remove createLiveRange.
+
+        * page/DragController.cpp:
+        (WebCore::documentFragmentFromDragData): Take SimpleRange.
+        (WebCore::DragController::concludeEditDrag): Remove createLiveRange.
+        (WebCore::DragController::startDrag): Ditto.
+
+        * page/TextIndicator.cpp:
+        (WebCore::selectionRects): Deleted.
+        (WebCore::initializeIndicator): Call collectSelectionRects directly here,
+        avoiding createLiveRange and using map to convert from Vector<SelectionRect>
+        to Vector<FloatRect>.
+
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot const): Use makeSimpleRange.
+
+        * platform/DragImage.cpp:
+        (WebCore::createDragImageForRange): Take SimpleRange.
+        * platform/DragImage.h: Update createDragImageForRange to take SimpleRange.
+
+        * platform/Pasteboard.h: Updated Windows-only layering-violating functions
+        to take SimpleRange.
+
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::createDragImageForRange): Take SimpleRange.
+
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeRangeToDataObject): Take SimpleRange.
+        (WebCore::Pasteboard::writeSelection): Ditto.
+        (WebCore::Pasteboard::documentFragment): Ditto.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::intervalsSufficientlyOverlap): Added. Moved from Range. Mostly unchanged
+        but uses SimpleRange now instead of a live range, and intersectingNodes instead of
+        a loop using firstNode and pastLastNode.
+        (WebCore::adjustLineHeightOfSelectionRects): Ditto.
+        (WebCore::coalesceSelectionRects): Ditto.
+        (WebCore::RenderObject::collectSelectionRectsWithoutUnionInteriorLines): Ditto.
+        (WebCore::RenderObject::collectSelectionRectsInternal): Ditto.
+        (WebCore::RenderObject::collectSelectionRects): Ditto.
+        * rendering/RenderObject.h: Update for above.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::markerRangeForNode): Use makeSimplRange.
+        (WebCore::Internals::locationFromRange): Ditto.
+        (WebCore::Internals::lengthFromRange): Ditto.
+        (WebCore::Internals::rangeAsTextUsingBackwardsTextIterator): Ditto.
+        (WebCore::Internals::subrange): Ditto.
+        (WebCore::Internals::rangeOfStringNearLocation): Ditto.
+        (WebCore::Internals::textIndicatorForRange): Ditto.
+
 2020-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Table data is incorrectly translated in some articles on en.wikipedia.org

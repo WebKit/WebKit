@@ -1,3 +1,54 @@
+2020-08-02  Darin Adler  <darin@apple.com>
+
+        Remove some member functions of Range and many calls to createLiveRange
+        https://bugs.webkit.org/show_bug.cgi?id=215070
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOM.mm:
+        (-[DOMRange renderedImageForcingBlackText:renderedImageForcingBlackText:]):
+        Use makeSimpleRange.
+        (-[DOMRange textRects]): Ditto.
+
+        * DOM/DOMDocument.mm: Update includes.
+        * DOM/DOMRange.mm: Ditto.
+        * DOM/DOMRangeInternal.h: Ditto.
+        * DOM/DOMUIKitExtensions.mm: Ditto.
+        * DOM/DOMUtility.mm: Ditto.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMRange webArchive]): Use makeSimpleRange.
+        (-[DOMRange markupString]): Ditto.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringForRange:]): Use makeSimpleRange.
+        (-[WebFrame _convertToDOMRange:]): Return a SimpleRange.
+        (-[WebFrame _convertToDOMRange:rangeIsRelativeTo:]): Ditto.
+        (-[WebFrame _convertNSRangeToDOMRange:]): Update for above.
+        (-[WebFrame _convertDOMRangeToNSRange:]): Use makeSimpleRange.
+        (-[WebFrame _selectNSRange:]): Update for above.
+        (-[WebFrame selectWithoutClosingTypingNSRange:]): Ditto.
+        (-[WebFrame getDictationResultRanges:andMetadatas:]): Use makeSimpleRange.
+        (-[WebFrame dictationResultMetadataForRange:]): Ditto.
+        * WebView/WebFrameInternal.h: Update for above.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+        Use makeSimpleRange.
+        (-[WebHTMLView attributedSubstringFromRange:]): Use auto.
+        (-[WebHTMLView _attributedStringFromDOMRange:]): Deleted.
+        (-[WebHTMLView attributedString]): Rewrote to use SimpleRange consistently.
+        (-[WebHTMLView selectedAttributedString]): Ditto.
+
+        * WebView/WebImmediateActionController.mm:
+        (-[WebImmediateActionController _animationControllerForDataDetectedText]):
+        Use makeSimpleRange.
+        * WebView/WebTextIterator.mm:
+        (-[WebTextIterator initWithRange:]): Ditto.
+
+        * WebView/WebView.mm:
+        (-[WebView _didConcludeEditDrag]): Remove createLiveRange.
+
 2020-08-01  Darin Adler  <darin@apple.com>
 
         Remove Range::create and many more uses of live ranges

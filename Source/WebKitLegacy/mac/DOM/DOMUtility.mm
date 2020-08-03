@@ -70,6 +70,7 @@
 #import <WebCore/JSWindowProxy.h>
 #import <WebCore/JSXPathExpression.h>
 #import <WebCore/JSXPathResult.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 
 static WebScriptObject *createDOMWrapper(JSC::JSObject& jsWrapper)

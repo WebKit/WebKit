@@ -61,6 +61,7 @@
 #import <WebCore/RenderText.h>
 #import <WebCore/RoundedRect.h>
 #import <WebCore/SharedBuffer.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/VisiblePosition.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WAKAppKitStubs.h>

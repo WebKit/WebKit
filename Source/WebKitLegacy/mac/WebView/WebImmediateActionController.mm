@@ -422,7 +422,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
             detectedItem = { {
                 actionContext,
                 { }, // FIXME: Seems like an empty rect isn't really OK.
-                *core(customDataDetectorsRange)
+                makeSimpleRange(*core(customDataDetectorsRange))
             } };
         }
     }
@@ -439,7 +439,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:[detectedItem->actionContext mainResult] actionContext:detectedItem->actionContext.get()])
         return nil;
 
-    auto indicator = WebCore::TextIndicator::createWithRange(createLiveRange(detectedItem->range), { }, WebCore::TextIndicatorPresentationTransition::FadeIn);
+    auto indicator = WebCore::TextIndicator::createWithRange(detectedItem->range, { }, WebCore::TextIndicatorPresentationTransition::FadeIn);
 
     _currentActionContext = [detectedItem->actionContext contextForView:_webView altMode:YES interactionStartedHandler:^() {
     } interactionChangedHandler:^() {

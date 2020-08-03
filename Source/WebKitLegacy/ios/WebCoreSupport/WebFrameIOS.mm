@@ -206,10 +206,7 @@ using namespace WebCore;
 
 - (NSArray *)selectionRectsForCoreRange:(const SimpleRange&)range
 {
-    Vector<SelectionRect> rects;
-    createLiveRange(range)->collectSelectionRects(rects);
-
-    return createNSArray(rects, [] (auto& coreRect) {
+    return createNSArray(RenderObject::collectSelectionRects(range), [] (auto& coreRect) {
         auto webRect = [WebSelectionRect selectionRect];
         webRect.rect = coreRect.rect();
         webRect.writingDirection = coreRect.direction() == TextDirection::LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;
@@ -226,7 +223,7 @@ using namespace WebCore;
 
 - (NSArray *)selectionRectsForRange:(DOMRange *)domRange
 {
-    auto range = core(domRange);
+    auto range = makeSimpleRange(core(domRange));
     return range ? [self selectionRectsForCoreRange:*range] : nil;
 }
 

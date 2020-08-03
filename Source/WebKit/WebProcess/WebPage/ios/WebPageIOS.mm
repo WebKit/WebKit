@@ -268,7 +268,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
     if (frame.editor().hasComposition()) {
         if (auto compositionRange = frame.editor().compositionRange()) {
-            createLiveRange(*compositionRange)->collectSelectionRects(postLayoutData.markedTextRects);
+            postLayoutData.markedTextRects = RenderObject::collectSelectionRects(*compositionRange);
             convertContentToRootViewSelectionRects(view, postLayoutData.markedTextRects);
 
             postLayoutData.markedText = plainTextForContext(*compositionRange);
@@ -298,7 +298,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         auto selectedRange = selection.toNormalizedRange();
         String selectedText;
         if (selectedRange) {
-            createLiveRange(*selectedRange)->collectSelectionRects(postLayoutData.selectionRects);
+            postLayoutData.selectionRects = RenderObject::collectSelectionRects(*selectedRange);
             convertContentToRootViewSelectionRects(view, postLayoutData.selectionRects);
             selectedText = plainTextForDisplay(*selectedRange);
             postLayoutData.selectedTextLength = selectedText.length();
@@ -1024,7 +1024,7 @@ void WebPage::computeAndSendEditDragSnapshot()
         TextIndicatorOption::IncludeSnapshotWithSelectionHighlight
     };
     if (auto range = std::exchange(m_rangeForDropSnapshot, WTF::nullopt)) {
-        if (auto textIndicator = TextIndicator::createWithRange(createLiveRange(*range), defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, { }))
+        if (auto textIndicator = TextIndicator::createWithRange(*range, defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, { }))
             textIndicatorData = textIndicator->data();
     }
     send(Messages::WebPageProxy::DidReceiveEditDragSnapshot(WTFMove(textIndicatorData)));
@@ -1982,8 +1982,7 @@ void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity
         return;
     }
 
-    Vector<WebCore::SelectionRect> selectionRects;
-    createLiveRange(*range)->collectSelectionRectsWithoutUnionInteriorLines(selectionRects);
+    auto selectionRects = RenderObject::collectSelectionRectsWithoutUnionInteriorLines(*range);
     convertContentToRootViewSelectionRects(*frame.view(), selectionRects);
     send(Messages::WebPageProxy::SelectionRectsCallback(selectionRects, callbackID));
 }
@@ -2029,8 +2028,7 @@ void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& te
         }
     }
 
-    Vector<WebCore::SelectionRect> selectionRects;
-    createLiveRange(range)->collectSelectionRectsWithoutUnionInteriorLines(selectionRects);
+    auto selectionRects = RenderObject::collectSelectionRectsWithoutUnionInteriorLines(*range);
     convertContentToRootViewSelectionRects(*frame.view(), selectionRects);
     send(Messages::WebPageProxy::SelectionRectsCallback(selectionRects, callbackID));
 }
@@ -2332,7 +2330,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
 
     Vector<SelectionRect> selectionRects;
     if (textForRange == textForAutocorrection)
-        createLiveRange(range)->collectSelectionRects(selectionRects);
+        selectionRects = RenderObject::collectSelectionRects(*range);
 
     auto rootViewSelectionRects = selectionRects.map([&](const auto& selectionRect) -> FloatRect { return frame.view()->contentsToRootView(selectionRect.rect()); });
 

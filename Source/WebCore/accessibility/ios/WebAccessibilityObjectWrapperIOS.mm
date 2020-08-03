@@ -2338,13 +2338,9 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return [array autorelease];
 }
 
-- (NSRange)_convertToNSRange:(Range *)liveRange
+// FIXME: No reason for this to be a method instead of a function.
+- (NSRange)_convertToNSRange:(const SimpleRange&)range
 {
-    if (!liveRange)
-        return NSMakeRange(NSNotFound, 0);
-
-    auto range = SimpleRange { *liveRange };
-
     auto& document = range.start.document();
     auto* frame = document.frame();
     if (!frame)
@@ -2398,7 +2394,9 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         CharacterOffset characterOffset = [marker characterOffset];
         // Create a collapsed range from the CharacterOffset object.
         auto range = cache->rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
-        return [self _convertToNSRange:createLiveRange(range).get()].location;
+        if (!range)
+            return NSNotFound;
+        return [self _convertToNSRange:*range].location;
     }
     return NSNotFound;
 }
@@ -2756,8 +2754,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!range || range->collapsed())
         return nil;
 
-    Vector<WebCore::SelectionRect> rects;
-    createLiveRange(range)->collectSelectionRectsWithoutUnionInteriorLines(rects);
+    auto rects = RenderObject::collectSelectionRectsWithoutUnionInteriorLines(*range);
     if (rects.isEmpty())
         return nil;
     return createNSArray(rects, [&] (auto& rect) {

@@ -735,7 +735,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
         return;
 
     if (shouldAddToKillRing)
-        document().editor().addRangeToKillRing(createLiveRange(*selectionToDelete.toNormalizedRange()), Editor::KillRingInsertionMode::PrependText);
+        document().editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange(), Editor::KillRingInsertionMode::PrependText);
 
     // Post the accessibility notification before actually deleting the content while selectionToDelete is still valid
     postTextStateChangeNotificationForDeletion(selectionToDelete);
@@ -846,7 +846,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
     postTextStateChangeNotificationForDeletion(selectionToDelete);
 
     if (shouldAddToKillRing)
-        document().editor().addRangeToKillRing(createLiveRange(*selectionToDelete.toNormalizedRange()), Editor::KillRingInsertionMode::AppendText);
+        document().editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange(), Editor::KillRingInsertionMode::AppendText);
     // make undo select what was deleted
     setStartingSelection(selectionAfterUndo);
     CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete, /* mergeBlocksAfterDelete*/ true, /* replace*/ false, expandForSpecialElements, /*sanitizeMarkup*/ true);

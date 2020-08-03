@@ -1775,7 +1775,7 @@ ExceptionOr<RefPtr<Range>> Internals::markerRangeForNode(Node& node, const Strin
     auto marker = result.releaseReturnValue();
     if (!marker)
         return nullptr;
-    return { createLiveRange(range(node, *marker)) };
+    return { createLiveRange(makeSimpleRange(node, *marker)) };
 }
 
 ExceptionOr<String> Internals::markerDescriptionForNode(Node& node, const String& markerType, unsigned index)
@@ -2154,12 +2154,12 @@ RefPtr<Range> Internals::rangeFromLocationAndLength(Element& scope, unsigned ran
 
 unsigned Internals::locationFromRange(Element& scope, const Range& range)
 {
-    return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), range).location);
+    return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), makeSimpleRange(range)).location);
 }
 
 unsigned Internals::lengthFromRange(Element& scope, const Range& range)
 {
-    return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), range).length);
+    return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), makeSimpleRange(range)).length);
 }
 
 String Internals::rangeAsText(const Range& range)
@@ -2170,19 +2170,19 @@ String Internals::rangeAsText(const Range& range)
 String Internals::rangeAsTextUsingBackwardsTextIterator(const Range& range)
 {
     String result;
-    for (SimplifiedBackwardsTextIterator backwardsIterator(range); !backwardsIterator.atEnd(); backwardsIterator.advance())
+    for (SimplifiedBackwardsTextIterator backwardsIterator(makeSimpleRange(range)); !backwardsIterator.atEnd(); backwardsIterator.advance())
         result.insert(backwardsIterator.text().toString(), 0);
     return result;
 }
 
 Ref<Range> Internals::subrange(Range& range, unsigned rangeLocation, unsigned rangeLength)
 {
-    return createLiveRange(resolveCharacterRange(range, { rangeLocation, rangeLength }));
+    return createLiveRange(resolveCharacterRange(makeSimpleRange(range), { rangeLocation, rangeLength }));
 }
 
-RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& searchRange, const String& text, unsigned targetOffset)
+RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& range, const String& text, unsigned targetOffset)
 {
-    return createLiveRange(findClosestPlainText(searchRange, text, { }, targetOffset));
+    return createLiveRange(findClosestPlainText(makeSimpleRange(range), text, { }, targetOffset));
 }
 
 #if !PLATFORM(MAC)
@@ -5756,7 +5756,7 @@ Internals::TextIndicatorInfo::~TextIndicatorInfo() = default;
 
 Internals::TextIndicatorInfo Internals::textIndicatorForRange(const Range& range, TextIndicatorOptions options)
 {
-    auto indicator = TextIndicator::createWithRange(range, options.coreOptions(), TextIndicatorPresentationTransition::None);
+    auto indicator = TextIndicator::createWithRange(makeSimpleRange(range), options.coreOptions(), TextIndicatorPresentationTransition::None);
     return indicator->data();
 }
 

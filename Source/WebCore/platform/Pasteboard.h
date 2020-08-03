@@ -65,8 +65,9 @@ class DragData;
 class Element;
 class Frame;
 class PasteboardStrategy;
-class Range;
 class SharedBuffer;
+
+struct SimpleRange;
 
 enum class PlainTextURLReadingPolicy : bool { IgnoreURL, AllowURL };
 enum class WebContentReadingPolicy : bool { AnyType, OnlyRichTextTypes };
@@ -241,9 +242,9 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    RefPtr<DocumentFragment> documentFragment(Frame&, Range&, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
+    RefPtr<DocumentFragment> documentFragment(Frame&, const SimpleRange&, bool allowPlainText, bool& chosePlainText); // FIXME: Layering violation.
     void writeImage(Element&, const URL&, const String& title); // FIXME: Layering violation.
-    void writeSelection(Range&, bool canSmartCopyOrDelete, Frame&, ShouldSerializeSelectedTextForDataTransfer = DefaultSelectedTextType); // FIXME: Layering violation.
+    void writeSelection(const SimpleRange&, bool canSmartCopyOrDelete, Frame&, ShouldSerializeSelectedTextForDataTransfer = DefaultSelectedTextType); // FIXME: Layering violation.
 #endif
 
 #if PLATFORM(GTK)
@@ -312,7 +313,7 @@ private:
 
 #if PLATFORM(WIN)
     void finishCreatingPasteboard();
-    void writeRangeToDataObject(Range&, Frame&); // FIXME: Layering violation.
+    void writeRangeToDataObject(const SimpleRange&, Frame&); // FIXME: Layering violation.
     void writeURLToDataObject(const URL&, const String&);
     void writePlainTextToDataObject(const String&, SmartReplaceOption);
     Optional<PasteboardCustomData> readPasteboardCustomData();

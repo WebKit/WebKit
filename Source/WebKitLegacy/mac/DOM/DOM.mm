@@ -581,31 +581,27 @@ id <DOMEventTarget> kit(EventTarget* target)
 - (CGImageRef)renderedImageForcingBlackText:(BOOL)forceBlackText
 #endif
 {
-    auto& range = *core(self);
-    auto* frame = range.ownerDocument().frame();
+    auto range = makeSimpleRange(*core(self));
+    auto frame = makeRefPtr(range.start.container->document().frame());
     if (!frame)
         return nil;
 
-    Ref<Frame> protectedFrame(*frame);
+    auto renderedImage = createDragImageForRange(*frame, range, forceBlackText);
 
-    // iOS uses CGImageRef for drag images, which doesn't support separate logical/physical sizes.
 #if PLATFORM(MAC)
-    RetainPtr<NSImage> renderedImage = createDragImageForRange(*frame, range, forceBlackText);
-
+    // iOS uses CGImageRef for drag images, which doesn't support separate logical/physical sizes.
     IntSize size([renderedImage size]);
     size.scale(1 / frame->page()->deviceScaleFactor());
     [renderedImage setSize:size];
+#endif
 
     return renderedImage.autorelease();
-#else
-    return createDragImageForRange(*frame, range, forceBlackText).autorelease();
-#endif
 }
 
 - (NSArray *)textRects
 {
-    auto& range = *core(self);
-    range.ownerDocument().updateLayoutIgnorePendingStylesheets();
+    auto range = makeSimpleRange(*core(self));
+    range.start.container->document().updateLayoutIgnorePendingStylesheets();
     return createNSArray(RenderObject::absoluteTextRects(range)).autorelease();
 }
 

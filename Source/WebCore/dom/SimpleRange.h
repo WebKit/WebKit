@@ -29,8 +29,6 @@
 
 namespace WebCore {
 
-class Range;
-
 struct SimpleRange {
     BoundaryPoint start;
     BoundaryPoint end;
@@ -44,11 +42,6 @@ struct SimpleRange {
 
     WEBCORE_EXPORT SimpleRange(const BoundaryPoint&, const BoundaryPoint&);
     WEBCORE_EXPORT SimpleRange(BoundaryPoint&&, BoundaryPoint&&);
-
-    // Convenience overloads to help with transition from using a lot of live ranges.
-    // FIXME: Once transition is over, remove and change callers to use makeSimpleRange instead.
-    WEBCORE_EXPORT SimpleRange(const Range&);
-    SimpleRange(const Ref<Range>&);
 };
 
 SimpleRange makeSimpleRangeHelper(BoundaryPoint&&, BoundaryPoint&&);
@@ -120,11 +113,6 @@ inline IntersectingNodeRange::IntersectingNodeRange(const SimpleRange& range)
 inline IntersectingNodeRange intersectingNodes(const SimpleRange& range)
 {
     return { range };
-}
-
-inline SimpleRange::SimpleRange(const Ref<Range>& range)
-    : SimpleRange(range.get())
-{
 }
 
 inline SimpleRange makeSimpleRangeHelper(BoundaryPoint&& start, BoundaryPoint&& end)

@@ -56,6 +56,7 @@
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderTreeAsText.h>
 #import <WebCore/ShadowRoot.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/WheelEvent.h>
 #import <WebCore/markup.h>
 #import <WebKitLegacy/DOMExtensions.h>
@@ -185,13 +186,13 @@ using namespace JSC;
 
 - (WebArchive *)webArchive
 {
-    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self))] autorelease];
+    return [[[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(makeSimpleRange(*core(self)))] autorelease];
 }
 
 - (NSString *)markupString
 {
     auto& range = *core(self);
-    return String { documentTypeString(range.startContainer().document()) + serializePreservingVisualAppearance(range, nullptr, AnnotateForInterchange::Yes) };
+    return String { documentTypeString(range.ownerDocument()) + serializePreservingVisualAppearance(makeSimpleRange(range), nullptr, AnnotateForInterchange::Yes) };
 }
 
 @end

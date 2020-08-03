@@ -1,3 +1,19 @@
+2020-08-02  Darin Adler  <darin@apple.com>
+
+        Remove some member functions of Range and many calls to createLiveRange
+        https://bugs.webkit.org/show_bug.cgi?id=215070
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebFrameIOS.mm:
+        (-[WebFrame selectionRectsForCoreRange:]): Remove createLiveRange.
+        (-[WebFrame selectionRectsForRange:]): Use makeSimpleRange.
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition enclosingRangeWithDictationPhraseAlternatives:]): Ditto.
+        (-[WebVisiblePosition enclosingRangeWithCorrectionIndicator]): Ditto.
+        (+[DOMRange rangeForFirstPosition:second:]): Rename firstVP/secondVP
+        to firstPosition/secondPosition.
+
 2020-08-01  Darin Adler  <darin@apple.com>
 
         Remove Range::create and many more uses of live ranges

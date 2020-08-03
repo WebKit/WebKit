@@ -142,11 +142,10 @@ DragController::DragController(Page& page, std::unique_ptr<DragClient>&& client)
 
 DragController::~DragController() = default;
 
-static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dragData, Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
+static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dragData, Frame& frame, const SimpleRange& context, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
 
-    Document& document = context.ownerDocument();
     if (dragData.containsCompatibleContent()) {
         if (auto fragment = frame.editor().webContentFromPasteboard(*Pasteboard::createForDragAndDrop(dragData), context, allowPlainText, chosePlainText))
             return fragment;
@@ -155,10 +154,11 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
             String title;
             String url = dragData.asURL(DragData::DoNotConvertFilenames, &title);
             if (!url.isEmpty()) {
+                auto& document = context.start.container->document();
                 auto anchor = HTMLAnchorElement::create(document);
                 anchor->setHref(url);
                 if (title.isEmpty()) {
-                    // Try the plain text first because the url might be normalized or escaped.
+                    // Try the plain text first because the URL might be normalized or escaped.
                     if (dragData.containsPlainText())
                         title = dragData.asPlainText();
                     if (title.isEmpty())
@@ -603,13 +603,13 @@ bool DragController::concludeEditDrag(const DragData& dragData)
     bool isMove = dragIsMove(innerFrame->selection(), dragData);
     if (isMove || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
-        RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, *innerFrame, createLiveRange(*range), true, chosePlainText);
+        auto fragment = documentFragmentFromDragData(dragData, *innerFrame, *range, true, chosePlainText);
         if (!fragment || !editor.shouldInsertFragment(*fragment, range, EditorInsertAction::Dropped))
             return false;
 
         client().willPerformDragDestinationAction(DragDestinationAction::Edit, dragData);
 
-        if (editor.client() && editor.client()->performTwoStepDrop(*fragment, createLiveRange(*range), isMove))
+        if (editor.client() && editor.client()->performTwoStepDrop(*fragment, *range, isMove))
             return true;
 
         if (isMove) {
@@ -635,7 +635,7 @@ bool DragController::concludeEditDrag(const DragData& dragData)
 
         client().willPerformDragDestinationAction(DragDestinationAction::Edit, dragData);
         auto fragment = createFragmentFromText(*range, text);
-        if (editor.client() && editor.client()->performTwoStepDrop(fragment.get(), createLiveRange(*range), isMove))
+        if (editor.client() && editor.client()->performTwoStepDrop(fragment.get(), *range, isMove))
             return true;
 
         if (setSelectionToDragCaret(innerFrame.get(), dragCaret, point))
@@ -1041,7 +1041,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
                     src.editor().writeSelectionToPasteboard(dataTransfer.pasteboard());
 #else
                     // FIXME: Convert Windows to match the other platforms and delete this.
-                    dataTransfer.pasteboard().writeSelection(createLiveRange(*selectionRange), src.editor().canSmartCopyOrDelete(), src, IncludeImageAltTextForDataTransfer);
+                    dataTransfer.pasteboard().writeSelection(*selectionRange, src.editor().canSmartCopyOrDelete(), src, IncludeImageAltTextForDataTransfer);
 #endif
                 } else {
 #if PLATFORM(COCOA)

@@ -478,7 +478,7 @@ void Pasteboard::setDragImage(DragImage, const IntPoint&)
 }
 #endif
 
-void Pasteboard::writeRangeToDataObject(Range& selectedRange, Frame& frame)
+void Pasteboard::writeRangeToDataObject(const SimpleRange& selectedRange, Frame& frame)
 {
     if (!m_writableDataObject)
         return;
@@ -488,7 +488,7 @@ void Pasteboard::writeRangeToDataObject(Range& selectedRange, Frame& frame)
 
     Vector<char> data;
     markupToCFHTML(serializePreservingVisualAppearance(selectedRange, nullptr, AnnotateForInterchange::Yes),
-        selectedRange.startContainer().document().url().string(), data);
+        selectedRange.start.container->document().url().string(), data);
     medium.hGlobal = createGlobalData(data);
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(htmlFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);
@@ -505,7 +505,7 @@ void Pasteboard::writeRangeToDataObject(Range& selectedRange, Frame& frame)
         m_writableDataObject->SetData(smartPasteFormat(), &medium, TRUE);
 }
 
-void Pasteboard::writeSelection(Range& selectedRange, bool canSmartCopyOrDelete, Frame& frame, ShouldSerializeSelectedTextForDataTransfer shouldSerializeSelectedTextForDataTransfer)
+void Pasteboard::writeSelection(const SimpleRange& selectedRange, bool canSmartCopyOrDelete, Frame& frame, ShouldSerializeSelectedTextForDataTransfer shouldSerializeSelectedTextForDataTransfer)
 {
     clear();
 
@@ -514,7 +514,7 @@ void Pasteboard::writeSelection(Range& selectedRange, bool canSmartCopyOrDelete,
         Vector<char> data;
         // FIXME: Use ResolveURLs::YesExcludingLocalFileURLsForPrivacy.
         markupToCFHTML(serializePreservingVisualAppearance(frame.selection().selection()),
-            selectedRange.startContainer().document().url().string(), data);
+            selectedRange.start.container->document().url().string(), data);
         HGLOBAL cbData = createGlobalData(data);
         if (!::SetClipboardData(HTMLClipboardFormat, cbData))
             ::GlobalFree(cbData);
@@ -854,7 +854,7 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, Opti
     }
 }
 
-RefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, Range& context, bool allowPlainText, bool& chosePlainText)
+RefPtr<DocumentFragment> Pasteboard::documentFragment(Frame& frame, const SimpleRange& context, bool allowPlainText, bool& chosePlainText)
 {
     chosePlainText = false;
     

@@ -337,7 +337,7 @@ void DOMSelection::addRange(Range& range)
 
     auto& selection = frame->selection();
     if (selection.isNone()) {
-        selection.setSelection(SimpleRange { range });
+        selection.setSelection(makeSimpleRange(range));
         return;
     }
 
@@ -356,7 +356,7 @@ void DOMSelection::addRange(Range& range)
                 selection.moveTo(range.startPosition(), normalizedRange->endPosition(), DOWNSTREAM);
             } else {
                 // The new range contains the original range.
-                selection.setSelection(SimpleRange { range });
+                selection.setSelection(makeSimpleRange(range));
             }
         }
     } else {
@@ -366,7 +366,7 @@ void DOMSelection::addRange(Range& range)
             result = range.compareBoundaryPoints(Range::END_TO_END, *normalizedRange);
             if (!result.hasException() && result.releaseReturnValue() == -1) {
                 // The original range contains the new range.
-                selection.setSelection(SimpleRange { *normalizedRange });
+                selection.setSelection(makeSimpleRange(*normalizedRange));
             } else {
                 // The ranges intersect.
                 selection.moveTo(normalizedRange->startPosition(), range.endPosition(), DOWNSTREAM);
@@ -381,12 +381,8 @@ void DOMSelection::deleteFromDocument()
     if (!frame)
         return;
 
-    auto& selection = frame->selection();
-    if (selection.isNone())
-        return;
-
-    auto selectedRange = selection.selection().toNormalizedRange();
-    if (!selectedRange || createLiveRange(*selectedRange)->shadowRoot())
+    auto selectedRange = frame->selection().selection().toNormalizedRange();
+    if (!selectedRange || selectedRange->start.container->containingShadowRoot())
         return;
 
     Ref<Frame> protector(*frame);

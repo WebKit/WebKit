@@ -31,10 +31,9 @@
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "NotImplemented.h"
-#include "Range.h"
 #include "RenderElement.h"
-#include "RenderObject.h"
 #include "RenderView.h"
+#include "SimpleRange.h"
 #include "TextIndicator.h"
 
 namespace WebCore {
@@ -153,7 +152,7 @@ struct ScopedFrameSelectionState {
 
 #if !PLATFORM(IOS_FAMILY)
 
-DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlackText)
+DragImageRef createDragImageForRange(Frame& frame, const SimpleRange& range, bool forceBlackText)
 {
     frame.document()->updateLayout();
     RenderView* view = frame.contentRenderer();
@@ -161,12 +160,12 @@ DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlack
         return nullptr;
 
     // To snapshot the range, temporarily select it and take selection snapshot.
-    Position start = range.startPosition();
+    Position start = createLegacyEditingPosition(range.start);
     Position candidate = start.downstream();
     if (candidate.deprecatedNode() && candidate.deprecatedNode()->renderer())
         start = candidate;
 
-    Position end = range.endPosition();
+    Position end = createLegacyEditingPosition(range.end);
     candidate = end.upstream();
     if (candidate.deprecatedNode() && candidate.deprecatedNode()->renderer())
         end = candidate;
