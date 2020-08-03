@@ -41,13 +41,11 @@ public:
     
     std::unique_ptr<AudioDSPKernel> createKernel() override;
         
-    AudioParam* delayTime() const { return m_delayTime.get(); }
+    AudioParam& delayTime() const { return m_delayTime.get(); }
+    double maxDelayTime() { return delayTime().maxValue(); }
 
-    double maxDelayTime() { return m_maxDelayTime; }
 private:
-
-    RefPtr<AudioParam> m_delayTime;
-    double m_maxDelayTime;
+    Ref<AudioParam> m_delayTime;
 };
 
 } // namespace WebCore

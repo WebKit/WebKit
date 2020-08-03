@@ -490,6 +490,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDedicatedWorkerGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDedicatedWorkerGlobalScope.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDelayNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDelayNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDelayOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDelayOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecatedCSSOMCounter.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecatedCSSOMCounter.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDeprecatedCSSOMPrimitiveValue.cpp

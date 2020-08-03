@@ -28,6 +28,7 @@
 
 #include "DelayNode.h"
 
+#include "DelayOptions.h"
 #include "DelayProcessor.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -37,21 +38,43 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DelayNode);
 
 const double maximumAllowedDelayTime = 180;
 
-inline DelayNode::DelayNode(BaseAudioContext& context, float sampleRate, double maxDelayTime)
-    : AudioBasicProcessorNode(context, sampleRate)
+inline DelayNode::DelayNode(BaseAudioContext& context, double maxDelayTime)
+    : AudioBasicProcessorNode(context, context.sampleRate())
 {
     setNodeType(NodeTypeDelay);
-    m_processor = makeUnique<DelayProcessor>(context, sampleRate, 1, maxDelayTime);
+    m_processor = makeUnique<DelayProcessor>(context, context.sampleRate(), 1, maxDelayTime);
 }
 
-ExceptionOr<Ref<DelayNode>> DelayNode::create(BaseAudioContext& context, float sampleRate, double maxDelayTime)
+ExceptionOr<Ref<DelayNode>> DelayNode::create(BaseAudioContext& context, const DelayOptions& options)
 {
-    if (maxDelayTime <= 0 || maxDelayTime >= maximumAllowedDelayTime)
+    if (context.isStopped())
+        return Exception { InvalidStateError };
+
+    context.lazyInitialize();
+
+    if (options.maxDelayTime <= 0 || options.maxDelayTime >= maximumAllowedDelayTime)
         return Exception { NotSupportedError };
-    return adoptRef(*new DelayNode(context, sampleRate, maxDelayTime));
+
+    auto delayNode = adoptRef(*new DelayNode(context, options.maxDelayTime));
+
+    auto result = delayNode->setChannelCount(options.channelCount.valueOr(2));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = delayNode->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::Max));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = delayNode->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
+    if (result.hasException())
+        return result.releaseException();
+
+    delayNode->delayTime().setValue(options.delayTime);
+
+    return delayNode;
 }
 
-AudioParam* DelayNode::delayTime()
+AudioParam& DelayNode::delayTime()
 {
     return static_cast<DelayProcessor&>(*m_processor).delayTime();
 }

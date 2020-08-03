@@ -472,6 +472,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/ChannelSplitterOptions.idl
     Modules/webaudio/ConvolverNode.idl
     Modules/webaudio/DelayNode.idl
+    Modules/webaudio/DelayOptions.idl
     Modules/webaudio/DistanceModelType.idl
     Modules/webaudio/DynamicsCompressorNode.idl
     Modules/webaudio/GainNode.idl

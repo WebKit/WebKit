@@ -1,3 +1,37 @@
+2020-08-03  Chris Dumez  <cdumez@apple.com>
+
+        Add constructor to DelayNode
+        https://bugs.webkit.org/show_bug.cgi?id=215083
+
+        Reviewed by Eric Carlson.
+
+        Add constructor to DelayNode:
+        - https://www.w3.org/TR/webaudio/#DelayNode
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createDelay):
+        * Modules/webaudio/DelayDSPKernel.cpp:
+        (WebCore::DelayDSPKernel::process):
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::DelayNode):
+        (WebCore::DelayNode::create):
+        (WebCore::DelayNode::delayTime):
+        * Modules/webaudio/DelayNode.h:
+        * Modules/webaudio/DelayNode.idl:
+        * Modules/webaudio/DelayOptions.h: Copied from Source/WebCore/Modules/webaudio/DelayNode.idl.
+        * Modules/webaudio/DelayOptions.idl: Copied from Source/WebCore/Modules/webaudio/DelayNode.idl.
+        * Modules/webaudio/DelayProcessor.cpp:
+        (WebCore::DelayProcessor::DelayProcessor):
+        * Modules/webaudio/DelayProcessor.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make WidthIterator::advance() return void

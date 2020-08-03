@@ -2,24 +2,54 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
 PASS Executing "invalid constructor" 
-FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
-FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.channelCount')"
-FAIL Executing "constructor options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.delayTime')"
+PASS Executing "default constructor" 
+PASS Executing "test AudioNodeOptions" 
+PASS Executing "constructor options" 
 PASS Audit report 
 PASS > [initialize]  
 PASS   context = new OfflineAudioContext(...) did not throw an exception. 
 PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [invalid constructor]  
-PASS   new DelayNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
-PASS   new DelayNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
-PASS   new DelayNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS   new DelayNode() threw TypeError: "Not enough arguments". 
+PASS   new DelayNode(1) threw TypeError: "Argument 1 ('context') to the DelayNode constructor must be an instance of BaseAudioContext". 
+PASS   new DelayNode(context, 42) threw TypeError: "Type error". 
 PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
 PASS > [default constructor]  
-FAIL X node0 = new DelayNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
-FAIL X node0 instanceof DelayNode is not equal to true. Got false. assert_true: expected true got false
+PASS   node0 = new DelayNode(context) did not throw an exception. 
+PASS   node0 instanceof DelayNode is equal to true. 
+PASS   node0.numberOfInputs is equal to 1. 
+PASS   node0.numberOfOutputs is equal to 1. 
+PASS   node0.channelCount is equal to 2. 
+PASS   node0.channelCountMode is equal to max. 
+PASS   node0.channelInterpretation is equal to speakers. 
+PASS   node0.delayTime.value is equal to 0. 
+PASS < [default constructor] All assertions passed. (total 8 assertions) 
 PASS > [test AudioNodeOptions]  
-FAIL X new DelayNode(c, {channelCount: 17}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[nodeName]')". assert_true: expected true got false
+PASS   new DelayNode(c, {channelCount: 17}) did not throw an exception. 
+PASS   node.channelCount is equal to 17. 
+PASS   new DelayNode(c, {channelCount: 0}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new DelayNode(c, {channelCount: 99}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new DelayNode(c, {channelCountMode: "max"} did not throw an exception. 
+PASS   node.channelCountMode is equal to max. 
+PASS   new DelayNode(c, {channelCountMode: "max"}) did not throw an exception. 
+PASS   node.channelCountMode after valid setter is equal to max. 
+PASS   new DelayNode(c, {channelCountMode: "clamped-max"}) did not throw an exception. 
+PASS   node.channelCountMode after valid setter is equal to clamped-max. 
+PASS   new DelayNode(c, {channelCountMode: "explicit"}) did not throw an exception. 
+PASS   node.channelCountMode after valid setter is equal to explicit. 
+PASS   new DelayNode(c, {channelCountMode: "foobar"} threw TypeError: "Type error". 
+PASS   node.channelCountMode after invalid setter is equal to explicit. 
+PASS   new DelayNode(c, {channelInterpretation: "speakers"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to speakers. 
+PASS   new DelayNode(c, {channelInterpretation: "discrete"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to discrete. 
+PASS   new DelayNode(c, {channelInterpretation: "foobar"}) threw TypeError: "Type error". 
+PASS   node.channelInterpretation after invalid setter is equal to discrete. 
+PASS < [test AudioNodeOptions] All assertions passed. (total 20 assertions) 
 PASS > [constructor options]  
-FAIL X node1 = new DelayNode(c, {"delayTime":0.5,"maxDelayTime":1.5}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DelayNode(context, options)')". assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 5 tasks were failed. assert_true: expected true got false
+PASS   node1 = new DelayNode(c, {"delayTime":0.5,"maxDelayTime":1.5}) did not throw an exception. 
+PASS   node1.delayTime.value is equal to 0.5. 
+PASS   node1.delayTime.maxValue is equal to 1.5. 
+PASS < [constructor options] All assertions passed. (total 3 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

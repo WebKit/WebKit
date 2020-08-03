@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,21 +24,17 @@
 
 #pragma once
 
-#include "AudioBasicProcessorNode.h"
+#if ENABLE(WEB_AUDIO)
+
+#include "AudioNodeOptions.h"
 
 namespace WebCore {
 
-struct DelayOptions;
-
-class DelayNode final : public AudioBasicProcessorNode {
-    WTF_MAKE_ISO_ALLOCATED(DelayNode);
-public:
-    static ExceptionOr<Ref<DelayNode>> create(BaseAudioContext&, const DelayOptions&);
-
-    AudioParam& delayTime();
-
-private:
-    DelayNode(BaseAudioContext&, double maxDelayTime);
+struct DelayOptions : AudioNodeOptions {
+    double maxDelayTime { 1 };
+    double delayTime { 0 };
 };
 
-} // namespace WebCore
+}
+
+#endif // ENABLE(WEB_AUDIO)

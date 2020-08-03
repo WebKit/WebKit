@@ -1405,8 +1405,8 @@
 		510A91F624D32DDC00BFD89C /* Dualshock3HIDGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91F424D324FF00BFD89C /* Dualshock3HIDGamepad.h */; };
 		510A91FD24D3C16200BFD89C /* GamepadConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 51715FE924CD05DD002C97E6 /* GamepadConstants.h */; };
 		510A91FE24D3C16700BFD89C /* GamepadConstantsMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A91FB24D3C0FD00BFD89C /* GamepadConstantsMac.h */; };
-		510A921224D5E60E00BFD89C /* StadiaHIDGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A921124D5E21700BFD89C /* StadiaHIDGamepad.h */; };
 		510A920824D4F49900BFD89C /* LogitechGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A920524D4F07A00BFD89C /* LogitechGamepad.h */; };
+		510A921224D5E60E00BFD89C /* StadiaHIDGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 510A921124D5E21700BFD89C /* StadiaHIDGamepad.h */; };
 		510D4A34103165EE0049EA54 /* SocketStreamError.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A2E103165EE0049EA54 /* SocketStreamError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A37103165EE0049EA54 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A31103165EE0049EA54 /* SocketStreamHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		510D4A38103165EE0049EA54 /* SocketStreamHandleClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2494,6 +2494,7 @@
 		839947101F50B6FA00E9D86B /* JSDOMFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 8399470E1F50B6F300E9D86B /* JSDOMFileSystem.h */; };
 		839A2F2E1E204A710039057E /* WebGLStateTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 839A2F2C1E204A6D0039057E /* WebGLStateTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		839AAFED1A0C0C8D00605F99 /* HTMLWBRElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 839AAFEB1A0C0C8D00605F99 /* HTMLWBRElement.h */; };
+		83A2ABDB24D86DE000E2D73D /* DelayOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A2ABD824D86DC600E2D73D /* DelayOptions.h */; };
 		83A8AC401FABBFE5002064AC /* ServiceWorkerIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A8AC3E1FABBFD1002064AC /* ServiceWorkerIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83B1A702249985F000FE5961 /* WebKitAudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 83B1A6FF249985D000FE5961 /* WebKitAudioContext.h */; };
 		83B2D1751B8BCD6A00A02E47 /* NativeNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E959E11B8BC22B004D9385 /* NativeNodeFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8239,10 +8240,10 @@
 		510A91F424D324FF00BFD89C /* Dualshock3HIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dualshock3HIDGamepad.h; sourceTree = "<group>"; };
 		510A91F524D3250000BFD89C /* Dualshock3HIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Dualshock3HIDGamepad.cpp; sourceTree = "<group>"; };
 		510A91FB24D3C0FD00BFD89C /* GamepadConstantsMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadConstantsMac.h; sourceTree = "<group>"; };
-		510A920F24D5E21700BFD89C /* StadiaHIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StadiaHIDGamepad.cpp; sourceTree = "<group>"; };
-		510A921124D5E21700BFD89C /* StadiaHIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StadiaHIDGamepad.h; sourceTree = "<group>"; };
 		510A920524D4F07A00BFD89C /* LogitechGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogitechGamepad.h; sourceTree = "<group>"; };
 		510A920724D4F07A00BFD89C /* LogitechGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogitechGamepad.cpp; sourceTree = "<group>"; };
+		510A920F24D5E21700BFD89C /* StadiaHIDGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StadiaHIDGamepad.cpp; sourceTree = "<group>"; };
+		510A921124D5E21700BFD89C /* StadiaHIDGamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StadiaHIDGamepad.h; sourceTree = "<group>"; };
 		510D4A2E103165EE0049EA54 /* SocketStreamError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamError.h; sourceTree = "<group>"; };
 		510D4A30103165EE0049EA54 /* SocketStreamHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandle.cpp; sourceTree = "<group>"; };
 		510D4A31103165EE0049EA54 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandle.h; sourceTree = "<group>"; };
@@ -10560,6 +10561,8 @@
 		839A2F2C1E204A6D0039057E /* WebGLStateTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLStateTracker.h; sourceTree = "<group>"; };
 		839AAFEA1A0C0C8D00605F99 /* HTMLWBRElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLWBRElement.cpp; sourceTree = "<group>"; };
 		839AAFEB1A0C0C8D00605F99 /* HTMLWBRElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLWBRElement.h; sourceTree = "<group>"; };
+		83A2ABD824D86DC600E2D73D /* DelayOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DelayOptions.h; sourceTree = "<group>"; };
+		83A2ABDA24D86DC700E2D73D /* DelayOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DelayOptions.idl; sourceTree = "<group>"; };
 		83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLDocumentCustom.cpp; sourceTree = "<group>"; };
 		83A8AC3E1FABBFD1002064AC /* ServiceWorkerIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerIdentifier.h; sourceTree = "<group>"; };
 		83B1A6FF249985D000FE5961 /* WebKitAudioContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAudioContext.h; sourceTree = "<group>"; };
@@ -29566,6 +29569,8 @@
 				FD315FE312B0267600C1A359 /* DelayNode.cpp */,
 				FD315FE412B0267600C1A359 /* DelayNode.h */,
 				FD315FE512B0267600C1A359 /* DelayNode.idl */,
+				83A2ABD824D86DC600E2D73D /* DelayOptions.h */,
+				83A2ABDA24D86DC700E2D73D /* DelayOptions.idl */,
 				FD315FE612B0267600C1A359 /* DelayProcessor.cpp */,
 				FD315FE712B0267600C1A359 /* DelayProcessor.h */,
 				8304027D249A7A5B00A90D8D /* DistanceModelType.h */,
@@ -30639,6 +30644,7 @@
 				CD83D36221122A210076E11C /* DeferrableTask.h in Headers */,
 				FD31602C12B0267600C1A359 /* DelayDSPKernel.h in Headers */,
 				FD31602E12B0267600C1A359 /* DelayNode.h in Headers */,
+				83A2ABDB24D86DE000E2D73D /* DelayOptions.h in Headers */,
 				FD31603112B0267600C1A359 /* DelayProcessor.h in Headers */,
 				93309DDF099E64920056E581 /* DeleteFromTextNodeCommand.h in Headers */,
 				93309DE1099E64920056E581 /* DeleteSelectionCommand.h in Headers */,

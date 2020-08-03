@@ -321,6 +321,7 @@ $(PROJECT_DIR)/Modules/webaudio/ChannelSplitterNode.idl
 $(PROJECT_DIR)/Modules/webaudio/ChannelSplitterOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/ConvolverNode.idl
 $(PROJECT_DIR)/Modules/webaudio/DelayNode.idl
+$(PROJECT_DIR)/Modules/webaudio/DelayOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/DistanceModelType.idl
 $(PROJECT_DIR)/Modules/webaudio/DynamicsCompressorNode.idl
 $(PROJECT_DIR)/Modules/webaudio/GainNode.idl

@@ -1,3 +1,15 @@
+2020-08-03  Chris Dumez  <cdumez@apple.com>
+
+        Add constructor to DelayNode
+        https://bugs.webkit.org/show_bug.cgi?id=215083
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/ctor-delay-expected.txt:
+
 2020-08-03  Clark Wang  <clark_wang@apple.com>
 
         Added AudioBuffer Constructor

@@ -2798,6 +2798,7 @@ JSDatabase.cpp
 JSDatabaseCallback.cpp
 JSDedicatedWorkerGlobalScope.cpp
 JSDelayNode.cpp
+JSDelayOptions.cpp
 JSDeprecatedCSSOMCounter.cpp
 JSDeprecatedCSSOMPrimitiveValue.cpp
 JSDeprecatedCSSOMRGBColor.cpp

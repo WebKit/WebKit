@@ -646,38 +646,38 @@ FAIL AudioNode interface: new ConvolverNode(context) must inherit property "chan
 FAIL AudioNode interface: new ConvolverNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new ConvolverNode(context)')"
 FAIL AudioNode interface: new ConvolverNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new ConvolverNode(context)')"
 PASS DelayNode interface: existence and properties of interface object 
-FAIL DelayNode interface object length assert_equals: wrong value for DelayNode.length expected 1 but got 0
+PASS DelayNode interface object length 
 PASS DelayNode interface object name 
 PASS DelayNode interface: existence and properties of interface prototype object 
 PASS DelayNode interface: existence and properties of interface prototype object's "constructor" property 
 PASS DelayNode interface: existence and properties of interface prototype object's @@unscopables property 
 PASS DelayNode interface: attribute delayTime 
-FAIL DelayNode must be primary interface of new DelayNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL Stringification of new DelayNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL DelayNode interface: new DelayNode(context) must inherit property "delayTime" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new DelayNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: calling connect(AudioParam, optional unsigned long) on new DelayNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "disconnect()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "disconnect(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: calling disconnect(unsigned long) on new DelayNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "disconnect(AudioNode)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode) on new DelayNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long) on new DelayNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new DelayNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "disconnect(AudioParam)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioParam) on new DelayNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioParam, unsigned long) on new DelayNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "context" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "numberOfInputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "numberOfOutputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "channelCount" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
-FAIL AudioNode interface: new DelayNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DelayNode(context)')"
+PASS DelayNode must be primary interface of new DelayNode(context) 
+PASS Stringification of new DelayNode(context) 
+PASS DelayNode interface: new DelayNode(context) must inherit property "delayTime" with the proper type 
+PASS AudioNode interface: new DelayNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new DelayNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DelayNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioParam, optional unsigned long) on new DelayNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DelayNode(context) must inherit property "disconnect()" with the proper type 
+PASS AudioNode interface: new DelayNode(context) must inherit property "disconnect(unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(unsigned long) on new DelayNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DelayNode(context) must inherit property "disconnect(AudioNode)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode) on new DelayNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DelayNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long) on new DelayNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DelayNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new DelayNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DelayNode(context) must inherit property "disconnect(AudioParam)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam) on new DelayNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DelayNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam, unsigned long) on new DelayNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DelayNode(context) must inherit property "context" with the proper type 
+PASS AudioNode interface: new DelayNode(context) must inherit property "numberOfInputs" with the proper type 
+PASS AudioNode interface: new DelayNode(context) must inherit property "numberOfOutputs" with the proper type 
+PASS AudioNode interface: new DelayNode(context) must inherit property "channelCount" with the proper type 
+PASS AudioNode interface: new DelayNode(context) must inherit property "channelCountMode" with the proper type 
+PASS AudioNode interface: new DelayNode(context) must inherit property "channelInterpretation" with the proper type 
 PASS DynamicsCompressorNode interface: existence and properties of interface object 
 FAIL DynamicsCompressorNode interface object length assert_equals: wrong value for DynamicsCompressorNode.length expected 1 but got 0
 PASS DynamicsCompressorNode interface object name 

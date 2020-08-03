@@ -47,6 +47,7 @@
 #include "ConvolverNode.h"
 #include "DefaultAudioDestinationNode.h"
 #include "DelayNode.h"
+#include "DelayOptions.h"
 #include "Document.h"
 #include "DynamicsCompressorNode.h"
 #include "EventNames.h"
@@ -567,11 +568,9 @@ ExceptionOr<Ref<DelayNode>> BaseAudioContext::createDelay(double maxDelayTime)
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
-    return DelayNode::create(*this, sampleRate(), maxDelayTime);
+    DelayOptions options;
+    options.maxDelayTime = maxDelayTime;
+    return DelayNode::create(*this, options);
 }
 
 ExceptionOr<Ref<ChannelSplitterNode>> BaseAudioContext::createChannelSplitter(size_t numberOfOutputs)
