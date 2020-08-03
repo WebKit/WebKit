@@ -26,6 +26,8 @@
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
 ] interface AnalyserNode : AudioNode {
+    [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional AnalyserOptions options);
+
     attribute unsigned long fftSize;
     readonly attribute unsigned long frequencyBinCount;
 

@@ -295,6 +295,7 @@ $(PROJECT_DIR)/Modules/streams/WritableStream.idl
 $(PROJECT_DIR)/Modules/streams/WritableStream.js
 $(PROJECT_DIR)/Modules/streams/WritableStreamInternals.js
 $(PROJECT_DIR)/Modules/webaudio/AnalyserNode.idl
+$(PROJECT_DIR)/Modules/webaudio/AnalyserOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBuffer.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBufferCallback.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBufferSourceNode.idl

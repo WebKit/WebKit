@@ -446,6 +446,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/streams/WritableStream.idl
 
     Modules/webaudio/AnalyserNode.idl
+    Modules/webaudio/AnalyserOptions.idl
     Modules/webaudio/AudioBuffer.idl
     Modules/webaudio/AudioBufferCallback.idl
     Modules/webaudio/AudioBufferSourceNode.idl

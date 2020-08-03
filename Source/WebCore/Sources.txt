@@ -2621,6 +2621,7 @@ JSAesCtrParams.cpp
 JSAesGcmParams.cpp
 JSAesKeyParams.cpp
 JSAnalyserNode.cpp
+JSAnalyserOptions.cpp
 JSAnimationEffect.cpp
 JSAnimationEvent.cpp
 JSAnimationPlaybackEvent.cpp

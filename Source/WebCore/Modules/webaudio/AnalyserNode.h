@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AnalyserOptions.h"
 #include "AudioBasicInspectorNode.h"
 #include "RealtimeAnalyser.h"
 
@@ -32,10 +33,7 @@ namespace WebCore {
 class AnalyserNode final : public AudioBasicInspectorNode {
     WTF_MAKE_ISO_ALLOCATED(AnalyserNode);
 public:
-    static Ref<AnalyserNode> create(BaseAudioContext& context, float sampleRate)
-    {
-        return adoptRef(*new AnalyserNode(context, sampleRate));
-    }
+    static ExceptionOr<Ref<AnalyserNode>> create(BaseAudioContext&, const AnalyserOptions& = { });
 
     virtual ~AnalyserNode();
 
@@ -44,6 +42,8 @@ public:
 
     unsigned frequencyBinCount() const { return m_analyser.frequencyBinCount(); }
 
+    ExceptionOr<void> setMinMaxDecibels(double minDecibels, double maxDecibels);
+    
     ExceptionOr<void> setMinDecibels(double);
     double minDecibels() const { return m_analyser.minDecibels(); }
 
@@ -59,7 +59,7 @@ public:
     void getByteTimeDomainData(const Ref<JSC::Uint8Array>& array) { m_analyser.getByteTimeDomainData(array.get()); }
 
 private:
-    AnalyserNode(BaseAudioContext&, float sampleRate);
+    AnalyserNode(BaseAudioContext&);
 
     void process(size_t framesToProcess) final;
     void reset() final;

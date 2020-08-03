@@ -53,6 +53,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAesKeyParams.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAesKeyParams.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnalyserNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnalyserNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnalyserOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnalyserOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimatable.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimatable.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAnimationEffect.cpp

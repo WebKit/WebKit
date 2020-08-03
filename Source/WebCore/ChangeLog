@@ -1,3 +1,35 @@
+2020-08-03  Clark Wang  <clark_wang@apple.com>
+
+        Added Constructor to AnalyserNode
+        https://bugs.webkit.org/show_bug.cgi?id=215040
+
+        Reviewed by Chris Dumez.
+
+        Introduced AnalyserNode constructor and AnalyserOptions according to spec:
+        https://www.w3.org/TR/webaudio/#AnalyserNode-constructors.
+
+        Re-baselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::create):
+        (WebCore::AnalyserNode::AnalyserNode):
+        (WebCore::AnalyserNode::setFftSize):
+        (WebCore::AnalyserNode::setMinMaxDecibels):
+        (WebCore::AnalyserNode::setMinDecibels):
+        (WebCore::AnalyserNode::setMaxDecibels):
+        * Modules/webaudio/AnalyserNode.h:
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AnalyserOptions.h: Added.
+        * Modules/webaudio/AnalyserOptions.idl: Added.
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createAnalyser):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-08-03  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorderPrivateWriter::appendEndOfVideoSampleDurationIfNeeded should only call requestMediaDataWhenReadyOnQueue once

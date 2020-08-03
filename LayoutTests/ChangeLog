@@ -1,3 +1,14 @@
+2020-08-03  Clark Wang  <clark_wang@apple.com>
+
+        Added Constructor to AnalyserNode
+        https://bugs.webkit.org/show_bug.cgi?id=215040
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing tests.
+
+        * webaudio/analyser-exception-expected.txt:
+
 2020-08-02  Darin Adler  <darin@apple.com>
 
         Write a script to find duplicate files and delete some duplicate tests in LayoutTests

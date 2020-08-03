@@ -2,41 +2,79 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
 PASS Executing "invalid constructor" 
-FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
-FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.channelCount')"
-FAIL Executing "constructor with options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.fftSize')"
-FAIL Executing "construct invalid options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.frequencyBinCount')"
+PASS Executing "default constructor" 
+PASS Executing "test AudioNodeOptions" 
+PASS Executing "constructor with options" 
+PASS Executing "construct invalid options" 
 PASS Executing "setting min/max" 
 PASS Audit report 
 PASS > [initialize]  
 PASS   context = new OfflineAudioContext(...) did not throw an exception. 
 PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [invalid constructor]  
-PASS   new AnalyserNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
-PASS   new AnalyserNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
-PASS   new AnalyserNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS   new AnalyserNode() threw TypeError: "Not enough arguments". 
+PASS   new AnalyserNode(1) threw TypeError: "Argument 1 ('context') to the AnalyserNode constructor must be an instance of BaseAudioContext". 
+PASS   new AnalyserNode(context, 42) threw TypeError: "Type error". 
 PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
 PASS > [default constructor]  
-FAIL X node0 = new AnalyserNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
-FAIL X node0 instanceof AnalyserNode is not equal to true. Got false. assert_true: expected true got false
+PASS   node0 = new AnalyserNode(context) did not throw an exception. 
+PASS   node0 instanceof AnalyserNode is equal to true. 
+PASS   node0.numberOfInputs is equal to 1. 
+PASS   node0.numberOfOutputs is equal to 1. 
+PASS   node0.channelCount is equal to 2. 
+PASS   node0.channelCountMode is equal to max. 
+PASS   node0.channelInterpretation is equal to speakers. 
+PASS   node0.fftSize is equal to 2048. 
+PASS   node0.frequencyBinCount is equal to 1024. 
+PASS   node0.minDecibels is equal to -100. 
+PASS   node0.maxDecibels is equal to -30. 
+PASS   node0.smoothingTimeConstant is equal to 0.8. 
+PASS < [default constructor] All assertions passed. (total 12 assertions) 
 PASS > [test AudioNodeOptions]  
-FAIL X new AnalyserNode(c, {channelCount: 17}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[nodeName]')". assert_true: expected true got false
+PASS   new AnalyserNode(c, {channelCount: 17}) did not throw an exception. 
+PASS   node.channelCount is equal to 17. 
+PASS   new AnalyserNode(c, {channelCount: 0}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new AnalyserNode(c, {channelCount: 99}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new AnalyserNode(c, {channelCountMode: "max"} did not throw an exception. 
+PASS   node.channelCountMode is equal to max. 
+PASS   new AnalyserNode(c, {channelCountMode: "max"}) did not throw an exception. 
+PASS   node.channelCountMode after valid setter is equal to max. 
+PASS   new AnalyserNode(c, {channelCountMode: "clamped-max"}) did not throw an exception. 
+PASS   node.channelCountMode after valid setter is equal to clamped-max. 
+PASS   new AnalyserNode(c, {channelCountMode: "explicit"}) did not throw an exception. 
+PASS   node.channelCountMode after valid setter is equal to explicit. 
+PASS   new AnalyserNode(c, {channelCountMode: "foobar"} threw TypeError: "Type error". 
+PASS   node.channelCountMode after invalid setter is equal to explicit. 
+PASS   new AnalyserNode(c, {channelInterpretation: "speakers"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to speakers. 
+PASS   new AnalyserNode(c, {channelInterpretation: "discrete"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to discrete. 
+PASS   new AnalyserNode(c, {channelInterpretation: "foobar"}) threw TypeError: "Type error". 
+PASS   node.channelInterpretation after invalid setter is equal to discrete. 
+PASS < [test AudioNodeOptions] All assertions passed. (total 20 assertions) 
 PASS > [constructor with options]  
-FAIL X node1 = new AnalyserNode(c, {"fftSize":32,"maxDecibels":1,"minDecibels":-13,"smoothingTimeConstant":0.125}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new AnalyserNode(context, options)')". assert_true: expected true got false
-FAIL X node1 instanceof AnalyserNode is not equal to true. Got false. assert_true: expected true got false
+PASS   node1 = new AnalyserNode(c, {"fftSize":32,"maxDecibels":1,"minDecibels":-13,"smoothingTimeConstant":0.125}) did not throw an exception. 
+PASS   node1 instanceof AnalyserNode is equal to true. 
+PASS   node1.fftSize is equal to 32. 
+PASS   node1.maxDecibels is equal to 1. 
+PASS   node1.minDecibels is equal to -13. 
+PASS   node1.smoothingTimeConstant is equal to 0.125. 
+PASS < [constructor with options] All assertions passed. (total 6 assertions) 
 PASS > [construct invalid options]  
-FAIL X node = new AnalyserNode(c, { fftSize: 33 }) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
-FAIL X node = new AnalyserNode(c, { maxDecibels: -500 }) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
-FAIL X node = new AnalyserNode(c, { minDecibels: -10 }) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
-FAIL X node = new AnalyserNode(c, { smoothingTimeConstant: 2 }) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
-FAIL X node = new AnalyserNode(c, { frequencyBinCount: 33 }) incorrectly threw TypeError: "function is not a constructor (evaluating 'new AnalyserNode(context, {frequencyBinCount: 33})')". assert_true: expected true got false
+PASS   node = new AnalyserNode(c, { fftSize: 33 }) threw IndexSizeError: "fftSize must be power of 2 in the range 32 to 32768.". 
+PASS   node = new AnalyserNode(c, { maxDecibels: -500 }) threw IndexSizeError: "minDecibels must be less than maxDecibels.". 
+PASS   node = new AnalyserNode(c, { minDecibels: -10 }) threw IndexSizeError: "minDecibels must be less than maxDecibels.". 
+PASS   node = new AnalyserNode(c, { smoothingTimeConstant: 2 }) threw IndexSizeError: "The index is not in the allowed range.". 
+PASS   node = new AnalyserNode(c, { frequencyBinCount: 33 }) did not throw an exception. 
+PASS   node.frequencyBinCount is equal to 1024. 
+PASS < [construct invalid options] All assertions passed. (total 6 assertions) 
 PASS > [setting min/max]  
-FAIL X node = new AnalyserNode(c, {"minDecibels":-10,"maxDecibels":20}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new AnalyserNode(context, options)')". assert_true: expected true got false
-FAIL X node = new AnalyserNode(c, {"maxDecibels":20,"minDecibels":-10}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new AnalyserNode(context, options)')". assert_true: expected true got false
-FAIL X node = new AnalyserNode(c, {"minDecibels":-200,"maxDecibels":-150}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new AnalyserNode(context, options)')". assert_true: expected true got false
-FAIL X node = new AnalyserNode(c, {"maxDecibels":-150,"minDecibels":-200}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new AnalyserNode(context, options)')". assert_true: expected true got false
-FAIL X node = new AnalyserNode(c, {"maxDecibels":-150,"minDecibels":-10}) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
-FAIL X node = new AnalyserNode(c, {"minDecibels":-10,"maxDecibels":-150}) threw "TypeError" instead of IndexSizeError. assert_true: expected true got false
-FAIL < [setting min/max] 6 out of 6 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 5 out of 7 tasks were failed. assert_true: expected true got false
+PASS   node = new AnalyserNode(c, {"minDecibels":-10,"maxDecibels":20}) did not throw an exception. 
+PASS   node = new AnalyserNode(c, {"maxDecibels":20,"minDecibels":-10}) did not throw an exception. 
+PASS   node = new AnalyserNode(c, {"minDecibels":-200,"maxDecibels":-150}) did not throw an exception. 
+PASS   node = new AnalyserNode(c, {"maxDecibels":-150,"minDecibels":-200}) did not throw an exception. 
+PASS   node = new AnalyserNode(c, {"maxDecibels":-150,"minDecibels":-10}) threw IndexSizeError: "minDecibels must be less than maxDecibels.". 
+PASS   node = new AnalyserNode(c, {"minDecibels":-10,"maxDecibels":-150}) threw IndexSizeError: "minDecibels must be less than maxDecibels.". 
+PASS < [setting min/max] All assertions passed. (total 6 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 7 tasks ran successfully. 
 

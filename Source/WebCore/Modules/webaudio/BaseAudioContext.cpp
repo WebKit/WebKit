@@ -549,11 +549,7 @@ ExceptionOr<Ref<AnalyserNode>> BaseAudioContext::createAnalyser()
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
-    return AnalyserNode::create(*this, sampleRate());
+    return AnalyserNode::create(*this);
 }
 
 ExceptionOr<Ref<GainNode>> BaseAudioContext::createGain()
