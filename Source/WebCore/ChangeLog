@@ -1,3 +1,26 @@
+2020-08-03  Youenn Fablet  <youenn@apple.com>
+
+        MediaRecorderPrivateWriter::appendEndOfVideoSampleDurationIfNeeded should only call requestMediaDataWhenReadyOnQueue once
+        https://bugs.webkit.org/show_bug.cgi?id=214972
+
+        Reviewed by Eric Carlson.
+
+        When processing a compressed sample, pass it to the writer if its ready.
+        Otherwise buffer it and retry passing it to the writer next time we have a sample.
+        When finishing a write, we call requestMediaDataWhenReadyOnQueue to finish passing samples that are still enqueued.
+
+        Covered by existing tests no longer triggering ObjC exception.
+
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedAudioSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedVideoSampleBufferIfPossible):
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedVideoSampleBuffer):
+        (WebCore::MediaRecorderPrivateWriter::appendCompressedSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::finishAppendingCompressedAudioSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::finishAppendingCompressedVideoSampleBuffers):
+        (WebCore::MediaRecorderPrivateWriter::flushCompressedSampleBuffers):
+
 2020-08-02  Darin Adler  <darin@apple.com>
 
         Remove some member functions of Range and many calls to createLiveRange

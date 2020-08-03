@@ -243,45 +243,60 @@ void MediaRecorderPrivateWriter::startAssetWriter()
     m_hasStartedWriting = true;
 }
 
-bool MediaRecorderPrivateWriter::appendCompressedAudioSampleBuffer()
+bool MediaRecorderPrivateWriter::appendCompressedAudioSampleBufferIfPossible()
 {
     if (!m_audioCompressor)
-        return false;
-
-    if (![m_audioAssetWriterInput isReadyForMoreMediaData])
         return false;
 
     auto buffer = m_audioCompressor->takeOutputSampleBuffer();
     if (!buffer)
         return false;
 
+    if (m_isFlushingSamples || ![m_videoAssetWriterInput isReadyForMoreMediaData]) {
+        m_pendingAudioSampleQueue.append(WTFMove(buffer));
+        return false;
+    }
+
+    while (!m_pendingAudioSampleQueue.isEmpty() && [m_videoAssetWriterInput isReadyForMoreMediaData])
+        [m_audioAssetWriterInput.get() appendSampleBuffer:m_pendingAudioSampleQueue.takeFirst().get()];
+
     [m_audioAssetWriterInput.get() appendSampleBuffer:buffer.get()];
     return true;
 }
 
-bool MediaRecorderPrivateWriter::appendCompressedVideoSampleBuffer()
+bool MediaRecorderPrivateWriter::appendCompressedVideoSampleBufferIfPossible()
 {
     if (!m_videoCompressor)
-        return false;
-
-    if (![m_videoAssetWriterInput isReadyForMoreMediaData])
         return false;
 
     auto buffer = m_videoCompressor->takeOutputSampleBuffer();
     if (!buffer)
         return false;
 
-    m_lastVideoPresentationTime = CMSampleBufferGetPresentationTimeStamp(buffer.get());
-    m_lastVideoDecodingTime = CMSampleBufferGetDecodeTimeStamp(buffer.get());
+    if (m_isFlushingSamples || ![m_videoAssetWriterInput isReadyForMoreMediaData]) {
+        m_pendingVideoSampleQueue.append(WTFMove(buffer));
+        return false;
+    }
+
+    while (!m_pendingVideoSampleQueue.isEmpty() && [m_videoAssetWriterInput isReadyForMoreMediaData])
+        appendCompressedVideoSampleBuffer(m_pendingVideoSampleQueue.takeFirst().get());
+
+    appendCompressedVideoSampleBuffer(buffer.get());
+    return true;
+}
+
+void MediaRecorderPrivateWriter::appendCompressedVideoSampleBuffer(CMSampleBufferRef buffer)
+{
+    m_lastVideoPresentationTime = CMSampleBufferGetPresentationTimeStamp(buffer);
+    m_lastVideoDecodingTime = CMSampleBufferGetDecodeTimeStamp(buffer);
     m_hasEncodedVideoSamples = true;
 
-    [m_videoAssetWriterInput.get() appendSampleBuffer:buffer.get()];
-    return true;
+    [m_videoAssetWriterInput.get() appendSampleBuffer:buffer];
 }
 
 void MediaRecorderPrivateWriter::appendCompressedSampleBuffers()
 {
-    while (appendCompressedVideoSampleBuffer() || appendCompressedAudioSampleBuffer()) { };
+    while (appendCompressedVideoSampleBufferIfPossible() || appendCompressedAudioSampleBufferIfPossible()) { };
 }
 
 static inline void appendEndsPreviousSampleDurationMarker(AVAssetWriterInput *assetWriterInput, CMTime presentationTimeStamp, CMTime decodingTimeStamp)
@@ -301,36 +316,58 @@ static inline void appendEndsPreviousSampleDurationMarker(AVAssetWriterInput *as
         RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter appendSampleBuffer to writer input failed");
 }
 
-void MediaRecorderPrivateWriter::appendEndOfVideoSampleDurationIfNeeded(CompletionHandler<void()>&& completionHandler)
+void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_hasEncodedVideoSamples) {
-        completionHandler();
-        return;
+    bool hasPendingAudioSamples = !m_pendingAudioSampleQueue.isEmpty();
+    bool hasPendingVideoSamples = !m_pendingVideoSampleQueue.isEmpty();
+
+    if (m_hasEncodedVideoSamples) {
+        hasPendingVideoSamples |= ![m_videoAssetWriterInput isReadyForMoreMediaData];
+        if (!hasPendingVideoSamples)
+            appendEndsPreviousSampleDurationMarker(m_videoAssetWriterInput.get(), m_lastVideoPresentationTime, m_lastVideoDecodingTime);
     }
-    if ([m_videoAssetWriterInput isReadyForMoreMediaData]) {
-        appendEndsPreviousSampleDurationMarker(m_videoAssetWriterInput.get(), m_lastVideoPresentationTime, m_lastVideoDecodingTime);
+
+    if (!hasPendingAudioSamples && !hasPendingVideoSamples) {
         completionHandler();
         return;
     }
 
-    auto block = makeBlockPtr([this, weakThis = makeWeakPtr(this), completionHandler = WTFMove(completionHandler)]() mutable {
-        if (weakThis) {
+    m_isFlushingSamples = true;
+    auto block = makeBlockPtr([this, weakThis = makeWeakPtr(*this), hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoSampleQueue), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!weakThis) {
+            completionHandler();
+            return;
+        }
+
+        while (!audioSampleQueue.isEmpty() && [m_audioAssetWriterInput isReadyForMoreMediaData])
+            [m_audioAssetWriterInput.get() appendSampleBuffer:audioSampleQueue.takeFirst().get()];
+
+        while (!videoSampleQueue.isEmpty() && [m_videoAssetWriterInput isReadyForMoreMediaData])
+            appendCompressedVideoSampleBuffer(videoSampleQueue.takeFirst().get());
+
+        if (!audioSampleQueue.isEmpty() || !videoSampleQueue.isEmpty())
+            return;
+
+        if (hasPendingAudioSamples)
+            [m_audioAssetWriterInput markAsFinished];
+        if (hasPendingVideoSamples) {
             appendEndsPreviousSampleDurationMarker(m_videoAssetWriterInput.get(), m_lastVideoPresentationTime, m_lastVideoDecodingTime);
             [m_videoAssetWriterInput markAsFinished];
         }
+        m_isFlushingSamples = false;
         completionHandler();
     });
-    [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:block.get()];
-}
 
-void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(CompletionHandler<void()>&& completionHandler)
-{
-    appendCompressedSampleBuffers();
-    appendEndOfVideoSampleDurationIfNeeded(WTFMove(completionHandler));
+    if (hasPendingAudioSamples)
+        [m_audioAssetWriterInput requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:block.get()];
+    if (hasPendingVideoSamples)
+        [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:block.get()];
 }
 
 void MediaRecorderPrivateWriter::clear()
 {
+    m_pendingAudioSampleQueue.clear();
+    m_pendingVideoSampleQueue.clear();
     if (m_writer)
         m_writer.clear();
 

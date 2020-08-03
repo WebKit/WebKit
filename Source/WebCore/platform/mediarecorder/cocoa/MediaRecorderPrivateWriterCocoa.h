@@ -83,16 +83,18 @@ private:
     static void compressedAudioOutputBufferCallback(void*, CMBufferQueueTriggerToken);
 
     void startAssetWriter();
-    void appendCompressedSampleBuffers();
 
-    bool appendCompressedAudioSampleBuffer();
-    bool appendCompressedVideoSampleBuffer();
+    void appendCompressedSampleBuffers();
+    bool appendCompressedAudioSampleBufferIfPossible();
+    bool appendCompressedVideoSampleBufferIfPossible();
+    void appendCompressedVideoSampleBuffer(CMSampleBufferRef);
 
     void processNewCompressedAudioSampleBuffers();
     void processNewCompressedVideoSampleBuffers();
 
+    void finishAppendingCompressedAudioSampleBuffers(CompletionHandler<void()>&&);
+    void finishAppendingCompressedVideoSampleBuffers(CompletionHandler<void()>&&);
     void flushCompressedSampleBuffers(CompletionHandler<void()>&&);
-    void appendEndOfVideoSampleDurationIfNeeded(CompletionHandler<void()>&&);
 
     bool m_hasAudio { false };
     bool m_hasVideo { false };
@@ -118,6 +120,10 @@ private:
     bool m_hasEncodedVideoSamples { false };
 
     RetainPtr<WebAVAssetWriterDelegate> m_writerDelegate;
+    Deque<RetainPtr<CMSampleBufferRef>> m_pendingVideoSampleQueue;
+    Deque<RetainPtr<CMSampleBufferRef>> m_pendingAudioSampleQueue;
+
+    bool m_isFlushingSamples { false };
 };
 
 } // namespace WebCore
