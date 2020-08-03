@@ -481,13 +481,13 @@ window.UIHelper = class UIHelper {
                     function clearCallbacksAndScriptComplete() {
                         uiController.didHideKeyboardCallback = null;
                         uiController.didDismissPopoverCallback = null;
-                        uiController.didHideContextMenuCallback = null;
+                        uiController.didDismissContextMenuCallback = null;
                         uiController.uiScriptComplete();
                     }
 
                     uiController.didHideKeyboardCallback = clearCallbacksAndScriptComplete;
                     uiController.didDismissPopoverCallback = clearCallbacksAndScriptComplete;
-                    uiController.didHideContextMenuCallback = clearCallbacksAndScriptComplete;
+                    uiController.didDismissContextMenuCallback = clearCallbacksAndScriptComplete;
                 })()`, resolve);
         });
     }

@@ -1235,12 +1235,12 @@ JSObjectRef UIScriptControllerIOS::attachmentInfo(JSStringRef jsAttachmentIdenti
 
 UIView *UIScriptControllerIOS::platformContentView() const
 {
-    return [webView() valueForKeyPath:@"_currentContentView"];
+    return webView().contentView;
 }
 
 JSObjectRef UIScriptControllerIOS::calendarType() const
 {
-    UIView *contentView = [webView() valueForKeyPath:@"_currentContentView"];
+    UIView *contentView = webView().contentView;
     NSString *calendarTypeString = [contentView valueForKeyPath:@"dateTimeInputControl.dateTimePickerCalendarType"];
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:calendarTypeString inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);

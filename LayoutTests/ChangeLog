@@ -1,3 +1,23 @@
+2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264170): fast/events/touch/ios/long-press-on-image.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=215075
+        <rdar://problem/66294637>
+
+        Reviewed by Megan Gardner.
+
+        Drive-by fix: this helper function had intended to use the `didDismissContextMenuCallback` property to register
+        callbacks for context menu dismissal, but instead, it sets a new property (`didHideContextMenuCallback`) on
+        `UIScriptController` that doesn't actually have any effect. The purpose of doing this is to make it safe to
+        invoke `waitForInputSessionToDismiss()` in the middle of the context menu dismissal animation when dismissing
+        date pickers on iOS. While it seems that none of our existing tests currently depend on this behavior in order
+        to pass, it still seems important to fix to avoid timing out when using this helper method in the future.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.waitForInputSessionToDismiss.return.new.Promise.):
+        (window.UIHelper.waitForInputSessionToDismiss.return.new.Promise):
+        (window.UIHelper.waitForInputSessionToDismiss):
+
 2020-08-03  Clark Wang  <clark_wang@apple.com>
 
         Added AudioBuffer Constructor

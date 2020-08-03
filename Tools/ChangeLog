@@ -1,3 +1,40 @@
+2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r264170): fast/events/touch/ios/long-press-on-image.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=215075
+        <rdar://problem/66294637>
+
+        Reviewed by Megan Gardner.
+
+        This test started timing out after r264170, due to the `if (self.showingContextMenu)` early return added inside
+        `-[TestRunnerWKWebView _didShowContextMenu]`. If this test is run after another test that attempts to show a
+        context menu but does not dismiss it, we will begin the test in a state where `showingContextMenu` is already
+        set to `YES`, which means that `didShowContextMenuCallback` will never be invoked.
+
+        To address this, force any context menu interactions on `WKContentView` to dismiss between tests. See below for
+        more details.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView immediatelyDismissContextMenuIfNeeded]):
+
+        When resetting state between tests, forcibly dismiss any context menus that were shown while running the
+        previous test and reset `showingContextMenu` back to `NO`.
+
+        (-[TestRunnerWKWebView contentView]):
+
+        Drive-by refactoring: add a readonly helper property to grab the WKWebView's content view for testing purposes,
+        and use this property instead of directly calling `-valueForKeyPath:` in a few places (see below).
+
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::windowSnapshotImage):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::notifyDone):
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::platformContentView const):
+        (WTR::UIScriptControllerIOS::calendarType const):
+
 2020-08-03  Devin Rousso  <drousso@apple.com>
 
         should be able to request an editing context for a given region of a given input

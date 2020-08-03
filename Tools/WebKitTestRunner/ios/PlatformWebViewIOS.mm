@@ -334,7 +334,7 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     RELEASE_ASSERT(viewSize.width);
     RELEASE_ASSERT(viewSize.height);
 
-    UIView *selectionView = [platformView() valueForKeyPath:@"_currentContentView.interactionAssistant.selectionView"];
+    UIView *selectionView = [platformView().contentView valueForKeyPath:@"interactionAssistant.selectionView"];
     UIView *startGrabberView = [selectionView valueForKeyPath:@"rangeView.startGrabber"];
     UIView *endGrabberView = [selectionView valueForKeyPath:@"rangeView.endGrabber"];
     Vector<WeakObjCPtr<UIView>, 3> viewsToUnhide;

@@ -92,7 +92,7 @@ static void handleMenuDidHideNotification(CFNotificationCenterRef, void*, CFStri
 
 void TestController::notifyDone()
 {
-    UIView *contentView = [mainWebView()->platformView() valueForKeyPath:@"_currentContentView"];
+    UIView *contentView = mainWebView()->platformView().contentView;
     UIView *selectionView = [contentView valueForKeyPath:@"interactionAssistant.selectionView"];
     [selectionView _removeAllAnimations:YES];
 }
@@ -217,6 +217,8 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
 
         if (webView.interactingWithFormControl)
             shouldRestoreFirstResponder = [webView resignFirstResponder];
+
+        [webView immediatelyDismissContextMenuIfNeeded];
     }
 
     UIMenuController.sharedMenuController.menuVisible = NO;

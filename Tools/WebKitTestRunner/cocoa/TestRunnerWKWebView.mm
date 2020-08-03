@@ -216,6 +216,21 @@ IGNORE_WARNINGS_END
     return _isInteractingWithFormControl;
 }
 
+- (void)immediatelyDismissContextMenuIfNeeded
+{
+    if (!self.showingContextMenu)
+        return;
+
+    self.showingContextMenu = NO;
+
+#if PLATFORM(IOS)
+    for (id <UIInteraction> interaction in self.contentView.interactions) {
+        if ([interaction isKindOfClass:UIContextMenuInteraction.class])
+            [(UIContextMenuInteraction *)interaction dismissMenu];
+    }
+#endif
+}
+
 - (void)_didShowContextMenu
 {
     if (self.showingContextMenu)
@@ -500,6 +515,11 @@ IGNORE_WARNINGS_END
 - (UIEdgeInsets)_safeAreaInsetsForFrame:(CGRect)frame inSuperview:(UIView *)view
 {
     return _overrideSafeAreaInsets;
+}
+
+- (UIView *)contentView
+{
+    return [self valueForKeyPath:@"_currentContentView"];
 }
 
 #pragma mark - WKUIDelegatePrivate

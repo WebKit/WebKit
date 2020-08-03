@@ -51,6 +51,7 @@
 - (void)setAllowedMenuActions:(NSArray<NSString *> *)actions;
 
 - (void)resetCustomMenuAction;
+- (void)immediatelyDismissContextMenuIfNeeded;
 - (void)installCustomMenuAction:(NSString *)name dismissesAutomatically:(BOOL)dismissesAutomatically callback:(dispatch_block_t)callback;
 
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
@@ -59,6 +60,7 @@
 
 @property (nonatomic, assign) UIEdgeInsets overrideSafeAreaInsets;
 
+@property (nonatomic, readonly) UIView *contentView;
 @property (nonatomic, readonly, getter=isShowingKeyboard) BOOL showingKeyboard;
 @property (nonatomic, readonly, getter=isDismissingMenu) BOOL dismissingMenu;
 @property (nonatomic, readonly, getter=isShowingPopover) BOOL showingPopover;
