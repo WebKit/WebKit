@@ -297,11 +297,11 @@ float FontCascade::drawText(GraphicsContext& context, const TextRun& run, const 
 {
     unsigned destination = to.valueOr(run.length());
     auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination);
-    FloatPoint startPoint = point + FloatSize(glyphBuffer.initialAdvance());
-    // We couldn't generate any glyphs for the run. Give up.
+
     if (glyphBuffer.isEmpty())
         return 0;
-    // Draw the glyph buffer now at the starting point returned in startX.
+
+    FloatPoint startPoint = point + FloatSize(glyphBuffer.initialAdvance());
     float oldStartX = startPoint.x();
     drawGlyphBuffer(context, glyphBuffer, startPoint, customFontNotReadyAction);
     return startPoint.x() - oldStartX;
@@ -334,8 +334,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
         codePathToUse = Complex;
 
     auto glyphBuffer = layoutText(codePathToUse, run, from, destination);
-    FloatPoint startPoint = toFloatPoint(FloatSize(glyphBuffer.initialAdvance()));
-    // We couldn't generate any glyphs for the run. Give up.
+
     if (glyphBuffer.isEmpty())
         return nullptr;
     
@@ -344,6 +343,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
         return makeUnique<DisplayList::Recorder>(displayListContext, *displayList, context.state(), FloatRect(), AffineTransform());
     });
     
+    FloatPoint startPoint = toFloatPoint(FloatSize(glyphBuffer.initialAdvance()));
     drawGlyphBuffer(recordingContext, glyphBuffer, startPoint, customFontNotReadyAction);
     return displayList;
 }
@@ -1395,6 +1395,7 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
         initialAdvance = finalRoundingWidth + it.runWidthSoFar() - afterWidth;
     } else
         initialAdvance = beforeWidth;
+    // FIXME: Deal with the GlyphBuffer's current initialAdvance.
     glyphBuffer.setInitialAdvance(FloatSize(initialAdvance, 0));
 
     if (run.rtl())
@@ -1558,11 +1559,10 @@ void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRec
     float beforeWidth = it.runWidthSoFar();
     it.advance(to, &glyphBuffer);
     float afterWidth = it.runWidthSoFar();
-    float totalWidth = -1;
 
     if (run.rtl()) {
         it.advance(run.length(), &glyphBuffer);
-        totalWidth = it.runWidthSoFar();
+        float totalWidth = it.runWidthSoFar();
         selectionRect.move(totalWidth - afterWidth, 0);
     } else
         selectionRect.move(beforeWidth, 0);

@@ -1,3 +1,32 @@
+2020-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make WidthIterator::advance() return void
+        https://bugs.webkit.org/show_bug.cgi?id=215053
+
+        Reviewed by Darin Adler.
+
+        This is in preparation for https://bugs.webkit.org/show_bug.cgi?id=214769
+        and https://bugs.webkit.org/show_bug.cgi?id=206208.
+
+        This is a small simplification in the fast text codepath. It used to return
+        how many characters were consumed. However, this information is already
+        exposed by just calling currentCharacter() on the width iterator before and
+        after calling advance().
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::drawText const):
+        (WebCore::FontCascade::displayListForTextRun const):
+        (WebCore::FontCascade::layoutSimpleText const):
+        (WebCore::FontCascade::adjustSelectionRectForSimpleText const):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/WidthIterator.h:
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::advanceSimpleText):
+
 2020-08-03  Youenn Fablet  <youenn@apple.com>
 
         MediaRecorderPrivateWriter should ensure its writer input is ready for more data before appending new samples

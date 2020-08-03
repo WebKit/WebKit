@@ -42,7 +42,7 @@ struct WidthIterator {
 public:
     WidthIterator(const FontCascade*, const TextRun&, HashSet<const Font*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 
-    unsigned advance(unsigned to, GlyphBuffer*);
+    void advance(unsigned to, GlyphBuffer*);
     bool advanceOneCharacter(float& width, GlyphBuffer&);
 
     float maxGlyphBoundingBoxY() const { ASSERT(m_accountForGlyphBounds); return m_maxGlyphBoundingBoxY; }
@@ -58,7 +58,7 @@ public:
 private:
     GlyphData glyphDataForCharacter(UChar32, bool mirror);
     template <typename TextIterator>
-    inline unsigned advanceInternal(TextIterator&, GlyphBuffer*);
+    inline void advanceInternal(TextIterator&, GlyphBuffer*);
 
     enum class TransformsType { None, Forced, NotForced };
     TransformsType shouldApplyFontTransforms(const GlyphBuffer*, unsigned lastGlyphCount, UChar32 previousCharacter) const;

@@ -30,7 +30,6 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include <wtf/MathExtras.h>
 
-
 namespace WebCore {
 
 using namespace WTF::Unicode;
@@ -170,7 +169,7 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
 }
 
 template <typename TextIterator>
-inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuffer* glyphBuffer)
+inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuffer* glyphBuffer)
 {
     // The core logic here needs to match SimpleLineLayout::widthForSimpleText()
     bool rtl = m_run.rtl();
@@ -366,14 +365,12 @@ inline unsigned WidthIterator::advanceInternal(TextIterator& textIterator, Glyph
             glyphBuffer->shrink(lastGlyphCount);
     }
 
-    unsigned consumedCharacters = textIterator.currentIndex() - m_currentCharacter;
     m_currentCharacter = textIterator.currentIndex();
     m_runWidthSoFar += widthSinceLastRounding;
     m_finalRoundingWidth = lastRoundingWidth;
-    return consumedCharacters;
 }
 
-unsigned WidthIterator::advance(unsigned offset, GlyphBuffer* glyphBuffer)
+void WidthIterator::advance(unsigned offset, GlyphBuffer* glyphBuffer)
 {
     unsigned length = m_run.length();
 
@@ -381,15 +378,16 @@ unsigned WidthIterator::advance(unsigned offset, GlyphBuffer* glyphBuffer)
         offset = length;
 
     if (m_currentCharacter >= offset)
-        return 0;
+        return;
 
     if (m_run.is8Bit()) {
         Latin1TextIterator textIterator(m_run.data8(m_currentCharacter), m_currentCharacter, offset, length);
-        return advanceInternal(textIterator, glyphBuffer);
+        advanceInternal(textIterator, glyphBuffer);
+        return;
     }
 
     SurrogatePairAwareTextIterator textIterator(m_run.data16(m_currentCharacter), m_currentCharacter, offset, length);
-    return advanceInternal(textIterator, glyphBuffer);
+    advanceInternal(textIterator, glyphBuffer);
 }
 
 bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer& glyphBuffer)

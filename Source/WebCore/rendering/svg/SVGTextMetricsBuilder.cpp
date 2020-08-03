@@ -58,8 +58,10 @@ bool SVGTextMetricsBuilder::advance()
 void SVGTextMetricsBuilder::advanceSimpleText()
 {
     GlyphBuffer glyphBuffer;
-    unsigned metricsLength = m_simpleWidthIterator->advance(m_textPosition + 1, &glyphBuffer);
-    if (!metricsLength) {
+    auto before = m_simpleWidthIterator->currentCharacter();
+    m_simpleWidthIterator->advance(m_textPosition + 1, &glyphBuffer);
+    auto after = m_simpleWidthIterator->currentCharacter();
+    if (before == after) {
         m_currentMetrics = SVGTextMetrics();
         return;
     }
@@ -67,7 +69,7 @@ void SVGTextMetricsBuilder::advanceSimpleText()
     float currentWidth = m_simpleWidthIterator->runWidthSoFar() - m_totalWidth;
     m_totalWidth = m_simpleWidthIterator->runWidthSoFar();
 
-    m_currentMetrics = SVGTextMetrics(*m_text, metricsLength, currentWidth);
+    m_currentMetrics = SVGTextMetrics(*m_text, after - before, currentWidth);
 }
 
 void SVGTextMetricsBuilder::advanceComplexText()
