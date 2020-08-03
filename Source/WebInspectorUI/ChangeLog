@@ -1,3 +1,26 @@
+2020-08-03  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: "Show transparency grid" string needs to be disambiguated for localization
+        https://bugs.webkit.org/show_bug.cgi?id=215101
+
+        Reviewed by Darin Adler.
+
+        Add two different string keys with the same English translation. This is specifically
+        needed for Portuguese, apparently.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        * UserInterface/Views/GraphicsOverviewContentView.js:
+        (WI.GraphicsOverviewContentView):
+        * UserInterface/Views/ImageResourceContentView.js:
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        * UserInterface/Views/ResourceCollectionContentView.js:
+        (WI.ResourceCollectionContentView):
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createSourcesSettingsView):
+
 2020-08-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r243301): Network: initiator column missing

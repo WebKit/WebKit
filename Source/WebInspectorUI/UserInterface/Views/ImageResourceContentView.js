@@ -35,7 +35,7 @@ WI.ImageResourceContentView = class ImageResourceContentView extends WI.Resource
         this._draggingInternalImageElement = false;
         this._disableDropZone = disableDropZone || false;
 
-        const toolTip = WI.UIString("Show transparency grid");
+        const toolTip = WI.UIString("Show transparency grid", "Show transparency grid (tooltip)");
         const activatedToolTip = WI.UIString("Hide transparency grid");
         this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", toolTip, activatedToolTip, "Images/NavigationItemCheckers.svg", 13, 13);
         this._showGridButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
