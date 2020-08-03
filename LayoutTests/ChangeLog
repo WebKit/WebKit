@@ -1,3 +1,12 @@
+2020-08-03  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk2 ] webrtc/datachannel/gather-candidates-networkprocess-crash.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=215088
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-03  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r259585) Text decoration color with value currentColor miscomputed in some cases
