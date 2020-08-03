@@ -13,7 +13,7 @@ PASS 6 channels buffer can be set.
 PASS 7 channels buffer can be set.
 PASS 8 channels buffer can be set.
 PASS 9 channels buffer can be set.
-PASS context.createBuffer(64, 1024, context.sampleRate) threw exception NotSupportedError: The operation is not supported..
+PASS context.createBuffer(64, 1024, context.sampleRate) threw exception NotSupportedError: Number of channels cannot be more than max supported..
 PASS source.buffer is not null
 PASS source.buffer = null did not throw exception.
 PASS source.buffer is null

@@ -1,3 +1,32 @@
+2020-08-03  Clark Wang  <clark_wang@apple.com>
+
+        Added AudioBuffer Constructor
+        https://bugs.webkit.org/show_bug.cgi?id=214990
+
+        Reviewed by Chris Dumez.
+
+        Added AudioBuffer constructor according to spec: https://www.w3.org/TR/webaudio/#AudioBuffer-constructors.
+        Added in AudioBufferOptions files. Updated BaseAudioContext::createBuffer to use new constructor.
+
+        Re-baselined existing tests. Some fail now due to unsupported sampleRate.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::create):
+        (WebCore::AudioBuffer::AudioBuffer):
+        * Modules/webaudio/AudioBuffer.h:
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioBufferOptions.h: Added.
+        * Modules/webaudio/AudioBufferOptions.idl: Added.
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createBuffer):
+        * Modules/webaudio/BaseAudioContext.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-08-03  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] webgl/2.0.0/conformance[2]/textures/image_bitmap* failures

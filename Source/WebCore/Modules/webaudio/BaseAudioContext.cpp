@@ -33,6 +33,7 @@
 #include "AsyncAudioDecoder.h"
 #include "AudioBuffer.h"
 #include "AudioBufferCallback.h"
+#include "AudioBufferOptions.h"
 #include "AudioBufferSourceNode.h"
 #include "AudioListener.h"
 #include "AudioNodeInput.h"
@@ -385,12 +386,9 @@ bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
     return false;
 }
 
-ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
+ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(unsigned numberOfChannels, unsigned length, float sampleRate)
 {
-    auto audioBuffer = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
-    if (!audioBuffer)
-        return Exception { NotSupportedError };
-    return audioBuffer.releaseNonNull();
+    return AudioBuffer::create(AudioBufferOptions {numberOfChannels, length, sampleRate});
 }
 
 ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(ArrayBuffer& arrayBuffer, bool mixToMono)

@@ -1,3 +1,16 @@
+2020-08-03  Clark Wang  <clark_wang@apple.com>
+
+        Added AudioBuffer Constructor
+        https://bugs.webkit.org/show_bug.cgi?id=214990
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing tests. Some now fail due to unsupported sampleRate.
+
+        * TestExpectations:
+        * webaudio/audiobuffer-crash-expected.txt:
+        * webaudio/audiobuffersource-channels-expected.txt:
+
 2020-08-03  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] webgl/2.0.0/conformance[2]/textures/image_bitmap* failures

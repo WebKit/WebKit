@@ -122,7 +122,7 @@ public:
     void incrementActiveSourceCount();
     void decrementActiveSourceCount();
     
-    ExceptionOr<Ref<AudioBuffer>> createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
+    ExceptionOr<Ref<AudioBuffer>> createBuffer(unsigned numberOfChannels, unsigned length, float sampleRate);
     ExceptionOr<Ref<AudioBuffer>> createBuffer(ArrayBuffer&, bool mixToMono);
 
     // Asynchronous audio file data decoding.

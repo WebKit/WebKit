@@ -2631,6 +2631,7 @@ JSAttestationConveyancePreference.cpp
 JSAttr.cpp
 JSAudioBuffer.cpp
 JSAudioBufferCallback.cpp
+JSAudioBufferOptions.cpp
 JSAudioBufferSourceNode.cpp
 JSAudioConfiguration.cpp
 JSAudioContext.cpp

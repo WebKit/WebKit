@@ -381,6 +381,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/AnalyserOptions.idl \
     $(WebCore)/Modules/webaudio/AudioBuffer.idl \
     $(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
+    $(WebCore)/Modules/webaudio/AudioBufferOptions.idl \
     $(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \
     $(WebCore)/Modules/webaudio/AudioContext.idl \
     $(WebCore)/Modules/webaudio/AudioContextLatencyCategory.idl \

@@ -15899,6 +15899,8 @@
 		E7E0352524CF715E008DFEFB /* ChannelSplitterOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChannelSplitterOptions.idl; sourceTree = "<group>"; };
 		E7E0356F24D4E190008DFEFB /* AnalyserOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalyserOptions.idl; sourceTree = "<group>"; };
 		E7E0357124D4E191008DFEFB /* AnalyserOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyserOptions.h; sourceTree = "<group>"; };
+		E7E0355724D346DF008DFEFB /* AudioBufferOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioBufferOptions.h; sourceTree = "<group>"; };
+		E7E0355924D346DF008DFEFB /* AudioBufferOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioBufferOptions.idl; sourceTree = "<group>"; };
 		EB081CD81696084400553730 /* TypeConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversions.h; sourceTree = "<group>"; };
 		EB081CD91696084400553730 /* TypeConversions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypeConversions.idl; sourceTree = "<group>"; };
 		EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteStatementAutoResetScope.h; sourceTree = "<group>"; };
@@ -29488,6 +29490,8 @@
 				FD315FB012B0267500C1A359 /* AudioBuffer.idl */,
 				FD5686CB13AC181400B69C68 /* AudioBufferCallback.h */,
 				FD5686CD13AC183E00B69C68 /* AudioBufferCallback.idl */,
+				E7E0355724D346DF008DFEFB /* AudioBufferOptions.h */,
+				E7E0355924D346DF008DFEFB /* AudioBufferOptions.idl */,
 				FD315FB112B0267500C1A359 /* AudioBufferSourceNode.cpp */,
 				FD315FB212B0267500C1A359 /* AudioBufferSourceNode.h */,
 				FD315FB312B0267500C1A359 /* AudioBufferSourceNode.idl */,

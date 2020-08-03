@@ -12,8 +12,7 @@ FAIL Executing "count 1, 4-channel in" promise_test: Unhandled rejection with va
 FAIL Executing "count 1, 5.1-channel in" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 PASS Audit report 
 PASS > [initialize] Convolver response with one channel 
-FAIL X new AudioBuffer({numberOfChannels: 2, length: 4, sampleRate: 8192}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new AudioBuffer(
-                      {numberOfChannels: 4, length: 8, sampleRate: sampleRate})')". assert_true: expected true got false
+FAIL X new AudioBuffer({numberOfChannels: 2, length: 4, sampleRate: 8192}) incorrectly threw NotSupportedError: "Sample rate is not in the supported range.". assert_true: expected true got false
 FAIL < [initialize] 1 out of 1 assertions were failed. assert_true: expected true got false
 PASS > [1-channel input] produces 2-channel output 
 PASS > [2-channel input] produces 2-channel output 

@@ -1,17 +1,42 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test 0" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
-FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
-FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
-FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
-FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
-FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: nsamples, sampleRate: context.sampleRate})')"
+PASS Executing "Test 0" 
+PASS Executing "Test 1" 
+PASS Executing "Test 2" 
+PASS Executing "Test 3" 
+PASS Executing "Test 4" 
+PASS Executing "Test 5" 
 PASS Audit report 
 PASS > [Test 0] Sine wave: 100 Hz 
+PASS   Sine: 100 Hz equals [0,0.014247103594243526,0.028491314500570297,0.04272974282503128,0.056959498673677444,0.07117769122123718,0.08538143336772919,0.09956784546375275,0.11373404413461685,0.1278771609067917,0.14199431240558624,0.1560826450586319,0.17013929784297943,0.18416140973567963,0.19814614951610565,0.2120906561613083...] with an element-wise tolerance of {"absoluteThreshold":0.0000018045,"relativeThreshold":0}. 
+PASS   Sine: SNR (db) is greater than or equal to 118.91. 
+PASS < [Test 0] All assertions passed. (total 2 assertions) 
 PASS > [Test 1] Sine wave: -100 Hz 
+PASS   Sine: -100 Hz equals [0,-0.014247103594243526,-0.028491314500570297,-0.04272974282503128,-0.056959498673677444,-0.07117769122123718,-0.08538143336772919,-0.09956784546375275,-0.11373404413461685,-0.1278771609067917,-0.14199431240558624,-0.1560826450586319,-0.17013929784297943,-0.18416140973567963,-0.19814614951610565,-0.2120906561613083...] with an element-wise tolerance of {"absoluteThreshold":4.7684e-7,"relativeThreshold":0}. 
+PASS   Sine: SNR (db) is greater than or equal to 130.95. 
+PASS < [Test 1] All assertions passed. (total 2 assertions) 
 PASS > [Test 2] Sine wave: 2 Hz 
+PASS   Sine: 2 Hz equals [0,0.0002849517040885985,0.000569903408177197,0.0008548550540581346,0.0011398065835237503,0.001424758112989366,0.0017097094096243382,0.0019946605898439884,0.0022796117700636387,0.0025645627174526453,0.0028495131991803646,0.003134463680908084,0.0034194139298051596,0.003704363713040948,0.003989313263446093,0.004274262581020594...] with an element-wise tolerance of {"absoluteThreshold":1.4516e-7,"relativeThreshold":0}. 
+PASS   Sine: SNR (db) is greater than or equal to 119.93. 
+PASS < [Test 2] All assertions passed. (total 2 assertions) 
 PASS > [Test 3] Sine wave: 1 Hz 
+PASS   Sine: 1 Hz equals [0,0.00014247585204429924,0.0002849517040885985,0.00042742755613289773,0.000569903408177197,0.0007123792311176658,0.0008548550540581346,0.0009973308769986033,0.0011398065835237503,0.001282282406464219,0.001424758112989366,0.001567233819514513,0.0017097094096243382,0.0018521851161494851,0.0019946605898439884,0.0021371361799538136...] with an element-wise tolerance of {"absoluteThreshold":1.4157e-7,"relativeThreshold":0}. 
+PASS   Sine: SNR (db) is greater than or equal to 112.22. 
+PASS < [Test 3] All assertions passed. (total 2 assertions) 
 PASS > [Test 4] Custom wave: 100 Hz 
+PASS   Custom: 100 Hz equals [1,1.0141456127166748,1.0280853509902954,1.0418163537979126,1.0553359985351562,1.0686413049697876,1.081729769706726,1.094598650932312,1.1072453260421753,1.1196671724319458,1.1318618059158325,1.1438266038894653,1.1555593013763428,1.1670573949813843,1.1783186197280884,1.189340591430664...] with an element-wise tolerance of {"absoluteThreshold":0.0000018478,"relativeThreshold":0}. 
+PASS   Custom: SNR (db) is greater than or equal to 122.43. 
+PASS < [Test 4] All assertions passed. (total 2 assertions) 
 PASS > [Test 5] Custom wave: 1 Hz 
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+FAIL X Custom: 1 Hz does not equal [1,1.0001424551010132,1.0002849102020264,1.0004273653030396,1.0005697011947632,1.0007121562957764,1.0008544921875,1.0009968280792236,1.0011391639709473,1.001281499862671,1.001423716545105,1.0015660524368286,1.0017082691192627,1.0018504858016968,1.0019927024841309,1.0021347999572754...] with an element-wise tolerance of {"absoluteThreshold":4.7684e-7,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[246]	1.0344271659851074e+0	1.0344277620315552e+0	5.9604644775390625e-7	5.7620886603362823e-7	4.7683999999999997e-7
+	[250]	1.0349766016006470e+0	1.0349771976470947e+0	5.9604644775390625e-7	5.7590297555245792e-7	4.7683999999999997e-7
+	[252]	1.0352511405944824e+0	1.0352517366409302e+0	5.9604644775390625e-7	5.7575025151649741e-7	4.7683999999999997e-7
+	Max AbsError of 5.9604644775390625e-7 at index of 246.
+	Max RelError of 5.7620886603362823e-7 at index of 246.
+ assert_true: expected true got false
+FAIL X Custom: SNR (db) is not greater than or equal to 138.76. Got 131.46607450774167. assert_true: expected true got false
+FAIL < [Test 5] 2 out of 2 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 6 tasks were failed. assert_true: expected true got false
 

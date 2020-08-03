@@ -1,8 +1,14 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "test" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer(
-          {numberOfChannels: 1, length: 1, sampleRate: context.sampleRate})')"
+PASS Executing "test" 
 PASS Audit report 
 PASS > [test]  
+PASS   Set buffer to null before set non-null did not throw an exception. 
+PASS   Set buffer first normally did not throw an exception. 
+PASS   Set buffer a second time did not throw an exception. 
+PASS   Set buffer to null did not throw an exception. 
+PASS   Set buffer to null again, to make sure did not throw an exception. 
+PASS   Set buffer to non-null to verify it is set did not throw an exception. 
+PASS < [test] All assertions passed. (total 6 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

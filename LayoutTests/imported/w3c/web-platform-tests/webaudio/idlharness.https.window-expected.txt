@@ -1,5 +1,5 @@
 
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBuffer({length: 1, sampleRate: sample_rate})')"
+FAIL idl_test setup promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
 PASS idl_test validation 
 PASS HTMLElement includes GlobalEventHandlers: member names are unique 
 PASS HTMLElement includes DocumentAndElementEventHandlers: member names are unique 
@@ -166,11 +166,11 @@ PASS OfflineAudioCompletionEvent interface: existence and properties of interfac
 PASS OfflineAudioCompletionEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS OfflineAudioCompletionEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS OfflineAudioCompletionEvent interface: attribute renderedBuffer 
-FAIL OfflineAudioCompletionEvent must be primary interface of new OfflineAudioCompletionEvent("", {renderedBuffer: buffer}) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL Stringification of new OfflineAudioCompletionEvent("", {renderedBuffer: buffer}) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL OfflineAudioCompletionEvent interface: new OfflineAudioCompletionEvent("", {renderedBuffer: buffer}) must inherit property "renderedBuffer" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
+PASS OfflineAudioCompletionEvent must be primary interface of new OfflineAudioCompletionEvent("", {renderedBuffer: buffer}) 
+PASS Stringification of new OfflineAudioCompletionEvent("", {renderedBuffer: buffer}) 
+PASS OfflineAudioCompletionEvent interface: new OfflineAudioCompletionEvent("", {renderedBuffer: buffer}) must inherit property "renderedBuffer" with the proper type 
 PASS AudioBuffer interface: existence and properties of interface object 
-FAIL AudioBuffer interface object length assert_equals: wrong value for AudioBuffer.length expected 1 but got 0
+PASS AudioBuffer interface object length 
 PASS AudioBuffer interface object name 
 PASS AudioBuffer interface: existence and properties of interface prototype object 
 PASS AudioBuffer interface: existence and properties of interface prototype object's "constructor" property 
@@ -182,18 +182,18 @@ PASS AudioBuffer interface: attribute numberOfChannels
 PASS AudioBuffer interface: operation getChannelData(unsigned long) 
 PASS AudioBuffer interface: operation copyFromChannel(Float32Array, unsigned long, optional unsigned long) 
 PASS AudioBuffer interface: operation copyToChannel(Float32Array, unsigned long, optional unsigned long) 
-FAIL AudioBuffer must be primary interface of buffer assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL Stringification of buffer assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL AudioBuffer interface: buffer must inherit property "sampleRate" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL AudioBuffer interface: buffer must inherit property "length" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL AudioBuffer interface: buffer must inherit property "duration" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL AudioBuffer interface: buffer must inherit property "numberOfChannels" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL AudioBuffer interface: buffer must inherit property "getChannelData(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL AudioBuffer interface: calling getChannelData(unsigned long) on buffer with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL AudioBuffer interface: buffer must inherit property "copyFromChannel(Float32Array, unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL AudioBuffer interface: calling copyFromChannel(Float32Array, unsigned long, optional unsigned long) on buffer with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL AudioBuffer interface: buffer must inherit property "copyToChannel(Float32Array, unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
-FAIL AudioBuffer interface: calling copyToChannel(Float32Array, unsigned long, optional unsigned long) on buffer with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
+PASS AudioBuffer must be primary interface of buffer 
+PASS Stringification of buffer 
+PASS AudioBuffer interface: buffer must inherit property "sampleRate" with the proper type 
+PASS AudioBuffer interface: buffer must inherit property "length" with the proper type 
+PASS AudioBuffer interface: buffer must inherit property "duration" with the proper type 
+PASS AudioBuffer interface: buffer must inherit property "numberOfChannels" with the proper type 
+PASS AudioBuffer interface: buffer must inherit property "getChannelData(unsigned long)" with the proper type 
+PASS AudioBuffer interface: calling getChannelData(unsigned long) on buffer with too few arguments must throw TypeError 
+PASS AudioBuffer interface: buffer must inherit property "copyFromChannel(Float32Array, unsigned long, optional unsigned long)" with the proper type 
+PASS AudioBuffer interface: calling copyFromChannel(Float32Array, unsigned long, optional unsigned long) on buffer with too few arguments must throw TypeError 
+PASS AudioBuffer interface: buffer must inherit property "copyToChannel(Float32Array, unsigned long, optional unsigned long)" with the proper type 
+PASS AudioBuffer interface: calling copyToChannel(Float32Array, unsigned long, optional unsigned long) on buffer with too few arguments must throw TypeError 
 PASS AudioNode interface: existence and properties of interface object 
 PASS AudioNode interface object length 
 PASS AudioNode interface object name 
@@ -443,19 +443,29 @@ PASS AudioProcessingEvent interface: attribute inputBuffer
 PASS AudioProcessingEvent interface: attribute outputBuffer 
 FAIL AudioProcessingEvent must be primary interface of new AudioProcessingEvent('', {
         playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
-      }) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
+      }) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AudioProcessingEvent('', {
+        playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
+      })')"
 FAIL Stringification of new AudioProcessingEvent('', {
         playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
-      }) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
+      }) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AudioProcessingEvent('', {
+        playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
+      })')"
 FAIL AudioProcessingEvent interface: new AudioProcessingEvent('', {
         playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
-      }) must inherit property "playbackTime" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
+      }) must inherit property "playbackTime" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AudioProcessingEvent('', {
+        playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
+      })')"
 FAIL AudioProcessingEvent interface: new AudioProcessingEvent('', {
         playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
-      }) must inherit property "inputBuffer" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
+      }) must inherit property "inputBuffer" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AudioProcessingEvent('', {
+        playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
+      })')"
 FAIL AudioProcessingEvent interface: new AudioProcessingEvent('', {
         playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
-      }) must inherit property "outputBuffer" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: buffer"
+      }) must inherit property "outputBuffer" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new AudioProcessingEvent('', {
+        playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
+      })')"
 PASS BiquadFilterNode interface: existence and properties of interface object 
 FAIL BiquadFilterNode interface object length assert_equals: wrong value for BiquadFilterNode.length expected 1 but got 0
 PASS BiquadFilterNode interface object name 

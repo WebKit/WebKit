@@ -151,6 +151,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBuffer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferSourceNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioBufferSourceNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioConfiguration.cpp

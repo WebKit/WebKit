@@ -32,7 +32,8 @@
     JSGenerateToJSObject,
     ReportExtraMemoryCost,
 ] interface AudioBuffer {
-    readonly attribute long length; // in sample-frames
+    [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor(AudioBufferOptions options);
+    readonly attribute unsigned long length; // in sample-frames
     readonly attribute unrestricted float duration; // in seconds
     readonly attribute unrestricted float sampleRate; // in sample-frames per second
 

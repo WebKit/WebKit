@@ -1,3 +1,22 @@
+2020-08-03  Clark Wang  <clark_wang@apple.com>
+
+        Added AudioBuffer Constructor
+        https://bugs.webkit.org/show_bug.cgi?id=214990
+
+        Reviewed by Chris Dumez.
+
+        Re-baselined existing tests. Some now fail due to unsupported sampleRate.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/ctor-audiobuffer-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-channels-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-setBuffer-already-has-value-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform-expected.txt:
+
 2020-08-03  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] webgl/2.0.0/conformance[2]/textures/image_bitmap* failures
