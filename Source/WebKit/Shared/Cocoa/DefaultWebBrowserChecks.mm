@@ -93,7 +93,7 @@ enum class ITPState : uint8_t {
 
 static std::atomic<ITPState> g_currentITPState = ITPState::Uninitialized;
 
-static bool hasRequestedCrossWebsiteTrackingPermission()
+bool hasRequestedCrossWebsiteTrackingPermission()
 {
     ASSERT(!isInWebKitChildProcess());
 
@@ -158,12 +158,12 @@ bool doesAppHaveITPEnabled()
     return isITPEnabled;
 }
 
-bool doesParentProcessHaveITPEnabled(Optional<audit_token_t> auditToken)
+bool doesParentProcessHaveITPEnabled(Optional<audit_token_t> auditToken, bool hasRequestedCrossWebsiteTrackingPermissionValue)
 {
     ASSERT(isInWebKitChildProcess());
     ASSERT(RunLoop::isMain());
 
-    if (!isParentProcessAFullWebBrowser(auditToken))
+    if (!isParentProcessAFullWebBrowser(auditToken) && !hasRequestedCrossWebsiteTrackingPermissionValue)
         return true;
 
     TCCAccessPreflightResult result = kTCCAccessPreflightDenied;

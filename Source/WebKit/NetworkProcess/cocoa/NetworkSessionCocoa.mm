@@ -1164,7 +1164,7 @@ static void activateSessionCleanup(NetworkSessionCocoa& session, const NetworkSe
     auto parentAuditToken = session.networkProcess().parentProcessConnection()->getAuditToken();
     RELEASE_ASSERT(parentAuditToken); // This should be impossible.
 
-    bool itpEnabled = doesParentProcessHaveITPEnabled(parentAuditToken);
+    bool itpEnabled = doesParentProcessHaveITPEnabled(parentAuditToken, parameters.appHasRequestedCrossWebsiteTrackingPermission);
     bool passedEnabledState = session.isResourceLoadStatisticsEnabled();
 
     if (itpEnabled != passedEnabledState)

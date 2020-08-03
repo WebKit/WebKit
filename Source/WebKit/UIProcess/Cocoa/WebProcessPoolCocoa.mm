@@ -28,6 +28,7 @@
 
 #import "AccessibilitySupportSPI.h"
 #import "CookieStorageUtilsCF.h"
+#import "DefaultWebBrowserChecks.h"
 #import "LegacyCustomProtocolManagerClient.h"
 #import "Logging.h"
 #import "NetworkProcessCreationParameters.h"
@@ -513,6 +514,8 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
         parameters.shouldEnableITPDatabase = m_defaultPageGroup->preferences().isITPDatabaseEnabled();
 
     parameters.enableAdClickAttributionDebugMode = [defaults boolForKey:[NSString stringWithFormat:@"Experimental%@", WebPreferencesKey::adClickAttributionDebugModeEnabledKey().createCFString().get()]];
+
+    parameters.defaultDataStoreParameters.networkSessionParameters.appHasRequestedCrossWebsiteTrackingPermission = hasRequestedCrossWebsiteTrackingPermission();
 }
 
 void WebProcessPool::platformInvalidateContext()

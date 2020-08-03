@@ -1,3 +1,30 @@
+2020-08-03  Kate Cheney  <katherine_cheney@apple.com>
+
+        doesParentProcessHaveITPEnabled() check should match behavior in determineITPStateInternal() check
+        https://bugs.webkit.org/show_bug.cgi?id=215031
+        <rdar://problem/66384618>
+
+        Reviewed by Brent Fulgham.
+
+        Checking ITP state from a WebKit child process should have the same
+        behavior as checking it from the UI process. In order to do this,
+        we must pass the value of hasRequestedCrossWebsiteTrackingPermission
+        to the network process to know if an application has included the
+        NSCrossWebsiteTrackingUsageDescription value in their Info.plist.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::activateSessionCleanup):
+        * Shared/Cocoa/DefaultWebBrowserChecks.h:
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::hasRequestedCrossWebsiteTrackingPermission):
+        (WebKit::doesParentProcessHaveITPEnabled):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2020-08-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early August 20202 edition

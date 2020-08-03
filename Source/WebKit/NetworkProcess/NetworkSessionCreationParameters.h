@@ -93,7 +93,8 @@ struct NetworkSessionCreationParameters {
     bool allowsServerPreconnect { true };
     bool requiresSecureHTTPSProxyConnection { false };
     bool preventsSystemHTTPProxyAuthentication { false };
-    
+    bool appHasRequestedCrossWebsiteTrackingPermission { false };
+
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters;
 };
 
