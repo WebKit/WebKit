@@ -1,3 +1,15 @@
+2020-08-03  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Assert when restoring lost context
+        https://bugs.webkit.org/show_bug.cgi?id=214999
+
+        Reviewed by Darin Adler.
+
+        Remove an assert that was wrong when restoring a lost context.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::initializeVertexArrayObjects):
+
 2020-08-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early August 20202 edition

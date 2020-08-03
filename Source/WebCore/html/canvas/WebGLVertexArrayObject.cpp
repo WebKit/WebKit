@@ -49,8 +49,6 @@ WebGLVertexArrayObject::WebGLVertexArrayObject(WebGLRenderingContextBase& contex
 #if USE(OPENGL_ES)
     if (m_type != Type::User)
         return;
-#else
-    ASSERT(type != Type::Default || !(this->context()->m_defaultVertexArrayObject));
 #endif
     setObject(this->context()->graphicsContextGL()->createVertexArray());
 }
