@@ -1,3 +1,19 @@
+2020-08-03  Devin Rousso  <drousso@apple.com>
+
+        should be able to request an editing context for a given region of a given input
+        https://bugs.webkit.org/show_bug.cgi?id=215042
+        <rdar://problem/65561491>
+
+        Reviewed by Wenson Hsieh.
+
+        Right now, it's only possible to request an editing context for either an entire input
+        element or a particular rect of the page.  It should be possible to request an editing
+        context for a particular rect within a given input element as well (e.g. get one paragraph
+        or the currently selected text in a `<textarea>` instead of the entire thing).
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext):
+
 2020-08-03  Kate Cheney  <katherine_cheney@apple.com>
 
         doesParentProcessHaveITPEnabled() check should match behavior in determineITPStateInternal() check

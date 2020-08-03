@@ -1,3 +1,22 @@
+2020-08-03  Devin Rousso  <drousso@apple.com>
+
+        should be able to request an editing context for a given region of a given input
+        https://bugs.webkit.org/show_bug.cgi?id=215042
+        <rdar://problem/65561491>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm:
+        (TEST.DocumentEditingContext.SpatialRequest_RectEncompassingInput): Added.
+        (TEST.DocumentEditingContext.SpatialRequest_RectBeforeInput): Added.
+        (TEST.DocumentEditingContext.SpatialRequest_RectInsideInput): Added.
+        (TEST.DocumentEditingContext.SpatialRequest_RectAfterInput): Added.
+        (TEST.DocumentEditingContext.SpatialAndCurrentSelectionRequest_RectEncompassingInputWithSelection): Added.
+        (TEST.DocumentEditingContext.SpatialAndCurrentSelectionRequest_RectBeforeInputWithSelection): Added.
+        (TEST.DocumentEditingContext.SpatialAndCurrentSelectionRequest_RectBeforeSelectionInInput): Added.
+        (TEST.DocumentEditingContext.SpatialAndCurrentSelectionRequest_RectAfterSelectionInInput): Added.
+        (TEST.DocumentEditingContext.SpatialAndCurrentSelectionRequest_RectAfterInputWithSelection): Added.
+
 2020-08-03  Zhifei Fang  <zhifei_fang@apple.com>
 
         run-jsc-stress-test: Set DYLD_FRAMEWORK_PATH to "$(cd ../.vm; pwd)" because it escape shell words
