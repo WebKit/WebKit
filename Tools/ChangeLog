@@ -1,3 +1,14 @@
+2020-08-03  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r264766) webkitpy: newly added --suite flag conflicts with other --suite flags in safaripy
+        https://bugs.webkit.org/show_bug.cgi?id=215038
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/results/options.py:
+        (upload_options):
+        For compatibility, make it possible to create the option with a differently-named flag.
+
 2020-08-03  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][GTK] run-minibrowser no longer assumes release configuration by default
