@@ -1,3 +1,13 @@
+2020-08-03  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r264096): [flatpak] Clean gst-build within build-webkit fails
+        https://bugs.webkit.org/show_bug.cgi?id=214080
+
+        Reviewed by Adrian Perez de Castro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Don't attempt to configure the gst-env when starting sccache-dist.
+
 2020-08-02  Simon Fraser  <simon.fraser@apple.com>
 
         Improve the check-for-duplicated-platform-test-results script

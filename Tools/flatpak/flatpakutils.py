@@ -600,11 +600,11 @@ class WebkitFlatpak:
             extra_args = os.environ.get('GST_BUILD_ARGS', '')
             args.extend(shlex.split(extra_args) + [gst_dir, gst_builddir])
             Console.message("Running %s ", ' '.join(args))
-            self.run_in_sandbox(*args, building_gst=True)
+            self.run_in_sandbox(*args, building_gst=True, start_sccache=False)
 
         if building:
             Console.message("Building `gst-build` %s ", gst_dir)
-            if self.run_in_sandbox('ninja', '-C', gst_builddir, building_gst=True) != 0:
+            if self.run_in_sandbox('ninja', '-C', gst_builddir, building_gst=True, start_sccache=False) != 0:
                 raise RuntimeError('Error while building gst-build.')
 
         command = [os.path.join(gst_dir, 'gst-env.py'), '--builddir', gst_builddir, '--srcdir', gst_dir, "--only-environment"]
@@ -659,6 +659,7 @@ class WebkitFlatpak:
         extra_flatpak_args = kwargs.get("extra_flatpak_args", [])
         start_sccache = kwargs.get("start_sccache", True)
         skip_icc = kwargs.get("skip_icc", False)
+        building_gst = kwargs.get("building_gst", False)
 
         if not isinstance(args, list):
             args = list(args)
@@ -775,7 +776,7 @@ class WebkitFlatpak:
         remote_sccache_configs = set(["SCCACHE_REDIS", "SCCACHE_BUCKET", "SCCACHE_MEMCACHED",
                                       "SCCACHE_GCS_BUCKET", "SCCACHE_AZURE_CONNECTION_STRING",
                                       "WEBKIT_USE_SCCACHE"])
-        if remote_sccache_configs.intersection(set(os.environ.keys())) and start_sccache:
+        if remote_sccache_configs.intersection(set(os.environ.keys())) and start_sccache and not building_gst:
             _log.debug("Enabling network access for the remote sccache")
             flatpak_command.append(share_network_option)
 
@@ -792,7 +793,7 @@ class WebkitFlatpak:
             if building:
                 # Spawn the sccache server in background, and avoid recursing here, using a bool keyword.
                 _log.debug("Pre-starting the SCCache dist server")
-                self.run_in_sandbox("sccache", "--start-server", env=sccache_environment,
+                self.run_in_sandbox("sccache", "--start-server", env=sccache_environment, building_gst=building_gst,
                                     extra_flatpak_args=[share_network_option], start_sccache=False)
 
             # Forward sccache server env vars to sccache clients.
@@ -821,7 +822,7 @@ class WebkitFlatpak:
         for envvar, value in sandbox_environment.items():
             flatpak_command.append("--env=%s=%s" % (envvar, value))
 
-        if not kwargs.get('building_gst'):
+        if not building_gst and args[0] != "sccache":
             extra_flatpak_args.extend(self.setup_gstbuild(building))
 
         flatpak_command += extra_flatpak_args + ['--command=%s' % args[0], "org.webkit.Sdk"] + args[1:]
