@@ -1,3 +1,17 @@
+2020-08-03  Brian Burg  <bburg@apple.com>
+
+        [WebDriver] window.print should not invoke native UI
+        https://bugs.webkit.org/show_bug.cgi?id=215084
+
+        Reviewed by Devin Rousso.
+
+        This could be handled at a higher level if there is a valid use case to allow printing,
+        but I'm not aware of one. For now, this fixes a script evaluation hang on Mac and iOS.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::print):
+        Don't call out to print delegates if this is a WebDriver-controlled page.
+
 2020-08-03  Rob Buis  <rbuis@igalia.com>
 
         Remove unused API in HighlightMap
