@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Unsafe attempt to load URL data:text/html,FAIL from document with Content-Disposition: attachment at URL http://127.0.0.1:8000/contentdispositionattachmentsandbox/resources/cross-origin-frames-frame.php.
-This test verifies that cross-origin frames are disabled when 'Content-Disposition: attachment' sandboxing is enabled. A security error will be logged to the console if the test passes.
-
-

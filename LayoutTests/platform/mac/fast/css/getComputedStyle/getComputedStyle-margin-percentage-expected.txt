@@ -1,7 +1,0 @@
-Test calling getPropertyValue on computed margin styles.
-
-margin-left: 258.71875px
-margin-top: 78.390625px
-margin-right: 113.28125px
-margin-bottom: 0px
-Test

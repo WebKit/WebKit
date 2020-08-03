@@ -1,6 +1,0 @@
-
-PASS Tests that named properties are not enumerable in navigator.plugins and navigator.mimeTypes 
-PASS Tests that navigator.plugins and navigator.mimeTypes returns the same object when queried multiple times. 
-PASS Tests that navigator.plugins and navigator.mimeTypes does not return the same object on different frames. 
-PASS Tests that navigator.plugins and navigator.mimeTypes returns plugins sorted in alphabetical order by plugin name. 
-

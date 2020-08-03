@@ -1,9 +1,0 @@
-Tests DelayNode with delay set to non-default maximum delay.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS Test signal was correctly delayed by 1.5 sec.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

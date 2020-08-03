@@ -1,8 +1,0 @@
-
-PASS Property stroke-opacity value '-1' 
-PASS Property stroke-opacity value '0.5' 
-PASS Property stroke-opacity value '3' 
-PASS Property stroke-opacity value '-100%' 
-PASS Property stroke-opacity value '50%' 
-PASS Property stroke-opacity value '300%' 
-

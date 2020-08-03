@@ -1,3 +1,0 @@
-
-PASS XMLHttpRequest: getResponseHeader() case-insensitive matching 
-

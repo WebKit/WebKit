@@ -1,3 +1,0 @@
-
-PASS EventSource: Last-Event-ID (2) 
-

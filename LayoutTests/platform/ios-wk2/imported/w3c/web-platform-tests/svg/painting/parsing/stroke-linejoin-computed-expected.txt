@@ -1,5 +1,0 @@
-
-PASS Property stroke-linejoin value 'miter' 
-PASS Property stroke-linejoin value 'round' 
-PASS Property stroke-linejoin value 'bevel' 
-

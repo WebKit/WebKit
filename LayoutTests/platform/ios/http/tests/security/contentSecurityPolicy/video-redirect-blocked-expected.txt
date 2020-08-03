@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: Refused to load http://localhost:8000/resources/test.mp4 because it does not appear in the media-src directive of the Content Security Policy.
-ALERT: PASS
-

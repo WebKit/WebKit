@@ -1,6 +1,0 @@
-
-PASS Property stroke-miterlimit value '0' 
-PASS Property stroke-miterlimit value '0.5' 
-PASS Property stroke-miterlimit value '1' 
-PASS Property stroke-miterlimit value '7.5' 
-

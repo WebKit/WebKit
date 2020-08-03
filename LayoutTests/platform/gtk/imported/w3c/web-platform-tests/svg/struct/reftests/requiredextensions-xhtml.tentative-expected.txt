@@ -1,8 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 100x100
-    RenderSVGContainer {switch} at (0,0) size 100x100
-      RenderSVGForeignObject {foreignObject} at (0,0) size 100x100
-        RenderBody {body} at (0,0) size 100x100
-          RenderBlock {div} at (0,0) size 100x100 [bgcolor=#008000]

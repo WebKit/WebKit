@@ -1,4 +1,0 @@
-
-PASS getElementsByName and newly introduced HTML elements 
-   
- 

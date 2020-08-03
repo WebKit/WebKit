@@ -1,6 +1,0 @@
-FAIL navigator.language should be zh-hant. Was zh-tw.
-PASS successfullyParsed is true
-Some tests failed.
-
-TEST COMPLETE
-
