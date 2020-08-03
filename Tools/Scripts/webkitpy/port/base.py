@@ -797,6 +797,8 @@ class Port(object):
             if not hasattr(self._options, name):
                 setattr(self._options, name, default_value)
                 return True
+            elif not self.get_option(name):
+                self.set_option(name, default_value)
         else:
             return self._options.ensure_value(name, default_value)
 

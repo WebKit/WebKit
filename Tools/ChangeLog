@@ -1,5 +1,18 @@
 2020-08-03  Philippe Normand  <pnormand@igalia.com>
 
+        [WPE][GTK] run-minibrowser no longer assumes release configuration by default
+        https://bugs.webkit.org/show_bug.cgi?id=214961
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.set_option_default): Ensure default value is set on optparsed options. In the case of
+        the default build configuration being set from the Port constructor, this wasn't done
+        properly. After fixing this, the WPE and GTK ports are correctly implicitely reusing the
+        build configuration option through the _build_path() method.
+
+2020-08-03  Philippe Normand  <pnormand@igalia.com>
+
         REGRESSION(r264096): [flatpak] Clean gst-build within build-webkit fails
         https://bugs.webkit.org/show_bug.cgi?id=214080
 
