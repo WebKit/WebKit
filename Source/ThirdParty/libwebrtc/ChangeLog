@@ -1,3 +1,15 @@
+2020-08-03  Youenn Fablet  <youenn@apple.com>
+
+        Remove libwebrtc protobuf copy
+        https://bugs.webkit.org/show_bug.cgi?id=215076
+        rdar://problem/66291604
+
+        Reviewed by Eric Carlson.
+
+        This is not used currently and contains code that is not up to date.
+
+        * Source/third_party/protobuf: Removed.
+
 2020-07-29  Jer Noble  <jer.noble@apple.com>
 
         Support HDR decode in SW VP9
