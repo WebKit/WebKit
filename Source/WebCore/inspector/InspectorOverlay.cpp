@@ -1058,14 +1058,13 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
 
     context.strokePath(path);
 
-    float textPositionX = boxX + elementDataSpacing;
-    float textPositionY = boxY - (elementDataSpacing / 2.0f) + fontHeight;
+    FloatPoint textPosition(boxX + elementDataSpacing, boxY - (elementDataSpacing / 2.0f) + fontHeight);
     const auto drawText = [&] (const String& text, SRGBA<uint8_t> color) {
         if (text.isEmpty())
             return;
 
         context.setFillColor(color);
-        textPositionX += context.drawText(font, TextRun(text), { textPositionX, textPositionY });
+        textPosition += context.drawText(font, TextRun(text), textPosition);
     };
 
     drawText(elementTagName, { 136, 18, 128 }); // Keep this in sync with XMLViewer.css (.tag)
@@ -1082,9 +1081,6 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     drawText("px"_s, Color::darkGray);
 
     if (hasSecondLine) {
-        textPositionX = boxX + elementDataSpacing;
-        textPositionY += fontHeight;
-
         drawText("Role"_s, { 170, 13, 145 });
         drawText(" "_s, Color::black);
         drawText(elementRole, Color::black);

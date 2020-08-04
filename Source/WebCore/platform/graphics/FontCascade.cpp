@@ -293,18 +293,17 @@ GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, 
     return layoutComplexText(run, from, to, shouldSaveOffsets, forTextEmphasis);
 }
 
-float FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
+FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     unsigned destination = to.valueOr(run.length());
     auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination);
 
     if (glyphBuffer.isEmpty())
-        return 0;
+        return FloatSize();
 
     FloatPoint startPoint = point + FloatSize(glyphBuffer.initialAdvance());
-    float oldStartX = startPoint.x();
     drawGlyphBuffer(context, glyphBuffer, startPoint, customFontNotReadyAction);
-    return startPoint.x() - oldStartX;
+    return startPoint - point;
 }
 
 void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, Optional<unsigned> to) const
