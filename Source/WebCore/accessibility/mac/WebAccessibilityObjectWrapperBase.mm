@@ -560,6 +560,23 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
     return convertMathPairsToNSArray(pairs, [self accessibilityPlatformMathSubscriptKey], [self accessibilityPlatformMathSuperscriptKey]);
 }
 
+- (NSDictionary<NSString *, id> *)baseAccessibilityResolvedEditingStyles
+{
+    NSMutableDictionary<NSString *, id> *results = [NSMutableDictionary dictionary];
+    auto editingStyles = self.axBackingObject->resolvedEditingStyles();
+    for (String& key : editingStyles.keys()) {
+        auto value = editingStyles.get(key);
+        id result = WTF::switchOn(value,
+            [] (String& typedValue) -> id { return (NSString *)typedValue; },
+            [] (bool& typedValue) -> id { return @(typedValue); },
+            [] (int& typedValue) -> id { return @(typedValue); },
+            [] (auto&) { return nil; }
+        );
+        results[(NSString *)key] = result;
+    }
+    return results;
+}
+
 // This is set by DRT when it wants to listen for notifications.
 static BOOL accessibilityShouldRepostNotifications;
 + (void)accessibilitySetShouldRepostNotifications:(BOOL)repost

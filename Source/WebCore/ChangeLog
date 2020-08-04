@@ -1,3 +1,32 @@
+2020-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver needs access to font styling at insertion point
+        https://bugs.webkit.org/show_bug.cgi?id=215129
+        <rdar://problem/65114972>
+
+        Reviewed by Darin Adler.
+
+        Give access to relevant font styling properties at the insertion point so that VoiceOver can speak them
+        when text commands alter styling.
+
+        Test: accessibility/mac/resolved-text-editing.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::resolvedEditingStyles const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityResolvedEditingStyles]):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::resolvedEditingStyles const):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilityResolvedEditingStyles]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2020-08-04  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r265019): ASSERTION FAILED: !m_impl || m_impl->wasConstructedOnMainThread() == isMainThread() under WebCore::PlaybackSessionInterfaceAVKit::invalidate()

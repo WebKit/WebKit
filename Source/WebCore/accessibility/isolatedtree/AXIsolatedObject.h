@@ -840,6 +840,8 @@ private:
     TextIteratorBehavior textIteratorBehaviorForTextRange() const override;
     Widget* widget() const override;
     PlatformWidget platformWidget() const override;
+    
+    HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const override;
 #if PLATFORM(COCOA)
     RemoteAXObjectRef remoteParentObject() const override;
 #endif

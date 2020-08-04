@@ -1,3 +1,13 @@
+2020-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: VoiceOver needs access to font styling at insertion point
+        https://bugs.webkit.org/show_bug.cgi?id=215129
+
+        Reviewed by Darin Adler.
+
+        * accessibility/mac/resolved-text-editing-expected.txt: Added.
+        * accessibility/mac/resolved-text-editing.html: Added.
+
 2020-08-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Add test coverage for handling redirects with App-Bound Domains

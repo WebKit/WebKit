@@ -87,6 +87,8 @@ class VisiblePosition;
 - (NSArray *)accessibilityMathPostscriptPairs;
 - (NSArray *)accessibilityMathPrescriptPairs;
 
+- (NSDictionary<NSString *, id> *)baseAccessibilityResolvedEditingStyles;
+
 extern WebCore::AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(const NSDictionary *);
 
 extern NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector&);

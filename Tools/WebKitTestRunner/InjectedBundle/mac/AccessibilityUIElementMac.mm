@@ -632,7 +632,9 @@ void AccessibilityUIElement::attributeValueAsync(JSStringRef attribute, JSValueR
     BEGIN_AX_OBJC_EXCEPTIONS
     s_controller->executeOnAXThread([attribute = retainPtr([NSString stringWithJSStringRef:attribute]), callback = WTFMove(callback), this] () mutable {
         id value = [m_element accessibilityAttributeValue:attribute.get()];
-
+        if ([value isKindOfClass:[NSArray class]] || [value isKindOfClass:[NSDictionary class]])
+            value = [value description];
+        
         s_controller->executeOnMainThread([value = retainPtr(value), callback = WTFMove(callback)] () {
             auto mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
             auto context = WKBundleFrameGetJavaScriptContext(mainFrame);
