@@ -28,7 +28,6 @@
     outline: none;
 
     --data-grid-header-horizontal-padding: 6px;
-    --data-grid-column-border-end: 1px solid var(--border-color);
 }
 
 .data-grid .highlight {
@@ -93,12 +92,8 @@
     padding: 0 var(--data-grid-header-horizontal-padding);
 }
 
-body[dir=ltr] .data-grid th:not(:last-child) > .header-cell-content {
-    border-right: var(--data-grid-column-border-end);
-}
-
-body[dir=rtl] .data-grid th:not(:last-child) > .header-cell-content {
-    border-left: var(--data-grid-column-border-end);
+.data-grid th:not(:last-child) > .header-cell-content {
+    border-inline-end: 1px solid var(--border-color);
 }
 
 .data-grid th.sortable:active {
@@ -196,12 +191,8 @@ body[dir=rtl] .data-grid th:not(:last-child) > .header-cell-content {
     --border-end-color: hsla(0, 0%, var(--foreground-lightness), 0.05);
 }
 
-body[dir=ltr] .data-grid:focus tr.selected td:not(:last-child) {
-    border-right-color: var(--border-end-color);
-}
-
-body[dir=rtl] .data-grid:focus tr.selected td:not(:last-child) {
-    border-left-color: var(--border-end-color);
+.data-grid:focus tr.selected td:not(:last-child) {
+    border-inline-end-color: var(--border-end-color);
 }
 
 .data-grid :matches(th, td) > div {

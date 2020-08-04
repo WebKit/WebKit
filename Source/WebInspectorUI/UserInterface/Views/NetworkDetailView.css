@@ -75,12 +75,8 @@
     bottom: 0;
 }
 
-body[dir=ltr] .network-table.showing-detail .network-detail {
-    border-left: 1px solid var(--border-color);
-}
-
-body[dir=rtl] .network-table.showing-detail .network-detail {
-    border-right: 1px solid var(--border-color);
+.network-table.showing-detail .network-detail {
+    border-inline-start: 1px solid var(--border-color);
 }
 
 @media (prefers-color-scheme: dark) {

@@ -52,12 +52,8 @@
     padding: 2px 0;
 }
 
-body[dir=ltr] .data-grid.timeline td.graph-column {
-    border-left: 1px solid var(--graph-line-color);
-}
-
-body[dir=rtl] .data-grid.timeline td.graph-column {
-    border-right: 1px solid var(--graph-line-color);
+.data-grid.timeline td.graph-column {
+    border-inline-start: 1px solid var(--graph-line-color);
 }
 
 .data-grid.timeline td.graph-column > .cell-content {
