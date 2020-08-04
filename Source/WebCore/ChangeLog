@@ -1,3 +1,22 @@
+2020-08-04  Peng Liu  <peng.liu6@apple.com>
+
+        REGRESSION (r265019): ASSERTION FAILED: !m_impl || m_impl->wasConstructedOnMainThread() == isMainThread() under WebCore::PlaybackSessionInterfaceAVKit::invalidate()
+        https://bugs.webkit.org/show_bug.cgi?id=215118
+
+        Reviewed by Jer Noble.
+
+        Revert the change about using a WeakPtr of PlaybackSessionModel in r265019.
+        On WK1, a VideoFullscreenControllerContext (a subclass of PlaybackSessionModel)
+        object is created on the main thread, so we cannot use a WeakPtr of it on
+        the UI thread.
+
+        No new tests, fix an API test failure: WebKitLegacy.AudioSessionCategoryIOS.
+
+        * platform/ios/PlaybackSessionInterfaceAVKit.h:
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit):
+        (WebCore::PlaybackSessionInterfaceAVKit::playbackSessionModel const):
+
 2020-08-04  Chris Dumez  <cdumez@apple.com>
 
         Align AudioBufferSourceNode's start() / stop() with the specification
