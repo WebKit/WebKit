@@ -1927,3 +1927,5 @@ webkit.org/b/214643 imported/w3c/web-platform-tests/css/css-pseudo/marker-hit-te
 webkit.org/b/215039 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure ]
 
 webkit.org/b/209353 [ Release ] media/video-background-tab-playback.html [ Pass Failure ]
+
+webkit.org/b/215110 [ Release ] imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html [ Pass Failure ]
