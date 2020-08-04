@@ -53,7 +53,7 @@ public:
     const TextRun& run() const { return m_run; }
     float runWidthSoFar() const { return m_runWidthSoFar; }
     float finalRoundingWidth() const { return m_finalRoundingWidth; }
-    unsigned currentCharacter() const { return m_currentCharacter; }
+    unsigned currentCharacterIndex() const { return m_currentCharacterIndex; }
 
 private:
     GlyphData glyphDataForCharacter(UChar32, bool mirror);
@@ -68,7 +68,7 @@ private:
     const TextRun& m_run;
     HashSet<const Font*>* m_fallbackFonts { nullptr };
 
-    unsigned m_currentCharacter { 0 };
+    unsigned m_currentCharacterIndex { 0 };
     float m_runWidthSoFar { 0 };
     float m_expansion { 0 };
     float m_expansionPerOpportunity { 0 };

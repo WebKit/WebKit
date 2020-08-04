@@ -208,7 +208,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             continue;
         }
 #endif
-        int currentCharacter = textIterator.currentIndex();
+        int currentCharacterIndex = textIterator.currentIndex();
         const GlyphData& glyphData = m_font->glyphDataForCharacter(character, rtl);
         Glyph glyph = glyphData.glyph;
         if (!glyph && !characterMustDrawSomething) {
@@ -261,19 +261,19 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 
             static bool expandAroundIdeographs = FontCascade::canExpandAroundIdeographsInComplexText();
             bool treatAsSpace = FontCascade::treatAsSpace(character);
-            bool currentIsLastCharacter = currentCharacter + advanceLength == static_cast<size_t>(m_run.length());
+            bool currentIsLastCharacter = currentCharacterIndex + advanceLength == static_cast<size_t>(m_run.length());
             bool forceLeadingExpansion = false; // On the left, regardless of m_run.ltr()
             bool forceTrailingExpansion = false; // On the right, regardless of m_run.ltr()
             bool forbidLeadingExpansion = false;
             bool forbidTrailingExpansion = false;
             if (runForcesLeadingExpansion)
-                forceLeadingExpansion = m_run.ltr() ? !currentCharacter : currentIsLastCharacter;
+                forceLeadingExpansion = m_run.ltr() ? !currentCharacterIndex : currentIsLastCharacter;
             if (runForcesTrailingExpansion)
-                forceTrailingExpansion = m_run.ltr() ? currentIsLastCharacter : !currentCharacter;
+                forceTrailingExpansion = m_run.ltr() ? currentIsLastCharacter : !currentCharacterIndex;
             if (runForbidsLeadingExpansion)
-                forbidLeadingExpansion = m_run.ltr() ? !currentCharacter : currentIsLastCharacter;
+                forbidLeadingExpansion = m_run.ltr() ? !currentCharacterIndex : currentIsLastCharacter;
             if (runForbidsTrailingExpansion)
-                forbidTrailingExpansion = m_run.ltr() ? currentIsLastCharacter : !currentCharacter;
+                forbidTrailingExpansion = m_run.ltr() ? currentIsLastCharacter : !currentCharacterIndex;
             bool ideograph = (expandAroundIdeographs && FontCascade::isCJKIdeographOrSymbol(character));
             if (treatAsSpace || ideograph || forceLeadingExpansion || forceTrailingExpansion) {
                 // Distribute the run's total expansion evenly over all expansion opportunities in the run.
@@ -287,9 +287,9 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
                             if (glyphBuffer) {
                                 if (glyphBuffer->isEmpty()) {
                                     if (m_forTextEmphasis)
-                                        glyphBuffer->add(font->zeroWidthSpaceGlyph(), font, m_expansionPerOpportunity, currentCharacter);
+                                        glyphBuffer->add(font->zeroWidthSpaceGlyph(), font, m_expansionPerOpportunity, currentCharacterIndex);
                                     else
-                                        glyphBuffer->add(font->spaceGlyph(), font, m_expansionPerOpportunity, currentCharacter);
+                                        glyphBuffer->add(font->spaceGlyph(), font, m_expansionPerOpportunity, currentCharacterIndex);
                                 } else
                                     glyphBuffer->expandLastAdvance(m_expansionPerOpportunity);
                             }
@@ -310,7 +310,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 
                 // Account for word spacing.
                 // We apply additional space between "words" by adding width to the space character.
-                if (treatAsSpace && (character != '\t' || !m_run.allowTabs()) && (currentCharacter || character == noBreakSpace) && m_font->wordSpacing())
+                if (treatAsSpace && (character != '\t' || !m_run.allowTabs()) && (currentCharacterIndex || character == noBreakSpace) && m_font->wordSpacing())
                     width += m_font->wordSpacing();
             } else
                 m_isAfterExpansion = false;
@@ -324,7 +324,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 
         if (m_accountForGlyphBounds) {
             bounds = font->boundsForGlyph(glyph);
-            if (!currentCharacter)
+            if (!currentCharacterIndex)
                 m_firstGlyphOverflow = std::max<float>(0, -bounds.x());
         }
 
@@ -339,7 +339,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         widthSinceLastRounding += width;
 
         if (glyphBuffer)
-            glyphBuffer->add(glyph, font, (rtl ? oldWidth + lastRoundingWidth : width), currentCharacter);
+            glyphBuffer->add(glyph, font, (rtl ? oldWidth + lastRoundingWidth : width), currentCharacterIndex);
 
         lastRoundingWidth = width - oldWidth;
 
@@ -365,7 +365,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             glyphBuffer->shrink(lastGlyphCount);
     }
 
-    m_currentCharacter = textIterator.currentIndex();
+    m_currentCharacterIndex = textIterator.currentIndex();
     m_runWidthSoFar += widthSinceLastRounding;
     m_finalRoundingWidth = lastRoundingWidth;
 }
@@ -377,23 +377,23 @@ void WidthIterator::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     if (offset > length)
         offset = length;
 
-    if (m_currentCharacter >= offset)
+    if (m_currentCharacterIndex >= offset)
         return;
 
     if (m_run.is8Bit()) {
-        Latin1TextIterator textIterator(m_run.data8(m_currentCharacter), m_currentCharacter, offset, length);
+        Latin1TextIterator textIterator(m_run.data8(m_currentCharacterIndex), m_currentCharacterIndex, offset, length);
         advanceInternal(textIterator, glyphBuffer);
         return;
     }
 
-    SurrogatePairAwareTextIterator textIterator(m_run.data16(m_currentCharacter), m_currentCharacter, offset, length);
+    SurrogatePairAwareTextIterator textIterator(m_run.data16(m_currentCharacterIndex), m_currentCharacterIndex, offset, length);
     advanceInternal(textIterator, glyphBuffer);
 }
 
 bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer& glyphBuffer)
 {
     unsigned oldSize = glyphBuffer.size();
-    advance(m_currentCharacter + 1, &glyphBuffer);
+    advance(m_currentCharacterIndex + 1, &glyphBuffer);
     float w = 0;
     for (unsigned i = oldSize; i < glyphBuffer.size(); ++i)
         w += glyphBuffer.advanceAt(i).width();

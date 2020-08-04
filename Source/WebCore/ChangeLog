@@ -1,3 +1,27 @@
+2020-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename WidthIterator::m_currentCharacter to WidthIterator::m_currentCharacterIndex
+        https://bugs.webkit.org/show_bug.cgi?id=215056
+
+        Reviewed by Darin Adler.
+
+        It represents an index, not a character.
+
+        No new tests because there is no behavior change.
+
+        This is in preparation for https://bugs.webkit.org/show_bug.cgi?id=214769
+        and https://bugs.webkit.org/show_bug.cgi?id=206208.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::offsetForPositionForSimpleText const):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+        (WebCore::WidthIterator::advance):
+        (WebCore::WidthIterator::advanceOneCharacter):
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::currentCharacterIndex const):
+        (WebCore::WidthIterator::currentCharacter const): Deleted.
+
 2020-08-03  Youenn Fablet  <youenn@apple.com>
 
         Move user gesture propagation over promise behind a feature flag

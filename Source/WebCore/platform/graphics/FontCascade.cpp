@@ -1593,7 +1593,7 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
     if (run.rtl()) {
         delta -= floatWidthForSimpleText(run);
         while (1) {
-            offset = it.currentCharacter();
+            offset = it.currentCharacterIndex();
             float w;
             if (!it.advanceOneCharacter(w, localGlyphBuffer))
                 break;
@@ -1608,7 +1608,7 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
         }
     } else {
         while (1) {
-            offset = it.currentCharacter();
+            offset = it.currentCharacterIndex();
             float w;
             if (!it.advanceOneCharacter(w, localGlyphBuffer))
                 break;
