@@ -15946,10 +15946,9 @@ private:
         PatchpointValue* authenticate = m_out.patchpoint(pointerType());
         authenticate->appendSomeRegister(ptr);
         authenticate->append(size, B3::ValueRep(B3::ValueRep::SomeLateRegister));
-        authenticate->numGPScratchRegisters = 1;
         authenticate->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             jit.move(params[1].gpr(), params[0].gpr());
-            jit.untagArrayPtr(params[2].gpr(), params[0].gpr(), true, params.gpScratch(0));
+            jit.untagArrayPtr(params[2].gpr(), params[0].gpr());
         });
         return authenticate;
 #else
@@ -16003,11 +16002,6 @@ private:
         
         LValue masked = m_out.bitAnd(ptr, mask);
         LValue result = m_out.add(masked, basePtr);
-#if CPU(ARM64E)
-        result = m_out.select(
-            m_out.equal(ptr, m_out.constIntPtr(JSArrayBufferView::nullVectorPtr())),
-            ptr, result);
-#endif
 
 #if CPU(ARM64E)
         if (kind == Gigacage::Primitive) {

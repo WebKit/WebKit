@@ -2460,7 +2460,7 @@ static void testCagePreservesPACFailureBit()
     RELEASE_ASSERT(!Gigacage::disablingPrimitiveGigacageIsForbidden());
     auto cage = compile([] (CCallHelpers& jit) {
         emitFunctionPrologue(jit);
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
+        jit.cageConditionally(Gigacage::Primitive, GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
         jit.move(GPRInfo::argumentGPR0, GPRInfo::returnValueGPR);
         emitFunctionEpilogue(jit);
         jit.ret();

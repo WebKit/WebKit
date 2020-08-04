@@ -368,7 +368,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         }
 
         jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
-        jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, scratchOrSize, scratchOrSize);
+        jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrSize, scratchOrSize);
     }
 
     // We use this callee to indicate how to unwind past these types of frames:
