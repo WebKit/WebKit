@@ -79,6 +79,7 @@
 
 #if PLATFORM(MAC)
 #import <QuartzCore/CARemoteLayerServer.h>
+#import <pal/spi/mac/NSApplicationSPI.h>
 #else
 #import "UIKitSPI.h"
 #endif
@@ -643,11 +644,13 @@ void WebProcessPool::registerNotificationObservers()
 #if !PLATFORM(IOS_FAMILY)
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.
     m_enhancedAccessibilityObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {
+        setEnhancedAccessibility([[[note userInfo] objectForKey:@"AXEnhancedUserInterface"] boolValue]);
 #if ENABLE(CFPREFS_DIRECT_MODE)
+        if (![[NSApp accessibilityEnhancedUserInterfaceAttribute] boolValue])
+            return;
         for (auto& process : m_processes)
             process->unblockPreferenceServiceIfNeeded();
 #endif
-        setEnhancedAccessibility([[[note userInfo] objectForKey:@"AXEnhancedUserInterface"] boolValue]);
     }];
 
     m_automaticTextReplacementNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSSpellCheckerDidChangeAutomaticTextReplacementNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
@@ -702,6 +705,8 @@ void WebProcessPool::registerNotificationObservers()
 
 #if PLATFORM(IOS_FAMILY)
     m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
+        if (!_AXSApplicationAccessibilityEnabled())
+            return;
         for (size_t i = 0; i < m_processes.size(); ++i) {
 #if ENABLE(CFPREFS_DIRECT_MODE)
             m_processes[i]->unblockPreferenceServiceIfNeeded();

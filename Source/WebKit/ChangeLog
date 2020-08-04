@@ -1,3 +1,18 @@
+2020-08-04  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Check that Accessibility is enabled when receiving the enable Accessibility notification
+        https://bugs.webkit.org/show_bug.cgi?id=215112
+        <rdar://problem/66498397>
+
+        Reviewed by Youenn Fablet.
+
+        As a security mitigation, return early when handling this notification if Accessibility is not enabled.
+
+        API test: WebKit.AccessibilityHasNoPreferencesServiceAccessWhenPostingNotification
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::registerNotificationObservers):
+
 2020-08-04  Brent Fulgham  <bfulgham@apple.com>
 
         Limit 'com.apple.webkit.microphone' use to macOS and MacCatalyst 
