@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +39,7 @@ struct AudioBufferSourceOptions;
 // AudioBufferSourceNode is an AudioNode representing an audio source from an in-memory audio asset represented by an AudioBuffer.
 // It generally will be used for short sounds which require a high degree of scheduling flexibility (can playback in rhythmically perfect ways).
 
-class AudioBufferSourceNode final : public AudioScheduledSourceNode {
+class AudioBufferSourceNode : public AudioScheduledSourceNode {
     WTF_MAKE_ISO_ALLOCATED(AudioBufferSourceNode);
 public:
     static Ref<AudioBufferSourceNode> create(BaseAudioContext&, float sampleRate);
@@ -74,7 +75,6 @@ public:
     void setLoopStart(double loopStart) { m_loopStart = loopStart; }
     void setLoopEnd(double loopEnd) { m_loopEnd = loopEnd; }
 
-    AudioParam& gain() { return m_gain.get(); }
     AudioParam& detune() { return m_detune.get(); }
     AudioParam& playbackRate() { return m_playbackRate.get(); }
 
@@ -90,11 +90,14 @@ public:
 
     const char* activeDOMObjectName() const override { return "AudioBufferSourceNode"; }
 
-private:
+protected:
     explicit AudioBufferSourceNode(BaseAudioContext&);
 
+private:
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }
+
+    virtual double legacyGainValue() const { return 1.0; }
 
     enum BufferPlaybackMode {
         Entire,
@@ -116,8 +119,6 @@ private:
     UniqueArray<const float*> m_sourceChannels;
     UniqueArray<float*> m_destinationChannels;
 
-    // Used for the "gain", "detune" and "playbackRate" attributes.
-    Ref<AudioParam> m_gain;
     Ref<AudioParam> m_detune;
     Ref<AudioParam> m_playbackRate;
 

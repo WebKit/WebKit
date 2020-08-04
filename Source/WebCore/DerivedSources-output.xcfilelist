@@ -2130,6 +2130,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUTextureView.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUTextureView.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitAnimationEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitAnimationEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitAudioBufferSourceNode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitAudioBufferSourceNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitAudioContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitAudioContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebKitAudioPannerNode.cpp

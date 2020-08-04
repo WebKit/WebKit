@@ -430,6 +430,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/ScriptProcessorNode.idl \
     $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webaudio/WaveShaperOptions.idl \
+    $(WebCore)/Modules/webaudio/WebKitAudioBufferSourceNode.idl \
     $(WebCore)/Modules/webaudio/WebKitAudioContext.idl \
     $(WebCore)/Modules/webaudio/WebKitAudioPannerNode.idl \
     $(WebCore)/Modules/webaudio/WebKitOfflineAudioContext.idl \

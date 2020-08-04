@@ -26,26 +26,26 @@
 // A cached (non-streamed), memory-resident audio source
 [
     Conditional=WEB_AUDIO,
+    EnabledBySetting=PrefixedWebAudio,
     JSGenerateToJSObject,
-    EnabledBySetting=ModernUnprefixedWebAudio
-] interface AudioBufferSourceNode : AudioScheduledSourceNode {
-    [MayThrowException] constructor (BaseAudioContext context, optional AudioBufferSourceOptions options);
-
+    NoInterfaceObject
+] interface WebKitAudioBufferSourceNode : AudioScheduledSourceNode {
     attribute AudioBuffer? buffer;
 
-    readonly attribute AudioParam playbackRate;
-    readonly attribute AudioParam detune;
-
-    attribute boolean loop;
-    attribute double loopStart;
-    attribute double loopEnd;
-
-    [MayThrowException, ImplementedAs=startLater] void start(optional double when = 0, optional double grainOffset = 0, optional double grainDuration);
-
-    // FIXME: Those constants are kept for backward compatibility with the prefixed API and should
-    // be removed once we stop supporting it.
     const unsigned short UNSCHEDULED_STATE = 0;
     const unsigned short SCHEDULED_STATE = 1;
     const unsigned short PLAYING_STATE = 2;
     const unsigned short FINISHED_STATE = 3;
+
+    readonly attribute unsigned short playbackState;
+
+    readonly attribute AudioParam gain;
+    readonly attribute AudioParam playbackRate;
+
+    attribute boolean loop;
+
+    attribute double loopStart;
+    attribute double loopEnd;
+
+    [MayThrowException, ImplementedAs=startLater] void start(optional double when = 0, optional double grainOffset = 0, optional double grainDuration);
 };

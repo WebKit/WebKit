@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +37,13 @@
 #include "FloatConversion.h"
 #include "PannerNode.h"
 #include "ScriptExecutionContext.h"
+#include "WebKitAudioBufferSourceNode.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioBufferSourceNode);
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitAudioBufferSourceNode);
 
 const double DefaultGrainDuration = 0.020; // 20ms
 
@@ -74,7 +77,6 @@ ExceptionOr<Ref<AudioBufferSourceNode>> AudioBufferSourceNode::create(BaseAudioC
 
 AudioBufferSourceNode::AudioBufferSourceNode(BaseAudioContext& context)
     : AudioScheduledSourceNode(context, context.sampleRate())
-    , m_gain(AudioParam::create(context, "gain"_s, 1.0, 0.0, 1.0))
     , m_detune(AudioParam::create(context, "detune"_s, 0.0, -FLT_MAX, FLT_MAX))
     , m_playbackRate(AudioParam::create(context, "playbackRate"_s, 1.0, -FLT_MAX, FLT_MAX))
     , m_grainDuration(DefaultGrainDuration)
@@ -142,7 +144,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     }
 
     // Apply the gain (in-place) to the output bus.
-    float totalGain = gain().value() * m_buffer->gain();
+    float totalGain = legacyGainValue() * m_buffer->gain();
     outputBus.copyWithGainFrom(outputBus, &m_lastGain, totalGain);
     outputBus.clearSilentFlag();
 }
@@ -413,7 +415,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 void AudioBufferSourceNode::reset()
 {
     m_virtualReadIndex = 0;
-    m_lastGain = gain().value();
+    m_lastGain = legacyGainValue();
 }
 
 void AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)

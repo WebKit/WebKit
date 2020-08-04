@@ -3570,6 +3570,7 @@ JSWebGPUSwapChain.cpp
 JSWebGPUTexture.cpp
 JSWebGPUTextureView.cpp
 JSWebKitAnimationEvent.cpp
+JSWebKitAudioBufferSourceNode.cpp
 JSWebKitAudioContext.cpp
 JSWebKitAudioPannerNode.cpp
 JSWebKitCSSMatrix.cpp

@@ -37,6 +37,7 @@ class MediaStream;
 class MediaStreamAudioDestinationNode;
 class MediaStreamAudioSourceNode;
 class PeriodicWave;
+class WebKitAudioBufferSourceNode;
 class WebKitAudioPannerNode;
 class WebKitOscillatorNode;
 
@@ -64,6 +65,7 @@ public:
     ExceptionOr<Ref<WebKitAudioPannerNode>> createWebKitPanner();
     ExceptionOr<Ref<WebKitOscillatorNode>> createWebKitOscillator();
     ExceptionOr<Ref<PeriodicWave>> createPeriodicWave(Float32Array& real, Float32Array& imaginary);
+    ExceptionOr<Ref<WebKitAudioBufferSourceNode>> createWebKitBufferSource();
 
 protected:
     explicit WebKitAudioContext(Document&);

@@ -31,6 +31,7 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "PeriodicWave.h"
+#include "WebKitAudioBufferSourceNode.h"
 #include "WebKitAudioPannerNode.h"
 #include "WebKitOscillatorNode.h"
 #include <wtf/IsoMallocInlines.h>
@@ -204,6 +205,25 @@ ExceptionOr<Ref<PeriodicWave>> WebKitAudioContext::createPeriodicWave(Float32Arr
         return Exception { IndexSizeError };
     lazyInitialize();
     return PeriodicWave::create(sampleRate(), real, imaginary);
+}
+
+ExceptionOr<Ref<WebKitAudioBufferSourceNode>> WebKitAudioContext::createWebKitBufferSource()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    ASSERT(isMainThread());
+    if (isStopped())
+        return Exception { InvalidStateError };
+
+    lazyInitialize();
+
+    auto node = WebKitAudioBufferSourceNode::create(*this);
+
+    // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
+    // When this happens, AudioScheduledSourceNode::finish() calls BaseAudioContext::notifyNodeFinishedProcessing().
+    refNode(node);
+
+    return node;
 }
 
 void WebKitAudioContext::close(DOMPromiseDeferred<void>&& promise)

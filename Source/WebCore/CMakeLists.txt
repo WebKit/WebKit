@@ -498,6 +498,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/ScriptProcessorNode.idl
     Modules/webaudio/WaveShaperNode.idl
     Modules/webaudio/WaveShaperOptions.idl
+    Modules/webaudio/WebKitAudioBufferSourceNode.idl
     Modules/webaudio/WebKitAudioContext.idl
     Modules/webaudio/WebKitAudioPannerNode.idl
     Modules/webaudio/WebKitOfflineAudioContext.idl

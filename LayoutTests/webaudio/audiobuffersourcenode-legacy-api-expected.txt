@@ -1,0 +1,21 @@
+Testing that the legacy AudioBufferSourceNode API is not exposed on the unprefixed AudioBufferSourceNode
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS AudioBufferSourceNode.prototype.playbackState is undefined.
+PASS AudioBufferSourceNode.prototype.gain is undefined.
+PASS AudioBufferSourceNode.UNSCHEDULED_STATE is 0
+PASS AudioBufferSourceNode.SCHEDULED_STATE is 1
+PASS AudioBufferSourceNode.PLAYING_STATE is 2
+PASS AudioBufferSourceNode.FINISHED_STATE is 3
+PASS legacyBufferSource.playbackState is defined.
+PASS legacyBufferSource.gain is defined.
+PASS legacyBufferSource.UNSCHEDULED_STATE is 0
+PASS legacyBufferSource.SCHEDULED_STATE is 1
+PASS legacyBufferSource.PLAYING_STATE is 2
+PASS legacyBufferSource.FINISHED_STATE is 3
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

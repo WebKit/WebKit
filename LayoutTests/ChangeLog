@@ -1,3 +1,15 @@
+2020-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Move non standard AudioBufferSourceNode API to new WebKitAudioBufferSourceNode interface
+        https://bugs.webkit.org/show_bug.cgi?id=215106
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * webaudio/audiobuffersourcenode-legacy-api-expected.txt: Added.
+        * webaudio/audiobuffersourcenode-legacy-api.html: Added.
+
 2020-08-03  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Gardening some failures and rebaseline.

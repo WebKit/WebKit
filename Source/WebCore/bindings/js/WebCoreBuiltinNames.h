@@ -49,6 +49,7 @@ namespace WebCore {
     macro(ApplePaySetupFeature) \
     macro(AttachmentElement) \
     macro(Audio) \
+    macro(AudioBufferSourceNode) \
     macro(AudioContext) \
     macro(AuthenticatorAssertionResponse) \
     macro(AuthenticatorAttestationResponse) \

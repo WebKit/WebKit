@@ -2444,6 +2444,7 @@
 		833B9E321F508D8500E0E428 /* JSFileSystemDirectoryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B9E2F1F508D8000E0E428 /* JSFileSystemDirectoryEntry.h */; };
 		833B9E341F508D8500E0E428 /* JSFileSystemEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B9E2A1F508D8000E0E428 /* JSFileSystemEntry.h */; };
 		833B9E361F508D8500E0E428 /* JSFileSystemFileEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 833B9E2C1F508D8000E0E428 /* JSFileSystemFileEntry.h */; };
+		833D1C7624D8D54F00E813DF /* WebKitAudioBufferSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 833D1C7324D8D53300E813DF /* WebKitAudioBufferSourceNode.h */; };
 		83407FC11E8D9C1700E048D3 /* VisibilityChangeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83407FC01E8D9C1200E048D3 /* VisibilityChangeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8343D98424D0DEE9009ABD49 /* WebKitOscillatorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 8343D98124D0DEA9009ABD49 /* WebKitOscillatorNode.h */; };
 		834476EF1DA5BC5E002B5EB0 /* JSScrollLogicalPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E9B3011DA5A51E00FFD8D4 /* JSScrollLogicalPosition.h */; };
@@ -10452,6 +10453,8 @@
 		833B9E2E1F508D8000E0E428 /* JSFileSystemEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemEntry.cpp; sourceTree = "<group>"; };
 		833B9E2F1F508D8000E0E428 /* JSFileSystemDirectoryEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileSystemDirectoryEntry.h; sourceTree = "<group>"; };
 		833CF70F20DB3F5F00141BCC /* JSPerformanceObserverCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceObserverCustom.cpp; sourceTree = "<group>"; };
+		833D1C7324D8D53300E813DF /* WebKitAudioBufferSourceNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitAudioBufferSourceNode.h; sourceTree = "<group>"; };
+		833D1C7524D8D53300E813DF /* WebKitAudioBufferSourceNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitAudioBufferSourceNode.idl; sourceTree = "<group>"; };
 		83407FC01E8D9C1200E048D3 /* VisibilityChangeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibilityChangeClient.h; sourceTree = "<group>"; };
 		8343D98124D0DEA9009ABD49 /* WebKitOscillatorNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitOscillatorNode.h; sourceTree = "<group>"; };
 		8343D98324D0DEA9009ABD49 /* WebKitOscillatorNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitOscillatorNode.idl; sourceTree = "<group>"; };
@@ -29648,6 +29651,8 @@
 				FD7F298C13D4C0CB00AD9535 /* WaveShaperNode.cpp */,
 				FD7F298D13D4C0CB00AD9535 /* WaveShaperNode.h */,
 				FD7F298E13D4C0CB00AD9535 /* WaveShaperNode.idl */,
+				833D1C7324D8D53300E813DF /* WebKitAudioBufferSourceNode.h */,
+				833D1C7524D8D53300E813DF /* WebKitAudioBufferSourceNode.idl */,
 				8326BF8C24D35C20001F8A85 /* WaveShaperOptions.h */,
 				8326BF8D24D35C21001F8A85 /* WaveShaperOptions.idl */,
 				FD7F298F13D4C0CB00AD9535 /* WaveShaperProcessor.cpp */,
@@ -33595,6 +33600,7 @@
 				B22279900D00BF220071B782 /* SVGAnimateElement.h in Headers */,
 				832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */,
 				B22279930D00BF220071B782 /* SVGAnimateMotionElement.h in Headers */,
+				833D1C7624D8D54F00E813DF /* WebKitAudioBufferSourceNode.h in Headers */,
 				B22279950D00BF220071B782 /* SVGAnimateTransformElement.h in Headers */,
 				B22279980D00BF220071B782 /* SVGAnimationElement.h in Headers */,
 				B222799C0D00BF220071B782 /* SVGCircleElement.h in Headers */,

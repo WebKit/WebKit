@@ -3,7 +3,7 @@ Tests that AudioBufferSourceNode validates AudioBuffer in .buffer attribute sett
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS source.buffer is null
-PASS source.buffer = 57 threw exception TypeError: The AudioBufferSourceNode.buffer attribute must be an instance of AudioBuffer.
+PASS source.buffer = 57 threw exception TypeError: The WebKitAudioBufferSourceNode.buffer attribute must be an instance of AudioBuffer.
 PASS Mono buffer can be set.
 PASS Stereo buffer can be set.
 PASS 3 channels buffer can be set.

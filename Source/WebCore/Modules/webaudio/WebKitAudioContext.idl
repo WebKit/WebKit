@@ -62,7 +62,7 @@
     void decodeAudioData(ArrayBuffer audioData, AudioBufferCallback? successCallback, optional AudioBufferCallback? errorCallback);
 
     // Sources
-    [MayThrowException] AudioBufferSourceNode createBufferSource();
+    [MayThrowException, ImplementedAs=createWebKitBufferSource] WebKitAudioBufferSourceNode createBufferSource();
 
     [Conditional=VIDEO, MayThrowException] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
 

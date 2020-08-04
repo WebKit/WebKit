@@ -23,29 +23,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// A cached (non-streamed), memory-resident audio source
-[
-    Conditional=WEB_AUDIO,
-    JSGenerateToJSObject,
-    EnabledBySetting=ModernUnprefixedWebAudio
-] interface AudioBufferSourceNode : AudioScheduledSourceNode {
-    [MayThrowException] constructor (BaseAudioContext context, optional AudioBufferSourceOptions options);
+#pragma once
 
-    attribute AudioBuffer? buffer;
+#include "AudioBufferSourceNode.h"
+#include "AudioParam.h"
 
-    readonly attribute AudioParam playbackRate;
-    readonly attribute AudioParam detune;
+namespace WebCore {
 
-    attribute boolean loop;
-    attribute double loopStart;
-    attribute double loopEnd;
+class WebKitAudioBufferSourceNode final : public AudioBufferSourceNode {
+    WTF_MAKE_ISO_ALLOCATED(WebKitAudioBufferSourceNode);
+public:
+    static Ref<WebKitAudioBufferSourceNode> create(BaseAudioContext& context)
+    {
+        return adoptRef(*new WebKitAudioBufferSourceNode(context));
+    }
 
-    [MayThrowException, ImplementedAs=startLater] void start(optional double when = 0, optional double grainOffset = 0, optional double grainDuration);
+    AudioParam& gain() const { return m_gain.get(); }
 
-    // FIXME: Those constants are kept for backward compatibility with the prefixed API and should
-    // be removed once we stop supporting it.
-    const unsigned short UNSCHEDULED_STATE = 0;
-    const unsigned short SCHEDULED_STATE = 1;
-    const unsigned short PLAYING_STATE = 2;
-    const unsigned short FINISHED_STATE = 3;
+private:
+    explicit WebKitAudioBufferSourceNode(BaseAudioContext& context)
+        : AudioBufferSourceNode(context)
+        , m_gain(AudioParam::create(context, "gain"_s, 1.0, 0.0, 1.0))
+    {
+    }
+
+    double legacyGainValue() const final { return gain().value(); }
+
+    Ref<AudioParam> m_gain;
 };
+
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test.js"></script>
+</head>
+<body>
+    <script>
+        description("Testing that the legacy AudioBufferSourceNode API is not exposed on the unprefixed AudioBufferSourceNode");
+
+        shouldBeUndefined("AudioBufferSourceNode.prototype.playbackState");
+        shouldBeUndefined("AudioBufferSourceNode.prototype.gain");
+
+        // Tests backward compatibility for prefixed API.
+        shouldBe("AudioBufferSourceNode.UNSCHEDULED_STATE", "0");
+        shouldBe("AudioBufferSourceNode.SCHEDULED_STATE", "1");
+        shouldBe("AudioBufferSourceNode.PLAYING_STATE", "2");
+        shouldBe("AudioBufferSourceNode.FINISHED_STATE", "3");
+
+        let legacyContext = new webkitAudioContext;
+        let legacyBufferSource = legacyContext.createBufferSource();
+        shouldBeDefined("legacyBufferSource.playbackState");
+        shouldBeDefined("legacyBufferSource.gain");
+        shouldBe("legacyBufferSource.UNSCHEDULED_STATE", "0");
+        shouldBe("legacyBufferSource.SCHEDULED_STATE", "1");
+        shouldBe("legacyBufferSource.PLAYING_STATE", "2");
+        shouldBe("legacyBufferSource.FINISHED_STATE", "3");
+    </script>
+</body>
+</html>
