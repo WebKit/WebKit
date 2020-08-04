@@ -55,6 +55,13 @@ bool AccessibilityUIElement::isValid() const
     return m_element;            
 }
 
+#if !ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+bool AccessibilityUIElement::isIsolatedObject() const
+{
+    return false;
+}
+#endif
+
 // iOS specific methods
 #if !PLATFORM(IOS_FAMILY)
 JSRetainPtr<JSStringRef> AccessibilityUIElement::identifier() { return nullptr; }

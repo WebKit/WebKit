@@ -55,15 +55,17 @@ AccessibilityController::~AccessibilityController()
 {
 }
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-void AccessibilityController::setAccessibilityIsolatedTreeMode(bool flag)
+void AccessibilityController::setIsolatedTreeMode(bool flag)
 {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (m_accessibilityIsolatedTreeMode != flag) {
         m_accessibilityIsolatedTreeMode = flag;
         updateIsolatedTreeMode();
     }
+#endif
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 void AccessibilityController::updateIsolatedTreeMode()
 {
     // Override to set identifier to VoiceOver so that requests are handled in isolated mode.

@@ -1,0 +1,25 @@
+Hello World!
+First paragraph.
+
+AXRole: AXGroup AXSubrole: AXApplicationGroup AXValue:
+    AXRole: AXGroup AXSubrole:  AXValue:
+        AXRole: AXStaticText AXSubrole:  AXValue: Hello World!
+    AXRole: AXGroup AXSubrole:  AXValue:
+        AXRole: AXStaticText AXSubrole:  AXValue: First paragraph.
+AXRole: AXGroup AXSubrole: AXApplicationGroup AXValue:
+    AXRole: AXGroup AXSubrole:  AXValue:
+        AXRole: AXStaticText AXSubrole:  AXValue: Hello World!
+    AXRole: AXGroup AXSubrole:  AXValue:
+        AXRole: AXStaticText AXSubrole:  AXValue: First paragraph.
+This tests that for the given HTML content, the accessibility trees in isolated tree mode on and off are identical.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS content.isIsolatedObject is false
+PASS content.isIsolatedObject is true
+PASS isolatedTreeOff[1] == isolatedTreeOn[1] is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

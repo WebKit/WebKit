@@ -1,3 +1,27 @@
+2020-08-04  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add the ability of comparing the accessibility tree with isolated tree mode on and off.
+        https://bugs.webkit.org/show_bug.cgi?id=215000
+
+        Reviewed by Chris Fleizach.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        (WTR::AccessibilityController::setIsolatedTreeMode):
+        (WTR::AccessibilityController::setAccessibilityIsolatedTreeMode): Renamed setIsolatedTreeMode.
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityController.idl:
+        Exposes setIsolatedTreeMode to JavaScript code so that it can be turned
+        on and off in a layout tests.
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        Exposes isIsolatedObject to JavaScript code so that layout tests can
+        check whether the underlying accessibility object is an AXIsolatedObject
+        or an AXObject.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting): Rename.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::isIsolatedObject const):
+
 2020-08-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Apple Silicon builder should skip non-relevant patches

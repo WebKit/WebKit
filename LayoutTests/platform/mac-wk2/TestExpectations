@@ -482,6 +482,9 @@ webkit.org/b/141085 http/tests/media/video-query-url.html [ Pass Timeout ]
 ### END OF (6) New WebKit2-only failures in Yosemite
 ########################################
 
+# Accessibility isolated tree mode is enabled in Big Sur and beyond, no in Catalina and before.
+[ Mojave Catalina ] accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
+
 # Content Extensions tests must be enabled explicitly on mac-wk2.
 http/tests/contentextensions [ Pass ]
 http/tests/inspector/network/contentextensions [ Pass ]

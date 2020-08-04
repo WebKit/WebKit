@@ -364,7 +364,8 @@ public:
     // Fieldset
     bool hasContainedByFieldsetTrait();
     RefPtr<AccessibilityUIElement> fieldsetAncestorElement();
-    
+
+    bool isIsolatedObject() const;
 private:
     AccessibilityUIElement(PlatformUIElement);
     AccessibilityUIElement(const AccessibilityUIElement&);

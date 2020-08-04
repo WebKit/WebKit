@@ -52,10 +52,8 @@ public:
     void enableEnhancedAccessibility(bool);
     bool enhancedAccessibilityEnabled();
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    void setAccessibilityIsolatedTreeMode(bool);
-#endif
-    
+    void setIsolatedTreeMode(bool);
+
     JSRetainPtr<JSStringRef> platformName();
 
     // Controller Methods - platform-independent implementations.

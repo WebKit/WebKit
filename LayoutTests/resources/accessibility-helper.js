@@ -1,3 +1,8 @@
+// Dumps the accessibility tree hierarchy for the given accessibilityObject into
+// an element with id="tree", e.g., <pre id="tree"></pre>. In addition, it
+// returns a two element array with the first element [0] being false if the
+// traversal of the tree was stopped at the stopElement, and second element [1],
+// the string representing the accessibility tree.
 function dumpAccessibilityTree(accessibilityObject, stopElement, indent, allAttributesIfNeeded, getValueFromTitle, includeSubrole) {
     var str = "";
     var i = 0;
@@ -11,18 +16,22 @@ function dumpAccessibilityTree(accessibilityObject, stopElement, indent, allAttr
     str += allAttributesIfNeeded && accessibilityObject.role == '' ? accessibilityObject.allAttributes() : '';
     str += "\n";
 
-    document.getElementById("tree").innerText += str;
+    var outputTree = document.getElementById("tree");
+    if (outputTree)
+        outputTree.innerText += str;
 
     if (stopElement && stopElement.isEqual(accessibilityObject))
-        return;
+        return [false, str];
 
     var count = accessibilityObject.childrenCount;
     for (i = 0; i < count; ++i) {
-        if (!dumpAccessibilityTree(accessibilityObject.childAtIndex(i), stopElement, indent + 1, allAttributesIfNeeded, getValueFromTitle, includeSubrole))
-            return false;
+        childRet = dumpAccessibilityTree(accessibilityObject.childAtIndex(i), stopElement, indent + 1, allAttributesIfNeeded, getValueFromTitle, includeSubrole);
+        if (!childRet[0])
+            return [false, str];
+        str += childRet[1];
     }
 
-    return true;
+    return [true, str];
 }
 
 function touchAccessibilityTree(accessibilityObject) {

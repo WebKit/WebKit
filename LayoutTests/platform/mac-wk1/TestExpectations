@@ -948,6 +948,7 @@ webkit.org/b/210134 media/track/track-css-user-override.html [ Pass Failure ]
 webkit.org/b/210198 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.html [ Slow ]
 
 webkit.org/b/208477 accessibility/mac/text-marker-for-index.html [ Skip ]
+accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
 
 webkit.org/b/211923 imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]
 

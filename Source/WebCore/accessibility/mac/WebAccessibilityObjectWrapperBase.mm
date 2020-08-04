@@ -372,6 +372,16 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
     return m_axObject;
 }
 
+- (BOOL)isIsolatedObject
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    auto* backingObject = self.axBackingObject;
+    return backingObject && backingObject->isAXIsolatedObjectInstance();
+#else
+    return NO;
+#endif
+}
+
 - (NSString *)baseAccessibilityDescription
 {
     return self.axBackingObject->descriptionAttributeValue();

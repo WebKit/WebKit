@@ -1,3 +1,22 @@
+2020-08-04  Andres Gonzalez  <andresg_22@apple.com>
+
+        Add the ability of comparing the accessibility tree with isolated tree mode on and off.
+        https://bugs.webkit.org/show_bug.cgi?id=215000
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/mac/isolated-tree-mode-on-off.html
+
+        Added [WebAccessibilityObjectWrapper isIsolatedObject] for testing
+        purposes, so that layout tests can determine whether an object is
+        isolated or not. It should not be used by real clients since there
+        should be no difference in behavior of a WebAccessibilityObjectWrapper
+        from a client point of view, regardless the underlying object being
+        isolated or not.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase isIsolatedObject]):
+
 2020-08-04  Chris Dumez  <cdumez@apple.com>
 
         Move non standard AudioBufferSourceNode API to new WebKitAudioBufferSourceNode interface
