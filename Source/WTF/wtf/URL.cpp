@@ -820,14 +820,24 @@ bool protocolIsInHTTPFamily(StringView url)
 
 const URL& aboutBlankURL()
 {
-    static NeverDestroyed<URL> staticBlankURL(URL(), "about:blank"_s);
+    static NeverDestroyed<URL> staticBlankURL;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        static constexpr const char* aboutBlank = "about:blank";
+        staticBlankURL.get() = URL(URL(), StringImpl::createStaticStringImpl(aboutBlank, strlen(aboutBlank)));
+    });
     return staticBlankURL;
 }
 
 const URL& aboutSrcDocURL()
 {
-    static NeverDestroyed<URL> staticAboutSrcDocURL(URL(), "about:srcdoc"_s);
-    return staticAboutSrcDocURL;
+    static NeverDestroyed<URL> staticSrcDocURL;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        static constexpr const char* aboutSrcDoc = "about:srcdoc";
+        staticSrcDocURL.get() = URL(URL(), StringImpl::createStaticStringImpl(aboutSrcDoc, strlen(aboutSrcDoc)));
+    });
+    return staticSrcDocURL;
 }
 
 bool URL::protocolIsAbout() const
