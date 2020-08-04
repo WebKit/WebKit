@@ -1,3 +1,19 @@
+2020-08-04  Rob Buis  <rbuis@igalia.com>
+
+        Performance.getEntriesByName/Type should match case sensitive
+        https://bugs.webkit.org/show_bug.cgi?id=214960
+
+        Reviewed by Youenn Fablet.
+
+        Import relevant test.
+
+        * web-platform-tests/performance-timeline/case-sensitivity.any-expected.txt: Added.
+        * web-platform-tests/performance-timeline/case-sensitivity.any.html: Added.
+        * web-platform-tests/performance-timeline/case-sensitivity.any.js: Added.
+        (test):
+        * web-platform-tests/performance-timeline/case-sensitivity.any.worker-expected.txt: Added.
+        * web-platform-tests/performance-timeline/case-sensitivity.any.worker.html: Added.
+
 2020-08-03  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Gardening some failures and rebaseline.

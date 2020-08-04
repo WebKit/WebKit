@@ -1,3 +1,23 @@
+2020-08-04  Rob Buis  <rbuis@igalia.com>
+
+        Performance.getEntriesByName/Type should match case sensitive
+        https://bugs.webkit.org/show_bug.cgi?id=214960
+
+        Reviewed by Youenn Fablet.
+
+        Performance.getEntriesByName/Type should match case sensitive [1].
+
+        Behavior matches Firefox and Chrome.
+
+        Tests: imported/w3c/web-platform-tests/performance-timeline/case-sensitivity.any.html
+               imported/w3c/web-platform-tests/performance-timeline/case-sensitivity.any.worker.html
+
+        [1] https://w3c.github.io/performance-timeline/#getentriesbytype-method
+
+        * page/Performance.cpp:
+        (WebCore::Performance::getEntriesByType const):
+        (WebCore::Performance::getEntriesByName const):
+
 2020-08-03  Simon Fraser  <simon.fraser@apple.com>
 
         m_isEditableRegionEnabled should be reset in didCommitLoad, not didFinishLoad

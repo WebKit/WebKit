@@ -1,0 +1,4 @@
+
+PASS getEntriesByType values are case sensitive 
+PASS getEntriesByName values are case sensitive 
+
