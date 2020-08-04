@@ -1,3 +1,20 @@
+2020-08-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Use setup.py for the autoinstaller
+        https://bugs.webkit.org/show_bug.cgi?id=215067
+        <rdar://problem/66432719>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Add all requests dependencies.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.Archive__init__): Add extension, tar.gz by default.
+        (Package.Archive.path): Support multiple file types.
+        (Package.Archive.unpack): Support .zip files.
+        (Package.__init__): Add slow_install flag.
+        (Package.archives): Handle case were a library does not have a tiny version.
+        (Package.install): Call setup.py instead of just moving the library out of the package.
+
 2020-08-04  Hector Lopez  <hector_i_lopez@apple.com>
 
         Add myself to contributors.json
