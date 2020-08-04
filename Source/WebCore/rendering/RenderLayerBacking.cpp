@@ -1730,6 +1730,8 @@ void RenderLayerBacking::updateEventRegion()
     if (!maintainsEventRegion())
         return;
 
+    LOG_WITH_STREAM(EventRegions, stream << "RenderLayerBacking " << *this << " updateEventRegion");
+
     TraceScope scope(ComputeEventRegionsStart, ComputeEventRegionsEnd);
 
     auto updateEventRegionForLayer = [&](GraphicsLayer& graphicsLayer) {
