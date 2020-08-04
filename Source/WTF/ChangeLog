@@ -1,3 +1,21 @@
+2020-08-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [MSVC] wtf/Optional.h: error C2280: 'WTF::constexpr_storage_t<T> &WTF::constexpr_storage_t<T>::operator =(const WTF::constexpr_storage_t<T> &)': attempting to reference a deleted function
+        https://bugs.webkit.org/show_bug.cgi?id=215003
+
+        Reviewed by Yusuke Suzuki.
+
+        Microsoft reported the upcoming MSVC can't compile
+        Optional<std::pair<JSC::SamplingProfiler::StackFrame::CodeLocation,JSC::CodeBlock *>>.
+
+        > wtf/Optional.h(419,39): error C2280: 'WTF::constexpr_storage_t<T> &WTF::constexpr_storage_t<T>::operator =(const WTF::constexpr_storage_t<T> &)': attempting to reference a deleted function
+
+        They suggests using std::is_trivially_copy_assignable_v in
+        Optional ctor instead of std::is_trivially_copyable_v.
+
+        * wtf/Optional.h:
+        (WTF::Optional::Optional): Replaced std::is_trivially_copyable_v with std::is_trivially_copy_assignable_v.
+
 2020-08-04  Alex Christensen  <achristensen@webkit.org>
 
         about: scheme URL constants should be backed by StaticStringImpl

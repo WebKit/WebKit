@@ -415,7 +415,7 @@ public:
   : OptionalBase<T>()
   {
     if (rhs.initialized()) {
-        if constexpr (std::is_trivially_copyable_v<T>)
+        if constexpr (std::is_trivially_copy_assignable_v<T>)
             OptionalBase<T>::storage_ = *rhs;
         else
             ::new (static_cast<void*>(dataptr())) T(*rhs);
@@ -427,7 +427,7 @@ public:
   : OptionalBase<T>()
   {
     if (rhs.initialized()) {
-        if constexpr (std::is_trivially_copyable_v<T>)
+        if constexpr (std::is_trivially_copy_assignable_v<T>)
             OptionalBase<T>::storage_ = *rhs;
         else
             ::new (static_cast<void*>(dataptr())) T(std::move(*rhs));
