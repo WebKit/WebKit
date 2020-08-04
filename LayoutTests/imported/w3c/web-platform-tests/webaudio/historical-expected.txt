@@ -2,8 +2,8 @@
 FAIL webkitAudioContext interface should not exist assert_false: expected false got true
 FAIL webkitAudioPannerNode interface should not exist assert_false: expected false got true
 FAIL webkitOfflineAudioContext interface should not exist assert_false: expected false got true
-FAIL dopplerFactor member should not exist on the AudioListener. assert_false: expected false got true
-FAIL speedOfSound member should not exist on the AudioListener. assert_false: expected false got true
-FAIL setVelocity member should not exist on the AudioListener. assert_false: expected false got true
+PASS dopplerFactor member should not exist on the AudioListener. 
+PASS speedOfSound member should not exist on the AudioListener. 
+PASS setVelocity member should not exist on the AudioListener. 
 PASS setVelocity should not exist on PannerNodes. 
 

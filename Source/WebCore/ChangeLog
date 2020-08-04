@@ -1,3 +1,58 @@
+2020-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Align AudioListener with the W3C specification
+        https://bugs.webkit.org/show_bug.cgi?id=215134
+
+        Reviewed by Geoffrey Garen.
+
+        Align AudioListener with the W3C specification:
+        - https://webaudio.github.io/web-audio-api/#audiolistener
+
+        Note that the prefixed API still behaves the way it used to. I have maintained
+        the old version of the AudioListener API by moving it to a new
+        WebKitAudioListener interface.
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioListener.cpp:
+        (WebCore::AudioListener::AudioListener):
+        (WebCore::AudioListener::setPosition):
+        (WebCore::AudioListener::position const):
+        (WebCore::AudioListener::setOrientation):
+        (WebCore::AudioListener::orientation const):
+        (WebCore::AudioListener::upVector const):
+        * Modules/webaudio/AudioListener.h:
+        (WebCore::AudioListener::create):
+        (WebCore::AudioListener::positionX):
+        (WebCore::AudioListener::positionY):
+        (WebCore::AudioListener::positionZ):
+        (WebCore::AudioListener::forwardX):
+        (WebCore::AudioListener::forwardY):
+        (WebCore::AudioListener::forwardZ):
+        (WebCore::AudioListener::upX):
+        (WebCore::AudioListener::upY):
+        (WebCore::AudioListener::upZ):
+        * Modules/webaudio/AudioListener.idl:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::constructCommon):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::dopplerRate):
+        * Modules/webaudio/WebKitAudioContext.h:
+        (WebCore::WebKitAudioContext::listener):
+        * Modules/webaudio/WebKitAudioContext.idl:
+        * Modules/webaudio/WebKitAudioListener.h: Copied from Source/WebCore/Modules/webaudio/AudioListener.h.
+        * Modules/webaudio/WebKitAudioListener.idl: Copied from Source/WebCore/Modules/webaudio/AudioListener.idl.
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::listener):
+        * Modules/webaudio/WebKitAudioPannerNode.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2020-08-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add glyph origins member to GlyphBuffer

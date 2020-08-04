@@ -42,7 +42,7 @@
     readonly attribute unrestricted float sampleRate;
 
     // All panning is relative to this listener.
-    readonly attribute AudioListener listener;
+    readonly attribute WebKitAudioListener listener;
 
     [ImplementedAs=suspendRendering] Promise<void> suspend();
     [ImplementedAs=resumeRendering] Promise<void> resume();

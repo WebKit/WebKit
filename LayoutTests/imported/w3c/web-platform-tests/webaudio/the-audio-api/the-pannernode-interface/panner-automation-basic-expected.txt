@@ -8,12 +8,12 @@ PASS Executing "Stereo panner.positionY"
 PASS Executing "Mono panner.positionY" 
 PASS Executing "Stereo panner.positionZ" 
 PASS Executing "Mono panner.positionZ" 
-FAIL Executing "Stereo listener.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
-FAIL Executing "Mono listener.positionX" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
-FAIL Executing "Stereo listener.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
-FAIL Executing "Mono listener.positionY" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
-FAIL Executing "Stereo listener.positionZ" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
-FAIL Executing "Mono listener.positionZ" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'pannerSetter.value = 1')"
+PASS Executing "Stereo listener.positionX" 
+PASS Executing "Mono listener.positionX" 
+PASS Executing "Stereo listener.positionY" 
+PASS Executing "Mono listener.positionY" 
+PASS Executing "Stereo listener.positionZ" 
+PASS Executing "Mono listener.positionZ" 
 PASS Executing "setPosition" 
 PASS Executing "orientation setter" 
 PASS Executing "forward setter" 
@@ -68,11 +68,53 @@ FAIL X Mono panner.positionZ: Output at frame 128 channel 0 should not be equal 
 FAIL X Mono panner.positionZ: Output at frame 128 channel 1 should not be equal to 0. Got 0. assert_true: expected true got false
 FAIL < [Mono panner.positionZ] 2 out of 6 assertions were failed. assert_true: expected true got false
 PASS > [Stereo listener.positionX]  
+PASS   Stereo listener.positionX.value frame [0, 128) channel 0 contains only the constant 0. 
+PASS   Stereo listener.positionX.value frame [0, 128) channel 1 contains only the constant 0. 
+PASS   Stereo listener.positionX.value frame [128, 256) channel 0 contains only the constant 0. 
+PASS   Stereo listener.positionX.value frame [128, 256) channel 1 contains only the constant 0. 
+FAIL X Stereo listener.positionX: Output at frame 128 channel 0 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL X Stereo listener.positionX: Output at frame 128 channel 1 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL < [Stereo listener.positionX] 2 out of 6 assertions were failed. assert_true: expected true got false
 PASS > [Mono listener.positionX]  
+PASS   Mono listener.positionX.value frame [0, 128) channel 0 contains only the constant 0. 
+PASS   Mono listener.positionX.value frame [0, 128) channel 1 contains only the constant 0. 
+PASS   Mono listener.positionX.value frame [128, 256) channel 0 contains only the constant 0. 
+PASS   Mono listener.positionX.value frame [128, 256) channel 1 contains only the constant 0. 
+FAIL X Mono listener.positionX: Output at frame 128 channel 0 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL X Mono listener.positionX: Output at frame 128 channel 1 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL < [Mono listener.positionX] 2 out of 6 assertions were failed. assert_true: expected true got false
 PASS > [Stereo listener.positionY]  
+PASS   Stereo listener.positionY.value frame [0, 128) channel 0 contains only the constant 0. 
+PASS   Stereo listener.positionY.value frame [0, 128) channel 1 contains only the constant 0. 
+PASS   Stereo listener.positionY.value frame [128, 256) channel 0 contains only the constant 0. 
+PASS   Stereo listener.positionY.value frame [128, 256) channel 1 contains only the constant 0. 
+FAIL X Stereo listener.positionY: Output at frame 128 channel 0 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL X Stereo listener.positionY: Output at frame 128 channel 1 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL < [Stereo listener.positionY] 2 out of 6 assertions were failed. assert_true: expected true got false
 PASS > [Mono listener.positionY]  
+PASS   Mono listener.positionY.value frame [0, 128) channel 0 contains only the constant 0. 
+PASS   Mono listener.positionY.value frame [0, 128) channel 1 contains only the constant 0. 
+PASS   Mono listener.positionY.value frame [128, 256) channel 0 contains only the constant 0. 
+PASS   Mono listener.positionY.value frame [128, 256) channel 1 contains only the constant 0. 
+FAIL X Mono listener.positionY: Output at frame 128 channel 0 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL X Mono listener.positionY: Output at frame 128 channel 1 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL < [Mono listener.positionY] 2 out of 6 assertions were failed. assert_true: expected true got false
 PASS > [Stereo listener.positionZ]  
+PASS   Stereo listener.positionZ.value frame [0, 128) channel 0 contains only the constant 0. 
+PASS   Stereo listener.positionZ.value frame [0, 128) channel 1 contains only the constant 0. 
+PASS   Stereo listener.positionZ.value frame [128, 256) channel 0 contains only the constant 0. 
+PASS   Stereo listener.positionZ.value frame [128, 256) channel 1 contains only the constant 0. 
+FAIL X Stereo listener.positionZ: Output at frame 128 channel 0 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL X Stereo listener.positionZ: Output at frame 128 channel 1 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL < [Stereo listener.positionZ] 2 out of 6 assertions were failed. assert_true: expected true got false
 PASS > [Mono listener.positionZ]  
+PASS   Mono listener.positionZ.value frame [0, 128) channel 0 contains only the constant 0. 
+PASS   Mono listener.positionZ.value frame [0, 128) channel 1 contains only the constant 0. 
+PASS   Mono listener.positionZ.value frame [128, 256) channel 0 contains only the constant 0. 
+PASS   Mono listener.positionZ.value frame [128, 256) channel 1 contains only the constant 0. 
+FAIL X Mono listener.positionZ: Output at frame 128 channel 0 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL X Mono listener.positionZ: Output at frame 128 channel 1 should not be equal to 0. Got 0. assert_true: expected true got false
+FAIL < [Mono listener.positionZ] 2 out of 6 assertions were failed. assert_true: expected true got false
 PASS > [setPosition]  
 PASS   setPosition.value frame [0, 128) channel 0 contains only the constant 0. 
 PASS   setPosition.value frame [0, 128) channel 1 contains only the constant 0. 
@@ -105,5 +147,5 @@ PASS   listener.up{XYZ}.value frame [128, 256) channel 1 contains only the const
 FAIL X listener.up{XYZ}: Output at frame 128 channel 0 should not be equal to 0. Got 0. assert_true: expected true got false
 FAIL X listener.up{XYZ}: Output at frame 128 channel 1 should not be equal to 0. Got 0. assert_true: expected true got false
 FAIL < [up setter] 2 out of 6 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 10 out of 16 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 16 out of 16 tasks were failed. assert_true: expected true got false
 

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,57 +28,39 @@
 
 #pragma once
 
-#include "FloatPoint3D.h"
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include "AudioListener.h"
 
 namespace WebCore {
 
-class AudioParam;
-
-// AudioListener maintains the state of the listener in the audio scene as defined in the OpenAL specification.
-
-class AudioListener : public RefCounted<AudioListener> {
+class WebKitAudioListener final : public AudioListener {
 public:
-    static Ref<AudioListener> create(BaseAudioContext& context)
+    static Ref<WebKitAudioListener> create(BaseAudioContext& context)
     {
-        return adoptRef(*new AudioListener(context));
+        return adoptRef(*new WebKitAudioListener(context));
     }
-    ~AudioListener();
 
-    AudioParam& positionX() { return m_positionX.get(); }
-    AudioParam& positionY() { return m_positionY.get(); }
-    AudioParam& positionZ() { return m_positionZ.get(); }
-    AudioParam& forwardX() { return m_forwardX.get(); }
-    AudioParam& forwardY() { return m_forwardY.get(); }
-    AudioParam& forwardZ() { return m_forwardZ.get(); }
-    AudioParam& upX() { return m_upX.get(); }
-    AudioParam& upY() { return m_upY.get(); }
-    AudioParam& upZ() { return m_upZ.get(); }
+    // Velocity
+    void setVelocity(float x, float y, float z) { setVelocity(FloatPoint3D(x, y, z)); }
+    void setVelocity(const FloatPoint3D& velocity) { m_velocity = velocity; }
+    const FloatPoint3D& velocity() const { return m_velocity; }
 
-    // Position
-    void setPosition(float x, float y, float z);
-    FloatPoint3D position() const;
+    // Doppler factor
+    void setDopplerFactor(double dopplerFactor) { m_dopplerFactor = dopplerFactor; }
+    double dopplerFactor() const { return m_dopplerFactor; }
 
-    // Orientation
-    void setOrientation(float x, float y, float z, float upX, float upY, float upZ);
-    FloatPoint3D orientation() const;
-
-    FloatPoint3D upVector() const;
-
-protected:
-    explicit AudioListener(BaseAudioContext&);
+    // Speed of sound
+    void setSpeedOfSound(double speedOfSound) { m_speedOfSound = speedOfSound; }
+    double speedOfSound() const { return m_speedOfSound; }
 
 private:
-    Ref<AudioParam> m_positionX;
-    Ref<AudioParam> m_positionY;
-    Ref<AudioParam> m_positionZ;
-    Ref<AudioParam> m_forwardX;
-    Ref<AudioParam> m_forwardY;
-    Ref<AudioParam> m_forwardZ;
-    Ref<AudioParam> m_upX;
-    Ref<AudioParam> m_upY;
-    Ref<AudioParam> m_upZ;
+    WebKitAudioListener(BaseAudioContext& context)
+        : AudioListener(context)
+        , m_velocity(0, 0, 0)
+    { }
+
+    FloatPoint3D m_velocity;
+    double m_dopplerFactor { 1.0 };
+    double m_speedOfSound { 343.3 };
 };
 
 } // namespace WebCore

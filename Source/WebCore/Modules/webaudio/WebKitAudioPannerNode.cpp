@@ -173,7 +173,7 @@ void WebKitAudioPannerNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-AudioListener* WebKitAudioPannerNode::listener()
+WebKitAudioListener* WebKitAudioPannerNode::listener()
 {
     return context().listener();
 }

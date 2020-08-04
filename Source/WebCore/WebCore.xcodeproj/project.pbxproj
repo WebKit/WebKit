@@ -2455,6 +2455,7 @@
 		8348BFAC1B85729800912F36 /* ClassCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 8348BFAA1B85729500912F36 /* ClassCollection.h */; };
 		834DFAD01F7DAE5D00C2725B /* SharedStringHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 834DFACC1F7DAE5600C2725B /* SharedStringHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83520C7E1A71BFCC006BD2AA /* CSSFontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = 83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		8356F97F24D9F818006C3E41 /* WebKitAudioListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 8356F97E24D9F809006C3E41 /* WebKitAudioListener.h */; };
 		8358CB701C53277500E0C2D8 /* JSXMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F570AD1C53268E007FD6CB /* JSXMLDocument.h */; };
 		835D2D781F5F1FBD00141DED /* HTMLInputElementEntriesAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D2D751F5F1FB800141DED /* HTMLInputElementEntriesAPI.h */; };
 		835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D363619FF6193004C93AB /* StyleBuilderCustom.h */; };
@@ -10480,6 +10481,8 @@
 		8350C3E81DA59B6200356446 /* ScrollToOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScrollToOptions.idl; sourceTree = "<group>"; };
 		83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFamily.h; sourceTree = "<group>"; };
 		835657C61ECAB0E800CDE72D /* JSDOMMatrixInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMatrixInit.cpp; sourceTree = "<group>"; };
+		8356F97C24D9F808006C3E41 /* WebKitAudioListener.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitAudioListener.idl; sourceTree = "<group>"; };
+		8356F97E24D9F809006C3E41 /* WebKitAudioListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitAudioListener.h; sourceTree = "<group>"; };
 		835B680E1F548BDE0071F7F6 /* JSFileSystemEntryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemEntryCustom.cpp; sourceTree = "<group>"; };
 		835D2D741F5F1FB800141DED /* HTMLInputElementEntriesAPI.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLInputElementEntriesAPI.idl; sourceTree = "<group>"; };
 		835D2D751F5F1FB800141DED /* HTMLInputElementEntriesAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLInputElementEntriesAPI.h; sourceTree = "<group>"; };
@@ -29651,15 +29654,17 @@
 				FD7F298C13D4C0CB00AD9535 /* WaveShaperNode.cpp */,
 				FD7F298D13D4C0CB00AD9535 /* WaveShaperNode.h */,
 				FD7F298E13D4C0CB00AD9535 /* WaveShaperNode.idl */,
-				833D1C7324D8D53300E813DF /* WebKitAudioBufferSourceNode.h */,
-				833D1C7524D8D53300E813DF /* WebKitAudioBufferSourceNode.idl */,
 				8326BF8C24D35C20001F8A85 /* WaveShaperOptions.h */,
 				8326BF8D24D35C21001F8A85 /* WaveShaperOptions.idl */,
 				FD7F298F13D4C0CB00AD9535 /* WaveShaperProcessor.cpp */,
 				FD7F299013D4C0CB00AD9535 /* WaveShaperProcessor.h */,
+				833D1C7324D8D53300E813DF /* WebKitAudioBufferSourceNode.h */,
+				833D1C7524D8D53300E813DF /* WebKitAudioBufferSourceNode.idl */,
 				83003E2B249997A80060AF94 /* WebKitAudioContext.cpp */,
 				83B1A6FF249985D000FE5961 /* WebKitAudioContext.h */,
 				83B1A701249985D000FE5961 /* WebKitAudioContext.idl */,
+				8356F97E24D9F809006C3E41 /* WebKitAudioListener.h */,
+				8356F97C24D9F808006C3E41 /* WebKitAudioListener.idl */,
 				831B61712499A59900C07C79 /* WebKitAudioPannerNode.cpp */,
 				831B61742499A59C00C07C79 /* WebKitAudioPannerNode.h */,
 				831B616F2499A59800C07C79 /* WebKitAudioPannerNode.idl */,
@@ -33600,7 +33605,6 @@
 				B22279900D00BF220071B782 /* SVGAnimateElement.h in Headers */,
 				832B843419D8E55100B26055 /* SVGAnimateElementBase.h in Headers */,
 				B22279930D00BF220071B782 /* SVGAnimateMotionElement.h in Headers */,
-				833D1C7624D8D54F00E813DF /* WebKitAudioBufferSourceNode.h in Headers */,
 				B22279950D00BF220071B782 /* SVGAnimateTransformElement.h in Headers */,
 				B22279980D00BF220071B782 /* SVGAnimationElement.h in Headers */,
 				B222799C0D00BF220071B782 /* SVGCircleElement.h in Headers */,
@@ -34106,7 +34110,9 @@
 				A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */,
 				F48223111E3869B80066FC79 /* WebItemProviderPasteboard.h in Headers */,
 				31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */,
+				833D1C7624D8D54F00E813DF /* WebKitAudioBufferSourceNode.h in Headers */,
 				83B1A702249985F000FE5961 /* WebKitAudioContext.h in Headers */,
+				8356F97F24D9F818006C3E41 /* WebKitAudioListener.h in Headers */,
 				831B61762499A5BB00C07C79 /* WebKitAudioPannerNode.h in Headers */,
 				5DFEBAB718592B6D00C75BEB /* WebKitAvailability.h in Headers */,
 				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,

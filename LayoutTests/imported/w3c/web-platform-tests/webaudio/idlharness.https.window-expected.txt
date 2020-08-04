@@ -406,28 +406,28 @@ PASS AudioListener interface object name
 PASS AudioListener interface: existence and properties of interface prototype object 
 PASS AudioListener interface: existence and properties of interface prototype object's "constructor" property 
 PASS AudioListener interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL AudioListener interface: attribute positionX assert_true: The prototype object must have a property "positionX" expected true got false
-FAIL AudioListener interface: attribute positionY assert_true: The prototype object must have a property "positionY" expected true got false
-FAIL AudioListener interface: attribute positionZ assert_true: The prototype object must have a property "positionZ" expected true got false
-FAIL AudioListener interface: attribute forwardX assert_true: The prototype object must have a property "forwardX" expected true got false
-FAIL AudioListener interface: attribute forwardY assert_true: The prototype object must have a property "forwardY" expected true got false
-FAIL AudioListener interface: attribute forwardZ assert_true: The prototype object must have a property "forwardZ" expected true got false
-FAIL AudioListener interface: attribute upX assert_true: The prototype object must have a property "upX" expected true got false
-FAIL AudioListener interface: attribute upY assert_true: The prototype object must have a property "upY" expected true got false
-FAIL AudioListener interface: attribute upZ assert_true: The prototype object must have a property "upZ" expected true got false
+PASS AudioListener interface: attribute positionX 
+PASS AudioListener interface: attribute positionY 
+PASS AudioListener interface: attribute positionZ 
+PASS AudioListener interface: attribute forwardX 
+PASS AudioListener interface: attribute forwardY 
+PASS AudioListener interface: attribute forwardZ 
+PASS AudioListener interface: attribute upX 
+PASS AudioListener interface: attribute upY 
+PASS AudioListener interface: attribute upZ 
 PASS AudioListener interface: operation setPosition(float, float, float) 
 PASS AudioListener interface: operation setOrientation(float, float, float, float, float, float) 
 PASS AudioListener must be primary interface of context.listener 
 PASS Stringification of context.listener 
-FAIL AudioListener interface: context.listener must inherit property "positionX" with the proper type assert_inherits: property "positionX" not found in prototype chain
-FAIL AudioListener interface: context.listener must inherit property "positionY" with the proper type assert_inherits: property "positionY" not found in prototype chain
-FAIL AudioListener interface: context.listener must inherit property "positionZ" with the proper type assert_inherits: property "positionZ" not found in prototype chain
-FAIL AudioListener interface: context.listener must inherit property "forwardX" with the proper type assert_inherits: property "forwardX" not found in prototype chain
-FAIL AudioListener interface: context.listener must inherit property "forwardY" with the proper type assert_inherits: property "forwardY" not found in prototype chain
-FAIL AudioListener interface: context.listener must inherit property "forwardZ" with the proper type assert_inherits: property "forwardZ" not found in prototype chain
-FAIL AudioListener interface: context.listener must inherit property "upX" with the proper type assert_inherits: property "upX" not found in prototype chain
-FAIL AudioListener interface: context.listener must inherit property "upY" with the proper type assert_inherits: property "upY" not found in prototype chain
-FAIL AudioListener interface: context.listener must inherit property "upZ" with the proper type assert_inherits: property "upZ" not found in prototype chain
+PASS AudioListener interface: context.listener must inherit property "positionX" with the proper type 
+PASS AudioListener interface: context.listener must inherit property "positionY" with the proper type 
+PASS AudioListener interface: context.listener must inherit property "positionZ" with the proper type 
+PASS AudioListener interface: context.listener must inherit property "forwardX" with the proper type 
+PASS AudioListener interface: context.listener must inherit property "forwardY" with the proper type 
+PASS AudioListener interface: context.listener must inherit property "forwardZ" with the proper type 
+PASS AudioListener interface: context.listener must inherit property "upX" with the proper type 
+PASS AudioListener interface: context.listener must inherit property "upY" with the proper type 
+PASS AudioListener interface: context.listener must inherit property "upZ" with the proper type 
 PASS AudioListener interface: context.listener must inherit property "setPosition(float, float, float)" with the proper type 
 PASS AudioListener interface: calling setPosition(float, float, float) on context.listener with too few arguments must throw TypeError 
 PASS AudioListener interface: context.listener must inherit property "setOrientation(float, float, float, float, float, float)" with the proper type 

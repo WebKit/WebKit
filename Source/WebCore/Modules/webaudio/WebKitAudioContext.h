@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BaseAudioContext.h"
+#include "WebKitAudioListener.h"
 
 namespace WebCore {
 
@@ -53,6 +54,8 @@ public:
     static ExceptionOr<Ref<WebKitAudioContext>> create(Document&);
 
     void close(DOMPromiseDeferred<void>&&);
+
+    WebKitAudioListener* listener() { return static_cast<WebKitAudioListener*>(BaseAudioContext::listener()); }
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
 #if ENABLE(VIDEO)

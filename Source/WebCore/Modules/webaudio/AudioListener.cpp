@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,19 +32,57 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioListener.h"
+#include "AudioParam.h"
 
 #include "AudioBus.h"
 
 namespace WebCore {
 
-AudioListener::AudioListener()
-    : m_position(0, 0, 0)
-    , m_orientation(0, 0, -1)
-    , m_upVector(0, 1, 0)
-    , m_velocity(0, 0, 0)
-    , m_dopplerFactor(1)
-    , m_speedOfSound(343.3)
+AudioListener::AudioListener(BaseAudioContext& context)
+    : m_positionX(AudioParam::create(context, "positionX", 0.0, -FLT_MAX, FLT_MAX))
+    , m_positionY(AudioParam::create(context, "positionY", 0.0, -FLT_MAX, FLT_MAX))
+    , m_positionZ(AudioParam::create(context, "positionZ", 0.0, -FLT_MAX, FLT_MAX))
+    , m_forwardX(AudioParam::create(context, "forwardX", 0.0, -FLT_MAX, FLT_MAX))
+    , m_forwardY(AudioParam::create(context, "forwardY", 0.0, -FLT_MAX, FLT_MAX))
+    , m_forwardZ(AudioParam::create(context, "forwardZ", -1.0, -FLT_MAX, FLT_MAX))
+    , m_upX(AudioParam::create(context, "upX", 0.0, -FLT_MAX, FLT_MAX))
+    , m_upY(AudioParam::create(context, "upY", 1.0, -FLT_MAX, FLT_MAX))
+    , m_upZ(AudioParam::create(context, "upZ", 0.0, -FLT_MAX, FLT_MAX))
 {
+}
+
+AudioListener::~AudioListener() = default;
+
+void AudioListener::setPosition(float x, float y, float z)
+{
+    m_positionX->setValue(x);
+    m_positionY->setValue(y);
+    m_positionZ->setValue(z);
+}
+
+FloatPoint3D AudioListener::position() const
+{
+    return FloatPoint3D { m_positionX->value(), m_positionY->value(), m_positionZ->value() };
+}
+
+void AudioListener::setOrientation(float x, float y, float z, float upX, float upY, float upZ)
+{
+    m_forwardX->setValue(x);
+    m_forwardY->setValue(y);
+    m_forwardZ->setValue(z);
+    m_upX->setValue(upX);
+    m_upY->setValue(upY);
+    m_upZ->setValue(upZ);
+}
+
+FloatPoint3D AudioListener::orientation() const
+{
+    return FloatPoint3D { m_forwardX->value(), m_forwardY->value(), m_forwardZ->value() };
+}
+
+FloatPoint3D AudioListener::upVector() const
+{
+    return FloatPoint3D { m_upX->value(), m_upY->value(), m_upZ->value() };
 }
 
 } // namespace WebCore

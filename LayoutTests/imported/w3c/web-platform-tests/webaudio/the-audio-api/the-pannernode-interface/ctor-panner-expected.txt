@@ -2,7 +2,7 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
 PASS Executing "invalid constructor" 
-FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.listener[item.name].value')"
+PASS Executing "default constructor" 
 PASS Executing "test AudioNodeOptions" 
 PASS Executing "constructor with options" 
 PASS Audit report 
@@ -36,6 +36,16 @@ PASS   node0.rolloffFactor is equal to 1.
 PASS   node0.coneInnerAngle is equal to 360. 
 PASS   node0.coneOuterAngle is equal to 360. 
 PASS   node0.coneOuterGain is equal to 0. 
+PASS   context.listener.positionX.value is equal to 0. 
+PASS   context.listener.positionY.value is equal to 0. 
+PASS   context.listener.positionZ.value is equal to 0. 
+PASS   context.listener.forwardX.value is equal to 0. 
+PASS   context.listener.forwardY.value is equal to 0. 
+PASS   context.listener.forwardZ.value is equal to -1. 
+PASS   context.listener.upX.value is equal to 0. 
+PASS   context.listener.upY.value is equal to 1. 
+PASS   context.listener.upZ.value is equal to 0. 
+PASS < [default constructor] All assertions passed. (total 30 assertions) 
 PASS > [test AudioNodeOptions]  
 PASS   node1 = new PannerNode(c, {"channelCount":1}) did not throw an exception. 
 PASS   node1.channelCount is equal to 1. 

@@ -3572,6 +3572,7 @@ JSWebGPUTextureView.cpp
 JSWebKitAnimationEvent.cpp
 JSWebKitAudioBufferSourceNode.cpp
 JSWebKitAudioContext.cpp
+JSWebKitAudioListener.cpp
 JSWebKitAudioPannerNode.cpp
 JSWebKitCSSMatrix.cpp
 JSWebKitMediaKeyError.cpp

@@ -1,16 +1,85 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'context.listener.positionX.value')
-
-Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'context.listener.positionX.value')
 
 PASS # AUDIT TASK RUNNER STARTED. 
-TIMEOUT Executing "0: 1-channel inverse rolloff: 1" Test timed out
-NOTRUN Executing "0: 2-channel inverse rolloff: 1" 
-NOTRUN Executing "1: 1-channel inverse rolloff: 1" 
-NOTRUN Executing "1: 2-channel inverse rolloff: 1" 
-NOTRUN Executing "2: 1-channel exponential rolloff: 1.5" 
-NOTRUN Executing "2: 2-channel exponential rolloff: 1.5" 
-NOTRUN Executing "3: 1-channel linear rolloff: 1" 
-NOTRUN Executing "3: 2-channel linear rolloff: 1" 
-NOTRUN Audit report 
+PASS Executing "0: 1-channel inverse rolloff: 1" 
+PASS Executing "0: 2-channel inverse rolloff: 1" 
+PASS Executing "1: 1-channel inverse rolloff: 1" 
+PASS Executing "1: 2-channel inverse rolloff: 1" 
+PASS Executing "2: 1-channel exponential rolloff: 1.5" 
+PASS Executing "2: 2-channel exponential rolloff: 1.5" 
+PASS Executing "3: 1-channel linear rolloff: 1" 
+PASS Executing "3: 2-channel linear rolloff: 1" 
+PASS Audit report 
 PASS > [0: 1-channel inverse rolloff: 1]  
+FAIL X 1-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, left channel does not equal [-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	7.0710676908493042e-1	-7.0710676908493042e-1	1.4142135381698608e+0	2.0000000000000000e+0	0.0000000000000000e+0
+	[1]	7.0710676908493042e-1	-7.0710676908493042e-1	1.4142135381698608e+0	2.0000000000000000e+0	0.0000000000000000e+0
+	[2]	7.0710676908493042e-1	-7.0710676908493042e-1	1.4142135381698608e+0	2.0000000000000000e+0	0.0000000000000000e+0
+	[3]	7.0710676908493042e-1	-7.0710676908493042e-1	1.4142135381698608e+0	2.0000000000000000e+0	0.0000000000000000e+0
+	[4]	7.0710676908493042e-1	-7.0710676908493042e-1	1.4142135381698608e+0	2.0000000000000000e+0	0.0000000000000000e+0
+	...and 251 more errors.
+	Max AbsError of 1.4142135381698608e+0 at index of 0.
+	Max RelError of 2.0000000000000000e+0 at index of 0.
+ assert_true: expected true got false
+FAIL X 1-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, right channel does not equal [0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[128]	1.0606071009533480e-4	7.0710676908493042e-1	7.0700070837483509e-1	9.9985000750278119e-1	0.0000000000000000e+0
+	[129]	1.0606071009533480e-4	7.0710676908493042e-1	7.0700070837483509e-1	9.9985000750278119e-1	0.0000000000000000e+0
+	[130]	1.0606071009533480e-4	7.0710676908493042e-1	7.0700070837483509e-1	9.9985000750278119e-1	0.0000000000000000e+0
+	[131]	1.0606071009533480e-4	7.0710676908493042e-1	7.0700070837483509e-1	9.9985000750278119e-1	0.0000000000000000e+0
+	[132]	1.0606071009533480e-4	7.0710676908493042e-1	7.0700070837483509e-1	9.9985000750278119e-1	0.0000000000000000e+0
+	...and 123 more errors.
+	Max AbsError of 7.0700070837483509e-1 at index of 128.
+	Max RelError of 9.9985000750278119e-1 at index of 128.
+ assert_true: expected true got false
+FAIL < [0: 1-channel inverse rolloff: 1] 2 out of 2 assertions were failed. assert_true: expected true got false
+PASS > [0: 2-channel inverse rolloff: 1]  
+FAIL X 2-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, left channel does not equal [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	1.0000001192092896e+0	-1.0000000000000000e+0	2.0000001192092896e+0	2.0000001192092896e+0	0.0000000000000000e+0
+	[1]	1.0000001192092896e+0	-1.0000000000000000e+0	2.0000001192092896e+0	2.0000001192092896e+0	0.0000000000000000e+0
+	[2]	1.0000001192092896e+0	-1.0000000000000000e+0	2.0000001192092896e+0	2.0000001192092896e+0	0.0000000000000000e+0
+	[3]	1.0000001192092896e+0	-1.0000000000000000e+0	2.0000001192092896e+0	2.0000001192092896e+0	0.0000000000000000e+0
+	[4]	1.0000001192092896e+0	-1.0000000000000000e+0	2.0000001192092896e+0	2.0000001192092896e+0	0.0000000000000000e+0
+	...and 251 more errors.
+	Max AbsError of 2.0000001192092896e+0 at index of 0.
+	Max RelError of 2.0000001192092896e+0 at index of 0.
+ assert_true: expected true got false
+FAIL X 2-channel [0, 0, 1] -> [0, 0, 10000]: distanceModel: inverse, rolloff: 1, right channel does not equal [2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	2.0000000000000000e+0	2.4492937051703357e-16	1.9999999999999998e+0	8.1656193202885410e+15	0.0000000000000000e+0
+	[1]	2.0000000000000000e+0	2.4492937051703357e-16	1.9999999999999998e+0	8.1656193202885410e+15	0.0000000000000000e+0
+	[2]	2.0000000000000000e+0	2.4492937051703357e-16	1.9999999999999998e+0	8.1656193202885410e+15	0.0000000000000000e+0
+	[3]	2.0000000000000000e+0	2.4492937051703357e-16	1.9999999999999998e+0	8.1656193202885410e+15	0.0000000000000000e+0
+	[4]	2.0000000000000000e+0	2.4492937051703357e-16	1.9999999999999998e+0	8.1656193202885410e+15	0.0000000000000000e+0
+	...and 251 more errors.
+	Max AbsError of 1.9999999999999998e+0 at index of 0.
+	Max RelError of 8.1656193202885410e+15 at index of 0.
+ assert_true: expected true got false
+FAIL < [0: 2-channel inverse rolloff: 1] 2 out of 2 assertions were failed. assert_true: expected true got false
+PASS > [1: 1-channel inverse rolloff: 1]  
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, left channel equals [-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.8124e-7},"relativeThreshold":0}. 
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, right channel equals [0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.8124e-7},"relativeThreshold":0}. 
+PASS < [1: 1-channel inverse rolloff: 1] All assertions passed. (total 2 assertions) 
+PASS > [1: 2-channel inverse rolloff: 1]  
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, left channel equals [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.3267e-7},"relativeThreshold":0}. 
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: inverse, rolloff: 1, right channel equals [2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":4.3267e-7},"relativeThreshold":0}. 
+PASS < [1: 2-channel inverse rolloff: 1] All assertions passed. (total 2 assertions) 
+PASS > [2: 1-channel exponential rolloff: 1.5]  
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, left channel equals [-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.0783e-7},"relativeThreshold":0}. 
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, right channel equals [0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.0783e-7},"relativeThreshold":0}. 
+PASS < [2: 1-channel exponential rolloff: 1.5] All assertions passed. (total 2 assertions) 
+PASS > [2: 2-channel exponential rolloff: 1.5]  
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, left channel equals [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.218e-7},"relativeThreshold":0}. 
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: exponential, rolloff: 1.5, right channel equals [2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":5.218e-7},"relativeThreshold":0}. 
+PASS < [2: 2-channel exponential rolloff: 1.5] All assertions passed. (total 2 assertions) 
+PASS > [3: 1-channel linear rolloff: 1]  
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, left channel equals [-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304,-0.7071067690849304...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065324},"relativeThreshold":0}. 
+PASS   1-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, right channel equals [0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304,0.7071067690849304...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065324},"relativeThreshold":0}. 
+PASS < [3: 1-channel linear rolloff: 1] All assertions passed. (total 2 assertions) 
+PASS > [3: 2-channel linear rolloff: 1]  
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, left channel equals [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065756},"relativeThreshold":0}. 
+PASS   2-channel [0, 0, 1] -> [20000, 30000, 10000]: distanceModel: linear, rolloff: 1, right channel equals [2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16,2.4492937051703357e-16...] with an element-wise tolerance of {"absoluteThreshold":{"relativeThreshold":0.0000065756},"relativeThreshold":0}. 
+PASS < [3: 2-channel linear rolloff: 1] All assertions passed. (total 2 assertions) 
+FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 8 tasks were failed. assert_true: expected true got false
 

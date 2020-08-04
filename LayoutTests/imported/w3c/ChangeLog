@@ -1,5 +1,21 @@
 2020-08-04  Chris Dumez  <cdumez@apple.com>
 
+        Align AudioListener with the W3C specification
+        https://bugs.webkit.org/show_bug.cgi?id=215134
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/historical-expected.txt:
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/ctor-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-position-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/pannernode-basic-expected.txt:
+
+2020-08-04  Chris Dumez  <cdumez@apple.com>
+
         Align AudioBufferSourceNode's start() / stop() with the specification
         https://bugs.webkit.org/show_bug.cgi?id=215130
 

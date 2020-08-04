@@ -72,6 +72,7 @@
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
 #include "WaveShaperNode.h"
+#include "WebKitAudioListener.h"
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/Scope.h>
 
@@ -159,7 +160,10 @@ void BaseAudioContext::constructCommon()
 {
     FFTFrame::initialize();
     
-    m_listener = AudioListener::create();
+    if (isWebKitAudioContext())
+        m_listener = WebKitAudioListener::create(*this);
+    else
+        m_listener = AudioListener::create(*this);
 
     ASSERT(document());
     if (document()->audioPlaybackRequiresUserGesture())

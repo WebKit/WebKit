@@ -349,6 +349,7 @@ $(PROJECT_DIR)/Modules/webaudio/WaveShaperNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WaveShaperOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitAudioBufferSourceNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitAudioContext.idl
+$(PROJECT_DIR)/Modules/webaudio/WebKitAudioListener.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitAudioPannerNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitOfflineAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitOscillatorNode.idl

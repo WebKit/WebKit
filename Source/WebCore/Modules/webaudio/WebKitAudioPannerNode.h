@@ -26,7 +26,6 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioListener.h"
 #include "AudioNode.h"
 #include "AudioParam.h"
 #include "Cone.h"
@@ -35,6 +34,7 @@
 #include "Panner.h"
 #include "PannerNode.h"
 #include "WebKitAudioContext.h"
+#include "WebKitAudioListener.h"
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -71,7 +71,7 @@ public:
     void uninitialize() override;
 
     // Listener
-    AudioListener* listener();
+    WebKitAudioListener* listener();
 
     // Panning model
     PanningModelType panningModel() const { return m_panningModel; }

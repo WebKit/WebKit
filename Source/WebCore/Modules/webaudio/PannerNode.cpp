@@ -391,45 +391,7 @@ void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
 
 float PannerNode::dopplerRate()
 {
-    double dopplerShift = 1.0;
-
-    // FIXME: optimize for case when neither source nor listener has changed...
-    double dopplerFactor = listener()->dopplerFactor();
-
-    if (dopplerFactor > 0.0) {
-        double speedOfSound = listener()->speedOfSound();
-
-        const FloatPoint3D& listenerVelocity = listener()->velocity();
-
-        // Don't bother if listener has no velocity
-        bool listenerHasVelocity = !listenerVelocity.isZero();
-
-        if (listenerHasVelocity) {
-            // Calculate the source to listener vector
-            FloatPoint3D listenerPosition = listener()->position();
-            FloatPoint3D sourceToListener = position() - listenerPosition;
-
-            double sourceListenerMagnitude = sourceToListener.length();
-
-            double listenerProjection = sourceToListener.dot(listenerVelocity) / sourceListenerMagnitude;
-
-            listenerProjection = -listenerProjection;
-
-            double scaledSpeedOfSound = speedOfSound / dopplerFactor;
-            listenerProjection = std::min(listenerProjection, scaledSpeedOfSound);
-
-            dopplerShift = ((speedOfSound - dopplerFactor * listenerProjection) / speedOfSound);
-            fixNANs(dopplerShift); // avoid illegal values
-
-            // Limit the pitch shifting to 4 octaves up and 3 octaves down.
-            if (dopplerShift > 16.0)
-                dopplerShift = 16.0;
-            else if (dopplerShift < 0.125)
-                dopplerShift = 0.125;   
-        }
-    }
-
-    return static_cast<float>(dopplerShift);
+    return 1.0f;
 }
 
 float PannerNode::distanceConeGain()

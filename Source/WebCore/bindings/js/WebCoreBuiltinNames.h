@@ -51,6 +51,7 @@ namespace WebCore {
     macro(Audio) \
     macro(AudioBufferSourceNode) \
     macro(AudioContext) \
+    macro(AudioListener) \
     macro(AuthenticatorAssertionResponse) \
     macro(AuthenticatorAttestationResponse) \
     macro(AuthenticatorResponse) \

@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,18 +29,13 @@
 [
     Conditional=WEB_AUDIO,
     ImplementationLacksVTable,
-    EnabledBySetting=ModernUnprefixedWebAudio,
-] interface AudioListener {
-    readonly attribute AudioParam positionX;
-    readonly attribute AudioParam positionY;
-    readonly attribute AudioParam positionZ;
-    readonly attribute AudioParam forwardX;
-    readonly attribute AudioParam forwardY;
-    readonly attribute AudioParam forwardZ;
-    readonly attribute AudioParam upX;
-    readonly attribute AudioParam upY;
-    readonly attribute AudioParam upZ;
+    EnabledBySetting=PrefixedWebAudio,
+    NoInterfaceObject,
+] interface WebKitAudioListener {
+    attribute unrestricted float dopplerFactor;  // same as OpenAL (default 1.0)
+    attribute unrestricted float speedOfSound;   // in meters / second (default 343.3)
 
-    void setPosition(float x, float y, float z);
-    void setOrientation(float x, float y, float z, float xUp, float yUp, float zUp);
+    void setPosition(unrestricted float x, unrestricted float y, unrestricted float z);
+    void setOrientation(unrestricted float x, unrestricted float y, unrestricted float z, unrestricted float xUp, unrestricted float yUp, unrestricted float zUp);
+    void setVelocity(unrestricted float x, unrestricted float y, unrestricted float z);
 };

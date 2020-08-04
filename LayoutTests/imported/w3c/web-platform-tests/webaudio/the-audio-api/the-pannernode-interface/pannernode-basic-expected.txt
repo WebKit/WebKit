@@ -2,7 +2,7 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
 PASS Executing "basic" 
-FAIL Executing "listener" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.listener.positionX.value')"
+PASS Executing "listener" 
 PASS Executing "panning models" 
 PASS Executing "distance models" 
 PASS Audit report 
@@ -34,6 +34,16 @@ PASS   panner.orientationY is equal to 0.
 PASS   panner.orientationZ is equal to 0. 
 PASS < [basic] All assertions passed. (total 22 assertions) 
 PASS > [listener]  
+PASS   listener.positionX is equal to 0. 
+PASS   listener.positionY is equal to 0. 
+PASS   listener.positionZ is equal to 0. 
+PASS   listener.forwardX is equal to 0. 
+PASS   listener.forwardY is equal to 0. 
+PASS   listener.forwardZ is equal to -1. 
+PASS   listener.upX is equal to 0. 
+PASS   listener.upY is equal to 1. 
+PASS   listener.upZ is equal to 0. 
+PASS < [listener] All assertions passed. (total 9 assertions) 
 PASS > [panning models]  
 PASS   Set panner.panningModel = "equalpower" did not throw an exception. 
 PASS   panner.panningModel = "equalpower" is equal to equalpower. 
