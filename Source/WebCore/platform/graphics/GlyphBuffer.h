@@ -55,9 +55,8 @@ typedef Glyph GlyphBufferGlyph;
 
 struct GlyphBufferAdvance : CGSize {
 public:
-    GlyphBufferAdvance() : CGSize(CGSizeZero) { }
-    GlyphBufferAdvance(CGSize size)
-        : CGSize(size)
+    GlyphBufferAdvance()
+        : CGSize(CGSizeZero)
     {
     }
     GlyphBufferAdvance(FloatSize size)
@@ -74,10 +73,10 @@ public:
 
     operator FloatSize() { return { static_cast<float>(this->CGSize::width), static_cast<float>(this->CGSize::height) }; }
 
-    void setWidth(CGFloat width) { this->CGSize::width = width; }
-    void setHeight(CGFloat height) { this->CGSize::height = height; }
-    CGFloat width() const { return this->CGSize::width; }
-    CGFloat height() const { return this->CGSize::height; }
+    void setWidth(float width) { this->CGSize::width = width; }
+    void setHeight(float height) { this->CGSize::height = height; }
+    float width() const { return this->CGSize::width; }
+    float height() const { return this->CGSize::height; }
 };
 
 template<class Encoder>
@@ -90,17 +89,66 @@ void GlyphBufferAdvance::encode(Encoder& encoder) const
 template<class Decoder>
 Optional<GlyphBufferAdvance> GlyphBufferAdvance::decode(Decoder& decoder)
 {
-    Optional<CGFloat> width;
+    Optional<float> width;
     decoder >> width;
     if (!width)
         return WTF::nullopt;
 
-    Optional<CGFloat> height;
+    Optional<float> height;
     decoder >> height;
     if (!height)
         return WTF::nullopt;
 
-    return GlyphBufferAdvance(CGSizeMake(*width, *height));
+    return GlyphBufferAdvance(*width, *height);
+}
+
+struct GlyphBufferOrigin : CGPoint {
+public:
+    GlyphBufferOrigin()
+        : CGPoint(CGPointZero)
+    {
+    }
+    GlyphBufferOrigin(FloatPoint point)
+        : CGPoint(point)
+    {
+    }
+    GlyphBufferOrigin(float x, float y)
+        : CGPoint(CGPointMake(x, y))
+    {
+    }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<GlyphBufferOrigin> decode(Decoder&);
+
+    operator FloatPoint() { return { static_cast<float>(this->CGPoint::x), static_cast<float>(this->CGPoint::y) }; }
+
+    void setX(float x) { this->CGPoint::x = x; }
+    void setY(float y) { this->CGPoint::y = y; }
+    float x() const { return this->CGPoint::x; }
+    float y() const { return this->CGPoint::y; }
+};
+
+template<class Encoder>
+void GlyphBufferOrigin::encode(Encoder& encoder) const
+{
+    encoder << x();
+    encoder << y();
+}
+
+template<class Decoder>
+Optional<GlyphBufferOrigin> GlyphBufferOrigin::decode(Decoder& decoder)
+{
+    Optional<float> x;
+    decoder >> x;
+    if (!x)
+        return WTF::nullopt;
+
+    Optional<float> y;
+    decoder >> y;
+    if (!y)
+        return WTF::nullopt;
+
+    return GlyphBufferOrigin(*x, *y);
 }
 
 using GlyphBufferStringOffset = CFIndex;
@@ -108,6 +156,7 @@ using GlyphBufferStringOffset = CFIndex;
 #else
 
 using GlyphBufferAdvance = FloatSize;
+using GlyphBufferOrigin = FloatPoint;
 using GlyphBufferStringOffset = unsigned;
 
 #endif // #if USE(CG)
@@ -127,16 +176,19 @@ public:
         m_fonts.clear();
         m_glyphs.clear();
         m_advances.clear();
+        m_origins.clear();
         m_offsetsInString.clear();
     }
 
     const Font** fonts(unsigned from) { return m_fonts.data() + from; }
     GlyphBufferGlyph* glyphs(unsigned from) { return m_glyphs.data() + from; }
     GlyphBufferAdvance* advances(unsigned from) { return m_advances.data() + from; }
+    GlyphBufferOrigin* origins(unsigned from) { return m_origins.data() + from; }
     GlyphBufferStringOffset* offsetsInString(unsigned from) { return m_offsetsInString.data() + from; }
     const Font* const * fonts(unsigned from) const { return m_fonts.data() + from; }
     const GlyphBufferGlyph* glyphs(unsigned from) const { return m_glyphs.data() + from; }
     const GlyphBufferAdvance* advances(unsigned from) const { return m_advances.data() + from; }
+    const GlyphBufferOrigin* origins(unsigned from) const { return m_origins.data() + from; }
     const GlyphBufferStringOffset* offsetsInString(unsigned from) const { return m_offsetsInString.data() + from; }
 
     const Font* fontAt(unsigned index) const { return m_fonts[index]; }
@@ -161,6 +213,7 @@ public:
         m_fonts.append(font);
         m_glyphs.append(glyph);
         m_advances.append(advance);
+        m_origins.append(GlyphBufferOrigin());
         m_offsetsInString.append(offsetInString);
     }
 
@@ -169,6 +222,7 @@ public:
         m_fonts.remove(location, length);
         m_glyphs.remove(location, length);
         m_advances.remove(location, length);
+        m_origins.remove(location, length);
         m_offsetsInString.remove(location, length);
     }
 
@@ -179,6 +233,7 @@ public:
         m_fonts.insertVector(location, Vector<const Font*>(length, font));
         m_glyphs.insertVector(location, Vector<GlyphBufferGlyph>(length, 0xFFFF));
         m_advances.insertVector(location, Vector<GlyphBufferAdvance>(length, GlyphBufferAdvance(0, 0)));
+        m_origins.insertVector(location, Vector<GlyphBufferOrigin>(length, GlyphBufferOrigin()));
         m_offsetsInString.insertVector(location, Vector<GlyphBufferStringOffset>(length, 0));
     }
 
@@ -208,25 +263,56 @@ public:
         m_fonts.shrink(truncationPoint);
         m_glyphs.shrink(truncationPoint);
         m_advances.shrink(truncationPoint);
+        m_origins.shrink(truncationPoint);
         m_offsetsInString.shrink(truncationPoint);
+    }
+
+    // FontCascade::layoutText() returns a GlyphBuffer which includes layout information that is split
+    // into "advances" and "origins". See the ASCII-art diagram in ComplexTextController.h
+    // In order to get paint advances, we need to run this "flatten" operation.
+    // This merges the layout advances and origins together,
+    // leaves the paint advances in the "m_advances" field,
+    // and zeros-out the origins in the "m_origins" field.
+    void flatten()
+    {
+        for (unsigned i = 0; i < size(); ++i) {
+            m_advances[i] = GlyphBufferAdvance(
+                -m_origins[i].x() + m_advances[i].width() + (i + 1 < size() ? m_origins[i + 1].x() : 0),
+                -m_origins[i].y() + m_advances[i].height() + (i + 1 < size() ? m_origins[i + 1].y() : 0)
+            );
+            m_origins[i] = GlyphBufferOrigin();
+        }
+    }
+
+    bool isFlattened() const
+    {
+        for (unsigned i = 0; i < size(); ++i) {
+            if (m_origins[i] != GlyphBufferOrigin())
+                return false;
+        }
+        return true;
     }
 
 private:
     void swap(unsigned index1, unsigned index2)
     {
-        const Font* font = m_fonts[index1];
+        auto font = m_fonts[index1];
         m_fonts[index1] = m_fonts[index2];
         m_fonts[index2] = font;
 
-        GlyphBufferGlyph glyph = m_glyphs[index1];
+        auto glyph = m_glyphs[index1];
         m_glyphs[index1] = m_glyphs[index2];
         m_glyphs[index2] = glyph;
 
-        GlyphBufferAdvance advance = m_advances[index1];
+        auto advance = m_advances[index1];
         m_advances[index1] = m_advances[index2];
         m_advances[index2] = advance;
 
-        GlyphBufferStringOffset offset = m_offsetsInString[index1];
+        auto origin = m_origins[index1];
+        m_origins[index1] = m_origins[index2];
+        m_origins[index2] = origin;
+
+        auto offset = m_offsetsInString[index1];
         m_offsetsInString[index1] = m_offsetsInString[index2];
         m_offsetsInString[index2] = offset;
     }
@@ -234,6 +320,7 @@ private:
     Vector<const Font*, 1024> m_fonts;
     Vector<GlyphBufferGlyph, 1024> m_glyphs;
     Vector<GlyphBufferAdvance, 1024> m_advances;
+    Vector<GlyphBufferOrigin, 1024> m_origins;
     Vector<GlyphBufferStringOffset, 1024> m_offsetsInString;
     GlyphBufferAdvance m_initialAdvance;
 };

@@ -297,6 +297,7 @@ FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, co
 {
     unsigned destination = to.valueOr(run.length());
     auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination);
+    glyphBuffer.flatten();
 
     if (glyphBuffer.isEmpty())
         return FloatSize();
@@ -314,6 +315,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
     unsigned destination = to.valueOr(run.length());
 
     auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination, ForTextEmphasisOrNot::ForTextEmphasis);
+    glyphBuffer.flatten();
 
     if (glyphBuffer.isEmpty())
         return;
@@ -333,6 +335,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
         codePathToUse = Complex;
 
     auto glyphBuffer = layoutText(codePathToUse, run, from, destination);
+    glyphBuffer.flatten();
 
     if (glyphBuffer.isEmpty())
         return nullptr;
@@ -1442,7 +1445,7 @@ inline bool shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotRead
 
 void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& glyphBuffer, FloatPoint& point, CustomFontNotReadyAction customFontNotReadyAction) const
 {
-    // Draw each contiguous run of glyphs that use the same font data.
+    ASSERT(glyphBuffer.isFlattened());
     const Font* fontData = glyphBuffer.fontAt(0);
     FloatPoint startPoint = point;
     float nextX = startPoint.x() + glyphBuffer.advanceAt(0).width();
@@ -1488,6 +1491,7 @@ inline static float offsetToMiddleOfGlyphAtIndex(const GlyphBuffer& glyphBuffer,
 
 void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer& glyphBuffer, const AtomString& mark, const FloatPoint& point) const
 {
+    ASSERT(glyphBuffer.isFlattened());
     Optional<GlyphData> markGlyphData = getEmphasisMarkGlyphData(mark);
     if (!markGlyphData)
         return;
