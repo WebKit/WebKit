@@ -1,3 +1,20 @@
+2020-08-04  Brent Fulgham  <bfulgham@apple.com>
+
+        Limit 'com.apple.webkit.microphone' use to macOS and MacCatalyst 
+        https://bugs.webkit.org/show_bug.cgi?id=215139
+        <rdar://problem/66501746>
+
+        Reviewed by Eric Carlson.
+
+        We only need the 'com.apple.webkit.microphone' Sandbox Extension at startup on
+        macOS and MacCatalyst (and even on those platforms, only until <rdar://problem/29448368>
+        is fixed).
+
+        We should not issue this extension on the iOS family of targets.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2020-08-04  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS Simulator] Assert under WebPage::platformDidReceiveLoadParameters
