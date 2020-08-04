@@ -4,5 +4,7 @@
 <dict>
 	<key>com.apple.runningboard.assertions.webkit</key>
 	<true/>
+	<key>com.apple.private.webkit.use-xpc-endpoint</key>
+	<true/>
 </dict>
 </plist>
