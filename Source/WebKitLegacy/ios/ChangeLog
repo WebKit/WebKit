@@ -1,3 +1,11 @@
+2020-08-04  Darin Adler  <darin@apple.com>
+
+        Try to fix Catalyst build
+        https://bugs.webkit.org/show_bug.cgi?id=215133
+        rdar://66534119
+
+        * WebCoreSupport/WebVisiblePosition.mm: Add include of SimpleRange.h.
+
 2020-08-02  Darin Adler  <darin@apple.com>
 
         Remove some member functions of Range and many calls to createLiveRange

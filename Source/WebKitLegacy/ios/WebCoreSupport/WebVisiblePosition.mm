@@ -38,6 +38,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderTextControl.h>
 #import <WebCore/RenderedDocumentMarker.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/TextBoundaries.h>
 #import <WebCore/TextFlags.h>
 #import <WebCore/TextGranularity.h>
