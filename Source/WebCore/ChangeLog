@@ -1,3 +1,20 @@
+2020-08-04  Youenn Fablet  <youenn@apple.com>
+
+        Remove AudioSampleDataSource::setPaused
+        https://bugs.webkit.org/show_bug.cgi?id=215125
+
+        Reviewed by Geoffrey Garen.
+
+        m_paused is unused except for setting m_transitioningFromPaused.
+        setPaused is only used in AudioMediaStreamTrackRenderCocoa at creation of the source.
+        We can remove the call for setPaused(true) and remove setPaused/m_paused.
+
+        * platform/audio/mac/AudioSampleDataSource.h:
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::setPaused): Deleted.
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp:
+        (WebCore::AudioMediaStreamTrackRendererCocoa::pushSamples):
+
 2020-08-04  Rob Buis  <rbuis@igalia.com>
 
         Performance.getEntriesByName/Type should match case sensitive
