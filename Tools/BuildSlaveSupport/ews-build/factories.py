@@ -97,8 +97,8 @@ class WebKitPyFactory(Factory):
 class BuildFactory(Factory):
     skipUpload = False
 
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments)
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=False, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance)
         self.addStep(KillOldProcesses())
         if platform == 'gtk':
             self.addStep(InstallGtkDependencies())
@@ -171,6 +171,9 @@ class macOSBuildFactory(BuildFactory):
 
 class macOSBuildOnlyFactory(BuildFactory):
     skipUpload = True
+
+    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, checkRelevance=True, **kwargs):
+        super(macOSBuildOnlyFactory, self).__init__(platform=platform, configuration=configuration, architectures=architectures, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=checkRelevance, **kwargs)
 
 
 class watchOSBuildFactory(BuildFactory):

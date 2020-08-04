@@ -1,3 +1,23 @@
+2020-08-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Apple Silicon builder should skip non-relevant patches
+        https://bugs.webkit.org/show_bug.cgi?id=215111
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (BuildFactory.__init__): Added the checkRelevance parameter.
+        (macOSBuildOnlyFactory.__init__):
+        * BuildSlaveSupport/ews-build/factories_unittest.py:
+        (TestBuildFactory.test_macos_build_only_factory): Updated unit-test.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckPatchRelevance): Added patch relevance info for Big Sur.
+        (CheckPatchRelevance._patch_is_relevant):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestCheckPatchRelevance.test_relevant_bigsur_builder_patch): Drive-by fix to make the comparision more robust.
+        (TestCheckPatchRelevance.test_non_relevant_patch_on_various_queues): Made the unit-test generic to cover multiple queues.
+        (TestCheckPatchRelevance.test_non_relevant_patch): Deleted.
+
 2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow -accessoryDone to blur the focused element on iPad when AutoFilling strong passwords

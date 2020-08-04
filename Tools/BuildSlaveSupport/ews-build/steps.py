@@ -296,6 +296,10 @@ class CheckPatchRelevance(buildstep.BuildStep):
         'Tools',
     ]
 
+    big_sur_builder_paths = [
+        'Source/',
+        'Tools/',
+    ]
     webkitpy_paths = [
         'Tools/Scripts/webkitpy',
         'Tools/Scripts/libraries',
@@ -303,6 +307,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
 
     group_to_paths_mapping = {
         'bindings': bindings_paths,
+        'bigsur-release-build': big_sur_builder_paths,
         'services-ews': services_paths,
         'jsc': jsc_paths,
         'webkitpy': webkitpy_paths,
@@ -311,7 +316,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
     }
 
     def _patch_is_relevant(self, patch, builderName):
-        group = [group for group in self.group_to_paths_mapping.keys() if group in builderName.lower()]
+        group = [group for group in self.group_to_paths_mapping.keys() if group.lower() in builderName.lower()]
         if not group:
             # This builder doesn't have paths defined, all patches are relevant.
             return True

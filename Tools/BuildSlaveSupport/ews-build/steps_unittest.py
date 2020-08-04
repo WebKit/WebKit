@@ -2297,6 +2297,13 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
+    def test_relevant_bigsur_builder_patch(self):
+        CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Source/xyz'
+        self.setupStep(CheckPatchRelevance())
+        self.setProperty('buildername', 'macOS-BigSur-Release-Build-EWS')
+        self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+        return self.runStep()
+
     def test_relevant_windows_wk1_patch(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: Source/WebKitLegacy'
         self.setupStep(CheckPatchRelevance())
@@ -2331,13 +2338,16 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
             rc = self.runStep()
         return rc
 
-    def test_non_relevant_patch(self):
+    def test_non_relevant_patch_on_various_queues(self):
         CheckPatchRelevance._get_patch = lambda x: 'Sample patch'
-        self.setupStep(CheckPatchRelevance())
-        self.setProperty('buildername', 'JSC-Tests-EWS')
-        self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
-        return self.runStep()
+        queues = ['Bindings-Tests-EWS', 'JSC-Tests-EWS', 'macOS-BigSur-Release-Build-EWS',
+                  'macOS-Mojave-Debug-WK1-Tests-EWS', 'Services-EWS', 'WebKitPy-Tests-EWS']
+        for queue in queues:
+            self.setupStep(CheckPatchRelevance())
+            self.setProperty('buildername', queue)
+            self.expectOutcome(result=FAILURE, state_string='Patch doesn\'t have relevant changes')
+            rc = self.runStep()
+        return rc
 
 
 class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):

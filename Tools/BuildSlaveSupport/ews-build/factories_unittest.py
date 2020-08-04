@@ -187,6 +187,7 @@ class TestBuildFactory(TestCase):
         factory = factories.macOSBuildOnlyFactory(platform='mac-bigsur', configuration='release', architectures=["arm64"])
         self.assertBuildSteps(factory.steps, [
             _BuildStepFactory(steps.ConfigureBuild, platform='mac-bigsur', configuration='release', architectures=["arm64"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
             _BuildStepFactory(steps.ValidatePatch),
             _BuildStepFactory(steps.PrintConfiguration),
             _BuildStepFactory(steps.CheckOutSource),
