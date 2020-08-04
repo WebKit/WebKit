@@ -1,3 +1,22 @@
+2020-08-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r265222. rdar://problem/66528551
+
+    Fix the macCatalyst build
+    
+    * UIProcess/EndowmentStateTracker.mm:
+    (WebKit::EndowmentStateTracker::stateFromEndowments):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265222 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-03  Tim Horton  <timothy_horton@apple.com>
+
+            Fix the macCatalyst build
+
+            * UIProcess/EndowmentStateTracker.mm:
+            (WebKit::EndowmentStateTracker::stateFromEndowments):
+
 2020-08-01  Keith Rollin  <krollin@apple.com>
 
         Prevent multiple invocations of generate-message-receiver.py
