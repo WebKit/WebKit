@@ -398,6 +398,12 @@ bool IOSApplication::isESPNFantasySports()
     return isESPNFantasySports;
 }
 
+bool IOSApplication::isDoubleDown()
+{
+    static bool isDoubleDown = applicationBundleIsEqualTo("com.doubledowninteractive.DDCasino"_s);
+    return isDoubleDown;
+}
+
 #endif
 
 } // namespace WebCore

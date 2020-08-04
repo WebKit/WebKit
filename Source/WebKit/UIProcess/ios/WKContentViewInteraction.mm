@@ -8639,6 +8639,10 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         if (WebCore::IOSApplication::isESPNFantasySports())
             return NO;
 
+        // <rdar://problem/64668138> DoubleDown Casino respin button stops working with trackpad
+        if (WebCore::IOSApplication::isDoubleDown())
+            return NO;
+
         return YES;
     }();
 
