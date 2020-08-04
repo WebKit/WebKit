@@ -809,8 +809,9 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
 
     if (m_mainWebView) {
         // Having created another page (via window.open()) prevents process swapping on navigation and it may therefore
-        // cause flakiness to reuse the view.
-        if (!m_createdOtherPage && m_mainWebView->viewSupportsOptions(options))
+        // cause flakiness to reuse the view. We should also always make a new view if the test is marked as app-bound, because
+        // the view configuration must change.
+        if (!m_createdOtherPage && m_mainWebView->viewSupportsOptions(options) && !options.isAppBoundWebView)
             return;
 
         willDestroyWebView();

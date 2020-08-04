@@ -1,3 +1,17 @@
+2020-08-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add test coverage for handling redirects with App-Bound Domains
+        https://bugs.webkit.org/show_bug.cgi?id=215128
+        <rdar://problem/66528515>
+
+        Reviewed by Brady Eidson.
+
+        We should always make a new WebView if the test options indicate an
+        app-bound view, because we need a new configuration.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::ensureViewSupportsOptionsForTest):
+
 2020-08-04  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Use setup.py for the autoinstaller

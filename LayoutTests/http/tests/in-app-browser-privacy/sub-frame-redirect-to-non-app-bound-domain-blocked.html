@@ -1,0 +1,41 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableInAppBrowserPrivacy=true applicationBundleIdentifier=inAppBrowserPrivacyTestIdentifier isAppBoundWebView=true ] -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<script>
+    description("Test subframe redirects disable app-bound mode");
+    jsTestIsAsync = true;
+
+    function loadFrame() {
+        let iframeElement = document.createElement("iframe");
+        iframeElement.src = "http://127.0.0.1:8000/in-app-browser-privacy/resources/redirect.php?step=1";
+        document.body.appendChild(iframeElement);
+        iframeElement.onload = checkForAppBound();
+    }
+
+    // Should be forced into non app-bound mode.
+    function checkForAppBound() {
+        if (testRunner.hasAppBoundSession()) {
+           testFailed("Subframe has app-bound session.");
+           finishJSTest();
+        } else {
+            testPassed("Subframe does not have app-bound session.");
+            finishJSTest();
+        }
+    }
+
+    onload = () => {
+        // Clear the app-bound session to make sure the iframe load creates
+        // a new one.
+        testRunner.clearAppBoundSession();
+        loadFrame();
+    }
+
+</script>
+
+</body>
+</html>
