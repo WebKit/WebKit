@@ -348,7 +348,8 @@ public:
     WEBCORE_EXPORT void updateMediaElementRateChangeRestrictions();
 
     void didStartProvisionalLoad();
-    void didFinishLoad(); // Called when the load has been committed in the main frame.
+    void didCommitLoad();
+    void didFinishLoad();
 
     bool delegatesScaling() const { return m_delegatesScaling; }
     WEBCORE_EXPORT void setDelegatesScaling(bool);

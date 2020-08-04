@@ -1229,11 +1229,17 @@ void Page::didStartProvisionalLoad()
         m_performanceMonitor->didStartProvisionalLoad();
 }
 
-void Page::didFinishLoad()
+void Page::didCommitLoad()
 {
 #if ENABLE(EDITABLE_REGION)
     m_isEditableRegionEnabled = false;
 #endif
+    resetSeenPlugins();
+    resetSeenMediaEngines();
+}
+
+void Page::didFinishLoad()
+{
     resetRelevantPaintedObjectCounter();
 
     if (m_performanceMonitor)

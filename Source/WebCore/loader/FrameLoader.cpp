@@ -3980,10 +3980,8 @@ void FrameLoader::dispatchDidCommitLoad(Optional<HasInsecureContent> initialHasI
 
     m_client->dispatchDidCommitLoad(initialHasInsecureContent, initialUsedLegacyTLS);
 
-    if (m_frame.isMainFrame()) {
-        m_frame.page()->resetSeenPlugins();
-        m_frame.page()->resetSeenMediaEngines();
-    }
+    if (m_frame.isMainFrame())
+        m_frame.page()->didCommitLoad();
 
     InspectorInstrumentation::didCommitLoad(m_frame, m_documentLoader.get());
 

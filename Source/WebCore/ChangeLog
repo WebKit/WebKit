@@ -1,3 +1,23 @@
+2020-08-03  Simon Fraser  <simon.fraser@apple.com>
+
+        m_isEditableRegionEnabled should be reset in didCommitLoad, not didFinishLoad
+        https://bugs.webkit.org/show_bug.cgi?id=215115
+
+        Reviewed by Wenson Hsieh.
+
+        Resetting m_isEditableRegionEnabled in didFinishLoad() is too late because
+        inline script at the end of the <body> (e.g. in a layout test) will have already
+        run before the reset.
+        
+        Fix by adding Page::didCommitLoad() and resetting m_isEditableRegionEnabled there.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchDidCommitLoad):
+        * page/Page.cpp:
+        (WebCore::Page::didCommitLoad):
+        (WebCore::Page::didFinishLoad):
+        * page/Page.h:
+
 2020-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unconditionally record string offsets in the fast text codepath
