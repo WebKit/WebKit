@@ -1,3 +1,26 @@
+2020-08-04  Chris Dumez  <cdumez@apple.com>
+
+        Align AudioBufferSourceNode's start() / stop() with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=215130
+
+        Reviewed by Darin Adler.
+
+        Align AudioBufferSourceNode's start() / stop() with the specification:
+        - https://www.w3.org/TR/webaudio/#dom-audiobuffersourcenode-start
+        - https://www.w3.org/TR/webaudio/#dom-audioscheduledsourcenode-stop
+
+        In particular, we should throw a RangeError when the parameters are invalid,
+        not an InvalidStateError. Also, we should not return early if there is no
+        buffer.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::startPlaying):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::startLater):
+        (WebCore::AudioScheduledSourceNode::stopLater):
+
 2020-08-04  Andres Gonzalez  <andresg_22@apple.com>
 
         Add the ability of comparing the accessibility tree with isolated tree mode on and off.

@@ -3,7 +3,7 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "Test setting the source buffer after starting the grain" 
 PASS Audit report 
 PASS > [Test setting the source buffer after starting the grain]  
-FAIL X Buffer was played is not true. Got false. assert_true: expected true got false
-FAIL < [Test setting the source buffer after starting the grain] 1 out of 1 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS   Buffer was played is true. 
+PASS < [Test setting the source buffer after starting the grain] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

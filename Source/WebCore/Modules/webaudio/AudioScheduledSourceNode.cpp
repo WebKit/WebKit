@@ -145,8 +145,9 @@ ExceptionOr<void> AudioScheduledSourceNode::startLater(double when)
 
     if (m_playbackState != UNSCHEDULED_STATE)
         return Exception { InvalidStateError };
+
     if (!std::isfinite(when) || when < 0)
-        return Exception { InvalidStateError };
+        return Exception { RangeError, "when value should be positive"_s };
 
     m_startTime = when;
     m_playbackState = SCHEDULED_STATE;
@@ -161,8 +162,9 @@ ExceptionOr<void> AudioScheduledSourceNode::stopLater(double when)
 
     if (m_playbackState == UNSCHEDULED_STATE || m_endTime != UnknownTime)
         return Exception { InvalidStateError };
+
     if (!std::isfinite(when) || when < 0)
-        return Exception { InvalidStateError };
+        return Exception { RangeError, "when value should be positive"_s };
 
     m_endTime = when;
 
