@@ -1,3 +1,15 @@
+2020-08-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening some failures and rebaseline.
+
+        Unreviewed test gardening.
+
+        Rebaseline expectations after r264478 updated the interface
+        descriptions.
+
+        * web-platform-tests/webxr/ar-module/idlharness.https.window-expected.txt:
+        * web-platform-tests/webxr/idlharness.https.window-expected.txt:
+
 2020-08-03  Chris Dumez  <cdumez@apple.com>
 
         Add constructor for AudioBufferSourceNode

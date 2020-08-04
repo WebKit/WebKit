@@ -661,7 +661,6 @@ webkit.org/b/214291 imported/w3c/web-platform-tests/css/css-writing-modes/baseli
 
 webkit.org/b/213131 compositing/ [ Skip ]
 webkit.org/b/213131 editing/ [ Skip ]
-webkit.org/b/213131 gamepad/ [ Skip ]
 webkit.org/b/213131 inspector/ [ Skip ]
 webkit.org/b/213131 media/ [ Skip ]
 
@@ -1597,10 +1596,12 @@ Bug(WPE) css3/zoom-coords.xhtml [ Failure ]
 transitions/svg-text-shadow-transition.html [ DumpJSConsoleLogInStdErr ]
 
 # ENABLE_MEDIA_SOURCE
+# Can't remove this PASS yet as the root media/ folder is skipped.
 media/media-source/ [ Pass ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
 webkit.org/b/168373 media/media-source/media-source-resize.html [ Failure ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
+webkit.org/b/214636 media/media-source/media-source-webm.html [ Failure ]
 
 webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
 webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass Failure ]

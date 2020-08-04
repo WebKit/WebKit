@@ -197,10 +197,6 @@ webkit.org/b/98936 fast/forms/month [ Skip ]
 webkit.org/b/98936 fast/forms/time [ Skip ]
 webkit.org/b/98936 fast/forms/week [ Skip ]
 
-# ENABLE_GAMEPAD not enabled.
-webkit.org/b/98937 gamepad [ Skip ]
-webkit.org/b/177447 imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html [ Failure ]
-
 # Requires WebP support.
 webkit.org/b/98939 fast/canvas/canvas-toDataURL-webp.html [ Skip ]
 
@@ -1209,7 +1205,6 @@ webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.h
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.tentative.html [ ImageOnlyFailure ]
 
-webkit.org/b/214636 media/media-source/media-source-webm.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.

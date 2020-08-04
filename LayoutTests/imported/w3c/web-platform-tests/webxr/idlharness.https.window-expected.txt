@@ -39,7 +39,7 @@ PASS XRSession interface: attribute inputSources
 PASS XRSession interface: operation updateRenderState(optional XRRenderStateInit) 
 PASS XRSession interface: operation requestReferenceSpace(XRReferenceSpaceType) 
 PASS XRSession interface: operation requestAnimationFrame(XRFrameRequestCallback) 
-PASS XRSession interface: operation cancelAnimationFrame(long) 
+PASS XRSession interface: operation cancelAnimationFrame(unsigned long) 
 PASS XRSession interface: operation end() 
 PASS XRSession interface: attribute onend 
 PASS XRSession interface: attribute oninputsourceschange 

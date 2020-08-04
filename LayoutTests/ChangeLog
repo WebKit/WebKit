@@ -1,3 +1,17 @@
+2020-08-03  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening some failures and rebaseline.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt:
+        * platform/wpe/mathml/opentype/opentype-stretchy-expected.txt: Removed.
+
 2020-08-03  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS Release ] imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html is a flaky failure

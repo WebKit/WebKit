@@ -198,6 +198,22 @@ webkit.org/b/212202 fast/events/platform-wheelevent-in-scrolling-div.html [ Skip
 
 
 #////////////////////////////////////////////////////////////////////////////////////////
+# Gamepad-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+# ENABLE_GAMEPAD not enabled.
+webkit.org/b/98937 gamepad [ Skip ]
+webkit.org/b/177447 imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html [ Failure ]
+webkit.org/b/98937 http/tests/misc/gamepads-insecure.html [ Skip ]
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Gamepad-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
@@ -218,6 +234,7 @@ webkit.org/b/210498 webkit.org/b/210840 fast/mediastream/play-newly-added-audio-
 
 webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Crash Timeout Pass ]
 webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Crash Pass ]
+webkit.org/b/214636 media/media-source/media-source-webm.html [ Failure ]
 
 webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
 
