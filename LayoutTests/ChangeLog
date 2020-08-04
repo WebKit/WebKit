@@ -1,3 +1,12 @@
+2020-08-04  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS ] fast/canvas/draw-focus-if-needed.html is passing and expectations need to be removed
+        https://bugs.webkit.org/show_bug.cgi?id=214840
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2020-08-04  Andres Gonzalez  <andresg_22@apple.com>
 
         Add the ability of comparing the accessibility tree with isolated tree mode on and off.

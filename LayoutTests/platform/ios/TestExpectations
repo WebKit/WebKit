@@ -1570,7 +1570,6 @@ fast/borders/border-radius-on-subpixel-position-non-hidpi.html [ ImageOnlyFailur
 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
 fast/canvas/canvas-bg.html [ Failure ]
 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
-fast/canvas/draw-focus-if-needed.html [ Failure ]
 fast/clip/clip-when-rect-has-fractional-pixel-value.html [ ImageOnlyFailure ]
 fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html [ Failure ]
 fast/dom/Element/getBoundingClientRect.html [ Failure ]
