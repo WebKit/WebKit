@@ -2385,6 +2385,12 @@
          "hayato"
       ]
    },
+   "Hector Lopez" : {
+      "emails" : [
+         "hector_i_lopez@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Helder Correia" : {
       "emails" : [
          "helder.correia@nokia.com",

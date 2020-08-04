@@ -1,3 +1,11 @@
+2020-08-04  Hector Lopez  <hector_i_lopez@apple.com>
+
+        Add myself to contributors.json
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-08-04  Andres Gonzalez  <andresg_22@apple.com>
 
         Add the ability of comparing the accessibility tree with isolated tree mode on and off.
