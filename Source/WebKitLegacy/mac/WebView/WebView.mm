@@ -3397,6 +3397,8 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setEncryptedMediaAPIEnabled(preferences.encryptedMediaAPIEnabled);
 #endif
 
+    RuntimeEnabledFeatures::sharedFeatures().setUserGesturePromisePropagationEnabled(preferences.userGesturePromisePropagationEnabled);
+
 #if ENABLE(PICTURE_IN_PICTURE_API)
     settings.setPictureInPictureAPIEnabled(preferences.pictureInPictureAPIEnabled);
 #endif

@@ -225,6 +225,9 @@ public:
     bool indexedDBWorkersEnabled() const { return m_isIndexedDBWorkersEnabled; }
 #endif
 
+    bool userGesturePromisePropagationEnabled() const { return m_userGesturePromisePropagationEnabled; }
+    void setUserGesturePromisePropagationEnabled(bool isEnabled) { m_userGesturePromisePropagationEnabled = isEnabled; }
+
 #if ENABLE(MEDIA_STREAM)
     bool mediaRecorderEnabled() const { return m_isMediaRecorderEnabled; }
     void setMediaRecorderEnabled(bool isEnabled) { m_isMediaRecorderEnabled = isEnabled; }
@@ -475,6 +478,7 @@ private:
     bool m_isIndexedDBWorkersEnabled { true };
 #endif
 
+    bool m_userGesturePromisePropagationEnabled { true };
 #if ENABLE(MEDIA_STREAM)
     bool m_isMediaRecorderEnabled { false };
     bool m_isMediaDevicesEnabled { false };

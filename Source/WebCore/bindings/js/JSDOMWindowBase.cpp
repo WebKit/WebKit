@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "RejectedPromiseTracker.h"
 #include "RuntimeApplicationChecks.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "ScriptModuleLoader.h"
 #include "SecurityOrigin.h"
@@ -217,7 +218,7 @@ void JSDOMWindowBase::queueMicrotaskToEventLoop(JSGlobalObject& object, Ref<JSC:
     auto& eventLoop = thisObject.scriptExecutionContext()->eventLoop();
     // Propagating media only user gesture for Fetch API's promise chain.
     auto userGestureToken = UserGestureIndicator::currentUserGesture();
-    if (userGestureToken && !userGestureToken->isPropagatedFromFetch())
+    if (userGestureToken && (!userGestureToken->isPropagatedFromFetch() || !RuntimeEnabledFeatures::sharedFeatures().userGesturePromisePropagationEnabled()))
         userGestureToken = nullptr;
     eventLoop.queueMicrotask([callback = WTFMove(callback), userGestureToken = WTFMove(userGestureToken)]() mutable {
         if (!userGestureToken) {

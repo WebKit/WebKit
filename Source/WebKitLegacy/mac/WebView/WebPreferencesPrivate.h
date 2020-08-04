@@ -652,6 +652,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setWebSQLEnabled:(BOOL)flag;
 - (BOOL)webSQLEnabled;
 
+- (void)setUserGesturePromisePropagationEnabled:(BOOL)flag;
+- (BOOL)userGesturePromisePropagationEnabled;
+
 @property (nonatomic) BOOL visualViewportAPIEnabled;
 @property (nonatomic) BOOL CSSOMViewScrollingAPIEnabled;
 @property (nonatomic) BOOL CSSOMViewSmoothScrollingEnabled;

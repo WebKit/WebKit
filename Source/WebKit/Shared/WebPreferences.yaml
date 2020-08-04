@@ -282,6 +282,14 @@ MediaUserGestureInheritsFromDocument:
   type: bool
   defaultValue: false
 
+UserGesturePromisePropagationEnabled:
+    type: bool
+    defaultValue: true
+    webcoreBinding: RuntimeEnabledFeatures
+    humanReadableName: "UserGesture Promise Propagation"
+    humanReadableDescription: "UserGesture Promise Propagation"
+    category: experimental
+
 AllowsInlineMediaPlayback:
   type: bool
   defaultValue: DEFAULT_ALLOWS_INLINE_MEDIA_PLAYBACK

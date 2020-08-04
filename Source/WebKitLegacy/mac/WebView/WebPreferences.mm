@@ -718,6 +718,7 @@ public:
         @NO, WebKitDebugInAppBrowserPrivacyEnabledPreferenceKey,
         @NO, WebKitAspectRatioOfImgFromWidthAndHeightEnabledPreferenceKey,
         @(webSQLEnabled), WebKitWebSQLEnabledPreferenceKey,
+        @YES, WebKitUserGesturePromisePropagationEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3701,6 +3702,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setWebSQLEnabled:(BOOL)webSQLEnabled
 {
     [self _setBoolValue:webSQLEnabled forKey:WebKitWebSQLEnabledPreferenceKey];
+}
+
+- (BOOL)userGesturePromisePropagationEnabled
+{
+    return [self _boolValueForKey:WebKitUserGesturePromisePropagationEnabledPreferenceKey];
+}
+
+- (void)setUserGesturePromisePropagationEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitUserGesturePromisePropagationEnabledPreferenceKey];
 }
 
 @end

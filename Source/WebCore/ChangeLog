@@ -1,3 +1,18 @@
+2020-08-03  Youenn Fablet  <youenn@apple.com>
+
+        Move user gesture propagation over promise behind a feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=215014
+
+        Reviewed by Eric Carlson.
+
+        If runtime flag is false, disable user gesture propagation to the next micro task.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::queueMicrotaskToEventLoop):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::userGesturePromisePropagationEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setUserGesturePromisePropagationEnabled):
+
 2020-08-03  Chris Dumez  <cdumez@apple.com>
 
         Add constructor for AudioBufferSourceNode
