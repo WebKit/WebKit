@@ -1,3 +1,15 @@
+2020-08-03  Andres Gonzalez  <andresg_22@apple.com>
+
+        Check for the presence of libAccessibility before trying to load the _AXSIsolatedTreeMode function.
+        https://bugs.webkit.org/show_bug.cgi?id=215107
+        <rdar://problem/66192260>
+
+        Reviewed by Chris Fleizach.
+
+        * pal/spi/cocoa/AccessibilitySupportSoftLink.h:
+        Trying to load _AXSIsolatedTreeMode when the library is not present
+        triggers an assert.
+
 2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove the ENABLE_DATA_INTERACTION feature flag
