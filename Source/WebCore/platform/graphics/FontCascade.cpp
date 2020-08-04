@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2020 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -285,12 +285,12 @@ void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
     m_requiresShaping = computeRequiresShaping();
 }
 
-GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ShouldSaveOffsets shouldSaveOffsets, ForTextEmphasisOrNot forTextEmphasis) const
+GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
 {
     if (codePathToUse != Complex)
-        return layoutSimpleText(run, from, to, shouldSaveOffsets, forTextEmphasis);
+        return layoutSimpleText(run, from, to, forTextEmphasis);
 
-    return layoutComplexText(run, from, to, shouldSaveOffsets, forTextEmphasis);
+    return layoutComplexText(run, from, to, forTextEmphasis);
 }
 
 FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
@@ -313,7 +313,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
 
     unsigned destination = to.valueOr(run.length());
 
-    auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination, ShouldSaveOffsets::No, ForTextEmphasisOrNot::ForTextEmphasis);
+    auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination, ForTextEmphasisOrNot::ForTextEmphasis);
 
     if (glyphBuffer.isEmpty())
         return;
@@ -1258,18 +1258,15 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
     // so we want to draw through CJK characters (on a character-by-character basis).
     // FIXME: The CSS spec says this should instead be done by the user-agent stylesheet using the lang= attribute.
     UChar32 baseCharacter;
-    unsigned offsetInString = glyphBuffer.offsetInString(index);
+    auto offsetInString = glyphBuffer.stringOffsetAt(index);
 
-    if (offsetInString == GlyphBuffer::noOffset || offsetInString >= textRun.length()) {
-        // We have no idea which character spawned this glyph. Bail.
-        ASSERT_WITH_SECURITY_IMPLICATION(offsetInString < textRun.length());
-        return GlyphUnderlineType::DrawOverGlyph;
-    }
+    GlyphBufferStringOffset textRunLength = textRun.length();
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(offsetInString < textRunLength);
     
     if (textRun.is8Bit())
         baseCharacter = textRun.characters8()[offsetInString];
     else
-        U16_NEXT(textRun.characters16(), offsetInString, textRun.length(), baseCharacter);
+        U16_GET(textRun.characters16(), 0, offsetInString, textRunLength, baseCharacter);
     
     // u_getIntPropertyValue with UCHAR_IDEOGRAPHIC doesn't return true for Japanese or Korean codepoints.
     // Instead, we can use the "Unicode allocation block" for the character.
@@ -1368,11 +1365,9 @@ int FontCascade::emphasisMarkHeight(const AtomString& mark) const
     return markFontData->fontMetrics().height();
 }
 
-GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, unsigned to, ShouldSaveOffsets shouldSaveOffsets, ForTextEmphasisOrNot forTextEmphasis) const
+GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
 {
     GlyphBuffer glyphBuffer;
-    if (shouldSaveOffsets == ShouldSaveOffsets::Yes)
-        glyphBuffer.saveOffsetsInString();
 
     WidthIterator it(this, run, 0, false, forTextEmphasis);
     // FIXME: Using separate glyph buffers for the prefix and the suffix is incorrect when kerning or
@@ -1403,11 +1398,9 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
     return glyphBuffer;
 }
 
-GlyphBuffer FontCascade::layoutComplexText(const TextRun& run, unsigned from, unsigned to, ShouldSaveOffsets shouldSaveOffsets, ForTextEmphasisOrNot forTextEmphasis) const
+GlyphBuffer FontCascade::layoutComplexText(const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
 {
     GlyphBuffer glyphBuffer;
-    if (shouldSaveOffsets == ShouldSaveOffsets::Yes)
-        glyphBuffer.saveOffsetsInString();
 
     ComplexTextController controller(*this, run, false, 0, forTextEmphasis);
     GlyphBuffer dummyGlyphBuffer;
@@ -1776,7 +1769,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     if (isLoadingCustomFonts())
         return DashArray();
 
-    auto glyphBuffer = layoutText(codePath(run), run, 0, run.length(), ShouldSaveOffsets::Yes);
+    auto glyphBuffer = layoutText(codePath(run), run, 0, run.length());
 
     if (!glyphBuffer.size())
         return DashArray();

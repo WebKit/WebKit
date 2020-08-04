@@ -1,5 +1,64 @@
 2020-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Unconditionally record string offsets in the fast text codepath
+        https://bugs.webkit.org/show_bug.cgi?id=215051
+
+        Reviewed by Darin Adler.
+
+        This is in preparation for https://bugs.webkit.org/show_bug.cgi?id=214769
+        and https://bugs.webkit.org/show_bug.cgi?id=206208.
+
+        The solution for https://bugs.webkit.org/show_bug.cgi?id=214769 requires applying
+        letter-spacing after text shaping. Today, we apply letter-spacing before text
+        shaping, which is wrong. However, if we want to apply letter-spacing after text
+        shaping, we will need a way of mapping back which shaped glyphs correspond to
+        which characters in the string, so we can apply letter-spacing to the correct
+        glyphs. Therefore, we need to record string offsets any time letter-spacing can
+        be applied (which is all the time - letter spacing can be applied on any element).
+
+        This also helps on the path toward https://bugs.webkit.org/show_bug.cgi?id=214769.
+        When we move off the complex text codepath, we will need these string offsets
+        to calculate things like what the text range of a selection is when the user has
+        selected some glyphs on the page.
+
+        There is no performance change because these string offsets were already being
+        calculated; the difference is just that we're storing them now. Also, we were
+        being wildly inefficient with the members of GlyphBuffer, giving them inline
+        sizes of 2048. I measured the median and mean of these strings in our Page Load
+        Test to be 6 and 7.4. So, I cut down the inline sizes down to 1024, so now we're
+        using less memory than we were before.
+
+        No new tests because there is no behavior change. The additional string offsets
+        are unused (for now). A subsequent patch will start using them.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::layoutText const):
+        (WebCore::FontCascade::drawEmphasisMarks const):
+        (WebCore::computeUnderlineType):
+        (WebCore::FontCascade::layoutSimpleText const):
+        (WebCore::FontCascade::layoutComplexText const):
+        (WebCore::FontCascade::dashesForIntersectionsWithRect const):
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::clear):
+        (WebCore::GlyphBuffer::fonts):
+        (WebCore::GlyphBuffer::offsetsInString):
+        (WebCore::GlyphBuffer::fonts const):
+        (WebCore::GlyphBuffer::offsetsInString const):
+        (WebCore::GlyphBuffer::glyphAt const):
+        (WebCore::GlyphBuffer::advanceAt const):
+        (WebCore::GlyphBuffer::stringOffsetAt const):
+        (WebCore::GlyphBuffer::add):
+        (WebCore::GlyphBuffer::remove):
+        (WebCore::GlyphBuffer::makeHole):
+        (WebCore::GlyphBuffer::expandLastAdvance):
+        (WebCore::GlyphBuffer::shrink):
+        (WebCore::GlyphBuffer::swap):
+        (WebCore::GlyphBuffer::saveOffsetsInString): Deleted.
+        (WebCore::GlyphBuffer::offsetInString const): Deleted.
+
+2020-08-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Rename WidthIterator::m_currentCharacter to WidthIterator::m_currentCharacterIndex
         https://bugs.webkit.org/show_bug.cgi?id=215056
 

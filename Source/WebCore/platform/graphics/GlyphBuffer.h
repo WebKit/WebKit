@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2009, 2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 #include "FloatSize.h"
 #include "Glyph.h"
 #include <climits>
+#include <limits>
 #include <wtf/Vector.h>
 
 #if USE(CG)
@@ -51,6 +52,7 @@ typedef Glyph GlyphBufferGlyph;
 // CG uses CGSize instead of FloatSize so that the result of advances()
 // can be passed directly to CGContextShowGlyphsWithAdvances in FontMac.mm
 #if USE(CG)
+
 struct GlyphBufferAdvance : CGSize {
 public:
     GlyphBufferAdvance() : CGSize(CGSizeZero) { }
@@ -100,9 +102,15 @@ Optional<GlyphBufferAdvance> GlyphBufferAdvance::decode(Decoder& decoder)
 
     return GlyphBufferAdvance(CGSizeMake(*width, *height));
 }
+
+using GlyphBufferStringOffset = CFIndex;
+
 #else
-typedef FloatSize GlyphBufferAdvance;
-#endif
+
+using GlyphBufferAdvance = FloatSize;
+using GlyphBufferStringOffset = unsigned;
+
+#endif // #if USE(CG)
 
 inline FloatSize toFloatSize(const GlyphBufferAdvance& a)
 {
@@ -119,49 +127,41 @@ public:
         m_fonts.clear();
         m_glyphs.clear();
         m_advances.clear();
-        if (m_offsetsInString)
-            m_offsetsInString->clear();
+        m_offsetsInString.clear();
     }
 
+    const Font** fonts(unsigned from) { return m_fonts.data() + from; }
     GlyphBufferGlyph* glyphs(unsigned from) { return m_glyphs.data() + from; }
     GlyphBufferAdvance* advances(unsigned from) { return m_advances.data() + from; }
+    GlyphBufferStringOffset* offsetsInString(unsigned from) { return m_offsetsInString.data() + from; }
+    const Font* const * fonts(unsigned from) const { return m_fonts.data() + from; }
     const GlyphBufferGlyph* glyphs(unsigned from) const { return m_glyphs.data() + from; }
     const GlyphBufferAdvance* advances(unsigned from) const { return m_advances.data() + from; }
+    const GlyphBufferStringOffset* offsetsInString(unsigned from) const { return m_offsetsInString.data() + from; }
 
     const Font* fontAt(unsigned index) const { return m_fonts[index]; }
+    Glyph glyphAt(unsigned index) const { return m_glyphs[index]; }
+    GlyphBufferAdvance advanceAt(unsigned index) const { return m_advances[index]; }
+    GlyphBufferStringOffset stringOffsetAt(unsigned index) const { return m_offsetsInString[index]; }
 
     void setInitialAdvance(GlyphBufferAdvance initialAdvance) { m_initialAdvance = initialAdvance; }
     const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }
     
-    Glyph glyphAt(unsigned index) const
-    {
-        return m_glyphs[index];
-    }
-
-    GlyphBufferAdvance advanceAt(unsigned index) const
-    {
-        return m_advances[index];
-    }
-    
-    static const unsigned noOffset = UINT_MAX;
-    void add(Glyph glyph, const Font* font, float width, unsigned offsetInString = noOffset)
+    static constexpr GlyphBufferStringOffset noOffset = std::numeric_limits<GlyphBufferStringOffset>::max();
+    void add(Glyph glyph, const Font* font, float width, GlyphBufferStringOffset offsetInString = noOffset)
     {
         GlyphBufferAdvance advance;
         advance.setWidth(width);
         advance.setHeight(0);
-
         add(glyph, font, advance, offsetInString);
     }
 
-    void add(Glyph glyph, const Font* font, GlyphBufferAdvance advance, unsigned offsetInString)
+    void add(Glyph glyph, const Font* font, GlyphBufferAdvance advance, GlyphBufferStringOffset offsetInString)
     {
         m_fonts.append(font);
         m_glyphs.append(glyph);
-
         m_advances.append(advance);
-        
-        if (offsetInString != noOffset && m_offsetsInString)
-            m_offsetsInString->append(offsetInString);
+        m_offsetsInString.append(offsetInString);
     }
 
     void remove(unsigned location, unsigned length)
@@ -169,8 +169,7 @@ public:
         m_fonts.remove(location, length);
         m_glyphs.remove(location, length);
         m_advances.remove(location, length);
-        if (m_offsetsInString)
-            m_offsetsInString->remove(location, length);
+        m_offsetsInString.remove(location, length);
     }
 
     void makeHole(unsigned location, unsigned length, const Font* font)
@@ -180,8 +179,7 @@ public:
         m_fonts.insertVector(location, Vector<const Font*>(length, font));
         m_glyphs.insertVector(location, Vector<GlyphBufferGlyph>(length, 0xFFFF));
         m_advances.insertVector(location, Vector<GlyphBufferAdvance>(length, GlyphBufferAdvance(0, 0)));
-        if (m_offsetsInString)
-            m_offsetsInString->insertVector(location, Vector<unsigned>(length, 0));
+        m_offsetsInString.insertVector(location, Vector<GlyphBufferStringOffset>(length, 0));
     }
 
     void reverse(unsigned from, unsigned length)
@@ -204,48 +202,40 @@ public:
         lastAdvance.setWidth(lastAdvance.width() + expansion.width());
         lastAdvance.setHeight(lastAdvance.height() + expansion.height());
     }
-    
-    void saveOffsetsInString()
-    {
-        m_offsetsInString.reset(new Vector<unsigned, 2048>());
-    }
-
-    int offsetInString(unsigned index) const
-    {
-        ASSERT(m_offsetsInString);
-        return (*m_offsetsInString)[index];
-    }
 
     void shrink(unsigned truncationPoint)
     {
         m_fonts.shrink(truncationPoint);
         m_glyphs.shrink(truncationPoint);
         m_advances.shrink(truncationPoint);
-        if (m_offsetsInString)
-            m_offsetsInString->shrink(truncationPoint);
+        m_offsetsInString.shrink(truncationPoint);
     }
 
 private:
     void swap(unsigned index1, unsigned index2)
     {
-        const Font* f = m_fonts[index1];
+        const Font* font = m_fonts[index1];
         m_fonts[index1] = m_fonts[index2];
-        m_fonts[index2] = f;
+        m_fonts[index2] = font;
 
-        GlyphBufferGlyph g = m_glyphs[index1];
+        GlyphBufferGlyph glyph = m_glyphs[index1];
         m_glyphs[index1] = m_glyphs[index2];
-        m_glyphs[index2] = g;
+        m_glyphs[index2] = glyph;
 
-        GlyphBufferAdvance s = m_advances[index1];
+        GlyphBufferAdvance advance = m_advances[index1];
         m_advances[index1] = m_advances[index2];
-        m_advances[index2] = s;
+        m_advances[index2] = advance;
+
+        GlyphBufferStringOffset offset = m_offsetsInString[index1];
+        m_offsetsInString[index1] = m_offsetsInString[index2];
+        m_offsetsInString[index2] = offset;
     }
 
-    Vector<const Font*, 2048> m_fonts;
-    Vector<GlyphBufferGlyph, 2048> m_glyphs;
-    Vector<GlyphBufferAdvance, 2048> m_advances;
+    Vector<const Font*, 1024> m_fonts;
+    Vector<GlyphBufferGlyph, 1024> m_glyphs;
+    Vector<GlyphBufferAdvance, 1024> m_advances;
+    Vector<GlyphBufferStringOffset, 1024> m_offsetsInString;
     GlyphBufferAdvance m_initialAdvance;
-    std::unique_ptr<Vector<unsigned, 2048>> m_offsetsInString;
 };
 
 }
