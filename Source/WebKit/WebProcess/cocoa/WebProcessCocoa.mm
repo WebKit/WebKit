@@ -207,6 +207,12 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         if (auto extension = SandboxExtension::create(WTFMove(*parameters.mobileGestaltExtensionHandle))) {
             bool ok = extension->consume();
             ASSERT_UNUSED(ok, ok);
+            // If we have an extension handle for MobileGestalt, it means the MobileGestalt cache is invalid.
+            // In this case, we perform a set of MobileGestalt queries while having access to the daemon,
+            // which will populate the MobileGestalt in-memory cache with correct values.
+            // The set of queries below was determined by finding all possible queries that have cachable
+            // values, and would reach out to the daemon for the answer. That way, the in-memory cache
+            // should be identical to a valid MobileGestalt cache after having queried all of these values.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
             MGGetFloat32Answer(kMGQMainScreenScale, 0);
             MGGetSInt32Answer(kMGQMainScreenPitch, 0);

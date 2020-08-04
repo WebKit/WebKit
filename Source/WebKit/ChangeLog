@@ -1,5 +1,17 @@
 2020-08-04  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Issue a temporary extension to the MobileGestalt daemon when the MobileGestalt cache is invalid
+        https://bugs.webkit.org/show_bug.cgi?id=214965
+
+        Unreviewed, address review comments.
+
+        Add comment explaining why a set of MobileGestalt queries are performed when starting up the WebContent process on iOS.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
+2020-08-04  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Check that Accessibility is enabled when receiving the enable Accessibility notification
         https://bugs.webkit.org/show_bug.cgi?id=215112
         <rdar://problem/66498397>
