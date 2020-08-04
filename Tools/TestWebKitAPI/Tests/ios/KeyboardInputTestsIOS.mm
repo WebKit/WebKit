@@ -691,6 +691,29 @@ TEST(KeyboardInputTests, TestWebViewAdditionalContextForStrongPasswordAssistance
     EXPECT_TRUE([[actual allValues] containsObject:expected]);
 }
 
+TEST(KeyboardInputTests, TestWebViewAccessoryDoneDuringStrongPasswordAssistance)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [inputDelegate setFocusRequiresStrongPasswordAssistanceHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) {
+        return YES;
+    }];
+
+    [webView _setInputDelegate:inputDelegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<input type='password' id='input'>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('input').focus()"];
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [(id <UIWebFormAccessoryDelegate>)[webView textInputContentView] accessoryDone];
+    EXPECT_WK_STREQ("BODY", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    EXPECT_TRUE([webView _contentViewIsFirstResponder]);
+}
+
 TEST(KeyboardInputTests, SupportsImagePaste)
 {
     auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);

@@ -1,3 +1,27 @@
+2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow -accessoryDone to blur the focused element on iPad when AutoFilling strong passwords
+        https://bugs.webkit.org/show_bug.cgi?id=215105
+        <rdar://problem/65143984>
+
+        Reviewed by Tim Horton.
+
+        `-accessoryDone` is now used to dismiss the strong password AutoFill keyboard after choosing a password on iOS,
+        due to how it hides the keyboard without causing the content view to resign first responder; being stuck in a
+        state where the content view is not first responder causes several issues when choosing strong passwords on iOS,
+        such as keyboard shortcuts no longer working.
+
+        On iPad, to ensure that `-accessoryDone` actually dismisses the keyboard, we need to additionally teach
+        `-endEditingAndUpdateFocusAppearanceWithReason:` (when given `EndEditingReasonAccessoryDone`) to allow the
+        focused element to blur when dismissing the strong password input view.
+
+        Test: KeyboardInputTests.TestWebViewAccessoryDoneDuringStrongPasswordAssistance
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView endEditingAndUpdateFocusAppearanceWithReason:]):
+
+        Refactor this logic into a local helper lambda with early returns, instead of using a single if statement.
+
 2020-08-03  Youenn Fablet  <youenn@apple.com>
 
         Move user gesture propagation over promise behind a feature flag

@@ -1,3 +1,16 @@
+2020-08-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow -accessoryDone to blur the focused element on iPad when AutoFilling strong passwords
+        https://bugs.webkit.org/show_bug.cgi?id=215105
+        <rdar://problem/65143984>
+
+        Reviewed by Tim Horton.
+
+        Add an API test that exercises the behavior change when run on iPad simulator.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2020-08-03  Tim Horton  <timothy_horton@apple.com>
 
         Occasional crashes when running nested runloops while using UIWebView
