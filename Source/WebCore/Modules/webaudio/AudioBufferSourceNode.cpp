@@ -49,28 +49,37 @@ const double DefaultGrainDuration = 0.020; // 20ms
 // to minimize linear interpolation aliasing.
 const double MaxRate = 1024;
 
-Ref<AudioBufferSourceNode> AudioBufferSourceNode::create(BaseAudioContext& context, float sampleRate)
+ExceptionOr<Ref<AudioBufferSourceNode>> AudioBufferSourceNode::create(BaseAudioContext& context, AudioBufferSourceOptions&& options)
 {
-    return adoptRef(*new AudioBufferSourceNode(context, sampleRate));
+    if (context.isStopped())
+        return Exception { InvalidStateError };
+
+    context.lazyInitialize();
+
+    auto node = adoptRef(*new AudioBufferSourceNode(context));
+
+    node->setBuffer(WTFMove(options.buffer));
+    node->detune().setValue(options.detune);
+    node->setLoop(options.loop);
+    node->setLoopEnd(options.loopEnd);
+    node->setLoopStart(options.loopStart);
+    node->playbackRate().setValue(options.playbackRate);
+
+    // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
+    // When this happens, AudioScheduledSourceNode::finish() calls BaseAudioContext::notifyNodeFinishedProcessing().
+    context.refNode(node);
+
+    return node;
 }
 
-AudioBufferSourceNode::AudioBufferSourceNode(BaseAudioContext& context, float sampleRate)
-    : AudioScheduledSourceNode(context, sampleRate)
-    , m_buffer(nullptr)
-    , m_isLooping(false)
-    , m_loopStart(0)
-    , m_loopEnd(0)
-    , m_virtualReadIndex(0)
-    , m_isGrain(false)
-    , m_grainOffset(0.0)
+AudioBufferSourceNode::AudioBufferSourceNode(BaseAudioContext& context)
+    : AudioScheduledSourceNode(context, context.sampleRate())
+    , m_gain(AudioParam::create(context, "gain"_s, 1.0, 0.0, 1.0))
+    , m_detune(AudioParam::create(context, "detune"_s, 0.0, -FLT_MAX, FLT_MAX))
+    , m_playbackRate(AudioParam::create(context, "playbackRate"_s, 1.0, -FLT_MAX, FLT_MAX))
     , m_grainDuration(DefaultGrainDuration)
-    , m_lastGain(1.0)
-    , m_pannerNode(nullptr)
 {
     setNodeType(NodeTypeAudioBufferSource);
-
-    m_gain = AudioParam::create(context, "gain", 1.0, 0.0, 1.0);
-    m_playbackRate = AudioParam::create(context, "playbackRate", 1.0, -MaxRate, MaxRate);
 
     // Default to mono.  A call to setBuffer() will set the number of output channels to that of the buffer.
     addOutput(makeUnique<AudioNodeOutput>(this, 1));
@@ -133,7 +142,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     }
 
     // Apply the gain (in-place) to the output bus.
-    float totalGain = gain()->value() * m_buffer->gain();
+    float totalGain = gain().value() * m_buffer->gain();
     outputBus.copyWithGainFrom(outputBus, &m_lastGain, totalGain);
     outputBus.clearSilentFlag();
 }
@@ -404,7 +413,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 void AudioBufferSourceNode::reset()
 {
     m_virtualReadIndex = 0;
-    m_lastGain = gain()->value();
+    m_lastGain = gain().value();
 }
 
 void AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
@@ -516,11 +525,12 @@ double AudioBufferSourceNode::totalPitchRate()
     if (buffer())
         sampleRateFactor = buffer()->sampleRate() / sampleRate();
     
-    double basePitchRate = playbackRate()->value();
+    double basePitchRate = playbackRate().value();
+    double detune = pow(2, m_detune->value() / 1200);
 
-    double totalRate = dopplerRate * sampleRateFactor * basePitchRate;
+    double totalRate = dopplerRate * sampleRateFactor * basePitchRate * detune;
 
-    totalRate = std::max(-MaxRate, std::min(MaxRate, totalRate));
+    totalRate = std::clamp(totalRate, -MaxRate, MaxRate);
     
     bool isTotalRateValid = !std::isnan(totalRate) && !std::isinf(totalRate);
     ASSERT(isTotalRateValid);
@@ -528,28 +538,6 @@ double AudioBufferSourceNode::totalPitchRate()
         totalRate = 1.0;
 
     return totalRate;
-}
-
-bool AudioBufferSourceNode::looping()
-{
-    static bool firstTime = true;
-    if (firstTime) {
-        context().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "AudioBufferSourceNode 'looping' attribute is deprecated.  Use 'loop' instead."_s);
-        firstTime = false;
-    }
-
-    return m_isLooping;
-}
-
-void AudioBufferSourceNode::setLooping(bool looping)
-{
-    static bool firstTime = true;
-    if (firstTime) {
-        context().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "AudioBufferSourceNode 'looping' attribute is deprecated.  Use 'loop' instead."_s);
-        firstTime = false;
-    }
-
-    m_isLooping = looping;
 }
 
 bool AudioBufferSourceNode::propagatesSilence() const

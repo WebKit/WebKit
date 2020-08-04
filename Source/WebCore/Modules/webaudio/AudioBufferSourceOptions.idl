@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,30 +22,13 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// A cached (non-streamed), memory-resident audio source
 [
-    Conditional=WEB_AUDIO,
-    JSGenerateToJSObject,
-] interface AudioBufferSourceNode : AudioScheduledSourceNode {
-    [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional AudioBufferSourceOptions options);
-
-    attribute AudioBuffer? buffer;
-
-    const unsigned short UNSCHEDULED_STATE = 0;
-    const unsigned short SCHEDULED_STATE = 1;
-    const unsigned short PLAYING_STATE = 2;
-    const unsigned short FINISHED_STATE = 3;
-
-    readonly attribute unsigned short playbackState; // FIXME: This is not part of the specification.
-
-    readonly attribute AudioParam gain; // FIXME: This is not part of the specification.
-    [EnabledBySetting=ModernUnprefixedWebAudio] readonly attribute AudioParam detune;
-    readonly attribute AudioParam playbackRate;
-
-    attribute boolean loop;
-
-    attribute double loopStart;
-    attribute double loopEnd;
-
-    [MayThrowException, ImplementedAs=startLater] void start(optional double when = 0, optional double grainOffset = 0, optional double grainDuration);
+    Conditional=WEB_AUDIO
+] dictionary AudioBufferSourceOptions {
+    AudioBuffer? buffer;
+    float detune = 0;
+    boolean loop = false;
+    double loopEnd = 0;
+    double loopStart = 0;
+    float playbackRate = 1;
 };

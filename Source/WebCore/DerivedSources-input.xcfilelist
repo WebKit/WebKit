@@ -300,6 +300,7 @@ $(PROJECT_DIR)/Modules/webaudio/AudioBuffer.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBufferCallback.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBufferOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioBufferSourceNode.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioBufferSourceOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioContextLatencyCategory.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioContextOptions.idl

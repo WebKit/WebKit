@@ -1,5 +1,20 @@
 2020-08-03  Chris Dumez  <cdumez@apple.com>
 
+        Add constructor for AudioBufferSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=215096
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/processing-model/feedback-delay-time-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/ctor-audiobuffer-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-basic-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/ctor-audiobuffersource-expected.txt:
+
+2020-08-03  Chris Dumez  <cdumez@apple.com>
+
         Add constructor for GainNode
         https://bugs.webkit.org/show_bug.cgi?id=215093
 

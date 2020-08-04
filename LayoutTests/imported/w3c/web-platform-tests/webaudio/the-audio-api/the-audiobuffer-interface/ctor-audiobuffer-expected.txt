@@ -6,7 +6,7 @@ PASS Executing "required options"
 PASS Executing "invalid option values" 
 FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'buffer.numberOfChannels')"
 PASS Executing "valid constructor" 
-FAIL Executing "multiple contexts" promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new AudioBufferSourceNode(c1, {buffer: buffer})')"
+PASS Executing "multiple contexts" 
 PASS Audit report 
 PASS > [initialize]  
 PASS   context = new OfflineAudioContext(...) did not throw an exception. 
@@ -52,5 +52,9 @@ PASS   buffer.getChannelData(2) length is equal to 42.
 PASS   buffer.getChannelData(3) threw IndexSizeError: "Index must be less than number of channels.". 
 PASS < [valid constructor] All assertions passed. (total 11 assertions) 
 PASS > [multiple contexts]  
+PASS   c1 result is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   c2 result is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+PASS   AudioBuffer shared between two different contexts correctly 
+PASS < [multiple contexts] All assertions passed. (total 3 assertions) 
 FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 7 tasks were failed. assert_true: expected true got false
 

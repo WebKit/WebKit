@@ -1,3 +1,37 @@
+2020-08-03  Chris Dumez  <cdumez@apple.com>
+
+        Add constructor for AudioBufferSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=215096
+
+        Reviewed by Darin Adler.
+
+        Add constructor for AudioBufferSourceNode as per:
+        - https://www.w3.org/TR/webaudio/#DelayNode
+
+        This patch also adds support for the detune attribute on AudioBufferSourceNode,
+        which gets initialized by the constructor.
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::create):
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        (WebCore::AudioBufferSourceNode::process):
+        (WebCore::AudioBufferSourceNode::reset):
+        (WebCore::AudioBufferSourceNode::totalPitchRate):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioBufferSourceOptions.h: Copied from Source/WebCore/Modules/webaudio/AudioBufferSourceNode.idl.
+        * Modules/webaudio/AudioBufferSourceOptions.idl: Copied from Source/WebCore/Modules/webaudio/AudioBufferSourceNode.idl.
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createBufferSource):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-08-03  Simon Fraser  <simon.fraser@apple.com>
 
         Add an EventRegions log channel

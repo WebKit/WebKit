@@ -412,18 +412,7 @@ ExceptionOr<Ref<AudioBufferSourceNode>> BaseAudioContext::createBufferSource()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT(isMainThread());
-
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
-    Ref<AudioBufferSourceNode> node = AudioBufferSourceNode::create(*this, sampleRate());
-
-    // Because this is an AudioScheduledSourceNode, the context keeps a reference until it has finished playing.
-    // When this happens, AudioScheduledSourceNode::finish() calls BaseAudioContext::notifyNodeFinishedProcessing().
-    refNode(node);
-
-    return node;
+    return AudioBufferSourceNode::create(*this);
 }
 
 ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(size_t bufferSize, size_t numberOfInputChannels, size_t numberOfOutputChannels)
