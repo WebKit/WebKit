@@ -1,3 +1,106 @@
+2020-08-03  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Change DataGrid and Table styles to closer match macOS
+        https://bugs.webkit.org/show_bug.cgi?id=214563
+        <rdar://problem/65841032>
+
+        Reviewed by Devin Rousso.
+
+        - Remove vertical borders from table contents and only keep them on the table headers.
+        - Use 1px borders instead of hairline (0.5px) borders to closer match macOS.
+        - Refactoring: add "sorted" CSS class on sorted header columns to replace `th:matches(.sort-ascending, .sort-descending)`
+          that is used 10 times with `.sorted`.
+
+        * UserInterface/Views/CPUTimelineView.css:
+        (.timeline-view.cpu :matches(.area-chart, .stacked-area-chart) .markers > div):
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid):
+        --data-grid-column-border-start is no longer used, remove it.
+
+        (.data-grid.inline):
+        (.data-grid th):
+        (.data-grid th > .header-cell-content):
+        (body[dir=ltr] .data-grid th:not(:last-child) > .header-cell-content):
+        (body[dir=rtl] .data-grid th:not(:last-child) > .header-cell-content):
+        (.data-grid th.sortable:active):
+        (.data-grid th:matches(.sort-ascending, .sort-descending)):
+        (.data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child):
+        (.data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after):
+        (body[dir=ltr] .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after):
+        (body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after):
+        Remove styles that are no longer relevant because columns don't have vertical borders anymore.
+
+        (.data-grid th.sort-ascending > .header-cell-content:first-child::after):
+        (.data-grid th.sort-descending > .header-cell-content:first-child::after):
+        (@media (prefers-color-scheme: dark) .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after):
+        Don't change the background color of the sorted header cells to match macOS.
+
+        (body[dir=ltr] .data-grid :matches(th, td):not(:last-child)): Deleted.
+        (body[dir=rtl] .data-grid :matches(th, td):not(:last-child)): Deleted.
+        (.data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child): Deleted.
+        (.data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after): Deleted.
+        (body[dir=ltr] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after): Deleted.
+        (body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after): Deleted.
+        (.data-grid th.sort-ascending > div:first-child::after): Deleted.
+        (.data-grid th.sort-descending > div:first-child::after): Deleted.
+        (.data-grid table:matches(.header, .data)): Deleted.
+        (body[dir=ltr] .data-grid :matches(th, td):first-child): Deleted.
+        (body[dir=rtl] .data-grid :matches(th, td):first-child): Deleted.
+        (@media (-webkit-min-device-pixel-ratio: 2) .data-grid table:matches(.header, .data)): Deleted.
+        (@media (-webkit-min-device-pixel-ratio: 2) .data-grid :matches(th, td):first-child): Deleted.
+        (@media (prefers-color-scheme: dark) .data-grid th.sortable:active): Deleted.
+        (@media (prefers-color-scheme: dark) .data-grid th.sort-ascending > div:first-child::after,): Deleted.
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype.insertColumn):
+
+        * UserInterface/Views/NetworkDetailView.css:
+        (body[dir=ltr] .network-table.showing-detail .network-detail):
+        (body[dir=rtl] .network-table.showing-detail .network-detail):
+        Now that columns don't have borders, add a vertical border to the Network details pane.
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.network-table > .table .header .cell.waterfall:matches(.sort-ascending, .sort-descending)):
+        (body[dir=ltr] .network-table > .table :not(.header) .cell.waterfall):
+        (body[dir=rtl] .network-table > .table :not(.header) .cell.waterfall):
+        Add a vertical border for the zeroth mark of the graph.
+
+        * UserInterface/Views/RenderingFrameTimelineOverviewGraph.css:
+        (.timeline-overview-graph.rendering-frame > .divider):
+        * UserInterface/Views/Table.css:
+        (.table):
+        (.table > .header > .sortable:active):
+        (.table > .header > :matches(.sort-ascending, .sort-descending)):
+        (.table > .header .cell):
+        (.table > .header .cell:not(:first-child)::before):
+        (body[dir=ltr] .table > .header .cell:not(:first-child)::before):
+        (body[dir=rtl] .table > .header .cell:not(:first-child)::before):
+        (body[dir=ltr] .table .cell:not(:last-child)): Deleted.
+        (body[dir=rtl] .table .cell:not(:last-child)): Deleted.
+        (body[dir=ltr] .table .cell:first-child): Deleted.
+        (body[dir=rtl] .table .cell:first-child): Deleted.
+        (@media (prefers-color-scheme: dark) .table > .header > .sortable:active): Deleted.
+        (@media (prefers-color-scheme: dark) .table > .header > :matches(.sort-ascending, .sort-descending)): Deleted.
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.data-grid th.graph-column:matches(.sort-ascending, .sort-descending)):
+        (.data-grid.timeline th.graph-column > .timeline-ruler):
+        (body[dir=ltr] .data-grid.timeline td.graph-column):
+        (body[dir=rtl] .data-grid.timeline td.graph-column):
+        Add a vertical border for the zeroth mark of the graph.
+
+        (.data-grid.timeline td.graph-column .timeline-record-bar):
+        (@media (prefers-color-scheme: dark) .data-grid th:matches(.sort-ascending, .sort-descending)): Deleted.
+        * UserInterface/Views/TimelineRuler.css:
+        (.timeline-ruler > .header > .divider > .label):
+        Reset font-weight from sorted column header.
+
+        (.timeline-ruler > .markers > .divider):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        (@media (prefers-color-scheme: dark) :root):
+        Use more precise color for --even-zebra-stripe-row-background-color.
+        Drive-by: remove unused --border-color-dark variable.
+
 2020-08-03  Brian Burg  <bburg@apple.com>
 
         Web Inspector: "Show transparency grid" string needs to be disambiguated for localization

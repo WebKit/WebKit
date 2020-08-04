@@ -27,8 +27,8 @@
     position: relative;
     outline: none;
 
-    --data-grid-column-border-start: 1px solid transparent;
-    --data-grid-column-border-end: 0.5px solid var(--border-color);
+    --data-grid-header-horizontal-padding: 6px;
+    --data-grid-column-border-end: 1px solid var(--border-color);
 }
 
 .data-grid .highlight {
@@ -62,7 +62,7 @@
 }
 
 .data-grid.inline {
-    border: 0.5px solid var(--border-color);
+    border: 1px solid var(--border-color);
 }
 
 .data-grid > .header-wrapper {
@@ -79,7 +79,7 @@
 
 .data-grid th {
     height: 22px;
-    padding: 0 6px;
+    padding: 0;
     text-align: start;
     vertical-align: middle;
     font-weight: normal;
@@ -88,20 +88,25 @@
     overflow: hidden;
 }
 
-body[dir=ltr] .data-grid :matches(th, td):not(:last-child) {
+.data-grid th > .header-cell-content {
+    margin: 3px 0;
+    padding: 0 var(--data-grid-header-horizontal-padding);
+}
+
+body[dir=ltr] .data-grid th:not(:last-child) > .header-cell-content {
     border-right: var(--data-grid-column-border-end);
 }
 
-body[dir=rtl] .data-grid :matches(th, td):not(:last-child) {
+body[dir=rtl] .data-grid th:not(:last-child) > .header-cell-content {
     border-left: var(--data-grid-column-border-end);
 }
 
 .data-grid th.sortable:active {
-    background-color: hsl(0, 0%, 70%);
+    background-color: var(--background-color-pressed);
 }
 
 .data-grid th:matches(.sort-ascending, .sort-descending) {
-    background-color: hsl(0, 0%, 90%);
+    font-weight: var(--sorted-header-font-weight);
 }
 
 .data-grid tr.filler {
@@ -222,11 +227,11 @@ body[dir=rtl] .data-grid:focus tr.selected td:not(:last-child) {
     position: relative;
 }
 
-.data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child {
-    -webkit-padding-end: 12px;
+.data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child {
+    padding-inline-end: calc(12px + var(--data-grid-header-horizontal-padding)); /* Add 12px for the sorting chevron. */
 }
 
-.data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after {
+.data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
     position: absolute;
     top: 1px;
     bottom: 0;
@@ -239,19 +244,19 @@ body[dir=rtl] .data-grid:focus tr.selected td:not(:last-child) {
     background-repeat: no-repeat;
 }
 
-body[dir=ltr] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after {
-    right: 0;
+body[dir=ltr] .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
+    right: var(--data-grid-header-horizontal-padding);
 }
 
-body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > div:first-child::after {
-    left: 0;
+body[dir=rtl] .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
+    left: var(--data-grid-header-horizontal-padding);
 }
 
-.data-grid th.sort-ascending > div:first-child::after {
+.data-grid th.sort-ascending > .header-cell-content:first-child::after {
     background-image: url(../Images/SortIndicatorArrows.svg#up-arrow-normal);
 }
 
-.data-grid th.sort-descending > div:first-child::after {
+.data-grid th.sort-descending > .header-cell-content:first-child::after {
     background-image: url(../Images/SortIndicatorArrows.svg#down-arrow-normal);
 }
 
@@ -366,31 +371,6 @@ body[dir=rtl] .data-grid .resizer {
     transform: translateX(calc(-1 * var(--data-grid-resizer-translateX)));
 }
 
-.data-grid table:matches(.header, .data) {
-    /* Hide starting border from first hidden columns. */
-    width: calc(100% + 1px);
-    -webkit-margin-start: -1px;
-}
-
-body[dir=ltr] .data-grid :matches(th, td):first-child {
-    border-left: var(--data-grid-column-border-start);
-}
-
-body[dir=rtl] .data-grid :matches(th, td):first-child {
-    border-right: var(--data-grid-column-border-start);
-}
-
-@media (-webkit-min-device-pixel-ratio: 2) {
-    .data-grid table:matches(.header, .data) {
-        width: calc(100% + 0.5px);
-        -webkit-margin-start: -0.5px;
-    }
-
-    .data-grid :matches(th, td):first-child {
-        border-width: 0.5px;
-    }
-}
-
 .data-grid tr.editable .cell-content > input {
     width: 100%;
     height: 100%;
@@ -423,12 +403,7 @@ body:not(.window-inactive, .window-docked-inactive) .data-grid:focus tr.editable
         background-color: unset;
     }
 
-    .data-grid th.sortable:active {
-        background-color: hsl(0, 0%, 40%);
-    }
-
-    .data-grid th.sort-ascending > div:first-child::after,
-    .data-grid th.sort-descending > div:first-child::after {
+    .data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after {
         filter: invert();
     }
 }

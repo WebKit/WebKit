@@ -793,10 +793,11 @@ WI.DataGrid = class DataGrid extends WI.View
             let headerView = column["headerView"];
             console.assert(headerView instanceof WI.View);
 
+            headerView.element.classList.add("header-cell-content");
             headerCellElement.appendChild(headerView.element);
             this.addSubview(headerView);
         } else {
-            let titleElement = headerCellElement.createChild("div");
+            let titleElement = headerCellElement.createChild("div", "header-cell-content");
             if (column["titleDOMFragment"])
                 titleElement.appendChild(column["titleDOMFragment"]);
             else

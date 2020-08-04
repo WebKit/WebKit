@@ -163,6 +163,10 @@ body[dir=rtl] .network-table > .table .cell.name > .status {
     color: transparent;
 }
 
+.network-table > .table .header .cell.waterfall:matches(.sort-ascending, .sort-descending) {
+    background-color: var(--background-color-selected);
+}
+
 .network-table > .table :not(.header) .cell:first-of-type {
     background: rgba(0, 0, 0, 0.07);
 }
@@ -170,6 +174,14 @@ body[dir=rtl] .network-table > .table .cell.name > .status {
 .network-table > .table :not(.header) .cell.waterfall {
     position: absolute;
     height: 20px;
+}
+
+body[dir=ltr] .network-table > .table :not(.header) .cell.waterfall {
+    border-left: 1px solid var(--graph-line-color);
+}
+
+body[dir=rtl] .network-table > .table :not(.header) .cell.waterfall {
+    border-right: 1px solid var(--graph-line-color);
 }
 
 .network-table > .table :not(.header) .cell.waterfall .waterfall-container {

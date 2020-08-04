@@ -55,6 +55,7 @@
     --background-color-unfocused: hsla(0, 0%, calc(100% - var(--foreground-lightness)), 0.8);
     --background-color-alternate: hsla(0, 0%, var(--foreground-lightness), 0.05);
     --background-color-selected: hsla(0, 0%, var(--foreground-lightness), 0.1);
+    --background-color-pressed: hsla(0, 0%, var(--foreground-lightness), 0.05);
 
     /* Gray background with lighter foreground. In dark mode this is lighter. */
     --gray-background-color: hsl(0, 0%, 66%);
@@ -134,6 +135,8 @@
 
     --timeline-scanner-color: hsl(0, 0%, 35%);
 
+    --graph-line-color: hsla(0, 0%, var(--foreground-lightness), 0.07);
+
     --memory-javascript-fill-color: hsl(269, 65%, 75%);
     --memory-javascript-stroke-color: hsl(269, 33%, 50%);
     --memory-images-fill-color: hsl(0, 65%, 75%);
@@ -181,7 +184,7 @@
     --network-request-color: hsl(118, 56%, 65%);
     --network-response-color: hsl(202, 61%, 59%);
 
-    --even-zebra-stripe-row-background-color: hsl(0, 0%, 95%);
+    --even-zebra-stripe-row-background-color: hsl(0, 0%, 96%);
     --odd-zebra-stripe-row-background-color: white;
     --transparent-stripe-background-gradient: linear-gradient(to bottom, transparent, transparent 50%, hsla(0, 0%, 0%, 0.03) 50%, hsla(0, 0%, 0%, 0.03)) top left / 100% 40px;
 
@@ -294,8 +297,6 @@ body.mac-platform.big-sur:not(.docked) {
         --glyph-color-inactive: hsl(0, 0%, 36%);
 
         --border-color: hsl(0, 0%, 33%);
-        --border-color-dark: hsl(0, 0%, 37%); /* non-semantic variable names */
-
         --border-color-secondary: hsl(0, 0%, 27%);
 
         --button-background-color: hsl(0, 0%, 43%);

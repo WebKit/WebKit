@@ -34,7 +34,7 @@
     width: 100%;
     height: 1px;
 
-    background-color: hsla(0, 0%, var(--foreground-lightness), 0.07);
+    background-color: var(--graph-line-color);
     text-align: right;
 
     pointer-events: none;

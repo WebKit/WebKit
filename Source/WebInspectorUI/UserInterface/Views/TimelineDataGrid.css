@@ -37,14 +37,27 @@
     border-top: none;
 }
 
+.data-grid th.graph-column:matches(.sort-ascending, .sort-descending) {
+    background-color: var(--background-color-selected);
+}
+
 .data-grid.timeline th.graph-column > .timeline-ruler {
     position: absolute;
     top: 0;
     bottom: 0;
+    margin: 0;
 }
 
 .data-grid.timeline td.graph-column {
     padding: 2px 0;
+}
+
+body[dir=ltr] .data-grid.timeline td.graph-column {
+    border-left: 1px solid var(--graph-line-color);
+}
+
+body[dir=rtl] .data-grid.timeline td.graph-column {
+    border-right: 1px solid var(--graph-line-color);
 }
 
 .data-grid.timeline td.graph-column > .cell-content {
@@ -53,10 +66,4 @@
 
 .data-grid.timeline td.graph-column .timeline-record-bar {
     top: 2px;
-}
-
-@media (prefers-color-scheme: dark) {
-    .data-grid th:matches(.sort-ascending, .sort-descending) {
-        background: var(--background-color-selected);
-    }
 }

@@ -31,7 +31,7 @@
     background: var(--background-color);
 
     --table-column-border-start: 1px solid transparent;
-    --table-column-border-end: 0.5px solid var(--border-color);
+    --table-column-border-end: 1px solid var(--border-color);
 }
 
 .table > .header {
@@ -47,11 +47,11 @@
 }
 
 .table > .header > .sortable:active {
-    background-color: hsl(0, 0%, 70%);
+    background-color: var(--background-color-pressed);
 }
 
 .table > .header > :matches(.sort-ascending, .sort-descending) {
-    background-color: hsl(0, 0%, 90%);
+    font-weight: var(--sorted-header-font-weight);
     -webkit-padding-end: 18px;
 }
 
@@ -149,20 +149,29 @@ body[dir=rtl] .table > .header > :matches(.sort-ascending, .sort-descending)::af
     overflow: hidden;
 }
 
-body[dir=ltr] .table .cell:not(:last-child) {
-    border-right: var(--table-column-border-end);
+.table > .header .cell {
+    padding-top: var(--table-header-cell-vertical-padding);
+    padding-bottom: var(--table-header-cell-vertical-padding);
+    line-height: calc(var(--navigation-bar-height) - 1px - 2 * var(--table-header-cell-vertical-padding));
+
+    --table-header-cell-vertical-padding: 4px;
 }
 
-body[dir=rtl] .table .cell:not(:last-child) {
-    border-left: var(--table-column-border-end);
+.table > .header .cell:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    top: var(--table-header-cell-vertical-padding);
+    bottom: var(--table-header-cell-vertical-padding);
+    width: 1px;
+    background-color: var(--separator-color);
 }
 
-body[dir=ltr] .table .cell:first-child {
-    border-left: var(--table-column-border-start);
+body[dir=ltr] .table > .header .cell:not(:first-child)::before {
+    left: 0;
 }
 
-body[dir=rtl] .table .cell:first-child {
-    border-right: var(--table-column-border-start);
+body[dir=rtl] .table > .header .cell:not(:first-child)::before {
+    right: 0;
 }
 
 .table .cell.align-right {
@@ -178,14 +187,6 @@ body[dir=rtl] .table .cell:first-child {
 }
 
 @media (prefers-color-scheme: dark) {
-    .table > .header > .sortable:active {
-        background-color: hsla(0, 0%, var(--foreground-lightness), 0.2);
-    }
-
-    .table > .header > :matches(.sort-ascending, .sort-descending) {
-        background: var(--background-color-selected);
-    }
-
     .table > .header > :matches(.sort-ascending, .sort-descending)::after {
         filter: invert();
     }

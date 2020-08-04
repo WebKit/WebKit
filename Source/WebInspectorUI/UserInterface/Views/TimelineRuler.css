@@ -82,6 +82,7 @@ body.window-inactive .timeline-ruler > .header > .divider {
     position: absolute;
     top: 6px;
     font-size: 9px;
+    font-weight: normal;
     color: hsl(0, 0%, 50%);
     white-space: nowrap;
 
@@ -110,7 +111,7 @@ body[dir=rtl] .timeline-ruler > .header > .divider > .label {
     z-index: var(--timeline-marker-z-index);
     bottom: 0;
     width: 1px;
-    background-color: hsla(0, 0%, var(--foreground-lightness), 0.07);
+    background-color: var(--graph-line-color);
 }
 
 .timeline-ruler > .markers > .marker {
