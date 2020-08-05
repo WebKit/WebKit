@@ -1780,7 +1780,6 @@ webkit.org/b/139210 imported/mozilla/svg/text/textLength-6.svg [ ImageOnlyFailur
 webkit.org/b/139237 imported/mozilla/svg/filters/feComposite-1.svg [ ImageOnlyFailure ]
 webkit.org/b/139258 imported/mozilla/svg/text-layout-05.svg [ ImageOnlyFailure ]
 webkit.org/b/139266 imported/mozilla/svg/text/dynamic-multiple-x.svg [ ImageOnlyFailure ]
-webkit.org/b/139282 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
 webkit.org/b/139322 imported/mozilla/svg/text/dynamic-non-scaling-stroke.svg [ ImageOnlyFailure ]
 webkit.org/b/139407 imported/mozilla/svg/as-image/border-image-simple-1.html [ ImageOnlyFailure ]
 webkit.org/b/139412 imported/mozilla/svg/filters/svg-filter-chains/clip-input.svg [ ImageOnlyFailure ]
@@ -1796,7 +1795,6 @@ webkit.org/b/139417 imported/mozilla/svg/filters/filter-marked-line-06.svg [ Ima
 webkit.org/b/139417 imported/mozilla/svg/filters/filter-marked-line-07.svg [ ImageOnlyFailure ]
 webkit.org/b/139417 imported/mozilla/svg/filters/filter-marked-line-08.svg [ ImageOnlyFailure ]
 webkit.org/b/139417 imported/mozilla/svg/filters/filter-marked-line-09.svg [ ImageOnlyFailure ]
-
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
 webkit.org/b/84760 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
 webkit.org/b/84761 ietestcenter/css3/multicolumn/column-filling-001.htm [ ImageOnlyFailure ]

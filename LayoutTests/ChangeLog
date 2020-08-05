@@ -1,3 +1,13 @@
+2020-08-05  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS ] imported/mozilla/svg/image/image-filter-01.svg is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=215167
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2020-08-05  Rob Buis  <rbuis@igalia.com>
 
         Allow multiple calls to PerformanceObserver.observe with different types
