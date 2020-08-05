@@ -357,6 +357,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSComputedEffectTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSComputedEffectTiming.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCoordinates.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCoordinates.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCountQueuingStrategy.cpp

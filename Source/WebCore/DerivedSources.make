@@ -406,6 +406,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/ChannelSplitterNode.idl \
     $(WebCore)/Modules/webaudio/ChannelSplitterOptions.idl \
     $(WebCore)/Modules/webaudio/ConvolverNode.idl \
+    $(WebCore)/Modules/webaudio/ConvolverOptions.idl \
     $(WebCore)/Modules/webaudio/DelayNode.idl \
     $(WebCore)/Modules/webaudio/DelayOptions.idl \
     $(WebCore)/Modules/webaudio/DistanceModelType.idl \

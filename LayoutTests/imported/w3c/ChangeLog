@@ -1,3 +1,16 @@
+2020-08-05  Chris Dumez  <cdumez@apple.com>
+
+        Add constructor to ConvolverNode
+        https://bugs.webkit.org/show_bug.cgi?id=215169
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/ctor-convolver-expected.txt:
+
 2020-08-05  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Re-sync web-platform-tests (2 dirs + 2 files)

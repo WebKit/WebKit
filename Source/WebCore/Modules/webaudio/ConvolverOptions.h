@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
  * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,50 +24,18 @@
 
 #pragma once
 
-#include "AudioNode.h"
-#include "ConvolverOptions.h"
-#include <wtf/Lock.h>
+#if ENABLE(WEB_AUDIO)
+
+#include "AudioBuffer.h"
+#include "AudioNodeOptions.h"
 
 namespace WebCore {
 
-class AudioBuffer;
-class Reverb;
-    
-class ConvolverNode final : public AudioNode {
-    WTF_MAKE_ISO_ALLOCATED(ConvolverNode);
-public:
-    static ExceptionOr<Ref<ConvolverNode>> create(BaseAudioContext&, ConvolverOptions&& = { });
-    
-    virtual ~ConvolverNode();
-    
-    ExceptionOr<void> setBuffer(RefPtr<AudioBuffer>&&);
-    AudioBuffer* buffer();
-
-    bool normalize() const { return m_normalize; }
-    void setNormalize(bool normalize) { m_normalize = normalize; }
-
-    ExceptionOr<void> setChannelCount(unsigned) final;
-    ExceptionOr<void> setChannelCountMode(ChannelCountMode) final;
-
-private:
-    explicit ConvolverNode(BaseAudioContext&);
-
-    double tailTime() const final;
-    double latencyTime() const final;
-
-    void process(size_t framesToProcess) final;
-    void reset() final;
-    void initialize() final;
-    void uninitialize() final;
-
-    std::unique_ptr<Reverb> m_reverb;
-    RefPtr<AudioBuffer> m_buffer;
-
-    // This synchronizes dynamic changes to the convolution impulse response with process().
-    mutable Lock m_processMutex;
-
-    // Normalize the impulse response or not.
-    bool m_normalize { true };
+struct ConvolverOptions : AudioNodeOptions {
+    RefPtr<AudioBuffer> buffer;
+    bool disableNormalization { false };
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUDIO)

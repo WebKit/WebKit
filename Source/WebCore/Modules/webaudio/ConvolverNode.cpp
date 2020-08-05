@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010, Google Inc. All rights reserved.
- * Copyright (C) 2016, Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,8 +47,38 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ConvolverNode);
 
-ConvolverNode::ConvolverNode(BaseAudioContext& context, float sampleRate)
-    : AudioNode(context, sampleRate)
+ExceptionOr<Ref<ConvolverNode>> ConvolverNode::create(BaseAudioContext& context, ConvolverOptions&& options)
+{
+    if (context.isStopped())
+        return Exception { InvalidStateError };
+
+    context.lazyInitialize();
+
+    auto node = adoptRef(*new ConvolverNode(context));
+
+    auto result = node->setChannelCount(options.channelCount.valueOr(2));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = node->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::ClampedMax));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = node->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = node->setBuffer(WTFMove(options.buffer));
+    if (result.hasException())
+        return result.releaseException();
+
+    node->setNormalize(!options.disableNormalization);
+
+    return node;
+}
+
+ConvolverNode::ConvolverNode(BaseAudioContext& context)
+    : AudioNode(context, context.sampleRate())
 {
     setNodeType(NodeTypeConvolver);
 
@@ -116,7 +146,7 @@ void ConvolverNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-ExceptionOr<void> ConvolverNode::setBuffer(AudioBuffer* buffer)
+ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 {
     ASSERT(isMainThread());
     
@@ -152,7 +182,7 @@ ExceptionOr<void> ConvolverNode::setBuffer(AudioBuffer* buffer)
         // Synchronize with process().
         auto locker = holdLock(m_processMutex);
         m_reverb = WTFMove(reverb);
-        m_buffer = buffer;
+        m_buffer = WTFMove(buffer);
     }
 
     return { };
@@ -172,6 +202,20 @@ double ConvolverNode::tailTime() const
 double ConvolverNode::latencyTime() const
 {
     return m_reverb ? m_reverb->latencyFrames() / static_cast<double>(sampleRate()) : 0;
+}
+
+ExceptionOr<void> ConvolverNode::setChannelCount(unsigned count)
+{
+    if (count > 2)
+        return Exception { NotSupportedError, "ConvolverNode's channel count cannot be greater than 2"_s };
+    return AudioNode::setChannelCount(count);
+}
+
+ExceptionOr<void> ConvolverNode::setChannelCountMode(ChannelCountMode mode)
+{
+    if (mode == ChannelCountMode::Max)
+        return Exception { NotSupportedError, "ConvolverNode's channel count mode cannot be 'max'"_s };
+    return AudioNode::setChannelCountMode(mode);
 }
 
 } // namespace WebCore

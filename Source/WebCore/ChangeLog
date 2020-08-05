@@ -1,5 +1,36 @@
 2020-08-05  Chris Dumez  <cdumez@apple.com>
 
+        Add constructor to ConvolverNode
+        https://bugs.webkit.org/show_bug.cgi?id=215169
+
+        Reviewed by Eric Carlson.
+
+        Add constructor to ConvolverNode, as per specification:
+        - https://webaudio.github.io/web-audio-api/#ConvolverNode
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createConvolver):
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::create):
+        (WebCore::ConvolverNode::ConvolverNode):
+        (WebCore::ConvolverNode::setBuffer):
+        (WebCore::ConvolverNode::setChannelCount):
+        (WebCore::ConvolverNode::setChannelCountMode):
+        * Modules/webaudio/ConvolverNode.h:
+        * Modules/webaudio/ConvolverNode.idl:
+        * Modules/webaudio/ConvolverOptions.h: Copied from Source/WebCore/Modules/webaudio/ConvolverNode.idl.
+        * Modules/webaudio/ConvolverOptions.idl: Copied from Source/WebCore/Modules/webaudio/ConvolverNode.idl.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2020-08-05  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION (r265266) DumpRenderTree crash at WebKitAudioListener::dopplerFactor
         https://bugs.webkit.org/show_bug.cgi?id=215171
         <rdar://problem/66556999>

@@ -2,32 +2,69 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
 PASS Executing "invalid constructor" 
-FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
-FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node[entry.attribute]')"
-FAIL Executing "nullable buffer" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.buffer')"
+PASS Executing "default constructor" 
+PASS Executing "test AudioNodeOptions" 
+PASS Executing "nullable buffer" 
 PASS Executing "illegal sample-rate" 
-FAIL Executing "construct with options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.buffer')"
+PASS Executing "construct with options" 
 PASS Audit report 
 PASS > [initialize]  
 PASS   context = new OfflineAudioContext(...) did not throw an exception. 
 PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [invalid constructor]  
-PASS   new ConvolverNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
-PASS   new ConvolverNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
-PASS   new ConvolverNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS   new ConvolverNode() threw TypeError: "Not enough arguments". 
+PASS   new ConvolverNode(1) threw TypeError: "Argument 1 ('context') to the ConvolverNode constructor must be an instance of BaseAudioContext". 
+PASS   new ConvolverNode(context, 42) threw TypeError: "Type error". 
 PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
 PASS > [default constructor]  
-FAIL X node0 = new ConvolverNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
-FAIL X node0 instanceof ConvolverNode is not equal to true. Got false. assert_true: expected true got false
+PASS   node0 = new ConvolverNode(context) did not throw an exception. 
+PASS   node0 instanceof ConvolverNode is equal to true. 
+PASS   node0.numberOfInputs is equal to 1. 
+PASS   node0.numberOfOutputs is equal to 1. 
+PASS   node0.channelCount is equal to 2. 
+PASS   node0.channelCountMode is equal to clamped-max. 
+PASS   node0.channelInterpretation is equal to speakers. 
+PASS   node0.normalize is equal to true. 
+PASS   node0.buffer is equal to null. 
+PASS < [default constructor] All assertions passed. (total 9 assertions) 
 PASS > [test AudioNodeOptions]  
-FAIL X new ConvolverNode(c, {"channelCount":1}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new ConvolverNode(context, options)')". assert_true: expected true got false
+PASS   new ConvolverNode(c, {"channelCount":1}) did not throw an exception. 
+PASS   node.channelCount is equal to 1. 
+PASS   new ConvolverNode(c, {"channelCount":2}) did not throw an exception. 
+PASS   node.channelCount is equal to 2. 
+PASS   new ConvolverNode(c, {"channelCount":0}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new ConvolverNode(c, {"channelCount":3}) threw NotSupportedError: "ConvolverNode's channel count cannot be greater than 2". 
+PASS   new ConvolverNode(c, {"channelCount":99}) threw NotSupportedError: "ConvolverNode's channel count cannot be greater than 2". 
+PASS   new ConvolverNode(c, {"channelCountMode":"clamped-max"}) did not throw an exception. 
+PASS   node.channelCountMode is equal to clamped-max. 
+PASS   new ConvolverNode(c, {"channelCountMode":"explicit"}) did not throw an exception. 
+PASS   node.channelCountMode is equal to explicit. 
+PASS   new ConvolverNode(c, {"channelCountMode":"max"}) threw NotSupportedError: "ConvolverNode's channel count mode cannot be 'max'". 
+PASS   new ConvolverNode(c, {"channelCountMode":"foobar"}) threw TypeError: "Type error". 
+PASS   new ConvolverNode(c, {"channelInterpretation":"speakers"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to speakers. 
+PASS   new ConvolverNode(c, {"channelInterpretation":"discrete"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to discrete. 
+PASS   new ConvolverNode(c, {"channelInterpretation":"foobar"}) threw TypeError: "Type error". 
+PASS < [test AudioNodeOptions] All assertions passed. (total 18 assertions) 
 PASS > [nullable buffer]  
-FAIL X node1 = new ConvolverNode(c, {"buffer":null} incorrectly threw TypeError: "function is not a constructor (evaluating 'new ConvolverNode(context, options)')". assert_true: expected true got false
+PASS   node1 = new ConvolverNode(c, {"buffer":null} did not throw an exception. 
+PASS   node1.buffer is equal to null. 
+PASS < [nullable buffer] All assertions passed. (total 2 assertions) 
 PASS > [illegal sample-rate]  
-FAIL X node1 = new ConvolverNode(c, {"buffer":{}} threw "TypeError" instead of NotSupportedError. assert_true: expected true got false
-FAIL < [illegal sample-rate] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS   node1 = new ConvolverNode(c, {"buffer":{}} threw NotSupportedError: "The operation is not supported.". 
+PASS < [illegal sample-rate] All assertions passed. (total 1 assertions) 
 PASS > [construct with options]  
-FAIL X node = new ConvolverNode(c, {"buffer":{},"disableNormalization":false}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new ConvolverNode(context, options)')". assert_true: expected true got false
-FAIL X node1 instanceOf ConvolverNode is not equal to true. Got false. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 5 out of 7 tasks were failed. assert_true: expected true got false
+PASS   node = new ConvolverNode(c, {"buffer":{},"disableNormalization":false}) did not throw an exception. 
+PASS   node1 instanceOf ConvolverNode is equal to true. 
+PASS   node1.buffer === <buf> is equal to true. 
+PASS   node1.normalize is equal to true. 
+PASS   node2 = new ConvolverNode(, {"buffer":null,"disableNormalization":true}) did not throw an exception. 
+PASS   node2.buffer is equal to null. 
+PASS   node2.normalize is equal to false. 
+PASS   node3 = new ConvolverNode(context, {"buffer":null,"disableNormalization":false}) did not throw an exception. 
+PASS   node3.buffer is equal to null. 
+PASS   node3.normalize is equal to true. 
+PASS < [construct with options] All assertions passed. (total 10 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 7 tasks ran successfully. 
 

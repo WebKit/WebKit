@@ -518,11 +518,7 @@ ExceptionOr<Ref<ConvolverNode>> BaseAudioContext::createConvolver()
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
-    return ConvolverNode::create(*this, sampleRate());
+    return ConvolverNode::create(*this);
 }
 
 ExceptionOr<Ref<DynamicsCompressorNode>> BaseAudioContext::createDynamicsCompressor()

@@ -2521,6 +2521,7 @@
 		83E359A21BB1031D002CEB98 /* JSHTMLTimeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E359A01BB1031D002CEB98 /* JSHTMLTimeElement.h */; };
 		83E866801FBA565B008855C5 /* ServiceWorkerData.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E8667D1FBA563F008855C5 /* ServiceWorkerData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83EE598F1F50958E003E8B30 /* JSErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EE598B1F50958B003E8B30 /* JSErrorCallback.h */; };
+		83F28C0024DB1DE1005BA6F6 /* ConvolverOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F28BFD24DB1DD3005BA6F6 /* ConvolverOptions.h */; };
 		83FB33711F508A5400986E54 /* FileSystemDirectoryEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FB336D1F508A4E00986E54 /* FileSystemDirectoryEntry.h */; };
 		83FB33731F508A5800986E54 /* FileSystemEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FB336F1F508A4E00986E54 /* FileSystemEntry.h */; };
 		83FB33751F508A5B00986E54 /* FileSystemFileEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FB336C1F508A4E00986E54 /* FileSystemFileEntry.h */; };
@@ -10627,6 +10628,8 @@
 		83E9B3011DA5A51E00FFE8F6 /* JSScrollToOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSScrollToOptions.h; sourceTree = "<group>"; };
 		83EE598B1F50958B003E8B30 /* JSErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSErrorCallback.h; sourceTree = "<group>"; };
 		83EE598C1F50958B003E8B30 /* JSErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSErrorCallback.cpp; sourceTree = "<group>"; };
+		83F28BFD24DB1DD3005BA6F6 /* ConvolverOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConvolverOptions.h; sourceTree = "<group>"; };
+		83F28BFF24DB1DD4005BA6F6 /* ConvolverOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ConvolverOptions.idl; sourceTree = "<group>"; };
 		83F570AD1C53268E007FD6CB /* JSXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLDocument.h; sourceTree = "<group>"; };
 		83F570AE1C53268E007FD6CB /* JSXMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLDocument.cpp; sourceTree = "<group>"; };
 		83F572941FA1066F003837BE /* JSServiceWorkerClientCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSServiceWorkerClientCustom.cpp; sourceTree = "<group>"; };
@@ -29586,6 +29589,8 @@
 				FD315FDE12B0267600C1A359 /* ConvolverNode.cpp */,
 				FD315FDF12B0267600C1A359 /* ConvolverNode.h */,
 				FD315FE012B0267600C1A359 /* ConvolverNode.idl */,
+				83F28BFD24DB1DD3005BA6F6 /* ConvolverOptions.h */,
+				83F28BFF24DB1DD4005BA6F6 /* ConvolverOptions.idl */,
 				FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */,
 				FD06DFA4134A4DEF006F5D7D /* DefaultAudioDestinationNode.h */,
 				FD315FE112B0267600C1A359 /* DelayDSPKernel.cpp */,
@@ -30430,6 +30435,7 @@
 				7ADE722610CBBB9B006B3B3A /* ContextMenuProvider.h in Headers */,
 				759CB837192DA9190012BC64 /* ControlStates.h in Headers */,
 				FD31602912B0267600C1A359 /* ConvolverNode.h in Headers */,
+				83F28C0024DB1DE1005BA6F6 /* ConvolverOptions.h in Headers */,
 				D8B6152F1032495100C8554A /* Cookie.h in Headers */,
 				E1424C94164B52C800F32D40 /* CookieJar.h in Headers */,
 				7A5699702086C619000E0433 /* CookieRequestHeaderFieldProxy.h in Headers */,

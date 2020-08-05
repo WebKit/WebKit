@@ -2734,6 +2734,7 @@ JSCompositeOperationOrAuto.cpp
 JSCompositionEvent.cpp
 JSComputedEffectTiming.cpp
 JSConvolverNode.cpp
+JSConvolverOptions.cpp
 JSCountQueuingStrategy.cpp
 JSCredentialCreationOptions.cpp
 JSCredentialRequestOptions.cpp
