@@ -55,6 +55,9 @@ class VisiblePosition;
 #endif
 
 - (void)detach;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+- (void)detachIsolatedObject:(WebCore::AccessibilityDetachmentType)detachmentType;
+#endif
 
 @property (nonatomic, assign) WebCore::AXID identifier;
 

@@ -445,7 +445,7 @@ void AXIsolatedTree::applyPendingChanges()
                 // The new IsolatedObject is a replacement for an existing object
                 // as the result of an update. Thus detach the wrapper from the
                 // existing object and attach it to the new one.
-                object->detachWrapper(AccessibilityDetachmentType::ElementDestroyed);
+                object->detachWrapper(AccessibilityDetachmentType::ElementChanged);
                 item.m_isolatedObject->attachPlatformWrapper(wrapper.get());
             }
             m_readerThreadNodeMap.remove(axID);

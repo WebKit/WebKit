@@ -542,6 +542,7 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 - (void)unregisterUniqueIdForUIElement
 {
+    ASSERT(isMainThread());
     NSAccessibilityUnregisterUniqueIdForUIElement(self);
 }
 

@@ -542,7 +542,7 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
     return "";
 }
 
-enum class AccessibilityDetachmentType { CacheDestroyed, ElementDestroyed, ElementChange };
+enum class AccessibilityDetachmentType { CacheDestroyed, ElementDestroyed, ElementChanged };
 
 enum class AccessibilityConversionSpace { Screen, Page };
 

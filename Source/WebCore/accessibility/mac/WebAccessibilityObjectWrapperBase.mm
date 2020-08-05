@@ -311,29 +311,20 @@ NSArray *convertToNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVect
 }
 #endif
 
-- (void)detachAXObject
+- (void)detach
 {
+    ASSERT(isMainThread());
+    _identifier = InvalidAXID;
     m_axObject = nullptr;
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-- (void)detachIsolatedObject
+- (void)detachIsolatedObject:(AccessibilityDetachmentType)detachmentType
 {
+    ASSERT_UNUSED(detachmentType, detachmentType == AccessibilityDetachmentType::ElementChanged ? _identifier != InvalidAXID && m_axObject : true);
     m_isolatedObject = nullptr;
 }
 #endif
-
-- (void)detach
-{
-    _identifier = InvalidAXID;
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (AXObjectCache::isIsolatedTreeEnabled()) {
-        [self detachIsolatedObject];
-        return;
-    }
-#endif
-    [self detachAXObject];
-}
 
 - (WebCore::AXCoreObject*)updateObjectBackingStore
 {

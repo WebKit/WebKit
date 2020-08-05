@@ -54,9 +54,9 @@ void AXIsolatedObject::attachPlatformWrapper(AccessibilityObjectWrapper* wrapper
     setWrapper(wrapper);
 }
 
-void AXIsolatedObject::detachPlatformWrapper(AccessibilityDetachmentType)
+void AXIsolatedObject::detachPlatformWrapper(AccessibilityDetachmentType detachmentType)
 {
-    [wrapper() detach];
+    [wrapper() detachIsolatedObject:detachmentType];
 }
 
 } // WebCore
