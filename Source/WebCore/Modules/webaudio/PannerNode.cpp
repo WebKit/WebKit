@@ -69,7 +69,11 @@ ExceptionOr<Ref<PannerNode>> PannerNode::create(BaseAudioContext& context, const
 
     auto panner = adoptRef(*new PannerNode(context, options));
 
-    auto result = panner->setMaxDistance(options.maxDistance);
+    auto result = panner->handleAudioNodeOptions(options, { 2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers });
+    if (result.hasException())
+        return result.releaseException();
+
+    result = panner->setMaxDistance(options.maxDistance);
     if (result.hasException())
         return result.releaseException();
 
@@ -82,18 +86,6 @@ ExceptionOr<Ref<PannerNode>> PannerNode::create(BaseAudioContext& context, const
         return result.releaseException();
 
     result = panner->setConeOuterGain(options.coneOuterGain);
-    if (result.hasException())
-        return result.releaseException();
-
-    result = panner->setChannelCount(options.channelCount.valueOr(2));
-    if (result.hasException())
-        return result.releaseException();
-
-    result = panner->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::ClampedMax));
-    if (result.hasException())
-        return result.releaseException();
-
-    result = panner->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
     if (result.hasException())
         return result.releaseException();
 
@@ -114,10 +106,11 @@ PannerNode::PannerNode(BaseAudioContext& context, const PannerOptions& options)
     // Load the HRTF database asynchronously so we don't block the Javascript thread while creating the HRTF database.
     , m_hrtfDatabaseLoader(HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(context.sampleRate()))
 {
+    setNodeType(NodeTypePanner);
+
     setDistanceModel(options.distanceModel);
     setConeInnerAngle(options.coneInnerAngle);
     setConeOuterAngle(options.coneOuterAngle);
-    setNodeType(NodeTypePanner);
 
     addInput(makeUnique<AudioNodeInput>(this));
     addOutput(makeUnique<AudioNodeOutput>(this, 2));

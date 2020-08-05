@@ -54,15 +54,7 @@ ExceptionOr<Ref<WaveShaperNode>> WaveShaperNode::create(BaseAudioContext& contex
 
     auto node = adoptRef(*new WaveShaperNode(context));
 
-    auto result = node->setChannelCount(options.channelCount.valueOr(2));
-    if (result.hasException())
-        return result.releaseException();
-
-    result = node->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::Max));
-    if (result.hasException())
-        return result.releaseException();
-
-    result = node->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
+    auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::Max, ChannelInterpretation::Speakers });
     if (result.hasException())
         return result.releaseException();
 

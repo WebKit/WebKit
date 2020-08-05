@@ -186,6 +186,14 @@ protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
     void addInput(std::unique_ptr<AudioNodeInput>);
     void addOutput(std::unique_ptr<AudioNodeOutput>);
+
+    struct DefaultAudioNodeOptions {
+        unsigned channelCount;
+        ChannelCountMode channelCountMode;
+        ChannelInterpretation channelInterpretation;
+    };
+
+    ExceptionOr<void> handleAudioNodeOptions(const AudioNodeOptions&, const DefaultAudioNodeOptions&);
     
     // Called by processIfNecessary() to cause all parts of the rendering graph connected to us to process.
     // Each rendering quantum, the audio data for each of the AudioNode's inputs will be available after this method is called.
@@ -201,6 +209,8 @@ protected:
     const char* logClassName() const final { return "AudioNode"; }
     WTFLogChannel& logChannel() const final;
 #endif
+
+    void initializeDefaultNodeOptions(unsigned count, ChannelCountMode, ChannelInterpretation);
 
 private:
     // EventTarget
@@ -241,10 +251,9 @@ private:
     const void* m_logIdentifier;
 #endif
 
-protected:
-    unsigned m_channelCount;
-    ChannelCountMode m_channelCountMode;
-    ChannelInterpretation m_channelInterpretation;
+    unsigned m_channelCount { 2 };
+    ChannelCountMode m_channelCountMode { ChannelCountMode::Max };
+    ChannelInterpretation m_channelInterpretation { ChannelInterpretation::Speakers };
 };
 
 String convertEnumerationToString(AudioNode::NodeType);

@@ -526,11 +526,7 @@ ExceptionOr<Ref<DynamicsCompressorNode>> BaseAudioContext::createDynamicsCompres
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
-    return DynamicsCompressorNode::create(*this, sampleRate());
+    return DynamicsCompressorNode::create(*this);
 }
 
 ExceptionOr<Ref<AnalyserNode>> BaseAudioContext::createAnalyser()

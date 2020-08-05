@@ -30,6 +30,7 @@
 
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
+#include "AudioNodeOptions.h"
 #include "AudioNodeOutput.h"
 #include "AudioParam.h"
 #include "Logging.h"
@@ -105,9 +106,6 @@ AudioNode::AudioNode(BaseAudioContext& context, float sampleRate)
     , m_logger(context.logger())
     , m_logIdentifier(context.nextAudioNodeLogIdentifier())
 #endif
-    , m_channelCount(2)
-    , m_channelCountMode(ChannelCountMode::Max)
-    , m_channelInterpretation(ChannelInterpretation::Speakers)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     
@@ -319,6 +317,13 @@ void AudioNode::updateChannelsForInputs()
 {
     for (auto& input : m_inputs)
         input->changedOutputs();
+}
+
+void AudioNode::initializeDefaultNodeOptions(unsigned count, ChannelCountMode mode, WebCore::ChannelInterpretation interpretation)
+{
+    m_channelCount = count;
+    m_channelCountMode = mode;
+    m_channelInterpretation = interpretation;
 }
 
 EventTargetInterface AudioNode::eventTargetInterface() const
@@ -542,6 +547,23 @@ void AudioNode::finishDeref(RefType refType)
         } else if (refType == RefTypeConnection)
             disableOutputsIfNecessary();
     }
+}
+
+ExceptionOr<void> AudioNode::handleAudioNodeOptions(const AudioNodeOptions& options, const DefaultAudioNodeOptions& defaults)
+{
+    auto result = setChannelCount(options.channelCount.valueOr(defaults.channelCount));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = setChannelCountMode(options.channelCountMode.valueOr(defaults.channelCountMode));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = setChannelInterpretation(options.channelInterpretation.valueOr(defaults.channelInterpretation));
+    if (result.hasException())
+        return result.releaseException();
+
+    return { };
 }
 
 #if DEBUG_AUDIONODE_REFERENCES

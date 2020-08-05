@@ -56,15 +56,7 @@ ExceptionOr<Ref<ConvolverNode>> ConvolverNode::create(BaseAudioContext& context,
 
     auto node = adoptRef(*new ConvolverNode(context));
 
-    auto result = node->setChannelCount(options.channelCount.valueOr(2));
-    if (result.hasException())
-        return result.releaseException();
-
-    result = node->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::ClampedMax));
-    if (result.hasException())
-        return result.releaseException();
-
-    result = node->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
+    auto result = node->handleAudioNodeOptions(options, { 2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers });
     if (result.hasException())
         return result.releaseException();
 
@@ -84,11 +76,6 @@ ConvolverNode::ConvolverNode(BaseAudioContext& context)
 
     addInput(makeUnique<AudioNodeInput>(this));
     addOutput(makeUnique<AudioNodeOutput>(this, 2));
-
-    // Node-specific default mixing rules.
-    m_channelCount = 2;
-    m_channelCountMode = ChannelCountMode::ClampedMax;
-    m_channelInterpretation = ChannelInterpretation::Speakers;
     
     initialize();
 }

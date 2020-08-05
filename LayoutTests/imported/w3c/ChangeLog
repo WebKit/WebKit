@@ -1,5 +1,18 @@
 2020-08-05  Chris Dumez  <cdumez@apple.com>
 
+        Add constructor for DynamicsCompressorNode
+        https://bugs.webkit.org/show_bug.cgi?id=215180
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-dynamicscompressornode-interface/ctor-dynamicscompressor-expected.txt:
+
+2020-08-05  Chris Dumez  <cdumez@apple.com>
+
         Add constructor to ConvolverNode
         https://bugs.webkit.org/show_bug.cgi?id=215169
 

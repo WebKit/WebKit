@@ -46,10 +46,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
 DefaultAudioDestinationNode::DefaultAudioDestinationNode(BaseAudioContext& context, Optional<float> sampleRate)
     : AudioDestinationNode(context, sampleRate.valueOr(AudioDestination::hardwareSampleRate()))
 {
-    // Node-specific default mixing rules.
-    m_channelCount = 2;
-    m_channelCountMode = ChannelCountMode::Explicit;
-    m_channelInterpretation = ChannelInterpretation::Speakers;
+    initializeDefaultNodeOptions(2, ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
 }
 
 DefaultAudioDestinationNode::~DefaultAudioDestinationNode()

@@ -2,25 +2,64 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
 PASS Executing "invalid constructor" 
-FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.numberOfInputs')"
-FAIL Executing "test AudioNodeOptions" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node[options.testAttribute]')"
-FAIL Executing "constructor with options" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'node.threshold')"
+PASS Executing "default constructor" 
+PASS Executing "test AudioNodeOptions" 
+PASS Executing "constructor with options" 
 PASS Audit report 
 PASS > [initialize]  
 PASS   context = new OfflineAudioContext(...) did not throw an exception. 
 PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [invalid constructor]  
-PASS   new DynamicsCompressorNode() threw TypeError: "function is not a constructor (evaluating 'new window[name]()')". 
-PASS   new DynamicsCompressorNode(1) threw TypeError: "function is not a constructor (evaluating 'new window[name](1)')". 
-PASS   new DynamicsCompressorNode(context, 42) threw TypeError: "function is not a constructor (evaluating 'new window[name](context, 42)')". 
+PASS   new DynamicsCompressorNode() threw TypeError: "Not enough arguments". 
+PASS   new DynamicsCompressorNode(1) threw TypeError: "Argument 1 ('context') to the DynamicsCompressorNode constructor must be an instance of BaseAudioContext". 
+PASS   new DynamicsCompressorNode(context, 42) threw TypeError: "Type error". 
 PASS < [invalid constructor] All assertions passed. (total 3 assertions) 
 PASS > [default constructor]  
-FAIL X node0 = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new window[name](context, options.constructorOptions)')". assert_true: expected true got false
-FAIL X node0 instanceof DynamicsCompressorNode is not equal to true. Got false. assert_true: expected true got false
+PASS   node0 = new DynamicsCompressorNode(context) did not throw an exception. 
+PASS   node0 instanceof DynamicsCompressorNode is equal to true. 
+PASS   node0.numberOfInputs is equal to 1. 
+PASS   node0.numberOfOutputs is equal to 1. 
+PASS   node0.channelCount is equal to 2. 
+PASS   node0.channelCountMode is equal to clamped-max. 
+PASS   node0.channelInterpretation is equal to speakers. 
+PASS   node0.threshold.value is equal to -24. 
+PASS   node0.knee.value is equal to 30. 
+PASS   node0.ratio.value is equal to 12. 
+PASS   node0.reduction.value is equal to 0. 
+PASS   node0.attack.value is equal to 0.003000000026077032. 
+PASS   node0.release.value is equal to 0.25. 
+PASS < [default constructor] All assertions passed. (total 13 assertions) 
 PASS > [test AudioNodeOptions]  
-FAIL X new DynamicsCompressorNode(c, {"channelCount":1}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context, options.nodeOptions)')". assert_true: expected true got false
+PASS   new DynamicsCompressorNode(c, {"channelCount":1}) did not throw an exception. 
+PASS   node.channelCount is equal to 1. 
+PASS   new DynamicsCompressorNode(c, {"channelCount":2}) did not throw an exception. 
+PASS   node.channelCount is equal to 2. 
+PASS   new DynamicsCompressorNode(c, {"channelCount":0}) threw InvalidStateError: "The object is in an invalid state.". 
+PASS   new DynamicsCompressorNode(c, {"channelCount":3}) threw NotSupportedError: "DynamicsCompressorNode's channel count cannot be greater than 2". 
+PASS   new DynamicsCompressorNode(c, {"channelCount":99}) threw NotSupportedError: "DynamicsCompressorNode's channel count cannot be greater than 2". 
+PASS   new DynamicsCompressorNode(c, {"channelCountMode":"clamped-max"}) did not throw an exception. 
+PASS   node.channelCountMode is equal to clamped-max. 
+PASS   new DynamicsCompressorNode(c, {"channelCountMode":"explicit"}) did not throw an exception. 
+PASS   node.channelCountMode is equal to explicit. 
+PASS   new DynamicsCompressorNode(c, {"channelCountMode":"max"}) threw NotSupportedError: "DynamicsCompressorNode's channel count mode cannot be set to 'max'". 
+PASS   new DynamicsCompressorNode(c, {"channelCountMode":"foobar"}) threw TypeError: "Type error". 
+PASS   new DynamicsCompressorNode(c, {"channelInterpretation":"speakers"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to speakers. 
+PASS   new DynamicsCompressorNode(c, {"channelInterpretation":"discrete"}) did not throw an exception. 
+PASS   node.channelInterpretation is equal to discrete. 
+PASS   new DynamicsCompressorNode(c, {"channelInterpretation":"foobar"}) threw TypeError: "Type error". 
+PASS < [test AudioNodeOptions] All assertions passed. (total 18 assertions) 
 PASS > [constructor with options]  
-FAIL X node1 = new DynamicsCompressorNode(c, {"threshold":-33,"knee":15,"ratio":7,"attack":0.625,"release":0.125}) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context, options)')". assert_true: expected true got false
-FAIL X node1 instanceof DynamicsCompressorNode is not equal to true. Got false. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 5 tasks were failed. assert_true: expected true got false
+PASS   node1 = new DynamicsCompressorNode(c, {"threshold":-33,"knee":15,"ratio":7,"attack":0.625,"release":0.125}) did not throw an exception. 
+PASS   node1 instanceof DynamicsCompressorNode is equal to true. 
+PASS   node1.threshold.value is equal to -33. 
+PASS   node1.knee.value is equal to 15. 
+PASS   node1.ratio.value is equal to 7. 
+PASS   node1.attack.value is equal to 0.625. 
+PASS   node1.release.value is equal to 0.125. 
+PASS   node1.channelCount is equal to 2. 
+PASS   node1.channelCountMode is equal to clamped-max. 
+PASS   node1.channelInterpretation is equal to speakers. 
+PASS < [constructor with options] All assertions passed. (total 10 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

@@ -55,15 +55,7 @@ ExceptionOr<Ref<ChannelMergerNode>> ChannelMergerNode::create(BaseAudioContext& 
     
     auto merger = adoptRef(*new ChannelMergerNode(context, context.sampleRate(), options.numberOfInputs));
     
-    auto result = merger->setChannelCount(options.channelCount.valueOr(1));
-    if (result.hasException())
-        return result.releaseException();
-    
-    result = merger->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::Explicit));
-    if (result.hasException())
-        return result.releaseException();
-    
-    result = merger->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
+    auto result = merger->handleAudioNodeOptions(options, { 1, ChannelCountMode::Explicit, ChannelInterpretation::Speakers });
     if (result.hasException())
         return result.releaseException();
     

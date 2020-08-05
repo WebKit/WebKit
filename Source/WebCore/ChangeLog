@@ -1,5 +1,69 @@
 2020-08-05  Chris Dumez  <cdumez@apple.com>
 
+        Add constructor for DynamicsCompressorNode
+        https://bugs.webkit.org/show_bug.cgi?id=215180
+
+        Reviewed by Geoffrey Garen.
+
+        Add constructor for DynamicsCompressorNode:
+        - https://webaudio.github.io/web-audio-api/#dynamicscompressornode
+
+        This patch also add a new handleAudioNodeOptions() member function to
+        AudioNode to avoid code duplication and every node constructor.
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::create):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::AudioNode):
+        (WebCore::AudioNode::initializeDefaultNodeOptions):
+        (WebCore::AudioNode::handleAudioNodeOptions):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createDynamicsCompressor):
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::create):
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::create):
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::create):
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::create):
+        (WebCore::ConvolverNode::ConvolverNode):
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::DefaultAudioDestinationNode):
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::create):
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::create):
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        (WebCore::DynamicsCompressorNode::setChannelCount):
+        (WebCore::DynamicsCompressorNode::setChannelCountMode):
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        * Modules/webaudio/DynamicsCompressorNode.idl:
+        * Modules/webaudio/DynamicsCompressorOptions.h: Copied from Source/WebCore/Modules/webaudio/DynamicsCompressorNode.idl.
+        * Modules/webaudio/DynamicsCompressorOptions.idl: Copied from Source/WebCore/Modules/webaudio/DynamicsCompressorNode.idl.
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::create):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::create):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::create):
+        (WebCore::PannerNode::PannerNode):
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::create):
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::WebKitAudioPannerNode):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2020-08-05  Chris Dumez  <cdumez@apple.com>
+
         Add constructor to ConvolverNode
         https://bugs.webkit.org/show_bug.cgi?id=215169
 

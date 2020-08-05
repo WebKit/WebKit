@@ -679,7 +679,7 @@ PASS AudioNode interface: new DelayNode(context) must inherit property "channelC
 PASS AudioNode interface: new DelayNode(context) must inherit property "channelCountMode" with the proper type 
 PASS AudioNode interface: new DelayNode(context) must inherit property "channelInterpretation" with the proper type 
 PASS DynamicsCompressorNode interface: existence and properties of interface object 
-FAIL DynamicsCompressorNode interface object length assert_equals: wrong value for DynamicsCompressorNode.length expected 1 but got 0
+PASS DynamicsCompressorNode interface object length 
 PASS DynamicsCompressorNode interface object name 
 PASS DynamicsCompressorNode interface: existence and properties of interface prototype object 
 PASS DynamicsCompressorNode interface: existence and properties of interface prototype object's "constructor" property 
@@ -690,37 +690,37 @@ PASS DynamicsCompressorNode interface: attribute ratio
 PASS DynamicsCompressorNode interface: attribute reduction 
 PASS DynamicsCompressorNode interface: attribute attack 
 PASS DynamicsCompressorNode interface: attribute release 
-FAIL DynamicsCompressorNode must be primary interface of new DynamicsCompressorNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL Stringification of new DynamicsCompressorNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "threshold" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "knee" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "ratio" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "reduction" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "attack" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "release" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: calling connect(AudioParam, optional unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: calling disconnect(unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(AudioNode)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(AudioParam)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioParam) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioParam, unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "context" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "numberOfInputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "numberOfOutputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "channelCount" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
-FAIL AudioNode interface: new DynamicsCompressorNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')"
+PASS DynamicsCompressorNode must be primary interface of new DynamicsCompressorNode(context) 
+PASS Stringification of new DynamicsCompressorNode(context) 
+PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "threshold" with the proper type 
+PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "knee" with the proper type 
+PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "ratio" with the proper type 
+FAIL DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "reduction" with the proper type assert_equals: expected "number" but got "object"
+PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "attack" with the proper type 
+PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "release" with the proper type 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioParam, optional unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect()" with the proper type 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(AudioNode)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(AudioParam)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam, unsigned long) on new DynamicsCompressorNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "context" with the proper type 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "numberOfInputs" with the proper type 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "numberOfOutputs" with the proper type 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "channelCount" with the proper type 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "channelCountMode" with the proper type 
+PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "channelInterpretation" with the proper type 
 PASS GainNode interface: existence and properties of interface object 
 PASS GainNode interface object length 
 PASS GainNode interface object name 

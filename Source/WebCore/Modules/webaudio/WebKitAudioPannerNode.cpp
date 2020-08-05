@@ -55,17 +55,13 @@ WebKitAudioPannerNode::WebKitAudioPannerNode(WebKitAudioContext& context, float 
     , m_connectionCount(0)
 {
     setNodeType(NodeTypePanner);
+    initializeDefaultNodeOptions(2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers);
 
     // Load the HRTF database asynchronously so we don't block the Javascript thread while creating the HRTF database.
     m_hrtfDatabaseLoader = HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(context.sampleRate());
 
     addInput(makeUnique<AudioNodeInput>(this));
     addOutput(makeUnique<AudioNodeOutput>(this, 2));
-
-    // Node-specific default mixing rules.
-    m_channelCount = 2;
-    m_channelCountMode = ChannelCountMode::ClampedMax;
-    m_channelInterpretation = ChannelInterpretation::Speakers;
 
     m_distanceGain = AudioParam::create(context, "distanceGain", 1.0, 0.0, 1.0);
     m_coneGain = AudioParam::create(context, "coneGain", 1.0, 0.0, 1.0);

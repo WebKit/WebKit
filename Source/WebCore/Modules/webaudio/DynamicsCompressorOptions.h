@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011, Google Inc. All rights reserved.
  * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,18 +22,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
-] interface DynamicsCompressorNode : AudioNode {
-    [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional DynamicsCompressorOptions options);
+#pragma once
 
-    readonly attribute AudioParam threshold; // in Decibels
-    readonly attribute AudioParam knee; // in Decibels
-    readonly attribute AudioParam ratio; // unit-less
-    readonly attribute AudioParam attack; // in Seconds
-    readonly attribute AudioParam release; // in Seconds
+#if ENABLE(WEB_AUDIO)
 
-    // FIXME: The following attribute should use float type.
-    readonly attribute AudioParam reduction; // in Decibels
+#include "AudioNodeOptions.h"
+
+namespace WebCore {
+
+struct DynamicsCompressorOptions : AudioNodeOptions {
+    float attack { 0.003 };
+    float knee { 30 };
+    float ratio { 12 };
+    float release { 0.25 };
+    float threshold { -24 };
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_AUDIO)

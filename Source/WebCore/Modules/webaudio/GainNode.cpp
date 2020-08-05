@@ -46,15 +46,7 @@ ExceptionOr<Ref<GainNode>> GainNode::create(BaseAudioContext& context, const Gai
 
     auto gainNode = adoptRef(*new GainNode(context));
 
-    auto result = gainNode->setChannelCount(options.channelCount.valueOr(2));
-    if (result.hasException())
-        return result.releaseException();
-
-    result = gainNode->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::Max));
-    if (result.hasException())
-        return result.releaseException();
-
-    result = gainNode->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
+    auto result = gainNode->handleAudioNodeOptions(options, { 2, ChannelCountMode::Max, ChannelInterpretation::Speakers });
     if (result.hasException())
         return result.releaseException();
 

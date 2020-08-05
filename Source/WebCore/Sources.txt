@@ -2825,6 +2825,7 @@ JSDocumentType.cpp
 JSDoubleRange.cpp
 JSDragEvent.cpp
 JSDynamicsCompressorNode.cpp
+JSDynamicsCompressorOptions.cpp
 JSEXTBlendMinMax.cpp
 JSEXTColorBufferFloat.cpp
 JSEXTColorBufferHalfFloat.cpp

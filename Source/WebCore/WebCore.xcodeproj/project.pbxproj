@@ -2486,6 +2486,7 @@
 		8379363F1FBBB0B400C8023C /* ServiceWorkerClientData.h in Headers */ = {isa = PBXBuildFile; fileRef = 8379363E1FBBB0A500C8023C /* ServiceWorkerClientData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		837964CF1F8DB69D00218EA0 /* GeolocationPositionDataIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 837964CE1F8DB69A00218EA0 /* GeolocationPositionDataIOS.mm */; };
 		837A80131E1E127300026B9F /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 837A80111E1E127300026B9F /* Localizable.stringsdict */; };
+		837C0B7624DB3850005D5959 /* DynamicsCompressorOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 837C0B7324DB3842005D5959 /* DynamicsCompressorOptions.h */; };
 		837D46271FA2A8CE0054E1FA /* ServiceWorkerClientIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 837D46251FA2A8C50054E1FA /* ServiceWorkerClientIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		837FB3451F9EA06D00D0FC31 /* ExtendableMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 837FB3401F9EA06600D0FC31 /* ExtendableMessageEvent.h */; };
 		838867351D13BA5F003697D0 /* RenderObjectEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 838867341D13BA59003697D0 /* RenderObjectEnums.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10551,6 +10552,8 @@
 		837964CE1F8DB69A00218EA0 /* GeolocationPositionDataIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GeolocationPositionDataIOS.mm; path = Modules/geolocation/ios/GeolocationPositionDataIOS.mm; sourceTree = SOURCE_ROOT; };
 		837A80121E1E127300026B9F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = SOURCE_ROOT; };
 		837B7D1F1DC3F54C00D051FC /* ValidationBubbleIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ValidationBubbleIOS.mm; sourceTree = "<group>"; };
+		837C0B7324DB3842005D5959 /* DynamicsCompressorOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamicsCompressorOptions.h; sourceTree = "<group>"; };
+		837C0B7524DB3843005D5959 /* DynamicsCompressorOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DynamicsCompressorOptions.idl; sourceTree = "<group>"; };
 		837D46251FA2A8C50054E1FA /* ServiceWorkerClientIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerClientIdentifier.h; sourceTree = "<group>"; };
 		837DFB341EBFEA7000601385 /* ElementCSSInlineStyle.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ElementCSSInlineStyle.idl; sourceTree = "<group>"; };
 		837FB3401F9EA06600D0FC31 /* ExtendableMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendableMessageEvent.h; sourceTree = "<group>"; };
@@ -29607,6 +29610,8 @@
 				FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */,
 				FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */,
 				FD6ED2C9136B8E9D003CF072 /* DynamicsCompressorNode.idl */,
+				837C0B7324DB3842005D5959 /* DynamicsCompressorOptions.h */,
+				837C0B7524DB3843005D5959 /* DynamicsCompressorOptions.idl */,
 				FD315FC212B0267500C1A359 /* GainNode.cpp */,
 				FD315FC312B0267500C1A359 /* GainNode.h */,
 				FD315FC412B0267500C1A359 /* GainNode.idl */,
@@ -30851,6 +30856,7 @@
 				FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */,
 				FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */,
 				FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */,
+				837C0B7624DB3850005D5959 /* DynamicsCompressorOptions.h in Headers */,
 				2D2E34AC21A4E192004598B5 /* EditableImageReference.h in Headers */,
 				93309DE2099E64920056E581 /* EditAction.h in Headers */,
 				93309DE4099E64920056E581 /* EditCommand.h in Headers */,
