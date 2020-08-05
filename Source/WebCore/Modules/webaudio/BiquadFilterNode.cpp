@@ -82,15 +82,15 @@ void BiquadFilterNode::setType(BiquadFilterType type)
     biquadProcessor()->setType(type);
 }
 
-void BiquadFilterNode::getFrequencyResponse(const RefPtr<Float32Array>& frequencyHz, const RefPtr<Float32Array>& magResponse, const RefPtr<Float32Array>& phaseResponse)
+ExceptionOr<void> BiquadFilterNode::getFrequencyResponse(const Ref<Float32Array>& frequencyHz, const Ref<Float32Array>& magResponse, const Ref<Float32Array>& phaseResponse)
 {
-    if (!frequencyHz || !magResponse || !phaseResponse)
-        return;
-    
-    int n = std::min(frequencyHz->length(), std::min(magResponse->length(), phaseResponse->length()));
+    auto length = frequencyHz->length();
+    if (magResponse->length() != length || phaseResponse->length() != length)
+        return Exception { InvalidStateError, "The arrays passed as arguments must have the same length" };
 
-    if (n)
-        biquadProcessor()->getFrequencyResponse(n, frequencyHz->data(), magResponse->data(), phaseResponse->data());
+    if (length)
+        biquadProcessor()->getFrequencyResponse(length, frequencyHz->data(), magResponse->data(), phaseResponse->data());
+    return { };
 }
 
 } // namespace WebCore

@@ -1,5 +1,16 @@
 2020-08-05  Chris Dumez  <cdumez@apple.com>
 
+        Align BiquadFilterNode.getFrequencyResponse() with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=215148
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests now that all checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-basic-expected.txt:
+
+2020-08-05  Chris Dumez  <cdumez@apple.com>
+
         Add constructor to BiquadFilterNode
         https://bugs.webkit.org/show_bug.cgi?id=215144
 

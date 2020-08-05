@@ -22,11 +22,11 @@ PASS > [exceptions-createBiquadFilter]
 PASS   createBiquadFilter() did not throw an exception. 
 PASS < [exceptions-createBiquadFilter] All assertions passed. (total 1 assertions) 
 PASS > [exceptions-getFrequencyData]  
-FAIL X getFrequencyResponse(null, new Float32Array(1), new Float32Array(1)) did not throw an exception. assert_true: expected true got false
-FAIL X getFrequencyResponse(new Float32Array(1), null, new Float32Array(1)) did not throw an exception. assert_true: expected true got false
-FAIL X getFrequencyResponse(new Float32Array(1), new Float32Array(1), null) did not throw an exception. assert_true: expected true got false
-FAIL X getFrequencyResponse(new Float32Array(10), new Float32Array(1), new Float32Array(20)) did not throw an exception. assert_true: expected true got false
-FAIL X getFrequencyResponse(new Float32Array(10), new Float32Array(20), new Float32Array(1)) did not throw an exception. assert_true: expected true got false
-FAIL < [exceptions-getFrequencyData] 5 out of 5 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 5 tasks were failed. assert_true: expected true got false
+PASS   getFrequencyResponse(null, new Float32Array(1), new Float32Array(1)) threw TypeError: "Argument 1 ('frequencyHz') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array". 
+PASS   getFrequencyResponse(new Float32Array(1), null, new Float32Array(1)) threw TypeError: "Argument 2 ('magResponse') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array". 
+PASS   getFrequencyResponse(new Float32Array(1), new Float32Array(1), null) threw TypeError: "Argument 3 ('phaseResponse') to BiquadFilterNode.getFrequencyResponse must be an instance of Float32Array". 
+PASS   getFrequencyResponse(new Float32Array(10), new Float32Array(1), new Float32Array(20)) threw InvalidStateError: "The arrays passed as arguments must have the same length". 
+PASS   getFrequencyResponse(new Float32Array(10), new Float32Array(20), new Float32Array(1)) threw InvalidStateError: "The arrays passed as arguments must have the same length". 
+PASS < [exceptions-getFrequencyData] All assertions passed. (total 5 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

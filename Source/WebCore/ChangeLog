@@ -1,5 +1,25 @@
 2020-08-05  Chris Dumez  <cdumez@apple.com>
 
+        Align BiquadFilterNode.getFrequencyResponse() with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=215148
+
+        Reviewed by Eric Carlson.
+
+        Align BiquadFilterNode.getFrequencyResponse() with the specification:
+        - https://webaudio.github.io/web-audio-api/#dom-biquadfilternode-getfrequencyresponse
+
+        In particular, the 3 argument arrays should not be nullable and we should throw
+        if they have different lengths.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::getFrequencyResponse):
+        * Modules/webaudio/BiquadFilterNode.h:
+        * Modules/webaudio/BiquadFilterNode.idl:
+
+2020-08-05  Chris Dumez  <cdumez@apple.com>
+
         Add constructor to BiquadFilterNode
         https://bugs.webkit.org/show_bug.cgi?id=215144
 
