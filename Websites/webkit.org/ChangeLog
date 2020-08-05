@@ -1,3 +1,13 @@
+2020-08-05  Jon Davis  <jond@apple.com>
+
+        Enhance feature status page origin for flexible test environments
+        https://bugs.webkit.org/show_bug.cgi?id=215178
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/css-status.php:
+        * wp-content/themes/webkit/status.php:
+
 2020-04-23  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, check in some more files for a blog post.
