@@ -973,7 +973,6 @@
             "com.apple.cfprefsd.daemon"
             "com.apple.containermanagerd"
             "com.apple.tccd"
-            "com.apple.lsd.mapdb"
             "com.apple.BluetoothServices"
 
             ;;; FIXME(207716): The following should be removed when the GPU process is complete

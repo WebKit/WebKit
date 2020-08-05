@@ -960,7 +960,6 @@
             "com.apple.containermanagerd"
             "com.apple.diagnosticd"
             "com.apple.iphone.axserver-systemwide"
-            "com.apple.lsd.mapdb"
             "com.apple.mobileassetd.v2"
             "com.apple.mobilegestalt.xpc"
             "com.apple.nehelper"

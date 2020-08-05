@@ -423,10 +423,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #if PLATFORM(COCOA)
     parameters.systemHasBattery = systemHasBattery();
     parameters.systemHasAC = cachedSystemHasAC().valueOr(true);
-
-    SandboxExtension::Handle mapDBHandle;
-    if (SandboxExtension::createHandleForMachLookup("com.apple.lsd.mapdb"_s, WTF::nullopt, mapDBHandle, SandboxExtension::Flags::NoReport))
-        parameters.mapDBExtensionHandle = WTFMove(mapDBHandle);
 #endif
 
     if (requiresContainerManagerAccess()) {

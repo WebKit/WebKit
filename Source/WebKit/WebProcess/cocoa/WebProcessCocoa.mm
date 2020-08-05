@@ -237,24 +237,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         }
     }
 
-#if HAVE(LSDATABASECONTEXT)
-    // FIXME: Remove this entire section when the selector observeDatabaseChange4WebKit is present
-    auto context = [NSClassFromString(@"LSDatabaseContext") sharedDatabaseContext];
-    if (![context respondsToSelector:@selector(observeDatabaseChange4WebKit:)]) {
-        // Map Launch Services database. This should be done as early as possible, as the mapping will fail
-        // if 'com.apple.lsd.mapdb' is being accessed before this.
-        if (parameters.mapDBExtensionHandle) {
-            auto extension = SandboxExtension::create(WTFMove(*parameters.mapDBExtensionHandle));
-            bool ok = extension->consume();
-            ASSERT_UNUSED(ok, ok);
-            // Perform API calls which will communicate with the database mapping service, and map the database.
-            auto uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0));
-            ok = extension->revoke();
-            ASSERT_UNUSED(ok, ok);
-            ASSERT(String(uti.get()) == String(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, CFSTR("text/html"), 0)).get()));
-        }
-    }
-#endif
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
     WebCore::initializeLogChannelsIfNecessary(parameters.webCoreLoggingChannels);
     WebKit::initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
