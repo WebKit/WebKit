@@ -1,3 +1,20 @@
+2020-08-05  Keith Miller  <keith_miller@apple.com>
+
+        Add assertions / inline capacity to checkpoint side state stacks
+        https://bugs.webkit.org/show_bug.cgi?id=215175
+
+        Reviewed by Saam Barati.
+
+        The inline capacity should hopefully avoid unneeded mallocs close to 100% of the time during our OSR exit ramp.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * runtime/VM.cpp:
+        (JSC::VM::pushCheckpointOSRSideState):
+        * runtime/VM.h:
+
 2020-08-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use LazyNeverDestroyed & std::call_once for complex singletons

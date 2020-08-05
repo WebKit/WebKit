@@ -1094,6 +1094,18 @@ void VM::pushCheckpointOSRSideState(std::unique_ptr<CheckpointOSRExitSideState>&
         ASSERT(sideState->associatedCallFrame != payload->associatedCallFrame);
 #endif
     m_checkpointSideState.append(WTFMove(payload));
+
+#if ASSERT_ENABLED
+    auto bounds = StackBounds::currentThreadStackBounds();
+    void* previousCallFrame = bounds.end();
+    for (size_t i = m_checkpointSideState.size(); i--;) {
+        auto* callFrame = m_checkpointSideState[i]->associatedCallFrame;
+        if (!bounds.contains(callFrame))
+            break;
+        ASSERT(previousCallFrame < callFrame);
+        previousCallFrame = callFrame;
+    }
+#endif
 }
 
 std::unique_ptr<CheckpointOSRExitSideState> VM::popCheckpointOSRSideState(CallFrame* expectedCallFrame)

@@ -593,7 +593,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         VM* vmPtr = &vm;
         auto* tmpScratch = scratch + operands.tmpIndex(0);
         jit.probe([=, values = WTFMove(values)] (Probe::Context& context) {
-            Vector<std::unique_ptr<CheckpointOSRExitSideState>> sideStates;
+            Vector<std::unique_ptr<CheckpointOSRExitSideState>, VM::expectedMaxActiveSideStateCount> sideStates;
             sideStates.reserveInitialCapacity(exit.m_codeOrigin.inlineDepth());
             auto sideStateCommitter = makeScopeExit([&] {
                 for (size_t i = sideStates.size(); i--;)

@@ -483,7 +483,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         JSValue* tmpScratch = reinterpret_cast<JSValue*>(scratch + exit.m_descriptor->m_values.tmpIndex(0));
         VM* vmPtr = &vm;
         jit.probe([=] (Probe::Context& context) {
-            Vector<std::unique_ptr<CheckpointOSRExitSideState>> sideStates;
+            Vector<std::unique_ptr<CheckpointOSRExitSideState>, VM::expectedMaxActiveSideStateCount> sideStates;
             sideStates.reserveInitialCapacity(exit.m_codeOrigin.inlineDepth());
             auto sideStateCommitter = makeScopeExit([&] {
                 for (size_t i = sideStates.size(); i--;)
