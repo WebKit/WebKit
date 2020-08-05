@@ -1,3 +1,21 @@
+2020-08-05  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS emails about build failure should include relevant error logs
+        https://bugs.webkit.org/show_bug.cgi?id=215174
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.start):
+        (AnalyzeCompileWebKitResults):
+        (AnalyzeCompileWebKitResults.getResults): Method to read the logs from previous build step.
+        (AnalyzeCompileWebKitResults.analyzeResults): Made a separate method called using deferred after reading the logs from previous steps.
+        (AnalyzeCompileWebKitResults.getBuildStepByName): Method to get step object from step name.
+        (AnalyzeCompileWebKitResults.filter_logs_containing_error): Filter the logs to include in email.
+        (AnalyzeCompileWebKitResults.send_email_for_preexisting_build_failure): Renamed from send_email_for_build_failure. Added 
+        relevant error logs in email.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2020-08-05  Sihui Liu  <sihui_liu@appe.com>
 
         TextManipulationController should observe newly inserted or displayed text

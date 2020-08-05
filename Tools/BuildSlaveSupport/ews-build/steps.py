@@ -1370,6 +1370,15 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
     descriptionDone = ['analyze-compile-webkit-results']
 
     def start(self):
+        self.error_logs = {}
+        self.compile_webkit_step = CompileWebKit.name
+        if self.getProperty('group') == 'jsc':
+            self.compile_webkit_step = CompileJSC.name
+        d = self.getResults(self.compile_webkit_step)
+        d.addCallback(lambda res: self.analyzeResults())
+        return defer.succeed(None)
+
+    def analyzeResults(self):
         compile_without_patch_step = CompileWebKitWithoutPatch.name
         if self.getProperty('group') == 'jsc':
             compile_without_patch_step = CompileJSCWithoutPatch.name
@@ -1379,7 +1388,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
             self.finished(FAILURE)
             message = 'Unable to build WebKit without patch, retrying build'
             self.descriptionDone = message
-            self.send_email_for_build_failure()
+            self.send_email_for_preexisting_build_failure()
             self.build.buildFinished([message], RETRY)
             return defer.succeed(None)
 
@@ -1395,21 +1404,55 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
         else:
             self.build.buildFinished([message], FAILURE)
 
-        return defer.succeed(None)
+    @defer.inlineCallbacks
+    def getResults(self, name):
+        step = self.getBuildStepByName(name)
+        if not step:
+            defer.returnValue(None)
+
+        logs = yield self.master.db.logs.getLogs(step.stepid)
+        log = next((log for log in logs if log['name'] == u'errors'), None)
+        if not log:
+            defer.returnValue(None)
+
+        lastline = int(max(0, log['num_lines'] - 1))
+        logLines = yield self.master.db.logs.getLogLines(log['id'], 0, lastline)
+        if log['type'] == 's':
+            logLines = '\n'.join([line[1:] for line in logLines.splitlines()])
+
+        self.error_logs[name] = logLines
 
     def getStepResult(self, step_name):
         for step in self.build.executedSteps:
             if step.name == step_name:
                 return step.results
 
-    def send_email_for_build_failure(self):
+    def getBuildStepByName(self, step_name):
+        for step in self.build.executedSteps:
+            if step.name == step_name:
+                return step
+        return None
+
+    def filter_logs_containing_error(self, logs, max_num_lines=10):
+        if not logs:
+            return None
+        filtered_logs = []
+        for line in logs.splitlines():
+            if 'rror:' in line:
+                filtered_logs.append(line)
+        return '\n'.join(filtered_logs[:max_num_lines])
+
+    def send_email_for_preexisting_build_failure(self):
         try:
             builder_name = self.getProperty('buildername', '')
             worker_name = self.getProperty('workername', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            logs = self.filter_logs_containing_error(self.error_logs.get(self.compile_webkit_step))
 
             email_subject = 'Build failure on trunk on {}'.format(builder_name)
             email_text = 'Failed to build WebKit without patch in {}\n\nBuilder: {}\n\nWorker: {}'.format(build_url, builder_name, worker_name)
+            if logs:
+                email_text += '\n\nError lines:\n\n{}'.format(logs)
             send_email_to_bot_watchers(email_subject, email_text)
         except Exception as e:
             print('Error in sending email for build failure: {}'.format(e))

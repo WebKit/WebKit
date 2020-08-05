@@ -1108,6 +1108,24 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.expectOutcome(result=FAILURE, state_string='Unable to build WebKit without patch, retrying build (failure)')
         return self.runStep()
 
+    def test_filter_logs_containing_error(self):
+        logs = 'In file included from WebCore/unified-sources/UnifiedSource263.cpp:4:\nImageBufferIOSurfaceBackend.cpp:108:30: error: definition of implicitly declared destructor'
+        expected_output = 'ImageBufferIOSurfaceBackend.cpp:108:30: error: definition of implicitly declared destructor'
+        output = AnalyzeCompileWebKitResults().filter_logs_containing_error(logs)
+        self.assertEqual(expected_output, output)
+
+    def test_filter_logs_containing_error_with_too_many_errors(self):
+        logs = 'Error:1\nError:2\nerror:3\nerror:4\nerror:5\nrandom-string\nerror:6\nerror:7\nerror8\nerror:9\nerror:10\nerror:11\nerror:12\nerror:13'
+        expected_output = 'Error:1\nError:2\nerror:3\nerror:4\nerror:5\nerror:6\nerror:7\nerror:9\nerror:10\nerror:11'
+        output = AnalyzeCompileWebKitResults().filter_logs_containing_error(logs)
+        self.assertEqual(expected_output, output)
+
+    def test_filter_logs_containing_error_with_no_error(self):
+        logs = 'CompileC /Volumes/Data/worker/macOS-Mojave-Release-Build-EWS'
+        expected_output = ''
+        output = AnalyzeCompileWebKitResults().filter_logs_containing_error(logs)
+        self.assertEqual(expected_output, output)
+
 
 class TestCompileJSC(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
