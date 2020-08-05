@@ -79,7 +79,7 @@ public:
     void uninitialize() override;
 
     // Listener
-    AudioListener* listener();
+    AudioListener& listener();
 
     // Panning model
     PanningModelType panningModel() const { return m_panningModel; }

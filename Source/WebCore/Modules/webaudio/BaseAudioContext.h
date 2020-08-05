@@ -128,7 +128,7 @@ public:
     // Asynchronous audio file data decoding.
     void decodeAudioData(Ref<ArrayBuffer>&&, RefPtr<AudioBufferCallback>&&, RefPtr<AudioBufferCallback>&&);
 
-    AudioListener* listener() { return m_listener.get(); }
+    AudioListener& listener();
 
     void suspendRendering(DOMPromiseDeferred<void>&&);
     void resumeRendering(DOMPromiseDeferred<void>&&);

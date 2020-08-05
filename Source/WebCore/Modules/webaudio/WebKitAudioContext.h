@@ -55,7 +55,7 @@ public:
 
     void close(DOMPromiseDeferred<void>&&);
 
-    WebKitAudioListener* listener() { return static_cast<WebKitAudioListener*>(BaseAudioContext::listener()); }
+    WebKitAudioListener& listener() { return downcast<WebKitAudioListener>(BaseAudioContext::listener()); }
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
 #if ENABLE(VIDEO)

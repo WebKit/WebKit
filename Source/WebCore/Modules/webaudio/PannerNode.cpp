@@ -221,7 +221,7 @@ void PannerNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-AudioListener* PannerNode::listener()
+AudioListener& PannerNode::listener()
 {
     return context().listener();
 }
@@ -332,7 +332,7 @@ void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
     double azimuth = 0.0;
 
     // Calculate the source-listener vector
-    FloatPoint3D listenerPosition = listener()->position();
+    FloatPoint3D listenerPosition = listener().position();
     FloatPoint3D sourceListener = position() - listenerPosition;
 
     if (sourceListener.isZero()) {
@@ -345,8 +345,8 @@ void PannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
     sourceListener.normalize();
 
     // Align axes
-    FloatPoint3D listenerFront = listener()->orientation();
-    FloatPoint3D listenerUp = listener()->upVector();
+    FloatPoint3D listenerFront = listener().orientation();
+    FloatPoint3D listenerUp = listener().upVector();
     FloatPoint3D listenerRight = listenerFront.cross(listenerUp);
     listenerRight.normalize();
 
@@ -396,7 +396,7 @@ float PannerNode::dopplerRate()
 
 float PannerNode::distanceConeGain()
 {
-    FloatPoint3D listenerPosition = listener()->position();
+    FloatPoint3D listenerPosition = listener().position();
     FloatPoint3D sourcePosition = position();
 
     double listenerDistance = sourcePosition.distanceTo(listenerPosition);

@@ -173,7 +173,7 @@ void WebKitAudioPannerNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-WebKitAudioListener* WebKitAudioPannerNode::listener()
+WebKitAudioListener& WebKitAudioPannerNode::listener()
 {
     return context().listener();
 }
@@ -206,7 +206,7 @@ void WebKitAudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outE
     double azimuth = 0.0;
 
     // Calculate the source-listener vector
-    FloatPoint3D listenerPosition = listener()->position();
+    FloatPoint3D listenerPosition = listener().position();
     FloatPoint3D sourceListener = position() - listenerPosition;
 
     if (sourceListener.isZero()) {
@@ -219,8 +219,8 @@ void WebKitAudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outE
     sourceListener.normalize();
 
     // Align axes
-    FloatPoint3D listenerFront = listener()->orientation();
-    FloatPoint3D listenerUp = listener()->upVector();
+    FloatPoint3D listenerFront = listener().orientation();
+    FloatPoint3D listenerUp = listener().upVector();
     FloatPoint3D listenerRight = listenerFront.cross(listenerUp);
     listenerRight.normalize();
 
@@ -268,13 +268,13 @@ float WebKitAudioPannerNode::dopplerRate()
     double dopplerShift = 1.0;
 
     // FIXME: optimize for case when neither source nor listener has changed...
-    double dopplerFactor = listener()->dopplerFactor();
+    double dopplerFactor = listener().dopplerFactor();
 
     if (dopplerFactor > 0.0) {
-        double speedOfSound = listener()->speedOfSound();
+        double speedOfSound = listener().speedOfSound();
 
-        const FloatPoint3D &sourceVelocity = m_velocity;
-        const FloatPoint3D &listenerVelocity = listener()->velocity();
+        const FloatPoint3D& sourceVelocity = m_velocity;
+        const FloatPoint3D& listenerVelocity = listener().velocity();
 
         // Don't bother if both source and listener have no velocity
         bool sourceHasVelocity = !sourceVelocity.isZero();
@@ -282,7 +282,7 @@ float WebKitAudioPannerNode::dopplerRate()
 
         if (sourceHasVelocity || listenerHasVelocity) {
             // Calculate the source to listener vector
-            FloatPoint3D listenerPosition = listener()->position();
+            FloatPoint3D listenerPosition = listener().position();
             FloatPoint3D sourceToListener = position() - listenerPosition;
 
             double sourceListenerMagnitude = sourceToListener.length();
@@ -313,7 +313,7 @@ float WebKitAudioPannerNode::dopplerRate()
 
 float WebKitAudioPannerNode::distanceConeGain()
 {
-    FloatPoint3D listenerPosition = listener()->position();
+    FloatPoint3D listenerPosition = listener().position();
     FloatPoint3D sourcePosition = position();
 
     double listenerDistance = sourcePosition.distanceTo(listenerPosition);

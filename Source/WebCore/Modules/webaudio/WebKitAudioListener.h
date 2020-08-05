@@ -58,9 +58,15 @@ private:
         , m_velocity(0, 0, 0)
     { }
 
+    bool isWebKitAudioListener() const final { return true; }
+
     FloatPoint3D m_velocity;
     double m_dopplerFactor { 1.0 };
     double m_speedOfSound { 343.3 };
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebKitAudioListener)
+    static bool isType(const WebCore::AudioListener& listener) { return listener.isWebKitAudioListener(); }
+SPECIALIZE_TYPE_TRAITS_END()

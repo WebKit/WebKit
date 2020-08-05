@@ -46,7 +46,7 @@ public:
     {
         return adoptRef(*new AudioListener(context));
     }
-    ~AudioListener();
+    virtual ~AudioListener();
 
     AudioParam& positionX() { return m_positionX.get(); }
     AudioParam& positionY() { return m_positionY.get(); }
@@ -67,6 +67,8 @@ public:
     FloatPoint3D orientation() const;
 
     FloatPoint3D upVector() const;
+
+    virtual bool isWebKitAudioListener() const { return false; }
 
 protected:
     explicit AudioListener(BaseAudioContext&);

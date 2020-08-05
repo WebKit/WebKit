@@ -71,7 +71,7 @@ public:
     void uninitialize() override;
 
     // Listener
-    WebKitAudioListener* listener();
+    WebKitAudioListener& listener();
 
     // Panning model
     PanningModelType panningModel() const { return m_panningModel; }

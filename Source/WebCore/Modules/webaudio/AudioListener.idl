@@ -29,7 +29,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    ImplementationLacksVTable,
     EnabledBySetting=ModernUnprefixedWebAudio,
 ] interface AudioListener {
     readonly attribute AudioParam positionX;

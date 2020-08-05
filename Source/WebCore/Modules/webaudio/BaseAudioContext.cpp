@@ -159,11 +159,6 @@ BaseAudioContext::BaseAudioContext(Document& document, AudioBuffer* renderTarget
 void BaseAudioContext::constructCommon()
 {
     FFTFrame::initialize();
-    
-    if (isWebKitAudioContext())
-        m_listener = WebKitAudioListener::create(*this);
-    else
-        m_listener = AudioListener::create(*this);
 
     ASSERT(document());
     if (document()->audioPlaybackRequiresUserGesture())
@@ -409,6 +404,17 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
     if (!m_audioDecoder)
         m_audioDecoder = makeUnique<AsyncAudioDecoder>();
     m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate(), WTFMove(successCallback), WTFMove(errorCallback));
+}
+
+AudioListener& WebCore::BaseAudioContext::listener()
+{
+    if (!m_listener) {
+        if (isWebKitAudioContext())
+            m_listener = WebKitAudioListener::create(*this);
+        else
+            m_listener = AudioListener::create(*this);
+    }
+    return *m_listener;
 }
 
 ExceptionOr<Ref<AudioBufferSourceNode>> BaseAudioContext::createBufferSource()

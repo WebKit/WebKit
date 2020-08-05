@@ -28,7 +28,6 @@
 
 [
     Conditional=WEB_AUDIO,
-    ImplementationLacksVTable,
     EnabledBySetting=PrefixedWebAudio,
     NoInterfaceObject,
 ] interface WebKitAudioListener {
