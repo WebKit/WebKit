@@ -431,7 +431,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         if (id attachmentView = [self attachmentView])
             return [attachmentView accessibilityElementCount];
     }
-    
+
     return self.axBackingObject->children().size();
 }
 
@@ -493,6 +493,14 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return NULL;
     
     return [self convertPathToScreenSpace:path];
+}
+
+- (NSString *)_accessibilityWebRoleAsString
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    return accessibilityRoleToString(self.axBackingObject->roleValue());
 }
 
 - (BOOL)accessibilityHasPopup
@@ -777,7 +785,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 {
     if (![self _prepareAccessibilityCall])
         return 0;
-    
+
     AccessibilityRole role = self.axBackingObject->roleValue();
     uint64_t traits = [self _axWebContentTrait];
     switch (role) {
