@@ -1,5 +1,20 @@
 2020-08-05  Per Arne Vollan  <pvollan@apple.com>
 
+        [Cocoa] Sandbox extension token not cleared from memory
+        https://bugs.webkit.org/show_bug.cgi?id=215136
+
+        Reviewed by Geoffrey Garen.
+
+        As a security mitigation, an invalidated sandbox extension should have its token cleared from memory.
+
+        No new tests, covered by existing tests.
+
+        * Shared/Cocoa/SandboxExtensionCocoa.mm:
+        (WebKit::SandboxExtensionImpl::m_length):
+        (WebKit::SandboxExtensionImpl::~SandboxExtensionImpl):
+
+2020-08-05  Per Arne Vollan  <pvollan@apple.com>
+
         [Cocoa] Remove obsolete sandbox extension after r264178
         https://bugs.webkit.org/show_bug.cgi?id=215154
 
