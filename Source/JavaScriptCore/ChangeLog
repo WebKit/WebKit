@@ -1,5 +1,25 @@
 2020-08-05  Keith Miller  <keith_miller@apple.com>
 
+        The various AllowList options should be able to take the function name inline
+        https://bugs.webkit.org/show_bug.cgi?id=215184
+
+        Reviewed by Saam Barati.
+
+        Right now when I use the various AllowList JSC options I almost
+        always only care about a single function. Right now you need to
+        create a file with that single name in it. That is inconvenient, so
+        this patch changes the behavior to treat the string as the
+        function name if no file at that path exists. I'm also
+        speculatively assuming fopen doesn't return ENOENT when it fails
+        due to sandboxing... I didn't feel like testing it because this is
+        a debug option.
+
+        * runtime/OptionsList.h:
+        * tools/FunctionAllowlist.cpp:
+        (JSC::FunctionAllowlist::FunctionAllowlist):
+
+2020-08-05  Keith Miller  <keith_miller@apple.com>
+
         Add assertions / inline capacity to checkpoint side state stacks
         https://bugs.webkit.org/show_bug.cgi?id=215175
 

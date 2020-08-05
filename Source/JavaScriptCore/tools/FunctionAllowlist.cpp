@@ -41,7 +41,11 @@ FunctionAllowlist::FunctionAllowlist(const char* filename)
 
     FILE* f = fopen(filename, "r");
     if (!f) {
-        dataLogF("Failed to open file %s. Did you add the file-read-data entitlement to WebProcess.sb?\n", filename); 
+        if (errno == ENOENT) {
+            m_hasActiveAllowlist = true;
+            m_entries.add(filename);
+        } else
+            dataLogF("Failed to open file %s. Did you add the file-read-data entitlement to WebProcess.sb? Error code: %s\n", filename, strerror(errno));
         return;
     }
 
