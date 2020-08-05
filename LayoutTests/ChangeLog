@@ -1,3 +1,17 @@
+2020-08-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Re-sync web-platform-tests (2 dirs + 2 files)
+        https://bugs.webkit.org/show_bug.cgi?id=215173
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Remove a duplicate test added in r259800 that was manually exported [1] and synced.
+
+        [1]: https://github.com/web-platform-tests/wpt/pull/23101
+
+        * js/getOwnPropertyDescriptor-host-object-proxy-expected.txt: Removed.
+        * js/getOwnPropertyDescriptor-host-object-proxy.html: Removed.
+
 2020-08-04  Simon Fraser  <simon.fraser@apple.com>
 
         Update event regions only once per frame

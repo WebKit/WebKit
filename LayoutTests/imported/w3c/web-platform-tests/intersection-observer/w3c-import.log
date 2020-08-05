@@ -30,12 +30,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/initial-observation-with-threshold.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/inline-client-rect.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/inline-with-block-child-client-rect.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/intersection-ratio-ib-split.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/isIntersecting-change-events.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/isIntersecting-threshold.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/multiple-targets.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/multiple-thresholds.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/nested-cross-origin-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-attributes.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-callback-arguments.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-in-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/observer-without-js-reference.html
@@ -49,6 +51,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/same-document-zero-size-target.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/same-origin-grand-child-iframe.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/shadow-content.html
+/LayoutTests/imported/w3c/web-platform-tests/intersection-observer/target-in-detached-document.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/target-in-different-window.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/text-target.html
 /LayoutTests/imported/w3c/web-platform-tests/intersection-observer/timestamp.html

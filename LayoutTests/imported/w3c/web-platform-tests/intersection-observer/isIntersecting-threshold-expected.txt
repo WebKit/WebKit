@@ -1,5 +1,5 @@
 
 PASS At initial scroll position 
-FAIL Scrolled to half way through target element assert_equals: expected true but got false
+PASS Scrolled to half way through target element 
 PASS Scrolled to target element completely off screen 
 

@@ -1,3 +1,18 @@
+2020-08-05  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Re-sync web-platform-tests (2 dirs + 2 files)
+        https://bugs.webkit.org/show_bug.cgi?id=215173
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        web-platform-tests revision: 993c1bc4c880
+
+        * web-platform-tests/css/cssom/*: Updated.
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+        * web-platform-tests/dom/idlharness.window.js:
+        * web-platform-tests/intersection-observer/*: Updated.
+        * web-platform-tests/performance-timeline/po-observe.any.*: Added.
+
 2020-08-05  Chris Dumez  <cdumez@apple.com>
 
         Align BiquadFilterNode.getFrequencyResponse() with the specification

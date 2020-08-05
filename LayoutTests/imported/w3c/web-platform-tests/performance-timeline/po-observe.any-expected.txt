@@ -1,0 +1,8 @@
+
+PASS entryTypes must be a sequence or throw a TypeError 
+PASS Empty sequence entryTypes does not throw an exception. 
+PASS Unknown entryTypes do not throw an exception. 
+PASS Filter unsupported entryType entryType names within the entryTypes sequence 
+FAIL Check observer callback parameter and this values assert_equals: observer is the this value expected object "[object Window]" but got object "[object PerformanceObserver]"
+PASS replace observer if already present 
+

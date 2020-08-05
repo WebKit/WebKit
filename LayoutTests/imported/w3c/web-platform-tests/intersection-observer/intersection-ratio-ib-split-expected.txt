@@ -1,0 +1,3 @@
+
+PASS IntersectionObserver on an IB split gets the right intersection ratio 
+
