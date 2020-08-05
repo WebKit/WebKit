@@ -1,3 +1,12 @@
+2020-08-05  Beth Dakin  <bdakin@apple.com>
+
+        Make report-non-inclusive-language ignore files within .svn and .git
+        https://bugs.webkit.org/show_bug.cgi?id=215156
+
+        Reviewed by Darin Adler.
+
+        * Scripts/report-non-inclusive-language:
+
 2020-08-05  Aakash Jain  <aakash_jain@apple.com>
 
         EWS emails about build failure should include relevant error logs

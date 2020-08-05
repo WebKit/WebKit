@@ -33,7 +33,8 @@ import argparse, os, re
 #   Clever default for use on WebKit source tree instead of current directory by default.
 #   Report third party sources separately from WebKit project files.
 #   Skip known examples on an exception list that we don't intend to fix.
-#   Replace special cases for ChangeLog, ".order", and ".xcuserstate" files with something smarter.
+#   Replace special cases for ChangeLog, ".order", ".xcuserstate", ".git", ".svn"
+#   files with something smarter.
 
 # Hard-coded for now, could read these out of a file instead.
 # Term, then the regular expression for that term.
@@ -55,6 +56,10 @@ for term in nonInclusiveTerms:
 root = os.getcwd()
 for subroot, directories, files in os.walk(root):
     prefix = subroot[len(root) + 1:]
+    if ".svn" in prefix:
+        continue
+    if ".git" in prefix:
+        continue
     for file in files:
         if file.startswith("ChangeLog"):
             continue
