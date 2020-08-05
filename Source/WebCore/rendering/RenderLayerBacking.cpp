@@ -1708,6 +1708,7 @@ bool RenderLayerBacking::maintainsEventRegion() const
         return true;
 #endif
 #if ENABLE(EDITABLE_REGION)
+    LOG_WITH_STREAM(EventRegions, stream << "RenderLayerBacking: " << this << " maintainsEventRegion - mayHaveEditableElements: " << renderer().document().mayHaveEditableElements() << " shouldBuildEditableRegion: " << renderer().page().shouldBuildEditableRegion());
     if (renderer().document().mayHaveEditableElements() && renderer().page().shouldBuildEditableRegion())
         return true;
 #endif
@@ -1727,10 +1728,13 @@ bool RenderLayerBacking::maintainsEventRegion() const
 
 void RenderLayerBacking::updateEventRegion()
 {
+    LOG_WITH_STREAM(EventRegions, stream << m_owningLayer << " " << this << " updateEventRegion (needs update: " << needsEventRegionUpdate() << ", maintainsEventRegion: " << maintainsEventRegion() << ")");
+
     if (!maintainsEventRegion())
         return;
 
-    LOG_WITH_STREAM(EventRegions, stream << "RenderLayerBacking " << *this << " updateEventRegion");
+    if (!needsEventRegionUpdate())
+        return;
 
     TraceScope scope(ComputeEventRegionsStart, ComputeEventRegionsEnd);
 
@@ -1778,6 +1782,8 @@ void RenderLayerBacking::updateEventRegion()
         updateEventRegionForLayer(*m_foregroundLayer);
 
     renderer().view().setNeedsEventRegionUpdateForNonCompositedFrame(false);
+    
+    setNeedsEventRegionUpdate(false);
 }
 #endif
 

@@ -899,6 +899,13 @@ String Frame::layerTreeAsText(LayerTreeFlags flags) const
     if (!contentRenderer())
         return { };
 
+    contentRenderer()->compositor().updateEventRegions();
+
+    for (auto* child = mainFrame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
+        if (auto* renderer = child->contentRenderer())
+            renderer->compositor().updateEventRegions();
+    }
+
     return contentRenderer()->compositor().layerTreeAsText(flags);
 }
 

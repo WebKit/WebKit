@@ -196,6 +196,9 @@ public:
     // This is used to cancel any pending update timers when the document goes into back/forward cache.
     void cancelCompositingLayerUpdate();
 
+    // Update event regions, which only needs to happen once per rendering update.
+    void updateEventRegions();
+
     enum class LayoutUpToDate {
         Yes, No
     };

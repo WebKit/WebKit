@@ -1,3 +1,39 @@
+2020-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Update event regions only once per frame
+        https://bugs.webkit.org/show_bug.cgi?id=215132
+        <rdar://problem/66533779>
+
+        Reviewed by Darin Adler.
+
+        Event regions (for touch-action, editable areas etc) were updated as part of
+        compositing updates, but we only need their output once per rendering update, so
+        move their computation out of RenderLayerCompositor::updateBackingAndHierarchy() 
+        and into a new RenderLayer tree walk that is called from Page::doAfterUpdateRendering().
+
+        RenderLayerBacking stores a dirty bit to track when regions need to be updated.
+
+        Reduces the amount of time spent in rendering updates when scrolling on facebook.com
+        on iPad, which has lots of discontiguous touch-action regions.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateEventRegions):
+        * dom/Document.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::layerTreeAsText const):
+        * page/Page.cpp:
+        (WebCore::Page::doAfterUpdateRendering):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::maintainsEventRegion const):
+        (WebCore::RenderLayerBacking::updateEventRegion):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateEventRegions):
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+        * rendering/RenderLayerCompositor.h:
+
 2020-08-05  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed non-unified build fix.

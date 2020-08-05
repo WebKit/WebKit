@@ -1549,6 +1549,9 @@ void Page::doAfterUpdateRendering()
     if (RefPtr<Document> document = mainFrame().document())
         document->updateTouchEventRegions();
 #endif
+    forEachDocument([] (Document& document) {
+        document.updateEventRegions();
+    });
 
     DebugPageOverlays::doAfterUpdateRendering(*this);
 

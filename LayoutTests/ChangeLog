@@ -1,3 +1,39 @@
+2020-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Update event regions only once per frame
+        https://bugs.webkit.org/show_bug.cgi?id=215132
+        <rdar://problem/66533779>
+
+        Reviewed by Darin Adler.
+
+        Tests that dispatch mouseWheel events in a way that tests event regions need to wait
+        now for a rendering update. `await UIHelper.animationFrame()` is not enough, because
+        the function resumes inside a microtask at the end of the requestAnimationFrame callback,
+        which is before we've completed the rest of the rendering update, and thus before
+        the event regions have been updated.
+        
+        In addition, `await UIHelper.animationFrame()` followed by eventSender calls to issue
+        wheel events actually trigger Page::updateRendering() re-entrancy, via the
+        WKBundlePageForceRepaint() in EventSendingController::mouseScrollByWithWheelAndMomentumPhases().
+
+        To fix this, add and use UIHelper.renderingUpdate(), which waits for a rAF and uses a setTimeout()
+        to get past the end of the current rendering update.
+
+        * fast/scrolling/mac/absolute-in-overflow-scroll-dynamic-expected.html:
+        * fast/scrolling/mac/absolute-in-overflow-scroll-dynamic.html:
+        * fast/scrolling/mac/absolute-in-overflow-scroll.html:
+        * fast/scrolling/mac/async-scroll-overflow-hidden-on-one-axis.html:
+        * fast/scrolling/mac/async-scroll-overflow-rtl-zoomed.html:
+        * fast/scrolling/mac/async-scroll-overflow-top-inset.html:
+        * fast/scrolling/mac/async-scroll-overflow.html:
+        * fast/scrolling/mac/clip-path-hit-test.html:
+        * fast/scrolling/mac/move-node-in-overflow-scroll.html:
+        * fast/scrolling/mac/overflow-scrolled-document.html:
+        * fast/scrolling/mac/overflow-zoomed-document.html:
+        * fast/scrolling/mac/overlapped-overflow-scroll.html:
+        * resources/ui-helper.js:
+        (window.UIHelper.async renderingUpdate):
+
 2020-08-05  Youenn Fablet  <youenn@apple.com>
 
         [ macOS wk2 ] webrtc/datachannel/gather-candidates-networkprocess-crash.html is a flaky timeout
