@@ -1,3 +1,15 @@
+2020-08-05  Caio Lima  <ticaiolima@gmail.com>
+
+        r264813 breaks Make runner on remote devices
+        https://bugs.webkit.org/show_bug.cgi?id=215179
+
+        Reviewed by Saam Barati.
+
+        This patch is setting up the proper `LD_LIBRARY_PATH` value to run JSC
+        stress tests on remote devices.
+
+        * Scripts/run-jsc-stress-tests:
+
 2020-08-05  Brady Eidson  <beidson@apple.com>
 
         Add a createWebArchiveData from a custom scheme API test
