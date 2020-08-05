@@ -1,3 +1,16 @@
+2020-08-05  Youenn Fablet  <youenn@apple.com>
+
+        [ macOS wk2 ] webrtc/datachannel/gather-candidates-networkprocess-crash.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=215088
+        <rdar://problem/66489006>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations:
+        * webrtc/datachannel/gather-candidates-networkprocess-crash.html:
+        Sending IPC to the network process is now happening in a background thread and in case of network process crash
+        we might need to wait a little bit longer since the socket creation/sending is not blocked on getting a proper connection.
+
 2020-08-05  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS ] imported/mozilla/svg/image/image-filter-01.svg is a constant failure

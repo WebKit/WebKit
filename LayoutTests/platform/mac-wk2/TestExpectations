@@ -1090,5 +1090,3 @@ webkit.org/b/214682 [ Release ] imported/w3c/web-platform-tests/css/cssom/styles
 webkit.org/b/214683 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
 
 webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
-
-webkit.org/b/215088 webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Pass Timeout ]
