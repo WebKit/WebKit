@@ -1,3 +1,21 @@
+2020-08-05  Jonathan Bedard  <jbedard@apple.com>
+
+        results.webkit.org: Return worker status to caller
+        https://bugs.webkit.org/show_bug.cgi?id=215086
+        <rdar://problem/66476525>
+
+        Rubber-stamped by Aakash Jain.
+
+        * resultsdbpy/resultsdbpy/model/model.py:
+        (Model.do_work): Return if process has successfully processed results.
+        * resultsdbpy/resultsdbpy/model/model_unittest.py:
+        (ModelTest.test_no_work):
+        * resultsdbpy/resultsdbpy/model/upload_context.py:
+        (UploadContext._do_job_for_key): Return if the job was successful.
+        (UploadContext.do_processing_work): Return true if any processed jobs were successful.
+        * resultsdbpy/resultsdbpy/model/upload_context_unittest.py:
+        (UploadContextTest.test_async_callback):
+
 2020-08-05  Beth Dakin  <bdakin@apple.com>
 
         Make report-non-inclusive-language ignore files within .svn and .git

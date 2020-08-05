@@ -195,17 +195,21 @@ class UploadContext(object):
                     json.dumps(dict(started_processing=0, attempts=attempts)),
                     ex=self.PROCESS_TIMEOUT,
                 )
+        return job_complete
 
     def do_processing_work(self):
         jobs_left = True
+        did_complete = False
 
         while jobs_left:
             jobs_left, key, attempts = self._find_job_with_attempts()
 
             if key:
-                self._do_job_for_key(key, attempts=attempts)
+                did_complete |= self._do_job_for_key(key, attempts=attempts)
             elif jobs_left:
                 time.sleep(10)  # There are jobs, but other workers are processing them.
+
+        return did_complete
 
     def process_test_results(self, configuration, commits, suite, test_results, timestamp=None):
         timestamp = timestamp or time.time()

@@ -43,3 +43,8 @@ class ModelTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         self.assertTrue(self.model.healthy())
         self.assertTrue(self.model.healthy(writable=False))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_no_work(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra, async_processing=True)
+        self.assertFalse(self.model.do_work())

@@ -128,7 +128,9 @@ class Model(object):
             raise RuntimeError('No work to be done, asynchronous processing disabled')
 
         try:
-            self.upload_context.do_processing_work()
+            return self.upload_context.do_processing_work()
         except Exception as e:
             sys.stderr.write(f'{traceback.format_exc()}\n')
             sys.stderr.write(f'{e}\n')
+
+        return False
