@@ -2202,7 +2202,7 @@ extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit_from_inlined_call(Ca
     SlowPathFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    std::unique_ptr<CheckpointOSRExitSideState> sideState = vm.findCheckpointOSRSideState(callFrame);
+    std::unique_ptr<CheckpointOSRExitSideState> sideState = vm.popCheckpointOSRSideState(callFrame);
     BytecodeIndex bytecodeIndex = sideState->bytecodeIndex;
     ASSERT(bytecodeIndex.checkpoint());
 
@@ -2253,7 +2253,7 @@ extern "C" SlowPathReturnType slow_path_checkpoint_osr_exit(CallFrame* callFrame
 
     JSGlobalObject* globalObject = codeBlock->globalObject();
 
-    std::unique_ptr<CheckpointOSRExitSideState> sideState = vm.findCheckpointOSRSideState(callFrame);
+    std::unique_ptr<CheckpointOSRExitSideState> sideState = vm.popCheckpointOSRSideState(callFrame);
     BytecodeIndex bytecodeIndex = sideState->bytecodeIndex;
     ASSERT(bytecodeIndex.checkpoint());
 

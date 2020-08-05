@@ -1,3 +1,15 @@
+2020-08-04  Keith Miller  <keith_miller@apple.com>
+
+        CheckpointSideState shoud play nicely with StackOverflowException unwinding.
+        https://bugs.webkit.org/show_bug.cgi?id=215114
+
+        Reviewed by Saam Barati.
+
+        Add a helper so we can have soft stack bounds.
+
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::withSoftOrigin const):
+
 2020-08-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [MSVC] wtf/Optional.h: error C2280: 'WTF::constexpr_storage_t<T> &WTF::constexpr_storage_t<T>::operator =(const WTF::constexpr_storage_t<T> &)': attempting to reference a deleted function

@@ -1,3 +1,67 @@
+2020-08-04  Keith Miller  <keith_miller@apple.com>
+
+        CheckpointSideState shoud play nicely with StackOverflowException unwinding.
+        https://bugs.webkit.org/show_bug.cgi?id=215114
+
+        Reviewed by Saam Barati.
+
+        This patch fixes an issue where we the StackVisitor would
+        automatically unwind into the first frame before calling into the
+        provided functor. As a note, we do this because the first frame is
+        not fully initialized at the time we check for stack
+        overflow. When this happened we would fail to clear the side state
+        causing a memory leak. To fix this the unwind function now clears
+        every checkpoint up to and including the call frame containing our
+        handler. Some care needs to be taken that we don't clear
+        checkpoint side state for other threads, which could happen if
+        there are no checkpoints on the current thread and an API
+        miggrated us from another thread below the current thread.
+
+        This patch also makes two refacorings. The first is to make the
+        checkpoint side state into a stack, which is how we used it
+        anyway. The second is that CallFrame::dump and everything associated
+        with it is now marked const so we can PointerDump a CallFrame*.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::bytecodeIndex const):
+        (JSC::CallFrame::codeOrigin const):
+        (JSC::CallFrame::dump const):
+        (JSC::CallFrame::bytecodeIndex): Deleted.
+        (JSC::CallFrame::codeOrigin): Deleted.
+        (JSC::CallFrame::dump): Deleted.
+        * interpreter/CallFrame.h:
+        (JSC::CallFrame::argument const):
+        (JSC::CallFrame::uncheckedArgument const):
+        (JSC::CallFrame::getArgumentUnsafe const):
+        (JSC::CallFrame::thisValue const):
+        (JSC::CallFrame::newTarget const):
+        (JSC::CallFrame::argument): Deleted.
+        (JSC::CallFrame::uncheckedArgument): Deleted.
+        (JSC::CallFrame::getArgumentUnsafe): Deleted.
+        (JSC::CallFrame::thisValue): Deleted.
+        (JSC::CallFrame::newTarget): Deleted.
+        * interpreter/CheckpointOSRExitSideState.h:
+        (JSC::CheckpointOSRExitSideState::CheckpointOSRExitSideState):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::operator() const):
+        (JSC::Interpreter::unwind):
+        (): Deleted.
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::slow_path_checkpoint_osr_exit_from_inlined_call):
+        (JSC::LLInt::slow_path_checkpoint_osr_exit):
+        * runtime/VM.cpp:
+        (JSC::VM::scanSideState const):
+        (JSC::VM::pushCheckpointOSRSideState):
+        (JSC::VM::popCheckpointOSRSideState):
+        (JSC::VM::popAllCheckpointOSRSideStateUntil):
+        (JSC::VM::addCheckpointOSRSideState): Deleted.
+        (JSC::VM::findCheckpointOSRSideState): Deleted.
+        * runtime/VM.h:
+
 2020-08-03  Alberto Garcia  <berto@igalia.com>
 
         [GTK] 2.29.4 fails to build in armhf

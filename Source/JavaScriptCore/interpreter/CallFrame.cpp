@@ -127,7 +127,7 @@ unsigned CallFrame::callSiteBitsAsBytecodeOffset() const
     return callSiteIndex().bits();
 }
 
-BytecodeIndex CallFrame::bytecodeIndex()
+BytecodeIndex CallFrame::bytecodeIndex() const
 {
     ASSERT(!callee().isWasm());
     if (!codeBlock())
@@ -147,7 +147,7 @@ BytecodeIndex CallFrame::bytecodeIndex()
     return callSiteIndex().bytecodeIndex();
 }
 
-CodeOrigin CallFrame::codeOrigin()
+CodeOrigin CallFrame::codeOrigin() const
 {
     if (!codeBlock())
         return CodeOrigin(BytecodeIndex(0));
@@ -267,7 +267,7 @@ String CallFrame::friendlyFunctionName()
     return emptyString();
 }
 
-void CallFrame::dump(PrintStream& out)
+void CallFrame::dump(PrintStream& out) const
 {
     if (CodeBlock* codeBlock = this->codeBlock()) {
         out.print(codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), " [", codeBlock->jitType(), " ", bytecodeIndex(), "]");
