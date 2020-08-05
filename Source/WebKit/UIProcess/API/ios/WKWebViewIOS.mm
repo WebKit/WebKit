@@ -2291,6 +2291,7 @@ static int32_t activeOrientation(WKWebView *webView)
 
     _frozenVisibleContentRect = [self convertRect:fullViewRect toView:_contentView.get()];
     _frozenUnobscuredContentRect = [self convertRect:unobscuredRect toView:_contentView.get()];
+    _contentViewShouldBecomeFirstResponderAfterNavigationGesture = [_contentView isFirstResponder];
 
     LOG_WITH_STREAM(VisibleRects, stream << "_navigationGestureDidBegin: freezing visibleContentRect " << WebCore::FloatRect(_frozenVisibleContentRect.value()) << " UnobscuredContentRect " << WebCore::FloatRect(_frozenUnobscuredContentRect.value()));
 }
@@ -2299,6 +2300,12 @@ static int32_t activeOrientation(WKWebView *webView)
 {
     _frozenVisibleContentRect = WTF::nullopt;
     _frozenUnobscuredContentRect = WTF::nullopt;
+
+    if (_contentViewShouldBecomeFirstResponderAfterNavigationGesture) {
+        if (self.window && ![_contentView isFirstResponder])
+            [_contentView becomeFirstResponder];
+        _contentViewShouldBecomeFirstResponderAfterNavigationGesture = NO;
+    }
 }
 
 - (void)_showPasswordViewWithDocumentName:(NSString *)documentName passwordHandler:(void (^)(NSString *))passwordHandler

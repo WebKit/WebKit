@@ -1,3 +1,20 @@
+2020-08-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Keyboard shortcuts and arrow key scrolling stop working after navigating via swipe gesture
+        https://bugs.webkit.org/show_bug.cgi?id=215137
+        <rdar://problem/65082979>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/NavigationSwipeTests.mm: Added.
+        (-[TestNavigationInteractiveTransition startInteractiveTransition:]):
+
+        Add an API test that exercises the bug by resigning first responder underneath `-startInteractiveTransition:`,
+        and checking that we have become first responder once again after completing the transition.
+
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2020-08-04  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add mocks.ContextStack

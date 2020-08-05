@@ -1075,6 +1075,8 @@
 		EB230D40245E727900C66AD1 /* IDBCheckpointWAL.mm in Sources */ = {isa = PBXBuildFile; fileRef = EB230D3E245E726300C66AD1 /* IDBCheckpointWAL.mm */; };
 		EB230D41245E813F00C66AD1 /* IDBCheckpointWAL.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = EB230D3D245E722E00C66AD1 /* IDBCheckpointWAL.html */; };
 		ECA680CE1E68CC0900731D20 /* StringUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = ECA680CD1E68CC0900731D20 /* StringUtilities.mm */; };
+		F4010B8024DA24AC00A876E2 /* NavigationSwipeTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B7F24DA24AC00A876E2 /* NavigationSwipeTests.mm */; };
+		F4010B8324DA267F00A876E2 /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B8124DA267F00A876E2 /* PoseAsClass.mm */; };
 		F402F56C23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = F402F56B23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm */; };
 		F407FE391F1D0DFC0017CF25 /* enormous.svg in Copy Resources */ = {isa = PBXBuildFile; fileRef = F407FE381F1D0DE60017CF25 /* enormous.svg */; };
 		F4106C6921ACBF84004B89A1 /* WKWebViewFirstResponderTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4106C6821ACBF84004B89A1 /* WKWebViewFirstResponderTests.mm */; };
@@ -2775,6 +2777,9 @@
 		EC79F168BE454E579E417B05 /* Markable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Markable.cpp; sourceTree = "<group>"; };
 		ECA680CD1E68CC0900731D20 /* StringUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StringUtilities.mm; sourceTree = "<group>"; };
 		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4010B7F24DA24AC00A876E2 /* NavigationSwipeTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NavigationSwipeTests.mm; sourceTree = "<group>"; };
+		F4010B8124DA267F00A876E2 /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoseAsClass.mm; path = ../TestRunnerShared/cocoa/PoseAsClass.mm; sourceTree = "<group>"; };
+		F4010B8224DA267F00A876E2 /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoseAsClass.h; path = ../TestRunnerShared/cocoa/PoseAsClass.h; sourceTree = "<group>"; };
 		F402F56B23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIWKInteractionViewProtocol.mm; sourceTree = "<group>"; };
 		F407FE381F1D0DE60017CF25 /* enormous.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = enormous.svg; sourceTree = "<group>"; };
 		F4106C6821ACBF84004B89A1 /* WKWebViewFirstResponderTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewFirstResponderTests.mm; sourceTree = "<group>"; };
@@ -3047,6 +3052,8 @@
 				F44A530D21B8976900DBB99C /* InstanceMethodSwizzler.h */,
 				F44A531021B8976900DBB99C /* InstanceMethodSwizzler.mm */,
 				0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */,
+				F4010B8224DA267F00A876E2 /* PoseAsClass.h */,
+				F4010B8124DA267F00A876E2 /* PoseAsClass.mm */,
 				CE640CA52370A4F300C5CAA4 /* TestCocoa.h */,
 				CE640CA62370A4F300C5CAA4 /* TestCocoa.mm */,
 				5CE7594822A883A500C12409 /* TestContextMenuDriver.h */,
@@ -3537,6 +3544,7 @@
 				F4BC0B132146C849002A0478 /* FocusPreservationTests.mm */,
 				CDA93DAC22F4EC2200490A69 /* FullscreenTouchSecheuristicTests.cpp */,
 				F45E15722112CE2900307E82 /* KeyboardInputTestsIOS.mm */,
+				F4010B7F24DA24AC00A876E2 /* NavigationSwipeTests.mm */,
 				0F34077523037FDC0060A1A0 /* OverflowScrollViewTests.mm */,
 				F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */,
 				F4C8797E2059D8D3009CD00B /* ScrollViewInsetTests.mm */,
@@ -5214,6 +5222,7 @@
 				7CCE7F011A411AE600447C4C /* MouseMoveAfterCrash.cpp in Sources */,
 				7CCE7F241A411AF600447C4C /* Navigation.mm in Sources */,
 				6351992822275C6A00890AD3 /* NavigationAction.mm in Sources */,
+				F4010B8024DA24AC00A876E2 /* NavigationSwipeTests.mm in Sources */,
 				5C8BC799218CF44700813886 /* NetworkProcess.mm in Sources */,
 				5CAE463820193B6A0051610F /* NetworkProcessCrashNonPersistentDataStore.mm in Sources */,
 				9B19CDA01F06DFE3000548DD /* NetworkProcessCrashWithPendingConnection.mm in Sources */,
@@ -5258,6 +5267,7 @@
 				7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */,
 				7CCE7EA71A411A1300447C4C /* PlatformWebViewMac.mm in Sources */,
 				83BAEE8D1EF4625500DDE894 /* PluginLoadClientPolicies.mm in Sources */,
+				F4010B8324DA267F00A876E2 /* PoseAsClass.mm in Sources */,
 				DFB8FF322492F52400F00B0D /* Preconnect.mm in Sources */,
 				1D67BFDC2433E0A7006B5047 /* PreemptVideoFullscreen.mm in Sources */,
 				C15CBB3F23FB177A00300CC7 /* PreferenceChanges.mm in Sources */,

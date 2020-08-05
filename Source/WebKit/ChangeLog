@@ -1,3 +1,30 @@
+2020-08-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Keyboard shortcuts and arrow key scrolling stop working after navigating via swipe gesture
+        https://bugs.webkit.org/show_bug.cgi?id=215137
+        <rdar://problem/65082979>
+
+        Reviewed by Tim Horton.
+
+        The process of starting a navigation swipe gesture causes the first responder (in this case, WKContentView) to
+        resign. Subsequently, nothing makes the content view first responder again once the navigation gesture ends,
+        even if the gesture is cancelled and we don't end up navigating. This results in several symptoms, two of which
+        are that keyboard shortcuts stop working, and pressing arrow keys does not scroll the web view after ending the
+        swipe gesture.
+
+        To mitigate this, add a mechanism to have the web view remember that our content view was first responder before
+        calling `-startInteractiveTransition:`; after ending the interactive transition (i.e. swipe gesture), we then
+        restore the web view's content view as first responder if it is not already first responder (and it is also
+        parented, which is not the case when swiping back to close a newly opened tab in Safari).
+
+        Test:   NavigationSwipeTests.RestoreFirstResponderAfterNavigationSwipe
+                NavigationSwipeTests.DoNotBecomeFirstResponderAfterNavigationSwipeIfWebViewIsUnparented
+
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _navigationGestureDidBegin]):
+        (-[WKWebView _navigationGestureDidEnd]):
+
 2020-08-04  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix after r265263
