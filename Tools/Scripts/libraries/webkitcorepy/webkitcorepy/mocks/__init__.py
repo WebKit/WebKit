@@ -20,31 +20,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
-import platform
-import sys
-
-log = logging.getLogger('webkitcorepy')
-
-from webkitcorepy.version import Version
-from webkitcorepy.string_utils import BytesIO, StringIO, UnicodeIO, unicode
-
-version = Version(0, 1, 1)
-
-from webkitcorepy.autoinstall import Package, AutoInstall
-if sys.version_info > (3, 0):
-    AutoInstall.register(Package('mock', Version(4)))
-    AutoInstall.register(Package('setuptools', Version(41, 2,  0)))
-else:
-    AutoInstall.register(Package('mock', Version(3, 0, 5)))
-    AutoInstall.register(Package('setuptools', Version(41, 0, 1)))
-    if platform.system() == 'Windows':
-        AutoInstall.register(Package('win_inet_pton', Version(1, 1, 0), pypi_name='win-inet-pton'))
-
-AutoInstall.register(Package('certifi', Version(2020, 6, 20)))
-AutoInstall.register(Package('chardet', Version(3, 0, 4)))
-AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
-AutoInstall.register(Package('idna', Version(2, 10)))
-AutoInstall.register(Package('requests', Version(2, 24)))
-AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
-AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
+from webkitcorepy.mocks.context_stack import ContextStack

@@ -1,3 +1,25 @@
+2020-08-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add mocks.ContextStack
+        https://bugs.webkit.org/show_bug.cgi?id=214484
+
+        Reviewed by Dewei Zhu.
+
+        Add a class which allows a context leveraging mock to stack. This is useful when
+        mocking requests or subprocess, where a single function (or class of functions)
+        is handling calls that are destined for different for different mock handlers.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/__init__.py: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/context_stack.py: Added.
+        (ContextStack): Class which stacks mock handlers.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/mocks: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/mocks/__init__.py: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/mocks/context_stack_unittest.py: Added.
+        (to_be_replaced): Function to be mocked
+        (ExampleStack): Example mock handler.
+        (ContextStack): Test suite.
+
 2020-08-04  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [webkitcorepy] REGRESSION(r265254): autoinstaller is failing to execute setup.py on win32 Python
