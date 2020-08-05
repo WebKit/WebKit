@@ -163,8 +163,8 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
 
     if (m_inputSampleOffset == MediaTime::invalidTime()) {
         m_inputSampleOffset = MediaTime(1 - sampleTime.timeValue(), sampleTime.timeScale());
-        dispatch_async(dispatch_get_main_queue(), [inputSampleOffset = m_inputSampleOffset.timeValue(), maximumSampleCount = m_maximumSampleCount, this, protectedThis = makeRefPtr(*this)] {
-            ERROR_LOG("pushSamples: input sample offset is ", inputSampleOffset, ", maximumSampleCount = ", maximumSampleCount);
+        dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, inputSampleOffset = m_inputSampleOffset.timeValue(), maximumSampleCount = m_maximumSampleCount, this, protectedThis = makeRefPtr(*this)] {
+            ALWAYS_LOG(logIdentifier, "input sample offset is ", inputSampleOffset, ", maximumSampleCount is ", maximumSampleCount);
         });
     }
     sampleTime += m_inputSampleOffset;
@@ -177,16 +177,6 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
 
     m_ringBuffer->store(sampleBufferList, sampleCount, sampleTime.timeValue());
     m_lastPushedSampleCount = sampleCount;
-
-#if !LOG_DISABLED
-    uint64_t startFrame2 = 0;
-    uint64_t endFrame2 = 0;
-    m_ringBuffer->getCurrentFrameBounds(startFrame2, endFrame2);
-    dispatch_async(dispatch_get_main_queue(), [sampleCount, sampleTime, presentationTime, absoluteTime = mach_absolute_time(), startFrame1, endFrame1, startFrame2, endFrame2] {
-        LOG(MediaCaptureSamples, "@@ pushSamples: added %ld samples for time = %s (was %s), mach time = %lld", sampleCount, toString(sampleTime).utf8().data(), toString(presentationTime).utf8().data(), absoluteTime);
-        LOG(MediaCaptureSamples, "@@ pushSamples: buffered range was [%lld .. %lld], is [%lld .. %lld]", startFrame1, endFrame1, startFrame2, endFrame2);
-    });
-#endif
 }
 
 void AudioSampleDataSource::pushSamples(const AudioStreamBasicDescription& sampleDescription, CMSampleBufferRef sampleBuffer)
@@ -202,6 +192,21 @@ void AudioSampleDataSource::pushSamples(const MediaTime& sampleTime, const Platf
 {
     ASSERT(is<WebAudioBufferList>(audioData));
     pushSamplesInternal(*downcast<WebAudioBufferList>(audioData).list(), sampleTime, sampleCount);
+}
+
+static inline int64_t computeOffsetDelay(double sampleRate, uint64_t lastPushedSampleCount)
+{
+    const double twentyMS = .02;
+    const double tenMS = .01;
+    const double fiveMS = .005;
+
+    if (lastPushedSampleCount > sampleRate * twentyMS)
+        return sampleRate * twentyMS;
+    if (lastPushedSampleCount > sampleRate * tenMS)
+        return sampleRate * tenMS;
+    if (lastPushedSampleCount > sampleRate * fiveMS)
+        return sampleRate * fiveMS;
+    return 0;
 }
 
 bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t& sampleCount, uint64_t timeStamp, double /*hostTime*/, PullMode mode)
@@ -225,7 +230,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
     uint64_t endFrame = 0;
     m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
 
-    if (m_transitioningFromPaused) {
+    if (m_shouldComputeOutputSampleOffset) {
         uint64_t buffered = endFrame - startFrame;
         if (buffered < sampleCount * 2) {
             AudioSampleBufferList::zeroABL(buffer, byteCount);
@@ -233,51 +238,35 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
             return false;
         }
 
-        const double twentyMS = .02;
-        const double tenMS = .01;
-        const double fiveMS = .005;
-        double sampleRate = m_outputDescription->sampleRate();
-        m_outputSampleOffset = (endFrame - sampleCount) - timeStamp;
-        if (m_lastPushedSampleCount > sampleRate * twentyMS)
-            m_outputSampleOffset -= sampleRate * twentyMS;
-        else if (m_lastPushedSampleCount > sampleRate * tenMS)
-            m_outputSampleOffset -= sampleRate * tenMS;
-        else if (m_lastPushedSampleCount > sampleRate * fiveMS)
-            m_outputSampleOffset -= sampleRate * fiveMS;
+        m_shouldComputeOutputSampleOffset = false;
 
-        m_transitioningFromPaused = false;
+        m_outputSampleOffset = (endFrame - sampleCount) - timeStamp;
+        m_outputSampleOffset -= computeOffsetDelay(m_outputDescription->sampleRate(), m_lastPushedSampleCount);
+        dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
+            ALWAYS_LOG(logIdentifier, "setting new offset to ", outputSampleOffset);
+        });
     }
 
     timeStamp += m_outputSampleOffset;
 
-#if !LOG_DISABLED
-    dispatch_async(dispatch_get_main_queue(), [sampleCount, timeStamp, sampleOffset = m_outputSampleOffset] {
-        LOG(MediaCaptureSamples, "** pullSamplesInternal: asking for %ld samples at time = %lld (was %lld)", sampleCount, timeStamp, timeStamp - sampleOffset);
-    });
-#endif
-
-    uint64_t framesAvailable = sampleCount;
     if (timeStamp < startFrame || timeStamp + sampleCount > endFrame) {
-        if (timeStamp + sampleCount < startFrame || timeStamp >= endFrame)
-            framesAvailable = 0;
-        else if (timeStamp < startFrame)
-            framesAvailable = timeStamp + sampleCount - startFrame;
-        else
-            framesAvailable = timeStamp + sampleCount - endFrame;
-
-#if !RELEASE_LOG_DISABLED
-        dispatch_async(dispatch_get_main_queue(), [timeStamp, startFrame, endFrame, framesAvailable, sampleCount, this, protectedThis = makeRefPtr(*this)] {
-            ALWAYS_LOG("sample ", timeStamp, " is not completely in range [", startFrame, " .. ", endFrame, "], returning ", framesAvailable, " frames");
-            if (framesAvailable < sampleCount)
-                ERROR_LOG("not enough data available, returning zeroes");
+        dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, timeStamp, startFrame, endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
+            ERROR_LOG(logIdentifier, "not enough data, sample ", timeStamp, " with offset ", outputSampleOffset, ", trying to get ", sampleCount, " samples, but not completely in range [", startFrame, " .. ", endFrame, "]");
         });
-#endif
 
-        if (framesAvailable < sampleCount) {
+        if (timeStamp < startFrame || timeStamp >= endFrame) {
+            // We are out of the window, let's restart the offset computation.
+            m_shouldComputeOutputSampleOffset = true;
+        } else {
+            // We are too close from endFrame, let's back up a little bit.
+            uint64_t framesAvailable = endFrame - timeStamp;
             m_outputSampleOffset -= sampleCount - framesAvailable;
-            AudioSampleBufferList::zeroABL(buffer, byteCount);
-            return false;
+            dispatch_async(dispatch_get_main_queue(), [logIdentifier = LOGIDENTIFIER, outputSampleOffset = m_outputSampleOffset, this, protectedThis = makeRefPtr(*this)] {
+                ALWAYS_LOG(logIdentifier, "updating offset to ", outputSampleOffset);
+            });
         }
+        AudioSampleBufferList::zeroABL(buffer, byteCount);
+        return false;
     }
 
     if (mode == Copy) {
@@ -315,9 +304,9 @@ bool AudioSampleDataSource::pullAvalaibleSamplesAsChunks(AudioBufferList& buffer
     uint64_t startFrame = 0;
     uint64_t endFrame = 0;
     m_ringBuffer->getCurrentFrameBounds(startFrame, endFrame);
-    if (m_transitioningFromPaused) {
+    if (m_shouldComputeOutputSampleOffset) {
         m_outputSampleOffset = timeStamp + (endFrame - sampleCountPerChunk);
-        m_transitioningFromPaused = false;
+        m_shouldComputeOutputSampleOffset = false;
     }
 
     timeStamp += m_outputSampleOffset;

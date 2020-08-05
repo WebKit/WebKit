@@ -1,3 +1,26 @@
+2020-08-05  Youenn Fablet  <youenn@apple.com>
+
+        Update AudioSampleDataSource offset computation
+        https://bugs.webkit.org/show_bug.cgi?id=215127
+        <rdar://problem/65938265>
+
+        Reviewed by Eric Carlson.
+
+        As per logs, it sometimes happens that the offset is so big that the timestamp is below the start of the window.
+        In that case, our logic is not able to catch up and reduce the offset.
+        To handle this, we special case if the timestamp is below the start frame and do as if we were starting from scratch.
+        Otherwise, we continue our logic to fine tune the offset by slowly making it bigger to not hit the end of the window but still be close to it.
+        Updated logging to help further debugging this issue if needed.
+
+        * platform/audio/mac/AudioSampleDataSource.h:
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::pushSamplesInternal):
+        (WebCore::computeOffsetDelay):
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+        (WebCore::AudioSampleDataSource::pullAvalaibleSamplesAsChunks):
+        * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeIncomingAudioSourceCocoa::OnData):
+
 2020-08-05  Eric Liang  <ericliang@apple.com>
 
         AX: WebCore should provide a way to get raw role for accessibility objects

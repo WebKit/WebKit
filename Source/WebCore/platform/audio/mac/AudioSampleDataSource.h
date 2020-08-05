@@ -113,7 +113,7 @@ private:
 
     float m_volume { 1.0 };
     bool m_muted { false };
-    bool m_transitioningFromPaused { true };
+    bool m_shouldComputeOutputSampleOffset { true };
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
