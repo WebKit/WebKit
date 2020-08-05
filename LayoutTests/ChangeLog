@@ -1,3 +1,18 @@
+2020-08-04  Andres Gonzalez  <andresg_22@apple.com>
+
+        Disable isolated-tree-mode-on-off.html because it is causing other test failures..
+        https://bugs.webkit.org/show_bug.cgi?id=215151
+        <rdar://problem/66542837>
+
+        Reviewed by Chris Fleizach.
+
+        This test turns isolated tree mode on and causes other concurrent test
+        to also run in isolated tree mode, and thus random failures. Will enable
+        once all tests succeed in isolated tree mode, or we can turn the mode on
+        only for a particular test without affecting others.
+
+        * platform/mac/TestExpectations:
+
 2020-08-04  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r265167): media/media-source/media-source-webm.html failing

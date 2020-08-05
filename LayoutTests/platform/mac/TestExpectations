@@ -1745,6 +1745,9 @@ webkit.org/b/205361 [ Release ] crypto/workers/subtle/aes-indexeddb.html [ Pass 
 
 webkit.org/b/205403 accessibility/presentation-role-iframe.html [ Pass Failure ]
 
+# Disabled temporarily since it is causing other tests to fail.
+accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
+
 webkit.org/b/202064 webaudio/silent-audio-interrupted-in-background.html [ Pass Crash ]
 
 webkit.org/b/205756 webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader.html [ Pass Failure ]
