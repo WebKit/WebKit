@@ -202,6 +202,7 @@ class Package(object):
             for candidate in [
                 os.path.join(temp_location, str(archive)),
                 os.path.join(temp_location, '{}-{}.{}'.format(archive.name, archive.version.major, archive.version.minor)),
+                os.path.join(temp_location, '{}-{}.{}.{}'.format(archive.name.replace('-', '_'), archive.version.major, archive.version.minor, archive.version.tiny)),
             ]:
                 if not os.path.exists(os.path.join(candidate, 'setup.py')):
                     continue
@@ -233,6 +234,7 @@ class Package(object):
                             PATH=os.environ.get('PATH', ''),
                             PATHEXT=os.environ.get('PATHEXT', ''),
                             PYTHONPATH=install_location,
+                            SYSTEMROOT=os.environ.get('SYSTEMROOT', ''),
                         ),
                         stdout=devnull,
                         stderr=devnull,

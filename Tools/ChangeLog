@@ -1,3 +1,18 @@
+2020-08-04  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [webkitcorepy] REGRESSION(r265254): autoinstaller is failing to execute setup.py on win32 Python
+        https://bugs.webkit.org/show_bug.cgi?id=215152
+
+        Reviewed by Jonathan Bedard.
+
+        There were two problems. Win32 Python needs SYSTEMROOT environment
+        variable to run setup.py. win-inet-pton is using `_` for the
+        directory name (win_inet_pton-1.1.0).
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.install): Add a new candidate directory by replacing '-'
+        with '_'. Pass through SYSTEMROOT env var.
+
 2020-08-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Move poseAsClass() into the TestRunnerShared directory
