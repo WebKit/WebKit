@@ -61,14 +61,15 @@ private:
     
     String databaseDirectoryIsolatedCopy() const { return m_databaseDirectory.isolatedCopy(); }
 
+    void schedulePushChanges(Vector<ServiceWorkerContextData>&&, Vector<ServiceWorkerRegistrationKey>&&, CompletionHandler<void()>&&);
     void postTaskToWorkQueue(Function<void()>&&);
 
     // Methods to be run on the work queue.
-    void openSQLiteDatabase(const String& fullFilename);
+    bool openSQLiteDatabase(const String& fullFilename);
     String ensureValidRecordsTable();
     String importRecords();
     void importRecordsIfNecessary();
-    void doPushChanges(const Vector<ServiceWorkerContextData>&, const Vector<ServiceWorkerRegistrationKey>&);
+    bool doPushChanges(const Vector<ServiceWorkerContextData>&, const Vector<ServiceWorkerRegistrationKey>&);
     void doClearOrigin(const SecurityOrigin&);
 
     // Replies to the main thread.
@@ -81,6 +82,7 @@ private:
     String m_databaseDirectory;
     String m_databaseFilePath;
     std::unique_ptr<SQLiteDatabase> m_database;
+    uint64_t m_pushCounter { 0 };
 };
 
 } // namespace WebCore

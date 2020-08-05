@@ -1,5 +1,34 @@
 2020-08-05  Youenn Fablet  <youenn@apple.com>
 
+        RegistrationDatabase::openSQLiteDatabase can spin
+        https://bugs.webkit.org/show_bug.cgi?id=215120
+        <rdar://problem/64850347>
+
+        Reviewed by Geoffrey Garen.
+
+        In case we fail opening the database when importing, we delete the database, the file and retry.
+        We do not need to retry in that case since there is nothing to import. Update the code to proceed with sending an import failure to SWServer.
+
+        In case of pushing changes to the database, it might be useful to retry but it is best to do this asynchronously.
+        For instance, there might be a script deleting the files/folders where is stored the database.
+        In that case, we check the result of pushing changes.
+        If they succeed, we call the completion handler and stop.
+        Otherwise, we will retry pushing the changes if changes were not pushed again in the meantime.
+        We introduce a push counter for that purpose.
+
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::postTaskToWorkQueue):
+        (WebCore::RegistrationDatabase::openSQLiteDatabase):
+        (WebCore::RegistrationDatabase::importRecordsIfNecessary):
+        (WebCore::RegistrationDatabase::pushChanges):
+        (WebCore::RegistrationDatabase::schedulePushChanges):
+        (WebCore::RegistrationDatabase::doPushChanges):
+        * workers/service/server/RegistrationDatabase.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::registrationStoreDatabaseFailedToOpen):
+
+2020-08-05  Youenn Fablet  <youenn@apple.com>
+
         SWServerJobQueue::didResolveRegistrationPromise should not assume its registration key relates to an existing worker
         https://bugs.webkit.org/show_bug.cgi?id=215123
         <rdar://problem/65096786>

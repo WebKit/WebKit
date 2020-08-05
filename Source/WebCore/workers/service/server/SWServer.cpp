@@ -149,6 +149,7 @@ void SWServer::whenImportIsCompleted(CompletionHandler<void()>&& callback)
 
 void SWServer::registrationStoreDatabaseFailedToOpen()
 {
+    ASSERT(!m_importCompleted);
     if (!m_importCompleted)
         registrationStoreImportComplete();
 }
