@@ -73,6 +73,7 @@ private:
     Ref<PerformanceObserverCallback> m_callback;
     OptionSet<PerformanceEntry::Type> m_typeFilter;
     bool m_registered { false };
+    bool m_isTypeObserver { false };
 };
 
 } // namespace WebCore

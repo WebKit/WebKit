@@ -64,22 +64,27 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
     if (init.entryTypes) {
         if (init.type)
             return Exception { TypeError, "either entryTypes or type must be provided"_s };
+        if (m_registered && m_isTypeObserver)
+            return Exception { InvalidModificationError, "observer type can't be changed once registered"_s };
         for (auto& entryType : *init.entryTypes) {
             if (auto type = PerformanceEntry::parseEntryTypeString(entryType))
                 filter.add(*type);
         }
         if (filter.isEmpty())
             return { };
+        m_typeFilter = filter;
     } else {
         if (!init.type)
             return Exception { TypeError, "no type or entryTypes were provided"_s };
+        if (m_registered && !m_isTypeObserver)
+            return Exception { InvalidModificationError, "observer type can't be changed once registered"_s };
+        m_isTypeObserver = true;
         if (auto type = PerformanceEntry::parseEntryTypeString(*init.type))
             filter.add(*type);
         else
             return { };
+        m_typeFilter.add(filter);
     }
-
-    m_typeFilter = filter;
 
     if (!m_registered) {
         m_performance->registerPerformanceObserver(*this);

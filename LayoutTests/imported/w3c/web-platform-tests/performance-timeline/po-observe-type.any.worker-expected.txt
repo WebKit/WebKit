@@ -1,14 +1,8 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Calling observe() without 'type' or 'entryTypes' throws a TypeError 
-FAIL Calling observe() with entryTypes and then type should throw an InvalidModificationError assert_throws_dom: function "function () {
-    obs.observe({type: "measure"});
-  }" did not throw
-FAIL Calling observe() with type and then entryTypes should throw an InvalidModificationError assert_throws_dom: function "function () {
-    obs.observe({entryTypes: ["measure"]});
-  }" did not throw
+PASS Calling observe() with entryTypes and then type should throw an InvalidModificationError 
+PASS Calling observe() with type and then entryTypes should throw an InvalidModificationError 
 PASS Calling observe() with type and entryTypes should throw a TypeError 
 PASS Passing in unknown values to type does throw an exception. 
-TIMEOUT observe() with different type values stacks. Test timed out
+PASS observe() with different type values stacks. 
 

@@ -1,3 +1,14 @@
+2020-08-05  Rob Buis  <rbuis@igalia.com>
+
+        Allow multiple calls to PerformanceObserver.observe with different types
+        https://bugs.webkit.org/show_bug.cgi?id=214884
+
+        Reviewed by Darin Adler.
+
+        Unskip po-observe-type.any.html.
+
+        * TestExpectations:
+
 2020-08-04  Andres Gonzalez  <andresg_22@apple.com>
 
         Disable isolated-tree-mode-on-off.html because it is causing other test failures..

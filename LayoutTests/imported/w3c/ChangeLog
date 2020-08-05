@@ -1,3 +1,15 @@
+2020-08-05  Rob Buis  <rbuis@igalia.com>
+
+        Allow multiple calls to PerformanceObserver.observe with different types
+        https://bugs.webkit.org/show_bug.cgi?id=214884
+
+        Reviewed by Darin Adler.
+
+        Update improved test expectations.
+
+        * web-platform-tests/performance-timeline/po-observe-type.any-expected.txt:
+        * web-platform-tests/performance-timeline/po-observe-type.any.worker-expected.txt:
+
 2020-08-04  Chris Dumez  <cdumez@apple.com>
 
         Align AudioListener with the W3C specification
