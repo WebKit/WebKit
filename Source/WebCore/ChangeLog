@@ -1,3 +1,11 @@
+2020-08-05  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified build fix.
+
+        No new tests needed.
+
+        * Modules/webaudio/AudioListener.h: Add forward declaration for BaseAudioSharedUnit.
+
 2020-08-05  Sihui Liu  <sihui_liu@appe.com>
 
         TextManipulationController should observe newly inserted or displayed text

@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class AudioParam;
+class BaseAudioContext;
 
 // AudioListener maintains the state of the listener in the audio scene as defined in the OpenAL specification.
 
