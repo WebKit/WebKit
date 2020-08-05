@@ -281,6 +281,7 @@
 		510A920A24D5048900BFD89C /* LogitechF310.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A920924D5048300BFD89C /* LogitechF310.mm */; };
 		510A920C24D5275500BFD89C /* LogitechF710.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A920B24D5275100BFD89C /* LogitechF710.mm */; };
 		510A921424D615B400BFD89C /* GoogleStadia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A921324D60A3E00BFD89C /* GoogleStadia.mm */; };
+		510A921E24DB38F300BFD89C /* CreateWebArchive.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A921D24DB38ED00BFD89C /* CreateWebArchive.mm */; };
 		5110FCF11E01CD64006F8D0B /* IDBIndexUpgradeToV2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */; };
 		5110FCF61E01CD83006F8D0B /* IndexUpgrade.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF31E01CD77006F8D0B /* IndexUpgrade.sqlite3 */; };
 		5110FCF91E01CD8A006F8D0B /* IndexUpgrade.blob in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5110FCF21E01CD77006F8D0B /* IndexUpgrade.blob */; };
@@ -1983,6 +1984,7 @@
 		510A920924D5048300BFD89C /* LogitechF310.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogitechF310.mm; sourceTree = "<group>"; };
 		510A920B24D5275100BFD89C /* LogitechF710.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogitechF710.mm; sourceTree = "<group>"; };
 		510A921324D60A3E00BFD89C /* GoogleStadia.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GoogleStadia.mm; sourceTree = "<group>"; };
+		510A921D24DB38ED00BFD89C /* CreateWebArchive.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CreateWebArchive.mm; sourceTree = "<group>"; };
 		5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBIndexUpgradeToV2.mm; sourceTree = "<group>"; };
 		5110FCF01E01CD53006F8D0B /* IDBIndexUpgradeToV2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBIndexUpgradeToV2.html; sourceTree = "<group>"; };
 		5110FCF21E01CD77006F8D0B /* IndexUpgrade.blob */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IndexUpgrade.blob; sourceTree = "<group>"; };
@@ -3181,6 +3183,7 @@
 				9999108A1F393C8B008AD455 /* Copying.mm */,
 				1C79201B234BDD9B001EAF23 /* CopyRTF.mm */,
 				9B7A37C21F8AEBA5004AA228 /* CopyURL.mm */,
+				510A921D24DB38ED00BFD89C /* CreateWebArchive.mm */,
 				46A911582108E66B0078D40D /* CustomUserAgent.mm */,
 				2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */,
 				518EE51C20A78D3300E024F3 /* DecidePolicyForNavigationAction.mm */,
@@ -5022,6 +5025,7 @@
 				1C79201C234BDD9B001EAF23 /* CopyRTF.mm in Sources */,
 				9B7A37C41F8AEBA5004AA228 /* CopyURL.mm in Sources */,
 				7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */,
+				510A921E24DB38F300BFD89C /* CreateWebArchive.mm in Sources */,
 				7AEAD47F1E20116C00416EFE /* CrossPartitionFileSchemeAccess.mm in Sources */,
 				7CCE7EDB1A411A9200447C4C /* CSSParser.cpp in Sources */,
 				5758597F23A2527A00C74572 /* CtapPinTest.cpp in Sources */,

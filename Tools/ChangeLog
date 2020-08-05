@@ -1,3 +1,13 @@
+2020-08-05  Brady Eidson  <beidson@apple.com>
+
+        Add a createWebArchiveData from a custom scheme API test
+        https://bugs.webkit.org/show_bug.cgi?id=215187
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/CreateWebArchive.mm: Added.
+
 2020-08-05  Jonathan Bedard  <jbedard@apple.com>
 
         results.webkit.org: Return worker status to caller
