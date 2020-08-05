@@ -314,6 +314,8 @@ $(PROJECT_DIR)/Modules/webaudio/AudioProcessingEvent.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioScheduledSourceNode.idl
 $(PROJECT_DIR)/Modules/webaudio/BaseAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/BiquadFilterNode.idl
+$(PROJECT_DIR)/Modules/webaudio/BiquadFilterOptions.idl
+$(PROJECT_DIR)/Modules/webaudio/BiquadFilterType.idl
 $(PROJECT_DIR)/Modules/webaudio/ChannelCountMode.idl
 $(PROJECT_DIR)/Modules/webaudio/ChannelInterpretation.idl
 $(PROJECT_DIR)/Modules/webaudio/ChannelMergerNode.idl

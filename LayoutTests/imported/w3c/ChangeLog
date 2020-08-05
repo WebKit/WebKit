@@ -1,3 +1,16 @@
+2020-08-05  Chris Dumez  <cdumez@apple.com>
+
+        Add constructor to BiquadFilterNode
+        https://bugs.webkit.org/show_bug.cgi?id=215144
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-getFrequencyResponse-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/ctor-biquadfilter-expected.txt:
+
 2020-08-05  Rob Buis  <rbuis@igalia.com>
 
         Allow multiple calls to PerformanceObserver.observe with different types

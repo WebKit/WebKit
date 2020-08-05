@@ -2661,6 +2661,8 @@ JSBasicCredential.cpp
 JSBeforeLoadEvent.cpp
 JSBeforeUnloadEvent.cpp
 JSBiquadFilterNode.cpp
+JSBiquadFilterOptions.cpp
+JSBiquadFilterType.cpp
 JSBlob.cpp
 JSBlobCallback.cpp
 JSBlobEvent.cpp

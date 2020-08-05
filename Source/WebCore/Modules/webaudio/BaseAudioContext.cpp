@@ -488,12 +488,7 @@ ExceptionOr<Ref<BiquadFilterNode>> BaseAudioContext::createBiquadFilter()
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
-    if (m_isStopScheduled)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
-
-    return BiquadFilterNode::create(*this, sampleRate());
+    return BiquadFilterNode::create(*this);
 }
 
 ExceptionOr<Ref<WaveShaperNode>> BaseAudioContext::createWaveShaper()

@@ -211,6 +211,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBeforeUnloadEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBeforeUnloadEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBiquadFilterNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBiquadFilterNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBiquadFilterOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBiquadFilterOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBiquadFilterType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBiquadFilterType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlob.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlob.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobCallback.cpp

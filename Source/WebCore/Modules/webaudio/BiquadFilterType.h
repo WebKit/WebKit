@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2016, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,35 +25,17 @@
 
 #pragma once
 
-#include "AudioBasicProcessorNode.h"
-#include "BiquadFilterOptions.h"
-#include "BiquadProcessor.h"
-
 namespace WebCore {
 
-class AudioParam;
-
-class BiquadFilterNode final : public AudioBasicProcessorNode {
-    WTF_MAKE_ISO_ALLOCATED(BiquadFilterNode);
-public:
-    static ExceptionOr<Ref<BiquadFilterNode>> create(BaseAudioContext& context, const BiquadFilterOptions& = { });
-
-    BiquadFilterType type() const;
-    void setType(BiquadFilterType);
-
-    AudioParam& frequency() { return biquadProcessor()->parameter1(); }
-    AudioParam& q() { return biquadProcessor()->parameter2(); }
-    AudioParam& gain() { return biquadProcessor()->parameter3(); }
-    AudioParam& detune() { return biquadProcessor()->parameter4(); }
-
-    // Get the magnitude and phase response of the filter at the given
-    // set of frequencies (in Hz). The phase response is in radians.
-    void getFrequencyResponse(const RefPtr<Float32Array>& frequencyHz, const RefPtr<Float32Array>& magResponse, const RefPtr<Float32Array>& phaseResponse);
-
-private:
-    explicit BiquadFilterNode(BaseAudioContext&);
-
-    BiquadProcessor* biquadProcessor() { return static_cast<BiquadProcessor*>(processor()); }
+enum class BiquadFilterType {
+    Lowpass,
+    Highpass,
+    Bandpass,
+    Lowshelf,
+    Highshelf,
+    Peaking,
+    Notch,
+    Allpass
 };
 
 } // namespace WebCore

@@ -33,13 +33,43 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BiquadFilterNode);
 
-BiquadFilterNode::BiquadFilterNode(BaseAudioContext& context, float sampleRate)
-    : AudioBasicProcessorNode(context, sampleRate)
+ExceptionOr<Ref<BiquadFilterNode>> BiquadFilterNode::create(BaseAudioContext& context, const BiquadFilterOptions& options)
+{
+    if (context.isStopped())
+        return Exception { InvalidStateError };
+
+    context.lazyInitialize();
+
+    auto node = adoptRef(*new BiquadFilterNode(context));
+
+    auto result = node->setChannelCount(options.channelCount.valueOr(2));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = node->setChannelCountMode(options.channelCountMode.valueOr(ChannelCountMode::Max));
+    if (result.hasException())
+        return result.releaseException();
+
+    result = node->setChannelInterpretation(options.channelInterpretation.valueOr(ChannelInterpretation::Speakers));
+    if (result.hasException())
+        return result.releaseException();
+
+    node->setType(options.type);
+    node->q().setValue(options.Q);
+    node->detune().setValue(options.detune);
+    node->frequency().setValue(options.frequency);
+    node->gain().setValue(options.gain);
+
+    return node;
+}
+
+BiquadFilterNode::BiquadFilterNode(BaseAudioContext& context)
+    : AudioBasicProcessorNode(context, context.sampleRate())
 {
     setNodeType(NodeTypeBiquadFilter);
 
     // Initially setup as lowpass filter.
-    m_processor = makeUnique<BiquadProcessor>(context, sampleRate, 1, false);
+    m_processor = makeUnique<BiquadProcessor>(context, context.sampleRate(), 1, false);
 }
 
 BiquadFilterType BiquadFilterNode::type() const

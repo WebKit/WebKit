@@ -467,7 +467,7 @@ FAIL AudioProcessingEvent interface: new AudioProcessingEvent('', {
         playbackTime: 0, inputBuffer: buffer, outputBuffer: buffer
       })')"
 PASS BiquadFilterNode interface: existence and properties of interface object 
-FAIL BiquadFilterNode interface object length assert_equals: wrong value for BiquadFilterNode.length expected 1 but got 0
+PASS BiquadFilterNode interface object length 
 PASS BiquadFilterNode interface object name 
 PASS BiquadFilterNode interface: existence and properties of interface prototype object 
 PASS BiquadFilterNode interface: existence and properties of interface prototype object's "constructor" property 
@@ -478,38 +478,38 @@ PASS BiquadFilterNode interface: attribute detune
 PASS BiquadFilterNode interface: attribute Q 
 PASS BiquadFilterNode interface: attribute gain 
 PASS BiquadFilterNode interface: operation getFrequencyResponse(Float32Array, Float32Array, Float32Array) 
-FAIL BiquadFilterNode must be primary interface of new BiquadFilterNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL Stringification of new BiquadFilterNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "type" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "frequency" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "detune" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "Q" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "gain" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "getFrequencyResponse(Float32Array, Float32Array, Float32Array)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL BiquadFilterNode interface: calling getFrequencyResponse(Float32Array, Float32Array, Float32Array) on new BiquadFilterNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: calling connect(AudioParam, optional unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: calling disconnect(unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(AudioNode)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode) on new BiquadFilterNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(AudioParam)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioParam) on new BiquadFilterNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: calling disconnect(AudioParam, unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "context" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "numberOfInputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "numberOfOutputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "channelCount" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
-FAIL AudioNode interface: new BiquadFilterNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: function is not a constructor (evaluating 'new BiquadFilterNode(context)')"
+PASS BiquadFilterNode must be primary interface of new BiquadFilterNode(context) 
+PASS Stringification of new BiquadFilterNode(context) 
+PASS BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "type" with the proper type 
+PASS BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "frequency" with the proper type 
+PASS BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "detune" with the proper type 
+PASS BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "Q" with the proper type 
+PASS BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "gain" with the proper type 
+PASS BiquadFilterNode interface: new BiquadFilterNode(context) must inherit property "getFrequencyResponse(Float32Array, Float32Array, Float32Array)" with the proper type 
+PASS BiquadFilterNode interface: calling getFrequencyResponse(Float32Array, Float32Array, Float32Array) on new BiquadFilterNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioParam, optional unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect()" with the proper type 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(AudioNode)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode) on new BiquadFilterNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(AudioParam)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam) on new BiquadFilterNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam, unsigned long) on new BiquadFilterNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "context" with the proper type 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "numberOfInputs" with the proper type 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "numberOfOutputs" with the proper type 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "channelCount" with the proper type 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "channelCountMode" with the proper type 
+PASS AudioNode interface: new BiquadFilterNode(context) must inherit property "channelInterpretation" with the proper type 
 PASS ChannelMergerNode interface: existence and properties of interface object 
 PASS ChannelMergerNode interface object length 
 PASS ChannelMergerNode interface object name 

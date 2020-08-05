@@ -2516,6 +2516,8 @@
 		83C5795D1DA5C301006FACA8 /* ScrollToOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200356446 /* ScrollToOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83D35AEC1C7187FA00F70D5A /* XMLHttpRequestEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D35AEA1C7187ED00F70D5A /* XMLHttpRequestEventTarget.h */; };
 		83D35AF21C718D9000F70D5A /* JSXMLHttpRequestEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D35AF01C718D8400F70D5A /* JSXMLHttpRequestEventTarget.h */; };
+		83DB9E0F24DA19490037B468 /* BiquadFilterType.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DB9E0C24DA18B50037B468 /* BiquadFilterType.h */; };
+		83DB9E1024DA19570037B468 /* BiquadFilterOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 83DB9E0E24DA18B60037B468 /* BiquadFilterOptions.h */; };
 		83E359A21BB1031D002CEB98 /* JSHTMLTimeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E359A01BB1031D002CEB98 /* JSHTMLTimeElement.h */; };
 		83E866801FBA565B008855C5 /* ServiceWorkerData.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E8667D1FBA563F008855C5 /* ServiceWorkerData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83EE598F1F50958E003E8B30 /* JSErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 83EE598B1F50958B003E8B30 /* JSErrorCallback.h */; };
@@ -10600,6 +10602,10 @@
 		83D35AEB1C7187ED00F70D5A /* XMLHttpRequestEventTarget.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XMLHttpRequestEventTarget.idl; sourceTree = "<group>"; };
 		83D35AEF1C718D8400F70D5A /* JSXMLHttpRequestEventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestEventTarget.cpp; sourceTree = "<group>"; };
 		83D35AF01C718D8400F70D5A /* JSXMLHttpRequestEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestEventTarget.h; sourceTree = "<group>"; };
+		83DB9E0A24DA18B40037B468 /* BiquadFilterType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = BiquadFilterType.idl; sourceTree = "<group>"; };
+		83DB9E0C24DA18B50037B468 /* BiquadFilterType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiquadFilterType.h; sourceTree = "<group>"; };
+		83DB9E0D24DA18B50037B468 /* BiquadFilterOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = BiquadFilterOptions.idl; sourceTree = "<group>"; };
+		83DB9E0E24DA18B60037B468 /* BiquadFilterOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiquadFilterOptions.h; sourceTree = "<group>"; };
 		83E045EC1DAA104F00B0D8B9 /* JSEventModifierInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventModifierInit.cpp; sourceTree = "<group>"; };
 		83E045ED1DAA104F00B0D8B9 /* JSEventModifierInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventModifierInit.h; sourceTree = "<group>"; };
 		83E045EE1DAA104F00B0D8B9 /* JSUIEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUIEventInit.cpp; sourceTree = "<group>"; };
@@ -29557,6 +29563,10 @@
 				FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */,
 				FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */,
 				FDC54F031399B0DA008D9117 /* BiquadFilterNode.idl */,
+				83DB9E0E24DA18B60037B468 /* BiquadFilterOptions.h */,
+				83DB9E0D24DA18B50037B468 /* BiquadFilterOptions.idl */,
+				83DB9E0C24DA18B50037B468 /* BiquadFilterType.h */,
+				83DB9E0A24DA18B40037B468 /* BiquadFilterType.idl */,
 				FD315FDC12B0267600C1A359 /* BiquadProcessor.cpp */,
 				FD315FDD12B0267600C1A359 /* BiquadProcessor.h */,
 				E785D91124B4D1B10014DB21 /* ChannelCountMode.h */,
@@ -30180,6 +30190,8 @@
 				FD31608D12B026F700C1A359 /* Biquad.h in Headers */,
 				FD31602512B0267600C1A359 /* BiquadDSPKernel.h in Headers */,
 				FDC54F051399B0DA008D9117 /* BiquadFilterNode.h in Headers */,
+				83DB9E1024DA19570037B468 /* BiquadFilterOptions.h in Headers */,
+				83DB9E0F24DA19490037B468 /* BiquadFilterType.h in Headers */,
 				FD31602712B0267600C1A359 /* BiquadProcessor.h in Headers */,
 				A89943280B42338800D7C802 /* BitmapImage.h in Headers */,
 				976D6C79122B8A3D001FD1F7 /* Blob.h in Headers */,
