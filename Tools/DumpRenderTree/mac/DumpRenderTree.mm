@@ -48,6 +48,7 @@
 #import "ObjCPluginFunction.h"
 #import "PixelDumpSupport.h"
 #import "PolicyDelegate.h"
+#import "PoseAsClass.h"
 #import "ResourceLoadDelegate.h"
 #import "TestOptions.h"
 #import "TestRunner.h"
@@ -238,56 +239,6 @@ DumpRenderTreeBrowserView *gWebBrowserView = nil;
 DumpRenderTreeWebScrollView *gWebScrollView = nil;
 DumpRenderTreeWindow *gDrtWindow = nil;
 #endif
-
-#ifdef __OBJC2__
-static void swizzleAllMethods(Class imposter, Class original)
-{
-    unsigned int imposterMethodCount;
-    Method* imposterMethods = class_copyMethodList(imposter, &imposterMethodCount);
-
-    unsigned int originalMethodCount;
-    Method* originalMethods = class_copyMethodList(original, &originalMethodCount);
-
-    for (unsigned int i = 0; i < imposterMethodCount; i++) {
-        SEL imposterMethodName = method_getName(imposterMethods[i]);
-
-        // Attempt to add the method to the original class.  If it fails, the method already exists and we should
-        // instead exchange the implementations.
-        if (class_addMethod(original, imposterMethodName, method_getImplementation(imposterMethods[i]), method_getTypeEncoding(imposterMethods[i])))
-            continue;
-
-        unsigned int j = 0;
-        for (; j < originalMethodCount; j++) {
-            SEL originalMethodName = method_getName(originalMethods[j]);
-            if (sel_isEqual(imposterMethodName, originalMethodName))
-                break;
-        }
-
-        // If class_addMethod failed above then the method must exist on the original class.
-        ASSERT(j < originalMethodCount);
-        method_exchangeImplementations(imposterMethods[i], originalMethods[j]);
-    }
-
-    free(imposterMethods);
-    free(originalMethods);
-}
-#endif
-
-static void poseAsClass(const char* imposter, const char* original)
-{
-    Class imposterClass = objc_getClass(imposter);
-    Class originalClass = objc_getClass(original);
-
-#ifndef __OBJC2__
-    class_poseAs(imposterClass, originalClass);
-#else
-
-    // Swizzle instance methods
-    swizzleAllMethods(imposterClass, originalClass);
-    // and then class methods
-    swizzleAllMethods(object_getClass(imposterClass), object_getClass(originalClass));
-#endif
-}
 
 void setPersistentUserStyleSheetLocation(CFStringRef url)
 {

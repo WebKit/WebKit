@@ -1,3 +1,25 @@
+2020-08-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move poseAsClass() into the TestRunnerShared directory
+        https://bugs.webkit.org/show_bug.cgi?id=215147
+
+        Reviewed by Tim Horton.
+
+        Move the duplicated implementations of `poseAsClass()` out of WebKitTestRunner and DumpRenderTree,
+        and into helper files in TestRunnerShared instead.
+
+        No change in behavior.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (poseAsClass): Deleted.
+        (setPersistentUserStyleSheetLocation): Deleted.
+        * TestRunnerShared/cocoa/PoseAsClass.h: Renamed from Tools/WebKitTestRunner/mac/PoseAsClass.h.
+        * TestRunnerShared/cocoa/PoseAsClass.mm: Renamed from Tools/WebKitTestRunner/mac/PoseAsClass.mm.
+        (swizzleAllMethods):
+        (poseAsClass):
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2020-08-04  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Check that Accessibility is enabled when receiving the enable Accessibility notification
