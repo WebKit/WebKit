@@ -116,6 +116,7 @@ public:
     WEBCORE_EXPORT void startObservingParagraphs(ManipulationItemCallback&&, Vector<ExclusionRule>&& = { });
 
     void didCreateRendererForElement(Element&);
+    void didCreateRendererForTextNode(Text&);
     void didUpdateContentForText(Text&);
     void removeNode(Node*);
 
@@ -181,6 +182,7 @@ private:
     WeakPtr<Document> m_document;
     WeakHashSet<Element> m_elementsWithNewRenderer;
     HashSet<Text*> m_manipulatedTextsWithNewContent;
+    HashSet<Node*> m_textNodesWithNewRenderer;
     HashSet<Node*> m_manipulatedNodes;
 
     HashMap<String, bool> m_cachedFontFamilyExclusionResults;

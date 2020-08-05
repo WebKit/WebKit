@@ -1,3 +1,13 @@
+2020-08-05  Sihui Liu  <sihui_liu@appe.com>
+
+        TextManipulationController should observe newly inserted or displayed text
+        https://bugs.webkit.org/show_bug.cgi?id=215157
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-08-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Keyboard shortcuts and arrow key scrolling stop working after navigating via swipe gesture

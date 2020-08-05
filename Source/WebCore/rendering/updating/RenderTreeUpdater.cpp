@@ -482,6 +482,10 @@ void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpda
     }
 
     m_builder.attach(renderTreePosition.parent(), WTFMove(textRenderer), renderTreePosition.nextSibling());
+
+    auto* textManipulationController = m_document.textManipulationControllerIfExists();
+    if (UNLIKELY(textManipulationController))
+        textManipulationController->didCreateRendererForTextNode(textNode);
 }
 
 void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate)

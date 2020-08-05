@@ -1,3 +1,24 @@
+2020-08-05  Sihui Liu  <sihui_liu@appe.com>
+
+        TextManipulationController should observe newly inserted or displayed text
+        https://bugs.webkit.org/show_bug.cgi?id=215157
+
+        Reviewed by Wenson Hsieh.
+
+        TextManipulationController already tracks renderer state of Element, but the case where Text children of an 
+        Element is newly inserted and displayed is not covered. Therefore, TextManipulationController also needs to
+        know when render of Text is created.
+
+        API test: TextManipulation.CompleteTextManipulationForNewlyDisplayedText
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::didCreateRendererForTextNode):
+        (WebCore::TextManipulationController::scheduleObservationUpdate):
+        (WebCore::TextManipulationController::removeNode):
+        * editing/TextManipulationController.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::createTextRenderer):
+
 2020-08-05  Youenn Fablet  <youenn@apple.com>
 
         RegistrationDatabase::openSQLiteDatabase can spin

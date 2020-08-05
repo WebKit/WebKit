@@ -541,10 +541,20 @@ void TextManipulationController::didUpdateContentForText(Text& text)
     m_manipulatedTextsWithNewContent.add(&text);
 }
 
+void TextManipulationController::didCreateRendererForTextNode(Text& text)
+{
+    if (m_manipulatedNodes.contains(&text))
+        return;
+
+    scheduleObservationUpdate();
+
+    m_textNodesWithNewRenderer.add(&text);
+}
+
 void TextManipulationController::scheduleObservationUpdate()
 {
     // An update is already scheduled.
-    if (!m_manipulatedTextsWithNewContent.isEmpty() || !m_elementsWithNewRenderer.computesEmpty())
+    if (!m_textNodesWithNewRenderer.isEmpty() || !m_manipulatedTextsWithNewContent.isEmpty() || !m_elementsWithNewRenderer.computesEmpty())
         return;
 
     if (!m_document)
@@ -567,6 +577,10 @@ void TextManipulationController::scheduleObservationUpdate()
             nodesToObserve.add(*text);
         }
         controller->m_manipulatedTextsWithNewContent.clear();
+
+        for (auto* text : controller->m_textNodesWithNewRenderer)
+            nodesToObserve.add(*text);
+        controller->m_textNodesWithNewRenderer.clear();
 
         if (nodesToObserve.isEmpty())
             return;
@@ -884,6 +898,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
 void TextManipulationController::removeNode(Node* node)
 {
     m_manipulatedNodes.remove(node);
+    m_textNodesWithNewRenderer.remove(node);
 }
 
 } // namespace WebCore
