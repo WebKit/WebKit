@@ -234,7 +234,7 @@ webkit.org/b/210498 webkit.org/b/210840 fast/mediastream/play-newly-added-audio-
 
 webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Crash Timeout Pass ]
 webkit.org/b/210528 media/media-source/media-source-seek-back.html [ Crash Pass ]
-webkit.org/b/214636 media/media-source/media-source-webm.html [ Failure ]
+webkit.org/b/214636 media/media-source/media-source-webm.html [ Timeout ]
 
 webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
 

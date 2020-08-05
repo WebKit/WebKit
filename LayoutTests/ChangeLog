@@ -1,3 +1,15 @@
+2020-08-05  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] media/media-source/media-source-webm.html is timing out
+
+        Unreviewed test gardening.
+
+        Instead of the previous missing 'update' event entries, now times out
+        waiting for resize event, which is not raised because the size does
+        not seem to be changing (all resize events return 320x240).
+
+        * platform/glib/TestExpectations:
+
 2020-08-05  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS wk2 ] imported/w3c/web-platform-tests/preload/single-download-preload.html is a flaky failure
