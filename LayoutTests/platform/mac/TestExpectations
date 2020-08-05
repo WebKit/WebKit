@@ -1932,3 +1932,5 @@ webkit.org/b/215039 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-
 webkit.org/b/209353 [ Release ] media/video-background-tab-playback.html [ Pass Failure ]
 
 webkit.org/b/215110 [ Release ] imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html [ Pass Failure ]
+
+webkit.org/b/215177 [ Release ] editing/selection/navigation-clears-editor-state.html [ Pass Failure ]

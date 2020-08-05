@@ -1803,3 +1803,6 @@ webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Ti
 webkit.org/b/215110 [ Release ] imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html [ Pass Failure ]
 
 webkit.org/b/215167 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
+
+webkit.org/b/215177 [ Release ] editing/selection/navigation-clears-editor-state.html [ Pass Failure ]
+
