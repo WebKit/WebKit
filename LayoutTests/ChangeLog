@@ -1,3 +1,12 @@
+2020-08-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ macOS Release wk1 ] imported/w3c/web-platform-tests/css/css-overflow/overflow-recalc-001.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214703
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Update expectatins to reflect that this is an image failure.
+
 2020-08-05  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] media/media-source/media-source-webm.html is timing out
