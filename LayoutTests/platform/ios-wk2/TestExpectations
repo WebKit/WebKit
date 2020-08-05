@@ -1807,3 +1807,6 @@ webkit.org/b/215167 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFa
 webkit.org/b/215177 [ Release ] editing/selection/navigation-clears-editor-state.html [ Pass Failure ]
 
 webkit.org/b/215185 [ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone-transaction-state.any.worker.html [ Pass Failure ]
+
+webkit.org/b/215192 imported/w3c/web-platform-tests/preload/single-download-preload.html [ Pass Failure ]
+
