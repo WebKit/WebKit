@@ -1,6 +1,6 @@
 {
 	"url": "content/test-vp9.webm",
-	"type": "video/webm; codecs=\"vp09.00.10.08.01\"",
+	"type": "video/webm; codecs=\"vp09.00.10.08\"",
 	"init": { "offset": 0, "size": 629 },
 	"duration": 2,
 	"media": [ 

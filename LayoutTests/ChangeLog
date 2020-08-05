@@ -1,3 +1,18 @@
+2020-08-04  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r265167): media/media-source/media-source-webm.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=215142
+        <rdar://problem/66487888>
+
+        Reviewed by Eric Carlson.
+
+        Once we started checking the "codecs=" parameter of the MIME type in MediaSource.isTypeSupported(),
+        the media-source-webm.html test started failing, as the codecs string didn't include some mandatory
+        entries. Also re-wrote the test to use a single try/catch block to catch errors without timing out.
+
+        * media/media-source/content/test-vp9-manifest.json:
+        * media/media-source/media-source-webm.html:
+
 2020-08-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: VoiceOver needs access to font styling at insertion point

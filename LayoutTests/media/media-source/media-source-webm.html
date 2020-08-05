@@ -9,50 +9,56 @@
     var source;
     var sourceBuffer;
 
-    function runTest() {
-        findMediaElement();
-
-        loader = new MediaSourceLoader('content/test-vp9-manifest.json');
-        loader.onload = mediaDataLoaded;
-        loader.onerror = mediaDataLoadingFailed;
+    function loaderPromise(loader) {
+        return new Promise((resolve, reject) => {
+            loader.onload = resolve;
+            loader.onerror = reject;
+        });
     }
 
-    function mediaDataLoadingFailed() {
-        failTest('Media data loading failed');
+    function resizePromise(video, width, height) {
+        return new Promise(resolve => {
+            video.addEventListener('resize', event => {
+                // First resize can be 0x0
+                if (video.videoWidth == 0 && video.videoHeight == 0)
+                    return;
+                consoleWrite(`EVENT(${event.type})`);
+                testExpected('video.videoWidth', width);
+                testExpected('video.videoHeight', height);
+                resolve();
+            });
+        });
     }
 
-    function mediaDataLoaded() {
-        source = new MediaSource();
-        waitForEvent('sourceopen', sourceOpen, false, false, source);
-        waitForEventAndFail('error');
-        run('video.src = URL.createObjectURL(source)');
-    }
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+            loader = new MediaSourceLoader('content/test-vp9-manifest.json');
+            await loaderPromise(loader);
 
-    function sourceOpen() {
-        run('source.duration = loader.duration()');
-        run('sourceBuffer = source.addSourceBuffer(loader.type())');
-        waitForEventOn(sourceBuffer, 'update', sourceInitialized, false, true);
-        waitForEventOnce('resize', resize);
-        run('sourceBuffer.appendBuffer(loader.initSegment())');
-    }
+            source = new MediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitForEventAndFail('error');
 
-    function sourceInitialized() {
-        waitForEventOnce('resize', resize);
-        consoleWrite('Append a media segment.')
-        run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
-    }
+            run('source.duration = loader.duration()');
+            run('sourceBuffer = source.addSourceBuffer(loader.type())');
+            run('sourceBuffer.appendBuffer(loader.initSegment())');
 
-    function resize() {
-        // First resize can be 0x0 (Mac) or 640x480 (GTK+)
-        if (video.videoWidth > 0 && video.videoHeight > 0) {
-            testExpected('video.videoWidth', 320);
-            testExpected('video.videoHeight', 240);
+            await waitFor(sourceBuffer, 'update');
+
+            consoleWrite('Append a media segment.')
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
+
+            await resizePromise(video, 320, 240);
             endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
         }
-    }
+    });
     </script>
 </head>
-<body onload="runTest()">
+<body>
     <div>
         This tests the ability of the SourceBuffer to reset the parser after an abort(). A SourceBuffer in this state should be able to accept
         a new initialization segment or a new media segment.
