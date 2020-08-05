@@ -1,3 +1,7 @@
+2020-08-05  Russell Epstein  <repstein@apple.com>
+
+        Revert r265115. rdar://problem/66552761
+
 2020-07-31  Alex Christensen  <achristensen@webkit.org>
 
         Use more inclusive terminology in Tools

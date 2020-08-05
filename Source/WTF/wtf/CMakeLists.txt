@@ -156,7 +156,6 @@ set(WTF_PUBLIC_HEADERS
     OSRandomSource.h
     ObjCRuntimeExtras.h
     ObjectIdentifier.h
-    Observer.h
     OptionSet.h
     OptionSetHash.h
     Optional.h

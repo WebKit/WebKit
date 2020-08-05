@@ -54,8 +54,6 @@ public:
     virtual void updateKeyStatuses(KeyStatusVector&&) = 0;
     virtual void sendMessage(CDMMessageType, Ref<SharedBuffer>&& message) = 0;
     virtual void sessionIdChanged(const String&) = 0;
-    using PlatformDisplayID = uint32_t;
-    virtual PlatformDisplayID displayID() = 0;
 };
 
 class CDMInstanceSession : public RefCounted<CDMInstanceSession> {
@@ -104,9 +102,6 @@ public:
     virtual void removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback&&) = 0;
 
     virtual void storeRecordOfKeyUsage(const String& sessionId) = 0;
-
-    using PlatformDisplayID = uint32_t;
-    virtual void displayChanged(PlatformDisplayID) { }
 };
 
 } // namespace WebCore

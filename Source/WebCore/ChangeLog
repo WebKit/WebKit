@@ -1,3 +1,7 @@
+2020-08-05  Russell Epstein  <repstein@apple.com>
+
+        Revert r265115. rdar://problem/66552761
+
 2020-08-01  Sam Weinig  <weinig@apple.com>
 
         Convert LinkHeader to use StringParsingBuffer
