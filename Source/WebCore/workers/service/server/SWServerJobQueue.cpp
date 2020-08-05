@@ -169,6 +169,8 @@ void SWServerJobQueue::install(SWServerRegistration& registration, ServiceWorker
 
     // Invoke Resolve Job Promise with job and registration.
     m_server.resolveRegistrationJob(firstJob(), registration.data(), ShouldNotifyWhenResolved::Yes);
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=215122. We do not need to wait for the registration promise to resolve to continue the install steps.
 }
 
 // https://w3c.github.io/ServiceWorker/#install (after resolving promise).
@@ -177,6 +179,11 @@ void SWServerJobQueue::didResolveRegistrationPromise()
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
     ASSERT(registration->installingWorker());
+
+    if (!registration || !registration->installingWorker()) {
+        RELEASE_LOG_ERROR(ServiceWorker, "%p - SWServerJobQueue::didResolveRegistrationPromise with null registration (%d) or null worker", this, !!registration);
+        return;
+    }
 
     RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::didResolveRegistrationPromise: Registration ID: %llu. Now proceeding with install", this, registration->identifier().toUInt64());
 
