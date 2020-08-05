@@ -61,7 +61,11 @@ void CommonData::shrinkToFit()
 static Lock pcCodeBlockMapLock;
 inline HashMap<void*, CodeBlock*>& pcCodeBlockMap(AbstractLocker&)
 {
-    static NeverDestroyed<HashMap<void*, CodeBlock*>> pcCodeBlockMap;
+    static LazyNeverDestroyed<HashMap<void*, CodeBlock*>> pcCodeBlockMap;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        pcCodeBlockMap.construct();
+    });
     return pcCodeBlockMap;
 }
 

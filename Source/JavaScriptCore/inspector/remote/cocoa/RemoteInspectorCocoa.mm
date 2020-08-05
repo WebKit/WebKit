@@ -85,7 +85,11 @@ static bool globalAutomaticInspectionState()
 
 RemoteInspector& RemoteInspector::singleton()
 {
-    static NeverDestroyed<RemoteInspector> shared;
+    static LazyNeverDestroyed<RemoteInspector> shared;
+    static dispatch_once_t onceConstructKey;
+    dispatch_once(&onceConstructKey, ^{
+        shared.construct();
+    });
 
 #if PLATFORM(COCOA)
     if (needMachSandboxExtension)

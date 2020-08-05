@@ -37,7 +37,11 @@ namespace Inspector {
 
 RemoteInspectorSocketEndpoint& RemoteInspectorSocketEndpoint::singleton()
 {
-    static NeverDestroyed<RemoteInspectorSocketEndpoint> shared;
+    static LazyNeverDestroyed<RemoteInspectorSocketEndpoint> shared;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        shared.construct();
+    });
     return shared;
 }
 

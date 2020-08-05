@@ -35,8 +35,12 @@ namespace Inspector {
 
 RemoteInspectorServer& RemoteInspectorServer::singleton()
 {
-    static NeverDestroyed<RemoteInspectorServer> server;
-    return server;
+    static LazyNeverDestroyed<RemoteInspectorServer> shared;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        shared.construct();
+    });
+    return shared;
 }
 
 RemoteInspectorServer::~RemoteInspectorServer()

@@ -51,8 +51,12 @@ static Lock wrapperCacheMutex;
 
 static HashMap<JSContextGroupRef, JSCVirtualMachine*>& wrapperMap()
 {
-    static NeverDestroyed<HashMap<JSContextGroupRef, JSCVirtualMachine*>> map;
-    return map;
+    static LazyNeverDestroyed<HashMap<JSContextGroupRef, JSCVirtualMachine*>> shared;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        shared.construct();
+    });
+    return shared;
 }
 
 static void addWrapper(JSContextGroupRef group, JSCVirtualMachine* vm)

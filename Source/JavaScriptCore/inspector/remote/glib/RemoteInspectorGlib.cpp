@@ -40,7 +40,11 @@ namespace Inspector {
 
 RemoteInspector& RemoteInspector::singleton()
 {
-    static NeverDestroyed<RemoteInspector> shared;
+    static LazyNeverDestroyed<RemoteInspector> shared;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        shared.construct();
+    });
     return shared;
 }
 

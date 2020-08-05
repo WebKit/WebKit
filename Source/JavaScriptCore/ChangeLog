@@ -1,3 +1,41 @@
+2020-08-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use LazyNeverDestroyed & std::call_once for complex singletons
+        https://bugs.webkit.org/show_bug.cgi?id=215153
+        <rdar://problem/65718983>
+
+        Reviewed by Mark Lam.
+
+        We are getting some crashes in RemoteInspector and this speculatively fixes the crash.
+        My guess is that NeverDestroyed<RemoteInspector> calls constructor twice in heavily contended situation:
+        WebKit's static does not have thread-safety. If two threads come here at the same time, it is possible that
+        constructor is invoked twice. In that case, later constructor will clear members, which involves clearing
+        Lock m_mutex field. This makes Lock's invariant broken.
+        This patch uses LazyNeverDestroyed and std::call_once to ensure invoking constructor only once.
+
+        * API/glib/JSCVirtualMachine.cpp:
+        * dfg/DFGCommonData.cpp:
+        * disassembler/Disassembler.cpp:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::singleton):
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::singleton):
+        * inspector/remote/socket/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::singleton):
+        * inspector/remote/socket/RemoteInspectorServer.h:
+        * inspector/remote/socket/RemoteInspectorSocket.cpp:
+        (Inspector::RemoteInspector::singleton):
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp:
+        (Inspector::RemoteInspectorSocketEndpoint::singleton):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::opcodeIDTable):
+        * runtime/IntlObject.cpp:
+        (JSC::intlAvailableLocales):
+        (JSC::intlCollatorAvailableLocales):
+        (JSC::defaultLocale):
+        (JSC::numberingSystemsForLocale):
+
 2020-08-04  Keith Miller  <keith_miller@apple.com>
 
         CheckpointSideState shoud play nicely with StackOverflowException unwinding.

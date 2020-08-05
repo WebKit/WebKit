@@ -72,11 +72,11 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<Lo
         
         if (!(currentValue & isHeldBit)) {
             dataLog("Lock not held!\n");
-            RELEASE_ASSERT_NOT_REACHED();
+            CRASH_WITH_INFO(currentValue);
         }
         if (!(currentValue & hasParkedBit)) {
             dataLog("Lock not parked!\n");
-            RELEASE_ASSERT_NOT_REACHED();
+            CRASH_WITH_INFO(currentValue);
         }
 
         // We now expect the value to be isHeld|hasParked. So long as that's the case, we can park.
@@ -113,7 +113,7 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<
         if ((oldByteValue & mask) != isHeldBit
             && (oldByteValue & mask) != (isHeldBit | hasParkedBit)) {
             dataLog("Invalid value for lock: ", oldByteValue, "\n");
-            RELEASE_ASSERT_NOT_REACHED();
+            CRASH_WITH_INFO(oldByteValue);
         }
         
         if ((oldByteValue & mask) == isHeldBit) {

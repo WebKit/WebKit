@@ -1,3 +1,17 @@
+2020-08-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use LazyNeverDestroyed & std::call_once for complex singletons
+        https://bugs.webkit.org/show_bug.cgi?id=215153
+        <rdar://problem/65718983>
+
+        Reviewed by Mark Lam.
+
+        Add lock's bits in crash information to investigate if this speculative fix does not work.
+
+        * wtf/LockAlgorithmInlines.h:
+        (WTF::Hooks>::lockSlow):
+        (WTF::Hooks>::unlockSlow):
+
 2020-08-04  Keith Miller  <keith_miller@apple.com>
 
         CheckpointSideState shoud play nicely with StackOverflowException unwinding.

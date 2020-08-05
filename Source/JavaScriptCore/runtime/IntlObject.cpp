@@ -241,20 +241,19 @@ static void addScriptlessLocaleIfNeeded(HashSet<String>& availableLocales, Strin
 
 const HashSet<String>& intlAvailableLocales()
 {
-    static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
-    HashSet<String>& availableLocales = cachedAvailableLocales.get();
-
+    static LazyNeverDestroyed<HashSet<String>> availableLocales;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
-        ASSERT(availableLocales.isEmpty());
+        availableLocales.construct();
+        ASSERT(availableLocales->isEmpty());
         constexpr bool isImmortal = true;
         int32_t count = uloc_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
             String locale = languageTagForLocaleID(uloc_getAvailable(i), isImmortal);
             if (locale.isEmpty())
                 continue;
-            availableLocales.add(locale);
-            addScriptlessLocaleIfNeeded(availableLocales, locale);
+            availableLocales->add(locale);
+            addScriptlessLocaleIfNeeded(availableLocales.get(), locale);
         }
     });
     return availableLocales;
@@ -262,20 +261,19 @@ const HashSet<String>& intlAvailableLocales()
 
 const HashSet<String>& intlCollatorAvailableLocales()
 {
-    static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
-    HashSet<String>& availableLocales = cachedAvailableLocales.get();
-
+    static LazyNeverDestroyed<HashSet<String>> availableLocales;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
-        ASSERT(availableLocales.isEmpty());
+        availableLocales.construct();
+        ASSERT(availableLocales->isEmpty());
         constexpr bool isImmortal = true;
         int32_t count = ucol_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
             String locale = languageTagForLocaleID(ucol_getAvailable(i), isImmortal);
             if (locale.isEmpty())
                 continue;
-            availableLocales.add(locale);
-            addScriptlessLocaleIfNeeded(availableLocales, locale);
+            availableLocales->add(locale);
+            addScriptlessLocaleIfNeeded(availableLocales.get(), locale);
         }
     });
     return availableLocales;
@@ -521,11 +519,11 @@ String defaultLocale(JSGlobalObject* globalObject)
 
     // If all else fails, ask ICU. It will probably say something bogus like en_us even if the user
     // has configured some other language, but being wrong is better than crashing.
-    static NeverDestroyed<String> icuDefaultLocalString;
+    static LazyNeverDestroyed<String> icuDefaultLocalString;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
         constexpr bool isImmortal = true;
-        icuDefaultLocalString.get() = languageTagForLocaleID(uloc_getDefault(), isImmortal);
+        icuDefaultLocalString.construct(languageTagForLocaleID(uloc_getDefault(), isImmortal));
     });
     if (!icuDefaultLocalString->isEmpty())
         return icuDefaultLocalString.get();
@@ -778,12 +776,11 @@ JSValue supportedLocales(JSGlobalObject* globalObject, const HashSet<String>& av
 
 Vector<String> numberingSystemsForLocale(const String& locale)
 {
-    static NeverDestroyed<Vector<String>> cachedNumberingSystems;
-    Vector<String>& availableNumberingSystems = cachedNumberingSystems.get();
-
+    static LazyNeverDestroyed<Vector<String>> availableNumberingSystems;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
-        ASSERT(availableNumberingSystems.isEmpty());
+        availableNumberingSystems.construct();
+        ASSERT(availableNumberingSystems->isEmpty());
         UErrorCode status = U_ZERO_ERROR;
         UEnumeration* numberingSystemNames = unumsys_openAvailableNames(&status);
         ASSERT(U_SUCCESS(status));
@@ -796,7 +793,7 @@ Vector<String> numberingSystemsForLocale(const String& locale)
             ASSERT(U_SUCCESS(status));
             // Only support algorithmic if it is the default fot the locale, handled below.
             if (!unumsys_isAlgorithmic(numsys))
-                availableNumberingSystems.append(String(StringImpl::createStaticStringImpl(result, resultLength)));
+                availableNumberingSystems->append(String(StringImpl::createStaticStringImpl(result, resultLength)));
             unumsys_close(numsys);
         }
         uenum_close(numberingSystemNames);
@@ -809,7 +806,7 @@ Vector<String> numberingSystemsForLocale(const String& locale)
     unumsys_close(defaultSystem);
 
     Vector<String> numberingSystems({ defaultSystemName });
-    numberingSystems.appendVector(availableNumberingSystems);
+    numberingSystems.appendVector(availableNumberingSystems.get());
     return numberingSystems;
 }
 

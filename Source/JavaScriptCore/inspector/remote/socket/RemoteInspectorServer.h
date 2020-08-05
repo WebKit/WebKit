@@ -43,7 +43,7 @@ public:
     bool isRunning() const { return !!m_server; }
 
 private:
-    friend class NeverDestroyed<RemoteInspectorServer>;
+    friend class LazyNeverDestroyed<RemoteInspectorServer>;
     RemoteInspectorServer() { Socket::init(); }
 
     bool didAccept(ConnectionID acceptedID, ConnectionID listenerID, Socket::Domain) final;

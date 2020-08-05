@@ -336,13 +336,14 @@ Interpreter::~Interpreter()
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 HashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
 {
-    static NeverDestroyed<HashMap<Opcode, OpcodeID>> opcodeIDTable;
+    static LazyNeverDestroyed<HashMap<Opcode, OpcodeID>> opcodeIDTable;
 
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [&] {
+        opcodeIDTable.construct();
         const Opcode* opcodeTable = LLInt::opcodeMap();
         for (unsigned i = 0; i < NUMBER_OF_BYTECODE_IDS; ++i)
-            opcodeIDTable.get().add(opcodeTable[i], static_cast<OpcodeID>(i));
+            opcodeIDTable->add(opcodeTable[i], static_cast<OpcodeID>(i));
     });
 
     return opcodeIDTable;
