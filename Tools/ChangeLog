@@ -1,3 +1,27 @@
+2020-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove UIScriptController.removeAllDynamicDictionaries()
+        https://bugs.webkit.org/show_bug.cgi?id=215207
+
+        Reviewed by Tim Horton.
+
+        This script controller hook was added to help reset dictionaries to a consistent state prior to running the test
+        `contenteditable-autocorrect.html`, which verifies that `autocorrect="no"` on a contenteditable element works as
+        intended by typing "ti" and expecting it to not be autocorrected to anything else (i.e. "to").
+
+        Instead of requiring each test that involves autocorrection to call this, move this reset step into
+        TestController::platformResetStateToConsistentValues and remove the testing hook.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::replaceTextAtRange):
+        (WTR::UIScriptController::removeAllDynamicDictionaries): Deleted.
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::removeAllDynamicDictionaries): Deleted.
+
 2020-08-06  Rob Buis  <rbuis@igalia.com>
 
         build-webkit script tries to execute command xcodebuild on Linux

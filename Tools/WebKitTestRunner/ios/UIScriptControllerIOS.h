@@ -118,7 +118,6 @@ public:
     JSObjectRef selectionCaretViewRect() const override;
     JSObjectRef selectionRangeViewRects() const override;
     JSObjectRef inputViewBounds() const override;
-    void removeAllDynamicDictionaries() override;
     JSRetainPtr<JSStringRef> scrollingTreeAsText() const override;
     JSObjectRef propertiesOfLayerWithID(uint64_t layerID) const override;
     void simulateRotation(DeviceOrientation*, JSValueRef) override;
