@@ -32,12 +32,13 @@
 
 namespace WebCore {
 
-std::unique_ptr<MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream)
+std::unique_ptr<MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
 {
 #if HAVE(AVASSETWRITERDELEGATE)
-    return MediaRecorderPrivateAVFImpl::create(stream);
+    return MediaRecorderPrivateAVFImpl::create(stream, options);
 #else
     UNUSED_PARAM(stream);
+    UNUSED_PARAM(options);
     return nullptr;
 #endif
 }

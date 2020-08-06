@@ -1,3 +1,51 @@
+2020-08-06  Youenn Fablet  <youenn@apple.com>
+
+        Add support for MediaRecorder bitrate options
+        https://bugs.webkit.org/show_bug.cgi?id=214973
+
+        Reviewed by Eric Carlson.
+
+        Pipe options to MediaRecorderPrivate constructor.
+        For the actual implementation, pass it down to VideoSampleBufferCompressor and AudioSampleBufferCompressor.
+        For AudioSampleBufferCompressor, we do not handle well some bit rates, so for now, we limit to specific values.
+
+        Tests: http/wpt/mediarecorder/MediaRecorder-audio-bitrate.html
+               http/wpt/mediarecorder/MediaRecorder-video-bitrate.html
+
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::create):
+        (WebCore::MediaRecorder::createMediaRecorderPrivate):
+        (WebCore::MediaRecorder::MediaRecorder):
+        (WebCore::MediaRecorder::startRecording):
+        * Modules/mediarecorder/MediaRecorder.h:
+        * Modules/mediarecorder/MediaRecorderProvider.cpp:
+        (WebCore::MediaRecorderProvider::createMediaRecorderPrivate):
+        * Modules/mediarecorder/MediaRecorderProvider.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.cpp:
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        (WebCore::MediaRecorderPrivateAVFImpl::create):
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.h:
+        * platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm:
+        (WebCore::AudioSampleBufferCompressor::setBitsPerSecond):
+        (WebCore::AudioSampleBufferCompressor::outputBitRate const):
+        (WebCore::AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription):
+        Do not exit when not able to set bitrate as we still want to set m_maxOutputPacketSize.
+        In case of error in setting up the converter, clean it up so that we do not use a partially set up converter.
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::create):
+        (WebCore::MediaRecorderPrivateWriter::setOptions):
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.h:
+        * platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm:
+        (WebCore::VideoSampleBufferCompressor::setBitsPerSecond):
+        (WebCore::setCompressionSessionProperty):
+        (WebCore::VideoSampleBufferCompressor::initCompressionSession):
+        * testing/Internals.cpp:
+        (WebCore::createRecorderMockSource):
+
 2020-08-06  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling tree nodes sometimes don't match layer z-order

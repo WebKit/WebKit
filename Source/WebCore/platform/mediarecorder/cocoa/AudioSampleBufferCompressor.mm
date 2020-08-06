@@ -32,6 +32,8 @@
 #include <AudioToolbox/AudioConverter.h>
 #include <AudioToolbox/AudioFormat.h>
 #include <Foundation/Foundation.h>
+#include <algorithm>
+#include <wtf/Scope.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
 
@@ -95,6 +97,34 @@ void AudioSampleBufferCompressor::finish()
     });
 }
 
+void AudioSampleBufferCompressor::setBitsPerSecond(unsigned bitRate)
+{
+    // FIXME: we have some issues when setting up some bit rates, only allow some that work for the moment.
+    if (bitRate < 128000) {
+        RELEASE_LOG_INFO(WebRTC, "AudioSampleBufferCompressor::outputBitRate clamped to 128000.");
+        bitRate = 128000;
+    } else if (bitRate > 256000) {
+        RELEASE_LOG_INFO(WebRTC, "AudioSampleBufferCompressor::outputBitRate clamped to 256000.");
+        bitRate = 256000;
+    } else if (bitRate != 128000 && bitRate != 192000 && bitRate != 256000) {
+        RELEASE_LOG_INFO(WebRTC, "AudioSampleBufferCompressor::outputBitRate did not set output bit rate as value is not supported.");
+        return;
+    }
+    m_outputBitRate = bitRate;
+}
+
+UInt32 AudioSampleBufferCompressor::outputBitRate(const AudioStreamBasicDescription& destinationFormat) const
+{
+    if (m_outputBitRate)
+        return *m_outputBitRate;
+
+    if (destinationFormat.mSampleRate >= 44100)
+        return 192000;
+    if (destinationFormat.mSampleRate < 22000)
+        return 32000;
+    return 64000;
+}
+
 bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(CMFormatDescriptionRef formatDescription, AudioFormatID outputFormatID)
 {
     const auto *audioFormatListItem = CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription);
@@ -117,6 +147,11 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
         return false;
     }
     m_converter = converter;
+
+    auto cleanupInCaseOfError = makeScopeExit([&] {
+        AudioConverterDispose(m_converter);
+        m_converter = nullptr;
+    });
 
     size_t cookieSize = 0;
     const void *cookie = CMAudioFormatDescriptionGetMagicCookie(formatDescription, &cookieSize);
@@ -145,18 +180,10 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
     }
 
     if (m_destinationFormat.mFormatID == kAudioFormatMPEG4AAC) {
-        // FIXME: Set outputBitRate according MediaRecorderOptions.audioBitsPerSecond.
-        UInt32 outputBitRate = 64000;
-        if (m_destinationFormat.mSampleRate >= 44100)
-            outputBitRate = 192000;
-        else if (m_destinationFormat.mSampleRate < 22000)
-            outputBitRate = 32000;
-
+        auto outputBitRate = this->outputBitRate(m_destinationFormat);
         size = sizeof(outputBitRate);
-        if (auto error = AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, size, &outputBitRate)) {
+        if (auto error = AudioConverterSetProperty(m_converter, kAudioConverterEncodeBitRate, size, &outputBitRate))
             RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor setting kAudioConverterEncodeBitRate failed with %d", error);
-            return false;
-        }
     }
 
     if (!m_destinationFormat.mBytesPerPacket) {
@@ -168,6 +195,8 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
             return false;
         }
     }
+
+    cleanupInCaseOfError.release();
 
     auto destinationBufferSize = computeBufferSizeForAudioFormat(m_destinationFormat, m_maxOutputPacketSize, LOW_WATER_TIME_IN_SECONDS);
     if (m_destinationBuffer.size() < destinationBufferSize)
@@ -428,8 +457,10 @@ void AudioSampleBufferCompressor::processSampleBuffersUntilLowWaterTime(CMTime l
         m_currentOutputPresentationTimeStamp = CMSampleBufferGetOutputPresentationTimeStamp(buffer);
 
         auto formatDescription = CMSampleBufferGetFormatDescription(buffer);
-        if (!initAudioConverterForSourceFormatDescription(formatDescription, m_outputCodecType))
+        if (!initAudioConverterForSourceFormatDescription(formatDescription, m_outputCodecType)) {
+            // FIXME: Maybe we should error the media recorder if we are not able to get a correct converter.
             return;
+        }
     }
 
     while (CMTIME_IS_INVALID(lowWaterTime) || CMTIME_COMPARE_INLINE(lowWaterTime, <, CMBufferQueueGetDuration(m_inputBufferQueue.get()))) {

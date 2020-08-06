@@ -29,6 +29,7 @@ namespace WebCore {
 
 class MediaRecorderPrivate;
 class MediaStreamPrivate;
+struct MediaRecorderPrivateOptions;
 
 class WEBCORE_EXPORT MediaRecorderProvider {
     WTF_MAKE_FAST_ALLOCATED;
@@ -37,7 +38,7 @@ public:
     virtual ~MediaRecorderProvider() = default;
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
-    virtual std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(MediaStreamPrivate&);
+    virtual std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(MediaStreamPrivate&, const MediaRecorderPrivateOptions&);
 #endif
 
     void setUseGPUProcess(bool value) { m_useGPUProcess = value; }

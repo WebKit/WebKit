@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "AudioSampleBufferCompressor.h"
 #include "AudioStreamDescription.h"
 #include "Logging.h"
+#include "MediaRecorderPrivateOptions.h"
 #include "MediaStreamTrackPrivate.h"
 #include "VideoSampleBufferCompressor.h"
 #include "WebAudioBufferList.h"
@@ -114,11 +115,12 @@ namespace WebCore {
 
 using namespace PAL;
 
-RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAudio, bool hasVideo)
+RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions& options)
 {
     auto writer = adoptRef(*new MediaRecorderPrivateWriter(hasAudio, hasVideo));
     if (!writer->initialize())
         return nullptr;
+    writer->setOptions(options);
     return writer;
 }
 
@@ -174,6 +176,14 @@ bool MediaRecorderPrivateWriter::initialize()
             return false;
     }
     return true;
+}
+
+void MediaRecorderPrivateWriter::setOptions(const MediaRecorderPrivateOptions& options)
+{
+    if (options.audioBitsPerSecond && m_audioCompressor)
+        m_audioCompressor->setBitsPerSecond(*options.audioBitsPerSecond);
+    if (options.videoBitsPerSecond && m_videoCompressor)
+        m_videoCompressor->setBitsPerSecond(*options.videoBitsPerSecond);
 }
 
 void MediaRecorderPrivateWriter::processNewCompressedVideoSampleBuffers()

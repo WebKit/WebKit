@@ -27,6 +27,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include "Exception.h"
+#include "MediaRecorderPrivateOptions.h"
 #include "RealtimeMediaSource.h"
 
 #if ENABLE(MEDIA_STREAM)

@@ -59,10 +59,11 @@ class AudioStreamDescription;
 class MediaStreamTrackPrivate;
 class PlatformAudioData;
 class VideoSampleBufferCompressor;
+struct MediaRecorderPrivateOptions;
 
 class WEBCORE_EXPORT MediaRecorderPrivateWriter : public ThreadSafeRefCounted<MediaRecorderPrivateWriter, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaRecorderPrivateWriter, WeakPtrFactoryInitialization::Eager> {
 public:
-    static RefPtr<MediaRecorderPrivateWriter> create(bool hasAudio, bool hasVideo);
+    static RefPtr<MediaRecorderPrivateWriter> create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions&);
     ~MediaRecorderPrivateWriter();
 
     void appendVideoSampleBuffer(CMSampleBufferRef);
@@ -78,6 +79,7 @@ private:
     void clear();
 
     bool initialize();
+    void setOptions(const MediaRecorderPrivateOptions&);
 
     static void compressedVideoOutputBufferCallback(void*, CMBufferQueueTriggerToken);
     static void compressedAudioOutputBufferCallback(void*, CMBufferQueueTriggerToken);

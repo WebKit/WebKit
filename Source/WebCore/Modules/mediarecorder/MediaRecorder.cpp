@@ -48,9 +48,10 @@ MediaRecorder::CreatorFunction MediaRecorder::m_customCreator = nullptr;
 
 ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<MediaStream>&& stream, Options&& options)
 {
-    auto privateInstance = MediaRecorder::createMediaRecorderPrivate(document, stream->privateStream());
-    if (!privateInstance)
-        return Exception { NotSupportedError, "The MediaRecorder is unsupported on this platform"_s };
+    auto result = MediaRecorder::createMediaRecorderPrivate(document, stream->privateStream(), options);
+    if (result.hasException())
+        return result.releaseException();
+
     auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(options)));
     recorder->suspendIfNeeded();
     return recorder;
@@ -61,27 +62,27 @@ void MediaRecorder::setCustomPrivateRecorderCreator(CreatorFunction creator)
     m_customCreator = creator;
 }
 
-std::unique_ptr<MediaRecorderPrivate> MediaRecorder::createMediaRecorderPrivate(Document& document, MediaStreamPrivate& stream)
+ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> MediaRecorder::createMediaRecorderPrivate(Document& document, MediaStreamPrivate& stream, const Options& options)
 {
     if (m_customCreator)
-        return m_customCreator(stream);
+        return m_customCreator(stream, options);
 
 #if PLATFORM(COCOA)
     auto* page = document.page();
     if (!page)
-        return nullptr;
+        return Exception { InvalidStateError };
 
-    return page->mediaRecorderProvider().createMediaRecorderPrivate(stream);
+    return page->mediaRecorderProvider().createMediaRecorderPrivate(stream, options);
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(stream);
-    return nullptr;
+    return Exception { NotSupportedError, "The MediaRecorder is unsupported on this platform"_s };
 #endif
 }
 
-MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Options&& option)
+MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Options&& options)
     : ActiveDOMObject(document)
-    , m_options(WTFMove(option))
+    , m_options(WTFMove(options))
     , m_stream(WTFMove(stream))
     , m_timeSliceTimer([this] { requestData(); })
 {
@@ -135,11 +136,13 @@ ExceptionOr<void> MediaRecorder::startRecording(Optional<unsigned> timeSlice)
         return Exception { InvalidStateError, "The MediaRecorder's state must be inactive in order to start recording"_s };
 
     ASSERT(!m_private);
-    m_private = createMediaRecorderPrivate(*document(), m_stream->privateStream());
+    auto result = createMediaRecorderPrivate(*document(), m_stream->privateStream(), m_options);
 
-    if (!m_private)
-        return Exception { NotSupportedError, "The MediaRecorder is unsupported on this platform"_s };
+    ASSERT(!result.hasException());
+    if (result.hasException())
+        return result.releaseException();
 
+    m_private = result.releaseReturnValue();
     m_private->startRecording([this, pendingActivity = makePendingActivity(*this)](auto&& exception) mutable {
         if (!m_isActive)
             return;
