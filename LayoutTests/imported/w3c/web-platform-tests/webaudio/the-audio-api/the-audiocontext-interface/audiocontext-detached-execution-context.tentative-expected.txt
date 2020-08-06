@@ -1,7 +1,9 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "decoding-on-detached-iframe" promise_test: Unhandled rejection with value: object "TypeError: Not enough arguments"
+PASS Executing "decoding-on-detached-iframe" 
 PASS Audit report 
 PASS > [decoding-on-detached-iframe]  
+PASS   decodeAudioData() upon a detached iframe rejected correctly with NotAllowedError. 
+PASS < [decoding-on-detached-iframe] All assertions passed. (total 1 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

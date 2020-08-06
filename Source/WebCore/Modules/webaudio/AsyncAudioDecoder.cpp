@@ -52,11 +52,11 @@ AsyncAudioDecoder::~AsyncAudioDecoder()
     m_thread->waitForCompletion();
 }
 
-void AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audioData, float sampleRate, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback)
+void AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audioData, float sampleRate, Function<void(ExceptionOr<Ref<AudioBuffer>>&&)>&& callback)
 {
     ASSERT(isMainThread());
 
-    auto decodingTask = makeUnique<DecodingTask>(WTFMove(audioData), sampleRate, WTFMove(successCallback), WTFMove(errorCallback));
+    auto decodingTask = makeUnique<DecodingTask>(WTFMove(audioData), sampleRate, WTFMove(callback));
     m_queue.append(WTFMove(decodingTask)); // note that ownership of the task is effectively taken by the queue.
 }
 
@@ -77,11 +77,10 @@ void AsyncAudioDecoder::runLoop()
     }
 }
 
-AsyncAudioDecoder::DecodingTask::DecodingTask(Ref<ArrayBuffer>&& audioData, float sampleRate, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback)
+AsyncAudioDecoder::DecodingTask::DecodingTask(Ref<ArrayBuffer>&& audioData, float sampleRate, Function<void(ExceptionOr<Ref<AudioBuffer>>&&)>&& callback)
     : m_audioData(WTFMove(audioData))
     , m_sampleRate(sampleRate)
-    , m_successCallback(WTFMove(successCallback))
-    , m_errorCallback(WTFMove(errorCallback))
+    , m_callback(WTFMove(callback))
 {
 }
 
@@ -98,10 +97,10 @@ void AsyncAudioDecoder::DecodingTask::decode()
 
 void AsyncAudioDecoder::DecodingTask::notifyComplete()
 {
-    if (audioBuffer() && successCallback())
-        successCallback()->handleEvent(audioBuffer());
-    else if (errorCallback())
-        errorCallback()->handleEvent(audioBuffer());
+    if (auto* audioBuffer = this->audioBuffer())
+        callback()(makeRef(*audioBuffer));
+    else
+        callback()(Exception { EncodingError, "Decoding failed"_s });
 
     // Our ownership was given up in AsyncAudioDecoder::runLoop()
     // Make sure to clean up here.

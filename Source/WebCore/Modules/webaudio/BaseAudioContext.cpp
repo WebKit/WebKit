@@ -58,6 +58,7 @@
 #include "GenericEventQueue.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
+#include "JSAudioBuffer.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
 #include "NetworkingContext.h"
@@ -391,11 +392,32 @@ ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(unsigned numberOfCh
     return AudioBuffer::create(AudioBufferOptions {numberOfChannels, length, sampleRate});
 }
 
-void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback)
+void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback, Optional<Ref<DeferredPromise>>&& promise)
 {
+    if (promise && (!document() || !document()->isFullyActive())) {
+        promise.value()->reject(Exception { NotAllowedError, "Document is not fully active"_s });
+        return;
+    }
+
     if (!m_audioDecoder)
         m_audioDecoder = makeUnique<AsyncAudioDecoder>();
-    m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate(), WTFMove(successCallback), WTFMove(errorCallback));
+
+    m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate(), [this, activity = ActiveDOMObject::makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)](ExceptionOr<Ref<AudioBuffer>>&& result) mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::InternalAsyncTask, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise), result = WTFMove(result)]() mutable {
+            if (result.hasException()) {
+                if (promise)
+                    promise.value()->reject(result.releaseException());
+                if (errorCallback)
+                    errorCallback->handleEvent(nullptr);
+                return;
+            }
+            auto audioBuffer = result.releaseReturnValue();
+            if (promise)
+                promise.value()->resolve<IDLInterface<AudioBuffer>>(audioBuffer.get());
+            if (successCallback)
+                successCallback->handleEvent(audioBuffer.ptr());
+        });
+    });
 }
 
 AudioListener& WebCore::BaseAudioContext::listener()

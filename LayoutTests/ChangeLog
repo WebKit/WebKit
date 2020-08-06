@@ -1,3 +1,14 @@
+2020-08-06  Chris Dumez  <cdumez@apple.com>
+
+        BaseAudioContext.decodeAudioData() should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=215242
+
+        Reviewed by Eric Carlson.
+
+        Unskip test that is no longer timing out.
+
+        * TestExpectations:
+
 2020-08-06  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk 2 Release ] imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worker-src-child-fallback.https.sub.html  is a flaky failure

@@ -40,7 +40,7 @@ PASS BaseAudioContext interface: operation createPeriodicWave(sequence<float>, s
 PASS BaseAudioContext interface: operation createScriptProcessor(optional unsigned long, optional unsigned long, optional unsigned long) 
 FAIL BaseAudioContext interface: operation createStereoPanner() assert_own_property: interface prototype object missing non-static operation expected property "createStereoPanner" missing
 PASS BaseAudioContext interface: operation createWaveShaper() 
-FAIL BaseAudioContext interface: operation decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) assert_equals: property has wrong .length expected 1 but got 2
+PASS BaseAudioContext interface: operation decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) 
 PASS AudioContext interface: existence and properties of interface object 
 PASS AudioContext interface object length 
 PASS AudioContext interface object name 
@@ -105,7 +105,7 @@ PASS BaseAudioContext interface: calling createScriptProcessor(optional unsigned
 FAIL BaseAudioContext interface: context must inherit property "createStereoPanner()" with the proper type assert_inherits: property "createStereoPanner" not found in prototype chain
 PASS BaseAudioContext interface: context must inherit property "createWaveShaper()" with the proper type 
 PASS BaseAudioContext interface: context must inherit property "decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?)" with the proper type 
-FAIL BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on context with too few arguments must throw TypeError assert_unreached: Throws "TypeError: Not enough arguments" instead of rejecting promise Reached unreachable code
+PASS BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on context with too few arguments must throw TypeError 
 PASS OfflineAudioContext interface: existence and properties of interface object 
 PASS OfflineAudioContext interface object length 
 PASS OfflineAudioContext interface object name 
@@ -158,7 +158,7 @@ PASS BaseAudioContext interface: calling createScriptProcessor(optional unsigned
 FAIL BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createStereoPanner()" with the proper type assert_inherits: property "createStereoPanner" not found in prototype chain
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createWaveShaper()" with the proper type 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?)" with the proper type 
-FAIL BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError assert_unreached: Throws "TypeError: Not enough arguments" instead of rejecting promise Reached unreachable code
+PASS BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError 
 PASS OfflineAudioCompletionEvent interface: existence and properties of interface object 
 PASS OfflineAudioCompletionEvent interface object length 
 PASS OfflineAudioCompletionEvent interface object name 

@@ -47,8 +47,7 @@
     [MayThrowException] AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate);
 
     // Asynchronous audio file data decoding.
-    // FIXME: successCallback should be optional and the callbacks should not be nullable. This should also return a Promise.
-    void decodeAudioData(ArrayBuffer audioData, AudioBufferCallback? successCallback, optional AudioBufferCallback? errorCallback);
+    Promise<AudioBuffer> decodeAudioData(ArrayBuffer audioData, optional AudioBufferCallback? successCallback, optional AudioBufferCallback? errorCallback);
 
     // Sources
     [MayThrowException] AudioBufferSourceNode createBufferSource();
