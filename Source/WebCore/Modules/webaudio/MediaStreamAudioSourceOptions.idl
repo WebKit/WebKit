@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, Google Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,7 @@
  */
 
 [
-    Conditional=WEB_AUDIO&MEDIA_STREAM,
-    JSGenerateToJSObject
-] interface MediaStreamAudioSourceNode : AudioNode {
-    [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor (AudioContext context, MediaStreamAudioSourceOptions options);
-
-    readonly attribute MediaStream mediaStream;
+    Conditional=WEB_AUDIO&MEDIA_STREAM
+] dictionary MediaStreamAudioSourceOptions {
+    required MediaStream mediaStream;
 };

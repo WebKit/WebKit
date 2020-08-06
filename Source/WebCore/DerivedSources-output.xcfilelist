@@ -1116,6 +1116,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamAudioDestinationNode.c
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamAudioDestinationNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamAudioSourceNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamAudioSourceNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamAudioSourceOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamAudioSourceOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrack.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrack.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSMediaStreamTrackEvent.cpp

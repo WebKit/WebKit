@@ -1,5 +1,17 @@
 2020-08-06  Chris Dumez  <cdumez@apple.com>
 
+        MediaStreamAudioSourceNode should have a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=215225
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourcenode-interface/mediastreamaudiosourcenode-ctor-expected.txt:
+
+2020-08-06  Chris Dumez  <cdumez@apple.com>
+
         DynamicsCompressorNode.reduction attribute should be a float, not an AudioParam
         https://bugs.webkit.org/show_bug.cgi?id=215195
 

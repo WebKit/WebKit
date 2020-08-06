@@ -1,3 +1,32 @@
+2020-08-06  Chris Dumez  <cdumez@apple.com>
+
+        MediaStreamAudioSourceNode should have a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=215225
+
+        Reviewed by Eric Carlson.
+
+        MediaStreamAudioSourceNode should have a constructor:
+        - https://webaudio.github.io/web-audio-api/#mediastreamaudiosourcenode
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createMediaStreamSource):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::create):
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        * Modules/webaudio/MediaStreamAudioSourceNode.idl:
+        * Modules/webaudio/MediaStreamAudioSourceOptions.h: Copied from Source/WebCore/Modules/webaudio/MediaStreamAudioSourceNode.idl.
+        * Modules/webaudio/MediaStreamAudioSourceOptions.idl: Copied from Source/WebCore/Modules/webaudio/MediaStreamAudioSourceNode.idl.
+        * Modules/webaudio/WebKitAudioContext.cpp:
+        (WebCore::WebKitAudioContext::createMediaStreamSource):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Rename LeadingExpansion and TrailingExpansion to LeftExpansion and RightExpansion

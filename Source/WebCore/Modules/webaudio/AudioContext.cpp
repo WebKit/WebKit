@@ -36,6 +36,7 @@
 #include "MediaStreamAudioDestinationNode.h"
 #include "MediaStreamAudioSource.h"
 #include "MediaStreamAudioSourceNode.h"
+#include "MediaStreamAudioSourceOptions.h"
 #endif
 
 #if ENABLE(VIDEO)
@@ -128,30 +129,7 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> AudioContext::createMediaStreamSour
 
     ASSERT(isMainThread());
 
-    if (isStopped())
-        return Exception { InvalidStateError };
-
-    auto audioTracks = mediaStream.getAudioTracks();
-    if (audioTracks.isEmpty())
-        return Exception { InvalidStateError };
-
-    MediaStreamTrack* providerTrack = nullptr;
-    for (auto& track : audioTracks) {
-        if (track->audioSourceProvider()) {
-            providerTrack = track.get();
-            break;
-        }
-    }
-    if (!providerTrack)
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
-
-    auto node = MediaStreamAudioSourceNode::create(*this, mediaStream, *providerTrack);
-    node->setFormat(2, sampleRate());
-
-    refNode(node); // context keeps reference until node is disconnected
-    return node;
+    return MediaStreamAudioSourceNode::create(*this, { &mediaStream });
 }
 
 ExceptionOr<Ref<MediaStreamAudioDestinationNode>> AudioContext::createMediaStreamDestination()
