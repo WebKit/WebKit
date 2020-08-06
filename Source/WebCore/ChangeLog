@@ -1,3 +1,39 @@
+2020-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling tree nodes sometimes don't match layer z-order
+        https://bugs.webkit.org/show_bug.cgi?id=215210
+
+        Reviewed by Antti Koivisto.
+
+        When adding nodes to the scrolling state tree during compositing layer traversal,
+        we would sometimes add then in the wrong order. For example, if the composited layer
+        tree was:
+        
+        + Root
+          + Stacking context
+            Fixed layer 1
+          Fixed layer 2
+          
+        we would build a scrolling tree like:
+        
+        + Root scrolling node
+          Node for layer 2
+          Node for layer 1
+
+        This happened because RenderLayerCompositor::updateBackingAndHierarchy() failed to propagate up
+        scrollingTreeState.nextChildIndex.
+        
+        This is generally benign, but inserting node 1 followed by node 2 would be seen as a scrolling tree
+        mutation, causing us to re-commit the scrolling tree when it hadn't really changed, triggering
+        extra CPU usage.
+        
+        Part of <rdar://problem/62737868>: higher CPU usage on instagram.com.
+
+        Test: scrollingcoordinator/scrolling-tree/sibling-node-order.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBackingAndHierarchy):
+
 2020-08-05  Rob Buis  <rbuis@igalia.com>
 
         Remove the StyleResolver-specific evaluate function in MediaQueryEvaluator

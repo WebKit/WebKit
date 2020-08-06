@@ -1,3 +1,14 @@
+2020-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling tree nodes sometimes don't match layer z-order
+        https://bugs.webkit.org/show_bug.cgi?id=215210
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/sibling-node-order-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/sibling-node-order-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/sibling-node-order.html: Added.
+
 2020-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove UIScriptController.removeAllDynamicDictionaries()

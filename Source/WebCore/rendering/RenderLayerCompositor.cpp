@@ -1356,6 +1356,9 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
 
         // Pass needSynchronousScrollingReasonsUpdate back up.
         scrollingTreeState.needSynchronousScrollingReasonsUpdate |= scrollingStateForDescendants.needSynchronousScrollingReasonsUpdate;
+        if (scrollingTreeState.parentNodeID == scrollingStateForDescendants.parentNodeID)
+            scrollingTreeState.nextChildIndex = scrollingStateForDescendants.nextChildIndex;
+
     } else if (requiresChildRebuild)
         appendForegroundLayerIfNecessary();
 
