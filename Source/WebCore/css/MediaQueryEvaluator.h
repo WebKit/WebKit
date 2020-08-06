@@ -33,13 +33,8 @@
 namespace WebCore {
 
 class Document;
-class Frame;
 class MediaQuerySet;
 class RenderStyle;
-
-namespace Style {
-class Resolver;
-}
 
 struct MediaQueryResult {
     MediaQueryExpression expression;
