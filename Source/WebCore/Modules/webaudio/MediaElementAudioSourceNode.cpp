@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, Google Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +32,7 @@
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
 #include "Logging.h"
+#include "MediaElementAudioSourceOptions.h"
 #include "MediaPlayer.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Locker.h>
@@ -43,16 +45,29 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(MediaElementAudioSourceNode);
 
-Ref<MediaElementAudioSourceNode> MediaElementAudioSourceNode::create(BaseAudioContext& context, HTMLMediaElement& mediaElement)
+ExceptionOr<Ref<MediaElementAudioSourceNode>> MediaElementAudioSourceNode::create(BaseAudioContext& context, MediaElementAudioSourceOptions&& options)
 {
-    return adoptRef(*new MediaElementAudioSourceNode(context, mediaElement));
+    RELEASE_ASSERT(options.mediaElement);
+
+    if (context.isStopped())
+        return Exception { InvalidStateError };
+
+    if (options.mediaElement->audioSourceNode())
+        return Exception { InvalidStateError, "Media element is already associated with an audio source node"_s };
+
+    context.lazyInitialize();
+
+    auto node = adoptRef(*new MediaElementAudioSourceNode(context, *options.mediaElement));
+
+    options.mediaElement->setAudioSourceNode(node.ptr());
+    context.refNode(node.get()); // context keeps reference until node is disconnected
+
+    return node;
 }
 
-MediaElementAudioSourceNode::MediaElementAudioSourceNode(BaseAudioContext& context, HTMLMediaElement& mediaElement)
+MediaElementAudioSourceNode::MediaElementAudioSourceNode(BaseAudioContext& context, Ref<HTMLMediaElement>&& mediaElement)
     : AudioNode(context, context.sampleRate())
-    , m_mediaElement(mediaElement)
-    , m_sourceNumberOfChannels(0)
-    , m_sourceSampleRate(0)
+    , m_mediaElement(WTFMove(mediaElement))
 {
     setNodeType(NodeTypeMediaElementAudioSource);
 

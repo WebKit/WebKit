@@ -3061,6 +3061,7 @@ JSMediaDecodingType.cpp
 JSMediaDeviceInfo.cpp
 JSMediaDevices.cpp
 JSMediaElementAudioSourceNode.cpp
+JSMediaElementAudioSourceOptions.cpp
 JSMediaEncodingConfiguration.cpp
 JSMediaEncodingType.cpp
 JSMediaEncryptedEvent.cpp

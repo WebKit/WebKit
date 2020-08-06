@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2020, Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +22,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    ActiveDOMObject,
-    Conditional=WEB_AUDIO,
-    EnabledBySetting=WebAudio&ModernUnprefixedWebAudio,
-    ExportMacro=WEBCORE_EXPORT,
-    JSGenerateToNativeObject,
-] interface AudioContext : BaseAudioContext {
-    [CallWith=Document, MayThrowException] constructor(optional AudioContextOptions contextOptions);
+#pragma once
 
-    // FIXME: Add support.
-    // readonly attribute double baseLatency;
-    // readonly attribute double outputLatency;
-    // AudioTimestamp getOutputTimestamp();
+#if ENABLE(WEB_AUDIO) && ENABLE(VIDEO)
 
-    [ImplementedAs=suspendRendering] Promise<void> suspend();
-    [ImplementedAs=resumeRendering] Promise<void> resume();
-    Promise<void> close();
+#include "HTMLMediaElement.h"
 
-    [Conditional=VIDEO, MayThrowException] MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
-    [Conditional=MEDIA_STREAM, MayThrowException] MediaStreamAudioSourceNode createMediaStreamSource(MediaStream mediaStream);
-    [Conditional=MEDIA_STREAM, MayThrowException] MediaStreamAudioDestinationNode createMediaStreamDestination();
+namespace WebCore {
 
-    // FIXME: Add support.
-    // MediaStreamTrackAudioSourceNode createMediaStreamTrackSource(MediaStreamTrack mediaStreamTrack);
+struct MediaElementAudioSourceOptions {
+    RefPtr<HTMLMediaElement> mediaElement;
 };
+
+} // namespace WebCore
+
+#endif // #if ENABLE(WEB_AUDIO) && ENABLE(VIDEO)

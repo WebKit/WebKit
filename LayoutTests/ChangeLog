@@ -1,3 +1,15 @@
+2020-08-06  Chris Dumez  <cdumez@apple.com>
+
+        MediaElementAudioSourceNode interface should have a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=215200
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * webaudio/mediaelementaudiosourcenode-constructor-expected.txt: Added.
+        * webaudio/mediaelementaudiosourcenode-constructor.html: Added.
+
 2020-08-06  Karl Rackler  <rackler@apple.com>
 
         [ iOS wk2 ] editing/pasteboard/paste-without-nesting.html is a flaky failure

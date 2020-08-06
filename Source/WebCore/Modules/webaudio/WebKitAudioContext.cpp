@@ -46,6 +46,7 @@
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 #include "MediaElementAudioSourceNode.h"
+#include "MediaElementAudioSourceOptions.h"
 #endif
 
 const unsigned MaxPeriodicWaveLength = 4096;
@@ -98,18 +99,7 @@ ExceptionOr<Ref<MediaElementAudioSourceNode>> WebKitAudioContext::createMediaEle
     ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT(isMainThread());
-
-    if (isStopped() || mediaElement.audioSourceNode())
-        return Exception { InvalidStateError };
-
-    lazyInitialize();
-
-    auto node = MediaElementAudioSourceNode::create(*this, mediaElement);
-
-    mediaElement.setAudioSourceNode(node.ptr());
-
-    refNode(node.get()); // context keeps reference until node is disconnected
-    return node;
+    return MediaElementAudioSourceNode::create(*this, { &mediaElement });
 }
 
 #endif
