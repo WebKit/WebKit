@@ -45,7 +45,6 @@ using WebCore::PlaybackSessionInterfaceMac;
 
 @implementation WebPlaybackControlsManager
 
-@synthesize contentDuration=_contentDuration;
 @synthesize seekToTime=_seekToTime;
 @synthesize hasEnabledAudio=_hasEnabledAudio;
 @synthesize hasEnabledVideo=_hasEnabledVideo;
@@ -60,6 +59,16 @@ using WebCore::PlaybackSessionInterfaceMac;
     if (_playbackSessionInterfaceMac)
         _playbackSessionInterfaceMac->setPlayBackControlsManager(nullptr);
     [super dealloc];
+}
+
+- (NSTimeInterval)contentDuration
+{
+    return [_seekableTimeRanges count] ? _contentDuration : std::numeric_limits<double>::infinity();
+}
+
+- (void)setContentDuration:(NSTimeInterval)duration
+{
+    _contentDuration = duration;
 }
 
 - (AVValueTiming *)timing

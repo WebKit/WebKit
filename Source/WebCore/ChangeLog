@@ -1,3 +1,38 @@
+2020-08-06  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r265318. rdar://problem/66630841
+
+    Netflix.com shows a scrubber that doesn't work
+    https://bugs.webkit.org/show_bug.cgi?id=215199
+    
+    Reviewed by Eric Carlson.
+    
+    The "contentDuration" property of WebPlaybackControlsManager needs to be infinite
+    when the video is not seekable. Otherwise, AVKit will show a scrubber that doesn't
+    work on the Touch Bar.
+    
+    * platform/mac/WebPlaybackControlsManager.mm:
+    (-[WebPlaybackControlsManager contentDuration]):
+    (-[WebPlaybackControlsManager setContentDuration:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265318 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-05  Peng Liu  <peng.liu6@apple.com>
+
+            Netflix.com shows a scrubber that doesn't work
+            https://bugs.webkit.org/show_bug.cgi?id=215199
+
+            Reviewed by Eric Carlson.
+
+            The "contentDuration" property of WebPlaybackControlsManager needs to be infinite
+            when the video is not seekable. Otherwise, AVKit will show a scrubber that doesn't
+            work on the Touch Bar.
+
+            * platform/mac/WebPlaybackControlsManager.mm:
+            (-[WebPlaybackControlsManager contentDuration]):
+            (-[WebPlaybackControlsManager setContentDuration:]):
+
 2020-08-05  Russell Epstein  <repstein@apple.com>
 
         Revert r265115. rdar://problem/66552761
