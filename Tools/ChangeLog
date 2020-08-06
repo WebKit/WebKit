@@ -1,3 +1,12 @@
+2020-08-05  Aakash Jain  <aakash_jain@apple.com>
+
+        Rename BigSur EWS to AppleSilicon EWS
+        https://bugs.webkit.org/show_bug.cgi?id=215205
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2020-08-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove all references to non-existent 10.16

@@ -388,7 +388,7 @@
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
     },
     {
-      "name": "macOS-BigSur-Release-Build-EWS",
+      "name": "macOS-Apple-Silicon-Big-Sur-Release-Build-EWS",
       "shortname": "mac-AS",
       "icon": "buildOnly",
       "factory": "macOSBuildOnlyFactory",
@@ -659,7 +659,8 @@
       "port": 5555,
       "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
                        "JSC-ARMv7-32bits-Build-EWS", "JSC-ARMv7-32bits-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS",
-                       "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS", "macOS-BigSur-Release-Build-EWS", "macOS-Mojave-Debug-Build-EWS", "macOS-Mojave-Release-Build-EWS",
+                       "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS",
+                       "macOS-Apple-Silicon-Big-Sur-Release-Build-EWS", "macOS-Mojave-Debug-Build-EWS", "macOS-Mojave-Release-Build-EWS",
                        "Services-EWS", "Style-EWS",
                        "tvOS-13-Build-EWS", "tvOS-13-Simulator-Build-EWS", "watchOS-6-Build-EWS", "watchOS-6-Simulator-Build-EWS",
                        "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"]
