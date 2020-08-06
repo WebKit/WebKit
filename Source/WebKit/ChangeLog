@@ -1,3 +1,19 @@
+2020-08-06  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Wrong argument order for clone syscall seccomp filter on s390x
+        https://bugs.webkit.org/show_bug.cgi?id=215212
+
+        Reviewed by Michael Catanzaro.
+
+        Patch based on this Flatpak pull request:
+        https://github.com/flatpak/flatpak/pull/3777
+
+        No new tests needed.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::setupSeccomp): Add preprocessor guard to choose the correct
+        clone() system call argument on S390.
+
 2020-08-06  James Savage  <james.savage@apple.com>
 
         Could not find module 'WebKit' for target 'armv7-apple-ios'

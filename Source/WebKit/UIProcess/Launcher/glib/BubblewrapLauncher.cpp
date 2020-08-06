@@ -598,7 +598,16 @@ static int setupSeccomp()
     //    in common/flatpak-run.c
     //  https://git.gnome.org/browse/linux-user-chroot
     //    in src/setup-seccomp.c
+
+#if defined(__s390__) || defined(__s390x__) || defined(__CRIS__)
+    // Architectures with CONFIG_CLONE_BACKWARDS2: the child stack
+    // and flags arguments are reversed so the flags come second.
+    struct scmp_arg_cmp cloneArg = SCMP_A1(SCMP_CMP_MASKED_EQ, CLONE_NEWUSER, CLONE_NEWUSER);
+#else
+    // Normally the flags come first.
     struct scmp_arg_cmp cloneArg = SCMP_A0(SCMP_CMP_MASKED_EQ, CLONE_NEWUSER, CLONE_NEWUSER);
+#endif
+
     struct scmp_arg_cmp ttyArg = SCMP_A1(SCMP_CMP_MASKED_EQ, 0xFFFFFFFFu, TIOCSTI);
     struct {
         int scall;
