@@ -1,3 +1,28 @@
+2020-08-06  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: better algorithm to check for acronym capitalization in an identifier
+        <https://webkit.org/b/215026>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_split_identifier_into_words): Add.
+        - This method splits a identifier into individual words.
+        (_check_identifier_name_for_acronyms):
+        - Update to use _split_identifier_into_words(), which makes it
+          possible to check for improperly capitalized acronyms in the
+          middle of identifiers.
+        - Also add support for exceptions, which are valid words that
+          include acronyms (like "Curl").
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest):
+        - Fix a typo in a method name in another test.
+        (WebKitStyleTest.test_split_identifier_into_words): Add.
+        - Add tests for _split_identifier_into_words().
+        (WebKitStyleTest.test_identifier_names_with_acronyms):
+        - Add tests for cases that weren't possible with the previous
+          algorithm.
+
 2020-08-06  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Add method to send email notifications to patch author for build failure

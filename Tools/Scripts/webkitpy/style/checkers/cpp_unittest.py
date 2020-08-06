@@ -45,7 +45,7 @@ import unittest
 from webkitcorepy import string_utils
 
 from webkitpy.style.checkers import cpp as cpp_style
-from webkitpy.style.checkers.cpp import CppChecker
+from webkitpy.style.checkers.cpp import CppChecker, _split_identifier_into_words
 from webkitpy.style.filter import FilterConfiguration
 
 
@@ -2043,7 +2043,7 @@ class CppStyleTest(CppStyleTestBase):
             '}\n',
             '')
         self.assert_multi_line_lint(
-            'auto Foo:bar() -> Baz\n'
+            'auto Foo::bar() -> Baz\n'
             '{\n'
             '}\n',
             '')
@@ -5949,12 +5949,55 @@ class WebKitStyleTest(CppStyleTestBase):
                                             '{\n'
                                             '}\n', 'test.cpp', parameter_error_rules))
 
+    def test_split_identifier_into_words(self):
+        self.assertEqual([], _split_identifier_into_words(''))
+        self.assertEqual(['a'], _split_identifier_into_words('a'))
+        self.assertEqual(['A'], _split_identifier_into_words('A'))
+        self.assertEqual(['a', 'B'], _split_identifier_into_words('aB'))
+        self.assertEqual(['Ab'], _split_identifier_into_words('Ab'))
+
+        self.assertEqual(['url'], _split_identifier_into_words('url'))
+        self.assertEqual(['Url'], _split_identifier_into_words('Url'))
+        self.assertEqual(['URL'], _split_identifier_into_words('URL'))
+        self.assertEqual(['url', 'String'], _split_identifier_into_words('urlString'))
+        self.assertEqual(['URL', 'String'], _split_identifier_into_words('URLString'))
+        self.assertEqual(['test', 'Path', 'Or', 'Url'], _split_identifier_into_words('testPathOrUrl'))
+
+        self.assertEqual(['URL', '::', 'invalidate'], _split_identifier_into_words('URL::invalidate'))
+        self.assertEqual(['URL', '::', 'invalidate'], _split_identifier_into_words('URL_::invalidate'))
+        self.assertEqual(['URL', '::', 'invalidate'], _split_identifier_into_words('URL_::_invalidate'))
+        self.assertEqual(['URL', '::', 'invalidate'], _split_identifier_into_words('URL_::invalidate'))
+        self.assertEqual(['URL', '8', '::', 'invalidate'], _split_identifier_into_words('URL8::invalidate'))
+        self.assertEqual(['URL', '8', '::', 'invalidate'], _split_identifier_into_words('URL8_::_invalidate_'))
+        self.assertEqual(['URL', '8', '::', 'invalidate'], _split_identifier_into_words('URL8_::_invalidate'))
+        self.assertEqual(['URL', '8', '::', 'invalidate'], _split_identifier_into_words('URL8_::_invalidate_'))
+        self.assertEqual(['URL', '8', '::', 'invalidate'], _split_identifier_into_words('URL8_::invalidate'))
+        self.assertEqual(['URL', '8', '::', 'invalidate'], _split_identifier_into_words('URL8_::_invalidate'))
+
+        self.assertEqual(['loadurl'], _split_identifier_into_words('loadurl'))
+        self.assertEqual(['load', 'Url'], _split_identifier_into_words('loadUrl'))
+        self.assertEqual(['load', 'URL'], _split_identifier_into_words('loadURL'))
+
+        self.assertEqual(['url'], _split_identifier_into_words('_url'))
+        self.assertEqual(['url'], _split_identifier_into_words('g_url'))
+        self.assertEqual(['url'], _split_identifier_into_words('m_url'))
+        self.assertEqual(['url'], _split_identifier_into_words('s_url'))
+        self.assertEqual(['DC'], _split_identifier_into_words('m_DC'))
+
+        self.assertEqual(['i', '1'], _split_identifier_into_words('i1'))
+        self.assertEqual(['url', '8'], _split_identifier_into_words('url8'))
+        self.assertEqual(['Url', '8'], _split_identifier_into_words('Url8'))
+        self.assertEqual(['URL', '8'], _split_identifier_into_words('URL8'))
+        self.assertEqual(['non', 'UTF', '8', 'Query', 'Encoding'], _split_identifier_into_words('nonUTF8QueryEncoding'))
+
+        self.assertEqual(['is', 'Soft'], _split_identifier_into_words('isSoft:1'))
+
     def test_identifier_names_with_acronyms(self):
         identifier_error_rules = ('-',
                                   '+readability/naming/acronym')
 
-        # Start of parameter name.
-        error_start = 'The identifier name "%s" starts with a acronym that is not all lowercase.'\
+        # Test that an identifier starts with an acronym.
+        error_start = 'The identifier name "%s" starts with an acronym that is not all lowercase.'\
                       '  [readability/naming/acronym] [5]'
 
         self.assertEqual('',
@@ -5991,6 +6034,8 @@ class WebKitStyleTest(CppStyleTestBase):
                          self.perform_lint('URLParser::URLParser(const String& input, const URL& base, const URLTextEncoding* nonUTF8QueryEncoding)', 'test.cpp', identifier_error_rules))
         self.assertEqual('',
                          self.perform_lint('bool URLParser::internalValuesConsistent(const URL& url)', 'test.cpp', identifier_error_rules))
+        self.assertEqual(error_start % 'URL::URLNotConstructor',
+                         self.perform_lint('bool URL::URLNotConstructor()', 'test.cpp', identifier_error_rules))
 
         self.assertEqual('',
                          self.perform_lint('String m_url;', 'test.cpp', identifier_error_rules))
@@ -6002,25 +6047,49 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assertEqual(error_start % 'UrlParse::UrlParse',
                          self.perform_lint('void UrlParse::UrlParse()', 'test.cpp', identifier_error_rules))
 
-        # FIXME: Hard to check middle words without knowing that the word to the left doesn't end with an acronym.
+        # Test that identifier contains an acronym.
+        error_contain = 'The identifier name "%s" contains an acronym that is not all uppercase.'\
+                        '  [readability/naming/acronym] [5]'
 
-        error_end = 'The identifier name "%s" ends with a acronym that is not all uppercase.'\
-                    '  [readability/naming/acronym] [5]'
-
-        # End of parameter name.
-        self.assertEqual(error_end % 'loadurl',
-                         self.perform_lint('void load(URL loadurl);', 'test.cpp', identifier_error_rules))
-        self.assertEqual(error_end % 'loadUrl',
+        self.assertEqual(error_contain % 'loadUrl',
                          self.perform_lint('void load(URL loadUrl);', 'test.cpp', identifier_error_rules))
         self.assertEqual('',
                          self.perform_lint('void load(URL loadURL);', 'test.cpp', identifier_error_rules))
 
         self.assertEqual('',
                          self.perform_lint('void InspectorFrontendHost::inspectedURLChanged(const String& newURL)', 'test.cpp', identifier_error_rules))
-        self.assertEqual(error_end % 'testPathOrUrl',
+        self.assertEqual(error_contain % 'testPathOrUrl',
                          self.perform_lint('static void changeWindowScaleIfNeeded(const char* testPathOrUrl)', 'test.cpp', identifier_error_rules))
-        self.assertEqual(error_end % 'localPathOrUrl',
+        self.assertEqual(error_contain % 'localPathOrUrl',
                          self.perform_lint('auto localPathOrUrl = String(testPathOrURL);', 'test.cpp', identifier_error_rules))
+
+        # Test that an identifier _might_ contain an acronym.
+        error_may_contain = 'The identifier name "%s" _may_ contain an acronym that is not all uppercase.'\
+                            '  [readability/naming/acronym] [3]'
+        self.assertEqual(error_may_contain % 'loadurl',
+                         self.perform_lint('void load(URL loadurl);', 'test.cpp', identifier_error_rules))
+        self.assertEqual(error_may_contain % 'canLoadurl',
+                         self.perform_lint('void load(URL url, bool canLoadurl);', 'test.cpp', identifier_error_rules))
+
+        # Test special exceptions.
+        self.assertEqual('', self.perform_lint(
+            'void curlDidSendData(WebCore::CurlRequest&, unsigned long long, unsigned long long) override;',
+            'NetworkDataTaskCurl.h', identifier_error_rules))
+        self.assertEqual('', self.perform_lint(
+            'void NetworkDataTaskCurl::cancel()',
+            'NetworkDataTaskCurl.cpp', identifier_error_rules))
+        self.assertEqual('', self.perform_lint(
+            'String m_nsurlCacheDirectory;',
+            'PluginProcess.h', identifier_error_rules))
+
+        # Sometimes check_identifier_name_in_declaration() gets confused
+        # and thinks ':' is an identifier.
+        self.assertEqual('', self.perform_lint(
+            'NSFilePosixPermissions : [NSNumber numberWithInteger:(WEB_UREAD | WEB_UWRITE)],',
+            'QuickLook.mm', identifier_error_rules))
+        self.assertEqual('', self.perform_lint(
+            'for (CALayer *currLayer : [layer sublayers]) {',
+            'RemoteLayerTreeScrollingPerformanceData.mm', identifier_error_rules))
 
     def test_comments(self):
         # A comment at the beginning of a line is ok.

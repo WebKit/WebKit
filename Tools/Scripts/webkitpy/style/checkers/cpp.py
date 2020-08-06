@@ -1796,6 +1796,101 @@ def _check_parameter_name_against_text(parameter, text, error):
     return True
 
 
+def _split_identifier_into_words(identifier):
+    words = []
+    if not identifier:
+        return words
+
+    # Remove prefixes that aren't part of the identifier name.
+    identifier = re.sub(r'^[gms]?_', '', identifier)
+    # Remove bitfield lengths.
+    identifier = re.sub(r':[0-9]+$', '', identifier)
+
+    identifier_length = len(identifier)
+
+    match_upper_re = re.compile(r'^[A-Z]+')
+    match_upper_lower_re = re.compile(r'^[A-Z][a-z]+')
+    match_lower_re = re.compile(r'^[a-z]+')
+
+    match_lower = match_lower_re.search(identifier)
+    match_upper_lower = match_upper_lower_re.search(identifier)
+    match_upper = match_upper_re.search(identifier)
+    if match_lower:
+        word = match_lower.group(0)
+        words.append(word)
+        if len(word) == identifier_length:
+            return words
+        identifier = identifier[len(word):]
+    elif match_upper_lower:
+        word = match_upper_lower.group(0)
+        words.append(word)
+        if len(word) == identifier_length:
+            return words
+        identifier = identifier[len(word):]
+    elif match_upper:
+        word = match_upper.group(0)
+        if len(word) == identifier_length:
+            words.append(word)
+            return words
+        if identifier[len(word)].islower():
+            word = word[:-1]
+        words.append(word)
+        identifier = identifier[len(word):]
+
+    match_number_re = re.compile(r'^[0-9]+')
+    while identifier:
+        identifier_length = len(identifier)
+        if identifier.startswith('_'):
+            if len(identifier) == 1:
+                return words
+            identifier = identifier[1:]
+            continue
+        if identifier.startswith('::'):
+            words.append('::')
+            if len(identifier) == 2:
+                return words
+            identifier = identifier[2:]
+            continue
+        match_upper_lower = match_upper_lower_re.search(identifier)
+        if match_upper_lower:
+            word = match_upper_lower.group(0)
+            words.append(word)
+            if len(word) == identifier_length:
+                return words
+            identifier = identifier[len(word):]
+            continue
+        match_upper = match_upper_re.search(identifier)
+        if match_upper:
+            word = match_upper.group(0)
+            if len(word) == len(identifier):
+                words.append(word)
+                return words
+            if identifier[len(word)].islower():
+                word = word[:-1]
+            words.append(word)
+            identifier = identifier[len(word):]
+            continue
+        match_number = match_number_re.search(identifier)
+        if match_number:
+            word = match_number.group(0)
+            words.append(word)
+            if len(word) == identifier_length:
+                return words
+            identifier = identifier[len(word):]
+            continue
+        match_lower = match_lower_re.search(identifier)
+        if match_lower:
+            word = match_lower.group(0)
+            words.append(word)
+            if len(word) == identifier_length:
+                return words
+            identifier = identifier[len(word):]
+            continue
+        assert False, 'Could not match "%s"' % identifier
+
+    return words
+
+
 def _check_identifier_name_for_acronyms(identifier, line_number, is_class_or_namespace_or_struct_name, error):
     """Checks to see if the identifier name contains an acronym with improper case.
 
@@ -1803,29 +1898,57 @@ def _check_identifier_name_for_acronyms(identifier, line_number, is_class_or_nam
     middle or at the end of an identifier name, but "Url" is never okay.
     """
     acronyms = '|'.join(['MIME', 'URL'])
+    acronym_exceptions = '|'.join(['cfurl', 'curl', 'Curl', 'nsurl', 'urls'])
 
-    start_re = re.compile('^(%s)(|$)' % acronyms, re.IGNORECASE)
-    start_expected_re = re.compile('^(%s)([^:]|$)' % acronyms.lower())
-    # Identifiers that start with an acronym must be all lowercase, except for class/namespace/struct names.
-    if start_re.search(identifier) and not start_expected_re.search(identifier):
-        start_uppercase_re = re.compile('^(%s)' % acronyms)
-        # Ignore class/namespace/struct names that start with all-uppercase acronyms.
-        if start_uppercase_re.search(identifier) and \
-                (is_class_or_namespace_or_struct_name or identifier.find('::') != -1):
-            return True
-        error(line_number, 'readability/naming/acronym', 5,
-              'The identifier name "%s" starts with a acronym that is not all lowercase.' % identifier)
-        return False
+    identifier_words = _split_identifier_into_words(identifier)
 
-    # FIXME: Hard to check middle words without knowing that the word to the left doesn't end with an acronym.
+    is_constructor = False
+    if identifier_words.count('::') == 1:
+        names = identifier.split('::')
+        if names[0] == names[1]:
+            is_constructor = True
 
-    # Identifiers that end with an acronym must be all uppercase, except for variables like 'm_url' and 'Class::url()'.
-    end_re = re.compile('[^_:](%s)$' % acronyms, re.IGNORECASE)
-    end_expected_re = re.compile('[^_:](%s)$' % acronyms)
-    if end_re.search(identifier) and not end_expected_re.search(identifier):
-        error(line_number, 'readability/naming/acronym', 5,
-              'The identifier name "%s" ends with a acronym that is not all uppercase.' % identifier)
-        return False
+    contains_acronym_lowercase_re = re.compile('(%s)' % acronyms.lower())
+    is_acronym_any_case_re = re.compile('^(%s)$' % acronyms, re.IGNORECASE)
+    is_acronym_lowercase_re = re.compile('^(%s)$' % acronyms.lower())
+    is_acronym_uppercase_re = re.compile('^(%s)$' % acronyms.upper())
+    is_acronym_exception_any_case_re = re.compile('^(%s)$' % acronym_exceptions)
+
+    start_of_variable = True
+    for i in range(0, len(identifier_words)):
+        word = identifier_words[i]
+
+        if word == '::':
+            start_of_variable = True
+            continue
+
+        if start_of_variable:
+            start_of_variable = False
+            # Identifiers that start with an acronym must be all lowercase, except for class/namespace/struct names.
+            if is_acronym_any_case_re.search(word):
+                if is_acronym_lowercase_re.search(word):
+                    continue
+                elif is_acronym_uppercase_re.search(word) and \
+                        (is_class_or_namespace_or_struct_name or '::' in identifier_words[i:] or is_constructor):
+                    continue
+                else:
+                    error(line_number, 'readability/naming/acronym', 5,
+                          'The identifier name "%s" starts with an acronym that is not all lowercase.' % identifier)
+                    return False
+        else:
+            # Identifiers that contain or end with an acronym must be all uppercase.
+            if is_acronym_any_case_re.search(word):
+                if is_acronym_uppercase_re.search(word):
+                    continue
+                else:
+                    error(line_number, 'readability/naming/acronym', 5,
+                          'The identifier name "%s" contains an acronym that is not all uppercase.' % identifier)
+                    return False
+
+        if contains_acronym_lowercase_re.search(word) and not is_acronym_exception_any_case_re.search(word):
+            error(line_number, 'readability/naming/acronym', 3,
+                  'The identifier name "%s" _may_ contain an acronym that is not all uppercase.' % identifier)
+            continue
 
     return True
 
@@ -3840,6 +3963,11 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
             return
         identifier = matched.group('identifier')
         character_after_identifier = matched.group('character_after_identifier')
+
+        # It's possible for the regular expression to match ':' in modern Objective-C for loops
+        # or NSDictionary initialization lists.
+        if identifier == ':':
+            return
 
         # If we removed a non-for-control statement, the character after
         # the identifier should be '='. With this rule, we can avoid
