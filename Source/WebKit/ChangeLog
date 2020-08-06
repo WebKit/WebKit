@@ -1,3 +1,19 @@
+2020-08-06  Jer Noble  <jer.noble@apple.com>
+
+        [Mac,WK2] REGRESSION(r262322): ScreenTime overlay is hidden in fullscreen mode
+        https://bugs.webkit.org/show_bug.cgi?id=215222
+        <rdar://problem/65871844>
+
+        Reviewed by Eric Carlson.
+
+        During a refactor, a call to -[NSWindow setAutodisplay:YES] was dropped (in addition to a call to
+        NSEnableScreenUpdates(), but that has a 1s timeout so its effects aren't persistent). This meant
+        all NSViews added to that window need -display called on them explicitly in order to paint, and
+        so subviews like the ScreenTime overlay is never drawn.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+
 2020-08-06  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r265328.
