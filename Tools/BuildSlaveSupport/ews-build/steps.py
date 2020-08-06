@@ -29,7 +29,7 @@ from buildbot.steps.worker import CompositeStepMixin
 from twisted.internet import defer
 
 from layout_test_failures import LayoutTestFailures
-from send_email import send_email_to_bot_watchers
+from send_email import send_email, send_email_to_bot_watchers
 
 import json
 import re
@@ -508,6 +508,7 @@ class BugzillaMixin(object):
             return -1
 
         bug_title = bug_json.get('summary')
+        self.setProperty('bug_title', bug_title)
         sensitive = bug_json.get('product') == 'Security'
         if sensitive:
             self.setProperty('sensitive', True)
@@ -1441,6 +1442,26 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
             if 'rror:' in line:
                 filtered_logs.append(line)
         return '\n'.join(filtered_logs[:max_num_lines])
+
+    def send_email_for_new_build_failure(self):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            bug_title = self.getProperty('bug_title', '')
+            worker_name = self.getProperty('workername', '')
+            patch_id = self.getProperty('patch_id', '')
+            patch_author = self.getProperty('patch_author', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            logs = self.filter_logs_containing_error(self.error_logs.get(self.compile_webkit_step))
+
+            email_subject = 'Build failure for Patch {}: {}'.format(patch_id, bug_title)
+            email_text = 'EWS has detected build failure on {} while testing Patch {}.'.format(builder_name, patch_id)
+            email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
+            if logs:
+                email_text += '\n\nError lines:\n\n{}'.format(logs)
+            email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
+            send_email([patch_author], email_subject, email_text)
+        except Exception as e:
+            print('Error in sending email for new build failure: {}'.format(e))
 
     def send_email_for_preexisting_build_failure(self):
         try:
