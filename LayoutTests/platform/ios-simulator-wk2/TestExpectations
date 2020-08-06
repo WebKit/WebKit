@@ -130,3 +130,5 @@ webkit.org/b/215025 imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-maxC
 webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html [ Pass Failure ]
 
 webkit.org/b/215216 imported/w3c/web-platform-tests/svg/import/interact-zoom-01-t-manual.svg [ Pass Failure ]
+
+webkit.org/b/215218 editing/pasteboard/paste-without-nesting.html [ Pass Failure ]
