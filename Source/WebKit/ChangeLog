@@ -1,3 +1,15 @@
+2020-08-06  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r265328.
+
+        Broke 17 MediaRecorder tests.
+
+        Reverted changeset:
+
+        "Add support for MediaRecorder bitrate options"
+        https://bugs.webkit.org/show_bug.cgi?id=214973
+        https://trac.webkit.org/changeset/265328
+
 2020-08-06  Youenn Fablet  <youenn@apple.com>
 
         Add support for MediaRecorder bitrate options

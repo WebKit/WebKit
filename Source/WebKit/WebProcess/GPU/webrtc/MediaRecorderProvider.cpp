@@ -34,13 +34,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
+std::unique_ptr<WebCore::MediaRecorderPrivate> MediaRecorderProvider::createMediaRecorderPrivate(MediaStreamPrivate& stream)
 {
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETWRITERDELEGATE)
     if (m_useGPUProcess)
-        return makeUnique<MediaRecorderPrivate>(stream, options);
+        return makeUnique<MediaRecorderPrivate>(stream);
 #endif
-    return WebCore::MediaRecorderProvider::createMediaRecorderPrivate(stream, options);
+    return WebCore::MediaRecorderProvider::createMediaRecorderPrivate(stream);
 }
 
 }

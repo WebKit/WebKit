@@ -44,7 +44,6 @@ namespace WebCore {
 class CARingBuffer;
 class ImageTransferSessionVT;
 class RemoteVideoSample;
-struct MediaRecorderPrivateOptions;
 }
 
 namespace WebKit {
@@ -55,7 +54,7 @@ class SharedRingBufferStorage;
 class RemoteMediaRecorder : private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<RemoteMediaRecorder> create(GPUConnectionToWebProcess&, MediaRecorderIdentifier, bool recordAudio, bool recordVideo, const WebCore::MediaRecorderPrivateOptions&);
+    static std::unique_ptr<RemoteMediaRecorder> create(GPUConnectionToWebProcess&, MediaRecorderIdentifier, bool recordAudio, bool recordVideo);
     ~RemoteMediaRecorder();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

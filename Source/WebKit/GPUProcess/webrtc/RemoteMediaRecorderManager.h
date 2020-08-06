@@ -41,7 +41,6 @@ class Decoder;
 
 namespace WebCore {
 struct ExceptionData;
-struct MediaRecorderPrivateOptions;
 }
 
 namespace WebKit {
@@ -61,7 +60,7 @@ public:
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    void createRecorder(MediaRecorderIdentifier, bool recordAudio, bool recordVideo, const WebCore::MediaRecorderPrivateOptions&, CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&);
+    void createRecorder(MediaRecorderIdentifier, bool recordAudio, bool recordVideo, CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&);
     void releaseRecorder(MediaRecorderIdentifier);
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;

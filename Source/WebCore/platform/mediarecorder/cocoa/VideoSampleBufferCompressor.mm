@@ -76,11 +76,6 @@ bool VideoSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callba
     return true;
 }
 
-void VideoSampleBufferCompressor::setBitsPerSecond(unsigned bitRate)
-{
-    m_outputBitRate = bitRate;
-}
-
 void VideoSampleBufferCompressor::finish()
 {
     dispatch_sync(m_serialDispatchQueue, ^{
@@ -106,15 +101,6 @@ void VideoSampleBufferCompressor::videoCompressionCallback(void *refCon, void*, 
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor CMBufferQueueEnqueue failed with %d", error);
 }
 
-static inline OSStatus setCompressionSessionProperty(VTCompressionSessionRef vtSession, CFStringRef key, uint32_t value)
-{
-    int64_t value64 = value;
-    CFNumberRef cfValue = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value64);
-    OSStatus status = VTSessionSetProperty(vtSession, key, cfValue);
-    CFRelease(cfValue);
-    return status;
-}
-
 bool VideoSampleBufferCompressor::initCompressionSession(CMVideoFormatDescriptionRef formatDescription)
 {
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
@@ -134,16 +120,12 @@ bool VideoSampleBufferCompressor::initCompressionSession(CMVideoFormatDescriptio
 
     error = VTSessionSetProperty(m_vtSession.get(), kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_RealTime failed with %d", error);
-    error = setCompressionSessionProperty(m_vtSession.get(), kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, m_maxKeyFrameIntervalDuration);
+    error = VTSessionSetProperty(m_vtSession.get(), kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, (__bridge CFTypeRef)@(m_maxKeyFrameIntervalDuration));
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration failed with %d", error);
-    error = setCompressionSessionProperty(m_vtSession.get(), kVTCompressionPropertyKey_ExpectedFrameRate, m_expectedFrameRate);
+    error = VTSessionSetProperty(m_vtSession.get(), kVTCompressionPropertyKey_ExpectedFrameRate, (__bridge CFTypeRef)@(m_expectedFrameRate));
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_ExpectedFrameRate failed with %d", error);
 
-    if (m_outputBitRate) {
-        error = setCompressionSessionProperty(m_vtSession.get(), kVTCompressionPropertyKey_AverageBitRate, *m_outputBitRate);
-        RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTSessionSetProperty kVTCompressionPropertyKey_AverageBitRate failed with %d", error);
-    }
-
+    // FIXME: Set video compression rate.
     error = VTCompressionSessionPrepareToEncodeFrames(m_vtSession.get());
     RELEASE_LOG_ERROR_IF(error, MediaStream, "VideoSampleBufferCompressor VTCompressionSessionPrepareToEncodeFrames failed with %d", error);
 
