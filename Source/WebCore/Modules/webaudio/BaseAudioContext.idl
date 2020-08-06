@@ -45,7 +45,6 @@
     attribute EventHandler onstatechange;
     
     [MayThrowException] AudioBuffer createBuffer(unsigned long numberOfChannels, unsigned long numberOfFrames, float sampleRate);
-    [MayThrowException] AudioBuffer createBuffer(ArrayBuffer buffer, boolean mixToMono);
 
     // Asynchronous audio file data decoding.
     // FIXME: successCallback should be optional and the callbacks should not be nullable. This should also return a Promise.

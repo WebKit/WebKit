@@ -24,7 +24,7 @@ FAIL BaseAudioContext interface: attribute audioWorklet assert_true: The prototy
 PASS BaseAudioContext interface: attribute onstatechange 
 PASS BaseAudioContext interface: operation createAnalyser() 
 PASS BaseAudioContext interface: operation createBiquadFilter() 
-FAIL BaseAudioContext interface: operation createBuffer(unsigned long, unsigned long, float) assert_equals: property has wrong .length expected 3 but got 2
+PASS BaseAudioContext interface: operation createBuffer(unsigned long, unsigned long, float) 
 PASS BaseAudioContext interface: operation createBufferSource() 
 PASS BaseAudioContext interface: operation createChannelMerger(optional unsigned long) 
 PASS BaseAudioContext interface: operation createChannelSplitter(optional unsigned long) 

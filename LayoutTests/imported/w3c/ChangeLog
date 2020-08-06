@@ -1,5 +1,16 @@
 2020-08-06  Chris Dumez  <cdumez@apple.com>
 
+        Drop non-standard createBuffer(ArrayBuffer, boolean) overload from AudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=215238
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests now that one more check is passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+
+2020-08-06  Chris Dumez  <cdumez@apple.com>
+
         MediaStreamAudioDestinationNode should have a constructor
         https://bugs.webkit.org/show_bug.cgi?id=215233
 

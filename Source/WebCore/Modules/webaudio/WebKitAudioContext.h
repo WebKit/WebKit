@@ -71,6 +71,7 @@ public:
     ExceptionOr<Ref<PeriodicWave>> createPeriodicWave(Float32Array& real, Float32Array& imaginary);
     ExceptionOr<Ref<WebKitAudioBufferSourceNode>> createWebKitBufferSource();
     ExceptionOr<Ref<WebKitDynamicsCompressorNode>> createWebKitDynamicsCompressor();
+    ExceptionOr<Ref<AudioBuffer>> createLegacyBuffer(ArrayBuffer&, bool mixToMono);
 
 protected:
     explicit WebKitAudioContext(Document&);

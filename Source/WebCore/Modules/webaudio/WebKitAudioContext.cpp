@@ -199,6 +199,14 @@ ExceptionOr<Ref<WebKitDynamicsCompressorNode>> WebKitAudioContext::createWebKitD
     return WebKitDynamicsCompressorNode::create(*this);
 }
 
+ExceptionOr<Ref<AudioBuffer>> WebKitAudioContext::createLegacyBuffer(ArrayBuffer& arrayBuffer, bool mixToMono)
+{
+    auto audioBuffer = AudioBuffer::createFromAudioFileData(arrayBuffer.data(), arrayBuffer.byteLength(), mixToMono, sampleRate());
+    if (!audioBuffer)
+        return Exception { SyntaxError };
+    return audioBuffer.releaseNonNull();
+}
+
 void WebKitAudioContext::close(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext() || isStopped()) {
