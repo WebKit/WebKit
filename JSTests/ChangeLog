@@ -1,3 +1,14 @@
+2020-08-05  Saam Barati  <sbarati@apple.com>
+
+        Fix returnEarlyFromInfiniteLoopsForFuzzing in DFG and validateDoesGC
+        https://bugs.webkit.org/show_bug.cgi?id=215194
+        <rdar://problem/66158641>
+
+        Reviewed by Mark Lam.
+
+        * stress/validate-does-gc-with-return-early-from-infinite-loop-2.js: Added.
+        (vm.useJIT):
+
 2020-08-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, skip private field test

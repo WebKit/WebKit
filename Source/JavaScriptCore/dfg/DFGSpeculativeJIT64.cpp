@@ -4979,6 +4979,14 @@ void SpeculativeJIT::compile(Node* node)
                 m_jit.load64(ptr, GPRInfo::regT0);
                 auto skipEarlyReturn = m_jit.branch64(CCallHelpers::Below, GPRInfo::regT0, CCallHelpers::TrustedImm64(Options::earlyReturnFromInfiniteLoopsLimit()));
 
+                if constexpr (validateDFGDoesGC) {
+                    if (Options::validateDoesGC()) {
+                        // We need to mock what a Return does: claims to GC.
+                        m_jit.move(CCallHelpers::TrustedImmPtr(vm().heap.addressOfDoesGC()), GPRInfo::regT0);
+                        m_jit.store32(CCallHelpers::TrustedImm32(DoesGCCheck::encode(true, DoesGCCheck::Special::Uninitialized)), CCallHelpers::Address(GPRInfo::regT0));
+                    }
+                }
+
                 m_jit.popToRestore(GPRInfo::regT0);
                 m_jit.move(CCallHelpers::TrustedImm64(JSValue::encode(jsUndefined())), GPRInfo::returnValueGPR);
                 m_jit.emitRestoreCalleeSaves();

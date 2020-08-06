@@ -1,3 +1,17 @@
+2020-08-05  Saam Barati  <sbarati@apple.com>
+
+        Fix returnEarlyFromInfiniteLoopsForFuzzing in DFG and validateDoesGC
+        https://bugs.webkit.org/show_bug.cgi?id=215194
+        <rdar://problem/66158641>
+
+        Reviewed by Mark Lam.
+
+        I already fixed this same issue in the FTL in r264330, but I forgot
+        to do it in the DFG.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2020-08-05  Keith Miller  <keith_miller@apple.com>
 
         The various AllowList options should be able to take the function name inline
