@@ -1,3 +1,14 @@
+2020-08-06  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Standardize setuptools version
+        https://bugs.webkit.org/show_bug.cgi?id=215234
+        <rdar://problem/66638187>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Use the same setuptools version
+        for Python 2 and 3.
+
 2020-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, reverting r265325.
