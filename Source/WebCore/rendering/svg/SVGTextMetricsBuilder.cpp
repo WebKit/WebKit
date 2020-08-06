@@ -105,7 +105,7 @@ void SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer(RenderSVGInlin
     if (m_isComplexText)
         m_simpleWidthIterator = nullptr;
     else
-        m_simpleWidthIterator = makeUnique<WidthIterator>(&scaledFont, m_run);
+        m_simpleWidthIterator = makeUnique<WidthIterator>(scaledFont, m_run);
 }
 
 struct MeasureTextData {

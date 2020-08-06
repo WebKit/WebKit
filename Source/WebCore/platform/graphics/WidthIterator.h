@@ -40,7 +40,7 @@ typedef Vector<std::pair<unsigned, OriginalAdvancesForCharacterTreatedAsSpace>, 
 struct WidthIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WidthIterator(const FontCascade*, const TextRun&, HashSet<const Font*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
+    WidthIterator(const FontCascade&, const TextRun&, HashSet<const Font*>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 
     void advance(unsigned to, GlyphBuffer*);
     bool advanceOneCharacter(float& width, GlyphBuffer&);
@@ -62,9 +62,9 @@ private:
 
     enum class TransformsType { None, Forced, NotForced };
     TransformsType shouldApplyFontTransforms(const GlyphBuffer*, unsigned lastGlyphCount, UChar32 previousCharacter) const;
-    float applyFontTransforms(GlyphBuffer*, bool ltr, unsigned& lastGlyphCount, const Font*, UChar32 previousCharacter, bool force, CharactersTreatedAsSpace&);
+    float applyFontTransforms(GlyphBuffer*, bool ltr, unsigned& lastGlyphCount, const Font&, UChar32 previousCharacter, bool force, CharactersTreatedAsSpace&);
 
-    const FontCascade* m_font;
+    const FontCascade& m_font;
     const TextRun& m_run;
     HashSet<const Font*>* m_fallbackFonts { nullptr };
 

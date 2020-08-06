@@ -34,15 +34,15 @@ namespace WebCore {
 
 using namespace WTF::Unicode;
 
-WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSet<const Font*>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
+WidthIterator::WidthIterator(const FontCascade& font, const TextRun& run, HashSet<const Font*>* fallbackFonts, bool accountForGlyphBounds, bool forTextEmphasis)
     : m_font(font)
     , m_run(run)
     , m_fallbackFonts(fallbackFonts)
     , m_expansion(run.expansion())
     , m_isAfterExpansion((run.expansionBehavior() & LeftExpansionMask) == ForbidLeftExpansion)
     , m_accountForGlyphBounds(accountForGlyphBounds)
-    , m_enableKerning(font->enableKerning())
-    , m_requiresShaping(font->requiresShaping())
+    , m_enableKerning(font.enableKerning())
+    , m_requiresShaping(font.requiresShaping())
     , m_forTextEmphasis(forTextEmphasis)
 {
     if (!m_expansion)
@@ -85,7 +85,7 @@ inline auto WidthIterator::shouldApplyFontTransforms(const GlyphBuffer* glyphBuf
     return TransformsType::NotForced;
 }
 
-inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, unsigned& lastGlyphCount, const Font* font, UChar32 previousCharacter, bool force, CharactersTreatedAsSpace& charactersTreatedAsSpace)
+inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool ltr, unsigned& lastGlyphCount, const Font& font, UChar32 previousCharacter, bool force, CharactersTreatedAsSpace& charactersTreatedAsSpace)
 {
     ASSERT_UNUSED(previousCharacter, shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter) != WidthIterator::TransformsType::None);
 
@@ -107,7 +107,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool l
     if (!ltr)
         glyphBuffer->reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
 
-    font->applyTransforms(*glyphBuffer, lastGlyphCount, m_enableKerning, m_requiresShaping, m_font->fontDescription().computedLocale());
+    font.applyTransforms(*glyphBuffer, lastGlyphCount, m_enableKerning, m_requiresShaping, m_font.fontDescription().computedLocale());
     glyphBufferSize = glyphBuffer->size();
 
     for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i)
@@ -173,7 +173,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 {
     // The core logic here needs to match SimpleLineLayout::widthForSimpleText()
     bool rtl = m_run.rtl();
-    bool hasExtraSpacing = (m_font->letterSpacing() || m_font->wordSpacing() || m_expansion) && !m_run.spacingDisabled();
+    bool hasExtraSpacing = (m_font.letterSpacing() || m_font.wordSpacing() || m_expansion) && !m_run.spacingDisabled();
 
     bool runForcesLeftExpansion = (m_run.expansionBehavior() & LeftExpansionMask) == ForceLeftExpansion;
     bool runForcesRightExpansion = (m_run.expansionBehavior() & RightExpansionMask) == ForceRightExpansion;
@@ -187,7 +187,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     float lastRoundingWidth = m_finalRoundingWidth;
     FloatRect bounds;
 
-    const Font& primaryFont = m_font->primaryFont();
+    const Font& primaryFont = m_font.primaryFont();
     const Font* lastFontData = &primaryFont;
     unsigned lastGlyphCount = glyphBuffer ? glyphBuffer->size() : 0;
 
@@ -209,19 +209,19 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         }
 #endif
         int currentCharacterIndex = textIterator.currentIndex();
-        const GlyphData& glyphData = m_font->glyphDataForCharacter(character, rtl);
+        const GlyphData& glyphData = m_font.glyphDataForCharacter(character, rtl);
         Glyph glyph = glyphData.glyph;
         if (!glyph && !characterMustDrawSomething) {
             textIterator.advance(advanceLength);
             continue;
         }
-        const Font* font = glyphData.font ? glyphData.font : &m_font->primaryFont();
+        const Font* font = glyphData.font ? glyphData.font : &m_font.primaryFont();
         ASSERT(font);
 
         // Now that we have a glyph and font data, get its width.
         float width;
         if (character == '\t' && m_run.allowTabs())
-            width = m_font->tabWidth(*font, m_run.tabSize(), m_run.xPos() + m_runWidthSoFar + widthSinceLastRounding);
+            width = m_font.tabWidth(*font, m_run.tabSize(), m_run.xPos() + m_runWidthSoFar + widthSinceLastRounding);
         else {
             width = font->widthForGlyph(glyph);
 
@@ -232,7 +232,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         if (font != lastFontData && width) {
             auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
             if (transformsType != TransformsType::None) {
-                m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, previousCharacter, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
+                m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, *lastFontData, previousCharacter, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
                 if (glyphBuffer)
                     glyphBuffer->shrink(lastGlyphCount);
             }
@@ -241,10 +241,10 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             if (m_fallbackFonts && font != &primaryFont) {
                 // FIXME: This does a little extra work that could be avoided if
                 // glyphDataForCharacter() returned whether it chose to use a small caps font.
-                if (!m_font->isSmallCaps() || character == u_toupper(character))
+                if (!m_font.isSmallCaps() || character == u_toupper(character))
                     m_fallbackFonts->add(font);
                 else {
-                    const GlyphData& uppercaseGlyphData = m_font->glyphDataForCharacter(u_toupper(character), rtl);
+                    const GlyphData& uppercaseGlyphData = m_font.glyphDataForCharacter(u_toupper(character), rtl);
                     if (uppercaseGlyphData.font != &primaryFont)
                         m_fallbackFonts->add(uppercaseGlyphData.font);
                 }
@@ -254,7 +254,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         if (hasExtraSpacing) {
             // Account for letter-spacing.
             if (width) {
-                width += m_font->letterSpacing();
+                width += m_font.letterSpacing();
                 width += leftoverJustificationWidth;
                 leftoverJustificationWidth = 0;
             }
@@ -310,8 +310,8 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 
                 // Account for word spacing.
                 // We apply additional space between "words" by adding width to the space character.
-                if (treatAsSpace && (character != '\t' || !m_run.allowTabs()) && (currentCharacterIndex || character == noBreakSpace) && m_font->wordSpacing())
-                    width += m_font->wordSpacing();
+                if (treatAsSpace && (character != '\t' || !m_run.allowTabs()) && (currentCharacterIndex || character == noBreakSpace) && m_font.wordSpacing())
+                    width += m_font.wordSpacing();
             } else
                 m_isAfterExpansion = false;
         }
@@ -360,7 +360,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 
     auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
     if (transformsType != TransformsType::None) {
-        m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, lastFontData, previousCharacter, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
+        m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, *lastFontData, previousCharacter, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
         if (glyphBuffer)
             glyphBuffer->shrink(lastGlyphCount);
     }

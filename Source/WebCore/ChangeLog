@@ -1,3 +1,28 @@
+2020-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Use references instead of pointers for WidthIterator's fonts
+        https://bugs.webkit.org/show_bug.cgi?id=215186
+
+        Reviewed by Zalan Bujtas.
+
+        They can never be null.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthOfTextRange const):
+        (WebCore::FontCascade::layoutSimpleText const):
+        (WebCore::FontCascade::floatWidthForSimpleText const):
+        (WebCore::FontCascade::adjustSelectionRectForSimpleText const):
+        (WebCore::FontCascade::offsetForPositionForSimpleText const):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::WidthIterator::applyFontTransforms):
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/WidthIterator.h:
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::initializeMeasurementWithTextRenderer):
+
 2020-08-06  Chris Dumez  <cdumez@apple.com>
 
         BaseAudioContext.decodeAudioData() should return a Promise

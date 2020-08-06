@@ -372,7 +372,7 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
         complexIterator.advance(run.length(), nullptr, IncludePartialGlyphs, fallbackFonts);
         totalWidth = complexIterator.runWidthSoFar();
     } else {
-        WidthIterator simpleIterator(this, run, fallbackFonts);
+        WidthIterator simpleIterator(*this, run, fallbackFonts);
         simpleIterator.advance(from, nullptr);
         offsetBeforeRange = simpleIterator.runWidthSoFar();
         simpleIterator.advance(to, nullptr);
@@ -1372,7 +1372,7 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
 {
     GlyphBuffer glyphBuffer;
 
-    WidthIterator it(this, run, 0, false, forTextEmphasis);
+    WidthIterator it(*this, run, 0, false, forTextEmphasis);
     // FIXME: Using separate glyph buffers for the prefix and the suffix is incorrect when kerning or
     // ligatures are enabled.
     GlyphBuffer localGlyphBuffer;
@@ -1521,7 +1521,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
 
 float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
-    WidthIterator it(this, run, fallbackFonts, glyphOverflow);
+    WidthIterator it(*this, run, fallbackFonts, glyphOverflow);
     GlyphBuffer glyphBuffer;
     it.advance(run.length(), (enableKerning() || requiresShaping()) ? &glyphBuffer : nullptr);
 
@@ -1550,7 +1550,7 @@ float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Fo
 void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
 {
     GlyphBuffer glyphBuffer;
-    WidthIterator it(this, run);
+    WidthIterator it(*this, run);
     it.advance(from, &glyphBuffer);
     float beforeWidth = it.runWidthSoFar();
     it.advance(to, &glyphBuffer);
@@ -1584,7 +1584,7 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
 {
     float delta = x;
 
-    WidthIterator it(this, run);
+    WidthIterator it(*this, run);
     GlyphBuffer localGlyphBuffer;
     unsigned offset;
     if (run.rtl()) {
