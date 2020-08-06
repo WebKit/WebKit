@@ -1810,3 +1810,4 @@ webkit.org/b/215185 [ Release ] imported/w3c/web-platform-tests/IndexedDB/struct
 
 webkit.org/b/215192 imported/w3c/web-platform-tests/preload/single-download-preload.html [ Pass Failure ]
 
+webkit.org/b/215204 imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual.svg [ Pass Failure ]
