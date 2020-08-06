@@ -186,6 +186,7 @@ public:
     virtual void setKeyboardInputModeIdentifier(JSStringRef) { notImplemented(); }
 
     virtual void replaceTextAtRange(JSStringRef, int location, int length) { notImplemented(); }
+    virtual void removeAllDynamicDictionaries() { notImplemented(); }
 
     virtual bool windowIsKey() const;
     virtual void setWindowIsKey(bool);

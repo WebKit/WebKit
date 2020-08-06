@@ -311,6 +311,7 @@ interface UIScriptController {
     void setKeyboardInputModeIdentifier(DOMString identifier);
 
     void replaceTextAtRange(DOMString text, long location, long length);
+    void removeAllDynamicDictionaries();
 
     readonly attribute DOMString scrollingTreeAsText;
 

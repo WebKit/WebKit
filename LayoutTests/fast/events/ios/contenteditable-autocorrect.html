@@ -32,6 +32,7 @@
             return new Promise(function(resolve) {
                 let rect = editable.getBoundingClientRect();
                 testRunner.runUIScript(`(function() {
+                    uiController.removeAllDynamicDictionaries();
                     uiController.didShowKeyboardCallback = function() {
                         uiController.typeCharacterUsingHardwareKeyboard("t", function() {
                             uiController.typeCharacterUsingHardwareKeyboard("i", function() {
