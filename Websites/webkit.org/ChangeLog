@@ -1,3 +1,28 @@
+2020-08-06  Jon Davis  <jond@apple.com>
+
+        Removed XML declaration from SVGs and updated copyrights
+        https://bugs.webkit.org/show_bug.cgi?id=215102
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/images/chevron-dark.svg:
+        * wp-content/themes/webkit/images/chevron.svg:
+        * wp-content/themes/webkit/images/circular.svg:
+        * wp-content/themes/webkit/images/compass.svg:
+        * wp-content/themes/webkit/images/download-white.svg:
+        * wp-content/themes/webkit/images/download.svg:
+        * wp-content/themes/webkit/images/filter.svg:
+        * wp-content/themes/webkit/images/icons.svg:
+        * wp-content/themes/webkit/images/inspector.svg:
+        * wp-content/themes/webkit/images/invert-lightness.svg:
+        * wp-content/themes/webkit/images/menu-down.svg:
+        * wp-content/themes/webkit/images/search.svg:
+        * wp-content/themes/webkit/images/spinner.svg:
+        * wp-content/themes/webkit/images/squirrelfish-lives.svg:
+        * wp-content/themes/webkit/images/template.svg:
+        * wp-content/themes/webkit/images/twitter.svg:
+        * wp-content/themes/webkit/images/webkit.svg:
+
 2020-08-05  Jon Davis  <jond@apple.com>
 
         Enhance feature status page origin for flexible test environments

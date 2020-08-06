@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright © 2018 Apple Inc. All rights reserved. -->
+<!-- Copyright © 2020 Apple Inc. All rights reserved. -->
 <svg xmlns="http://www.w3.org/2000/svg">
 	<style> svg { display: block; width: 0; height: 0; } </style>
     <filter id="invertLightness" x="0" y="0" style="color-interpolation-filters: sRGB">
