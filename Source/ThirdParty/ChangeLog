@@ -1,3 +1,13 @@
+2020-08-05  Tim Horton  <timothy_horton@apple.com>
+
+        Remove all references to non-existent 10.16
+        https://bugs.webkit.org/show_bug.cgi?id=215202
+
+        Reviewed by Wenson Hsieh.
+
+        * gtest/xcode/Config/DebugProject.xcconfig:
+        * gtest/xcode/Config/ReleaseProject.xcconfig:
+
 2020-07-22  Conrad Shultz  <conrad_shultz@apple.com>
 
         Update macOS Version macros

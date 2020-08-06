@@ -1,3 +1,29 @@
+2020-08-05  Tim Horton  <timothy_horton@apple.com>
+
+        Remove all references to non-existent 10.16
+        https://bugs.webkit.org/show_bug.cgi?id=215202
+
+        Reviewed by Wenson Hsieh.
+
+        * ContentExtensionTester/Configurations/Base.xcconfig:
+        * ContentExtensionTester/Configurations/DebugRelease.xcconfig:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+        * ImageDiff/cg/Configurations/DebugRelease.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/DebugRelease.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig:
+        * TestWebKitAPI/Configurations/WebKitTargetConditionals.xcconfig:
+        * TestWebKitAPI/config.h:
+        * WebEditingTester/Configurations/Base.xcconfig:
+        * WebEditingTester/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        * lldb/lldbWebKitTester/Configurations/Base.xcconfig:
+        * lldb/lldbWebKitTester/Configurations/DebugRelease.xcconfig:
+
 2020-08-05  Caio Lima  <ticaiolima@gmail.com>
 
         r264813 breaks Make runner on remote devices

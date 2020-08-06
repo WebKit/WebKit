@@ -115,7 +115,7 @@
         (iokit-registry-entry-class "IOAccelerationUserClient")
         (iokit-registry-entry-class "IOSurfaceRootUserClient")
         (iokit-registry-entry-class "IOSurfaceSendRight"))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101600
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
     ;; CoreVideo CVCGDisplayLink
     (allow iokit-open
         (iokit-registry-entry-class "IOFramebufferSharedUserClient"))
@@ -445,7 +445,7 @@
     (xpc-service-name "com.apple.print.normalizerd")
 )
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101600
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 (allow mach-lookup
     (xpc-service-name-regex #"\.apple-extension-service$")
 )
@@ -637,14 +637,14 @@
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_TEMP_DIR")))
 
 ;; IOKit user clients
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101600
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 (allow iokit-open
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
     (iokit-user-client-class "IOHIDParamUserClient")
 )
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny iokit-open
     (with send-signal SIGKILL)
     (iokit-user-client-class "AppleMultitouchDeviceUserClient")
@@ -743,7 +743,7 @@
     (global-name "com.apple.PowerManagement.control")
 )
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny mach-lookup (with telemetry-backtrace)
 #else
 (allow mach-lookup
@@ -764,7 +764,7 @@
     (global-name "com.apple.windowserver.active"))
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101600
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
 ;; Needed to support encrypted media playback <rdar://problem/40038478>
 (allow mach-lookup
     (global-name "com.apple.SecurityServer")
@@ -952,7 +952,7 @@
     (home-subpath "/Library/Preferences/")
     (with no-log))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101600
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 (deny mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.containermanagerd")
 )

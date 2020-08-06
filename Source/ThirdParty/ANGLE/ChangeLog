@@ -1,3 +1,15 @@
+2020-08-05  Tim Horton  <timothy_horton@apple.com>
+
+        Remove all references to non-existent 10.16
+        https://bugs.webkit.org/show_bug.cgi?id=215202
+
+        Reviewed by Wenson Hsieh.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
 2020-07-29  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] 2.29.4 fails to link on armv7hl
