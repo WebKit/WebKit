@@ -1,3 +1,16 @@
+2020-08-06  Rob Buis  <rbuis@igalia.com>
+
+        build-webkit script tries to execute command xcodebuild on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=214353
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Only call the function determineXcodeSDK() when
+        building for an Apple/Cocoa platform.
+
+        * Scripts/webkitdirs.pm:
+        (argumentsForConfiguration):
+
 2020-08-05  Aakash Jain  <aakash_jain@apple.com>
 
         Rename BigSur EWS to AppleSilicon EWS

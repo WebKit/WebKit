@@ -530,7 +530,9 @@ sub argumentsForConfiguration()
 {
     determineConfiguration();
     determineArchitecture();
-    determineXcodeSDK();
+    if (isAppleCocoaWebKit()) {
+        determineXcodeSDK();
+    }
 
     my @args = ();
     # FIXME: Is it necessary to pass --debug, --release, --32-bit or --64-bit?
