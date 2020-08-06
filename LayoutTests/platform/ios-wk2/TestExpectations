@@ -1813,3 +1813,6 @@ webkit.org/b/215192 imported/w3c/web-platform-tests/preload/single-download-prel
 webkit.org/b/215204 imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual.svg [ Pass Failure ]
 
 webkit.org/b/215221 [ Debug ] editing/undo-manager/undo-manager-delete-stale-undo-items.html [ Pass Crash ]
+
+webkit.org/b/215226 [ Debug ] fast/text/basic/001.html [ Pass Crash ]
+
