@@ -8,8 +8,8 @@ PASS   compressor.knee.value is equal to 30.
 PASS   compressor.ratio.value is equal to 12. 
 PASS   compressor.attack.value is equal to 0.003000000026077032. 
 PASS   compressor.release.value is equal to 0.25. 
-FAIL X typeof compressor.reduction is not equal to number. Got object. assert_true: expected true got false
-FAIL X compressor.reduction is not equal to 0. Got AudioParam. assert_true: expected true got false
-FAIL < [test] 2 out of 7 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS   typeof compressor.reduction is equal to number. 
+PASS   compressor.reduction is equal to 0. 
+PASS < [test] All assertions passed. (total 7 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

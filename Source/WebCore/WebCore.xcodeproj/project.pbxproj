@@ -2431,6 +2431,7 @@
 		830784B21C52EE2C00104D1D /* XMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 830784B11C52EE1900104D1D /* XMLDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		830A1C7D24DB788B002ECCAD /* MediaElementAudioSourceOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 830A1C7C24DB7870002ECCAD /* MediaElementAudioSourceOptions.h */; };
 		830A36BD1DAC5FAD006D7D09 /* JSMouseEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 830A36BB1DAC5FA7006D7D09 /* JSMouseEventInit.h */; };
+		830EEABA24DB6A64009EFBCE /* WebKitDynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 830EEAB724DB6A52009EFBCE /* WebKitDynamicsCompressorNode.h */; };
 		83102B271F9EADD900E404B9 /* JSExtendableMessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 83102B231F9EADC200E404B9 /* JSExtendableMessageEvent.h */; };
 		8311C0031FAA2E9500E3C8E5 /* SWServerJobQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8311C0021FAA2E8900E3C8E5 /* SWServerJobQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83120C711C56F3FB001CB112 /* HTMLDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B86A71C56E83A00F3F0E3 /* HTMLDataElement.h */; };
@@ -10426,6 +10427,8 @@
 		830A1C7C24DB7870002ECCAD /* MediaElementAudioSourceOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaElementAudioSourceOptions.h; sourceTree = "<group>"; };
 		830A36BA1DAC5FA7006D7D09 /* JSMouseEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMouseEventInit.cpp; sourceTree = "<group>"; };
 		830A36BB1DAC5FA7006D7D09 /* JSMouseEventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMouseEventInit.h; sourceTree = "<group>"; };
+		830EEAB724DB6A52009EFBCE /* WebKitDynamicsCompressorNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitDynamicsCompressorNode.h; sourceTree = "<group>"; };
+		830EEAB924DB6A52009EFBCE /* WebKitDynamicsCompressorNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitDynamicsCompressorNode.idl; sourceTree = "<group>"; };
 		83102B231F9EADC200E404B9 /* JSExtendableMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExtendableMessageEvent.h; sourceTree = "<group>"; };
 		83102B251F9EADC200E404B9 /* JSExtendableMessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSExtendableMessageEvent.cpp; sourceTree = "<group>"; };
 		8311C0001FAA2E8900E3C8E5 /* SWServerJobQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWServerJobQueue.cpp; sourceTree = "<group>"; };
@@ -29693,6 +29696,8 @@
 				831B61712499A59900C07C79 /* WebKitAudioPannerNode.cpp */,
 				831B61742499A59C00C07C79 /* WebKitAudioPannerNode.h */,
 				831B616F2499A59800C07C79 /* WebKitAudioPannerNode.idl */,
+				830EEAB724DB6A52009EFBCE /* WebKitDynamicsCompressorNode.h */,
+				830EEAB924DB6A52009EFBCE /* WebKitDynamicsCompressorNode.idl */,
 				831B61732499A59B00C07C79 /* WebKitOfflineAudioContext.cpp */,
 				831B61752499A59D00C07C79 /* WebKitOfflineAudioContext.h */,
 				831B61722499A59A00C07C79 /* WebKitOfflineAudioContext.idl */,
@@ -34146,6 +34151,7 @@
 				831B61762499A5BB00C07C79 /* WebKitAudioPannerNode.h in Headers */,
 				5DFEBAB718592B6D00C75BEB /* WebKitAvailability.h in Headers */,
 				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
+				830EEABA24DB6A64009EFBCE /* WebKitDynamicsCompressorNode.h in Headers */,
 				2D0621451DA639BA00A7FB26 /* WebKitMediaKeyMessageEvent.h in Headers */,
 				2D0621511DA63A9F00A7FB26 /* WebKitMediaKeyNeededEvent.h in Headers */,
 				2D06214E1DA63A8E00A7FB26 /* WebKitMediaKeys.h in Headers */,

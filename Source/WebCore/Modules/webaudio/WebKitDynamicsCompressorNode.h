@@ -23,17 +23,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WEB_AUDIO,
-    JSGenerateToJSObject
-] interface DynamicsCompressorNode : AudioNode {
-    [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional DynamicsCompressorOptions options);
+#pragma once
 
-    readonly attribute AudioParam threshold; // in Decibels
-    readonly attribute AudioParam knee; // in Decibels
-    readonly attribute AudioParam ratio; // unit-less
-    readonly attribute AudioParam attack; // in Seconds
-    readonly attribute AudioParam release; // in Seconds
+#include "DynamicsCompressorNode.h"
 
-    readonly attribute float reduction; // in Decibels
+namespace WebCore {
+
+class WebKitDynamicsCompressorNode final : public DynamicsCompressorNode {
+    WTF_MAKE_ISO_ALLOCATED(WebKitDynamicsCompressorNode);
+public:
+    static Ref<WebKitDynamicsCompressorNode> create(WebKitAudioContext& context)
+    {
+        return adoptRef(*new WebKitDynamicsCompressorNode(context));
+    }
+
+    AudioParam& legacyReduction() { return m_legacyReduction.get(); }
+
+private:
+    explicit WebKitDynamicsCompressorNode(WebKitAudioContext& context)
+        : DynamicsCompressorNode(context)
+        , m_legacyReduction(AudioParam::create(context, "reduction"_s, 0, -20, 0))
+    {
+        initializeDefaultNodeOptions(2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers);
+    }
+
+    void setReduction(float reduction) final
+    {
+        DynamicsCompressorNode::setReduction(reduction);
+        m_legacyReduction->setValue(reduction);
+    }
+
+    Ref<AudioParam> m_legacyReduction;
 };
+
+} // namespace WebCore

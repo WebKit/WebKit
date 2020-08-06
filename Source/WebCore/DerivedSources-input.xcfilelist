@@ -356,6 +356,7 @@ $(PROJECT_DIR)/Modules/webaudio/WebKitAudioBufferSourceNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitAudioListener.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitAudioPannerNode.idl
+$(PROJECT_DIR)/Modules/webaudio/WebKitDynamicsCompressorNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitOfflineAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitOscillatorNode.idl
 $(PROJECT_DIR)/Modules/webauthn/AttestationConveyancePreference.idl

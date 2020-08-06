@@ -1,5 +1,18 @@
 2020-08-06  Chris Dumez  <cdumez@apple.com>
 
+        DynamicsCompressorNode.reduction attribute should be a float, not an AudioParam
+        https://bugs.webkit.org/show_bug.cgi?id=215195
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-dynamicscompressornode-interface/ctor-dynamicscompressor-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-dynamicscompressornode-interface/dynamicscompressor-basic-expected.txt:
+
+2020-08-06  Chris Dumez  <cdumez@apple.com>
+
         MediaElementAudioSourceNode interface should have a constructor
         https://bugs.webkit.org/show_bug.cgi?id=215200
 

@@ -1,3 +1,38 @@
+2020-08-06  Chris Dumez  <cdumez@apple.com>
+
+        DynamicsCompressorNode.reduction attribute should be a float, not an AudioParam
+        https://bugs.webkit.org/show_bug.cgi?id=215195
+
+        Reviewed by Youenn Fablet.
+
+        DynamicsCompressorNode.reduction attribute should be a float, not an AudioParam:
+        - https://webaudio.github.io/web-audio-api/#dynamicscompressornode
+
+        Backward-compatibility is maintained for the prefixed WebAudio API.
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        (WebCore::DynamicsCompressorNode::process):
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        (WebCore::DynamicsCompressorNode::reduction const):
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        (WebCore::DynamicsCompressorNode::setReduction):
+        * Modules/webaudio/DynamicsCompressorNode.idl:
+        * Modules/webaudio/WebKitAudioContext.cpp:
+        (WebCore::WebKitAudioContext::createWebKitDynamicsCompressor):
+        * Modules/webaudio/WebKitAudioContext.h:
+        * Modules/webaudio/WebKitAudioContext.idl:
+        * Modules/webaudio/WebKitDynamicsCompressorNode.h: Copied from Source/WebCore/Modules/webaudio/DynamicsCompressorNode.idl.
+        * Modules/webaudio/WebKitDynamicsCompressorNode.idl: Copied from Source/WebCore/Modules/webaudio/DynamicsCompressorNode.idl.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-08-06  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r265328.

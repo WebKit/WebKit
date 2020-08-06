@@ -3580,6 +3580,7 @@ JSWebKitAudioContext.cpp
 JSWebKitAudioListener.cpp
 JSWebKitAudioPannerNode.cpp
 JSWebKitCSSMatrix.cpp
+JSWebKitDynamicsCompressorNode.cpp
 JSWebKitMediaKeyError.cpp
 JSWebKitMediaKeyMessageEvent.cpp
 JSWebKitMediaKeyNeededEvent.cpp

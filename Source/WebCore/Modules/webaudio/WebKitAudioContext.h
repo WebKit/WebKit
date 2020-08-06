@@ -40,6 +40,7 @@ class MediaStreamAudioSourceNode;
 class PeriodicWave;
 class WebKitAudioBufferSourceNode;
 class WebKitAudioPannerNode;
+class WebKitDynamicsCompressorNode;
 class WebKitOscillatorNode;
 
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
@@ -69,6 +70,7 @@ public:
     ExceptionOr<Ref<WebKitOscillatorNode>> createWebKitOscillator();
     ExceptionOr<Ref<PeriodicWave>> createPeriodicWave(Float32Array& real, Float32Array& imaginary);
     ExceptionOr<Ref<WebKitAudioBufferSourceNode>> createWebKitBufferSource();
+    ExceptionOr<Ref<WebKitDynamicsCompressorNode>> createWebKitDynamicsCompressor();
 
 protected:
     explicit WebKitAudioContext(Document&);

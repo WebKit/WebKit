@@ -76,7 +76,7 @@
     [MayThrowException] WaveShaperNode createWaveShaper();
     [MayThrowException, ImplementedAs=createWebKitPanner] WebKitAudioPannerNode createPanner();
     [MayThrowException] ConvolverNode createConvolver();
-    [MayThrowException] DynamicsCompressorNode createDynamicsCompressor();
+    [MayThrowException, ImplementedAs=createWebKitDynamicsCompressor] WebKitDynamicsCompressorNode createDynamicsCompressor();
     [MayThrowException] AnalyserNode createAnalyser();
     [MayThrowException] ScriptProcessorNode createScriptProcessor(optional unsigned long bufferSize = 0, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
     [MayThrowException, ImplementedAs=createWebKitOscillator] WebKitOscillatorNode createOscillator();

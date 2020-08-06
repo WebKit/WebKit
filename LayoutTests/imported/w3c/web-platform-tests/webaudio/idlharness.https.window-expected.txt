@@ -695,7 +695,7 @@ PASS Stringification of new DynamicsCompressorNode(context)
 PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "threshold" with the proper type 
 PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "knee" with the proper type 
 PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "ratio" with the proper type 
-FAIL DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "reduction" with the proper type assert_equals: expected "number" but got "object"
+PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "reduction" with the proper type 
 PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "attack" with the proper type 
 PASS DynamicsCompressorNode interface: new DynamicsCompressorNode(context) must inherit property "release" with the proper type 
 PASS AudioNode interface: new DynamicsCompressorNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type 

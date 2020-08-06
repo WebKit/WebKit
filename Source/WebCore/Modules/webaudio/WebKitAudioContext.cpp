@@ -33,6 +33,7 @@
 #include "PeriodicWave.h"
 #include "WebKitAudioBufferSourceNode.h"
 #include "WebKitAudioPannerNode.h"
+#include "WebKitDynamicsCompressorNode.h"
 #include "WebKitOscillatorNode.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -214,6 +215,16 @@ ExceptionOr<Ref<WebKitAudioBufferSourceNode>> WebKitAudioContext::createWebKitBu
     refNode(node);
 
     return node;
+}
+
+ExceptionOr<Ref<WebKitDynamicsCompressorNode>> WebKitAudioContext::createWebKitDynamicsCompressor()
+{
+    if (isStopped())
+        return Exception { InvalidStateError };
+
+    lazyInitialize();
+
+    return WebKitDynamicsCompressorNode::create(*this);
 }
 
 void WebKitAudioContext::close(DOMPromiseDeferred<void>&& promise)

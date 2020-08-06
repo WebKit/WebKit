@@ -25,7 +25,7 @@ PASS   node0.channelInterpretation is equal to speakers.
 PASS   node0.threshold.value is equal to -24. 
 PASS   node0.knee.value is equal to 30. 
 PASS   node0.ratio.value is equal to 12. 
-PASS   node0.reduction.value is equal to 0. 
+PASS   node0.reduction is equal to 0. 
 PASS   node0.attack.value is equal to 0.003000000026077032. 
 PASS   node0.release.value is equal to 0.25. 
 PASS < [default constructor] All assertions passed. (total 13 assertions) 

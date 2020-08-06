@@ -33,6 +33,7 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "DynamicsCompressor.h"
+#include "WebKitDynamicsCompressorNode.h"
 #include <wtf/IsoMallocInlines.h>
 
 // Set output to stereo by default.
@@ -41,6 +42,7 @@ static const unsigned defaultNumberOfOutputChannels = 2;
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DynamicsCompressorNode);
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitDynamicsCompressorNode);
 
 ExceptionOr<Ref<DynamicsCompressorNode>> DynamicsCompressorNode::create(BaseAudioContext& context, const DynamicsCompressorOptions& options)
 {
@@ -63,7 +65,6 @@ DynamicsCompressorNode::DynamicsCompressorNode(BaseAudioContext& context, const 
     , m_threshold(AudioParam::create(context, "threshold"_s, options.threshold, -100, 0))
     , m_knee(AudioParam::create(context, "knee"_s, options.knee, 0, 40))
     , m_ratio(AudioParam::create(context, "ratio"_s, options.ratio, 1, 20))
-    , m_reduction(AudioParam::create(context, "reduction"_s, 0, -20, 0))
     , m_attack(AudioParam::create(context, "attack"_s, options.attack, 0, 1))
     , m_release(AudioParam::create(context, "release"_s, options.release, 0, 1))
 {
@@ -99,8 +100,7 @@ void DynamicsCompressorNode::process(size_t framesToProcess)
 
     m_dynamicsCompressor->process(input(0)->bus(), outputBus, framesToProcess);
 
-    float reduction = m_dynamicsCompressor->parameterValue(DynamicsCompressor::ParamReduction);
-    m_reduction->setValue(reduction);
+    setReduction(m_dynamicsCompressor->parameterValue(DynamicsCompressor::ParamReduction));
 }
 
 void DynamicsCompressorNode::reset()

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class DynamicsCompressor;
 
-class DynamicsCompressorNode final : public AudioNode {
+class DynamicsCompressorNode : public AudioNode {
     WTF_MAKE_ISO_ALLOCATED(DynamicsCompressorNode);
 public:
     static ExceptionOr<Ref<DynamicsCompressorNode>> create(BaseAudioContext&, const DynamicsCompressorOptions& = { });
@@ -55,24 +55,26 @@ public:
     AudioParam& release() { return m_release.get(); }
 
     // Amount by which the compressor is currently compressing the signal in decibels.
-    AudioParam& reduction() { return m_reduction.get(); }
+    float reduction() const { return m_reduction; }
 
     ExceptionOr<void> setChannelCount(unsigned) final;
     ExceptionOr<void> setChannelCountMode(ChannelCountMode) final;
+
+protected:
+    explicit DynamicsCompressorNode(BaseAudioContext&, const DynamicsCompressorOptions& = { });
+    virtual void setReduction(float reduction) { m_reduction = reduction; }
 
 private:
     double tailTime() const override;
     double latencyTime() const override;
 
-    DynamicsCompressorNode(BaseAudioContext&, const DynamicsCompressorOptions&);
-
     std::unique_ptr<DynamicsCompressor> m_dynamicsCompressor;
     Ref<AudioParam> m_threshold;
     Ref<AudioParam> m_knee;
     Ref<AudioParam> m_ratio;
-    Ref<AudioParam> m_reduction;
     Ref<AudioParam> m_attack;
     Ref<AudioParam> m_release;
+    float m_reduction { 0 };
 };
 
 } // namespace WebCore
