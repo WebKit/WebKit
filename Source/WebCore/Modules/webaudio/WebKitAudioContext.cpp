@@ -118,12 +118,7 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> WebKitAudioContext::createMediaStre
 
 ExceptionOr<Ref<MediaStreamAudioDestinationNode>> WebKitAudioContext::createMediaStreamDestination()
 {
-    if (isStopped())
-        return Exception { InvalidStateError };
-
-    // FIXME: Add support for an optional argument which specifies the number of channels.
-    // FIXME: The default should probably be stereo instead of mono.
-    return MediaStreamAudioDestinationNode::create(*this, 1);
+    return MediaStreamAudioDestinationNode::create(*this);
 }
 
 #endif

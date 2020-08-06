@@ -28,6 +28,7 @@
 
 #include "AudioBasicInspectorNode.h"
 #include "AudioBus.h"
+#include "AudioNodeOptions.h"
 #include "MediaStream.h"
 
 namespace WebCore {
@@ -38,7 +39,7 @@ class MediaStreamAudioSource;
 class MediaStreamAudioDestinationNode final : public AudioBasicInspectorNode {
     WTF_MAKE_ISO_ALLOCATED(MediaStreamAudioDestinationNode);
 public:
-    static Ref<MediaStreamAudioDestinationNode> create(BaseAudioContext&, size_t numberOfChannels);
+    static ExceptionOr<Ref<MediaStreamAudioDestinationNode>> create(BaseAudioContext&, const AudioNodeOptions& = { });
 
     virtual ~MediaStreamAudioDestinationNode();
 
@@ -49,7 +50,7 @@ public:
     void reset() final;
     
 private:
-    MediaStreamAudioDestinationNode(BaseAudioContext&, size_t numberOfChannels);
+    explicit MediaStreamAudioDestinationNode(BaseAudioContext&);
 
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }

@@ -65,9 +65,10 @@ ExceptionOr<Ref<AnalyserNode>> AnalyserNode::create(BaseAudioContext& context, c
 }
 
 AnalyserNode::AnalyserNode(BaseAudioContext& context)
-    : AudioBasicInspectorNode(context, context.sampleRate(), 2)
+    : AudioBasicInspectorNode(context, context.sampleRate())
 {
     setNodeType(NodeTypeAnalyser);
+    addOutput(makeUnique<AudioNodeOutput>(this, 2));
     
     initialize();
 }

@@ -1,3 +1,33 @@
+2020-08-06  Chris Dumez  <cdumez@apple.com>
+
+        MediaStreamAudioDestinationNode should have a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=215233
+
+        Reviewed by Geoffrey Garen.
+
+        MediaStreamAudioDestinationNode should have a constructor:
+        - https://webaudio.github.io/web-audio-api/#mediastreamaudiodestinationnode
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::AnalyserNode):
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::AudioBasicInspectorNode):
+        (WebCore::AudioBasicInspectorNode::pullInputs):
+        (WebCore::AudioBasicInspectorNode::checkNumberOfChannelsForInput):
+        (WebCore::AudioBasicInspectorNode::updatePullStatus):
+        * Modules/webaudio/AudioBasicInspectorNode.h:
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createMediaStreamDestination):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::create):
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.idl:
+        * Modules/webaudio/WebKitAudioContext.cpp:
+        (WebCore::WebKitAudioContext::createMediaStreamDestination):
+
 2020-08-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] Avoid creating a sub-image when drawing a small scaled sub-rect from a native image
