@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2020 Apple Inc. All Rights Reserved.
  * Copyright (C) 2012 Patrick Gansterer <paroga@paroga.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -51,8 +51,8 @@ template<typename T, typename SignedIntegerType>
 inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringSigned(SignedIntegerType number, typename IntegerToStringConversionTrait<T>::AdditionalArgumentType* additionalArgument = nullptr)
 {
     if (number < 0)
-        return numberToStringImpl<T, typename std::make_unsigned<SignedIntegerType>::type, NegativeNumber>(-number, additionalArgument);
-    return numberToStringImpl<T, typename std::make_unsigned<SignedIntegerType>::type, PositiveNumber>(number, additionalArgument);
+        return numberToStringImpl<T, typename std::make_unsigned_t<SignedIntegerType>, NegativeNumber>(-number, additionalArgument);
+    return numberToStringImpl<T, typename std::make_unsigned_t<SignedIntegerType>, PositiveNumber>(number, additionalArgument);
 }
 
 template<typename T, typename UnsignedIntegerType>
@@ -62,7 +62,7 @@ inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringUnsi
 }
 
 template<typename CharacterType, typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
-static void writeNumberToBufferImpl(UnsignedIntegerType number, CharacterType* destination)
+static void writeIntegerToBufferImpl(UnsignedIntegerType number, CharacterType* destination)
 {
     static_assert(!std::is_same_v<bool, std::remove_cv_t<UnsignedIntegerType>>, "'bool' not supported");
     LChar buf[sizeof(UnsignedIntegerType) * 3 + 1];
@@ -81,22 +81,22 @@ static void writeNumberToBufferImpl(UnsignedIntegerType number, CharacterType* d
         *destination++ = static_cast<CharacterType>(*p++);
 }
 
-template<typename CharacterType, typename SignedIntegerType>
-inline void writeNumberToBufferSigned(SignedIntegerType number, CharacterType* destination)
+template<typename CharacterType, typename IntegerType>
+inline void writeIntegerToBuffer(IntegerType integer, CharacterType* destination)
 {
-    if (number < 0)
-        return writeNumberToBufferImpl<CharacterType, typename std::make_unsigned<SignedIntegerType>::type, NegativeNumber>(-number, destination);
-    return writeNumberToBufferImpl<CharacterType, typename std::make_unsigned<SignedIntegerType>::type, PositiveNumber>(number, destination);
-}
-
-template<typename CharacterType, typename UnsignedIntegerType>
-inline void writeNumberToBufferUnsigned(UnsignedIntegerType number, CharacterType* destination)
-{
-    return writeNumberToBufferImpl<CharacterType, UnsignedIntegerType, PositiveNumber>(number, destination);
+    static_assert(std::is_integral_v<IntegerType>);
+    if constexpr (std::is_same_v<IntegerType, bool>)
+        return writeIntegerToBufferImpl<CharacterType, uint8_t, PositiveNumber>(integer ? 1 : 0, destination);
+    else if constexpr (std::is_signed_v<IntegerType>) {
+        if (integer < 0)
+            return writeIntegerToBufferImpl<CharacterType, typename std::make_unsigned_t<IntegerType>, NegativeNumber>(-integer, destination);
+        return writeIntegerToBufferImpl<CharacterType, typename std::make_unsigned_t<IntegerType>, PositiveNumber>(integer, destination);
+    } else
+        return writeIntegerToBufferImpl<CharacterType, IntegerType, PositiveNumber>(integer, destination);
 }
 
 template<typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
-static unsigned lengthOfNumberAsStringImpl(UnsignedIntegerType number)
+static unsigned lengthOfIntegerAsStringImpl(UnsignedIntegerType number)
 {
     unsigned length = 0;
 
@@ -111,18 +111,18 @@ static unsigned lengthOfNumberAsStringImpl(UnsignedIntegerType number)
     return length;
 }
 
-template<typename SignedIntegerType>
-inline unsigned lengthOfNumberAsStringSigned(SignedIntegerType number)
+template<typename IntegerType>
+inline unsigned lengthOfIntegerAsString(IntegerType integer)
 {
-    if (number < 0)
-        return lengthOfNumberAsStringImpl<typename std::make_unsigned<SignedIntegerType>::type, NegativeNumber>(-number);
-    return lengthOfNumberAsStringImpl<typename std::make_unsigned<SignedIntegerType>::type, PositiveNumber>(number);
-}
-
-template<typename UnsignedIntegerType>
-inline unsigned lengthOfNumberAsStringUnsigned(UnsignedIntegerType number)
-{
-    return lengthOfNumberAsStringImpl<UnsignedIntegerType, PositiveNumber>(number);
+    static_assert(std::is_integral_v<IntegerType>);
+    if constexpr (std::is_same_v<IntegerType, bool>)
+        return 1;
+    else if constexpr (std::is_signed_v<IntegerType>) {
+        if (integer < 0)
+            return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, NegativeNumber>(-integer);
+        return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, PositiveNumber>(integer);
+    } else
+        return lengthOfIntegerAsStringImpl<IntegerType, PositiveNumber>(integer);
 }
 
 } // namespace WTF

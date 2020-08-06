@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,23 @@
 
 namespace TestWebKitAPI {
 
+enum class BoolEnum : bool {
+    A,
+    B
+};
+
+enum class SignedEnum : int8_t {
+    A = -1,
+    B = 0,
+    C = 1
+};
+
+enum class UnsignedEnum : uint8_t {
+    A,
+    B,
+    C
+};
+
 static int arr[2];
 struct S {
     char c;
@@ -48,21 +65,21 @@ TEST(WTF, StringConcatenate)
 
 TEST(WTF, StringConcatenate_Int)
 {
-    EXPECT_EQ(5u, WTF::lengthOfNumberAsStringSigned(17890));
+    EXPECT_EQ(5u, WTF::lengthOfIntegerAsString(17890));
     EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890 , " world").utf8().data());
     EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890l , " world").utf8().data());
     EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890ll , " world").utf8().data());
     EXPECT_STREQ("hello 17890 world", makeString("hello ", static_cast<int64_t>(17890) , " world").utf8().data());
     EXPECT_STREQ("hello 17890 world", makeString("hello ", static_cast<int64_t>(17890) , " world").utf8().data());
 
-    EXPECT_EQ(6u, WTF::lengthOfNumberAsStringSigned(-17890));
+    EXPECT_EQ(6u, WTF::lengthOfIntegerAsString(-17890));
     EXPECT_STREQ("hello -17890 world", makeString("hello ", -17890 , " world").utf8().data());
     EXPECT_STREQ("hello -17890 world", makeString("hello ", -17890l , " world").utf8().data());
     EXPECT_STREQ("hello -17890 world", makeString("hello ", -17890ll , " world").utf8().data());
     EXPECT_STREQ("hello -17890 world", makeString("hello ", static_cast<int64_t>(-17890) , " world").utf8().data());
     EXPECT_STREQ("hello -17890 world", makeString("hello ", static_cast<int64_t>(-17890) , " world").utf8().data());
 
-    EXPECT_EQ(1u, WTF::lengthOfNumberAsStringSigned(0));
+    EXPECT_EQ(1u, WTF::lengthOfIntegerAsString(0));
     EXPECT_STREQ("hello 0 world", makeString("hello ", 0 , " world").utf8().data());
 
     EXPECT_STREQ("hello 42 world", makeString("hello ", static_cast<signed char>(42) , " world").utf8().data());
@@ -72,14 +89,14 @@ TEST(WTF, StringConcatenate_Int)
 
 TEST(WTF, StringConcatenate_Unsigned)
 {
-    EXPECT_EQ(5u, WTF::lengthOfNumberAsStringUnsigned(17890u));
+    EXPECT_EQ(5u, WTF::lengthOfIntegerAsString(17890u));
     EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890u , " world").utf8().data());
     EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890ul , " world").utf8().data());
     EXPECT_STREQ("hello 17890 world", makeString("hello ", 17890ull , " world").utf8().data());
     EXPECT_STREQ("hello 17890 world", makeString("hello ", static_cast<uint64_t>(17890) , " world").utf8().data());
     EXPECT_STREQ("hello 17890 world", makeString("hello ", static_cast<uint64_t>(17890) , " world").utf8().data());
 
-    EXPECT_EQ(1u, WTF::lengthOfNumberAsStringSigned(0u));
+    EXPECT_EQ(1u, WTF::lengthOfIntegerAsString(0u));
     EXPECT_STREQ("hello 0 world", makeString("hello ", 0u , " world").utf8().data());
 
     EXPECT_STREQ("hello 42 world", makeString("hello ", static_cast<unsigned char>(42) , " world").utf8().data());
@@ -87,6 +104,20 @@ TEST(WTF, StringConcatenate_Unsigned)
     EXPECT_STREQ("hello 4 world", makeString("hello ", sizeof(int) , " world").utf8().data()); // size_t
     EXPECT_STREQ("hello 4 world", makeString("hello ", offsetof(S, i) , " world").utf8().data()); // size_t
     EXPECT_STREQ("hello 3235839742 world", makeString("hello ", static_cast<size_t>(0xc0defefe), " world").utf8().data());
+}
+
+TEST(WTF, StringConcatenate_Enum)
+{
+    EXPECT_STREQ("0", makeString(BoolEnum::A).utf8().data());
+    EXPECT_STREQ("1", makeString(BoolEnum::B).utf8().data());
+
+    EXPECT_STREQ("-1", makeString(SignedEnum::A).utf8().data());
+    EXPECT_STREQ("0", makeString(SignedEnum::B).utf8().data());
+    EXPECT_STREQ("1", makeString(SignedEnum::C).utf8().data());
+
+    EXPECT_STREQ("0", makeString(UnsignedEnum::A).utf8().data());
+    EXPECT_STREQ("1", makeString(UnsignedEnum::B).utf8().data());
+    EXPECT_STREQ("2", makeString(UnsignedEnum::C).utf8().data());
 }
 
 TEST(WTF, StringConcatenate_Float)

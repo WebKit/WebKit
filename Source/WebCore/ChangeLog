@@ -1,3 +1,15 @@
+2020-08-06  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::makeString() should handle enum values
+        <https://webkit.org/b/214906>
+
+        Reviewed by Sam Weinig.
+
+        * Modules/webgpu/WHLSL/Metal/WHLSLMangledNames.h:
+        (WTF::MangledNameAdaptor::length):
+        (WTF::MangledNameAdaptor::writeTo):
+        - Update for function renames.
+
 2020-08-06  Chris Dumez  <cdumez@apple.com>
 
         MediaStreamAudioSourceNode should have a constructor

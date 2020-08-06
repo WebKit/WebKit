@@ -275,10 +275,9 @@ bool Connection::sendMessage(std::unique_ptr<MachMessage> message)
 
     default:
         auto messageName = message->messageName();
-        auto messageNameValue = static_cast<std::underlying_type_t<IPC::MessageName>>(messageName);
-        auto errorMessage = makeString("Unhandled error code 0x", hex(kr), ", message '", description(messageName), "' (", messageNameValue, ')');
+        auto errorMessage = makeString("Unhandled error code 0x", hex(kr), ", message '", description(messageName), "' (", messageName, ')');
         WebKit::logAndSetCrashLogMessage(errorMessage.utf8().data());
-        CRASH_WITH_INFO(kr, messageNameValue);
+        CRASH_WITH_INFO(kr, WTF::enumToUnderlyingType(messageName));
     }
 }
 

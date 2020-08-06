@@ -1,3 +1,50 @@
+2020-08-06  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::makeString() should handle enum values
+        <https://webkit.org/b/214906>
+
+        Reviewed by Sam Weinig.
+
+        * wtf/text/IntegerToStringConversion.h:
+        (WTF::numberToStringSigned):
+        - Drive-by fix to change std::make_unsigned<>::type to
+          std::make_unsigned_t<>.
+        (WTF::writeNumberToBufferImpl): Delete.
+        (WTF::writeIntegerToBufferImpl):
+        - Rename from WTF::writeNumberToBufferImpl().
+        (WTF::writeNumberToBufferSigned): Delete.
+        (WTF::writeNumberToBufferUnsigned): Delete.
+        (WTF::writeIntegerToBuffer):
+        - Replace WTF::writeNumberToBufferSigned() and
+          WTF::writeNumberToBufferUnsigned() with a single function that
+          uses constexpr checks to let the compiler eliminate code.  Had
+          to use if/else if/else construct to help the compiler
+          eliminate unused cases.
+        (WTF::lengthOfNumberAsStringImpl): Delete.
+        (WTF::lengthOfIntegerAsStringImpl):
+        - Rename from WTF::lengthOfNumberAsStringImpl().
+        (WTF::lengthOfNumberAsStringSigned): Delete.
+        (WTF::lengthOfNumberAsStringUnsigned): Delete.
+        (WTF::lengthOfIntegerAsString):
+        - Replace WTF::lengthOfNumberAsStringSigned() and
+          WTF::lengthOfNumberAsStringUnsigned() with a single function
+          that uses constexpr checks to let the compiler eliminate code.
+          Had to use if/else if/else construct to help the compiler
+          eliminate unused cases.
+
+        * wtf/text/StringConcatenateNumbers.h:
+        (WTF::StringTypeAdapter<SignedInt, ...>): Deleted.
+        (WTF::StringTypeAdapter<UnignedInt, ...>): Deleted.
+        (WTF::StringTypeAdapter<Integer, ...>):
+        - Combine signed/unsigned templated classes into a single class
+          now that WTF::lengthOfIntegerAsString() and
+          WTF::writeIntegerToBuffer() are templated.
+        (WTF::StringTypeAdapter<Enum, ...>):
+        - Add support for enum types to WTF::makeString().  This also
+          takes advantage of templated WTF::lengthOfIntegerAsString()
+          and WTF::writeIntegerToBuffer() functions since enum types may
+          be either signed or unsigned.
+
 2020-08-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove all references to non-existent 10.16

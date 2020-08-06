@@ -1,5 +1,17 @@
 2020-08-06  David Kilzer  <ddkilzer@apple.com>
 
+        WTF::makeString() should handle enum values
+        <https://webkit.org/b/214906>
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WTF/StringConcatenate.cpp:
+        (TestWebKitAPI::TEST):
+        - Update tests for renamed functions.
+        - Add test for enum values.
+
+2020-08-06  David Kilzer  <ddkilzer@apple.com>
+
         check-webkit-style: better algorithm to check for acronym capitalization in an identifier
         <https://webkit.org/b/215026>
 

@@ -1,3 +1,16 @@
+2020-08-06  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::makeString() should handle enum values
+        <https://webkit.org/b/214906>
+
+        Reviewed by Sam Weinig.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::sendMessage):
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::didReceiveInvalidMessage):
+        - Update to take advantage of enum support in WTF::makeString().
+
 2020-08-06  Jer Noble  <jer.noble@apple.com>
 
         [Mac,WK2] REGRESSION(r262322): ScreenTime overlay is hidden in fullscreen mode

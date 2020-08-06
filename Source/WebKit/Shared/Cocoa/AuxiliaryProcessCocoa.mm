@@ -34,10 +34,9 @@ namespace WebKit {
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
 {
-    auto messageNameValue = static_cast<std::underlying_type_t<IPC::MessageName>>(messageName);
-    auto errorMessage = makeString("Received invalid message: '", description(messageName), "' (", messageNameValue, ')');
+    auto errorMessage = makeString("Received invalid message: '", description(messageName), "' (", messageName, ')');
     logAndSetCrashLogMessage(errorMessage.utf8().data());
-    CRASH_WITH_INFO(messageNameValue);
+    CRASH_WITH_INFO(WTF::enumToUnderlyingType(messageName));
 }
 
 bool AuxiliaryProcess::parentProcessHasEntitlement(const char* entitlement)
