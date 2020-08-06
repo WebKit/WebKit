@@ -734,11 +734,11 @@ static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlo
 {
     // Tatechuyoko is modeled as the Object Replacement Character (U+FFFC), which can never have expansion opportunities inside nor intrinsically adjacent to it.
     if (textBox.renderer().style().textCombine() == TextCombine::Horizontal)
-        return ForbidLeadingExpansion | ForbidTrailingExpansion;
+        return ForbidLeftExpansion | ForbidRightExpansion;
 
     ExpansionBehavior result = 0;
-    bool setLeadingExpansion = false;
-    bool setTrailingExpansion = false;
+    bool setLeftExpansion = false;
+    bool setRightExpansion = false;
     if (textAlign == TextAlignMode::Justify) {
         // If the next box is ruby, and we're justifying, and the first box in the ruby base has a leading expansion, and we are a text box, then force a trailing expansion.
         if (nextRun && is<RenderRubyRun>(nextRun->renderer()) && downcast<RenderRubyRun>(nextRun->renderer()).rubyBase() && nextRun->renderer().style().collapseWhiteSpace()) {
@@ -746,10 +746,10 @@ static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlo
             if (rubyBase.firstRootBox() && !rubyBase.firstRootBox()->nextRootBox()) {
                 if (auto* leafChild = rubyBase.firstRootBox()->firstLeafDescendant()) {
                     if (is<InlineTextBox>(*leafChild)) {
-                        // FIXME: This leadingExpansionOpportunity doesn't actually work because it doesn't perform the UBA
-                        if (FontCascade::leadingExpansionOpportunity(downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction())) {
-                            setTrailingExpansion = true;
-                            result |= ForceTrailingExpansion;
+                        // FIXME: This leftExpansionOpportunity doesn't actually work because it doesn't perform the UBA
+                        if (FontCascade::leftExpansionOpportunity(downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction())) {
+                            setRightExpansion = true;
+                            result |= ForceRightExpansion;
                         }
                     }
                 }
@@ -761,10 +761,10 @@ static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlo
             if (rubyBase.firstRootBox() && !rubyBase.firstRootBox()->nextRootBox()) {
                 if (auto* leafChild = rubyBase.firstRootBox()->lastLeafDescendant()) {
                     if (is<InlineTextBox>(*leafChild)) {
-                        // FIXME: This leadingExpansionOpportunity doesn't actually work because it doesn't perform the UBA
-                        if (FontCascade::trailingExpansionOpportunity(downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction())) {
-                            setLeadingExpansion = true;
-                            result |= ForceLeadingExpansion;
+                        // FIXME: This leftExpansionOpportunity doesn't actually work because it doesn't perform the UBA
+                        if (FontCascade::rightExpansionOpportunity(downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction())) {
+                            setLeftExpansion = true;
+                            result |= ForceLeftExpansion;
                         }
                     }
                 }
@@ -774,46 +774,46 @@ static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlo
         if (is<RenderRubyBase>(block)) {
             RenderRubyBase& rubyBase = downcast<RenderRubyBase>(block);
             if (&textBox == rubyBase.firstRootBox()->firstLeafDescendant()) {
-                setLeadingExpansion = true;
-                result |= ForbidLeadingExpansion;
+                setLeftExpansion = true;
+                result |= ForbidLeftExpansion;
             } if (&textBox == rubyBase.firstRootBox()->lastLeafDescendant()) {
-                setTrailingExpansion = true;
-                result |= ForbidTrailingExpansion;
+                setRightExpansion = true;
+                result |= ForbidRightExpansion;
             }
         }
     }
-    if (!setLeadingExpansion)
-        result |= isAfterExpansion ? ForbidLeadingExpansion : AllowLeadingExpansion;
-    if (!setTrailingExpansion)
-        result |= AllowTrailingExpansion;
+    if (!setLeftExpansion)
+        result |= isAfterExpansion ? ForbidLeftExpansion : AllowLeftExpansion;
+    if (!setRightExpansion)
+        result |= AllowRightExpansion;
     return result;
 }
 
 static inline void applyExpansionBehavior(InlineTextBox& textBox, ExpansionBehavior expansionBehavior)
 {
-    switch (expansionBehavior & LeadingExpansionMask) {
-    case ForceLeadingExpansion:
-        textBox.setForceLeadingExpansion();
+    switch (expansionBehavior & LeftExpansionMask) {
+    case ForceLeftExpansion:
+        textBox.setForceLeftExpansion();
         break;
-    case ForbidLeadingExpansion:
-        textBox.setCanHaveLeadingExpansion(false);
+    case ForbidLeftExpansion:
+        textBox.setCanHaveLeftExpansion(false);
         break;
-    case AllowLeadingExpansion:
-        textBox.setCanHaveLeadingExpansion(true);
+    case AllowLeftExpansion:
+        textBox.setCanHaveLeftExpansion(true);
         break;
     default:
         ASSERT_NOT_REACHED();
         break;
     }
-    switch (expansionBehavior & TrailingExpansionMask) {
-    case ForceTrailingExpansion:
-        textBox.setForceTrailingExpansion();
+    switch (expansionBehavior & RightExpansionMask) {
+    case ForceRightExpansion:
+        textBox.setForceRightExpansion();
         break;
-    case ForbidTrailingExpansion:
-        textBox.setCanHaveTrailingExpansion(false);
+    case ForbidRightExpansion:
+        textBox.setCanHaveRightExpansion(false);
         break;
-    case AllowTrailingExpansion:
-        textBox.setCanHaveTrailingExpansion(true);
+    case AllowRightExpansion:
+        textBox.setCanHaveRightExpansion(true);
         break;
     default:
         ASSERT_NOT_REACHED();

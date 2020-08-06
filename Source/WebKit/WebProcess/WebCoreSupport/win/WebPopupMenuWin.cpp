@@ -111,7 +111,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
 
         String itemText = m_popupClient->itemText(index);
 
-        TextRun textRun(itemText, 0, 0, AllowTrailingExpansion, itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
+        TextRun textRun(itemText, 0, 0, AllowRightExpansion, itemStyle.textDirection(), itemStyle.hasTextDirectionOverride());
 
         notSelectedBackingStoreContext->setFillColor(optionTextColor);
         selectedBackingStoreContext->setFillColor(activeOptionTextColor);

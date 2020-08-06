@@ -385,7 +385,7 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
     auto direction = toTextDirection(state().direction, &computedStyle);
     bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
 
-    TextRun textRun(normalizedText, 0, 0, AllowTrailingExpansion, direction, override, true);
+    TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, override, true);
     auto& font = fontProxy();
     auto& fontMetrics = font.fontMetrics();
 
@@ -498,7 +498,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     auto direction = toTextDirection(state().direction, &computedStyle);
     bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
 
-    TextRun textRun(normalizedText, 0, 0, AllowTrailingExpansion, direction, override, true);
+    TextRun textRun(normalizedText, 0, 0, AllowRightExpansion, direction, override, true);
     float fontWidth = fontProxy.width(textRun);
     bool useMaxWidth = maxWidth && maxWidth.value() < fontWidth;
     float width = useMaxWidth ? maxWidth.value() : fontWidth;

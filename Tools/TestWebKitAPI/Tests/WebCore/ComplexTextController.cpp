@@ -261,7 +261,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
     EXPECT_NEAR(glyphBuffer.advanceAt(3).height(), 12.368896925859, 0.0001);
 }
 
-TEST_F(ComplexTextControllerTest, LeadingExpansion)
+TEST_F(ComplexTextControllerTest, LeftExpansion)
 {
     FontCascadeDescription description;
     description.setOneFamily("Times");
@@ -271,7 +271,7 @@ TEST_F(ComplexTextControllerTest, LeadingExpansion)
 
     UChar characters[] = { 'a' };
     size_t charactersLength = WTF_ARRAY_LENGTH(characters);
-    TextRun textRun(StringView(characters, charactersLength), 0, 100, ForceLeadingExpansion);
+    TextRun textRun(StringView(characters, charactersLength), 0, 100, ForceLeftExpansion);
     auto run = ComplexTextController::ComplexTextRun::create({ FloatSize(24, 0) }, { }, { 16 }, { 0 }, FloatSize(), font.primaryFont(), characters, 0, charactersLength, 0, 1, true);
     Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
     runs.append(WTFMove(run));

@@ -281,10 +281,10 @@ public:
     float expansion() const { return m_expansion; }
 
     void setHasHyphen(bool hasHyphen) { m_bitfields.setHasEllipsisBoxOrHyphen(hasHyphen); }
-    void setCanHaveLeadingExpansion(bool canHaveLeadingExpansion) { m_bitfields.setHasSelectedChildrenOrCanHaveLeadingExpansion(canHaveLeadingExpansion); }
-    void setCanHaveTrailingExpansion(bool canHaveTrailingExpansion) { m_bitfields.setCanHaveTrailingExpansion(canHaveTrailingExpansion); }
-    void setForceTrailingExpansion() { m_bitfields.setForceTrailingExpansion(true); }
-    void setForceLeadingExpansion() { m_bitfields.setForceLeadingExpansion(true); }
+    void setCanHaveLeftExpansion(bool canHaveLeftExpansion) { m_bitfields.setHasSelectedChildrenOrCanHaveLeftExpansion(canHaveLeftExpansion); }
+    void setCanHaveRightExpansion(bool canHaveRightExpansion) { m_bitfields.setCanHaveRightExpansion(canHaveRightExpansion); }
+    void setForceRightExpansion() { m_bitfields.setForceRightExpansion(true); }
+    void setForceLeftExpansion() { m_bitfields.setForceLeftExpansion(true); }
 
 private:
     InlineBox* m_nextOnLine { nullptr }; // The next element on the same line as us.
@@ -317,14 +317,14 @@ private:
             , m_hasVirtualLogicalHeight(false)
             , m_isHorizontal(isHorizontal)
             , m_endsWithBreak(false)
-            , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)
-            , m_canHaveTrailingExpansion(false)
+            , m_hasSelectedChildrenOrCanHaveLeftExpansion(false)
+            , m_canHaveRightExpansion(false)
             , m_knownToHaveNoOverflow(true)  
             , m_hasEllipsisBoxOrHyphen(false)
             , m_dirOverride(false)
             , m_behavesLikeText(false)
-            , m_forceTrailingExpansion(false)
-            , m_forceLeadingExpansion(false)
+            , m_forceRightExpansion(false)
+            , m_forceLeftExpansion(false)
             , m_determinedIfNextOnLineExists(false)
             , m_nextOnLineExists(false)
         {
@@ -349,15 +349,15 @@ private:
         // for RootInlineBox
         ADD_BOOLEAN_BITFIELD(endsWithBreak, EndsWithBreak); // Whether the line ends with a <br>.
         // shared between RootInlineBox and InlineTextBox
-        ADD_BOOLEAN_BITFIELD(hasSelectedChildrenOrCanHaveLeadingExpansion, HasSelectedChildrenOrCanHaveLeadingExpansion);
-        ADD_BOOLEAN_BITFIELD(canHaveTrailingExpansion, CanHaveTrailingExpansion);
+        ADD_BOOLEAN_BITFIELD(hasSelectedChildrenOrCanHaveLeftExpansion, HasSelectedChildrenOrCanHaveLeftExpansion);
+        ADD_BOOLEAN_BITFIELD(canHaveRightExpansion, CanHaveRightExpansion);
         ADD_BOOLEAN_BITFIELD(knownToHaveNoOverflow, KnownToHaveNoOverflow);
         ADD_BOOLEAN_BITFIELD(hasEllipsisBoxOrHyphen, HasEllipsisBoxOrHyphen);
         // for InlineTextBox
         ADD_BOOLEAN_BITFIELD(dirOverride, DirOverride);
         ADD_BOOLEAN_BITFIELD(behavesLikeText, BehavesLikeText); // Whether or not this object represents text with a non-zero height. Includes non-image list markers, text boxes, br.
-        ADD_BOOLEAN_BITFIELD(forceTrailingExpansion, ForceTrailingExpansion);
-        ADD_BOOLEAN_BITFIELD(forceLeadingExpansion, ForceLeadingExpansion);
+        ADD_BOOLEAN_BITFIELD(forceRightExpansion, ForceRightExpansion);
+        ADD_BOOLEAN_BITFIELD(forceLeftExpansion, ForceLeftExpansion);
 
     private:
         mutable unsigned m_determinedIfNextOnLineExists : 1;
@@ -398,16 +398,16 @@ protected:
     bool endsWithBreak() const { return m_bitfields.endsWithBreak(); }
     void setEndsWithBreak(bool endsWithBreak) { m_bitfields.setEndsWithBreak(endsWithBreak); }
     bool hasEllipsisBox() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
-    bool hasSelectedChildren() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeadingExpansion(); }
-    void setHasSelectedChildren(bool hasSelectedChildren) { m_bitfields.setHasSelectedChildrenOrCanHaveLeadingExpansion(hasSelectedChildren); }
+    bool hasSelectedChildren() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeftExpansion(); }
+    void setHasSelectedChildren(bool hasSelectedChildren) { m_bitfields.setHasSelectedChildrenOrCanHaveLeftExpansion(hasSelectedChildren); }
     void setHasEllipsisBox(bool hasEllipsisBox) { m_bitfields.setHasEllipsisBoxOrHyphen(hasEllipsisBox); }
 
     // For InlineTextBox
     bool hasHyphen() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
-    bool canHaveLeadingExpansion() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeadingExpansion(); }
-    bool canHaveTrailingExpansion() const { return m_bitfields.canHaveTrailingExpansion(); }
-    bool forceTrailingExpansion() const { return m_bitfields.forceTrailingExpansion(); }
-    bool forceLeadingExpansion() const { return m_bitfields.forceLeadingExpansion(); }
+    bool canHaveLeftExpansion() const { return m_bitfields.hasSelectedChildrenOrCanHaveLeftExpansion(); }
+    bool canHaveRightExpansion() const { return m_bitfields.canHaveRightExpansion(); }
+    bool forceRightExpansion() const { return m_bitfields.forceRightExpansion(); }
+    bool forceLeftExpansion() const { return m_bitfields.forceLeftExpansion(); }
     
     // For InlineFlowBox and InlineTextBox
     bool extracted() const { return m_bitfields.extracted(); }

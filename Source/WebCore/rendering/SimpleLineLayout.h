@@ -70,7 +70,7 @@ struct Run {
     float logicalRight;
     // TODO: Move these optional items out of SimpleLineLayout::Run to a supplementary structure.
     float expansion { 0 };
-    ExpansionBehavior expansionBehavior { ForbidLeadingExpansion | ForbidTrailingExpansion };
+    ExpansionBehavior expansionBehavior { ForbidLeftExpansion | ForbidRightExpansion };
 };
 
 struct SimpleLineStrut {

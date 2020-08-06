@@ -1440,23 +1440,23 @@ inline const RenderCombineText* InlineTextBox::combinedText() const
 
 ExpansionBehavior InlineTextBox::expansionBehavior() const
 {
-    ExpansionBehavior leadingBehavior;
-    if (forceLeadingExpansion())
-        leadingBehavior = ForceLeadingExpansion;
-    else if (canHaveLeadingExpansion())
-        leadingBehavior = AllowLeadingExpansion;
+    ExpansionBehavior leftBehavior;
+    if (forceLeftExpansion())
+        leftBehavior = ForceLeftExpansion;
+    else if (canHaveLeftExpansion())
+        leftBehavior = AllowLeftExpansion;
     else
-        leadingBehavior = ForbidLeadingExpansion;
+        leftBehavior = ForbidLeftExpansion;
 
-    ExpansionBehavior trailingBehavior;
-    if (forceTrailingExpansion())
-        trailingBehavior = ForceTrailingExpansion;
+    ExpansionBehavior rightBehavior;
+    if (forceRightExpansion())
+        rightBehavior = ForceRightExpansion;
     else if (expansion() && nextLeafOnLine() && !nextLeafOnLine()->isLineBreak())
-        trailingBehavior = AllowTrailingExpansion;
+        rightBehavior = AllowRightExpansion;
     else
-        trailingBehavior = ForbidTrailingExpansion;
+        rightBehavior = ForbidRightExpansion;
 
-    return leadingBehavior | trailingBehavior;
+    return leftBehavior | rightBehavior;
 }
 
 #if ENABLE(TREE_DEBUGGING)

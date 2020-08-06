@@ -277,12 +277,12 @@ static void initializeInlineTextBox(RenderBlockFlow& flow, InlineTextBox& inline
     inlineTextBox.setExpansionWithoutGrowing(run.expansion());
 
     auto expansionBehavior = run.expansionBehavior();
-    inlineTextBox.setCanHaveLeadingExpansion(expansionBehavior & AllowLeadingExpansion);
-    inlineTextBox.setCanHaveTrailingExpansion(expansionBehavior & AllowTrailingExpansion);
-    if (expansionBehavior & ForceTrailingExpansion)
-        inlineTextBox.setForceTrailingExpansion();
-    if (expansionBehavior & ForceLeadingExpansion)
-        inlineTextBox.setForceLeadingExpansion();
+    inlineTextBox.setCanHaveLeftExpansion(expansionBehavior & AllowLeftExpansion);
+    inlineTextBox.setCanHaveRightExpansion(expansionBehavior & AllowRightExpansion);
+    if (expansionBehavior & ForceRightExpansion)
+        inlineTextBox.setForceRightExpansion();
+    if (expansionBehavior & ForceLeftExpansion)
+        inlineTextBox.setForceLeftExpansion();
 }
 
 void generateLineBoxTree(RenderBlockFlow& flow, const Layout& layout)

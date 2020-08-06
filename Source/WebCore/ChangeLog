@@ -1,3 +1,86 @@
+2020-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Rename LeadingExpansion and TrailingExpansion to LeftExpansion and RightExpansion
+        https://bugs.webkit.org/show_bug.cgi?id=215211
+
+        Reviewed by Darin Adler.
+
+        "Leading" and "Trailing" are terms-of-art which represent logical order.
+        However, the behavior of these flags operates in visual order.
+        Instead, we should rename them to their visual order analogues: left and right.
+
+        No new tests because there is no behavior change.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::measureText):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::justifyRuns):
+        (WebCore::Layout::LineBuilder::Run::expand):
+        (WebCore::Layout::LineBuilder::Run::visuallyCollapseTrailingWhitespace):
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::expansionLocation):
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::expansionOpportunityCountInternal):
+        (WebCore::FontCascade::leftExpansionOpportunity):
+        (WebCore::FontCascade::rightExpansionOpportunity):
+        (WebCore::FontCascade::leadingExpansionOpportunity): Deleted.
+        (WebCore::FontCascade::trailingExpansionOpportunity): Deleted.
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::expansionLocation):
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/text/TextFlags.h:
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::expansionBehaviorForInlineTextBox):
+        (WebCore::applyExpansionBehavior):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::selectionRect):
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::setCanHaveLeftExpansion):
+        (WebCore::InlineBox::setCanHaveRightExpansion):
+        (WebCore::InlineBox::setForceRightExpansion):
+        (WebCore::InlineBox::setForceLeftExpansion):
+        (WebCore::InlineBox::InlineBoxBitfields::InlineBoxBitfields):
+        (WebCore::InlineBox::hasSelectedChildren const):
+        (WebCore::InlineBox::setHasSelectedChildren):
+        (WebCore::InlineBox::canHaveLeftExpansion const):
+        (WebCore::InlineBox::canHaveRightExpansion const):
+        (WebCore::InlineBox::forceRightExpansion const):
+        (WebCore::InlineBox::forceLeftExpansion const):
+        (WebCore::InlineBox::setCanHaveLeadingExpansion): Deleted.
+        (WebCore::InlineBox::setCanHaveTrailingExpansion): Deleted.
+        (WebCore::InlineBox::setForceTrailingExpansion): Deleted.
+        (WebCore::InlineBox::setForceLeadingExpansion): Deleted.
+        (WebCore::InlineBox::canHaveLeadingExpansion const): Deleted.
+        (WebCore::InlineBox::canHaveTrailingExpansion const): Deleted.
+        (WebCore::InlineBox::forceTrailingExpansion const): Deleted.
+        (WebCore::InlineBox::forceLeadingExpansion const): Deleted.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::expansionBehavior const):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::computeIntrinsicLogicalWidths const):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAverageCharWidth):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::expansionBehavior):
+        * rendering/SimpleLineLayout.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::initializeInlineTextBox):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun const):
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::constructTextRun):
+
 2020-08-06  Chris Dumez  <cdumez@apple.com>
 
         DynamicsCompressorNode.reduction attribute should be a float, not an AudioParam

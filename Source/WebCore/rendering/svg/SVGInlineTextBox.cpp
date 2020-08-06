@@ -391,7 +391,7 @@ TextRun SVGInlineTextBox::constructTextRun(const RenderStyle& style, const SVGTe
     TextRun run(StringView(renderer().text()).substring(fragment.characterOffset, fragment.length)
                 , 0 /* xPos, only relevant with allowTabs=true */
                 , 0 /* padding, only relevant for justified text, not relevant for SVG */
-                , AllowTrailingExpansion
+                , AllowRightExpansion
                 , direction()
                 , dirOverride() || style.rtlOrdering() == Order::Visual /* directionalOverride */);
 

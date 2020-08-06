@@ -228,8 +228,8 @@ void LineBuilder::justifyRuns(InlineLayoutUnit availableWidth)
     // Need to fix up the last run's trailing expansion.
     if (lastRunWithContent && lastRunWithContent->hasExpansionOpportunity()) {
         // Turn off the trailing bits first and add the forbid trailing expansion.
-        auto leadingExpansion = lastRunWithContent->expansionBehavior() & LeadingExpansionMask;
-        lastRunWithContent->setExpansionBehavior(leadingExpansion | ForbidTrailingExpansion);
+        auto leftExpansion = lastRunWithContent->expansionBehavior() & LeftExpansionMask;
+        lastRunWithContent->setExpansionBehavior(leftExpansion | ForbidRightExpansion);
     }
     // Nothing to distribute?
     if (!expansionOpportunityCount)
@@ -825,7 +825,7 @@ void LineBuilder::Run::expand(const InlineTextItem& inlineTextItem, InlineLayout
 
     if (m_trailingWhitespaceType == TrailingWhitespace::None) {
         m_trailingWhitespaceWidth = { };
-        setExpansionBehavior(AllowLeadingExpansion | AllowTrailingExpansion);
+        setExpansionBehavior(AllowLeftExpansion | AllowRightExpansion);
         m_textContent->expand(inlineTextItem.length());
         return;
     }
@@ -879,7 +879,7 @@ void LineBuilder::Run::visuallyCollapseTrailingWhitespace()
         ASSERT(m_expansionOpportunityCount);
         m_expansionOpportunityCount--;
     }
-    setExpansionBehavior(AllowLeadingExpansion | AllowTrailingExpansion);
+    setExpansionBehavior(AllowLeftExpansion | AllowRightExpansion);
 }
 
 void LineBuilder::Run::setExpansionBehavior(ExpansionBehavior expansionBehavior)

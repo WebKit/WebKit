@@ -878,8 +878,8 @@ static bool createLineRuns(LineState& line, const LineState& previousLine, Layou
 static ExpansionBehavior expansionBehavior(bool isAfterExpansion, bool lastRunOnLine)
 {
     ExpansionBehavior expansionBehavior;
-    expansionBehavior = isAfterExpansion ? ForbidLeadingExpansion : AllowLeadingExpansion;
-    expansionBehavior |= lastRunOnLine ? ForbidTrailingExpansion : AllowTrailingExpansion;
+    expansionBehavior = isAfterExpansion ? ForbidLeftExpansion : AllowLeftExpansion;
+    expansionBehavior |= lastRunOnLine ? ForbidRightExpansion : AllowRightExpansion;
     return expansionBehavior;
 }
 

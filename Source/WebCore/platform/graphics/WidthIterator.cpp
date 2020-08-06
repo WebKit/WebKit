@@ -39,7 +39,7 @@ WidthIterator::WidthIterator(const FontCascade* font, const TextRun& run, HashSe
     , m_run(run)
     , m_fallbackFonts(fallbackFonts)
     , m_expansion(run.expansion())
-    , m_isAfterExpansion((run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion)
+    , m_isAfterExpansion((run.expansionBehavior() & LeftExpansionMask) == ForbidLeftExpansion)
     , m_accountForGlyphBounds(accountForGlyphBounds)
     , m_enableKerning(font->enableKerning())
     , m_requiresShaping(font->requiresShaping())
@@ -139,7 +139,7 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer* glyphBuffer, bool l
     return afterWidth - beforeWidth;
 }
 
-static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeadingExpansion, bool forbidTrailingExpansion, bool forceLeadingExpansion, bool forceTrailingExpansion)
+static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeftExpansion, bool forbidRightExpansion, bool forceLeftExpansion, bool forceRightExpansion)
 {
     bool expandLeft = ideograph;
     bool expandRight = ideograph;
@@ -155,15 +155,15 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
         else
             expandRight = false;
     }
-    ASSERT(!forbidLeadingExpansion || !forceLeadingExpansion);
-    ASSERT(!forbidTrailingExpansion || !forceTrailingExpansion);
-    if (forbidLeadingExpansion)
+    ASSERT(!forbidLeftExpansion || !forceLeftExpansion);
+    ASSERT(!forbidRightExpansion || !forceRightExpansion);
+    if (forbidLeftExpansion)
         expandLeft = false;
-    if (forbidTrailingExpansion)
+    if (forbidRightExpansion)
         expandRight = false;
-    if (forceLeadingExpansion)
+    if (forceLeftExpansion)
         expandLeft = true;
-    if (forceTrailingExpansion)
+    if (forceRightExpansion)
         expandRight = true;
     return std::make_pair(expandLeft, expandRight);
 }
@@ -175,10 +175,10 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     bool rtl = m_run.rtl();
     bool hasExtraSpacing = (m_font->letterSpacing() || m_font->wordSpacing() || m_expansion) && !m_run.spacingDisabled();
 
-    bool runForcesLeadingExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForceLeadingExpansion;
-    bool runForcesTrailingExpansion = (m_run.expansionBehavior() & TrailingExpansionMask) == ForceTrailingExpansion;
-    bool runForbidsLeadingExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion;
-    bool runForbidsTrailingExpansion = (m_run.expansionBehavior() & TrailingExpansionMask) == ForbidTrailingExpansion;
+    bool runForcesLeftExpansion = (m_run.expansionBehavior() & LeftExpansionMask) == ForceLeftExpansion;
+    bool runForcesRightExpansion = (m_run.expansionBehavior() & RightExpansionMask) == ForceRightExpansion;
+    bool runForbidsLeftExpansion = (m_run.expansionBehavior() & LeftExpansionMask) == ForbidLeftExpansion;
+    bool runForbidsRightExpansion = (m_run.expansionBehavior() & RightExpansionMask) == ForbidRightExpansion;
     float widthSinceLastRounding = m_runWidthSoFar;
     float leftoverJustificationWidth = 0;
     m_runWidthSoFar = floorf(m_runWidthSoFar);
@@ -262,23 +262,23 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             static bool expandAroundIdeographs = FontCascade::canExpandAroundIdeographsInComplexText();
             bool treatAsSpace = FontCascade::treatAsSpace(character);
             bool currentIsLastCharacter = currentCharacterIndex + advanceLength == static_cast<size_t>(m_run.length());
-            bool forceLeadingExpansion = false; // On the left, regardless of m_run.ltr()
-            bool forceTrailingExpansion = false; // On the right, regardless of m_run.ltr()
-            bool forbidLeadingExpansion = false;
-            bool forbidTrailingExpansion = false;
-            if (runForcesLeadingExpansion)
-                forceLeadingExpansion = m_run.ltr() ? !currentCharacterIndex : currentIsLastCharacter;
-            if (runForcesTrailingExpansion)
-                forceTrailingExpansion = m_run.ltr() ? currentIsLastCharacter : !currentCharacterIndex;
-            if (runForbidsLeadingExpansion)
-                forbidLeadingExpansion = m_run.ltr() ? !currentCharacterIndex : currentIsLastCharacter;
-            if (runForbidsTrailingExpansion)
-                forbidTrailingExpansion = m_run.ltr() ? currentIsLastCharacter : !currentCharacterIndex;
+            bool forceLeftExpansion = false; // On the left, regardless of m_run.ltr()
+            bool forceRightExpansion = false; // On the right, regardless of m_run.ltr()
+            bool forbidLeftExpansion = false;
+            bool forbidRightExpansion = false;
+            if (runForcesLeftExpansion)
+                forceLeftExpansion = m_run.ltr() ? !currentCharacterIndex : currentIsLastCharacter;
+            if (runForcesRightExpansion)
+                forceRightExpansion = m_run.ltr() ? currentIsLastCharacter : !currentCharacterIndex;
+            if (runForbidsLeftExpansion)
+                forbidLeftExpansion = m_run.ltr() ? !currentCharacterIndex : currentIsLastCharacter;
+            if (runForbidsRightExpansion)
+                forbidRightExpansion = m_run.ltr() ? currentIsLastCharacter : !currentCharacterIndex;
             bool ideograph = (expandAroundIdeographs && FontCascade::isCJKIdeographOrSymbol(character));
-            if (treatAsSpace || ideograph || forceLeadingExpansion || forceTrailingExpansion) {
+            if (treatAsSpace || ideograph || forceLeftExpansion || forceRightExpansion) {
                 // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                 if (m_expansion) {
-                    auto [expandLeft, expandRight] = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), m_isAfterExpansion, forbidLeadingExpansion, forbidTrailingExpansion, forceLeadingExpansion, forceTrailingExpansion);
+                    auto [expandLeft, expandRight] = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), m_isAfterExpansion, forbidLeftExpansion, forbidRightExpansion, forceLeftExpansion, forceRightExpansion);
                     if (expandLeft) {
                         if (m_run.ltr()) {
                             // Increase previous width

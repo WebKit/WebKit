@@ -174,10 +174,8 @@ public:
 
     // Whether or not there is an expansion opportunity just before the first character
     // Note that this does not take a isAfterExpansion flag; this assumes that isAfterExpansion is false
-    // Here, "Leading" and "Trailing" are relevant after the line has been rearranged for bidi.
-    // ("Leading" means "left" and "Trailing" means "right.")
-    static bool leadingExpansionOpportunity(const StringView&, TextDirection);
-    static bool trailingExpansionOpportunity(const StringView&, TextDirection);
+    static bool leftExpansionOpportunity(const StringView&, TextDirection);
+    static bool rightExpansionOpportunity(const StringView&, TextDirection);
 
     WEBCORE_EXPORT static void setShouldUseSmoothing(bool);
     WEBCORE_EXPORT static bool shouldUseSmoothing();

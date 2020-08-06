@@ -647,7 +647,7 @@ void ComplexTextController::advance(unsigned offset, GlyphBuffer* glyphBuffer, G
     }
 }
 
-static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeadingExpansion, bool forbidTrailingExpansion, bool forceLeadingExpansion, bool forceTrailingExpansion)
+static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treatAsSpace, bool ltr, bool isAfterExpansion, bool forbidLeftExpansion, bool forbidRightExpansion, bool forceLeftExpansion, bool forceRightExpansion)
 {
     bool expandLeft = ideograph;
     bool expandRight = ideograph;
@@ -659,28 +659,28 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
     }
     if (isAfterExpansion)
         expandLeft = false;
-    ASSERT(!forbidLeadingExpansion || !forceLeadingExpansion);
-    ASSERT(!forbidTrailingExpansion || !forceTrailingExpansion);
-    if (forbidLeadingExpansion)
+    ASSERT(!forbidLeftExpansion || !forceLeftExpansion);
+    ASSERT(!forbidRightExpansion || !forceRightExpansion);
+    if (forbidLeftExpansion)
         expandLeft = false;
-    if (forbidTrailingExpansion)
+    if (forbidRightExpansion)
         expandRight = false;
-    if (forceLeadingExpansion)
+    if (forceLeftExpansion)
         expandLeft = true;
-    if (forceTrailingExpansion)
+    if (forceRightExpansion)
         expandRight = true;
     return std::make_pair(expandLeft, expandRight);
 }
 
 void ComplexTextController::adjustGlyphsAndAdvances()
 {
-    bool afterExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion;
+    bool afterExpansion = (m_run.expansionBehavior() & LeftExpansionMask) == ForbidLeftExpansion;
     size_t runCount = m_complexTextRuns.size();
     bool hasExtraSpacing = (m_font.letterSpacing() || m_font.wordSpacing() || m_expansion) && !m_run.spacingDisabled();
-    bool runForcesLeadingExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForceLeadingExpansion;
-    bool runForcesTrailingExpansion = (m_run.expansionBehavior() & TrailingExpansionMask) == ForceTrailingExpansion;
-    bool runForbidsLeadingExpansion = (m_run.expansionBehavior() & LeadingExpansionMask) == ForbidLeadingExpansion;
-    bool runForbidsTrailingExpansion = (m_run.expansionBehavior() & TrailingExpansionMask) == ForbidTrailingExpansion;
+    bool runForcesLeftExpansion = (m_run.expansionBehavior() & LeftExpansionMask) == ForceLeftExpansion;
+    bool runForcesRightExpansion = (m_run.expansionBehavior() & RightExpansionMask) == ForceRightExpansion;
+    bool runForbidsLeftExpansion = (m_run.expansionBehavior() & LeftExpansionMask) == ForbidLeftExpansion;
+    bool runForbidsRightExpansion = (m_run.expansionBehavior() & RightExpansionMask) == ForbidRightExpansion;
 
     // We are iterating in glyph order, not string order. Compare this to WidthIterator::advanceInternal()
     for (size_t runIndex = 0; runIndex < runCount; ++runIndex) {
@@ -740,25 +740,25 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 bool isFirstCharacter = !(characterIndex + complexTextRun.stringLocation());
                 bool isLastCharacter = characterIndexInRun + 1 == m_run.length() || (U16_IS_LEAD(ch) && characterIndexInRun + 2 == m_run.length() && U16_IS_TRAIL(*(cp + characterIndex + 1)));
 
-                bool forceLeadingExpansion = false; // On the left, regardless of m_run.ltr()
-                bool forceTrailingExpansion = false; // On the right, regardless of m_run.ltr()
-                bool forbidLeadingExpansion = false;
-                bool forbidTrailingExpansion = false;
-                if (runForcesLeadingExpansion)
-                    forceLeadingExpansion = m_run.ltr() ? isFirstCharacter : isLastCharacter;
-                if (runForcesTrailingExpansion)
-                    forceTrailingExpansion = m_run.ltr() ? isLastCharacter : isFirstCharacter;
-                if (runForbidsLeadingExpansion)
-                    forbidLeadingExpansion = m_run.ltr() ? isFirstCharacter : isLastCharacter;
-                if (runForbidsTrailingExpansion)
-                    forbidTrailingExpansion = m_run.ltr() ? isLastCharacter : isFirstCharacter;
+                bool forceLeftExpansion = false; // On the left, regardless of m_run.ltr()
+                bool forceRightExpansion = false; // On the right, regardless of m_run.ltr()
+                bool forbidLeftExpansion = false;
+                bool forbidRightExpansion = false;
+                if (runForcesLeftExpansion)
+                    forceLeftExpansion = m_run.ltr() ? isFirstCharacter : isLastCharacter;
+                if (runForcesRightExpansion)
+                    forceRightExpansion = m_run.ltr() ? isLastCharacter : isFirstCharacter;
+                if (runForbidsLeftExpansion)
+                    forbidLeftExpansion = m_run.ltr() ? isFirstCharacter : isLastCharacter;
+                if (runForbidsRightExpansion)
+                    forbidRightExpansion = m_run.ltr() ? isLastCharacter : isFirstCharacter;
                 // Handle justification and word-spacing.
                 static bool expandAroundIdeographs = FontCascade::canExpandAroundIdeographsInComplexText();
                 bool ideograph = expandAroundIdeographs && FontCascade::isCJKIdeographOrSymbol(ch);
-                if (treatAsSpace || ideograph || forceLeadingExpansion || forceTrailingExpansion) {
+                if (treatAsSpace || ideograph || forceLeftExpansion || forceRightExpansion) {
                     // Distribute the run's total expansion evenly over all expansion opportunities in the run.
                     if (m_expansion) {
-                        auto [expandLeft, expandRight] = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), afterExpansion, forbidLeadingExpansion, forbidTrailingExpansion, forceLeadingExpansion, forceTrailingExpansion);
+                        auto [expandLeft, expandRight] = expansionLocation(ideograph, treatAsSpace, m_run.ltr(), afterExpansion, forbidLeftExpansion, forbidRightExpansion, forceLeftExpansion, forceRightExpansion);
                         if (expandLeft) {
                             m_expansion -= m_expansionPerOpportunity;
                             // Increase previous width

@@ -1086,8 +1086,8 @@ bool FontCascade::isCJKIdeographOrSymbol(UChar32 c)
 std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const LChar* characters, unsigned length, TextDirection direction, ExpansionBehavior expansionBehavior)
 {
     unsigned count = 0;
-    bool isAfterExpansion = (expansionBehavior & LeadingExpansionMask) == ForbidLeadingExpansion;
-    if ((expansionBehavior & LeadingExpansionMask) == ForceLeadingExpansion) {
+    bool isAfterExpansion = (expansionBehavior & LeftExpansionMask) == ForbidLeftExpansion;
+    if ((expansionBehavior & LeftExpansionMask) == ForceLeftExpansion) {
         ++count;
         isAfterExpansion = true;
     }
@@ -1108,10 +1108,10 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const L
                 isAfterExpansion = false;
         }
     }
-    if (!isAfterExpansion && (expansionBehavior & TrailingExpansionMask) == ForceTrailingExpansion) {
+    if (!isAfterExpansion && (expansionBehavior & RightExpansionMask) == ForceRightExpansion) {
         ++count;
         isAfterExpansion = true;
-    } else if (isAfterExpansion && (expansionBehavior & TrailingExpansionMask) == ForbidTrailingExpansion) {
+    } else if (isAfterExpansion && (expansionBehavior & RightExpansionMask) == ForbidRightExpansion) {
         ASSERT(count);
         --count;
         isAfterExpansion = false;
@@ -1123,8 +1123,8 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
 {
     static bool expandAroundIdeographs = canExpandAroundIdeographsInComplexText();
     unsigned count = 0;
-    bool isAfterExpansion = (expansionBehavior & LeadingExpansionMask) == ForbidLeadingExpansion;
-    if ((expansionBehavior & LeadingExpansionMask) == ForceLeadingExpansion) {
+    bool isAfterExpansion = (expansionBehavior & LeftExpansionMask) == ForbidLeftExpansion;
+    if ((expansionBehavior & LeftExpansionMask) == ForceLeftExpansion) {
         ++count;
         isAfterExpansion = true;
     }
@@ -1171,10 +1171,10 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
             isAfterExpansion = false;
         }
     }
-    if (!isAfterExpansion && (expansionBehavior & TrailingExpansionMask) == ForceTrailingExpansion) {
+    if (!isAfterExpansion && (expansionBehavior & RightExpansionMask) == ForceRightExpansion) {
         ++count;
         isAfterExpansion = true;
-    } else if (isAfterExpansion && (expansionBehavior & TrailingExpansionMask) == ForbidTrailingExpansion) {
+    } else if (isAfterExpansion && (expansionBehavior & RightExpansionMask) == ForbidRightExpansion) {
         ASSERT(count);
         --count;
         isAfterExpansion = false;
@@ -1193,7 +1193,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCount(const StringVie
     return expansionOpportunityCountInternal(stringView.characters16(), stringView.length(), direction, expansionBehavior);
 }
 
-bool FontCascade::leadingExpansionOpportunity(const StringView& stringView, TextDirection direction)
+bool FontCascade::leftExpansionOpportunity(const StringView& stringView, TextDirection direction)
 {
     if (!stringView.length())
         return false;
@@ -1212,7 +1212,7 @@ bool FontCascade::leadingExpansionOpportunity(const StringView& stringView, Text
     return canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(initialCharacter);
 }
 
-bool FontCascade::trailingExpansionOpportunity(const StringView& stringView, TextDirection direction)
+bool FontCascade::rightExpansionOpportunity(const StringView& stringView, TextDirection direction)
 {
     if (!stringView.length())
         return false;
