@@ -1,5 +1,17 @@
 2020-08-06  Jon Davis  <jond@apple.com>
 
+        Fixed widget method argument compatibility with WordPress
+        https://bugs.webkit.org/show_bug.cgi?id=215103
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/themes/webkit/widgets/icon.php:
+        * wp-content/themes/webkit/widgets/page.php:
+        * wp-content/themes/webkit/widgets/post.php:
+        * wp-content/themes/webkit/widgets/twitter.php:
+
+2020-08-06  Jon Davis  <jond@apple.com>
+
         Removed XML declaration from SVGs and updated copyrights
         https://bugs.webkit.org/show_bug.cgi?id=215102
 

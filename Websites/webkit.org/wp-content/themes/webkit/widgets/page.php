@@ -17,14 +17,14 @@ class WebKitPageTileWidget extends WebKitPostTileWidget {
         );
     }
 
-    public function load( array $options = array() ) {
+    public function load($options = array()) {
         return new WP_Query(array(
             'post_type' => 'page',
             'page_id' => $options['page']
         ));
     }
 
-    function form( array $options ) {
+    function form($options) {
         if ( empty( $options['link'] ) ) $options['link'] = __('Read more');
         ?>
         <p><label for="<?php echo $this->get_field_id('page'); ?>"><?php _e( 'Page' ); ?></label>

@@ -20,7 +20,7 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
         );
     }
 
-    function widget( array $args, array $options ) {
+    function widget($args, $options) {
 
         if ( ! empty($args) )
             extract($args, EXTR_SKIP);
@@ -101,7 +101,7 @@ class WebKitTwitterTileWidget extends WebKitPostTileWidget {
         <?php
     }
 
-    function form( array $options ) {
+    function form($options) {
         ?>
         <p><label for="<?php echo $this->get_field_id('text'); ?>"><?php _e('Text'); ?></label>
         <textarea type="text" name="<?php echo $this->get_field_name('text'); ?>" id="<?php echo $this->get_field_id('text'); ?>" class="widefat"><?php echo $options['text']; ?></textarea></p>

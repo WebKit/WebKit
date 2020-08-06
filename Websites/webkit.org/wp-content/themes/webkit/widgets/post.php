@@ -21,7 +21,7 @@ class WebKitPostTileWidget extends WP_Widget {
         return Front_Page_Posts::WP_Query();
     }
 
-    public function widget( array $args, array $options ) {
+    public function widget($args, $options) {
         $Query = $this->load($options);
 
         // Get the next post, if available
@@ -82,7 +82,7 @@ class WebKitPostTileWidget extends WP_Widget {
         <?php
     }
 
-    public function form( array $options ) {
+    public function form($options) {
         if ( empty( $options['link'] ) ) $options['link'] = __('Read more');
         ?>
         <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title'); ?></label>

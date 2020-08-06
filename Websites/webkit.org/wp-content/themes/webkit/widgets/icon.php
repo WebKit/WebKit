@@ -17,7 +17,7 @@ class WebKitIconTileWidget extends WP_Widget {
         );
     }
 
-    function widget( array $args, array $options ) {
+    function widget($args, $options) {
         if ( ! empty($args) )
             extract($args, EXTR_SKIP);
 
@@ -38,7 +38,7 @@ class WebKitIconTileWidget extends WP_Widget {
         <?php
     }
 
-    function form( array $options ) {
+    function form($options) {
         ?>
         <p><label for="<?php echo $this->get_field_id('color'); ?>"><?php _e('Color'); ?></label>
         <select name="<?php echo $this->get_field_name('color'); ?>">
