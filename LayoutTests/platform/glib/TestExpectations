@@ -180,6 +180,17 @@ webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-reflection-value-
 webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-reflection.html [ ImageOnlyFailure ]
 webkit.org/b/169988 css3/filters/backdrop/effect-hw.html [ ImageOnlyFailure ]
 
+webkit.org/b/215209 [ Debug ] css3/filters/backdrop/backdrop-filter-does-not-size-properly-absolute.html [ Crash ]
+webkit.org/b/215209 [ Debug ] css3/filters/backdrop/backdrop-filter-does-not-size-properly-border-and-padding.html [ Crash ]
+webkit.org/b/215209 [ Debug ] css3/filters/backdrop/backdrop-filter-with-cliprect.html [ Crash ]
+webkit.org/b/215209 [ Debug ] css3/filters/backdrop/backdrop-filter-with-mask.html [ Crash ]
+webkit.org/b/215209 [ Debug ] css3/filters/backdrop/backdrop-with-visibility-hidden-changing.html [ Crash ]
+webkit.org/b/215209 [ Debug ] css3/filters/backdrop/backdrop-with-visibility-hidden.html [ Crash ]
+webkit.org/b/215209 [ Debug ] css3/filters/backdrop/resource-use-add-more-layers.html [ Crash ]
+webkit.org/b/215209 [ Debug ] css3/filters/backdrop/resource-use-excessive.html [ Crash ]
+webkit.org/b/215209 [ Debug ] css3/filters/backdrop/resource-use-ok.html [ Crash ]
+webkit.org/b/215209 [ Debug ] css3/filters/backdrop/resource-use-remove-some-layers.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
