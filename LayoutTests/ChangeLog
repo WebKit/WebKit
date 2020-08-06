@@ -1,3 +1,10 @@
+2020-08-06  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed GStreamer MSE micro gardening
+        https://bugs.webkit.org/show_bug.cgi?id=215228
+
+        * platform/gtk/TestExpectations:
+
 2020-08-06  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS wk2 Debug ] fast/text/basic/001.html is a flaky crash
