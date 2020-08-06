@@ -1,3 +1,12 @@
+2020-08-06  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk 2 Release ] imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worker-src-child-fallback.https.sub.html  is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215245
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, reverting r265325.

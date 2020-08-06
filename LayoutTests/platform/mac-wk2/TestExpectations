@@ -1093,3 +1093,4 @@ webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
 
 webkit.org/b/215221 [ Debug ] editing/undo-manager/undo-manager-delete-stale-undo-items.html [ Pass Crash ]
 
+webkit.org/b/215245 [ Release ] imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worker-src-child-fallback.https.sub.html [ Pass Failure ]
