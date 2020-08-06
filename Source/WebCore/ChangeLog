@@ -1,3 +1,16 @@
+2020-08-05  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Upgrade vertexAttribPointer with new supported types
+        https://bugs.webkit.org/show_bug.cgi?id=215036
+
+        Reviewed by Dean Jackson.
+
+        Tested by updated WebGL conformance tests webgl/2.0.0/conformance/attribs/gl-vertexattribpointer-offsets.html and webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::sizeInBytes):
+        (WebCore::WebGLRenderingContextBase::vertexAttribPointer):
+
 2020-08-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove all references to non-existent 10.16

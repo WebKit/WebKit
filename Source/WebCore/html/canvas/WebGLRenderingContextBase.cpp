@@ -1295,6 +1295,11 @@ unsigned WebGLRenderingContextBase::sizeInBytes(GCGLenum type)
         return sizeof(GCGLuint);
     case GraphicsContextGL::FLOAT:
         return sizeof(GCGLfloat);
+    case GraphicsContextGL::HALF_FLOAT:
+        return 2;
+    case GraphicsContextGL::INT_2_10_10_10_REV:
+    case GraphicsContextGL::UNSIGNED_INT_2_10_10_10_REV:
+        return 4;
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -5965,8 +5970,26 @@ void WebGLRenderingContextBase::vertexAttribPointer(GCGLuint index, GCGLint size
     case GraphicsContextGL::FLOAT:
         break;
     default:
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "vertexAttribPointer", "invalid type");
-        return;
+        if (!isWebGL2()) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "vertexAttribPointer", "invalid type");
+            return;
+        }
+        switch (type) {
+        case GraphicsContextGL::INT:
+        case GraphicsContextGL::UNSIGNED_INT:
+        case GraphicsContextGL::HALF_FLOAT:
+            break;
+        case GraphicsContextGL::INT_2_10_10_10_REV:
+        case GraphicsContextGL::UNSIGNED_INT_2_10_10_10_REV:
+            if (size != 4) {
+                synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "vertexAttribPointer", "[UNSIGNED_]INT_2_10_10_10_REV requires size 4");
+                return;
+            }
+            break;
+        default:
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "vertexAttribPointer", "invalid type");
+            return;
+        }
     }
     if (index >= m_maxVertexAttribs) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "vertexAttribPointer", "index out of range");
