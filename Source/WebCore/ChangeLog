@@ -1,3 +1,19 @@
+2020-08-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some more Animations logging
+        https://bugs.webkit.org/show_bug.cgi?id=215181
+
+        Reviewed by Zalan Bujtas.
+
+        Add logging that shows when DeclarativeAnimation::tick() runs and when it invalidates style.
+
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::tick):
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::updateAnimationsAndSendEvents):
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::invalidate):
+
 2020-08-05  Peng Liu  <peng.liu6@apple.com>
 
         Netflix.com shows a scrubber that doesn't work

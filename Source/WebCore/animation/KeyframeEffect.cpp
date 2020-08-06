@@ -1237,6 +1237,7 @@ bool KeyframeEffect::isRunningAcceleratedAnimationForProperty(CSSPropertyID prop
 
 void KeyframeEffect::invalidate()
 {
+    LOG_WITH_STREAM(Animations, stream << "KeyframeEffect::invalidate on element " << ValueOrNull(targetElementOrPseudoElement()));
     invalidateElement(targetElementOrPseudoElement());
 }
 

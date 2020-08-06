@@ -34,8 +34,10 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "KeyframeEffect.h"
+#include "Logging.h"
 #include "PseudoElement.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -59,6 +61,8 @@ Element* DeclarativeAnimation::owningElement() const
 
 void DeclarativeAnimation::tick()
 {
+    LOG_WITH_STREAM(Animations, stream << "DeclarativeAnimation::tick for element " << m_owningElement);
+
     bool wasRelevant = isRelevant();
     
     WebAnimation::tick();

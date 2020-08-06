@@ -32,11 +32,13 @@
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "EventLoop.h"
+#include "Logging.h"
 #include "Page.h"
 #include "Settings.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
 #include <JavaScriptCore/VM.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -78,6 +80,8 @@ void DocumentTimelinesController::detachFromDocument()
 
 void DocumentTimelinesController::updateAnimationsAndSendEvents(ReducedResolutionSeconds timestamp)
 {
+    LOG_WITH_STREAM(Animations, stream << "DocumentTimelinesController::updateAnimationsAndSendEvents for time " << timestamp);
+
     ASSERT(!m_timelines.hasNullReferences());
 
     // We need to copy m_timelines before iterating over its members since the steps in this procedure may mutate m_timelines.
