@@ -1,3 +1,21 @@
+2020-08-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [CG] Avoid creating a sub-image when drawing a small scaled sub-rect from a native image
+        https://bugs.webkit.org/show_bug.cgi?id=215015
+        <rdar://problem/63845893>
+
+        Reviewed by Simon Fraser.
+
+        The reason for creating the sub-image in GraphicsContext::drawNativeImage()
+        is to have a better image interpolation for the scaled sub-rect. For small
+        destRect, the interpolation on the original image is almost the same as
+        the interpolation on the sub-image. So we should avoid creating the sub-
+        image if destRect.area() is less than some minimum value. Creating many
+        sub-images can affect the rendering performance.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+
 2020-08-06  David Kilzer  <ddkilzer@apple.com>
 
         WTF::makeString() should handle enum values
