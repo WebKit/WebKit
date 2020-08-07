@@ -1,3 +1,36 @@
+2020-08-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        {Intersection,Resize,Performance}Observer callbacks get incorrect `this` value
+        https://bugs.webkit.org/show_bug.cgi?id=215162
+
+        Reviewed by Geoffrey Garen.
+
+        This change utilizes CallbackThisObject] IDL attribute to invoke a callback of
+        IntersectionObserver [1], ResizeObserver [2], and PerformanceObserver [3] with
+        correct `this` value of its observer, aligning WebKit with Blink and Gecko.
+
+        Tests: imported/w3c/web-platform-tests/intersection-observer/observer-callback-arguments.html
+               imported/w3c/web-platform-tests/resize-observer/observe.html
+               imported/w3c/web-platform-tests/performance-timeline/po-observe.any.js
+
+        [1] https://w3c.github.io/IntersectionObserver/#notify-intersection-observers-algo (step 3.4)
+        [2] https://github.com/w3c/csswg-drafts/pull/5383
+        [3] https://w3c.github.io/performance-timeline/#queue-the-performanceobserver-task (step 3.3.5)
+
+        * html/LazyLoadImageObserver.cpp:
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::notify):
+        * page/IntersectionObserverCallback.h:
+        * page/IntersectionObserverCallback.idl:
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::deliver):
+        * page/PerformanceObserverCallback.h:
+        * page/PerformanceObserverCallback.idl:
+        * page/ResizeObserver.cpp:
+        (WebCore::ResizeObserver::deliverObservations):
+        * page/ResizeObserverCallback.h:
+        * page/ResizeObserverCallback.idl:
+
 2020-08-07  Chris Dumez  <cdumez@apple.com>
 
         baseLatency attribute is missing on AudioContext interface

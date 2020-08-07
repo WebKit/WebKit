@@ -282,7 +282,7 @@ void IntersectionObserver::notify()
     auto takenRecords = takeRecords();
 
     InspectorInstrumentation::willFireObserverCallback(*context, "IntersectionObserver"_s);
-    m_callback->handleEvent(WTFMove(takenRecords.records), *this);
+    m_callback->handleEvent(*this, WTFMove(takenRecords.records), *this);
     InspectorInstrumentation::didFireObserverCallback(*context);
 }
 

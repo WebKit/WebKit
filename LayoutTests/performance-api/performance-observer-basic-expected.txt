@@ -8,8 +8,8 @@ PASS argumentsLength === 2 is true
 PASS list instanceof PerformanceObserverEntryList is true
 PASS obs instanceof PerformanceObserver is true
 PASS obs === observer is true
-FAIL thisObject instanceof PerformanceObserver should be true. Was false.
-FAIL thisObject === observer should be true. Was false.
+PASS thisObject instanceof PerformanceObserver is true
+PASS thisObject === observer is true
 
 PerformanceObserverEntryList APIs
 PASS list.getEntries() instanceof Array is true
@@ -53,8 +53,8 @@ PASS [Worker] argumentsLength === 2 is true
 PASS [Worker] list instanceof PerformanceObserverEntryList is true
 PASS [Worker] obs instanceof PerformanceObserver is true
 PASS [Worker] obs === observer is true
-FAIL [Worker] thisObject instanceof PerformanceObserver should be true. Was false.
-FAIL [Worker] thisObject === observer should be true. Was false.
+PASS [Worker] thisObject instanceof PerformanceObserver is true
+PASS [Worker] thisObject === observer is true
 [Worker] 
 [Worker] PerformanceObserverEntryList APIs
 PASS [Worker] list.getEntries() instanceof Array is true

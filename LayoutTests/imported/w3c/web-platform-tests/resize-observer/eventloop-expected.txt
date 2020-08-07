@@ -1,8 +1,6 @@
 CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
 CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
 CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
-ResizeObserver notification event loop tests
-
 
 PASS ResizeObserver implemented 
 PASS guard 

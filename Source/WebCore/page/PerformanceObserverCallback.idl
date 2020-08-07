@@ -27,4 +27,5 @@
 
 [
     IsWeakCallback,
+    CallbackThisObject=PerformanceObserver,
 ] callback PerformanceObserverCallback = void (PerformanceObserverEntryList entries, PerformanceObserver observer);

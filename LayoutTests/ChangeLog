@@ -1,3 +1,12 @@
+2020-08-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        {Intersection,Resize,Performance}Observer callbacks get incorrect `this` value
+        https://bugs.webkit.org/show_bug.cgi?id=215162
+
+        Reviewed by Geoffrey Garen.
+
+        * performance-api/performance-observer-basic-expected.txt:
+
 2020-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] It should be possible to override spellchecking results in WebKitTestRunner

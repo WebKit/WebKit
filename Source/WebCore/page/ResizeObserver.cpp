@@ -129,7 +129,7 @@ void ResizeObserver::deliverObservations()
         return;
 
     InspectorInstrumentation::willFireObserverCallback(*context, "ResizeObserver"_s);
-    m_callback->handleEvent(entries, *this);
+    m_callback->handleEvent(*this, entries, *this);
     InspectorInstrumentation::didFireObserverCallback(*context);
 }
 

@@ -129,7 +129,7 @@ void PerformanceObserver::deliver()
     auto list = PerformanceObserverEntryList::create(WTFMove(entries));
 
     InspectorInstrumentation::willFireObserverCallback(*context, "PerformanceObserver"_s);
-    m_callback->handleEvent(list, *this);
+    m_callback->handleEvent(*this, list, *this);
     InspectorInstrumentation::didFireObserverCallback(*context);
 }
 

@@ -39,7 +39,7 @@ class ResizeObserverEntry;
 class ResizeObserverCallback : public RefCounted<ResizeObserverCallback>, public ActiveDOMCallback {
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
-    virtual CallbackResult<void> handleEvent(const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&) = 0;
+    virtual CallbackResult<void> handleEvent(ResizeObserver&, const Vector<Ref<ResizeObserverEntry>>&, ResizeObserver&) = 0;
 };
 
 } // namespace WebCore

@@ -10,7 +10,7 @@ PASS test3: disconnect stops all notifications
 PASS test4: unobserve target stops notifications, unobserve non-observed does nothing 
 PASS test5: observe img 
 PASS test6: iframe notifications 
-FAIL test7: callback.this assert_equals: callback.this is ResizeObserver expected (object) object "[object ResizeObserver]" but got (undefined) undefined
+PASS test7: callback.this 
 FAIL test8: simple content-box observation undefined is not an object (evaluating 'entries[0].contentBoxSize[0]')
 FAIL test9: simple content-box observation but keep border-box size unchanged undefined is not an object (evaluating 'entries[0].contentBoxSize[0]')
 FAIL test10: simple border-box observation undefined is not an object (evaluating 'entries[0].contentBoxSize[0]')

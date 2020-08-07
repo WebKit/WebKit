@@ -1,3 +1,16 @@
+2020-08-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        {Intersection,Resize,Performance}Observer callbacks get incorrect `this` value
+        https://bugs.webkit.org/show_bug.cgi?id=215162
+
+        Reviewed by Geoffrey Garen.
+
+        * web-platform-tests/intersection-observer/observer-callback-arguments-expected.txt:
+        * web-platform-tests/performance-timeline/po-observe.any-expected.txt:
+        * web-platform-tests/performance-timeline/po-observe.any.worker-expected.txt:
+        * web-platform-tests/resize-observer/eventloop-expected.txt:
+        * web-platform-tests/resize-observer/observe-expected.txt:
+
 2020-08-07  Chris Dumez  <cdumez@apple.com>
 
         baseLatency attribute is missing on AudioContext interface
