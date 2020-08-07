@@ -1045,6 +1045,7 @@ private:
         write(ImageBitmapTag);
         write(static_cast<uint8_t>(imageBitmap.originClean()));
         write(static_cast<uint8_t>(imageBitmap.premultiplyAlpha()));
+        write(static_cast<uint8_t>(imageBitmap.forciblyPremultiplyAlpha()));
         write(static_cast<int32_t>(logicalSize.width()));
         write(static_cast<int32_t>(logicalSize.height()));
         write(static_cast<double>(buffer->resolutionScale()));
@@ -2961,12 +2962,13 @@ private:
     {
         uint8_t originClean;
         uint8_t premultiplyAlpha;
+        uint8_t forciblyPremultiplyAlpha;
         int32_t logicalWidth;
         int32_t logicalHeight;
         double resolutionScale;
         RefPtr<ArrayBuffer> arrayBuffer;
 
-        if (!read(originClean) || !read(premultiplyAlpha) || !read(logicalWidth) || !read(logicalHeight) || !read(resolutionScale) || !readArrayBuffer(arrayBuffer)) {
+        if (!read(originClean) || !read(premultiplyAlpha) || !read(forciblyPremultiplyAlpha) || !read(logicalWidth) || !read(logicalHeight) || !read(resolutionScale) || !readArrayBuffer(arrayBuffer)) {
             fail();
             return JSValue();
         }
@@ -2995,7 +2997,7 @@ private:
 
         buffer->putImageData(AlphaPremultiplication::Premultiplied, *imageData, { IntPoint::zero(), logicalSize });
 
-        auto bitmap = ImageBitmap::create({ WTFMove(buffer), ImageBuffer::SerializationState { static_cast<bool>(originClean), static_cast<bool>(premultiplyAlpha) }});
+        auto bitmap = ImageBitmap::create({ WTFMove(buffer), ImageBuffer::SerializationState { static_cast<bool>(originClean), static_cast<bool>(premultiplyAlpha), static_cast<bool>(forciblyPremultiplyAlpha) }});
         return getJSValue(bitmap);
     }
 

@@ -1,3 +1,22 @@
+2020-08-06  Kenneth Russell  <kbr@chromium.org>
+
+        Implement createImageBitmap(ImageData)
+        https://bugs.webkit.org/show_bug.cgi?id=183438
+
+        Reviewed by Dean Jackson.
+
+        Rebaseline tests under
+        web-platform-tests/html/canvas/element/imagebitmap/ , which are
+        now either fully passing, or have progressed.
+
+        * web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-resize-expected.txt:
+        * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-expected.txt:
+        * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt:
+        * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable-expected.txt:
+        * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-sizeOverflow-expected.txt:
+        * web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer-expected.txt:
+
 2020-08-06  Chris Dumez  <cdumez@apple.com>
 
         BaseAudioContext.decodeAudioData() should return a Promise

@@ -3,5 +3,5 @@ FAIL createImageBitmap from a Blob with resize option. assert_false: expected fa
 FAIL createImageBitmap from a HTMLCanvasElement with resize option. assert_false: expected false got true
 FAIL createImageBitmap from a HTMLImageElement with resize option. assert_false: expected false got true
 FAIL createImageBitmap from an ImageBitmap with resize option. assert_false: expected false got true
-FAIL createImageBitmap from an ImageData with resize option. promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
+FAIL createImageBitmap from an ImageData with resize option. assert_false: expected false got true
 

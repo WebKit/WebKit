@@ -94,7 +94,7 @@ public:
     virtual Vector<uint8_t> toBGRAData() const = 0;
 
     virtual RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect&) const = 0;
-    virtual void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint) = 0;
+    virtual void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
 
     virtual PlatformLayer* platformLayer() const { return nullptr; }
     virtual bool copyToPlatformTexture(GraphicsContextGLOpenGL&, GCGLenum, PlatformGLObject, GCGLenum, bool, bool) const { return false; }
@@ -126,7 +126,7 @@ protected:
     WEBCORE_EXPORT Vector<uint8_t> toBGRAData(void* data) const;
 
     WEBCORE_EXPORT RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect, void* data) const;
-    WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, void* data);
+    WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, void* data);
 
     IntSize m_logicalSize;
     IntSize m_backendSize;

@@ -81,7 +81,7 @@ private:
             return false;
 
         auto& putImageDataItem = static_cast<WebCore::DisplayList::PutImageData&>(item);
-        putImageData(putImageDataItem.inputFormat(), putImageDataItem.imageData(), putImageDataItem.srcRect(), putImageDataItem.destPoint());
+        putImageData(putImageDataItem.inputFormat(), putImageDataItem.imageData(), putImageDataItem.srcRect(), putImageDataItem.destPoint(), putImageDataItem.destFormat());
         return true;
     }
 };

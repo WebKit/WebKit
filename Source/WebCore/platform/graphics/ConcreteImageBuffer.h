@@ -236,11 +236,11 @@ protected:
         return nullptr;
     }
 
-    void putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint = { }) override
+    void putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) override
     {
         if (auto* backend = ensureBackendCreated()) {
             flushContext();
-            backend->putImageData(inputFormat, imageData, srcRect, destPoint);
+            backend->putImageData(inputFormat, imageData, srcRect, destPoint, destFormat);
         }
     }
 

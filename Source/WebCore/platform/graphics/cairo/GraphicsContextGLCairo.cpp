@@ -41,7 +41,7 @@ namespace WebCore {
 
 GraphicsContextGLOpenGL::ImageExtractor::~ImageExtractor() = default;
 
-bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool)
 {
     if (!m_image)
         return false;

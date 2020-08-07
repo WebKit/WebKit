@@ -606,7 +606,7 @@ public:
 
     class ImageExtractor {
     public:
-        ImageExtractor(Image*, DOMSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
+        ImageExtractor(Image*, DOMSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication);
 
         // Each platform must provide an implementation of this method to deallocate or release resources
         // associated with the image if needed.
@@ -624,7 +624,7 @@ public:
         // Each platform must provide an implementation of this method.
         // Extracts the image and keeps track of its status, such as width, height, Source Alignment, format and AlphaOp etc,
         // needs to lock the resources or relevant data if needed and returns true upon success
-        bool extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
+        bool extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication);
 
 #if USE(CAIRO)
         RefPtr<cairo_surface_t> m_imageSurface;

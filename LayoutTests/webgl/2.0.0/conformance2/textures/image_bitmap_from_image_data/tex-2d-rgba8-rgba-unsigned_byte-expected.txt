@@ -1,8 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_from_image_data/tex-2d-rgba8-rgba-unsigned_byte.html
-[ 1: PASS ] createImageBitmap with options may be rejected if it is not supported. Retrying without options.
-[ 2: FAIL ] createImageBitmap(source) failed: "createImageBitmap with ImageData is not implemented"
-[ 3: PASS ] successfullyParsed is true
-[ FAIL ] 1 failures reported
+[ PASS ] All tests passed
 

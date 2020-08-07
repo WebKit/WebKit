@@ -57,7 +57,7 @@ public:
 
     Vector<uint8_t> toBGRAData() const override;
     RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect&) const override;
-    void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint) override;
+    void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) override;
 
 private:
 #if PLATFORM(IOS_FAMILY)

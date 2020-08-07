@@ -47,7 +47,7 @@ public:
     Vector<uint8_t> toBGRAData() const override;
 
     RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect&) const override;
-    void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint) override;
+    void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
 
 private:
     ImageBufferCGBitmapBackend(const FloatSize& logicalSize, const IntSize& physicalSize, float resolutionScale, ColorSpace, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContext>&&);

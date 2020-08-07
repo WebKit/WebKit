@@ -207,7 +207,9 @@ static inline void copyImagePixelsAccelerated(
 {
     if (srcAlphaFormat == destAlphaFormat) {
         ASSERT(srcColorFormat != destColorFormat);
-        ASSERT(destAlphaFormat == AlphaPremultiplication::Premultiplied);
+        // The destination alpha format can be unpremultiplied in the
+        // case of an ImageBitmap created from an ImageData with
+        // premultiplyAlpha=="none".
 
         // Swap pixel channels BGRA <-> RGBA.
         const uint8_t map[4] = { 2, 1, 0, 3 };

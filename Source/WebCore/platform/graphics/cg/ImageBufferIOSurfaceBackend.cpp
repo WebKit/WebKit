@@ -177,10 +177,10 @@ RefPtr<ImageData> ImageBufferIOSurfaceBackend::getImageData(AlphaPremultiplicati
     return ImageBufferBackend::getImageData(outputFormat, srcRect, lock.surfaceBaseAddress());
 }
 
-void ImageBufferIOSurfaceBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+void ImageBufferIOSurfaceBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     IOSurface::Locker lock(*m_surface, IOSurface::Locker::AccessMode::ReadWrite);
-    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, lock.surfaceBaseAddress());
+    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, destFormat, lock.surfaceBaseAddress());
     m_requiresDrawAfterPutImageData = true;
 }
 

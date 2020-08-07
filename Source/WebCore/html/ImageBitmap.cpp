@@ -77,6 +77,7 @@ Ref<ImageBitmap> ImageBitmap::create(std::pair<std::unique_ptr<ImageBuffer>, Ima
     auto imageBitmap = create(WTFMove(buffer.first));
     imageBitmap->m_originClean = buffer.second.originClean;
     imageBitmap->m_premultiplyAlpha = buffer.second.premultiplyAlpha;
+    imageBitmap->m_forciblyPremultiplyAlpha = buffer.second.forciblyPremultiplyAlpha;
     return imageBitmap;
 }
 
@@ -98,7 +99,7 @@ Vector<std::pair<std::unique_ptr<ImageBuffer>, ImageBuffer::SerializationState>>
 {
     Vector<std::pair<std::unique_ptr<ImageBuffer>, ImageBuffer::SerializationState>> buffers;
     for (auto& bitmap : bitmaps)
-        buffers.append(std::make_pair(bitmap->transferOwnershipAndClose(), ImageBuffer::SerializationState { bitmap->originClean(), bitmap->premultiplyAlpha() }));
+        buffers.append(std::make_pair(bitmap->transferOwnershipAndClose(), ImageBuffer::SerializationState { bitmap->originClean(), bitmap->premultiplyAlpha(), bitmap->forciblyPremultiplyAlpha() }));
     return buffers;
 }
 
@@ -227,6 +228,34 @@ static ImageOrientation imageOrientationForOrientation(ImageBitmapOptions::Orien
     return ImageOrientation();
 }
 
+static AlphaPremultiplication alphaPremultiplicationForPremultiplyAlpha(ImageBitmapOptions::PremultiplyAlpha premultiplyAlpha)
+{
+    // The default is to premultiply - this is the least surprising behavior.
+    if (premultiplyAlpha == ImageBitmapOptions::PremultiplyAlpha::None)
+        return AlphaPremultiplication::Unpremultiplied;
+    return AlphaPremultiplication::Premultiplied;
+}
+
+void ImageBitmap::resolveWithBlankImageBuffer(bool originClean, Promise&& promise)
+{
+    // Source rectangle likely doesn't intersect the source image.
+    // Behavior isn't well specified, but WPT tests expect no Promise rejection (and of course no crashes).
+    // Resolve Promise with a blank 1x1 ImageBitmap.
+    auto bitmapData = ImageBuffer::create(FloatSize(1, 1), bufferRenderingMode);
+
+    // 7. Create a new ImageBitmap object.
+    auto imageBitmap = create(WTFMove(bitmapData));
+
+    // 9. If the origin of image's image is not the same origin as the origin specified by the
+    //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
+    //    bitmap to false.
+    imageBitmap->m_originClean = originClean;
+
+    // 10. Return a new promise, but continue running these steps in parallel.
+    // 11. Resolve the promise with the new ImageBitmap object as the value.
+    promise.resolve(WTFMove(imageBitmap));
+}
+
 // FIXME: More steps from https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
 
 // 7. Place input on an infinite transparent black grid plane, positioned so that its
@@ -330,10 +359,14 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
     auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
-
     auto imageForRender = cachedImage->imageForRenderer(imageElement->renderer());
     if (!imageForRender) {
         promise.reject(InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered");
+        return;
+    }
+
+    if (!bitmapData) {
+        resolveWithBlankImageBuffer(!taintsOrigin(*cachedImage), WTFMove(promise));
         return;
     }
 
@@ -349,7 +382,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
 
     imageBitmap->m_originClean = !taintsOrigin(*cachedImage);
 
-    imageBitmap->m_premultiplyAlpha = (options.premultiplyAlpha == ImageBitmapOptions::PremultiplyAlpha::Premultiply);
+    imageBitmap->m_premultiplyAlpha = (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied);
 
     // 10. Return a new promise, but continue running these steps in parallel.
     // 11. Resolve the promise with the new ImageBitmap object as the value.
@@ -398,6 +431,11 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, CanvasBase& canvas, Ima
         return;
     }
 
+    if (!bitmapData) {
+        resolveWithBlankImageBuffer(canvas.originClean(), WTFMove(promise));
+        return;
+    }
+
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), imageOrientationForOrientation(options.imageOrientation) });
 
@@ -409,7 +447,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, CanvasBase& canvas, Ima
 
     imageBitmap->m_originClean = canvas.originClean();
 
-    imageBitmap->m_premultiplyAlpha = (options.premultiplyAlpha == ImageBitmapOptions::PremultiplyAlpha::Premultiply);
+    imageBitmap->m_premultiplyAlpha = (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied);
 
     // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
@@ -455,6 +493,11 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle, options);
     auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
 
+    if (!bitmapData) {
+        resolveWithBlankImageBuffer(!taintsOrigin(scriptExecutionContext.securityOrigin(), *video), WTFMove(promise));
+        return;
+    }
+
     {
         GraphicsContext& c = bitmapData->context();
         GraphicsContextStateSaver stateSaver(c);
@@ -479,7 +522,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     //      image's bitmap to false.
     imageBitmap->m_originClean = !taintsOrigin(scriptExecutionContext.securityOrigin(), *video);
 
-    imageBitmap->m_premultiplyAlpha = (options.premultiplyAlpha == ImageBitmapOptions::PremultiplyAlpha::Premultiply);
+    imageBitmap->m_premultiplyAlpha = (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied);
 
     // 6.4.1. Resolve p with imageBitmap.
     promise.resolve(WTFMove(imageBitmap));
@@ -513,6 +556,11 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>& ex
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
     auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
 
+    if (!bitmapData) {
+        resolveWithBlankImageBuffer(existingImageBitmap->originClean(), WTFMove(promise));
+        return;
+    }
+
     auto imageForRender = existingImageBitmap->buffer()->copyImage();
 
     FloatRect destRect(FloatPoint(), outputSize);
@@ -525,7 +573,13 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>& ex
     //    value as the origin-clean flag of the bitmap of the image argument.
     imageBitmap->m_originClean = existingImageBitmap->originClean();
 
-    imageBitmap->m_premultiplyAlpha = (options.premultiplyAlpha == ImageBitmapOptions::PremultiplyAlpha::Premultiply);
+    imageBitmap->m_premultiplyAlpha = (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied);
+
+    // At least in the Core Graphics backend, when creating an ImageBitmap from
+    // an ImageBitmap, the alpha channel of bitmapData isn't premultiplied even
+    // though the alpha mode of the internal surface claims it is. Instruct
+    // users of this ImageBitmap to ignore the internal surface's alpha mode.
+    imageBitmap->m_forciblyPremultiplyAlpha = imageBitmap->m_premultiplyAlpha;
 
     // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
@@ -700,7 +754,7 @@ void ImageBitmap::createFromBuffer(
 
     auto imageBitmap = create(WTFMove(bitmapData));
 
-    imageBitmap->m_premultiplyAlpha = (options.premultiplyAlpha == ImageBitmapOptions::PremultiplyAlpha::Premultiply);
+    imageBitmap->m_premultiplyAlpha = (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied);
 
     promise.resolve(WTFMove(imageBitmap));
 }
@@ -713,22 +767,55 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageData>& imageData, ImageBitmapOptions&& options, Optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
-    UNUSED_PARAM(imageData);
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(rect);
+    // 6.1. Let buffer be image's data attribute value's [[ViewedArrayBuffer]]
+    //      internal slot.
+    // 6.2. If IsDetachedBuffer(buffer) is true, then return p rejected with an
+    //      "InvalidStateError" DOMException.
+    if (imageData->data()->isNeutered()) {
+        promise.reject(InvalidStateError, "ImageData's viewed buffer has been neutered");
+        return;
+    }
 
-    // 2. If the image object's data attribute value's [[Detached]] internal slot value
-    //    is true, return a promise rejected with an "InvalidStateError" DOMException
-    //    and abort these steps.
+    // 6.3. Set imageBitmap's bitmap data to image's image data, cropped to the
+    //      source rectangle with formatting.
+    auto sourceRectangle = croppedSourceRectangleWithFormatting(imageData->size(), options, WTFMove(rect));
+    if (sourceRectangle.hasException()) {
+        promise.reject(sourceRectangle.releaseException());
+        return;
+    }
 
-    // 3. Create a new ImageBitmap object.
+    auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
+    auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
 
-    // 4. Let the ImageBitmap object's bitmap data be the image data given by the ImageData
-    //    object, cropped to the source rectangle with formatting.
+    if (!bitmapData) {
+        resolveWithBlankImageBuffer(true, WTFMove(promise));
+        return;
+    }
 
-    // 5. Return a new promise, but continue running these steps in parallel.
-    // 6. Resolve the promise with the new ImageBitmap object as the value.
-    promise.reject(TypeError, "createImageBitmap with ImageData is not implemented");
+    // If no cropping, resizing, flipping, etc. are needed, then simply use the
+    // resulting ImageBuffer directly.
+    auto alphaPremultiplication = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha);
+    if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size()
+        && sourceRectangle.returnValue().size() == outputSize
+        && options.imageOrientation == ImageBitmapOptions::Orientation::None) {
+        bitmapData->putImageData(AlphaPremultiplication::Unpremultiplied, *imageData, sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
+        auto imageBitmap = create(WTFMove(bitmapData));
+        // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
+        promise.resolve(WTFMove(imageBitmap));
+        return;
+    }
+
+    // 6.3. Set imageBitmap's bitmap data to image's image data, cropped to the
+    //      source rectangle with formatting.
+    auto tempBitmapData = ImageBuffer::create(FloatSize(imageData->width(), imageData->height()), bufferRenderingMode);
+    tempBitmapData->putImageData(AlphaPremultiplication::Unpremultiplied, *imageData, IntRect(0, 0, imageData->width(), imageData->height()), { }, alphaPremultiplication);
+    FloatRect destRect(FloatPoint(), outputSize);
+    bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), imageOrientationForOrientation(options.imageOrientation) });
+
+    // 6.4.1. Resolve p with ImageBitmap.
+    auto imageBitmap = create(WTFMove(bitmapData));
+    // The result is implicitly origin-clean, and alpha premultiplication has already been handled.
+    promise.resolve(WTFMove(imageBitmap));
 }
 
 ImageBitmap::ImageBitmap(std::unique_ptr<ImageBuffer>&& buffer)

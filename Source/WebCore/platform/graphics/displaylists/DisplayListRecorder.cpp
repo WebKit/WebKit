@@ -51,9 +51,9 @@ Recorder::~Recorder()
     LOG(DisplayLists, "Recorded display list:\n%s", m_displayList.description().data());
 }
 
-void Recorder::putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint)
+void Recorder::putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
 {
-    appendItem(WebCore::DisplayList::PutImageData::create(inputFormat, imageData, srcRect, destPoint));
+    appendItem(WebCore::DisplayList::PutImageData::create(inputFormat, imageData, srcRect, destPoint, destFormat));
 }
 
 void Recorder::willAppendItem(const Item& item)

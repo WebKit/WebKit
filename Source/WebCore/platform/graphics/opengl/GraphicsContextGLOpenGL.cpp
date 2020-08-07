@@ -603,11 +603,11 @@ GraphicsContextGLOpenGL::PixelStoreParams::PixelStoreParams()
 {
 }
 
-GraphicsContextGLOpenGL::ImageExtractor::ImageExtractor(Image* image, DOMSource imageHtmlDomSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+GraphicsContextGLOpenGL::ImageExtractor::ImageExtractor(Image* image, DOMSource imageHtmlDomSource, bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
 {
     m_image = image;
     m_imageHtmlDomSource = imageHtmlDomSource;
-    m_extractSucceeded = extractImage(premultiplyAlpha, ignoreGammaAndColorProfile);
+    m_extractSucceeded = extractImage(premultiplyAlpha, ignoreGammaAndColorProfile, ignoreNativeImageAlphaPremultiplication);
 }
 
 bool GraphicsContextGLOpenGL::packImageData(Image* image, const void* pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp alphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data)

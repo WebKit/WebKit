@@ -99,6 +99,12 @@ public:
 
     bool premultiplyAlpha() const { return m_premultiplyAlpha; }
 
+    // When WebGL consumes an Image coming from an ImageBitmap's ImageBuffer, it typically honors
+    // the alpha mode of that native image - CGImageAlphaInfo in the Core Graphics backend. For
+    // ImageBitmaps created from ImageBitmaps, this information is not accurate, and callers must be
+    // told to ignore the alpha mode, and forcibly premultiply the alpha channel.
+    bool forciblyPremultiplyAlpha() const { return m_forciblyPremultiplyAlpha; }
+
     std::unique_ptr<ImageBuffer> transferOwnershipAndClose();
 
     static Vector<std::pair<std::unique_ptr<ImageBuffer>, ImageBuffer::SerializationState>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);
@@ -109,6 +115,8 @@ private:
 
     static Ref<ImageBitmap> create(std::unique_ptr<ImageBuffer>&&);
     ImageBitmap(std::unique_ptr<ImageBuffer>&&);
+
+    static void resolveWithBlankImageBuffer(bool originClean, Promise&&);
 
     static void createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement>&, ImageBitmapOptions&&, Optional<IntRect>, Promise&&);
 #if ENABLE(VIDEO)
@@ -129,6 +137,7 @@ private:
     bool m_detached { false };
     bool m_originClean { true };
     bool m_premultiplyAlpha { false };
+    bool m_forciblyPremultiplyAlpha { false };
 };
 
 }

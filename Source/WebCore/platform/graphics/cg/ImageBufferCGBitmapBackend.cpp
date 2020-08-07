@@ -134,9 +134,9 @@ RefPtr<ImageData> ImageBufferCGBitmapBackend::getImageData(AlphaPremultiplicatio
     return ImageBufferBackend::getImageData(outputFormat, srcRect, m_data);
 }
 
-void ImageBufferCGBitmapBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+void ImageBufferCGBitmapBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, m_data);
+    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, destFormat, m_data);
 }
 
 } // namespace WebCore

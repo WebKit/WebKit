@@ -319,7 +319,7 @@ void convert16BitFormatToRGBA8(GraphicsContextGL::DataFormat srcFormat, const ui
 
 GraphicsContextGLOpenGL::ImageExtractor::~ImageExtractor() = default;
 
-bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool ignoreNativeImageAlphaPremultiplication)
 {
     if (!m_image)
         return false;
@@ -422,6 +422,8 @@ bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha
     case kCGImageAlphaPremultipliedFirst:
         if (!premultiplyAlpha)
             m_alphaOp = AlphaOp::DoUnmultiply;
+        else if (ignoreNativeImageAlphaPremultiplication)
+            m_alphaOp = AlphaOp::DoPremultiply;
         alphaFormat = AlphaFormatFirst;
         break;
     case kCGImageAlphaFirst:
@@ -437,6 +439,8 @@ bool GraphicsContextGLOpenGL::ImageExtractor::extractImage(bool premultiplyAlpha
     case kCGImageAlphaPremultipliedLast:
         if (!premultiplyAlpha)
             m_alphaOp = AlphaOp::DoUnmultiply;
+        else if (ignoreNativeImageAlphaPremultiplication)
+            m_alphaOp = AlphaOp::DoPremultiply;
         alphaFormat = AlphaFormatLast;
         break;
     case kCGImageAlphaLast:

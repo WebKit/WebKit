@@ -313,10 +313,10 @@ RefPtr<ImageData> ImageBufferDirect2DBackend::getImageData(AlphaPremultiplicatio
     return ImageBufferBackend::getImageData(outputFormat, srcRect, nullptr);
 }
 
-void ImageBufferDirect2DBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+void ImageBufferDirect2DBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     notImplemented();
-    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, nullptr);
+    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, destFormat, nullptr);
 }
 
 } // namespace WebCore

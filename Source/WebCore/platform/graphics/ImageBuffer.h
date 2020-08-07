@@ -41,6 +41,7 @@ public:
     struct SerializationState {
         bool originClean { false };
         bool premultiplyAlpha { false };
+        bool forciblyPremultiplyAlpha { false };
     };
 
     // Will return a null pointer on allocation failure.
@@ -100,7 +101,7 @@ public:
     virtual Vector<uint8_t> toBGRAData() const = 0;
 
     virtual RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const = 0;
-    virtual void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint = { }) = 0;
+    virtual void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) = 0;
 
     // FIXME: current implementations of this method have the restriction that they only work
     // with textures that are RGB or RGBA format, and UNSIGNED_BYTE type.

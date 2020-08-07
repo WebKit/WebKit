@@ -1,3 +1,83 @@
+2020-08-06  Kenneth Russell  <kbr@chromium.org>
+
+        Implement createImageBitmap(ImageData)
+        https://bugs.webkit.org/show_bug.cgi?id=183438
+
+        Reviewed by Dean Jackson.
+
+        Implement createImageBitmap(ImageData), including scaling,
+        flipping and alpha premultiplication, and fix bugs in
+        createImageBitmap(ImageBitmap).
+
+        Support copying unpremultiplied-alpha data to the
+        unpremultiplied-alpha format in ImageBuffer::putImageData. Plumb
+        this change through all ImageBuffer backends and display lists.
+
+        Handle error cases exposed by W3C WPT tests now that
+        createImageBitmap(ImageData) is working.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpImageBitmap):
+        (WebCore::CloneDeserializer::readImageBitmap):
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::create):
+        (WebCore::ImageBitmap::detachBitmaps):
+        (WebCore::alphaPremultiplicationForPremultiplyAlpha):
+        (WebCore::ImageBitmap::resolveWithBlankImageBuffer):
+        (WebCore::ImageBitmap::createPromise):
+        (WebCore::ImageBitmap::createFromBuffer):
+        * html/ImageBitmap.h:
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::transferToImageBitmap):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImageSourceHelper):
+        (WebCore::WebGLRenderingContextBase::texImageImpl):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/ConcreteImageBuffer.h:
+        (WebCore::ConcreteImageBuffer::putImageData):
+        * platform/graphics/ImageBuffer.h:
+        (WebCore::ImageBuffer::putImageData):
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::convertToLuminanceMask):
+        (WebCore::copyUnpremultipliedToUnpremultiplied):
+        (WebCore::ImageBufferBackend::copyImagePixels const):
+        (WebCore::ImageBufferBackend::putImageData):
+        * platform/graphics/ImageBufferBackend.h:
+        * platform/graphics/cairo/GraphicsContextGLCairo.cpp:
+        (WebCore::GraphicsContextGLOpenGL::ImageExtractor::extractImage):
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoSurfaceBackend::putImageData):
+        * platform/graphics/cairo/ImageBufferCairoSurfaceBackend.h:
+        * platform/graphics/cg/GraphicsContextGLCG.cpp:
+        (WebCore::GraphicsContextGLOpenGL::ImageExtractor::extractImage):
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::copyImagePixelsAccelerated):
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.cpp:
+        (WebCore::ImageBufferCGBitmapBackend::putImageData):
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.h:
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::putImageData):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::PutImageData::PutImageData):
+        (WebCore::DisplayList::operator<<):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::PutImageData::create):
+        (WebCore::DisplayList::PutImageData::destFormat const):
+        (WebCore::DisplayList::PutImageData::encode const):
+        (WebCore::DisplayList::PutImageData::decode):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::putImageData):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        (WebCore::GraphicsContextGLOpenGL::ImageExtractor::ImageExtractor):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/win/GraphicsContextGLDirect2D.cpp:
+        (WebCore::GraphicsContextGLOpenGL::ImageExtractor::extractImage):
+        * platform/graphics/win/ImageBufferDirect2DBackend.cpp:
+        (WebCore::ImageBufferDirect2DBackend::putImageData):
+        * platform/graphics/win/ImageBufferDirect2DBackend.h:
+
 2020-08-06  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid triggering redundant compositing updates when trying ot run a steps() animation on transform

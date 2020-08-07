@@ -2452,13 +2452,13 @@ Optional<Ref<FillEllipse>> FillEllipse::decode(Decoder& decoder)
 
 class PutImageData : public DrawingItem {
 public:
-    static Ref<PutImageData> create(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+    static Ref<PutImageData> create(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
     {
-        return adoptRef(*new PutImageData(inputFormat, imageData, srcRect, destPoint));
+        return adoptRef(*new PutImageData(inputFormat, imageData, srcRect, destPoint, destFormat));
     }
-    static Ref<PutImageData> create(AlphaPremultiplication inputFormat, Ref<ImageData>&& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+    static Ref<PutImageData> create(AlphaPremultiplication inputFormat, Ref<ImageData>&& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
     {
-        return adoptRef(*new PutImageData(inputFormat, WTFMove(imageData), srcRect, destPoint));
+        return adoptRef(*new PutImageData(inputFormat, WTFMove(imageData), srcRect, destPoint, destFormat));
     }
 
     WEBCORE_EXPORT virtual ~PutImageData();
@@ -2467,13 +2467,14 @@ public:
     ImageData& imageData() const { return m_imageData; }
     IntRect srcRect() const { return m_srcRect; }
     IntPoint destPoint() const { return m_destPoint; }
+    AlphaPremultiplication destFormat() const { return m_destFormat; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<Ref<PutImageData>> decode(Decoder&);
 
 private:
-    WEBCORE_EXPORT PutImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint);
-    WEBCORE_EXPORT PutImageData(AlphaPremultiplication inputFormat, Ref<ImageData>&&, const IntRect& srcRect, const IntPoint& destPoint);
+    WEBCORE_EXPORT PutImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
+    WEBCORE_EXPORT PutImageData(AlphaPremultiplication inputFormat, Ref<ImageData>&&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
 
     void apply(GraphicsContext&) const override;
 
@@ -2483,6 +2484,7 @@ private:
     IntPoint m_destPoint;
     Ref<ImageData> m_imageData;
     AlphaPremultiplication m_inputFormat;
+    AlphaPremultiplication m_destFormat;
 };
 
 template<class Encoder>
@@ -2492,6 +2494,7 @@ void PutImageData::encode(Encoder& encoder) const
     encoder << m_imageData;
     encoder << m_srcRect;
     encoder << m_destPoint;
+    encoder << m_destFormat;
 }
 
 template<class Decoder>
@@ -2501,6 +2504,7 @@ Optional<Ref<PutImageData>> PutImageData::decode(Decoder& decoder)
     Optional<Ref<ImageData>> imageData;
     Optional<IntRect> srcRect;
     Optional<IntPoint> destPoint;
+    Optional<AlphaPremultiplication> destFormat;
 
     decoder >> inputFormat;
     if (!inputFormat)
@@ -2518,7 +2522,11 @@ Optional<Ref<PutImageData>> PutImageData::decode(Decoder& decoder)
     if (!destPoint)
         return WTF::nullopt;
 
-    return PutImageData::create(*inputFormat, WTFMove(*imageData), *srcRect, *destPoint);
+    decoder >> destFormat;
+    if (!destFormat)
+        return WTF::nullopt;
+
+    return PutImageData::create(*inputFormat, WTFMove(*imageData), *srcRect, *destPoint, *destFormat);
 }
 
 class StrokeRect : public DrawingItem {

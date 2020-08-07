@@ -122,9 +122,9 @@ RefPtr<ImageData> ImageBufferShareableBitmapBackend::getImageData(AlphaPremultip
     return ImageBufferBackend::getImageData(outputFormat, srcRect, m_bitmap->data());
 }
 
-void ImageBufferShareableBitmapBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+void ImageBufferShareableBitmapBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat)
 {
-    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, m_bitmap->data());
+    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, destFormat, m_bitmap->data());
 }
 
 } // namespace WebKit

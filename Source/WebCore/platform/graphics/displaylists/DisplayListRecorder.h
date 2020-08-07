@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT Recorder(GraphicsContext&, DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, Observer* = nullptr);
     WEBCORE_EXPORT virtual ~Recorder();
 
-    WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint);
+    WEBCORE_EXPORT void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat);
 
     size_t itemCount() const { return m_displayList.itemCount(); }
 

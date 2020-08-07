@@ -119,9 +119,9 @@ RefPtr<ImageData> ImageBufferCairoSurfaceBackend::getImageData(AlphaPremultiplic
     return ImageBufferBackend::getImageData(outputFormat, srcRect, cairo_image_surface_get_data(m_surface.get()));
 }
 
-void ImageBufferCairoSurfaceBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint)
+void ImageBufferCairoSurfaceBackend::putImageData(AlphaPremultiplication inputFormat, const ImageData& imageData, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, cairo_image_surface_get_data(m_surface.get()));
+    ImageBufferBackend::putImageData(inputFormat, imageData, srcRect, destPoint, destFormat, cairo_image_surface_get_data(m_surface.get()));
 
     IntRect srcRectScaled = toBackendCoordinates(srcRect);
     IntPoint destPointScaled = toBackendCoordinates(destPoint);
