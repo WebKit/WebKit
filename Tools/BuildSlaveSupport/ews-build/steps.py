@@ -2105,6 +2105,25 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
+    def send_email_for_new_test_failures(self, test_names):
+        try:
+            builder_name = self.getProperty('buildername', '')
+            bug_title = self.getProperty('bug_title', '')
+            worker_name = self.getProperty('workername', '')
+            patch_id = self.getProperty('patch_id', '')
+            patch_author = self.getProperty('patch_author', '')
+            build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
+            test_names_string = '- ' + '\n- '.join(test_names)
+
+            email_subject = 'Layout test failure for Patch {}: {} '.format(patch_id, bug_title)
+            email_text = 'EWS has detected test failure on {} while testing Patch {}.'.format(builder_name, patch_id)
+            email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
+            email_text += '\n\nLayout test failure:\n\n{}'.format(test_names_string)
+            email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
+            send_email([patch_author], email_subject, email_text)
+        except Exception as e:
+            print('Error in sending email for new layout test failures: {}'.format(e))
+
     def _report_flaky_tests(self, flaky_tests):
         #TODO: implement this
         pass
