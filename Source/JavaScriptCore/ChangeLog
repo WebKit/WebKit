@@ -1,3 +1,18 @@
+2020-08-07  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r261159) PokerBros only shows black screen
+        https://bugs.webkit.org/show_bug.cgi?id=215293
+
+        Reviewed by Keith Miller.
+
+        The PokerBros app has some logic that was broken by the change in behavior of r261159.
+        It caused the app do do nothing except show a black screen upon opening.
+        Revert to the old behavior for this app until they update to iOS14.
+
+        * runtime/JSObject.cpp:
+        (JSC::needsOldStringName):
+        (JSC::JSObject::toStringName):
+
 2020-08-07  Michael Saboff  <msaboff@apple.com>
 
         RegExp sticky not matching alternates correctly, ignoring lastIndex requirement
