@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class DefaultAudioDestinationNode;
+
 class AudioContext : public BaseAudioContext {
     WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
@@ -37,6 +39,9 @@ public:
     static ExceptionOr<Ref<AudioContext>> create(Document&, const AudioContextOptions& = { });
 
     void close(DOMPromiseDeferred<void>&&);
+
+    DefaultAudioDestinationNode* destination();
+    double baseLatency();
 
 #if ENABLE(VIDEO)
     ExceptionOr<Ref<MediaElementAudioSourceNode>> createMediaElementSource(HTMLMediaElement&);

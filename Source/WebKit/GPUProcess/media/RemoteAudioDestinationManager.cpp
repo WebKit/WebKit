@@ -69,6 +69,7 @@ public:
     void start() { m_destination->start(); }
     void stop() { m_destination->stop(); }
     bool isPlaying() { return m_destination->isPlaying(); }
+    unsigned framesPerBuffer() const { return m_destination->framesPerBuffer() ; }
 
 private:
     RemoteAudioDestination(GPUConnectionToWebProcess& connection, RemoteAudioDestinationIdentifier id, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate)
@@ -136,12 +137,13 @@ RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebP
 RemoteAudioDestinationManager::~RemoteAudioDestinationManager() = default;
 
 void RemoteAudioDestinationManager::createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate,
-    CompletionHandler<void(RemoteAudioDestinationIdentifier)>&& completionHandler)
+    CompletionHandler<void(RemoteAudioDestinationIdentifier, unsigned framesPerBuffer)>&& completionHandler)
 {
     auto newID = RemoteAudioDestinationIdentifier::generateThreadSafe();
-    auto callback = RemoteAudioDestination::create(m_gpuConnectionToWebProcess, newID, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
-    m_audioDestinations.add(newID, WTFMove(callback));
-    completionHandler(newID);
+    auto destination = RemoteAudioDestination::create(m_gpuConnectionToWebProcess, newID, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate);
+    auto framesPerBuffer = destination->framesPerBuffer();
+    m_audioDestinations.add(newID, WTFMove(destination));
+    completionHandler(newID, framesPerBuffer);
 }
 
 void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier id, CompletionHandler<void()>&& completionHandler)

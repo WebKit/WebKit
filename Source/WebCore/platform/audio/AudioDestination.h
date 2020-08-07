@@ -57,6 +57,8 @@ public:
     virtual float sampleRate() const = 0;
     static float hardwareSampleRate();
 
+    virtual unsigned framesPerBuffer() const = 0;
+
     // maxChannelCount() returns the total number of output channels of the audio hardware.
     // A value of 0 indicates that the number of channels cannot be configured and
     // that only stereo (2-channel) destinations can be created.

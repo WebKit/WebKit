@@ -136,6 +136,11 @@ AudioDestinationGStreamer::~AudioDestinationGStreamer()
     gst_object_unref(m_pipeline);
 }
 
+unsigned AudioDestinationGStreamer::framesPerBuffer() const
+{
+    return framesToPull;
+}
+
 gboolean AudioDestinationGStreamer::handleMessage(GstMessage* message)
 {
     GUniqueOutPtr<GError> error;

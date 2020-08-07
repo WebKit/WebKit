@@ -1,0 +1,15 @@
+Basic testing for AudioContext.baseLatency.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS context.sampleRate is expectedSampleRate
+PASS context.baseLatency == (renderQuantum / expectedSampleRate) || context.baseLatency == (2 * (renderQuantum / expectedSampleRate)) is true
+PASS context.sampleRate is expectedSampleRate
+PASS context.baseLatency == (renderQuantum / expectedSampleRate) || context.baseLatency == (2 * (renderQuantum / expectedSampleRate)) is true
+PASS context.sampleRate is expectedSampleRate
+PASS context.baseLatency == (renderQuantum / expectedSampleRate) || context.baseLatency == (2 * (renderQuantum / expectedSampleRate)) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

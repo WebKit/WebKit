@@ -40,6 +40,7 @@ public:
     
     virtual ~DefaultAudioDestinationNode();
 
+    unsigned framesPerBuffer() const;
     float sampleRate() const final { return m_sampleRate; }
     
 private:

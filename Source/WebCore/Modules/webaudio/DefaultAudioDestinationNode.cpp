@@ -176,6 +176,11 @@ bool DefaultAudioDestinationNode::isPlaying()
     return m_destination && m_destination->isPlaying();
 }
 
+unsigned DefaultAudioDestinationNode::framesPerBuffer() const
+{
+    return m_destination ? m_destination->framesPerBuffer() : 0.;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

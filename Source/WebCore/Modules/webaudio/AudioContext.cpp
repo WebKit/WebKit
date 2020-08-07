@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioContext.h"
+#include "DefaultAudioDestinationNode.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -87,6 +88,14 @@ AudioContext::AudioContext(Document& document, AudioBuffer* renderTarget)
 {
 }
 
+double AudioContext::baseLatency()
+{
+    lazyInitialize();
+
+    auto* destination = this->destination();
+    return destination ? static_cast<double>(destination->framesPerBuffer()) / sampleRate() : 0.;
+}
+
 void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 {
     if (isOfflineContext() || isStopped()) {
@@ -107,6 +116,11 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
         setState(State::Closed);
         uninitialize();
     });
+}
+
+DefaultAudioDestinationNode* AudioContext::destination()
+{
+    return static_cast<DefaultAudioDestinationNode*>(BaseAudioContext::destination());
 }
 
 #if ENABLE(VIDEO)

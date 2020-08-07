@@ -88,6 +88,11 @@ AudioDestinationCocoa::~AudioDestinationCocoa()
         AudioComponentInstanceDispose(m_outputUnit);
 }
 
+unsigned AudioDestinationCocoa::framesPerBuffer() const
+{
+    return m_renderBus->length();
+}
+
 void AudioDestinationCocoa::start()
 {
     LOG(Media, "AudioDestinationCocoa::start");

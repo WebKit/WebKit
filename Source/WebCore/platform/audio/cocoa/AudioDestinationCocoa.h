@@ -50,6 +50,7 @@ protected:
 
     bool isPlaying() final { return m_isPlaying; }
     float sampleRate() const final { return m_sampleRate; }
+    unsigned framesPerBuffer() const final;
     AudioUnit& outputUnit() { return m_outputUnit; }
     
     // DefaultOutputUnit callback

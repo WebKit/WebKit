@@ -54,14 +54,16 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
     , m_sampleRate(sampleRate)
 {
     RemoteAudioDestinationIdentifier destinationID;
+    unsigned framesPerBuffer { 0 };
 
     auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
     connection.connection().sendSync(
         Messages::RemoteAudioDestinationManager::CreateAudioDestination(inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate),
-        Messages::RemoteAudioDestinationManager::CreateAudioDestination::Reply(destinationID), 0);
+        Messages::RemoteAudioDestinationManager::CreateAudioDestination::Reply(destinationID, framesPerBuffer), 0);
     connection.messageReceiverMap().addMessageReceiver(Messages::RemoteAudioDestinationProxy::messageReceiverName(), destinationID.toUInt64(), *this);
 
     m_destinationID = destinationID;
+    m_framesPerBuffer = framesPerBuffer;
 }
 
 RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()

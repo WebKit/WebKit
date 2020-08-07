@@ -32,8 +32,9 @@
 ] interface AudioContext : BaseAudioContext {
     [CallWith=Document, MayThrowException] constructor(optional AudioContextOptions contextOptions);
 
+    readonly attribute double baseLatency;
+
     // FIXME: Add support.
-    // readonly attribute double baseLatency;
     // readonly attribute double outputLatency;
     // AudioTimestamp getOutputTimestamp();
 

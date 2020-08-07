@@ -25,7 +25,7 @@
 
 messages -> RemoteAudioDestinationManager NotRefCounted {
 
-    CreateAudioDestination(String inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate) -> (WebKit::RemoteAudioDestinationIdentifier id) Synchronous
+    CreateAudioDestination(String inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate) -> (WebKit::RemoteAudioDestinationIdentifier id, unsigned framesPerBuffer) Synchronous
 
     DeleteAudioDestination(WebKit::RemoteAudioDestinationIdentifier id) -> () Async
 

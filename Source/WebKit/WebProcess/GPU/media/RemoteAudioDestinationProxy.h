@@ -63,12 +63,14 @@ private:
     void stop() override;
     bool isPlaying() override { return m_isPlaying; }
     float sampleRate() const override { return m_sampleRate; }
+    unsigned framesPerBuffer() const override { return m_framesPerBuffer; }
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     AudioIOCallback& m_callback;
-    float m_sampleRate;
+    float m_sampleRate { 0. };
+    unsigned m_framesPerBuffer { 0 };
     RemoteAudioDestinationIdentifier m_destinationID;
     bool m_isPlaying { false };
 };

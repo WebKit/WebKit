@@ -46,7 +46,7 @@ public:
     RemoteAudioDestinationManager(GPUConnectionToWebProcess&);
     ~RemoteAudioDestinationManager();
 
-    void createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, CompletionHandler<void(RemoteAudioDestinationIdentifier)>&&);
+    void createAudioDestination(const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, CompletionHandler<void(RemoteAudioDestinationIdentifier, unsigned framesPerBuffer)>&&);
     void deleteAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void()>&&);
     void startAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);
     void stopAudioDestination(RemoteAudioDestinationIdentifier, CompletionHandler<void(bool)>&&);

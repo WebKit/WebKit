@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Basic testing for AudioContext.baseLatency.");
+
+const renderQuantum = 128.;
+
+function testSampleRate(_expectedSampleRate) {
+    expectedSampleRate = _expectedSampleRate;
+    context = new AudioContext({ sampleRate: expectedSampleRate });
+    shouldBe("context.sampleRate", "expectedSampleRate");
+
+    // Check that the baseLatency makes sense with either single or double buffering.
+    shouldBeTrue("context.baseLatency == (renderQuantum / expectedSampleRate) || context.baseLatency == (2 * (renderQuantum / expectedSampleRate))");
+}
+
+testSampleRate(44100);
+testSampleRate(64000);
+testSampleRate(96000);
+</script>
+</body>
+</html>

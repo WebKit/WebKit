@@ -1,3 +1,15 @@
+2020-08-07  Chris Dumez  <cdumez@apple.com>
+
+        baseLatency attribute is missing on AudioContext interface
+        https://bugs.webkit.org/show_bug.cgi?id=215277
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * webaudio/audiocontext-baselatency-expected.txt: Added.
+        * webaudio/audiocontext-baselatency.html: Added.
+
 2020-08-07  Rob Buis  <rbuis@igalia.com>
 
         Implement PerfomanceObserverInit.buffered

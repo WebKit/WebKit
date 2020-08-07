@@ -47,7 +47,7 @@ PASS AudioContext interface object name
 PASS AudioContext interface: existence and properties of interface prototype object 
 PASS AudioContext interface: existence and properties of interface prototype object's "constructor" property 
 PASS AudioContext interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL AudioContext interface: attribute baseLatency assert_true: The prototype object must have a property "baseLatency" expected true got false
+PASS AudioContext interface: attribute baseLatency 
 FAIL AudioContext interface: attribute outputLatency assert_true: The prototype object must have a property "outputLatency" expected true got false
 FAIL AudioContext interface: operation getOutputTimestamp() assert_own_property: interface prototype object missing non-static operation expected property "getOutputTimestamp" missing
 PASS AudioContext interface: operation resume() 
@@ -59,7 +59,7 @@ FAIL AudioContext interface: operation createMediaStreamTrackSource(MediaStreamT
 PASS AudioContext interface: operation createMediaStreamDestination() 
 PASS AudioContext must be primary interface of context 
 PASS Stringification of context 
-FAIL AudioContext interface: context must inherit property "baseLatency" with the proper type assert_inherits: property "baseLatency" not found in prototype chain
+PASS AudioContext interface: context must inherit property "baseLatency" with the proper type 
 FAIL AudioContext interface: context must inherit property "outputLatency" with the proper type assert_inherits: property "outputLatency" not found in prototype chain
 FAIL AudioContext interface: context must inherit property "getOutputTimestamp()" with the proper type assert_inherits: property "getOutputTimestamp" not found in prototype chain
 PASS AudioContext interface: context must inherit property "resume()" with the proper type 
