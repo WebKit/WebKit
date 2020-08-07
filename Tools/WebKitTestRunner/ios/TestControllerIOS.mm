@@ -155,6 +155,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
 {
     cocoaResetStateToConsistentValues(options);
 
+    [UIKeyboardImpl.activeInstance setCorrectionLearningAllowed:NO];
     [UIPasteboard generalPasteboard].items = @[ ];
     [[UIApplication sharedApplication] _cancelAllTouches];
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];

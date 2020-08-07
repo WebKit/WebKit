@@ -843,11 +843,6 @@ JSObjectRef UIScriptControllerIOS::inputViewBounds() const
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView()._inputViewBounds) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
-void UIScriptControllerIOS::removeAllDynamicDictionaries()
-{
-    [UIKeyboard removeAllDynamicDictionaries];
-}
-
 JSRetainPtr<JSStringRef> UIScriptControllerIOS::scrollingTreeAsText() const
 {
     return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _scrollingTreeAsText]));

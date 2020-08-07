@@ -1,3 +1,14 @@
+2020-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove UIScriptController.removeAllDynamicDictionaries()
+        https://bugs.webkit.org/show_bug.cgi?id=215207
+
+        Reviewed by Sam Weinig.
+
+        See Tools/ChangeLog for more detail.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2020-08-06  Kenneth Russell  <kbr@chromium.org>
 
         Implement createImageBitmap(ImageData)

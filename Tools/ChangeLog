@@ -1,3 +1,23 @@
+2020-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove UIScriptController.removeAllDynamicDictionaries()
+        https://bugs.webkit.org/show_bug.cgi?id=215207
+
+        Reviewed by Sam Weinig.
+
+        Instead of clearing out learned words from the spellchecking dictionary between every test, simply disable
+        correction learning during each test.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::replaceTextAtRange):
+        (WTR::UIScriptController::removeAllDynamicDictionaries): Deleted.
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::removeAllDynamicDictionaries): Deleted.
+
 2020-08-07  Robin Morisset  <rmorisset@apple.com>
 
         IndexSparseSet::sort() should update m_map

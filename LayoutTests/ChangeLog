@@ -1,3 +1,14 @@
+2020-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove UIScriptController.removeAllDynamicDictionaries()
+        https://bugs.webkit.org/show_bug.cgi?id=215207
+
+        Reviewed by Sam Weinig.
+
+        See Tools/ChangeLog for more detail.
+
+        * fast/events/ios/contenteditable-autocorrect.html:
+
 2020-08-07  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS wk 2 Debug ] storage/indexeddb/modern/new-database-after-user-delete.html is a flaky failure
