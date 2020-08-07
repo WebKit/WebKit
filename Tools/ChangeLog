@@ -1,3 +1,15 @@
+2020-08-07  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS emails about build failure should include last few relevant error logs
+        https://bugs.webkit.org/show_bug.cgi?id=215264
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.filter_logs_containing_error):
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestAnalyzeCompileWebKitResults.test_filter_logs_containing_error_with_too_many_errors):
+
 2020-08-07  Youenn Fablet  <youenn@apple.com>
 
         Introduce a Vector::isolatedCopy() &&

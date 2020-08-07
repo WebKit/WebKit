@@ -1116,7 +1116,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
 
     def test_filter_logs_containing_error_with_too_many_errors(self):
         logs = 'Error:1\nError:2\nerror:3\nerror:4\nerror:5\nrandom-string\nerror:6\nerror:7\nerror8\nerror:9\nerror:10\nerror:11\nerror:12\nerror:13'
-        expected_output = 'Error:1\nError:2\nerror:3\nerror:4\nerror:5\nerror:6\nerror:7\nerror:9\nerror:10\nerror:11'
+        expected_output = 'error:3\nerror:4\nerror:5\nerror:6\nerror:7\nerror:9\nerror:10\nerror:11\nerror:12\nerror:13'
         output = AnalyzeCompileWebKitResults().filter_logs_containing_error(logs)
         self.assertEqual(expected_output, output)
 

@@ -1441,7 +1441,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
         for line in logs.splitlines():
             if 'rror:' in line:
                 filtered_logs.append(line)
-        return '\n'.join(filtered_logs[:max_num_lines])
+        return '\n'.join(filtered_logs[-max_num_lines:])
 
     def send_email_for_new_build_failure(self):
         try:
