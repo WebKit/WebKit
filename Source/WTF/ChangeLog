@@ -1,3 +1,24 @@
+2020-08-07  Robin Morisset  <rmorisset@apple.com>
+
+        IndexSparseSet::sort() should update m_map
+        https://bugs.webkit.org/show_bug.cgi?id=215100
+
+        Reviewed by Yusuke Suzuki and Mark Lam.
+
+        IndexSparseSet is made of two fields: m_values and m_map, and the two must be kept in sync.
+        But its sort routine currently only sorts m_values.
+        This might be related to a random crash that seems to occasionally occur in the vicinity of this code in the wild (rdar://problem/64594569)
+
+        I added a validation routine, that I run in the tests that I added to TestWTF.
+        I verified, and without the fix, the validation routine fails after the sorting.
+
+        I also fixed remove() which was wrong on non-trivial types (thanks to Mark for catching this other bug).
+
+        * wtf/IndexSparseSet.h:
+        (WTF::OverflowHandler>::remove):
+        (WTF::OverflowHandler>::sort):
+        (WTF::OverflowHandler>::validate):
+
 2020-08-07  Youenn Fablet  <youenn@apple.com>
 
         Introduce a Vector::isolatedCopy() &&

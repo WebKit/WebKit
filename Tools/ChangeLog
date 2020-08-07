@@ -1,3 +1,17 @@
+2020-08-07  Robin Morisset  <rmorisset@apple.com>
+
+        IndexSparseSet::sort() should update m_map
+        https://bugs.webkit.org/show_bug.cgi?id=215100
+
+        Reviewed by Yusuke Suzuki and Mark Lam.
+
+        TestWTF was not testing IndexSparseSet at all. It now does.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/IndexSparseSet.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2020-08-07  Aakash Jain  <aakash_jain@apple.com>
 
         EWS emails about build failure should include last few relevant error logs

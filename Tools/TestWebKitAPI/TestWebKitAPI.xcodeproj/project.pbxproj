@@ -196,6 +196,7 @@
 		31B76E4523299BDC007FED2C /* system-preview-trigger.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31B76E4423299BA3007FED2C /* system-preview-trigger.html */; };
 		31E9BDA1247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31E9BDA0247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm */; };
 		31E9BDA3247F5729002E51A2 /* webgl.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 31E9BDA2247F4DD0002E51A2 /* webgl.html */; };
+		33976D8324DC479B00812304 /* IndexSparseSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33976D8224DC479B00812304 /* IndexSparseSet.cpp */; };
 		33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */; };
 		33DC8912141955FE00747EF7 /* simple-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 33DC890E1419539300747EF7 /* simple-iframe.html */; };
 		33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33DC89131419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp */; };
@@ -1869,6 +1870,7 @@
 		31E9BDA0247F4C62002E51A2 /* WebGLPrepareDisplayOnWebThread.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLPrepareDisplayOnWebThread.mm; sourceTree = "<group>"; };
 		31E9BDA2247F4DD0002E51A2 /* webgl.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = webgl.html; sourceTree = "<group>"; };
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
+		33976D8224DC479B00812304 /* IndexSparseSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexSparseSet.cpp; sourceTree = "<group>"; };
 		33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash.cpp; sourceTree = "<group>"; };
 		33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash_Bundle.cpp; sourceTree = "<group>"; };
 		33DC890E1419539300747EF7 /* simple-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "simple-iframe.html"; sourceTree = "<group>"; };
@@ -4138,6 +4140,7 @@
 				0BCD833414857CE400EA2003 /* HashMap.cpp */,
 				26B2DFF815BDE599004F691D /* HashSet.cpp */,
 				7C8BFF7023C0106700C009B3 /* HexNumber.cpp */,
+				33976D8224DC479B00812304 /* IndexSparseSet.cpp */,
 				266FAFD215E5775200F61D5B /* IntegerToStringConversion.cpp */,
 				7CEB62A92236086C0069CBB0 /* IteratorRange.cpp */,
 				7A0509401FB9F04400B33FB8 /* JSONValue.cpp */,
@@ -4864,6 +4867,7 @@
 				7C8BFF7123C0107A00C009B3 /* HexNumber.cpp in Sources */,
 				7C83DEE01D0A590C00FEBCF3 /* IntegerToStringConversion.cpp in Sources */,
 				53FCDE6B229EFFB900598ECF /* IsoHeap.cpp in Sources */,
+				33976D8324DC479B00812304 /* IndexSparseSet.cpp in Sources */,
 				7CEB62AB223609DE0069CBB0 /* IteratorRange.cpp in Sources */,
 				7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */,
 				531C1D8E1DF8EF72006E979F /* LEBDecoder.cpp in Sources */,

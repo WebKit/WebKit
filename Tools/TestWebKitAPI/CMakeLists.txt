@@ -49,6 +49,7 @@ set(TestWTF_SOURCES
     Tests/WTF/HashSet.cpp
     Tests/WTF/Hasher.cpp
     Tests/WTF/HexNumber.cpp
+    Tests/WTF/IndexSparseSet.cpp
     Tests/WTF/IntegerToStringConversion.cpp
     Tests/WTF/IteratorRange.cpp
     Tests/WTF/JSONValue.cpp

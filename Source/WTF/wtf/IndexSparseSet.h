@@ -99,6 +99,8 @@ public:
     const_iterator end() const;
     
     void sort();
+
+    void validate();
     
     const ValueList& values() const { return m_values; }
 
@@ -148,7 +150,7 @@ inline bool IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::remove(
     if (position >= m_values.size())
         return false;
 
-    if (m_values[position] == value) {
+    if (EntryTypeTraits::key(m_values[position]) == value) {
         EntryType lastValue = m_values.last();
         m_values[position] = WTFMove(lastValue);
         m_map[EntryTypeTraits::key(lastValue)] = position;
@@ -215,6 +217,24 @@ void IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::sort()
         [&] (const EntryType& a, const EntryType& b) {
             return EntryTypeTraits::key(a) < EntryTypeTraits::key(b);
         });
+
+    // Bring m_map back in sync with m_values
+    for (unsigned index = 0; index < m_values.size(); ++index) {
+        unsigned key = EntryTypeTraits::key(m_values[index]);
+        m_map[key] = index;
+    }
+
+#if ASSERT_ENABLED
+    validate();
+#endif
+}
+
+template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>
+void IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::validate()
+{
+    RELEASE_ASSERT(m_values.size() < m_map.size());
+    for (const EntryType& entry : *this)
+        RELEASE_ASSERT(contains(EntryTypeTraits::key(entry)));
 }
 
 template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>
