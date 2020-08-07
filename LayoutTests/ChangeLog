@@ -1,3 +1,34 @@
+2020-08-07  John Wilander  <wilander@apple.com>
+
+        Experimental: Cap the expiry of persistent cookies set in 3rd-party CNAME cloaked HTTP responses
+        https://bugs.webkit.org/show_bug.cgi?id=215201
+        <rdar://problem/57454633>
+
+        Reviewed by Brent Fulgham. Also reviewed and commented on by Chris Dumez, Jiten Mehta, Sam Weinig, and Alex Christensen.
+
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-1p-cname-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-1p-cname.html: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.html: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-matching-cname-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-matching-cname.html: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-no-cname-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-no-cname.html: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname.html: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html: Added.
+        * platform/ios-13/TestExpectations:
+            New tests marked as [ Skip ].
+        * platform/ios-wk2/TestExpectations:
+            New tests marked as [ Pass ] in general.
+        * platform/mac-wk2/TestExpectations:
+            New tests marked as [ Pass ] for BigSur+.
+        * platform/wk2/TestExpectations:
+            New tests marked as [ Skip ] in general.
+
 2020-08-07  Chris Dumez  <cdumez@apple.com>
 
         length attribute is missing on OfflineAudioContext

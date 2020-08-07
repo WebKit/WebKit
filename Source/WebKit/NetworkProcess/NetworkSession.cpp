@@ -90,6 +90,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_sameSiteStrictEnforcementEnabled(parameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled)
     , m_firstPartyWebsiteDataRemovalMode(parameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode)
     , m_standaloneApplicationDomain(parameters.resourceLoadStatisticsParameters.standaloneApplicationDomain)
+    , m_cnameCloakingMitigationEnabled(parameters.resourceLoadStatisticsParameters.cnameCloakingMitigationEnabled)
 #endif
     , m_adClickAttribution(makeUniqueRef<AdClickAttributionManager>(networkProcess, parameters.sessionID))
     , m_testSpeedMultiplier(parameters.testSpeedMultiplier)
@@ -279,6 +280,44 @@ void NetworkSession::setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteSt
     m_sameSiteStrictEnforcementEnabled = enabled;
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->setSameSiteStrictEnforcementEnabled(enabled);
+}
+
+void NetworkSession::setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain)
+{
+#if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
+    if (!cnameCloakingMitigationEnabled())
+        return;
+
+    ASSERT(!firstPartyHost.isEmpty() && !cnameDomain.isEmpty() && firstPartyHost != cnameDomain.string());
+    if (firstPartyHost.isEmpty() || cnameDomain.isEmpty() || firstPartyHost == cnameDomain.string())
+        return;
+    m_firstPartyHostCNAMEDomains.add(WTFMove(firstPartyHost), WTFMove(cnameDomain));
+#else
+    UNUSED_PARAM(firstPartyHost);
+    UNUSED_PARAM(cnameDomain);
+#endif
+}
+
+Optional<WebCore::RegistrableDomain> NetworkSession::firstPartyHostCNAMEDomain(const String& firstPartyHost)
+{
+#if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
+    if (!cnameCloakingMitigationEnabled())
+        return WTF::nullopt;
+
+    auto iterator = m_firstPartyHostCNAMEDomains.find(firstPartyHost);
+    if (iterator == m_firstPartyHostCNAMEDomains.end())
+        return WTF::nullopt;
+    return iterator->value;
+#else
+    UNUSED_PARAM(firstPartyHost);
+    return WTF::nullopt;
+#endif
+}
+
+void NetworkSession::resetCNAMEDomainData()
+{
+    m_firstPartyHostCNAMEDomains.clear();
+    m_thirdPartyCNAMEDomainForTesting = WTF::nullopt;
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

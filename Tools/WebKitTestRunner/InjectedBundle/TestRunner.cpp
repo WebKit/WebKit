@@ -758,6 +758,8 @@ enum {
     StatisticsDidSetShouldBlockThirdPartyCookiesCallbackID,
     StatisticsDidSetFirstPartyWebsiteDataRemovalModeCallbackID,
     StatisticsDidSetToSameSiteStrictCookiesCallbackID,
+    StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID,
+    StatisticsDidSetThirdPartyCNAMEDomainCallbackID,
     AllStorageAccessEntriesCallbackID,
     LoadedThirdPartyDomainsCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
@@ -2362,6 +2364,52 @@ void TestRunner::statisticsSetToSameSiteStrictCookies(JSStringRef hostName, JSVa
 void TestRunner::statisticsCallDidSetToSameSiteStrictCookiesCallback()
 {
     callTestRunnerCallback(StatisticsDidSetToSameSiteStrictCookiesCallbackID);
+}
+
+
+void TestRunner::statisticsSetFirstPartyHostCNAMEDomain(JSStringRef firstPartyURLString, JSStringRef cnameURLString, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID, completionHandler);
+
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+    
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("FirstPartyURL")));
+    values.append(adoptWK(WKStringCreateWithJSString(firstPartyURLString)));
+    
+    keys.append(adoptWK(WKStringCreateWithUTF8CString("CNAME")));
+    values.append(adoptWK(WKStringCreateWithJSString(cnameURLString)));
+    
+    Vector<WKStringRef> rawKeys(keys.size());
+    Vector<WKTypeRef> rawValues(values.size());
+    
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("StatisticsSetFirstPartyHostCNAMEDomain"));
+    auto messageBody = adoptWK(WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
+}
+
+void TestRunner::statisticsCallDidSetFirstPartyHostCNAMEDomainCallback()
+{
+    callTestRunnerCallback(StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID);
+}
+
+void TestRunner::statisticsSetThirdPartyCNAMEDomain(JSStringRef cnameURLString, JSValueRef completionHandler)
+{
+    cacheTestRunnerCallback(StatisticsDidSetThirdPartyCNAMEDomainCallbackID, completionHandler);
+
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("StatisticsSetThirdPartyCNAMEDomain"));
+    auto messageBody = adoptWK(WKStringCreateWithJSString(cnameURLString));
+    WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get());
+}
+
+void TestRunner::statisticsCallDidSetThirdPartyCNAMEDomainCallback()
+{
+    callTestRunnerCallback(StatisticsDidSetThirdPartyCNAMEDomainCallbackID);
 }
 
 void TestRunner::statisticsResetToConsistentState(JSValueRef completionHandler)

@@ -1,3 +1,120 @@
+2020-08-07  John Wilander  <wilander@apple.com>
+
+        Experimental: Cap the expiry of persistent cookies set in 3rd-party CNAME cloaked HTTP responses
+        https://bugs.webkit.org/show_bug.cgi?id=215201
+        <rdar://problem/57454633>
+
+        Reviewed by Brent Fulgham. Also reviewed and commented on by Chris Dumez, Jiten Mehta, Sam Weinig, and Alex Christensen.
+
+        This experimental feature is off by default.
+
+        CNAME cloaking means a host resolves to a a different domain, potentially a
+        third-party domain, as part of DNS resolution.
+
+        This patch makes WebKit::NetworkDataTaskCocoa capture any CNAME cloaking for
+        the first party host and stores it in a table in the WebKit::NetworkSession.
+        It then checks first party subresource loads to see if they resolve to a
+        different domain and if so, compare that domain to both the first party
+        domain and its CNAME cloaking domain, if there is one. If there's a
+        mismatch, it's deemed a case of third-party CNAME cloaking and any cookies
+        set in the response of the cloaked subresource load will have their expiry
+        capped to 7 days.
+
+        The cases for capping expiry look like this (and are backed by test cases):
+
+        First-party host  | First-party subdomain      | Capped expiry
+        ------------------|----------------------------|--------------
+        No CNAME cloaking | No CNAME cloaking          | No
+        No CNAME cloaking | First-party CNAME cloaking | No
+        No CNAME cloaking | Third-party CNAME cloaking | Yes
+        CNAME cloaking    | No CNAME cloaking          | No
+        CNAME cloaking    | Matching CNAME cloaking    | No
+        CNAME cloaking    | First-party CNAME cloaking | No
+        CNAME cloaking    | Third-party CNAME cloaking | Yes
+
+        This patch makes use of two new CFNetwork SPIs on NSURLSessionTask:
+        - _cookieTransformCallback
+        - _resolvedCNAMEChain
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::resetParametersToDefaultValues):
+            This reset now covers the new CNAME cloaking member variables.
+        (WebKit::NetworkProcess::setIsRunningResourceLoadStatisticsTest):
+            This function now also enables the CNAME cloaking code.
+        (WebKit::NetworkProcess::setFirstPartyHostCNAMEDomainForTesting):
+        (WebKit::NetworkProcess::setThirdPartyCNAMEDomainForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+            New IPC to forward test configuration.
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+            Now picks up the flag for this feature.
+        (WebKit::NetworkSession::setFirstPartyHostCNAMEDomain):
+            This is called from NetworkDataTaskCocoa::updateFirstPartyInfoForTaskAndSession()
+            when there is CNAME cloaking for the first party host. This is done to make it
+            possible to not cap the expiry of cookies if subsequent subresource loads have
+            CNAME cloaking that matches the first-party host's CNAME cloaking. This happens
+            when whole websites are hosted on edge networks.
+            This function is also used by the test infrastructure to mock the DNS resolution
+            for a first-party host.
+        (WebKit::NetworkSession::firstPartyHostCNAMEDomain):
+            This returns any captured CNAME cloaking for a host, if there is one.
+        (WebKit::NetworkSession::resetCNAMEDomainData):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::setCNAMECloakingMitigationEnabled):
+        (WebKit::NetworkSession::cnameCloakingMitigationEnabled const):
+        (WebKit::NetworkSession::setThirdPartyCNAMEDomainForTesting):
+            This test functions allows us to mock the DNS resolution for a subresource.
+        (WebKit::NetworkSession::thirdPartyCNAMEDomainForTesting const):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::hasCNAMEAndCookieTransformSPI):
+        (WebKit::lastCNAMEDomain):
+        (WebKit::NetworkDataTaskCocoa::updateFirstPartyInfoForSession):
+            This is called by NetworkDataTaskCocoa::didReceiveResponse() to capture any
+            CNAME cloaking for the first-party host.
+        (WebKit::NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking):
+            This is called in the NetworkDataTaskCocoa constructor and in
+            NetworkDataTaskCocoa::willPerformHTTPRedirection() and sets the new
+            _cookieTransformCallback SPI property on the task which will check the
+            response for any third-party CNAME cloaking and cap the expiry of incoming
+            cookies accordingly.
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+            This now calls
+            NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking().
+        (WebKit::NetworkDataTaskCocoa::didReceiveResponse):
+            This now calls
+            NetworkDataTaskCocoa::updateFirstPartyInfoForTaskAndSession().
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+            This now calls
+            NetworkDataTaskCocoa::applyCookiePolicyForThirdPartyCNAMECloaking().
+        * Shared/ResourceLoadStatisticsParameters.h:
+            Now holds a WebCore::CNAMECloakingMitigationEnabled flag.
+        (WebKit::ResourceLoadStatisticsParameters::encode const):
+        (WebKit::ResourceLoadStatisticsParameters::decode):
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting):
+            Used to mock CNAME resolution data.
+        (WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting):
+            Used to mock CNAME resolution data.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setFirstPartyHostCNAMEDomainForTesting):
+        (WebKit::NetworkProcessProxy::setThirdPartyCNAMEDomainForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+            Now handles the WebCore::CNAMECloakingMitigationEnabled flag.
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+            Now handles the WebCore::CNAMECloakingMitigationEnabled flag.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting):
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2020-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove UIScriptController.removeAllDynamicDictionaries()

@@ -266,6 +266,8 @@ public:
     void setStatisticsShouldBlockThirdPartyCookies(bool value, bool onlyOnSitesWithoutUserInteraction);
     void setStatisticsFirstPartyWebsiteDataRemovalMode(bool value);
     void setStatisticsToSameSiteStrictCookies(WKStringRef hostName);
+    void setStatisticsFirstPartyHostCNAMEDomain(WKStringRef firstPartyURLString, WKStringRef cnameURLString);
+    void setStatisticsThirdPartyCNAMEDomain(WKStringRef cnameURLString);
     void setAppBoundDomains(WKArrayRef originURLs);
     void statisticsResetToConsistentState();
 

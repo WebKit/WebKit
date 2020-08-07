@@ -359,6 +359,16 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetFirstPartyHostCNAMEDomain")) {
+        m_testRunner->statisticsCallDidSetFirstPartyHostCNAMEDomainCallback();
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidSetThirdPartyCNAMEDomain")) {
+        m_testRunner->statisticsCallDidSetThirdPartyCNAMEDomainCallback();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidResetStatisticsToConsistentState")) {
         m_testRunner->statisticsCallDidResetToConsistentStateCallback();
         return;

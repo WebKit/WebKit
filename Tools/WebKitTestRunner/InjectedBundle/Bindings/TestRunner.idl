@@ -347,6 +347,8 @@ interface TestRunner {
     void setStatisticsShouldBlockThirdPartyCookies(boolean value, object callback, optional boolean onlyOnSitesWithoutUserInteraction);
     void setStatisticsFirstPartyWebsiteDataRemovalMode(boolean value, object callback);
     void statisticsSetToSameSiteStrictCookies(DOMString hostName, object callback);
+    void statisticsSetFirstPartyHostCNAMEDomain(DOMString firstPartyURLString, DOMString cnameURLString, object callback);
+    void statisticsSetThirdPartyCNAMEDomain(DOMString cnameURLString, object callback);
     void loadedThirdPartyDomains(object callback);
 
     // Injected bundle form client.

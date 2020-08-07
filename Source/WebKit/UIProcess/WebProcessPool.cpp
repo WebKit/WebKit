@@ -601,6 +601,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode = WebCore::ThirdPartyCookieBlockingMode::All;
     WebCore::SameSiteStrictEnforcementEnabled sameSiteStrictEnforcementEnabled = WebCore::SameSiteStrictEnforcementEnabled::No;
+    WebCore::CNAMECloakingMitigationEnabled cnameCloakingMitigationEnabled = WebCore::CNAMECloakingMitigationEnabled::No;
 #endif
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     WebCore::RegistrableDomain standaloneApplicationDomain;
@@ -634,6 +635,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
             thirdPartyCookieBlockingMode = networkSessionParameters.resourceLoadStatisticsParameters.thirdPartyCookieBlockingMode;
             sameSiteStrictEnforcementEnabled = networkSessionParameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled;
+            cnameCloakingMitigationEnabled = networkSessionParameters.resourceLoadStatisticsParameters.cnameCloakingMitigationEnabled;
 #endif
             firstPartyWebsiteDataRemovalMode = networkSessionParameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode;
             standaloneApplicationDomain = networkSessionParameters.resourceLoadStatisticsParameters.standaloneApplicationDomain;
@@ -661,6 +663,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
             thirdPartyCookieBlockingMode = networkSessionParameters.resourceLoadStatisticsParameters.thirdPartyCookieBlockingMode;
             sameSiteStrictEnforcementEnabled = networkSessionParameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled;
+            cnameCloakingMitigationEnabled = networkSessionParameters.resourceLoadStatisticsParameters.cnameCloakingMitigationEnabled;
 #endif
             firstPartyWebsiteDataRemovalMode = networkSessionParameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode;
             standaloneApplicationDomain = networkSessionParameters.resourceLoadStatisticsParameters.standaloneApplicationDomain;
@@ -704,6 +707,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         thirdPartyCookieBlockingMode,
         sameSiteStrictEnforcementEnabled,
+        cnameCloakingMitigationEnabled,
 #endif
         firstPartyWebsiteDataRemovalMode,
         standaloneApplicationDomain,

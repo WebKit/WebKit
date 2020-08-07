@@ -3862,6 +3862,22 @@ void TestController::setStatisticsToSameSiteStrictCookies(WKStringRef hostName)
     m_currentInvocation->didSetToSameSiteStrictCookies();
 }
 
+void TestController::setStatisticsFirstPartyHostCNAMEDomain(WKStringRef firstPartyURLString, WKStringRef cnameURLString)
+{
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting(websiteDataStore(), firstPartyURLString, cnameURLString, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetFirstPartyHostCNAMEDomain();
+}
+
+void TestController::setStatisticsThirdPartyCNAMEDomain(WKStringRef cnameURLString)
+{
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(websiteDataStore(), cnameURLString, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+    m_currentInvocation->didSetThirdPartyCNAMEDomain();
+}
+
 struct AppBoundDomainsCallbackContext {
     explicit AppBoundDomainsCallbackContext(TestController& controller)
         : testController(controller)

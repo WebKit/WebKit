@@ -1,3 +1,12 @@
 # Certain versions of iOS use different text security characters.
 webkit.org/b/209692 platform/ios/fast/text/text-security-disc-bullet-pua-ios-new.html [ ImageOnlyFailure ]
 webkit.org/b/209692 fast/text/text-security-disc-bullet-pua.html [ ImageOnlyFailure ]
+
+# The CNAME and cookie transform SPIs are only available in iOS 14 and above.
+http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-1p-cname.html [ Skip ]
+http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.html [ Skip ]
+http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-matching-cname.html [ Skip ]
+http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-no-cname.html [ Skip ]
+http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname.html [ Skip ]
+http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html [ Skip ]
+http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html [ Skip ]

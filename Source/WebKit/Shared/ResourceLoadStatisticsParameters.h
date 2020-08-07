@@ -45,6 +45,7 @@ struct ResourceLoadStatisticsParameters {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     WebCore::SameSiteStrictEnforcementEnabled sameSiteStrictEnforcementEnabled { WebCore::SameSiteStrictEnforcementEnabled::No };
+    WebCore::CNAMECloakingMitigationEnabled cnameCloakingMitigationEnabled { WebCore::CNAMECloakingMitigationEnabled::No };
 #endif
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
     WebCore::RegistrableDomain standaloneApplicationDomain;
@@ -63,6 +64,7 @@ struct ResourceLoadStatisticsParameters {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         encoder << thirdPartyCookieBlockingMode;
         encoder << sameSiteStrictEnforcementEnabled;
+        encoder << cnameCloakingMitigationEnabled;
 #endif
         encoder << firstPartyWebsiteDataRemovalMode;
         encoder << standaloneApplicationDomain;
@@ -117,6 +119,11 @@ struct ResourceLoadStatisticsParameters {
         decoder >> sameSiteStrictEnforcementEnabled;
         if (!sameSiteStrictEnforcementEnabled)
             return WTF::nullopt;
+
+        Optional<WebCore::CNAMECloakingMitigationEnabled> cnameCloakingMitigationEnabled;
+        decoder >> cnameCloakingMitigationEnabled;
+        if (!cnameCloakingMitigationEnabled)
+            return WTF::nullopt;
 #endif
 
         Optional<WebCore::FirstPartyWebsiteDataRemovalMode> firstPartyWebsiteDataRemovalMode;
@@ -150,6 +157,7 @@ struct ResourceLoadStatisticsParameters {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
             WTFMove(*thirdPartyCookieBlockingMode),
             WTFMove(*sameSiteStrictEnforcementEnabled),
+            WTFMove(*cnameCloakingMitigationEnabled),
 #endif
             WTFMove(*firstPartyWebsiteDataRemovalMode),
             WTFMove(*standaloneApplicationDomain),

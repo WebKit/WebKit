@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/cookies/resources/cookie-utilities.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="runTest()">
+<script>
+    description("Test for CNAME Cloaking: No cookie expiry capping if the top frame has no alternate CNAME and the sub resource has no alternate CNAME.");
+    jsTestIsAsync = true;
+
+    function finishTest() {
+        resetCookiesForCurrentOrigin();
+        setEnableFeature(false, function() {
+            finishJSTest();
+        });
+    }
+
+    function checkCookieExpiry(cookieData, seconds, shouldBeLessThan) {
+        let now = new Date();
+        let expiryDateInMilliseconds = now.getTime() + (seconds * 1000);
+
+        if ((cookieData["expires"] < expiryDateInMilliseconds) === shouldBeLessThan)
+            testPassed("Cookie named " + cookieData["name"] + " expires in " + (shouldBeLessThan ? "less" : "more") + " than " + seconds + " seconds.");
+        else
+            testFailed("Cookie named " + cookieData["name"] + " expires in " + (shouldBeLessThan ? "more" : "less") + " than " + seconds + " seconds.");
+    }
+
+    const oneWeekInSeconds = 7 * 24 * 60 * 60;
+    const overOneWeekInSeconds = oneWeekInSeconds + 600;
+    const cookieName = "cnameTestCookie";
+    const subPathToSetFirstPartyCookie = "resources/set-cookie.php?name=" + cookieName + "&value=value&dummy=" + Math.random();
+
+    function setAndCheckCookie() {
+        fetch(subPathToSetFirstPartyCookie).then(function() {
+            if (internals) {
+                let cookies = internals.getCookies();
+                if (!cookies.length)
+                    testFailed("No cookies found.");
+                for (let cookie of cookies) {
+                    if (cookie.name === cookieName) {
+                        checkCookieExpiry(cookie, overOneWeekInSeconds, false);
+                    } else {
+                        testFailed("Unknown cookie " + cookie.name + " found.");
+                    }
+                }
+                finishTest();
+            }
+        });
+    }
+
+    function runTest() {
+        setEnableFeature(true, function() {
+            setAndCheckCookie();
+        });
+    }
+</script>
+</body>

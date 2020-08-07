@@ -1,0 +1,10 @@
+Test for CNAME Cloaking: Cookie expiry capping if the top frame has no alternate CNAME and the sub resource has an alternate CNAME.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Cookie named cnameTestCookie expires in less than 605400 seconds.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

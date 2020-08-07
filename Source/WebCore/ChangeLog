@@ -1,3 +1,32 @@
+2020-08-07  John Wilander  <wilander@apple.com>
+
+        Experimental: Cap the expiry of persistent cookies set in 3rd-party CNAME cloaked HTTP responses
+        https://bugs.webkit.org/show_bug.cgi?id=215201
+        <rdar://problem/57454633>
+
+        Reviewed by Brent Fulgham. Also reviewed and commented on by Chris Dumez, Jiten Mehta, Sam Weinig, and Alex Christensen.
+
+        Tests: http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-1p-cname.html
+               http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-3p-cname.html
+               http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-matching-cname.html
+               http/tests/resourceLoadStatistics/cname-cloaking-top-cname-sub-no-cname.html
+               http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-1p-cname.html
+               http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html
+               http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html
+
+        * page/Settings.yaml:
+            Added the off-by-default flag isCNAMECloakingMitigationEnabled.
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::resourceLoadStatisticsEnabled const):
+            New getter for the ITP setting.
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::capExpiryOfPersistentCookie):
+            Broke this function out so that it can be reused.
+        (WebCore::parseDOMCookie):
+            Here's from where the function above was broken out.
+            The existing functionality has a test case.
+
 2020-08-07  Chris Dumez  <cdumez@apple.com>
 
         length attribute is missing on OfflineAudioContext

@@ -628,6 +628,28 @@ void WKWebsiteDataStoreSetResourceLoadStatisticsToSameSiteStrictCookiesForTestin
 #endif
 }
 
+void WKWebsiteDataStoreSetResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting(WKWebsiteDataStoreRef dataStoreRef, WKStringRef firstPartyURLString, WKStringRef cnameURLString, void* context, WKWebsiteDataStoreSetResourceLoadStatisticsFirstPartyHostCNAMEDomainForTestingFunction completionHandler)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsFirstPartyHostCNAMEDomainForTesting(URL(URL(), WebKit::toImpl(firstPartyURLString)->string()), URL(URL(), WebKit::toImpl(cnameURLString)->string()), [context, completionHandler] {
+        completionHandler(context);
+    });
+#else
+    completionHandler(context);
+#endif
+}
+
+void WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(WKWebsiteDataStoreRef dataStoreRef, WKStringRef cnameURLString, void* context, WKWebsiteDataStoreSetResourceLoadStatisticsThirdPartyCNAMEDomainForTestingFunction completionHandler)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsThirdPartyCNAMEDomainForTesting(URL(URL(), WebKit::toImpl(cnameURLString)->string()), [context, completionHandler] {
+        completionHandler(context);
+    });
+#else
+    completionHandler(context);
+#endif
+}
+
 void WKWebsiteDataStoreSetAppBoundDomainsForTesting(WKArrayRef originURLsRef, void* context, WKWebsiteDataStoreSetAppBoundDomainsForTestingFunction completionHandler)
 {
 #if PLATFORM(COCOA)

@@ -34,6 +34,10 @@
 OBJC_CLASS NSHTTPCookieStorage;
 OBJC_CLASS NSURLSessionDataTask;
 
+namespace WebCore {
+class RegistrableDomain;
+}
+
 namespace WebKit {
 
 class Download;
@@ -87,6 +91,10 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     static NSHTTPCookieStorage *statelessCookieStorage();
+#if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
+    void updateFirstPartyInfoForSession(const URL&);
+    void applyCookiePolicyForThirdPartyCNAMECloaking(const WebCore::ResourceRequest&);
+#endif
     void blockCookies();
     void unblockCookies();
     bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;
@@ -102,6 +110,9 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
+#if HAVE(CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI)
+    Seconds m_ageCapForCNAMECloakedCookies { 24_h * 7 };
+#endif
 #endif
 
     bool m_isForMainResourceNavigationForAnyFrame { false };

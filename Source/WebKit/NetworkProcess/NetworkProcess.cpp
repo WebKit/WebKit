@@ -814,6 +814,8 @@ void NetworkProcess::getResourceLoadStatisticsDataSummary(PAL::SessionID session
 void NetworkProcess::resetParametersToDefaultValues(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
+        networkSession->resetCNAMEDomainData();
+        networkSession->setCNAMECloakingMitigationEnabled(WebCore::CNAMECloakingMitigationEnabled::No);
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->resetParametersToDefaultValues(WTFMove(completionHandler));
         else
@@ -866,6 +868,7 @@ void NetworkProcess::setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID ses
 void NetworkProcess::setIsRunningResourceLoadStatisticsTest(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession(sessionID)) {
+        networkSession->setCNAMECloakingMitigationEnabled(WebCore::CNAMECloakingMitigationEnabled::Yes);
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
             resourceLoadStatistics->setIsRunningTest(value, WTFMove(completionHandler));
         else
@@ -1378,6 +1381,20 @@ void NetworkProcess::setToSameSiteStrictCookiesForTesting(PAL::SessionID session
         ASSERT_NOT_REACHED();
         completionHandler();
     }
+}
+
+void NetworkProcess::setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID sessionID, String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID))
+        networkSession->setFirstPartyHostCNAMEDomain(WTFMove(firstPartyHost), WTFMove(cnameDomain));
+    completionHandler();
+}
+
+void NetworkProcess::setThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkSession = this->networkSession(sessionID))
+        networkSession->setThirdPartyCNAMEDomainForTesting(WTFMove(domain));
+    completionHandler();
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

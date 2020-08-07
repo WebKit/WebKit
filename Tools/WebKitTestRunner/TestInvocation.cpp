@@ -957,6 +957,27 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetFirstPartyHostCNAMEDomain")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> firstPartyURLStringKey = adoptWK(WKStringCreateWithUTF8CString("FirstPartyURL"));
+        WKRetainPtr<WKStringRef> cnameURLStringKey = adoptWK(WKStringCreateWithUTF8CString("CNAME"));
+        
+        WKStringRef firstPartyURLString = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, firstPartyURLStringKey.get()));
+        WKStringRef cnameURLString = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, cnameURLStringKey.get()));
+        
+        TestController::singleton().setStatisticsFirstPartyHostCNAMEDomain(firstPartyURLString, cnameURLString);
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetThirdPartyCNAMEDomain")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        WKStringRef cnameURLString = static_cast<WKStringRef>(messageBody);
+        TestController::singleton().setStatisticsThirdPartyCNAMEDomain(cnameURLString);
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "StatisticsResetToConsistentState")) {
         if (m_shouldDumpResourceLoadStatistics)
             m_savedResourceLoadStatistics = TestController::singleton().dumpResourceLoadStatistics();
@@ -1943,6 +1964,18 @@ void TestInvocation::didSetFirstPartyWebsiteDataRemovalMode()
 void TestInvocation::didSetToSameSiteStrictCookies()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetToSameSiteStrictCookies"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
+}
+
+void TestInvocation::didSetFirstPartyHostCNAMEDomain()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetFirstPartyHostCNAMEDomain"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
+}
+
+void TestInvocation::didSetThirdPartyCNAMEDomain()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetThirdPartyCNAMEDomain"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), nullptr);
 }
 

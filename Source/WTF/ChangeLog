@@ -1,3 +1,15 @@
+2020-08-07  John Wilander  <wilander@apple.com>
+
+        Experimental: Cap the expiry of persistent cookies set in 3rd-party CNAME cloaked HTTP responses
+        https://bugs.webkit.org/show_bug.cgi?id=215201
+        <rdar://problem/57454633>
+
+        Reviewed by Brent Fulgham. Also reviewed and commented on by Chris Dumez, Jiten Mehta, Sam Weinig, and Alex Christensen.
+
+        This change defines HAVE_CFNETWORK_CNAME_AND_COOKIE_TRANSFORM_SPI.
+
+        * wtf/PlatformHave.h:
+
 2020-08-07  Saam Barati  <sbarati@apple.com>
 
         Use thread_switch instead of switch_pri to drop priority to zero for 1ms instead of 10
