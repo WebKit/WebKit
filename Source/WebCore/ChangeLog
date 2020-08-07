@@ -1,3 +1,28 @@
+2020-08-06  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation: leading and trailing spaces should be ignored when comparing content
+        https://bugs.webkit.org/show_bug.cgi?id=214878
+        <rdar://problem/63735024>
+
+        Reviewed by Ryosuke Niwa.
+
+        TextIterator does not emit collapsed space if there is no text emitted before or the last emitted character is 
+        collapsed space. When TextManipulationController starts observing paragraphs, it iterates the whole document and
+        the range of TextIterator is the range of document. For some text node A in the document, if TextIterator emits 
+        text for some other text node B before it, the collapsed space at the beginning of A will be emitted, and 
+        TextManipulationController would think the emitted space is part of A's content. When TextManipulationController
+        replaces content for A, and the range of TextIterator is set to the range of A, the collapsed space is not 
+        emitted. The check to ensure A's content is unchanged would fail.
+ 
+        To solve this issue, for first and last token in the paragraph, TextManipulationController checks content after 
+        removing leading and trailing spaces.
+ 
+        API test: TextManipulation.CompleteTextManipulationParagraphsContainCollapsedSpaces
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::areEqualIgnoringLeadingAndTrailingWhitespaces):
+        (WebCore::TextManipulationController::replace):
+
 2020-08-06  Kenneth Russell  <kbr@chromium.org>
 
         Implement createImageBitmap(ImageData)

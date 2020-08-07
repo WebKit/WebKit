@@ -281,6 +281,11 @@ static bool canPerformTextManipulationByReplacingEntireTextContent(const Element
     return element.hasTagName(HTMLNames::titleTag) || element.hasTagName(HTMLNames::optionTag);
 }
 
+static bool areEqualIgnoringLeadingAndTrailingWhitespaces(const String& content, const String& originalContent)
+{
+    return content.stripWhiteSpace() == originalContent.stripWhiteSpace();
+}
+
 static Optional<TextManipulationController::ManipulationTokenInfo> tokenInfo(Node* node)
 {
     if (!node)
@@ -793,7 +798,13 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
                 return ManipulationFailureType::ContentChanged;
 
             auto& currentToken = item.tokens[currentTokenIndex++];
-            if (!content.isReplacedContent && currentToken.content != token.content)
+            bool isContentUnchanged = currentToken.content == token.content;
+            if (!UNLIKELY(isContentUnchanged)) {
+                bool isFirstOrLastToken = currentTokenIndex == 1 || currentTokenIndex == item.tokens.size();
+                isContentUnchanged = isFirstOrLastToken && areEqualIgnoringLeadingAndTrailingWhitespaces(currentToken.content, token.content);
+            }
+
+            if (!content.isReplacedContent && !isContentUnchanged)
                 return ManipulationFailureType::ContentChanged;
 
             tokenExchangeMap.set(currentToken.identifier, TokenExchangeData { content.node.copyRef(), currentToken.content, !isNodeIncluded });
