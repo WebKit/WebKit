@@ -1,3 +1,22 @@
+2020-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WeakPtr threading assertion on editing/undo-manager/undo-manager-delete-stale-undo-items.html
+        https://bugs.webkit.org/show_bug.cgi?id=215221
+        <rdar://problem/66632111>
+
+        Reviewed by Devin Rousso.
+
+        Refactors `UndoItem` to avoid dereferencing its `m_undoManager` underneath `UndoItem::document`, which is
+        consulted when computing its JS wrapper's opaque roots. Instead of going through `m_undoManager` to grab the
+        document, store a `WeakPtr` to the `Document` upon setting the `UndoManager` and return its pointer value
+        directly in `document()`.
+
+        * page/UndoItem.cpp:
+        (WebCore::UndoItem::setUndoManager):
+        (WebCore::UndoItem::invalidate):
+        (WebCore::UndoItem::document const):
+        * page/UndoItem.h:
+
 2020-08-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Use references instead of pointers for WidthIterator's fonts

@@ -74,6 +74,7 @@ private:
     Ref<VoidCallback> m_undoHandler;
     Ref<VoidCallback> m_redoHandler;
     WeakPtr<UndoManager> m_undoManager;
+    WeakPtr<Document> m_document;
 };
 
 } // namespace WebCore
