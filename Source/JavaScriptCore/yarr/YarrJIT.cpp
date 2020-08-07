@@ -2821,17 +2821,17 @@ class YarrGenerator final : public YarrJITInfo, private MacroAssembler {
                 if (onceThrough)
                     m_backtrackingState.linkTo(endOp.m_reentry, this);
                 else {
-                    // If we don't need to move the input poistion, and the pattern has a fixed size
-                    // (in which case we omit the store of the start index until the pattern has matched)
-                    // then we can just link the backtrack out of the last alternative straight to the
-                    // head of the first alternative.
-                    if (m_pattern.m_body->m_hasFixedSize
-                        && (alternative->m_minimumSize > beginOp->m_alternative->m_minimumSize)
-                        && (alternative->m_minimumSize - beginOp->m_alternative->m_minimumSize == 1))
-                        m_backtrackingState.linkTo(beginOp->m_reentry, this);
-                    else if (m_pattern.sticky() && m_ops[op.m_nextOp].m_op == OpBodyAlternativeEnd) {
+                    if (m_pattern.sticky() && m_ops[op.m_nextOp].m_op == OpBodyAlternativeEnd) {
                         // It is a sticky pattern and the last alternative failed, jump to the end.
                         m_backtrackingState.takeBacktracksToJumpList(lastStickyAlternativeFailures, this);
+                    } else if (m_pattern.m_body->m_hasFixedSize
+                        && (alternative->m_minimumSize > beginOp->m_alternative->m_minimumSize)
+                        && (alternative->m_minimumSize - beginOp->m_alternative->m_minimumSize == 1)) {
+                        // If we don't need to move the input position, and the pattern has a fixed size
+                        // (in which case we omit the store of the start index until the pattern has matched)
+                        // then we can just link the backtrack out of the last alternative straight to the
+                        // head of the first alternative.
+                        m_backtrackingState.linkTo(beginOp->m_reentry, this);
                     } else {
                         // We need to generate a trampoline of code to execute before looping back
                         // around to the first alternative.

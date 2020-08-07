@@ -1,3 +1,15 @@
+2020-08-07  Michael Saboff  <msaboff@apple.com>
+
+        RegExp sticky not matching alternates correctly, ignoring lastIndex requirement
+        https://bugs.webkit.org/show_bug.cgi?id=214181
+
+        Reviewed by Yusuke Suzuki.
+
+        In the YARR JIT, we need to check for sticky patterns before checking for fixed character
+        terms when backtracking.  The YARR interpreter doesn't have this issue.
+
+        * yarr/YarrJIT.cpp:
+
 2020-08-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove all references to non-existent 10.16

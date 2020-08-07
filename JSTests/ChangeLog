@@ -1,3 +1,15 @@
+2020-08-07  Michael Saboff  <msaboff@apple.com>
+
+        RegExp sticky not matching alternates correctly, ignoring lastIndex requirement
+        https://bugs.webkit.org/show_bug.cgi?id=214181
+
+        Reviewed by Yusuke Suzuki.
+
+        New test.
+
+        * stress/regexp-sticky-tests.js: Added.
+        (assert):
+
 2020-08-07  Paulo Matos  <pmatos@igalia.com>
 
         Skip test on ARM32 - test is flaky in mini-mode
