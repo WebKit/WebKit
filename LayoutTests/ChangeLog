@@ -1,3 +1,14 @@
+2020-08-07  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r260276): instructure.com custom PDF viewer stops scrolling / loading after switching to another tab then switching back
+        https://bugs.webkit.org/show_bug.cgi?id=215215
+        <rdar://problem/65743028>
+
+        Reviewed by Simon Fraser.
+
+        * scrollingcoordinator/overflow-proxy-reattach-expected.html: Added.
+        * scrollingcoordinator/overflow-proxy-reattach.html: Added.
+
 2020-08-07  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS wk2 ] svg/animations/smil-multiple-animate-list.svg is a flaky timeout

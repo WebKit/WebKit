@@ -5171,6 +5171,22 @@ void Internals::setPageIsFocusedAndActive(bool isFocusedAndActive)
     page.setActivityState(state);
 }
 
+void Internals::setPageIsInWindow(bool isInWindow)
+{
+    auto* document = contextDocument();
+    if (!document || !document->page())
+        return;
+    auto& page = *document->page();
+    auto state = page.activityState();
+
+    if (!isInWindow)
+        state.remove({ ActivityState::IsInWindow });
+    else
+        state.add({ ActivityState::IsInWindow });
+
+    page.setActivityState(state);
+}
+
 bool Internals::isPageActive() const
 {
     auto* document = contextDocument();

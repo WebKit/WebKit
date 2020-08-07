@@ -1,0 +1,17 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true internal:AsyncFrameScrollingEnabled=true ] -->
+<iframe id=frame onload='test()' srcdoc='
+<style>
+.scroll { overflow:scroll; height:100px; border: 2px solid blue; }
+.content { position:relative; height: 1000px; }
+.abs { position:absolute; width:100px; height:100px; background-color:green; will-change:transform}
+</style>
+<div class=scroll id=scroller>
+    <div class=content>
+        <div class=abs></div>
+    </div>
+</div>'></iframe>
+<script>
+async function test() {
+    frame.contentDocument.querySelector('.scroll').scrollTop = 50;
+}
+</script>

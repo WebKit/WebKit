@@ -1,3 +1,26 @@
+2020-08-07  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r260276): instructure.com custom PDF viewer stops scrolling / loading after switching to another tab then switching back
+        https://bugs.webkit.org/show_bug.cgi?id=215215
+        <rdar://problem/65743028>
+
+        Reviewed by Simon Fraser.
+
+        Test: scrollingcoordinator/overflow-proxy-reattach.html
+
+        * page/scrolling/ScrollingStateOverflowScrollProxyNode.cpp:
+        (WebCore::ScrollingStateOverflowScrollProxyNode::setPropertyChangedBitsAfterReattach):
+
+        We need to reset OverflowScrollingNode after reattach.
+
+        * page/scrolling/ScrollingStateOverflowScrollProxyNode.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPageIsInWindow):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+        Add direct testing support for background tab state.
+
 2020-08-07  Chris Dumez  <cdumez@apple.com>
 
         Stop storing the sampleRate on AudioNode and get it from the AudioContext instead

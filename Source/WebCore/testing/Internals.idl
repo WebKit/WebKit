@@ -796,6 +796,7 @@ enum ContentSizeCategory {
 
     void setPageVisibility(boolean isVisible);
     void setPageIsFocusedAndActive(boolean isFocused);
+    void setPageIsInWindow(boolean isInWindow);
     boolean isPageActive();
 
     [Conditional=WEB_RTC] void setH264HardwareEncoderAllowed(boolean allowed);
