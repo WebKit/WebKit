@@ -1,3 +1,20 @@
+2020-08-07  Rob Buis  <rbuis@igalia.com>
+
+        Fix warnings related to unsigned >=0 ASSERTs
+        https://bugs.webkit.org/show_bug.cgi?id=215223
+
+        Reviewed by Sergio Villar Senin.
+
+        Fix warnings related to unsigned >=0 ASSERTs by removing the expressions. Example warning:
+        TextCheckingHelper.cpp:425:39: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase const):
+        (WebCore::TextCheckingHelper::findUngrammaticalPhrases const):
+        (WebCore::TextCheckingHelper::guessesForMisspelledWordOrUngrammaticalPhrase const):
+
 2020-08-06  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation: leading and trailing spaces should be ignored when comparing content

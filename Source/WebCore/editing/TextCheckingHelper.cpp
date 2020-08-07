@@ -343,7 +343,6 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                 for (auto& result : results) {
                     if (result.type == TextCheckingType::Spelling && result.range.location >= currentStartOffset && result.range.location + result.range.length <= currentEndOffset) {
                         ASSERT(result.range.length > 0);
-                        ASSERT(result.range.location >= 0);
                         spellingLocation = result.range.location;
                         misspelledWord = paragraphString.substring(result.range.location, result.range.length);
                         ASSERT(misspelledWord.length());
@@ -351,7 +350,6 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                     }
                     if (checkGrammar && result.type == TextCheckingType::Grammar && result.range.location < currentEndOffset && result.range.location + result.range.length > currentStartOffset) {
                         ASSERT(result.range.length > 0);
-                        ASSERT(result.range.location >= 0);
                         // We can't stop after the first grammar result, since there might still be a spelling result after
                         // it begins but before the first detail in it, but we can stop if we find a second grammar result.
                         if (foundGrammar)
@@ -359,7 +357,6 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
                         for (unsigned j = 0; j < result.details.size(); j++) {
                             const GrammarDetail* detail = &result.details[j];
                             ASSERT(detail->range.length > 0);
-                            ASSERT(detail->range.location >= 0);
                             if (result.range.location + detail->range.location >= currentStartOffset && result.range.location + detail->range.location + detail->range.length <= currentEndOffset && (!foundGrammar || result.range.location + detail->range.location < grammarDetailLocation)) {
                                 grammarDetailIndex = j;
                                 grammarDetailLocation = result.range.location + detail->range.location;
@@ -422,7 +419,6 @@ int TextCheckingHelper::findUngrammaticalPhrases(Operation operation, const Vect
     for (unsigned i = 0; i < grammarDetails.size(); i++) {
         const GrammarDetail* detail = &grammarDetails[i];
         ASSERT(detail->range.length > 0);
-        ASSERT(detail->range.location >= 0);
         
         uint64_t detailStartOffsetInParagraph = badGrammarPhraseLocation + detail->range.location;
         
@@ -541,7 +537,6 @@ TextCheckingGuesses TextCheckingHelper::guessesForMisspelledWordOrUngrammaticalP
         if (result.type == TextCheckingType::Grammar && paragraph.isCheckingRangeCoveredBy(result.range)) {
             for (auto& detail : result.details) {
                 ASSERT(detail.range.length > 0);
-                ASSERT(detail.range.location >= 0);
                 if (paragraph.checkingRangeMatches({ result.range.location + detail.range.location, detail.range.length })) {
                     String badGrammarPhrase = paragraph.text().substring(result.range.location, result.range.length).toString();
                     ASSERT(badGrammarPhrase.length());
