@@ -1,5 +1,14 @@
 2020-08-07  Hector Lopez  <hector_i_lopez@apple.com>
 
+        [ iOS wk2 Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-external-classic.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215283
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-08-07  Hector Lopez  <hector_i_lopez@apple.com>
+
         [ iOS wk2 Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-parse-error-external-module.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=215278
 
