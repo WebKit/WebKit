@@ -1,3 +1,14 @@
+2020-08-07  Chris Dumez  <cdumez@apple.com>
+
+        length attribute is missing on OfflineAudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=215287
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+
 2020-08-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Reduce the amount of custom binding code for JSXPathNSResolver

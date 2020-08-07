@@ -39,6 +39,8 @@ public:
 
     void startOfflineRendering(Ref<DeferredPromise>&&);
 
+    unsigned length() const;
+
 private:
     OfflineAudioContext(Document&, AudioBuffer* renderTarget);
 

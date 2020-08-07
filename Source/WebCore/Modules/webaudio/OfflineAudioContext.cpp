@@ -94,6 +94,11 @@ void OfflineAudioContext::didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>
     promise->resolve<IDLInterface<AudioBuffer>>(result.releaseReturnValue());
 }
 
+unsigned OfflineAudioContext::length() const
+{
+    return renderTarget()->length();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

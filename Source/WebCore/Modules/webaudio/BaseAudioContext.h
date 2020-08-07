@@ -133,6 +133,8 @@ public:
     void suspendRendering(DOMPromiseDeferred<void>&&);
     void resumeRendering(DOMPromiseDeferred<void>&&);
 
+    AudioBuffer* renderTarget() const { return m_renderTarget.get(); }
+
     using State = AudioContextState;
     State state() const { return m_state; }
     bool isClosed() const { return m_state == State::Closed; }

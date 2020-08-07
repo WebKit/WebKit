@@ -115,7 +115,7 @@ PASS OfflineAudioContext interface: existence and properties of interface protot
 PASS OfflineAudioContext interface: operation startRendering() 
 PASS OfflineAudioContext interface: operation resume() 
 FAIL OfflineAudioContext interface: operation suspend(double) assert_equals: property has wrong .length expected 1 but got 0
-FAIL OfflineAudioContext interface: attribute length assert_true: The prototype object must have a property "length" expected true got false
+PASS OfflineAudioContext interface: attribute length 
 PASS OfflineAudioContext interface: attribute oncomplete 
 PASS OfflineAudioContext must be primary interface of new OfflineAudioContext(1, 1, sample_rate) 
 PASS Stringification of new OfflineAudioContext(1, 1, sample_rate) 
@@ -123,7 +123,7 @@ PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) m
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "resume()" with the proper type 
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "suspend(double)" with the proper type 
 PASS OfflineAudioContext interface: calling suspend(double) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError 
-FAIL OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "length" with the proper type assert_inherits: property "length" not found in prototype chain
+PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "length" with the proper type 
 PASS OfflineAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "oncomplete" with the proper type 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "destination" with the proper type 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "sampleRate" with the proper type 

@@ -1,3 +1,22 @@
+2020-08-07  Chris Dumez  <cdumez@apple.com>
+
+        length attribute is missing on OfflineAudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=215287
+
+        Reviewed by Geoffrey Garen.
+
+        length attribute is missing on OfflineAudioContext:
+        - https://www.w3.org/TR/webaudio/#dom-offlineaudiocontext-length
+
+        Test: webaudio/offlineaudiocontext-length.html
+
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::renderTarget const):
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::length const):
+        * Modules/webaudio/OfflineAudioContext.h:
+        * Modules/webaudio/OfflineAudioContext.idl:
+
 2020-08-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Reduce the amount of custom binding code for JSXPathNSResolver

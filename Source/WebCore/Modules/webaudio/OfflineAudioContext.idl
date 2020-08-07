@@ -35,8 +35,7 @@
     [ImplementedAs=resumeRendering] Promise<void> resume();
     [ImplementedAs=suspendRendering] Promise<void> suspend(); // FIXME: Missing suspendTime parameter.
 
-    // FIXME: Add support.
-    // readonly attribute unsigned long length;
+    readonly attribute unsigned long length;
 
     attribute EventHandler oncomplete;
 };
