@@ -1552,6 +1552,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/service/server/SWServerToContextConnection.h
     workers/service/server/SWServerWorker.h
 
+    xml/CustomXPathNSResolver.h
     xml/XPathExpression.h
     xml/XPathNSResolver.h
     xml/XPathNodeSet.h

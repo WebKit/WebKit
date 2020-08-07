@@ -1215,6 +1215,7 @@ $(PROJECT_DIR)/workers/service/ServiceWorkerWindowClient.idl
 $(PROJECT_DIR)/worklets/PaintWorkletGlobalScope.idl
 $(PROJECT_DIR)/worklets/Worklet.idl
 $(PROJECT_DIR)/worklets/WorkletGlobalScope.idl
+$(PROJECT_DIR)/xml/CustomXPathNSResolver.idl
 $(PROJECT_DIR)/xml/DOMParser.idl
 $(PROJECT_DIR)/xml/XMLHttpRequest.idl
 $(PROJECT_DIR)/xml/XMLHttpRequestEventTarget.idl

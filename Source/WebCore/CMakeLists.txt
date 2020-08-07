@@ -1070,6 +1070,7 @@ set(WebCore_NON_SVG_IDL_FILES
     worklets/Worklet.idl
     worklets/WorkletGlobalScope.idl
 
+    xml/CustomXPathNSResolver.idl
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
     xml/XMLHttpRequestEventTarget.idl

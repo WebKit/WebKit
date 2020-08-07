@@ -28,38 +28,27 @@
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
 
+#include "JSCustomXPathNSResolver.h"
+#include "JSXPathNSResolver.h"
+
 namespace WebCore {
 
-template<typename T> struct Converter<IDLXPathNSResolver<T>> : DefaultConverter<IDLXPathNSResolver<T>> {
-    using ReturnType = RefPtr<T>;
-    using WrapperType = typename JSDOMWrapperConverterTraits<T>::WrapperClass;
-
+template<> struct Converter<IDLInterface<XPathNSResolver>> : DefaultConverter<IDLInterface<XPathNSResolver>> {
     template<typename ExceptionThrower = DefaultExceptionThrower>
-    static ReturnType convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    static RefPtr<XPathNSResolver> convert(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
     {
         JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        ReturnType object = WrapperType::toWrapped(vm, lexicalGlobalObject, value);
-        if (UNLIKELY(!object))
+        if (!value.isObject()) {
             exceptionThrower(lexicalGlobalObject, scope);
-        return object;
-    }
-};
+            return nullptr;
+        }
 
-template<typename T> struct JSConverter<IDLXPathNSResolver<T>> {
-    static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = true;
+        auto object = asObject(value);
+        if (object->inherits<JSXPathNSResolver>(vm))
+            return &JSC::jsCast<JSXPathNSResolver*>(object)->wrapped();
 
-    template <typename U>
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const U& value)
-    {
-        return toJS(&lexicalGlobalObject, &globalObject, Detail::getPtrOrRef(value));
-    }
-
-    template<typename U>
-    static JSC::JSValue convertNewlyCreated(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, U&& value)
-    {
-        return toJSNewlyCreated(&lexicalGlobalObject, &globalObject, std::forward<U>(value));
+        return JSCustomXPathNSResolver::create(object, JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject));
     }
 };
 

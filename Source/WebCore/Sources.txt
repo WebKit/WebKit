@@ -472,7 +472,6 @@ bindings/js/JSCanvasRenderingContext2DCustom.cpp
 bindings/js/JSCustomElementInterface.cpp
 bindings/js/JSCustomElementRegistryCustom.cpp
 bindings/js/JSCustomEventCustom.cpp
-bindings/js/JSCustomXPathNSResolver.cpp
 bindings/js/JSDOMBindingSecurity.cpp
 bindings/js/JSDOMBuiltinConstructorBase.cpp
 bindings/js/JSDOMConstructorBase.cpp
@@ -574,7 +573,6 @@ bindings/js/JSWorkerNavigatorCustom.cpp
 bindings/js/JSWorkletGlobalScopeBase.cpp
 bindings/js/JSXMLDocumentCustom.cpp
 bindings/js/JSXMLHttpRequestCustom.cpp
-bindings/js/JSXPathNSResolverCustom.cpp
 bindings/js/JSXPathResultCustom.cpp
 bindings/js/ReadableStream.cpp
 bindings/js/ReadableStreamDefaultController.cpp
@@ -2554,6 +2552,7 @@ worklets/Worklet.cpp
 worklets/WorkletConsoleClient.cpp
 worklets/WorkletGlobalScope.cpp
 worklets/WorkletScriptController.cpp
+xml/CustomXPathNSResolver.cpp
 xml/DOMParser.cpp
 xml/NativeXPathNSResolver.cpp
 xml/XMLErrors.cpp
@@ -3123,6 +3122,7 @@ JSNavigatorStorageQuota.cpp
 JSNavigatorWebDriver.cpp
 JSNode.cpp
 JSNodeFilter.cpp
+JSCustomXPathNSResolver.cpp
 JSNodeIterator.cpp
 JSNodeList.cpp
 JSNonDocumentTypeChildNode.cpp

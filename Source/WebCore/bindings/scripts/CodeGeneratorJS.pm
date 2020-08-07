@@ -364,6 +364,12 @@ sub AddToIncludesForIDLType
         return;
     }
 
+    if ($type->name eq "XPathNSResolver") {
+        AddToIncludes("JSXPathNSResolver.h", $includesRef, $conditional);
+        AddToIncludes("JSDOMConvertXPathNSResolver.h", $includesRef, $conditional);
+        return;
+    }
+
     if ($codeGenerator->IsInterfaceType($type)) {
         AddToIncludes("JS" . $type->name . ".h", $includesRef, $conditional);
         AddToIncludes("JSDOMConvertInterface.h", $includesRef, $conditional);
@@ -434,12 +440,6 @@ sub AddToIncludesForIDLType
             AddToIncludesForIDLType($memberType, $includesRef, $conditional);
         }
 
-        return;
-    }
-
-    if ($type->name eq "XPathNSResolver") {
-        AddToIncludes("JSXPathNSResolver.h", $includesRef, $conditional);
-        AddToIncludes("JSDOMConvertXPathNSResolver.h", $includesRef, $conditional);
         return;
     }
 }
@@ -2659,17 +2659,9 @@ sub GenerateHeader
 
     # JSValue to implementation type
     if (ShouldGenerateToWrapped($hasParent, $interface)) {
-        # FIXME: Add extended attribute for this.
-        my @toWrappedArguments = ();
-        push(@toWrappedArguments, "JSC::VM&");
-        push(@toWrappedArguments, "JSC::JSGlobalObject&") if $interface->type->name eq "XPathNSResolver";
-        push(@toWrappedArguments, "JSC::JSValue");
-
-        my $toWrappedType = $interface->type->name eq "XPathNSResolver" ? "RefPtr<${implType}>" : "${implType}*";
-
         my $export = "";
         $export = "WEBCORE_EXPORT " if $interface->extendedAttributes->{ExportToWrappedFunction};
-        push(@headerContent, "    static ${export}${toWrappedType} toWrapped(" . join(", ", @toWrappedArguments) . ");\n");
+        push(@headerContent, "    static ${export}${implType}* toWrapped(JSC::VM&, JSC::JSValue);\n");
     }
 
     $headerTrailingIncludes{"${className}Custom.h"} = 1 if $interface->extendedAttributes->{JSCustomHeader};
@@ -3074,12 +3066,11 @@ sub GenerateHeader
     }
 
     if (NeedsImplementationClass($interface)) {
-        my $toWrappedType = $interface->type->name eq "XPathNSResolver" ? "RefPtr<${implType}>" : "${implType}*";
         $headerIncludes{"JSDOMWrapper.h"} = 1;
 
         push(@headerContent, "template<> struct JSDOMWrapperConverterTraits<${implType}> {\n");
         push(@headerContent, "    using WrapperClass = ${className};\n");
-        push(@headerContent, "    using ToWrappedReturnType = ${toWrappedType};\n");
+        push(@headerContent, "    using ToWrappedReturnType = ${implType}*;\n");
         push(@headerContent, "};\n");
     }
 
@@ -6233,7 +6224,7 @@ sub GenerateCallbackHeaderContent
             my $nativeReturnType = "CallbackResult<typename " . GetIDLType($interfaceOrCallback, $operation->type) . "::ImplementationType>";
             
             # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
-            my $functionName = $operation->name || "handleEvent";
+            my $functionName = $operation->extendedAttributes->{ImplementedAs} || $operation->name || "handleEvent";
 
             push(@$contentRef, "    ${nativeReturnType} ${functionName}(" . join(", ", @arguments) . ") override;\n");
         }
@@ -6344,6 +6335,7 @@ sub GenerateCallbackImplementationContent
             
             # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
             my $functionName = $operation->name || "handleEvent";
+            my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $functionName;
 
             my @arguments = ();
 
@@ -6369,7 +6361,7 @@ sub GenerateCallbackImplementationContent
                 push(@arguments, "typename ${IDLType}::ParameterType " . $argument->name);
             }
             
-            push(@$contentRef, "${nativeReturnType} ${className}::${functionName}(" . join(", ", @arguments) . ")\n");
+            push(@$contentRef, "${nativeReturnType} ${className}::${functionImplementationName}(" . join(", ", @arguments) . ")\n");
             push(@$contentRef, "{\n");
 
             # FIXME: This is needed for NodeFilter, which works even for disconnected iframes. We should investigate
@@ -6787,7 +6779,6 @@ sub GetBaseIDLType
         "JSON" => "IDLJSON",
         "ScheduledAction" => "IDLScheduledAction",
         "SerializedScriptValue" => "IDLSerializedScriptValue<SerializedScriptValue>",
-        "XPathNSResolver" => "IDLXPathNSResolver<XPathNSResolver>",
     );
 
     return $IDLTypes{$type->name} if exists $IDLTypes{$type->name};
@@ -6947,7 +6938,6 @@ sub NativeToJSValueDOMConvertNeedsState
     return 1 if $type->name eq "Date";
     return 1 if $type->name eq "JSON";
     return 1 if $type->name eq "SerializedScriptValue";
-    return 1 if $type->name eq "XPathNSResolver";
     
     return 0;
 }
@@ -6977,7 +6967,6 @@ sub NativeToJSValueDOMConvertNeedsGlobalObject
     return 1 if $codeGenerator->IsBufferSourceType($type);
     return 1 if $codeGenerator->IsPromiseType($type);
     return 1 if $type->name eq "SerializedScriptValue";
-    return 1 if $type->name eq "XPathNSResolver";
 
     return 0;
 }

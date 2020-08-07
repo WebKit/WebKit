@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Alexey Shvayka <shvaikalesh@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CustomXPathNSResolver.h"
 
-#include "JSDOMConvertAny.h"
-#include "JSDOMConvertBoolean.h"
-#include "JSDOMConvertBufferSource.h"
-#include "JSDOMConvertCallbacks.h"
-#include "JSDOMConvertDate.h"
-#include "JSDOMConvertDictionary.h"
-#include "JSDOMConvertEnumeration.h"
-#include "JSDOMConvertEventListener.h"
-#include "JSDOMConvertIndexedDB.h"
-#include "JSDOMConvertInterface.h"
-#include "JSDOMConvertJSON.h"
-#include "JSDOMConvertNull.h"
-#include "JSDOMConvertNullable.h"
-#include "JSDOMConvertNumbers.h"
-#include "JSDOMConvertObject.h"
-#include "JSDOMConvertRecord.h"
-#include "JSDOMConvertSequences.h"
-#include "JSDOMConvertSerializedScriptValue.h"
-#include "JSDOMConvertStrings.h"
-#include "JSDOMConvertUnion.h"
-#include "JSDOMConvertWebGL.h"
+namespace WebCore {
+
+String CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
+{
+    auto result = lookupNamespaceURIForBindings(prefix);
+    if (result.type() != CallbackResultType::Success)
+        return String();
+
+    return result.releaseReturnValue();
+}
+
+} // namespace WebCore

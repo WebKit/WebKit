@@ -1,3 +1,13 @@
+2020-08-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Reduce the amount of custom binding code for JSXPathNSResolver
+        https://bugs.webkit.org/show_bug.cgi?id=161030
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+        * web-platform-tests/domxpath/callback-interface-expected.txt:
+
 2020-08-06  Kenneth Russell  <kbr@chromium.org>
 
         Implement createImageBitmap(ImageData)

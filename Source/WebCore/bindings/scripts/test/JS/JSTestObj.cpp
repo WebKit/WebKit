@@ -6011,7 +6011,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithXPathNSRes
     if (UNLIKELY(callFrame->argumentCount() < 1))
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto resolver = convert<IDLXPathNSResolver<XPathNSResolver>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "resolver", "TestObject", "methodWithXPathNSResolverParameter", "XPathNSResolver"); });
+    auto resolver = convert<IDLInterface<XPathNSResolver>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "resolver", "TestObject", "methodWithXPathNSResolverParameter", "XPathNSResolver"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     throwScope.release();
     impl.methodWithXPathNSResolverParameter(*resolver);
@@ -7328,7 +7328,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalXP
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto resolver = convert<IDLNullable<IDLXPathNSResolver<XPathNSResolver>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "resolver", "TestObject", "methodWithOptionalXPathNSResolver", "XPathNSResolver"); });
+    auto resolver = convert<IDLNullable<IDLInterface<XPathNSResolver>>>(*lexicalGlobalObject, argument0.value(), [](JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope) { throwArgumentTypeError(lexicalGlobalObject, scope, 0, "resolver", "TestObject", "methodWithOptionalXPathNSResolver", "XPathNSResolver"); });
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     throwScope.release();
     impl.methodWithOptionalXPathNSResolver(WTFMove(resolver));

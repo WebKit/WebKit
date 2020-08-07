@@ -1843,9 +1843,7 @@ PASS XPathNSResolver interface: existence and properties of interface prototype 
 PASS XPathNSResolver interface: operation lookupNamespaceURI(DOMString?) 
 PASS Stringification of document.createNSResolver(document.body) 
 PASS XPathNSResolver interface: document.createNSResolver(document.body) must inherit property "lookupNamespaceURI(DOMString?)" with the proper type 
-FAIL XPathNSResolver interface: calling lookupNamespaceURI(DOMString?) on document.createNSResolver(document.body) with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
-            fn.apply(obj, args);
-        }" did not throw
+PASS XPathNSResolver interface: calling lookupNamespaceURI(DOMString?) on document.createNSResolver(document.body) with too few arguments must throw TypeError 
 PASS XPathEvaluator interface: existence and properties of interface object 
 PASS XPathEvaluator interface object length 
 PASS XPathEvaluator interface object name 

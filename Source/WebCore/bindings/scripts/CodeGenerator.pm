@@ -1046,7 +1046,6 @@ sub IsBuiltinType
     return 1 if $type->name eq "Promise";
     return 1 if $type->name eq "ScheduledAction";
     return 1 if $type->name eq "SerializedScriptValue";
-    return 1 if $type->name eq "XPathNSResolver";
     return 1 if $type->name eq "any";
     return 1 if $type->name eq "object";
 
@@ -1073,7 +1072,6 @@ sub IsWrapperType
     assert("Not a type") if ref($type) ne "IDLType";
 
     return 1 if $object->IsInterfaceType($type);
-    return 1 if $type->name eq "XPathNSResolver";
 
     return 0;
 }

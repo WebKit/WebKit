@@ -1,3 +1,70 @@
+2020-08-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Reduce the amount of custom binding code for JSXPathNSResolver
+        https://bugs.webkit.org/show_bug.cgi?id=161030
+
+        Reviewed by Darin Adler.
+
+        This patch introduces CustomXPathNSResolver callback interface,
+        cleaning up CodeGeneratorJS.pm and removing custom binding code.
+
+        XPathNSResolver is kept as a wrapper for NativeXPathNSResolver, preserving common
+        case performance via IDL interface converter, and because a callback interface
+        can't be returned from a function without substantial code generator change.
+
+        Also, improves non-callable method error message and fixes 2 spec incompatibilities:
+        a) no "lookupNamespaceURI" method lookup on functions [1];
+        b) resolver's "prefix" parameter is required [2].
+
+        Since C++ methods can't be overload based on return type, this patch adds
+        [ImplementedAs] IDL attribute support for callback interface methods.
+
+        Because XPathNSResolver wrappers are always temporary (no reference is kept),
+        [IsWeakCallback] IDL attribute isn't added, preserving strong reference.
+
+        [1]: https://heycam.github.io/webidl/#call-a-user-objects-operation (step 10.1)
+        [2]: https://dom.spec.whatwg.org/#dom-xpathnsresolver-lookupnamespaceuri
+
+        Tests: imported/w3c/web-platform-tests/dom/idlharness.window.js
+               imported/w3c/web-platform-tests/domxpath/callback-interface.html        
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/IDLTypes.h:
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCustomXPathNSResolver.cpp: Removed.
+        * bindings/js/JSCustomXPathNSResolver.h: Removed.
+        * bindings/js/JSDOMConvertXPathNSResolver.h:
+        (WebCore::Converter<IDLInterface<XPathNSResolver>>::convert):
+        (WebCore::Converter<IDLXPathNSResolver<T>>::convert): Deleted.
+        (WebCore::JSConverter<IDLXPathNSResolver<T>>::convert): Deleted.
+        (WebCore::JSConverter<IDLXPathNSResolver<T>>::convertNewlyCreated): Deleted.
+        * bindings/scripts/CodeGenerator.pm:
+        (IsBuiltinType):
+        (IsWrapperType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        (GenerateHeader):
+        (GenerateCallbackHeaderContent):
+        (GenerateCallbackImplementationContent):
+        (GetBaseIDLType):
+        (NativeToJSValueDOMConvertNeedsState):
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithXPathNSResolverParameterBody):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolverBody):
+        * xml/CustomXPathNSResolver.cpp: Copied from Source/WebCore/bindings/js/JSXPathNSResolverCustom.cpp.
+        (WebCore::CustomXPathNSResolver::lookupNamespaceURI):
+        * xml/CustomXPathNSResolver.h: Copied from Source/WebCore/bindings/js/JSXPathNSResolverCustom.cpp.
+        * xml/CustomXPathNSResolver.idl: Renamed from Source/WebCore/bindings/js/JSXPathNSResolverCustom.cpp.
+        * xml/XPathNSResolver.idl:
+
 2020-08-07  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r260276): instructure.com custom PDF viewer stops scrolling / loading after switching to another tab then switching back

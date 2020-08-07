@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: XPathNSResolver does not have a lookupNamespaceURI method.
+CONSOLE MESSAGE: TypeError: 'lookupNamespaceURI' property of callback interface should be callable
 SUCCESS

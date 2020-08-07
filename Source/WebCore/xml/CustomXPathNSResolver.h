@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Alexey Shvayka <shvaikalesh@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSXPathNSResolver.h"
+#pragma once
 
-#include "JSCustomXPathNSResolver.h"
-#include "JSDOMExceptionHandling.h"
-
+#include "ActiveDOMCallback.h"
+#include "CallbackResult.h"
+#include "XPathNSResolver.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
-using namespace JSC;
 
-RefPtr<XPathNSResolver> JSXPathNSResolver::toWrapped(VM& vm, JSGlobalObject& lexicalGlobalObject, JSValue value)
-{
-    if (value.inherits<JSXPathNSResolver>(vm))
-        return &jsCast<JSXPathNSResolver*>(asObject(value))->wrapped();
+class CustomXPathNSResolver : public XPathNSResolver, public ActiveDOMCallback {
+public:
+    using ActiveDOMCallback::ActiveDOMCallback;
 
-    auto result = JSCustomXPathNSResolver::create(lexicalGlobalObject, value);
-    if (UNLIKELY(result.hasException())) {
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        propagateException(lexicalGlobalObject, scope, result.releaseException());
-        return nullptr;
-    }
-    return result.releaseReturnValue();
-}
+    virtual CallbackResult<String> lookupNamespaceURIForBindings(const String& prefix) = 0;
+
+    String lookupNamespaceURI(const String& prefix);
+};
 
 } // namespace WebCore

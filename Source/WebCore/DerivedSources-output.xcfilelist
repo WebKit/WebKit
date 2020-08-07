@@ -2262,6 +2262,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathEvaluator.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathEvaluator.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathExpression.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathExpression.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomXPathNSResolver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomXPathNSResolver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathNSResolver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathNSResolver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathResult.cpp

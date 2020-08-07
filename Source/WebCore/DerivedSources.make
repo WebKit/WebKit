@@ -1226,6 +1226,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/worklets/PaintWorkletGlobalScope.idl \
     $(WebCore)/worklets/Worklet.idl \
     $(WebCore)/worklets/WorkletGlobalScope.idl \
+    $(WebCore)/xml/CustomXPathNSResolver.idl \
     $(WebCore)/xml/DOMParser.idl \
     $(WebCore)/xml/XMLHttpRequest.idl \
     $(WebCore)/xml/XMLHttpRequestEventTarget.idl \

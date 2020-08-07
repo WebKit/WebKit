@@ -19,10 +19,8 @@
  */
 
 [
-    JSCustomToNativeObject,
     NoInterfaceObject,
     SkipVTableValidation,
 ] interface XPathNSResolver {
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    DOMString? lookupNamespaceURI(optional DOMString prefix = "undefined");
+    DOMString? lookupNamespaceURI(DOMString? prefix);
 };
