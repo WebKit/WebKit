@@ -29,7 +29,7 @@ log = logging.getLogger('webkitcorepy')
 from webkitcorepy.version import Version
 from webkitcorepy.string_utils import BytesIO, StringIO, UnicodeIO, unicode
 
-version = Version(0, 2, 0)
+version = Version(0, 2, 1)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

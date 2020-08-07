@@ -89,13 +89,14 @@ class Package(object):
             else:
                 raise OSError('{} has an  unrecognized package format'.format(self.path))
 
-    def __init__(self, name, version=None, pypi_name=None, slow_install=False, wheel=False):
+    def __init__(self, name, version=None, pypi_name=None, slow_install=False, wheel=False, aliases=None):
         self.name = name
         self.version = version
         self._archives = []
         self.pypi_name = pypi_name or self.name
         self.slow_install = slow_install
         self.wheel = wheel
+        self.aliases = aliases or []
 
     @property
     def location(self):
@@ -408,6 +409,8 @@ class AutoInstall(object):
                 return cls.packages.get(package.name)
         else:
             raise ValueError('Expected package to be str or Package, not {}'.format(type(package)))
+        for alias in package.aliases:
+            cls.packages[alias] = package
         cls.packages[package.name] = package
         return package
 
