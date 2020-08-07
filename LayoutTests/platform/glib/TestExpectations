@@ -10,7 +10,7 @@
 #
 # Never add any tests to this file without opening a bug on bugzilla.webkit.org.
 #
-# Currently the following sections are used, but this is not a fixed list. Some sections
+# Initially the following sections were used, but this is not a fixed list. Some sections
 # (like WebAnimation, PageOverlay, WebGL) will mirror their top-level LayoutTests/
 # folders, but others like CSS and GStreamer may have entries from multiple folders.
 #
@@ -259,6 +259,8 @@ webkit.org/b/207547 media/media-can-play-av1.html [ Failure ]
 
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Failure Pass ]
 
+webkit.org/b/215255 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-multi-channels.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -288,6 +290,18 @@ webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of IndexedDB-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# MathML-related bugs
+#////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/215217 [ Debug ] mathml/opentype/munderover-layout-resize.html [ Crash ]
+webkit.org/b/215217 [ Debug ] mathml/presentation/mo-invisible.html [ Crash ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of MathML-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -533,6 +547,8 @@ webkit.org/b/169917 fast/canvas/webgl/unprefixed-anisotropic-extension.html [ Fa
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-compressed-texture-size-limit.html [ Failure ]
 
 webkit.org/b/211887 [ Debug ] fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Crash ]
+webkit.org/b/211887 [ Debug ] webgl/1.0.3/conformance/textures/tex-sub-image-2d-bad-args.html [ Crash ]
+webkit.org/b/211887 [ Debug ] webgl/1.0.3/conformance/more/functions/texSubImage2DHTMLBadArgs.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs

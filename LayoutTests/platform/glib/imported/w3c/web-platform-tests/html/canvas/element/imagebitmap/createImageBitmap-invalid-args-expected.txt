@@ -33,7 +33,7 @@ PASS createImageBitmap with an OffscreenCanvas source and sh set to 0
 FAIL createImageBitmap with an OffscreenCanvas source and oversized (unallocatable) crop region assert_equals: expected 100000000 but got 20
 PASS createImageBitmap with an ImageData source and sw set to 0 
 PASS createImageBitmap with an ImageData source and sh set to 0 
-FAIL createImageBitmap with an ImageData source and oversized (unallocatable) crop region assert_throws_dom: function "() => { throw e }" threw object "TypeError: createImageBitmap with ImageData is not implemented" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL createImageBitmap with an ImageData source and oversized (unallocatable) crop region assert_equals: expected 100000000 but got 20
 PASS createImageBitmap with an ImageBitmap source and sw set to 0 
 PASS createImageBitmap with an ImageBitmap source and sh set to 0 
 FAIL createImageBitmap with an ImageBitmap source and oversized (unallocatable) crop region assert_equals: expected 100000000 but got 20

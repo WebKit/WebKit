@@ -1,3 +1,17 @@
+2020-08-06  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening some tests and rebaseline after imagebitmap update
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/animations/steps-transform-rendering-updates-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/canvas-createImageBitmap-resize-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-drawImage-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-flipY-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-transfer-expected.txt:
+
 2020-08-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html test

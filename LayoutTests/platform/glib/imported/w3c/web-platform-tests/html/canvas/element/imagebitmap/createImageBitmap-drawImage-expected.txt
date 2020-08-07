@@ -39,11 +39,11 @@ PASS createImageBitmap from an OffscreenCanvas scaled down, and drawImage on the
 PASS createImageBitmap from an OffscreenCanvas scaled up, and drawImage on the created ImageBitmap 
 PASS createImageBitmap from an OffscreenCanvas resized, and drawImage on the created ImageBitmap 
 PASS createImageBitmap from an OffscreenCanvas with negative sw/sh, and drawImage on the created ImageBitmap 
-FAIL createImageBitmap from an ImageData, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
-FAIL createImageBitmap from an ImageData scaled down, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
-FAIL createImageBitmap from an ImageData scaled up, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
-FAIL createImageBitmap from an ImageData resized, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
-FAIL createImageBitmap from an ImageData with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
+PASS createImageBitmap from an ImageData, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from an ImageData scaled down, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from an ImageData scaled up, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from an ImageData resized, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from an ImageData with negative sw/sh, and drawImage on the created ImageBitmap 
 PASS createImageBitmap from an ImageBitmap, and drawImage on the created ImageBitmap 
 PASS createImageBitmap from an ImageBitmap scaled down, and drawImage on the created ImageBitmap 
 PASS createImageBitmap from an ImageBitmap scaled up, and drawImage on the created ImageBitmap 
