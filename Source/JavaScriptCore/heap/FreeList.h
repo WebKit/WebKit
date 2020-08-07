@@ -34,8 +34,11 @@ namespace JSC {
 
 class HeapCell;
 
+// Currently it is disabled because of Speedometer2 regression.
+// FIXME: We should attempt to enable it again or remove the code.
+// https://bugs.webkit.org/show_bug.cgi?id=215284
 #if CPU(X86_64)
-#define ENABLE_BITMAP_FREELIST 1
+#define ENABLE_BITMAP_FREELIST 0
 #else
 #define ENABLE_BITMAP_FREELIST 0
 #endif

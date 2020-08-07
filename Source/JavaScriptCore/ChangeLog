@@ -1,3 +1,19 @@
+2020-08-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Disable ENABLE_BITMAP_FREELIST
+        https://bugs.webkit.org/show_bug.cgi?id=215285
+
+        Reviewed by Mark Lam.
+
+        From performance bots, we observed that,
+
+            1. MBP11,4 shows 1% regression in Speedometer2.
+            2. The other MBP / iMac / MBA bots show neutral or slight regression in Speedometer2.
+
+        Based on the above result, for now, we disable this feature.
+
+        * heap/FreeList.h:
+
 2020-08-07  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r261159) PokerBros only shows black screen
