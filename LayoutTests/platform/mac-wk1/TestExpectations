@@ -997,3 +997,5 @@ webkit.org/b/214967 imported/w3c/web-platform-tests/pointerevents/pointerevent_a
 webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html [ Pass Failure ]
 
 webkit.org/b/215296 media/modern-media-controls/placard/placard-ltr.html [ Pass Timeout ]
+
+webkit.org/b/215299 imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html [ Pass Timeout ]
