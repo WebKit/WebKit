@@ -1,3 +1,13 @@
+2020-08-07  Aakash Jain  <aakash_jain@apple.com>
+
+        Do not email bot watcher when first run of layout tests exceeds failure limit
+        https://bugs.webkit.org/show_bug.cgi?id=215274
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ReRunWebKitTests.evaluateCommand): Do not send emails for flaky tests when first_results_did_exceed_test_failure_limit.
+
 2020-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove UIScriptController.removeAllDynamicDictionaries()

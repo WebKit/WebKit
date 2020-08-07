@@ -1950,9 +1950,9 @@ class ReRunWebKitTests(RunWebKitTests):
             if not first_results_did_exceed_test_failure_limit:
                 pluralSuffix = 's' if len(flaky_failures) > 1 else ''
                 message = 'Found flaky test{}: {}'.format(pluralSuffix, flaky_failures_string)
+                for flaky_failure in flaky_failures:
+                    self.send_email_for_flaky_failure(flaky_failure)
             self.setProperty('build_summary', message)
-            for flaky_failure in flaky_failures:
-                self.send_email_for_flaky_failure(flaky_failure)
         else:
             self.setProperty('patchFailedTests', True)
             self.build.addStepsAfterCurrentStep([ArchiveTestResults(),
