@@ -1,3 +1,11 @@
+2020-08-07  Paulo Matos  <pmatos@igalia.com>
+
+        Skip test on ARM32 - test is flaky in mini-mode
+
+        Unreviewed Gardening.
+
+        * stress/put-direct-index-broken-2.js:
+
 2020-08-05  Saam Barati  <sbarati@apple.com>
 
         Fix returnEarlyFromInfiniteLoopsForFuzzing in DFG and validateDoesGC
