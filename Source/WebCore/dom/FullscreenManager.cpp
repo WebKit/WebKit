@@ -421,7 +421,9 @@ void FullscreenManager::didExitFullscreen()
     if (!hasLivingRenderTree() || backForwardCacheState() != Document::NotInBackForwardCache)
         return;
     fullscreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
-    m_fullscreenElement->didStopBeingFullscreenElement();
+
+    if (m_fullscreenElement)
+        m_fullscreenElement->didStopBeingFullscreenElement();
 
     m_areKeysEnabledInFullscreen = false;
 

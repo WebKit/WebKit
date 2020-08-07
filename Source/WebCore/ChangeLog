@@ -1,3 +1,16 @@
+2020-08-06  Peng Liu  <peng.liu6@apple.com>
+
+        Web process crashes at WebCore::FullscreenManager::didExitFullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=215243
+
+        Reviewed by Eric Carlson.
+
+        No new tests, no functional change.
+
+        * dom/FullscreenManager.cpp:
+        (WebCore::FullscreenManager::didExitFullscreen):
+        m_fullscreenElement might be nullptr when fullscreenOrPendingElement() is not nullptr.
+
 2020-08-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WeakPtr threading assertion on editing/undo-manager/undo-manager-delete-stale-undo-items.html
