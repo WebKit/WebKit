@@ -1,3 +1,19 @@
+2020-08-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Support wheels in the autoinstaller
+        https://bugs.webkit.org/show_bug.cgi?id=215230
+        <rdar://problem/66636527>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version, include packaging and it's dependencies.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.Archive.unpack): .whl files are zip files.
+        (Package.__init__): Allow programs to request packages as wheels.
+        (Package.archives): Search for compatible .whl files.
+        (Package.install): Ensure that .egg-info directories are appropriately chowned, unpack wheels, format manifest.json.
+        (AutoInstall.tags): List the packaging tags associated with this distribution, but with a work-around for Big Sur.
+
 2020-08-07  Aakash Jain  <aakash_jain@apple.com>
 
         Do not email bot watcher when first run of layout tests exceeds failure limit

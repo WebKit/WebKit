@@ -29,7 +29,7 @@ log = logging.getLogger('webkitcorepy')
 from webkitcorepy.version import Version
 from webkitcorepy.string_utils import BytesIO, StringIO, UnicodeIO, unicode
 
-version = Version(0, 1, 2)
+version = Version(0, 2, 0)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -43,7 +43,10 @@ AutoInstall.register(Package('certifi', Version(2020, 6, 20)))
 AutoInstall.register(Package('chardet', Version(3, 0, 4)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('idna', Version(2, 10)))
+AutoInstall.register(Package('packaging', Version(20, 4)))
+AutoInstall.register(Package('pyparsing', Version(2, 4, 7)))
 AutoInstall.register(Package('requests', Version(2, 24)))
 AutoInstall.register(Package('setuptools', Version(44, 1,  1)))
 AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
+AutoInstall.register(Package('six', Version(1, 15, 0)))
 AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
