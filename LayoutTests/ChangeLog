@@ -1,3 +1,28 @@
+2020-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] It should be possible to override spellchecking results in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=215290
+
+        Reviewed by Devin Rousso.
+
+        * editing/spelling/markers-expected.txt:
+        * editing/spelling/markers.html:
+
+        Rewrite this layout test to use async-await, instead of asynchronously calling the recursive `done` function.
+        Additionally, adopt `UIHelper.setSpellCheckerResults`.
+
+        * editing/spelling/text-replacement-after-typing-to-word.html:
+
+        Adopt `UIHelper.setSpellCheckerResults`. This allows us to enable the test on macOS WebKit2, since the only
+        thing that prevented it from working before was the ability to `setSpellCheckerResults` in WebKit2.
+
+        * platform/mac-wk2/TestExpectations:
+        * resources/ui-helper.js:
+
+        Add a `UIHelper` method to override the system spell checker with given results.
+
+        (window.UIHelper.async setSpellCheckerResults):
+
 2020-08-07  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk1  ] media/modern-media-controls/placard/placard-ltr.html is a flaky timeout

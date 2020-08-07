@@ -28,6 +28,7 @@
 
 #import "EventSenderProxy.h"
 #import "EventSerializerMac.h"
+#import "LayoutTestSpellChecker.h"
 #import "PlatformViewHelpers.h"
 #import "PlatformWebView.h"
 #import "PlatformWebView.h"
@@ -261,6 +262,11 @@ void UIScriptControllerMac::copyText(JSStringRef text)
     NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
     [pasteboard declareTypes:@[NSPasteboardTypeString] owner:nil];
     [pasteboard setString:text->string() forType:NSPasteboardTypeString];
+}
+
+void UIScriptControllerMac::setSpellCheckerResults(JSValueRef results)
+{
+    [[LayoutTestSpellChecker checker] setResultsFromJSValue:results inContext:m_context->jsContext()];
 }
 
 } // namespace WTR

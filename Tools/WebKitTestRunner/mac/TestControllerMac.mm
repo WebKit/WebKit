@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestController.h"
 
+#import "LayoutTestSpellChecker.h"
 #import "PlatformWebView.h"
 #import "PoseAsClass.h"
 #import "TestInvocation.h"
@@ -160,6 +161,8 @@ void TestController::platformResetPreferencesToConsistentValues()
 
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
 {
+    [LayoutTestSpellChecker uninstallAndReset];
+
     cocoaResetStateToConsistentValues(options);
 
     while ([NSApp nextEventMatchingMask:NSEventMaskGesture | NSEventMaskScrollWheel untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES]) {

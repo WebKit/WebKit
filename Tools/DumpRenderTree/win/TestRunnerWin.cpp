@@ -1415,8 +1415,3 @@ void TestRunner::setSpellCheckerLoggingEnabled(bool enabled)
 {
     fprintf(testResult, "ERROR: TestRunner::setSpellCheckerLoggingEnabled() not implemented\n");
 }
-
-void TestRunner::setSpellCheckerResults(JSContextRef, JSObjectRef)
-{
-    fprintf(testResult, "ERROR: TestRunner::setSpellCheckerResults() not implemented\n");
-}

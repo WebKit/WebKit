@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "DumpRenderTree.h"
+#import "LayoutTestSpellChecker.h"
 #import "UIScriptContext.h"
 #import <JavaScriptCore/JSContext.h>
 #import <JavaScriptCore/JSStringRefCF.h>
@@ -165,6 +166,11 @@ void UIScriptControllerMac::copyText(JSStringRef text)
     NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
     [pasteboard declareTypes:@[NSPasteboardTypeString] owner:nil];
     [pasteboard setString:text->string() forType:NSPasteboardTypeString];
+}
+
+void UIScriptControllerMac::setSpellCheckerResults(JSValueRef results)
+{
+    [[LayoutTestSpellChecker checker] setResultsFromJSValue:results inContext:m_context->jsContext()];
 }
 
 }

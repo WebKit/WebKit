@@ -54,6 +54,7 @@ public:
     NSView *platformContentView() const override;
     void clearAllCallbacks() override;
     void copyText(JSStringRef) override;
+    void setSpellCheckerResults(JSValueRef) override;
 
     void chooseMenuAction(JSStringRef, JSValueRef) override;
 

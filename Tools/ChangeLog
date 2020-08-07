@@ -1,3 +1,47 @@
+2020-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] It should be possible to override spellchecking results in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=215290
+
+        Reviewed by Devin Rousso.
+
+        Refactor `setSpellCheckerResults` so that it is on `UIScriptController` instead of `TestRunner`, such that it
+        can be triggered asynchronously from a layout test. This allows the testing hook to work in WebKit2, where the
+        swizzled spell checker is in the UI process.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::staticFunctions):
+        (setSpellCheckerResultsCallback): Deleted.
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/ios/UIScriptControllerIOS.h:
+
+        Add a method implementation stub for iOS.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setSpellCheckerResults): Deleted.
+        * DumpRenderTree/mac/UIScriptControllerMac.h:
+        * DumpRenderTree/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::setSpellCheckerResults):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setSpellCheckerLoggingEnabled):
+        (TestRunner::setSpellCheckerResults): Deleted.
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::setSpellCheckerResults):
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.h:
+        * TestRunnerShared/cocoa/LayoutTestSpellChecker.mm:
+        (-[LayoutTestSpellChecker setResultsFromJSValue:inContext:]):
+        (-[LayoutTestSpellChecker setResultsFromJSObject:inContext:]): Deleted.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Make sure that we uninstall the swizzled `LayoutTestSpellChecker` between tests.
+
+        * WebKitTestRunner/mac/UIScriptControllerMac.h:
+        * WebKitTestRunner/mac/UIScriptControllerMac.mm:
+        (WTR::UIScriptControllerMac::setSpellCheckerResults):
+
 2020-08-07  Aakash Jain  <aakash_jain@apple.com>
 
         Windows EWS should filter build logs to show errors

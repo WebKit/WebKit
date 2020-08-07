@@ -384,7 +384,6 @@ public:
     bool dumpJSConsoleLogInStdErr() const { return m_dumpJSConsoleLogInStdErr; }
 
     void setSpellCheckerLoggingEnabled(bool);
-    void setSpellCheckerResults(JSContextRef, JSObjectRef results);
 
     const std::vector<std::string>& openPanelFiles() const { return m_openPanelFiles; }
     void setOpenPanelFiles(JSContextRef, JSValueRef);

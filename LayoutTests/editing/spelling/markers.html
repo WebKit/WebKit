@@ -8,10 +8,11 @@
     font-size: 24px;
 }
 </style>
-<script src="../editing.js" language="JavaScript" type="text/JavaScript" ></script>
+<script src="../editing.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
-<script src="../../resources/js-test-pre.js"></script>
 
 <div id="container"></div>
 
@@ -26,10 +27,10 @@ if (window.internals) {
 }
 
 function createEditableElement(parent, textContent) {
-    var e = document.createElement('div');
+    var e = document.createElement("div");
     e.setAttribute("contentEditable", "true");
     e.textContent = textContent;
-    e.className = 'editing';
+    e.className = "editing";
 
     parent.appendChild(e);
     return e;
@@ -39,22 +40,22 @@ function typeText(elem, text) {
     elem.focus();
     selectAllCommand();
     deleteCommand();
-    for (var i = 0; i < text.length; ++i)
-        typeCharacterCommand(text[i]);
+    for (let character of text)
+        typeCharacterCommand(character);
 }
 
-const container = document.getElementById('container');
+const container = document.getElementById("container");
 const elementWithGrammarIssue = createEditableElement(container, "I have a issue.");
 const elementWithSpellingIssue  = createEditableElement(container, "zz.");
 const elementWithGrammarAndSpellingIssue = createEditableElement(container, "orange,zz,apple.");
 
 const misspellings = [
-    { marker: 'spelling',  issue: 'a' },
-    { marker: 'grammar',  issue: 'a' },
-    { marker: 'grammar',  issue: 'I have a issue.' },
-    { marker: 'spelling', issue: 'zz' },
-    { marker: 'grammar',  issue: 'orange,zz,apple.' },
-    { marker: 'spelling',  issue: 'orange,zz,apple' },
+    { marker: "spelling",  issue: "a" },
+    { marker: "grammar",  issue: "a" },
+    { marker: "grammar",  issue: "I have a issue." },
+    { marker: "spelling", issue: "zz" },
+    { marker: "grammar",  issue: "orange,zz,apple." },
+    { marker: "spelling",  issue: "orange,zz,apple" },
 ];
 
 const results = [
@@ -73,87 +74,76 @@ const results = [
     }
 ];
 
-var tests = [
-    function() { verifyDesiredMarkers(elementWithGrammarIssue, misspellings.slice(0, 1), results.slice(0, 1)) },
-    function() { verifyDesiredMarkers(elementWithGrammarIssue, misspellings.slice(1, 2), results.slice(1, 2)) },
-    function() { verifyDesiredMarkers(elementWithGrammarIssue, misspellings.slice(0, 2), results.slice(0, 2)) },
-    function() { verifyDesiredMarkers(elementWithSpellingIssue, misspellings.slice(3, 4)) },
-    function() { verifyDesiredMarkers(elementWithGrammarAndSpellingIssue, misspellings.slice(4, 6)) },
+window.element = null;
+window.oppositeMarker = null;
+window.misspellingData = null;
 
-    // Those expect to have only one kind of markers either spelling or grammar.
-    function() { verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(0, 1), results.slice(0, 1)) },
-    function() { verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(1, 2), results.slice(1, 2)) },
-    function() { verifyUnexpectedMarkers(elementWithSpellingIssue, misspellings.slice(3, 4)) },
-];
-
-var element;
-var nextMisspellingData;
-
-function verifyDesiredMarkers(e, misspellings, overrideSpellCheckingResults)
+async function verifyDesiredMarkers(e, misspellings, overrideSpellCheckingResults)
 {
-    if (!window.internals)
-        return done();
+    await UIHelper.delayFor(0);
 
+    window.element = e;
     const textToCheck = e.firstChild.nodeValue;
-    const spellCheckerResults = { };
+
+    let spellCheckerResults = { };
     if (overrideSpellCheckingResults)
         spellCheckerResults[textToCheck] = overrideSpellCheckingResults;
-    testRunner.setSpellCheckerResults(spellCheckerResults);
+    await UIHelper.setSpellCheckerResults(spellCheckerResults);
 
-    typeText(e, textToCheck);
+    for (let misspelling of misspellings) {
+        window.misspellingData = misspelling;
 
-    element = e;
-    nextMisspellingData = misspellings.shift();
-    if (!nextMisspellingData)
-        return done();
+        typeText(e, textToCheck);
 
-    debug(`Checking for issue on '${textToCheck}'`);
+        debug(`Checking for issue on "${textToCheck}"`);
 
-    shouldBecomeDifferent('internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0)', "null", function() {
-        range = internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0);
-        shouldBeEqualToString('range.toString()', nextMisspellingData.issue);
+        await new Promise(resolve => shouldBecomeDifferent("internals.markerRangeForNode(element.firstChild, misspellingData.marker, 0)", "null", resolve));
+        range = internals.markerRangeForNode(element.firstChild, misspellingData.marker, 0);
+        shouldBeEqualToString("range.toString()", misspellingData.issue);
         debug("");
-        verifyDesiredMarkers(element, misspellings);
-    });
+    }
 }
 
-var oppositeMarker;
-function verifyUnexpectedMarkers(e, misspellings, overrideSpellCheckingResults)
+async function verifyUnexpectedMarkers(e, misspellings, overrideSpellCheckingResults)
 {
+    await UIHelper.delayFor(0);
+
+    window.element = e;
     const textToCheck = e.firstChild.nodeValue;
-    const spellCheckerResults = { };
+
+    let spellCheckerResults = { };
     if (overrideSpellCheckingResults)
         spellCheckerResults[textToCheck] = overrideSpellCheckingResults;
-    testRunner.setSpellCheckerResults(spellCheckerResults);
+    await UIHelper.setSpellCheckerResults(spellCheckerResults);
 
-    typeText(e, textToCheck);
+    for (let misspelling of misspellings) {
+        window.misspellingData = misspelling;
 
-    element = e;
-    nextMisspellingData = misspellings.shift();
+        typeText(e, textToCheck);
 
-    if (nextMisspellingData.marker == 'grammar')
-        oppositeMarker = 'spelling';
-    else if (nextMisspellingData.marker == 'spelling')
-        oppositeMarker = 'grammar';
+        if (misspellingData.marker == "grammar")
+            window.oppositeMarker = "spelling";
+        else if (misspellingData.marker == "spelling")
+            window.oppositeMarker = "grammar";
 
-    debug(`Checking for no other issues on '${textToCheck}'`);
+        debug(`Checking for no other issues on "${textToCheck}"`);
 
-    shouldBecomeEqual('internals.markerCountForNode(element.firstChild, oppositeMarker)', '0', function() {
+        await new Promise(resolve => shouldBecomeEqual("internals.markerCountForNode(element.firstChild, oppositeMarker)", "0", resolve));
         debug("");
-        done();
-    });
+    }
 }
 
-function done()
-{
-    var next = tests.shift();
-    if (next)
-        return window.setTimeout(next, 0);
-
+addEventListener("load", async function() {
+    await verifyDesiredMarkers(elementWithGrammarIssue, misspellings.slice(0, 1), results.slice(0, 1));
+    await verifyDesiredMarkers(elementWithGrammarIssue, misspellings.slice(1, 2), results.slice(1, 2));
+    await verifyDesiredMarkers(elementWithGrammarIssue, misspellings.slice(0, 2), results.slice(0, 2));
+    await verifyDesiredMarkers(elementWithSpellingIssue, misspellings.slice(3, 4));
+    await verifyDesiredMarkers(elementWithGrammarAndSpellingIssue, misspellings.slice(4, 6));
+    await verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(0, 1), results.slice(0, 1));
+    await verifyUnexpectedMarkers(elementWithGrammarIssue, misspellings.slice(1, 2), results.slice(1, 2));
+    await verifyUnexpectedMarkers(elementWithSpellingIssue, misspellings.slice(3, 4));
     finishJSTest();
-}
-done();
+});
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

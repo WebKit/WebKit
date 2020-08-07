@@ -3,41 +3,41 @@ Tests spelling and grammar markers for misspellings.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Checking for issue on 'I have a issue.'
-PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
+Checking for issue on "I have a issue."
+PASS internals.markerRangeForNode(element.firstChild, misspellingData.marker, 0) became different from null
 PASS range.toString() is "a"
 
-Checking for issue on 'I have a issue.'
-PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
+Checking for issue on "I have a issue."
+PASS internals.markerRangeForNode(element.firstChild, misspellingData.marker, 0) became different from null
 PASS range.toString() is "a"
 
-Checking for issue on 'I have a issue.'
-PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
+Checking for issue on "I have a issue."
+PASS internals.markerRangeForNode(element.firstChild, misspellingData.marker, 0) became different from null
 PASS range.toString() is "a"
 
-Checking for issue on 'I have a issue.'
-PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
+Checking for issue on "I have a issue."
+PASS internals.markerRangeForNode(element.firstChild, misspellingData.marker, 0) became different from null
 PASS range.toString() is "a"
 
-Checking for issue on 'zz.'
-PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
+Checking for issue on "zz."
+PASS internals.markerRangeForNode(element.firstChild, misspellingData.marker, 0) became different from null
 PASS range.toString() is "zz"
 
-Checking for issue on 'orange,zz,apple.'
-PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
+Checking for issue on "orange,zz,apple."
+PASS internals.markerRangeForNode(element.firstChild, misspellingData.marker, 0) became different from null
 PASS range.toString() is "orange,zz,apple."
 
-Checking for issue on 'orange,zz,apple.'
-PASS internals.markerRangeForNode(element.firstChild, nextMisspellingData.marker, 0) became different from null
+Checking for issue on "orange,zz,apple."
+PASS internals.markerRangeForNode(element.firstChild, misspellingData.marker, 0) became different from null
 PASS range.toString() is "orange,zz,apple"
 
-Checking for no other issues on 'I have a issue.'
+Checking for no other issues on "I have a issue."
 PASS internals.markerCountForNode(element.firstChild, oppositeMarker) became 0
 
-Checking for no other issues on 'I have a issue.'
+Checking for no other issues on "I have a issue."
 PASS internals.markerCountForNode(element.firstChild, oppositeMarker) became 0
 
-Checking for no other issues on 'zz.'
+Checking for no other issues on "zz."
 PASS internals.markerCountForNode(element.firstChild, oppositeMarker) became 0
 
 PASS successfullyParsed is true

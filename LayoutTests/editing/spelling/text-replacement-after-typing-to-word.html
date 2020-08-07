@@ -1,6 +1,7 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="../editing.js"></script>
 <script>
 jsTestIsAsync = true;
@@ -17,7 +18,7 @@ async function runTest()
         internals.settings.setAsynchronousSpellCheckingEnabled(false);
         internals.setAutomaticTextReplacementEnabled(true);
         internals.setAutomaticSpellingCorrectionEnabled(true);
-        testRunner.setSpellCheckerResults({
+        await UIHelper.setSpellCheckerResults({
             "YT?": [
                 {
                     "replacement": "You there?",
@@ -62,6 +63,5 @@ async function runTest()
 <body onload="runTest()">
     <div id="description"></div>
     <div contenteditable style="margin-bottom: 1em; border: 1px orange dashed;" id="editor"></div>
-    <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -1287,6 +1287,16 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async setSpellCheckerResults(results)
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.setSpellCheckerResults(${JSON.stringify(results)});
+                uiController.uiScriptComplete();
+            })()`, resolve);
+        });
+    }
+
     static async activateElementAfterInstallingTapGestureOnWindow(element)
     {
         if (!this.isWebKit2() || !this.isIOSFamily())

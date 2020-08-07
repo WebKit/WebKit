@@ -79,6 +79,7 @@ interface UIScriptController {
     void keyDown(DOMString character, object modifierArray);
     void toggleCapsLock(object callback);
     void setContinuousSpellCheckingEnabled(boolean enabled);
+    void setSpellCheckerResults(object results);
 
     readonly attribute boolean keyboardIsAutomaticallyShifted;
 

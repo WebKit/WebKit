@@ -209,8 +209,9 @@ static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
     _results = adoptNS(results.copy);
 }
 
-- (void)setResultsFromJSObject:(JSObjectRef)resultsObject inContext:(JSContextRef)context
+- (void)setResultsFromJSValue:(JSValueRef)resultsValue inContext:(JSContextRef)context
 {
+    auto resultsObject = JSValueToObject(context, resultsValue, nullptr);
     auto fromPropertyName = adopt(JSStringCreateWithUTF8CString("from"));
     auto toPropertyName = adopt(JSStringCreateWithUTF8CString("to"));
     auto typePropertyName = adopt(JSStringCreateWithUTF8CString("type"));
