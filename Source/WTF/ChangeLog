@@ -1,3 +1,17 @@
+2020-08-07  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a Vector::isolatedCopy() &&
+        https://bugs.webkit.org/show_bug.cgi?id=215160
+
+        Reviewed by Alex Christensen.
+
+        By introducing an isolatedCopy() &&, we remove the need to allocate a vector buffer.
+        This can make a Vector<String>::isolatedCopy() allocate no memory at all in cases like RegistrationDatabase::schedulePushChanges.
+
+        * wtf/Vector.h:
+        (WTF::Malloc>::isolatedCopy const):
+        (WTF::Malloc>::isolatedCopy):
+
 2020-08-06  David Kilzer  <ddkilzer@apple.com>
 
         WTF::makeString() should handle enum values

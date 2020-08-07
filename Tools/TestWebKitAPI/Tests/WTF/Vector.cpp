@@ -128,6 +128,36 @@ TEST(WTF_Vector, ConstructWithFromString)
     EXPECT_TRUE(s3.isNull());
 }
 
+TEST(WTF_Vector, IsolateCopy)
+{
+    String s1 = "s1";
+    String s2 = "s2";
+
+    auto vector1 = Vector<String>::from(WTFMove(s1), s2);
+    EXPECT_EQ(2U, vector1.size());
+    EXPECT_EQ(2U, vector1.capacity());
+
+    auto* data1 = vector1[0].impl();
+    auto* data2 = vector1[1].impl();
+
+    auto vector2 = vector1.isolatedCopy();
+
+    EXPECT_TRUE("s1" == vector2[0]);
+    EXPECT_TRUE("s2" == vector2[1]);
+
+    EXPECT_FALSE(data1 == vector2[0].impl());
+    EXPECT_FALSE(data2 == vector2[1].impl());
+
+    auto vector3 = WTFMove(vector1).isolatedCopy();
+    EXPECT_EQ(0U, vector1.size());
+
+    EXPECT_TRUE("s1" == vector3[0]);
+    EXPECT_TRUE("s2" == vector3[1]);
+
+    EXPECT_TRUE(data1 == vector3[0].impl());
+    EXPECT_FALSE(data2 == vector3[1].impl());
+}
+
 TEST(WTF_Vector, ConstructWithFromMoveOnly)
 {
     auto vector1 = Vector<MoveOnly>::from(MoveOnly(1));
