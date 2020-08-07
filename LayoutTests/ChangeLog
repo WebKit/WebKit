@@ -1,3 +1,12 @@
+2020-08-07  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS wk2 ] http/wpt/resource-timing/rt-revalidate-requests-3.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215268
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-08-06  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Gardening some tests and rebaseline after imagebitmap update
