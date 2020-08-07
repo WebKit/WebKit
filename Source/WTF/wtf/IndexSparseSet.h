@@ -232,7 +232,7 @@ void IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::sort()
 template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>
 void IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::validate()
 {
-    RELEASE_ASSERT(m_values.size() < m_map.size());
+    RELEASE_ASSERT(m_values.size() <= m_map.size());
     for (const EntryType& entry : *this)
         RELEASE_ASSERT(contains(EntryTypeTraits::key(entry)));
 }

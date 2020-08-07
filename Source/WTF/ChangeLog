@@ -1,5 +1,17 @@
 2020-08-07  Robin Morisset  <rmorisset@apple.com>
 
+        Fix inequality in newly added assertion
+        https://bugs.webkit.org/show_bug.cgi?id=215272
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, as it was caught by our testing infrastructure (not sure why it only got caught after landing).
+
+        * wtf/IndexSparseSet.h:
+        (WTF::OverflowHandler>::validate):
+
+2020-08-07  Robin Morisset  <rmorisset@apple.com>
+
         IndexSparseSet::sort() should update m_map
         https://bugs.webkit.org/show_bug.cgi?id=215100
 
