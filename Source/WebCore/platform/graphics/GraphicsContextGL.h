@@ -786,7 +786,7 @@ public:
         // These constants are redefined here from ANGLE's OpenGL ES headers to
         // provide a single place where multiple portions of platform code can
         // reference them.
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         IOSurfaceTextureTarget = TEXTURE_RECTANGLE_ARB, // also GL_TEXTURE_RECTANGLE_ANGLE
         IOSurfaceTextureTargetQuery = TEXTURE_BINDING_RECTANGLE_ARB,
         EGLIOSurfaceTextureTarget = 0x345B, // EGL_TEXTURE_RECTANGLE_ANGLE

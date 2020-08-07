@@ -384,7 +384,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     if (m_isForWebGL2)
         gl::Enable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     ExtensionsGL& extensions = getExtensions();
 
     static constexpr const char* requiredExtensions[] = {
@@ -401,6 +401,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
         extensions.ensureEnabled(requiredExtensions[i]);
     }
 
+#if PLATFORM(MAC)
     EGLDeviceEXT device = nullptr;
     EGL_QueryDisplayAttribEXT(m_displayObj, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device));
     CGLContextObj cglContext = nullptr;
@@ -409,6 +410,10 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
     EGL_QueryDeviceAttribEXT(device, EGL_CGL_PIXEL_FORMAT_ANGLE, reinterpret_cast<EGLAttrib*>(&pixelFormat));
     auto gpuID = (hostWindow && hostWindow->displayID()) ? gpuIDForDisplay(hostWindow->displayID()) : primaryGPUID();
     setGPUByRegistryID(cglContext, pixelFormat, gpuID);
+#else
+    UNUSED_PARAM(hostWindow);
+#endif
+
 #else
     UNUSED_PARAM(hostWindow);
 #endif // PLATFORM(MAC)

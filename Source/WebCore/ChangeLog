@@ -1,3 +1,18 @@
+2020-08-07  Dean Jackson  <dino@apple.com>
+
+        Pocket City game play area is blank (WebGL is broken in Catalyst)
+        https://bugs.webkit.org/show_bug.cgi?id=215251
+
+        Reviewed by Tim Horton.
+
+        Our configuration for WebGL under Catalyst was incorrect. Since
+        it uses "desktop" OpenGL, it had to use the normal macOS setup
+        (enabling texture rectangle extension, and the correct target).
+
+        * platform/graphics/GraphicsContextGL.h: Add PLATFORM(MACCATALYST).
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm: Ditto.
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+
 2020-08-07  Rob Buis  <rbuis@igalia.com>
 
         Fix warnings related to unsigned >=0 ASSERTs
