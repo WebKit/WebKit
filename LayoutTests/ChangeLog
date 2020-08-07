@@ -1,3 +1,13 @@
+2020-08-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html test
+
+        It may not throw an exception, depending on GC.
+
+        * TestExpectations:
+        * fast/css-custom-paint/out-of-memory-while-adding-worklet-module-expected.txt:
+        * fast/css-custom-paint/script-tests/out-of-memory-while-adding-worklet-module.js:
+
 2020-08-06  Kenneth Russell  <kbr@chromium.org>
 
         Implement createImageBitmap(ImageData)

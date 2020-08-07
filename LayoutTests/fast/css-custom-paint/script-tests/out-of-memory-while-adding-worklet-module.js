@@ -14,7 +14,7 @@ function useAllMemory() {
     } catch { }
 }
 
-var exception;
+var exception = null;
 useAllMemory();
 try {
     for (let i = 0; i < 1000; i++) {
@@ -24,5 +24,8 @@ try {
     exception = e;
 }
 
-if (exception != "RangeError: Out of memory")
-    throw "FAIL: expect: 'RangeError: Out of memory', actual: '" + exception + "'";
+// Exception may not be thrown, depends on GC timing.
+if (exception !== null) {
+    if (exception != "RangeError: Out of memory")
+        throw "FAIL: expect: 'RangeError: Out of memory', actual: '" + exception + "'";
+}
