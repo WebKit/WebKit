@@ -1817,3 +1817,6 @@ webkit.org/b/215221 [ Debug ] editing/undo-manager/undo-manager-delete-stale-und
 webkit.org/b/215226 [ Debug ] fast/text/basic/001.html [ Pass Crash ]
 
 webkit.org/b/215268 http/wpt/resource-timing/rt-revalidate-requests-3.html [ Pass Failure ]
+
+webkit.org/b/215271 [ Debug ] storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
+
