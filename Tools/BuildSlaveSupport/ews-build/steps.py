@@ -1251,20 +1251,30 @@ def appendCustomBuildFlags(step, platform, fullPlatform):
 
 
 class BuildLogLineObserver(logobserver.LogLineObserver, object):
-    def __init__(self, errorReceived=None):
+    def __init__(self, errorReceived, searchString='rror:', includeRelatedLines=True):
         self.errorReceived = errorReceived
+        self.searchString = searchString
+        self.includeRelatedLines = includeRelatedLines
         self.error_context_buffer = []
         self.whitespace_re = re.compile('^[\s]*$')
         super(BuildLogLineObserver, self).__init__()
 
     def outLineReceived(self, line):
+        if not self.errorReceived:
+            return
+
+        if not self.includeRelatedLines:
+            if self.searchString in line:
+                self.errorReceived(line)
+            return
+
         is_whitespace = self.whitespace_re.search(line) is not None
         if is_whitespace:
             self.error_context_buffer = []
         else:
             self.error_context_buffer.append(line)
 
-        if 'rror:' in line and self.errorReceived:
+        if self.searchString in line:
             map(self.errorReceived, self.error_context_buffer)
             self.error_context_buffer = []
 
@@ -1291,7 +1301,9 @@ class CompileWebKit(shell.Compile):
         architecture = self.getProperty('architecture')
         additionalArguments = self.getProperty('additionalArguments')
 
-        if platform != 'windows':
+        if platform in ['win', 'wincairo']:
+            self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, searchString='error ', includeRelatedLines=False))
+        else:
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived))
 
         if additionalArguments:
@@ -1434,12 +1446,12 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
                 return step
         return None
 
-    def filter_logs_containing_error(self, logs, max_num_lines=10):
+    def filter_logs_containing_error(self, logs, searchString='rror:', max_num_lines=10):
         if not logs:
             return None
         filtered_logs = []
         for line in logs.splitlines():
-            if 'rror:' in line:
+            if searchString in line:
                 filtered_logs.append(line)
         return '\n'.join(filtered_logs[-max_num_lines:])
 
@@ -1450,8 +1462,13 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
             worker_name = self.getProperty('workername', '')
             patch_id = self.getProperty('patch_id', '')
             patch_author = self.getProperty('patch_author', '')
+            platform = self.getProperty('platform', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
-            logs = self.filter_logs_containing_error(self.error_logs.get(self.compile_webkit_step))
+            logs = self.error_logs.get(self.compile_webkit_step)
+            if platform in ['win', 'wincairo']:
+                logs = self.filter_logs_containing_error(logs, searchString='error ')
+            else:
+                logs = self.filter_logs_containing_error(logs)
 
             email_subject = 'Build failure for Patch {}: {}'.format(patch_id, bug_title)
             email_text = 'EWS has detected build failure on {} while testing Patch {}.'.format(builder_name, patch_id)
@@ -1467,8 +1484,13 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
         try:
             builder_name = self.getProperty('buildername', '')
             worker_name = self.getProperty('workername', '')
+            platform = self.getProperty('platform', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
-            logs = self.filter_logs_containing_error(self.error_logs.get(self.compile_webkit_step))
+            logs = self.error_logs.get(self.compile_webkit_step)
+            if platform in ['win', 'wincairo']:
+                logs = self.filter_logs_containing_error(logs, searchString='error ')
+            else:
+                logs = self.filter_logs_containing_error(logs)
 
             email_subject = 'Build failure on trunk on {}'.format(builder_name)
             email_text = 'Failed to build WebKit without patch in {}\n\nBuilder: {}\n\nWorker: {}'.format(build_url, builder_name, worker_name)
