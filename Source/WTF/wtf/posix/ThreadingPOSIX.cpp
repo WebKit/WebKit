@@ -63,6 +63,11 @@
 
 #endif
 
+#if OS(DARWIN)
+#include <mach/mach_traps.h>
+#include <mach/thread_switch.h>
+#endif
+
 namespace WTF {
 
 static Lock globalSuspendLock;
@@ -555,7 +560,12 @@ void ThreadCondition::broadcast()
 
 void Thread::yield()
 {
+#if OS(DARWIN)
+    constexpr mach_msg_timeout_t timeoutInMS = 1;
+    thread_switch(MACH_PORT_NULL, SWITCH_OPTION_DEPRESS, timeoutInMS);
+#else
     sched_yield();
+#endif
 }
 
 } // namespace WTF

@@ -27,9 +27,23 @@
 #include "Mutex.h"
 
 #include "ScopeExit.h"
+#if BOS(DARWIN)
+#include <mach/mach_traps.h>
+#include <mach/thread_switch.h>
+#endif
 #include <thread>
 
 namespace bmalloc {
+
+static inline void yield()
+{
+#if BOS(DARWIN)
+    constexpr mach_msg_timeout_t timeoutInMS = 1;
+    thread_switch(MACH_PORT_NULL, SWITCH_OPTION_DEPRESS, timeoutInMS);
+#else
+    sched_yield();
+#endif
+}
 
 void Mutex::lockSlowCase()
 {
@@ -49,7 +63,7 @@ void Mutex::lockSlowCase()
 
     // Avoid spinning pathologically.
     while (!try_lock())
-        sched_yield();
+        yield();
 }
 
 } // namespace bmalloc
