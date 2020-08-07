@@ -1,3 +1,17 @@
+2020-08-07  Dean Jackson  <dino@apple.com>
+
+        ANGLE: No need to check for Catalyst in the iOS build
+        https://bugs.webkit.org/show_bug.cgi?id=215249
+        <rdar://problem/66655478>
+
+        Reviewed by Tim Horton.
+
+        The DisplayEAGL class is never used for Catalyst, so doesn't
+        need to handle it.
+
+        * src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm:
+        (rx::DisplayEAGL::generateConfigs):
+
 2020-08-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove all references to non-existent 10.16
