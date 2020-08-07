@@ -1,3 +1,15 @@
+2020-08-07  James Darpinian  <jdarpinian@chromium.org>
+
+        Off by one error in transform feedback buffer binding
+        https://bugs.webkit.org/show_bug.cgi?id=215298
+
+        Reviewed by Dean Jackson.
+
+        Caught by conformance test deqp/functional/gles3/negativebufferapi.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::setIndexedBufferBinding):
+
 2020-08-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         {Intersection,Resize,Performance}Observer callbacks get incorrect `this` value
