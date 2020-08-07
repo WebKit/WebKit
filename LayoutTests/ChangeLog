@@ -1,3 +1,20 @@
+2020-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid triggering redundant compositing updates when trying ot run a steps() animation on transform
+        https://bugs.webkit.org/show_bug.cgi?id=215241
+        <rdar://problem/62737868>
+
+        Reviewed by Zalan Bujtas.
+
+        animations/steps-transform-rendering-updates.html was landed with a bug; it aliased
+        the global 'count' variable, and was thus testing the wrong thing. So land a failing
+        result for the test for now (webkit.org/b/215229 addresses the fix).
+
+        * animations/steps-transform-compositing-updates-expected.txt: Copied from LayoutTests/animations/steps-transform-rendering-updates-expected.txt.
+        * animations/steps-transform-compositing-updates.html: Copied from LayoutTests/animations/steps-transform-rendering-updates.html.
+        * animations/steps-transform-rendering-updates-expected.txt:
+        * animations/steps-transform-rendering-updates.html:
+
 2020-08-06  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS ] webgpu/whlsl/dont-crash-parsing-enum.html is a flaky failure

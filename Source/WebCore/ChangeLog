@@ -1,3 +1,24 @@
+2020-08-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid triggering redundant compositing updates when trying ot run a steps() animation on transform
+        https://bugs.webkit.org/show_bug.cgi?id=215241
+        <rdar://problem/62737868>
+
+        Reviewed by Zalan Bujtas.
+
+        With a steps() timing function and keyframes animating the transform property, KeyframeEffect::applyPendingAcceleratedActions()
+        tries to restart the animation every time because the GraphicsLayer reports that it didn't start an accelerated animation.
+        r264856 patched some of this, but we still call animationFinished() every time, and this triggers a compositing update via
+        the m_owningLayer.setNeeds* calls in RenderLayerBacking::animationFinished().
+
+        So don't try to remove the animation if wasn't running. This makes those compositing updates a no-op, which is important
+        because these animations still invalidate style on every frame (webkit.org/b/215229).
+
+        Test: animations/steps-transform-compositing-updates.html
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+
 2020-08-06  Peng Liu  <peng.liu6@apple.com>
 
         Web process crashes at WebCore::FullscreenManager::didExitFullscreen

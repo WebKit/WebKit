@@ -10,12 +10,12 @@
         }
         
         #box.animating {
-            animation: spinner 0.25s steps(2) 1;     
+            animation: spinner 0.25s steps(2) 1;
         }
 
         @keyframes spinner {
-            from { transform:rotate(0deg); }
-            to   { transform:rotate(360deg); }
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
         }
     </style>
     <script>
@@ -23,18 +23,15 @@
 
         let count = 0;
         window.addEventListener('load', () => {
-            if (!window.internals) {
-                finishJSTest();
-                return;
-            }
-
             let box = document.getElementById('box');
             box.addEventListener('animationstart', () => {
-                internals.startTrackingRenderingUpdates();
+                if (window.internals)
+                    internals.startTrackingCompositingUpdates();
                 shouldBe('count', '0');
             }, false);
             box.addEventListener('animationend', () => {
-                count = internals.renderingUpdateCount();
+                if (window.internals)
+                    count = internals.compositingUpdateCount();
                 shouldBeTrue('count < 6');
                 finishJSTest();
             }, false);
