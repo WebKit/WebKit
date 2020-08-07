@@ -46,6 +46,16 @@
     top: 0;
     bottom: 0;
     margin: 0;
+    padding: 0;
+}
+
+.data-grid.timeline th > .header-cell-content.timeline-ruler > .markers {
+    position: absolute;
+}
+
+.data-grid.timeline th:matches(.sort-ascending, .sort-descending) > .header-cell-content.timeline-ruler:first-child::after {
+    top: calc(var(--data-grid-header-height) / 2 - var(--data-grid-sorting-indicator-height) / 2);
+    bottom: unset;
 }
 
 .data-grid.timeline td.graph-column {

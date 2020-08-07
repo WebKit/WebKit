@@ -1,3 +1,23 @@
+2020-08-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Media & Animations timeline shouldn't shift when sorting
+        https://bugs.webkit.org/show_bug.cgi?id=215085
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/DataGrid.css:
+        (.data-grid):
+        (.data-grid th):
+        (.data-grid th:matches(.sort-ascending, .sort-descending) > .header-cell-content:first-child::after):
+        * UserInterface/Views/TimelineDataGrid.css:
+        (.data-grid.timeline th.graph-column > .timeline-ruler):
+        Override padding defined in `.data-grid th > .header-cell-content`.
+
+        (.data-grid.timeline th > .header-cell-content.timeline-ruler > .markers):
+        (.data-grid.timeline th:matches(.sort-ascending, .sort-descending) > .header-cell-content.timeline-ruler:first-child::after):
+        `.header-cell-content.timeline-ruler` is different from `.header-cell-content` in the sense that the former takes the entire
+        height of DataGrid and has no padding. Place the chevron in the middle of `--data-grid-header-height`.
+
 2020-08-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove all references to non-existent 10.16

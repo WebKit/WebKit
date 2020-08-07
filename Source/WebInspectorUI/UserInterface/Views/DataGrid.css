@@ -28,6 +28,8 @@
     outline: none;
 
     --data-grid-header-horizontal-padding: 6px;
+    --data-grid-header-height: 22px;
+    --data-grid-sorting-indicator-height: 8px;
 }
 
 .data-grid .highlight {
@@ -77,7 +79,7 @@
 }
 
 .data-grid th {
-    height: 22px;
+    height: var(--data-grid-header-height);
     padding: 0;
     text-align: start;
     vertical-align: middle;
@@ -227,7 +229,7 @@
     top: 1px;
     bottom: 0;
     width: 9px;
-    height: 8px;
+    height: var(--data-grid-sorting-indicator-height);
     margin-bottom: auto;
     margin-top: auto;
     content: "";
