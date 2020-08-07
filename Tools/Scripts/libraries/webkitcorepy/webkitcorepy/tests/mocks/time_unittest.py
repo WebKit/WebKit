@@ -20,33 +20,27 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
-import platform
-import sys
+import time
+import unittest
 
-log = logging.getLogger('webkitcorepy')
+from webkitcorepy import mocks
 
-from webkitcorepy.version import Version
-from webkitcorepy.string_utils import BytesIO, StringIO, UnicodeIO, unicode
 
-version = Version(0, 2, 2)
+class MockTime(unittest.TestCase):
+    def test_decorator(self):
+        @mocks.Time
+        def action():
+            original = time.time()
+            time.sleep(10)
+            self.assertGreaterEqual(time.time(), original + 10)
 
-from webkitcorepy.autoinstall import Package, AutoInstall
-if sys.version_info > (3, 0):
-    AutoInstall.register(Package('mock', Version(4)))
-else:
-    AutoInstall.register(Package('mock', Version(3, 0, 5)))
-    if platform.system() == 'Windows':
-        AutoInstall.register(Package('win_inet_pton', Version(1, 1, 0), pypi_name='win-inet-pton'))
+        action()
 
-AutoInstall.register(Package('certifi', Version(2020, 6, 20)))
-AutoInstall.register(Package('chardet', Version(3, 0, 4)))
-AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
-AutoInstall.register(Package('idna', Version(2, 10)))
-AutoInstall.register(Package('packaging', Version(20, 4)))
-AutoInstall.register(Package('pyparsing', Version(2, 4, 7)))
-AutoInstall.register(Package('requests', Version(2, 24)))
-AutoInstall.register(Package('setuptools', Version(44, 1,  1)))
-AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
-AutoInstall.register(Package('six', Version(1, 15, 0)))
-AutoInstall.register(Package('urllib3', Version(1, 25, 10)))
+    def test_context_manager(self):
+        original = time.time()
+
+        with mocks.Time:
+            time.sleep(10)
+            self.assertGreaterEqual(time.time(), original + 10)
+
+        self.assertLess(time.time(), original + 1)

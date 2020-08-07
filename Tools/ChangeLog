@@ -1,5 +1,27 @@
 2020-08-07  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitcorepy] Add mocks.Time
+        https://bugs.webkit.org/show_bug.cgi?id=214475
+
+        Reviewed by Dewei Zhu.
+
+        Provide a mock construct which allows basic time utilities to be used without
+        actually waiting.
+
+        * Scripts/libraries/webkitcorepy/README.md: Add documentation of mocks.Time.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/__init__.py: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/time_.py: Added.
+        (_MetaTime): Meta-class for Time object.
+        (add_metaclass): Python 2/3 compatible function to add meta-class to class.
+        (Time): Mock Time decorator.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/mocks: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/mocks/__init__.py: Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/mocks/time_unittest.py: Added.
+        (MockTime): Verify the functionality of mocks.Time.
+
+2020-08-07  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitcorepy] Add aliases to Autoinstall packages
         https://bugs.webkit.org/show_bug.cgi?id=215276
         <rdar://problem/66688543>

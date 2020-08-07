@@ -21,3 +21,4 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitcorepy.mocks.context_stack import ContextStack
+from webkitcorepy.mocks.time_ import Time

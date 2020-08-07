@@ -33,3 +33,13 @@ from webkitcorepy import AutoInstall
 AutoInstall.register(Package('requests', Version(2, 24)))
 import requests
 ```
+
+Mocking basic time and sleep  calls
+```
+import time
+from webkitcorepy import mocks
+
+with mocks.Time:
+    stamp = time.time()
+    time.sleep(5)
+```
