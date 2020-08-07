@@ -51,9 +51,6 @@ public:
     virtual float dopplerRate() = 0;
 
 protected:
-
-    // FIXME: Remove once dependency from prefixed version is removed
-    PannerNodeBase(BaseAudioContext&, float sampleRate);
     PannerNodeBase(BaseAudioContext&);
 };
 

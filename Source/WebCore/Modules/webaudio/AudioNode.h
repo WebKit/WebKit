@@ -61,9 +61,7 @@ class AudioNode
 public:
     enum { ProcessingSizeInFrames = 128 };
 
-    // FIXME: Remove once dependencies on old constructor are removed.
-    AudioNode(BaseAudioContext&, float sampleRate);
-    AudioNode(BaseAudioContext&);
+    explicit AudioNode(BaseAudioContext&);
     virtual ~AudioNode();
 
     BaseAudioContext& context() { return m_context.get(); }
@@ -138,7 +136,7 @@ public:
     ExceptionOr<void> connect(AudioParam&, unsigned outputIndex);
     virtual ExceptionOr<void> disconnect(unsigned outputIndex);
 
-    virtual float sampleRate() const { return m_sampleRate; }
+    virtual float sampleRate() const;
 
     // processIfNecessary() is called by our output(s) when the rendering graph needs this AudioNode to process.
     // This method ensures that the AudioNode will only process once per rendering time quantum even if it's called repeatedly.
@@ -220,9 +218,6 @@ private:
     volatile bool m_isInitialized { false };
     NodeType m_nodeType { NodeTypeUnknown };
     Ref<BaseAudioContext> m_context;
-
-    // FIXME: Remove m_sampleRate once old constructor is removed.
-    float m_sampleRate;
 
     Vector<std::unique_ptr<AudioNodeInput>> m_inputs;
     Vector<std::unique_ptr<AudioNodeOutput>> m_outputs;

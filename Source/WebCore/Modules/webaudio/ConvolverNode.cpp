@@ -70,7 +70,7 @@ ExceptionOr<Ref<ConvolverNode>> ConvolverNode::create(BaseAudioContext& context,
 }
 
 ConvolverNode::ConvolverNode(BaseAudioContext& context)
-    : AudioNode(context, context.sampleRate())
+    : AudioNode(context)
 {
     setNodeType(NodeTypeConvolver);
 

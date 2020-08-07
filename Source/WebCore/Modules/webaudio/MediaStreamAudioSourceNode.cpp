@@ -71,7 +71,7 @@ ExceptionOr<Ref<MediaStreamAudioSourceNode>> MediaStreamAudioSourceNode::create(
 }
 
 MediaStreamAudioSourceNode::MediaStreamAudioSourceNode(BaseAudioContext& context, MediaStream& mediaStream, MediaStreamTrack& audioTrack)
-    : AudioNode(context, context.sampleRate())
+    : AudioNode(context)
     , m_mediaStream(mediaStream)
     , m_audioTrack(audioTrack)
 {

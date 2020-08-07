@@ -66,7 +66,7 @@ ExceptionOr<Ref<MediaElementAudioSourceNode>> MediaElementAudioSourceNode::creat
 }
 
 MediaElementAudioSourceNode::MediaElementAudioSourceNode(BaseAudioContext& context, Ref<HTMLMediaElement>&& mediaElement)
-    : AudioNode(context, context.sampleRate())
+    : AudioNode(context)
     , m_mediaElement(WTFMove(mediaElement))
 {
     setNodeType(NodeTypeMediaElementAudioSource);

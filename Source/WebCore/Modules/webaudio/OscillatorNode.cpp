@@ -77,7 +77,7 @@ ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& contex
 }
 
 OscillatorNode::OscillatorNode(BaseAudioContext& context, const OscillatorOptions& options)
-    : AudioScheduledSourceNode(context, context.sampleRate())
+    : AudioScheduledSourceNode(context)
     , m_frequency(AudioParam::create(context, "frequency"_s, options.frequency, -context.sampleRate() / 2, context.sampleRate() / 2))
     , m_detune(AudioParam::create(context, "detune"_s, options.detune, -153600, 153600))
 {

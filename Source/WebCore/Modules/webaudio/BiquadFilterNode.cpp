@@ -56,7 +56,7 @@ ExceptionOr<Ref<BiquadFilterNode>> BiquadFilterNode::create(BaseAudioContext& co
 }
 
 BiquadFilterNode::BiquadFilterNode(BaseAudioContext& context)
-    : AudioBasicProcessorNode(context, context.sampleRate())
+    : AudioBasicProcessorNode(context)
 {
     setNodeType(NodeTypeBiquadFilter);
 

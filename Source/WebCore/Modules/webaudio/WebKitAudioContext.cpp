@@ -132,7 +132,7 @@ ExceptionOr<Ref<WebKitAudioPannerNode>> WebKitAudioContext::createWebKitPanner()
         return Exception { InvalidStateError };
 
     lazyInitialize();
-    return WebKitAudioPannerNode::create(*this, sampleRate());
+    return WebKitAudioPannerNode::create(*this);
 }
 
 ExceptionOr<Ref<WebKitOscillatorNode>> WebKitAudioContext::createWebKitOscillator()

@@ -49,12 +49,6 @@ static void fixNANs(double &x)
         x = 0.0;
 }
 
-// FIXME: Remove once dependency from prefixed version is removed
-PannerNodeBase::PannerNodeBase(BaseAudioContext& context, float sampleRate)
-    : AudioNode(context, sampleRate)
-{
-}
-
 PannerNodeBase::PannerNodeBase(BaseAudioContext& context)
     : AudioNode(context)
 {

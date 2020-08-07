@@ -1,3 +1,85 @@
+2020-08-07  Chris Dumez  <cdumez@apple.com>
+
+        Stop storing the sampleRate on AudioNode and get it from the AudioContext instead
+        https://bugs.webkit.org/show_bug.cgi?id=215246
+
+        Reviewed by Eric Carlson.
+
+        Stop storing the sampleRate on AudioNode and get it from the AudioContext instead.
+        This avoids having to pass the sampleRate everywhere when we construct nodes.
+
+        No new tests, no behavior change.
+
+        * Modules/webaudio/AnalyserNode.cpp:
+        (WebCore::AnalyserNode::AnalyserNode):
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::AudioBasicInspectorNode):
+        * Modules/webaudio/AudioBasicInspectorNode.h:
+        * Modules/webaudio/AudioBasicProcessorNode.cpp:
+        (WebCore::AudioBasicProcessorNode::AudioBasicProcessorNode):
+        * Modules/webaudio/AudioBasicProcessorNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        * Modules/webaudio/AudioDestinationNode.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::AudioNode):
+        (WebCore::AudioNode::sampleRate const):
+        (WebCore::AudioNode::processIfNecessary):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createScriptProcessor):
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::BiquadFilterNode):
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        (WebCore::ChannelMergerNode::create):
+        (WebCore::ChannelMergerNode::ChannelMergerNode):
+        * Modules/webaudio/ChannelMergerNode.h:
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        (WebCore::ChannelSplitterNode::create):
+        (WebCore::ChannelSplitterNode::ChannelSplitterNode):
+        * Modules/webaudio/ChannelSplitterNode.h:
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::ConvolverNode):
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        (WebCore::DefaultAudioDestinationNode::DefaultAudioDestinationNode):
+        (WebCore::DefaultAudioDestinationNode::sampleRate const):
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore::DelayNode::DelayNode):
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::GainNode):
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        (WebCore::MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode):
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::MediaStreamAudioSourceNode):
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::OscillatorNode):
+        * Modules/webaudio/PannerNode.cpp:
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::create):
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::WaveShaperNode):
+        * Modules/webaudio/WebKitAudioContext.cpp:
+        (WebCore::WebKitAudioContext::createWebKitPanner):
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::WebKitAudioPannerNode):
+        * Modules/webaudio/WebKitAudioPannerNode.h:
+
 2020-08-07  Dean Jackson  <dino@apple.com>
 
         Pocket City game play area is blank (WebGL is broken in Catalyst)

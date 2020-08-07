@@ -97,29 +97,8 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
-
-// FIXME: Remove once dependencies on old constructor are removed
-AudioNode::AudioNode(BaseAudioContext& context, float sampleRate)
-    : m_context(context)
-    , m_sampleRate(sampleRate)
-#if !RELEASE_LOG_DISABLED
-    , m_logger(context.logger())
-    , m_logIdentifier(context.nextAudioNodeLogIdentifier())
-#endif
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-    
-#if DEBUG_AUDIONODE_REFERENCES
-    if (!s_isNodeCountInitialized) {
-        s_isNodeCountInitialized = true;
-        atexit(AudioNode::printNodeCounts);
-    }
-#endif
-}
-
 AudioNode::AudioNode(BaseAudioContext& context)
     : m_context(context)
-    , m_sampleRate(context.sampleRate())
 #if !RELEASE_LOG_DISABLED
     , m_logger(context.logger())
     , m_logIdentifier(context.nextAudioNodeLogIdentifier())
@@ -266,6 +245,11 @@ ExceptionOr<void> AudioNode::disconnect(unsigned outputIndex)
     return { };
 }
 
+float AudioNode::sampleRate() const
+{
+    return m_context->sampleRate();
+}
+
 ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
 {
     ASSERT(isMainThread());
@@ -355,7 +339,7 @@ void AudioNode::processIfNecessary(size_t framesToProcess)
 
         bool silentInputs = inputsAreSilent();
         if (!silentInputs)
-            m_lastNonSilentTime = (context().currentSampleFrame() + framesToProcess) / static_cast<double>(m_sampleRate);
+            m_lastNonSilentTime = (context().currentSampleFrame() + framesToProcess) / static_cast<double>(context().sampleRate());
 
         if (silentInputs && propagatesSilence())
             silenceOutputs();

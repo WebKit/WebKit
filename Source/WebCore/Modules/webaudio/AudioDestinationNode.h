@@ -35,7 +35,7 @@ namespace WebCore {
 class AudioDestinationNode : public AudioNode, public AudioIOCallback {
     WTF_MAKE_ISO_ALLOCATED(AudioDestinationNode);
 public:
-    AudioDestinationNode(BaseAudioContext&, float sampleRate);
+    explicit AudioDestinationNode(BaseAudioContext&);
     virtual ~AudioDestinationNode();
     
     // AudioNode   

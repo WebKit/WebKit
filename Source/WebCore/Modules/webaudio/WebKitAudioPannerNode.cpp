@@ -48,8 +48,8 @@ static void fixNANs(double &x)
         x = 0.0;
 }
 
-WebKitAudioPannerNode::WebKitAudioPannerNode(WebKitAudioContext& context, float sampleRate)
-    : PannerNodeBase(context, sampleRate)
+WebKitAudioPannerNode::WebKitAudioPannerNode(WebKitAudioContext& context)
+    : PannerNodeBase(context)
     , m_panningModel(PanningModelType::HRTF)
     , m_lastGain(-1.0)
     , m_connectionCount(0)

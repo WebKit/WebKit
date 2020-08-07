@@ -48,7 +48,7 @@ private:
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }
 
-    ChannelSplitterNode(BaseAudioContext&, float sampleRate, unsigned numberOfOutputs);
+    ChannelSplitterNode(BaseAudioContext&, unsigned numberOfOutputs);
 };
 
 } // namespace WebCore

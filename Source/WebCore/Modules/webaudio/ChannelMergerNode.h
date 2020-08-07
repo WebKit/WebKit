@@ -56,7 +56,7 @@ private:
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }
 
-    ChannelMergerNode(BaseAudioContext&, float sampleRate, unsigned numberOfInputs);
+    ChannelMergerNode(BaseAudioContext&, unsigned numberOfInputs);
 };
 
 } // namespace WebCore

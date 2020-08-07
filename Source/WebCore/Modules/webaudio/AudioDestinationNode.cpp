@@ -39,8 +39,8 @@ namespace WebCore {
     
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioDestinationNode);
 
-AudioDestinationNode::AudioDestinationNode(BaseAudioContext& context, float sampleRate)
-    : AudioNode(context, sampleRate)
+AudioDestinationNode::AudioDestinationNode(BaseAudioContext& context)
+    : AudioNode(context)
     , m_currentSampleFrame(0)
     , m_isSilent(true)
     , m_isEffectivelyPlayingAudio(false)

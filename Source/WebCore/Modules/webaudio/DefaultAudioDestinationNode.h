@@ -39,6 +39,8 @@ public:
     }
     
     virtual ~DefaultAudioDestinationNode();
+
+    float sampleRate() const final { return m_sampleRate; }
     
 private:
     explicit DefaultAudioDestinationNode(BaseAudioContext&, Optional<float>);
@@ -59,6 +61,7 @@ private:
     std::unique_ptr<AudioDestination> m_destination;
     String m_inputDeviceId;
     unsigned m_numberOfInputChannels { 0 };
+    float m_sampleRate { 0 };
 };
 
 } // namespace WebCore

@@ -497,7 +497,7 @@ ExceptionOr<Ref<ScriptProcessorNode>> BaseAudioContext::createScriptProcessor(si
     if (numberOfOutputChannels > maxNumberOfChannels())
         return Exception { NotSupportedError };
 
-    auto node = ScriptProcessorNode::create(*this, sampleRate(), bufferSize, numberOfInputChannels, numberOfOutputChannels);
+    auto node = ScriptProcessorNode::create(*this, bufferSize, numberOfInputChannels, numberOfOutputChannels);
 
     refNode(node); // context keeps reference until we stop making javascript rendering callbacks
     return node;

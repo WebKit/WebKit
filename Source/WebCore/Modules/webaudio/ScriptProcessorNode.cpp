@@ -44,13 +44,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ScriptProcessorNode);
 
-Ref<ScriptProcessorNode> ScriptProcessorNode::create(BaseAudioContext& context, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
+Ref<ScriptProcessorNode> ScriptProcessorNode::create(BaseAudioContext& context, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
 {
-    return adoptRef(*new ScriptProcessorNode(context, sampleRate, bufferSize, numberOfInputChannels, numberOfOutputChannels));
+    return adoptRef(*new ScriptProcessorNode(context, bufferSize, numberOfInputChannels, numberOfOutputChannels));
 }
 
-ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, float sampleRate, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
-    : AudioNode(context, sampleRate)
+ScriptProcessorNode::ScriptProcessorNode(BaseAudioContext& context, size_t bufferSize, unsigned numberOfInputChannels, unsigned numberOfOutputChannels)
+    : AudioNode(context)
     , ActiveDOMObject(context.scriptExecutionContext())
     , m_doubleBufferIndex(0)
     , m_doubleBufferIndexForEvent(0)

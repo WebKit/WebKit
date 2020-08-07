@@ -61,7 +61,7 @@ ExceptionOr<Ref<DynamicsCompressorNode>> DynamicsCompressorNode::create(BaseAudi
 }
 
 DynamicsCompressorNode::DynamicsCompressorNode(BaseAudioContext& context, const DynamicsCompressorOptions& options)
-    : AudioNode(context, context.sampleRate())
+    : AudioNode(context)
     , m_threshold(AudioParam::create(context, "threshold"_s, options.threshold, -100, 0))
     , m_knee(AudioParam::create(context, "knee"_s, options.knee, 0, 40))
     , m_ratio(AudioParam::create(context, "ratio"_s, options.ratio, 1, 20))

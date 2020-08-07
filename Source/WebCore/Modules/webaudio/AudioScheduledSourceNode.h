@@ -53,7 +53,7 @@ public:
         FINISHED_STATE = 3
     };
     
-    AudioScheduledSourceNode(BaseAudioContext&, float sampleRate);
+    explicit AudioScheduledSourceNode(BaseAudioContext&);
 
     ExceptionOr<void> startLater(double when);
     ExceptionOr<void> stopLater(double when);

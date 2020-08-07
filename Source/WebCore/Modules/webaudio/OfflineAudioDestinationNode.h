@@ -52,7 +52,7 @@ public:
     void enableInput(const String&) override { }
     ExceptionOr<void> startRendering() override;
 
-    float sampleRate() const override { return m_renderTarget->sampleRate(); }
+    float sampleRate() const final { return m_renderTarget->sampleRate(); }
 
 private:
     OfflineAudioDestinationNode(BaseAudioContext&, AudioBuffer* renderTarget);

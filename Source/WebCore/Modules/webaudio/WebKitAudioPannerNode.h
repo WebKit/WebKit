@@ -53,9 +53,9 @@ class HRTFDatabaseLoader;
 class WebKitAudioPannerNode final : public PannerNodeBase {
     WTF_MAKE_ISO_ALLOCATED(WebKitAudioPannerNode);
 public:
-    static Ref<WebKitAudioPannerNode> create(WebKitAudioContext& context, float sampleRate)
+    static Ref<WebKitAudioPannerNode> create(WebKitAudioContext& context)
     {
-        return adoptRef(*new WebKitAudioPannerNode(context, sampleRate));
+        return adoptRef(*new WebKitAudioPannerNode(context));
     }
 
     virtual ~WebKitAudioPannerNode();
@@ -123,7 +123,7 @@ public:
     double latencyTime() const override { return m_panner ? m_panner->latencyTime() : 0; }
 
 private:
-    WebKitAudioPannerNode(WebKitAudioContext&, float sampleRate);
+    explicit WebKitAudioPannerNode(WebKitAudioContext&);
 
     // Returns the combined distance and cone gain attenuation.
     float distanceConeGain();
