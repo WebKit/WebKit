@@ -1916,7 +1916,7 @@ webrtc/h264-baseline.html [ Slow ]
 webrtc/h264-high.html [ Slow ]
 
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Slow ]
-webkit.org/b/214197 imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver.https.html [ Pass Failure ]
+webkit.org/b/214197 imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver.https.html [ Pass Failure Crash ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-answer.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceGatheringState.html [ Pass Failure ]
