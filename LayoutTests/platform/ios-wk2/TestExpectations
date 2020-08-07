@@ -1821,3 +1821,5 @@ webkit.org/b/215268 http/wpt/resource-timing/rt-revalidate-requests-3.html [ Pas
 webkit.org/b/215271 [ Debug ] storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
 
 webkit.org/b/215273 svg/animations/smil-multiple-animate-list.svg [ Pass Timeout ]
+
+webkit.org/b/215278 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-parse-error-external-module.html [ Pass Timeout ]
