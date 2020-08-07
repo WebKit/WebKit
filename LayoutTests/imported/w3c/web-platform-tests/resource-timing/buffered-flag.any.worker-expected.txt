@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT PerformanceObserver with buffered flag sees previous resource entries. Test timed out
+PASS PerformanceObserver with buffered flag sees previous resource entries. 
 

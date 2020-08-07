@@ -1,3 +1,32 @@
+2020-08-07  Rob Buis  <rbuis@igalia.com>
+
+        Implement PerfomanceObserverInit.buffered
+        https://bugs.webkit.org/show_bug.cgi?id=214883
+
+        Reviewed by Darin Adler.
+
+        Implement PerfomanceObserverInit.buffered IDL and
+        functionality [1].
+
+        Behavior matches Chrome and Firefox.
+
+        Tests: imported/w3c/web-platform-tests/resource-timing/buffered-flag.any.html
+               imported/w3c/web-platform-tests/resource-timing/buffered-flag.any.worker.html
+               imported/w3c/web-platform-tests/user-timing/buffered-flag.any.html
+               imported/w3c/web-platform-tests/user-timing/buffered-flag.any.worker.html
+               imported/w3c/web-platform-tests/performance-timeline/case-sensitivity.any.html
+               imported/w3c/web-platform-tests/performance-timeline/case-sensitivity.any.worker.html
+
+        [1] https://w3c.github.io/performance-timeline/#performanceobserverinit-dictionary
+
+        * page/Performance.cpp:
+        (WebCore::Performance::appendBufferedEntriesByType const):
+        * page/Performance.h:
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::observe):
+        * page/PerformanceObserver.h:
+        * page/PerformanceObserver.idl:
+
 2020-08-07  John Wilander  <wilander@apple.com>
 
         Experimental: Cap the expiry of persistent cookies set in 3rd-party CNAME cloaked HTTP responses

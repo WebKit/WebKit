@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT PerformanceObserver with buffered flag sees previous marks Test timed out
-TIMEOUT PerformanceObserver with buffered flag sees previous measures Test timed out
+PASS PerformanceObserver with buffered flag sees previous marks 
+PASS PerformanceObserver with buffered flag sees previous measures 
 

@@ -42,4 +42,5 @@
 dictionary PerformanceObserverInit {
     sequence<DOMString> entryTypes;
     DOMString type;
+    boolean buffered = false;
 };

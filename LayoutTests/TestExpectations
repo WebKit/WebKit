@@ -4516,8 +4516,3 @@ webkit.org/b/214467 imported/w3c/web-platform-tests/html/canvas/element/drawing-
 
 # WebKit2 only.
 js/throw-large-string-oom.html [ Skip ]
-
-webkit.org/b/214883 imported/w3c/web-platform-tests/resource-timing/buffered-flag.any.html [ Skip ]
-webkit.org/b/214883 imported/w3c/web-platform-tests/resource-timing/buffered-flag.any.worker.html [ Skip ]
-webkit.org/b/214883 imported/w3c/web-platform-tests/user-timing/buffered-flag.any.html [ Skip ]
-webkit.org/b/214883 imported/w3c/web-platform-tests/user-timing/buffered-flag.any.worker.html [ Skip ]

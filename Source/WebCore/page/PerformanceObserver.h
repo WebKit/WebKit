@@ -43,6 +43,7 @@ public:
     struct Init {
         Optional<Vector<String>> entryTypes;
         Optional<String> type;
+        bool buffered;
     };
 
     static Ref<PerformanceObserver> create(ScriptExecutionContext& context, Ref<PerformanceObserverCallback>&& callback)

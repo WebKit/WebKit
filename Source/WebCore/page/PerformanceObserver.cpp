@@ -60,6 +60,7 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
     if (!m_performance)
         return Exception { TypeError };
 
+    bool isBuffered = false;
     OptionSet<PerformanceEntry::Type> filter;
     if (init.entryTypes) {
         if (init.type)
@@ -83,6 +84,11 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
             filter.add(*type);
         else
             return { };
+        if (init.buffered) {
+            isBuffered = true;
+            if (m_performance->appendBufferedEntriesByType(*init.type, m_entriesToDeliver))
+                std::stable_sort(m_entriesToDeliver.begin(), m_entriesToDeliver.end(), PerformanceEntry::startTimeCompareLessThan);
+        }
         m_typeFilter.add(filter);
     }
 
@@ -90,6 +96,8 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
         m_performance->registerPerformanceObserver(*this);
         m_registered = true;
     }
+    if (isBuffered)
+        deliver();
 
     return { };
 }
