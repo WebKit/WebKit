@@ -1,3 +1,12 @@
+2020-08-07  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ iOS wk2 ] svg/animations/smil-multiple-animate-list.svg is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=215273
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove UIScriptController.removeAllDynamicDictionaries()

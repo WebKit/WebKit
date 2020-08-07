@@ -1820,3 +1820,4 @@ webkit.org/b/215268 http/wpt/resource-timing/rt-revalidate-requests-3.html [ Pas
 
 webkit.org/b/215271 [ Debug ] storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
 
+webkit.org/b/215273 svg/animations/smil-multiple-animate-list.svg [ Pass Timeout ]
