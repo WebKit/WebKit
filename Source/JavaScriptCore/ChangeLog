@@ -1,3 +1,55 @@
+2020-08-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Speculate children first in DFG NewArray
+        https://bugs.webkit.org/show_bug.cgi?id=215308
+        <rdar://problem/64749263>
+
+        Reviewed by Mark Lam.
+
+        SpeculativeJIT::emitAllocateRawObject can create uninitialized butterfly since we later fill them.
+        However, DFG NewArray node has speculation after that. So if speculation failure happens, we release
+        half-baked butterfly.
+
+        Let's see the example.
+
+           8459         emitAllocateRawObject(resultGPR, structure, storageGPR, numElements, vectorLengthHint);
+           ...
+           8482             case ALL_INT32_INDEXING_TYPES:
+           8483             case ALL_CONTIGUOUS_INDEXING_TYPES: {
+           8484                 JSValueOperand operand(this, use, ManualOperandSpeculation);
+           8485                 JSValueRegs operandRegs = operand.jsValueRegs();
+           8486                 if (hasInt32(node->indexingType())) {
+           8487                     DFG_TYPE_CHECK(
+           8488                         operandRegs, use, SpecInt32Only,
+           8489                         m_jit.branchIfNotInt32(operandRegs));
+           8490                 }
+           8491                 m_jit.storeValue(operandRegs, MacroAssembler::Address(storageGPR, sizeof(JSValue) * operandIdx));
+           8492                 break;
+           8493             }
+
+        L8487-L8489 is doing speculation check. If it failed, the rest of the butterfly can be filled with garbage. This looks OK since
+        it is Int32 butterfly so GC never scans it. However, if have-a-bad-time happens and the array is reachable from the conservative root,
+        this half-baked array is converted from Int32 array to ArrayStorage. At that time, since Int32 butterfly should hold JSInt32,
+        we store this garbage to ArrayStorage. Later, if conservative root still holds this array, and GC scans this garbage as as JSValue,
+        this value confuses GC.
+
+        In this patch, we first perform speculation before creating uninitialized JSArray so that we can ensure that we never exit after
+        creating this array until we fill it. This strategy is the same to FTL's NewArray implementation.
+
+        And we also found that emitAllocateRawObject is allocating an object from JSFinalObject space while we use it for JSArray too.
+        We should get per-type allocator to ensure JSArray is allocated in its IsoSubspace.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::compileNewArray):
+        (JSC::DFG::SpeculativeJIT::compileMaterializeNewObject):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        * runtime/JSObject.h:
+        (JSC::JSObject::createRawObject): Deleted.
+
 2020-08-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Disable ENABLE_BITMAP_FREELIST

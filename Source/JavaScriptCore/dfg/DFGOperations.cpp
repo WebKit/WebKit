@@ -2919,8 +2919,9 @@ char* JIT_OPERATION operationNewRawObject(VM* vmPointer, Structure* structure, i
             length * sizeof(EncodedJSValue));
     }
 
-    JSObject* result = JSObject::createRawObject(vm, structure, butterfly);
-    return bitwise_cast<char*>(result);
+    if (structure->type() == JSType::ArrayType)
+        return bitwise_cast<char*>(JSArray::createWithButterfly(vm, nullptr, structure, butterfly));
+    return bitwise_cast<char*>(JSFinalObject::create(vm, structure, butterfly));
 }
 
 JSCell* JIT_OPERATION operationNewObjectWithButterfly(VM* vmPointer, Structure* structure, Butterfly* butterfly)
@@ -2934,8 +2935,9 @@ JSCell* JIT_OPERATION operationNewObjectWithButterfly(VM* vmPointer, Structure* 
             vm, nullptr, 0, structure->outOfLineCapacity(), false, IndexingHeader(), 0);
     }
     
-    JSObject* result = JSObject::createRawObject(vm, structure, butterfly);
-    return result;
+    if (structure->type() == JSType::ArrayType)
+        return JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
+    return JSFinalObject::create(vm, structure, butterfly);
 }
 
 JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(VM* vmPointer, Structure* structure, unsigned length, Butterfly* butterfly)
@@ -2955,9 +2957,9 @@ JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVector
             sizeof(EncodedJSValue) * length);
     }
     
-    // Paradoxically this may allocate a JSArray. That's totally cool.
-    JSObject* result = JSObject::createRawObject(vm, structure, butterfly);
-    return result;
+    if (structure->type() == JSType::ArrayType)
+        return JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
+    return JSFinalObject::create(vm, structure, butterfly);
 }
 
 JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(JSGlobalObject* globalObject, void* buffer, uint32_t numItems)
