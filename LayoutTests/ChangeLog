@@ -1,3 +1,15 @@
+2020-08-07  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening and adding some WPE baselines.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/css3/filters/backdrop/backdrop-filter-with-clip-path-expected.txt: Added.
+        * platform/wpe/http/tests/storageAccess/aggregate-sorted-data-with-storage-access-expected.txt: Added.
+        * platform/wpe/scrollingcoordinator/scrolling-tree/sibling-node-order-expected.txt: Added.
+
 2020-08-07  Chris Dumez  <cdumez@apple.com>
 
         AudioContext / OfflineAudioContext should support a wider sample rate range

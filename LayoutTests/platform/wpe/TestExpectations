@@ -26,6 +26,9 @@ webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailur
 # Paint Timing
 webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
 
+# WPT tests
+webkit.org/b/215306 imported/w3c/web-platform-tests/html/user-activation/basic.html [ Timeout ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 # Legacy Expectations sections below
@@ -191,6 +194,7 @@ fast/events/shift-drag-selection-on-link-triggers-drag-n-drop.html [ Skip ]
 fast/events/touch/gesture/long-press-on-draggable-element-triggers-drag.html [ Skip ]
 fast/events/touch/gesture/resources/drag-inside-iframe2.html [ Skip ]
 fast/events/touch/gesture/resources/drag-inside-nested-iframes3.html [ Skip ]
+fast/text/selection-is-prevent-defaulted.html [ Skip ]
 
 # ENABLE_DARK_MODE_CSS is OFF in WPE.
 css-dark-mode [ Skip ]
@@ -1188,8 +1192,6 @@ webkit.org/b/208921 fast/events/touch/multi-touch-inside-iframes.html [ Timeout 
 
 webkit.org/b/208932 scrollbars/scroll-rtl-or-bt-layer.html [ Timeout ]
 
-webkit.org/b/208934 inspector/console/console-screenshot.html [ Timeout ]
-
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints1.html [ Timeout Crash ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints2.html [ Timeout ]
 webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Timeout Crash ]
@@ -1601,7 +1603,7 @@ media/media-source/ [ Pass ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
 webkit.org/b/168373 media/media-source/media-source-resize.html [ Failure ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
-webkit.org/b/214636 media/media-source/media-source-webm.html [ Failure ]
+webkit.org/b/214636 media/media-source/media-source-webm.html [ Timeout ]
 
 webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
 webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass Failure ]

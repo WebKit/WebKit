@@ -191,6 +191,8 @@ webkit.org/b/215209 [ Debug ] css3/filters/backdrop/resource-use-excessive.html 
 webkit.org/b/215209 [ Debug ] css3/filters/backdrop/resource-use-ok.html [ Crash ]
 webkit.org/b/215209 [ Debug ] css3/filters/backdrop/resource-use-remove-some-layers.html [ Crash ]
 
+webkit.org/b/214682 imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html [ Pass Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -260,6 +262,8 @@ webkit.org/b/207547 media/media-can-play-av1.html [ Failure ]
 webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Failure Pass ]
 
 webkit.org/b/215255 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-multi-channels.html [ Failure ]
+
+webkit.org/b/215281 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/ctor-audiobuffer.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
