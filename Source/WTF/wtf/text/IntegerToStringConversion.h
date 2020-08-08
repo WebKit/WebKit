@@ -115,8 +115,10 @@ template<typename IntegerType>
 inline unsigned lengthOfIntegerAsString(IntegerType integer)
 {
     static_assert(std::is_integral_v<IntegerType>);
-    if constexpr (std::is_same_v<IntegerType, bool>)
+    if constexpr (std::is_same_v<IntegerType, bool>) {
+        UNUSED_PARAM(integer);
         return 1;
+    }
     else if constexpr (std::is_signed_v<IntegerType>) {
         if (integer < 0)
             return lengthOfIntegerAsStringImpl<typename std::make_unsigned_t<IntegerType>, NegativeNumber>(-integer);

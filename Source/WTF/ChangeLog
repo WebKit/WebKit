@@ -1,3 +1,13 @@
+2020-08-08  Joonghun Park  <jh718.park@samsung.com>
+
+        [WTF] Remove the build warning since r265344.
+        https://bugs.webkit.org/show_bug.cgi?id=215269
+
+        warning: parameter ‘integer’ set but not used [-Wunused-but-set-parameter]
+
+        * wtf/text/IntegerToStringConversion.h:
+        (WTF::lengthOfIntegerAsString):
+
 2020-08-07  John Wilander  <wilander@apple.com>
 
         Experimental: Cap the expiry of persistent cookies set in 3rd-party CNAME cloaked HTTP responses
