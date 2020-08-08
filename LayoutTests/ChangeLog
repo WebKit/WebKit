@@ -1,3 +1,12 @@
+2020-08-07  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk2 ] fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215304
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Attempt to stabilize out-of-memory error test

@@ -79,7 +79,6 @@ http/tests/webAPIStatistics [ Pass ]
 webkit.org/b/184569 storage/indexeddb/modern/transactions-stop-on-navigation.html [ Pass Failure ]
 
 fast/events/detect-caps-lock.html [ Pass ]
-fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Pass ]
 fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Pass ]
 fast/forms/password-scrolled-after-caps-lock-toggled.html [ Pass ]
 webkit.org/b/194170 [ Release ] fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass Failure ]
@@ -1102,3 +1101,5 @@ webkit.org/b/214824 [ Debug ] js/throw-large-string-oom.html [ Skip ]
 webkit.org/b/215221 [ Debug ] editing/undo-manager/undo-manager-delete-stale-undo-items.html [ Pass Crash ]
 
 webkit.org/b/215245 [ Release ] imported/w3c/web-platform-tests/content-security-policy/worker-src/service-worker-src-child-fallback.https.sub.html [ Pass Failure ]
+
+webkit.org/b/215304 fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Pass Failure ]
