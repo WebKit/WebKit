@@ -1,15 +1,47 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
 PASS Audit report 
 PASS > [Test 1] k-rate frequency input 
+PASS   Test 1: srcRef.frequency.automationRate = 'k-rate' did not throw an exception. 
+PASS   Test 1: srcRef.frequency.setValueAtTime(100, 0) did not throw an exception. 
+PASS   Test 1: srcRef.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
+PASS   Test 1: srcTest.frequency.automationRate = 'k-rate' did not throw an exception. 
 PASS > [Test 2] k-rate detune input 
+PASS   Test 2: srcRef.detune.automationRate = 'k-rate' did not throw an exception. 
+PASS   Test 2: srcRef.detune.setValueAtTime(0, 0) did not throw an exception. 
+PASS   Test 2: srcRef.detune.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
+PASS   Test 2: srcTest.detune.automationRate = 'k-rate' did not throw an exception. 
 PASS > [Test 3] k-rate frequency input with a-rate detune 
+PASS   Test 3: srcRef.frequency.automationRate = 'k-rate' did not throw an exception. 
+PASS   Test 3: srcRef.frequency.setValueAtTime(100, 0) did not throw an exception. 
+PASS   Test 3: srcRef.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
+PASS   Test 3: srcRef.detune.setValueAtTime(0, 0) did not throw an exception. 
+PASS   Test 3: srcRef.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
+PASS   Test 3: srcTest.frequency.automationRate = 'k-rate' did not throw an exception. 
+PASS   Test 3: srcTest.detune.setValueAtTime(0, 0) did not throw an exception. 
+PASS   Test 3: srcTest.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
 PASS > [Test 4] a-rate frequency with k-rate detune input 
+PASS   Test 4: srcRef.frequency.setValueAtTime(100, 0) did not throw an exception. 
+PASS   Test 4: srcRef.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
+PASS   Test 4: srcRef.detune.automationRate = 'k-rate' did not throw an exception. 
+PASS   Test 4: srcRef.detune.setValueAtTime(0, 0) did not throw an exception. 
+PASS   Test 4: srcRef.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
+PASS   Test 4: srcTest.detune.automationRate = 'k-rate' did not throw an exception. 
+PASS   Test 4: srcTest.frequency.setValueAtTime(100, 0) did not throw an exception. 
+PASS   Test 4: srcTest.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
 PASS > [Test 5] k-rate inputs for frequency and detune 
+PASS   Test 5: srcRef.frequency.automationRate = 'k-rate' did not throw an exception. 
+PASS   Test 5: srcRef.setValueAtTime(100, 0) did not throw an exception. 
+PASS   Test 5: srcRef;.frequency.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
+PASS   Test 5: srcRef.detune.automationRate = 'k-rate' did not throw an exception. 
+PASS   Test 5: srcRef.detune.setValueAtTime(0, 0) did not throw an exception. 
+PASS   Test 5: srcRef.detune.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
+PASS   Test 5: srcTest.frequency.automationRate = 'k-rate' did not throw an exception. 
+PASS   Test 5: srcTest.detune.automationRate = 'k-rate' did not throw an exception. 
 PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

@@ -105,11 +105,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(BaseAudioContext);
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document() && document()->page() && document()->page()->isAlwaysOnLoggingAllowed(), Media, "%p - BaseAudioContext::" fmt, this, ##__VA_ARGS__)
     
-bool BaseAudioContext::isSampleRateRangeGood(float sampleRate)
+bool BaseAudioContext::isSupportedSampleRate(float sampleRate)
 {
-    // FIXME: It would be nice if the minimum sample-rate could be less than 44.1KHz,
-    // but that will require some fixes in HRTFPanner::fftSizeForSampleRate(), and some testing there.
-    return sampleRate >= 44100 && sampleRate <= 96000;
+    return sampleRate >= 3000 && sampleRate <= 384000;
 }
 
 unsigned BaseAudioContext::s_hardwareContextCount = 0;

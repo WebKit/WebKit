@@ -1,9 +1,25 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "playbackRate" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "detune" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "playbackRate" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'mod.start')"
+FAIL Executing "detune" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'mod.start')"
 PASS Audit report 
 PASS > [playbackRate] AudioBufferSource playbackRate 
+PASS   playbackRate: refNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception. 
+PASS   playbackRate: tstNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception. 
+PASS   playbackRate: refNode[playbackRate].setValueAtTime(1, 0) did not throw an exception. 
+PASS   playbackRate: refNode[playbackRate].linearRampToValueAtTime(2, 0.25) did not throw an exception. 
+FAIL X playbackRate: mod = new ConstantSourceNode(context, {offset: 0}) incorrectly threw ReferenceError: "Can't find variable: ConstantSourceNode". assert_true: expected true got false
+FAIL X playbackRate: mod.offset.setValueAtTime(0, 0) incorrectly threw TypeError: "undefined is not an object (evaluating 'mod.offset')". assert_true: expected true got false
+FAIL X playbackRate: mod.offset.linearRampToValueAtTime(1, 0.25) incorrectly threw TypeError: "undefined is not an object (evaluating 'mod.offset')". assert_true: expected true got false
+FAIL X playbackRate: mod.connect(tstNode[playbackRate]) incorrectly threw TypeError: "undefined is not an object (evaluating 'mod.connect')". assert_true: expected true got false
 PASS > [detune] AudioBufferSource detune 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS   detune: refNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception. 
+PASS   detune: tstNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception. 
+PASS   detune: refNode[detune].setValueAtTime(-1200, 0) did not throw an exception. 
+PASS   detune: refNode[detune].linearRampToValueAtTime(1200, 0.25) did not throw an exception. 
+FAIL X detune: mod = new ConstantSourceNode(context, {offset: 0}) incorrectly threw ReferenceError: "Can't find variable: ConstantSourceNode". assert_true: expected true got false
+FAIL X detune: mod.offset.setValueAtTime(-1200, 0) incorrectly threw TypeError: "undefined is not an object (evaluating 'mod.offset')". assert_true: expected true got false
+FAIL X detune: mod.offset.linearRampToValueAtTime(1200, 0.25) incorrectly threw TypeError: "undefined is not an object (evaluating 'mod.offset')". assert_true: expected true got false
+FAIL X detune: mod.connect(tstNode[detune]) incorrectly threw TypeError: "undefined is not an object (evaluating 'mod.connect')". assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 2 tasks were failed. assert_true: expected true got false
 

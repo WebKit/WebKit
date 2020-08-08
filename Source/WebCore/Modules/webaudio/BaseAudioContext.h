@@ -296,11 +296,12 @@ public:
 
     void lazyInitialize();
 
+    static bool isSupportedSampleRate(float sampleRate);
+
 protected:
     explicit BaseAudioContext(Document&, const AudioContextOptions& = { });
     BaseAudioContext(Document&, AudioBuffer* renderTarget);
     
-    static bool isSampleRateRangeGood(float sampleRate);
     void clearPendingActivity();
     void makePendingActivity();
 

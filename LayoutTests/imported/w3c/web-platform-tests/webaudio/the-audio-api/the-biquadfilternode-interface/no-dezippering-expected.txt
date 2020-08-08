@@ -1,17 +1,128 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+
+Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test 0" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Test 1" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Test 2" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Test 3" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Test 4" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Test 5" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Executing "Test 0" 
+PASS Executing "Test 1" 
+PASS Executing "Test 2" 
+PASS Executing "Test 3" 
+PASS Executing "Test 4" 
+PASS Executing "Test 5" 
 PASS Audit report 
 PASS > [Test 0] No dezippering for frequency 
+PASS   At time 0, frequency is equal to 350. 
+PASS   At time 0.015625, frequency is equal to 800. 
+PASS   At time 0.0546875, frequency is equal to 200. 
+FAIL X Output from frequency setter does not equal [0,0.17418307065963745,0.355204313993454,0.5364867448806763,0.711405873298645,0.8735066652297974,1.0167138576507568,1.135528326034546,1.2252027988433838,1.2818962335586548,1.3027971982955933,1.286213994026184,1.2316339015960693,1.1397417783737183,1.012405276298523,0.8526221513748169...] with an element-wise tolerance of {"absoluteThreshold":0.0000030399,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[256]	-1.3514351844787598e+0	-1.2989152669906616e+0	5.2519917488098145e-2	4.0433674792180060e-2	3.0398999999999999e-6
+	[257]	-1.1879494190216064e+0	-1.0467828512191772e+0	1.4116656780242920e-1	1.3485754723438004e-1	3.0398999999999999e-6
+	[258]	-9.9072003364562988e-1	-7.4232369661331177e-1	2.4839633703231812e-1	3.3461997530938542e-1	3.0398999999999999e-6
+	[259]	-7.6534926891326904e-1	-4.0805009007453918e-1	3.5729917883872986e-1	8.7562578107374378e-1	3.0398999999999999e-6
+	[260]	-5.1823866367340088e-1	-6.5232887864112854e-2	4.5300577580928802e-1	6.9444384671877160e+0	3.0398999999999999e-6
+	...and 1787 more errors.
+	Max AbsError of 8.3080706745386124e-1 at index of 277.
+	[277]	9.0765744447708130e-1	7.6850377023220062e-2	8.3080706745386124e-1	1.0810709063962509e+1	3.0398999999999999e-6
+	Max RelError of 2.3631930476440275e+3 at index of 650.
+	[650]	7.6102942228317261e-1	3.2189817284233868e-4	7.6070752411033027e-1	2.3631930476440275e+3	3.0398999999999999e-6
+ assert_true: expected true got false
+FAIL X Output from frequency setter matches setValueAtTime output is not true. Got false. assert_true: expected true got false
+FAIL < [Test 0] 2 out of 5 assertions were failed. assert_true: expected true got false
 PASS > [Test 1] No dezippering for detune 
+PASS   At time 0, detune is equal to 33. 
+PASS   At time 0.015625, detune is equal to 1000. 
+PASS   At time 0.0390625, detune is equal to -400. 
+FAIL X Output from detune setter does not equal [0,0.1731616109609604,0.3515752851963043,0.529510498046875,0.7010406851768494,0.8602386713027954,1.001375675201416,1.1191176176071167,1.20871102809906,1.266155481338501,1.288353443145752,1.2732324600219727,1.219840168952942,1.1284005641937256,1.0003381967544556,0.8382605910301208...] with an element-wise tolerance of {"absoluteThreshold":0.0000040532,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[256]	-2.4123668670654297e+0	-2.3244657516479492e+0	8.7901115417480469e-2	3.7815620795945151e-2	4.0531999999999996e-6
+	[257]	-2.2314679622650146e+0	-1.9786868095397949e+0	2.5278115272521973e-1	1.2775197747642125e-1	4.0531999999999996e-6
+	[258]	-1.9873690605163574e+0	-1.5111680030822754e+0	4.7620105743408203e-1	3.1512118868503813e-1	4.0531999999999996e-6
+	[259]	-1.6870247125625610e+0	-9.5303630828857422e-1	7.3398840427398682e-1	7.7015786060874725e-1	4.0531999999999996e-6
+	[260]	-1.3389812707901001e+0	-3.4056508541107178e-1	9.9841618537902832e-1	2.9316457503972009e+0	4.0531999999999996e-6
+	...and 1787 more errors.
+	Max AbsError of 2.8063004612922668e+0 at index of 277.
+	[277]	1.8710902929306030e+0	-9.3521016836166382e-1	2.8063004612922668e+0	3.0007163696781110e+0	4.0531999999999996e-6
+	Max RelError of 1.9435226765169134e+3 at index of 650.
+	[650]	1.6453440189361572e+0	8.4614288061857224e-4	1.6444978760555387e+0	1.9435226765169134e+3	4.0531999999999996e-6
+ assert_true: expected true got false
+FAIL X Output from detune setter matches setValueAtTime output is not true. Got false. assert_true: expected true got false
+FAIL < [Test 1] 2 out of 5 assertions were failed. assert_true: expected true got false
 PASS > [Test 2] No dezippering for Q 
+PASS   At time 0, Q is equal to 5. 
+PASS   At time 0.015625, Q is equal to 10. 
+PASS   At time 0.0625, Q is equal to -10. 
+FAIL X Output from Q setter does not equal [0,0.16793830692768097,0.3311063051223755,0.48486924171447754,0.6248595118522644,0.7471005916595459,0.8481203317642212,0.925049364566803,0.9757022261619568,0.9986401796340942,0.9932120442390442,0.9595714211463928,0.898674488067627,0.812250554561615,0.7027547955513,0.5732971429824829...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[1024]	6.8833827526759706e-15	0.0000000000000000e+0	6.8833827526759706e-15	Infinity	0.0000000000000000e+0
+	Max AbsError of 6.8833827526759706e-15 at index of 1024.
+	Max RelError of Infinity at index of 1024.
+ assert_true: expected true got false
+FAIL X Output from Q setter matches setValueAtTime output is not true. Got false. assert_true: expected true got false
+FAIL < [Test 2] 2 out of 5 assertions were failed. assert_true: expected true got false
 PASS > [Test 3] No dezippering for gain 
+PASS   At time 0, gain is equal to 1. 
+PASS   At time 0.015625, gain is equal to 5. 
+PASS   At time 0.046875, gain is equal to -0.3. 
+FAIL X Output from gain setter does not equal [0,0.1691558063030243,0.3357764184474945,0.494800329208374,0.6413879990577698,0.7710639238357544,0.8798481225967407,0.9643722772598267,1.0219773054122925,1.0507917404174805,1.0497864484786987,1.018802523612976,0.9585590958595276,0.8706297278404236,0.7573992609977722,0.6219938397407532...] with an element-wise tolerance of {"absoluteThreshold":0.0000019074,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[256]	-8.1076192855834961e-1	-8.0489200353622437e-1	5.8699250221252441e-3	7.2928107079412259e-3	1.9074000000000002e-6
+	[257]	-6.7455321550369263e-1	-6.5623950958251953e-1	1.8313705921173096e-2	2.7907045604163246e-2	1.9074000000000002e-6
+	[258]	-5.1918393373489380e-1	-4.8153373599052429e-1	3.7650197744369507e-2	7.8188078903593985e-2	1.9074000000000002e-6
+	[259]	-3.4906724095344543e-1	-2.8525641560554504e-1	6.3810825347900391e-2	2.2369637230574521e-1	1.9074000000000002e-6
+	[260]	-1.6903521120548248e-1	-7.2682879865169525e-2	9.6352331340312958e-2	1.3256537374282842e+0	1.9074000000000002e-6
+	...and 1787 more errors.
+	Max AbsError of 6.0013067722320557e-1 at index of 291.
+	[291]	-1.0273032188415527e+0	-1.6274338960647583e+0	6.0013067722320557e-1	3.6875886552096576e-1	1.9074000000000002e-6
+	Max RelError of 7.1162953743970647e+1 at index of 1508.
+	[1508]	6.1744473874568939e-2	-8.8001531548798084e-4	6.2624489190056920e-2	7.1162953743970647e+1	1.9074000000000002e-6
+ assert_true: expected true got false
+FAIL X Output from gain setter matches setValueAtTime output is not true. Got false. assert_true: expected true got false
+FAIL < [Test 3] 2 out of 5 assertions were failed. assert_true: expected true got false
 PASS > [Test 4] No dezippering of frequency vs JS filter 
+FAIL X Output from lowpass filter does not equal [0,0.0007127508870325983,0.00416393531486392,0.012737087905406952,0.02830197848379612,0.052167076617479324,0.08505348861217499,0.12709030508995056,0.17783066630363464,0.23628735542297363,0.300986111164093,0.37003448605537415,0.44120365381240845,0.5120202302932739,0.5798649191856384,0.6420748233795166...] with an element-wise tolerance of {"absoluteThreshold":5.9607e-7,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[1]	7.0587755180895329e-4	7.1275088703259826e-4	6.8733352236449718e-6	9.6433906273491795e-3	5.9607000000000002e-7
+	[2]	4.1110487654805183e-3	4.1639353148639202e-3	5.2886549383401871e-5	1.2701097731901301e-2	5.9607000000000002e-7
+	[3]	1.2529139406979084e-2	1.2737087905406952e-2	2.0794849842786789e-4	1.6326219931291578e-2	5.9607000000000002e-7
+	[4]	2.7729967609047890e-2	2.8301978483796120e-2	5.7201087474822998e-4	2.0210985429012545e-2	5.9607000000000002e-7
+	[5]	5.0907988101243973e-2	5.2167076617479324e-2	1.2590885162353516e-3	2.4135692430452889e-2	5.9607000000000002e-7
+	...and 2042 more errors.
+	Max AbsError of 1.2134951353073120e-1 at index of 61.
+	[61]	6.3951355218887329e-1	7.6086306571960449e-1	1.2134951353073120e-1	1.5948929445794821e-1	5.9607000000000002e-7
+	Max RelError of 5.7956460867381793e+1 at index of 1092.
+	[1092]	4.2581163346767426e-2	-7.4760901043191552e-4	4.3328772357199341e-2	5.7956460867381793e+1	5.9607000000000002e-7
+ assert_true: expected true got false
+FAIL X Output matches JS filter results is not true. Got false. assert_true: expected true got false
+FAIL < [Test 4] 2 out of 2 assertions were failed. assert_true: expected true got false
 PASS > [Test 5] Test with modulation 
-PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+PASS   Modulation: At time 0, frequency is equal to 350. 
+PASS   Modulation: At time 0.015625, frequency is equal to 10. 
+PASS   Modulation: At time 0.0625, frequency is equal to -10. 
+FAIL X Modulation: Output from frequency setter does not equal [0,0.1692368984222412,0.3362148404121399,0.4960717260837555,0.6441068053245544,0.7759177088737488,0.8875302672386169,0.9755157232284546,1.0370930433273315,1.070214033126831,1.073627233505249,1.0469180345535278,0.9905280470848083,0.9057464003562927,0.7946801781654358,0.6601983904838562...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[256]	-8.7437158823013306e-1	-7.0710676908493042e-1	1.6726481914520264e-1	2.3654817979137815e-1	0.0000000000000000e+0
+	[257]	-7.6328033208847046e-1	-5.7831376791000366e-1	1.8496656417846680e-1	3.1983773245953745e-1	0.0000000000000000e+0
+	[258]	-6.3168478012084961e-1	-4.3309381604194641e-1	1.9859096407890320e-1	4.5854029017045367e-1	0.0000000000000000e+0
+	[259]	-4.8344242572784424e-1	-2.7557188272476196e-1	2.0787054300308228e-1	7.5432421097438662e-1	0.0000000000000000e+0
+	[260]	-3.2286658883094788e-1	-1.1022224277257919e-1	2.1264434605836868e-1	1.9292326186568016e+0	0.0000000000000000e+0
+	...and 1787 more errors.
+	Max AbsError of 8.5506224632263184e-1 at index of 571.
+	[571]	1.5555992126464844e+0	7.0053696632385254e-1	8.5506224632263184e-1	1.2205811933232706e+0	0.0000000000000000e+0
+	Max RelError of Infinity at index of 1024.
+	[1024]	1.4562375843524933e-1	0.0000000000000000e+0	1.4562375843524933e-1	Infinity	0.0000000000000000e+0
+ assert_true: expected true got false
+FAIL X Modulation: Output from frequency setter matches setValueAtTime output is not true. Got false. assert_true: expected true got false
+FAIL < [Test 5] 2 out of 5 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 6 out of 6 tasks were failed. assert_true: expected true got false
 

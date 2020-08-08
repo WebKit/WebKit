@@ -1,7 +1,8 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "convergence handled correctly" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "convergence handled correctly" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'src.connect')"
 PASS Audit report 
 PASS > [convergence handled correctly]  
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+FAIL X src = new ConstantSourceNode(context) incorrectly threw ReferenceError: "Can't find variable: ConstantSourceNode". assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

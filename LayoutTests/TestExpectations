@@ -313,6 +313,17 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourc
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-getFrequencyResponse.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/no-dezippering.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/no-dezippering.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-rolloff-clamping.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-copy-curve.html [ Pass Failure ]
+
 
 # Some of the subchecks are failing and print out a different value every time.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting.html [ Pass Failure ]
@@ -350,6 +361,7 @@ imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.html
 imported/w3c/web-platform-tests/streams/writable-streams/write.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/writable-streams/error.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_lineno.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-detached-execution-context.tentative.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic.html [ DumpJSConsoleLogInStdErr ]
 fast/files/file-reader-back-forward-cache.html [ DumpJSConsoleLogInStdErr ]

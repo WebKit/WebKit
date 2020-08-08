@@ -46,7 +46,7 @@ ExceptionOr<Ref<WebKitOfflineAudioContext>> WebKitOfflineAudioContext::create(Sc
     // FIXME: Add support for workers.
     if (!is<Document>(context))
         return Exception { NotSupportedError };
-    if (!numberOfChannels || numberOfChannels > 10 || !numberOfFrames || !isSampleRateRangeGood(sampleRate))
+    if (!numberOfChannels || numberOfChannels > 10 || !numberOfFrames || !isSupportedSampleRate(sampleRate))
         return Exception { SyntaxError };
     auto renderTarget = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
     if (!renderTarget)

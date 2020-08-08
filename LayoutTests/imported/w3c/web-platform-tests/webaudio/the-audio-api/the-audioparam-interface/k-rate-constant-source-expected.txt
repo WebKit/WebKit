@@ -1,8 +1,8 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "ConstantSource k-rate offset" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "ConstantSourceNode.offset k-rate automation" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "ConstantSource.offset" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "ConstantSource k-rate offset" promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new window[options.nodeName](context, options.nodeOptions)')"
+FAIL Executing "ConstantSourceNode.offset k-rate automation" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "ConstantSource.offset" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
 PASS Audit report 
 PASS > [ConstantSource k-rate offset]  
 PASS > [ConstantSourceNode.offset k-rate automation] Explicitly test ConstantSourceNode.offset k-rate automation is k-rate 

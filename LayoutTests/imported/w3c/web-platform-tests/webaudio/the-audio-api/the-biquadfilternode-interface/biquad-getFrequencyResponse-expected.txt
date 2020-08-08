@@ -8,7 +8,7 @@ PASS Executing "highshelf"
 PASS Executing "peaking" 
 PASS Executing "notch" 
 PASS Executing "allpass" 
-FAIL Executing "getFrequencyResponse" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Executing "getFrequencyResponse" 
 PASS Audit report 
 PASS > [lowpass] Frequency response 
 PASS   lowpass: Number of non-finite values in magnitude response is equal to 0. 
@@ -83,5 +83,10 @@ PASS   allpass: Max error (-266.8735521058153 dB) of magnitude response at frequ
 PASS   allpass: Max error (0.000013259871597205388 deg) in phase response at frequency 1080 Hz is less than or equal to 0.0007597420363434716. 
 PASS < [allpass] All assertions passed. (total 7 assertions) 
 PASS > [getFrequencyResponse] Test out-of-bounds frequency values 
-FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 9 tasks were failed. assert_true: expected true got false
+FAIL X Magnitude response at frequency -1 is not NaN but should be. Got 1.000003695487976. assert_true: expected true got false
+FAIL X Magnitude response at frequency 16385 is not NaN but should be. Got 1.0357666981042346e-11. assert_true: expected true got false
+FAIL X Phase response at frequency -1 is not NaN but should be. Got 0.002985912375152111. assert_true: expected true got false
+FAIL X Phase response at frequency 16385 is not NaN but should be. Got 3.141589403152466. assert_true: expected true got false
+FAIL < [getFrequencyResponse] 4 out of 4 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 9 tasks were failed. assert_true: expected true got false
 

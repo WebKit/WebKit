@@ -1,25 +1,30 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+
+Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
-FAIL Executing "1-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "2-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "3-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "4-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "5.1-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "delayed buffer set" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "count 1, 2-channel in" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "count 1, 4-channel in" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "count 1, 5.1-channel in" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "1-channel input" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "2-channel input" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "3-channel input" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "4-channel input" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "5.1-channel input" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+PASS Executing "delayed buffer set" 
+FAIL Executing "count 1, 2-channel in" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "count 1, 4-channel in" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "count 1, 5.1-channel in" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
 PASS Audit report 
 PASS > [initialize] Convolver response with one channel 
-FAIL X new AudioBuffer({numberOfChannels: 2, length: 4, sampleRate: 8192}) incorrectly threw NotSupportedError: "Sample rate is not in the supported range.". assert_true: expected true got false
-FAIL < [initialize] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS   new AudioBuffer({numberOfChannels: 2, length: 4, sampleRate: 8192}) did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [1-channel input] produces 2-channel output 
 PASS > [2-channel input] produces 2-channel output 
 PASS > [3-channel input] 3->2 downmix producing 2-channel output 
 PASS > [4-channel input] 4->2 downmix producing 2-channel output 
 PASS > [5.1-channel input] 5.1->2 downmix producing 2-channel output 
 PASS > [delayed buffer set] Delayed set of 4-channel response 
+FAIL X Output with delayed setting of convolver buffer should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [delayed buffer set] 1 out of 1 assertions were failed. assert_true: expected true got false
 PASS > [count 1, 2-channel in] 2->1 downmix because channel count is 1 
 PASS > [count 1, 4-channel in] 4->1 downmix because channel count is 1 
 PASS > [count 1, 5.1-channel in] 5.1->1 downmix because channel count is 1 

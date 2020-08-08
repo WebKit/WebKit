@@ -1,7 +1,17 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "delayTime" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "delayTime" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'testMod.start')"
 PASS Audit report 
 PASS > [delayTime] DelayNode delayTime k-rate input 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS   refNode = new DelayNode(context) did not throw an exception. 
+PASS   refNode.delayTime.automationRate = 'k-rate' did not throw an exception. 
+PASS   refNode.delayTime.setValueAtTime(0, 0) did not throw an exception. 
+PASS   refNode.delayTime.linearRampToValueAtTime(1.125, 1) did not throw an exception. 
+PASS   testNode = new DelayNode(context) did not throw an exception. 
+PASS   testNode.delayTime.automationRate = 'k-rate' did not throw an exception. 
+FAIL X testMod = new ConstantSourceNode(context) incorrectly threw ReferenceError: "Can't find variable: ConstantSourceNode". assert_true: expected true got false
+FAIL X testMod.offset.setValueAtTime(0, 0) incorrectly threw TypeError: "undefined is not an object (evaluating 'testMod.offset')". assert_true: expected true got false
+FAIL X testMod.offset.linearRampToValueAtTime(1.125, 1) incorrectly threw TypeError: "undefined is not an object (evaluating 'testMod.offset')". assert_true: expected true got false
+FAIL X testMod.connect(testNode.delayTime) incorrectly threw TypeError: "undefined is not an object (evaluating 'testMod.connect')". assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

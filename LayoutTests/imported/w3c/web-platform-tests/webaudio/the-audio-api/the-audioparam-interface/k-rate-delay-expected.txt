@@ -1,7 +1,12 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test k-rate DelayNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test k-rate DelayNode" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
 PASS Audit report 
 PASS > [Test k-rate DelayNode]  
+PASS   DelayNode: Setting delayTime.automationRate to "k-rate" is equal to k-rate. 
+PASS   DelayNode: k-rate node: delayTime.setValueAtTime(0,0) did not throw an exception. 
+PASS   DelayNode: k-rate node: delayTime.linearRampToValueAtTime(0.5,1) did not throw an exception. 
+PASS   DelayNode: a-rate node:delayTime.setValueAtTime(0,0) did not throw an exception. 
+PASS   DelayNode: a-rate node:delayTime.linearRampToValueAtTime(0.5,1) did not throw an exception. 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

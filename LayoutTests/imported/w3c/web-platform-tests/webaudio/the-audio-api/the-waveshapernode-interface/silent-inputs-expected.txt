@@ -1,8 +1,8 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "test-0" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "test-1" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "test-2" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "test-0" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "test-1" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "test-2" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
 PASS Audit report 
 PASS > [test-0] curve output is non-zero for silent inputs 
 PASS > [test-1] 2x curve output is non-zero for silent inputs 

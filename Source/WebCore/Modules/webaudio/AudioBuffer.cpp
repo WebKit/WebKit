@@ -42,7 +42,7 @@ namespace WebCore {
 
 RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
 {
-    if (sampleRate < 22050 || sampleRate > 96000 || numberOfChannels > AudioContext::maxNumberOfChannels() || !numberOfFrames)
+    if (!BaseAudioContext::isSupportedSampleRate(sampleRate) || !numberOfChannels || numberOfChannels > AudioContext::maxNumberOfChannels() || !numberOfFrames)
         return nullptr;
 
     auto buffer = adoptRef(*new AudioBuffer(numberOfChannels, numberOfFrames, sampleRate));
@@ -54,13 +54,16 @@ RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t number
 
 ExceptionOr<Ref<AudioBuffer>> AudioBuffer::create(const AudioBufferOptions& options)
 {
+    if (!options.numberOfChannels)
+        return Exception { NotSupportedError, "Number of channels cannot be 0."_s };
+
     if (options.numberOfChannels > AudioContext::maxNumberOfChannels())
         return Exception { NotSupportedError, "Number of channels cannot be more than max supported."_s };
     
     if (!options.length)
         return Exception { NotSupportedError, "Length must be at least 1."_s };
     
-    if (options.sampleRate < 22050 || options.sampleRate > 96000)
+    if (!BaseAudioContext::isSupportedSampleRate(options.sampleRate))
         return Exception { NotSupportedError, "Sample rate is not in the supported range."_s };
     
     auto buffer = adoptRef(*new AudioBuffer(options.numberOfChannels, options.length, options.sampleRate));

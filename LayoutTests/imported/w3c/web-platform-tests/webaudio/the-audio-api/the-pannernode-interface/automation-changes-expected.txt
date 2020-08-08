@@ -1,11 +1,65 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+
+Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Set Listener.positionX.value" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Listener.positionX.setValue" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Listener.setPosition" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Executing "Set Listener.positionX.value" 
+PASS Executing "Listener.positionX.setValue" 
+PASS Executing "Listener.setPosition" 
 PASS Audit report 
 PASS > [Set Listener.positionX.value]  
+PASS   listenr.positionX.value: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}. 
+PASS   listenr.positionX.value: output1[0:511] is not constantly 0 (contains 511 different values). 
+PASS   listenr.positionX.value: output0[512:] is not constantly 0 (contains 1536 different values). 
+FAIL X listenr.positionX.value: output1[512:] does not equal [-1.9137023649122533e-17,-1.9514972397165362e-17,-1.9828210805888168e-17,-2.0075678429745657e-17,-2.0256582829711004e-17,-2.037029534851867e-17,-2.0416460298505253e-17,-2.0394915552270697e-17,-2.0305733901708905e-17,-2.014921478620162e-17,-1.9925866094644953e-17,-1.9636440561396324e-17,-1.9281887789798945e-17,-1.8863395611212442e-17,-1.8382338799814878e-17,-1.7840330357800732e-17...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	-3.1253132224082947e-1	-1.9137023649122533e-17	3.1253132224082947e-1	1.6331239798366430e+16	0.0000000000000000e+0
+	[1]	-3.1870371103286743e-1	-1.9514972397165362e-17	3.1870371103286743e-1	1.6331240677499528e+16	0.0000000000000000e+0
+	[2]	-3.2381924986839294e-1	-1.9828210805888168e-17	3.2381924986839294e-1	1.6331239012863020e+16	0.0000000000000000e+0
+	[3]	-3.2786071300506592e-1	-2.0075678429745657e-17	3.2786071300506592e-1	1.6331239522111614e+16	0.0000000000000000e+0
+	[4]	-3.3081510663032532e-1	-2.0256582829711004e-17	3.3081510663032532e-1	1.6331239548711434e+16	0.0000000000000000e+0
+	...and 1531 more errors.
+	Max AbsError of 3.3344447612762451e-1 at index of 388.
+	[388]	3.3344447612762451e-1	2.0417586918499551e-17	3.3344447612762451e-1	1.6331238233912154e+16	0.0000000000000000e+0
+	Max RelError of 1.6331241457741146e+16 at index of 122.
+	[122]	-3.0872654914855957e-1	-1.8904046575235748e-17	3.0872654914855957e-1	1.6331241457741146e+16	0.0000000000000000e+0
+ assert_true: expected true got false
+FAIL < [Set Listener.positionX.value] 1 out of 4 assertions were failed. assert_true: expected true got false
 PASS > [Listener.positionX.setValue]  
+PASS   listener.positionX.setValueATTime: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}. 
+PASS   listener.positionX.setValueATTime: output1[0:511] is not constantly 0 (contains 511 different values). 
+PASS   listener.positionX.setValueATTime: output0[512:] is not constantly 0 (contains 1536 different values). 
+FAIL X listener.positionX.setValueATTime: output1[512:] does not equal [-0.0002722969511523843,-0.0005604756297543645,-0.0008619691943749785,-0.001174044911749661,-0.0014938220847398043,-0.0018182838102802634,-0.0021442994475364685,-0.0024686381220817566,-0.0027879911940544844,-0.003098989836871624,-0.00339822587557137,-0.0036822748370468616,-0.003947712946683168,-0.004191146232187748,-0.004409221466630697,-0.004598661791533232...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	-3.1554225087165833e-1	-2.7229695115238428e-4	3.1526995392050594e-1	1.1578166872095196e+3	0.0000000000000000e+0
+	[1]	-3.2482647895812988e-1	-5.6047562975436449e-4	3.2426600332837552e-1	5.7855504523986031e+2	0.0000000000000000e+0
+	[2]	-3.3312344551086426e-1	-8.6196919437497854e-4	3.3226147631648928e-1	3.8546792447427890e+2	0.0000000000000000e+0
+	[3]	-3.4038427472114563e-1	-1.1740449117496610e-3	3.3921022980939597e-1	2.8892440690695230e+2	0.0000000000000000e+0
+	[4]	-3.4656429290771484e-1	-1.4938220847398043e-3	3.4507047082297504e-1	2.3099837279690496e+2	0.0000000000000000e+0
+	...and 1531 more errors.
+	Max AbsError of 5.9573757648468018e-1 at index of 224.
+	[224]	-7.2888660430908203e-1	-1.3314902782440186e-1	5.9573757648468018e-1	4.4742164942454128e+0	0.0000000000000000e+0
+	Max RelError of 1.1578166872095196e+3 at index of 0.
+ assert_true: expected true got false
+FAIL < [Listener.positionX.setValue] 1 out of 4 assertions were failed. assert_true: expected true got false
 PASS > [Listener.setPosition]  
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS   listener.setPostion: output0[0:511] equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":1e-16,"relativeThreshold":0}. 
+PASS   listener.setPostion: output1[0:511] is not constantly 0 (contains 511 different values). 
+PASS   listener.setPostion: output0[512:] is not constantly 0 (contains 1536 different values). 
+FAIL X listener.setPostion: output1[512:] does not equal [-1.9137023649122533e-17,-1.9514972397165362e-17,-1.9828210805888168e-17,-2.0075678429745657e-17,-2.0256582829711004e-17,-2.037029534851867e-17,-2.0416460298505253e-17,-2.0394915552270697e-17,-2.0305733901708905e-17,-2.014921478620162e-17,-1.9925866094644953e-17,-1.9636440561396324e-17,-1.9281887789798945e-17,-1.8863395611212442e-17,-1.8382338799814878e-17,-1.7840330357800732e-17...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	-3.1253132224082947e-1	-1.9137023649122533e-17	3.1253132224082947e-1	1.6331239798366430e+16	0.0000000000000000e+0
+	[1]	-3.1870371103286743e-1	-1.9514972397165362e-17	3.1870371103286743e-1	1.6331240677499528e+16	0.0000000000000000e+0
+	[2]	-3.2381924986839294e-1	-1.9828210805888168e-17	3.2381924986839294e-1	1.6331239012863020e+16	0.0000000000000000e+0
+	[3]	-3.2786071300506592e-1	-2.0075678429745657e-17	3.2786071300506592e-1	1.6331239522111614e+16	0.0000000000000000e+0
+	[4]	-3.3081510663032532e-1	-2.0256582829711004e-17	3.3081510663032532e-1	1.6331239548711434e+16	0.0000000000000000e+0
+	...and 1531 more errors.
+	Max AbsError of 3.3344447612762451e-1 at index of 388.
+	[388]	3.3344447612762451e-1	2.0417586918499551e-17	3.3344447612762451e-1	1.6331238233912154e+16	0.0000000000000000e+0
+	Max RelError of 1.6331241457741146e+16 at index of 122.
+	[122]	-3.0872654914855957e-1	-1.8904046575235748e-17	3.0872654914855957e-1	1.6331241457741146e+16	0.0000000000000000e+0
+ assert_true: expected true got false
+FAIL < [Listener.setPosition] 1 out of 4 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 3 tasks were failed. assert_true: expected true got false
 

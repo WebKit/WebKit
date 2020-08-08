@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "mono-test" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "stereo-test" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "mono-test" promise_test: Unhandled rejection with value: object "TypeError: this.context.createStereoPanner is not a function. (In 'this.context.createStereoPanner()', 'this.context.createStereoPanner' is undefined)"
+FAIL Executing "stereo-test" promise_test: Unhandled rejection with value: object "TypeError: this.context.createStereoPanner is not a function. (In 'this.context.createStereoPanner()', 'this.context.createStereoPanner' is undefined)"
 PASS Audit report 
 PASS > [mono-test]  
 PASS > [stereo-test]  

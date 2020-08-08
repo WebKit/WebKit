@@ -1,26 +1,46 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "basic" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.length')"
-FAIL Executing "options-1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context2.destination')"
+PASS Executing "basic" 
+PASS Executing "options-1" 
 PASS Executing "options-2" 
-FAIL Executing "options-3" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.length')"
+PASS Executing "options-3" 
 PASS Audit report 
 PASS > [basic] Old-style constructor 
 PASS   new OfflineAudioContext(3) threw TypeError: "Type error". 
 PASS   new OfflineAudioContext(3, 42) threw TypeError: "Type error". 
-FAIL X context = new OfflineAudioContext(3, 42, 12345) incorrectly threw SyntaxError: "The string did not match the expected pattern.". assert_true: expected true got false
+PASS   context = new OfflineAudioContext(3, 42, 12345) did not throw an exception. 
+PASS   context.length is equal to 42. 
+PASS   context.sampleRate is equal to 12345. 
+FAIL X context.destination.channelCount is not equal to 3. Got 2. assert_true: expected true got false
+FAIL X context.destination.channelCountMode is not equal to explicit. Got max. assert_true: expected true got false
+PASS   context.destination.channelInterpretation is equal to speakers. 
+FAIL < [basic] 2 out of 8 assertions were failed. assert_true: expected true got false
 PASS > [options-1] Required options 
 PASS   new OfflineAudioContext() threw TypeError: "Not enough arguments". 
 PASS   new OfflineAudioContext({}) threw TypeError: "Member OfflineAudioContextOptions.length is required and must be an instance of unsigned long". 
 PASS   new OfflineAudioContext({"length":42}) threw TypeError: "Member OfflineAudioContextOptions.sampleRate is required and must be an instance of float". 
 PASS   new OfflineAudioContext({"sampleRate":12345}) threw TypeError: "Member OfflineAudioContextOptions.length is required and must be an instance of unsigned long". 
-FAIL X c2 = new OfflineAudioContext({"length":42,"sampleRate":12345}) incorrectly threw SyntaxError: "The string did not match the expected pattern.". assert_true: expected true got false
+PASS   c2 = new OfflineAudioContext({"length":42,"sampleRate":12345}) did not throw an exception. 
+FAIL X c2.destination.channelCount is not equal to 1. Got 2. assert_true: expected true got false
+PASS   c2.length is equal to 42. 
+PASS   c2.sampleRate is equal to 12345. 
+FAIL X c2.destination.channelCountMode is not equal to explicit. Got max. assert_true: expected true got false
+PASS   c2.destination.channelInterpretation is equal to speakers. 
+FAIL < [options-1] 2 out of 10 assertions were failed. assert_true: expected true got false
 PASS > [options-2] Invalid options 
-PASS   new OfflineAudioContext({"length":42,"sampleRate":8000,"numberOfChannels":33}) threw SyntaxError: "The string did not match the expected pattern.". 
-PASS   new OfflineAudioContext({"length":0,"sampleRate":8000}) threw SyntaxError: "The string did not match the expected pattern.". 
-PASS   new OfflineAudioContext({"length":1,"sampleRate":1}) threw SyntaxError: "The string did not match the expected pattern.". 
+PASS   new OfflineAudioContext({"length":42,"sampleRate":8000,"numberOfChannels":33}) threw SyntaxError: "Number of channels is not in range". 
+PASS   new OfflineAudioContext({"length":0,"sampleRate":8000}) threw SyntaxError: "length cannot be 0". 
+PASS   new OfflineAudioContext({"length":1,"sampleRate":1}) threw SyntaxError: "sampleRate is not in range". 
 PASS < [options-2] All assertions passed. (total 3 assertions) 
 PASS > [options-3] Valid options 
-FAIL X c = new OfflineAudioContext{"length":1,"sampleRate":8000}) incorrectly threw SyntaxError: "The string did not match the expected pattern.". assert_true: expected true got false
+PASS   c = new OfflineAudioContext{"length":1,"sampleRate":8000}) did not throw an exception. 
+PASS   c.length is equal to 1. 
+PASS   c.sampleRate is equal to 8000. 
+FAIL X c.destination.channelCount is not equal to 1. Got 2. assert_true: expected true got false
+FAIL X c.destination.channelCountMode is not equal to explicit. Got max. assert_true: expected true got false
+PASS   c.destination.channelCountMode is equal to speakers. 
+PASS   c = new OfflineAudioContext{"length":1,"sampleRate":8000,"numberOfChannels":7}) did not throw an exception. 
+FAIL X c.destination.channelCount is not equal to 7. Got 2. assert_true: expected true got false
+FAIL < [options-3] 3 out of 8 assertions were failed. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 4 tasks were failed. assert_true: expected true got false
 

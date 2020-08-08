@@ -7,31 +7,31 @@ PASS Audit report
 PASS > [test-audiocontextoptions-latencyHint-basic] Test creating contexts with basic latencyHint types. 
 PASS   context = new AudioContext() did not throw an exception. 
 PASS   context.sampleRate (48000 Hz) is greater than 0. 
-FAIL X default baseLatency is not greater than or equal to 0. Got undefined. assert_true: expected true got false
+PASS   default baseLatency is greater than or equal to 0. 
 PASS   context = new AudioContext({'latencyHint': 'interactive'}) did not throw an exception. 
-PASS   interactive baseLatency is equal to undefined. 
+PASS   interactive baseLatency is equal to 0.0026666666666666666. 
 PASS   context = new AudioContext({'latencyHint': 'balanced'}) did not throw an exception. 
-FAIL X balanced baseLatency is not greater than or equal to undefined. Got undefined. assert_true: expected true got false
+PASS   balanced baseLatency is greater than or equal to 0.0026666666666666666. 
 PASS   context = new AudioContext({'latencyHint': 'playback'}) did not throw an exception. 
-FAIL X playback baseLatency is not greater than or equal to undefined. Got undefined. assert_true: expected true got false
-FAIL < [test-audiocontextoptions-latencyHint-basic] 3 out of 9 assertions were failed. assert_true: expected true got false
+PASS   playback baseLatency is greater than or equal to 0.0026666666666666666. 
+PASS < [test-audiocontextoptions-latencyHint-basic] All assertions passed. (total 9 assertions) 
 PASS > [test-audiocontextoptions-latencyHint-double] Test creating contexts with explicit latencyHint values. 
 PASS   context = new AudioContext({'latencyHint': interactiveLatency/2}) did not throw an exception. 
-FAIL X double-constructor baseLatency small is not less than or equal to undefined. Got undefined. assert_true: expected true got false
+PASS   double-constructor baseLatency small is less than or equal to 0.0026666666666666666. 
 PASS   context = new AudioContext({'latencyHint': validLatency}) did not throw an exception. 
-FAIL X double-constructor baseLatency inrange 1 is not greater than or equal to undefined. Got undefined. assert_true: expected true got false
-FAIL X double-constructor baseLatency inrange 2 is not less than or equal to undefined. Got undefined. assert_true: expected true got false
+PASS   double-constructor baseLatency inrange 1 is greater than or equal to 0.0026666666666666666. 
+PASS   double-constructor baseLatency inrange 2 is less than or equal to 0.0026666666666666666. 
 PASS   creating two high latency contexts did not throw an exception. 
-PASS   high latency context baseLatency is equal to undefined. 
-FAIL X high latency context baseLatency is not greater than or equal to undefined. Got undefined. assert_true: expected true got false
-FAIL X context = new AudioContext({'latencyHint': 'foo'}) did not throw an exception. assert_true: expected true got false
-FAIL X context = new AudioContext('latencyHint') did not throw an exception. assert_true: expected true got false
-FAIL < [test-audiocontextoptions-latencyHint-double] 6 out of 10 assertions were failed. assert_true: expected true got false
+PASS   high latency context baseLatency is equal to 0.0026666666666666666. 
+PASS   high latency context baseLatency is greater than or equal to 0.0026666666666666666. 
+PASS   context = new AudioContext({'latencyHint': 'foo'}) threw TypeError: "Type error". 
+PASS   context = new AudioContext('latencyHint') threw TypeError: "Type error". 
+PASS < [test-audiocontextoptions-latencyHint-double] All assertions passed. (total 10 assertions) 
 PASS > [test-audiocontextoptions-sampleRate] Test creating contexts with non-default sampleRate values. 
-FAIL X context = new AudioContext({sampleRate: 1}) did not throw an exception. assert_true: expected true got false
-FAIL X context = new AudioContext({sampleRate: 1000000}) did not throw an exception. assert_true: expected true got false
+PASS   context = new AudioContext({sampleRate: 1}) threw SyntaxError: "sampleRate is not in range". 
+PASS   context = new AudioContext({sampleRate: 1000000}) threw SyntaxError: "sampleRate is not in range". 
 PASS   context = new AudioContext({sampleRate: 24000}) did not throw an exception. 
-FAIL X sampleRate inrange is not equal to 24000. Got 48000. assert_true: expected true got false
-FAIL < [test-audiocontextoptions-sampleRate] 3 out of 4 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 3 tasks were failed. assert_true: expected true got false
+PASS   sampleRate inrange is equal to 24000. 
+PASS < [test-audiocontextoptions-sampleRate] All assertions passed. (total 4 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
 

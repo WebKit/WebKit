@@ -1,20 +1,30 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "coefficient-normalization" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "one-zero" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "one-pole" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "0: lowpass" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "1: highpass" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "2: bandpass" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "3: notch" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "4: allpass" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "5: lowshelf" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "6: highshelf" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "7: peaking" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "multi-channel" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "4th-order-iir" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "coefficient-normalization" promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL Executing "one-zero" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([0.5, 0.5], [1])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "one-pole" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([1], [1, c])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "0: lowpass" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(
+              [coef.b0, coef.b1, coef.b2], [1, coef.a1, coef.a2])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "1: highpass" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(
+              [coef.b0, coef.b1, coef.b2], [1, coef.a1, coef.a2])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "2: bandpass" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(
+              [coef.b0, coef.b1, coef.b2], [1, coef.a1, coef.a2])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "3: notch" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(
+              [coef.b0, coef.b1, coef.b2], [1, coef.a1, coef.a2])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "4: allpass" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(
+              [coef.b0, coef.b1, coef.b2], [1, coef.a1, coef.a2])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "5: lowshelf" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(
+              [coef.b0, coef.b1, coef.b2], [1, coef.a1, coef.a2])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "6: highshelf" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(
+              [coef.b0, coef.b1, coef.b2], [1, coef.a1, coef.a2])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "7: peaking" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(
+              [coef.b0, coef.b1, coef.b2], [1, coef.a1, coef.a2])', 'context.createIIRFilter' is undefined)"
+FAIL Executing "multi-channel" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(ff, fb)', 'context.createIIRFilter' is undefined)"
+FAIL Executing "4th-order-iir" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(cascade.ff, cascade.fb)', 'context.createIIRFilter' is undefined)"
 PASS Audit report 
 PASS > [coefficient-normalization]  
+FAIL X createIIRFilter with normalized coefficients incorrectly threw TypeError: "context.createIIRFilter is not a function. (In 'context.createIIRFilter(ff, fb1)', 'context.createIIRFilter' is undefined)". assert_true: expected true got false
+FAIL X createIIRFilter with unnormalized coefficients incorrectly threw TypeError: "context.createIIRFilter is not a function. (In 'context.createIIRFilter(ff, fb2)', 'context.createIIRFilter' is undefined)". assert_true: expected true got false
 PASS > [one-zero]  
 PASS > [one-pole]  
 PASS > [0: lowpass]  
@@ -27,5 +37,5 @@ PASS > [6: highshelf]
 PASS > [7: peaking]  
 PASS > [multi-channel]  
 PASS > [4th-order-iir]  
-PASS # AUDIT TASK RUNNER FINISHED: 13 tasks ran successfully. 
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 13 tasks were failed. assert_true: expected true got false
 

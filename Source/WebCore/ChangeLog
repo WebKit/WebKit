@@ -1,3 +1,40 @@
+2020-08-07  Chris Dumez  <cdumez@apple.com>
+
+        AudioContext / OfflineAudioContext should support a wider sample rate range
+        https://bugs.webkit.org/show_bug.cgi?id=215289
+
+        Reviewed by Eric Carlson.
+
+        AudioContext / OfflineAudioContext should support a wider sample rate range. We only supported
+        sample rates in the [44100, 96000] range, which is much smaller than other browsers and would
+        cause us to fail a LOT of web-platform-tests.
+
+        We now support sample rates in the range [3000, 384000], which is the same range as Chromium.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::create):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::isSampleRateRangeGood):
+        * Modules/webaudio/BaseAudioContext.h:
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::create):
+
+        * platform/audio/FFTFrame.h:
+        * platform/audio/HRTFPanner.cpp:
+        (WebCore::HRTFPanner::fftSizeForSampleRate):
+        Update fftSizeForSampleRate() to support wider sample rate range. This implementation is based
+        on Chromium's:
+        https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/audio/hrtf_panner.cc#L70
+
+        * platform/audio/gstreamer/FFTFrameGStreamer.cpp:
+        (WebCore::FFTFrame::minFFTSize):
+        (WebCore::FFTFrame::maxFFTSize):
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::FFTFrame::minFFTSize):
+        (WebCore::FFTFrame::maxFFTSize):
+
 2020-08-07  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Missing validation for sampler unit index

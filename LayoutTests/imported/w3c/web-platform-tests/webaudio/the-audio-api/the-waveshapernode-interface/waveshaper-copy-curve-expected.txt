@@ -1,7 +1,12 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+
+Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "test copying" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Executing "test copying" 
 PASS Audit report 
 PASS > [test copying] Modifying curve should not modify WaveShaper 
+PASS   Output of WaveShaper with modified curve is identical to the array [-0.5,-0.5540992617607117,-0.6611072421073914,-0.6962677836418152,-0.7824875712394714,-0.8508710265159607,-0.9287480711936951,-0.965785801410675,-1,-1,-1,-1,-1,-1,-1,-1...]. 
+PASS < [test copying] All assertions passed. (total 1 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

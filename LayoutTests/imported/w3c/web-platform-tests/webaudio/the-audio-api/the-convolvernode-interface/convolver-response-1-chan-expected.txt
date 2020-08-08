@@ -1,21 +1,42 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
-FAIL Executing "1-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "2-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "3-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "4-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "5.1-channel input" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "3-channel input, explicit" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "4-channel input, explicit" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "5.1-channel input, explicit" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "mono-upmix-explicit" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "mono-upmix-clamped-max" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Executing "1-channel input" 
+FAIL Executing "2-channel input" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "3-channel input" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "4-channel input" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "5.1-channel input" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "3-channel input, explicit" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "4-channel input, explicit" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "5.1-channel input, explicit" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "mono-upmix-explicit" promise_test: Unhandled rejection with value: object "IndexSizeError: Number of inputs is not in the allowed range."
+FAIL Executing "mono-upmix-clamped-max" promise_test: Unhandled rejection with value: object "IndexSizeError: Number of inputs is not in the allowed range."
 PASS Audit report 
 PASS > [initialize] Convolver response with one channel 
-FAIL X new AudioBuffer({numberOfChannels: 1, length: 2, sampleRate: 8192}) incorrectly threw NotSupportedError: "Sample rate is not in the supported range.". assert_true: expected true got false
-FAIL < [initialize] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS   new AudioBuffer({numberOfChannels: 1, length: 2, sampleRate: 8192}) did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [1-channel input] produces 1-channel output 
+FAIL X 1: Channel 1: Expected 0 for all values but found 1278 unexpected values: 
+	Index	Actual
+	[2]	0.0005517149693332613
+	[3]	0.0011016002390533686
+	[4]	0.0016478316392749548
+	[5]	0.0021885987371206284
+	...and 1274 more errors. assert_true: expected true got false
+FAIL X Convolver output does not equal [0,0,0.057564035058021545,0.11493717133998871,0.17192906141281128,0.22835084795951843,0.2840152382850647,0.3387378752231598,0.39233696460723877,0.44463497400283813,0.4954586327075958,0.5446387529373169,0.5920130610466003,0.6374237537384033,0.6807206869125366,0.7217600345611572...] with an element-wise tolerance of {"absoluteThreshold":4.76837158203125e-7,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[2]	5.5171496933326125e-4	5.7564035058021545e-2	5.7012320088688284e-2	9.9041563071843097e-1	4.7683715820312500e-7
+	[3]	1.1016002390533686e-3	1.1493717133998871e-1	1.1383557110093534e-1	9.9041563119911147e-1	4.7683715820312500e-7
+	[4]	1.6478316392749548e-3	1.7192906141281128e-1	1.7028122977353632e-1	9.9041563057615711e-1	4.7683715820312500e-7
+	[5]	2.1885987371206284e-3	2.2835084795951843e-1	2.2616224922239780e-1	9.9041563122415632e-1	4.7683715820312500e-7
+	[6]	2.7221068739891052e-3	2.8401523828506470e-1	2.8129313141107559e-1	9.9041563089915285e-1	4.7683715820312500e-7
+	...and 1273 more errors.
+	Max AbsError of 9.9041563086211681e-1 at index of 301.
+	[301]	-9.5843691378831863e-3	-1.0000000000000000e+0	9.9041563086211681e-1	9.9041563086211681e-1	4.7683715820312500e-7
+	Max RelError of 9.9041563141564226e-1 at index of 966.
+	[966]	-7.8987376764416695e-3	-8.2412707805633545e-1	8.1622834037989378e-1	9.9041563141564226e-1	4.7683715820312500e-7
+ assert_true: expected true got false
+FAIL < [1-channel input] 2 out of 2 assertions were failed. assert_true: expected true got false
 PASS > [2-channel input] produces 2-channel output 
 PASS > [3-channel input] 3->2 downmix producing 2-channel output 
 PASS > [4-channel input] 4->2 downmix producing 2-channel output 

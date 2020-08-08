@@ -1,7 +1,11 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "ABSN with null buffer" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Executing "ABSN with null buffer" 
 PASS Audit report 
 PASS > [ABSN with null buffer]  
+PASS   Setting ABSN.buffer to AudioBuffer did not throw an exception. 
+PASS   Setting ABSN.buffer = null did not throw an exception. 
+PASS   ABSN output contains only the constant 0. 
+PASS < [ABSN with null buffer] All assertions passed. (total 3 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

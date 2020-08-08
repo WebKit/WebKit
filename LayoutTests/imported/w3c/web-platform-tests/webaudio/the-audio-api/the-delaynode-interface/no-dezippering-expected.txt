@@ -1,11 +1,56 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+
+Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "test0" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "test1" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "test2" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Executing "test0" 
+PASS Executing "test1" 
+PASS Executing "test2" 
 PASS Audit report 
 PASS > [test0] Test DelayNode has no dezippering 
+PASS   output[0:63] contains only the constant 0. 
+PASS   output[64:127] is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
+FAIL X output[128:] expected to be equal to the array [113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128...] but differs in 16256 places:
+	Index	Actual			Expected
+	[0]	6.5000000000000000e+1	1.1300000000000000e+2
+	[1]	6.6000000000000000e+1	1.1400000000000000e+2
+	[2]	6.7000000000000000e+1	1.1500000000000000e+2
+	[3]	6.8000000000000000e+1	1.1600000000000000e+2
+	...and 16252 more errors. assert_true: expected true got false
+FAIL < [test0] 1 out of 3 assertions were failed. assert_true: expected true got false
 PASS > [test1] Test value setter and setValueAtTime 
+FAIL X .value setter output does not equal [0,0,0,0,0.15114448964595795,0.3147895336151123,0.46949297189712524,0.6108605265617371,0.7348765134811401,0.8380183577537537,0.9173564910888672,0.9706369638442993,0.9963464140892029,0.9937548637390137,0.9629355072975159,0.9047641754150391...] with an element-wise tolerance of {"absoluteThreshold":0.000065819,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[384]	9.9025076627731323e-1	2.7795964479446411e-1	7.1229112148284912e-1	2.5625702681033045e+0	6.5819000000000001e-5
+	[385]	9.9798452854156494e-1	4.3493452668190002e-1	5.6305000185966492e-1	1.2945626693634862e+0	6.5819000000000001e-5
+	[386]	9.7737038135528564e-1	5.7955497503280640e-1	3.9781540632247925e-1	6.8641530736572565e-1	6.5819000000000001e-5
+	[387]	9.2899405956268311e-1	7.0771324634552002e-1	2.2128081321716309e-1	3.1267015893769112e-1	6.5819000000000001e-5
+	[388]	8.5422986745834351e-1	8.1576895713806152e-1	3.8460910320281982e-2	4.7146817715659685e-2	6.5819000000000001e-5
+	...and 15995 more errors.
+	Max AbsError of 1.0925426483154297e+0 at index of 1105.
+	[1105]	-5.4595923423767090e-1	5.4658341407775879e-1	1.0925426483154297e+0	1.9988580336980384e+0	6.5819000000000001e-5
+	Max RelError of 1.1920715089528179e+4 at index of 1276.
+	[1276]	9.1491645574569702e-1	7.6743694080505520e-5	9.1483971205161652e-1	1.1920715089528179e+4	6.5819000000000001e-5
+ assert_true: expected true got false
+FAIL X .value setter output matches setValueAtTime output is not true. Got false. assert_true: expected true got false
+FAIL < [test1] 2 out of 2 assertions were failed. assert_true: expected true got false
 PASS > [test2] Test value setter and modulation 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+FAIL X With modulation: .value setter output does not equal [0,0,0,0,0,0,0,0,0,0.9986401796340942,0.9932120442390442,0.9595714211463928,0.898674488067627,0.812250554561615,0.7027547955513,0.5732971429824829...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[384]	-2.8093492984771729e-1	7.6507669687271118e-1	1.0460116267204285e+0	1.3671983880780223e+0	0.0000000000000000e+0
+	[385]	9.7342061996459961e-1	1.9463731348514557e-1	7.7878330647945404e-1	4.0012025060081280e+0	0.0000000000000000e+0
+	[393]	-3.3399969339370728e-1	-8.0883669853210449e-1	4.7483700513839722e-1	5.8706164791996007e-1	0.0000000000000000e+0
+	[394]	9.3716228008270264e-1	6.5124280750751495e-2	8.7203799933195114e-1	1.3390366684731307e+1	0.0000000000000000e+0
+	[395]	-9.9599927663803101e-1	-3.6386561393737793e-1	6.3213366270065308e-1	1.7372723293645567e+0	0.0000000000000000e+0
+	...and 9484 more errors.
+	Max AbsError of 1.9853133559226990e+0 at index of 1982.
+	[1982]	9.9005824327468872e-1	-9.9525511264801025e-1	1.9853133559226990e+0	1.9947783545070223e+0	0.0000000000000000e+0
+	Max RelError of 2.2424508073129741e+3 at index of 2415.
+	[2415]	9.1266250610351563e-1	-4.0717489900998771e-4	9.1306968100252561e-1	2.2424508073129741e+3	0.0000000000000000e+0
+ assert_true: expected true got false
+FAIL X With modulation: .value setter output matches setValueAtTime output is not true. Got false. assert_true: expected true got false
+FAIL < [test2] 2 out of 2 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 3 tasks were failed. assert_true: expected true got false
 

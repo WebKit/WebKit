@@ -1,5 +1,26 @@
-CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
 
-Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
-
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "synthesize-verify" 
+PASS Executing "subsample start with playback rate 0" 
+PASS Audit report 
+PASS > [synthesize-verify]  
+PASS   The zero playbackRate held the sample value correctly 
+PASS < [synthesize-verify] All assertions passed. (total 1 assertions) 
+PASS > [subsample start with playback rate 0]  
+FAIL X output[0:27]: Expected 0 for all values but found 28 unexpected values: 
+	Index	Actual
+	[0]	5
+	[1]	5
+	[2]	5
+	[3]	5
+	...and 24 more errors. assert_true: expected true got false
+FAIL X output[28:]: Expected 5 for all values but found 27 unexpected values: 
+	Index	Actual
+	[73]	0
+	[74]	0
+	[75]	0
+	[76]	0
+	...and 23 more errors. assert_true: expected true got false
+FAIL < [subsample start with playback rate 0] 2 out of 2 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
 

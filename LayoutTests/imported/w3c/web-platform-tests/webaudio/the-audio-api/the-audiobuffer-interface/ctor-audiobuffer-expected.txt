@@ -4,7 +4,7 @@ PASS Executing "initialize"
 PASS Executing "invalid constructor" 
 PASS Executing "required options" 
 PASS Executing "invalid option values" 
-FAIL Executing "default constructor" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'buffer.numberOfChannels')"
+PASS Executing "default constructor" 
 PASS Executing "valid constructor" 
 PASS Executing "multiple contexts" 
 PASS Audit report 
@@ -31,13 +31,17 @@ PASS   buffer1.length is equal to 1.
 PASS   buffer1.sampleRate is equal to 48000. 
 PASS < [required options] All assertions passed. (total 12 assertions) 
 PASS > [invalid option values]  
-PASS   new AudioBuffer({"numberOfChannels":0,"length":1,"sampleRate":16000}) threw NotSupportedError: "Sample rate is not in the supported range.". 
+PASS   new AudioBuffer({"numberOfChannels":0,"length":1,"sampleRate":16000}) threw NotSupportedError: "Number of channels cannot be 0.". 
 PASS   new AudioBuffer({"numberOfChannels":99,"length":0,"sampleRate":16000}) threw NotSupportedError: "Number of channels cannot be more than max supported.". 
 PASS   new AudioBuffer({"numberOfChannels":1,"length":0,"sampleRate":16000}) threw NotSupportedError: "Length must be at least 1.". 
 PASS   new AudioBuffer({"numberOfChannels":1,"length":1,"sampleRate":100}) threw NotSupportedError: "Sample rate is not in the supported range.". 
 PASS < [invalid option values] All assertions passed. (total 4 assertions) 
 PASS > [default constructor]  
-FAIL X buffer = new AudioBuffer({"numberOfChannels":5,"length":17,"sampleRate":16000}) incorrectly threw NotSupportedError: "Sample rate is not in the supported range.". assert_true: expected true got false
+PASS   buffer = new AudioBuffer({"numberOfChannels":5,"length":17,"sampleRate":16000}) did not throw an exception. 
+PASS   buffer.numberOfChannels is equal to 5. 
+PASS   buffer.length is equal to 17. 
+PASS   buffer.sampleRate is equal to 16000. 
+PASS < [default constructor] All assertions passed. (total 4 assertions) 
 PASS > [valid constructor]  
 PASS   new AudioBuffer({"numberOfChannels":3,"length":42,"sampleRate":54321}) did not throw an exception. 
 PASS   buffer.numberOfChannels is equal to 3. 
@@ -56,5 +60,5 @@ PASS   c1 result is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
 PASS   c2 result is identical to the array [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16...]. 
 PASS   AudioBuffer shared between two different contexts correctly 
 PASS < [multiple contexts] All assertions passed. (total 3 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 7 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 7 tasks ran successfully. 
 

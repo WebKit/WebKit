@@ -1,15 +1,43 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Biquad k-rate AudioParams (all)" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Biquad k-rate Q" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Biquad k-rate detune" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Biquad k-rate frequency" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "Biquad k-rate gain" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Biquad k-rate AudioParams (all)" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "Biquad k-rate Q" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "Biquad k-rate detune" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "Biquad k-rate frequency" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "Biquad k-rate gain" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
 PASS Audit report 
 PASS > [Biquad k-rate AudioParams (all)]  
+PASS   All k-rate params: Setting Q.automationRate to "k-rate" is equal to k-rate. 
+PASS   All k-rate params: Setting detune.automationRate to "k-rate" is equal to k-rate. 
+PASS   All k-rate params: Setting frequency.automationRate to "k-rate" is equal to k-rate. 
+PASS   All k-rate params: Setting gain.automationRate to "k-rate" is equal to k-rate. 
+PASS   All k-rate params: k-rate node: frequency.setValueAtTime(350,0) did not throw an exception. 
+PASS   All k-rate params: k-rate node: frequency.linearRampToValueAtTime(0,1) did not throw an exception. 
+PASS   All k-rate params: a-rate node:frequency.setValueAtTime(350,0) did not throw an exception. 
+PASS   All k-rate params: a-rate node:frequency.linearRampToValueAtTime(0,1) did not throw an exception. 
 PASS > [Biquad k-rate Q]  
+PASS   k-rate Q: Setting Q.automationRate to "k-rate" is equal to k-rate. 
+PASS   k-rate Q: k-rate node: Q.setValueAtTime(1,0) did not throw an exception. 
+PASS   k-rate Q: k-rate node: Q.linearRampToValueAtTime(10,1) did not throw an exception. 
+PASS   k-rate Q: a-rate node:Q.setValueAtTime(1,0) did not throw an exception. 
+PASS   k-rate Q: a-rate node:Q.linearRampToValueAtTime(10,1) did not throw an exception. 
 PASS > [Biquad k-rate detune]  
+PASS   k-rate detune: Setting detune.automationRate to "k-rate" is equal to k-rate. 
+PASS   k-rate detune: k-rate node: detune.setValueAtTime(0,0) did not throw an exception. 
+PASS   k-rate detune: k-rate node: detune.linearRampToValueAtTime(1200,1) did not throw an exception. 
+PASS   k-rate detune: a-rate node:detune.setValueAtTime(0,0) did not throw an exception. 
+PASS   k-rate detune: a-rate node:detune.linearRampToValueAtTime(1200,1) did not throw an exception. 
 PASS > [Biquad k-rate frequency]  
+PASS   k-rate frequency: Setting frequency.automationRate to "k-rate" is equal to k-rate. 
+PASS   k-rate frequency: k-rate node: frequency.setValueAtTime(350,0) did not throw an exception. 
+PASS   k-rate frequency: k-rate node: frequency.linearRampToValueAtTime(0,1) did not throw an exception. 
+PASS   k-rate frequency: a-rate node:frequency.setValueAtTime(350,0) did not throw an exception. 
+PASS   k-rate frequency: a-rate node:frequency.linearRampToValueAtTime(0,1) did not throw an exception. 
 PASS > [Biquad k-rate gain]  
+PASS   k-rate gain: Setting gain.automationRate to "k-rate" is equal to k-rate. 
+PASS   k-rate gain: k-rate node: gain.setValueAtTime(10,0) did not throw an exception. 
+PASS   k-rate gain: k-rate node: gain.linearRampToValueAtTime(0,1) did not throw an exception. 
+PASS   k-rate gain: a-rate node:gain.setValueAtTime(10,0) did not throw an exception. 
+PASS   k-rate gain: a-rate node:gain.linearRampToValueAtTime(0,1) did not throw an exception. 
 PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

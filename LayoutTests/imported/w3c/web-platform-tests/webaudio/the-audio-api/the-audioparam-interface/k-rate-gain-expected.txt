@@ -1,7 +1,12 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test k-rate GainNode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Executing "Test k-rate GainNode" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
 PASS Audit report 
 PASS > [Test k-rate GainNode]  
+PASS   GainNode: Setting gain.automationRate to "k-rate" is equal to k-rate. 
+PASS   GainNode: k-rate node: gain.setValueAtTime(1,0) did not throw an exception. 
+PASS   GainNode: k-rate node: gain.linearRampToValueAtTime(0,1) did not throw an exception. 
+PASS   GainNode: a-rate node:gain.setValueAtTime(1,0) did not throw an exception. 
+PASS   GainNode: a-rate node:gain.linearRampToValueAtTime(0,1) did not throw an exception. 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

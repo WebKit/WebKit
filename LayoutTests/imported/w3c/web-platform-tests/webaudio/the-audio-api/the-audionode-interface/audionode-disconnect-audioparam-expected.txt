@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
 
 Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 

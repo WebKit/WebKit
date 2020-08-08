@@ -1,9 +1,11 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
+
+Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "setup-buffer-and-worklet" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "verify-rendered-buffer" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.startRendering')"
-PASS Audit report 
+FAIL Executing "setup-buffer-and-worklet" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
+TIMEOUT Executing "verify-rendered-buffer" Test timed out
+NOTRUN Audit report 
 PASS > [setup-buffer-and-worklet]  
 PASS > [verify-rendered-buffer]  
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

@@ -1,3 +1,14 @@
+2020-08-07  Chris Dumez  <cdumez@apple.com>
+
+        AudioContext / OfflineAudioContext should support a wider sample rate range
+        https://bugs.webkit.org/show_bug.cgi?id=215289
+
+        Reviewed by Eric Carlson.
+
+        Mark a few tests as flaky because the values they are printing out keep changing.
+
+        * TestExpectations:
+
 2020-08-07  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk2 ] fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html is a flaky failure

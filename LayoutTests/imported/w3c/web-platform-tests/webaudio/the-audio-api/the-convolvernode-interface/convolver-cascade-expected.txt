@@ -1,7 +1,9 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "cascade-mono" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Executing "cascade-mono" 
 PASS Audit report 
 PASS > [cascade-mono] Cascaded mono convolvers 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+FAIL X Output of cascaded mono convolvers should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [cascade-mono] 1 out of 1 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

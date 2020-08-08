@@ -73,11 +73,33 @@ HRTFPanner::~HRTFPanner() = default;
 
 size_t HRTFPanner::fftSizeForSampleRate(float sampleRate)
 {
-    // The HRTF impulse responses (loaded as audio resources) are 512 sample-frames @44.1KHz.
-    // Currently, we truncate the impulse responses to half this size, but an FFT-size of twice impulse response size is needed (for convolution).
-    // So for sample rates around 44.1KHz an FFT size of 512 is good. We double the FFT-size only for sample rates at least double this.
-    ASSERT(sampleRate >= 44100 && sampleRate <= 96000.0);
-    return (sampleRate < 88200.0) ? 512 : 1024;
+    // The HRTF impulse responses (loaded as audio resources) are 512
+    // sample-frames @44.1KHz. Currently, we truncate the impulse responses to
+    // half this size, but an FFT-size of twice impulse response size is needed
+    // (for convolution). So for sample rates around 44.1KHz an FFT size of 512
+    // is good. For different sample rates, the truncated response is resampled.
+    // The resampled length is used to compute the FFT size by choosing a power
+    // of two that is greater than or equal the resampled length. This power of
+    // two is doubled to get the actual FFT size.
+
+    const int truncatedImpulseLength = 256;
+    double sampleRateRatio = sampleRate / 44100;
+    double resampledLength = truncatedImpulseLength * sampleRateRatio;
+
+    // This is the size used for analysis frames in the HRTF kernel. The
+    // convolvers used by the kernel are twice this size.
+    int analysisFFTSize = 1 << static_cast<unsigned>(log2(resampledLength));
+
+    // Don't let the analysis size be smaller than the supported size
+    analysisFFTSize = std::max(analysisFFTSize, FFTFrame::minFFTSize());
+
+    int convolverFFTSize = 2 * analysisFFTSize;
+
+    // Make sure this size of convolver is supported.
+    ASSERT(convolverFFTSize <= FFTFrame::maxFFTSize());
+
+    return convolverFFTSize;
+
 }
 
 void HRTFPanner::reset()

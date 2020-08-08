@@ -1,19 +1,68 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
-FAIL Executing "test value" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.createGain')"
-FAIL Executing "test time" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.createGain')"
-FAIL Executing "test setValueCurve" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.createGain')"
-FAIL Executing "special cases 1" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.createGain')"
-FAIL Executing "special cases 2" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.createGain')"
+PASS Executing "test value" 
+PASS Executing "test time" 
+PASS Executing "test setValueCurve" 
+PASS Executing "special cases 1" 
+PASS Executing "special cases 2" 
 PASS Audit report 
 PASS > [initialize]  
-FAIL X Creating context for testing incorrectly threw SyntaxError: "The string did not match the expected pattern.". assert_true: expected true got false
-FAIL < [initialize] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS   Creating context for testing did not throw an exception. 
+PASS < [initialize] All assertions passed. (total 1 assertions) 
 PASS > [test value] Test non-finite arguments for AudioParam value 
+FAIL X gain.gain.setValueAtTime(Infinity,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.linearRampToValueAtTime(Infinity,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.exponentialRampToValueAtTime(Infinity,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(Infinity,1,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setValueAtTime(-Infinity,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.linearRampToValueAtTime(-Infinity,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.exponentialRampToValueAtTime(-Infinity,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(-Infinity,1,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setValueAtTime(NaN,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.linearRampToValueAtTime(NaN,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.exponentialRampToValueAtTime(NaN,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(NaN,1,1) did not throw an exception. assert_true: expected true got false
+FAIL < [test value] 12 out of 12 assertions were failed. assert_true: expected true got false
 PASS > [test time] Test non-finite arguments for AudioParam time 
+FAIL X gain.gain.setValueAtTime(1,Infinity) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.linearRampToValueAtTime(1,Infinity) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.exponentialRampToValueAtTime(1,Infinity) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(1,Infinity,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(1,1,Infinity) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setValueAtTime(1,-Infinity) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.linearRampToValueAtTime(1,-Infinity) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.exponentialRampToValueAtTime(1,-Infinity) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(1,-Infinity,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(1,1,-Infinity) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setValueAtTime(1,NaN) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.linearRampToValueAtTime(1,NaN) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.exponentialRampToValueAtTime(1,NaN) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(1,NaN,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(1,1,NaN) did not throw an exception. assert_true: expected true got false
+FAIL < [test time] 15 out of 15 assertions were failed. assert_true: expected true got false
 PASS > [test setValueCurve] Test non-finite arguments for setValueCurveAtTime 
+FAIL X gain.gain.setValueCurveAtTime([0,0,0],Infinity,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setValueCurveAtTime([0,0,0],-Infinity,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setValueCurveAtTime([0,0,0],NaN,1) did not throw an exception. assert_true: expected true got false
+PASS   gain.gain.setValueCurveAtTime([1,2,Infinity,3],1,1) threw TypeError: "Argument 1 ('values') to AudioParam.setValueCurveAtTime must be an instance of Float32Array". 
+PASS   gain.gain.setValueCurveAtTime([1,NaN,2,3],1,1) threw TypeError: "Argument 1 ('values') to AudioParam.setValueCurveAtTime must be an instance of Float32Array". 
+FAIL < [test setValueCurve] 3 out of 5 assertions were failed. assert_true: expected true got false
 PASS > [special cases 1] Test exceptions for finite values 
+FAIL X gain.gain.setValueAtTime(1,-1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.linearRampToValueAtTime(1,-1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.exponentialRampToValueAtTime(1,-1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(1,-1,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setTargetAtTime(1,1,-1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setValueCurveAtTime([0,0,0],-1,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setValueCurveAtTime([0,0,0],1,-1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setValueCurveAtTime(curve, 1, 0) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.setValueCurveAtTime(curve, 1, -1) did not throw an exception. assert_true: expected true got false
+FAIL < [special cases 1] 9 out of 9 assertions were failed. assert_true: expected true got false
 PASS > [special cases 2] Test special cases for expeonentialRamp 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 6 tasks were failed. assert_true: expected true got false
+FAIL X gain.gain.exponentialRampToValueAtTime(0,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.exponentialRampToValueAtTime(-1e-100,1) did not throw an exception. assert_true: expected true got false
+FAIL X gain.gain.exponentialRampToValueAtTime(1e-100,1) did not throw an exception. assert_true: expected true got false
+FAIL < [special cases 2] 3 out of 3 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 5 out of 6 tasks were failed. assert_true: expected true got false
 

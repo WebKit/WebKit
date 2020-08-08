@@ -76,7 +76,6 @@ void AudioParamTimeline::insertEvent(const ParamEvent& event)
         && isValidNumber(event.duration())
         && event.duration() >= 0;
 
-    ASSERT(isValid);
     if (!isValid)
         return;
         

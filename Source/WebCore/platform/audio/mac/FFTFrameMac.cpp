@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+const int kMinFFTPow2Size = 2;
 const int kMaxFFTPow2Size = 24;
 
 FFTSetup* FFTFrame::fftSetups = 0;
@@ -154,6 +155,16 @@ FFTSetup FFTFrame::fftSetupForSize(unsigned fftSize)
         fftSetups[pow2size] = vDSP_create_fftsetup(pow2size, FFT_RADIX2);
 
     return fftSetups[pow2size];
+}
+
+int FFTFrame::minFFTSize()
+{
+    return 1 << kMinFFTPow2Size;
+}
+
+int FFTFrame::maxFFTSize()
+{
+    return 1 << kMaxFFTPow2Size;
 }
 
 void FFTFrame::initialize()

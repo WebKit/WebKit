@@ -30,6 +30,10 @@
 
 namespace {
 
+// FIXME: It is unclear what the limits are for gst_fft so we use the same ones as on macOS for now.
+const int kMinFFTPow2Size = 2;
+const int kMaxFFTPow2Size = 24;
+
 size_t unpackedFFTDataSize(unsigned fftSize)
 {
     return fftSize / 2 + 1;
@@ -167,6 +171,16 @@ float* FFTFrame::realData() const
 float* FFTFrame::imagData() const
 {
     return const_cast<float*>(m_imagData.data());
+}
+
+int FFTFrame::minFFTSize()
+{
+    return 1 << kMinFFTPow2Size;
+}
+
+int FFTFrame::maxFFTSize()
+{
+    return 1 << kMaxFFTPow2Size;
 }
 
 } // namespace WebCore

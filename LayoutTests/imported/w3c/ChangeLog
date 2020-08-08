@@ -1,3 +1,98 @@
+2020-08-07  Chris Dumez  <cdumez@apple.com>
+
+        AudioContext / OfflineAudioContext should support a wider sample rate range
+        https://bugs.webkit.org/show_bug.cgi?id=215289
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests now that way for checks are passing and now that most tests are running further.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/ctor-audiobuffer-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-null-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-playbackrate-zero-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/buffer-resampling-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/note-grain-on-play-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/note-grain-on-timing-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-scheduling-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontextoptions-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-channel-rules-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-connect-method-chaining-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/channel-mode-interp-basic-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/adding-events-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-exceptional-values-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-method-chaining-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/automation-rate-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/cancel-scheduled-values-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/event-insertion-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet-connections.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audioworklet.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-constant-source-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-gain-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-oscillator-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-oscillator-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-exponentialRampToValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-linearRampToValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setTargetAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/retrospective-setValueCurveAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/set-target-conv-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-audioparam-size.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-disconnected-input.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/suspended-context-messageport.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-allpass-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-bandpass-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-getFrequencyResponse-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-highpass-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-highshelf-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-lowpass-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-lowshelf-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-notch-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-peaking-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-tail-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-cascade-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/delaynode-channel-count-1-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/gain-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/iirfilter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/ctor-offlineaudiocontext-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/offlineaudiocontext-detached-execution-context.tentative-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-exponential-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-inverse-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/distance-linear-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-equalpower-stereo-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-azimuth-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-distance-clamping-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-stereo-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-rolloff-clamping-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/stereopannernode-panning-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/silent-inputs-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-copy-curve-expected.txt:
+
 2020-08-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         {Intersection,Resize,Performance}Observer callbacks get incorrect `this` value

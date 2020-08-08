@@ -1,9 +1,15 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "interp" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "mode" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Executing "interp" 
+PASS Executing "mode" 
 PASS Audit report 
 PASS > [interp]  
+PASS   node.channelInterpretation is equal to discrete. 
+PASS   After rendering node.channelInterpretation is equal to discrete. 
+PASS < [interp] All assertions passed. (total 2 assertions) 
 PASS > [mode]  
+PASS   node.channelCountMode is equal to explicit. 
+PASS   After rendering node.channelCountMode is equal to explicit. 
+PASS < [mode] All assertions passed. (total 2 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

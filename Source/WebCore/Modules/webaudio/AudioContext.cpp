@@ -68,7 +68,7 @@ ExceptionOr<Ref<AudioContext>> AudioContext::create(Document& document, const Au
     
     // FIXME: Figure out where latencyHint should go.
 
-    if (contextOptions.sampleRate.hasValue() && !isSampleRateRangeGood(contextOptions.sampleRate.value()))
+    if (contextOptions.sampleRate.hasValue() && !isSupportedSampleRate(contextOptions.sampleRate.value()))
         return Exception { SyntaxError, "sampleRate is not in range"_s };
     
     auto audioContext = adoptRef(*new AudioContext(document, contextOptions));

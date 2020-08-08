@@ -1,8 +1,9 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "from-dictionary" 
-FAIL Executing "invalid-operation" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL Executing "verification" promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Executing "invalid-operation" 
+FAIL Executing "verification" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'envelope.gain.setValueAtTime(0.0, 0.0)
+            .linearRampToValueAtTime')"
 PASS Audit report 
 PASS > [from-dictionary]  
 FAIL X The return value of AudioParam.setValueAtTime() matches the source AudioParam is not equal to true. Got false. assert_true: expected true got false
@@ -13,6 +14,11 @@ FAIL X The return value of AudioParam.setValueCurveAtTime() matches the source A
 FAIL X The return value of AudioParam.cancelScheduledValues() matches the source AudioParam is not equal to true. Got false. assert_true: expected true got false
 FAIL < [from-dictionary] 6 out of 6 assertions were failed. assert_true: expected true got false
 PASS > [invalid-operation]  
+FAIL X Calling setValueAtTime() with a negative end time threw "TypeError" instead of EcmaScript error RangeError. assert_true: expected true got false
+FAIL X Calling exponentialRampToValueAtTime() with a zero target value threw "TypeError" instead of EcmaScript error RangeError. assert_true: expected true got false
+FAIL X The gain value of the first gain node is not equal to 1. Got 0.25. assert_true: expected true got false
+PASS   The gain value of the second gain node is equal to 0.5. 
+FAIL < [invalid-operation] 3 out of 4 assertions were failed. assert_true: expected true got false
 PASS > [verification]  
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 3 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 3 tasks were failed. assert_true: expected true got false
 
