@@ -1,3 +1,15 @@
+2020-08-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] REGRESSION(r265408): Unreviewed layout test script fix
+        https://bugs.webkit.org/show_bug.cgi?id=215292
+        <rdar://problem/66698141>
+
+        os.getuid() is available only for Unix.
+
+        > AttributeError: 'module' object has no attribute 'getuid'
+
+        * Scripts/webkitpy/__init__.py: Don't use os.getuid() unless sys.platform == 'darwin'.
+
 2020-08-08  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Pick a reasonable auto-install location on NFS mounts
