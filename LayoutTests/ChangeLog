@@ -1,3 +1,22 @@
+2020-08-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Attempt to stabilize out-of-memory error test
+        https://bugs.webkit.org/show_bug.cgi?id=215291
+
+        Reviewed by Mark Lam.
+
+        This patch attempts to stabilize out-of-memory error test: making the test reliably throw an out-of-memory error.
+
+        1. Anchor all ArrayBuffer allocation from the strong root (window) to keep them alive even GC happens, which stresses memory usage.
+        2. Increase count of VM allocation from 1000 to 5000 to mitigate the worst case scenario where out-of-memory does not happen because
+           worklet is constantly terminated and memory is released. Referencing worklet object in the caller side does not matter since worklet
+           can be terminated regardless of whether the caller references the object of worklet.
+
+        * TestExpectations:
+        * fast/css-custom-paint/out-of-memory-while-adding-worklet-module-expected.txt:
+        * fast/css-custom-paint/script-tests/out-of-memory-while-adding-worklet-module.js:
+        (useAllMemory): Deleted.
+
 2020-08-07  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk1 ] imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html is a flaky failure

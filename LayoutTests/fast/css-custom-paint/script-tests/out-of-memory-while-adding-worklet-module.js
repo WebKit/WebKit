@@ -1,3 +1,4 @@
+window.allocated = [];
 function useAllMemory() {
     try {
         const a = [];
@@ -9,23 +10,20 @@ function useAllMemory() {
         }
         new Promise(foo).catch(() => {});
         while(1) {
-            new ArrayBuffer(1000);
+            window.allocated.push(new ArrayBuffer(1000));
         }
     } catch { }
 }
 
-var exception = null;
+var exception;
 useAllMemory();
 try {
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 5000; i++) {
         CSS.paintWorklet.addModule('');
     }
 } catch (e) {
     exception = e;
 }
 
-// Exception may not be thrown, depends on GC timing.
-if (exception !== null) {
-    if (exception != "RangeError: Out of memory")
-        throw "FAIL: expect: 'RangeError: Out of memory', actual: '" + exception + "'";
-}
+if (exception != "RangeError: Out of memory")
+    throw "FAIL: expect: 'RangeError: Out of memory', actual: '" + exception + "'";
