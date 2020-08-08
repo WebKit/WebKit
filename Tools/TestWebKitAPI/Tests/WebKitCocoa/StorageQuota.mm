@@ -113,24 +113,33 @@ struct ResourceInfo {
 static bool receivedMessage;
 
 @interface QuotaMessageHandler : NSObject <WKScriptMessageHandler>
--(void)setExpectedMessage:(NSString *)message;
+- (void)setExpectedMessage:(NSString *)message;
+- (String)receivedMessage;
 @end
 
 @implementation QuotaMessageHandler {
-    NSString *_expectedMessage;
+    String _expectedMessage;
+    String _message;
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    if (_expectedMessage) {
-        EXPECT_TRUE([[message body] isEqualToString:_expectedMessage]);
-        _expectedMessage = nil;
+    _message = [message body];
+    if (!_expectedMessage.isNull()) {
+        EXPECT_STREQ(_message.utf8().data(), _expectedMessage.utf8().data());
+        _expectedMessage = { };
     }
     receivedMessage = true;
 }
 
--(void)setExpectedMessage:(NSString *)message {
+- (void)setExpectedMessage:(NSString *)message
+{
     _expectedMessage = message;
+}
+
+- (String)receivedMessage
+{
+    return _message;
 }
 @end
 
@@ -200,6 +209,32 @@ function doTest(num)
 </script>
 )SWRESOURCE";
 
+#if PLATFORM(MAC)
+static const char* TestHiddenBytes = R"SWRESOURCE(
+<script>
+
+async function test()
+{
+    url = "http://example.org/test";
+    try {
+        const cache = await window.caches.open("mycache");
+        const promise = cache.put(url, new Response(new ArrayBuffer(1024 * 1024)));
+        promise.then(() => {
+            window.webkit.messageHandlers.qt.postMessage("put succeeded");
+        }, () => {
+            window.webkit.messageHandlers.qt.postMessage("put failed");
+        });
+    } catch (e) {
+        window.webkit.messageHandlers.qt.postMessage("fail with exception " + e);
+    }
+    setTimeout(() => window.webkit.messageHandlers.qt.postMessage("timed out"), 10000);
+}
+
+test();
+</script>
+)SWRESOURCE";
+#endif
+
 static bool done;
 
 static inline void setVisible(TestWKWebView *webView)
@@ -210,6 +245,67 @@ static inline void setVisible(TestWKWebView *webView)
     webView.window.hidden = NO;
 #endif
 }
+
+#if PLATFORM(MAC)
+TEST(WebKit, QuotaDelegateHidden)
+{
+    done = false;
+    _WKWebsiteDataStoreConfiguration *storeConfiguration = [[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease];
+    storeConfiguration.perOriginStorageQuota = 1024 * 400;
+    WKWebsiteDataStore *dataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration] autorelease];
+    [dataStore removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:dataStore];
+
+    auto messageHandler = adoptNS([[QuotaMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"qt"];
+
+    ServiceWorkerTCPServer server({
+        { "text/html", TestHiddenBytes }
+    }, {
+        { "text/html", TestHiddenBytes }
+    });
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    auto delegate = adoptNS([[QuotaDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    setVisible(webView.get());
+
+    auto *hostWindow = [webView hostWindow];
+    [hostWindow miniaturize:hostWindow];
+
+    NSLog(@"QuotaDelegateHidden 1");
+
+    receivedQuotaDelegateCalled = false;
+    receivedMessage = false;
+    [webView loadRequest:server.request()];
+    Util::run(&receivedMessage);
+    EXPECT_STREQ([messageHandler receivedMessage].utf8().data(), "put failed");
+
+    NSLog(@"QuotaDelegateHidden 2");
+
+    EXPECT_FALSE(receivedQuotaDelegateCalled);
+
+    [hostWindow deminiaturize:hostWindow];
+
+    receivedQuotaDelegateCalled = false;
+    receivedMessage = false;
+    [webView reload];
+    Util::run(&receivedQuotaDelegateCalled);
+
+    NSLog(@"QuotaDelegateHidden 3");
+
+    [delegate grantQuota];
+    Util::run(&receivedMessage);
+    EXPECT_STREQ([messageHandler receivedMessage].utf8().data(), "put succeeded");
+
+    NSLog(@"QuotaDelegateHidden 4");
+}
+#endif
 
 TEST(WebKit, QuotaDelegate)
 {

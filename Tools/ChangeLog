@@ -1,3 +1,17 @@
+2020-08-08  Youenn Fablet  <youenn@apple.com>
+
+        Add a quota delegate test for miniaturized/deminiaturized pages
+        https://bugs.webkit.org/show_bug.cgi?id=215166
+
+        Reviewed by Alex Christensen.
+
+        Add a Mac specific test for testing quota delegate in case page is miniaturized or not.
+        Update testing code to show more meaningful error reports.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/StorageQuota.mm:
+        (-[QuotaMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[QuotaMessageHandler receivedMessage]):
+
 2020-08-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] It should be possible to override spellchecking results in WebKitTestRunner
