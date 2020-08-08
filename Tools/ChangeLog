@@ -1,3 +1,13 @@
+2020-08-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Pick a reasonable auto-install location on NFS mounts
+        https://bugs.webkit.org/show_bug.cgi?id=215292
+        <rdar://problem/66698141>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/__init__.py: On MacOS, when the current user does not own the checkout, use ~/Libraries/webkitpy.
+
 2020-08-08  Youenn Fablet  <youenn@apple.com>
 
         Add a quota delegate test for miniaturized/deminiaturized pages

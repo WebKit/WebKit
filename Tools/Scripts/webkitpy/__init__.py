@@ -18,5 +18,10 @@ import sys
 libraries = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))), 'libraries')
 sys.path.insert(0, os.path.join(libraries, 'webkitcorepy'))
 
+is_root = not os.getuid()
+does_own_libraries = os.stat(libraries).st_uid == os.getuid()
+if sys.platform == 'darwin' and (is_root or not does_own_libraries):
+    libraries = os.path.expanduser('~/Library/webkitpy')
+
 from webkitcorepy import AutoInstall
 AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
