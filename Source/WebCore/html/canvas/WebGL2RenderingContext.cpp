@@ -1987,14 +1987,21 @@ GCGLboolean WebGL2RenderingContext::isSampler(WebGLSampler* sampler)
 
 void WebGL2RenderingContext::bindSampler(GCGLuint unit, WebGLSampler* sampler)
 {
-    if (isContextLostOrPending() || m_boundSamplers[unit] == sampler)
+    if (isContextLostOrPending())
         return;
+    
+    if (unit >= m_boundSamplers.size()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bindSampler", "invalid texture unit");
+        return;
+    }
 
     if (sampler && sampler->isDeleted()) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "bindSampler", "cannot bind a deleted Sampler object");
         return;
     }
 
+    if (m_boundSamplers[unit] == sampler)
+        return;
     m_context->bindSampler(unit, objectOrZero(sampler));
     m_boundSamplers[unit] = sampler;
 }
