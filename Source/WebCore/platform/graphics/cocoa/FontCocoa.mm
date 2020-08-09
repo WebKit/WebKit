@@ -547,7 +547,8 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
 void Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningIndex, bool enableKerning, bool requiresShaping, const AtomString& locale) const
 {
     // FIXME: Implement GlyphBuffer initial advance.
-    CTFontTransformOptions options = (enableKerning ? kCTFontTransformApplyPositioning : 0) | (requiresShaping ? kCTFontTransformApplyShaping : 0);
+    UNUSED_PARAM(requiresShaping);
+    CTFontTransformOptions options = (enableKerning ? kCTFontTransformApplyPositioning : 0) | kCTFontTransformApplyShaping;
 #if USE(CTFONTTRANSFORMGLYPHSWITHLANGUAGE)
     auto handler = ^(CFRange range, CGGlyph** newGlyphsPointer, CGSize** newAdvancesPointer) {
         range.location = std::min(std::max(range.location, static_cast<CFIndex>(0)), static_cast<CFIndex>(glyphBuffer.size()));

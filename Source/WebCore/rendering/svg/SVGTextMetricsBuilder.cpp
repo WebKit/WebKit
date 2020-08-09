@@ -59,7 +59,7 @@ void SVGTextMetricsBuilder::advanceSimpleText()
 {
     GlyphBuffer glyphBuffer;
     auto before = m_simpleWidthIterator->currentCharacterIndex();
-    m_simpleWidthIterator->advance(m_textPosition + 1, &glyphBuffer);
+    m_simpleWidthIterator->advance(m_textPosition + 1, glyphBuffer);
     auto after = m_simpleWidthIterator->currentCharacterIndex();
     if (before == after) {
         m_currentMetrics = SVGTextMetrics();

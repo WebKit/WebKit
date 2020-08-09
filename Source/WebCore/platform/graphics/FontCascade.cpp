@@ -373,11 +373,12 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
         totalWidth = complexIterator.runWidthSoFar();
     } else {
         WidthIterator simpleIterator(*this, run, fallbackFonts);
-        simpleIterator.advance(from, nullptr);
+        GlyphBuffer glyphBuffer;
+        simpleIterator.advance(from, glyphBuffer);
         offsetBeforeRange = simpleIterator.runWidthSoFar();
-        simpleIterator.advance(to, nullptr);
+        simpleIterator.advance(to, glyphBuffer);
         offsetAfterRange = simpleIterator.runWidthSoFar();
-        simpleIterator.advance(run.length(), nullptr);
+        simpleIterator.advance(run.length(), glyphBuffer);
         totalWidth = simpleIterator.runWidthSoFar();
     }
 
@@ -435,26 +436,22 @@ float FontCascade::widthForSimpleText(StringView text) const
         return *cacheEntry;
 
     GlyphBuffer glyphBuffer;
-    bool hasKerningOrLigatures = enableKerning() || requiresShaping();
     float runWidth = 0;
     auto& font = primaryFont();
     for (unsigned i = 0; i < text.length(); ++i) {
         auto glyph = glyphDataForCharacter(text[i], false).glyph;
         auto glyphWidth = font.widthForGlyph(glyph);
         runWidth += glyphWidth;
-        if (!hasKerningOrLigatures)
-            continue;
         glyphBuffer.add(glyph, font, glyphWidth);
     }
-    if (hasKerningOrLigatures) {
-        font.applyTransforms(glyphBuffer, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale());
-        // This is needed only to match the result of the slow path. Same glyph widths but different floating point arithmentics can
-        // produce different run width.
-        float runWidthDifferenceWithTransformApplied = -runWidth;
-        for (size_t i = 0; i < glyphBuffer.size(); ++i)
-            runWidthDifferenceWithTransformApplied += glyphBuffer.advanceAt(i).width();
-        runWidth += runWidthDifferenceWithTransformApplied;
-    }
+
+    font.applyTransforms(glyphBuffer, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale());
+    // This is needed only to match the result of the slow path.
+    // Same glyph widths but different floating point arithmetic can produce different run width.
+    float runWidthDifferenceWithTransformApplied = -runWidth;
+    for (size_t i = 0; i < glyphBuffer.size(); ++i)
+        runWidthDifferenceWithTransformApplied += glyphBuffer.advanceAt(i).width();
+    runWidth += runWidthDifferenceWithTransformApplied;
 
     if (cacheEntry)
         *cacheEntry = runWidth;
@@ -1376,9 +1373,9 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
     // FIXME: Using separate glyph buffers for the prefix and the suffix is incorrect when kerning or
     // ligatures are enabled.
     GlyphBuffer localGlyphBuffer;
-    it.advance(from, &localGlyphBuffer);
+    it.advance(from, localGlyphBuffer);
     float beforeWidth = it.runWidthSoFar();
-    it.advance(to, &glyphBuffer);
+    it.advance(to, glyphBuffer);
 
     if (glyphBuffer.isEmpty())
         return glyphBuffer;
@@ -1387,7 +1384,7 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
 
     float initialAdvance = 0;
     if (run.rtl()) {
-        it.advance(run.length(), &localGlyphBuffer);
+        it.advance(run.length(), localGlyphBuffer);
         initialAdvance = it.runWidthSoFar() - afterWidth;
     } else
         initialAdvance = beforeWidth;
@@ -1522,7 +1519,7 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Fon
 {
     WidthIterator it(*this, run, fallbackFonts, glyphOverflow);
     GlyphBuffer glyphBuffer;
-    it.advance(run.length(), (enableKerning() || requiresShaping()) ? &glyphBuffer : nullptr);
+    it.advance(run.length(), glyphBuffer);
 
     if (glyphOverflow) {
         glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-it.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().ascent()));
@@ -1550,13 +1547,13 @@ void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRec
 {
     GlyphBuffer glyphBuffer;
     WidthIterator it(*this, run);
-    it.advance(from, &glyphBuffer);
+    it.advance(from, glyphBuffer);
     float beforeWidth = it.runWidthSoFar();
-    it.advance(to, &glyphBuffer);
+    it.advance(to, glyphBuffer);
     float afterWidth = it.runWidthSoFar();
 
     if (run.rtl()) {
-        it.advance(run.length(), &glyphBuffer);
+        it.advance(run.length(), glyphBuffer);
         float totalWidth = it.runWidthSoFar();
         selectionRect.move(totalWidth - afterWidth, 0);
     } else
