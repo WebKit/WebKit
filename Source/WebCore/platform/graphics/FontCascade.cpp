@@ -442,7 +442,7 @@ float FontCascade::widthForSimpleText(StringView text) const
         auto glyph = glyphDataForCharacter(text[i], false).glyph;
         auto glyphWidth = font.widthForGlyph(glyph);
         runWidth += glyphWidth;
-        glyphBuffer.add(glyph, font, glyphWidth);
+        glyphBuffer.add(glyph, font, glyphWidth, i);
     }
 
     font.applyTransforms(glyphBuffer, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale());

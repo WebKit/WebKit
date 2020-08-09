@@ -1,5 +1,15 @@
 2020-08-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Fix bad merge in r265241
+        https://bugs.webkit.org/show_bug.cgi?id=215051
+
+        Unreviewed. This is something that got dropped in a bad merge from r265241.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthForSimpleText const):
+
+2020-08-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Make GlyphBuffers required in the fast text codepath
         https://bugs.webkit.org/show_bug.cgi?id=215052
 
