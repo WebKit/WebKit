@@ -334,6 +334,12 @@ public:
 
     void enableVP9Decoder();
 
+#if PLATFORM(COCOA)
+    void willWriteToPasteboardAsynchronously(const String& pasteboardName);
+    void waitForPendingPasteboardWritesToFinish(const String& pasteboardName);
+    void didWriteToPasteboardAsynchronously(const String& pasteboardName);
+#endif
+
 private:
     WebProcess();
     ~WebProcess();
@@ -646,6 +652,10 @@ private:
 #if PLATFORM(IOS)
     RefPtr<SandboxExtension> m_assetServiceExtension;
     RefPtr<SandboxExtension> m_assetServiceV2Extension;
+#endif
+
+#if PLATFORM(COCOA)
+    HashCountedSet<String> m_pendingPasteboardWriteCounts;
 #endif
 
     bool m_useGPUProcessForMedia { false };

@@ -178,4 +178,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #if PLATFORM(GTK) && !USE(GTK4)
     SetUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars)
 #endif
+
+#if PLATFORM(COCOA)
+    DidWriteToPasteboardAsynchronously(String pasteboardName);
+#endif
 }

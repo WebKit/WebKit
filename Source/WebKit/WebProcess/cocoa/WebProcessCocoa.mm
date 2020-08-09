@@ -45,6 +45,7 @@
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessDataStoreParameters.h"
+#import "WebProcessMessages.h"
 #import "WebProcessProxyMessages.h"
 #import "WebSleepDisablerClient.h"
 #import "WebsiteDataStoreParameters.h"
@@ -1075,6 +1076,25 @@ void WebProcess::powerSourceDidChange(bool hasAC)
     setSystemHasAC(hasAC);
 }
 
+void WebProcess::willWriteToPasteboardAsynchronously(const String& pasteboardName)
+{
+    m_pendingPasteboardWriteCounts.add(pasteboardName);
+}
+
+void WebProcess::didWriteToPasteboardAsynchronously(const String& pasteboardName)
+{
+    m_pendingPasteboardWriteCounts.remove(pasteboardName);
+}
+
+void WebProcess::waitForPendingPasteboardWritesToFinish(const String& pasteboardName)
+{
+    while (m_pendingPasteboardWriteCounts.contains(pasteboardName)) {
+        if (!parentProcessConnection()->waitForAndDispatchImmediately<Messages::WebProcess::DidWriteToPasteboardAsynchronously>(0, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives)) {
+            m_pendingPasteboardWriteCounts.removeAll(pasteboardName);
+            break;
+        }
+    }
+}
 
 } // namespace WebKit
 

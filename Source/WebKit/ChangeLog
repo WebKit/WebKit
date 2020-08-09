@@ -1,3 +1,54 @@
+2020-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [ iOS wk2 ] editing/pasteboard/paste-without-nesting.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215218
+        <rdar://problem/66628493>
+
+        Reviewed by Darin Adler.
+
+        This test writes to the system pasteboard using `document.execCommand("Copy")`, and then immediately reads from
+        the system pasteboard by triggering `document.execCommand("Paste")`. On rare occasions, this fails on iOS, where
+        IPC messages for writing content to the pasteboard (e.g. `WebPasteboardProxy::WriteWebContentToPasteboard`) are
+        asynchronous, but the IPC message to get the pasteboard change count before pasting (`GetPasteboardChangeCount`)
+        is synchronous. This means that `Connection` may end up dispatching the sync `GetPasteboardChangeCount` IPC
+        message before dispatching `WriteWebContentToPasteboard`, which causes the pasteboard read to fail, because the
+        contents on the pasteboard have changed after starting to read from the pasteboard.
+
+        Note that this is not a problem on macOS since all pasteboard writing IPC is synchronous. Instead of turning all
+        of the async iOS pasteboard writing messages synchronous as well, we can fix this by adding a mechanism in
+        `WebProcess` to keep track of outgoing async pasteboard write messages; then, before attempting to grab the
+        change count when we start reading, wait for any of these pending async writes to finish before we continue.
+
+        In a future patch, we could actually adopt this same mechanism in `SetPasteboardTypes` and neighboring IPC
+        messages to turn these all asynchronous.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::writeURLToPasteboard):
+        (WebKit::WebPasteboardProxy::writeWebContentToPasteboard):
+        (WebKit::WebPasteboardProxy::writeImageToPasteboard):
+        (WebKit::WebPasteboardProxy::writeStringToPasteboard):
+
+        Call `didWriteToPasteboardAsynchronously` after we finish writing to the pasteboard asynchronously.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::changeCount):
+
+        Before accessing changeCount, wait until any asynchronous calls to write to the system pasteboard have finished.
+
+        (WebKit::WebPlatformStrategies::writeToPasteboard):
+
+        Right before we send an async message to the UI process to write to the system pasteboard, notify `WebProcess`
+        so that it can keep track of pending clipboard writes.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::willWriteToPasteboardAsynchronously):
+        (WebKit::WebProcess::didWriteToPasteboardAsynchronously):
+        (WebKit::WebProcess::waitForPendingPasteboardWritesToFinish):
+
+        Wait for a maximum of 1 second for any outgoing pasteboard writing messages to return to the web process.
+
 2020-08-07  Chris Dumez  <cdumez@apple.com>
 
         baseLatency attribute is missing on AudioContext interface

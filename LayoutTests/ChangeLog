@@ -1,3 +1,15 @@
+2020-08-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [ iOS wk2 ] editing/pasteboard/paste-without-nesting.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215218
+        <rdar://problem/66628493>
+
+        Reviewed by Darin Adler.
+
+        Remove the flaky test expectation.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-08-07  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Gardening and adding some WPE baselines.
