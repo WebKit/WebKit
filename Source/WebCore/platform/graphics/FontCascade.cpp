@@ -1387,9 +1387,8 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
 
     float initialAdvance = 0;
     if (run.rtl()) {
-        float finalRoundingWidth = it.finalRoundingWidth();
         it.advance(run.length(), &localGlyphBuffer);
-        initialAdvance = finalRoundingWidth + it.runWidthSoFar() - afterWidth;
+        initialAdvance = it.runWidthSoFar() - afterWidth;
     } else
         initialAdvance = beforeWidth;
     // FIXME: Deal with the GlyphBuffer's current initialAdvance.

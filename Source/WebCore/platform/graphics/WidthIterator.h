@@ -52,7 +52,6 @@ public:
 
     const TextRun& run() const { return m_run; }
     float runWidthSoFar() const { return m_runWidthSoFar; }
-    float finalRoundingWidth() const { return m_finalRoundingWidth; }
     unsigned currentCharacterIndex() const { return m_currentCharacterIndex; }
 
 private:
@@ -72,7 +71,6 @@ private:
     float m_runWidthSoFar { 0 };
     float m_expansion { 0 };
     float m_expansionPerOpportunity { 0 };
-    float m_finalRoundingWidth { 0 };
     float m_maxGlyphBoundingBoxY { std::numeric_limits<float>::min() };
     float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };
     float m_firstGlyphOverflow { 0 };

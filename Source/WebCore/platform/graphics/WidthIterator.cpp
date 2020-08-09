@@ -179,12 +179,8 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     bool runForcesRightExpansion = (m_run.expansionBehavior() & RightExpansionMask) == ForceRightExpansion;
     bool runForbidsLeftExpansion = (m_run.expansionBehavior() & LeftExpansionMask) == ForbidLeftExpansion;
     bool runForbidsRightExpansion = (m_run.expansionBehavior() & RightExpansionMask) == ForbidRightExpansion;
-    float widthSinceLastRounding = m_runWidthSoFar;
     float leftoverJustificationWidth = 0;
-    m_runWidthSoFar = floorf(m_runWidthSoFar);
-    widthSinceLastRounding -= m_runWidthSoFar;
 
-    float lastRoundingWidth = m_finalRoundingWidth;
     FloatRect bounds;
 
     const Font& primaryFont = m_font.primaryFont();
@@ -221,7 +217,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         // Now that we have a glyph and font data, get its width.
         float width;
         if (character == '\t' && m_run.allowTabs())
-            width = m_font.tabWidth(*font, m_run.tabSize(), m_run.xPos() + m_runWidthSoFar + widthSinceLastRounding);
+            width = m_font.tabWidth(*font, m_run.tabSize(), m_run.xPos() + m_runWidthSoFar);
         else {
             width = font->widthForGlyph(glyph);
 
@@ -334,14 +330,10 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         // Advance past the character we just dealt with.
         textIterator.advance(advanceLength);
 
-        float oldWidth = width;
-
-        widthSinceLastRounding += width;
+        m_runWidthSoFar += width;
 
         if (glyphBuffer)
-            glyphBuffer->add(glyph, *font, (rtl ? oldWidth + lastRoundingWidth : width), currentCharacterIndex);
-
-        lastRoundingWidth = width - oldWidth;
+            glyphBuffer->add(glyph, *font, width, currentCharacterIndex);
 
         if (m_accountForGlyphBounds) {
             m_maxGlyphBoundingBoxY = std::max(m_maxGlyphBoundingBoxY, bounds.maxY());
@@ -366,8 +358,6 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     }
 
     m_currentCharacterIndex = textIterator.currentIndex();
-    m_runWidthSoFar += widthSinceLastRounding;
-    m_finalRoundingWidth = lastRoundingWidth;
 }
 
 void WidthIterator::advance(unsigned offset, GlyphBuffer* glyphBuffer)

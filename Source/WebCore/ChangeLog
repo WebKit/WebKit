@@ -1,5 +1,24 @@
 2020-08-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        WidthIterator::m_finalRoundingWidth is always 0
+        https://bugs.webkit.org/show_bug.cgi?id=215307
+
+        Reviewed by Darin Adler.
+
+        There's no reason for it to exist.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::layoutSimpleText const):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/WidthIterator.h:
+        (WebCore::WidthIterator::runWidthSoFar const):
+        (WebCore::WidthIterator::finalRoundingWidth const): Deleted.
+
+2020-08-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Use references instead of pointers for GlyphBuffer::add()'s Font argument
         https://bugs.webkit.org/show_bug.cgi?id=215309
 
