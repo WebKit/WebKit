@@ -397,6 +397,11 @@ public:
         parseArguments(argc, argv);
     }
 
+    enum CommandLineForWorkersTag { CommandLineForWorkers };
+    CommandLine(CommandLineForWorkersTag)
+    {
+    }
+
     Vector<Script> m_scripts;
     Vector<String> m_arguments;
     String m_profilerOutput;
@@ -1869,7 +1874,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentStart(JSGlobalObject* globalObje
     Thread::create(
         "JSC Agent",
         [sourceCode, &didStartLock, &didStartCondition, &didStart] () {
-            CommandLine commandLine(0, nullptr);
+            CommandLine commandLine(CommandLine::CommandLineForWorkers);
             commandLine.m_interactive = false;
             runJSC(
                 commandLine, true,

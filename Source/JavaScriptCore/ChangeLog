@@ -1,3 +1,18 @@
+2020-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make CommandLine on Worker agent (JSC shell feature for testing) work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=215311
+        <rdar://problem/66660053>
+
+        Reviewed by Mark Lam.
+
+        We should not reconfigure Options since this is once initialized. Since Options are frozen,
+        this results in crash.
+
+        * jsc.cpp:
+        (CommandLine::CommandLine):
+        (functionDollarAgentStart):
+
 2020-08-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r263195, r263252, and r265394.
