@@ -1,5 +1,24 @@
 2020-08-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Update OriginalAdvancesForCharacterTreatedAsSpace to work correctly in the presence of inserted or removed glyphs
+        https://bugs.webkit.org/show_bug.cgi?id=215302
+
+        Reviewed by Darin Adler.
+
+        OriginalAdvancesForCharacterTreatedAsSpace is trying to make sure that shaping doesn't cause
+        spaces to get wider or thinner. However, the way it was doing that is, for all the space
+        characters, overwrite that glyph index's advance after shaping to be what it was before shaping.
+        However, this is wrong, because shaping can insert or delete glyphs. Instead, now that we have
+        explicit string indices for each glyph, we can use those to determine which glyphs come from
+        space characters. These glyphs are the ones which should be overwritten.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::applyFontTransforms):
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/WidthIterator.h:
+
+2020-08-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Fix bad merge in r265241
         https://bugs.webkit.org/show_bug.cgi?id=215051
 

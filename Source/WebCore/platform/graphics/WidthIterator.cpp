@@ -28,6 +28,7 @@
 #include "GlyphBuffer.h"
 #include "Latin1TextIterator.h"
 #include "SurrogatePairAwareTextIterator.h"
+#include <algorithm>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -58,14 +59,15 @@ WidthIterator::WidthIterator(const FontCascade& font, const TextRun& run, HashSe
 }
 
 struct OriginalAdvancesForCharacterTreatedAsSpace {
-public:
-    explicit OriginalAdvancesForCharacterTreatedAsSpace(bool isSpace, float advanceBefore, float advanceAt)
-        : characterIsSpace(isSpace)
+    explicit OriginalAdvancesForCharacterTreatedAsSpace(GlyphBufferStringOffset stringOffset, bool isSpace, float advanceBefore, float advanceAt)
+        : stringOffset(stringOffset)
+        , characterIsSpace(isSpace)
         , advanceBeforeCharacter(advanceBefore)
         , advanceAtCharacter(advanceAt)
     {
     }
 
+    GlyphBufferStringOffset stringOffset;
     bool characterIsSpace;
     float advanceBeforeCharacter;
     float advanceAtCharacter;
@@ -113,18 +115,17 @@ inline float WidthIterator::applyFontTransforms(GlyphBuffer& glyphBuffer, bool l
     if (!ltr)
         glyphBuffer.reverse(lastGlyphCount, glyphBufferSize - lastGlyphCount);
 
-    // https://bugs.webkit.org/show_bug.cgi?id=206208: This is totally, 100%, furiously, utterly, frustratingly bogus.
-    // There is absolutely no guarantee that glyph indices before shaping have any relation at all with glyph indices after shaping.
-    // One of the fundamental things that shaping does is insert glyph all over the place.
-    for (size_t i = 0; i < charactersTreatedAsSpace.size(); ++i) {
-        auto spaceOffset = charactersTreatedAsSpace[i].first;
-        // Shaping may have deleted the glyph.
-        if (spaceOffset >= glyphBufferSize)
+    for (unsigned i = lastGlyphCount; i < glyphBufferSize; ++i) {
+        auto characterIndex = glyphBuffer.stringOffsetAt(i);
+        auto iterator = std::lower_bound(charactersTreatedAsSpace.begin(), charactersTreatedAsSpace.end(), characterIndex, [](const OriginalAdvancesForCharacterTreatedAsSpace& l, GlyphBufferStringOffset r) -> bool {
+            return l.stringOffset < r;
+        });
+        if (iterator == charactersTreatedAsSpace.end() || iterator->stringOffset != characterIndex)
             continue;
-        const OriginalAdvancesForCharacterTreatedAsSpace& originalAdvances = charactersTreatedAsSpace[i].second;
-        if (spaceOffset && !originalAdvances.characterIsSpace)
-            glyphBuffer.advances(spaceOffset - 1)->setWidth(originalAdvances.advanceBeforeCharacter);
-        glyphBuffer.advances(spaceOffset)->setWidth(originalAdvances.advanceAtCharacter);
+        const auto& originalAdvances = *iterator;
+        if (i && !originalAdvances.characterIsSpace)
+            glyphBuffer.advances(i - 1)->setWidth(originalAdvances.advanceBeforeCharacter);
+        glyphBuffer.advances(i)->setWidth(originalAdvances.advanceAtCharacter);
     }
     charactersTreatedAsSpace.clear();
 
@@ -308,8 +309,11 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 
         auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
         if (transformsType != TransformsType::None && FontCascade::treatAsSpace(character)) {
-            charactersTreatedAsSpace.append(std::make_pair(glyphBuffer.size(),
-                OriginalAdvancesForCharacterTreatedAsSpace(character == ' ', glyphBuffer.size() ? glyphBuffer.advanceAt(glyphBuffer.size() - 1).width() : 0, width)));
+            charactersTreatedAsSpace.constructAndAppend(
+                currentCharacterIndex,
+                character == ' ',
+                glyphBuffer.size() ? glyphBuffer.advanceAt(glyphBuffer.size() - 1).width() : 0,
+                width);
         }
 
         if (m_accountForGlyphBounds) {
