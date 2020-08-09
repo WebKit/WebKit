@@ -17,4 +17,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/streams/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/streams/README.md
 /LayoutTests/imported/w3c/web-platform-tests/streams/idlharness.any.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/queuing-strategies-size-function-per-global.window.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/queuing-strategies.any.js

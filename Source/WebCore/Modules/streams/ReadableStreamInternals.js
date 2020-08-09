@@ -169,6 +169,7 @@ function readableStreamTee(stream, shouldClone)
         @readableStreamDefaultControllerError(branch1.@readableStreamController, e);
         @readableStreamDefaultControllerError(branch2.@readableStreamController, e);
         teeState.closedOrErrored = true;
+        teeState.cancelPromiseCapability.@resolve.@call();
     });
 
     // Additional fields compared to the spec, as they are needed within pull/cancel functions.
@@ -208,6 +209,7 @@ function readableStreamTeePullFunction(teeState, reader, shouldClone)
                 if (!teeState.canceled2)
                     @readableStreamDefaultControllerClose(teeState.branch2.@readableStreamController);
                 teeState.closedOrErrored = true;
+                teeState.cancelPromiseCapability.@resolve.@call();
             }
             if (teeState.closedOrErrored)
                 return;

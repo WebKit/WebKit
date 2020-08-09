@@ -21,6 +21,7 @@
     "paint-timing/resources/": "import", 
     "resources/testharness.js": "import", 
     "shadow-dom": "import", 
+    "streams": "import", 
     "tools": "import", 
     "web-animations": "import", 
     "web-platform-tests/DOM-parsing": "skip", 

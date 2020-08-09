@@ -1,3 +1,13 @@
+2020-08-09  Youenn Fablet  <youenn@apple.com>
+
+        Always resolve ReadableStream's tee()'s cancel promise after the stream closes or errors
+        https://bugs.webkit.org/show_bug.cgi?id=215197
+
+        Reviewed by Darin Adler.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/streams: Resynced to upstream WPT.
+
 2020-08-07  Chris Dumez  <cdumez@apple.com>
 
         AudioContext / OfflineAudioContext should support a wider sample rate range

@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Attempted to assign to readonly property.
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not a function
 
-Harness Error (FAIL), message = Unhandled rejection: Attempted to assign to readonly property.
+Harness Error (FAIL), message = Unhandled rejection: undefined is not a function
 
 TIMEOUT piping should not be observable Test timed out
 NOTRUN tee should not be observable 

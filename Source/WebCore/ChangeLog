@@ -1,3 +1,17 @@
+2020-08-09  Youenn Fablet  <youenn@apple.com>
+
+        Always resolve ReadableStream's tee()'s cancel promise after the stream closes or errors
+        https://bugs.webkit.org/show_bug.cgi?id=215197
+
+        Reviewed by Darin Adler.
+
+        Make sure to resolve the cancel promise if the source gets closed or errored.
+        Test: imported/w3c/web-platform-tests/streams/queuing-strategies-size-function-per-global.window.html
+
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamTee):
+        (readableStreamTeePullFunction):
+
 2020-08-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update OriginalAdvancesForCharacterTreatedAsSpace to work correctly in the presence of inserted or removed glyphs

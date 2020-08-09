@@ -1,4 +1,6 @@
 
+Harness Error (FAIL), message = Test named 'TransformStream constructor should not call setters for highWaterMark or size' specified 1 'cleanup' function, and 1 failed.
+
 FAIL TransformStream constructor should not call setters for highWaterMark or size Can't find variable: TransformStream
-FAIL TransformStream should use the original value of ReadableStream and WritableStream Can't find variable: WritableStream
+NOTRUN TransformStream should use the original value of ReadableStream and WritableStream 
 
