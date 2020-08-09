@@ -191,7 +191,11 @@ public:
     const GlyphBufferOrigin* origins(unsigned from) const { return m_origins.data() + from; }
     const GlyphBufferStringOffset* offsetsInString(unsigned from) const { return m_offsetsInString.data() + from; }
 
-    const Font* fontAt(unsigned index) const { return m_fonts[index]; }
+    const Font& fontAt(unsigned index) const
+    {
+        ASSERT(m_fonts[index]);
+        return *m_fonts[index];
+    }
     Glyph glyphAt(unsigned index) const { return m_glyphs[index]; }
     GlyphBufferAdvance advanceAt(unsigned index) const { return m_advances[index]; }
     GlyphBufferStringOffset stringOffsetAt(unsigned index) const { return m_offsetsInString[index]; }
@@ -200,7 +204,7 @@ public:
     const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }
     
     static constexpr GlyphBufferStringOffset noOffset = std::numeric_limits<GlyphBufferStringOffset>::max();
-    void add(Glyph glyph, const Font* font, float width, GlyphBufferStringOffset offsetInString = noOffset)
+    void add(Glyph glyph, const Font& font, float width, GlyphBufferStringOffset offsetInString = noOffset)
     {
         GlyphBufferAdvance advance;
         advance.setWidth(width);
@@ -208,9 +212,9 @@ public:
         add(glyph, font, advance, offsetInString);
     }
 
-    void add(Glyph glyph, const Font* font, GlyphBufferAdvance advance, GlyphBufferStringOffset offsetInString)
+    void add(Glyph glyph, const Font& font, GlyphBufferAdvance advance, GlyphBufferStringOffset offsetInString)
     {
-        m_fonts.append(font);
+        m_fonts.append(&font);
         m_glyphs.append(glyph);
         m_advances.append(advance);
         m_origins.append(GlyphBufferOrigin());

@@ -1,3 +1,37 @@
+2020-08-08  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Use references instead of pointers for GlyphBuffer::add()'s Font argument
+        https://bugs.webkit.org/show_bug.cgi?id=215309
+
+        Reviewed by Darin Adler.
+
+        They're not allowed to be null.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::advance):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthForSimpleText const):
+        (WebCore::FontCascade::drawGlyphBuffer const):
+        (WebCore::offsetToMiddleOfGlyph):
+        (WebCore::FontCascade::drawEmphasisMarks const):
+        (WebCore::GlyphToPathTranslator::GlyphToPathTranslator):
+        (WebCore::GlyphToPathTranslator::advance):
+        (WebCore::FontCascade::dashesForIntersectionsWithRect const):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::fontAt const):
+        (WebCore::GlyphBuffer::add):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawGlyphs::generateGlyphBuffer const):
+        * rendering/mathml/MathOperator.cpp:
+        (WebCore::MathOperator::paintGlyph):
+        (WebCore::MathOperator::paint):
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::paint):
+
 2020-08-07  Chris Dumez  <cdumez@apple.com>
 
         AudioContext / OfflineAudioContext should support a wider sample rate range

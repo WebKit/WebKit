@@ -287,9 +287,9 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
                             if (glyphBuffer) {
                                 if (glyphBuffer->isEmpty()) {
                                     if (m_forTextEmphasis)
-                                        glyphBuffer->add(font->zeroWidthSpaceGlyph(), font, m_expansionPerOpportunity, currentCharacterIndex);
+                                        glyphBuffer->add(font->zeroWidthSpaceGlyph(), *font, m_expansionPerOpportunity, currentCharacterIndex);
                                     else
-                                        glyphBuffer->add(font->spaceGlyph(), font, m_expansionPerOpportunity, currentCharacterIndex);
+                                        glyphBuffer->add(font->spaceGlyph(), *font, m_expansionPerOpportunity, currentCharacterIndex);
                                 } else
                                     glyphBuffer->expandLastAdvance(m_expansionPerOpportunity);
                             }
@@ -339,7 +339,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         widthSinceLastRounding += width;
 
         if (glyphBuffer)
-            glyphBuffer->add(glyph, font, (rtl ? oldWidth + lastRoundingWidth : width), currentCharacterIndex);
+            glyphBuffer->add(glyph, *font, (rtl ? oldWidth + lastRoundingWidth : width), currentCharacterIndex);
 
         lastRoundingWidth = width - oldWidth;
 
@@ -353,9 +353,9 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
 
     if (glyphBuffer && leftoverJustificationWidth) {
         if (m_forTextEmphasis)
-            glyphBuffer->add(lastFontData->zeroWidthSpaceGlyph(), lastFontData, leftoverJustificationWidth, m_run.length() - 1);
+            glyphBuffer->add(lastFontData->zeroWidthSpaceGlyph(), *lastFontData, leftoverJustificationWidth, m_run.length() - 1);
         else
-            glyphBuffer->add(lastFontData->spaceGlyph(), lastFontData, leftoverJustificationWidth, m_run.length() - 1);
+            glyphBuffer->add(lastFontData->spaceGlyph(), *lastFontData, leftoverJustificationWidth, m_run.length() - 1);
     }
 
     auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);

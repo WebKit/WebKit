@@ -444,7 +444,7 @@ float FontCascade::widthForSimpleText(StringView text) const
         runWidth += glyphWidth;
         if (!hasKerningOrLigatures)
             continue;
-        glyphBuffer.add(glyph, &font, glyphWidth);
+        glyphBuffer.add(glyph, font, glyphWidth);
     }
     if (hasKerningOrLigatures) {
         font.applyTransforms(glyphBuffer, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale());
@@ -1446,21 +1446,21 @@ inline bool shouldDrawIfLoading(const Font& font, FontCascade::CustomFontNotRead
 void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& glyphBuffer, FloatPoint& point, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     ASSERT(glyphBuffer.isFlattened());
-    const Font* fontData = glyphBuffer.fontAt(0);
+    const Font* fontData = &glyphBuffer.fontAt(0);
     FloatPoint startPoint = point;
     float nextX = startPoint.x() + glyphBuffer.advanceAt(0).width();
     float nextY = startPoint.y() + glyphBuffer.advanceAt(0).height();
     unsigned lastFrom = 0;
     unsigned nextGlyph = 1;
     while (nextGlyph < glyphBuffer.size()) {
-        const Font* nextFontData = glyphBuffer.fontAt(nextGlyph);
+        const Font& nextFontData = glyphBuffer.fontAt(nextGlyph);
 
-        if (nextFontData != fontData) {
+        if (&nextFontData != fontData) {
             if (shouldDrawIfLoading(*fontData, customFontNotReadyAction))
                 context.drawGlyphs(*fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint, m_fontDescription.fontSmoothing());
 
             lastFrom = nextGlyph;
-            fontData = nextFontData;
+            fontData = &nextFontData;
             startPoint.setX(nextX);
             startPoint.setY(nextY);
         }
@@ -1474,14 +1474,14 @@ void FontCascade::drawGlyphBuffer(GraphicsContext& context, const GlyphBuffer& g
     point.setX(nextX);
 }
 
-inline static float offsetToMiddleOfGlyph(const Font* fontData, Glyph glyph)
+inline static float offsetToMiddleOfGlyph(const Font& fontData, Glyph glyph)
 {
-    if (fontData->platformData().orientation() == FontOrientation::Horizontal) {
-        FloatRect bounds = fontData->boundsForGlyph(glyph);
+    if (fontData.platformData().orientation() == FontOrientation::Horizontal) {
+        FloatRect bounds = fontData.boundsForGlyph(glyph);
         return bounds.x() + bounds.width() / 2;
     }
     // FIXME: Use glyph bounds once they make sense for vertical fonts.
-    return fontData->widthForGlyph(glyph) / 2;
+    return fontData.widthForGlyph(glyph) / 2;
 }
 
 inline static float offsetToMiddleOfGlyphAtIndex(const GlyphBuffer& glyphBuffer, unsigned i)
@@ -1505,16 +1505,16 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer&
     Glyph spaceGlyph = markFontData->spaceGlyph();
 
     float middleOfLastGlyph = offsetToMiddleOfGlyphAtIndex(glyphBuffer, 0);
-    FloatPoint startPoint(point.x() + middleOfLastGlyph - offsetToMiddleOfGlyph(markFontData, markGlyph), point.y());
+    FloatPoint startPoint(point.x() + middleOfLastGlyph - offsetToMiddleOfGlyph(*markFontData, markGlyph), point.y());
 
     GlyphBuffer markBuffer;
     for (unsigned i = 0; i + 1 < glyphBuffer.size(); ++i) {
         float middleOfNextGlyph = offsetToMiddleOfGlyphAtIndex(glyphBuffer, i + 1);
         float advance = glyphBuffer.advanceAt(i).width() - middleOfLastGlyph + middleOfNextGlyph;
-        markBuffer.add(glyphBuffer.glyphAt(i) ? markGlyph : spaceGlyph, markFontData, advance);
+        markBuffer.add(glyphBuffer.glyphAt(i) ? markGlyph : spaceGlyph, *markFontData, advance);
         middleOfLastGlyph = middleOfNextGlyph;
     }
-    markBuffer.add(glyphBuffer.glyphAt(glyphBuffer.size() - 1) ? markGlyph : spaceGlyph, markFontData, 0);
+    markBuffer.add(glyphBuffer.glyphAt(glyphBuffer.size() - 1) ? markGlyph : spaceGlyph, *markFontData, 0);
 
     drawGlyphBuffer(context, markBuffer, startPoint, CustomFontNotReadyAction::DoNotPaintIfFontNotReady);
 }
@@ -1717,7 +1717,7 @@ public:
         : m_index(0)
         , m_textRun(textRun)
         , m_glyphBuffer(glyphBuffer)
-        , m_fontData(glyphBuffer.fontAt(m_index))
+        , m_fontData(&glyphBuffer.fontAt(m_index))
         , m_translation(AffineTransform::translation(textOrigin.x(), textOrigin.y()))
     {
 #if USE(CG)
@@ -1765,7 +1765,7 @@ void GlyphToPathTranslator::advance()
     m_translation.translate(FloatSize(advance.width(), advance.height()));
     ++m_index;
     if (m_index < m_glyphBuffer.size())
-        m_fontData = m_glyphBuffer.fontAt(m_index);
+        m_fontData = &m_glyphBuffer.fontAt(m_index);
 }
 
 DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
@@ -1783,12 +1783,6 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     DashArray result;
     for (unsigned index = 0; translator.containsMorePaths(); ++index, translator.advance()) {
         GlyphIterationState info = { FloatPoint(0, 0), FloatPoint(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x() };
-        const Font* localFont = glyphBuffer.fontAt(index);
-        if (!localFont) {
-            // The advances will get all messed up if we do anything other than bail here.
-            result.clear();
-            break;
-        }
         switch (translator.underlineType()) {
         case GlyphUnderlineType::SkipDescenders: {
             Path path = translator.path();

@@ -544,7 +544,7 @@ inline GlyphBuffer DrawGlyphs::generateGlyphBuffer() const
 {
     GlyphBuffer result;
     for (size_t i = 0; i < m_glyphs.size(); ++i)
-        result.add(m_glyphs[i], &m_font.get(), m_advances[i], GlyphBuffer::noOffset);
+        result.add(m_glyphs[i], m_font.get(), m_advances[i], GlyphBuffer::noOffset);
     return result;
 }
 
