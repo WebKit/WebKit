@@ -1,3 +1,15 @@
+2020-08-09  Ben Nham  <nham@apple.com>
+
+        Preload graphics drivers in Mac WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=215183
+
+        Reviewed by Darin Adler.
+
+        Enable GPU driver preheating in versions of the OS that might not have the drivers in the dyld
+        shared cache due to size restrictions.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2020-08-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r263195, r263252, and r265394.

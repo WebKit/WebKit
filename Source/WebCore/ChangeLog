@@ -1,3 +1,17 @@
+2020-08-09  Ben Nham  <nham@apple.com>
+
+        Preload graphics drivers in Mac WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=215183
+
+        Reviewed by Darin Adler.
+
+        In newer versions of Mac OS, graphics drivers are no longer part of the shared cache due to
+        size restrictions. This can cause first render to be blocked by ~10 ms when we dlopen those
+        drivers. To work around this, we preload the drivers when prewarming the WebProcess.
+
+        * page/ProcessWarming.cpp:
+        (WebCore::ProcessWarming::prewarmGlobally):
+
 2020-08-09  Youenn Fablet  <youenn@apple.com>
 
         Always resolve ReadableStream's tee()'s cancel promise after the stream closes or errors
