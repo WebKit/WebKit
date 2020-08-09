@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -84,8 +84,6 @@ public:
     static_assert(!(MarkedBlock::atomSize & (MarkedBlock::atomSize - 1)), "MarkedBlock::atomSize must be a power of two.");
     static_assert(!(MarkedBlock::blockSize & (MarkedBlock::blockSize - 1)), "MarkedBlock::blockSize must be a power of two.");
     
-    using AtomsBitmap = Bitmap<atomsPerBlock>;
-
     struct VoidFunctor {
         typedef void ReturnType;
         void returnValue() { }
@@ -205,7 +203,6 @@ public:
         
         void* start() const { return &m_block->atoms()[0]; }
         void* end() const { return &m_block->atoms()[m_endAtom]; }
-        void* atomAt(size_t i) const { return &m_block->atoms()[i]; }
         bool contains(void* p) const { return start() <= p && p < end(); }
 
         void dumpState(PrintStream&);
@@ -297,8 +294,8 @@ public:
         HeapVersion m_markingVersion;
         HeapVersion m_newlyAllocatedVersion;
 
-        AtomsBitmap m_marks;
-        AtomsBitmap m_newlyAllocated;
+        Bitmap<atomsPerBlock> m_marks;
+        Bitmap<atomsPerBlock> m_newlyAllocated;
     };
     
 private:    
@@ -339,7 +336,7 @@ public:
     bool isNewlyAllocated(const void*);
     void setNewlyAllocated(const void*);
     void clearNewlyAllocated(const void*);
-    const AtomsBitmap& newlyAllocated() const;
+    const Bitmap<atomsPerBlock>& newlyAllocated() const;
     
     HeapVersion newlyAllocatedVersion() const { return footer().m_newlyAllocatedVersion; }
     
@@ -377,7 +374,7 @@ public:
     bool isMarkedRaw(const void* p);
     HeapVersion markingVersion() const { return footer().m_markingVersion; }
     
-    const AtomsBitmap& marks() const;
+    const Bitmap<atomsPerBlock>& marks() const;
     
     CountingLock& lock() { return footer().m_lock; }
     
@@ -402,8 +399,6 @@ private:
     
     inline bool marksConveyLivenessDuringMarking(HeapVersion markingVersion);
     inline bool marksConveyLivenessDuringMarking(HeapVersion myMarkingVersion, HeapVersion markingVersion);
-
-    friend class FreeList;
 };
 
 inline MarkedBlock::Footer& MarkedBlock::footer()
