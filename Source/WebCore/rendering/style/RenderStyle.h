@@ -1322,6 +1322,7 @@ public:
     bool hasExplicitlySetStrokeColor() const { return m_rareInheritedData->hasSetStrokeColor; };
     static Color initialStrokeColor() { return Color::transparentBlack; }
     Color computedStrokeColor() const;
+    CSSPropertyID effectiveStrokeColorProperty() const { return hasExplicitlySetStrokeColor() ? CSSPropertyStrokeColor : CSSPropertyWebkitTextStrokeColor; }
 
     float strokeMiterLimit() const { return m_rareInheritedData->miterLimit; }
     void setStrokeMiterLimit(float f) { SET_VAR(m_rareInheritedData, miterLimit, f); }

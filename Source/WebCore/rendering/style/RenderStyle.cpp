@@ -2024,6 +2024,17 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
     auto result = unresolvedColorForProperty(colorProperty, visitedLink);
 
     if (isCurrentColor(result)) {
+        if (colorProperty == CSSPropertyTextDecorationColor) {
+            if (hasPositiveStrokeWidth()) {
+                // Prefer stroke color if possible but not if it's fully transparent.
+                auto strokeColor = colorResolvingCurrentColor(effectiveStrokeColorProperty(), visitedLink);
+                if (strokeColor.isVisible())
+                    return strokeColor;
+            }
+
+            return colorResolvingCurrentColor(CSSPropertyWebkitTextFillColor, visitedLink);
+        }
+
         auto borderStyle = computeBorderStyle();
         if (!visitedLink && (borderStyle == BorderStyle::Inset || borderStyle == BorderStyle::Outset || borderStyle == BorderStyle::Ridge || borderStyle == BorderStyle::Groove))
             return SRGBA<uint8_t> { 238, 238, 238 };
@@ -2049,10 +2060,6 @@ Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty) const
         return unvisitedColor;
 
     Color visitedColor = colorResolvingCurrentColor(colorProperty, true);
-
-    // Text decoration color validity is preserved (checked in RenderObject::decorationColor).
-    if (colorProperty == CSSPropertyTextDecorationColor)
-        return visitedColor;
 
     // FIXME: Technically someone could explicitly specify the color transparent, but for now we'll just
     // assume that if the background color is transparent that it wasn't set. Note that it's weird that
@@ -2560,10 +2567,7 @@ bool RenderStyle::hasPositiveStrokeWidth() const
 
 Color RenderStyle::computedStrokeColor() const
 {
-    CSSPropertyID propertyID = CSSPropertyStrokeColor;
-    if (!hasExplicitlySetStrokeColor())
-        propertyID = CSSPropertyWebkitTextStrokeColor;
-    return visitedDependentColor(propertyID);
+    return visitedDependentColor(effectiveStrokeColorProperty());
 }
 
 } // namespace WebCore
