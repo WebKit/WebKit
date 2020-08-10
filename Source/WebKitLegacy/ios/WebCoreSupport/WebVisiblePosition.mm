@@ -478,7 +478,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 {
     auto firstPosition = [first _visiblePosition];
     auto secondPosition = [second _visiblePosition];
-    if (firstPosition < secondPosition)
+    if (secondPosition < firstPosition)
         std::swap(firstPosition, secondPosition);
     return kit(makeSimpleRange(firstPosition, secondPosition));
 }

@@ -1,3 +1,16 @@
+2020-08-10  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r265176): Cannot make or extend selections in iOS WebKitLegacy 
+        https://bugs.webkit.org/show_bug.cgi?id=215319
+        <rdar://problem/66688560>
+
+        Reviewed by Devin Rousso.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (+[DOMRange rangeForFirstPosition:second:]):
+        We want to ensure that firstPosition is *before* secondPosition, so
+        the change in r265176 got the condition backwards. Swap it.
+
 2020-08-04  Darin Adler  <darin@apple.com>
 
         Try to fix Catalyst build
