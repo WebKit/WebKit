@@ -1,5 +1,50 @@
 2020-08-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r265282. rdar://problem/66643985
+
+    SWServerJobQueue::didResolveRegistrationPromise should not assume its registration key relates to an existing worker
+    https://bugs.webkit.org/show_bug.cgi?id=215123
+    <rdar://problem/65096786>
+    
+    Reviewed by Geoffrey Garen.
+    
+    We know that in some cases, the registration is null in SWServerJobQueue::didResolveRegistrationPromise.
+    This might happen for instance in case a worker gets terminated, thus removing a job and the next job is clearing the registration.
+    Also, SWServerJobQueue::didResolveRegistrationPromise is not checking that the job identifier is the same in SWServerJobQueue::install
+    and SWServerJobQueue::didResolveRegistrationPromise while other code paths do.
+    
+    A future refactoring might allow to call SWServerJobQueue::didResolveRegistrationPromise code synchronously from SWServerJobQueue::install.
+    In the meantime, let's add a null check and add release logging for that case.
+    
+    * workers/service/server/SWServerJobQueue.cpp:
+    (WebCore::SWServerJobQueue::install):
+    (WebCore::SWServerJobQueue::didResolveRegistrationPromise):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265282 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-05  Youenn Fablet  <youenn@apple.com>
+
+            SWServerJobQueue::didResolveRegistrationPromise should not assume its registration key relates to an existing worker
+            https://bugs.webkit.org/show_bug.cgi?id=215123
+            <rdar://problem/65096786>
+
+            Reviewed by Geoffrey Garen.
+
+            We know that in some cases, the registration is null in SWServerJobQueue::didResolveRegistrationPromise.
+            This might happen for instance in case a worker gets terminated, thus removing a job and the next job is clearing the registration.
+            Also, SWServerJobQueue::didResolveRegistrationPromise is not checking that the job identifier is the same in SWServerJobQueue::install
+            and SWServerJobQueue::didResolveRegistrationPromise while other code paths do.
+
+            A future refactoring might allow to call SWServerJobQueue::didResolveRegistrationPromise code synchronously from SWServerJobQueue::install.
+            In the meantime, let's add a null check and add release logging for that case.
+
+            * workers/service/server/SWServerJobQueue.cpp:
+            (WebCore::SWServerJobQueue::install):
+            (WebCore::SWServerJobQueue::didResolveRegistrationPromise):
+
+2020-08-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r265257. rdar://problem/66644029
 
     REGRESSION (r265019): ASSERTION FAILED: !m_impl || m_impl->wasConstructedOnMainThread() == isMainThread() under WebCore::PlaybackSessionInterfaceAVKit::invalidate()
