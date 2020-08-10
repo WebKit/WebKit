@@ -1,3 +1,23 @@
+2020-08-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [macOS] Drag/drop an image of a unsupported format to an file input element should convert it to a supported format
+        https://bugs.webkit.org/show_bug.cgi?id=212482
+        <rdar://problem/63731672>
+
+        Reviewed by Darin Adler.
+
+        Enable the new tests on macOS WK1. eventSender.beginDragWithFiles is
+        supported on WK1 only.
+
+        * fast/forms/file/entries-api/image-no-transcode-drag-drop-expected.txt: Added.
+        * fast/forms/file/entries-api/image-no-transcode-drag-drop.html: Added.
+        * fast/forms/file/entries-api/image-transcode-drag-drop-expected.txt: Added.
+        * fast/forms/file/entries-api/image-transcode-drag-drop.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2020-08-08  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make GlyphBuffers required in the fast text codepath

@@ -27,12 +27,18 @@
 #include "ImageUtilities.h"
 
 #include "Logging.h"
+#include "MIMETypeRegistry.h"
 #include <ImageIO/ImageIO.h>
-#include <WebCore/MIMETypeRegistry.h>
 #include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
 
-namespace WebKit {
+namespace WebCore {
+
+WorkQueue& sharedImageTranscodingQueue()
+{
+    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("com.apple.WebKit.ImageTranscoding"));
+    return queue.get();
+}
 
 static String transcodeImage(const String& path, const String& destinationUTI, const String& destinationExtension)
 {
@@ -119,4 +125,4 @@ Vector<String> transcodeImages(const Vector<String>& paths, const String& destin
     return transcodedPaths;
 }
 
-} // namespace WebKit
+} // namespace WebCore

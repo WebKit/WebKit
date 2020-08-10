@@ -331,6 +331,7 @@ platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp
 platform/graphics/cg/ImageBufferUtilitiesCG.cpp
 platform/graphics/cg/ImageDecoderCG.cpp
 platform/graphics/cg/ImageSourceCGMac.mm
+platform/graphics/cg/ImageUtilitiesCG.cpp
 platform/graphics/cg/IntPointCG.cpp
 platform/graphics/cg/IntRectCG.cpp
 platform/graphics/cg/IntSizeCG.cpp

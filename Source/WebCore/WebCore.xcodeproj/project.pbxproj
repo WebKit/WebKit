@@ -1762,6 +1762,7 @@
 		55AD09402408964000DE4D2F /* DisplayListDrawingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 72EA09F923FCCC6A008504A5 /* DisplayListDrawingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55AD09412408964A00DE4D2F /* ConcreteImageBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 72BAC3A723E17328008D741C /* ConcreteImageBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55AF14E61EAAC59B0026EEAA /* UTIRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 55AF14E41EAAC59B0026EEAA /* UTIRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		55BBD42924DB560400BB6E0C /* ImageUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 55BBD42824DB53A200BB6E0C /* ImageUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55DCC52822407B2000C26E32 /* SVGPrimitiveList.h in Headers */ = {isa = PBXBuildFile; fileRef = 55DCC5252240749E00C26E32 /* SVGPrimitiveList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55DCC52922407B2A00C26E32 /* SVGList.h in Headers */ = {isa = PBXBuildFile; fileRef = 55DCC523224073FE00C26E32 /* SVGList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		55EC9599206AA7A0007DD0A9 /* PaintFrequencyTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 55EC95972069C92D007DD0A9 /* PaintFrequencyTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8847,6 +8848,8 @@
 		55A336F81D821E3C0022C4C7 /* ImageBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBackingStore.h; sourceTree = "<group>"; };
 		55AF14E31EAAC59B0026EEAA /* UTIRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UTIRegistry.cpp; sourceTree = "<group>"; };
 		55AF14E41EAAC59B0026EEAA /* UTIRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UTIRegistry.h; sourceTree = "<group>"; };
+		55BBD42624DB534300BB6E0C /* ImageUtilitiesCG.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageUtilitiesCG.cpp; sourceTree = "<group>"; };
+		55BBD42824DB53A200BB6E0C /* ImageUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageUtilities.h; sourceTree = "<group>"; };
 		55BE0257223B29C00032F08A /* SVGPropertyRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPropertyRegistry.h; sourceTree = "<group>"; };
 		55BE0259223B29C10032F08A /* SVGAnimationAdditiveValueFunctionImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimationAdditiveValueFunctionImpl.h; sourceTree = "<group>"; };
 		55BE025A223B29C20032F08A /* SVGPointerMemberAccessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPointerMemberAccessor.h; sourceTree = "<group>"; };
@@ -25625,6 +25628,7 @@
 				555B87EB1CAAF0AB00349425 /* ImageDecoderCG.h */,
 				4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */,
 				4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */,
+				55BBD42624DB534300BB6E0C /* ImageUtilitiesCG.cpp */,
 				B27535320B053814002CE64F /* IntPointCG.cpp */,
 				B27535330B053814002CE64F /* IntRectCG.cpp */,
 				B27535340B053814002CE64F /* IntSizeCG.cpp */,
@@ -25828,6 +25832,7 @@
 				554675771FD1FC1A003B10B0 /* ImageSource.cpp */,
 				554675781FD1FC1A003B10B0 /* ImageSource.h */,
 				5550CB411E955E3C00111AA0 /* ImageTypes.h */,
+				55BBD42824DB53A200BB6E0C /* ImageUtilities.h */,
 				078633F8240715D20087AE21 /* InbandGenericCue.cpp */,
 				078633DE23FEDF220087AE21 /* InbandGenericCue.h */,
 				0706A0D7240830A600E93818 /* InbandGenericCueIdentifier.h */,
@@ -31422,6 +31427,7 @@
 				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				078ED193216D079500775B33 /* ImageTransferSessionVT.h in Headers */,
 				5550CB421E955E3C00111AA0 /* ImageTypes.h in Headers */,
+				55BBD42924DB560400BB6E0C /* ImageUtilities.h in Headers */,
 				26F756B31B3B66F70005DD79 /* ImmutableNFA.h in Headers */,
 				26F756B51B3B68F20005DD79 /* ImmutableNFANodeBuilder.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,

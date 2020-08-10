@@ -657,6 +657,8 @@ media/video-src-blob.html
 security/contentSecurityPolicy/image-with-blob-url-allowed-by-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html
 security/contentSecurityPolicy/image-with-blob-url-blocked-by-img-src-star.html
 security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html
+fast/forms/file/entries-api/image-no-transcode-drag-drop.html
+fast/forms/file/entries-api/image-transcode-drag-drop.html
 
 # WebKitTestRunner doesn't have eventSender.fireKeyboardEventsToElement
 platform/mac/fast/events/objc-keyboard-event-creation.html
