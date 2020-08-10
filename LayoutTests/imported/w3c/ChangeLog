@@ -1,3 +1,9 @@
+2020-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam-expected.txt:
+
 2020-08-09  Youenn Fablet  <youenn@apple.com>
 
         Always resolve ReadableStream's tee()'s cancel promise after the stream closes or errors
