@@ -1,3 +1,19 @@
+2020-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r260831): Web process crashes under Editor::setComposition() after navigating with marked text
+        https://bugs.webkit.org/show_bug.cgi?id=215315
+        <rdar://problem/64740092>
+
+        Reviewed by Darin Adler.
+
+        Add a new API that exercises the crash by:
+        - Enabling PSON.
+        - Navigating to page A and inserting some marked text.
+        - Navigating to page B with a process swap (without confirming the marked text).
+        - Navigating back to page A, and verifying that the previoulsy marked text is now committed.
+
+        * TestWebKitAPI/Tests/mac/WKWebViewMacEditingTests.mm:
+
 2020-08-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] REGRESSION(r265408): Unreviewed layout test script fix

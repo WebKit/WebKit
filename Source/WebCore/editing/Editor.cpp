@@ -1939,6 +1939,23 @@ void Editor::confirmComposition()
     setComposition(m_compositionNode->data().substring(m_compositionStart, m_compositionEnd - m_compositionStart), ConfirmComposition);
 }
 
+void Editor::confirmCompositionAndNotifyClient()
+{
+    if (!hasComposition())
+        return;
+
+    auto frame = makeRefPtr(m_document.frame());
+    if (!frame)
+        return;
+
+    confirmComposition();
+
+    if (auto editorClient = client()) {
+        editorClient->respondToChangedSelection(frame.get());
+        editorClient->discardedComposition(frame.get());
+    }
+}
+
 void Editor::cancelComposition()
 {
     if (!m_compositionNode)

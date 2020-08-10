@@ -1,3 +1,53 @@
+2020-08-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r260831): Web process crashes under Editor::setComposition() after navigating with marked text
+        https://bugs.webkit.org/show_bug.cgi?id=215315
+        <rdar://problem/64740092>
+
+        Reviewed by Darin Adler.
+
+        To address a variety of crashes due to frames changing (or otherwise losing) their document while executing
+        editing commands, r260831 refactored the Editor class such that it extends the functionality of the Document
+        class, rather than the Frame class. In nearly all scenarios, this either leads to no behavior change or prevents
+        null pointer crashes, since a document is almost always attached to a frame when applying any editing commands.
+
+        However, there is one scenario where a document that has not yet been attached to its frame (and therefore does
+        not have a browsing context) will cause a null deref when trying to confirm an existing IME composition. The
+        logic added in <https://trac.webkit.org/r150291> will try and confirm any existing composition range on a
+        document right before committing provisional navigation. In the case where we are navigating back to a
+        previously visited page, `m_frame`'s document in `FrameLoader::commitProvisionalLoad()` will not be attached
+        until the cached page's mainframe is opened underneath `CachedPage::restore()`. Since the call to
+        `Editor::confirmComposition()` currently happens before this step, we end up crashing while attempting to create
+        a `UserTypingGestureIndicator`. Note that even if we avoid this with a null check, we'll still end up crashing
+        shortly thereafter, underneath `Editor::insertTextForConfirmedComposition`. And even if this second crash is
+        avoided with another null check, we'll just end up with some version of webkit.org/b/59121, where the
+        composition range is present after navigation, but is out of sync with platform UI.
+
+        To fix the crash (and also not bring back bug #59121), we refactor this composition confirmation logic so that
+        it lives in Editor, and is also robust against the case where the document is not attached to a frame; we then
+        invoke this call after we're done committing the provisional load, so that any frame that is not yet attached
+        before commiting the load still has a chance to confirm its composition.
+
+        Test: WKWebViewMacEditingTests.ProcessSwapAfterSettingMarkedText
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::confirmCompositionAndNotifyClient):
+
+        Move functionality from `willTransitionToCommitted` to `confirmCompositionAndNotifyClient`, a helper method that
+        will bail if the document is not attached, but otherwise confirm the active composition (if it exists).
+
+        * editing/Editor.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
+        Add a call to confirm the editor's current composition after we're done committing the load. Note that in the
+        case where we had a composition before committing the load, we'll end up confirming the composition earlier (in
+        the first call site), rather than confirming after the load has been committed. This means that this second call
+        will be a no-op, due to the editor not having any composition.
+
+        (WebCore::FrameLoader::willTransitionToCommitted): Deleted.
+        * loader/FrameLoader.h:
+
 2020-08-09  Ben Nham  <nham@apple.com>
 
         Preload graphics drivers in Mac WebProcess
