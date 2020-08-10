@@ -554,7 +554,6 @@ void UIScriptControllerIOS::keyDown(JSStringRef character, JSValueRef modifierAr
     String inputString = toWTFString(toWK(character));
     auto modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
 
-    WTFLogAlways("Synthesizing key events (first responder: %@; is key window? %d)", webView().firstResponder.class, webView().window.keyWindow);
     for (auto& modifierFlag : modifierFlags) {
         WTFLogAlways("Sending modifier keydown: %s", modifierFlag.utf8().data());
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
@@ -562,13 +561,11 @@ void UIScriptControllerIOS::keyDown(JSStringRef character, JSValueRef modifierAr
 
     WTFLogAlways("Sending keydown for input string '%s'", inputString.utf8().data());
     [[HIDEventGenerator sharedHIDEventGenerator] keyDown:inputString];
-    WTFLogAlways("Sending keyup for input string '%s'", inputString.utf8().data());
     [[HIDEventGenerator sharedHIDEventGenerator] keyUp:inputString];
 
     for (size_t i = modifierFlags.size(); i; ) {
         --i;
         [[HIDEventGenerator sharedHIDEventGenerator] keyUp:modifierFlags[i]];
-        WTFLogAlways("Sending modifier keyup: %s", modifierFlags[i].utf8().data());
     }
 
     [[HIDEventGenerator sharedHIDEventGenerator] sendMarkerHIDEventWithCompletionBlock:^{ /* Do nothing */ }];
