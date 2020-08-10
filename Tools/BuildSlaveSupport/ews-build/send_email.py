@@ -40,7 +40,7 @@ def send_email(to_emails, subject, text):
         print('Skipping email since no subject or text is specified')
         return
 
-    email_data = """From: {}\nTo: {}\nSubject: {}\n\n{}""".format(FROM_EMAIL, ', '.join(to_emails), subject, text)
+    email_data = """From: {}\nTo: {}\nSubject: {}\n\n{}""".format(FROM_EMAIL, ', '.join(to_emails), subject, text.encode('utf-8'))
 
     server = smtplib.SMTP(SERVER)
     server.sendmail(FROM_EMAIL, to_emails, email_data)

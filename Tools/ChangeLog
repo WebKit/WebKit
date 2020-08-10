@@ -1,3 +1,16 @@
+2020-08-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Handle logs with unicode characters in ews emails
+        https://bugs.webkit.org/show_bug.cgi?id=215330
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/ews-build/send_email.py:
+        (send_email): Encode email content as utf-8.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure):
+        (AnalyzeCompileWebKitResults.send_email_for_preexisting_build_failure):
+
 2020-08-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add more logging to diagnose editing/selection/ios/select-all-non-editable-text-using-keyboard.html
