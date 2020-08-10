@@ -1836,3 +1836,5 @@ webkit.org/b/215278 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scr
 webkit.org/b/215283 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-external-classic.html [ Pass Failure ]
 
 webkit.org/b/215324 compositing/clipping/border-radius-on-webgl.html [ Pass Failure ]
+
+webkit.org/b/215326 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-parsing.html [ Pass Timeout ]
