@@ -29,6 +29,7 @@
 #include "AudioProcessingEvent.h"
 
 #include "AudioBuffer.h"
+#include "AudioProcessingEventInit.h"
 #include "EventNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -36,13 +37,26 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(AudioProcessingEvent);
 
-AudioProcessingEvent::AudioProcessingEvent() = default;
+Ref<AudioProcessingEvent> AudioProcessingEvent::create(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
+{
+    RELEASE_ASSERT(eventInitDict.inputBuffer);
+    RELEASE_ASSERT(eventInitDict.outputBuffer);
+    return adoptRef(*new AudioProcessingEvent(eventType, WTFMove(eventInitDict)));
+}
 
 AudioProcessingEvent::AudioProcessingEvent(RefPtr<AudioBuffer>&& inputBuffer, RefPtr<AudioBuffer>&& outputBuffer, double playbackTime)
     : Event(eventNames().audioprocessEvent, CanBubble::Yes, IsCancelable::No)
     , m_inputBuffer(WTFMove(inputBuffer))
     , m_outputBuffer(WTFMove(outputBuffer))
     , m_playbackTime(playbackTime)
+{
+}
+
+AudioProcessingEvent::AudioProcessingEvent(const AtomString& eventType, AudioProcessingEventInit&& eventInitDict)
+    : Event(eventType, eventInitDict, IsTrusted::No)
+    , m_inputBuffer(eventInitDict.inputBuffer.releaseNonNull())
+    , m_outputBuffer(eventInitDict.outputBuffer.releaseNonNull())
+    , m_playbackTime(eventInitDict.playbackTime)
 {
 }
 

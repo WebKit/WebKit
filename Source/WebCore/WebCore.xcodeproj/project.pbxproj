@@ -5088,6 +5088,7 @@
 		E785D93424B636FF0014DB21 /* ChannelInterpretation.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D93124B636FF0014DB21 /* ChannelInterpretation.h */; };
 		E785D96124B7F7350014DB21 /* AudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D95F24B7F7340014DB21 /* AudioContextOptions.h */; };
 		E785D96224B7F7350014DB21 /* AudioContextLatencyCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */; };
+		E7C8E11B24DCABF30027A27F /* AudioProcessingEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = E7C8E11824DCABF30027A27F /* AudioProcessingEventInit.h */; };
 		E7CF84A924C6461C00B06B90 /* OfflineAudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7CF84A524C635F400B06B90 /* OfflineAudioContextOptions.h */; };
 		E7E0357224D4E196008DFEFB /* AnalyserOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7E0357124D4E191008DFEFB /* AnalyserOptions.h */; };
 		EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */ = {isa = PBXBuildFile; fileRef = EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15931,6 +15932,8 @@
 		E785D95E24B7F7270014DB21 /* AudioContextLatencyCategory.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioContextLatencyCategory.idl; sourceTree = "<group>"; };
 		E785D95F24B7F7340014DB21 /* AudioContextOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextOptions.h; sourceTree = "<group>"; };
 		E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextLatencyCategory.h; sourceTree = "<group>"; };
+		E7C8E11824DCABF30027A27F /* AudioProcessingEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioProcessingEventInit.h; sourceTree = "<group>"; };
+		E7C8E11A24DCABF30027A27F /* AudioProcessingEventInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioProcessingEventInit.idl; sourceTree = "<group>"; };
 		E7CF848924C0E05700B06B90 /* AudioScheduledSourceNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioScheduledSourceNode.idl; sourceTree = "<group>"; };
 		E7CF84A524C635F400B06B90 /* OfflineAudioContextOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OfflineAudioContextOptions.h; sourceTree = "<group>"; };
 		E7CF84A724C635F400B06B90 /* OfflineAudioContextOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OfflineAudioContextOptions.idl; sourceTree = "<group>"; };
@@ -29574,6 +29577,8 @@
 				FD315FD512B0267600C1A359 /* AudioProcessingEvent.cpp */,
 				FD315FD612B0267600C1A359 /* AudioProcessingEvent.h */,
 				FD315FD712B0267600C1A359 /* AudioProcessingEvent.idl */,
+				E7C8E11824DCABF30027A27F /* AudioProcessingEventInit.h */,
+				E7C8E11A24DCABF30027A27F /* AudioProcessingEventInit.idl */,
 				FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */,
 				FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */,
 				E7CF848924C0E05700B06B90 /* AudioScheduledSourceNode.idl */,
@@ -30140,6 +30145,7 @@
 				FD31601D12B0267600C1A359 /* AudioParam.h in Headers */,
 				FD359190138DB22000E1EBEC /* AudioParamTimeline.h in Headers */,
 				FD31602012B0267600C1A359 /* AudioProcessingEvent.h in Headers */,
+				E7C8E11B24DCABF30027A27F /* AudioProcessingEventInit.h in Headers */,
 				FD31608412B026F700C1A359 /* AudioProcessor.h in Headers */,
 				FD31608612B026F700C1A359 /* AudioResampler.h in Headers */,
 				FD31608812B026F700C1A359 /* AudioResamplerKernel.h in Headers */,

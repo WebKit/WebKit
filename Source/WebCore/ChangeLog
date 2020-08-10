@@ -1,3 +1,29 @@
+2020-08-10  Clark Wang  <clark_wang@apple.com>
+
+        Add AudioProcessingEvent Constructor
+        https://bugs.webkit.org/show_bug.cgi?id=215237
+
+        Reviewed by Chris Dumez.
+
+        Added constructor according to spec: https://bugs.webkit.org/show_bug.cgi?id=215237.
+        Added in AudioProcessingEventInit files.
+
+        Test: webaudio/audioprocessingevent-constructor.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioProcessingEvent.cpp:
+        (WebCore::AudioProcessingEvent::create):
+        (WebCore::AudioProcessingEvent::AudioProcessingEvent):
+        * Modules/webaudio/AudioProcessingEvent.h:
+        * Modules/webaudio/AudioProcessingEvent.idl:
+        * Modules/webaudio/AudioProcessingEventInit.h: Added.
+        * Modules/webaudio/AudioProcessingEventInit.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2020-08-10  Chris Dumez  <cdumez@apple.com>
 
         Align existing AudioParam API with the specification

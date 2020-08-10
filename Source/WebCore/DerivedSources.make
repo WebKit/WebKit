@@ -394,6 +394,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/AudioNodeOptions.idl \
     $(WebCore)/Modules/webaudio/AudioParam.idl \
     $(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
+    $(WebCore)/Modules/webaudio/AudioProcessingEventInit.idl \
     $(WebCore)/Modules/webaudio/AudioScheduledSourceNode.idl \
     $(WebCore)/Modules/webaudio/BaseAudioContext.idl \
     $(WebCore)/Modules/webaudio/BiquadFilterNode.idl \

@@ -179,6 +179,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParam.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioParam.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEventInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioScheduledSourceNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioScheduledSourceNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTrack.cpp

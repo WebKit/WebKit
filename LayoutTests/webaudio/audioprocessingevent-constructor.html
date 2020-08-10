@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests the AudioProcessingEvent constructor");
+
+shouldThrowErrorName("event = new AudioProcessingEvent;", "TypeError");
+shouldThrowErrorName("event = new AudioProcessingEvent('foo');", "TypeError");
+
+let context = new AudioContext;
+shouldNotThrow("iBuffer = context.createBuffer(3, 200, 47000);");
+shouldNotThrow("oBuffer = context.createBuffer(2, 100, 46000);");
+shouldNotThrow("wrongBuffer = context.createBufferSource();");
+
+shouldThrowErrorName("event = new AudioProcessingEvent('foo', { inputBuffer: iBuffer, outputBuffer: oBuffer });", "TypeError");
+shouldThrowErrorName("event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: iBuffer });", "TypeError");
+shouldThrowErrorName("event = new AudioProcessingEvent('foo', { playbackTime: 5, outputBuffer: oBuffer });", "TypeError");
+shouldThrowErrorName("event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: null, outputBuffer: oBuffer });", "TypeError");
+shouldThrowErrorName("event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: iBuffer, outputBuffer: null });", "TypeError");
+shouldThrowErrorName("event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: wrongBuffer, outputBuffer: oBuffer });", "TypeError");
+shouldThrowErrorName("event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: iBuffer, outputBuffer: wrongBuffer });", "TypeError");
+
+shouldNotThrow("event = new AudioProcessingEvent('foo', { playbackTime: 5, inputBuffer: iBuffer, outputBuffer: oBuffer, bubbles: true });");
+shouldBeEqualToString("event.type", "foo");
+shouldBeTrue("event.bubbles");
+shouldBeFalse("event.cancelable");
+shouldBeFalse("event.composed");
+shouldBeFalse("event.isTrusted");
+shouldBe("event.playbackTime", "5");
+shouldBe("event.inputBuffer.length", "iBuffer.length");
+shouldBe("event.inputBuffer.duration", "iBuffer.duration");
+shouldBe("event.inputBuffer.sampleRate", "iBuffer.sampleRate");
+shouldBe("event.outputBuffer.length", "oBuffer.length");
+shouldBe("event.outputBuffer.duration", "oBuffer.duration");
+shouldBe("event.outputBuffer.sampleRate", "oBuffer.sampleRate");
+
+</script>
+</body>
+</html>
