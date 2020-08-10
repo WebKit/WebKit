@@ -1,3 +1,29 @@
+2020-08-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Always suspend IDB work when network process is prepared to suspend
+        https://bugs.webkit.org/show_bug.cgi?id=215239
+        <rdar://problem/65690450>
+
+        Reviewed by Geoffrey Garen.
+
+        We do not suspend IDB work in the network process when there is an ongoing transaction because the network 
+        process is going to ask the UI process to hold a background process assertion for it. However, it is possible 
+        that the request from the network process does not reach the UI process in time: RunningBoard may already decide
+        to suspend the network process after app is backgrounded and UI process drops the foreground assertion for the 
+        network process. 
+
+        In this case, IDB in the network process would continue its transaction and the network process will be killed 
+        when it becomes suspened for holding database file locks. A network process crash can lead to a worse result 
+        than suspending IDB work, which aborts ongoing transactions, because it will destroy all database connections 
+        and transaction. Therefore, let's just suspend IDB work when the network process receives prepareToSuspend 
+        message.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::suspend):
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::prepareToSuspend):
+
 2020-08-10  Per Arne Vollan  <pvollan@apple.com>
 
         Add required entitlement for Catalyst
