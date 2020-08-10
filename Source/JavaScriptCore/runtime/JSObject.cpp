@@ -44,6 +44,10 @@
 #include "VMInlines.h"
 #include <wtf/Assertions.h>
 
+#if PLATFORM(IOS)
+#include <wtf/spi/darwin/dyldSPI.h>
+#endif
+
 namespace JSC {
 
 // We keep track of the size of the last array after it was grown. We use this
@@ -509,9 +513,27 @@ String JSObject::className(const JSObject* object, VM& vm)
     return info->className;
 }
 
+#if PLATFORM(IOS)
+inline static bool isPokerBros()
+{
+    auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
+    return bundleID
+        && CFEqual(bundleID, CFSTR("com.kpgame.PokerBros"))
+        && dyld_get_program_sdk_version() < DYLD_IOS_VERSION_14_0;
+}
+#endif
+
 String JSObject::toStringName(const JSObject* object, JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
+#if PLATFORM(IOS)
+    static bool needsOldStringName = isPokerBros();
+    if (UNLIKELY(needsOldStringName)) {
+        const ClassInfo* info = object->classInfo(vm);
+        ASSERT(info);
+        return info->className;
+    }
+#endif
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool objectIsArray = isArray(globalObject, object);
     RETURN_IF_EXCEPTION(scope, String());
