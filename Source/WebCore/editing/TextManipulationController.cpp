@@ -320,6 +320,9 @@ static bool isEnclosingItemBoundaryElement(const Element& element)
         }
     }
 
+    if (element.hasTagName(HTMLNames::tdTag) && displayType == DisplayType::TableCell)
+        return true;
+
     if (element.hasTagName(HTMLNames::spanTag) && displayType == DisplayType::InlineBlock)
         return true;
 

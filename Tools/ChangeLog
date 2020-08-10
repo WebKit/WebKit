@@ -1,3 +1,47 @@
+2020-08-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r265188. rdar://problem/66643973
+
+    Table data is incorrectly translated in some articles on en.wikipedia.org
+    https://bugs.webkit.org/show_bug.cgi?id=215071
+    <rdar://problem/66354013>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Text in table cells sometimes end up in adjacent cells after translation, since adjacent cells are currently
+    extracted as different tokens in a single item; mitigate this by splitting text in table cells into different
+    text manipulation items instead.
+    
+    Test: TextManipulation.StartTextManipulationExtractsTableCellsAsSeparateItems
+    
+    * editing/TextManipulationController.cpp:
+    (WebCore::isEnclosingItemBoundaryElement):
+    
+    Tools:
+    
+    Add a new API test to exercise the change.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265188 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Table data is incorrectly translated in some articles on en.wikipedia.org
+            https://bugs.webkit.org/show_bug.cgi?id=215071
+            <rdar://problem/66354013>
+
+            Reviewed by Darin Adler.
+
+            Add a new API test to exercise the change.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+            (TestWebKitAPI::TEST):
+
 2020-08-05  Russell Epstein  <repstein@apple.com>
 
         Revert r265115. rdar://problem/66552761
