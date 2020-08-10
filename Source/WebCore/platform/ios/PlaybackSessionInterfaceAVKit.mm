@@ -51,7 +51,7 @@ using namespace PAL;
 
 PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionModel& model)
     : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))
-    , m_playbackSessionModel(makeWeakPtr(model))
+    , m_playbackSessionModel(&model)
 {
     ASSERT(isUIThread());
     model.addClient(*this);
@@ -81,7 +81,7 @@ PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
 
 PlaybackSessionModel* PlaybackSessionInterfaceAVKit::playbackSessionModel() const
 {
-    return m_playbackSessionModel.get();
+    return m_playbackSessionModel;
 }
 
 void PlaybackSessionInterfaceAVKit::durationChanged(double duration)

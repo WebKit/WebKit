@@ -81,7 +81,7 @@ public:
 private:
     PlaybackSessionInterfaceAVKit(PlaybackSessionModel&);
     RetainPtr<WebAVPlayerController> m_playerController;
-    WeakPtr<PlaybackSessionModel> m_playbackSessionModel;
+    PlaybackSessionModel* m_playbackSessionModel { nullptr };
 };
 
 }
