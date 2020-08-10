@@ -1838,3 +1838,5 @@ webkit.org/b/215283 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scr
 webkit.org/b/215324 compositing/clipping/border-radius-on-webgl.html [ Pass Failure ]
 
 webkit.org/b/215326 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-parsing.html [ Pass Timeout ]
+
+webkit.org/b/215345 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Pass Timeout ]
