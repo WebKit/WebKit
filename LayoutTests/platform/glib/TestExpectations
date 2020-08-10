@@ -971,6 +971,8 @@ webkit.org/b/133151 js/cached-window-properties.html [ Timeout Pass ]
 
 webkit.org/b/163533 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Crash ImageOnlyFailure Timeout Pass ]
 
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html [ DumpJSConsoleLogInStdErr ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of NEEDS TRIAGING. Don't put expectations below this section.
 #////////////////////////////////////////////////////////////////////////////////////////

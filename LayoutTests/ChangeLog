@@ -1,3 +1,17 @@
+2020-08-10  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Emit new baselines after r265403.
+
+        Some result values of tests failing are different in the WebKitGTK/WPE
+        ports, which makes the tests fail. However the total number of tests
+        passing and failing is the same as in the general baseline.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-highpass-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-lowpass-expected.txt: Added.
+
 2020-08-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [macOS] Drag/drop an image of a unsupported format to an file input element should convert it to a supported format
