@@ -1388,7 +1388,26 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     if (!self.webView._retainingActiveFocusedState) {
         // We need to complete the editing operation before we blur the element.
         [self _endEditing];
-        if ((reason == EndEditingReasonAccessoryDone && !WebKit::currentUserInterfaceIdiomIsPad()) || _keyboardDidRequestDismissal || self._shouldUseLegacySelectPopoverDismissalBehavior) {
+
+        auto shouldBlurFocusedElement = [&] {
+            if (_keyboardDidRequestDismissal)
+                return true;
+
+            if (self._shouldUseLegacySelectPopoverDismissalBehavior)
+                return true;
+
+            if (reason == EndEditingReasonAccessoryDone) {
+                if (_focusRequiresStrongPasswordAssistance)
+                    return true;
+
+                if (!WebKit::currentUserInterfaceIdiomIsPad())
+                    return true;
+            }
+
+            return false;
+        };
+
+        if (shouldBlurFocusedElement()) {
             _page->blurFocusedElement();
             // Don't wait for WebPageProxy::blurFocusedElement() to round-trip back to us to hide the keyboard
             // because we know that the user explicitly requested us to do so.

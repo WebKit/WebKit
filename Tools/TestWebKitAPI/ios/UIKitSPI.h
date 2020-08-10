@@ -171,6 +171,10 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @interface UIWKAutocorrectionContext : NSObject
 @end
 
+@protocol UIWebFormAccessoryDelegate
+- (void)accessoryDone;
+@end
+
 @protocol UIWKInteractionViewProtocol
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
