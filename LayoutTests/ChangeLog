@@ -1,3 +1,12 @@
+2020-08-10  Hector Lopez  <hector_i_lopez@apple.com>
+
+        REGRESSION [ macOS ] fullscreen/video-controls-rtl.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=214412
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-10  Karl Rackler  <rackler@apple.com>
 
         [ Win10 wk1 ews ] imported/blink/fast/css/fixed-overlaps-absolute-in-clip.html is a flaky image failure

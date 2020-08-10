@@ -1939,3 +1939,5 @@ webkit.org/b/215247 webgpu/whlsl/dont-crash-parsing-enum.html [ Pass Failure ]
 
 webkit.org/b/215271 [ Debug ] storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
 
+webkit.org/b/214412 fullscreen/video-controls-rtl.html [ Pass Failure Crash ]
+
