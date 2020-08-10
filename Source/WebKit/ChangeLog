@@ -1,3 +1,19 @@
+2020-08-10  Per Arne Vollan  <pvollan@apple.com>
+
+        Add required entitlement for Catalyst
+        https://bugs.webkit.org/show_bug.cgi?id=215244
+
+        Reviewed by Darin Adler.
+
+        The entitlement 'com.apple.private.webkit.use-xpc-endpoint' should be added to the WebContent process on Catalyst as well,
+        since it is needed on all Apple platforms. This entitlement is needed to support direct XPC communication between WebKit
+        processes, which is used to send the Launch Services database to the WebContent process from the Networking process. Also,
+        add some more logging related to this, to detect if it takes a long time for the WebContent process to receive the database.
+
+        * Scripts/process-entitlements.sh:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters):
+
 2020-08-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [macOS] Drag/drop an image of a unsupported format to an file input element should convert it to a supported format

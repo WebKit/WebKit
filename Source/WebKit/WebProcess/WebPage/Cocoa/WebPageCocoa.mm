@@ -65,10 +65,14 @@ namespace WebKit {
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
 #if HAVE(LSDATABASECONTEXT)
-    bool databaseUpdated = LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate(5_s);
+    auto startTime = WallTime::now();
+    bool databaseUpdated = LaunchServicesDatabaseManager::singleton().waitForDatabaseUpdate(1_s);
+    auto elapsedTime = WallTime::now() - startTime;
+    if (elapsedTime.value() > 0.5)
+        RELEASE_LOG(Loading, "Waiting for Launch Services database update took %f seconds", elapsedTime.value());
     ASSERT_UNUSED(databaseUpdated, databaseUpdated);
     if (!databaseUpdated)
-        WTFLogAlways("Timed out waiting for Launch Services database update.");
+        RELEASE_LOG_ERROR(Loading, "Timed out waiting for Launch Services database update.");
 #endif
 
     m_dataDetectionContext = parameters.dataDetectionContext;
