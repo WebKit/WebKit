@@ -1,3 +1,18 @@
+2020-08-10  David Kilzer  <ddkilzer@apple.com>
+
+        Use RefPtr for WebKit::WebOpenPanelResultListenerProxy
+        <https://webkit.org/b/215252>
+        <rdar://problem/65753821>
+
+        Reviewed by Geoffrey Garen.
+
+        Unable to create an API test for this.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::runOpenPanel):
+        - Use RefPtr<WebOpenPanelResultListenerProxy> when passing
+          `listener` into the block.
+
 2020-08-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add more logging to diagnose editing/selection/ios/select-all-non-editable-text-using-keyboard.html
