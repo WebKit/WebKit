@@ -1,3 +1,47 @@
+2020-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Align existing AudioParam API with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=215301
+
+        Reviewed by Sam Weinig.
+
+        Align existing AudioParam API with the specification:
+        - https://www.w3.org/TR/webaudio/#AudioParam
+
+        In particular, the following changes were made:
+        - Use float instead of unrestricted float where appropriate, so that we properly throw when
+          provided non-finite values.
+        - Use double instead of float where appropriate
+        - A lot of the operations were previously returning nothing but they should return the
+          AudioParam itself to allow chaining.
+        - Throw an exceptions when passed invalid values (e.g. negative times)
+        - Throw exceptions when events overlap. This part is based on Chromium's implementation here:
+          - https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/modules/webaudio/audio_param_timeline.cc#L513
+          and is specification is here:
+          - https://webaudio.github.io/web-audio-api/#dfn-automation-event
+
+        This allows us to pass some more WPT webaudio tests.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioParam.cpp:
+        * Modules/webaudio/AudioParam.h:
+        * Modules/webaudio/AudioParam.idl:
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::setValueAtTime):
+        (WebCore::AudioParamTimeline::linearRampToValueAtTime):
+        (WebCore::AudioParamTimeline::exponentialRampToValueAtTime):
+        (WebCore::AudioParamTimeline::setTargetAtTime):
+        (WebCore::AudioParamTimeline::setValueCurveAtTime):
+        (WebCore::AudioParamTimeline::insertEvent):
+        (WebCore::AudioParamTimeline::cancelScheduledValues):
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+        * Modules/webaudio/AudioParamTimeline.h:
+        (WebCore::AudioParamTimeline::ParamEvent::ParamEvent):
+        (WebCore::AudioParamTimeline::ParamEvent::time const):
+        (WebCore::AudioParamTimeline::ParamEvent::duration const):
+        (WebCore::AudioParamTimeline::ParamEvent::curve):
+
 2020-08-10  Eric Carlson  <eric.carlson@apple.com>
 
         r262456 broke sites that expect webkitDisplayingFullscreen to be true almost immediately

@@ -114,6 +114,78 @@ bool AudioParam::smooth()
     return false;
 }
 
+ExceptionOr<AudioParam&> AudioParam::setValueAtTime(float value, double startTime)
+{
+    if (startTime < 0)
+        return Exception { RangeError, "startTime must be a positive value"_s };
+
+    auto result = m_timeline.setValueAtTime(value, Seconds { startTime });
+    if (result.hasException())
+        return result.releaseException();
+    return *this;
+}
+
+ExceptionOr<AudioParam&> AudioParam::linearRampToValueAtTime(float value, double endTime)
+{
+    if (endTime < 0)
+        return Exception { RangeError, "endTime must be a positive value"_s };
+
+    auto result = m_timeline.linearRampToValueAtTime(value, Seconds { endTime });
+    if (result.hasException())
+        return result.releaseException();
+    return *this;
+}
+
+ExceptionOr<AudioParam&> AudioParam::exponentialRampToValueAtTime(float value, double endTime)
+{
+    if (!value)
+        return Exception { RangeError, "value cannot be 0"_s };
+    if (endTime < 0)
+        return Exception { RangeError, "endTime must be a positive value"_s };
+
+    auto result = m_timeline.exponentialRampToValueAtTime(value, Seconds { endTime });
+    if (result.hasException())
+        return result.releaseException();
+    return *this;
+}
+
+ExceptionOr<AudioParam&> AudioParam::setTargetAtTime(float target, double startTime, float timeConstant)
+{
+    if (startTime < 0)
+        return Exception { RangeError, "startTime must be a positive value"_s };
+    if (timeConstant < 0)
+        return Exception { RangeError, "timeConstant must be a positive value"_s };
+
+    auto result = m_timeline.setTargetAtTime(target, Seconds { startTime }, timeConstant);
+    if (result.hasException())
+        return result.releaseException();
+    return *this;
+}
+
+ExceptionOr<AudioParam&> AudioParam::setValueCurveAtTime(Vector<float>&& curve, double startTime, double duration)
+{
+    if (curve.size() < 2)
+        return Exception { InvalidStateError, "Array must have a length of at least 2"_s };
+    if (startTime < 0)
+        return Exception { RangeError, "startTime must be a positive value"_s };
+    if (duration <= 0)
+        return Exception { RangeError, "duration must be a strictly positive value"_s };
+
+    auto result = m_timeline.setValueCurveAtTime(WTFMove(curve), Seconds { startTime }, Seconds { duration });
+    if (result.hasException())
+        return result.releaseException();
+    return *this;
+}
+
+ExceptionOr<AudioParam&> AudioParam::cancelScheduledValues(double cancelTime)
+{
+    if (cancelTime < 0)
+        return Exception { RangeError, "cancelTime must be a positive value"_s };
+
+    m_timeline.cancelScheduledValues(Seconds { cancelTime });
+    return *this;
+}
+
 float AudioParam::finalValue()
 {
     float value;
@@ -175,8 +247,8 @@ void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
     // Calculate values for this render quantum.
     // Normally numberOfValues will equal AudioNode::ProcessingSizeInFrames (the render quantum size).
     double sampleRate = context().sampleRate();
-    double startTime = context().currentTime();
-    double endTime = startTime + numberOfValues / sampleRate;
+    Seconds startTime = Seconds { context().currentTime() };
+    Seconds endTime = startTime + Seconds { numberOfValues / sampleRate };
 
     // Note we're running control rate at the sample-rate.
     // Pass in the current value as default value.

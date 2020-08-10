@@ -91,12 +91,12 @@ public:
     void setSmoothingConstant(double k) { m_smoothingConstant = k; }
 
     // Parameter automation.    
-    void setValueAtTime(float value, float time) { m_timeline.setValueAtTime(value, time); }
-    void linearRampToValueAtTime(float value, float time) { m_timeline.linearRampToValueAtTime(value, time); }
-    void exponentialRampToValueAtTime(float value, float time) { m_timeline.exponentialRampToValueAtTime(value, time); }
-    void setTargetAtTime(float target, float time, float timeConstant) { m_timeline.setTargetAtTime(target, time, timeConstant); }
-    void setValueCurveAtTime(const RefPtr<Float32Array>& curve, float time, float duration) { m_timeline.setValueCurveAtTime(curve.get(), time, duration); }
-    void cancelScheduledValues(float startTime) { m_timeline.cancelScheduledValues(startTime); }
+    ExceptionOr<AudioParam&> setValueAtTime(float value, double startTime);
+    ExceptionOr<AudioParam&> linearRampToValueAtTime(float value, double endTime);
+    ExceptionOr<AudioParam&> exponentialRampToValueAtTime(float value, double endTime);
+    ExceptionOr<AudioParam&> setTargetAtTime(float target, double startTime, float timeConstant);
+    ExceptionOr<AudioParam&> setValueCurveAtTime(Vector<float>&& curve, double startTime, double duration);
+    ExceptionOr<AudioParam&> cancelScheduledValues(double cancelTime);
 
     bool hasSampleAccurateValues() { return m_timeline.hasValues() || numberOfRenderingConnections(); }
     

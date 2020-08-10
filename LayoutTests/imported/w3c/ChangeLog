@@ -1,3 +1,19 @@
+2020-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Align existing AudioParam API with the specification
+        https://bugs.webkit.org/show_bug.cgi?id=215301
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-exceptional-values-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-exponentialRampToValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-linearRampToValueAtTime-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-method-chaining-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/audioparam-setValueCurve-exceptions-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-position-expected.txt:
+
 2020-08-10  Chris Lord  <clord@igalia.com>
 
         Update WPT OffscreenCanvas tests to include manually written tests

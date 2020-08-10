@@ -29,28 +29,34 @@
 [
     Conditional=WEB_AUDIO,
 ] interface AudioParam {
-    attribute unrestricted float value;
-    readonly attribute unrestricted float minValue;
-    readonly attribute unrestricted float maxValue;
-    readonly attribute unrestricted float defaultValue;
+    attribute float value;
 
-    readonly attribute DOMString name;
+    // FIXME: add support for this.
+    // attribute AutomationRate automationRate;
 
-    // FIXME: Could define units constants here (seconds, decibels, cents, etc.)...
-    readonly attribute unsigned short units;
+    readonly attribute float defaultValue;
+    readonly attribute float minValue;
+    readonly attribute float maxValue;
 
     // Parameter automation.
-    void setValueAtTime(unrestricted float value, unrestricted float time);
-    void linearRampToValueAtTime(unrestricted float value, unrestricted float time);
-    void exponentialRampToValueAtTime(unrestricted float value, unrestricted float time);
+    [MayThrowException] AudioParam setValueAtTime(float value, double startTime);
+    [MayThrowException] AudioParam linearRampToValueAtTime(float value, double endTime);
+    [MayThrowException] AudioParam exponentialRampToValueAtTime(float value, double endTime);
 
     // Exponentially approach the target with a rate having the given time constant.
-    void setTargetAtTime(unrestricted float target, unrestricted float time, unrestricted float timeConstant);
+    [MayThrowException] AudioParam setTargetAtTime(float target, double startTime, float timeConstant);
 
     // Sets an array of arbitrary parameter values starting at time for the given duration.
     // The number of values will be scaled to fit into the desired duration.
-    void setValueCurveAtTime(Float32Array? values, unrestricted float time, unrestricted float duration); // FIXME: values should not be nullable.
+    [MayThrowException] AudioParam setValueCurveAtTime(sequence<float> values, double startTime, double duration);
 
     // Cancels all scheduled parameter changes with times greater than or equal to startTime.
-    void cancelScheduledValues(unrestricted float startTime);
+    [MayThrowException] AudioParam cancelScheduledValues(double cancelTime);
+
+    // FIXME: Add support for this.
+    // AudioParam cancelAndHoldAtTime(double cancelTime);
+
+    // FIXME: These are not standard.
+    [EnabledBySetting=PrefixedWebAudio] readonly attribute DOMString name;
+    [EnabledBySetting=PrefixedWebAudio] readonly attribute unsigned short units;
 };
