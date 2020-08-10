@@ -1209,7 +1209,8 @@ public:
         return (maxSize - allocationSize(0)) / sizeof(WriteBarrier<Unknown>);
     }
 
-    static JSFinalObject* create(VM&, Structure*, Butterfly* = nullptr);
+    static JSFinalObject* create(VM&, Structure*);
+    static JSFinalObject* createWithButterfly(VM&, Structure*, Butterfly*);
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, unsigned inlineCapacity)
     {
         return Structure::create(vm, globalObject, prototype, typeInfo(), info(), defaultIndexingType, inlineCapacity);
@@ -1224,7 +1225,7 @@ private:
 
     void visitChildrenCommon(SlotVisitor&);
 
-    explicit JSFinalObject(VM& vm, Structure* structure, Butterfly* butterfly = nullptr)
+    explicit JSFinalObject(VM& vm, Structure* structure, Butterfly* butterfly)
         : JSObject(vm, structure, butterfly)
     {
         gcSafeZeroMemory(inlineStorageUnsafe(), structure->inlineCapacity() * sizeof(EncodedJSValue));
@@ -1233,17 +1234,17 @@ private:
     void finishCreation(VM& vm)
     {
         Base::finishCreation(vm);
-        ASSERT(structure(vm)->totalStorageCapacity() == structure(vm)->inlineCapacity());
+        ASSERT(butterfly() || structure(vm)->totalStorageCapacity() == structure(vm)->inlineCapacity());
         ASSERT(classInfo(vm));
     }
 };
 
 JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(JSGlobalObject*, CallFrame*);
 
-inline JSFinalObject* JSFinalObject::create(VM& vm, Structure* structure, Butterfly* butterfly)
+inline JSFinalObject* JSFinalObject::createWithButterfly(VM& vm, Structure* structure, Butterfly* butterfly)
 {
     JSFinalObject* finalObject = new (
-        NotNull, 
+        NotNull,
         allocateCell<JSFinalObject>(
             vm.heap,
             allocationSize(structure->inlineCapacity())
@@ -1251,6 +1252,11 @@ inline JSFinalObject* JSFinalObject::create(VM& vm, Structure* structure, Butter
     ) JSFinalObject(vm, structure, butterfly);
     finalObject->finishCreation(vm);
     return finalObject;
+}
+
+inline JSFinalObject* JSFinalObject::create(VM& vm, Structure* structure)
+{
+    return createWithButterfly(vm, structure, nullptr);
 }
 
 inline size_t JSObject::offsetOfInlineStorage()

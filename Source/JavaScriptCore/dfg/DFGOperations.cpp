@@ -2921,7 +2921,7 @@ char* JIT_OPERATION operationNewRawObject(VM* vmPointer, Structure* structure, i
 
     if (structure->type() == JSType::ArrayType)
         return bitwise_cast<char*>(JSArray::createWithButterfly(vm, nullptr, structure, butterfly));
-    return bitwise_cast<char*>(JSFinalObject::create(vm, structure, butterfly));
+    return bitwise_cast<char*>(JSFinalObject::createWithButterfly(vm, structure, butterfly));
 }
 
 JSCell* JIT_OPERATION operationNewObjectWithButterfly(VM* vmPointer, Structure* structure, Butterfly* butterfly)
@@ -2937,7 +2937,7 @@ JSCell* JIT_OPERATION operationNewObjectWithButterfly(VM* vmPointer, Structure* 
     
     if (structure->type() == JSType::ArrayType)
         return JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
-    return JSFinalObject::create(vm, structure, butterfly);
+    return JSFinalObject::createWithButterfly(vm, structure, butterfly);
 }
 
 JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVectorLength(VM* vmPointer, Structure* structure, unsigned length, Butterfly* butterfly)
@@ -2959,7 +2959,7 @@ JSCell* JIT_OPERATION operationNewObjectWithButterflyWithIndexingHeaderAndVector
     
     if (structure->type() == JSType::ArrayType)
         return JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
-    return JSFinalObject::create(vm, structure, butterfly);
+    return JSFinalObject::createWithButterfly(vm, structure, butterfly);
 }
 
 JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(JSGlobalObject* globalObject, void* buffer, uint32_t numItems)

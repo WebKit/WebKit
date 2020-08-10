@@ -1,3 +1,25 @@
+2020-08-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSFinalObject::finishCreation's ASSERT has stale condition
+        https://bugs.webkit.org/show_bug.cgi?id=215317
+
+        Reviewed by Mark Lam.
+
+        JSFinalObject::finishCreation assumes that there is no out-of-line property storage (inline storage capacity == total storage capacity).
+        But this is wrong when passing Butterfly* parameter to JSFinalObject. Previously, this feature is not used and we instead used JSObject::createRawObject,
+        which bypasses this assertion. But now, we start using this when creating an object for MaterializeNewObject in DFG and FTL, and then we hit the crash
+        because this assertion does not consider about non-nullptr butterfly.
+
+        This patch makes create function explicit by introducing `JSFinalObject::createWithButterfly`, which is similar to JSArray::createWithButterfly.
+        And we fix the assertion by checking butterfly existence. By renaming JSFinalObject::create to JSFinalObject::createWithButterfly when getting butterfly,
+        this patch also clarifies that only MaterializeNewObject related functions, which were using JSObject::createRawObject to bypass this assertion, is passing
+        butterfly.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/JSObject.h:
+        (JSC::JSFinalObject::createWithButterfly):
+        (JSC::JSFinalObject::create):
+
 2020-08-09  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r265392.
