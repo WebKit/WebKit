@@ -1,5 +1,14 @@
 2020-08-10  Karl Rackler  <rackler@apple.com>
 
+        [ Win10 wk1 ews ] imported/blink/fast/css/fixed-overlaps-absolute-in-clip.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=215172
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2020-08-10  Karl Rackler  <rackler@apple.com>
+
         [ Win10 wk1 ews ] webanimations/accelerated-animation-with-easing.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=215170
 

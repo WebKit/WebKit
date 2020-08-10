@@ -4532,3 +4532,5 @@ webkit.org/b/214673 js/weakref-finalizationregistry.html [ Pass Timeout ]
 js/dom/promise-rejection-might-stack-overflow.html [ Skip ]
 
 webkit.org/b/215170 webanimations/accelerated-animation-with-easing.html [ Skip ]
+
+webkit.org/b/215172 imported/blink/fast/css/fixed-overlaps-absolute-in-clip.html [ Skip ]
