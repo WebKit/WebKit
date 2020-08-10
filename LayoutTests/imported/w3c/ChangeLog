@@ -1,3 +1,88 @@
+2020-08-10  Chris Lord  <clord@igalia.com>
+
+        Update WPT OffscreenCanvas tests to include manually written tests
+        https://bugs.webkit.org/show_bug.cgi?id=215322
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.html: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.worker.js: Added.
+        (t_fail.t.step_func):
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/w3c-import.log:
+        * web-platform-tests/html/canvas/offscreen/manual/convert-to-blob/offscreencanvas.convert.to.blob-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/convert-to-blob/offscreencanvas.convert.to.blob.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/convert-to-blob/offscreencanvas.convert.to.blob.w-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/convert-to-blob/offscreencanvas.convert.to.blob.w.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/convert-to-blob/w3c-import.log: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.js: Added.
+        (getRegularContextForFilter):
+        (matchImageDataResults):
+        (createPatternCanvas):
+        * web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/filter/w3c-import.log: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/image-smoothing/image.smoothing-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/image-smoothing/image.smoothing.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/image-smoothing/image.smoothing.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/image-smoothing/image.smoothing.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/image-smoothing/image.smoothing.worker.js: Added.
+        (createTestImage):
+        (test):
+        (test.draw):
+        * web-platform-tests/html/canvas/offscreen/manual/image-smoothing/w3c-import.log: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.w-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.w.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.constructor-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.constructor.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.constructor.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.constructor.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.constructor.worker.js: Added.
+        (t1.step):
+        (t2.step):
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.js: Added.
+        (test):
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfercontrol.to.offscreen-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfercontrol.to.offscreen.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfercontrol.to.offscreen.w-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfercontrol.to.offscreen.w.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.w-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.w.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/w3c-import.log: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/transformations/2d.transformation.getTransform-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/transformations/2d.transformation.getTransform.html: Added.
+        * web-platform-tests/html/canvas/offscreen/manual/transformations/w3c-import.log: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.basic-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.basic.html: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.basic.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.basic.worker.html: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.basic.worker.js: Added.
+        (t_fail.t.step_func):
+        (t.step):
+        * web-platform-tests/html/canvas/offscreen/path-objects/w3c-import.log:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.space.html:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.space.worker.js:
+        (t.step):
+
 2020-08-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html.

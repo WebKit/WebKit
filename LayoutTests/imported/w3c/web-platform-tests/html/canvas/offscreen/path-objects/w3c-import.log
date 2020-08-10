@@ -186,6 +186,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.unclosed.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.winding.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInPath.winding.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.basic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.isPointInStroke.basic.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.lineTo.basic.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.lineTo.basic.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/path-objects/2d.path.lineTo.ensuresubpath.1.html

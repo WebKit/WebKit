@@ -1,0 +1,7 @@
+2d.gradient.conic
+
+Conic gradient function exists
+
+
+FAIL Conic gradient function exists ctx.createConicGradient is not a function. (In 'ctx.createConicGradient(0, 0, 25)', 'ctx.createConicGradient' is undefined)
+

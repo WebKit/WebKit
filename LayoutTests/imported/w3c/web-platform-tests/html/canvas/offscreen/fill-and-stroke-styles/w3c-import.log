@@ -270,6 +270,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.transparent-1.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.transparent-2.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.parse.transparent-2.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.empty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.empty.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.interpolate.alpha.html

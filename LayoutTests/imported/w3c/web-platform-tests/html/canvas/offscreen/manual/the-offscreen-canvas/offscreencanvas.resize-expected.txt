@@ -1,0 +1,12 @@
+
+PASS Verify that writing to the width and height attributes of an OffscreenCanvas works when there is no context attached. 
+PASS Verify that writing to the width and height attributes of an OffscreenCanvas works when there is a 2d context attached. 
+PASS Verify that writing to the width and height attributes of an OffscreenCanvas works when there is a webgl context attached. 
+FAIL Verify that writing to the width or height attribute of a placeholder canvas throws an exception placeholder.transferControlToOffscreen is not a function. (In 'placeholder.transferControlToOffscreen()', 'placeholder.transferControlToOffscreen' is undefined)
+FAIL Verify that writing to the width or height attribute of a placeholder canvas throws an exception even when not changing the value of the attribute. placeholder.transferControlToOffscreen is not a function. (In 'placeholder.transferControlToOffscreen()', 'placeholder.transferControlToOffscreen' is undefined)
+PASS Verify that resizing a 2d context resets its state. 
+PASS Verify that setting the size of a 2d context to the same size it already had resets its state. 
+FAIL Verify that resizing an OffscreenCanvas with a 2d context propagates the new size to its placeholder canvas asynchronously. placeholder.transferControlToOffscreen is not a function. (In 'placeholder.transferControlToOffscreen()', 'placeholder.transferControlToOffscreen' is undefined)
+FAIL Verify that resizing an OffscreenCanvas with a webgl context propagates the new size to its placeholder canvas asynchronously. placeholder.transferControlToOffscreen is not a function. (In 'placeholder.transferControlToOffscreen()', 'placeholder.transferControlToOffscreen' is undefined)
+FAIL Verify that drawImage uses the size of the frame as the intinsic size of a placeholder canvas. placeholder.transferControlToOffscreen is not a function. (In 'placeholder.transferControlToOffscreen()', 'placeholder.transferControlToOffscreen' is undefined)
+

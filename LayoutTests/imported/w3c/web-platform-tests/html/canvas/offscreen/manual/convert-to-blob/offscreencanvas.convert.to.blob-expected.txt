@@ -1,0 +1,9 @@
+
+PASS Test that convertToBlob with default type produces correct result 
+PASS Test that convertToBlob with png produces correct result 
+PASS Test that convertToBlob with jpge produces correct result 
+PASS Test that convertToBlob with webp produces correct result 
+PASS Test that call convertToBlob on a detached OffscreenCanvas throws exception 
+PASS Test that call convertToBlob on a OffscreenCanvas with size 0 throws exception 
+PASS Test that call convertToBlob on a OffscreenCanvas with tainted origin throws exception 
+
