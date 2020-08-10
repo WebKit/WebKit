@@ -1834,3 +1834,5 @@ webkit.org/b/215273 svg/animations/smil-multiple-animate-list.svg [ Pass Timeout
 webkit.org/b/215278 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-parse-error-external-module.html [ Pass Failure ]
 
 webkit.org/b/215283 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-success-external-classic.html [ Pass Failure ]
+
+webkit.org/b/215324 compositing/clipping/border-radius-on-webgl.html [ Pass Failure ]
