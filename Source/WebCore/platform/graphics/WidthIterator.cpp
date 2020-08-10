@@ -166,6 +166,25 @@ static inline std::pair<bool, bool> expansionLocation(bool ideograph, bool treat
     return std::make_pair(expandLeft, expandRight);
 }
 
+void WidthIterator::commitCurrentFontRange(GlyphBuffer& glyphBuffer, unsigned lastGlyphCount, const Font& font, UChar32 previousCharacter, const Font& primaryFont, UChar32 character, float widthOfCurrentFontRange, CharactersTreatedAsSpace& charactersTreatedAsSpace)
+{
+    auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
+    if (transformsType != TransformsType::None)
+        m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, font, previousCharacter, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
+
+    if (widthOfCurrentFontRange && m_fallbackFonts && &font != &primaryFont) {
+        // FIXME: This does a little extra work that could be avoided if
+        // glyphDataForCharacter() returned whether it chose to use a small caps font.
+        if (!m_font.isSmallCaps() || character == u_toupper(character))
+            m_fallbackFonts->add(&font);
+        else {
+            auto glyphFont = m_font.glyphDataForCharacter(u_toupper(character), m_run.rtl()).font;
+            if (glyphFont != &primaryFont)
+                m_fallbackFonts->add(glyphFont);
+        }
+    }
+}
+
 template <typename TextIterator>
 inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuffer& glyphBuffer)
 {
@@ -189,7 +208,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     UChar32 previousCharacter = 0;
     unsigned clusterLength = 0;
     CharactersTreatedAsSpace charactersTreatedAsSpace;
-    String normalizedSpacesStringCache;
+    float widthOfCurrentFontRange = 0;
     // We are iterating in string order, not glyph order. Compare this to ComplexTextController::adjustGlyphsAndAdvances()
     while (textIterator.consume(character, clusterLength)) {
         unsigned advanceLength = clusterLength;
@@ -223,26 +242,14 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             width *= m_run.horizontalGlyphStretch();
         }
 
-        if (font != lastFontData && width) {
-            auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
-            if (transformsType != TransformsType::None) {
-                m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, *lastFontData, previousCharacter, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
-                glyphBuffer.shrink(lastGlyphCount);
-            }
-
+        if (font != lastFontData) {
+            commitCurrentFontRange(glyphBuffer, lastGlyphCount, *lastFontData, previousCharacter, primaryFont, character, widthOfCurrentFontRange, charactersTreatedAsSpace);
+            m_currentCharacterIndex = currentCharacterIndex;
+            lastGlyphCount = glyphBuffer.size();
             lastFontData = font;
-            if (m_fallbackFonts && font != &primaryFont) {
-                // FIXME: This does a little extra work that could be avoided if
-                // glyphDataForCharacter() returned whether it chose to use a small caps font.
-                if (!m_font.isSmallCaps() || character == u_toupper(character))
-                    m_fallbackFonts->add(font);
-                else {
-                    const GlyphData& uppercaseGlyphData = m_font.glyphDataForCharacter(u_toupper(character), rtl);
-                    if (uppercaseGlyphData.font != &primaryFont)
-                        m_fallbackFonts->add(uppercaseGlyphData.font);
-                }
-            }
-        }
+            widthOfCurrentFontRange = width;
+        } else
+            widthOfCurrentFontRange += width;
 
         if (hasExtraSpacing) {
             // Account for letter-spacing.
@@ -340,20 +347,15 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         previousCharacter = character;
     }
 
+    commitCurrentFontRange(glyphBuffer, lastGlyphCount, *lastFontData, previousCharacter, primaryFont, character, widthOfCurrentFontRange, charactersTreatedAsSpace);
+    m_currentCharacterIndex = textIterator.currentIndex();
+
     if (leftoverJustificationWidth) {
         if (m_forTextEmphasis)
             glyphBuffer.add(lastFontData->zeroWidthSpaceGlyph(), *lastFontData, leftoverJustificationWidth, m_run.length() - 1);
         else
             glyphBuffer.add(lastFontData->spaceGlyph(), *lastFontData, leftoverJustificationWidth, m_run.length() - 1);
     }
-
-    auto transformsType = shouldApplyFontTransforms(glyphBuffer, lastGlyphCount, previousCharacter);
-    if (transformsType != TransformsType::None) {
-        m_runWidthSoFar += applyFontTransforms(glyphBuffer, m_run.ltr(), lastGlyphCount, *lastFontData, previousCharacter, transformsType == TransformsType::Forced, charactersTreatedAsSpace);
-        glyphBuffer.shrink(lastGlyphCount);
-    }
-
-    m_currentCharacterIndex = textIterator.currentIndex();
 }
 
 void WidthIterator::advance(unsigned offset, GlyphBuffer& glyphBuffer)

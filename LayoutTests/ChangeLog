@@ -1,3 +1,22 @@
+2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Shaping can be performed on glyphIDs from the wrong font
+        https://bugs.webkit.org/show_bug.cgi?id=215333
+
+        Reviewed by Darin Adler.
+
+        * fast/text/resources/Ahem-zero-width-shaping-font-mismatch.ttf: Added. This is a font where
+        U+2C95 COPTIC SMALL LETTER KAPA (which Times doesn't support) is mapped to glyph 73. Also,
+        the font has fewer than 192 glyphs.
+        * fast/text/zero-width-shaping-font-mismatch-expected-mismatch.html: Added. Times has a
+        ligature where the glyph sequence 73,76 gets replaced with glyph 192. The test has characters
+        U+2C95 COPTIC SMALL LETTER KAPA (which Times doesn't support but the webfont does, so we map
+        this to glyph 73 inside the web font) followed by U+0069 LATIN SMALL LETTER I, (which Times
+        does support, so we map this to glyph 76 inside Times). Then, because of this bug, we'll try
+        to shape glyphs 73,76 using Times, which replaces them with glyph 192, but then try to render
+        glyph 192 with the web font, which doesn't support it, so we get a white screen.
+        * fast/text/zero-width-shaping-font-mismatch.html: Added.
+
 2020-08-10  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk1 Release ] svg/text/hidpi-text-selection-rect-position.html is a flaky failure
