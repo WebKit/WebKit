@@ -174,11 +174,11 @@ namespace JSC  {
         // also return 0 if the call frame has no notion of bytecode offsets (for
         // example if it's native code).
         // https://bugs.webkit.org/show_bug.cgi?id=121754
-        BytecodeIndex bytecodeIndex();
+        BytecodeIndex bytecodeIndex() const;
         
         // This will get you a CodeOrigin. It will always succeed. May return
         // CodeOrigin(BytecodeIndex(0)) if we're in native code.
-        JS_EXPORT_PRIVATE CodeOrigin codeOrigin();
+        JS_EXPORT_PRIVATE CodeOrigin codeOrigin() const;
 
         inline Register* topOfFrame();
     
@@ -211,13 +211,13 @@ namespace JSC  {
         // use thisValue() and setThisValue() below.
 
         JSValue* addressOfArgumentsStart() const { return bitwise_cast<JSValue*>(this + argumentOffset(0)); }
-        JSValue argument(size_t argument)
+        JSValue argument(size_t argument) const
         {
             if (argument >= argumentCount())
                  return jsUndefined();
             return getArgumentUnsafe(argument);
         }
-        JSValue uncheckedArgument(size_t argument)
+        JSValue uncheckedArgument(size_t argument) const
         {
             ASSERT(argument < argumentCount());
             return getArgumentUnsafe(argument);
@@ -227,7 +227,7 @@ namespace JSC  {
             this[argumentOffset(argument)] = value;
         }
 
-        JSValue getArgumentUnsafe(size_t argIndex)
+        JSValue getArgumentUnsafe(size_t argIndex) const
         {
             // User beware! This method does not verify that there is a valid
             // argument at the specified argIndex. This is used for debugging
@@ -237,12 +237,12 @@ namespace JSC  {
         }
 
         static int thisArgumentOffset() { return argumentOffsetIncludingThis(0); }
-        JSValue thisValue() { return this[thisArgumentOffset()].jsValue(); }
+        JSValue thisValue() const { return this[thisArgumentOffset()].jsValue(); }
         void setThisValue(JSValue value) { this[thisArgumentOffset()] = value; }
 
         // Under the constructor implemented in C++, thisValue holds the newTarget instead of the automatically constructed value.
         // The result of this function is only effective under the "construct" context.
-        JSValue newTarget() { return thisValue(); }
+        JSValue newTarget() const { return thisValue(); }
 
         JSValue argumentAfterCapture(size_t argument);
 
@@ -278,7 +278,7 @@ namespace JSC  {
             StackVisitor::visit<action, Functor>(this, vm, functor);
         }
 
-        void dump(PrintStream&);
+        void dump(PrintStream&) const;
 
         // This function is used in LLDB btjs.
         JS_EXPORT_PRIVATE const char* describeFrame();

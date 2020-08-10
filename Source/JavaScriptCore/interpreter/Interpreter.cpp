@@ -524,11 +524,6 @@ public:
 
         m_handler = nullptr;
         if (m_codeBlock) {
-            // FIXME: We should support exception handling in checkpoints.
-#if ENABLE(DFG_JIT)
-            if (removeCodePtrTag(m_returnPC) == LLInt::getCodePtr<NoPtrTag>(checkpoint_osr_exit_from_inlined_call_trampoline).executableAddress())
-                m_codeBlock->vm().findCheckpointOSRSideState(m_callFrame);
-#endif
             if (!m_isTermination) {
                 m_handler = findExceptionHandler(visitor, m_codeBlock, RequiredHandler::AnyHandler);
                 if (m_handler)
@@ -551,7 +546,6 @@ public:
         if (shouldStopUnwinding)
             return StackVisitor::Done;
 
-        m_returnPC = m_callFrame->returnPC().value();
         return StackVisitor::Continue;
     }
 
@@ -588,7 +582,6 @@ private:
     bool m_isTermination;
     CodeBlock*& m_codeBlock;
     HandlerInfo*& m_handler;
-    mutable const void* m_returnPC { nullptr };
 };
 
 NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exception* exception)
@@ -612,6 +605,9 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
     HandlerInfo* handler = nullptr;
     UnwindFunctor functor(vm, callFrame, isTerminatedExecutionException(vm, exception), codeBlock, handler);
     StackVisitor::visit<StackVisitor::TerminateIfTopEntryFrameIsEmpty>(callFrame, vm, functor);
+    if (vm.hasCheckpointOSRSideState())
+        vm.popAllCheckpointOSRSideStateUntil(callFrame);
+
     if (!handler)
         return nullptr;
 

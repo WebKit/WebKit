@@ -43,6 +43,8 @@
 #include "OperandsInlines.h"
 #include "ProbeContext.h"
 
+#include <wtf/Scope.h>
+
 namespace JSC { namespace FTL {
 
 using namespace DFG;
@@ -481,14 +483,21 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
         JSValue* tmpScratch = reinterpret_cast<JSValue*>(scratch + exit.m_descriptor->m_values.tmpIndex(0));
         VM* vmPtr = &vm;
         jit.probe([=] (Probe::Context& context) {
+            Vector<std::unique_ptr<CheckpointOSRExitSideState>> sideStates;
+            sideStates.reserveInitialCapacity(exit.m_codeOrigin.inlineDepth());
+            auto sideStateCommitter = makeScopeExit([&] {
+                for (size_t i = sideStates.size(); i--;)
+                    vmPtr->pushCheckpointOSRSideState(WTFMove(sideStates[i]));
+            });
+
             auto addSideState = [&] (CallFrame* frame, BytecodeIndex index, size_t tmpOffset) {
-                std::unique_ptr<CheckpointOSRExitSideState> sideState = WTF::makeUnique<CheckpointOSRExitSideState>();
+                std::unique_ptr<CheckpointOSRExitSideState> sideState = WTF::makeUnique<CheckpointOSRExitSideState>(frame);
 
                 sideState->bytecodeIndex = index;
                 for (size_t i = 0; i < maxNumCheckpointTmps; ++i)
                     sideState->tmps[i] = tmpScratch[i + tmpOffset];
 
-                vmPtr->addCheckpointOSRSideState(frame, WTFMove(sideState));
+                sideStates.append(WTFMove(sideState));
             };
 
             const CodeOrigin* codeOrigin;

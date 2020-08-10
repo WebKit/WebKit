@@ -1078,25 +1078,41 @@ void VM::gatherScratchBufferRoots(ConservativeRoots& conservativeRoots)
 void VM::scanSideState(ConservativeRoots& roots) const
 {
     ASSERT(heap.worldIsStopped());
-    for (const auto& iter : m_checkpointSideState) {
-        static_assert(sizeof(iter.value->tmps) / sizeof(JSValue) == maxNumCheckpointTmps);
-        roots.add(iter.value->tmps, iter.value->tmps + maxNumCheckpointTmps);
+    for (const auto& sideState : m_checkpointSideState) {
+        static_assert(sizeof(sideState->tmps) / sizeof(JSValue) == maxNumCheckpointTmps);
+        roots.add(sideState->tmps, sideState->tmps + maxNumCheckpointTmps);
     }
 }
 #endif
 
-void VM::addCheckpointOSRSideState(CallFrame* callFrame, std::unique_ptr<CheckpointOSRExitSideState>&& payload)
+void VM::pushCheckpointOSRSideState(std::unique_ptr<CheckpointOSRExitSideState>&& payload)
 {
     ASSERT(currentThreadIsHoldingAPILock());
-    auto addResult = m_checkpointSideState.add(callFrame, WTFMove(payload));
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    ASSERT(payload->associatedCallFrame);
+#if ASSERT_ENABLED
+    for (const auto& sideState : m_checkpointSideState)
+        ASSERT(sideState->associatedCallFrame != payload->associatedCallFrame);
+#endif
+    m_checkpointSideState.append(WTFMove(payload));
 }
 
-std::unique_ptr<CheckpointOSRExitSideState> VM::findCheckpointOSRSideState(CallFrame* callFrame)
+std::unique_ptr<CheckpointOSRExitSideState> VM::popCheckpointOSRSideState(CallFrame* expectedCallFrame)
 {
     ASSERT(currentThreadIsHoldingAPILock());
-    auto sideState = m_checkpointSideState.take(callFrame);
+    auto sideState = m_checkpointSideState.takeLast();
+    RELEASE_ASSERT(sideState->associatedCallFrame == expectedCallFrame);
     return sideState;
+}
+
+void VM::popAllCheckpointOSRSideStateUntil(CallFrame* target)
+{
+    ASSERT(currentThreadIsHoldingAPILock());
+    auto bounds = StackBounds::currentThreadStackBounds().withSoftOrigin(target);
+    ASSERT(bounds.contains(target));
+
+    // We have to worry about migrating from another thread since there may be no checkpoints in our thread but one in the other threads.
+    while (m_checkpointSideState.size() && bounds.contains(m_checkpointSideState.last()->associatedCallFrame))
+        m_checkpointSideState.takeLast();
 }
 
 void logSanitizeStack(VM& vm)

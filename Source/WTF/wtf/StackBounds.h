@@ -104,6 +104,12 @@ public:
         return startOfUserStack - maxUserStackWithReservedZone;
     }
 
+    StackBounds withSoftOrigin(void* origin) const
+    {
+        ASSERT(contains(origin));
+        return StackBounds(origin, m_bound);
+    }
+
 private:
     StackBounds(void* origin, void* end)
         : m_origin(origin)
