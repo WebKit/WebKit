@@ -4933,6 +4933,16 @@
       ],
       "status" : "reviewer"
    },
+   "Sam Sneddon" : {
+      "emails" : [
+         "gsnedders@apple.com",
+         "me@gsnedders.com"
+      ],
+      "expertise" : "Web Standards, WPT",
+      "nicks" : [
+         "gsnedders"
+      ]
+   },
    "Sam Weinig" : {
       "emails" : [
          "sam@webkit.org",
