@@ -55,6 +55,10 @@ public:
 
     ~SandboxExtensionImpl()
     {
+        if (!m_token)
+            return;
+        auto length = strlen(m_token);
+        memset_s(m_token, length, 0, length);
         free(m_token);
     }
 
