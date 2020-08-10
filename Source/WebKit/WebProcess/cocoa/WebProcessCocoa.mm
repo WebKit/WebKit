@@ -217,6 +217,14 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
             MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
             MGGetBoolAnswer(kMGQHasExtendedColorDisplay);
             MGGetFloat32Answer(kMGQDeviceCornerRadius, 0);
+            MGGetBoolAnswer(kMGQSupportsForceTouch);
+
+            auto answer = adoptCF(MGCopyAnswer(kMGQBluetoothCapability, nullptr));
+            answer = MGCopyAnswer(kMGQDeviceProximityCapability, nullptr);
+            answer = MGCopyAnswer(kMGQDeviceSupportsARKit, nullptr);
+            answer = MGCopyAnswer(kMGQTimeSyncCapability, nullptr);
+            answer = MGCopyAnswer(kMGQWAPICapability, nullptr);
+            answer = MGCopyAnswer(kMGQMainDisplayRotation, nullptr);
 #endif
             ok = extension->revoke();
             ASSERT_UNUSED(ok, ok);

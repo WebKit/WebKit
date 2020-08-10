@@ -1,3 +1,58 @@
+2020-08-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r265215. rdar://problem/66643571
+
+    Finalize the list of MobileGestalt queries needed to populate the in-memory cache in the WebContent process
+    https://bugs.webkit.org/show_bug.cgi?id=215095
+    <rdar://problem/66034080>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebCore/PAL:
+    
+    Declare constants for MobileGestalt questions.
+    
+    * pal/spi/ios/MobileGestaltSPI.h:
+    
+    Source/WebKit:
+    
+    When the MobileGestalt cache is invalid, we issue a temporary extension to the MobileGestalt daemon for the WebContent process,
+    which will populate the in-memory cache by doing a set of MobileGestalt queries before revoking the extension. This patch
+    finalizes the list of MobileGestalt queries needed to populate the in-memory cache in the WebContent process on iOS before
+    revoking the temporary extension to com.apple.mobilegestalt.xpc. This list was compiled by querying every possible MobileGestalt
+    key after the temporary extension was revoked, and make a note of all queries that were contacting the MobileGestalt daemon to
+    get the answer. The added queries in this patch should make the list complete, and ensures that all cachable values are in the
+    in-memory cache before revoking the extension, since every possible MobileGestalt query was tested. This again means that users
+    that have an invalid MobileGestalt cache, will have access to the exact same MobileGestalt values, as those users who have a
+    valid MobileGestalt cache.
+    
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::platformInitializeWebProcess):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265215 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-03  Per Arne Vollan  <pvollan@apple.com>
+
+            Finalize the list of MobileGestalt queries needed to populate the in-memory cache in the WebContent process
+            https://bugs.webkit.org/show_bug.cgi?id=215095
+            <rdar://problem/66034080>
+
+            Reviewed by Geoffrey Garen.
+
+            When the MobileGestalt cache is invalid, we issue a temporary extension to the MobileGestalt daemon for the WebContent process,
+            which will populate the in-memory cache by doing a set of MobileGestalt queries before revoking the extension. This patch
+            finalizes the list of MobileGestalt queries needed to populate the in-memory cache in the WebContent process on iOS before
+            revoking the temporary extension to com.apple.mobilegestalt.xpc. This list was compiled by querying every possible MobileGestalt
+            key after the temporary extension was revoked, and make a note of all queries that were contacting the MobileGestalt daemon to
+            get the answer. The added queries in this patch should make the list complete, and ensures that all cachable values are in the
+            in-memory cache before revoking the extension, since every possible MobileGestalt query was tested. This again means that users
+            that have an invalid MobileGestalt cache, will have access to the exact same MobileGestalt values, as those users who have a
+            valid MobileGestalt cache.
+
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::platformInitializeWebProcess):
+
 2020-08-05  Russell Epstein  <repstein@apple.com>
 
         Revert r265115. rdar://problem/66552761
