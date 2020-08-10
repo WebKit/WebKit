@@ -1003,3 +1003,6 @@ webkit.org/b/215299 imported/w3c/web-platform-tests/css/css-logical/parsing/marg
 webkit.org/b/215335 [ Release ] webanimations/css-transition-retargeting-during-ready-promise.html [ Pass Failure ]
 
 webkit.org/b/215336 [ Release ] svg/text/hidpi-text-selection-rect-position.html [ Pass Failure ]
+
+webkit.org/b/215339 [ Release ] imported/w3c/web-platform-tests/IndexedDB/blob-delete-objectstore-db.any.html [ Pass Failure ]
+

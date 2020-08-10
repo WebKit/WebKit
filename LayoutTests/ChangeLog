@@ -1,3 +1,12 @@
+2020-08-10  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk1 Release ] imported/w3c/web-platform-tests/IndexedDB/blob-delete-objectstore-db.any.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215339
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Shaping can be performed on glyphIDs from the wrong font
