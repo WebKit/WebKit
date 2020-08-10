@@ -1,3 +1,9 @@
+2020-08-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unmark imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html as flaky.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-10  Hector Lopez  <hector_i_lopez@apple.com>
 
         REGRESSION [ macOS ] fullscreen/video-controls-rtl.html is a flaky failure
