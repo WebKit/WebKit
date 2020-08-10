@@ -1,3 +1,12 @@
+2020-08-10  Patrick Angle  <pangle@apple.com>
+
+        Add myself (Patrick Angle) to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=215328
+
+        Reviewed by Brian Burg.
+
+        * Scripts/webkitpy/common/config/contributors.json: Added myself.
+
 2020-08-10  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Handle logs with unicode characters in ews emails
