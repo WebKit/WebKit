@@ -1,5 +1,36 @@
 2020-08-10  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r265230. rdar://problem/66643993
+
+    Null check parentProcessConnection when creating a NetworkDataTaskCocoa
+    https://bugs.webkit.org/show_bug.cgi?id=215109
+    <rdar://problem/64853922>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2020-08-03
+    Reviewed by Chris Dumez.
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+    Null check parentProcessConnection.  Otherwise, we can dereference null and crash between disconnecting with the parent process and terminating,
+    which isn't the worst time to crash because we are trying to terminate anyways.  But we may as well not crash.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265230 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-03  Alex Christensen  <achristensen@webkit.org>
+
+            Null check parentProcessConnection when creating a NetworkDataTaskCocoa
+            https://bugs.webkit.org/show_bug.cgi?id=215109
+            <rdar://problem/64853922>
+
+            Reviewed by Chris Dumez.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+            Null check parentProcessConnection.  Otherwise, we can dereference null and crash between disconnecting with the parent process and terminating,
+            which isn't the worst time to crash because we are trying to terminate anyways.  But we may as well not crash.
+
+2020-08-10  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r265215. rdar://problem/66643571
 
     Finalize the list of MobileGestalt queries needed to populate the in-memory cache in the WebContent process

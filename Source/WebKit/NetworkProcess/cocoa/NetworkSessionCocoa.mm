@@ -1315,8 +1315,10 @@ void NetworkSessionCocoa::initializeEphemeralStatelessSession(NavigatingToAppBou
 SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
-    if (isParentProcessAFullWebBrowser(networkProcess().parentProcessConnection()->getAuditToken()))
-        shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
+    if (auto* connection = networkProcess().parentProcessConnection()) {
+        if (isParentProcessAFullWebBrowser(connection->getAuditToken()))
+            shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
+    }
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* storageSession = networkStorageSession()) {
         auto firstParty = WebCore::RegistrableDomain(request.firstPartyForCookies());
