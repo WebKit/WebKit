@@ -1,3 +1,16 @@
+2020-08-09  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r265392.
+        https://bugs.webkit.org/show_bug.cgi?id=215316
+
+        Crash ARM64 / ARM64E JSC tests
+
+        Reverted changeset:
+
+        "REGRESSION(r261159) PokerBros only shows black screen"
+        https://bugs.webkit.org/show_bug.cgi?id=215293
+        https://trac.webkit.org/changeset/265392
+
 2020-08-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make CommandLine on Worker agent (JSC shell feature for testing) work on iOS
