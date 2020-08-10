@@ -38,6 +38,7 @@
 #include "HTMLDivElement.h"
 #include "HTMLMetaElement.h"
 #include "HTMLObjectElement.h"
+#include "HTMLVideoElement.h"
 #include "JSEventListener.h"
 #include "LayoutUnit.h"
 #include "NamedNodeMap.h"
@@ -983,5 +984,30 @@ bool Quirks::needsHDRPixelDepthQuirk() const
     return *m_needsHDRPixelDepthQuirk;
 }
 
+// FIXME: remove this once rdar://66739450 has been fixed.
+bool Quirks::needsAkamaiMediaPlayerQuirk(const HTMLVideoElement& element) const
+{
+#if PLATFORM(IOS_FAMILY)
+    // Akamai Media Player begins polling `webkitDisplayingFullscreen` every 100ms immediately after calling
+    // `webkitEnterFullscreen` and exits fullscreen as soon as it returns false. r262456 changed the HTMLMediaPlayer state
+    // machine so `webkitDisplayingFullscreen` doesn't return true until the fullscreen window has been opened in the
+    // UI process, which causes Akamai Media Player to frequently exit fullscreen mode immediately.
+
+    static NeverDestroyed<const AtomString> akamaiHTML5(MAKE_STATIC_STRING_IMPL("akamai-html5"));
+    static NeverDestroyed<const AtomString> akamaiMediaElement(MAKE_STATIC_STRING_IMPL("akamai-media-element"));
+
+    if (!needsQuirks())
+        return false;
+
+    if (!element.hasClass())
+        return false;
+
+    auto& classNames = element.classNames();
+    return classNames.contains(akamaiHTML5) && classNames.contains(akamaiMediaElement);
+#else
+    UNUSED_PARAM(element);
+    return false;
+#endif
+}
 
 }

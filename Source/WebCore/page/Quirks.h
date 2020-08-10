@@ -110,6 +110,8 @@ public:
 
     bool needsVP9FullRangeFlagQuirk() const;
     bool needsHDRPixelDepthQuirk() const;
+    
+    bool needsAkamaiMediaPlayerQuirk(const HTMLVideoElement&) const;
 
 private:
     bool needsQuirks() const;
