@@ -1,3 +1,15 @@
+2020-08-10  Peng Liu  <peng.liu6@apple.com>
+
+        MobileSafari crashes at WebCore: -[WebAVPlayerController seekToTime:toleranceBefore:toleranceAfter:]
+        https://bugs.webkit.org/show_bug.cgi?id=215332
+
+        Reviewed by Eric Carlson.
+
+        Add a NULL pointer check to fix a crash.
+
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController seekToTime:toleranceBefore:toleranceAfter:]):
+
 2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Shaping can be performed on glyphIDs from the wrong font
