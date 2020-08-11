@@ -4133,7 +4133,11 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
             completionHandler({ });
             return;
         }
-        if (is<HTMLTextFormControlElement>(element)) {
+
+        if (!request.rect.isEmpty()) {
+            rangeOfInterestStart = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.minXMinYCorner()));
+            rangeOfInterestEnd = closestEditablePositionInElementForAbsolutePoint(*element, roundedIntPoint(request.rect.maxXMaxYCorner()));
+        } else if (is<HTMLTextFormControlElement>(element)) {
             auto& textFormControlElement = downcast<HTMLTextFormControlElement>(*element);
             rangeOfInterestStart = textFormControlElement.visiblePositionForIndex(0);
             rangeOfInterestEnd = textFormControlElement.visiblePositionForIndex(textFormControlElement.value().length());
@@ -4145,17 +4149,19 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         // FIXME: We might need to be a bit more careful that we get something useful (test the other corners?).
         rangeOfInterestStart = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.minXMinYCorner());
         rangeOfInterestEnd = visiblePositionForPointInRootViewCoordinates(frame.get(), request.rect.maxXMaxYCorner());
-        if (rangeOfInterestEnd < rangeOfInterestStart)
-            std::exchange(rangeOfInterestStart, rangeOfInterestEnd);
-        if (request.options.contains(DocumentEditingContextRequest::Options::SpatialAndCurrentSelection)) {
-            if (selectionStart < rangeOfInterestStart)
-                rangeOfInterestStart = selectionStart;
-            if (selectionEnd > rangeOfInterestEnd)
-                rangeOfInterestEnd = selectionEnd;
-        }
     } else if (!selection.isNone()) {
         rangeOfInterestStart = selectionStart;
         rangeOfInterestEnd = selectionEnd;
+    }
+
+    if (rangeOfInterestEnd < rangeOfInterestStart)
+        std::exchange(rangeOfInterestStart, rangeOfInterestEnd);
+
+    if (request.options.contains(DocumentEditingContextRequest::Options::SpatialAndCurrentSelection)) {
+        if (selectionStart < rangeOfInterestStart)
+            rangeOfInterestStart = selectionStart;
+        if (selectionEnd > rangeOfInterestEnd)
+            rangeOfInterestEnd = selectionEnd;
     }
 
     if (rangeOfInterestStart.isNull() || rangeOfInterestStart.isOrphan() || rangeOfInterestEnd.isNull() || rangeOfInterestEnd.isOrphan()) {

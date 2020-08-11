@@ -487,6 +487,88 @@ static CGRect CGRectFromJSONEncodedDOMRectJSValue(id jsValue)
     return CGRectMake([domRect[@"left"] floatValue], [domRect[@"top"] floatValue], [domRect[@"width"] floatValue], [domRect[@"height"] floatValue]);
 }
 
+TEST(DocumentEditingContext, SpatialRequest_RectEncompassingInput)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+
+    // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
+
+    NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    EXPECT_EQ(1UL, textInputContexts.count);
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatial, UITextGranularityWord, 200, [webView frame], textInputContexts[0])];
+    EXPECT_NSSTRING_EQ("The quick brown fox ", context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NSSTRING_EQ("jumps over the lazy dog.", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialRequest_RectBeforeInput)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+
+    // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
+
+    NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    EXPECT_EQ(1UL, textInputContexts.count);
+
+    auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
+    documentRect.origin.x -= glyphWidth * 2;
+    documentRect.origin.y -= glyphWidth * 2;
+    documentRect.size.width = glyphWidth;
+    documentRect.size.height = glyphWidth;
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatial, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
+    EXPECT_NULL(context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NSSTRING_EQ("The quick brown fox jumps over the lazy dog.", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialRequest_RectInsideInput)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+
+    // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
+
+    NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    EXPECT_EQ(1UL, textInputContexts.count);
+
+    auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
+    documentRect.origin.x += (documentRect.size.width / 2) - (glyphWidth * 2);
+    documentRect.origin.y += (documentRect.size.height / 2) - (glyphWidth * 2);
+    documentRect.size.width = glyphWidth;
+    documentRect.size.height = glyphWidth;
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatial, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
+    EXPECT_NSSTRING_EQ("The quick b", context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NSSTRING_EQ("rown fox jumps over the lazy dog.", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialRequest_RectAfterInput)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+
+    // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <textarea id='test' style='width: 26em; margin: 200px 0 0 200px; padding: 0;'>The quick brown fox jumps over the lazy dog.</textarea> after")]; // Word wraps "over" onto next line
+
+    NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    EXPECT_EQ(1UL, textInputContexts.count);
+
+    auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
+    documentRect.origin.x += documentRect.size.width + glyphWidth;
+    documentRect.origin.y += documentRect.size.height + glyphWidth;
+    documentRect.size.width = glyphWidth;
+    documentRect.size.height = glyphWidth;
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatial, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
+    EXPECT_NSSTRING_EQ("The quick brown fox jumps over the lazy dog.", context.contextBefore);
+    EXPECT_NULL(context.selectedText);
+    EXPECT_NULL(context.contextAfter);
+}
+
 TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeRangeSelection)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
@@ -599,6 +681,119 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAroundCaretSe
     EXPECT_NSSTRING_EQ("quick brown fox ", context.contextBefore);
     EXPECT_NULL(context.selectedText);
     EXPECT_NSSTRING_EQ("jumps over the", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectEncompassingInputWithSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+
+    // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(fox_jumps_over, 0, fox_jumps_over, 1)"];
+
+    NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    EXPECT_EQ(1UL, textInputContexts.count);
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, [webView frame], textInputContexts[0])];
+    EXPECT_NSSTRING_EQ("The quick brown ", context.contextBefore);
+    EXPECT_NSSTRING_EQ("fox jumps over", context.selectedText);
+    EXPECT_NSSTRING_EQ(" the lazy dog.", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeInputWithSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+
+    // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(fox_jumps_over, 0, fox_jumps_over, 1)"];
+
+    NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    EXPECT_EQ(1UL, textInputContexts.count);
+
+    auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
+    documentRect.origin.x -= glyphWidth * 2;
+    documentRect.origin.y -= glyphWidth * 2;
+    documentRect.size.width = glyphWidth;
+    documentRect.size.height = glyphWidth;
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
+    EXPECT_NSSTRING_EQ("The quick brown ", context.contextBefore);
+    EXPECT_NSSTRING_EQ("fox jumps over", context.selectedText);
+    EXPECT_NSSTRING_EQ(" the lazy dog.", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectBeforeSelectionInInput)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+
+    // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(fox_jumps_over, 0, fox_jumps_over, 1)"];
+
+    NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    EXPECT_EQ(1UL, textInputContexts.count);
+
+    auto selectionBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"fox_jumps_over.getBoundingClientRect().toJSON()"]);
+
+    auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
+    documentRect.origin.x = ((documentRect.origin.x + selectionBoxRect.origin.x) / 2) - (glyphWidth * 2);
+    documentRect.origin.y = ((documentRect.origin.y + selectionBoxRect.origin.y) / 2) - (glyphWidth * 2);
+    documentRect.size.width = glyphWidth;
+    documentRect.size.height = glyphWidth;
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
+    EXPECT_NSSTRING_EQ("The quick brown ", context.contextBefore);
+    EXPECT_NSSTRING_EQ("fox jumps over", context.selectedText);
+    EXPECT_NSSTRING_EQ(" the lazy dog.", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterSelectionInInput)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+
+    // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(fox_jumps_over, 0, fox_jumps_over, 1)"];
+
+    NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    EXPECT_EQ(1UL, textInputContexts.count);
+
+    auto selectionBoxRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"fox_jumps_over.getBoundingClientRect().toJSON()"]);
+
+    auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
+    documentRect.origin.x = ((documentRect.origin.x + documentRect.size.width + selectionBoxRect.origin.x + selectionBoxRect.size.width) / 2) + glyphWidth;
+    documentRect.origin.y = ((documentRect.origin.y + documentRect.size.height + selectionBoxRect.origin.y + selectionBoxRect.size.height) / 2) + glyphWidth;
+    documentRect.size.width = glyphWidth;
+    documentRect.size.height = glyphWidth;
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
+    EXPECT_NSSTRING_EQ("The quick brown ", context.contextBefore);
+    EXPECT_NSSTRING_EQ("fox jumps over", context.selectedText);
+    EXPECT_NSSTRING_EQ(" the lazy dog.", context.contextAfter);
+}
+
+TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterInputWithSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 980, 600)]);
+
+    // Use "padding: 0" as the default user-agent stylesheet can effect text wrapping.
+    [webView synchronouslyLoadHTMLString:applyAhemStyle(@"before <span contenteditable id='test' style='display: inline-block; width: 26em; margin: 200px 0 0 200px;'>The quick brown <span id='fox_jumps_over'>fox jumps over</span> the lazy dog.</span> after")]; // Word wraps "over" onto next line
+    [webView stringByEvaluatingJavaScript:@"getSelection().setBaseAndExtent(fox_jumps_over, 0, fox_jumps_over, 1)"];
+
+    NSArray<_WKTextInputContext *> *textInputContexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
+    EXPECT_EQ(1UL, textInputContexts.count);
+
+    auto documentRect = CGRectFromJSONEncodedDOMRectJSValue([webView objectByEvaluatingJavaScript:@"test.getBoundingClientRect().toJSON()"]);
+    documentRect.origin.x += documentRect.size.width + (glyphWidth * 2);
+    documentRect.origin.y += documentRect.size.height + (glyphWidth * 2);
+    documentRect.size.width = glyphWidth;
+    documentRect.size.height = glyphWidth;
+
+    UIWKDocumentContext *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, documentRect, textInputContexts[0])];
+    EXPECT_NSSTRING_EQ("The quick brown ", context.contextBefore);
+    EXPECT_NSSTRING_EQ("fox jumps over", context.selectedText);
+    EXPECT_NSSTRING_EQ(" the lazy dog.", context.contextAfter);
 }
 
 TEST(DocumentEditingContext, RequestRectsInTextAreaAcrossWordWrappedLine)
