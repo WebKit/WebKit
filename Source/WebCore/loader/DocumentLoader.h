@@ -331,7 +331,7 @@ public:
     LegacyOverflowScrollingTouchPolicy legacyOverflowScrollingTouchPolicy() const { return m_legacyOverflowScrollingTouchPolicy; }
     void setLegacyOverflowScrollingTouchPolicy(LegacyOverflowScrollingTouchPolicy policy) { m_legacyOverflowScrollingTouchPolicy = policy; }
 
-    MouseEventPolicy mouseEventPolicy() const { return m_mouseEventPolicy; }
+    WEBCORE_EXPORT MouseEventPolicy mouseEventPolicy() const;
     void setMouseEventPolicy(MouseEventPolicy policy) { m_mouseEventPolicy = policy; }
 
     void addSubresourceLoader(ResourceLoader*);

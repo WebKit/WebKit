@@ -72,6 +72,7 @@
 #include "PlatformStrategies.h"
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
+#include "Quirks.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
@@ -1252,6 +1253,19 @@ void DocumentLoader::applyPoliciesToSettings()
 #if ENABLE(TEXT_AUTOSIZING)
     m_frame->settings().setIdempotentModeAutosizingOnlyHonorsPercentages(m_idempotentModeAutosizingOnlyHonorsPercentages);
 #endif
+}
+
+MouseEventPolicy DocumentLoader::mouseEventPolicy() const
+{
+#if ENABLE(IOS_TOUCH_EVENTS)
+    if (m_mouseEventPolicy == MouseEventPolicy::Default) {
+        if (auto* document = this->document()) {
+            if (document->quirks().shouldSynthesizeTouchEvents())
+                return MouseEventPolicy::SynthesizeTouchEvents;
+        }
+    }
+#endif
+    return m_mouseEventPolicy;
 }
 
 void DocumentLoader::attachToFrame(Frame& frame)

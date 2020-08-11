@@ -66,6 +66,14 @@ static inline OptionSet<AutoplayQuirk> allowedAutoplayQuirks(Document& document)
     return loader->allowedAutoplayQuirks();
 }
 
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+static inline bool isYahooMail(Document& document)
+{
+    auto host = document.topDocument().url().host();
+    return startsWithLettersIgnoringASCIICase(host, "mail.") && topPrivatelyControlledDomain(host.toString()).startsWith("yahoo.");
+}
+#endif
+
 Quirks::Quirks(Document& document)
     : m_document(makeWeakPtr(document))
 {
@@ -488,6 +496,18 @@ bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType,
 
 #endif
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+bool Quirks::shouldSynthesizeTouchEvents() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_shouldSynthesizeTouchEventsQuirk)
+        m_shouldSynthesizeTouchEventsQuirk = isYahooMail(*m_document);
+    return m_shouldSynthesizeTouchEventsQuirk.value();
+}
+#endif
+
 bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
 {
     if (!needsQuirks())
@@ -842,10 +862,8 @@ bool Quirks::shouldAvoidPastingImagesAsWebContent() const
         return false;
 
 #if PLATFORM(IOS_FAMILY)
-    if (!m_shouldAvoidPastingImagesAsWebContent) {
-        auto host = m_document->topDocument().url().host().toString();
-        m_shouldAvoidPastingImagesAsWebContent = host.startsWithIgnoringASCIICase("mail.") && topPrivatelyControlledDomain(host).startsWith("yahoo.");
-    }
+    if (!m_shouldAvoidPastingImagesAsWebContent)
+        m_shouldAvoidPastingImagesAsWebContent = isYahooMail(*m_document);
     return *m_shouldAvoidPastingImagesAsWebContent;
 #else
     return false;

@@ -1,3 +1,27 @@
+2020-08-10  Devin Rousso  <drousso@apple.com>
+
+        Add quirk to force touch events on mail.yahoo.com
+        https://bugs.webkit.org/show_bug.cgi?id=215329
+        <rdar://problem/59824469>
+
+        Reviewed by Darin Adler and Tim Horton.
+
+        <https://mail.yahoo.com/> serves a mobile site even in desktop browsing "mode", meaning
+        that certain actions, such as selecting an aufotill contact, expect mobile behaviors,
+        such as mouse events being dispatched after touch events rather than instantly (in the
+        case of a connected trackpad with an iPad). This quirk ensures always mobile behavior for
+        those actions, matching the expectations of <https://mail.yahoo.com/>.
+
+        * page/Quirks.h:
+        * page/Quirks.cpp:
+        (WebCore::isYahooMail): Added.
+        (WebCore::Quirks::shouldSynthesizeTouchEvents const): Added.
+        (WebCore::Quirks::shouldAvoidPastingImagesAsWebContent const):
+
+        * loader/DocumentLoader.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::mouseEventPolicy const):
+
 2020-08-10  Chris Dumez  <cdumez@apple.com>
 
         AuxiliaryProcess::didReceiveInvalidMessage() for WebPage::PerformDragControllerAction IPC
