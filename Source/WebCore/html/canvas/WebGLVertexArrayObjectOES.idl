@@ -25,7 +25,6 @@
 
 [
     NoInterfaceObject,
-    Conditional=WEBGL,
-    GenerateIsReachable=Impl
+    Conditional=WEBGL
 ] interface WebGLVertexArrayObjectOES {
 };

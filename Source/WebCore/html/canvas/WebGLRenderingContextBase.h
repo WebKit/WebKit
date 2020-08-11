@@ -56,10 +56,6 @@
 #include "JSDOMPromiseDeferred.h"
 #endif
 
-namespace JSC {
-class SlotVisitor;
-}
-
 namespace WebCore {
 
 class ANGLEInstancedArrays;
@@ -401,8 +397,6 @@ public:
     void forceContextLost() override;
     void recycleContext() override;
     void dispatchContextChangedNotification() override;
-
-    virtual void visitReferencedJSWrappers(JSC::SlotVisitor&);
 
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);

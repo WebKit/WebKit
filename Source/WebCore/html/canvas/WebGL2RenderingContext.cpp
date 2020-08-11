@@ -66,8 +66,6 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
-#include <JavaScriptCore/SlotVisitor.h>
-#include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -3010,35 +3008,6 @@ bool WebGL2RenderingContext::checkAndTranslateAttachments(const char* functionNa
         }
     }
     return true;
-}
-
-void WebGL2RenderingContext::visitReferencedJSWrappers(JSC::SlotVisitor& visitor)
-{
-    WebGLRenderingContextBase::visitReferencedJSWrappers(visitor);
-
-    visitor.addOpaqueRoot(m_readFramebufferBinding.get());
-    if (m_readFramebufferBinding)
-        m_readFramebufferBinding->visitReferencedJSWrappers(visitor);
-
-    visitor.addOpaqueRoot(m_boundTransformFeedback.get());
-    if (m_boundTransformFeedback)
-        m_boundTransformFeedback->visitReferencedJSWrappers(visitor);
-
-    visitor.addOpaqueRoot(m_boundCopyReadBuffer.get());
-    visitor.addOpaqueRoot(m_boundCopyWriteBuffer.get());
-    visitor.addOpaqueRoot(m_boundPixelPackBuffer.get());
-    visitor.addOpaqueRoot(m_boundPixelUnpackBuffer.get());
-    visitor.addOpaqueRoot(m_boundTransformFeedbackBuffer.get());
-    visitor.addOpaqueRoot(m_boundUniformBuffer.get());
-
-    for (auto& buffer : m_boundIndexedUniformBuffers)
-        visitor.addOpaqueRoot(buffer.get());
-
-    for (auto& entry : m_activeQueries)
-        visitor.addOpaqueRoot(entry.value.get());
-
-    for (auto& entry : m_boundSamplers)
-        visitor.addOpaqueRoot(entry.get());
 }
 
 GCGLenum WebGL2RenderingContext::baseInternalFormatFromInternalFormat(GCGLenum internalformat)

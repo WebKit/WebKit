@@ -1,3 +1,17 @@
+2020-08-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r265502.
+        https://bugs.webkit.org/show_bug.cgi?id=215396
+
+        Needs locking to avoid flaky GC-related crashes
+
+        Reverted changeset:
+
+        "[WebGL2] expando-loss and expando-loss-2 conformance tests
+        are failing"
+        https://bugs.webkit.org/show_bug.cgi?id=214765
+        https://trac.webkit.org/changeset/265502
+
 2020-08-11  Jon Davis  <jond@apple.com>
 
         Add privacy and security keywords to feature status entries

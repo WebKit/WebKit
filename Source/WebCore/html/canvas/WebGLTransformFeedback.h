@@ -30,10 +30,6 @@
 #include "WebGL2RenderingContext.h"
 #include "WebGLSharedObject.h"
 
-namespace JSC {
-class SlotVisitor;
-}
-
 namespace WebCore {
 
 class WebGLTransformFeedback final : public WebGLSharedObject {
@@ -65,9 +61,6 @@ public:
     void unbindBuffer(WebGLBuffer&);
     
     bool hasEnoughBuffers(GCGLuint numRequired) const;
-
-    void visitReferencedJSWrappers(JSC::SlotVisitor&);
-
 private:
     WebGLTransformFeedback(WebGL2RenderingContext&);
 

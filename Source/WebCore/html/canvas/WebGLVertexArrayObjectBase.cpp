@@ -29,8 +29,6 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLRenderingContextBase.h"
-#include <JavaScriptCore/SlotVisitor.h>
-#include <JavaScriptCore/SlotVisitorInlines.h>
 
 namespace WebCore {
 
@@ -106,14 +104,7 @@ void WebGLVertexArrayObjectBase::setVertexAttribDivisor(GCGLuint index, GCGLuint
 {
     m_vertexAttribState[index].divisor = divisor;
 }
-
-void WebGLVertexArrayObjectBase::visitReferencedJSWrappers(JSC::SlotVisitor& visitor)
-{
-    visitor.addOpaqueRoot(m_boundElementArrayBuffer.get());
-    for (auto& state : m_vertexAttribState)
-        visitor.addOpaqueRoot(state.bufferBinding.get());
-}
-
+    
 }
 
 #endif // ENABLE(WEBGL)

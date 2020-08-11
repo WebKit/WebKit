@@ -25,6 +25,5 @@
 
 [
     Conditional=WEBGL,
-    GenerateIsReachable=Impl
 ] interface WebGLBuffer {
 };

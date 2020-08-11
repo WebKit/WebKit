@@ -33,8 +33,6 @@
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
-#include <JavaScriptCore/SlotVisitor.h>
-#include <JavaScriptCore/SlotVisitorInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -196,12 +194,6 @@ bool WebGLProgram::detachShader(WebGLShader* shader)
     default:
         return false;
     }
-}
-
-void WebGLProgram::visitReferencedJSWrappers(JSC::SlotVisitor& visitor)
-{
-    visitor.addOpaqueRoot(m_vertexShader.get());
-    visitor.addOpaqueRoot(m_fragmentShader.get());
 }
 
 void WebGLProgram::cacheActiveAttribLocations(GraphicsContextGLOpenGL* context3d)

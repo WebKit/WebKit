@@ -31,10 +31,6 @@
 #include "WebGLBuffer.h"
 #include "WebGLContextObject.h"
 
-namespace JSC {
-class SlotVisitor;
-}
-
 namespace WebCore {
 
 class WebGLVertexArrayObjectBase : public WebGLContextObject {
@@ -71,8 +67,6 @@ public:
     void unbindBuffer(WebGLBuffer&);
 
     void setVertexAttribDivisor(GCGLuint index, GCGLuint divisor);
-
-    void visitReferencedJSWrappers(JSC::SlotVisitor&);
 
 protected:
     WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, Type);

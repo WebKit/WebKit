@@ -25,7 +25,6 @@
 
 [
     Conditional=WEBGL2,
-    EnabledAtRuntime=WebGL2,
-    GenerateIsReachable=Impl
+    EnabledAtRuntime=WebGL2
 ] interface WebGLTransformFeedback {
 };

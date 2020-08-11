@@ -34,10 +34,6 @@
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
-namespace JSC {
-class SlotVisitor;
-}
-
 namespace WebCore {
 
 class ScriptExecutionContext;
@@ -83,8 +79,6 @@ public:
         cacheInfoIfNeeded();
         return m_requiredTransformFeedbackBufferCount;
     }
-
-    void visitReferencedJSWrappers(JSC::SlotVisitor&);
 
 private:
     WebGLProgram(WebGLRenderingContextBase&);
