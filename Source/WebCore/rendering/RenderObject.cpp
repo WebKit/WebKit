@@ -1189,6 +1189,20 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
         if (renderer.continuation())
             stream << " continuation->(" << renderer.continuation() << ")";
     }
+
+    if (is<RenderBox>(*this)) {
+        const auto& box = downcast<RenderBox>(*this);
+        if (box.hasRenderOverflow()) {
+            auto layoutOverflow = box.layoutOverflowRect();
+            stream << " (layout overflow " << layoutOverflow.x().toInt() << "," << layoutOverflow.y().toInt() << " " << layoutOverflow.width().toInt() << "x" << layoutOverflow.height().toInt() << ")";
+            
+            if (box.hasVisualOverflow()) {
+                auto visualOverflow = box.visualOverflowRect();
+                stream << " (visual overflow " << visualOverflow.x().toInt() << "," << visualOverflow.y().toInt() << " " << visualOverflow.width().toInt() << "x" << visualOverflow.height().toInt() << ")";
+            }
+        }
+    }
+
     outputRegionsInformation(stream);
     if (needsLayout()) {
         stream << " layout->";

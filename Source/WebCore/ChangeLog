@@ -1,3 +1,16 @@
+2020-08-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Have render tree dumps show overflow information
+        https://bugs.webkit.org/show_bug.cgi?id=215385
+
+        Reviewed by Zalan Bujtas.
+
+        Add code to RenderObject::outputRenderObject() to show layout/visual overflow, as we do
+        for render tree dumps.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::outputRenderObject const):
+
 2020-08-11  Brady Eidson  <beidson@apple.com>
 
         Add a "use stored credentials" setting to WKWebView.
