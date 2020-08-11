@@ -1,3 +1,31 @@
+2020-08-11  Timothy Hatcher  <timothy@apple.com>
+
+        Deferred WKUserScripts are exponentially injected on preloaded pages with frames.
+        https://bugs.webkit.org/show_bug.cgi?id=215382
+        rdar://problem/66837802
+
+        Reviewed by Sam Weinig.
+
+        When defering a script in a frame it was previously added to a vector per-page.
+        Later when notified to inject the defered scripts, the page would iterate over all
+        the frames and evaluate the scripts on each frame. Since this vector had all the
+        frame's scripts the evaluations would be multiplied by the number of frames.
+
+        Now the defered scripts are stored per-frame and the page asks each frame to
+        inject the defered scripts.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScripts):
+        (WebCore::Frame::addUserScriptAwaitingNotification):
+        (WebCore::Frame::injectUserScriptsAwaitingNotification):
+        * page/Frame.h:
+        * page/Page.cpp:
+        (WebCore::Page::notifyToInjectUserScripts):
+        (WebCore::Page::addUserScriptAwaitingNotification): Deleted.
+        * page/Page.h:
+        * page/Quirks.cpp:
+        (WebCore::Quirks::triggerOptionalStorageAccessQuirk const):
+
 2020-08-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text input autocorrect="off" attribute ignored on Mac

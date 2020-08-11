@@ -945,6 +945,18 @@ TEST(WKUserContentController, UserScriptNotification)
     EXPECT_FALSE(webView3._deferrableUserScriptsNeedNotification);
     EXPECT_WK_STREQ([delegate waitForAlert], "waited for notification");
     EXPECT_WK_STREQ([delegate waitForAlert], "document parsing ended");
+
+    TestWKWebView *webView4 = [[TestWKWebView new] autorelease];
+    EXPECT_TRUE(webView4._deferrableUserScriptsNeedNotification);
+    [webView4.configuration.userContentController addUserScript:waitsForNotification];
+    [webView4.configuration.userContentController addUserScript:documentEnd];
+    webView4.UIDelegate = delegate;
+    [webView4 loadTestPageNamed:@"simple-iframe"];
+    [webView4 _notifyUserScripts];
+
+    // If this is broken, two alerts would appear back-to-back with the same text due to the frame.
+    EXPECT_WK_STREQ([delegate waitForAlert], "waited for notification");
+    EXPECT_WK_STREQ([delegate waitForAlert], "document parsing ended");
 }
 
 @interface AsyncScriptMessageHandler : NSObject <WKScriptMessageHandlerWithReply>

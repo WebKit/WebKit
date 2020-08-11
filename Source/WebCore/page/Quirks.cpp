@@ -965,11 +965,9 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(const Elem
             auto* abstractFrame = proxy->frame();
             if (abstractFrame && is<Frame>(*abstractFrame)) {
                 auto& frame = downcast<Frame>(*abstractFrame);
-                if (auto* page = frame.page()) {
-                    auto world = ScriptController::createWorld("kinjaComQuirkWorld", ScriptController::WorldType::User);
-                    page->addUserScriptAwaitingNotification(world.get(), kinjaLoginUserScript);
-                    return Quirks::StorageAccessResult::ShouldCancelEvent;
-                }
+                auto world = ScriptController::createWorld("kinjaComQuirkWorld", ScriptController::WorldType::User);
+                frame.addUserScriptAwaitingNotification(world.get(), kinjaLoginUserScript);
+                return Quirks::StorageAccessResult::ShouldCancelEvent;
             }
         }
     }

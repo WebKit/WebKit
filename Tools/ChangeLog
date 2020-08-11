@@ -1,3 +1,14 @@
+2020-08-11  Timothy Hatcher  <timothy@apple.com>
+
+        Deferred WKUserScripts are exponentially injected on preloaded pages with frames.
+        https://bugs.webkit.org/show_bug.cgi?id=215382
+        rdar://problem/66837802
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UserContentController.mm:
+        (TEST):
+
 2020-08-11  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation crashes when replacing element with img role
