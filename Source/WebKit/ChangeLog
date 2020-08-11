@@ -1,3 +1,17 @@
+2020-08-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Deny access to directory for compiled WebKit sandboxes
+        https://bugs.webkit.org/show_bug.cgi?id=215384
+
+        Reviewed by Brent Fulgham.
+
+        A WebKit process on macOS should not be allowed access to the directory containing compiled sandboxes
+        after entering the sandbox itself.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-08-11  Tim Horton  <timothy_horton@apple.com>
 
         iOS: Scrolling and touch events sporadically stop working after navigating
