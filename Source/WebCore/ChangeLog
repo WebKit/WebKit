@@ -1,5 +1,12 @@
 2020-08-11  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, address post-landing review comment from Darin for r265536.
+
+        * Modules/webaudio/WaveShaperDSPKernel.cpp:
+        (WebCore::WaveShaperDSPKernel::processCurve):
+
+2020-08-11  Chris Dumez  <cdumez@apple.com>
+
         Fix WaveShapperNode's waveshaping curve implementation
         https://bugs.webkit.org/show_bug.cgi?id=215391
 

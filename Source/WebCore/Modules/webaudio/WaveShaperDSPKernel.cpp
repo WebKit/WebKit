@@ -101,7 +101,7 @@ void WaveShaperDSPKernel::processCurve(const float* source, float* destination, 
     for (unsigned i = 0; i < framesToProcess; ++i) {
         const float input = source[i];
 
-        float v = (curveLength - 1) * 0.5 * (input + 1);
+        float v = (curveLength - 1) * 0.5f * (input + 1);
         if (v < 0)
             destination[i] = curveData[0];
         else if (v >= curveLength - 1)
