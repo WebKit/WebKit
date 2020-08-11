@@ -107,7 +107,7 @@ body[dir=rtl] .timeline-overview:not(.frames) > :matches(.scroll-container, .tim
 
 .timeline-overview.edit-instruments > .tree-outline.timelines .item:nth-child(even),
 .timeline-overview > .tree-outline.timelines .item:not(.selected):nth-child(even) {
-    background-color: hsla(0, 0%, 0%, 0.03);
+    background-color: hsla(0, 0%, var(--foreground-lightness), 0.03);
     background-clip: padding-box;
 }
 
@@ -211,7 +211,7 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
 }
 
 .timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:not(:first-child) {
-    border-top: 1px solid hsla(0, 0%, 0%, 0.09);
+    border-top: 1px solid hsla(0, 0%, var(--foreground-lightness), 0.09);
 }
 
 .timeline-overview:not(.has-scrollbar) > .scroll-container {

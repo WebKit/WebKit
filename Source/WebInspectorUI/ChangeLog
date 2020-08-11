@@ -1,3 +1,15 @@
+2020-08-11  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Dark Mode: Timelines: wrong background colors of even/odd items
+        https://bugs.webkit.org/show_bug.cgi?id=214565
+        <rdar://problem/65841762>
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/TimelineOverview.css:
+        (.timeline-overview.edit-instruments > .tree-outline.timelines .item:nth-child(even),):
+        (.timeline-overview:not(.frames) > .graphs-container > .timeline-overview-graph:not(:first-child)):
+
 2020-08-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Media & Animations timeline shouldn't shift when sorting
