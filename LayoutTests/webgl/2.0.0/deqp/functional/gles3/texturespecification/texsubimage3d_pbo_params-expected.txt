@@ -1,30 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texsubimage3d_pbo_params.html
-[ 1: FAIL ] specification.texsubimage3d_pbo.rgb8_offset_2d_array: Image comparison failed
-[ 2: FAIL ] specification.texsubimage3d_pbo.rgb8_offset_2d_array: Verification failed
-[ 3: FAIL ] specification.texsubimage3d_pbo.rgb8_offset_3d: Image comparison failed
-[ 4: FAIL ] specification.texsubimage3d_pbo.rgb8_offset_3d: Verification failed
-[ 5: FAIL ] specification.texsubimage3d_pbo.rgb8_image_height_2d_array: Image comparison failed
-[ 6: FAIL ] specification.texsubimage3d_pbo.rgb8_image_height_2d_array: Verification failed
-[ 7: FAIL ] specification.texsubimage3d_pbo.rgb8_image_height_3d: Image comparison failed
-[ 8: FAIL ] specification.texsubimage3d_pbo.rgb8_image_height_3d: Verification failed
-[ 9: FAIL ] specification.texsubimage3d_pbo.rgb8_row_length_2d_array: Image comparison failed
-[ 10: FAIL ] specification.texsubimage3d_pbo.rgb8_row_length_2d_array: Verification failed
-[ 11: FAIL ] specification.texsubimage3d_pbo.rgb8_row_length_3d: Image comparison failed
-[ 12: FAIL ] specification.texsubimage3d_pbo.rgb8_row_length_3d: Verification failed
-[ 13: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_images_2d_array: Image comparison failed
-[ 14: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_images_2d_array: Verification failed
-[ 15: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_images_3d: Image comparison failed
-[ 16: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_images_3d: Verification failed
-[ 17: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_rows_2d_array: Image comparison failed
-[ 18: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_rows_2d_array: Verification failed
-[ 19: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_rows_3d: Image comparison failed
-[ 20: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_rows_3d: Verification failed
-[ 21: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_pixels_2d_array: Image comparison failed
-[ 22: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_pixels_2d_array: Verification failed
-[ 23: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_pixels_3d: Image comparison failed
-[ 24: FAIL ] specification.texsubimage3d_pbo.rgb8_skip_pixels_3d: Verification failed
-[ 25: PASS ] specification.texsubimage3d_pbo.rgb8_skip_pixels_3d: successfullyParsed is true
-[ FAIL ] 24 failures reported
-
+[ PASS ] All tests passed

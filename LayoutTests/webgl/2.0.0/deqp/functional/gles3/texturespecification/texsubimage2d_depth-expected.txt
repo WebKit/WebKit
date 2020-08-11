@@ -1,10 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texsubimage2d_depth.html
-[ 1: FAIL ] specification.texsubimage2d_depth.depth_component32f: gl.createProgram()
-[ 2: FAIL ] specification.texsubimage2d_depth.depth_component24: gl.createProgram()
-[ 3: FAIL ] specification.texsubimage2d_depth.depth_component16: gl.createProgram()
-[ 4: FAIL ] specification.texsubimage2d_depth.depth24_stencil8: gl.createProgram()
-[ 5: PASS ] successfullyParsed is true
-[ FAIL ] 4 failures reported
-
+[ PASS ] All tests passed

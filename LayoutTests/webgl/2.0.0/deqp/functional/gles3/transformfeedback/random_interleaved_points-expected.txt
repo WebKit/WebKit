@@ -1,16 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/transformfeedback/random_interleaved_points.html
-[ 1: FAIL ] transform_feedback.random.interleaved.points.1: Result comparison failed for iteration elemCount1
-[ 2: FAIL ] transform_feedback.random.interleaved.points.2: gl.createProgram()
-[ 3: FAIL ] transform_feedback.random.interleaved.points.3: gl.createProgram()
-[ 4: FAIL ] transform_feedback.random.interleaved.points.4: gl.createProgram()
-[ 5: FAIL ] transform_feedback.random.interleaved.points.5: Result comparison failed for iteration elemCount1
-[ 6: FAIL ] transform_feedback.random.interleaved.points.6: gl.createProgram()
-[ 7: FAIL ] transform_feedback.random.interleaved.points.7: gl.createProgram()
-[ 8: FAIL ] transform_feedback.random.interleaved.points.8: gl.createProgram()
-[ 9: FAIL ] transform_feedback.random.interleaved.points.9: Result comparison failed for iteration elemCount1
-[ 10: FAIL ] transform_feedback.random.interleaved.points.10: gl.createProgram()
-[ 11: PASS ] successfullyParsed is true
-[ FAIL ] 10 failures reported
-
+[ PASS ] All tests passed

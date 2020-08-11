@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/extensions/promoted-extensions.html
+
 [ 1: PASS ] gl = wtu.create3DContext(undefined, undefined, 2) is non-null.
 [ 2: PASS ] ANGLE_instanced_arrays was not exposed in the WebGL 2.0 context
 [ 3: PASS ] EXT_blend_minmax was not exposed in the WebGL 2.0 context
@@ -18,4 +19,3 @@ Test: ../../resources/webgl_test_files/conformance2/extensions/promoted-extensio
 [ 15: PASS ] WEBGL_draw_buffers was not exposed in the WebGL 2.0 context
 [ 16: PASS ] successfullyParsed is true
 [ FAIL ] 4 failures reported
-

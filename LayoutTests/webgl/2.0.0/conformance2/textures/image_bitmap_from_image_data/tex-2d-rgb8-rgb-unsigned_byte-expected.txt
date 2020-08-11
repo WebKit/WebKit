@@ -2,4 +2,3 @@ This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/image_bitmap_from_image_data/tex-2d-rgb8-rgb-unsigned_byte.html
 [ PASS ] All tests passed
-

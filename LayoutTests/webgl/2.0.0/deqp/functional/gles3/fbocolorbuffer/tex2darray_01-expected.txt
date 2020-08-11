@@ -1,11 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fbocolorbuffer/tex2darray_01.html
-[ 1: FAIL ] color.tex2darray.rgba32ui: glError: INVALID_ENUM
-[ 2: FAIL ] color.tex2darray.srgb8_alpha8: gl.createProgram()
-[ 3: FAIL ] color.tex2darray.rgb565: glError: INVALID_ENUM
-[ 4: FAIL ] color.tex2darray.rg8i: gl.createProgram()
-[ 5: FAIL ] color.tex2darray.r8: glError: INVALID_ENUM
-[ 6: PASS ] color.tex2darray.rg32f: successfullyParsed is true
-[ FAIL ] 5 failures reported
-
+[ PASS ] All tests passed

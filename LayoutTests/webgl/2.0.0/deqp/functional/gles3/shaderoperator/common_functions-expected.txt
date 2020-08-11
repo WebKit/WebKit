@@ -1,4 +1,4 @@
-#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 93030)
+#PID UNRESPONSIVE - WebKitTestRunner (pid 32178)
 FAIL: Timed out waiting for notifyDone to be called
 
 #EOF

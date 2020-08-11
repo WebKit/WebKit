@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/programs/get-active-test.html
+
 [ 1: PASS ] getError was expected value: NO_ERROR :
 [ 2: PASS ] context.getActiveUniform(program, 0).name is 'u_modelViewProjMatrix'
 [ 3: PASS ] context.getActiveUniform(program, 0).type is context.FLOAT_MAT4
@@ -44,4 +45,3 @@ Test: ../../resources/webgl_test_files/conformance/programs/get-active-test.html
 [ 41: PASS ] getError was expected value: INVALID_VALUE :
 [ 42: PASS ] successfullyParsed is true
 [ FAIL ] 4 failures reported
-

@@ -1,11 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fbocolorbuffer/texcube_01.html
-[ 1: PASS ] color.texcube.rgba32ui:
-[ 2: FAIL ] color.texcube.srgb8_alpha8: gl.createProgram()
-[ 3: PASS ] color.texcube.rgb565:
-[ 4: FAIL ] color.texcube.rg8i: gl.createProgram()
-[ 5: PASS ] color.texcube.r8:
-[ 6: PASS ] color.texcube.rg32f: successfullyParsed is true
-[ FAIL ] 2 failures reported
-
+[ PASS ] All tests passed

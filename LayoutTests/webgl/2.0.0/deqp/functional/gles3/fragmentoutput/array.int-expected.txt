@@ -1,29 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fragmentoutput/array.int.html
-[ 1: FAIL ] fragment_outputs.random.3: Image comparison failed for some of 3 attachments
-[ 2: FAIL ] fragment_outputs.random.6: gl.createProgram()
-[ 3: FAIL ] fragment_outputs.random.12: gl.createProgram()
-[ 4: FAIL ] fragment_outputs.random.15: Image comparison failed for some of 3 attachments
-[ 5: FAIL ] fragment_outputs.random.21: gl.createProgram()
-[ 6: FAIL ] fragment_outputs.random.24: gl.createProgram()
-[ 7: FAIL ] fragment_outputs.random.27: Image comparison failed for some of 4 attachments
-[ 8: FAIL ] fragment_outputs.random.33: gl.createProgram()
-[ 9: FAIL ] fragment_outputs.random.36: gl.createProgram()
-[ 10: FAIL ] fragment_outputs.random.42: Image comparison failed for some of 4 attachments
-[ 11: FAIL ] fragment_outputs.random.45: gl.createProgram()
-[ 12: FAIL ] fragment_outputs.random.54: gl.createProgram()
-[ 13: FAIL ] fragment_outputs.random.66: Image comparison failed for some of 2 attachments
-[ 14: FAIL ] fragment_outputs.random.69: gl.createProgram()
-[ 15: FAIL ] fragment_outputs.random.72: gl.createProgram()
-[ 16: FAIL ] fragment_outputs.random.75: Image comparison failed for some of 2 attachments
-[ 17: FAIL ] fragment_outputs.random.78: gl.createProgram()
-[ 18: FAIL ] fragment_outputs.random.81: gl.createProgram()
-[ 19: FAIL ] fragment_outputs.random.84: Image comparison failed for some of 3 attachments
-[ 20: FAIL ] fragment_outputs.random.87: gl.createProgram()
-[ 21: FAIL ] fragment_outputs.random.90: gl.createProgram()
-[ 22: FAIL ] fragment_outputs.random.93: Image comparison failed for some of 4 attachments
-[ 23: FAIL ] fragment_outputs.random.99: gl.createProgram()
-[ 24: PASS ] successfullyParsed is true
-[ FAIL ] 23 failures reported
-
+[ PASS ] All tests passed

@@ -2,4 +2,3 @@ This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL
 
 Test: ../../../../resources/webgl_test_files/conformance/ogles/GL/built_in_varying_array_out_of_bounds/built_in_varying_array_out_of_bounds_001_to_001.html
 [ PASS ] All tests passed
-

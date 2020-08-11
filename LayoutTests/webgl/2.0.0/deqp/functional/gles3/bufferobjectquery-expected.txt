@@ -1,8 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/bufferobjectquery.html
-[ 1: PASS ] buffer_object.buffer_size: Passed
-[ 2: FAIL ] buffer_object.buffer_usage: Buffer usage should be STREAM_READ ; got STREAM_DRAW
-[ 3: PASS ] successfullyParsed is true
-[ FAIL ] 1 failures reported
-
+[ PASS ] All tests passed

@@ -1,46 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/transformfeedback/basic_types_separate_triangles.html
-[ 1: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_float: Result comparison failed for iteration elemCount1
-[ 2: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_float: gl.createProgram()
-[ 3: FAIL ] transform_feedback.basic_types.separate.triangles.highp_float: gl.createProgram()
-[ 4: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_vec2: gl.createProgram()
-[ 5: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_vec2: Result comparison failed for iteration elemCount1
-[ 6: FAIL ] transform_feedback.basic_types.separate.triangles.highp_vec2: gl.createProgram()
-[ 7: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_vec3: gl.createProgram()
-[ 8: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_vec3: gl.createProgram()
-[ 9: FAIL ] transform_feedback.basic_types.separate.triangles.highp_vec3: Result comparison failed for iteration elemCount1
-[ 10: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_vec4: gl.createProgram()
-[ 11: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_vec4: gl.createProgram()
-[ 12: FAIL ] transform_feedback.basic_types.separate.triangles.highp_vec4: gl.createProgram()
-[ 13: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_mat2: Result comparison failed for iteration elemCount1
-[ 14: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_mat2: gl.createProgram()
-[ 15: FAIL ] transform_feedback.basic_types.separate.triangles.highp_mat2: gl.createProgram()
-[ 16: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_mat2x3: gl.createProgram()
-[ 17: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_int: Result comparison failed for iteration elemCount1
-[ 18: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_int: gl.createProgram()
-[ 19: FAIL ] transform_feedback.basic_types.separate.triangles.highp_int: gl.createProgram()
-[ 20: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_ivec2: gl.createProgram()
-[ 21: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_ivec2: Result comparison failed for iteration elemCount1
-[ 22: FAIL ] transform_feedback.basic_types.separate.triangles.highp_ivec2: gl.createProgram()
-[ 23: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_ivec3: gl.createProgram()
-[ 24: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_ivec3: gl.createProgram()
-[ 25: FAIL ] transform_feedback.basic_types.separate.triangles.highp_ivec3: Result comparison failed for iteration elemCount1
-[ 26: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_ivec4: gl.createProgram()
-[ 27: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_ivec4: gl.createProgram()
-[ 28: FAIL ] transform_feedback.basic_types.separate.triangles.highp_ivec4: gl.createProgram()
-[ 29: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_uint: Result comparison failed for iteration elemCount1
-[ 30: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_uint: gl.createProgram()
-[ 31: FAIL ] transform_feedback.basic_types.separate.triangles.highp_uint: gl.createProgram()
-[ 32: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_uvec2: gl.createProgram()
-[ 33: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_uvec2: Result comparison failed for iteration elemCount1
-[ 34: FAIL ] transform_feedback.basic_types.separate.triangles.highp_uvec2: gl.createProgram()
-[ 35: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_uvec3: gl.createProgram()
-[ 36: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_uvec3: gl.createProgram()
-[ 37: FAIL ] transform_feedback.basic_types.separate.triangles.highp_uvec3: Result comparison failed for iteration elemCount1
-[ 38: FAIL ] transform_feedback.basic_types.separate.triangles.lowp_uvec4: gl.createProgram()
-[ 39: FAIL ] transform_feedback.basic_types.separate.triangles.mediump_uvec4: gl.createProgram()
-[ 40: FAIL ] transform_feedback.basic_types.separate.triangles.highp_uvec4: gl.createProgram()
-[ 41: PASS ] successfullyParsed is true
-[ FAIL ] 40 failures reported
-
+[ PASS ] All tests passed

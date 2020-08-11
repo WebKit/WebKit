@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/fbostatequery.html
+
 [ 1: FAIL ] fbo.draw_framebuffer_default_framebuffer:
 [ 2: FAIL ] fbo.read_framebuffer_default_framebuffer:
 [ 3: PASS ] fbo.framebuffer_attachment_object: Passed
@@ -18,4 +19,3 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/fbostatequery.ht
 [ 15: PASS ] fbo.framebuffer_unspecified_attachment_x_size_texture: Passed
 [ 16: PASS ] fbo.framebuffer_unspecified_attachment_x_size_texture: successfullyParsed is true
 [ FAIL ] 3 failures reported
-

@@ -1,30 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/builtinprecision/faceforward.html
-[ 1: FAIL ] precision.faceforward.lowp_vertex.scalar: bindBuffer
-[ 2: FAIL ] precision.faceforward.lowp_vertex.vec2: bindBuffer
-[ 3: FAIL ] precision.faceforward.lowp_vertex.vec3: gl.createProgram()
-[ 4: FAIL ] precision.faceforward.lowp_vertex.vec4: bindBuffer
-[ 5: FAIL ] precision.faceforward.lowp_fragment.scalar: gl.createProgram()
-[ 6: FAIL ] precision.faceforward.lowp_fragment.vec2: bindBuffer
-[ 7: FAIL ] precision.faceforward.lowp_fragment.vec3: bindBuffer
-[ 8: FAIL ] precision.faceforward.lowp_fragment.vec4: bindBuffer
-[ 9: FAIL ] precision.faceforward.mediump_vertex.scalar: bindBuffer
-[ 10: FAIL ] precision.faceforward.mediump_vertex.vec2: gl.createProgram()
-[ 11: FAIL ] precision.faceforward.mediump_vertex.vec3: bindBuffer
-[ 12: FAIL ] precision.faceforward.mediump_vertex.vec4: gl.createProgram()
-[ 13: FAIL ] precision.faceforward.mediump_fragment.scalar: bindBuffer
-[ 14: FAIL ] precision.faceforward.mediump_fragment.vec2: bindBuffer
-[ 15: FAIL ] precision.faceforward.mediump_fragment.vec3: bindBuffer
-[ 16: FAIL ] precision.faceforward.mediump_fragment.vec4: bindBuffer
-[ 17: FAIL ] precision.faceforward.highp_vertex.scalar: bindBuffer
-[ 18: FAIL ] precision.faceforward.highp_vertex.vec2: gl.createProgram()
-[ 19: FAIL ] precision.faceforward.highp_vertex.vec3: bindBuffer
-[ 20: FAIL ] precision.faceforward.highp_vertex.vec4: gl.createProgram()
-[ 21: FAIL ] precision.faceforward.highp_fragment.scalar: bindBuffer
-[ 22: FAIL ] precision.faceforward.highp_fragment.vec2: bindBuffer
-[ 23: FAIL ] precision.faceforward.highp_fragment.vec3: bindBuffer
-[ 24: FAIL ] precision.faceforward.highp_fragment.vec4: bindBuffer
-[ 25: PASS ] successfullyParsed is true
-[ FAIL ] 24 failures reported
-
+[ PASS ] All tests passed

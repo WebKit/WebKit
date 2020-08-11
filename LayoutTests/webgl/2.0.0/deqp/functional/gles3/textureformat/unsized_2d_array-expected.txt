@@ -1,22 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/textureformat/unsized_2d_array.html
-[ 1: FAIL ] texture_format.unsized.alpha_2d_array_pot: Texture upload failed
-[ 2: FAIL ] texture_format.unsized.alpha_2d_array_npot: Texture upload failed
-[ 3: FAIL ] texture_format.unsized.luminance_2d_array_pot: Texture upload failed
-[ 4: FAIL ] texture_format.unsized.luminance_2d_array_npot: Texture upload failed
-[ 5: FAIL ] texture_format.unsized.luminance_alpha_2d_array_pot: Texture upload failed
-[ 6: FAIL ] texture_format.unsized.luminance_alpha_2d_array_npot: Texture upload failed
-[ 7: FAIL ] texture_format.unsized.rgb_unsigned_short_5_6_5_2d_array_pot: Texture upload failed
-[ 8: FAIL ] texture_format.unsized.rgb_unsigned_short_5_6_5_2d_array_npot: Texture upload failed
-[ 9: FAIL ] texture_format.unsized.rgb_unsigned_byte_2d_array_pot: Texture upload failed
-[ 10: FAIL ] texture_format.unsized.rgb_unsigned_byte_2d_array_npot: Texture upload failed
-[ 11: FAIL ] texture_format.unsized.rgba_unsigned_short_4_4_4_4_2d_array_pot: Texture upload failed
-[ 12: FAIL ] texture_format.unsized.rgba_unsigned_short_4_4_4_4_2d_array_npot: Texture upload failed
-[ 13: FAIL ] texture_format.unsized.rgba_unsigned_short_5_5_5_1_2d_array_pot: Texture upload failed
-[ 14: FAIL ] texture_format.unsized.rgba_unsigned_short_5_5_5_1_2d_array_npot: Texture upload failed
-[ 15: FAIL ] texture_format.unsized.rgba_unsigned_byte_2d_array_pot: Texture upload failed
-[ 16: FAIL ] texture_format.unsized.rgba_unsigned_byte_2d_array_npot: Texture upload failed
-[ 17: PASS ] successfullyParsed is true
-[ FAIL ] 16 failures reported
-
+[ PASS ] All tests passed

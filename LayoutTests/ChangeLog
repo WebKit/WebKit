@@ -1,3 +1,19 @@
+2020-08-11  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Conformance tests throttled by iframe leaving viewport
+        https://bugs.webkit.org/show_bug.cgi?id=215346
+
+        Reviewed by Dean Jackson.
+
+        The WebGL conformance tests are wrapped in an iframe that was placed below the text output of the test.
+        When the test outputs a lot of text, this caused the iframe to be pushed below the bottom of the viewport
+        and then the test was throttled, usually resulting in timeouts. The fix is to move the iframe above the
+        text. This requires touching every conformance test and expectation file.
+
+        * webgl/resources/webgl-wrapper-template.html: Move test iframe above text output so it doesn't get pushed below the viewport.
+        * webgl/2.0.0/*: Every test file and expectations file updated from new template.
+        * webgl/TestExpectations: Unskip a bunch of passing tests
+
 2020-08-11  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS wk2 Release ] imported/w3c/web-platform-tests/css/css-images/idlharness.html is a flaky timeout

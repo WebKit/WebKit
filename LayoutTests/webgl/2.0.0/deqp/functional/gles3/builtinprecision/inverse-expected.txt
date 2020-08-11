@@ -1,12 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/builtinprecision/inverse.html
-[ 1: FAIL ] precision.inverse.lowp_vertex.mat2: bindBuffer
-[ 2: FAIL ] precision.inverse.lowp_fragment.mat2: bindBuffer
-[ 3: FAIL ] precision.inverse.mediump_vertex.mat2: bindBuffer
-[ 4: FAIL ] precision.inverse.mediump_fragment.mat2: gl.createProgram()
-[ 5: FAIL ] precision.inverse.highp_vertex.mat2: bindBuffer
-[ 6: FAIL ] precision.inverse.highp_fragment.mat2: gl.createProgram()
-[ 7: PASS ] successfullyParsed is true
-[ FAIL ] 6 failures reported
-
+[ PASS ] All tests passed

@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/tricky-loop-conditions.html
+
 [ 1: PASS ] should be green
 [ 2: PASS ] should be green
 [ 3: PASS ] should be green
@@ -47,4 +48,3 @@ Test: ../../resources/webgl_test_files/conformance2/glsl3/tricky-loop-conditions
 [ 44: PASS ] should be green
 [ 45: PASS ] successfullyParsed is true
 [ FAIL ] 4 failures reported
-

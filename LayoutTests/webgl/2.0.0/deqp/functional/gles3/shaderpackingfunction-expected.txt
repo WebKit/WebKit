@@ -1,26 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/shaderpackingfunction.html
-[ 1: FAIL ] pack_unpack.packsnorm2x16_lowp_vertex: bindBuffer
-[ 2: FAIL ] pack_unpack.packsnorm2x16_lowp_fragment: bindBuffer
-[ 3: FAIL ] pack_unpack.packsnorm2x16_mediump_vertex: bindBuffer
-[ 4: FAIL ] pack_unpack.packsnorm2x16_mediump_fragment: gl.createProgram()
-[ 5: FAIL ] pack_unpack.packsnorm2x16_highp_vertex: bindBuffer
-[ 6: FAIL ] pack_unpack.packsnorm2x16_highp_fragment: gl.createProgram()
-[ 7: FAIL ] pack_unpack.unpacksnorm2x16_vertex: bindBuffer
-[ 8: FAIL ] pack_unpack.unpacksnorm2x16_fragment: gl.createProgram()
-[ 9: FAIL ] pack_unpack.packunorm2x16_lowp_vertex: bindBuffer
-[ 10: FAIL ] pack_unpack.packunorm2x16_lowp_fragment: gl.createProgram()
-[ 11: FAIL ] pack_unpack.packunorm2x16_mediump_vertex: bindBuffer
-[ 12: FAIL ] pack_unpack.packunorm2x16_mediump_fragment: gl.createProgram()
-[ 13: FAIL ] pack_unpack.packunorm2x16_highp_vertex: bindBuffer
-[ 14: FAIL ] pack_unpack.packunorm2x16_highp_fragment: gl.createProgram()
-[ 15: FAIL ] pack_unpack.unpackunorm2x16_vertex: bindBuffer
-[ 16: FAIL ] pack_unpack.unpackunorm2x16_fragment: gl.createProgram()
-[ 17: FAIL ] pack_unpack.packhalf2x16_vertex: bindBuffer
-[ 18: FAIL ] pack_unpack.packhalf2x16_fragment: gl.createProgram()
-[ 19: FAIL ] pack_unpack.unpackhalf2x16_vertex: bindBuffer
-[ 20: FAIL ] pack_unpack.unpackhalf2x16_fragment: gl.createProgram()
-[ 21: PASS ] successfullyParsed is true
-[ FAIL ] 20 failures reported
-
+[ PASS ] All tests passed

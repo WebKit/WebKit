@@ -1,38 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/renderbuffers/multisample-with-full-sample-counts.html
-[ 1: FAIL ] User buffer has been rendered to red with sample = 1, coverageValue = 1 and isInverted = false at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 2: FAIL ] User buffer has been rendered to red with sample = 1, coverageValue = 0 and isInverted = true at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 3: FAIL ] User buffer has been rendered to red with sample = 2, coverageValue = 1 and isInverted = false at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 4: FAIL ] User buffer has been rendered to red with sample = 2, coverageValue = 0 and isInverted = true at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 5: FAIL ] User buffer has been rendered to red with sample = 3, coverageValue = 1 and isInverted = false at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 6: FAIL ] User buffer has been rendered to red with sample = 3, coverageValue = 0 and isInverted = true at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 7: FAIL ] User buffer has been rendered to red with sample = 4, coverageValue = 1 and isInverted = false at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 8: FAIL ] User buffer has been rendered to red with sample = 4, coverageValue = 0 and isInverted = true at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 9: FAIL ] User buffer has been rendered to red with sample = 5, coverageValue = 1 and isInverted = false at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 10: FAIL ] User buffer has been rendered to red with sample = 5, coverageValue = 0 and isInverted = true at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 11: FAIL ] User buffer has been rendered to red with sample = 6, coverageValue = 1 and isInverted = false at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 12: FAIL ] User buffer has been rendered to red with sample = 6, coverageValue = 0 and isInverted = true at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 13: FAIL ] User buffer has been rendered to red with sample = 7, coverageValue = 1 and isInverted = false at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 14: FAIL ] User buffer has been rendered to red with sample = 7, coverageValue = 0 and isInverted = true at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 15: FAIL ] User buffer has been rendered to red with sample = 8, coverageValue = 1 and isInverted = false at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 16: FAIL ] User buffer has been rendered to red with sample = 8, coverageValue = 0 and isInverted = true at (0, 0) expected: 255,0,0,255 was 0,0,0,0
-[ 17: FAIL ] Framebuffer incomplete.
-[ 18: FAIL ] Framebuffer incomplete.
-[ 19: FAIL ] Framebuffer incomplete.
-[ 20: FAIL ] Framebuffer incomplete.
-[ 21: FAIL ] Framebuffer incomplete.
-[ 22: FAIL ] Framebuffer incomplete.
-[ 23: FAIL ] Framebuffer incomplete.
-[ 24: FAIL ] Framebuffer incomplete.
-[ 25: FAIL ] Framebuffer incomplete.
-[ 26: FAIL ] Framebuffer incomplete.
-[ 27: FAIL ] Framebuffer incomplete.
-[ 28: FAIL ] Framebuffer incomplete.
-[ 29: FAIL ] Framebuffer incomplete.
-[ 30: FAIL ] Framebuffer incomplete.
-[ 31: FAIL ] Framebuffer incomplete.
-[ 32: FAIL ] Framebuffer incomplete.
-[ 33: PASS ] successfullyParsed is true
-[ FAIL ] 32 failures reported
-
+[ PASS ] All tests passed

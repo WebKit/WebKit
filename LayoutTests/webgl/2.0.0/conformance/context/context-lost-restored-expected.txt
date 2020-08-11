@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/context/context-lost-restored.html
+
 [ 1: PASS ] gl.isContextLost() is false
 [ 2: PASS ] gl.getError() is gl.NO_ERROR
 [ 3: PASS ] shouldBe 255,10,20
@@ -54,4 +55,3 @@ Test: ../../resources/webgl_test_files/conformance/context/context-lost-restored
 [ 51: PASS ] newExtension.webglTestProperty === true is true
 [ 52: PASS ] successfullyParsed is true
 [ FAIL ] 5 failures reported
-

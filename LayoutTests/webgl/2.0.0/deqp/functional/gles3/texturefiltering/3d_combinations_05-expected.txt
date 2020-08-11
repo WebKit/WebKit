@@ -1,15 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturefiltering/3d_combinations_05.html
-[ 1: FAIL ] filtering.3d_combinations.nearest_linear_mirror_clamp_clamp: Texture upload failed
-[ 2: FAIL ] filtering.3d_combinations.nearest_linear_mirror_clamp_repeat: Texture upload failed
-[ 3: FAIL ] filtering.3d_combinations.nearest_linear_mirror_clamp_mirror: Texture upload failed
-[ 4: FAIL ] filtering.3d_combinations.nearest_linear_mirror_repeat_clamp: Texture upload failed
-[ 5: FAIL ] filtering.3d_combinations.nearest_linear_mirror_repeat_repeat: Texture upload failed
-[ 6: FAIL ] filtering.3d_combinations.nearest_linear_mirror_repeat_mirror: Texture upload failed
-[ 7: FAIL ] filtering.3d_combinations.nearest_linear_mirror_mirror_clamp: Texture upload failed
-[ 8: FAIL ] filtering.3d_combinations.nearest_linear_mirror_mirror_repeat: Texture upload failed
-[ 9: FAIL ] filtering.3d_combinations.nearest_linear_mirror_mirror_mirror: Texture upload failed
-[ 10: PASS ] successfullyParsed is true
-[ FAIL ] 9 failures reported
-
+[ PASS ] All tests passed

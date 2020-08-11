@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html
+
 [ 1: PASS ] WebGL context exists
 [ 2: PASS ] Succeed to set up program
 [ 3: PASS ] getError was expected value: NO_ERROR : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
@@ -17,4 +18,3 @@ Test: ../../resources/webgl_test_files/conformance2/rendering/fs-color-type-mism
 [ 14: PASS ] getError was expected value: INVALID_OPERATION : If color buffers' type mismatch the type of fragment shader's outputs, geneate INVALID_OPERATION. Otherwise, it should be NO_ERROR
 [ 15: PASS ] successfullyParsed is true
 [ FAIL ] 2 failures reported
-

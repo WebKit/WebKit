@@ -1,10 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fbocolorbuffer/tex3d_05.html
-[ 1: FAIL ] color.tex3d.rgba8i: glError: INVALID_ENUM
-[ 2: FAIL ] color.tex3d.rgb5_a1: gl.createProgram()
-[ 3: FAIL ] color.tex3d.rg16ui: glError: INVALID_ENUM
-[ 4: FAIL ] color.tex3d.r16i: gl.createProgram()
-[ 5: PASS ] color.tex3d.rgba16f: successfullyParsed is true
-[ FAIL ] 4 failures reported
-
+[ PASS ] All tests passed

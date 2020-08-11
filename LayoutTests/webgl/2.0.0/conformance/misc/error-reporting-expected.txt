@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/misc/error-reporting.html
+
 [ 1: PASS ] getError was expected value: NO_ERROR :
 [ 2: FAIL ] context.getActiveAttrib(null, 2) should throw an exception. Was null.
 [ 3: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
@@ -24,4 +25,3 @@ Test: ../../resources/webgl_test_files/conformance/misc/error-reporting.html
 [ 21: PASS ] getError was expected value: NO_ERROR :
 [ 22: PASS ] successfullyParsed is true
 [ FAIL ] 4 failures reported
-

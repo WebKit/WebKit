@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/shadertexturefunction/textureoffset.html
+
 [ 1: PASS ] texture_functions.textureoffset.sampler2d_fixed_vertex: Pass
 [ 2: PASS ] texture_functions.textureoffset.sampler2d_fixed_fragment: Pass
 [ 3: PASS ] texture_functions.textureoffset.sampler2d_float_vertex: Pass
@@ -13,29 +14,28 @@ Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/shadertexture
 [ 10: PASS ] texture_functions.textureoffset.sampler2d_bias_float_fragment: Pass
 [ 11: PASS ] texture_functions.textureoffset.isampler2d_bias_fragment: Pass
 [ 12: PASS ] texture_functions.textureoffset.usampler2d_bias_fragment: Pass
-[ 13: FAIL ] texture_functions.textureoffset.sampler2darray_fixed_vertex: Texture upload failed
-[ 14: FAIL ] texture_functions.textureoffset.sampler2darray_fixed_fragment: Texture upload failed
-[ 15: FAIL ] texture_functions.textureoffset.sampler2darray_float_vertex: Texture upload failed
-[ 16: FAIL ] texture_functions.textureoffset.sampler2darray_float_fragment: Texture upload failed
-[ 17: FAIL ] texture_functions.textureoffset.isampler2darray_vertex: Texture upload failed
-[ 18: FAIL ] texture_functions.textureoffset.isampler2darray_fragment: Texture upload failed
-[ 19: FAIL ] texture_functions.textureoffset.usampler2darray_vertex: Texture upload failed
-[ 20: FAIL ] texture_functions.textureoffset.usampler2darray_fragment: Texture upload failed
-[ 21: FAIL ] texture_functions.textureoffset.sampler2darray_bias_fixed_fragment: Texture upload failed
-[ 22: FAIL ] texture_functions.textureoffset.sampler2darray_bias_float_fragment: Texture upload failed
-[ 23: FAIL ] texture_functions.textureoffset.isampler2darray_bias_fragment: Texture upload failed
-[ 24: FAIL ] texture_functions.textureoffset.usampler2darray_bias_fragment: Texture upload failed
-[ 25: FAIL ] texture_functions.textureoffset.sampler3d_fixed_vertex: Texture upload failed
-[ 26: FAIL ] texture_functions.textureoffset.sampler3d_float_vertex: Texture upload failed
-[ 27: FAIL ] texture_functions.textureoffset.isampler3d_vertex: Texture upload failed
-[ 28: FAIL ] texture_functions.textureoffset.usampler3d_vertex: Texture upload failed
-[ 29: FAIL ] texture_functions.textureoffset.sampler3d_bias_fixed_fragment: Texture upload failed
-[ 30: FAIL ] texture_functions.textureoffset.sampler3d_bias_float_fragment: Texture upload failed
-[ 31: FAIL ] texture_functions.textureoffset.isampler3d_bias_fragment: Texture upload failed
-[ 32: FAIL ] texture_functions.textureoffset.usampler3d_bias_fragment: Texture upload failed
+[ 13: PASS ] texture_functions.textureoffset.sampler2darray_fixed_vertex: Pass
+[ 14: PASS ] texture_functions.textureoffset.sampler2darray_fixed_fragment: Pass
+[ 15: PASS ] texture_functions.textureoffset.sampler2darray_float_vertex: Pass
+[ 16: PASS ] texture_functions.textureoffset.sampler2darray_float_fragment: Pass
+[ 17: PASS ] texture_functions.textureoffset.isampler2darray_vertex: Pass
+[ 18: PASS ] texture_functions.textureoffset.isampler2darray_fragment: Pass
+[ 19: PASS ] texture_functions.textureoffset.usampler2darray_vertex: Pass
+[ 20: PASS ] texture_functions.textureoffset.usampler2darray_fragment: Pass
+[ 21: PASS ] texture_functions.textureoffset.sampler2darray_bias_fixed_fragment: Pass
+[ 22: PASS ] texture_functions.textureoffset.sampler2darray_bias_float_fragment: Pass
+[ 23: PASS ] texture_functions.textureoffset.isampler2darray_bias_fragment: Pass
+[ 24: PASS ] texture_functions.textureoffset.usampler2darray_bias_fragment: Pass
+[ 25: PASS ] texture_functions.textureoffset.sampler3d_fixed_vertex: Pass
+[ 26: PASS ] texture_functions.textureoffset.sampler3d_float_vertex: Pass
+[ 27: PASS ] texture_functions.textureoffset.isampler3d_vertex: Pass
+[ 28: PASS ] texture_functions.textureoffset.usampler3d_vertex: Pass
+[ 29: PASS ] texture_functions.textureoffset.sampler3d_bias_fixed_fragment: Pass
+[ 30: PASS ] texture_functions.textureoffset.sampler3d_bias_float_fragment: Pass
+[ 31: PASS ] texture_functions.textureoffset.isampler3d_bias_fragment: Pass
+[ 32: PASS ] texture_functions.textureoffset.usampler3d_bias_fragment: Pass
 [ 33: FAIL ] texture_functions.textureoffset.sampler2dshadow_vertex: Texture upload failed
 [ 34: FAIL ] texture_functions.textureoffset.sampler2dshadow_fragment: Texture upload failed
 [ 35: FAIL ] texture_functions.textureoffset.sampler2dshadow_bias_fragment: Texture upload failed
 [ 36: PASS ] successfullyParsed is true
-[ FAIL ] 23 failures reported
-
+[ FAIL ] 3 failures reported

@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/shader-with-1024-character-identifier.frag.html
+
 [ 1: FAIL ] [unexpected fragment shader compile status] (expected: true) shader with 1024 character identifier should succeed
 [ 2: FAIL ] [unexpected fragment shader compile status] (expected: true) shader with 1024 character identifier that starts with underscore should succeed
 [ 3: FAIL ] [unexpected fragment shader compile status] (expected: true) shader with 1024 character identifier that ends with underscore should succeed
@@ -8,4 +9,3 @@ Test: ../../resources/webgl_test_files/conformance2/glsl3/shader-with-1024-chara
 [ 5: FAIL ] [unexpected fragment shader compile status] (expected: true) shader with 1024 character identifier with even characters as underscores should succeed
 [ 6: PASS ] successfullyParsed is true
 [ FAIL ] 5 failures reported
-

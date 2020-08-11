@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/extensions/webgl-draw-buffers.html
+
 [ 1: PASS ] WebGL context exists
 [ 2: PASS ] getError was expected value: INVALID_ENUM : MAX_COLOR_ATTACHMENTS_WEBGL should not be queryable if extension is disabled
 [ 3: PASS ] getError was expected value: INVALID_ENUM : MAX_DRAW_BUFFERS_WEBGL should not be queryable if extension is disabled
@@ -299,4 +300,3 @@ Test: ../../resources/webgl_test_files/conformance/extensions/webgl-draw-buffers
 [ 296: PASS ] getError was expected value: NO_ERROR : there should be no errors
 [ 297: PASS ] successfullyParsed is true
 [ FAIL ] 5 failures reported
-

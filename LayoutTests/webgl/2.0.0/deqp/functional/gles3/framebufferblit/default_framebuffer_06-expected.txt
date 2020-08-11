@@ -1,13 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/framebufferblit/default_framebuffer_06.html
-[ 1: FAIL ] blit.default_framebuffer.rgb565:
-[ 2: FAIL ] blit.default_framebuffer.rgb565_nearest_scale_blit_from_default: glError: INVALID_ENUM
-[ 3: FAIL ] blit.default_framebuffer.rgb565_nearest_scale_blit_to_default:
-[ 4: FAIL ] blit.default_framebuffer.rgb565_linear_scale_blit_from_default: glError: INVALID_ENUM
-[ 5: FAIL ] blit.default_framebuffer.rgb565_linear_scale_blit_to_default:
-[ 6: FAIL ] blit.default_framebuffer.rgb565_linear_out_of_bounds_blit_from_default: glError: INVALID_ENUM
-[ 7: FAIL ] blit.default_framebuffer.rgb565_linear_out_of_bounds_blit_to_default:
-[ 8: PASS ] blit.default_framebuffer.r16f_linear_out_of_bounds_blit_to_default: successfullyParsed is true
-[ FAIL ] 7 failures reported
-
+[ PASS ] All tests passed

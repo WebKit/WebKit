@@ -1,26 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/negativefragmentapi.html
-[ 1: PASS ] negativeFragmentApi.scissor: Passed
-[ 2: PASS ] negativeFragmentApi.depth_func: Passed
-[ 3: PASS ] negativeFragmentApi.viewport: Passed
-[ 4: PASS ] negativeFragmentApi.stencil_func: Passed
-[ 5: PASS ] negativeFragmentApi.stencil_func_separate: Passed
-[ 6: PASS ] negativeFragmentApi.stencil_op: Passed
-[ 7: PASS ] negativeFragmentApi.stencil_op_separate: Passed
-[ 8: PASS ] negativeFragmentApi.stencil_mask_separate: Passed
-[ 9: PASS ] negativeFragmentApi.blend_equation: Passed
-[ 10: PASS ] negativeFragmentApi.blend_equation_separate: Passed
-[ 11: PASS ] negativeFragmentApi.blend_func: Passed
-[ 12: PASS ] negativeFragmentApi.blend_func_separate: Passed
-[ 13: PASS ] negativeFragmentApi.cull_face: Passed
-[ 14: PASS ] negativeFragmentApi.front_face: Passed
-[ 15: PASS ] negativeFragmentApi.line_width: Passed
-[ 16: FAIL ] negativeFragmentApi.begin_query: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 17: FAIL ] negativeFragmentApi.end_query: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 18: FAIL ] negativeFragmentApi.fence_sync: Expected gl.INVALID_ENUM, but got gl.NO_ERROR.
-[ 19: FAIL ] negativeFragmentApi.wait_sync: Argument 1 ('sync') to WebGL2RenderingContext.waitSync must be an instance of WebGLSync
-[ 20: FAIL ] negativeFragmentApi.client_wait_sync: Argument 1 ('sync') to WebGL2RenderingContext.clientWaitSync must be an instance of WebGLSync
-[ 21: PASS ] negativeFragmentApi.client_wait_sync: successfullyParsed is true
-[ FAIL ] 5 failures reported
-
+[ PASS ] All tests passed

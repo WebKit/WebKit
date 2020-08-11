@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/misc/expando-loss-2.html
+
 [ 1: PASS ] getParameter(SAMPLER_BINDING) returns instance that was bound.
 [ 2: FAIL ] getParameter(SAMPLER_BINDING): Expect basic expando to survive despite GC.
 [ 3: FAIL ] getParameter(SAMPLER_BINDING): Expect subobject expando to survive despite GC.
@@ -338,4 +339,3 @@ Test: ../../resources/webgl_test_files/conformance2/misc/expando-loss-2.html
 [ 335: PASS ] [object WebGLQuery] is an instance of WebGLQuery
 [ 336: PASS ] successfullyParsed is true
 [ FAIL ] 180 failures reported
-

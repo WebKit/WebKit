@@ -1,37 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/occlusionquery_strict.html
-[ 1: FAIL ] occlusion_query.scissor: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 2: FAIL ] occlusion_query.depth_write: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 3: FAIL ] occlusion_query.depth_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 4: FAIL ] occlusion_query.stencil_write: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 5: FAIL ] occlusion_query.stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 6: FAIL ] occlusion_query.scissor_depth_write: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 7: FAIL ] occlusion_query.scissor_depth_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 8: FAIL ] occlusion_query.scissor_stencil_write: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 9: FAIL ] occlusion_query.scissor_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 10: FAIL ] occlusion_query.depth_write_depth_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 11: FAIL ] occlusion_query.depth_write_stencil_write: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 12: FAIL ] occlusion_query.depth_write_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 13: FAIL ] occlusion_query.depth_clear_stencil_write: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 14: FAIL ] occlusion_query.depth_clear_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 15: FAIL ] occlusion_query.stencil_write_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 16: FAIL ] occlusion_query.scissor_depth_write_depth_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 17: FAIL ] occlusion_query.scissor_depth_write_stencil_write: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 18: FAIL ] occlusion_query.scissor_depth_write_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 19: FAIL ] occlusion_query.scissor_depth_clear_stencil_write: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 20: FAIL ] occlusion_query.scissor_depth_clear_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 21: FAIL ] occlusion_query.scissor_stencil_write_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 22: FAIL ] occlusion_query.depth_write_depth_clear_stencil_write: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 23: FAIL ] occlusion_query.depth_write_depth_clear_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 24: FAIL ] occlusion_query.depth_write_stencil_write_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 25: FAIL ] occlusion_query.depth_clear_stencil_write_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 26: FAIL ] occlusion_query.scissor_depth_write_depth_clear_stencil_write: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 27: FAIL ] occlusion_query.scissor_depth_write_depth_clear_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 28: FAIL ] occlusion_query.scissor_depth_write_stencil_write_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 29: FAIL ] occlusion_query.scissor_depth_clear_stencil_write_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 30: FAIL ] occlusion_query.depth_write_depth_clear_stencil_write_stencil_clear: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 31: FAIL ] occlusion_query.all_occluders: Argument 2 ('query') to WebGL2RenderingContext.beginQuery must be an instance of WebGLQuery
-[ 32: PASS ] occlusion_query.all_occluders: successfullyParsed is true
-[ FAIL ] 31 failures reported
-
+[ PASS ] All tests passed

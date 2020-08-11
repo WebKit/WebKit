@@ -1,37 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/draw/draw_arrays_instanced.html
-[ 1: FAIL ] draw.draw_arrays_instanced.first.first_1: Could not map pixel format:[object Object]
-[ 2: FAIL ] draw.draw_arrays_instanced.first.first_3: Could not map pixel format:[object Object]
-[ 3: FAIL ] draw.draw_arrays_instanced.first.first_17: Could not map pixel format:[object Object]
-[ 4: FAIL ] draw.draw_arrays_instanced.points.single_attribute: Could not map pixel format:[object Object]
-[ 5: FAIL ] draw.draw_arrays_instanced.points.multiple_attributes: Could not map pixel format:[object Object]
-[ 6: FAIL ] draw.draw_arrays_instanced.points.instanced_attributes: Could not map pixel format:[object Object]
-[ 7: FAIL ] draw.draw_arrays_instanced.points.default_attribute: Could not map pixel format:[object Object]
-[ 8: FAIL ] draw.draw_arrays_instanced.triangles.single_attribute: Could not map pixel format:[object Object]
-[ 9: FAIL ] draw.draw_arrays_instanced.triangles.multiple_attributes: Could not map pixel format:[object Object]
-[ 10: FAIL ] draw.draw_arrays_instanced.triangles.instanced_attributes: Could not map pixel format:[object Object]
-[ 11: FAIL ] draw.draw_arrays_instanced.triangles.default_attribute: Could not map pixel format:[object Object]
-[ 12: FAIL ] draw.draw_arrays_instanced.triangle_fan.single_attribute: Could not map pixel format:[object Object]
-[ 13: FAIL ] draw.draw_arrays_instanced.triangle_fan.multiple_attributes: Could not map pixel format:[object Object]
-[ 14: FAIL ] draw.draw_arrays_instanced.triangle_fan.instanced_attributes: Could not map pixel format:[object Object]
-[ 15: FAIL ] draw.draw_arrays_instanced.triangle_fan.default_attribute: Could not map pixel format:[object Object]
-[ 16: FAIL ] draw.draw_arrays_instanced.triangle_strip.single_attribute: Could not map pixel format:[object Object]
-[ 17: FAIL ] draw.draw_arrays_instanced.triangle_strip.multiple_attributes: Could not map pixel format:[object Object]
-[ 18: FAIL ] draw.draw_arrays_instanced.triangle_strip.instanced_attributes: Could not map pixel format:[object Object]
-[ 19: FAIL ] draw.draw_arrays_instanced.triangle_strip.default_attribute: Could not map pixel format:[object Object]
-[ 20: FAIL ] draw.draw_arrays_instanced.lines.single_attribute: Could not map pixel format:[object Object]
-[ 21: FAIL ] draw.draw_arrays_instanced.lines.multiple_attributes: Could not map pixel format:[object Object]
-[ 22: FAIL ] draw.draw_arrays_instanced.lines.instanced_attributes: Could not map pixel format:[object Object]
-[ 23: FAIL ] draw.draw_arrays_instanced.lines.default_attribute: Could not map pixel format:[object Object]
-[ 24: FAIL ] draw.draw_arrays_instanced.line_strip.single_attribute: Could not map pixel format:[object Object]
-[ 25: FAIL ] draw.draw_arrays_instanced.line_strip.multiple_attributes: Could not map pixel format:[object Object]
-[ 26: FAIL ] draw.draw_arrays_instanced.line_strip.instanced_attributes: Could not map pixel format:[object Object]
-[ 27: FAIL ] draw.draw_arrays_instanced.line_strip.default_attribute: Could not map pixel format:[object Object]
-[ 28: FAIL ] draw.draw_arrays_instanced.line_loop.single_attribute: Could not map pixel format:[object Object]
-[ 29: FAIL ] draw.draw_arrays_instanced.line_loop.multiple_attributes: Could not map pixel format:[object Object]
-[ 30: FAIL ] draw.draw_arrays_instanced.line_loop.instanced_attributes: Could not map pixel format:[object Object]
-[ 31: FAIL ] draw.draw_arrays_instanced.line_loop.default_attribute: Could not map pixel format:[object Object]
-[ 32: PASS ] draw.draw_arrays_instanced.line_loop.default_attribute: successfullyParsed is true
-[ FAIL ] 31 failures reported
-
+[ PASS ] All tests passed

@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.html
+
 [ 1: PASS ] gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_SIZE) is 16
 [ 2: PASS ] gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_USAGE) is gl.DYNAMIC_DRAW
 [ 3: PASS ] getBufferParameter correctly handled invalid parameter enums
@@ -365,4 +366,3 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 362: PASS ] getError was expected value: NO_ERROR :
 [ 363: PASS ] successfullyParsed is true
 [ FAIL ] 37 failures reported
-

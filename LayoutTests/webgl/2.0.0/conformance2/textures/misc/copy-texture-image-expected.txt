@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/copy-texture-image.html
+
 [ 1: PASS ] WebGL context exists
 [ 2: PASS ] checkFramebufferStatus got FRAMEBUFFER_COMPLETE as expected
 [ 3: PASS ] getError was expected value: NO_ERROR : copyTexImage2D should succeed for good internalformat RGB
@@ -118,4 +119,3 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/copy-textur
 [ 115: PASS ] getError was one of: INVALID_ENUM or INVALID_OPERATION : copyTexImage2D should fail for bad internalformat DEPTH24_STENCIL8
 [ 116: PASS ] successfullyParsed is true
 [ FAIL ] 4 failures reported
-

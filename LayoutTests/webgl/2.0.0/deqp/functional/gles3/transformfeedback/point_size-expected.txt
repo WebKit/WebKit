@@ -1,12 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/transformfeedback/point_size.html
-[ 1: FAIL ] transform_feedback.point_size.points_separate: Result comparison failed for iteration elemCount1
-[ 2: FAIL ] transform_feedback.point_size.points_interleaved: gl.createProgram()
-[ 3: FAIL ] transform_feedback.point_size.lines_separate: gl.createProgram()
-[ 4: FAIL ] transform_feedback.point_size.lines_interleaved: gl.createProgram()
-[ 5: FAIL ] transform_feedback.point_size.triangles_separate: Result comparison failed for iteration elemCount1
-[ 6: FAIL ] transform_feedback.point_size.triangles_interleaved: gl.createProgram()
-[ 7: PASS ] successfullyParsed is true
-[ FAIL ] 6 failures reported
-
+[ PASS ] All tests passed

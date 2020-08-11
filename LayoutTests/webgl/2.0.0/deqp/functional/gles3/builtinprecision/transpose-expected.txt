@@ -1,5 +1,60 @@
-#PID UNRESPONSIVE - com.apple.WebKit.WebContent.Development (pid 91583)
-FAIL: Timed out waiting for notifyDone to be called
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
-#EOF
-#EOF
+Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/builtinprecision/transpose.html
+
+[ 1: PASS ] precision.transpose.lowp_vertex.mat2: All 16405 inputs passed.
+[ 2: PASS ] precision.transpose.lowp_vertex.mat2x3: All 16404 inputs passed.
+[ 3: FAIL ] precision.transpose.lowp_vertex.mat2x4: Maximum call stack size exceeded.
+[ 4: PASS ] precision.transpose.lowp_vertex.mat3x2: All 16404 inputs passed.
+[ 5: PASS ] precision.transpose.lowp_vertex.mat3: All 16405 inputs passed.
+[ 6: FAIL ] precision.transpose.lowp_vertex.mat3x4: Maximum call stack size exceeded.
+[ 7: PASS ] precision.transpose.lowp_vertex.mat4x2: All 16404 inputs passed.
+[ 8: PASS ] precision.transpose.lowp_vertex.mat4x3: All 16404 inputs passed.
+[ 9: FAIL ] precision.transpose.lowp_vertex.mat4: Maximum call stack size exceeded.
+[ 10: PASS ] precision.transpose.lowp_fragment.mat2: All 16405 inputs passed.
+[ 11: PASS ] precision.transpose.lowp_fragment.mat2x3: All 16404 inputs passed.
+[ 12: FAIL ] precision.transpose.lowp_fragment.mat2x4: Maximum call stack size exceeded.
+[ 13: PASS ] precision.transpose.lowp_fragment.mat3x2: All 16404 inputs passed.
+[ 14: PASS ] precision.transpose.lowp_fragment.mat3: All 16405 inputs passed.
+[ 15: FAIL ] precision.transpose.lowp_fragment.mat3x4: Maximum call stack size exceeded.
+[ 16: PASS ] precision.transpose.lowp_fragment.mat4x2: All 16404 inputs passed.
+[ 17: PASS ] precision.transpose.lowp_fragment.mat4x3: All 16404 inputs passed.
+[ 18: FAIL ] precision.transpose.lowp_fragment.mat4: Maximum call stack size exceeded.
+[ 19: PASS ] precision.transpose.mediump_vertex.mat2: All 16405 inputs passed.
+[ 20: PASS ] precision.transpose.mediump_vertex.mat2x3: All 16404 inputs passed.
+[ 21: FAIL ] precision.transpose.mediump_vertex.mat2x4: Maximum call stack size exceeded.
+[ 22: PASS ] precision.transpose.mediump_vertex.mat3x2: All 16404 inputs passed.
+[ 23: PASS ] precision.transpose.mediump_vertex.mat3: All 16405 inputs passed.
+[ 24: FAIL ] precision.transpose.mediump_vertex.mat3x4: Maximum call stack size exceeded.
+[ 25: PASS ] precision.transpose.mediump_vertex.mat4x2: All 16404 inputs passed.
+[ 26: PASS ] precision.transpose.mediump_vertex.mat4x3: All 16404 inputs passed.
+[ 27: FAIL ] precision.transpose.mediump_vertex.mat4: Maximum call stack size exceeded.
+[ 28: PASS ] precision.transpose.mediump_fragment.mat2: All 16405 inputs passed.
+[ 29: PASS ] precision.transpose.mediump_fragment.mat2x3: All 16404 inputs passed.
+[ 30: FAIL ] precision.transpose.mediump_fragment.mat2x4: Maximum call stack size exceeded.
+[ 31: PASS ] precision.transpose.mediump_fragment.mat3x2: All 16404 inputs passed.
+[ 32: PASS ] precision.transpose.mediump_fragment.mat3: All 16405 inputs passed.
+[ 33: FAIL ] precision.transpose.mediump_fragment.mat3x4: Maximum call stack size exceeded.
+[ 34: PASS ] precision.transpose.mediump_fragment.mat4x2: All 16404 inputs passed.
+[ 35: PASS ] precision.transpose.mediump_fragment.mat4x3: All 16404 inputs passed.
+[ 36: FAIL ] precision.transpose.mediump_fragment.mat4: Maximum call stack size exceeded.
+[ 37: PASS ] precision.transpose.highp_vertex.mat2: All 16405 inputs passed.
+[ 38: PASS ] precision.transpose.highp_vertex.mat2x3: All 16404 inputs passed.
+[ 39: FAIL ] precision.transpose.highp_vertex.mat2x4: Maximum call stack size exceeded.
+[ 40: PASS ] precision.transpose.highp_vertex.mat3x2: All 16404 inputs passed.
+[ 41: PASS ] precision.transpose.highp_vertex.mat3: All 16405 inputs passed.
+[ 42: FAIL ] precision.transpose.highp_vertex.mat3x4: Maximum call stack size exceeded.
+[ 43: PASS ] precision.transpose.highp_vertex.mat4x2: All 16404 inputs passed.
+[ 44: PASS ] precision.transpose.highp_vertex.mat4x3: All 16404 inputs passed.
+[ 45: FAIL ] precision.transpose.highp_vertex.mat4: Maximum call stack size exceeded.
+[ 46: PASS ] precision.transpose.highp_fragment.mat2: All 16405 inputs passed.
+[ 47: PASS ] precision.transpose.highp_fragment.mat2x3: All 16404 inputs passed.
+[ 48: FAIL ] precision.transpose.highp_fragment.mat2x4: Maximum call stack size exceeded.
+[ 49: PASS ] precision.transpose.highp_fragment.mat3x2: All 16404 inputs passed.
+[ 50: PASS ] precision.transpose.highp_fragment.mat3: All 16405 inputs passed.
+[ 51: FAIL ] precision.transpose.highp_fragment.mat3x4: Maximum call stack size exceeded.
+[ 52: PASS ] precision.transpose.highp_fragment.mat4x2: All 16404 inputs passed.
+[ 53: PASS ] precision.transpose.highp_fragment.mat4x3: All 16404 inputs passed.
+[ 54: FAIL ] precision.transpose.highp_fragment.mat4: Maximum call stack size exceeded.
+[ 55: PASS ] precision.transpose.highp_fragment.mat4: successfullyParsed is true
+[ FAIL ] 18 failures reported

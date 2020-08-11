@@ -1,30 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/shaderprecision_int.html
-[ 1: FAIL ] precision.int.highp_add_vertex: drawArrays
-[ 2: FAIL ] precision.int.highp_add_fragment: drawArrays
-[ 3: FAIL ] precision.int.highp_sub_vertex: drawArrays
-[ 4: FAIL ] precision.int.highp_sub_fragment: drawArrays
-[ 5: FAIL ] precision.int.highp_mul_vertex: drawArrays
-[ 6: FAIL ] precision.int.highp_mul_fragment: drawArrays
-[ 7: FAIL ] precision.int.highp_div_vertex: drawArrays
-[ 8: FAIL ] precision.int.highp_div_fragment: drawArrays
-[ 9: FAIL ] precision.int.mediump_add_vertex: drawArrays
-[ 10: FAIL ] precision.int.mediump_add_fragment: drawArrays
-[ 11: FAIL ] precision.int.mediump_sub_vertex: drawArrays
-[ 12: FAIL ] precision.int.mediump_sub_fragment: drawArrays
-[ 13: FAIL ] precision.int.mediump_mul_vertex: drawArrays
-[ 14: FAIL ] precision.int.mediump_mul_fragment: drawArrays
-[ 15: FAIL ] precision.int.mediump_div_vertex: drawArrays
-[ 16: FAIL ] precision.int.mediump_div_fragment: drawArrays
-[ 17: FAIL ] precision.int.lowp_add_vertex: drawArrays
-[ 18: FAIL ] precision.int.lowp_add_fragment: drawArrays
-[ 19: FAIL ] precision.int.lowp_sub_vertex: drawArrays
-[ 20: FAIL ] precision.int.lowp_sub_fragment: drawArrays
-[ 21: FAIL ] precision.int.lowp_mul_vertex: drawArrays
-[ 22: FAIL ] precision.int.lowp_mul_fragment: drawArrays
-[ 23: FAIL ] precision.int.lowp_div_vertex: drawArrays
-[ 24: FAIL ] precision.int.lowp_div_fragment: drawArrays
-[ 25: PASS ] successfullyParsed is true
-[ FAIL ] 24 failures reported
-
+[ PASS ] All tests passed

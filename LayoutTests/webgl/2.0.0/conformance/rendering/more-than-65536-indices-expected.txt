@@ -2,4 +2,3 @@ This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL
 
 Test: ../../resources/webgl_test_files/conformance/rendering/more-than-65536-indices.html
 [ PASS ] All tests passed
-

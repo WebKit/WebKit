@@ -1,0 +1,42 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/webgl_test_files/deqp/functional/gles3/internalformatquery.html
+
+[ 1: PASS ] internal_format.rgba_samples: Passed
+[ 2: PASS ] internal_format.rgb_samples: Passed
+[ 3: PASS ] internal_format.r8_samples: Passed
+[ 4: PASS ] internal_format.rg8_samples: Passed
+[ 5: PASS ] internal_format.rgb8_samples: Passed
+[ 6: PASS ] internal_format.rgb565_samples: Passed
+[ 7: PASS ] internal_format.rgba4_samples: Passed
+[ 8: PASS ] internal_format.rgb5_a1_samples: Passed
+[ 9: PASS ] internal_format.rgba8_samples: Passed
+[ 10: PASS ] internal_format.rgb10_a2_samples: Passed
+[ 11: FAIL ] internal_format.rgb10_a2ui_samples: integer internal format should have 0 samples, got 1
+[ 12: PASS ] internal_format.srgb8_alpha8_samples: Passed
+[ 13: FAIL ] internal_format.r8i_samples: integer internal format should have 0 samples, got 1
+[ 14: FAIL ] internal_format.r8ui_samples: integer internal format should have 0 samples, got 1
+[ 15: FAIL ] internal_format.r16i_samples: integer internal format should have 0 samples, got 1
+[ 16: FAIL ] internal_format.r16ui_samples: integer internal format should have 0 samples, got 1
+[ 17: FAIL ] internal_format.r32i_samples: integer internal format should have 0 samples, got 1
+[ 18: FAIL ] internal_format.r32ui_samples: integer internal format should have 0 samples, got 1
+[ 19: FAIL ] internal_format.rg8i_samples: integer internal format should have 0 samples, got 1
+[ 20: FAIL ] internal_format.rg8ui_samples: integer internal format should have 0 samples, got 1
+[ 21: FAIL ] internal_format.rg16i_samples: integer internal format should have 0 samples, got 1
+[ 22: FAIL ] internal_format.rg16ui_samples: integer internal format should have 0 samples, got 1
+[ 23: FAIL ] internal_format.rg32i_samples: integer internal format should have 0 samples, got 1
+[ 24: FAIL ] internal_format.rg32ui_samples: integer internal format should have 0 samples, got 1
+[ 25: FAIL ] internal_format.rgba8i_samples: integer internal format should have 0 samples, got 1
+[ 26: FAIL ] internal_format.rgba8ui_samples: integer internal format should have 0 samples, got 1
+[ 27: FAIL ] internal_format.rgba16i_samples: integer internal format should have 0 samples, got 1
+[ 28: FAIL ] internal_format.rgba16ui_samples: integer internal format should have 0 samples, got 1
+[ 29: FAIL ] internal_format.rgba32i_samples: integer internal format should have 0 samples, got 1
+[ 30: FAIL ] internal_format.rgba32ui_samples: integer internal format should have 0 samples, got 1
+[ 31: PASS ] internal_format.depth_component16_samples: Passed
+[ 32: PASS ] internal_format.depth_component24_samples: Passed
+[ 33: PASS ] internal_format.depth_component32f_samples: Passed
+[ 34: PASS ] internal_format.depth24_stencil8_samples: Passed
+[ 35: PASS ] internal_format.depth32f_stencil8_samples: Passed
+[ 36: PASS ] internal_format.stencil_index8_samples: Passed
+[ 37: PASS ] internal_format.stencil_index8_samples: successfullyParsed is true
+[ FAIL ] 19 failures reported

@@ -1,11 +1,11 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/rbostatequery.html
+
 [ 1: PASS ] rbo.renderbuffer_size: Passed
 [ 2: PASS ] rbo.renderbuffer_internal_format: Passed
 [ 3: PASS ] rbo.renderbuffer_component_size_color: Passed
 [ 4: PASS ] rbo.renderbuffer_component_size_depth: Passed
-[ 5: FAIL ] rbo.renderbuffer_samples:
+[ 5: FAIL ] rbo.renderbuffer_samples: Expected greater or equal to 1 got 0
 [ 6: PASS ] successfullyParsed is true
 [ FAIL ] 1 failures reported
-

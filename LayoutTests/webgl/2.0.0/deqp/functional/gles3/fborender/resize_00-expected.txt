@@ -1,18 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fborender/resize_00.html
-[ 1: PASS ] render.resize.tex2d_rgba16i:
-[ 2: FAIL ] render.resize.rbo_rgba16i: Got unexpected error
-[ 3: FAIL ] render.resize.tex2d_rgb10_a2ui: gl.createProgram()
-[ 4: FAIL ] render.resize.rbo_rgb10_a2ui: gl.createProgram()
-[ 5: FAIL ] render.resize.tex2d_rg32ui: gl.createProgram()
-[ 6: FAIL ] render.resize.rbo_rg32ui: gl.createProgram()
-[ 7: FAIL ] render.resize.tex2d_rg8: gl.createProgram()
-[ 8: FAIL ] render.resize.rbo_rg8: gl.createProgram()
-[ 9: FAIL ] render.resize.tex2d_r32i: gl.createProgram()
-[ 10: FAIL ] render.resize.rbo_r32i: gl.createProgram()
-[ 11: FAIL ] render.resize.tex2d_r16ui: gl.createProgram()
-[ 12: FAIL ] render.resize.rbo_r16ui: gl.createProgram()
-[ 13: PASS ] successfullyParsed is true
-[ FAIL ] 11 failures reported
-
+[ PASS ] All tests passed

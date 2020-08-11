@@ -1,50 +1,48 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/pixelbufferobject.html
-[ 1: FAIL ] pixel_buffer_object.native.clears: Simple read pixels test with color clears
-[ 2: FAIL ] pixel_buffer_object.native.triangles: gl.createProgram()
-[ 3: FAIL ] pixel_buffer_object.renderbuffer.rgba8_triangles: gl.createProgram()
-[ 4: FAIL ] pixel_buffer_object.renderbuffer.rgba8_clears: rgba8_clears
-[ 5: FAIL ] pixel_buffer_object.renderbuffer.rgba8i_triangles: gl.createProgram()
-[ 6: FAIL ] pixel_buffer_object.renderbuffer.rgba8i_clears: gl.createProgram()
-[ 7: FAIL ] pixel_buffer_object.renderbuffer.rgba8ui_triangles: useProgram failed
-[ 8: PASS ] pixel_buffer_object.renderbuffer.rgba8ui_clears: rgba8ui_clears
-[ 9: FAIL ] pixel_buffer_object.renderbuffer.rgba16i_triangles: gl.createProgram()
-[ 10: FAIL ] pixel_buffer_object.renderbuffer.rgba16i_clears: gl.createProgram()
-[ 11: FAIL ] pixel_buffer_object.renderbuffer.rgba16ui_triangles: useProgram failed
-[ 12: PASS ] pixel_buffer_object.renderbuffer.rgba16ui_clears: rgba16ui_clears
-[ 13: FAIL ] pixel_buffer_object.renderbuffer.rgba32i_triangles: gl.createProgram()
-[ 14: FAIL ] pixel_buffer_object.renderbuffer.rgba32i_clears: gl.createProgram()
-[ 15: FAIL ] pixel_buffer_object.renderbuffer.rgba32ui_triangles: useProgram failed
-[ 16: PASS ] pixel_buffer_object.renderbuffer.rgba32ui_clears: rgba32ui_clears
-[ 17: FAIL ] pixel_buffer_object.renderbuffer.srgb8_alpha8_triangles: gl.createProgram()
-[ 18: FAIL ] pixel_buffer_object.renderbuffer.srgb8_alpha8_clears: gl.createProgram()
-[ 19: PASS ] pixel_buffer_object.renderbuffer.rgb10_a2_triangles: rgb10_a2_triangles
-[ 20: FAIL ] pixel_buffer_object.renderbuffer.rgb10_a2_clears: gl.createProgram()
-[ 21: FAIL ] pixel_buffer_object.renderbuffer.rgb10_a2ui_triangles: gl.createProgram()
-[ 22: PASS ] pixel_buffer_object.renderbuffer.rgb10_a2ui_clears: rgb10_a2ui_clears
-[ 23: FAIL ] pixel_buffer_object.renderbuffer.rgba4_triangles: gl.createProgram()
-[ 24: FAIL ] pixel_buffer_object.renderbuffer.rgba4_clears: gl.createProgram()
-[ 25: FAIL ] pixel_buffer_object.renderbuffer.rgb5_a1_triangles: rgb5_a1_triangles
-[ 26: FAIL ] pixel_buffer_object.renderbuffer.rgb5_a1_clears: gl.createProgram()
-[ 27: FAIL ] pixel_buffer_object.renderbuffer.rgb8_triangles: gl.createProgram()
-[ 28: FAIL ] pixel_buffer_object.renderbuffer.rgb8_clears: rgb8_clears
-[ 29: FAIL ] pixel_buffer_object.renderbuffer.rgb565_triangles: gl.createProgram()
-[ 30: FAIL ] pixel_buffer_object.renderbuffer.rgb565_clears: gl.createProgram()
-[ 31: FAIL ] pixel_buffer_object.renderbuffer.rg8_triangles: rg8_triangles
-[ 32: FAIL ] pixel_buffer_object.renderbuffer.rg8_clears: gl.createProgram()
-[ 33: FAIL ] pixel_buffer_object.renderbuffer.rg8i_triangles: gl.createProgram()
-[ 34: FAIL ] pixel_buffer_object.renderbuffer.rg8i_clears: rg8i_clears
-[ 35: FAIL ] pixel_buffer_object.renderbuffer.rg8ui_triangles: gl.createProgram()
-[ 36: FAIL ] pixel_buffer_object.renderbuffer.rg8ui_clears: gl.createProgram()
-[ 37: FAIL ] pixel_buffer_object.renderbuffer.rg16i_triangles: useProgram failed
-[ 38: FAIL ] pixel_buffer_object.renderbuffer.rg16i_clears: rg16i_clears
-[ 39: FAIL ] pixel_buffer_object.renderbuffer.rg16ui_triangles: gl.createProgram()
-[ 40: FAIL ] pixel_buffer_object.renderbuffer.rg16ui_clears: gl.createProgram()
-[ 41: FAIL ] pixel_buffer_object.renderbuffer.rg32i_triangles: useProgram failed
-[ 42: FAIL ] pixel_buffer_object.renderbuffer.rg32i_clears: rg32i_clears
-[ 43: FAIL ] pixel_buffer_object.renderbuffer.rg32ui_triangles: gl.createProgram()
-[ 44: FAIL ] pixel_buffer_object.renderbuffer.rg32ui_clears: gl.createProgram()
-[ 45: PASS ] successfullyParsed is true
-[ FAIL ] 39 failures reported
 
+[ 1: PASS ] pixel_buffer_object.native.clears: Simple read pixels test with color clears
+[ 2: PASS ] pixel_buffer_object.native.triangles: Simple read pixels test rendering triangles
+[ 3: FAIL ] pixel_buffer_object.renderbuffer.rgba8_triangles: rgba8_triangles
+[ 4: FAIL ] pixel_buffer_object.renderbuffer.rgba8_clears: rgba8_clears
+[ 5: PASS ] pixel_buffer_object.renderbuffer.rgba8i_triangles: rgba8i_triangles
+[ 6: PASS ] pixel_buffer_object.renderbuffer.rgba8i_clears: rgba8i_clears
+[ 7: PASS ] pixel_buffer_object.renderbuffer.rgba8ui_triangles: rgba8ui_triangles
+[ 8: PASS ] pixel_buffer_object.renderbuffer.rgba8ui_clears: rgba8ui_clears
+[ 9: PASS ] pixel_buffer_object.renderbuffer.rgba16i_triangles: rgba16i_triangles
+[ 10: PASS ] pixel_buffer_object.renderbuffer.rgba16i_clears: rgba16i_clears
+[ 11: PASS ] pixel_buffer_object.renderbuffer.rgba16ui_triangles: rgba16ui_triangles
+[ 12: PASS ] pixel_buffer_object.renderbuffer.rgba16ui_clears: rgba16ui_clears
+[ 13: PASS ] pixel_buffer_object.renderbuffer.rgba32i_triangles: rgba32i_triangles
+[ 14: PASS ] pixel_buffer_object.renderbuffer.rgba32i_clears: rgba32i_clears
+[ 15: PASS ] pixel_buffer_object.renderbuffer.rgba32ui_triangles: rgba32ui_triangles
+[ 16: PASS ] pixel_buffer_object.renderbuffer.rgba32ui_clears: rgba32ui_clears
+[ 17: FAIL ] pixel_buffer_object.renderbuffer.srgb8_alpha8_triangles: srgb8_alpha8_triangles
+[ 18: FAIL ] pixel_buffer_object.renderbuffer.srgb8_alpha8_clears: srgb8_alpha8_clears
+[ 19: PASS ] pixel_buffer_object.renderbuffer.rgb10_a2_triangles: rgb10_a2_triangles
+[ 20: PASS ] pixel_buffer_object.renderbuffer.rgb10_a2_clears: rgb10_a2_clears
+[ 21: PASS ] pixel_buffer_object.renderbuffer.rgb10_a2ui_triangles: rgb10_a2ui_triangles
+[ 22: PASS ] pixel_buffer_object.renderbuffer.rgb10_a2ui_clears: rgb10_a2ui_clears
+[ 23: FAIL ] pixel_buffer_object.renderbuffer.rgba4_triangles: rgba4_triangles
+[ 24: FAIL ] pixel_buffer_object.renderbuffer.rgba4_clears: rgba4_clears
+[ 25: PASS ] pixel_buffer_object.renderbuffer.rgb5_a1_triangles: rgb5_a1_triangles
+[ 26: PASS ] pixel_buffer_object.renderbuffer.rgb5_a1_clears: rgb5_a1_clears
+[ 27: PASS ] pixel_buffer_object.renderbuffer.rgb565_triangles: rgb565_triangles
+[ 28: PASS ] pixel_buffer_object.renderbuffer.rgb565_clears: rgb565_clears
+[ 29: PASS ] pixel_buffer_object.renderbuffer.rg8_triangles: rg8_triangles
+[ 30: PASS ] pixel_buffer_object.renderbuffer.rg8_clears: rg8_clears
+[ 31: PASS ] pixel_buffer_object.renderbuffer.rg8i_triangles: rg8i_triangles
+[ 32: PASS ] pixel_buffer_object.renderbuffer.rg8i_clears: rg8i_clears
+[ 33: PASS ] pixel_buffer_object.renderbuffer.rg8ui_triangles: rg8ui_triangles
+[ 34: PASS ] pixel_buffer_object.renderbuffer.rg8ui_clears: rg8ui_clears
+[ 35: PASS ] pixel_buffer_object.renderbuffer.rg16i_triangles: rg16i_triangles
+[ 36: PASS ] pixel_buffer_object.renderbuffer.rg16i_clears: rg16i_clears
+[ 37: PASS ] pixel_buffer_object.renderbuffer.rg16ui_triangles: rg16ui_triangles
+[ 38: PASS ] pixel_buffer_object.renderbuffer.rg16ui_clears: rg16ui_clears
+[ 39: PASS ] pixel_buffer_object.renderbuffer.rg32i_triangles: rg32i_triangles
+[ 40: PASS ] pixel_buffer_object.renderbuffer.rg32i_clears: rg32i_clears
+[ 41: PASS ] pixel_buffer_object.renderbuffer.rg32ui_triangles: rg32ui_triangles
+[ 42: PASS ] pixel_buffer_object.renderbuffer.rg32ui_clears: rg32ui_clears
+[ 43: PASS ] pixel_buffer_object.renderbuffer.rg32ui_clears: successfullyParsed is true
+[ FAIL ] 6 failures reported

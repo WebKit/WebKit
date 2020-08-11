@@ -1,12 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturefiltering/2d_array_formats_09.html
-[ 1: FAIL ] filtering.2d_array_formats.rgb10_a2_nearest: Texture upload failed
-[ 2: FAIL ] filtering.2d_array_formats.rgb10_a2_linear: Texture upload failed
-[ 3: FAIL ] filtering.2d_array_formats.rgb10_a2_nearest_mipmap_nearest: Texture upload failed
-[ 4: FAIL ] filtering.2d_array_formats.rgb10_a2_linear_mipmap_nearest: Texture upload failed
-[ 5: FAIL ] filtering.2d_array_formats.rgb10_a2_nearest_mipmap_linear: Texture upload failed
-[ 6: FAIL ] filtering.2d_array_formats.rgb10_a2_linear_mipmap_linear: Texture upload failed
-[ 7: PASS ] successfullyParsed is true
-[ FAIL ] 6 failures reported
-
+[ PASS ] All tests passed

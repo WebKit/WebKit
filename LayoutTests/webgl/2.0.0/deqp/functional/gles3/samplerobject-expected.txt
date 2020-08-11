@@ -1,48 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/samplerobject.html
-[ 1: FAIL ] sampler_object.single_tex_2d.diff_wrap_t: bindBuffer
-[ 2: FAIL ] sampler_object.single_tex_2d.diff_wrap_s: bindBuffer
-[ 3: FAIL ] sampler_object.single_tex_2d.diff_wrap_r: bindBuffer
-[ 4: FAIL ] sampler_object.single_tex_2d.diff_min_filter: bindBuffer
-[ 5: FAIL ] sampler_object.single_tex_2d.diff_mag_filter: bindBuffer
-[ 6: FAIL ] sampler_object.single_tex_2d.diff_max_lod: bindBuffer
-[ 7: FAIL ] sampler_object.single_tex_2d.diff_min_lod: bindBuffer
-[ 8: FAIL ] sampler_object.multi_tex_2d.diff_wrap_t: bindBuffer
-[ 9: FAIL ] sampler_object.multi_tex_2d.diff_wrap_s: bindBuffer
-[ 10: FAIL ] sampler_object.multi_tex_2d.diff_wrap_r: bindBuffer
-[ 11: FAIL ] sampler_object.multi_tex_2d.diff_min_filter: bindBuffer
-[ 12: FAIL ] sampler_object.multi_tex_2d.diff_mag_filter: bindBuffer
-[ 13: FAIL ] sampler_object.multi_tex_2d.diff_max_lod: bindBuffer
-[ 14: FAIL ] sampler_object.multi_tex_2d.diff_min_lod: bindBuffer
-[ 15: FAIL ] sampler_object.single_tex_3d.diff_wrap_t: bindBuffer
-[ 16: FAIL ] sampler_object.single_tex_3d.diff_wrap_s: bindBuffer
-[ 17: FAIL ] sampler_object.single_tex_3d.diff_wrap_r: bindBuffer
-[ 18: FAIL ] sampler_object.single_tex_3d.diff_min_filter: bindBuffer
-[ 19: FAIL ] sampler_object.single_tex_3d.diff_mag_filter: bindBuffer
-[ 20: FAIL ] sampler_object.single_tex_3d.diff_max_lod: bindBuffer
-[ 21: FAIL ] sampler_object.single_tex_3d.diff_min_lod: bindBuffer
-[ 22: FAIL ] sampler_object.multi_tex_3d.diff_wrap_t: bindBuffer
-[ 23: FAIL ] sampler_object.multi_tex_3d.diff_wrap_s: bindBuffer
-[ 24: FAIL ] sampler_object.multi_tex_3d.diff_wrap_r: bindBuffer
-[ 25: FAIL ] sampler_object.multi_tex_3d.diff_min_filter: bindBuffer
-[ 26: FAIL ] sampler_object.multi_tex_3d.diff_mag_filter: bindBuffer
-[ 27: FAIL ] sampler_object.multi_tex_3d.diff_max_lod: bindBuffer
-[ 28: FAIL ] sampler_object.multi_tex_3d.diff_min_lod: bindBuffer
-[ 29: FAIL ] sampler_object.single_cubemap.diff_wrap_t: bindBuffer
-[ 30: FAIL ] sampler_object.single_cubemap.diff_wrap_s: bindBuffer
-[ 31: FAIL ] sampler_object.single_cubemap.diff_wrap_r: bindBuffer
-[ 32: FAIL ] sampler_object.single_cubemap.diff_min_filter: bindBuffer
-[ 33: FAIL ] sampler_object.single_cubemap.diff_mag_filter: bindBuffer
-[ 34: FAIL ] sampler_object.single_cubemap.diff_max_lod: bindBuffer
-[ 35: FAIL ] sampler_object.single_cubemap.diff_min_lod: bindBuffer
-[ 36: FAIL ] sampler_object.multi_cubemap.diff_wrap_t: bindBuffer
-[ 37: FAIL ] sampler_object.multi_cubemap.diff_wrap_s: bindBuffer
-[ 38: FAIL ] sampler_object.multi_cubemap.diff_wrap_r: bindBuffer
-[ 39: FAIL ] sampler_object.multi_cubemap.diff_min_filter: bindBuffer
-[ 40: FAIL ] sampler_object.multi_cubemap.diff_mag_filter: bindBuffer
-[ 41: FAIL ] sampler_object.multi_cubemap.diff_max_lod: bindBuffer
-[ 42: FAIL ] sampler_object.multi_cubemap.diff_min_lod: bindBuffer
-[ 43: PASS ] successfullyParsed is true
-[ FAIL ] 42 failures reported
-
+[ PASS ] All tests passed

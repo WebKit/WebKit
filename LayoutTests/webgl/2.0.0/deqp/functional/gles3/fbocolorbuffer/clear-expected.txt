@@ -1,34 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fbocolorbuffer/clear.html
-[ 1: FAIL ] color.clear.rgba32i: glError: INVALID_OPERATION
-[ 2: FAIL ] color.clear.rgba32ui: glError: INVALID_ENUM
-[ 3: FAIL ] color.clear.rgba16i: glError: INVALID_ENUM
-[ 4: FAIL ] color.clear.rgba16ui: glError: INVALID_ENUM
-[ 5: FAIL ] color.clear.rgba8: glError: INVALID_ENUM
-[ 6: FAIL ] color.clear.rgba8i: glError: INVALID_ENUM
-[ 7: FAIL ] color.clear.rgba8ui: glError: INVALID_ENUM
-[ 8: FAIL ] color.clear.srgb8_alpha8: glError: INVALID_ENUM
-[ 9: FAIL ] color.clear.rgb10_a2: glError: INVALID_ENUM
-[ 10: FAIL ] color.clear.rgb10_a2ui: glError: INVALID_ENUM
-[ 11: FAIL ] color.clear.rgba4: glError: INVALID_ENUM
-[ 12: FAIL ] color.clear.rgb5_a1: glError: INVALID_ENUM
-[ 13: FAIL ] color.clear.rgb8: glError: INVALID_ENUM
-[ 14: FAIL ] color.clear.rgb565: glError: INVALID_ENUM
-[ 15: FAIL ] color.clear.rg32i: glError: INVALID_ENUM
-[ 16: FAIL ] color.clear.rg32ui: glError: INVALID_ENUM
-[ 17: FAIL ] color.clear.rg16i: glError: INVALID_ENUM
-[ 18: FAIL ] color.clear.rg16ui: glError: INVALID_ENUM
-[ 19: FAIL ] color.clear.rg8: glError: INVALID_ENUM
-[ 20: FAIL ] color.clear.rg8i: glError: INVALID_ENUM
-[ 21: FAIL ] color.clear.rg8ui: glError: INVALID_ENUM
-[ 22: FAIL ] color.clear.r32i: glError: INVALID_ENUM
-[ 23: FAIL ] color.clear.r32ui: glError: INVALID_ENUM
-[ 24: FAIL ] color.clear.r16i: glError: INVALID_ENUM
-[ 25: FAIL ] color.clear.r16ui: glError: INVALID_ENUM
-[ 26: FAIL ] color.clear.r8: glError: INVALID_ENUM
-[ 27: FAIL ] color.clear.r8i: glError: INVALID_ENUM
-[ 28: FAIL ] color.clear.r8ui: glError: INVALID_ENUM
-[ 29: PASS ] color.clear.r16f: successfullyParsed is true
-[ FAIL ] 28 failures reported
-
+[ PASS ] All tests passed

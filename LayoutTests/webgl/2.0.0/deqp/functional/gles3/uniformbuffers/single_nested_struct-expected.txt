@@ -1,15 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/uniformbuffers/single_nested_struct.html
-[ 1: FAIL ] ubo.single_nested_struct.per_block_buffer.std140_vertex: Assert failed
-[ 2: FAIL ] ubo.single_nested_struct.per_block_buffer.std140_fragment: Assert failed
-[ 3: FAIL ] ubo.single_nested_struct.per_block_buffer.std140_both: Assert failed
-[ 4: FAIL ] ubo.single_nested_struct.per_block_buffer.std140_instance_array_vertex: Assert failed
-[ 5: FAIL ] ubo.single_nested_struct.per_block_buffer.std140_instance_array_fragment: Assert failed
-[ 6: FAIL ] ubo.single_nested_struct.per_block_buffer.std140_instance_array_both: Assert failed
-[ 7: FAIL ] ubo.single_nested_struct.single_buffer.std140_instance_array_vertex: Assert failed
-[ 8: FAIL ] ubo.single_nested_struct.single_buffer.std140_instance_array_fragment: Assert failed
-[ 9: FAIL ] ubo.single_nested_struct.single_buffer.std140_instance_array_both: Assert failed
-[ 10: PASS ] ubo.single_nested_struct.single_buffer.std140_instance_array_both: successfullyParsed is true
-[ FAIL ] 9 failures reported
-
+[ PASS ] All tests passed

@@ -1,12 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/builtinprecision/cross.html
-[ 1: FAIL ] precision.cross.lowp_vertex: bindBuffer
-[ 2: FAIL ] precision.cross.lowp_fragment: bindBuffer
-[ 3: FAIL ] precision.cross.mediump_vertex: bindBuffer
-[ 4: FAIL ] precision.cross.mediump_fragment: gl.createProgram()
-[ 5: FAIL ] precision.cross.highp_vertex: bindBuffer
-[ 6: FAIL ] precision.cross.highp_fragment: gl.createProgram()
-[ 7: PASS ] successfullyParsed is true
-[ FAIL ] 6 failures reported
-
+[ PASS ] All tests passed

@@ -1,14 +1,13 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texstorage3d_format_depth_stencil.html
-[ 1: FAIL ] specification.texstorage3d.format.depth_component32f_2d_array: Image comparison failed
-[ 2: FAIL ] specification.texstorage3d.format.depth_component32f_2d_array: Verification failed
-[ 3: FAIL ] specification.texstorage3d.format.depth_component24_2d_array: Image comparison failed
-[ 4: FAIL ] specification.texstorage3d.format.depth_component24_2d_array: Verification failed
-[ 5: FAIL ] specification.texstorage3d.format.depth_component16_2d_array: Image comparison failed
-[ 6: FAIL ] specification.texstorage3d.format.depth_component16_2d_array: Verification failed
-[ 7: FAIL ] specification.texstorage3d.format.depth24_stencil8_2d_array: Image comparison failed
-[ 8: FAIL ] specification.texstorage3d.format.depth24_stencil8_2d_array: Verification failed
-[ 9: PASS ] specification.texstorage3d.format.depth24_stencil8_2d_array: successfullyParsed is true
-[ FAIL ] 8 failures reported
 
+[ 1: PASS ] specification.texstorage3d.format.depth_component32f_2d_array: Passed
+[ 2: FAIL ] specification.texstorage3d.format.depth_component24_2d_array: Image comparison failed
+[ 3: FAIL ] specification.texstorage3d.format.depth_component24_2d_array: Verification failed
+[ 4: FAIL ] specification.texstorage3d.format.depth_component16_2d_array: Image comparison failed
+[ 5: FAIL ] specification.texstorage3d.format.depth_component16_2d_array: Verification failed
+[ 6: FAIL ] specification.texstorage3d.format.depth24_stencil8_2d_array: Image comparison failed
+[ 7: FAIL ] specification.texstorage3d.format.depth24_stencil8_2d_array: Verification failed
+[ 8: PASS ] specification.texstorage3d.format.depth24_stencil8_2d_array: successfullyParsed is true
+[ FAIL ] 6 failures reported

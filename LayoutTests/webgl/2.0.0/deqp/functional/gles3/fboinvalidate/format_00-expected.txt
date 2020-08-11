@@ -1,18 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fboinvalidate/format_00.html
-[ 1: PASS ] invalidate.format.rgba32i:
-[ 2: PASS ] invalidate.format.rgba16ui:
-[ 3: PASS ] invalidate.format.rgba8ui:
-[ 4: PASS ] invalidate.format.rgb10_a2ui:
-[ 5: PASS ] invalidate.format.rgb8:
-[ 6: PASS ] invalidate.format.rg32ui:
-[ 7: PASS ] invalidate.format.rg8:
-[ 8: PASS ] invalidate.format.r32i:
-[ 9: PASS ] invalidate.format.r16ui:
-[ 10: PASS ] invalidate.format.r8ui:
-[ 11: PASS ] invalidate.format.depth_component32f:
-[ 12: FAIL ] invalidate.format.depth32f_stencil8: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 13: PASS ] invalidate.format.depth32f_stencil8: successfullyParsed is true
-[ FAIL ] 1 failures reported
-
+[ PASS ] All tests passed

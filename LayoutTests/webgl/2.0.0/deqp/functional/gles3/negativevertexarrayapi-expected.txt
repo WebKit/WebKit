@@ -1,11 +1,12 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/negativevertexarrayapi.html
+
 [ 1: PASS ] vertex_array.vertex_attribf: Passed
 [ 2: PASS ] vertex_array.vertex_attribfv: Passed
-[ 3: FAIL ] vertex_array.vertex_attribi4: Expected gl.INVALID_VALUE, but got gl.NO_ERROR.
-[ 4: FAIL ] vertex_array.vertex_attribi4v: Expected gl.INVALID_VALUE, but got gl.NO_ERROR.
-[ 5: FAIL ] vertex_array.vertex_attrib_pointer: Expected gl.INVALID_OPERATION, but got gl.INVALID_ENUM.
+[ 3: PASS ] vertex_array.vertex_attribi4: Passed
+[ 4: PASS ] vertex_array.vertex_attribi4v: Passed
+[ 5: PASS ] vertex_array.vertex_attrib_pointer: Passed
 [ 6: PASS ] vertex_array.vertex_attrib_i_pointer: Passed
 [ 7: PASS ] vertex_array.enable_vertex_attrib_array: Passed
 [ 8: PASS ] vertex_array.disable_vertex_attrib_array: Passed
@@ -13,18 +14,17 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/negativevertexar
 [ 10: PASS ] vertex_array.draw_arrays: Passed
 [ 11: PASS ] vertex_array.draw_arrays_invalid_program: Passed
 [ 12: PASS ] vertex_array.draw_arrays_incomplete_primitive: Passed
-[ 13: FAIL ] vertex_array.draw_elements: Expected 0x0506, but got gl.INVALID_OPERATION.
+[ 13: PASS ] vertex_array.draw_elements: Passed
 [ 14: PASS ] vertex_array.draw_elements_invalid_program: Passed
-[ 15: FAIL ] vertex_array.draw_elements_incomplete_primitive: Expected 0x0506, but got gl.INVALID_OPERATION.
-[ 16: FAIL ] vertex_array.draw_arrays_instanced: Expected gl.NO_ERROR, but got gl.INVALID_OPERATION.
-[ 17: FAIL ] vertex_array.draw_arrays_instanced_invalid_program: Expected gl.NO_ERROR, but got gl.INVALID_OPERATION.
-[ 18: FAIL ] vertex_array.draw_arrays_instanced_incomplete_primitive: Expected gl.NO_ERROR, but got gl.INVALID_OPERATION.
-[ 19: FAIL ] vertex_array.draw_elements_instanced: Expected gl.NO_ERROR, but got gl.INVALID_OPERATION.
-[ 20: FAIL ] vertex_array.draw_elements_instanced_invalid_program: Expected gl.NO_ERROR, but got gl.INVALID_OPERATION.
-[ 21: FAIL ] vertex_array.draw_elements_instanced_incomplete_primitive: Expected gl.NO_ERROR, but got gl.INVALID_OPERATION.
-[ 22: FAIL ] vertex_array.draw_range_elements: Expected gl.INVALID_ENUM, but got gl.NO_ERROR.
-[ 23: FAIL ] vertex_array.draw_range_elements_invalid_program: Expected gl.INVALID_OPERATION, but got gl.NO_ERROR.
-[ 24: FAIL ] vertex_array.draw_range_elements_incomplete_primitive: Expected gl.INVALID_ENUM, but got gl.NO_ERROR.
-[ 25: PASS ] successfullyParsed is true
-[ FAIL ] 14 failures reported
-
+[ 15: PASS ] vertex_array.draw_elements_incomplete_primitive: Passed
+[ 16: PASS ] vertex_array.draw_arrays_instanced: Passed
+[ 17: PASS ] vertex_array.draw_arrays_instanced_invalid_program: Passed
+[ 18: PASS ] vertex_array.draw_arrays_instanced_incomplete_primitive: Passed
+[ 19: FAIL ] vertex_array.draw_elements_instanced: Expected gl.INVALID_VALUE, but got gl.NO_ERROR.
+[ 20: PASS ] vertex_array.draw_elements_instanced_invalid_program: Passed
+[ 21: FAIL ] vertex_array.draw_elements_instanced_incomplete_primitive: Expected gl.INVALID_VALUE, but got gl.NO_ERROR.
+[ 22: PASS ] vertex_array.draw_range_elements: Passed
+[ 23: PASS ] vertex_array.draw_range_elements_invalid_program: Passed
+[ 24: PASS ] vertex_array.draw_range_elements_incomplete_primitive: Passed
+[ 25: PASS ] vertex_array.draw_range_elements_incomplete_primitive: successfullyParsed is true
+[ FAIL ] 2 failures reported

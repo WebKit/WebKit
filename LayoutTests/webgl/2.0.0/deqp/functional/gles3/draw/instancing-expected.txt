@@ -1,16 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/draw/instancing.html
-[ 1: FAIL ] draw.instancing.draw_arrays_instanced_grid_2x2: Incorrect rendering result
-[ 2: FAIL ] draw.instancing.draw_arrays_instanced_grid_5x5: gl.createProgram()
-[ 3: FAIL ] draw.instancing.draw_arrays_instanced_grid_10x10: Incorrect rendering result
-[ 4: FAIL ] draw.instancing.draw_arrays_instanced_grid_32x32: gl.createProgram()
-[ 5: FAIL ] draw.instancing.draw_arrays_instanced_grid_100x100: Incorrect rendering result
-[ 6: FAIL ] draw.instancing.draw_elements_instanced_grid_2x2: gl.createProgram()
-[ 7: FAIL ] draw.instancing.draw_elements_instanced_grid_5x5: Incorrect rendering result
-[ 8: FAIL ] draw.instancing.draw_elements_instanced_grid_10x10: gl.createProgram()
-[ 9: FAIL ] draw.instancing.draw_elements_instanced_grid_32x32: Incorrect rendering result
-[ 10: FAIL ] draw.instancing.draw_elements_instanced_grid_100x100: gl.createProgram()
-[ 11: PASS ] successfullyParsed is true
-[ FAIL ] 10 failures reported
-
+[ PASS ] All tests passed

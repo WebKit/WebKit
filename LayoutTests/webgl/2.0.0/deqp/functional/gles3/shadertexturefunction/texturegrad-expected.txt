@@ -1,38 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/shadertexturefunction/texturegrad.html
-[ 1: PASS ] texture_functions.texturegrad.sampler2d_fixed_vertex: Pass
-[ 2: PASS ] texture_functions.texturegrad.sampler2d_fixed_fragment: Pass
-[ 3: PASS ] texture_functions.texturegrad.sampler2d_float_vertex: Pass
-[ 4: PASS ] texture_functions.texturegrad.sampler2d_float_fragment: Pass
-[ 5: PASS ] texture_functions.texturegrad.isampler2d_vertex: Pass
-[ 6: PASS ] texture_functions.texturegrad.isampler2d_fragment: Pass
-[ 7: PASS ] texture_functions.texturegrad.usampler2d_vertex: Pass
-[ 8: PASS ] texture_functions.texturegrad.usampler2d_fragment: Pass
-[ 9: PASS ] texture_functions.texturegrad.samplercube_fixed_vertex: Pass
-[ 10: PASS ] texture_functions.texturegrad.samplercube_fixed_fragment: Pass
-[ 11: PASS ] texture_functions.texturegrad.samplercube_float_vertex: Pass
-[ 12: PASS ] texture_functions.texturegrad.samplercube_float_fragment: Pass
-[ 13: PASS ] texture_functions.texturegrad.isamplercube_vertex: Pass
-[ 14: PASS ] texture_functions.texturegrad.isamplercube_fragment: Pass
-[ 15: PASS ] texture_functions.texturegrad.usamplercube_vertex: Pass
-[ 16: PASS ] texture_functions.texturegrad.usamplercube_fragment: Pass
-[ 17: FAIL ] texture_functions.texturegrad.sampler2darray_fixed_vertex: Texture upload failed
-[ 18: FAIL ] texture_functions.texturegrad.sampler2darray_fixed_fragment: Texture upload failed
-[ 19: FAIL ] texture_functions.texturegrad.sampler2darray_float_vertex: Texture upload failed
-[ 20: FAIL ] texture_functions.texturegrad.sampler2darray_float_fragment: Texture upload failed
-[ 21: FAIL ] texture_functions.texturegrad.isampler2darray_vertex: Texture upload failed
-[ 22: FAIL ] texture_functions.texturegrad.isampler2darray_fragment: Texture upload failed
-[ 23: FAIL ] texture_functions.texturegrad.usampler2darray_vertex: Texture upload failed
-[ 24: FAIL ] texture_functions.texturegrad.usampler2darray_fragment: Texture upload failed
-[ 25: FAIL ] texture_functions.texturegrad.sampler3d_fixed_vertex: Texture upload failed
-[ 26: FAIL ] texture_functions.texturegrad.sampler3d_fixed_fragment: Texture upload failed
-[ 27: FAIL ] texture_functions.texturegrad.sampler3d_float_vertex: Texture upload failed
-[ 28: FAIL ] texture_functions.texturegrad.sampler3d_float_fragment: Texture upload failed
-[ 29: FAIL ] texture_functions.texturegrad.isampler3d_vertex: Texture upload failed
-[ 30: FAIL ] texture_functions.texturegrad.isampler3d_fragment: Texture upload failed
-[ 31: FAIL ] texture_functions.texturegrad.usampler3d_vertex: Texture upload failed
-[ 32: FAIL ] texture_functions.texturegrad.usampler3d_fragment: Texture upload failed
-[ 33: PASS ] texture_functions.texturegrad.sampler2darrayshadow_fragment: successfullyParsed is true
-[ FAIL ] 16 failures reported
-
+[ PASS ] All tests passed

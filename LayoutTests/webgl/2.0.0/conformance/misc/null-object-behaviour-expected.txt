@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/misc/null-object-behaviour.html
+
 [ 1: PASS ] Program Compiled
 [ 2: PASS ] Shader Compiled
 [ 3: FAIL ] context.compileShader(undefined) should throw an exception. Was undefined.
@@ -46,4 +47,3 @@ Test: ../../resources/webgl_test_files/conformance/misc/null-object-behaviour.ht
 [ 43: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: context.getTexParameter(context.TEXTURE_2D, context.TEXTURE_MIN_FILTER)
 [ 44: PASS ] successfullyParsed is true
 [ FAIL ] 19 failures reported
-

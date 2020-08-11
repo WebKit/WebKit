@@ -2,8 +2,8 @@ Blocked access to external URL https://get.webgl.org/conformance-resources/openg
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance/more/functions/readPixelsBadArgs.html
+
 [ 1: PASS ] testReadPixels
 [ 2: FAIL ] testReadPixelsSOPIMG
 [ 3: FAIL ] testReadPixelsSOPCanvas
 [ FAIL ] 2 failures reported
-

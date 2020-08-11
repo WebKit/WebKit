@@ -1,8 +1,8 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/context/user-defined-properties-on-context.html
+
 [ 1: PASS ] WebGL context exists
 [ 2: FAIL ] gl2.myProperty should be 2 (of type number). Was undefined (of type undefined).
 [ 3: PASS ] successfullyParsed is true
 [ FAIL ] 1 failures reported
-

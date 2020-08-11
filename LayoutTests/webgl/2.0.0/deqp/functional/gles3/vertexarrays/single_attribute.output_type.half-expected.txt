@@ -1,33 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/vertexarrays/single_attribute.output_type.half.html
-[ 1: FAIL ] vertex_arrays.single_attribute.output_types.half.components2_vec2_quads1: Image comparison failed
-[ 2: FAIL ] vertex_arrays.single_attribute.output_types.half.components2_vec2_quads256: gl.createProgram()
-[ 3: FAIL ] : gl.createProgram()
-[ 4: FAIL ] vertex_arrays.single_attribute.output_types.half.components3_vec2_quads1: Image comparison failed
-[ 5: FAIL ] vertex_arrays.single_attribute.output_types.half.components3_vec2_quads256: gl.createProgram()
-[ 6: FAIL ] : gl.createProgram()
-[ 7: FAIL ] vertex_arrays.single_attribute.output_types.half.components4_vec2_quads1: Image comparison failed
-[ 8: FAIL ] vertex_arrays.single_attribute.output_types.half.components4_vec2_quads256: gl.createProgram()
-[ 9: FAIL ] : gl.createProgram()
-[ 10: FAIL ] vertex_arrays.single_attribute.output_types.half.components2_vec3_quads1: Image comparison failed
-[ 11: FAIL ] vertex_arrays.single_attribute.output_types.half.components2_vec3_quads256: gl.createProgram()
-[ 12: FAIL ] : gl.createProgram()
-[ 13: FAIL ] vertex_arrays.single_attribute.output_types.half.components3_vec3_quads1: Image comparison failed
-[ 14: FAIL ] vertex_arrays.single_attribute.output_types.half.components3_vec3_quads256: gl.createProgram()
-[ 15: FAIL ] : gl.createProgram()
-[ 16: FAIL ] vertex_arrays.single_attribute.output_types.half.components4_vec3_quads1: Image comparison failed
-[ 17: FAIL ] vertex_arrays.single_attribute.output_types.half.components4_vec3_quads256: gl.createProgram()
-[ 18: FAIL ] : gl.createProgram()
-[ 19: FAIL ] vertex_arrays.single_attribute.output_types.half.components2_vec4_quads1: Image comparison failed
-[ 20: FAIL ] vertex_arrays.single_attribute.output_types.half.components2_vec4_quads256: gl.createProgram()
-[ 21: FAIL ] : gl.createProgram()
-[ 22: PASS ] vertex_arrays.single_attribute.output_types.half.components3_vec4_quads1:
-[ 23: FAIL ] vertex_arrays.single_attribute.output_types.half.components3_vec4_quads256: gl.createProgram()
-[ 24: FAIL ] : gl.createProgram()
-[ 25: FAIL ] vertex_arrays.single_attribute.output_types.half.components4_vec4_quads1: Image comparison failed
-[ 26: FAIL ] vertex_arrays.single_attribute.output_types.half.components4_vec4_quads256: gl.createProgram()
-[ 27: FAIL ] : gl.createProgram()
-[ 28: PASS ] successfullyParsed is true
-[ FAIL ] 26 failures reported
-
+[ PASS ] All tests passed

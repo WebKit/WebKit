@@ -1,15 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/vertexarrays/single_attribute.output_type.unsigned_int_2_10_10_10.html
-[ 1: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_int2_10_10_10.components4_vec2_quads1: Image comparison failed
-[ 2: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_int2_10_10_10.components4_vec2_quads256: gl.createProgram()
-[ 3: FAIL ] : gl.createProgram()
-[ 4: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_int2_10_10_10.components4_vec3_quads1: Image comparison failed
-[ 5: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_int2_10_10_10.components4_vec3_quads256: gl.createProgram()
-[ 6: FAIL ] : gl.createProgram()
-[ 7: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_int2_10_10_10.components4_vec4_quads1: Image comparison failed
-[ 8: FAIL ] vertex_arrays.single_attribute.output_types.unsigned_int2_10_10_10.components4_vec4_quads256: gl.createProgram()
-[ 9: FAIL ] : gl.createProgram()
-[ 10: PASS ] successfullyParsed is true
-[ FAIL ] 9 failures reported
-
+[ PASS ] All tests passed

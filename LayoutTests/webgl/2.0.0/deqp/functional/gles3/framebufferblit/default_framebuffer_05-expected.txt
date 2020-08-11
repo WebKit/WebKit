@@ -1,13 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/framebufferblit/default_framebuffer_05.html
-[ 1: FAIL ] blit.default_framebuffer.rgb8:
-[ 2: FAIL ] blit.default_framebuffer.rgb8_nearest_scale_blit_from_default:
-[ 3: FAIL ] blit.default_framebuffer.rgb8_nearest_scale_blit_to_default:
-[ 4: FAIL ] blit.default_framebuffer.rgb8_linear_scale_blit_from_default:
-[ 5: FAIL ] blit.default_framebuffer.rgb8_linear_scale_blit_to_default:
-[ 6: FAIL ] blit.default_framebuffer.rgb8_linear_out_of_bounds_blit_from_default:
-[ 7: FAIL ] blit.default_framebuffer.rgb8_linear_out_of_bounds_blit_to_default:
-[ 8: PASS ] blit.default_framebuffer.r32f_nearest_out_of_bounds_blit_to_default: successfullyParsed is true
-[ FAIL ] 7 failures reported
-
+[ PASS ] All tests passed

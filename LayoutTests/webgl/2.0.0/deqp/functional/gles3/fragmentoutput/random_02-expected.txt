@@ -1,5 +1,38 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fragmentoutput/random_02.html
-[ PASS ] All tests passed
 
+[ 1: PASS ] fragment_outputs.random.2: Image comparison passed for 3 attachments
+[ 2: PASS ] fragment_outputs.random.5: Image comparison passed for 4 attachments
+[ 3: PASS ] fragment_outputs.random.8: Image comparison passed for 2 attachments
+[ 4: PASS ] fragment_outputs.random.14: Image comparison passed for 3 attachments
+[ 5: FAIL ] fragment_outputs.random.17: Image comparison failed for some of 2 attachments
+[ 6: FAIL ] fragment_outputs.random.20: gl.createProgram()
+[ 7: PASS ] fragment_outputs.random.23: Image comparison passed for 4 attachments
+[ 8: FAIL ] fragment_outputs.random.26: Image comparison failed for some of 3 attachments
+[ 9: FAIL ] fragment_outputs.random.29: gl.createProgram()
+[ 10: FAIL ] fragment_outputs.random.32: Image comparison failed for some of 2 attachments
+[ 11: FAIL ] fragment_outputs.random.35: gl.createProgram()
+[ 12: PASS ] fragment_outputs.random.38: Image comparison passed for 4 attachments
+[ 13: PASS ] fragment_outputs.random.41: Image comparison passed for 2 attachments
+[ 14: PASS ] fragment_outputs.random.44: Image comparison passed for 4 attachments
+[ 15: PASS ] fragment_outputs.random.47: Image comparison passed for 4 attachments
+[ 16: PASS ] fragment_outputs.random.50: Image comparison passed for 4 attachments
+[ 17: FAIL ] fragment_outputs.random.53: Image comparison failed for some of 3 attachments
+[ 18: FAIL ] fragment_outputs.random.56: gl.createProgram()
+[ 19: FAIL ] fragment_outputs.random.59: Image comparison failed for some of 2 attachments
+[ 20: FAIL ] fragment_outputs.random.62: gl.createProgram()
+[ 21: FAIL ] fragment_outputs.random.65: Image comparison failed for some of 3 attachments
+[ 22: FAIL ] fragment_outputs.random.68: gl.createProgram()
+[ 23: FAIL ] fragment_outputs.random.71: Image comparison failed for some of 2 attachments
+[ 24: FAIL ] fragment_outputs.random.74: gl.createProgram()
+[ 25: FAIL ] fragment_outputs.random.77: Image comparison failed for some of 3 attachments
+[ 26: FAIL ] fragment_outputs.random.80: gl.createProgram()
+[ 27: FAIL ] fragment_outputs.random.83: Image comparison failed for some of 3 attachments
+[ 28: FAIL ] fragment_outputs.random.86: gl.createProgram()
+[ 29: PASS ] fragment_outputs.random.89: Image comparison passed for 4 attachments
+[ 30: PASS ] fragment_outputs.random.92: Image comparison passed for 3 attachments
+[ 31: FAIL ] fragment_outputs.random.95: Image comparison failed for some of 3 attachments
+[ 32: FAIL ] fragment_outputs.random.98: gl.createProgram()
+[ 33: PASS ] successfullyParsed is true
+[ FAIL ] 20 failures reported

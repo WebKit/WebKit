@@ -1,36 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/shaderbuiltinvar.html
-[ 1: FAIL ] builtin_variable.max_vertex_attribs_vertex: drawArrays
-[ 2: FAIL ] builtin_variable.max_vertex_attribs_fragment: gl.createProgram()
-[ 3: FAIL ] builtin_variable.max_vertex_uniform_vectors_vertex: drawArrays
-[ 4: FAIL ] builtin_variable.max_vertex_uniform_vectors_fragment: gl.createProgram()
-[ 5: FAIL ] builtin_variable.max_fragment_uniform_vectors_vertex: drawArrays
-[ 6: FAIL ] builtin_variable.max_fragment_uniform_vectors_fragment: gl.createProgram()
-[ 7: FAIL ] builtin_variable.max_texture_image_units_vertex: drawArrays
-[ 8: FAIL ] builtin_variable.max_texture_image_units_fragment: gl.createProgram()
-[ 9: FAIL ] builtin_variable.max_vertex_texture_image_units_vertex: drawArrays
-[ 10: FAIL ] builtin_variable.max_vertex_texture_image_units_fragment: gl.createProgram()
-[ 11: FAIL ] builtin_variable.max_combined_texture_image_units_vertex: drawArrays
-[ 12: FAIL ] builtin_variable.max_combined_texture_image_units_fragment: gl.createProgram()
-[ 13: FAIL ] builtin_variable.max_draw_buffers_vertex: drawArrays
-[ 14: FAIL ] builtin_variable.max_draw_buffers_fragment: gl.createProgram()
-[ 15: FAIL ] builtin_variable.max_vertex_output_vectors_vertex: drawArrays
-[ 16: FAIL ] builtin_variable.max_vertex_output_vectors_fragment: gl.createProgram()
-[ 17: FAIL ] builtin_variable.max_fragment_input_vectors_vertex: drawArrays
-[ 18: FAIL ] builtin_variable.max_fragment_input_vectors_fragment: gl.createProgram()
-[ 19: FAIL ] builtin_variable.min_program_texel_offset_vertex: drawArrays
-[ 20: FAIL ] builtin_variable.min_program_texel_offset_fragment: gl.createProgram()
-[ 21: FAIL ] builtin_variable.max_program_texel_offset_vertex: drawArrays
-[ 22: FAIL ] builtin_variable.max_program_texel_offset_fragment: gl.createProgram()
-[ 23: FAIL ] builtin_variable.depth_range_vertex: bindBuffer
-[ 24: FAIL ] builtin_variable.depth_range_fragment: bindBuffer
-[ 25: FAIL ] builtin_variable.vertex_id: Image comparison failed
-[ 26: FAIL ] builtin_variable.vertex_id: Image comparison failed
-[ 27: FAIL ] builtin_variable.fragcoord_xyz: gl.createProgram()
-[ 28: FAIL ] builtin_variable.fragcoord_w: bindBuffer
-[ 29: FAIL ] builtin_variable.pointcoord: bindBuffer
-[ 30: FAIL ] builtin_variable.frontfacing: bindBuffer
-[ 31: PASS ] successfullyParsed is true
-[ FAIL ] 30 failures reported
-
+[ PASS ] All tests passed

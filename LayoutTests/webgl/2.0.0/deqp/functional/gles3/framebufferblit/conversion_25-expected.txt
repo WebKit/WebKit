@@ -1,15 +1,22 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/framebufferblit/conversion_25.html
-[ 1: PASS ] blit.conversion.r8_to_rgba8:
-[ 2: FAIL ] blit.conversion.r8_to_srgb8_alpha8:
-[ 3: FAIL ] blit.conversion.r8_to_rgb10_a2: glError: [object Object]
-[ 4: PASS ] blit.conversion.r8_to_rgba4:
-[ 5: PASS ] blit.conversion.r8_to_rgb5_a1:
-[ 6: PASS ] blit.conversion.r8_to_rgb8:
-[ 7: FAIL ] blit.conversion.r8_to_rgb565: glError: [object Object]
-[ 8: PASS ] blit.conversion.r8_to_rg8:
-[ 9: PASS ] blit.conversion.r8_to_r8:
-[ 10: PASS ] blit.conversion.r8_to_r16f: successfullyParsed is true
-[ FAIL ] 3 failures reported
 
+[ 1: FAIL ] blit.conversion.r8_to_rgba8:
+[ 2: PASS ] blit.conversion.r8_to_srgb8_alpha8:
+[ 3: FAIL ] blit.conversion.r8_to_rgb10_a2:
+[ 4: FAIL ] blit.conversion.r8_to_rgba4:
+[ 5: FAIL ] blit.conversion.r8_to_rgb5_a1:
+[ 6: FAIL ] blit.conversion.r8_to_rgb8:
+[ 7: FAIL ] blit.conversion.r8_to_rgb565:
+[ 8: FAIL ] blit.conversion.r8_to_rg8:
+[ 9: PASS ] blit.conversion.r8_to_r8:
+[ 10: PASS ] blit.conversion.r8_to_rgba32f:
+[ 11: PASS ] blit.conversion.r8_to_rgba16f:
+[ 12: PASS ] blit.conversion.r8_to_r11f_g11f_b10f:
+[ 13: PASS ] blit.conversion.r8_to_rg32f:
+[ 14: PASS ] blit.conversion.r8_to_rg16f:
+[ 15: PASS ] blit.conversion.r8_to_r32f:
+[ 16: PASS ] blit.conversion.r8_to_r16f:
+[ 17: PASS ] blit.conversion.r8_to_r16f: successfullyParsed is true
+[ FAIL ] 7 failures reported

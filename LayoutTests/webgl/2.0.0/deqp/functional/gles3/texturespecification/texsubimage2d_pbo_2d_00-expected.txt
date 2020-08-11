@@ -1,44 +1,32 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texsubimage2d_pbo_2d_00.html
-[ 1: PASS ] specification.texsubimage2d_pbo.rgba32f_2d: Passed
-[ 2: FAIL ] specification.texsubimage2d_pbo.rgba32ui_2d: Image comparison failed
-[ 3: FAIL ] specification.texsubimage2d_pbo.rgba32ui_2d: Verification failed
-[ 4: FAIL ] specification.texsubimage2d_pbo.rgba16i_2d: Image comparison failed
-[ 5: FAIL ] specification.texsubimage2d_pbo.rgba16i_2d: Verification failed
-[ 6: FAIL ] specification.texsubimage2d_pbo.rgba8_2d: Image comparison failed
-[ 7: FAIL ] specification.texsubimage2d_pbo.rgba8_2d: Verification failed
-[ 8: FAIL ] specification.texsubimage2d_pbo.rgba8ui_2d: Image comparison failed
-[ 9: FAIL ] specification.texsubimage2d_pbo.rgba8ui_2d: Verification failed
-[ 10: FAIL ] specification.texsubimage2d_pbo.rgb10_a2_2d: Image comparison failed
-[ 11: FAIL ] specification.texsubimage2d_pbo.rgb10_a2_2d: Verification failed
-[ 12: FAIL ] specification.texsubimage2d_pbo.rgba4_2d: Image comparison failed
-[ 13: FAIL ] specification.texsubimage2d_pbo.rgba4_2d: Verification failed
-[ 14: FAIL ] specification.texsubimage2d_pbo.rgba8_snorm_2d: Image comparison failed
-[ 15: FAIL ] specification.texsubimage2d_pbo.rgba8_snorm_2d: Verification failed
-[ 16: FAIL ] specification.texsubimage2d_pbo.rgb565_2d: Image comparison failed
-[ 17: FAIL ] specification.texsubimage2d_pbo.rgb565_2d: Verification failed
-[ 18: PASS ] specification.texsubimage2d_pbo.rgb32f_2d: Passed
-[ 19: FAIL ] specification.texsubimage2d_pbo.rgb32ui_2d: Image comparison failed
-[ 20: FAIL ] specification.texsubimage2d_pbo.rgb32ui_2d: Verification failed
-[ 21: PASS ] specification.texsubimage2d_pbo.rgb16i_2d: Passed
-[ 22: PASS ] specification.texsubimage2d_pbo.rgb8_snorm_2d: Passed
-[ 23: FAIL ] specification.texsubimage2d_pbo.rgb8ui_2d: Image comparison failed
-[ 24: FAIL ] specification.texsubimage2d_pbo.rgb8ui_2d: Verification failed
-[ 25: FAIL ] specification.texsubimage2d_pbo.rgb9_e5_2d: Image comparison failed
-[ 26: FAIL ] specification.texsubimage2d_pbo.rgb9_e5_2d: Verification failed
-[ 27: PASS ] specification.texsubimage2d_pbo.rg32i_2d: Passed
-[ 28: PASS ] specification.texsubimage2d_pbo.rg16f_2d: Passed
-[ 29: FAIL ] specification.texsubimage2d_pbo.rg16ui_2d: Image comparison failed
-[ 30: FAIL ] specification.texsubimage2d_pbo.rg16ui_2d: Verification failed
-[ 31: PASS ] specification.texsubimage2d_pbo.rg8i_2d: Passed
-[ 32: PASS ] specification.texsubimage2d_pbo.rg8_snorm_2d: Passed
-[ 33: PASS ] specification.texsubimage2d_pbo.r32i_2d: Passed
-[ 34: PASS ] specification.texsubimage2d_pbo.r16f_2d: Passed
-[ 35: FAIL ] specification.texsubimage2d_pbo.r16ui_2d: Image comparison failed
-[ 36: FAIL ] specification.texsubimage2d_pbo.r16ui_2d: Verification failed
-[ 37: PASS ] specification.texsubimage2d_pbo.r8i_2d: Passed
-[ 38: PASS ] specification.texsubimage2d_pbo.r8_snorm_2d: Passed
-[ 39: PASS ] specification.texsubimage2d_pbo.r8_snorm_2d: successfullyParsed is true
-[ FAIL ] 26 failures reported
 
+[ 1: PASS ] specification.texsubimage2d_pbo.rgba32f_2d: Passed
+[ 2: PASS ] specification.texsubimage2d_pbo.rgba32ui_2d: Passed
+[ 3: PASS ] specification.texsubimage2d_pbo.rgba16i_2d: Passed
+[ 4: PASS ] specification.texsubimage2d_pbo.rgba8_2d: Passed
+[ 5: PASS ] specification.texsubimage2d_pbo.rgba8ui_2d: Passed
+[ 6: PASS ] specification.texsubimage2d_pbo.rgb10_a2_2d: Passed
+[ 7: PASS ] specification.texsubimage2d_pbo.rgba4_2d: Passed
+[ 8: PASS ] specification.texsubimage2d_pbo.rgba8_snorm_2d: Passed
+[ 9: FAIL ] specification.texsubimage2d_pbo.rgb565_2d: Image comparison failed
+[ 10: FAIL ] specification.texsubimage2d_pbo.rgb565_2d: Verification failed
+[ 11: PASS ] specification.texsubimage2d_pbo.rgb32f_2d: Passed
+[ 12: PASS ] specification.texsubimage2d_pbo.rgb32ui_2d: Passed
+[ 13: PASS ] specification.texsubimage2d_pbo.rgb16i_2d: Passed
+[ 14: PASS ] specification.texsubimage2d_pbo.rgb8_snorm_2d: Passed
+[ 15: PASS ] specification.texsubimage2d_pbo.rgb8ui_2d: Passed
+[ 16: PASS ] specification.texsubimage2d_pbo.rgb9_e5_2d: Passed
+[ 17: PASS ] specification.texsubimage2d_pbo.rg32i_2d: Passed
+[ 18: PASS ] specification.texsubimage2d_pbo.rg16f_2d: Passed
+[ 19: PASS ] specification.texsubimage2d_pbo.rg16ui_2d: Passed
+[ 20: PASS ] specification.texsubimage2d_pbo.rg8i_2d: Passed
+[ 21: PASS ] specification.texsubimage2d_pbo.rg8_snorm_2d: Passed
+[ 22: PASS ] specification.texsubimage2d_pbo.r32i_2d: Passed
+[ 23: PASS ] specification.texsubimage2d_pbo.r16f_2d: Passed
+[ 24: PASS ] specification.texsubimage2d_pbo.r16ui_2d: Passed
+[ 25: PASS ] specification.texsubimage2d_pbo.r8i_2d: Passed
+[ 26: PASS ] specification.texsubimage2d_pbo.r8_snorm_2d: Passed
+[ 27: PASS ] specification.texsubimage2d_pbo.r8_snorm_2d: successfullyParsed is true
+[ FAIL ] 2 failures reported

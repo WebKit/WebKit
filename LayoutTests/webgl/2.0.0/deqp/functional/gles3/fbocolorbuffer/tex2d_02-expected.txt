@@ -1,11 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fbocolorbuffer/tex2d_02.html
-[ 1: PASS ] color.tex2d.rgba16i:
-[ 2: FAIL ] color.tex2d.rgb10_a2: gl.createProgram()
-[ 3: PASS ] color.tex2d.rg32i:
-[ 4: FAIL ] color.tex2d.rg8ui: gl.createProgram()
-[ 5: PASS ] color.tex2d.r8i:
-[ 6: PASS ] color.tex2d.rg16f: successfullyParsed is true
-[ FAIL ] 2 failures reported
-
+[ PASS ] All tests passed

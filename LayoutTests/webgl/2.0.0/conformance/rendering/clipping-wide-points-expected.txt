@@ -1,5 +1,15 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/rendering/clipping-wide-points.html
-[ PASS ] All tests passed
 
+[ 1: PASS ] getError was expected value: NO_ERROR : Should be no errors after setting up program
+[ 2: PASS ] should be 0,255,0
+[ 3: PASS ] getError was expected value: NO_ERROR : Should be no errors after running one test case
+[ 4: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 255,0,0
+[ 5: PASS ] getError was expected value: NO_ERROR : Should be no errors after running one test case
+[ 6: PASS ] should be 0,255,0
+[ 7: PASS ] getError was expected value: NO_ERROR : Should be no errors after running one test case
+[ 8: FAIL ] should be 0,255,0 at (0, 0) expected: 0,255,0 was 255,0,0
+[ 9: PASS ] getError was expected value: NO_ERROR : Should be no errors after running one test case
+[ 10: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported

@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/misc/expando-loss.html
+
 [ 1: PASS ] getParameter(TEXTURE_BINDING_2D) returns instance that was bound.
 [ 2: FAIL ] getParameter(TEXTURE_BINDING_2D): Expect basic expando to survive despite GC.
 [ 3: FAIL ] getParameter(TEXTURE_BINDING_2D): Expect subobject expando to survive despite GC.
@@ -53,4 +54,3 @@ Test: ../../resources/webgl_test_files/conformance/misc/expando-loss.html
 [ 50: PASS ] [object WebGLRenderbuffer] is an instance of WebGLRenderbuffer
 [ 51: PASS ] successfullyParsed is true
 [ FAIL ] 28 failures reported
-

@@ -1,26 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texsubimage2d_pbo_params.html
-[ 1: FAIL ] specification.texsubimage2d_pbo.rgb8_offset_2d: Image comparison failed
-[ 2: FAIL ] specification.texsubimage2d_pbo.rgb8_offset_2d: Verification failed
-[ 3: FAIL ] specification.texsubimage2d_pbo.rgb8_offset_cube: Image comparison failed
-[ 4: FAIL ] specification.texsubimage2d_pbo.rgb8_offset_cube: Verification failed
-[ 5: FAIL ] specification.texsubimage2d_pbo.rgb8_alignment_2d: Image comparison failed
-[ 6: FAIL ] specification.texsubimage2d_pbo.rgb8_alignment_2d: Verification failed
-[ 7: FAIL ] specification.texsubimage2d_pbo.rgb8_alignment_cube: Image comparison failed
-[ 8: FAIL ] specification.texsubimage2d_pbo.rgb8_alignment_cube: Verification failed
-[ 9: FAIL ] specification.texsubimage2d_pbo.rgb8_row_length_2d: Image comparison failed
-[ 10: FAIL ] specification.texsubimage2d_pbo.rgb8_row_length_2d: Verification failed
-[ 11: FAIL ] specification.texsubimage2d_pbo.rgb8_row_length_cube: Image comparison failed
-[ 12: FAIL ] specification.texsubimage2d_pbo.rgb8_row_length_cube: Verification failed
-[ 13: FAIL ] specification.texsubimage2d_pbo.rgb8_skip_rows_2d: Image comparison failed
-[ 14: FAIL ] specification.texsubimage2d_pbo.rgb8_skip_rows_2d: Verification failed
-[ 15: FAIL ] specification.texsubimage2d_pbo.rgb8_skip_rows_cube: Image comparison failed
-[ 16: FAIL ] specification.texsubimage2d_pbo.rgb8_skip_rows_cube: Verification failed
-[ 17: FAIL ] specification.texsubimage2d_pbo.rgb8_skip_pixels_2d: Image comparison failed
-[ 18: FAIL ] specification.texsubimage2d_pbo.rgb8_skip_pixels_2d: Verification failed
-[ 19: FAIL ] specification.texsubimage2d_pbo.rgb8_skip_pixels_cube: Image comparison failed
-[ 20: FAIL ] specification.texsubimage2d_pbo.rgb8_skip_pixels_cube: Verification failed
-[ 21: PASS ] specification.texsubimage2d_pbo.rgb8_skip_pixels_cube: successfullyParsed is true
-[ FAIL ] 20 failures reported
-
+[ PASS ] All tests passed

@@ -1,22 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/uniformbuffers/multi_nested_struct.html
-[ 1: FAIL ] ubo.multi_nested_struct.per_block_buffer.std140_vertex: Assert failed
-[ 2: FAIL ] ubo.multi_nested_struct.per_block_buffer.std140_fragment: Assert failed
-[ 3: FAIL ] ubo.multi_nested_struct.per_block_buffer.std140_both: Assert failed
-[ 4: FAIL ] ubo.multi_nested_struct.per_block_buffer.std140_mixed: Assert failed
-[ 5: FAIL ] ubo.multi_nested_struct.per_block_buffer.std140_instance_array_vertex: Assert failed
-[ 6: FAIL ] ubo.multi_nested_struct.per_block_buffer.std140_instance_array_fragment: Assert failed
-[ 7: FAIL ] ubo.multi_nested_struct.per_block_buffer.std140_instance_array_both: Assert failed
-[ 8: FAIL ] ubo.multi_nested_struct.per_block_buffer.std140_instance_array_mixed: Assert failed
-[ 9: FAIL ] ubo.multi_nested_struct.single_buffer.std140_vertex: Assert failed
-[ 10: FAIL ] ubo.multi_nested_struct.single_buffer.std140_fragment: Assert failed
-[ 11: FAIL ] ubo.multi_nested_struct.single_buffer.std140_both: Assert failed
-[ 12: FAIL ] ubo.multi_nested_struct.single_buffer.std140_mixed: Assert failed
-[ 13: FAIL ] ubo.multi_nested_struct.single_buffer.std140_instance_array_vertex: Assert failed
-[ 14: FAIL ] ubo.multi_nested_struct.single_buffer.std140_instance_array_fragment: Assert failed
-[ 15: FAIL ] ubo.multi_nested_struct.single_buffer.std140_instance_array_both: Assert failed
-[ 16: FAIL ] ubo.multi_nested_struct.single_buffer.std140_instance_array_mixed: Assert failed
-[ 17: PASS ] ubo.multi_nested_struct.single_buffer.std140_instance_array_mixed: successfullyParsed is true
-[ FAIL ] 16 failures reported
-
+[ PASS ] All tests passed

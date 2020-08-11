@@ -1,24 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/shadermatrix/mul_assign.html
-[ 1: FAIL ] shader_matrix.mul_assign.lowp_mat2_float_vertex: bindBuffer
-[ 2: FAIL ] shader_matrix.mul_assign.lowp_mat2_float_fragment: bindBuffer
-[ 3: FAIL ] shader_matrix.mul_assign.mediump_mat2_float_vertex: bindBuffer
-[ 4: FAIL ] shader_matrix.mul_assign.mediump_mat2_float_fragment: bindBuffer
-[ 5: FAIL ] shader_matrix.mul_assign.highp_mat2_float_vertex: bindBuffer
-[ 6: FAIL ] shader_matrix.mul_assign.highp_mat2_float_fragment: bindBuffer
-[ 7: FAIL ] shader_matrix.mul_assign.lowp_mat3_float_vertex: bindBuffer
-[ 8: FAIL ] shader_matrix.mul_assign.lowp_mat3_float_fragment: bindBuffer
-[ 9: FAIL ] shader_matrix.mul_assign.mediump_mat3_float_vertex: bindBuffer
-[ 10: FAIL ] shader_matrix.mul_assign.mediump_mat3_float_fragment: bindBuffer
-[ 11: FAIL ] shader_matrix.mul_assign.highp_mat3_float_vertex: bindBuffer
-[ 12: FAIL ] shader_matrix.mul_assign.highp_mat3_float_fragment: bindBuffer
-[ 13: FAIL ] shader_matrix.mul_assign.lowp_mat4_float_vertex: bindBuffer
-[ 14: FAIL ] shader_matrix.mul_assign.lowp_mat4_float_fragment: bindBuffer
-[ 15: FAIL ] shader_matrix.mul_assign.mediump_mat4_float_vertex: bindBuffer
-[ 16: FAIL ] shader_matrix.mul_assign.mediump_mat4_float_fragment: bindBuffer
-[ 17: FAIL ] shader_matrix.mul_assign.highp_mat4_float_vertex: bindBuffer
-[ 18: FAIL ] shader_matrix.mul_assign.highp_mat4_float_fragment: bindBuffer
-[ 19: PASS ] successfullyParsed is true
-[ FAIL ] 18 failures reported
-
+[ PASS ] All tests passed

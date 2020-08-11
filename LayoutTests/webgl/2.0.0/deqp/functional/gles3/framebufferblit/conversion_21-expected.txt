@@ -1,15 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/framebufferblit/conversion_21.html
-[ 1: FAIL ] blit.conversion.r32i_to_rgba32i: glError: INVALID_OPERATION
-[ 2: FAIL ] blit.conversion.r32i_to_rgba16i: glError: INVALID_OPERATION
-[ 3: FAIL ] blit.conversion.r32i_to_rgba8i: glError: INVALID_OPERATION
-[ 4: FAIL ] blit.conversion.r32i_to_rg32i: glError: INVALID_OPERATION
-[ 5: FAIL ] blit.conversion.r32i_to_rg16i: glError: INVALID_OPERATION
-[ 6: FAIL ] blit.conversion.r32i_to_rg8i: glError: INVALID_OPERATION
-[ 7: FAIL ] blit.conversion.r32i_to_r32i: glError: INVALID_OPERATION
-[ 8: FAIL ] blit.conversion.r32i_to_r16i: glError: INVALID_OPERATION
-[ 9: FAIL ] blit.conversion.r32i_to_r8i: glError: INVALID_OPERATION
-[ 10: PASS ] blit.conversion.r32i_to_r8i: successfullyParsed is true
-[ FAIL ] 9 failures reported
-
+[ PASS ] All tests passed

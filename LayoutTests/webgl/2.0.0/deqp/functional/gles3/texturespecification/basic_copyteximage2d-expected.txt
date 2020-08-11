@@ -1,21 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/basic_copyteximage2d.html
-[ 1: PASS ] specification.basic_copyteximage2d.2d_alpha: Passed
-[ 2: PASS ] specification.basic_copyteximage2d.2d_luminance: Passed
-[ 3: PASS ] specification.basic_copyteximage2d.2d_luminance_alpha: Passed
-[ 4: PASS ] specification.basic_copyteximage2d.2d_rgb: Passed
-[ 5: PASS ] specification.basic_copyteximage2d.2d_rgba: Passed
-[ 6: FAIL ] specification.basic_copyteximage2d.cube_alpha: Image comparison failed
-[ 7: FAIL ] specification.basic_copyteximage2d.cube_alpha: Verification failed
-[ 8: FAIL ] specification.basic_copyteximage2d.cube_luminance: Image comparison failed
-[ 9: FAIL ] specification.basic_copyteximage2d.cube_luminance: Verification failed
-[ 10: FAIL ] specification.basic_copyteximage2d.cube_luminance_alpha: Image comparison failed
-[ 11: FAIL ] specification.basic_copyteximage2d.cube_luminance_alpha: Verification failed
-[ 12: FAIL ] specification.basic_copyteximage2d.cube_rgb: Image comparison failed
-[ 13: FAIL ] specification.basic_copyteximage2d.cube_rgb: Verification failed
-[ 14: FAIL ] specification.basic_copyteximage2d.cube_rgba: Image comparison failed
-[ 15: FAIL ] specification.basic_copyteximage2d.cube_rgba: Verification failed
-[ 16: PASS ] specification.basic_copyteximage2d.cube_rgba: successfullyParsed is true
-[ FAIL ] 10 failures reported
-
+[ PASS ] All tests passed

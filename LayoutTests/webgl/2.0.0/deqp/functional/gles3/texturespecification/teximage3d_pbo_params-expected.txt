@@ -1,34 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/teximage3d_pbo_params.html
-[ 1: FAIL ] specification.teximage3d_pbo.rgb8_offset_2d_array: Image comparison failed
-[ 2: FAIL ] specification.teximage3d_pbo.rgb8_offset_2d_array: Verification failed
-[ 3: FAIL ] specification.teximage3d_pbo.rgb8_offset_3d: Image comparison failed
-[ 4: FAIL ] specification.teximage3d_pbo.rgb8_offset_3d: Verification failed
-[ 5: FAIL ] specification.teximage3d_pbo.rgb8_alignment_2d_array: Image comparison failed
-[ 6: FAIL ] specification.teximage3d_pbo.rgb8_alignment_2d_array: Verification failed
-[ 7: FAIL ] specification.teximage3d_pbo.rgb8_alignment_3d: Image comparison failed
-[ 8: FAIL ] specification.teximage3d_pbo.rgb8_alignment_3d: Verification failed
-[ 9: FAIL ] specification.teximage3d_pbo.rgb8_image_height_2d_array: Image comparison failed
-[ 10: FAIL ] specification.teximage3d_pbo.rgb8_image_height_2d_array: Verification failed
-[ 11: FAIL ] specification.teximage3d_pbo.rgb8_image_height_3d: Image comparison failed
-[ 12: FAIL ] specification.teximage3d_pbo.rgb8_image_height_3d: Verification failed
-[ 13: FAIL ] specification.teximage3d_pbo.rgb8_row_length_2d_array: Image comparison failed
-[ 14: FAIL ] specification.teximage3d_pbo.rgb8_row_length_2d_array: Verification failed
-[ 15: FAIL ] specification.teximage3d_pbo.rgb8_row_length_3d: Image comparison failed
-[ 16: FAIL ] specification.teximage3d_pbo.rgb8_row_length_3d: Verification failed
-[ 17: FAIL ] specification.teximage3d_pbo.rgb8_skip_images_2d_array: Image comparison failed
-[ 18: FAIL ] specification.teximage3d_pbo.rgb8_skip_images_2d_array: Verification failed
-[ 19: FAIL ] specification.teximage3d_pbo.rgb8_skip_images_3d: Image comparison failed
-[ 20: FAIL ] specification.teximage3d_pbo.rgb8_skip_images_3d: Verification failed
-[ 21: FAIL ] specification.teximage3d_pbo.rgb8_skip_rows_2d_array: Image comparison failed
-[ 22: FAIL ] specification.teximage3d_pbo.rgb8_skip_rows_2d_array: Verification failed
-[ 23: FAIL ] specification.teximage3d_pbo.rgb8_skip_rows_3d: Image comparison failed
-[ 24: FAIL ] specification.teximage3d_pbo.rgb8_skip_rows_3d: Verification failed
-[ 25: FAIL ] specification.teximage3d_pbo.rgb8_skip_pixels_2d_array: Image comparison failed
-[ 26: FAIL ] specification.teximage3d_pbo.rgb8_skip_pixels_2d_array: Verification failed
-[ 27: FAIL ] specification.teximage3d_pbo.rgb8_skip_pixels_3d: Image comparison failed
-[ 28: FAIL ] specification.teximage3d_pbo.rgb8_skip_pixels_3d: Verification failed
-[ 29: PASS ] specification.teximage3d_pbo.rgb8_skip_pixels_3d: successfullyParsed is true
-[ FAIL ] 28 failures reported
-
+[ PASS ] All tests passed

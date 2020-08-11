@@ -1,15 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/fbostencilbuffer.html
-[ 1: PASS ] stencil.basic.depth32f_stencil8:
-[ 2: FAIL ] stencil.basic.depth32f_stencil8_depth: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 3: PASS ] stencil.basic.depth24_stencil8:
-[ 4: FAIL ] stencil.basic.depth24_stencil8_depth: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 5: PASS ] stencil.basic.stencil_index8:
-[ 6: PASS ] stencil.attach.depth_only:
-[ 7: PASS ] stencil.attach.stencil_only:
-[ 8: FAIL ] stencil.attach.depth_stencil_separate: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 9: PASS ] stencil.attach.depth_stencil_attachment:
-[ 10: PASS ] stencil.attach.depth_stencil_attachment: successfullyParsed is true
-[ FAIL ] 3 failures reported
-
+[ PASS ] All tests passed

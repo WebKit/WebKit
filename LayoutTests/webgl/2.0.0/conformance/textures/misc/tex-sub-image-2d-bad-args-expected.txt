@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance/textures/misc/tex-sub-image-2d-bad-args.html
+
 [ 1: PASS ] getError was expected value: INVALID_OPERATION : no previously defined texture image
 [ 2: PASS ] getError was expected value: NO_ERROR : Setup should succeed
 [ 3: PASS ] getError was expected value: INVALID_VALUE : y + height > texture height
@@ -39,4 +40,3 @@ Test: ../../../resources/webgl_test_files/conformance/textures/misc/tex-sub-imag
 [ 36: PASS ] getError was one of: INVALID_VALUE or INVALID_OPERATION : too high level
 [ 37: PASS ] successfullyParsed is true
 [ FAIL ] 2 failures reported
-

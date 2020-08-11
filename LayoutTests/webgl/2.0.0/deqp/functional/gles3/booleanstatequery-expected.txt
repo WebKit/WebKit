@@ -1,23 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/booleanstatequery.html
-[ 1: PASS ] boolean.rasterizer_discard: Passed
-[ 2: PASS ] boolean.cull_face: Passed
-[ 3: PASS ] boolean.polygon_offset_fill: Passed
-[ 4: PASS ] boolean.sample_alpha_to_coverage: Passed
-[ 5: PASS ] boolean.sample_coverage: Passed
-[ 6: PASS ] boolean.scissor_test: Passed
-[ 7: PASS ] boolean.stencil_test: Passed
-[ 8: PASS ] boolean.depth_test: Passed
-[ 9: PASS ] boolean.blend: Passed
-[ 10: PASS ] boolean.dither: Passed
-[ 11: PASS ] boolean.color_writemask: Passed
-[ 12: PASS ] boolean.depth_writemask: Passed
-[ 13: PASS ] boolean.sample_coverage_invert: Passed
-[ 14: PASS ] boolean.transform_feedback_active_initial: Passed
-[ 15: PASS ] boolean.transform_feedback_paused_initial: Passed
-[ 16: FAIL ] boolean.transform_feedback:
-[ 17: FAIL ] boolean.transform_feedback_implicit_resume:
-[ 18: PASS ] successfullyParsed is true
-[ FAIL ] 2 failures reported
-
+[ PASS ] All tests passed

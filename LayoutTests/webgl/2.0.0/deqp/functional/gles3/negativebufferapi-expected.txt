@@ -1,0 +1,34 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/webgl_test_files/deqp/functional/gles3/negativebufferapi.html
+
+[ 1: PASS ] negativeBufferApi.bind_buffer: Passed
+[ 2: PASS ] negativeBufferApi.buffer_data: Passed
+[ 3: PASS ] negativeBufferApi.buffer_sub_data: Passed
+[ 4: PASS ] negativeBufferApi.buffer_sub_data_size_offset: Passed
+[ 5: PASS ] negativeBufferApi.clear: Passed
+[ 6: PASS ] negativeBufferApi.read_pixels: Passed
+[ 7: PASS ] negativeBufferApi.read_pixels_format_mismatch: Passed
+[ 8: PASS ] negativeBufferApi.read_pixels_fbo_format_mismatch: Passed
+[ 9: PASS ] negativeBufferApi.bind_buffer_range: Passed
+[ 10: PASS ] negativeBufferApi.bind_buffer_base: Passed
+[ 11: PASS ] negativeBufferApi.clear_bufferiv: Passed
+[ 12: PASS ] negativeBufferApi.clear_bufferuiv: Passed
+[ 13: PASS ] negativeBufferApi.clear_bufferfv: Passed
+[ 14: PASS ] negativeBufferApi.clear_bufferfi: Passed
+[ 15: FAIL ] negativeBufferApi.copy_buffer_sub_data: Expected gl.INVALID_OPERATION, but got gl.INVALID_VALUE.
+[ 16: FAIL ] negativeBufferApi.draw_buffers: Expected gl.NO_ERROR, but got gl.INVALID_OPERATION.
+[ 17: PASS ] negativeBufferApi.bind_framebuffer: Passed
+[ 18: PASS ] negativeBufferApi.bind_renderbuffer: Passed
+[ 19: PASS ] negativeBufferApi.check_framebuffer_status: Passed
+[ 20: PASS ] negativeBufferApi.framebuffer_renderbuffer: Passed
+[ 21: PASS ] negativeBufferApi.framebuffer_texture2d: Passed
+[ 22: FAIL ] negativeBufferApi.renderbuffer_storage: Expected gl.INVALID_VALUE, but got gl.NO_ERROR.
+[ 23: PASS ] negativeBufferApi.blit_framebuffer: Passed
+[ 24: PASS ] negativeBufferApi.blit_framebuffer_multisample: Passed
+[ 25: PASS ] negativeBufferApi.framebuffer_texture_layer: Passed
+[ 26: PASS ] negativeBufferApi.invalidate_framebuffer: Passed
+[ 27: PASS ] negativeBufferApi.invalidate_sub_framebuffer: Passed
+[ 28: FAIL ] negativeBufferApi.renderbuffer_storage_multisample: Expected gl.INVALID_VALUE, but got gl.NO_ERROR.
+[ 29: PASS ] successfullyParsed is true
+[ FAIL ] 4 failures reported

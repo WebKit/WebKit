@@ -1,19 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/textureformat/sized_color_3d_npot_00.html
-[ 1: FAIL ] texture_format.sized.rgba32f_npot: Texture upload failed
-[ 2: FAIL ] texture_format.sized.rgba16i_npot: Texture upload failed
-[ 3: FAIL ] texture_format.sized.rgba8ui_npot: Texture upload failed
-[ 4: FAIL ] texture_format.sized.rgba4_npot: Texture upload failed
-[ 5: FAIL ] texture_format.sized.rgb565_npot: Texture upload failed
-[ 6: FAIL ] texture_format.sized.rgb32ui_npot: Texture upload failed
-[ 7: FAIL ] texture_format.sized.rgb8_snorm_npot: Texture upload failed
-[ 8: FAIL ] texture_format.sized.rgb9_e5_npot: Texture upload failed
-[ 9: FAIL ] texture_format.sized.rg16f_npot: Texture upload failed
-[ 10: FAIL ] texture_format.sized.rg8i_npot: Texture upload failed
-[ 11: FAIL ] texture_format.sized.r32i_npot: Texture upload failed
-[ 12: FAIL ] texture_format.sized.r16ui_npot: Texture upload failed
-[ 13: FAIL ] texture_format.sized.r8_snorm_npot: Texture upload failed
-[ 14: PASS ] successfullyParsed is true
-[ FAIL ] 13 failures reported
-
+[ PASS ] All tests passed

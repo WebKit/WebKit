@@ -1,10 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fborender/shared_colorbuffer_02.html
-[ 1: FAIL ] render.shared_colorbuffer.tex2d_rg8_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 2: FAIL ] render.shared_colorbuffer.rbo_rg8_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 3: FAIL ] render.shared_colorbuffer.tex2d_r8_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 4: FAIL ] render.shared_colorbuffer.rbo_r8_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 5: PASS ] render.shared_colorbuffer.rbo_r8_depth_stencil_rbo_depth24_stencil8: successfullyParsed is true
-[ FAIL ] 4 failures reported
-
+[ PASS ] All tests passed

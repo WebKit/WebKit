@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/shaderstatequery.html
+
 [ 1: PASS ] shader.shader_type: Passed
 [ 2: PASS ] shader.shader_compile_status: Passed
 [ 3: PASS ] shader.shader_info_log: Passed
@@ -8,32 +9,32 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/shaderstatequery
 [ 5: FAIL ] shader.delete_status:
 [ 6: PASS ] shader.current_vertex_attrib_initial: Passed
 [ 7: PASS ] shader.current_vertex_attrib_float: Passed
-[ 8: FAIL ] shader.current_vertex_attrib_int:
-[ 9: FAIL ] shader.current_vertex_attrib_uint:
+[ 8: PASS ] shader.current_vertex_attrib_int: Passed
+[ 9: PASS ] shader.current_vertex_attrib_uint: Passed
 [ 10: PASS ] shader.program_info_log: Passed
 [ 11: PASS ] shader.program_validate_status: Passed
 [ 12: PASS ] shader.program_attached_shaders: Passed
-[ 13: FAIL ] shader.program_active_uniform_name: null is not an object (evaluating 'indices[ndx]')
-[ 14: FAIL ] shader.program_active_uniform_types: Value is not a sequence
-[ 15: FAIL ] shader.program_active_uniform_blocks: Value is not a sequence
+[ 13: PASS ] shader.program_active_uniform_name: Passed
+[ 14: PASS ] shader.program_active_uniform_types: Passed
+[ 15: FAIL ] shader.program_active_uniform_blocks: Expected { 1, 2}; got {1, 2}
 [ 16: PASS ] shader.transform_feedback: Passed
 [ 17: PASS ] shader.active_attributes: Passed
-[ 18: FAIL ] shader.vertex_attrib_size:
+[ 18: PASS ] shader.vertex_attrib_size: Passed
 [ 19: FAIL ] shader.vertex_attrib_type:
-[ 20: FAIL ] shader.vertex_attrib_stride: Expected gl.NO_ERROR, but got gl.INVALID_ENUM.
+[ 20: FAIL ] shader.vertex_attrib_stride:
 [ 21: FAIL ] shader.vertex_attrib_normalized:
 [ 22: FAIL ] shader.vertex_attrib_integer:
 [ 23: PASS ] shader.vertex_attrib_array_enabled: Passed
 [ 24: PASS ] shader.vertex_attrib_array_divisor: Passed
 [ 25: PASS ] shader.vertex_attrib_array_buffer_binding: Passed
-[ 26: FAIL ] shader.vertex_attrib_offset:
+[ 26: PASS ] shader.vertex_attrib_offset: Passed
 [ 27: PASS ] shader.uniform_value_float: Passed
 [ 28: PASS ] shader.uniform_value_int: Passed
-[ 29: FAIL ] shader.uniform_value_uint: null is not an object (evaluating 'a.constructor')
+[ 29: PASS ] shader.uniform_value_uint: Passed
 [ 30: PASS ] shader.uniform_value_boolean: Passed
 [ 31: PASS ] shader.uniform_value_sampler: Passed
 [ 32: PASS ] shader.uniform_value_array: Passed
-[ 33: FAIL ] shader.uniform_value_matrix:
+[ 33: PASS ] shader.uniform_value_matrix: Passed
 [ 34: PASS ] shader.precision_vertex_lowp_float: Passed
 [ 35: PASS ] shader.precision_vertex_mediump_float: Passed
 [ 36: PASS ] shader.precision_vertex_highp_float: Passed
@@ -47,5 +48,4 @@ Test: ../../../resources/webgl_test_files/deqp/functional/gles3/shaderstatequery
 [ 44: PASS ] shader.precision_fragment_mediump_int: Passed
 [ 45: PASS ] shader.precision_fragment_highp_int: Passed
 [ 46: PASS ] shader.precision_fragment_highp_int: successfullyParsed is true
-[ FAIL ] 14 failures reported
-
+[ FAIL ] 6 failures reported

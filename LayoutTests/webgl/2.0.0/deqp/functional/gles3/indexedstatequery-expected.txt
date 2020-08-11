@@ -1,10 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/indexedstatequery.html
-[ 1: FAIL ] indexed.transform_feedback_buffer_binding: buffers do not match
-[ 2: FAIL ] indexed.transform_feedback_buffer_start_size: got null; expected 0
-[ 3: FAIL ] indexed.uniform_buffer_binding: null is not an object (evaluating 'uniformIndices[ndx]')
-[ 4: FAIL ] indexed.uniform_buffer_start_size: null is not an object (evaluating 'uniformIndices[0]')
-[ 5: PASS ] indexed.uniform_buffer_start_size: successfullyParsed is true
-[ FAIL ] 4 failures reported
-
+[ PASS ] All tests passed

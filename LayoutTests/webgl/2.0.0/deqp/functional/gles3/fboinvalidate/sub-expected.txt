@@ -1,25 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fboinvalidate/sub.html
-[ 1: FAIL ] invalidate.sub.render_none: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 2: FAIL ] invalidate.sub.render_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 3: FAIL ] invalidate.sub.render_depth: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 4: FAIL ] invalidate.sub.render_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 5: FAIL ] invalidate.sub.render_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 6: FAIL ] invalidate.sub.render_all: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 7: FAIL ] invalidate.sub.unbind_read_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 8: FAIL ] invalidate.sub.unbind_read_depth: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 9: FAIL ] invalidate.sub.unbind_read_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 10: FAIL ] invalidate.sub.unbind_read_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 11: FAIL ] invalidate.sub.unbind_read_color_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 12: FAIL ] invalidate.sub.unbind_blit_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 13: FAIL ] invalidate.sub.unbind_blit_depth: gl.createProgram()
-[ 14: FAIL ] invalidate.sub.unbind_blit_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 15: FAIL ] invalidate.sub.unbind_blit_depth_stencil: gl.createProgram()
-[ 16: FAIL ] invalidate.sub.unbind_blit_msaa_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 17: FAIL ] invalidate.sub.unbind_blit_msaa_depth: gl.createProgram()
-[ 18: FAIL ] invalidate.sub.unbind_blit_msaa_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 19: FAIL ] invalidate.sub.unbind_blit_msaa_depth_stencil: gl.createProgram()
-[ 20: PASS ] successfullyParsed is true
-[ FAIL ] 19 failures reported
-
+[ PASS ] All tests passed

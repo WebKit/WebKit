@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-input-validation.html
+
 [ 1: PASS ] gl = wtu.create3DContext(undefined, undefined, contextVersion) is non-null.
 [ 2: PASS ] tex = gl.createTexture() is non-null.
 [ 3: PASS ] getError was expected value: NO_ERROR :
@@ -85,4 +86,3 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-input-v
 [ 82: PASS ] getError was expected value: NO_ERROR : format: RGBA type: UNSIGNED_BYTE
 [ 83: PASS ] successfullyParsed is true
 [ FAIL ] 2 failures reported
-

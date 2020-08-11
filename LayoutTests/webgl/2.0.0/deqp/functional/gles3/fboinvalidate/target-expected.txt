@@ -1,33 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fboinvalidate/target.html
-[ 1: FAIL ] invalidate.target.framebuffer_framebuffer_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 2: FAIL ] invalidate.target.framebuffer_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 3: FAIL ] invalidate.target.framebuffer_framebuffer_all: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 4: FAIL ] invalidate.target.framebuffer_read_framebuffer_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 5: FAIL ] invalidate.target.framebuffer_read_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 6: FAIL ] invalidate.target.framebuffer_read_framebuffer_all: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 7: FAIL ] invalidate.target.framebuffer_draw_framebuffer_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 8: FAIL ] invalidate.target.framebuffer_draw_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 9: FAIL ] invalidate.target.framebuffer_draw_framebuffer_all: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 10: FAIL ] invalidate.target.read_framebuffer_framebuffer_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 11: FAIL ] invalidate.target.read_framebuffer_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 12: FAIL ] invalidate.target.read_framebuffer_framebuffer_all: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 13: FAIL ] invalidate.target.read_framebuffer_read_framebuffer_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 14: FAIL ] invalidate.target.read_framebuffer_read_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 15: FAIL ] invalidate.target.read_framebuffer_read_framebuffer_all: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 16: FAIL ] invalidate.target.read_framebuffer_draw_framebuffer_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 17: FAIL ] invalidate.target.read_framebuffer_draw_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 18: FAIL ] invalidate.target.read_framebuffer_draw_framebuffer_all: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 19: FAIL ] invalidate.target.draw_framebuffer_framebuffer_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 20: FAIL ] invalidate.target.draw_framebuffer_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 21: FAIL ] invalidate.target.draw_framebuffer_framebuffer_all: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 22: FAIL ] invalidate.target.draw_framebuffer_read_framebuffer_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 23: FAIL ] invalidate.target.draw_framebuffer_read_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 24: FAIL ] invalidate.target.draw_framebuffer_read_framebuffer_all: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 25: FAIL ] invalidate.target.draw_framebuffer_draw_framebuffer_color: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 26: FAIL ] invalidate.target.draw_framebuffer_draw_framebuffer_depth_stencil: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 27: FAIL ] invalidate.target.draw_framebuffer_draw_framebuffer_all: Framebuffer Status: FRAMEBUFFER_UNSUPPORTED
-[ 28: PASS ] invalidate.target.draw_framebuffer_draw_framebuffer_all: successfullyParsed is true
-[ FAIL ] 27 failures reported
-
+[ PASS ] All tests passed

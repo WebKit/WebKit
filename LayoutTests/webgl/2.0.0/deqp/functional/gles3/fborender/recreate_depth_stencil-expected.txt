@@ -1,17 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fborender/recreate_depth_stencil.html
-[ 1: PASS ] render.recreate_depth_stencil.tex2d_rgba8_depth_tex2d_depth_component32f:
-[ 2: PASS ] render.recreate_depth_stencil.tex2d_rgba8_depth_rbo_depth_component32f:
-[ 3: PASS ] render.recreate_depth_stencil.tex2d_rgba8_depth_tex2d_depth_component24:
-[ 4: PASS ] render.recreate_depth_stencil.tex2d_rgba8_depth_rbo_depth_component24:
-[ 5: PASS ] render.recreate_depth_stencil.tex2d_rgba8_depth_tex2d_depth_component16:
-[ 6: PASS ] render.recreate_depth_stencil.tex2d_rgba8_depth_rbo_depth_component16:
-[ 7: FAIL ] render.recreate_depth_stencil.tex2d_rgba8_depth_stencil_tex2d_depth32f_stencil8: Not supported
-[ 8: FAIL ] render.recreate_depth_stencil.tex2d_rgba8_depth_stencil_rbo_depth32f_stencil8: Not supported
-[ 9: FAIL ] render.recreate_depth_stencil.tex2d_rgba8_depth_stencil_tex2d_depth24_stencil8: Not supported
-[ 10: FAIL ] render.recreate_depth_stencil.tex2d_rgba8_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 11: PASS ] render.recreate_depth_stencil.tex2d_rgba8_stencil_rbo_stencil_index8:
-[ 12: PASS ] render.recreate_depth_stencil.tex2d_rgba8_stencil_rbo_stencil_index8: successfullyParsed is true
-[ FAIL ] 4 failures reported
-
+[ PASS ] All tests passed

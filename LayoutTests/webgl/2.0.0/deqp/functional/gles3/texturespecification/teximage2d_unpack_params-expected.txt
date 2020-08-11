@@ -1,31 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/teximage2d_unpack_params.html
-[ 1: FAIL ] specification.teximage2d_unpack_params.rgb8_alignment: Image comparison failed
-[ 2: FAIL ] specification.teximage2d_unpack_params.rgb8_alignment: Verification failed
-[ 3: FAIL ] specification.teximage2d_unpack_params.rgb8_row_length: Image comparison failed
-[ 4: FAIL ] specification.teximage2d_unpack_params.rgb8_row_length: Verification failed
-[ 5: FAIL ] specification.teximage2d_unpack_params.rgb8_skip_rows: Image comparison failed
-[ 6: FAIL ] specification.teximage2d_unpack_params.rgb8_skip_rows: Verification failed
-[ 7: FAIL ] specification.teximage2d_unpack_params.rgb8_skip_pixels: Image comparison failed
-[ 8: FAIL ] specification.teximage2d_unpack_params.rgb8_skip_pixels: Verification failed
-[ 9: FAIL ] specification.teximage2d_unpack_params.r8_complex1: Image comparison failed
-[ 10: FAIL ] specification.teximage2d_unpack_params.r8_complex1: Verification failed
-[ 11: FAIL ] specification.teximage2d_unpack_params.r8_complex2: Image comparison failed
-[ 12: FAIL ] specification.teximage2d_unpack_params.r8_complex2: Verification failed
-[ 13: FAIL ] specification.teximage2d_unpack_params.r8_complex3: Image comparison failed
-[ 14: FAIL ] specification.teximage2d_unpack_params.r8_complex3: Verification failed
-[ 15: FAIL ] specification.teximage2d_unpack_params.r8_complex4: Image comparison failed
-[ 16: FAIL ] specification.teximage2d_unpack_params.r8_complex4: Verification failed
-[ 17: FAIL ] specification.teximage2d_unpack_params.rgba8_complex1: Image comparison failed
-[ 18: FAIL ] specification.teximage2d_unpack_params.rgba8_complex1: Verification failed
-[ 19: FAIL ] specification.teximage2d_unpack_params.rgba8_complex2: Image comparison failed
-[ 20: FAIL ] specification.teximage2d_unpack_params.rgba8_complex2: Verification failed
-[ 21: FAIL ] specification.teximage2d_unpack_params.rgba8_complex3: Image comparison failed
-[ 22: FAIL ] specification.teximage2d_unpack_params.rgba8_complex3: Verification failed
-[ 23: FAIL ] specification.teximage2d_unpack_params.rgba8_complex4: Image comparison failed
-[ 24: FAIL ] specification.teximage2d_unpack_params.rgba8_complex4: Verification failed
-[ 25: PASS ] specification.teximage2d_unpack_params.rgba32f_complex: Passed
-[ 26: PASS ] specification.teximage2d_unpack_params.rgba32f_complex: successfullyParsed is true
-[ FAIL ] 24 failures reported
-
+[ PASS ] All tests passed

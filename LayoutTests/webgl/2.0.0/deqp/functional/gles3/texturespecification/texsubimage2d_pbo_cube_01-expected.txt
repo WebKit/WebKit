@@ -1,26 +1,17 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texsubimage2d_pbo_cube_01.html
-[ 1: FAIL ] specification.texsubimage2d_pbo.rgba32i_cube: Image comparison failed
-[ 2: FAIL ] specification.texsubimage2d_pbo.rgba32i_cube: Verification failed
-[ 3: FAIL ] specification.texsubimage2d_pbo.rgba8_cube: Image comparison failed
-[ 4: FAIL ] specification.texsubimage2d_pbo.rgba8_cube: Verification failed
-[ 5: FAIL ] specification.texsubimage2d_pbo.rgb10_a2ui_cube: Image comparison failed
-[ 6: FAIL ] specification.texsubimage2d_pbo.rgb10_a2ui_cube: Verification failed
-[ 7: FAIL ] specification.texsubimage2d_pbo.rgb565_cube: Image comparison failed
-[ 8: FAIL ] specification.texsubimage2d_pbo.rgb565_cube: Verification failed
-[ 9: FAIL ] specification.texsubimage2d_pbo.rgb16f_cube: Image comparison failed
-[ 10: FAIL ] specification.texsubimage2d_pbo.rgb16f_cube: Verification failed
-[ 11: FAIL ] specification.texsubimage2d_pbo.rgb8ui_cube: Image comparison failed
-[ 12: FAIL ] specification.texsubimage2d_pbo.rgb8ui_cube: Verification failed
-[ 13: FAIL ] specification.texsubimage2d_pbo.rg32ui_cube: Image comparison failed
-[ 14: FAIL ] specification.texsubimage2d_pbo.rg32ui_cube: Verification failed
-[ 15: FAIL ] specification.texsubimage2d_pbo.rg8i_cube: Image comparison failed
-[ 16: FAIL ] specification.texsubimage2d_pbo.rg8i_cube: Verification failed
-[ 17: FAIL ] specification.texsubimage2d_pbo.r32ui_cube: Image comparison failed
-[ 18: FAIL ] specification.texsubimage2d_pbo.r32ui_cube: Verification failed
-[ 19: FAIL ] specification.texsubimage2d_pbo.r8i_cube: Image comparison failed
-[ 20: FAIL ] specification.texsubimage2d_pbo.r8i_cube: Verification failed
-[ 21: PASS ] specification.texsubimage2d_pbo.r8i_cube: successfullyParsed is true
-[ FAIL ] 20 failures reported
 
+[ 1: PASS ] specification.texsubimage2d_pbo.rgba32i_cube: Passed
+[ 2: PASS ] specification.texsubimage2d_pbo.rgba8_cube: Passed
+[ 3: PASS ] specification.texsubimage2d_pbo.rgb10_a2ui_cube: Passed
+[ 4: FAIL ] specification.texsubimage2d_pbo.rgb565_cube: Image comparison failed
+[ 5: FAIL ] specification.texsubimage2d_pbo.rgb565_cube: Verification failed
+[ 6: PASS ] specification.texsubimage2d_pbo.rgb16f_cube: Passed
+[ 7: PASS ] specification.texsubimage2d_pbo.rgb8ui_cube: Passed
+[ 8: PASS ] specification.texsubimage2d_pbo.rg32ui_cube: Passed
+[ 9: PASS ] specification.texsubimage2d_pbo.rg8i_cube: Passed
+[ 10: PASS ] specification.texsubimage2d_pbo.r32ui_cube: Passed
+[ 11: PASS ] specification.texsubimage2d_pbo.r8i_cube: Passed
+[ 12: PASS ] specification.texsubimage2d_pbo.r8i_cube: successfullyParsed is true
+[ FAIL ] 2 failures reported

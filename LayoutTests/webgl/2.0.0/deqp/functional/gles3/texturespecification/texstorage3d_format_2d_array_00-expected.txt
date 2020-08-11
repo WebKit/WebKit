@@ -1,29 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texstorage3d_format_2d_array_00.html
-[ 1: PASS ] specification.texstorage3d.format.rgba32f_2d_array: Passed
-[ 2: PASS ] specification.texstorage3d.format.rgba16f_2d_array: Passed
-[ 3: FAIL ] specification.texstorage3d.format.rgba8_2d_array: Image comparison failed
-[ 4: FAIL ] specification.texstorage3d.format.rgba8_2d_array: Verification failed
-[ 5: FAIL ] specification.texstorage3d.format.srgb8_alpha8_2d_array: Image comparison failed
-[ 6: FAIL ] specification.texstorage3d.format.srgb8_alpha8_2d_array: Verification failed
-[ 7: FAIL ] specification.texstorage3d.format.rgba4_2d_array: Image comparison failed
-[ 8: FAIL ] specification.texstorage3d.format.rgba4_2d_array: Verification failed
-[ 9: FAIL ] specification.texstorage3d.format.rgb8_2d_array: Image comparison failed
-[ 10: FAIL ] specification.texstorage3d.format.rgb8_2d_array: Verification failed
-[ 11: PASS ] specification.texstorage3d.format.rgb32f_2d_array: Passed
-[ 12: PASS ] specification.texstorage3d.format.rgb16f_2d_array: Passed
-[ 13: PASS ] specification.texstorage3d.format.rgb8_snorm_2d_array: Passed
-[ 14: FAIL ] specification.texstorage3d.format.srgb8_2d_array: Image comparison failed
-[ 15: FAIL ] specification.texstorage3d.format.srgb8_2d_array: Verification failed
-[ 16: PASS ] specification.texstorage3d.format.rg32i_2d_array: Passed
-[ 17: PASS ] specification.texstorage3d.format.rg16i_2d_array: Passed
-[ 18: PASS ] specification.texstorage3d.format.rg8i_2d_array: Passed
-[ 19: PASS ] specification.texstorage3d.format.r32f_2d_array: Passed
-[ 20: PASS ] specification.texstorage3d.format.r16f_2d_array: Passed
-[ 21: FAIL ] specification.texstorage3d.format.r8_2d_array: Image comparison failed
-[ 22: FAIL ] specification.texstorage3d.format.r8_2d_array: Verification failed
-[ 23: PASS ] specification.texstorage3d.format.r8_snorm_2d_array: Passed
-[ 24: PASS ] specification.texstorage3d.format.r8_snorm_2d_array: successfullyParsed is true
-[ FAIL ] 12 failures reported
-
+[ PASS ] All tests passed

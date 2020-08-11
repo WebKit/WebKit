@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/extensions/promoted-extensions-in-shaders.html
+
 [ 1: FAIL ] [unexpected link status] ESSL 1.00 Fragment shader that requires GL_EXT_draw_buffers should not compile.
 [ 2: FAIL ] [unexpected link status] ESSL 3.00 Fragment shader that requires GL_EXT_draw_buffers should not compile.
 [ 3: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
@@ -19,4 +20,3 @@ Test: ../../resources/webgl_test_files/conformance2/extensions/promoted-extensio
 [ 16: FAIL ] should be green at (0, 0) expected: 0,255,0,255 was 255,0,0,255
 [ 17: PASS ] successfullyParsed is true
 [ FAIL ] 16 failures reported
-

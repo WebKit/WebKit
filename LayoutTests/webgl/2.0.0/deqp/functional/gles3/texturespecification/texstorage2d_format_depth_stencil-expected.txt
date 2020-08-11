@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texstorage2d_format_depth_stencil.html
+
 [ 1: FAIL ] specification.texstorage2d.format.depth_component32f_2d: Image comparison failed
 [ 2: FAIL ] specification.texstorage2d.format.depth_component32f_2d: Verification failed
 [ 3: FAIL ] specification.texstorage2d.format.depth_component32f_cube: Image comparison failed
@@ -19,4 +20,3 @@ Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecif
 [ 16: FAIL ] specification.texstorage2d.format.depth24_stencil8_cube: Verification failed
 [ 17: PASS ] specification.texstorage2d.format.depth24_stencil8_cube: successfullyParsed is true
 [ FAIL ] 16 failures reported
-

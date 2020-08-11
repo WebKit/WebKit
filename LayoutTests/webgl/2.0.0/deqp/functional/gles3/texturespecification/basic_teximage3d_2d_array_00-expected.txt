@@ -1,29 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/basic_teximage3d_2d_array_00.html
-[ 1: PASS ] specification.basic_teximage3d.rgba32f_2d_array: Passed
-[ 2: PASS ] specification.basic_teximage3d.rgba16f_2d_array: Passed
-[ 3: FAIL ] specification.basic_teximage3d.rgba8_2d_array: Image comparison failed
-[ 4: FAIL ] specification.basic_teximage3d.rgba8_2d_array: Verification failed
-[ 5: FAIL ] specification.basic_teximage3d.srgb8_alpha8_2d_array: Image comparison failed
-[ 6: FAIL ] specification.basic_teximage3d.srgb8_alpha8_2d_array: Verification failed
-[ 7: FAIL ] specification.basic_teximage3d.rgba4_2d_array: Image comparison failed
-[ 8: FAIL ] specification.basic_teximage3d.rgba4_2d_array: Verification failed
-[ 9: FAIL ] specification.basic_teximage3d.rgb8_2d_array: Image comparison failed
-[ 10: FAIL ] specification.basic_teximage3d.rgb8_2d_array: Verification failed
-[ 11: PASS ] specification.basic_teximage3d.rgb32f_2d_array: Passed
-[ 12: PASS ] specification.basic_teximage3d.rgb16f_2d_array: Passed
-[ 13: PASS ] specification.basic_teximage3d.rgb8_snorm_2d_array: Passed
-[ 14: FAIL ] specification.basic_teximage3d.srgb8_2d_array: Image comparison failed
-[ 15: FAIL ] specification.basic_teximage3d.srgb8_2d_array: Verification failed
-[ 16: PASS ] specification.basic_teximage3d.rg32i_2d_array: Passed
-[ 17: PASS ] specification.basic_teximage3d.rg16i_2d_array: Passed
-[ 18: PASS ] specification.basic_teximage3d.rg8i_2d_array: Passed
-[ 19: PASS ] specification.basic_teximage3d.r32f_2d_array: Passed
-[ 20: PASS ] specification.basic_teximage3d.r16f_2d_array: Passed
-[ 21: FAIL ] specification.basic_teximage3d.r8_2d_array: Image comparison failed
-[ 22: FAIL ] specification.basic_teximage3d.r8_2d_array: Verification failed
-[ 23: PASS ] specification.basic_teximage3d.r8_snorm_2d_array: Passed
-[ 24: PASS ] specification.basic_teximage3d.r8_snorm_2d_array: successfullyParsed is true
-[ FAIL ] 12 failures reported
-
+[ PASS ] All tests passed

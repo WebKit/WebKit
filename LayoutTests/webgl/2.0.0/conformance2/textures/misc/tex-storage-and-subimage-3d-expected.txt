@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-storage-and-subimage-3d.html
+
 [ 1: PASS ] WebGL context exists
 [ 2: PASS ] getError was expected value: INVALID_VALUE : texStorage3D should fail for zero width
 [ 3: PASS ] getError was expected value: INVALID_VALUE : texStorage3D should fail for zero height
@@ -59,4 +60,3 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-storage
 [ 56: PASS ] getError was expected value: NO_ERROR : there should be no errors
 [ 57: PASS ] successfullyParsed is true
 [ FAIL ] 6 failures reported
-

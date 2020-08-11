@@ -1,24 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/teximage2d_pbo_cube_04.html
-[ 1: FAIL ] specification.teximage2d_pbo.rgba16i_cube: Image comparison failed
-[ 2: FAIL ] specification.teximage2d_pbo.rgba16i_cube: Verification failed
-[ 3: FAIL ] specification.teximage2d_pbo.srgb8_alpha8_cube: Image comparison failed
-[ 4: FAIL ] specification.teximage2d_pbo.srgb8_alpha8_cube: Verification failed
-[ 5: FAIL ] specification.teximage2d_pbo.rgba8_snorm_cube: Image comparison failed
-[ 6: FAIL ] specification.teximage2d_pbo.rgba8_snorm_cube: Verification failed
-[ 7: FAIL ] specification.teximage2d_pbo.rgb32i_cube: Image comparison failed
-[ 8: FAIL ] specification.teximage2d_pbo.rgb32i_cube: Verification failed
-[ 9: FAIL ] specification.teximage2d_pbo.rgb8_snorm_cube: Image comparison failed
-[ 10: FAIL ] specification.teximage2d_pbo.rgb8_snorm_cube: Verification failed
-[ 11: FAIL ] specification.teximage2d_pbo.rg32f_cube: Image comparison failed
-[ 12: FAIL ] specification.teximage2d_pbo.rg32f_cube: Verification failed
-[ 13: FAIL ] specification.teximage2d_pbo.rg16ui_cube: Image comparison failed
-[ 14: FAIL ] specification.teximage2d_pbo.rg16ui_cube: Verification failed
-[ 15: FAIL ] specification.teximage2d_pbo.r32f_cube: Image comparison failed
-[ 16: FAIL ] specification.teximage2d_pbo.r32f_cube: Verification failed
-[ 17: FAIL ] specification.teximage2d_pbo.r16ui_cube: Image comparison failed
-[ 18: FAIL ] specification.teximage2d_pbo.r16ui_cube: Verification failed
-[ 19: PASS ] specification.teximage2d_pbo.r16ui_cube: successfullyParsed is true
-[ FAIL ] 18 failures reported
-
+[ PASS ] All tests passed

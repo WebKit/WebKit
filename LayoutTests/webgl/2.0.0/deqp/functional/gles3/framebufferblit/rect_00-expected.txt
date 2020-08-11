@@ -1,20 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/framebufferblit/rect_00.html
-[ 1: FAIL ] blit.rect.basic_nearest:
-[ 2: FAIL ] blit.rect.basic_linear:
-[ 3: FAIL ] blit.rect.basic_reverse_src_x_nearest:
-[ 4: FAIL ] blit.rect.basic_reverse_src_x_linear:
-[ 5: FAIL ] blit.rect.basic_reverse_src_y_nearest:
-[ 6: FAIL ] blit.rect.basic_reverse_src_y_linear:
-[ 7: FAIL ] blit.rect.basic_reverse_dst_x_nearest:
-[ 8: FAIL ] blit.rect.basic_reverse_dst_x_linear:
-[ 9: FAIL ] blit.rect.basic_reverse_dst_y_nearest:
-[ 10: FAIL ] blit.rect.basic_reverse_dst_y_linear:
-[ 11: FAIL ] blit.rect.basic_reverse_src_dst_x_nearest:
-[ 12: FAIL ] blit.rect.basic_reverse_src_dst_x_linear:
-[ 13: FAIL ] blit.rect.basic_reverse_src_dst_y_nearest:
-[ 14: FAIL ] blit.rect.basic_reverse_src_dst_y_linear:
-[ 15: PASS ] blit.rect.basic_reverse_src_dst_y_linear: successfullyParsed is true
-[ FAIL ] 14 failures reported
-
+[ PASS ] All tests passed

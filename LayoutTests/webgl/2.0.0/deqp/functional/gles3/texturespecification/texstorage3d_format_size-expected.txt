@@ -1,34 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texstorage3d_format_size.html
-[ 1: PASS ] specification.texstorage3d.size.2d_array_1x1x1_1_levels: Passed
-[ 2: FAIL ] specification.texstorage3d.size.2d_array_2x2x2_2_levels: Image comparison failed
-[ 3: FAIL ] specification.texstorage3d.size.2d_array_2x2x2_2_levels: Verification failed
-[ 4: FAIL ] specification.texstorage3d.size.2d_array_64x32x3_7_levels: Image comparison failed
-[ 5: FAIL ] specification.texstorage3d.size.2d_array_64x32x3_7_levels: Verification failed
-[ 6: FAIL ] specification.texstorage3d.size.2d_array_32x64x3_4_levels: Image comparison failed
-[ 7: FAIL ] specification.texstorage3d.size.2d_array_32x64x3_4_levels: Verification failed
-[ 8: FAIL ] specification.texstorage3d.size.2d_array_57x63x5_1_levels: Image comparison failed
-[ 9: FAIL ] specification.texstorage3d.size.2d_array_57x63x5_1_levels: Verification failed
-[ 10: FAIL ] specification.texstorage3d.size.2d_array_57x63x5_2_levels: Image comparison failed
-[ 11: FAIL ] specification.texstorage3d.size.2d_array_57x63x5_2_levels: Verification failed
-[ 12: FAIL ] specification.texstorage3d.size.2d_array_57x63x5_6_levels: Image comparison failed
-[ 13: FAIL ] specification.texstorage3d.size.2d_array_57x63x5_6_levels: Verification failed
-[ 14: PASS ] specification.texstorage3d.size.3d_1x1x1_1_levels: Passed
-[ 15: FAIL ] specification.texstorage3d.size.3d_2x2x2_2_levels: Image comparison failed
-[ 16: FAIL ] specification.texstorage3d.size.3d_2x2x2_2_levels: Verification failed
-[ 17: FAIL ] specification.texstorage3d.size.3d_64x32x16_7_levels: Image comparison failed
-[ 18: FAIL ] specification.texstorage3d.size.3d_64x32x16_7_levels: Verification failed
-[ 19: FAIL ] specification.texstorage3d.size.3d_32x64x16_4_levels: Image comparison failed
-[ 20: FAIL ] specification.texstorage3d.size.3d_32x64x16_4_levels: Verification failed
-[ 21: FAIL ] specification.texstorage3d.size.3d_32x16x64_4_levels: Image comparison failed
-[ 22: FAIL ] specification.texstorage3d.size.3d_32x16x64_4_levels: Verification failed
-[ 23: FAIL ] specification.texstorage3d.size.3d_57x63x11_1_levels: Image comparison failed
-[ 24: FAIL ] specification.texstorage3d.size.3d_57x63x11_1_levels: Verification failed
-[ 25: FAIL ] specification.texstorage3d.size.3d_57x63x11_2_levels: Image comparison failed
-[ 26: FAIL ] specification.texstorage3d.size.3d_57x63x11_2_levels: Verification failed
-[ 27: FAIL ] specification.texstorage3d.size.3d_57x63x11_6_levels: Image comparison failed
-[ 28: FAIL ] specification.texstorage3d.size.3d_57x63x11_6_levels: Verification failed
-[ 29: PASS ] specification.texstorage3d.size.3d_57x63x11_6_levels: successfullyParsed is true
-[ FAIL ] 26 failures reported
-
+[ PASS ] All tests passed

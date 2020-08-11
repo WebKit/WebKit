@@ -1,35 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/basic_teximage3d_2d_array_02.html
-[ 1: FAIL ] specification.basic_teximage3d.rgba32ui_2d_array: Image comparison failed
-[ 2: FAIL ] specification.basic_teximage3d.rgba32ui_2d_array: Verification failed
-[ 3: FAIL ] specification.basic_teximage3d.rgba16ui_2d_array: Image comparison failed
-[ 4: FAIL ] specification.basic_teximage3d.rgba16ui_2d_array: Verification failed
-[ 5: FAIL ] specification.basic_teximage3d.rgba8ui_2d_array: Image comparison failed
-[ 6: FAIL ] specification.basic_teximage3d.rgba8ui_2d_array: Verification failed
-[ 7: FAIL ] specification.basic_teximage3d.rgb10_a2ui_2d_array: Image comparison failed
-[ 8: FAIL ] specification.basic_teximage3d.rgb10_a2ui_2d_array: Verification failed
-[ 9: FAIL ] specification.basic_teximage3d.rgba8_snorm_2d_array: Image comparison failed
-[ 10: FAIL ] specification.basic_teximage3d.rgba8_snorm_2d_array: Verification failed
-[ 11: FAIL ] specification.basic_teximage3d.r11f_g11f_b10f_2d_array: Image comparison failed
-[ 12: FAIL ] specification.basic_teximage3d.r11f_g11f_b10f_2d_array: Verification failed
-[ 13: FAIL ] specification.basic_teximage3d.rgb32ui_2d_array: Image comparison failed
-[ 14: FAIL ] specification.basic_teximage3d.rgb32ui_2d_array: Verification failed
-[ 15: FAIL ] specification.basic_teximage3d.rgb16ui_2d_array: Image comparison failed
-[ 16: FAIL ] specification.basic_teximage3d.rgb16ui_2d_array: Verification failed
-[ 17: FAIL ] specification.basic_teximage3d.rgb8ui_2d_array: Image comparison failed
-[ 18: FAIL ] specification.basic_teximage3d.rgb8ui_2d_array: Verification failed
-[ 19: PASS ] specification.basic_teximage3d.rg32f_2d_array: Passed
-[ 20: PASS ] specification.basic_teximage3d.rg16f_2d_array: Passed
-[ 21: FAIL ] specification.basic_teximage3d.rg8_2d_array: Image comparison failed
-[ 22: FAIL ] specification.basic_teximage3d.rg8_2d_array: Verification failed
-[ 23: PASS ] specification.basic_teximage3d.rg8_snorm_2d_array: Passed
-[ 24: FAIL ] specification.basic_teximage3d.r32ui_2d_array: Image comparison failed
-[ 25: FAIL ] specification.basic_teximage3d.r32ui_2d_array: Verification failed
-[ 26: FAIL ] specification.basic_teximage3d.r16ui_2d_array: Image comparison failed
-[ 27: FAIL ] specification.basic_teximage3d.r16ui_2d_array: Verification failed
-[ 28: FAIL ] specification.basic_teximage3d.r8ui_2d_array: Image comparison failed
-[ 29: FAIL ] specification.basic_teximage3d.r8ui_2d_array: Verification failed
-[ 30: PASS ] specification.basic_teximage3d.r8ui_2d_array: successfullyParsed is true
-[ FAIL ] 26 failures reported
-
+[ PASS ] All tests passed

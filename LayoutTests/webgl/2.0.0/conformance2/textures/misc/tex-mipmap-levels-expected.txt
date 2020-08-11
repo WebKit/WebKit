@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-mipmap-levels.html
+
 [ 1: PASS ] getError was expected value: NO_ERROR : Should be no errors from setup.
 [ 2: PASS ] getError was expected value: NO_ERROR : fillTexture(8x8, level=2) should succeed
 [ 3: PASS ] getError was expected value: NO_ERROR : fillTexture(4x4, level=3) should succeed
@@ -43,4 +44,3 @@ Test: ../../../resources/webgl_test_files/conformance2/textures/misc/tex-mipmap-
 [ 40: PASS ] should draw with [255, 0, 0, 255]
 [ 41: PASS ] successfullyParsed is true
 [ FAIL ] 1 failures reported
-

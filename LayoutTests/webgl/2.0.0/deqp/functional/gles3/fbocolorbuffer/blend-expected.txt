@@ -1,15 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fbocolorbuffer/blend.html
-[ 1: PASS ] color.blend.rgba8_src_over:
-[ 2: FAIL ] color.blend.srgb8_alpha8_src_over: gl.createProgram()
-[ 3: FAIL ] color.blend.rgb10_a2_src_over: glError: [object Object]
-[ 4: FAIL ] color.blend.rgba4_src_over: gl.createProgram()
-[ 5: PASS ] color.blend.rgb5_a1_src_over:
-[ 6: FAIL ] color.blend.rgb8_src_over: gl.createProgram()
-[ 7: FAIL ] color.blend.rgb565_src_over: glError: [object Object]
-[ 8: FAIL ] color.blend.rg8_src_over: gl.createProgram()
-[ 9: PASS ] color.blend.r8_src_over:
-[ 10: PASS ] color.blend.r16f_src_over: successfullyParsed is true
-[ FAIL ] 6 failures reported
-
+[ PASS ] All tests passed

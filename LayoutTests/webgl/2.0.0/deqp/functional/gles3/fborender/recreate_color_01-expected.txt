@@ -1,12 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fborender/recreate_color_01.html
-[ 1: FAIL ] render.recreate_color.tex2d_rgba32i_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 2: FAIL ] render.recreate_color.rbo_rgba32i_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 3: FAIL ] render.recreate_color.tex2d_rgb10_a2ui_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 4: FAIL ] render.recreate_color.rbo_rgb10_a2ui_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 5: FAIL ] render.recreate_color.tex2d_rg16ui_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 6: FAIL ] render.recreate_color.rbo_rg16ui_depth_stencil_rbo_depth24_stencil8: Not supported
-[ 7: PASS ] render.recreate_color.rbo_r16f_depth_stencil_rbo_depth24_stencil8: successfullyParsed is true
-[ FAIL ] 6 failures reported
-
+[ PASS ] All tests passed

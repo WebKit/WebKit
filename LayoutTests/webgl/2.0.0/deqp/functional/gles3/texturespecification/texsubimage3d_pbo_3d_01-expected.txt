@@ -1,46 +1,47 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texsubimage3d_pbo_3d_01.html
+
 [ 1: FAIL ] specification.texsubimage3d_pbo.rgba32i_3d: Image comparison failed
 [ 2: FAIL ] specification.texsubimage3d_pbo.rgba32i_3d: Verification failed
-[ 3: PASS ] specification.texsubimage3d_pbo.rgba16f_3d: Passed
-[ 4: FAIL ] specification.texsubimage3d_pbo.rgba16ui_3d: Image comparison failed
-[ 5: FAIL ] specification.texsubimage3d_pbo.rgba16ui_3d: Verification failed
-[ 6: FAIL ] specification.texsubimage3d_pbo.rgba8i_3d: Image comparison failed
-[ 7: FAIL ] specification.texsubimage3d_pbo.rgba8i_3d: Verification failed
-[ 8: FAIL ] specification.texsubimage3d_pbo.srgb8_alpha8_3d: Image comparison failed
-[ 9: FAIL ] specification.texsubimage3d_pbo.srgb8_alpha8_3d: Verification failed
-[ 10: FAIL ] specification.texsubimage3d_pbo.rgb10_a2ui_3d: Image comparison failed
-[ 11: FAIL ] specification.texsubimage3d_pbo.rgb10_a2ui_3d: Verification failed
+[ 3: FAIL ] specification.texsubimage3d_pbo.rgba16f_3d: Image comparison failed
+[ 4: FAIL ] specification.texsubimage3d_pbo.rgba16f_3d: Verification failed
+[ 5: FAIL ] specification.texsubimage3d_pbo.rgba16ui_3d: Image comparison failed
+[ 6: FAIL ] specification.texsubimage3d_pbo.rgba16ui_3d: Verification failed
+[ 7: FAIL ] specification.texsubimage3d_pbo.rgba8i_3d: Image comparison failed
+[ 8: FAIL ] specification.texsubimage3d_pbo.rgba8i_3d: Verification failed
+[ 9: FAIL ] specification.texsubimage3d_pbo.srgb8_alpha8_3d: Image comparison failed
+[ 10: FAIL ] specification.texsubimage3d_pbo.srgb8_alpha8_3d: Verification failed
+[ 11: PASS ] specification.texsubimage3d_pbo.rgb10_a2ui_3d: Passed
 [ 12: FAIL ] specification.texsubimage3d_pbo.rgb5_a1_3d: Image comparison failed
 [ 13: FAIL ] specification.texsubimage3d_pbo.rgb5_a1_3d: Verification failed
-[ 14: FAIL ] specification.texsubimage3d_pbo.rgb8_3d: Image comparison failed
-[ 15: FAIL ] specification.texsubimage3d_pbo.rgb8_3d: Verification failed
-[ 16: FAIL ] specification.texsubimage3d_pbo.r11f_g11f_b10f_3d: Image comparison failed
-[ 17: FAIL ] specification.texsubimage3d_pbo.r11f_g11f_b10f_3d: Verification failed
-[ 18: PASS ] specification.texsubimage3d_pbo.rgb32i_3d: Passed
-[ 19: PASS ] specification.texsubimage3d_pbo.rgb16f_3d: Passed
-[ 20: FAIL ] specification.texsubimage3d_pbo.rgb16ui_3d: Image comparison failed
-[ 21: FAIL ] specification.texsubimage3d_pbo.rgb16ui_3d: Verification failed
-[ 22: PASS ] specification.texsubimage3d_pbo.rgb8i_3d: Passed
-[ 23: FAIL ] specification.texsubimage3d_pbo.srgb8_3d: Image comparison failed
-[ 24: FAIL ] specification.texsubimage3d_pbo.srgb8_3d: Verification failed
-[ 25: PASS ] specification.texsubimage3d_pbo.rg32f_3d: Passed
-[ 26: FAIL ] specification.texsubimage3d_pbo.rg32ui_3d: Image comparison failed
-[ 27: FAIL ] specification.texsubimage3d_pbo.rg32ui_3d: Verification failed
-[ 28: PASS ] specification.texsubimage3d_pbo.rg16i_3d: Passed
-[ 29: FAIL ] specification.texsubimage3d_pbo.rg8_3d: Image comparison failed
-[ 30: FAIL ] specification.texsubimage3d_pbo.rg8_3d: Verification failed
-[ 31: FAIL ] specification.texsubimage3d_pbo.rg8ui_3d: Image comparison failed
-[ 32: FAIL ] specification.texsubimage3d_pbo.rg8ui_3d: Verification failed
-[ 33: PASS ] specification.texsubimage3d_pbo.r32f_3d: Passed
+[ 14: PASS ] specification.texsubimage3d_pbo.rgb8_3d: Passed
+[ 15: FAIL ] specification.texsubimage3d_pbo.r11f_g11f_b10f_3d: Image comparison failed
+[ 16: FAIL ] specification.texsubimage3d_pbo.r11f_g11f_b10f_3d: Verification failed
+[ 17: PASS ] specification.texsubimage3d_pbo.rgb32i_3d: Passed
+[ 18: PASS ] specification.texsubimage3d_pbo.rgb16f_3d: Passed
+[ 19: PASS ] specification.texsubimage3d_pbo.rgb16ui_3d: Passed
+[ 20: PASS ] specification.texsubimage3d_pbo.rgb8i_3d: Passed
+[ 21: PASS ] specification.texsubimage3d_pbo.srgb8_3d: Passed
+[ 22: FAIL ] specification.texsubimage3d_pbo.rg32f_3d: Image comparison failed
+[ 23: FAIL ] specification.texsubimage3d_pbo.rg32f_3d: Verification failed
+[ 24: FAIL ] specification.texsubimage3d_pbo.rg32ui_3d: Image comparison failed
+[ 25: FAIL ] specification.texsubimage3d_pbo.rg32ui_3d: Verification failed
+[ 26: FAIL ] specification.texsubimage3d_pbo.rg16i_3d: Image comparison failed
+[ 27: FAIL ] specification.texsubimage3d_pbo.rg16i_3d: Verification failed
+[ 28: FAIL ] specification.texsubimage3d_pbo.rg8_3d: Image comparison failed
+[ 29: FAIL ] specification.texsubimage3d_pbo.rg8_3d: Verification failed
+[ 30: FAIL ] specification.texsubimage3d_pbo.rg8ui_3d: Image comparison failed
+[ 31: FAIL ] specification.texsubimage3d_pbo.rg8ui_3d: Verification failed
+[ 32: FAIL ] specification.texsubimage3d_pbo.r32f_3d: Image comparison failed
+[ 33: FAIL ] specification.texsubimage3d_pbo.r32f_3d: Verification failed
 [ 34: FAIL ] specification.texsubimage3d_pbo.r32ui_3d: Image comparison failed
 [ 35: FAIL ] specification.texsubimage3d_pbo.r32ui_3d: Verification failed
-[ 36: PASS ] specification.texsubimage3d_pbo.r16i_3d: Passed
-[ 37: FAIL ] specification.texsubimage3d_pbo.r8_3d: Image comparison failed
-[ 38: FAIL ] specification.texsubimage3d_pbo.r8_3d: Verification failed
-[ 39: FAIL ] specification.texsubimage3d_pbo.r8ui_3d: Image comparison failed
-[ 40: FAIL ] specification.texsubimage3d_pbo.r8ui_3d: Verification failed
-[ 41: PASS ] specification.texsubimage3d_pbo.r8ui_3d: successfullyParsed is true
-[ FAIL ] 32 failures reported
-
+[ 36: FAIL ] specification.texsubimage3d_pbo.r16i_3d: Image comparison failed
+[ 37: FAIL ] specification.texsubimage3d_pbo.r16i_3d: Verification failed
+[ 38: FAIL ] specification.texsubimage3d_pbo.r8_3d: Image comparison failed
+[ 39: FAIL ] specification.texsubimage3d_pbo.r8_3d: Verification failed
+[ 40: FAIL ] specification.texsubimage3d_pbo.r8ui_3d: Image comparison failed
+[ 41: FAIL ] specification.texsubimage3d_pbo.r8ui_3d: Verification failed
+[ 42: PASS ] specification.texsubimage3d_pbo.r8ui_3d: successfullyParsed is true
+[ FAIL ] 34 failures reported

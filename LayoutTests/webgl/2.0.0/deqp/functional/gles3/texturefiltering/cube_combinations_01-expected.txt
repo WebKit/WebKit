@@ -1,24 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturefiltering/cube_combinations_01.html
-[ 1: FAIL ] filtering.cube_combinations.linear_nearest_clamp_clamp: Image verification failed
-[ 2: FAIL ] filtering.cube_combinations.linear_nearest_clamp_repeat: Image verification failed
-[ 3: FAIL ] filtering.cube_combinations.linear_nearest_clamp_mirror: Image verification failed
-[ 4: FAIL ] filtering.cube_combinations.linear_nearest_repeat_clamp: Image verification failed
-[ 5: FAIL ] filtering.cube_combinations.linear_nearest_repeat_repeat: Image verification failed
-[ 6: FAIL ] filtering.cube_combinations.linear_nearest_repeat_mirror: Image verification failed
-[ 7: FAIL ] filtering.cube_combinations.linear_nearest_mirror_clamp: Image verification failed
-[ 8: FAIL ] filtering.cube_combinations.linear_nearest_mirror_repeat: Image verification failed
-[ 9: FAIL ] filtering.cube_combinations.linear_nearest_mirror_mirror: Image verification failed
-[ 10: PASS ] filtering.cube_combinations.linear_linear_clamp_clamp: Verified
-[ 11: PASS ] filtering.cube_combinations.linear_linear_clamp_repeat: Verified
-[ 12: PASS ] filtering.cube_combinations.linear_linear_clamp_mirror: Verified
-[ 13: PASS ] filtering.cube_combinations.linear_linear_repeat_clamp: Verified
-[ 14: PASS ] filtering.cube_combinations.linear_linear_repeat_repeat: Verified
-[ 15: PASS ] filtering.cube_combinations.linear_linear_repeat_mirror: Verified
-[ 16: PASS ] filtering.cube_combinations.linear_linear_mirror_clamp: Verified
-[ 17: PASS ] filtering.cube_combinations.linear_linear_mirror_repeat: Verified
-[ 18: PASS ] filtering.cube_combinations.linear_linear_mirror_mirror: Verified
-[ 19: PASS ] filtering.cube_combinations.linear_linear_mirror_mirror: successfullyParsed is true
-[ FAIL ] 9 failures reported
-
+[ PASS ] All tests passed

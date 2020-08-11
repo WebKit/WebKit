@@ -1,6 +1,7 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/misc/bad-arguments-test.html
+
 [ 1: PASS ] Program Compiled
 [ 2: PASS ] Shader Compiled
 [ 3: PASS ] getUniformLocation succeeded
@@ -110,4 +111,3 @@ Test: ../../resources/webgl_test_files/conformance/misc/bad-arguments-test.html
 [ 107: PASS ] context.useProgram(argument) is undefined.
 [ 108: PASS ] successfullyParsed is true
 [ FAIL ] 32 failures reported
-

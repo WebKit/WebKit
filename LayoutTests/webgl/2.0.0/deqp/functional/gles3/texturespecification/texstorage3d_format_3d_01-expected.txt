@@ -1,26 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texstorage3d_format_3d_01.html
-[ 1: FAIL ] specification.texstorage3d.format.rgba32i_3d: Image comparison failed
-[ 2: FAIL ] specification.texstorage3d.format.rgba32i_3d: Verification failed
-[ 3: FAIL ] specification.texstorage3d.format.rgba16ui_3d: Image comparison failed
-[ 4: FAIL ] specification.texstorage3d.format.rgba16ui_3d: Verification failed
-[ 5: FAIL ] specification.texstorage3d.format.srgb8_alpha8_3d: Image comparison failed
-[ 6: FAIL ] specification.texstorage3d.format.srgb8_alpha8_3d: Verification failed
-[ 7: FAIL ] specification.texstorage3d.format.rgb5_a1_3d: Image comparison failed
-[ 8: FAIL ] specification.texstorage3d.format.rgb5_a1_3d: Verification failed
-[ 9: FAIL ] specification.texstorage3d.format.r11f_g11f_b10f_3d: Image comparison failed
-[ 10: FAIL ] specification.texstorage3d.format.r11f_g11f_b10f_3d: Verification failed
-[ 11: PASS ] specification.texstorage3d.format.rgb16f_3d: Passed
-[ 12: PASS ] specification.texstorage3d.format.rgb8i_3d: Passed
-[ 13: PASS ] specification.texstorage3d.format.rg32f_3d: Passed
-[ 14: PASS ] specification.texstorage3d.format.rg16i_3d: Passed
-[ 15: FAIL ] specification.texstorage3d.format.rg8ui_3d: Image comparison failed
-[ 16: FAIL ] specification.texstorage3d.format.rg8ui_3d: Verification failed
-[ 17: FAIL ] specification.texstorage3d.format.r32ui_3d: Image comparison failed
-[ 18: FAIL ] specification.texstorage3d.format.r32ui_3d: Verification failed
-[ 19: FAIL ] specification.texstorage3d.format.r8_3d: Image comparison failed
-[ 20: FAIL ] specification.texstorage3d.format.r8_3d: Verification failed
-[ 21: PASS ] specification.texstorage3d.format.r8_3d: successfullyParsed is true
-[ FAIL ] 16 failures reported
-
+[ PASS ] All tests passed

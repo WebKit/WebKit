@@ -1,30 +1,30 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/builtinprecision/clamp.html
-[ 1: FAIL ] precision.clamp.lowp_vertex.scalar: bindBuffer
-[ 2: FAIL ] precision.clamp.lowp_vertex.vec2: bindBuffer
-[ 3: FAIL ] precision.clamp.lowp_vertex.vec3: gl.createProgram()
-[ 4: FAIL ] precision.clamp.lowp_vertex.vec4: bindBuffer
-[ 5: FAIL ] precision.clamp.lowp_fragment.scalar: gl.createProgram()
-[ 6: FAIL ] precision.clamp.lowp_fragment.vec2: bindBuffer
-[ 7: FAIL ] precision.clamp.lowp_fragment.vec3: bindBuffer
-[ 8: FAIL ] precision.clamp.lowp_fragment.vec4: bindBuffer
-[ 9: FAIL ] precision.clamp.mediump_vertex.scalar: bindBuffer
-[ 10: FAIL ] precision.clamp.mediump_vertex.vec2: gl.createProgram()
-[ 11: FAIL ] precision.clamp.mediump_vertex.vec3: bindBuffer
-[ 12: FAIL ] precision.clamp.mediump_vertex.vec4: gl.createProgram()
-[ 13: FAIL ] precision.clamp.mediump_fragment.scalar: bindBuffer
-[ 14: FAIL ] precision.clamp.mediump_fragment.vec2: bindBuffer
-[ 15: FAIL ] precision.clamp.mediump_fragment.vec3: bindBuffer
-[ 16: FAIL ] precision.clamp.mediump_fragment.vec4: bindBuffer
-[ 17: FAIL ] precision.clamp.highp_vertex.scalar: bindBuffer
-[ 18: FAIL ] precision.clamp.highp_vertex.vec2: gl.createProgram()
-[ 19: FAIL ] precision.clamp.highp_vertex.vec3: bindBuffer
-[ 20: FAIL ] precision.clamp.highp_vertex.vec4: gl.createProgram()
-[ 21: FAIL ] precision.clamp.highp_fragment.scalar: bindBuffer
-[ 22: FAIL ] precision.clamp.highp_fragment.vec2: bindBuffer
-[ 23: FAIL ] precision.clamp.highp_fragment.vec3: bindBuffer
-[ 24: FAIL ] precision.clamp.highp_fragment.vec4: bindBuffer
-[ 25: PASS ] successfullyParsed is true
-[ FAIL ] 24 failures reported
 
+[ 1: PASS ] precision.clamp.lowp_vertex.scalar: All 24384 inputs passed.
+[ 2: PASS ] precision.clamp.lowp_vertex.vec2: All 24384 inputs passed.
+[ 3: PASS ] precision.clamp.lowp_vertex.vec3: All 24384 inputs passed.
+[ 4: PASS ] precision.clamp.lowp_vertex.vec4: All 24384 inputs passed.
+[ 5: PASS ] precision.clamp.lowp_fragment.scalar: All 24384 inputs passed.
+[ 6: PASS ] precision.clamp.lowp_fragment.vec2: All 24384 inputs passed.
+[ 7: PASS ] precision.clamp.lowp_fragment.vec3: All 24384 inputs passed.
+[ 8: PASS ] precision.clamp.lowp_fragment.vec4: All 24384 inputs passed.
+[ 9: PASS ] precision.clamp.mediump_vertex.scalar: All 24384 inputs passed.
+[ 10: PASS ] precision.clamp.mediump_vertex.vec2: All 24384 inputs passed.
+[ 11: PASS ] precision.clamp.mediump_vertex.vec3: All 24384 inputs passed.
+[ 12: PASS ] precision.clamp.mediump_vertex.vec4: All 24384 inputs passed.
+[ 13: PASS ] precision.clamp.mediump_fragment.scalar: All 24384 inputs passed.
+[ 14: PASS ] precision.clamp.mediump_fragment.vec2: All 24384 inputs passed.
+[ 15: PASS ] precision.clamp.mediump_fragment.vec3: All 24384 inputs passed.
+[ 16: PASS ] precision.clamp.mediump_fragment.vec4: All 24384 inputs passed.
+[ 17: FAIL ] precision.clamp.highp_vertex.scalar: 55/24384 inputs failed.
+[ 18: FAIL ] precision.clamp.highp_vertex.vec2: 55/24384 inputs failed.
+[ 19: FAIL ] precision.clamp.highp_vertex.vec3: 55/24384 inputs failed.
+[ 20: FAIL ] precision.clamp.highp_vertex.vec4: 55/24384 inputs failed.
+[ 21: FAIL ] precision.clamp.highp_fragment.scalar: 55/24384 inputs failed.
+[ 22: FAIL ] precision.clamp.highp_fragment.vec2: 55/24384 inputs failed.
+[ 23: FAIL ] precision.clamp.highp_fragment.vec3: 55/24384 inputs failed.
+[ 24: FAIL ] precision.clamp.highp_fragment.vec4: 55/24384 inputs failed.
+[ 25: PASS ] precision.clamp.highp_fragment.vec4: successfullyParsed is true
+[ FAIL ] 8 failures reported

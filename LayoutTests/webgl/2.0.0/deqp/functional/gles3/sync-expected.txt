@@ -1,16 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/sync.html
-[ 1: FAIL ] fence_sync.wait_sync_smalldraw: gl.createProgram()
-[ 2: FAIL ] fence_sync.wait_sync_largedraw: Argument 1 ('sync') to WebGL2RenderingContext.waitSync must be an instance of WebGLSync
-[ 3: FAIL ] fence_sync.client_wait_sync_smalldraw: Argument 1 ('sync') to WebGL2RenderingContext.clientWaitSync must be an instance of WebGLSync
-[ 4: FAIL ] fence_sync.client_wait_sync_largedraw: Argument 1 ('sync') to WebGL2RenderingContext.clientWaitSync must be an instance of WebGLSync
-[ 5: FAIL ] fence_sync.client_wait_sync_timeout_smalldraw: Argument 1 ('sync') to WebGL2RenderingContext.clientWaitSync must be an instance of WebGLSync
-[ 6: FAIL ] fence_sync.client_wait_sync_timeout_largedraw: Argument 1 ('sync') to WebGL2RenderingContext.clientWaitSync must be an instance of WebGLSync
-[ 7: FAIL ] fence_sync.client_wait_sync_flush_auto: Argument 1 ('sync') to WebGL2RenderingContext.clientWaitSync must be an instance of WebGLSync
-[ 8: FAIL ] fence_sync.client_wait_sync_flush_manual: Argument 1 ('sync') to WebGL2RenderingContext.clientWaitSync must be an instance of WebGLSync
-[ 9: FAIL ] fence_sync.client_wait_sync_noflush: Argument 1 ('sync') to WebGL2RenderingContext.clientWaitSync must be an instance of WebGLSync
-[ 10: FAIL ] fence_sync.client_wait_sync_finish: Argument 1 ('sync') to WebGL2RenderingContext.clientWaitSync must be an instance of WebGLSync
-[ 11: PASS ] fence_sync.client_wait_sync_finish: successfullyParsed is true
-[ FAIL ] 10 failures reported
-
+[ PASS ] All tests passed

@@ -1,8 +1,8 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance2/glsl3/shader-with-1024-character-define.html
+
 [ 1: FAIL ] [unexpected vertex shader compile status] (expected: true) vertex shader that uses 1024 character token in #define should succeed
 [ 2: FAIL ] [link failed] vertex shader that uses 1024 character token in #define should succeed
 [ 3: PASS ] successfullyParsed is true
 [ FAIL ] 2 failures reported
-
