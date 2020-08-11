@@ -275,6 +275,7 @@ interface TestRunner {
 
     // UI Process Testing
     void runUIScript(DOMString script, object callback);
+    void runUIScriptImmediately(DOMString script, object callback);
 
     void clearTestRunnerCallbacks();
 

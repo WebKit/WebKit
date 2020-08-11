@@ -775,6 +775,20 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "RunUIProcessScriptImmediately")) {
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> scriptKey = adoptWK(WKStringCreateWithUTF8CString("Script"));
+        WKRetainPtr<WKStringRef> callbackIDKey = adoptWK(WKStringCreateWithUTF8CString("CallbackID"));
+
+        UIScriptInvocationData* invocationData = new UIScriptInvocationData();
+        invocationData->testInvocation = this;
+        invocationData->callbackID = (unsigned)WKUInt64GetValue(static_cast<WKUInt64Ref>(WKDictionaryGetItemForKey(messageBodyDictionary, callbackIDKey.get())));
+        invocationData->scriptString = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, scriptKey.get()));
+        m_pendingUIScriptInvocationData = invocationData;
+        runUISideScriptImmediately(nullptr, invocationData);
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "InstallCustomMenuAction")) {
         auto messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
         WKRetainPtr<WKStringRef> nameKey = adoptWK(WKStringCreateWithUTF8CString("name"));
@@ -1861,7 +1875,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     return nullptr;
 }
 
-void TestInvocation::runUISideScriptAfterUpdateCallback(WKErrorRef, void* context)
+void TestInvocation::runUISideScriptImmediately(WKErrorRef, void* context)
 {
     UIScriptInvocationData* data = static_cast<UIScriptInvocationData*>(context);
     if (TestInvocation* invocation = data->testInvocation) {
@@ -1869,6 +1883,11 @@ void TestInvocation::runUISideScriptAfterUpdateCallback(WKErrorRef, void* contex
         invocation->runUISideScript(data->scriptString.get(), data->callbackID);
     }
     delete data;
+}
+
+void TestInvocation::runUISideScriptAfterUpdateCallback(WKErrorRef error, void* context)
+{
+    runUISideScriptImmediately(error, context);
 }
 
 void TestInvocation::runUISideScript(WKStringRef script, unsigned scriptCallbackID)

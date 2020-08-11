@@ -3943,6 +3943,15 @@ void WebPage::dispatchAsynchronousTouchEvents(const Vector<std::pair<WebTouchEve
             send(Messages::WebPageProxy::BoolCallback(handled, *eventAndCallbackID.second));
     }
 }
+
+void WebPage::cancelAsynchronousTouchEvents(const Vector<std::pair<WebTouchEvent, Optional<CallbackID>>, 1>& queue)
+{
+    for (auto& eventAndCallbackID : queue) {
+        if (!eventAndCallbackID.second)
+            continue;
+        send(Messages::WebPageProxy::BoolCallback(true, *eventAndCallbackID.second));
+    }
+}
 #endif
 
 void WebPage::computePagesForPrintingAndDrawToPDF(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CallbackID callbackID, Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply&& reply)

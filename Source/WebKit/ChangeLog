@@ -1,3 +1,55 @@
+2020-08-11  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: Scrolling and touch events sporadically stop working after navigating
+        https://bugs.webkit.org/show_bug.cgi?id=215368
+        <rdar://problem/65801531>
+
+        Reviewed by Wenson Hsieh.
+
+        Test: fast/events/touch/ios/touch-event-stall-after-navigating-with-pending-asynchronous-touch-start.html
+
+        WebPageProxy::handlePreventableTouchEvent keeps a counter of the number
+        of outstanding "preventable" touch events that it is waiting to hear
+        from the Web Content process about. This counter is incremented when the
+        event is dispatched to the Web Content process's EventHandler queue,
+        and decremented when the reply (whether it was handled or not) comes
+        back from the Web Content process. While the counter is non-zero, all
+        deferrable gestures remain deferred (and when it returns to zero, the
+        WKDeferringGestureRecognizer gate is lifted, and events are allowed to flow).
+        This means that it is very important that every event eventually reply
+        about its handling status.
+
+        Before this change, when the Web Content process is navigating, and reaches didCommitLoad,
+        it cleared all queued touch events, without replying to to the UI process.
+        Thus, there is a small window of time in which an incoming touch event will
+        end up in the queue, *not* get dispatched/replied, and then get dropped on
+        the floor in didCommitLoad. Most events do not meet this fate, because they
+        are handled promptly, and commitLoad/didCommitLoad tend to be very quick.
+        However, if the Web Content process ends up spending any significant amount
+        of time under commitLoad (say, in an unload handler, or in media frameworks),
+        any incoming touch events during that time will get lost, and the UI process'
+        count of outstanding events will end up getting stuck non-zero.
+
+        Fix this by always pretending that the page ate any events that were outstanding
+        when didCommitLoad occurs, instead of just dropping them on the floor.
+
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::takeQueuedTouchEventsForPage):
+        (WebKit::EventDispatcher::clearQueuedTouchEventsForPage): Deleted.
+        (WebKit::EventDispatcher::getQueuedTouchEventsForPage): Deleted.
+        Also, rename getQueuedTouchEventsForPage to takeQueuedTouchEventsForPage,
+        since it removes the queue from EventDispatcher's set.
+
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::touchEventSync):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::cancelAsynchronousTouchEvents):
+
 2020-08-11  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] gst-full standalone library support

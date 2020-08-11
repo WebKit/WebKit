@@ -1,3 +1,20 @@
+2020-08-11  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: Scrolling and touch events sporadically stop working after navigating
+        https://bugs.webkit.org/show_bug.cgi?id=215368
+        <rdar://problem/65801531>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/events/touch/ios/resources/finish-test-after-scrolling-with-touch-event-handlers.html: Added.
+        * fast/events/touch/ios/touch-event-stall-after-navigating-with-pending-asynchronous-touch-start-expected.txt: Added.
+        * fast/events/touch/ios/touch-event-stall-after-navigating-with-pending-asynchronous-touch-start.html: Added.
+        Add a test that ensures that a page that dispatches events in beforeunload,
+        receiving preventable touch events during the next page's commitLoad does not result
+        in scrolling being stuck.
+
+        Before this change, this test would time out.
+
 2020-08-11  Darin Adler  <darin@apple.com>
 
         LayoutTest accessibility/mac/select-element-selection-with-optgroups.html is a flaky failure

@@ -1,3 +1,29 @@
+2020-08-11  Tim Horton  <timothy_horton@apple.com>
+
+        iOS: Scrolling and touch events sporadically stop working after navigating
+        https://bugs.webkit.org/show_bug.cgi?id=215368
+        <rdar://problem/65801531>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::runUIScriptImmediately):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::runUISideScriptImmediately):
+        (WTR::TestInvocation::runUISideScriptAfterUpdateCallback):
+        * WebKitTestRunner/TestInvocation.h:
+        Add a variant of runUISideScript that runs the script without
+        waiting for a rendering update.
+
+        It makes sense for the default runUISideScript to wait for a rendering
+        update -- nearly every test is either unaffected or improved by this --
+        but for the test for this bug, since we have hung the Web Content process
+        main thread intentionally, we will not see a rendering update, and so
+        the UI-side script will never run.
+
 2020-08-11  Darin Adler  <darin@apple.com>
 
         LayoutTest accessibility/mac/select-element-selection-with-optgroups.html is a flaky failure

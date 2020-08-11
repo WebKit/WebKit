@@ -450,9 +450,9 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& nativeWebtouchEvent, bool eventHandled)
+void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& nativeWebTouchEvent, bool eventHandled)
 {
-    [m_contentView _webTouchEvent:nativeWebtouchEvent preventsNativeGestures:eventHandled];
+    [m_contentView _webTouchEvent:nativeWebTouchEvent preventsNativeGestures:eventHandled];
 }
 #endif
 

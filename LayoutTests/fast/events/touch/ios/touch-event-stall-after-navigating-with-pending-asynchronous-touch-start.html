@@ -1,0 +1,33 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        function runTest() {
+            const tapper = document.getElementById("tapper");
+            tapper.addEventListener("touchstart", () => { });
+            tapper.addEventListener("touchend", () => { });
+
+            const x = tapper.offsetLeft + (tapper.offsetWidth / 2);
+            const y = tapper.offsetTop + (tapper.offsetHeight / 2);
+
+            window.onbeforeunload = function() {
+                testRunner.runUIScriptImmediately(`
+                    uiController.doubleTapAtPoint(${x}, ${y}, .01, function() {
+                        uiController.uiScriptComplete();
+                    });`);
+            };
+
+            window.location.href = "resources/finish-test-after-scrolling-with-touch-event-handlers.html";
+        }
+
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        addEventListener("load", runTest);
+    </script>
+</head>
+<body>
+    <div id="tapper">Tap Here</div>
+</body>
+</html>

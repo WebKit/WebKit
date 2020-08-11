@@ -1324,6 +1324,27 @@ void TestRunner::runUIScript(JSStringRef script, JSValueRef callback)
     WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), testDictionary.get());
 }
 
+void TestRunner::runUIScriptImmediately(JSStringRef script, JSValueRef callback)
+{
+    unsigned callbackID = nextUIScriptCallbackID();
+    cacheTestRunnerCallback(callbackID, callback);
+
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("RunUIProcessScriptImmediately"));
+
+    WKRetainPtr<WKMutableDictionaryRef> testDictionary = adoptWK(WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> scriptKey = adoptWK(WKStringCreateWithUTF8CString("Script"));
+    WKRetainPtr<WKStringRef> scriptValue = adoptWK(WKStringCreateWithJSString(script));
+
+    WKRetainPtr<WKStringRef> callbackIDKey = adoptWK(WKStringCreateWithUTF8CString("CallbackID"));
+    WKRetainPtr<WKUInt64Ref> callbackIDValue = adoptWK(WKUInt64Create(callbackID));
+
+    WKDictionarySetItem(testDictionary.get(), scriptKey.get(), scriptValue.get());
+    WKDictionarySetItem(testDictionary.get(), callbackIDKey.get(), callbackIDValue.get());
+
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), testDictionary.get());
+}
+
 void TestRunner::runUIScriptCallback(unsigned callbackID, JSStringRef result)
 {
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
