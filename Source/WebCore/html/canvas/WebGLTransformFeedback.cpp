@@ -30,6 +30,8 @@
 
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
+#include <JavaScriptCore/SlotVisitor.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
 
 namespace WebCore {
 
@@ -84,6 +86,14 @@ bool WebGLTransformFeedback::hasEnoughBuffers(GCGLuint numRequired) const
             return false;
     }
     return true;
+}
+
+void WebGLTransformFeedback::visitReferencedJSWrappers(JSC::SlotVisitor& visitor)
+{
+    for (auto& buffer : m_boundIndexedTransformFeedbackBuffers)
+        visitor.addOpaqueRoot(buffer.get());
+
+    visitor.addOpaqueRoot(m_program.get());
 }
 
 void WebGLTransformFeedback::unbindBuffer(WebGLBuffer& buffer)

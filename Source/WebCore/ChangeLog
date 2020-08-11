@@ -1,3 +1,56 @@
+2020-08-11  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] expando-loss and expando-loss-2 conformance tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=214765
+
+        Reviewed by Darin Adler.
+
+        Use JSWebGLRenderingContext's and JSWebGL2RenderingContext's
+        existing visitAdditionalChildren hook (via JSCustomMarkFunction in
+        their IDL) to add opaque roots for all WebGLObjects latched in to
+        the context state, and all WebGLObjects they refer to. (Extensions
+        were already previously handled.)
+
+        Add "GenerateIsReachable=Impl" to the IDL files for all such
+        objects (WebGLBuffer, WebGLTexture, etc.) so that they pay
+        attention to the opaque root state when determining liveness of
+        their JavaScript wrappers. Thanks to ysuzuki@ for pointing out the
+        need for this.
+
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp:
+        (WebCore::JSWebGL2RenderingContext::visitAdditionalChildren):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::visitAdditionalChildren):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::visitReferencedJSWrappers):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLBuffer.idl:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::visitReferencedJSWrappers):
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLFramebuffer.idl:
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::visitReferencedJSWrappers):
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLProgram.idl:
+        * html/canvas/WebGLQuery.idl:
+        * html/canvas/WebGLRenderbuffer.idl:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::visitReferencedJSWrappers):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLSampler.idl:
+        * html/canvas/WebGLShader.idl:
+        * html/canvas/WebGLTexture.idl:
+        * html/canvas/WebGLTransformFeedback.cpp:
+        (WebCore::WebGLTransformFeedback::visitReferencedJSWrappers):
+        * html/canvas/WebGLTransformFeedback.h:
+        * html/canvas/WebGLTransformFeedback.idl:
+        * html/canvas/WebGLVertexArrayObject.idl:
+        * html/canvas/WebGLVertexArrayObjectBase.cpp:
+        (WebCore::WebGLVertexArrayObjectBase::visitReferencedJSWrappers):
+        * html/canvas/WebGLVertexArrayObjectBase.h:
+        * html/canvas/WebGLVertexArrayObjectOES.idl:
+
 2020-08-11  Youenn Fablet  <youenn@apple.com>
 
         Add JS console log message in case of capture failure

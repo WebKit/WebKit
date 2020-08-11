@@ -1,3 +1,23 @@
+2020-08-11  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] expando-loss and expando-loss-2 conformance tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=214765
+
+        Reviewed by Darin Adler.
+
+        Rebaseline expando-loss.html and expando-loss-2.html, which are
+        now fully passing.
+
+        Add a hook to js-test-pre.js which allows this test to be run
+        correctly in the MiniBrowser by setting the following environment
+        variables:
+          export JSC_useDollarVM=1
+          export __XPC_JSC_useDollarVM=1
+
+        * webgl/2.0.0/conformance/misc/expando-loss-expected.txt:
+        * webgl/2.0.0/conformance2/misc/expando-loss-2-expected.txt:
+        * webgl/2.0.0/resources/webgl_test_files/js/js-test-pre.js:
+
 2020-08-11  Youenn Fablet  <youenn@apple.com>
 
         Add JS console log message in case of capture failure

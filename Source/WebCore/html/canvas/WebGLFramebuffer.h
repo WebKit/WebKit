@@ -33,6 +33,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+namespace JSC {
+class SlotVisitor;
+}
+
 namespace WebCore {
 
 class WebGLRenderbuffer;
@@ -57,6 +61,7 @@ public:
         virtual void onDetached(GraphicsContextGLOpenGL*) = 0;
         virtual void attach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) = 0;
         virtual void unattach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) = 0;
+        virtual void visitReferencedJSWrappers(JSC::SlotVisitor&) = 0;
 
     protected:
         WebGLAttachment();
@@ -104,6 +109,8 @@ public:
     void drawBuffers(const Vector<GCGLenum>& bufs);
 
     GCGLenum getDrawBuffer(GCGLenum);
+
+    void visitReferencedJSWrappers(JSC::SlotVisitor&);
 
 private:
     WebGLFramebuffer(WebGLRenderingContextBase&);

@@ -32,6 +32,8 @@
 #include "WebGLContextGroup.h"
 #include "WebGLDrawBuffers.h"
 #include "WebGLRenderingContextBase.h"
+#include <JavaScriptCore/SlotVisitor.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
 
 namespace WebCore {
 
@@ -56,6 +58,7 @@ namespace {
         void onDetached(GraphicsContextGLOpenGL*) override;
         void attach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) override;
         void unattach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) override;
+        void visitReferencedJSWrappers(JSC::SlotVisitor&) override;
 
         WebGLRenderbufferAttachment() { };
 
@@ -137,6 +140,11 @@ namespace {
             context->framebufferRenderbuffer(target, attachment, GraphicsContextGL::RENDERBUFFER, 0);
     }
 
+    void WebGLRenderbufferAttachment::visitReferencedJSWrappers(JSC::SlotVisitor& visitor)
+    {
+        visitor.addOpaqueRoot(m_renderbuffer.get());
+    }
+
     class WebGLTextureAttachment : public WebGLFramebuffer::WebGLAttachment {
     public:
         static Ref<WebGLFramebuffer::WebGLAttachment> create(WebGLTexture*, GCGLenum target, GCGLint level, GCGLint layer);
@@ -156,6 +164,7 @@ namespace {
         void onDetached(GraphicsContextGLOpenGL*) override;
         void attach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) override;
         void unattach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) override;
+        void visitReferencedJSWrappers(JSC::SlotVisitor&) override;
 
         WebGLTextureAttachment() { };
 
@@ -251,6 +260,11 @@ namespace {
         } else
             context->framebufferTexture2D(GraphicsContextGL::FRAMEBUFFER, attachment, m_target, 0, m_level);
 #endif
+    }
+
+    void WebGLTextureAttachment::visitReferencedJSWrappers(JSC::SlotVisitor& visitor)
+    {
+        visitor.addOpaqueRoot(m_texture.get());
     }
 
 #if !USE(ANGLE)
@@ -687,6 +701,12 @@ GCGLenum WebGLFramebuffer::getDrawBuffer(GCGLenum drawBuffer)
     if (drawBuffer == ExtensionsGL::DRAW_BUFFER0_EXT)
         return GraphicsContextGL::COLOR_ATTACHMENT0;
     return GraphicsContextGL::NONE;
+}
+
+void WebGLFramebuffer::visitReferencedJSWrappers(JSC::SlotVisitor& visitor)
+{
+    for (auto& entry : m_attachments)
+        entry.value->visitReferencedJSWrappers(visitor);
 }
 
 void WebGLFramebuffer::setAttachmentInternal(GCGLenum attachment, GCGLenum texTarget, WebGLTexture* texture, GCGLint level, GCGLint layer)

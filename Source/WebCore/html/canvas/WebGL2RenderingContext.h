@@ -261,6 +261,8 @@ public:
 
     bool checkAndTranslateAttachments(const char* functionName, GCGLenum, Vector<GCGLenum>&);
 
+    void visitReferencedJSWrappers(JSC::SlotVisitor&) override;
+
 private:
     WebGL2RenderingContext(CanvasBase&, GraphicsContextGLAttributes);
     WebGL2RenderingContext(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, GraphicsContextGLAttributes);

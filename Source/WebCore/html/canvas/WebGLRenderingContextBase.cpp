@@ -102,6 +102,8 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <JavaScriptCore/SlotVisitor.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/Uint32Array.h>
 #include <wtf/CheckedArithmetic.h>
@@ -7762,6 +7764,38 @@ void WebGLRenderingContextBase::dispatchContextChangedNotification()
         return;
 
     queueTaskToDispatchEvent(*canvas, TaskSource::WebGL, WebGLContextEvent::create(eventNames().webglcontextchangedEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
+}
+
+void WebGLRenderingContextBase::visitReferencedJSWrappers(JSC::SlotVisitor& visitor)
+{
+    visitor.addOpaqueRoot(m_boundArrayBuffer.get());
+
+    visitor.addOpaqueRoot(m_boundVertexArrayObject.get());
+    if (m_boundVertexArrayObject)
+        m_boundVertexArrayObject->visitReferencedJSWrappers(visitor);
+
+    visitor.addOpaqueRoot(m_currentProgram.get());
+    if (m_currentProgram)
+        m_currentProgram->visitReferencedJSWrappers(visitor);
+
+    visitor.addOpaqueRoot(m_framebufferBinding.get());
+    if (m_framebufferBinding)
+        m_framebufferBinding->visitReferencedJSWrappers(visitor);
+
+    visitor.addOpaqueRoot(m_renderbufferBinding.get());
+
+    for (auto& unit : m_textureUnits) {
+        visitor.addOpaqueRoot(unit.texture2DBinding.get());
+        visitor.addOpaqueRoot(unit.textureCubeMapBinding.get());
+        visitor.addOpaqueRoot(unit.texture3DBinding.get());
+        visitor.addOpaqueRoot(unit.texture2DArrayBinding.get());
+    }
+
+    // Extensions' IDL files use GenerateIsReachable=ImplWebGLRenderingContext,
+    // which checks to see whether the context is in the opaque root set (it is;
+    // it's added in JSWebGLRenderingContext / JSWebGL2RenderingContext's custom
+    // bindings code). For this reason it's unnecessary to explicitly add opaque
+    // roots for extensions.
 }
 
 void WebGLRenderingContextBase::prepareForDisplay()
