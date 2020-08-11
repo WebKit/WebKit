@@ -112,6 +112,6 @@ if (DEVELOPER_MODE)
     file(COPY
         "${JAVASCRIPTCORE_DIR}/API/tests/testapiScripts"
         DESTINATION
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/testapiScripts
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 endif ()
