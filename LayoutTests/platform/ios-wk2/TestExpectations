@@ -1842,3 +1842,5 @@ webkit.org/b/215326 imported/w3c/web-platform-tests/css/css-images/image-set/ima
 webkit.org/b/215345 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Pass Timeout ]
 
 webkit.org/b/215350 http/tests/xmlhttprequest/overridemimetype-headers-received-state-force-shiftjis.html [ Pass Timeout ]
+
+webkit.org/b/215351 http/wpt/service-workers/module-meta-url-fragment.https.html [ Pass Failure ]
