@@ -861,14 +861,12 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         updateInsertions(lastTopDownPath, topDownPath, replacementNode.get(), reusedOriginalNodes, insertions);
     }
 
-    auto end = lastChildOfCommonAncestorInRange ? positionInParentAfterNode(lastChildOfCommonAncestorInRange.get()) : positionAfterNode(commonAncestor.get());
     RefPtr<Node> node = item.end.firstNode();
-    RefPtr<Node> endNode = end.firstNode();
-    if (node && node != endNode) {
+    if (node && lastChildOfCommonAncestorInRange->contains(node.get())) {
         auto topDownPath = getPath(commonAncestor.get(), node->parentNode());
         updateInsertions(lastTopDownPath, topDownPath, nullptr, reusedOriginalNodes, insertions);
     }
-    while (node != endNode) {
+    while (lastChildOfCommonAncestorInRange->contains(node.get())) {
         Ref<Node> parentNode = *node->parentNode();
         while (!lastTopDownPath.isEmpty() && lastTopDownPath.last().first.ptr() != parentNode.ptr())
             lastTopDownPath.removeLast();
@@ -878,21 +876,18 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         node = NodeTraversal::next(*node);
     }
 
-    Position insertionPoint = positionBeforeNode(firstContentNode.get()).parentAnchoredEquivalent();
-    while (insertionPoint.containerNode() != commonAncestor)
-        insertionPoint = positionInParentBeforeNode(insertionPoint.containerNode());
+    RefPtr<Node> insertionPointNode = lastChildOfCommonAncestorInRange->nextSibling();
 
     for (auto& node : nodesToRemove)
         node->remove();
 
     for (auto& insertion : insertions) {
         auto parentContainer = insertion.parentIfDifferentFromCommonAncestor;
-        if (!insertion.parentIfDifferentFromCommonAncestor) {
-            parentContainer = insertionPoint.containerNode();
-            parentContainer->insertBefore(insertion.child, insertionPoint.computeNodeAfterPosition());
-            insertionPoint = positionInParentAfterNode(insertion.child.ptr());
+        if (!parentContainer) {
+            parentContainer = commonAncestor;
+            parentContainer->insertBefore(insertion.child, insertionPointNode.get());
         } else
-            insertion.parentIfDifferentFromCommonAncestor->appendChild(insertion.child);
+            parentContainer->appendChild(insertion.child);
 
         if (auto* box = parentContainer->renderBox()) {
             if (!box->hasVisualOverflow())

@@ -1,3 +1,21 @@
+2020-08-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation crashes when replacing element with img role
+        https://bugs.webkit.org/show_bug.cgi?id=215344
+
+        Reviewed by Wenson Hsieh.
+
+        positionInParentAfterNode and positionInParentBeforeNode do not return Position with Nodes that are ignored by 
+        editing. Element with img role is one of such Nodes. However, TextManipulationController can manipulate content 
+        of children of the ignored Nodes (see the newly added test). Therefore, we'd better not use 
+        positionInParentBeforeNode or positionInParentBeforeNode in TextManipulationController::replace, because
+        insertion position can be inside a ignored Node.
+
+        API Test: TextManipulation.CompleteTextManipulationShouldReplaceContentIgnoredByEditing
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::replace):
+
 2020-08-11  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] expando-loss and expando-loss-2 conformance tests are failing

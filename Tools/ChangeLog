@@ -1,3 +1,13 @@
+2020-08-11  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation crashes when replacing element with img role
+        https://bugs.webkit.org/show_bug.cgi?id=215344
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-08-11  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Add MiniBrowser wrapper env vars and white-list MESA env vars in flatpak
