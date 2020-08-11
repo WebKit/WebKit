@@ -1844,3 +1844,5 @@ webkit.org/b/215345 imported/w3c/web-platform-tests/css/css-fonts/font-display/f
 webkit.org/b/215350 http/tests/xmlhttprequest/overridemimetype-headers-received-state-force-shiftjis.html [ Pass Timeout ]
 
 webkit.org/b/215351 http/wpt/service-workers/module-meta-url-fragment.https.html [ Pass Failure ]
+
+webkit.org/b/245353 [ Debug ] svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
