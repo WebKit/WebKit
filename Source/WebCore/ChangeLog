@@ -1,5 +1,81 @@
 2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Spacing of Chinese characters is inconsistent in macOS 11/Safari 14 beta
+        https://bugs.webkit.org/show_bug.cgi?id=214769
+
+        Reviewed by Darin Adler.
+
+        This is in preparation for https://bugs.webkit.org/show_bug.cgi?id=206208..
+
+        In the general case, text shaping is Turing-complete. In order for it to work properly,
+        we need to feed the text shaping virtual machine the correct inputs so that it can
+        produce correct outputs. The input to text shaping is supposed to be the raw glyph
+        advances straight from CTFontGetAdvancesForGlyphs().
+
+        Previously, we were applying letter-spacing, word-spacing, justification, and tab stops
+        before shaping. Most fonts don't care about this and still produce the correct results.
+        However, Ping Fang on macOS Big Sur and iOS 14 _does_ care about this, and its shaping
+        rules operate incorrectly when fed these pre-expanded glyph widths.
+
+        The solution is to apply this extra spacing after shaping occurs. However, because
+        shaping is Turing-complete, it is free to add or remove glyphs willy-nilly. This means
+        we need some way of tracing back which character in the input string correspond to which
+        output glyphs, so we know which glyphs to add additional spacing to. This is what
+        https://bugs.webkit.org/show_bug.cgi?id=215059 does: It switches from using
+        CTFontTransformGlyphsWithLanguage() to CTFontShapeGlyphs(), which outputs this
+        glyph-character tracing info. Then, once we have this tracing info, we can apply spacing
+        properly after shaping has completed. That's what this patch does.
+
+        Tests: fast/text/letter-spacing-shaping.html
+               fast/text/tab-letter-space.html
+
+        * platform/graphics/FontCascade.cpp: Clients of WidthIterator::advance() need to call
+        WidthIterator::finalize() (see below).
+        (WebCore::FontCascade::widthOfTextRange const):
+        (WebCore::FontCascade::layoutSimpleText const):
+        (WebCore::FontCascade::floatWidthForSimpleText const):
+        (WebCore::FontCascade::adjustSelectionRectForSimpleText const):
+        (WebCore::FontCascade::offsetForPositionForSimpleText const):
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::expandInitialAdvance):
+        (WebCore::GlyphBuffer::expandAdvance):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator):
+        (WebCore::WidthIterator::hasExtraSpacing const):
+        (WebCore::WidthIterator::advanceInternal): Delete the code that used to apply spacing
+        before shaping. Instead, it gets moved to applyExtraSpacingAfterShaping().
+        (WebCore::WidthIterator::calculateAdditionalWidth const): This is a refactoring of
+        the additional space calculation code. This is a const function, and has no side-effects.
+        It outputs 4 floats:
+        - How much space needs to be added to the left of the current character
+        - How much space needs to be added to the right of the current character
+        - How much space needs to be added to the left of the current character due to justification
+        - How much space needs to be added to the right of the current character due to justification
+        We need these last two values because one of the outputs of WidthIterator::advance() is
+        a bool which represents whether or not we are ending on a justification space, so that the
+        next WidthIterator that gets created for the next thing on the line can forbid/require a
+        leading justification appropriately.
+        (WebCore::WidthIterator::applyAdditionalWidth): Given the 4 values calculated in
+        calculateAdditionalWidth(), apply them. We're operating in logical order, so this function has
+        to do some translation from visual order to logical order (hence all the m_run.ltr() calls).
+        If we're trying to add size to the left of the first character in LTR, we can't directly do
+        that, because advances can only add space to the right side of a character, and there is no
+        character to the left of the first character to expand. Therefore, we do this by increasing
+        the initial advance of the GlyphBuffer, which is a special advance created just to solve this
+        problem. In RTL, the problem is a bit more complicated - we don't know whether advance() will
+        be called again, thereby delivering a glyph which we _can_ expand, so we instead store what
+        would have been expanded inside m_leftoverJustificationWidth, and wait for the next call to
+        advance(). If none comes, clients have to call finalize() instead, which will apply
+        m_leftoverJustificationWidth to the GlyphBuffer's initial advance.
+        (WebCore::WidthIterator::applyExtraSpacingAfterShaping):
+        (WebCore::WidthIterator::finalize):
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/WidthIterator.h:
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::measureTextRenderer):
+
+2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] Migrate from CTFontTransformGlyphsWithLanguage() to CTFontShapeGlyphs()
         https://bugs.webkit.org/show_bug.cgi?id=215059
 

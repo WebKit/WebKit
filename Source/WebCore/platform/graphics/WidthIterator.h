@@ -22,6 +22,7 @@
 #ifndef WidthIterator_h
 #define WidthIterator_h
 
+#include "GlyphBuffer.h"
 #include <unicode/umachine.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -29,10 +30,10 @@
 namespace WebCore {
 
 class FontCascade;
-class GlyphBuffer;
 class Font;
 class TextRun;
 struct GlyphData;
+struct GlyphIndexRange;
 struct OriginalAdvancesForCharacterTreatedAsSpace;
 
 using CharactersTreatedAsSpace = Vector<OriginalAdvancesForCharacterTreatedAsSpace, 64>;
@@ -44,6 +45,7 @@ public:
 
     void advance(unsigned to, GlyphBuffer&);
     bool advanceOneCharacter(float& width, GlyphBuffer&);
+    void finalize(GlyphBuffer&);
 
     float maxGlyphBoundingBoxY() const { ASSERT(m_accountForGlyphBounds); return m_maxGlyphBoundingBoxY; }
     float minGlyphBoundingBoxY() const { ASSERT(m_accountForGlyphBounds); return m_minGlyphBoundingBoxY; }
@@ -64,11 +66,24 @@ private:
     float applyFontTransforms(GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font&, bool force, CharactersTreatedAsSpace&);
     void commitCurrentFontRange(GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font&, const Font& primaryFont, UChar32 character, float widthOfCurrentFontRange, CharactersTreatedAsSpace&);
 
+    bool hasExtraSpacing() const;
+    void applyExtraSpacingAfterShaping(GlyphBuffer&, unsigned characterStartIndex, unsigned glyphBufferStartIndex, unsigned characterDestinationIndex, float startingRunWidth);
+    struct AdditionalWidth {
+        float left;
+        float right;
+        float leftExpansion;
+        float rightExpansion;
+    };
+    AdditionalWidth calculateAdditionalWidth(GlyphBuffer&, GlyphBufferStringOffset currentCharacterIndex, unsigned leadingGlyphIndex, unsigned trailingGlyphIndex, float position) const;
+    void applyAdditionalWidth(GlyphBuffer&, GlyphIndexRange, float leftAdditionalWidth, float rightAdditionalWidth, float leftExpansionAdditionalWidth, float rightExpansionAdditionalWidth);
+
     const FontCascade& m_font;
     const TextRun& m_run;
     HashSet<const Font*>* m_fallbackFonts { nullptr };
 
+    Optional<unsigned> m_lastCharacterIndex;
     unsigned m_currentCharacterIndex { 0 };
+    float m_leftoverJustificationWidth { 0 };
     float m_runWidthSoFar { 0 };
     float m_expansion { 0 };
     float m_expansionPerOpportunity { 0 };
@@ -76,6 +91,7 @@ private:
     float m_minGlyphBoundingBoxY { std::numeric_limits<float>::max() };
     float m_firstGlyphOverflow { 0 };
     float m_lastGlyphOverflow { 0 };
+    bool m_containsTabs { false };
     bool m_isAfterExpansion { false };
     bool m_accountForGlyphBounds { false };
     bool m_enableKerning { false };

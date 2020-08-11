@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "FloatPoint.h"
 #include "FloatSize.h"
 #include "Glyph.h"
 #include <climits>
@@ -202,6 +203,7 @@ public:
 
     void setInitialAdvance(GlyphBufferAdvance initialAdvance) { m_initialAdvance = initialAdvance; }
     const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }
+    void expandInitialAdvance(float width) { m_initialAdvance.setWidth(m_initialAdvance.width() + width); }
     
     static constexpr GlyphBufferStringOffset noOffset = std::numeric_limits<GlyphBufferStringOffset>::max();
     void add(Glyph glyph, const Font& font, float width, GlyphBufferStringOffset offsetInString = noOffset)
@@ -251,6 +253,13 @@ public:
     {
         ASSERT(!isEmpty());
         GlyphBufferAdvance& lastAdvance = m_advances.last();
+        lastAdvance.setWidth(lastAdvance.width() + width);
+    }
+
+    void expandAdvance(unsigned index, float width)
+    {
+        ASSERT(index < size());
+        auto& lastAdvance = m_advances[index];
         lastAdvance.setWidth(lastAdvance.width() + width);
     }
 

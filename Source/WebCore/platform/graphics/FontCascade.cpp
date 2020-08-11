@@ -380,6 +380,7 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
         offsetAfterRange = simpleIterator.runWidthSoFar();
         simpleIterator.advance(run.length(), glyphBuffer);
         totalWidth = simpleIterator.runWidthSoFar();
+        simpleIterator.finalize(glyphBuffer);
     }
 
     if (outWidthBeforeRange)
@@ -1390,11 +1391,13 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
     float initialAdvance = 0;
     if (run.rtl()) {
         it.advance(run.length(), localGlyphBuffer);
+        it.finalize(localGlyphBuffer);
         initialAdvance = it.runWidthSoFar() - afterWidth;
-    } else
+    } else {
+        it.finalize(localGlyphBuffer);
         initialAdvance = beforeWidth;
-    // FIXME: Deal with the GlyphBuffer's current initialAdvance.
-    glyphBuffer.setInitialAdvance(FloatSize(initialAdvance, 0));
+    }
+    glyphBuffer.expandInitialAdvance(initialAdvance);
 
     // The glyph buffer is currently in logical order,
     // but we need to return the results in visual order.
@@ -1527,6 +1530,7 @@ float FontCascade::floatWidthForSimpleText(const TextRun& run, HashSet<const Fon
     WidthIterator it(*this, run, fallbackFonts, glyphOverflow);
     GlyphBuffer glyphBuffer;
     it.advance(run.length(), glyphBuffer);
+    it.finalize(glyphBuffer);
 
     if (glyphOverflow) {
         glyphOverflow->top = std::max<int>(glyphOverflow->top, ceilf(-it.minGlyphBoundingBoxY()) - (glyphOverflow->computeBounds ? 0 : fontMetrics().ascent()));
@@ -1561,10 +1565,13 @@ void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRec
 
     if (run.rtl()) {
         it.advance(run.length(), glyphBuffer);
+        it.finalize(glyphBuffer);
         float totalWidth = it.runWidthSoFar();
         selectionRect.move(totalWidth - afterWidth, 0);
-    } else
+    } else {
+        it.finalize(glyphBuffer);
         selectionRect.move(beforeWidth, 0);
+    }
     selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
 }
 
@@ -1623,6 +1630,7 @@ int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, boo
         }
     }
 
+    it.finalize(localGlyphBuffer);
     return offset;
 }
 

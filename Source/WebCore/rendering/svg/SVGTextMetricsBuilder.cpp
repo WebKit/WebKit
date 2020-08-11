@@ -165,6 +165,11 @@ void SVGTextMetricsBuilder::measureTextRenderer(RenderSVGInlineText& text, Measu
         data->lastCharacter = currentCharacter;
     }
 
+    if (m_simpleWidthIterator) {
+        GlyphBuffer glyphBuffer;
+        m_simpleWidthIterator->finalize(glyphBuffer);
+    }
+
     if (!data->allCharactersMap)
         return;
 

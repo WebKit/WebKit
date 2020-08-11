@@ -1,5 +1,17 @@
 2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Spacing of Chinese characters is inconsistent in macOS 11/Safari 14 beta
+        https://bugs.webkit.org/show_bug.cgi?id=214769
+
+        Reviewed by Darin Adler.
+
+        * fast/text/letter-spacing-shaping-expected.html: Added.
+        * fast/text/letter-spacing-shaping.html: Added.
+        * fast/text/tab-letter-space-expected.html: Added.
+        * fast/text/tab-letter-space.html: Added.
+
+2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] Migrate from CTFontTransformGlyphsWithLanguage() to CTFontShapeGlyphs()
         https://bugs.webkit.org/show_bug.cgi?id=215059
 
