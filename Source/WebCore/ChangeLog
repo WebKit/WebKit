@@ -1,3 +1,12 @@
+2020-08-11  Jon Davis  <jond@apple.com>
+
+        Add privacy and security keywords to feature status entries
+        https://bugs.webkit.org/show_bug.cgi?id=215203
+
+        Reviewed by Youenn Fablet.
+
+        * features.json:
+
 2020-08-11  Chris Dumez  <cdumez@apple.com>
 
         Fix BiquadFilterNode's lowpass filter

@@ -32,7 +32,7 @@
         },
         "url": "https://w3c.github.io/battery/",
         "webkit-url": "https://webkit.org/b/62698",
-        "keywords": ["battery"],
+        "keywords": ["battery", "privacy"],
         "category": "webapps",
         "description": "An API that provides information about the battery status of the hosting device."
     },
@@ -326,13 +326,27 @@
         }
     },
     {
+        "name": "Client-Side Storage Partitioning",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://github.com/privacycg/storage-partitioning",
+        "keywords": ["privacy"],
+        "category": "privacy",
+        "description": "Preserve privacy and security of users by keying user-agent state on more than a single origin.",
+        "contact": {
+            "name": "John Wilander",
+            "twitter": "@johnwilander"
+        }
+    },
+    {
         "name": "Content Security Policy Level 2",
         "status": {
             "status": "Supported",
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/webappsec-csp/2/",
-        "keywords": ["csp", "cross-site scripting", "xss", "injection", "header"],
+        "keywords": ["csp", "cross-site scripting", "xss", "injection", "header", "security"],
         "category": "webapps",
         "description": "A mechanism that web applications can use to mitigate content injection vulnerabilities, such as cross-site scripting (XSS). Developers can declare a CSP policy to prohibit their web application from loading content or executing scripts that have not been whitelisted among other capabilities.",
         "contact": {
@@ -347,7 +361,7 @@
             "enabled-by-default": true
         },
         "url": "https://w3c.github.io/webappsec-csp/",
-        "keywords": ["csp", "cross-site scripting", "xss", "injection", "header"],
+        "keywords": ["csp", "cross-site scripting", "xss", "injection", "header", "security"],
         "category": "webapps",
         "contact": {
             "name": "Daniel Bates",
@@ -721,7 +735,7 @@
         },
         "url": "http://www.w3.org/TR/WebCryptoAPI/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=160880",
-        "keywords": ["webcrypto", "web cryptography api", "crypto"],
+        "keywords": ["webcrypto", "web cryptography api", "crypto", "security"],
         "category": "webapps",
         "description": "A JavaScript API for web applications to perform cryptographic operations.",
         "contact": {
@@ -965,6 +979,21 @@
         }
     },
     {
+        "name": "Cross-Origin Resource Policy",
+        "status": {
+            "status": "Supported"
+        },
+        "url": "https://fetch.spec.whatwg.org/#cross-origin-resource-policy-header",
+        "specification": "Fetch",
+        "keywords": ["security"],
+        "description": "Allows websites to protect against certain requests from other origins.",
+        "contact": {
+            "name": "Jon Davis",
+            "twitter": "@jonathandavis",
+            "email": "web-evangelist@apple.com"
+        }
+    },    
+    {
         "name": "Custom Elements",
         "status": {
             "status": "Supported"
@@ -1115,6 +1144,16 @@
             "name": "Ryosuke Niwa",
             "email": "rniwa@webkit.org"
         }
+    },
+    {
+        "name": "HTTP Cache Partitioning",
+        "status": {
+            "status": "Supported"
+        },
+        "keywords": ["privacy"],
+        "category": "privacy",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=110269",
+        "description": "Optionally partitions cache to prevent using cache for tracking."
     },
     {
         "name": "ImageBitmap",
@@ -1332,7 +1371,7 @@
         },
         "url": "https://w3c.github.io/webappsec-mixed-content/#strict-checking",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=165438",
-        "keywords": ["csp", "content security policy", "blockable", "optionally-blockable", "block-all-mixed-content", "HTTPS"],
+        "keywords": ["csp", "content security policy", "blockable", "optionally-blockable", "block-all-mixed-content", "HTTPS", "security"],
         "category": "webapps",
         "description": "Allows developers to opt into blocking display and running of all insecure content on an HTTPS page.",
         "contact": {
@@ -1346,6 +1385,7 @@
             "status": "Supported"
         },
         "url": "https://w3c.github.io/webappsec-subresource-integrity/",
+        "keywords": ["security"],
         "description": "Extends script and link elements with an integrity attribute that contains a cryptographic hash of the representation of the resource the author expects to load.",
         "contact": {
             "name": "Jonathan Davis",
@@ -1425,7 +1465,7 @@
         },
         "url": "https://w3c.github.io/webauthn/",
         "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=181943",
-        "keywords": ["authentication", "credentials", "webauthn"],
+        "keywords": ["authentication", "credentials", "webauthn", "security"],
         "description": "An API enabling the creation and use of strong, attested, cryptographic scoped credentials by web applications, for the purpose of strongly authenticating users.",
         "contact": {
             "name": "Jiewen Tan",
@@ -1439,7 +1479,7 @@
             "status": "Not Considering"
         },
         "url": "https://webbluetoothcg.github.io/web-bluetooth/",
-        "keywords": ["bluetooth"],
+        "keywords": ["bluetooth", "security", "privacy"],
         "description": "An API to discover and communicate with devices over the Bluetooth."
     },
     {
@@ -1448,7 +1488,7 @@
             "status": "Not Considering"
         },
         "url": "https://webbluetoothcg.github.io/web-bluetooth/",
-        "keywords": ["bluetooth"],
+        "keywords": ["bluetooth", "privacy"],
         "description": "An API to listen for Bluetooth Low Energy advertising packets."
     },
     {
@@ -1457,7 +1497,7 @@
             "status": "Not Considering"
         },
         "url": "https://www.w3.org/TR/webmidi/",
-        "keywords": ["MIDI, music, synthesizer, keyboard"],
+        "keywords": ["MIDI", "music", "synthesizer", "keyboard", "security", "privacy"],
         "description": "An API supporting the Musical Instrument Digital Interface (MIDI) protocol, enabling web applications to enumerate and select MIDI input and output devices on the client system and send and receive MIDI messages."
     },
     {
@@ -1476,7 +1516,7 @@
             "status": "Not Considering"
         },
         "url": "https://wicg.github.io/webusb/",
-        "keywords": ["USB"],
+        "keywords": ["USB", "security", "privacy"],
         "description": "An an API for securely providing access to Universal Serial Bus devices from web pages."
     },
     {
