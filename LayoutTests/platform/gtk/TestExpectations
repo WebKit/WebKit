@@ -2118,8 +2118,6 @@ webkit.org/b/214422 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 webkit.org/b/214637 js/weakref-finalizationregistry.html [ Timeout Pass ]
 
-webkit.org/b/214797 http/tests/images/jpeg-partial-load.html [ ImageOnlyFailure Timeout Pass ]
-
 webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeout Pass ]
 
 webkit.org/b/214800 imported/w3c/web-platform-tests/web-animations/timing-model/animations/infinite-duration-animation.html [ ImageOnlyFailure Pass ]

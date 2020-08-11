@@ -23,6 +23,9 @@ scrollingcoordinator/ios/ [ Skip ]
 # CSS3
 webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure ]
 
+# Fonts
+webkit.org/b/215355 fonts/ligature.html [ ImageOnlyFailure ]
+
 # Paint Timing
 webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
 
@@ -596,6 +599,7 @@ webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-010.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-tab-003.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-tab-004.html [ ImageOnlyFailure ]
+webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-keep-all-001.html [ Failure ]
 
 # Still failing even after r259188.
 webkit.org/b/206885 css3/font-variant-font-face-override.html [ ImageOnlyFailure ]

@@ -1,3 +1,16 @@
+2020-08-10  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening failures and rebaseline some tests.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w-expected.txt: Added.
+        * platform/glib/webaudio/audiobuffersource-loop-points-expected.wav: Renamed from LayoutTests/platform/wpe/webaudio/audiobuffersource-loop-points-expected.wav.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/webaudio/audiobuffersource-loop-points-expected.wav: Removed.
+        * platform/wpe/TestExpectations:
+
 2020-08-10  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS ] svg/animations/smil-leak-element-instances-noBaseValRef.svg is a flaky failure
