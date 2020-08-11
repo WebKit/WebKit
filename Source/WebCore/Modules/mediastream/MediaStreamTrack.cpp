@@ -535,6 +535,9 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
     if (m_ended)
         return;
 
+    if (m_isCaptureTrack && m_private->source().captureDidFail())
+        scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "A MediaStreamTrack ended due to a capture failure"_s);
+
     // 2. Set track's readyState attribute to ended.
     m_ended = true;
 

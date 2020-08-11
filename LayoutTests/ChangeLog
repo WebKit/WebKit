@@ -1,3 +1,12 @@
+2020-08-11  Youenn Fablet  <youenn@apple.com>
+
+        Add JS console log message in case of capture failure
+        https://bugs.webkit.org/show_bug.cgi?id=215370
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/media-stream-track-source-failure-expected.txt:
+
 2020-08-11  Zalan Bujtas  <zalan@apple.com>
 
         [AutoTableLayout] REGRESSION(r263855) Paypal email is rendered right aligned on Safari

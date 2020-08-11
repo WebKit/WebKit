@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: A MediaStreamTrack ended due to a capture failure
+CONSOLE MESSAGE: A MediaStreamTrack ended due to a capture failure
 
 
 PASS Create stream 
