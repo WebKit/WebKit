@@ -1,3 +1,25 @@
+2020-08-11  Keith Rollin  <krollin@apple.com>
+
+        Update filter-build-webkit for unknown/unhandled messages
+        https://bugs.webkit.org/show_bug.cgi?id=215395
+        <rdar://problem/63819507>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Teach filter-build-webkit about XCBuild build output that needs to be
+        reformatted.
+
+        At the same time, address other red messages that have crept in over
+        time, either reformatting or squelching them.
+
+        Some red messages are still emitted under both XCBuild and the Legacy
+        build system, but those either need to be addressed at the source or
+        be investigated first in order to determine the correct remediation.
+
+        * Scripts/filter-build-webkit:
+        (shouldShowSubsequentLine):
+        (shouldIgnoreLine):
+
 2020-08-11  Brady Eidson  <beidson@apple.com>
 
         Add a "use stored credentials" setting to WKWebView.

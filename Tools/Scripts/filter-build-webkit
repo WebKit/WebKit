@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
-# 
+# Copyright (C) 2011, 2012, 2013, 2014, 2020 Apple Inc. All rights reserved.
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
@@ -10,7 +10,7 @@
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -82,6 +82,7 @@ our $logUnfilteredOutput;
 our $outputFormat = "text";
 our $unfilteredOutputPath = "build.log";
 our $useColor = -t STDOUT;
+our $inEntitlements = 0;
 
 sub usageAndExit()
 {
@@ -133,21 +134,28 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
 
     next if shouldIgnoreLine($previousLine, $line);
 
+    $line =~ s/\(in target .* from project .*\)$//g;
+
     if ($line =~ /^={10}/) {
         printLine($line, STYLE_SUCCESS);
         $buildFinished = 1;
     } elsif ($line =~ /^===/) {
         printLine($line, STYLE_HEADER);
-    } elsif ($line =~ /^note: using/) {
+    } elsif ($line =~ /^note: [Uu]sing/) {
         printLine($line, STYLE_HEADER);
     } elsif ($line =~ /Checking Dependencies|Check dependencies|Create product structure|Write auxiliary files|LinkStoryboards/) {
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
         printLine("Build Succeeded", STYLE_SUCCESS);
-    } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+    } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
         my ($command, $path) = ($2, basename($4));
         $path =~ s/("|\\|\.[ah]$)//g;
         printLine("$command $path", STYLE_PLAIN);
+    } elsif ($line =~ /^(Ditto) (\S+) (\S+)/) {
+        my ($command, $path) = ($1, basename($3));
+        printLine("$command $path", STYLE_PLAIN);
+    } elsif ($line =~ /^(CompileAssetCatalog) .*/) {
+        printLine("$1", STYLE_PLAIN);
     } elsif ($line =~ /^\S+mkdir .*?(\S+)$/) {
         my $path = basename($1);
         printLine("mkdir $path", STYLE_PLAIN);
@@ -175,16 +183,39 @@ for (my $previousLine = "", my $line = <>; $line; $previousLine = $line, $line =
         printLine("Generating $command $path", STYLE_PLAIN);
     } elsif ($line =~ /^(Generating|Merging) (\S+) (from|for) (\S+)/) {
         printLine($line, STYLE_PLAIN);
-    } elsif ($line =~ /^Postprocessed ANGLE header/) {
-        printLine($line, STYLE_PLAIN);
+    } elsif ($line =~ /^Postprocessed ANGLE header:? (\S+)/) {
+        my $path = basename($1);
+        printLine("Postprocessed ANGLE header $path", STYLE_PLAIN);
     } elsif ($line =~ /^Prepare build/) {
-        printLine($line, STYLE_PLAIN);
-    } elsif ($line =~ /^GXCF:/) {
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /^Signing Identity:/) {
         printLine($line, STYLE_PLAIN);
     } elsif ($line =~ /^Pre-processing (\S+) sandbox profile/) {
         printLine($line, STYLE_PLAIN);
+    } elsif ($line =~ /^Scripts\/generate-unified-source-bundles.rb/) {
+        printLine("Generating unified sources", STYLE_PLAIN);
+    } elsif ($line =~ /^ruby JavaScriptCore\/generator\/main.rb JavaScriptCore\/bytecode\/BytecodeList.rb.*/) {
+        printLine("Generating bytecode list", STYLE_PLAIN);
+    } elsif ($line =~ /^ruby JavaScriptCore\/b3\/air\/opcode_generator.rb JavaScriptCore\/b3\/air\/AirOpcode.opcodes$/) {
+        printLine("Generating opcodes", STYLE_PLAIN);
+    } elsif ($line =~ /^ruby WebCore\/Scripts\/GenerateSettings.rb --input .*/) {
+        printLine("Generating settings", STYLE_PLAIN);
+    } elsif ($line =~ /^ruby "?WebCore\/domjit\/generate-abstract-heap.rb"? (\S+) (\S+)/) {
+        printLine("Generating abstract heap", STYLE_PLAIN);
+    } elsif ($line =~ /^bash -c "perl JavaScriptCorePrivateHeaders\/xxd.pl .* \<\(gzip -cn .*\) .*"/) {
+        printLine("Converting WHLSLStandardLibrary", STYLE_PLAIN);
+    } elsif ($line =~ /^sh .*\/generate-https-upgrade-database\.sh .*\/HTTPSUpgradeList.txt HTTPSUpgradeList.db/) {
+        printLine("Converting HTTPSUpgradeList", STYLE_PLAIN);
+    } elsif ($line =~ /^.*\/GeneratePreferences.rb --input .*\.yaml/) {
+        printLine("Generating preferences", STYLE_PLAIN);
+    } elsif ($line =~ /^### (Generating \.xcfilelists for .*)$/) {
+        printLine("$1", STYLE_PLAIN);
+    } elsif ($line =~ /^(Pre-processing InspectorBackendCommands\.\.\.)$/) {
+        printLine("$1", STYLE_PLAIN);
+    } elsif ($line =~ /^(Unlocking '.*keychain-db')$/) {
+        printLine("$1", STYLE_PLAIN);
+    } elsif ($line =~ /^(Using unified source list files: .*)$/) {
+        printLine("$1", STYLE_PLAIN);
     } elsif ($line =~ /^(\S+\/cc).*?(\S+)\.(out|exp)/) {
         my ($command, $path) = (basename($1), basename($2));
         printLine("$command $path", STYLE_PLAIN);
@@ -251,7 +282,7 @@ sub shouldShowSubsequentLine($)
 
     return 1 if $line =~ /referenced from:$/;
     return 1 if $line =~ /(note:|error:)/;
-    
+
     return 0;
 }
 
@@ -259,8 +290,29 @@ sub shouldIgnoreLine($$)
 {
     my ($previousLine, $line) = @_;
 
+    if ($line =~ /^Entitlements:$/) {
+        $inEntitlements = 1;
+        return 1
+    }
+
+    if ($inEntitlements) {
+        $inEntitlements = 0 if $line =~ /^}$/;
+        return 1
+    }
+
     return 1 if $line =~ /^\s*$/;
+    return 1 if $line =~ /^Command line invocation:/;
     return 1 if $line =~ /^Build settings from command line:/;
+    return 1 if $line =~ /^User defaults from command line:/;
+    return 1 if $line =~ /^Prepare build/;
+    return 1 if $line =~ /^Build system information/;
+    return 1 if $line =~ /^note: Planning build/;
+    return 1 if $line =~ /^note: Constructing build description/;
+    return 1 if $line =~ /^note: Build description (constructed|loaded) in .*/;
+    return 1 if $line =~ /^note: Using build description .*/;
+    return 1 if $line =~ /^note: Using eager compilation/;
+    return 1 if $line =~ /^note: Execution policy exception registration failed and was skipped: Error Domain=NSPOSIXErrorDomain Code=1 "Operation not permitted"/;
+    return 1 if $line =~ /^note: detected encoding of input file as Unicode \(.*\)/;
     return 1 if $line =~ /make(\[\d+\])?: Nothing to be done for `all'\./;
     return 1 if $line =~ /^JavaScriptCore\/create_hash_table/;
     return 1 if $line =~ /JavaScriptCore.framework\/PrivateHeaders\/create_hash_table/;
@@ -286,6 +338,11 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^(Details|Object|Method|Function|Thread):/;
     return 1 if $line =~ /^Please file a bug at /;
     return 1 if $line =~ /created by an unsupported XCDependencyGraph build$/;
+    return 1 if $line =~ /warning: The assignment of '.*' at ".*" uses \$\(inherited\). In the new build system this will inherit from an earlier definition of '.*' in this xcconfig file or its imports; the old build system would discard earlier definitions. This may result in changes to resolved build setting values./;
+    return 1 if $line =~ /.* com.apple.actool.compilation-results .*/;
+    return 1 if $line =~ /.*\/Assets.car/;
+    return 1 if $line =~ /.*\/assetcatalog_generated_info.plist/;
+
 
     if ($platform eq "win") {
         return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|del|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
