@@ -728,6 +728,7 @@ class WebkitFlatpak:
             "GTK",
             "ICECC",
             "JSC",
+            "MESA",
             "RUST",
             "SCCACHE",
             "WAYLAND",

@@ -267,6 +267,8 @@ class GtkPort(Port):
             print("%s not found... Did you run build-webkit?" % miniBrowser)
             return 1
         command = [miniBrowser]
+        if os.environ.get("WEBKIT_MINI_BROWSER_PREFIX"):
+            command.insert(0, os.environ["WEBKIT_MINI_BROWSER_PREFIX"])
         if self._should_use_jhbuild():
             command = self._jhbuild_wrapper + command
         return self._executive.run_command(command + args, cwd=self.webkit_base(), stdout=None, return_stderr=False, decode_output=False)

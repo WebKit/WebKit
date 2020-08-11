@@ -1,5 +1,20 @@
 2020-08-11  Philippe Normand  <pnormand@igalia.com>
 
+        [GTK][WPE] Add MiniBrowser wrapper env vars and white-list MESA env vars in flatpak
+        https://bugs.webkit.org/show_bug.cgi?id=215361
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.run_minibrowser): Add support for the $WEBKIT_MINI_BROWSER_PREFIX env var which can
+        be useful when debugging MiniBrowser with gdb or rr.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.run_minibrowser): Ditto.
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): White-list MESA environment variables in the sandbox.
+
+2020-08-11  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] gst-full standalone library support
         https://bugs.webkit.org/show_bug.cgi?id=215262
 
