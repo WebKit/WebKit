@@ -1,3 +1,23 @@
+2020-08-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Only update the intrinsic height if we don't have an override height
+        https://bugs.webkit.org/show_bug.cgi?id=215369
+
+        Reviewed by Javier Fernandez.
+
+        If we do have an override height, children will size themselves relative to the override height
+        (e.g. flexbox flexing/stretching, percentage heights). Because flex intrinsic height is based on
+        its children, it would then store an incorrect intrinsic height.
+
+        This is specially problematic with min-height:auto is nested column flexboxes where flexboxes are
+        flex items at the same time.
+
+        Based on Blink's https://crrev.com/c/1283482 by <cbiesinger@chromium.org>
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::cacheIntrinsicContentLogicalHeightForFlexItem const): Early return if there
+        is an override height.
+
 2020-08-11  Andres Gonzalez  <andresg_22@apple.com>
 
         Update the isolated tree on element language changes.

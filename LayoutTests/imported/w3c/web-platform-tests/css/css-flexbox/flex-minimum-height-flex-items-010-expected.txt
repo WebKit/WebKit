@@ -1,32 +1,6 @@
 Green rectangle should be entirely within the black rectangle
 
 
-FAIL .container 1 assert_equals: 
-<div id="container" class="container" style="height: 80px;">
-  <div class="flexbox column" style="height: 100%;">
-    <div class="flexbox flex-one">
-        <div class="flexbox column">
-          <div class="flexbox column flex-one">
-            <div class="inner" data-expected-height="80">
-            </div>
-          </div>
-        </div>
-    </div>
-  </div>
-</div>
-height expected 80 but got 300
-FAIL .container 2 assert_equals: 
-<div id="container2" class="container" style="height: 80px;">
-  <div class="flexbox column" style="height: 100%;">
-    <div class="flexbox flex-one">
-        <div class="flexbox column">
-          <div class="flexbox column flex-one">
-            <div class="inner" data-expected-height="80">
-            </div>
-          </div>
-        </div>
-    </div>
-  </div>
-</div>
-height expected 80 but got 300
+PASS .container 1 
+PASS .container 2 
 
