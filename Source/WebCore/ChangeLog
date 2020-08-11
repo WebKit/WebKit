@@ -1,3 +1,20 @@
+2020-08-11  Chris Dumez  <cdumez@apple.com>
+
+        Fix BiquadFilterNode's lowpass filter
+        https://bugs.webkit.org/show_bug.cgi?id=215381
+
+        Reviewed by Darin Adler.
+
+        Fix BiquadFilterNode's lowpass filter as it was causing us to fail a WPT test:
+        - https://www.w3.org/TR/webaudio/#dom-biquadfiltertype-lowpass
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::BiquadProcessor):
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::setLowpassParams):
+
 2020-08-11  Darin Adler  <darin@apple.com>
 
         LayoutTest accessibility/mac/select-element-selection-with-optgroups.html is a flaky failure

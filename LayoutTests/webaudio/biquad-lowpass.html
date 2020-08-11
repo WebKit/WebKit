@@ -15,11 +15,13 @@
 <script>
 description("Tests Biquad lowpass filter.");
 
+window.OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+
 function runTest() {
     window.jsTestIsAsync = true;
         
     // Create offline audio context.
-    var context = new webkitOfflineAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+    var context = new OfflineAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
 
     // Dummy filter to get filter type constant
     var f = context.createBiquadFilter();

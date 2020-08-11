@@ -202,22 +202,22 @@ void Biquad::setLowpassParams(double cutoff, double resonance)
     } else if (cutoff > 0) {
         // Compute biquad coefficients for lowpass filter
         resonance = std::max(0.0, resonance); // can't go negative
-        double g = pow(10.0, 0.05 * resonance);
-        double d = sqrt((4 - sqrt(16 - 16 / (g * g))) / 2);
+        resonance = pow(10.0, 0.05 * resonance);
 
         double theta = piDouble * cutoff;
-        double sn = 0.5 * d * sin(theta);
-        double beta = 0.5 * (1 - sn) / (1 + sn);
-        double gamma = (0.5 + beta) * cos(theta);
-        double alpha = 0.25 * (0.5 + beta - gamma);
+        double alpha = sin(theta) / (2 * resonance);
+        double cosw = cos(theta);
+        double beta = (1 - cosw) / 2;
 
-        double b0 = 2 * alpha;
-        double b1 = 2 * 2 * alpha;
-        double b2 = 2 * alpha;
-        double a1 = 2 * -gamma;
-        double a2 = 2 * beta;
+        double b0 = beta;
+        double b1 = 2 * beta;
+        double b2 = beta;
 
-        setNormalizedCoefficients(b0, b1, b2, 1, a1, a2);
+        double a0 = 1 + alpha;
+        double a1 = -2 * cosw;
+        double a2 = 1 - alpha;
+
+        setNormalizedCoefficients(b0, b1, b2, a0, a1, a2);
     } else {
         // When cutoff is zero, nothing gets through the filter, so set
         // coefficients up correctly.

@@ -1,3 +1,19 @@
+2020-08-11  Chris Dumez  <cdumez@apple.com>
+
+        Fix BiquadFilterNode's lowpass filter
+        https://bugs.webkit.org/show_bug.cgi?id=215381
+
+        Reviewed by Darin Adler.
+
+        * webaudio/biquad-lowpass.html:
+        Update test to work in other browsers (which do not support prefixed API).
+
+        * webaudio/resources/biquad-testing.js:
+        (createLowpassFilter):
+        Update test to reflect behavior change. Note that this test was failing in both
+        Chrome and Firefox before I updated the test. Now that I updated the test to
+        match the new behavior we implemented, it passes in both Chrome and Firefox.
+
 2020-08-11  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk1 ] webaudio/oscillator-sawtooth.html is a flaky failure
