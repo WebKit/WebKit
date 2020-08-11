@@ -218,6 +218,7 @@ class ViewGestureController;
     BOOL _didDeferUpdateVisibleContentRectsForAnyReason;
     BOOL _didDeferUpdateVisibleContentRectsForUnstableScrollView;
     BOOL _alwaysSendNextVisibleContentRectUpdate;
+    BOOL _contentViewShouldBecomeFirstResponderAfterNavigationGesture;
 
     BOOL _waitingForEndAnimatedResize;
     BOOL _waitingForCommitAfterAnimatedResize;

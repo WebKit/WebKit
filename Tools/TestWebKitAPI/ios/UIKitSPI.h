@@ -44,6 +44,7 @@
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
 #import <UIKit/UIWebFormAccessory.h>
+#import <UIKit/_UINavigationInteractiveTransition.h>
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 #import <UIKit/UIWebBrowserView.h>
@@ -129,6 +130,9 @@ WTF_EXTERN_C_END
 
 @interface UICalloutBar : UIView
 + (UICalloutBar *)sharedCalloutBar;
+@end
+
+@interface _UINavigationInteractiveTransitionBase : UIPercentDrivenInteractiveTransition
 @end
 
 @interface UIWKDocumentContext : NSObject
