@@ -1,3 +1,15 @@
+2020-08-11  Brian Burg  <bburg@apple.com>
+
+        REGRESSION(r?): build-webkit --inspector-frontend always builds ImageDiff
+        https://bugs.webkit.org/show_bug.cgi?id=215393
+        <rdar://problem/66862975>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/build-webkit: exit after building projects if --inspector-frontend is passed.
+        This flag is for desk builds only and not used by build infrastructure. We don't need to build ImageDiff
+        when iterating on the Web Inspector frontend.
+
 2020-08-11  Keith Rollin  <krollin@apple.com>
 
         Update filter-build-webkit for unknown/unhandled messages

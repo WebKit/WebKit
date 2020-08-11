@@ -367,6 +367,10 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
         }
     }
 
+    if (isInspectorFrontend()) {
+        exit exitStatus($result);
+    }
+
     # Build ImageDiff for host
     my @command = File::Spec->catfile(getcwd(), "/Tools/Scripts/build-imagediff");
     chdirWebKit();
