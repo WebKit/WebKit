@@ -3504,11 +3504,3 @@ animations/suspend-resume-animation-events.html [ Pass Failure ]
 
 # <rdar://problem/63399079> [ iOS Debug ] imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm is a flaky failure
 imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm [ Pass Failure ]
-
-# <rdar://problem/64047392> REGRESSION: 5 fast/text/international/system-language/navigator-language/navigator-language tests are contant failures
-fast/text/international/system-language/navigator-language/navigator-language-en-US.html [ Failure ]
-fast/text/international/system-language/navigator-language/navigator-language-es-ES.html [ Failure ]
-fast/text/international/system-language/navigator-language/navigator-language-es-MX.html [ Failure ]
-fast/text/international/system-language/navigator-language/navigator-language-pt-BR.html [ Failure ]
-fast/text/international/system-language/navigator-language/navigator-language-zh-Hant.html [ Failure ]
-fast/text/international/system-language/navigator-language/navigator-language-zh-Hans.html [ Failure ]

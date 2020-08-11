@@ -1,0 +1,6 @@
+FAIL navigator.language should be hi-in. Was hi.
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+
