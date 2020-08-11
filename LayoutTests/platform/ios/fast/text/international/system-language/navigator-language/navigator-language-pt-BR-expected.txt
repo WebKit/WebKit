@@ -1,6 +1,5 @@
-FAIL navigator.language should be pt-br. Was pt.
+PASS navigator.language is "pt-br"
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 

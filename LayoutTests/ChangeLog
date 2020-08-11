@@ -6,6 +6,44 @@
 
         Unreviewed test gardening.
 
+        Update iOS test results.
+
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt: Copied from LayoutTests/plat
+form    /ios/fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-en-expected.txt: Copied from LayoutTests/platfor
+m/io    s/fast/text/international/system-language/navigator-language/navigator-language-en-expected.txt.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt: Copied from LayoutTests/plat
+form    /ios/fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-es-MX-expected.txt: Copied from LayoutTests/plat
+form    /ios/fast/text/international/system-language/navigator-language/navigator-language-es-MX-expected.txt.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-es-expected.txt: Copied from LayoutTests/platfor
+m/io    s/fast/text/international/system-language/navigator-language/navigator-language-es-expected.txt.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-fr-expected.txt: Copied from LayoutTests/platfor
+m/io    s/fast/text/international/system-language/navigator-language/navigator-language-fr-expected.txt.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-hi-expected.txt: Copied from LayoutTests/platfor
+m/io    s/fast/text/international/system-language/navigator-language/navigator-language-hi-expected.txt.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt: Copied from LayoutTests/plat
+form    /ios/fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt.
+        * platform/ios-13/fast/text/international/system-language/navigator-language/navigator-language-ru-expected.txt: Copied from LayoutTests/platfor
+m/io    s/fast/text/international/system-language/navigator-language/navigator-language-ru-expected.txt.
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt:
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-en-expected.txt:
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt:
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-es-MX-expected.txt:
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-es-expected.txt:
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-fr-expected.txt:
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-hi-expected.txt:
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt:
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-ru-expected.txt:
+
+2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [BigSur] 5 fast/text/international/system-language/navigator-language/navigator-language tests are constant failures
+        https://bugs.webkit.org/show_bug.cgi?id=214629
+        <rdar://problem/64047392>
+
+        Unreviewed test gardening.
+
         The behavior of +[NSLocale minimizedLanguagesFromLanguages:] has changed.
 
         * fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt:
