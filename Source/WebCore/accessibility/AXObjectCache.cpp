@@ -1685,7 +1685,7 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
 {
     if (!shouldProcessAttributeChange(attrName, element))
         return;
-    
+
     if (attrName == roleAttr)
         handleAriaRoleChanged(element);
     else if (attrName == altAttr || attrName == titleAttr)
@@ -1694,6 +1694,8 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
         labelChanged(element);
     else if (attrName == tabindexAttr)
         childrenChanged(element->parentNode(), element);
+    else if (attrName == langAttr)
+        postNotification(element, AXObjectCache::AXLanguageChanged);
 
     if (!attrName.localName().string().startsWith("aria-"))
         return;
@@ -3170,6 +3172,7 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
         tree->updateNode(object);
         break;
     case AXChildrenChanged:
+    case AXLanguageChanged:
         tree->updateChildren(object);
         break;
     default:
@@ -3230,7 +3233,8 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
                 tree->updateNode(*notification.first);
             break;
         }
-        case AXChildrenChanged: {
+        case AXChildrenChanged:
+        case AXLanguageChanged: {
             bool needsUpdate = appendIfNotContainsMatching(filteredNotifications, notification, [&notification] (const std::pair<RefPtr<AXCoreObject>, AXNotification>& note) {
                 return note.second == notification.second && note.first.get() == notification.first.get();
             });

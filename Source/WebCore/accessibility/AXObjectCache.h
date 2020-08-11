@@ -278,6 +278,7 @@ public:
         AXCurrentChanged,
         AXDisabledStateChanged,
         AXFocusedUIElementChanged,
+        AXLanguageChanged,
         AXLayoutComplete,
         AXLoadComplete,
         AXNewDocumentLoadComplete,

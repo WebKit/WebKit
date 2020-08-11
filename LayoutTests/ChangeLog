@@ -1,3 +1,14 @@
+2020-08-11  Andres Gonzalez  <andresg_22@apple.com>
+
+        Update the isolated tree on element language changes.
+        https://bugs.webkit.org/show_bug.cgi?id=215354
+        <rdar://problem/65583698>
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/language-attribute-change-expected.txt: Added.
+        * accessibility/language-attribute-change.html: Added.
+
 2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [BigSur] 5 fast/text/international/system-language/navigator-language/navigator-language tests are constant failures
