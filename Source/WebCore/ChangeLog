@@ -1,3 +1,28 @@
+2020-08-11  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Remove m_sourceBufferPrivateClient checks in SourceBufferPrivateGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=215263
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        m_sourceBufferPrivateClient is only reset to NULL from SourceBuffer's
+        destructor. At this point SourceBufferPrivateGStreamer is about to
+        receive its last unref by SourceBuffer and therefore be destroyed.
+
+        Similarly, there is no need to check for m_mediaSource being null.
+        m_mediaSource is only reset when the SourceBuffer is removed, and at
+        that point SourceBufferPrivate shouldn't receive any calls.
+
+        This is a clean-up and doesn't introduce new behavior. Asserts have
+        been added checking the precondition above.
+
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::removedFromMediaSource):
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveInitializationSegment):
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveSample):
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveAllPendingSamples):
+        (WebCore::SourceBufferPrivateGStreamer::appendParsingFailed):
+
 2020-08-11  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] gst-full standalone library support

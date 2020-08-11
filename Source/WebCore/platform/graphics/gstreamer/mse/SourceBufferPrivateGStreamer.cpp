@@ -69,6 +69,9 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
 
 void SourceBufferPrivateGStreamer::setClient(SourceBufferPrivateClient* client)
 {
+    // setClient(nullptr) is only called from SourceBuffer destructor. At that point, SourceBuffer is also the
+    // owner of the last reference to us, so we're about to be destroyed.
+    ASSERT(client || refCount() == 1);
     m_sourceBufferPrivateClient = client;
 }
 
@@ -108,9 +111,11 @@ void SourceBufferPrivateGStreamer::resetParserState()
 void SourceBufferPrivateGStreamer::removedFromMediaSource()
 {
     ASSERT(isMainThread());
-    if (m_mediaSource)
-        m_mediaSource->removeSourceBuffer(this);
+    m_mediaSource->removeSourceBuffer(this);
     m_playerPrivate.playbackPipeline()->removeSourceBuffer(this);
+    // After this only SourceBuffer should hold a reference to us, which will be destroyed eventually (when JS
+    // GC releases the last reference). Until then SourceBuffer is in "removed" state and won't use SourceBufferPrivate.
+    ASSERT(refCount() == 1);
 }
 
 MediaPlayer::ReadyState SourceBufferPrivateGStreamer::readyState() const
@@ -167,8 +172,7 @@ void SourceBufferPrivateGStreamer::notifyReadyForMoreSamples()
 
 void SourceBufferPrivateGStreamer::setActive(bool isActive)
 {
-    if (m_mediaSource)
-        m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
+    m_mediaSource->sourceBufferPrivateDidChangeActiveState(this, isActive);
 }
 
 void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const AtomString& trackId)
@@ -180,26 +184,22 @@ void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const Ato
 
 void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(const SourceBufferPrivateClient::InitializationSegment& initializationSegment)
 {
-    if (m_sourceBufferPrivateClient)
-        m_sourceBufferPrivateClient->sourceBufferPrivateDidReceiveInitializationSegment(initializationSegment);
+    m_sourceBufferPrivateClient->sourceBufferPrivateDidReceiveInitializationSegment(initializationSegment);
 }
 
 void SourceBufferPrivateGStreamer::didReceiveSample(MediaSample& sample)
 {
-    if (m_sourceBufferPrivateClient)
-        m_sourceBufferPrivateClient->sourceBufferPrivateDidReceiveSample(sample);
+    m_sourceBufferPrivateClient->sourceBufferPrivateDidReceiveSample(sample);
 }
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
 {
-    if (m_sourceBufferPrivateClient)
-        m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendSucceeded);
+    m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::AppendSucceeded);
 }
 
 void SourceBufferPrivateGStreamer::appendParsingFailed()
 {
-    if (m_sourceBufferPrivateClient)
-        m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::ParsingFailed);
+    m_sourceBufferPrivateClient->sourceBufferPrivateAppendComplete(SourceBufferPrivateClient::ParsingFailed);
 }
 
 #if !RELEASE_LOG_DISABLED
