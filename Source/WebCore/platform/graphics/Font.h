@@ -1,7 +1,7 @@
 /*
  * This file is part of the internal font implementation.
  *
- * Copyright (C) 2006, 2008, 2010, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -207,7 +207,7 @@ public:
 #endif
 
     bool canRenderCombiningCharacterSequence(const UChar*, size_t) const;
-    void applyTransforms(GlyphBuffer&, unsigned beginningIndex, bool enableKerning, bool requiresShaping, const AtomString& locale) const;
+    void applyTransforms(GlyphBuffer&, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection) const;
 
 #if PLATFORM(WIN)
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;

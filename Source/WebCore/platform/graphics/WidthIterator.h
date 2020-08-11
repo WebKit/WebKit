@@ -60,9 +60,9 @@ private:
     inline void advanceInternal(TextIterator&, GlyphBuffer&);
 
     enum class TransformsType { None, Forced, NotForced };
-    TransformsType shouldApplyFontTransforms(const GlyphBuffer&, unsigned lastGlyphCount, UChar32 previousCharacter) const;
-    float applyFontTransforms(GlyphBuffer&, bool ltr, unsigned& lastGlyphCount, const Font&, UChar32 previousCharacter, bool force, CharactersTreatedAsSpace&);
-    void commitCurrentFontRange(GlyphBuffer&, unsigned lastGlyphCount, const Font&, UChar32 previousCharacter, const Font& primaryFont, UChar32 character, float widthOfCurrentFontRange, CharactersTreatedAsSpace&);
+    TransformsType shouldApplyFontTransforms(const GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex) const;
+    float applyFontTransforms(GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font&, bool force, CharactersTreatedAsSpace&);
+    void commitCurrentFontRange(GlyphBuffer&, unsigned lastGlyphCount, unsigned currentCharacterIndex, const Font&, const Font& primaryFont, UChar32 character, float widthOfCurrentFontRange, CharactersTreatedAsSpace&);
 
     const FontCascade& m_font;
     const TextRun& m_run;

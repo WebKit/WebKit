@@ -116,7 +116,7 @@ public:
 
     float widthOfTextRange(const TextRun&, unsigned from, unsigned to, HashSet<const Font*>* fallbackFonts = 0, float* outWidthBeforeRange = nullptr, float* outWidthAfterRange = nullptr) const;
     WEBCORE_EXPORT float width(const TextRun&, HashSet<const Font*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
-    float widthForSimpleText(StringView text) const;
+    float widthForSimpleText(StringView text, TextDirection = TextDirection::LTR) const;
 
     std::unique_ptr<TextLayout, TextLayoutDeleter> createLayout(RenderText&, float xPos, bool collapseWhiteSpace) const;
     static float width(TextLayout&, unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts = 0);

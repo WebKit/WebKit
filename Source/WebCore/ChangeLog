@@ -1,3 +1,53 @@
+2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Migrate from CTFontTransformGlyphsWithLanguage() to CTFontShapeGlyphs()
+        https://bugs.webkit.org/show_bug.cgi?id=215059
+
+        Reviewed by Darin Adler.
+
+        This is in preparation for https://bugs.webkit.org/show_bug.cgi?id=214769
+        and https://bugs.webkit.org/show_bug.cgi?id=206208.
+
+        The solution for https://bugs.webkit.org/show_bug.cgi?id=214769 requires applying
+        letter-spacing after text shaping. Today, we apply letter-spacing before text shaping
+        which is wrong. However, if we want to apply letter-spacing after text shaping, we need
+        to use CTFontShapeGlyphs(), which returns the glyph -> string mapping, which allows us
+        to determine which glyphs to add letter-spacing to.
+
+        Updates existing tests.
+
+        Tests: fast/text/international/kana-voiced-sound-marks-1.html
+               fast/text/international/kana-voiced-sound-marks-2.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::applyTransforms const):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthForSimpleText const):
+        (WebCore::FontCascade::characterRangeCodePath):
+        (WebCore::FontCascade::layoutSimpleText const):
+        * platform/graphics/FontCascade.h:
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp:
+        (WebCore::SurrogatePairAwareTextIterator::consumeSlowCase): Now that we're using
+        CTFontShapeGlyphs(), the shaping routine can and does look at the underlying character
+        string to perform character composition. This means that the glyph buffer needs to
+        match exactly what is in the string. We can't do any shenanigans where we pretend the
+        string has characters that aren't actually there.
+        * platform/graphics/SurrogatePairAwareTextIterator.h:
+        (WebCore::SurrogatePairAwareTextIterator::consume):
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::shouldApplyFontTransforms const):
+        (WebCore::WidthIterator::applyFontTransforms): Reversing the glyph buffer for rtl
+        content needs to be done inside platform-specific code, because its behavior depends on
+        which platform shaping routine is being used.
+        (WebCore::WidthIterator::commitCurrentFontRange):
+        (WebCore::WidthIterator::advanceInternal):
+        * platform/graphics/WidthIterator.h:
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::applyTransforms const):
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::Font::getCFStringAttributes const):
+
 2020-08-10  Devin Rousso  <drousso@apple.com>
 
         Add quirk to force touch events on mail.yahoo.com

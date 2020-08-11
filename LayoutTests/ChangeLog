@@ -1,3 +1,33 @@
+2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Migrate from CTFontTransformGlyphsWithLanguage() to CTFontShapeGlyphs()
+        https://bugs.webkit.org/show_bug.cgi?id=215059
+
+        Reviewed by Darin Adler.
+
+        * fast/encoding/denormalised-voiced-japanese-chars-expected.html: Copied from LayoutTests/fast/encoding/denormalised-voiced-japanese-chars.html.
+        * fast/encoding/denormalised-voiced-japanese-chars.html: Update to be a reftest.
+        * fast/text/international/kana-voiced-sound-marks-1-expected.html: Copied from LayoutTests/imported/blink/fast/text/international/kana-voiced-sound-marks-expected.html.
+        Make the test more robust.
+        * fast/text/international/kana-voiced-sound-marks-1.html: Renamed from LayoutTests/imported/blink/fast/text/international/kana-voiced-sound-marks.html.
+        Make the test more robust.
+        * fast/text/international/kana-voiced-sound-marks-2-expected.html: Copied from LayoutTests/imported/blink/fast/text/international/kana-voiced-sound-marks-expected.html.
+        Make the test more robust.
+        * fast/text/international/kana-voiced-sound-marks-2.html: Renamed from LayoutTests/imported/blink/fast/text/international/kana-voiced-sound-marks-expected.html.
+        Make the test more robust.
+        * fast/text/soft-hyphen-min-preferred-width-expected.html:
+        * fast/text/soft-hyphen-min-preferred-width.html: Update to be more robust.
+        * platform/gtk/fast/encoding/denormalised-voiced-japanese-chars-expected.png: Removed.
+        * platform/gtk/fast/encoding/denormalised-voiced-japanese-chars-expected.txt: Removed.
+        * platform/ios/fast/encoding/denormalised-voiced-japanese-chars-expected.txt: Removed.
+        * platform/mac-bigsur/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Added Big Sur -expected result.
+        * platform/mac-bigsur/svg/text/bidi-tspans-expected.txt: Ditto.
+        * platform/mac/fast/encoding/denormalised-voiced-japanese-chars-expected.png: Removed.
+        * platform/mac/fast/encoding/denormalised-voiced-japanese-chars-expected.txt: Removed.
+        * platform/win/fast/encoding/denormalised-voiced-japanese-chars-expected.txt: Removed.
+        * platform/wincairo/fast/encoding/denormalised-voiced-japanese-chars-expected.txt: Removed.
+        * platform/wpe/fast/encoding/denormalised-voiced-japanese-chars-expected.txt: Removed.
+
 2020-08-10  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Gardening failures and rebaseline some tests.

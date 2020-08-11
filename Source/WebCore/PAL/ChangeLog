@@ -1,3 +1,12 @@
+2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Migrate from CTFontTransformGlyphsWithLanguage() to CTFontShapeGlyphs()
+        https://bugs.webkit.org/show_bug.cgi?id=215059
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
 2020-08-07  John Wilander  <wilander@apple.com>
 
         Experimental: Cap the expiry of persistent cookies set in 3rd-party CNAME cloaked HTTP responses

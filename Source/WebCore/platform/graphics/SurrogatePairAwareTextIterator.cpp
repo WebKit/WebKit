@@ -37,19 +37,7 @@ SurrogatePairAwareTextIterator::SurrogatePairAwareTextIterator(const UChar* char
 
 bool SurrogatePairAwareTextIterator::consumeSlowCase(UChar32& character, unsigned& clusterLength)
 {
-    if (character <= 0x30FE) {
-        // Deal with Hiragana and Katakana voiced and semi-voiced syllables.
-        // Normalize into composed form, and then look for glyph with base + combined mark.
-        // Check above for character range to minimize performance impact.
-        if (UChar32 normalized = normalizeVoicingMarks()) {
-            character = normalized;
-            clusterLength = 2;
-        }
-        return true;
-    }
-
-    if (!U16_IS_SURROGATE(character))
-        return true;
+    ASSERT(U16_IS_SURROGATE(character));
 
     // If we have a surrogate pair, make sure it starts with the high part.
     if (!U16_IS_SURROGATE_LEAD(character))

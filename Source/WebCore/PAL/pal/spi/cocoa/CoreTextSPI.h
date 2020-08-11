@@ -46,6 +46,12 @@ typedef CF_OPTIONS(uint32_t, CTFontTransformOptions) {
     kCTFontTransformApplyPositioning = (1 << 1)
 };
 
+typedef CF_OPTIONS(CFOptionFlags, CTFontShapeOptions) {
+    kCTFontShapeWithKerning = (1 << 0),
+    kCTFontShapeWithClusterComposition = (1 << 1),
+    kCTFontShapeRightToLeft = (1 << 2),
+};
+
 typedef CF_OPTIONS(uint32_t, CTFontDescriptorOptions) {
     kCTFontDescriptorOptionSystemUIFont = 1 << 1,
     kCTFontDescriptorOptionPreferAppleSystemFont = kCTFontOptionsPreferSystemFont
@@ -92,7 +98,7 @@ extern const CFStringRef kCTFontCSSFamilyMonospace;
 extern const CFStringRef kCTFontCSSFamilySystemUI;
 
 bool CTFontTransformGlyphs(CTFontRef, CGGlyph glyphs[], CGSize advances[], CFIndex count, CTFontTransformOptions);
-CGSize CTFontTransformGlyphsWithLanguage(CTFontRef, CGGlyph[], CGSize[], CFIndex count, CTFontTransformOptions, CFStringRef language, void (^handler)(CFRange, CGGlyph**, CGSize**));
+CGSize CTFontShapeGlyphs(CTFontRef, CGGlyph glyphs[], CGSize advances[], CGPoint origins[], CFIndex indexes[], const UniChar chars[], CFIndex count, CTFontShapeOptions, CFStringRef language, void (^handler)(CFRange, CGGlyph**, CGSize**, CGPoint**, CFIndex**));
 
 CGSize CTRunGetInitialAdvance(CTRunRef);
 CTLineRef CTLineCreateWithUniCharProvider(CTUniCharProviderCallback, CTUniCharDisposeCallback, void* refCon);

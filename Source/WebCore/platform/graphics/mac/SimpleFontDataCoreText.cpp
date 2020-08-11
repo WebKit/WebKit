@@ -41,7 +41,7 @@ RetainPtr<CFDictionaryRef> Font::getCFStringAttributes(bool enableKerning, FontO
     values[0] = platformData().ctFont();
     size_t count = 1;
 
-#if USE(CTFONTTRANSFORMGLYPHSWITHLANGUAGE)
+#if USE(CTFONTSHAPEGLYPHS)
     RetainPtr<CFStringRef> localeString;
     if (!locale.isEmpty()) {
         localeString = locale.string().createCFString();

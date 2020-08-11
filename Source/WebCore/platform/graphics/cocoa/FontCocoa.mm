@@ -544,28 +544,78 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
     return createDerivativeFont(scaledFont.get(), size, m_platformData.orientation(), fontTraits, m_platformData.syntheticBold(), m_platformData.syntheticOblique());
 }
 
-void Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningIndex, bool enableKerning, bool requiresShaping, const AtomString& locale) const
+void Font::applyTransforms(GlyphBuffer& glyphBuffer, unsigned beginningGlyphIndex, unsigned beginningStringIndex, bool enableKerning, bool requiresShaping, const AtomString& locale, StringView text, TextDirection textDirection) const
 {
-    // FIXME: Implement GlyphBuffer initial advance.
     UNUSED_PARAM(requiresShaping);
-    CTFontTransformOptions options = (enableKerning ? kCTFontTransformApplyPositioning : 0) | kCTFontTransformApplyShaping;
-#if USE(CTFONTTRANSFORMGLYPHSWITHLANGUAGE)
-    auto handler = ^(CFRange range, CGGlyph** newGlyphsPointer, CGSize** newAdvancesPointer) {
+
+    // FIXME: Implement GlyphBuffer initial advance.
+#if USE(CTFONTSHAPEGLYPHS)
+    auto handler = ^(CFRange range, CGGlyph** newGlyphsPointer, CGSize** newAdvancesPointer, CGPoint** newOffsetsPointer, CFIndex** newIndicesPointer) {
         range.location = std::min(std::max(range.location, static_cast<CFIndex>(0)), static_cast<CFIndex>(glyphBuffer.size()));
         if (range.length < 0) {
             range.length = std::min(range.location, -range.length);
             range.location = range.location - range.length;
-            glyphBuffer.remove(beginningIndex + range.location, range.length);
+            glyphBuffer.remove(beginningGlyphIndex + range.location, range.length);
         } else
-            glyphBuffer.makeHole(beginningIndex + range.location, range.length, this);
-        *newGlyphsPointer = glyphBuffer.glyphs(beginningIndex);
-        *newAdvancesPointer = glyphBuffer.advances(beginningIndex);
+            glyphBuffer.makeHole(beginningGlyphIndex + range.location, range.length, this);
+
+        *newGlyphsPointer = glyphBuffer.glyphs(beginningGlyphIndex);
+        *newAdvancesPointer = glyphBuffer.advances(beginningGlyphIndex);
+        *newOffsetsPointer = glyphBuffer.origins(beginningGlyphIndex);
+        *newIndicesPointer = glyphBuffer.offsetsInString(beginningGlyphIndex);
     };
-    CTFontTransformGlyphsWithLanguage(m_platformData.ctFont(), glyphBuffer.glyphs(beginningIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningIndex)), glyphBuffer.size() - beginningIndex, options, LocaleCocoa::canonicalLanguageIdentifierFromString(locale).string().createCFString().get(), handler);
+
+    auto substring = text.substring(beginningStringIndex);
+    auto upconvertedCharacters = substring.upconvertedCharacters();
+    auto localeString = LocaleCocoa::canonicalLanguageIdentifierFromString(locale).string().createCFString();
+    CTFontShapeOptions options = kCTFontShapeWithClusterComposition
+        | (enableKerning ? kCTFontShapeWithKerning : 0)
+        | (textDirection == TextDirection::RTL ? kCTFontShapeRightToLeft : 0);
+
+    for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
+        glyphBuffer.offsetsInString(beginningGlyphIndex)[i] -= beginningStringIndex;
+
+    CTFontShapeGlyphs(
+        m_platformData.ctFont(),
+        glyphBuffer.glyphs(beginningGlyphIndex),
+        reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningGlyphIndex)),
+        reinterpret_cast<CGPoint*>(glyphBuffer.origins(beginningGlyphIndex)),
+        glyphBuffer.offsetsInString(beginningGlyphIndex),
+        reinterpret_cast<const UniChar*>(upconvertedCharacters.get()),
+        glyphBuffer.size() - beginningGlyphIndex,
+        options,
+        localeString.get(),
+        handler);
+
+    for (unsigned i = 0; i < glyphBuffer.size() - beginningGlyphIndex; ++i)
+        glyphBuffer.offsetsInString(beginningGlyphIndex)[i] += beginningStringIndex;
+
 #else
+
+    UNUSED_PARAM(beginningStringIndex);
     UNUSED_PARAM(locale);
-    CTFontTransformGlyphs(m_platformData.ctFont(), glyphBuffer.glyphs(beginningIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningIndex)), glyphBuffer.size() - beginningIndex, options);
+    UNUSED_PARAM(text);
+
+    // CTFontTransformGlyphs() operates in visual order, but WidthIterator iterates in logical order.
+    // Temporarily put us in visual order just for the call, then put us back into logical order when
+    // the call is done.
+    // We don't have a global view of the entire GlyphBuffer; we're just operating on a single chunk of it.
+    // WidthIterator encounters the chunks out in logical order, so we have to maintain that invariant.
+    // Eventually, FontCascade::layoutSimpleText() will reverse the whole buffer to put the entire thing
+    // in visual order, but that's okay because it has a view of the entire GlyphBuffer.
+    // On the other hand, CTFontShapeGlyphs() accepts the buffer in logical order but returns it in physical
+    // order, which means the second reverse() in this function still needs to execute when
+    // CTFontShapeGlyphs() is being used.
+    if (textDirection == TextDirection::RTL)
+        glyphBuffer.reverse(beginningGlyphIndex, glyphBuffer.size() - beginningGlyphIndex);
+
+    CTFontTransformOptions options = (enableKerning ? kCTFontTransformApplyPositioning : 0) | kCTFontTransformApplyShaping;
+    CTFontTransformGlyphs(m_platformData.ctFont(), glyphBuffer.glyphs(beginningGlyphIndex), reinterpret_cast<CGSize*>(glyphBuffer.advances(beginningGlyphIndex)), glyphBuffer.size() - beginningGlyphIndex, options);
 #endif
+
+    // See the comment above in this function where the other call to reverse() is.
+    if (textDirection == TextDirection::RTL)
+        glyphBuffer.reverse(beginningGlyphIndex, glyphBuffer.size() - beginningGlyphIndex);
 }
 
 static int extractNumber(CFNumberRef number)

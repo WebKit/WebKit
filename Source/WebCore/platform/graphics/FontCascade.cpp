@@ -426,7 +426,7 @@ float FontCascade::width(const TextRun& run, HashSet<const Font*>* fallbackFonts
     return result;
 }
 
-float FontCascade::widthForSimpleText(StringView text) const
+float FontCascade::widthForSimpleText(StringView text, TextDirection textDirection) const
 {
     if (text.isNull() || text.isEmpty())
         return 0;
@@ -445,7 +445,7 @@ float FontCascade::widthForSimpleText(StringView text) const
         glyphBuffer.add(glyph, font, glyphWidth, i);
     }
 
-    font.applyTransforms(glyphBuffer, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale());
+    font.applyTransforms(glyphBuffer, 0, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale(), text, textDirection);
     // This is needed only to match the result of the slow path.
     // Same glyph widths but different floating point arithmetic can produce different run width.
     float runWidthDifferenceWithTransformApplied = -runWidth;
@@ -747,6 +747,11 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
             continue;
         if (c <= 0x302F)
             return Complex;
+
+        if (c < 0x3099)
+            continue;
+        if (c < 0x309D)
+            return Complex; // KATAKANA-HIRAGANA (SEMI-)VOICED SOUND MARKS require character composition
 
         if (c < 0xA67C) // U+A67C through U+A67D Combining marks for old Cyrillic
             continue;
@@ -1391,6 +1396,8 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
     // FIXME: Deal with the GlyphBuffer's current initialAdvance.
     glyphBuffer.setInitialAdvance(FloatSize(initialAdvance, 0));
 
+    // The glyph buffer is currently in logical order,
+    // but we need to return the results in visual order.
     if (run.rtl())
         glyphBuffer.reverse(0, glyphBuffer.size());
 

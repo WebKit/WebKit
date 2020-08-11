@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2008, 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2020 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -512,7 +512,7 @@ RefPtr<Font> Font::createScaledFont(const FontDescription& fontDescription, floa
 }
 
 #if !PLATFORM(COCOA)
-void Font::applyTransforms(GlyphBuffer&, unsigned, bool, bool, const AtomString&) const
+void Font::applyTransforms(GlyphBuffer&, unsigned, unsigned, bool, bool, const AtomString&, StringView, TextDirection) const
 {
 }
 #endif
