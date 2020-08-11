@@ -364,6 +364,7 @@ bool defaultWebXREnabled();
 
 #if ENABLE(VP9)
 bool defaultVP9DecoderEnabled();
+bool defaultVP9SWDecoderEnabledOnBattery();
 #endif
 
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)

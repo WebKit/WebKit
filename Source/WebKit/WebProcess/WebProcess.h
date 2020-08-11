@@ -333,6 +333,7 @@ public:
 #endif
 
     void enableVP9Decoder();
+    void enableVP9SWDecoder();
 
 #if PLATFORM(COCOA)
     void willWriteToPasteboardAsynchronously(const String& pasteboardName);
@@ -660,6 +661,7 @@ private:
 
     bool m_useGPUProcessForMedia { false };
     bool m_vp9DecoderEnabled { false };
+    bool m_vp9SWDecoderEnabled { false };
 };
 
 } // namespace WebKit

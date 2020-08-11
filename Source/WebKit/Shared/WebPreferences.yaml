@@ -677,6 +677,15 @@ VP9DecoderEnabled:
   category: experimental
   condition: ENABLE(VP9)
 
+VP9SWDecoderEnabledOnBattery:
+  type: bool
+  defaultValue: defaultVP9SWDecoderEnabledOnBattery()
+  webcoreBinding: none
+  humanReadableName: "VP9 SW decoder on battery"
+  humanReadableDescription: "Enable VP9 SW decoder on battery"
+  category: experimental
+  condition: ENABLE(VP9)
+
 WebMParserEnabled:
   type: bool
   defaultValue: defaultWebMParserEnabled()
