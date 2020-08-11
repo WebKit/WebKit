@@ -1007,3 +1007,6 @@ webkit.org/b/215336 [ Release ] svg/text/hidpi-text-selection-rect-position.html
 webkit.org/b/215339 [ Release ] imported/w3c/web-platform-tests/IndexedDB/blob-delete-objectstore-db.any.html [ Pass Failure ]
 
 webkit.org/b/215392 webaudio/oscillator-sawtooth.html [ Pass Failure ]
+
+webkit.org/b/215397 media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Pass Failure ]
+
