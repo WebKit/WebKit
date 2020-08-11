@@ -1554,7 +1554,7 @@ bool ArgumentCoder<DragData>::decode(Decoder& decoder, DragData& dragData)
     if (!decoder.decode(draggingSourceOperationMask))
         return false;
 
-    DragApplicationFlags applicationFlags;
+    OptionSet<DragApplicationFlags> applicationFlags;
     if (!decoder.decode(applicationFlags))
         return false;
 

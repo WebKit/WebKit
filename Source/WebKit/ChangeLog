@@ -1,3 +1,25 @@
+2020-08-10  Chris Dumez  <cdumez@apple.com>
+
+        AuxiliaryProcess::didReceiveInvalidMessage() for WebPage::PerformDragControllerAction IPC
+        https://bugs.webkit.org/show_bug.cgi?id=215341
+        <rdar://problem/59344091>
+
+        Reviewed by Alex Christensen.
+
+        DragApplicationFlags is an enum containing flags. It was being sent over IPC as a DragApplicationFlags
+        instead of an OptionSet<DragApplicationFlags>, and thus would fail enum value validation when decoding
+        when more than one flag is set.
+
+        * Scripts/webkit/messages.py:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DragData>::decode):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::applicationFlagsForDrag):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-08-10  David Kilzer  <ddkilzer@apple.com>
 
         Use RefPtr for WebKit::WebOpenPanelResultListenerProxy

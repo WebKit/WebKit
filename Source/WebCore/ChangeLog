@@ -1,3 +1,27 @@
+2020-08-10  Chris Dumez  <cdumez@apple.com>
+
+        AuxiliaryProcess::didReceiveInvalidMessage() for WebPage::PerformDragControllerAction IPC
+        https://bugs.webkit.org/show_bug.cgi?id=215341
+        <rdar://problem/59344091>
+
+        Reviewed by Alex Christensen.
+
+        Consistently use OptionSet<DragApplicationFlags> instead of DragApplicationFlags.
+
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::isCopyKeyDown):
+        (WebCore::DragController::dragOperation):
+        * platform/DragData.cpp:
+        (WebCore::DragData::DragData):
+        * platform/DragData.h:
+        (WebCore::DragData::flags const):
+        * platform/cocoa/DragDataCocoa.mm:
+        (WebCore::DragData::DragData):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::DragData):
+
 2020-08-10  Peng Liu  <peng.liu6@apple.com>
 
         MobileSafari crashes at WebCore: -[WebAVPlayerController seekToTime:toleranceBefore:toleranceAfter:]

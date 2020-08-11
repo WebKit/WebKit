@@ -7465,7 +7465,7 @@ static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDr
     auto dragOperationMask = WebCore::anyDragOperation();
     if (!session.allowsMoveOperation)
         dragOperationMask.remove(WebCore::DragOperation::Move);
-    return { session, WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), dragOperationMask, WebCore::DragApplicationNone, WebKit::coreDragDestinationActionMask(dragDestinationAction) };
+    return { session, WebCore::roundedIntPoint(client), WebCore::roundedIntPoint(global), dragOperationMask, { }, WebKit::coreDragDestinationActionMask(dragDestinationAction) };
 }
 
 - (void)cleanUpDragSourceSessionState

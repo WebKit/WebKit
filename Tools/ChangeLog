@@ -1,3 +1,17 @@
+2020-08-10  Chris Dumez  <cdumez@apple.com>
+
+        AuxiliaryProcess::didReceiveInvalidMessage() for WebPage::PerformDragControllerAction IPC
+        https://bugs.webkit.org/show_bug.cgi?id=215341
+        <rdar://problem/59344091>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/mac/DragAndDropTestsMac.mm:
+        (overrideCurrentEvent):
+        (TEST):
+
 2020-08-10  Simon Fraser  <simon.fraser@apple.com>
 
         Add Sam Sneddon to contributors.json
