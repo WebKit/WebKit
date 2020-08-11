@@ -1,3 +1,21 @@
+2020-08-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] gst-full standalone library support
+        https://bugs.webkit.org/show_bug.cgi?id=215262
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Somehow unrelated with the gst-full support, disable GStreamer options command-line support
+        in MiniBrowsers. This isn't very useful and pulls GStreamer in the MiniBrowser for no much
+        gain. Use GST_* env variables instead.
+
+        * MiniBrowser/gtk/CMakeLists.txt:
+        * MiniBrowser/gtk/main.c:
+        (main):
+        * MiniBrowser/wpe/CMakeLists.txt:
+        * MiniBrowser/wpe/main.cpp:
+        (main):
+
 2020-08-10  Chris Dumez  <cdumez@apple.com>
 
         AuxiliaryProcess::didReceiveInvalidMessage() for WebPage::PerformDragControllerAction IPC

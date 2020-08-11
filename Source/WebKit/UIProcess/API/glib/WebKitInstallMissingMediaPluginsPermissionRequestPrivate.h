@@ -22,6 +22,6 @@
 #include "InstallMissingMediaPluginsPermissionRequest.h"
 #include "WebKitInstallMissingMediaPluginsPermissionRequest.h"
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && !USE(GSTREAMER_FULL)
 WebKitInstallMissingMediaPluginsPermissionRequest* webkitInstallMissingMediaPluginsPermissionRequestCreate(WebKit::InstallMissingMediaPluginsPermissionRequest&);
 #endif

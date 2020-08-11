@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InstallMissingMediaPluginsPermissionRequest_h
-#define InstallMissingMediaPluginsPermissionRequest_h
+#pragma once
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER) && !USE(GSTREAMER_FULL)
 #include <WebCore/GUniquePtrGStreamer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -69,5 +68,5 @@ namespace WebKit {
 class InstallMissingMediaPluginsPermissionRequest;
 } // namespace WebKit
 
-#endif // ENABLE(VIDEO) && USE(GSTREAMER)
-#endif // InstallMissingMediaPluginsPermissionRequest_h
+#endif // ENABLE(VIDEO) && USE(GSTREAMER) && !USE(GSTREAMER_FULL)
+

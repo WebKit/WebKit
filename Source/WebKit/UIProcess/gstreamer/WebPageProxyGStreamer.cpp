@@ -27,18 +27,25 @@
 #include "WebPageProxy.h"
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
+#if !USE(GSTREAMER_FULL)
 #include "InstallMissingMediaPluginsPermissionRequest.h"
+#endif
 #include "PageClient.h"
 
 namespace WebKit {
 
 void WebPageProxy::requestInstallMissingMediaPlugins(const String& details, const String& description)
 {
+#if !USE(GSTREAMER_FULL)
     auto request = InstallMissingMediaPluginsPermissionRequest::create(*this, details, description);
     if (pageClient().decidePolicyForInstallMissingMediaPluginsPermissionRequest(request.get()))
         return;
 
     request->deny();
+#else
+    UNUSED_PARAM(details);
+    UNUSED_PARAM(description);
+#endif
 }
 
 } // namespace WebKit

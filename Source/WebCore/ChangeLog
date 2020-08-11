@@ -1,3 +1,33 @@
+2020-08-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] gst-full standalone library support
+        https://bugs.webkit.org/show_bug.cgi?id=215262
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A new CMake option is introduced to enable gst-full support: USE_GSTREAMER_FULL. By default
+        this option is disabled. WebKit distributors might want to enable this if they distribute
+        GStreamer through gst-build's gst-full library. In gst-build the following options can be
+        used to produce a usable libgstreamer-full-1.0.so:
+
+        -Dpython=disabled -Dges=disabled -Ddevtools=disabled -Dintrospection=disabled -Ddefault_library=static
+
+        Once enabled in our build, the dynamic library libgstreamer-full-1.0.so will be loaded
+        instead of all the other GStreamer libraries. Plugins are statically registered in this
+        library as well.
+
+        This can be useful when deploying WebKit in controlled embedded platform where disk space is
+        limited. One of the goals of gst-full is to enable full customization of the plugins to be
+        included in the library. Static registration can also reduce GStreamer initialization time.
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::initializeGStreamer):
+        (WebCore::initializeGStreamerAndRegisterWebKitElements):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Disable missing-plugins handling when
+        gst-full is in use. The plugin installer doesn't make much sense for this scenario.
+
 2020-08-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fix bad merge in r265488

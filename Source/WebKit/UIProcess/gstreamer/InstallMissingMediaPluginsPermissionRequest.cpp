@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InstallMissingMediaPluginsPermissionRequest.h"
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER) && !USE(GSTREAMER_FULL)
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include <wtf/text/CString.h>
@@ -80,4 +80,4 @@ void InstallMissingMediaPluginsPermissionRequest::didEndRequestInstallMissingMed
 
 } // namespace WebKit
 
-#endif // ENABLE(VIDEO) && USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER) && !USE(GSTREAMER_FULL)

@@ -1965,6 +1965,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         break;
     case GST_MESSAGE_ELEMENT:
         if (gst_is_missing_plugin_message(message)) {
+#if !USE(GSTREAMER_FULL)
             if (gst_install_plugins_supported()) {
                 auto missingPluginCallback = MediaPlayerRequestInstallMissingPluginsCallback::create([weakThis = makeWeakPtr(*this)](uint32_t result, MediaPlayerRequestInstallMissingPluginsCallback& missingPluginCallback) {
                     if (!weakThis) {
@@ -1986,6 +1987,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 GUniquePtr<char> description(gst_missing_plugin_message_get_description(message));
                 m_player->requestInstallMissingPlugins(String::fromUTF8(detail.get()), String::fromUTF8(description.get()), missingPluginCallback.get());
             }
+#endif
         }
 #if USE(GSTREAMER_MPEGTS)
         else if (GstMpegtsSection* section = gst_message_parse_mpegts_section(message)) {

@@ -34,6 +34,10 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
+#if USE(GSTREAMER_FULL)
+#include <gst/gstinitstaticplugins.h>
+#endif
+
 #if USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API
 #include <gst/mpegts/mpegts.h>
@@ -257,22 +261,6 @@ bool initializeGStreamer(Optional<Vector<String>>&& options)
         if (isGStreamerInitialized)
             gst_mpegts_initialize();
 #endif
-
-        // If the FDK-AAC decoder is available, promote it and downrank the
-        // libav AAC decoders, due to their broken LC support, as reported in:
-        // https://ffmpeg.org/pipermail/ffmpeg-devel/2019-July/247063.html
-        GRefPtr<GstElementFactory> elementFactory = adoptGRef(gst_element_factory_find("fdkaacdec"));
-        if (elementFactory) {
-            gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(elementFactory.get()), GST_RANK_PRIMARY);
-
-            const char* const elementNames[] = {"avdec_aac", "avdec_aac_fixed", "avdec_aac_latm"};
-            for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
-                GRefPtr<GstElementFactory> avAACDecoderFactory = adoptGRef(gst_element_factory_find(elementNames[i]));
-                if (avAACDecoderFactory)
-                    gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(avAACDecoderFactory.get()), GST_RANK_MARGINAL);
-            }
-        }
-
 #endif
     });
     return isGStreamerInitialized;
@@ -304,6 +292,10 @@ bool initializeGStreamerAndRegisterWebKitElements()
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+#if USE(GSTREAMER_FULL)
+        gst_init_static_plugins();
+#endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
         gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 200, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
 #if ENABLE(THUNDER)
@@ -326,6 +318,21 @@ bool initializeGStreamerAndRegisterWebKitElements()
         gst_element_register(0, "webkitglvideosink", GST_RANK_PRIMARY, WEBKIT_TYPE_GL_VIDEO_SINK);
 #endif
 #endif
+
+        // If the FDK-AAC decoder is available, promote it and downrank the
+        // libav AAC decoders, due to their broken LC support, as reported in:
+        // https://ffmpeg.org/pipermail/ffmpeg-devel/2019-July/247063.html
+        GRefPtr<GstElementFactory> elementFactory = adoptGRef(gst_element_factory_find("fdkaacdec"));
+        if (elementFactory) {
+            gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(elementFactory.get()), GST_RANK_PRIMARY);
+
+            const char* const elementNames[] = {"avdec_aac", "avdec_aac_fixed", "avdec_aac_latm"};
+            for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
+                GRefPtr<GstElementFactory> avAACDecoderFactory = adoptGRef(gst_element_factory_find(elementNames[i]));
+                if (avAACDecoderFactory)
+                    gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(avAACDecoderFactory.get()), GST_RANK_MARGINAL);
+            }
+        }
     });
     return true;
 }

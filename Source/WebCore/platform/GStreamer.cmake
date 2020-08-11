@@ -71,20 +71,29 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/mediastream/libwebrtc/LibWebRTCProviderGStreamer.h
     )
 
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${GSTREAMER_INCLUDE_DIRS}
-        ${GSTREAMER_BASE_INCLUDE_DIRS}
-        ${GSTREAMER_APP_INCLUDE_DIRS}
-        ${GSTREAMER_PBUTILS_INCLUDE_DIRS}
-    )
+    if (USE_GSTREAMER_FULL)
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${GSTREAMER_FULL_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${GSTREAMER_FULL_LIBRARIES}
+        )
+    else ()
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${GSTREAMER_INCLUDE_DIRS}
+            ${GSTREAMER_BASE_INCLUDE_DIRS}
+            ${GSTREAMER_APP_INCLUDE_DIRS}
+            ${GSTREAMER_PBUTILS_INCLUDE_DIRS}
+        )
 
-    list(APPEND WebCore_LIBRARIES
-        ${GSTREAMER_APP_LIBRARIES}
-        ${GSTREAMER_BASE_LIBRARIES}
-        ${GSTREAMER_LIBRARIES}
-        ${GSTREAMER_PBUTILS_LIBRARIES}
-        ${GSTREAMER_AUDIO_LIBRARIES}
-    )
+        list(APPEND WebCore_LIBRARIES
+            ${GSTREAMER_APP_LIBRARIES}
+            ${GSTREAMER_BASE_LIBRARIES}
+            ${GSTREAMER_LIBRARIES}
+            ${GSTREAMER_PBUTILS_LIBRARIES}
+            ${GSTREAMER_AUDIO_LIBRARIES}
+        )
+    endif ()
 
     # Avoiding a GLib deprecation warning due to GStreamer API using deprecated classes.
     set_source_files_properties(platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp PROPERTIES COMPILE_DEFINITIONS "GLIB_DISABLE_DEPRECATION_WARNINGS=1")
@@ -96,12 +105,14 @@ if (ENABLE_VIDEO)
         ${GSTREAMER_VIDEO_INCLUDE_DIRS}
     )
 
-    list(APPEND WebCore_LIBRARIES
-        ${GSTREAMER_TAG_LIBRARIES}
-        ${GSTREAMER_VIDEO_LIBRARIES}
-    )
+    if (NOT USE_GSTREAMER_FULL)
+        list(APPEND WebCore_LIBRARIES
+           ${GSTREAMER_TAG_LIBRARIES}
+           ${GSTREAMER_VIDEO_LIBRARIES}
+        )
+    endif ()
 
-    if (USE_GSTREAMER_MPEGTS)
+    if (USE_GSTREAMER_MPEGTS AND NOT USE_GSTREAMER_FULL)
         list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
             ${GSTREAMER_MPEGTS_INCLUDE_DIRS}
         )
@@ -111,12 +122,14 @@ if (ENABLE_VIDEO)
     endif ()
 
     if (USE_GSTREAMER_GL)
-        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-            ${GSTREAMER_GL_INCLUDE_DIRS}
-        )
-        list(APPEND WebCore_LIBRARIES
-            ${GSTREAMER_GL_LIBRARIES}
-        )
+        if (NOT USE_GSTREAMER_FULL)
+            list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+                ${GSTREAMER_GL_INCLUDE_DIRS}
+            )
+            list(APPEND WebCore_LIBRARIES
+                ${GSTREAMER_GL_LIBRARIES}
+            )
+        endif ()
         list(APPEND WebCore_SOURCES
             platform/graphics/gstreamer/PlatformDisplayGStreamer.cpp
             platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp
@@ -130,9 +143,11 @@ if (ENABLE_VIDEO)
             list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
                 ${GSTREAMER_CODECPARSERS_INCLUDE_DIRS}
             )
-            list(APPEND WebCore_LIBRARIES
-                ${GSTREAMER_CODECPARSERS_LIBRARIES}
-            )
+            if (NOT USE_GSTREAMER_FULL)
+                list(APPEND WebCore_LIBRARIES
+                    ${GSTREAMER_CODECPARSERS_LIBRARIES}
+                )
+            endif ()
         endif ()
     endif ()
 endif ()
@@ -150,14 +165,16 @@ if (ENABLE_WEB_AUDIO)
         platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
     )
 
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${GSTREAMER_AUDIO_INCLUDE_DIRS}
-        ${GSTREAMER_FFT_INCLUDE_DIRS}
-    )
+    if (NOT USE_GSTREAMER_FULL)
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${GSTREAMER_AUDIO_INCLUDE_DIRS}
+            ${GSTREAMER_FFT_INCLUDE_DIRS}
+        )
 
-    list(APPEND WebCore_LIBRARIES
-        ${GSTREAMER_FFT_LIBRARIES}
-    )
+        list(APPEND WebCore_LIBRARIES
+            ${GSTREAMER_FFT_LIBRARIES}
+        )
+    endif ()
 endif ()
 
 if (ENABLE_ENCRYPTED_MEDIA)

@@ -2743,7 +2743,7 @@ void webkitWebViewSelectionDidChange(WebKitWebView* webView)
 
 void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView* webView, InstallMissingMediaPluginsPermissionRequest& request)
 {
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && !USE(GSTREAMER_FULL)
     GRefPtr<WebKitInstallMissingMediaPluginsPermissionRequest> installMediaPluginsPermissionRequest = adoptGRef(webkitInstallMissingMediaPluginsPermissionRequestCreate(request));
     webkitWebViewMakePermissionRequest(webView, WEBKIT_PERMISSION_REQUEST(installMediaPluginsPermissionRequest.get()));
 #else

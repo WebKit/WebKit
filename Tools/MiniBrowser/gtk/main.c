@@ -29,9 +29,6 @@
 
 #include "BrowserWindow.h"
 #include <errno.h>
-#if ENABLE_WEB_AUDIO || ENABLE_VIDEO
-#include <gst/gst.h>
-#endif
 #include <gtk/gtk.h>
 #include <string.h>
 #include <webkit2/webkit2.h>
@@ -759,9 +756,6 @@ int main(int argc, char *argv[])
     g_option_context_add_main_entries(context, commandLineOptions, 0);
 #if !GTK_CHECK_VERSION(3, 98, 0)
     g_option_context_add_group(context, gtk_get_option_group(TRUE));
-#endif
-#if ENABLE_WEB_AUDIO || ENABLE_VIDEO
-    g_option_context_add_group(context, gst_init_get_option_group());
 #endif
 
     WebKitSettings *webkitSettings = webkit_settings_new();

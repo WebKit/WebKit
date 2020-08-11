@@ -1,3 +1,26 @@
+2020-08-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] gst-full standalone library support
+        https://bugs.webkit.org/show_bug.cgi?id=215262
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Disable missing-plugins handling when gst-full is in use. The plugin installer doesn't make
+        much sense for this scenario.
+
+        * PlatformWPE.cmake:
+        * UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp:
+        (webkitInstallMissingMediaPluginsPermissionRequestAllow):
+        (webkitInstallMissingMediaPluginsPermissionRequestDeny):
+        (webkit_install_missing_media_plugins_permission_request_get_description):
+        * UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewRequestInstallMissingMediaPlugins):
+        * UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.cpp:
+        * UIProcess/gstreamer/InstallMissingMediaPluginsPermissionRequest.h:
+        * UIProcess/gstreamer/WebPageProxyGStreamer.cpp:
+        (WebKit::WebPageProxy::requestInstallMissingMediaPlugins):
+
 2020-08-10  Chris Dumez  <cdumez@apple.com>
 
         AuxiliaryProcess::didReceiveInvalidMessage() for WebPage::PerformDragControllerAction IPC
