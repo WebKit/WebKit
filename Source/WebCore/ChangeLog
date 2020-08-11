@@ -1,3 +1,20 @@
+2020-08-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Text input autocorrect="off" attribute ignored on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=151019
+        <rdar://problem/65061700>
+
+        Reviewed by Simon Fraser.
+
+        Add support for the `autocorrect` attribute on macOS, by not showing the automatic spell checking popup or
+        automatically correcting misspelled words if the root editable element has `autocorrect="off"`.
+
+        Tests:  editing/input/cocoa/autocorrect-off.html
+                editing/input/cocoa/autocorrect-on.html
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::isAutomaticSpellingCorrectionEnabled):
+
 2020-08-11  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation crashes when replacing element with img role

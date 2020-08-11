@@ -1,0 +1,10 @@
+ This test verifies that autocorrect=off disables autocorrection. To manually test, type 'Tset' into both editable areas and a period, and verify that it is not autocorrected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS contenteditable.textContent is "Tset."
+PASS textarea.value is "Tset."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -52,6 +52,7 @@ PASS a["offsetLeft"] is 8
 PASS a["offsetWidth"] is 40
 PASS a["offsetHeight"] is 18
 PASS a["outerText"] is nerget
+PASS a["autocorrect"] is true
 PASS a["webkitdropzone"] is 
 PASS a["inputMode"] is 
 PASS a["enterKeyHint"] is 

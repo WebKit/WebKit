@@ -9,6 +9,7 @@
 accessibility/mac [ Pass ]
 compositing/scrolling/async-overflow-scrolling/mac [ Pass ]
 displaylists [ Pass ]
+editing/input/cocoa [ Pass ]
 editing/mac [ Pass ]
 editing/pasteboard/mac [ Pass ]
 fast/dom/Range/mac [ Pass ]

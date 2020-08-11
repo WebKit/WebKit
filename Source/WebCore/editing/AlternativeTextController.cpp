@@ -337,7 +337,23 @@ void AlternativeTextController::handleAlternativeTextUIResult(const String& resu
 
 bool AlternativeTextController::isAutomaticSpellingCorrectionEnabled()
 {
-    return editorClient() && editorClient()->isAutomaticSpellingCorrectionEnabled();
+    if (!editorClient() || !editorClient()->isAutomaticSpellingCorrectionEnabled())
+        return false;
+
+#if ENABLE(AUTOCORRECT)
+    auto position = m_document.selection().selection().start();
+    if (auto editableRoot = position.rootEditableElement()) {
+        if (is<HTMLElement>(editableRoot) && !downcast<HTMLElement>(*editableRoot).shouldAutocorrect())
+            return false;
+    }
+
+    if (auto control = enclosingTextFormControl(position)) {
+        if (!control->shouldAutocorrect())
+            return false;
+    }
+#endif
+
+    return true;
 }
 
 FloatRect AlternativeTextController::rootViewRectForRange(const SimpleRange& range) const

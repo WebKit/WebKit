@@ -1,5 +1,0 @@
-To manually test, type 'Ti' into the contenteditable and a space. The 'Ti' should not be autocorrected.
-
-With autocorrect off, the result is: "Ti"
-With autocorrect on, the result is: "To"
-

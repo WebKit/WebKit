@@ -87,7 +87,7 @@
 #define ENABLE_AUTOCAPITALIZE 1
 #endif
 
-#if !defined(ENABLE_AUTOCORRECT) && !PLATFORM(MAC)
+#if !defined(ENABLE_AUTOCORRECT)
 #define ENABLE_AUTOCORRECT 1
 #endif
 
