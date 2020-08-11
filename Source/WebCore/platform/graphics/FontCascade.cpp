@@ -1398,6 +1398,11 @@ GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, uns
         initialAdvance = beforeWidth;
     }
     glyphBuffer.expandInitialAdvance(initialAdvance);
+    if (!glyphBuffer.isEmpty()) {
+        // The initial advance is supposed to point directly to the first glyph's paint position.
+        // See the ascii-art diagram in ComplexTextController.h.
+        glyphBuffer.expandInitialAdvance(GlyphBufferAdvance(glyphBuffer.originAt(0).x(), glyphBuffer.originAt(0).y()));
+    }
 
     // The glyph buffer is currently in logical order,
     // but we need to return the results in visual order.

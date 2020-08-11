@@ -199,11 +199,17 @@ public:
     }
     Glyph glyphAt(unsigned index) const { return m_glyphs[index]; }
     GlyphBufferAdvance advanceAt(unsigned index) const { return m_advances[index]; }
+    GlyphBufferOrigin originAt(unsigned index) const { return m_origins[index]; }
     GlyphBufferStringOffset stringOffsetAt(unsigned index) const { return m_offsetsInString[index]; }
 
     void setInitialAdvance(GlyphBufferAdvance initialAdvance) { m_initialAdvance = initialAdvance; }
     const GlyphBufferAdvance& initialAdvance() const { return m_initialAdvance; }
     void expandInitialAdvance(float width) { m_initialAdvance.setWidth(m_initialAdvance.width() + width); }
+    void expandInitialAdvance(GlyphBufferAdvance additionalAdvance)
+    {
+        m_initialAdvance.setWidth(m_initialAdvance.width() + additionalAdvance.width());
+        m_initialAdvance.setHeight(m_initialAdvance.height() + additionalAdvance.height());
+    }
     
     static constexpr GlyphBufferStringOffset noOffset = std::numeric_limits<GlyphBufferStringOffset>::max();
     void add(Glyph glyph, const Font& font, float width, GlyphBufferStringOffset offsetInString = noOffset)
