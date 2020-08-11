@@ -1,3 +1,14 @@
+2020-08-11  Youenn Fablet  <youenn@apple.com>
+
+        Cherry-pick usrsctp 264ce452885bfed73348ba6b6f63693bc2f52a6e commit
+        https://bugs.webkit.org/show_bug.cgi?id=215378
+        <rdar://problem/66788144>
+
+        Reviewed by Eric Carlson.
+
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c:
+        (sctp_handle_asconf):
+
 2020-08-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove all references to non-existent 10.16
