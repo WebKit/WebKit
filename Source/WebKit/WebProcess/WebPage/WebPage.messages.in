@@ -609,4 +609,5 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetNeedsDOMWindowResizeEvent()
 
     SetHasResourceLoadClient(bool has)
+    SetCanUseCredentialStorage(bool canUse)
 }

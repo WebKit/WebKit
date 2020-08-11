@@ -4402,7 +4402,14 @@ void WebPageProxy::preconnectTo(const URL& url)
     if (!m_websiteDataStore->configuration().allowsServerPreconnect())
         return;
 
-    m_process->processPool().ensureNetworkProcess().preconnectTo(sessionID(), identifier(), webPageID(), url, userAgent(), WebCore::StoredCredentialsPolicy::Use, m_isNavigatingToAppBoundDomain);
+    auto storedCredentialsPolicy = m_canUseCredentialStorage ? WebCore::StoredCredentialsPolicy::Use : WebCore::StoredCredentialsPolicy::DoNotUse;
+    m_process->processPool().ensureNetworkProcess().preconnectTo(sessionID(), identifier(), webPageID(), url, userAgent(), storedCredentialsPolicy, m_isNavigatingToAppBoundDomain);
+}
+
+void WebPageProxy::setCanUseCredentialStorage(bool canUseCredentialStorage)
+{
+    m_canUseCredentialStorage = canUseCredentialStorage;
+    send(Messages::WebPage::SetCanUseCredentialStorage(canUseCredentialStorage));
 }
 
 void WebPageProxy::didDestroyNavigation(uint64_t navigationID)
@@ -7865,6 +7872,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.shouldCaptureDisplayInUIProcess = m_process->processPool().configuration().shouldCaptureDisplayInUIProcess();
     parameters.limitsNavigationsToAppBoundDomains = m_limitsNavigationsToAppBoundDomains;
     parameters.shouldRelaxThirdPartyCookieBlocking = m_configuration->shouldRelaxThirdPartyCookieBlocking();
+    parameters.canUseCredentialStorage = m_canUseCredentialStorage;
 
 #if PLATFORM(GTK)
     parameters.themeName = pageClient().themeName();

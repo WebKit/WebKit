@@ -741,6 +741,11 @@ bool ResourceLoader::shouldUseCredentialStorage()
     if (m_options.storedCredentialsPolicy != StoredCredentialsPolicy::Use)
         return false;
 
+    if (auto* page = m_frame->page()) {
+        if (!page->canUseCredentialStorage())
+            return false;
+    }
+
     Ref<ResourceLoader> protectedThis(*this);
     return frameLoader()->client().shouldUseCredentialStorage(documentLoader(), identifier());
 }

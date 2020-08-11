@@ -780,6 +780,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (parameters.shouldEnableVP9Decoder)
         WebProcess::singleton().enableVP9Decoder();
 
+    m_page->setCanUseCredentialStorage(parameters.canUseCredentialStorage);
+
     updateThrottleState();
 }
 
@@ -1227,6 +1229,12 @@ void WebPage::setHasResourceLoadClient(bool has)
 {
     if (m_page)
         m_page->setHasResourceLoadClient(has);
+}
+
+void WebPage::setCanUseCredentialStorage(bool has)
+{
+    if (m_page)
+        m_page->setCanUseCredentialStorage(has);
 }
 
 void WebPage::setTracksRepaints(bool trackRepaints)

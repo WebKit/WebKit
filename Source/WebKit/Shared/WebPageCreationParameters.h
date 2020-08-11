@@ -229,6 +229,8 @@ struct WebPageCreationParameters {
     bool shouldEnableVP9Decoder { false };
     bool needsInAppBrowserPrivacyQuirks { false };
     bool limitsNavigationsToAppBoundDomains { false };
+    bool canUseCredentialStorage { true };
+
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
 
 #if PLATFORM(GTK)

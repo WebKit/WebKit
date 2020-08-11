@@ -2674,6 +2674,16 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     _page->preconnectTo(url);
 }
 
+- (BOOL)_canUseCredentialStorage
+{
+    return _page->canUseCredentialStorage();
+}
+
+- (void)_setCanUseCredentialStorage:(BOOL)canUseCredentialStorage
+{
+    _page->setCanUseCredentialStorage(canUseCredentialStorage);
+}
+
 - (id <_WKInputDelegate>)_inputDelegate
 {
     return _inputDelegate.getAutoreleased();

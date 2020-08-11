@@ -1793,6 +1793,9 @@ public:
 
     void preconnectTo(const URL&);
 
+    bool canUseCredentialStorage() { return m_canUseCredentialStorage; }
+    void setCanUseCredentialStorage(bool);
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2850,6 +2853,7 @@ private:
     bool m_userScriptsNotified { false };
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_hasExecutedAppBoundBehaviorBeforeNavigation { false };
+    bool m_canUseCredentialStorage { true };
 };
 
 } // namespace WebKit

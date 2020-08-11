@@ -157,6 +157,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << needsInAppBrowserPrivacyQuirks;
     encoder << limitsNavigationsToAppBoundDomains;
     encoder << shouldRelaxThirdPartyCookieBlocking;
+    encoder << canUseCredentialStorage;
 
 #if PLATFORM(GTK)
     encoder << themeName;
@@ -503,7 +504,10 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     
     if (!decoder.decode(parameters.shouldRelaxThirdPartyCookieBlocking))
         return WTF::nullopt;
-    
+
+    if (!decoder.decode(parameters.canUseCredentialStorage))
+        return WTF::nullopt;
+
 #if PLATFORM(GTK)
     if (!decoder.decode(parameters.themeName))
         return WTF::nullopt;

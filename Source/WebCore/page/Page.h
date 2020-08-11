@@ -657,6 +657,9 @@ public:
     void setHasResourceLoadClient(bool has) { m_hasResourceLoadClient = has; }
     bool hasResourceLoadClient() const { return m_hasResourceLoadClient; }
 
+    void setCanUseCredentialStorage(bool canUse) { m_canUseCredentialStorage = canUse; }
+    bool canUseCredentialStorage() const { return m_canUseCredentialStorage; }
+
 #if ENABLE(MEDIA_SESSION)
     WEBCORE_EXPORT void handleMediaEvent(MediaEventType);
     WEBCORE_EXPORT void setVolumeOfMediaElement(double, uint64_t);
@@ -1067,6 +1070,7 @@ private:
     bool m_shouldFireEvents { true };
     bool m_loadsSubresources { true };
     bool m_loadsFromNetwork { true };
+    bool m_canUseCredentialStorage { true };
     ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool m_hasBeenNotifiedToInjectUserScripts { false };
 };

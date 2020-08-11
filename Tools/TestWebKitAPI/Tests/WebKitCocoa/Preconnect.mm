@@ -53,9 +53,11 @@ namespace TestWebKitAPI {
 
 TEST(Preconnect, HTTP)
 {
+    size_t connectionCount = 0;
     bool connected = false;
     bool requested = false;
     HTTPServer server([&] (Connection connection) {
+        ++connectionCount;
         connected = true;
         connection.receiveHTTPRequest([&](Vector<char>&&) {
             requested = true;
@@ -68,6 +70,38 @@ TEST(Preconnect, HTTP)
     EXPECT_FALSE(requested);
     [webView loadRequest:server.request()];
     Util::run(&requested);
+
+    EXPECT_EQ(connectionCount, 1u);
+}
+
+TEST(Preconnect, ConnectionCount)
+{
+    size_t connectionCount = 0;
+    bool anyConnections = false;
+    bool requested = false;
+    HTTPServer server([&] (Connection connection) {
+        ++connectionCount;
+        anyConnections = true;
+        connection.receiveHTTPRequest([&](Vector<char>&&) {
+            requested = true;
+        });
+    });
+    auto webView = adoptNS([WKWebView new]);
+
+    // The preconnect to the server will use the default setting of "use the credential store",
+    // and therefore use the credential-store-blessed NSURLSession.
+    [webView _preconnectToServer:server.request().URL];
+    Util::run(&anyConnections);
+    Util::spinRunLoop(10);
+    EXPECT_FALSE(requested);
+
+    // Then this request will *not* use the credential store, therefore using a different NSURLSession
+    // that doesn't know about the above preconnect, triggering a second connection to the server.
+    webView.get()._canUseCredentialStorage = NO;
+    [webView loadRequest:server.request()];
+    Util::run(&requested);
+
+    EXPECT_EQ(connectionCount, 2u);
 }
 
 // Mojave CFNetwork _preconnect SPI seems to have a bug causing this to time out.

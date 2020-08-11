@@ -1646,6 +1646,7 @@ private:
     void platformDidSelectAll();
     
     void setHasResourceLoadClient(bool);
+    void setCanUseCredentialStorage(bool);
 
 #if ENABLE(CONTEXT_MENUS)
     void didSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
@@ -2136,6 +2137,8 @@ private:
     
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_navigationHasOccured { false };
+    bool m_canUseCredentialStorage { true };
+
     Vector<String> m_corsDisablingPatterns;
 };
 

@@ -1,3 +1,39 @@
+2020-08-11  Brady Eidson  <beidson@apple.com>
+
+        Add a "use stored credentials" setting to WKWebView.
+        <rdar://problem/63308019> and https://bugs.webkit.org/show_bug.cgi?id=215388
+
+        Reviewed by Geoff Garen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _canUseCredentialStorage]):
+        (-[WKWebView _setCanUseCredentialStorage:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::preconnectTo):
+        (WebKit::WebPageProxy::setCanUseCredentialStorage):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::canUseCredentialStorage):
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_limitsNavigationsToAppBoundDomains):
+        (WebKit::WebPage::setCanUseCredentialStorage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-08-11  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Deny access to directory for compiled WebKit sandboxes
