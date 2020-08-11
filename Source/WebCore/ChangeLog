@@ -1,3 +1,19 @@
+2020-08-11  Zalan Bujtas  <zalan@apple.com>
+
+        [AutoTableLayout] REGRESSION(r263855) Paypal email is rendered right aligned on Safari
+        https://bugs.webkit.org/show_bug.cgi?id=215340
+        <rdar://problem/66540254>
+
+        Reviewed by Simon Fraser.
+
+        Prior to r263855, these zero-length, non-empty columns had the preferred width value of 1px and the available space got distributed based on this made-up 1px value.
+        In this patch, we distribute the available horizontal space evenly among these zero-length, 'width: auto' columns.
+
+        Test: fast/table/zero-length-non-empty-columns-with-auto-width.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::layout):
+
 2020-08-11  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Only update the intrinsic height if we don't have an override height

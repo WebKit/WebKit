@@ -530,6 +530,7 @@ void AutoTableLayout::layout()
     bool havePercent = false;
     float totalRelative = 0;
     int numFixed = 0;
+    size_t numberOfNonEmptyAuto = 0;
     Optional<float> totalAuto;
     float totalFixed = 0;
     float totalPercent = 0;
@@ -558,6 +559,7 @@ void AutoTableLayout::layout()
             if (m_layoutStruct[i].emptyCellsOnly)
                 numAutoEmptyCellsOnly++;
             else {
+                ++numberOfNonEmptyAuto;
                 totalAuto = totalAuto.valueOr(0.f) + m_layoutStruct[i].effectiveMaxLogicalWidth;
                 allocAuto += cellLogicalWidth;
             }
@@ -620,15 +622,23 @@ void AutoTableLayout::layout()
     }
 
     // now satisfy variable
-    if (available > 0 && totalAuto) {
-        available += allocAuto; // this gets redistributed
+    if (available > 0 && numberOfNonEmptyAuto) {
+        ASSERT(totalAuto);
+        available += allocAuto; // this gets redistributed.
+        auto equalWidthForZeroLengthColumns = Optional<float> { };
+        if (!*totalAuto) {
+            // All columns in this table are (non-empty)zero length with 'width: auto'.
+            equalWidthForZeroLengthColumns = available / numberOfNonEmptyAuto;
+        }
         for (size_t i = 0; i < nEffCols; ++i) {
-            Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
-            if (logicalWidth.isAuto() && !m_layoutStruct[i].emptyCellsOnly) {
-                auto cellLogicalWidth = std::max(m_layoutStruct[i].computedLogicalWidth, *totalAuto ? available * m_layoutStruct[i].effectiveMaxLogicalWidth / *totalAuto : available);
-                available -= cellLogicalWidth;
-                *totalAuto -= m_layoutStruct[i].effectiveMaxLogicalWidth;
-                m_layoutStruct[i].computedLogicalWidth = cellLogicalWidth;
+            auto& column = m_layoutStruct[i];
+            if (!column.effectiveLogicalWidth.isAuto() || column.emptyCellsOnly)
+                continue;
+            auto columnWidthCandidate = equalWidthForZeroLengthColumns ? *equalWidthForZeroLengthColumns : available * column.effectiveMaxLogicalWidth / *totalAuto;
+            column.computedLogicalWidth = std::max(column.computedLogicalWidth, columnWidthCandidate);
+            available -= column.computedLogicalWidth;
+            if (!equalWidthForZeroLengthColumns) {
+                *totalAuto -= column.effectiveMaxLogicalWidth;
                 if (*totalAuto <= 0)
                     break;
             }
