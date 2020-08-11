@@ -3,29 +3,29 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "test" 
 PASS Audit report 
 PASS > [test] WaveShaperNode including values outside the range of [-1,1] 
-FAIL X Max error mapping -1.100000 to -0.150000 is not less than or equal to 0.000001. Got 0.15000003576278687. assert_true: expected true got false
+PASS   Max error mapping -1.100000 to 0.000000 is less than or equal to 0.000001. 
 PASS   Max error mapping -1.000000 to 0.000000 is less than or equal to 0.000001. 
-FAIL X Max error mapping -0.900000 to 0.150000 is not less than or equal to 0.000001. Got 0.050000034272670746. assert_true: expected true got false
-FAIL X Max error mapping -0.800000 to 0.300000 is not less than or equal to 0.000001. Got 0.09999997913837433. assert_true: expected true got false
-FAIL X Max error mapping -0.700000 to 0.450000 is not less than or equal to 0.000001. Got 0.15000000596046448. assert_true: expected true got false
-FAIL X Max error mapping -0.600000 to 0.600000 is not less than or equal to 0.000001. Got 0.19999995827674866. assert_true: expected true got false
-FAIL X Max error mapping -0.500000 to 0.750000 is not less than or equal to 0.000001. Got 0.25. assert_true: expected true got false
-FAIL X Max error mapping -0.400000 to 0.900000 is not less than or equal to 0.000001. Got 0.30000001192092896. assert_true: expected true got false
-FAIL X Max error mapping -0.300000 to 0.950000 is not less than or equal to 0.000001. Got 0.2500000596046448. assert_true: expected true got false
+PASS   Max error mapping -0.900000 to 0.100000 is less than or equal to 0.000001. 
+PASS   Max error mapping -0.800000 to 0.200000 is less than or equal to 0.000001. 
+PASS   Max error mapping -0.700000 to 0.300000 is less than or equal to 0.000001. 
+PASS   Max error mapping -0.600000 to 0.400000 is less than or equal to 0.000001. 
+PASS   Max error mapping -0.500000 to 0.500000 is less than or equal to 0.000001. 
+PASS   Max error mapping -0.400000 to 0.600000 is less than or equal to 0.000001. 
+PASS   Max error mapping -0.300000 to 0.700000 is less than or equal to 0.000001. 
 PASS   Max error mapping -0.200000 to 0.800000 is less than or equal to 0.000001. 
-FAIL X Max error mapping -0.100000 to 0.650000 is not less than or equal to 0.000001. Got 0.24999994039535522. assert_true: expected true got false
-FAIL X Max error mapping 0.000000 to 0.500000 is not less than or equal to 0.000001. Got 0.5. assert_true: expected true got false
-FAIL X Max error mapping 0.100000 to 0.350000 is not less than or equal to 0.000001. Got 0.550000011920929. assert_true: expected true got false
-FAIL X Max error mapping 0.200000 to 0.200000 is not less than or equal to 0.000001. Got 0.6000000834465027. assert_true: expected true got false
-FAIL X Max error mapping 0.300000 to 0.050000 is not less than or equal to 0.000001. Got 0.6499999165534973. assert_true: expected true got false
-FAIL X Max error mapping 0.400000 to 0.000000 is not less than or equal to 0.000001. Got 0.6000000238418579. assert_true: expected true got false
-FAIL X Max error mapping 0.500000 to 0.000000 is not less than or equal to 0.000001. Got 0.5. assert_true: expected true got false
-FAIL X Max error mapping 0.600000 to 0.000000 is not less than or equal to 0.000001. Got 0.4000000059604645. assert_true: expected true got false
-FAIL X Max error mapping 0.700000 to 0.000000 is not less than or equal to 0.000001. Got 0.30000001192092896. assert_true: expected true got false
-FAIL X Max error mapping 0.800000 to 0.000000 is not less than or equal to 0.000001. Got 0.20000000298023224. assert_true: expected true got false
-FAIL X Max error mapping 0.900000 to 0.000000 is not less than or equal to 0.000001. Got 0.10000000149011612. assert_true: expected true got false
+PASS   Max error mapping -0.100000 to 0.900000 is less than or equal to 0.000001. 
+PASS   Max error mapping 0.000000 to 1.000000 is less than or equal to 0.000001. 
+PASS   Max error mapping 0.100000 to 0.900000 is less than or equal to 0.000001. 
+PASS   Max error mapping 0.200000 to 0.800000 is less than or equal to 0.000001. 
+PASS   Max error mapping 0.300000 to 0.700000 is less than or equal to 0.000001. 
+PASS   Max error mapping 0.400000 to 0.600000 is less than or equal to 0.000001. 
+PASS   Max error mapping 0.500000 to 0.500000 is less than or equal to 0.000001. 
+PASS   Max error mapping 0.600000 to 0.400000 is less than or equal to 0.000001. 
+PASS   Max error mapping 0.700000 to 0.300000 is less than or equal to 0.000001. 
+PASS   Max error mapping 0.800000 to 0.200000 is less than or equal to 0.000001. 
+PASS   Max error mapping 0.900000 to 0.100000 is less than or equal to 0.000001. 
 PASS   Max error mapping 1.000000 to 0.000000 is less than or equal to 0.000001. 
 PASS   Max error mapping 1.100000 to 0.000000 is less than or equal to 0.000001. 
-FAIL < [test] 19 out of 23 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS < [test] All assertions passed. (total 23 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

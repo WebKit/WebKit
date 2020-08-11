@@ -138,6 +138,8 @@ function createImpulseBuffer(context, sampleFrameLength) {
     return audioBuffer;
 }
 
+window.OfflineAudioContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+
 function runWaveShaperOversamplingTest(testParams) {
     sampleRate = testParams.sampleRate;
     nyquist = 0.5 * sampleRate;
@@ -154,7 +156,7 @@ function runWaveShaperOversamplingTest(testParams) {
 
     // Create offline audio context.
     var numberOfRenderFrames = sampleRate * lengthInSeconds;
-    context = new webkitOfflineAudioContext(1, numberOfRenderFrames, sampleRate);
+    context = new OfflineAudioContext(1, numberOfRenderFrames, sampleRate);
 
     // source -> waveshaper -> destination
     var source = context.createBufferSource();
