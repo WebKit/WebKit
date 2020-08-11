@@ -1,5 +1,48 @@
 2020-08-11  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r265432. rdar://problem/66802579
+
+    Return values of FontDatabase::collectionForFamily are not thread safe
+    https://bugs.webkit.org/show_bug.cgi?id=215320
+    <rdar://problem/66502539>
+    
+    Reviewed by Anders Carlsson.
+    
+    Font prewarming can add new entries to m_familyNameToFontDescriptors while lookups are being made.
+    Access to it is protected by a lock.
+    
+    However if the hashmap ends up rehashing, the pointer returned from collectionForFamily may end up becoming invalid.
+    This can result in a crash later under findClosestFont.
+    
+    * platform/graphics/cocoa/FontCacheCoreText.cpp:
+    (WebCore::FontDatabase::collectionForFamily):
+    
+    Heap allocate the hashmap values so they stay valid over hashtable mutations.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265432 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-10  Antti Koivisto  <antti@apple.com>
+
+            Return values of FontDatabase::collectionForFamily are not thread safe
+            https://bugs.webkit.org/show_bug.cgi?id=215320
+            <rdar://problem/66502539>
+
+            Reviewed by Anders Carlsson.
+
+            Font prewarming can add new entries to m_familyNameToFontDescriptors while lookups are being made.
+            Access to it is protected by a lock.
+
+            However if the hashmap ends up rehashing, the pointer returned from collectionForFamily may end up becoming invalid.
+            This can result in a crash later under findClosestFont.
+
+            * platform/graphics/cocoa/FontCacheCoreText.cpp:
+            (WebCore::FontDatabase::collectionForFamily):
+
+            Heap allocate the hashmap values so they stay valid over hashtable mutations.
+
+2020-08-11  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r265357. rdar://problem/66801720
 
     Web process crashes at WebCore::FullscreenManager::didExitFullscreen

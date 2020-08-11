@@ -889,6 +889,8 @@ public:
     };
 
     struct InstalledFontFamily {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
         InstalledFontFamily() = default;
 
         explicit InstalledFontFamily(Vector<InstalledFont>&& installedFonts)
@@ -924,7 +926,7 @@ public:
             auto locker = holdLock(m_familyNameToFontDescriptorsLock);
             auto it = m_familyNameToFontDescriptors.find(folded);
             if (it != m_familyNameToFontDescriptors.end())
-                return it->value;
+                return *it->value;
         }
 
         auto installedFontFamily = [&] {
@@ -942,13 +944,13 @@ public:
                     InstalledFont installedFont(static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matches.get(), i)), m_allowUserInstalledFonts);
                     result.uncheckedAppend(WTFMove(installedFont));
                 }
-                return InstalledFontFamily(WTFMove(result));
+                return makeUnique<InstalledFontFamily>(WTFMove(result));
             }
-            return InstalledFontFamily();
+            return makeUnique<InstalledFontFamily>();
         }();
 
         auto locker = holdLock(m_familyNameToFontDescriptorsLock);
-        return m_familyNameToFontDescriptors.add(folded.isolatedCopy(), WTFMove(installedFontFamily)).iterator->value;
+        return *m_familyNameToFontDescriptors.add(folded.isolatedCopy(), WTFMove(installedFontFamily)).iterator->value;
     }
 
     const InstalledFont& fontForPostScriptName(const AtomString& postScriptName)
@@ -986,7 +988,7 @@ private:
     }
 
     Lock m_familyNameToFontDescriptorsLock;
-    HashMap<String, InstalledFontFamily> m_familyNameToFontDescriptors;
+    HashMap<String, std::unique_ptr<InstalledFontFamily>> m_familyNameToFontDescriptors;
     HashMap<String, InstalledFont> m_postScriptNameToFontDescriptors;
     AllowUserInstalledFonts m_allowUserInstalledFonts;
 };
