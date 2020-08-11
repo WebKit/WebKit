@@ -166,6 +166,12 @@ body[dir=rtl] .table > .header > :matches(.sort-ascending, .sort-descending)::af
     background-color: var(--separator-color);
 }
 
+.table > .header .cell:not(:first-child):active::before,
+.table > .header .cell:active + .cell::before {
+    top: 0;
+    bottom: 0;
+}
+
 body[dir=ltr] .table > .header .cell:not(:first-child)::before {
     left: 0;
 }
