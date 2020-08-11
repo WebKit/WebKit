@@ -1,3 +1,17 @@
+2020-08-11  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Rebaseline outdated baselines
+
+        Unreviewed test gardening.
+
+        * platform/glib/webaudio/audiobuffersource-playbackrate-expected.wav:
+        Renamed from
+        LayoutTests/platform/gtk/webaudio/audiobuffersource-playbackrate-expected.wav.
+        After r265440.
+        * platform/gtk/fast/table/empty-cells-expected.txt: After r265499.
+        * platform/wpe/fast/table/empty-cells-expected.txt: ditto.
+        * platform/wpe/webaudio/audiobuffersource-playbackrate-expected.wav: Removed.
+
 2020-08-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text input autocorrect="off" attribute ignored on Mac
