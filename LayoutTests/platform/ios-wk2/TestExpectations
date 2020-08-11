@@ -1840,3 +1840,5 @@ webkit.org/b/215324 compositing/clipping/border-radius-on-webgl.html [ Pass Fail
 webkit.org/b/215326 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-parsing.html [ Pass Timeout ]
 
 webkit.org/b/215345 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Pass Timeout ]
+
+webkit.org/b/215350 http/tests/xmlhttprequest/overridemimetype-headers-received-state-force-shiftjis.html [ Pass Timeout ]
