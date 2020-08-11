@@ -97,16 +97,13 @@ struct _WebKitAccessiblePrivate {
 
 WEBKIT_DEFINE_TYPE(WebKitAccessible, webkit_accessible, ATK_TYPE_OBJECT)
 
-static AccessibilityObject* fallbackObject()
-{
-    static AccessibilityObject* object = &AccessibilityListBoxOption::create().leakRef();
-    return object;
-}
-
 static const gchar* webkitAccessibleGetName(AtkObject* object)
 {
     auto* accessible = WEBKIT_ACCESSIBLE(object);
     returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
+
+    if (!accessible->priv->object)
+        return "";
 
     Vector<AccessibilityText> textOrder;
     accessible->priv->object->accessibilityText(textOrder);
@@ -132,6 +129,9 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
 {
     auto* accessible = WEBKIT_ACCESSIBLE(object);
     returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
+
+    if (!accessible->priv->object)
+        return "";
 
     Vector<AccessibilityText> textOrder;
     accessible->priv->object->accessibilityText(textOrder);
@@ -312,6 +312,8 @@ static AtkObject* webkitAccessibleGetParent(AtkObject* object)
 
     // Parent not set yet, so try to find it in the hierarchy.
     auto* coreObject = accessible->priv->object;
+    if (!coreObject)
+        return nullptr;
     auto* coreParent = coreObject->parentObjectUnignored();
     if (!coreParent && isRootObject(coreObject)) {
         // The top level object claims to not have a parent. This makes it
@@ -329,6 +331,8 @@ static gint webkitAccessibleGetNChildren(AtkObject* object)
     auto* accessible = WEBKIT_ACCESSIBLE(object);
     returnValIfWebKitAccessibleIsInvalid(accessible, 0);
 
+    if (!accessible->priv->object)
+        return 0;
     return accessible->priv->object->children().size();
 }
 
@@ -337,7 +341,7 @@ static AtkObject* webkitAccessibleRefChild(AtkObject* object, gint index)
     auto* accessible = WEBKIT_ACCESSIBLE(object);
     returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
-    if (index < 0)
+    if (!accessible->priv->object || index < 0)
         return nullptr;
 
     const auto& children = accessible->priv->object->children();
@@ -362,6 +366,8 @@ static gint webkitAccessibleGetIndexInParent(AtkObject* object)
     returnValIfWebKitAccessibleIsInvalid(accessible, -1);
 
     auto* coreObject = accessible->priv->object;
+    if (!coreObject)
+        return -1;
     auto* parent = coreObject->parentObjectUnignored();
     if (!parent && isRootObject(coreObject)) {
         if (!coreObject->document())
@@ -399,6 +405,8 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
 #endif
 
     auto* coreObject = accessible->priv->object;
+    if (!coreObject)
+        return attributeSet;
 
     // Hack needed for WebKit2 tests because obtaining an element by its ID
     // cannot be done from the UIProcess. Assistive technologies have no need
@@ -836,6 +844,9 @@ static AtkRole webkitAccessibleGetRole(AtkObject* object)
     auto* accessible = WEBKIT_ACCESSIBLE(object);
     returnValIfWebKitAccessibleIsInvalid(accessible, ATK_ROLE_INVALID);
 
+    if (!accessible->priv->object)
+        return ATK_ROLE_INVALID;
+    
     // Note: Why doesn't WebCore have a password field for this
     if (accessible->priv->object->isPasswordField())
         return ATK_ROLE_PASSWORD_TEXT;
@@ -1006,9 +1017,9 @@ static AtkStateSet* webkitAccessibleRefStateSet(AtkObject* object)
 
     // Make sure the layout is updated to really know whether the object
     // is defunct or not, so we can return the proper state.
-    accessible->priv->object->updateBackingStore();
-
-    if (accessible->priv->object == fallbackObject()) {
+    if (accessible->priv->object)
+        accessible->priv->object->updateBackingStore();
+    if (!accessible->priv->object) {
         atk_state_set_add_state(stateSet, ATK_STATE_DEFUNCT);
         return stateSet;
     }
@@ -1028,7 +1039,8 @@ static AtkRelationSet* webkitAccessibleRefRelationSet(AtkObject* object)
     returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
     AtkRelationSet* relationSet = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->ref_relation_set(object);
-    setAtkRelationSetFromCoreObject(accessible->priv->object, relationSet);
+    if (accessible->priv->object)
+        setAtkRelationSetFromCoreObject(accessible->priv->object, relationSet);
     return relationSet;
 }
 
@@ -1046,6 +1058,9 @@ static const gchar* webkitAccessibleGetObjectLocale(AtkObject* object)
     auto* accessible = WEBKIT_ACCESSIBLE(object);
     returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
+    if (!accessible->priv->object)
+        return nullptr;
+    
     if (ATK_IS_DOCUMENT(object)) {
         // TODO: Should we fall back on lang xml:lang when the following comes up empty?
         String language = accessible->priv->object->language();
@@ -1300,27 +1315,24 @@ WebKitAccessible* webkitAccessibleNew(AccessibilityObject* coreObject)
 AccessibilityObject& webkitAccessibleGetAccessibilityObject(WebKitAccessible* accessible)
 {
     ASSERT(WEBKIT_IS_ACCESSIBLE(accessible));
+    ASSERT(accessible->priv->object);
     return *accessible->priv->object;
 }
 
 void webkitAccessibleDetach(WebKitAccessible* accessible)
 {
     ASSERT(WEBKIT_IS_ACCESSIBLE(accessible));
-    ASSERT(accessible->priv->object != fallbackObject());
 
-    if (accessible->priv->object->roleValue() == AccessibilityRole::WebArea)
+    if (accessible->priv->object && accessible->priv->object->roleValue() == AccessibilityRole::WebArea)
         atk_object_notify_state_change(ATK_OBJECT(accessible), ATK_STATE_DEFUNCT, TRUE);
 
-    // We replace the WebCore AccessibilityObject with a fallback object that
-    // provides default implementations to avoid repetitive null-checking after
-    // detachment.
-    accessible->priv->object = fallbackObject();
+    accessible->priv->object = nullptr;
 }
 
 bool webkitAccessibleIsDetached(WebKitAccessible* accessible)
 {
     ASSERT(WEBKIT_IS_ACCESSIBLE(accessible));
-    return accessible->priv->object == fallbackObject();
+    return !accessible->priv->object;
 }
 
 const char* webkitAccessibleCacheAndReturnAtkProperty(WebKitAccessible* accessible, AtkCachedProperty property, CString&& value)

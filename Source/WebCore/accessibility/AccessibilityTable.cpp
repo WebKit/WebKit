@@ -417,7 +417,7 @@ void AccessibilityTable::addChildren()
     // make the columns based on the number of columns in the first body
     unsigned length = maxColumnCount;
     for (unsigned i = 0; i < length; ++i) {
-        auto& column = downcast<AccessibilityTableColumn>(*axCache->getOrCreate(AccessibilityRole::Column));
+        auto& column = downcast<AccessibilityTableColumn>(*axCache->create(AccessibilityRole::Column));
         column.setColumnIndex(i);
         column.setParent(this);
         m_columns.append(&column);
@@ -505,7 +505,7 @@ AXCoreObject* AccessibilityTable::headerContainer()
     if (m_headerContainer)
         return m_headerContainer.get();
     
-    auto& tableHeader = downcast<AccessibilityMockObject>(*axObjectCache()->getOrCreate(AccessibilityRole::TableHeaderContainer));
+    auto& tableHeader = downcast<AccessibilityMockObject>(*axObjectCache()->create(AccessibilityRole::TableHeaderContainer));
     tableHeader.setParent(this);
 
     m_headerContainer = &tableHeader;

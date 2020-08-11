@@ -346,7 +346,5 @@ class SingleTestRunner(object):
                 actual_driver_output.error = (actual_driver_output.error or '') + error_string
             elif diff_result[0]:
                 failures.append(test_failures.FailureReftestMismatch(reference_filename))
-            else:
-                _log.warning("  %s -> ref test hashes didn't match but diff passed" % self._test_name)
 
         return TestResult(self._test_name, failures, total_test_time, has_stderr, pid=actual_driver_output.pid)

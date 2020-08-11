@@ -1,3 +1,130 @@
+2020-08-11  Darin Adler  <darin@apple.com>
+
+        LayoutTest accessibility/mac/select-element-selection-with-optgroups.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=175341
+
+        Reviewed by Chris Fleizach.
+
+        Failures were due to new AX objects being created for HTMLOptionElement.
+        Unlike most other AX objects, these were not cached in the AXObjectCache
+        and multiple objects could be created for the same underlying option. Fixed this
+        by changing it to track the option element in the cache in the conventional way.
+
+        * WebCore.xcodeproj/project.pbxproj: Remove AccessibilityMediaControls.h/cpp.
+        The source files were removed back in April.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate): Added code for HTMLOptionElement and
+        HTMLOptGroupElement so AccessibilityMenuListOption and AccessibilityListBoxOption
+        can be created in this function.
+        (WebCore::AXObjectCache::create): Renamed the version of this that takes an
+        AccessibilityRole to not claim that it ever gets the value from the cache,
+        because it never does. Also removed the cases for ListBoxOption and MenuListOption.
+        * accessibility/AXObjectCache.h: Updated for above.
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addChildren): Use create.
+
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::addChildren): Removed super-old comment that mentions
+        the long-ago-removed WML.
+        (WebCore::AccessibilityListBox::listBoxOptionAccessibilityObject const): Use the
+        element to get the list box option rather than creating a new one every time.
+        No longer any need to special case <hr> elements since the getOrCreate function
+        will return nil for non-option elements that don't have a renderer.
+
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::AccessibilityListBoxOption): Take the element
+        in the constructor instead of using a separate function to associate it.
+        (WebCore::AccessibilityListBoxOption::create): Ditto.
+        (WebCore::AccessibilityListBoxOption::isEnabled const): Update for WeakPtr.
+        (WebCore::AccessibilityListBoxOption::isSelected const): Ditto.
+        (WebCore::AccessibilityListBoxOption::canSetSelectedAttribute const): Ditto.
+        (WebCore::AccessibilityListBoxOption::actionElement const): Update for WeakPtr.
+        (WebCore::AccessibilityListBoxOption::node const): Added. For some reason the
+        AccessibilityMenuListOption class had this function and this one did not. They
+        should both have it.
+        * accessibility/AccessibilityListBoxOption.h: Updated for above. Made most
+        functions private and final. Fixed includes and forward declarations.
+        Removed the setHTMLElement function. Changed m_optionElement from
+        HTMLElement* to WeakPtr<HTMLElement>.
+
+        * accessibility/AccessibilityMenuList.cpp:
+        (WebCore::AccessibilityMenuList::addChildren): Use create.
+
+        * accessibility/AccessibilityMenuListOption.cpp:
+        (WebCore::AccessibilityMenuListOption::AccessibilityMenuListOption): Take the
+        element in the constructor instead of using a separate function to associate it.
+        (WebCore::AccessibilityMenuListOption::create): Ditto.
+        (WebCore::AccessibilityMenuListOption::setElement): Deleted.
+        (WebCore::AccessibilityMenuListOption::node const): Moved here from the header.
+        (WebCore::AccessibilityMenuListOption::isEnabled const): Removed unneeded cast
+        now that m_element has a more specific type, and added a null check.
+        (WebCore::AccessibilityMenuListOption::isVisible const): Removed dependency
+        on m_parent pointer, which does not exist now that we don't derive from
+        AccessibilityMockObject.
+        (WebCore::AccessibilityMenuListOption::isSelected const): Removed unneeded cast
+        now that m_element has a more specific type, and added a null check.
+        (WebCore::AccessibilityMenuListOption::setSelected): Ditto, but no null check
+        needed because canSetSelectedAttribute takes care of that.
+        (WebCore::AccessibilityMenuListOption::stringValue const): Ditto.
+        * accessibility/AccessibilityMenuListOption.h: Updated for above. Marked
+        functions final instead of override. Changed m_element from RefPtr<HTMLElement>
+        to WeakPtr<HTMLOptionElement> to avoid reference cycles that could leak to
+        memory leaks. Derive from AccessibilityObject instead of
+        AccessibilityMockObject, since the latter class has nothing to offer us.
+
+        * accessibility/AccessibilityMenuListPopup.cpp:
+        (WebCore::AccessibilityMenuListPopup::menuListOptionAccessibilityObject const):
+        Use the element to get the menu list option rather than creating a new one
+        every time. No longer any need to check that the type is HTMLOptionElement
+        because that's the responsibility of the code in the cache now.
+        (WebCore::AccessibilityMenuListPopup::addChildren): Removed unneeded call
+        to setParent since the menu list option objects no longer hold parent pointers.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::accessibleNameForNode): Added a special case for HTMLOptionElement
+        like the one for HTMLInputElement. The code worked for fairly well for option
+        elements before, almost by accident, and the way it worked was perturbed by
+        the change to whether we cache those objects. This newer code path works in a
+        more straightforward way, keeps our existing tests psasing, and likely gets
+        some edge cases handled more correctly (should add new tests for those).
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::documentLinks): Use create.
+        (WebCore::AccessibilityRenderObject::addImageMapChildren): Ditto.
+        (WebCore::AccessibilityRenderObject::addTextFieldChildren): Ditto.
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::addChildren): Ditto.
+        * accessibility/AccessibilitySpinButton.cpp:
+        (WebCore::AccessibilitySpinButton::addChildren): Ditto.
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::addChildren): Ditto.
+        (WebCore::AccessibilityTable::headerContainer): Ditto.
+
+        * accessibility/atk/WebKitAccessible.cpp:
+        (fallbackObject): Deleted.
+        (webkitAccessibleGetName): Added null check.
+        (webkitAccessibleGetDescription): Ditto.
+        (webkitAccessibleGetParent): Ditto.
+        (webkitAccessibleGetNChildren): Ditto.
+        (webkitAccessibleRefChild): Ditto.
+        (webkitAccessibleGetIndexInParent): Ditto.
+        (webkitAccessibleGetAttributes): Ditto.
+        (webkitAccessibleGetRole): Ditto.
+        (webkitAccessibleRefStateSet): Ditto.
+        (webkitAccessibleRefRelationSet): Ditto.
+        (webkitAccessibleGetObjectLocale): Ditto.
+        (webkitAccessibleGetAccessibilityObject): Ditto.
+        (webkitAccessibleDetach): Use nullptr instead of fallbackObject.
+        (webkitAccessibleIsDetached): Ditto.
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::selected const): Made this const. An earlier
+        version of the patch required this; the latest version doesn't, but it's
+        more logical and better for it to be const.
+        * html/HTMLOptionElement.h: Updated for above.
+
 2020-08-11  Timothy Hatcher  <timothy@apple.com>
 
         Deferred WKUserScripts are exponentially injected on preloaded pages with frames.

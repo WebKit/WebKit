@@ -159,7 +159,7 @@ public:
     WEBCORE_EXPORT AccessibilityObject* getOrCreate(Node*);
 
     // used for objects without backing elements
-    AccessibilityObject* getOrCreate(AccessibilityRole);
+    AccessibilityObject* create(AccessibilityRole);
     
     // will only return the AccessibilityObject if it already exists
     AccessibilityObject* get(RenderObject*);

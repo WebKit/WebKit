@@ -854,7 +854,7 @@ imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]
 
 webkit.org/b/205412 [ Mojave Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Timeout ]
 
-webkit.org/b/205410 [ Debug ] accessibility/mac/expanded-notification.html [ Failure ]
+webkit.org/b/205410 [ Debug ] accessibility/mac/expanded-notification.html [ Pass Failure ]
 
 webkit.org/b/206071 editing/spelling/grammar.html [ Skip ]
 webkit.org/b/206071 editing/spelling/markers.html [ Skip ]

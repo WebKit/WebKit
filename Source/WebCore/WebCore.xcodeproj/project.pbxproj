@@ -193,7 +193,6 @@
 		07AB996B18DA3C010018771E /* RTCIceServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AB996718DA3C010018771E /* RTCIceServer.h */; };
 		07AFF4221EFB144900B545B3 /* CoreAudioCaptureSourceIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AFF4201EFB144700B545B3 /* CoreAudioCaptureSourceIOS.h */; };
 		07AFF4231EFB144900B545B3 /* CoreAudioCaptureSourceIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AFF4211EFB144700B545B3 /* CoreAudioCaptureSourceIOS.mm */; };
-		07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */; };
 		07B0ABCF1032242200FBDC33 /* AccessibilityMathMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0ABCE1032242200FBDC33 /* AccessibilityMathMLElement.h */; };
 		07B442D6166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */; };
 		07B442D7166C70B000556CAD /* InbandTextTrackPrivateAVF.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B442D5166C70B000556CAD /* InbandTextTrackPrivateAVF.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5711,7 +5710,6 @@
 		07AB996818DA3C010018771E /* RTCIceServer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RTCIceServer.idl; sourceTree = "<group>"; };
 		07AFF4201EFB144700B545B3 /* CoreAudioCaptureSourceIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudioCaptureSourceIOS.h; sourceTree = "<group>"; };
 		07AFF4211EFB144700B545B3 /* CoreAudioCaptureSourceIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreAudioCaptureSourceIOS.mm; sourceTree = "<group>"; };
-		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
 		07B0ABCE1032242200FBDC33 /* AccessibilityMathMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMathMLElement.h; sourceTree = "<group>"; };
 		07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandTextTrackPrivateAVF.cpp; sourceTree = "<group>"; };
 		07B442D5166C70B000556CAD /* InbandTextTrackPrivateAVF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateAVF.h; sourceTree = "<group>"; };
@@ -6813,7 +6811,6 @@
 		2981CAA1131822EC00D12F2A /* AccessibilityList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityList.cpp; sourceTree = "<group>"; };
 		2981CAA2131822EC00D12F2A /* AccessibilityListBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityListBox.cpp; sourceTree = "<group>"; };
 		2981CAA3131822EC00D12F2A /* AccessibilityListBoxOption.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityListBoxOption.cpp; sourceTree = "<group>"; };
-		2981CAA4131822EC00D12F2A /* AccessibilityMediaControls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMediaControls.cpp; sourceTree = "<group>"; };
 		2981CAA5131822EC00D12F2A /* AccessibilityObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityObject.cpp; sourceTree = "<group>"; };
 		2981CAA6131822EC00D12F2A /* AccessibilityRenderObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityRenderObject.cpp; sourceTree = "<group>"; };
 		2981CAA7131822EC00D12F2A /* AccessibilityScrollbar.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityScrollbar.cpp; sourceTree = "<group>"; };
@@ -18352,8 +18349,6 @@
 				29A812240FBB9C1D00510293 /* AccessibilityListBoxOption.h */,
 				2981ABC4131822EC00D12F2A /* AccessibilityMathMLElement.cpp */,
 				07B0ABCE1032242200FBDC33 /* AccessibilityMathMLElement.h */,
-				2981CAA4131822EC00D12F2A /* AccessibilityMediaControls.cpp */,
-				07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */,
 				A9787CB31F5F5C6500C551C6 /* AccessibilityMediaObject.cpp */,
 				A9787CB21F5F599200C551C6 /* AccessibilityMediaObject.h */,
 				76CDD2EC1103DA6600680521 /* AccessibilityMenuList.cpp */,
@@ -29994,7 +29989,6 @@
 				29A812430FBB9C1D00510293 /* AccessibilityListBox.h in Headers */,
 				29A812420FBB9C1D00510293 /* AccessibilityListBoxOption.h in Headers */,
 				07B0ABCF1032242200FBDC33 /* AccessibilityMathMLElement.h in Headers */,
-				07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */,
 				76CDD2F31103DA6600680521 /* AccessibilityMenuList.h in Headers */,
 				76CDD2F71103DA6600680521 /* AccessibilityMenuListOption.h in Headers */,
 				76CDD2F51103DA6600680521 /* AccessibilityMenuListPopup.h in Headers */,

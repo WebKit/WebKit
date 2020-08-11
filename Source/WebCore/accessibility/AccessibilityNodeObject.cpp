@@ -53,6 +53,7 @@
 #include "HTMLLabelElement.h"
 #include "HTMLLegendElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
@@ -2026,7 +2027,7 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
 
     // If the node can be turned into an AX object, we can use standard name computation rules.
     // If however, the node cannot (because there's no renderer e.g.) fallback to using the basic text underneath.
-    AccessibilityObject* axObject = node->document().axObjectCache()->getOrCreate(node);
+    auto axObject = element.document().axObjectCache()->getOrCreate(&element);
     if (axObject) {
         String valueDescription = axObject->valueDescription();
         if (!valueDescription.isEmpty())
@@ -2056,9 +2057,11 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode)
             return childText;
     }
     
-    if (is<HTMLInputElement>(*node))
-        return downcast<HTMLInputElement>(*node).value();
-    
+    if (is<HTMLInputElement>(element))
+        return downcast<HTMLInputElement>(element).value();
+    if (is<HTMLOptionElement>(element))
+        return downcast<HTMLOptionElement>(element).value();
+
     String text;
     if (axObject) {
         if (axObject->accessibleNameDerivesFromContent())

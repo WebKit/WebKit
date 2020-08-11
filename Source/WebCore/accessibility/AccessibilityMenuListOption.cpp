@@ -35,36 +35,39 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityMenuListOption::AccessibilityMenuListOption()
+AccessibilityMenuListOption::AccessibilityMenuListOption(HTMLOptionElement& element)
+    : m_element(makeWeakPtr(element))
 {
 }
 
-void AccessibilityMenuListOption::setElement(HTMLElement* element)
+Ref<AccessibilityMenuListOption> AccessibilityMenuListOption::create(HTMLOptionElement& element)
 {
-    ASSERT_ARG(element, is<HTMLOptionElement>(element));
-    m_element = element;
+    return adoptRef(*new AccessibilityMenuListOption(element));
 }
 
 Element* AccessibilityMenuListOption::actionElement() const
 {
     return m_element.get();
 }
+
+Node* AccessibilityMenuListOption::node() const
+{
+    return m_element.get();
+}
     
 bool AccessibilityMenuListOption::isEnabled() const
 {
-    // isDisabledFormControl() returns true if the parent <select> element is disabled,
-    // which we don't want.
-    return !downcast<HTMLOptionElement>(*m_element).ownElementDisabled();
+    return m_element && !m_element->ownElementDisabled();
 }
 
 bool AccessibilityMenuListOption::isVisible() const
 {
-    if (!m_parent)
+    if (!m_element)
         return false;
-    
-    // In a single-option select with the popup collapsed, only the selected
-    // item is considered visible.
-    return !m_parent->isOffScreen() || isSelected();
+
+    // In a single-option select with the popup collapsed, only the selected item is considered visible.
+    auto parent = m_element->document().axObjectCache()->getOrCreate(m_element->ownerSelectElement());
+    return parent && (!parent->isOffScreen() || isSelected());
 }
 
 bool AccessibilityMenuListOption::isOffScreen() const
@@ -75,7 +78,7 @@ bool AccessibilityMenuListOption::isOffScreen() const
 
 bool AccessibilityMenuListOption::isSelected() const
 {
-    return downcast<HTMLOptionElement>(*m_element).selected();
+    return m_element && m_element->selected();
 }
 
 void AccessibilityMenuListOption::setSelected(bool selected)
@@ -83,7 +86,7 @@ void AccessibilityMenuListOption::setSelected(bool selected)
     if (!canSetSelectedAttribute())
         return;
     
-    downcast<HTMLOptionElement>(*m_element).setSelected(selected);
+    m_element->setSelected(selected);
 }
 
 String AccessibilityMenuListOption::nameForMSAA() const
@@ -118,7 +121,7 @@ LayoutRect AccessibilityMenuListOption::elementRect() const
 
 String AccessibilityMenuListOption::stringValue() const
 {
-    return downcast<HTMLOptionElement>(*m_element).label();
+    return m_element ? m_element->label() : String();
 }
 
 } // namespace WebCore

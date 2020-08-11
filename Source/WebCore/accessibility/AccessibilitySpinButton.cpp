@@ -88,12 +88,12 @@ void AccessibilitySpinButton::addChildren()
     
     m_haveChildren = true;
     
-    auto& incrementor = downcast<AccessibilitySpinButtonPart>(*cache->getOrCreate(AccessibilityRole::SpinButtonPart));
+    auto& incrementor = downcast<AccessibilitySpinButtonPart>(*cache->create(AccessibilityRole::SpinButtonPart));
     incrementor.setIsIncrementor(true);
     incrementor.setParent(this);
     m_children.append(&incrementor);
 
-    auto& decrementor = downcast<AccessibilitySpinButtonPart>(*cache->getOrCreate(AccessibilityRole::SpinButtonPart));
+    auto& decrementor = downcast<AccessibilitySpinButtonPart>(*cache->create(AccessibilityRole::SpinButtonPart));
     decrementor.setIsIncrementor(false);
     decrementor.setParent(this);
     m_children.append(&decrementor);

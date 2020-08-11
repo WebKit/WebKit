@@ -78,7 +78,10 @@
 #include "HTMLMediaElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptGroupElement.h"
+#include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLSelectElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineElementBox.h"
 #include "MathMLElement.h"
@@ -640,6 +643,24 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     if (!node->parentElement())
         return nullptr;
     
+    bool isOptionElement = is<HTMLOptionElement>(*node);
+    if (isOptionElement || is<HTMLOptGroupElement>(*node)) {
+        auto select = isOptionElement
+            ? downcast<HTMLOptionElement>(*node).ownerSelectElement()
+            : downcast<HTMLOptGroupElement>(*node).ownerSelectElement();
+        if (!select)
+            return nullptr;
+        RefPtr<AccessibilityObject> object;
+        if (select->usesMenuList()) {
+            if (!isOptionElement)
+                return nullptr;
+            object = AccessibilityMenuListOption::create(downcast<HTMLOptionElement>(*node));
+        } else
+            object = AccessibilityListBoxOption::create(downcast<HTMLElement>(*node));
+        cacheAndInitializeWrapper(object.get(), node);
+        return object.get();
+    }
+
     // It's only allowed to create an AccessibilityObject from a Node if it's in a canvas subtree.
     // Or if it's a hidden element, but we still want to expose it because of other ARIA attributes.
     bool inCanvasSubtree = lineageOfType<HTMLCanvasElement>(*node->parentElement()).first();
@@ -801,15 +822,12 @@ AccessibilityObject* AXObjectCache::rootObjectForFrame(Frame* frame)
     return getOrCreate(frame->view());
 }    
     
-AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
+AccessibilityObject* AXObjectCache::create(AccessibilityRole role)
 {
     RefPtr<AccessibilityObject> obj;
 
     // will be filled in...
     switch (role) {
-    case AccessibilityRole::ListBoxOption:
-        obj = AccessibilityListBoxOption::create();
-        break;
     case AccessibilityRole::ImageMapLink:
         obj = AccessibilityImageMapLink::create();
         break;
@@ -824,9 +842,6 @@ AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
         break;
     case AccessibilityRole::MenuListPopup:
         obj = AccessibilityMenuListPopup::create();
-        break;
-    case AccessibilityRole::MenuListOption:
-        obj = AccessibilityMenuListOption::create();
         break;
     case AccessibilityRole::SpinButton:
         obj = AccessibilitySpinButton::create();

@@ -653,8 +653,6 @@ webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-cross-
 
 webkit.org/b/172148 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html [ Pass Failure ]
 
-webkit.org/b/175341 accessibility/mac/select-element-selection-with-optgroups.html [ Pass Failure ]
-
 webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html [ Pass Timeout ]
 
 webkit.org/b/173779 [ Debug ] fast/scrolling/arrow-key-scroll-in-rtl-document.html [ Pass Failure ]
@@ -1086,7 +1084,7 @@ webkit.org/b/214574 [ Release ] svg/animations/smil-leak-list-property-instances
 
 webkit.org/b/214579 [ Release ] svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 
-webkkit.org/b/214651 [ Debug ] tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html [ Pass Crash ]
+webkit.org/b/214651 [ Debug ] tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html [ Pass Crash ]
 
 webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Crash ]
 

@@ -1949,7 +1949,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
         } else {
             auto* parent = current->parentNode();
             if (is<HTMLAreaElement>(*current) && is<HTMLMapElement>(parent)) {
-                auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->getOrCreate(AccessibilityRole::ImageMapLink));
+                auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->create(AccessibilityRole::ImageMapLink));
                 HTMLMapElement& map = downcast<HTMLMapElement>(*parent);
                 areaObject.setHTMLAreaElement(downcast<HTMLAreaElement>(current));
                 areaObject.setHTMLMapElement(&map);
@@ -3173,7 +3173,7 @@ void AccessibilityRenderObject::addImageMapChildren()
         // add an <area> element for this child if it has a link
         if (!area.isLink())
             continue;
-        auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->getOrCreate(AccessibilityRole::ImageMapLink));
+        auto& areaObject = downcast<AccessibilityImageMapLink>(*axObjectCache()->create(AccessibilityRole::ImageMapLink));
         areaObject.setHTMLAreaElement(&area);
         areaObject.setHTMLMapElement(map);
         areaObject.setParent(this);
@@ -3208,7 +3208,7 @@ void AccessibilityRenderObject::addTextFieldChildren()
     if (!is<SpinButtonElement>(spinButtonElement))
         return;
 
-    auto& axSpinButton = downcast<AccessibilitySpinButton>(*axObjectCache()->getOrCreate(AccessibilityRole::SpinButton));
+    auto& axSpinButton = downcast<AccessibilitySpinButton>(*axObjectCache()->create(AccessibilityRole::SpinButton));
     axSpinButton.setSpinButtonElement(downcast<SpinButtonElement>(spinButtonElement));
     axSpinButton.setParent(this);
     m_children.append(&axSpinButton);

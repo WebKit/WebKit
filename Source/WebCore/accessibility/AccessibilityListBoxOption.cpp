@@ -31,35 +31,32 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityListBox.h"
-#include "Element.h"
-#include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "HTMLOptGroupElement.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
 #include "IntRect.h"
 #include "RenderListBox.h"
-#include "RenderObject.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
     
-AccessibilityListBoxOption::AccessibilityListBoxOption()
-    : m_optionElement(nullptr)
+AccessibilityListBoxOption::AccessibilityListBoxOption(HTMLElement& element)
+    : m_optionElement(makeWeakPtr(element))
 {
 }
 
 AccessibilityListBoxOption::~AccessibilityListBoxOption() = default;
     
-Ref<AccessibilityListBoxOption> AccessibilityListBoxOption::create()
+Ref<AccessibilityListBoxOption> AccessibilityListBoxOption::create(HTMLElement& element)
 {
-    return adoptRef(*new AccessibilityListBoxOption());
+    return adoptRef(*new AccessibilityListBoxOption(element));
 }
     
 bool AccessibilityListBoxOption::isEnabled() const
 {
-    if (is<HTMLOptGroupElement>(m_optionElement))
+    if (is<HTMLOptGroupElement>(m_optionElement.get()))
         return false;
 
     if (equalLettersIgnoringASCIICase(getAttribute(aria_disabledAttr), "true"))
@@ -73,7 +70,7 @@ bool AccessibilityListBoxOption::isEnabled() const
     
 bool AccessibilityListBoxOption::isSelected() const
 {
-    if (!is<HTMLOptionElement>(m_optionElement))
+    if (!is<HTMLOptionElement>(m_optionElement.get()))
         return false;
 
     return downcast<HTMLOptionElement>(*m_optionElement).selected();
@@ -124,7 +121,7 @@ bool AccessibilityListBoxOption::computeAccessibilityIsIgnored() const
     
 bool AccessibilityListBoxOption::canSetSelectedAttribute() const
 {
-    if (!is<HTMLOptionElement>(m_optionElement))
+    if (!is<HTMLOptionElement>(m_optionElement.get()))
         return false;
     
     if (m_optionElement->isDisabledFormControl())
@@ -157,7 +154,12 @@ String AccessibilityListBoxOption::stringValue() const
 
 Element* AccessibilityListBoxOption::actionElement() const
 {
-    return m_optionElement;
+    return m_optionElement.get();
+}
+
+Node* AccessibilityListBoxOption::node() const
+{
+    return m_optionElement.get();
 }
 
 AccessibilityObject* AccessibilityListBoxOption::parentObject() const

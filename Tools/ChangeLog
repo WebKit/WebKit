@@ -1,3 +1,15 @@
+2020-08-11  Darin Adler  <darin@apple.com>
+
+        LayoutTest accessibility/mac/select-element-selection-with-optgroups.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=175341
+
+        Reviewed by Chris Fleizach.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_output_with_reference): Removed unhelpful log message that tells
+        about ref tests where the hash optimization for comparing images does not work, but the
+        test passes. We don't want to get this kind of log message for passing tests.
+
 2020-08-11  Timothy Hatcher  <timothy@apple.com>
 
         Deferred WKUserScripts are exponentially injected on preloaded pages with frames.

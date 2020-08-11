@@ -45,7 +45,7 @@ public:
     WEBCORE_EXPORT String value() const;
     WEBCORE_EXPORT void setValue(const String&);
 
-    WEBCORE_EXPORT bool selected();
+    WEBCORE_EXPORT bool selected() const;
     WEBCORE_EXPORT void setSelected(bool);
 
     WEBCORE_EXPORT HTMLSelectElement* ownerSelectElement() const;
