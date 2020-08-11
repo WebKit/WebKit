@@ -1,3 +1,30 @@
+2020-08-11  Mark Lam  <mark.lam@apple.com>
+
+        ScriptExecutable::newCodeBlockFor() neglected to set the exception pointer result in one case.
+        https://bugs.webkit.org/show_bug.cgi?id=215357
+        <rdar://problem/57675112>
+
+        Reviewed by Yusuke Suzuki.
+
+        At the bottom of ScriptExecutable::newCodeBlockFor(), it calls:
+            RELEASE_AND_RETURN(throwScope, FunctionCodeBlock::create(vm, executable, unlinkedCodeBlock, scope));
+
+        However, ScriptExecutable::newCodeBlockFor() has 2 return values: a CodeBlock*,
+        and a passed in Exception*& that needs to be set if there's an exception.
+        FunctionCodeBlock::create() is capable of returning a null CodeBlock* because
+        CodeBlock::finishCreation() can throw exceptions.  As a result, we have a scenario
+        here where ScriptExecutable::newCodeBlockFor() can return a null CodeBlock* without
+        setting the Exception*& result.
+
+        Consequently, Interpreter::executeCall() is relying on this and can end up
+        crashing while dereferencing a null CodeBlock* because the exception result was
+        not set.
+
+        This patch fixes ScriptExecutable::newCodeBlockFor() to set the exception result.
+
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+
 2020-08-10  Lauro Moura  <lmoura@igalia.com>
 
         [CMake][JSC] Fix testapiScripts copy location
