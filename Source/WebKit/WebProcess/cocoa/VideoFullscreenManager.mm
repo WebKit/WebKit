@@ -524,7 +524,7 @@ void VideoFullscreenManager::setVideoLayerGravityEnum(PlaybackSessionContextIden
     ensureModel(contextId).setVideoLayerGravity((MediaPlayerEnums::VideoGravity)gravity);
 }
     
-void VideoFullscreenManager::fullscreenMayReturnToInline(PlaybackSessionContextIdentifier contextId, bool isPageVisible)
+void VideoFullscreenManager::fullscreenWillReturnToInline(PlaybackSessionContextIdentifier contextId, bool isPageVisible)
 {
     if (!m_page)
         return;

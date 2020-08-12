@@ -435,6 +435,7 @@ public:
     void enterFullscreen(VideoFullscreenMode);
     WEBCORE_EXPORT void enterFullscreen() override;
     WEBCORE_EXPORT void exitFullscreen();
+    WEBCORE_EXPORT void prepareForVideoFullscreenStandby();
     WEBCORE_EXPORT void setVideoFullscreenStandby(bool);
 
     bool hasClosedCaptions() const override;

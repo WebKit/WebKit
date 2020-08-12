@@ -46,12 +46,6 @@ static const NSTimeInterval autoHideDelay = 4.0;
 
 @class WKFullscreenStackView;
 
-@interface WKFullScreenViewController (VideoFullscreenClientCallbacks)
-- (void)willEnterPictureInPicture;
-- (void)didEnterPictureInPicture;
-- (void)failedToEnterPictureInPicture;
-@end
-
 class WKFullScreenViewControllerPlaybackSessionModelClient : WebCore::PlaybackSessionModelClient {
 public:
     void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
@@ -85,45 +79,6 @@ public:
 private:
     WKFullScreenViewController *m_parent { nullptr };
     RefPtr<WebCore::PlaybackSessionInterfaceAVKit> m_interface;
-};
-
-class WKFullScreenViewControllerVideoFullscreenModelClient : WebCore::VideoFullscreenModelClient {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    void setParent(WKFullScreenViewController *parent) { m_parent = parent; }
-
-    void setInterface(WebCore::VideoFullscreenInterfaceAVKit* interface)
-    {
-        if (m_interface == interface)
-            return;
-
-        if (m_interface && m_interface->videoFullscreenModel())
-            m_interface->videoFullscreenModel()->removeClient(*this);
-        m_interface = interface;
-        if (m_interface && m_interface->videoFullscreenModel())
-            m_interface->videoFullscreenModel()->addClient(*this);
-    }
-
-    WebCore::VideoFullscreenInterfaceAVKit* interface() const { return m_interface.get(); }
-
-    void willEnterPictureInPicture() final
-    {
-        [m_parent willEnterPictureInPicture];
-    }
-
-    void didEnterPictureInPicture() final
-    {
-        [m_parent didEnterPictureInPicture];
-    }
-
-    void failedToEnterPictureInPicture() final
-    {
-        [m_parent failedToEnterPictureInPicture];
-    }
-
-private:
-    WKFullScreenViewController *m_parent { nullptr };
-    RefPtr<WebCore::VideoFullscreenInterfaceAVKit> m_interface;
 };
 
 #pragma mark - _WKExtrinsicButton
@@ -164,7 +119,6 @@ private:
     RetainPtr<NSLayoutConstraint> _topConstraint;
     WebKit::FullscreenTouchSecheuristic _secheuristic;
     WKFullScreenViewControllerPlaybackSessionModelClient _playbackClient;
-    WKFullScreenViewControllerVideoFullscreenModelClient _videoFullscreenClient;
     CGFloat _nonZeroStatusBarHeight;
 }
 
@@ -188,7 +142,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     self._webView = webView;
 
     _playbackClient.setParent(self);
-    _videoFullscreenClient.setParent(self);
 
     return self;
 }
@@ -200,8 +153,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _playbackClient.setParent(nullptr);
     _playbackClient.setInterface(nullptr);
-    _videoFullscreenClient.setParent(nullptr);
-    _videoFullscreenClient.setInterface(nullptr);
 
     [_target release];
     [_location release];
@@ -261,7 +212,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto* playbackSessionInterface = videoFullscreenInterface ? &videoFullscreenInterface->playbackSessionInterface() : nullptr;
 
     _playbackClient.setInterface(playbackSessionInterface);
-    _videoFullscreenClient.setInterface(videoFullscreenInterface);
 
     WebCore::PlaybackSessionModel* playbackSessionModel = playbackSessionInterface ? playbackSessionInterface->playbackSessionModel() : nullptr;
     self.playing = playbackSessionModel ? playbackSessionModel->isPlaying() : NO;
@@ -270,6 +220,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
     bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
     [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
+}
+
+- (void)setAnimatingViewAlpha:(CGFloat)alpha
+{
+    [UIView animateWithDuration:pipHideAnimationDuration animations:^{
+        _animatingView.get().alpha = alpha;
+    }];
 }
 
 - (void)setPrefersStatusBarHidden:(BOOL)value
@@ -328,33 +285,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [self hideUI];
     else
         [self showUI];
-}
-
-- (void)willEnterPictureInPicture
-{
-    auto* interface = _videoFullscreenClient.interface();
-    if (!interface || !interface->pictureInPictureWasStartedWhenEnteringBackground())
-        return;
-
-    [UIView animateWithDuration:pipHideAnimationDuration animations:^{
-        _animatingView.get().alpha = 0;
-    }];
-}
-
-- (void)didEnterPictureInPicture
-{
-    [self _cancelAction:self];
-}
-
-- (void)failedToEnterPictureInPicture
-{
-    auto* interface = _videoFullscreenClient.interface();
-    if (!interface || !interface->pictureInPictureWasStartedWhenEnteringBackground())
-        return;
-
-    [UIView animateWithDuration:pipHideAnimationDuration animations:^{
-        _animatingView.get().alpha = 1;
-    }];
 }
 
 #pragma mark - UIViewController Overrides
@@ -503,7 +433,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_cancelAction:(id)sender
 {
-    [[self target] performSelector:[self action]];
+    [[self target] performSelector:[self exitFullScreenAction]];
 }
 
 - (void)_togglePiPAction:(id)sender

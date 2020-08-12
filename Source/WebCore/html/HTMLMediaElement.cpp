@@ -5956,7 +5956,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
 
     m_fullscreenTaskQueue.enqueueTask([this, mode] {
         if (document().hidden()) {
-            ALWAYS_LOG(LOGIDENTIFIER, "  returning because document is hidden");
+            ALWAYS_LOG(LOGIDENTIFIER, " returning because document is hidden");
             return;
         }
 
@@ -6028,6 +6028,13 @@ void HTMLMediaElement::exitFullscreen()
 
         scheduleEvent(eventNames().webkitendfullscreenEvent);
     }
+}
+
+void HTMLMediaElement::prepareForVideoFullscreenStandby()
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    document().page()->chrome().client().prepareForVideoFullscreen();
+#endif
 }
 
 WEBCORE_EXPORT void HTMLMediaElement::setVideoFullscreenStandby(bool value)

@@ -154,7 +154,7 @@ protected:
     void setVideoLayerFrameFenced(PlaybackSessionContextIdentifier, WebCore::FloatRect bounds, IPC::Attachment fencePort);
     void setVideoLayerGravityEnum(PlaybackSessionContextIdentifier, unsigned gravity);
     void fullscreenModeChanged(PlaybackSessionContextIdentifier, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
-    void fullscreenMayReturnToInline(PlaybackSessionContextIdentifier, bool isPageVisible);
+    void fullscreenWillReturnToInline(PlaybackSessionContextIdentifier, bool isPageVisible);
     void requestRouteSharingPolicyAndContextUID(PlaybackSessionContextIdentifier, Messages::VideoFullscreenManager::RequestRouteSharingPolicyAndContextUIDAsyncReply&&);
 
     WebPage* m_page;

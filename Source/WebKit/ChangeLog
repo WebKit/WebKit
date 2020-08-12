@@ -1,3 +1,112 @@
+2020-08-12  Peng Liu  <peng.liu6@apple.com>
+
+        Add the support to return to element fullscreen from picture-in-picture
+        https://bugs.webkit.org/show_bug.cgi?id=215305
+
+        Reviewed by Jer Noble.
+
+        This patch replaces WKFullScreenViewControllerVideoFullscreenModelClient
+        with WKFullScreenWindowControllerVideoFullscreenModelClient. We need to do
+        that because the instance of WKFullScreenViewControllerVideoFullscreenModelClient
+        will be destroyed after the container element exits fullscreen while the video
+        element enters picture-in-picture.
+
+        The instance of WKFullScreenWindowControllerVideoFullscreenModelClient
+        will always exist when the WKFullScreenWindowController instance is alive,
+        so that it can receive callbacks from the VideoFullscreenInterfaceAVKit instance
+        to implement the "return to element fullscreen from picture-in-picture" feature.
+
+        This patch supports the following transitions:
+        element fullscreen -> picture-in-picture (through user gestures)
+        element fullscreen -> picture-in-picture (through the PiP button)
+        picture-in-picture -> element fullscreen (when the tab is visible)
+        picture-in-picture -> element fullscreen (when the tab is invisible)
+        picture-in-picture -> element fullscreen (when the browser is in background)
+        picture-in-picture -> inline (when the browser is in foreground)
+        exit picture-in-picture when the browser is in background
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenModelContext::fullscreenWillReturnToInline):
+        (WebKit::VideoFullscreenModelContext::prepareToExitFullscreen):
+        Notify clients to prepare for the stop of fullscreen/picture-in-picture.
+        (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+        Fix issues that increase the client count unnecessarily.
+        (WebKit::VideoFullscreenManagerProxy::preparedToReturnToInline):
+        Call m_page->fullscreenMayReturnToInline() earlier.
+        (WebKit::VideoFullscreenManagerProxy::fullscreenMayReturnToInline):
+        Ditto.
+        (WebKit::VideoFullscreenManagerProxy::fullscreenWillReturnToInline):
+        Notify VideoFullscreenManager to prepare for exiting picture-in-picture or video fullscreen
+        and report the destination rectangle of the exit picture-in-picture or video fullscreen animations.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::requestEnterFullScreen):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        Add a function requestEnterFullScreen() so that we can request an element to enter fullscreen
+        from the UI process side.
+
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.h:
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController initWithWebView:]):
+        (-[WKFullScreenViewController dealloc]):
+        (-[WKFullScreenViewController videoControlsManagerDidChange]):
+        (-[WKFullScreenViewController setAnimatingViewAlpha:]):
+        (-[WKFullScreenViewController _cancelAction:]):
+        (WKFullScreenViewControllerVideoFullscreenModelClient::setParent): Deleted.
+        (WKFullScreenViewControllerVideoFullscreenModelClient::setInterface): Deleted.
+        (WKFullScreenViewControllerVideoFullscreenModelClient::interface const): Deleted.
+        (-[WKFullScreenViewController willEnterPictureInPicture]): Deleted.
+        (-[WKFullScreenViewController didEnterPictureInPicture]): Deleted.
+        (-[WKFullScreenViewController failedToEnterPictureInPicture]): Deleted.
+        Minor clean-ups and remove code related to WKFullScreenViewControllerVideoFullscreenModelClient.
+
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.h:
+        * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+        (WKFullScreenWindowControllerVideoFullscreenModelClient::setParent):
+        (WKFullScreenWindowControllerVideoFullscreenModelClient::setInterface):
+        (WKFullScreenWindowControllerVideoFullscreenModelClient::interface const):
+        (-[WKFullScreenWindowController initWithWebView:]):
+        (-[WKFullScreenWindowController dealloc]):
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController requestEnterFullScreen]):
+        (-[WKFullScreenWindowController requestExitFullScreen]):
+        (-[WKFullScreenWindowController _completedExitFullScreen]):
+        (-[WKFullScreenWindowController videoControlsManagerDidChange]):
+        (-[WKFullScreenWindowController willEnterPictureInPicture]):
+        (-[WKFullScreenWindowController didEnterPictureInPicture]):
+        (-[WKFullScreenWindowController failedToEnterPictureInPicture]):
+        (-[WKFullScreenWindowController prepareToExitPictureInPicture]):
+        (-[WKFullScreenWindowController didExitPictureInPicture]):
+        Add WKFullScreenWindowControllerVideoFullscreenModelClient and implement the support
+        to "restore fullscreen from picture-in-picture".
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::enterFullScreenForElement):
+        (WebKit::WebFullScreenManager::requestEnterFullScreen):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in:
+        Add the interface requestEnterFullScreen() and the corresponding IPC message.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::prepareForVideoFullscreen):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Add the interface to prepare for video fullscreen standby. The web process can
+        use this interface to create a VideoFullscreenManager instance to avoid the
+        scenario that an IPC message comes from the VideoFullscreenManagerProxy but
+        the VideoFullscreenManager instance is not constructed yet.
+
+        * WebProcess/cocoa/VideoFullscreenManager.h:
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::fullscreenWillReturnToInline):
+        (WebKit::VideoFullscreenManager::fullscreenMayReturnToInline): Deleted.
+        Rename fullscreenMayReturnToInline() to fullscreenWillReturnToInline().
+        In the UI process side, fullscreenMayReturnToInline() is used by
+        VideoFullscreenManagerProxy to notify applications regarding UI
+        changes (e.g., switch browser tabs).
+
 2020-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebPageProxy::registerEditCommand should be robust against invalid undo step identifiers

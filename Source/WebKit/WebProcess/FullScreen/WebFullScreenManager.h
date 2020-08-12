@@ -77,6 +77,7 @@ protected:
     void setPIPStandbyElement(WebCore::HTMLVideoElement*);
 
     void setAnimatingFullScreen(bool);
+    void requestEnterFullScreen();
     void requestExitFullScreen();
     void saveScrollPosition();
     void restoreScrollPosition();

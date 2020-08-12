@@ -76,11 +76,12 @@ public:
 class VideoFullscreenModelClient {
 public:
     virtual ~VideoFullscreenModelClient() = default;
-    virtual void hasVideoChanged(bool) { };
-    virtual void videoDimensionsChanged(const FloatSize&) { };
+    virtual void hasVideoChanged(bool) { }
+    virtual void videoDimensionsChanged(const FloatSize&) { }
     virtual void willEnterPictureInPicture() { }
     virtual void didEnterPictureInPicture() { }
     virtual void failedToEnterPictureInPicture() { }
+    virtual void prepareToExitPictureInPicture() { }
     virtual void willExitPictureInPicture() { }
     virtual void didExitPictureInPicture() { }
     virtual void modelDestroyed() { }

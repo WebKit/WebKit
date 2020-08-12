@@ -1,3 +1,76 @@
+2020-08-12  Peng Liu  <peng.liu6@apple.com>
+
+        Add the support to return to element fullscreen from picture-in-picture
+        https://bugs.webkit.org/show_bug.cgi?id=215305
+
+        Reviewed by Jer Noble.
+
+        When a container element enters fullscreen (with the fullscreen API), a descendant
+        video element will enter the video fullscreen standby state so that it can enter
+        picture-in-picture on application suspend (r226217). But we cannot restore
+        to that state from the picture-in-picture mode when we click the "restore" button
+        on the top-right corner of the PiP window. Instead, the video element will return
+        to the inline mode.
+
+        However, when a video element enters video fullscreen first and then enters
+        picture-in-picture, we can let the video restore to fullscreen by clicking the
+        "restore" button on the top-right corner of the picture-in-picture window.
+
+        The inconsistent behaviors may confuse users who are not aware of the difference
+        between the fullscreen API (or element fullscreen) and video fullscreen.
+
+        This patch enables the support to restore to element fullscreen from picture-in-picture
+        mode so that users can have a consistent experience on element fullscreen and
+        video fullscreen.
+
+        * dom/FullscreenManager.h:
+        Export requestFullscreenForElement() so that we can use it in WebKit code.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::prepareForVideoFullscreenStandby):
+        * html/HTMLMediaElement.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::prepareForVideoFullscreen):
+        Add the interface to request a video element to be prepared for the video fullscreen
+        standby state.
+
+        * platform/cocoa/VideoFullscreenChangeObserver.h:
+        Add prepareToExitFullscreen() and fullscreenWillReturnToInline().
+
+        * platform/cocoa/VideoFullscreenModel.h:
+        (WebCore::VideoFullscreenModelClient::hasVideoChanged):
+        (WebCore::VideoFullscreenModelClient::videoDimensionsChanged):
+        (WebCore::VideoFullscreenModelClient::prepareToExitPictureInPicture):
+        Some minor clean-ups and add function prepareToExitPictureInPicture().
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::cleanupFullscreen):
+        (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStop):
+        (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::willStopPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler):
+        (VideoFullscreenInterfaceAVKit::setReadyToStopPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::willEnterStandbyFromPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::setWillEnterStandbyFromPictureInPicture):
+        (VideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline): Deleted.
+        When we enter picture-in-picture, we need to save the state and be prepared to
+        restore to element fullscreen if needed.
+
+        Before we exit picture-in-picture, if the "restore" button is clicked, we need
+        to notify the client to prepare for the picture-in-picture stop, and call
+        VideoFullscreenInterfaceAVKit::setReadyToStopPictureInPicture(true) when the client
+        is ready.
+
+        Based on those changes, a client (e.g., WKFullScreenWindowControllerVideoFullscreenModelClient)
+        can coordinate with WKFullScreenWindowController to implement the "restore to
+        element fullscreen" feature.
+
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::fullscreenWillReturnToInline):
+        (VideoFullscreenControllerContext::fullscreenMayReturnToInline): Deleted.
+
 2020-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Broken formatting in price table on yandex.ru after translating to English
