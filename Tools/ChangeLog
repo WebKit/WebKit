@@ -1,3 +1,20 @@
+2020-08-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [resultsdbpy] Move to Tools/Scripts/libraries
+        https://bugs.webkit.org/show_bug.cgi?id=215401
+        <rdar://problem/66868387>
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckPatchRelevance): Changed resultsdbpy location.
+        (RunResultsdbpyTests): Ditto.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestRunResultsdbpyTests.test_success):
+        (TestRunResultsdbpyTests.test_failure):
+        * Scripts/libraries/resultsdbpy: Copied from Tools/resultsdbpy.
+        * resultsdbpy: Removed.
+
 2020-08-12  Youenn Fablet  <youenn@apple.com>
 
         Refresh WritableStream up to spec

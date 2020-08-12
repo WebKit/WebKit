@@ -669,7 +669,7 @@ class TestRunResultsdbpyTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=120,
                         logEnviron=False,
-                        command=['python3', 'Tools/resultsdbpy/resultsdbpy/run-tests', '--verbose', '--no-selenium', '--fast-tests'],
+                        command=['python3', 'Tools/Scripts/libraries/resultsdbpy/resultsdbpy/run-tests', '--verbose', '--no-selenium', '--fast-tests'],
                         )
             + 0,
         )
@@ -682,7 +682,7 @@ class TestRunResultsdbpyTests(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=120,
                         logEnviron=False,
-                        command=['python3', 'Tools/resultsdbpy/resultsdbpy/run-tests', '--verbose', '--no-selenium', '--fast-tests'],
+                        command=['python3', 'Tools/Scripts/libraries/resultsdbpy/resultsdbpy/run-tests', '--verbose', '--no-selenium', '--fast-tests'],
                         )
             + ExpectShell.log('stdio', stdout='FAILED (errors=5, skipped=224)')
             + 2,

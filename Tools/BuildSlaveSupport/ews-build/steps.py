@@ -259,7 +259,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
         'Tools/BuildSlaveSupport/build.webkit.org-config',
         'Tools/BuildSlaveSupport/ews-build',
         'Tools/BuildSlaveSupport/Shared',
-        'Tools/resultsdbpy',
+        'Tools/Scripts/libraries/resultsdbpy',
     ]
 
     jsc_paths = [
@@ -1125,7 +1125,7 @@ class RunResultsdbpyTests(shell.ShellCommand):
     description = ['resultsdbpy-unit-tests running']
     command = [
         'python3',
-        'Tools/resultsdbpy/resultsdbpy/run-tests',
+        'Tools/Scripts/libraries/resultsdbpy/resultsdbpy/run-tests',
         '--verbose',
         '--no-selenium',
         '--fast-tests',
