@@ -1,3 +1,16 @@
+2020-08-12  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Rebaseline after new offscreencanvas progress
+
+        Unreviewed test gardening.
+
+        * platform/glib/fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/offscreen/filter/offscreencanvas.filter.w-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2020-08-12  Youenn Fablet  <youenn@apple.com>
 
         Refresh WritableStream up to spec

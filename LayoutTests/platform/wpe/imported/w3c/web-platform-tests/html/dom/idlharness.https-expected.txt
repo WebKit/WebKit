@@ -3851,7 +3851,7 @@ PASS HTMLCanvasElement interface: attribute height
 PASS HTMLCanvasElement interface: operation getContext(DOMString, optional any) 
 PASS HTMLCanvasElement interface: operation toDataURL(optional DOMString, optional any) 
 PASS HTMLCanvasElement interface: operation toBlob(BlobCallback, optional DOMString, optional any) 
-FAIL HTMLCanvasElement interface: operation transferControlToOffscreen() assert_own_property: interface prototype object missing non-static operation expected property "transferControlToOffscreen" missing
+PASS HTMLCanvasElement interface: operation transferControlToOffscreen() 
 PASS HTMLCanvasElement must be primary interface of document.createElement("canvas") 
 PASS Stringification of document.createElement("canvas") 
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "width" with the proper type 
@@ -3862,7 +3862,7 @@ PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit 
 PASS HTMLCanvasElement interface: calling toDataURL(optional DOMString, optional any) on document.createElement("canvas") with too few arguments must throw TypeError 
 PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "toBlob(BlobCallback, optional DOMString, optional any)" with the proper type 
 PASS HTMLCanvasElement interface: calling toBlob(BlobCallback, optional DOMString, optional any) on document.createElement("canvas") with too few arguments must throw TypeError 
-FAIL HTMLCanvasElement interface: document.createElement("canvas") must inherit property "transferControlToOffscreen()" with the proper type assert_inherits: property "transferControlToOffscreen" not found in prototype chain
+PASS HTMLCanvasElement interface: document.createElement("canvas") must inherit property "transferControlToOffscreen()" with the proper type 
 PASS CanvasRenderingContext2D interface: existence and properties of interface object 
 PASS CanvasRenderingContext2D interface object length 
 PASS CanvasRenderingContext2D interface object name 
@@ -4152,7 +4152,7 @@ PASS OffscreenCanvasRenderingContext2D interface object name
 PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object 
 PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property 
 PASS OffscreenCanvasRenderingContext2D interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL OffscreenCanvasRenderingContext2D interface: operation commit() assert_own_property: interface prototype object missing non-static operation expected property "commit" missing
+PASS OffscreenCanvasRenderingContext2D interface: operation commit() 
 PASS OffscreenCanvasRenderingContext2D interface: attribute canvas 
 PASS OffscreenCanvasRenderingContext2D interface: operation save() 
 PASS OffscreenCanvasRenderingContext2D interface: operation restore() 
