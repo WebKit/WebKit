@@ -1,3 +1,10 @@
+2020-08-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, rebaseline test after r265514.
+
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt:
+        * inspector/dom/getAccessibilityPropertiesForNode.html: Remove a FIXME since it is no longer applicable.
+
 2020-08-12  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Rebaseline after new offscreencanvas progress
