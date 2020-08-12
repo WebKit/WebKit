@@ -104,6 +104,7 @@ function maccatalyst_process_webcontent_entitlements()
 {
     plistbuddy Add :com.apple.security.cs.allow-jit bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
     then
         plistbuddy Add :com.apple.pac.shared_region_id string WebContent
@@ -122,6 +123,7 @@ function maccatalyst_process_network_entitlements()
     plistbuddy Add :com.apple.private.network.socket-delegate bool YES
     plistbuddy Add :com.apple.security.network.client bool YES
     plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
+    plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
 
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token array
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token:0 string kTCCServiceWebKitIntelligentTrackingPrevention

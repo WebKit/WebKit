@@ -1,3 +1,40 @@
+2020-08-12  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r265427. rdar://problem/66932337
+
+    Add required entitlement for Catalyst
+    https://bugs.webkit.org/show_bug.cgi?id=215244
+    
+    Reviewed by Darin Adler.
+    
+    The entitlement 'com.apple.private.webkit.use-xpc-endpoint' should be added to the WebContent process on Catalyst as well,
+    since it is needed on all Apple platforms. This entitlement is needed to support direct XPC communication between WebKit
+    processes, which is used to send the Launch Services database to the WebContent process from the Networking process. Also,
+    add some more logging related to this, to detect if it takes a long time for the WebContent process to receive the database.
+    
+    * Scripts/process-entitlements.sh:
+    * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+    (WebKit::WebPage::platformDidReceiveLoadParameters):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265427 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-10  Per Arne Vollan  <pvollan@apple.com>
+
+            Add required entitlement for Catalyst
+            https://bugs.webkit.org/show_bug.cgi?id=215244
+
+            Reviewed by Darin Adler.
+
+            The entitlement 'com.apple.private.webkit.use-xpc-endpoint' should be added to the WebContent process on Catalyst as well,
+            since it is needed on all Apple platforms. This entitlement is needed to support direct XPC communication between WebKit
+            processes, which is used to send the Launch Services database to the WebContent process from the Networking process. Also,
+            add some more logging related to this, to detect if it takes a long time for the WebContent process to receive the database.
+
+            * Scripts/process-entitlements.sh:
+            * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+            (WebKit::WebPage::platformDidReceiveLoadParameters):
+
 2020-08-05  Russell Epstein  <repstein@apple.com>
 
         Revert r265115. rdar://problem/66552761
