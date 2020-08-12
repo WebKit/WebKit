@@ -266,6 +266,7 @@
         "description": "Allows web components to define and expose stylable parts",
         "contact": {
             "name": "Ryosuke Niwa",
+            "twitter": "@rniwa_dev",
             "email": "rniwa@webkit.org"
         }
     },
@@ -724,6 +725,7 @@
         "description": "A collection of technologies to improve modularization of DOM subtrees.",
         "contact": {
             "name": "Ryosuke Niwa",
+            "twitter": "@rniwa_dev",
             "email": "rniwa@webkit.org"
         }
     },
@@ -1004,6 +1006,7 @@
         "description": "Define a custom HTML tag and associate it with an ES6 class.",
         "contact": {
             "name": "Ryosuke Niwa",
+            "twitter": "@rniwa_dev",
             "email": "rniwa@webkit.org"
         }
     },
@@ -1142,6 +1145,7 @@
         "comment": "Multile browser vendors have raised concerns about how the HTML imports currently works. For example, its dependency model is not fully compatible with ES6 Modules. We are exploring other ways to package web components by integrating into ES6 Modules with other browser vendors.",
         "contact": {
             "name": "Ryosuke Niwa",
+            "twitter": "@rniwa_dev",
             "email": "rniwa@webkit.org"
         }
     },
@@ -1318,6 +1322,7 @@
         "comment": "We are fixing the remainig bugs in our implementation.",
         "contact": {
             "name": "Ryosuke Niwa",
+            "twitter": "@rniwa_dev",
             "email": "rniwa@webkit.org"
         }
     },
