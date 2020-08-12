@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import webkitpy.thirdparty.autoinstalled.requests
+from webkitcorepy import BytesIO
 
 import collections
 import json
@@ -28,8 +28,6 @@ import requests
 import sys
 import time
 import unittest
-
-from webkitcorepy import BytesIO
 
 from webkitpy.results.upload import Upload
 from webkitpy.thirdparty import mock

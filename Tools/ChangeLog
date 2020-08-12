@@ -1,3 +1,23 @@
+2020-08-12  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's auto installer for requests
+        https://bugs.webkit.org/show_bug.cgi?id=214951
+        <rdar://problem/66308049>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/common/net/bugzilla/test_expectation_updater.py: Use webkitcorepy's auto installer.
+        * Scripts/webkitpy/results/upload.py: Ditto.
+        * Scripts/webkitpy/results/upload_unittest.py: Ditto.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._ensure_autoinstalled_dir_is_in_sys_path): Make sure webkitcorepy takes precedence
+        over webkitpy.
+        (AutoinstallImportHook.find_module): Delete _install_requests.
+        (AutoinstallImportHook._install_pytest): Ditto.
+        (AutoinstallImportHook._install_beautifulsoup): Ditto.
+        (AutoinstallImportHook._install_selenium): Ditto.
+        (AutoinstallImportHook._install_requests): Deleted.
+
 2020-08-12  Alex Christensen  <achristensen@webkit.org>
 
         Fail preconnect requests to deprecated TLS instead of allowing application to show warning
