@@ -848,6 +848,7 @@
     (iokit-property "BaseAddressAlignmentRequirement")
     (iokit-property-regex #"^DisplayPipe(PlaneBaseAlignment|StrideRequirements)")
     (iokit-property "HEVCSupported")
+    (iokit-property "HEVCCanDecodeTileToCanvas")
     (iokit-property-regex #"IOGVA(BGRAEnc|Codec|EncoderRestricted|Scaler)")
     (iokit-property "IOClassNameOverride")
     (iokit-property "IOPlatformUUID")

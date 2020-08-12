@@ -1,3 +1,15 @@
+2020-08-12  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Allow additional iokit-get-property to support HEIF images
+        https://bugs.webkit.org/show_bug.cgi?id=215431
+        <rdar://problem/66760775>
+
+        Reviewed by Per Arne Vollan.
+
+        Allow the WebContent process to read the HEVCCanDecodeTileToCanvas property.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2020-08-12  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Fix iokit get property sandbox violation
