@@ -1,3 +1,17 @@
+2020-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Broken formatting in price table on yandex.ru after translating to English
+        https://bugs.webkit.org/show_bug.cgi?id=215416
+        <rdar://problem/66354018>
+
+        Reviewed by Tim Horton.
+
+        Extend the behavior added in r265188 so that it applies to all elements that have `display: table-cell;`, rather
+        than only table data cell elements.
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::isEnclosingItemBoundaryElement):
+
 2020-08-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed non-unified build fix.

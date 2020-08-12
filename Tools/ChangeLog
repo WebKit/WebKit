@@ -1,3 +1,14 @@
+2020-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Broken formatting in price table on yandex.ru after translating to English
+        https://bugs.webkit.org/show_bug.cgi?id=215416
+        <rdar://problem/66354018>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-08-12  Devin Rousso  <drousso@apple.com>
 
         Add Copy WebKit Permalink items to Sublime Text command palette
