@@ -242,6 +242,27 @@ TEST(TLSVersion, ShouldAllowDeprecatedTLS)
     }
 }
 
+TEST(TLSVersion, Preconnect)
+{
+    bool connectionAttempted = false;
+    TCPServer server(TCPServer::Protocol::HTTPS, [&](SSL *ssl) {
+        EXPECT_FALSE(ssl);
+        connectionAttempted = true;
+    }, tls1_1);
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView loadHTMLString:makeString("<head><link rel='preconnect' href='https://127.0.0.1:", server.port(), "/'></link></head>") baseURL:nil];
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_TRUE(false);
+        callback(NSURLSessionAuthChallengeUseCredential, nil);
+    }];
+
+    TestWebKitAPI::Util::run(&connectionAttempted);
+}
+
 #endif // HAVE(TLS_VERSION_DURING_CHALLENGE)
 
 #if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)

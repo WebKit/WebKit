@@ -1,3 +1,15 @@
+2020-08-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fail preconnect requests to deprecated TLS instead of allowing application to show warning
+        https://bugs.webkit.org/show_bug.cgi?id=215424
+        <rdar://problem/66784116>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::webViewWithNavigationDelegate):
+
 2020-08-12  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] email notifications should include link to corresponding bug

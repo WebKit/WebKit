@@ -1,3 +1,17 @@
+2020-08-12  Alex Christensen  <achristensen@webkit.org>
+
+        Fail preconnect requests to deprecated TLS instead of allowing application to show warning
+        https://bugs.webkit.org/show_bug.cgi?id=215424
+        <rdar://problem/66784116>
+
+        Reviewed by Geoffrey Garen.
+
+        Preconnecting is just a suggestion, so if the content really wants to load something from the deprecated TLS server,
+        we will see the warning when the load actually happens.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+
 2020-08-12  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Allow additional iokit-get-property to support HEIF images
