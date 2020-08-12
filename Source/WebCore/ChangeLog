@@ -1,3 +1,21 @@
+2020-08-12  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r259805): Not able to scroll vertically after scrolling horizontally without leaving message and coming back
+        https://bugs.webkit.org/show_bug.cgi?id=215374
+        <rdar://problem/65269837>
+
+        Reviewed by Darin Adler.
+
+        The content has a horizontally scrolling overflow. While rubberbanding it we mark a wheel event unhandled which causes Mail
+        to take over event handling and leaves us semi-permanently in stretched state.
+
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::handleWheelEvent):
+
+        Dissallowed vertical stretch would mark the event unhandled even though we are rubberbanding in horizontal direction.
+
+        Only mark a wheel event unhandled if it actually concerns the tested direction.
+
 2020-08-12  Chris Lord  <clord@igalia.com>
 
         Implement Canvas.transferControlToOffscreen and OffscreenCanvasRenderingContext2D.commit

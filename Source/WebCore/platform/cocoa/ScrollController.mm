@@ -266,26 +266,30 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
                 m_client.immediateScrollBy(FloatSize(deltaX, 0));
             }
         } else {
-            if (!m_client.allowsHorizontalStretching(wheelEvent)) {
-                deltaX = 0;
-                eventCoalescedDeltaX = 0;
-                handled = false;
-            } else if (deltaX && !isHorizontallyStretched && !m_client.pinnedInDirection(FloatSize(deltaX, 0))) {
-                deltaX *= scrollWheelMultiplier();
+            if (deltaX) {
+                if (!m_client.allowsHorizontalStretching(wheelEvent)) {
+                    deltaX = 0;
+                    eventCoalescedDeltaX = 0;
+                    handled = false;
+                } else if (!isHorizontallyStretched && !m_client.pinnedInDirection(FloatSize(deltaX, 0))) {
+                    deltaX *= scrollWheelMultiplier();
 
-                m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(deltaX, 0));
-                deltaX = 0;
+                    m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(deltaX, 0));
+                    deltaX = 0;
+                }
             }
 
-            if (!m_client.allowsVerticalStretching(wheelEvent)) {
-                deltaY = 0;
-                eventCoalescedDeltaY = 0;
-                handled = false;
-            } else if (deltaY && !isVerticallyStretched && !m_client.pinnedInDirection(FloatSize(0, deltaY))) {
-                deltaY *= scrollWheelMultiplier();
+            if (deltaY) {
+                if (!m_client.allowsVerticalStretching(wheelEvent)) {
+                    deltaY = 0;
+                    eventCoalescedDeltaY = 0;
+                    handled = false;
+                } else if (!isVerticallyStretched && !m_client.pinnedInDirection(FloatSize(0, deltaY))) {
+                    deltaY *= scrollWheelMultiplier();
 
-                m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(0, deltaY));
-                deltaY = 0;
+                    m_client.immediateScrollByWithoutContentEdgeConstraints(FloatSize(0, deltaY));
+                    deltaY = 0;
+                }
             }
 
             IntSize stretchAmount = m_client.stretchAmount();
