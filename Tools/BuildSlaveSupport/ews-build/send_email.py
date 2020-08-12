@@ -23,6 +23,8 @@
 import os
 import smtplib
 
+from email.mime.text import MIMEText
+
 is_test_mode_enabled = os.getenv('BUILDBOT_PRODUCTION') is None
 
 BOT_WATCHERS_EMAILS = ['webkit-ews-bot-watchers@group.apple.com']
@@ -40,10 +42,16 @@ def send_email(to_emails, subject, text):
         print('Skipping email since no subject or text is specified')
         return
 
-    email_data = """From: {}\nTo: {}\nSubject: {}\n\n{}""".format(FROM_EMAIL, ', '.join(to_emails), subject, text.encode('utf-8'))
+    text = text.encode('utf-8')
+    text = text.replace('\n', '<br>')
+
+    msg = MIMEText(text, 'html')
+    msg['From'] = FROM_EMAIL
+    msg['To'] = ', '.join(to_emails)
+    msg['Subject'] = subject
 
     server = smtplib.SMTP(SERVER)
-    server.sendmail(FROM_EMAIL, to_emails, email_data)
+    server.sendmail(FROM_EMAIL, to_emails, msg.as_string())
     server.quit()
 
 

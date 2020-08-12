@@ -1,3 +1,16 @@
+2020-08-12  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] send emails as html instead of plain-text
+        https://bugs.webkit.org/show_bug.cgi?id=215331
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/ews-build/send_email.py:
+        (send_email): Send email as html instead of plain-text.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure): Encode few characters like <,>,& for html. Also format the logs in <code> block.
+        (AnalyzeCompileWebKitResults.send_email_for_preexisting_build_failure): Ditto.
+
 2020-08-12  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy] Move to Tools/Scripts/libraries

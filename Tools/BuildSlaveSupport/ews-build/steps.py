@@ -1474,7 +1474,8 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
             email_text = 'EWS has detected build failure on {} while testing Patch {}.'.format(builder_name, patch_id)
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
             if logs:
-                email_text += u'\n\nError lines:\n\n{}'.format(logs)
+                logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                email_text += u'\n\nError lines:\n\n<code>{}</code>'.format(logs)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
             send_email([patch_author], email_subject, email_text)
         except Exception as e:
@@ -1495,7 +1496,8 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
             email_subject = 'Build failure on trunk on {}'.format(builder_name)
             email_text = 'Failed to build WebKit without patch in {}\n\nBuilder: {}\n\nWorker: {}'.format(build_url, builder_name, worker_name)
             if logs:
-                email_text += u'\n\nError lines:\n\n{}'.format(logs)
+                logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+                email_text += u'\n\nError lines:\n\n<code>{}</code>'.format(logs)
             send_email_to_bot_watchers(email_subject, email_text)
         except Exception as e:
             print('Error in sending email for build failure: {}'.format(e))
