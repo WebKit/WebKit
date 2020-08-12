@@ -1,3 +1,10 @@
+2020-08-12  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address post-landing review comment from Sam Weinig for r265536.
+
+        * Modules/webaudio/WaveShaperDSPKernel.cpp:
+        (WebCore::WaveShaperDSPKernel::processCurve):
+
 2020-08-12  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed build fix after r265546.

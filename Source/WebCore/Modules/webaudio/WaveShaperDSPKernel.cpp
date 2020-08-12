@@ -107,7 +107,7 @@ void WaveShaperDSPKernel::processCurve(const float* source, float* destination, 
         else if (v >= curveLength - 1)
             destination[i] = curveData[curveLength - 1];
         else {
-            float k = floorf(v);
+            float k = std::floor(v);
             float f = v - k;
             unsigned kIndex = k;
             destination[i] = (1 - f) * curveData[kIndex] + f * curveData[kIndex + 1];
