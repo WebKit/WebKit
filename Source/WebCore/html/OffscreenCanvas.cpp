@@ -31,11 +31,14 @@
 #include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
 #include "Document.h"
+#include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
+#include "ImageData.h"
 #include "JSBlob.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MIMETypeRegistry.h"
 #include "OffscreenCanvasRenderingContext2D.h"
+#include "PlaceholderRenderingContext.h"
 #include "WebGLRenderingContext.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
@@ -56,6 +59,12 @@ std::unique_ptr<ImageBuffer> DetachedOffscreenCanvas::takeImageBuffer()
     return WTFMove(m_buffer);
 }
 
+WeakPtr<HTMLCanvasElement> DetachedOffscreenCanvas::takePlaceholderCanvas()
+{
+    ASSERT(isMainThread());
+    return std::exchange(m_placeholderCanvas, nullptr);
+}
+
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, unsigned width, unsigned height)
 {
     return adoptRef(*new OffscreenCanvas(context, width, height));
@@ -68,7 +77,20 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, st
     if (!detachedCanvas->originClean())
         clone->setOriginTainted();
 
+    callOnMainThread([detachedCanvas = WTFMove(detachedCanvas), offscreenCanvas = makeRef(clone.get())] () mutable {
+        offscreenCanvas->m_placeholderCanvas = detachedCanvas->takePlaceholderCanvas();
+        offscreenCanvas->scriptExecutionContext()->postTask({ ScriptExecutionContext::Task::CleanupTask,
+            [releaseOffscreenCanvas = WTFMove(offscreenCanvas)] (ScriptExecutionContext&) { } });
+    });
+
     return clone;
+}
+
+Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, HTMLCanvasElement& canvas)
+{
+    auto offscreen = adoptRef(*new OffscreenCanvas(context, canvas.width(), canvas.height()));
+    offscreen->setPlaceholderCanvas(canvas);
+    return offscreen;
 }
 
 OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& context, unsigned width, unsigned height)
@@ -119,7 +141,7 @@ void OffscreenCanvas::setSize(const IntSize& newSize)
     reset();
 }
 
-ExceptionOr<OffscreenRenderingContext> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
     if (m_detached)
         return Exception { InvalidStateError };
@@ -127,22 +149,22 @@ ExceptionOr<OffscreenRenderingContext> OffscreenCanvas::getContext(JSC::JSGlobal
     if (contextType == RenderingContextType::_2d) {
         if (m_context) {
             if (!is<OffscreenCanvasRenderingContext2D>(*m_context))
-                return Exception { InvalidStateError };
-            return { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } };
+                return { { WTF::nullopt } };
+            return { { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } } };
         }
 
         m_context = makeUnique<OffscreenCanvasRenderingContext2D>(*this);
         if (!m_context)
-            return { RefPtr<OffscreenCanvasRenderingContext2D> { nullptr } };
+            return { { WTF::nullopt } };
 
-        return { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } };
+        return { { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } } };
     }
 #if ENABLE(WEBGL)
     if (contextType == RenderingContextType::Webgl) {
         if (m_context) {
-            if (!is<WebGLRenderingContext>(*m_context))
-                return Exception { InvalidStateError };
-            return { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } };
+            if (is<WebGLRenderingContext>(*m_context))
+                return { { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } } };
+            return { { WTF::nullopt } };
         }
 
         auto scope = DECLARE_THROW_SCOPE(state.vm());
@@ -151,13 +173,13 @@ ExceptionOr<OffscreenRenderingContext> OffscreenCanvas::getContext(JSC::JSGlobal
 
         m_context = WebGLRenderingContextBase::create(*this, attributes, "webgl");
         if (!m_context)
-            return { RefPtr<WebGLRenderingContext> { nullptr } };
+            return { { WTF::nullopt } };
 
-        return { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } };
+        return { { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } } };
     }
 #endif
 
-    return Exception { NotSupportedError };
+    return Exception { TypeError };
 }
 
 ExceptionOr<RefPtr<ImageBitmap>> OffscreenCanvas::transferToImageBitmap()
@@ -259,6 +281,7 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
 void OffscreenCanvas::didDraw(const FloatRect& rect)
 {
     clearCopiedImage();
+    scheduleCommitToPlaceholderCanvas();
     notifyObserversCanvasChanged(rect);
 }
 
@@ -301,7 +324,73 @@ std::unique_ptr<DetachedOffscreenCanvas> OffscreenCanvas::detach()
 
     m_detached = true;
 
-    return makeUnique<DetachedOffscreenCanvas>(takeImageBuffer(), size(), originClean());
+    auto detached = makeUnique<DetachedOffscreenCanvas>(takeImageBuffer(), size(), originClean());
+    detached->m_placeholderCanvas = std::exchange(m_placeholderCanvas, nullptr);
+
+    return detached;
+}
+
+void OffscreenCanvas::setPlaceholderCanvas(HTMLCanvasElement& canvas)
+{
+    ASSERT(!m_context);
+    ASSERT(isMainThread());
+    m_placeholderCanvas = makeWeakPtr(canvas);
+}
+
+void OffscreenCanvas::pushBufferToPlaceholder()
+{
+    callOnMainThread([protectedThis = makeRef(*this), this] () mutable {
+        auto locker = holdLock(m_commitLock);
+
+        if (m_placeholderCanvas && m_hasPendingCommitData) {
+            std::unique_ptr<ImageBuffer> buffer = ImageBuffer::create(FloatSize(m_pendingCommitData->size()), RenderingMode::Unaccelerated);
+            buffer->putImageData(AlphaPremultiplication::Premultiplied, *m_pendingCommitData, IntRect(IntPoint(), m_pendingCommitData->size()));
+            m_placeholderCanvas->setImageBufferAndMarkDirty(WTFMove(buffer));
+            m_hasPendingCommitData = false;
+        }
+
+        scriptExecutionContext()->postTask([releaseThis = WTFMove(protectedThis)] (ScriptExecutionContext&) { });
+    });
+}
+
+void OffscreenCanvas::commitToPlaceholderCanvas()
+{
+    auto* imageBuffer = buffer();
+    if (!imageBuffer)
+        return;
+
+    // FIXME: Transfer texture over if we're using accelerated compositing
+    if (m_context && (m_context->isWebGL() || m_context->isAccelerated()))
+        m_context->paintRenderingResultsToCanvas();
+
+    if (isMainThread()) {
+        if (m_placeholderCanvas) {
+            if (auto bufferCopy = imageBuffer->copyRectToBuffer(FloatRect(FloatPoint(), imageBuffer->logicalSize()), ColorSpace::SRGB, imageBuffer->context()))
+                m_placeholderCanvas->setImageBufferAndMarkDirty(WTFMove(bufferCopy));
+        }
+        return;
+    }
+
+    auto locker = holdLock(m_commitLock);
+
+    bool shouldPushBuffer = !m_hasPendingCommitData;
+    m_pendingCommitData = imageBuffer->getImageData(AlphaPremultiplication::Premultiplied, IntRect(IntPoint(), imageBuffer->logicalSize()));
+    m_hasPendingCommitData = true;
+
+    if (shouldPushBuffer)
+        pushBufferToPlaceholder();
+}
+
+void OffscreenCanvas::scheduleCommitToPlaceholderCanvas()
+{
+    if (!m_hasScheduledCommit) {
+        auto& scriptContext = *scriptExecutionContext();
+        m_hasScheduledCommit = true;
+        scriptContext.postTask([protectedThis = makeRef(*this), this] (ScriptExecutionContext&) {
+            m_hasScheduledCommit = false;
+            commitToPlaceholderCanvas();
+        });
+    }
 }
 
 CSSValuePool& OffscreenCanvas::cssValuePool()
@@ -351,6 +440,7 @@ void OffscreenCanvas::reset()
     clearCopiedImage();
 
     notifyObserversCanvasResized();
+    scheduleCommitToPlaceholderCanvas();
 }
 
 }

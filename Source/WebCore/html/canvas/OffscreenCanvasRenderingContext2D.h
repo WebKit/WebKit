@@ -42,6 +42,8 @@ public:
     bool isOffscreen2d() const override { return true; }
 
     OffscreenCanvas& canvas() const { return downcast<OffscreenCanvas>(canvasBase()); }
+
+    void commit();
 };
 
 } // namespace WebCore

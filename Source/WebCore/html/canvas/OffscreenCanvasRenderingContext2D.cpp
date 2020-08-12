@@ -48,6 +48,11 @@ OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D(CanvasBase&
 
 OffscreenCanvasRenderingContext2D::~OffscreenCanvasRenderingContext2D() = default;
 
+void OffscreenCanvasRenderingContext2D::commit()
+{
+    downcast<OffscreenCanvas>(canvasBase()).commitToPlaceholderCanvas();
+}
+
 } // namespace WebCore
 
 #endif

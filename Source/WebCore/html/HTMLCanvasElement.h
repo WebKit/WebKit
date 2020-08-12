@@ -50,6 +50,7 @@ class ImageBuffer;
 class ImageData;
 class MediaSample;
 class MediaStream;
+class OffscreenCanvas;
 class WebGLRenderingContextBase;
 class GPUCanvasContext;
 struct UncachedString;
@@ -97,6 +98,9 @@ public:
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);
     ExceptionOr<void> toBlob(ScriptExecutionContext&, Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue quality);
+#if ENABLE(OFFSCREEN_CANVAS)
+    ExceptionOr<Ref<OffscreenCanvas>> transferControlToOffscreen(ScriptExecutionContext&);
+#endif
 
     // Used for rendering
     void didDraw(const FloatRect&) final;
@@ -134,6 +138,8 @@ public:
 
     void setIsSnapshotting(bool isSnapshotting) { m_isSnapshotting = isSnapshotting; }
     bool isSnapshotting() const { return m_isSnapshotting; }
+
+    bool isControlledByOffscreen() const;
 
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);

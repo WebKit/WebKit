@@ -49,6 +49,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMConvertDictionary.h"
 #include "MIMETypeRegistry.h"
+#include "PlaceholderRenderingContext.h"
 #include "RenderElement.h"
 #include "RenderHTMLCanvas.h"
 #include "ResourceLoadObserver.h"
@@ -184,7 +185,7 @@ bool HTMLCanvasElement::canStartSelection() const
 
 ExceptionOr<void> HTMLCanvasElement::setHeight(unsigned value)
 {
-    if (m_context && m_context->isPlaceholder())
+    if (isControlledByOffscreen())
         return Exception { InvalidStateError };
     setAttributeWithoutSynchronization(heightAttr, AtomString::number(limitToOnlyHTMLNonNegative(value, defaultHeight)));
     return { };
@@ -192,7 +193,7 @@ ExceptionOr<void> HTMLCanvasElement::setHeight(unsigned value)
 
 ExceptionOr<void> HTMLCanvasElement::setWidth(unsigned value)
 {
-    if (m_context && m_context->isPlaceholder())
+    if (isControlledByOffscreen())
         return Exception { InvalidStateError };
     setAttributeWithoutSynchronization(widthAttr, AtomString::number(limitToOnlyHTMLNonNegative(value, defaultWidth)));
     return { };
@@ -566,7 +567,7 @@ void HTMLCanvasElement::didDraw(const FloatRect& rect)
 
 void HTMLCanvasElement::reset()
 {
-    if (m_ignoreReset)
+    if (m_ignoreReset || isControlledByOffscreen())
         return;
 
     bool hadImageBuffer = hasCreatedImageBuffer();
@@ -768,6 +769,17 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref
     return { };
 }
 
+#if ENABLE(OFFSCREEN_CANVAS)
+ExceptionOr<Ref<OffscreenCanvas>> HTMLCanvasElement::transferControlToOffscreen(ScriptExecutionContext& context)
+{
+    if (m_context)
+        return Exception { InvalidStateError };
+
+    m_context = makeUnique<PlaceholderRenderingContext>(*this);
+    return OffscreenCanvas::create(context, *this);
+}
+#endif
+
 RefPtr<ImageData> HTMLCanvasElement::getImageData()
 {
 #if ENABLE(WEBGL)
@@ -945,8 +957,24 @@ void HTMLCanvasElement::createImageBuffer() const
 
 void HTMLCanvasElement::setImageBufferAndMarkDirty(std::unique_ptr<ImageBuffer>&& buffer)
 {
+    IntSize oldSize = size();
     m_hasCreatedImageBuffer = true;
     setImageBuffer(WTFMove(buffer));
+
+    if (isControlledByOffscreen() && oldSize != size()) {
+        setAttributeWithoutSynchronization(widthAttr, AtomString::number(width()));
+        setAttributeWithoutSynchronization(heightAttr, AtomString::number(height()));
+
+        auto renderer = this->renderer();
+        if (is<RenderHTMLCanvas>(renderer)) {
+            auto& canvasRenderer = downcast<RenderHTMLCanvas>(*renderer);
+            canvasRenderer.canvasSizeChanged();
+            canvasRenderer.contentChanged(CanvasChanged);
+        }
+
+        notifyObserversCanvasResized();
+    }
+
     didDraw(FloatRect(FloatPoint(), size()));
 }
 
@@ -1050,6 +1078,11 @@ void HTMLCanvasElement::prepareForDisplay()
     if (is<WebGLRenderingContextBase>(m_context.get()))
         downcast<WebGLRenderingContextBase>(m_context.get())->prepareForDisplay();
 #endif
+}
+
+bool HTMLCanvasElement::isControlledByOffscreen() const
+{
+    return m_context && m_context->isPlaceholder();
 }
 
 }

@@ -1,3 +1,12 @@
+2020-08-12  Chris Lord  <clord@igalia.com>
+
+        Implement Canvas.transferControlToOffscreen and OffscreenCanvasRenderingContext2D.commit
+        https://bugs.webkit.org/show_bug.cgi?id=202797
+
+        Reviewed by Dean Jackson.
+
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w-expected.txt: Removed.
+
 2020-08-11  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Garden accessibility failures after r265514

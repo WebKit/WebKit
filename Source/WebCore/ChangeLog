@@ -1,3 +1,46 @@
+2020-08-12  Chris Lord  <clord@igalia.com>
+
+        Implement Canvas.transferControlToOffscreen and OffscreenCanvasRenderingContext2D.commit
+        https://bugs.webkit.org/show_bug.cgi?id=202797
+
+        Reviewed by Dean Jackson.
+
+        Implement HTMLCanvasElement.transferControlToOffscreen and
+        OffscreenCanvasRenderingContext2D.commit. This allows for
+        (synchronous) display of asynchronously rendered OffscreenCanvas
+        content.
+
+        No new tests. Covered by existing tests.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::setHeight):
+        (WebCore::HTMLCanvasElement::setWidth):
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::transferControlToOffscreen):
+        (WebCore::HTMLCanvasElement::setImageBufferAndMarkDirty):
+        (WebCore::HTMLCanvasElement::isControlledByOffscreen const):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+        * html/OffscreenCanvas.cpp:
+        (WebCore::DetachedOffscreenCanvas::takePlaceholderCanvas):
+        (WebCore::OffscreenCanvas::create):
+        (WebCore::OffscreenCanvas::getContext):
+        (WebCore::OffscreenCanvas::didDraw):
+        (WebCore::OffscreenCanvas::detach):
+        (WebCore::OffscreenCanvas::setPlaceholderCanvas):
+        (WebCore::OffscreenCanvas::pushBufferToPlaceholder):
+        (WebCore::OffscreenCanvas::commitToPlaceholderCanvas):
+        (WebCore::OffscreenCanvas::scheduleCommitToPlaceholderCanvas):
+        (WebCore::OffscreenCanvas::reset):
+        * html/OffscreenCanvas.h:
+        * html/canvas/OffscreenCanvasRenderingContext2D.cpp:
+        (WebCore::OffscreenCanvasRenderingContext2D::commit):
+        * html/canvas/OffscreenCanvasRenderingContext2D.h:
+        * html/canvas/OffscreenCanvasRenderingContext2D.idl:
+        * html/canvas/PlaceholderRenderingContext.cpp:
+        (WebCore::PlaceholderRenderingContext::canvas const):
+        * html/canvas/PlaceholderRenderingContext.h:
+
 2020-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r261570): [GTK] Fails to send drop event to JavaScript

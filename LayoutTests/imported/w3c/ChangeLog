@@ -1,3 +1,19 @@
+2020-08-12  Chris Lord  <clord@igalia.com>
+
+        Implement Canvas.transferControlToOffscreen and OffscreenCanvasRenderingContext2D.commit
+        https://bugs.webkit.org/show_bug.cgi?id=202797
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/html/canvas/offscreen/filter/offscreencanvas.filter.w-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.w-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfercontrol.to.offscreen-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfercontrol.to.offscreen.w-expected.txt:
+
 2020-08-11  Chris Dumez  <cdumez@apple.com>
 
         Fix WaveShapperNode's waveshaping curve implementation

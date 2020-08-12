@@ -38,6 +38,7 @@
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -45,7 +46,9 @@ namespace WebCore {
 class CanvasRenderingContext;
 class CSSValuePool;
 class DeferredPromise;
+class HTMLCanvasElement;
 class ImageBitmap;
+class ImageData;
 class OffscreenCanvasRenderingContext2D;
 class WebGLRenderingContext;
 
@@ -58,6 +61,8 @@ using OffscreenRenderingContext = Variant<RefPtr<OffscreenCanvasRenderingContext
 class DetachedOffscreenCanvas {
     WTF_MAKE_NONCOPYABLE(DetachedOffscreenCanvas);
     WTF_MAKE_FAST_ALLOCATED;
+    friend class OffscreenCanvas;
+
 public:
     DetachedOffscreenCanvas(std::unique_ptr<ImageBuffer>&&, const IntSize&, bool originClean);
 
@@ -71,11 +76,13 @@ public:
             return buffer->memoryCost();
         return 0;
     }
+    WeakPtr<HTMLCanvasElement> takePlaceholderCanvas();
 
 private:
     std::unique_ptr<ImageBuffer> m_buffer;
     IntSize m_size;
     bool m_originClean;
+    WeakPtr<HTMLCanvasElement> m_placeholderCanvas;
 };
 
 class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTargetWithInlineData, private ContextDestructionObserver {
@@ -94,6 +101,7 @@ public:
 
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, std::unique_ptr<DetachedOffscreenCanvas>&&);
+    static Ref<OffscreenCanvas> create(ScriptExecutionContext&, HTMLCanvasElement&);
     virtual ~OffscreenCanvas();
 
     unsigned width() const final;
@@ -103,7 +111,7 @@ public:
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 
-    ExceptionOr<OffscreenRenderingContext> getContext(JSC::JSGlobalObject&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<Optional<OffscreenRenderingContext>> getContext(JSC::JSGlobalObject&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     ExceptionOr<RefPtr<ImageBitmap>> transferToImageBitmap();
     void convertToBlob(ImageEncodeOptions&&, Ref<DeferredPromise>&&);
 
@@ -116,6 +124,8 @@ public:
 
     bool canDetach() const;
     std::unique_ptr<DetachedOffscreenCanvas> detach();
+
+    void commitToPlaceholderCanvas();
 
     CSSValuePool& cssValuePool();
 
@@ -146,6 +156,10 @@ private:
 
     void clearCopiedImage() const;
 
+    void setPlaceholderCanvas(HTMLCanvasElement&);
+    void pushBufferToPlaceholder();
+    void scheduleCommitToPlaceholderCanvas();
+
     std::unique_ptr<CanvasRenderingContext> m_context;
 
     // m_hasCreatedImageBuffer means we tried to malloc the buffer. We didn't necessarily get it.
@@ -154,6 +168,13 @@ private:
     bool m_detached { false };
 
     mutable RefPtr<Image> m_copiedImage;
+
+    bool m_hasScheduledCommit { false };
+    WeakPtr<HTMLCanvasElement> m_placeholderCanvas;
+
+    mutable Lock m_commitLock;
+    bool m_hasPendingCommitData { false };
+    RefPtr<ImageData> m_pendingCommitData;
 };
 
 }

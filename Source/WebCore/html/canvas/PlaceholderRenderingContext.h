@@ -25,14 +25,20 @@
 
 #pragma once
 
+#if ENABLE(OFFSCREEN_CANVAS)
+
 #include "CanvasRenderingContext.h"
 
 namespace WebCore {
+
+class OffscreenCanvas;
 
 class PlaceholderRenderingContext final : public CanvasRenderingContext {
     WTF_MAKE_ISO_ALLOCATED(PlaceholderRenderingContext);
 public:
     PlaceholderRenderingContext(CanvasBase&);
+
+    HTMLCanvasElement* canvas() const;
 
 private:
     bool isPlaceholder() const final { return true; }
@@ -41,3 +47,5 @@ private:
 }
 
 SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::PlaceholderRenderingContext, isPlaceholder())
+
+#endif

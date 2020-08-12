@@ -1,4 +1,4 @@
 
-FAIL Test that calling OffscreenCanvas's commit pushes its contents to its placeholder. placeholder.transferControlToOffscreen is not a function. (In 'placeholder.transferControlToOffscreen()', 'placeholder.transferControlToOffscreen' is undefined)
+PASS Test that calling OffscreenCanvas's commit pushes its contents to its placeholder. 
 PASS Test that calling commit on an OffscreenCanvas that is not transferred from a HTMLCanvasElement throws an exception in a worker. 
 

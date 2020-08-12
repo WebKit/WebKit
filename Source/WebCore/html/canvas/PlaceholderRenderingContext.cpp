@@ -26,6 +26,10 @@
 #include "config.h"
 #include "PlaceholderRenderingContext.h"
 
+#if ENABLE(OFFSCREEN_CANVAS)
+
+#include "HTMLCanvasElement.h"
+#include "OffscreenCanvas.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,4 +41,14 @@ PlaceholderRenderingContext::PlaceholderRenderingContext(CanvasBase& canvas)
 {
 }
 
+HTMLCanvasElement* PlaceholderRenderingContext::canvas() const
+{
+    auto& base = canvasBase();
+    if (!is<HTMLCanvasElement>(base))
+        return nullptr;
+    return &downcast<HTMLCanvasElement>(base);
 }
+
+}
+
+#endif
