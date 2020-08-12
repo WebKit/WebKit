@@ -1,3 +1,27 @@
+2020-08-12  Jon Davis  <jond@apple.com>
+
+        Remove unused selector performance test
+        https://bugs.webkit.org/show_bug.cgi?id=215414
+
+        Reviewed by Darin Adler.
+
+        * perf/slickspeed/config.ini: Removed.
+        * perf/slickspeed/footer.html: Removed.
+        * perf/slickspeed/frameworks/DomQuery.js: Removed.
+        * perf/slickspeed/frameworks/dummy.js: Removed.
+        * perf/slickspeed/frameworks/jquery-1.2.3.js: Removed.
+        * perf/slickspeed/frameworks/prototype.js: Removed.
+        * perf/slickspeed/header.html: Removed.
+        * perf/slickspeed/index.php: Removed.
+        * perf/slickspeed/instructions.txt: Removed.
+        * perf/slickspeed/logo.png: Removed.
+        * perf/slickspeed/selectors.list: Removed.
+        * perf/slickspeed/style.css: Removed.
+        * perf/slickspeed/system/index.php: Removed.
+        * perf/slickspeed/system/slickspeed.js: Removed.
+        * perf/slickspeed/system/template.php: Removed.
+        * perf/slickspeed/template.html: Removed.
+
 2020-08-06  Jon Davis  <jond@apple.com>
 
         Fixed widget method argument compatibility with WordPress
