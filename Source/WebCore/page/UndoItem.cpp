@@ -26,6 +26,7 @@
 #include "config.h"
 #include "UndoItem.h"
 
+#include "Document.h"
 #include "UndoManager.h"
 #include <wtf/IsoMallocInlines.h>
 

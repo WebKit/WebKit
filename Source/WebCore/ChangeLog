@@ -1,3 +1,14 @@
+2020-08-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified build fix.
+
+        No new tests needed.
+
+        * accessibility/AccessibilityMenuListOption.cpp: Add missing inclusion of
+        HTMLSelectElement.h.
+        * page/Quirks.h: Add mising forward declaration of HTMLVideoElement.
+        * page/UndoItem.cpp: Add missing inclusion of Document.h.
+
 2020-08-12  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, address post-landing review comment from Sam Weinig for r265536.

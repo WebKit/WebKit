@@ -30,6 +30,7 @@
 #include "AccessibilityMenuListPopup.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
+#include "HTMLSelectElement.h"
 
 namespace WebCore {
 
