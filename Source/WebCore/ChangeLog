@@ -1,3 +1,16 @@
+2020-08-12  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Build fix for !ENABLE(ACCESSIBILITY) after r265514
+        https://bugs.webkit.org/show_bug.cgi?id=215426
+
+        AXObjectCache::getOrCreate(AccessibilityRole) changed names
+        in the above, but the short definition for
+        !ENABLE(ACCESSIBILITY) didn't update.
+
+        Unreviewed build fix.
+
+        * accessibility/AXObjectCache.h: Update name to match new name
+
 2020-08-12  Peng Liu  <peng.liu6@apple.com>
 
         Add the support to return to element fullscreen from picture-in-picture
