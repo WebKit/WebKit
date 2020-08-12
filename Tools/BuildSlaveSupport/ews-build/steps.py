@@ -2137,12 +2137,15 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
             patch_id = self.getProperty('patch_id', '')
             patch_author = self.getProperty('patch_author', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
-            test_names_string = '- ' + '\n- '.join(test_names)
+            test_names_string = ''
+            for test_name in test_names:
+                history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
+                test_names_string += '\n- {} (<a href="{}">test history</a>)'.format(test_name, history_url)
 
             email_subject = 'Layout test failure for Patch {}: {} '.format(patch_id, bug_title)
             email_text = 'EWS has detected test failure on {} while testing Patch {}.'.format(builder_name, patch_id)
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
-            email_text += '\n\nLayout test failure:\n\n{}'.format(test_names_string)
+            email_text += '\n\nLayout test failure:\n{}'.format(test_names_string)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
             send_email([patch_author], email_subject, email_text)
         except Exception as e:

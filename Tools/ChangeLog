@@ -1,3 +1,13 @@
+2020-08-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] emails for test failures should include link to test history
+        https://bugs.webkit.org/show_bug.cgi?id=215337
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeLayoutTestsResults.send_email_for_new_test_failures):
+
 2020-08-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ews-build] Add another Big Sur bot
