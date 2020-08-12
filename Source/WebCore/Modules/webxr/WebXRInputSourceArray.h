@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR)
 
 #include <wtf/IsoMalloc.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

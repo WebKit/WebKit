@@ -1,3 +1,12 @@
+2020-08-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed build fix after r265546.
+
+        The <Ref.h> include should be now in the header now that we've inlined the create() function.
+
+        * Modules/webxr/WebXRInputSourceArray.cpp: Removed include.
+        * Modules/webxr/WebXRInputSourceArray.h: Added include
+
 2020-08-12  Youenn Fablet  <youenn@apple.com>
 
         Refresh WritableStream up to spec
