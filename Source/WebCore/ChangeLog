@@ -1,3 +1,15 @@
+2020-08-11  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Depth formats can have mipmaps in WebGL 2
+        https://bugs.webkit.org/show_bug.cgi?id=215404
+
+        Reviewed by Kenneth Russell.
+
+        Fixes 150 WebGL 2 conformance tests.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateTexFuncFormatAndType):
+
 2020-08-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, address post-landing review comment from Darin for r265536.

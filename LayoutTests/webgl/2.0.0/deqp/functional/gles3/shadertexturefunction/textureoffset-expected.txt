@@ -1,41 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/shadertexturefunction/textureoffset.html
-
-[ 1: PASS ] texture_functions.textureoffset.sampler2d_fixed_vertex: Pass
-[ 2: PASS ] texture_functions.textureoffset.sampler2d_fixed_fragment: Pass
-[ 3: PASS ] texture_functions.textureoffset.sampler2d_float_vertex: Pass
-[ 4: PASS ] texture_functions.textureoffset.sampler2d_float_fragment: Pass
-[ 5: PASS ] texture_functions.textureoffset.isampler2d_vertex: Pass
-[ 6: PASS ] texture_functions.textureoffset.isampler2d_fragment: Pass
-[ 7: PASS ] texture_functions.textureoffset.usampler2d_vertex: Pass
-[ 8: PASS ] texture_functions.textureoffset.usampler2d_fragment: Pass
-[ 9: PASS ] texture_functions.textureoffset.sampler2d_bias_fixed_fragment: Pass
-[ 10: PASS ] texture_functions.textureoffset.sampler2d_bias_float_fragment: Pass
-[ 11: PASS ] texture_functions.textureoffset.isampler2d_bias_fragment: Pass
-[ 12: PASS ] texture_functions.textureoffset.usampler2d_bias_fragment: Pass
-[ 13: PASS ] texture_functions.textureoffset.sampler2darray_fixed_vertex: Pass
-[ 14: PASS ] texture_functions.textureoffset.sampler2darray_fixed_fragment: Pass
-[ 15: PASS ] texture_functions.textureoffset.sampler2darray_float_vertex: Pass
-[ 16: PASS ] texture_functions.textureoffset.sampler2darray_float_fragment: Pass
-[ 17: PASS ] texture_functions.textureoffset.isampler2darray_vertex: Pass
-[ 18: PASS ] texture_functions.textureoffset.isampler2darray_fragment: Pass
-[ 19: PASS ] texture_functions.textureoffset.usampler2darray_vertex: Pass
-[ 20: PASS ] texture_functions.textureoffset.usampler2darray_fragment: Pass
-[ 21: PASS ] texture_functions.textureoffset.sampler2darray_bias_fixed_fragment: Pass
-[ 22: PASS ] texture_functions.textureoffset.sampler2darray_bias_float_fragment: Pass
-[ 23: PASS ] texture_functions.textureoffset.isampler2darray_bias_fragment: Pass
-[ 24: PASS ] texture_functions.textureoffset.usampler2darray_bias_fragment: Pass
-[ 25: PASS ] texture_functions.textureoffset.sampler3d_fixed_vertex: Pass
-[ 26: PASS ] texture_functions.textureoffset.sampler3d_float_vertex: Pass
-[ 27: PASS ] texture_functions.textureoffset.isampler3d_vertex: Pass
-[ 28: PASS ] texture_functions.textureoffset.usampler3d_vertex: Pass
-[ 29: PASS ] texture_functions.textureoffset.sampler3d_bias_fixed_fragment: Pass
-[ 30: PASS ] texture_functions.textureoffset.sampler3d_bias_float_fragment: Pass
-[ 31: PASS ] texture_functions.textureoffset.isampler3d_bias_fragment: Pass
-[ 32: PASS ] texture_functions.textureoffset.usampler3d_bias_fragment: Pass
-[ 33: FAIL ] texture_functions.textureoffset.sampler2dshadow_vertex: Texture upload failed
-[ 34: FAIL ] texture_functions.textureoffset.sampler2dshadow_fragment: Texture upload failed
-[ 35: FAIL ] texture_functions.textureoffset.sampler2dshadow_bias_fragment: Texture upload failed
-[ 36: PASS ] successfullyParsed is true
-[ FAIL ] 3 failures reported
+[ PASS ] All tests passed

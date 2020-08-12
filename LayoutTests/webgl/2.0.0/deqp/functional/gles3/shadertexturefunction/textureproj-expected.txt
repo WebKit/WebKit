@@ -1,45 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/shadertexturefunction/textureproj.html
-
-[ 1: PASS ] texture_functions.textureproj.sampler2d_vec3_fixed_vertex: Pass
-[ 2: PASS ] texture_functions.textureproj.sampler2d_vec3_fixed_fragment: Pass
-[ 3: PASS ] texture_functions.textureproj.sampler2d_vec3_float_vertex: Pass
-[ 4: PASS ] texture_functions.textureproj.sampler2d_vec3_float_fragment: Pass
-[ 5: PASS ] texture_functions.textureproj.isampler2d_vec3_vertex: Pass
-[ 6: PASS ] texture_functions.textureproj.isampler2d_vec3_fragment: Pass
-[ 7: PASS ] texture_functions.textureproj.usampler2d_vec3_vertex: Pass
-[ 8: PASS ] texture_functions.textureproj.usampler2d_vec3_fragment: Pass
-[ 9: PASS ] texture_functions.textureproj.sampler2d_vec3_bias_fixed_fragment: Pass
-[ 10: PASS ] texture_functions.textureproj.sampler2d_vec3_bias_float_fragment: Pass
-[ 11: PASS ] texture_functions.textureproj.isampler2d_vec3_bias_fragment: Pass
-[ 12: PASS ] texture_functions.textureproj.usampler2d_vec3_bias_fragment: Pass
-[ 13: PASS ] texture_functions.textureproj.sampler2d_vec4_fixed_vertex: Pass
-[ 14: PASS ] texture_functions.textureproj.sampler2d_vec4_fixed_fragment: Pass
-[ 15: PASS ] texture_functions.textureproj.sampler2d_vec4_float_vertex: Pass
-[ 16: PASS ] texture_functions.textureproj.sampler2d_vec4_float_fragment: Pass
-[ 17: PASS ] texture_functions.textureproj.isampler2d_vec4_vertex: Pass
-[ 18: PASS ] texture_functions.textureproj.isampler2d_vec4_fragment: Pass
-[ 19: PASS ] texture_functions.textureproj.usampler2d_vec4_vertex: Pass
-[ 20: PASS ] texture_functions.textureproj.usampler2d_vec4_fragment: Pass
-[ 21: PASS ] texture_functions.textureproj.sampler2d_vec4_bias_fixed_fragment: Pass
-[ 22: PASS ] texture_functions.textureproj.sampler2d_vec4_bias_float_fragment: Pass
-[ 23: PASS ] texture_functions.textureproj.isampler2d_vec4_bias_fragment: Pass
-[ 24: PASS ] texture_functions.textureproj.usampler2d_vec4_bias_fragment: Pass
-[ 25: PASS ] texture_functions.textureproj.sampler3d_fixed_vertex: Pass
-[ 26: PASS ] texture_functions.textureproj.sampler3d_fixed_fragment: Pass
-[ 27: PASS ] texture_functions.textureproj.sampler3d_float_vertex: Pass
-[ 28: PASS ] texture_functions.textureproj.sampler3d_float_fragment: Pass
-[ 29: PASS ] texture_functions.textureproj.isampler3d_vertex: Pass
-[ 30: PASS ] texture_functions.textureproj.isampler3d_fragment: Pass
-[ 31: PASS ] texture_functions.textureproj.usampler3d_vertex: Pass
-[ 32: PASS ] texture_functions.textureproj.usampler3d_fragment: Pass
-[ 33: PASS ] texture_functions.textureproj.sampler3d_bias_fixed_fragment: Pass
-[ 34: PASS ] texture_functions.textureproj.sampler3d_bias_float_fragment: Pass
-[ 35: PASS ] texture_functions.textureproj.isampler3d_bias_fragment: Pass
-[ 36: PASS ] texture_functions.textureproj.usampler3d_bias_fragment: Pass
-[ 37: FAIL ] texture_functions.textureproj.sampler2dshadow_vertex: Texture upload failed
-[ 38: FAIL ] texture_functions.textureproj.sampler2dshadow_fragment: Texture upload failed
-[ 39: FAIL ] texture_functions.textureproj.sampler2dshadow_bias_fragment: Texture upload failed
-[ 40: PASS ] successfullyParsed is true
-[ FAIL ] 3 failures reported
+[ PASS ] All tests passed

@@ -5355,7 +5355,7 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "depth texture formats not enabled");
             return false;
         }
-        if (level > 0) {
+        if (level > 0 && isWebGL1()) {
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "level must be 0 for depth formats");
             return false;
         }

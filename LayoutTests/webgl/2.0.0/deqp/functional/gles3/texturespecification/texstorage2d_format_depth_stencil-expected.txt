@@ -1,22 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/texturespecification/texstorage2d_format_depth_stencil.html
-
-[ 1: FAIL ] specification.texstorage2d.format.depth_component32f_2d: Image comparison failed
-[ 2: FAIL ] specification.texstorage2d.format.depth_component32f_2d: Verification failed
-[ 3: FAIL ] specification.texstorage2d.format.depth_component32f_cube: Image comparison failed
-[ 4: FAIL ] specification.texstorage2d.format.depth_component32f_cube: Verification failed
-[ 5: FAIL ] specification.texstorage2d.format.depth_component24_2d: Image comparison failed
-[ 6: FAIL ] specification.texstorage2d.format.depth_component24_2d: Verification failed
-[ 7: FAIL ] specification.texstorage2d.format.depth_component24_cube: Image comparison failed
-[ 8: FAIL ] specification.texstorage2d.format.depth_component24_cube: Verification failed
-[ 9: FAIL ] specification.texstorage2d.format.depth_component16_2d: Image comparison failed
-[ 10: FAIL ] specification.texstorage2d.format.depth_component16_2d: Verification failed
-[ 11: FAIL ] specification.texstorage2d.format.depth_component16_cube: Image comparison failed
-[ 12: FAIL ] specification.texstorage2d.format.depth_component16_cube: Verification failed
-[ 13: FAIL ] specification.texstorage2d.format.depth24_stencil8_2d: Image comparison failed
-[ 14: FAIL ] specification.texstorage2d.format.depth24_stencil8_2d: Verification failed
-[ 15: FAIL ] specification.texstorage2d.format.depth24_stencil8_cube: Image comparison failed
-[ 16: FAIL ] specification.texstorage2d.format.depth24_stencil8_cube: Verification failed
-[ 17: PASS ] specification.texstorage2d.format.depth24_stencil8_cube: successfullyParsed is true
-[ FAIL ] 16 failures reported
+[ PASS ] All tests passed
