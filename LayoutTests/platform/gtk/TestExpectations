@@ -39,6 +39,13 @@ swipe [ Pass ]
 
 # Accessibility
 webkit.org/b/214341 [ Debug ] accessibility/datalist.html [ Crash ]
+webkit.org/b/215405 accessibility/gtk/caret-browsing-select-focus.html [ Failure ]
+webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.html [ Failure ]
+webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
+webkit.org/b/215405 accessibility/roles-computedRoleString.html [ Failure ]
+webkit.org/b/215405 [ Release ] accessibility/roles-exposed.html [ Failure ]
+webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
+webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
 webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
@@ -2404,7 +2411,6 @@ webkit.org/b/206876 http/tests/security/storage-blocking-strengthened-private-br
 
 webkit.org/b/207711 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Timeout ]
-webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] fast/selectors/slow-style-sharing-with-long-cousin-list.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] http/tests/multipart/multipart-async-image.html [ Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/encoding/legacy-mb-korean/euc-kr/euckr-decode-cseuckr.html [ Timeout ]

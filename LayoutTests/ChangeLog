@@ -1,3 +1,12 @@
+2020-08-11  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Garden accessibility failures after r265514
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-08-11  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Depth formats can have mipmaps in WebGL 2

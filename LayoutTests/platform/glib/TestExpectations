@@ -251,7 +251,7 @@ webkit.org/b/214636 media/media-source/media-source-webm.html [ Timeout ]
 
 webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
 
-webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure ]
+webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 
 webkit.org/b/214038 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Missing Failure ]
 
