@@ -1,3 +1,14 @@
+2020-08-12  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] email notifications should include link to corresponding bug
+        https://bugs.webkit.org/show_bug.cgi?id=215425
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure):
+        (AnalyzeLayoutTestsResults.send_email_for_new_test_failures):
+
 2020-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Broken formatting in price table on yandex.ru after translating to English

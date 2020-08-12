@@ -366,6 +366,15 @@ class CheckPatchRelevance(buildstep.BuildStep):
             return {u'step': u'Patch doesn\'t have relevant changes'}
         return super(CheckPatchRelevance, self).getResultSummary()
 
+
+class Bugzilla(object):
+    @classmethod
+    def bug_url(cls, bug_id):
+        if not bug_id:
+            return ''
+        return '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id)
+
+
 class BugzillaMixin(object):
     addURLs = False
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
@@ -514,7 +523,7 @@ class BugzillaMixin(object):
             self.setProperty('sensitive', True)
             bug_title = ''
         if self.addURLs:
-            self.addURL(u'Bug {} {}'.format(bug_id, bug_title), '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id))
+            self.addURL(u'Bug {} {}'.format(bug_id, bug_title), Bugzilla.bug_url(bug_id))
         if bug_json.get('status') in self.bug_closed_statuses:
             return 1
         return 0
@@ -1458,6 +1467,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
     def send_email_for_new_build_failure(self):
         try:
             builder_name = self.getProperty('buildername', '')
+            bug_id = self.getProperty('bug_id', '')
             bug_title = self.getProperty('bug_title', '')
             worker_name = self.getProperty('workername', '')
             patch_id = self.getProperty('patch_id', '')
@@ -1471,7 +1481,8 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
                 logs = self.filter_logs_containing_error(logs)
 
             email_subject = 'Build failure for Patch {}: {}'.format(patch_id, bug_title)
-            email_text = 'EWS has detected build failure on {} while testing Patch {}.'.format(builder_name, patch_id)
+            email_text = 'EWS has detected build failure on {} while testing Patch {}'.format(builder_name, patch_id)
+            email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
             if logs:
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
@@ -2132,6 +2143,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
     def send_email_for_new_test_failures(self, test_names):
         try:
             builder_name = self.getProperty('buildername', '')
+            bug_id = self.getProperty('bug_id', '')
             bug_title = self.getProperty('bug_title', '')
             worker_name = self.getProperty('workername', '')
             patch_id = self.getProperty('patch_id', '')
@@ -2143,7 +2155,8 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
                 test_names_string += '\n- {} (<a href="{}">test history</a>)'.format(test_name, history_url)
 
             email_subject = 'Layout test failure for Patch {}: {} '.format(patch_id, bug_title)
-            email_text = 'EWS has detected test failure on {} while testing Patch {}.'.format(builder_name, patch_id)
+            email_text = 'EWS has detected test failure on {} while testing Patch {}'.format(builder_name, patch_id)
+            email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
             email_text += '\n\nLayout test failure:\n{}'.format(test_names_string)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
