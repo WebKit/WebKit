@@ -29,6 +29,7 @@
 #if ENABLE(WEBXR)
 
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

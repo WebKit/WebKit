@@ -34,6 +34,7 @@ namespace WebCore {
 class WebXRSession;
 
 class XRSessionEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(XRSessionEvent);
 public:
     struct Init : EventInit {
         RefPtr<WebXRSession> session;

@@ -37,11 +37,14 @@ class WebXRInputSource;
 class WebXRInputSourceArray : public RefCounted<WebXRInputSourceArray> {
     WTF_MAKE_ISO_ALLOCATED(WebXRInputSourceArray);
 public:
+    static Ref<WebXRInputSourceArray> create() { return adoptRef(*new WebXRInputSourceArray()); }
+    ~WebXRInputSourceArray() = default;
+
     unsigned length() const;
     WebXRInputSource* item(unsigned) const;
 
 private:
-    WebXRInputSourceArray();
+    WebXRInputSourceArray() = default;
 };
 
 } // namespace WebCore

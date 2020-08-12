@@ -15,9 +15,12 @@ const fakeDeviceInitParams = {
   supportedFeatures: ALL_FEATURES,
 };
 
+// Creates a test method that leverages regular hit test API (as opposed to hit
+// test for transient input).
 // |shouldSucceed| - true if the hit test request is expected to succeed, false otherwise
 // |endSession| - true if the test case should call session.end() prior to requesting hit test
-const testFunctionGenerator = function(shouldSucceed, endSession) {
+// |expectedError| - expected error name that should be returned in case shouldSucceed is false
+const testFunctionGeneratorRegular = function(shouldSucceed, endSession, expectedError) {
   const testFunction = function(session, fakeDeviceController, t) {
     session.requestReferenceSpace('viewer').then((viewerRefSpace) => {
 
@@ -39,6 +42,8 @@ const testFunctionGenerator = function(shouldSucceed, endSession) {
         t.step(() => {
           assert_false(shouldSucceed,
             "`requestHitTestSource` failed when it was expected to succeed, error: " + error);
+          assert_equals(error.name, expectedError,
+            "`requestHitTestSource` failed with unexpected error name");
         });
       });
     });
@@ -48,17 +53,17 @@ const testFunctionGenerator = function(shouldSucceed, endSession) {
 };
 
 xr_session_promise_test("Hit test subscription succeeds if the feature was requested",
-  testFunctionGenerator(/*shouldSucceed=*/true, /*endSession=*/false),
+  testFunctionGeneratorRegular(/*shouldSucceed=*/true, /*endSession=*/false),
   fakeDeviceInitParams,
   'immersive-ar', { 'requiredFeatures': ['hit-test'] });
 
 xr_session_promise_test("Hit test subscription fails if the feature was not requested",
-  testFunctionGenerator(/*shouldSucceed=*/false, /*endSession=*/false),
+  testFunctionGeneratorRegular(/*shouldSucceed=*/false, /*endSession=*/false, "NotSupportedError"),
   fakeDeviceInitParams,
   'immersive-ar', {});
 
 xr_session_promise_test("Hit test subscription fails if the feature was requested but the session already ended",
-  testFunctionGenerator(/*shouldSucceed=*/false, /*endSession=*/true),
+  testFunctionGeneratorRegular(/*shouldSucceed=*/false, /*endSession=*/true, "InvalidStateError"),
   fakeDeviceInitParams,
   'immersive-ar', { 'requiredFeatures': ['hit-test'] });
 

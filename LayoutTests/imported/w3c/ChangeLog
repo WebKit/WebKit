@@ -1,3 +1,78 @@
+2020-08-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Update WebXR WPT directory
+        https://bugs.webkit.org/show_bug.cgi?id=215224
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_create_move.https.html: Added.
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_delay_creation.https.html: Added.
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_failure.https.html: Added.
+        * web-platform-tests/webxr/anchors/ar_anchor_freefloating_pause_resume_stop.https.html: Added.
+        * web-platform-tests/webxr/anchors/ar_anchor_states.https.html: Added.
+        * web-platform-tests/webxr/anchors/idlharness.https.window.html: Added.
+        * web-platform-tests/webxr/anchors/idlharness.https.window.js: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/ar-module/idlharness.https.window.js.
+        (async idl_array):
+        * web-platform-tests/webxr/anchors/w3c-import.log: Added.
+        * web-platform-tests/webxr/ar-module/idlharness.https.window-expected.txt:
+        * web-platform-tests/webxr/ar-module/idlharness.https.window.js:
+        (async idl_array):
+        * web-platform-tests/webxr/dom-overlay/ar_dom_overlay.https.html:
+        * web-platform-tests/webxr/dom-overlay/ar_dom_overlay_hit_test.https.html: Added.
+        * web-platform-tests/webxr/dom-overlay/idlharness.https.window.html: Added.
+        * web-platform-tests/webxr/dom-overlay/idlharness.https.window.js: Copied from LayoutTests/imported/w3c/web-platform-tests/webxr/ar-module/idlharness.https.window.js.
+        (async idl_array):
+        * web-platform-tests/webxr/dom-overlay/w3c-import.log:
+        * web-platform-tests/webxr/events_input_sources_change.https.html:
+        * web-platform-tests/webxr/events_referenceSpace_reset_immersive.https.html:
+        * web-platform-tests/webxr/events_session_select.https.html:
+        * web-platform-tests/webxr/events_session_select_subframe.https.html:
+        * web-platform-tests/webxr/events_session_squeeze.https.html:
+        * web-platform-tests/webxr/gamepads-module/xrInputSource_gamepad_disconnect.https.html:
+        * web-platform-tests/webxr/gamepads-module/xrInputSource_gamepad_input_registered.https.html:
+        * web-platform-tests/webxr/getInputPose_handedness.https.html:
+        * web-platform-tests/webxr/getInputPose_pointer.https.html:
+        * web-platform-tests/webxr/getViewerPose_emulatedPosition.https.html:
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_inputSources.https.html: Added.
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_refSpaces.https.html:
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_states_regular.https.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_states.https.html.
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_states_transient.https.html: Added.
+        * web-platform-tests/webxr/hit-test/ar_hittest_subscription_transientInputSources.https.html: Added.
+        * web-platform-tests/webxr/hit-test/idlharness.https.html: Added.
+        * web-platform-tests/webxr/hit-test/w3c-import.log:
+        * web-platform-tests/webxr/hit-test/xrRay_constructor.https.html:
+        * web-platform-tests/webxr/idlharness.https.window-expected.txt:
+        * web-platform-tests/webxr/idlharness.https.window.js:
+        (async idl_array):
+        * web-platform-tests/webxr/render_state_update.https.html: Added.
+        * web-platform-tests/webxr/resources/webxr_test_constants.js:
+        * web-platform-tests/webxr/resources/webxr_util.js:
+        (xr_debug):
+        (async requestSkipAnimationFrame):
+        (async loadChromiumResources):
+        (setupWebKitWebXRTestAPI):
+        (xr_promise_test): Deleted.
+        (async xr_session_promise_test): Deleted.
+        * web-platform-tests/webxr/w3c-import.log:
+        * web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html:
+        * web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https.html: Added.
+        * web-platform-tests/webxr/xrBoundedReferenceSpace_updates.https.html:
+        * web-platform-tests/webxr/xrInputSource_add_remove.https.html:
+        * web-platform-tests/webxr/xrInputSource_emulatedPosition.https.html:
+        * web-platform-tests/webxr/xrInputSource_profiles.https.html:
+        * web-platform-tests/webxr/xrInputSource_sameObject.https.html:
+        * web-platform-tests/webxr/xrPose_transform_sameObject.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https.html:
+        * web-platform-tests/webxr/xrReferenceSpace_relationships.https.html: Added.
+        * web-platform-tests/webxr/xrSession_input_events_end.https.html:
+        * web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https.html:
+        * web-platform-tests/webxr/xrSession_sameObject.https.html:
+        * web-platform-tests/webxr/xrSession_visibilityState.https.html:
+        * web-platform-tests/webxr/xrStationaryReferenceSpace_floorlevel_updates.https.html:
+        * web-platform-tests/webxr/xrWebGLLayer_constructor.https.html:
+
 2020-08-12  Chris Lord  <clord@igalia.com>
 
         Implement Canvas.transferControlToOffscreen and OffscreenCanvasRenderingContext2D.commit

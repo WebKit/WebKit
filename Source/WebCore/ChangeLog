@@ -1,3 +1,45 @@
+2020-08-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Update WebXR WPT directory
+        https://bugs.webkit.org/show_bug.cgi?id=215224
+
+        Reviewed by Youenn Fablet.
+
+        The update of the WebXR WPT directory helped us to unveil a couple of mistakes in the current code.
+        First of all the Events defined in the WebXR spec had to be iso allocated as the Event base class.
+        Secondly the WebXRInputSourceArray must have a ::create() method. Finally the m_inputSources attribute
+        of the WebXRSession must be a Ref instead of a RefPtr because the specs mention that the initial
+        value is an empty array.
+
+        Tests: imported/w3c/web-platform-tests/webxr/anchors/ar_anchor_freefloating_create_move.https.html
+               imported/w3c/web-platform-tests/webxr/anchors/ar_anchor_freefloating_delay_creation.https.html
+               imported/w3c/web-platform-tests/webxr/anchors/ar_anchor_freefloating_failure.https.html
+               imported/w3c/web-platform-tests/webxr/anchors/ar_anchor_freefloating_pause_resume_stop.https.html
+               imported/w3c/web-platform-tests/webxr/anchors/ar_anchor_states.https.html
+               imported/w3c/web-platform-tests/webxr/anchors/idlharness.https.window.html
+               imported/w3c/web-platform-tests/webxr/dom-overlay/ar_dom_overlay_hit_test.https.html
+               imported/w3c/web-platform-tests/webxr/dom-overlay/idlharness.https.window.html
+               imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_inputSources.https.html
+               imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_states_regular.https.html
+               imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_states_transient.https.html
+               imported/w3c/web-platform-tests/webxr/hit-test/ar_hittest_subscription_transientInputSources.https.html
+               imported/w3c/web-platform-tests/webxr/hit-test/idlharness.https.html
+               imported/w3c/web-platform-tests/webxr/render_state_update.https.html
+               imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https.html
+               imported/w3c/web-platform-tests/webxr/xrReferenceSpace_relationships.https.html
+
+        * Modules/webxr/WebXRInputSourceArray.cpp:
+        (WebCore::WebXRInputSourceArray::create): Added.
+        * Modules/webxr/WebXRInputSourceArray.h:
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::WebXRSession): Initialize the m_inputSources.
+        (WebCore::WebXRSession::inputSources const): Return a const reference.
+        * Modules/webxr/WebXRSession.h:
+        * Modules/webxr/XRInputSourcesChangeEvent.cpp: Make it iso allocated.
+        * Modules/webxr/XRInputSourcesChangeEvent.h: Ditto.
+        * Modules/webxr/XRSessionEvent.cpp: Ditto.
+        * Modules/webxr/XRSessionEvent.h: Ditto.
+
 2020-08-12  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r259805): Not able to scroll vertically after scrolling horizontally without leaving message and coming back

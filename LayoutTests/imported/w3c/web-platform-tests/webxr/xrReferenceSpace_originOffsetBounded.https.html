@@ -28,7 +28,7 @@ const VIEWS_WITH_OFFSET = [{
 }];
 
 const FLOOR_TRANSFORM = {
-  position: [0.1, 0.2, 0.3],
+  position: [-0.1, -0.2, -0.3],
   orientation: [0, 0, 0, 1]
 };
 
@@ -54,7 +54,7 @@ function testFunction(session, fakeDeviceController, t) {
   };
 
   const LOCAL_POINTER_TRANSFORM = {
-    position: [0.01, 0.02, 0.03],
+    position: [1.01, 2.02, 3.03],
     orientation: [0, 0, 0, 1]
   }
 
@@ -67,7 +67,7 @@ function testFunction(session, fakeDeviceController, t) {
   });
 
   return new Promise((resolve, reject) => {
-    session.requestAnimationFrame((time, frame) => {
+    requestSkipAnimationFrame(session, (time, frame) => {
       let input_source = session.inputSources[0];
 
       session.requestReferenceSpace('bounded-floor').then((referenceSpace) => {

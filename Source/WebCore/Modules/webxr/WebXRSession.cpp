@@ -46,6 +46,7 @@ Ref<WebXRSession> WebXRSession::create(Document& document, WebXRSystem& system, 
 
 WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device)
     : ActiveDOMObject(&document)
+    , m_inputSources(WebXRInputSourceArray::create())
     , m_xrSystem(system)
     , m_mode(mode)
     , m_device(makeWeakPtr(device))
@@ -81,7 +82,7 @@ const WebXRRenderState& WebXRSession::renderState() const
 
 const WebXRInputSourceArray& WebXRSession::inputSources() const
 {
-    return *m_inputSources;
+    return m_inputSources;
 }
 
 void WebXRSession::updateRenderState(const XRRenderStateInit&)

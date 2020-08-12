@@ -1,3 +1,12 @@
+2020-08-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Update WebXR WPT directory
+        https://bugs.webkit.org/show_bug.cgi?id=215224
+
+        Reviewed by Youenn Fablet.
+
+        * platform/wpe/TestExpectations: Skipped one test that started to fail after the import.
+
 2020-08-12  Chris Lord  <clord@igalia.com>
 
         Implement Canvas.transferControlToOffscreen and OffscreenCanvasRenderingContext2D.commit

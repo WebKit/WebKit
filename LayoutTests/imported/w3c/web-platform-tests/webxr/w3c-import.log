@@ -28,10 +28,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webxr/getViewerPose_emulatedPosition.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/idlharness.https.window.js
 /LayoutTests/imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/render_state_update.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_inline.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_create_xrcompatible.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_contextlost.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/webGLCanvasContext_makecompatible_reentrant.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/webxr-supported-by-feature-policy.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/webxr_availability.http.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/webxr_feature_policy.https.html
@@ -60,6 +62,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webxr/xrReferenceSpace_relationships.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrRigidTransform_inverse.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webxr/xrRigidTransform_matrix.https.html

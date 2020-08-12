@@ -50,6 +50,29 @@ PASS XRSession interface: attribute onsqueeze
 PASS XRSession interface: attribute onsqueezestart 
 PASS XRSession interface: attribute onsqueezeend 
 PASS XRSession interface: attribute onvisibilitychange 
+PASS XRSession must be primary interface of xrSession 
+PASS Stringification of xrSession 
+PASS XRSession interface: xrSession must inherit property "visibilityState" with the proper type 
+PASS XRSession interface: xrSession must inherit property "renderState" with the proper type 
+PASS XRSession interface: xrSession must inherit property "inputSources" with the proper type 
+PASS XRSession interface: xrSession must inherit property "updateRenderState(optional XRRenderStateInit)" with the proper type 
+PASS XRSession interface: calling updateRenderState(optional XRRenderStateInit) on xrSession with too few arguments must throw TypeError 
+PASS XRSession interface: xrSession must inherit property "requestReferenceSpace(XRReferenceSpaceType)" with the proper type 
+PASS XRSession interface: calling requestReferenceSpace(XRReferenceSpaceType) on xrSession with too few arguments must throw TypeError 
+PASS XRSession interface: xrSession must inherit property "requestAnimationFrame(XRFrameRequestCallback)" with the proper type 
+PASS XRSession interface: calling requestAnimationFrame(XRFrameRequestCallback) on xrSession with too few arguments must throw TypeError 
+PASS XRSession interface: xrSession must inherit property "cancelAnimationFrame(unsigned long)" with the proper type 
+PASS XRSession interface: calling cancelAnimationFrame(unsigned long) on xrSession with too few arguments must throw TypeError 
+PASS XRSession interface: xrSession must inherit property "end()" with the proper type 
+PASS XRSession interface: xrSession must inherit property "onend" with the proper type 
+PASS XRSession interface: xrSession must inherit property "oninputsourceschange" with the proper type 
+PASS XRSession interface: xrSession must inherit property "onselect" with the proper type 
+PASS XRSession interface: xrSession must inherit property "onselectstart" with the proper type 
+PASS XRSession interface: xrSession must inherit property "onselectend" with the proper type 
+PASS XRSession interface: xrSession must inherit property "onsqueeze" with the proper type 
+PASS XRSession interface: xrSession must inherit property "onsqueezestart" with the proper type 
+PASS XRSession interface: xrSession must inherit property "onsqueezeend" with the proper type 
+PASS XRSession interface: xrSession must inherit property "onvisibilitychange" with the proper type 
 PASS XRRenderState interface: existence and properties of interface object 
 PASS XRRenderState interface object length 
 PASS XRRenderState interface object name 
@@ -60,6 +83,12 @@ PASS XRRenderState interface: attribute depthNear
 PASS XRRenderState interface: attribute depthFar 
 PASS XRRenderState interface: attribute inlineVerticalFieldOfView 
 PASS XRRenderState interface: attribute baseLayer 
+PASS XRRenderState must be primary interface of xrRenderState 
+PASS Stringification of xrRenderState 
+PASS XRRenderState interface: xrRenderState must inherit property "depthNear" with the proper type 
+PASS XRRenderState interface: xrRenderState must inherit property "depthFar" with the proper type 
+PASS XRRenderState interface: xrRenderState must inherit property "inlineVerticalFieldOfView" with the proper type 
+PASS XRRenderState interface: xrRenderState must inherit property "baseLayer" with the proper type 
 PASS XRFrame interface: existence and properties of interface object 
 PASS XRFrame interface object length 
 PASS XRFrame interface object name 
@@ -83,6 +112,11 @@ PASS XRReferenceSpace interface: existence and properties of interface prototype
 PASS XRReferenceSpace interface: existence and properties of interface prototype object's @@unscopables property 
 PASS XRReferenceSpace interface: operation getOffsetReferenceSpace(XRRigidTransform) 
 PASS XRReferenceSpace interface: attribute onreset 
+PASS XRReferenceSpace must be primary interface of xrReferenceSpace 
+PASS Stringification of xrReferenceSpace 
+PASS XRReferenceSpace interface: xrReferenceSpace must inherit property "getOffsetReferenceSpace(XRRigidTransform)" with the proper type 
+PASS XRReferenceSpace interface: calling getOffsetReferenceSpace(XRRigidTransform) on xrReferenceSpace with too few arguments must throw TypeError 
+PASS XRReferenceSpace interface: xrReferenceSpace must inherit property "onreset" with the proper type 
 PASS XRBoundedReferenceSpace interface: existence and properties of interface object 
 PASS XRBoundedReferenceSpace interface object length 
 PASS XRBoundedReferenceSpace interface object name 
@@ -119,6 +153,12 @@ PASS XRRigidTransform interface: attribute position
 PASS XRRigidTransform interface: attribute orientation 
 PASS XRRigidTransform interface: attribute matrix 
 PASS XRRigidTransform interface: attribute inverse 
+PASS XRRigidTransform must be primary interface of new XRRigidTransform() 
+PASS Stringification of new XRRigidTransform() 
+PASS XRRigidTransform interface: new XRRigidTransform() must inherit property "position" with the proper type 
+PASS XRRigidTransform interface: new XRRigidTransform() must inherit property "orientation" with the proper type 
+PASS XRRigidTransform interface: new XRRigidTransform() must inherit property "matrix" with the proper type 
+PASS XRRigidTransform interface: new XRRigidTransform() must inherit property "inverse" with the proper type 
 PASS XRPose interface: existence and properties of interface object 
 PASS XRPose interface object length 
 PASS XRPose interface object name 
@@ -153,6 +193,9 @@ PASS XRInputSourceArray interface: existence and properties of interface prototy
 PASS XRInputSourceArray interface: existence and properties of interface prototype object's @@unscopables property 
 PASS XRInputSourceArray interface: iterable<XRInputSource> 
 PASS XRInputSourceArray interface: attribute length 
+PASS XRInputSourceArray must be primary interface of xrInputSourceArray 
+PASS Stringification of xrInputSourceArray 
+PASS XRInputSourceArray interface: xrInputSourceArray must inherit property "length" with the proper type 
 PASS XRLayer interface: existence and properties of interface object 
 PASS XRLayer interface object length 
 PASS XRLayer interface object name 
@@ -172,6 +215,17 @@ PASS XRWebGLLayer interface: attribute framebufferWidth
 PASS XRWebGLLayer interface: attribute framebufferHeight 
 PASS XRWebGLLayer interface: operation getViewport(XRView) 
 PASS XRWebGLLayer interface: operation getNativeFramebufferScaleFactor(XRSession) 
+PASS XRWebGLLayer must be primary interface of xrWebGLLayer 
+PASS Stringification of xrWebGLLayer 
+PASS XRWebGLLayer interface: xrWebGLLayer must inherit property "antialias" with the proper type 
+PASS XRWebGLLayer interface: xrWebGLLayer must inherit property "ignoreDepthValues" with the proper type 
+PASS XRWebGLLayer interface: xrWebGLLayer must inherit property "framebuffer" with the proper type 
+PASS XRWebGLLayer interface: xrWebGLLayer must inherit property "framebufferWidth" with the proper type 
+PASS XRWebGLLayer interface: xrWebGLLayer must inherit property "framebufferHeight" with the proper type 
+PASS XRWebGLLayer interface: xrWebGLLayer must inherit property "getViewport(XRView)" with the proper type 
+PASS XRWebGLLayer interface: calling getViewport(XRView) on xrWebGLLayer with too few arguments must throw TypeError 
+PASS XRWebGLLayer interface: xrWebGLLayer must inherit property "getNativeFramebufferScaleFactor(XRSession)" with the proper type 
+PASS XRWebGLLayer interface: calling getNativeFramebufferScaleFactor(XRSession) on xrWebGLLayer with too few arguments must throw TypeError 
 PASS XRSessionEvent interface: existence and properties of interface object 
 PASS XRSessionEvent interface object length 
 PASS XRSessionEvent interface object name 
@@ -179,6 +233,9 @@ PASS XRSessionEvent interface: existence and properties of interface prototype o
 PASS XRSessionEvent interface: existence and properties of interface prototype object's "constructor" property 
 PASS XRSessionEvent interface: existence and properties of interface prototype object's @@unscopables property 
 PASS XRSessionEvent interface: attribute session 
+PASS XRSessionEvent must be primary interface of xrSessionEvent 
+PASS Stringification of xrSessionEvent 
+PASS XRSessionEvent interface: xrSessionEvent must inherit property "session" with the proper type 
 PASS XRInputSourceEvent interface: existence and properties of interface object 
 PASS XRInputSourceEvent interface object length 
 PASS XRInputSourceEvent interface object name 
@@ -196,6 +253,11 @@ PASS XRInputSourcesChangeEvent interface: existence and properties of interface 
 PASS XRInputSourcesChangeEvent interface: attribute session 
 PASS XRInputSourcesChangeEvent interface: attribute added 
 PASS XRInputSourcesChangeEvent interface: attribute removed 
+PASS XRInputSourcesChangeEvent must be primary interface of xrInputSourcesChangeEvent 
+PASS Stringification of xrInputSourcesChangeEvent 
+PASS XRInputSourcesChangeEvent interface: xrInputSourcesChangeEvent must inherit property "session" with the proper type 
+PASS XRInputSourcesChangeEvent interface: xrInputSourcesChangeEvent must inherit property "added" with the proper type 
+PASS XRInputSourcesChangeEvent interface: xrInputSourcesChangeEvent must inherit property "removed" with the proper type 
 PASS XRReferenceSpaceEvent interface: existence and properties of interface object 
 PASS XRReferenceSpaceEvent interface object length 
 PASS XRReferenceSpaceEvent interface object name 
@@ -211,6 +273,7 @@ FAIL XRPermissionStatus interface: existence and properties of interface prototy
 FAIL XRPermissionStatus interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "XRPermissionStatus" expected property "XRPermissionStatus" missing
 FAIL XRPermissionStatus interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "XRPermissionStatus" expected property "XRPermissionStatus" missing
 FAIL XRPermissionStatus interface: attribute granted assert_own_property: self does not have own property "XRPermissionStatus" expected property "XRPermissionStatus" missing
+PASS WebGLRenderingContextBase interface: webGLRenderingContextBase must inherit property "makeXRCompatible()" with the proper type 
 PASS Navigator interface: attribute xr 
 PASS Navigator interface: navigator must inherit property "xr" with the proper type 
 

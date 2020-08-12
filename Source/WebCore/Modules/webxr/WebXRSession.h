@@ -109,7 +109,7 @@ private:
     XREnvironmentBlendMode m_environmentBlendMode;
     XRInteractionMode m_interactionMode;
     XRVisibilityState m_visibilityState;
-    RefPtr<WebXRInputSourceArray> m_inputSources;
+    Ref<WebXRInputSourceArray> m_inputSources;
     bool m_ended { false };
 
     WebXRSystem& m_xrSystem;

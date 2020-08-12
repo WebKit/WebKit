@@ -37,6 +37,7 @@ class WebXRInputSource;
 class WebXRSession;
 
 class XRInputSourcesChangeEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(XRInputSourcesChangeEvent);
 public:
     struct Init : EventInit {
         RefPtr<WebXRSession> session;

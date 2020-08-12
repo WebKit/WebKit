@@ -1,3 +1,5 @@
+'use strict';
+
 // These tests rely on the User Agent providing an implementation of the
 // WebXR Testing API (https://github.com/immersive-web/webxr-test-api).
 //
@@ -9,24 +11,46 @@
 
 // Debugging message helper, by default does nothing. Implementations can
 // override this.
-var xr_debug = function(name, msg) {}
-var isChromiumBased = 'MojoInterfaceInterceptor' in self;
-var isWebKitBased = 'internals' in self && 'xrTest' in internals;
+var xr_debug = function(name, msg) {};
 
 function xr_promise_test(name, func, properties) {
   promise_test(async (t) => {
     // Perform any required test setup:
     xr_debug(name, 'setup');
 
-    if (isChromiumBased) {
-      // Chrome setup
-      await loadChromiumResources;
-      xr_debug = navigator.xr.test.Debug;
+    // Only set up once.
+    if (!navigator.xr.test) {
+      // Load test-only API helpers.
+      const script = document.createElement('script');
+      script.src = '/resources/test-only-api.js';
+      script.async = false;
+      const p = new Promise((resolve, reject) => {
+        script.onload = () => { resolve(); };
+        script.onerror = e => { reject(e); };
+      })
+      document.head.appendChild(script);
+      await p;
+
+      if (isChromiumBased) {
+        // Chrome setup
+        await loadChromiumResources();
+      } else if (isWebKitBased) {
+        // WebKit setup
+        await setupWebKitWebXRTestAPI();
+      } else {
+        assert_implements(false, "missing navigator.xr.test");
+      }
     }
 
-    if (isWebKitBased) {
-      // WebKit setup
-      await setupWebKitWebXRTestAPI;
+    // Either the test api needs to be polyfilled and it's not set up above, or
+    // something happened to one of the known polyfills and it failed to be
+    // setup properly. Either way, the fact that xr_promise_test is being used
+    // means that the tests expect navigator.xr.test to be set. By rejecting now
+    // we can hopefully provide a clearer indication of what went wrong.
+    if (!navigator.xr.test) {
+      // We can't use assert_true here because it causes the wpt testharness
+      // to treat this as a test page and not as a test.
+      return Promise.reject("No navigator.xr.test object found, even after attempted load");
     }
 
     // Ensure that any devices are disconnected when done. If this were done in
@@ -42,6 +66,18 @@ function xr_promise_test(name, func, properties) {
     xr_debug(name, 'main');
     return func(t);
   }, name, properties);
+}
+
+// A utility function for waiting one animation frame before running the callback
+//
+// This is only needed after calling FakeXRDevice methods outside of an animation frame
+//
+// This is so that we can paper over the potential race allowed by the "next animation frame"
+// concept https://immersive-web.github.io/webxr-test-api/#xrsession-next-animation-frame
+function requestSkipAnimationFrame(session, callback) {
+ session.requestAnimationFrame(() => {
+  session.requestAnimationFrame(callback);
+ });
 }
 
 // A test function which runs through the common steps of requesting a session.
@@ -149,6 +185,7 @@ function forEachWebxrObject(callback) {
   callback(window.XRFrameRequestCallback, 'XRFrameRequestCallback');
   callback(window.XRPresentationContext, 'XRPresentationContext');
   callback(window.XRFrame, 'XRFrame');
+  callback(window.XRLayer, 'XRLayer');
   callback(window.XRView, 'XRView');
   callback(window.XRViewport, 'XRViewport');
   callback(window.XRViewerPose, 'XRViewerPose');
@@ -162,25 +199,27 @@ function forEachWebxrObject(callback) {
 }
 
 // Code for loading test API in Chromium.
-let loadChromiumResources = Promise.resolve().then(() => {
-  if (!isChromiumBased) {
-    // Do nothing on non-Chromium-based browsers or when the Mojo bindings are
-    // not present in the global namespace.
-    return;
-  }
-
+async function loadChromiumResources() {
   let chromiumResources = [
-    '/gen/layout_test_data/mojo/public/js/mojo_bindings.js',
     '/gen/mojo/public/mojom/base/time.mojom.js',
-    '/gen/gpu/ipc/common/mailbox_holder.mojom.js',
+    '/gen/mojo/public/mojom/base/shared_memory.mojom.js',
+    '/gen/mojo/public/mojom/base/unguessable_token.mojom.js',
     '/gen/gpu/ipc/common/sync_token.mojom.js',
-    '/gen/ui/display/mojom/display.mojom.js',
+    '/gen/gpu/ipc/common/mailbox.mojom.js',
+    '/gen/gpu/ipc/common/mailbox_holder.mojom.js',
     '/gen/ui/gfx/geometry/mojom/geometry.mojom.js',
+    '/gen/ui/gfx/mojom/native_handle_types.mojom.js',
+    '/gen/ui/gfx/mojom/buffer_types.mojom.js',
+    '/gen/ui/gfx/mojom/color_space.mojom.js',
+    '/gen/ui/gfx/mojom/display_color_spaces.mojom.js',
     '/gen/ui/gfx/mojom/gpu_fence_handle.mojom.js',
     '/gen/ui/gfx/mojom/transform.mojom.js',
+    '/gen/ui/display/mojom/display.mojom.js',
+    '/gen/device/gamepad/public/mojom/gamepad.mojom.js',
     '/gen/device/vr/public/mojom/vr_service.mojom.js',
     '/resources/chromium/webxr-test-math-helper.js',
     '/resources/chromium/webxr-test.js',
+    // Required only by resources/chromium/webxr-test.js
     '/resources/testdriver.js',
     '/resources/testdriver-vendor.js',
   ];
@@ -193,29 +232,15 @@ let loadChromiumResources = Promise.resolve().then(() => {
     chromiumResources = chromiumResources.concat(additionalChromiumResources);
   }
 
-  let chain = Promise.resolve();
-    chromiumResources.forEach(path => {
-      let script = document.createElement('script');
-      script.src = path;
-      script.async = false;
-      chain = chain.then(() => new Promise(resolve => {
-                           script.onload = () => resolve();
-                         }));
-      document.head.appendChild(script);
-  });
+  await loadMojoResources(chromiumResources);
 
-  return chain;
-});
+  xr_debug = navigator.xr.test.Debug;
+}
 
-let setupWebKitWebXRTestAPI = Promise.resolve().then(() => {
-  if (!isWebKitBased) {
-    // Do nothing on non-WebKit-based browsers.
-    return;
-  }
-
+function setupWebKitWebXRTestAPI() {
   // WebKit setup. The internals object is used by the WebKit test runner
   // to provide JS access to internal APIs. In this case it's used to
   // ensure that XRTest is only exposed to wpt tests.
   navigator.xr.test = internals.xrTest;
   return Promise.resolve();
-});
+}
