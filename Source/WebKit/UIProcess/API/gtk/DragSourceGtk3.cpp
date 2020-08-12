@@ -31,12 +31,13 @@
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/GRefPtrGtk.h>
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-enum DragTargetType { Markup, Text, Image, URIList, NetscapeURL, SmartPaste };
+enum DragTargetType { Markup, Text, Image, URIList, NetscapeURL, SmartPaste, Custom };
 
 DragSource::DragSource(GtkWidget* webView)
     : m_webView(webView)
@@ -74,6 +75,11 @@ DragSource::DragSource(GtkWidget* webView)
         case DragTargetType::SmartPaste:
             gtk_selection_data_set_text(data, "", -1);
             break;
+        case DragTargetType::Custom: {
+            auto* buffer = drag.m_selectionData->customData();
+            gtk_selection_data_set(data, gdk_atom_intern_static_string(PasteboardCustomData::gtkType()), 8, reinterpret_cast<const guchar*>(buffer->data()), buffer->size());
+            break;
+        }
         }
     }), this);
 
@@ -128,6 +134,8 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
         gtk_target_list_add_image_targets(list.get(), DragTargetType::Image, TRUE);
     if (m_selectionData->canSmartReplace())
         gtk_target_list_add(list.get(), gdk_atom_intern_static_string("application/vnd.webkitgtk.smartpaste"), 0, DragTargetType::SmartPaste);
+    if (m_selectionData->hasCustomData())
+        gtk_target_list_add(list.get(), gdk_atom_intern_static_string(PasteboardCustomData::gtkType()), 0, DragTargetType::Custom);
 
     m_drag = gtk_drag_begin_with_coordinates(m_webView, list.get(), dragOperationToGdkDragActions(operationMask), GDK_BUTTON_PRIMARY, nullptr, -1, -1);
     if (image) {

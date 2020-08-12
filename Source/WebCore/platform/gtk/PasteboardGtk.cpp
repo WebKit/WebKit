@@ -184,6 +184,9 @@ void Pasteboard::write(const PasteboardWebContent& pasteboardContent)
         m_selectionData->setText(pasteboardContent.text);
         m_selectionData->setMarkup(pasteboardContent.markup);
         m_selectionData->setCanSmartReplace(pasteboardContent.canSmartCopyOrDelete);
+        PasteboardCustomData customData;
+        customData.setOrigin(pasteboardContent.contentOrigin);
+        m_selectionData->setCustomData(customData.createSharedBuffer());
     } else {
         SelectionData data;
         data.setText(pasteboardContent.text);
@@ -253,6 +256,8 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy, Opti
 
 void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, Optional<size_t>)
 {
+    reader.contentOrigin = readOrigin();
+
     if (m_selectionData) {
         if (m_selectionData->hasMarkup() && reader.readHTML(m_selectionData->markup()))
             return;
@@ -268,8 +273,6 @@ void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolic
 
         return;
     }
-
-    reader.contentOrigin = readOrigin();
 
     auto types = platformStrategies()->pasteboardStrategy()->types(m_name);
     if (types.contains("text/html"_s)) {
@@ -319,14 +322,31 @@ void Pasteboard::read(PasteboardFileReader& reader, Optional<size_t>)
 bool Pasteboard::hasData()
 {
     if (m_selectionData)
-        return m_selectionData->hasText() || m_selectionData->hasMarkup() || m_selectionData->hasURIList() || m_selectionData->hasImage();
+        return m_selectionData->hasText() || m_selectionData->hasMarkup() || m_selectionData->hasURIList() || m_selectionData->hasImage() || m_selectionData->hasCustomData();
     return !platformStrategies()->pasteboardStrategy()->types(m_name).isEmpty();
 }
 
 Vector<String> Pasteboard::typesSafeForBindings(const String& origin)
 {
-    if (m_selectionData)
-        return { };
+    if (m_selectionData) {
+        ListHashSet<String> types;
+        if (auto* buffer = m_selectionData->customData()) {
+            auto customData = PasteboardCustomData::fromSharedBuffer(*buffer);
+            if (customData.origin() == origin) {
+                for (auto& type : customData.orderedTypes())
+                    types.add(type);
+            }
+        }
+
+        if (m_selectionData->hasText())
+            types.add("text/plain"_s);
+        if (m_selectionData->hasMarkup())
+            types.add("text/html"_s);
+        if (m_selectionData->hasURIList())
+            types.add("text/uri-list"_s);
+
+        return copyToVector(types);
+    }
 
     return platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_name, origin);
 }
@@ -356,8 +376,12 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
 
 String Pasteboard::readOrigin()
 {
-    if (m_selectionData)
+    if (m_selectionData) {
+        if (auto* buffer = m_selectionData->customData())
+            return PasteboardCustomData::fromSharedBuffer(*buffer).origin();
+
         return { };
+    }
 
     // FIXME: cache custom data?
     if (auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, PasteboardCustomData::gtkType()))
@@ -395,8 +419,12 @@ String Pasteboard::readString(const String& type)
 
 String Pasteboard::readStringInCustomData(const String& type)
 {
-    if (m_selectionData)
+    if (m_selectionData) {
+        if (auto* buffer = m_selectionData->customData())
+            return PasteboardCustomData::fromSharedBuffer(*buffer).readStringInCustomData(type);
+
         return { };
+    }
 
     // FIXME: cache custom data?
     if (auto buffer = platformStrategies()->pasteboardStrategy()->readBufferFromClipboard(m_name, PasteboardCustomData::gtkType()))
@@ -429,8 +457,17 @@ void Pasteboard::writeMarkup(const String&)
 
 void Pasteboard::writeCustomData(const Vector<PasteboardCustomData>& data)
 {
-    if (m_selectionData)
+    if (m_selectionData) {
+        if (!data.isEmpty()) {
+            const auto& customData = data[0];
+            customData.forEachPlatformString([this] (auto& type, auto& string) {
+                writeString(type, string);
+            });
+            if (customData.hasSameOriginCustomData() || !customData.origin().isEmpty())
+                m_selectionData->setCustomData(customData.createSharedBuffer());
+        }
         return;
+    }
 
     platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_name);
 }

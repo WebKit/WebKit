@@ -31,6 +31,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/DragData.h>
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -48,6 +49,7 @@ DropTarget::DropTarget(GtkWidget* webView)
     gdk_content_formats_builder_add_mime_type(formatsBuilder, "text/uri-list");
     gdk_content_formats_builder_add_mime_type(formatsBuilder, "_NETSCAPE_URL");
     gdk_content_formats_builder_add_mime_type(formatsBuilder, "application/vnd.webkitgtk.smartpaste");
+    gdk_content_formats_builder_add_mime_type(formatsBuilder, PasteboardCustomData::gtkType());
     auto* target = gtk_drop_target_async_new(gdk_content_formats_builder_free_to_formats(formatsBuilder),
         static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK));
     g_signal_connect(target, "accept", G_CALLBACK(+[](GtkDropTargetAsync*, GdkDrop* gdkDrop, gpointer userData) -> gboolean {
@@ -130,7 +132,8 @@ void DropTarget::accept(unsigned)
         "text/html",
         "_NETSCAPE_URL",
         "text/uri-list",
-        "application/vnd.webkitgtk.smartpaste"
+        "application/vnd.webkitgtk.smartpaste",
+        "org.webkitgtk.WebKit.custom-pasteboard-data"
     };
 
     for (unsigned i = 0; i < G_N_ELEMENTS(supportedMimeTypes); ++i) {
@@ -173,6 +176,10 @@ void DropTarget::accept(unsigned)
                     m_selectionData->setURIList(String::fromUTF8(reinterpret_cast<const char*>(uriListData), length));
             } else if (mimeType == "application/vnd.webkitgtk.smartpaste")
                 m_selectionData->setCanSmartReplace(true);
+            else if (mimeType == PasteboardCustomData::gtkType()) {
+                if (g_bytes_get_size(data.get()))
+                    m_selectionData->setCustomData(SharedBuffer::create(data.get()));
+            }
 
             didLoadData();
         });

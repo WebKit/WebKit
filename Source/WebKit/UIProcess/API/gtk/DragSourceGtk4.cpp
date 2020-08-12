@@ -30,6 +30,7 @@
 
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
 
 namespace WebKit {
@@ -84,6 +85,11 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     if (m_selectionData->canSmartReplace()) {
         GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(nullptr, 0));
         providers.append(gdk_content_provider_new_for_bytes("application/vnd.webkitgtk.smartpaste", bytes.get()));
+    }
+
+    if (m_selectionData->hasCustomData()) {
+        GRefPtr<GBytes> bytes = m_selectionData->customData()->createGBytes();
+        providers.append(gdk_content_provider_new_for_bytes(PasteboardCustomData::gtkType(), bytes.get()));
     }
 
     auto* surface = gtk_native_get_surface(gtk_widget_get_native(m_webView));

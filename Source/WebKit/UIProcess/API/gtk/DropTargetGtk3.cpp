@@ -32,13 +32,14 @@
 #include <WebCore/DragData.h>
 #include <WebCore/GRefPtrGtk.h>
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-enum DropTargetType { Markup, Text, URIList, NetscapeURL, SmartPaste };
+enum DropTargetType { Markup, Text, URIList, NetscapeURL, SmartPaste, Custom };
 
 DropTarget::DropTarget(GtkWidget* webView)
     : m_webView(webView)
@@ -50,6 +51,7 @@ DropTarget::DropTarget(GtkWidget* webView)
     gtk_target_list_add_uri_targets(list.get(), DropTargetType::URIList);
     gtk_target_list_add(list.get(), gdk_atom_intern_static_string("_NETSCAPE_URL"), 0, DropTargetType::NetscapeURL);
     gtk_target_list_add(list.get(), gdk_atom_intern_static_string("application/vnd.webkitgtk.smartpaste"), 0, DropTargetType::SmartPaste);
+    gtk_target_list_add(list.get(), gdk_atom_intern_static_string(PasteboardCustomData::gtkType()), 0, DropTargetType::Custom);
     gtk_drag_dest_set(m_webView, static_cast<GtkDestDefaults>(0), nullptr, 0,
         static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK));
     gtk_drag_dest_set_target_list(m_webView, list.get());
@@ -114,7 +116,8 @@ void DropTarget::accept(unsigned time)
         "text/html",
         "_NETSCAPE_URL",
         "text/uri-list",
-        "application/vnd.webkitgtk.smartpaste"
+        "application/vnd.webkitgtk.smartpaste",
+        "org.webkitgtk.WebKit.custom-pasteboard-data"
     };
     Vector<GdkAtom, 4> targets;
     for (unsigned i = 0; i < G_N_ELEMENTS(supportedTargets); ++i) {
@@ -200,6 +203,13 @@ void DropTarget::dataReceived(IntPoint&& position, GtkSelectionData* data, unsig
     case DropTargetType::SmartPaste:
         m_selectionData->setCanSmartReplace(true);
         break;
+    case DropTargetType::Custom: {
+        int length;
+        const auto* customData = gtk_selection_data_get_data_with_length(data, &length);
+        if (length)
+            m_selectionData->setCustomData(SharedBuffer::create(customData, static_cast<size_t>(length)));
+        break;
+    }
     }
 
     if (--m_dataRequestCount)

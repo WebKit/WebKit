@@ -1,3 +1,21 @@
+2020-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r261570): [GTK] Fails to send drop event to JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=215032
+
+        Reviewed by Darin Adler.
+
+        Add support for custom data in drag and drop operations too.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::write): Se custom data on m_selectionData.
+        (WebCore::Pasteboard::read): Initialize the content origin also for drag and drop pasteboards.
+        (WebCore::Pasteboard::hasData): For drag and drop pasteboards return true also if m_selectionData has custom data.
+        (WebCore::Pasteboard::typesSafeForBindings): Implement this for drag and drop pasteboards.
+        (WebCore::Pasteboard::readOrigin): Ditto.
+        (WebCore::Pasteboard::readStringInCustomData): Ditto.
+        (WebCore::Pasteboard::writeCustomData): Ditto.
+
 2020-08-11  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Depth formats can have mipmaps in WebGL 2

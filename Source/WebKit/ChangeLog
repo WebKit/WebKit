@@ -1,3 +1,25 @@
+2020-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r261570): [GTK] Fails to send drop event to JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=215032
+
+        Reviewed by Darin Adler.
+
+        Handle custom data in drag and drop operations.
+
+        * UIProcess/API/gtk/DragSourceGtk3.cpp:
+        (WebKit::DragSource::DragSource):
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/DragSourceGtk4.cpp:
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        (WebKit::DropTarget::DropTarget):
+        (WebKit::DropTarget::accept):
+        (WebKit::DropTarget::dataReceived):
+        * UIProcess/API/gtk/DropTargetGtk4.cpp:
+        (WebKit::DropTarget::DropTarget):
+        (WebKit::DropTarget::accept):
+
 2020-08-11  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add Experimental Feature preference for SW VP9
