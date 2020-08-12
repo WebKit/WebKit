@@ -1,3 +1,16 @@
+2020-08-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebPageProxy::registerEditCommand should be robust against invalid undo step identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=215412
+        <rdar://problem/66296820>
+
+        Reviewed by Tim Horton.
+
+        Add a `MESSAGE_CHECK` to avoid ever creating a `WebEditCommandProxy` with an invalid command identifier.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::registerEditCommand):
+
 2020-08-12  Youenn Fablet  <youenn@apple.com>
 
         Refresh WritableStream up to spec
