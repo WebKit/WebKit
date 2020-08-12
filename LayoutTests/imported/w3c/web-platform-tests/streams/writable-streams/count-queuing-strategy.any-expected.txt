@@ -1,5 +1,5 @@
 
 PASS Can construct a writable stream with a valid CountQueuingStrategy 
-FAIL Correctly governs the value of a WritableStream's state property (HWM = 0) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Correctly governs the value of a WritableStream's state property (HWM = 4) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+PASS Correctly governs the value of a WritableStream's state property (HWM = 0) 
+PASS Correctly governs the value of a WritableStream's state property (HWM = 4) 
 

@@ -20,8 +20,8 @@ PASS The ReadableStreamDefaultReader interface object should not be exposed.
 PASS The ReadableStreamBYOBReader interface object should not be exposed. 
 PASS The ReadableStreamDefaultController interface object should not be exposed. 
 PASS The ReadableByteStreamController interface object should not be exposed. 
-PASS The WritableStreamDefaultWriter interface object should not be exposed. 
-PASS The WritableStreamDefaultController interface object should not be exposed. 
+FAIL The WritableStreamDefaultWriter interface object should not be exposed. assert_false: expected false got true
+FAIL The WritableStreamDefaultController interface object should not be exposed. assert_false: expected false got true
 PASS The IDBEnvironment interface object should not be exposed. 
 PASS The Database interface object should not be exposed. 
 PASS The UIEvent interface object should not be exposed. 

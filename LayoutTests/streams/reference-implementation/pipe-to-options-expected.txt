@@ -1,11 +1,5 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: destination error
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: destination error
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: destination error
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: destination error
 
-Harness Error (FAIL), message = destination error
-
-PASS Piping with no options and a destination error 
-PASS Piping with { preventCancel: false } and a destination error 
-PASS Piping with { preventCancel: true } and a destination error 
+FAIL Piping with no options and a destination error |this| is not a Promise
+FAIL Piping with { preventCancel: false } and a destination error |this| is not a Promise
+FAIL Piping with { preventCancel: true } and a destination error |this| is not a Promise
 

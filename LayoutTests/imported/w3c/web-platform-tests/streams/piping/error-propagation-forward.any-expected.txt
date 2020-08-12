@@ -1,95 +1,51 @@
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error2: error2!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error2: error2!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error2: error2!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error2: error2!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
 CONSOLE MESSAGE: Unhandled Promise Rejection: error2: error2!
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
+CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
+CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
+CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
+CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
+CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
+CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1!
 
-Harness Error (FAIL), message = Unhandled rejection: error1!
-
-PASS Errors must be propagated forward: starts errored; preventAbort = false; fulfilled abort promise 
-FAIL Errors must be propagated forward: starts errored; preventAbort = false; rejected abort promise promise_rejects_exactly: pipeTo must reject with the abort error function "function () { throw e }" threw object "error1: error1!" but we expected it to throw object "error2: error2!"
-PASS Errors must be propagated forward: starts errored; preventAbort = undefined (falsy); fulfilled abort promise 
-PASS Errors must be propagated forward: starts errored; preventAbort = null (falsy); fulfilled abort promise 
-PASS Errors must be propagated forward: starts errored; preventAbort = false (falsy); fulfilled abort promise 
-PASS Errors must be propagated forward: starts errored; preventAbort = 0 (falsy); fulfilled abort promise 
-PASS Errors must be propagated forward: starts errored; preventAbort = -0 (falsy); fulfilled abort promise 
-PASS Errors must be propagated forward: starts errored; preventAbort = NaN (falsy); fulfilled abort promise 
-PASS Errors must be propagated forward: starts errored; preventAbort =  (falsy); fulfilled abort promise 
-PASS Errors must be propagated forward: starts errored; preventAbort = true (truthy) 
-PASS Errors must be propagated forward: starts errored; preventAbort = a (truthy) 
-PASS Errors must be propagated forward: starts errored; preventAbort = 1 (truthy) 
-PASS Errors must be propagated forward: starts errored; preventAbort = Symbol() (truthy) 
-PASS Errors must be propagated forward: starts errored; preventAbort = [object Object] (truthy) 
-PASS Errors must be propagated forward: starts errored; preventAbort = true, preventCancel = true 
-PASS Errors must be propagated forward: starts errored; preventAbort = true, preventCancel = true, preventClose = true 
-PASS Errors must be propagated forward: becomes errored while empty; preventAbort = false; fulfilled abort promise 
-FAIL Errors must be propagated forward: becomes errored while empty; preventAbort = false; rejected abort promise promise_rejects_exactly: pipeTo must reject with the abort error function "function () { throw e }" threw object "error1: error1!" but we expected it to throw object "error2: error2!"
-PASS Errors must be propagated forward: becomes errored while empty; preventAbort = true 
-PASS Errors must be propagated forward: becomes errored while empty; dest never desires chunks; preventAbort = false; fulfilled abort promise 
-FAIL Errors must be propagated forward: becomes errored while empty; dest never desires chunks; preventAbort = false; rejected abort promise promise_rejects_exactly: pipeTo must reject with the abort error function "function () { throw e }" threw object "error1: error1!" but we expected it to throw object "error2: error2!"
-PASS Errors must be propagated forward: becomes errored while empty; dest never desires chunks; preventAbort = true 
-PASS Errors must be propagated forward: becomes errored after one chunk; preventAbort = false; fulfilled abort promise 
-FAIL Errors must be propagated forward: becomes errored after one chunk; preventAbort = false; rejected abort promise promise_rejects_exactly: pipeTo must reject with the abort error function "function () { throw e }" threw object "error1: error1!" but we expected it to throw object "error2: error2!"
-PASS Errors must be propagated forward: becomes errored after one chunk; preventAbort = true 
-FAIL Errors must be propagated forward: becomes errored after one chunk; dest never desires chunks; preventAbort = false; fulfilled abort promise assert_array_equals: lengths differ, expected array ["abort", object "error1: error1!"] length 2, got ["write", "Hello", "abort", object "error1: error1!"] length 4
-FAIL Errors must be propagated forward: becomes errored after one chunk; dest never desires chunks; preventAbort = false; rejected abort promise promise_rejects_exactly: pipeTo must reject with the abort error function "function () { throw e }" threw object "error1: error1!" but we expected it to throw object "error2: error2!"
-FAIL Errors must be propagated forward: becomes errored after one chunk; dest never desires chunks; preventAbort = true assert_array_equals: lengths differ, expected array [] length 0, got ["write", "Hello"] length 2
-FAIL Errors must be propagated forward: shutdown must not occur until the final write completes assert_array_equals: lengths differ, expected array ["write", "a"] length 2, got ["write", "a", "abort", object "error1: error1!"] length 4
-FAIL Errors must be propagated forward: shutdown must not occur until the final write completes; preventAbort = true assert_equals: the pipe must not be complete expected false but got true
-FAIL Errors must be propagated forward: shutdown must not occur until the final write completes; becomes errored after first write assert_array_equals: the second chunk must have been written, but abort must not have happened yet expected property 2 to be "write" but got "abort" (expected array ["write", "a", "write", "b"] got ["write", "a", "abort", object "error1: error1!"])
-FAIL Errors must be propagated forward: shutdown must not occur until the final write completes; becomes errored after first write; preventAbort = true assert_false: the pipe should not complete while the second write is pending expected false got true
+FAIL Errors must be propagated forward: starts errored; preventAbort = false; fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = false; rejected abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = undefined (falsy); fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = null (falsy); fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = false (falsy); fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = 0 (falsy); fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = -0 (falsy); fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = NaN (falsy); fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort =  (falsy); fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = true (truthy) |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = a (truthy) |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = 1 (truthy) |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = Symbol() (truthy) |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = [object Object] (truthy) |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = true, preventCancel = true |this| is not a Promise
+FAIL Errors must be propagated forward: starts errored; preventAbort = true, preventCancel = true, preventClose = true |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored while empty; preventAbort = false; fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored while empty; preventAbort = false; rejected abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored while empty; preventAbort = true |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored while empty; dest never desires chunks; preventAbort = false; fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored while empty; dest never desires chunks; preventAbort = false; rejected abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored while empty; dest never desires chunks; preventAbort = true |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored after one chunk; preventAbort = false; fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored after one chunk; preventAbort = false; rejected abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored after one chunk; preventAbort = true |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored after one chunk; dest never desires chunks; preventAbort = false; fulfilled abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored after one chunk; dest never desires chunks; preventAbort = false; rejected abort promise |this| is not a Promise
+FAIL Errors must be propagated forward: becomes errored after one chunk; dest never desires chunks; preventAbort = true |this| is not a Promise
+FAIL Errors must be propagated forward: shutdown must not occur until the final write completes |this| is not a Promise
+FAIL Errors must be propagated forward: shutdown must not occur until the final write completes; preventAbort = true |this| is not a Promise
+FAIL Errors must be propagated forward: shutdown must not occur until the final write completes; becomes errored after first write |this| is not a Promise
+FAIL Errors must be propagated forward: shutdown must not occur until the final write completes; becomes errored after first write; preventAbort = true |this| is not a Promise
 

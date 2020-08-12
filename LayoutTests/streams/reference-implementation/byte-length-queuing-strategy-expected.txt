@@ -1,3 +1,3 @@
 
-PASS Closing a writable stream with in-flight writes below the high water mark delays the close call properly 
+FAIL Closing a writable stream with in-flight writes below the high water mark delays the close call properly ws.write is not a function. (In 'ws.write({ byteLength: 1024 })', 'ws.write' is undefined)
 

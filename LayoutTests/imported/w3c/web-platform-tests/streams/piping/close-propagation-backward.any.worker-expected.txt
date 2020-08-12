@@ -1,18 +1,18 @@
 
-FAIL Closing must be propagated backward: starts closed; preventCancel omitted; fulfilled cancel promise Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel omitted; rejected cancel promise Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = undefined (falsy); fulfilled cancel promise Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = null (falsy); fulfilled cancel promise Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = false (falsy); fulfilled cancel promise Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = 0 (falsy); fulfilled cancel promise Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = -0 (falsy); fulfilled cancel promise Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = NaN (falsy); fulfilled cancel promise Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel =  (falsy); fulfilled cancel promise Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = true (truthy) Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = a (truthy) Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = 1 (truthy) Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = Symbol() (truthy) Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = [object Object] (truthy) Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = true, preventAbort = true Can't find variable: WritableStream
-FAIL Closing must be propagated backward: starts closed; preventCancel = true, preventAbort = true, preventClose = true Can't find variable: WritableStream
+FAIL Closing must be propagated backward: starts closed; preventCancel omitted; fulfilled cancel promise |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel omitted; rejected cancel promise |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = undefined (falsy); fulfilled cancel promise |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = null (falsy); fulfilled cancel promise |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = false (falsy); fulfilled cancel promise |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = 0 (falsy); fulfilled cancel promise |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = -0 (falsy); fulfilled cancel promise |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = NaN (falsy); fulfilled cancel promise |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel =  (falsy); fulfilled cancel promise |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = true (truthy) |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = a (truthy) |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = 1 (truthy) |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = Symbol() (truthy) |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = [object Object] (truthy) |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = true, preventAbort = true |this| is not a Promise
+FAIL Closing must be propagated backward: starts closed; preventCancel = true, preventAbort = true, preventClose = true |this| is not a Promise
 

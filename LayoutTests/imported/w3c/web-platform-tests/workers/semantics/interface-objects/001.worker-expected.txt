@@ -49,7 +49,7 @@ PASS The Event interface object should be exposed.
 PASS The CustomEvent interface object should be exposed. 
 PASS The DOMException interface object should be exposed. 
 PASS The ReadableStream interface object should be exposed. 
-FAIL The WritableStream interface object should be exposed. assert_own_property: expected property "WritableStream" missing
+PASS The WritableStream interface object should be exposed. 
 PASS The ByteLengthQueuingStrategy interface object should be exposed. 
 PASS The CountQueuingStrategy interface object should be exposed. 
 PASS The IDBRequest interface object should be exposed. 

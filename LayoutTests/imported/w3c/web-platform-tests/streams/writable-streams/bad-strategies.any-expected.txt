@@ -3,7 +3,7 @@ PASS Writable stream: throwing strategy.size getter
 PASS reject any non-function value for strategy.size 
 PASS Writable stream: throwing strategy.highWaterMark getter 
 PASS Writable stream: invalid strategy.highWaterMark 
-FAIL Writable stream: throwing strategy.size method ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Writable stream: invalid strategy.size return value ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+PASS Writable stream: throwing strategy.size method 
+PASS Writable stream: invalid strategy.size return value 
 PASS Writable stream: invalid size beats invalid highWaterMark 
 

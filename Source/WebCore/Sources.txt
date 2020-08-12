@@ -3627,6 +3627,8 @@ JSWorkerType.cpp
 JSWorklet.cpp
 JSWorkletGlobalScope.cpp
 JSWritableStream.cpp
+JSWritableStreamDefaultController.cpp
+JSWritableStreamDefaultWriter.cpp
 JSXMLDocument.cpp
 JSXMLHttpRequest.cpp
 JSXMLHttpRequestEventTarget.cpp

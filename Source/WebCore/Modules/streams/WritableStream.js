@@ -30,37 +30,46 @@ function initializeWritableStream(underlyingSink, strategy)
 
     if (underlyingSink === @undefined)
         underlyingSink = { };
+
     if (strategy === @undefined)
-        strategy = { highWaterMark: 0, size: function() { return 1; } };
+        strategy = { };
 
     if (!@isObject(underlyingSink))
         @throwTypeError("WritableStream constructor takes an object as first argument");
 
-    if (!@isObject(strategy))
-        @throwTypeError("WritableStream constructor takes an object as second argument, if any");
+    if ("type" in underlyingSink)
+        @throwRangeError("Invalid type is specified");
 
+    // Initialize Writable Stream
+    @putByIdDirectPrivate(this, "state", "writable");
+    @putByIdDirectPrivate(this, "storedError", @undefined);
+    @putByIdDirectPrivate(this, "writer", @undefined);
+    @putByIdDirectPrivate(this, "controller", @undefined);
+    @putByIdDirectPrivate(this, "inFlightWriteRequest", @undefined);
+    @putByIdDirectPrivate(this, "closeRequest", @undefined);
+    @putByIdDirectPrivate(this, "inFlightCloseRequest", @undefined);
+    @putByIdDirectPrivate(this, "pendingAbortRequest", @undefined);
+    @putByIdDirectPrivate(this, "writeRequests", []);
+    @putByIdDirectPrivate(this, "backpressure", false);
     @putByIdDirectPrivate(this, "underlyingSink", underlyingSink);
-    @putByIdDirectPrivate(this, "closedPromiseCapability", @newPromiseCapability(@Promise));
-    @putByIdDirectPrivate(this, "readyPromiseCapability", { @promise: @Promise.@resolve() });
-    @putByIdDirectPrivate(this, "queue", @newQueue());
-    @putByIdDirectPrivate(this, "state", @streamWritable);
-    @putByIdDirectPrivate(this, "started", false);
-    @putByIdDirectPrivate(this, "writing", false);
 
-    @putByIdDirectPrivate(this, "strategy", @validateAndNormalizeQueuingStrategy(strategy.size, strategy.highWaterMark));
+    const sizeAlgorithm = @extractSizeAlgorithm(strategy);
+    const highWaterMark = @extractHighWaterMark(strategy, 1);
 
-    @syncWritableStreamStateWithQueue(this);
-
-    const errorFunction = (e) => {
-        @errorWritableStream(this, e);
-    };
-    @putByIdDirectPrivate(this, "startedPromise", @promiseInvokeOrNoopNoCatch(underlyingSink, "start", [errorFunction]));
-    @getByIdDirectPrivate(this, "startedPromise").@then(() => {
-        @putByIdDirectPrivate(this, "started", true);
-        @putByIdDirectPrivate(this, "startedPromise", @undefined);
-    }, errorFunction);
+    @setUpWritableStreamDefaultControllerFromUnderlyingSink(this, underlyingSink, underlyingSink, highWaterMark, sizeAlgorithm)
 
     return this;
+}
+
+@getter
+function locked()
+{
+    "use strict";
+
+    if (!@isWritableStream(this))
+        throw @makeThisTypeError("WritableStream", "locked");
+
+    return @isWritableStreamLocked(this);
 }
 
 function abort(reason)
@@ -68,18 +77,12 @@ function abort(reason)
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(@makeTypeError("The WritableStream.abort method can only be used on instances of WritableStream"));
+        return @Promise.@reject(@makeThisTypeError("WritableStream", "abort"));
 
-    const state = @getByIdDirectPrivate(this, "state");
-    if (state === @streamClosed)
-        return @Promise.@resolve();
+    if (@isWritableStreamLocked(this))
+        return @Promise.@reject(@makeTypeError("WritableStream.abort method can only be used on non locked WritableStream"));
 
-    if (state === @streamErrored)
-        return @Promise.@reject(@getByIdDirectPrivate(this, "storedError"));
-
-    @errorWritableStream(this, reason);
-
-    return @promiseInvokeOrFallbackOrNoop(@getByIdDirectPrivate(this, "underlyingSink"), "abort", [reason], "close", []).@then(function() { });
+    return @writableStreamAbort(this, reason);
 }
 
 function close()
@@ -87,107 +90,23 @@ function close()
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(@makeTypeError("The WritableStream.close method can only be used on instances of WritableStream"));
+        return @Promise.@reject(@makeThisTypeError("WritableStream", "close"));
 
-    const state = @getByIdDirectPrivate(this, "state");
-    if (state === @streamClosed || state === @streamClosing)
-        return @Promise.@reject(@makeTypeError("Cannot close a WritableString that is closed or closing"));
+    if (@isWritableStreamLocked(this))
+        return @Promise.@reject(@makeTypeError("WritableStream.close method can only be used on non locked WritableStream"));
 
-    if (state === @streamErrored)
-        return @Promise.@reject(@getByIdDirectPrivate(this, "storedError"));
+    if (@writableStreamCloseQueuedOrInFlight(this))
+        return @Promise.@reject(@makeTypeError("WritableStream.close method can only be used on a being close WritableStream"));
 
-    if (state === @streamWaiting)
-        @getByIdDirectPrivate(this, "readyPromiseCapability").@resolve.@call();
-
-    @putByIdDirectPrivate(this, "state", @streamClosing);
-    @enqueueValueWithSize(@getByIdDirectPrivate(this, "queue"), "close", 0);
-    @callOrScheduleWritableStreamAdvanceQueue(this);
-
-    return @getByIdDirectPrivate(this, "closedPromiseCapability").@promise;
+    return @writableStreamClose(this);
 }
 
-function write(chunk)
+function getWriter()
 {
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(@makeTypeError("The WritableStream.write method can only be used on instances of WritableStream"));
+        throw @makeThisTypeError("WritableStream", "getWriter");
 
-    const state = @getByIdDirectPrivate(this, "state");
-    if (state === @streamClosed || state === @streamClosing)
-        return @Promise.@reject(@makeTypeError("Cannot write on a WritableString that is closed or closing"));
-
-    if (state === @streamErrored)
-        return @Promise.@reject(this.@storedError);
-
-    @assert(state === @streamWritable || state === @streamWaiting);
-
-    let chunkSize = 1;
-    if (@getByIdDirectPrivate(this, "strategy").size !== @undefined) {
-        try {
-            chunkSize = @getByIdDirectPrivate(this, "strategy").size.@call(@undefined, chunk);
-        } catch(e) {
-            @errorWritableStream(this, e);
-            return @Promise.@reject(e);
-        }
-    }
-
-    const promiseCapability = @newPromiseCapability(@Promise);
-    try {
-        @enqueueValueWithSize(@getByIdDirectPrivate(this, "queue"), { promiseCapability: promiseCapability, chunk: chunk }, chunkSize);
-    } catch (e) {
-        @errorWritableStream(this, e);
-        return @Promise.@reject(e);
-    }
-
-    @syncWritableStreamStateWithQueue(this);
-    @callOrScheduleWritableStreamAdvanceQueue(this);
-
-    return promiseCapability.@promise;
-}
-
-@getter
-function closed()
-{
-    "use strict";
-
-    if (!@isWritableStream(this))
-        return @Promise.@reject(@makeGetterTypeError("WritableStream", "closed"));
-
-    return @getByIdDirectPrivate(this, "closedPromiseCapability").@promise;
-}
-
-@getter
-function ready()
-{
-    "use strict";
-
-    if (!@isWritableStream(this))
-        return @Promise.@reject(@makeGetterTypeError("WritableStream", "ready"));
-
-    return @getByIdDirectPrivate(this, "readyPromiseCapability").@promise;
-}
-
-@getter
-function state()
-{
-    "use strict";
-
-    if (!@isWritableStream(this))
-        @throwTypeError("The WritableStream.state getter can only be used on instances of WritableStream");
-
-    switch(@getByIdDirectPrivate(this, "state")) {
-    case @streamClosed:
-        return "closed";
-    case @streamClosing:
-        return "closing";
-    case @streamErrored:
-        return "errored";
-    case @streamWaiting:
-        return "waiting";
-    case @streamWritable:
-        return "writable";
-    }
-
-    @assert(false);
+    return @acquireWritableStreamDefaultWriter(this);
 }

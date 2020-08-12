@@ -1,3 +1,28 @@
+2020-08-12  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WritableStream up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=215267
+
+        Reviewed by Geoff Garen.
+
+        * js/dom/builtin-getter-name-expected.txt:
+        * js/dom/builtin-getter-name.html:
+        * streams/pipe-to-expected.txt:
+        * streams/reference-implementation/bad-strategies-expected.txt:
+        * streams/reference-implementation/bad-underlying-sinks-expected.txt:
+        * streams/reference-implementation/brand-checks-expected.txt:
+        * streams/reference-implementation/byte-length-queuing-strategy-expected.txt:
+        * streams/reference-implementation/count-queuing-strategy-expected.txt:
+        * streams/reference-implementation/pipe-through-expected.txt:
+        * streams/reference-implementation/pipe-to-expected.txt:
+        * streams/reference-implementation/pipe-to-options-expected.txt:
+        * streams/reference-implementation/readable-stream-templated-expected.txt:
+        * streams/reference-implementation/writable-stream-abort-expected.txt: Removed.
+        * streams/reference-implementation/writable-stream-abort.html: Removed.
+        Removed as not up to date.
+        We should probably do so with all the reference implementation tests.
+        * streams/reference-implementation/writable-stream-expected.txt:
+
 2020-08-06  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Update WebXR WPT directory

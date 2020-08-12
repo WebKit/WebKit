@@ -1,3 +1,17 @@
+2020-08-12  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WritableStream up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=215267
+
+        Reviewed by Geoff Garen.
+
+        Put console log in stderr as this makes some tests flaky otherwise.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (shouldDumpJSConsoleLogInStdErr):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::shouldDumpJSConsoleLogInStdErr):
+
 2020-08-11  Alex Christensen  <achristensen@webkit.org>
 
         Enable HTTP/2 ping API tests

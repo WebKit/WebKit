@@ -1,18 +1,14 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.error')
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'e.error')
-
-PASS error argument is given to start method 
-PASS Underlying sink's write won't be called until start finishes 
-PASS Underlying sink's close won't be called until start finishes 
+FAIL error argument is given to start method error is not a function. (In 'error(passedError)', 'error' is an instance of WritableStreamDefaultController)
+FAIL Underlying sink's write won't be called until start finishes ws.write is not a function. (In 'ws.write('a')', 'ws.write' is undefined)
+FAIL Underlying sink's close won't be called until start finishes assert_equals: expected (string) "closing" but got (undefined) undefined
 PASS Fulfillment value of ws.close() call must be undefined even if the underlying sink returns a non-undefined value 
 PASS Underlying sink's write or close are never invoked if start throws 
 PASS Underlying sink's write or close are never invoked if the promise returned by start is rejected 
 PASS WritableStream can be constructed with no arguments 
-PASS WritableStream instances have the correct methods and properties 
-PASS WritableStream with simple input, processed asynchronously 
-PASS WritableStream with simple input, processed synchronously 
-PASS WritableStream is writable and ready fulfills immediately if the strategy does not apply backpressure 
-PASS Fulfillment value of ws.write() call must be undefined even if the underlying sink returns a non-undefined value 
+FAIL WritableStream instances have the correct methods and properties assert_equals: has a write method expected "function" but got "undefined"
+FAIL WritableStream with simple input, processed asynchronously writableStream.write is not a function. (In 'writableStream.write(chunk)', 'writableStream.write' is undefined)
+FAIL WritableStream with simple input, processed synchronously writableStream.write is not a function. (In 'writableStream.write(chunk)', 'writableStream.write' is undefined)
+FAIL WritableStream is writable and ready fulfills immediately if the strategy does not apply backpressure assert_equals: expected (string) "writable" but got (undefined) undefined
+FAIL Fulfillment value of ws.write() call must be undefined even if the underlying sink returns a non-undefined value ws.write is not a function. (In 'ws.write('a')', 'ws.write' is undefined)
 

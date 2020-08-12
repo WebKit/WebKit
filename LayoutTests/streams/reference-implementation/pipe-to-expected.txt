@@ -1,49 +1,29 @@
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.message')
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: horrible things
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: horrible things
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.message')
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.message')
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'e.message')
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: horrible things
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: horrible things
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: horrible things
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: I don't like you.
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: I don't like you.
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: I don't like you.
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: I don't like you.
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: I don't like you.
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_unreached: Unexpected pull call Reached unreachable code
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: underlying sink abort should receive the error from the readable stream expected (object) object "Error: horrible things" but got (undefined) undefined
 
-Harness Error (FAIL), message = I don't like you.
+Harness Error (FAIL), message = assert_equals: underlying sink abort should receive the error from the readable stream expected (object) object "Error: horrible things" but got (undefined) undefined
 
-PASS Piping from a ReadableStream from which lots of data are readable synchronously 
-PASS Piping from a ReadableStream in readable state to a WritableStream in closing state 
-PASS Piping from a ReadableStream in readable state to a WritableStream in errored state 
-PASS Piping from a ReadableStream in the readable state which becomes closed after pipeTo call to a WritableStream in the writable state 
-PASS Piping from a ReadableStream in the readable state which becomes errored after pipeTo call to a WritableStream in the writable state 
-PASS Piping from an empty ReadableStream which becomes non-empty after pipeTo call to a WritableStream in the writable state 
-PASS Piping from an empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the writable state 
-PASS Piping from an empty ReadableStream to a WritableStream in the writable state which becomes errored after a pipeTo call 
-PASS Piping from a non-empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call 
-PASS Piping from a non-empty ReadableStream to a WritableStream in waiting state which becomes errored after a pipeTo call 
-PASS Piping from a non-empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the waiting state 
-PASS Piping from a non-empty ReadableStream to a WritableStream in the waiting state where both become ready after a pipeTo 
-PASS Piping from an empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call 
-PASS Piping from an empty ReadableStream which becomes closed after a pipeTo call to a WritableStream in the waiting state whose writes never complete 
-PASS Piping from an empty ReadableStream which becomes errored after a pipeTo call to a WritableStream in the waiting state 
+FAIL Piping from a ReadableStream from which lots of data are readable synchronously assert_equals: writable stream state should start out writable expected (string) "writable" but got (undefined) undefined
+FAIL Piping from a ReadableStream in readable state to a WritableStream in closing state assert_equals: writable stream should be closing immediately after closing it expected (string) "closing" but got (undefined) undefined
+FAIL Piping from a ReadableStream in readable state to a WritableStream in errored state ws.write is not a function. (In 'ws.write('Hello')', 'ws.write' is undefined)
+FAIL Piping from a ReadableStream in the readable state which becomes closed after pipeTo call to a WritableStream in the writable state |this| is not a Promise
+FAIL Piping from a ReadableStream in the readable state which becomes errored after pipeTo call to a WritableStream in the writable state |this| is not a Promise
+FAIL Piping from an empty ReadableStream which becomes non-empty after pipeTo call to a WritableStream in the writable state |this| is not a Promise
+FAIL Piping from an empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the writable state |this| is not a Promise
+FAIL Piping from an empty ReadableStream to a WritableStream in the writable state which becomes errored after a pipeTo call assert_equals: ws should start writable expected (string) "writable" but got (undefined) undefined
+FAIL Piping from a non-empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call ws.write is not a function. (In 'ws.write('Hello')', 'ws.write' is undefined)
+FAIL Piping from a non-empty ReadableStream to a WritableStream in waiting state which becomes errored after a pipeTo call ws.write is not a function. (In 'ws.write('Hello')', 'ws.write' is undefined)
+FAIL Piping from a non-empty ReadableStream which becomes errored after pipeTo call to a WritableStream in the waiting state ws.write is not a function. (In 'ws.write('Hello')', 'ws.write' is undefined)
+FAIL Piping from a non-empty ReadableStream to a WritableStream in the waiting state where both become ready after a pipeTo ws.write is not a function. (In 'ws.write('Hello')', 'ws.write' is undefined)
+FAIL Piping from an empty ReadableStream to a WritableStream in the waiting state which becomes writable after a pipeTo call ws.write is not a function. (In 'ws.write('Hello')', 'ws.write' is undefined)
+FAIL Piping from an empty ReadableStream which becomes closed after a pipeTo call to a WritableStream in the waiting state whose writes never complete ws.write is not a function. (In 'ws.write('Hello')', 'ws.write' is undefined)
+FAIL Piping from an empty ReadableStream which becomes errored after a pipeTo call to a WritableStream in the waiting state ws.write is not a function. (In 'ws.write('Hello')', 'ws.write' is undefined)
 PASS Piping to a duck-typed asynchronous "writable stream" works 
-PASS Piping to a stream that has been aborted passes through the error as the cancellation reason 
-PASS Piping to a stream and then aborting it passes through the error as the cancellation reason 
-PASS Piping to a stream that has been closed propagates a TypeError cancellation reason backward 
-PASS Piping to a stream and then closing it propagates a TypeError cancellation reason backward 
-PASS Piping to a stream that errors on write should pass through the error as the cancellation reason 
-PASS Piping to a stream that errors on write should not pass through the error if the stream is already closed 
-PASS Piping to a stream that errors soon after writing should pass through the error as the cancellation reason 
+FAIL Piping to a stream that has been aborted passes through the error as the cancellation reason |this| is not a Promise
+FAIL Piping to a stream and then aborting it passes through the error as the cancellation reason |this| is not a Promise
+FAIL Piping to a stream that has been closed propagates a TypeError cancellation reason backward |this| is not a Promise
+FAIL Piping to a stream and then closing it propagates a TypeError cancellation reason backward |this| is not a Promise
+FAIL Piping to a stream that errors on write should pass through the error as the cancellation reason |this| is not a Promise
+FAIL Piping to a stream that errors on write should not pass through the error if the stream is already closed |this| is not a Promise
+FAIL Piping to a stream that errors soon after writing should pass through the error as the cancellation reason |this| is not a Promise
 

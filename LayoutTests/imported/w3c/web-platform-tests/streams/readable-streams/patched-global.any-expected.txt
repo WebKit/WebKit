@@ -3,5 +3,5 @@ PASS ReadableStream tee() should not touch Object.prototype properties
 PASS ReadableStream tee() should not call the global ReadableStream 
 FAIL ReadableStream async iterator should use the original values of getReader() and ReadableStreamDefaultReader methods promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...chunk of rs...')"
 PASS tee() should not call Promise.prototype.then() 
-PASS pipeTo() should not call Promise.prototype.then() 
+FAIL pipeTo() should not call Promise.prototype.then() |this| is not a Promise
 

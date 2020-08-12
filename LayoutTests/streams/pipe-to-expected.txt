@@ -1,3 +1,3 @@
 
-PASS Piping to a writable stream that does not consume the writes fast enough exerts backpressure on the source 
+FAIL Piping to a writable stream that does not consume the writes fast enough exerts backpressure on the source |this| is not a Promise
 

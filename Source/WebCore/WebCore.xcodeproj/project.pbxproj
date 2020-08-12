@@ -7527,6 +7527,10 @@
 		417612AC1E3A993B00C3D81D /* LibWebRTCMediaEndpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCMediaEndpoint.h; path = libwebrtc/LibWebRTCMediaEndpoint.h; sourceTree = "<group>"; };
 		417612AD1E3A993B00C3D81D /* LibWebRTCPeerConnectionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCPeerConnectionBackend.cpp; path = libwebrtc/LibWebRTCPeerConnectionBackend.cpp; sourceTree = "<group>"; };
 		417612AE1E3A993B00C3D81D /* LibWebRTCPeerConnectionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCPeerConnectionBackend.h; path = libwebrtc/LibWebRTCPeerConnectionBackend.h; sourceTree = "<group>"; };
+		4176673024DC08EA008BFE28 /* WritableStreamDefaultWriter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WritableStreamDefaultWriter.idl; sourceTree = "<group>"; };
+		4176673224DC08EB008BFE28 /* WritableStreamDefaultWriter.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = WritableStreamDefaultWriter.js; sourceTree = "<group>"; };
+		4176673324DC08EB008BFE28 /* WritableStreamDefaultController.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = WritableStreamDefaultController.js; sourceTree = "<group>"; };
+		4176673424DC08EB008BFE28 /* WritableStreamDefaultController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WritableStreamDefaultController.idl; sourceTree = "<group>"; };
 		4176900322FCD8F200B1576D /* MediaSourceRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSourceRegistry.h; sourceTree = "<group>"; };
 		4176900422FCD8F200B1576D /* MediaSourceRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSourceRegistry.cpp; sourceTree = "<group>"; };
 		4176E88F23C348D2003E83FE /* MediaRecorderProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaRecorderProvider.h; sourceTree = "<group>"; };
@@ -18891,6 +18895,10 @@
 				9908B0F11BCACF9100ED0F55 /* StreamInternals.js */,
 				41A023ED1A39DB7900F722DF /* WritableStream.idl */,
 				9908B0EF1BCACF9100ED0F75 /* WritableStream.js */,
+				4176673424DC08EB008BFE28 /* WritableStreamDefaultController.idl */,
+				4176673324DC08EB008BFE28 /* WritableStreamDefaultController.js */,
+				4176673024DC08EA008BFE28 /* WritableStreamDefaultWriter.idl */,
+				4176673224DC08EB008BFE28 /* WritableStreamDefaultWriter.js */,
 				9908B0F11BCACF9100ED0F75 /* WritableStreamInternals.js */,
 			);
 			path = streams;

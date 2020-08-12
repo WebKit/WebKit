@@ -377,6 +377,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/streams/ReadableStreamSink.idl \
     $(WebCore)/Modules/streams/ReadableStreamSource.idl \
     $(WebCore)/Modules/streams/WritableStream.idl \
+    $(WebCore)/Modules/streams/WritableStreamDefaultController.idl \
+    $(WebCore)/Modules/streams/WritableStreamDefaultWriter.idl \
     $(WebCore)/Modules/webaudio/AnalyserNode.idl \
     $(WebCore)/Modules/webaudio/AnalyserOptions.idl \
     $(WebCore)/Modules/webaudio/AudioBuffer.idl \
@@ -1762,6 +1764,8 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/streams/ReadableStreamDefaultReader.js \
     $(WebCore)/Modules/streams/StreamInternals.js \
     $(WebCore)/Modules/streams/WritableStream.js \
+    $(WebCore)/Modules/streams/WritableStreamDefaultController.js \
+    $(WebCore)/Modules/streams/WritableStreamDefaultWriter.js \
     $(WebCore)/Modules/streams/WritableStreamInternals.js \
     $(WebCore)/bindings/js/JSDOMBindingInternals.js \
 #

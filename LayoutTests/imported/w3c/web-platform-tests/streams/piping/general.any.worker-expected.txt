@@ -1,15 +1,15 @@
 
-FAIL Piping must lock both the ReadableStream and WritableStream Can't find variable: WritableStream
-FAIL Piping finishing must unlock both the ReadableStream and WritableStream Can't find variable: WritableStream
-FAIL pipeTo must check the brand of its ReadableStream this value Can't find variable: WritableStream
-FAIL pipeTo must check the brand of its WritableStream argument Can't find variable: WritableStream
-FAIL pipeTo must fail if the ReadableStream is locked, and not lock the WritableStream Can't find variable: WritableStream
-FAIL pipeTo must fail if the WritableStream is locked, and not lock the ReadableStream Can't find variable: WritableStream
-FAIL Piping from a ReadableStream from which lots of chunks are synchronously readable Can't find variable: WritableStream
-FAIL Piping from a ReadableStream for which a chunk becomes asynchronously readable after the pipeTo Can't find variable: WritableStream
-FAIL an undefined rejection from pull should cause pipeTo() to reject when preventAbort is true Can't find variable: WritableStream
-FAIL an undefined rejection from pull should cause pipeTo() to reject when preventAbort is false Can't find variable: WritableStream
-FAIL an undefined rejection from write should cause pipeTo() to reject when preventCancel is true Can't find variable: WritableStream
-FAIL an undefined rejection from write should cause pipeTo() to reject when preventCancel is false Can't find variable: WritableStream
-FAIL pipeTo() should reject if an option getter grabs a writer Can't find variable: WritableStream
+FAIL Piping must lock both the ReadableStream and WritableStream |this| is not a Promise
+FAIL Piping finishing must unlock both the ReadableStream and WritableStream |this| is not a Promise
+FAIL pipeTo must check the brand of its ReadableStream this value Can only call ReadableStream.getReader on instances of ReadableStream
+FAIL pipeTo must check the brand of its WritableStream argument |this| is not a Promise
+FAIL pipeTo must fail if the ReadableStream is locked, and not lock the WritableStream ReadableStream is locked
+FAIL pipeTo must fail if the WritableStream is locked, and not lock the ReadableStream |this| is not a Promise
+FAIL Piping from a ReadableStream from which lots of chunks are synchronously readable |this| is not a Promise
+FAIL Piping from a ReadableStream for which a chunk becomes asynchronously readable after the pipeTo |this| is not a Promise
+FAIL an undefined rejection from pull should cause pipeTo() to reject when preventAbort is true |this| is not a Promise
+FAIL an undefined rejection from pull should cause pipeTo() to reject when preventAbort is false |this| is not a Promise
+FAIL an undefined rejection from write should cause pipeTo() to reject when preventCancel is true |this| is not a Promise
+FAIL an undefined rejection from write should cause pipeTo() to reject when preventCancel is false |this| is not a Promise
+FAIL pipeTo() should reject if an option getter grabs a writer |this| is not a Promise
 

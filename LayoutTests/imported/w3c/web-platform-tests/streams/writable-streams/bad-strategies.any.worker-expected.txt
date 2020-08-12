@@ -1,43 +1,9 @@
 
-FAIL Writable stream: throwing strategy.size getter assert_throws_exactly: construction should re-throw the error function "() => {
-    new WritableStream({}, {
-      get size() {
-        throw error1;
-      },
-      highWaterMark: 5
-    });
-  }" threw object "ReferenceError: Can't find variable: WritableStream" but we expected it to throw object "error1: a unique string"
-FAIL reject any non-function value for strategy.size assert_throws_js: function "() => {
-    new WritableStream({}, { size: 'a string' });
-  }" threw object "ReferenceError: Can't find variable: WritableStream" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Writable stream: throwing strategy.highWaterMark getter assert_throws_exactly: construction should re-throw the error function "() => {
-    new WritableStream({}, {
-      size() {
-        return 1;
-      },
-      get highWaterMark() {
-        throw error1;
-      }
-    });
-  }" threw object "ReferenceError: Can't find variable: WritableStream" but we expected it to throw object "error1: a unique string"
-FAIL Writable stream: invalid strategy.highWaterMark assert_throws_js: construction should throw a RangeError for -1 function "() => {
-      new WritableStream({}, {
-        size() {
-          return 1;
-        },
-        highWaterMark
-      });
-    }" threw object "ReferenceError: Can't find variable: WritableStream" ("ReferenceError") expected instance of function "function RangeError() {
-    [native code]
-}" ("RangeError")
-FAIL Writable stream: throwing strategy.size method Can't find variable: WritableStream
-FAIL Writable stream: invalid strategy.size return value Can't find variable: WritableStream
-FAIL Writable stream: invalid size beats invalid highWaterMark assert_throws_js: WritableStream constructor should throw a TypeError function "() => new WritableStream(undefined, {
-    size: 'not a function',
-    highWaterMark: NaN
-  })" threw object "ReferenceError: Can't find variable: WritableStream" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Writable stream: throwing strategy.size getter 
+PASS reject any non-function value for strategy.size 
+PASS Writable stream: throwing strategy.highWaterMark getter 
+PASS Writable stream: invalid strategy.highWaterMark 
+PASS Writable stream: throwing strategy.size method 
+PASS Writable stream: invalid strategy.size return value 
+PASS Writable stream: invalid size beats invalid highWaterMark 
 

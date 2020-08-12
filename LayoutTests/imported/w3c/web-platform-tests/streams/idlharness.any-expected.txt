@@ -125,52 +125,54 @@ PASS WritableStream interface object name
 PASS WritableStream interface: existence and properties of interface prototype object 
 PASS WritableStream interface: existence and properties of interface prototype object's "constructor" property 
 PASS WritableStream interface: existence and properties of interface prototype object's @@unscopables property 
-FAIL WritableStream interface: attribute locked assert_true: The prototype object must have a property "locked" expected true got false
+PASS WritableStream interface: attribute locked 
 FAIL WritableStream interface: operation abort(optional any) assert_equals: property has wrong .length expected 0 but got 1
 PASS WritableStream interface: operation close() 
-FAIL WritableStream interface: operation getWriter() assert_own_property: interface prototype object missing non-static operation expected property "getWriter" missing
+PASS WritableStream interface: operation getWriter() 
 PASS WritableStream must be primary interface of new WritableStream() 
 PASS Stringification of new WritableStream() 
-FAIL WritableStream interface: new WritableStream() must inherit property "locked" with the proper type assert_inherits: property "locked" not found in prototype chain
+PASS WritableStream interface: new WritableStream() must inherit property "locked" with the proper type 
 PASS WritableStream interface: new WritableStream() must inherit property "abort(optional any)" with the proper type 
 PASS WritableStream interface: calling abort(optional any) on new WritableStream() with too few arguments must throw TypeError 
 PASS WritableStream interface: new WritableStream() must inherit property "close()" with the proper type 
-FAIL WritableStream interface: new WritableStream() must inherit property "getWriter()" with the proper type assert_inherits: property "getWriter" not found in prototype chain
-FAIL WritableStreamDefaultWriter interface: existence and properties of interface object assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface object length assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface object name assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface: existence and properties of interface prototype object assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface: attribute closed assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface: attribute desiredSize assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface: attribute ready assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface: operation abort(optional any) assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface: operation close() assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface: operation releaseLock() assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter interface: operation write(optional any) assert_own_property: self does not have own property "WritableStreamDefaultWriter" expected property "WritableStreamDefaultWriter" missing
-FAIL WritableStreamDefaultWriter must be primary interface of (new WritableStream()).getWriter() assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL Stringification of (new WritableStream()).getWriter() assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "closed" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "desiredSize" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "ready" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "abort(optional any)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL WritableStreamDefaultWriter interface: calling abort(optional any) on (new WritableStream()).getWriter() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "close()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "releaseLock()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "write(optional any)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL WritableStreamDefaultWriter interface: calling write(optional any) on (new WritableStream()).getWriter() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: (new WritableStream()).getWriter is not a function. (In '(new WritableStream()).getWriter()', '(new WritableStream()).getWriter' is undefined)"
-FAIL WritableStreamDefaultController interface: existence and properties of interface object assert_own_property: self does not have own property "WritableStreamDefaultController" expected property "WritableStreamDefaultController" missing
-FAIL WritableStreamDefaultController interface object length assert_own_property: self does not have own property "WritableStreamDefaultController" expected property "WritableStreamDefaultController" missing
-FAIL WritableStreamDefaultController interface object name assert_own_property: self does not have own property "WritableStreamDefaultController" expected property "WritableStreamDefaultController" missing
-FAIL WritableStreamDefaultController interface: existence and properties of interface prototype object assert_own_property: self does not have own property "WritableStreamDefaultController" expected property "WritableStreamDefaultController" missing
-FAIL WritableStreamDefaultController interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "WritableStreamDefaultController" expected property "WritableStreamDefaultController" missing
-FAIL WritableStreamDefaultController interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "WritableStreamDefaultController" expected property "WritableStreamDefaultController" missing
-FAIL WritableStreamDefaultController interface: operation error(optional any) assert_own_property: self does not have own property "WritableStreamDefaultController" expected property "WritableStreamDefaultController" missing
-FAIL WritableStreamDefaultController must be primary interface of self.writableStreamDefaultController assert_equals: wrong typeof object expected "object" but got "function"
-FAIL Stringification of self.writableStreamDefaultController assert_equals: wrong typeof object expected "object" but got "function"
-FAIL WritableStreamDefaultController interface: self.writableStreamDefaultController must inherit property "error(optional any)" with the proper type assert_equals: wrong typeof object expected "object" but got "function"
-FAIL WritableStreamDefaultController interface: calling error(optional any) on self.writableStreamDefaultController with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "function"
+PASS WritableStream interface: new WritableStream() must inherit property "getWriter()" with the proper type 
+PASS WritableStreamDefaultWriter interface: existence and properties of interface object 
+PASS WritableStreamDefaultWriter interface object length 
+PASS WritableStreamDefaultWriter interface object name 
+PASS WritableStreamDefaultWriter interface: existence and properties of interface prototype object 
+PASS WritableStreamDefaultWriter interface: existence and properties of interface prototype object's "constructor" property 
+PASS WritableStreamDefaultWriter interface: existence and properties of interface prototype object's @@unscopables property 
+PASS WritableStreamDefaultWriter interface: attribute closed 
+PASS WritableStreamDefaultWriter interface: attribute desiredSize 
+PASS WritableStreamDefaultWriter interface: attribute ready 
+FAIL WritableStreamDefaultWriter interface: operation abort(optional any) assert_equals: property has wrong .length expected 0 but got 1
+PASS WritableStreamDefaultWriter interface: operation close() 
+PASS WritableStreamDefaultWriter interface: operation releaseLock() 
+FAIL WritableStreamDefaultWriter interface: operation write(optional any) assert_equals: property has wrong .length expected 0 but got 1
+PASS WritableStreamDefaultWriter must be primary interface of (new WritableStream()).getWriter() 
+PASS Stringification of (new WritableStream()).getWriter() 
+PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "closed" with the proper type 
+PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "desiredSize" with the proper type 
+PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "ready" with the proper type 
+PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "abort(optional any)" with the proper type 
+PASS WritableStreamDefaultWriter interface: calling abort(optional any) on (new WritableStream()).getWriter() with too few arguments must throw TypeError 
+PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "close()" with the proper type 
+PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "releaseLock()" with the proper type 
+PASS WritableStreamDefaultWriter interface: (new WritableStream()).getWriter() must inherit property "write(optional any)" with the proper type 
+PASS WritableStreamDefaultWriter interface: calling write(optional any) on (new WritableStream()).getWriter() with too few arguments must throw TypeError 
+FAIL WritableStreamDefaultController interface: existence and properties of interface object assert_throws_js: interface object didn't throw TypeError when called as a constructor function "function () {
+                new interface_object();
+            }" did not throw
+PASS WritableStreamDefaultController interface object length 
+PASS WritableStreamDefaultController interface object name 
+PASS WritableStreamDefaultController interface: existence and properties of interface prototype object 
+PASS WritableStreamDefaultController interface: existence and properties of interface prototype object's "constructor" property 
+PASS WritableStreamDefaultController interface: existence and properties of interface prototype object's @@unscopables property 
+FAIL WritableStreamDefaultController interface: operation error(optional any) assert_equals: property has wrong .length expected 0 but got 1
+PASS WritableStreamDefaultController must be primary interface of self.writableStreamDefaultController 
+PASS Stringification of self.writableStreamDefaultController 
+PASS WritableStreamDefaultController interface: self.writableStreamDefaultController must inherit property "error(optional any)" with the proper type 
+PASS WritableStreamDefaultController interface: calling error(optional any) on self.writableStreamDefaultController with too few arguments must throw TypeError 
 FAIL TransformStream interface: existence and properties of interface object assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing
 FAIL TransformStream interface object length assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing
 FAIL TransformStream interface object name assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing

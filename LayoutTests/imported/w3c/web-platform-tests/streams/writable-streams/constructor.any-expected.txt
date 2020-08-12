@@ -1,18 +1,14 @@
 
-FAIL controller argument should be passed to start method controller.error is not a function. (In 'controller.error(error1)', 'controller.error' is undefined)
-FAIL controller argument should be passed to write method ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL controller argument should not be passed to close method ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL highWaterMark should be reflected to desiredSize ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL WritableStream should be writable and ready should fulfill immediately if the strategy does not apply backpressure ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+PASS controller argument should be passed to start method 
+PASS controller argument should be passed to write method 
+PASS controller argument should not be passed to close method 
+PASS highWaterMark should be reflected to desiredSize 
+PASS WritableStream should be writable and ready should fulfill immediately if the strategy does not apply backpressure 
 PASS WritableStream should be constructible with no arguments 
 PASS underlyingSink argument should be converted after queuingStrategy argument 
-FAIL WritableStream instances should have standard methods and properties ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL WritableStreamDefaultController constructor should throw assert_throws_js: constructor should throw a TypeError exception function "() => new WritableStreamDefaultController({})" threw object "SyntaxError: Unexpected identifier 'Object'. Expected either a closing ']' or a ',' following an array element." ("SyntaxError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL WritableStreamDefaultController constructor should throw when passed an initialised WritableStream assert_throws_js: constructor should throw a TypeError exception function "() => new WritableStreamDefaultController(stream)" threw object "SyntaxError: Unexpected identifier 'WritableStream'. Expected either a closing ']' or a ',' following an array element." ("SyntaxError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL WritableStreamDefaultWriter should throw unless passed a WritableStream stream.getWriter is not a function. (In 'stream.getWriter()', 'stream.getWriter' is undefined)
-FAIL WritableStreamDefaultWriter constructor should throw when stream argument is locked stream.getWriter is not a function. (In 'stream.getWriter()', 'stream.getWriter' is undefined)
+PASS WritableStream instances should have standard methods and properties 
+FAIL WritableStreamDefaultController constructor should throw assert_throws_js: constructor should throw a TypeError exception function "() => new WritableStreamDefaultController({})" did not throw
+FAIL WritableStreamDefaultController constructor should throw when passed an initialised WritableStream assert_throws_js: constructor should throw a TypeError exception function "() => new WritableStreamDefaultController(stream)" did not throw
+PASS WritableStreamDefaultWriter should throw unless passed a WritableStream 
+PASS WritableStreamDefaultWriter constructor should throw when stream argument is locked 
 

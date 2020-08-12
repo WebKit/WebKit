@@ -2248,6 +2248,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkletGlobalScope.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWorkletGlobalScope.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStream.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStream.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamDefaultController.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamDefaultController.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamDefaultWriter.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWritableStreamDefaultWriter.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXMLDocument.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXMLDocument.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXMLHttpRequest.cpp
@@ -2359,6 +2363,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WebKitFontFamilyNames.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WorkerGlobalScopeConstructors.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WorkletGlobalScopeConstructors.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WritableStreamBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WritableStreamDefaultControllerBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WritableStreamDefaultWriterBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/WritableStreamInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/XLinkNames.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/XMLNSNames.cpp

@@ -293,6 +293,10 @@ $(PROJECT_DIR)/Modules/streams/ReadableStreamSource.idl
 $(PROJECT_DIR)/Modules/streams/StreamInternals.js
 $(PROJECT_DIR)/Modules/streams/WritableStream.idl
 $(PROJECT_DIR)/Modules/streams/WritableStream.js
+$(PROJECT_DIR)/Modules/streams/WritableStreamDefaultController.idl
+$(PROJECT_DIR)/Modules/streams/WritableStreamDefaultController.js
+$(PROJECT_DIR)/Modules/streams/WritableStreamDefaultWriter.idl
+$(PROJECT_DIR)/Modules/streams/WritableStreamDefaultWriter.js
 $(PROJECT_DIR)/Modules/streams/WritableStreamInternals.js
 $(PROJECT_DIR)/Modules/webaudio/AnalyserNode.idl
 $(PROJECT_DIR)/Modules/webaudio/AnalyserOptions.idl

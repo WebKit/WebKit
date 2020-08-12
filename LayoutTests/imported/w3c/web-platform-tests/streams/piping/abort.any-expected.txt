@@ -1,58 +1,25 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1
-CONSOLE MESSAGE: Unhandled Promise Rejection: failed to abort
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error2: error2
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: cancel() called on a reader owned by no readable stream
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1
-CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1
 
-Harness Error (FAIL), message = Unhandled rejection: error1
-
-FAIL a signal argument 'null' should cause pipeTo() to reject promise_rejects_js: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
-FAIL a signal argument 'AbortSignal' should cause pipeTo() to reject promise_rejects_js: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
-FAIL a signal argument 'true' should cause pipeTo() to reject promise_rejects_js: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
-FAIL a signal argument '-1' should cause pipeTo() to reject promise_rejects_js: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
-FAIL a signal argument '[object AbortSignal]' should cause pipeTo() to reject promise_rejects_js: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
-FAIL an aborted signal should cause the writable stream to reject with an AbortError promise_rejects_dom: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
-FAIL all the AbortError objects should be the same object promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
-FAIL preventCancel should prevent canceling the readable promise_rejects_dom: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
-FAIL preventAbort should prevent aborting the readable promise_rejects_dom: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
-FAIL preventCancel and preventAbort should prevent canceling the readable and aborting the readable promise_rejects_dom: pipeTo should reject function "function () { throw e }" threw "failed to abort" with type "string", not an object
-FAIL abort should prevent further reads assert_unreached: Should have rejected: pipeTo should reject Reached unreachable code
-FAIL all pending writes should complete on abort assert_unreached: Should have rejected: pipeTo should reject Reached unreachable code
-FAIL a rejection from underlyingSource.cancel() should be returned by pipeTo() promise_rejects_exactly: pipeTo should reject function "function () { throw e }" threw "failed to abort" but we expected it to throw object "error1: error1"
-FAIL a rejection from underlyingSink.abort() should be returned by pipeTo() promise_rejects_exactly: pipeTo should reject function "function () { throw e }" threw "failed to abort" but we expected it to throw object "error1: error1"
-FAIL a rejection from underlyingSink.abort() should be preferred to one from underlyingSource.cancel() promise_rejects_exactly: pipeTo should reject function "function () { throw e }" threw "failed to abort" but we expected it to throw object "error2: error2"
-FAIL abort signal takes priority over closed readable assert_unreached: Should have rejected: pipeTo should reject Reached unreachable code
-FAIL abort signal takes priority over errored readable promise_rejects_dom: pipeTo should reject function "function () { throw e }" threw object "error1: error1" that is not a DOMException AbortError: property "code" is equal to undefined, expected 20
-FAIL abort signal takes priority over closed writable ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL abort signal takes priority over errored writable controller.error is not a function. (In 'controller.error(error1)', 'controller.error' is undefined)
-FAIL abort should do nothing after the readable is closed promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
-FAIL abort should do nothing after the readable is errored promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
-FAIL abort should do nothing after the readable is errored, even with pending writes promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
-FAIL abort should do nothing after the writable is errored promise_test: Unhandled rejection with value: object "TypeError: writeController.error is not a function. (In 'writeController.error(error1)', 'writeController.error' is undefined)"
+FAIL a signal argument 'null' should cause pipeTo() to reject |this| is not a Promise
+FAIL a signal argument 'AbortSignal' should cause pipeTo() to reject |this| is not a Promise
+FAIL a signal argument 'true' should cause pipeTo() to reject |this| is not a Promise
+FAIL a signal argument '-1' should cause pipeTo() to reject |this| is not a Promise
+FAIL a signal argument '[object AbortSignal]' should cause pipeTo() to reject |this| is not a Promise
+FAIL an aborted signal should cause the writable stream to reject with an AbortError |this| is not a Promise
+FAIL all the AbortError objects should be the same object |this| is not a Promise
+FAIL preventCancel should prevent canceling the readable |this| is not a Promise
+FAIL preventAbort should prevent aborting the readable |this| is not a Promise
+FAIL preventCancel and preventAbort should prevent canceling the readable and aborting the readable |this| is not a Promise
+FAIL abort should prevent further reads |this| is not a Promise
+FAIL all pending writes should complete on abort |this| is not a Promise
+FAIL a rejection from underlyingSource.cancel() should be returned by pipeTo() |this| is not a Promise
+FAIL a rejection from underlyingSink.abort() should be returned by pipeTo() |this| is not a Promise
+FAIL a rejection from underlyingSink.abort() should be preferred to one from underlyingSource.cancel() |this| is not a Promise
+FAIL abort signal takes priority over closed readable |this| is not a Promise
+FAIL abort signal takes priority over errored readable |this| is not a Promise
+FAIL abort signal takes priority over closed writable promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
+FAIL abort signal takes priority over errored writable |this| is not a Promise
+FAIL abort should do nothing after the readable is closed |this| is not a Promise
+FAIL abort should do nothing after the readable is errored |this| is not a Promise
+FAIL abort should do nothing after the readable is errored, even with pending writes |this| is not a Promise
+FAIL abort should do nothing after the writable is errored |this| is not a Promise
 

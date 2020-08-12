@@ -1,70 +1,65 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: done
-CONSOLE MESSAGE: Unhandled Promise Rejection: done
-CONSOLE MESSAGE: Unhandled Promise Rejection: done
-CONSOLE MESSAGE: Unhandled Promise Rejection: error2: error2
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: string argument
 
 Harness Error (FAIL), message = Unhandled rejection
 
-FAIL Aborting a WritableStream before it starts should cause the writer's unsettled ready promise to reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Aborting a WritableStream should cause the writer's fulfilled ready promise to reset to a rejected one ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL abort() on a released writer rejects ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Aborting a WritableStream immediately prevents future writes promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
-FAIL Aborting a WritableStream prevents further writes after any that are in progress promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
-FAIL Fulfillment value of writer.abort() call must be undefined even if the underlying sink returns a non-undefined value ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL WritableStream if sink's abort throws, the promise returned by writer.abort() rejects ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL WritableStream if sink's abort throws, the promise returned by multiple writer.abort()s is the same and rejects ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+PASS Aborting a WritableStream before it starts should cause the writer's unsettled ready promise to reject 
+FAIL Aborting a WritableStream should cause the writer's fulfilled ready promise to reset to a rejected one assert_not_equals: the ready promise property should change got disallowed value object "[object Promise]"
+PASS abort() on a released writer rejects 
+PASS Aborting a WritableStream immediately prevents future writes 
+PASS Aborting a WritableStream prevents further writes after any that are in progress 
+PASS Fulfillment value of writer.abort() call must be undefined even if the underlying sink returns a non-undefined value 
+PASS WritableStream if sink's abort throws, the promise returned by writer.abort() rejects 
+PASS WritableStream if sink's abort throws, the promise returned by multiple writer.abort()s is the same and rejects 
 PASS WritableStream if sink's abort throws, the promise returned by ws.abort() rejects 
-FAIL WritableStream if sink's abort throws, for an abort performed during a write, the promise returned by ws.abort() rejects ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Aborting a WritableStream passes through the given reason ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Aborting a WritableStream puts it in an errored state with the error passed to abort() ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Aborting a WritableStream causes any outstanding write() promises to be rejected with the reason supplied ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Closing but then immediately aborting a WritableStream causes the stream to error ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Closing a WritableStream and aborting it while it closes causes the stream to ignore the abort attempt ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Aborting a WritableStream after it is closed is a no-op ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL WritableStream should NOT call underlying sink's close if no abort is supplied (historical) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL returning a thenable from abort() should work ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL .closed should not resolve before fulfilled write() ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL .closed should not resolve before rejected write(); write() error should not overwrite abort() error ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL writes should be satisfied in order when aborting ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL writes should be satisfied in order after rejected write when aborting ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL close() should reject with abort reason why abort() is first error ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL underlying abort() should not be called until underlying write() completes ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL underlying abort() should not be called if underlying close() has started ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL if underlying close() has started and then rejects, the abort() and close() promises should reject with the underlying close rejection reason ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL an abort() that happens during a write() should trigger the underlying abort() even with a close() queued ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL if a writer is created for a stream with a pending abort, its ready should be rejected with the abort error ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL writer close() promise should resolve before abort() promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL writer.ready should reject on controller error without waiting for underlying write ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL writer.abort() while there is an in-flight write, and then finish the write with rejection ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL writer.abort(), controller.error() while there is an in-flight write, and then finish the write ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL writer.abort(), controller.error() while there is an in-flight close, and then finish the close ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL controller.error(), writer.abort() while there is an in-flight write, and then finish the write ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL controller.error(), writer.abort() while there is an in-flight close, and then finish the close ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL releaseLock() while aborting should reject the original closed promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL releaseLock() during delayed async abort() should reject the writer.closed promise ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL sink abort() should not be called until sink start() is done assert_array_equals: abort() should not be called during start() lengths differ, expected array [] length 0, got ["abort", "done"] length 2
-FAIL if start attempts to error the controller after abort() has been called, then it should lose controller.error is not a function. (In 'controller.error(error1)', 'controller.error' is undefined)
+PASS WritableStream if sink's abort throws, for an abort performed during a write, the promise returned by ws.abort() rejects 
+PASS Aborting a WritableStream passes through the given reason 
+FAIL Aborting a WritableStream puts it in an errored state with the error passed to abort() assert_unreached: Should have rejected: ready should reject with error1 Reached unreachable code
+PASS Aborting a WritableStream causes any outstanding write() promises to be rejected with the reason supplied 
+PASS Closing but then immediately aborting a WritableStream causes the stream to error 
+PASS Closing a WritableStream and aborting it while it closes causes the stream to ignore the abort attempt 
+PASS Aborting a WritableStream after it is closed is a no-op 
+PASS WritableStream should NOT call underlying sink's close if no abort is supplied (historical) 
+PASS returning a thenable from abort() should work 
+PASS .closed should not resolve before fulfilled write() 
+PASS .closed should not resolve before rejected write(); write() error should not overwrite abort() error 
+PASS writes should be satisfied in order when aborting 
+PASS writes should be satisfied in order after rejected write when aborting 
+PASS close() should reject with abort reason why abort() is first error 
+PASS underlying abort() should not be called until underlying write() completes 
+PASS underlying abort() should not be called if underlying close() has started 
+PASS if underlying close() has started and then rejects, the abort() and close() promises should reject with the underlying close rejection reason 
+PASS an abort() that happens during a write() should trigger the underlying abort() even with a close() queued 
+PASS if a writer is created for a stream with a pending abort, its ready should be rejected with the abort error 
+PASS writer close() promise should resolve before abort() promise 
+PASS writer.ready should reject on controller error without waiting for underlying write 
+FAIL writer.abort() while there is an in-flight write, and then finish the write with rejection promise_rejects_js: writer.ready must be rejected with an error indicating release function "function () { throw e }" threw object "error1: error1" ("error1") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL writer.abort(), controller.error() while there is an in-flight write, and then finish the write promise_rejects_js: writer.ready must be rejected with an error indicating release function "function () { throw e }" threw object "error1: error1" ("error1") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL writer.abort(), controller.error() while there is an in-flight close, and then finish the close assert_unreached: Should have rejected: writer.ready must reject with the error from abort Reached unreachable code
+FAIL controller.error(), writer.abort() while there is an in-flight write, and then finish the write promise_rejects_js: writer.ready must be rejected with an error indicating release function "function () { throw e }" threw object "error2: error2" ("error2") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL controller.error(), writer.abort() while there is an in-flight close, and then finish the close assert_unreached: Should have rejected: writer.ready must reject with the error passed to the controller's error method Reached unreachable code
+PASS releaseLock() while aborting should reject the original closed promise 
+PASS releaseLock() during delayed async abort() should reject the writer.closed promise 
+PASS sink abort() should not be called until sink start() is done 
+PASS if start attempts to error the controller after abort() has been called, then it should lose 
 PASS stream abort() promise should still resolve if sink start() rejects 
-FAIL writer abort() during sink start() should replace the writer.ready promise synchronously ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL promises returned from other writer methods should be rejected when writer abort() happens during sink start() ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL abort() should succeed despite rejection from write ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL abort() should be rejected with the rejection returned from close() ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL a rejecting sink.write() should not prevent sink.abort() from being called ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+FAIL writer abort() during sink start() should replace the writer.ready promise synchronously assert_not_equals: abort() should replace the ready promise with a rejected one got disallowed value object "[object Promise]"
+PASS promises returned from other writer methods should be rejected when writer abort() happens during sink start() 
+PASS abort() should succeed despite rejection from write 
+PASS abort() should be rejected with the rejection returned from close() 
+PASS a rejecting sink.write() should not prevent sink.abort() from being called 
 PASS when start errors after stream abort(), underlying sink abort() should be called anyway 
-FAIL when calling abort() twice on the same stream, both should give the same promise that fulfills with undefined assert_equals: the promises must be the same expected object "[object Promise]" but got object "[object Promise]"
-FAIL when calling abort() twice on the same stream, but sequentially so so there's no pending abort the second time, both should fulfill with undefined promise_test: Unhandled rejection with value: undefined
-FAIL calling abort() on an errored stream should fulfill with undefined c.error is not a function. (In 'c.error(error1)', 'c.error' is undefined)
-FAIL sink abort() should not be called if stream was erroring due to controller.error() before abort() was called ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL sink abort() should not be called if stream was erroring due to bad strategy before abort() was called ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL abort with no arguments should set the stored error to undefined promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
-FAIL abort with an undefined argument should set the stored error to undefined promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
-FAIL abort with a string argument should set the stored error to that argument promise_test: Unhandled rejection with value: object "TypeError: ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)"
-FAIL abort on a locked stream should reject ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+PASS when calling abort() twice on the same stream, both should give the same promise that fulfills with undefined 
+PASS when calling abort() twice on the same stream, but sequentially so so there's no pending abort the second time, both should fulfill with undefined 
+PASS calling abort() on an errored stream should fulfill with undefined 
+PASS sink abort() should not be called if stream was erroring due to controller.error() before abort() was called 
+PASS sink abort() should not be called if stream was erroring due to bad strategy before abort() was called 
+PASS abort with no arguments should set the stored error to undefined 
+PASS abort with an undefined argument should set the stored error to undefined 
+PASS abort with a string argument should set the stored error to that argument 
+PASS abort on a locked stream should reject 
 

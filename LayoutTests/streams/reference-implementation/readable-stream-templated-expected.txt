@@ -1,37 +1,37 @@
 
 PASS Running templatedRSClosed with ReadableStream (closed via call in start) 
-PASS ReadableStream (closed via call in start): piping to a WritableStream in the writable state should close the writable stream 
-PASS ReadableStream (closed via call in start): piping to a WritableStream in the writable state with { preventClose: true } should do nothing 
+FAIL ReadableStream (closed via call in start): piping to a WritableStream in the writable state should close the writable stream assert_equals: writable stream should start in writable state expected (string) "writable" but got (undefined) undefined
+FAIL ReadableStream (closed via call in start): piping to a WritableStream in the writable state with { preventClose: true } should do nothing assert_equals: writable stream should start in writable state expected (string) "writable" but got (undefined) undefined
 PASS Running templatedRSClosed with ReadableStream (closed via cancel) 
-PASS ReadableStream (closed via cancel): piping to a WritableStream in the writable state should close the writable stream 
-PASS ReadableStream (closed via cancel): piping to a WritableStream in the writable state with { preventClose: true } should do nothing 
+FAIL ReadableStream (closed via cancel): piping to a WritableStream in the writable state should close the writable stream assert_equals: writable stream should start in writable state expected (string) "writable" but got (undefined) undefined
+FAIL ReadableStream (closed via cancel): piping to a WritableStream in the writable state with { preventClose: true } should do nothing assert_equals: writable stream should start in writable state expected (string) "writable" but got (undefined) undefined
 PASS Running templatedRSErrored with ReadableStream (errored via call in start) 
-PASS ReadableStream (errored via call in start): piping to a WritableStream in the writable state should abort the writable stream 
+FAIL ReadableStream (errored via call in start): piping to a WritableStream in the writable state should abort the writable stream assert_equals: expected (string) "writable" but got (undefined) undefined
 PASS Running templatedRSErrored with ReadableStream (errored via returning a rejected promise in start) 
-PASS ReadableStream (errored via returning a rejected promise in start): piping to a WritableStream in the writable state should abort the writable stream 
+FAIL ReadableStream (errored via returning a rejected promise in start): piping to a WritableStream in the writable state should abort the writable stream assert_equals: expected (string) "writable" but got (undefined) undefined
 PASS Running templatedRSErroredAsyncOnly with ReadableStream (errored via returning a rejected promise in start) reader 
-PASS ReadableStream (errored via returning a rejected promise in start) reader: piping with no options 
-PASS ReadableStream (errored via returning a rejected promise in start) reader: piping with { preventAbort: false } 
-PASS ReadableStream (errored via returning a rejected promise in start) reader: piping with { preventAbort: true } 
+FAIL ReadableStream (errored via returning a rejected promise in start) reader: piping with no options |this| is not a Promise
+FAIL ReadableStream (errored via returning a rejected promise in start) reader: piping with { preventAbort: false } |this| is not a Promise
+FAIL ReadableStream (errored via returning a rejected promise in start) reader: piping with { preventAbort: true } |this| is not a Promise
 PASS Running templatedRSTwoChunksClosed with ReadableStream (two chunks enqueued, then closed) 
-PASS ReadableStream (two chunks enqueued, then closed): piping with no options and no destination errors 
-PASS ReadableStream (two chunks enqueued, then closed): piping with { preventClose: false } and no destination errors 
-PASS ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and no destination errors 
-PASS ReadableStream (two chunks enqueued, then closed): piping with { preventClose: false } and a destination with that errors synchronously 
-PASS ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and a destination with that errors synchronously 
-PASS ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and a destination that errors on the last chunk 
+FAIL ReadableStream (two chunks enqueued, then closed): piping with no options and no destination errors |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: false } and no destination errors |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and no destination errors |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: false } and a destination with that errors synchronously |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and a destination with that errors synchronously |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and a destination that errors on the last chunk |this| is not a Promise
 PASS Running templatedRSTwoChunksClosed with ReadableStream (two chunks enqueued async, then closed) 
-PASS ReadableStream (two chunks enqueued async, then closed): piping with no options and no destination errors 
-PASS ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: false } and no destination errors 
-PASS ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and no destination errors 
-PASS ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: false } and a destination with that errors synchronously 
-PASS ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and a destination with that errors synchronously 
-PASS ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and a destination that errors on the last chunk 
+FAIL ReadableStream (two chunks enqueued async, then closed): piping with no options and no destination errors |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: false } and no destination errors |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and no destination errors |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: false } and a destination with that errors synchronously |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and a destination with that errors synchronously |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and a destination that errors on the last chunk |this| is not a Promise
 PASS Running templatedRSTwoChunksClosed with ReadableStream (two chunks enqueued via pull, then closed) 
-PASS ReadableStream (two chunks enqueued via pull, then closed): piping with no options and no destination errors 
-PASS ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: false } and no destination errors 
-PASS ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and no destination errors 
-PASS ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: false } and a destination with that errors synchronously 
-PASS ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and a destination with that errors synchronously 
-PASS ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and a destination that errors on the last chunk 
+FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with no options and no destination errors |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: false } and no destination errors |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and no destination errors |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: false } and a destination with that errors synchronously |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and a destination with that errors synchronously |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and a destination that errors on the last chunk |this| is not a Promise
 

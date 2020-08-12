@@ -1,14 +1,14 @@
 
-FAIL controller argument should be passed to start method Can't find variable: WritableStream
-FAIL controller argument should be passed to write method Can't find variable: WritableStream
-FAIL controller argument should not be passed to close method Can't find variable: WritableStream
-FAIL highWaterMark should be reflected to desiredSize Can't find variable: WritableStream
-FAIL WritableStream should be writable and ready should fulfill immediately if the strategy does not apply backpressure Can't find variable: WritableStream
-FAIL WritableStream should be constructible with no arguments Can't find variable: WritableStream
-FAIL underlyingSink argument should be converted after queuingStrategy argument assert_throws_exactly: function "() => new WritableStream(underlyingSink, queuingStrategy)" threw object "ReferenceError: Can't find variable: WritableStream" but we expected it to throw object "error2: error2"
-FAIL WritableStream instances should have standard methods and properties Can't find variable: WritableStream
-FAIL WritableStreamDefaultController constructor should throw Can't find variable: WritableStream
-FAIL WritableStreamDefaultController constructor should throw when passed an initialised WritableStream Can't find variable: WritableStream
-FAIL WritableStreamDefaultWriter should throw unless passed a WritableStream Can't find variable: WritableStream
-FAIL WritableStreamDefaultWriter constructor should throw when stream argument is locked Can't find variable: WritableStream
+PASS controller argument should be passed to start method 
+PASS controller argument should be passed to write method 
+PASS controller argument should not be passed to close method 
+PASS highWaterMark should be reflected to desiredSize 
+PASS WritableStream should be writable and ready should fulfill immediately if the strategy does not apply backpressure 
+PASS WritableStream should be constructible with no arguments 
+PASS underlyingSink argument should be converted after queuingStrategy argument 
+PASS WritableStream instances should have standard methods and properties 
+FAIL WritableStreamDefaultController constructor should throw assert_throws_js: constructor should throw a TypeError exception function "() => new WritableStreamDefaultController({})" did not throw
+FAIL WritableStreamDefaultController constructor should throw when passed an initialised WritableStream assert_throws_js: constructor should throw a TypeError exception function "() => new WritableStreamDefaultController(stream)" did not throw
+PASS WritableStreamDefaultWriter should throw unless passed a WritableStream 
+PASS WritableStreamDefaultWriter constructor should throw when stream argument is locked 
 

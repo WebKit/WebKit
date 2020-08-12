@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: |this| is not a Promise
+
+Harness Error (FAIL), message = Unhandled rejection: |this| is not a Promise
 
 PASS enqueue() inside size() should work 
 PASS close() inside size() should not crash 
@@ -5,7 +8,7 @@ PASS close request inside size() should work
 PASS error() inside size() should work 
 PASS desiredSize inside size() should work 
 PASS cancel() inside size() should work 
-PASS pipeTo() inside size() should behave as expected 
+FAIL pipeTo() inside size() should behave as expected |this| is not a Promise
 PASS read() inside of size() should behave as expected 
 PASS getReader() inside size() should work 
 PASS tee() inside size() should work 

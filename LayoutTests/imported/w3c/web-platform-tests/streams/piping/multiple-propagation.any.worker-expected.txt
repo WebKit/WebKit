@@ -1,11 +1,13 @@
 
-FAIL Piping from an errored readable stream to an erroring writable stream Can't find variable: WritableStream
-FAIL Piping from an errored readable stream to an errored writable stream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WritableStream"
-FAIL Piping from an errored readable stream to an erroring writable stream; preventAbort = true Can't find variable: WritableStream
-FAIL Piping from an errored readable stream to an errored writable stream; preventAbort = true promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WritableStream"
-FAIL Piping from an errored readable stream to a closing writable stream Can't find variable: WritableStream
-FAIL Piping from an errored readable stream to a closed writable stream Can't find variable: WritableStream
-FAIL Piping from a closed readable stream to an erroring writable stream Can't find variable: WritableStream
-FAIL Piping from a closed readable stream to an errored writable stream promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: WritableStream"
-FAIL Piping from a closed readable stream to a closed writable stream Can't find variable: WritableStream
+Harness Error (FAIL), message = Unhandled rejection: writableStreamDefaultWriterRelease
+
+FAIL Piping from an errored readable stream to an erroring writable stream |this| is not a Promise
+FAIL Piping from an errored readable stream to an errored writable stream promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
+FAIL Piping from an errored readable stream to an erroring writable stream; preventAbort = true |this| is not a Promise
+FAIL Piping from an errored readable stream to an errored writable stream; preventAbort = true promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
+FAIL Piping from an errored readable stream to a closing writable stream |this| is not a Promise
+FAIL Piping from an errored readable stream to a closed writable stream promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
+FAIL Piping from a closed readable stream to an erroring writable stream |this| is not a Promise
+FAIL Piping from a closed readable stream to an errored writable stream promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
+FAIL Piping from a closed readable stream to a closed writable stream |this| is not a Promise
 

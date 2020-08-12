@@ -1,4 +1,4 @@
 
-FAIL using pipeTo on Response body should disturb it synchronously Can't find variable: WritableStream
-FAIL using pipeThrough on Response body should disturb it synchronously Can't find variable: WritableStream
+FAIL using pipeTo on Response body should disturb it synchronously |this| is not a Promise
+FAIL using pipeThrough on Response body should disturb it synchronously |this| is not a Promise
 

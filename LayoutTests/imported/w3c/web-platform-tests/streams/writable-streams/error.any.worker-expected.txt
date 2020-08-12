@@ -1,7 +1,7 @@
 
-FAIL controller.error() should error the stream Can't find variable: WritableStream
-FAIL controller.error() on erroring stream should not throw Can't find variable: WritableStream
-FAIL surplus calls to controller.error() should be a no-op Can't find variable: WritableStream
-FAIL controller.error() on errored stream should not throw Can't find variable: WritableStream
-FAIL controller.error() on closed stream should not throw Can't find variable: WritableStream
+PASS controller.error() should error the stream 
+PASS controller.error() on erroring stream should not throw 
+PASS surplus calls to controller.error() should be a no-op 
+PASS controller.error() on errored stream should not throw 
+PASS controller.error() on closed stream should not throw 
 

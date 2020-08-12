@@ -1,6 +1,42 @@
-CONSOLE MESSAGE: TypeError: new WritableStream().getWriter is not a function. (In 'new WritableStream().getWriter()', 'new WritableStream().getWriter' is undefined)
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'methodRealm.WritableStreamDefaultWriter.prototype')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextEncoderStream()')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextEncoderStream')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextEncoderStream')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId7.writable')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId7.readable')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextEncoderStream')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId15.readable')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId15.writable')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextEncoderStream')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId23.readable')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId23.writable')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextDecoderStream()')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextDecoderStream')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextDecoderStream')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId37.writable')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId37.readable')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextDecoderStream')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId45.readable')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId45.writable')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextDecoderStream')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId53.readable')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId53.writable')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextDecoderStream('utf-8', {fatal: true})')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId61.readable')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId61.writable')
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new parent.constructorRealm.TextDecoderStream('utf-8', {fatal: true})')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId69.readable')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'window.realmsId69.writable')
 
-Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'methodRealm.WritableStreamDefaultWriter.prototype')
-
+FAIL a TextEncoderStream object should be associated with the realm the constructor came from promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'obj.constructor')"
+FAIL TextEncoderStream's readable and writable attributes should come from the same realm as the constructor definition promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'methodRealm[classname].prototype')"
+FAIL the output chunks when read is called after write should come from the same realm as the constructor of TextEncoderStream promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result.constructor')"
+FAIL the output chunks when write is called with a pending read should come from the same realm as the constructor of TextEncoderStream promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result.constructor')"
+FAIL TypeError for unconvertable chunk should come from constructor realm of TextEncoderStream assert_unreached: Should have rejected: write TypeError should come from constructor realm Reached unreachable code
+FAIL a TextDecoderStream object should be associated with the realm the constructor came from promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'obj.constructor')"
+FAIL TextDecoderStream's readable and writable attributes should come from the same realm as the constructor definition promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'methodRealm[classname].prototype')"
+FAIL the result object when read is called after write should come from the same realm as the constructor of TextDecoderStream promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result.constructor')"
+FAIL the result object when write is called with a pending read should come from the same realm as the constructor of TextDecoderStream promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'result.constructor')"
+FAIL TypeError for chunk with the wrong type should come from constructor realm of TextDecoderStream assert_unreached: Should have rejected: write TypeError should come from constructor realm Reached unreachable code
+FAIL TypeError for invalid chunk should come from constructor realm of TextDecoderStream assert_unreached: Should have rejected: write TypeError should come from constructor realm Reached unreachable code
+FAIL TypeError for incomplete input should come from constructor realm of TextDecoderStream assert_unreached: Should have rejected: close TypeError should come from constructor realm Reached unreachable code
 

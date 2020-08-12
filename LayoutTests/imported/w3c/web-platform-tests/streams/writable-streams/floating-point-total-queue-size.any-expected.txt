@@ -1,6 +1,6 @@
 
-FAIL Floating point arithmetic must manifest near NUMBER.MAX_SAFE_INTEGER (total ends up positive) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Floating point arithmetic must manifest near 0 (total ends up positive, but clamped) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Floating point arithmetic must manifest near 0 (total ends up positive, and not clamped) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
-FAIL Floating point arithmetic must manifest near 0 (total ends up zero) ws.getWriter is not a function. (In 'ws.getWriter()', 'ws.getWriter' is undefined)
+PASS Floating point arithmetic must manifest near NUMBER.MAX_SAFE_INTEGER (total ends up positive) 
+PASS Floating point arithmetic must manifest near 0 (total ends up positive, but clamped) 
+PASS Floating point arithmetic must manifest near 0 (total ends up positive, and not clamped) 
+PASS Floating point arithmetic must manifest near 0 (total ends up zero) 
 

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2015 Canon Inc.
  * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2020 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -29,15 +30,16 @@
 
 [
     EnabledAtRuntime=WritableStreamAPI,
-    JSBuiltin
+    Exposed=(Window,Worker),
+    JSBuiltin,
+    PrivateIdentifier,
+    PublicIdentifier
 ] interface WritableStream {
-    constructor();
+    constructor(optional object underlyingSink, optional QueuingStrategy strategy);
+
+    readonly attribute boolean locked;
 
     Promise<any> abort(optional any reason);
     Promise<any> close();
-    Promise<any> write(any chunk);
-
-    readonly attribute Promise<boolean> closed;
-    readonly attribute Promise<boolean> ready;
-    readonly attribute DOMString state;
+    WritableStreamDefaultWriter getWriter();
 };

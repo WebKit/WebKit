@@ -2144,6 +2144,14 @@ WebXREnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBXR)
 
+WritableStreamAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "WritableStream API"
+  humanReadableDescription: "Enable Writable Stream API"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

@@ -47,10 +47,11 @@ test(() => {
 }, 'ReadableStreamBYOBReader property names');
 
 test(() => {
-    tryGetOwnPropertyDescriptorGetName(WritableStream.prototype, 'closed', 'get closed');
-    tryGetOwnPropertyDescriptorGetName(WritableStream.prototype, 'ready', 'get ready');
-    tryGetOwnPropertyDescriptorGetName(WritableStream.prototype, 'state', 'get state');
-}, 'WritableStream property names');
+    let stream = new WritableStream();
+    let writer = stream.getWriter();
+    tryGetOwnPropertyDescriptorGetName(writer.__proto__, 'closed', 'get closed');
+    tryGetOwnPropertyDescriptorGetName(writer.__proto__, 'ready', 'get ready');
+}, 'WritableStreamDefaultWriter property names');
 
 </script>
 </body>

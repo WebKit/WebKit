@@ -1,24 +1,10 @@
 
-FAIL underlying sink's write should not be called until start finishes Can't find variable: WritableStream
-FAIL underlying sink's close should not be called until start finishes Can't find variable: WritableStream
-FAIL underlying sink's write or close should not be called if start throws assert_throws_exactly: constructor should throw passedError function "() => {
-    // recordingWritableStream cannot be used here because the exception in the
-    // constructor prevents assigning the object to a variable.
-    new WritableStream({
-      start() {
-        throw passedError;
-      },
-      write() {
-        writeCalled = true;
-      },
-      close() {
-        closeCalled = true;
-      }
-    });
-  }" threw object "ReferenceError: Can't find variable: WritableStream" but we expected it to throw object "Error: horrible things"
-FAIL underlying sink's write or close should not be invoked if the promise returned by start is rejected Can't find variable: WritableStream
-FAIL returning a thenable from start() should work Can't find variable: WritableStream
-FAIL controller.error() during start should cause writes to fail Can't find variable: WritableStream
-FAIL controller.error() during async start should cause existing writes to fail Can't find variable: WritableStream
-FAIL when start() rejects, writer promises should reject in standard order Can't find variable: WritableStream
+PASS underlying sink's write should not be called until start finishes 
+PASS underlying sink's close should not be called until start finishes 
+PASS underlying sink's write or close should not be called if start throws 
+PASS underlying sink's write or close should not be invoked if the promise returned by start is rejected 
+PASS returning a thenable from start() should work 
+PASS controller.error() during start should cause writes to fail 
+PASS controller.error() during async start should cause existing writes to fail 
+PASS when start() rejects, writer promises should reject in standard order 
 

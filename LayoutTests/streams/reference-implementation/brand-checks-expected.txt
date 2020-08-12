@@ -1,8 +1,8 @@
 
-PASS WritableStream.prototype.closed enforces a brand check 
-PASS WritableStream.prototype.ready enforces a brand check 
-PASS WritableStream.prototype.state enforces a brand check 
+FAIL WritableStream.prototype.closed enforces a brand check undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, getterName).get')
+FAIL WritableStream.prototype.ready enforces a brand check undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, getterName).get')
+FAIL WritableStream.prototype.state enforces a brand check undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, getterName).get')
 PASS WritableStream.prototype.abort enforces a brand check 
-PASS WritableStream.prototype.write enforces a brand check 
+FAIL WritableStream.prototype.write enforces a brand check undefined is not an object (evaluating 'method.call')
 PASS WritableStream.prototype.close enforces a brand check 
 

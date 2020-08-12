@@ -1,10 +1,10 @@
 
-FAIL sink method start should be called with the right number of arguments Can't find variable: WritableStream
-FAIL sink method start should be called even when it's located on the prototype chain Can't find variable: WritableStream
-FAIL sink method write should be called with the right number of arguments Can't find variable: WritableStream
-FAIL sink method write should be called even when it's located on the prototype chain Can't find variable: WritableStream
-FAIL sink method close should be called with the right number of arguments Can't find variable: WritableStream
-FAIL sink method close should be called even when it's located on the prototype chain Can't find variable: WritableStream
-FAIL sink method abort should be called with the right number of arguments Can't find variable: WritableStream
-FAIL sink method abort should be called even when it's located on the prototype chain Can't find variable: WritableStream
+PASS sink method start should be called with the right number of arguments 
+PASS sink method start should be called even when it's located on the prototype chain 
+PASS sink method write should be called with the right number of arguments 
+PASS sink method write should be called even when it's located on the prototype chain 
+PASS sink method close should be called with the right number of arguments 
+PASS sink method close should be called even when it's located on the prototype chain 
+PASS sink method abort should be called with the right number of arguments 
+PASS sink method abort should be called even when it's located on the prototype chain 
 

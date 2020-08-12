@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 FAIL pipeTo should stop after getting preventAbort throws preventAbort
 FAIL pipeThrough should stop after getting preventAbort throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
     [native code]
@@ -13,7 +11,7 @@ FAIL pipeTo should stop after getting preventClose throws preventClose
 FAIL pipeThrough should stop after getting preventClose throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
     [native code]
 }" ("Error")
-TIMEOUT pipeTo should stop after getting signal throws Test timed out
+FAIL pipeTo should stop after getting signal throws |this| is not a Promise
 FAIL pipeThrough should stop after getting signal throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
     [native code]
 }" ("Error")
