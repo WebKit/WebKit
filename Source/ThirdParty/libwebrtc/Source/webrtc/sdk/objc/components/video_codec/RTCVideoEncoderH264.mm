@@ -746,32 +746,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
                                &_vcpCompressionSession);
   }
 #elif HAVE_VTB_REQUIREDLOWLATENCY
-  // In case VCP is disabled, we will use it anyway if using software encoder.
-  if (webrtc::isH264LowLatencyEncoderEnabled() && !_useVCP) {
-    CFBooleanRef hwaccl_enabled = nullptr;
-    if (status == noErr) {
-      status = VTSessionCopyProperty(_vtCompressionSession,
-                               kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder,
-                               nullptr,
-                               &hwaccl_enabled);
-    }
-    if (status == noErr && (CFBooleanGetValue(hwaccl_enabled))) {
-      RTC_LOG(LS_INFO) << "Compression session created with hw accl enabled";
-    } else {
-      [self destroyCompressionSession];
-      CFDictionarySetValue(encoderSpecs, kVTVideoEncoderSpecification_RequiredLowLatency, kCFBooleanTrue);
-      status = VTCompressionSessionCreate(nullptr,  // use default allocator
-                                 _width,
-                                 _height,
-                                 kCMVideoCodecType_H264,
-                                 encoderSpecs,  // use hardware accelerated encoder if available
-                                 sourceAttributes,
-                                 nullptr,  // use default compressed data allocator
-                                 compressionOutputCallback,
-                                 nullptr,
-                                 &_vtCompressionSession);
-    }
-  }
+  // Provided encoder should be good enough.
 #else
   if (status != noErr) {
     if (encoderSpecs) {

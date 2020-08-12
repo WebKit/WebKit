@@ -1,3 +1,14 @@
+2020-08-12  Youenn Fablet  <youenn@apple.com>
+
+        Enable H264 low latency code path by default for MacOS
+        https://bugs.webkit.org/show_bug.cgi?id=215371
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoEncoderH264.mm:
+        (-[RTCVideoEncoderH264 resetCompressionSessionWithPixelFormat:]):
+        Remove the workaround to use VCP encoder if software is detected as regular software code path should work now.
+
 2020-08-11  Youenn Fablet  <youenn@apple.com>
 
         Cherry-pick usrsctp 264ce452885bfed73348ba6b6f63693bc2f52a6e commit

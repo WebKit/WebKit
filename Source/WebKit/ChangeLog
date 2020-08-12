@@ -1,3 +1,15 @@
+2020-08-12  Youenn Fablet  <youenn@apple.com>
+
+        Enable H264 low latency code path by default for MacOS
+        https://bugs.webkit.org/show_bug.cgi?id=215371
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests, in particular platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultWebRTCH264LowLatencyEncoderEnabled):
+
 2020-08-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r261570): [GTK] Fails to send drop event to JavaScript
