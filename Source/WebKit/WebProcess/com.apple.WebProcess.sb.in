@@ -408,6 +408,7 @@
         (iokit-property "ADSSupported")
         (iokit-property "IOAVDHEVCDecodeCapabilities")
         (iokit-property "IOSurfaceAcceleratorCapabilitiesDict") ;; <rdar://problem/63696732>
+        (iokit-property "acoustic-id") ;; <rdar://problem/65290967>
     ))
 
 (if (equal? (param "CPU") "arm64")
