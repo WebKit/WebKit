@@ -167,8 +167,7 @@ static void pingPong(Ref<H2::Connection>&& connection, size_t* headersCount)
     });
 }
 
-// This should remain disabled until rdar://problem/65055930 is integrated and bots are updated
-TEST(Preconnect, DISABLED_H2Ping)
+TEST(Preconnect, H2Ping)
 {
     size_t headersCount = 0;
     HTTPServer server([headersCount = &headersCount] (Connection tlsConnection) {
@@ -208,8 +207,7 @@ TEST(Preconnect, DISABLED_H2Ping)
     EXPECT_EQ(headersCount, 1u);
 }
 
-// This should remain disabled until rdar://problem/65055930 is integrated and bots are updated
-TEST(Preconnect, DISABLED_H2PingFromWebCoreNSURLSession)
+TEST(Preconnect, H2PingFromWebCoreNSURLSession)
 {
     size_t headersCount = 0;
     HTTPServer server([headersCount = &headersCount] (Connection tlsConnection) {
@@ -232,8 +230,6 @@ TEST(Preconnect, DISABLED_H2PingFromWebCoreNSURLSession)
     EXPECT_FALSE(headersCount);
     EXPECT_TRUE(receivedChallenge);
 }
-
-
 
 #endif // HAVE(PRECONNECT_PING)
 

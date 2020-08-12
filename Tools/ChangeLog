@@ -1,3 +1,13 @@
+2020-08-11  Alex Christensen  <achristensen@webkit.org>
+
+        Enable HTTP/2 ping API tests
+        https://bugs.webkit.org/show_bug.cgi?id=215402
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Preconnect.mm:
+        (TestWebKitAPI::TEST):
+
 2020-08-11  Brian Burg  <bburg@apple.com>
 
         REGRESSION(r?): build-webkit --inspector-frontend always builds ImageDiff
