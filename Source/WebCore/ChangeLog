@@ -1,3 +1,19 @@
+2020-08-12  Lauro Moura  <lmoura@igalia.com>
+
+        Highpass Biquads use old formulas
+        https://bugs.webkit.org/show_bug.cgi?id=181191
+
+        Reviewed by Darin Adler.
+
+        Like r265517, but for the highpass filter.
+
+        Spec: https://www.w3.org/TR/webaudio/#dom-biquadfiltertype-highpass
+
+        Covered by existing tests
+
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::setHighpassParams):
+
 2020-08-12  Dean Jackson  <dino@apple.com>
 
         First search on Google Maps shows black bar at top of map and blank strips through the middle

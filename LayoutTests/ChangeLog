@@ -1,5 +1,44 @@
 2020-08-12  Lauro Moura  <lmoura@igalia.com>
 
+        Highpass Biquads use old formulas
+        https://bugs.webkit.org/show_bug.cgi?id=181191
+
+        Reviewed by Darin Adler.
+
+        Gardening r265517 (lowpass) showed our test failing for GStreamer due
+        to a different threshold than used by the imported WPT biquad tests.
+
+        As they test the same functionality, remove the old webaudio/biquad
+        tests and keep using the imported WPT ones with the detailed
+        thresholds.
+
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-highpass-expected.txt: Removed.
+        * platform/mac-wk2/TestExpectations: Removed expectation regarding
+        deleted file.
+        * webaudio/biquad-allpass-expected.txt: Removed.
+        * webaudio/biquad-allpass.html: Removed.
+        * webaudio/biquad-bandpass-expected.txt: Removed.
+        * webaudio/biquad-bandpass.html: Removed.
+        * webaudio/biquad-getFrequencyResponse-expected.txt: Removed.
+        * webaudio/biquad-getFrequencyResponse.html: Removed.
+        * webaudio/biquad-highpass-expected.txt: Removed.
+        * webaudio/biquad-highpass.html: Removed.
+        * webaudio/biquad-highshelf-expected.txt: Removed.
+        * webaudio/biquad-highshelf.html: Removed.
+        * webaudio/biquad-lowpass-expected.txt: Removed.
+        * webaudio/biquad-lowpass.html: Removed.
+        * webaudio/biquad-lowshelf-expected.txt: Removed.
+        * webaudio/biquad-lowshelf.html: Removed.
+        * webaudio/biquad-notch-expected.txt: Removed.
+        * webaudio/biquad-notch.html: Removed.
+        * webaudio/biquad-peaking-expected.txt: Removed.
+        * webaudio/biquad-peaking.html: Removed.
+        * webaudio/biquadfilternode-basic-expected.txt: Removed.
+        * webaudio/biquadfilternode-basic.html: Removed.
+        * webaudio/resources/biquad-testing.js: Removed.
+
+2020-08-12  Lauro Moura  <lmoura@igalia.com>
+
         [GTK][WPE] Gardening some more failures.
 
         Unreviewed test gardening.
