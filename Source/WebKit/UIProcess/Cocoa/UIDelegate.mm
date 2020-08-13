@@ -827,7 +827,7 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy& page, WebFrameProxy* webFr
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:));
 
-    [delegate webView:m_uiDelegate.m_webView runOpenPanelWithParameters:wrapper(*openPanelParameters) initiatedByFrame:wrapper(frame) completionHandler:makeBlockPtr([checker = WTFMove(checker), openPanelParameters = makeRef(*openPanelParameters), listener = WTFMove(listener)] (NSArray *URLs) mutable {
+    [delegate webView:m_uiDelegate.m_webView runOpenPanelWithParameters:wrapper(*openPanelParameters) initiatedByFrame:wrapper(frame) completionHandler:makeBlockPtr([checker = WTFMove(checker), openPanelParameters = makeRef(*openPanelParameters), listener = makeRefPtr(listener)] (NSArray *URLs) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
