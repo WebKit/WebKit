@@ -35,7 +35,6 @@ import tempfile
 import re
 
 from webkitpy.common.system.logutils import configure_logging
-import webkitpy.thirdparty.autoinstalled.toml
 import toml
 
 try:

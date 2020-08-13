@@ -98,8 +98,6 @@ class AutoinstallImportHook(object):
             self._install_pycodestyle()
         elif '.pylint' in fullname:
             self._install_pylint()
-        elif '.coverage' in fullname:
-            self._install_coverage()
         elif '.buildbot' in fullname:
             self._install_buildbot()
         elif '.keyring' in fullname:
@@ -124,8 +122,6 @@ class AutoinstallImportHook(object):
             self._install_beautifulsoup()
         elif '.html5lib' in fullname:
             self._install_html5lib()
-        elif '.toml' in fullname:
-            self._install_toml()
 
     def _install_six(self):
         self._install("https://files.pythonhosted.org/packages/16/d8/bc6316cf98419719bd59c91742194c111b6f2e85abac88e496adefaf7afe/six-1.11.0.tar.gz",
@@ -248,10 +244,6 @@ class AutoinstallImportHook(object):
 
         self._install("https://files.pythonhosted.org/packages/source/b/buildbot/buildbot-0.8.6p1.tar.gz", "buildbot-0.8.6p1/buildbot")
 
-    def _install_coverage(self):
-        self._ensure_autoinstalled_dir_is_in_sys_path()
-        self._install(url="https://files.pythonhosted.org/packages/85/d5/818d0e603685c4a613d56f065a721013e942088047ff1027a632948bdae6/coverage-4.5.4.tar.gz", url_subpath="coverage-4.5.4/coverage")
-
     def _install_twisted_15_5_0(self):
         twisted_dir = self._fs.join(_AUTOINSTALLED_DIR, "twisted_15_5_0")
         installer = AutoInstaller(prepend_to_search_path=True, target_dir=twisted_dir)
@@ -300,11 +292,6 @@ class AutoinstallImportHook(object):
             all_firefox_release_urls = "\n".join(re.findall(r'.*browser_download_url.*', firefox_releases_line_separated))
             full_firefox_url = re.findall(r'.*%s.*' % filename_postfix, all_firefox_release_urls)[0].split('"')[3]
             self.install_binary(full_firefox_url, 'geckodriver')
-
-    def _install_toml(self):
-        toml_dir = self._fs.join(_AUTOINSTALLED_DIR, "toml")
-        installer = AutoInstaller(prepend_to_search_path=True, target_dir=toml_dir)
-        installer.install(url="https://files.pythonhosted.org/packages/b9/19/5cbd78eac8b1783671c40e34bb0fa83133a06d340a38b55c645076d40094/toml-0.10.0.tar.gz", url_subpath="toml-0.10.0/toml")
 
     def _install(self, url, url_subpath=None, target_name=None):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)

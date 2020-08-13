@@ -1,3 +1,22 @@
+2020-08-13  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's auto installer for coverage
+        https://bugs.webkit.org/show_bug.cgi?id=215419
+        <rdar://problem/66922400>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/__init__.py: Add coverage and it's dependencies.
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests): Stop relying on webkitpy's autoinstaller.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Remove _install_coverage, _install_toml.
+        (AutoinstallImportHook._install_coverage): Deleted.
+        (AutoinstallImportHook._install_toml): Deleted.
+        * Scripts/webkitpy/thirdparty/__init___unittest.py:
+        (ThirdpartyTest.test_imports): Remove coverage.
+        * flatpak/flatpakutils.py: Stop relying on webkitpy's autoinstaller.
+
 2020-08-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Add a script for generating MiniBrowser bundles
