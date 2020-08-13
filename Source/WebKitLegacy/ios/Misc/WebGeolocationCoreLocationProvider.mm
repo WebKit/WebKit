@@ -89,10 +89,6 @@ using namespace WebCore;
 
 - (void)requestGeolocationAuthorization
 {
-#if PLATFORM(MACCATALYST)
-    [_positionListener geolocationAuthorizationDenied];
-    return;
-#else
     if (![getCLLocationManagerClass() locationServicesEnabled]) {
         [_positionListener geolocationAuthorizationDenied];
         return;
@@ -116,7 +112,6 @@ using namespace WebCore;
         [_positionListener geolocationAuthorizationDenied];
         break;
     }
-#endif
 }
 
 static bool isAuthorizationGranted(CLAuthorizationStatus authorizationStatus)
