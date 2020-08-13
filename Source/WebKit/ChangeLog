@@ -1,3 +1,13 @@
+2020-08-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified build fix.
+
+        No new tests needed.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::requestEnterFullScreen): Add missing WebCore:: namespace
+        prefix to usage of WebCore::FullscreenManager.
+
 2020-08-13  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r260684): Messages YouTube inline video: after Multitasking away and Back, Audio is heard but icon indicates "muted"

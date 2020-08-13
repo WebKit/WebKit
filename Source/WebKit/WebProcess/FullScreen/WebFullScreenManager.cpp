@@ -231,7 +231,7 @@ void WebFullScreenManager::requestEnterFullScreen()
         return;
 
     WebCore::UserGestureIndicator gestureIndicator(WebCore::ProcessingUserGesture);
-    m_element->document().fullscreenManager().requestFullscreenForElement(m_element.get(), FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
+    m_element->document().fullscreenManager().requestFullscreenForElement(m_element.get(), WebCore::FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
 }
 
 void WebFullScreenManager::requestExitFullScreen()
