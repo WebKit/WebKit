@@ -26,8 +26,10 @@
 #import "config.h"
 
 #import "DragAndDropSimulator.h"
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)
 
@@ -135,6 +137,35 @@ TEST(DragAndDropTests, DragImageFileIntoFileUpload)
     }, 2, @"Expected image to finish loading.");
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"filecount.textContent"].integerValue);
 }
+
+static NSEvent *overrideCurrentEvent()
+{
+    return [NSEvent mouseEventWithType:NSEventTypeLeftMouseDragged
+        location:NSMakePoint(0, 200)
+        modifierFlags:NSEventModifierFlagOption
+        timestamp:[NSDate timeIntervalSinceReferenceDate]
+        windowNumber:0
+        context:nil
+        eventNumber:1
+        clickCount:1
+        pressure:1];
+}
+
+TEST(DragAndDropTests, DragImageWithOptionKeyDown)
+{
+    InstanceMethodSwizzler swizzler([NSApp class], @selector(currentEvent), reinterpret_cast<IMP>(overrideCurrentEvent));
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    TestWKWebView *webView = [simulator webView];
+
+    [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
+
+    auto pid = [webView _webProcessIdentifier];
+    [simulator runFrom:NSMakePoint(100, 100) to:NSMakePoint(100, 300)];
+
+    EXPECT_EQ(pid, [webView _webProcessIdentifier]);
+}
+
 
 TEST(DragAndDropTests, ProvideImageDataForMultiplePasteboards)
 {

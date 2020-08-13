@@ -3929,19 +3929,19 @@ void WebViewImpl::sendDragEndToPage(CGPoint endPoint, NSDragOperation dragOperat
     m_page->dragEnded(WebCore::IntPoint(windowMouseLoc), WebCore::IntPoint(WebCore::globalPoint(windowMouseLoc, [m_view window])), coreDragOperationMask(dragOperationMask));
 }
 
-static WebCore::DragApplicationFlags applicationFlagsForDrag(NSView *view, id <NSDraggingInfo> draggingInfo)
+static OptionSet<WebCore::DragApplicationFlags> applicationFlagsForDrag(NSView *view, id <NSDraggingInfo> draggingInfo)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    uint32_t flags = 0;
+    OptionSet<WebCore::DragApplicationFlags> flags;
     if ([NSApp modalWindow])
-        flags = WebCore::DragApplicationIsModal;
+        flags.add(WebCore::DragApplicationIsModal);
     if (view.window.attachedSheet)
-        flags |= WebCore::DragApplicationHasAttachedSheet;
+        flags.add(WebCore::DragApplicationHasAttachedSheet);
     if (draggingInfo.draggingSource == view)
-        flags |= WebCore::DragApplicationIsSource;
+        flags.add(WebCore::DragApplicationIsSource);
     if ([NSApp currentEvent].modifierFlags & NSEventModifierFlagOption)
-        flags |= WebCore::DragApplicationIsCopyKeyDown;
-    return static_cast<WebCore::DragApplicationFlags>(flags);
+        flags.add(WebCore::DragApplicationIsCopyKeyDown);
+    return flags;
 
 }
 

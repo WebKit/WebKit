@@ -3981,14 +3981,14 @@ NotificationPermissionRequestManager* WebPage::notificationPermissionRequestMana
 #if ENABLE(DRAG_SUPPORT)
 
 #if PLATFORM(GTK)
-void WebPage::performDragControllerAction(DragControllerAction action, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> draggingSourceOperationMask, SelectionData&& selectionData, uint32_t flags)
+void WebPage::performDragControllerAction(DragControllerAction action, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> draggingSourceOperationMask, SelectionData&& selectionData, OptionSet<DragApplicationFlags> flags)
 {
     if (!m_page) {
         send(Messages::WebPageProxy::DidPerformDragControllerAction(WTF::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
         return;
     }
 
-    DragData dragData(&selectionData, clientPosition, globalPosition, draggingSourceOperationMask, static_cast<DragApplicationFlags>(flags));
+    DragData dragData(&selectionData, clientPosition, globalPosition, draggingSourceOperationMask, flags);
     switch (action) {
     case DragControllerAction::Entered: {
         auto resolvedDragOperation = m_page->dragController().dragEntered(dragData);

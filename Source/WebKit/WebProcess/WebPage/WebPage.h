@@ -193,6 +193,7 @@ class SubstituteData;
 class TextCheckingRequest;
 class VisiblePosition;
 
+enum DragApplicationFlags : uint8_t;
 enum SyntheticClickType : int8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class DragHandlingMethod : uint8_t;
@@ -900,7 +901,7 @@ public:
     void restoreSelectionInFocusedEditableElement();
 
 #if ENABLE(DRAG_SUPPORT) && PLATFORM(GTK)
-    void performDragControllerAction(DragControllerAction, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation> draggingSourceOperationMask, WebCore::SelectionData&&, uint32_t flags);
+    void performDragControllerAction(DragControllerAction, const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, OptionSet<WebCore::DragOperation> draggingSourceOperationMask, WebCore::SelectionData&&, OptionSet<WebCore::DragApplicationFlags>);
 #endif
 
 #if ENABLE(DRAG_SUPPORT) && !PLATFORM(GTK)

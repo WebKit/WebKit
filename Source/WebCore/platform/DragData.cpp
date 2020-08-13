@@ -32,7 +32,7 @@
 namespace WebCore {
 
 #if !PLATFORM(COCOA)
-DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, DragApplicationFlags flags, OptionSet<DragDestinationAction> destinationActionMask)
+DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(data)
@@ -42,7 +42,7 @@ DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPo
 {  
 }
 
-DragData::DragData(const String&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, DragApplicationFlags flags, OptionSet<DragDestinationAction> destinationActionMask)
+DragData::DragData(const String&, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> sourceOperationMask, OptionSet<DragApplicationFlags> flags, OptionSet<DragDestinationAction> destinationActionMask)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(0)
