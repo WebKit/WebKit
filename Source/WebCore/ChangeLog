@@ -1,3 +1,7 @@
+2020-08-13  Alan Coon  <alancoon@apple.com>
+
+        Revert r265115. rdar://problem/67015032
+
 2020-08-11  Andres Gonzalez  <andresg_22@apple.com>
 
         Update the isolated tree on element language changes.
