@@ -89,12 +89,7 @@ class ConfigureBuild(buildstep.BuildStep):
     def add_patch_id_url(self):
         patch_id = self.getProperty('patch_id', '')
         if patch_id:
-            self.addURL('Patch {}'.format(patch_id), self.getPatchURL(patch_id))
-
-    def getPatchURL(self, patch_id):
-        if not patch_id:
-            return None
-        return '{}attachment.cgi?id={}&action=prettypatch'.format(BUG_SERVER_URL, patch_id)
+            self.addURL('Patch {}'.format(patch_id), Bugzilla.patch_url(patch_id))
 
 
 class CheckOutSource(git.Git):
@@ -373,6 +368,12 @@ class Bugzilla(object):
         if not bug_id:
             return ''
         return '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id)
+
+    @classmethod
+    def patch_url(cls, patch_id):
+        if not patch_id:
+            return ''
+        return '{}attachment.cgi?id={}&action=prettypatch'.format(BUG_SERVER_URL, patch_id)
 
 
 class BugzillaMixin(object):
@@ -1481,7 +1482,8 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
                 logs = self.filter_logs_containing_error(logs)
 
             email_subject = 'Build failure for Patch {}: {}'.format(patch_id, bug_title)
-            email_text = 'EWS has detected build failure on {} while testing Patch {}'.format(builder_name, patch_id)
+            email_text = 'EWS has detected build failure on {}'.format(builder_name)
+            email_text += ' while testing <a href="{}">Patch {}</a>'.format(Bugzilla.patch_url(patch_id), patch_id)
             email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
             if logs:
@@ -2156,7 +2158,8 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
 
             pluralSuffix = 's' if len(test_names) > 1 else ''
             email_subject = 'Layout test failure for Patch {}: {} '.format(patch_id, bug_title)
-            email_text = 'EWS has detected layout test failure{} on {} while testing Patch {}'.format(pluralSuffix, builder_name, patch_id)
+            email_text = 'EWS has detected layout test failure{} on {}'.format(pluralSuffix, builder_name)
+            email_text += ' while testing <a href="{}">Patch {}</a>'.format(Bugzilla.patch_url(patch_id), patch_id)
             email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
             email_text += '\n\nLayout test failure{}:\n{}'.format(pluralSuffix, test_names_string)

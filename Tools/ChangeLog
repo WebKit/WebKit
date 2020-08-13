@@ -1,5 +1,20 @@
 2020-08-13  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] email notifications should include Bugzilla link to the patch
+        https://bugs.webkit.org/show_bug.cgi?id=215455
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (Bugzilla):
+        (Bugzilla.patch_url): Method to generate patch url.
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure): Added link to the patch id.
+        (AnalyzeLayoutTestsResults.send_email_for_new_test_failures): Ditto.
+        (ConfigureBuild.add_patch_id_url):
+        (ConfigureBuild.getPatchURL): Deleted.
+
+2020-08-13  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] test names in ews notification email should be in sorted order
         https://bugs.webkit.org/show_bug.cgi?id=215446
 
