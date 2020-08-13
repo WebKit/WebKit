@@ -2985,7 +2985,7 @@ void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<
     m_pendingSynchronousTouchEventReply = WTFMove(reply);
 
     EventDispatcher::TouchEventQueue queuedEvents;
-    WebProcess::singleton().eventDispatcher().getQueuedTouchEventsForPage(*this, queuedEvents);
+    WebProcess::singleton().eventDispatcher().takeQueuedTouchEventsForPage(*this, queuedEvents);
     dispatchAsynchronousTouchEvents(queuedEvents);
 
     bool handled = true;
@@ -5987,7 +5987,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = WTF::nullopt;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    WebProcess::singleton().eventDispatcher().clearQueuedTouchEventsForPage(*this);
+    EventDispatcher::TouchEventQueue queuedEvents;
+    WebProcess::singleton().eventDispatcher().takeQueuedTouchEventsForPage(*this, queuedEvents);
+    cancelAsynchronousTouchEvents(queuedEvents);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
 

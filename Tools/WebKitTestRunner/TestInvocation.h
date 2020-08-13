@@ -128,6 +128,7 @@ private:
         TestInvocation* testInvocation;
     };
     static void runUISideScriptAfterUpdateCallback(WKErrorRef, void* context);
+    static void runUISideScriptImmediately(WKErrorRef, void* context);
 
     bool shouldLogHistoryClientCallbacks() const;
 

@@ -176,13 +176,7 @@ void EventDispatcher::gestureEvent(PageIdentifier pageID, const WebKit::WebGestu
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-void EventDispatcher::clearQueuedTouchEventsForPage(const WebPage& webPage)
-{
-    LockHolder locker(&m_touchEventsLock);
-    m_touchEvents.remove(webPage.identifier());
-}
-
-void EventDispatcher::getQueuedTouchEventsForPage(const WebPage& webPage, TouchEventQueue& destinationQueue)
+void EventDispatcher::takeQueuedTouchEventsForPage(const WebPage& webPage, TouchEventQueue& destinationQueue)
 {
     LockHolder locker(&m_touchEventsLock);
     destinationQueue = m_touchEvents.take(webPage.identifier());

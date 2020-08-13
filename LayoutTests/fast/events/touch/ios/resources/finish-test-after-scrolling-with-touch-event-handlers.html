@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<head>
+    <script src="../../../../../resources/ui-helper.js"></script>
+    <style>
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+    }
+
+    #scroller {
+        overflow: scroll;
+        width: 200px;
+        height: 200px;
+        border: 2px solid black;
+    }
+
+    #content {
+        width: 100%;
+        height: 1000px;
+    }
+    </style>
+    <script>
+        async function finishTest() {
+            const scroller = document.getElementById("scroller");
+            scroller.addEventListener("touchstart", () => { });
+            scroller.addEventListener("touchend", () => { });
+            scroller.addEventListener("scroll", () => { 
+                content.textContent = "Scrolled!";
+                testRunner.notifyDone()
+            }, { once : true });
+
+            const eventStreamData = new UIHelper.EventStreamBuilder()
+                .begin(100, 190)
+                .move(100, 10, 1)
+                .move(100, 190, 1)
+                .move(100, 100, 0.5)
+                .end()
+                .takeResult();
+
+            await UIHelper.sendEventStream(eventStreamData);
+        }
+
+        addEventListener("load", finishTest);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div id="content"></div>
+    </div>
+</body>
+</html>

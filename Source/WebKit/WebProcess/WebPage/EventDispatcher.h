@@ -63,9 +63,7 @@ public:
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     using TouchEventQueue = Vector<std::pair<WebTouchEvent, Optional<CallbackID>>, 1>;
-
-    void clearQueuedTouchEventsForPage(const WebPage&);
-    void getQueuedTouchEventsForPage(const WebPage&, TouchEventQueue&);
+    void takeQueuedTouchEventsForPage(const WebPage&, TouchEventQueue&);
 #endif
 
     void initializeConnection(IPC::Connection*);
