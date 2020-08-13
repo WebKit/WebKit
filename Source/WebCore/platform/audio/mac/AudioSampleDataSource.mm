@@ -75,15 +75,6 @@ AudioSampleDataSource::~AudioSampleDataSource()
     }
 }
 
-void AudioSampleDataSource::setPaused(bool paused)
-{
-    if (paused == m_paused)
-        return;
-
-    m_transitioningFromPaused = m_paused;
-    m_paused = paused;
-}
-
 OSStatus AudioSampleDataSource::setupConverter()
 {
     ASSERT(m_inputDescription && m_outputDescription);

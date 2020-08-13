@@ -91,7 +91,6 @@ void AudioMediaStreamTrackRendererCocoa::pushSamples(const MediaTime& sampleTime
             if (oldSource)
                 AudioMediaStreamTrackRendererUnit::singleton().removeSource(*oldSource);
 
-            newSource->setPaused(false);
             newSource->setVolume(volume());
             AudioMediaStreamTrackRendererUnit::singleton().addSource(WTFMove(newSource));
         });
