@@ -3022,6 +3022,7 @@ webkit.org/b/148888 http/tests/navigation/slowmetaredirect-basic.html [ Pass Fai
 # Imported Blink tests.
 imported/blink/compositing/iframes/ancestor-clipping-layer.html [ Skip ]
 imported/blink/compositing/perspective-origin-overflow-hidden.html [ ImageOnlyFailure ]
+webkit.org/b/215467 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
 imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Skip ]
 imported/blink/plugins/empty-per-context-data.html [ Skip ]
 imported/blink/animations/animation-iteration-event-short-iterations.html [ Failure Pass ]
