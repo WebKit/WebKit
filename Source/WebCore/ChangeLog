@@ -1,3 +1,13 @@
+2020-08-13  Dean Jackson  <dino@apple.com>
+
+        Pocket City game play area is blank (WebGL is broken in Catalyst)
+        https://bugs.webkit.org/show_bug.cgi?id=215251
+
+        Follow-up review comments from Darin Adler.
+
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::GraphicsContextGLOpenGL):
+
 2020-08-13  Zalan Bujtas  <zalan@apple.com>
 
         Add RenderTreeMutationDisallowedScope to track intrusive render tree mutations

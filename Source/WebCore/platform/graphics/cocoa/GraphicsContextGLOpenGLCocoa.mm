@@ -400,8 +400,11 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 
         extensions.ensureEnabled(requiredExtensions[i]);
     }
+#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 #if PLATFORM(MAC)
+    // FIXME: It's unclear if MACCATALYST should take these steps as well, but that
+    // would require the PlatformScreenMac code to be exposed to Catalyst too.
     EGLDeviceEXT device = nullptr;
     EGL_QueryDisplayAttribEXT(m_displayObj, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device));
     CGLContextObj cglContext = nullptr;
@@ -413,10 +416,6 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 #else
     UNUSED_PARAM(hostWindow);
 #endif
-
-#else
-    UNUSED_PARAM(hostWindow);
-#endif // PLATFORM(MAC)
 
 #endif // #elif USE(ANGLE)
 
