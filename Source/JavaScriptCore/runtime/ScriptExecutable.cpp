@@ -261,7 +261,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_evalCodeBlock);
         RELEASE_ASSERT(!function);
-        auto codeBlock = EvalCodeBlock::create(vm,
+        auto* codeBlock = EvalCodeBlock::create(vm,
             executable, executable->m_unlinkedEvalCodeBlock.get(), scope);
         EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
@@ -278,7 +278,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_programCodeBlock);
         RELEASE_ASSERT(!function);
-        auto codeBlock = ProgramCodeBlock::create(vm,
+        auto* codeBlock = ProgramCodeBlock::create(vm,
             executable, executable->m_unlinkedProgramCodeBlock.get(), scope);
         EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
@@ -295,7 +295,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         RELEASE_ASSERT(kind == CodeForCall);
         RELEASE_ASSERT(!executable->m_moduleProgramCodeBlock);
         RELEASE_ASSERT(!function);
-        auto codeBlock = ModuleProgramCodeBlock::create(vm,
+        auto* codeBlock = ModuleProgramCodeBlock::create(vm,
             executable, executable->m_unlinkedModuleProgramCodeBlock.get(), scope);
         EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
@@ -337,7 +337,10 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         return nullptr;
     }
 
-    RELEASE_AND_RETURN(throwScope, FunctionCodeBlock::create(vm, executable, unlinkedCodeBlock, scope));
+    auto* codeBlock = FunctionCodeBlock::create(vm, executable, unlinkedCodeBlock, scope);
+    if (throwScope.exception())
+        exception = throwScope.exception();
+    return codeBlock;
 }
 
 CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
