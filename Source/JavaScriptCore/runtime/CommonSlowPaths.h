@@ -137,6 +137,16 @@ inline bool canAccessArgumentIndexQuickly(JSObject& object, uint32_t index)
     return false;
 }
 
+ALWAYS_INLINE Structure* originalStructureBeforePut(VM& vm, JSValue value)
+{
+    if (!value.isCell())
+        return nullptr;
+    if (value.asCell()->type() == PureForwardingProxyType)
+        return jsCast<JSProxy*>(value)->target()->structure(vm);
+    return value.asCell()->structure(vm);
+}
+
+
 static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObject, JSObject* baseObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot, Structure** result = nullptr)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -145,7 +155,7 @@ static ALWAYS_INLINE void putDirectWithReify(VM& vm, JSGlobalObject* globalObjec
         RETURN_IF_EXCEPTION(scope, void());
     }
     if (result)
-        *result = baseObject->structure(vm);
+        *result = originalStructureBeforePut(vm, baseObject);
     scope.release();
     baseObject->putDirect(vm, propertyName, value, slot);
 }

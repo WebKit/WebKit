@@ -589,7 +589,7 @@ void JIT_OPERATION operationPutByIdStrictOptimize(JSGlobalObject* globalObject, 
     CodeBlock* codeBlock = callFrame->codeBlock();
     PutPropertySlot slot(baseValue, true, codeBlock->putByIdContext());
 
-    Structure* structure = baseValue.isCell() ? baseValue.asCell()->structure(vm) : nullptr;
+    Structure* structure = CommonSlowPaths::originalStructureBeforePut(vm, baseValue);
     baseValue.putInline(globalObject, ident, value, slot);
 
     LOG_IC((ICEvent::OperationPutByIdStrictOptimize, baseValue.classInfoOrNull(vm), ident, slot.base() == baseValue));
@@ -621,7 +621,7 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(JSGlobalObject* globalObjec
     CodeBlock* codeBlock = callFrame->codeBlock();
     PutPropertySlot slot(baseValue, false, codeBlock->putByIdContext());
 
-    Structure* structure = baseValue.isCell() ? baseValue.asCell()->structure(vm) : nullptr;
+    Structure* structure = CommonSlowPaths::originalStructureBeforePut(vm, baseValue);
     baseValue.putInline(globalObject, ident, value, slot);
 
     LOG_IC((ICEvent::OperationPutByIdNonStrictOptimize, baseValue.classInfoOrNull(vm), ident, slot.base() == baseValue));

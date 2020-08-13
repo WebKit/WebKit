@@ -1,3 +1,41 @@
+2020-08-12  Saam Barati  <sbarati@apple.com>
+
+        Inline cache Replace and Setters on PureForwardingProxy
+        https://bugs.webkit.org/show_bug.cgi?id=215250
+
+        Reviewed by Yusuke Suzuki.
+
+        We didn't used to cache any Puts on PureForwardingProxy. This patch
+        implements Replace and JS/Custom Setters on PureForwardingProxy. We don't support
+        Transition puts because in our current implementation different global objects
+        will never share the same structure.
+        
+        This patch also aligns how our runtime and the ICs invoke Customs when the
+        passed in |this| value is a JSProxy. For custom accessors, our runtime passes
+        in the JSProxy, where our ICs used to pass in the target of the JSProxy, for
+        the receiver value. For custom values, the IC behavior and the runtime were
+        already aligned in passing in the property owner, which is the JSProxy's
+        target. This patch aligns our IC behavior to match our runtime behavior.
+        
+        This patch also renames some of the registers in the IC code to clear
+        up what they're used for.
+        
+        This is a 2.5x speedup on the microbenchmark I've added, and a 15-20% speedup
+        on JetStream2's 3d-cube-SP.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::create):
+        * bytecode/GetterSetterAccessCase.h:
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::originalStructureBeforePut):
+        (JSC::CommonSlowPaths::putDirectWithReify):
+
 2020-08-11  Mark Lam  <mark.lam@apple.com>
 
         ScriptExecutable::newCodeBlockFor() neglected to set the exception pointer result in one case.

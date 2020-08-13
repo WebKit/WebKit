@@ -59,7 +59,7 @@ public:
         JSObject* customSlotBase, Optional<DOMAttributeAnnotation>, std::unique_ptr<PolyProtoAccessChain>);
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, Structure*, CacheableIdentifier, PropertyOffset,
-        const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>,
+        const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>, bool viaProxy = false,
         FunctionPtr<OperationPtrTag> customSetter = nullptr, JSObject* customSlotBase = nullptr);
 
     void dumpImpl(PrintStream&, CommaPrinter&) const final;

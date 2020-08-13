@@ -841,7 +841,7 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
             JSValue gs = obj->getDirect(offset);
             if (gs.isGetterSetter()) {
                 // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
-                if (!this->structure(vm)->isDictionary())
+                if (!this->structure(vm)->isUncacheableDictionary())
                     slot.setCacheableSetter(obj, offset);
 
                 bool result = callSetter(globalObject, slot.thisValue(), gs, value, slot.isStrictMode() ? ECMAMode::strict() : ECMAMode::sloppy());
@@ -849,6 +849,9 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 return result;
             }
             if (gs.isCustomGetterSetter()) {
+                // FIXME: We should only be caching these if we're not an uncacheable dictionary:
+                // https://bugs.webkit.org/show_bug.cgi?id=215347
+
                 // We need to make sure that we decide to cache this property before we potentially execute aribitrary JS.
                 if (attributes & PropertyAttribute::CustomAccessor)
                     slot.setCustomAccessor(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());

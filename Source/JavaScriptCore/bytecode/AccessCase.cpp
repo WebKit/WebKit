@@ -786,6 +786,7 @@ void AccessCase::generateWithGuard(
 
     auto emitDefaultGuard = [&] () {
         if (m_polyProtoAccessChain) {
+            ASSERT(!viaProxy());
             GPRReg baseForAccessGPR = state.scratchGPR;
             jit.move(state.baseGPR, baseForAccessGPR);
             m_polyProtoAccessChain->forEach(vm, structure(), [&] (Structure* structure, bool atEnd) {
@@ -904,11 +905,13 @@ void AccessCase::generateWithGuard(
     }
 
     case ModuleNamespaceLoad: {
+        ASSERT(!viaProxy());
         this->as<ModuleNamespaceAccessCase>().emit(state, fallThrough);
         return;
     }
 
     case IndexedScopedArgumentsLoad: {
+        ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = state.u.propertyGPR;
 
@@ -974,6 +977,7 @@ void AccessCase::generateWithGuard(
     }
 
     case IndexedDirectArgumentsLoad: {
+        ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = state.u.propertyGPR;
         jit.load8(CCallHelpers::Address(baseGPR, JSCell::typeInfoTypeOffset()), scratchGPR);
@@ -997,6 +1001,7 @@ void AccessCase::generateWithGuard(
     case IndexedTypedArrayUint32Load:
     case IndexedTypedArrayFloat32Load:
     case IndexedTypedArrayFloat64Load: {
+        ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
 
         TypedArrayType type = toTypedArrayType(m_type);
@@ -1087,6 +1092,7 @@ void AccessCase::generateWithGuard(
     }
 
     case IndexedStringLoad: {
+        ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = state.u.propertyGPR;
 
@@ -1142,6 +1148,7 @@ void AccessCase::generateWithGuard(
     case IndexedDoubleLoad:
     case IndexedContiguousLoad:
     case IndexedArrayStorageLoad: {
+        ASSERT(!viaProxy());
         // This code is written such that the result could alias with the base or the property.
         GPRReg propertyGPR = state.u.propertyGPR;
 
@@ -1258,6 +1265,7 @@ void AccessCase::generateWithGuard(
         break;
         
     case InstanceOfGeneric: {
+        ASSERT(!viaProxy());
         GPRReg prototypeGPR = state.u.prototypeGPR;
         // Legend: value = `base instanceof prototypeGPR`.
         
@@ -1426,40 +1434,47 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             currStructure->startWatchingPropertyForReplacements(vm, offset());
         }
 
-        GPRReg baseForGetGPR;
-        if (viaProxy()) {
-            ASSERT(m_type != CustomValueSetter || m_type != CustomAccessorSetter); // Because setters need to not trash valueRegsPayloadGPR.
-            if (m_type == Getter || m_type == Setter)
-                baseForGetGPR = scratchGPR;
-            else
-                baseForGetGPR = valueRegsPayloadGPR;
+        bool doesPropertyStorageLoads = m_type == Load 
+            || m_type == GetGetter
+            || m_type == Getter
+            || m_type == Setter;
 
-            ASSERT((m_type != Getter && m_type != Setter) || baseForGetGPR != baseGPR);
-            ASSERT(m_type != Setter || baseForGetGPR != valueRegsPayloadGPR);
+        bool takesPropertyOwnerAsCFunctionArgument = m_type == CustomValueGetter || m_type == CustomValueSetter;
 
-            jit.loadPtr(
-                CCallHelpers::Address(baseGPR, JSProxy::targetOffset()),
-                baseForGetGPR);
-        } else
-            baseForGetGPR = baseGPR;
+        GPRReg receiverGPR = baseGPR;
+        GPRReg propertyOwnerGPR;
 
-        GPRReg baseForAccessGPR;
         if (m_polyProtoAccessChain) {
             // This isn't pretty, but we know we got here via generateWithGuard,
             // and it left the baseForAccess inside scratchGPR. We could re-derive the base,
             // but it'd require emitting the same code to load the base twice.
-            baseForAccessGPR = scratchGPR;
-        } else {
-            if (hasAlternateBase()) {
-                jit.move(
-                    CCallHelpers::TrustedImmPtr(alternateBase()), scratchGPR);
-                baseForAccessGPR = scratchGPR;
-            } else
-                baseForAccessGPR = baseForGetGPR;
-        }
+            propertyOwnerGPR = scratchGPR;
+        } else if (hasAlternateBase()) {
+            jit.move(
+                CCallHelpers::TrustedImmPtr(alternateBase()), scratchGPR);
+            propertyOwnerGPR = scratchGPR;
+        } else if (viaProxy() && doesPropertyStorageLoads) {
+            // We only need this when loading an inline or out of line property. For customs accessors,
+            // we can invoke with a receiver value that is a JSProxy. For custom values, we unbox to the
+            // JSProxy's target. For getters/setters, we'll also invoke them with the JSProxy as |this|,
+            // but we need to load the actual GetterSetter cell from the JSProxy's target.
+
+            if (m_type == Getter || m_type == Setter)
+                propertyOwnerGPR = scratchGPR;
+            else
+                propertyOwnerGPR = valueRegsPayloadGPR;
+
+            jit.loadPtr(
+                CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), propertyOwnerGPR);
+        } else if (viaProxy() && takesPropertyOwnerAsCFunctionArgument) {
+            propertyOwnerGPR = scratchGPR;
+            jit.loadPtr(
+                CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), propertyOwnerGPR);
+        } else
+            propertyOwnerGPR = receiverGPR;
 
         GPRReg loadedValueGPR = InvalidGPRReg;
-        if (m_type != CustomValueGetter && m_type != CustomAccessorGetter && m_type != CustomValueSetter && m_type != CustomAccessorSetter) {
+        if (doesPropertyStorageLoads) {
             if (m_type == Load || m_type == GetGetter)
                 loadedValueGPR = valueRegsPayloadGPR;
             else
@@ -1470,10 +1485,10 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
             GPRReg storageGPR;
             if (isInlineOffset(m_offset))
-                storageGPR = baseForAccessGPR;
+                storageGPR = propertyOwnerGPR;
             else {
                 jit.loadPtr(
-                    CCallHelpers::Address(baseForAccessGPR, JSObject::butterflyOffset()),
+                    CCallHelpers::Address(propertyOwnerGPR, JSObject::butterflyOffset()),
                     loadedValueGPR);
                 storageGPR = loadedValueGPR;
             }
@@ -1509,7 +1524,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             }
 
             if (Options::useDOMJIT() && access.domAttribute()->domJIT) {
-                access.emitDOMJITGetter(state, access.domAttribute()->domJIT, baseForGetGPR);
+                access.emitDOMJITGetter(state, access.domAttribute()->domJIT, receiverGPR);
                 return;
             }
         }
@@ -1684,6 +1699,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             });
         } else {
             ASSERT(m_type == CustomValueGetter || m_type == CustomAccessorGetter || m_type == CustomValueSetter || m_type == CustomAccessorSetter);
+            ASSERT(!doesPropertyStorageLoads); // Or we need an extra register. We rely on propertyOwnerGPR being correct here.
 
             // Need to make room for the C call so any of our stack spillage isn't overwritten. It's
             // hard to track if someone did spillage or not, so we just assume that we always need
@@ -1691,14 +1707,14 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             jit.makeSpaceOnStackForCCall();
 
             // Check if it is a super access
-            GPRReg baseForCustomGetGPR = baseGPR != thisGPR ? thisGPR : baseForGetGPR;
+            GPRReg receiverForCustomGetGPR = baseGPR != thisGPR ? thisGPR : receiverGPR;
 
             // getter: EncodedJSValue (*GetValueFunc)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
             // setter: void (*PutValueFunc)(JSGlobalObject*, EncodedJSValue thisObject, EncodedJSValue value);
-            // Custom values are passed the slotBase (the property holder), custom accessors are passed the thisVaule (reciever).
+            // Custom values are passed the slotBase (the property holder), custom accessors are passed the thisVaule (receiver).
             // FIXME: Remove this differences in custom values and custom accessors.
             // https://bugs.webkit.org/show_bug.cgi?id=158014
-            GPRReg baseForCustom = m_type == CustomValueGetter || m_type == CustomValueSetter ? baseForAccessGPR : baseForCustomGetGPR; 
+            GPRReg baseForCustom = takesPropertyOwnerAsCFunctionArgument ? propertyOwnerGPR : receiverForCustomGetGPR; 
             // We do not need to keep globalObject alive since the owner CodeBlock (even if JSGlobalObject* is one of CodeBlock that is inlined and held by DFG CodeBlock)
             // must keep it alive.
             if (m_type == CustomValueGetter || m_type == CustomAccessorGetter) {
@@ -1739,15 +1755,21 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     }
 
     case Replace: {
+        GPRReg base = baseGPR;
+        if (viaProxy()) {
+            // This aint pretty, but the path that structure checks loads the real base into scratchGPR.
+            base = scratchGPR;
+        }
+
         if (isInlineOffset(m_offset)) {
             jit.storeValue(
                 valueRegs,
                 CCallHelpers::Address(
-                    baseGPR,
+                    base,
                     JSObject::offsetOfInlineStorage() +
                     offsetInInlineStorage(m_offset) * sizeof(JSValue)));
         } else {
-            jit.loadPtr(CCallHelpers::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
+            jit.loadPtr(CCallHelpers::Address(base, JSObject::butterflyOffset()), scratchGPR);
             jit.storeValue(
                 valueRegs,
                 CCallHelpers::Address(
@@ -1758,6 +1780,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
     }
 
     case Transition: {
+        ASSERT(!viaProxy());
         // AccessCase::transition() should have returned null if this wasn't true.
         RELEASE_ASSERT(GPRInfo::numberOfRegisters >= 6 || !structure()->outOfLineCapacity() || structure()->outOfLineCapacity() == newStructure()->outOfLineCapacity());
 

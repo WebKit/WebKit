@@ -518,6 +518,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Bool, useLICMFuzzing, false, Normal, nullptr) \
     v(Unsigned, seedForLICMFuzzer, 424242, Normal, nullptr) \
     v(Double, allowHoistingLICMProbability, 0.5, Normal, nullptr) \
+    v(Bool, exposeCustomSettersOnGlobalObjectForTesting, false, Normal, nullptr) \
 
 enum OptionEquivalence {
     SameOption,

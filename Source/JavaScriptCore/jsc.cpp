@@ -638,6 +638,51 @@ private:
         addFunction(vm, "setUnhandledRejectionCallback", functionSetUnhandledRejectionCallback, 1);
 
         addFunction(vm, "asDoubleNumber", functionAsDoubleNumber, 1);
+
+        if (Options::exposeCustomSettersOnGlobalObjectForTesting()) {
+            {
+                CustomGetterSetter* custom = CustomGetterSetter::create(vm, nullptr, testCustomAccessorSetter);
+                Identifier identifier = Identifier::fromString(vm, "testCustomAccessorSetter");
+                this->putDirectCustomAccessor(vm, identifier, custom, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::CustomAccessor);
+            }
+
+            {
+                CustomGetterSetter* custom = CustomGetterSetter::create(vm, nullptr, testCustomValueSetter);
+                Identifier identifier = Identifier::fromString(vm, "testCustomValueSetter");
+                this->putDirectCustomAccessor(vm, identifier, custom, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::CustomValue);
+            }
+        }
+    }
+
+    static bool testCustomSetterImpl(JSGlobalObject* lexicalGlobalObject, GlobalObject* thisObject, EncodedJSValue encodedValue, const char* propertyName)
+    {
+        VM& vm = lexicalGlobalObject->vm();
+
+        Identifier identifier = Identifier::fromString(vm, propertyName);
+        thisObject->putDirect(vm, identifier, JSValue::decode(encodedValue), DontEnum);
+
+        return true;
+    }
+
+    static bool testCustomAccessorSetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+    {
+        VM& vm = lexicalGlobalObject->vm();
+        RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
+        JSCell* thisCell = JSValue::decode(thisValue).asCell();
+        RELEASE_ASSERT(thisCell->type() == PureForwardingProxyType);
+        GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(vm, jsCast<JSProxy*>(thisCell)->target());
+        RELEASE_ASSERT(thisObject);
+        return testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomAccessorSetter");
+    }
+
+    static bool testCustomValueSetter(JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+    {
+        VM& vm = lexicalGlobalObject->vm();
+        RELEASE_ASSERT(JSValue::decode(thisValue).isCell());
+        JSCell* thisCell = JSValue::decode(thisValue).asCell();
+        GlobalObject* thisObject = jsDynamicCast<GlobalObject*>(vm, thisCell);
+        RELEASE_ASSERT(thisObject);
+        return testCustomSetterImpl(lexicalGlobalObject, thisObject, encodedValue, "_testCustomValueSetter");
     }
     
     void addFunction(VM& vm, JSObject* object, const char* name, NativeFunction function, unsigned arguments)

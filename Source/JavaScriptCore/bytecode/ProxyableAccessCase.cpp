@@ -40,7 +40,7 @@ ProxyableAccessCase::ProxyableAccessCase(VM& vm, JSCell* owner, AccessType acces
 
 std::unique_ptr<AccessCase> ProxyableAccessCase::create(VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet, std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain)
 {
-    ASSERT(type == Load || type == Miss || type == GetGetter);
+    ASSERT(type == Load || type == Miss || type == GetGetter || type == Replace);
     return std::unique_ptr<AccessCase>(new ProxyableAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, additionalSet, WTFMove(prototypeAccessChain)));
 }
 

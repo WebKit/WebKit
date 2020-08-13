@@ -591,8 +591,25 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
         if (!oldStructure->propertyAccessesAreCacheable())
             return GiveUpOnCache;
 
-        std::unique_ptr<AccessCase> newCase;
         JSCell* baseCell = baseValue.asCell();
+
+        bool isProxy = false;
+        if (baseCell->type() == PureForwardingProxyType) {
+            baseCell = jsCast<JSProxy*>(baseCell)->target();
+            baseValue = baseCell;
+            isProxy = true;
+
+            // We currently only cache Replace and JS/Custom Setters on JSProxy. We don't
+            // cache transitions because global objects will never share the same structure
+            // in our current implementation.
+            bool isCacheableProxy = (slot.isCacheablePut() && slot.type() == PutPropertySlot::ExistingProperty)
+                || slot.isCacheableSetter()
+                || slot.isCacheableCustom();
+            if (!isCacheableProxy)
+                return GiveUpOnCache;
+        }
+
+        std::unique_ptr<AccessCase> newCase;
 
         if (slot.base() == baseValue && slot.isCacheablePut()) {
             if (slot.type() == PutPropertySlot::ExistingProperty) {
@@ -608,7 +625,8 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
             
                 if (stubInfo.cacheType() == CacheType::Unset
                     && InlineAccess::canGenerateSelfPropertyReplace(stubInfo, slot.cachedOffset())
-                    && !oldStructure->needImpurePropertyWatchpoint()) {
+                    && !oldStructure->needImpurePropertyWatchpoint()
+                    && !isProxy) {
                     
                     bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(stubInfo, oldStructure, slot.cachedOffset());
                     if (generatedCodeInline) {
@@ -619,8 +637,9 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                     }
                 }
 
-                newCase = AccessCase::create(vm, codeBlock, AccessCase::Replace, propertyName, slot.cachedOffset(), oldStructure);
+                newCase = ProxyableAccessCase::create(vm, codeBlock, AccessCase::Replace, propertyName, slot.cachedOffset(), oldStructure, ObjectPropertyConditionSet(), isProxy);
             } else {
+                ASSERT(!isProxy);
                 ASSERT(slot.type() == PutPropertySlot::NewProperty);
 
                 if (!oldStructure->isObject())
@@ -706,8 +725,9 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
 
                 newCase = GetterSetterAccessCase::create(
                     vm, codeBlock, slot.isCustomAccessor() ? AccessCase::CustomAccessorSetter : AccessCase::CustomValueSetter, oldStructure, propertyName,
-                    invalidOffset, conditionSet, WTFMove(prototypeAccessChain), slot.customSetter(), slot.base() != baseValue ? slot.base() : nullptr);
+                    invalidOffset, conditionSet, WTFMove(prototypeAccessChain), isProxy, slot.customSetter(), slot.base() != baseValue ? slot.base() : nullptr);
             } else {
+                ASSERT(slot.isCacheableSetter());
                 ObjectPropertyConditionSet conditionSet;
                 std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
                 PropertyOffset offset = slot.cachedOffset();
@@ -742,7 +762,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                 }
 
                 newCase = GetterSetterAccessCase::create(
-                    vm, codeBlock, AccessCase::Setter, oldStructure, propertyName, offset, conditionSet, WTFMove(prototypeAccessChain));
+                    vm, codeBlock, AccessCase::Setter, oldStructure, propertyName, offset, conditionSet, WTFMove(prototypeAccessChain), isProxy);
             }
         }
 
