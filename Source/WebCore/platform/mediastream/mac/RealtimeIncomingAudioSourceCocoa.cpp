@@ -75,10 +75,6 @@ void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPer
     }
 #endif
 
-    CMTime startTime = CMTimeMake(m_numberOfFrames, sampleRate);
-    auto mediaTime = PAL::toMediaTime(startTime);
-    m_numberOfFrames += numberOfFrames;
-
     if (!m_audioBufferList || m_sampleRate != sampleRate || m_numberOfChannels != numberOfChannels) {
         callOnMainThread([identifier = LOGIDENTIFIER, this, protectedThis = makeRef(*this), sampleRate, numberOfChannels] {
             ALWAYS_LOG_IF(loggerPtr(), identifier, "new audio buffer list for sampleRate ", sampleRate, " and ", numberOfChannels, " channel(s)");
@@ -88,7 +84,15 @@ void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPer
         m_numberOfChannels = numberOfChannels;
         m_streamDescription = streamDescription(sampleRate, numberOfChannels);
         m_audioBufferList = makeUnique<WebAudioBufferList>(m_streamDescription);
+        if (m_sampleRate && m_numberOfFrames)
+            m_numberOfFrames = m_numberOfFrames * sampleRate / m_sampleRate;
+        else
+            m_numberOfFrames = 0;
     }
+
+    CMTime startTime = CMTimeMake(m_numberOfFrames, sampleRate);
+    auto mediaTime = PAL::toMediaTime(startTime);
+    m_numberOfFrames += numberOfFrames;
 
     auto& bufferList = *m_audioBufferList->buffer(0);
     bufferList.mDataByteSize = numberOfChannels * numberOfFrames * bitsPerSample / 8;
