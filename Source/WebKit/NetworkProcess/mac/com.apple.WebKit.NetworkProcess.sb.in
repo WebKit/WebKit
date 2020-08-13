@@ -276,13 +276,6 @@
 
 (allow file-read* file-write* (subpath (param "DARWIN_USER_CACHE_DIR")))
 
-(deny file-read* file-write*
-    (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.WebKit.WebContent.Sandbox")))
-(deny file-read* file-write*
-    (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.WebKit.Networking.Sandbox")))
-(deny file-read* file-write*
-    (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.WebKit.GPU.Sandbox")))
-
 (allow file-read* file-write* (subpath (param "DARWIN_USER_TEMP_DIR")))
 
 ;; IOKit user clients

@@ -551,12 +551,6 @@
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
-    (deny file-read* file-write*
-        (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.WebKit.WebContent.Sandbox")))
-    (deny file-read* file-write*
-        (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.WebKit.Networking.Sandbox")))
-    (deny file-read* file-write*
-        (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/com.apple.WebKit.GPU.Sandbox")))
 
 (if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_TEMP_DIR")))

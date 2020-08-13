@@ -1,3 +1,16 @@
+2020-08-13  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed, reverting r265520.
+
+        Invalid sandbox change
+
+        Reverted changeset:
+
+        "[macOS] Deny access to directory for compiled WebKit
+        sandboxes"
+        https://bugs.webkit.org/show_bug.cgi?id=215384
+        https://trac.webkit.org/changeset/265520
+
 2020-08-12  Keith Rollin  <krollin@apple.com>
 
         Remove the need for defining USE_NEW_BUILD_SYSTEM
