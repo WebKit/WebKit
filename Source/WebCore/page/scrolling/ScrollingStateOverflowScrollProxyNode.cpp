@@ -57,6 +57,13 @@ Ref<ScrollingStateNode> ScrollingStateOverflowScrollProxyNode::clone(ScrollingSt
     return adoptRef(*new ScrollingStateOverflowScrollProxyNode(*this, adoptiveTree));
 }
 
+void ScrollingStateOverflowScrollProxyNode::setPropertyChangedBitsAfterReattach()
+{
+    setPropertyChangedBit(OverflowScrollingNode);
+
+    ScrollingStateNode::setPropertyChangedBitsAfterReattach();
+}
+
 void ScrollingStateOverflowScrollProxyNode::setOverflowScrollingNode(ScrollingNodeID nodeID)
 {
     if (nodeID == m_overflowScrollingNodeID)

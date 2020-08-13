@@ -1,3 +1,49 @@
+2020-08-12  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r265379. rdar://problem/66945470
+
+    REGRESSION (r260276): instructure.com custom PDF viewer stops scrolling / loading after switching to another tab then switching back
+    https://bugs.webkit.org/show_bug.cgi?id=215215
+    <rdar://problem/65743028>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Test: scrollingcoordinator/overflow-proxy-reattach.html
+    
+    * page/scrolling/ScrollingStateOverflowScrollProxyNode.cpp:
+    (WebCore::ScrollingStateOverflowScrollProxyNode::setPropertyChangedBitsAfterReattach):
+    
+    We need to reset OverflowScrollingNode after reattach.
+    
+    * page/scrolling/ScrollingStateOverflowScrollProxyNode.h:
+    * testing/Internals.cpp:
+    (WebCore::Internals::setPageIsInWindow):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    Add direct testing support for background tab state.
+    
+    LayoutTests:
+    
+    * scrollingcoordinator/overflow-proxy-reattach-expected.html: Added.
+    * scrollingcoordinator/overflow-proxy-reattach.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265379 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-07  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r260276): instructure.com custom PDF viewer stops scrolling / loading after switching to another tab then switching back
+            https://bugs.webkit.org/show_bug.cgi?id=215215
+            <rdar://problem/65743028>
+
+            Reviewed by Simon Fraser.
+
+            * scrollingcoordinator/overflow-proxy-reattach-expected.html: Added.
+            * scrollingcoordinator/overflow-proxy-reattach.html: Added.
+
 2020-08-10  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r265198. rdar://problem/66644002

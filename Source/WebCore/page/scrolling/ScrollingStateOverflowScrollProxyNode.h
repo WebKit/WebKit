@@ -52,6 +52,8 @@ public:
 private:
     ScrollingStateOverflowScrollProxyNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateOverflowScrollProxyNode(const ScrollingStateOverflowScrollProxyNode&, ScrollingStateTree&);
+
+    void setPropertyChangedBitsAfterReattach() override;
     
     ScrollingNodeID m_overflowScrollingNodeID { 0 };
 };
