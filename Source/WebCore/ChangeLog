@@ -1,3 +1,24 @@
+2020-08-13  Zalan Bujtas  <zalan@apple.com>
+
+        Add RenderTreeMutationDisallowedScope to track intrusive render tree mutations
+        https://bugs.webkit.org/show_bug.cgi?id=215463
+        <rdar://problem/67012831>
+
+        Reviewed by Simon Fraser.
+
+        RenderLayer::enclosingScrollableLayer should not mutate the render tree accidentally.
+        This is related to <rdar://problem/64739768>.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderTreeMutationDisallowedScope.cpp: Added.
+        * rendering/RenderTreeMutationDisallowedScope.h: Added.
+        (WebCore::RenderTreeMutationDisallowedScope::RenderTreeMutationDisallowedScope):
+        (WebCore::RenderTreeMutationDisallowedScope::~RenderTreeMutationDisallowedScope):
+        (WebCore::RenderTreeMutationDisallowedScope::isMutationAllowed):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::destroy):
+
 2020-08-13  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r260684): Messages YouTube inline video: after Multitasking away and Back, Audio is heard but icon indicates "muted"

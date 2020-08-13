@@ -385,6 +385,7 @@
 		115CFA82208B8EDA001E6991 /* FloatingState.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA80208B8EDA001E6991 /* FloatingState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		115CFA86208B9066001E6991 /* FloatingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA84208B9066001E6991 /* FloatingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		115CFA97208B952B001E6991 /* LayoutBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 115CFA95208B952B001E6991 /* LayoutBox.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1163F82424E5D5AE000AB960 /* RenderTreeMutationDisallowedScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 1163F82124E5D59B000AB960 /* RenderTreeMutationDisallowedScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		119340791FE8B92300935F1E /* RenderTreeBuilderTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340771FE8B92300935F1E /* RenderTreeBuilderTable.h */; };
 		1193408A1FEB355D00935F1E /* RenderTreeBuilderRuby.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340881FEB355D00935F1E /* RenderTreeBuilderRuby.h */; };
 		119340971FED715500935F1E /* RenderTreeBuilderFormControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340951FED715500935F1E /* RenderTreeBuilderFormControls.h */; };
@@ -6091,6 +6092,8 @@
 		115CFA89208B921A001E6991 /* BlockMarginCollapse.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BlockMarginCollapse.cpp; sourceTree = "<group>"; };
 		115CFA95208B952B001E6991 /* LayoutBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutBox.h; sourceTree = "<group>"; };
 		115CFA96208B952B001E6991 /* LayoutBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutBox.cpp; sourceTree = "<group>"; };
+		1163F82124E5D59B000AB960 /* RenderTreeMutationDisallowedScope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeMutationDisallowedScope.h; sourceTree = "<group>"; };
+		1163F82324E5D59B000AB960 /* RenderTreeMutationDisallowedScope.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeMutationDisallowedScope.cpp; sourceTree = "<group>"; };
 		119340761FE8B92300935F1E /* RenderTreeBuilderTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderTable.cpp; sourceTree = "<group>"; };
 		119340771FE8B92300935F1E /* RenderTreeBuilderTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderTable.h; sourceTree = "<group>"; };
 		119340871FEB355D00935F1E /* RenderTreeBuilderRuby.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderRuby.cpp; sourceTree = "<group>"; };
@@ -28863,6 +28866,8 @@
 				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
+				1163F82324E5D59B000AB960 /* RenderTreeMutationDisallowedScope.cpp */,
+				1163F82124E5D59B000AB960 /* RenderTreeMutationDisallowedScope.h */,
 				E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */,
 				E4B41E340CBFB60900AF2ECE /* RenderVideo.h */,
 				BCEA4828097D93020094C9E4 /* RenderView.cpp */,
@@ -33222,6 +33227,7 @@
 				E47C39331FE6E10800BBBC6B /* RenderTreeBuilderMultiColumn.h in Headers */,
 				1193408A1FEB355D00935F1E /* RenderTreeBuilderRuby.h in Headers */,
 				119340791FE8B92300935F1E /* RenderTreeBuilderTable.h in Headers */,
+				1163F82424E5D5AE000AB960 /* RenderTreeMutationDisallowedScope.h in Headers */,
 				E47C392E1FE6E0F700BBBC6B /* RenderTreePosition.h in Headers */,
 				E47C392F1FE6E0F900BBBC6B /* RenderTreeUpdater.h in Headers */,
 				E47C39311FE6E10200BBBC6B /* RenderTreeUpdaterGeneratedContent.h in Headers */,
