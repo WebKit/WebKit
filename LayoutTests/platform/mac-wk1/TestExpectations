@@ -1010,3 +1010,5 @@ webkit.org/b/215392 webaudio/oscillator-sawtooth.html [ Pass Failure ]
 
 webkit.org/b/215397 media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Pass Failure ]
 
+webkit.org/b/215452 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-002.html [ Pass Failure ]
+
