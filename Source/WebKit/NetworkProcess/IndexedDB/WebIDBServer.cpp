@@ -102,12 +102,9 @@ void WebIDBServer::renameOrigin(const WebCore::SecurityOriginData& oldOrigin, co
     });
 }
 
-void WebIDBServer::suspend(ShouldForceStop shouldForceStop)
+void WebIDBServer::suspend()
 {
     ASSERT(RunLoop::isMain());
-
-    if (shouldForceStop == ShouldForceStop::No && WebCore::SQLiteDatabaseTracker::hasTransactionInProgress())
-        return;
 
     if (m_isSuspended)
         return;

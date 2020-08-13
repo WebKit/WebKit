@@ -51,8 +51,7 @@ public:
     void closeAndDeleteDatabasesForOrigins(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&& callback);
     void renameOrigin(const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&, CompletionHandler<void()>&&);
 
-    enum class ShouldForceStop : bool { No, Yes };
-    void suspend(ShouldForceStop);
+    void suspend();
     void resume();
 
     // Message handlers.
