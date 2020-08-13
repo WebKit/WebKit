@@ -1,3 +1,12 @@
+2020-08-13  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk2 Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215468
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-13  Karl Rackler  <rackler@apple.com>
 
         [ Win10 wk1 ews ] imported/blink/compositing/squashing/squashing-reflection-disallowed.html is a flaky image failure

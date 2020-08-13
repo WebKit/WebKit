@@ -1104,3 +1104,4 @@ webkit.org/b/215465 [ Debug ] http/tests/security/no-indexeddb-from-sandbox.html
 
 webkit.org/b/189672 [ Mojave Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb8-rgb-unsigned_byte.html [ Skip ]
 
+webkit.org/b/215468 [ Mojave Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Failure ]
