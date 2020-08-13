@@ -1,3 +1,24 @@
+2020-08-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r260684): Messages YouTube inline video: after Multitasking away and Back, Audio is heard but icon indicates "muted"
+        https://bugs.webkit.org/show_bug.cgi?id=215453
+        <rdar://problem/66136673>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsDoingSnapshotSequence):
+        (WebKit::WebPageProxy::setShouldFireEvents): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView _willBeginSnapshotSequence]):
+        (-[WKApplicationStateTrackingView _didCompleteSnapshotSequence]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setIsDoingSnapshotSequence):
+        (WebKit::WebPage::setShouldFireEvents): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-08-13  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed, reverting r265520.

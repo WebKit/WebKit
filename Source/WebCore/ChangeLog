@@ -1,3 +1,39 @@
+2020-08-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r260684): Messages YouTube inline video: after Multitasking away and Back, Audio is heard but icon indicates "muted"
+        https://bugs.webkit.org/show_bug.cgi?id=215453
+        <rdar://problem/66136673>
+
+        Reviewed by Tim Horton.
+
+        r260684 silenced all JS events during the snapshot sequence that occurs whenever the user homes out of Safari.
+        This was meant to address compatibility with websites that did not expect various resize/orientationchange
+        events when homing out. However, the snapshot sequence is fairly long and this was causing us to silence JS
+        events which have nothing to do with the snapshot sequence, like window.postMessage()'s message events. This is
+        what caused this regression.
+
+        To address the issue, this patch basically reverts r260684 and deals with websites-compatibility issues via
+        less risky site-specific and event-specific quirks:
+        - We silence Window resize events on nytimes.com to address <rdar://problem/59763843>.
+        - We silence Window resize events and MediaQueryList change events on twitter.com to address <rdar://problem/58804852>
+          and <rdar://problem/61731801>.
+
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::evaluateAll):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::sendResizeEventIfNeeded):
+        * page/Page.h:
+        (WebCore::Page::isTakingSnapshotsForApplicationSuspension const):
+        (WebCore::Page::setIsTakingSnapshotsForApplicationSuspension):
+        (WebCore::Page::shouldFireEvents const): Deleted.
+        (WebCore::Page::setShouldFireEvents): Deleted.
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldSilenceWindowResizeEvents const):
+        (WebCore::Quirks::shouldSilenceMediaQueryListChangeEvents const):
+        * page/Quirks.h:
+
 2020-08-13  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Zoomed-in search field is clipped out

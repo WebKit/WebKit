@@ -125,8 +125,12 @@ void MediaQueryMatcher::evaluateAll()
             continue;
         bool notify;
         list->evaluate(evaluator, notify);
-        if (notify)
+        if (notify) {
+            if (m_document && m_document->quirks().shouldSilenceMediaQueryListChangeEvents())
+                continue;
+
             list->dispatchEvent(MediaQueryListEvent::create(eventNames().changeEvent, list->media(), list->matches()));
+        }
     }
 }
 

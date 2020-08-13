@@ -3372,12 +3372,12 @@ void WebPage::show()
     send(Messages::WebPageProxy::ShowPage());
 }
 
-void WebPage::setShouldFireEvents(bool shouldFireEvents)
+void WebPage::setIsTakingSnapshotsForApplicationSuspension(bool isTakingSnapshotsForApplicationSuspension)
 {
-    RELEASE_LOG_IF_ALLOWED(Resize, "setShouldFireEvents(%d)", shouldFireEvents);
+    RELEASE_LOG_IF_ALLOWED(Resize, "setIsTakingSnapshotsForApplicationSuspension(%d)", isTakingSnapshotsForApplicationSuspension);
 
     if (m_page)
-        m_page->setShouldFireEvents(shouldFireEvents);
+        m_page->setIsTakingSnapshotsForApplicationSuspension(isTakingSnapshotsForApplicationSuspension);
 }
 
 void WebPage::setNeedsDOMWindowResizeEvent()
