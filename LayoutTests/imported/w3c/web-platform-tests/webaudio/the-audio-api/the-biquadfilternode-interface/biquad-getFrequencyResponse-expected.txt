@@ -16,18 +16,18 @@ PASS   lowpass: Number of non-finte values in phase response is equal to 0.
 PASS   lowpass: Number of non-finite values in the expected magnitude response is equal to 0. 
 PASS   lowpass: Number of non-finite values in expected phase response is equal to 0. 
 PASS   lowpass: Actual and expected results contained only finite values is true. 
-FAIL X lowpass: Max error (2.8336142432639253 dB) of magnitude response at frequency 1008 Hz is not less than or equal to -73.01779999999998. Got 2.8336142432639253. assert_true: expected true got false
-FAIL X lowpass: Max error (4.566711633161105 deg) in phase response at frequency 1584 Hz is not less than or equal to 0.000460864332091429. Got 4.566711633161105. assert_true: expected true got false
-FAIL < [lowpass] 2 out of 7 assertions were failed. assert_true: expected true got false
+PASS   lowpass: Max error (-73.01781972755178 dB) of magnitude response at frequency 23952 Hz is less than or equal to -73.01779999999998. 
+PASS   lowpass: Max error (0.000008043596428984033 deg) in phase response at frequency 1992 Hz is less than or equal to 0.000460864332091429. 
+PASS < [lowpass] All assertions passed. (total 7 assertions) 
 PASS > [highpass] Frequency response 
 PASS   highpass: Number of non-finite values in magnitude response is equal to 0. 
 PASS   highpass: Number of non-finte values in phase response is equal to 0. 
 PASS   highpass: Number of non-finite values in the expected magnitude response is equal to 0. 
 PASS   highpass: Number of non-finite values in expected phase response is equal to 0. 
 PASS   highpass: Actual and expected results contained only finite values is true. 
-FAIL X highpass: Max error (2.8336167311899474 dB) of magnitude response at frequency 1008 Hz is not less than or equal to -117.5461. Got 2.8336167311899474. assert_true: expected true got false
-FAIL X highpass: Max error (4.5667166421174645 deg) in phase response at frequency 1584 Hz is not less than or equal to 0.00039930001700462205. Got 4.5667166421174645. assert_true: expected true got false
-FAIL < [highpass] 2 out of 7 assertions were failed. assert_true: expected true got false
+PASS   highpass: Max error (-117.54613270502502 dB) of magnitude response at frequency 408 Hz is less than or equal to -117.5461. 
+PASS   highpass: Max error (0.000006969012786694054 deg) in phase response at frequency 912 Hz is less than or equal to 0.00039930001700462205. 
+PASS < [highpass] All assertions passed. (total 7 assertions) 
 PASS > [bandpass] Frequency response 
 PASS   bandpass: Number of non-finite values in magnitude response is equal to 0. 
 PASS   bandpass: Number of non-finte values in phase response is equal to 0. 
@@ -83,10 +83,10 @@ PASS   allpass: Max error (-266.8735521058153 dB) of magnitude response at frequ
 PASS   allpass: Max error (0.000013259871597205388 deg) in phase response at frequency 1080 Hz is less than or equal to 0.0007597420363434716. 
 PASS < [allpass] All assertions passed. (total 7 assertions) 
 PASS > [getFrequencyResponse] Test out-of-bounds frequency values 
-FAIL X Magnitude response at frequency -1 is not NaN but should be. Got 1.000003695487976. assert_true: expected true got false
+FAIL X Magnitude response at frequency -1 is not NaN but should be. Got 1.0000048875808716. assert_true: expected true got false
 FAIL X Magnitude response at frequency 16385 is not NaN but should be. Got 1.0357666981042346e-11. assert_true: expected true got false
-FAIL X Phase response at frequency -1 is not NaN but should be. Got 0.002985912375152111. assert_true: expected true got false
-FAIL X Phase response at frequency 16385 is not NaN but should be. Got 3.141589403152466. assert_true: expected true got false
+FAIL X Phase response at frequency -1 is not NaN but should be. Got 0.0025454906281083822. assert_true: expected true got false
+FAIL X Phase response at frequency 16385 is not NaN but should be. Got 3.141589879989624. assert_true: expected true got false
 FAIL < [getFrequencyResponse] 4 out of 4 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 9 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 9 tasks were failed. assert_true: expected true got false
 

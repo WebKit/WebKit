@@ -90,21 +90,9 @@ FAIL X Output from gain setter does not equal [0,0.1691558063030243,0.3357764184
 FAIL X Output from gain setter matches setValueAtTime output is not true. Got false. assert_true: expected true got false
 FAIL < [Test 3] 2 out of 5 assertions were failed. assert_true: expected true got false
 PASS > [Test 4] No dezippering of frequency vs JS filter 
-FAIL X Output from lowpass filter does not equal [0,0.0007127508870325983,0.00416393531486392,0.012737087905406952,0.02830197848379612,0.052167076617479324,0.08505348861217499,0.12709030508995056,0.17783066630363464,0.23628735542297363,0.300986111164093,0.37003448605537415,0.44120365381240845,0.5120202302932739,0.5798649191856384,0.6420748233795166...] with an element-wise tolerance of {"absoluteThreshold":5.9607e-7,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[1]	7.0587755180895329e-4	7.1275088703259826e-4	6.8733352236449718e-6	9.6433906273491795e-3	5.9607000000000002e-7
-	[2]	4.1110487654805183e-3	4.1639353148639202e-3	5.2886549383401871e-5	1.2701097731901301e-2	5.9607000000000002e-7
-	[3]	1.2529139406979084e-2	1.2737087905406952e-2	2.0794849842786789e-4	1.6326219931291578e-2	5.9607000000000002e-7
-	[4]	2.7729967609047890e-2	2.8301978483796120e-2	5.7201087474822998e-4	2.0210985429012545e-2	5.9607000000000002e-7
-	[5]	5.0907988101243973e-2	5.2167076617479324e-2	1.2590885162353516e-3	2.4135692430452889e-2	5.9607000000000002e-7
-	...and 2042 more errors.
-	Max AbsError of 1.2134951353073120e-1 at index of 61.
-	[61]	6.3951355218887329e-1	7.6086306571960449e-1	1.2134951353073120e-1	1.5948929445794821e-1	5.9607000000000002e-7
-	Max RelError of 5.7956460867381793e+1 at index of 1092.
-	[1092]	4.2581163346767426e-2	-7.4760901043191552e-4	4.3328772357199341e-2	5.7956460867381793e+1	5.9607000000000002e-7
- assert_true: expected true got false
-FAIL X Output matches JS filter results is not true. Got false. assert_true: expected true got false
-FAIL < [Test 4] 2 out of 2 assertions were failed. assert_true: expected true got false
+PASS   Output from lowpass filter equals [0,0.0007127508870325983,0.00416393531486392,0.012737087905406952,0.02830197848379612,0.052167076617479324,0.08505348861217499,0.12709030508995056,0.17783066630363464,0.23628735542297363,0.300986111164093,0.37003448605537415,0.44120365381240845,0.5120202302932739,0.5798649191856384,0.6420748233795166...] with an element-wise tolerance of {"absoluteThreshold":5.9607e-7,"relativeThreshold":0}. 
+PASS   Output matches JS filter results is true. 
+PASS < [Test 4] All assertions passed. (total 2 assertions) 
 PASS > [Test 5] Test with modulation 
 PASS   Modulation: At time 0, frequency is equal to 350. 
 PASS   Modulation: At time 0.015625, frequency is equal to 10. 
@@ -124,5 +112,5 @@ FAIL X Modulation: Output from frequency setter does not equal [0,0.169236898422
  assert_true: expected true got false
 FAIL X Modulation: Output from frequency setter matches setValueAtTime output is not true. Got false. assert_true: expected true got false
 FAIL < [Test 5] 2 out of 5 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 6 out of 6 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 5 out of 6 tasks were failed. assert_true: expected true got false
 
