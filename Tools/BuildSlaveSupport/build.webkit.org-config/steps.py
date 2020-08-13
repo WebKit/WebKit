@@ -301,9 +301,10 @@ class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
 
 
 class GenerateJSCBundle(shell.ShellCommand):
-    command = ["python", "./Tools/Scripts/generate-jsc-bundle", "--builder-name", WithProperties("%(buildername)s"),
-               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"),
-               WithProperties("--revision=%(got_revision)s"), "--remote-config-file", "../../remote-jsc-bundle-upload-config.json"]
+    command = ["./Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
+               "--bundle=jsc", "--syslibs=bundle-all", WithProperties("--platform=%(fullPlatform)s"),
+               WithProperties("--%(configuration)s"), WithProperties("--revision=%(got_revision)s"),
+               "--remote-config-file", "../../remote-jsc-bundle-upload-config.json"]
     name = "generate-jsc-bundle"
     description = ["generating jsc bundle"]
     descriptionDone = ["generated jsc bundle"]

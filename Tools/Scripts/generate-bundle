@@ -1,0 +1,642 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2018, 2020 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import argparse
+import base64
+import datetime
+import hashlib
+import json
+import logging
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import zipfile
+
+top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'flatpak'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'jhbuild'))
+import jhbuildutils
+import flatpakutils
+
+
+INSTALL_DEPS_SCRIPT_TEMPLATE = """\
+#!/bin/bash
+set -eu -o pipefail
+
+REQUIREDPACKAGES="%(packages_needed)s"
+
+if ! which apt-get >/dev/null; then
+    echo "This script only supports apt-get based distributions like Debian or Ubuntu."
+    exit 1
+fi
+
+# Calling dpkg-query is slow, so call it only once and cache the results
+TMPCHECKPACKAGES="$(mktemp)"
+dpkg-query --show --showformat='${binary:Package} ${db:Status-Status}\\n' > "${TMPCHECKPACKAGES}"
+TOINSTALL=""
+for PACKAGE in ${REQUIREDPACKAGES}; do
+    if ! grep -qxF "${PACKAGE} installed" "${TMPCHECKPACKAGES}"; then
+        TOINSTALL="${TOINSTALL} ${PACKAGE}"
+    fi
+done
+rm -f "${TMPCHECKPACKAGES}"
+
+if [[ -z "${TOINSTALL}" ]]; then
+    echo "All required dependencies are already installed"
+else
+    AUTOINSTALL=""
+    [[ ${#} -gt 0 ]] && [[ "${1}" == "--autoinstall" ]] && AUTOINSTALL="-y" && export DEBIAN_FRONTEND="noninteractive"
+    SUDO=""
+    [[ ${UID} -ne 0 ]] && SUDO="sudo --preserve-env=DEBIAN_FRONTEND"
+
+    echo "Need to install the following extra packages: ${TOINSTALL}"
+    set -x
+    ${SUDO} apt-get install --no-install-recommends ${AUTOINSTALL} ${TOINSTALL}
+fi
+"""
+
+_log = logging.getLogger(__name__)
+LOG_MESSAGE = 25
+
+class BundleCreator(object):
+
+    def __init__(self, configuration, platform, bundle_type, syslibs, should_strip_objects, compression_type, destination = None, revision = None, builder_name = None):
+        self._configuration = configuration
+        self._platform = platform.lower()
+        self._revision = revision
+        self._bundle_binaries = ['jsc', 'MiniBrowser'] if bundle_type == 'all' else [ bundle_type ]
+        self._bundle_type = bundle_type
+        self._buildername = builder_name
+        self._syslibs = syslibs
+        self._should_strip_objects = should_strip_objects
+        self._compression_type = compression_type
+        self._tmpdir = None
+        self._wrapper_scripts = []
+        self._port_binary_preffix = 'WebKit' if self._platform == 'gtk' else 'WPE'
+        wk_build_path = os.environ['WEBKIT_OUTPUTDIR'] if 'WEBKIT_OUTPUTDIR' in os.environ else \
+                        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'WebKitBuild'))
+        self._buildpath = os.path.join(wk_build_path, self._configuration.capitalize())
+
+        default_bundle_name = bundle_type  + '_' + self._platform + '_' + self._configuration + '.' + self._compression_type
+        if destination and  os.path.isdir(destination):
+            self._bundle_file_path = os.path.join(destination, default_bundle_name)
+        else:
+            self._bundle_file_path = os.path.join(wk_build_path, default_bundle_name)
+
+
+    def _create_tempdir(self, basedir = None):
+        if basedir is not None:
+            if not os.path.isdir(basedir):
+                raise ValueError('%s is not a directory' % basedir)
+            return tempfile.mkdtemp(prefix=os.path.join(os.path.abspath(basedir), 'tmp'))
+        return tempfile.mkdtemp()
+
+    def _run_cmd_and_get_output(self, command):
+        command_process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, encoding='utf-8')
+        stdout, stderr = command_process.communicate()
+        return command_process.returncode, stdout, stderr
+
+
+    def _ldd_get_libs_and_interpreter(self, object):
+        interpreter = None
+        retcode, stdout, stderr = self._run_cmd_and_get_output(['ldd', object])
+        if retcode != 0:
+            raise RuntimeError('The ldd command returned non-zero status for object %s' % object)
+        libs = []
+        for line in stdout.splitlines():
+            line = line.strip()
+            if '=>' in line:
+                line = line.split('=>')[1].strip()
+                if 'not found' in line:
+                    raise RuntimeError('ldd can not resolve all dependencies for object %s.' % object)
+                line = line.split(' ')[0].strip()
+                if os.path.isfile(line):
+                    libs.append(line)
+            else:
+                line = line.split(' ')[0].strip()
+                if os.path.isfile(line):
+                    interpreter = line
+        return libs, interpreter
+
+
+    def _ldd_recursive_get_libs_and_interpreter(self, object, already_checked_libs = []):
+        libs, interpreter = self._ldd_get_libs_and_interpreter(object)
+        if libs:
+            for lib in libs:
+                if lib in already_checked_libs:
+                    continue
+                # avoid recursion loops (libfreetype.so.6 <-> libharfbuzz.so.0)
+                already_checked_libs.append(lib)
+                sub_libs, sub_interpreter = self._ldd_recursive_get_libs_and_interpreter(lib, already_checked_libs)
+                libs.extend(sub_libs)
+                if sub_interpreter and interpreter and sub_interpreter != interpreter:
+                    raise RuntimeError('library %s has interpreter %s but object %s has interpreter %s' % (lib, sub_interpreter, object, interpreter))
+        return list(set(libs)), interpreter
+
+
+    def _get_osprettyname(self):
+        with open('/etc/os-release', 'r') as osrelease_handle:
+            for line in osrelease_handle.readlines():
+                if line.startswith('PRETTY_NAME='):
+                    return line.split('=')[1].strip().strip('"')
+        return None
+
+
+    def _generate_readme(self):
+        _log.info('Generate README.txt file')
+        readme_file = os.path.join(self._tmpdir, 'README.txt')
+        with open(readme_file, 'w') as readme_handle:
+            readme_handle.write('Bundle details:\n')
+            readme_handle.write('  - WebKit Platform: %s\n' % self._platform.upper())
+            readme_handle.write('  - Configuration: %s\n' % self._configuration.capitalize())
+            if self._revision:
+                readme_handle.write('  - WebKit Revision: %s\n' % self._revision)
+            readme_handle.write('  - Bundle type: %s\n' % self._bundle_type)
+            if self._buildername:
+                readme_handle.write('  - Builder name: %s\n' % self._buildername)
+            readme_handle.write('  - Builder date: %s\n' % datetime.datetime.now().isoformat())
+            readme_handle.write('  - Builder OS: %s\n' % self._get_osprettyname())
+            if self._syslibs == 'generate-install-script':
+                readme_handle.write('\nRequired dependencies:\n')
+                readme_handle.write('  - This bundle depends on several system libraries that are assumed to be installed.\n')
+                readme_handle.write('  - To ensure all the required libraries are installed execute the script: install-dependencies.sh\n')
+                readme_handle.write('  - You can pass the flag "--autoinstall" to this script to automatically install the dependencies if needed.\n')
+            readme_handle.write('\nRun instructions:\n')
+            scripts = "script" if len(self._wrapper_scripts) == 1 else "scripts"
+            readme_handle.write('  - Execute the wrapper %s in this directory:\n' % scripts)
+            for wrapper_script in self._wrapper_scripts:
+                readme_handle.write('    * %s\n' %wrapper_script)
+        return True
+
+
+    def _generate_wrapper_script(self, interpreter, binary_to_wrap):
+        if not os.path.isfile(os.path.join(self._tmpdir, 'bin', binary_to_wrap)):
+            raise RuntimeError('Can not find binary to wrap for %s' % binary_to_wrap)
+        self._wrapper_scripts.append(binary_to_wrap)
+        _log.info('Generate wrapper script %s' % binary_to_wrap)
+        script_file = os.path.join(self._tmpdir, binary_to_wrap)
+
+        with open(script_file, 'w') as script_handle:
+            script_handle.write('#!/bin/sh\n')
+            script_handle.write('MYDIR="$(dirname $(readlink -f $0))"\n')
+            script_handle.write('export LD_LIBRARY_PATH="${MYDIR}/lib"\n')
+            if os.path.isdir(os.path.join(self._tmpdir, 'gio')):
+                gio_var = 'GIO_MODULE_DIR' if self._syslibs == 'bundle-all' else 'GIO_EXTRA_MODULES'
+                script_handle.write('export %s="${MYDIR}/gio"\n' % gio_var)
+            if os.path.isdir(os.path.join(self._tmpdir, 'gst')):
+                gst_var = 'GST_PLUGIN_SYSTEM_PATH_1_0' if self._syslibs == 'bundle-all' else 'GST_PLUGIN_PATH_1_0'
+                script_handle.write('export %s="${MYDIR}/gst"\n' % gst_var)
+                script_handle.write('export GST_REGISTRY_1_0="${MYDIR}/gst/gstreamer-1.0.registry"\n')
+            if binary_to_wrap != "jsc":
+                script_handle.write('export WEBKIT_EXEC_PATH="${MYDIR}/bin"\n')
+                script_handle.write('export WEBKIT_INJECTED_BUNDLE_PATH="${MYDIR}/lib"\n')
+            if self._syslibs == 'bundle-all':
+                script_handle.write('INTERPRETER="${MYDIR}/lib/%s"\n' % os.path.basename(interpreter))
+                if binary_to_wrap != "jsc":
+                    script_handle.write('export WEB_PROCESS_CMD_PREFIX="${INTERPRETER}"\n')
+                    script_handle.write('export PLUGIN_PROCESS_CMD_PREFIX="${INTERPRETER}"\n')
+                    script_handle.write('export NETWORK_PROCESS_CMD_PREFIX="${INTERPRETER}"\n')
+                    script_handle.write('export GPU_PROCESS_CMD_PREFIX="${INTERPRETER}"\n')
+                script_handle.write('exec "${INTERPRETER}" "${MYDIR}/bin/%s" "$@"\n' % binary_to_wrap)
+            else:
+                script_handle.write('exec "${MYDIR}/bin/%s" "$@"\n' % binary_to_wrap)
+        os.chmod(script_file, 0o755)
+
+    def _generate_install_deps_script(self, system_packages_needed):
+        if not system_packages_needed:
+            return
+        if 'MiniBrowser' in self._bundle_binaries:
+            # Add some extra packages that are needed but the script can't automatically detect
+            for extra_needed_pkg in ['ca-certificates', 'shared-mime-info']:
+                system_packages_needed.add(extra_needed_pkg)
+            # And remove some packages that may be detected due to indirect deps (gstreamer/gio) but are really not needed
+            for not_needed_pkg in ['dconf-gsettings-backend', 'gvfs', 'pitivi', 'gstreamer1.0-convolver-pulseeffects', 'gstreamer1.0-x',
+                                   'gstreamer1.0-adapter-pulseeffects', 'gstreamer1.0-autogain-pulseeffects', 'gstreamer1.0-alsa',
+                                   'gstreamer1.0-clutter-3.0', 'gstreamer1.0-crystalizer-pulseeffects', 'gstreamer1.0-gtk3', 'gstreamer1.0-nice']:
+                if not_needed_pkg in system_packages_needed:
+                    system_packages_needed.remove(not_needed_pkg)
+                # Sometimes the package is identified with an arch suffix, but not always
+                not_needed_pkg_arch = not_needed_pkg + ':amd64'
+                if not_needed_pkg_arch in system_packages_needed:
+                    system_packages_needed.remove(not_needed_pkg_arch)
+        installdeps_file = os.path.join(self._tmpdir, 'install-dependencies.sh')
+        with open(installdeps_file, 'w') as installdeps_handle:
+            installdeps_handle.write(INSTALL_DEPS_SCRIPT_TEMPLATE % {'packages_needed' : ' '.join(system_packages_needed)} )
+        os.chmod(installdeps_file, 0o755)
+
+
+    def _copy_and_remove_rpath(self, orig_file, type='bin', destination_dir=None):
+        if not destination_dir:
+            dir_suffix = 'lib' if type == 'interpreter' else type
+            destination_dir = os.path.join(self._tmpdir, dir_suffix)
+        if not os.path.isdir(destination_dir):
+            os.makedirs(destination_dir)
+
+        if not os.path.isfile(orig_file):
+            raise ValueError('Can not find file %s' % orig_file)
+
+        _log.info('Add to bundle [%s]: %s' % (type, orig_file))
+        shutil.copy(orig_file, destination_dir)
+
+        if shutil.which('patchelf'):
+            patch_elf_command = ['patchelf', '--remove-rpath', os.path.join(destination_dir, os.path.basename(orig_file))]
+            if subprocess.call(patch_elf_command) != 0:
+                _log.warning('The patchelf command returned non-zero status')
+        else:
+                _log.warning('patchelf not found. Not modifying rpath')
+
+        if shutil.which('strip'):
+            strip_command = ['strip', '--strip-unneeded', os.path.join(destination_dir, os.path.basename(orig_file))]
+            if subprocess.call(strip_command) != 0:
+                _log.warning('The strip command returned non-zero status')
+        else:
+            _log.warning('strip not found. Not stripping object')
+
+    def _remove_tempdir(self):
+        if not self._tmpdir:
+            return
+        if os.path.isdir(self._tmpdir):
+            shutil.rmtree(self._tmpdir)
+
+    def create(self):
+        self._tmpdir = self._create_tempdir(self._buildpath)
+
+        if os.path.isfile(self._bundle_file_path):
+            _log.info('Removing previous bundle %s' % self._bundle_file_path)
+            os.remove(self._bundle_file_path)
+
+        for bundle_binary in self._bundle_binaries:
+            self._create_bundle(bundle_binary)
+        self._generate_readme()
+        if self._compression_type == 'zip':
+            self._create_zip()
+        else:
+            raise NotImplementedError('Support for compression type %s not implemented' % self._compression_type)
+        self._remove_tempdir()
+        if not os.path.isfile(self._bundle_file_path):
+            raise RuntimeError('Unable to create the file %s' % self._bundle_file_path)
+        _log.log(LOG_MESSAGE, 'Bundle file created at: %s' % self._bundle_file_path)
+        return self._bundle_file_path
+
+
+    def _get_webkit_binaries(self):
+        webkit_binaries = []
+        bin_dir = os.path.join(self._buildpath, 'bin')
+        for entry in os.listdir(bin_dir):
+            if entry.startswith(self._port_binary_preffix) and (entry.endswith('Process') or entry.endswith('Driver')):
+                binary = os.path.join(bin_dir, entry)
+                if os.path.isfile(binary) and os.access(binary, os.X_OK):
+                    webkit_binaries.append(binary)
+        if len(webkit_binaries) < 2:
+            raise RuntimeError('Could not find required WebKit Process binaries. Check if you are passing the right platform value.')
+        return webkit_binaries
+
+
+    def _get_webkit_bundlelib(self):
+        lib_dir = os.path.join(self._buildpath, 'lib')
+        bundle_lib = None
+        for entry in os.listdir(lib_dir):
+            if entry.endswith('.so') and 'injectedbundle' in entry.lower() and 'test' not in entry.lower():
+                assert(bundle_lib == None)
+                bundle_lib = os.path.join(lib_dir, entry)
+                break
+        assert(bundle_lib)
+        return bundle_lib
+
+
+    def _create_zip(self):
+        _log.info('Create ZIP file')
+        with zipfile.ZipFile(self._bundle_file_path, 'w', compression=zipfile.ZIP_DEFLATED) as zipHandle:
+            for dirname, subdirs, files in os.walk(self._tmpdir):
+                for filename in files:
+                    system_file_path = os.path.join(dirname, filename)
+                    zip_file_path = system_file_path.replace(self._tmpdir, '', 1).lstrip('/')
+                    if os.path.islink(system_file_path):
+                        symlink_zip_info = zipfile.ZipInfo(zip_file_path)
+                        symlink_zip_info.create_system = 3 # Unix (for symlink support)
+                        symlink_zip_info.external_attr = 0xA1ED0000 # Zip softlink magic number
+                        zipHandle.writestr(symlink_zip_info, os.readlink(system_file_path))
+                    else:
+                        zipHandle.write(system_file_path, zip_file_path)
+
+
+    def _get_system_package_name(self, object):
+        if not shutil.which('dpkg'):
+            raise RuntimeError('Adding system dependencies only supported for dpkg-based distros. Try passing --syslibs=bundle-all')
+        retcode, stdout, stderr = self._run_cmd_and_get_output(['dpkg', '-S', object])
+        if retcode != 0:
+            # Give a second-try with the realpath of the object.
+            # This fixes issue on Ubuntu-20.04 that has a /lib symlink to /usr/lib
+            # and objects point to /lib, but dpkg only recognizes the files on /usr/lib
+            object_realpath = os.path.realpath(object)
+            if object_realpath != object:
+                retcode, stdout, stderr = self._run_cmd_and_get_output(['dpkg', '-S', object_realpath])
+        if retcode != 0:
+            # Package not found
+            return None
+        package = stdout.split(' ')[0].rstrip(':')
+        _log.info('Add dependency on system package [%s]: %s' %(package, object))
+        return package
+
+
+    def _get_gio_modules(self):
+        gio_modules = []
+        retcode, stdout, stderr = self._run_cmd_and_get_output(['pkg-config', '--variable=giomoduledir', 'gio-2.0'])
+        if retcode != 0:
+            raise RuntimeError('The pkg-config command returned status %d' % retcode)
+        gio_module_dir = stdout.strip()
+        if not os.path.isdir(gio_module_dir):
+            raise RuntimeError('The pkg-config entry for giomoduledir is not a directory: %s' % gio_module_dir)
+        for entry in os.listdir(gio_module_dir):
+            if entry.endswith('.so'):
+                gio_modules.append(os.path.join(gio_module_dir, entry))
+        return gio_modules
+
+    def _get_gstreamer_modules(self):
+        gstreamer_plugins = []
+        retcode, stdout, stderr = self._run_cmd_and_get_output(['pkg-config', '--variable=pluginsdir', 'gstreamer-1.0'])
+        if retcode != 0:
+            raise RuntimeError('The pkg-config command returned status %d' % retcode)
+        gstramer_plugins_dir = stdout.strip()
+        if not os.path.isdir(gstramer_plugins_dir):
+            raise RuntimeError('The pkg-config entry for pluginsdir is not a directory: %s' % gstramer_plugins_dir)
+        for entry in os.listdir(gstramer_plugins_dir):
+            if entry.endswith('.so'):
+                gstreamer_plugins.append(os.path.join(gstramer_plugins_dir, entry))
+        return gstreamer_plugins
+
+
+    def _add_object_or_get_sysdep(self, object, object_type):
+        provided_by_system_package = None
+        if self._syslibs == 'bundle-all':
+            self._copy_and_remove_rpath(object, type=object_type)
+        else:
+            provided_by_system_package = self._get_system_package_name(object)
+            if not provided_by_system_package:
+                self._copy_and_remove_rpath(object, type=object_type)
+        return provided_by_system_package
+
+    def _ensure_wpe_backend_symlink(self):
+        # WPE/WPERenderer dlopens this library without a version suffix,
+        # so we need to ensure there is a proper symlink
+        bundle_lib_dir = os.path.join(self._tmpdir, 'lib')
+        wpe_backend_soname = 'libWPEBackend-fdo-1.0.so'
+        previous_dir = os.getcwd()
+        for entry in os.listdir(bundle_lib_dir):
+            if entry.startswith(wpe_backend_soname + '.'):
+                os.chdir(bundle_lib_dir)
+                if not os.path.exists(wpe_backend_soname):
+                    os.symlink(entry, wpe_backend_soname)
+                os.chdir(previous_dir)
+                break
+
+    def _create_bundle(self, bundle_binary):
+        main_binary_path = os.path.join(self._buildpath, 'bin', bundle_binary)
+        if not os.path.isfile(main_binary_path) or not os.access(main_binary_path, os.X_OK):
+            raise ValueError('Cannot find binary for %s at %s' % (bundle_binary, main_binary_path) )
+
+        copied_interpreter = None
+        gio_modules = []
+        gstreamer_modules = []
+        libraries_checked = set()
+        system_packages_needed = set()
+        objects_to_copy = [ main_binary_path ]
+        if bundle_binary == 'MiniBrowser':
+            gio_modules = self._get_gio_modules()
+            gstreamer_modules = self._get_gstreamer_modules()
+            objects_to_copy.extend(self._get_webkit_binaries())
+            objects_to_copy.append(self._get_webkit_bundlelib())
+            objects_to_copy.extend(gio_modules)
+            objects_to_copy.extend(gstreamer_modules)
+        for object in objects_to_copy:
+            system_package = None
+            if object in gio_modules:
+                system_package = self._add_object_or_get_sysdep(object, 'gio')
+                if system_package:
+                    system_packages_needed.add(system_package)
+            elif object in gstreamer_modules:
+                system_package = self._add_object_or_get_sysdep(object, 'gst')
+                if system_package:
+                    system_packages_needed.add(system_package)
+            elif object.endswith('.so'):
+                self._copy_and_remove_rpath(object, type='lib')
+            else:
+                self._copy_and_remove_rpath(object, type='bin')
+            # There is no need to examine the libraries linked with objects coming from a system package,
+            # because system packages already declare dependencies between them.
+            # However, if we are running with self._syslibs == 'bundle-all' then system_package will be None,
+            # and everything will be examined and bundled as we don't account for system packages in that case.
+            if not system_package:
+                libraries, interpreter = self._ldd_recursive_get_libs_and_interpreter(object)
+                if copied_interpreter is None:
+                    if self._syslibs == 'bundle-all':
+                        self._copy_and_remove_rpath(interpreter, type='interpreter')
+                    copied_interpreter = interpreter
+                elif copied_interpreter != interpreter:
+                    raise RuntimeError('Detected binaries with different interpreters: %s != %s' %(copied_interpreter, interpreter))
+                # FIXME: for --syslibs=bundle-all we would have to copy the libnss_*so* libraries which are dlopen'ed <https://bugs.debian.org/203014>
+                # Also we should include config files like fontconfig stuff or support files like icons.
+                for library in libraries:
+                    if library in libraries_checked:
+                        _log.debug('Skip already checked [lib]: %s' % library)
+                        continue
+                    libraries_checked.add(library)
+                    system_package = self._add_object_or_get_sysdep(library, 'lib')
+                    if system_package:
+                        system_packages_needed.add(system_package)
+
+        self._ensure_wpe_backend_symlink()
+        self._generate_wrapper_script(interpreter, bundle_binary)
+        if bundle_binary == "MiniBrowser":
+            self._generate_wrapper_script(interpreter, self._port_binary_preffix + 'WebDriver')
+        self._generate_install_deps_script(system_packages_needed)
+
+
+class BundleUploader(object):
+
+    def __init__(self, bundle_file_path, remote_config_file, bundle_type, platform, configuration, compression_type, revision, log_level):
+        self._bundle_file_path = bundle_file_path
+        self._remote_config_file = remote_config_file
+        self._configuration = configuration
+        self._revision = revision
+        self._bundle_type = bundle_type
+        self._platform = platform
+        self._compression_type = compression_type
+        self._sftp_quiet = log_level == 'quiet' or log_level == 'minimal'
+        if not os.path.isfile(self._remote_config_file):
+            raise ValueError('Can not find remote config file for upload at path %s' % self._remote_config_file)
+
+    def _sha256sum(self, file):
+        hash = hashlib.sha256()
+        with open(file, 'rb') as f:
+            for chunk in iter(lambda: f.read(4096), b''):
+                hash.update(chunk)
+        return hash.hexdigest()
+
+    def _get_osidversion(self):
+        with open('/etc/os-release', 'r') as osrelease_handle:
+            for line in osrelease_handle.readlines():
+                if line.startswith('ID='):
+                    os_id = line.split('=')[1].strip().strip('"')
+                if line.startswith('VERSION_ID='):
+                    version_id = line.split('=')[1].strip().strip('"')
+        assert(os_id)
+        assert(version_id)
+        osidversion = os_id + '-' + version_id
+        assert(' ' not in osidversion)
+        assert(len(osidversion) > 3)
+        return osidversion
+
+    # The expected format for --remote-config-file is something like:
+    # {
+    # "servername": "webkitgtk.org",
+    # "serveraddress": "webkitgtk.intranet-address.local",
+    # "serverport": "23",
+    # "username": "upload-bot-64",
+    # "baseurl": "https://webkitgtk.org/built-products",
+    # "remotepath" : "x86_64/nightly/%(bundletype)s/%(distro_id_ver)s/%(bundletype)s_%(platform)s_%(configuration)s_r%(version)s.%(compression_type)s",
+    # "sshkey": "output of the priv key in base64. E.g. cat ~/.ssh/id_rsa|base64 -w0"
+    # }
+    def upload(self):
+        remote_data = json.load(open(self._remote_config_file))
+        remote_file_bundle_path = remote_data['remotepath'] % { 'bundletype' : self._bundle_type,
+                                                                'configuration' : self._configuration,
+                                                                'compression_type' : self._compression_type,
+                                                                'distro_id_ver' : self._get_osidversion().capitalize(),
+                                                                'platform' : self._platform,
+                                                                'version' : self._revision }
+        with tempfile.NamedTemporaryFile(mode='w+b') as sshkeyfile, tempfile.NamedTemporaryFile(mode='w+') as hashcheckfile, \
+             tempfile.NamedTemporaryFile(mode='w+') as lastisfile, tempfile.NamedTemporaryFile(mode='w+') as uploadinstructionsfile:
+
+            # In theory NamedTemporaryFile() is already created 0600. But it don't hurts ensuring this again here.
+            os.chmod(sshkeyfile.name, 0o600)
+            sshkeyfile.write(base64.b64decode(remote_data['sshkey']))
+            sshkeyfile.flush()
+            # Generate and upload also a sha256 hash
+            hashforbundle = self._sha256sum(self._bundle_file_path)
+            os.chmod(hashcheckfile.name, 0o644)
+            hashcheckfile.write('%s %s\n' % (hashforbundle, os.path.basename(remote_file_bundle_path)))
+            hashcheckfile.flush()
+            # A LAST-IS file for convenience
+            os.chmod(lastisfile.name, 0o644)
+            lastisfile.write('%s\n' % os.path.basename(remote_file_bundle_path))
+            lastisfile.flush()
+            # SFTP upload instructions file
+            uploadinstructionsfile.write('progress\n')
+            uploadinstructionsfile.write('put %s %s\n' % (self._bundle_file_path, remote_file_bundle_path))
+            uploadinstructionsfile.write('put %s %s\n' % (hashcheckfile.name, remote_file_bundle_path + '.sha256sum'))
+            uploadinstructionsfile.write('put %s %s\n' % (lastisfile.name, os.path.join(os.path.dirname(remote_file_bundle_path), 'LAST-IS')))
+            uploadinstructionsfile.write('quit\n')
+            uploadinstructionsfile.flush()
+            # The idea of this is to ensure scp doesn't ask any question (not even on the first run).
+            # This should be secure enough according to https://www.gremwell.com/ssh-mitm-public-key-authentication
+            sftpCommand = ['sftp',
+                           '-o', 'StrictHostKeyChecking=no',
+                           '-o', 'UserKnownHostsFile=/dev/null',
+                           '-o', 'LogLevel=ERROR',
+                           '-P', remote_data['serverport'],
+                           '-i', sshkeyfile.name,
+                           '-b', uploadinstructionsfile.name,
+                           '%s@%s' % (remote_data['username'], remote_data['serveraddress'])]
+            _log.info('Uploading bundle to %s as %s with sha256 hash %s' % (remote_data['servername'], remote_file_bundle_path, hashforbundle))
+            sftp_out = subprocess.DEVNULL if self._sftp_quiet else sys.stdout
+            if subprocess.call(sftpCommand, stdout=sftp_out, stderr=sftp_out) != 0:
+                raise RuntimeError('The sftp command returned non-zero status')
+
+        _log.log(LOG_MESSAGE, 'Done: archive sucesfully uploaded to %s/%s' % (remote_data['baseurl'], remote_file_bundle_path))
+        return 0
+
+
+def configure_logging(selected_log_level='info'):
+
+    class LogHandler(logging.StreamHandler):
+        def __init__(self, stream):
+             super().__init__(stream)
+
+        def format(self, record):
+            if record.levelno > LOG_MESSAGE:
+                return '%s: %s' % (record.levelname, record.getMessage())
+            return record.getMessage()
+
+    logging.addLevelName(LOG_MESSAGE, 'MESSAGE')
+    if selected_log_level == 'debug':
+        log_level = logging.DEBUG
+    elif selected_log_level == 'info':
+        log_level = logging.INFO
+    elif selected_log_level == 'quiet':
+        log_level = logging.NOTSET
+    elif selected_log_level == 'minimal':
+        log_level = logging.getLevelName(LOG_MESSAGE)
+
+    handler = LogHandler(sys.stdout)
+    logger = logging.getLogger(__name__)
+    logger.addHandler(handler)
+    logger.setLevel(log_level)
+    return handler
+
+
+def main():
+    parser = argparse.ArgumentParser('usage: %prog [options]')
+    configuration = parser.add_mutually_exclusive_group(required=True)
+    configuration.add_argument('--debug', action='store_const', const='debug', dest='configuration')
+    configuration.add_argument('--release', action='store_const', const='release', dest='configuration')
+    parser.add_argument('--platform', dest='platform', choices=['gtk', 'wpe'], required=True,
+                        help='The WebKit port to generate the bundle')
+    parser.add_argument('--bundle', dest='bundle_binary', choices=['jsc', 'MiniBrowser', 'all'], required=True,
+                        help='Select what main binary should be included in the bundle')
+    parser.add_argument('--syslibs', dest='syslibs', choices=['bundle-all', 'generate-install-script'], default='generate-install-script',
+                        help='If value is "bundle-all", the bundle will include _all_ the system libraries instead of a install-dependencies script.\n'
+                        'If value is "generate-install-script", the system libraries will not be bundled and a install-dependencies script will be generated for this distribution.')
+    parser.add_argument('--compression', dest='compression', choices=['zip', 'tar.xz'], default='zip')
+    parser.add_argument('--destination', action='store', dest='destination',
+                        help='Optional path were to store the bundle')
+    parser.add_argument('--no-strip', action='store_true', dest='no_strip',
+                        help='Do not strip the binaries and libraries inside the bundle')
+    parser.add_argument('--log-level', dest='log_level', choices=['quiet', 'minimal', 'info', 'debug'], default='info')
+    parser.add_argument('--revision', action='store', dest='webkit_version')
+    parser.add_argument('--builder-name', action='store', dest='builder_name')
+    parser.add_argument('--remote-config-file', action='store', dest='remote_config_file',
+                        help='Optional configuration file with the configuration needed to upload the generated the bundle to a remote server via sftp/ssh.')
+    options = parser.parse_args()
+
+    flatpakutils.run_in_sandbox_if_available([sys.argv[0], '--flatpak-' + options.platform] + sys.argv[1:])
+    if not flatpakutils.is_sandboxed():
+        jhbuildutils.enter_jhbuild_environment_if_available(options.platform)
+
+    configure_logging(options.log_level)
+    bundle_creator = BundleCreator(options.configuration, options.platform, options.bundle_binary, options.syslibs,
+                                   not options.no_strip, options.compression, options.destination, options.webkit_version, options.builder_name)
+    bundle_file_path = bundle_creator.create()
+
+    if options.remote_config_file is not None:
+        bundle_uploader = BundleUploader(bundle_file_path, options.remote_config_file, options.bundle_binary, options.platform,
+                                         options.configuration, options.compression, options.webkit_version, options.log_level)
+        return bundle_uploader.upload()
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -1,3 +1,32 @@
+2020-08-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Add a script for generating MiniBrowser bundles
+        https://bugs.webkit.org/show_bug.cgi?id=215266
+
+        Reviewed by Carlos Garcia Campos.
+
+        This converts the previous generate-jsc-bundle into a new script
+        that is now able to do the following:
+         - generate a jsc bundle
+         - generate a MiniBrowse bundle
+         - generate an all bundle (jsc+MiniBrowser)
+        The bundle can include all the system-libraries from the system,
+        so that way (in theory) the bundle would run on any other distribution
+        or it can generate an install-dependencies script so it generates
+        a lightweight bundle with only the minimum libraries included that
+        would run only on the distribution where it has been created
+        (after running the install-dependencies script)
+
+        We already have a bot generating the jsc bundle and we plan to also
+        have bots for generating the MiniBrowser bundles as well.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py: Update the step for the new command.
+        (GenerateJSCBundle):
+        * Scripts/generate-bundle: Added.
+        * Scripts/generate-jsc-bundle: Removed.
+        * jhbuild/jhbuildutils.py:
+        (enter_jhbuild_environment_if_available): Unicode argument not longer available on python3's gettext.install()
+
 2020-08-12  Keith Rollin  <krollin@apple.com>
 
         Remove the need for defining USE_NEW_BUILD_SYSTEM

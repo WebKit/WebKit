@@ -53,7 +53,7 @@ def enter_jhbuild_environment_if_available(platform):
     try:
         import jhbuild.config
         from jhbuild.errors import FatalError
-        gettext.install('jhbuild', localedir=os.path.join(source_path, 'mo'), unicode=True)
+        gettext.install('jhbuild', localedir=os.path.join(source_path, 'mo'))
         config = jhbuild.config.Config(get_config_file_for_platform(platform), [])
     except FatalError as exception:
         sys.stderr.write('Could not load jhbuild config file: %s\n' % exception.args[0])
