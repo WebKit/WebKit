@@ -337,7 +337,13 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     [window makeFirstResponder:_webView];
 
     _page->setSuppressVisibilityUpdates(false);
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [[self window] setAutodisplay:YES];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [[self window] displayIfNeeded];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    NSEnableScreenUpdates();
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     [CATransaction commit];
 

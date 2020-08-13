@@ -1,5 +1,42 @@
 2020-08-12  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r265339. rdar://problem/66945496
+
+    [Mac,WK2] REGRESSION(r262322): ScreenTime overlay is hidden in fullscreen mode
+    https://bugs.webkit.org/show_bug.cgi?id=215222
+    <rdar://problem/65871844>
+    
+    Reviewed by Eric Carlson.
+    
+    During a refactor, a call to -[NSWindow setAutodisplay:YES] was dropped (in addition to a call to
+    NSEnableScreenUpdates(), but that has a 1s timeout so its effects aren't persistent). This meant
+    all NSViews added to that window need -display called on them explicitly in order to paint, and
+    so subviews like the ScreenTime overlay is never drawn.
+    
+    * UIProcess/mac/WKFullScreenWindowController.mm:
+    (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265339 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-06  Jer Noble  <jer.noble@apple.com>
+
+            [Mac,WK2] REGRESSION(r262322): ScreenTime overlay is hidden in fullscreen mode
+            https://bugs.webkit.org/show_bug.cgi?id=215222
+            <rdar://problem/65871844>
+
+            Reviewed by Eric Carlson.
+
+            During a refactor, a call to -[NSWindow setAutodisplay:YES] was dropped (in addition to a call to
+            NSEnableScreenUpdates(), but that has a 1s timeout so its effects aren't persistent). This meant
+            all NSViews added to that window need -display called on them explicitly in order to paint, and
+            so subviews like the ScreenTime overlay is never drawn.
+
+            * UIProcess/mac/WKFullScreenWindowController.mm:
+            (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+
+2020-08-12  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r265322. rdar://problem/66943882
 
     Could not find module 'WebKit' for target 'armv7-apple-ios'
