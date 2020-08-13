@@ -315,9 +315,10 @@ void GraphicsContext::drawNativeImage(const RetainPtr<CGImageRef>& image, const 
         // containing only the portion we want to display. We need to do this because high-quality
         // interpolation smoothes sharp edges, causing pixels from outside the source rect to bleed
         // into the destination rect. See <rdar://problem/6112909>.
-        shouldUseSubimage = (interpolationQuality != kCGInterpolationNone) && (srcRect.size() != destRect.size() || !getCTM().isIdentityOrTranslationOrFlipped());
+        const float minimumAreaForInterpolation = 40 * 40;
         float xScale = srcRect.width() / destRect.width();
         float yScale = srcRect.height() / destRect.height();
+        shouldUseSubimage = (interpolationQuality != kCGInterpolationNone) && (xScale < 0 || yScale < 0 || destRect.area() >= minimumAreaForInterpolation) && (srcRect.size() != destRect.size() || !getCTM().isIdentityOrTranslationOrFlipped());
         if (shouldUseSubimage) {
             FloatRect subimageRect = srcRect;
             float leftPadding = srcRect.x() - floorf(srcRect.x());
