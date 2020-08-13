@@ -1,3 +1,27 @@
+2020-08-12  Dean Jackson  <dino@apple.com>
+
+        First search on Google Maps shows black bar at top of map and blank strips through the middle
+        https://bugs.webkit.org/show_bug.cgi?id=214945
+        <rdar://problem/63374422>
+
+        Reviewed by Tim Horton.
+
+        On iOS with an attached keyboard, Google Maps appears to calculate
+        the viewport it will use for map display at a time when the Unified
+        Control Bar (keyboard accessories) is visible. If it then changes the
+        map location via the user submitting a search form, the resulting map
+        will be using the incorrect viewport as the control bar has disappeared.
+        This causes parts of the map display to get the wrong stencil masks, leaving
+        blank strips. This fixes itself as soon as you force the map to recalculate
+        its viewport (e.g. by rotating the device).
+
+        Rather than have Google Maps update its code to detect these viewport changes,
+        we're adding a Quirk to not use the control bar in these calculations.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldAvoidResizingWhenInputViewBoundsChange const):
+        Return true for "*.google.com/maps/".
+
 2020-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add my new Twitter handle to the feature status page

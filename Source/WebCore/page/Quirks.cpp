@@ -513,11 +513,16 @@ bool Quirks::shouldAvoidResizingWhenInputViewBoundsChange() const
     if (!needsQuirks())
         return false;
 
-    auto host = m_document->topDocument().url().host();
+    auto& url = m_document->topDocument().url();
+    auto host = url.host();
+
     if (equalLettersIgnoringASCIICase(host, "live.com") || host.endsWithIgnoringASCIICase(".live.com"))
         return true;
 
     if (equalLettersIgnoringASCIICase(host, "twitter.com") || host.endsWithIgnoringASCIICase(".twitter.com"))
+        return true;
+
+    if ((equalLettersIgnoringASCIICase(host, "google.com") || host.endsWithIgnoringASCIICase(".google.com")) && url.path().startsWithIgnoringASCIICase("/maps/"))
         return true;
 
     if (host.endsWithIgnoringASCIICase(".sharepoint.com"))
