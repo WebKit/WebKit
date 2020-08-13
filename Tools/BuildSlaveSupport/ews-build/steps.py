@@ -2150,7 +2150,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
             patch_author = self.getProperty('patch_author', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             test_names_string = ''
-            for test_name in test_names:
+            for test_name in sorted(test_names):
                 history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
                 test_names_string += '\n- {} (<a href="{}">test history</a>)'.format(test_name, history_url)
 

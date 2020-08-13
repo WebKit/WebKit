@@ -1,5 +1,15 @@
 2020-08-13  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] test names in ews notification email should be in sorted order
+        https://bugs.webkit.org/show_bug.cgi?id=215446
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeLayoutTestsResults.send_email_for_new_test_failures):
+
+2020-08-13  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] Improve wording for test failure email
         https://bugs.webkit.org/show_bug.cgi?id=215449
 
