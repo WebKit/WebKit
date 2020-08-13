@@ -49,6 +49,7 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
             let dataElement = rowElement.appendChild(document.createElement("td"));
 
             let inputElement = dataElement.appendChild(document.createElement("input"));
+            inputElement.type = "text";
             inputElement.id = id;
             return {rowElement, inputElement};
         }
