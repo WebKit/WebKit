@@ -1,3 +1,16 @@
+2020-08-13  Karl Rackler  <rackler@apple.com>
+
+        Unreviewed, reverting r265612.
+
+        Commit fixed wincairo, but broke ios/mac
+
+        Reverted changeset:
+
+        "rdar://66995964 (REGRESSION (r265358): [ Win10 wk1 ]
+        animations/steps-transform-rendering-updates.html is a
+        constant failure (215454))"
+        https://trac.webkit.org/changeset/265612
+
 2020-08-13  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Zoomed-in search field is clipped out
