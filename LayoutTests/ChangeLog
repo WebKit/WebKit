@@ -1,3 +1,14 @@
+2020-08-13  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening and adding baseline
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/search/search-zoom-computed-style-height-expected.txt: Added.
+        * platform/wpe/TestExpectations:
+
 2020-08-13  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS wk2 Debug ] http/tests/security/no-indexeddb-from-sandbox.html is a constant crash

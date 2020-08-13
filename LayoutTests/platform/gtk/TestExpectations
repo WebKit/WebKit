@@ -1054,8 +1054,6 @@ webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/disable-remo
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/idlharness.window.html [ Failure ]
 webkit.org/b/206528 imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Failure ]
 
-webkit.org/b/206583 webrtc/video-gpuProcess.html [ Failure ]
-
 webkit.org/b/206584 webkit.org/b/198830 media/video-set-presentation-mode-to-inline.html [ Failure Crash ]
 
 webkit.org/b/206585 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-position-vertical-lr.html [ Failure ]

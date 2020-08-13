@@ -383,6 +383,8 @@ webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext
 webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-TransferToImageBitmap-offscreen.html [ Failure ]
 webkit.org/b/197421 imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-null-offscreen.html [ Failure ]
 
+webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -590,6 +592,10 @@ webkit.org/b/215005 webrtc/h264-baseline.html [ Crash ]
 # h264-high.html is marked as slow in the root expectation
 webkit.org/b/215007 [ Release ] webrtc/h264-high.html [ Timeout ]
 webkit.org/b/215007 [ Debug ] webrtc/h264-high.html [ Slow Failure ]
+
+webkit.org/b/206583 [ Release ] webrtc/video-gpuProcess.html [ Failure ]
+webkit.org/b/206583 [ Debug ] webrtc/video-gpuProcess.html [ Timeout ]
+
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
