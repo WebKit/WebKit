@@ -65,8 +65,6 @@ GPUProcess/webrtc/LibWebRTCCodecsProxy.mm
 
 Platform/cf/ModuleCF.cpp
 
-Platform/cg/ImageUtilitiesCG.cpp
-
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 

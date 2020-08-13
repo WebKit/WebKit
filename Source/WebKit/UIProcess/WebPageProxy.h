@@ -2850,9 +2850,6 @@ private:
     bool m_userScriptsNotified { false };
     bool m_limitsNavigationsToAppBoundDomains { false };
     bool m_hasExecutedAppBoundBehaviorBeforeNavigation { false };
-#if PLATFORM(MAC)
-    Ref<WorkQueue> m_transcodingQueue;
-#endif
 };
 
 } // namespace WebKit

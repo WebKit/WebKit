@@ -71,6 +71,7 @@ private:
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
 
 #if ENABLE(DRAG_SUPPORT)
+    bool receiveDroppedFilesWithImageTranscoding(const Vector<String>& paths);
     bool receiveDroppedFiles(const DragData&) final;
 #endif
 
@@ -82,11 +83,13 @@ private:
     String defaultToolTip() const final;
 
     void filesChosen(const Vector<FileChooserFileInfo>&, const String& displayString = { }, Icon* = nullptr) final;
+    void filesChosen(const Vector<String>& paths, const Vector<String>& replacementPaths = { });
 
     // FileIconLoaderClient implementation.
     void iconLoaded(RefPtr<Icon>&&) final;
 
-    void applyFileChooserSettings(const FileChooserSettings&);
+    FileChooserSettings fileChooserSettings() const;
+    void applyFileChooserSettings();
     void didCreateFileList(Ref<FileList>&&, RefPtr<Icon>&&);
     void requestIcon(const Vector<String>&);
 

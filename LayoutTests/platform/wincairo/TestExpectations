@@ -745,6 +745,8 @@ fast/forms/file/get-file-upload-using-open-panel.html [ Timeout ]
 fast/forms/file/input-file-value-using-open-panel.html [ Timeout ]
 fast/forms/file/input-file-write-files-using-open-panel.html [ Timeout ]
 fast/forms/file/open-file-panel.html [ Timeout ]
+fast/forms/file/entries-api/image-no-transcode-drag-drop.html [Skip ]
+fast/forms/file/entries-api/image-transcode-drag-drop.html [Skip ]
 fast/history/page-cache-createObjectURL-using-open-panel.html [ Timeout ]
 fast/history/page-cache-createObjectURL.html [ Timeout ]
 
