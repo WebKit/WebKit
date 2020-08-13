@@ -1965,7 +1965,7 @@ void RenderThemeMac::setSearchCellState(const RenderObject& o, const IntRect&)
 
 const IntSize* RenderThemeMac::searchFieldSizes() const
 {
-    static const IntSize sizes[4] = { IntSize(0, 22), IntSize(0, 19), IntSize(0, 17), IntSize(0, 22) };
+    static const IntSize sizes[4] = { IntSize(0, 22), IntSize(0, 19), IntSize(0, 17), IntSize(0, 30) };
     return sizes;
 }
 
@@ -1993,6 +1993,10 @@ void RenderThemeMac::adjustSearchFieldStyle(RenderStyle& style, const Element*) 
     style.setBorderTopWidth(borderWidth);
     style.setBorderTopStyle(BorderStyle::Inset);
 
+    // Adjust the font size prior to adjusting height, as the adjusted size may
+    // correspond to a different control size when style.effectiveZoom() != 1.
+    setFontFromControlSize(style, controlSizeForFont(style));
+
     // Override height.
     style.setHeight(Length(Auto));
     setSearchFieldSize(style);
@@ -2003,9 +2007,6 @@ void RenderThemeMac::adjustSearchFieldStyle(RenderStyle& style, const Element*) 
     style.setPaddingRight(Length(padding, Fixed));
     style.setPaddingTop(Length(padding, Fixed));
     style.setPaddingBottom(Length(padding, Fixed));
-
-    NSControlSize controlSize = controlSizeForFont(style);
-    setFontFromControlSize(style, controlSize);
 
     style.setBoxShadow(nullptr);
 }

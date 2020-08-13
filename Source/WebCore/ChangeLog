@@ -1,3 +1,31 @@
+2020-08-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Zoomed-in search field is clipped out
+        https://bugs.webkit.org/show_bug.cgi?id=215428
+        <rdar://problem/66161781>
+
+        Reviewed by Darin Adler.
+
+        r257150 added support for painting large form controls using NSControlSizeLarge.
+        However, RenderThemeMac::searchFieldSizes() still returned a height
+        corresponding to NSControlSizeRegular rather than NSControlSizeLarge. This
+        behavior causes the height of the layout rect to be smaller than the height
+        of the painted cell, resulting in clipping.
+
+        Returning the correct height in searchFieldSizes is not enough to solve the
+        issue. Currently, the height of the layout rect is set before adjusting the font
+        size of the corresponding RenderStyle. This is problematic as the initial font
+        size could correspond to NSControlSizeRegular, but when adjusted for zoom, the
+        font size could correspond to NSControlSizeLarge. To ensure that the font size
+        and height correspond to the same control size, the font size is now adjusted
+        prior to adjusting the height.
+
+        Test: fast/forms/search/search-zoom-computed-style-height.html
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::searchFieldSizes const): Correct height for NSControlSizeLarge.
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle const):
+
 2020-08-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Font loads quickly followed by navigations may fail indefinitely

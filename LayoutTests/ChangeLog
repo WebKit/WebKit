@@ -1,3 +1,19 @@
+2020-08-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Zoomed-in search field is clipped out
+        https://bugs.webkit.org/show_bug.cgi?id=215428
+        <rdar://problem/66161781>
+
+        Reviewed by Darin Adler.
+
+        Added a test to verify the computed style height of a zoomed-in search field.
+
+        * fast/forms/search/search-zoom-computed-style-height-expected.txt: Added.
+        * fast/forms/search/search-zoom-computed-style-height.html: Added.
+        * platform/ios/fast/forms/search/search-zoom-computed-style-height-expected.txt: Added.
+        * platform/mac-mojave/fast/forms/search/search-zoom-computed-style-height-expected.txt: Added.
+        * platform/win/fast/forms/search/search-zoom-computed-style-height-expected.txt: Added.
+
 2020-08-13  Karl Rackler  <rackler@apple.com>
 
         rdar://66995964 (REGRESSION (r265358): [ Win10 wk1 ] animations/steps-transform-rendering-updates.html is a constant failure (215454))
