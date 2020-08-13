@@ -184,27 +184,34 @@
                         r"|Source/WebCore/rendering/svg",
         },
         "WebInspectorBackend": {
-            "filename": r"Source/JavaScriptCore/inspector"
-                        r"|Source/WebCore/inspector",
+            "filename": r"Source/JavaScriptCore/debugger"
+                        r"|Source/JavaScriptCore/inspector"
+                        r"|Source/WebCore/inspector"
+                        r"|Source/WebKit/WebProcess/Inspector"
+                        r"|Source/WebKit/UIProcess/Inspector",
+        },
+        "WebInspectorFrontend": {
+            "filename": r"Source/WebInspectorUI",
         },
         "WebInspectorGenerator": {
             "filename": r"Source/JavaScriptCore/inspector/scripts/codegen"
-                        r"|Tools/Scripts/generate-inspector-protocol-bindings.py"
+                        r"|Source/JavaScriptCore/inspector/scripts/generate-inspector-protocol-bindings\.py"
                         r"|Tools/Scripts/webkitpy/inspector",
         },
         "WebInspectorProtocol": {
             "filename": r"Source/JavaScriptCore/inspector/protocol/",
         },
         "WebInspectorRecording": {
-            "filename": r"Source/JavaScriptCore/inspector/protocol/Recording\.json"
-                        r"|Source/WebCore/bindings/js/CallTracer.*"
-                        r"|Source/WebCore/inspector/Recording.*"
-                        r"|Source/WebInspectorUI/UserInterface/\w*/Recording.*\.js"
-                        # Canvas
-                        r"|Source/WebCore/inspector/InspectorCanvas.*"
+            "filename": r"Source/WebCore/bindings/js/CallTracer.*"
                         r"|Source/WebCore/html/canvas/Canvas.*\.idl"
+                        r"|Source/WebCore/html/canvas/ImageBitmapRenderingContext\.idl"
                         r"|Source/WebCore/html/canvas/WebGLRenderingContext\.idl"
                         r"|Source/WebCore/html/canvas/WebGLRenderingContextBase\.idl",
+        },
+        "WebInspectorTests" {
+            "filename": r"LayoutTests/inspector"
+                        r"|LayoutTests/http/tests/inspector"
+                        r"|LayoutTests/http/tests/websocket/tests/hybi/inspector",
         },
         "WebSocket": {
             "filename": r"Source/WebCore/Modules/websockets"
@@ -455,8 +462,10 @@
         "WebGL": [ "dino@apple.com", "kondapallykalyan@gmail.com", "graouts@webkit.org" ],
         "WebIDL": [ "esprehn+autocc@chromium.org", "cdumez@apple.com", "kondapallykalyan@gmail.com" ],
         "WebInspectorBackend": [ "joepeck@webkit.org", "drousso@apple.com" ],
+        "WebInspectorFrontend": [ "drousso@apple.com" ],
         "WebInspectorGenerator": [ "bburg@apple.com", "joepeck@webkit.org", "drousso@apple.com" ],
         "WebInspectorRecording": [ "drousso@apple.com" ],
+        "WebInspectorTests": [ "drousso@apple.com" ],
         "JSBuiltins": [ "joepeck@webkit.org" ],
         "JSBuiltinsGenerator": [ "bburg@apple.com" ],
         "WPEDependencies": [ "aperez@igalia.com", "clopez@igalia.com" ],

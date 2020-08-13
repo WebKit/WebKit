@@ -1,3 +1,9 @@
+2020-08-12  Devin Rousso  <drousso@apple.com>
+
+        Update my watchlist entries and add some additional Web Inspector definitions
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2020-08-12  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Use webkitcorepy's auto installer for requests
