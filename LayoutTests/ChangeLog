@@ -1,3 +1,12 @@
+2020-08-13  Hector Lopez  <hector_i_lopez@apple.com>
+
+        WebGL conformance: Failures and Timeouts in suite 2.0.0/conformance2
+        https://bugs.webkit.org/show_bug.cgi?id=189672
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-13  Aditya Keerthi  <akeerthi@apple.com>
 
         Unreviewed test gardening, rebaseline test after r265613.
