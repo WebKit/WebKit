@@ -2154,11 +2154,12 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
                 history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
                 test_names_string += '\n- {} (<a href="{}">test history</a>)'.format(test_name, history_url)
 
+            pluralSuffix = 's' if len(test_names) > 1 else ''
             email_subject = 'Layout test failure for Patch {}: {} '.format(patch_id, bug_title)
-            email_text = 'EWS has detected test failure on {} while testing Patch {}'.format(builder_name, patch_id)
+            email_text = 'EWS has detected layout test failure{} on {} while testing Patch {}'.format(pluralSuffix, builder_name, patch_id)
             email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
-            email_text += '\n\nLayout test failure:\n{}'.format(test_names_string)
+            email_text += '\n\nLayout test failure{}:\n{}'.format(pluralSuffix, test_names_string)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
             send_email([patch_author], email_subject, email_text)
         except Exception as e:

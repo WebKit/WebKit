@@ -36,10 +36,10 @@ def send_email(to_emails, subject, text):
     if is_test_mode_enabled:
         return
     if not to_emails:
-        print('Skipping email since no recipient is specified')
+        print('Error: skipping email since no recipient is specified')
         return
     if not subject or not text:
-        print('Skipping email since no subject or text is specified')
+        print('Error: skipping email since no subject or text is specified')
         return
 
     text = text.encode('utf-8')
