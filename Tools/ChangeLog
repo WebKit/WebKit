@@ -1,5 +1,14 @@
 2020-08-13  Aakash Jain  <aakash_jain@apple.com>
 
+        Regression(r265580): apply-watchlist is broken
+        https://bugs.webkit.org/show_bug.cgi?id=215457
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
+2020-08-13  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] email notifications should include Bugzilla link to the patch
         https://bugs.webkit.org/show_bug.cgi?id=215455
 

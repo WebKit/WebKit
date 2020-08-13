@@ -208,7 +208,7 @@
                         r"|Source/WebCore/html/canvas/WebGLRenderingContext\.idl"
                         r"|Source/WebCore/html/canvas/WebGLRenderingContextBase\.idl",
         },
-        "WebInspectorTests" {
+        "WebInspectorTests": {
             "filename": r"LayoutTests/inspector"
                         r"|LayoutTests/http/tests/inspector"
                         r"|LayoutTests/http/tests/websocket/tests/hybi/inspector",
