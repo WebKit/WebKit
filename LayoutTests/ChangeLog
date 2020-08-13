@@ -1,3 +1,11 @@
+2020-08-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        Unreviewed test gardening, rebaseline test after r265613.
+
+        * fast/forms/search/search-zoom-computed-style-height-expected.txt:
+        * platform/mac-bigsur/fast/forms/search/search-zoom-computed-style-height-expected.txt: Copied from LayoutTests/fast/forms/search/search-zoom-computed-style-height-expected.txt.
+        * platform/mac-mojave/fast/forms/search/search-zoom-computed-style-height-expected.txt: Removed.
+
 2020-08-13  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Gardening and adding baseline

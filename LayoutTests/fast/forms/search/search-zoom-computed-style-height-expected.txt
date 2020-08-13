@@ -7,4 +7,4 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 
-Computed style height: 30px
+Computed style height: 22px
