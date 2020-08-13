@@ -352,6 +352,9 @@ bool HTMLVideoElement::webkitSupportsFullscreen()
 
 bool HTMLVideoElement::webkitDisplayingFullscreen()
 {
+    if (document().quirks().needsAkamaiMediaPlayerQuirk(*this))
+        return isFullscreen() || m_isChangingPresentationMode;
+
     // This function starts to return true after the video element has entered
     // fullscreen/picture-in-picture until it has exited fullscreen/picture-in-picture
     return (isFullscreen() && !waitingToEnterFullscreen()) || (!isFullscreen() && m_isChangingPresentationMode);
