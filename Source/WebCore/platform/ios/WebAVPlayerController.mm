@@ -185,7 +185,8 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 - (void)seekToTime:(NSTimeInterval)time toleranceBefore:(NSTimeInterval)before toleranceAfter:(NSTimeInterval)after
 {
-    self.delegate->seekToTime(time, before, after);
+    if (self.delegate)
+        self.delegate->seekToTime(time, before, after);
 }
 
 - (void)seekByTimeInterval:(NSTimeInterval)interval
