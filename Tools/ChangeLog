@@ -1,5 +1,33 @@
 2020-08-12  Devin Rousso  <drousso@apple.com>
 
+        Add settings for Copy WebKit Permalink
+        https://bugs.webkit.org/show_bug.cgi?id=215440
+
+        Reviewed by Daniel Bates.
+
+        * CopyPermalink/Sublime Text/CopyWebKitPermalink/Context.sublime-settings: Added.
+
+        * CopyPermalink/Sublime Text/CopyWebKitPermalink/CopyWebKitPermalink.py:
+        (plugin_loaded): Added.
+        (plugin_unloaded): Added.
+        (Settings): Added.
+        (Settings.__init__): Added.
+        (Settings.unload): Added.
+        (Settings.include_revision): Added.
+        (Settings._get): Added.
+        (Settings._set): Added.
+        Helper class for caching settings values.
+
+        (CopyWebKitPermalinkCommand.run):
+        (CopyWebKitPermalinkCommand.revision_info_for_path):
+        (CopyWebKitPermalinkCommand.permalink_for_path):
+        Only include the current revision in the URL if the `include_revision` setting is true.
+        Turning this off is desirable as getting the current revision often takes a few seconds.
+
+        * CopyPermalink/Sublime Text/INSTALL:
+
+2020-08-12  Devin Rousso  <drousso@apple.com>
+
         Update my watchlist entries and add some additional Web Inspector definitions
 
         * Scripts/webkitpy/common/config/watchlist:

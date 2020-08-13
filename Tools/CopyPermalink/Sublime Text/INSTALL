@@ -14,3 +14,7 @@ Copy WebKit Permalink and Copy WebKit Permalink to Blame are also available as a
 
 Without blame annotations: Command + Shift + Control + C
 With blame annotations: Command + Shift + Control + Option + C
+
+== Settings ==
+
+Copy `CopyWebKitPermalink.sublime-settings`  (located in the same directory as this file) to your `Packages/User` directory and make changes.

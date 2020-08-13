@@ -26,6 +26,44 @@ import sublime
 import sublime_plugin
 import subprocess
 
+global s_settings
+
+def plugin_loaded():
+    global s_settings
+    s_settings = Settings()
+
+def plugin_unloaded():
+    s_settings.unload()
+
+class Settings(object):
+    def __init__(self):
+        self._settings = sublime.load_settings('CopyWebKitPermalink.sublime-settings')
+        self._cache = {}
+
+    def unload(self):
+        for key in self._cache:
+            self._settings.clear_on_change(key)
+
+    @property
+    def include_revision(self):
+        return self._get('include_revision', default=True)
+
+    @include_revision.setter
+    def include_revision(self, value):
+        self._set('include_revision', value)
+
+    def _get(self, key, default=None):
+        if key not in self._cache:
+            self._settings.add_on_change(key, lambda : self._cache.pop(key, None))
+            self._cache[key] = self._settings.get(key, default)
+        return self._cache[key]
+
+    def _set(self, key, value):
+        if key in self._cache and self._cache[key] == value:
+            return
+
+        self._cache[key] = value
+        self._settings.set(key, value)
 
 class CopyWebKitPermalinkCommand(sublime_plugin.TextCommand):
     def run(self, edit, annotate_blame=False):
@@ -37,7 +75,7 @@ class CopyWebKitPermalinkCommand(sublime_plugin.TextCommand):
         self._directory_in_checkout = document_path if os.path.isdir(document_path) else os.path.dirname(document_path)
         self.determine_vcs_from_path(document_path)
 
-        if not self.path_is_in_webkit_checkout(document_path):
+        if s_settings.include_revision and not self.path_is_in_webkit_checkout(document_path):
             return
 
         line_number, _ = self.view.rowcol(self.view.sel()[0].begin())  # Zero-based
@@ -91,10 +129,11 @@ class CopyWebKitPermalinkCommand(sublime_plugin.TextCommand):
         return ''
 
     def revision_info_for_path(self, path):
-        if self._is_svn or self._is_git_svn:
-            return self.svn_revision_info_for_path(path)
-        if self._is_git:
-            return self.git_revision_info_for_path(path)
+        if s_settings.include_revision:
+            if self._is_svn or self._is_git_svn:
+                return self.svn_revision_info_for_path(path)
+            if self._is_git:
+                return self.git_revision_info_for_path(path)
         return {}
 
     def svn_revision_info_for_path(self, path):
@@ -148,9 +187,9 @@ class CopyWebKitPermalinkCommand(sublime_plugin.TextCommand):
 
     @staticmethod
     def permalink_for_path(path, line_number, revision_info, annotate_blame):
-        revision = '?rev=' + str(revision_info['revision']) if revision_info['revision'] else ''
+        revision = '?rev=' + str(revision_info['revision']) if 'revision' in revision_info else ''
         line_number = '#L' + str(line_number) if line_number else ''
-        branch = revision_info['branch'] or 'trunk'
+        branch = revision_info.get('branch', 'trunk')
         annotate_blame = '&annotate=blame' if annotate_blame else ''
         return 'https://trac.webkit.org/browser/{}/{}{}{}{}'.format(branch, path, revision, annotate_blame, line_number)
 
