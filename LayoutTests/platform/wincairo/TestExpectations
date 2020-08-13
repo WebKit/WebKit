@@ -1323,6 +1323,8 @@ webkit.org/b/178341 animations/play-state-in-shorthand.html [ Failure ]
 
 webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
 
+webkit.org/b/215454 animations/steps-transform-rendering-updates.html [ Failure ]
+
 ################################################################################
 ###########################   End Animation Issues   ###########################
 ################################################################################
