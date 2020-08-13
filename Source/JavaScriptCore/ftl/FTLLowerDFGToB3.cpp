@@ -6751,6 +6751,8 @@ private:
         // that doing the speculations up here might be unprofitable for RA - so we can consider
         // sinking this to below the allocation fast path if we find that this has a lot of
         // register pressure.
+        // Because we first speculate on all of the children here, we can never exit after creating
+        // uninitialized contiguous JSArray, which ensures that we will never produce a half-baked JSArray.
         for (unsigned operandIndex = 0; operandIndex < m_node->numChildren(); ++operandIndex)
             speculate(m_graph.varArgChild(m_node, operandIndex));
         
@@ -12558,8 +12560,11 @@ private:
             LValue butterfly;
             
             if (structure->outOfLineCapacity() || hasIndexedProperties(structure->indexingType())) {
-                size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-                Allocator cellAllocator = allocatorForNonVirtualConcurrently<JSFinalObject>(vm(), allocationSize, AllocatorForMode::AllocatorIfExists);
+                Allocator cellAllocator;
+                if (structure->type() == JSType::ArrayType)
+                    cellAllocator = allocatorForNonVirtualConcurrently<JSArray>(vm(), JSArray::allocationSize(structure->inlineCapacity()), AllocatorForMode::AllocatorIfExists);
+                else
+                    cellAllocator = allocatorForNonVirtualConcurrently<JSFinalObject>(vm(), JSFinalObject::allocationSize(structure->inlineCapacity()), AllocatorForMode::AllocatorIfExists);
 
                 bool hasIndexingHeader = hasIndexedProperties(structure->indexingType());
                 unsigned indexingHeaderSize = 0;

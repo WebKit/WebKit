@@ -130,8 +130,11 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
             slowCases.append(m_jit.jump());
     }
 
-    size_t allocationSize = JSFinalObject::allocationSize(inlineCapacity);
-    Allocator allocator = allocatorForNonVirtualConcurrently<JSFinalObject>(vm, allocationSize, AllocatorForMode::AllocatorIfExists);
+    Allocator allocator;
+    if (structure->type() == JSType::ArrayType)
+        allocator = allocatorForNonVirtualConcurrently<JSArray>(vm, JSArray::allocationSize(inlineCapacity), AllocatorForMode::AllocatorIfExists);
+    else
+        allocator = allocatorForNonVirtualConcurrently<JSFinalObject>(vm, JSFinalObject::allocationSize(inlineCapacity), AllocatorForMode::AllocatorIfExists);
     if (allocator) {
         emitAllocateJSObject(resultGPR, JITAllocator::constant(allocator), scratchGPR, TrustedImmPtr(structure), storageGPR, scratch2GPR, slowCases);
         m_jit.emitInitializeInlineStorage(resultGPR, structure->inlineCapacity());
@@ -8450,6 +8453,11 @@ void SpeculativeJIT::compileNewArray(Node* node)
         unsigned vectorLengthHint = node->vectorLengthHint();
         ASSERT(vectorLengthHint >= numElements);
 
+        // Because we first speculate on all of the children here, we can never exit after creating
+        // uninitialized contiguous JSArray, which ensures that we will never produce a half-baked JSArray.
+        for (unsigned operandIndex = 0; operandIndex < node->numChildren(); ++operandIndex)
+            speculate(node, m_jit.graph().varArgChild(node, operandIndex));
+
         GPRTemporary result(this);
         GPRTemporary storage(this);
 
@@ -8463,8 +8471,8 @@ void SpeculativeJIT::compileNewArray(Node* node)
 
         ASSERT(!hasUndecided(structure->indexingType()) || !node->numChildren());
 
-        for (unsigned operandIdx = 0; operandIdx < node->numChildren(); ++operandIdx) {
-            Edge use = m_jit.graph().m_varArgChildren[node->firstChild() + operandIdx];
+        for (unsigned operandIndex = 0; operandIndex < node->numChildren(); ++operandIndex) {
+            Edge use = m_jit.graph().varArgChild(node, operandIndex);
             switch (node->indexingType()) {
             case ALL_BLANK_INDEXING_TYPES:
             case ALL_UNDECIDED_INDEXING_TYPES:
@@ -8473,22 +8481,14 @@ void SpeculativeJIT::compileNewArray(Node* node)
             case ALL_DOUBLE_INDEXING_TYPES: {
                 SpeculateDoubleOperand operand(this, use);
                 FPRReg opFPR = operand.fpr();
-                DFG_TYPE_CHECK(
-                    JSValueRegs(), use, SpecDoubleReal,
-                    m_jit.branchIfNaN(opFPR));
-                m_jit.storeDouble(opFPR, MacroAssembler::Address(storageGPR, sizeof(double) * operandIdx));
+                m_jit.storeDouble(opFPR, MacroAssembler::Address(storageGPR, sizeof(double) * operandIndex));
                 break;
             }
             case ALL_INT32_INDEXING_TYPES:
             case ALL_CONTIGUOUS_INDEXING_TYPES: {
                 JSValueOperand operand(this, use, ManualOperandSpeculation);
                 JSValueRegs operandRegs = operand.jsValueRegs();
-                if (hasInt32(node->indexingType())) {
-                    DFG_TYPE_CHECK(
-                        operandRegs, use, SpecInt32Only,
-                        m_jit.branchIfNotInt32(operandRegs));
-                }
-                m_jit.storeValue(operandRegs, MacroAssembler::Address(storageGPR, sizeof(JSValue) * operandIdx));
+                m_jit.storeValue(operandRegs, MacroAssembler::Address(storageGPR, sizeof(JSValue) * operandIndex));
                 break;
             }
             default:
@@ -12233,6 +12233,8 @@ void SpeculativeJIT::compileMaterializeNewObject(Node* node)
     GPRReg storageGPR = storage.gpr();
     
     emitAllocateRawObject(resultGPR, structure, storageGPR, 0, vectorLength);
+
+    // After the allocation, we must not exit until we fill butterfly completely.
     
     m_jit.store32(
         JITCompiler::TrustedImm32(publicLength),

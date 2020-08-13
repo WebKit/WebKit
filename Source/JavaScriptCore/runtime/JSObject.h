@@ -114,10 +114,6 @@ class JSObject : public JSCell {
 public:
     using Base = JSCell;
 
-    // This is a super dangerous method for JITs. Sometimes the JITs will want to create either a
-    // JSFinalObject or a JSArray. This is the method that will do that.
-    static JSObject* createRawObject(VM& vm, Structure* structure, Butterfly* = nullptr);
-
     JS_EXPORT_PRIVATE static size_t estimatedSize(JSCell*, VM&);
     JS_EXPORT_PRIVATE static void visitChildren(JSCell*, SlotVisitor&);
     JS_EXPORT_PRIVATE static void analyzeHeap(JSCell*, HeapAnalyzer&);
@@ -1243,19 +1239,6 @@ private:
 };
 
 JS_EXPORT_PRIVATE EncodedJSValue JSC_HOST_CALL objectPrivateFuncInstanceOf(JSGlobalObject*, CallFrame*);
-
-inline JSObject* JSObject::createRawObject(VM& vm, Structure* structure, Butterfly* butterfly)
-{
-    JSObject* finalObject = new (
-        NotNull, 
-        allocateCell<JSFinalObject>(
-            vm.heap,
-            JSFinalObject::allocationSize(structure->inlineCapacity())
-        )
-    ) JSObject(vm, structure, butterfly);
-    finalObject->finishCreation(vm);
-    return finalObject;
-}
 
 inline JSFinalObject* JSFinalObject::create(VM& vm, Structure* structure, Butterfly* butterfly)
 {
