@@ -1,3 +1,13 @@
+2020-08-13  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS iOS wk2 Debug ] http/tests/security/no-indexeddb-from-sandbox.html is a constant crash
+        https://bugs.webkit.org/show_bug.cgi?id=215465
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-13  Karl Rackler  <rackler@apple.com>
 
         Unreviewed, reverting r265612.

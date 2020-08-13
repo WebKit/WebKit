@@ -1100,3 +1100,4 @@ webkit.org/b/215304 fast/forms/auto-fill-button/caps-lock-indicator-should-be-vi
 
 webkit.org/b/245353 [ Release ] svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
 
+webkit.org/b/215465 [ Debug ] http/tests/security/no-indexeddb-from-sandbox.html [ Crash ]
