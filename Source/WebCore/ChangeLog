@@ -1,3 +1,36 @@
+2020-08-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Font loads quickly followed by navigations may fail indefinitely
+        https://bugs.webkit.org/show_bug.cgi?id=215435
+        <rdar://problem/65560550>
+
+        Reviewed by Darin Adler.
+
+        Font loads are coalesced using a zero-delay timer. However, that zero-delay timer
+        can fire while the page is in the middle of a navigation, which will cause the font
+        loads to fail. Then, the second page can request those same fonts, which are marked
+        as failed, and as such will never actually load/use the desired web font.
+
+        This patch just stops the zero-delay timer during navigations, and resumes it
+        when resuming the document. This means:
+
+        1. The second page in the above story will not see that the font has failed, or
+        even started, and will then re-request the font and load it successfully
+        2. If the user goes "back" to the previous page, the zero-delay timer is restarted,
+        the CachedFont realizes it's already succeeded, and the previous page is rendered
+        as expected.
+
+        Test: fast/loader/font-load-timer.html
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::suspendFontLoadingTimer):
+        (WebCore::CSSFontSelector::restartFontLoadingTimer):
+        * css/CSSFontSelector.h:
+        * dom/Document.cpp:
+        (WebCore::Document::resume):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading):
+
 2020-08-12  Lauro Moura  <lmoura@igalia.com>
 
         Highpass Biquads use old formulas
