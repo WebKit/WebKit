@@ -1,3 +1,14 @@
+2020-08-12  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening some more failures.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-lowpass-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-08-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, rebaseline test after r265514.

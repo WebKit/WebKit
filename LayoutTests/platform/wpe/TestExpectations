@@ -20,11 +20,12 @@ scrollingcoordinator/ios/ [ Skip ]
 # ask for triaging.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+# Complex Text Path: Tests passing with --complex-text
+webkit.org/b/215355 fonts/ligature.html [ ImageOnlyFailure ]
+webkit.org/b/215421 fast/encoding/denormalised-voiced-japanese-chars.html [ ImageOnlyFailure ]
+
 # CSS3
 webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure ]
-
-# Fonts
-webkit.org/b/215355 fonts/ligature.html [ ImageOnlyFailure ]
 
 # Paint Timing
 webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]

@@ -82,6 +82,10 @@ webkit.org/b/98382 accessibility/visible-elements.html [ Failure ]
 
 webkit.org/b/209102 accessibility/accessibility-node-memory-management.html [ Failure Pass ]
 
+webkit.org/b/215405 accessibility/roles-computedRoleString.html [ Failure ]
+webkit.org/b/215405 [ Release ] accessibility/roles-exposed.html [ Failure ]
+webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

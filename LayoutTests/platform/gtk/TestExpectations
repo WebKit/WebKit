@@ -42,9 +42,6 @@ webkit.org/b/214341 [ Debug ] accessibility/datalist.html [ Crash ]
 webkit.org/b/215405 accessibility/gtk/caret-browsing-select-focus.html [ Failure ]
 webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.html [ Failure ]
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
-webkit.org/b/215405 accessibility/roles-computedRoleString.html [ Failure ]
-webkit.org/b/215405 [ Release ] accessibility/roles-exposed.html [ Failure ]
-webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
 webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
 
 # GStreamer - GTK-Only. Most GStreamer issues probably will go in the glib expectations
