@@ -1,3 +1,51 @@
+2020-08-12  Keith Rollin  <krollin@apple.com>
+
+        Remove the need for defining USE_NEW_BUILD_SYSTEM
+        https://bugs.webkit.org/show_bug.cgi?id=215439
+
+        Reviewed by Darin Adler.
+
+        When building WebKit for XCBuild, we currently require that the
+        external build system (such as the Makefile, build-webkit, etc.)
+        defines the USE_NEW_BUILD_SYSTEM=YES build setting. This build setting
+        controls parts of our build instructions that are sensitive to when
+        XCBuild or the Legacy build system are being used. Notably, we need to
+        know when to use our custom “copy and modify” scripts with copying
+        certain header files (used with the Legacy build system) vs. using the
+        enhanced Copy Headers build phase that’s enabled with
+        APPLY_RULES_IN_COPY_HEADERS=YES (introduced with and used by XCBuild).
+        The choice of which method to copy headers is used is controlled by
+        USE_NEW_BUILD_SYSTEM.
+
+        There is no built-in build setting that we can probe to help us
+        determine which approach to take when copying and modifying headers,
+        which is why we need to define USE_NEW_BUILD_SYSTEM ourselves. But it
+        turns out that we can *detect* which build system is being used by
+        taking advantage of a subtle difference between the two systems. As
+        noted in:
+
+            https://developer.apple.com/documentation/xcode-release-notes/build-system-release-notes-for-xcode-10
+
+            “When an .xcconfig file contains multiple assignments of the same
+             build setting, later assignments using $(inherited) or
+             $(<setting_name>) will inherit from earlier assignments in the
+             .xcconfig. The legacy build system caused every use of
+             $(inherited) or $(<setting_name>) skip any other values defined
+             within the .xcconfig.”
+
+        This difference can be exploited as follows:
+
+            WK_WHICH_BUILD_SYSTEM = not_
+            WK_WHICH_BUILD_SYSTEM = $(inherited)legacy
+            WK_USE_NEW_BUILD_SYSTEM = $(WK_USE_NEW_BUILD_SYSTEM_$(WK_WHICH_BUILD_SYSTEM))
+            WK_USE_NEW_BUILD_SYSTEM_legacy = NO
+            WK_USE_NEW_BUILD_SYSTEM_not_legacy = YES
+
+        We can then use WK_USE_NEW_BUILD_SYSTEM where we used to use the
+        externally-defined USE_NEW_BUILD_SYSTEM.
+
+        * Scripts/build-webkit:
+
 2020-08-12  Devin Rousso  <drousso@apple.com>
 
         Add settings for Copy WebKit Permalink

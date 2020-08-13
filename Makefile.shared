@@ -42,12 +42,9 @@ ifeq ($(findstring UseNewBuildSystem,$(ARGS)),)
 	ifeq ($(CAN_USE_XCBUILD),1)
 		# Temporarily disable default use of XCBuild until issues with it are ironed out.
 		#XCODE_OPTIONS += -UseNewBuildSystem=YES
-		#XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=YES
 		XCODE_OPTIONS += -UseNewBuildSystem=NO
-		XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=NO
 	else
 		XCODE_OPTIONS += -UseNewBuildSystem=NO
-		XCODE_OPTIONS += USE_NEW_BUILD_SYSTEM=NO
 	endif
 endif
 
