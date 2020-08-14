@@ -198,7 +198,10 @@ public:
 
     WEBCORE_EXPORT void injectUserScripts(UserScriptInjectionTime);
     WEBCORE_EXPORT void injectUserScriptImmediately(DOMWrapperWorld&, const UserScript&);
-    
+
+    void injectUserScriptsAwaitingNotification();
+    void addUserScriptAwaitingNotification(DOMWrapperWorld&, const UserScript&);
+
     WEBCORE_EXPORT String layerTreeAsText(LayerTreeFlags = 0) const;
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
 
@@ -327,6 +330,8 @@ private:
     AbstractDOMWindow* virtualWindow() const final;
 
     HashSet<FrameDestructionObserver*> m_destructionObservers;
+
+    Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 
     Frame& m_mainFrame;
     Page* m_page;

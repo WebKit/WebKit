@@ -774,7 +774,6 @@ public:
 
     bool hasBeenNotifiedToInjectUserScripts() const { return m_hasBeenNotifiedToInjectUserScripts; }
     WEBCORE_EXPORT void notifyToInjectUserScripts();
-    void addUserScriptAwaitingNotification(DOMWrapperWorld&, const UserScript&);
 
 private:
     struct Navigation {
@@ -1069,7 +1068,6 @@ private:
     bool m_loadsFromNetwork { true };
     ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool m_hasBeenNotifiedToInjectUserScripts { false };
-    Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 };
 
 inline PageGroup& Page::group()

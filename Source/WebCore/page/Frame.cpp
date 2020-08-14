@@ -648,7 +648,7 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
     m_page->userContentProvider().forEachUserScript([this, protectedThis = makeRef(*this), injectionTime, pageWasNotified] (DOMWrapperWorld& world, const UserScript& script) {
         if (script.injectionTime() == injectionTime) {
             if (script.waitForNotificationBeforeInjecting() == WaitForNotificationBeforeInjecting::Yes && !pageWasNotified)
-                m_page->addUserScriptAwaitingNotification(world, script);
+                addUserScriptAwaitingNotification(world, script);
             else
                 injectUserScriptImmediately(world, script);
         }
@@ -678,6 +678,17 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
     document->setAsRunningUserScripts();
     loader().client().willInjectUserScript(world);
     m_script->evaluateInWorldIgnoringException(ScriptSourceCode(script.source(), URL(script.url())), world);
+}
+
+void Frame::addUserScriptAwaitingNotification(DOMWrapperWorld& world, const UserScript& script)
+{
+    m_userScriptsAwaitingNotification.append({ makeRef(world), makeUniqueRef<UserScript>(script) });
+}
+
+void Frame::injectUserScriptsAwaitingNotification()
+{
+    for (const auto& [world, script] : std::exchange(m_userScriptsAwaitingNotification, { }))
+        injectUserScriptImmediately(world, script.get());
 }
 
 Optional<PageIdentifier> Frame::pageID() const
