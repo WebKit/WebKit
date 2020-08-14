@@ -1,5 +1,5 @@
 
-Harness Error (FAIL), message = Unhandled rejection: error1
+Harness Error (FAIL), message = Unhandled rejection: writableStreamDefaultWriterRelease
 
 PASS fulfillment value of writer.close() call must be undefined even if the underlying sink returns a non-undefined value 
 PASS when sink calls error asynchronously while sink close is in-flight, the stream should not become errored 

@@ -7,7 +7,7 @@ PASS ws.getWriter() on a closing WritableStream
 PASS ws.getWriter() on a closed WritableStream 
 PASS ws.getWriter() on an aborted WritableStream 
 PASS ws.getWriter() on an errored WritableStream 
-FAIL closed and ready on a released writer assert_unreached: writer.ready fulfilled unexpectedly with: undefined Reached unreachable code
+PASS closed and ready on a released writer 
 PASS WritableStream should call underlying sink methods as methods 
 PASS methods should not not have .apply() or .call() called 
 PASS WritableStream's strategy.size should not be called as a method 

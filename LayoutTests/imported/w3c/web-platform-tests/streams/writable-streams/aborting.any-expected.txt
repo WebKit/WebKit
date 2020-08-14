@@ -1,8 +1,8 @@
 
-Harness Error (FAIL), message = Unhandled rejection
+Harness Error (FAIL), message = Unhandled rejection: writableStreamDefaultWriterRelease
 
 PASS Aborting a WritableStream before it starts should cause the writer's unsettled ready promise to reject 
-FAIL Aborting a WritableStream should cause the writer's fulfilled ready promise to reset to a rejected one assert_not_equals: the ready promise property should change got disallowed value object "[object Promise]"
+PASS Aborting a WritableStream should cause the writer's fulfilled ready promise to reset to a rejected one 
 PASS abort() on a released writer rejects 
 PASS Aborting a WritableStream immediately prevents future writes 
 PASS Aborting a WritableStream prevents further writes after any that are in progress 
@@ -12,7 +12,7 @@ PASS WritableStream if sink's abort throws, the promise returned by multiple wri
 PASS WritableStream if sink's abort throws, the promise returned by ws.abort() rejects 
 PASS WritableStream if sink's abort throws, for an abort performed during a write, the promise returned by ws.abort() rejects 
 PASS Aborting a WritableStream passes through the given reason 
-FAIL Aborting a WritableStream puts it in an errored state with the error passed to abort() assert_unreached: Should have rejected: ready should reject with error1 Reached unreachable code
+PASS Aborting a WritableStream puts it in an errored state with the error passed to abort() 
 PASS Aborting a WritableStream causes any outstanding write() promises to be rejected with the reason supplied 
 PASS Closing but then immediately aborting a WritableStream causes the stream to error 
 PASS Closing a WritableStream and aborting it while it closes causes the stream to ignore the abort attempt 
@@ -31,23 +31,23 @@ PASS an abort() that happens during a write() should trigger the underlying abor
 PASS if a writer is created for a stream with a pending abort, its ready should be rejected with the abort error 
 PASS writer close() promise should resolve before abort() promise 
 PASS writer.ready should reject on controller error without waiting for underlying write 
-FAIL writer.abort() while there is an in-flight write, and then finish the write with rejection promise_rejects_js: writer.ready must be rejected with an error indicating release function "function () { throw e }" threw object "error1: error1" ("error1") expected instance of function "function TypeError() {
+FAIL writer.abort() while there is an in-flight write, and then finish the write with rejection promise_rejects_js: writer.closed must be rejected with an error indicating release function "function () { throw e }" threw object "error1: error1" ("error1") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL writer.abort(), controller.error() while there is an in-flight write, and then finish the write promise_rejects_js: writer.ready must be rejected with an error indicating release function "function () { throw e }" threw object "error1: error1" ("error1") expected instance of function "function TypeError() {
+FAIL writer.abort(), controller.error() while there is an in-flight write, and then finish the write promise_rejects_js: writer.closed must be rejected with an error indicating release function "function () { throw e }" threw object "error1: error1" ("error1") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL writer.abort(), controller.error() while there is an in-flight close, and then finish the close assert_unreached: Should have rejected: writer.ready must reject with the error from abort Reached unreachable code
-FAIL controller.error(), writer.abort() while there is an in-flight write, and then finish the write promise_rejects_js: writer.ready must be rejected with an error indicating release function "function () { throw e }" threw object "error2: error2" ("error2") expected instance of function "function TypeError() {
+FAIL writer.abort(), controller.error() while there is an in-flight close, and then finish the close assert_unreached: Should have rejected: writer.closed must be rejected with an error indicating release Reached unreachable code
+FAIL controller.error(), writer.abort() while there is an in-flight write, and then finish the write promise_rejects_js: writer.closed must be rejected with an error indicating release function "function () { throw e }" threw object "error2: error2" ("error2") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL controller.error(), writer.abort() while there is an in-flight close, and then finish the close assert_unreached: Should have rejected: writer.ready must reject with the error passed to the controller's error method Reached unreachable code
+FAIL controller.error(), writer.abort() while there is an in-flight close, and then finish the close assert_unreached: Should have rejected: writer.closed must be rejected with an error indicating release Reached unreachable code
 PASS releaseLock() while aborting should reject the original closed promise 
 PASS releaseLock() during delayed async abort() should reject the writer.closed promise 
 PASS sink abort() should not be called until sink start() is done 
 PASS if start attempts to error the controller after abort() has been called, then it should lose 
 PASS stream abort() promise should still resolve if sink start() rejects 
-FAIL writer abort() during sink start() should replace the writer.ready promise synchronously assert_not_equals: abort() should replace the ready promise with a rejected one got disallowed value object "[object Promise]"
+PASS writer abort() during sink start() should replace the writer.ready promise synchronously 
 PASS promises returned from other writer methods should be rejected when writer abort() happens during sink start() 
 PASS abort() should succeed despite rejection from write 
 PASS abort() should be rejected with the rejection returned from close() 

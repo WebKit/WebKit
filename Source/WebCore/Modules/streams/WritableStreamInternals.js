@@ -380,7 +380,17 @@ function writableStreamDefaultWriterEnsureClosedPromiseRejected(writer, error)
 
 function writableStreamDefaultWriterEnsureReadyPromiseRejected(writer, error)
 {
-    @getByIdDirectPrivate(writer, "readyPromise").@reject.@call(@undefined, error);
+    let readyPromiseCapability = @getByIdDirectPrivate(writer, "readyPromise");
+    let readyPromise = readyPromiseCapability.@promise;
+
+    if ((@getPromiseInternalField(readyPromise, @promiseFieldFlags) & @promiseStateMask) !== @promiseStatePending) {
+        readyPromiseCapability = @newPromiseCapability(@Promise);
+        readyPromise = readyPromiseCapability.@promise;
+        @putByIdDirectPrivate(writer, "readyPromise", readyPromiseCapability);
+    }
+
+    readyPromiseCapability.@reject.@call(@undefined, error);
+    @putPromiseInternalField(readyPromise, @promiseFieldFlags, @getPromiseInternalField(readyPromise, @promiseFieldFlags) | @promiseFlagsIsHandled);
 }
 
 function writableStreamDefaultWriterGetDesiredSize(writer)

@@ -1,3 +1,21 @@
+2020-08-14  Youenn Fablet  <youenn@apple.com>
+
+        WritableStreamDefaultWriterEnsureReadyPromiseRejected should create a new readPromise if the current readyPromise is not pending
+        https://bugs.webkit.org/show_bug.cgi?id=215500
+
+        Reviewed by Geoffrey Garen.
+
+        * web-platform-tests/streams/writable-streams/aborting.any-expected.txt:
+        * web-platform-tests/streams/writable-streams/aborting.any.worker-expected.txt:
+        * web-platform-tests/streams/writable-streams/bad-underlying-sinks.any-expected.txt:
+        * web-platform-tests/streams/writable-streams/bad-underlying-sinks.any.worker-expected.txt:
+        * web-platform-tests/streams/writable-streams/close.any-expected.txt:
+        * web-platform-tests/streams/writable-streams/close.any.worker-expected.txt:
+        * web-platform-tests/streams/writable-streams/general.any-expected.txt:
+        * web-platform-tests/streams/writable-streams/general.any.worker-expected.txt:
+        * web-platform-tests/streams/writable-streams/reentrant-strategy.any-expected.txt:
+        * web-platform-tests/streams/writable-streams/reentrant-strategy.any.worker-expected.txt:
+
 2020-08-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Implement WebXRSession::updateRenderState()

@@ -2,8 +2,8 @@
 Harness Error (FAIL), message = Unhandled rejection: error1
 
 PASS start: errors in start cause WritableStream constructor to throw 
-FAIL close: throwing method should cause writer close() and ready to reject assert_unreached: Should have rejected: ready promise must reject with the thrown error Reached unreachable code
-FAIL close: returning a rejected promise should cause writer close() and ready to reject assert_unreached: Should have rejected: ready promise must reject with the same error Reached unreachable code
+PASS close: throwing method should cause writer close() and ready to reject 
+PASS close: returning a rejected promise should cause writer close() and ready to reject 
 PASS close: throwing getter should cause constructor to throw 
 PASS write: throwing getter should cause write() and closed to reject 
 PASS write: throwing method should cause write() and closed to reject 
