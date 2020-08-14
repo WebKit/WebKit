@@ -1157,12 +1157,15 @@ TEST(TextManipulation, StartTextManipulationExtractsTableCellsAsSeparateItems)
         "<head>"
         "  <style>"
         "    td { border: solid 1px tomato; }"
+        "    a { border: solid 1px black; display: table-cell; }"
         "  </style>"
         "</head>"
         "<body>"
         "  <table>"
         "    <tbody>"
         "      <tr>"
+        "        <a><span>Hello</span></a>"
+        "        <a>World</a>"
         "        <td>Foo</td>"
         "        <td>Bar</td>"
         "        <td>Baz</td>"
@@ -1178,13 +1181,17 @@ TEST(TextManipulation, StartTextManipulationExtractsTableCellsAsSeparateItems)
     TestWebKitAPI::Util::run(&done);
 
     auto items = [delegate items];
-    EXPECT_EQ(items.count, 3UL);
+    EXPECT_EQ(items.count, 5UL);
     EXPECT_EQ(items[0].tokens.count, 1UL);
-    EXPECT_WK_STREQ("Foo", items[0].tokens[0].content);
+    EXPECT_WK_STREQ("Hello", items[0].tokens[0].content);
     EXPECT_EQ(items[1].tokens.count, 1UL);
-    EXPECT_WK_STREQ("Bar", items[1].tokens[0].content);
+    EXPECT_WK_STREQ("World", items[1].tokens[0].content);
     EXPECT_EQ(items[2].tokens.count, 1UL);
-    EXPECT_WK_STREQ("Baz", items[2].tokens[0].content);
+    EXPECT_WK_STREQ("Foo", items[2].tokens[0].content);
+    EXPECT_EQ(items[3].tokens.count, 1UL);
+    EXPECT_WK_STREQ("Bar", items[3].tokens[0].content);
+    EXPECT_EQ(items[4].tokens.count, 1UL);
+    EXPECT_WK_STREQ("Baz", items[4].tokens[0].content);
 }
 
 struct Token {
