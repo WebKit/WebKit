@@ -1,5 +1,16 @@
 2020-08-14  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Assertion Failed: removeEventListener cannot remove css-manager-style-sheet-added because it doesn't exist.
+        https://bugs.webkit.org/show_bug.cgi?id=215495
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WI.FrameTreeElement.prototype.ondetach):
+        Check `this.listItemElement`, which is equivalent to `WI.View.prototype.didInitialLayout` for `WI.TreeElement`.
+
+2020-08-14  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Assertion Failed: removeEventListener cannot remove frame-main-resource-did-change because it doesn't exist.
         https://bugs.webkit.org/show_bug.cgi?id=215496
 
