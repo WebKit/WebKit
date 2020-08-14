@@ -1,3 +1,14 @@
+2020-08-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r259170): text inputs in box-shadow editor push sliders offscreen
+        https://bugs.webkit.org/show_bug.cgi?id=215436
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/BoxShadowEditor.js:
+        (WI.BoxShadowEditor.createInputRow):
+        Make sure the inputs are `type="text"` so that CSS is able to distinguish them from sliders.
+
 2020-08-11  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Clicking on sortable Table headers should expand vertical borders
