@@ -1,3 +1,19 @@
+2020-08-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        VoiceOver not able to invoke play button on some web sites.
+        https://bugs.webkit.org/show_bug.cgi?id=215484
+        <rdar://problem/62729643>
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/ios-simulator/has-touch-event-listener.html.
+
+        We were checking for the presence of listeners for touchstart and touchend
+        events only. Now we check for the presence of any touch-related event listener.
+
+        * accessibility/ios/AccessibilityObjectIOS.mm:
+        (WebCore::AccessibilityObject::hasTouchEventListener const):
+
 2020-08-13  Dean Jackson  <dino@apple.com>
 
         Pocket City game play area is blank (WebGL is broken in Catalyst)

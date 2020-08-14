@@ -1,3 +1,16 @@
+2020-08-13  Andres Gonzalez  <andresg_22@apple.com>
+
+        VoiceOver not able to invoke play button on some web sites.
+        https://bugs.webkit.org/show_bug.cgi?id=215484
+        <rdar://problem/62729643>
+
+        Reviewed by Chris Fleizach.
+
+        Expanded this test to check for all touch-related event listeners.
+
+        * accessibility/ios-simulator/has-touch-event-listener-expected.txt:
+        * accessibility/ios-simulator/has-touch-event-listener.html:
+
 2020-08-13  Lauro Moura  <lmoura@igalia.com>
 
         [GTK] Gardening

@@ -82,13 +82,19 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
 
 bool AccessibilityObject::hasTouchEventListener() const
 {
+    // Check whether this->node or any of its ancestors has any of the touch-related event listeners.
+    auto touchEventNames = eventNames().touchRelatedEventNames();
+    // If the node is in a shadowRoot, going up the node parent tree will stop and
+    // not check the entire chain of ancestors. Thus, use the parentInComposedTree instead.
     for (auto* node = this->node(); node; node = node->parentInComposedTree()) {
-        if (node->hasEventListeners(eventNames().touchstartEvent) || node->hasEventListeners(eventNames().touchendEvent))
-            return true;
+        for (auto eventName : touchEventNames) {
+            if (node->hasEventListeners(eventName))
+                return true;
+        }
     }
     return false;
 }
-    
+
 bool AccessibilityObject::isInputTypePopupButton() const
 {
     if (is<HTMLInputElement>(node()))
