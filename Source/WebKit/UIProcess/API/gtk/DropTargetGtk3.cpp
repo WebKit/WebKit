@@ -105,7 +105,7 @@ void DropTarget::accept(unsigned time)
     }
 
     m_dataRequestCount = 0;
-    m_selectionData = SelectionData();
+    m_selectionData = WTF::nullopt;
 
     // WebCore needs the selection data to decide, so we need to preload the
     // data of targets we support. Once all data requests are done we start
@@ -131,7 +131,11 @@ void DropTarget::accept(unsigned time)
         }
     }
 
+    if (targets.isEmpty())
+        return;
+
     m_dataRequestCount = targets.size();
+    m_selectionData = SelectionData();
     for (auto* atom : targets)
         gtk_drag_get_data(m_webView, m_drop.get(), atom, time);
 }
@@ -239,7 +243,8 @@ void DropTarget::leaveTimerFired()
     auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
     ASSERT(page);
 
-    DragData dragData(&m_selectionData.value(), *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), { });
+    SelectionData emptyData;
+    DragData dragData(m_selectionData ? &m_selectionData.value() : &emptyData, *m_position, convertWidgetPointToScreenPoint(m_webView, *m_position), { });
     page->dragExited(dragData);
     page->resetCurrentDragInformation();
 
