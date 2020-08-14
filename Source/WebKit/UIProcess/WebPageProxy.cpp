@@ -6757,6 +6757,7 @@ void WebPageProxy::changeSpellingToWord(const String& word)
 
 void WebPageProxy::registerEditCommand(Ref<WebEditCommandProxy>&& commandProxy, UndoOrRedo undoOrRedo)
 {
+    MESSAGE_CHECK(m_process, commandProxy->commandID());
     pageClient().registerEditCommand(WTFMove(commandProxy), undoOrRedo);
 }
 
