@@ -120,7 +120,7 @@ webkit.org/b/211979 imported/w3c/web-platform-tests/clipboard-apis/async-raw-wri
 
 webkit.org/b/214060 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
 
-webkit.org/b/214417 css3/color/composited-solid-backgrounds.html [ Crash ]
+webkit.org/b/214417 [ Debug ] css3/color/composited-solid-backgrounds.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Compositing tests
