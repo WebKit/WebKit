@@ -1,19 +1,17 @@
 
-Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
-
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "disconnect(AudioParam)" 
 PASS Executing "disconnect(AudioParam, output)" 
 PASS Executing "exceptions" 
 PASS Audit report 
 PASS > [disconnect(AudioParam)]  
-FAIL X Channel #0 expected to have the value sequence of [2.25,1.5] but got 1 values, [2.25], instead of 2. assert_true: expected true got false
+FAIL X Channel #0 expected to have the value sequence of [2.25,1.5] but got 3 values, [1,2.25,0], instead of 2. assert_true: expected true got false
 FAIL X The index of value change is not equal to 11136. Got -1. assert_true: expected true got false
 FAIL < [disconnect(AudioParam)] 2 out of 2 assertions were failed. assert_true: expected true got false
 PASS > [disconnect(AudioParam, output)]  
-FAIL X Channel #0 expected to have the value sequence of [3,1.5] but got 1 values, [3], instead of 2. assert_true: expected true got false
+FAIL X Channel #0 expected to have the value sequence of [3,1.5] but got 3 values, [2,3,0], instead of 2. assert_true: expected true got false
 FAIL X The index of value change in channel #0 is not equal to 11136. Got -1. assert_true: expected true got false
-FAIL X Channel #1 expected to have the value sequence of [6,3] but got 1 values, [6], instead of 2. assert_true: expected true got false
+FAIL X Channel #1 expected to have the value sequence of [6,3] but got 3 values, [4,6,0], instead of 2. assert_true: expected true got false
 FAIL X The index of value change in channel #1 is not equal to 11136. Got -1. assert_true: expected true got false
 FAIL < [disconnect(AudioParam, output)] 4 out of 4 assertions were failed. assert_true: expected true got false
 PASS > [exceptions]  

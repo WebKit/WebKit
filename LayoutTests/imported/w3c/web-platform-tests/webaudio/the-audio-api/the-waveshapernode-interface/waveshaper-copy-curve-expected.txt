@@ -1,12 +1,16 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
-
-Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "test copying" 
 PASS Audit report 
 PASS > [test copying] Modifying curve should not modify WaveShaper 
-PASS   Output of WaveShaper with modified curve is identical to the array [0,-0.03606617450714111,-0.10740482807159424,-0.13084518909454346,-0.18832504749298096,-0.23391401767730713,-0.2858320474624634,-0.3105238676071167,-0.39458978176116943,-0.4054110050201416,-0.4653935432434082,-0.5295544862747192,-0.540738582611084,-0.615452766418457,-0.6579914093017578,-0.6984437704086304...]. 
-PASS < [test copying] All assertions passed. (total 1 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS   Modifying curve array at time 0.016 did not throw an exception. 
+FAIL X Output of WaveShaper with modified curve expected to be equal to the array [-0.0756523609161377,-0.11659121513366699,-0.155839204788208,-0.20866751670837402,-0.2606172561645508,-0.2944837808609009,-0.34542036056518555,-0.4115844964981079,-0.4145416021347046,-0.5117456912994385,-0.5245202779769897,-0.5778524875640869,-0.6312663555145264,-0.6895406246185303,-0.6796438694000244,-0.8224917650222778...] but differs in 768 places:
+	Index	Actual			Expected
+	[0]	1.7228272557258606e-1	-7.5652360916137695e-2
+	[1]	1.9786950945854187e-1	-1.1659121513366699e-1
+	[2]	2.2239950299263000e-1	-1.5583920478820801e-1
+	[3]	2.5541719794273376e-1	-2.0866751670837402e-1
+	...and 764 more errors. assert_true: expected true got false
+FAIL < [test copying] 1 out of 2 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

@@ -1,13 +1,17 @@
 
-Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
-
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "silent-disconnect" 
 PASS Audit report 
 PASS > [silent-disconnect]  
-PASS   Channel #0 contains only the constant 1. 
-FAIL X Channel #1 expected to have the value sequence of [1,0] but got 1 values, [1], instead of 2. assert_true: expected true got false
-FAIL X The index of first zero in the channel #1 is not equal to 11136. Got -1. assert_true: expected true got false
-FAIL < [silent-disconnect] 2 out of 3 assertions were failed. assert_true: expected true got false
+FAIL X Channel #0: Expected 1 for all values but found 10914 unexpected values: 
+	Index	Actual
+	[11136]	0
+	[11137]	0
+	[11138]	0
+	[11139]	0
+	...and 10910 more errors. assert_true: expected true got false
+PASS   Channel #1 contains all the expected values in the correct order: [1,0]. 
+PASS   The index of first zero in the channel #1 is equal to 11136. 
+FAIL < [silent-disconnect] 1 out of 3 assertions were failed. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

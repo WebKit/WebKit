@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
-
-Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "initialize" 
@@ -23,10 +20,10 @@ PASS > [3-channel input] 3->2 downmix producing 2-channel output
 PASS > [4-channel input] 4->2 downmix producing 2-channel output 
 PASS > [5.1-channel input] 5.1->2 downmix producing 2-channel output 
 PASS > [delayed buffer set] Delayed set of 4-channel response 
-FAIL X Output with delayed setting of convolver buffer should have contain at least one value different from 0. assert_true: expected true got false
-FAIL < [delayed buffer set] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS   Output with delayed setting of convolver buffer is not constantly 0 (contains 768 different values). 
+PASS < [delayed buffer set] All assertions passed. (total 1 assertions) 
 PASS > [count 1, 2-channel in] 2->1 downmix because channel count is 1 
 PASS > [count 1, 4-channel in] 4->1 downmix because channel count is 1 
 PASS > [count 1, 5.1-channel in] 5.1->1 downmix because channel count is 1 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 10 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 10 tasks ran successfully. 
 

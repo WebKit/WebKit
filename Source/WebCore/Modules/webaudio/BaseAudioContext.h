@@ -123,6 +123,8 @@ public:
 
     void incrementActiveSourceCount();
     void decrementActiveSourceCount();
+
+    virtual bool shouldSuspend() { return false; }
     
     ExceptionOr<Ref<AudioBuffer>> createBuffer(unsigned numberOfChannels, unsigned length, float sampleRate);
 
@@ -133,6 +135,8 @@ public:
 
     void suspendRendering(DOMPromiseDeferred<void>&&);
     void resumeRendering(DOMPromiseDeferred<void>&&);
+
+    virtual void didSuspendRendering(size_t frame);
 
     AudioBuffer* renderTarget() const { return m_renderTarget.get(); }
 
@@ -202,7 +206,7 @@ public:
 
     // Returns true only after the audio thread has been started and then shutdown.
     bool isAudioThreadFinished() { return m_isAudioThreadFinished; }
-    
+
     // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
     void lock(bool& mustReleaseLock);
 
@@ -307,11 +311,13 @@ protected:
     void clearPendingActivity();
     void makePendingActivity();
 
+    void lockInternal(bool& mustReleaseLock);
+
     AudioDestinationNode* destinationNode() const { return m_destinationNode.get(); }
 
     bool willBeginPlayback();
 
-    void uninitialize();
+    virtual void uninitialize();
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "BaseAudioContext"; }

@@ -1,3 +1,92 @@
+2020-08-14  Chris Dumez  <cdumez@apple.com>
+
+        Add support for suspending / resuming an OfflineAudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=215417
+
+        Reviewed by Eric Carlson.
+
+        Import tests for this feature from Blink since the WPT coverage is not great.
+
+        * webaudio/offlineaudiocontext-suspend-resume-basic-expected.txt: Added.
+        * webaudio/offlineaudiocontext-suspend-resume-basic.html: Added.
+        * webaudio/offlineaudiocontext-suspend-resume-eventhandler-expected.txt: Added.
+        * webaudio/offlineaudiocontext-suspend-resume-eventhandler.html: Added.
+        * webaudio/offlineaudiocontext-suspend-resume-graph-manipulation-expected.txt: Added.
+        * webaudio/offlineaudiocontext-suspend-resume-graph-manipulation.html: Added.
+        * webaudio/offlineaudiocontext-suspend-resume-promise-expected.txt: Added.
+        * webaudio/offlineaudiocontext-suspend-resume-promise.html: Added.
+        * webaudio/offlineaudiocontext-suspend-resume-sequence-expected.txt: Added.
+        * webaudio/offlineaudiocontext-suspend-resume-sequence.html: Added.
+        * webaudio/resources/audit-util.js: Added.
+        (compareBuffersWithConstraints):
+        (createImpulseBuffer):
+        (createLinearRampBuffer):
+        (createConstantBuffer):
+        (createStereoImpulseBuffer):
+        (timeToSampleFrame):
+        (grainLengthInSampleFrames):
+        (isValidNumber):
+        * webaudio/resources/audit.js: Added.
+        (_logError):
+        (_logPassed):
+        (_logFailed):
+        (_throwException):
+        (_generateDescription):
+        (_formatFailureEntry):
+        (_closeToThreshold):
+        (Should):
+        (Should.prototype._processArguments):
+        (Should.prototype._buildResultText):
+        (Should.prototype._finalize):
+        (Should.prototype._assert):
+        (Should.prototype.get result):
+        (Should.prototype.get detail):
+        (Should.prototype.exist):
+        (Should.prototype.throw):
+        (Should.prototype.notThrow):
+        (Should.prototype.beResolved):
+        (Should.prototype.beRejected):
+        (Should.prototype.beRejectedWith):
+        (Should.prototype.beTrue):
+        (Should.prototype.beFalse):
+        (Should.prototype.beEqualTo):
+        (Should.prototype.notBeEqualTo):
+        (Should.prototype.beNaN):
+        (Should.prototype.notBeNaN):
+        (Should.prototype.beGreaterThan):
+        (Should.prototype.beGreaterThanOrEqualTo):
+        (Should.prototype.beLessThan):
+        (Should.prototype.beLessThanOrEqualTo):
+        (Should.prototype.beConstantValueOf):
+        (Should.prototype.notBeConstantValueOf):
+        (Should.prototype.beEqualToArray):
+        (Should.prototype.containValues):
+        (Should.prototype.notGlitch):
+        (Should.prototype.beCloseTo):
+        (Should.prototype.beCloseToArray):
+        (Should.prototype.message):
+        (Should.prototype.haveOwnProperty):
+        (Should.prototype.notHaveOwnProperty):
+        (Should.prototype.inheritFrom):
+        (Task):
+        (Task.prototype.get label):
+        (Task.prototype.get state):
+        (Task.prototype.get result):
+        (Task.prototype.should):
+        (Task.prototype.run):
+        (Task.prototype.update):
+        (Task.prototype.done):
+        (Task.prototype.timeout):
+        (Task.prototype.isPassed):
+        (Task.prototype.toString):
+        (TaskRunner):
+        (TaskRunner.prototype._finish):
+        (TaskRunner.prototype.define):
+        (TaskRunner.prototype.run):
+        (loadFileFromUrl):
+        (return.createTaskRunner):
+        (window.Audit):
+
 2020-08-14  Clark Wang  <clark_wang@apple.com>
 
         Introduce ConstantSourceNode Interface

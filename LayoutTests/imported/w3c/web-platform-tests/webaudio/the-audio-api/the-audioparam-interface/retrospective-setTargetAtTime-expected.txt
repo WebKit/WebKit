@@ -1,14 +1,23 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
-
-Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "test" 
 PASS Audit report 
 PASS > [test] Test setTargetAtTime with start time in the past 
-PASS   Test[0:127] contains only the constant 1. 
-PASS   Reference[0:127] contains only the constant 1. 
-PASS   Test[128:] is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...]. 
-PASS < [test] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+FAIL X Test[0:127]: Expected 1 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.9994508624076843
+	[2]	0.9989020228385925
+	[3]	0.9983535408973694
+	[4]	0.9978054165840149
+	...and 123 more errors. assert_true: expected true got false
+FAIL X Reference[0:127]: Expected 1 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.9994508624076843
+	[2]	0.9989020228385925
+	[3]	0.9983535408973694
+	[4]	0.9978054165840149
+	...and 123 more errors. assert_true: expected true got false
+PASS   Test[128:] is identical to the array [0.9323640465736389,0.9318561553955078,0.9313485622406006,0.930841326713562,0.9303343892097473,0.9298277497291565,0.9293214082717896,0.9288153648376465,0.9283096790313721,0.9278042912483215,0.9272992014884949,0.9267944097518921,0.9262899160385132,0.9257857203483582,0.9252818822860718,0.9247783422470093...]. 
+FAIL < [test] 2 out of 3 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

@@ -50,12 +50,18 @@ public:
 
     // AudioDestinationNode
     void enableInput(const String&) override { }
-    ExceptionOr<void> startRendering() override;
+    ExceptionOr<void> startRendering() final;
 
     float sampleRate() const final { return m_renderTarget->sampleRate(); }
 
+    static const size_t renderQuantumSize;
+
 private:
     OfflineAudioDestinationNode(BaseAudioContext&, AudioBuffer* renderTarget);
+
+    enum class OfflineRenderResult { Failure, Suspended, Complete };
+    OfflineRenderResult offlineRender();
+    void notifyOfflineRenderingSuspended();
 
     // This AudioNode renders into this AudioBuffer.
     RefPtr<AudioBuffer> m_renderTarget;
@@ -65,8 +71,8 @@ private:
     
     // Rendering thread.
     RefPtr<Thread> m_renderThread;
-    bool m_startedRendering;
-    bool offlineRender();
+    size_t m_framesToProcess;
+    bool m_startedRendering { false };
 };
 
 } // namespace WebCore

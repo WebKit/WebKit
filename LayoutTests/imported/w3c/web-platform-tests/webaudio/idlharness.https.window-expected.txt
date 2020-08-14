@@ -114,7 +114,7 @@ PASS OfflineAudioContext interface: existence and properties of interface protot
 PASS OfflineAudioContext interface: existence and properties of interface prototype object's @@unscopables property 
 PASS OfflineAudioContext interface: operation startRendering() 
 PASS OfflineAudioContext interface: operation resume() 
-FAIL OfflineAudioContext interface: operation suspend(double) assert_equals: property has wrong .length expected 1 but got 0
+PASS OfflineAudioContext interface: operation suspend(double) 
 PASS OfflineAudioContext interface: attribute length 
 PASS OfflineAudioContext interface: attribute oncomplete 
 PASS OfflineAudioContext must be primary interface of new OfflineAudioContext(1, 1, sample_rate) 

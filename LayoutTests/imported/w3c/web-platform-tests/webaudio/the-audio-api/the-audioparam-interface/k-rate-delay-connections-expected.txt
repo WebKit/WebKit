@@ -13,8 +13,8 @@ PASS   testMod = new ConstantSourceNode(context) did not throw an exception.
 PASS   testMod.offset.setValueAtTime(0, 0) did not throw an exception. 
 PASS   testMod.offset.linearRampToValueAtTime(1.125, 1) did not throw an exception. 
 PASS   testMod.connect(testNode.delayTime) did not throw an exception. 
-PASS   Expected k-rate delayTime AudioParam with input is not constantly 0 (contains 4088 different values). 
-PASS   Actual k-rate delayTime AudioParam with input is not constantly 0 (contains 4088 different values). 
+PASS   Expected k-rate delayTime AudioParam with input is not constantly 0 (contains 4095 different values). 
+PASS   Actual k-rate delayTime AudioParam with input is not constantly 0 (contains 4095 different values). 
 PASS   output[128, 143] contains only the constant 0. 
 FAIL X output[144, 255] should have contain at least one value different from 0. assert_true: expected true got false
 PASS   k-rate delayTime AudioParam with input equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 

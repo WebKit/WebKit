@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
-
-Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "linearRamp" 
@@ -9,51 +5,41 @@ PASS Executing "expoRamp"
 PASS Audit report 
 PASS > [linearRamp] Insert linearRamp after running for some time 
 PASS   linearRamp: setValueAtTime(1, 0.0078125) did not throw an exception. 
-PASS   linearRamp: output[0:511] contains only the constant 1. 
-FAIL X linearRamp: output[512:576] does not equal [...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	1.0000000000000000e+0	1.4375000000000000e+0	4.3750000000000000e-1	3.0434782608695654e-1	0.0000000000000000e+0
-	[1]	1.0000000000000000e+0	1.4384765625000000e+0	4.3847656250000000e-1	3.0482009504412760e-1	0.0000000000000000e+0
-	[2]	1.0000000000000000e+0	1.4394531250000000e+0	4.3945312500000000e-1	3.0529172320217096e-1	0.0000000000000000e+0
-	[3]	1.0000000000000000e+0	1.4404296875000000e+0	4.4042968750000000e-1	3.0576271186440679e-1	0.0000000000000000e+0
-	[4]	1.0000000000000000e+0	1.4414062500000000e+0	4.4140625000000000e-1	3.0623306233062331e-1	0.0000000000000000e+0
-	...and 60 more errors.
-	Max AbsError of 5.0000000000000000e-1 at index of 64.
-	[64]	1.0000000000000000e+0	1.5000000000000000e+0	5.0000000000000000e-1	3.3333333333333331e-1	0.0000000000000000e+0
-	Max RelError of 3.3333333333333331e-1 at index of 64.
-	[64]	1.0000000000000000e+0	1.5000000000000000e+0	5.0000000000000000e-1	3.3333333333333331e-1	0.0000000000000000e+0
- assert_true: expected true got false
-FAIL X linearRamp: output[1088:]: Expected 2 for all values but found 7104 unexpected values: 
+PASS   linearRamp: At time 0.0625 scheduling linearRampToValueAtTime(2, 0.1328125) did not throw an exception. 
+FAIL X linearRamp: output[0:511]: Expected 1 for all values but found 512 unexpected values: 
 	Index	Actual
-	[0]	1
-	[1]	1
-	[2]	1
-	[3]	1
-	...and 7100 more errors. assert_true: expected true got false
-FAIL < [linearRamp] 2 out of 4 assertions were failed. assert_true: expected true got false
+	[0]	1.4375
+	[1]	1.4384765625
+	[2]	1.439453125
+	[3]	1.4404296875
+	...and 508 more errors. assert_true: expected true got false
+PASS   linearRamp: output[512:576] equals [...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+FAIL X linearRamp: output[1088:]: Expected 2 for all values but found 512 unexpected values: 
+	Index	Actual
+	[6592]	0
+	[6593]	0
+	[6594]	0
+	[6595]	0
+	...and 508 more errors. assert_true: expected true got false
+FAIL < [linearRamp] 2 out of 5 assertions were failed. assert_true: expected true got false
 PASS > [expoRamp] Insert expoRamp after running for some time 
 PASS   expoRamp: setValueAtTime(1, 0.0078125) did not throw an exception. 
-PASS   expoRamp: output[0:511] contains only the constant 1. 
-FAIL X expoRamp: output[512:576] does not equal [...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[0]	1.0000000000000000e+0	1.3542555570602417e+0	3.5425555706024170e-1	2.6158693255004545e-1	0.0000000000000000e+0
-	[1]	1.0000000000000000e+0	1.3551725149154663e+0	3.5517251491546631e-1	2.6208656905768302e-1	0.0000000000000000e+0
-	[2]	1.0000000000000000e+0	1.3560900688171387e+0	3.5609006881713867e-1	2.6258585399695561e-1	0.0000000000000000e+0
-	[3]	1.0000000000000000e+0	1.3570083379745483e+0	3.5700833797454834e-1	2.6308485215898819e-1	0.0000000000000000e+0
-	[4]	1.0000000000000000e+0	1.3579272031784058e+0	3.5792720317840576e-1	2.6358349868875919e-1	0.0000000000000000e+0
-	...and 60 more errors.
-	Max AbsError of 4.1421151161193848e-1 at index of 64.
-	[64]	1.0000000000000000e+0	1.4142115116119385e+0	4.1421151161193848e-1	2.9289219343138728e-1	0.0000000000000000e+0
-	Max RelError of 2.9289219343138728e-1 at index of 64.
-	[64]	1.0000000000000000e+0	1.4142115116119385e+0	4.1421151161193848e-1	2.9289219343138728e-1	0.0000000000000000e+0
- assert_true: expected true got false
-FAIL X expoRamp: output[1088:]: Expected 2 for all values but found 7104 unexpected values: 
+PASS   expoRamp: At time 0.0625 scheduling exponentialRampToValueAtTime(2, 0.1328125) did not throw an exception. 
+FAIL X expoRamp: output[0:511]: Expected 1 for all values but found 512 unexpected values: 
 	Index	Actual
-	[0]	1
-	[1]	1
-	[2]	1
-	[3]	1
-	...and 7100 more errors. assert_true: expected true got false
-FAIL < [expoRamp] 2 out of 4 assertions were failed. assert_true: expected true got false
+	[0]	1.3542555570602417
+	[1]	1.3551725149154663
+	[2]	1.3560900688171387
+	[3]	1.3570083379745483
+	...and 508 more errors. assert_true: expected true got false
+PASS   expoRamp: output[512:576] equals [...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+FAIL X expoRamp: output[1088:]: Expected 2 for all values but found 512 unexpected values: 
+	Index	Actual
+	[6592]	0
+	[6593]	0
+	[6594]	0
+	[6595]	0
+	...and 508 more errors. assert_true: expected true got false
+FAIL < [expoRamp] 2 out of 5 assertions were failed. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 2 tasks were failed. assert_true: expected true got false
 

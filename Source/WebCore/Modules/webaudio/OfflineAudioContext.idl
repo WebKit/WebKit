@@ -32,8 +32,8 @@
     
     [ImplementedAs=startOfflineRendering] Promise<AudioBuffer> startRendering();
 
-    [ImplementedAs=resumeRendering] Promise<void> resume();
-    [ImplementedAs=suspendRendering] Promise<void> suspend(); // FIXME: Missing suspendTime parameter.
+    [ImplementedAs=resumeOfflineRendering] Promise<void> resume();
+    [ImplementedAs=suspendOfflineRendering] Promise<void> suspend(double suspendTime);
 
     readonly attribute unsigned long length;
 

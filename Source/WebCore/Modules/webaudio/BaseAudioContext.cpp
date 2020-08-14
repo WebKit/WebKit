@@ -669,6 +669,11 @@ void BaseAudioContext::lock(bool& mustReleaseLock)
     // Don't allow regular lock in real-time audio thread.
     ASSERT(isMainThread());
 
+    lockInternal(mustReleaseLock);
+}
+
+void BaseAudioContext::lockInternal(bool& mustReleaseLock)
+{
     Thread& thisThread = Thread::current();
 
     if (&thisThread == m_graphOwnerThread) {
@@ -1151,6 +1156,11 @@ void BaseAudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
     m_destinationNode->suspend([this, protectedThis = makeRef(*this)] {
         setState(State::Suspended);
     });
+}
+
+void BaseAudioContext::didSuspendRendering(size_t)
+{
+    setState(State::Suspended);
 }
 
 void BaseAudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)

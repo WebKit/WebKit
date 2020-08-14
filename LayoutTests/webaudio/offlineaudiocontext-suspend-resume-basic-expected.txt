@@ -1,0 +1,34 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "suspend-invalid-argument" 
+PASS Executing "suspend-in-the-past" 
+PASS Executing "suspend-after-render-completion" 
+PASS Executing "identical-suspend-time" 
+PASS Executing "resume-before-suspend" 
+PASS Executing "resume-without-suspend" 
+PASS Audit report 
+PASS > [suspend-invalid-argument]  
+PASS   context.suspend() rejected correctly with TypeError: Not enough arguments. 
+PASS   context.suspend(-1.0) rejected correctly with InvalidStateError: suspendTime cannot be negative. 
+PASS   context.suspend(2.0) rejected correctly with InvalidStateError: suspendTime cannot be greater than total rendering duration. 
+PASS < [suspend-invalid-argument] All assertions passed. (total 3 assertions) 
+PASS > [suspend-in-the-past]  
+PASS   Scheduling a suspend in the past rejected correctly with InvalidStateError: Suspension frame is earlier than current frame. 
+PASS   Promise resolved correctly. 
+PASS < [suspend-in-the-past] All assertions passed. (total 2 assertions) 
+PASS > [suspend-after-render-completion]  
+PASS   Scheduling a suspend after the render completion rejected correctly with InvalidStateError: suspendTime cannot be greater than total rendering duration. 
+PASS < [suspend-after-render-completion] All assertions passed. (total 1 assertions) 
+PASS > [identical-suspend-time]  
+PASS   Scheduling a suspend at frame 160 did not throw an exception. 
+PASS   Scheduling another suspend at the same rendering quantum rejected correctly with InvalidStateError: There is already a pending suspend request at this frame. 
+PASS < [identical-suspend-time] All assertions passed. (total 2 assertions) 
+PASS > [resume-before-suspend]  
+PASS   Scheduling a suspend at 4.5 seconds did not throw an exception. 
+PASS   Resuming a running context resolved correctly. 
+PASS < [resume-before-suspend] All assertions passed. (total 2 assertions) 
+PASS > [resume-without-suspend]  
+PASS   Resuming a context without starting it rejected correctly with InvalidStateError: Cannot resume an offline audio context that has not started. 
+PASS < [resume-without-suspend] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
+

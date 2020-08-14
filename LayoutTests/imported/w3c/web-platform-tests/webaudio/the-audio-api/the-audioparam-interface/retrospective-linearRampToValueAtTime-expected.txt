@@ -1,14 +1,29 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: The object is in an invalid state.
-
-Harness Error (FAIL), message = Unhandled rejection: The object is in an invalid state.
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "test" 
 PASS Audit report 
 PASS > [test] Test linearRampToValue with end time in the past 
-PASS   Test[0:127] contains only the constant 1. 
-PASS   Reference[0:127] contains only the constant 1. 
-PASS   Test[128:] is identical to the array [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1...]. 
-PASS < [test] All assertions passed. (total 3 assertions) 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+FAIL X Test[0:127]: Expected 1 for all values but found 128 unexpected values: 
+	Index	Actual
+	[0]	0.10313726216554642
+	[1]	0.10318627208471298
+	[2]	0.10323529690504074
+	[3]	0.1032843142747879
+	...and 124 more errors. assert_true: expected true got false
+FAIL X Reference[0:127]: Expected 1 for all values but found 128 unexpected values: 
+	Index	Actual
+	[0]	0.10000000149011612
+	[1]	0.1000492125749588
+	[2]	0.10009843111038208
+	[3]	0.10014764219522476
+	...and 124 more errors. assert_true: expected true got false
+FAIL X Test[128:] expected to be equal to the array [0.10629921406507492,0.1063484251499176,0.10639764368534088,0.10644685477018356,0.10649606585502625,0.10654528439044952,0.10659448802471161,0.10664370656013489,0.10669291019439697,0.10674212872982025,0.10679133981466293,0.10684055089950562,0.1068897619843483,0.10693897306919098,0.10698819160461426,0.10703740268945694...] but differs in 16128 places:
+	Index	Actual			Expected
+	[0]	1.0941176861524582e-1	1.0629921406507492e-1
+	[1]	1.0946078598499298e-1	1.0634842514991760e-1
+	[2]	1.0950980335474014e-1	1.0639764368534088e-1
+	[3]	1.0955882817506790e-1	1.0644685477018356e-1
+	...and 16124 more errors. assert_true: expected true got false
+FAIL < [test] 3 out of 3 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

@@ -1,0 +1,26 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "test" 
+PASS Audit report 
+PASS > [test] Promise resolution of resume() and suspend() 
+PASS   Scheduling a new suspend at 0 second(s) did not throw an exception. 
+PASS   Context suspended at 0 second(s) is true. 
+PASS   Scheduling a new suspend at 0.25 second(s) did not throw an exception. 
+PASS   Context suspended at 0.25 second(s) is true. 
+PASS   Scheduling a new suspend at 0.5 second(s) did not throw an exception. 
+PASS   Context suspended at 0.5 second(s) is true. 
+PASS   Scheduling a new suspend at 0.75 second(s) did not throw an exception. 
+PASS   Context suspended at 0.75 second(s) is true. 
+PASS   Scheduling a new suspend at 1 second(s) did not throw an exception. 
+PASS   Context suspended at 1 second(s) is true. 
+PASS   Scheduling a new suspend at 1.25 second(s) did not throw an exception. 
+PASS   Context suspended at 1.25 second(s) is true. 
+PASS   Scheduling a new suspend at 1.5 second(s) did not throw an exception. 
+PASS   Context suspended at 1.5 second(s) is true. 
+PASS   Scheduling a new suspend at 1.75 second(s) did not throw an exception. 
+PASS   Context suspended at 1.75 second(s) is true. 
+PASS   Scheduling at 2 seconds rejected correctly with InvalidStateError: suspendTime cannot be greater than total rendering duration. 
+PASS   Promise context.state is equal to closed. 
+PASS < [test] All assertions passed. (total 18 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+

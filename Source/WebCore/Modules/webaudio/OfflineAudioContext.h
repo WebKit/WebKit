@@ -27,6 +27,9 @@
 #include "BaseAudioContext.h"
 #include "JSDOMPromiseDeferred.h"
 #include "OfflineAudioContextOptions.h"
+#include "OfflineAudioDestinationNode.h"
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -38,15 +41,46 @@ public:
     static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, const OfflineAudioContextOptions&);
 
     void startOfflineRendering(Ref<DeferredPromise>&&);
+    void suspendOfflineRendering(double suspendTime, Ref<DeferredPromise>&&);
+    void resumeOfflineRendering(Ref<DeferredPromise>&&);
 
     unsigned length() const;
+    bool shouldSuspend() final;
+
+    OfflineAudioDestinationNode* destination() { return static_cast<OfflineAudioDestinationNode*>(BaseAudioContext::destination()); }
+
+    // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
+    void offlineLock(bool& mustReleaseLock);
+
+    class OfflineAutoLocker {
+    public:
+        explicit OfflineAutoLocker(OfflineAudioContext& context)
+            : m_context(context)
+        {
+            m_context.offlineLock(m_mustReleaseLock);
+        }
+
+        ~OfflineAutoLocker()
+        {
+            if (m_mustReleaseLock)
+                m_context.unlock();
+        }
+
+    private:
+        OfflineAudioContext& m_context;
+        bool m_mustReleaseLock;
+    };
 
 private:
     OfflineAudioContext(Document&, AudioBuffer* renderTarget);
 
     void didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>>&&) final;
+    void didSuspendRendering(size_t frame) final;
+    void uninitialize() final;
 
     RefPtr<DeferredPromise> m_pendingOfflineRenderingPromise;
+    HashMap<unsigned /* frame */, RefPtr<DeferredPromise>, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_suspendRequests;
+    bool m_didStartOfflineRendering { false };
 };
 
 } // namespace WebCore
