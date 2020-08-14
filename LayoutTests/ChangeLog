@@ -1,3 +1,12 @@
+2020-08-14  Karl Rackler  <rackler@apple.com>
+
+        rdar://66995964 (REGRESSION (r265358): [ Win10 wk1 ] animations/steps-transform-rendering-updates.html is a constant failure (215454))
+        Rebaseline Test - Remore test expectation.
+
+        Unreviewed test gardening.
+
+        * platform/wincairo/TestExpectations:
+
 2020-08-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Implement WebXRSession::updateRenderState()
