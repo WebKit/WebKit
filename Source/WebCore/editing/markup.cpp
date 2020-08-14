@@ -668,7 +668,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
         if (!enterNode(*n)) {
             next = nextSkippingChildren(*n);
             // Don't skip over pastEnd.
-            if (pastEnd && isDescendantOf(*pastEnd, *n))
+            if (pastEnd && (isDescendantOf(*pastEnd, *n) || !next))
                 next = pastEnd;
             ASSERT(next || !pastEnd);
         } else {
