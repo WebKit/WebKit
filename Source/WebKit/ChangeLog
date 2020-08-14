@@ -1,3 +1,28 @@
+2020-08-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        Create SharedMemory::IPCHandle object to validate the size of SharedMemory::Handle objects sent over IPC
+        https://bugs.webkit.org/show_bug.cgi?id=215288
+        <rdar://problem/60870795>
+
+        Reviewed by David Kilzer.
+
+        Part 1 of a multi-patch plan to convert all SharedMemory::Handle
+        objects being sent over IPC to use SharedMemory::IPCHandle objects instead.
+
+        * Platform/SharedMemory.h:
+        (WebKit::SharedMemory::IPCHandle::IPCHandle):
+        * Platform/cocoa/SharedMemoryCocoa.cpp:
+        (WebKit::SharedMemory::IPCHandle::encode const):
+        (WebKit::SharedMemory::IPCHandle::decode):
+        Validate the size of the data sent in the IPCHandle::decode()
+        function.
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::IPCHandle::encode const):
+        (WebKit::SharedMemory::IPCHandle::decode):
+        * Platform/win/SharedMemoryWin.cpp:
+        Implement IPCHandle encode and decode for all platforms for when we remove
+        SharedMemory::Handle encode/decode functions.
+
 2020-08-13  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed non-unified build fix.
