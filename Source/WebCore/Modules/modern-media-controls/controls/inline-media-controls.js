@@ -166,7 +166,7 @@ class InlineMediaControls extends MediaControls
         this.rightContainer.children = this._rightContainerButtons();
         this.rightContainer.children.concat(this.leftContainer.children).forEach(button => delete button.dropped);
         this.muteButton.style = this.preferredMuteButtonStyle;
-        this.muteButton.usesRTLIconVariant = false;
+        this.muteButton.usesRTLIconVariant = !this.usesLTRUserInterfaceLayoutDirection;
 
         for (let button of this._droppableButtons()) {
             // If the button is not enabled, we can skip it.
