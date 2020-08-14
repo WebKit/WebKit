@@ -547,23 +547,6 @@ void FrameLoader::stop()
     }
 }
 
-void FrameLoader::willTransitionToCommitted()
-{
-    // This function is called when a frame is still fully in place (not cached, not detached), but will be replaced.
-    Document* document = m_frame.document();
-    if (!document)
-        return;
-
-    if (document->editor().hasComposition()) {
-        // The text was already present in DOM, so it's better to confirm than to cancel the composition.
-        document->editor().confirmComposition();
-        if (EditorClient* editorClient = document->editor().client()) {
-            editorClient->respondToChangedSelection(&m_frame);
-            editorClient->discardedComposition(&m_frame);
-        }
-    }
-}
-
 void FrameLoader::closeURL()
 {
     history().saveDocumentState();
@@ -2008,7 +1991,13 @@ void FrameLoader::commitProvisionalLoad()
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "",
         pdl ? pdl->url().stringCenterEllipsizedToLength().utf8().data() : "<no provisional DocumentLoader>", cachedPage.get());
 
-    willTransitionToCommitted();
+    if (auto document = makeRefPtr(m_frame.document())) {
+        // In the case where we're restoring from a cached page, our document will not
+        // be connected to its frame yet, so the following call with be a no-op. We will
+        // attempt to confirm any active composition once again in this scenario after we
+        // finish restoring from the cached page.
+        document->editor().confirmCompositionAndNotifyClient();
+    }
 
     if (!m_frame.tree().parent() && history().currentItem() && history().currentItem() != history().provisionalItem()) {
         // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
@@ -2086,6 +2075,9 @@ void FrameLoader::commitProvisionalLoad()
             frame->loader().checkCompleted();
     } else
         didOpenURL();
+
+    if (auto document = makeRefPtr(m_frame.document()))
+        document->editor().confirmCompositionAndNotifyClient();
 
     LOG(Loading, "WebCoreLoading %s: Finished committing provisional load to URL %s", m_frame.tree().uniqueName().string().utf8().data(),
         m_frame.document() ? m_frame.document()->url().stringCenterEllipsizedToLength().utf8().data() : "");

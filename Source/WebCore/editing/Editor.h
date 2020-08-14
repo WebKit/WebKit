@@ -379,6 +379,7 @@ public:
     WEBCORE_EXPORT void setComposition(const String&, const Vector<CompositionUnderline>&, const Vector<CompositionHighlight>&, unsigned selectionStart, unsigned selectionEnd);
     WEBCORE_EXPORT void confirmComposition();
     WEBCORE_EXPORT void confirmComposition(const String&); // if no existing composition, replaces selection
+    void confirmCompositionAndNotifyClient();
     WEBCORE_EXPORT void cancelComposition();
     bool cancelCompositionIfSelectionIsInvalid();
     WEBCORE_EXPORT Optional<SimpleRange> compositionRange() const;

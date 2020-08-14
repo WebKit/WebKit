@@ -29,7 +29,11 @@
 
 #import "AppKitSPI.h"
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
+#import "TestProtocol.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -135,6 +139,43 @@ TEST(WKWebViewMacEditingTests, DoNotCrashWhenInterpretingKeyEventWhileDeallocati
     }
 
     TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(WKWebViewMacEditingTests, ProcessSwapAfterSettingMarkedText)
+{
+    [TestProtocol registerWithScheme:@"https"];
+
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    [processPoolConfiguration setProcessSwapsOnNavigation:YES];
+
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool:processPool.get()];
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView<NSTextInputClient, NSTextInputClient_Async> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView _setEditable:YES];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/simple.html"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView selectAll:nil];
+    [webView setMarkedText:@"Simple" selectedRange:NSMakeRange(0, 6) replacementRange:NSMakeRange(0, 6)];
+    [webView waitForNextPresentationUpdate];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool done = false;
+    [webView hasMarkedTextWithCompletionHandler:^(BOOL hasMarkedText) {
+        EXPECT_FALSE(hasMarkedText);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
 
 #endif // PLATFORM(MAC)
