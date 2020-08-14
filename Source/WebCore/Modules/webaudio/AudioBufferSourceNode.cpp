@@ -418,10 +418,13 @@ void AudioBufferSourceNode::reset()
     m_lastGain = legacyGainValue();
 }
 
-void AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
+ExceptionOr<void> AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 {
     ASSERT(isMainThread());
     DEBUG_LOG(LOGIDENTIFIER);
+
+    if (buffer && m_wasBufferSet && shouldThrowOnAttemptToOverwriteBuffer())
+        return Exception { InvalidStateError, "The buffer was already set"_s };
 
     // The context must be locked since changing the buffer can re-configure the number of channels that are output.
     BaseAudioContext::AutoLocker contextLocker(context());
@@ -430,6 +433,8 @@ void AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
     auto locker = holdLock(m_processMutex);
     
     if (buffer) {
+        m_wasBufferSet = true;
+
         // Do any necesssary re-configuration to the buffer's number of channels.
         unsigned numberOfChannels = buffer->numberOfChannels();
         ASSERT(numberOfChannels <= AudioContext::maxNumberOfChannels());
@@ -445,6 +450,7 @@ void AudioBufferSourceNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
 
     m_virtualReadIndex = 0;
     m_buffer = WTFMove(buffer);
+    return { };
 }
 
 unsigned AudioBufferSourceNode::numberOfChannels()

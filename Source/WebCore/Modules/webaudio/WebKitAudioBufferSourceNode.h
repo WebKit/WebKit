@@ -47,6 +47,7 @@ private:
     {
     }
 
+    bool shouldThrowOnAttemptToOverwriteBuffer() const final { return false; }
     double legacyGainValue() const final { return gain().value(); }
 
     Ref<AudioParam> m_gain;

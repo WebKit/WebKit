@@ -6,9 +6,9 @@ PASS > [validate .buffer] Validatation of AudioBuffer in .buffer attribute sette
 PASS   source.buffer = 57 threw TypeError: "The AudioBufferSourceNode.buffer attribute must be an instance of AudioBuffer". 
 PASS   source.buffer = null did not throw an exception. 
 PASS   source.buffer = buffer did not throw an exception. 
-FAIL X source.buffer = new buffer did not throw an exception. assert_true: expected true got false
+PASS   source.buffer = new buffer threw InvalidStateError: "The buffer was already set". 
 PASS   source.buffer = null again did not throw an exception. 
-FAIL X source.buffer = buffer again did not throw an exception. assert_true: expected true got false
+PASS   source.buffer = buffer again threw InvalidStateError: "The buffer was already set". 
 PASS   source.buffer = null after setting to null did not throw an exception. 
 PASS   Setting source with mono buffer did not throw an exception. 
 PASS   Setting source with stereo buffer did not throw an exception. 
@@ -19,6 +19,6 @@ PASS   Setting source with 6 channels buffer did not throw an exception.
 PASS   Setting source with 7 channels buffer did not throw an exception. 
 PASS   Setting source with 8 channels buffer did not throw an exception. 
 PASS   Setting source with 9 channels buffer did not throw an exception. 
-FAIL < [validate .buffer] 2 out of 16 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS < [validate .buffer] All assertions passed. (total 16 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

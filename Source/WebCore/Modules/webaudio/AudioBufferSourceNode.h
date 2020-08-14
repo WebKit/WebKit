@@ -52,8 +52,7 @@ public:
     void reset() final;
 
     // setBuffer() is called on the main thread.  This is the buffer we use for playback.
-    // returns true on success.
-    void setBuffer(RefPtr<AudioBuffer>&&);
+    ExceptionOr<void> setBuffer(RefPtr<AudioBuffer>&&);
     AudioBuffer* buffer() { return m_buffer.get(); }
 
     // numberOfChannels() returns the number of output channels.  This value equals the number of channels from the buffer.
@@ -98,6 +97,7 @@ private:
     double latencyTime() const final { return 0; }
 
     virtual double legacyGainValue() const { return 1.0; }
+    virtual bool shouldThrowOnAttemptToOverwriteBuffer() const { return true; }
 
     enum BufferPlaybackMode {
         Entire,
@@ -125,6 +125,8 @@ private:
     // If m_isLooping is false, then this node will be done playing and become inactive after it reaches the end of the sample data in the buffer.
     // If true, it will wrap around to the start of the buffer each time it reaches the end.
     bool m_isLooping { false };
+
+    bool m_wasBufferSet { false };
 
     double m_loopStart { 0 };
     double m_loopEnd { 0 };

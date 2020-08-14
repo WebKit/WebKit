@@ -1,3 +1,14 @@
+2020-08-14  Chris Dumez  <cdumez@apple.com>
+
+        AudioBufferSourceNode.buffer setter should throw when the buffer was already set
+        https://bugs.webkit.org/show_bug.cgi?id=215510
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test now that all checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-channels-expected.txt:
+
 2020-08-14  Takeshi Kurosawa  <taken.spc@gmail.com>
 
         @font-face font-weight descriptor should reject bolder and lighter
