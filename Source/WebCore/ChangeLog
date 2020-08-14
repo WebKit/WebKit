@@ -1,5 +1,24 @@
 2020-08-14  Chris Dumez  <cdumez@apple.com>
 
+        Make sure OfflineAudioContext::startOfflineRendering() does lazy initialization
+        https://bugs.webkit.org/show_bug.cgi?id=215481
+
+        Reviewed by Eric Carlson.
+
+        Make sure OfflineAudioContext::startOfflineRendering() does lazy initialization before
+        actually starting rendering. If lazy initialization has not happened yet (because no
+        audio nodes were created for this context yet), then rendering would fail with an
+        InvalidStateError, due to lack on initialization.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::startOfflineRendering):
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::offlineRender):
+
+2020-08-14  Chris Dumez  <cdumez@apple.com>
+
         Fix bad check in AudioBufferSourceNode::renderFromBuffer()
         https://bugs.webkit.org/show_bug.cgi?id=215513
 

@@ -108,11 +108,7 @@ bool OfflineAudioDestinationNode::offlineRender()
     if (!m_renderBus.get())
         return false;
 
-    bool isAudioContextInitialized = context().isInitialized();
-    // FIXME: We used to assert that isAudioContextInitialized is true here.
-    // But it's trivially false in imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/current-time-block-size.html 
-    if (!isAudioContextInitialized)
-        return false;
+    RELEASE_ASSERT(context().isInitialized());
 
     bool channelsMatch = m_renderBus->numberOfChannels() == m_renderTarget->numberOfChannels();
     ASSERT(channelsMatch);

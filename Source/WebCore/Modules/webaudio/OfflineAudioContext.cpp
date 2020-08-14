@@ -74,6 +74,8 @@ void OfflineAudioContext::startOfflineRendering(Ref<DeferredPromise>&& promise)
         return;
     }
 
+    lazyInitialize();
+
     auto result = destination()->startRendering();
     if (result.hasException()) {
         promise->reject(result.releaseException());

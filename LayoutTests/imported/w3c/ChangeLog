@@ -1,5 +1,19 @@
 2020-08-14  Chris Dumez  <cdumez@apple.com>
 
+        Make sure OfflineAudioContext::startOfflineRendering() does lazy initialization
+        https://bugs.webkit.org/show_bug.cgi?id=215481
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-channel-count.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/suspended-context-messageport.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/current-time-block-size-expected.txt:
+
+2020-08-14  Chris Dumez  <cdumez@apple.com>
+
         Fix bad check in AudioBufferSourceNode::renderFromBuffer()
         https://bugs.webkit.org/show_bug.cgi?id=215513
 
