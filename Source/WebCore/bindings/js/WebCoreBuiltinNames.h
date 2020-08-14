@@ -64,6 +64,7 @@ namespace WebCore {
     macro(Clients) \
     macro(Clipboard) \
     macro(ClipboardItem) \
+    macro(ConstantSourceNode) \
     macro(Credential) \
     macro(CredentialsContainer) \
     macro(CSSAnimation) \

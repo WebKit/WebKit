@@ -327,6 +327,8 @@ $(PROJECT_DIR)/Modules/webaudio/ChannelMergerNode.idl
 $(PROJECT_DIR)/Modules/webaudio/ChannelMergerOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/ChannelSplitterNode.idl
 $(PROJECT_DIR)/Modules/webaudio/ChannelSplitterOptions.idl
+$(PROJECT_DIR)/Modules/webaudio/ConstantSourceNode.idl
+$(PROJECT_DIR)/Modules/webaudio/ConstantSourceOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/ConvolverNode.idl
 $(PROJECT_DIR)/Modules/webaudio/ConvolverOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/DelayNode.idl

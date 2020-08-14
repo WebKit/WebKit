@@ -63,6 +63,7 @@ class AudioSummingJunction;
 class BiquadFilterNode;
 class ChannelMergerNode;
 class ChannelSplitterNode;
+class ConstantSourceNode;
 class ConvolverNode;
 class DelayNode;
 class Document;
@@ -156,6 +157,7 @@ public:
     ExceptionOr<Ref<ChannelMergerNode>> createChannelMerger(size_t numberOfInputs);
     ExceptionOr<Ref<OscillatorNode>> createOscillator();
     ExceptionOr<Ref<PeriodicWave>> createPeriodicWave(Vector<float>&& real, Vector<float>&& imaginary, const PeriodicWaveConstraints& = { });
+    ExceptionOr<Ref<ConstantSourceNode>> createConstantSource();
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
     void notifyNodeFinishedProcessing(AudioNode*);

@@ -5089,6 +5089,8 @@
 		E785D96124B7F7350014DB21 /* AudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D95F24B7F7340014DB21 /* AudioContextOptions.h */; };
 		E785D96224B7F7350014DB21 /* AudioContextLatencyCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */; };
 		E7C8E11B24DCABF30027A27F /* AudioProcessingEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = E7C8E11824DCABF30027A27F /* AudioProcessingEventInit.h */; };
+		E7C8E13724E2FBCE0027A27F /* ConstantSourceOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7C8E13324E2FA7C0027A27F /* ConstantSourceOptions.h */; };
+		E7C8E13B24E2FE7E0027A27F /* ConstantSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E7C8E13824E2FE650027A27F /* ConstantSourceNode.h */; };
 		E7CF84A924C6461C00B06B90 /* OfflineAudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7CF84A524C635F400B06B90 /* OfflineAudioContextOptions.h */; };
 		E7E0357224D4E196008DFEFB /* AnalyserOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7E0357124D4E191008DFEFB /* AnalyserOptions.h */; };
 		EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */ = {isa = PBXBuildFile; fileRef = EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15938,6 +15940,11 @@
 		E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextLatencyCategory.h; sourceTree = "<group>"; };
 		E7C8E11824DCABF30027A27F /* AudioProcessingEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioProcessingEventInit.h; sourceTree = "<group>"; };
 		E7C8E11A24DCABF30027A27F /* AudioProcessingEventInit.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioProcessingEventInit.idl; sourceTree = "<group>"; };
+		E7C8E13324E2FA7C0027A27F /* ConstantSourceOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConstantSourceOptions.h; sourceTree = "<group>"; };
+		E7C8E13524E2FA7C0027A27F /* ConstantSourceOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ConstantSourceOptions.idl; sourceTree = "<group>"; };
+		E7C8E13824E2FE650027A27F /* ConstantSourceNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConstantSourceNode.h; sourceTree = "<group>"; };
+		E7C8E13924E2FE650027A27F /* ConstantSourceNode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantSourceNode.cpp; sourceTree = "<group>"; };
+		E7C8E13A24E2FE650027A27F /* ConstantSourceNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ConstantSourceNode.idl; sourceTree = "<group>"; };
 		E7CF848924C0E05700B06B90 /* AudioScheduledSourceNode.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioScheduledSourceNode.idl; sourceTree = "<group>"; };
 		E7CF84A524C635F400B06B90 /* OfflineAudioContextOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OfflineAudioContextOptions.h; sourceTree = "<group>"; };
 		E7CF84A724C635F400B06B90 /* OfflineAudioContextOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OfflineAudioContextOptions.idl; sourceTree = "<group>"; };
@@ -29620,6 +29627,11 @@
 				FD315FB912B0267500C1A359 /* ChannelSplitterNode.idl */,
 				E7E0352424CF715E008DFEFB /* ChannelSplitterOptions.h */,
 				E7E0352524CF715E008DFEFB /* ChannelSplitterOptions.idl */,
+				E7C8E13924E2FE650027A27F /* ConstantSourceNode.cpp */,
+				E7C8E13824E2FE650027A27F /* ConstantSourceNode.h */,
+				E7C8E13A24E2FE650027A27F /* ConstantSourceNode.idl */,
+				E7C8E13324E2FA7C0027A27F /* ConstantSourceOptions.h */,
+				E7C8E13524E2FA7C0027A27F /* ConstantSourceOptions.idl */,
 				FD315FDE12B0267600C1A359 /* ConvolverNode.cpp */,
 				FD315FDF12B0267600C1A359 /* ConvolverNode.h */,
 				FD315FE012B0267600C1A359 /* ConvolverNode.idl */,
@@ -30438,6 +30450,8 @@
 				FD31608F12B026F700C1A359 /* Cone.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */,
+				E7C8E13B24E2FE7E0027A27F /* ConstantSourceNode.h in Headers */,
+				E7C8E13724E2FBCE0027A27F /* ConstantSourceOptions.h in Headers */,
 				A818721C0977D3C0005826D9 /* ContainerNode.h in Headers */,
 				E1A1470811102B1500EEC0F3 /* ContainerNodeAlgorithms.h in Headers */,
 				6FB5E214221F2453003989CF /* ContentChangeObserver.h in Headers */,

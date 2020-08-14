@@ -1,3 +1,42 @@
+2020-08-14  Clark Wang  <clark_wang@apple.com>
+
+        Introduce ConstantSourceNode Interface
+        https://bugs.webkit.org/show_bug.cgi?id=215377
+
+        Reviewed by Chris Dumez.
+
+        Introduced new ConstantSourceNode interface according to spec:
+        https://www.w3.org/TR/webaudio/#ConstantSourceNode and with 
+        guidance from Chromium implementation: 
+        https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/modules/webaudio/constant_source_node.cc.
+
+        Re-baselined existing tests. Some fail further, mainly due to lack of support for automation rate in AudioParam.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::convertEnumerationToString):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createConstantSource):
+        * Modules/webaudio/BaseAudioContext.h:
+        * Modules/webaudio/BaseAudioContext.idl:
+        * Modules/webaudio/ConstantSourceNode.cpp: Added.
+        (WebCore::ConstantSourceNode::create):
+        (WebCore::ConstantSourceNode::ConstantSourceNode):
+        (WebCore::ConstantSourceNode::~ConstantSourceNode):
+        (WebCore::ConstantSourceNode::process):
+        (WebCore::ConstantSourceNode::propagatesSilence const):
+        * Modules/webaudio/ConstantSourceNode.h: Added.
+        * Modules/webaudio/ConstantSourceNode.idl: Added.
+        * Modules/webaudio/ConstantSourceOptions.h: Added.
+        * Modules/webaudio/ConstantSourceOptions.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2020-08-14  Rob Buis  <rbuis@igalia.com>
 
         Simplify FrameLoader::open

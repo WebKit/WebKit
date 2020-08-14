@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
 FAIL Executing "Initializing AudioWorklet and Context" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'context.audioWorklet.addModule')"
-FAIL Executing "Verifying AudioParam in AudioWorkletNode" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "Verifying AudioParam in AudioWorkletNode" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioWorkletNode"
 PASS Audit report 
 PASS > [Initializing AudioWorklet and Context]  
 PASS > [Verifying AudioParam in AudioWorkletNode]  

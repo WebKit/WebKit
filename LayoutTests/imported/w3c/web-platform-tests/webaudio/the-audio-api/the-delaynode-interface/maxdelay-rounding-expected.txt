@@ -1,7 +1,16 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "maxdelay-rounding" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+PASS Executing "maxdelay-rounding" 
 PASS Audit report 
 PASS > [maxdelay-rounding] Test DelayNode when maxDelayTime requires rounding 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+FAIL X output[0:44099]: Expected 0 for all values but found 44100 unexpected values: 
+	Index	Actual
+	[0]	0.39954185485839844
+	[1]	0.39954185485839844
+	[2]	0.39954185485839844
+	[3]	0.39954185485839844
+	...and 44096 more errors. assert_true: expected true got false
+PASS   output[44100:] is not constantly 0 (contains 44100 different values). 
+FAIL < [maxdelay-rounding] 1 out of 2 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

@@ -1,8 +1,8 @@
 
-FAIL ConstantSourceNode can be constructed ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
-FAIL ConstantSourceNode stop and start ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
-FAIL ConstantSourceNode onended event ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
-FAIL ConstantSourceNode start and stop when work ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
-FAIL ConstantSourceNode with no automation ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
-FAIL ConstantSourceNode with automation ac.createConstantSource is not a function. (In 'ac.createConstantSource()', 'ac.createConstantSource' is undefined)
+PASS ConstantSourceNode can be constructed 
+PASS ConstantSourceNode stop and start 
+PASS ConstantSourceNode onended event 
+PASS ConstantSourceNode start and stop when work 
+PASS ConstantSourceNode with no automation 
+FAIL ConstantSourceNode with automation assert_true: sample 1464 should equal 0.24925357103347778 expected true got false
 

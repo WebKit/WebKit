@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "test mono input" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL Executing "test stereo input" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "test mono input" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: StereoPannerNode"
+FAIL Executing "test stereo input" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: StereoPannerNode"
 FAIL Executing "test mono input setValue" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: StereoPannerNode"
 FAIL Executing "test stereo input setValue" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: StereoPannerNode"
 FAIL Executing "test mono input automation" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: StereoPannerNode"

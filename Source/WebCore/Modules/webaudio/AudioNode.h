@@ -89,6 +89,7 @@ public:
         NodeTypeDynamicsCompressor,
         NodeTypeWaveShaper,
         NodeTypeBasicInspector,
+        NodeTypeConstant,
         NodeTypeEnd
     };
 

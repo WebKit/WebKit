@@ -1,6 +1,6 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "delayTime" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'testMod.start')"
+PASS Executing "delayTime" 
 PASS Audit report 
 PASS > [delayTime] DelayNode delayTime k-rate input 
 PASS   refNode = new DelayNode(context) did not throw an exception. 
@@ -9,9 +9,15 @@ PASS   refNode.delayTime.setValueAtTime(0, 0) did not throw an exception.
 PASS   refNode.delayTime.linearRampToValueAtTime(1.125, 1) did not throw an exception. 
 PASS   testNode = new DelayNode(context) did not throw an exception. 
 PASS   testNode.delayTime.automationRate = 'k-rate' did not throw an exception. 
-FAIL X testMod = new ConstantSourceNode(context) incorrectly threw ReferenceError: "Can't find variable: ConstantSourceNode". assert_true: expected true got false
-FAIL X testMod.offset.setValueAtTime(0, 0) incorrectly threw TypeError: "undefined is not an object (evaluating 'testMod.offset')". assert_true: expected true got false
-FAIL X testMod.offset.linearRampToValueAtTime(1.125, 1) incorrectly threw TypeError: "undefined is not an object (evaluating 'testMod.offset')". assert_true: expected true got false
-FAIL X testMod.connect(testNode.delayTime) incorrectly threw TypeError: "undefined is not an object (evaluating 'testMod.connect')". assert_true: expected true got false
+PASS   testMod = new ConstantSourceNode(context) did not throw an exception. 
+PASS   testMod.offset.setValueAtTime(0, 0) did not throw an exception. 
+PASS   testMod.offset.linearRampToValueAtTime(1.125, 1) did not throw an exception. 
+PASS   testMod.connect(testNode.delayTime) did not throw an exception. 
+PASS   Expected k-rate delayTime AudioParam with input is not constantly 0 (contains 4088 different values). 
+PASS   Actual k-rate delayTime AudioParam with input is not constantly 0 (contains 4088 different values). 
+PASS   output[128, 143] contains only the constant 0. 
+FAIL X output[144, 255] should have contain at least one value different from 0. assert_true: expected true got false
+PASS   k-rate delayTime AudioParam with input equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+FAIL < [delayTime] 1 out of 15 assertions were failed. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

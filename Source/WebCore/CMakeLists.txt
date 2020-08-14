@@ -476,6 +476,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/ChannelMergerOptions.idl
     Modules/webaudio/ChannelSplitterNode.idl
     Modules/webaudio/ChannelSplitterOptions.idl
+    Modules/webaudio/ConstantSourceNode.idl
+    Modules/webaudio/ConstantSourceOptions.idl
     Modules/webaudio/ConvolverNode.idl
     Modules/webaudio/ConvolverOptions.idl
     Modules/webaudio/DelayNode.idl

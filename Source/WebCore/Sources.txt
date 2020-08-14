@@ -213,6 +213,7 @@ Modules/webaudio/BiquadFilterNode.cpp
 Modules/webaudio/BiquadProcessor.cpp
 Modules/webaudio/ChannelMergerNode.cpp
 Modules/webaudio/ChannelSplitterNode.cpp
+Modules/webaudio/ConstantSourceNode.cpp
 Modules/webaudio/ConvolverNode.cpp
 Modules/webaudio/DefaultAudioDestinationNode.cpp
 Modules/webaudio/DelayDSPKernel.cpp
@@ -2734,6 +2735,8 @@ JSCompositeOperation.cpp
 JSCompositeOperationOrAuto.cpp
 JSCompositionEvent.cpp
 JSComputedEffectTiming.cpp
+JSConstantSourceNode.cpp
+JSConstantSourceOptions.cpp
 JSConvolverNode.cpp
 JSConvolverOptions.cpp
 JSCountQueuingStrategy.cpp

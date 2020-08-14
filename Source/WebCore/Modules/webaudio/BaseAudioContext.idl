@@ -64,6 +64,7 @@
     [MayThrowException] ScriptProcessorNode createScriptProcessor(optional unsigned long bufferSize = 0, optional unsigned long numberOfInputChannels = 2, optional unsigned long numberOfOutputChannels = 2);
     [MayThrowException] OscillatorNode createOscillator();
     [MayThrowException] PeriodicWave createPeriodicWave(sequence<float> real, sequence<float> imag, optional PeriodicWaveOptions options);
+    [MayThrowException] ConstantSourceNode createConstantSource();
 
     // Channel splitting and merging
     [MayThrowException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs = 6);

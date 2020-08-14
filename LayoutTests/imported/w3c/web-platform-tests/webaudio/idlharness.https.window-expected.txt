@@ -28,7 +28,7 @@ PASS BaseAudioContext interface: operation createBuffer(unsigned long, unsigned 
 PASS BaseAudioContext interface: operation createBufferSource() 
 PASS BaseAudioContext interface: operation createChannelMerger(optional unsigned long) 
 PASS BaseAudioContext interface: operation createChannelSplitter(optional unsigned long) 
-FAIL BaseAudioContext interface: operation createConstantSource() assert_own_property: interface prototype object missing non-static operation expected property "createConstantSource" missing
+PASS BaseAudioContext interface: operation createConstantSource() 
 PASS BaseAudioContext interface: operation createConvolver() 
 PASS BaseAudioContext interface: operation createDelay(optional double) 
 PASS BaseAudioContext interface: operation createDynamicsCompressor() 
@@ -88,7 +88,7 @@ PASS BaseAudioContext interface: context must inherit property "createChannelMer
 PASS BaseAudioContext interface: calling createChannelMerger(optional unsigned long) on context with too few arguments must throw TypeError 
 PASS BaseAudioContext interface: context must inherit property "createChannelSplitter(optional unsigned long)" with the proper type 
 PASS BaseAudioContext interface: calling createChannelSplitter(optional unsigned long) on context with too few arguments must throw TypeError 
-FAIL BaseAudioContext interface: context must inherit property "createConstantSource()" with the proper type assert_inherits: property "createConstantSource" not found in prototype chain
+PASS BaseAudioContext interface: context must inherit property "createConstantSource()" with the proper type 
 PASS BaseAudioContext interface: context must inherit property "createConvolver()" with the proper type 
 PASS BaseAudioContext interface: context must inherit property "createDelay(optional double)" with the proper type 
 PASS BaseAudioContext interface: calling createDelay(optional double) on context with too few arguments must throw TypeError 
@@ -141,7 +141,7 @@ PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must
 PASS BaseAudioContext interface: calling createChannelMerger(optional unsigned long) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createChannelSplitter(optional unsigned long)" with the proper type 
 PASS BaseAudioContext interface: calling createChannelSplitter(optional unsigned long) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError 
-FAIL BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createConstantSource()" with the proper type assert_inherits: property "createConstantSource" not found in prototype chain
+PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createConstantSource()" with the proper type 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createConvolver()" with the proper type 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createDelay(optional double)" with the proper type 
 PASS BaseAudioContext interface: calling createDelay(optional double) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError 
@@ -562,44 +562,44 @@ PASS AudioNode interface: new ChannelSplitterNode(context) must inherit property
 PASS AudioNode interface: new ChannelSplitterNode(context) must inherit property "channelCount" with the proper type 
 PASS AudioNode interface: new ChannelSplitterNode(context) must inherit property "channelCountMode" with the proper type 
 PASS AudioNode interface: new ChannelSplitterNode(context) must inherit property "channelInterpretation" with the proper type 
-FAIL ConstantSourceNode interface: existence and properties of interface object assert_own_property: self does not have own property "ConstantSourceNode" expected property "ConstantSourceNode" missing
-FAIL ConstantSourceNode interface object length assert_own_property: self does not have own property "ConstantSourceNode" expected property "ConstantSourceNode" missing
-FAIL ConstantSourceNode interface object name assert_own_property: self does not have own property "ConstantSourceNode" expected property "ConstantSourceNode" missing
-FAIL ConstantSourceNode interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ConstantSourceNode" expected property "ConstantSourceNode" missing
-FAIL ConstantSourceNode interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ConstantSourceNode" expected property "ConstantSourceNode" missing
-FAIL ConstantSourceNode interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ConstantSourceNode" expected property "ConstantSourceNode" missing
-FAIL ConstantSourceNode interface: attribute offset assert_own_property: self does not have own property "ConstantSourceNode" expected property "ConstantSourceNode" missing
-FAIL ConstantSourceNode must be primary interface of new ConstantSourceNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL Stringification of new ConstantSourceNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL ConstantSourceNode interface: new ConstantSourceNode(context) must inherit property "offset" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioScheduledSourceNode interface: new ConstantSourceNode(context) must inherit property "onended" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioScheduledSourceNode interface: new ConstantSourceNode(context) must inherit property "start(optional double)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioScheduledSourceNode interface: calling start(optional double) on new ConstantSourceNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioScheduledSourceNode interface: new ConstantSourceNode(context) must inherit property "stop(optional double)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioScheduledSourceNode interface: calling stop(optional double) on new ConstantSourceNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: calling connect(AudioParam, optional unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: calling disconnect(unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(AudioNode)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: calling disconnect(AudioNode) on new ConstantSourceNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(AudioParam)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: calling disconnect(AudioParam) on new ConstantSourceNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: calling disconnect(AudioParam, unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "context" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "numberOfInputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "numberOfOutputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "channelCount" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL AudioNode interface: new ConstantSourceNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: ConstantSourceNode"
+PASS ConstantSourceNode interface: existence and properties of interface object 
+PASS ConstantSourceNode interface object length 
+PASS ConstantSourceNode interface object name 
+PASS ConstantSourceNode interface: existence and properties of interface prototype object 
+PASS ConstantSourceNode interface: existence and properties of interface prototype object's "constructor" property 
+PASS ConstantSourceNode interface: existence and properties of interface prototype object's @@unscopables property 
+PASS ConstantSourceNode interface: attribute offset 
+PASS ConstantSourceNode must be primary interface of new ConstantSourceNode(context) 
+PASS Stringification of new ConstantSourceNode(context) 
+PASS ConstantSourceNode interface: new ConstantSourceNode(context) must inherit property "offset" with the proper type 
+PASS AudioScheduledSourceNode interface: new ConstantSourceNode(context) must inherit property "onended" with the proper type 
+PASS AudioScheduledSourceNode interface: new ConstantSourceNode(context) must inherit property "start(optional double)" with the proper type 
+PASS AudioScheduledSourceNode interface: calling start(optional double) on new ConstantSourceNode(context) with too few arguments must throw TypeError 
+PASS AudioScheduledSourceNode interface: new ConstantSourceNode(context) must inherit property "stop(optional double)" with the proper type 
+PASS AudioScheduledSourceNode interface: calling stop(optional double) on new ConstantSourceNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioParam, optional unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect()" with the proper type 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(AudioNode)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode) on new ConstantSourceNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(AudioParam)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam) on new ConstantSourceNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam, unsigned long) on new ConstantSourceNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "context" with the proper type 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "numberOfInputs" with the proper type 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "numberOfOutputs" with the proper type 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "channelCount" with the proper type 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "channelCountMode" with the proper type 
+PASS AudioNode interface: new ConstantSourceNode(context) must inherit property "channelInterpretation" with the proper type 
 PASS ConvolverNode interface: existence and properties of interface object 
 PASS ConvolverNode interface object length 
 PASS ConvolverNode interface object name 

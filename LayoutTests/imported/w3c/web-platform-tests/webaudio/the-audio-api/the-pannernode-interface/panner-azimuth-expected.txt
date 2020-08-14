@@ -1,7 +1,10 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Azimuth calculation" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+PASS Executing "Azimuth calculation" 
 PASS Audit report 
 PASS > [Azimuth calculation]  
+PASS   Left channel contains only the constant 0.7071067690849304. 
+PASS   Righteft channel contains only the constant 0.7071067690849304. 
+PASS < [Azimuth calculation] All assertions passed. (total 2 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

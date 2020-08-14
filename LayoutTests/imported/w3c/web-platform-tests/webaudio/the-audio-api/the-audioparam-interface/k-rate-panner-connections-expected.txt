@@ -1,17 +1,50 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Panner x" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL Executing "Panner y" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL Executing "Panner z" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL Executing "Listener x" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL Executing "Listener y" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL Executing "Listener z" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "Panner x" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "Panner y" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+FAIL Executing "Panner z" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+PASS Executing "Listener x" 
+PASS Executing "Listener y" 
+PASS Executing "Listener z" 
 PASS Audit report 
 PASS > [Panner x] k-rate input 
 PASS > [Panner y] k-rate input 
 PASS > [Panner z] k-rate input 
 PASS > [Listener x] k-rate input 
+PASS   Listener: positionX: Channel 0 output[0, 127] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionX: Channel 0 output[128, 255] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionX: Channel 0 output[256, 383] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionX: Channel 0 output[384, 511] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionX: Channel 0 output[512, 639] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionX: Channel 1 output[0, 127] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionX: Channel 1 output[128, 255] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionX: Channel 1 output[256, 383] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionX: Channel 1 output[384, 511] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionX: Channel 1 output[512, 639] contains only the constant 0.04175786301493645. 
+PASS < [Listener x] All assertions passed. (total 10 assertions) 
 PASS > [Listener y] k-rate input 
+PASS   Listener: positionY: Channel 0 output[0, 127] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionY: Channel 0 output[128, 255] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionY: Channel 0 output[256, 383] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionY: Channel 0 output[384, 511] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionY: Channel 0 output[512, 639] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionY: Channel 1 output[0, 127] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionY: Channel 1 output[128, 255] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionY: Channel 1 output[256, 383] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionY: Channel 1 output[384, 511] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionY: Channel 1 output[512, 639] contains only the constant 0.04175786301493645. 
+PASS < [Listener y] All assertions passed. (total 10 assertions) 
 PASS > [Listener z] k-rate input 
+PASS   Listener: positionZ: Channel 0 output[0, 127] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionZ: Channel 0 output[128, 255] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionZ: Channel 0 output[256, 383] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionZ: Channel 0 output[384, 511] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionZ: Channel 0 output[512, 639] contains only the constant 0.016349565237760544. 
+PASS   Listener: positionZ: Channel 1 output[0, 127] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionZ: Channel 1 output[128, 255] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionZ: Channel 1 output[256, 383] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionZ: Channel 1 output[384, 511] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionZ: Channel 1 output[512, 639] contains only the constant 0.04175786301493645. 
+PASS < [Listener z] All assertions passed. (total 10 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
 

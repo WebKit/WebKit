@@ -44,6 +44,8 @@
 #include "ChannelMergerOptions.h"
 #include "ChannelSplitterNode.h"
 #include "ChannelSplitterOptions.h"
+#include "ConstantSourceNode.h"
+#include "ConstantSourceOptions.h"
 #include "ConvolverNode.h"
 #include "DefaultAudioDestinationNode.h"
 #include "DelayNode.h"
@@ -608,6 +610,14 @@ ExceptionOr<Ref<PeriodicWave>> BaseAudioContext::createPeriodicWave(Vector<float
     options.imag = WTFMove(imaginary);
     options.disableNormalization = constraints.disableNormalization;
     return PeriodicWave::create(*this, WTFMove(options));
+}
+
+ExceptionOr<Ref<ConstantSourceNode>> BaseAudioContext::createConstantSource()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return ConstantSourceNode::create(*this);
 }
 
 void BaseAudioContext::notifyNodeFinishedProcessing(AudioNode* node)

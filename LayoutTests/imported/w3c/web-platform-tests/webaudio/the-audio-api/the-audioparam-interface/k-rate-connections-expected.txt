@@ -1,9 +1,18 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Gain" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL Executing "StereoPanner" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+PASS Executing "Gain" 
+FAIL Executing "StereoPanner" promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new window[nodeName](context)')"
 PASS Audit report 
 PASS > [Gain] k-rate GainNode.gain 
+PASS   gain[0:128] contains only the constant 2. 
+PASS   gain[128:256] contains only the constant 2. 
+PASS   gain[256:384] contains only the constant 2. 
+PASS   gain[384:512] contains only the constant 2. 
+PASS   gain[512:640] contains only the constant 2. 
+PASS   gain[640:768] contains only the constant 2. 
+PASS   gain[768:896] contains only the constant 2. 
+PASS   gain[896:1024] contains only the constant 2. 
+PASS < [Gain] All assertions passed. (total 8 assertions) 
 PASS > [StereoPanner] k-rate StereoPannerNode.pan 
 PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

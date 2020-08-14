@@ -1,11 +1,82 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "ConstantSource k-rate offset" promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new window[options.nodeName](context, options.nodeOptions)')"
-FAIL Executing "ConstantSourceNode.offset k-rate automation" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL Executing "ConstantSource.offset" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+FAIL Executing "ConstantSource k-rate offset" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+PASS Executing "ConstantSourceNode.offset k-rate automation" 
+PASS Executing "ConstantSource.offset" 
 PASS Audit report 
 PASS > [ConstantSource k-rate offset]  
+PASS   k-rate offset: Setting offset.automationRate to "k-rate" is equal to k-rate. 
+PASS   k-rate offset: k-rate node: offset.setValueAtTime(0,0) did not throw an exception. 
+PASS   k-rate offset: k-rate node: offset.linearRampToValueAtTime(10,0.064) did not throw an exception. 
+PASS   k-rate offset: a-rate node:offset.setValueAtTime(0,0) did not throw an exception. 
+PASS   k-rate offset: a-rate node:offset.linearRampToValueAtTime(10,0.064) did not throw an exception. 
 PASS > [ConstantSourceNode.offset k-rate automation] Explicitly test ConstantSourceNode.offset k-rate automation is k-rate 
+FAIL X k-rate ConstantSource.offset:  output[0:128]: Expected 0 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	1
+	[2]	2
+	[3]	3
+	[4]	4
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate ConstantSource.offset:  output[128:256]: Expected 128 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	129
+	[2]	130
+	[3]	131
+	[4]	132
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate ConstantSource.offset:  output[256:384]: Expected 256 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	257
+	[2]	258
+	[3]	259
+	[4]	260
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate ConstantSource.offset:  output[384:512]: Expected 384 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	385
+	[2]	386
+	[3]	387
+	[4]	388
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate ConstantSource.offset:  output[512:640]: Expected 512 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	513
+	[2]	514
+	[3]	515
+	[4]	516
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate ConstantSource.offset:  output[640:768]: Expected 640 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	641
+	[2]	642
+	[3]	643
+	[4]	644
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate ConstantSource.offset:  output[768:896]: Expected 768 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	769
+	[2]	770
+	[3]	771
+	[4]	772
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate ConstantSource.offset:  output[896:1024]: Expected 896 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	897
+	[2]	898
+	[3]	899
+	[4]	900
+	...and 123 more errors. assert_true: expected true got false
+FAIL < [ConstantSourceNode.offset k-rate automation] 8 out of 8 assertions were failed. assert_true: expected true got false
 PASS > [ConstantSource.offset] Verify k-rate automation matches k-rate input 
-PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
+PASS   ConstantSource.offset k-rate input: output[0:128] contains only the constant 2. 
+PASS   ConstantSource.offset k-rate input: output[128:256] contains only the constant 2. 
+PASS   ConstantSource.offset k-rate input: output[256:384] contains only the constant 2. 
+PASS   ConstantSource.offset k-rate input: output[384:512] contains only the constant 2. 
+PASS   ConstantSource.offset k-rate input: output[512:640] contains only the constant 2. 
+PASS   ConstantSource.offset k-rate input: output[640:768] contains only the constant 2. 
+PASS   ConstantSource.offset k-rate input: output[768:896] contains only the constant 2. 
+PASS   ConstantSource.offset k-rate input: output[896:1024] contains only the constant 2. 
+PASS < [ConstantSource.offset] All assertions passed. (total 8 assertions) 
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 3 tasks were failed. assert_true: expected true got false
 

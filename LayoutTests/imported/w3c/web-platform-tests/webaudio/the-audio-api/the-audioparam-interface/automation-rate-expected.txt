@@ -2,7 +2,7 @@
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "AudioBufferSourceNode" 
 PASS Executing "BiquadFilterNode" 
-FAIL Executing "ConstantSourceNode" promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new window[test.nodeName](context)')"
+PASS Executing "ConstantSourceNode" 
 PASS Executing "DelayNode" 
 PASS Executing "DynamicsCompressorNode" 
 PASS Executing "GainNode" 
@@ -32,6 +32,10 @@ PASS   Set BiquadFilterNode.gain.automationRate to "k-rate" did not throw an exc
 PASS   BiquadFilterNode.gain.automationRate is equal to k-rate. 
 FAIL < [BiquadFilterNode] 4 out of 12 assertions were failed. assert_true: expected true got false
 PASS > [ConstantSourceNode]  
+FAIL X Default ConstantSourceNode.offset.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Set ConstantSourceNode.offset.automationRate to "k-rate" did not throw an exception. 
+PASS   ConstantSourceNode.offset.automationRate is equal to k-rate. 
+FAIL < [ConstantSourceNode] 1 out of 3 assertions were failed. assert_true: expected true got false
 PASS > [DelayNode]  
 FAIL X Default DelayNode.delayTime.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
 PASS   Set DelayNode.delayTime.automationRate to "k-rate" did not throw an exception. 
@@ -112,5 +116,5 @@ FAIL X Default AudioListener.upZ.automationRate is not equal to a-rate. Got unde
 PASS   Set AudioListener.upZ.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.upZ.automationRate is equal to k-rate. 
 FAIL < [AudioListener] 9 out of 27 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 8 out of 10 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 9 out of 10 tasks were failed. assert_true: expected true got false
 

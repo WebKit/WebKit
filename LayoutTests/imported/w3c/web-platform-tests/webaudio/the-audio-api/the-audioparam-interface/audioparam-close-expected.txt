@@ -1,9 +1,23 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "no-nan" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
-FAIL Executing "interpolation" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+PASS Executing "no-nan" 
+PASS Executing "interpolation" 
 PASS Audit report 
 PASS > [no-nan] NaN does not occur 
+PASS   src0 = new ConstantSourceNode(context, {offset: 0}) is equal to ConstantSourceNode. 
+PASS   src0.offset.setValueAtTime(10, 0) is equal to AudioParam. 
+PASS   src0.offset.linearRampToValueAtTime(3.4028234663852886e+38, 1.401298464324817e-45) is equal to AudioParam. 
+FAIL X output[0] is not equal to 10. Got 3.4028234663852886e+38. assert_true: expected true got false
+PASS   output[1] contains only the constant 3.4028234663852886e+38. 
+FAIL < [no-nan] 1 out of 5 assertions were failed. assert_true: expected true got false
 PASS > [interpolation] Interpolation of linear ramp 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+PASS   src1 = new ConstantSourceNode(context, {offset: 0}) is equal to ConstantSourceNode. 
+PASS   src1.offset.setValueAtTime(1000000000000000, 0.000015258789062499998) is equal to AudioParam. 
+PASS   src1.offset.linearRampToValueAtTime(3.4028234663852886e+38, 0.000015258789062500003) is equal to AudioParam. 
+PASS   Event time difference is not equal to 0. 
+PASS   output[0] is equal to 0. 
+FAIL X output[1] is not close to 1.1342744887950962e+38 within a relative error of 0 (RelErr=2). Got 3.4028234663852886e+38. assert_true: expected true got false
+PASS   output[2:] contains only the constant 3.4028234663852886e+38. 
+FAIL < [interpolation] 1 out of 7 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 2 tasks were failed. assert_true: expected true got false
 

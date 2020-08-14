@@ -357,6 +357,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCompositionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCompositionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSComputedEffectTiming.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSComputedEffectTiming.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConstantSourceNode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConstantSourceNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConstantSourceOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConstantSourceOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverOptions.cpp

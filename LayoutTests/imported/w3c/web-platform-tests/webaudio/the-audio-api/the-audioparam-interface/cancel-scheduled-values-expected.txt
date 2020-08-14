@@ -1,7 +1,31 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "cancel1" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ConstantSourceNode"
+PASS Executing "cancel1" 
 PASS Audit report 
 PASS > [cancel1] cancel setValueCurve 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS   cancelTime is after curve start is greater than 0.25. 
+PASS   cancelTime is before curve ends is less than 0.5. 
+PASS   gain.gain.setValueAtTime(0.5, 0) did not throw an exception. 
+PASS   gain.gain.setValueAtTime(1.5, 0.25) did not throw an exception. 
+PASS   gain.gain.setValueCurveAtTime(..., 0.25, 0.25) did not throw an exception. 
+PASS   gain.gain.setValueAtTime(99, 0.5) did not throw an exception. 
+PASS   gain.gain.cancelScheduledValues(0.3) did not throw an exception. 
+FAIL X gain.gain.setValueAtTime(3, 0.375) incorrectly threw NotSupportedError: "Events are overlapping". assert_true: expected true got false
+PASS   output[0:1999] contains only the constant 0.5. 
+FAIL X output[2000:2999]: Expected 1.5 for all values but found 1000 unexpected values: 
+	Index	Actual
+	[0]	1
+	[1]	1
+	[2]	1
+	[3]	1
+	...and 996 more errors. assert_true: expected true got false
+FAIL X output[3000:]: Expected 3 for all values but found 5000 unexpected values: 
+	Index	Actual
+	[0]	-1
+	[1]	-1
+	[2]	-1
+	[3]	-1
+	...and 4996 more errors. assert_true: expected true got false
+FAIL < [cancel1] 3 out of 11 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 
