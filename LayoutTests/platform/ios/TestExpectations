@@ -3501,3 +3501,6 @@ animations/suspend-resume-animation-events.html [ Pass Failure ]
 
 # <rdar://problem/63399079> [ iOS Debug ] imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm is a flaky failure
 imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm [ Pass Failure ]
+
+webkit.org/b/215515 imported/w3c/web-platform-tests/user-timing/measure_navigation_timing.html [ Pass Failure ]
+
