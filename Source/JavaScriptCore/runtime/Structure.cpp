@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Alexey Shvayka <shvaikalesh@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -444,6 +445,7 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
             table->addDeletedOffset(structure->transitionOffset());
             continue;
         }
+        ASSERT(structure->isPropertyAdditionTransition());
         PropertyMapEntry entry(structure->m_transitionPropertyName.get(), structure->transitionOffset(), structure->transitionPropertyAttributes());
         auto nextOffset = table->nextOffset(structure->inlineCapacity());
         ASSERT_UNUSED(nextOffset, nextOffset == structure->transitionOffset());
@@ -643,11 +645,7 @@ Structure* Structure::removeNewPropertyTransition(VM& vm, Structure* structure, 
     ASSERT(!Structure::removePropertyTransitionFromExistingStructure(structure, propertyName, offset));
     ASSERT(structure->getConcurrently(propertyName.uid()) != invalidOffset);
 
-    int transitionCount = 0;
-    for (auto* s = structure; s && transitionCount <= s_maxTransitionLength; s = s->previousID())
-        ++transitionCount;
-
-    if (transitionCount > s_maxTransitionLength) {
+    if (structure->transitionCountHasOverflowed()) {
         ASSERT(!isCopyOnWrite(structure->indexingMode()));
         Structure* transition = toUncacheableDictionaryTransition(vm, structure, deferred);
         ASSERT(structure != transition);
@@ -706,30 +704,79 @@ Structure* Structure::changePrototypeTransition(VM& vm, Structure* structure, JS
     return transition;
 }
 
-Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes)
+Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes, DeferredStructureTransitionWatchpointFire* deferred)
 {
-    if (!structure->isUncacheableDictionary()) {
-        Structure* transition = create(vm, structure);
+    auto setEntryAttributes = [&](Structure* structure) {
+        PropertyMapEntry* entry = structure->ensurePropertyTable(vm)->get(propertyName.uid());
+        ASSERT(entry);
+        entry->attributes = attributes;
+    };
 
-        PropertyTable* table = structure->copyPropertyTableForPinning(vm);
-        transition->pin(holdLock(transition->m_lock), vm, table);
-        transition->setMaxOffset(vm, structure->maxOffset());
-        
-        structure = transition;
+    auto setStructureFlags = [&](Structure* structure) {
+        if (attributes & PropertyAttribute::ReadOnly)
+            structure->setContainsReadOnlyProperties();
+        if (attributes & PropertyAttribute::DontEnum)
+            structure->setIsQuickPropertyAccessAllowedForEnumeration(false);
+    };
+
+    if (structure->isUncacheableDictionary()) {
+        setEntryAttributes(structure);
+        setStructureFlags(structure);
+        structure->checkOffsetConsistency();
+        return structure;
     }
 
-    PropertyMapEntry* entry = structure->ensurePropertyTable(vm)->get(propertyName.uid());
+    if (!structure->isDictionary()) {
+        if (Structure* existingTransition = structure->m_transitionTable.get(propertyName.uid(), attributes, TransitionKind::PropertyAttributeChange)) {
+            validateOffset(existingTransition->transitionOffset(), existingTransition->inlineCapacity());
+            existingTransition->checkOffsetConsistency();
+            return existingTransition;
+        }
+
+        if (structure->transitionCountHasOverflowed()) {
+            ASSERT(!isCopyOnWrite(structure->indexingMode()));
+            Structure* transition = toUncacheableDictionaryTransition(vm, structure, deferred);
+            ASSERT(structure != transition);
+            setEntryAttributes(transition);
+            setStructureFlags(transition);
+            return transition;
+        }
+    }
+
+    Structure* transition = create(vm, structure);
+
+    {
+        ConcurrentJSLocker locker(transition->m_lock);
+        transition->setProtectPropertyTableWhileTransitioning(true);
+    }
+
+    PropertyTable* table = structure->copyPropertyTableForPinning(vm);
+    if (structure->isDictionary())
+        transition->pin(holdLock(transition->m_lock), vm, table);
+    else
+        transition->pinForCaching(holdLock(transition->m_lock), vm, table);
+    transition->m_transitionPropertyName = propertyName.uid();
+    transition->setTransitionPropertyAttributes(attributes);
+    transition->setTransitionKind(TransitionKind::PropertyAttributeChange);
+    transition->setMaxOffset(vm, structure->maxOffset());
+
+    PropertyMapEntry* entry = table->get(propertyName.uid());
     ASSERT(entry);
     entry->attributes = attributes;
+    transition->setTransitionOffset(vm, entry->offset);
+    setStructureFlags(transition);
 
-    if (attributes & PropertyAttribute::ReadOnly)
-        structure->setContainsReadOnlyProperties();
+    WTF::storeStoreFence();
+    transition->setProtectPropertyTableWhileTransitioning(false);
 
-    if (attributes & PropertyAttribute::DontEnum)
-        structure->setIsQuickPropertyAccessAllowedForEnumeration(false);
-
+    checkOffset(transition->transitionOffset(), transition->inlineCapacity());
+    if (!structure->isDictionary()) {
+        GCSafeConcurrentJSLocker locker(structure->m_lock, vm.heap);
+        structure->m_transitionTable.add(vm, transition);
+    }
+    transition->checkOffsetConsistency();
     structure->checkOffsetConsistency();
-    return structure;
+    return transition;
 }
 
 Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, DictionaryKind kind, DeferredStructureTransitionWatchpointFire* deferred)

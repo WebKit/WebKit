@@ -1726,8 +1726,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
 
 bool Graph::getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* regExpPrototypeStructure, UniquedStringImpl* uid, JSValue& returnJSValue)
 {
-    unsigned attributesUnused;
-    PropertyOffset offset = regExpPrototypeStructure->getConcurrently(uid, attributesUnused);
+    PropertyOffset offset = regExpPrototypeStructure->getConcurrently(uid);
     if (!isValidOffset(offset))
         return false;
 

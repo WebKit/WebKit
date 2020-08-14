@@ -1,5 +1,34 @@
 2020-08-13  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Cache Structure::attributeChangeTransition()
+        https://bugs.webkit.org/show_bug.cgi?id=214890
+
+        Reviewed by Yusuke Suzuki.
+
+        With this change, a non-dictionary structure adds attribute-change transitions
+        to transition table, making redefinition to previous atttributes a fast path.
+
+        After too many transitions, the structure becomes a dictionary, firing the
+        transition watchpoint. Attribute-change transitions pin their property tables,
+        preventing forEachPropertyConcurrently() traversal.
+
+        This patch advances provided microbenchmark by ~90% and progresses
+        Speedometer2/EmberJS-Debug-TodoMVC by ~12% (~5% over r264573).
+
+        No behavior change.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::getRegExpPrototypeProperty):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectInternal):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyTable):
+        (JSC::Structure::removeNewPropertyTransition):
+        (JSC::Structure::attributeChangeTransition):
+        * runtime/Structure.h:
+
+2020-08-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Rework StructureTransitionTable::Hash::Key encoding
         https://bugs.webkit.org/show_bug.cgi?id=215483
 

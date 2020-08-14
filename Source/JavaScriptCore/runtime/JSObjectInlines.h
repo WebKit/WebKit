@@ -364,6 +364,10 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         return true;
     }
 
+    // We want the structure transition watchpoint to fire after this object has switched structure.
+    // This allows adaptive watchpoints to observe if the new structure is the one we want.
+    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
+
     unsigned currentAttributes;
     offset = structure->get(vm, propertyName, currentAttributes);
     if (offset != invalidOffset) {
@@ -376,7 +380,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
         // https://bugs.webkit.org/show_bug.cgi?id=214342
         if (mode == PutModeDefineOwnProperty && (attributes != currentAttributes || (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue)))
-            setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
+            setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes, &deferredWatchpointFire));
         else
             slot.setExistingProperty(this, offset);
 
@@ -385,11 +389,6 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
 
     if ((mode == PutModePut) && !isStructureExtensible(vm))
         return false;
-
-    // We want the structure transition watchpoint to fire after this object has switched
-    // structure. This allows adaptive watchpoints to observe if the new structure is the one
-    // we want.
-    DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
     
     newStructure = Structure::addNewPropertyTransition(
         vm, structure, propertyName, attributes, offset, slot.context(), &deferredWatchpointFire);

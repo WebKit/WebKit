@@ -1,3 +1,12 @@
+2020-08-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Cache Structure::attributeChangeTransition()
+        https://bugs.webkit.org/show_bug.cgi?id=214890
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/redefine-property-previous-attributes.js: Added.
+
 2020-08-12  Saam Barati  <sbarati@apple.com>
 
         Inline cache Replace and Setters on PureForwardingProxy
