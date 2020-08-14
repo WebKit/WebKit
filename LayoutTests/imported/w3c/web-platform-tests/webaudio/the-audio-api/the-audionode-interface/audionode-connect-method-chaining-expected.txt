@@ -55,13 +55,7 @@ PASS   Connecting with an invalid output threw IndexSizeError: "The index is not
 PASS   Connecting to a node from the different context threw SyntaxError: "The string did not match the expected pattern.". 
 PASS < [invalid-operation] All assertions passed. (total 2 assertions) 
 PASS > [verification]  
-FAIL X The output of chained connection of gain nodes: Expected 0.125 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	0
-	[1]	0
-	[2]	0
-	[3]	0
-	...and 124 more errors. assert_true: expected true got false
-FAIL < [verification] 1 out of 1 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 4 tasks were failed. assert_true: expected true got false
+PASS   The output of chained connection of gain nodes contains only the constant 0.125. 
+PASS < [verification] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 4 tasks ran successfully. 
 

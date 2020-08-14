@@ -5,15 +5,9 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "silent-disconnect" 
 PASS Audit report 
 PASS > [silent-disconnect]  
-FAIL X Channel #0: Expected 1 for all values but found 22050 unexpected values: 
-	Index	Actual
-	[0]	0
-	[1]	0
-	[2]	0
-	[3]	0
-	...and 22046 more errors. assert_true: expected true got false
-FAIL X Channel #1 expected to have the value sequence of [1,0] but got 1 values, [0], instead of 2. assert_true: expected true got false
-FAIL X The index of first zero in the channel #1 is not equal to 11136. Got 1. assert_true: expected true got false
-FAIL < [silent-disconnect] 3 out of 3 assertions were failed. assert_true: expected true got false
+PASS   Channel #0 contains only the constant 1. 
+FAIL X Channel #1 expected to have the value sequence of [1,0] but got 1 values, [1], instead of 2. assert_true: expected true got false
+FAIL X The index of first zero in the channel #1 is not equal to 11136. Got -1. assert_true: expected true got false
+FAIL < [silent-disconnect] 2 out of 3 assertions were failed. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

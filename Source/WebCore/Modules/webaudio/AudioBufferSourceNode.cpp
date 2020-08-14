@@ -245,9 +245,8 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         virtualDeltaFrames = virtualMaxFrame - virtualMinFrame;
     }
 
-
     // Sanity check that our playback rate isn't larger than the loop size.
-    if (fabs(pitchRate) >= virtualDeltaFrames)
+    if (std::abs(pitchRate) > virtualDeltaFrames)
         return false;
 
     // Get local copy.

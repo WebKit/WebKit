@@ -3,13 +3,7 @@ PASS # AUDIT TASK RUNNER STARTED.
 PASS Executing "one-sample-loop" 
 PASS Audit report 
 PASS > [one-sample-loop]  
-FAIL X Rendered data: Expected 1 for all values but found 1000 unexpected values: 
-	Index	Actual
-	[0]	0
-	[1]	0
-	[2]	0
-	[3]	0
-	...and 996 more errors. assert_true: expected true got false
-FAIL < [one-sample-loop] 1 out of 1 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
+PASS   Rendered data contains only the constant 1. 
+PASS < [one-sample-loop] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
 

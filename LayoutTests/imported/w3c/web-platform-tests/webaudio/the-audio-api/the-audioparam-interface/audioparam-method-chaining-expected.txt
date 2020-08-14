@@ -19,18 +19,7 @@ PASS   The gain value of the first gain node is equal to 1.
 PASS   The gain value of the second gain node is equal to 0.5. 
 PASS < [invalid-operation] All assertions passed. (total 4 assertions) 
 PASS > [verification]  
-FAIL X The rendered envelope does not equal [0,0.000125,0.00025,0.000375,0.0005,0.000625,0.00075,0.000875,0.001,0.001125,0.00125,0.001375,0.0015,0.001625,0.00175,0.001875...] with an element-wise tolerance of {"absoluteThreshold":0.0000040532,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[1]	0.0000000000000000e+0	1.2500000000000000e-4	1.2500000000000000e-4	1.0000000000000000e+0	4.0531999999999996e-6
-	[2]	0.0000000000000000e+0	2.5000000000000001e-4	2.5000000000000001e-4	1.0000000000000000e+0	4.0531999999999996e-6
-	[3]	0.0000000000000000e+0	3.7500000000000001e-4	3.7500000000000001e-4	1.0000000000000000e+0	4.0531999999999996e-6
-	[4]	0.0000000000000000e+0	5.0000000000000001e-4	5.0000000000000001e-4	1.0000000000000000e+0	4.0531999999999996e-6
-	[5]	0.0000000000000000e+0	6.2500000000000001e-4	6.2500000000000001e-4	1.0000000000000000e+0	4.0531999999999996e-6
-	...and 31994 more errors.
-	Max AbsError of 1.0000000000000000e+0 at index of 8000.
-	[8000]	0.0000000000000000e+0	1.0000000000000000e+0	1.0000000000000000e+0	1.0000000000000000e+0	4.0531999999999996e-6
-	Max RelError of 1.0000000000000000e+0 at index of 1.
- assert_true: expected true got false
-FAIL < [verification] 1 out of 1 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 3 tasks were failed. assert_true: expected true got false
+PASS   The rendered envelope equals [0,0.000125,0.00025,0.000375,0.0005,0.000625,0.00075,0.000875,0.001,0.001125,0.00125,0.001375,0.0015,0.001625,0.00175,0.001875...] with an element-wise tolerance of {"absoluteThreshold":0.0000040532,"relativeThreshold":0}. 
+PASS < [verification] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
 
