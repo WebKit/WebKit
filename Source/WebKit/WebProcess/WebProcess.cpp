@@ -294,10 +294,6 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 {
     AuxiliaryProcess::initializeConnection(connection);
 
-#if PLATFORM(COCOA)
-    handleXPCEndpointMessages();
-#endif
-
     // We call _exit() directly from the background queue in case the main thread is unresponsive
     // and AuxiliaryProcess::didClose() does not get called.
     connection->setDidCloseOnConnectionWorkQueueCallback(callExit);

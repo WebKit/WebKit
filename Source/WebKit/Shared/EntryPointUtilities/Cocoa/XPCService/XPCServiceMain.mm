@@ -25,6 +25,7 @@
 
 #import "config.h"
 
+#import "HandleXPCEndpointMessages.h"
 #import "WKCrashReporter.h"
 #import "XPCServiceEntryPoint.h"
 #import <CoreFoundation/CoreFoundation.h>
@@ -41,7 +42,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
 {
     static xpc_object_t priorityBoostMessage = nullptr;
 
-    xpc_connection_set_target_queue(peer, dispatch_get_main_queue());
+    xpc_connection_set_target_queue(peer, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
         xpc_type_t type = xpc_get_type(event);
         if (type == XPC_TYPE_ERROR) {
@@ -87,7 +88,10 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 if (fd != -1)
                     dup2(fd, STDERR_FILENO);
 
-                initializerFunctionPtr(peer, event, priorityBoostMessage);
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    initializerFunctionPtr(peer, event, priorityBoostMessage);
+                });
+
                 if (priorityBoostMessage)
                     xpc_release(priorityBoostMessage);
             }
@@ -97,6 +101,8 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 assert(!priorityBoostMessage);
                 priorityBoostMessage = xpc_retain(event);
             }
+
+            handleXPCEndpointMessages(event);
         }
     });
 

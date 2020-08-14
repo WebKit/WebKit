@@ -26,8 +26,6 @@
 #import "config.h"
 #import "WebProcess.h"
 
-#import "LaunchServicesDatabaseManager.h"
-#import "LaunchServicesDatabaseXPCConstants.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
 #import "Logging.h"
@@ -49,7 +47,6 @@
 #import "WebProcessProxyMessages.h"
 #import "WebSleepDisablerClient.h"
 #import "WebsiteDataStoreParameters.h"
-#import "XPCEndpoint.h"
 #import <JavaScriptCore/ConfigFile.h>
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AVAssetMIMETypeCache.h>
@@ -166,41 +163,6 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
     return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
 }
 #endif
-
-void WebProcess::handleXPCEndpointMessages() const
-{
-    if (!parentProcessConnection())
-        return;
-
-    auto connection = parentProcessConnection()->xpcConnection();
-
-    if (!connection)
-        return;
-
-    RELEASE_ASSERT(xpc_get_type(connection) == XPC_TYPE_CONNECTION);
-
-    xpc_connection_suspend(connection);
-
-    xpc_connection_set_target_queue(connection, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
-    xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
-        if (xpc_get_type(event) != XPC_TYPE_DICTIONARY)
-            return;
-
-        String messageName = xpc_dictionary_get_string(event, XPCEndpoint::xpcMessageNameKey);
-        if (messageName.isEmpty())
-            return;
-
-#if HAVE(LSDATABASECONTEXT)
-        if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
-            auto endpoint = xpc_dictionary_get_value(event, LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointNameKey);
-            LaunchServicesDatabaseManager::singleton().setEndpoint(endpoint);
-            return;
-        }
-#endif
-    });
-
-    xpc_connection_resume(connection);
-}
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {

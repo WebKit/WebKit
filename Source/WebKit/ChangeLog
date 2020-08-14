@@ -1,3 +1,38 @@
+2020-08-14  Per Arne Vollan  <pvollan@apple.com>
+
+        [Cocoa] Avoid changing XPC target queue inside XPC event handler
+        https://bugs.webkit.org/show_bug.cgi?id=215460
+
+        Reviewed by Darin Adler.
+
+        In WebProcess::handleXPCEndpointMessages we currently change the XPC target queue for the XPC bootstrap connection while
+        under the XPC event handler. This sometimes causes simulated crashes on iOS and should be avoided. According to the
+        documentation in https://developer.apple.com/documentation/xpc/1448786-xpc_connection_set_target_queue?language=objc,
+        there does not seem to be anything saying this is a programming error, but the simulated crash claims otherwise. This
+        patch addresses this issue by changing the initial target queue for the XPC bootstrap connection from the main thread
+        queue to a queue on a secondary thread. The WebKit initializer function needs to be called on the main thread, which
+        is done by synchronously dispatching the call on the main thread. This patch also stops changing the event handler for
+        the bootstrap connection, but instead adds the additional XPC handling to the current event handler.
+
+        No new tests, since this is covered by existing tests. The handling of the Launch Services XPC endpoint message that
+        this patch changes, is used to receive the Launch Services database from the Networking process. The Launch Services
+        database is used in MIME type mapping APIs, and many tests would fail if this database was not received in the
+        WebContent process.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/HandleXPCEndpointMessages.h: Added.
+        * WebProcess/cocoa/HandleXPCEndpointMessages.mm: Added.
+        (WebKit::handleXPCEndpointMessages):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::handleXPCEndpointMessages const): Deleted.
+
 2020-08-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Convert SharedMemory::Handle to SharedMemory::IPCHandle WebPage image/pasteboard functions
