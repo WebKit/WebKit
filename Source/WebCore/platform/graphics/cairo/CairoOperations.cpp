@@ -286,7 +286,9 @@ static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFon
 
     // The scaled font defaults to FontSmoothingMode::AutoSmoothing. Only override antialiasing settings if its not auto.
     if (fontSmoothingMode != FontSmoothingMode::AutoSmoothing) {
-        CairoUniquePtr<cairo_font_options_t> fontOptionsSmoothing(cairo_font_options_copy(getDefaultCairoFontOptions()));
+        CairoUniquePtr<cairo_font_options_t> fontOptionsSmoothing(cairo_font_options_create());
+        cairo_scaled_font_get_font_options(scaledFont, fontOptionsSmoothing.get());
+
         switch (fontSmoothingMode) {
         case FontSmoothingMode::Antialiased:
             // Don't use CAIRO_ANTIALIAS_GRAY in Windows. It is mapped to ANTIALIASED_QUALITY which looks jaggy and faint.
