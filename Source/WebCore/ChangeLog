@@ -1,3 +1,20 @@
+2020-08-14  Andres Gonzalez  <andresg_22@apple.com>
+
+        Crash in WebCore::AXObjectCache::rangeMatchesTextNearRange.
+        https://bugs.webkit.org/show_bug.cgi?id=215521
+        <rdar://problem/64773177>
+
+        Reviewed by Chris Fleizach.
+
+        The test accessibility/ios-simulator/text-marker-range-matches-text.html
+        exercises this code path, but doesn't reproduce this crash.
+
+        Added a check for nullity of the VisiblePositions before creating the
+        SimpleRange.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::rangeMatchesTextNearRange):
+
 2020-08-14  Chris Dumez  <cdumez@apple.com>
 
         Add support for suspending / resuming an OfflineAudioContext
