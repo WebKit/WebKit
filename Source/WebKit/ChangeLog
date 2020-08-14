@@ -1,3 +1,16 @@
+2020-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not accept drag operations when the matched target list is empty
+        https://bugs.webkit.org/show_bug.cgi?id=215372
+
+        Reviewed by Adrian Perez de Castro.
+
+        Do not initialize m_selectionData if we don't have valid targets.
+
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        (WebKit::DropTarget::accept):
+        (WebKit::DropTarget::leaveTimerFired):
+
 2020-08-13  Brady Eidson  <beidson@apple.com>
 
         (WK2 only) gamepad mapping stops being reported as “standard” in new tabs.
