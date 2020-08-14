@@ -29,6 +29,10 @@
 
 #include "WebGLSharedObject.h"
 
+namespace WTF {
+class AbstractLocker;
+}
+
 namespace WebCore {
 
 class WebGLQuery final : public WebGLSharedObject {
@@ -45,7 +49,7 @@ public:
 
 private:
     explicit WebGLQuery(WebGLRenderingContextBase&);
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
     bool m_isResultAvailable { false };
     GCGLenum m_target { 0 };

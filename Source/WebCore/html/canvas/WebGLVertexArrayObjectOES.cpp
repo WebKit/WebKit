@@ -53,10 +53,13 @@ WebGLVertexArrayObjectOES::WebGLVertexArrayObjectOES(WebGLRenderingContextBase& 
 
 WebGLVertexArrayObjectOES::~WebGLVertexArrayObjectOES()
 {
-    deleteObject(nullptr);
+    if (!context())
+        return;
+
+    runDestructor();
 }
 
-void WebGLVertexArrayObjectOES::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLVertexArrayObjectOES::deleteObjectImpl(const WTF::AbstractLocker& locker, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     switch (m_type) {
     case Type::Default:
@@ -67,11 +70,11 @@ void WebGLVertexArrayObjectOES::deleteObjectImpl(GraphicsContextGLOpenGL* contex
     }
 
     if (m_boundElementArrayBuffer)
-        m_boundElementArrayBuffer->onDetached(context3d);
+        m_boundElementArrayBuffer->onDetached(locker, context3d);
 
     for (auto& state : m_vertexAttribState) {
         if (state.bufferBinding)
-            state.bufferBinding->onDetached(context3d);
+            state.bufferBinding->onDetached(locker, context3d);
     }
 }
 }

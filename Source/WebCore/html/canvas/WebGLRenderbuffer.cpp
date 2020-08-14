@@ -31,6 +31,8 @@
 
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 
 namespace WebCore {
 
@@ -41,7 +43,10 @@ Ref<WebGLRenderbuffer> WebGLRenderbuffer::create(WebGLRenderingContextBase& ctx)
 
 WebGLRenderbuffer::~WebGLRenderbuffer()
 {
-    deleteObject(0);
+    if (!hasGroupOrContext())
+        return;
+
+    runDestructor();
 }
 
 WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase& ctx)
@@ -56,7 +61,7 @@ WebGLRenderbuffer::WebGLRenderbuffer(WebGLRenderingContextBase& ctx)
     setObject(ctx.graphicsContextGL()->createRenderbuffer());
 }
 
-void WebGLRenderbuffer::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLRenderbuffer::deleteObjectImpl(const AbstractLocker&, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     context3d->deleteRenderbuffer(object);
 }

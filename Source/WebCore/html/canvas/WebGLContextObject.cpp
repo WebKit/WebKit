@@ -29,6 +29,7 @@
 #if ENABLE(WEBGL)
 
 #include "WebGLRenderingContextBase.h"
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -43,14 +44,21 @@ WebGLContextObject::~WebGLContextObject()
         m_context->removeContextObject(*this);
 }
 
-void WebGLContextObject::detachContext()
+void WebGLContextObject::detachContext(const AbstractLocker& locker)
 {
     detach();
     if (m_context) {
-        deleteObject(m_context->graphicsContextGL());
+        deleteObject(locker, m_context->graphicsContextGL());
         m_context->removeContextObject(*this);
         m_context = nullptr;
     }
+}
+
+WTF::Lock& WebGLContextObject::objectGraphLockForContext()
+{
+    // Should not call this if the object or context has been deleted.
+    ASSERT(m_context);
+    return m_context->objectGraphLock();
 }
 
 GraphicsContextGLOpenGL* WebGLContextObject::getAGraphicsContextGL() const

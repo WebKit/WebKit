@@ -67,7 +67,7 @@ public:
 private:
     WebGLBuffer(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
     GCGLenum m_target { 0 };
 

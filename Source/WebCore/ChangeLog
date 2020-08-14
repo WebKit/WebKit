@@ -1,3 +1,188 @@
+2020-08-14  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] expando-loss and expando-loss-2 conformance tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=214765
+
+        Reviewed by Yusuke Suzuki.
+
+        Re-land with locking fixes ysuzuki@ pointed out as necessary, and
+        advised heavily on.
+
+        Use JSWebGLRenderingContext's and JSWebGL2RenderingContext's
+        existing visitAdditionalChildren hook, via JSCustomMarkFunction in
+        their IDL, to add opaque roots for all WebGLObjects latched in to
+        the context state, and all WebGLObjects they refer to. Extensions
+        were already previously handled.
+
+        In order to support JSC's concurrent marking, grab a
+        per-WebGL-context lock in visitAdditionalChildren, and in all
+        WebGL context- and object-related methods which modify compound
+        data structures like HashMaps and Vectors that are traversed by
+        visitAdditionalChildren and its callees. Add "const
+        AbstractLocker&" throughout WebGL's call hierarchy to guarantee
+        that this lock is held where needed. Add needed exception in
+        WebGLObjects' destructors to avoid recursive locking, and in
+        WebGLContextGroup destruction to avoid mutating objects that GC
+        might be traversing when a lock is no longer available on the
+        application's thread.
+
+        Add "GenerateIsReachable=Impl" to the IDL files of needed WebGL
+        objects (WebGLBuffer, WebGLTexture, etc.) so that they pay
+        attention to the opaque root state when determining liveness of
+        their JavaScript wrappers. Add a FIXME to objectGraphLock in
+        WebGLRenderingContextBase to consider rewriting this in a
+        lock-free manner.
+
+        Covered by existing WebGL conformance tests.
+
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp:
+        (WebCore::JSWebGL2RenderingContext::visitAdditionalChildren):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::JSWebGLRenderingContext::visitAdditionalChildren):
+        * html/canvas/OESVertexArrayObject.cpp:
+        (WebCore::OESVertexArrayObject::deleteVertexArrayOES):
+        (WebCore::OESVertexArrayObject::bindVertexArrayOES):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::validateAndCacheBufferBinding):
+        (WebCore::WebGL2RenderingContext::bindFramebuffer):
+        (WebCore::WebGL2RenderingContext::deleteFramebuffer):
+        (WebCore::WebGL2RenderingContext::deleteQuery):
+        (WebCore::WebGL2RenderingContext::beginQuery):
+        (WebCore::WebGL2RenderingContext::endQuery):
+        (WebCore::WebGL2RenderingContext::deleteSampler):
+        (WebCore::WebGL2RenderingContext::bindSampler):
+        (WebCore::WebGL2RenderingContext::deleteSync):
+        (WebCore::WebGL2RenderingContext::deleteTransformFeedback):
+        (WebCore::WebGL2RenderingContext::bindTransformFeedback):
+        (WebCore::WebGL2RenderingContext::beginTransformFeedback):
+        (WebCore::WebGL2RenderingContext::setIndexedBufferBinding):
+        (WebCore::WebGL2RenderingContext::deleteVertexArray):
+        (WebCore::WebGL2RenderingContext::bindVertexArray):
+        (WebCore::WebGL2RenderingContext::addMembersToOpaqueRoots):
+        (WebCore::WebGL2RenderingContext::uncacheDeletedBuffer):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::~WebGLBuffer):
+        (WebCore::WebGLBuffer::deleteObjectImpl):
+        * html/canvas/WebGLBuffer.h:
+        * html/canvas/WebGLBuffer.idl:
+        * html/canvas/WebGLContextGroup.cpp:
+        (WebCore::WebGLContextGroup::hasAContext const):
+        (WebCore::WebGLContextGroup::objectGraphLockForAContext):
+        (WebCore::WebGLContextGroup::detachAndRemoveAllObjects):
+        * html/canvas/WebGLContextGroup.h:
+        * html/canvas/WebGLContextObject.cpp:
+        (WebCore::WebGLContextObject::detachContext):
+        (WebCore::WebGLContextObject::objectGraphLockForContext):
+        * html/canvas/WebGLContextObject.h:
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::~WebGLFramebuffer):
+        (WebCore::WebGLFramebuffer::removeAttachmentFromBoundFramebuffer):
+        (WebCore::WebGLFramebuffer::deleteObjectImpl):
+        (WebCore::WebGLFramebuffer::initializeAttachments):
+        (WebCore::WebGLFramebuffer::addMembersToOpaqueRoots):
+        (WebCore::WebGLFramebuffer::setAttachmentInternal):
+        (WebCore::WebGLFramebuffer::removeAttachmentInternal):
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLFramebuffer.idl:
+        * html/canvas/WebGLObject.cpp:
+        (WebCore::WebGLObject::runDestructor):
+        (WebCore::WebGLObject::deleteObject):
+        * html/canvas/WebGLObject.h:
+        * html/canvas/WebGLProgram.cpp:
+        (WebCore::WebGLProgram::~WebGLProgram):
+        (WebCore::WebGLProgram::deleteObjectImpl):
+        (WebCore::WebGLProgram::attachShader):
+        (WebCore::WebGLProgram::detachShader):
+        (WebCore::WebGLProgram::addMembersToOpaqueRoots):
+        * html/canvas/WebGLProgram.h:
+        * html/canvas/WebGLProgram.idl:
+        * html/canvas/WebGLQuery.cpp:
+        (WebCore::WebGLQuery::~WebGLQuery):
+        (WebCore::WebGLQuery::deleteObjectImpl):
+        * html/canvas/WebGLQuery.h:
+        * html/canvas/WebGLQuery.idl:
+        * html/canvas/WebGLRenderbuffer.cpp:
+        (WebCore::WebGLRenderbuffer::~WebGLRenderbuffer):
+        (WebCore::WebGLRenderbuffer::deleteObjectImpl):
+        * html/canvas/WebGLRenderbuffer.h:
+        * html/canvas/WebGLRenderbuffer.idl:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::attachShader):
+        (WebCore::WebGLRenderingContextBase::validateAndCacheBufferBinding):
+        (WebCore::WebGLRenderingContextBase::bindBuffer):
+        (WebCore::WebGLRenderingContextBase::bindFramebuffer):
+        (WebCore::WebGLRenderingContextBase::bindRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::bindTexture):
+        (WebCore::WebGLRenderingContextBase::deleteObject):
+        (WebCore::WebGLRenderingContextBase::uncacheDeletedBuffer):
+        (WebCore::WebGLRenderingContextBase::setBoundVertexArrayObject):
+        (WebCore::WebGLRenderingContextBase::deleteBuffer):
+        (WebCore::WebGLRenderingContextBase::deleteFramebuffer):
+        (WebCore::WebGLRenderingContextBase::deleteProgram):
+        (WebCore::WebGLRenderingContextBase::deleteRenderbuffer):
+        (WebCore::WebGLRenderingContextBase::deleteShader):
+        (WebCore::WebGLRenderingContextBase::deleteTexture):
+        (WebCore::WebGLRenderingContextBase::detachShader):
+        (WebCore::WebGLRenderingContextBase::useProgram):
+        (WebCore::WebGLRenderingContextBase::vertexAttribPointer):
+        (WebCore::WebGLRenderingContextBase::detachAndRemoveAllObjects):
+        (WebCore::WebGLRenderingContextBase::setFramebuffer):
+        (WebCore::WebGLRenderingContextBase::addMembersToOpaqueRoots):
+        (WebCore::WebGLRenderingContextBase::objectGraphLock):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::setBoundVertexArrayObject): Deleted.
+        * html/canvas/WebGLSampler.cpp:
+        (WebCore::WebGLSampler::~WebGLSampler):
+        (WebCore::WebGLSampler::deleteObjectImpl):
+        * html/canvas/WebGLSampler.h:
+        * html/canvas/WebGLSampler.idl:
+        * html/canvas/WebGLShader.cpp:
+        (WebCore::WebGLShader::~WebGLShader):
+        (WebCore::WebGLShader::deleteObjectImpl):
+        * html/canvas/WebGLShader.h:
+        * html/canvas/WebGLShader.idl:
+        * html/canvas/WebGLSharedObject.cpp:
+        (WebCore::WebGLSharedObject::detachContextGroup):
+        (WebCore::WebGLSharedObject::detachContextGroupWithoutDeletingObject):
+        (WebCore::WebGLSharedObject::hasGroupOrContext const):
+        (WebCore::WebGLSharedObject::objectGraphLockForContext):
+        * html/canvas/WebGLSharedObject.h:
+        * html/canvas/WebGLSync.cpp:
+        (WebCore::WebGLSync::~WebGLSync):
+        (WebCore::WebGLSync::deleteObjectImpl):
+        * html/canvas/WebGLSync.h:
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::~WebGLTexture):
+        (WebCore::WebGLTexture::deleteObjectImpl):
+        * html/canvas/WebGLTexture.h:
+        * html/canvas/WebGLTexture.idl:
+        * html/canvas/WebGLTransformFeedback.cpp:
+        (WebCore::WebGLTransformFeedback::~WebGLTransformFeedback):
+        (WebCore::WebGLTransformFeedback::deleteObjectImpl):
+        (WebCore::WebGLTransformFeedback::setProgram):
+        (WebCore::WebGLTransformFeedback::setBoundIndexedTransformFeedbackBuffer):
+        (WebCore::WebGLTransformFeedback::addMembersToOpaqueRoots):
+        (WebCore::WebGLTransformFeedback::unbindBuffer):
+        * html/canvas/WebGLTransformFeedback.h:
+        * html/canvas/WebGLTransformFeedback.idl:
+        * html/canvas/WebGLVertexArrayObject.cpp:
+        (WebCore::WebGLVertexArrayObject::~WebGLVertexArrayObject):
+        (WebCore::WebGLVertexArrayObject::deleteObjectImpl):
+        * html/canvas/WebGLVertexArrayObject.h:
+        * html/canvas/WebGLVertexArrayObject.idl:
+        * html/canvas/WebGLVertexArrayObjectBase.cpp:
+        (WebCore::WebGLVertexArrayObjectBase::setElementArrayBuffer):
+        (WebCore::WebGLVertexArrayObjectBase::setVertexAttribState):
+        (WebCore::WebGLVertexArrayObjectBase::unbindBuffer):
+        (WebCore::WebGLVertexArrayObjectBase::addMembersToOpaqueRoots):
+        * html/canvas/WebGLVertexArrayObjectBase.h:
+        * html/canvas/WebGLVertexArrayObjectOES.cpp:
+        (WebCore::WebGLVertexArrayObjectOES::~WebGLVertexArrayObjectOES):
+        (WebCore::WebGLVertexArrayObjectOES::deleteObjectImpl):
+        * html/canvas/WebGLVertexArrayObjectOES.h:
+        * html/canvas/WebGLVertexArrayObjectOES.idl:
+
 2020-08-14  Andres Gonzalez  <andresg_22@apple.com>
 
         Crash in WebCore::AXObjectCache::rangeMatchesTextNearRange.

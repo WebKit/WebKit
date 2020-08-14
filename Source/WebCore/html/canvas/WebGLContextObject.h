@@ -47,7 +47,9 @@ public:
         return &context == m_context;
     }
 
-    void detachContext();
+    void detachContext(const WTF::AbstractLocker&);
+
+    WTF::Lock& objectGraphLockForContext() override;
 
 protected:
     WebGLContextObject(WebGLRenderingContextBase&);

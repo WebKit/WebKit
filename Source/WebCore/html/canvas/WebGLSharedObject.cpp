@@ -30,6 +30,7 @@
 
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
+#include <wtf/Lock.h>
 
 namespace WebCore {
 
@@ -44,19 +45,48 @@ WebGLSharedObject::~WebGLSharedObject()
         m_contextGroup->removeObject(*this);
 }
 
-void WebGLSharedObject::detachContextGroup()
+void WebGLSharedObject::detachContextGroup(const AbstractLocker& locker)
 {
     detach();
     if (m_contextGroup) {
-        deleteObject(nullptr);
+        deleteObject(locker, nullptr);
         m_contextGroup->removeObject(*this);
         m_contextGroup = nullptr;
     }
 }
 
+void WebGLSharedObject::detachContextGroupWithoutDeletingObject()
+{
+    // This can be called during context teardown if the sole context
+    // in the share group has already been removed. In this case, the
+    // underlying WebGL object has already been implicitly deleted, so
+    // it's not necessary to call deleteObject on it - which couldn't
+    // be protected by the objectGraphLock.
+    detach();
+    if (m_contextGroup) {
+        m_contextGroup->removeObject(*this);
+        m_contextGroup = nullptr;
+    }
+}
+
+bool WebGLSharedObject::hasGroupOrContext() const
+{
+    // Returning true from this implies that there's at least one (or,
+    // since context sharing isn't currently implemented, exactly one)
+    // viable context from which to grab the objectGraphLock.
+    return m_contextGroup && m_contextGroup->hasAContext();
+}
+
 GraphicsContextGLOpenGL* WebGLSharedObject::getAGraphicsContextGL() const
 {
     return m_contextGroup ? &m_contextGroup->getAGraphicsContextGL() : nullptr;
+}
+
+WTF::Lock& WebGLSharedObject::objectGraphLockForContext()
+{
+    // Should not call this if the object or context has been deleted.
+    ASSERT(m_contextGroup);
+    return m_contextGroup->objectGraphLockForAContext();
 }
 
 }

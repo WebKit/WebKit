@@ -31,6 +31,8 @@
 #include "HTMLCanvasElement.h"
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 
 namespace WebCore {
 
@@ -41,7 +43,10 @@ Ref<WebGLSync> WebGLSync::create(WebGLRenderingContextBase& ctx)
 
 WebGLSync::~WebGLSync()
 {
-    deleteObject(0);
+    if (!hasGroupOrContext())
+        return;
+
+    runDestructor();
 }
 
 WebGLSync::WebGLSync(WebGLRenderingContextBase& ctx)
@@ -53,7 +58,7 @@ WebGLSync::WebGLSync(WebGLRenderingContextBase& ctx)
     setObject(-1);
 }
 
-void WebGLSync::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLSync::deleteObjectImpl(const AbstractLocker&, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     UNUSED_PARAM(object);
     context3d->deleteSync(m_sync);

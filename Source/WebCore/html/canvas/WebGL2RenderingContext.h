@@ -261,6 +261,8 @@ public:
 
     bool checkAndTranslateAttachments(const char* functionName, GCGLenum, Vector<GCGLenum>&);
 
+    void addMembersToOpaqueRoots(JSC::SlotVisitor&) override;
+
 private:
     WebGL2RenderingContext(CanvasBase&, GraphicsContextGLAttributes);
     WebGL2RenderingContext(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, GraphicsContextGLAttributes);
@@ -284,7 +286,7 @@ private:
     bool validateBufferTargetCompatibility(const char*, GCGLenum, WebGLBuffer*);
     WebGLBuffer* validateBufferDataParameters(const char* functionName, GCGLenum target, GCGLenum usage) final;
     WebGLBuffer* validateBufferDataTarget(const char* functionName, GCGLenum target) final;
-    bool validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer*) final;
+    bool validateAndCacheBufferBinding(const WTF::AbstractLocker&, const char* functionName, GCGLenum target, WebGLBuffer*) final;
     GCGLint getMaxDrawBuffers() final;
     GCGLint getMaxColorAttachments() final;
     bool validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired) final;
@@ -321,7 +323,7 @@ private:
     bool validateTexStorageFuncParameters(GCGLenum target, GCGLsizei levels, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, const char* functionName);
 #endif
 
-    void uncacheDeletedBuffer(WebGLBuffer*) final;
+    void uncacheDeletedBuffer(const WTF::AbstractLocker&, WebGLBuffer*) final;
 
     enum class ClearBufferCaller : uint8_t {
         ClearBufferiv,

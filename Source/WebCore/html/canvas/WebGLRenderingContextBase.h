@@ -47,6 +47,7 @@
 #include <limits>
 #include <memory>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/Lock.h>
 
 #if ENABLE(WEBGL2)
 #include "WebGLVertexArrayObject.h"
@@ -55,6 +56,14 @@
 #if ENABLE(WEBXR)
 #include "JSDOMPromiseDeferred.h"
 #endif
+
+namespace JSC {
+class SlotVisitor;
+}
+
+namespace WTF {
+class AbstractLocker;
+}
 
 namespace WebCore {
 
@@ -398,6 +407,23 @@ public:
     void recycleContext() override;
     void dispatchContextChangedNotification() override;
 
+    virtual void addMembersToOpaqueRoots(JSC::SlotVisitor&);
+    // This lock must be held across all mutations of containers like
+    // Vectors, HashSets, etc. which contain RefPtr<WebGLObject>, and
+    // which are traversed by addMembersToOpaqueRoots() or any of the
+    // similarly-named methods in WebGLObject subclasses.
+    //
+    // FIXME: consider changing this mechanism to instead record when
+    // individual WebGLObjects are latched / unlatched in the
+    // context's state, either directly, or indirectly through
+    // container objects. If that were done, then the
+    // "GenerateIsReachable=Impl" in various WebGL objects' IDL files
+    // would need to be changed to instead query whether the object is
+    // currently latched into the context - without traversing all of
+    // the latched objects to find the current one, which would be
+    // prohibitively expensive.
+    Lock& objectGraphLock();
+
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
     WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGLOpenGL>&&, WebGLContextAttributes);
@@ -491,10 +517,11 @@ protected:
 
     bool enableSupportedExtension(ASCIILiteral extensionNameLiteral);
 
-    virtual void uncacheDeletedBuffer(WebGLBuffer*);
+    virtual void uncacheDeletedBuffer(const WTF::AbstractLocker&, WebGLBuffer*);
 
     RefPtr<GraphicsContextGLOpenGL> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
+    Lock m_objectGraphLock;
 
     bool m_restoreAllowed { false };
     SuspendableTimer m_restoreTimer;
@@ -509,10 +536,7 @@ protected:
     RefPtr<WebGLVertexArrayObjectBase> m_defaultVertexArrayObject;
     RefPtr<WebGLVertexArrayObjectBase> m_boundVertexArrayObject;
 
-    void setBoundVertexArrayObject(WebGLVertexArrayObjectBase* arrayObject)
-    {
-        m_boundVertexArrayObject = arrayObject ? arrayObject : m_defaultVertexArrayObject;
-    }
+    void setBoundVertexArrayObject(const WTF::AbstractLocker&, WebGLVertexArrayObjectBase*);
     
     class VertexAttribValue {
     public:
@@ -992,7 +1016,7 @@ protected:
 
     // Helper function for delete* (deleteBuffer, deleteProgram, etc) functions.
     // Return false if caller should return without further processing.
-    bool deleteObject(WebGLObject*);
+    bool deleteObject(const WTF::AbstractLocker&, WebGLObject*);
 
     // Helper function for bind* (bindBuffer, bindTexture, etc) and useProgram.
     // Return false if caller should return without further processing.
@@ -1006,7 +1030,7 @@ protected:
     // Return the current bound buffer to target, or 0 if the target is invalid.
     virtual WebGLBuffer* validateBufferDataTarget(const char* functionName, GCGLenum target);
 
-    virtual bool validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer*);
+    virtual bool validateAndCacheBufferBinding(const WTF::AbstractLocker&, const char* functionName, GCGLenum target, WebGLBuffer*);
 
 #if !USE(ANGLE)
     // Helpers for simulating vertexAttrib0.
@@ -1035,7 +1059,7 @@ protected:
     virtual GCGLint getMaxColorAttachments() = 0;
 
     void setBackDrawBuffer(GCGLenum);
-    void setFramebuffer(GCGLenum, WebGLFramebuffer*);
+    void setFramebuffer(const WTF::AbstractLocker&, GCGLenum, WebGLFramebuffer*);
 
     virtual void restoreCurrentFramebuffer();
     void restoreCurrentTexture2D();

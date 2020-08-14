@@ -31,6 +31,8 @@
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 
 namespace WebCore {
 
@@ -48,10 +50,13 @@ WebGLBuffer::WebGLBuffer(WebGLRenderingContextBase& ctx)
 
 WebGLBuffer::~WebGLBuffer()
 {
-    deleteObject(0);
+    if (!hasGroupOrContext())
+        return;
+
+    runDestructor();
 }
 
-void WebGLBuffer::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLBuffer::deleteObjectImpl(const AbstractLocker&, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     context3d->deleteBuffer(object);
 }

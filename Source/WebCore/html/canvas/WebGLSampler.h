@@ -29,6 +29,10 @@
 
 #include "WebGLSharedObject.h"
 
+namespace WTF {
+class AbstractLocker;
+}
+
 namespace WebCore {
 
 class WebGLSampler final : public WebGLSharedObject {
@@ -38,7 +42,7 @@ public:
 
 private:
     explicit WebGLSampler(WebGLRenderingContextBase&);
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) final;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) final;
 };
 
 } // namespace WebCore

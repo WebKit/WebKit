@@ -30,6 +30,8 @@
 
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 
 namespace WebCore {
 
@@ -40,7 +42,10 @@ Ref<WebGLSampler> WebGLSampler::create(WebGLRenderingContextBase& ctx)
 
 WebGLSampler::~WebGLSampler()
 {
-    deleteObject(0);
+    if (!hasGroupOrContext())
+        return;
+
+    runDestructor();
 }
 
 WebGLSampler::WebGLSampler(WebGLRenderingContextBase& ctx)
@@ -49,7 +54,7 @@ WebGLSampler::WebGLSampler(WebGLRenderingContextBase& ctx)
     setObject(ctx.graphicsContextGL()->createSampler());
 }
 
-void WebGLSampler::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLSampler::deleteObjectImpl(const AbstractLocker&, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     context3d->deleteSampler(object);
 }

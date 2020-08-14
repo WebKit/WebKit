@@ -66,8 +66,12 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/SlotVisitor.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 
 namespace WebCore {
 
@@ -349,7 +353,7 @@ WebGLBuffer* WebGL2RenderingContext::validateBufferDataTarget(const char* functi
     return buffer;
 }
 
-bool WebGL2RenderingContext::validateAndCacheBufferBinding(const char* functionName, GCGLenum target, WebGLBuffer* buffer)
+bool WebGL2RenderingContext::validateAndCacheBufferBinding(const AbstractLocker& locker, const char* functionName, GCGLenum target, WebGLBuffer* buffer)
 {
     if (!validateBufferTarget(functionName, target))
         return false;
@@ -368,7 +372,7 @@ bool WebGL2RenderingContext::validateAndCacheBufferBinding(const char* functionN
         m_boundCopyWriteBuffer = buffer;
         break;
     case GraphicsContextGL::ELEMENT_ARRAY_BUFFER:
-        m_boundVertexArrayObject->setElementArrayBuffer(buffer);
+        m_boundVertexArrayObject->setElementArrayBuffer(locker, buffer);
         break;
     case GraphicsContextGL::PIXEL_PACK_BUFFER:
         m_boundPixelPackBuffer = buffer;
@@ -693,6 +697,8 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
 
 void WebGL2RenderingContext::bindFramebuffer(GCGLenum target, WebGLFramebuffer* buffer)
 {
+    auto locker = holdLock(objectGraphLock());
+
     if (!checkObjectToBeBound("bindFramebuffer", buffer))
         return;
 
@@ -708,7 +714,7 @@ void WebGL2RenderingContext::bindFramebuffer(GCGLenum target, WebGLFramebuffer* 
         return;
     }
 
-    setFramebuffer(target, buffer);
+    setFramebuffer(locker, target, buffer);
 }
 
 void WebGL2RenderingContext::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
@@ -721,7 +727,9 @@ void WebGL2RenderingContext::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLi
 
 void WebGL2RenderingContext::deleteFramebuffer(WebGLFramebuffer* framebuffer)
 {
-    if (!deleteObject(framebuffer))
+    auto locker = holdLock(objectGraphLock());
+
+    if (!deleteObject(locker, framebuffer))
         return;
 
     GCGLenum target = 0;
@@ -1840,13 +1848,15 @@ RefPtr<WebGLQuery> WebGL2RenderingContext::createQuery()
 
 void WebGL2RenderingContext::deleteQuery(WebGLQuery* query)
 {
+    auto locker = holdLock(objectGraphLock());
+
     if (isContextLostOrPending() || !query || !query->object() || !validateWebGLObject("deleteQuery", query))
         return;
     if (query->target() && query == m_activeQueries.get(query->target())) {
         m_context->endQuery(query->target());
         m_activeQueries.remove(query->target());
     }
-    deleteObject(query);
+    deleteObject(locker, query);
 }
 
 GCGLboolean WebGL2RenderingContext::isQuery(WebGLQuery* query)
@@ -1869,6 +1879,8 @@ bool WebGL2RenderingContext::validateQueryTarget(const char* functionName, GCGLe
 
 void WebGL2RenderingContext::beginQuery(GCGLenum target, WebGLQuery& query)
 {
+    auto locker = holdLock(objectGraphLock());
+
     GCGLenum targetKey;
     if (isContextLostOrPending() || !validateWebGLObject("beginQuery", &query) || !validateQueryTarget("beginQuery", target, &targetKey))
         return;
@@ -1892,6 +1904,8 @@ void WebGL2RenderingContext::beginQuery(GCGLenum target, WebGLQuery& query)
 
 void WebGL2RenderingContext::endQuery(GCGLenum target)
 {
+    auto locker = holdLock(objectGraphLock());
+
     GCGLenum targetKey;
     if (isContextLostOrPending() || !scriptExecutionContext() || !validateQueryTarget("beginQuery", target, &targetKey))
         return;
@@ -1963,6 +1977,8 @@ RefPtr<WebGLSampler> WebGL2RenderingContext::createSampler()
 
 void WebGL2RenderingContext::deleteSampler(WebGLSampler* sampler)
 {
+    auto locker = holdLock(objectGraphLock());
+
     if (isContextLostOrPending())
         return;
 
@@ -1974,7 +1990,7 @@ void WebGL2RenderingContext::deleteSampler(WebGLSampler* sampler)
         }
     }
 
-    deleteObject(sampler);
+    deleteObject(locker, sampler);
 }
 
 GCGLboolean WebGL2RenderingContext::isSampler(WebGLSampler* sampler)
@@ -1987,6 +2003,8 @@ GCGLboolean WebGL2RenderingContext::isSampler(WebGLSampler* sampler)
 
 void WebGL2RenderingContext::bindSampler(GCGLuint unit, WebGLSampler* sampler)
 {
+    auto locker = holdLock(objectGraphLock());
+
     if (isContextLostOrPending())
         return;
     
@@ -2077,9 +2095,11 @@ GCGLboolean WebGL2RenderingContext::isSync(WebGLSync* sync)
 
 void WebGL2RenderingContext::deleteSync(WebGLSync* sync)
 {
+    auto locker = holdLock(objectGraphLock());
+
     if (isContextLostOrPending() || !sync || sync->isDeleted() || !validateWebGLObject("deleteSync", sync))
         return;
-    deleteObject(sync);
+    deleteObject(locker, sync);
 }
 
 GCGLenum WebGL2RenderingContext::clientWaitSync(WebGLSync& sync, GCGLbitfield flags, GCGLuint64 timeout)
@@ -2148,6 +2168,8 @@ RefPtr<WebGLTransformFeedback> WebGL2RenderingContext::createTransformFeedback()
 
 void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback* feedbackObject)
 {
+    auto locker = holdLock(objectGraphLock());
+
     if (isContextLostOrPending() || !feedbackObject || feedbackObject->isDeleted() || !validateWebGLObject("deleteTransformFeedback", feedbackObject))
         return;
     
@@ -2161,7 +2183,7 @@ void WebGL2RenderingContext::deleteTransformFeedback(WebGLTransformFeedback* fee
     if (m_boundTransformFeedback == feedbackObject)
         m_boundTransformFeedback = m_defaultTransformFeedback;
 
-    deleteObject(feedbackObject);
+    deleteObject(locker, feedbackObject);
 }
 
 GCGLboolean WebGL2RenderingContext::isTransformFeedback(WebGLTransformFeedback* feedbackObject)
@@ -2174,6 +2196,8 @@ GCGLboolean WebGL2RenderingContext::isTransformFeedback(WebGLTransformFeedback* 
 
 void WebGL2RenderingContext::bindTransformFeedback(GCGLenum target, WebGLTransformFeedback* feedbackObject)
 {
+    auto locker = holdLock(objectGraphLock());
+
     if (isContextLostOrPending())
         return;
 
@@ -2242,7 +2266,8 @@ void WebGL2RenderingContext::beginTransformFeedback(GCGLenum primitiveMode)
 
     m_context->beginTransformFeedback(primitiveMode);
 
-    m_boundTransformFeedback->setProgram(*m_currentProgram);
+    auto locker = holdLock(objectGraphLock());
+    m_boundTransformFeedback->setProgram(locker, *m_currentProgram);
     m_boundTransformFeedback->setActive(true);
     m_boundTransformFeedback->setPaused(false);
 }
@@ -2339,6 +2364,8 @@ void WebGL2RenderingContext::resumeTransformFeedback()
 
 bool WebGL2RenderingContext::setIndexedBufferBinding(const char *functionName, GCGLenum target, GCGLuint index, WebGLBuffer* buffer)
 {
+    auto locker = holdLock(objectGraphLock());
+
     if (isContextLostOrPending())
         return false;
 
@@ -2363,12 +2390,12 @@ bool WebGL2RenderingContext::setIndexedBufferBinding(const char *functionName, G
         return false;
     }
 
-    if (!validateAndCacheBufferBinding(functionName, target, buffer))
+    if (!validateAndCacheBufferBinding(locker, functionName, target, buffer))
         return false;
 
     switch (target) {
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
-        m_boundTransformFeedback->setBoundIndexedTransformFeedbackBuffer(index, buffer);
+        m_boundTransformFeedback->setBoundIndexedTransformFeedbackBuffer(locker, index, buffer);
         break;
     case GraphicsContextGL::UNIFORM_BUFFER:
         m_boundIndexedUniformBuffers[index] = buffer;
@@ -2573,20 +2600,26 @@ RefPtr<WebGLVertexArrayObject> WebGL2RenderingContext::createVertexArray()
 
 void WebGL2RenderingContext::deleteVertexArray(WebGLVertexArrayObject* arrayObject)
 {
+    auto locker = holdLock(objectGraphLock());
+
     if (!arrayObject || isContextLost())
         return;
 
     if (arrayObject->isDeleted())
         return;
 
-    if (!arrayObject->isDefaultObject() && arrayObject == m_boundVertexArrayObject)
+    if (!arrayObject->isDefaultObject() && arrayObject == m_boundVertexArrayObject) {
 #if USE(OPENGL_ES)
-        setBoundVertexArrayObject(nullptr);
+        setBoundVertexArrayObject(locker, nullptr);
 #else
+        // bindVertexArray grabs the lock internally.
+        locker.unlockEarly();
         bindVertexArray(nullptr); // The default VAO was removed in OpenGL 3.3 but not from WebGL 2; bind the default for WebGL to use.
+        locker = holdLock(objectGraphLock());
 #endif
+    }
 
-    arrayObject->deleteObject(graphicsContextGL());
+    arrayObject->deleteObject(locker, graphicsContextGL());
 }
 
 GCGLboolean WebGL2RenderingContext::isVertexArray(WebGLVertexArrayObject* arrayObject)
@@ -2602,6 +2635,8 @@ GCGLboolean WebGL2RenderingContext::isVertexArray(WebGLVertexArrayObject* arrayO
 
 void WebGL2RenderingContext::bindVertexArray(WebGLVertexArrayObject* arrayObject)
 {
+    auto locker = holdLock(objectGraphLock());
+
     if (isContextLost())
         return;
 
@@ -2613,10 +2648,10 @@ void WebGL2RenderingContext::bindVertexArray(WebGLVertexArrayObject* arrayObject
         m_context->bindVertexArray(arrayObject->object());
 
         arrayObject->setHasEverBeenBound();
-        setBoundVertexArrayObject(arrayObject);
+        setBoundVertexArrayObject(locker, arrayObject);
     } else {
         m_context->bindVertexArray(m_defaultVertexArrayObject->object());
-        setBoundVertexArrayObject(m_defaultVertexArrayObject.get());
+        setBoundVertexArrayObject(locker, m_defaultVertexArrayObject.get());
     }
 }
 
@@ -3008,6 +3043,36 @@ bool WebGL2RenderingContext::checkAndTranslateAttachments(const char* functionNa
         }
     }
     return true;
+}
+
+void WebGL2RenderingContext::addMembersToOpaqueRoots(JSC::SlotVisitor& visitor)
+{
+    WebGLRenderingContextBase::addMembersToOpaqueRoots(visitor);
+
+    auto locker = holdLock(objectGraphLock());
+    visitor.addOpaqueRoot(m_readFramebufferBinding.get());
+    if (m_readFramebufferBinding)
+        m_readFramebufferBinding->addMembersToOpaqueRoots(locker, visitor);
+
+    visitor.addOpaqueRoot(m_boundTransformFeedback.get());
+    if (m_boundTransformFeedback)
+        m_boundTransformFeedback->addMembersToOpaqueRoots(locker, visitor);
+
+    visitor.addOpaqueRoot(m_boundCopyReadBuffer.get());
+    visitor.addOpaqueRoot(m_boundCopyWriteBuffer.get());
+    visitor.addOpaqueRoot(m_boundPixelPackBuffer.get());
+    visitor.addOpaqueRoot(m_boundPixelUnpackBuffer.get());
+    visitor.addOpaqueRoot(m_boundTransformFeedbackBuffer.get());
+    visitor.addOpaqueRoot(m_boundUniformBuffer.get());
+
+    for (auto& buffer : m_boundIndexedUniformBuffers)
+        visitor.addOpaqueRoot(buffer.get());
+
+    for (auto& entry : m_activeQueries)
+        visitor.addOpaqueRoot(entry.value.get());
+
+    for (auto& entry : m_boundSamplers)
+        visitor.addOpaqueRoot(entry.get());
 }
 
 GCGLenum WebGL2RenderingContext::baseInternalFormatFromInternalFormat(GCGLenum internalformat)
@@ -3491,7 +3556,7 @@ void WebGL2RenderingContext::readPixels(GLint x, GLint y, GLsizei width, GLsizei
     if (binding == buffer) \
         binding = nullptr;
 
-void WebGL2RenderingContext::uncacheDeletedBuffer(WebGLBuffer* buffer)
+void WebGL2RenderingContext::uncacheDeletedBuffer(const AbstractLocker& locker, WebGLBuffer* buffer)
 {
     ASSERT(buffer);
 
@@ -3501,9 +3566,9 @@ void WebGL2RenderingContext::uncacheDeletedBuffer(WebGLBuffer* buffer)
     REMOVE_BUFFER_FROM_BINDING(m_boundPixelUnpackBuffer);
     REMOVE_BUFFER_FROM_BINDING(m_boundTransformFeedbackBuffer);
     REMOVE_BUFFER_FROM_BINDING(m_boundUniformBuffer);
-    m_boundTransformFeedback->unbindBuffer(*buffer);
+    m_boundTransformFeedback->unbindBuffer(locker, *buffer);
 
-    WebGLRenderingContextBase::uncacheDeletedBuffer(buffer);
+    WebGLRenderingContextBase::uncacheDeletedBuffer(locker, buffer);
 }
 
 #undef REMOVE_BUFFER_FROM_BINDING

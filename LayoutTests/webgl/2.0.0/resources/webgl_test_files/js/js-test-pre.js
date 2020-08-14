@@ -708,6 +708,12 @@ function webglHarnessCollectGarbage() {
         return;
     }
 
+    // WebKit's MiniBrowser
+    if (window.$vm) {
+        window.$vm.gc();
+        return;
+    }
+
     function gcRec(n) {
         if (n < 1)
             return {};

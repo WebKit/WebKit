@@ -50,7 +50,7 @@ private:
     GCGLint m_syncStatus = { GraphicsContextGL::UNSIGNALED };
     GCGLsync m_sync;
 
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) override;
 };
 
 } // namespace WebCore

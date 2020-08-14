@@ -62,7 +62,10 @@ WebGLTexture::WebGLTexture(WebGLRenderingContextBase& ctx)
 
 WebGLTexture::~WebGLTexture()
 {
-    deleteObject(0);
+    if (!hasGroupOrContext())
+        return;
+
+    runDestructor();
 }
 
 void WebGLTexture::setTarget(GCGLenum target, GCGLint maxLevel)
@@ -92,7 +95,7 @@ void WebGLTexture::setTarget(GCGLenum target, GCGLint maxLevel)
 #endif // USE(ANGLE)
 }
 
-void WebGLTexture::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
+void WebGLTexture::deleteObjectImpl(const AbstractLocker&, GraphicsContextGLOpenGL* context3d, PlatformGLObject object)
 {
     context3d->deleteTexture(object);
 }

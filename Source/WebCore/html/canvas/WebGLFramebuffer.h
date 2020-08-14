@@ -33,6 +33,14 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+namespace JSC {
+class SlotVisitor;
+}
+
+namespace WTF {
+class AbstractLocker;
+}
+
 namespace WebCore {
 
 class WebGLRenderbuffer;
@@ -54,9 +62,10 @@ public:
         virtual bool isValid() const = 0;
         virtual bool isInitialized() const = 0;
         virtual void setInitialized() = 0;
-        virtual void onDetached(GraphicsContextGLOpenGL*) = 0;
+        virtual void onDetached(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*) = 0;
         virtual void attach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) = 0;
         virtual void unattach(GraphicsContextGLOpenGL*, GCGLenum target, GCGLenum attachment) = 0;
+        virtual void addMembersToOpaqueRoots(const WTF::AbstractLocker&, JSC::SlotVisitor&) = 0;
 
     protected:
         WebGLAttachment();
@@ -69,9 +78,9 @@ public:
     void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, GCGLenum texTarget, WebGLTexture*, GCGLint level, GCGLint layer);
     void setAttachmentForBoundFramebuffer(GCGLenum target, GCGLenum attachment, WebGLRenderbuffer*);
     // If an object is attached to the currently bound framebuffer, remove it.
-    void removeAttachmentFromBoundFramebuffer(GCGLenum target, WebGLSharedObject*);
+    void removeAttachmentFromBoundFramebuffer(const WTF::AbstractLocker&, GCGLenum target, WebGLSharedObject*);
     // If a given attachment point for the currently bound framebuffer is not null, remove the attached object.
-    void removeAttachmentFromBoundFramebuffer(GCGLenum target, GCGLenum attachment);
+    void removeAttachmentFromBoundFramebuffer(const WTF::AbstractLocker&, GCGLenum target, GCGLenum attachment);
     WebGLSharedObject* getAttachmentObject(GCGLenum) const;
 
 #if !USE(ANGLE)
@@ -105,15 +114,19 @@ public:
 
     GCGLenum getDrawBuffer(GCGLenum);
 
+    void addMembersToOpaqueRoots(const WTF::AbstractLocker&, JSC::SlotVisitor&);
+
 private:
     WebGLFramebuffer(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
     WebGLAttachment* getAttachment(GCGLenum) const;
 
+#if !USE(ANGLE)
     // Return false if framebuffer is incomplete.
     bool initializeAttachments(GraphicsContextGLOpenGL*, const char** reason);
+#endif
 
     // Check if the framebuffer is currently bound to the given target.
     bool isBound(GCGLenum target) const;
@@ -128,7 +141,7 @@ private:
     void setAttachmentInternal(GCGLenum attachment, WebGLRenderbuffer*);
     // If a given attachment point for the currently bound framebuffer is not
     // null, remove the attached object.
-    void removeAttachmentInternal(GCGLenum attachment);
+    void removeAttachmentInternal(const WTF::AbstractLocker&, GCGLenum attachment);
 
     typedef WTF::HashMap<GCGLenum, RefPtr<WebGLAttachment>> AttachmentMap;
 

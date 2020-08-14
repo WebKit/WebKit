@@ -65,7 +65,7 @@ public:
 private:
     WebGLRenderbuffer(WebGLRenderingContextBase&);
 
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) override;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) override;
 
     bool isRenderbuffer() const override { return true; }
 

@@ -48,7 +48,7 @@ public:
 private:
     WebGLShader(WebGLRenderingContextBase&, GCGLenum);
 
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) final;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) final;
 
     GCGLenum m_type;
     String m_source;

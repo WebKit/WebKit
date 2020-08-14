@@ -36,6 +36,7 @@ using namespace JSC;
 void JSWebGL2RenderingContext::visitAdditionalChildren(SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(&wrapped());
+    wrapped().addMembersToOpaqueRoots(visitor);
 }
 
 } // namespace WebCore

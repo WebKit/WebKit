@@ -30,6 +30,8 @@
 
 #include "ExtensionsGL.h"
 #include "WebGLRenderingContext.h"
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 
 namespace WebCore {
 
@@ -55,13 +57,15 @@ RefPtr<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()
 
 void OESVertexArrayObject::deleteVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
 {
+    auto locker = holdLock(m_context.objectGraphLock());
+
     if (!arrayObject || m_context.isContextLost())
         return;
 
     if (!arrayObject->isDefaultObject() && arrayObject == static_cast<WebGLRenderingContext&>(m_context).m_boundVertexArrayObject)
-        static_cast<WebGLRenderingContext&>(m_context).setBoundVertexArrayObject(nullptr);
+        static_cast<WebGLRenderingContext&>(m_context).setBoundVertexArrayObject(locker, nullptr);
 
-    arrayObject->deleteObject(m_context.graphicsContextGL());
+    arrayObject->deleteObject(locker, m_context.graphicsContextGL());
 }
 
 GCGLboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
@@ -72,6 +76,8 @@ GCGLboolean OESVertexArrayObject::isVertexArrayOES(WebGLVertexArrayObjectOES* ar
 
 void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)
 {
+    auto locker = holdLock(m_context.objectGraphLock());
+
     if (m_context.isContextLost())
         return;
 
@@ -85,10 +91,10 @@ void OESVertexArrayObject::bindVertexArrayOES(WebGLVertexArrayObjectOES* arrayOb
     if (arrayObject && !arrayObject->isDefaultObject() && arrayObject->object()) {
         extensions.bindVertexArrayOES(arrayObject->object());
         arrayObject->setHasEverBeenBound();
-        context.setBoundVertexArrayObject(arrayObject);
+        context.setBoundVertexArrayObject(locker, arrayObject);
     } else {
         extensions.bindVertexArrayOES(0);
-        context.setBoundVertexArrayObject(nullptr);
+        context.setBoundVertexArrayObject(locker, nullptr);
     }
 }
 

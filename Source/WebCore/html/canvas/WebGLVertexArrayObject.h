@@ -29,6 +29,10 @@
 
 #include "WebGLVertexArrayObjectBase.h"
 
+namespace WTF {
+class AbstractLocker;
+}
+
 namespace WebCore {
 
 class WebGL2RenderingContext;
@@ -39,7 +43,7 @@ public:
     virtual ~WebGLVertexArrayObject();
 private:
     WebGLVertexArrayObject(WebGLRenderingContextBase&, Type);
-    void deleteObjectImpl(GraphicsContextGLOpenGL*, PlatformGLObject) final;
+    void deleteObjectImpl(const WTF::AbstractLocker&, GraphicsContextGLOpenGL*, PlatformGLObject) final;
 };
 
 } // namespace WebCore

@@ -33,7 +33,10 @@
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
+#include <JavaScriptCore/SlotVisitor.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
 #include <wtf/Lock.h>
+#include <wtf/Locker.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -73,13 +76,16 @@ WebGLProgram::~WebGLProgram()
 {
     InspectorInstrumentation::willDestroyWebGLProgram(*this);
 
-    deleteObject(0);
-
     {
         LockHolder lock(instancesMutex());
         ASSERT(instances(lock).contains(this));
         instances(lock).remove(this);
     }
+
+    if (!hasGroupOrContext())
+        return;
+
+    runDestructor();
 }
 
 void WebGLProgram::contextDestroyed()
@@ -89,15 +95,15 @@ void WebGLProgram::contextDestroyed()
     ContextDestructionObserver::contextDestroyed();
 }
 
-void WebGLProgram::deleteObjectImpl(GraphicsContextGLOpenGL* context3d, PlatformGLObject obj)
+void WebGLProgram::deleteObjectImpl(const AbstractLocker& locker, GraphicsContextGLOpenGL* context3d, PlatformGLObject obj)
 {
     context3d->deleteProgram(obj);
     if (m_vertexShader) {
-        m_vertexShader->onDetached(context3d);
+        m_vertexShader->onDetached(locker, context3d);
         m_vertexShader = nullptr;
     }
     if (m_fragmentShader) {
-        m_fragmentShader->onDetached(context3d);
+        m_fragmentShader->onDetached(locker, context3d);
         m_fragmentShader = nullptr;
     }
 }
@@ -156,7 +162,7 @@ WebGLShader* WebGLProgram::getAttachedShader(GCGLenum type)
     }
 }
 
-bool WebGLProgram::attachShader(WebGLShader* shader)
+bool WebGLProgram::attachShader(const AbstractLocker&, WebGLShader* shader)
 {
     if (!shader || !shader->object())
         return false;
@@ -176,7 +182,7 @@ bool WebGLProgram::attachShader(WebGLShader* shader)
     }
 }
 
-bool WebGLProgram::detachShader(WebGLShader* shader)
+bool WebGLProgram::detachShader(const AbstractLocker&, WebGLShader* shader)
 {
     if (!shader || !shader->object())
         return false;
@@ -194,6 +200,12 @@ bool WebGLProgram::detachShader(WebGLShader* shader)
     default:
         return false;
     }
+}
+
+void WebGLProgram::addMembersToOpaqueRoots(const AbstractLocker&, JSC::SlotVisitor& visitor)
+{
+    visitor.addOpaqueRoot(m_vertexShader.get());
+    visitor.addOpaqueRoot(m_fragmentShader.get());
 }
 
 void WebGLProgram::cacheActiveAttribLocations(GraphicsContextGLOpenGL* context3d)
