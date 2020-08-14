@@ -1,3 +1,12 @@
+2020-08-14  Brady Eidson  <beidson@apple.com>
+
+        Gamepad.GCFVersusHID fails on Big Sur.
+        <rdar://problem/66948608> and https://bugs.webkit.org/show_bug.cgi?id=215520
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/mac/HIDGamepads.mm: Accept two different names for the virtual Xbox One controller
+
 2020-08-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move WebGL bot from debug to release builds

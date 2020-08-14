@@ -193,6 +193,7 @@ TEST(Gamepad, GCFVersusHID)
         @"\"Virtual Nimbus Extended Gamepad\"",
         @"\"Virtual Dualshock4 Extended Gamepad\"",
         @"\"Virtual Xbox One Gamepad\"",
+        @"\"Virtual Xbox One Extended Gamepad\"",
         @"\"79-11-Virtual Shenzhen Longshengwei Technology Gamepad\"",
         @"\"12bd-d015-Virtual Sun Light Application Generic NES Controller\""]];
 
