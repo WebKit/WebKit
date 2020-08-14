@@ -42,8 +42,8 @@ layer at (0,0) size 800x268
           RenderInline {B} at (0,0) size 50x17
             RenderText {#text} at (131,0) size 50x17
               text run at (131,0) width 50: "bold"
-          RenderText {#text} at (180,0) size 101x17
-            text run at (180,0) width 101: " element."
+          RenderText {#text} at (180,0) size 102x17
+            text run at (180,0) width 102: " element."
         RenderBlock {P} at (0,34) size 784x18
           RenderText {#text} at (0,0) size 132x17
             text run at (0,0) width 132: "Text inside "

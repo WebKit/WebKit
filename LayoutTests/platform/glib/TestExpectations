@@ -50,8 +50,10 @@
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
 # Added in r263823. Both tests are timing out.
-webkit.org/b/newbug accessibility/keyevents-for-increment-actions-with-node-removal.html [ Skip ]
-webkit.org/b/newbug accessibility/keyevents-posted-for-increment-actions.html [ Skip ]
+webkit.org/b/213874 accessibility/keyevents-for-increment-actions-with-node-removal.html [ Skip ]
+webkit.org/b/213874 accessibility/keyevents-posted-for-increment-actions.html [ Skip ]
+webkit.org/b/213874 accessibility/keyevents-posted-for-dismiss-action.html [ Skip ]
+
 
 webkit.org/b/214068 accessibility/textarea-selected-text-range.html [ Timeout ]
 

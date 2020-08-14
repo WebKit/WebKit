@@ -27,8 +27,17 @@ webkit.org/b/215421 fast/encoding/denormalised-voiced-japanese-chars.html [ Imag
 # CSS3
 webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailure ]
 
+# Flexbox layout
+webkit.org/b/215502 fast/flexbox/image-percent-max-height.html [ Failure Pass ]
+
 # Paint Timing
 webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-num-chars.html [ Pass Failure ]
+
+# Scrolling coordinator
+webkit.org/b/215508 [ Release ] scrollingcoordinator/overflow-proxy-reattach.html [ Pass Timeout ]
+
+# Workers
+webkit.org/b/187597 fast/workers/worker-exception-during-navigation.html [ Timeout Pass ]
 
 # WPT tests
 webkit.org/b/215306 imported/w3c/web-platform-tests/html/user-activation/basic.html [ Timeout ]
