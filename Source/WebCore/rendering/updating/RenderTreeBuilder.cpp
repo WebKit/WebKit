@@ -67,7 +67,6 @@
 #include "RenderTreeBuilderRuby.h"
 #include "RenderTreeBuilderSVG.h"
 #include "RenderTreeBuilderTable.h"
-#include "RenderTreeMutationDisallowedScope.h"
 #include "RenderView.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
@@ -164,7 +163,6 @@ RenderTreeBuilder::~RenderTreeBuilder()
 
 void RenderTreeBuilder::destroy(RenderObject& renderer)
 {
-    RELEASE_ASSERT(RenderTreeMutationDisallowedScope::isMutationAllowed());
     ASSERT(renderer.parent());
     auto toDestroy = detach(*renderer.parent(), renderer);
 
