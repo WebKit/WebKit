@@ -1,5 +1,16 @@
 2020-08-14  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: add aria-label for [>>] overflow tab picker
+        https://bugs.webkit.org/show_bug.cgi?id=215342
+        <rdar://problem/66804113>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/TabBar.js: Moved title for `tabPickerTabBarItem` to `title` attribute instead of the unused `displayName` argument
+        (WI.TabBar):
+
+2020-08-14  Patrick Angle  <pangle@apple.com>
+
         REGRESSION (r265224): Web Inspector: LOCALIZED STRING NOT FOUND next to the Image checkbox in the Sources prefs panel
         https://bugs.webkit.org/show_bug.cgi?id=215387
         <rdar://problem/66855263>

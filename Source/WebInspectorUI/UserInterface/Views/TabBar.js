@@ -62,7 +62,8 @@ WI.TabBar = class TabBar extends WI.View
         this._hiddenTabBarItems = [];
 
         const tabPickerRepresentedObject = null;
-        this._tabPickerTabBarItem = new WI.PinnedTabBarItem(tabPickerRepresentedObject, "Images/TabPicker.svg", WI.UIString("Show hidden tabs"));
+        const tabPickerDisplayName = null;
+        this._tabPickerTabBarItem = new WI.PinnedTabBarItem(tabPickerRepresentedObject, "Images/TabPicker.svg", tabPickerDisplayName, WI.UIString("Show hidden tabs"));
         this._tabPickerTabBarItem.hidden = true;
         this._tabPickerTabBarItem.element.classList.add("tab-picker");
         this.addTabBarItem(this._tabPickerTabBarItem, {suppressAnimations: true});
