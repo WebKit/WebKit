@@ -14,6 +14,7 @@ depends:
 - test-infra/apr-util.bst
 - sdk/libserf.bst
 - sdk/perl-term-readkey.bst
+- sdk/libsecret.bst
 
 sources:
 - kind: tar
@@ -26,6 +27,7 @@ variables:
     --with-apr-util=/usr/bin/apu-1-config
     --with-lz4=internal
     --with-swig=/usr/bin/swig
+    --with-gnome-keyring
 
 config:
   build-commands:
