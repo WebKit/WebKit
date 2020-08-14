@@ -64,8 +64,13 @@ PlaybackSessionModelMediaElement::~PlaybackSessionModelMediaElement()
 
 void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaElement)
 {
-    if (m_mediaElement == mediaElement)
+    if (m_mediaElement == mediaElement) {
+        if (m_mediaElement) {
+            for (auto client : m_clients)
+                client->isPictureInPictureSupportedChanged(isPictureInPictureSupported());
+        }
         return;
+    }
 
     auto& events = eventNames();
 

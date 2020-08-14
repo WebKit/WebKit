@@ -1,3 +1,35 @@
+2020-08-14  Peng Liu  <peng.liu6@apple.com>
+
+        The PiP button on the fullscreen youtube player disappears after starting a new video in a playlist
+        https://bugs.webkit.org/show_bug.cgi?id=215488
+
+        Reviewed by Eric Carlson.
+
+        When a fullscreen video player (e.g., YouTube.com) completes the current video and starts
+        the next one in a playlist, it may reuse the video element, so m_mediaElement of the
+        PlaybackSessionModelMediaElement instance won't change. However, the video element
+        will exit video fullscreen standby and then enter video fullscreen standby. Those
+        transitions are invisible to users. But the corresponding PlaybackSessionModelContext
+        instance will be destroyed and a new instance will be created.
+
+        By default, the member variable m_pictureInPictureSupported of the PlaybackSessionModelContext
+        instance is "false". After a new video starts to play, the function
+        PlaybackSessionModelMediaElement::setMediaElement() won't ask the PlaybackSessionManager
+        to send a PlaybackSessionManagerProxy::PictureInPictureSupportedChanged message
+        (because we don't change m_mediaElement) to notify the PlaybackSessionModelContext
+        instance in the UI process that m_pictureInPictureSupported should be "true". Therefore,
+        the PlaybackSessionModelContext instance will tell the WKFullScreenViewController instance
+        that picture-in-picture is not supported, which in turn will hide the picture-in-picture button.
+
+        With this patch, PlaybackSessionModelMediaElement::setMediaElement() will ask the
+        PlaybackSessionManager instance to send an IPC message if m_mediaElement is not nullptr
+        even we don't change the media element. So that the PlaybackSessionModelContext instance
+        in the UI process will always have a consistent state as the PlaybackSessionModelMediaElement
+        instance in the Web process.
+
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::setMediaElement):
+
 2020-08-14  Clark Wang  <clark_wang@apple.com>
 
         Introduce ConstantSourceNode Interface
