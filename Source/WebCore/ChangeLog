@@ -1,5 +1,21 @@
 2020-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r254506): [Freetype] Spektra variable font does not work properly
+        https://bugs.webkit.org/show_bug.cgi?id=215214
+        <rdar://problem/66984524>
+
+        Reviewed by Adrian Perez de Castro.
+
+        This regressed in r254506, when a font smoothing mode is passed to drawGlyphsToContext() a new cairo font
+        options is set, using the default font options and changing the antialiasing. This means the font options from
+        the font (the ones containing the variation settings) set in the context by cairo_set_scaled_font() are
+        lost. We should copy the scaled font options instead, then set the antialiasing and apply them.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawGlyphsToContext): Use cairo_scaled_font_get_font_options() instead of getDefaultCairoFontOptions().
+
+2020-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Crash in WebCore::StyledMarkupAccumulator::traverseNodesForSerialization
         https://bugs.webkit.org/show_bug.cgi?id=199224
 
