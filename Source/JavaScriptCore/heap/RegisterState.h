@@ -78,6 +78,7 @@ struct RegisterState {
     uint32_t r4;
     uint32_t r5;
     uint32_t r6;
+    uint32_t r7;
     uint32_t r8;
     uint32_t r9;
     uint32_t r10;
@@ -92,6 +93,7 @@ struct RegisterState {
     SAVE_REG(r4, registers.r4); \
     SAVE_REG(r5, registers.r5); \
     SAVE_REG(r6, registers.r6); \
+    SAVE_REG(r7, registers.r7); \
     SAVE_REG(r8, registers.r8); \
     SAVE_REG(r9, registers.r9); \
     SAVE_REG(r10, registers.r10); \

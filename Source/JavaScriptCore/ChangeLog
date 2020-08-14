@@ -1,3 +1,21 @@
+2020-08-14  Caio Lima  <ticaiolima@gmail.com>
+
+        [ARMv7][JSC] Conservative GC is not considering `r7` as a root
+        https://bugs.webkit.org/show_bug.cgi?id=215512
+
+        Reviewed by Yusuke Suzuki.
+
+        Since `r7` is a callee-saved register on ARMv7
+        we need to consider it as a conservative root.
+
+        See the statement "A subroutine must preserve
+        the contents of the registers r4-r8, r10, r11
+        and SP (and r9 in PCS variants that designate
+        r9 as v6) form page 15 of
+        https://developer.arm.com/documentation/ihi0042/f/.
+
+        * heap/RegisterState.h:
+
 2020-08-12  Keith Miller  <keith_miller@apple.com>
 
         OSRAvailabilityAnalysis shouldn't mark GetStack nodes directly as valid places for recovery
