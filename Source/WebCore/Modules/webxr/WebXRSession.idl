@@ -39,7 +39,7 @@
     [SameObject] readonly attribute WebXRInputSourceArray inputSources;
 
     // Methods
-    void updateRenderState(optional XRRenderStateInit stateInit);
+    [MayThrowException] void updateRenderState(optional XRRenderStateInit stateInit);
     [NewObject] Promise<WebXRReferenceSpace> requestReferenceSpace(XRReferenceSpaceType type);
 
     unsigned long requestAnimationFrame(XRFrameRequestCallback callback);

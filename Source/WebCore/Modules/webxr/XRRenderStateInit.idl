@@ -31,4 +31,5 @@
     double depthFar;
     double inlineVerticalFieldOfView;
     WebXRWebGLLayer? baseLayer;
+    sequence<WebXRLayer>? layers;
 };

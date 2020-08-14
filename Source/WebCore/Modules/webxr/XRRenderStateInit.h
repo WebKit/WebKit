@@ -28,15 +28,18 @@
 #if ENABLE(WEBXR)
 
 #include "WebXRWebGLLayer.h"
+#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct XRRenderStateInit {
-    double depthNear;
-    double depthFar;
-    double inlineVerticalFieldOfView;
+    Optional<double> depthNear;
+    Optional<double> depthFar;
+    Optional<double> inlineVerticalFieldOfView;
     RefPtr<WebXRWebGLLayer> baseLayer;
+    Optional<Vector<RefPtr<WebXRLayer>>> layers;
 };
 
 } // namespace WebCore

@@ -917,6 +917,8 @@ imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html [ Pass 
 imported/w3c/web-platform-tests/webxr/xrFrame_session_sameObject.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_prevent_multiple_exclusive.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/render_state_vertical_fov_immersive.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/render_state_update.https.html [ Pass ]
 
 # Passing since r259532.
 imported/w3c/web-platform-tests/css/css-ui/outline-019.html

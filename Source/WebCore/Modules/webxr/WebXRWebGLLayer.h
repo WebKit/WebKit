@@ -72,6 +72,8 @@ public:
 
     static double getNativeFramebufferScaleFactor(const WebXRSession&);
 
+    const WebXRSession& session() { return m_session; }
+
 private:
     WebXRWebGLLayer(Ref<WebXRSession>&&, WebXRRenderingContext&&, const XRWebGLLayerInit&);
 

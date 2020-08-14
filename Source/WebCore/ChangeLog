@@ -1,3 +1,45 @@
+2020-08-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Implement WebXRSession::updateRenderState()
+        https://bugs.webkit.org/show_bug.cgi?id=213555
+
+        Reviewed by Darin Adler.
+
+        Added an implementation which matches the current specs. The updateRenderState() is specially useful to set
+        the base layer in the session where WebXR contents would be rendered. Authors would normally do:
+
+        glCanvas.getContext("webgl").makeXRCompatible().then(() => {
+            xrSession.updateRenderState({ baseLayer: new XRWebGLLayer(xrSession, gl) });
+        });
+
+        The XRRenderStateInit has also been updated to the latest version of specs.
+
+        * Modules/webxr/WebXRRenderState.cpp:
+        (WebCore::WebXRRenderState::WebXRRenderState):
+        (WebCore::WebXRRenderState::depthNear const): Inlined.
+        (WebCore::WebXRRenderState::depthFar const): Ditto.
+        (WebCore::WebXRRenderState::inlineVerticalFieldOfView const): Ditto.
+        (WebCore::WebXRRenderState::baseLayer const): Ditto.
+        * Modules/webxr/WebXRRenderState.h:
+        (WebCore::WebXRRenderState::depthNear const): Inlined.
+        (WebCore::WebXRRenderState::setDepthNear): Ditto.
+        (WebCore::WebXRRenderState::depthFar const): Ditto.
+        (WebCore::WebXRRenderState::setDepthFar): Ditto.
+        (WebCore::WebXRRenderState::inlineVerticalFieldOfView const): Added.
+        (WebCore::WebXRRenderState::setInlineVerticalFieldOfView): Ditto.
+        (WebCore::WebXRRenderState::baseLayer const): Ditto.
+        (WebCore::WebXRRenderState::setBaseLayer): Ditto.
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::isImmersive):
+        (WebCore::WebXRSession::updateRenderState): Implemented.
+        (WebCore::WebXRSession::referenceSpaceIsSupported const):
+        * Modules/webxr/WebXRSession.h: updateRenderState may throw exception.
+        * Modules/webxr/WebXRSession.idl: Ditto.
+        * Modules/webxr/WebXRWebGLLayer.h:
+        (WebCore::WebXRWebGLLayer::session): Added.
+        * Modules/webxr/XRRenderStateInit.h: Added layers and made many attributes optional.
+        * Modules/webxr/XRRenderStateInit.idl: Ditto.
+
 2020-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r254506): [Freetype] Spektra variable font does not work properly

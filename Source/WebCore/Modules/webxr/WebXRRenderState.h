@@ -27,18 +27,12 @@
 
 #if ENABLE(WEBXR)
 
+#include "HTMLCanvasElement.h"
+#include "WebXRWebGLLayer.h"
 #include "XRSessionMode.h"
-#include <wtf/IsoMalloc.h>
-#include <wtf/Optional.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class HTMLCanvasElement;
-class WebXRWebGLLayer;
 struct XRRenderStateInit;
 
 class WebXRRenderState : public RefCounted<WebXRRenderState> {
@@ -47,15 +41,25 @@ public:
     static Ref<WebXRRenderState> create(XRSessionMode);
     ~WebXRRenderState();
 
-    double depthNear() const;
-    double depthFar() const;
-    Optional<double> inlineVerticalFieldOfView() const;
-    RefPtr<WebXRWebGLLayer> baseLayer() const;
-    HTMLCanvasElement* outputCanvas() const;
+    Ref<WebXRRenderState> clone() const;
+
+    double depthNear() const { return m_depth.near; }
+    void setDepthNear(double near) { m_depth.near = near; }
+
+    double depthFar() const { return m_depth.far; }
+    void setDepthFar(double far) { m_depth.far = far; };
+
+    Optional<double> inlineVerticalFieldOfView() const { return m_inlineVerticalFieldOfView; }
+    void setInlineVerticalFieldOfView(double fieldOfView) { m_inlineVerticalFieldOfView = fieldOfView; }
+
+    RefPtr<WebXRWebGLLayer> baseLayer() const { return m_baseLayer; }
+    void setBaseLayer(WebXRWebGLLayer* baseLayer) { m_baseLayer = baseLayer; }
+
+    HTMLCanvasElement* outputCanvas() const { return m_outputCanvas.get(); }
 
 private:
-    explicit WebXRRenderState(Optional<double>&& fieldOfView);
-    explicit WebXRRenderState(const XRRenderStateInit&);
+    explicit WebXRRenderState(Optional<double> fieldOfView);
+    explicit WebXRRenderState(const WebXRRenderState&);
 
     // https://immersive-web.github.io/webxr/#initialize-the-render-state
     struct {

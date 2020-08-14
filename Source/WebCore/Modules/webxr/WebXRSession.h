@@ -70,7 +70,7 @@ public:
     const WebXRRenderState& renderState() const;
     const WebXRInputSourceArray& inputSources() const;
 
-    void updateRenderState(const XRRenderStateInit&);
+    ExceptionOr<void> updateRenderState(const XRRenderStateInit&);
     void requestReferenceSpace(XRReferenceSpaceType, RequestReferenceSpacePromise&&);
 
     unsigned requestAnimationFrame(Ref<XRFrameRequestCallback>&&);

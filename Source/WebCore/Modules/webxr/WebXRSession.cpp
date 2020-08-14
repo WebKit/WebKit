@@ -33,7 +33,9 @@
 #include "WebXRFrame.h"
 #include "WebXRSystem.h"
 #include "XRFrameRequestCallback.h"
+#include "XRRenderStateInit.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -85,8 +87,62 @@ const WebXRInputSourceArray& WebXRSession::inputSources() const
     return m_inputSources;
 }
 
-void WebXRSession::updateRenderState(const XRRenderStateInit&)
+static bool isImmersive(XRSessionMode mode)
 {
+    return mode == XRSessionMode::ImmersiveAr || mode == XRSessionMode::ImmersiveVr;
+}
+
+// https://immersive-web.github.io/webxr/#dom-xrsession-updaterenderstate
+ExceptionOr<void> WebXRSession::updateRenderState(const XRRenderStateInit& newState)
+{
+    // 1. Let session be this.
+    // 2. If session's ended value is true, throw an InvalidStateError and abort these steps.
+    if (m_ended)
+        return Exception { InvalidStateError };
+
+    // 3. If newState's baseLayer was created with an XRSession other than session,
+    //    throw an InvalidStateError and abort these steps.
+    if (newState.baseLayer && &newState.baseLayer->session() != this)
+        return Exception { InvalidStateError };
+
+    // 4. If newState's inlineVerticalFieldOfView is set and session is an immersive session,
+    //    throw an InvalidStateError and abort these steps.
+    if (newState.inlineVerticalFieldOfView && isImmersive(m_mode))
+        return Exception { InvalidStateError };
+
+    // 5. If none of newState's depthNear, depthFar, inlineVerticalFieldOfView, baseLayer,
+    //    layers are set, abort these steps.
+    if (!newState.depthNear && !newState.depthFar && !newState.inlineVerticalFieldOfView && !newState.baseLayer && !newState.layers)
+        return { };
+
+    // 6. Run update the pending layers state with session and newState.
+    // https://immersive-web.github.io/webxr/#update-the-pending-layers-state
+    if (newState.layers)
+        return Exception { NotSupportedError };
+
+    // 7. Let activeState be session's active render state.
+    // 8. If session's pending render state is null, set it to a copy of activeState.
+    if (!m_pendingRenderState)
+        m_pendingRenderState = m_activeRenderState->clone();
+
+    // 9. If newState's depthNear value is set, set session's pending render state's depthNear to newState's depthNear.
+    if (newState.depthNear)
+        m_pendingRenderState->setDepthNear(newState.depthNear.value());
+
+    // 10. If newState's depthFar value is set, set session's pending render state's depthFar to newState's depthFar.
+    if (newState.depthFar)
+        m_pendingRenderState->setDepthFar(newState.depthFar.value());
+
+    // 11. If newState's inlineVerticalFieldOfView is set, set session's pending render state's inlineVerticalFieldOfView
+    //     to newState's inlineVerticalFieldOfView.
+    if (newState.inlineVerticalFieldOfView)
+        m_pendingRenderState->setInlineVerticalFieldOfView(newState.inlineVerticalFieldOfView.value());
+
+    // 12. If newState's baseLayer is set, set session's pending render state's baseLayer to newState's baseLayer.
+    if (newState.baseLayer)
+        m_pendingRenderState->setBaseLayer(newState.baseLayer.get());
+
+    return { };
 }
 
 // https://immersive-web.github.io/webxr/#reference-space-is-supported
@@ -100,7 +156,7 @@ bool WebXRSession::referenceSpaceIsSupported(XRReferenceSpaceType type) const
     if (type == XRReferenceSpaceType::Viewer)
         return true;
 
-    bool isImmersiveSession = m_mode == XRSessionMode::ImmersiveAr || m_mode == XRSessionMode::ImmersiveVr;
+    bool isImmersiveSession = isImmersive(m_mode);
     if (type == XRReferenceSpaceType::Local || type == XRReferenceSpaceType::LocalFloor) {
         // 3. If type is local or local-floor, and session is an immersive session, return true.
         if (isImmersiveSession)
