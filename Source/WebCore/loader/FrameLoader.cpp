@@ -2295,8 +2295,6 @@ void FrameLoader::willRestoreFromCachedPage()
 
 void FrameLoader::open(CachedFrameBase& cachedFrame)
 {
-    m_isComplete = false;
-    
     // Don't re-emit the load event.
     m_didCallImplicitClose = true;
 

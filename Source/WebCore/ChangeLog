@@ -1,5 +1,18 @@
 2020-08-14  Rob Buis  <rbuis@igalia.com>
 
+        Simplify FrameLoader::open
+        https://bugs.webkit.org/show_bug.cgi?id=215505
+
+        Reviewed by Darin Adler.
+
+        There is no need to set m_isComplete to false since the started() call
+        a few lines below does the same thing.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open):
+
+2020-08-14  Rob Buis  <rbuis@igalia.com>
+
         Simplify HTMLFrameElementBase::openURL
         https://bugs.webkit.org/show_bug.cgi?id=215504
 
