@@ -1,3 +1,9 @@
+2020-08-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Add baseline for css3/filters/backdrop/blur-input-bounds.html.
+
+        * platform/glib/css3/filters/backdrop/blur-input-bounds-expected.txt: Added.
+
 2020-08-13  Andres Gonzalez  <andresg_22@apple.com>
 
         VoiceOver not able to invoke play button on some web sites.
