@@ -35,6 +35,7 @@ class Element;
 class EventListener;
 class EventTarget;
 class HTMLElement;
+class HTMLVideoElement;
 class LayoutUnit;
 
 class Quirks {
