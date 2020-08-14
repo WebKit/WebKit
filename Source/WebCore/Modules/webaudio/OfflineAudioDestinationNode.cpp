@@ -47,11 +47,17 @@ OfflineAudioDestinationNode::OfflineAudioDestinationNode(BaseAudioContext& conte
     , m_framesToProcess(renderTarget->length())
 {
     m_renderBus = AudioBus::create(renderTarget->numberOfChannels(), renderQuantumSize);
+    initializeDefaultNodeOptions(renderTarget->numberOfChannels(), ChannelCountMode::Explicit, ChannelInterpretation::Speakers);
 }
 
 OfflineAudioDestinationNode::~OfflineAudioDestinationNode()
 {
     uninitialize();
+}
+
+unsigned OfflineAudioDestinationNode::maxChannelCount() const
+{
+    return m_renderTarget->numberOfChannels();
 }
 
 void OfflineAudioDestinationNode::initialize()

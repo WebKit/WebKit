@@ -1,10 +1,10 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Panner k-rate positionX" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
-FAIL Executing "Panner k-rate positionY" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
-FAIL Executing "Panner k-rate orientationX" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
-FAIL Executing "Panner k-rate orientationY" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
-FAIL Executing "Panner k-rate orientationZ" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+PASS Executing "Panner k-rate positionX" 
+PASS Executing "Panner k-rate positionY" 
+PASS Executing "Panner k-rate orientationX" 
+PASS Executing "Panner k-rate orientationY" 
+PASS Executing "Panner k-rate orientationZ" 
 PASS Executing "Listener k-rate positionX" 
 PASS Executing "Listener k-rate positionY" 
 PASS Executing "Listener k-rate positionZ" 
@@ -21,30 +21,195 @@ PASS   k-rate positionX: k-rate node: positionX.setValueAtTime(0,0) did not thro
 PASS   k-rate positionX: k-rate node: positionX.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
 PASS   k-rate positionX: a-rate node:positionX.setValueAtTime(0,0) did not throw an exception. 
 PASS   k-rate positionX: a-rate node:positionX.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
+PASS   k-rate positionX: Output of k-rate PannerNode is identical to the array [0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652...]. 
+PASS   k-rate positionX: Output of a-rate PannerNode is identical to the array [0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652,0.00005495094956131652...]. 
+PASS   k-rate positionX: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 157 different values). 
+PASS   k-rate positionX k-rate output [0: 127] contains only the constant 0.00005495094956131652. 
+FAIL X k-rate positionX k-rate output [128: 255]: Expected 0.00006342888082144782 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.00007185198774095625
+	[2]	0.00008022063411772251
+	[3]	0.00008853514736983925
+	[4]	0.00009679589129518718
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate positionX k-rate output [256: 383]: Expected 0.0008111112983897328 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.000810645055025816
+	[2]	0.0008101799758151174
+	[3]	0.0008097159443423152
+	[4]	0.0008092531352303922
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate positionX k-rate output [384: 511]: Expected 0.0005070294719189405 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.0005068031023256481
+	[2]	0.0005065773730166256
+	[3]	0.0005063521675765514
+	[4]	0.0005061274860054255
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate positionX k-rate output [512: 639]: Expected 0.000361790822353214 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.00036166736390441656
+	[2]	0.0003615442547015846
+	[3]	0.00036142137832939625
+	[4]	0.0003612988512031734
+	...and 123 more errors. assert_true: expected true got false
+FAIL < [Panner k-rate positionX] 4 out of 13 assertions were failed. assert_true: expected true got false
 PASS > [Panner k-rate positionY]  
 PASS   k-rate positionY: Setting positionY.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate positionY: k-rate node: positionY.setValueAtTime(0,0) did not throw an exception. 
 PASS   k-rate positionY: k-rate node: positionY.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
 PASS   k-rate positionY: a-rate node:positionY.setValueAtTime(0,0) did not throw an exception. 
 PASS   k-rate positionY: a-rate node:positionY.linearRampToValueAtTime(1000,0.08) did not throw an exception. 
+PASS   k-rate positionY: Output of k-rate PannerNode is identical to the array [0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686...]. 
+PASS   k-rate positionY: Output of a-rate PannerNode is identical to the array [0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686,0.15397992730140686...]. 
+PASS   k-rate positionY: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 296 different values). 
+PASS   k-rate positionY k-rate output [0: 127] contains only the constant 0.15397992730140686. 
+FAIL X k-rate positionY k-rate output [128: 255]: Expected 0.15321408212184906 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.15245208144187927
+	[2]	0.15169388055801392
+	[3]	0.1509394645690918
+	[4]	0.15018881857395172
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate positionY k-rate output [256: 383]: Expected 0.08104125410318375 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.08063808083534241
+	[2]	0.08023692667484283
+	[3]	0.07983777672052383
+	[4]	0.07944062352180481
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate positionY k-rate output [384: 511]: Expected 0.04285595566034317 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.04264303669333458
+	[2]	0.04243117943406105
+	[3]	0.042220380157232285
+	[4]	0.04201063886284828
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate positionY k-rate output [512: 639]: Expected 0.022689657285809517 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.022577228024601936
+	[2]	0.022465359419584274
+	[3]	0.02235405333340168
+	[4]	0.022243302315473557
+	...and 123 more errors. assert_true: expected true got false
+FAIL < [Panner k-rate positionY] 4 out of 13 assertions were failed. assert_true: expected true got false
 PASS > [Panner k-rate orientationX]  
 PASS   k-rate orientationX: Setting orientationX.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate orientationX: k-rate node: orientationX.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationX: k-rate node: orientationX.linearRampToValueAtTime(10,0.08) did not throw an exception. 
 PASS   k-rate orientationX: a-rate node:orientationX.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationX: a-rate node:orientationX.linearRampToValueAtTime(10,0.08) did not throw an exception. 
+PASS   k-rate orientationX: Output of k-rate PannerNode is identical to the array [0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766...]. 
+PASS   k-rate orientationX: Output of a-rate PannerNode is identical to the array [0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766,0.000041451945435255766...]. 
+PASS   k-rate orientationX: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 320 different values). 
+PASS   k-rate orientationX k-rate output [0: 127] contains only the constant 0.000041451945435255766. 
+FAIL X k-rate orientationX k-rate output [128: 255]: Expected 0.0003339551039971411 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.0006249957368709147
+	[2]	0.0009145812364295125
+	[3]	0.001202718704007566
+	[4]	0.0014894155319780111
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate orientationX k-rate output [256: 383]: Expected 0.028000328689813614 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.02825474739074707
+	[2]	0.028507892042398453
+	[3]	0.028759770095348358
+	[4]	0.029010390862822533
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate orientationX k-rate output [384: 511]: Expected 0.05214492604136467 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.05232711881399155
+	[2]	0.0525084063410759
+	[3]	0.052688777446746826
+	[4]	0.052868250757455826
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate orientationX k-rate output [512: 639]: Expected 0.06942851841449738 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.06955232471227646
+	[2]	0.0696755051612854
+	[3]	0.0697980672121048
+	[4]	0.06992002576589584
+	...and 123 more errors. assert_true: expected true got false
+FAIL < [Panner k-rate orientationX] 4 out of 13 assertions were failed. assert_true: expected true got false
 PASS > [Panner k-rate orientationY]  
 PASS   k-rate orientationY: Setting orientationY.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate orientationY: k-rate node: orientationY.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationY: k-rate node: orientationY.linearRampToValueAtTime(10,0.08) did not throw an exception. 
 PASS   k-rate orientationY: a-rate node:orientationY.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationY: a-rate node:orientationY.linearRampToValueAtTime(10,0.08) did not throw an exception. 
+PASS   k-rate orientationY: Output of k-rate PannerNode is identical to the array [0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607...]. 
+PASS   k-rate orientationY: Output of a-rate PannerNode is identical to the array [0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607...]. 
+PASS   k-rate orientationY: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 174 different values). 
+PASS   k-rate orientationY k-rate output [0: 127] contains only the constant 0.07389305531978607. 
+FAIL X k-rate orientationY k-rate output [128: 255]: Expected 0.0739683136343956 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.07404319196939468
+	[2]	0.07411769032478333
+	[3]	0.07419182360172272
+	[4]	0.07426558434963226
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate orientationY k-rate output [256: 383]: Expected 0.0811038538813591 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.08118677884340286
+	[2]	0.0812692940235138
+	[3]	0.0813513994216919
+	[4]	0.08143308758735657
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate orientationY k-rate output [384: 511]: Expected 0.08898043632507324 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.08904612064361572
+	[2]	0.08911147713661194
+	[3]	0.08917650580406189
+	[4]	0.08924121409654617
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate orientationY k-rate output [512: 639]: Expected 0.09521431475877762 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.09526193141937256
+	[2]	0.0953093022108078
+	[3]	0.09535645693540573
+	[4]	0.09540335834026337
+	...and 123 more errors. assert_true: expected true got false
+FAIL < [Panner k-rate orientationY] 4 out of 13 assertions were failed. assert_true: expected true got false
 PASS > [Panner k-rate orientationZ]  
 PASS   k-rate orientationZ: Setting orientationZ.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate orientationZ: k-rate node: orientationZ.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationZ: k-rate node: orientationZ.linearRampToValueAtTime(10,0.08) did not throw an exception. 
 PASS   k-rate orientationZ: a-rate node:orientationZ.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate orientationZ: a-rate node:orientationZ.linearRampToValueAtTime(10,0.08) did not throw an exception. 
+PASS   k-rate orientationZ: Output of k-rate PannerNode is identical to the array [0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607...]. 
+PASS   k-rate orientationZ: Output of a-rate PannerNode is identical to the array [0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607,0.07389305531978607...]. 
+PASS   k-rate orientationZ: Difference between a-rate and k-rate PannerNode is not constantly 0 (contains 174 different values). 
+PASS   k-rate orientationZ k-rate output [0: 127] contains only the constant 0.07389305531978607. 
+FAIL X k-rate orientationZ k-rate output [128: 255]: Expected 0.0739683136343956 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.07404319196939468
+	[2]	0.07411769032478333
+	[3]	0.07419182360172272
+	[4]	0.07426558434963226
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate orientationZ k-rate output [256: 383]: Expected 0.0811038538813591 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.08118677884340286
+	[2]	0.0812692940235138
+	[3]	0.0813513994216919
+	[4]	0.08143308758735657
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate orientationZ k-rate output [384: 511]: Expected 0.08898043632507324 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.08904612064361572
+	[2]	0.08911147713661194
+	[3]	0.08917650580406189
+	[4]	0.08924121409654617
+	...and 123 more errors. assert_true: expected true got false
+FAIL X k-rate orientationZ k-rate output [512: 639]: Expected 0.09521431475877762 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.09526193141937256
+	[2]	0.0953093022108078
+	[3]	0.09535645693540573
+	[4]	0.09540335834026337
+	...and 123 more errors. assert_true: expected true got false
+FAIL < [Panner k-rate orientationZ] 4 out of 13 assertions were failed. assert_true: expected true got false
 PASS > [Listener k-rate positionX]  
 PASS   Listener positionX.automationRate is equal to k-rate. 
 PASS   Listener positionX.setValueAtTime(1,0) did not throw an exception. 
@@ -360,5 +525,5 @@ FAIL X Listener k-rate upZ: Output [512, 639]: Expected 0.0010074147721752524 fo
 	[4]	0.0010074054589495063
 	...and 123 more errors. assert_true: expected true got false
 FAIL < [Listener k-rate upZ] 4 out of 9 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 9 out of 14 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 14 out of 14 tasks were failed. assert_true: expected true got false
 

@@ -1,9 +1,13 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Oscillator k-rate detune" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
-FAIL Executing "Oscillator k-rate frequency" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+PASS Executing "Oscillator k-rate detune" 
+PASS Executing "Oscillator k-rate frequency" 
 PASS Audit report 
 PASS > [Oscillator k-rate detune]  
+FAIL X k-rate detune: Difference between a-rate and k-rate outputs should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [Oscillator k-rate detune] 1 out of 1 assertions were failed. assert_true: expected true got false
 PASS > [Oscillator k-rate frequency]  
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+FAIL X k-rate frequency: Difference between a-rate and k-rate outputs should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [Oscillator k-rate frequency] 1 out of 1 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 2 tasks were failed. assert_true: expected true got false
 

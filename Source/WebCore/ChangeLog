@@ -1,3 +1,23 @@
+2020-08-14  Chris Dumez  <cdumez@apple.com>
+
+        OfflineAudioContext.destination has incorrect number of channels & channel count mode
+        https://bugs.webkit.org/show_bug.cgi?id=215522
+
+        Reviewed by Eric Carlson.
+
+        OfflineAudioContext.destination currently always has a number of channels that is 0, no
+        matter the numberOfChannels provided when constructing the OfflineAudioContext. The
+        channel count mode is also "max" instead of "explicit" (as per [1]).
+
+        [1] https://www.w3.org/TR/webaudio/#AudioDestinationNode
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        (WebCore::OfflineAudioDestinationNode::maxChannelCount const):
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+
 2020-08-14  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] releaseShaderCompiler is not allowed to be supported in WebGL

@@ -1,5 +1,28 @@
 2020-08-14  Chris Dumez  <cdumez@apple.com>
 
+        OfflineAudioContext.destination has incorrect number of channels & channel count mode
+        https://bugs.webkit.org/show_bug.cgi?id=215522
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT tests now that more checks are passing.
+        Note that some tests are now failing when checking the audio channels on the OfflineAudioContext's destination.
+        Previously, there were no such channels to check since the channel count was always 0.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-scheduling-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-constant-source-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-gain-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-oscillator-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/gain-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/ctor-offlineaudiocontext-expected.txt:
+
+2020-08-14  Chris Dumez  <cdumez@apple.com>
+
         Add support for suspending / resuming an OfflineAudioContext
         https://bugs.webkit.org/show_bug.cgi?id=215417
 

@@ -322,8 +322,12 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad-connection.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-upmixing-1-channel-response.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-copy-curve.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-biquad.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-gain.html [ Pass Failure ]
 
 # This test passes but prints a different value almost every time.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan.html [ Pass Failure ]

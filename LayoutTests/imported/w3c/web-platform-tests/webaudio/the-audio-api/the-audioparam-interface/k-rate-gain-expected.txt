@@ -1,6 +1,6 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test k-rate GainNode" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+PASS Executing "Test k-rate GainNode" 
 PASS Audit report 
 PASS > [Test k-rate GainNode]  
 PASS   GainNode: Setting gain.automationRate to "k-rate" is equal to k-rate. 
@@ -8,5 +8,9 @@ PASS   GainNode: k-rate node: gain.setValueAtTime(1,0) did not throw an exceptio
 PASS   GainNode: k-rate node: gain.linearRampToValueAtTime(0,1) did not throw an exception. 
 PASS   GainNode: a-rate node:gain.setValueAtTime(1,0) did not throw an exception. 
 PASS   GainNode: a-rate node:gain.linearRampToValueAtTime(0,1) did not throw an exception. 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS   GainNode: Output of k-rate GainNode is identical to the array [0,0.3386955261230469,0.6372645497322083,0.8604192137718201,0.9817960262298584,0.9870707392692566,0.8756490349769592,0.6607331037521362,0.367756187915802,0.03137516602873802,-0.3086307942867279,-0.6120643615722656,-0.8430613279342651,-0.974330723285675,-0.9903783798217773,-0.8893356323242188...]. 
+PASS   GainNode: Output of a-rate GainNode is identical to the array [0,0.3386955261230469,0.6372645497322083,0.8604192137718201,0.9817960262298584,0.9870707392692566,0.8756490349769592,0.6607331037521362,0.367756187915802,0.03137516602873802,-0.3086307942867279,-0.6120643615722656,-0.8430613279342651,-0.974330723285675,-0.9903783798217773,-0.8893356323242188...]. 
+FAIL X GainNode: Difference between a-rate and k-rate GainNode should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [Test k-rate GainNode] 1 out of 8 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

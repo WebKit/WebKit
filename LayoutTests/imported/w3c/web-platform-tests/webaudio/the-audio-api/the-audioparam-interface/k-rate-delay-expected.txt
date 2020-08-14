@@ -1,6 +1,6 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Test k-rate DelayNode" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+PASS Executing "Test k-rate DelayNode" 
 PASS Audit report 
 PASS > [Test k-rate DelayNode]  
 PASS   DelayNode: Setting delayTime.automationRate to "k-rate" is equal to k-rate. 
@@ -8,5 +8,9 @@ PASS   DelayNode: k-rate node: delayTime.setValueAtTime(0,0) did not throw an ex
 PASS   DelayNode: k-rate node: delayTime.linearRampToValueAtTime(0.5,1) did not throw an exception. 
 PASS   DelayNode: a-rate node:delayTime.setValueAtTime(0,0) did not throw an exception. 
 PASS   DelayNode: a-rate node:delayTime.linearRampToValueAtTime(0.5,1) did not throw an exception. 
-PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully. 
+PASS   DelayNode: Output of k-rate DelayNode is identical to the array [0,0.1693689227104187,0.3387378454208374,0.48808085918426514,0.6374238729476929,0.7490829229354858,0.8607419729232788,0.9215145707130432,0.9822871685028076,0.9849876165390015,0.9876880645751953,0.9319971799850464,0.8763062953948975,0.7688090205192566,0.6613118052482605,0.5147179961204529...]. 
+PASS   DelayNode: Output of a-rate DelayNode is identical to the array [0,0.1693689227104187,0.3387378454208374,0.48808085918426514,0.6374238729476929,0.7490829229354858,0.8607419729232788,0.9215145707130432,0.9822871685028076,0.9849876165390015,0.9876880645751953,0.9319971799850464,0.8763062953948975,0.7688090205192566,0.6613118052482605,0.5147179961204529...]. 
+FAIL X DelayNode: Difference between a-rate and k-rate DelayNode should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [Test k-rate DelayNode] 1 out of 8 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 1 tasks were failed. assert_true: expected true got false
 

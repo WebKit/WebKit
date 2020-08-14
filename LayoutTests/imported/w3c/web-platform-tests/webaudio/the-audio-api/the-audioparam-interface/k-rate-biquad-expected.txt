@@ -1,10 +1,10 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "Biquad k-rate AudioParams (all)" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
-FAIL Executing "Biquad k-rate Q" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
-FAIL Executing "Biquad k-rate detune" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
-FAIL Executing "Biquad k-rate frequency" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
-FAIL Executing "Biquad k-rate gain" promise_test: Unhandled rejection with value: object "IndexSizeError: The index is not in the allowed range."
+PASS Executing "Biquad k-rate AudioParams (all)" 
+PASS Executing "Biquad k-rate Q" 
+PASS Executing "Biquad k-rate detune" 
+PASS Executing "Biquad k-rate frequency" 
+PASS Executing "Biquad k-rate gain" 
 PASS Audit report 
 PASS > [Biquad k-rate AudioParams (all)]  
 PASS   All k-rate params: Setting Q.automationRate to "k-rate" is equal to k-rate. 
@@ -15,29 +15,49 @@ PASS   All k-rate params: k-rate node: frequency.setValueAtTime(350,0) did not t
 PASS   All k-rate params: k-rate node: frequency.linearRampToValueAtTime(0,1) did not throw an exception. 
 PASS   All k-rate params: a-rate node:frequency.setValueAtTime(350,0) did not throw an exception. 
 PASS   All k-rate params: a-rate node:frequency.linearRampToValueAtTime(0,1) did not throw an exception. 
+PASS   All k-rate params: Output of k-rate BiquadFilterNode is identical to the array [0,0.005672737956047058,0.031761422753334045,0.09152894467115402,0.18822039663791656,0.3152911961078644,0.4580239951610565,0.5962369441986084,0.7076709866523743,0.7715816497802734,0.7720555663108826,0.700621485710144,0.5578286647796631,0.35359877347946167,0.10631752759218216,-0.15921232104301453...]. 
+PASS   All k-rate params: Output of a-rate BiquadFilterNode is identical to the array [0,0.005672737956047058,0.031761422753334045,0.09152894467115402,0.18822039663791656,0.3152911961078644,0.4580239951610565,0.5962369441986084,0.7076709866523743,0.7715816497802734,0.7720555663108826,0.700621485710144,0.5578286647796631,0.35359877347946167,0.10631752759218216,-0.15921232104301453...]. 
+FAIL X All k-rate params: Difference between a-rate and k-rate BiquadFilterNode should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [Biquad k-rate AudioParams (all)] 1 out of 11 assertions were failed. assert_true: expected true got false
 PASS > [Biquad k-rate Q]  
 PASS   k-rate Q: Setting Q.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate Q: k-rate node: Q.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate Q: k-rate node: Q.linearRampToValueAtTime(10,1) did not throw an exception. 
 PASS   k-rate Q: a-rate node:Q.setValueAtTime(1,0) did not throw an exception. 
 PASS   k-rate Q: a-rate node:Q.linearRampToValueAtTime(10,1) did not throw an exception. 
+PASS   k-rate Q: Output of k-rate BiquadFilterNode is identical to the array [0,0.39067500829696655,0.8280423879623413,1.237112283706665,1.5446851253509521,1.6899598836898804,1.6333717107772827,1.3625415563583374,0.8945985436439514,0.27460339665412903,-0.42972034215927124,-1.1362687349319458,-1.758807897567749,-2.217907190322876,-2.4511806964874268,-2.4215519428253174...]. 
+PASS   k-rate Q: Output of a-rate BiquadFilterNode is identical to the array [0,0.39067500829696655,0.8280423879623413,1.237112283706665,1.5446851253509521,1.6899598836898804,1.6333717107772827,1.3625415563583374,0.8945985436439514,0.27460339665412903,-0.42972034215927124,-1.1362687349319458,-1.758807897567749,-2.217907190322876,-2.4511806964874268,-2.4215519428253174...]. 
+FAIL X k-rate Q: Difference between a-rate and k-rate BiquadFilterNode should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [Biquad k-rate Q] 1 out of 8 assertions were failed. assert_true: expected true got false
 PASS > [Biquad k-rate detune]  
 PASS   k-rate detune: Setting detune.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate detune: k-rate node: detune.setValueAtTime(0,0) did not throw an exception. 
 PASS   k-rate detune: k-rate node: detune.linearRampToValueAtTime(1200,1) did not throw an exception. 
 PASS   k-rate detune: a-rate node:detune.setValueAtTime(0,0) did not throw an exception. 
 PASS   k-rate detune: a-rate node:detune.linearRampToValueAtTime(1200,1) did not throw an exception. 
+PASS   k-rate detune: Output of k-rate BiquadFilterNode is identical to the array [0,0.39067500829696655,0.8280423879623413,1.237112283706665,1.5446851253509521,1.6899598836898804,1.6333717107772827,1.3625415563583374,0.8945985436439514,0.27460339665412903,-0.42972034215927124,-1.1362687349319458,-1.758807897567749,-2.217907190322876,-2.4511806964874268,-2.4215519428253174...]. 
+PASS   k-rate detune: Output of a-rate BiquadFilterNode is identical to the array [0,0.39067500829696655,0.8280423879623413,1.237112283706665,1.5446851253509521,1.6899598836898804,1.6333717107772827,1.3625415563583374,0.8945985436439514,0.27460339665412903,-0.42972034215927124,-1.1362687349319458,-1.758807897567749,-2.217907190322876,-2.4511806964874268,-2.4215519428253174...]. 
+FAIL X k-rate detune: Difference between a-rate and k-rate BiquadFilterNode should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [Biquad k-rate detune] 1 out of 8 assertions were failed. assert_true: expected true got false
 PASS > [Biquad k-rate frequency]  
 PASS   k-rate frequency: Setting frequency.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate frequency: k-rate node: frequency.setValueAtTime(350,0) did not throw an exception. 
 PASS   k-rate frequency: k-rate node: frequency.linearRampToValueAtTime(0,1) did not throw an exception. 
 PASS   k-rate frequency: a-rate node:frequency.setValueAtTime(350,0) did not throw an exception. 
 PASS   k-rate frequency: a-rate node:frequency.linearRampToValueAtTime(0,1) did not throw an exception. 
+PASS   k-rate frequency: Output of k-rate BiquadFilterNode is identical to the array [0,0.39067500829696655,0.8280423879623413,1.237112283706665,1.5446851253509521,1.6899598836898804,1.6333717107772827,1.3625415563583374,0.8945985436439514,0.27460339665412903,-0.42972034215927124,-1.1362687349319458,-1.758807897567749,-2.217907190322876,-2.4511806964874268,-2.4215519428253174...]. 
+PASS   k-rate frequency: Output of a-rate BiquadFilterNode is identical to the array [0,0.39067500829696655,0.8280423879623413,1.237112283706665,1.5446851253509521,1.6899598836898804,1.6333717107772827,1.3625415563583374,0.8945985436439514,0.27460339665412903,-0.42972034215927124,-1.1362687349319458,-1.758807897567749,-2.217907190322876,-2.4511806964874268,-2.4215519428253174...]. 
+FAIL X k-rate frequency: Difference between a-rate and k-rate BiquadFilterNode should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [Biquad k-rate frequency] 1 out of 8 assertions were failed. assert_true: expected true got false
 PASS > [Biquad k-rate gain]  
 PASS   k-rate gain: Setting gain.automationRate to "k-rate" is equal to k-rate. 
 PASS   k-rate gain: k-rate node: gain.setValueAtTime(10,0) did not throw an exception. 
 PASS   k-rate gain: k-rate node: gain.linearRampToValueAtTime(0,1) did not throw an exception. 
 PASS   k-rate gain: a-rate node:gain.setValueAtTime(10,0) did not throw an exception. 
 PASS   k-rate gain: a-rate node:gain.linearRampToValueAtTime(0,1) did not throw an exception. 
-PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
+PASS   k-rate gain: Output of k-rate BiquadFilterNode is identical to the array [0,0.39067500829696655,0.8280423879623413,1.237112283706665,1.5446851253509521,1.6899598836898804,1.6333717107772827,1.3625415563583374,0.8945985436439514,0.27460339665412903,-0.42972034215927124,-1.1362687349319458,-1.758807897567749,-2.217907190322876,-2.4511806964874268,-2.4215519428253174...]. 
+PASS   k-rate gain: Output of a-rate BiquadFilterNode is identical to the array [0,0.39067500829696655,0.8280423879623413,1.237112283706665,1.5446851253509521,1.6899598836898804,1.6333717107772827,1.3625415563583374,0.8945985436439514,0.27460339665412903,-0.42972034215927124,-1.1362687349319458,-1.758807897567749,-2.217907190322876,-2.4511806964874268,-2.4215519428253174...]. 
+FAIL X k-rate gain: Difference between a-rate and k-rate BiquadFilterNode should have contain at least one value different from 0. assert_true: expected true got false
+FAIL < [Biquad k-rate gain] 1 out of 8 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 5 out of 5 tasks were failed. assert_true: expected true got false
 

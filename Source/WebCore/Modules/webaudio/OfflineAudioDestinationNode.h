@@ -63,6 +63,8 @@ private:
     OfflineRenderResult offlineRender();
     void notifyOfflineRenderingSuspended();
 
+    unsigned maxChannelCount() const final;
+
     // This AudioNode renders into this AudioBuffer.
     RefPtr<AudioBuffer> m_renderTarget;
     
