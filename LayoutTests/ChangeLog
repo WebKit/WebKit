@@ -1,3 +1,13 @@
+2020-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Crash in WebCore::StyledMarkupAccumulator::traverseNodesForSerialization
+        https://bugs.webkit.org/show_bug.cgi?id=199224
+
+        Reviewed by Michael Catanzaro.
+
+        * editing/pasteboard/copy-across-shadow-boundaries-crash-expected.txt: Added.
+        * editing/pasteboard/copy-across-shadow-boundaries-crash.html: Added.
+
 2020-08-13  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Add baseline for css3/filters/backdrop/blur-input-bounds.html.

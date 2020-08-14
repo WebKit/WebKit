@@ -1,3 +1,19 @@
+2020-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Crash in WebCore::StyledMarkupAccumulator::traverseNodesForSerialization
+        https://bugs.webkit.org/show_bug.cgi?id=199224
+
+        Reviewed by Michael Catanzaro.
+
+        The crash happens in StyledMarkupAccumulator::traverseNodesForSerialization() when we can't enter the node and
+        nextSkippingChildren() returns nullptr.
+
+        Test: editing/pasteboard/copy-across-shadow-boundaries-crash.html
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization): Set next to pastEnd if nextSkippingChildren()
+        returns nullptr.
+
 2020-08-13  Andres Gonzalez  <andresg_22@apple.com>
 
         VoiceOver not able to invoke play button on some web sites.
