@@ -290,6 +290,15 @@ void DropTarget::didPerformAction()
 void DropTarget::leave()
 {
     g_cancellable_cancel(m_cancellable.get());
+
+    auto* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
+    ASSERT(page);
+
+    auto position = m_position.valueOr(IntPoint());
+    DragData dragData(&m_selectionData.value(), position, position, { });
+    page->dragExited(dragData);
+    page->resetCurrentDragInformation();
+
     m_drop = nullptr;
     m_position = WTF::nullopt;
     m_selectionData = WTF::nullopt;

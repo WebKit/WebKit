@@ -1,5 +1,17 @@
 2020-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK4] Notify the web process on drag leave
+        https://bugs.webkit.org/show_bug.cgi?id=215373
+
+        Reviewed by Adrian Perez de Castro.
+
+        We missed this when implemented drag and drop support for GTK4.
+
+        * UIProcess/API/gtk/DropTargetGtk4.cpp:
+        (WebKit::DropTarget::leave): Call dragExited() and resetCurrentDragInformation() on WebPageProxy.
+
+2020-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Do not accept drag operations when the matched target list is empty
         https://bugs.webkit.org/show_bug.cgi?id=215372
 
