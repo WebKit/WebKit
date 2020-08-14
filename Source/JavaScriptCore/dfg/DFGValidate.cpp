@@ -33,6 +33,7 @@
 #include "DFGClobbersExitState.h"
 #include "DFGDominators.h"
 #include "DFGMayExit.h"
+#include "DFGOSRAvailabilityAnalysisPhase.h"
 #include <wtf/Assertions.h>
 
 namespace JSC { namespace DFG {
@@ -82,6 +83,11 @@ public:
         
     void validate()
     {
+        if (m_graph.m_isValidating)
+            return;
+
+        auto isValidating = SetForScope(m_graph.m_isValidating, true);
+
         // NB. This code is not written for performance, since it is not intended to run
         // in release builds.
 
@@ -801,14 +807,13 @@ private:
 
         auto& dominators = m_graph.ensureSSADominators();
 
+        if (Options::validateFTLOSRExitLiveness())
+            validateOSRExitAvailability(m_graph);
+
         for (unsigned entrypointIndex : m_graph.m_entrypointIndexToCatchBytecodeIndex.keys())
             VALIDATE((), entrypointIndex > 0); // By convention, 0 is the entrypoint index for the op_enter entrypoint, which can not be in a catch.
 
-        for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-            BasicBlock* block = m_graph.block(blockIndex);
-            if (!block)
-                continue;
-            
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             VALIDATE((block), block->phis.isEmpty());
 
             bool didSeeExitOK = false;

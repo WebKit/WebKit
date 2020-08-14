@@ -1,3 +1,73 @@
+2020-08-12  Keith Miller  <keith_miller@apple.com>
+
+        OSRAvailabilityAnalysis shouldn't mark GetStack nodes directly as valid places for recovery
+        https://bugs.webkit.org/show_bug.cgi?id=215434
+
+        Reviewed by Saam Barati.
+
+        It's somewhat subtle why we cannot use the node for the GetStack
+        itself in the Availability's node field. The reason is that if we
+        did we would need to make any phase that converts nodes to
+        GetStack availability aware. For instance, a place where this
+        could come up is in constant folding if you had a graph like the
+        following, which could arise from PutStack sinking:
+
+        BB#1:
+        @1: NewObject()
+        @2: MovHint(@1, inline-arg1)
+        @3: Jump(#2, #3)
+
+        BB#2:
+        @4: PutStack(@1, inline-arg1)
+        @5: GetMyArgumentByVal(inline-arg1)
+        @6: Jump(#3)
+
+        BB#3:
+        @7: InvalidationPoint()
+
+        If constant folding converts @5 to a GetStack then at @7
+        inline-arg1 won't be available since at the end of BB#1 our
+        availability is (@1, DeadFlush) and (@5,
+        FlushedAt(inline-arg1)). When that gets merged at BB#3 then the
+        availability will be (nullptr, ConflictingFlush).
+
+        This patch also makes validation check that availability is sane
+        at each pontential exit site if
+        Options::validateFTLOSRExitLiveness() is set. Since this is
+        actually a Phase we also need to make sure that we don't infinite
+        loop, so there is now a m_isValidating field on m_graph. The
+        validateOSRExitAvailability phase is also careful not to modify
+        the Graph, in order to avoid masking bugs when validating.
+
+        In a followup patch I intend to look into why MovHint elimination
+        will convert:
+
+        @2: MovHint(@0, loc1, bc#1, ExitInvalid)
+        @3: KillStack(loc1, bc#2, ExitValid)
+        @4: MovHint(@1 loc1, bc#2, ExitInvalid)
+
+        into
+
+        @2: ZombieHint(@0, loc1, bc#1, ExitInvalid)
+        @3: KillStack(loc1, bc#2, ExitValid)
+        @4: MovHint(@1 loc1, bc#2, ExitInvalid)
+
+        when loc1 is live in the bytecode at bc#2. But for now, the
+        validation rule works around this by only checking when mayExit
+        and the nodes exitOK agree exiting is possible.
+
+        * dfg/DFGGraph.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::OSRAvailabilityAnalysisPhase):
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        (JSC::DFG::performOSRAvailabilityAnalysis):
+        (JSC::DFG::validateOSRExitAvailability):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.h:
+        * dfg/DFGPhase.h:
+        (JSC::DFG::runPhase):
+        * dfg/DFGValidate.cpp:
+
 2020-08-13  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Cache Structure::attributeChangeTransition()

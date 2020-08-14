@@ -88,10 +88,10 @@ bool runAndLog(PhaseType& phase)
     return result;
 }
 
-template<typename PhaseType>
-bool runPhase(Graph& graph)
+template<typename PhaseType, typename... Args>
+bool runPhase(Graph& graph, Args... args)
 {
-    PhaseType phase(graph);
+    PhaseType phase(graph, args...);
     return runAndLog(phase);
 }
 

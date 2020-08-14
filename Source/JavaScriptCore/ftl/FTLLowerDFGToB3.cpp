@@ -19048,6 +19048,7 @@ private:
             
             Availability availability = availabilityMap.m_locals[i];
             
+            // FIXME: It seems like we should be able to do at least some validation when OSR entering. https://bugs.webkit.org/show_bug.cgi?id=215511
             if (Options::validateFTLOSRExitLiveness()
                 && m_graph.m_plan.mode() != FTLForOSREntryMode) {
 
