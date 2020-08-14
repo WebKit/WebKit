@@ -148,8 +148,8 @@ layer at (0,0) size 800x776
       RenderTable {TABLE} at (0,566) size 800x54 [border: (2px solid #000000)]
         RenderTableSection {TBODY} at (2,2) size 796x50
           RenderTableRow {TR} at (0,0) size 796x25
-            RenderTableCell {TD} at (0,12) size 398x0 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (398,12) size 0x0 [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (0,12) size 199x0 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (199,12) size 199x0 [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (398,2) size 398x21 [bgcolor=#FF0000] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (0,0) size 238x20
                 text run at (0,1) width 238: "First row, first and second cell empty"
