@@ -46,7 +46,6 @@ public:
     {
     }
 
-    GamepadData(unsigned index, const Vector<WebCore::SharedGamepadValue>& axisValues, const Vector<WebCore::SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime);
     GamepadData(unsigned index, const String& id, const String& mapping, const Vector<WebCore::SharedGamepadValue>& axisValues, const Vector<WebCore::SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime);
 
     void encode(IPC::Encoder&) const;

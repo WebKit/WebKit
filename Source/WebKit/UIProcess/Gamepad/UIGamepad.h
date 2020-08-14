@@ -47,8 +47,7 @@ public:
 
     unsigned index() const { return m_index; }
 
-    GamepadData condensedGamepadData() const;
-    GamepadData fullGamepadData() const;
+    GamepadData gamepadData() const;
 
     void updateFromPlatformGamepad(WebCore::PlatformGamepad&);
 

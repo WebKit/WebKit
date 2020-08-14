@@ -1,3 +1,32 @@
+2020-08-13  Brady Eidson  <beidson@apple.com>
+
+        (WK2 only) gamepad mapping stops being reported as “standard” in new tabs.
+        rdar://problem/66946505 and https://bugs.webkit.org/show_bug.cgi?id=215486
+
+        Reviewed by Tim Horton.
+
+        Covered by new API test.
+        
+        Get rid of the premature optimization that was "full gamepaddata" vs "condensed gamepaddata"
+        
+        In practice, the actual button and axis values are larger than the mapping and id, so
+        not much IPC was being saved.
+
+        * Shared/Gamepad/GamepadData.cpp:
+        * Shared/Gamepad/GamepadData.h:
+
+        * UIProcess/Gamepad/UIGamepad.cpp:
+        (WebKit::UIGamepad::gamepadData const):
+        (WebKit::UIGamepad::condensedGamepadData const): Deleted.
+        (WebKit::UIGamepad::fullGamepadData const): Deleted.
+        * UIProcess/Gamepad/UIGamepad.h:
+
+        * UIProcess/Gamepad/UIGamepadProvider.cpp:
+        (WebKit::UIGamepadProvider::snapshotGamepads):
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gamepadConnected):
+
 2020-08-13  Kate Cheney  <katherine_cheney@apple.com>
 
         Create SharedMemory::IPCHandle object to validate the size of SharedMemory::Handle objects sent over IPC

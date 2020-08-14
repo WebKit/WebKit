@@ -35,14 +35,6 @@ using WebCore::SharedGamepadValue;
 
 namespace WebKit {
 
-GamepadData::GamepadData(unsigned index, const Vector<SharedGamepadValue>& axisValues, const Vector<SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime)
-    : m_index(index)
-    , m_axisValues(WTF::map(axisValues, [](const auto& value) { return value.value(); }))
-    , m_buttonValues(WTF::map(buttonValues, [](const auto& value) { return value.value(); }))
-    , m_lastUpdateTime(lastUpdateTime)
-{
-}
-
 GamepadData::GamepadData(unsigned index, const String& id, const String& mapping, const Vector<SharedGamepadValue>& axisValues, const Vector<SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime)
     : m_index(index)
     , m_id(id)

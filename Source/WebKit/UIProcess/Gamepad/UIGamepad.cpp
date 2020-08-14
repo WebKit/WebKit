@@ -57,12 +57,7 @@ void UIGamepad::updateFromPlatformGamepad(WebCore::PlatformGamepad& platformGame
     m_lastUpdateTime = platformGamepad.lastUpdateTime();
 }
 
-GamepadData UIGamepad::condensedGamepadData() const
-{
-    return { m_index, m_axisValues, m_buttonValues, m_lastUpdateTime };
-}
-
-GamepadData UIGamepad::fullGamepadData() const
+GamepadData UIGamepad::gamepadData() const
 {
     return { m_index, m_id, m_mapping, m_axisValues, m_buttonValues, m_lastUpdateTime };
 }

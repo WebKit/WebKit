@@ -1,3 +1,12 @@
+2020-08-13  Brady Eidson  <beidson@apple.com>
+
+        (WK2 only) gamepad mapping stops being reported as “standard” in new tabs.
+        rdar://problem/66946505 and https://bugs.webkit.org/show_bug.cgi?id=215486
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/mac/HIDGamepads.mm:
+
 2020-08-13  Aakash Jain  <aakash_jain@apple.com>
 
         Regression(r265580): apply-watchlist is broken

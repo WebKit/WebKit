@@ -209,6 +209,7 @@ var gamepads = navigator.getGamepads();
 result.gamepadCount = gamepads.length;
 result.gamepadButtons = new Array;
 result.gamepadAxes = new Array;
+result.gamepadMapping = new Array;
 
 for (var i = 0; i < gamepads.length; ++i) {
     result.gamepadButtons[i] = new Array;
@@ -218,6 +219,8 @@ for (var i = 0; i < gamepads.length; ++i) {
     result.gamepadAxes[i] = new Array;
     for (var j = 0; j < gamepads[i].axes.length; ++j)
         result.gamepadAxes[i][j] = gamepads[i].axes[j];
+
+    result.gamepadMapping[i] = gamepads[i].mapping;
 }
 
 return result;
@@ -517,6 +520,7 @@ TEST(Gamepad, LogitechBasic)
     // needs to convince it to monitor gamepad devices
     [[webView window] resignKeyWindow];
     [[webView window] makeKeyWindow];
+    [[webView window] makeFirstResponder:webView.get()];
 
     // Connect a gamepad and make it visible to the page
     auto gamepad1 = makeUnique<VirtualGamepad>(VirtualGamepad::logitechF310Mapping());
@@ -564,6 +568,86 @@ TEST(Gamepad, LogitechBasic)
 
     Util::run(&done);
     didReceiveMessage = true;
+}
+
+TEST(Gamepad, FullInfoAfterConnection)
+{
+    auto keyWindowSwizzler = makeUnique<InstanceMethodSwizzler>([NSApplication class], @selector(keyWindow), reinterpret_cast<IMP>(getKeyWindowForTesting));
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto messageHandler = adoptNS([[GamepadMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gamepad"];
+
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"gamepad"];
+
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:mainBytes length:strlen(mainBytes)]];
+        [task didFinish];
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    keyWindowForTesting = [webView window];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"gamepad://host/main.html"]]];
+
+    [[webView window] makeFirstResponder:webView.get()];
+
+    // Resigning/reinstating the key window state triggers the "key window did change" notification that WKWebView currently
+    // needs to convince it to monitor gamepad devices
+    [[webView window] resignKeyWindow];
+    [[webView window] makeKeyWindow];
+
+    // Connect a gamepad and make it visible to the page
+    auto gamepad1 = makeUnique<VirtualGamepad>(VirtualGamepad::logitechF310Mapping());
+    while ([webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting] != 1u)
+        Util::sleep(0.01);
+
+    gamepad1->setButtonValue(0, 1.0);
+    gamepad1->publishReport();
+
+    // Wait until the page sees the gamepad
+    while (messageHandler.get().messages.size() < 1) {
+        didReceiveMessage = false;
+        Util::run(&didReceiveMessage);
+    }
+
+    bool done = false;
+    auto resultBlock = [&] (id result, NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_TRUE([result[@"gamepadCount"] isEqualToNumber:@(1)]);
+        EXPECT_TRUE([result[@"gamepadMapping"][0] isEqualToString:@"standard"]);
+        done = true;
+    };
+
+    // Verify the gamepad has the expected mapping.
+    [webView callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
+    Util::run(&done);
+    done = false;
+
+    // Make a second web view to make the same gamepad visible to it.
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    keyWindowForTesting = [webView2 window];
+    [webView2 synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"gamepad://host/main.html"]]];
+    [[webView2 window] makeFirstResponder:webView2.get()];
+
+    // The gamepad is already connected, but this new web view can't see it.
+    // Press buttons to make it visible.
+    gamepad1->setButtonValue(1, 1.0);
+    gamepad1->publishReport();
+
+    // The gamepad is already connected, but this new web view can't see it.
+    // Press buttons to make it visible.
+    while (messageHandler.get().messages.size() < 2) {
+        didReceiveMessage = false;
+        Util::run(&didReceiveMessage);
+    }
+
+    // Verify the gamepad has the expected mapping in the second web view.
+    [webView2 callAsyncJavaScript:@(pollGamepadStateFunction) arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:resultBlock];
+    Util::run(&done);
+    done = false;
 }
 
 
