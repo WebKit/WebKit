@@ -1,3 +1,71 @@
+2020-08-13  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Rework StructureTransitionTable::Hash::Key encoding
+        https://bugs.webkit.org/show_bug.cgi?id=215483
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch implements new encoding of StructureTransitionTable::Hash::Key
+        to enable storing attribute change transitions in a transition table.
+
+        Since PropertyMapEntry attributes are always uint8_t, the remaining 8 bits
+        are used for TransitionKind, which also accommodates non-property transitions,
+        removing a bit hacky toAttributes() and utilization of unused pointer bits.
+
+        This change also introduces TransitionKind::Unknown we can validate against,
+        preventing addition transition from being a default, which could be unsafe.
+
+        No behavior change.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::notifyPresenceOfIndexedAccessors):
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToContiguous):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::convertFromCopyOnWrite):
+        (JSC::JSObject::switchToSlowPutArrayStorage):
+        (JSC::JSObject::suggestedArrayStorageTransition const):
+        * runtime/JSObject.h:
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::contains const):
+        (JSC::StructureTransitionTable::get const):
+        (JSC::StructureTransitionTable::add):
+        (JSC::Structure::Structure):
+        (JSC::Structure::addPropertyTransitionToExistingStructureImpl):
+        (JSC::Structure::addNewPropertyTransition):
+        (JSC::Structure::removePropertyTransitionFromExistingStructureImpl):
+        (JSC::Structure::removeNewPropertyTransition):
+        (JSC::Structure::sealTransition):
+        (JSC::Structure::freezeTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::nonPropertyTransitionSlow):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::nonPropertyTransition):
+        * runtime/StructureTransitionTable.h:
+        (JSC::changesIndexingType):
+        (JSC::newIndexingType):
+        (JSC::preventsExtensions):
+        (JSC::setsDontDeleteOnAllProperties):
+        (JSC::setsReadOnlyOnNonAccessorProperties):
+        (JSC::StructureTransitionTable::Hash::Key::Key):
+        (JSC::StructureTransitionTable::Hash::Key::attributes const):
+        (JSC::StructureTransitionTable::Hash::Key::transitionKind const):
+        (JSC::StructureTransitionTable::Hash::hash):
+        (JSC::toAttributes): Deleted.
+        (JSC::StructureTransitionTable::Hash::Key::isAddition const): Deleted.
+
 2020-08-12  Keith Rollin  <krollin@apple.com>
 
         Remove the need for defining USE_NEW_BUILD_SYSTEM
