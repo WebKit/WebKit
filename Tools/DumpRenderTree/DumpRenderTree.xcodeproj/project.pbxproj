@@ -156,6 +156,7 @@
 		C23EA2081BC9F05100C980B7 /* FontWithFeatures.otf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2061BC9EABA00C980B7 /* FontWithFeatures.otf */; };
 		C23EA2091BC9F05100C980B7 /* FontWithFeatures.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */; };
 		E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */; };
+		F4010B7B24DA201F00A876E2 /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B7924DA200E00A876E2 /* PoseAsClass.mm */; };
 		F445C68624B2789D00790440 /* UIScriptControllerShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F445C68524B2788F00790440 /* UIScriptControllerShared.cpp */; };
 		F445C68924B278EC00790440 /* UIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F445C68824B278EC00790440 /* UIScriptController.cpp */; };
 		F44A531D21B89A4D00DBB99C /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531A21B89A4400DBB99C /* ClassMethodSwizzler.mm */; };
@@ -428,6 +429,8 @@
 		C23EA2071BC9EABA00C980B7 /* FontWithFeatures.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontWithFeatures.ttf; path = fonts/FontWithFeatures.ttf; sourceTree = "<group>"; };
 		E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockGeolocationProvider.h; path = mac/MockGeolocationProvider.h; sourceTree = "<group>"; };
 		E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MockGeolocationProvider.mm; path = mac/MockGeolocationProvider.mm; sourceTree = "<group>"; };
+		F4010B7924DA200E00A876E2 /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PoseAsClass.mm; sourceTree = "<group>"; };
+		F4010B7A24DA200E00A876E2 /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoseAsClass.h; sourceTree = "<group>"; };
 		F445C68524B2788F00790440 /* UIScriptControllerShared.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = UIScriptControllerShared.cpp; path = ../TestRunnerShared/UIScriptContext/UIScriptControllerShared.cpp; sourceTree = "<group>"; };
 		F445C68824B278EC00790440 /* UIScriptController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIScriptController.cpp; sourceTree = "<group>"; };
 		F44A531921B89A4400DBB99C /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstanceMethodSwizzler.h; sourceTree = "<group>"; };
@@ -877,6 +880,8 @@
 				F44A531C21B89A4500DBB99C /* InstanceMethodSwizzler.mm */,
 				F4C3578920E8442700FA0748 /* LayoutTestSpellChecker.h */,
 				F4C3578820E8442700FA0748 /* LayoutTestSpellChecker.mm */,
+				F4010B7A24DA200E00A876E2 /* PoseAsClass.h */,
+				F4010B7924DA200E00A876E2 /* PoseAsClass.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -1225,6 +1230,7 @@
 				A1158D59189274360088C17B /* PixelDumpSupportIOS.mm in Sources */,
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
 				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
+				F4010B7B24DA201F00A876E2 /* PoseAsClass.mm in Sources */,
 				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
 				A30A21F82051D8C40008FF42 /* TestOptions.cpp in Sources */,
 				BC0131DA0C9772010087317D /* TestRunner.cpp in Sources */,

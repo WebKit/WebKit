@@ -150,8 +150,8 @@
 		C0CE720B1247C93300BC0EC4 /* TestRunnerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0CE720A1247C93300BC0EC4 /* TestRunnerMac.mm */; };
 		E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3817CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm */; };
 		E132AA3D17CE776F00611DF0 /* WebKitTestRunnerEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */; };
-		E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */; };
 		E1C642C617CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */; };
+		F4010B7E24DA205300A876E2 /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B7C24DA204800A876E2 /* PoseAsClass.mm */; };
 		F445C68A24B27ACC00790440 /* UIScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F445C68324B277E300790440 /* UIScriptController.cpp */; };
 		F44A531721B899E200DBB99C /* ClassMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531421B899DA00DBB99C /* ClassMethodSwizzler.mm */; };
 		F44A531821B899E500DBB99C /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44A531621B899DA00DBB99C /* InstanceMethodSwizzler.mm */; };
@@ -407,10 +407,10 @@
 		E132AA3B17CE776F00611DF0 /* WebKitTestRunnerEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerEvent.mm; sourceTree = "<group>"; };
 		E132AA3C17CE776F00611DF0 /* WebKitTestRunnerEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerEvent.h; sourceTree = "<group>"; };
 		E1BA671D1742DA5A00C20251 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PoseAsClass.mm; sourceTree = "<group>"; };
-		E1C642C217CBCC7300D66A3C /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoseAsClass.h; sourceTree = "<group>"; };
 		E1C642C417CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitTestRunnerPasteboard.mm; sourceTree = "<group>"; };
 		E1C642C517CBCD4C00D66A3C /* WebKitTestRunnerPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerPasteboard.h; sourceTree = "<group>"; };
+		F4010B7C24DA204800A876E2 /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoseAsClass.mm; path = ../TestRunnerShared/cocoa/PoseAsClass.mm; sourceTree = "<group>"; };
+		F4010B7D24DA204800A876E2 /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoseAsClass.h; path = ../TestRunnerShared/cocoa/PoseAsClass.h; sourceTree = "<group>"; };
 		F445C68324B277E300790440 /* UIScriptController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIScriptController.cpp; sourceTree = "<group>"; };
 		F44A531321B899DA00DBB99C /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceMethodSwizzler.h; path = ../TestRunnerShared/cocoa/InstanceMethodSwizzler.h; sourceTree = "<group>"; };
 		F44A531421B899DA00DBB99C /* ClassMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ClassMethodSwizzler.mm; path = ../TestRunnerShared/cocoa/ClassMethodSwizzler.mm; sourceTree = "<group>"; };
@@ -796,8 +796,6 @@
 				5670B8271386FCA5002EB355 /* EventSenderProxy.mm */,
 				BC7933FF118F7C84005EA8E2 /* main.mm */,
 				BC7934E711906846005EA8E2 /* PlatformWebViewMac.mm */,
-				E1C642C217CBCC7300D66A3C /* PoseAsClass.h */,
-				E1C642C117CBCC7300D66A3C /* PoseAsClass.mm */,
 				BC8C795B11D2785D004535A1 /* TestControllerMac.mm */,
 				2D058E0A22E2EF6D00E4C145 /* UIScriptControllerMac.h */,
 				0F87B6111BACAD6F004EC572 /* UIScriptControllerMac.mm */,
@@ -900,6 +898,8 @@
 				F4C3578A20E8444000FA0748 /* LayoutTestSpellChecker.mm */,
 				2E2A765B2370C8A0008F9FFE /* PlatformViewHelpers.h */,
 				2E2A765C2370C8A0008F9FFE /* PlatformViewHelpers.mm */,
+				F4010B7D24DA204800A876E2 /* PoseAsClass.h */,
+				F4010B7C24DA204800A876E2 /* PoseAsClass.mm */,
 			);
 			name = cocoa;
 			sourceTree = "<group>";
@@ -1166,7 +1166,6 @@
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
 				F4FED324235823A3003C139C /* NSPasteboardAdditions.mm in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
-				E1C642C317CBCC7300D66A3C /* PoseAsClass.mm in Sources */,
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
 				0F87B6131BACAD82004EC572 /* UIScriptControllerMac.mm in Sources */,
 				E132AA3A17CD5F1000611DF0 /* WebKitTestRunnerDraggingInfo.mm in Sources */,
@@ -1193,6 +1192,7 @@
 				A185103C1B9AE0FE00744AEB /* Options.cpp in Sources */,
 				A18510401B9AE13100744AEB /* PixelDumpSupport.cpp in Sources */,
 				2E2A765D2370C8D1008F9FFE /* PlatformViewHelpers.mm in Sources */,
+				F4010B7E24DA205300A876E2 /* PoseAsClass.mm in Sources */,
 				2DFA98491D7F70CF00AFF2C9 /* SharedEventStreamsMac.mm in Sources */,
 				A18510411B9AE13800744AEB /* TestController.cpp in Sources */,
 				A185103B1B9AE0E200744AEB /* TestControllerCocoa.mm in Sources */,

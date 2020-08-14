@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,21 +31,21 @@
 
 static void swizzleAllMethods(Class imposter, Class original)
 {
-    unsigned int imposterMethodCount;
+    unsigned imposterMethodCount;
     Method* imposterMethods = class_copyMethodList(imposter, &imposterMethodCount);
 
-    unsigned int originalMethodCount;
+    unsigned originalMethodCount;
     Method* originalMethods = class_copyMethodList(original, &originalMethodCount);
 
-    for (unsigned int i = 0; i < imposterMethodCount; i++) {
+    for (unsigned i = 0; i < imposterMethodCount; i++) {
         SEL imposterMethodName = method_getName(imposterMethods[i]);
 
-        // Attempt to add the method to the original class.  If it fails, the method already exists and we should
+        // Attempt to add the method to the original class. If it fails, the method already exists and we should
         // instead exchange the implementations.
         if (class_addMethod(original, imposterMethodName, method_getImplementation(imposterMethods[i]), method_getTypeEncoding(imposterMethods[i])))
             continue;
 
-        unsigned int j = 0;
+        unsigned j = 0;
         for (; j < originalMethodCount; j++) {
             SEL originalMethodName = method_getName(originalMethods[j]);
             if (sel_isEqual(imposterMethodName, originalMethodName))
