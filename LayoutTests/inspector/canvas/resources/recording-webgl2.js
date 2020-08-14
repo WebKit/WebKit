@@ -326,9 +326,6 @@ function performActions() {
             context.readPixels(1, 2, 3, 4, 5, 6, float32Array);
         },
         () => {
-            context.releaseShaderCompiler();
-        },
-        () => {
             context.renderbufferStorage(1, 2, 3, 4);
         },
         () => {

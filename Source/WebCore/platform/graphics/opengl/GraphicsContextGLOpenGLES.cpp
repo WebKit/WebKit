@@ -40,12 +40,6 @@
 
 namespace WebCore {
 
-void GraphicsContextGLOpenGL::releaseShaderCompiler()
-{
-    makeContextCurrent();
-    ::glReleaseShaderCompiler();
-}
-
 void GraphicsContextGLOpenGL::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, void* data)
 {
     makeContextCurrent();

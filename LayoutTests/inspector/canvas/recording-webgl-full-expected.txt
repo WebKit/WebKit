@@ -652,82 +652,76 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   91: (duration)
-    0: releaseShaderCompiler()
-      trace:
-        0: releaseShaderCompiler
-        1: (anonymous function)
-        2: executeFrameFunction
-  92: (duration)
     0: renderbufferStorage(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: renderbufferStorage
         1: (anonymous function)
         2: executeFrameFunction
-  93: (duration)
+  92: (duration)
     0: sampleCoverage(1, true)
       swizzleTypes: [Number, Boolean]
       trace:
         0: sampleCoverage
         1: (anonymous function)
         2: executeFrameFunction
-  94: (duration)
+  93: (duration)
     0: scissor(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: scissor
         1: (anonymous function)
         2: executeFrameFunction
-  95: (duration)
+  94: (duration)
     0: shaderSource(0, "test")
       swizzleTypes: [WebGLShader, String]
       trace:
         0: shaderSource
         1: (anonymous function)
         2: executeFrameFunction
-  96: (duration)
+  95: (duration)
     0: stencilFunc(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
         0: stencilFunc
         1: (anonymous function)
         2: executeFrameFunction
-  97: (duration)
+  96: (duration)
     0: stencilFuncSeparate(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: stencilFuncSeparate
         1: (anonymous function)
         2: executeFrameFunction
-  98: (duration)
+  97: (duration)
     0: stencilMask(1)
       swizzleTypes: [Number]
       trace:
         0: stencilMask
         1: (anonymous function)
         2: executeFrameFunction
-  99: (duration)
+  98: (duration)
     0: stencilMaskSeparate(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: stencilMaskSeparate
         1: (anonymous function)
         2: executeFrameFunction
-  100: (duration)
+  99: (duration)
     0: stencilOp(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
         0: stencilOp
         1: (anonymous function)
         2: executeFrameFunction
-  101: (duration)
+  100: (duration)
     0: stencilOpSeparate(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: stencilOpSeparate
         1: (anonymous function)
         2: executeFrameFunction
-  102: (duration)
+  101: (duration)
     0: texImage2D(1, 2, 3, 4, 5, [object HTMLImageElement])
       swizzleTypes: [Number, Number, Number, Number, Number, Image]
       trace:
@@ -740,21 +734,21 @@ frames:
         0: texImage2D
         1: (anonymous function)
         2: executeFrameFunction
-  103: (duration)
+  102: (duration)
     0: texParameterf(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
         0: texParameterf
         1: (anonymous function)
         2: executeFrameFunction
-  104: (duration)
+  103: (duration)
     0: texParameteri(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
         0: texParameteri
         1: (anonymous function)
         2: executeFrameFunction
-  105: (duration)
+  104: (duration)
     0: texSubImage2D(1, 2, 3, 4, 5, 6, [object HTMLImageElement])
       swizzleTypes: [Number, Number, Number, Number, Number, Number, Image]
       trace:
@@ -767,224 +761,224 @@ frames:
         0: texSubImage2D
         1: (anonymous function)
         2: executeFrameFunction
-  106: (duration)
+  105: (duration)
     0: uniform1f(1)
       swizzleTypes: [Number]
       trace:
         0: uniform1f
         1: (anonymous function)
         2: executeFrameFunction
-  107: (duration)
+  106: (duration)
     0: uniform1fv(0)
       swizzleTypes: [TypedArray]
       trace:
         0: uniform1fv
         1: (anonymous function)
         2: executeFrameFunction
-  108: (duration)
+  107: (duration)
     0: uniform1i(1)
       swizzleTypes: [Number]
       trace:
         0: uniform1i
         1: (anonymous function)
         2: executeFrameFunction
-  109: (duration)
+  108: (duration)
     0: uniform1iv(0)
       swizzleTypes: [TypedArray]
       trace:
         0: uniform1iv
         1: (anonymous function)
         2: executeFrameFunction
-  110: (duration)
+  109: (duration)
     0: uniform2f(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: uniform2f
         1: (anonymous function)
         2: executeFrameFunction
-  111: (duration)
+  110: (duration)
     0: uniform2fv(0)
       swizzleTypes: [TypedArray]
       trace:
         0: uniform2fv
         1: (anonymous function)
         2: executeFrameFunction
-  112: (duration)
+  111: (duration)
     0: uniform2i(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: uniform2i
         1: (anonymous function)
         2: executeFrameFunction
-  113: (duration)
+  112: (duration)
     0: uniform2iv(0)
       swizzleTypes: [TypedArray]
       trace:
         0: uniform2iv
         1: (anonymous function)
         2: executeFrameFunction
-  114: (duration)
+  113: (duration)
     0: uniform3f(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
         0: uniform3f
         1: (anonymous function)
         2: executeFrameFunction
-  115: (duration)
+  114: (duration)
     0: uniform3fv(0)
       swizzleTypes: [TypedArray]
       trace:
         0: uniform3fv
         1: (anonymous function)
         2: executeFrameFunction
-  116: (duration)
+  115: (duration)
     0: uniform3i(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
         0: uniform3i
         1: (anonymous function)
         2: executeFrameFunction
-  117: (duration)
+  116: (duration)
     0: uniform3iv(0)
       swizzleTypes: [TypedArray]
       trace:
         0: uniform3iv
         1: (anonymous function)
         2: executeFrameFunction
-  118: (duration)
+  117: (duration)
     0: uniform4f(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: uniform4f
         1: (anonymous function)
         2: executeFrameFunction
-  119: (duration)
+  118: (duration)
     0: uniform4fv(0)
       swizzleTypes: [TypedArray]
       trace:
         0: uniform4fv
         1: (anonymous function)
         2: executeFrameFunction
-  120: (duration)
+  119: (duration)
     0: uniform4i(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: uniform4i
         1: (anonymous function)
         2: executeFrameFunction
-  121: (duration)
+  120: (duration)
     0: uniform4iv(0)
       swizzleTypes: [TypedArray]
       trace:
         0: uniform4iv
         1: (anonymous function)
         2: executeFrameFunction
-  122: (duration)
+  121: (duration)
     0: uniformMatrix2fv(true, 0)
       swizzleTypes: [Boolean, TypedArray]
       trace:
         0: uniformMatrix2fv
         1: (anonymous function)
         2: executeFrameFunction
-  123: (duration)
+  122: (duration)
     0: uniformMatrix3fv(true, 0)
       swizzleTypes: [Boolean, TypedArray]
       trace:
         0: uniformMatrix3fv
         1: (anonymous function)
         2: executeFrameFunction
-  124: (duration)
+  123: (duration)
     0: uniformMatrix4fv(true, 0)
       swizzleTypes: [Boolean, TypedArray]
       trace:
         0: uniformMatrix4fv
         1: (anonymous function)
         2: executeFrameFunction
-  125: (duration)
+  124: (duration)
     0: useProgram(0)
       swizzleTypes: [WebGLProgram]
       trace:
         0: useProgram
         1: (anonymous function)
         2: executeFrameFunction
-  126: (duration)
+  125: (duration)
     0: validateProgram(0)
       swizzleTypes: [WebGLProgram]
       trace:
         0: validateProgram
         1: (anonymous function)
         2: executeFrameFunction
-  127: (duration)
+  126: (duration)
     0: vertexAttrib1f(1, 2)
       swizzleTypes: [Number, Number]
       trace:
         0: vertexAttrib1f
         1: (anonymous function)
         2: executeFrameFunction
-  128: (duration)
+  127: (duration)
     0: vertexAttrib1fv(1, 0)
       swizzleTypes: [Number, TypedArray]
       trace:
         0: vertexAttrib1fv
         1: (anonymous function)
         2: executeFrameFunction
-  129: (duration)
+  128: (duration)
     0: vertexAttrib2f(1, 2, 3)
       swizzleTypes: [Number, Number, Number]
       trace:
         0: vertexAttrib2f
         1: (anonymous function)
         2: executeFrameFunction
-  130: (duration)
+  129: (duration)
     0: vertexAttrib2fv(1, 0)
       swizzleTypes: [Number, TypedArray]
       trace:
         0: vertexAttrib2fv
         1: (anonymous function)
         2: executeFrameFunction
-  131: (duration)
+  130: (duration)
     0: vertexAttrib3f(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: vertexAttrib3f
         1: (anonymous function)
         2: executeFrameFunction
-  132: (duration)
+  131: (duration)
     0: vertexAttrib3fv(1, 0)
       swizzleTypes: [Number, TypedArray]
       trace:
         0: vertexAttrib3fv
         1: (anonymous function)
         2: executeFrameFunction
-  133: (duration)
+  132: (duration)
     0: vertexAttrib4f(1, 2, 3, 4, 5)
       swizzleTypes: [Number, Number, Number, Number, Number]
       trace:
         0: vertexAttrib4f
         1: (anonymous function)
         2: executeFrameFunction
-  134: (duration)
+  133: (duration)
     0: vertexAttrib4fv(1, 0)
       swizzleTypes: [Number, TypedArray]
       trace:
         0: vertexAttrib4fv
         1: (anonymous function)
         2: executeFrameFunction
-  135: (duration)
+  134: (duration)
     0: vertexAttribPointer(1, 2, 3, true, 5, 6)
       swizzleTypes: [Number, Number, Number, Boolean, Number, Number]
       trace:
         0: vertexAttribPointer
         1: (anonymous function)
         2: executeFrameFunction
-  136: (duration)
+  135: (duration)
     0: viewport(1, 2, 3, 4)
       swizzleTypes: [Number, Number, Number, Number]
       trace:
         0: viewport
         1: (anonymous function)
         2: executeFrameFunction
-  137: (duration)
+  136: (duration)
     0: width
       trace:
         0: (anonymous function)
@@ -994,7 +988,7 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
-  138: (duration)
+  137: (duration)
     0: height
       trace:
         0: (anonymous function)

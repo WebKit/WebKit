@@ -1,5 +1,16 @@
 2020-08-14  James Darpinian  <jdarpinian@chromium.org>
 
+        [WebGL2] releaseShaderCompiler is not allowed to be supported in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=215432
+
+        Reviewed by Dean Jackson.
+
+        * webgl/1.0.3/conformance/context/methods-expected.txt:
+        * webgl/2.0.0/conformance/context/methods-expected.txt:
+        * webgl/2.0.0/conformance2/context/methods-2-expected.txt:
+
+2020-08-14  James Darpinian  <jdarpinian@chromium.org>
+
         [WebGL2] Skip buggy conformance tests
         https://bugs.webkit.org/show_bug.cgi?id=215466
 

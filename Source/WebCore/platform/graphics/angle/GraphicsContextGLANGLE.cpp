@@ -102,12 +102,6 @@ private:
 
 } // namespace anonymous
 
-void GraphicsContextGLOpenGL::releaseShaderCompiler()
-{
-    makeContextCurrent();
-    notImplemented();
-}
-
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 static void wipeAlphaChannelFromPixels(int width, int height, unsigned char* pixels)
 {

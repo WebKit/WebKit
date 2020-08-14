@@ -8,7 +8,7 @@ initialState:
     width: 2
     height: 2
   parameters:
-    0: {"alpha":true,"depth":true,"stencil":false,"antialias":false,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"failIfMajorPerformanceCaveat":false}
+    0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"failIfMajorPerformanceCaveat":false}
   content: <filtered>
 frames:
   0: (duration)

@@ -4346,13 +4346,6 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
 #endif
 }
 
-void WebGLRenderingContextBase::releaseShaderCompiler()
-{
-    if (isContextLostOrPending())
-        return;
-    m_context->releaseShaderCompiler();
-}
-
 void WebGLRenderingContextBase::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
     const char* functionName = "renderbufferStorage";
