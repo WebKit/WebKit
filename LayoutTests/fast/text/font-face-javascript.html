@@ -20,8 +20,8 @@ shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'style': 
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'normal'}).weight", "normal");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': '200'}).weight", "200");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'bold'}).weight", "bold");
-shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'bolder'}).weight", "bold");
-shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'lighter'}).weight", "200");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'bolder'}).status", "error");
+shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'lighter'}).status", "error");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'weight': 'inherit'}).status", "error");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'stretch': 'ultra-expanded'}).stretch", "ultra-expanded");
 shouldBeEqualToString("new FontFace('family_name', 'url(\\'asdf\\')', {'unicodeRange': 'U+26'}).unicodeRange", "U+26");

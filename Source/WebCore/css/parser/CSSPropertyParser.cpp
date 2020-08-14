@@ -872,10 +872,15 @@ static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
     return consumeFontWeightNumber(range);
 }
 
-#if ENABLE(VARIATION_FONTS)
-static RefPtr<CSSValue> consumeFontWeightRange(CSSParserTokenRange& range)
+static RefPtr<CSSPrimitiveValue> consumeFontWeightAbsoluteKeywordValue(CSSParserTokenRange& range)
 {
-    if (auto result = consumeFontWeightKeywordValue(range))
+    return consumeIdent<CSSValueNormal, CSSValueBold>(range);
+}
+
+#if ENABLE(VARIATION_FONTS)
+static RefPtr<CSSValue> consumeFontWeightAbsoluteRange(CSSParserTokenRange& range)
+{
+    if (auto result = consumeFontWeightAbsoluteKeywordValue(range))
         return result;
     auto firstNumber = consumeFontWeightNumber(range);
     if (!firstNumber)
@@ -889,6 +894,13 @@ static RefPtr<CSSValue> consumeFontWeightRange(CSSParserTokenRange& range)
     result->append(firstNumber.releaseNonNull());
     result->append(secondNumber.releaseNonNull());
     return RefPtr<CSSValue>(WTFMove(result));
+}
+#else
+static RefPtr<CSSPrimitiveValue> consumeFontWeightAbsolute(CSSParserTokenRange& range)
+{
+    if (auto result = consumeFontWeightAbsoluteKeywordValue(range))
+        return result;
+    return consumeFontWeightNumber(range);
 }
 #endif
 
@@ -4437,9 +4449,9 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
         break;
     case CSSPropertyFontWeight:
 #if ENABLE(VARIATION_FONTS)
-        parsedValue = consumeFontWeightRange(m_range);
+        parsedValue = consumeFontWeightAbsoluteRange(m_range);
 #else
-        parsedValue = consumeFontWeight(m_range);
+        parsedValue = consumeFontWeightAbsolute(m_range);
 #endif
         break;
     case CSSPropertyFontStretch:

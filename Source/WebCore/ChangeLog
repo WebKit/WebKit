@@ -1,3 +1,22 @@
+2020-08-14  Takeshi Kurosawa  <taken.spc@gmail.com>
+
+        @font-face font-weight descriptor should reject bolder and lighter
+        https://bugs.webkit.org/show_bug.cgi?id=215359
+
+        Reviewed by Darin Adler.
+
+        Both bolder and lighter are not allowed in font-weight descriptor. This patch splits
+        font-weight descriptor parsers from font-weight property parsers.
+
+        Tested by existing (formerly failing) test: web-platform-tests/css/css-fonts/variations/at-font-face-descriptors.html:
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeFontWeightAbsoluteKeywordValue):
+        (WebCore::consumeFontWeightAbsoluteRange):
+        (WebCore::consumeFontWeightAbsolute):
+        (WebCore::CSSPropertyParser::parseFontFaceDescriptor):
+        (WebCore::consumeFontWeightRange): Deleted.
+
 2020-08-14  Youenn Fablet  <youenn@apple.com>
 
         WritableStreamDefaultWriterEnsureReadyPromiseRejected should create a new readPromise if the current readyPromise is not pending
