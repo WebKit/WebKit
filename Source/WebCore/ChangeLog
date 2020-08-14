@@ -1,3 +1,16 @@
+2020-08-14  Rob Buis  <rbuis@igalia.com>
+
+        Simplify HTMLFrameElementBase::openURL
+        https://bugs.webkit.org/show_bug.cgi?id=215504
+
+        Reviewed by Darin Adler.
+
+        The expression effectively uses the indirection document -> frame -> document, but
+        we can just use the document directly.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::openURL):
+
 2020-08-14  Chris Dumez  <cdumez@apple.com>
 
         Make sure OfflineAudioContext::startOfflineRendering() does lazy initialization
