@@ -1,3 +1,30 @@
+2020-08-14  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r265597. rdar://problem/67084522
+
+    Web Inspector: REGRESSION(r259170): text inputs in box-shadow editor push sliders offscreen
+    https://bugs.webkit.org/show_bug.cgi?id=215436
+    
+    Reviewed by Darin Adler.
+    
+    * UserInterface/Views/BoxShadowEditor.js:
+    (WI.BoxShadowEditor.createInputRow):
+    Make sure the inputs are `type="text"` so that CSS is able to distinguish them from sliders.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265597 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-12  Devin Rousso  <drousso@apple.com>
+
+            Web Inspector: REGRESSION(r259170): text inputs in box-shadow editor push sliders offscreen
+            https://bugs.webkit.org/show_bug.cgi?id=215436
+
+            Reviewed by Darin Adler.
+
+            * UserInterface/Views/BoxShadowEditor.js:
+            (WI.BoxShadowEditor.createInputRow):
+            Make sure the inputs are `type="text"` so that CSS is able to distinguish them from sliders.
+
 2020-07-30  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r?): Web Inspector: Timelines: blue border below selected timeline when in edit mode
