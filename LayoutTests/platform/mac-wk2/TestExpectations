@@ -1253,7 +1253,7 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ arm64 ] fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 [ arm64 ] fast/inline/hidpi-inline-block-is-subpixel-while-line-is-not.html [ ImageOnlyFailure ]
 
-# rdar://66807554 (REGRESSION (GolgenGate20A2323e-20A2348b): imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html is a flaky failure)
+# rdar://66807554
 [ arm64 ] imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html  [ Failure ]
 
 # rdar://66808228 (REGRESSION (20A2321a-20A2348b): imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html is a flaky failure)

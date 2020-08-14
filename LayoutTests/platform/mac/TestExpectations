@@ -2119,7 +2119,7 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 # <rdar://problem/63547006> [20A279] DQ bots are seeing imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html failing
 [ BigSur+ Release ] imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html [ Pass Failure ]
 
-# rdar://66784420 (REGRESSION (Gate20A2321a-20A2348b): imported/mozilla/svg/filters/feImage-1.svg is a flaky image failure)
+# rdar://66784420
 [ BigSur+ ] imported/mozilla/svg/filters/feImage-1.svg [ Pass ImageOnlyFailure ]
 
 # rdar://66788673 (REGRESSION (20A2316-20A2348b): imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-time-limits.html is a flaky failure)

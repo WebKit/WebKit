@@ -1,3 +1,10 @@
+2020-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, clean up some test expectations after r265639
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-08-14  Chris Dumez  <cdumez@apple.com>
 
         Add support for suspending / resuming an OfflineAudioContext
