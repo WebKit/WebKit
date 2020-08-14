@@ -1,4 +1,12 @@
 =================
+WebKitGTK 2.29.91
+=================
+
+What's new in WebKitGTK 2.29.91?
+
+  - Fix a web process crash introduced in 2.29.90.
+
+=================
 WebKitGTK 2.29.90
 =================
 
