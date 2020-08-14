@@ -110,7 +110,7 @@
                     },
                     { "name": "Apple-Catalina-Debug-Build", "type": "Build", "builddir": "catalina-debug",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["catalina-debug-tests-jsc", "catalina-debug-tests-test262", "catalina-debug-tests-wk1", "catalina-debug-tests-wk2", "catalina-debug-tests-wk2-webgl", "catalina-debug-tests-wk2-gpuprocess"],
+                      "triggers": ["catalina-debug-tests-jsc", "catalina-debug-tests-test262", "catalina-debug-tests-wk1", "catalina-debug-tests-wk2", "catalina-debug-tests-wk2-gpuprocess"],
                       "slavenames": ["bot687", "bot688"]
                     },
                     { "name": "Apple-Catalina-Debug-WK1-Tests", "type": "TestWebKit1AllButJSC", "builddir": "catalina-debug-tests-wk1",
@@ -123,11 +123,7 @@
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot243", "bot244"]
                     },
-                    { "name": "Apple-Catalina-Debug-WK2-WebGL-Tests", "type": "TestAllButJSC", "builddir": "catalina-debug-tests-wk2-webgl",
-                      "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--webgl-test-suite"],
-                      "slavenames": ["bot302"]
-                    },
+
                     { "name": "Apple-Catalina-Debug-WK2-GPUProcess-Tests", "type": "TestAllButJSC", "builddir": "catalina-debug-tests-wk2-gpuprocess",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
@@ -135,7 +131,7 @@
                     },
                     { "name": "Apple-Catalina-Release-Build", "type": "Build", "builddir": "catalina-release",
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["catalina-release-tests-test262", "catalina-release-tests-jsc", "catalina-release-perf-tests", "catalina-release-tests-wk1", "catalina-release-tests-wk2"],
+                      "triggers": ["catalina-release-tests-test262", "catalina-release-tests-jsc", "catalina-release-perf-tests", "catalina-release-tests-wk1", "catalina-release-tests-wk2", "catalina-release-tests-wk2-webgl"],
                       "slavenames": ["bot683", "bot674"]
                     },
                     { "name": "Apple-Catalina-Release-WK1-Tests", "type": "TestWebKit1AllButJSC", "builddir": "catalina-release-tests-wk1",
@@ -147,6 +143,11 @@
                       "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-retry-failures"],
                       "slavenames": ["bot247", "bot248"]
+                    },
+                    { "name": "Apple-Catalina-Release-WK2-WebGL-Tests", "type": "TestAllButJSC", "builddir": "catalina-release-tests-wk2-webgl",
+                      "platform": "mac-catalina", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-retry-failures", "--webgl-test-suite"],
+                      "slavenames": ["bot302"]
                     },
                     { "name": "Apple-Catalina-Debug-JSC-Tests", "type": "TestJSC", "builddir": "catalina-debug-tests-jsc",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
@@ -479,8 +480,8 @@
                     { "type": "Triggerable", "name": "catalina-debug-tests-wk2",
                       "builderNames": ["Apple-Catalina-Debug-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "catalina-debug-tests-wk2-webgl",
-                      "builderNames": ["Apple-Catalina-Debug-WK2-WebGL-Tests"]
+                    { "type": "Triggerable", "name": "catalina-release-tests-wk2-webgl",
+                      "builderNames": ["Apple-Catalina-Release-WK2-WebGL-Tests"]
                     },
                     { "type": "Triggerable", "name": "catalina-debug-tests-wk2-gpuprocess",
                       "builderNames": ["Apple-Catalina-Debug-WK2-GPUProcess-Tests"]

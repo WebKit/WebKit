@@ -1,3 +1,15 @@
+2020-08-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Move WebGL bot from debug to release builds
+        https://bugs.webkit.org/show_bug.cgi?id=215509
+
+        Rubber-stamped by Darin Adler.
+
+        Make the switch to release builds since many of the tests are already slow, and running in debug configuration makes them even slower
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2020-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, revert r265213 and r265441
