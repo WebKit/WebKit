@@ -111,6 +111,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderTreeAsText.h"
+#include "RenderTreeMutationDisallowedScope.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGNames.h"
@@ -1865,6 +1866,8 @@ static RenderLayer* enclosingContainingBlockLayer(const RenderLayer& layer, Cros
 
 RenderLayer* RenderLayer::enclosingScrollableLayer(IncludeSelfOrNot includeSelf, CrossFrameBoundaries crossFrameBoundaries) const
 {
+    RenderTreeMutationDisallowedScope renderTreeMutationDisallowedScope;
+
     auto isConsideredScrollable = [](const RenderLayer& layer) {
         return is<RenderBox>(layer.renderer()) && downcast<RenderBox>(layer.renderer()).canBeScrolledAndHasScrollableArea();
     };
