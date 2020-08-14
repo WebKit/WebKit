@@ -1,3 +1,11 @@
+2020-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, revert r265213 and r265441
+        https://bugs.webkit.org/show_bug.cgi?id=215089
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::keyDown):
+
 2020-08-14  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SK] Enable GNOME keyring support in subversion

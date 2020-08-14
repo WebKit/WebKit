@@ -554,12 +554,9 @@ void UIScriptControllerIOS::keyDown(JSStringRef character, JSValueRef modifierAr
     String inputString = toWTFString(toWK(character));
     auto modifierFlags = parseModifierArray(m_context->jsContext(), modifierArray);
 
-    for (auto& modifierFlag : modifierFlags) {
-        WTFLogAlways("Sending modifier keydown: %s", modifierFlag.utf8().data());
+    for (auto& modifierFlag : modifierFlags)
         [[HIDEventGenerator sharedHIDEventGenerator] keyDown:modifierFlag];
-    }
 
-    WTFLogAlways("Sending keydown for input string '%s'", inputString.utf8().data());
     [[HIDEventGenerator sharedHIDEventGenerator] keyDown:inputString];
     [[HIDEventGenerator sharedHIDEventGenerator] keyUp:inputString];
 

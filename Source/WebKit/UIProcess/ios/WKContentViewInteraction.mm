@@ -3581,7 +3581,6 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)selectAllForWebView:(id)sender
 {
-    WTFLogAlways("%s", __PRETTY_FUNCTION__);
     [_textInteractionAssistant selectAll:sender];
     _page->selectAll();
 }

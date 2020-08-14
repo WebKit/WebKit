@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Triggering 'select all' via key command.
-CONSOLE MESSAGE: Done waiting for selectionchange.
 Tests pressing Command + a to select all non-editable text.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

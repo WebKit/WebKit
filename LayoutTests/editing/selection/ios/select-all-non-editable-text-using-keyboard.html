@@ -29,9 +29,7 @@ async function runTest()
 {
     toggleOnlyShowTestContainer();
 
-    console.log("Triggering 'select all' via key command.");
     await UIHelper.callFunctionAndWaitForEvent(() => window.testRunner && UIHelper.keyDown("a", ["metaKey"]) , document, "selectionchange");
-    console.log("Done waiting for selectionchange.");
     shouldBeEqualToString("window.getSelection().toString()", "Here's to the crazy ones.\n\nThe misfits.\n\nThe rebels.");
 
     toggleOnlyShowTestContainer();

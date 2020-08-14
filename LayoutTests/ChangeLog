@@ -1,3 +1,11 @@
+2020-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, revert r265213 and r265441
+        https://bugs.webkit.org/show_bug.cgi?id=215089
+
+        * editing/selection/ios/select-all-non-editable-text-using-keyboard-expected.txt:
+        * editing/selection/ios/select-all-non-editable-text-using-keyboard.html:
+
 2020-08-14  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS ] imported/w3c/web-platform-tests/user-timing/measure_navigation_timing.html is a flaky failure

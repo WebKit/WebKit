@@ -1,3 +1,13 @@
+2020-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, revert r265213 and r265441
+        https://bugs.webkit.org/show_bug.cgi?id=215089
+
+        This logging is no longer needed, since the test seems to be passing reliably in internal automation now.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView selectAllForWebView:]):
+
 2020-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] Notify the web process on drag leave
