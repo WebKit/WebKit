@@ -1,3 +1,15 @@
+=================
+WebKitGTK 2.29.90
+=================
+
+What's new in WebKitGTK 2.29.90?
+
+  - Fix font variation settings when font smoothing setting is also present.
+  - Fix HTML drag and drop operations.
+  - Fix argument order for clone syscall seccomp filter on s390x.
+  - Fix a crash when selecting text.
+  - Fix several crashes and rendering issues.
+
 ================
 WebKitGTK 2.29.4
 ================
