@@ -300,7 +300,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         sourcesSettingsView.addSeparator();
 
-        sourcesSettingsView.addSetting(WI.UIString("Images:"), WI.settings.showImageGrid, WI.UIString("Show transparency grid", "Show transparency grid (settings label)"));
+        sourcesSettingsView.addSetting(WI.UIString("Images:"), WI.settings.showImageGrid, WI.UIString("Show transparency grid", "Show transparency grid (settings label)", "Settings tab checkbox label for whether the transparency grid is shown by default"));
 
         this._createReferenceLink(sourcesSettingsView);
 

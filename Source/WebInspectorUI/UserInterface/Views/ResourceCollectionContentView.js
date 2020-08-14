@@ -38,7 +38,7 @@ WI.ResourceCollectionContentView = class ResourceCollectionContentView extends W
         this.element.classList.add("resource-collection");
 
         if (collection.resourceType === WI.Resource.Type.Image) {
-            this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show transparency grid", "Show transparency grid (tooltip)"), WI.UIString("Hide transparency grid"), "Images/NavigationItemCheckers.svg", 13, 13);
+            this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.repeatedUIString.showTransparencyGridTooltip(), WI.UIString("Hide transparency grid"), "Images/NavigationItemCheckers.svg", 13, 13);
             this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleShowGridButtonClicked, this);
             this._showGridButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
             this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
