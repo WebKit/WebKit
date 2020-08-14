@@ -132,16 +132,12 @@ RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const String&
         return SharedBuffer::create(WTFMove(overrideBuffer));
 
     // Fallback to messaging the UI process for native pasteboard content.
-    SharedMemory::Handle handle;
-    uint64_t size { 0 };
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardBufferForType(pasteboardName, pasteboardType), Messages::WebPasteboardProxy::GetPasteboardBufferForType::Reply(handle, size), 0);
-    if (handle.isNull())
+    SharedMemory::IPCHandle ipcHandle;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardBufferForType(pasteboardName, pasteboardType), Messages::WebPasteboardProxy::GetPasteboardBufferForType::Reply(ipcHandle), 0);
+    if (ipcHandle.handle.isNull())
         return nullptr;
-    // SharedMemory::Handle::size() is rounded up to the nearest page.
-    if (!size || size > handle.size())
-        return nullptr;
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
-    return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+    return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), ipcHandle.dataSize);
 }
 
 void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType, const String& pasteboardName)
@@ -216,7 +212,7 @@ int64_t WebPlatformStrategies::setBufferForType(SharedBuffer* buffer, const Stri
         }
     }
     int64_t newChangeCount { 0 };
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, pasteboardType, handle, buffer ? buffer->size() : 0), Messages::WebPasteboardProxy::SetPasteboardBufferForType::Reply(newChangeCount), 0);
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, pasteboardType, SharedMemory::IPCHandle { WTFMove(handle), buffer ? buffer->size() : 0 }), Messages::WebPasteboardProxy::SetPasteboardBufferForType::Reply(newChangeCount), 0);
     return newChangeCount;
 }
 
@@ -404,21 +400,13 @@ Optional<PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(si
 
 RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::readBufferFromPasteboard(size_t index, const String& pasteboardType, const String& pasteboardName)
 {
-    SharedMemory::Handle handle;
-    uint64_t size { 0 };
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadBufferFromPasteboard(index, pasteboardType, pasteboardName), Messages::WebPasteboardProxy::ReadBufferFromPasteboard::Reply(handle, size), 0);
-    if (handle.isNull())
+    SharedMemory::IPCHandle ipcHandle;
+    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadBufferFromPasteboard(index, pasteboardType, pasteboardName), Messages::WebPasteboardProxy::ReadBufferFromPasteboard::Reply(ipcHandle), 0);
+    if (ipcHandle.handle.isNull())
         return nullptr;
-#if OS(DARWIN) || OS(WINDOWS)
-    // SharedMemory::Handle::size() is rounded up to the nearest page.
-    if (!size || size > handle.size())
-        return nullptr;
-#else
-    if (!size)
-        return nullptr;
-#endif
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
-    return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), size);
+
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
+    return SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), ipcHandle.dataSize);
 }
 
 URL WebPlatformStrategies::readURLFromPasteboard(size_t index, const String& pasteboardName, String& title)

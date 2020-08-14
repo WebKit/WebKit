@@ -1,3 +1,57 @@
+2020-08-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        Convert SharedMemory::Handle to SharedMemory::IPCHandle WebPage image/pasteboard functions
+        https://bugs.webkit.org/show_bug.cgi?id=215478
+        <rdar://problem/67024582>
+
+        Reviewed by Chris Dumez.
+
+        Convert SharedMemory::Handle objects to SharedMemory::IPCHandle
+        objects which automatically verify the size of data being sent.
+
+        We can remove the additional size parameter being sent in many IPC
+        messages along with the handle, now that both are stored in the
+        IPCHandle struct.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setPromisedDataForImage):
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardBufferForType):
+        No longer need size check, this is done in the IPCHandle::decode()
+        function.
+        (WebKit::WebPasteboardProxy::setPasteboardBufferForType):
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPasteboardProxy.cpp:
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::saveImageToLibrary):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::dataSelectionForPasteboard):
+        No longer need size check, this is done in the IPCHandle::decode()
+        function.
+        (WebKit::WebPageProxy::setPromisedDataForImage):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::writeItemsToPasteboard):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::bufferForType):
+        (WebKit::WebPlatformStrategies::setBufferForType):
+        (WebKit::WebPlatformStrategies::readBufferFromPasteboard):
+        No longer need size check, this is done in the IPCHandle::decode()
+        function.
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+        (WebKit::WebPage::performActionOnElement):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+
 2020-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, revert r265213 and r265441

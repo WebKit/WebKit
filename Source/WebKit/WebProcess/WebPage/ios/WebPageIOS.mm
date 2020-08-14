@@ -589,10 +589,10 @@ void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&
     completionHandler({ });
 }
 
-void WebPage::getDataSelectionForPasteboard(const String, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&& completionHandler)
+void WebPage::getDataSelectionForPasteboard(const String, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
 {
     notImplemented();
-    completionHandler({ }, 0);
+    completionHandler({ });
 }
 
 WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
@@ -3004,7 +3004,7 @@ void WebPage::performActionOnElement(uint32_t action)
         memcpy(sharedMemoryBuffer->data(), buffer->data(), bufferSize);
         SharedMemory::Handle handle;
         sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
-        send(Messages::WebPageProxy::SaveImageToLibrary(handle, bufferSize));
+        send(Messages::WebPageProxy::SaveImageToLibrary(SharedMemory::IPCHandle { WTFMove(handle), bufferSize }));
     }
 }
 

@@ -195,26 +195,26 @@ void WebPasteboardProxy::getPasteboardStringsForType(IPC::Connection& connection
     completionHandler(PlatformPasteboard(pasteboardName).allStringsForType(pasteboardType));
 }
 
-void WebPasteboardProxy::getPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&& completionHandler)
+void WebPasteboardProxy::getPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }, 0));
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
-        return completionHandler({ }, 0);
+        return completionHandler({ });
 
     RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).bufferForType(pasteboardType);
     if (!buffer)
-        return completionHandler({ }, 0);
+        return completionHandler({ });
     uint64_t size = buffer->size();
     if (!size)
-        return completionHandler({ }, 0);
+        return completionHandler({ });
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(size);
     if (!sharedMemoryBuffer)
-        return completionHandler({ }, 0);
+        return completionHandler({ });
     memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
     SharedMemory::Handle handle;
     sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    completionHandler(WTFMove(handle), size);
+    completionHandler(SharedMemory::IPCHandle { WTFMove(handle), size });
 }
 
 void WebPasteboardProxy::getPasteboardChangeCount(const String& pasteboardName, CompletionHandler<void(int64_t)>&& completionHandler)
@@ -319,25 +319,22 @@ void WebPasteboardProxy::urlStringSuitableForLoading(IPC::Connection& connection
     completionHandler(WTFMove(urlString), WTFMove(title));
 }
 
-void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle& handle, uint64_t size, CompletionHandler<void(int64_t)>&& completionHandler)
+void WebPasteboardProxy::setPasteboardBufferForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType, const SharedMemory::IPCHandle& ipcHandle, CompletionHandler<void(int64_t)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!pasteboardName.isEmpty(), completionHandler(0));
     MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler(0));
 
     auto previousChangeCount = PlatformPasteboard(pasteboardName).changeCount();
-    if (handle.isNull()) {
+    if (ipcHandle.handle.isNull()) {
         auto newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(nullptr, pasteboardType);
         didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
         return completionHandler(newChangeCount);
     }
 
-    // SharedMemory::Handle::size() is rounded up to the nearest page.
-    MESSAGE_CHECK_COMPLETION(size <= handle.size(), completionHandler(0));
-
-    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return completionHandler(0);
-    auto buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), static_cast<size_t>(size));
+    auto buffer = SharedBuffer::create(static_cast<unsigned char *>(sharedMemoryBuffer->data()), static_cast<size_t>(ipcHandle.dataSize));
     auto newChangeCount = PlatformPasteboard(pasteboardName).setBufferForType(buffer.ptr(), pasteboardType);
     didModifyContentsOfPasteboard(connection, pasteboardName, previousChangeCount, newChangeCount);
     completionHandler(newChangeCount);
@@ -415,26 +412,26 @@ void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection& connection, size
     completionHandler(WTFMove(url), WTFMove(title));
 }
 
-void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&& completionHandler)
+void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection& connection, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }, 0));
+    MESSAGE_CHECK_COMPLETION(!pasteboardType.isEmpty(), completionHandler({ }));
 
     if (!canAccessPasteboardData(connection, pasteboardName))
-        return completionHandler({ }, 0);
+        return completionHandler({ });
 
     RefPtr<SharedBuffer> buffer = PlatformPasteboard(pasteboardName).readBuffer(index, pasteboardType);
     if (!buffer)
-        return completionHandler({ }, 0);
+        return completionHandler({ });
     uint64_t size = buffer->size();
     if (!size)
-        return completionHandler({ }, 0);
+        return completionHandler({ });
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(size);
     if (!sharedMemoryBuffer)
-        return completionHandler({ }, 0);
+        return completionHandler({ });
     memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
     SharedMemory::Handle handle;
     sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    completionHandler(WTFMove(handle), size);
+    completionHandler(SharedMemory::IPCHandle { WTFMove(handle), size });
 }
 
 void WebPasteboardProxy::containsStringSafeForDOMToReadForType(IPC::Connection& connection, const String& type, const String& pasteboardName, CompletionHandler<void(bool)>&& completionHandler)
