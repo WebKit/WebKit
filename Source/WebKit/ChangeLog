@@ -1,5 +1,46 @@
 2020-08-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r265573. rdar://problem/67083969
+
+    Fail preconnect requests to deprecated TLS instead of allowing application to show warning
+    https://bugs.webkit.org/show_bug.cgi?id=215424
+    <rdar://problem/66784116>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2020-08-12
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebKit:
+    
+    Preconnecting is just a suggestion, so if the content really wants to load something from the deprecated TLS server,
+    we will see the warning when the load actually happens.
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+    (TestWebKitAPI::TEST):
+    (TestWebKitAPI::webViewWithNavigationDelegate):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265573 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-12  Alex Christensen  <achristensen@webkit.org>
+
+            Fail preconnect requests to deprecated TLS instead of allowing application to show warning
+            https://bugs.webkit.org/show_bug.cgi?id=215424
+            <rdar://problem/66784116>
+
+            Reviewed by Geoffrey Garen.
+
+            Preconnecting is just a suggestion, so if the content really wants to load something from the deprecated TLS server,
+            we will see the warning when the load actually happens.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+
+2020-08-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r265560. rdar://problem/67084214
 
     WebPageProxy::registerEditCommand should be robust against invalid undo step identifiers
