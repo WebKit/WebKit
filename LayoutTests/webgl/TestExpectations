@@ -1,21 +1,22 @@
 # Currently skipped due to fetching external resources.
 webgl/1.0.3/conformance/more/functions [ Skip ]
-
-# Time outs
-webgl/2.0.0/conformance2/textures/video [ Skip ]
+webgl/2.0.0/conformance/textures/misc/origin-clean-conformance.html [ Skip ]
+webgl/2.0.0/conformance/more/functions/texImage2DHTML.html [ Skip ]
+webgl/2.0.0/conformance/more/functions/readPixelsBadArgs.html [ Skip ]
+webgl/2.0.0/conformance/more/functions/texSubImage2DHTML.html [ Skip ]
 
 # Run as much of DEQP as possible
 webgl/2.0.0/deqp [ Pass Slow ]
 
-# Flaky time outs
-webgl/2.0.0/deqp/functional/gles3/builtinprecision/acosh.html [ Timeout Pass ]
-webgl/2.0.0/deqp/functional/gles3/builtinprecision/asinh.html [ Timeout Pass ]
-webgl/2.0.0/deqp/functional/gles3/builtinprecision/atanh.html [ Timeout Pass ]
-webgl/2.0.0/deqp/functional/gles3/shaderoperator/binary_operator_00.html [ Timeout Pass ]
-webgl/2.0.0/deqp/functional/gles3/shaderoperator/binary_operator_01.html [ Timeout Pass ]
-webgl/2.0.0/deqp/functional/gles3/vertexarrays/multiple_attributes.stride.html [ Timeout Pass ]
-
-# DEQP timeouts
+# Timeouts
 webgl/2.0.0/deqp/functional/gles3/builtinprecision/refract.html [ Skip ]
 webgl/2.0.0/deqp/functional/gles3/builtinprecision/smoothstep.html [ Skip ]
 webgl/2.0.0/deqp/functional/gles3/shaderoperator/common_functions.html [ Skip ]
+
+# Flaky time outs
+webgl/2.0.0/deqp/functional/gles3/shaderoperator/binary_operator [ Timeout Pass ]
+webgl/2.0.0/deqp/functional/gles3/vertexarrays/multiple_attributes.stride.html [ Timeout Pass ]
+
+# Incorrect tests
+webgl/2.0.0/deqp/functional/gles3/builtinprecision/ [ Skip ]
+webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Skip ]
