@@ -1,0 +1,51 @@
+
+PASS Padding properties on maction 
+PASS Padding properties on maction (rtl) 
+FAIL Padding properties on menclose assert_approx_equals: bottom padding expected 60 +/- 1 but got -4.171875
+FAIL Padding properties on menclose (rtl) assert_approx_equals: bottom padding expected 60 +/- 1 but got -4.171875
+PASS Padding properties on merror 
+PASS Padding properties on merror (rtl) 
+FAIL Padding properties on mfrac assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on mfrac (rtl) assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on mi assert_approx_equals: right padding expected 40 +/- 1 but got 38.406253814697266
+FAIL Padding properties on mi (rtl) assert_approx_equals: right padding expected 40 +/- 1 but got 38.406253814697266
+FAIL Padding properties on mmultiscripts assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on mmultiscripts (rtl) assert_approx_equals: left padding expected 30 +/- 1 but got 0
+PASS Padding properties on mn 
+PASS Padding properties on mn (rtl) 
+PASS Padding properties on mo 
+PASS Padding properties on mo (rtl) 
+FAIL Padding properties on mover assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on mover (rtl) assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on mpadded assert_approx_equals: bottom padding expected 60 +/- 1 but got -0.203125
+FAIL Padding properties on mpadded (rtl) assert_approx_equals: bottom padding expected 60 +/- 1 but got -0.203125
+PASS Padding properties on mphantom 
+PASS Padding properties on mphantom (rtl) 
+FAIL Padding properties on mroot assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on mroot (rtl) assert_approx_equals: left padding expected 30 +/- 1 but got 0
+PASS Padding properties on mrow 
+PASS Padding properties on mrow (rtl) 
+PASS Padding properties on ms 
+PASS Padding properties on ms (rtl) 
+FAIL Padding properties on mspace assert_approx_equals: left/right padding expected 70 +/- 1 but got 0
+FAIL Padding properties on msqrt assert_approx_equals: bottom padding expected 60 +/- 1 but got -10.703125
+FAIL Padding properties on msqrt (rtl) assert_approx_equals: bottom padding expected 60 +/- 1 but got -10.703125
+PASS Padding properties on mstyle 
+PASS Padding properties on mstyle (rtl) 
+FAIL Padding properties on msub assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on msub (rtl) assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on msubsup assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on msubsup (rtl) assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on msup assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on msup (rtl) assert_approx_equals: left padding expected 30 +/- 1 but got 0
+PASS Padding properties on mtable 
+PASS Padding properties on mtable (rtl) 
+PASS Padding properties on mtext 
+PASS Padding properties on mtext (rtl) 
+FAIL Padding properties on munder assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on munder (rtl) assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on munderover assert_approx_equals: left padding expected 30 +/- 1 but got 0
+FAIL Padding properties on munderover (rtl) assert_approx_equals: left padding expected 30 +/- 1 but got 0
+PASS Padding properties on semantics 
+PASS Padding properties on semantics (rtl) 
+

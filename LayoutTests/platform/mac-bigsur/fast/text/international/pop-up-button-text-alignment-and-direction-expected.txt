@@ -1,0 +1,99 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x544
+  RenderBlock {HTML} at (0,0) size 800x544
+    RenderBody {BODY} at (8,16) size 784x520
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 709x18
+          text run at (0,0) width 497: "Verify that the alignment and writing direction of each selected item matches "
+          text run at (496,0) width 213: "the one below the pop-up button."
+      RenderBlock {DIV} at (0,34) size 784x242
+        RenderMenuList {SELECT} at (0,0) size 500x21 [color=#000000D8] [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 500x21
+            RenderText at (8,2) size 160x16
+              text run at (8,2) width 31: "First "
+              text run at (38,2) width 49 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
+              text run at (86,2) width 18: "03"
+              text run at (103,2) width 37 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+              text run at (139,2) width 29: " fifth"
+        RenderBlock {DIV} at (0,23) size 470x36
+          RenderText {#text} at (10,10) size 163x16
+            text run at (10,10) width 32: "First "
+            text run at (41,10) width 49 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
+            text run at (89,10) width 17: "03"
+            text run at (105,10) width 37 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+            text run at (141,10) width 32: " fifth"
+        RenderMenuList {SELECT} at (0,61) size 500x21 [color=#000000D8] [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 500x21
+            RenderText at (8,2) size 160x16
+              text run at (8,2) width 25: "fifth"
+              text run at (32,2) width 53 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
+              text run at (84,2) width 18: "03"
+              text run at (101,2) width 41 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+              text run at (141,2) width 27: "First"
+        RenderBlock {DIV} at (0,84) size 470x36
+          RenderText {#text} at (10,10) size 163x16
+            text run at (10,10) width 27: "fifth"
+            text run at (36,10) width 52 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
+            text run at (87,10) width 18: "03"
+            text run at (104,10) width 41 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+            text run at (144,10) width 29: "First"
+        RenderMenuList {SELECT} at (0,122) size 500x21 [color=#000000D8] [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 500x21
+            RenderText at (8,2) size 160x16
+              text run at (8,2) width 160 LTR override: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+        RenderBlock {DIV} at (0,145) size 470x36
+          RenderText {#text} at (10,10) size 163x16
+            text run at (10,10) width 163 LTR override: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+        RenderMenuList {SELECT} at (0,183) size 500x21 [color=#000000D8] [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 500x21
+            RenderText at (8,2) size 160x16
+              text run at (8,2) width 160 RTL override: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+        RenderBlock {DIV} at (0,206) size 470x36
+          RenderText {#text} at (10,10) size 163x16
+            text run at (10,10) width 163 RTL override: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+      RenderBlock {DIV} at (0,278) size 784x242
+        RenderMenuList {SELECT} at (0,0) size 500x21 [color=#000000D8] [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 500x21
+            RenderText at (332,2) size 160x16
+              text run at (332,2) width 31: "First "
+              text run at (362,2) width 50 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
+              text run at (411,2) width 17: "03"
+              text run at (427,2) width 37 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+              text run at (463,2) width 29: " fifth"
+        RenderBlock {DIV} at (0,23) size 470x36
+          RenderText {#text} at (297,10) size 163x16
+            text run at (297,10) width 33: "First "
+            text run at (329,10) width 48 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA}"
+            text run at (376,10) width 18: "03"
+            text run at (393,10) width 37 RTL: "\x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+            text run at (429,10) width 31: " fifth"
+        RenderMenuList {SELECT} at (0,61) size 500x21 [color=#000000D8] [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 500x21
+            RenderText at (332,2) size 160x16
+              text run at (332,2) width 25: "fifth"
+              text run at (356,2) width 54 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
+              text run at (409,2) width 17: "03"
+              text run at (425,2) width 41 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+              text run at (465,2) width 27: "First"
+        RenderBlock {DIV} at (0,84) size 470x36
+          RenderText {#text} at (297,10) size 163x16
+            text run at (297,10) width 28: "fifth"
+            text run at (324,10) width 52 RTL: ") \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} "
+            text run at (375,10) width 17: "03"
+            text run at (391,10) width 42 RTL: " \x{5E9}\x{5E0}\x{5D9}\x{5D4} ("
+            text run at (432,10) width 28: "First"
+        RenderMenuList {SELECT} at (0,122) size 500x21 [color=#000000D8] [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 500x21
+            RenderText at (332,2) size 160x16
+              text run at (332,2) width 160 LTR override: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+        RenderBlock {DIV} at (0,145) size 470x36
+          RenderText {#text} at (297,10) size 163x16
+            text run at (297,10) width 163 LTR override: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+        RenderMenuList {SELECT} at (0,183) size 500x21 [color=#000000D8] [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (0,0) size 500x21
+            RenderText at (332,2) size 160x16
+              text run at (332,2) width 160 RTL override: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"
+        RenderBlock {DIV} at (0,206) size 470x36
+          RenderText {#text} at (297,10) size 163x16
+            text run at (297,10) width 163 RTL override: "First \x{5E9}\x{5E0}\x{5D9}\x{5D4} (03) \x{5E8}\x{5D1}\x{5D9}\x{5E2}\x{5D9}\x{5EA} fifth"

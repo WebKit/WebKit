@@ -332,9 +332,7 @@ webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-vary.html [
 webkit.org/b/147075 [ Debug ] http/tests/cache/disk-cache/disk-cache-disable.html [ Pass Failure Timeout ]
 webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-vary-no-body.html [ Pass Failure Timeout ]
 
-webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Failure ]
-
-webkit.org/b/150241 webarchive/loading/object.html [ Pass Crash ] 
+webkit.org/b/150241 webarchive/loading/object.html [ Pass Crash ]
 
 webkit.org/b/150942 animations/multiple-backgrounds.html [ Pass ImageOnlyFailure ]
 
@@ -889,7 +887,8 @@ webkit.org/b/198942 webgpu/vertex-buffer-triangle-strip.html [ Pass ImageOnlyFai
 
 webkit.org/b/206864 http/tests/workers/service/basic-timeout.https.html [ Pass Failure ]
 
-webkit.org/b/206696 [ Release ] editing/selection/caret-at-bidi-boundary.html [ Slow ]
+# <rdar://problem/60929239> [ macOS wk2 ] editing/selection/caret-at-bidi-boundary.html is a flaky timeout
+webkit.org/b/206696 editing/selection/caret-at-bidi-boundary.html [ Pass Timeout ]
 
 webkit.org/b/206708 fast/animation/request-animation-frame-iframe.html [ Pass Failure ]
 
@@ -1082,8 +1081,6 @@ webkit.org/b/214574 [ Release ] svg/animations/smil-leak-list-property-instances
 
 webkit.org/b/214579 [ Release ] svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 
-webkit.org/b/214651 [ Debug ] tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html [ Pass Crash ]
-
 webkit.org/b/214661 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-events.html [ Pass Crash ]
 
 webkit.org/b/214682 [ Release ] imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html [ Pass Failure ]
@@ -1105,3 +1102,159 @@ webkit.org/b/215465 [ Debug ] http/tests/security/no-indexeddb-from-sandbox.html
 webkit.org/b/189672 [ Mojave Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb8-rgb-unsigned_byte.html [ Skip ]
 
 webkit.org/b/215468 [ Mojave Release ] media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Pass Failure ]
+
+# <rdar://problem/37330377> ASan tests exiting early due to timeouts
+[ Release ] imported/w3c/web-platform-tests/encoding [ Skip ]
+[ Release ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys [ Skip ]
+
+# <rdar://problem/60063002> REGRESSION: (r257758) http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html is crashing
+http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html [ Pass Crash ]
+
+# <rdar://problem/60105927> [ Mac wk2 Release ] webgpu/whlsl/make-array-reference.html is flaky failing
+[ Release ] webgpu/whlsl/make-array-reference.html [ Pass Failure ]
+
+# <rdar://problem/60507526> REGRESSION (r258124-r258230) [ Mac wk2 ] http/tests/inspector/network/contentextensions/blocked-websocket-crash.html is flaky crashing.
+http/tests/inspector/network/contentextensions/blocked-websocket-crash.html [ Pass Crash ]
+
+# <rdar://problem/60548192> [ Mac wk2 ] http/tests/contentextensions/service-worker.https.html is flaky failing.
+http/tests/contentextensions/service-worker.https.html [ Pass Failure ]
+
+# <rdar://problem/60590009> [ macOS ] REGRESSION(~r258238) http/tests/inspector/network/har/har-basic.html is flaky crashing
+http/tests/inspector/network/har/har-basic.html [ Pass Crash ]
+
+# <rdar://problem/61062687> [ macos wk2 ] REGRESSION: media/modern-media-controls/scrubber-support/scrubber-support-media-api.html is flaky crashing
+media/modern-media-controls/scrubber-support/scrubber-support-media-api.html [ Pass Crash ]
+
+# <rdar://problem/61071209> [ macOS wk2 debug ] media/modern-media-controls/volume-support/volume-support-drag.html is flaky failing
+[ Debug ] media/modern-media-controls/volume-support/volume-support-drag.html [ Pass Failure ]
+
+# <rdar://problem/61463671> [ macOS wk2 ] tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html is a flaky failure
+[ Mojave ] tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html [ Pass Failure ]
+
+# <rdar://problem/61833992> REGRESSION: (20A267) http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html
+[ BigSur+ ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ Pass Failure ]
+
+# <rdar://problem/63626512> REGRESSION(20A279-20A291a): webrtc/simulcast-h264.html is a constant timeout
+webrtc/simulcast-h264.html [ Pass Timeout ]
+
+# <rdar://problem/66492801> [ Mac wk2 ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html is timing out
+platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html [ Pass Timeout ]
+
+# <rdar://problem/60642539> [ macOS wk2 ] inspector/unit-tests/async-test-suite.html is flaky timing out
+[ Catalina ] inspector/unit-tests/async-test-suite.html [ Slow ]
+
+# <rdar://problem/61177257> [ wk2 Debug ] ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http-http.html
+[ Catalina Debug ] http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http-http.html [ Pass Crash ]
+
+# <rdar://problem/61736265> fast/scrolling/latching/scroll-div-no-latching.html is flaky failing.
+[ Catalina Release ] fast/scrolling/latching/scroll-div-no-latching.html [ Pass Failure ]
+
+# <rdar://problem/63730309> accessibility/mac/attributed-string/attributed-string-does-not-includes-misspelled-for-non-editable.html is a flaky failure
+[ Catalina ] accessibility/mac/attributed-string/attributed-string-does-not-includes-misspelled-for-non-editable.html [ Pass Failure ]
+
+# <rdar://problem/64816037> REGRESSION: media/media-source/media-source-unnecessary-seek-seeked.html is a flaky failure
+[ Catalina ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Failure ]
+
+#  <rdar://problem/64816527> swipe/pushState-cached-back-swipe.html is a flaky failure
+[ Catalina ] swipe/pushState-cached-back-swipe.html [ Pass Failure ]
+
+# <rdar://problem/63275213> REGRESSION: http/tests/IndexedDB/storage-limit-1.https.html is a flaky failure
+[ BigSur+ Release ] http/tests/IndexedDB/storage-limit-1.https.html [ Pass Failure ]
+
+# <rdar://problem/63357481> http/tests/adClickAttribution/send-attribution-conversion-request.html is a super flaky failure
+[ BigSur+ Debug ] http/tests/adClickAttribution/send-attribution-conversion-request.html [ Pass Failure ]
+
+# <rdar://problem/63554249> [20A279] DQ bots are seeing http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html and http/tests/cache/disk-cache/disk-cache-validation-no-body.html are timing out
+webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Failure Timeout ]
+[ BigSur+ Release ] http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Pass Timeout ]
+
+# <rdar://problem/63547191> webrtc/h265.html consistently times out on several Mac models
+[ BigSur+ Release ] webrtc/h265.html [ Pass Timeout ]
+
+# <rdar://problem/64547962> REGRESSION: fast/multicol/newmulticol/ tests are flaky failing.
+[ BigSur+ ] fast/multicol/newmulticol/adjacent-spanners.html [ Pass Failure ]
+[ BigSur+ ] fast/multicol/newmulticol/insert-spanner4.html [ Pass Failure ]
+[ BigSur+ ] fast/multicol/newmulticol/remove-row-content2.html [ Pass Failure ]
+[ BigSur+ ] fast/multicol/newmulticol/remove-row-content8.html [ Pass Failure ]
+[ BigSur+ ] fast/multicol/newmulticol/spanner-last.html [ Pass Failure ]
+
+# <rdar://problem/64700658> imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html is a flaky timeout and flaky failure
+[ BigSur+ ] imported/w3c/web-platform-tests/css/css-font-loading/idlharness.https.html [ Pass Failure Timeout ]
+
+# rdar://66701815 (REGRESSION (20A2321a-20A2348b): fast/speechsynthesis/speech-synthesis-speak-empty-string.html is a flaky failure)
+[ BigSur+ ] fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Pass Failure ]
+
+# rdar://66811185 (imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html is a constant failure)
+[ BigSur+ ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Failure ]
+
+# Disable plug-in tests on Apple Silicon
+[ arm64 ] compositing/plugins [ Skip ]
+[ arm64 ] http/tests/plugins [ Skip ]
+[ arm64 ] imported/blink/plugins [ Skip ]
+[ arm64 ] platform/mac-wk2/plugins [ Skip ]
+[ arm64 ] platform/mac/plugins [ Skip ]
+[ arm64 ] plugins [ Skip ]
+[ arm64 ] fullscreen/full-screen-plugin.html [ Skip ]
+[ arm64 ] http/tests/contentextensions/plugin-doesnt-crash.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-iframe.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-plugin-in-main-frame.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/cross-origin-plugin-document-allowed-in-child-window.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-default-src-star.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/embed-with-no-url-allowed-by-star.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-default-src-star.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/object-with-no-url-allowed-by-star.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-allowed-in-child-window.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window-report.php [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-blocked-in-child-window.html [ Skip ]
+[ arm64 ] http/tests/security/contentSecurityPolicy/same-origin-plugin-document-with-csp-blocked-in-child-window.html [ Skip ]
+[ arm64 ] http/tests/security/cross-origin-plugin-allowed.html [ Skip ]
+[ arm64 ] http/tests/security/cross-origin-plugin.html [ Skip ]
+[ arm64 ] http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Skip ]
+[ arm64 ] http/tests/security/storage-blocking-loosened-plugin.html [ Skip ]
+[ arm64 ] http/tests/security/storage-blocking-strengthened-plugin.html [ Skip ]
+[ arm64 ] tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html [ Skip ]
+[ arm64 ] userscripts/user-script-plugin-document.html [ Skip ]
+[ arm64 ] fast/frames/sandboxed-iframe-about-blank.html [ Skip ]
+[ arm64 ] fast/frames/sandboxed-iframe-navigation-allowed.html [ Skip ]
+[ arm64 ] fast/replaced/invalid-object-with-fallback.html [ Skip ]
+[ arm64 ] fast/replaced/no-focus-ring-embed.html [ Skip ]
+[ arm64 ] fast/replaced/no-focus-ring-object.html [ Skip ]
+
+# rdar://66703773 (REGRESSION (20A2316-20A2348b): http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html is a constant failure)
+[ arm64 ] http/tests/security/contentSecurityPolicy/plugin-blocked-in-about-blank-window.html [ Skip ]
+
+# rdar://66706867 (REGRESSION (20A2321a-20A2348b): fast/table/hidpi-collapsed-border-with-odd-pixel-width.html is a flaky image failure)
+[ arm64 ] fast/table/hidpi-collapsed-border-with-odd-pixel-width.html [ Pass ImageOnlyFailure ]
+
+# rdar://65642935 ([AS] 20A2323e: 15 canvas layout tests consistently failing)
+[ arm64 ] canvas/philip/tests/2d.line.miter.obtuse.html [ Failure ]
+[ arm64 ] canvas/philip/tests/2d.path.arc.selfintersect.1.html [ Failure ]
+[ arm64 ] canvas/philip/tests/2d.path.arc.shape.3.html [ Failure ]
+[ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
+[ arm64 ] imported/w3c/canvas/2d.line.miter.obtuse.html [ Failure ]
+[ arm64 ] imported/w3c/canvas/2d.path.arc.selfintersect.1.html [ Failure ]
+[ arm64 ] imported/w3c/canvas/2d.path.arc.shape.3.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.miter.obtuse.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.selfintersect.1.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
+[ arm64 ] inspector/canvas/memory.html [ Failure ]
+[ arm64 ] media/video-canvas-createPattern.html [ Failure ]
+
+# rdar://66798751 (REGRESSION (20A2321a-20A2327a): imported/w3c/web-platform-tests/css/css-animations/event-dispatch.tentative.html is a flaky failure)
+[ arm64 ] imported/w3c/web-platform-tests/css/css-animations/event-dispatch.tentative.html [ Pass Failure ]
+
+# rdar://66806059 (REGRESSION (20A2321a-20A2348b): 4 fast hidpi tests are a flaky image failure)
+[ arm64 ] fast/flexbox/hidpi-simple-line-layout-with-flexbox-and-transition.html [ ImageOnlyFailure ]
+[ arm64 ] fast/forms/hidpi-fieldset-on-subpixel-position-when-legend-is-present.html [ ImageOnlyFailure ]
+[ arm64 ] fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
+[ arm64 ] fast/inline/hidpi-inline-block-is-subpixel-while-line-is-not.html [ ImageOnlyFailure ]
+
+# rdar://66807554 (REGRESSION (GolgenGate20A2323e-20A2348b): imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html is a flaky failure)
+[ arm64 ] imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-002.html  [ Failure ]
+
+# rdar://66808228 (REGRESSION (20A2321a-20A2348b): imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html is a flaky failure)
+[ arm64 ] imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html [ Failure ]

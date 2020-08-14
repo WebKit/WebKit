@@ -1,3 +1,132 @@
+2020-08-13  Darin Adler  <darin@apple.com>
+
+        Migrate some Apple internal Mac expectations here into WebKit sources
+        https://bugs.webkit.org/show_bug.cgi?id=215459
+
+        Reviewed by Jonathan Bedard.
+
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest-expected.txt: Removed.
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt: Removed.
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-en-expected.txt: Removed.
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt: Removed.
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-es-MX-expected.txt: Removed.
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-es-expected.txt: Removed.
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-fr-expected.txt: Removed.
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-hi-expected.txt: Removed.
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt: Removed.
+        * platform/ios/fast/text/international/system-language/navigator-language/navigator-language-ru-expected.txt: Removed.
+        These expected files were identical to the ones that will be used otherwise.
+
+        * platform/ios/TestExpectations: Removed expectations for test that have been removed.
+
+        * platform/mac-bigsur-wk1/editing/pasteboard/drop-text-without-selection-expected.txt: Added.
+        * platform/mac-bigsur-wk1/editing/selection/select-across-readonly-input-4-expected.txt: Added.
+        * platform/mac-bigsur-wk1/editing/selection/select-across-readonly-input-5-expected.txt: Added.
+        * platform/mac-bigsur-wk1/http/tests/cookies/js-get-and-set-http-only-cookie-expected.txt: Added.
+        * platform/mac-bigsur/editing/input/reveal-caret-of-multiline-input-expected.txt: Added.
+        * platform/mac-bigsur/editing/pasteboard/drop-text-without-selection-expected.txt: Added.
+        * platform/mac-bigsur/editing/pasteboard/pasting-tabs-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/3690703-2-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/3690703-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/3690719-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/select-from-textfield-outwards-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-backward-br-mixed-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-backward-p-mixed-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-forward-br-mixed-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt: Added.
+        * platform/mac-bigsur/editing/selection/vertical-rl-rtl-extend-line-forward-p-mixed-expected.txt: Added.
+        * platform/mac-bigsur/fast/block/float/float-avoidance-expected.txt: Added.
+        * platform/mac-bigsur/fast/block/margin-collapse/103-expected.txt: Added.
+        * platform/mac-bigsur/fast/css/apple-system-control-colors-expected.txt: Added.
+        * platform/mac-bigsur/fast/css/rtl-ordering-expected.txt: Added.
+        * platform/mac-bigsur/fast/css/text-overflow-input-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/basic-inputs-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/basic-textareas-quirks-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/box-shadow-override-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/button-sizes-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/button-table-styles-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/form-element-geometry-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/input-appearance-preventDefault-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/input-appearance-spinbutton-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/input-appearance-spinbutton-up-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/input-placeholder-visibility-1-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/input-placeholder-visibility-3-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/input-table-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/input-value-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/listbox-bidi-align-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/listbox-width-change-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/option-text-clip-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/search-rtl-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/search/search-size-with-decorations-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/select-change-listbox-to-popup-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/select-visual-hebrew-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/textAreaLineHeight-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/textarea-placeholder-visibility-1-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/textarea-placeholder-visibility-2-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/textfield-outline-expected.txt: Added.
+        * platform/mac-bigsur/fast/forms/visual-hebrew-text-field-expected.txt: Added.
+        * platform/mac-bigsur/fast/parser/entity-comment-in-textarea-expected.txt: Added.
+        * platform/mac-bigsur/fast/parser/open-comment-in-textarea-expected.txt: Added.
+        * platform/mac-bigsur/fast/text/backslash-to-yen-sign-euc-expected.txt: Added.
+        * platform/mac-bigsur/fast/text/drawBidiText-expected.txt: Added.
+        * platform/mac-bigsur/fast/text/international/danda-space-expected.txt: Added.
+        * platform/mac-bigsur/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt: Added.
+        * platform/mac-bigsur/fast/text/international/system-language/system-font-punctuation-expected.txt: Added.
+        * platform/mac-bigsur/fast/text/justify-ideograph-leading-expansion-expected.txt: Added.
+        * platform/mac-bigsur/fast/text/vertical-rl-rtl-linebreak-expected.txt: Added.
+        * platform/mac-bigsur/fast/text/vertical-rl-rtl-linebreak-mixed-expected.txt: Added.
+        * platform/mac-bigsur/http/tests/navigation/javascriptlink-frames-expected.txt: Added.
+        * platform/mac-bigsur/http/tests/xmlhttprequest/methods-async-expected.txt: Added.
+        * platform/mac-bigsur/http/tests/xmlhttprequest/methods-expected.txt: Added.
+        * platform/mac-bigsur/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Added.
+        * platform/mac-bigsur/http/tests/xmlhttprequest/workers/methods-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.any.worker-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/fetch/redirect-navigate/preserve-fragment-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/xhr/send-entity-body-empty-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-async-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/xhr/send-entity-body-get-head-expected.txt: Added.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt: Added.
+        * platform/mac-bigsur/media/controls-after-reload-expected.txt: Added.
+        * platform/mac-bigsur/media/video-display-toggle-expected.txt: Added.
+        * platform/mac-bigsur/media/video-no-audio-expected.txt: Added.
+        * platform/mac-bigsur/media/video-volume-slider-expected.txt: Added.
+        * platform/mac-bigsur/platform/mac/fast/text/international/bidi-fallback-font-weight-expected.txt: Added.
+        * platform/mac-bigsur/svg/custom/svg-fonts-without-missing-glyph-expected.txt: Added.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug18359-expected.txt: Added.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug2479-3-expected.txt: Added.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug30692-expected.txt: Added.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug33855-expected.txt: Added.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug60749-expected.txt: Added.
+        * platform/mac-bigsur/tables/mozilla/bugs/bug7342-expected.txt: Added.
+        * platform/mac-bigsur/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt: Added.
+        * platform/mac-bigsur/transforms/2d/zoom-menulist-expected.txt: Added.
+        Copied these expectation files here.
+
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-en-US-expected.txt: Removed.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-en-expected.txt: Removed.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-es-ES-expected.txt: Removed.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-es-expected.txt: Removed.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-fr-expected.txt: Removed.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-hi-expected.txt: Removed.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-pt-BR-expected.txt: Removed.
+        * platform/mac-mojave/fast/text/international/system-language/navigator-language/navigator-language-ru-expected.txt: Removed.
+        These expectations files were all the same as the ones that would be used otherwise.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        Copied expectations here.
+
 2020-08-13  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS wk2 Release ] imported/w3c/eb-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-long-crash.html is a flaky timeout

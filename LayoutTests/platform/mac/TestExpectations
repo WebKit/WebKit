@@ -1731,6 +1731,7 @@ platform/mac/media/encrypted-media/fps-multiple-pssh.html [ Skip ]
 
 webkit.org/b/204756 imported/w3c/web-platform-tests/fetch/content-encoding/bad-gzip-body.any.worker.html [ Pass Failure ]
 
+# <rdar://problem/55667423> REGRESSION: [19E136] fast/text/emoji-gender* tests are failing.
 webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-3.html [ ImageOnlyFailure ]
 webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-4.html [ ImageOnlyFailure ]
 webkit.org/b/204820 [ Catalina+ ] fast/text/emoji-gender-5.html [ ImageOnlyFailure ]
@@ -1758,9 +1759,6 @@ webkit.org/b/205865 webgpu/whlsl/ensure-proper-variable-lifetime-2.html [ Pass I
 webkit.org/b/205867 webgpu/draw-indexed-triangles.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/197204 webexposed/css-properties-behind-flags.html [ Pass Failure ]
-
-# The navigator.language tests rely on functionality only available in recent releases of macOS Catalina and onward.
-webkit.org/b/208023 [ Sierra HighSierra Mojave ] fast/text/international/system-language/declarative-language.html [ Failure ]
 
 webkit.org/b/204312 imported/w3c/web-platform-tests/svg/import/struct-dom-06-b-manual.svg [ Failure Pass ]
 
@@ -1873,8 +1871,6 @@ webkit.org/b/209446 [ Debug ] imported/w3c/web-platform-tests/navigation-timing/
 
 webkit.org/b/209619 [ Catalina ] compositing/clipping/border-radius-async-overflow-stacking.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/208023 [ Catalina ] fast/text/international/system-language/declarative-language.html [ Failure ]
-
 webkit.org/b/209740 webgl/2.0.0/conformance2/rendering/framebuffer-completeness-unaffected.html [ Failure ]
 
 webkit.org/b/209908 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout ]
@@ -1944,3 +1940,270 @@ webkit.org/b/214412 fullscreen/video-controls-rtl.html [ Pass Failure Crash ]
 
 webkit.org/b/215450 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Pass Failure ]
 
+# <rdar://problem/31017631> Stress GC bot failing LayoutTest step with timeout while running WebCryptoAPI/derive_bits_keys tests
+[ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys [ Skip ]
+
+# The navigator.language tests rely on functionality only available in recent releases of macOS Catalina and onward.
+# <rdar://problem/59461792> REGRESSION: [ Mac iOS ] ( r254389 - r254411 ) fast/text/international/system-language/declarative-language.html is failing internally
+fast/text/international/system-language/declarative-language.html [ Pass Failure ]
+
+# <rdar://problem/59628620> REGRESSION: compositing/video/video-border-radius-clipping.html is failing and flaky crashing
+compositing/video/video-border-radius-clipping.html [ Pass Failure Timeout ]
+
+# <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Pass Failure ]
+
+# <rdar://problem/59785942> [ iOS macOS ] imported/w3c/web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub.html is flaky failing
+imported/w3c/web-platform-tests/content-security-policy/form-action/form-action-src-blocked.sub.html [ Pass Failure ]
+
+# <rdar://problem/60173203> [ Mac ] accessibility/accessibility-node-memory-management.html is flaky failing and crashing.
+accessibility/accessibility-node-memory-management.html [ Pass Failure Crash ]
+
+# <rdar://problem/60290943> [ Mac ] inspector/unit-tests/test-harness-expect-functions.html is flaky crashing.
+inspector/unit-tests/test-harness-expect-functions.html [ Pass Crash ]
+
+# <rdar://problem/60790658> editing/selection/select-bidi-run.html is flaky timing out.
+editing/selection/select-bidi-run.html [ Pass Timeout ]
+
+# <rdar://problem/60227623> fast/text/international/generic-font-family-language-traditional.html is failing.
+[ BigSur+ ] fast/text/international/generic-font-family-language-traditional.html [ ImageOnlyFailure ]
+
+# <rdar://problem/60873976> [ Mac Guard Malloc ] imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.worker.html is flaky crashing.
+imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.worker.html [ Pass Crash ]
+
+# <rdar://problem/60780398> REGRESSION: (258729?) imported/w3c/web-platform-tests/websockets/opening-handshake/003.html is failing.
+imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
+
+# In-App Browser Privacy requires functions that are currently in WebKitAdditions.
+http/tests/in-app-browser-privacy/ [ Skip ]
+
+# <rdar://problem/61062109> ASSERTION FAILED: m_wrapper @ WebCore::JSEventListener::ensureJSFunction(WebCore::ScriptExecutionContext&) const
+imported/w3c/web-platform-tests/IndexedDB/request_bubble-and-capture.htm [ Pass Crash ]
+
+# <rdar://problem/61264058> [ iOS and Mac with Guard-Malloc and wk2 or Stress-GC ] imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html is flaky failing.
+imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html [ Pass Failure ]
+
+# <rdar://problem/61833551> REGRESSION: fast/loader/create-frame-in-DOMContentLoaded.html is failing
+[ BigSur+ ] fast/loader/create-frame-in-DOMContentLoaded.html [ Failure ]
+
+# <rdar://problem/61948094>
+[ BigSur+ ] imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html [ Pass Failure ]
+
+# rdar://66841102 ([AS Layout Tests] REGRESSION (r264522): [ MacOS wk1 ] 2 css-logical/parsing tests are a flaky failure)
+imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-computed.html [ Pass Failure ]
+
+# <rdar://problem/62848940> [ Mac Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek.html is flaky failing.
+[ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek.html [ Pass Failure ]
+
+# <rdar://problem/62860846> REGRESSION [ Mac Debug ] accessibility/roles-exposed.html is flaky timing out.
+[ Debug ] accessibility/roles-exposed.html [ Pass Timeout ]
+
+# <rdar://problem/66346141> [ Mac ] fast/forms/hidpi-textfield-background-bleeding.html is failing
+# <rdar://problem/66295552> [ Mac ] fast/forms/hidpi-textfield-background-bleeding.html is failing
+fast/forms/hidpi-textfield-background-bleeding.html [ ImageOnlyFailure ]
+
+# <rdar://problem/64947666> fast/images/image-controls-basic.html is a constant failure
+fast/images/image-controls-basic.html [ Failure ]
+
+# <rdar://problem/66399069> [ Mac ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html is failing
+imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html [ ImageOnlyFailure ]
+
+# <rdar://problem/66351394> [ Mac ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html is failing
+imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
+
+# rdar://66910555 ([ Layout Tests ] REGRESSION (r264345): [ macOS ] 2 media-source/mediasource-changetype-play are a flaky failure)
+imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
+imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Failure ]
+
+# <rdar://problem/56545293> REGRESSION (r250936?): http/tests/IndexedDB/storage-limit-1.https.html is a Flaky Failure
+[ Catalina Release ] http/tests/IndexedDB/storage-limit-1.https.html [ Pass Failure ]
+
+# <rdar://problem/60376665> [ macOS ] svg/custom/glyph-selection-arabic-forms.svg is failing since around r252706
+[ Mojave ] svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
+
+# <rdar://problem/60387784> [ macOS ] fast/scrolling/programmatic-scroll-to-zero-zero.html is flaky failing
+[ Mojave ] fast/scrolling/programmatic-scroll-to-zero-zero.html [ Pass Failure ]
+
+# <rdar://problem/60791726> [ wk2 Debug ] scrollbars/scroll tests are flaky failing.
+[ Mojave Debug ] scrollbars/scrollbar-miss-mousemove-disabled.html [ Pass Failure ]
+[ Mojave Debug ] scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
+[ Mojave Debug ] scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Pass Failure ]
+[ Mojave Debug ] scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
+[ Mojave Debug ] scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
+[ Mojave Debug ] scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html [ Pass Failure ]
+[ Mojave Debug ] scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
+[ Mojave Debug ] scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Pass Failure ]
+[ Mojave Debug ] scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Pass Failure ]
+
+# <rdar://problem/61114827> [ Stress GC ] http/tests/navigation/page-cache-fontfaceset.html is flaky crashing.
+[ Mojave ] http/tests/navigation/page-cache-fontfaceset.html [ Pass Crash ]
+
+# <rdar://problem/61117613> [ Stress GC ] ASSERTION FAILED: m_wrapper on fast/events/scoped/editing-commands.html
+[ Mojave ] fast/events/scoped/editing-commands.html [ Pass Crash ]
+
+# <rdar://problem/61120274> [ Stress GC ] ASSERTION FAILED: m_wrapper on webgl/max-active-contexts-webglcontextlost-prevent-default.html
+[ Mojave ] webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Crash ]
+
+# <rdar://problem/61461935> [ macOS wk2 ] fast/scrolling/rtl-point-in-iframe.html is flaky failing
+[ Mojave ] fast/scrolling/rtl-point-in-iframe.html [ Pass Failure ]
+
+# <rdar://problem/61464604> [ macOS ] fast/forms/form-control-element-crash.html is a flaky timeout
+[ Mojave ] fast/forms/form-control-element-crash.html [ Pass Timeout ]
+
+# <rdar://problem/61733642> [ wk2 ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html is flaky failing.
+[ Mojave ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ Pass Failure ]
+
+# <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
+[ Mojave ] imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]
+
+# <rdar://problem/61851850> REGRESSION: [ Stress GC ] (JavaScriptCore): ASSERTION FAILED: callback - WebCore::JSMutationCallback::handleEvent(WebCore::MutationObserve
+[ Mojave ] fast/dom/MutationObserver/disconnect-observer-while-mutation-records-are-enqueued-crash.html [ Pass Crash ]
+
+# <rdar://problem/62317723> [ Guard-Malloc ] imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html is flaky crashing with 'WebCore::HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()' alert.
+[ Mojave ] imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Pass Crash ]
+
+# <rdar://problem/56961499> Many webGPU test fail on production and crash on Debug
+[ BigSur+ ] inspector/canvas/requestShaderSource-webgpu.html [ Skip ]
+[ BigSur+ ] inspector/canvas/updateShader-webgpu-sharedVertexFragment.html [ Skip ]
+[ BigSur+ ] inspector/canvas/updateShader-webgpu.html [ Skip ]
+
+# WebP images
+[ BigSur+ ] fast/images/webp-as-image.html [ Pass ]
+[ BigSur+ ] fast/images/animated-webp-as-image.html [ Pass ]
+
+# <rdar://problem/59015708>
+[ BigSur+ ] fast/images/animated-webp.html [ Skip ]
+
+# <rdar://problem/59605703> REGRESSION: crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html is failing
+[ BigSur+ ] crypto/subtle/aes-cbc-import-key-wrap-jwk-rsa-key-private.html [ Pass Failure ]
+[ BigSur+ ] crypto/workers/subtle/rsa-postMessage-worker.html [ Pass Failure ]
+
+# <rdar://problem/59607934> REGRESSION: [ 20A184-20A211 ] 3 fast/mediastream tests are failing after updating the bots
+[ BigSur+ ] fast/mediastream/MediaStream-video-element-displays-buffer.html [ Pass Failure Timeout ]
+[ BigSur+ ] fast/mediastream/resize-trim.html [ Pass Failure ]
+[ BigSur+ ] fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Pass Timeout ]
+
+# <rdar://problem/60349279> [ wk2 ] fast/replaced/frame-removed-during-resize-smaller.html is flaky crashing.
+[ BigSur+ ] fast/replaced/frame-removed-during-resize-smaller.html [ Pass Crash ]
+
+# <rdar://problem/60512303> [ wk2 ] imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-allowed.sub.html is flaky timing out.
+[ BigSur+ ] imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-eventsource-allowed.sub.html [ Pass Timeout Failure ]
+
+# <rdar://problem/60501497> REGRESSION (r258080) fast/history/history-back-while-pdf-in-pagecache.html is timing out.
+[ BigSur+ ] fast/history/history-back-while-pdf-in-pagecache.html [ Pass ImageOnlyFailure Crash Timeout ]
+
+# Certain versions of macOS use different text security characters.
+webkit.org/b/209692 [ BigSur+ ] platform/mac/fast/text/text-security-disc-bullet-pua-mac.html [ Pass ]
+webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ ImageOnlyFailure ]
+
+# rdar://63094384 (REGRESSION: (r261413): [ Guard-Malloc ] webgl/2.0.0/conformance2/textures/misc/tex-unpack-params.html is crashing consistently with - libGLImage.dylib: void glgConvertTo_32<GLGConverter_RGB8_ARGB8, (GLGMemory)1>)
+[ BigSur+ ] webgl/2.0.0/conformance2/textures/misc/tex-unpack-params.html [ Skip ]
+
+# <rdar://problem/63399079> [ Debug ] imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm is a flaky failure
+[ BigSur+ ] imported/w3c/web-platform-tests/xhr/access-control-basic-post-success-no-content-type.htm [ Pass Failure ]
+
+# <rdar://problem/63448168> [ Debug ] media/video-source-moved.html is a super flkay timeout
+[ BigSur+ Debug ] media/video-source-moved.html [ Pass Timeout ]
+
+# <rdar://problem/63461530> [ Debug ] media/media-fragments/TC0090.html is failing very rarely
+[ BigSur+ Debug ] media/media-fragments/TC0090.html [ Pass Failure ]
+
+# <rdar://problem/63495500> REGRESSION: imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html is a flaky failure
+[ BigSur+ ] imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-MediaElement-disabled-audio-is-silence.https.html [ Pass Failure ]
+
+# <rdar://problem/63546844> [20A279] DQ is seeing editing/pasteboard/5478250.html failing
+[ BigSur+ Release ] editing/pasteboard/5478250.html [ Pass Failure ]
+
+# <rdar://problem/63547006> [20A279] DQ bots are seeing imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html failing
+[ BigSur+ Release ] imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html [ Pass Failure ]
+
+# rdar://66784420 (REGRESSION (Gate20A2321a-20A2348b): imported/mozilla/svg/filters/feImage-1.svg is a flaky image failure)
+[ BigSur+ ] imported/mozilla/svg/filters/feImage-1.svg [ Pass ImageOnlyFailure ]
+
+# rdar://66788673 (REGRESSION (20A2316-20A2348b): imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-time-limits.html is a flaky failure)
+[ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiosource-time-limits.html [ Pass Failure ]
+
+# <rdar://problem/63545884> [20A279] DQ bots have editing/mac/spelling/accept-misspelled-candidate.html and editing/mac/spelling/autocorrection-contraction.html failing
+[ BigSur+ Release ] editing/mac/spelling/accept-misspelled-candidate.html [ Pass Failure ]
+[ BigSur+ Release ] editing/mac/spelling/autocorrection-contraction.html [ Pass Failure ]
+
+# <rdar://problem/63554876> [20A279] DQ is seeing media/video-currentTime.html flaky failing
+[ BigSur+ Release ] media/video-currentTime.html [ Pass Failure ]
+
+# <rdar://problem/63554557> [20A279] DQ is seeing media/media-source/media-source-unnecessary-seek-seeked.html failing
+[ BigSur+ Release ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Failure ]
+
+# <rdar://problem/64170117> REGRESSION(20A296a-20A301a): fast/text/arabic-zwj-and-zwnj.html is a constant failure
+[ BigSur+ ] fast/text/arabic-zwj-and-zwnj.html [ Pass ImageOnlyFailure ]
+
+# <rdar://problem/64166412> REGRESSION(20A296a-20A301a): fast/text/arabic-blacklisted.html is a constant failure
+[ BigSur+ ] fast/text/arabic-blacklisted.html [ Pass ImageOnlyFailure ]
+
+# <rdar://problem/64546452> mathml/opentype/munderover-stretch-width.html is flaky failing.
+[ BigSur+ ] mathml/opentype/munderover-stretch-width.html [ Pass Failure ]
+
+# <rdar://problem/64043254> REGRESSION(20A279-20A301a): platform/mac/fast/text/ligature-subdivision.html is a constant failure
+[ BigSur+ ] platform/mac/fast/text/ligature-subdivision.html [ Pass Failure ]
+
+# rdar://66641405 (REGRESSION (20A2327-20A2348b?): 7 http/tests/media/hls/ tests are timing out)
+[ BigSur+ ] http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
+[ BigSur+ ] http/tests/media/hls/hls-audio-tracks-has-audio.html [ Skip ]
+[ BigSur+ ] http/tests/media/hls/hls-audio-tracks-locale-selection.html [ Skip ]
+[ BigSur+ ] http/tests/media/hls/hls-audio-tracks.html [ Skip ]
+[ BigSur+ ] http/tests/media/hls/hls-webvtt-tracks.html [ Skip ]
+[ BigSur+ ] http/tests/media/hls/range-request.html [ Skip ]
+[ BigSur+ ] http/tests/media/hls/video-cookie.html [ Skip ]
+
+# rdar://66660579 (REGRESSION (20A2327a-20A2348b): fast/images/animated-gif-loop-count.html is failing)
+[ BigSur+ ] fast/images/animated-gif-loop-count.html [ ImageOnlyFailure ]
+
+# rdar://66660680 (REGRESSION (20A2327a-20A2348b): media/video-canvas-createPattern.html is failing)
+[ BigSur+ ] media/video-canvas-createPattern.html [ Failure ]
+
+# Remove this once <rdar://problem/66734187> hits the bots
+[ BigSur+ ] fast/text/locale-shaping.html [ Pass ImageOnlyFailure ]
+
+# rdar://65641563 ([WebGL2] vector-dynamic-indexing is failing a subtest on iOS (214393))
+[ arm64 ] webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing.html [ Failure ]
+
+# rdar://65848157 ([AS Layout Tests] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html is failing)
+[ arm64 ] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html [ Failure ]
+
+# rdar://64535650 (BlitFramebuffer sRGB webgl tests crashing/failing)
+[ arm64 ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Failure ]
+
+# rdar://65641438 ([WebGL2] tex-srgb-mipmap test fails on macOS Intel + iOS (but passes on macOS Apple Silicon) (214392))
+[ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-srgb-mipmap.html [ Failure ]
+
+# rdar://66660924 ([ASi Layout Tests] 6 WPT css-backgrounds tests consistently failing)
+[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-contain.xht [ ImageOnlyFailure ]
+[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-size-cover.xht [ ImageOnlyFailure ]
+[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--height.html [ ImageOnlyFailure ]
+[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
+[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
+[ arm64 ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
+
+# rdar://66661355 ([ASi Layout Tests] 3 compositing tests failing with 0.01% diffs)
+[ arm64 ] compositing/backgrounds/fixed-background-on-descendant.html [ ImageOnlyFailure ]
+[ arm64 ] compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
+[ arm64 ] compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
+
+# rdar://66802945 (REGRESSION (20A2323e-20A234b): [ Layout Test] 12 canvas layout tests are a constant failure)
+[ arm64 ] canvas/philip/tests/2d.line.miter.obtuse.html [ Failure ]
+[ arm64 ] canvas/philip/tests/2d.path.arc.selfintersect.1.html [ Failure ]
+[ arm64 ] canvas/philip/tests/2d.path.arc.shape.3.html [ Failure ]
+[ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
+[ arm64 ] imported/w3c/canvas/2d.line.miter.obtuse.html [ Failure ]
+[ arm64 ] imported/w3c/canvas/2d.path.arc.selfintersect.1.html [ Failure ]
+[ arm64 ] imported/w3c/canvas/2d.path.arc.shape.3.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.miter.obtuse.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.selfintersect.1.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
+
+# rdar://66842535 ([AS Layout Tests] REGRESSION (r265488): fast/text/letter-spacing-shaping.html is a constant ImageOnlyFailure)
+[ arm64 ] fast/text/letter-spacing-shaping.html [ Pass ImageOnlyFailure ]
+
+# rdar://66861801 ([AS Layout Tests] REGRESSION (r265487): svg/W3C-I18N/tspan-direction-rtl.svg is a constant failure)
+[ arm64 ] svg/W3C-I18N/tspan-direction-rtl.svg [ Failure ]

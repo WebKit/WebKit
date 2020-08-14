@@ -1,0 +1,5 @@
+
+PASS XMLHttpRequest: send("") - empty entity body (POST) 
+PASS XMLHttpRequest: send("") - empty entity body (PUT) 
+PASS XMLHttpRequest: send("") - empty entity body (HEAD) 
+

@@ -1,0 +1,43 @@
+EDITING DELEGATE: shouldInsertText:http://www.ibm.com/ replacingDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > #document-fragment to 0 of DIV > #document-fragment toDOMRange:range from 0 of #text > DIV > #document-fragment to 19 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 108x18
+          text run at (0,0) width 108: "This is a test for "
+        RenderInline {I} at (0,0) size 764x36
+          RenderInline {A} at (0,0) size 353x18 [color=#0000EE]
+            RenderText {#text} at (107,0) size 353x18
+              text run at (107,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8394"
+          RenderText {#text} at (459,0) size 764x36
+            text run at (459,0) width 5: " "
+            text run at (463,0) width 301: "Editable region does not accept dropped text if"
+            text run at (0,18) width 128: "there is no selection"
+        RenderText {#text} at (127,18) size 5x18
+          text run at (127,18) width 5: "."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {#text} at (0,0) size 667x18
+          text run at (0,0) width 487: "The text field should accept drag-and-dropped text, such as the link, even if "
+          text run at (486,0) width 181: "no text is currently selected."
+      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,96) size 784x23
+        RenderTextControl {INPUT} at (2,2) size 146x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (149,2) size 5x18
+          text run at (149,2) width 5: " "
+        RenderInline {A} at (0,0) size 167x18 [color=#0000EE]
+          RenderText {#text} at (153,2) size 167x18
+            text run at (153,2) width 167: "drop me into the text field"
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (13,109) size 140x13
+  RenderBlock {DIV} at (3,3) size 140x13
+    RenderText {#text} at (0,0) size 109x13
+      text run at (0,0) width 109: "http://www.ibm.com/"
+selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
+selection end:   position 19 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body

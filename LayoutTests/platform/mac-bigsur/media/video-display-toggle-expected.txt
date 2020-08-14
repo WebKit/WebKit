@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 504x18
+        text run at (0,0) width 504: "This tests that toggling the display property won't make the controls disappear."
+      RenderBR {BR} at (503,14) size 1x0
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,26) size 320x240 isolatesBlending
+  RenderVideo {VIDEO} at (0,18) size 320x240
+layer at (8,26) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
+layer at (8,221) size 320x45
+  RenderFlexibleBox {DIV} at (0,195) size 320x45
+layer at (8,221) size 320x45 isolatesBlending
+  RenderBlock (positioned) {DIV} at (0,0) size 320x45
+layer at (8,221) size 320x45
+  RenderBlock (positioned) {DIV} at (0,0) size 320x45 [bgcolor=#1E1E1E73]
+layer at (8,221) size 320x45 blendMode: lighten
+  RenderBlock (positioned) {DIV} at (0,0) size 320x45 [bgcolor=#292929]
+layer at (16,246) size 12x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (8,25) size 12x15 [color=#FFFFFF]
+layer at (44,246) size 16x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (36,24) size 16x16 [color=#FFFFFF]
+layer at (68,245) size 201x17
+  RenderFlexibleBox {DIV} at (60,24) size 201x17
+layer at (76,247) size 32x13 blendMode: plus-lighter
+  RenderFlexibleBox {DIV} at (8,2) size 32x13 [color=#FFFFFF]
+    RenderBlock (anonymous) at (0,0) size 32x13
+      RenderText {#text} at (0,0) size 32x13
+        text run at (0,0) width 32: "00:00"
+layer at (118,245) size 96x17
+  RenderFlexibleBox {DIV} at (50,0) size 96x17
+layer at (118,245) size 96x17 blendMode: plus-lighter
+  RenderSlider {INPUT} at (0,0) size 96x17 [color=#909090]
+    RenderFlexibleBox {DIV} at (0,0) size 96x17
+      RenderBlock {DIV} at (0,1) size 96x15
+        RenderBlock {DIV} at (0,0) size 3x15
+layer at (224,247) size 37x13 blendMode: plus-lighter
+  RenderFlexibleBox {DIV} at (156,2) size 37x13 [color=#FFFFFF]
+    RenderBlock (anonymous) at (0,0) size 37x13
+      RenderText {#text} at (0,0) size 37x13
+        text run at (0,0) width 37: "-00:06"
+layer at (277,241) size 14x25
+  RenderFlexibleBox {DIV} at (269,20) size 14x25
+layer at (277,246) size 14x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (0,5) size 14x15 [color=#FFFFFF]
+layer at (307,246) size 14x15 blendMode: plus-lighter
+  RenderButton {BUTTON} at (299,25) size 14x15 [color=#FFFFFF]

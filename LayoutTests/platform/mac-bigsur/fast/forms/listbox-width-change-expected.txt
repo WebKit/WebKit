@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 665x18
+        text run at (0,0) width 665: "This tests that when a list box's options get updated, the list box will recalculate its width, and relayout. "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderListBox {SELECT} at (2,20) size 188x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+      RenderText {#text} at (0,0) size 0x0

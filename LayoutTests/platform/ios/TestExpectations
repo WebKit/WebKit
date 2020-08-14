@@ -2616,10 +2616,6 @@ webkit.org/b/167619 css3/filters/backdrop/dynamic-with-clip-path.html [ ImageOnl
 webkit.org/b/168215 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Skip ]
 webkit.org/b/168215 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Skip ]
 
-# <rdar://problem/30610988>
-imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin.html [ Failure ]
-
 # rdar://problem/23643423
 [ Debug ] fast/frames/exponential-frames.html [ Skip ]
 

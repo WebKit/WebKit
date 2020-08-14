@@ -382,14 +382,14 @@ svg/animations/animations-paused-in-background-page-iframe.html [ Skip ]
 svg/animations/animations-paused-in-background-page.html [ Skip ]
 
 # WK1 uses the native scrollview for scrolling by page.
-scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html
-scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html
-scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html
-scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html
-scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html
-scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html
-scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html
-scrollbars/scrolling-by-page-on-keyboard-spacebar.html
+scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Skip ]
+scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Skip ]
+scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Skip ]
+scrollbars/scrolling-by-page-accounting-top-fixed-elements-on-keyboard-spacebar.html [ Skip ]
+scrollbars/scrolling-by-page-accounting-top-fixed-elements-with-negative-top-on-keyboard-spacebar.html [ Skip ]
+scrollbars/scrolling-by-page-ignoring-hidden-fixed-elements-on-keyboard-spacebar.html [ Skip ]
+scrollbars/scrolling-by-page-ignoring-transparent-fixed-elements-on-keyboard-spacebar.html [ Skip ]
+scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Skip ]
 
 # This test times out.
 webkit.org/b/147683 fast/scrolling/latching/scroll-div-with-nested-nonscrollable-iframe.html [ Skip ]
@@ -600,10 +600,12 @@ webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Failure ]
 
 # webkit.org/b/163585
-media/track/track-cues-cuechange.html [ Pass Crash ]
 media/track/track-cue-rendering-horizontal.html [ Pass Crash ]
 media/accessibility-closed-captions-has-aria-owns.html [ Pass Crash ]
 media/track/track-cues-enter-exit.html [ Pass Crash ]
+
+# <rdar://problem/61744994> media/track/track-cues-cuechange.html is flaky timing out.
+media/track/track-cues-cuechange.html [ Pass Crash Timeout ]
 
 webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
 
@@ -777,8 +779,6 @@ webkit.org/b/189756 compositing/filters/opacity-change-on-filtered-paints-into-a
 
 webkit.org/b/189723 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Pass Failure ]
 
-webkit.org/b/190350 [ Mojave ] storage/indexeddb/database-odd-names.html [ Failure ]
-
 webkit.org/b/190832 [ Debug ] fast/forms/state-restore-to-non-edited-controls.html [ Pass Failure ]
 
 webkit.org/b/190849 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Pass Failure ]
@@ -817,8 +817,6 @@ imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_compat-mouse-e
 webkit.org/b/198459 [ Debug ] inspector/canvas/recording-webgl-full.html [ Slow ]
 
 webkit.org/b/196508 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Pass Failure ]
-webkit.org/b/206945 [ Catalina ] compositing/repaint/become-overlay-composited-layer.html [ Pass Failure ]
-webkit.org/b/214388 [ Mojave ] compositing/repaint/iframes [ Pass Failure ]
 
 webkit.org/b/198676 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Pass Failure ]
 
@@ -844,25 +842,19 @@ webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/position-st
 webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/position-sticky-scroll-with-clip-and-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/203466 imported/w3c/web-platform-tests/css/css-position/z-index-blend-will-change-overlapping-layers.html [ ImageOnlyFailure ]
 
-
 webkit.org/b/203517 imported/w3c/web-platform-tests/css/css-sizing/dynamic-available-size-iframe.html [ Pass ImageOnlyFailure ]
 
 # Stale-while-revalidate is not supported on WK1
 imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]
 
-[ Mojave ] editing/mac/input/firstrectforcharacterrange-styled.html [ Failure ]
-
-webkit.org/b/205412 [ Mojave Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Timeout ]
-
 webkit.org/b/205410 [ Debug ] accessibility/mac/expanded-notification.html [ Pass Failure ]
 
+# rdar://53137847 (macOS WK1: editing/spelling/retro-correction-spelling-markers.html, editing/spelling/grammar.html, and editing/spelling/markers.html are flaky)
 webkit.org/b/206071 editing/spelling/grammar.html [ Skip ]
 webkit.org/b/206071 editing/spelling/markers.html [ Skip ]
 webkit.org/b/206071 editing/spelling/retro-correction-spelling-markers.html [ Failure ]
 
 webkit.org/b/199117 [ Debug ] storage/indexeddb/modern/objectstore-autoincrement-types.html [ Timeout ]
-
-webkit.org/b/206503 [ Mojave Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Failure ]
 
 webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Failure Timeout ]
 
@@ -911,8 +903,6 @@ webkit.org/b/207857 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Pass Tim
 webkit.org/b/207891 imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html [ Pass Failure ]
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
 
-webkit.org/b/206178 [ Mojave ] editing/spelling/spellcheck-attribute.html [ Pass Crash ]
-
 webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.php [ Pass Failure ]
 
 # prefetch not supported in WK1
@@ -951,6 +941,7 @@ webkit.org/b/210198 webgl/2.0.0/conformance2/attribs/gl-vertexattribipointer.htm
 webkit.org/b/208477 accessibility/mac/text-marker-for-index.html [ Skip ]
 accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
 
+# <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
 webkit.org/b/211923 imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]
 
 webkit.org/b/212665 svg/custom/textPath-insert-path.svg [ Pass ImageOnlyFailure ]
@@ -960,8 +951,6 @@ media/modern-media-controls/media-controller/media-controller-inline-to-fullscre
 media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/presentationmodechanged-fired-once.html [ Skip ]
 media/video-presentation-mode.html [ Skip ]
-
-webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-console-no-report.html [ Pass Failure ]
 
 webkit.org/b/213896 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-008.html [ Pass Failure ]
 
@@ -1012,3 +1001,131 @@ webkit.org/b/215397 media/modern-media-controls/media-controller/media-controlle
 
 webkit.org/b/215452 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-002.html [ Pass Failure ]
 
+# <rdar://problem/30897457> [StressGC] ASSERTION FAILED: view in com.apple.WebCore: WebCore::Widget::getOuterView const + 132
+[ HighSierra Debug ] fast/frames/insert-frame-unload-handler.html [ Skip ]
+
+# rdar://problem/52515114 REGRESSION: CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.Photos: +[AVAssetCollection(Utilities) fragmentParamsFromURL:]
+media/media-fragments/TC0034.html [ Pass Crash ]
+
+# <rdar://problem/62472844> [ Mac wk1 ] fast/dom/Window/window-open-self-disallow-close.html is flaky crashing and timing out.
+fast/dom/Window/window-open-self-disallow-close.html [ Pass Crash Timeout ]
+
+# <rdar://problem/65269589> [ Mac wk1 and iOS ] media/vp9.html is failing consistently.
+media/vp9.html [ Failure ]
+
+# rdar://66866579 ([ Layout Tests ] REGRESSION: [ MacOS wk1 release ] compositing/animation/matrix-animation.html is a flaky failure)
+compositing/animation/matrix-animation.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/206945 [ Catalina ] compositing/repaint/become-overlay-composited-layer.html [ Pass Failure ]
+
+# rdar://65287528 (CrashTracer: DumpRenderTree at com.apple.QuartzCore: CA::OGL::MetalContext::create_pipeline_state (SC crash on SC_SCCVN::MakeBufferIntrinsicProp))
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.cone.behind.html [ Skip ]
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.cone.beside.html [ Skip ]
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.cone.bottom.html [ Skip ]
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.cone.cylinder.html [ Skip ]
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.cone.front.html [ Skip ]
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.cone.shape1.html [ Skip ]
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.cone.shape2.html [ Skip ]
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.cone.top.html [ Skip ]
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.touch1.html [ Skip ]
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.touch2.html [ Skip ]
+[ Catalina Release ] canvas/philip/tests/2d.gradient.radial.touch3.html [ Skip ]
+[ Catalina Release ] fast/canvas/canvas-currentColor.html [ Skip ]
+[ Catalina Release ] fast/canvas/canvas-radial-gradient-spreadMethod.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.cone.behind.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.cone.beside.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.cone.bottom.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.cone.cylinder.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.cone.shape1.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.cone.shape2.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.touch1.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.touch2.html [ Skip ]
+[ Catalina Release ] imported/w3c/canvas/2d.gradient.radial.touch3.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.behind.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.beside.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.bottom.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.cylinder.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.front.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.shape1.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.shape2.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.cone.top.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.touch1.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.touch2.html [ Skip ]
+[ Catalina Release ] imported/w3c/web-platform-tests/html/canvas/element/fill-and-stroke-styles/2d.gradient.radial.touch3.html [ Skip ]
+
+webkit.org/b/214388 [ Mojave ] compositing/repaint/iframes [ Pass Failure ]
+webkit.org/b/206178 [ Mojave ] editing/spelling/spellcheck-attribute.html [ Pass Crash ]
+webkit.org/b/190350 [ Mojave ] storage/indexeddb/database-odd-names.html [ Failure ]
+[ Mojave ] editing/mac/input/firstrectforcharacterrange-styled.html [ Failure ]
+
+webkit.org/b/206503 [ Mojave Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Failure ]
+webkit.org/b/205412 [ Mojave Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Timeout ]
+
+webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-console-no-report.html [ Pass Failure ]
+
+# <rdar://problem/60376665> [ macOS ] svg/custom/glyph-selection-arabic-forms.svg is failing since around r252706
+[ Mojave ] svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
+
+# <rdar://problem/60387784> [ macOS ] fast/scrolling/programmatic-scroll-to-zero-zero.html is flaky failing
+[ Mojave ] fast/scrolling/programmatic-scroll-to-zero-zero.html [ Pass Failure ]
+
+# <rdar://problem/60791726> [ wk2 Debug ] scrollbars/scroll tests are flaky failing.
+[ Mojave Debug ] scrollbars/scrollbar-miss-mousemove-disabled.html [ Pass Failure ]
+
+# <rdar://problem/61114827> [ Stress GC] http/tests/navigation/page-cache-fontfaceset.html is flaky crashing.
+[ Mojave ] http/tests/navigation/page-cache-fontfaceset.html [ Pass Crash ]
+
+# <rdar://problem/61117613> [ Stress GC ] ASSERTION FAILED: m_wrapper on fast/events/scoped/editing-commands.html
+[ Mojave ] fast/events/scoped/editing-commands.html [ Pass Crash ]
+
+# <rdar://problem/61120274> [ Stress GC ] ASSERTION FAILED: m_wrapper on webgl/max-active-contexts-webglcontextlost-prevent-default.html
+[ Mojave ] webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Pass Crash ]
+
+# <rdar://problem/61461935> [ macOS wk2 ] fast/scrolling/rtl-point-in-iframe.html is flaky failing
+[ Mojave ] fast/scrolling/rtl-point-in-iframe.html [ Pass Failure ]
+
+# <rdar://problem/61464604> [ macOS ] fast/forms/form-control-element-crash.html is a flaky timeout
+[ Mojave ] fast/forms/form-control-element-crash.html [ Pass Timeout ]
+
+# <rdar://problem/61733642> [ wk2 ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html is flaky failing.
+[ Mojave ] http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ Pass Failure ]
+
+# <rdar://problem/61851850> REGRESSION: [ Stress GC ] (JavaScriptCore): ASSERTION FAILED: callback - WebCore::JSMutationCallback::handleEvent(WebCore::MutationObserve
+[ Mojave ] fast/dom/MutationObserver/disconnect-observer-while-mutation-records-are-enqueued-crash.html [ Pass Crash ]
+
+# <rdar://problem/62317723> imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html is flaky crashing with 'WebCore::HTMLMediaElement::remoteHasAvailabilityCallbacksChanged()' alert.
+[ Mojave ] imported/w3c/web-platform-tests/remote-playback/watch-availability-initial-callback.html [ Pass Crash ]
+
+# rdar://problem/59892959 REGRESSION: (r255143?) http/tests/misc/acid3.html is failing.
+[ BigSur+ ] http/tests/misc/acid3.html [ Pass Failure ]
+
+# <rdar://problem/60169524> REGRESSION: (20A211?) [ wk1 ] fast/scrolling/scrollable-area-frame-zero-size-and-border.html is failing.
+[ BigSur+ ] fast/scrolling/scrollable-area-frame-zero-size-and-border.html [ Pass Failure ]
+
+# <rdar://problem/48603627> FuzzDragon -- Null Ptr Deref @ WebCore::genericFamily -- DOS parseWebKit
+[ BigSur+ ] imported/w3c/web-platform-tests/css/css-text/i18n/ja/css-text-line-break-ja-cj-loose.html [ Pass Crash ]
+
+# <rdar://problem/63022026> REGRESSION: [ 20A267-20A279 ]: multiple fast tests are failing with scrolling related diffs.
+[ BigSur+ ] fast/dom/horizontal-scrollbar-in-rtl.html [ Failure ]
+[ BigSur+ ] fast/multicol/pagination/RightToLeft-tb.html [ Failure ]
+[ BigSur+ ] fast/multicol/pagination/RightToLeft-rl.html [ Failure ]
+
+# rdar://66868787 ([ Layout Tests ] REGRESSION: fast/images/image-copy-memory-usage.html is a flaky failure)
+[ BigSur+ ] fast/images/image-copy-memory-usage.html [ Failure ]
+
+# rdar://65642935 15 canvas layout tests consistently failing
+[ arm64 ] canvas/philip/tests/2d.line.miter.obtuse.html [ Failure ]
+[ arm64 ] canvas/philip/tests/2d.path.arc.selfintersect.1.html [ Failure ]
+[ arm64 ] canvas/philip/tests/2d.path.arc.shape.3.html [ Failure ]
+[ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
+[ arm64 ] imported/w3c/canvas/2d.line.miter.obtuse.html [ Failure ]
+[ arm64 ] imported/w3c/canvas/2d.path.arc.selfintersect.1.html [ Failure ]
+[ arm64 ] imported/w3c/canvas/2d.path.arc.shape.3.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.miter.obtuse.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.selfintersect.1.html [ Failure ]
+[ arm64 ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
+
+# rdar://66845465 REGRESSION (r264183): imported/w3c/web-platform-tests/workers/modules/shared-worker-import-referrer.html is a flaky failure
+[ arm64 ] imported/w3c/web-platform-tests/workers/modules/shared-worker-import-referrer.html [ Failure ]
