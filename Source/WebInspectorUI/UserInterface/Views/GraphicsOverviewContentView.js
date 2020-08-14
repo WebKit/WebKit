@@ -130,29 +130,6 @@ WI.GraphicsOverviewContentView = class GraphicsOverviewContentView extends WI.Co
             this.element.addEventListener("click", this._handleClick.bind(this));
         } else
             this.addSubview(this._canvasOverviewContentView);
-
-        let dropZoneView = new WI.DropZoneView(this);
-        dropZoneView.text = WI.UIString("Import Recording");
-        dropZoneView.targetElement = this.element;
-        this.addSubview(dropZoneView);
-    }
-
-    // DropZoneView delegate
-
-    dropZoneShouldAppearForDragEvent(dropZone, event)
-    {
-        return event.dataTransfer.types.includes("Files");
-    }
-
-    dropZoneHandleDrop(dropZone, event)
-    {
-        let files = event.dataTransfer.files;
-        if (files.length !== 1) {
-            InspectorFrontendHost.beep();
-            return;
-        }
-
-        WI.FileUtilities.readJSON(files, (result) => WI.canvasManager.processJSON(result));
     }
 
     // Private

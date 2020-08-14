@@ -82,6 +82,16 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
         super.closed();
     }
 
+    initialLayout()
+    {
+        super.initialLayout();
+
+        let dropZoneView = new WI.DropZoneView(this);
+        dropZoneView.text = WI.UIString("Import HAR");
+        dropZoneView.targetElement = this.element;
+        this.addSubview(dropZoneView);
+    }
+
     get canHandleFindEvent()
     {
         return this._networkTableContentView.canFocusFilterBar;
@@ -90,11 +100,6 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
     handleFindEvent()
     {
         this._networkTableContentView.focusFilterBar();
-    }
-
-    async handleFileDrop(files)
-    {
-        await WI.FileUtilities.readJSON(files, (result) => this._networkTableContentView.processHAR(result));
     }
 
     // Public
@@ -120,6 +125,24 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
     get supportsSplitContentBrowser()
     {
         return true;
+    }
+
+    // DropZoneView delegate
+
+    dropZoneShouldAppearForDragEvent(dropZone, event)
+    {
+        return event.dataTransfer.types.includes("Files");
+    }
+
+    dropZoneHandleDrop(dropZone, event)
+    {
+        let files = event.dataTransfer.files;
+        if (files.length !== 1) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        WI.FileUtilities.readJSON(files, (result) => this._networkTableContentView.processHAR(result));
     }
 };
 

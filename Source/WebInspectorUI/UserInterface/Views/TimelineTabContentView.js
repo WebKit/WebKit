@@ -370,12 +370,35 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         this._displayedContentView.focusFilterBar();
     }
 
-    async handleFileDrop(files)
+    // DropZoneView delegate
+
+    dropZoneShouldAppearForDragEvent(dropZone, event)
     {
-        await WI.FileUtilities.readJSON(files, (result) => WI.timelineManager.processJSON(result));
+        return event.dataTransfer.types.includes("Files");
+    }
+
+    dropZoneHandleDrop(dropZone, event)
+    {
+        let files = event.dataTransfer.files;
+        if (files.length !== 1) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        WI.FileUtilities.readJSON(files, (result) => WI.timelineManager.processJSON(result));
     }
 
     // Protected
+
+    initialLayout()
+    {
+        super.initialLayout();
+
+        let dropZoneView = new WI.DropZoneView(this);
+        dropZoneView.text = WI.UIString("Import Recording");
+        dropZoneView.targetElement = this.element;
+        this.addSubview(dropZoneView);
+    }
 
     restoreFromCookie(cookie)
     {
