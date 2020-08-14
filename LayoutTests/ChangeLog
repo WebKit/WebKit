@@ -1,3 +1,26 @@
+2020-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r259184): Typing -- then Return into an email moves the selection by two lines
+        https://bugs.webkit.org/show_bug.cgi?id=215491
+        <rdar://problem/66938121>
+
+        Reviewed by Darin Adler.
+
+        Tweaks an existing layout test so that it additionally exercises this bug. The erroneous code was already hit
+        during this test, but it currently does not result in any behavioral difference because after inserting the
+        newline, the caret is already at the end of the editable root; this means that the redundant call to advance
+        the selection forward by 1 character ends up being a no-op, and the test passes.
+
+        To adjust the test so that it fails, we simply start the root editable container off with two lines instead of
+        just one, such that the test (without this fix) will cause the selection to end up at the very end of the root
+        editable container instead of the first line after the "?".
+
+        To check that the selection ends up in the right place, we also use `dump-as-markup.js` to dump the caret
+        position after inserting the newline.
+
+        * editing/spelling/text-replacement-after-typing-to-word-expected.txt:
+        * editing/spelling/text-replacement-after-typing-to-word.html:
+
 2020-08-14  Takeshi Kurosawa  <taken.spc@gmail.com>
 
         @font-face font-weight descriptor should reject bolder and lighter

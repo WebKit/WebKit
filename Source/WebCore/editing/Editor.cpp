@@ -2782,7 +2782,6 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
     bool useAmbiguousBoundaryOffset = false;
     bool selectionChanged = false;
     bool restoreSelectionAfterChange = false;
-    bool adjustSelectionForParagraphBoundaries = false;
 
     if (shouldPerformReplacement || shouldMarkSpelling || shouldCheckForCorrection) {
         if (m_document.selection().selection().selectionType() == VisibleSelection::CaretSelection) {
@@ -2790,8 +2789,6 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
             Position caretPosition = m_document.selection().selection().end();
             selectionOffset = paragraph.offsetTo(caretPosition).releaseReturnValue();
             restoreSelectionAfterChange = true;
-            if (selectionOffset > 0 && (selectionOffset > paragraph.text().length() || paragraph.text()[selectionOffset - 1] == newlineCharacter))
-                adjustSelectionForParagraphBoundaries = true;
             if (selectionOffset > 0 && selectionOffset <= paragraph.text().length() && isAmbiguousBoundaryCharacter(paragraph.text()[selectionOffset - 1]))
                 useAmbiguousBoundaryOffset = true;
         }
@@ -2915,8 +2912,6 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
         if (restoreSelectionAfterChange && selectionOffset <= extendedParagraph.rangeLength()) {
             auto selectionRange = extendedParagraph.subrange({ 0, selectionOffset });
             m_document.selection().moveTo(createLegacyEditingPosition(selectionRange.end), DOWNSTREAM);
-            if (adjustSelectionForParagraphBoundaries)
-                m_document.selection().modify(FrameSelection::AlterationMove, SelectionDirection::Forward, TextGranularity::CharacterGranularity);
         } else {
             // If this fails for any reason, the fallback is to go one position beyond the last replacement
             m_document.selection().moveTo(m_document.selection().selection().end());

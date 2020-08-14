@@ -1,15 +1,11 @@
 <html>
 <head>
 <script src="../../resources/ui-helper.js"></script>
-<script src="../../resources/js-test.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script src="../editing.js"></script>
 <script>
-jsTestIsAsync = true;
-
-function zeroDelayTimer()
-{
-    return new Promise(resolve => setTimeout(resolve, 0));
-}
+Markup.description("To manually test, add an automatic text replacement mapping from the string 'YT?' to 'You there?', and then type the string 'YT?'. It should not be immediately corrected to 'You there?'. However, entering a newline should subsequently trigger autocorrection, and place the selection on the line after 'You there?'");
+Markup.waitUntilDone();
 
 async function runTest()
 {
@@ -42,26 +38,24 @@ async function runTest()
     editor.focus();
     for (const character of "YT?")
         typeCharacterCommand(character);
-    await zeroDelayTimer();
+    await UIHelper.delayFor(0);
 
-    if (!window.testRunner) {
-        description.innerHTML = `To manually test, add an automatic text replacement mapping from the string "YT?" to
-        "You there?", and then type the string "YT?". It should not be immediately corrected to "You there?".
-        However, entering a newline should subsequently trigger autocorrection.`;
-        return;
-    }
+    Markup.dump(editor, "Before pressing enter");
 
-    debug("Before pressing enter:");
-    shouldBe("editor.textContent", "'YT?'");
     insertParagraphCommand();
-    await zeroDelayTimer();
-    finishJSTest();
+    await UIHelper.delayFor(0);
+
+    Markup.dump(editor, "After pressing enter");
+    Markup.notifyDone();
 }
 </script>
 </head>
 
 <body onload="runTest()">
     <div id="description"></div>
-    <div contenteditable style="margin-bottom: 1em; border: 1px orange dashed;" id="editor"></div>
+    <div contenteditable style="margin-bottom: 1em; border: 1px orange dashed;" id="editor">
+        <div><br></div>
+        <div><br></div>
+    </div>
 </body>
 </html>

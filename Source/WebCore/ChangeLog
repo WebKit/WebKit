@@ -1,3 +1,43 @@
+2020-08-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r259184): Typing -- then Return into an email moves the selection by two lines
+        https://bugs.webkit.org/show_bug.cgi?id=215491
+        <rdar://problem/66938121>
+
+        Reviewed by Darin Adler.
+
+        When inserting a newline after text that is about to be replaced (e.g. using smart dashes, or a system-wide text
+        replacement), logic in `Editor::markAndReplaceFor` attempts to detect the fact that we've just inserted a new
+        paragraph (setting `adjustSelectionForParagraphBoundaries` to `true`), and subsequently causes us to advance
+        the selection forward by 1 character after we're done handling the text replacement.
+
+        This logic appears to have been added to deal with the fact that prior to r259184, `TextIterator::subrange()`
+        with a range that ended in a line break would not include the line break as a part of the resulting subrange.
+        For instance, suppose we're inserting a newline after "--", text replacement has just run and replaced the
+        two hyphens with a single dash (—), and there is a newline after the dash. The extended paragraph range consists
+        of the dash, followed by the line break after it ("—\n"), with a `selectionOffset` of 2. The following code:
+
+            `auto selectionRange = extendedParagraph.subrange({ 0, selectionOffset });`
+
+        ...would compute a `selectionRange` that encompasses only the "—", despite a selection offset of 2, causing the
+        following code to only move the selection to the end of the "—":
+
+            `m_document.selection().moveTo(createLegacyEditingPosition(selectionRange.end), DOWNSTREAM);`
+
+        This requires the logic in the `adjustSelectionForParagraphBoundaries` to subsequently move the selection to the
+        line break, as the user would expect. However, after the changes in r259184, the subrange now (correctly)
+        returns a range that starts before the "—" and ends at the following line break. However, this also means that
+        the subsequent adjustment logic will cause us to advance unnecessarily!
+
+        To fix this, we remove the `adjustSelectionForParagraphBoundaries` case altogether, since its only (apparent)
+        purpose is to work around the fact that `TextIterator::subrange` didn't include trailing line breaks before
+        r259184.
+
+        Test: editing/spelling/text-replacement-after-typing-to-word.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor):
+
 2020-08-14  Takeshi Kurosawa  <taken.spc@gmail.com>
 
         @font-face font-weight descriptor should reject bolder and lighter
