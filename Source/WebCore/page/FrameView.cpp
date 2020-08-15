@@ -72,6 +72,7 @@
 #include "Page.h"
 #include "PageOverlayController.h"
 #include "ProgressTracker.h"
+#include "Quirks.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFullScreen.h"
 #include "RenderIFrame.h"
@@ -3391,8 +3392,14 @@ void FrameView::sendResizeEventIfNeeded()
     }
 #endif
 
-    LOG_WITH_STREAM(Events, stream << "FrameView" << this << "sendResizeEventIfNeeded scheduling resize event for document" << frame().document() << ", size " << currentSize);
-    frame().document()->setNeedsDOMWindowResizeEvent();
+    auto* document = frame().document();
+    if (document->quirks().shouldSilenceWindowResizeEvents()) {
+        FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(Events, "sendResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
+        return;
+    }
+
+    LOG_WITH_STREAM(Events, stream << "FrameView" << this << "sendResizeEventIfNeeded scheduling resize event for document" << document << ", size " << currentSize);
+    document->setNeedsDOMWindowResizeEvent();
 
     bool isMainFrame = frame().isMainFrame();
     if (InspectorInstrumentation::hasFrontends() && isMainFrame) {

@@ -109,7 +109,7 @@
     if (!page)
         return;
 
-    page->setShouldFireEvents(false);
+    page->setIsTakingSnapshotsForApplicationSuspension(true);
 }
 
 - (void)_didCompleteSnapshotSequence
@@ -118,7 +118,7 @@
     if (!page)
         return;
 
-    page->setShouldFireEvents(true);
+    page->setIsTakingSnapshotsForApplicationSuspension(false);
 }
 
 - (BOOL)isBackground
