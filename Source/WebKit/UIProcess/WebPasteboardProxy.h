@@ -97,7 +97,7 @@ private:
     void getPasteboardPathnamesForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(Vector<String>&& pathnames, SandboxExtension::HandleArray&&)>&&);
     void getPasteboardStringForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(String&&)>&&);
     void getPasteboardStringsForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(Vector<String>&&)>&&);
-    void getPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&&);
+    void getPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(SharedMemory::IPCHandle&&)>&&);
     void getPasteboardChangeCount(const String& pasteboardName, CompletionHandler<void(int64_t)>&&);
     void getPasteboardColor(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(WebCore::Color&&)>&&);
     void getPasteboardURL(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(const String&)>&&);
@@ -106,12 +106,12 @@ private:
     void setPasteboardURL(IPC::Connection&, const WebCore::PasteboardURL&, const String& pasteboardName, CompletionHandler<void(int64_t)>&&);
     void setPasteboardColor(IPC::Connection&, const String&, const WebCore::Color&, CompletionHandler<void(int64_t)>&&);
     void setPasteboardStringForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, const String&, CompletionHandler<void(int64_t)>&&);
-    void setPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, CompletionHandler<void(int64_t)>&&);
+    void setPasteboardBufferForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, const SharedMemory::IPCHandle&, CompletionHandler<void(int64_t)>&&);
 #endif
 
     void readStringFromPasteboard(IPC::Connection&, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(String&&)>&&);
     void readURLFromPasteboard(IPC::Connection&, size_t index, const String& pasteboardName, CompletionHandler<void(String&& url, String&& title)>&&);
-    void readBufferFromPasteboard(IPC::Connection&, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&&);
+    void readBufferFromPasteboard(IPC::Connection&, size_t index, const String& pasteboardType, const String& pasteboardName, CompletionHandler<void(SharedMemory::IPCHandle&&)>&&);
     void getPasteboardItemsCount(IPC::Connection&, const String& pasteboardName, CompletionHandler<void(uint64_t)>&&);
     void informationForItemAtIndex(IPC::Connection&, size_t index, const String& pasteboardName, int64_t changeCount, CompletionHandler<void(Optional<WebCore::PasteboardItemInfo>&&)>&&);
     void allPasteboardItemInfo(IPC::Connection&, const String& pasteboardName, int64_t changeCount, CompletionHandler<void(Optional<Vector<WebCore::PasteboardItemInfo>>&&)>&&);

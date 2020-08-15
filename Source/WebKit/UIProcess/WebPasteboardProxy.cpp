@@ -111,9 +111,9 @@ void WebPasteboardProxy::readURLFromPasteboard(IPC::Connection&, size_t, const S
     completionHandler({ }, { });
 }
 
-void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection&, size_t, const String&, const String&, CompletionHandler<void(SharedMemory::Handle&&, uint64_t size)>&& completionHandler)
+void WebPasteboardProxy::readBufferFromPasteboard(IPC::Connection&, size_t, const String&, const String&, CompletionHandler<void(SharedMemory::IPCHandle&&)>&& completionHandler)
 {
-    completionHandler({ }, 0);
+    completionHandler({ });
 }
 
 #if !USE(LIBWPE)

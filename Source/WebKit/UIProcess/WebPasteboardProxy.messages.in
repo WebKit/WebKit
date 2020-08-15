@@ -36,7 +36,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount) Synchronous WantsConnection
     ReadStringFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (String string) Synchronous WantsConnection
     ReadURLFromPasteboard(uint64_t index, String pasteboardName) -> (String url, String title) Synchronous WantsConnection
-    ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous WantsConnection
+    ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous WantsConnection
     ContainsStringSafeForDOMToReadForType(String type, String pasteboardName) -> (bool result) Synchronous WantsConnection
 
 #if PLATFORM(COCOA)
@@ -46,7 +46,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     GetPasteboardPathnamesForType(String pasteboardName, String pasteboardType) -> (Vector<String> pathnames, WebKit::SandboxExtension::HandleArray sandboxExtensions) Synchronous WantsConnection
     GetPasteboardStringForType(String pasteboardName, String pasteboardType) -> (String string) Synchronous WantsConnection
     GetPasteboardStringsForType(String pasteboardName, String pasteboardType) -> (Vector<String> strings) Synchronous WantsConnection
-    GetPasteboardBufferForType(String pasteboardName, String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous WantsConnection
+    GetPasteboardBufferForType(String pasteboardName, String pasteboardType) -> (WebKit::SharedMemory::IPCHandle handle) Synchronous WantsConnection
     GetPasteboardChangeCount(String pasteboardName) -> (int64_t changeCount) Synchronous
     GetPasteboardColor(String pasteboardName) -> (WebCore::Color color) Synchronous WantsConnection
     GetPasteboardURL(String pasteboardName) -> (String urlString) Synchronous WantsConnection
@@ -55,7 +55,7 @@ messages -> WebPasteboardProxy NotRefCounted {
     SetPasteboardURL(struct WebCore::PasteboardURL pasteboardURL, String pasteboardName) -> (int64_t changeCount) Synchronous WantsConnection
     SetPasteboardColor(String pasteboardName, WebCore::Color color) -> (int64_t changeCount) Synchronous WantsConnection
     SetPasteboardStringForType(String pasteboardName, String pasteboardType, String string) -> (int64_t changeCount) Synchronous WantsConnection
-    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size) -> (int64_t changeCount) Synchronous WantsConnection
+    SetPasteboardBufferForType(String pasteboardName, String pasteboardType, WebKit::SharedMemory::IPCHandle handle) -> (int64_t changeCount) Synchronous WantsConnection
     ContainsURLStringSuitableForLoading(String pasteboardName) -> (bool result) Synchronous WantsConnection
     URLStringSuitableForLoading(String pasteboardName) -> (String url, String title) Synchronous WantsConnection
 #endif
