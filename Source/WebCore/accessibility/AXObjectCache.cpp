@@ -2002,8 +2002,6 @@ Optional<SimpleRange> AXObjectCache::rangeMatchesTextNearRange(const SimpleRange
         startPosition = firstPositionInOrBeforeNode(originalRange.start.container.ptr());
     if (endPosition.isNull())
         endPosition = lastPositionInOrAfterNode(originalRange.end.container.ptr());
-    if (startPosition.isNull() || endPosition.isNull())
-        return WTF::nullopt;
 
     auto searchRange = makeSimpleRange(startPosition, endPosition);
     if (!searchRange || searchRange->collapsed())
