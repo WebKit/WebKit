@@ -1,3 +1,22 @@
+2020-08-14  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r263551
+        https://bugs.webkit.org/show_bug.cgi?id=215530
+        <rdar://problem/66961066>
+
+        Reviewed by Geoffrey Garen.
+
+        I was hoping to fix many developers' bugs, but it caused hangs and more hangs, so back to the status quo.
+        https://bugs.webkit.org/show_bug.cgi?id=203547 will fix this the right way in the hopefully-not-too-distant future.
+
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::setCookies):
+        (API::HTTPCookieStore::registerForNewProcessPoolNotifications):
+        (API::HTTPCookieStore::flushDefaultUIProcessCookieStore):
+        * UIProcess/API/APIHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm:
+        (API::HTTPCookieStore::flushDefaultUIProcessCookieStore):
+
 2020-08-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Convert remaining SharedMemory::Handle to SharedMemory::IPCHandle
