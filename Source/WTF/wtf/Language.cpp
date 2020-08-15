@@ -41,7 +41,11 @@ static Lock userPreferredLanguagesMutex;
 typedef HashMap<void*, LanguageChangeObserverFunction> ObserverMap;
 static ObserverMap& observerMap()
 {
-    static NeverDestroyed<ObserverMap> map;
+    static LazyNeverDestroyed<ObserverMap> map;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        map.construct();
+    });
     return map.get();
 }
 
@@ -75,7 +79,11 @@ String defaultLanguage()
 
 static Vector<String>& preferredLanguagesOverride()
 {
-    static NeverDestroyed<Vector<String>> override;
+    static LazyNeverDestroyed<Vector<String>> override;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        override.construct();
+    });
     return override;
 }
 

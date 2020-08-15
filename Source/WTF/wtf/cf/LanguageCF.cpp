@@ -42,7 +42,11 @@ static Lock preferredLanguagesMutex;
 
 static Vector<String>& preferredLanguages()
 {
-    static NeverDestroyed<Vector<String>> languages;
+    static LazyNeverDestroyed<Vector<String>> languages;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        languages.construct();
+    });
     return languages;
 }
 

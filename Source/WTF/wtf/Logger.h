@@ -112,6 +112,8 @@ struct ConsoleLogValue<Argument, false> {
     }
 };
 
+WTF_EXPORT_PRIVATE extern Lock loggerObserverLock;
+
 class Logger : public ThreadSafeRefCounted<Logger> {
     WTF_MAKE_NONCOPYABLE(Logger);
 public:
@@ -359,16 +361,11 @@ private:
             observer.didLogMessage(channel, level, { ConsoleLogValue<Argument>::toValue(arguments)... });
     }
 
-    static Vector<std::reference_wrapper<Observer>>& observers()
-    {
-        static NeverDestroyed<Vector<std::reference_wrapper<Observer>>> observers;
-        return observers;
-    }
+    WTF_EXPORT_PRIVATE static Vector<std::reference_wrapper<Observer>>& observers();
 
     static Lock& observerLock()
     {
-        static Lock observerLock;
-        return observerLock;
+        return loggerObserverLock;
     }
 
 

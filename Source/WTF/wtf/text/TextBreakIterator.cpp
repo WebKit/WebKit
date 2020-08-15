@@ -31,6 +31,16 @@
 
 namespace WTF {
 
+TextBreakIteratorCache& TextBreakIteratorCache::singleton()
+{
+    static LazyNeverDestroyed<TextBreakIteratorCache> cache;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        cache.construct();
+    });
+    return cache.get();
+}
+
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY)
 
 static Variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)

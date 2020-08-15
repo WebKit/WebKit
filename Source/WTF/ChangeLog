@@ -1,3 +1,56 @@
+2020-08-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use std::call_once + LazyNeverDestroyed to initialize complex data structures
+        https://bugs.webkit.org/show_bug.cgi?id=215535
+        <rdar://problem/66774266>
+
+        Reviewed by Mark Lam.
+
+        NeverDestroyed<> is not thread-safe in Darwin build since it is not using C++11 thread-safe static variable semantics.
+        This patch uses LazyNeverDestroyed and call_once to initialize complex data structures so that we can ensure they are
+        initialized atomically.
+
+        We also move some of `singleton` definitions from headers to cpp files. This is important since this ensures that singleton
+        is only one instance which is generated in one translation unit.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FastMalloc.cpp:
+        (WTF::MallocCallTracker::singleton):
+        * wtf/Language.cpp:
+        (WTF::observerMap):
+        (WTF::preferredLanguagesOverride):
+        * wtf/Logger.cpp:
+        (WTF::Logger::observers):
+        * wtf/Logger.h:
+        (WTF::Logger::observerLock):
+        (WTF::Logger::observers): Deleted.
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::singleton):
+        * wtf/MemoryPressureHandler.h:
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::current):
+        * wtf/Threading.cpp:
+        (WTF::Thread::initializeInThread):
+        * wtf/URL.cpp:
+        (WTF::aboutBlankURL):
+        (WTF::aboutSrcDocURL):
+        * wtf/cf/LanguageCF.cpp:
+        (WTF::preferredLanguages):
+        * wtf/cocoa/NSURLExtras.mm:
+        (WTF::rangeOfURLScheme):
+        * wtf/text/LineBreakIteratorPoolICU.cpp: Copied from Source/WTF/wtf/Logger.cpp.
+        (WTF::LineBreakIteratorPool::sharedPool):
+        * wtf/text/LineBreakIteratorPoolICU.h:
+        (WTF::LineBreakIteratorPool::sharedPool): Deleted.
+        * wtf/text/StringView.cpp:
+        * wtf/text/TextBreakIterator.cpp:
+        (WTF::TextBreakIteratorCache::singleton):
+        * wtf/text/TextBreakIterator.h:
+        (WTF::TextBreakIteratorCache::singleton): Deleted.
+        * wtf/threads/Signals.cpp:
+        (WTF::activeThreads):
+
 2020-08-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Text input autocorrect="off" attribute ignored on Mac

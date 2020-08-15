@@ -48,7 +48,11 @@ WTF_EXPORT_PRIVATE bool MemoryPressureHandler::ReliefLogger::s_loggingEnabled = 
 
 MemoryPressureHandler& MemoryPressureHandler::singleton()
 {
-    static NeverDestroyed<MemoryPressureHandler> memoryPressureHandler;
+    static LazyNeverDestroyed<MemoryPressureHandler> memoryPressureHandler;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        memoryPressureHandler.construct();
+    });
     return memoryPressureHandler;
 }
 

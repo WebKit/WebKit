@@ -375,7 +375,11 @@ static Lock underlyingStringsMutex;
 
 static HashMap<const StringImpl*, StringView::UnderlyingString*>& underlyingStrings()
 {
-    static NeverDestroyed<HashMap<const StringImpl*, StringView::UnderlyingString*>> map;
+    static LazyNeverDestroyed<HashMap<const StringImpl*, StringView::UnderlyingString*>> map;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        map.construct();
+    });
     return map;
 }
 

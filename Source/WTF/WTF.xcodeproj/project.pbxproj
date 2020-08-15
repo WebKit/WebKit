@@ -178,6 +178,7 @@
 		E38D6E271F5522E300A75CC4 /* StringBuilderJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */; };
 		E392FA2722E92BFF00ECDC73 /* ResourceUsageCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */; };
 		E3A32BC41FC830E2007D7E76 /* JSValueMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */; };
+		E3B8E41D24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3B8E41C24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp */; };
 		E3BE09A724A5854D009DF2B4 /* ICUHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
@@ -728,6 +729,7 @@
 		E392FA2622E92BFF00ECDC73 /* ResourceUsageCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceUsageCocoa.cpp; sourceTree = "<group>"; };
 		E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueMalloc.cpp; sourceTree = "<group>"; };
 		E3A32BC31FC830E2007D7E76 /* JSValueMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValueMalloc.h; sourceTree = "<group>"; };
+		E3B8E41C24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineBreakIteratorPoolICU.cpp; sourceTree = "<group>"; };
 		E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ICUHelpers.cpp; sourceTree = "<group>"; };
 		E3CF76902115D6BA0091DE48 /* CompactPointerTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactPointerTuple.h; sourceTree = "<group>"; };
 		E3E158251EADA53C004A079D /* SystemFree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemFree.h; sourceTree = "<group>"; };
@@ -1383,6 +1385,7 @@
 				50DE35F4215BB01500B979C7 /* ExternalStringImpl.h */,
 				26147B0815DDCCDC00DDB907 /* IntegerToStringConversion.h */,
 				93AC91A718942FC400244939 /* LChar.h */,
+				E3B8E41C24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp */,
 				1C181C811D30797C00F5FA16 /* LineBreakIteratorPoolICU.h */,
 				C2BCFC531F621F3F00C9222C /* LineEnding.cpp */,
 				C2BCFC541F621F3F00C9222C /* LineEnding.h */,
@@ -1681,6 +1684,7 @@
 				C2BCFC401F61D13000C9222C /* Language.cpp in Sources */,
 				C2BCFC421F61D61600C9222C /* LanguageCF.cpp in Sources */,
 				1C503BE623AAE0AE0072E66B /* LanguageCocoa.mm in Sources */,
+				E3B8E41D24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp in Sources */,
 				C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */,
 				0FE1646A1B6FFC9600400E7C /* Lock.cpp in Sources */,
 				0F60F32F1DFCBD1B00416D6C /* LockedPrintStream.cpp in Sources */,

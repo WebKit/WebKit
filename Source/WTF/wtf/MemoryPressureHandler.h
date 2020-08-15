@@ -58,7 +58,7 @@ typedef WTF::Function<void(Critical, Synchronous)> LowMemoryHandler;
 
 class MemoryPressureHandler {
     WTF_MAKE_FAST_ALLOCATED;
-    friend class WTF::NeverDestroyed<MemoryPressureHandler>;
+    friend class WTF::LazyNeverDestroyed<MemoryPressureHandler>;
 public:
     WTF_EXPORT_PRIVATE static MemoryPressureHandler& singleton();
 

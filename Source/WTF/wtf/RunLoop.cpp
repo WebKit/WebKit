@@ -60,7 +60,11 @@ void RunLoop::initializeMain()
 
 RunLoop& RunLoop::current()
 {
-    static NeverDestroyed<ThreadSpecific<Holder>> runLoopHolder;
+    static LazyNeverDestroyed<ThreadSpecific<Holder>> runLoopHolder;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        runLoopHolder.construct();
+    });
     return runLoopHolder.get()->runLoop();
 }
 

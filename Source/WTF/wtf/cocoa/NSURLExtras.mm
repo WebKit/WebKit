@@ -29,6 +29,7 @@
 #import "config.h"
 #import "NSURLExtras.h"
 
+#import <mutex>
 #import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/URLHelpers.h>
@@ -424,8 +425,12 @@ NSRange rangeOfURLScheme(NSString *string)
          even need to enforce the character set here.
          */
         NSString *acceptableCharacters = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+.-";
-        static NeverDestroyed<RetainPtr<NSCharacterSet>> InverseSchemeCharacterSet([[NSCharacterSet characterSetWithCharactersInString:acceptableCharacters] invertedSet]);
-        NSRange illegals = [string rangeOfCharacterFromSet:InverseSchemeCharacterSet.get().get() options:0 range:scheme];
+        static LazyNeverDestroyed<RetainPtr<NSCharacterSet>> inverseSchemeCharacterSet;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            inverseSchemeCharacterSet.construct([[NSCharacterSet characterSetWithCharactersInString:acceptableCharacters] invertedSet]);
+        });
+        NSRange illegals = [string rangeOfCharacterFromSet:inverseSchemeCharacterSet.get().get() options:0 range:scheme];
         if (illegals.location == NSNotFound)
             return scheme;
     }

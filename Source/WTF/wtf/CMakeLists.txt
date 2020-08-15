@@ -476,6 +476,7 @@ set(WTF_SOURCES
     text/Base64.cpp
     text/CString.cpp
     text/ExternalStringImpl.cpp
+    text/LineBreakIteratorPoolICU.cpp
     text/LineEnding.cpp
     text/StringBuffer.cpp
     text/StringBuilder.cpp

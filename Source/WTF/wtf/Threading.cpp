@@ -87,7 +87,11 @@ public:
 
 HashSet<Thread*>& Thread::allThreads(const LockHolder&)
 {
-    static NeverDestroyed<HashSet<Thread*>> allThreads;
+    static LazyNeverDestroyed<HashSet<Thread*>> allThreads;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        allThreads.construct();
+    });
     return allThreads;
 }
 
@@ -134,7 +138,11 @@ void Thread::initializeInThread()
 #if USE(WEB_THREAD)
     // On iOS, one AtomStringTable is shared between the main UI thread and the WebThread.
     if (isWebThread() || isUIThread()) {
-        static NeverDestroyed<AtomStringTable> sharedStringTable;
+        static LazyNeverDestroyed<AtomStringTable> sharedStringTable;
+        static std::once_flag onceKey;
+        std::call_once(onceKey, [&] {
+            sharedStringTable.construct();
+        });
         m_currentAtomStringTable = &sharedStringTable.get();
     }
 #endif

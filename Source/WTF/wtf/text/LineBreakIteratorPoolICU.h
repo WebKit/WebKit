@@ -41,11 +41,7 @@ class LineBreakIteratorPool {
 public:
     LineBreakIteratorPool() = default;
 
-    static LineBreakIteratorPool& sharedPool()
-    {
-        static NeverDestroyed<WTF::ThreadSpecific<LineBreakIteratorPool>> pool;
-        return *pool.get();
-    }
+    WTF_EXPORT_PRIVATE static LineBreakIteratorPool& sharedPool();
 
     static AtomString makeLocaleWithBreakKeyword(const AtomString& locale, LineBreakIteratorMode mode)
     {

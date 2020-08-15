@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Variant.h>
 #include <wtf/text/StringView.h>
@@ -112,14 +113,10 @@ class TextBreakIteratorCache {
     WTF_MAKE_FAST_ALLOCATED;
 // Use CachedTextBreakIterator instead of dealing with the cache directly.
 private:
-    friend class NeverDestroyed<TextBreakIteratorCache>;
+    friend class LazyNeverDestroyed<TextBreakIteratorCache>;
     friend class CachedTextBreakIterator;
 
-    static TextBreakIteratorCache& singleton()
-    {
-        static NeverDestroyed<TextBreakIteratorCache> cache;
-        return cache.get();
-    }
+    WTF_EXPORT_PRIVATE static TextBreakIteratorCache& singleton();
 
     TextBreakIteratorCache(const TextBreakIteratorCache&) = delete;
     TextBreakIteratorCache(TextBreakIteratorCache&&) = delete;

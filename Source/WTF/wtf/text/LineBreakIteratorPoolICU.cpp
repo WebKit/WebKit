@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,36 +24,18 @@
  */
 
 #include "config.h"
-#include "Logger.h"
-
-#include <mutex>
-#include <wtf/HexNumber.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/LineBreakIteratorPoolICU.h>
 
 namespace WTF {
 
-Lock loggerObserverLock;
-
-String Logger::LogSiteIdentifier::toString() const
+LineBreakIteratorPool& LineBreakIteratorPool::sharedPool()
 {
-    if (className)
-        return makeString(className, "::", methodName, '(', hex(objectPtr), ") ");
-    return makeString(methodName, '(', hex(objectPtr), ") ");
-}
-
-String LogArgument<const void*>::toString(const void* argument)
-{
-    return makeString('(', hex(reinterpret_cast<uintptr_t>(argument)), ')');
-}
-
-Vector<std::reference_wrapper<Logger::Observer>>& Logger::observers()
-{
-    static LazyNeverDestroyed<Vector<std::reference_wrapper<Observer>>> observers;
+    static LazyNeverDestroyed<WTF::ThreadSpecific<LineBreakIteratorPool>> pool;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        observers.construct();
+        pool.construct();
     });
-    return observers;
+    return *pool.get();
 }
 
 } // namespace WTF
