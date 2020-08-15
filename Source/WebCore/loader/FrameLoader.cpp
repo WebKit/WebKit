@@ -2852,7 +2852,8 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
     if (request.isConditional())
         return ResourceRequestCachePolicy::ReloadIgnoringCacheData;
 
-    if (documentLoader()->isLoadingInAPISense()) {
+    auto* documentLoader = this->documentLoader();
+    if (documentLoader && documentLoader->isLoadingInAPISense()) {
         // If we inherit cache policy from a main resource, we use the DocumentLoader's
         // original request cache policy for two reasons:
         // 1. For POST requests, we mutate the cache policy for the main resource,
@@ -2860,7 +2861,7 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
         // 2. Delegates that modify the cache policy using willSendRequest: should
         //    not affect any other resources. Such changes need to be done
         //    per request.
-        ResourceRequestCachePolicy mainDocumentOriginalCachePolicy = documentLoader()->originalRequest().cachePolicy();
+        ResourceRequestCachePolicy mainDocumentOriginalCachePolicy = documentLoader->originalRequest().cachePolicy();
         // Back-forward navigations try to load main resource from cache only to avoid re-submitting form data, and start over (with a warning dialog) if that fails.
         // This policy is set on initial request too, but should not be inherited.
         return (mainDocumentOriginalCachePolicy == ResourceRequestCachePolicy::ReturnCacheDataDontLoad) ? ResourceRequestCachePolicy::ReturnCacheDataElseLoad : mainDocumentOriginalCachePolicy;

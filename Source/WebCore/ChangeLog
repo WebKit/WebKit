@@ -1,3 +1,17 @@
+2020-08-14  Brady Eidson  <beidson@apple.com>
+
+        Crash inside FrameLoader::defaultRequestCachingPolicy (null DocumentLoader)
+        <rdar://problem/42167093> and https://bugs.webkit.org/show_bug.cgi?id=215527
+
+        Reviewed by Darin Adler.
+
+        We have CrashTracer data, but despite my best efforts no way of reproducing.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultRequestCachingPolicy): If a PingLoader is sending a CSP violation
+          report sometime after part of the Document's lifecycle, the FrameLoader as a null DocumentLoader here.
+          Like everywhere else in FrameLoader, null check it.
+
 2020-08-14  Zalan Bujtas  <zalan@apple.com>
 
         RenderTextControlSingleLine::scroll* functions should not call Element::scroll* on the inner text content
