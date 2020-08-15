@@ -1,3 +1,14 @@
+2020-08-14  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Add platform baselines after r265701
+
+        Unreviewed test gardening.
+
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-tail-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic-expected.txt: Added.
+
 2020-08-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Assertion Failed: Appended a string with newlines. This breaks the source map.

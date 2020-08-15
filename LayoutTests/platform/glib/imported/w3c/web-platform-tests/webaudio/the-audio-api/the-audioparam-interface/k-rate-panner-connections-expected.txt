@@ -1,0 +1,166 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "Panner x" 
+PASS Executing "Panner y" 
+PASS Executing "Panner z" 
+PASS Executing "Listener x" 
+PASS Executing "Listener y" 
+PASS Executing "Listener z" 
+PASS Audit report 
+PASS > [Panner x] k-rate input 
+PASS   Panner: positionX: Expected output channel 0 is not constantly 0.017871391028165817 (contains 512 different values). 
+PASS   positionX: Expected output channel 1 is not constantly 0.036486219614744186 (contains 512 different values). 
+PASS   Panner: positionX: Channel 0 output[0, 127] contains only the constant 0.017888545989990234. 
+PASS   Panner: positionX: Channel 0 output[128, 255] contains only the constant 0.017888545989990234. 
+PASS   Panner: positionX: Channel 0 output[256, 383] contains only the constant 0.017888545989990234. 
+PASS   Panner: positionX: Channel 0 output[384, 511] contains only the constant 0.017888545989990234. 
+PASS   Panner: positionX: Channel 0 output[512, 639] contains only the constant 0.017888545989990234. 
+PASS   Panner: positionX: Channel 1 output[0, 127] contains only the constant 0.03577708825469017. 
+PASS   Panner: positionX: Channel 1 output[128, 255] contains only the constant 0.03577708825469017. 
+PASS   Panner: positionX: Channel 1 output[256, 383] contains only the constant 0.03577708825469017. 
+PASS   Panner: positionX: Channel 1 output[384, 511] contains only the constant 0.03577708825469017. 
+PASS   Panner: positionX: Channel 1 output[512, 639] contains only the constant 0.03577708825469017. 
+FAIL X Panner: positionX: Actual output channel 0 does not equal [0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817,0.017871391028165817...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	1.7888545989990234e-2	1.7871391028165817e-2	1.7154961824417114e-5	9.5991195074744933e-4	0.0000000000000000e+0
+	[1]	1.7888545989990234e-2	1.7871391028165817e-2	1.7154961824417114e-5	9.5991195074744933e-4	0.0000000000000000e+0
+	[2]	1.7888545989990234e-2	1.7871391028165817e-2	1.7154961824417114e-5	9.5991195074744933e-4	0.0000000000000000e+0
+	[3]	1.7888545989990234e-2	1.7871391028165817e-2	1.7154961824417114e-5	9.5991195074744933e-4	0.0000000000000000e+0
+	[4]	1.7888545989990234e-2	1.7871391028165817e-2	1.7154961824417114e-5	9.5991195074744933e-4	0.0000000000000000e+0
+	...and 635 more errors.
+	Max AbsError of 1.0607886593788862e-2 at index of 639.
+	[639]	1.7888545989990234e-2	7.2806593962013721e-3	1.0607886593788862e-2	1.4569953099747319e+0	0.0000000000000000e+0
+	Max RelError of 1.4569953099747319e+0 at index of 639.
+	[639]	1.7888545989990234e-2	7.2806593962013721e-3	1.0607886593788862e-2	1.4569953099747319e+0	0.0000000000000000e+0
+ assert_true: expected true got false
+FAIL X Panner: positionX: Actual output channel 1 does not equal [0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186,0.036486219614744186...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	3.5777088254690170e-2	3.6486219614744186e-2	7.0913136005401611e-4	1.9435594247408795e-2	0.0000000000000000e+0
+	[1]	3.5777088254690170e-2	3.6486219614744186e-2	7.0913136005401611e-4	1.9435594247408795e-2	0.0000000000000000e+0
+	[2]	3.5777088254690170e-2	3.6486219614744186e-2	7.0913136005401611e-4	1.9435594247408795e-2	0.0000000000000000e+0
+	[3]	3.5777088254690170e-2	3.6486219614744186e-2	7.0913136005401611e-4	1.9435594247408795e-2	0.0000000000000000e+0
+	[4]	3.5777088254690170e-2	3.6486219614744186e-2	7.0913136005401611e-4	1.9435594247408795e-2	0.0000000000000000e+0
+	...and 635 more errors.
+	Max AbsError of 3.2140947878360748e-3 at index of 639.
+	[639]	3.5777088254690170e-2	3.2562993466854095e-2	3.2140947878360748e-3	9.8703910348651003e-2	0.0000000000000000e+0
+	Max RelError of 9.8703910348651003e-2 at index of 639.
+	[639]	3.5777088254690170e-2	3.2562993466854095e-2	3.2140947878360748e-3	9.8703910348651003e-2	0.0000000000000000e+0
+ assert_true: expected true got false
+FAIL < [Panner x] 2 out of 14 assertions were failed. assert_true: expected true got false
+PASS > [Panner y] k-rate input 
+PASS   Panner: positionY: Expected output channel 0 is not constantly 0.039904240518808365 (contains 512 different values). 
+PASS   positionY: Expected output channel 1 is not constantly 0.08146847039461136 (contains 512 different values). 
+PASS   Panner: positionY: Channel 0 output[0, 127] contains only the constant 0.03993610292673111. 
+PASS   Panner: positionY: Channel 0 output[128, 255] contains only the constant 0.03993610292673111. 
+PASS   Panner: positionY: Channel 0 output[256, 383] contains only the constant 0.03993610292673111. 
+PASS   Panner: positionY: Channel 0 output[384, 511] contains only the constant 0.03993610292673111. 
+PASS   Panner: positionY: Channel 0 output[512, 639] contains only the constant 0.03993610292673111. 
+PASS   Panner: positionY: Channel 1 output[0, 127] contains only the constant 0.0815335214138031. 
+PASS   Panner: positionY: Channel 1 output[128, 255] contains only the constant 0.0815335214138031. 
+PASS   Panner: positionY: Channel 1 output[256, 383] contains only the constant 0.0815335214138031. 
+PASS   Panner: positionY: Channel 1 output[384, 511] contains only the constant 0.0815335214138031. 
+PASS   Panner: positionY: Channel 1 output[512, 639] contains only the constant 0.0815335214138031. 
+FAIL X Panner: positionY: Actual output channel 0 does not equal [0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365,0.039904240518808365...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	3.9936102926731110e-2	3.9904240518808365e-2	3.1862407922744751e-5	7.9847172903157505e-4	0.0000000000000000e+0
+	[1]	3.9936102926731110e-2	3.9904240518808365e-2	3.1862407922744751e-5	7.9847172903157505e-4	0.0000000000000000e+0
+	[2]	3.9936102926731110e-2	3.9904240518808365e-2	3.1862407922744751e-5	7.9847172903157505e-4	0.0000000000000000e+0
+	[3]	3.9936102926731110e-2	3.9904240518808365e-2	3.1862407922744751e-5	7.9847172903157505e-4	0.0000000000000000e+0
+	[4]	3.9936102926731110e-2	3.9904240518808365e-2	3.1862407922744751e-5	7.9847172903157505e-4	0.0000000000000000e+0
+	...and 635 more errors.
+	Max AbsError of 2.2556984797120094e-2 at index of 639.
+	[639]	3.9936102926731110e-2	1.7379118129611015e-2	2.2556984797120094e-2	1.2979360994552933e+0	0.0000000000000000e+0
+	Max RelError of 1.2979360994552933e+0 at index of 639.
+	[639]	3.9936102926731110e-2	1.7379118129611015e-2	2.2556984797120094e-2	1.2979360994552933e+0	0.0000000000000000e+0
+ assert_true: expected true got false
+FAIL X Panner: positionY: Actual output channel 1 does not equal [0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136,0.08146847039461136...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	8.1533521413803101e-2	8.1468470394611359e-2	6.5051019191741943e-5	7.9848092000073527e-4	0.0000000000000000e+0
+	[1]	8.1533521413803101e-2	8.1468470394611359e-2	6.5051019191741943e-5	7.9848092000073527e-4	0.0000000000000000e+0
+	[2]	8.1533521413803101e-2	8.1468470394611359e-2	6.5051019191741943e-5	7.9848092000073527e-4	0.0000000000000000e+0
+	[3]	8.1533521413803101e-2	8.1468470394611359e-2	6.5051019191741943e-5	7.9848092000073527e-4	0.0000000000000000e+0
+	[4]	8.1533521413803101e-2	8.1468470394611359e-2	6.5051019191741943e-5	7.9848092000073527e-4	0.0000000000000000e+0
+	...and 635 more errors.
+	Max AbsError of 4.6052325516939163e-2 at index of 639.
+	[639]	8.1533521413803101e-2	3.5481195896863937e-2	4.6052325516939163e-2	1.2979361138447301e+0	0.0000000000000000e+0
+	Max RelError of 1.2979361138447301e+0 at index of 639.
+	[639]	8.1533521413803101e-2	3.5481195896863937e-2	4.6052325516939163e-2	1.2979361138447301e+0	0.0000000000000000e+0
+ assert_true: expected true got false
+FAIL < [Panner y] 2 out of 14 assertions were failed. assert_true: expected true got false
+PASS > [Panner z] k-rate input 
+PASS   Panner: positionZ: Expected output channel 0 is not constantly 0.014136483892798424 (contains 512 different values). 
+PASS   positionZ: Expected output channel 1 is not constantly 0.0541204996407032 (contains 512 different values). 
+PASS   Panner: positionZ: Channel 0 output[0, 127] contains only the constant 1.2244020484828828e-18. 
+PASS   Panner: positionZ: Channel 0 output[128, 255] contains only the constant 1.2244020484828828e-18. 
+PASS   Panner: positionZ: Channel 0 output[256, 383] contains only the constant 1.2244020484828828e-18. 
+PASS   Panner: positionZ: Channel 0 output[384, 511] contains only the constant 1.2244020484828828e-18. 
+PASS   Panner: positionZ: Channel 0 output[512, 639] contains only the constant 1.2244020484828828e-18. 
+PASS   Panner: positionZ: Channel 1 output[0, 127] contains only the constant 0.059988006949424744. 
+PASS   Panner: positionZ: Channel 1 output[128, 255] contains only the constant 0.059988006949424744. 
+PASS   Panner: positionZ: Channel 1 output[256, 383] contains only the constant 0.059988006949424744. 
+PASS   Panner: positionZ: Channel 1 output[384, 511] contains only the constant 0.059988006949424744. 
+PASS   Panner: positionZ: Channel 1 output[512, 639] contains only the constant 0.059988006949424744. 
+FAIL X Panner: positionZ: Actual output channel 0 does not equal [0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424,0.014136483892798424...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	1.2244020484828828e-18	1.4136483892798424e-2	1.4136483892798422e-2	9.9999999999999989e-1	0.0000000000000000e+0
+	[1]	1.2244020484828828e-18	1.4136483892798424e-2	1.4136483892798422e-2	9.9999999999999989e-1	0.0000000000000000e+0
+	[2]	1.2244020484828828e-18	1.4136483892798424e-2	1.4136483892798422e-2	9.9999999999999989e-1	0.0000000000000000e+0
+	[3]	1.2244020484828828e-18	1.4136483892798424e-2	1.4136483892798422e-2	9.9999999999999989e-1	0.0000000000000000e+0
+	[4]	1.2244020484828828e-18	1.4136483892798424e-2	1.4136483892798422e-2	9.9999999999999989e-1	0.0000000000000000e+0
+	...and 635 more errors.
+	Max AbsError of 1.5163775533437727e-2 at index of 255.
+	[255]	1.2244020484828828e-18	1.5163775533437729e-2	1.5163775533437727e-2	9.9999999999999989e-1	0.0000000000000000e+0
+	Max RelError of 9.9999999999999989e-1 at index of 0.
+ assert_true: expected true got false
+FAIL X Panner: positionZ: Actual output channel 1 does not equal [0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032,0.0541204996407032...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
+	Index	Actual			Expected		AbsError		RelError		Test threshold
+	[0]	5.9988006949424744e-2	5.4120499640703201e-2	5.8675073087215424e-3	1.0841561603597391e-1	0.0000000000000000e+0
+	[1]	5.9988006949424744e-2	5.4120499640703201e-2	5.8675073087215424e-3	1.0841561603597391e-1	0.0000000000000000e+0
+	[2]	5.9988006949424744e-2	5.4120499640703201e-2	5.8675073087215424e-3	1.0841561603597391e-1	0.0000000000000000e+0
+	[3]	5.9988006949424744e-2	5.4120499640703201e-2	5.8675073087215424e-3	1.0841561603597391e-1	0.0000000000000000e+0
+	[4]	5.9988006949424744e-2	5.4120499640703201e-2	5.8675073087215424e-3	1.0841561603597391e-1	0.0000000000000000e+0
+	...and 635 more errors.
+	Max AbsError of 3.1148768961429596e-2 at index of 639.
+	[639]	5.9988006949424744e-2	2.8839237987995148e-2	3.1148768961429596e-2	1.0800829402772649e+0	0.0000000000000000e+0
+	Max RelError of 1.0800829402772649e+0 at index of 639.
+	[639]	5.9988006949424744e-2	2.8839237987995148e-2	3.1148768961429596e-2	1.0800829402772649e+0	0.0000000000000000e+0
+ assert_true: expected true got false
+FAIL < [Panner z] 2 out of 14 assertions were failed. assert_true: expected true got false
+PASS > [Listener x] k-rate input 
+PASS   Listener: positionX: Channel 0 output[0, 127] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionX: Channel 0 output[128, 255] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionX: Channel 0 output[256, 383] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionX: Channel 0 output[384, 511] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionX: Channel 0 output[512, 639] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionX: Channel 1 output[0, 127] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionX: Channel 1 output[128, 255] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionX: Channel 1 output[256, 383] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionX: Channel 1 output[384, 511] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionX: Channel 1 output[512, 639] contains only the constant 0.04175786301493645. 
+PASS < [Listener x] All assertions passed. (total 10 assertions) 
+PASS > [Listener y] k-rate input 
+PASS   Listener: positionY: Channel 0 output[0, 127] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionY: Channel 0 output[128, 255] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionY: Channel 0 output[256, 383] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionY: Channel 0 output[384, 511] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionY: Channel 0 output[512, 639] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionY: Channel 1 output[0, 127] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionY: Channel 1 output[128, 255] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionY: Channel 1 output[256, 383] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionY: Channel 1 output[384, 511] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionY: Channel 1 output[512, 639] contains only the constant 0.04175786301493645. 
+PASS < [Listener y] All assertions passed. (total 10 assertions) 
+PASS > [Listener z] k-rate input 
+PASS   Listener: positionZ: Channel 0 output[0, 127] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionZ: Channel 0 output[128, 255] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionZ: Channel 0 output[256, 383] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionZ: Channel 0 output[384, 511] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionZ: Channel 0 output[512, 639] contains only the constant 0.016349563375115395. 
+PASS   Listener: positionZ: Channel 1 output[0, 127] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionZ: Channel 1 output[128, 255] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionZ: Channel 1 output[256, 383] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionZ: Channel 1 output[384, 511] contains only the constant 0.04175786301493645. 
+PASS   Listener: positionZ: Channel 1 output[512, 639] contains only the constant 0.04175786301493645. 
+PASS < [Listener z] All assertions passed. (total 10 assertions) 
+FAIL # AUDIT TASK RUNNER FINISHED: 3 out of 6 tasks were failed. assert_true: expected true got false
+
