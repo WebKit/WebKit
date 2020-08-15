@@ -1,3 +1,23 @@
+2020-08-14  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTextControlSingleLine::scroll* functions should not call Element::scroll* on the inner text content
+        https://bugs.webkit.org/show_bug.cgi?id=215516
+        <rdar://problem/64739768>
+
+        Reviewed by Simon Fraser.
+
+        Normally the RenderBox::content*, border*, padding* and scroll* functions grab the geometry information from the renderer itself.
+        The clients of these functions expect the geometry data to be consistent with the rest of the rendering context
+        (e.g coordinates are in the coordinate system of the containing block, paint time operations are not applied etc).
+        Also these functions are supposed to be const. They should not mutate the geometry or the render tree itself.
+        Forwarding ::scroll* calls to Element::scroll* can't guarantee neither of these above.
+
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::scrollWidth const):
+        (WebCore::RenderTextControlSingleLine::scrollHeight const):
+        (WebCore::RenderTextControlSingleLine::scrollLeft const):
+        (WebCore::RenderTextControlSingleLine::scrollTop const):
+
 2020-08-14  Chris Dumez  <cdumez@apple.com>
 
         OfflineAudioContext.destination has incorrect number of channels & channel count mode
