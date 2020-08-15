@@ -1,3 +1,9 @@
+2020-08-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified source build fix
+
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp: Add missing OperandsInlines.h header.
+
 2020-08-14  Caio Lima  <ticaiolima@gmail.com>
 
         [ARMv7][JSC] Conservative GC is not considering `r7` as a root

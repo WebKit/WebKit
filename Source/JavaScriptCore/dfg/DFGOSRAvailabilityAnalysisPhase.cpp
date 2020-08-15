@@ -32,6 +32,7 @@
 #include "DFGMayExit.h"
 #include "DFGPhase.h"
 #include "JSCJSValueInlines.h"
+#include "OperandsInlines.h"
 
 namespace JSC { namespace DFG {
 
