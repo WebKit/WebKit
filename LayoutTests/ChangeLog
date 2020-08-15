@@ -1,3 +1,11 @@
+2020-08-15  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Add provisional expectation to http/tests to allow the bots to run
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-08-14  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Add platform baselines after r265701
