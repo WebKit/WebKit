@@ -1,3 +1,14 @@
+==================
+WPE WebKit 2.29.90
+==================
+
+What's new in WPE WebKit 2.29.90?
+
+  - Fix font variation settings when font smoothing setting is also present.
+  - Fix argument order for clone syscall seccomp filter on s390x.
+  - Fix a crash when selecting text.
+  - Fix several crashes and rendering issues.
+
 =================
 WPE WebKit 2.29.2
 =================
