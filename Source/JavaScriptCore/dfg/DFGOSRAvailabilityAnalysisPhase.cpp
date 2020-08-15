@@ -28,17 +28,21 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
+#include "DFGBlockMapInlines.h"
+#include "DFGMayExit.h"
 #include "DFGPhase.h"
 #include "JSCJSValueInlines.h"
 
 namespace JSC { namespace DFG {
 
+template<typename HeadFunctor, typename TailFunctor>
 class OSRAvailabilityAnalysisPhase : public Phase {
     static constexpr bool verbose = false;
 public:
-    OSRAvailabilityAnalysisPhase(Graph& graph)
+    OSRAvailabilityAnalysisPhase(Graph& graph, HeadFunctor& availabilityAtHead, TailFunctor& availabilityAtTail)
         : Phase(graph, "OSR availability analysis")
+        , availabilityAtHead(availabilityAtHead)
+        , availabilityAtTail(availabilityAtTail)
     {
     }
     
@@ -50,21 +54,21 @@ public:
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
                 continue;
-            block->ssa->availabilityAtHead.clear();
-            block->ssa->availabilityAtTail.clear();
+            availabilityAtHead(block).clear();
+            availabilityAtTail(block).clear();
         }
         
         BasicBlock* root = m_graph.block(0);
-        root->ssa->availabilityAtHead.m_locals.fill(Availability::unavailable());
+        availabilityAtHead(root).m_locals.fill(Availability::unavailable());
 
         for (unsigned argument = 0; argument < m_graph.block(0)->valuesAtHead.numberOfArguments(); ++argument)
-            root->ssa->availabilityAtHead.m_locals.argument(argument) = Availability::unavailable();
+            availabilityAtHead(root).m_locals.argument(argument) = Availability(FlushedAt(FlushedJSValue, virtualRegisterForArgumentIncludingThis(argument)));
 
         // This could be made more efficient by processing blocks in reverse postorder.
         
-        auto dumpAvailability = [] (BasicBlock* block) {
-            dataLogLn(block->ssa->availabilityAtHead);
-            dataLogLn(block->ssa->availabilityAtTail);
+        auto dumpAvailability = [&] (BasicBlock* block) {
+            dataLogLn("Head: ", availabilityAtHead(block));
+            dataLogLn("Tail: ", availabilityAtTail(block));
         };
 
         auto dumpBytecodeLivenessAtHead = [&] (BasicBlock* block) {
@@ -82,24 +86,21 @@ public:
         do {
             changed = false;
             
-            for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-                BasicBlock* block = m_graph.block(blockIndex);
-                if (!block)
-                    continue;
-                
+            for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
                 if (verbose) {
                     dataLogLn("Before changing Block #", block->index);
                     dumpAvailability(block);
                 }
-                calculator.beginBlock(block);
+
+                calculator.m_availability = availabilityAtHead(block);
                 
                 for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex)
                     calculator.executeNode(block->at(nodeIndex));
                 
-                if (calculator.m_availability == block->ssa->availabilityAtTail)
+                if (calculator.m_availability == availabilityAtTail(block))
                     continue;
                 
-                block->ssa->availabilityAtTail = calculator.m_availability;
+                availabilityAtTail(block) = calculator.m_availability;
                 changed = true;
 
                 if (verbose) {
@@ -109,12 +110,12 @@ public:
 
                 for (unsigned successorIndex = block->numSuccessors(); successorIndex--;) {
                     BasicBlock* successor = block->successor(successorIndex);
-                    successor->ssa->availabilityAtHead.merge(calculator.m_availability);
+                    availabilityAtHead(successor).merge(calculator.m_availability);
                 }
 
                 for (unsigned successorIndex = block->numSuccessors(); successorIndex--;) {
                     BasicBlock* successor = block->successor(successorIndex);
-                    successor->ssa->availabilityAtHead.pruneByLiveness(
+                    availabilityAtHead(successor).pruneByLiveness(
                         m_graph, successor->at(0)->origin.forExit);
                     if (verbose) {
                         dataLogLn("After pruning Block #", successor->index);
@@ -127,23 +128,22 @@ public:
 
         if (validationEnabled()) {
 
-            for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
-                BasicBlock* block = m_graph.block(blockIndex);
-                if (!block)
-                    continue;
-                
-                calculator.beginBlock(block);
+            for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+                calculator.m_availability = availabilityAtHead(block);
                 
                 for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-                    if (block->at(nodeIndex)->origin.exitOK) {
+                    Node* node = block->at(nodeIndex);
+                    // FIXME: The mayExit status of a node doesn't seem like it should mean we don't need to have everything available.
+                    if (mayExit(m_graph, node) != DoesNotExit && node->origin.exitOK) {
                         // If we're allowed to exit here, the heap must be in a state
                         // where exiting wouldn't crash. These particular fields are
                         // required for correctness because we use them during OSR exit
                         // to do meaningful things. It would be wrong for any of them
                         // to be dead.
 
-                        AvailabilityMap availabilityMap = calculator.m_availability;
-                        availabilityMap.pruneByLiveness(m_graph, block->at(nodeIndex)->origin.forExit);
+                        CodeOrigin exitOrigin = node->origin.forExit;
+                        AvailabilityMap& availabilityMap = calculator.m_availability;
+                        availabilityMap.pruneByLiveness(m_graph, exitOrigin);
 
                         for (auto heapPair : availabilityMap.m_heap) {
                             switch (heapPair.key.kind()) {
@@ -163,6 +163,16 @@ public:
                                 break;
                             }
                         }
+
+                        // FIXME: It seems like we should be able to do at least some validation when OSR entering. https://bugs.webkit.org/show_bug.cgi?id=215511
+                        if (m_graph.m_plan.mode() != FTLForOSREntryMode) {
+                            for (size_t i = 0; i < availabilityMap.m_locals.size(); ++i) {
+                                Operand operand = availabilityMap.m_locals.operandForIndex(i);
+                                Availability availability = availabilityMap.m_locals[i];
+                                if (availability.isDead() && m_graph.isLiveInBytecode(operand, exitOrigin))
+                                    DFG_CRASH(m_graph, node, toCString("Live bytecode local not available: operand = ", operand, ", availabilityMap = ", availabilityMap, ", origin = ", exitOrigin).data());
+                            }
+                        }
                     }
 
                     calculator.executeNode(block->at(nodeIndex));
@@ -173,11 +183,31 @@ public:
         return true;
     }
 
+    HeadFunctor& availabilityAtHead;
+    TailFunctor& availabilityAtTail;
 };
 
 bool performOSRAvailabilityAnalysis(Graph& graph)
 {
-    return runPhase<OSRAvailabilityAnalysisPhase>(graph);
+    auto availabilityAtHead = [&] (BasicBlock* block) -> AvailabilityMap& { return block->ssa->availabilityAtHead; };
+    auto availabilityAtTail = [&] (BasicBlock* block) -> AvailabilityMap& { return block->ssa->availabilityAtTail; };
+    return runPhase<OSRAvailabilityAnalysisPhase<decltype(availabilityAtHead), decltype(availabilityAtTail)>>(graph, availabilityAtHead, availabilityAtTail);
+}
+
+void validateOSRExitAvailability(Graph& graph)
+{
+    BlockMap<AvailabilityMap> availabilityMapAtHead(graph);
+    BlockMap<AvailabilityMap> availabilityMapAtTail(graph);
+
+    for (BasicBlock* block : graph.blocksInNaturalOrder()) {
+        availabilityMapAtHead[block] = AvailabilityMap(block->ssa->availabilityAtHead);
+        availabilityMapAtTail[block] = AvailabilityMap(block->ssa->availabilityAtTail);
+    }
+
+    auto availabilityAtHead = [&] (BasicBlock* block) -> AvailabilityMap& { return availabilityMapAtHead[block]; };
+    auto availabilityAtTail = [&] (BasicBlock* block) -> AvailabilityMap& { return availabilityMapAtTail[block]; };
+    OSRAvailabilityAnalysisPhase phase(graph, availabilityAtHead, availabilityAtTail);
+    phase.run();
 }
 
 LocalOSRAvailabilityCalculator::LocalOSRAvailabilityCalculator(Graph& graph)
@@ -202,6 +232,24 @@ void LocalOSRAvailabilityCalculator::endBlock(BasicBlock* block)
 void LocalOSRAvailabilityCalculator::executeNode(Node* node)
 {
     switch (node->op()) {
+
+    // It's somewhat subtle why we cannot use the node for the GetStack itself in the Availability's node field. The reason is that if we did we would need to make any phase that converts nodes to GetStack availability aware. For instance a place where this could come up is if you had a graph like:
+
+    // BB#1:
+    // @1: NewObject()
+    // @2: MovHint(@1, inline-arg1)
+    // @3: Jump(#2, #3)
+
+    // BB#2:
+    // @4: PutStack(@1, inline-arg1)
+    // @5: GetMyArgumentByVal(inline-arg1)
+    // @6: Jump(#3)
+
+    // BB#3:
+    // @7: InvalidationPoint()
+
+    // If constant folding converts @5 to a GetStack then at @7 inline-arg1 won't be available since at the end of BB#1 our availability is (@1, DeadFlush) and (@5, FlushedAt(inline-arg1)). When that gets merged at BB#3 then the availability will be (nullptr, ConflictingFlush).
+    case GetStack:
     case PutStack: {
         StackAccessData* data = node->stackAccessData();
         m_availability.m_locals.operand(data->operand).setFlush(data->flushedAt());
@@ -210,12 +258,6 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         
     case KillStack: {
         m_availability.m_locals.operand(node->unlinkedOperand()).setFlush(FlushedAt(ConflictingFlush));
-        break;
-    }
-
-    case GetStack: {
-        StackAccessData* data = node->stackAccessData();
-        m_availability.m_locals.operand(data->operand) = Availability(node, data->flushedAt());
         break;
     }
 

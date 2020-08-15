@@ -41,6 +41,9 @@ class Graph;
 
 bool performOSRAvailabilityAnalysis(Graph&);
 
+// Unlike the phase above this function doesn't mutate the graph's BasicBlock SSA metadata. Also, does nothing if !validationEnabled()
+void validateOSRExitAvailability(Graph&);
+
 // Local calculator for figuring out the availability at any node in a basic block. Requires
 // having run the availability analysis.
 class LocalOSRAvailabilityCalculator {

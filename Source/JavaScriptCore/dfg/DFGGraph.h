@@ -686,7 +686,7 @@ public:
         {
         }
         
-        NaturalBlockIterable(Graph& graph)
+        NaturalBlockIterable(const Graph& graph)
             : m_graph(&graph)
         {
         }
@@ -699,7 +699,7 @@ public:
             {
             }
             
-            iterator(Graph& graph, BlockIndex index)
+            iterator(const Graph& graph, BlockIndex index)
                 : m_graph(&graph)
                 , m_index(findNext(index))
             {
@@ -734,7 +734,7 @@ public:
                 return index;
             }
             
-            Graph* m_graph;
+            const Graph* m_graph;
             BlockIndex m_index;
         };
         
@@ -749,10 +749,10 @@ public:
         }
         
     private:
-        Graph* m_graph;
+        const Graph* m_graph;
     };
     
-    NaturalBlockIterable blocksInNaturalOrder()
+    NaturalBlockIterable blocksInNaturalOrder() const
     {
         return NaturalBlockIterable(*this);
     }
@@ -1172,6 +1172,7 @@ public:
     bool m_hasDebuggerEnabled;
     bool m_hasExceptionHandlers { false };
     bool m_isInSSAConversion { false };
+    bool m_isValidating { false };
     Optional<uint32_t> m_maxLocalsForCatchOSREntry;
     std::unique_ptr<FlowIndexing> m_indexingCache;
     std::unique_ptr<FlowMap<AbstractValue>> m_abstractValuesCache;
