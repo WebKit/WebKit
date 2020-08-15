@@ -1,3 +1,18 @@
+2020-08-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Assertion Failed: Appended a string with newlines. This breaks the source map.
+        https://bugs.webkit.org/show_bug.cgi?id=215494
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/formatting/resources/javascript-source-map-tests/2.js: Added.
+        * inspector/formatting/source-map-javascript-2.html: Added.
+        * inspector/formatting/source-map-javascript-2-expected.txt: Added.
+        With `appendStringWithPossibleNewlines` the source map properly indents the comment inside
+        the function body so that the `*` all line up.
+
+        * TestExpectations:
+
 2020-08-14  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] releaseShaderCompiler is not allowed to be supported in WebGL

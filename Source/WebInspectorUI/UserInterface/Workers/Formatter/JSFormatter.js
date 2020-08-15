@@ -121,7 +121,7 @@ JSFormatter = class JSFormatter
         if (comment.type === "Line")
             this._builder.appendToken("//" + comment.value, comment.range[0]);
         else if (comment.type === "Block")
-            this._builder.appendToken("/*" + comment.value + "*/", comment.range[0]);
+            this._builder.appendStringWithPossibleNewlines("/*" + comment.value + "*/", comment.range[0]);
         this._appendNewline(node);
         comment.__handled = true;
     }

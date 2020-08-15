@@ -1,0 +1,2248 @@
+Test JavaScript SourceMap.
+
+
+== Running test suite: SourceMaps.JavaScript
+-- Running test case: SourceMaps.JavaScript.2
+Original Content Length
+Formatted Content Length
+---- Original to Formatted ----
+Original: 0 (0, 1)
+  0| (#function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 0 (0, 1)
+  0| (#function(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 1 (0, 2)
+  0| (f#unction(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 1 (0, 2)
+  0| (f#unction(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 2 (0, 3)
+  0| (fu#nction(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 2 (0, 3)
+  0| (fu#nction(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 3 (0, 4)
+  0| (fun#ction(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 3 (0, 4)
+  0| (fun#ction(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 4 (0, 5)
+  0| (func#tion(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 4 (0, 5)
+  0| (func#tion(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 5 (0, 6)
+  0| (funct#ion(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 5 (0, 6)
+  0| (funct#ion(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 6 (0, 7)
+  0| (functi#on(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 6 (0, 7)
+  0| (functi#on(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 7 (0, 8)
+  0| (functio#n(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 7 (0, 8)
+  0| (functio#n(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 8 (0, 9)
+  0| (function#(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 8 (0, 9)
+  0| (function#(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 9 (0, 10)
+  0| (function(#a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 9 (0, 10)
+  0| (function(#a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 10 (0, 11)
+  0| (function(a#,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 10 (0, 11)
+  0| (function(a#, b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 11 (0, 12)
+  0| (function(a,#b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 11 (0, 13)
+  0| (function(a, #b, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 12 (0, 13)
+  0| (function(a,b#,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 13 (0, 14)
+  0| (function(a, b#, c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 13 (0, 14)
+  0| (function(a,b,#c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 14 (0, 16)
+  0| (function(a, b, #c) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 14 (0, 15)
+  0| (function(a,b,c#){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 16 (0, 17)
+  0| (function(a, b, c#) {
+  1|     /*
+  2|      * multi-line comment
+
+Original: 15 (0, 16)
+  0| (function(a,b,c)#{/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 17 (0, 19)
+  0| (function(a, b, c) #{
+  1|     /*
+  2|      * multi-line comment
+
+Original: 16 (0, 17)
+  0| (function(a,b,c){#/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 19 (1, 4)
+  0| (function(a, b, c) {
+  1|     #/*
+  2|      * multi-line comment
+  3|      */
+
+Original: 17 (0, 18)
+  0| (function(a,b,c){/#*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 25 (1, 5)
+  0| (function(a, b, c) {
+  1|     /#*
+  2|      * multi-line comment
+  3|      */
+
+Original: 18 (0, 19)
+  0| (function(a,b,c){/*#
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 26 (1, 6)
+  0| (function(a, b, c) {
+  1|     /*#
+  2|      * multi-line comment
+  3|      */
+
+Original: 19 (1, 0)
+  0| (function(a,b,c){/*
+  1| # * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 27 (2, 4)
+  0| (function(a, b, c) {
+  1|     /*
+  2|     # * multi-line comment
+  3|      */
+  4|     let sum = a;
+
+Original: 20 (1, 1)
+  0| (function(a,b,c){/*
+  1|  #* multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 32 (2, 5)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      #* multi-line comment
+  3|      */
+  4|     let sum = a;
+
+Original: 21 (1, 2)
+  0| (function(a,b,c){/*
+  1|  *# multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 33 (2, 6)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      *# multi-line comment
+  3|      */
+  4|     let sum = a;
+
+Original: 22 (1, 3)
+  0| (function(a,b,c){/*
+  1|  * #multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 34 (2, 7)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * #multi-line comment
+  3|      */
+  4|     let sum = a;
+
+Original: 23 (1, 4)
+  0| (function(a,b,c){/*
+  1|  * m#ulti-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 35 (2, 8)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * m#ulti-line comment
+  3|      */
+  4|     let sum = a;
+
+Original: 24 (1, 5)
+  0| (function(a,b,c){/*
+  1|  * mu#lti-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 36 (2, 9)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * mu#lti-line comment
+  3|      */
+  4|     let sum = a;
+
+Original: 25 (1, 6)
+  0| (function(a,b,c){/*
+  1|  * mul#ti-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 37 (2, 10)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * mul#ti-line comment
+  3|      */
+  4|     let sum = a;
+
+Original: 26 (1, 7)
+  0| (function(a,b,c){/*
+  1|  * mult#i-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 38 (2, 11)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * mult#i-line comment
+  3|      */
+  4|     let sum = a;
+
+Original: 27 (1, 8)
+  0| (function(a,b,c){/*
+  1|  * multi#-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 39 (2, 12)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi#-line comment
+  3|      */
+  4|     let sum = a;
+
+Original: 28 (1, 9)
+  0| (function(a,b,c){/*
+  1|  * multi-#line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 40 (2, 13)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-#line comment
+  3|      */
+  4|     let sum = a;
+
+Original: 29 (1, 10)
+  0| (function(a,b,c){/*
+  1|  * multi-l#ine comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 41 (2, 14)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-l#ine comment
+  3|      */
+  4|     let sum = a;
+
+Original: 30 (1, 11)
+  0| (function(a,b,c){/*
+  1|  * multi-li#ne comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 42 (2, 15)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-li#ne comment
+  3|      */
+  4|     let sum = a;
+
+Original: 31 (1, 12)
+  0| (function(a,b,c){/*
+  1|  * multi-lin#e comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 43 (2, 16)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-lin#e comment
+  3|      */
+  4|     let sum = a;
+
+Original: 32 (1, 13)
+  0| (function(a,b,c){/*
+  1|  * multi-line# comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 44 (2, 17)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line# comment
+  3|      */
+  4|     let sum = a;
+
+Original: 33 (1, 14)
+  0| (function(a,b,c){/*
+  1|  * multi-line #comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 45 (2, 18)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line #comment
+  3|      */
+  4|     let sum = a;
+
+Original: 34 (1, 15)
+  0| (function(a,b,c){/*
+  1|  * multi-line c#omment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 46 (2, 19)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line c#omment
+  3|      */
+  4|     let sum = a;
+
+Original: 35 (1, 16)
+  0| (function(a,b,c){/*
+  1|  * multi-line co#mment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 47 (2, 20)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line co#mment
+  3|      */
+  4|     let sum = a;
+
+Original: 36 (1, 17)
+  0| (function(a,b,c){/*
+  1|  * multi-line com#ment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 48 (2, 21)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line com#ment
+  3|      */
+  4|     let sum = a;
+
+Original: 37 (1, 18)
+  0| (function(a,b,c){/*
+  1|  * multi-line comm#ent
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 49 (2, 22)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line comm#ent
+  3|      */
+  4|     let sum = a;
+
+Original: 38 (1, 19)
+  0| (function(a,b,c){/*
+  1|  * multi-line comme#nt
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 50 (2, 23)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line comme#nt
+  3|      */
+  4|     let sum = a;
+
+Original: 39 (1, 20)
+  0| (function(a,b,c){/*
+  1|  * multi-line commen#t
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 51 (2, 24)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line commen#t
+  3|      */
+  4|     let sum = a;
+
+Original: 40 (1, 21)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment#
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 52 (2, 25)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line comment#
+  3|      */
+  4|     let sum = a;
+
+Original: 41 (2, 0)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2| # */let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 53 (3, 4)
+  1|     /*
+  2|      * multi-line comment
+  3|     # */
+  4|     let sum = a;
+  5|     sum += b;
+
+Original: 42 (2, 1)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  #*/let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 58 (3, 5)
+  1|     /*
+  2|      * multi-line comment
+  3|      #*/
+  4|     let sum = a;
+  5|     sum += b;
+
+Original: 43 (2, 2)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  *#/let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 59 (3, 6)
+  1|     /*
+  2|      * multi-line comment
+  3|      *#/
+  4|     let sum = a;
+  5|     sum += b;
+
+Original: 44 (2, 3)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */#let sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 60 (4, 4)
+  2|      * multi-line comment
+  3|      */
+  4|     #let sum = a;
+  5|     sum += b;
+  6|     sum += c;
+
+Original: 45 (2, 4)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */l#et sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 66 (4, 5)
+  2|      * multi-line comment
+  3|      */
+  4|     l#et sum = a;
+  5|     sum += b;
+  6|     sum += c;
+
+Original: 46 (2, 5)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */le#t sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 67 (4, 6)
+  2|      * multi-line comment
+  3|      */
+  4|     le#t sum = a;
+  5|     sum += b;
+  6|     sum += c;
+
+Original: 47 (2, 6)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let# sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 68 (4, 7)
+  2|      * multi-line comment
+  3|      */
+  4|     let# sum = a;
+  5|     sum += b;
+  6|     sum += c;
+
+Original: 48 (2, 7)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let #sum=a;sum+=b;sum+=c;return sum;})()
+Formatted: 69 (4, 8)
+  2|      * multi-line comment
+  3|      */
+  4|     let #sum = a;
+  5|     sum += b;
+  6|     sum += c;
+
+Original: 49 (2, 8)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let s#um=a;sum+=b;sum+=c;return sum;})()
+Formatted: 70 (4, 9)
+  2|      * multi-line comment
+  3|      */
+  4|     let s#um = a;
+  5|     sum += b;
+  6|     sum += c;
+
+Original: 50 (2, 9)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let su#m=a;sum+=b;sum+=c;return sum;})()
+Formatted: 71 (4, 10)
+  2|      * multi-line comment
+  3|      */
+  4|     let su#m = a;
+  5|     sum += b;
+  6|     sum += c;
+
+Original: 51 (2, 10)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum#=a;sum+=b;sum+=c;return sum;})()
+Formatted: 72 (4, 12)
+  2|      * multi-line comment
+  3|      */
+  4|     let sum #= a;
+  5|     sum += b;
+  6|     sum += c;
+
+Original: 52 (2, 11)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=#a;sum+=b;sum+=c;return sum;})()
+Formatted: 74 (4, 14)
+  2|      * multi-line comment
+  3|      */
+  4|     let sum = #a;
+  5|     sum += b;
+  6|     sum += c;
+
+Original: 53 (2, 12)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a#;sum+=b;sum+=c;return sum;})()
+Formatted: 76 (4, 15)
+  2|      * multi-line comment
+  3|      */
+  4|     let sum = a#;
+  5|     sum += b;
+  6|     sum += c;
+
+Original: 54 (2, 13)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;#sum+=b;sum+=c;return sum;})()
+Formatted: 77 (5, 4)
+  3|      */
+  4|     let sum = a;
+  5|     #sum += b;
+  6|     sum += c;
+  7|     return sum;
+
+Original: 55 (2, 14)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;s#um+=b;sum+=c;return sum;})()
+Formatted: 83 (5, 5)
+  3|      */
+  4|     let sum = a;
+  5|     s#um += b;
+  6|     sum += c;
+  7|     return sum;
+
+Original: 56 (2, 15)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;su#m+=b;sum+=c;return sum;})()
+Formatted: 84 (5, 6)
+  3|      */
+  4|     let sum = a;
+  5|     su#m += b;
+  6|     sum += c;
+  7|     return sum;
+
+Original: 57 (2, 16)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum#+=b;sum+=c;return sum;})()
+Formatted: 85 (5, 8)
+  3|      */
+  4|     let sum = a;
+  5|     sum #+= b;
+  6|     sum += c;
+  7|     return sum;
+
+Original: 58 (2, 17)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+#=b;sum+=c;return sum;})()
+Formatted: 87 (5, 9)
+  3|      */
+  4|     let sum = a;
+  5|     sum +#= b;
+  6|     sum += c;
+  7|     return sum;
+
+Original: 59 (2, 18)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=#b;sum+=c;return sum;})()
+Formatted: 88 (5, 11)
+  3|      */
+  4|     let sum = a;
+  5|     sum += #b;
+  6|     sum += c;
+  7|     return sum;
+
+Original: 60 (2, 19)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b#;sum+=c;return sum;})()
+Formatted: 90 (5, 12)
+  3|      */
+  4|     let sum = a;
+  5|     sum += b#;
+  6|     sum += c;
+  7|     return sum;
+
+Original: 61 (2, 20)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;#sum+=c;return sum;})()
+Formatted: 91 (6, 4)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     #sum += c;
+  7|     return sum;
+  8| })()
+
+Original: 62 (2, 21)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;s#um+=c;return sum;})()
+Formatted: 97 (6, 5)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     s#um += c;
+  7|     return sum;
+  8| })()
+
+Original: 63 (2, 22)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;su#m+=c;return sum;})()
+Formatted: 98 (6, 6)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     su#m += c;
+  7|     return sum;
+  8| })()
+
+Original: 64 (2, 23)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum#+=c;return sum;})()
+Formatted: 99 (6, 8)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum #+= c;
+  7|     return sum;
+  8| })()
+
+Original: 65 (2, 24)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+#=c;return sum;})()
+Formatted: 101 (6, 9)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum +#= c;
+  7|     return sum;
+  8| })()
+
+Original: 66 (2, 25)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=#c;return sum;})()
+Formatted: 102 (6, 11)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum += #c;
+  7|     return sum;
+  8| })()
+
+Original: 67 (2, 26)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c#;return sum;})()
+Formatted: 104 (6, 12)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum += c#;
+  7|     return sum;
+  8| })()
+
+Original: 68 (2, 27)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;#return sum;})()
+Formatted: 105 (7, 4)
+  5|     sum += b;
+  6|     sum += c;
+  7|     #return sum;
+  8| })()
+  9| 
+
+Original: 69 (2, 28)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;r#eturn sum;})()
+Formatted: 111 (7, 5)
+  5|     sum += b;
+  6|     sum += c;
+  7|     r#eturn sum;
+  8| })()
+  9| 
+
+Original: 70 (2, 29)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;re#turn sum;})()
+Formatted: 112 (7, 6)
+  5|     sum += b;
+  6|     sum += c;
+  7|     re#turn sum;
+  8| })()
+  9| 
+
+Original: 71 (2, 30)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;ret#urn sum;})()
+Formatted: 113 (7, 7)
+  5|     sum += b;
+  6|     sum += c;
+  7|     ret#urn sum;
+  8| })()
+  9| 
+
+Original: 72 (2, 31)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;retu#rn sum;})()
+Formatted: 114 (7, 8)
+  5|     sum += b;
+  6|     sum += c;
+  7|     retu#rn sum;
+  8| })()
+  9| 
+
+Original: 73 (2, 32)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;retur#n sum;})()
+Formatted: 115 (7, 9)
+  5|     sum += b;
+  6|     sum += c;
+  7|     retur#n sum;
+  8| })()
+  9| 
+
+Original: 74 (2, 33)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return# sum;})()
+Formatted: 116 (7, 10)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return# sum;
+  8| })()
+  9| 
+
+Original: 75 (2, 34)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return #sum;})()
+Formatted: 117 (7, 11)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return #sum;
+  8| })()
+  9| 
+
+Original: 76 (2, 35)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return s#um;})()
+Formatted: 118 (7, 12)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return s#um;
+  8| })()
+  9| 
+
+Original: 77 (2, 36)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return su#m;})()
+Formatted: 119 (7, 13)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return su#m;
+  8| })()
+  9| 
+
+Original: 78 (2, 37)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum#;})()
+Formatted: 120 (7, 14)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return sum#;
+  8| })()
+  9| 
+
+Original: 79 (2, 38)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;#})()
+Formatted: 121 (8, 0)
+  6|     sum += c;
+  7|     return sum;
+  8| #})()
+  9| 
+
+Original: 80 (2, 39)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;}#)()
+Formatted: 123 (8, 1)
+  6|     sum += c;
+  7|     return sum;
+  8| }#)()
+  9| 
+
+Original: 81 (2, 40)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})#()
+Formatted: 124 (8, 2)
+  6|     sum += c;
+  7|     return sum;
+  8| })#()
+  9| 
+
+Original: 82 (2, 41)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})(#)
+Formatted: 125 (8, 3)
+  6|     sum += c;
+  7|     return sum;
+  8| })(#)
+  9| 
+
+Original: 83 (2, 42)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()#
+Formatted: 126 (8, 4)
+  6|     sum += c;
+  7|     return sum;
+  8| })()#
+  9| 
+
+
+---- Formatted to Original ----
+Formatted: 0 (0, 1)
+  0| (#function(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 0 (0, 1)
+  0| (#function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 1 (0, 2)
+  0| (f#unction(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 1 (0, 2)
+  0| (f#unction(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 2 (0, 3)
+  0| (fu#nction(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 2 (0, 3)
+  0| (fu#nction(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 3 (0, 4)
+  0| (fun#ction(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 3 (0, 4)
+  0| (fun#ction(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 4 (0, 5)
+  0| (func#tion(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 4 (0, 5)
+  0| (func#tion(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 5 (0, 6)
+  0| (funct#ion(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 5 (0, 6)
+  0| (funct#ion(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 6 (0, 7)
+  0| (functi#on(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 6 (0, 7)
+  0| (functi#on(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 7 (0, 8)
+  0| (functio#n(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 7 (0, 8)
+  0| (functio#n(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 8 (0, 9)
+  0| (function#(a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 8 (0, 9)
+  0| (function#(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 9 (0, 10)
+  0| (function(#a, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 9 (0, 10)
+  0| (function(#a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 10 (0, 11)
+  0| (function(a#, b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 10 (0, 11)
+  0| (function(a#,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 11 (0, 12)
+  0| (function(a,# b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 11 (0, 12)
+  0| (function(a,#b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 12 (0, 13)
+  0| (function(a, #b, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 12 (0, 12)
+  0| (function(a,#b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 13 (0, 14)
+  0| (function(a, b#, c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 12 (0, 13)
+  0| (function(a,b#,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 14 (0, 15)
+  0| (function(a, b,# c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 13 (0, 14)
+  0| (function(a,b,#c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 15 (0, 16)
+  0| (function(a, b, #c) {
+  1|     /*
+  2|      * multi-line comment
+Original: 14 (0, 14)
+  0| (function(a,b,#c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 16 (0, 17)
+  0| (function(a, b, c#) {
+  1|     /*
+  2|      * multi-line comment
+Original: 14 (0, 15)
+  0| (function(a,b,c#){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 17 (0, 18)
+  0| (function(a, b, c)# {
+  1|     /*
+  2|      * multi-line comment
+Original: 15 (0, 16)
+  0| (function(a,b,c)#{/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 18 (0, 19)
+  0| (function(a, b, c) #{
+  1|     /*
+  2|      * multi-line comment
+Original: 16 (0, 16)
+  0| (function(a,b,c)#{/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 19 (0, 20)
+  0| (function(a, b, c) {#
+  1|     /*
+  2|      * multi-line comment
+Original: 16 (0, 17)
+  0| (function(a,b,c){#/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 20 (1, 0)
+  0| (function(a, b, c) {
+  1| #    /*
+  2|      * multi-line comment
+  3|      */
+Original: 17 (0, 17)
+  0| (function(a,b,c){#/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 21 (1, 1)
+  0| (function(a, b, c) {
+  1|  #   /*
+  2|      * multi-line comment
+  3|      */
+Original: 17 (0, 17)
+  0| (function(a,b,c){#/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 22 (1, 2)
+  0| (function(a, b, c) {
+  1|   #  /*
+  2|      * multi-line comment
+  3|      */
+Original: 17 (0, 17)
+  0| (function(a,b,c){#/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 23 (1, 3)
+  0| (function(a, b, c) {
+  1|    # /*
+  2|      * multi-line comment
+  3|      */
+Original: 17 (0, 17)
+  0| (function(a,b,c){#/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 24 (1, 4)
+  0| (function(a, b, c) {
+  1|     #/*
+  2|      * multi-line comment
+  3|      */
+Original: 17 (0, 17)
+  0| (function(a,b,c){#/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 25 (1, 5)
+  0| (function(a, b, c) {
+  1|     /#*
+  2|      * multi-line comment
+  3|      */
+Original: 17 (0, 18)
+  0| (function(a,b,c){/#*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 26 (1, 6)
+  0| (function(a, b, c) {
+  1|     /*#
+  2|      * multi-line comment
+  3|      */
+Original: 18 (0, 19)
+  0| (function(a,b,c){/*#
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 27 (2, 0)
+  0| (function(a, b, c) {
+  1|     /*
+  2| #     * multi-line comment
+  3|      */
+  4|     let sum = a;
+Original: 19 (1, 0)
+  0| (function(a,b,c){/*
+  1| # * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 28 (2, 1)
+  0| (function(a, b, c) {
+  1|     /*
+  2|  #    * multi-line comment
+  3|      */
+  4|     let sum = a;
+Original: 20 (1, 0)
+  0| (function(a,b,c){/*
+  1| # * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 29 (2, 2)
+  0| (function(a, b, c) {
+  1|     /*
+  2|   #   * multi-line comment
+  3|      */
+  4|     let sum = a;
+Original: 20 (1, 0)
+  0| (function(a,b,c){/*
+  1| # * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 30 (2, 3)
+  0| (function(a, b, c) {
+  1|     /*
+  2|    #  * multi-line comment
+  3|      */
+  4|     let sum = a;
+Original: 20 (1, 0)
+  0| (function(a,b,c){/*
+  1| # * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 31 (2, 4)
+  0| (function(a, b, c) {
+  1|     /*
+  2|     # * multi-line comment
+  3|      */
+  4|     let sum = a;
+Original: 20 (1, 0)
+  0| (function(a,b,c){/*
+  1| # * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 32 (2, 5)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      #* multi-line comment
+  3|      */
+  4|     let sum = a;
+Original: 20 (1, 1)
+  0| (function(a,b,c){/*
+  1|  #* multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 33 (2, 6)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      *# multi-line comment
+  3|      */
+  4|     let sum = a;
+Original: 21 (1, 2)
+  0| (function(a,b,c){/*
+  1|  *# multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 34 (2, 7)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * #multi-line comment
+  3|      */
+  4|     let sum = a;
+Original: 22 (1, 3)
+  0| (function(a,b,c){/*
+  1|  * #multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 35 (2, 8)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * m#ulti-line comment
+  3|      */
+  4|     let sum = a;
+Original: 23 (1, 4)
+  0| (function(a,b,c){/*
+  1|  * m#ulti-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 36 (2, 9)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * mu#lti-line comment
+  3|      */
+  4|     let sum = a;
+Original: 24 (1, 5)
+  0| (function(a,b,c){/*
+  1|  * mu#lti-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 37 (2, 10)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * mul#ti-line comment
+  3|      */
+  4|     let sum = a;
+Original: 25 (1, 6)
+  0| (function(a,b,c){/*
+  1|  * mul#ti-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 38 (2, 11)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * mult#i-line comment
+  3|      */
+  4|     let sum = a;
+Original: 26 (1, 7)
+  0| (function(a,b,c){/*
+  1|  * mult#i-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 39 (2, 12)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi#-line comment
+  3|      */
+  4|     let sum = a;
+Original: 27 (1, 8)
+  0| (function(a,b,c){/*
+  1|  * multi#-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 40 (2, 13)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-#line comment
+  3|      */
+  4|     let sum = a;
+Original: 28 (1, 9)
+  0| (function(a,b,c){/*
+  1|  * multi-#line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 41 (2, 14)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-l#ine comment
+  3|      */
+  4|     let sum = a;
+Original: 29 (1, 10)
+  0| (function(a,b,c){/*
+  1|  * multi-l#ine comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 42 (2, 15)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-li#ne comment
+  3|      */
+  4|     let sum = a;
+Original: 30 (1, 11)
+  0| (function(a,b,c){/*
+  1|  * multi-li#ne comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 43 (2, 16)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-lin#e comment
+  3|      */
+  4|     let sum = a;
+Original: 31 (1, 12)
+  0| (function(a,b,c){/*
+  1|  * multi-lin#e comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 44 (2, 17)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line# comment
+  3|      */
+  4|     let sum = a;
+Original: 32 (1, 13)
+  0| (function(a,b,c){/*
+  1|  * multi-line# comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 45 (2, 18)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line #comment
+  3|      */
+  4|     let sum = a;
+Original: 33 (1, 14)
+  0| (function(a,b,c){/*
+  1|  * multi-line #comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 46 (2, 19)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line c#omment
+  3|      */
+  4|     let sum = a;
+Original: 34 (1, 15)
+  0| (function(a,b,c){/*
+  1|  * multi-line c#omment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 47 (2, 20)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line co#mment
+  3|      */
+  4|     let sum = a;
+Original: 35 (1, 16)
+  0| (function(a,b,c){/*
+  1|  * multi-line co#mment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 48 (2, 21)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line com#ment
+  3|      */
+  4|     let sum = a;
+Original: 36 (1, 17)
+  0| (function(a,b,c){/*
+  1|  * multi-line com#ment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 49 (2, 22)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line comm#ent
+  3|      */
+  4|     let sum = a;
+Original: 37 (1, 18)
+  0| (function(a,b,c){/*
+  1|  * multi-line comm#ent
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 50 (2, 23)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line comme#nt
+  3|      */
+  4|     let sum = a;
+Original: 38 (1, 19)
+  0| (function(a,b,c){/*
+  1|  * multi-line comme#nt
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 51 (2, 24)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line commen#t
+  3|      */
+  4|     let sum = a;
+Original: 39 (1, 20)
+  0| (function(a,b,c){/*
+  1|  * multi-line commen#t
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 52 (2, 25)
+  0| (function(a, b, c) {
+  1|     /*
+  2|      * multi-line comment#
+  3|      */
+  4|     let sum = a;
+Original: 40 (1, 21)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment#
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 53 (3, 0)
+  1|     /*
+  2|      * multi-line comment
+  3| #     */
+  4|     let sum = a;
+  5|     sum += b;
+Original: 41 (2, 0)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2| # */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 54 (3, 1)
+  1|     /*
+  2|      * multi-line comment
+  3|  #    */
+  4|     let sum = a;
+  5|     sum += b;
+Original: 42 (2, 0)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2| # */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 55 (3, 2)
+  1|     /*
+  2|      * multi-line comment
+  3|   #   */
+  4|     let sum = a;
+  5|     sum += b;
+Original: 42 (2, 0)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2| # */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 56 (3, 3)
+  1|     /*
+  2|      * multi-line comment
+  3|    #  */
+  4|     let sum = a;
+  5|     sum += b;
+Original: 42 (2, 0)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2| # */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 57 (3, 4)
+  1|     /*
+  2|      * multi-line comment
+  3|     # */
+  4|     let sum = a;
+  5|     sum += b;
+Original: 42 (2, 0)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2| # */let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 58 (3, 5)
+  1|     /*
+  2|      * multi-line comment
+  3|      #*/
+  4|     let sum = a;
+  5|     sum += b;
+Original: 42 (2, 1)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  #*/let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 59 (3, 6)
+  1|     /*
+  2|      * multi-line comment
+  3|      *#/
+  4|     let sum = a;
+  5|     sum += b;
+Original: 43 (2, 2)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  *#/let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 60 (3, 7)
+  1|     /*
+  2|      * multi-line comment
+  3|      */#
+  4|     let sum = a;
+  5|     sum += b;
+Original: 44 (2, 3)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 61 (4, 0)
+  2|      * multi-line comment
+  3|      */
+  4| #    let sum = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 45 (2, 3)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 62 (4, 1)
+  2|      * multi-line comment
+  3|      */
+  4|  #   let sum = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 45 (2, 3)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 63 (4, 2)
+  2|      * multi-line comment
+  3|      */
+  4|   #  let sum = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 45 (2, 3)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 64 (4, 3)
+  2|      * multi-line comment
+  3|      */
+  4|    # let sum = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 45 (2, 3)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 65 (4, 4)
+  2|      * multi-line comment
+  3|      */
+  4|     #let sum = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 45 (2, 3)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */#let sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 66 (4, 5)
+  2|      * multi-line comment
+  3|      */
+  4|     l#et sum = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 45 (2, 4)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */l#et sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 67 (4, 6)
+  2|      * multi-line comment
+  3|      */
+  4|     le#t sum = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 46 (2, 5)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */le#t sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 68 (4, 7)
+  2|      * multi-line comment
+  3|      */
+  4|     let# sum = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 47 (2, 6)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let# sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 69 (4, 8)
+  2|      * multi-line comment
+  3|      */
+  4|     let #sum = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 48 (2, 7)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let #sum=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 70 (4, 9)
+  2|      * multi-line comment
+  3|      */
+  4|     let s#um = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 49 (2, 8)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let s#um=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 71 (4, 10)
+  2|      * multi-line comment
+  3|      */
+  4|     let su#m = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 50 (2, 9)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let su#m=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 72 (4, 11)
+  2|      * multi-line comment
+  3|      */
+  4|     let sum# = a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 51 (2, 10)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum#=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 73 (4, 12)
+  2|      * multi-line comment
+  3|      */
+  4|     let sum #= a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 52 (2, 10)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum#=a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 74 (4, 13)
+  2|      * multi-line comment
+  3|      */
+  4|     let sum =# a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 52 (2, 11)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=#a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 75 (4, 14)
+  2|      * multi-line comment
+  3|      */
+  4|     let sum = #a;
+  5|     sum += b;
+  6|     sum += c;
+Original: 53 (2, 11)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=#a;sum+=b;sum+=c;return sum;})()
+
+Formatted: 76 (4, 15)
+  2|      * multi-line comment
+  3|      */
+  4|     let sum = a#;
+  5|     sum += b;
+  6|     sum += c;
+Original: 53 (2, 12)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a#;sum+=b;sum+=c;return sum;})()
+
+Formatted: 77 (4, 16)
+  2|      * multi-line comment
+  3|      */
+  4|     let sum = a;#
+  5|     sum += b;
+  6|     sum += c;
+Original: 54 (2, 13)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 78 (5, 0)
+  3|      */
+  4|     let sum = a;
+  5| #    sum += b;
+  6|     sum += c;
+  7|     return sum;
+Original: 55 (2, 13)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 79 (5, 1)
+  3|      */
+  4|     let sum = a;
+  5|  #   sum += b;
+  6|     sum += c;
+  7|     return sum;
+Original: 55 (2, 13)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 80 (5, 2)
+  3|      */
+  4|     let sum = a;
+  5|   #  sum += b;
+  6|     sum += c;
+  7|     return sum;
+Original: 55 (2, 13)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 81 (5, 3)
+  3|      */
+  4|     let sum = a;
+  5|    # sum += b;
+  6|     sum += c;
+  7|     return sum;
+Original: 55 (2, 13)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 82 (5, 4)
+  3|      */
+  4|     let sum = a;
+  5|     #sum += b;
+  6|     sum += c;
+  7|     return sum;
+Original: 55 (2, 13)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;#sum+=b;sum+=c;return sum;})()
+
+Formatted: 83 (5, 5)
+  3|      */
+  4|     let sum = a;
+  5|     s#um += b;
+  6|     sum += c;
+  7|     return sum;
+Original: 55 (2, 14)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;s#um+=b;sum+=c;return sum;})()
+
+Formatted: 84 (5, 6)
+  3|      */
+  4|     let sum = a;
+  5|     su#m += b;
+  6|     sum += c;
+  7|     return sum;
+Original: 56 (2, 15)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;su#m+=b;sum+=c;return sum;})()
+
+Formatted: 85 (5, 7)
+  3|      */
+  4|     let sum = a;
+  5|     sum# += b;
+  6|     sum += c;
+  7|     return sum;
+Original: 57 (2, 16)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum#+=b;sum+=c;return sum;})()
+
+Formatted: 86 (5, 8)
+  3|      */
+  4|     let sum = a;
+  5|     sum #+= b;
+  6|     sum += c;
+  7|     return sum;
+Original: 58 (2, 16)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum#+=b;sum+=c;return sum;})()
+
+Formatted: 87 (5, 9)
+  3|      */
+  4|     let sum = a;
+  5|     sum +#= b;
+  6|     sum += c;
+  7|     return sum;
+Original: 58 (2, 17)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+#=b;sum+=c;return sum;})()
+
+Formatted: 88 (5, 10)
+  3|      */
+  4|     let sum = a;
+  5|     sum +=# b;
+  6|     sum += c;
+  7|     return sum;
+Original: 59 (2, 18)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=#b;sum+=c;return sum;})()
+
+Formatted: 89 (5, 11)
+  3|      */
+  4|     let sum = a;
+  5|     sum += #b;
+  6|     sum += c;
+  7|     return sum;
+Original: 60 (2, 18)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=#b;sum+=c;return sum;})()
+
+Formatted: 90 (5, 12)
+  3|      */
+  4|     let sum = a;
+  5|     sum += b#;
+  6|     sum += c;
+  7|     return sum;
+Original: 60 (2, 19)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b#;sum+=c;return sum;})()
+
+Formatted: 91 (5, 13)
+  3|      */
+  4|     let sum = a;
+  5|     sum += b;#
+  6|     sum += c;
+  7|     return sum;
+Original: 61 (2, 20)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 92 (6, 0)
+  4|     let sum = a;
+  5|     sum += b;
+  6| #    sum += c;
+  7|     return sum;
+  8| })()
+Original: 62 (2, 20)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 93 (6, 1)
+  4|     let sum = a;
+  5|     sum += b;
+  6|  #   sum += c;
+  7|     return sum;
+  8| })()
+Original: 62 (2, 20)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 94 (6, 2)
+  4|     let sum = a;
+  5|     sum += b;
+  6|   #  sum += c;
+  7|     return sum;
+  8| })()
+Original: 62 (2, 20)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 95 (6, 3)
+  4|     let sum = a;
+  5|     sum += b;
+  6|    # sum += c;
+  7|     return sum;
+  8| })()
+Original: 62 (2, 20)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 96 (6, 4)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     #sum += c;
+  7|     return sum;
+  8| })()
+Original: 62 (2, 20)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;#sum+=c;return sum;})()
+
+Formatted: 97 (6, 5)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     s#um += c;
+  7|     return sum;
+  8| })()
+Original: 62 (2, 21)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;s#um+=c;return sum;})()
+
+Formatted: 98 (6, 6)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     su#m += c;
+  7|     return sum;
+  8| })()
+Original: 63 (2, 22)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;su#m+=c;return sum;})()
+
+Formatted: 99 (6, 7)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum# += c;
+  7|     return sum;
+  8| })()
+Original: 64 (2, 23)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum#+=c;return sum;})()
+
+Formatted: 100 (6, 8)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum #+= c;
+  7|     return sum;
+  8| })()
+Original: 65 (2, 23)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum#+=c;return sum;})()
+
+Formatted: 101 (6, 9)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum +#= c;
+  7|     return sum;
+  8| })()
+Original: 65 (2, 24)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+#=c;return sum;})()
+
+Formatted: 102 (6, 10)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum +=# c;
+  7|     return sum;
+  8| })()
+Original: 66 (2, 25)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=#c;return sum;})()
+
+Formatted: 103 (6, 11)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum += #c;
+  7|     return sum;
+  8| })()
+Original: 67 (2, 25)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=#c;return sum;})()
+
+Formatted: 104 (6, 12)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum += c#;
+  7|     return sum;
+  8| })()
+Original: 67 (2, 26)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c#;return sum;})()
+
+Formatted: 105 (6, 13)
+  4|     let sum = a;
+  5|     sum += b;
+  6|     sum += c;#
+  7|     return sum;
+  8| })()
+Original: 68 (2, 27)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 106 (7, 0)
+  5|     sum += b;
+  6|     sum += c;
+  7| #    return sum;
+  8| })()
+  9| 
+Original: 69 (2, 27)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 107 (7, 1)
+  5|     sum += b;
+  6|     sum += c;
+  7|  #   return sum;
+  8| })()
+  9| 
+Original: 69 (2, 27)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 108 (7, 2)
+  5|     sum += b;
+  6|     sum += c;
+  7|   #  return sum;
+  8| })()
+  9| 
+Original: 69 (2, 27)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 109 (7, 3)
+  5|     sum += b;
+  6|     sum += c;
+  7|    # return sum;
+  8| })()
+  9| 
+Original: 69 (2, 27)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 110 (7, 4)
+  5|     sum += b;
+  6|     sum += c;
+  7|     #return sum;
+  8| })()
+  9| 
+Original: 69 (2, 27)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;#return sum;})()
+
+Formatted: 111 (7, 5)
+  5|     sum += b;
+  6|     sum += c;
+  7|     r#eturn sum;
+  8| })()
+  9| 
+Original: 69 (2, 28)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;r#eturn sum;})()
+
+Formatted: 112 (7, 6)
+  5|     sum += b;
+  6|     sum += c;
+  7|     re#turn sum;
+  8| })()
+  9| 
+Original: 70 (2, 29)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;re#turn sum;})()
+
+Formatted: 113 (7, 7)
+  5|     sum += b;
+  6|     sum += c;
+  7|     ret#urn sum;
+  8| })()
+  9| 
+Original: 71 (2, 30)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;ret#urn sum;})()
+
+Formatted: 114 (7, 8)
+  5|     sum += b;
+  6|     sum += c;
+  7|     retu#rn sum;
+  8| })()
+  9| 
+Original: 72 (2, 31)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;retu#rn sum;})()
+
+Formatted: 115 (7, 9)
+  5|     sum += b;
+  6|     sum += c;
+  7|     retur#n sum;
+  8| })()
+  9| 
+Original: 73 (2, 32)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;retur#n sum;})()
+
+Formatted: 116 (7, 10)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return# sum;
+  8| })()
+  9| 
+Original: 74 (2, 33)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return# sum;})()
+
+Formatted: 117 (7, 11)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return #sum;
+  8| })()
+  9| 
+Original: 75 (2, 34)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return #sum;})()
+
+Formatted: 118 (7, 12)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return s#um;
+  8| })()
+  9| 
+Original: 76 (2, 35)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return s#um;})()
+
+Formatted: 119 (7, 13)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return su#m;
+  8| })()
+  9| 
+Original: 77 (2, 36)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return su#m;})()
+
+Formatted: 120 (7, 14)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return sum#;
+  8| })()
+  9| 
+Original: 78 (2, 37)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum#;})()
+
+Formatted: 121 (7, 15)
+  5|     sum += b;
+  6|     sum += c;
+  7|     return sum;#
+  8| })()
+  9| 
+Original: 79 (2, 38)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;#})()
+
+Formatted: 122 (8, 0)
+  6|     sum += c;
+  7|     return sum;
+  8| #})()
+  9| 
+Original: 80 (2, 38)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;#})()
+
+Formatted: 123 (8, 1)
+  6|     sum += c;
+  7|     return sum;
+  8| }#)()
+  9| 
+Original: 80 (2, 39)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;}#)()
+
+Formatted: 124 (8, 2)
+  6|     sum += c;
+  7|     return sum;
+  8| })#()
+  9| 
+Original: 81 (2, 40)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})#()
+
+Formatted: 125 (8, 3)
+  6|     sum += c;
+  7|     return sum;
+  8| })(#)
+  9| 
+Original: 82 (2, 41)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})(#)
+
+Formatted: 126 (8, 4)
+  6|     sum += c;
+  7|     return sum;
+  8| })()#
+  9| 
+Original: 83 (2, 42)
+  0| (function(a,b,c){/*
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()#
+
+Formatted: 127 (9, 0)
+  7|     return sum;
+  8| })()
+  9| #
+Original: 84 (3, 0)
+  1|  * multi-line comment
+  2|  */let sum=a;sum+=b;sum+=c;return sum;})()
+
+

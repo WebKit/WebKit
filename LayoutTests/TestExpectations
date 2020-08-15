@@ -1079,6 +1079,7 @@ webkit.org/b/161951 [ Release ] inspector/debugger/stepping [ Slow Pass Failure 
 # Source map tests produce a lot of output.
 inspector/formatting/source-map-css-1.html [ Slow ]
 inspector/formatting/source-map-javascript-1.html [ Slow ]
+inspector/formatting/source-map-javascript-2.html [ Slow ]
 [ Debug ] inspector/formatting/source-map-html-1.html [ Skip ]
 [ Debug ] inspector/formatting/source-map-html-2.html [ Skip ]
 [ Release ] inspector/formatting/source-map-html-1.html [ Slow ]
