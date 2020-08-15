@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection: writableStreamDefaultWriterRelease
-
 PASS Aborting a WritableStream before it starts should cause the writer's unsettled ready promise to reject 
 PASS Aborting a WritableStream should cause the writer's fulfilled ready promise to reset to a rejected one 
 PASS abort() on a released writer rejects 

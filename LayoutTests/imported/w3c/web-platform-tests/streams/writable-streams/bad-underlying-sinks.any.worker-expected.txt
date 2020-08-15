@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Unhandled rejection: error1
-
 PASS start: errors in start cause WritableStream constructor to throw 
 PASS close: throwing method should cause writer close() and ready to reject 
 PASS close: returning a rejected promise should cause writer close() and ready to reject 

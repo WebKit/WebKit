@@ -1,3 +1,19 @@
+2020-08-15  Youenn Fablet  <youenn@apple.com>
+
+        WritableStream rejected promises should be marked as handled as per spec
+        https://bugs.webkit.org/show_bug.cgi?id=215501
+
+        Reviewed by Darin Adler.
+
+        Marking promises that got rejected as handled to ensure onunhandledrejection handler is not called erroneously.
+        Covered by rebased tests.
+
+        * Modules/streams/WritableStreamInternals.js:
+        (setUpWritableStreamDefaultWriter):
+        (writableStreamRejectCloseAndClosedPromiseIfNeeded):
+        (writableStreamDefaultWriterEnsureClosedPromiseRejected):
+        (writableStreamDefaultWriterEnsureReadyPromiseRejected):
+
 2020-08-14  Brady Eidson  <beidson@apple.com>
 
         Crash inside FrameLoader::defaultRequestCachingPolicy (null DocumentLoader)

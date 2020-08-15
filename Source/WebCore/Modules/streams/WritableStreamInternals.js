@@ -67,16 +67,19 @@ function setUpWritableStreamDefaultWriter(writer, stream)
     if (state === "writable") {
         if (@writableStreamCloseQueuedOrInFlight(stream) || !@getByIdDirectPrivate(stream, "backpressure"))
             readyPromiseCapability.@resolve.@call();
-    } else if (state === "erroring")
+    } else if (state === "erroring") {
         readyPromiseCapability.@reject.@call(@undefined, @getByIdDirectPrivate(stream, "storedError"));
-    else if (state === "closed") {
+        @putPromiseInternalField(readyPromiseCapability.@promise, @promiseFieldFlags, @getPromiseInternalField(readyPromiseCapability.@promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+    } else if (state === "closed") {
         readyPromiseCapability.@resolve.@call();
         closedPromiseCapability.@resolve.@call();
     } else {
         @assert(state === "errored");
         const storedError = @getByIdDirectPrivate(stream, "storedError");
         readyPromiseCapability.@reject.@call(@undefined, storedError);
+        @putPromiseInternalField(readyPromiseCapability.@promise, @promiseFieldFlags, @getPromiseInternalField(readyPromiseCapability.@promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
         closedPromiseCapability.@reject.@call(@undefined, storedError);
+        @putPromiseInternalField(closedPromiseCapability.@promise, @promiseFieldFlags, @getPromiseInternalField(closedPromiseCapability.@promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
     }
 }
 
@@ -304,8 +307,11 @@ function writableStreamRejectCloseAndClosedPromiseIfNeeded(stream)
     }
 
     const writer = @getByIdDirectPrivate(stream, "writer");
-    if (writer !== @undefined)
-        @getByIdDirectPrivate(writer, "closedPromise").@reject.@call(@undefined, storedError);
+    if (writer !== @undefined) {
+        const closedPromise = @getByIdDirectPrivate(writer, "closedPromise");
+        closedPromise.@reject.@call(@undefined, storedError);
+        @putPromiseInternalField(closedPromise.@promise, @promiseFieldFlags, @getPromiseInternalField(closedPromise.@promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+    }
 }
 
 function writableStreamStartErroring(stream, reason)
@@ -375,7 +381,9 @@ function writableStreamDefaultWriterCloseWithErrorPropagation(writer)
 
 function writableStreamDefaultWriterEnsureClosedPromiseRejected(writer, error)
 {
-    @getByIdDirectPrivate(writer, "closedPromise").@reject.@call(@undefined, error);
+     const closedPromise = @getByIdDirectPrivate(writer, "closedPromise");
+     closedPromise.@reject.@call(@undefined, error);
+     @putPromiseInternalField(closedPromise.@promise, @promiseFieldFlags, @getPromiseInternalField(closedPromise.@promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
 }
 
 function writableStreamDefaultWriterEnsureReadyPromiseRejected(writer, error)
