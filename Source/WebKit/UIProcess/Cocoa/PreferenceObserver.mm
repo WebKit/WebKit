@@ -73,11 +73,15 @@
 
         auto globalValue = adoptCF(CFPreferencesCopyValue((__bridge CFStringRef)key, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
         auto domainValue = adoptCF(CFPreferencesCopyValue((__bridge CFStringRef)key, (__bridge CFStringRef)m_suiteName, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
-        
-        if (globalValue && [newValue isEqual:(__bridge id)globalValue.get()])
+
+        auto preferenceValuesAreEqual = [] (id a, id b) {
+            return a == b || [a isEqual:b];
+        };
+
+        if (preferenceValuesAreEqual((__bridge id)globalValue.get(), newValue))
             [m_observer preferenceDidChange:nil key:key encodedValue:encodedString];
 
-        if (domainValue && [newValue isEqual:(__bridge id)domainValue.get()])
+        if (preferenceValuesAreEqual((__bridge id)domainValue.get(), newValue))
             [m_observer preferenceDidChange:m_suiteName key:key encodedValue:encodedString];
     }
 }

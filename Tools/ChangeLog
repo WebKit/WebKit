@@ -1,3 +1,20 @@
+2020-08-15  Tim Horton  <timothy_horton@apple.com>
+
+        Live Web Content processes do not respect accent color if dynamically changed to "multicolor"
+        https://bugs.webkit.org/show_bug.cgi?id=215523
+        <rdar://problem/63941133>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKit/PreferenceChanges.mm:
+        (deleteTestDefaults):
+        (TEST):
+        Fix some minor style issues with these tests.
+        Fix a bug where these tests would leak state between themselves by leaving defaults behind.
+        Change the NSUserDefaults key name so that it is abundantly obvious where it comes from when you see it in your defaults.
+        Leave a FIXME for the future that these tests should probably not be writing to the real persistent defaults.
+        Add a test that ensures that the observer correctly respects deletion of a default.
+
 2020-08-14  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add a NullHandler to logger

@@ -937,7 +937,10 @@ static void setPreferenceValue(const String& domain, const String& key, id value
 {
     if (domain.isEmpty()) {
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-        ASSERT([[[NSUserDefaults standardUserDefaults] objectForKey:key] isEqual:value]);
+#if ASSERT_ENABLED
+        id valueAfterSetting = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+        ASSERT(valueAfterSetting == value || [valueAfterSetting isEqual:value]);
+#endif
     } else
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
 }

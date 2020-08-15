@@ -1,3 +1,20 @@
+2020-08-15  Tim Horton  <timothy_horton@apple.com>
+
+        Live Web Content processes do not respect accent color if dynamically changed to "multicolor"
+        https://bugs.webkit.org/show_bug.cgi?id=215523
+        <rdar://problem/63941133>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/Cocoa/PreferenceObserver.mm:
+        (-[WKUserDefaults _notifyObserversOfChangeFromValuesForKeys:toValuesForKeys:]):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::setPreferenceValue):
+        The NSUserDefaults syncing mechanism does not propagate defaults that are
+        deleted or changed to nil.
+
+        Allow nil, and fix up an assert that would fire for the same reason.
+
 2020-08-14  Alex Christensen  <achristensen@webkit.org>
 
         Revert r263551
