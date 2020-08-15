@@ -1,5 +1,58 @@
 2020-08-14  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r265709. rdar://problem/67106107
+
+    RTL: volume slider and icons are backwards
+    https://bugs.webkit.org/show_bug.cgi?id=215482
+    <rdar://problem/65730749>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    * Modules/modern-media-controls/controls/inline-media-controls.js:
+    (InlineMediaControls.prototype.layout):
+    Flip the inline volume button when not in LTR.
+    
+    * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+    (MacOSFullscreenMediaControls.prototype.layout):
+    (MacOSFullscreenMediaControls.prototype._volumeControlsForCurrentDirection): Added.
+    Reverse the order of the fullscreen volume controls when not in LTR.
+    
+    * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.css:
+    (.media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) :is(.volume-down, .volume.slider, .volume-up)): Added.
+    (.media-controls.mac.fullscreen:not(.uses-ltr-user-interface-layout-direction) .volume.slider): Deleted.
+    Also flip the fullscreen volume up and volume down buttons.
+    
+    LayoutTests:
+    
+    `MacOSFullscreenMediaControls` defaults to having `usesLTRUserInterfaceLayoutDirection` be
+    `false`, so flip the order of the volume controls to match the non-LTR UI.
+    
+    * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html:
+    * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor-expected.txt:
+    * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-styles.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265709 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-14  Devin Rousso  <drousso@apple.com>
+
+            RTL: volume slider and icons are backwards
+            https://bugs.webkit.org/show_bug.cgi?id=215482
+            <rdar://problem/65730749>
+
+            Reviewed by Eric Carlson.
+
+            `MacOSFullscreenMediaControls` defaults to having `usesLTRUserInterfaceLayoutDirection` be
+            `false`, so flip the order of the volume controls to match the non-LTR UI.
+
+            * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html:
+            * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor-expected.txt:
+            * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-styles.html:
+
+2020-08-14  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r265603. rdar://problem/67084483
 
     Font loads quickly followed by navigations may fail indefinitely

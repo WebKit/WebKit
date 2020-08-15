@@ -14,7 +14,7 @@ PASS mediaControls.bottomControlsBar.children[2] instanceof ButtonsContainer is 
 PASS mediaControls.bottomControlsBar.children[3] instanceof ButtonsContainer is true
 
 Left container
-PASS mediaControls.bottomControlsBar.children[1].children is [mediaControls.volumeDownButton, mediaControls.volumeSlider, mediaControls.volumeUpButton]
+PASS mediaControls.bottomControlsBar.children[1].children is [mediaControls.volumeUpButton, mediaControls.volumeSlider, mediaControls.volumeDownButton]
 PASS mediaControls.bottomControlsBar.children[1].element.className is "buttons-container left"
 PASS mediaControls.bottomControlsBar.children[1].leftMargin is 12
 PASS mediaControls.bottomControlsBar.children[1].rightMargin is 0

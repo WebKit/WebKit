@@ -9,6 +9,8 @@ description("Testing the <code>MacOSFullscreenMediaControls</code> computed styl
 window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSFullscreenMediaControls;
+mediaControls.usesLTRUserInterfaceLayoutDirection = true;
+
 document.body.appendChild(mediaControls.element);
 
 shouldBecomeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).left", "30px", () => {
