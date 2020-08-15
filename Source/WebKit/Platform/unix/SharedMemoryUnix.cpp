@@ -88,23 +88,6 @@ bool SharedMemory::IPCHandle::decode(IPC::Decoder& decoder, IPCHandle& ipcHandle
     return true;
 }
 
-void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
-{
-    encoder << releaseAttachment();
-}
-
-bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
-{
-    ASSERT_ARG(handle, handle.isNull());
-
-    IPC::Attachment attachment;
-    if (!decoder.decode(attachment))
-        return false;
-
-    handle.adoptAttachment(WTFMove(attachment));
-    return true;
-}
-
 IPC::Attachment SharedMemory::Handle::releaseAttachment() const
 {
     return WTFMove(m_attachment);

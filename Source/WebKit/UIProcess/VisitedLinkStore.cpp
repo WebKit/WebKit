@@ -118,7 +118,13 @@ void VisitedLinkStore::sendStoreHandleToProcess(WebProcessProxy& process)
     if (!m_linkHashStore.createSharedMemoryHandle(handle))
         return;
 
-    process.send(Messages::VisitedLinkTableController::SetVisitedLinkTable(handle), identifier());
+    // FIXME: Get the actual size of data being sent from m_linkHashStore and send it in the SharedMemory::IPCHandle object.
+#if OS(DARWIN) || OS(WINDOWS)
+    uint64_t dataSize = handle.size();
+#else
+    uint64_t dataSize = 0;
+#endif
+    process.send(Messages::VisitedLinkTableController::SetVisitedLinkTable(SharedMemory::IPCHandle { WTFMove(handle), dataSize }), identifier());
 }
 
 void VisitedLinkStore::didInvalidateSharedMemory()
