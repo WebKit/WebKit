@@ -1367,6 +1367,9 @@ private:
         case TypeOfIsUndefined:
             compileTypeOfIsUndefined();
             break;
+        case TypeOfIsObject:
+            compileTypeOfIsObject();
+            break;
         case IsUndefinedOrNull:
             compileIsUndefinedOrNull();
             break;
@@ -1426,9 +1429,6 @@ private:
             break;
         case IsObject:
             compileIsObject();
-            break;
-        case IsObjectOrNull:
-            compileIsObjectOrNull();
             break;
         case IsFunction:
             compileIsFunction();
@@ -11671,7 +11671,7 @@ private:
         vmCall(Void, operationWeakMapSet, m_vmValue, map, key, value, hash);
     }
 
-    void compileIsObjectOrNull()
+    void compileTypeOfIsObject()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         
@@ -11710,7 +11710,7 @@ private:
         LValue slowResultValue = lazySlowPath(
             [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                 return createLazyCallGenerator(vm,
-                    operationObjectIsObject, locations[0].directGPR(),
+                    operationTypeOfIsObject, locations[0].directGPR(),
                     CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
             }, value);
         ValueFromBlock slowResult = m_out.anchor(m_out.notZero64(slowResultValue));

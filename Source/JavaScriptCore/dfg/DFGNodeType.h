@@ -393,6 +393,7 @@ namespace JSC { namespace DFG {
     macro(IsCellWithType, NodeResultBoolean) \
     macro(IsEmpty, NodeResultBoolean) \
     macro(TypeOfIsUndefined, NodeResultBoolean) \
+    macro(TypeOfIsObject, NodeResultBoolean) \
     macro(IsUndefinedOrNull, NodeResultBoolean) \
     macro(IsBoolean, NodeResultBoolean) \
     macro(IsNumber, NodeResultBoolean) \
@@ -400,7 +401,6 @@ namespace JSC { namespace DFG {
     macro(IsBigInt, NodeResultBoolean) \
     macro(NumberIsInteger, NodeResultBoolean) \
     macro(IsObject, NodeResultBoolean) \
-    macro(IsObjectOrNull, NodeResultBoolean) \
     macro(IsFunction, NodeResultBoolean) \
     macro(IsConstructor, NodeResultBoolean) \
     macro(IsTypedArrayView, NodeResultBoolean) \

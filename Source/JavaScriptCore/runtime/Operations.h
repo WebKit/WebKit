@@ -33,7 +33,7 @@ namespace JSC {
 NEVER_INLINE JSValue jsAddSlowCase(JSGlobalObject*, JSValue, JSValue);
 JSValue jsTypeStringForValue(JSGlobalObject*, JSValue);
 JSValue jsTypeStringForValue(VM&, JSGlobalObject*, JSValue);
-bool jsIsObjectTypeOrNull(JSGlobalObject*, JSValue);
+bool jsTypeofIsObject(JSGlobalObject*, JSValue);
 size_t normalizePrototypeChain(JSGlobalObject*, JSCell*, bool& sawPolyProto);
 
 ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1, JSString* s2)

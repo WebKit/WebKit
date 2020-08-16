@@ -5742,6 +5742,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
             set(bytecode.m_dst, addToGraph(TypeOfIsUndefined, value));
             NEXT_OPCODE(op_is_undefined);
         }
+        case op_typeof_is_object: {
+            auto bytecode = currentInstruction->as<OpTypeofIsObject>();
+            Node* value = get(bytecode.m_operand);
+            set(bytecode.m_dst, addToGraph(TypeOfIsObject, value));
+            NEXT_OPCODE(op_typeof_is_object);
+        }
         case op_is_undefined_or_null: {
             auto bytecode = currentInstruction->as<OpIsUndefinedOrNull>();
             Node* value = get(bytecode.m_operand);
@@ -5786,13 +5792,6 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* value = get(bytecode.m_operand);
             set(bytecode.m_dst, addToGraph(IsObject, value));
             NEXT_OPCODE(op_is_object);
-        }
-
-        case op_is_object_or_null: {
-            auto bytecode = currentInstruction->as<OpIsObjectOrNull>();
-            Node* value = get(bytecode.m_operand);
-            set(bytecode.m_dst, addToGraph(IsObjectOrNull, value));
-            NEXT_OPCODE(op_is_object_or_null);
         }
 
         case op_is_function: {

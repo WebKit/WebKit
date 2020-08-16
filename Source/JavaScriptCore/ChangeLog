@@ -1,3 +1,79 @@
+2020-08-16  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove OpIsObjectOrNull from ClassExprNode::emitBytecode()
+        https://bugs.webkit.org/show_bug.cgi?id=214525
+
+        Reviewed by Keith Miller.
+
+        This patch:
+
+        1. Replaces OpIsObjectOrNull in ClassExprNode::emitBytecode() [1] with emitIsObject() +
+           emitIsNull(), preventing DFG/FTL from throwing a TypeError if `document.all` is the
+           value of superclass "prototype" property, which aligns JSC with V8 and SpiderMonkey.
+           Also, tweaks error message to reflect that `null` is allowed.
+
+        2. Renames is_object_or_null bytecode op to typeof_is_object, fixing the confusing
+           operationObjectIsObject() name, and aligns it with typeof_is_undefined.
+           New name offers better semantics and clearly communicates the op should be avoided when
+           implementing new features because of `typeof` behavior with [[IsHTMLDDA]] objects [2].
+
+        [1]: https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation (step 5.g.ii)
+        [2]: https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-typeof
+
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOpImpl):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileTypeOfIsObject):
+        (JSC::DFG::SpeculativeJIT::compileIsObjectOrNull): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTypeOfIsObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsObjectOrNull): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/Operations.cpp:
+        (JSC::jsTypeofIsObject):
+        (JSC::jsIsObjectTypeOrNull): Deleted.
+        * runtime/Operations.h:
+
 2020-08-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed non-unified source build fix

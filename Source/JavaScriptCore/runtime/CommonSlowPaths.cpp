@@ -804,11 +804,11 @@ SLOW_PATH_DECL(slow_path_typeof)
     RETURN(jsTypeStringForValue(globalObject, GET_C(bytecode.m_value).jsValue()));
 }
 
-SLOW_PATH_DECL(slow_path_is_object_or_null)
+SLOW_PATH_DECL(slow_path_typeof_is_object)
 {
     BEGIN();
-    auto bytecode = pc->as<OpIsObjectOrNull>();
-    RETURN(jsBoolean(jsIsObjectTypeOrNull(globalObject, GET_C(bytecode.m_operand).jsValue())));
+    auto bytecode = pc->as<OpTypeofIsObject>();
+    RETURN(jsBoolean(jsTypeofIsObject(globalObject, GET_C(bytecode.m_operand).jsValue())));
 }
 
 SLOW_PATH_DECL(slow_path_is_function)

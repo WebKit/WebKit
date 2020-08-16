@@ -4902,9 +4902,9 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         generator.emitGetById(protoParent.get(), superclass.get(), generator.propertyNames().prototype);
 
         Ref<Label> protoParentIsObjectOrNullLabel = generator.newLabel();
-        generator.emitJumpIfTrue(generator.emitUnaryOp<OpIsObjectOrNull>(tempRegister.get(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
-        generator.emitJumpIfTrue(generator.emitUnaryOp<OpIsFunction>(tempRegister.get(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
-        generator.emitThrowTypeError("The value of the superclass's prototype property is not an object."_s);
+        generator.emitJumpIfTrue(generator.emitIsObject(tempRegister.get(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
+        generator.emitJumpIfTrue(generator.emitIsNull(tempRegister.get(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
+        generator.emitThrowTypeError("The value of the superclass's prototype property is not an object or null."_s);
         generator.emitLabel(protoParentIsObjectOrNullLabel.get());
 
         generator.emitDirectPutById(constructor.get(), generator.propertyNames().underscoreProto, superclass.get(), PropertyNode::Unknown);

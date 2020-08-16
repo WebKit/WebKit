@@ -1405,7 +1405,7 @@ public:
     void compileRegExpTest(Node*);
     void compileStringReplace(Node*);
     void compileIsObject(Node*);
-    void compileIsObjectOrNull(Node*);
+    void compileTypeOfIsObject(Node*);
     void compileIsFunction(Node*);
     void compileIsConstructor(Node*);
     void compileTypeOf(Node*);

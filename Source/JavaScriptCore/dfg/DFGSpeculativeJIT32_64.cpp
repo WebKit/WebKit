@@ -3664,6 +3664,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case TypeOfIsObject: {
+        compileTypeOfIsObject(node);
+        break;
+    }
+
     case IsUndefinedOrNull: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value, TagWord);
@@ -3713,11 +3718,6 @@ void SpeculativeJIT::compile(Node* node)
 
     case IsObject: {
         compileIsObject(node);
-        break;
-    }
-
-    case IsObjectOrNull: {
-        compileIsObjectOrNull(node);
         break;
     }
 

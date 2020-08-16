@@ -106,7 +106,7 @@ JSValue jsTypeStringForValue(JSGlobalObject* globalObject, JSValue v)
     return jsTypeStringForValue(globalObject->vm(), globalObject, v);
 }
 
-bool jsIsObjectTypeOrNull(JSGlobalObject* globalObject, JSValue v)
+bool jsTypeofIsObject(JSGlobalObject* globalObject, JSValue v)
 {
     VM& vm = globalObject->vm();
     if (!v.isCell())

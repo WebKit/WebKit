@@ -1035,13 +1035,13 @@ private:
         case InstanceOfCustom:
         case IsEmpty:
         case TypeOfIsUndefined:
+        case TypeOfIsObject:
         case IsUndefinedOrNull:
         case IsBoolean:
         case IsNumber:
         case IsBigInt:
         case NumberIsInteger:
         case IsObject:
-        case IsObjectOrNull:
         case IsFunction:
         case IsConstructor:
         case IsCellWithType:

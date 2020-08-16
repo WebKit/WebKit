@@ -1715,7 +1715,7 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
             }
             if (value == "object") {
                 rewind();
-                OpIsObjectOrNull::emit(this, dst, op.m_value);
+                OpTypeofIsObject::emit(this, dst, op.m_value);
                 return true;
             }
             if (value == "function") {

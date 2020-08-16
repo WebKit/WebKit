@@ -592,9 +592,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(HeapObjectCount);
         return;
 
-    case IsObjectOrNull:
+    case TypeOfIsObject:
         read(MiscFields);
-        def(HeapLocation(IsObjectOrNullLoc, MiscFields, node->child1()), LazyNode(node));
+        def(HeapLocation(TypeOfIsObjectLoc, MiscFields, node->child1()), LazyNode(node));
         return;
         
     case IsFunction:

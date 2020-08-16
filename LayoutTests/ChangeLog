@@ -1,3 +1,22 @@
+2020-08-16  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove OpIsObjectOrNull from ClassExprNode::emitBytecode()
+        https://bugs.webkit.org/show_bug.cgi?id=214525
+
+        Reviewed by Keith Miller.
+
+        New tests are added for `document.all` rather than `makeMasquerader()` since
+        the latter has sufficient test coverage and takes the short path as JSFunction.
+
+        * js/class-syntax-extends-expected.txt:
+        * js/dom/document-all-class-extends-expected.txt: Added.
+        * js/dom/document-all-class-extends.html: Added.
+        * js/dom/document-all-typeof-is-object-fold-expected.txt: Added.
+        * js/dom/document-all-typeof-is-object-fold.html: Added.
+        * js/dom/script-tests/document-all-class-extends.js: Added.
+        * js/dom/script-tests/document-all-typeof-is-object-fold.js: Added.
+        * js/script-tests/class-syntax-extends.js:
+
 2020-08-16  Dean Jackson  <dino@apple.com>
 
         [AS Layout Tests] 6 WPT css-backgrounds tests consistently failing

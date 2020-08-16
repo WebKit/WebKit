@@ -257,13 +257,13 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case OverridesHasInstance:
     case IsEmpty:
     case TypeOfIsUndefined:
+    case TypeOfIsObject:
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
     case IsBigInt:
     case NumberIsInteger:
     case IsObject:
-    case IsObjectOrNull:
     case IsFunction:
     case IsConstructor:
     case IsCellWithType:

@@ -2103,7 +2103,7 @@ JSCell* JIT_OPERATION operationCreateRest(JSGlobalObject* globalObject, Register
     return constructArray(globalObject, structure, argumentsToCopyRegion, arraySize);
 }
 
-size_t JIT_OPERATION operationObjectIsObject(JSGlobalObject* globalObject, JSCell* object)
+size_t JIT_OPERATION operationTypeOfIsObject(JSGlobalObject* globalObject, JSCell* object)
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);

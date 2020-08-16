@@ -26,9 +26,9 @@ PASS x.__proto__:::Function.prototype
 PASS x = class extends 3 { constructor() { } }; x.__proto__:::TypeError: The superclass is not a constructor.
 PASS x = class extends "abc" { constructor() { } }; x.__proto__:::TypeError: The superclass is not a constructor.
 PASS baseWithBadPrototype = function () {}; baseWithBadPrototype.prototype = 3; new baseWithBadPrototype
-PASS x = class extends baseWithBadPrototype { constructor() { } }:::TypeError: The value of the superclass's prototype property is not an object.
+PASS x = class extends baseWithBadPrototype { constructor() { } }:::TypeError: The value of the superclass's prototype property is not an object or null.
 PASS baseWithBadPrototype.prototype = "abc"
-PASS x = class extends baseWithBadPrototype { constructor() { } }:::TypeError: The value of the superclass's prototype property is not an object.
+PASS x = class extends baseWithBadPrototype { constructor() { } }:::TypeError: The value of the superclass's prototype property is not an object or null.
 PASS baseWithBadPrototype.prototype = null; x = class extends baseWithBadPrototype { constructor() { } }
 PASS x = 1; c = class extends ++x { constructor() { } };:::SyntaxError: Unexpected token '++'
 PASS x = 1; c = class extends x++ { constructor() { } };:::SyntaxError: Unexpected token '++'. Expected opening '{' at the start of a class body.

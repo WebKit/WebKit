@@ -1451,13 +1451,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case IsEmpty:
     case TypeOfIsUndefined:
+    case TypeOfIsObject:
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
     case IsBigInt:
     case NumberIsInteger:
     case IsObject:
-    case IsObjectOrNull:
     case IsFunction:
     case IsConstructor:
     case IsCellWithType:
@@ -1474,6 +1474,21 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     child.value().isCell()
                     ? child.value().asCell()->structure(m_vm)->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))
                     : child.value().isUndefined()));
+                break;
+            case TypeOfIsObject:
+                if (child.value().isObject()) {
+                    JSObject* object = asObject(child.value());
+                    if (object->type() == JSFunctionType)
+                        setConstant(node, jsBoolean(false));
+                    else if (!(object->inlineTypeFlags() & OverridesGetCallData))
+                        setConstant(node, jsBoolean(!child.value().asCell()->structure(m_vm)->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))));
+                    else {
+                        // FIXME: This could just call getCallData.
+                        // https://bugs.webkit.org/show_bug.cgi?id=144457
+                        constantWasSet = false;
+                    }
+                } else
+                    setConstant(node, jsBoolean(child.value().isNull()));
                 break;
             case IsUndefinedOrNull:
                 setConstant(node, jsBoolean(child.value().isUndefinedOrNull()));
@@ -1492,21 +1507,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             case IsObject:
                 setConstant(node, jsBoolean(child.value().isObject()));
-                break;
-            case IsObjectOrNull:
-                if (child.value().isObject()) {
-                    JSObject* object = asObject(child.value());
-                    if (object->type() == JSFunctionType)
-                        setConstant(node, jsBoolean(false));
-                    else if (!(object->inlineTypeFlags() & OverridesGetCallData))
-                        setConstant(node, jsBoolean(!child.value().asCell()->structure(m_vm)->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))));
-                    else {
-                        // FIXME: This could just call getCallData.
-                        // https://bugs.webkit.org/show_bug.cgi?id=144457
-                        constantWasSet = false;
-                    }
-                } else
-                    setConstant(node, jsBoolean(child.value().isNull()));
                 break;
             case IsFunction:
                 if (child.value().isObject()) {
@@ -1603,6 +1603,38 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             
             break;
+        case TypeOfIsObject:
+            // FIXME: Use the masquerades-as-undefined watchpoint thingy.
+            // https://bugs.webkit.org/show_bug.cgi?id=144456
+            
+            // These expressions are complicated to parse. A helpful way to parse this is that
+            // "!(T & ~S)" means "T is a subset of S". Conversely, "!(T & S)" means "T is a
+            // disjoint set from S". Things like "T - S" means that, provided that S is a
+            // subset of T, it's the "set of all things in T but not in S". Things like "T | S"
+            // mean the "union of T and S".
+            
+            // Is the child's type an object that isn't an other-object (i.e. object that could
+            // have masquaredes-as-undefined traps) and isn't a function? Then: we should fold
+            // this to true.
+            if (!(child.m_type & ~(SpecObject - SpecObjectOther - SpecFunction))) {
+                setConstant(node, jsBoolean(true));
+                constantWasSet = true;
+                break;
+            }
+            
+            // Is the child's type definitely not either of: an object that isn't a function,
+            // or either undefined or null? Then: we should fold this to false. This means
+            // for example that if it's any non-function object, including those that have
+            // masquerades-as-undefined traps, then we don't fold. It also means we won't fold
+            // if it's undefined-or-null, since the type bits don't distinguish between
+            // undefined (which should fold to false) and null (which should fold to true).
+            if (!(child.m_type & ((SpecObject - SpecFunction) | SpecOther))) {
+                setConstant(node, jsBoolean(false));
+                constantWasSet = true;
+                break;
+            }
+            
+            break;
         case IsUndefinedOrNull:
             if (!(child.m_type & ~SpecOther)) {
                 setConstant(node, jsBoolean(true));
@@ -1683,38 +1715,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             }
             
             if (!(child.m_type & SpecObject)) {
-                setConstant(node, jsBoolean(false));
-                constantWasSet = true;
-                break;
-            }
-            
-            break;
-        case IsObjectOrNull:
-            // FIXME: Use the masquerades-as-undefined watchpoint thingy.
-            // https://bugs.webkit.org/show_bug.cgi?id=144456
-            
-            // These expressions are complicated to parse. A helpful way to parse this is that
-            // "!(T & ~S)" means "T is a subset of S". Conversely, "!(T & S)" means "T is a
-            // disjoint set from S". Things like "T - S" means that, provided that S is a
-            // subset of T, it's the "set of all things in T but not in S". Things like "T | S"
-            // mean the "union of T and S".
-            
-            // Is the child's type an object that isn't an other-object (i.e. object that could
-            // have masquaredes-as-undefined traps) and isn't a function?  Then: we should fold
-            // this to true.
-            if (!(child.m_type & ~(SpecObject - SpecObjectOther - SpecFunction))) {
-                setConstant(node, jsBoolean(true));
-                constantWasSet = true;
-                break;
-            }
-            
-            // Is the child's type definitely not either of: an object that isn't a function,
-            // or either undefined or null?  Then: we should fold this to false.  This means
-            // for example that if it's any non-function object, including those that have
-            // masquerades-as-undefined traps, then we don't fold. It also means we won't fold
-            // if it's undefined-or-null, since the type bits don't distinguish between
-            // undefined (which should fold to false) and null (which should fold to true).
-            if (!(child.m_type & ((SpecObject - SpecFunction) | SpecOther))) {
                 setConstant(node, jsBoolean(false));
                 constantWasSet = true;
                 break;

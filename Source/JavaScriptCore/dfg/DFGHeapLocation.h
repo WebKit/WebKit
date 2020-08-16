@@ -56,7 +56,7 @@ enum LocationKind {
     InvalidationPointLoc,
     IsFunctionLoc,
     IsConstructorLoc,
-    IsObjectOrNullLoc,
+    TypeOfIsObjectLoc,
     NamedPropertyLoc,
     RegExpObjectLastIndexLoc,
     SetterLoc,

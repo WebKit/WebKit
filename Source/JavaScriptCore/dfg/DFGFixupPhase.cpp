@@ -2714,11 +2714,11 @@ private:
         case IsTypedArrayView:
         case IsEmpty:
         case TypeOfIsUndefined:
+        case TypeOfIsObject:
         case IsUndefinedOrNull:
         case IsBoolean:
         case IsNumber:
         case IsBigInt:
-        case IsObjectOrNull:
         case IsFunction:
         case IsConstructor:
         case CreateDirectArguments:
