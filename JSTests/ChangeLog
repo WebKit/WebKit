@@ -1,3 +1,11 @@
+2020-08-16  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, reduce iteration count more for non-JIT environments
+
+        If JSC does not have JIT, many iterations do not matter.
+
+        * stress/memcpy-typed-loops.js:
+
 2020-08-12  Keith Miller  <keith_miller@apple.com>
 
         OSRAvailabilityAnalysis shouldn't mark GetStack nodes directly as valid places for recovery

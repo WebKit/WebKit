@@ -27,7 +27,7 @@ for (let i=0; i<arr1.length; ++i) {
     arr1[i] = i
 }
 
-const iterationCount = $vm.useJIT() ? 10000000 : 100000;
+const iterationCount = $vm.useJIT() ? 10000000 : 100;
 for (let i=0; i<iterationCount; ++i) noLoop(arr1, arr2)
 for (let i=0; i<iterationCount; ++i) invalidStart(arr1, arr2)
 
