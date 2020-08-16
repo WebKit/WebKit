@@ -600,6 +600,20 @@ PlatformDisplayID ScrollingTree::displayID()
     return m_treeState.displayID;
 }
 
+bool ScrollingTree::hasProcessedWheelEventsRecently()
+{
+    LockHolder locker(m_lastWheelEventTimeMutex);
+    constexpr auto activityInterval = 50_ms; // Duration of a few frames so that we stay active for sequence of wheel events.
+    
+    return (MonotonicTime::now() - m_lastWheelEventTime) < activityInterval;
+}
+
+void ScrollingTree::willProcessWheelEvent()
+{
+    LockHolder locker(m_lastWheelEventTimeMutex);
+    m_lastWheelEventTime = MonotonicTime::now();
+}
+
 Optional<unsigned> ScrollingTree::nominalFramesPerSecond()
 {
     LockHolder locker(m_treeStateMutex);

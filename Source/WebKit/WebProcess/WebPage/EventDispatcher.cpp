@@ -139,6 +139,8 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
         if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
             return false;
 
+        scrollingTree->willProcessWheelEvent();
+
         ScrollingThread::dispatch([scrollingTree, wheelEvent, platformWheelEvent, pageID, protectedThis = makeRef(*this)] {
             auto result = scrollingTree->handleWheelEvent(platformWheelEvent);
 

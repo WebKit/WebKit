@@ -1,3 +1,20 @@
+2020-08-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling sync changes in r261985 regressed CPU usage by ~2 ms/s
+        https://bugs.webkit.org/show_bug.cgi?id=215529
+        <rdar://problem/66866163>
+
+        Reviewed by Geoff Garen.
+        
+        r261985 added two code paths that wake up the scrolling thread on every
+        rendering update (triggered by displayDidRefresh()). One is a ping from
+        the EventDispatcher thread, the other is a wake-and-block from the main
+        thread. If the scrolling thread isn't active (no wheel events received recently),
+        we can avoid both of these to reduce the number of CPU core wakeups.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::wheelEvent):
+
 2020-08-15  Tim Horton  <timothy_horton@apple.com>
 
         Live Web Content processes do not respect accent color if dynamically changed to "multicolor"

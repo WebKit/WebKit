@@ -204,6 +204,9 @@ void ThreadedScrollingTree::willStartRenderingUpdate()
 {
     ASSERT(isMainThread());
 
+    if (!hasProcessedWheelEventsRecently())
+        return;
+
     tracePoint(ScrollingThreadRenderUpdateSyncStart);
 
     // Wait for the scrolling thread to acquire m_treeMutex. This ensures that any pending wheel events are processed.
@@ -315,16 +318,17 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 
 void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
 {
-    if (displayID != this->displayID())
-        return;
-
     // We're on the EventDispatcher thread here.
 
-#if ENABLE(SCROLLING_THREAD)
+    if (displayID != this->displayID())
+        return;
+    
+    if (!hasProcessedWheelEventsRecently())
+        return;
+
     ScrollingThread::dispatch([protectedThis = makeRef(*this)]() {
         protectedThis->displayDidRefreshOnScrollingThread();
     });
-#endif
 }
 
 } // namespace WebCore
