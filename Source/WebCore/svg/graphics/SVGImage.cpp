@@ -170,11 +170,11 @@ IntSize SVGImage::containerSize() const
     else
         currentSize = rootElement->currentViewBoxRect().size();
 
-    if (!currentSize.isEmpty())
-        return IntSize(static_cast<int>(ceilf(currentSize.width())), static_cast<int>(ceilf(currentSize.height())));
+    // Use the default CSS intrinsic size if the above failed.
+    if (currentSize.isEmpty())
+        return IntSize(300, 150);
 
-    // As last resort, use CSS default intrinsic size.
-    return IntSize(300, 150);
+    return IntSize(currentSize);
 }
 
 ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect,

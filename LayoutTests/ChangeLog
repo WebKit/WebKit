@@ -1,3 +1,13 @@
+2020-08-16  Dean Jackson  <dino@apple.com>
+
+        [AS Layout Tests] 6 WPT css-backgrounds tests consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=215533
+        rdar://66660924
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations: Mark some tests as failing.
+
 2020-08-15  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Add provisional expectation to http/tests to allow the bots to run

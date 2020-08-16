@@ -1,3 +1,28 @@
+2020-08-16  Dean Jackson  <dino@apple.com>
+
+        [AS Layout Tests] 6 WPT css-backgrounds tests consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=215533
+        rdar://66660924
+
+        Reviewed by Youenn Fablet.
+
+        A static_cast from float to int, where the float value is larger than MAX_INT, produces
+        different results on x86_64 and arm64e. Unfortunately, fixing this exposed the fact
+        that we were accidentally passing the tests below on Intel.
+
+        This commit addresses the casting issue and marks the tests as now accurately
+        failing. Details on the new bug at: webkit.org/b/206753
+
+        Covered by:
+        imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--height.html
+        imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html
+        imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html
+        imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::containerSize const): Don't static_cast from float to int. Rather, use
+        the explicit IntSize constructor.
+
 2020-08-15  Andres Gonzalez  <andresg_22@apple.com>
 
         Revert unnecessary change for https://bugs.webkit.org/show_bug.cgi?id=215521.
