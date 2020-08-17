@@ -74,11 +74,6 @@ void WebSocketTask::readNextMessage()
             didClose(WebCore::WebSocketChannel::CloseEventCodeAbnormalClosure, emptyString());
             return;
         }
-        if (!message) {
-            // FIXME: this is a workaround and we should probably never get there.
-            didClose(1000, "Unknown error");
-            return;
-        }
         if (message.type == NSURLSessionWebSocketMessageTypeString)
             m_channel.didReceiveText(message.string);
         else

@@ -1,5 +1,18 @@
 2020-08-17  Youenn Fablet  <youenn@apple.com>
 
+        Remove message check in WebSocketTask::readNextMessage
+        https://bugs.webkit.org/show_bug.cgi?id=215561
+
+        Reviewed by Alex Christensen.
+
+        This if check was added as a workaround to cases where both error and message were null.
+        This is no longer the case as per running existing tests with NSURLSession WebSocket code path on BigSur.
+
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::readNextMessage):
+
+2020-08-17  Youenn Fablet  <youenn@apple.com>
+
         Remove Cocoa WebSocketTask::send workaround
         https://bugs.webkit.org/show_bug.cgi?id=215564
 
