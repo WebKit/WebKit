@@ -1,3 +1,14 @@
+2020-08-17  Chris Dumez  <cdumez@apple.com>
+
+        WaveShaperNode should not output silence when it has no input or when input is silence
+        https://bugs.webkit.org/show_bug.cgi?id=215574
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline existing test now that all checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/silent-inputs-expected.txt:
+
 2020-08-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         JSDOMConstructorNotConstructable should be a constructor

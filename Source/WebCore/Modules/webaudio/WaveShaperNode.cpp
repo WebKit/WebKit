@@ -132,6 +132,12 @@ auto WaveShaperNode::oversample() const -> OverSampleType
     return OverSampleType::None;
 }
 
+bool WaveShaperNode::propagatesSilence() const
+{
+    auto curve = const_cast<WaveShaperNode*>(this)->curve();
+    return !curve || !curve->length();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

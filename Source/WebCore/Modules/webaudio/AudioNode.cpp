@@ -423,7 +423,9 @@ void AudioNode::disableOutputsIfNecessary()
         // because they no longer have any input connections. This needs to be handled more generally where AudioNodes have
         // a tailTime attribute. Then the AudioNode only needs to remain "active" for tailTime seconds after there are no
         // longer any active connections.
-        if (nodeType() != NodeTypeConvolver && nodeType() != NodeTypeDelay) {
+        // Also, WaveShaperNode may produce non-silence even when it no longer has any output. For this reason, we cannot
+        // disable it either.
+        if (nodeType() != NodeTypeConvolver && nodeType() != NodeTypeDelay && nodeType() != NodeTypeWaveShaper) {
             m_isDisabled = true;
             for (auto& output : m_outputs)
                 output->disable();

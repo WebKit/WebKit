@@ -51,6 +51,8 @@ public:
 private:    
     explicit WaveShaperNode(BaseAudioContext&);
 
+    bool propagatesSilence() const final;
+
     WaveShaperProcessor* waveShaperProcessor() { return static_cast<WaveShaperProcessor*>(processor()); }
 };
 

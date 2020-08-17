@@ -1,3 +1,26 @@
+2020-08-17  Chris Dumez  <cdumez@apple.com>
+
+        WaveShaperNode should not output silence when it has no input or when input is silence
+        https://bugs.webkit.org/show_bug.cgi?id=215574
+
+        Reviewed by Eric Carlson.
+
+        WaveShaperNode should not output silence when it has no input or when input is silence.
+        It should still apply its curve to the silent input.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::disableOutputsIfNecessary):
+        Do not disable the WaveShaperNode's output when its has no input. The WaveShaperNode
+        may still provide non-silent output when it has no input.
+
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::propagatesSilence const):
+        * Modules/webaudio/WaveShaperNode.h:
+        Override propagatesSilence() to return false when the WaveShaperNode has a curve to apply,
+        so that we ask the node to process the input even when it is silence.
+
 2020-08-17  David Kilzer  <ddkilzer@apple.com>
 
         Clean up DragApplicationFlags after switch to OptionSet<>
