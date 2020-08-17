@@ -124,8 +124,7 @@ void WebSocketTask::sendString(const IPC::DataReference& utf8String, CompletionH
     }
     auto message = adoptNS([[NSURLSessionWebSocketMessage alloc] initWithString:text.get()]);
     [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTFMove(callback)](NSError * _Nullable) mutable {
-        // Workaround rdar://problem/55324926 until it gets fixed.
-        callOnMainRunLoop(WTFMove(callback));
+        callback();
     }).get()];
 }
 
@@ -134,8 +133,7 @@ void WebSocketTask::sendData(const IPC::DataReference& data, CompletionHandler<v
     auto nsData = adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]);
     auto message = adoptNS([[NSURLSessionWebSocketMessage alloc] initWithData:nsData.get()]);
     [m_task sendMessage:message.get() completionHandler:makeBlockPtr([callback = WTFMove(callback)](NSError * _Nullable) mutable {
-        // Workaround rdar://problem/55324926 until it gets fixed.
-        callOnMainRunLoop(WTFMove(callback));
+        callback();
     }).get()];
 }
 

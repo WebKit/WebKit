@@ -1,3 +1,16 @@
+2020-08-17  Youenn Fablet  <youenn@apple.com>
+
+        Remove Cocoa WebSocketTask::send workaround
+        https://bugs.webkit.org/show_bug.cgi?id=215564
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing tests run in Debug.
+
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::sendString):
+        (WebKit::WebSocketTask::sendData):
+
 2020-08-17  David Kilzer  <ddkilzer@apple.com>
 
         Clean up DragApplicationFlags after switch to OptionSet<>
