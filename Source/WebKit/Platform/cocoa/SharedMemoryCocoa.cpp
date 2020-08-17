@@ -113,6 +113,44 @@ bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
     return true;
 }
 
+void SharedMemory::IPCHandle::encode(IPC::Encoder& encoder) const
+{
+    encoder << static_cast<uint64_t>(handle.m_size);
+    encoder << dataSize;
+    encoder << IPC::MachPort(handle.m_port, MACH_MSG_TYPE_MOVE_SEND);
+    handle.m_port = MACH_PORT_NULL;
+}
+
+bool SharedMemory::IPCHandle::decode(IPC::Decoder& decoder, IPCHandle& ipcHandle)
+{
+    ASSERT(!ipcHandle.handle.m_port);
+    ASSERT(!ipcHandle.handle.m_size);
+
+    SharedMemory::Handle handle;
+
+    uint64_t bufferSize;
+    if (!decoder.decode(bufferSize))
+        return false;
+
+    uint64_t dataLength;
+    if (!decoder.decode(dataLength))
+        return false;
+
+    // SharedMemory::Handle::size() is rounded up to the nearest page.
+    if (dataLength > bufferSize)
+        return false;
+
+    IPC::MachPort machPort;
+    if (!decoder.decode(machPort))
+        return false;
+    
+    handle.m_size = bufferSize;
+    handle.m_port = machPort.port();
+    ipcHandle.handle = WTFMove(handle);
+    ipcHandle.dataSize = dataLength;
+    return true;
+}
+
 static inline void* toPointer(mach_vm_address_t address)
 {
     return reinterpret_cast<void*>(static_cast<uintptr_t>(address));

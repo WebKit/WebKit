@@ -62,6 +62,47 @@ bool SharedMemory::Handle::isNull() const
     return !m_handle;
 }
 
+void SharedMemory::IPCHandle::encode(IPC::Encoder& encoder) const
+{
+    encoder << static_cast<uint64_t>(handle.m_size);
+    encoder << dataSize;
+    handle.encodeHandle(encoder, handle.m_handle);
+
+    // Hand off ownership of our HANDLE to the receiving process. It will close it for us.
+    // FIXME: If the receiving process crashes before it receives the memory, the memory will be
+    // leaked. See <http://webkit.org/b/47502>.
+    handle.m_handle = 0;
+}
+
+bool SharedMemory::IPCHandle::decode(IPC::Decoder& decoder, IPCHandle& ipcHandle)
+{
+    ASSERT_ARG(ipcHandle, !ipcHandle.handle.m_handle);
+    ASSERT_ARG(ipcHandle, !ipcHandle.handle.m_size);
+
+    SharedMemory::Handle handle;
+
+    uint64_t bufferSize;
+    if (!decoder.decode(bufferSize))
+        return false;
+
+    uint64_t dataLength;
+    if (!decoder.decode(dataLength))
+        return false;
+    
+    if (dataLength != bufferSize)
+        return false;
+    
+    auto processSpecificHandle = handle.decodeHandle(decoder);
+    if (!processSpecificHandle)
+        return false;
+
+    handle.m_handle = processSpecificHandle.value();
+    handle.m_size = bufferSize;
+    ipcHandle.handle = WTFMove(handle);
+    ipcHandle.dataSize = dataLength;
+    return true;
+}
+
 void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
 {
     encoder << static_cast<uint64_t>(m_size);
