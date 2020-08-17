@@ -1,3 +1,13 @@
+2020-08-17  Saagar Jha  <saagar@saagarjha.com>
+
+        Stop webkitpy from warning about not having a 64-bit git on Apple silicon
+        https://bugs.webkit.org/show_bug.cgi?id=214718
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git._executable_is_64bit): Loosen 64-bit check to succeed on systems that aren't x86_64.
+
 2020-08-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WTF] HashTable<Ref<K>, V>::HashTable(const HashTable& other) can't compile

@@ -86,7 +86,7 @@ class Git(SCM, SVNRepository):
         # git_bits = platform.architecture(executable=git_path, bits='default')[0]
         # git_bits is just 'default', meaning the call failed.
         file_output = self.run(['file', path])
-        return re.search('x86_64', file_output)
+        return re.search('64', file_output)
 
     def _check_git_architecture(self):
         if not self._machine_is_64bit():
