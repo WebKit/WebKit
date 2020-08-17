@@ -381,9 +381,17 @@ function writableStreamDefaultWriterCloseWithErrorPropagation(writer)
 
 function writableStreamDefaultWriterEnsureClosedPromiseRejected(writer, error)
 {
-     const closedPromise = @getByIdDirectPrivate(writer, "closedPromise");
-     closedPromise.@reject.@call(@undefined, error);
-     @putPromiseInternalField(closedPromise.@promise, @promiseFieldFlags, @getPromiseInternalField(closedPromise.@promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+    let closedPromiseCapability = @getByIdDirectPrivate(writer, "closedPromise");
+    let closedPromise = closedPromiseCapability.@promise;
+
+    if ((@getPromiseInternalField(closedPromise, @promiseFieldFlags) & @promiseStateMask) !== @promiseStatePending) {
+        closedPromiseCapability = @newPromiseCapability(@Promise);
+        closedPromise = closedPromiseCapability.@promise;
+        @putByIdDirectPrivate(writer, "closedPromise", closedPromiseCapability);
+    }
+
+    closedPromiseCapability.@reject.@call(@undefined, error);
+    @putPromiseInternalField(closedPromise, @promiseFieldFlags, @getPromiseInternalField(closedPromise, @promiseFieldFlags) | @promiseFlagsIsHandled);
 }
 
 function writableStreamDefaultWriterEnsureReadyPromiseRejected(writer, error)

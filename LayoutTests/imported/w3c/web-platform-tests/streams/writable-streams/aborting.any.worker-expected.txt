@@ -29,17 +29,11 @@ PASS an abort() that happens during a write() should trigger the underlying abor
 PASS if a writer is created for a stream with a pending abort, its ready should be rejected with the abort error 
 PASS writer close() promise should resolve before abort() promise 
 PASS writer.ready should reject on controller error without waiting for underlying write 
-FAIL writer.abort() while there is an in-flight write, and then finish the write with rejection promise_rejects_js: writer.closed must be rejected with an error indicating release function "function () { throw e }" threw object "error1: error1" ("error1") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL writer.abort(), controller.error() while there is an in-flight write, and then finish the write promise_rejects_js: writer.closed must be rejected with an error indicating release function "function () { throw e }" threw object "error1: error1" ("error1") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL writer.abort(), controller.error() while there is an in-flight close, and then finish the close assert_unreached: Should have rejected: writer.closed must be rejected with an error indicating release Reached unreachable code
-FAIL controller.error(), writer.abort() while there is an in-flight write, and then finish the write promise_rejects_js: writer.closed must be rejected with an error indicating release function "function () { throw e }" threw object "error2: error2" ("error2") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL controller.error(), writer.abort() while there is an in-flight close, and then finish the close assert_unreached: Should have rejected: writer.closed must be rejected with an error indicating release Reached unreachable code
+PASS writer.abort() while there is an in-flight write, and then finish the write with rejection 
+PASS writer.abort(), controller.error() while there is an in-flight write, and then finish the write 
+PASS writer.abort(), controller.error() while there is an in-flight close, and then finish the close 
+PASS controller.error(), writer.abort() while there is an in-flight write, and then finish the write 
+PASS controller.error(), writer.abort() while there is an in-flight close, and then finish the close 
 PASS releaseLock() while aborting should reject the original closed promise 
 PASS releaseLock() during delayed async abort() should reject the writer.closed promise 
 PASS sink abort() should not be called until sink start() is done 

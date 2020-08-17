@@ -1,5 +1,15 @@
 2020-08-17  Youenn Fablet  <youenn@apple.com>
 
+        Make sure writableStreamDefaultWriterEnsureClosedPromiseRejected overwrite the closedPromise if needed
+        https://bugs.webkit.org/show_bug.cgi?id=215540
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/streams/writable-streams/aborting.any-expected.txt:
+        * web-platform-tests/streams/writable-streams/aborting.any.worker-expected.txt:
+
+2020-08-17  Youenn Fablet  <youenn@apple.com>
+
         Check WritableStream underlyingSink methods
         https://bugs.webkit.org/show_bug.cgi?id=215539
 
