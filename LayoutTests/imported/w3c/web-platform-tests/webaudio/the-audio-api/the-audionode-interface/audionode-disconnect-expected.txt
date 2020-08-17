@@ -15,52 +15,28 @@ PASS > [disconnect(output)]
 PASS   Channel #0 contains only the constant 4. 
 PASS < [disconnect(output)] All assertions passed. (total 1 assertions) 
 PASS > [disconnect(AudioNode)]  
-FAIL X Channel #0: Expected 2 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	0
-	[1]	0
-	[2]	0
-	[3]	0
-	...and 124 more errors. assert_true: expected true got false
-FAIL < [disconnect(AudioNode)] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS   Channel #0 contains only the constant 2. 
+PASS < [disconnect(AudioNode)] All assertions passed. (total 1 assertions) 
 PASS > [disconnect(AudioNode, output)]  
-FAIL X Channel #0: Expected 3 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	2
-	[1]	2
-	[2]	2
-	[3]	2
-	...and 124 more errors. assert_true: expected true got false
-FAIL < [disconnect(AudioNode, output)] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS   Channel #0 contains only the constant 3. 
+PASS < [disconnect(AudioNode, output)] All assertions passed. (total 1 assertions) 
 PASS > [disconnect(AudioNode, output, input)]  
-FAIL X Channel #0: Expected 1 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	2
-	[1]	2
-	[2]	2
-	[3]	2
-	...and 124 more errors. assert_true: expected true got false
-FAIL X Channel #1: Expected 2 for all values but found 128 unexpected values: 
-	Index	Actual
-	[0]	3
-	[1]	3
-	[2]	3
-	[3]	3
-	...and 124 more errors. assert_true: expected true got false
+PASS   Channel #0 contains only the constant 1. 
+PASS   Channel #1 contains only the constant 2. 
 PASS   Channel #2 contains only the constant 0. 
-FAIL < [disconnect(AudioNode, output, input)] 2 out of 3 assertions were failed. assert_true: expected true got false
+PASS < [disconnect(AudioNode, output, input)] All assertions passed. (total 3 assertions) 
 PASS > [exceptions]  
-PASS   splitter.disconnect(2) threw IndexSizeError: "The index is not in the allowed range.". 
+PASS   splitter.disconnect(2) threw IndexSizeError: "output index is out of bounds". 
 PASS   Disconnecting a connection twice did not throw an exception. 
-FAIL X gain1.disconnect(gain2) did not throw an exception. assert_true: expected true got false
-FAIL X gain1.disconnect(gain3) did not throw an exception. assert_true: expected true got false
-FAIL X splitter.disconnect(gain2, 2) did not throw an exception. assert_true: expected true got false
-FAIL X splitter.disconnect(gain1, 0) did not throw an exception. assert_true: expected true got false
-FAIL X splitter.disconnect(gain3, 0, 0) did not throw an exception. assert_true: expected true got false
-FAIL X splitter.disconnect(merger, 3, 0) did not throw an exception. assert_true: expected true got false
-FAIL < [exceptions] 6 out of 8 assertions were failed. assert_true: expected true got false
+PASS   gain1.disconnect(gain2) threw InvalidAccessError: "The given destination is not connected". 
+PASS   gain1.disconnect(gain3) threw InvalidAccessError: "The given destination is not connected". 
+PASS   splitter.disconnect(gain2, 2) threw IndexSizeError: "output index is out of bounds". 
+PASS   splitter.disconnect(gain1, 0) threw InvalidAccessError: "The given destination is not connected". 
+PASS   splitter.disconnect(gain3, 0, 0) threw InvalidAccessError: "The given destination is not connected". 
+PASS   splitter.disconnect(merger, 3, 0) threw IndexSizeError: "output index is out of bounds". 
+PASS < [exceptions] All assertions passed. (total 8 assertions) 
 PASS > [disabled-outputs]  
 PASS   Disabled outputs handled correctly 
 PASS < [disabled-outputs] All assertions passed. (total 1 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 4 out of 7 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 7 tasks ran successfully. 
 

@@ -53,28 +53,6 @@ void AudioBasicInspectorNode::pullInputs(size_t framesToProcess)
     input(0)->pull(output ? output->bus() : nullptr, framesToProcess);
 }
 
-ExceptionOr<void> AudioBasicInspectorNode::connect(AudioNode& destination, unsigned outputIndex, unsigned inputIndex)
-{
-    ASSERT(isMainThread());
-
-    AudioContext::AutoLocker locker(context());
-
-    auto result = AudioNode::connect(destination, outputIndex, inputIndex);
-    updatePullStatus();
-    return result;
-}
-
-ExceptionOr<void> AudioBasicInspectorNode::disconnect(unsigned outputIndex)
-{
-    ASSERT(isMainThread());
-
-    AudioContext::AutoLocker locker(context());
-
-    auto result = AudioNode::disconnect(outputIndex);
-    updatePullStatus();
-    return result;
-}
-
 void AudioBasicInspectorNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
     ASSERT(context().isAudioThread() && context().isGraphOwner());

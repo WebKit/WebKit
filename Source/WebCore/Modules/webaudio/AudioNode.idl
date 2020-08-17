@@ -35,5 +35,12 @@
 
     [MayThrowException] AudioNode connect([ReturnValue] AudioNode destination, optional unsigned long output = 0, optional unsigned long input = 0);
     [MayThrowException] void connect(AudioParam destination, optional unsigned long output = 0);
-    [MayThrowException] void disconnect(optional unsigned long output = 0);
+
+    void disconnect();
+    [MayThrowException] void disconnect(unsigned long output);
+    [MayThrowException] void disconnect(AudioNode destinationNode);
+    [MayThrowException] void disconnect(AudioNode destinationNode, unsigned long output);
+    [MayThrowException] void disconnect(AudioNode destinationNode, unsigned long output, unsigned long input);
+    [MayThrowException] void disconnect(AudioParam destinationParam);
+    [MayThrowException] void disconnect(AudioParam destinationParam, unsigned long output);
 };

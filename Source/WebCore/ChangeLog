@@ -1,5 +1,31 @@
 2020-08-17  Chris Dumez  <cdumez@apple.com>
 
+        AudioNode.disconnect() does not match the specification
+        https://bugs.webkit.org/show_bug.cgi?id=215578
+
+        Reviewed by Eric Carlson.
+
+        AudioNode.disconnect() did not match the specification. There were a lot of overloads in
+        the specification that we did not support:
+        - https://www.w3.org/TR/webaudio/#dom-audionode-disconnect
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        (WebCore::AudioBasicInspectorNode::connect): Deleted.
+        (WebCore::AudioBasicInspectorNode::disconnect): Deleted.
+        * Modules/webaudio/AudioBasicInspectorNode.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::connect):
+        (WebCore::AudioNode::disconnect):
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNode::updatePullStatus):
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/AudioNodeOutput.h:
+        (WebCore::AudioNodeOutput::isConnectedTo const):
+
+2020-08-17  Chris Dumez  <cdumez@apple.com>
+
         WaveShaperNode should not output silence when it has no input or when input is silence
         https://bugs.webkit.org/show_bug.cgi?id=215574
 

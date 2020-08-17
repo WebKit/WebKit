@@ -133,9 +133,16 @@ public:
     AudioNodeOutput* output(unsigned);
 
     // Called from main thread by corresponding JavaScript methods.
-    virtual ExceptionOr<void> connect(AudioNode&, unsigned outputIndex, unsigned inputIndex);
+    ExceptionOr<void> connect(AudioNode&, unsigned outputIndex, unsigned inputIndex);
     ExceptionOr<void> connect(AudioParam&, unsigned outputIndex);
-    virtual ExceptionOr<void> disconnect(unsigned outputIndex);
+
+    void disconnect();
+    ExceptionOr<void> disconnect(unsigned output);
+    ExceptionOr<void> disconnect(AudioNode& destinationNode);
+    ExceptionOr<void> disconnect(AudioNode& destinationNode, unsigned output);
+    ExceptionOr<void> disconnect(AudioNode& destinationNode, unsigned output, unsigned input);
+    ExceptionOr<void> disconnect(AudioParam& destinationParam);
+    ExceptionOr<void> disconnect(AudioParam& destinationParam, unsigned output);
 
     virtual float sampleRate() const;
 
@@ -210,6 +217,8 @@ protected:
 #endif
 
     void initializeDefaultNodeOptions(unsigned count, ChannelCountMode, ChannelInterpretation);
+
+    virtual void updatePullStatus() { }
 
 private:
     // EventTarget
