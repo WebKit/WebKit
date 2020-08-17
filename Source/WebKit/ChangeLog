@@ -1,3 +1,19 @@
+2020-08-17  Youenn Fablet  <youenn@apple.com>
+
+        Set Sec-WebSocket-Protocol for WebSocket NSURLSession code path
+        https://bugs.webkit.org/show_bug.cgi?id=215456
+        <rdar://problem/66996369>
+
+        Reviewed by Alex Christensen.
+
+        Covered by existing protocol tests with NSURLSession code path enabled.
+        http/tests/websocket/tests/hybi/set-protocol.html, http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html
+        Code change originating from Jiten Mehta.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+        Set Sec-WebSocket-Protocol to support WebSocket protocol negotiation.
+
 2020-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r265725) [GTK][WPE] Several http/tests timeout/failures
