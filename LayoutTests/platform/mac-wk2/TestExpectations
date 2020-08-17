@@ -1258,3 +1258,5 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 
 # rdar://66808228 (REGRESSION (20A2321a-20A2348b): imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html is a flaky failure)
 [ arm64 ] imported/w3c/web-platform-tests/web-animations/interfaces/Animation/onremove.html [ Failure ]
+
+webkit.org/b/215581 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.https.html [ Pass Failure ]
