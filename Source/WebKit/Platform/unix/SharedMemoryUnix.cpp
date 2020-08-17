@@ -75,6 +75,7 @@ bool SharedMemory::Handle::isNull() const
 void SharedMemory::IPCHandle::encode(IPC::Encoder& encoder) const
 {
     encoder << handle.releaseAttachment();
+    encoder << dataSize;
 }
 
 bool SharedMemory::IPCHandle::decode(IPC::Decoder& decoder, IPCHandle& ipcHandle)
@@ -84,7 +85,12 @@ bool SharedMemory::IPCHandle::decode(IPC::Decoder& decoder, IPCHandle& ipcHandle
     if (!decoder.decode(attachment))
         return false;
 
+    uint64_t dataSize;
+    if (!decoder.decode(dataSize))
+        return false;
+
     ipcHandle.handle.adoptAttachment(WTFMove(attachment));
+    ipcHandle.dataSize = dataSize;
     return true;
 }
 
