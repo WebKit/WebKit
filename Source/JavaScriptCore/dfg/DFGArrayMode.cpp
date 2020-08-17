@@ -260,7 +260,7 @@ ArrayMode ArrayMode::refine(
             graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
             graph.registerAndWatchStructureTransition(objectPrototypeStructure);
             if (globalObject->arrayPrototypeChainIsSane())
-                return withSpeculation(Array::SaneChain);
+                return withSpeculation(Array::InBoundsSaneChain);
         }
         return ArrayMode(Array::Generic, action());
     }
@@ -713,14 +713,16 @@ const char* arrayClassToString(Array::Class arrayClass)
 const char* arraySpeculationToString(Array::Speculation speculation)
 {
     switch (speculation) {
-    case Array::SaneChain:
-        return "SaneChain";
+    case Array::InBoundsSaneChain:
+        return "InBoundsSaneChain";
     case Array::InBounds:
         return "InBounds";
     case Array::ToHole:
         return "ToHole";
     case Array::OutOfBounds:
         return "OutOfBounds";
+    case Array::OutOfBoundsSaneChain:
+        return "OutOfBoundsSaneChain";
     default:
         return "Unknown!";
     }

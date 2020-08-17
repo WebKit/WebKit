@@ -1059,20 +1059,24 @@ private:
             switch (arrayMode.type()) {
             case Array::Contiguous:
             case Array::Double:
-                if (arrayMode.isJSArrayWithOriginalStructure() && arrayMode.speculation() == Array::InBounds) {
-                    // Check if SaneChain will work on a per-type basis. Note that:
+            case Array::Int32: {
+                Optional<Array::Speculation> saneChainSpeculation;
+                if (arrayMode.isJSArrayWithOriginalStructure()) {
+                    // Check if InBoundsSaneChain will work on a per-type basis. Note that:
                     //
                     // 1) We don't want double arrays to sometimes return undefined, since
                     // that would require a change to the return type and it would pessimise
                     // things a lot. So, we'd only want to do that if we actually had
                     // evidence that we could read from a hole. That's pretty annoying.
                     // Likely the best way to handle that case is with an equivalent of
-                    // SaneChain for OutOfBounds. For now we just detect when Undefined and
+                    // InBoundsSaneChain for OutOfBounds. For now we just detect when Undefined and
                     // NaN are indistinguishable according to backwards propagation, and just
-                    // use SaneChain in that case. This happens to catch a lot of cases.
+                    // use InBoundsSaneChain in that case. This happens to catch a lot of cases.
                     //
                     // 2) We don't want int32 array loads to have to do a hole check just to
-                    // coerce to Undefined, since that would mean twice the checks.
+                    // coerce to Undefined, since that would mean twice the checks. We want to
+                    // be able to say we always return Int32. FIXME: Maybe this should be profiling
+                    // based?
                     //
                     // This has two implications. First, we have to do more checks than we'd
                     // like. It's unfortunate that we have to do the hole check. Second,
@@ -1080,32 +1084,41 @@ private:
                     // out-of-bounds slow path. We can fix that with:
                     // https://bugs.webkit.org/show_bug.cgi?id=144668
                     
-                    bool canDoSaneChain = false;
                     switch (arrayMode.type()) {
+                    case Array::Int32:
+                        if (is64Bit() && arrayMode.speculation() == Array::OutOfBounds && !m_graph.hasExitSite(node->origin.semantic, NegativeIndex))
+                            saneChainSpeculation = Array::OutOfBoundsSaneChain;
+                        break;
                     case Array::Contiguous:
                         // This is happens to be entirely natural. We already would have
                         // returned any JSValue, and now we'll return Undefined. We still do
                         // the check but it doesn't require taking any kind of slow path.
-                        canDoSaneChain = true;
+                        if (is64Bit() && arrayMode.speculation() == Array::OutOfBounds && !m_graph.hasExitSite(node->origin.semantic, NegativeIndex))
+                            saneChainSpeculation = Array::OutOfBoundsSaneChain;
+                        else if (arrayMode.speculation() == Array::InBounds)
+                            saneChainSpeculation = Array::InBoundsSaneChain;
                         break;
                         
                     case Array::Double:
-                        if (!(node->flags() & NodeBytecodeUsesAsOther)) {
+                        if (!(node->flags() & NodeBytecodeUsesAsOther) && arrayMode.speculation() == Array::InBounds) {
                             // Holes look like NaN already, so if the user doesn't care
                             // about the difference between Undefined and NaN then we can
                             // do this.
-                            canDoSaneChain = true;
-                        }
+                            saneChainSpeculation = Array::InBoundsSaneChain;
+                        } else if (is64Bit() && arrayMode.speculation() == Array::OutOfBounds && !m_graph.hasExitSite(node->origin.semantic, NegativeIndex))
+                            saneChainSpeculation = Array::OutOfBoundsSaneChain;
                         break;
                         
                     default:
                         break;
                     }
-                    
-                    if (canDoSaneChain)
-                        setSaneChainIfPossible(node);
                 }
+
+                if (saneChainSpeculation)
+                    setSaneChainIfPossible(node, *saneChainSpeculation);
+
                 break;
+            }
                 
             case Array::String:
                 if ((node->prediction() & ~SpecString)
@@ -1155,7 +1168,8 @@ private:
             
             switch (arrayMode.type()) {
             case Array::Double:
-                if (!arrayMode.isOutOfBounds())
+                if (!arrayMode.isOutOfBounds()
+                    || (arrayMode.isOutOfBoundsSaneChain() && !(node->flags() & NodeBytecodeUsesAsOther)))
                     node->setResult(NodeResultDouble);
                 break;
                 
@@ -2202,7 +2216,7 @@ private:
             // FIXME: OutOfBounds shouldn't preclude going sane chain because OOB is just false and cannot have effects.
             // See: https://bugs.webkit.org/show_bug.cgi?id=209456
             if (arrayMode.isJSArrayWithOriginalStructure() && arrayMode.speculation() == Array::InBounds)
-                setSaneChainIfPossible(node);
+                setSaneChainIfPossible(node, Array::InBoundsSaneChain);
             break;
         }
         case GetDirectPname: {
@@ -3509,7 +3523,7 @@ private:
             m_insertionSet.insertNode(
                 m_indexInBlock, SpecNone, Check, origin, Edge(array, StringUse));
         } else {
-            // Note that we only need to be using a structure check if we opt for SaneChain, since
+            // Note that we only need to be using a structure check if we opt for InBoundsSaneChain, since
             // that needs to protect against JSArray's __proto__ being changed.
             Structure* structure = arrayMode.originalArrayStructure(m_graph, origin.semantic);
         
@@ -3551,7 +3565,7 @@ private:
             OpInfo(arrayMode.asWord()), Edge(array, KnownCellUse));
     }
 
-    void setSaneChainIfPossible(Node* node)
+    void setSaneChainIfPossible(Node* node, Array::Speculation speculation)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
         Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure(vm());
@@ -3561,7 +3575,7 @@ private:
             && globalObject->arrayPrototypeChainIsSane()) {
             m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
             m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
-            node->setArrayMode(node->arrayMode().withSpeculation(Array::SaneChain));
+            node->setArrayMode(node->arrayMode().withSpeculation(speculation));
             node->clearFlags(NodeMustGenerate);
         }
     }
@@ -3943,7 +3957,7 @@ private:
         // FIXME: OutOfBounds shouldn't preclude going sane chain because OOB is just false and cannot have effects.
         // See: https://bugs.webkit.org/show_bug.cgi?id=209456
         if (arrayMode.isJSArrayWithOriginalStructure() && arrayMode.speculation() == Array::InBounds)
-            setSaneChainIfPossible(node);
+            setSaneChainIfPossible(node, Array::InBoundsSaneChain);
 
         fixEdge<CellUse>(m_graph.varArgChild(node, 0));
         fixEdge<Int32Use>(m_graph.varArgChild(node, 1));

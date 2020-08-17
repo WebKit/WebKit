@@ -550,7 +550,7 @@ private:
                         case Array::Double: {
                             if (!mode.isInBounds())
                                 break;
-                            LocationKind kind = mode.isSaneChain() ? IndexedPropertyDoubleSaneChainLoc : IndexedPropertyDoubleLoc;
+                            LocationKind kind = mode.isInBoundsSaneChain() ? IndexedPropertyDoubleSaneChainLoc : IndexedPropertyDoubleLoc;
                             heap = HeapLocation(kind, IndexedDoubleProperties, base, index);
                             break;
                         }

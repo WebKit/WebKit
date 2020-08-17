@@ -1,3 +1,16 @@
+2020-08-17  Saam Barati  <sbarati@apple.com>
+
+        Have an OOB+SaneChain Array::Speculation
+        https://bugs.webkit.org/show_bug.cgi?id=215487
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/oob-sane-chain-contiguous.js: Added.
+        * microbenchmarks/oob-sane-chain-double-read-undefined.js: Added.
+        * microbenchmarks/oob-sane-chain-double.js: Added.
+        * microbenchmarks/oob-sane-chain-int32.js: Added.
+        * stress/oob-sane-chain-negative-index.js: Added.
+
 2020-08-16  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, reduce iteration count more for non-JIT environments

@@ -382,6 +382,20 @@ public:
                 case NewArrayBuffer:
                     VALIDATE((node), node->vectorLengthHint() >= node->castOperand<JSImmutableButterfly*>()->length());
                     break;
+                case GetByVal:
+                    switch (node->arrayMode().type()) {
+                    case Array::Int32:
+                    case Array::Double:
+                    case Array::Contiguous:
+                        // We rely on being an original array structure because we are SaneChain, and we need 
+                        // Array.prototype to be our prototype, so we can return undefined when we go OOB.
+                        if (node->arrayMode().isOutOfBoundsSaneChain())
+                            VALIDATE((node), node->arrayMode().isJSArrayWithOriginalStructure());
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
                 default:
                     break;
                 }

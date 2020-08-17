@@ -4632,7 +4632,7 @@ private:
             if (m_node->arrayMode().isInBounds()) {
                 LValue result = m_out.load64(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
                 LValue isHole = m_out.isZero64(result);
-                if (m_node->arrayMode().isSaneChain()) {
+                if (m_node->arrayMode().isInBoundsSaneChain()) {
                     DFG_ASSERT(
                         m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous, m_node->arrayMode().type());
                     result = m_out.select(
@@ -4645,7 +4645,7 @@ private:
                 setJSValue(result);
                 return;
             }
-            
+
             LBasicBlock fastCase = m_out.newBlock();
             LBasicBlock slowCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
@@ -4663,7 +4663,12 @@ private:
                 m_out.isZero64(fastResultValue), rarely(slowCase), usually(continuation));
             
             m_out.appendTo(slowCase, continuation);
-            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationGetByValObjectInt, weakPointer(globalObject), base, index));
+            ValueFromBlock slowResult;
+            if (m_node->arrayMode().isOutOfBoundsSaneChain()) {
+                speculate(NegativeIndex, noValue(), nullptr, m_out.lessThan(index, m_out.int32Zero));
+                slowResult = m_out.anchor(m_out.constInt64(JSValue::ValueUndefined));
+            } else
+                slowResult = m_out.anchor(vmCall(Int64, operationGetByValObjectInt, weakPointer(globalObject), base, index));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
@@ -4685,7 +4690,7 @@ private:
                 LValue result = m_out.loadDouble(
                     baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
                 
-                if (!m_node->arrayMode().isSaneChain()) {
+                if (!m_node->arrayMode().isInBoundsSaneChain()) {
                     speculate(
                         LoadFromHole, noValue(), nullptr,
                         m_out.doubleNotEqualOrUnordered(result, result));
@@ -4693,6 +4698,8 @@ private:
                 setDouble(result);
                 break;
             }
+
+            bool resultIsUnboxed = m_node->arrayMode().isOutOfBoundsSaneChain() && !(m_node->flags() & NodeBytecodeUsesAsOther);
 
             LBasicBlock inBounds = m_out.newBlock();
             LBasicBlock boxPath = m_out.newBlock();
@@ -4712,15 +4719,26 @@ private:
                 rarely(slowCase), usually(boxPath));
             
             m_out.appendTo(boxPath, slowCase);
-            ValueFromBlock fastResult = m_out.anchor(boxDouble(doubleValue));
+            ValueFromBlock fastResult = m_out.anchor(resultIsUnboxed ? doubleValue : boxDouble(doubleValue));
             m_out.jump(continuation);
             
             m_out.appendTo(slowCase, continuation);
-            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationGetByValObjectInt, weakPointer(globalObject), base, index));
+            ValueFromBlock slowResult;
+            if (m_node->arrayMode().isOutOfBoundsSaneChain()) {
+                speculate(NegativeIndex, noValue(), nullptr, m_out.lessThan(index, m_out.int32Zero));
+                if (resultIsUnboxed)
+                    slowResult = m_out.anchor(m_out.constDouble(PNaN));
+                else
+                    slowResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined())));
+            } else
+                slowResult = m_out.anchor(vmCall(Int64, operationGetByValObjectInt, weakPointer(globalObject), base, index));
             m_out.jump(continuation);
             
             m_out.appendTo(continuation, lastNext);
-            setJSValue(m_out.phi(Int64, fastResult, slowResult));
+            if (resultIsUnboxed)
+                setDouble(m_out.phi(Double, fastResult, slowResult));
+            else
+                setJSValue(m_out.phi(Int64, fastResult, slowResult));
             return;
         }
 
@@ -8135,7 +8153,7 @@ private:
             if (globalObject->stringPrototypeChainIsSane()) {
                 // FIXME: This could be captured using a Speculation mode that means
                 // "out-of-bounds loads return a trivial value", something like
-                // SaneChainOutOfBounds.
+                // OutOfBoundsSaneChain.
                 // https://bugs.webkit.org/show_bug.cgi?id=144668
                 
                 m_graph.registerAndWatchStructureTransition(stringPrototypeStructure);
@@ -12220,7 +12238,7 @@ private:
             LValue checkHoleResultValue =
                 m_out.notZero64(m_out.load64(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1))));
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
-            if (mode.isSaneChain())
+            if (mode.isInBoundsSaneChain())
                 m_out.jump(continuation);
             else if (!mode.isInBounds())
                 m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
@@ -12259,7 +12277,7 @@ private:
             LValue doubleValue = m_out.loadDouble(baseIndex(heap, storage, index, m_graph.varArgChild(m_node, 1)));
             LValue checkHoleResultValue = m_out.doubleEqual(doubleValue, doubleValue);
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
-            if (mode.isSaneChain())
+            if (mode.isInBoundsSaneChain())
                 m_out.jump(continuation);
             else if (!mode.isInBounds())
                 m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));
@@ -12297,7 +12315,7 @@ private:
             LValue checkHoleResultValue =
                 m_out.notZero64(m_out.load64(baseIndex(m_heaps.ArrayStorage_vector, storage, index, m_graph.varArgChild(m_node, 1))));
             ValueFromBlock checkHoleResult = m_out.anchor(checkHoleResultValue);
-            if (mode.isSaneChain())
+            if (mode.isInBoundsSaneChain())
                 m_out.jump(continuation);
             else if (!mode.isInBounds())
                 m_out.branch(checkHoleResultValue, usually(continuation), rarely(slowCase));

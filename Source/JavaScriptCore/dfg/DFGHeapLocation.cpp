@@ -138,8 +138,16 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("IndexedPropertyDoubleSaneChainLoc");
         return;
 
+    case IndexedPropertyDoubleOrOtherSaneChainLoc:
+        out.print("IndexedPropertyDoubleOrOtherSaneChainLoc");
+        return;
+
     case IndexedPropertyInt32Loc:
         out.print("IndexedPropertyInt32Loc");
+        return;
+
+    case IndexedPropertyInt32OrOtherLoc:
+        out.print("IndexedPropertyInt32OrOtherLoc");
         return;
 
     case IndexedPropertyInt52Loc:

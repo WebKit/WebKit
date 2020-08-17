@@ -89,10 +89,11 @@ enum Class : uint8_t {
 };
 
 enum Speculation : uint8_t {
-    SaneChain, // In bounds and the array prototype chain is still intact, i.e. loading a hole doesn't require special treatment.
+    InBoundsSaneChain, // In bounds and the array prototype chain is still intact, i.e. loading a hole doesn't require special treatment.
     
     InBounds, // In bounds and not loading a hole.
     ToHole, // Potentially storing to a hole.
+    OutOfBoundsSaneChain, // Out-of-bounds access, but sane chain, so there are no arbitrary effects. E.g, loading out of bounds doesn't require traversing the prototype chain if we're an original array structure.
     OutOfBounds // Out-of-bounds access and anything can happen.
 };
 enum Conversion : uint8_t {
@@ -276,15 +277,35 @@ public:
         return arrayClass() == Array::OriginalArray || arrayClass() == Array::OriginalCopyOnWriteArray;
     }
     
-    bool isSaneChain() const
+    bool isInBoundsSaneChain() const
     {
-        return speculation() == Array::SaneChain;
+        return speculation() == Array::InBoundsSaneChain;
+    }
+
+    bool isOutOfBoundsSaneChain() const
+    {
+        return speculation() == Array::OutOfBoundsSaneChain;
+    }
+
+    bool isAnySaneChain() const
+    {
+        return isInBoundsSaneChain() || isOutOfBoundsSaneChain();
+    }
+    
+    bool isOutOfBounds() const
+    {
+        return speculation() == Array::OutOfBounds || speculation() == Array::OutOfBoundsSaneChain;
+    }
+
+    bool isEffectfulOutOfBounds() const
+    {
+        return speculation() == Array::OutOfBounds;
     }
     
     bool isInBounds() const
     {
         switch (speculation()) {
-        case Array::SaneChain:
+        case Array::InBoundsSaneChain:
         case Array::InBounds:
             return true;
         default:
@@ -295,11 +316,6 @@ public:
     bool mayStoreToHole() const
     {
         return !isInBounds();
-    }
-    
-    bool isOutOfBounds() const
-    {
-        return speculation() == Array::OutOfBounds;
     }
     
     bool isSlowPut() const

@@ -2408,7 +2408,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
 
         if (globalObject->stringPrototypeChainIsSane()) {
             // FIXME: This could be captured using a Speculation mode that means "out-of-bounds
-            // loads return a trivial value". Something like SaneChainOutOfBounds. This should
+            // loads return a trivial value". Something like OutOfBoundsSaneChain. This should
             // speculate that we don't take negative out-of-bounds, or better yet, it should rely
             // on a stringPrototypeChainIsSane() guaranteeing that the prototypes have no negative
             // indexed properties either.
@@ -14148,7 +14148,7 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
         m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), scratchGPR);
 #endif
 
-        if (mode.isSaneChain()) {
+        if (mode.isInBoundsSaneChain()) {
             m_jit.isNotEmpty(scratchGPR, resultGPR);
             break;
         }
@@ -14177,7 +14177,7 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
 
         m_jit.loadDouble(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), scratchFPR);
 
-        if (mode.isSaneChain()) {
+        if (mode.isInBoundsSaneChain()) {
             m_jit.compareDouble(MacroAssembler::DoubleEqualAndOrdered, scratchFPR, scratchFPR, resultGPR);
             break;
         }
@@ -14210,13 +14210,13 @@ void SpeculativeJIT::compileHasIndexedProperty(Node* node)
         m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, ArrayStorage::vectorOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), scratchGPR);
 #endif
 
-        if (mode.isSaneChain()) {
+        if (mode.isInBoundsSaneChain()) {
             m_jit.isNotEmpty(scratchGPR, resultGPR);
             break;
         }
 
         MacroAssembler::Jump isHole = m_jit.branchIfEmpty(scratchGPR);
-        if (!mode.isInBounds() || mode.isSaneChain())
+        if (!mode.isInBounds() || mode.isInBoundsSaneChain())
             slowCases.append(isHole);
         else
             speculationCheck(LoadFromHole, JSValueRegs(), nullptr, isHole);

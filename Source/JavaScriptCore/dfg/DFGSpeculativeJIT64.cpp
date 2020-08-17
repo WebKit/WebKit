@@ -2736,7 +2736,7 @@ void SpeculativeJIT::compile(Node* node)
                 GPRTemporary result(this);
 
                 m_jit.load64(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), result.gpr());
-                if (node->arrayMode().isSaneChain()) {
+                if (node->arrayMode().isInBoundsSaneChain()) {
                     ASSERT(node->arrayMode().type() == Array::Contiguous);
                     JITCompiler::Jump notHole = m_jit.branchIfNotEmpty(result.gpr());
                     m_jit.move(TrustedImm64(JSValue::encode(jsUndefined())), result.gpr());
@@ -2769,12 +2769,21 @@ void SpeculativeJIT::compile(Node* node)
             slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
 
             m_jit.load64(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), resultReg);
-            slowCases.append(m_jit.branchIfEmpty(resultReg));
+
+            if (node->arrayMode().isOutOfBoundsSaneChain()) {
+                auto done = m_jit.branchIfNotEmpty(resultReg);
+                slowCases.link(&m_jit);
+                speculationCheck(NegativeIndex, JSValueRegs(), nullptr, m_jit.branch32(MacroAssembler::LessThan, propertyReg, CCallHelpers::TrustedImm32(0)));
+                m_jit.move(CCallHelpers::TrustedImm64(JSValue::encode(jsUndefined())), resultReg);
+                done.link(&m_jit);
+            } else {
+                slowCases.append(m_jit.branchIfEmpty(resultReg));
+                addSlowPathGenerator(
+                    slowPathCall(
+                        slowCases, this, operationGetByValObjectInt,
+                        result.gpr(), TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg));
+            }
             
-            addSlowPathGenerator(
-                slowPathCall(
-                    slowCases, this, operationGetByValObjectInt,
-                    result.gpr(), TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg));
             
             jsValueResult(resultReg, node);
             break;
@@ -2797,11 +2806,13 @@ void SpeculativeJIT::compile(Node* node)
                 speculationCheck(OutOfBounds, JSValueRegs(), nullptr, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
 
                 m_jit.loadDouble(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), resultReg);
-                if (!node->arrayMode().isSaneChain())
+                if (!node->arrayMode().isInBoundsSaneChain())
                     speculationCheck(LoadFromHole, JSValueRegs(), nullptr, m_jit.branchIfNaN(resultReg));
                 doubleResult(resultReg, node);
                 break;
             }
+
+            bool resultIsUnboxed = node->arrayMode().isOutOfBoundsSaneChain() && !(node->flags() & NodeBytecodeUsesAsOther);
 
             SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
             SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
@@ -2814,9 +2825,13 @@ void SpeculativeJIT::compile(Node* node)
             if (!m_compileOkay)
                 return;
             
-            GPRTemporary result(this);
+            Optional<GPRTemporary> result;
+            Optional<GPRReg> resultReg;
+            if (!resultIsUnboxed) {
+                result.emplace(this);
+                resultReg = result->gpr();
+            }
             FPRTemporary temp(this);
-            GPRReg resultReg = result.gpr();
             FPRReg tempReg = temp.fpr();
             
             MacroAssembler::JumpList slowCases;
@@ -2824,15 +2839,35 @@ void SpeculativeJIT::compile(Node* node)
             slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(storageReg, Butterfly::offsetOfPublicLength())));
 
             m_jit.loadDouble(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), tempReg);
-            slowCases.append(m_jit.branchIfNaN(tempReg));
-            boxDouble(tempReg, resultReg);
-            
-            addSlowPathGenerator(
-                slowPathCall(
-                    slowCases, this, operationGetByValObjectInt,
-                    result.gpr(), TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg));
-            
-            jsValueResult(resultReg, node);
+            if (node->arrayMode().isOutOfBoundsSaneChain()) {
+                if (resultIsUnboxed) {
+                    auto done = m_jit.jump();
+                    slowCases.link(&m_jit);
+                    speculationCheck(NegativeIndex, JSValueRegs(), nullptr, m_jit.branch32(MacroAssembler::LessThan, propertyReg, CCallHelpers::TrustedImm32(0)));
+                    static const double NaN = PNaN;
+                    m_jit.loadDouble(TrustedImmPtr(&NaN), tempReg);
+                    done.link(&m_jit);
+                    doubleResult(tempReg, node);
+                } else {
+                    slowCases.append(m_jit.branchIfNaN(tempReg));
+                    boxDouble(tempReg, *resultReg);
+                    auto done = m_jit.jump();
+                    slowCases.link(&m_jit);
+                    speculationCheck(NegativeIndex, JSValueRegs(), nullptr, m_jit.branch32(MacroAssembler::LessThan, propertyReg, CCallHelpers::TrustedImm32(0)));
+                    m_jit.move(CCallHelpers::TrustedImm64(JSValue::encode(jsUndefined())), *resultReg);
+                    done.link(&m_jit);
+                    jsValueResult(*resultReg, node);
+                }
+            } else {
+                slowCases.append(m_jit.branchIfNaN(tempReg));
+                boxDouble(tempReg, *resultReg);
+                addSlowPathGenerator(
+                    slowPathCall(
+                        slowCases, this, operationGetByValObjectInt,
+                        *resultReg, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseReg, propertyReg));
+                jsValueResult(*resultReg, node);
+            }
+
             break;
         }
 

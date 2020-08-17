@@ -39,6 +39,7 @@ enum ExitKind : uint8_t {
     BadTypeInfoFlags, // We exited because we made an incorrect assumption about what TypeInfo flags we would see.
     Overflow, // We exited because of overflow.
     NegativeZero, // We exited because we encountered negative zero.
+    NegativeIndex, // We exited because we encountered a negative index in a place we didn't want to see it.
     Int52Overflow, // We exited because of an Int52 overflow.
     StoreToHole, // We had a store to a hole.
     LoadFromHole, // We had a load from a hole.

@@ -1,3 +1,57 @@
+2020-08-17  Saam Barati  <sbarati@apple.com>
+
+        Have an OOB+SaneChain Array::Speculation
+        https://bugs.webkit.org/show_bug.cgi?id=215487
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds a new ArrayMode speculation in the DFG/FTL called OutOfBoundsSaneChain.
+        It allows us to do fast things when we go OOB, like simply return undefined.
+        This is because we install watchpoints on the prototype chain to ensure they
+        have no indexed properties. This patch implements OutOfBoundsSaneChain on
+        GetByVal over Int32/Double/Contiguous original JS arrays. We can extend it in
+        the future to non original JS arrays if we prove their prototype is Array.prototype. 
+        To implement this properly, we also need to ensure that the index isn't negative,
+        as Array.prototype/Object.prototype may have negative indexed accessors. We
+        do this via speculation, and if we ever recompile, and see an exit because of
+        this, we will stop speculating OutOfBoundsSaneChain.
+        
+        This is about 20% faster on crypto-md5-SP. And ~3-4x faster on the
+        microbenchmarks I created.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine const):
+        (JSC::DFG::arraySpeculationToString):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::isInBoundsSaneChain const):
+        (JSC::DFG::ArrayMode::isOutOfBoundsSaneChain const):
+        (JSC::DFG::ArrayMode::isOutOfBounds const):
+        (JSC::DFG::ArrayMode::isEffectfulOutOfBounds const):
+        (JSC::DFG::ArrayMode::isInBounds const):
+        (JSC::DFG::ArrayMode::isSaneChain const): Deleted.
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        (JSC::DFG::FixupPhase::setSaneChainIfPossible):
+        (JSC::DFG::FixupPhase::convertToHasIndexedProperty):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileHasIndexedProperty):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+
 2020-08-16  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove OpIsObjectOrNull from ClassExprNode::emitBytecode()
