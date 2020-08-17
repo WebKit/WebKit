@@ -20,4 +20,29 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import sys
+
+
+def _maybe_add_webkitcorepy_path():
+    # Hopefully we're beside webkitcorepy, otherwise webkitcorepy will need to be installed.
+    libraries_path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+    webkitcorepy_path = os.path.join(libraries_path, 'webkitcorepy')
+    if os.path.isdir(webkitcorepy_path) and os.path.isdir(os.path.join(webkitcorepy_path, 'webkitcorepy')) and webkitcorepy_path not in sys.path:
+        sys.path.insert(0, webkitcorepy_path)
+
+
+_maybe_add_webkitcorepy_path()
+
+try:
+    from webkitcorepy.version import Version
+except ImportError:
+    raise ImportError(
+        "'webkitcorepy' could not be found on your Python path.\n" +
+        "You are not running from a WebKit checkout.\n" +
+        "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
+    )
+
+version = Version(1, 0, 0)
+
 name = 'resultsdbpy'

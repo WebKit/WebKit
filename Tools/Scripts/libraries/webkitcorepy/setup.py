@@ -52,6 +52,7 @@ setup(
     install_requires=[
         'mock',
         'requests',
+        'six',
     ],
     include_package_data=True,
     zip_safe=False,

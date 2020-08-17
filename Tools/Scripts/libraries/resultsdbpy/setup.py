@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from resultsdbpy import version
 from setuptools import setup
 
 
@@ -30,7 +31,7 @@ def readme():
 
 setup(
     name='resultsdbpy',
-    version='0.9.0',
+    version=str(version),
     description='Library for visualizing, processing and storing test results.',
     long_description=readme(),
     classifiers=[
@@ -57,12 +58,10 @@ setup(
         'Flask-Cors',
         'gunicorn',
         'lupa',
-        'mock',
         'redis',
         'xmltodict',
-        'requests',
         'selenium',
-        'six',
+        'webkitcorepy',
     ],
     include_package_data=True,
     zip_safe=False,
