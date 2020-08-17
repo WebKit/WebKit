@@ -87,6 +87,12 @@ window.UIHelper = class UIHelper {
         return new Promise(requestAnimationFrame);
     }
 
+    static async renderingUpdate()
+    {
+        await UIHelper.animationFrame();
+        await UIHelper.delayFor(0);
+    }
+
     static async waitForCondition(conditionFunc)
     {
         while (!conditionFunc()) {

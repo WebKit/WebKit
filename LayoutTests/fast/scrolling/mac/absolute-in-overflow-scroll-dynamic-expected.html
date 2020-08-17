@@ -37,6 +37,7 @@
     <script>
         async function scrollOverContent()
         {
+            await UIHelper.renderingUpdate();
             await UIHelper.mouseWheelScrollAt(50, 50);
         }
 

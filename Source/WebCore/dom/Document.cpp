@@ -4287,6 +4287,15 @@ void Document::elementInActiveChainDidDetach(Element& element)
         m_activeElement = m_activeElement->parentElement();
 }
 
+void Document::updateEventRegions()
+{
+    // FIXME: Move updateTouchEventRegions() here, but it should only happen for the top document.
+    if (auto* view = renderView()) {
+        if (view->usesCompositing())
+            view->compositor().updateEventRegions();
+    }
+}
+
 void Document::invalidateEventRegionsForFrame(HTMLFrameOwnerElement& element)
 {
     auto* renderer = element.renderer();

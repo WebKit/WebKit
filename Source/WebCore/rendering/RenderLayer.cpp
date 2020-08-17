@@ -7049,7 +7049,7 @@ bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
 
     LOG_WITH_STREAM(EventRegions, stream << this << " invalidateEventRegion for reason " << reason << " invalidating in compositing layer " << compositingLayer);
 
-    compositingLayer->setNeedsCompositingConfigurationUpdate();
+    compositingLayer->backing()->setNeedsEventRegionUpdate();
 
     if (reason == EventRegionInvalidationReason::NonCompositedFrame) {
         auto& view = renderer().view();

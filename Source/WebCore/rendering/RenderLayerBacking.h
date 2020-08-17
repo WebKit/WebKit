@@ -204,6 +204,9 @@ public:
 #if ENABLE(ASYNC_SCROLLING)
     bool maintainsEventRegion() const;
     void updateEventRegion();
+    
+    bool needsEventRegionUpdate() const { return m_needsEventRegionUpdate; }
+    void setNeedsEventRegionUpdate(bool needsUpdate = true) { m_needsEventRegionUpdate = needsUpdate; }
 #endif
 
     void updateAfterWidgetResize();
@@ -434,6 +437,9 @@ private:
     bool m_requiresBackgroundLayer { false };
     bool m_hasSubpixelRounding { false };
     bool m_paintsSubpixelAntialiasedText { false }; // This is for logging only.
+#if ENABLE(ASYNC_SCROLLING)
+    bool m_needsEventRegionUpdate { true };
+#endif
 };
 
 enum CanvasCompositingStrategy {

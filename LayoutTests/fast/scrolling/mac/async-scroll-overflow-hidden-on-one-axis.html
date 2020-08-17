@@ -49,7 +49,7 @@
             verticalScroller.scrollTop = 0;
             
             // Wait for scroll events to fire.
-            await UIHelper.animationFrame();
+            await UIHelper.renderingUpdate();
 
             horizontalScrollerEventCount = 0;
             verticalScrollerEventCount = 0;

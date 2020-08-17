@@ -47,7 +47,7 @@
             scroller.scrollTop = 0;
             
             // Wait for scroll events to fire.
-            await UIHelper.animationFrame();
+            await UIHelper.renderingUpdate();
 
             overflowScrollEventCount = 0;
             windowScrollEventCount = 0;

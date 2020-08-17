@@ -1130,6 +1130,8 @@ public:
 
     WEBCORE_EXPORT String displayStringModifiedByEncoding(const String&) const;
 
+    void updateEventRegions();
+
     void invalidateRenderingDependentRegions();
     void invalidateEventRegionsForFrame(HTMLFrameOwnerElement&);
 
