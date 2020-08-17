@@ -1,3 +1,13 @@
+2020-08-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WTF] HashTable<Ref<K>, V>::HashTable(const HashTable& other) can't compile
+        https://bugs.webkit.org/show_bug.cgi?id=215550
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-08-17  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy]: Depend on webkitcorepy

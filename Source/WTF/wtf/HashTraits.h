@@ -208,8 +208,6 @@ template<typename P> struct RefHashTraits : SimpleClassHashTraits<Ref<P>> {
     static constexpr bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(const Ref<P>& value) { return value.isHashTableEmptyValue(); }
 
-    static void assignToEmpty(Ref<P>& emptyValue, Ref<P>&& newValue) { ASSERT(isEmptyValue(emptyValue)); emptyValue.assignToHashTableEmptyValue(WTFMove(newValue)); }
-
     typedef P* PeekType;
     static PeekType peek(const Ref<P>& value) { return const_cast<PeekType>(value.ptrAllowingHashTableEmptyValue()); }
     static PeekType peek(P* value) { return value; }

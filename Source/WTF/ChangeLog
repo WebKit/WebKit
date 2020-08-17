@@ -1,3 +1,20 @@
+2020-08-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WTF] HashTable<Ref<K>, V>::HashTable(const HashTable& other) can't compile
+        https://bugs.webkit.org/show_bug.cgi?id=215550
+
+        Reviewed by Darin Adler.
+
+        Even though the copy constructor takes a const HashTable
+        reference, RefHashTraits::assignToEmpty takes non-const Ref<P>. It
+        seems that RefHashTraits::assignToEmpty and
+        Ref::assignToHashTableEmptyValue are unnecessary. Just remove them.
+
+        * wtf/HashTraits.h:
+        (WTF::RefHashTraits::assignToEmpty): Deleted.
+        * wtf/Ref.h:
+        (WTF::Ref::assignToHashTableEmptyValue): Deleted.
+
 2020-08-17  Youenn Fablet  <youenn@apple.com>
 
         Bump HAVE_NSURLSESSION_WEBSOCKET requirement to BigSur for MacOS

@@ -112,17 +112,6 @@ public:
     const T* ptrAllowingHashTableEmptyValue() const { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
     T* ptrAllowingHashTableEmptyValue() { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
 
-    void assignToHashTableEmptyValue(Ref&& reference)
-    {
-#if ASAN_ENABLED
-        if (__asan_address_is_poisoned(this))
-            __asan_unpoison_memory_region(this, sizeof(*this));
-#endif
-        ASSERT(m_ptr == hashTableEmptyValue());
-        m_ptr = &reference.leakRef();
-        ASSERT(m_ptr);
-    }
-
     T* operator->() const { ASSERT(m_ptr); return PtrTraits::unwrap(m_ptr); }
     T* ptr() const RETURNS_NONNULL { ASSERT(m_ptr); return PtrTraits::unwrap(m_ptr); }
     T& get() const { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
