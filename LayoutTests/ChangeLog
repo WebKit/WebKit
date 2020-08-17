@@ -1,3 +1,28 @@
+2020-08-17  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        [ macOS iOS ] svg/animations/smil-leak-element-instances-noBaseValRef.svg is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215353
+
+        Reviewed by Jon Lee.
+
+        GCController.collect() is flaky. Calling this function from JS does not
+        guarantee the memory of all the deallocated objects is garbage-collected.
+        Multiple calls to GCController.collect() may be invoked to overcome this
+        problem. Putting idle time before requesting the numberOfLiveNodes()
+        might be needed as well.
+
+        The test adds 100 <use> elements. Each of them references a <rect> element
+        and adds an <animate> element to animate the 'x' property. This is a big
+        number of objects to be allocated, deallocated and garbage collected. To
+        overcome the flakiness of GCController.collect(), three <use> elements
+        can be added instead. This number of objects should be enough to test the
+        SVG animated properties do not leak. And at the same time the test won't
+        exercise the flakiness of GCController.collect().
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * svg/animations/smil-leak-element-instances-noBaseValRef.svg:
+
 2020-08-17  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS ] media/modern-media-controls/volume-down-support/volume-down-support.html is a flaky timeout

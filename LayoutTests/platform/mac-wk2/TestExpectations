@@ -1095,8 +1095,6 @@ webkit.org/b/215245 [ Release ] imported/w3c/web-platform-tests/content-security
 
 webkit.org/b/215304 fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-auto-fill-strong-password-button.html [ Pass Failure ]
 
-webkit.org/b/245353 [ Release ] svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
-
 webkit.org/b/215465 [ Debug ] http/tests/security/no-indexeddb-from-sandbox.html [ Crash ]
 
 webkit.org/b/189672 [ Mojave Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-3d-rgb8-rgb-unsigned_byte.html [ Skip ]

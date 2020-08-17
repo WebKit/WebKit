@@ -37,7 +37,7 @@ function startTest() {
     GCController.collect();
     originalLiveElements = window.internals.numberOfLiveNodes();
 
-    for (var i = 0; i < 100; i++)
+    for (var i = 0; i < 3; i++)
         g.appendChild(createAnimatedRectInstance());
 
     setTimeout(continueTest, 0);
