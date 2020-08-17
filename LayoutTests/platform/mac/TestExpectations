@@ -1266,8 +1266,6 @@ webkit.org/b/170831 media/track/track-cue-rendering-rtl.html [ Pass Timeout ]
 
 webkit.org/b/165553 media/media-controls-timeline-updates-when-hovered.html [ Pass Failure ]
 
-webkit.org/b/171465 media/track/track-in-band-style.html [ Pass Timeout ]
-
 webkit.org/b/171760 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
 
 # These tests are iOS-specific
@@ -2213,4 +2211,6 @@ webkit.org/b/215506 imported/w3c/web-platform-tests/html/webappapis/scripting/pr
 webkit.org/b/215515 imported/w3c/web-platform-tests/user-timing/measure_navigation_timing.html [ Pass Failure ]
 
 webkit.org/b/215576 media/modern-media-controls/volume-up-support/volume-up-support.html [ Pass Timeout ]
+
+webkit.org/b/215583 media/track/track-in-band-style.html [ Pass Failure Timeout ] 
 
