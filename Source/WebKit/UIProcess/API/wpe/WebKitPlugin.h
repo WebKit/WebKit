@@ -55,19 +55,19 @@ struct _WebKitPluginClass {
     void (*_webkit_reserved3) (void);
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_plugin_get_type           (void);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_plugin_get_name           (WebKitPlugin *plugin);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_plugin_get_description    (WebKitPlugin *plugin);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_plugin_get_path           (WebKitPlugin *plugin);
 
-WEBKIT_API GList *
+WEBKIT_DEPRECATED GList *
 webkit_plugin_get_mime_info_list (WebKitPlugin *plugin);
 
 G_END_DECLS

@@ -228,17 +228,17 @@ webkit_web_context_get_favicon_database_directory   (WebKitWebContext           
 WEBKIT_API WebKitSecurityManager *
 webkit_web_context_get_security_manager             (WebKitWebContext              *context);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_web_context_set_additional_plugins_directory (WebKitWebContext              *context,
                                                      const gchar                   *directory);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_web_context_get_plugins                      (WebKitWebContext              *context,
                                                      GCancellable                  *cancellable,
                                                      GAsyncReadyCallback            callback,
                                                      gpointer                       user_data);
 
-WEBKIT_API GList *
+WEBKIT_DEPRECATED GList *
 webkit_web_context_get_plugins_finish               (WebKitWebContext              *context,
                                                      GAsyncResult                  *result,
                                                      GError                       **error);

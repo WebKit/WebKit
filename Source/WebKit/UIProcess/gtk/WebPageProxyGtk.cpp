@@ -41,10 +41,6 @@
 #include <WebCore/UserAgent.h>
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(X11) && ENABLE(NETSCAPE_PLUGIN_API)
-#include <gtk/gtkx.h>
-#endif
-
 namespace WebKit {
 
 void WebPageProxy::platformInitialize()
@@ -95,62 +91,6 @@ void WebPageProxy::updateEditorState(const EditorState& editorState)
         WebPasteboardProxy::singleton().setPrimarySelectionOwner(focusedFrame());
     pageClient().selectionDidChange();
 }
-
-#if PLATFORM(X11) && ENABLE(NETSCAPE_PLUGIN_API)
-typedef HashMap<uint64_t, GtkWidget* > PluginWindowMap;
-static PluginWindowMap& pluginWindowMap()
-{
-    static NeverDestroyed<PluginWindowMap> map;
-    return map;
-}
-
-static gboolean pluginContainerPlugRemoved(GtkSocket* socket)
-{
-    uint64_t windowID = static_cast<uint64_t>(gtk_socket_get_id(socket));
-    pluginWindowMap().remove(windowID);
-    return FALSE;
-}
-
-void WebPageProxy::createPluginContainer(CompletionHandler<void(uint64_t)>&& completionHandler)
-{
-    RELEASE_ASSERT(WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11);
-    GtkWidget* socket = gtk_socket_new();
-    g_signal_connect(socket, "plug-removed", G_CALLBACK(pluginContainerPlugRemoved), 0);
-    gtk_container_add(GTK_CONTAINER(viewWidget()), socket);
-
-    uint64_t windowID = static_cast<uint64_t>(gtk_socket_get_id(GTK_SOCKET(socket)));
-    pluginWindowMap().set(windowID, socket);
-    completionHandler(windowID);
-}
-
-void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID)
-{
-    GtkWidget* plugin = pluginWindowMap().get(windowID);
-    if (!plugin)
-        return;
-
-    if (gtk_widget_get_realized(plugin)) {
-        GdkRectangle clip = clipRect;
-        cairo_region_t* clipRegion = cairo_region_create_rectangle(&clip);
-        gdk_window_shape_combine_region(gtk_widget_get_window(plugin), clipRegion, 0, 0);
-        cairo_region_destroy(clipRegion);
-    }
-
-    webkitWebViewBaseChildMoveResize(WEBKIT_WEB_VIEW_BASE(viewWidget()), plugin, frameRect);
-}
-
-void WebPageProxy::windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID)
-{
-    GtkWidget* plugin = pluginWindowMap().get(windowID);
-    if (!plugin)
-        return;
-
-    if (isVisible)
-        gtk_widget_show(plugin);
-    else
-        gtk_widget_hide(plugin);
-}
-#endif // PLATFORM(X11) && ENABLE(NETSCAPE_PLUGIN_API)
 
 void WebPageProxy::setInputMethodState(Optional<InputMethodState>&& state)
 {

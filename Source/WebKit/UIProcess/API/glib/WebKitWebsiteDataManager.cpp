@@ -925,10 +925,6 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue.add(WebsiteDataType::IndexedDBDatabases);
     if (types & WEBKIT_WEBSITE_DATA_HSTS_CACHE)
         returnValue.add(WebsiteDataType::HSTSCache);
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (types & WEBKIT_WEBSITE_DATA_PLUGIN_DATA)
-        returnValue.add(WebsiteDataType::PlugInData);
-#endif
     if (types & WEBKIT_WEBSITE_DATA_COOKIES)
         returnValue.add(WebsiteDataType::Cookies);
     if (types & WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT)

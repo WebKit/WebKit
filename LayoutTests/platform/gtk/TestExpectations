@@ -345,8 +345,6 @@ webkit.org/b/169918 compositing/overflow/clipping-behaviour-change-is-not-propag
 webkit.org/b/169918 compositing/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/scrolling-without-painting.html [ Failure ]
 webkit.org/b/169918 compositing/overflow/updating-scrolling-content.html [ Failure ]
-webkit.org/b/169918 compositing/plugins/no-backing-store.html [ Failure ]
-webkit.org/b/169918 compositing/plugins/small-to-large-composited-plugin.html [ Failure ]
 webkit.org/b/169918 compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
 webkit.org/b/169918 compositing/repaint/positioned-movement.html [ Failure ]
 webkit.org/b/169918 compositing/repaint/resize-repaint.html [ Failure ]
@@ -401,7 +399,6 @@ webkit.org/b/169918 compositing/visibility/visibility-composited-transforms.html
 webkit.org/b/169918 compositing/visibility/visibility-composited.html [ Missing Failure ]
 webkit.org/b/169918 compositing/webgl/webgl-no-alpha.html [ Missing Failure ]
 webkit.org/b/169918 compositing/webgl/webgl-reflection.html [ Missing Failure ]
-webkit.org/b/169918 compositing/plugins/composited-plugin.html [ Missing Failure ]
 webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Crash ]
 webkit.org/b/169918 compositing/video/video-background-color.html [ Crash Pass ]
 webkit.org/b/214868 compositing/clipping/border-radius-stacking-context-clip.html [ ImageOnlyFailure ]
@@ -568,9 +565,6 @@ webkit.org/b/131546 media/track/track-in-band-mode.html [ Skip ]
 # DataCue.value not enabled
 Bug(GTK) http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 
-# Snapshotted plugins not enabled
-webkit.org/b/98696 plugins/snapshotting [ Skip ]
-
 # Missing WebSpeech implementation
 webkit.org/b/136224 fast/speechsynthesis [ Skip ]
 
@@ -609,9 +603,6 @@ editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
 editing/inserting/smart-link-when-caret-is-moved-before-URL.html [ Skip ]
 editing/inserting/smart-quote-with-all-configurations.html [ Skip ]
 fast/events/input-event-insert-link.html [ Skip ]
-
-# QuickTime plug-in not relevant to this port
-Bug(GTK) plugins/quicktime-plugin-replacement.html [ Skip ]
 
 # ENABLE(CSS_SCROLL_SNAP) is disabled.
 css3/scroll-snap [ Skip ]
@@ -856,16 +847,6 @@ webkit.org/b/160120 editing/deleting/delete-emoji-9.html [ Skip ]
 webkit.org/b/160120 fast/text/emoji-single-parent-family.html [ Skip ]
 webkit.org/b/160120 editing/caret/emoji.html [ Skip ]
 
-# No support for QuickTime/YouTube plugin replacement.
-security/contentSecurityPolicy/object-src-none-blocks-quicktime-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/object-src-none-blocks-youtube-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement-without-mime-type.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-quicktime-plugin-replacement.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement-without-mime-type.html [ Skip ]
-security/contentSecurityPolicy/plugins-types-blocks-youtube-plugin-replacement.html [ Skip ]
-
 # No support for descriptive audio tracks in HLS file
 http/tests/media/hls/hls-accessiblity-describes-video-menu.html [ Skip ]
 http/tests/media/hls/hls-accessiblity-describes-video.html [ Skip ]
@@ -898,9 +879,6 @@ fast/images/displaced-non-cached-pdf.html [ Skip ]
 fast/images/image-map-outline-with-scale-transform.html [ ImageOnlyFailure ]
 
 webkit.org/b/168433 http/tests/xmlhttprequest/redirections-and-user-headers.html [ Failure ]
-
-# WebKit2 plug-ins: No support for getting the form value.
-plugins/form-value.html [ Skip ]
 
 # Require FILE_REPLACEMENT.
 fast/files/filereader-zip-bundle-using-open-panel.html [ Skip ]
@@ -970,9 +948,6 @@ webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html
 
 # Requires support for testing text replacement
 editing/spelling/text-replacement-after-typing-to-word.html [ Skip ]
-
-# Depends on mac-specific code in TestController.
-webkit.org/b/187550 http/tests/plugins/plugin-allow-then-reload.html [ Failure ]
 
 # MediaRecorder is not currently implemented
 http/wpt/mediarecorder [ Skip ]
@@ -1222,13 +1197,7 @@ webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/
 
 webkit.org/b/90957 [ Release ] js/dom/random-array-gc-stress.html [ Timeout Crash Pass ]
 
-webkit.org/b/105689 [ Debug ] plugins/npruntime/embed-property-iframe-equality.html [ Crash ]
-
 webkit.org/b/120200 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-allowall.html [ Crash Pass ]
-
-Bug(GTK) plugins/document-open.html [ Crash Timeout ]
-
-webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure Crash Pass ]
 
 webkit.org/b/163826 storage/domstorage/events/basic-body-attribute.html [ Failure Pass ]
 
@@ -1305,8 +1274,6 @@ webkit.org/b/55126 media/video-aspect-ratio.html [ Failure Crash Timeout Pass ]
 webkit.org/b/122481 svg/animations/svglengthlist-animation-3.html [ Failure Pass ]
 webkit.org/b/62204 svg/custom/circular-marker-reference-4.svg [ Failure Pass ]
 
-webkit.org/b/119735 [ Debug ] plugins/unavailable-plugin-indicator-obscurity.html [ Skip ]
-
 webkit.org/b/71777 fast/lists/inlineBoxWrapperNullCheck.html [ Failure Pass ]
 
 webkit.org/b/80129 fast/frames/flattening/iframe-flattening-fixed-width.html [ Failure Pass ]
@@ -1369,8 +1336,6 @@ webkit.org/b/119253 [ Debug ] js/dfg-osr-entry-hoisted-clobbered-structure-check
 webkit.org/b/119253 [ Debug ] fast/media/update-media-query-css-parser.html [ Timeout Pass ]
 
 webkit.org/b/124511 media/video-played-reset.html [ Failure Pass Crash ]
-
-webkit.org/b/125407 plugins/plugin-clip-subframe.html [ Failure Pass ]
 
 webkit.org/b/126420 fast/table/dynamic-caption-add-before-child.xhtml [ Failure Pass ]
 
@@ -1438,8 +1403,6 @@ webkit.org/b/134576 [ Debug ] media/track/track-cue-rendering.html [ Failure Tim
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure Timeout Pass Crash ]
 webkit.org/b/134576 webkit.org/b/198830 media/track/video/video-track-mkv-theora-language.html [ Failure Timeout Pass Crash ]
 
-webkit.org/b/134760 plugins/layout-in-beforeload-listener-affects-plugin-loading.html [ Failure Pass ]
-
 webkit.org/b/135583 http/tests/media/video-play-progress.html [ Crash Timeout Pass ]
 
 webkit.org/b/136066 animations/fill-mode-iteration-count-non-integer.html [ Timeout Pass ]
@@ -1471,9 +1434,6 @@ webkit.org/b/53959 fast/dom/Window/window-resize.html [ Failure Timeout Pass ]
 
 webkit.org/b/153771 animations/resume-after-page-cache.html [ Timeout Failure Pass ]
 
-webkit.org/b/153942 plugins/private-browsing-mode-2.html [ Failure Pass ]
-webkit.org/b/153942 plugins/private-browsing-mode.html [ Failure Pass ]
-
 webkit.org/b/153943 webaudio/convolution-mono-mono.html [ Failure Pass ]
 
 webkit.org/b/156436 fast/harness/sample-fail-mismatch-reftest.html [ ImageOnlyFailure Pass ]
@@ -1504,10 +1464,6 @@ webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.ht
 webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.xhtml [ ImageOnlyFailure Pass ]
 webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure Pass ]
 webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.xhtml [ ImageOnlyFailure Pass ]
-
-webkit.org/b/160136 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Failure Pass ]
-
-webkit.org/b/163532 plugins/js-from-destroy.html [ Failure Pass ]
 
 webkit.org/b/168780 fast/forms/input-first-letter-edit.html [ ImageOnlyFailure Pass ]
 
@@ -1614,8 +1570,6 @@ webkit.org/b/187589 inspector/unit-tests/debouncer.html [ Failure Timeout Pass ]
 
 webkit.org/b/187590 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html [ Failure Pass ]
 
-webkit.org/b/187761 http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html [ Pass Failure ]
-
 webkit.org/b/187760 fast/mediastream/get-user-media-on-loadedmetadata.html [ Pass Failure ]
 
 webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass Failure ]
@@ -1641,8 +1595,6 @@ webkit.org/b/191680 editing/pasteboard/copy-paste-first-line-in-textarea.html [ 
 webkit.org/b/191680 editing/pasteboard/display-block-on-spans.html [ Failure Pass ]
 
 webkit.org/b/191685 http/wpt/css/css-animations/set-animation-play-state-to-paused-001.html [ ImageOnlyFailure Pass Timeout ]
-
-webkit.org/b/191687 imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Timeout Pass ]
 
 webkit.org/b/192149 imported/blink/animations/animation-events-prefixed-01.html [ Timeout Pass ]
 
@@ -2289,8 +2241,6 @@ webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 
 webkit.org/b/147518 inspector/debugger/nested-inspectors.html [ Timeout ]
 
-Bug(GTK) plugins/reloadplugins-and-pages.html [ Timeout ]
-
 webkit.org/b/135053 html5lib/webkit-resumer.html [ Timeout Pass ]
 
 webkit.org/b/135086 media/video-seek-with-negative-playback.html [ Timeout Pass ]
@@ -2403,8 +2353,6 @@ webkit.org/b/206147 inspector/dom-debugger/dom-breakpoints.html [ Timeout ]
 
 webkit.org/b/202736 http/tests/appcache/remove-cache.html [ Failure ]
 webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.html [ Failure Pass Timeout ]
-
-webkit.org/b/206876 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Timeout ]
 
 webkit.org/b/207711 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
 webkit.org/b/207711 [ Debug ] imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Timeout ]
@@ -2541,8 +2489,6 @@ webkit.org/b/157179 fast/forms/drag-out-of-textarea.html [ Failure ]
 webkit.org/b/157179 fast/forms/range/slider-delete-while-dragging-thumb.html [ Failure ]
 webkit.org/b/157179 fast/lists/drag-into-marker.html [ Failure ]
 webkit.org/b/157179 http/tests/security/resources/drag-drop-allowed.html [ Skip ]
-webkit.org/b/157179 plugins/mouse-events-fixedpos.html [ Failure ]
-webkit.org/b/157179 plugins/mouse-events.html [ Failure Timeout ]
 webkit.org/b/157179 editing/pasteboard/cleanup-on-move.html [ Failure ]
 webkit.org/b/157179 editing/pasteboard/drag-list-item.html [ Failure ]
 webkit.org/b/157179 fast/events/ondragenter.html [ Failure ]
@@ -2579,10 +2525,6 @@ Bug(GTK) svg/text/select-textLength-spacing-stretch-1.svg [ Failure Pass ]
 Bug(GTK) svg/text/select-x-list-1.svg [ Failure Pass ]
 Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure Pass ]
 
-# [Qt][WK2] New http/tests/security/cross-origin-plugin* tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=95935
-webkit.org/b/95935 http/tests/security/cross-origin-plugin.html [ Failure ]
-
 # Missing support for the modifierArray argument to EventSendingController::mouseMoveTo().
 Bug(GTK) platform/gtk/fast/events/event-sender-metakey.html [ Failure ]
 
@@ -2613,13 +2555,6 @@ Bug(GTK) fast/ruby/ruby-trailing.html [ Failure ]
 Bug(GTK) fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure Timeout Pass ]
 Bug(GTK) http/tests/security/cross-origin-xsl-BLOCKED.html [ Failure ]
 Bug(GTK) http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Failure ]
-Bug(GTK) http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
-Bug(GTK) plugins/keyboard-events.html [ Failure ]
-Bug(GTK) plugins/netscape-plugin-setwindow-size-2.html [ Failure ]
-Bug(GTK) plugins/npp-set-window-called-during-destruction.html [ Failure ]
-Bug(GTK) plugins/npruntime/browser-object-identity.html [ Failure ]
-Bug(GTK) plugins/npruntime/embed-property-equality.html [ Failure ]
-Bug(GTK) plugins/resize-from-plugin.html [ Failure ]
 
 # Selection doesn't work properly.
 Bug(GTK) editing/selection/context-menu-text-selection-lookup.html [ Failure Pass ]
@@ -2662,9 +2597,6 @@ webkit.org/b/123097 media/track/track-user-preferences.html [ Skip ]
 webkit.org/b/121995 webkit.org/b/198830 media/video-controls-captions-trackmenu-includes-enabled-track.html [ Failure Crash ]
 
 Bug(GTK) http/tests/misc/acid3.html [ Failure ]
-
-# eventSender.keyDown call does not get executed from the TestNetscapePlugin
-webkit.org/b/90383 http/tests/plugins/plugin-document-has-focus.html [ Skip ]
 
 webkit.org/b/30620 fast/xsl/sort-locale.xml [ Failure ]
 
@@ -2748,12 +2680,6 @@ webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
 
 # Started failing after it was added in r116473
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
-
-webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
-webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
-webkit.org/b/86443 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
-
-webkit.org/b/51027 [ Release ] plugins/refcount-leaks.html [ Failure ]
 
 # Failing after r121121 on both GTK and EFL
 webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
@@ -2884,12 +2810,6 @@ webkit.org/b/132056 webaudio/codec-tests/mp3/128kbps-44khz.html  [ Failure ]
 webkit.org/b/132910 editing/pasteboard/drag-drop-paragraph-crasher.html [ Failure ]
 
 webkit.org/b/132914 http/tests/security/drag-drop-local-file.html [ Failure ]
-
-webkit.org/b/132919 platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html [ Failure ]
-
-webkit.org/b/132921 plugins/evaluate-js-after-removing-plugin-element.html [ Failure ]
-
-webkit.org/b/132923 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Pass Failure ]
 
 webkit.org/b/133146 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
 
@@ -3225,8 +3145,6 @@ webkit.org/b/182763 accessibility/notification-listeners.html [ Failure ]
 webkit.org/b/182763 accessibility/gtk/caret-offsets.html [ Timeout ]
 
 webkit.org/b/182765 fast/text/emphasis-overlap.html [ Failure ImageOnlyFailure ]
-
-webkit.org/b/183033 http/tests/plugins/supported-plugin-origin-specific-visibility.html [ Failure ]
 
 webkit.org/b/198830 media/context-menu-actions.html [ Pass Crash ]
 

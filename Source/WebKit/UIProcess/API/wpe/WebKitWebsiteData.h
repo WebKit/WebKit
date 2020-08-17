@@ -42,7 +42,7 @@ typedef struct _WebKitWebsiteData WebKitWebsiteData;
  * @WEBKIT_WEBSITE_DATA_LOCAL_STORAGE: Local storage data.
  * @WEBKIT_WEBSITE_DATA_WEBSQL_DATABASES: WebSQL databases. Deprecated 2.24
  * @WEBKIT_WEBSITE_DATA_INDEXEDDB_DATABASES: IndexedDB databases.
- * @WEBKIT_WEBSITE_DATA_PLUGIN_DATA: Plugins data.
+ * @WEBKIT_WEBSITE_DATA_PLUGIN_DATA: Plugins data. Deprecated 2.32
  * @WEBKIT_WEBSITE_DATA_COOKIES: Cookies.
  * @WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT: Hash salt used to generate the device ids used by webpages. Since 2.24
  * @WEBKIT_WEBSITE_DATA_HSTS_CACHE: HSTS cache. Since 2.26

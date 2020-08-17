@@ -60,10 +60,6 @@ Platform/glib/ModuleGlib.cpp
 Platform/unix/LoggingUnix.cpp
 Platform/unix/SharedMemoryUnix.cpp
 
-PluginProcess/unix/PluginControllerProxyUnix.cpp
-PluginProcess/unix/PluginProcessMainUnix.cpp
-PluginProcess/unix/PluginProcessUnix.cpp
-
 Shared/API/c/cairo/WKImageCairo.cpp
 
 Shared/API/glib/WebKitContextMenu.cpp @no-unify
@@ -80,9 +76,6 @@ Shared/CoordinatedGraphics/SimpleViewportController.cpp
 Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
 Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
 Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp
-
-Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
-Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp
 
 Shared/cairo/ShareableBitmapCairo.cpp
 
@@ -210,9 +203,6 @@ UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp
 UIProcess/Launcher/glib/FlatpakLauncher.cpp
 
-UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
-UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
-
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 
@@ -249,8 +239,6 @@ WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp @no-unify
 WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
 
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
-
-WebProcess/Plugins/Netscape/NetscapePluginNone.cpp @no-unify
 
 WebProcess/WebCoreSupport/glib/WebEditorClientGLib.cpp
 

@@ -226,11 +226,6 @@ private:
     bool artificialPluginInitializationDelayEnabled() const override;
     void protectPluginFromDestruction() override;
     void unprotectPluginFromDestruction() override;
-#if PLATFORM(X11) && ENABLE(NETSCAPE_PLUGIN_API)
-    uint64_t createPluginContainer() override;
-    void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID) override;
-    void windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID) override;
-#endif
 
     void didInitializePlugin() override;
     void didFailToInitializePlugin() override;

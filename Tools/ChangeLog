@@ -1,3 +1,16 @@
+2020-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Remove support for NPAPI plugins
+        https://bugs.webkit.org/show_bug.cgi?id=215503
+
+        Reviewed by Darin Adler.
+
+        * PlatformGTK.cmake:
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (beforeAll):
+
 2020-08-17  Youenn Fablet  <youenn@apple.com>
 
         Update W3C test exporter to use Authorisation header instead of query parameter to validate GitHub account

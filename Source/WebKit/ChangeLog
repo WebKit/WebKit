@@ -1,3 +1,81 @@
+2020-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Remove support for NPAPI plugins
+        https://bugs.webkit.org/show_bug.cgi?id=215503
+
+        Reviewed by Darin Adler.
+
+        * PlatformGTK.cmake:
+        * PluginProcess/unix/PluginControllerProxyUnix.cpp: Removed.
+        * PluginProcess/unix/PluginProcessMainUnix.cpp: Removed.
+        * PluginProcess/unix/PluginProcessUnix.cpp: Removed.
+        * Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp: Removed.
+        * Shared/Plugins/unix/PluginSearchPath.cpp: Removed.
+        * Shared/Plugins/unix/PluginSearchPath.h: Removed.
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitMimeInfo.cpp:
+        (webkit_mime_info_ref):
+        (webkit_mime_info_unref):
+        (webkit_mime_info_get_mime_type):
+        (webkit_mime_info_get_description):
+        (webkit_mime_info_get_extensions):
+        * UIProcess/API/glib/WebKitMimeInfoPrivate.h: Removed.
+        * UIProcess/API/glib/WebKitPlugin.cpp:
+        (webkit_plugin_get_name):
+        (webkit_plugin_get_description):
+        (webkit_plugin_get_path):
+        (webkit_plugin_get_mime_info_list):
+        * UIProcess/API/glib/WebKitPluginPrivate.h: Removed.
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_plugins):
+        (webkit_settings_set_enable_plugins):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_set_additional_plugins_directory):
+        (webkit_web_context_get_plugins):
+        (webkit_web_context_get_plugins_finish):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewLoadFail):
+        * UIProcess/API/glib/WebKitWebsiteData.cpp:
+        (recordContainsSupportedDataTypes):
+        (toWebKitWebsiteDataTypes):
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (toWebsiteDataTypes):
+        * UIProcess/API/gtk/WebKitError.h:
+        * UIProcess/API/gtk/WebKitMimeInfo.h:
+        * UIProcess/API/gtk/WebKitPlugin.h:
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/WebKitWebsiteData.h:
+        * UIProcess/API/wpe/WebKitError.h:
+        * UIProcess/API/wpe/WebKitMimeInfo.h:
+        * UIProcess/API/wpe/WebKitPlugin.h:
+        * UIProcess/API/wpe/WebKitSettings.h:
+        * UIProcess/API/wpe/WebKitWebContext.h:
+        * UIProcess/API/wpe/WebKitWebsiteData.h:
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::bubblewrapSpawn):
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Plugins/gtk/PluginInfoCache.cpp: Removed.
+        * UIProcess/Plugins/gtk/PluginInfoCache.h: Removed.
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp: Removed.
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp: Removed.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        * WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp: Removed.
+        * WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.h: Removed.
+        * WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp: Removed.
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp: Removed.
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.h: Removed.
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Plugins/PluginView.h:
+
 2020-08-17  Youenn Fablet  <youenn@apple.com>
 
         Set Sec-WebSocket-Protocol for WebSocket NSURLSession code path

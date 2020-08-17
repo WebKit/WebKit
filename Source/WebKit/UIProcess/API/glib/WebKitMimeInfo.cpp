@@ -20,32 +20,12 @@
 #include "config.h"
 #include "WebKitMimeInfo.h"
 
-#include "WebKitMimeInfoPrivate.h"
-#include <wtf/glib/GRefPtr.h>
-#include <wtf/text/CString.h>
-
 struct _WebKitMimeInfo {
-    _WebKitMimeInfo(const WebCore::MimeClassInfo& mimeInfo)
-        : mimeInfo(mimeInfo)
-    {
-    }
-
-    WebCore::MimeClassInfo mimeInfo;
-    CString mimeType;
-    CString description;
-    GRefPtr<GPtrArray> extensions;
-
-    int referenceCount { 0 };
 };
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 G_DEFINE_BOXED_TYPE(WebKitMimeInfo, webkit_mime_info, webkit_mime_info_ref, webkit_mime_info_unref)
-
-WebKitMimeInfo* webkitMimeInfoCreate(const WebCore::MimeClassInfo& mimeInfo)
-{
-    WebKitMimeInfo* info = static_cast<WebKitMimeInfo*>(fastMalloc(sizeof(WebKitMimeInfo)));
-    new (info) WebKitMimeInfo(mimeInfo);
-    return info;
-}
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 /**
  * webkit_mime_info_ref:
@@ -55,11 +35,12 @@ WebKitMimeInfo* webkitMimeInfoCreate(const WebCore::MimeClassInfo& mimeInfo)
  * function is MT-safe and may be called from any thread.
  *
  * Returns: The passed in #WebKitMimeInfo
+ *
+ * Deprecated: 2.32
  */
-WebKitMimeInfo* webkit_mime_info_ref(WebKitMimeInfo* info)
+WebKitMimeInfo* webkit_mime_info_ref(WebKitMimeInfo*)
 {
-    g_atomic_int_inc(&info->referenceCount);
-    return info;
+    return nullptr;
 }
 
 /**
@@ -70,13 +51,11 @@ WebKitMimeInfo* webkit_mime_info_ref(WebKitMimeInfo* info)
  * reference count drops to 0, all memory allocated by the #WebKitMimeInfo is
  * released. This function is MT-safe and may be called from any
  * thread.
+ *
+ * Deprecated: 2.32
  */
-void webkit_mime_info_unref(WebKitMimeInfo* info)
+void webkit_mime_info_unref(WebKitMimeInfo*)
 {
-    if (g_atomic_int_dec_and_test(&info->referenceCount)) {
-        info->~WebKitMimeInfo();
-        fastFree(info);
-    }
 }
 
 /**
@@ -84,17 +63,12 @@ void webkit_mime_info_unref(WebKitMimeInfo* info)
  * @info: a #WebKitMimeInfo
  *
  * Returns: the MIME type of @info
+ *
+ * Deprecated: 2.32
  */
-const char* webkit_mime_info_get_mime_type(WebKitMimeInfo* info)
+const char* webkit_mime_info_get_mime_type(WebKitMimeInfo*)
 {
-    if (!info->mimeType.isNull())
-        return info->mimeType.data();
-
-    if (info->mimeInfo.type.isEmpty())
-        return 0;
-
-    info->mimeType = info->mimeInfo.type.utf8();
-    return info->mimeType.data();
+    return nullptr;
 }
 
 /**
@@ -102,17 +76,12 @@ const char* webkit_mime_info_get_mime_type(WebKitMimeInfo* info)
  * @info: a #WebKitMimeInfo
  *
  * Returns: the description of the MIME type of @info
+ *
+ * Deprecated: 2.32
  */
-const char* webkit_mime_info_get_description(WebKitMimeInfo* info)
+const char* webkit_mime_info_get_description(WebKitMimeInfo*)
 {
-    if (!info->description.isNull())
-        return info->description.data();
-
-    if (info->mimeInfo.desc.isEmpty())
-        return 0;
-
-    info->description = info->mimeInfo.desc.utf8();
-    return info->description.data();
+    return nullptr;
 }
 
 /**
@@ -124,22 +93,10 @@ const char* webkit_mime_info_get_description(WebKitMimeInfo* info)
  *
  * Returns: (array zero-terminated=1) (transfer none): a
  *     %NULL-terminated array of strings
+ *
+ * Deprecated: 2.32
  */
-const char* const* webkit_mime_info_get_extensions(WebKitMimeInfo* info)
+const char* const* webkit_mime_info_get_extensions(WebKitMimeInfo*)
 {
-    if (info->extensions)
-        return reinterpret_cast<gchar**>(info->extensions->pdata);
-
-    if (info->mimeInfo.extensions.isEmpty())
-        return 0;
-
-    info->extensions = adoptGRef(g_ptr_array_new_with_free_func(g_free));
-    for (size_t i = 0; i < info->mimeInfo.extensions.size(); ++i) {
-        if (info->mimeInfo.extensions[i].isEmpty())
-            continue;
-        g_ptr_array_add(info->extensions.get(), g_strdup(info->mimeInfo.extensions[i].utf8().data()));
-    }
-    g_ptr_array_add(info->extensions.get(), 0);
-
-    return reinterpret_cast<gchar**>(info->extensions->pdata);
+    return nullptr;
 }

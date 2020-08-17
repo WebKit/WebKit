@@ -41,7 +41,6 @@
 #include "WebKitInjectedBundleClient.h"
 #include "WebKitNetworkProxySettingsPrivate.h"
 #include "WebKitNotificationProvider.h"
-#include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitProtocolHandler.h"
 #include "WebKitSecurityManagerPrivate.h"
@@ -1152,31 +1151,12 @@ WebKitSecurityManager* webkit_web_context_get_security_manager(WebKitWebContext*
  * @directory: the directory to add
  *
  * Set an additional directory where WebKit will look for plugins.
+ *
+ * Deprecated: 2.32
  */
-void webkit_web_context_set_additional_plugins_directory(WebKitWebContext* context, const char* directory)
+void webkit_web_context_set_additional_plugins_directory(WebKitWebContext*, const char*)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
-    g_return_if_fail(directory);
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    context->priv->processPool->setAdditionalPluginsDirectory(FileSystem::stringFromFileSystemRepresentation(directory));
-#endif
-}
-
-static void destroyPluginList(GList* plugins)
-{
-    g_list_free_full(plugins, g_object_unref);
-}
-
-static void webkitWebContextGetPluginThread(GTask* task, gpointer object, gpointer /* taskData */, GCancellable*)
-{
-    GList* returnValue = 0;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    Vector<PluginModuleInfo> plugins = WEBKIT_WEB_CONTEXT(object)->priv->processPool->pluginInfoStore().plugins();
-    for (size_t i = 0; i < plugins.size(); ++i)
-        returnValue = g_list_prepend(returnValue, webkitPluginCreate(plugins[i]));
-#endif
-    g_task_return_pointer(task, returnValue, reinterpret_cast<GDestroyNotify>(destroyPluginList));
+    g_warning("webkit_web_context_set_additional_plugins_directory is deprecated and does nothing. Netscape plugins are no longer supported.");
 }
 
 /**
@@ -1190,13 +1170,17 @@ static void webkitWebContextGetPluginThread(GTask* task, gpointer object, gpoint
  *
  * When the operation is finished, @callback will be called. You can then call
  * webkit_web_context_get_plugins_finish() to get the result of the operation.
+ *
+ * Deprecated: 2.32
  */
 void webkit_web_context_get_plugins(WebKitWebContext* context, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
+    g_warning("webkit_web_context_get_plugins is deprecated and always returns an empty list. Netscape plugins are no longer supported.");
+
     GRefPtr<GTask> task = adoptGRef(g_task_new(context, cancellable, callback, userData));
-    g_task_run_in_thread(task.get(), webkitWebContextGetPluginThread);
+    g_task_return_pointer(task.get(), nullptr, nullptr);
 }
 
 /**
@@ -1209,11 +1193,13 @@ void webkit_web_context_get_plugins(WebKitWebContext* context, GCancellable* can
  *
  * Returns: (element-type WebKitPlugin) (transfer full): a #GList of #WebKitPlugin. You must free the #GList with
  *    g_list_free() and unref the #WebKitPlugin<!-- -->s with g_object_unref() when you're done with them.
+ *
+ * Deprecated: 2.32
  */
 GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncResult* result, GError** error)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
-    g_return_val_if_fail(g_task_is_valid(result, context), 0);
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, context), nullptr);
 
     return static_cast<GList*>(g_task_propagate_pointer(G_TASK(result), error));
 }
@@ -1244,9 +1230,7 @@ GList* webkit_web_context_get_plugins_finish(WebKitWebContext* context, GAsyncRe
  *     const gchar  *path;
  *
  *     path = webkit_uri_scheme_request_get_path (request);
- *     if (!g_strcmp0 (path, "plugins")) {
- *         /<!-- -->* Create a GInputStream with the contents of plugins about page, and set its length to stream_length *<!-- -->/
- *     } else if (!g_strcmp0 (path, "memory")) {
+ *     if (!g_strcmp0 (path, "memory")) {
  *         /<!-- -->* Create a GInputStream with the contents of memory about page, and set its length to stream_length *<!-- -->/
  *     } else if (!g_strcmp0 (path, "applications")) {
  *         /<!-- -->* Create a GInputStream with the contents of applications about page, and set its length to stream_length *<!-- -->/

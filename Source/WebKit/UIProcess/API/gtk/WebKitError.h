@@ -76,12 +76,12 @@ typedef enum {
 
 /**
  * WebKitPluginError:
- * @WEBKIT_PLUGIN_ERROR_FAILED: Generic plugin load failure
- * @WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN: Load failure due to missing plugin
- * @WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN: Load failure due to inability to load plugin
- * @WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE: Load failure due to missing Java support that is required to load plugin
- * @WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED: Load failure due to connection cancellation
- * @WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD: Load failure since plugin handles the load
+ * @WEBKIT_PLUGIN_ERROR_FAILED: Generic plugin load failure. Deprecated 2.32
+ * @WEBKIT_PLUGIN_ERROR_CANNOT_FIND_PLUGIN: Load failure due to missing plugin. Deprecated 2.32
+ * @WEBKIT_PLUGIN_ERROR_CANNOT_LOAD_PLUGIN: Load failure due to inability to load plugin. Deprecated 2.32
+ * @WEBKIT_PLUGIN_ERROR_JAVA_UNAVAILABLE: Load failure due to missing Java support that is required to load plugin. Deprecated 2.32
+ * @WEBKIT_PLUGIN_ERROR_CONNECTION_CANCELLED: Load failure due to connection cancellation. Deprecated 2.32
+ * @WEBKIT_PLUGIN_ERROR_WILL_HANDLE_LOAD: Load failure since plugin handles the load. Deprecated 2.32
  *
  * Enum values used to denote the various plugin errors.
  **/
@@ -160,7 +160,7 @@ webkit_network_error_quark             (void);
 WEBKIT_API GQuark
 webkit_policy_error_quark              (void);
 
-WEBKIT_API GQuark
+WEBKIT_DEPRECATED GQuark
 webkit_plugin_error_quark              (void);
 
 WEBKIT_API GQuark

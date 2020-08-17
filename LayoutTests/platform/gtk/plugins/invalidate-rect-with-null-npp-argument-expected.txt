@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: PLUGIN: SUCCESS!
-
-This tests that when the plugin calls NPN_InvlidateRect we do not crash.

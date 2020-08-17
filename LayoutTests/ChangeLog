@@ -1,3 +1,36 @@
+2020-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Remove support for NPAPI plugins
+        https://bugs.webkit.org/show_bug.cgi?id=215503
+
+        Reviewed by Darin Adler.
+
+        Skip tests using plugins and remove expectations.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/plugin-expected.txt: Removed.
+        * platform/gtk/http/tests/plugins/plugin-javascript-access-allow-all-plugins-expected.txt: Removed.
+        * platform/gtk/plugins/document-open-expected.txt: Removed.
+        * platform/gtk/plugins/embed-attributes-style-expected.png: Removed.
+        * platform/gtk/plugins/embed-attributes-style-expected.txt: Removed.
+        * platform/gtk/plugins/iframe-plugin-bgcolor-expected.png: Removed.
+        * platform/gtk/plugins/invalidate-rect-with-null-npp-argument-expected.txt: Removed.
+        * platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html: Removed.
+        * platform/gtk/plugins/mouse-click-plugin-clears-selection-expected.png: Removed.
+        * platform/gtk/plugins/mouse-click-plugin-clears-selection-expected.txt: Removed.
+        * platform/gtk/plugins/nested-plugin-objects-expected.txt: Removed.
+        * platform/gtk/plugins/netscape-destroy-plugin-script-objects-expected.txt: Removed.
+        * platform/gtk/plugins/netscape-dom-access-expected.png: Removed.
+        * platform/gtk/plugins/netscape-dom-access-expected.txt: Removed.
+        * platform/gtk/plugins/npruntime/object-from-destroyed-plugin-expected.txt: Removed.
+        * platform/gtk/plugins/npruntime/object-from-destroyed-plugin-in-subframe-expected.txt: Removed.
+        * platform/gtk/plugins/plugin-clip-subframe-expected.txt: Removed.
+        * platform/gtk/plugins/plugin-initiate-popup-window-expected.txt: Removed.
+        * platform/gtk/plugins/plugin-javascript-access-expected.txt: Removed.
+        * platform/gtk/plugins/resize-from-plugin-expected.txt: Removed.
+        * platform/wpe/TestExpectations:
+
 2020-08-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         JSDOMConstructorNotConstructable should be a constructor

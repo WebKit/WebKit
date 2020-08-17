@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: NPP_SetWindow: NULL window, Rect {0, 0, 0, 0}, Clip Rect {0, 0, 0, 0}, Type 2
-CONSOLE MESSAGE: NPP_SetWindow: NULL window, Rect {0, 0, 300, 150}, Clip Rect {0, 0, 0, 0}, Type 2
-CONSOLE MESSAGE: NPP_SetWindow: NULL window, Rect {0, 0, 300, 150}, Clip Rect {0, 0, 300, 150}, Type 2
-

@@ -76,84 +76,6 @@ static void testWebContextEphemeral(Test* test, gconstpointer)
     g_assert_true(webkit_web_context_is_ephemeral(context.get()));
 }
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-class PluginsTest: public Test {
-public:
-    MAKE_GLIB_TEST_FIXTURE(PluginsTest);
-
-    PluginsTest()
-        : m_mainLoop(g_main_loop_new(nullptr, TRUE))
-        , m_plugins(nullptr)
-    {
-        webkit_web_context_set_additional_plugins_directory(m_webContext.get(), WEBKIT_TEST_PLUGIN_DIR);
-    }
-
-    ~PluginsTest()
-    {
-        g_main_loop_unref(m_mainLoop);
-        g_list_free_full(m_plugins, g_object_unref);
-    }
-
-    static void getPluginsAsyncReadyCallback(GObject*, GAsyncResult* result, PluginsTest* test)
-    {
-        test->m_plugins = webkit_web_context_get_plugins_finish(test->m_webContext.get(), result, nullptr);
-        g_main_loop_quit(test->m_mainLoop);
-    }
-
-    GList* getPlugins()
-    {
-        g_list_free_full(m_plugins, g_object_unref);
-        webkit_web_context_get_plugins(m_webContext.get(), nullptr, reinterpret_cast<GAsyncReadyCallback>(getPluginsAsyncReadyCallback), this);
-        g_main_loop_run(m_mainLoop);
-        return m_plugins;
-    }
-
-    GMainLoop* m_mainLoop;
-    GList* m_plugins;
-};
-
-static void testWebContextGetPlugins(PluginsTest* test, gconstpointer)
-{
-    GList* plugins = test->getPlugins();
-    g_assert_nonnull(plugins);
-
-    GRefPtr<WebKitPlugin> testPlugin;
-    for (GList* item = plugins; item; item = g_list_next(item)) {
-        WebKitPlugin* plugin = WEBKIT_PLUGIN(item->data);
-        test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(plugin));
-        if (!g_strcmp0(webkit_plugin_get_name(plugin), "WebKit Test PlugIn")) {
-            testPlugin = plugin;
-            break;
-        }
-    }
-    g_assert_true(WEBKIT_IS_PLUGIN(testPlugin.get()));
-
-    char normalizedPath[PATH_MAX];
-    g_assert_nonnull(realpath(WEBKIT_TEST_PLUGIN_DIR, normalizedPath));
-    GUniquePtr<char> pluginPath(g_build_filename(normalizedPath, "libTestNetscapePlugIn.so", nullptr));
-    g_assert_cmpstr(webkit_plugin_get_path(testPlugin.get()), ==, pluginPath.get());
-    g_assert_cmpstr(webkit_plugin_get_description(testPlugin.get()), ==, "Simple Netscape® plug-in that handles test content for WebKit");
-    GList* mimeInfoList = webkit_plugin_get_mime_info_list(testPlugin.get());
-    g_assert_nonnull(mimeInfoList);
-    g_assert_cmpuint(g_list_length(mimeInfoList), ==, 2);
-
-    WebKitMimeInfo* mimeInfo = static_cast<WebKitMimeInfo*>(mimeInfoList->data);
-    g_assert_cmpstr(webkit_mime_info_get_mime_type(mimeInfo), ==, "image/png");
-    g_assert_cmpstr(webkit_mime_info_get_description(mimeInfo), ==, "png image");
-    const gchar* const* extensions = webkit_mime_info_get_extensions(mimeInfo);
-    g_assert_nonnull(extensions);
-    g_assert_cmpstr(extensions[0], ==, "png");
-
-    mimeInfoList = g_list_next(mimeInfoList);
-    mimeInfo = static_cast<WebKitMimeInfo*>(mimeInfoList->data);
-    g_assert_cmpstr(webkit_mime_info_get_mime_type(mimeInfo), ==, "application/x-webkit-test-netscape");
-    g_assert_cmpstr(webkit_mime_info_get_description(mimeInfo), ==, "test netscape content");
-    extensions = webkit_mime_info_get_extensions(mimeInfo);
-    g_assert_nonnull(extensions);
-    g_assert_cmpstr(extensions[0], ==, "testnetscape");
-}
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-
 static const char* kBarHTML = "<html><body>Bar</body></html>";
 static const char* kEchoHTMLFormat = "<html><body>%s</body></html>";
 static const char* errorDomain = "test";
@@ -834,9 +756,6 @@ void beforeAll()
 
     Test::add("WebKitWebContext", "default-context", testWebContextDefault);
     Test::add("WebKitWebContext", "ephemeral", testWebContextEphemeral);
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    PluginsTest::add("WebKitWebContext", "get-plugins", testWebContextGetPlugins);
-#endif
     URISchemeTest::add("WebKitWebContext", "uri-scheme", testWebContextURIScheme);
     // FIXME: implement spellchecker in WPE.
 #if PLATFORM(GTK)

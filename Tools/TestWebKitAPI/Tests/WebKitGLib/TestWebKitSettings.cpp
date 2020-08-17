@@ -81,11 +81,6 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_enable_frame_flattening(settings, TRUE);
     g_assert_true(webkit_settings_get_enable_frame_flattening(settings));
 
-    // Plugins are enabled by default.
-    g_assert_true(webkit_settings_get_enable_plugins(settings));
-    webkit_settings_set_enable_plugins(settings, FALSE);
-    g_assert_false(webkit_settings_get_enable_plugins(settings));
-
     // Java is enabled by default.
     g_assert_true(webkit_settings_get_enable_java(settings));
     webkit_settings_set_enable_java(settings, FALSE);

@@ -34,22 +34,22 @@ G_BEGIN_DECLS
 typedef struct _WebKitMimeInfo WebKitMimeInfo;
 
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_mime_info_get_type        (void);
 
-WEBKIT_API WebKitMimeInfo *
+WEBKIT_DEPRECATED WebKitMimeInfo *
 webkit_mime_info_ref             (WebKitMimeInfo *info);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED void
 webkit_mime_info_unref           (WebKitMimeInfo *info);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_mime_info_get_mime_type   (WebKitMimeInfo *info);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_mime_info_get_description (WebKitMimeInfo *info);
 
-WEBKIT_API const gchar * const *
+WEBKIT_DEPRECATED const gchar * const *
 webkit_mime_info_get_extensions  (WebKitMimeInfo *info);
 
 G_END_DECLS

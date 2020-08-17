@@ -60,10 +60,6 @@ Platform/glib/ModuleGlib.cpp
 Platform/unix/LoggingUnix.cpp
 Platform/unix/SharedMemoryUnix.cpp
 
-PluginProcess/unix/PluginControllerProxyUnix.cpp
-PluginProcess/unix/PluginProcessMainUnix.cpp
-PluginProcess/unix/PluginProcessUnix.cpp
-
 Shared/API/c/cairo/WKImageCairo.cpp
 
 Shared/API/glib/WebKitContextMenu.cpp @no-unify
@@ -80,11 +76,6 @@ Shared/CoordinatedGraphics/SimpleViewportController.cpp
 Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp
 Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp
 Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp
-
-Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
-Shared/Plugins/Netscape/unix/NetscapePluginModuleUnix.cpp
-
-Shared/Plugins/unix/PluginSearchPath.cpp
 
 Shared/cairo/ShareableBitmapCairo.cpp
 
@@ -239,11 +230,6 @@ UIProcess/Launcher/glib/BubblewrapLauncher.cpp @no-unify
 UIProcess/Launcher/glib/FlatpakLauncher.cpp @no-unify
 
 UIProcess/linux/MemoryPressureMonitor.cpp
-
-UIProcess/Plugins/gtk/PluginInfoCache.cpp
-
-UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
-UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
 
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
@@ -415,11 +401,6 @@ WebProcess/Inspector/gtk/WebInspectorUIGtk.cpp
 
 WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
 
-WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp @no-unify
-WebProcess/Plugins/Netscape/unix/PluginProxyUnix.cpp @no-unify
-
-WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp @no-unify
-
 WebProcess/WebCoreSupport/glib/WebEditorClientGLib.cpp
 
 WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp
@@ -452,5 +433,3 @@ WebProcess/glib/WebProcessGLib.cpp
 
 WebProcess/gtk/WaylandCompositorDisplay.cpp
 WebProcess/gtk/WebProcessMainGtk.cpp
-
-WebProcess/Plugins/Netscape/NetscapePluginNone.cpp

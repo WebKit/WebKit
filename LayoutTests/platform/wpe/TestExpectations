@@ -680,11 +680,6 @@ webkit.org/b/213131 editing/ [ Skip ]
 webkit.org/b/213131 inspector/ [ Skip ]
 webkit.org/b/213131 media/ [ Skip ]
 
-plugins/ [ Skip ]
-http/tests/plugins [ Skip ]
-imported/blink/http/tests/plugins/get-url-notify-on-removal.html [ Skip ]
-imported/blink/plugins/empty-per-context-data.html [ Skip ]
-
 Bug(WPE) fast/autoresize [ Skip ]
 webkit.org/b/213131 fast/files [ Skip ]
 webkit.org/b/213131 fast/forms [ Skip ]
@@ -1341,8 +1336,6 @@ fast/canvas/webgl/webglcontextchangedevent.html [ Timeout ]
 Bug(WPE) security/contentSecurityPolicy/image-with-blob-url-allowed-by-img-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Skip ]
 Bug(WPE) security/contentSecurityPolicy/image-with-blob-url-blocked-by-img-src-star.html [ Skip ]
 Bug(WPE) security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
-# Require QuickTime support
-Bug(WPE) security/contentSecurityPolicy/plugins-types-allows-quicktime-plugin-replacement.html [ Skip ]
 
 # accessibility/
 webkit.org/b/68512 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
@@ -1653,7 +1646,6 @@ webkit.org/b/184295 http/wpt/loading/redirect-headers.html [ Skip ]
 # This 3 fullscreen tests are still not passing.
 webkit.org/b/185676 fullscreen/requestFullscreen-escape-key.html [ Failure ]
 webkit.org/b/185676 fullscreen/video-controls-rtl.html [ Failure ]
-webkit.org/b/185676 fullscreen/full-screen-plugin.html [ Timeout ]
 
 webkit.org/b/185254 http/tests/cache/disk-cache/redirect-chain-limits.html [ Failure ]
 

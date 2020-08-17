@@ -73,10 +73,6 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(X11) && ENABLE(NETSCAPE_PLUGIN_API)
-#include <WebCore/PlatformDisplay.h>
-#endif
-
 namespace WebKit {
 using namespace JSC;
 using namespace WebCore;
@@ -1681,26 +1677,6 @@ void PluginView::didFailLoad(WebFrame* webFrame, bool wasCancelled)
     
     m_plugin->frameDidFail(request->requestID(), wasCancelled);
 }
-
-#if PLATFORM(X11) && ENABLE(NETSCAPE_PLUGIN_API)
-uint64_t PluginView::createPluginContainer()
-{
-    uint64_t windowID = 0;
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
-        m_webPage->sendSync(Messages::WebPageProxy::CreatePluginContainer(), Messages::WebPageProxy::CreatePluginContainer::Reply(windowID));
-    return windowID;
-}
-
-void PluginView::windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID)
-{
-    m_webPage->send(Messages::WebPageProxy::WindowedPluginGeometryDidChange(frameRect, clipRect, windowID));
-}
-
-void PluginView::windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID)
-{
-    m_webPage->send(Messages::WebPageProxy::WindowedPluginVisibilityDidChange(isVisible, windowID));
-}
-#endif
 
 #if PLATFORM(COCOA)
 static bool isAlmostSolidColor(BitmapImage* bitmap)
