@@ -1,3 +1,18 @@
+2020-08-17  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Add Experimental Feature preference for SW VP9
+        https://bugs.webkit.org/show_bug.cgi?id=215043
+        <rdar://problem/66400034>
+
+        Reviewed by Darin Adler.
+
+        Follow up fix: during a rebase, a line deletion was dropped which causes the SW decoder to
+        always be registered regardless of the new setting.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::enableVP9Decoder):
+        (WebKit::WebProcess::enableVP9SWDecoder):
+
 2020-08-17  Youenn Fablet  <youenn@apple.com>
 
         Remove message check in WebSocketTask::readNextMessage
