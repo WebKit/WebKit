@@ -26,7 +26,9 @@
 #include "config.h"
 #include "EventRegion.h"
 
+#include "Logging.h"
 #include "RenderStyle.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -130,8 +132,10 @@ void EventRegion::unite(const Region& region, const RenderStyle& style, bool ove
 #endif
 
 #if ENABLE(EDITABLE_REGION)
-    if (m_editableRegion && (overrideUserModifyIsEditable || style.userModify() != UserModify::ReadOnly))
+    if (m_editableRegion && (overrideUserModifyIsEditable || style.userModify() != UserModify::ReadOnly)) {
         m_editableRegion->unite(region);
+        LOG_WITH_STREAM(EventRegions, stream << " uniting editable region");
+    }
 #else
     UNUSED_PARAM(overrideUserModifyIsEditable);
 #endif
@@ -214,10 +218,13 @@ void EventRegion::uniteTouchActions(const Region& touchRegion, OptionSet<TouchAc
 
     for (unsigned i = 0; i < m_touchActionRegions.size(); ++i) {
         auto regionTouchAction = toTouchAction(i);
-        if (touchActions.contains(regionTouchAction))
+        if (touchActions.contains(regionTouchAction)) {
             m_touchActionRegions[i].unite(touchRegion);
-        else
+            LOG_WITH_STREAM(EventRegions, stream << " uniting for TouchAction " << regionTouchAction);
+        } else {
             m_touchActionRegions[i].subtract(touchRegion);
+            LOG_WITH_STREAM(EventRegions, stream << " subtracting for TouchAction " << regionTouchAction);
+        }
     }
 }
 
@@ -253,10 +260,14 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
 #if ENABLE(WHEEL_EVENT_REGIONS)
 void EventRegion::uniteEventListeners(const Region& region, OptionSet<EventListenerRegionType> eventListenerRegionTypes)
 {
-    if (eventListenerRegionTypes.contains(EventListenerRegionType::Wheel))
+    if (eventListenerRegionTypes.contains(EventListenerRegionType::Wheel)) {
         m_wheelEventListenerRegion.unite(region);
-    if (eventListenerRegionTypes.contains(EventListenerRegionType::NonPassiveWheel))
+        LOG_WITH_STREAM(EventRegions, stream << " uniting for wheel event listener");
+    }
+    if (eventListenerRegionTypes.contains(EventListenerRegionType::NonPassiveWheel)) {
         m_nonPassiveWheelEventListenerRegion.unite(region);
+        LOG_WITH_STREAM(EventRegions, stream << " uniting for passive wheel event listener");
+    }
 }
 
 OptionSet<EventListenerRegionType> EventRegion::eventListenerRegionTypesForPoint(const IntPoint& point) const

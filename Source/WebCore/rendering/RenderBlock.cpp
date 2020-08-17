@@ -43,6 +43,7 @@
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "LayoutRepainter.h"
+#include "Logging.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "OverflowEvent.h"
 #include "Page.h"
@@ -80,6 +81,7 @@
 #include <wtf/Optional.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -1249,22 +1251,29 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
         if (visibleToHitTesting()) {
             auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
+            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderRegion);
             paintInfo.eventRegionContext->unite(borderRegion, style(), isTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
         }
 
         bool needsTraverseDescendants = hasVisualOverflow() || containsFloats() || !paintInfo.eventRegionContext->contains(enclosingIntRect(borderRect)) || view().needsEventRegionUpdateForNonCompositedFrame();
+        LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " needsTraverseDescendants for event region: hasVisualOverflow: " << hasVisualOverflow() << " containsFloats: "
+            << containsFloats() <<  " border box is outside current region: " << !paintInfo.eventRegionContext->contains(enclosingIntRect(borderRect)) << " needsEventRegionUpdateForNonCompositedFrame:" << view().needsEventRegionUpdateForNonCompositedFrame());
 #if ENABLE(TOUCH_ACTION_REGIONS)
         needsTraverseDescendants |= document().mayHaveElementsWithNonAutoTouchAction();
+        LOG_WITH_STREAM(EventRegions, stream << "  may have touch-action elements: " << document().mayHaveElementsWithNonAutoTouchAction());
 #endif
 #if !PLATFORM(IOS_FAMILY)
         needsTraverseDescendants |= document().hasWheelEventHandlers();
+        LOG_WITH_STREAM(EventRegions, stream << "  has wheel event handlers: " << document().hasWheelEventHandlers());
 #endif
 #if ENABLE(EDITABLE_REGION)
         // We treat the entire text control as editable to match users' expectation even
         // though it's actually the inner text element of the control that is editable.
         // So, no need to traverse to find the inner text element in this case.
-        if (!isTextControl())
+        if (!isTextControl()) {
             needsTraverseDescendants |= document().mayHaveEditableElements() && page().shouldBuildEditableRegion();
+            LOG_WITH_STREAM(EventRegions, stream << "  needs editable event region: " << (document().mayHaveEditableElements() && page().shouldBuildEditableRegion()));
+        }
 #endif
         if (!needsTraverseDescendants)
             return;
