@@ -1,3 +1,30 @@
+2020-08-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add OutputCapture to webkitcorepy
+        https://bugs.webkit.org/show_bug.cgi?id=215380
+        <rdar://problem/66846384>
+
+        Reviewed by Dewei Zhu.
+
+        Although webkitpy has an OutputCapture class, that class does not separate logging from
+        stdout and stderr, which makes the API less useful. This version of the OutputCapture class
+        is inspired by the one in webkitpy, but with a cleaner interface.
+
+        * Scripts/libraries/webkitcorepy/README.md: Document usage of OutputCapture.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Export LoggerCapture, OutputCapture and
+        OutputDuplicate as API, bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/output_capture.py: Added.
+        (LoggerCapture): Capture logs at some level for the duration of the interface.
+        (OutputCapture): Capture stdout, stderr and all logging channels for the duration of the interface.
+        (OutputCapture.ReplaceSysStream): Replace sys.stdout or sys.stderr for a block.
+        (OutputDuplicate): Context which can duplicate all output for a block of code. This is useful to both print and
+        capture logs.
+        (OutputDuplicate.Stream): File-like object that routes output to multiple file-like objects.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/output_capture_unittest.py: Added.
+        (LoggerCaptureTest):
+        (OutputCaptureTest):
+        (OutputOutputDuplicateTest):
+
 2020-08-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [TestWebKitAPI] Some WTF_HashMap tests are failing if TestWTF is executed directly

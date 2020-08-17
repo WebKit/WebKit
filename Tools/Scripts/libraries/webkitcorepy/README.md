@@ -43,3 +43,17 @@ with mocks.Time:
     stamp = time.time()
     time.sleep(5)
 ```
+Capturing stdout, stderr and logging output for testing
+```
+capturer = OutputCapture()
+with capturer:
+    print('data\n')
+assert capturer.stdout.getvalue() == 'data\n'
+```
+Capturing stdout, stderr and logging output for testing
+```
+capturer = OutputCapture()
+with capturer:
+    print('data\n')
+assert capturer.stdout.getvalue() == 'data\n'
+```
