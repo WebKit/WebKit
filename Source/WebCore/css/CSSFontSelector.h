@@ -80,8 +80,6 @@ public:
     Document* document() const { return m_document.get(); }
 
     void beginLoadingFontSoon(CachedFont&);
-    void suspendFontLoadingTimer();
-    void restartFontLoadingTimer();
 
     FontFaceSet* fontFaceSetIfExists();
     FontFaceSet& fontFaceSet();
@@ -121,7 +119,6 @@ private:
     unsigned m_computingRootStyleFontCount { 0 };
     bool m_creatingFont { false };
     bool m_buildIsUnderway { false };
-    bool m_fontLoadingTimerIsSuspended { false };
 };
 
 } // namespace WebCore

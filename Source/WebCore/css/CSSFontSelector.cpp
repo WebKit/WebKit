@@ -364,28 +364,7 @@ void CSSFontSelector::beginLoadingFontSoon(CachedFont& font)
     // decrementRequestCount() in beginLoadTimerFired() and in clearDocument().
     m_document->cachedResourceLoader().incrementRequestCount(font);
 
-    if (!m_fontLoadingTimerIsSuspended)
-        m_beginLoadingTimer.startOneShot(0_s);
-}
-
-void CSSFontSelector::suspendFontLoadingTimer()
-{
-    if (m_fontLoadingTimerIsSuspended)
-        return;
-
-    m_beginLoadingTimer.cancel();
-    m_fontLoadingTimerIsSuspended = true;
-}
-
-void CSSFontSelector::restartFontLoadingTimer()
-{
-    if (!m_fontLoadingTimerIsSuspended)
-        return;
-
-    if (!m_fontsToBeginLoading.isEmpty())
-        m_beginLoadingTimer.startOneShot(0_s);
-
-    m_fontLoadingTimerIsSuspended = false;
+    m_beginLoadingTimer.startOneShot(0_s);
 }
 
 void CSSFontSelector::beginLoadTimerFired()
