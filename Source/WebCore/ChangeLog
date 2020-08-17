@@ -1,3 +1,17 @@
+2020-08-17  Karl Rackler  <rackler@apple.com>
+
+        Unreviewed, reverting r265603.
+
+        Reverting per commiter because commit caused consisent crash
+        with test.
+
+        Reverted changeset:
+
+        "Font loads quickly followed by navigations may fail
+        indefinitely"
+        https://bugs.webkit.org/show_bug.cgi?id=215435
+        https://trac.webkit.org/changeset/265603
+
 2020-08-17  Chris Dumez  <cdumez@apple.com>
 
         AudioNode.disconnect() does not match the specification

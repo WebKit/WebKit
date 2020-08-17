@@ -5449,8 +5449,6 @@ void Document::resume(ReasonForSuspension reason)
     if (renderView())
         renderView()->setIsInWindow(true);
 
-    fontSelector().restartFontLoadingTimer();
-
     ASSERT(page());
     page()->lockAllOverlayScrollbarsToHidden(false);
 
