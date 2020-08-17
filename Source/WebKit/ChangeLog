@@ -1,5 +1,44 @@
 2020-08-17  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r265263. rdar://problem/66944311
+
+    Limit 'com.apple.webkit.microphone' use to macOS and MacCatalyst
+    https://bugs.webkit.org/show_bug.cgi?id=215139
+    <rdar://problem/66501746>
+    
+    Reviewed by Eric Carlson.
+    
+    We only need the 'com.apple.webkit.microphone' Sandbox Extension at startup on
+    macOS and MacCatalyst (and even on those platforms, only until <rdar://problem/29448368>
+    is fixed).
+    
+    We should not issue this extension on the iOS family of targets.
+    
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::platformInitializeWebProcess):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265263 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-04  Brent Fulgham  <bfulgham@apple.com>
+
+            Limit 'com.apple.webkit.microphone' use to macOS and MacCatalyst
+            https://bugs.webkit.org/show_bug.cgi?id=215139
+            <rdar://problem/66501746>
+
+            Reviewed by Eric Carlson.
+
+            We only need the 'com.apple.webkit.microphone' Sandbox Extension at startup on
+            macOS and MacCatalyst (and even on those platforms, only until <rdar://problem/29448368>
+            is fixed).
+
+            We should not issue this extension on the iOS family of targets.
+
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::platformInitializeWebProcess):
+
+2020-08-17  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r265725. rdar://problem/67260862
 
     Convert remaining SharedMemory::Handle to SharedMemory::IPCHandle
