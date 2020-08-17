@@ -7,9 +7,10 @@ PASS write: throwing getter should cause write() and closed to reject
 PASS write: throwing method should cause write() and closed to reject 
 PASS write: returning a promise that becomes rejected after the writer write() should cause writer write() and ready to reject 
 PASS write: returning a rejected promise (second write) should cause writer write() and ready to reject 
-FAIL abort: non-function abort method with .apply assert_throws_js: constructor should throw function "() => new WritableStream({
-    abort: { apply() {} }
-  })" did not throw
+PASS start: non-function start method 
+PASS write: non-function write method 
+PASS close: non-function close method 
+PASS abort: non-function abort method with .apply 
 PASS abort: throwing getter should cause abort() and closed to reject 
 PASS abort: throwing method should cause abort() and closed to reject 
 

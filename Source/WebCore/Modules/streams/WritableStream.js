@@ -40,6 +40,31 @@ function initializeWritableStream(underlyingSink, strategy)
     if ("type" in underlyingSink)
         @throwRangeError("Invalid type is specified");
 
+    const sizeAlgorithm = @extractSizeAlgorithm(strategy);
+    const highWaterMark = @extractHighWaterMark(strategy, 1);
+
+    const underlyingSinkDict = { };
+    if ("start" in underlyingSink) {
+        underlyingSinkDict["start"] = underlyingSink["start"];
+        if (typeof underlyingSinkDict["start"] !== "function")
+            @throwTypeError("underlyingSink.start should be a function");
+    }
+    if ("write" in underlyingSink) {
+        underlyingSinkDict["write"] = underlyingSink["write"];
+        if (typeof underlyingSinkDict["write"] !== "function")
+            @throwTypeError("underlyingSink.write should be a function");
+    }
+    if ("close" in underlyingSink) {
+        underlyingSinkDict["close"] = underlyingSink["close"];
+        if (typeof underlyingSinkDict["close"] !== "function")
+            @throwTypeError("underlyingSink.close should be a function");
+    }
+    if ("abort" in underlyingSink) {
+        underlyingSinkDict["abort"] = underlyingSink["abort"];
+        if (typeof underlyingSinkDict["abort"] !== "function")
+            @throwTypeError("underlyingSink.abort should be a function");
+    }
+
     // Initialize Writable Stream
     @putByIdDirectPrivate(this, "state", "writable");
     @putByIdDirectPrivate(this, "storedError", @undefined);
@@ -53,10 +78,7 @@ function initializeWritableStream(underlyingSink, strategy)
     @putByIdDirectPrivate(this, "backpressure", false);
     @putByIdDirectPrivate(this, "underlyingSink", underlyingSink);
 
-    const sizeAlgorithm = @extractSizeAlgorithm(strategy);
-    const highWaterMark = @extractHighWaterMark(strategy, 1);
-
-    @setUpWritableStreamDefaultControllerFromUnderlyingSink(this, underlyingSink, underlyingSink, highWaterMark, sizeAlgorithm)
+    @setUpWritableStreamDefaultControllerFromUnderlyingSink(this, underlyingSink, underlyingSinkDict, highWaterMark, sizeAlgorithm)
 
     return this;
 }

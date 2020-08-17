@@ -1,3 +1,15 @@
+2020-08-17  Youenn Fablet  <youenn@apple.com>
+
+        Check WritableStream underlyingSink methods
+        https://bugs.webkit.org/show_bug.cgi?id=215539
+
+        Reviewed by Darin Adler.
+
+        Covered by updated tests.
+
+        * Modules/streams/WritableStream.js:
+        (initializeWritableStream):
+
 2020-08-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix some spelling and editorial issues

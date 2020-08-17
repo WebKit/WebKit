@@ -1,3 +1,15 @@
+2020-08-17  Youenn Fablet  <youenn@apple.com>
+
+        Check WritableStream underlyingSink methods
+        https://bugs.webkit.org/show_bug.cgi?id=215539
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/streams/writable-streams/bad-underlying-sinks.any-expected.txt:
+        * web-platform-tests/streams/writable-streams/bad-underlying-sinks.any.js:
+        (test):
+        * web-platform-tests/streams/writable-streams/bad-underlying-sinks.any.worker-expected.txt:
+
 2020-08-15  Youenn Fablet  <youenn@apple.com>
 
         WritableStream rejected promises should be marked as handled as per spec
