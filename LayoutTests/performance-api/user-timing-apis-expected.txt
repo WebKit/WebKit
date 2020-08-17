@@ -5,11 +5,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PerformanceMark
 PASS PerformanceMark is defined.
-PASS new PerformanceMark() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceMark()').
+PASS new PerformanceMark() threw exception TypeError: Illegal constructor.
 
 PerformanceMeasure
 PASS PerformanceMeasure is defined.
-PASS new PerformanceMeasure() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceMeasure()').
+PASS new PerformanceMeasure() threw exception TypeError: Illegal constructor.
 
 Performance extensions
 PASS Performance.prototype.mark is defined.
@@ -28,11 +28,11 @@ PASS performance.clearMeasures("measure_name") did not throw exception.
 Starting worker: resources/user-timing-api.js
 [Worker] PerformanceMark
 PASS [Worker] PerformanceMark is defined.
-PASS [Worker] new PerformanceMark() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceMark()').
+PASS [Worker] new PerformanceMark() threw exception TypeError: Illegal constructor.
 [Worker] 
 [Worker] PerformanceMeasure
 PASS [Worker] PerformanceMeasure is defined.
-PASS [Worker] new PerformanceMeasure() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceMeasure()').
+PASS [Worker] new PerformanceMeasure() threw exception TypeError: Illegal constructor.
 [Worker] 
 [Worker] Performance extensions
 PASS [Worker] Performance.prototype.mark is defined.

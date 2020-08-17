@@ -1,3 +1,26 @@
+2020-08-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JSDOMConstructorNotConstructable should be a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=215554
+        <rdar://problem/65770688>
+
+        Reviewed by Darin Adler.
+
+        * editing/async-clipboard/clipboard-interfaces-expected.txt:
+        * editing/undo-manager/undo-manager-interfaces-expected.txt:
+        * fast/dom/MutationObserver/mutation-record-constructor-expected.txt:
+        * http/wpt/html/browsers/the-window-object/window-is-constructor-expected.txt: Added.
+        * http/wpt/html/browsers/the-window-object/window-is-constructor.html: Added.
+        * js/interface-objects-expected.txt:
+        * performance-api/paint-timing/paint-timing-apis-expected.txt:
+        * performance-api/performance-observer-api-expected.txt:
+        * performance-api/performance-timeline-api-expected.txt:
+        * performance-api/resource-timing-apis-expected.txt:
+        * performance-api/user-timing-apis-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/custom-elements/reactions/HTMLInputElement-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+
 2020-08-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove several unnecessary timeouts in layout tests

@@ -1,6 +1,6 @@
 
-FAIL value on HTMLProgressElement must enqueue an attributeChanged reaction when adding value content attribute The superclass is not a constructor.
-FAIL value on HTMLProgressElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL max on HTMLProgressElement must enqueue an attributeChanged reaction when adding max content attribute The superclass is not a constructor.
-FAIL max on HTMLProgressElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL value on HTMLProgressElement must enqueue an attributeChanged reaction when adding value content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL value on HTMLProgressElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
+FAIL max on HTMLProgressElement must enqueue an attributeChanged reaction when adding max content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL max on HTMLProgressElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
 

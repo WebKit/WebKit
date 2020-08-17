@@ -9,7 +9,7 @@ PASS "name" in PerformanceEntry.prototype is true
 PASS "entryType" in PerformanceEntry.prototype is true
 PASS "startTime" in PerformanceEntry.prototype is true
 PASS "duration" in PerformanceEntry.prototype is true
-PASS new PerformanceEntry() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceEntry()').
+PASS new PerformanceEntry() threw exception TypeError: Illegal constructor.
 
 Performance extensions
 PASS Performance.prototype.getEntries is defined.
@@ -50,7 +50,7 @@ PASS [Worker] "name" in PerformanceEntry.prototype is true
 PASS [Worker] "entryType" in PerformanceEntry.prototype is true
 PASS [Worker] "startTime" in PerformanceEntry.prototype is true
 PASS [Worker] "duration" in PerformanceEntry.prototype is true
-PASS [Worker] new PerformanceEntry() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceEntry()').
+PASS [Worker] new PerformanceEntry() threw exception TypeError: Illegal constructor.
 [Worker] 
 [Worker] Performance extensions
 PASS [Worker] Performance.prototype.getEntries is defined.

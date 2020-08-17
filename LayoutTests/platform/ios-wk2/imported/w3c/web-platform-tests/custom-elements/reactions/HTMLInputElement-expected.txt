@@ -1,6 +1,6 @@
 
-FAIL capture on HTMLInputElement must enqueue an attributeChanged reaction when adding new attribute The superclass is not a constructor.
-FAIL capture on HTMLInputElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL capture on HTMLInputElement must enqueue an attributeChanged reaction when adding invalid value default The superclass is not a constructor.
-FAIL capture on HTMLInputElement must enqueue an attributeChanged reaction when removing the attribute The superclass is not a constructor.
+FAIL capture on HTMLInputElement must enqueue an attributeChanged reaction when adding new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL capture on HTMLInputElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
+FAIL capture on HTMLInputElement must enqueue an attributeChanged reaction when adding invalid value default assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL capture on HTMLInputElement must enqueue an attributeChanged reaction when removing the attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
 

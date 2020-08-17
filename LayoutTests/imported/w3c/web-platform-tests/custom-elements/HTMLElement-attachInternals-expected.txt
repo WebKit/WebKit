@@ -1,6 +1,6 @@
 
 FAIL Successful attachInternals() and the second call. element.attachInternals is not a function. (In 'element.attachInternals()', 'element.attachInternals' is undefined)
-FAIL attachInternals() throws a NotSupportedError if it is called for a customized built-in element The superclass is not a constructor.
+FAIL attachInternals() throws a NotSupportedError if it is called for a customized built-in element assert_throws_dom: function "() => { customizedBuiltin.attachInternals() }" threw object "TypeError: customizedBuiltin.attachInternals is not a function. (In 'customizedBuiltin.attachInternals()', 'customizedBuiltin.attachInternals' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
 FAIL If a custom element definition for the local name of the element doesn't exist, throw an NotSupportedError assert_throws_dom: function "() => { builtin.attachInternals() }" threw object "TypeError: builtin.attachInternals is not a function. (In 'builtin.attachInternals()', 'builtin.attachInternals' is undefined)" that is not a DOMException NotSupportedError: property "code" is equal to undefined, expected 9
 FAIL If a custom element definition for the local name of the element has disable internals flag, throw a NotSupportedError assert_throws_dom: function "() => {
     (new MyElement2).attachInternals();

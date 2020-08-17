@@ -1,19 +1,19 @@
  
 
-FAIL alt on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL alt on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL coords on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL coords on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL shape on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL shape on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL target on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL target on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL download on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL download on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL ping on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL ping on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL rel on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL rel on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL referrerPolicy on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL referrerPolicy on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL alt on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL alt on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
+FAIL coords on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL coords on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL shape on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL shape on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
+FAIL target on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL target on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
+FAIL download on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL download on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
+FAIL ping on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL ping on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
+FAIL rel on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL rel on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
+FAIL referrerPolicy on HTMLAreaElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL referrerPolicy on HTMLAreaElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
 

@@ -23,7 +23,7 @@ FAIL "transferSize" in PerformanceResourceTiming.prototype should be true. Was f
 FAIL "encodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
 FAIL "decodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
 PASS PerformanceResourceTiming.prototype.toJSON is defined.
-PASS new PerformanceResourceTiming() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceResourceTiming()').
+PASS new PerformanceResourceTiming() threw exception TypeError: Illegal constructor.
 
 Performance extensions
 PASS Performance.prototype.clearResourceTimings is defined.
@@ -54,7 +54,7 @@ FAIL [Worker] "transferSize" in PerformanceResourceTiming.prototype should be tr
 FAIL [Worker] "encodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
 FAIL [Worker] "decodedBodySize" in PerformanceResourceTiming.prototype should be true. Was false.
 PASS [Worker] PerformanceResourceTiming.prototype.toJSON is defined.
-PASS [Worker] new PerformanceResourceTiming() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceResourceTiming()').
+PASS [Worker] new PerformanceResourceTiming() threw exception TypeError: Illegal constructor.
 [Worker] 
 [Worker] Performance extensions
 PASS [Worker] Performance.prototype.clearResourceTimings is defined.

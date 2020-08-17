@@ -1,3 +1,70 @@
+2020-08-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JSDOMConstructorNotConstructable should be a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=215554
+        <rdar://problem/65770688>
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/FileAPI/file/send-file-form-expected.txt:
+        * web-platform-tests/FileAPI/file/send-file-form-iso-2022-jp.tentative-expected.txt:
+        * web-platform-tests/FileAPI/file/send-file-form-utf-8-expected.txt:
+        * web-platform-tests/FileAPI/file/send-file-form-windows-1252.tentative-expected.txt:
+        * web-platform-tests/FileAPI/file/send-file-form-x-user-defined.tentative-expected.txt:
+        * web-platform-tests/css/cssom/CSSStyleSheet-constructable-baseURL.tentative-expected.txt:
+        * web-platform-tests/css/cssom/CSSStyleSheet-constructable-disabled-regular-sheet-insertion-expected.txt:
+        * web-platform-tests/css/cssom/CSSStyleSheet-constructable-disallow-import.tentative-expected.txt:
+        * web-platform-tests/css/cssom/CSSStyleSheet-constructable-duplicate-expected.txt:
+        * web-platform-tests/css/cssom/CSSStyleSheet-constructable-expected.txt:
+        * web-platform-tests/css/cssom/CSSStyleSheet-modify-after-removal-expected.txt:
+        * web-platform-tests/custom-elements/Document-createElement-expected.txt:
+        * web-platform-tests/custom-elements/Document-createElementNS-expected.txt:
+        * web-platform-tests/custom-elements/HTMLElement-attachInternals-expected.txt:
+        * web-platform-tests/custom-elements/HTMLElement-constructor-expected.txt:
+        * web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+        * web-platform-tests/custom-elements/customized-built-in-constructor-exceptions-expected.txt:
+        * web-platform-tests/custom-elements/htmlconstructor/newtarget-expected.txt:
+        * web-platform-tests/custom-elements/parser/serializing-html-fragments-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLAreaElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLBaseElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLButtonElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLCanvasElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLDataElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLDetailsElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLEmbedElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLFieldSetElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLImageElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLLIElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLLabelElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLMapElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLMediaElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLMetaElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLMeterElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLModElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLOListElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLOptGroupElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLParamElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLProgressElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLQuoteElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLSlotElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLStyleElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLTableCellElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLTableColElement-expected.txt:
+        * web-platform-tests/custom-elements/reactions/HTMLTimeElement-expected.txt:
+        * web-platform-tests/custom-elements/upgrading/Document-importNode-expected.txt:
+        * web-platform-tests/custom-elements/upgrading/Node-cloneNode-expected.txt:
+        * web-platform-tests/dom/nodes/Node-appendChild-cereactions-vs-script.window-expected.txt:
+        * web-platform-tests/html/editing/dnd/datastore/datatransfer-constructor-001-expected.txt:
+        * web-platform-tests/html/editing/dnd/datastore/datatransfer-types-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/submit-file.sub-expected.txt:
+        * web-platform-tests/service-workers/service-worker/data-transfer-files.https-expected.txt:
+        * web-platform-tests/shadow-dom/Element-interface-attachShadow-custom-element-expected.txt:
+        * web-platform-tests/user-timing/mark-entry-constructor.any-expected.txt:
+        * web-platform-tests/user-timing/mark-entry-constructor.any.worker-expected.txt:
+        * web-platform-tests/user-timing/structured-serialize-detail.any-expected.txt:
+        * web-platform-tests/user-timing/structured-serialize-detail.any.worker-expected.txt:
+        * web-platform-tests/webrtc/RTCIceTransport-extension.https-expected.txt:
+
 2020-08-17  Youenn Fablet  <youenn@apple.com>
 
         Make sure writableStreamDefaultWriterEnsureClosedPromiseRejected overwrite the closedPromise if needed

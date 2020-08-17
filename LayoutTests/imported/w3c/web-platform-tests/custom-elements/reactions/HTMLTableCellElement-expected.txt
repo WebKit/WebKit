@@ -1,18 +1,18 @@
 
-FAIL colSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL colSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL colSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL colSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL rowSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL rowSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL rowSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL rowSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL headers on HTMLTableCellElement in td must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL headers on HTMLTableCellElement in td must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL headers on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL headers on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL scope on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL scope on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL abbr on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL abbr on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL colSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL colSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL colSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL colSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL rowSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL rowSpan on HTMLTableCellElement in td must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL rowSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL rowSpan on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL headers on HTMLTableCellElement in td must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL headers on HTMLTableCellElement in td must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL headers on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL headers on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL scope on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL scope on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL abbr on HTMLTableCellElement in th must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL abbr on HTMLTableCellElement in th must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
 

@@ -1,3 +1,19 @@
+2020-08-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        JSDOMConstructorNotConstructable should be a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=215554
+        <rdar://problem/65770688>
+
+        Reviewed by Darin Adler.
+
+        Test: js/dom/window-is-constructor.html
+
+        While JSDOMConstructorNotConstructable throws an error, still it should be a constructor, which means,
+        `IsConstructor(JSDOMConstructorNotConstructable)` should be true. To fix it, we add getConstructData
+        which configures a function throwing an error.
+
+        * bindings/js/JSDOMConstructorNotConstructable.h:
+
 2020-08-17  Youenn Fablet  <youenn@apple.com>
 
         Make sure writableStreamDefaultWriterEnsureClosedPromiseRejected overwrite the closedPromise if needed

@@ -1,8 +1,8 @@
 
-FAIL Mark entry can be created by 'new PerformanceMark(string)'. function is not a constructor (evaluating 'new PerformanceMark("name")')
-FAIL Mark entry can be created by 'new PerformanceMark(string, {})'. function is not a constructor (evaluating 'new PerformanceMark("name", {})')
-FAIL Mark entry can be created by 'new PerformanceMark(string, {startTime})'. function is not a constructor (evaluating 'new PerformanceMark("name", {startTime: 1})')
-FAIL Mark entry can be created by 'new PerformanceMark(string, {detail})'. function is not a constructor (evaluating 'new PerformanceMark("name", {detail: {info: "abc"}})')
-FAIL Mark entry can be created by 'new PerformanceMark(string, {startTime, detail})'. function is not a constructor (evaluating 'new PerformanceMark("name", {startTime: 1, detail: {info: "abc"}})')
-FAIL Using new PerformanceMark() shouldn't add the entry to performance timeline. function is not a constructor (evaluating 'new PerformanceMark("name")')
+FAIL Mark entry can be created by 'new PerformanceMark(string)'. Illegal constructor
+FAIL Mark entry can be created by 'new PerformanceMark(string, {})'. Illegal constructor
+FAIL Mark entry can be created by 'new PerformanceMark(string, {startTime})'. Illegal constructor
+FAIL Mark entry can be created by 'new PerformanceMark(string, {detail})'. Illegal constructor
+FAIL Mark entry can be created by 'new PerformanceMark(string, {startTime, detail})'. Illegal constructor
+FAIL Using new PerformanceMark() shouldn't add the entry to performance timeline. Illegal constructor
 

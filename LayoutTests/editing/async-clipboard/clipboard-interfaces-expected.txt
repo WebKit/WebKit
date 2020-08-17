@@ -14,7 +14,7 @@ PASS Clipboard.prototype.writeText instanceof Function is true
 PASS Clipboard.prototype.read instanceof Function is true
 PASS Clipboard.prototype.write instanceof Function is true
 PASS Clipboard() threw exception TypeError: Illegal constructor.
-PASS new Clipboard() threw exception TypeError: function is not a constructor (evaluating 'new Clipboard()').
+PASS new Clipboard() threw exception TypeError: Illegal constructor.
 PASS Clipboard.toString() is "function Clipboard() {\n    [native code]\n}"
 PASS navigator.clipboard.toString() is "[object Clipboard]"
 PASS navigator.clipboard.writeText('foo') instanceof Promise is true

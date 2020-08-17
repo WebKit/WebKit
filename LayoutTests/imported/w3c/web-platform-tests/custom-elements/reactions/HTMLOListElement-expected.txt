@@ -1,8 +1,8 @@
 
-FAIL reversed on HTMLOListElement must enqueue an attributeChanged reaction when adding reversed content attribute The superclass is not a constructor.
-FAIL reversed on HTMLOListElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL start on HTMLOListElement must enqueue an attributeChanged reaction when adding start content attribute The superclass is not a constructor.
-FAIL start on HTMLOListElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL type on HTMLOListElement must enqueue an attributeChanged reaction when adding type content attribute The superclass is not a constructor.
-FAIL type on HTMLOListElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL reversed on HTMLOListElement must enqueue an attributeChanged reaction when adding reversed content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL reversed on HTMLOListElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
+FAIL start on HTMLOListElement must enqueue an attributeChanged reaction when adding start content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL start on HTMLOListElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
+FAIL type on HTMLOListElement must enqueue an attributeChanged reaction when adding type content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL type on HTMLOListElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
 

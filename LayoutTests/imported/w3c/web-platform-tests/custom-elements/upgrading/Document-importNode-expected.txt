@@ -1,6 +1,6 @@
 
 PASS autonomous: document.importNode() should import custom elements successfully 
 PASS autonomous: document.importNode() should import "undefined" custom elements successfully 
-FAIL built-in: document.importNode() should import custom elements successfully promise_test: Unhandled rejection with value: object "TypeError: The superclass is not a constructor."
-FAIL built-in: document.importNode() should import "undefined" custom elements successfully promise_test: Unhandled rejection with value: object "TypeError: The superclass is not a constructor."
+FAIL built-in: document.importNode() should import custom elements successfully assert_true: expected true got false
+FAIL built-in: document.importNode() should import "undefined" custom elements successfully assert_true: expected true got false
 

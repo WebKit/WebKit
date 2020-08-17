@@ -1,7 +1,7 @@
 
 
-FAIL disabled on HTMLOptGroupElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL disabled on HTMLOptGroupElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL label on HTMLOptGroupElement must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL label on HTMLOptGroupElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL disabled on HTMLOptGroupElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL disabled on HTMLOptGroupElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected", "attributeChanged"] length 3, got [] length 0
+FAIL label on HTMLOptGroupElement must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL label on HTMLOptGroupElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
 
