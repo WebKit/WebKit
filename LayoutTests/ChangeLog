@@ -1,3 +1,17 @@
+2020-08-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove several unnecessary timeouts in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=215552
+
+        Reviewed by Darin Adler.
+
+        Remove several `setTimeout(finishJSTest, s);` calls in layout tests. These were probably added in the process of
+        developing or debugging these tests, and were not intended to be landed.
+
+        * editing/pasteboard/data-transfer-set-data-sanitize-html-when-dragging-in-null-origin.html:
+        * fast/forms/ios/show-and-dismiss-date-input.html:
+        * http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html:
+
 2020-08-16  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove OpIsObjectOrNull from ClassExprNode::emitBytecode()
