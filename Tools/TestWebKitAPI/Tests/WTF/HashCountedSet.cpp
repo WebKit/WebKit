@@ -353,120 +353,144 @@ TEST(WTF_HashCountedSet, UniquePtrKey_RemoveUsingRawPointer)
 
 TEST(WTF_HashCountedSet, RefPtrKey_Add)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+        HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
 
-    RefPtr<RefLogger> ptr(&a);
-    hashCountedSet.add(ptr);
+        RefPtr<RefLogger> ptr(&a);
+        hashCountedSet.add(ptr);
 
-    ASSERT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
-    EXPECT_EQ(1U, hashCountedSet.count(ptr));
-    EXPECT_EQ(1U, hashCountedSet.count(ptr.get()));
+        ASSERT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
+        EXPECT_EQ(1U, hashCountedSet.count(ptr));
+        EXPECT_EQ(1U, hashCountedSet.count(ptr.get()));
+    }
+
+    EXPECT_STREQ("deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddUsingRelease)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+        HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
 
-    RefPtr<RefLogger> ptr(&a);
-    hashCountedSet.add(WTFMove(ptr));
+        RefPtr<RefLogger> ptr(&a);
+        hashCountedSet.add(WTFMove(ptr));
+    }
 
-    EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddUsingMove)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+        HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
 
-    RefPtr<RefLogger> ptr(&a);
-    hashCountedSet.add(WTFMove(ptr));
+        RefPtr<RefLogger> ptr(&a);
+        hashCountedSet.add(WTFMove(ptr));
+    }
 
-    EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddUsingRaw)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+        HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
 
-    RefPtr<RefLogger> ptr(&a);
-    hashCountedSet.add(ptr.get());
+        RefPtr<RefLogger> ptr(&a);
+        hashCountedSet.add(ptr.get());
 
-    EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
-    EXPECT_EQ(1U, hashCountedSet.count(ptr));
-    EXPECT_EQ(1U, hashCountedSet.count(ptr.get()));
+        EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
+        EXPECT_EQ(1U, hashCountedSet.count(ptr));
+        EXPECT_EQ(1U, hashCountedSet.count(ptr.get()));
+    }
+
+    EXPECT_STREQ("deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddKeyAlreadyPresent)
 {
-    DerivedRefLogger a("a");
-
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
-
     {
-        RefPtr<RefLogger> ptr(&a);
-        hashCountedSet.add(ptr);
+        DerivedRefLogger a("a");
+
+        HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+
+        {
+            RefPtr<RefLogger> ptr(&a);
+            hashCountedSet.add(ptr);
+        }
+
+        EXPECT_STREQ("ref(a) ref(a) deref(a) ", takeLogStr().c_str());
+
+        {
+            RefPtr<RefLogger> ptr2(&a);
+            auto addResult = hashCountedSet.add(ptr2);
+            EXPECT_FALSE(addResult.isNewEntry);
+        }
+
+        EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
     }
 
-    EXPECT_STREQ("ref(a) ref(a) deref(a) ", takeLogStr().c_str());
-
-    {
-        RefPtr<RefLogger> ptr2(&a);
-        auto addResult = hashCountedSet.add(ptr2);
-        EXPECT_FALSE(addResult.isNewEntry);
-    }
-
-    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
 {
-    DerivedRefLogger a("a");
-
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
-
     {
-        RefPtr<RefLogger> ptr(&a);
-        hashCountedSet.add(ptr);
+        DerivedRefLogger a("a");
+
+        HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+
+        {
+            RefPtr<RefLogger> ptr(&a);
+            hashCountedSet.add(ptr);
+        }
+
+        EXPECT_STREQ("ref(a) ref(a) deref(a) ", takeLogStr().c_str());
+
+        {
+            RefPtr<RefLogger> ptr2(&a);
+            auto addResult = hashCountedSet.add(WTFMove(ptr2));
+            EXPECT_FALSE(addResult.isNewEntry);
+        }
+
+        EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
     }
 
-    EXPECT_STREQ("ref(a) ref(a) deref(a) ", takeLogStr().c_str());
-
-    {
-        RefPtr<RefLogger> ptr2(&a);
-        auto addResult = hashCountedSet.add(WTFMove(ptr2));
-        EXPECT_FALSE(addResult.isNewEntry);
-    }
-
-    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
 {
-    DerivedRefLogger a("a");
-
-    HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
-
     {
-        RefPtr<RefLogger> ptr(&a);
-        hashCountedSet.add(ptr);
+        DerivedRefLogger a("a");
+
+        HashCountedSet<RefPtr<RefLogger>> hashCountedSet;
+
+        {
+            RefPtr<RefLogger> ptr(&a);
+            hashCountedSet.add(ptr);
+        }
+
+        EXPECT_STREQ("ref(a) ref(a) deref(a) ", takeLogStr().c_str());
+
+        {
+            RefPtr<RefLogger> ptr2(&a);
+            auto addResult = hashCountedSet.add(WTFMove(ptr2));
+            EXPECT_FALSE(addResult.isNewEntry);
+        }
+
+        EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
     }
 
-    EXPECT_STREQ("ref(a) ref(a) deref(a) ", takeLogStr().c_str());
-
-    {
-        RefPtr<RefLogger> ptr2(&a);
-        auto addResult = hashCountedSet.add(WTFMove(ptr2));
-        EXPECT_FALSE(addResult.isNewEntry);
-    }
-
-    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashCountedSet, Values)

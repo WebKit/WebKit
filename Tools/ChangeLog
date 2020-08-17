@@ -1,3 +1,23 @@
+2020-08-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [TestWebKitAPI] Some WTF_HashMap tests are failing if TestWTF is executed directly
+        https://bugs.webkit.org/show_bug.cgi?id=215556
+
+        Reviewed by Darin Adler.
+
+        Some tests using RefLogger were failing if TestWTF is executed
+        directly without run-api-tests test driver script. Subsequent
+        tests were failing due to extra "deref(a) " which is a leftover of
+        the previous tests. Because run-api-tests is spawning a TestWTF
+        process for each test, it hides this issue.
+
+        * TestWebKitAPI/Tests/WTF/HashCountedSet.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+        Added blocks or calling clear() method to destroy local variables and added more
+        EXPECT_STREQ("deref(a) ", takeLogStr().c_str()).
+
 2020-08-17  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Fix file url in WPEQt api test

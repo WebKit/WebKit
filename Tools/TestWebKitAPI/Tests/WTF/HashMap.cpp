@@ -308,50 +308,58 @@ TEST(WTF_HashMap, UniquePtrKey_TakeUsingRawPointer)
 
 TEST(WTF_HashMap, RefPtrKey_Add)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+        HashMap<RefPtr<RefLogger>, int> map;
 
-    RefPtr<RefLogger> ptr(&a);
-    map.add(ptr, 0);
+        RefPtr<RefLogger> ptr(&a);
+        map.add(ptr, 0);
+    }
 
-    ASSERT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
+    ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_AddUsingRelease)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+        HashMap<RefPtr<RefLogger>, int> map;
 
-    RefPtr<RefLogger> ptr(&a);
-    map.add(WTFMove(ptr), 0);
+        RefPtr<RefLogger> ptr(&a);
+        map.add(WTFMove(ptr), 0);
+    }
 
-    EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_AddUsingMove)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+        HashMap<RefPtr<RefLogger>, int> map;
 
-    RefPtr<RefLogger> ptr(&a);
-    map.add(WTFMove(ptr), 0);
+        RefPtr<RefLogger> ptr(&a);
+        map.add(WTFMove(ptr), 0);
+    }
 
-    EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_AddUsingRaw)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+        HashMap<RefPtr<RefLogger>, int> map;
 
-    RefPtr<RefLogger> ptr(&a);
-    map.add(ptr.get(), 0);
+        RefPtr<RefLogger> ptr(&a);
+        map.add(ptr.get(), 0);
+    }
 
-    EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_AddKeyAlreadyPresent)
@@ -374,6 +382,10 @@ TEST(WTF_HashMap, RefPtrKey_AddKeyAlreadyPresent)
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    map.clear();
+
+    EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
@@ -396,6 +408,10 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    map.clear();
+
+    EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
@@ -418,118 +434,142 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+
+    map.clear();
+
+    EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_Set)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+        HashMap<RefPtr<RefLogger>, int> map;
 
-    RefPtr<RefLogger> ptr(&a);
-    map.set(ptr, 0);
+        RefPtr<RefLogger> ptr(&a);
+        map.set(ptr, 0);
+    }
 
-    ASSERT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
+    ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_SetUsingRelease)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+        HashMap<RefPtr<RefLogger>, int> map;
 
-    RefPtr<RefLogger> ptr(&a);
-    map.set(WTFMove(ptr), 0);
+        RefPtr<RefLogger> ptr(&a);
+        map.set(WTFMove(ptr), 0);
+    }
 
-    EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 
 TEST(WTF_HashMap, RefPtrKey_SetUsingMove)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+        HashMap<RefPtr<RefLogger>, int> map;
 
-    RefPtr<RefLogger> ptr(&a);
-    map.set(WTFMove(ptr), 0);
+        RefPtr<RefLogger> ptr(&a);
+        map.set(WTFMove(ptr), 0);
+    }
 
-    EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_SetUsingRaw)
 {
-    DerivedRefLogger a("a");
+    {
+        DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+        HashMap<RefPtr<RefLogger>, int> map;
 
-    RefPtr<RefLogger> ptr(&a);
-    map.set(ptr.get(), 0);
+        RefPtr<RefLogger> ptr(&a);
+        map.set(ptr.get(), 0);
+    }
 
-    EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_SetKeyAlreadyPresent)
 {
-    DerivedRefLogger a("a");
-
-    HashMap<RefPtr<RefLogger>, int> map;
-
-    RefPtr<RefLogger> ptr(&a);
-    map.set(ptr, 0);
-
-    EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
-
     {
-        RefPtr<RefLogger> ptr2(&a);
-        auto addResult = map.set(ptr2, 1);
-        EXPECT_FALSE(addResult.isNewEntry);
-        EXPECT_EQ(1, map.get(ptr.get()));
+        DerivedRefLogger a("a");
+
+        HashMap<RefPtr<RefLogger>, int> map;
+
+        RefPtr<RefLogger> ptr(&a);
+        map.set(ptr, 0);
+
+        EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
+
+        {
+            RefPtr<RefLogger> ptr2(&a);
+            auto addResult = map.set(ptr2, 1);
+            EXPECT_FALSE(addResult.isNewEntry);
+            EXPECT_EQ(1, map.get(ptr.get()));
+        }
+
+        EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
     }
 
-    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_SetUsingReleaseKeyAlreadyPresent)
 {
-    DerivedRefLogger a("a");
-
-    HashMap<RefPtr<RefLogger>, int> map;
-
-    RefPtr<RefLogger> ptr(&a);
-    map.set(ptr, 0);
-
-    EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
-
     {
-        RefPtr<RefLogger> ptr2(&a);
-        auto addResult = map.set(WTFMove(ptr2), 1);
-        EXPECT_FALSE(addResult.isNewEntry);
-        EXPECT_EQ(1, map.get(ptr.get()));
+        DerivedRefLogger a("a");
+
+        HashMap<RefPtr<RefLogger>, int> map;
+
+        RefPtr<RefLogger> ptr(&a);
+        map.set(ptr, 0);
+
+        EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
+
+        {
+            RefPtr<RefLogger> ptr2(&a);
+            auto addResult = map.set(WTFMove(ptr2), 1);
+            EXPECT_FALSE(addResult.isNewEntry);
+            EXPECT_EQ(1, map.get(ptr.get()));
+        }
+
+        EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
     }
 
-    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
 {
-    DerivedRefLogger a("a");
-
-    HashMap<RefPtr<RefLogger>, int> map;
-
-    RefPtr<RefLogger> ptr(&a);
-    map.set(ptr, 0);
-
-    EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
-
     {
-        RefPtr<RefLogger> ptr2(&a);
-        auto addResult = map.set(WTFMove(ptr2), 1);
-        EXPECT_FALSE(addResult.isNewEntry);
-        EXPECT_EQ(1, map.get(ptr.get()));
+        DerivedRefLogger a("a");
+
+        HashMap<RefPtr<RefLogger>, int> map;
+
+        RefPtr<RefLogger> ptr(&a);
+        map.set(ptr, 0);
+
+        EXPECT_STREQ("ref(a) ref(a) ", takeLogStr().c_str());
+
+        {
+            RefPtr<RefLogger> ptr2(&a);
+            auto addResult = map.set(WTFMove(ptr2), 1);
+            EXPECT_FALSE(addResult.isNewEntry);
+            EXPECT_EQ(1, map.get(ptr.get()));
+        }
+
+        EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
     }
 
-    EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
+    EXPECT_STREQ("deref(a) deref(a) ", takeLogStr().c_str());
 }
 
 TEST(WTF_HashMap, Ensure)
@@ -590,6 +630,10 @@ TEST(WTF_HashMap, Ensure_RefPtr)
 
     map.ensure(1, [&] { return RefPtr<RefLogger>(&a); });
     EXPECT_STREQ("", takeLogStr().c_str());
+
+    map.clear();
+
+    EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
 class ObjectWithRefLogger {
