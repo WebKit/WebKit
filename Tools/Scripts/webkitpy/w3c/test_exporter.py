@@ -235,9 +235,10 @@ class WebPlatformTestExporter(object):
             self._validate_and_save_token(self._username, self._token)
 
     def _validate_and_save_token(self, username, token):
-        url = 'https://api.github.com/user?access_token=%s' % (token,)
+        url = 'https://api.github.com/user'
+        headers = {'Accept': 'application/vnd.github.v3+json', 'Authorization': 'token {}'.format(token)}
         try:
-            response = self._host.web.request(method='GET', url=url, data=None)
+            response = self._host.web.request(method='GET', url=url, data=None, headers=headers)
         except HTTPError as e:
             raise Exception("OAuth token is not valid")
         data = json.load(response)

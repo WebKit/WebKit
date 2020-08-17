@@ -1,3 +1,15 @@
+2020-08-17  Youenn Fablet  <youenn@apple.com>
+
+        Update W3C test exporter to use Authorisation header instead of query parameter to validate GitHub account
+        https://bugs.webkit.org/show_bug.cgi?id=215548
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/w3c/test_exporter.py:
+        (WebPlatformTestExporter._validate_and_save_token):
+        access_token query parameter is dbeing deprecated in favor of Authorization header.
+        Update script accordingly.
+
 2020-08-15  Tim Horton  <timothy_horton@apple.com>
 
         Live Web Content processes do not respect accent color if dynamically changed to "multicolor"
