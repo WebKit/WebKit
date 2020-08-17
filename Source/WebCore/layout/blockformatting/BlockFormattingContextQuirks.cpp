@@ -64,7 +64,7 @@ LayoutUnit BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box& layo
 
     if (layoutBox.isDocumentBox()) {
         // Let's stretch the inflow document box(<html>) to the height of the initial containing block (view).
-        auto documentBoxContentHeight = formattingContext.geometryForBox(layoutBox.initialContainingBlock(), EscapeReason::DocumentBoxStrechesToViewportQuirk).contentBoxHeight();
+        auto documentBoxContentHeight = formattingContext.geometryForBox(layoutBox.initialContainingBlock(), EscapeReason::DocumentBoxStretchesToViewportQuirk).contentBoxHeight();
         // Document box's own vertical margin/border/padding values always shrink the content height.
         auto& documentBoxGeometry = formattingContext.geometryForBox(layoutBox);
         documentBoxContentHeight -= nonCollapsedVerticalMargin + documentBoxGeometry.verticalBorder() + documentBoxGeometry.verticalPadding().valueOr(0);
@@ -74,7 +74,7 @@ LayoutUnit BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box& layo
     // Here is the quirky part for body box when it stretches all the way to the ICB even when the document box does not (e.g. out-of-flow positioned).
     ASSERT(layoutBox.isBodyBox());
     auto& initialContainingBlock = layoutBox.initialContainingBlock();
-    auto& initialContainingBlockGeometry = formattingContext.geometryForBox(initialContainingBlock, EscapeReason::BodyStrechesToViewportQuirk);
+    auto& initialContainingBlockGeometry = formattingContext.geometryForBox(initialContainingBlock, EscapeReason::BodyStretchesToViewportQuirk);
     // Start the content height with the ICB.
     auto bodyBoxContentHeight = initialContainingBlockGeometry.contentBoxHeight();
     // Body box's own border and padding shrink the content height.
@@ -88,12 +88,12 @@ LayoutUnit BlockFormattingContext::Quirks::stretchedInFlowHeight(const Box& layo
     bodyBoxContentHeight -= usedVerticalMargin;
     // Document box's padding and border also shrink the body box's content height.
     auto& documentBox = layoutBox.parent();
-    auto& documentBoxGeometry = formattingContext.geometryForBox(documentBox, EscapeReason::BodyStrechesToViewportQuirk);
+    auto& documentBoxGeometry = formattingContext.geometryForBox(documentBox, EscapeReason::BodyStretchesToViewportQuirk);
     bodyBoxContentHeight -= documentBoxGeometry.verticalBorder() + documentBoxGeometry.verticalPadding().valueOr(0);
     // However the non-in-flow document box's vertical margins are ignored. They don't affect the body box's content height.
     if (documentBox.isInFlow()) {
         auto geometry = this->geometry();
-        auto precomputeDocumentBoxVerticalMargin = geometry.computedVerticalMargin(documentBox, geometry.constraintsForInFlowContent(initialContainingBlock, EscapeReason::BodyStrechesToViewportQuirk).horizontal);
+        auto precomputeDocumentBoxVerticalMargin = geometry.computedVerticalMargin(documentBox, geometry.constraintsForInFlowContent(initialContainingBlock, EscapeReason::BodyStretchesToViewportQuirk).horizontal);
         bodyBoxContentHeight -= precomputeDocumentBoxVerticalMargin.before.valueOr(0) + precomputeDocumentBoxVerticalMargin.after.valueOr(0);
     }
     return std::max(contentHeightAndMargin.contentHeight,  bodyBoxContentHeight);

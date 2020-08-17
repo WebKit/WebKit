@@ -53,7 +53,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTableCell);
 
 struct SameSizeAsRenderTableCell : public RenderBlockFlow {
     unsigned bitfields;
-    LayoutUnit paddings[2];
+    LayoutUnit padding[2];
 };
 
 COMPILE_ASSERT(sizeof(RenderTableCell) == sizeof(SameSizeAsRenderTableCell), RenderTableCell_should_stay_small);

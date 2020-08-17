@@ -582,7 +582,7 @@ void LineBuilder::adjustBaselineAndLineHeight(const Run& run, const LineBoxBuild
     auto& style = layoutBox.style();
     if (run.isContainerStart()) {
         // Inline containers stretch the line by their font size.
-        // Vertical margins, paddings and borders don't contribute to the line height.
+        // Vertical margins, padding and borders don't contribute to the line height.
         auto& fontMetrics = style.fontMetrics();
         if (style.verticalAlign() == VerticalAlign::Baseline) {
             auto halfLeading = halfLeadingMetrics(fontMetrics, style.computedLineHeight());

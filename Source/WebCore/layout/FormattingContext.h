@@ -74,7 +74,7 @@ public:
     struct ConstraintsForOutOfFlowContent {
         HorizontalConstraints horizontal;
         VerticalConstraints vertical;
-        // Borders and paddings are resolved against the containing block's content box as if the box was an in-flow box.
+        // Borders and padding are resolved against the containing block's content box as if the box was an in-flow box.
         LayoutUnit borderAndPaddingConstraints;
     };
     void layoutOutOfFlowContent(InvalidationState&, const ConstraintsForOutOfFlowContent&);
@@ -101,8 +101,8 @@ public:
         OutOfFlowBoxNeedsInFlowGeometry,
         FloatBoxNeedsToBeInAbsoluteCoordinates,
         FindFixedHeightAncestorQuirk,
-        DocumentBoxStrechesToViewportQuirk,
-        BodyStrechesToViewportQuirk,
+        DocumentBoxStretchesToViewportQuirk,
+        BodyStretchesToViewportQuirk,
         StrokeOverflowNeedsViewportGeometry,
         TableNeedsAccessToTableWrapper
     };

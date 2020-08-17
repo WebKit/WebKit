@@ -183,12 +183,12 @@ const Display::Box& FormattingContext::geometryForBox(const Box& layoutBox, Opti
             return false;
         }
 
-        if (*escapeReason == EscapeReason::DocumentBoxStrechesToViewportQuirk) {
+        if (*escapeReason == EscapeReason::DocumentBoxStretchesToViewportQuirk) {
             ASSERT(layoutState().inQuirksMode());
             return is<InitialContainingBlock>(layoutBox);
         }
 
-        if (*escapeReason == EscapeReason::BodyStrechesToViewportQuirk) {
+        if (*escapeReason == EscapeReason::BodyStretchesToViewportQuirk) {
             ASSERT(layoutState().inQuirksMode());
             return is<InitialContainingBlock>(layoutBox) || layoutBox.isDocumentBox();
 

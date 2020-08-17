@@ -328,7 +328,7 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
     if (styleLogicalWidth.isIntrinsic())
         return computeIntrinsicLogicalWidthUsing(styleLogicalWidth, availableWidth, bordersPaddingAndSpacingInRowDirection());
 
-    // HTML tables' width styles already include borders and paddings, but CSS tables' width styles do not.
+    // HTML tables' width styles already include borders and padding, but CSS tables' width styles do not.
     LayoutUnit borders;
     bool isCSSTable = !is<HTMLTableElement>(element());
     if (isCSSTable && styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive() && style().boxSizing() == BoxSizing::ContentBox)

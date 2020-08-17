@@ -96,7 +96,7 @@ void RenderTextControlSingleLine::layout()
     // - Make the height of the container element equal to the intrinsic height of
     //   the inner elements when the field has a strong password button.
     //
-    // We don't honor paddings and borders for textfields without decorations
+    // We don't honor padding and borders for textfields without decorations
     // and type=search if the text height is taller than the contentHeight()
     // because of compability.
 

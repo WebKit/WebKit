@@ -154,7 +154,7 @@ static void buildRendererHighlight(RenderObject* renderer, const HighlightConfig
         } else {
             auto& renderInline = downcast<RenderInline>(*renderer);
 
-            // RenderInline's bounding box includes paddings and borders, excludes margins.
+            // RenderInline's bounding box includes padding and borders, excludes margins.
             borderBox = renderInline.linesBoundingBox();
             paddingBox = LayoutRect(borderBox.x() + renderInline.borderLeft(), borderBox.y() + renderInline.borderTop(),
                 borderBox.width() - renderInline.borderLeft() - renderInline.borderRight(), borderBox.height() - renderInline.borderTop() - renderInline.borderBottom());
