@@ -56,7 +56,7 @@ void TestLoadRequest::main()
 
     {
         QSignalSpy loadChangedSignalSpy(m_view, SIGNAL(loadingChanged(WPEQtViewLoadRequest*)));
-        m_view->setUrl(QUrl("file://IDONTEXIST.html"));
+        m_view->setUrl(QUrl("file:///IDONTEXIST.html"));
         waitForLoadFailed(m_view);
         QCOMPARE(loadChangedSignalSpy.count(), 2);
     }
