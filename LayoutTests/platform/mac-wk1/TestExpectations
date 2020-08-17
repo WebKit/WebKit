@@ -1129,3 +1129,6 @@ webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-consol
 
 # rdar://66845465 REGRESSION (r264183): imported/w3c/web-platform-tests/workers/modules/shared-worker-import-referrer.html is a flaky failure
 [ arm64 ] imported/w3c/web-platform-tests/workers/modules/shared-worker-import-referrer.html [ Failure ]
+
+webkit.org/b/215593 webaudio/oscillator-square.html [ Pass Failure ]
+

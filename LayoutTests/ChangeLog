@@ -1,3 +1,12 @@
+2020-08-17  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk1 ] webaudio/oscillator-square.html is a flaky failure
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=215593
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2020-08-17  Karl Rackler  <rackler@apple.com>
 
         Unreviewed, reverting r265603.
