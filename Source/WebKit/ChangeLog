@@ -1,3 +1,19 @@
+2020-08-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Cocoa] Avoid waiting for Launch Services on every load
+        https://bugs.webkit.org/show_bug.cgi?id=215569
+
+        Reviewed by Darin Adler.
+
+        Currently, we are waiting for the Launch Services database to be present on every load in the WebContent process.
+        It should be sufficient to wait only on the first load. Since we now are waiting only once per WebContent process,
+        increase the maximum wait time from 1s to 5s.
+
+        No new tests, covered by existing tests.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters):
+
 2020-08-17  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Add Experimental Feature preference for SW VP9
