@@ -424,6 +424,65 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
 #pragma mark -
 
+@interface WKFullScreenWindowController (VideoFullscreenClientCallbacks)
+- (void)willEnterPictureInPicture;
+- (void)didEnterPictureInPicture;
+- (void)failedToEnterPictureInPicture;
+- (void)prepareToExitPictureInPicture;
+- (void)didExitPictureInPicture;
+@end
+
+class WKFullScreenWindowControllerVideoFullscreenModelClient : WebCore::VideoFullscreenModelClient {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    void setParent(WKFullScreenWindowController *parent) { m_parent = parent; }
+
+    void setInterface(WebCore::VideoFullscreenInterfaceAVKit* interface)
+    {
+        if (m_interface == interface)
+            return;
+
+        if (m_interface && m_interface->videoFullscreenModel())
+            m_interface->videoFullscreenModel()->removeClient(*this);
+        m_interface = interface;
+        if (m_interface && m_interface->videoFullscreenModel())
+            m_interface->videoFullscreenModel()->addClient(*this);
+    }
+
+    WebCore::VideoFullscreenInterfaceAVKit* interface() const { return m_interface.get(); }
+
+    void willEnterPictureInPicture() final
+    {
+        [m_parent willEnterPictureInPicture];
+    }
+
+    void didEnterPictureInPicture() final
+    {
+        [m_parent didEnterPictureInPicture];
+    }
+
+    void failedToEnterPictureInPicture() final
+    {
+        [m_parent failedToEnterPictureInPicture];
+    }
+
+    void prepareToExitPictureInPicture() final
+    {
+        [m_parent prepareToExitPictureInPicture];
+    }
+
+    void didExitPictureInPicture() final
+    {
+        [m_parent didExitPictureInPicture];
+    }
+
+private:
+    WKFullScreenWindowController *m_parent { nullptr };
+    RefPtr<WebCore::VideoFullscreenInterfaceAVKit> m_interface;
+};
+
+#pragma mark -
+
 @implementation WKFullScreenWindowController {
     RetainPtr<WKFullScreenPlaceholderView> _webViewPlaceholder;
 
@@ -441,6 +500,10 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     RetainPtr<UIPinchGestureRecognizer> _interactivePinchDismissGestureRecognizer;
     RetainPtr<WKFullScreenInteractiveTransition> _interactiveDismissTransitionCoordinator;
 
+    WKFullScreenWindowControllerVideoFullscreenModelClient _videoFullscreenClient;
+    BOOL _inPictureInPicture;
+    BOOL _returnToFullscreenFromPictureInPicture;
+
     CGRect _initialFrame;
     CGRect _finalFrame;
 
@@ -448,6 +511,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     BOOL _EVOrganizationNameIsValid;
     BOOL _inInteractiveDismiss;
     BOOL _exitRequested;
+    BOOL _enterRequested;
+    BOOL _exitingFullScreen;
 
     RetainPtr<id> _notificationListener;
 }
@@ -460,6 +525,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         return nil;
 
     self._webView = webView;
+    _videoFullscreenClient.setParent(self);
 
     return self;
 }
@@ -468,6 +534,9 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    _videoFullscreenClient.setInterface(nullptr);
+    _videoFullscreenClient.setParent(nullptr);
 
     [super dealloc];
 }
@@ -524,7 +593,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [_fullscreenViewController setTransitioningDelegate:self];
     [_fullscreenViewController setModalPresentationCapturesStatusBarAppearance:YES];
     [_fullscreenViewController setTarget:self];
-    [_fullscreenViewController setAction:@selector(requestExitFullScreen)];
+    [_fullscreenViewController setExitFullScreenAction:@selector(requestExitFullScreen)];
     _fullscreenViewController.get().view.frame = _rootViewController.get().view.bounds;
     [self _updateLocationInfo];
 
@@ -652,12 +721,36 @@ static const NSTimeInterval kAnimationDuration = 0.2;
             manager->didEnterFullScreen();
             manager->setAnimatingFullScreen(false);
             page->setSuppressVisibilityUpdates(false);
+
+            auto* videoFullscreenManager = page->videoFullscreenManager();
+            auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr;
+            if (_returnToFullscreenFromPictureInPicture) {
+                ASSERT(videoFullscreenInterface);
+                _returnToFullscreenFromPictureInPicture = NO;
+                if (videoFullscreenInterface)
+                    videoFullscreenInterface->setReadyToStopPictureInPicture(YES);
+            } else
+                _videoFullscreenClient.setInterface(videoFullscreenInterface);
+
             return;
         }
 
         ASSERT_NOT_REACHED();
         [self _exitFullscreenImmediately];
     }];
+}
+
+- (void)requestEnterFullScreen
+{
+    if (_fullScreenState != WebKit::NotInFullScreen)
+        return;
+
+    if (auto* manager = self._manager) {
+        manager->requestEnterFullScreen();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 - (void)requestExitFullScreen
@@ -669,6 +762,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     if (auto* manager = self._manager) {
         manager->requestExitFullScreen();
+        _exitingFullScreen = YES;
         return;
     }
 
@@ -770,6 +864,16 @@ static const NSTimeInterval kAnimationDuration = 0.2;
             page->setSuppressVisibilityUpdates(false);
             page->setNeedsDOMWindowResizeEvent();
         }
+
+        if (!_inPictureInPicture)
+            _videoFullscreenClient.setInterface(nullptr);
+
+        _exitRequested = NO;
+        _exitingFullScreen = NO;
+        if (_enterRequested) {
+            _enterRequested = NO;
+            [self requestEnterFullScreen];
+        }
     });
 
     if (auto page = [self._webView _page])
@@ -779,7 +883,6 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     [_fullscreenViewController setPrefersStatusBarHidden:YES];
     _fullscreenViewController = nil;
-    _exitRequested = NO;
 }
 
 - (void)close
@@ -798,6 +901,11 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 {
     if (_fullscreenViewController)
         [_fullscreenViewController videoControlsManagerDidChange];
+
+    auto page = [self._webView _page];
+    auto* videoFullscreenManager = page ? page->videoFullscreenManager() : nullptr;
+    auto* videoFullscreenInterface = videoFullscreenManager ? videoFullscreenManager->controlsManagerInterface() : nullptr;
+    _videoFullscreenClient.setInterface(videoFullscreenInterface);
 }
 
 - (void)placeholderWillMoveToSuperview:(UIView *)superview
@@ -809,6 +917,53 @@ static const NSTimeInterval kAnimationDuration = 0.2;
         if ([_webViewPlaceholder superview] == nil && [_webViewPlaceholder parent] == self)
             [self close];
     });
+}
+
+- (void)willEnterPictureInPicture
+{
+    auto* interface = _videoFullscreenClient.interface();
+    if (!interface || !interface->pictureInPictureWasStartedWhenEnteringBackground())
+        return;
+
+    [_fullscreenViewController setAnimatingViewAlpha:0];
+}
+
+- (void)didEnterPictureInPicture
+{
+    _inPictureInPicture = YES;
+    [self requestExitFullScreen];
+}
+
+- (void)failedToEnterPictureInPicture
+{
+    auto* interface = _videoFullscreenClient.interface();
+    if (!interface || !interface->pictureInPictureWasStartedWhenEnteringBackground())
+        return;
+
+    [_fullscreenViewController setAnimatingViewAlpha:1];
+}
+
+- (void)prepareToExitPictureInPicture
+{
+    auto* interface = _videoFullscreenClient.interface();
+    if (!interface)
+        return;
+
+    interface->setReadyToStopPictureInPicture(NO);
+    interface->setWillEnterStandbyFromPictureInPicture(YES);
+    _returnToFullscreenFromPictureInPicture = YES;
+
+    if (!_exitingFullScreen)
+        [self requestEnterFullScreen];
+    else
+        _enterRequested = YES;
+}
+
+- (void)didExitPictureInPicture
+{
+    _inPictureInPicture = NO;
+    if (!_returnToFullscreenFromPictureInPicture && ![self isFullScreen])
+        _videoFullscreenClient.setInterface(nullptr);
 }
 
 #pragma mark -

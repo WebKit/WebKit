@@ -128,7 +128,9 @@ private:
     void willExitFullscreen() final;
     void didExitFullscreen() final;
     void didCleanupFullscreen() final;
-    void fullscreenMayReturnToInline() final;
+    void prepareToExitFullscreen() final { }
+    void fullscreenMayReturnToInline() final { }
+    void fullscreenWillReturnToInline() final;
 
     // VideoFullscreenModelClient
     void hasVideoChanged(bool) override;
@@ -359,7 +361,7 @@ void VideoFullscreenControllerContext::didCleanupFullscreen()
     });
 }
 
-void VideoFullscreenControllerContext::fullscreenMayReturnToInline()
+void VideoFullscreenControllerContext::fullscreenWillReturnToInline()
 {
     ASSERT(isUIThread());
     WebThreadRun([protectedThis = makeRefPtr(this), this] () mutable {

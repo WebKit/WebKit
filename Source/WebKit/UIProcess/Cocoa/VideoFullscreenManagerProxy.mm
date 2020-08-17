@@ -274,12 +274,24 @@ void VideoFullscreenModelContext::fullscreenMayReturnToInline()
         m_manager->fullscreenMayReturnToInline(m_contextId);
 }
 
+void VideoFullscreenModelContext::fullscreenWillReturnToInline()
+{
+    if (m_manager)
+        m_manager->fullscreenWillReturnToInline(m_contextId);
+}
+
 void VideoFullscreenModelContext::requestRouteSharingPolicyAndContextUID(CompletionHandler<void(WebCore::RouteSharingPolicy, String)>&& completionHandler)
 {
     if (m_manager)
         m_manager->requestRouteSharingPolicyAndContextUID(m_contextId, WTFMove(completionHandler));
     else
         completionHandler(WebCore::RouteSharingPolicy::Default, emptyString());
+}
+
+void VideoFullscreenModelContext::prepareToExitFullscreen()
+{
+    for (auto& client : m_clients)
+        client->prepareToExitPictureInPicture();
 }
 
 void VideoFullscreenModelContext::willEnterPictureInPicture()
@@ -512,7 +524,12 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextId
     MESSAGE_CHECK(videoLayerID);
 
     auto& [model, interface] = ensureModelAndInterface(contextId);
-    addClientForContext(contextId);
+#if PLATFORM(IOS_FAMILY)
+    if (interface->willEnterStandbyFromPictureInPicture())
+        interface->setWillEnterStandbyFromPictureInPicture(NO);
+    else if (videoFullscreenMode != HTMLMediaElementEnums::VideoFullscreenModePictureInPicture || !standby)
+        addClientForContext(contextId);
+#endif
 
     if (m_mockVideoPresentationModeEnabled) {
         if (!videoDimensions.isEmpty())
@@ -696,8 +713,6 @@ void VideoFullscreenManagerProxy::cleanupFullscreen(PlaybackSessionContextIdenti
 
 void VideoFullscreenManagerProxy::preparedToReturnToInline(PlaybackSessionContextIdentifier contextId, bool visible, WebCore::IntRect inlineRect)
 {
-    m_page->fullscreenMayReturnToInline();
-
 #if !PLATFORM(IOS_FAMILY)
     IntRect inlineWindowRect;
     m_page->rootViewToWindow(inlineRect, inlineWindowRect);
@@ -806,8 +821,13 @@ void VideoFullscreenManagerProxy::fullscreenModeChanged(PlaybackSessionContextId
 
 void VideoFullscreenManagerProxy::fullscreenMayReturnToInline(PlaybackSessionContextIdentifier contextId)
 {
+    m_page->fullscreenMayReturnToInline();
+}
+
+void VideoFullscreenManagerProxy::fullscreenWillReturnToInline(PlaybackSessionContextIdentifier contextId)
+{
     bool isViewVisible = m_page->isViewVisible();
-    m_page->send(Messages::VideoFullscreenManager::FullscreenMayReturnToInline(contextId, isViewVisible));
+    m_page->send(Messages::VideoFullscreenManager::FullscreenWillReturnToInline(contextId, isViewVisible));
 }
 
 #endif

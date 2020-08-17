@@ -1,5 +1,262 @@
 2020-08-17  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r265562. rdar://problem/66944332
+
+    Add the support to return to element fullscreen from picture-in-picture
+    https://bugs.webkit.org/show_bug.cgi?id=215305
+    
+    Reviewed by Jer Noble.
+    
+    Source/WebCore:
+    
+    When a container element enters fullscreen (with the fullscreen API), a descendant
+    video element will enter the video fullscreen standby state so that it can enter
+    picture-in-picture on application suspend (r226217). But we cannot restore
+    to that state from the picture-in-picture mode when we click the "restore" button
+    on the top-right corner of the PiP window. Instead, the video element will return
+    to the inline mode.
+    
+    However, when a video element enters video fullscreen first and then enters
+    picture-in-picture, we can let the video restore to fullscreen by clicking the
+    "restore" button on the top-right corner of the picture-in-picture window.
+    
+    The inconsistent behaviors may confuse users who are not aware of the difference
+    between the fullscreen API (or element fullscreen) and video fullscreen.
+    
+    This patch enables the support to restore to element fullscreen from picture-in-picture
+    mode so that users can have a consistent experience on element fullscreen and
+    video fullscreen.
+    
+    * dom/FullscreenManager.h:
+    Export requestFullscreenForElement() so that we can use it in WebKit code.
+    
+    * html/HTMLMediaElement.cpp:
+    (WebCore::HTMLMediaElement::enterFullscreen):
+    (WebCore::HTMLMediaElement::prepareForVideoFullscreenStandby):
+    * html/HTMLMediaElement.h:
+    * page/ChromeClient.h:
+    (WebCore::ChromeClient::prepareForVideoFullscreen):
+    Add the interface to request a video element to be prepared for the video fullscreen
+    standby state.
+    
+    * platform/cocoa/VideoFullscreenChangeObserver.h:
+    Add prepareToExitFullscreen() and fullscreenWillReturnToInline().
+    
+    * platform/cocoa/VideoFullscreenModel.h:
+    (WebCore::VideoFullscreenModelClient::hasVideoChanged):
+    (WebCore::VideoFullscreenModelClient::videoDimensionsChanged):
+    (WebCore::VideoFullscreenModelClient::prepareToExitPictureInPicture):
+    Some minor clean-ups and add function prepareToExitPictureInPicture().
+    
+    * platform/ios/VideoFullscreenInterfaceAVKit.h:
+    * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+    (VideoFullscreenInterfaceAVKit::cleanupFullscreen):
+    (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStop):
+    (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+    (VideoFullscreenInterfaceAVKit::willStopPictureInPicture):
+    (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler):
+    (VideoFullscreenInterfaceAVKit::setReadyToStopPictureInPicture):
+    (VideoFullscreenInterfaceAVKit::willEnterStandbyFromPictureInPicture):
+    (VideoFullscreenInterfaceAVKit::setWillEnterStandbyFromPictureInPicture):
+    (VideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline): Deleted.
+    When we enter picture-in-picture, we need to save the state and be prepared to
+    restore to element fullscreen if needed.
+    
+    Before we exit picture-in-picture, if the "restore" button is clicked, we need
+    to notify the client to prepare for the picture-in-picture stop, and call
+    VideoFullscreenInterfaceAVKit::setReadyToStopPictureInPicture(true) when the client
+    is ready.
+    
+    Based on those changes, a client (e.g., WKFullScreenWindowControllerVideoFullscreenModelClient)
+    can coordinate with WKFullScreenWindowController to implement the "restore to
+    element fullscreen" feature.
+    
+    * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+    (VideoFullscreenControllerContext::fullscreenWillReturnToInline):
+    (VideoFullscreenControllerContext::fullscreenMayReturnToInline): Deleted.
+    
+    Source/WebKit:
+    
+    This patch replaces WKFullScreenViewControllerVideoFullscreenModelClient
+    with WKFullScreenWindowControllerVideoFullscreenModelClient. We need to do
+    that because the instance of WKFullScreenViewControllerVideoFullscreenModelClient
+    will be destroyed after the container element exits fullscreen while the video
+    element enters picture-in-picture.
+    
+    The instance of WKFullScreenWindowControllerVideoFullscreenModelClient
+    will always exist when the WKFullScreenWindowController instance is alive,
+    so that it can receive callbacks from the VideoFullscreenInterfaceAVKit instance
+    to implement the "return to element fullscreen from picture-in-picture" feature.
+    
+    This patch supports the following transitions:
+    element fullscreen -> picture-in-picture (through user gestures)
+    element fullscreen -> picture-in-picture (through the PiP button)
+    picture-in-picture -> element fullscreen (when the tab is visible)
+    picture-in-picture -> element fullscreen (when the tab is invisible)
+    picture-in-picture -> element fullscreen (when the browser is in background)
+    picture-in-picture -> inline (when the browser is in foreground)
+    exit picture-in-picture when the browser is in background
+    
+    * UIProcess/Cocoa/VideoFullscreenManagerProxy.h:
+    * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+    (WebKit::VideoFullscreenModelContext::fullscreenWillReturnToInline):
+    (WebKit::VideoFullscreenModelContext::prepareToExitFullscreen):
+    Notify clients to prepare for the stop of fullscreen/picture-in-picture.
+    (WebKit::VideoFullscreenManagerProxy::setupFullscreenWithID):
+    Fix issues that increase the client count unnecessarily.
+    (WebKit::VideoFullscreenManagerProxy::preparedToReturnToInline):
+    Call m_page->fullscreenMayReturnToInline() earlier.
+    (WebKit::VideoFullscreenManagerProxy::fullscreenMayReturnToInline):
+    Ditto.
+    (WebKit::VideoFullscreenManagerProxy::fullscreenWillReturnToInline):
+    Notify VideoFullscreenManager to prepare for exiting picture-in-picture or video fullscreen
+    and report the destination rectangle of the exit picture-in-picture or video fullscreen animations.
+    
+    * UIProcess/WebFullScreenManagerProxy.cpp:
+    (WebKit::WebFullScreenManagerProxy::requestEnterFullScreen):
+    * UIProcess/WebFullScreenManagerProxy.h:
+    Add a function requestEnterFullScreen() so that we can request an element to enter fullscreen
+    from the UI process side.
+    
+    * UIProcess/ios/fullscreen/WKFullScreenViewController.h:
+    * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+    (-[WKFullScreenViewController initWithWebView:]):
+    (-[WKFullScreenViewController dealloc]):
+    (-[WKFullScreenViewController videoControlsManagerDidChange]):
+    (-[WKFullScreenViewController setAnimatingViewAlpha:]):
+    (-[WKFullScreenViewController _cancelAction:]):
+    (WKFullScreenViewControllerVideoFullscreenModelClient::setParent): Deleted.
+    (WKFullScreenViewControllerVideoFullscreenModelClient::setInterface): Deleted.
+    (WKFullScreenViewControllerVideoFullscreenModelClient::interface const): Deleted.
+    (-[WKFullScreenViewController willEnterPictureInPicture]): Deleted.
+    (-[WKFullScreenViewController didEnterPictureInPicture]): Deleted.
+    (-[WKFullScreenViewController failedToEnterPictureInPicture]): Deleted.
+    Minor clean-ups and remove code related to WKFullScreenViewControllerVideoFullscreenModelClient.
+    
+    * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.h:
+    * UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm:
+    (WKFullScreenWindowControllerVideoFullscreenModelClient::setParent):
+    (WKFullScreenWindowControllerVideoFullscreenModelClient::setInterface):
+    (WKFullScreenWindowControllerVideoFullscreenModelClient::interface const):
+    (-[WKFullScreenWindowController initWithWebView:]):
+    (-[WKFullScreenWindowController dealloc]):
+    (-[WKFullScreenWindowController enterFullScreen]):
+    (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+    (-[WKFullScreenWindowController requestEnterFullScreen]):
+    (-[WKFullScreenWindowController requestExitFullScreen]):
+    (-[WKFullScreenWindowController _completedExitFullScreen]):
+    (-[WKFullScreenWindowController videoControlsManagerDidChange]):
+    (-[WKFullScreenWindowController willEnterPictureInPicture]):
+    (-[WKFullScreenWindowController didEnterPictureInPicture]):
+    (-[WKFullScreenWindowController failedToEnterPictureInPicture]):
+    (-[WKFullScreenWindowController prepareToExitPictureInPicture]):
+    (-[WKFullScreenWindowController didExitPictureInPicture]):
+    Add WKFullScreenWindowControllerVideoFullscreenModelClient and implement the support
+    to "restore fullscreen from picture-in-picture".
+    
+    * WebProcess/FullScreen/WebFullScreenManager.cpp:
+    (WebKit::WebFullScreenManager::enterFullScreenForElement):
+    (WebKit::WebFullScreenManager::requestEnterFullScreen):
+    * WebProcess/FullScreen/WebFullScreenManager.h:
+    * WebProcess/FullScreen/WebFullScreenManager.messages.in:
+    Add the interface requestEnterFullScreen() and the corresponding IPC message.
+    
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::prepareForVideoFullscreen):
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    Add the interface to prepare for video fullscreen standby. The web process can
+    use this interface to create a VideoFullscreenManager instance to avoid the
+    scenario that an IPC message comes from the VideoFullscreenManagerProxy but
+    the VideoFullscreenManager instance is not constructed yet.
+    
+    * WebProcess/cocoa/VideoFullscreenManager.h:
+    * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+    * WebProcess/cocoa/VideoFullscreenManager.mm:
+    (WebKit::VideoFullscreenManager::fullscreenWillReturnToInline):
+    (WebKit::VideoFullscreenManager::fullscreenMayReturnToInline): Deleted.
+    Rename fullscreenMayReturnToInline() to fullscreenWillReturnToInline().
+    In the UI process side, fullscreenMayReturnToInline() is used by
+    VideoFullscreenManagerProxy to notify applications regarding UI
+    changes (e.g., switch browser tabs).
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265562 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-12  Peng Liu  <peng.liu6@apple.com>
+
+            Add the support to return to element fullscreen from picture-in-picture
+            https://bugs.webkit.org/show_bug.cgi?id=215305
+
+            Reviewed by Jer Noble.
+
+            When a container element enters fullscreen (with the fullscreen API), a descendant
+            video element will enter the video fullscreen standby state so that it can enter
+            picture-in-picture on application suspend (r226217). But we cannot restore
+            to that state from the picture-in-picture mode when we click the "restore" button
+            on the top-right corner of the PiP window. Instead, the video element will return
+            to the inline mode.
+
+            However, when a video element enters video fullscreen first and then enters
+            picture-in-picture, we can let the video restore to fullscreen by clicking the
+            "restore" button on the top-right corner of the picture-in-picture window.
+
+            The inconsistent behaviors may confuse users who are not aware of the difference
+            between the fullscreen API (or element fullscreen) and video fullscreen.
+
+            This patch enables the support to restore to element fullscreen from picture-in-picture
+            mode so that users can have a consistent experience on element fullscreen and
+            video fullscreen.
+
+            * dom/FullscreenManager.h:
+            Export requestFullscreenForElement() so that we can use it in WebKit code.
+
+            * html/HTMLMediaElement.cpp:
+            (WebCore::HTMLMediaElement::enterFullscreen):
+            (WebCore::HTMLMediaElement::prepareForVideoFullscreenStandby):
+            * html/HTMLMediaElement.h:
+            * page/ChromeClient.h:
+            (WebCore::ChromeClient::prepareForVideoFullscreen):
+            Add the interface to request a video element to be prepared for the video fullscreen
+            standby state.
+
+            * platform/cocoa/VideoFullscreenChangeObserver.h:
+            Add prepareToExitFullscreen() and fullscreenWillReturnToInline().
+
+            * platform/cocoa/VideoFullscreenModel.h:
+            (WebCore::VideoFullscreenModelClient::hasVideoChanged):
+            (WebCore::VideoFullscreenModelClient::videoDimensionsChanged):
+            (WebCore::VideoFullscreenModelClient::prepareToExitPictureInPicture):
+            Some minor clean-ups and add function prepareToExitPictureInPicture().
+
+            * platform/ios/VideoFullscreenInterfaceAVKit.h:
+            * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+            (VideoFullscreenInterfaceAVKit::cleanupFullscreen):
+            (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStop):
+            (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+            (VideoFullscreenInterfaceAVKit::willStopPictureInPicture):
+            (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler):
+            (VideoFullscreenInterfaceAVKit::setReadyToStopPictureInPicture):
+            (VideoFullscreenInterfaceAVKit::willEnterStandbyFromPictureInPicture):
+            (VideoFullscreenInterfaceAVKit::setWillEnterStandbyFromPictureInPicture):
+            (VideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline): Deleted.
+            When we enter picture-in-picture, we need to save the state and be prepared to
+            restore to element fullscreen if needed.
+
+            Before we exit picture-in-picture, if the "restore" button is clicked, we need
+            to notify the client to prepare for the picture-in-picture stop, and call
+            VideoFullscreenInterfaceAVKit::setReadyToStopPictureInPicture(true) when the client
+            is ready.
+
+            Based on those changes, a client (e.g., WKFullScreenWindowControllerVideoFullscreenModelClient)
+            can coordinate with WKFullScreenWindowController to implement the "restore to
+            element fullscreen" feature.
+
+            * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+            (VideoFullscreenControllerContext::fullscreenWillReturnToInline):
+            (VideoFullscreenControllerContext::fullscreenMayReturnToInline): Deleted.
+
+2020-08-17  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r265259. rdar://problem/66944362
 
     AX: VoiceOver needs access to font styling at insertion point

@@ -969,13 +969,9 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
     
     [m_playerViewController setDelegate:nil];
     [m_playerViewController setPlayerController:nil];
-    
-    if (m_currentMode.hasPictureInPicture()) {
-        [m_playerViewController stopPictureInPicture];
 
-        if (m_videoFullscreenModel)
-            m_videoFullscreenModel->didExitPictureInPicture();
-    }
+    if (m_currentMode.hasPictureInPicture())
+        [m_playerViewController stopPictureInPicture];
 
     if (m_currentMode.hasFullscreen()) {
         [[m_playerViewController view] layoutIfNeeded];
@@ -1001,6 +997,13 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
 
     [playerController() setHasEnabledVideo:false];
     [playerController() setHasVideo:false];
+
+    m_willEnterStandbyFromPictureInPicture = false;
+    if (m_exitingPictureInPicture) {
+        m_exitingPictureInPicture = false;
+        if (m_videoFullscreenModel)
+            m_videoFullscreenModel->didExitPictureInPicture();
+    }
 
     if (m_fullscreenChangeObserver)
         m_fullscreenChangeObserver->didCleanupFullscreen();
@@ -1066,11 +1069,15 @@ bool VideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoPictureInPicture() 
     return [playerController() isPlaying] && (m_standby || m_currentMode.isFullscreen()) && supportsPictureInPicture();
 }
 
-void VideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline(WTF::Function<void(bool)>&& callback)
+void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStop(WTF::Function<void(bool)>&& callback)
 {
     m_prepareToInlineCallback = WTFMove(callback);
-    if (m_fullscreenChangeObserver)
+    if (m_fullscreenChangeObserver) {
         m_fullscreenChangeObserver->fullscreenMayReturnToInline();
+        m_fullscreenChangeObserver->prepareToExitFullscreen();
+        if (m_readyToStopPictureInPicture)
+            m_fullscreenChangeObserver->fullscreenWillReturnToInline();
+    }
 }
 
 void VideoFullscreenInterfaceAVKit::willStartPictureInPicture()
@@ -1118,7 +1125,6 @@ void VideoFullscreenInterfaceAVKit::didStartPictureInPicture()
     }
 
     m_enteringPictureInPicture = false;
-    m_standby = false;
 }
 
 void VideoFullscreenInterfaceAVKit::failedToStartPictureInPicture()
@@ -1144,6 +1150,7 @@ void VideoFullscreenInterfaceAVKit::willStopPictureInPicture()
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::willStopPictureInPicture(%p)", this);
 
+    m_exitingPictureInPicture = true;
     m_shouldReturnToFullscreenWhenStoppingPiP = false;
 
     if (m_currentMode.hasFullscreen() || m_restoringFullscreenForPictureInPictureStop)
@@ -1190,6 +1197,7 @@ void VideoFullscreenInterfaceAVKit::didStopPictureInPicture()
 void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler(void (^completionHandler)(BOOL restored))
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler(%p)", this);
+
     if (m_shouldReturnToFullscreenWhenStoppingPiP) {
         m_shouldReturnToFullscreenWhenStoppingPiP = false;
         m_restoringFullscreenForPictureInPictureStop = true;
@@ -1205,7 +1213,7 @@ void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletion
         return;
     }
 
-    fullscreenMayReturnToInline([protectedThis = makeRefPtr(this), strongCompletionHandler = adoptNS([completionHandler copy])](bool restored)  {
+    prepareForPictureInPictureStop([protectedThis = makeRefPtr(this), strongCompletionHandler = adoptNS([completionHandler copy])](bool restored)  {
         LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler lambda(%p) - restored(%s)", protectedThis.get(), boolString(restored));
         ((void (^)(BOOL))strongCompletionHandler.get())(restored);
     });
@@ -1578,6 +1586,26 @@ void VideoFullscreenInterfaceAVKit::clearMode(HTMLMediaElementEnums::VideoFullsc
 bool VideoFullscreenInterfaceAVKit::isPlayingVideoInEnhancedFullscreen() const
 {
     return hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) && [playerController() isPlaying];
+}
+
+void VideoFullscreenInterfaceAVKit::setReadyToStopPictureInPicture(BOOL ready)
+{
+    if (m_readyToStopPictureInPicture == ready)
+        return;
+
+    m_readyToStopPictureInPicture = ready;
+    if (m_readyToStopPictureInPicture && m_fullscreenChangeObserver)
+        m_fullscreenChangeObserver->fullscreenWillReturnToInline();
+}
+
+bool VideoFullscreenInterfaceAVKit::willEnterStandbyFromPictureInPicture()
+{
+    return m_willEnterStandbyFromPictureInPicture;
+}
+
+void VideoFullscreenInterfaceAVKit::setWillEnterStandbyFromPictureInPicture(BOOL value)
+{
+    m_willEnterStandbyFromPictureInPicture = value;
 }
 
 static Optional<bool> isPictureInPictureSupported;

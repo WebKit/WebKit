@@ -940,6 +940,11 @@ RefPtr<ScrollingCoordinator> WebChromeClient::createScrollingCoordinator(Page& p
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
+void WebChromeClient::prepareForVideoFullscreen()
+{
+    m_page.videoFullscreenManager();
+}
+
 bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullscreenMode mode)
 {
     return m_page.videoFullscreenManager().supportsVideoFullscreen(mode);
