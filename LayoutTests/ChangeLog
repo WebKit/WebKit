@@ -1,3 +1,63 @@
+2020-08-17  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r265259. rdar://problem/66944362
+
+    AX: VoiceOver needs access to font styling at insertion point
+    https://bugs.webkit.org/show_bug.cgi?id=215129
+    Source/WebCore:
+    
+    <rdar://problem/65114972>
+    
+    Reviewed by Darin Adler.
+    
+    Give access to relevant font styling properties at the insertion point so that VoiceOver can speak them
+    when text commands alter styling.
+    
+    Test: accessibility/mac/resolved-text-editing.html
+    
+    * accessibility/AccessibilityObject.cpp:
+    (WebCore::AccessibilityObject::resolvedEditingStyles const):
+    * accessibility/AccessibilityObject.h:
+    * accessibility/AccessibilityObjectInterface.h:
+    * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+    (-[WebAccessibilityObjectWrapper _accessibilityResolvedEditingStyles]):
+    * accessibility/isolatedtree/AXIsolatedObject.cpp:
+    (WebCore::AXIsolatedObject::resolvedEditingStyles const):
+    * accessibility/isolatedtree/AXIsolatedObject.h:
+    * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+    * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+    (-[WebAccessibilityObjectWrapperBase baseAccessibilityResolvedEditingStyles]):
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (-[WebAccessibilityObjectWrapper ALLOW_DEPRECATED_IMPLEMENTATIONS_END]):
+    (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+    
+    Tools:
+    
+    Reviewed by Darin Adler.
+    
+    * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+    (WTR::AccessibilityUIElement::attributeValueAsync):
+    
+    LayoutTests:
+    
+    Reviewed by Darin Adler.
+    
+    * accessibility/mac/resolved-text-editing-expected.txt: Added.
+    * accessibility/mac/resolved-text-editing.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265259 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-04  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: VoiceOver needs access to font styling at insertion point
+            https://bugs.webkit.org/show_bug.cgi?id=215129
+
+            Reviewed by Darin Adler.
+
+            * accessibility/mac/resolved-text-editing-expected.txt: Added.
+            * accessibility/mac/resolved-text-editing.html: Added.
+
 2020-08-14  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r265709. rdar://problem/67106107

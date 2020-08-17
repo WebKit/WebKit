@@ -224,7 +224,8 @@ public:
     void setIsExpanded(bool) override { }
     FloatRect relativeFrame() const override;
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override;
-
+    HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const override;
+    
     // In a multi-select list, many items can be selected but only one is active at a time.
     bool isSelectedOptionActive() const override { return false; }
 

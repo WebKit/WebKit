@@ -33,6 +33,7 @@
 #include "TextIterator.h"
 #include "VisibleSelection.h"
 #include <wtf/RefCounted.h>
+#include <wtf/Variant.h>
 
 #if PLATFORM(WIN)
 #include "AccessibilityObjectWrapperWin.h"
@@ -297,6 +298,8 @@ enum class AccessibilitySearchKey {
     UnvisitedLink,
     VisitedLink,
 };
+
+using AXEditingStyleValueVariant = Variant<String, bool, int>;
 
 struct AccessibilitySearchCriteria {
     AXCoreObject* anchorObject { nullptr };
@@ -594,6 +597,8 @@ public:
     bool isTreeItem() const { return roleValue() == AccessibilityRole::TreeItem; }
     bool isScrollbar() const { return roleValue() == AccessibilityRole::ScrollBar; }
     virtual bool isButton() const = 0;
+    
+    virtual HashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const = 0;
 
     bool isListItem() const { return roleValue() == AccessibilityRole::ListItem; }
     bool isCheckboxOrRadio() const { return isCheckbox() || isRadioButton(); }

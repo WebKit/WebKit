@@ -1776,6 +1776,14 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     return [[self _accessibilityWebDocumentView] _accessibilityPreviousElementsWithCount:count];
 }
 
+- (NSDictionary<NSString *, id> *)_accessibilityResolvedEditingStyles
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    
+    return [self baseAccessibilityResolvedEditingStyles];
+}
+
 - (BOOL)accessibilityCanSetValue
 {
     if (![self _prepareAccessibilityCall])

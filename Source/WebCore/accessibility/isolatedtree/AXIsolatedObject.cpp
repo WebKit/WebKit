@@ -1176,6 +1176,15 @@ bool AXIsolatedObject::isIndeterminate() const
     return false;
 }
 
+HashMap<String, AXEditingStyleValueVariant> AXIsolatedObject::resolvedEditingStyles() const
+{
+    return Accessibility::retrieveValueFromMainThread<HashMap<String, AXEditingStyleValueVariant>>([this] () -> HashMap<String, AXEditingStyleValueVariant> {
+        if (auto* object = associatedAXObject())
+            return object->resolvedEditingStyles();
+        return { };
+    });
+}
+
 bool AXIsolatedObject::isOnScreen() const
 {
     return Accessibility::retrieveValueFromMainThread<bool>([this] () -> bool {

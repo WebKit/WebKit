@@ -2767,6 +2767,24 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
     return AccessibilityButtonState::Off;
 }
 
+HashMap<String, AXEditingStyleValueVariant> AccessibilityObject::resolvedEditingStyles() const
+{
+    auto document = this->document();
+    if (!document)
+        return { };
+    
+    auto selectionStyle = EditingStyle::styleAtSelectionStart(document->selection().selection());
+    if (!selectionStyle)
+        return { };
+
+    HashMap<String, AXEditingStyleValueVariant> styles;
+    styles.add("bold", selectionStyle->hasStyle(CSSPropertyFontWeight, "bold"));
+    styles.add("italic", selectionStyle->hasStyle(CSSPropertyFontStyle, "italic"));
+    styles.add("underline", selectionStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"));
+    styles.add("fontsize", selectionStyle->legacyFontSize(*document));
+    return styles;
+}
+
 // This is a 1-dimensional scroll offset helper function that's applied
 // separately in the horizontal and vertical directions, because the
 // logic is the same. The goal is to compute the best scroll offset
