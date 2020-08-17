@@ -29,6 +29,7 @@ import subprocess
 import shutil
 import sys
 import tarfile
+import tempfile
 import zipfile
 
 from webkitcorepy import log
@@ -216,7 +217,7 @@ class Package(object):
             log.warning('Installing {}...'.format(archive))
             archive.download()
 
-            temp_location = '{}.tmp'.format(self.location)
+            temp_location = os.path.join(tempfile.gettempdir(), self.name)
             archive.unpack(temp_location)
 
             for candidate in [
