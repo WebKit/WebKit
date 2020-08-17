@@ -46,7 +46,7 @@ struct RemoteAudioBusData {
         for (size_t i = 0; i < channelBuffers.size(); ++i) {
             SharedMemory::Handle handle;
             channelBuffers[i]->createHandle(handle, SharedMemory::Protection::ReadWrite);
-            encoder << handle;
+            encoder << SharedMemory::IPCHandle { WTFMove(handle), channelBuffers[i]->size() };
         }
     }
 
@@ -63,11 +63,13 @@ struct RemoteAudioBusData {
             return false;
 
         for (size_t i = 0; i < size; ++i) {
-            SharedMemory::Handle handle;
-            if (!decoder.decode(handle))
+            SharedMemory::IPCHandle ipcHandle;
+            if (!decoder.decode(ipcHandle))
                 return false;
-            if (auto memory = SharedMemory::map(handle, SharedMemory::Protection::ReadWrite))
+            if (auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadWrite))
                 result.channelBuffers.append(memory.releaseNonNull());
+            else
+                return false;
         }
 
         return true;

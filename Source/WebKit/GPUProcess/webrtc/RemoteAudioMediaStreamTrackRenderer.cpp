@@ -95,7 +95,7 @@ void RemoteAudioMediaStreamTrackRenderer::setVolume(float value)
     m_renderer->setVolume(value);
 }
 
-void RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
+void RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged(const SharedMemory::IPCHandle& ipcHandle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
 {
     ASSERT(m_ringBuffer);
     if (!m_ringBuffer)
@@ -103,14 +103,14 @@ void RemoteAudioMediaStreamTrackRenderer::audioSamplesStorageChanged(const Share
 
     m_description = description;
 
-    if (handle.isNull()) {
+    if (ipcHandle.handle.isNull()) {
         m_ringBuffer->deallocate();
         storage().setReadOnly(false);
         storage().setStorage(nullptr);
         return;
     }
 
-    auto memory = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    auto memory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
     storage().setStorage(WTFMove(memory));
     storage().setReadOnly(true);
 

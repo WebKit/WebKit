@@ -87,7 +87,12 @@ void WebSWOriginStore::sendStoreHandle(WebSWServerConnection& connection)
     if (!m_store.createSharedMemoryHandle(handle))
         return;
 
-    connection.send(Messages::WebSWClientConnection::SetSWOriginTableSharedMemory(handle));
+#if OS(DARWIN) || OS(WINDOWS)
+    uint64_t dataSize = handle.size();
+#else
+    uint64_t dataSize = 0;
+#endif
+    connection.send(Messages::WebSWClientConnection::SetSWOriginTableSharedMemory(SharedMemory::IPCHandle { WTFMove(handle), dataSize }));
 }
 
 void WebSWOriginStore::didInvalidateSharedMemory()

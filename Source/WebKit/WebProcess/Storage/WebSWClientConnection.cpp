@@ -133,9 +133,9 @@ bool WebSWClientConnection::mayHaveServiceWorkerRegisteredForOrigin(const Securi
     return m_swOriginTable->contains(origin);
 }
 
-void WebSWClientConnection::setSWOriginTableSharedMemory(const SharedMemory::Handle& handle)
+void WebSWClientConnection::setSWOriginTableSharedMemory(const SharedMemory::IPCHandle& ipcHandle)
 {
-    m_swOriginTable->setSharedMemory(handle);
+    m_swOriginTable->setSharedMemory(ipcHandle.handle);
 }
 
 void WebSWClientConnection::setSWOriginTableIsImported()

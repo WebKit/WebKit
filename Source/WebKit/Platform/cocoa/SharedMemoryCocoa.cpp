@@ -88,31 +88,6 @@ void SharedMemory::Handle::clear()
     m_size = 0;
 }
 
-void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
-{
-    encoder << static_cast<uint64_t>(m_size);
-    encoder << IPC::MachPort(m_port, MACH_MSG_TYPE_MOVE_SEND);
-    m_port = MACH_PORT_NULL;
-}
-
-bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
-{
-    ASSERT(!handle.m_port);
-    ASSERT(!handle.m_size);
-
-    uint64_t size;
-    if (!decoder.decode(size))
-        return false;
-
-    IPC::MachPort machPort;
-    if (!decoder.decode(machPort))
-        return false;
-    
-    handle.m_size = size;
-    handle.m_port = machPort.port();
-    return true;
-}
-
 void SharedMemory::IPCHandle::encode(IPC::Encoder& encoder) const
 {
     encoder << static_cast<uint64_t>(handle.m_size);

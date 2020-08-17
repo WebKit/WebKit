@@ -43,14 +43,16 @@ ShareableBitmap::Handle::Handle()
 
 void ShareableBitmap::Handle::encode(IPC::Encoder& encoder) const
 {
-    encoder << m_handle;
+    SharedMemory::IPCHandle ipcHandle(WTFMove(m_handle), numBytesForSize(m_size, m_configuration).unsafeGet());
+    encoder << ipcHandle;
     encoder << m_size;
     encoder << m_configuration;
 }
 
 bool ShareableBitmap::Handle::decode(IPC::Decoder& decoder, Handle& handle)
 {
-    if (!decoder.decode(handle.m_handle))
+    SharedMemory::IPCHandle ipcHandle;
+    if (!decoder.decode(ipcHandle))
         return false;
     if (!decoder.decode(handle.m_size))
         return false;
@@ -58,6 +60,8 @@ bool ShareableBitmap::Handle::decode(IPC::Decoder& decoder, Handle& handle)
         return false;
     if (!decoder.decode(handle.m_configuration))
         return false;
+    
+    handle.m_handle = WTFMove(ipcHandle.handle);
     return true;
 }
 

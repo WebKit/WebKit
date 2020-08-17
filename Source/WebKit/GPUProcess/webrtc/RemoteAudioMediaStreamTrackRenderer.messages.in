@@ -30,7 +30,7 @@ messages -> RemoteAudioMediaStreamTrackRenderer NotRefCounted {
 
     SetVolume(float value)
 
-    AudioSamplesStorageChanged(WebKit::SharedMemory::Handle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
+    AudioSamplesStorageChanged(WebKit::SharedMemory::IPCHandle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
     AudioSamplesAvailable(MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)
 }
 

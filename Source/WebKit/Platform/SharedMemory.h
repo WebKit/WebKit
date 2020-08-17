@@ -79,9 +79,6 @@ public:
 
         void clear();
 
-        void encode(IPC::Encoder&) const;
-        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Handle&);
-
 #if USE(UNIX_DOMAIN_SOCKETS)
         IPC::Attachment releaseAttachment() const;
         void adoptAttachment(IPC::Attachment&&);

@@ -140,10 +140,10 @@ static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(element.segment->data()), element.segment->size(), 1);
 #else
     SharedMemory::Handle handle;
-    auto sharedMemoryBuffer = SharedMemory::allocate(buffer->size());
-    memcpy(sharedMemoryBuffer->data(), buffer->data(), buffer->size());
+    auto sharedMemoryBuffer = SharedMemory::allocate(bufferSize);
+    memcpy(sharedMemoryBuffer->data(), buffer->data(), bufferSize);
     sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    encoder << handle;
+    encoder << SharedMemory::IPCHandle { WTFMove(handle), bufferSize };
 #endif
 }
 
@@ -167,15 +167,11 @@ static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<Share
 
     buffer = SharedBuffer::create(WTFMove(data));
 #else
-    SharedMemory::Handle handle;
-    if (!decoder.decode(handle))
+    SharedMemory::IPCHandle ipcHandle;
+    if (!decoder.decode(ipcHandle))
         return false;
 
-    // SharedMemory::Handle::size() is rounded up to the nearest page.
-    if (bufferSize > handle.size())
-        return false;
-
-    auto sharedMemoryBuffer = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    auto sharedMemoryBuffer = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
         return false;
 

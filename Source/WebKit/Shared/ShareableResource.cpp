@@ -40,19 +40,20 @@ ShareableResource::Handle::Handle()
 
 void ShareableResource::Handle::encode(IPC::Encoder& encoder) const
 {
-    encoder << m_handle;
+    encoder << SharedMemory::IPCHandle { WTFMove(m_handle), m_size };
     encoder << m_offset;
-    encoder << m_size;
 }
 
 bool ShareableResource::Handle::decode(IPC::Decoder& decoder, Handle& handle)
 {
-    if (!decoder.decode(handle.m_handle))
+    SharedMemory::IPCHandle ipcHandle;
+    if (!decoder.decode(ipcHandle))
         return false;
     if (!decoder.decode(handle.m_offset))
         return false;
-    if (!decoder.decode(handle.m_size))
-        return false;
+
+    handle.m_size = ipcHandle.dataSize;
+    handle.m_handle = WTFMove(ipcHandle.handle);
     return true;
 }
 

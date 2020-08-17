@@ -120,8 +120,8 @@ void WebHitTestResultData::encode(IPC::Encoder& encoder) const
     WebKit::SharedMemory::Handle imageHandle;
     if (imageSharedMemory && imageSharedMemory->data())
         imageSharedMemory->createHandle(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
-    encoder << imageHandle;
-    encoder << imageSize;
+
+    encoder << WebKit::SharedMemory::IPCHandle { WTFMove(imageHandle), imageSize };
 
     bool hasLinkTextIndicator = linkTextIndicator;
     encoder << hasLinkTextIndicator;
@@ -152,22 +152,21 @@ bool WebHitTestResultData::decode(IPC::Decoder& decoder, WebHitTestResultData& h
         || !decoder.decode(hitTestResultData.dictionaryPopupInfo))
         return false;
 
-    WebKit::SharedMemory::Handle imageHandle;
+    WebKit::SharedMemory::IPCHandle imageHandle;
     if (!decoder.decode(imageHandle))
         return false;
 
-    if (!imageHandle.isNull())
-        hitTestResultData.imageSharedMemory = WebKit::SharedMemory::map(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
-
-    if (!decoder.decode(hitTestResultData.imageSize))
-        return false;
-
-    if (hitTestResultData.imageSharedMemory) {
-        // SharedMemory:size() is rounded up to the nearest page.
-        if (hitTestResultData.imageSize > hitTestResultData.imageSharedMemory->size())
+    hitTestResultData.imageSize = imageHandle.dataSize;
+    if (imageHandle.handle.isNull()) {
+        if (hitTestResultData.imageSize)
             return false;
-    } else if (hitTestResultData.imageSize)
-        return false;
+    } else {
+        hitTestResultData.imageSharedMemory = WebKit::SharedMemory::map(imageHandle.handle, WebKit::SharedMemory::Protection::ReadOnly);
+        if (!hitTestResultData.imageSharedMemory)
+            return false;
+        if (!hitTestResultData.imageSize)
+            return false;
+    }
 
     bool hasLinkTextIndicator;
     if (!decoder.decode(hasLinkTextIndicator))
