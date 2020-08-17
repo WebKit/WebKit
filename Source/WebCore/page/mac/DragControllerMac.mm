@@ -61,12 +61,12 @@ const float DragController::DragImageAlpha = 0.75f;
 
 bool DragController::isCopyKeyDown(const DragData& dragData)
 {
-    return dragData.flags().contains(DragApplicationIsCopyKeyDown);
+    return dragData.flags().contains(DragApplicationFlags::IsCopyKeyDown);
 }
     
 Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
 {
-    if (dragData.flags().contains(DragApplicationIsModal))
+    if (dragData.flags().contains(DragApplicationFlags::IsModal))
         return WTF::nullopt;
 
     bool mayContainURL;
@@ -78,7 +78,7 @@ Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
     if (!mayContainURL && !dragData.containsPromise())
         return WTF::nullopt;
 
-    if (!m_documentUnderMouse || (!(dragData.flags().containsAll({ DragApplicationHasAttachedSheet, DragApplicationIsSource }))))
+    if (!m_documentUnderMouse || (!(dragData.flags().containsAll({ DragApplicationFlags::HasAttachedSheet, DragApplicationFlags::IsSource }))))
         return DragOperation::Copy;
 
     return WTF::nullopt;

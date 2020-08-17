@@ -3934,13 +3934,13 @@ static OptionSet<WebCore::DragApplicationFlags> applicationFlagsForDrag(NSView *
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     OptionSet<WebCore::DragApplicationFlags> flags;
     if ([NSApp modalWindow])
-        flags.add(WebCore::DragApplicationIsModal);
+        flags.add(WebCore::DragApplicationFlags::IsModal);
     if (view.window.attachedSheet)
-        flags.add(WebCore::DragApplicationHasAttachedSheet);
+        flags.add(WebCore::DragApplicationFlags::HasAttachedSheet);
     if (draggingInfo.draggingSource == view)
-        flags.add(WebCore::DragApplicationIsSource);
+        flags.add(WebCore::DragApplicationFlags::IsSource);
     if ([NSApp currentEvent].modifierFlags & NSEventModifierFlagOption)
-        flags.add(WebCore::DragApplicationIsCopyKeyDown);
+        flags.add(WebCore::DragApplicationFlags::IsCopyKeyDown);
     return flags;
 
 }

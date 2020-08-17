@@ -1,3 +1,21 @@
+2020-08-17  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up DragApplicationFlags after switch to OptionSet<>
+        <https://webkit.org/b/215349>
+
+        Reviewed by Darin Adler.
+
+        Change WebCore::DragApplicationFlags to an enum class.
+
+        No new tests since no change in behavior.
+
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::isCopyKeyDown):
+        (WebCore::DragController::dragOperation):
+        * platform/DragData.h:
+
 2020-08-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         JSDOMConstructorNotConstructable should be a constructor

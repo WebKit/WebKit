@@ -1,3 +1,20 @@
+2020-08-17  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up DragApplicationFlags after switch to OptionSet<>
+        <https://webkit.org/b/215349>
+
+        Reviewed by Darin Adler.
+
+        Change WebCore::DragApplicationFlags to an enum class.
+
+        * UIProcess/API/gtk/DropTargetGtk3.cpp:
+        (WebKit::DropTarget::drop):
+        - Switch to use OptionSet<WebCore::DragApplicationFlags>.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::applicationFlagsForDrag):
+        * WebProcess/WebPage/WebPage.h:
+        - Update forward declaration.
+
 2020-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Remove support for NPAPI plugins

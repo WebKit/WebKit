@@ -1,3 +1,24 @@
+2020-08-17  David Kilzer  <ddkilzer@apple.com>
+
+        Clean up DragApplicationFlags after switch to OptionSet<>
+        <https://webkit.org/b/215349>
+
+        Reviewed by Darin Adler.
+
+        Change WebCore::DragApplicationFlags to an enum class.
+
+        * WebView/WebView.mm:
+        (-[WebView applicationFlags:]): Deleted.
+        (-[WebView _applicationFlagsForDrag:]):
+        - Rename -applicationFlags: to -_applicationFlagsForDrag: since
+          it's only used internally.
+        - Switch to return OptionSet<WebCore::DragApplicationFlags>.
+        (-[WebView draggingEntered:]):
+        (-[WebView draggingUpdated:]):
+        (-[WebView draggingExited:]):
+        (-[WebView performDragOperation:]):
+        - Switch to calling -_applicationFlagsForDrag:.
+
 2020-08-12  Keith Rollin  <krollin@apple.com>
 
         Remove the need for defining USE_NEW_BUILD_SYSTEM

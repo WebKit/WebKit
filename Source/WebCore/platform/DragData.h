@@ -58,11 +58,11 @@ typedef void* DragDataRef;
 
 namespace WebCore {
 
-enum DragApplicationFlags : uint8_t {
-    DragApplicationIsModal = 1,
-    DragApplicationIsSource = 2,
-    DragApplicationHasAttachedSheet = 4,
-    DragApplicationIsCopyKeyDown = 8
+enum class DragApplicationFlags : uint8_t {
+    IsModal = 1,
+    IsSource = 2,
+    HasAttachedSheet = 4,
+    IsCopyKeyDown = 8
 };
 
 #if PLATFORM(WIN)
@@ -148,10 +148,10 @@ namespace WTF {
 template<> struct EnumTraits<WebCore::DragApplicationFlags> {
     using values = EnumValues<
         WebCore::DragApplicationFlags,
-        WebCore::DragApplicationFlags::DragApplicationIsModal,
-        WebCore::DragApplicationFlags::DragApplicationIsSource,
-        WebCore::DragApplicationFlags::DragApplicationHasAttachedSheet,
-        WebCore::DragApplicationFlags::DragApplicationIsCopyKeyDown
+        WebCore::DragApplicationFlags::IsModal,
+        WebCore::DragApplicationFlags::IsSource,
+        WebCore::DragApplicationFlags::HasAttachedSheet,
+        WebCore::DragApplicationFlags::IsCopyKeyDown
     >;
 };
 

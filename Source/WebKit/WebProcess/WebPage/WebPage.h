@@ -193,9 +193,9 @@ class SubstituteData;
 class TextCheckingRequest;
 class VisiblePosition;
 
-enum DragApplicationFlags : uint8_t;
 enum SyntheticClickType : int8_t;
 enum class DOMPasteAccessResponse : uint8_t;
+enum class DragApplicationFlags : uint8_t;
 enum class DragHandlingMethod : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class SelectionDirection : uint8_t;

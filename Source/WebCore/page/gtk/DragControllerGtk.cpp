@@ -47,7 +47,7 @@ const float DragController::DragImageAlpha = 0.75f;
 
 bool DragController::isCopyKeyDown(const DragData& dragData)
 {
-    return dragData.flags().contains(DragApplicationIsCopyKeyDown);
+    return dragData.flags().contains(DragApplicationFlags::IsCopyKeyDown);
 }
 
 Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
