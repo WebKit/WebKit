@@ -147,10 +147,13 @@ static void assignAudioBuffersToBus(AudioBuffer* buffers, AudioBus& bus, UInt32 
 // Pulls on our provider to get rendered audio stream.
 OSStatus AudioDestinationCocoa::render(const AudioTimeStamp* timestamp, UInt32 numberOfFrames, AudioBufferList* ioData)
 {
-    auto outputTimestamp = AudioIOPosition {
-        Seconds { timestamp->mSampleTime / m_sampleRate },
-        MonotonicTime::fromMachAbsoluteTime(timestamp->mHostTime)
-    };
+    AudioIOPosition outputTimestamp;
+    if (timestamp) {
+        outputTimestamp = {
+            Seconds { timestamp->mSampleTime / m_sampleRate },
+            MonotonicTime::fromMachAbsoluteTime(timestamp->mHostTime)
+        };
+    }
     auto* buffers = ioData->mBuffers;
     UInt32 numberOfBuffers = ioData->mNumberBuffers;
     UInt32 framesRemaining = numberOfFrames;

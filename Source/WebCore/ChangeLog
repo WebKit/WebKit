@@ -1,3 +1,13 @@
+2020-08-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, null-deref fix after r265797.
+
+        MockAudioDestinationCocoa::tick() is calling AudioDestinationCocoa::inputProc()
+        with a null AudioTimeStamp struct so we need to deal with this.
+
+        * platform/audio/cocoa/AudioDestinationCocoa.cpp:
+        (WebCore::AudioDestinationCocoa::render):
+
 2020-08-18  Antti Koivisto  <antti@apple.com>
 
         The CSS specificity of :host() pseudo-classes is wrong
