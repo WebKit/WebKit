@@ -1,3 +1,12 @@
+2020-08-05  Darin Adler  <darin@apple.com>
+
+        Document versions of C++ and Python
+        https://bugs.webkit.org/show_bug.cgi?id=215191
+
+        Reviewed by Jonathan Bedard.
+
+        * languages.md: Added.
+
 2020-08-12  Jon Davis  <jond@apple.com>
 
         Remove unused selector performance test
