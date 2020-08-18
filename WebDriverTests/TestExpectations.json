@@ -13,11 +13,24 @@
             },
             "testGetLog": {
                 "expected": {"all": {"status": ["SKIP"]}}
+            },
+            "testMoveWindowPosition": {
+                "expected": {"wpe": {"status": ["SKIP"]}}
+            },
+            "testChangeWindowSize": {
+                "expected": {"wpe": {"status": ["SKIP"]}}
             }
         }
     },
     "imported/selenium/py/test/selenium/webdriver/common/appcache_tests.py": {
         "expected": {"all": {"status": ["SKIP"]}}
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/driver_element_finding_tests.py": {
+        "subtests": {
+            "test_Should_Be_Able_To_Find_Element_By_XPath_With_Namespace": {
+                "expected": {"wpe": {"status": ["SKIP"]}}
+            }
+        }
     },
     "imported/selenium/py/test/selenium/webdriver/common/click_scrolling_tests.py": {
         "subtests": {
@@ -63,8 +76,14 @@
             "testClickingOnFormElements": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
+            "testDoubleClick": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/174674"}}
+            },
             "testSelectingMultipleItems": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            },
+            "testSendingKeysToActiveElementWithModifier": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/215588"}}
             }
         }
     },
@@ -151,6 +170,13 @@
             }
         }
     },
+    "imported/selenium/py/test/selenium/webdriver/common/w3c_interaction_tests.py": {
+        "subtests": {
+            "test_double_click": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/174674"}}
+            }
+        }
+    },
     "imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py": {
         "subtests": {
             "testCanCallGetWindowHandlesAfterClosingAWindow": {
@@ -168,10 +194,10 @@
     "imported/selenium/py/test/selenium/webdriver/support/relative_by_tests.py": {
         "subtests": {
             "test_should_be_able_to_find_elements_above_another": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/213451"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213451"}}
             },
             "test_should_be_able_to_combine_filters": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/213451"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213451"}}
             }
         }
     },
