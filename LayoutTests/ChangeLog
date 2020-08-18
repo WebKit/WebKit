@@ -1,5 +1,14 @@
 2020-08-18  Hector Lopez  <hector_i_lopez@apple.com>
 
+        [ macOS Mojave wk2 Debug ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-hovered.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=215611
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-08-18  Hector Lopez  <hector_i_lopez@apple.com>
+
         [ macOS wk1 iOS ] imported/w3c/web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=215608
 

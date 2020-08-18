@@ -1259,3 +1259,5 @@ webkit.org/b/215581 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSta
 
 webkit.org/b/215606 webgpu/whlsl/do-while-loop-break.html [ Pass Failure ]
 
+webkit.org/b/215611 [ Debug ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-hovered.html [ Pass Timeout ]
+
