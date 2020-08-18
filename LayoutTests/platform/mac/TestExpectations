@@ -2230,9 +2230,10 @@ webkit.org/b/215583 media/track/track-in-band-style.html [ Pass Failure Timeout 
 
 webkit.org/b/215587 media/modern-media-controls/volume-down-support/volume-down-support.html [ Pass Timeout ]
 
-# rdar://67289434 ([ Layout Tests ] REGRESSION (r265701): [ BigSur ] 3 webaudio/the-audio-api/the-audioparam-interface tests are a constant failure)
-[ arm64 BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html [ Failure ]
-[ arm64 BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner.html [ Failure ]
-[ arm64 BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic.html [ Failure ]
+# rdar://67289434 ([ Rosetta Layout Tests ] REGRESSION (r265701): [ BigSur ] 3 webaudio/the-audio-api/the-audioparam-interface tests are a constant failure)
+# FIXME: Should skip this only on Rosetta, not all Intel Big Sur Macs
+[ x86_64 BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html [ Failure ]
+[ x86_64 BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner.html [ Failure ]
+[ x86_64 BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic.html [ Failure ]
 
 
