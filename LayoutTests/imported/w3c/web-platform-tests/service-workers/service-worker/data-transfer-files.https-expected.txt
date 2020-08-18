@@ -1,5 +1,5 @@
 
 
 
-FAIL Posting a File in a navigation handled by a service worker promise_test: Unhandled rejection with value: object "TypeError: function is not a constructor (evaluating 'new DataTransfer()')"
+FAIL Posting a File in a navigation handled by a service worker promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
 

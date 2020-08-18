@@ -1,7 +1,7 @@
 
 PASS document.createElement must create an instance of custom elements 
 PASS document.createElement must create an instance of autonomous custom elements when it has is attribute 
-FAIL document.createElement()'s second argument is to be ignored when it's a string The superclass is not a constructor.
+FAIL document.createElement()'s second argument is to be ignored when it's a string assert_true: expected true got false
 PASS document.createElement must report a TypeError when the result of Construct is not a DOM node 
 PASS document.createElement must report a TypeError when the result of Construct is a TextNode 
 PASS document.createElement must report a NotSupportedError when attribute is added by setAttribute during construction 
@@ -36,7 +36,7 @@ PASS document.createElement must report a NotSupportedError when the element is 
 PASS document.createElement must not report a NotSupportedError when the element is adopted back from a an HTML document fetched by XHR during construction 
 PASS document.createElement must report a NotSupportedError when the local name of the element does not match that of the custom element 
 PASS document.createElement must report an exception thrown by a custom element constructor 
-FAIL document.createElement must report an exception thrown by a custom built-in element constructor The superclass is not a constructor.
-FAIL document.createElement with unknown "is" value should create "undefined" state element The superclass is not a constructor.
+FAIL document.createElement must report an exception thrown by a custom built-in element constructor assert_throws_exactly: function "function () { new ThrowCustomBuiltinElement; }" threw object "TypeError: Illegal constructor" but we expected it to throw object "[object Object]"
+FAIL document.createElement with unknown "is" value should create "undefined" state element assert_true: Undefined element is upgraded on connecting to a document expected true got false
 PASS document.createElement with undefined options value should be upgraded. 
 

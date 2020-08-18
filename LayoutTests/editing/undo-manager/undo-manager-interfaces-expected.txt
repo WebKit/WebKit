@@ -11,7 +11,7 @@ PASS document.undoManager instanceof UndoManager is true
 PASS Object.getPrototypeOf(document.undoManager) === UndoManager.prototype is true
 PASS UndoManager.prototype.addItem instanceof Function is true
 PASS UndoManager() threw exception TypeError: Illegal constructor.
-PASS new UndoManager() threw exception TypeError: function is not a constructor (evaluating 'new UndoManager()').
+PASS new UndoManager() threw exception TypeError: Illegal constructor.
 PASS document.undoManager.addItem() threw exception TypeError: Not enough arguments.
 PASS document.undoManager.addItem('foo') threw exception TypeError: Argument 1 ('item') to UndoManager.addItem must be an instance of UndoItem.
 PASS UndoManager.toString() is "function UndoManager() {\n    [native code]\n}"

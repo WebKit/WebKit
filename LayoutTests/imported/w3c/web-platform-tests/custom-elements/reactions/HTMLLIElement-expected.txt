@@ -1,8 +1,8 @@
 
-FAIL value on HTMLLIElement in ol must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL value on HTMLLIElement in ol must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL value on HTMLLIElement in ul must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL value on HTMLLIElement in ul must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL value on HTMLLIElement in menu must enqueue an attributeChanged reaction when adding a new attribute The superclass is not a constructor.
-FAIL value on HTMLLIElement in menu must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL value on HTMLLIElement in ol must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL value on HTMLLIElement in ol must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL value on HTMLLIElement in ul must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL value on HTMLLIElement in ul must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
+FAIL value on HTMLLIElement in menu must enqueue an attributeChanged reaction when adding a new attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL value on HTMLLIElement in menu must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "connected"] length 2, got [] length 0
 

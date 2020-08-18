@@ -1,6 +1,6 @@
 
-FAIL type's state on DataTransfer creation function is not a constructor (evaluating 'new DataTransfer()')
-FAIL Relationship between types and items function is not a constructor (evaluating 'new DataTransfer()')
-FAIL type's identity function is not a constructor (evaluating 'new DataTransfer()')
-FAIL Verify type is a read-only attribute function is not a constructor (evaluating 'new DataTransfer()')
+FAIL type's state on DataTransfer creation Illegal constructor
+FAIL Relationship between types and items Illegal constructor
+FAIL type's identity Illegal constructor
+FAIL Verify type is a read-only attribute Illegal constructor
 

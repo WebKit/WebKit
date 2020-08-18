@@ -28,7 +28,7 @@ PASS PerformanceObserverEntryList is defined.
 PASS PerformanceObserverEntryList.prototype.getEntries is defined.
 PASS PerformanceObserverEntryList.prototype.getEntriesByType is defined.
 PASS PerformanceObserverEntryList.prototype.getEntriesByName is defined.
-PASS new PerformanceObserverEntryList() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceObserverEntryList()').
+PASS new PerformanceObserverEntryList() threw exception TypeError: Illegal constructor.
 
 Starting worker: resources/observer-api.js
 [Worker] PerformanceObserver
@@ -56,7 +56,7 @@ PASS [Worker] PerformanceObserverEntryList is defined.
 PASS [Worker] PerformanceObserverEntryList.prototype.getEntries is defined.
 PASS [Worker] PerformanceObserverEntryList.prototype.getEntriesByType is defined.
 PASS [Worker] PerformanceObserverEntryList.prototype.getEntriesByName is defined.
-PASS [Worker] new PerformanceObserverEntryList() threw exception TypeError: function is not a constructor (evaluating 'new PerformanceObserverEntryList()').
+PASS [Worker] new PerformanceObserverEntryList() threw exception TypeError: Illegal constructor.
 PASS successfullyParsed is true
 
 TEST COMPLETE

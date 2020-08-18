@@ -1,3 +1,3 @@
 
-FAIL Verify DataTransfer constructor function is not a constructor (evaluating 'new DataTransfer()')
+FAIL Verify DataTransfer constructor Illegal constructor
 

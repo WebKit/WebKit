@@ -61,6 +61,14 @@ private:
         callData.native.function = callThrowTypeError;
         return callData;
     }
+
+    static JSC::CallData getConstructData(JSC::JSCell*)
+    {
+        JSC::CallData callData;
+        callData.type = JSC::CallData::Type::Native;
+        callData.native.function = callThrowTypeError;
+        return callData;
+    }
 };
 
 template<typename JSClass> inline JSDOMConstructorNotConstructable<JSClass>* JSDOMConstructorNotConstructable<JSClass>::create(JSC::VM& vm, JSC::Structure* structure, JSDOMGlobalObject& globalObject)

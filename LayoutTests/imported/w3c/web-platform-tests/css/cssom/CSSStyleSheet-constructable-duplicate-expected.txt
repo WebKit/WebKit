@@ -1,6 +1,6 @@
 
-FAIL Duplicate stylesheets have the right cascade position in the Document function is not a constructor (evaluating 'new CSSStyleSheet()')
-FAIL Appending duplicate stylesheets yields the correct cascade position in the Document function is not a constructor (evaluating 'new CSSStyleSheet()')
-FAIL Duplicate stylesheets have the right cascade position in the ShadowRoot function is not a constructor (evaluating 'new CSSStyleSheet()')
-FAIL Appending duplicate stylesheets yields the correct cascade position in the ShadowRoot function is not a constructor (evaluating 'new CSSStyleSheet()')
+FAIL Duplicate stylesheets have the right cascade position in the Document Illegal constructor
+FAIL Appending duplicate stylesheets yields the correct cascade position in the Document Illegal constructor
+FAIL Duplicate stylesheets have the right cascade position in the ShadowRoot Illegal constructor
+FAIL Appending duplicate stylesheets yields the correct cascade position in the ShadowRoot Illegal constructor
 

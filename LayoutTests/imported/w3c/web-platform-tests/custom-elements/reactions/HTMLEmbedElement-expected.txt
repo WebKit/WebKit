@@ -1,10 +1,10 @@
 
-FAIL src on HTMLEmbedElement must enqueue an attributeChanged reaction when adding src content attribute The superclass is not a constructor.
-FAIL src on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL type on HTMLEmbedElement must enqueue an attributeChanged reaction when adding type content attribute The superclass is not a constructor.
-FAIL type on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL width on HTMLEmbedElement must enqueue an attributeChanged reaction when adding width content attribute The superclass is not a constructor.
-FAIL width on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL height on HTMLEmbedElement must enqueue an attributeChanged reaction when adding height content attribute The superclass is not a constructor.
-FAIL height on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL src on HTMLEmbedElement must enqueue an attributeChanged reaction when adding src content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL src on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
+FAIL type on HTMLEmbedElement must enqueue an attributeChanged reaction when adding type content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL type on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
+FAIL width on HTMLEmbedElement must enqueue an attributeChanged reaction when adding width content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL width on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
+FAIL height on HTMLEmbedElement must enqueue an attributeChanged reaction when adding height content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL height on HTMLEmbedElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
 

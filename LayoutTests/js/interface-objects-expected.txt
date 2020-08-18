@@ -29,7 +29,7 @@ PASS typeof Element is "function"
 PASS Object.getPrototypeOf(Element) is Node
 PASS Element() threw exception TypeError: Illegal constructor.
 PASS Element.call() threw exception TypeError: Illegal constructor.
-PASS new Element() threw exception TypeError: function is not a constructor (evaluating 'new Element()').
+PASS new Element() threw exception TypeError: Illegal constructor.
 PASS Element.toString() is "function Element() {\n    [native code]\n}"
 PASS object.toString.call(Element) is "[object Function]"
 PASS successfullyParsed is true

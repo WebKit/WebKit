@@ -1,6 +1,6 @@
 
-FAIL width on HTMLCanvasElement must enqueue an attributeChanged reaction when adding width content attribute The superclass is not a constructor.
-FAIL width on HTMLCanvasElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
-FAIL height on HTMLCanvasElement must enqueue an attributeChanged reaction when adding height content attribute The superclass is not a constructor.
-FAIL height on HTMLCanvasElement must enqueue an attributeChanged reaction when replacing an existing attribute The superclass is not a constructor.
+FAIL width on HTMLCanvasElement must enqueue an attributeChanged reaction when adding width content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL width on HTMLCanvasElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
+FAIL height on HTMLCanvasElement must enqueue an attributeChanged reaction when adding height content attribute assert_array_equals: lengths differ, expected array ["constructed"] length 1, got [] length 0
+FAIL height on HTMLCanvasElement must enqueue an attributeChanged reaction when replacing an existing attribute assert_array_equals: lengths differ, expected array ["constructed", "attributeChanged"] length 2, got [] length 0
 
