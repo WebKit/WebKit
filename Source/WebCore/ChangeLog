@@ -1,3 +1,18 @@
+2020-08-18  Antti Koivisto  <antti@apple.com>
+
+        The CSS specificity of :host() pseudo-classes is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=202494
+        <rdar://problem/66292568>
+
+        Reviewed by Anders Carlsson.
+
+        https://drafts.csswg.org/css-scoping/#host-selector
+
+        “The specificity of :host() is that of a pseudo-class, plus the specificity of its argument.”
+
+        * css/CSSSelector.cpp:
+        (WebCore::simpleSelectorSpecificityInternal):
+
 2020-08-18  Youenn Fablet  <youenn@apple.com>
 
         Add a JS built-in routine to mark a promise as handled

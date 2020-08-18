@@ -128,6 +128,7 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
             return 0;
         case CSSSelector::PseudoClassNthChild:
         case CSSSelector::PseudoClassNthLastChild:
+        case CSSSelector::PseudoClassHost:
             return CSSSelector::addSpecificities(static_cast<unsigned>(SelectorSpecificityIncrement::ClassB), simpleSelector.selectorList() ? maxSpecificity(*simpleSelector.selectorList()) : 0);
         default:
             break;
