@@ -231,7 +231,9 @@ private:
     void traverseScrollingTreeRecursive(ScrollingTreeNode&, const VisitorFunction&);
 
     WEBCORE_EXPORT virtual RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint);
+#if ENABLE(WHEEL_EVENT_REGIONS)
     WEBCORE_EXPORT virtual OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const;
+#endif
     virtual void receivedWheelEvent(const PlatformWheelEvent&) { }
     
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;

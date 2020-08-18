@@ -170,10 +170,12 @@ RefPtr<ScrollingTreeNode> ScrollingTree::scrollingNodeForPoint(FloatPoint)
     return m_rootNode;
 }
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
 OptionSet<EventListenerRegionType> ScrollingTree::eventListenerRegionTypesForPoint(FloatPoint) const
 {
     return { };
 }
+#endif
 
 void ScrollingTree::traverseScrollingTree(VisitorFunction&& visitorFunction)
 {

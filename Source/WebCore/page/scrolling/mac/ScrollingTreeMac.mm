@@ -197,6 +197,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
     return rootScrollingNode;
 }
 
+#if ENABLE(WHEEL_EVENT_REGIONS)
 OptionSet<EventListenerRegionType> ScrollingTreeMac::eventListenerRegionTypesForPoint(FloatPoint point) const
 {
     auto* rootScrollingNode = rootNode();
@@ -227,6 +228,7 @@ OptionSet<EventListenerRegionType> ScrollingTreeMac::eventListenerRegionTypesFor
 
     return eventRegion->eventListenerRegionTypesForPoint(roundedIntPoint(localPoint));
 }
+#endif
 
 void ScrollingTreeMac::lockLayersForHitTesting()
 {

@@ -1,3 +1,18 @@
+2020-08-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Turn off wheel event regions until we need them
+        https://bugs.webkit.org/show_bug.cgi?id=215586
+
+        Reviewed by Darin Adler.
+
+        Leave ENABLE_WHEEL_EVENT_REGIONS off because it's currently unused, and adds extra
+        region building overhead on macOS.
+
+        * page/scrolling/ScrollingTree.cpp:
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingTreeMac.h:
+        * page/scrolling/mac/ScrollingTreeMac.mm:
+
 2020-08-18  Youenn Fablet  <youenn@apple.com>
 
         Update platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html to account for low latency code path

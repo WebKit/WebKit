@@ -1069,6 +1069,15 @@ webkit.org/b/214286 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-con
 
 webkit.org/b/213804 fast/scrolling/mac/scroll-snapping-in-progress.html [ Pass Failure ]
 
+webkit.org/b/215586 fast/scrolling/mac/wheel-event-listener-region-basic.html [ Skip ]
+webkit.org/b/215586 fast/scrolling/mac/wheel-event-listener-region-document.html [ Skip ]
+webkit.org/b/215586 fast/scrolling/mac/wheel-event-listener-region-element-invalidation.html [ Skip ]
+webkit.org/b/215586 fast/scrolling/mac/wheel-event-listener-region-inside-overflow-scroll-clipped-out.html [ Skip ]
+webkit.org/b/215586 fast/scrolling/mac/wheel-event-listener-region-inside-overflow-scroll.html [ Skip ]
+webkit.org/b/215586 fast/scrolling/mac/wheel-event-listener-region-layer-offset.html [ Skip ]
+webkit.org/b/215586 fast/scrolling/mac/wheel-event-listener-region-root-invalidation.html [ Skip ]
+webkit.org/b/215586 fast/scrolling/mac/wheel-event-listener-region-window.html [ Skip ]
+
 webkit.org/b/214478 [ Debug ] http/wpt/webrtc/generateCertificate.html [ Skip ]
 webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCCertificate-postMessage.html [ Skip ]
 webkit.org/b/214478 [ Debug ] imported/w3c/web-platform-tests/webrtc/RTCCertificate.html [ Skip ]
