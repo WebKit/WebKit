@@ -2424,6 +2424,7 @@
 		82E3D8DF122EA0D1003AE5BC /* CSSPropertySourceData.h in Headers */ = {isa = PBXBuildFile; fileRef = 82E3D8DD122EA0D1003AE5BC /* CSSPropertySourceData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		830030F61B7D33B500ED3AAC /* GenericCachedHTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 830030F41B7D33A600ED3AAC /* GenericCachedHTMLCollection.h */; };
 		830030F81B7D3B7800ED3AAC /* CachedHTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 830030F71B7D398800ED3AAC /* CachedHTMLCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		83005F9D24EB1D4000480F9B /* AudioTimestamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 83005F9A24EB1D2800480F9B /* AudioTimestamp.h */; };
 		830335021F549057004DF707 /* FileSystemDirectoryReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 830334FC1F549052004DF707 /* FileSystemDirectoryReader.h */; };
 		830335031F54905A004DF707 /* FileSystemEntriesCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 830334FE1F549052004DF707 /* FileSystemEntriesCallback.h */; };
 		83040282249A7A5F00A90D8D /* PanningModelType.h in Headers */ = {isa = PBXBuildFile; fileRef = 83040280249A7A5C00A90D8D /* PanningModelType.h */; };
@@ -10419,6 +10420,8 @@
 		830030F41B7D33A600ED3AAC /* GenericCachedHTMLCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericCachedHTMLCollection.h; sourceTree = "<group>"; };
 		830030F71B7D398800ED3AAC /* CachedHTMLCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedHTMLCollection.h; sourceTree = "<group>"; };
 		83003E2B249997A80060AF94 /* WebKitAudioContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAudioContext.cpp; sourceTree = "<group>"; };
+		83005F9A24EB1D2800480F9B /* AudioTimestamp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioTimestamp.h; sourceTree = "<group>"; };
+		83005F9C24EB1D2900480F9B /* AudioTimestamp.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioTimestamp.idl; sourceTree = "<group>"; };
 		830334FB1F549052004DF707 /* FileSystemDirectoryReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystemDirectoryReader.cpp; sourceTree = "<group>"; };
 		830334FC1F549052004DF707 /* FileSystemDirectoryReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemDirectoryReader.h; sourceTree = "<group>"; };
 		830334FD1F549052004DF707 /* FileSystemEntriesCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FileSystemEntriesCallback.idl; sourceTree = "<group>"; };
@@ -29599,6 +29602,8 @@
 				E7CF848924C0E05700B06B90 /* AudioScheduledSourceNode.idl */,
 				FDB052DD1561A42C00B500D6 /* AudioSummingJunction.cpp */,
 				FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */,
+				83005F9A24EB1D2800480F9B /* AudioTimestamp.h */,
+				83005F9C24EB1D2900480F9B /* AudioTimestamp.idl */,
 				83198FBB24A160C100420B05 /* BaseAudioContext.cpp */,
 				83198FBE24A160C100420B05 /* BaseAudioContext.h */,
 				83198FBD24A160C100420B05 /* BaseAudioContext.idl */,
@@ -30177,6 +30182,7 @@
 				FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */,
 				07C046CB1E426413007201E7 /* AudioStreamDescription.h in Headers */,
 				FDB052E01561A42C00B500D6 /* AudioSummingJunction.h in Headers */,
+				83005F9D24EB1D4000480F9B /* AudioTimestamp.h in Headers */,
 				BE88E0D91715D2A200658D98 /* AudioTrack.h in Headers */,
 				BE88E0DC1715D2A200658D98 /* AudioTrackList.h in Headers */,
 				CD8B5A4C180E17C0008B8E65 /* AudioTrackMediaSource.h in Headers */,

@@ -67,7 +67,7 @@ private:
     void configure();
     void processBusAfterRender(AudioBus&, UInt32 numberOfFrames);
 
-    OSStatus render(UInt32 numberOfFrames, AudioBufferList* ioData);
+    OSStatus render(const AudioTimeStamp*, UInt32 numberOfFrames, AudioBufferList* ioData);
 
     AudioUnit m_outputUnit;
     AudioIOCallback& m_callback;

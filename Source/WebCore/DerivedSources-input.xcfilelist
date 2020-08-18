@@ -317,6 +317,7 @@ $(PROJECT_DIR)/Modules/webaudio/AudioParam.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioProcessingEvent.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioProcessingEventInit.idl
 $(PROJECT_DIR)/Modules/webaudio/AudioScheduledSourceNode.idl
+$(PROJECT_DIR)/Modules/webaudio/AudioTimestamp.idl
 $(PROJECT_DIR)/Modules/webaudio/BaseAudioContext.idl
 $(PROJECT_DIR)/Modules/webaudio/BiquadFilterNode.idl
 $(PROJECT_DIR)/Modules/webaudio/BiquadFilterOptions.idl

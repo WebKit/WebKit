@@ -350,7 +350,7 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffersAndR
     }
 
     // FIXME: Add support for local/live audio input.
-    priv->provider->render(nullptr, priv->bus, priv->framesToPull);
+    priv->provider->render(nullptr, priv->bus, priv->framesToPull, { });
 
     return makeOptional(channelBufferList);
 }

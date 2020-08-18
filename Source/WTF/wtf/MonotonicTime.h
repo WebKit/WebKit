@@ -51,7 +51,11 @@ public:
     {
         return MonotonicTime(value);
     }
-    
+
+#if OS(DARWIN)
+    WTF_EXPORT_PRIVATE static MonotonicTime fromMachAbsoluteTime(uint64_t);
+#endif
+
     WTF_EXPORT_PRIVATE static MonotonicTime now();
     
     static constexpr MonotonicTime infinity() { return fromRawSeconds(std::numeric_limits<double>::infinity()); }

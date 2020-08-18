@@ -55,7 +55,7 @@ AudioDestinationNode::~AudioDestinationNode()
     uninitialize();
 }
 
-void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t numberOfFrames)
+void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition)
 {
     // We don't want denormals slowing down any of the audio processing
     // since they can very seriously hurt performance.
@@ -78,7 +78,7 @@ void AudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t nu
     }
 
     // Let the context take care of any business at the start of each render quantum.
-    context().handlePreRenderTasks();
+    context().handlePreRenderTasks(outputPosition);
 
     // This will cause the node(s) connected to us to process, which in turn will pull on their input(s),
     // all the way backwards through the rendering graph.

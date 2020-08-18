@@ -148,7 +148,7 @@ auto OfflineAudioDestinationNode::offlineRender() -> OfflineRenderResult
             return OfflineRenderResult::Suspended;
 
         // Render one render quantum.
-        render(0, m_renderBus.get(), renderQuantumSize);
+        render(0, m_renderBus.get(), renderQuantumSize, { });
         
         size_t framesAvailableToCopy = std::min(m_framesToProcess, renderQuantumSize);
         

@@ -1,5 +1,17 @@
 2020-08-17  Chris Dumez  <cdumez@apple.com>
 
+        AudioContext.getOutputTimestamp() is missing
+        https://bugs.webkit.org/show_bug.cgi?id=215591
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-getoutputtimestamp-expected.txt:
+
+2020-08-17  Chris Dumez  <cdumez@apple.com>
+
         Improve channel mixing support in AudioBus
         https://bugs.webkit.org/show_bug.cgi?id=215597
 

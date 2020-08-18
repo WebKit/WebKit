@@ -145,8 +145,12 @@ static void assignAudioBuffersToBus(AudioBuffer* buffers, AudioBus& bus, UInt32 
 }
 
 // Pulls on our provider to get rendered audio stream.
-OSStatus AudioDestinationCocoa::render(UInt32 numberOfFrames, AudioBufferList* ioData)
+OSStatus AudioDestinationCocoa::render(const AudioTimeStamp* timestamp, UInt32 numberOfFrames, AudioBufferList* ioData)
 {
+    auto outputTimestamp = AudioIOPosition {
+        Seconds { timestamp->mSampleTime / m_sampleRate },
+        MonotonicTime::fromMachAbsoluteTime(timestamp->mHostTime)
+    };
     auto* buffers = ioData->mBuffers;
     UInt32 numberOfBuffers = ioData->mNumberBuffers;
     UInt32 framesRemaining = numberOfFrames;
@@ -169,12 +173,12 @@ OSStatus AudioDestinationCocoa::render(UInt32 numberOfFrames, AudioBufferList* i
         if (!framesThisTime)
             break;
         if (framesThisTime < kRenderBufferSize) {
-            m_callback.render(0, m_spareBus.ptr(), kRenderBufferSize);
+            m_callback.render(0, m_spareBus.ptr(), kRenderBufferSize, outputTimestamp);
             m_renderBus->copyFromRange(m_spareBus.get(), 0, framesThisTime);
             m_startSpareFrame = framesThisTime;
             m_endSpareFrame = kRenderBufferSize;
         } else
-            m_callback.render(0, m_renderBus.ptr(), framesThisTime);
+            m_callback.render(0, m_renderBus.ptr(), framesThisTime, outputTimestamp);
         processBusAfterRender(m_renderBus.get(), framesThisTime);
         frameOffset += framesThisTime;
         framesRemaining -= framesThisTime;
@@ -184,10 +188,10 @@ OSStatus AudioDestinationCocoa::render(UInt32 numberOfFrames, AudioBufferList* i
 }
 
 // DefaultOutputUnit callback
-OSStatus AudioDestinationCocoa::inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 /*busNumber*/, UInt32 numberOfFrames, AudioBufferList* ioData)
+OSStatus AudioDestinationCocoa::inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp* timestamp, UInt32 /*busNumber*/, UInt32 numberOfFrames, AudioBufferList* ioData)
 {
     auto* audioOutput = static_cast<AudioDestinationCocoa*>(userData);
-    return audioOutput->render(numberOfFrames, ioData);
+    return audioOutput->render(timestamp, numberOfFrames, ioData);
 }
 
 } // namespace WebCore

@@ -99,7 +99,7 @@ void RemoteAudioDestinationProxy::renderBuffer(const WebKit::RemoteAudioBusData&
     for (unsigned i = 0; i < audioBusData.channelBuffers.size(); ++i)
         audioBus->setChannelMemory(i, (float*)audioBusData.channelBuffers[i]->data(), audioBusData.framesToProcess);
 
-    m_callback.render(0, audioBus.get(), audioBusData.framesToProcess);
+    m_callback.render(0, audioBus.get(), audioBusData.framesToProcess, audioBusData.outputPosition);
 
     completionHandler();
 }

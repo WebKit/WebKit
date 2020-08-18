@@ -79,7 +79,7 @@ private:
     {
     }
 
-    void render(AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess) override
+    void render(AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess, const WebCore::AudioIOPosition& outputPosition) override
     {
         if (m_protectThisDuringGracefulShutdown)
             return;
@@ -95,8 +95,8 @@ private:
 
         // FIXME: Replace this code with a ring buffer. At least this happens in audio thread.
         ASSERT(!isMainThread());
-        callOnMainThread([this, framesToProcess, &buffers, &renderSemaphore] {
-            RemoteAudioBusData busData { framesToProcess, buffers.map([](auto& memory) { return memory.copyRef(); }) };
+        callOnMainThread([this, framesToProcess, outputPosition, &buffers, &renderSemaphore] {
+            RemoteAudioBusData busData { framesToProcess, outputPosition, buffers.map([](auto& memory) { return memory.copyRef(); }) };
             ASSERT(framesToProcess);
             m_connection.connection().sendWithAsyncReply(Messages::RemoteAudioDestinationProxy::RenderBuffer(busData), [&]() {
                 renderSemaphore.signal();

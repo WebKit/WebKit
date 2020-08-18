@@ -167,7 +167,9 @@ public:
     void notifyNodeFinishedProcessing(AudioNode*);
 
     // Called at the start of each render quantum.
-    void handlePreRenderTasks();
+    void handlePreRenderTasks(const AudioIOPosition& outputPosition);
+
+    AudioIOPosition outputPosition();
 
     // Called at the end of each render quantum.
     void handlePostRenderTasks();
@@ -450,6 +452,8 @@ private:
 
     State m_state { State::Suspended };
     RefPtr<PendingActivity<BaseAudioContext>> m_pendingActivity;
+
+    AudioIOPosition m_outputPosition;
 };
 
 } // WebCore

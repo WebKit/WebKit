@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +24,17 @@
 
 #pragma once
 
-#include "AudioContextOptions.h"
-#include "BaseAudioContext.h"
+#if ENABLE(WEB_AUDIO)
+
+#include "DOMHighResTimeStamp.h"
 
 namespace WebCore {
 
-class DOMWindow;
-class DefaultAudioDestinationNode;
-
-struct AudioTimestamp;
-
-class AudioContext : public BaseAudioContext {
-    WTF_MAKE_ISO_ALLOCATED(AudioContext);
-public:
-    // Create an AudioContext for rendering to the audio hardware.
-    static ExceptionOr<Ref<AudioContext>> create(Document&, const AudioContextOptions& = { });
-
-    void close(DOMPromiseDeferred<void>&&);
-
-    DefaultAudioDestinationNode* destination();
-    double baseLatency();
-
-    AudioTimestamp getOutputTimestamp(DOMWindow&);
-
-#if ENABLE(VIDEO)
-    ExceptionOr<Ref<MediaElementAudioSourceNode>> createMediaElementSource(HTMLMediaElement&);
-#endif
-#if ENABLE(MEDIA_STREAM)
-    ExceptionOr<Ref<MediaStreamAudioSourceNode>> createMediaStreamSource(MediaStream&);
-    ExceptionOr<Ref<MediaStreamAudioDestinationNode>> createMediaStreamDestination();
-#endif
-
-private:
-    AudioContext(Document&, const AudioContextOptions&);
-    AudioContext(Document&, AudioBuffer* renderTarget);
+struct AudioTimestamp {
+    double contextTime;
+    DOMHighResTimeStamp performanceTime;
 };
 
-} // WebCore
+} // namespace WebCore
+
+#endif // PLATFORM(WEB_AUDIO)

@@ -30,18 +30,21 @@
 #include "DataReference.h"
 #include "SharedBufferDataReference.h"
 #include "SharedMemory.h"
+#include <WebCore/AudioIOCallback.h>
 #include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
 
 struct RemoteAudioBusData {
     uint64_t framesToProcess { 0 };
+    WebCore::AudioIOPosition outputPosition;
     Vector<Ref<SharedMemory>> channelBuffers;
 
     template<typename Encoder>
     void encode(Encoder& encoder) const
     {
         encoder << framesToProcess;
+        encoder << outputPosition;
         encoder << static_cast<uint64_t>(channelBuffers.size());
         for (size_t i = 0; i < channelBuffers.size(); ++i) {
             SharedMemory::Handle handle;
@@ -57,6 +60,11 @@ struct RemoteAudioBusData {
         if (!decoder.decode(framesToProcess))
             return false;
         result.framesToProcess = framesToProcess;
+
+        WebCore::AudioIOPosition outputPosition;
+        if (!decoder.decode(outputPosition))
+            return false;
+        result.outputPosition = outputPosition;
 
         uint64_t size = 0;
         if (!decoder.decode(size))

@@ -36,7 +36,8 @@
 
     // FIXME: Add support.
     // readonly attribute double outputLatency;
-    // AudioTimestamp getOutputTimestamp();
+
+    [CallWith=ActiveWindow] AudioTimestamp getOutputTimestamp();
 
     [ImplementedAs=suspendRendering] Promise<void> suspend();
     [ImplementedAs=resumeRendering] Promise<void> resume();

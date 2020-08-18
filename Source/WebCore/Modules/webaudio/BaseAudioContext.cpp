@@ -744,7 +744,7 @@ void BaseAudioContext::addDeferredFinishDeref(AudioNode* node)
     m_deferredFinishDerefList.append(node);
 }
 
-void BaseAudioContext::handlePreRenderTasks()
+void BaseAudioContext::handlePreRenderTasks(const AudioIOPosition& outputPosition)
 {
     ASSERT(isAudioThread());
 
@@ -757,10 +757,18 @@ void BaseAudioContext::handlePreRenderTasks()
         handleDirtyAudioNodeOutputs();
 
         updateAutomaticPullNodes();
+        m_outputPosition = outputPosition;
 
         if (mustReleaseLock)
             unlock();
     }
+}
+
+AudioIOPosition BaseAudioContext::outputPosition()
+{
+    ASSERT(isMainThread());
+    AutoLocker locker(*this);
+    return m_outputPosition;
 }
 
 void BaseAudioContext::handlePostRenderTasks()

@@ -183,6 +183,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioProcessingEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioScheduledSourceNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioScheduledSourceNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTimestamp.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTimestamp.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTrack.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTrack.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAudioTrackList.cpp
@@ -401,6 +403,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomElementRegistry.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomElementRegistry.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomXPathNSResolver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomXPathNSResolver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMApplicationCache.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMApplicationCache.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMBindingInternalsBuiltins.h
@@ -2272,8 +2276,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathEvaluator.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathEvaluator.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathExpression.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathExpression.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomXPathNSResolver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomXPathNSResolver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathNSResolver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathNSResolver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSXPathResult.cpp
