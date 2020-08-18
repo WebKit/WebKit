@@ -1,5 +1,13 @@
 2020-08-17  Karl Rackler  <rackler@apple.com>
 
+        Removing added entry in error.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2020-08-17  Karl Rackler  <rackler@apple.com>
+
         Adding BigSur to existing test expectations
         
         Unreviewed test gardening.
