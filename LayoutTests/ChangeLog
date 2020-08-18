@@ -1,3 +1,12 @@
+2020-08-18  Hector Lopez  <hector_i_lopez@apple.com>
+
+        REGRESSION: [ macOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=215614
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-18  Karl Rackler  <rackler@apple.com>
 
         rdar://67289434 ([ Rosetta Layout Tests ] REGRESSION (r265701): [ BigSur ] 3 webaudio/the-audio-api/the-audioparam-interface tests are a constant failure)

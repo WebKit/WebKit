@@ -2237,3 +2237,4 @@ webkit.org/b/215587 media/modern-media-controls/volume-down-support/volume-down-
 [ x86_64 BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic.html [ Failure ]
 
 
+webkit.org/b/215614 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html [ Pass Timeout ]
