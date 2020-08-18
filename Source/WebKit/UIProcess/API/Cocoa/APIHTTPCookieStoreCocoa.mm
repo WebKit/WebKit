@@ -36,19 +36,9 @@
 
 namespace API {
 
-void HTTPCookieStore::flushDefaultUIProcessCookieStore(CompletionHandler<void()>&& completionHandler)
+void HTTPCookieStore::flushDefaultUIProcessCookieStore()
 {
-#if HAVE(FOUNDATION_WITH_SAVE_COOKIES_WITH_COMPLETION_HANDLER)
-    ASSERT(RunLoop::isMain());
-    m_owningDataStore->dispatchOnQueue([completionHandler = WTFMove(completionHandler)] () mutable {
-        [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)]() mutable {
-            RunLoop::main().dispatch(WTFMove(completionHandler));
-        }).get()];
-    });
-#else
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] _saveCookies];
-    RunLoop::main().dispatch(WTFMove(completionHandler));
-#endif
 }
 
 Vector<WebCore::Cookie> HTTPCookieStore::getAllDefaultUIProcessCookieStoreCookies()
