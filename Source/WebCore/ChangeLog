@@ -1,3 +1,20 @@
+2020-08-18  Chris Dumez  <cdumez@apple.com>
+
+        ScriptProcessNode should only run script asynchronously if the audio context is not an OfflineAudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=215624
+
+        Reviewed by Eric Carlson.
+
+        ScriptProcessNode should only run script asynchronously if the audio context is not an OfflineAudioContext.
+        If the context is an OfflineAudioContext, then it should pause processing until the script has finished
+        execution. This aligns our behavior with Blink and helps us pass more WPT tests.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        (WebCore::ScriptProcessorNode::process):
+
 2020-08-18  Eric Carlson  <eric.carlson@apple.com>
 
         [Catalyst] Video should pause automatically when switching desktops

@@ -1,5 +1,16 @@
 2020-08-18  Chris Dumez  <cdumez@apple.com>
 
+        ScriptProcessNode should only run script asynchronously if the audio context is not an OfflineAudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=215624
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-scriptprocessornode-interface/simple-input-output-expected.txt:
+
+2020-08-18  Chris Dumez  <cdumez@apple.com>
+
         WaveShaperNode.curve setter should create a copy of the input array
         https://bugs.webkit.org/show_bug.cgi?id=215615
 
