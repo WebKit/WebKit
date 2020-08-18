@@ -1,3 +1,9 @@
+2020-08-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, contributors.json is broken
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-08-18  Alex Christensen  <achristensen@webkit.org>
 
         WKWebViews using fastServerTrustEvaluationEnabled should only allow legacy TLS for main resource loads
