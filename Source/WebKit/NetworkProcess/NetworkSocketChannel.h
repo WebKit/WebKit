@@ -28,6 +28,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "WebSocketIdentifier.h"
+#include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
@@ -73,6 +74,7 @@ private:
     void sendString(const IPC::DataReference&, CompletionHandler<void()>&&);
     void sendData(const IPC::DataReference&, CompletionHandler<void()>&&);
     void close(int32_t code, const String& reason);
+    void sendDelayedError();
 
     NetworkSession* session();
 
@@ -88,6 +90,9 @@ private:
 
     enum class State { Open, Closing, Closed };
     State m_state { State::Open };
+    WebCore::Timer m_errorTimer;
+    String m_errorMessage;
+    Optional<std::pair<unsigned short, String>> m_closeInfo;
 };
 
 } // namespace WebKit

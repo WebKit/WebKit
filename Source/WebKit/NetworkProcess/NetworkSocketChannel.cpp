@@ -51,6 +51,7 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
     : m_connectionToWebProcess(connection)
     , m_identifier(identifier)
     , m_session(makeWeakPtr(session))
+    , m_errorTimer(*this, &NetworkSocketChannel::sendDelayedError)
 {
     if (!m_session)
         return;
@@ -115,13 +116,27 @@ void NetworkSocketChannel::didReceiveBinaryData(const uint8_t* data, size_t leng
 
 void NetworkSocketChannel::didClose(unsigned short code, const String& reason)
 {
+    if (m_errorTimer.isActive()) {
+        m_closeInfo = std::make_pair(code, reason);
+        return;
+    }
     send(Messages::WebSocketChannel::DidClose { code, reason });
     finishClosingIfPossible();
 }
 
 void NetworkSocketChannel::didReceiveMessageError(const String& errorMessage)
 {
-    send(Messages::WebSocketChannel::DidReceiveMessageError { errorMessage });
+    m_errorMessage = errorMessage;
+    m_errorTimer.startOneShot(NetworkProcess::randomClosedPortDelay());
+}
+
+void NetworkSocketChannel::sendDelayedError()
+{
+    send(Messages::WebSocketChannel::DidReceiveMessageError { m_errorMessage });
+    if (m_closeInfo) {
+        send(Messages::WebSocketChannel::DidClose { m_closeInfo->first, m_closeInfo->second });
+        finishClosingIfPossible();
+    }
 }
 
 void NetworkSocketChannel::didSendHandshakeRequest(ResourceRequest&& request)
