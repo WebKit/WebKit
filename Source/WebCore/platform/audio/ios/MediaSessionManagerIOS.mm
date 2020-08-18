@@ -62,6 +62,7 @@ MediaSessionManageriOS::~MediaSessionManageriOS()
     AudioSession::sharedSession().removeInterruptionObserver(*this);
 }
 
+#if !PLATFORM(MACCATALYST)
 void MediaSessionManageriOS::resetRestrictions()
 {
     static const size_t systemMemoryRequiredForVideoInBackgroundTabs = 1024 * 1024 * 1024;
@@ -78,6 +79,7 @@ void MediaSessionManageriOS::resetRestrictions()
     addRestriction(PlatformMediaSession::MediaType::Video, BackgroundProcessPlaybackRestricted);
     addRestriction(PlatformMediaSession::MediaType::VideoAudio, ConcurrentPlaybackNotPermitted | BackgroundProcessPlaybackRestricted | SuspendedUnderLockPlaybackRestricted);
 }
+#endif
 
 bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
 {

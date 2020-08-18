@@ -60,7 +60,9 @@ private:
 
     MediaSessionManageriOS();
 
+#if !PLATFORM(MACCATALYST)
     void resetRestrictions() final;
+#endif
 
     void configureWireLessTargetMonitoring() final;
     void providePresentingApplicationPIDIfNecessary() final;

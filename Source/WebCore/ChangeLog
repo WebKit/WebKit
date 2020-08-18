@@ -1,3 +1,14 @@
+2020-08-18  Eric Carlson  <eric.carlson@apple.com>
+
+        [Catalyst] Video should pause automatically when switching desktops
+        https://bugs.webkit.org/show_bug.cgi?id=215620
+
+        Reviewed by Jer Noble.
+
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm: Don't override resetRestrictions
+        on Catalyst so we don't pause video in the background.
+
 2020-08-18  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Pass user-defined-properties-on-context.html layout test
