@@ -1,3 +1,12 @@
+2020-08-17  Karl Rackler  <rackler@apple.com>
+
+        REGRESSION (r265701): [ BigSur ] 3 webaudio/the-audio-api/the-audioparam-interface tests are a constant failure)
+        rdar://67289434
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-17  Hector Lopez  <hector_i_lopez@apple.com>
 
         ASSERTION FAILURE: WebKit::AuthenticationManager::initializeConnection(IPC::Connection *)_block_invoke
