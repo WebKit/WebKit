@@ -190,8 +190,8 @@ bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
                 if (auto* context = m_canvas.canvasContext()) {
                     if (is<WebGLRenderingContextBase>(context)) {
                         auto& contextWebGLBase = downcast<WebGLRenderingContextBase>(*context);
-                        contextWebGLBase.shaderSource(shader, source);
-                        contextWebGLBase.compileShader(shader);
+                        contextWebGLBase.shaderSource(*shader, source);
+                        contextWebGLBase.compileShader(*shader);
                         if (shader->isValid()) {
                             contextWebGLBase.linkProgramWithoutInvalidatingAttribLocations(&program);
                             return true;

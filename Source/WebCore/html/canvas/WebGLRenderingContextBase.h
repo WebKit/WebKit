@@ -132,8 +132,8 @@ public:
     int drawingBufferHeight() const;
 
     void activeTexture(GCGLenum texture);
-    void attachShader(WebGLProgram*, WebGLShader*);
-    void bindAttribLocation(WebGLProgram*, GCGLuint index, const String& name);
+    void attachShader(WebGLProgram&, WebGLShader&);
+    void bindAttribLocation(WebGLProgram&, GCGLuint index, const String& name);
     void bindBuffer(GCGLenum target, WebGLBuffer*);
     virtual void bindFramebuffer(GCGLenum target, WebGLFramebuffer*);
     void bindRenderbuffer(GCGLenum target, WebGLRenderbuffer*);
@@ -155,7 +155,7 @@ public:
     void clearDepth(GCGLfloat);
     void clearStencil(GCGLint);
     void colorMask(GCGLboolean red, GCGLboolean green, GCGLboolean blue, GCGLboolean alpha);
-    void compileShader(WebGLShader*);
+    void compileShader(WebGLShader&);
 
     void compressedTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, ArrayBufferView& data);
     void compressedTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& data);
@@ -182,7 +182,7 @@ public:
     void depthFunc(GCGLenum);
     void depthMask(GCGLboolean);
     void depthRange(GCGLfloat zNear, GCGLfloat zFar);
-    void detachShader(WebGLProgram*, WebGLShader*);
+    void detachShader(WebGLProgram&, WebGLShader&);
     void disable(GCGLenum cap);
     void disableVertexAttribArray(GCGLuint index);
     void drawArrays(GCGLenum mode, GCGLint first, GCGLsizei count);
@@ -197,27 +197,27 @@ public:
     void frontFace(GCGLenum mode);
     void generateMipmap(GCGLenum target);
 
-    RefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram*, GCGLuint index);
-    RefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram*, GCGLuint index);
-    Optional<Vector<RefPtr<WebGLShader>>> getAttachedShaders(WebGLProgram*);
-    GCGLint getAttribLocation(WebGLProgram*, const String& name);
+    RefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram&, GCGLuint index);
+    RefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram&, GCGLuint index);
+    Optional<Vector<RefPtr<WebGLShader>>> getAttachedShaders(WebGLProgram&);
+    GCGLint getAttribLocation(WebGLProgram&, const String& name);
     WebGLAny getBufferParameter(GCGLenum target, GCGLenum pname);
     Optional<WebGLContextAttributes> getContextAttributes();
     GCGLenum getError();
     virtual WebGLExtension* getExtension(const String& name) = 0;
     virtual WebGLAny getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname) = 0;
     virtual WebGLAny getParameter(GCGLenum pname);
-    WebGLAny getProgramParameter(WebGLProgram*, GCGLenum pname);
-    String getProgramInfoLog(WebGLProgram*);
+    WebGLAny getProgramParameter(WebGLProgram&, GCGLenum pname);
+    String getProgramInfoLog(WebGLProgram&);
     WebGLAny getRenderbufferParameter(GCGLenum target, GCGLenum pname);
-    WebGLAny getShaderParameter(WebGLShader*, GCGLenum pname);
-    String getShaderInfoLog(WebGLShader*);
+    WebGLAny getShaderParameter(WebGLShader&, GCGLenum pname);
+    String getShaderInfoLog(WebGLShader&);
     RefPtr<WebGLShaderPrecisionFormat> getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType);
-    String getShaderSource(WebGLShader*);
+    String getShaderSource(WebGLShader&);
     virtual Optional<Vector<String>> getSupportedExtensions() = 0;
     virtual WebGLAny getTexParameter(GCGLenum target, GCGLenum pname);
-    WebGLAny getUniform(WebGLProgram*, const WebGLUniformLocation*);
-    RefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram*, const String&);
+    WebGLAny getUniform(WebGLProgram&, const WebGLUniformLocation&);
+    RefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram&, const String&);
     WebGLAny getVertexAttrib(GCGLuint index, GCGLenum pname);
     long long getVertexAttribOffset(GCGLuint index, GCGLenum pname);
 
@@ -243,7 +243,7 @@ public:
     GCGLboolean isTexture(WebGLTexture*);
 
     void lineWidth(GCGLfloat);
-    void linkProgram(WebGLProgram*);
+    void linkProgram(WebGLProgram&);
     bool linkProgramWithoutInvalidatingAttribLocations(WebGLProgram*);
     virtual void pixelStorei(GCGLenum pname, GCGLint param);
 #if ENABLE(WEBXR)
@@ -258,7 +258,7 @@ public:
     virtual void renderbufferStorageImpl(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, const char* functionName);
     void sampleCoverage(GCGLfloat value, GCGLboolean invert);
     void scissor(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height);
-    void shaderSource(WebGLShader*, const String&);
+    void shaderSource(WebGLShader&, const String&);
     void stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask);
     void stencilFuncSeparate(GCGLenum face, GCGLenum func, GCGLint ref, GCGLuint mask);
     void stencilMask(GCGLuint);
@@ -343,7 +343,7 @@ public:
     void uniformMatrix4fv(const WebGLUniformLocation*, GCGLboolean transpose, Float32List&&);
 
     void useProgram(WebGLProgram*);
-    void validateProgram(WebGLProgram*);
+    void validateProgram(WebGLProgram&);
 
     void vertexAttrib1f(GCGLuint index, GCGLfloat x);
     void vertexAttrib2f(GCGLuint index, GCGLfloat x, GCGLfloat y);

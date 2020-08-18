@@ -90,14 +90,14 @@ PASS gl.stencilOpSeparate(gl.FRONT, gl.KEEP, gl.KEEP, gl.KEEP) was expected valu
 PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, arrayBufferView) was expected value: NO_ERROR.
 PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData) was expected value: NO_ERROR.
 PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image) was expected value: NO_ERROR.
-PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas) was expected value: NO_ERROR.
+PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d) was expected value: NO_ERROR.
 PASS gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video) was expected value: NO_ERROR.
 PASS gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST) was expected value: NO_ERROR.
 PASS gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST) was expected value: NO_ERROR.
 PASS gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, arrayBufferView) was expected value: NO_ERROR.
 PASS gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData) was expected value: NO_ERROR.
 PASS gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, image) was expected value: NO_ERROR.
-PASS gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, canvas) was expected value: NO_ERROR.
+PASS gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d) was expected value: NO_ERROR.
 PASS gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, video) was expected value: NO_ERROR.
 PASS gl.uniform1f(uniformLocation, 0) was expected value: NO_ERROR.
 PASS gl.uniform1fv(uniformLocation, float32array) was expected value: NO_ERROR.
@@ -178,6 +178,10 @@ PASS gl.isRenderbuffer(renderbuffer) is false
 PASS gl.isShader(shader) is false
 PASS gl.isTexture(texture) is false
 PASS gl.getError() is gl.NO_ERROR
+PASS OES_vertex_array_object.bindVertexArrayOES(vertexArrayObject) was expected value: NO_ERROR.
+PASS OES_vertex_array_object.isVertexArrayOES(vertexArrayObject) was expected value: NO_ERROR.
+PASS OES_vertex_array_object.deleteVertexArrayOES(vertexArrayObject) was expected value: NO_ERROR.
+PASS OES_vertex_array_object.createVertexArrayOES() is null
 
 PASS successfullyParsed is true
 

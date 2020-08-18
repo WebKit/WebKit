@@ -31,6 +31,8 @@ var ctx2d;
 var imageData;
 var float32array;
 var int32array;
+var OES_vertex_array_object;
+var vertexArrayObject;
 
 function init()
 {
@@ -49,15 +51,22 @@ function init()
     // for the isContextLost() method, which we want to do regardless of the extension's presence.
     testValidContext();
 
-    extension = gl.getExtension("WEBGL_lose_context");
-    if (!extension) {
-        debug("Could not find lose_context extension under the following names: WEBGL_lose_context");
+    extensionName = wtu.getSupportedExtensionWithKnownPrefixes(gl, "WEBGL_lose_context");
+    if (!extensionName) {
+        debug("Could not find WEBGL_lose_context extension");
         finishTest();
         return false;
     }
+    extension = gl.getExtension(extensionName);
+
+    // need an extension that exposes new API methods.
+    OES_vertex_array_object = wtu.getExtensionWithKnownPrefixes(gl, "OES_vertex_array_object");
 
     canvas.addEventListener("webglcontextlost", testLostContext, false);
 
+    // We need to initialize |uniformLocation| before losing context.
+    // Otherwise gl.getUniform() when context is lost will throw.
+    uniformLocation = gl.getUniformLocation(program, "tex");
     loseContext();
 }
 
@@ -103,6 +112,24 @@ function testValidContext()
     shouldBeTrue("gl.isRenderbuffer(renderbuffer)");
     shouldBeTrue("gl.isShader(shader)");
     shouldBeTrue("gl.isTexture(texture)");
+
+    if (OES_vertex_array_object) {
+      vertexArrayObject = OES_vertex_array_object.createVertexArrayOES();
+      shouldBe("gl.getError()", "gl.NO_ERROR");
+      shouldBeTrue("OES_vertex_array_object.isVertexArrayOES(vertexArrayObject)");
+    }
+}
+
+function testGLNOErrorFunctions(tests) {
+  tests.forEach(function(test) {
+      shouldGenerateGLError(gl, gl.NO_ERROR, test);
+  });
+}
+
+function testFunctionsThatReturnNULL(tests) {
+  tests.forEach(function(test) {
+      shouldBeNull(test);
+  });
 }
 
 function testLostContext()
@@ -198,14 +225,14 @@ function testLostContext()
         "gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, arrayBufferView)",
         "gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imageData)",
         "gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image)",
-        "gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas)",
+        "gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d)",
         "gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video)",
         "gl.texParameterf(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)",
         "gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)",
         "gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, arrayBufferView)",
         "gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, imageData)",
         "gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, image)",
-        "gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, canvas)",
+        "gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, canvas2d)",
         "gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, video)",
         "gl.uniform1f(uniformLocation, 0)",
         "gl.uniform1fv(uniformLocation, float32array)",
@@ -254,9 +281,7 @@ function testLostContext()
         "gl.vertexAttribPointer(0, 0, gl.FLOAT, false, 0, 0)",
         "gl.viewport(0, 0, 0, 0)",
     ];
-    for (var i = 0; i < voidTests.length; ++i) {
-        shouldGenerateGLError(gl, gl.NO_ERROR, voidTests[i]);
-    }
+    testGLNOErrorFunctions(voidTests);
 
     // Functions return nullable values should all return null.
     var nullTests = [
@@ -284,11 +309,9 @@ function testLostContext()
         "gl.getUniformLocation(program, 'vPosition')",
         "gl.getVertexAttrib(0, gl.VERTEX_ATTRIB_ARRAY_BUFFER_BINDING)",
         "gl.getSupportedExtensions()",
-        "gl.getExtension('WEBGL_lose_context')",
+        "gl.getExtension('" + extensionName + "')",
     ];
-    for (var i = 0; i < nullTests.length; ++i) {
-        shouldBeNull(nullTests[i]);
-    }
+    testFunctionsThatReturnNULL(nullTests);
 
     // "Is" queries should all return false.
     shouldBeFalse("gl.isBuffer(buffer)");
@@ -300,6 +323,20 @@ function testLostContext()
     shouldBeFalse("gl.isTexture(texture)");
 
     shouldBe("gl.getError()", "gl.NO_ERROR");
+
+    // test extensions
+    if (OES_vertex_array_object) {
+      testGLNOErrorFunctions(
+        [
+          "OES_vertex_array_object.bindVertexArrayOES(vertexArrayObject)",
+          "OES_vertex_array_object.isVertexArrayOES(vertexArrayObject)",
+          "OES_vertex_array_object.deleteVertexArrayOES(vertexArrayObject)",
+        ]);
+      testFunctionsThatReturnNULL(
+        [
+          "OES_vertex_array_object.createVertexArrayOES()",
+        ]);
+    }
 
     debug("");
 

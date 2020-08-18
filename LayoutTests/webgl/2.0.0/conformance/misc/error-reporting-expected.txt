@@ -1,27 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/misc/error-reporting.html
-
-[ 1: PASS ] getError was expected value: NO_ERROR :
-[ 2: FAIL ] context.getActiveAttrib(null, 2) should throw an exception. Was null.
-[ 3: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
-[ 4: PASS ] getError was expected value: NO_ERROR :
-[ 5: PASS ] context.getActiveAttrib(program, 2) is null
-[ 6: PASS ] getError was expected value: INVALID_VALUE :
-[ 7: PASS ] getError was expected value: NO_ERROR :
-[ 8: FAIL ] context.getActiveUniform(null, 0) should throw an exception. Was null.
-[ 9: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
-[ 10: PASS ] getError was expected value: NO_ERROR :
-[ 11: PASS ] context.getActiveUniform(program, 50) is null
-[ 12: PASS ] getError was expected value: INVALID_VALUE :
-[ 13: PASS ] getError was expected value: NO_ERROR :
-[ 14: PASS ] context.bindFramebuffer(context.FRAMEBUFFER, null) is undefined.
-[ 15: PASS ] getError was expected value: NO_ERROR :
-[ 16: PASS ] context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, null) is undefined.
-[ 17: PASS ] getError was expected value: INVALID_OPERATION :
-[ 18: PASS ] getError was expected value: NO_ERROR :
-[ 19: PASS ] context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, null, 0) is undefined.
-[ 20: PASS ] getError was expected value: INVALID_OPERATION :
-[ 21: PASS ] getError was expected value: NO_ERROR :
-[ 22: PASS ] successfullyParsed is true
-[ FAIL ] 4 failures reported
+[ PASS ] All tests passed

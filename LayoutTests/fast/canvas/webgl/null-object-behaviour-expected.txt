@@ -4,16 +4,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS Program Compiled
 PASS Shader Compiled
-PASS context.compileShader(undefined) was expected value: INVALID_VALUE.
-PASS context.linkProgram(undefined) was expected value: INVALID_VALUE.
-PASS context.attachShader(undefined, undefined) was expected value: INVALID_VALUE.
-PASS context.attachShader(program, undefined) was expected value: INVALID_VALUE.
-PASS context.attachShader(undefined, shader) was expected value: INVALID_VALUE.
-PASS context.detachShader(program, undefined) was expected value: INVALID_VALUE.
-PASS context.detachShader(undefined, shader) was expected value: INVALID_VALUE.
-PASS context.shaderSource(undefined, undefined) was expected value: INVALID_VALUE.
-PASS context.shaderSource(undefined, 'foo') was expected value: INVALID_VALUE.
-PASS context.bindAttribLocation(undefined, 0, 'foo') was expected value: INVALID_VALUE.
+PASS context.compileShader(undefined) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.compileShader must be an instance of WebGLShader.
+PASS context.linkProgram(undefined) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.linkProgram must be an instance of WebGLProgram.
+PASS context.attachShader(undefined, undefined) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.attachShader must be an instance of WebGLProgram.
+PASS context.attachShader(program, undefined) threw exception TypeError: Argument 2 ('shader') to WebGLRenderingContext.attachShader must be an instance of WebGLShader.
+PASS context.attachShader(undefined, shader) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.attachShader must be an instance of WebGLProgram.
+PASS context.detachShader(program, undefined) threw exception TypeError: Argument 2 ('shader') to WebGLRenderingContext.detachShader must be an instance of WebGLShader.
+PASS context.detachShader(undefined, shader) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.detachShader must be an instance of WebGLProgram.
+PASS context.shaderSource(undefined, undefined) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.shaderSource must be an instance of WebGLShader.
+PASS context.shaderSource(undefined, 'foo') threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.shaderSource must be an instance of WebGLShader.
+PASS context.bindAttribLocation(undefined, 0, 'foo') threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.bindAttribLocation must be an instance of WebGLProgram.
 PASS context.bindBuffer(context.ARRAY_BUFFER, 0) threw exception TypeError: Argument 2 ('buffer') to WebGLRenderingContext.bindBuffer must be an instance of WebGLBuffer.
 PASS context.bindFramebuffer(context.FRAMEBUFFER, 0) threw exception TypeError: Argument 2 ('framebuffer') to WebGLRenderingContext.bindFramebuffer must be an instance of WebGLFramebuffer.
 PASS context.bindRenderbuffer(context.RENDERBUFFER, 0) threw exception TypeError: Argument 2 ('renderbuffer') to WebGLRenderingContext.bindRenderbuffer must be an instance of WebGLRenderbuffer.
@@ -28,13 +28,13 @@ PASS context.bindRenderbuffer(context.RENDERBUFFER, undefined) was expected valu
 PASS context.bindTexture(context.TEXTURE_2D, undefined) was expected value: NO_ERROR.
 PASS context.framebufferRenderbuffer(context.FRAMEBUFFER, context.DEPTH_ATTACHMENT, context.RENDERBUFFER, null) was expected value: INVALID_OPERATION.
 PASS context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, null, 0) was expected value: INVALID_OPERATION.
-PASS context.getProgramParameter(undefined, 0) was expected value: INVALID_VALUE.
-PASS context.getProgramInfoLog(undefined, 0) was expected value: INVALID_VALUE.
-PASS context.getShaderParameter(undefined, 0) was expected value: INVALID_VALUE.
-PASS context.getShaderInfoLog(undefined, 0) was expected value: INVALID_VALUE.
-PASS context.getShaderSource(undefined) was expected value: INVALID_VALUE.
-PASS context.getUniform(undefined, null) was expected value: INVALID_VALUE.
-PASS context.getUniformLocation(undefined, 'foo') was expected value: INVALID_VALUE.
+PASS context.getProgramParameter(undefined, 0) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getProgramParameter must be an instance of WebGLProgram.
+PASS context.getProgramInfoLog(undefined, 0) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getProgramInfoLog must be an instance of WebGLProgram.
+PASS context.getShaderParameter(undefined, 0) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.getShaderParameter must be an instance of WebGLShader.
+PASS context.getShaderInfoLog(undefined, 0) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.getShaderInfoLog must be an instance of WebGLShader.
+PASS context.getShaderSource(undefined) threw exception TypeError: Argument 1 ('shader') to WebGLRenderingContext.getShaderSource must be an instance of WebGLShader.
+PASS context.getUniform(undefined, null) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getUniform must be an instance of WebGLProgram.
+PASS context.getUniformLocation(undefined, 'foo') threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getUniformLocation must be an instance of WebGLProgram.
 
 check with bindings
 PASS context.bufferData(context.ARRAY_BUFFER, 1, context.STATIC_DRAW) was expected value: NO_ERROR.

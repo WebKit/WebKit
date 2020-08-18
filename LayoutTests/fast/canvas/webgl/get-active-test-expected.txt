@@ -10,8 +10,8 @@ PASS context.getActiveUniform(program, 1) is null
 PASS getError was expected value: INVALID_VALUE : 
 PASS context.getActiveUniform(program, -1) is null
 PASS getError was expected value: INVALID_VALUE : 
-PASS context.getActiveUniform(null, 0) is null
-PASS getError was expected value: INVALID_VALUE : 
+PASS context.getActiveUniform(null, 0) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getActiveUniform must be an instance of WebGLProgram.
+PASS getError was expected value: NO_ERROR : 
 PASS info[ii] is non-null.
 PASS info[ii] is non-null.
 PASS info[ii].name is expected[ii].name
@@ -32,8 +32,8 @@ PASS context.getActiveAttrib(program, 2) is null
 PASS getError was expected value: INVALID_VALUE : 
 PASS context.getActiveAttrib(program, -1) is null
 PASS getError was expected value: INVALID_VALUE : 
-PASS context.getActiveAttrib(null, 0) is null
-PASS getError was expected value: INVALID_VALUE : 
+PASS context.getActiveAttrib(null, 0) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getActiveAttrib must be an instance of WebGLProgram.
+PASS getError was expected value: NO_ERROR : 
 PASS getError was expected value: NO_ERROR : 
 Check trying to get attribs from different context
 PASS context2.getActiveAttrib(program, 0) is null

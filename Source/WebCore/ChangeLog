@@ -1,3 +1,41 @@
+2020-08-18  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Various parameters should be non-nullable in IDL
+        https://bugs.webkit.org/show_bug.cgi?id=215616
+
+        Reviewed by Kenneth Russell.
+
+        Fixes 5 conformance tests:
+        conformance/misc/error-reporting.html
+        conformance/misc/null-object-behaviour.html
+        conformance/misc/bad-arguments-test.html
+        conformance/textures/misc/tex-sub-image-2d-bad-args.html
+        conformance/programs/get-active-test.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::attachShader):
+        (WebCore::WebGLRenderingContextBase::bindAttribLocation):
+        (WebCore::WebGLRenderingContextBase::compileShader):
+        (WebCore::WebGLRenderingContextBase::detachShader):
+        (WebCore::WebGLRenderingContextBase::getActiveAttrib):
+        (WebCore::WebGLRenderingContextBase::getActiveUniform):
+        (WebCore::WebGLRenderingContextBase::getAttachedShaders):
+        (WebCore::WebGLRenderingContextBase::getAttribLocation):
+        (WebCore::WebGLRenderingContextBase::getProgramParameter):
+        (WebCore::WebGLRenderingContextBase::getProgramInfoLog):
+        (WebCore::WebGLRenderingContextBase::getShaderParameter):
+        (WebCore::WebGLRenderingContextBase::getShaderInfoLog):
+        (WebCore::WebGLRenderingContextBase::getShaderSource):
+        (WebCore::WebGLRenderingContextBase::getUniform):
+        (WebCore::WebGLRenderingContextBase::getUniformLocation):
+        (WebCore::WebGLRenderingContextBase::linkProgram):
+        (WebCore::WebGLRenderingContextBase::shaderSource):
+        (WebCore::WebGLRenderingContextBase::validateProgram):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.idl:
+        * inspector/InspectorShaderProgram.cpp:
+        (WebCore::InspectorShaderProgram::updateShader):
+
 2020-08-18  Chris Dumez  <cdumez@apple.com>
 
         PannerNode's rolloffFactor should be clamped to [0, 1] internally when distanceModel is "linear"

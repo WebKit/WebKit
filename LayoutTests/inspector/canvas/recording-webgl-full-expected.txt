@@ -527,8 +527,8 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   73: (duration)
-    0: getUniform(0)
-      swizzleTypes: [WebGLProgram]
+    0: getUniform(0, 0)
+      swizzleTypes: [WebGLProgram, WebGLUniformLocation]
       trace:
         0: getUniform
         1: (anonymous function)
@@ -762,134 +762,134 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   105: (duration)
-    0: uniform1f(1)
-      swizzleTypes: [Number]
+    0: uniform1f(0, 1)
+      swizzleTypes: [WebGLUniformLocation, Number]
       trace:
         0: uniform1f
         1: (anonymous function)
         2: executeFrameFunction
   106: (duration)
-    0: uniform1fv(0)
-      swizzleTypes: [TypedArray]
+    0: uniform1fv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
       trace:
         0: uniform1fv
         1: (anonymous function)
         2: executeFrameFunction
   107: (duration)
-    0: uniform1i(1)
-      swizzleTypes: [Number]
+    0: uniform1i(0, 1)
+      swizzleTypes: [WebGLUniformLocation, Number]
       trace:
         0: uniform1i
         1: (anonymous function)
         2: executeFrameFunction
   108: (duration)
-    0: uniform1iv(0)
-      swizzleTypes: [TypedArray]
+    0: uniform1iv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
       trace:
         0: uniform1iv
         1: (anonymous function)
         2: executeFrameFunction
   109: (duration)
-    0: uniform2f(1, 2)
-      swizzleTypes: [Number, Number]
+    0: uniform2f(0, 1, 2)
+      swizzleTypes: [WebGLUniformLocation, Number, Number]
       trace:
         0: uniform2f
         1: (anonymous function)
         2: executeFrameFunction
   110: (duration)
-    0: uniform2fv(0)
-      swizzleTypes: [TypedArray]
+    0: uniform2fv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
       trace:
         0: uniform2fv
         1: (anonymous function)
         2: executeFrameFunction
   111: (duration)
-    0: uniform2i(1, 2)
-      swizzleTypes: [Number, Number]
+    0: uniform2i(0, 1, 2)
+      swizzleTypes: [WebGLUniformLocation, Number, Number]
       trace:
         0: uniform2i
         1: (anonymous function)
         2: executeFrameFunction
   112: (duration)
-    0: uniform2iv(0)
-      swizzleTypes: [TypedArray]
+    0: uniform2iv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
       trace:
         0: uniform2iv
         1: (anonymous function)
         2: executeFrameFunction
   113: (duration)
-    0: uniform3f(1, 2, 3)
-      swizzleTypes: [Number, Number, Number]
+    0: uniform3f(0, 1, 2, 3)
+      swizzleTypes: [WebGLUniformLocation, Number, Number, Number]
       trace:
         0: uniform3f
         1: (anonymous function)
         2: executeFrameFunction
   114: (duration)
-    0: uniform3fv(0)
-      swizzleTypes: [TypedArray]
+    0: uniform3fv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
       trace:
         0: uniform3fv
         1: (anonymous function)
         2: executeFrameFunction
   115: (duration)
-    0: uniform3i(1, 2, 3)
-      swizzleTypes: [Number, Number, Number]
+    0: uniform3i(0, 1, 2, 3)
+      swizzleTypes: [WebGLUniformLocation, Number, Number, Number]
       trace:
         0: uniform3i
         1: (anonymous function)
         2: executeFrameFunction
   116: (duration)
-    0: uniform3iv(0)
-      swizzleTypes: [TypedArray]
+    0: uniform3iv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
       trace:
         0: uniform3iv
         1: (anonymous function)
         2: executeFrameFunction
   117: (duration)
-    0: uniform4f(1, 2, 3, 4)
-      swizzleTypes: [Number, Number, Number, Number]
+    0: uniform4f(0, 1, 2, 3, 4)
+      swizzleTypes: [WebGLUniformLocation, Number, Number, Number, Number]
       trace:
         0: uniform4f
         1: (anonymous function)
         2: executeFrameFunction
   118: (duration)
-    0: uniform4fv(0)
-      swizzleTypes: [TypedArray]
+    0: uniform4fv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
       trace:
         0: uniform4fv
         1: (anonymous function)
         2: executeFrameFunction
   119: (duration)
-    0: uniform4i(1, 2, 3, 4)
-      swizzleTypes: [Number, Number, Number, Number]
+    0: uniform4i(0, 1, 2, 3, 4)
+      swizzleTypes: [WebGLUniformLocation, Number, Number, Number, Number]
       trace:
         0: uniform4i
         1: (anonymous function)
         2: executeFrameFunction
   120: (duration)
-    0: uniform4iv(0)
-      swizzleTypes: [TypedArray]
+    0: uniform4iv(0, 0)
+      swizzleTypes: [WebGLUniformLocation, TypedArray]
       trace:
         0: uniform4iv
         1: (anonymous function)
         2: executeFrameFunction
   121: (duration)
-    0: uniformMatrix2fv(true, 0)
-      swizzleTypes: [Boolean, TypedArray]
+    0: uniformMatrix2fv(0, true, 0)
+      swizzleTypes: [WebGLUniformLocation, Boolean, TypedArray]
       trace:
         0: uniformMatrix2fv
         1: (anonymous function)
         2: executeFrameFunction
   122: (duration)
-    0: uniformMatrix3fv(true, 0)
-      swizzleTypes: [Boolean, TypedArray]
+    0: uniformMatrix3fv(0, true, 0)
+      swizzleTypes: [WebGLUniformLocation, Boolean, TypedArray]
       trace:
         0: uniformMatrix3fv
         1: (anonymous function)
         2: executeFrameFunction
   123: (duration)
-    0: uniformMatrix4fv(true, 0)
-      swizzleTypes: [Boolean, TypedArray]
+    0: uniformMatrix4fv(0, true, 0)
+      swizzleTypes: [WebGLUniformLocation, Boolean, TypedArray]
       trace:
         0: uniformMatrix4fv
         1: (anonymous function)

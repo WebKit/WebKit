@@ -5,8 +5,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS shaders.length is 2
 PASS shaders[0] == standardVert && shaders[1] == standardFrag || shaders[1] == standardVert && shaders[0] == standardFrag is true
 PASS getError was expected value: NO_ERROR : 
-PASS gl.getAttachedShaders(null) is null
-PASS getError was expected value: INVALID_VALUE : 
+PASS gl.getAttachedShaders(null) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getAttachedShaders must be an instance of WebGLProgram.
+PASS getError was expected value: NO_ERROR : 
 PASS gl.getAttachedShaders(standardVert) threw exception TypeError: Argument 1 ('program') to WebGLRenderingContext.getAttachedShaders must be an instance of WebGLProgram.
 PASS getError was expected value: NO_ERROR : 
 PASS gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_SIZE) is 16

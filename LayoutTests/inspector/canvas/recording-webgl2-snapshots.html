@@ -6,6 +6,7 @@
 <script src="resources/shaderProgram-utilities-webgl.js"></script>
 <script id="vertex-shader" type="x-shader/x-vertex">
     attribute vec3 position;
+    uniform vec4 testUniform;
     void main(void) {
         gl_Position = vec4(position, 1.0);
     }

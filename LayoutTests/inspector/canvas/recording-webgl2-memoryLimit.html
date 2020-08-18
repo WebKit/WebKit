@@ -6,8 +6,9 @@
 <script src="resources/shaderProgram-utilities-webgl.js"></script>
 <script id="vertex-shader" type="x-shader/x-vertex">
     attribute vec4 test;
+    uniform vec4 testUniform;
     void main(void) {
-        gl_Position = test;
+        gl_Position = test + testUniform;
     }
 </script>
 <script id="fragment-shader" type="x-shader/x-fragment">

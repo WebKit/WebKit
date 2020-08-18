@@ -1,3 +1,39 @@
+2020-08-18  James Darpinian  <jdarpinian@chromium.org>
+
+        [WebGL2] Various parameters should be non-nullable in IDL
+        https://bugs.webkit.org/show_bug.cgi?id=215616
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/context-lost-expected.txt:
+        * fast/canvas/webgl/context-lost.html:
+        * fast/canvas/webgl/error-reporting-expected.txt:
+        * fast/canvas/webgl/error-reporting.html:
+        * fast/canvas/webgl/get-active-test-expected.txt:
+        * fast/canvas/webgl/get-active-test.html:
+        * fast/canvas/webgl/gl-object-get-calls-expected.txt:
+        * fast/canvas/webgl/gl-object-get-calls.html:
+        * fast/canvas/webgl/null-object-behaviour-expected.txt:
+        * fast/canvas/webgl/null-object-behaviour.html:
+        * inspector/canvas/recording-webgl-frameCount.html:
+        * inspector/canvas/recording-webgl-full-expected.txt:
+        * inspector/canvas/recording-webgl-full.html:
+        * inspector/canvas/recording-webgl-memoryLimit.html:
+        * inspector/canvas/recording-webgl-snapshots.html:
+        * inspector/canvas/recording-webgl2-frameCount.html:
+        * inspector/canvas/recording-webgl2-full.html:
+        * inspector/canvas/recording-webgl2-memoryLimit.html:
+        * inspector/canvas/recording-webgl2-snapshots.html:
+        * inspector/canvas/resources/recording-webgl.js:
+        (load):
+        * webgl/2.0.0/conformance/misc/bad-arguments-test-expected.txt:
+        * webgl/2.0.0/conformance/misc/error-reporting-expected.txt:
+        * webgl/2.0.0/conformance/misc/null-object-behaviour-expected.txt:
+        * webgl/2.0.0/conformance/programs/get-active-test-expected.txt:
+        * webgl/2.0.0/conformance/state/gl-object-get-calls-expected.txt:
+        * webgl/2.0.0/conformance/textures/misc/tex-sub-image-2d-bad-args-expected.txt:
+        * webgl/2.0.0/conformance2/state/gl-object-get-calls-expected.txt:
+
 2020-08-18  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Pass user-defined-properties-on-context.html layout test

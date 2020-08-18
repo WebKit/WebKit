@@ -1,47 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/programs/get-active-test.html
-
-[ 1: PASS ] getError was expected value: NO_ERROR :
-[ 2: PASS ] context.getActiveUniform(program, 0).name is 'u_modelViewProjMatrix'
-[ 3: PASS ] context.getActiveUniform(program, 0).type is context.FLOAT_MAT4
-[ 4: PASS ] context.getActiveUniform(program, 0).size is 1
-[ 5: PASS ] context.getActiveUniform(program, 1) is null
-[ 6: PASS ] getError was expected value: INVALID_VALUE :
-[ 7: PASS ] context.getActiveUniform(program, -1) is null
-[ 8: PASS ] getError was expected value: INVALID_VALUE :
-[ 9: FAIL ] context.getActiveUniform(null, 0) should throw an exception. Was null.
-[ 10: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
-[ 11: PASS ] info[ii] is non-null.
-[ 12: PASS ] info[ii] is non-null.
-[ 13: PASS ] info[ii].name is expected[ii].name
-[ 14: PASS ] info[ii].type is expected[ii].type
-[ 15: PASS ] info[ii].size is expected[ii].size
-[ 16: PASS ] info[ii].name is expected[ii].name
-[ 17: PASS ] info[ii].type is expected[ii].type
-[ 18: PASS ] info[ii].size is expected[ii].size
-[ 19: PASS ] info2[ii] is non-null.
-[ 20: PASS ] info2[ii] is non-null.
-[ 21: PASS ] info2[ii].name is expected2[ii].name
-[ 22: PASS ] info2[ii].type is expected2[ii].type
-[ 23: PASS ] info2[ii].size is expected2[ii].size
-[ 24: PASS ] info2[ii].name is expected2[ii].name
-[ 25: PASS ] info2[ii].type is expected2[ii].type
-[ 26: PASS ] info2[ii].size is expected2[ii].size
-[ 27: PASS ] context.getActiveAttrib(program, 2) is null
-[ 28: PASS ] getError was expected value: INVALID_VALUE :
-[ 29: PASS ] context.getActiveAttrib(program, -1) is null
-[ 30: PASS ] getError was expected value: INVALID_VALUE :
-[ 31: FAIL ] context.getActiveAttrib(null, 0) should throw an exception. Was null.
-[ 32: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
-[ 33: PASS ] getError was expected value: NO_ERROR :
-[ 34: PASS ] context2.getActiveAttrib(program, 0) is null
-[ 35: PASS ] getError was expected value: INVALID_OPERATION :
-[ 36: PASS ] context2.getActiveUniform(program, 0) is null
-[ 37: PASS ] getError was expected value: INVALID_OPERATION :
-[ 38: PASS ] context.getActiveUniform(program, 0) is null
-[ 39: PASS ] getError was expected value: INVALID_VALUE :
-[ 40: PASS ] context.getActiveAttrib(program, 0) is null
-[ 41: PASS ] getError was expected value: INVALID_VALUE :
-[ 42: PASS ] successfullyParsed is true
-[ FAIL ] 4 failures reported
+[ PASS ] All tests passed

@@ -1,42 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/conformance/textures/misc/tex-sub-image-2d-bad-args.html
-
-[ 1: PASS ] getError was expected value: INVALID_OPERATION : no previously defined texture image
-[ 2: PASS ] getError was expected value: NO_ERROR : Setup should succeed
-[ 3: PASS ] getError was expected value: INVALID_VALUE : y + height > texture height
-[ 4: PASS ] getError was expected value: INVALID_VALUE : x + width > texture width
-[ 5: PASS ] getError was expected value: INVALID_VALUE : negative x
-[ 6: PASS ] getError was expected value: INVALID_VALUE : negative y
-[ 7: PASS ] getError was expected value: INVALID_VALUE : negative level
-[ 8: FAIL ] gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, null) should throw an exception. Was undefined.
-[ 9: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
-[ 10: PASS ] getError was expected value: INVALID_VALUE : null pixels
-[ 11: PASS ] getError was one of: INVALID_VALUE or INVALID_OPERATION : too high level
-[ 12: PASS ] getError was expected value: INVALID_ENUM : bad target
-[ 13: PASS ] getError was expected value: NO_ERROR : good args
-[ 14: PASS ] getError was expected value: INVALID_OPERATION : format not same as original
-[ 15: PASS ] getError was expected value: INVALID_OPERATION : type not same as original
-[ 16: PASS ] getError was expected value: NO_ERROR : make texture RGB
-[ 17: PASS ] getError was expected value: NO_ERROR : format same as original RGB
-[ 18: PASS ] getError was expected value: INVALID_OPERATION : format not same as original RGB
-[ 19: PASS ] getError was expected value: INVALID_OPERATION : type not same as original RGB
-[ 20: PASS ] getError was expected value: NO_ERROR : make texture RGBA UNSIGNED_BYTE
-[ 21: PASS ] getError was expected value: NO_ERROR : format same as original
-[ 22: PASS ] getError was expected value: INVALID_OPERATION : format not same as original
-[ 23: PASS ] getError was expected value: INVALID_OPERATION : type not same as original
-[ 24: PASS ] getError was expected value: NO_ERROR : make texture RGBA UNSIGNED_BYTE
-[ 25: PASS ] getError was expected value: NO_ERROR : format same as original
-[ 26: PASS ] getError was expected value: INVALID_OPERATION : format not same as original
-[ 27: PASS ] getError was expected value: INVALID_OPERATION : type not same as original
-[ 28: PASS ] getError was expected value: NO_ERROR : format same as original
-[ 29: PASS ] getError was expected value: INVALID_OPERATION : format not same as original
-[ 30: PASS ] getError was expected value: INVALID_OPERATION : type not same as original
-[ 31: PASS ] getError was one of: INVALID_VALUE or INVALID_OPERATION : too high level
-[ 32: PASS ] getError was one of: INVALID_VALUE or INVALID_OPERATION : too high level
-[ 33: PASS ] getError was one of: INVALID_VALUE or INVALID_OPERATION : too high level
-[ 34: PASS ] getError was one of: INVALID_VALUE or INVALID_OPERATION : too high level
-[ 35: PASS ] getError was one of: INVALID_VALUE or INVALID_OPERATION : too high level
-[ 36: PASS ] getError was one of: INVALID_VALUE or INVALID_OPERATION : too high level
-[ 37: PASS ] successfullyParsed is true
-[ FAIL ] 2 failures reported
+[ PASS ] All tests passed

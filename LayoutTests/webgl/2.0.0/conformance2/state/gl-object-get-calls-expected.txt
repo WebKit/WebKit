@@ -157,8 +157,8 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 153: PASS ] shaders.length is 2
 [ 154: PASS ] shaders[0] == standardVert && shaders[1] == standardFrag || shaders[1] == standardVert && shaders[0] == standardFrag is true
 [ 155: PASS ] getError was expected value: NO_ERROR :
-[ 156: FAIL ] gl.getAttachedShaders(null) should throw an exception. Was null.
-[ 157: FAIL ] getError expected: NO_ERROR. Was INVALID_VALUE :
+[ 156: PASS ] gl.getAttachedShaders(null) threw exception TypeError: Argument 1 ('program') to WebGL2RenderingContext.getAttachedShaders must be an instance of WebGLProgram.
+[ 157: PASS ] getError was expected value: NO_ERROR :
 [ 158: PASS ] gl.getAttachedShaders(standardVert) threw exception TypeError: Argument 1 ('program') to WebGL2RenderingContext.getAttachedShaders must be an instance of WebGLProgram.
 [ 159: PASS ] getError was expected value: NO_ERROR :
 [ 160: PASS ] gl.getProgramParameter(standardProgram, gl.DELETE_STATUS) is false
@@ -365,4 +365,4 @@ Test: ../../resources/webgl_test_files/conformance2/state/gl-object-get-calls.ht
 [ 361: PASS ] getActiveUniformBlockParameter correctly handled invalid pname enums
 [ 362: PASS ] getError was expected value: NO_ERROR :
 [ 363: PASS ] successfullyParsed is true
-[ FAIL ] 37 failures reported
+[ FAIL ] 35 failures reported

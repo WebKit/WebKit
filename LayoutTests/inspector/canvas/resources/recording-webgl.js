@@ -24,7 +24,7 @@ function load() {
 
     buffer = context.createBuffer();
     framebuffer = context.createFramebuffer();
-    uniformLocation = context.getUniformLocation(program, "test");
+    uniformLocation = context.getUniformLocation(program, "testUniform");
     renderbuffer = context.createRenderbuffer();
     shader = context.createShader(context.VERTEX_SHADER);
     texture = context.createTexture();
