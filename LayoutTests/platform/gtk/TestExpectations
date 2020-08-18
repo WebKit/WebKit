@@ -51,9 +51,6 @@ webkit.org/b/210528 media/video-supports-fullscreen.html [ Crash Pass ]
 webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Crash ]
 webkit.org/b/196542 printing/printing-events.html [ Crash ]
 
-# Rendering
-webkit.org/b/215489 fast/forms/search-abs-pos-cancel-button.html [ Crash ]
-
 # ResourceLoading
 webkit.org/b/201270 [ Release ] http/tests/security/navigate-when-restoring-cached-page.html [ Timeout ]
 webkit.org/b/201270 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Crash ]

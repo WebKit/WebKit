@@ -1,3 +1,12 @@
+2020-08-17  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Update some expectations after closed bugs
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-08-17  Hector Lopez  <hector_i_lopez@apple.com>
 
         WeakPtr threading assertion on editing/undo-manager/undo-manager-delete-stale-undo-items.html

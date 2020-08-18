@@ -95,9 +95,6 @@ webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
 # Cairo-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/214192 [ Debug ] imported/blink/fast/gradients/large-horizontal-gradient.html [ Crash ]
-webkit.org/b/214192 [ Debug ] imported/blink/fast/gradients/large-vertical-gradient.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Cairo-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -291,9 +288,6 @@ webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-borde
 #////////////////////////////////////////////////////////////////////////////////////////
 # HTTP-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
-
-# Marking all as timeout/pass to avoid the bots getting stuck.
-webkit.org/b/215542 http/tests [ Timeout Pass Failure ]
 
 webkit.org/b/214797 http/tests/images/jpeg-partial-load.html [ ImageOnlyFailure Timeout Pass ]
 
