@@ -1,3 +1,13 @@
+2020-08-18  Karl Rackler  <rackler@apple.com>
+
+        rdar://67281310 REGRESSION (r265639): [ BigSur ] 11 canvas layout tests are a constant failure)
+        Should skip this only on Rosetta, not all Intel Big Sur Macs
+        Clean up arm64 only gardening.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-18  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (Async overflow scrolling): No rubberbanding in overflow:scroll in the wheel event region
