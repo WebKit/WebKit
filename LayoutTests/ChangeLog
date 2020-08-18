@@ -1,3 +1,12 @@
+2020-08-17  Hector Lopez  <hector_i_lopez@apple.com>
+
+        ASSERTION FAILURE: WebKit::AuthenticationManager::initializeConnection(IPC::Connection *)_block_invoke
+        https://bugs.webkit.org/show_bug.cgi?id=215025
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2020-08-17  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Update some expectations after closed bugs
