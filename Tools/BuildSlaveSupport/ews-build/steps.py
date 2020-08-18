@@ -29,7 +29,7 @@ from buildbot.steps.worker import CompositeStepMixin
 from twisted.internet import defer
 
 from layout_test_failures import LayoutTestFailures
-from send_email import send_email, send_email_to_bot_watchers
+from send_email import send_email_to_patch_author, send_email_to_bot_watchers
 
 import json
 import re
@@ -1490,7 +1490,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 email_text += u'\n\nError lines:\n\n<code>{}</code>'.format(logs)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
-            send_email([patch_author], email_subject, email_text)
+            send_email_to_patch_author(patch_author, email_subject, email_text)
         except Exception as e:
             print('Error in sending email for new build failure: {}'.format(e))
 
@@ -2164,7 +2164,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
             email_text += '\n\nLayout test failure{}:\n{}'.format(pluralSuffix, test_names_string)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
-            send_email([patch_author], email_subject, email_text)
+            send_email_to_patch_author(patch_author, email_subject, email_text)
         except Exception as e:
             print('Error in sending email for new layout test failures: {}'.format(e))
 

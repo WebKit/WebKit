@@ -1,3 +1,22 @@
+2020-08-17  Aakash Jain  <aakash_jain@apple.com>
+
+        Develop a mechanism to unsubscribe from ews emails
+        https://bugs.webkit.org/show_bug.cgi?id=215585
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/emails.json: Added.
+        * BuildSlaveSupport/ews-build/send_email.py:
+        (get_email_ids):
+        (send_email_to_patch_author): Do not email patch authors whose email is in unsubscribe list.
+        (send_email_to_bot_watchers):
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure):
+        (AnalyzeLayoutTestsResults.send_email_for_new_test_failures):
+        * BuildSlaveSupport/ews-build/email_unittest.py: Added unit-tests.
+        (EmailsDotJSONTest.test_valid_emails_json):
+        (EmailsDotJSONTest.test_emails_json_required_categories_present):
+
 2020-08-17  Saagar Jha  <saagar@saagarjha.com>
 
         Stop webkitpy from warning about not having a 64-bit git on Apple silicon

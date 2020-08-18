@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import os
 import smtplib
 
@@ -27,9 +28,18 @@ from email.mime.text import MIMEText
 
 is_test_mode_enabled = os.getenv('BUILDBOT_PRODUCTION') is None
 
-BOT_WATCHERS_EMAILS = ['webkit-ews-bot-watchers@group.apple.com']
 FROM_EMAIL = 'ews@webkit.org'
 SERVER = 'localhost'
+
+
+def get_email_ids(category):
+    # Valid categories: 'ADMIN_EMAILS', 'BOT_WATCHERS_EMAILS', 'EMAIL_IDS_TO_UNSUBSCRIBE'
+    try:
+        emails = json.load(open('emails.json'))
+        return emails.get(category, [])
+    except Exception as e:
+        print('Error in reading emails.json: {}'.format(e))
+        return []
 
 
 def send_email(to_emails, subject, text):
@@ -55,5 +65,14 @@ def send_email(to_emails, subject, text):
     server.quit()
 
 
+def send_email_to_patch_author(author_email, subject, text):
+    if not author_email:
+        return
+    if author_email in get_email_ids('EMAIL_IDS_TO_UNSUBSCRIBE'):
+        print('email {} is in unsubscribe list, skipping email'.format(author_email))
+        return
+    send_email([author_email], subject, text)
+
+
 def send_email_to_bot_watchers(subject, text):
-    send_email(BOT_WATCHERS_EMAILS, subject, text)
+    send_email(get_email_ids('BOT_WATCHERS_EMAILS'), subject, text)
