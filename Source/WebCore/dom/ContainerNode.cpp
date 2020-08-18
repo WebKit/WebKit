@@ -633,8 +633,10 @@ void ContainerNode::replaceAllChildren(std::nullptr_t)
 void ContainerNode::replaceAllChildren(Ref<Node>&& node)
 {
     // This function assumes the input node is not a DocumentFragment and is parentless to decrease complexity.
+    // This function must be called on a new node that has not yet been exposed to script due to the use of DeferChildrenChanged::Yes.
     ASSERT(!is<DocumentFragment>(node));
     ASSERT(!node->parentNode());
+    RELEASE_ASSERT(!node->wrapper() && node->refCount() == 1);
 
     if (!hasChildNodes()) {
         // appendChildWithoutPreInsertionValidityCheck() can only throw when node has a parent and we already asserted it doesn't.
@@ -972,7 +974,7 @@ ExceptionOr<void> ContainerNode::replaceChildren(Vector<NodeOrString>&& vector)
     // step 3
     Ref<ContainerNode> protectedThis(*this);
     ChildListMutationScope mutation(*this);
-    removeAllChildrenWithScriptAssertion(ChildChangeSource::API, DeferChildrenChanged::Yes);
+    removeAllChildrenWithScriptAssertion(ChildChangeSource::API, DeferChildrenChanged::No);
 
     auto insertResult = appendChildWithoutPreInsertionValidityCheck(*node);
     if (insertResult.hasException())

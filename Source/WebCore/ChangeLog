@@ -1,3 +1,18 @@
+2020-08-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r262381): replaceChildren should not use DeferChildrenChanged::No
+        https://bugs.webkit.org/show_bug.cgi?id=215600
+
+        Reviewed by Antti Koivisto.
+
+        It's not correct to use DeferChildrenChanged::No when the new node may have an old parent.
+        Use DeferChildrenChanged::Yes instead.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceAllChildren): Added a release assertion to make sure
+        people don't start using this function incorrectly in the future.
+        (WebCore::ContainerNode::replaceChildren): Fixed the bug.
+
 2020-08-18  Simon Fraser  <simon.fraser@apple.com>
 
         Turn off wheel event regions until we need them
