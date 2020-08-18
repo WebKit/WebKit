@@ -1,3 +1,11 @@
+2020-08-17  Karl Rackler  <rackler@apple.com>
+
+        Adding BigSur to existing test expectations
+        
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-17  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk1 ] webaudio/oscillator-square.html is a flaky failure
