@@ -1,3 +1,12 @@
+2020-08-18  Karl Rackler  <rackler@apple.com>
+
+        rdar://66861801 ([ Layout Tests] REGRESSION (r265487): svg/W3C-I18N/tspan-direction-rtl.svg is a constant failure)
+        Updating expectations in include Rosetta.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-18  Hector Lopez  <hector_i_lopez@apple.com>
 
         REGRESSION: [ macOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html is a flaky timeout
