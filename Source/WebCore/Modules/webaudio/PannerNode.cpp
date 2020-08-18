@@ -278,8 +278,6 @@ ExceptionOr<void> PannerNode::setMaxDistance(double maxDistance)
 
 ExceptionOr<void> PannerNode::setRolloffFactor(double rolloffFactor)
 {
-    // FIXME: Implement clamping of linear model once feedback is received
-    
     if (rolloffFactor < 0)
         return Exception { RangeError, "rolloffFactor cannot be set to a negative value"_s };
     

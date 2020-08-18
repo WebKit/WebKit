@@ -1,5 +1,16 @@
 2020-08-18  Chris Dumez  <cdumez@apple.com>
 
+        PannerNode's rolloffFactor should be clamped to [0, 1] internally when distanceModel is "linear"
+        https://bugs.webkit.org/show_bug.cgi?id=215625
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-rolloff-clamping-expected.txt:
+
+2020-08-18  Chris Dumez  <cdumez@apple.com>
+
         ScriptProcessNode should only run script asynchronously if the audio context is not an OfflineAudioContext
         https://bugs.webkit.org/show_bug.cgi?id=215624
 
