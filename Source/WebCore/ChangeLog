@@ -1,3 +1,16 @@
+2020-08-18  Youenn Fablet  <youenn@apple.com>
+
+        Update platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html to account for low latency code path
+        https://bugs.webkit.org/show_bug.cgi?id=215601
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing/updated test.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::supportsVCPEncoder):
+        In case low latency code path is enabled, supportsVCPEncoder should return true.
+
 2020-08-18  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (Async overflow scrolling): No rubberbanding in overflow:scroll in the wheel event region

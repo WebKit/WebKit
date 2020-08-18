@@ -5646,6 +5646,8 @@ bool Internals::supportsVCPEncoder()
 {
 #if defined(ENABLE_VCP_ENCODER)
     return ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER;
+#elif defined(HAVE_VTB_REQUIREDLOWLATENCY)
+    return true;
 #else
     return false;
 #endif

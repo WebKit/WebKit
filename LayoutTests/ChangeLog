@@ -1,3 +1,18 @@
+2020-08-18  Youenn Fablet  <youenn@apple.com>
+
+        Update platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html to account for low latency code path
+        https://bugs.webkit.org/show_bug.cgi?id=215601
+
+        Reviewed by Eric Carlson.
+
+        Update test to check software encoder for both baseline and high profiles.
+        Move baseline/high profile selection routines to routines.js.
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder-expected.txt:
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html:
+        * webrtc/h264-baseline.html:
+        * webrtc/h264-high.html:
+        * webrtc/routines.js:
+
 2020-08-18  Karl Rackler  <rackler@apple.com>
 
         rdar://67281310 REGRESSION (r265639): [ BigSur ] 11 canvas layout tests are a constant failure)

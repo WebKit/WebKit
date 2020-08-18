@@ -50,7 +50,8 @@ function testCanvas(testName, canvas, isSame, count)
 
 var canvas0Track;
 var sender;
-promise_test((test) => {
+function doTest(test, setupOffer)
+{
     canvas0.color = "green";
     printRectangle(canvas0);
     const shouldMatchCanvas1AfterReplaceTrack = window.internals ? internals.supportsVCPEncoder() : true;
@@ -63,6 +64,10 @@ promise_test((test) => {
             secondConnection.ontrack = (trackEvent) => {
                 resolve(trackEvent.streams[0]);
             };
+        }, { observeOffer : (offer) => {
+            offer.sdp = setupOffer(offer.sdp);
+            return offer;
+        }
         });
         setTimeout(() => reject("Test timed out"), 5000);
     }).then((stream) => {
@@ -94,8 +99,15 @@ promise_test((test) => {
             internals.setH264HardwareEncoderAllowed(true);
 	return Promise.reject(error);
     });
-}, "captureStream with webrtc");
+}
 
+promise_test((test) => {
+    return doTest(test, (sdp) => setH264BaselineCodec(sdp));
+}, "captureStream with webrtc - h264 baseline");
+
+promise_test((test) => {
+    return doTest(test, (sdp) => setH264HighCodec(sdp));
+}, "captureStream with webrtc - h264 high profile");
         </script>
     </head>
 </html>
