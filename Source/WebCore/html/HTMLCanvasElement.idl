@@ -39,6 +39,7 @@ typedef (
 
 [
     ActiveDOMObject,
+    JSCustomMarkFunction,
     JSGenerateToNativeObject,
     ReportExtraMemoryCost,
     ReportExternalMemoryCost,

@@ -9494,6 +9494,7 @@
 		6E5388DF2458AE1C0076AE03 /* EXTColorBufferHalfFloat.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = EXTColorBufferHalfFloat.idl; sourceTree = "<group>"; };
 		6E5388E02458AE1D0076AE03 /* WebGLColorBufferFloat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLColorBufferFloat.cpp; sourceTree = "<group>"; };
 		6E5388E12458AE1D0076AE03 /* WebGLColorBufferFloat.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGLColorBufferFloat.idl; sourceTree = "<group>"; };
+		6E576BC324EB509C0094D4AA /* JSHTMLCanvasElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLCanvasElementCustom.cpp; sourceTree = "<group>"; };
 		6E67D2A41280E8A4008758F7 /* ExtensionsGLOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionsGLOpenGL.cpp; sourceTree = "<group>"; };
 		6E67D2A51280E8A4008758F7 /* ExtensionsGLOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionsGLOpenGL.h; sourceTree = "<group>"; };
 		6E67D2A81280E8BD008758F7 /* ExtensionsGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionsGL.h; sourceTree = "<group>"; };
@@ -21935,6 +21936,7 @@
 				46B63F6B1C6E8CDF002E914B /* JSEventTargetCustom.h */,
 				4131F3B11F9552810059995A /* JSFetchEventCustom.cpp */,
 				835B680E1F548BDE0071F7F6 /* JSFileSystemEntryCustom.cpp */,
+				6E576BC324EB509C0094D4AA /* JSHTMLCanvasElementCustom.cpp */,
 				BCCBAD3A0C18BFF800CE890F /* JSHTMLCollectionCustom.cpp */,
 				BC51580A0C03D404008BB0EE /* JSHTMLDocumentCustom.cpp */,
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,

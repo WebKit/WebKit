@@ -1,3 +1,34 @@
+2020-08-18  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Pass user-defined-properties-on-context.html layout test
+        https://bugs.webkit.org/show_bug.cgi?id=215433
+
+        Reviewed by Yusuke Suzuki.
+
+        Keep the canvas' rendering context alive from the canvas itself by
+        adding a custom mark function for HTMLCanvasElement, and adding a
+        new GenerateIsReachable=ImplCanvasBase extended IDL attribute,
+        used from all rendering context types (2D, WebGL, and WebGPU).
+
+        This patch does not touch OffscreenCanvas since the implementation
+        there seems to be incomplete and there are no associated tests of
+        GC behavior.
+
+        Tests: fast/canvas/2d.context.expando.html
+               webgpu/expando-properties.html
+
+        * Modules/webgpu/GPUCanvasContext.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLCanvasElementCustom.cpp: Copied from Source/WebCore/html/canvas/WebGLRenderingContext.idl.
+        (WebCore::JSHTMLCanvasElement::visitAdditionalChildren):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.json:
+        * html/HTMLCanvasElement.idl:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLRenderingContext.idl:
+
 2020-08-18  Chris Dumez  <cdumez@apple.com>
 
         WaveShaperNode.curve setter should create a copy of the input array

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Ensure expando properties are preserved on the WebGPU context.</title>
+<body>
+<canvas id="canvas" style="width: 50px; height: 50px;"> </canvas>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script>
+
+function initialize() {
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("gpu");
+    ctx.myProperty = 2;
+}
+
+function collectGarbage() {
+    if (window.GCController)
+        window.GCController.collect();
+    else if (window.gc)
+        gc();
+    else if (window.$vm)
+        window.$vm.gc();
+    // $vm is exposed in WebKit's MiniBrowser with the following environment variables set:
+    //   export JSC_useDollarVM=1
+    //   export __XPC_JSC_useDollarVM=1
+}
+
+// FIXME: HTMLCanvasElement.getContext("gpu") no longer exists in the
+// WebGPU spec. When WebKit is updated to track the current spec, this
+// test and the bindings should be updated to honor the spec's
+// guarantees about preserving expando properties on various
+// interfaces.
+let test1 = async_test('Verify expando properties are preserved on the WebGPU context');
+test1.step(function() {
+    initialize();
+    setTimeout(test1.step_func(function() {
+        collectGarbage();
+        let canvas = document.getElementById("canvas");
+        let ctx = canvas.getContext("gpu");
+        assert_equals(ctx.myProperty, 2);
+        test1.done();
+    }), 200);
+});
+</script>
+</body>

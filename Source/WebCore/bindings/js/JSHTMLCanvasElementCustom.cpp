@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,29 +20,20 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef unsigned long GLenum;
-typedef long GLint;
-typedef long GLsizei;
+#include "config.h"
+#include "JSHTMLCanvasElement.h"
 
-#ifdef ENABLE_VIDEO
-typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) TexImageSource;
-#else
-typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement) TexImageSource;
-#endif
+#include <JavaScriptCore/SlotVisitor.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
 
-[
-    ActiveDOMObject,
-    Conditional=WEBGL,
-    GenerateIsReachable=ImplCanvasBase,
-    JSCustomMarkFunction,
-    JSGenerateToJSObject,
-    DoNotCheckConstants,
-    ExportMacro=WEBCORE_EXPORT,
-    CallTracingCallback=recordCanvasAction,
-] interface WebGLRenderingContext {
-};
+namespace WebCore {
 
-WebGLRenderingContext implements WebGLRenderingContextBase;
+void JSHTMLCanvasElement::visitAdditionalChildren(SlotVisitor& visitor)
+{
+    visitor.addOpaqueRoot(static_cast<CanvasBase*>(&wrapped()));
+}
+
+} // namespace WebCore

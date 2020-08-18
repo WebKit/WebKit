@@ -1,0 +1,10 @@
+Verify that expando properties are preserved on the 2d canvas context.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS globalCtx.myProperty is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

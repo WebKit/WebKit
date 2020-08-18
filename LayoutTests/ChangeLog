@@ -1,3 +1,23 @@
+2020-08-18  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Pass user-defined-properties-on-context.html layout test
+        https://bugs.webkit.org/show_bug.cgi?id=215433
+
+        Reviewed by Yusuke Suzuki.
+
+        Rebaseline user-defined-properties-on-context.html, which is now
+        fully passing.
+
+        Add tests of expando properties on 2D and WebGPU contexts. Add a
+        FIXME to the WebGPU test, as that specification no longer defines
+        a canvas rendering context.
+
+        * fast/canvas/2d.context.expando-expected.txt: Added.
+        * fast/canvas/2d.context.expando.html: Added.
+        * webgl/2.0.0/conformance/context/user-defined-properties-on-context-expected.txt:
+        * webgpu/expando-properties-expected.txt: Added.
+        * webgpu/expando-properties.html: Added.
+
 2020-08-18  Karl Rackler  <rackler@apple.com>
 
         Disable plug-in tests on Apple Silicon

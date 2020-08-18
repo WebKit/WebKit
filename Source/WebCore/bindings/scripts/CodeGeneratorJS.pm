@@ -4841,6 +4841,12 @@ sub GenerateImplementation
                 $rootString .= "        return false;\n";
                 $rootString .= "    if (UNLIKELY(reason))\n";
                 $rootString .= "        *reason = \"Reachable from Navigator\";\n";
+            } elsif (GetGenerateIsReachable($interface) eq "ImplCanvasBase") {
+                $rootString  = "    CanvasBase* root = WTF::getPtr(&(js${interfaceName}->wrapped().canvasBase()));\n";
+                $rootString .= "    if (!root)\n";
+                $rootString .= "        return false;\n";
+                $rootString .= "    if (UNLIKELY(reason))\n";
+                $rootString .= "        *reason = \"Reachable from CanvasBase\";\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplDocument") {
                 $rootString  = "    Document* root = WTF::getPtr(js${interfaceName}->wrapped().document());\n";
                 $rootString .= "    if (!root)\n";
