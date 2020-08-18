@@ -1,3 +1,13 @@
+2020-08-17  Hector Lopez  <hector_i_lopez@apple.com>
+
+        WeakPtr threading assertion on editing/undo-manager/undo-manager-delete-stale-undo-items.html
+        https://bugs.webkit.org/show_bug.cgi?id=215221
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: expectation removal
+        * platform/mac-wk2/TestExpectations: expectation removal
+
 2020-08-17  Chris Dumez  <cdumez@apple.com>
 
         Improve channel mixing support in AudioBus
