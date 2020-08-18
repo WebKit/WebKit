@@ -1,3 +1,14 @@
+2020-08-18  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] Unhandled keyDown: events cause a system beep in full screen mode
+        https://bugs.webkit.org/show_bug.cgi?id=215596
+        <rdar://problem/65823962>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController noResponderFor:]):
+
 2020-08-18  Youenn Fablet  <youenn@apple.com>
 
         NetworkSocketChannel should delay sending back error message as done by NetworkSocketStream

@@ -222,6 +222,18 @@ static void makeResponderFirstResponderIfDescendantOfView(NSWindow *window, NSRe
 }
 
 #pragma mark -
+#pragma mark NSResponder overrides
+
+- (void)noResponderFor:(SEL)eventMethod
+{
+    // The default behavior of the last link in the responder chain is to call NSBeep() if the
+    // event in question is a -keyDown:. Adding a no-op override of -noResponderFor: in a subclass
+    // of NSWindowController, which is typically the last link in a responder chain, avoids the
+    // NSBeep() when -keyDown: goes unhandled.
+    UNUSED_PARAM(eventMethod);
+}
+
+#pragma mark -
 #pragma mark Exposed Interface
 
 static RetainPtr<CGDataProviderRef> createImageProviderWithCopiedData(CGDataProviderRef sourceProvider)
