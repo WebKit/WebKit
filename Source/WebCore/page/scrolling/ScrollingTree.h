@@ -207,6 +207,9 @@ public:
 
     void windowScreenDidChange(PlatformDisplayID, Optional<unsigned> nominalFramesPerSecond);
     PlatformDisplayID displayID();
+    
+    bool hasProcessedWheelEventsRecently();
+    WEBCORE_EXPORT void willProcessWheelEvent();
 
 protected:
     FloatPoint mainFrameScrollPosition() const;
@@ -270,6 +273,9 @@ private:
 
     Lock m_swipeStateMutex;
     SwipeState m_swipeState;
+
+    Lock m_lastWheelEventTimeMutex;
+    MonotonicTime m_lastWheelEventTime;
 
 protected:
     bool m_allowLatching { true };
