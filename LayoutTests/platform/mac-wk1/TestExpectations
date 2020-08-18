@@ -1132,3 +1132,4 @@ webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-consol
 
 webkit.org/b/215593 webaudio/oscillator-square.html [ Pass Failure ]
 
+webkit.org/b/215608 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm [ Pass Timeout ]

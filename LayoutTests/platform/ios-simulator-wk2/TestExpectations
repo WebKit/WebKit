@@ -130,3 +130,5 @@ webkit.org/b/215025 imported/w3c/web-platform-tests/webrtc/RTCSctpTransport-maxC
 webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-party-cookie-accepted.https.html [ Pass Failure ]
 
 webkit.org/b/215216 imported/w3c/web-platform-tests/svg/import/interact-zoom-01-t-manual.svg [ Pass Failure ]
+
+webkit.org/b/215608 [ Release ] imported/w3c/web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm [ Pass Timeout ]
