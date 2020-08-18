@@ -2177,6 +2177,11 @@
          "gavinp"
       ]
    },
+   "Geoff Lang" : {
+      "emails" : [
+         "geofflang@google.com"
+      ],
+   },
    "Geoffrey Garen" : {
       "aliases" : [
          "Geoff Garen"
@@ -3040,6 +3045,11 @@
          "jonlee"
       ],
       "status" : "reviewer"
+   },
+   "Jonah Ryan-Davis" : {
+      "emails" : [
+         "jonahr@google.com"
+      ],
    },
    "Jonathan Backer" : {
       "emails" : [
