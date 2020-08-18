@@ -3,38 +3,46 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-var successfullyParsed = false;
 if (window.testRunner)
    testRunner.dumpAsText();
 
 function click() {}
-
 </script>
 </head>
 <body>
 
-<div role="button" id="button" ontouchstart="chick();"">button</div>
-<div role="link" ontouchend="chick();"><div id="link">link</div></div>
+<div role="button" id="button">button</div>
+<div role="link"><div id="link">link</div></div>
 
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
-
-    description("Makes sure that we can check if an AXObject has touch event listener.");
+    description("Makes sure that we can check if an AXObject has touch event listeners.");
 
     if (window.accessibilityController) {
-        var button = accessibilityController.accessibleElementById("button");
-        var link = accessibilityController.accessibleElementById("link");
-        shouldBeTrue("button.boolAttributeValue('AXHasTouchEventListener')");
-        shouldBeTrue("link.boolAttributeValue('AXHasTouchEventListener')");
+        var eventNames = [ "touchstart", "touchmove", "touchend", "touchcancel", "touchforcechange", "pointerover", "pointerenter", "pointerdown", "pointermove", "pointerup", "pointerout", "pointerleave", "pointercancel" ];
+
+        var button = document.getElementById("button");
+        var link = document.getElementById("link");
+        var axButton = accessibilityController.accessibleElementById("button");
+        var axLink = accessibilityController.accessibleElementById("link");
+
+        for (i = 0; i < eventNames.length; ++i) {
+            button.addEventListener(eventNames[i], click);
+            link.addEventListener(eventNames[i], click);
+            debug("After adding event listener for " + eventNames[i]);
+            shouldBeTrue("axButton.boolAttributeValue('AXHasTouchEventListener')");
+            shouldBeTrue("axLink.boolAttributeValue('AXHasTouchEventListener')");
+
+            button.removeEventListener(eventNames[i], click);
+            link.removeEventListener(eventNames[i], click);
+            debug("After removing event listener for " + eventNames[i]);
+            shouldBeFalse("axButton.boolAttributeValue('AXHasTouchEventListener')");
+            shouldBeFalse("axLink.boolAttributeValue('AXHasTouchEventListener')");
+        }
     }
-
-    successfullyParsed = true;
 </script>
-
 <script src="../../resources/js-test-post.js"></script>
-
 </body>
 </html>
-

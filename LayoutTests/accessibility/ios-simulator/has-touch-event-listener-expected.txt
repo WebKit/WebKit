@@ -1,12 +1,88 @@
 button
 link
-Makes sure that we can check if an AXObject has touch event listener.
+Makes sure that we can check if an AXObject has touch event listeners.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS button.boolAttributeValue('AXHasTouchEventListener') is true
-PASS link.boolAttributeValue('AXHasTouchEventListener') is true
+After adding event listener for touchstart
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for touchstart
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for touchmove
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for touchmove
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for touchend
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for touchend
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for touchcancel
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for touchcancel
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for touchforcechange
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for touchforcechange
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for pointerover
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for pointerover
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for pointerenter
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for pointerenter
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for pointerdown
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for pointerdown
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for pointermove
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for pointermove
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for pointerup
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for pointerup
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for pointerout
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for pointerout
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for pointerleave
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for pointerleave
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
+After adding event listener for pointercancel
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is true
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is true
+After removing event listener for pointercancel
+PASS axButton.boolAttributeValue('AXHasTouchEventListener') is false
+PASS axLink.boolAttributeValue('AXHasTouchEventListener') is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,5 +1,48 @@
 2020-08-17  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r265645. rdar://problem/67285376
+
+    VoiceOver not able to invoke play button on some web sites.
+    https://bugs.webkit.org/show_bug.cgi?id=215484
+    <rdar://problem/62729643>
+    
+    Reviewed by Chris Fleizach.
+    
+    Source/WebCore:
+    
+    Test: accessibility/ios-simulator/has-touch-event-listener.html.
+    
+    We were checking for the presence of listeners for touchstart and touchend
+    events only. Now we check for the presence of any touch-related event listener.
+    
+    * accessibility/ios/AccessibilityObjectIOS.mm:
+    (WebCore::AccessibilityObject::hasTouchEventListener const):
+    
+    LayoutTests:
+    
+    Expanded this test to check for all touch-related event listeners.
+    
+    * accessibility/ios-simulator/has-touch-event-listener-expected.txt:
+    * accessibility/ios-simulator/has-touch-event-listener.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265645 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-13  Andres Gonzalez  <andresg_22@apple.com>
+
+            VoiceOver not able to invoke play button on some web sites.
+            https://bugs.webkit.org/show_bug.cgi?id=215484
+            <rdar://problem/62729643>
+
+            Reviewed by Chris Fleizach.
+
+            Expanded this test to check for all touch-related event listeners.
+
+            * accessibility/ios-simulator/has-touch-event-listener-expected.txt:
+            * accessibility/ios-simulator/has-touch-event-listener.html:
+
+2020-08-17  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r265289. rdar://problem/66944320
 
     Update event regions only once per frame
