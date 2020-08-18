@@ -313,7 +313,7 @@ function readableStreamError(stream, error)
 
     @getByIdDirectPrivate(reader, "closedPromiseCapability").@reject.@call(@undefined, error);
     const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise;
-    @putPromiseInternalField(promise, @promiseFieldFlags, @getPromiseInternalField(promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+    @markPromiseAsHandled(promise);
 }
 
 function readableStreamDefaultControllerCallPullIfNeeded(controller)
@@ -537,7 +537,7 @@ function readableStreamReaderGenericRelease(reader)
         @putByIdDirectPrivate(reader, "closedPromiseCapability", { @promise: @newHandledRejectedPromise(@makeTypeError("reader released lock")) });
 
     const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise;
-    @putPromiseInternalField(promise, @promiseFieldFlags, @getPromiseInternalField(promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+    @markPromiseAsHandled(promise);
     @putByIdDirectPrivate(@getByIdDirectPrivate(reader, "ownerReadableStream"), "reader", @undefined);
     @putByIdDirectPrivate(reader, "ownerReadableStream", @undefined);
 }

@@ -69,7 +69,7 @@ function setUpWritableStreamDefaultWriter(writer, stream)
             readyPromiseCapability.@resolve.@call();
     } else if (state === "erroring") {
         readyPromiseCapability.@reject.@call(@undefined, @getByIdDirectPrivate(stream, "storedError"));
-        @putPromiseInternalField(readyPromiseCapability.@promise, @promiseFieldFlags, @getPromiseInternalField(readyPromiseCapability.@promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+        @markPromiseAsHandled(readyPromiseCapability.@promise);
     } else if (state === "closed") {
         readyPromiseCapability.@resolve.@call();
         closedPromiseCapability.@resolve.@call();
@@ -77,9 +77,9 @@ function setUpWritableStreamDefaultWriter(writer, stream)
         @assert(state === "errored");
         const storedError = @getByIdDirectPrivate(stream, "storedError");
         readyPromiseCapability.@reject.@call(@undefined, storedError);
-        @putPromiseInternalField(readyPromiseCapability.@promise, @promiseFieldFlags, @getPromiseInternalField(readyPromiseCapability.@promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+        @markPromiseAsHandled(readyPromiseCapability.@promise);
         closedPromiseCapability.@reject.@call(@undefined, storedError);
-        @putPromiseInternalField(closedPromiseCapability.@promise, @promiseFieldFlags, @getPromiseInternalField(closedPromiseCapability.@promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+        @markPromiseAsHandled(closedPromiseCapability.@promise);
     }
 }
 
@@ -310,7 +310,7 @@ function writableStreamRejectCloseAndClosedPromiseIfNeeded(stream)
     if (writer !== @undefined) {
         const closedPromise = @getByIdDirectPrivate(writer, "closedPromise");
         closedPromise.@reject.@call(@undefined, storedError);
-        @putPromiseInternalField(closedPromise.@promise, @promiseFieldFlags, @getPromiseInternalField(closedPromise.@promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+        @markPromiseAsHandled(closedPromise.@promise);
     }
 }
 
@@ -391,7 +391,7 @@ function writableStreamDefaultWriterEnsureClosedPromiseRejected(writer, error)
     }
 
     closedPromiseCapability.@reject.@call(@undefined, error);
-    @putPromiseInternalField(closedPromise, @promiseFieldFlags, @getPromiseInternalField(closedPromise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+    @markPromiseAsHandled(closedPromise);
 }
 
 function writableStreamDefaultWriterEnsureReadyPromiseRejected(writer, error)
@@ -406,7 +406,7 @@ function writableStreamDefaultWriterEnsureReadyPromiseRejected(writer, error)
     }
 
     readyPromiseCapability.@reject.@call(@undefined, error);
-    @putPromiseInternalField(readyPromise, @promiseFieldFlags, @getPromiseInternalField(readyPromise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+    @markPromiseAsHandled(readyPromise);
 }
 
 function writableStreamDefaultWriterGetDesiredSize(writer)

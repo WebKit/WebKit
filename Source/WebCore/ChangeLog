@@ -1,3 +1,27 @@
+2020-08-18  Youenn Fablet  <youenn@apple.com>
+
+        Add a JS built-in routine to mark a promise as handled
+        https://bugs.webkit.org/show_bug.cgi?id=215558
+
+        Reviewed by Darin Adler.
+
+        Wrap long line of code inside a method to ease code readability.
+        No change of behavior.
+
+        * Modules/streams/ReadableStream.js:
+        (pipeThrough):
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamError):
+        (readableStreamReaderGenericRelease):
+        * Modules/streams/StreamInternals.js:
+        (markPromiseAsHandled):
+        (shieldingPromiseResolve):
+        * Modules/streams/WritableStreamInternals.js:
+        (setUpWritableStreamDefaultWriter):
+        (writableStreamRejectCloseAndClosedPromiseIfNeeded):
+        (writableStreamDefaultWriterEnsureClosedPromiseRejected):
+        (writableStreamDefaultWriterEnsureReadyPromiseRejected):
+
 2020-08-17  Chris Dumez  <cdumez@apple.com>
 
         AudioContext.getOutputTimestamp() is missing

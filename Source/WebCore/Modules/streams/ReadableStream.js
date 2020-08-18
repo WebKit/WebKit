@@ -119,7 +119,7 @@ function pipeThrough(streams, options)
     const readable = streams.readable;
     const promise = this.pipeTo(writable, options);
     if (@isPromise(promise))
-        @putPromiseInternalField(promise, @promiseFieldFlags, @getPromiseInternalField(promise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+        @markPromiseAsHandled(promise);
     return readable;
 }
 
