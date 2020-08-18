@@ -209,6 +209,8 @@ bool ScrollableArea::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
         return false;
 
     bool handledEvent = scrollAnimator().handleWheelEvent(wheelEvent);
+    
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea (" << *this << ") handleWheelEvent - handled " << handledEvent);
 #if ENABLE(CSS_SCROLL_SNAP)
     if (scrollAnimator().activeScrollSnapIndexDidChange()) {
         setCurrentHorizontalSnapPointIndex(scrollAnimator().activeScrollSnapIndexForAxis(ScrollEventAxis::Horizontal));
@@ -234,7 +236,10 @@ void ScrollableArea::setScrollOffsetFromInternals(const ScrollOffset& offset)
 void ScrollableArea::setScrollOffsetFromAnimation(const ScrollOffset& offset)
 {
     ScrollPosition position = scrollPositionFromOffset(offset);
-    if (requestScrollPositionUpdate(position, currentScrollType()))
+    
+    auto scrollType = currentScrollType();
+    auto clamping = scrollType == ScrollType::User ? ScrollClamping::Unclamped : ScrollClamping::Clamped;
+    if (requestScrollPositionUpdate(position, scrollType, clamping))
         return;
 
     scrollPositionChanged(position);

@@ -81,6 +81,8 @@ bool ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const PlatformWheelEv
     if (scrollingTree()->willWheelEventStartSwipeGesture(wheelEvent))
         return false;
 
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingCoordinatorMac::handleWheelEvent - sending event to scrolling thread");
+
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     ScrollingThread::dispatch([threadedScrollingTree, wheelEvent] {
         threadedScrollingTree->handleWheelEventAfterMainThread(wheelEvent);

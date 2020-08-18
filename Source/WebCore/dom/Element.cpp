@@ -78,6 +78,7 @@
 #include "KeyboardEvent.h"
 #include "KeyframeAnimationOptions.h"
 #include "KeyframeEffect.h"
+#include "Logging.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "NodeRenderStyle.h"
@@ -126,6 +127,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -407,6 +409,8 @@ bool Element::dispatchWheelEvent(const PlatformWheelEvent& platformEvent)
         event->stopPropagation();
 
     dispatchEvent(event);
+    
+    LOG_WITH_STREAM(Scrolling, stream << "Element " << *this << " dispatchWheelEvent: defaultPrevented " << event->defaultPrevented() << " defaultHandled " << event->defaultHandled());
     return !event->defaultPrevented() && !event->defaultHandled();
 }
 

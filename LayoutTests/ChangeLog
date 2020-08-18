@@ -1,3 +1,27 @@
+2020-08-18  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Async overflow scrolling): No rubberbanding in overflow:scroll in the wheel event region
+        https://bugs.webkit.org/show_bug.cgi?id=215598
+        <rdar://problem/64895442>
+
+        Reviewed by Darin Adler.
+
+        Remove an unneeded `var successfullyParsed = true` in existing tests.
+
+        New test that detect rubberbanding.
+
+        * fast/scrolling/mac/async-scroll-overflow-hidden-on-one-axis.html:
+        * fast/scrolling/mac/async-scroll-overflow-rtl.html:
+        * fast/scrolling/mac/async-scroll-overflow-top-inset.html:
+        * fast/scrolling/mac/async-scroll-overflow.html:
+        * fast/scrolling/mac/hit-test-overflow-tiled-layer.html:
+        * fast/scrolling/mac/move-node-in-overflow-scroll.html:
+        * fast/scrolling/mac/overflow-scrolled-document.html:
+        * fast/scrolling/mac/overflow-zoomed-document.html:
+        * fast/scrolling/mac/overlapped-overflow-scroll.html:
+        * fast/scrolling/mac/rubberband-overflow-in-wheel-region-expected.txt: Added.
+        * fast/scrolling/mac/rubberband-overflow-in-wheel-region.html: Copied from LayoutTests/fast/scrolling/mac/overflow-scrolled-document.html.
+
 2020-08-18  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS Mojave wk2 Debug ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-hovered.html is a flaky timeout

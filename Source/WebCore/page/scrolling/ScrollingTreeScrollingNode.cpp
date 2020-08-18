@@ -187,8 +187,7 @@ bool ScrollingTreeScrollingNode::eventCanScrollContents(const PlatformWheelEvent
         wheelDelta.setHeight(0);
 
     auto oldScrollPosition = currentScrollPosition();
-    auto newScrollPosition = oldScrollPosition - wheelDelta;
-    newScrollPosition = newScrollPosition.constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
+    auto newScrollPosition = (oldScrollPosition - wheelDelta).constrainedBetween(minimumScrollPosition(), maximumScrollPosition());
     return newScrollPosition != oldScrollPosition;
 }
 

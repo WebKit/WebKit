@@ -1,0 +1,87 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        body {
+            height: 2000px;
+        }
+        
+        .container {
+            padding: 10px;
+            margin: 20px;
+            border: 1px solid gray;
+        }
+        
+        .scroller {
+            height: 300px;
+            width: 300px;
+            border: 1px solid black;
+            padding: 5px;
+            overflow: scroll;
+        }
+        .content {
+            width: 200%;
+            height: 300%;
+        }
+        
+    </style>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script>
+        var jsTestIsAsync = true;
+
+        var scroller;
+        var sawOverflowScrollWithNegativeOffset = false;
+
+        async function resetScrollPositions()
+        {
+            scroller.scrollTop = 0;
+            
+            // Wait for scroll events to fire.
+            await UIHelper.renderingUpdate();
+
+            sawOverflowScrollWithNegativeOffset = false;
+        }
+        
+        async function doMouseWheelScroll()
+        {
+            eventSender.mouseMoveTo(100, 100);
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 1, "began", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 20, "changed", "none");
+            eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, "ended", "none");
+            await UIHelper.renderingUpdate();
+        }
+        
+        async function scrollTest()
+        {
+            debug('');
+            debug('Test rubberband of overflow:scroll inside the non-fast scrollable region');
+            await resetScrollPositions();
+            await doMouseWheelScroll();
+
+            shouldBecomeEqual('sawOverflowScrollWithNegativeOffset', 'true', finishJSTest);
+        }
+
+        window.addEventListener('load', () => {
+            let container = document.querySelector('.container');
+            container.addEventListener('wheel', () => { }, false);
+
+            scroller = document.querySelector('.scroller');
+            scroller.addEventListener('scroll', () => {
+                if (scroller.scrollTop < 0)
+                    sawOverflowScrollWithNegativeOffset = true;
+            }, false);
+
+            setTimeout(scrollTest, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="scroller">
+            <div class="content"></div>
+        </div>
+    </div>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

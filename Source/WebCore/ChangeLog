@@ -1,3 +1,28 @@
+2020-08-18  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Async overflow scrolling): No rubberbanding in overflow:scroll in the wheel event region
+        https://bugs.webkit.org/show_bug.cgi?id=215598
+        <rdar://problem/64895442>
+
+        Reviewed by Darin Adler.
+        
+        Scrolling in overflow:scroll inside the non-fast event region (e.g. inside an ancestor with a wheel event
+        handler) happens via ScrollAnimatorMac::handleWheelEvent() which calls ScrollableArea::setScrollOffsetFromAnimation()
+        which bounces to the scrolling thread via RenderLayer::requestScrollPositionUpdate(). We were clamping the
+        scroll offset here, thus disallowing the overscrolled offsets required for rubberbanding.
+        
+        Fix is to allow clamping for user scrolls. Also add more logging.
+
+        Test: fast/scrolling/mac/rubberband-overflow-in-wheel-region.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchWheelEvent):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::handleWheelEvent):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::handleWheelEvent):
+        (WebCore::ScrollableArea::setScrollOffsetFromAnimation):
+
 2020-08-18  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, null-deref fix after r265797.
