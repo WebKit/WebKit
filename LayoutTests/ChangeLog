@@ -1,3 +1,9 @@
+2020-08-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GLib gardening. Skip more tests using plugins after r265753
+
+        * platform/glib/TestExpectations:
+
 2020-08-17  Karl Rackler  <rackler@apple.com>
 
         REGRESSION (r265701): [ BigSur ] 3 webaudio/the-audio-api/the-audioparam-interface tests are a constant failure)
