@@ -357,29 +357,29 @@ void RenderTextControlSingleLine::autoscroll(const IntPoint& position)
 
 int RenderTextControlSingleLine::scrollWidth() const
 {
-    if (innerTextElement())
-        return innerTextElement()->scrollWidth();
+    if (auto innerTextElement = this->innerTextElement(); innerTextElement && innerTextElement->renderer())
+        return innerTextElement->renderer()->scrollWidth();
     return RenderBlockFlow::scrollWidth();
 }
 
 int RenderTextControlSingleLine::scrollHeight() const
 {
-    if (innerTextElement())
-        return innerTextElement()->scrollHeight();
+    if (auto innerTextElement = this->innerTextElement(); innerTextElement && innerTextElement->renderer())
+        return innerTextElement->renderer()->scrollHeight();
     return RenderBlockFlow::scrollHeight();
 }
 
 int RenderTextControlSingleLine::scrollLeft() const
 {
-    if (innerTextElement())
-        return innerTextElement()->scrollLeft();
+    if (auto innerTextElement = this->innerTextElement(); innerTextElement && innerTextElement->renderer())
+        return innerTextElement->renderer()->scrollLeft();
     return RenderBlockFlow::scrollLeft();
 }
 
 int RenderTextControlSingleLine::scrollTop() const
 {
-    if (innerTextElement())
-        return innerTextElement()->scrollTop();
+    if (auto innerTextElement = this->innerTextElement(); innerTextElement && innerTextElement->renderer())
+        return innerTextElement->renderer()->scrollTop();
     return RenderBlockFlow::scrollTop();
 }
 
