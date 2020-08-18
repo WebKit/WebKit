@@ -1,3 +1,19 @@
+2020-08-18  Chris Dumez  <cdumez@apple.com>
+
+        WaveShaperNode.curve setter should create a copy of the input array
+        https://bugs.webkit.org/show_bug.cgi?id=215615
+
+        Reviewed by Eric Carlson.
+
+        WaveShaperNode.curve setter should create a copy of the input array, so that follow-up modifications
+        of the array by the JS do not impact audio processing:
+        - https://www.w3.org/TR/webaudio/#dom-waveshapernode-curve
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::setCurve):
+
 2020-08-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r262381): replaceChildren should not use DeferChildrenChanged::No
