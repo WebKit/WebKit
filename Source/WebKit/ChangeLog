@@ -1,3 +1,23 @@
+2020-08-18  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebViews using fastServerTrustEvaluationEnabled should only allow legacy TLS for main resource loads
+        https://bugs.webkit.org/show_bug.cgi?id=215626
+        <rdar://problem/67268892>
+
+        Reviewed by Darin Adler.
+
+        We have introduced public API webView:authenticationChallenge:shouldAllowDeprecatedTLS: in WKNavigationDelegate to allow
+        applications to choose whether to allow TLS 1.0 or 1.1 connections.  We don't want to break this API or break existing third party
+        apps that load pages that load third party subresources that use TLS 1.0 or 1.1.
+
+        However, we do want Safari, which uses fastServerTrustEvaluationEnabled SPI, to silently fail subresource loads that use TLS 1.0 or 1.1.
+        This matches the current behavior of Chrome and Firefox, which was not implemented in those other browsers when we decided to ask about subresources.
+
+        Covered by an API test.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::continueDidReceiveChallenge):
+
 2020-08-18  Jer Noble  <jer.noble@apple.com>
 
         [Mac] Unhandled keyDown: events cause a system beep in full screen mode

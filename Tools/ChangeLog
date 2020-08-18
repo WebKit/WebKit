@@ -1,3 +1,14 @@
+2020-08-18  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebViews using fastServerTrustEvaluationEnabled should only allow legacy TLS for main resource loads
+        https://bugs.webkit.org/show_bug.cgi?id=215626
+        <rdar://problem/67268892>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-08-17  Aakash Jain  <aakash_jain@apple.com>
 
         Develop a mechanism to unsubscribe from ews emails
