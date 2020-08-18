@@ -1,5 +1,22 @@
 2020-08-17  Per Arne Vollan  <pvollan@apple.com>
 
+        Assert failure after r265715
+        https://bugs.webkit.org/show_bug.cgi?id=215592
+
+        Reviewed by Darin Adler.
+
+        The change set r265715 introduced an assert failure in AuthenticationManager::initializeConnection. This
+        happens because after r265715 the new XPC event handler set in AuthenticationManager::initializeConnection,
+        will no longer be called on the main thread. This patch addresses this issue by dispatching this work on
+        the main thread.
+
+        No new tests, covered by existing tests.
+
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+        (WebKit::AuthenticationManager::initializeConnection):
+
+2020-08-17  Per Arne Vollan  <pvollan@apple.com>
+
         [Cocoa] Avoid waiting for Launch Services on every load
         https://bugs.webkit.org/show_bug.cgi?id=215569
 
