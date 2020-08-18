@@ -27,7 +27,7 @@ This includes scripts like `run-webkit-tests` and `build-webkit`.
 
 All of these scripts must be written so that they are compatible with both Python 2 and Python 3.
 Some ports build on environments that have only Python 2, including the internal Apple build
-environment for older Apple OS versions such as macOS Movaje.
+environment for older Apple OS versions such as macOS Mojave.
 Other ports build on environments that have only Python 3.
 
 At some point in the future the Python 2 requirement will be relaxed.
