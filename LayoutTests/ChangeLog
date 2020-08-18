@@ -1,5 +1,14 @@
 2020-08-18  Karl Rackler  <rackler@apple.com>
 
+        Disable plug-in tests on Apple Silicon
+        Updating test expectation in include Rosetta
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2020-08-18  Karl Rackler  <rackler@apple.com>
+
         rdar://66861801 ([ Layout Tests] REGRESSION (r265487): svg/W3C-I18N/tspan-direction-rtl.svg is a constant failure)
         Updating expectations in include Rosetta.
 

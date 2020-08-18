@@ -1221,7 +1221,7 @@ webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navig
 [ arm64 ] http/tests/security/mixedContent/insecure-plugin-in-iframe.html [ Skip ]
 [ arm64 ] http/tests/security/storage-blocking-loosened-plugin.html [ Skip ]
 [ arm64 ] http/tests/security/storage-blocking-strengthened-plugin.html [ Skip ]
-[ arm64 ] tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html [ Skip ]
+[ BigSur+ ] tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html [ Skip ]
 [ arm64 ] userscripts/user-script-plugin-document.html [ Skip ]
 [ arm64 ] fast/frames/sandboxed-iframe-about-blank.html [ Skip ]
 [ arm64 ] fast/frames/sandboxed-iframe-navigation-allowed.html [ Skip ]
