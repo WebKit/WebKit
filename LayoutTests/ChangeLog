@@ -1,3 +1,12 @@
+2020-08-18  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk2 ] webgpu/whlsl/do-while-loop-break.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215606
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-18  Antti Koivisto  <antti@apple.com>
 
         The CSS specificity of :host() pseudo-classes is wrong
