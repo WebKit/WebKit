@@ -1,3 +1,9 @@
+2020-08-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update test baseline after r265749.
+
+        * platform/gtk/imported/w3c/web-platform-tests/custom-elements/builtin-coverage-expected.txt:
+
 2020-08-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GLib gardening. Skip more tests using plugins after r265753
