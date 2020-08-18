@@ -1,3 +1,15 @@
+2020-08-17  Chris Dumez  <cdumez@apple.com>
+
+        Improve channel mixing support in AudioBus
+        https://bugs.webkit.org/show_bug.cgi?id=215597
+
+        Reviewed by Darin Adler.
+
+        Remove outdated test. A newer version of this test is present in web-platform-tests.
+
+        * webaudio/audionode-channel-rules-expected.txt: Removed.
+        * webaudio/audionode-channel-rules.html: Removed.
+
 2020-08-17  Karl Rackler  <rackler@apple.com>
 
         Removing added entry in error.

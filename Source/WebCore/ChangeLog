@@ -1,3 +1,25 @@
+2020-08-17  Chris Dumez  <cdumez@apple.com>
+
+        Improve channel mixing support in AudioBus
+        https://bugs.webkit.org/show_bug.cgi?id=215597
+
+        Reviewed by Darin Adler.
+
+        Improve channel mixing support in AudioBus to match the specification:
+        - https://www.w3.org/TR/webaudio/#channel-up-mixing-and-down-mixing
+
+        Our implementation also matches Blink's:
+        - https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/audio/audio_bus.cc
+
+        No new tests, rebaselined existing test.
+
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::copyFrom):
+        (WebCore::AudioBus::sumFrom):
+        (WebCore::AudioBus::speakersSumFromByUpMixing):
+        (WebCore::AudioBus::speakersSumFromByDownMixing):
+        * platform/audio/AudioBus.h:
+
 2020-08-17  Karl Rackler  <rackler@apple.com>
 
         Unreviewed, reverting r265603.

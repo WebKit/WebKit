@@ -245,24 +245,9 @@ void AudioBus::copyFrom(const AudioBus& sourceBus, ChannelInterpretation channel
     if (&sourceBus == this)
         return;
 
-    unsigned numberOfSourceChannels = sourceBus.numberOfChannels();
-    unsigned numberOfDestinationChannels = numberOfChannels();
-
-    if (numberOfDestinationChannels == numberOfSourceChannels) {
-        for (unsigned i = 0; i < numberOfSourceChannels; ++i)
-            channel(i)->copyFrom(sourceBus.channel(i));
-    } else {
-        switch (channelInterpretation) {
-        case ChannelInterpretation::Speakers:
-            speakersCopyFrom(sourceBus);
-            break;
-        case ChannelInterpretation::Discrete:
-            discreteCopyFrom(sourceBus);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-    }
+    // Copying bus is equivalent to zeroing and then summing.
+    zero();
+    sumFrom(sourceBus, channelInterpretation);
 }
 
 void AudioBus::sumFrom(const AudioBus& sourceBus, ChannelInterpretation channelInterpretation)
@@ -279,7 +264,10 @@ void AudioBus::sumFrom(const AudioBus& sourceBus, ChannelInterpretation channelI
     } else {
         switch (channelInterpretation) {
         case ChannelInterpretation::Speakers:
-            speakersSumFrom(sourceBus);
+            if (numberOfSourceChannels < numberOfDestinationChannels)
+                speakersSumFromByUpMixing(sourceBus);
+            else
+                speakersSumFromByDownMixing(sourceBus);
             break;
         case ChannelInterpretation::Discrete:
             discreteSumFrom(sourceBus);
@@ -290,63 +278,43 @@ void AudioBus::sumFrom(const AudioBus& sourceBus, ChannelInterpretation channelI
     }
 }
 
-void AudioBus::speakersCopyFrom(const AudioBus& sourceBus)
+void AudioBus::speakersSumFromByUpMixing(const AudioBus& sourceBus)
 {
-    // FIXME: Implement down mixing 5.1 to stereo.
-    // https://bugs.webkit.org/show_bug.cgi?id=79192
-
     unsigned numberOfSourceChannels = sourceBus.numberOfChannels();
     unsigned numberOfDestinationChannels = numberOfChannels();
 
-    if (numberOfDestinationChannels == 2 && numberOfSourceChannels == 1) {
-        // Handle mono -> stereo case (for now simply copy mono channel into both left and right)
-        // FIXME: Really we should apply an equal-power scaling factor here, since we're effectively panning center...
-        const AudioChannel* sourceChannel = sourceBus.channel(0);
-        channel(0)->copyFrom(sourceChannel);
-        channel(1)->copyFrom(sourceChannel);
-    } else if (numberOfDestinationChannels == 1 && numberOfSourceChannels == 2) {
-        // Handle stereo -> mono case. output = 0.5 * (input.L + input.R).
-        AudioBus& sourceBusSafe = const_cast<AudioBus&>(sourceBus);
-
-        const float* sourceL = sourceBusSafe.channelByType(ChannelLeft)->data();
-        const float* sourceR = sourceBusSafe.channelByType(ChannelRight)->data();
-
-        float* destination = channelByType(ChannelLeft)->mutableData();
-        vadd(sourceL, 1, sourceR, 1, destination, 1, length());
-        float scale = 0.5;
-        vsmul(destination, 1, &scale, destination, 1, length());
-    } else if (numberOfDestinationChannels == 6 && numberOfSourceChannels == 1) {
-        // Handle mono -> 5.1 case, copy mono channel to center. 
-        channel(2)->copyFrom(sourceBus.channel(0));
-        channel(0)->zero();
-        channel(1)->zero();
-        channel(3)->zero();
-        channel(4)->zero();
-        channel(5)->zero();
-    } else if (numberOfDestinationChannels == 1 && numberOfSourceChannels == 6) {
-        // Handle 5.1 -> mono case.
-        zero();
-        speakersSumFrom5_1_ToMono(sourceBus);
+    if ((numberOfSourceChannels == 1 && numberOfDestinationChannels == 2)
+        || (numberOfSourceChannels == 1 && numberOfDestinationChannels == 4)) {
+        // Handle mono -> stereo case (summing mono channel into both left and right).
+        auto* sourceL = sourceBus.channelByType(ChannelLeft);
+        channelByType(ChannelLeft)->sumFrom(sourceL);
+        channelByType(ChannelRight)->sumFrom(sourceL);
+    } else if (numberOfSourceChannels == 1 && numberOfDestinationChannels == 6) {
+        // Handle mono -> 5.1 case, sum mono channel into center.
+        channelByType(ChannelCenter)->sumFrom(sourceBus.channelByType(ChannelLeft));
+    } else if ((numberOfSourceChannels == 2 && numberOfDestinationChannels == 4)
+        || (numberOfSourceChannels == 2 && numberOfDestinationChannels == 6)) {
+        // Up-mixing: 2 -> 4, 2 -> 5.1
+        channelByType(ChannelLeft)->sumFrom(sourceBus.channelByType(ChannelLeft));
+        channelByType(ChannelRight)->sumFrom(sourceBus.channelByType(ChannelRight));
+    } else if (numberOfSourceChannels == 4 && numberOfDestinationChannels == 6) {
+        // Up-mixing: 4 -> 5.1
+        channelByType(ChannelLeft)->sumFrom(sourceBus.channelByType(ChannelLeft));
+        channelByType(ChannelRight)->sumFrom(sourceBus.channelByType(ChannelRight));
+        channelByType(ChannelSurroundLeft)->sumFrom(sourceBus.channelByType(ChannelSurroundLeft));
+        channelByType(ChannelSurroundRight)->sumFrom(sourceBus.channelByType(ChannelSurroundRight));
     } else {
         // Fallback for unknown combinations.
-        discreteCopyFrom(sourceBus);
+        discreteSumFrom(sourceBus);
     }
 }
 
-void AudioBus::speakersSumFrom(const AudioBus& sourceBus)
+void AudioBus::speakersSumFromByDownMixing(const AudioBus& sourceBus)
 {
-    // FIXME: Implement down mixing 5.1 to stereo.
-    // https://bugs.webkit.org/show_bug.cgi?id=79192
-    
     unsigned numberOfSourceChannels = sourceBus.numberOfChannels();
     unsigned numberOfDestinationChannels = numberOfChannels();
 
-    if (numberOfDestinationChannels == 2 && numberOfSourceChannels == 1) {
-        // Handle mono -> stereo case (summing mono channel into both left and right).
-        const AudioChannel* sourceChannel = sourceBus.channel(0);
-        channel(0)->sumFrom(sourceChannel);
-        channel(1)->sumFrom(sourceChannel);
-    } else if (numberOfDestinationChannels == 1 && numberOfSourceChannels == 2) {
+    if (numberOfSourceChannels == 2 && numberOfDestinationChannels == 1) {
         // Handle stereo -> mono case. output += 0.5 * (input.L + input.R).
         AudioBus& sourceBusSafe = const_cast<AudioBus&>(sourceBus);
 
@@ -357,64 +325,99 @@ void AudioBus::speakersSumFrom(const AudioBus& sourceBus)
         float scale = 0.5;
         vsma(sourceL, 1, &scale, destination, 1, length());
         vsma(sourceR, 1, &scale, destination, 1, length());
-    } else if (numberOfDestinationChannels == 6 && numberOfSourceChannels == 1) {
-        // Handle mono -> 5.1 case, sum mono channel into center.
-        channel(2)->sumFrom(sourceBus.channel(0));
-    } else if (numberOfDestinationChannels == 1 && numberOfSourceChannels == 6) {
-        // Handle 5.1 -> mono case.
-        speakersSumFrom5_1_ToMono(sourceBus);
+    } else if (numberOfSourceChannels == 4 && numberOfDestinationChannels == 1) {
+        // Down-mixing: 4 -> 1
+        // output = 0.25 * (input.L + input.R + input.SL + input.SR)
+        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
+        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
+        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
+        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
+
+        auto* destination = channelByType(ChannelLeft)->mutableData();
+        float scale = 0.25;
+
+        vsma(sourceL, 1, &scale, destination, 1, length());
+        vsma(sourceR, 1, &scale, destination, 1, length());
+        vsma(sourceSL, 1, &scale, destination, 1, length());
+        vsma(sourceSR, 1, &scale, destination, 1, length());
+    } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 1) {
+        // Down-mixing: 5.1 -> 1
+        // output = sqrt(1/2) * (input.L + input.R) + input.C + 0.5 * (input.SL + input.SR)
+        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
+        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
+        auto* sourceC = sourceBus.channelByType(ChannelCenter)->data();
+        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
+        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
+
+        auto* destination = channelByType(ChannelLeft)->mutableData();
+        float scaleSqrtHalf = sqrtf(0.5);
+        float scaleHalf = 0.5f;
+
+        vsma(sourceL, 1, &scaleSqrtHalf, destination, 1, length());
+        vsma(sourceR, 1, &scaleSqrtHalf, destination, 1, length());
+        vadd(sourceC, 1, destination, 1, destination, 1, length());
+        vsma(sourceSL, 1, &scaleHalf, destination, 1, length());
+        vsma(sourceSR, 1, &scaleHalf, destination, 1, length());
+    } else if (numberOfSourceChannels == 4 && numberOfDestinationChannels == 2) {
+        // Down-mixing: 4 -> 2
+        // output.L = 0.5 * (input.L + input.SL)
+        // output.R = 0.5 * (input.R + input.SR)
+        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
+        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
+        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
+        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
+
+        auto* destinationL = channelByType(ChannelLeft)->mutableData();
+        auto* destinationR = channelByType(ChannelRight)->mutableData();
+        float scaleHalf = 0.5f;
+
+        vsma(sourceL, 1, &scaleHalf, destinationL, 1, length());
+        vsma(sourceSL, 1, &scaleHalf, destinationL, 1, length());
+        vsma(sourceR, 1, &scaleHalf, destinationR, 1, length());
+        vsma(sourceSR, 1, &scaleHalf, destinationR, 1, length());
+    } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 2) {
+        // Down-mixing: 5.1 -> 2
+        // output.L = input.L + sqrt(1/2) * (input.C + input.SL)
+        // output.R = input.R + sqrt(1/2) * (input.C + input.SR)
+        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
+        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
+        auto* sourceC = sourceBus.channelByType(ChannelCenter)->data();
+        auto* sourceSL = sourceBus.channelByType(ChannelSurroundLeft)->data();
+        auto* sourceSR = sourceBus.channelByType(ChannelSurroundRight)->data();
+
+        float* destinationL = channelByType(ChannelLeft)->mutableData();
+        float* destinationR = channelByType(ChannelRight)->mutableData();
+        float scaleSqrtHalf = sqrtf(0.5);
+
+        vadd(sourceL, 1, destinationL, 1, destinationL, 1, length());
+        vsma(sourceC, 1, &scaleSqrtHalf, destinationL, 1, length());
+        vsma(sourceSL, 1, &scaleSqrtHalf, destinationL, 1, length());
+        vadd(sourceR, 1, destinationR, 1, destinationR, 1, length());
+        vsma(sourceC, 1, &scaleSqrtHalf, destinationR, 1, length());
+        vsma(sourceSR, 1, &scaleSqrtHalf, destinationR, 1, length());
+    } else if (numberOfSourceChannels == 6 && numberOfDestinationChannels == 4) {
+        // Down-mixing: 5.1 -> 4
+        // output.L = input.L + sqrt(1/2) * input.C
+        // output.R = input.R + sqrt(1/2) * input.C
+        // output.SL = input.SL
+        // output.SR = input.SR
+        auto* sourceL = sourceBus.channelByType(ChannelLeft)->data();
+        auto* sourceR = sourceBus.channelByType(ChannelRight)->data();
+        auto* sourceC = sourceBus.channelByType(ChannelCenter)->data();
+
+        auto* destinationL = channelByType(ChannelLeft)->mutableData();
+        auto* destinationR = channelByType(ChannelRight)->mutableData();
+        auto scaleSqrtHalf = sqrtf(0.5);
+
+        vadd(sourceL, 1, destinationL, 1, destinationL, 1, length());
+        vsma(sourceC, 1, &scaleSqrtHalf, destinationL, 1, length());
+        vadd(sourceR, 1, destinationR, 1, destinationR, 1, length());
+        vsma(sourceC, 1, &scaleSqrtHalf, destinationR, 1, length());
+        channel(2)->sumFrom(sourceBus.channel(4));
+        channel(3)->sumFrom(sourceBus.channel(5));
     } else {
         // Fallback for unknown combinations.
         discreteSumFrom(sourceBus);
-    }
-}
-
-void AudioBus::speakersSumFrom5_1_ToMono(const AudioBus& sourceBus)
-{
-    AudioBus& sourceBusSafe = const_cast<AudioBus&>(sourceBus);
-
-    const float* sourceL = sourceBusSafe.channelByType(ChannelLeft)->data();
-    const float* sourceR = sourceBusSafe.channelByType(ChannelRight)->data();
-    const float* sourceC = sourceBusSafe.channelByType(ChannelCenter)->data();
-    const float* sourceSL = sourceBusSafe.channelByType(ChannelSurroundLeft)->data();
-    const float* sourceSR = sourceBusSafe.channelByType(ChannelSurroundRight)->data();
-
-    float* destination = channelByType(ChannelLeft)->mutableData();
-
-    AudioFloatArray temp(length());
-    float* tempData = temp.data();
-
-    // Sum in L and R.
-    vadd(sourceL, 1, sourceR, 1, tempData, 1, length());
-    float scale = 0.7071;
-    vsmul(tempData, 1, &scale, tempData, 1, length());
-    vadd(tempData, 1, destination, 1, destination, 1, length());
-
-    // Sum in SL and SR.
-    vadd(sourceSL, 1, sourceSR, 1, tempData, 1, length());
-    scale = 0.5;
-    vsmul(tempData, 1, &scale, tempData, 1, length());
-    vadd(tempData, 1, destination, 1, destination, 1, length());
-
-    // Sum in center.
-    vadd(sourceC, 1, destination, 1, destination, 1, length());
-}
-
-void AudioBus::discreteCopyFrom(const AudioBus& sourceBus)
-{
-    unsigned numberOfSourceChannels = sourceBus.numberOfChannels();
-    unsigned numberOfDestinationChannels = numberOfChannels();
-    
-    if (numberOfDestinationChannels < numberOfSourceChannels) {
-        // Down-mix by copying channels and dropping the remaining.
-        for (unsigned i = 0; i < numberOfDestinationChannels; ++i)
-            channel(i)->copyFrom(sourceBus.channel(i));
-    } else if (numberOfDestinationChannels > numberOfSourceChannels) {
-        // Up-mix by copying as many channels as we have, then zeroing remaining channels.
-        for (unsigned i = 0; i < numberOfSourceChannels; ++i) 
-            channel(i)->copyFrom(sourceBus.channel(i));
-        for (unsigned i = numberOfSourceChannels; i < numberOfDestinationChannels; ++i)
-            channel(i)->zero();
     }
 }
 
