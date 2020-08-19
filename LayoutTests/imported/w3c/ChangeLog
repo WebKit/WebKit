@@ -1,3 +1,17 @@
+2020-08-19  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/67364254
+
+    2020-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r262381): replaceChildren should not use DeferChildrenChanged::No
+            ​https://bugs.webkit.org/show_bug.cgi?id=215600
+
+            Reverted r262381.
+
+            * web-platform-tests/dom/idlharness.window-expected.txt:
+            * web-platform-tests/dom/nodes/ParentNode-replaceChildren-expected.txt:
+
 2020-08-17  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r265749. rdar://problem/67284454
