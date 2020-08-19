@@ -61,6 +61,7 @@ Ref<WebXRSystem> WebXRSystem::create(ScriptExecutionContext& scriptExecutionCont
 
 WebXRSystem::WebXRSystem(ScriptExecutionContext& scriptExecutionContext)
     : ActiveDOMObject(&scriptExecutionContext)
+    , m_workQueue(WorkQueue::create("XRSystem work queue"))
 {
     m_inlineXRDevice = makeWeakPtr(m_defaultInlineDevice);
     suspendIfNeeded();
@@ -144,24 +145,32 @@ void WebXRSystem::isSessionSupported(XRSessionMode mode, IsSessionSupportedPromi
     }
 
     // 4. Run the following steps in parallel:
-    scriptExecutionContext()->postTask([this, promise = WTFMove(promise), mode] (ScriptExecutionContext&) mutable {
+    m_workQueue->dispatch([this, promise = WTFMove(promise), mode] () mutable {
+        ASSERT(!isMainThread());
+
         // 4.1 Ensure an immersive XR device is selected.
         ensureImmersiveXRDeviceIsSelected();
 
         // 4.2 If the immersive XR device is null, resolve promise with false and abort these steps.
         if (!m_activeImmersiveDevice) {
-            promise.resolve(false);
+            callOnMainThread([promise = WTFMove(promise)] () mutable {
+                promise.resolve(false);
+            });
             return;
         }
 
         // 4.3 If the immersive XR device's list of supported modes does not contain mode, resolve promise with false and abort these steps.
         if (!m_activeImmersiveDevice->supports(mode)) {
-            promise.resolve(false);
+            callOnMainThread([promise = WTFMove(promise)] () mutable {
+                promise.resolve(false);
+            });
             return;
         }
 
         // 4.4 Resolve promise with true.
-        promise.resolve(true);
+        callOnMainThread([promise = WTFMove(promise)] () mutable {
+            promise.resolve(true);
+        });
     });
 }
 
@@ -360,14 +369,15 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
     }
 
     // 5. Run the following steps in parallel:
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, document = makeWeakPtr(document), immersive, init, mode, promise = WTFMove(promise)] () mutable {
+    m_workQueue->dispatch([this, document = makeWeakPtr(document), immersive, init, mode, promise = WTFMove(promise)] () mutable {
+        ASSERT(!isMainThread());
         // 5.1 Let requiredFeatures be options' requiredFeatures.
         // 5.2 Let optionalFeatures be options' optionalFeatures.
         // 5.3 Set device to the result of obtaining the current device for mode, requiredFeatures, and optionalFeatures.
         auto* device = obtainCurrentDevice(mode, init.requiredFeatures, init.optionalFeatures);
 
         // 5.4 Queue a task to perform the following steps:
-        queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, document = WTFMove(document), device = makeWeakPtr(device), immersive, init, mode, promise = WTFMove(promise)] () mutable {
+        callOnMainThread([this, document = WTFMove(document), device = makeWeakPtr(device), immersive, init, mode, promise = WTFMove(promise)] () mutable {
             auto rejectPromiseWithNotSupportedError = makeScopeExit([&] () {
                 promise.reject(Exception { NotSupportedError });
                 m_pendingImmersiveSession = false;

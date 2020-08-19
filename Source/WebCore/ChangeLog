@@ -1,3 +1,25 @@
+2020-08-19  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebXR] Make "in parallel" code run really in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=215642
+
+        Reviewed by Carlos Garcia Campos.
+
+        As the HTML spec mentions https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel
+        "in parallel" means that the task should be run in parallel to the event loop using any available
+        mechanism (threads, processess...). We were instead queueing those tasks to be run in the main
+        thread causing freezes while initializing the whole OpenXR machinery.
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::WebXRSession): create a WorkQueue.
+        (WebCore::WebXRSession::requestReferenceSpace): Dispatch to the work queue.
+        * Modules/webxr/WebXRSession.h:
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::WebXRSystem): create a WorkQueue.
+        (WebCore::WebXRSystem::isSessionSupported): Dispatch to the work queue.
+        (WebCore::WebXRSystem::requestSession): Ditto.
+        * Modules/webxr/WebXRSystem.h:
+
 2020-08-18  Chris Dumez  <cdumez@apple.com>
 
         AudioBuffer.duration should use double precision

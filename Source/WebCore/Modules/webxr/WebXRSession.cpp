@@ -36,6 +36,7 @@
 #include "XRRenderStateInit.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -53,6 +54,7 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_mode(mode)
     , m_device(makeWeakPtr(device))
     , m_activeRenderState(WebXRRenderState::create(mode))
+    , m_workQueue(WorkQueue::create("XRSession work queue"))
     , m_animationTimer(*this, &WebXRSession::animationTimerFired)
 {
     // FIXME: If no other features of the user agent have done so already, perform the necessary platform-specific steps to
@@ -187,17 +189,27 @@ bool WebXRSession::referenceSpaceIsSupported(XRReferenceSpaceType type) const
 // https://immersive-web.github.io/webxr/#dom-xrsession-requestreferencespace
 void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestReferenceSpacePromise&& promise)
 {
-    if (!scriptExecutionContext()) {
+    auto* context = scriptExecutionContext();
+    if (!context) {
         promise.reject(Exception { InvalidStateError });
         return;
     }
     // 1. Let promise be a new Promise.
     // 2. Run the following steps in parallel:
-    scriptExecutionContext()->postTask([this, promise = WTFMove(promise), type] (auto& context) mutable {
+    m_workQueue->dispatch([this, promise = WTFMove(promise), weakDocument = makeWeakPtr(downcast<Document>(*context)), type] () mutable {
         //  2.1. Create a reference space, referenceSpace, with the XRReferenceSpaceType type.
         //  2.2. If referenceSpace is null, reject promise with a NotSupportedError and abort these steps.
         if (!referenceSpaceIsSupported(type)) {
-            promise.reject(Exception { NotSupportedError });
+            callOnMainThread([promise = WTFMove(promise)] () mutable {
+                promise.reject(Exception { NotSupportedError });
+            });
+            return;
+        }
+
+        if (!weakDocument) {
+            callOnMainThread([promise = WTFMove(promise)] () mutable {
+                promise.reject(Exception { InvalidStateError });
+            });
             return;
         }
 
@@ -205,13 +217,15 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
         RefPtr<WebXRReferenceSpace> referenceSpace;
         ASSERT(is<Document>(context));
         if (type == XRReferenceSpaceType::BoundedFloor)
-            referenceSpace = WebXRBoundedReferenceSpace::create(downcast<Document>(context), makeRef(*this), type);
+            referenceSpace = WebXRBoundedReferenceSpace::create(*weakDocument, makeRef(*this), type);
         else
-            referenceSpace = WebXRReferenceSpace::create(downcast<Document>(context), makeRef(*this), type);
+            referenceSpace = WebXRReferenceSpace::create(*weakDocument, makeRef(*this), type);
 
         //  2.3. Resolve promise with referenceSpace.
         // 3. Return promise.
-        promise.resolve(referenceSpace.releaseNonNull());
+        callOnMainThread([promise = WTFMove(promise), referenceSpace = referenceSpace.releaseNonNull()] () mutable {
+            promise.resolve(referenceSpace);
+        });
     });
 }
 
