@@ -38,7 +38,6 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "ScrollView.h"
-#import <Carbon/Carbon.h>
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
@@ -168,7 +167,7 @@ static LengthSize sizeFromFont(const FontCascade& font, const LengthSize& zoomed
     return sizeFromNSControlSize(controlSizeForFont(font), zoomedSize, zoomFactor, sizes);
 }
 
-static ControlSize controlSizeFromPixelSize(const std::array<IntSize, 4>& sizes, const IntSize& minZoomedSize, float zoomFactor)
+static NSControlSize controlSizeFromPixelSize(const std::array<IntSize, 4>& sizes, const IntSize& minZoomedSize, float zoomFactor)
 {
 #if HAVE(LARGE_CONTROL_SIZE)
     if (ThemeMac::supportsLargeFormControls()
@@ -187,9 +186,9 @@ static ControlSize controlSizeFromPixelSize(const std::array<IntSize, 4>& sizes,
 
 static void setControlSize(NSCell* cell, const std::array<IntSize, 4>& sizes, const IntSize& minZoomedSize, float zoomFactor)
 {
-    ControlSize size = controlSizeFromPixelSize(sizes, minZoomedSize, zoomFactor);
+    auto size = controlSizeFromPixelSize(sizes, minZoomedSize, zoomFactor);
     if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
-        [cell setControlSize:(NSControlSize)size];
+        [cell setControlSize:size];
 }
 
 static void updateStates(NSCell* cell, const ControlStates& controlStates, bool useAnimation = false)
@@ -643,7 +642,7 @@ static void paintStepper(ControlStates& controlStates, GraphicsContext& context,
         coreUIState = (__bridge NSString *)kCUIStateActive;
 
     NSString *coreUISize;
-    ControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), IntSize(zoomedRect.size()), zoomFactor);
+    auto controlSize = controlSizeFromPixelSize(stepperSizes(), IntSize(zoomedRect.size()), zoomFactor);
     if (controlSize == NSControlSizeMini)
         coreUISize = (__bridge NSString *)kCUISizeMini;
     else if (controlSize == NSControlSizeSmall)
@@ -921,7 +920,7 @@ void ThemeMac::inflateControlPaintRect(ControlPart part, const ControlStates& st
         }
         case InnerSpinButtonPart: {
             static const int stepperMargin[4] = { 0, 0, 0, 0 };
-            ControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), zoomRectSize, zoomFactor);
+            auto controlSize = controlSizeFromPixelSize(stepperSizes(), zoomRectSize, zoomFactor);
             IntSize zoomedSize = stepperSizes()[controlSize];
             zoomedSize.setHeight(zoomedSize.height() * zoomFactor);
             zoomedSize.setWidth(zoomedSize.width() * zoomFactor);

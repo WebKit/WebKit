@@ -1,5 +1,28 @@
 2020-08-19  Aditya Keerthi  <akeerthi@apple.com>
 
+        Remove use of ControlSize in ThemeMac
+        https://bugs.webkit.org/show_bug.cgi?id=215651
+
+        Reviewed by Sam Weinig.
+
+        ThemeMac contains incorrectly mixes the use of Carbon's ControlSize
+        and AppKit's NSControlSize. This inconsistency went unnoticed as
+        ControlSize is a UInt16, and NSControlSize is an NSUInteger.
+
+        No new tests as there is no change in behavior.
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::controlSizeFromPixelSize):
+
+        This method always returns an NSControlSize, but it's declared return
+        type is a ControlSize. Correct the declared return type.
+
+        (WebCore::setControlSize):
+        (WebCore::paintStepper):
+        (WebCore::ThemeMac::inflateControlPaintRect const):
+
+2020-08-19  Aditya Keerthi  <akeerthi@apple.com>
+
         [macOS] Move stepper painting code off of Carbon API
         https://bugs.webkit.org/show_bug.cgi?id=215619
         <rdar://problem/41936617>
