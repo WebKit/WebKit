@@ -1,3 +1,19 @@
+2020-08-19  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/67373871
+
+    2020-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r262381): replaceChildren should not use DeferChildrenChanged::No
+            ​https://bugs.webkit.org/show_bug.cgi?id=215600
+
+            Reverted r262381.
+
+            * dom/ContainerNode.cpp:
+            (WebCore::ContainerNode::replaceChildren): Deleted.
+            * dom/ContainerNode.h:
+            * dom/ParentNode.idl:
+
 2020-08-17  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r265749. rdar://problem/67284454
