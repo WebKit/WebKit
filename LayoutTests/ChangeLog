@@ -1,3 +1,9 @@
+2020-08-19  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Skip more tests using plugins after r265753.
+
+        * platform/gtk/TestExpectations:
+
 2020-08-18  Lauro Moura  <lmoura@igalia.com>
 
         [GTK][WPE] Gardening
