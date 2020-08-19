@@ -215,7 +215,6 @@ void WebXRSession::requestReferenceSpace(XRReferenceSpaceType type, RequestRefer
 
         // https://immersive-web.github.io/webxr/#create-a-reference-space
         RefPtr<WebXRReferenceSpace> referenceSpace;
-        ASSERT(is<Document>(context));
         if (type == XRReferenceSpaceType::BoundedFloor)
             referenceSpace = WebXRBoundedReferenceSpace::create(*weakDocument, makeRef(*this), type);
         else

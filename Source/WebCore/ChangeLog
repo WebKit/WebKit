@@ -1,3 +1,17 @@
+2020-08-19  Lauro Moura  <lmoura@igalia.com>
+
+        [WebXR] Remove uneeded assert
+
+        Rubber-stamped by Sergio Villar Senin
+
+        context being a Document is tracked by the downcast when capturing.
+        Fixes debug build error complaining about not capturing context.
+
+        Covered by existing tests.
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::requestReferenceSpace):
+
 2020-08-17  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] min-height:auto not updated after an image loads when the image has a specified height and width.
