@@ -31,26 +31,42 @@
 
 #else
 
-extern const CFStringRef kCUIWidgetKey;
+extern const CFStringRef kCUIAnimationStartTimeKey;
+
+extern const CFStringRef kCUIAnimationTimeKey;
+
 extern const CFStringRef kCUIIsFlippedKey;
 
-extern const CFStringRef kCUIWidgetScrollBarTrackCorner;
-extern const CFStringRef kCUIWidgetProgressIndeterminateBar;
-extern const CFStringRef kCUIWidgetProgressBar;
+extern const CFStringRef kCUIMaskOnlyKey;
 
-extern const CFStringRef kCUIUserInterfaceLayoutDirectionLeftToRight;
+extern const CFStringRef kCUIOrientationKey;
+extern const CFStringRef kCUIOrientHorizontal;
+
+extern const CFStringRef kCUIPresentationStateKey;
 extern const CFStringRef kCUIPresentationStateActiveKey;
 extern const CFStringRef kCUIPresentationStateInactive;
-extern const CFStringRef kCUIOrientHorizontal;
+
+extern const CFStringRef kCUIScaleKey;
+
+extern const CFStringRef kCUISizeKey;
+extern const CFStringRef kCUISizeMini;
 extern const CFStringRef kCUISizeSmall;
 extern const CFStringRef kCUISizeRegular;
-extern const CFStringRef kCUIValueKey;
-extern const CFStringRef kCUISizeKey;
+
+extern const CFStringRef kCUIStateKey;
+extern const CFStringRef kCUIStateActive;
+extern const CFStringRef kCUIStateDisabled;
+extern const CFStringRef kCUIStatePressed;
+
 extern const CFStringRef kCUIUserInterfaceLayoutDirectionKey;
-extern const CFStringRef kCUIScaleKey;
-extern const CFStringRef kCUIPresentationStateKey;
-extern const CFStringRef kCUIOrientationKey;
-extern const CFStringRef kCUIAnimationStartTimeKey;
-extern const CFStringRef kCUIAnimationTimeKey;
+extern const CFStringRef kCUIUserInterfaceLayoutDirectionLeftToRight;
+
+extern const CFStringRef kCUIValueKey;
+
+extern const CFStringRef kCUIWidgetKey;
+extern const CFStringRef kCUIWidgetButtonLittleArrows;
+extern const CFStringRef kCUIWidgetProgressIndeterminateBar;
+extern const CFStringRef kCUIWidgetProgressBar;
+extern const CFStringRef kCUIWidgetScrollBarTrackCorner;
 
 #endif

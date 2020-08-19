@@ -1,3 +1,27 @@
+2020-08-19  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Move stepper painting code off of Carbon API
+        https://bugs.webkit.org/show_bug.cgi?id=215619
+        <rdar://problem/41936617>
+
+        Reviewed by Darin Adler.
+
+        Use CoreUI and AppKit SPI to paint steppers. There are two benefits to
+        this new approach.
+
+        1. The stepper now has an appropriate appearance in dark mode.
+
+        2. We move away from using the outdated Carbon API.
+
+        Note that we still cannot use NSStepperCell to paint steppers, since it
+        is not possible to draw one with the up button highlighted. However, the
+        approach used in this patch is shared by NSStepperCell.
+
+        Test: fast/forms/number/number-dark-appearance.html
+
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintStepper):
+
 2020-08-19  Lauro Moura  <lmoura@igalia.com>
 
         [WebXR] Remove uneeded assert

@@ -1537,6 +1537,7 @@ css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
 inspector/css/force-page-appearance.html [ Pass ]
 editing/pasteboard/paste-dark-mode-color-filtered.html [ Pass ]
+fast/forms/number/number-dark-appearance.html [ Pass ]
 
 webkit.org/b/189686 webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Slow ]
 
