@@ -35,6 +35,8 @@ from webkitpy.port import port_testcase
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, ScriptError
+from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version_name_map import VersionNameMap
 
 
@@ -267,4 +269,20 @@ class MacTest(darwin_testcase.DarwinTest):
                 style='release',
             ),
             port.configuration_for_upload(),
+        )
+
+    def test_rosetta_expectations(self):
+        mock_host = MockSystemHost()
+        mock_host.platform = MockPlatformInfo(architecture='arm64')
+        mock_host.filesystem.write_text_file(
+            '/mock-checkout/LayoutTests/platform/mac/TestExpectationsRosetta',
+            '# FIXME <https://bugs.webkit.org/show_bug.cgi?id=213761>\n',
+        )
+        port = self.make_port(
+            host=mock_host,
+            options=MockOptions(architecture='x86_64', configuration='Release'),
+        )
+        self.assertEqual(
+            list(port.expectations_dict().keys())[-1],
+            '/mock-checkout/LayoutTests/platform/mac/TestExpectationsRosetta',
         )

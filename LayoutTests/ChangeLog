@@ -1,3 +1,14 @@
+2020-08-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Rosetta specific test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=215633
+        <rdar://problem/67353771>
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/TestExpectations: Move Rosetta expectations.
+        * platform/mac/TestExpectationsRosetta: Added.
+
 2020-08-18  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/mac/aria-expanded-notifications.html in isolated tree mode.

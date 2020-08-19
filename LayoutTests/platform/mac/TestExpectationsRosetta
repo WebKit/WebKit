@@ -1,0 +1,20 @@
+# FIXME: This is a work-around for Rosetta, remove once <https://bugs.webkit.org/show_bug.cgi?id=213761> is resolved
+
+# rdar://67281310 ([ Rosetta Layout Tests ] REGRESSION (r265639): [ GoldenGate ] 11 canvas layout tests are a constant failure)
+[ BigSur+ ] canvas/philip/tests/2d.line.miter.obtuse.html [ Failure ]
+[ BigSur+ ] canvas/philip/tests/2d.path.arc.selfintersect.1.html [ Failure ]
+[ BigSur+ ] canvas/philip/tests/2d.path.arc.shape.3.html [ Failure ]
+[ BigSur+ ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
+[ BigSur+ ] imported/w3c/canvas/2d.line.miter.obtuse.html [ Failure ]
+[ BigSur+ ] imported/w3c/canvas/2d.path.arc.selfintersect.1.html [ Failure ]
+[ BigSur+ ] imported/w3c/canvas/2d.path.arc.shape.3.html [ Failure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/css/css-animations/Element-getAnimations-dynamic-changes.tentative.html [ Failure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.miter.obtuse.html [ Failure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.selfintersect.1.html [ Failure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
+
+# rdar://67289434 ([ Rosetta Layout Tests ] REGRESSION (r265701): [ BigSur ] 3 webaudio/the-audio-api/the-audioparam-interface tests are a constant failure)
+[ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html [ Failure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner.html [ Failure ]
+[ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic.html [ Failure ]
+
