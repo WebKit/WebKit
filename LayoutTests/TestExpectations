@@ -2304,27 +2304,13 @@ editing/deleting/delete-emoji.html [ Slow ]
 
 # New emoji requires system support.
 webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Failure Timeout ]
-webkit.org/b/159755 fast/text/emoji-gender-2-3.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-2-4.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-2-5.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-2-6.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-2-7.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-2-8.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-2-9.html [ ImageOnlyFailure ]
+
 webkit.org/b/159755 fast/text/emoji-gender-3.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-4.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-5.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-6.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-8.html [ ImageOnlyFailure ]
 webkit.org/b/159755 fast/text/emoji-gender-9.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-3.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-4.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-5.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-6.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-7.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-8.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
-webkit.org/b/159755 fast/text/emoji-gender.html [ ImageOnlyFailure ]
 
 webkit.org/b/160017 js/regress-139548.html [ Slow ]
 

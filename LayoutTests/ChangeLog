@@ -1,3 +1,16 @@
+2020-08-18  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS iOS ] fast/text/emoji-gender* text expectations change
+        https://bugs.webkit.org/show_bug.cgi?id=215636
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/glib/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2020-08-18  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Rosetta specific test expectations

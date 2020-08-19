@@ -1145,22 +1145,6 @@ webkit.org/b/128312 media/video-load-preload-metadata.html [ Pass Failure ]
 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-2-3.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-2-4.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-2-5.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-2-6.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-2-7.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-2-8.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-2-9.html [ Pass ]
-
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-3.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-4.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-5.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-6.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-7.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-8.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender-fe0f-9.html [ Pass ]
-webkit.org/b/159755 fast/text/emoji-gender.html [ Pass ]
 
 webkit.org/b/161144 http/tests/media/hls/hls-accessiblity-describes-video-menu.html [ Skip ]
 
