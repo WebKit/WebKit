@@ -1,3 +1,9 @@
+2020-08-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline imported/w3c/web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform.html
+
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform-expected.txt:
+
 2020-08-19  Rob Buis  <rbuis@igalia.com>
 
         Implement PerfomanceObserverInit.buffered
