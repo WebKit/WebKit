@@ -1,5 +1,44 @@
 2020-08-19  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r265792. rdar://problem/67420555
+
+    Assert failure after r265715
+    https://bugs.webkit.org/show_bug.cgi?id=215592
+    
+    Reviewed by Darin Adler.
+    
+    The change set r265715 introduced an assert failure in AuthenticationManager::initializeConnection. This
+    happens because after r265715 the new XPC event handler set in AuthenticationManager::initializeConnection,
+    will no longer be called on the main thread. This patch addresses this issue by dispatching this work on
+    the main thread.
+    
+    No new tests, covered by existing tests.
+    
+    * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+    (WebKit::AuthenticationManager::initializeConnection):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265792 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-17  Per Arne Vollan  <pvollan@apple.com>
+
+            Assert failure after r265715
+            https://bugs.webkit.org/show_bug.cgi?id=215592
+
+            Reviewed by Darin Adler.
+
+            The change set r265715 introduced an assert failure in AuthenticationManager::initializeConnection. This
+            happens because after r265715 the new XPC event handler set in AuthenticationManager::initializeConnection,
+            will no longer be called on the main thread. This patch addresses this issue by dispatching this work on
+            the main thread.
+
+            No new tests, covered by existing tests.
+
+            * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm:
+            (WebKit::AuthenticationManager::initializeConnection):
+
+2020-08-19  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r265761. rdar://problem/67420550
 
     [Mac] Add Experimental Feature preference for SW VP9
