@@ -3912,7 +3912,6 @@ webkit.org/b/206767 imported/w3c/web-platform-tests/css/css-flexbox/gap-014.html
 webkit.org/b/206767 imported/w3c/web-platform-tests/css/css-flexbox/gap-015.html [ ImageOnlyFailure ]
 webkit.org/b/206767 imported/w3c/web-platform-tests/css/css-flexbox/gap-016.html [ ImageOnlyFailure ]
 webkit.org/b/209649 imported/w3c/web-platform-tests/css/css-flexbox/padding-overflow-crash.html [ ImageOnlyFailure ]
-webkit.org/b/210077 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-010.html [ ImageOnlyFailure ]
 webkit.org/b/210077 imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-010.html [ ImageOnlyFailure ]
 webkit.org/b/210089 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-011.xht [ ImageOnlyFailure ]
 webkit.org/b/210089 imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-height-flex-items-013.html [ ImageOnlyFailure ]

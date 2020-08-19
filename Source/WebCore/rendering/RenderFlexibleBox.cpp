@@ -860,6 +860,12 @@ LayoutUnit RenderFlexibleBox::computeInnerFlexBaseSizeForChild(RenderBox& child,
     if (mainAxisLengthIsDefinite(child, flexBasis))
         return std::max(0_lu, computeMainAxisExtentForChild(child, MainOrPreferredSize, flexBasis).value());
 
+    if (useChildAspectRatio(child)) {
+        const Length& crossSizeLength = isHorizontalFlow() ? child.style().height() : child.style().width();
+        auto mainSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, computeMainSizeFromAspectRatioUsing(child, crossSizeLength));
+        return mainSize - mainAxisBorderAndPadding;
+    }
+
     // The flex basis is indefinite (=auto), so we need to compute the actual
     // width of the child. For the logical width axis we just use the preferred
     // width; for the height we need to lay out the child.
