@@ -1,10 +1,8 @@
 
-Harness Error (FAIL), message = Unhandled rejection: undefined is not an object
-
-FAIL Attempt to inject {done: false, value: bye} via Object.prototype.then. assert_equals: The value should be "hello". expected "hello" but got "bye"
-FAIL Attempt to inject value: undefined via Object.prototype.then. promise_test: Unhandled rejection with value: object "TypeError: ReadableStream chunk enqueueing in the sink failed"
-TIMEOUT Attempt to inject undefined via Object.prototype.then. Test timed out
-NOTRUN Attempt to inject 8.2 via Object.prototype.then. 
-NOTRUN intercepting arraybuffer to text conversion via Object.prototype.then should not be possible 
-NOTRUN intercepting arraybuffer to body readable stream conversion via Object.prototype.then should not be possible 
+PASS Attempt to inject {done: false, value: bye} via Object.prototype.then. 
+PASS Attempt to inject value: undefined via Object.prototype.then. 
+PASS Attempt to inject undefined via Object.prototype.then. 
+PASS Attempt to inject 8.2 via Object.prototype.then. 
+PASS intercepting arraybuffer to text conversion via Object.prototype.then should not be possible 
+FAIL intercepting arraybuffer to body readable stream conversion via Object.prototype.then should not be possible promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
 

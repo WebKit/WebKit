@@ -187,3 +187,10 @@ function extractHighWaterMark(strategy, defaultHWM)
 
     return highWaterMark;
 }
+
+function createFulfilledPromise(value)
+{
+    const promise = @newPromise();
+    @fulfillPromise(promise, value);
+    return promise;
+}
