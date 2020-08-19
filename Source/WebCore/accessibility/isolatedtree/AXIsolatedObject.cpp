@@ -135,6 +135,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
     setProperty(AXPropertyName::SpeechHint, object.speechHintAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::SupportsDatetimeAttribute, object.supportsDatetimeAttribute());
+    setProperty(AXPropertyName::SupportsRowCountChange, object.supportsRowCountChange());
     setProperty(AXPropertyName::Title, object.title().isolatedCopy());
     setProperty(AXPropertyName::TitleAttributeValue, object.titleAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::DatetimeAttributeValue, object.datetimeAttributeValue());
@@ -1736,11 +1737,6 @@ AXCoreObject* AXIsolatedObject::activeDescendant() const
 }
 
 void AXIsolatedObject::handleActiveDescendantChanged()
-{
-    ASSERT_NOT_REACHED();
-}
-
-void AXIsolatedObject::handleAriaExpandedChanged()
 {
     ASSERT_NOT_REACHED();
 }

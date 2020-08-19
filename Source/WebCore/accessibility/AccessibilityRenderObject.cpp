@@ -2581,49 +2581,6 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
     return nullptr;
 }
 
-void AccessibilityRenderObject::handleAriaExpandedChanged()
-{
-    // This object might be deleted under the call to the parentObject() method.
-    auto protectedThis = makeRef(*this);
-    
-    // Find if a parent of this object should handle aria-expanded changes.
-    AccessibilityObject* containerParent = this->parentObject();
-    while (containerParent) {
-        bool foundParent = false;
-        
-        switch (containerParent->roleValue()) {
-        case AccessibilityRole::Tree:
-        case AccessibilityRole::TreeGrid:
-        case AccessibilityRole::Grid:
-        case AccessibilityRole::Table:
-        case AccessibilityRole::Browser:
-            foundParent = true;
-            break;
-        default:
-            break;
-        }
-        
-        if (foundParent)
-            break;
-        
-        containerParent = containerParent->parentObject();
-    }
-    
-    // Post that the row count changed.
-    AXObjectCache* cache = axObjectCache();
-    if (!cache)
-        return;
-    
-    if (containerParent)
-        cache->postNotification(containerParent, document(), AXObjectCache::AXRowCountChanged);
-
-    // Post that the specific row either collapsed or expanded.
-    if (roleValue() == AccessibilityRole::Row || roleValue() == AccessibilityRole::TreeItem)
-        cache->postNotification(this, document(), isExpanded() ? AXObjectCache::AXRowExpanded : AXObjectCache::AXRowCollapsed);
-    else
-        cache->postNotification(this, document(), AXObjectCache::AXExpandedChanged);
-}
-    
 RenderObject* AccessibilityRenderObject::targetElementForActiveDescendant(const QualifiedName& attributeName, AccessibilityObject* activeDescendant) const
 {
     AccessibilityObject::AccessibilityChildrenVector elements;

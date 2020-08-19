@@ -19,21 +19,20 @@
 
 <p id="description"></p>
 <div id="console"></div>
-<div id="notifications"></div>
 
 <script>
-
-    description("This tests that when aria-expanded is toggled, the appropriate notifications are sent out");
+    description("This tests that when aria-expanded is toggled, the appropriate notifications are sent out.");
 
     var axTree = 0;
     var notifyCount = 0;
-    var notifyName = 0;
-    // The order of notifications should be Row Count, Row Collapsed, Row Count, Row Expanded
-    function notifyCallback(element, notification) {  
+    var notifyName = "";
+    // The order of notifications should be RowCount, RowCollapsed, RowCount, RowExpanded.
+    function notifyCallback(element, notification) {
         if (notification == "AXLoadComplete"
             || notification == "AXLayoutComplete"
             || notification == "AXFocusChanged")
             return;
+
         notifyName = notification;
         if (notifyCount == 0)
             shouldBeEqualToString("notifyName", "AXRowCountChanged");
@@ -46,16 +45,15 @@
             accessibilityController.removeNotificationListener();
             finishJSTest();
         }
+
         notifyCount++;
     }
 
     if (window.accessibilityController) {
-        jsTestIsAsync = true;
+        window.jsTestIsAsync = true;
 
         var domTree = document.getElementById("tree0");
         domTree.focus();
-
-        axTree = window.accessibilityController.focusedElement;
 
         var addedNotification = accessibilityController.addNotificationListener(notifyCallback);
         shouldBe("addedNotification", "true");
@@ -63,13 +61,12 @@
         accessibilityController.accessibleElementById("tree0");
         accessibilityController.accessibleElementById("tree0_item0");
 
-        // the first aria-expanded should generate row count, row collapsed.
+        // The following should generate notifications RowCount, RowCollapsed.
         document.getElementById("tree0_item0").setAttribute("aria-expanded", "false");
 
-        // the second aria-expanded should generate row count, row expanded.
+        // The following should generate notifications RowCount, RowExpanded.
         document.getElementById("tree0_item0").setAttribute("aria-expanded", "true");
     }
-
 </script>
 </body>
 </html>

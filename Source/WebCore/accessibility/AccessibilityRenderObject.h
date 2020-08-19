@@ -161,8 +161,7 @@ public:
     bool shouldNotifyActiveDescendant() const;
     AccessibilityObject* activeDescendant() const override;
     void handleActiveDescendantChanged() override;
-    void handleAriaExpandedChanged() override;
-    
+
     VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;

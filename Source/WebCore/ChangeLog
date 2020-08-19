@@ -1,3 +1,37 @@
+2020-08-18  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/mac/aria-expanded-notifications.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=215613
+
+        Reviewed by Darin Adler.
+
+        Test: accessibility/mac/aria-expanded-notifications.html.
+
+        Refactored AXObjectCache::handleAriaExpandedChange so that it doesn't
+        call into AccessibilityObject to handle the notification, to then call
+        into AXObjectCache again. The new implementation is cleaner and more
+        straightforward.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::handleAriaExpandedChange):
+        (WebCore::AXObjectCache::updateIsolatedTree): Updates the isolated tree
+        on the row expanded/collapsed-related notifications.
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsRowCountChange const): Added.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::handleAriaExpandedChanged):
+        Deleted, not needed any longer since it is handled in AXObjectCache where
+        it should.
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData): Caches the
+        supportsRowCountChange property.
+        (WebCore::AXIsolatedObject::handleAriaExpandedChanged): Deleted, not
+        needed any longer.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2020-08-18  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Various parameters should be non-nullable in IDL

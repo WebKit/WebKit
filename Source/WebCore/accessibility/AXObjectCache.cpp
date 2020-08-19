@@ -1646,13 +1646,31 @@ void AXObjectCache::handleScrollbarUpdate(ScrollView* view)
         scrollViewObject->updateChildrenIfNecessary();
     }
 }
-    
+
 void AXObjectCache::handleAriaExpandedChange(Node* node)
 {
-    if (AccessibilityObject* obj = get(node))
-        obj->handleAriaExpandedChanged();
+    // An aria-expanded change can cause two notifications to be posted:
+    // RowCountChanged for the tree or table ancestor of this object, and
+    // RowExpanded/Collapsed for this object.
+    if (auto object = makeRefPtr(get(node))) {
+        // Find the ancestor that supports RowCountChanged if exists.
+        auto* ancestor = Accessibility::findAncestor<AccessibilityObject>(*object, false, [] (auto& candidate) {
+            return candidate.supportsRowCountChange();
+        });
+
+        // Post that the ancestor's row count changed.
+        if (ancestor)
+            postNotification(ancestor, &document(), AXRowCountChanged);
+
+        // Post that the specific row either collapsed or expanded.
+        auto role = object->roleValue();
+        if (role == AccessibilityRole::Row || role == AccessibilityRole::TreeItem)
+            postNotification(object.get(), &document(), object->isExpanded() ? AXRowExpanded : AXRowCollapsed);
+        else
+            postNotification(object.get(), &document(), AXExpandedChanged);
+    }
 }
-    
+
 void AXObjectCache::handleActiveDescendantChanged(Node* node)
 {
     if (AccessibilityObject* obj = getOrCreate(node))
@@ -3188,6 +3206,10 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
         break;
     case AXChildrenChanged:
     case AXLanguageChanged:
+    case AXRowCountChanged:
+    case AXRowCollapsed:
+    case AXRowExpanded:
+    case AXExpandedChanged:
         tree->updateChildren(object);
         break;
     default:
@@ -3249,7 +3271,11 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             break;
         }
         case AXChildrenChanged:
-        case AXLanguageChanged: {
+        case AXLanguageChanged:
+        case AXRowCountChanged:
+        case AXRowCollapsed:
+        case AXRowExpanded:
+        case AXExpandedChanged: {
             bool needsUpdate = appendIfNotContainsMatching(filteredNotifications, notification, [&notification] (const std::pair<RefPtr<AXCoreObject>, AXNotification>& note) {
                 return note.second == notification.second && note.first.get() == notification.first.get();
             });

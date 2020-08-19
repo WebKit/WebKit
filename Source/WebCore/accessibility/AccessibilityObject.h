@@ -305,6 +305,7 @@ public:
     bool supportsPressed() const override;
     bool supportsExpanded() const override;
     bool supportsChecked() const override;
+    bool supportsRowCountChange() const override;
     AccessibilitySortDirection sortDirection() const override;
     bool canvasHasFallbackContent() const override { return false; }
     bool supportsRangeValue() const override;
@@ -505,7 +506,6 @@ public:
     bool shouldFocusActiveDescendant() const override { return false; }
     AccessibilityObject* activeDescendant() const override { return nullptr; }
     void handleActiveDescendantChanged() override { }
-    void handleAriaExpandedChanged() override { }
     AccessibilityObject* firstAnonymousBlockChild() const override;
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);

@@ -1,6 +1,6 @@
 Animals
 Birds
-This tests that when aria-expanded is toggled, the appropriate notifications are sent out
+This tests that when aria-expanded is toggled, the appropriate notifications are sent out.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

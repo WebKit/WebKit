@@ -1032,6 +1032,7 @@ public:
     virtual bool supportsPressed() const = 0;
     virtual bool supportsExpanded() const = 0;
     virtual bool supportsChecked() const = 0;
+    virtual bool supportsRowCountChange() const = 0;
     virtual AccessibilitySortDirection sortDirection() const = 0;
     virtual bool canvasHasFallbackContent() const = 0;
     virtual bool supportsRangeValue() const = 0;
@@ -1238,7 +1239,6 @@ public:
     virtual bool shouldFocusActiveDescendant() const = 0;
     virtual AXCoreObject* activeDescendant() const = 0;
     virtual void handleActiveDescendantChanged() = 0;
-    virtual void handleAriaExpandedChanged() = 0;
     bool isDescendantOfObject(const AXCoreObject*) const;
     bool isAncestorOfObject(const AXCoreObject*) const;
     virtual AXCoreObject* firstAnonymousBlockChild() const = 0;

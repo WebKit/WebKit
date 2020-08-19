@@ -315,6 +315,7 @@ private:
         SpeakAs,
         SpeechHint,
         StringValue,
+        SupportsRowCountChange,
         SupportsDragging,
         SupportsDropping,
         SupportsARIAOwns,
@@ -802,6 +803,7 @@ private:
     bool supportsHasPopup() const override;
     bool supportsPressed() const override;
     bool supportsChecked() const override;
+    bool supportsRowCountChange() const override { return boolAttributeValue(AXPropertyName::SupportsRowCountChange); }
     bool ignoredFromModalPresence() const override;
     bool isModalDescendant(Node*) const override;
     bool isModalNode() const override;
@@ -871,7 +873,6 @@ private:
     bool shouldFocusActiveDescendant() const override;
     AXCoreObject* activeDescendant() const override;
     void handleActiveDescendantChanged() override;
-    void handleAriaExpandedChanged() override;
     AXCoreObject* firstAnonymousBlockChild() const override;
     bool hasAttribute(const QualifiedName&) const override;
     const AtomString& getAttribute(const QualifiedName&) const override;

@@ -1,3 +1,14 @@
+2020-08-18  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/mac/aria-expanded-notifications.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=215613
+
+        Reviewed by Darin Adler.
+
+        * accessibility/mac/aria-expanded-notifications-expected.txt:
+        * accessibility/mac/aria-expanded-notifications.html: Removed unnecessary
+        call to accessibilityController.focusedElement. Some code cleanup.
+
 2020-08-18  James Darpinian  <jdarpinian@chromium.org>
 
         [WebGL2] Various parameters should be non-nullable in IDL

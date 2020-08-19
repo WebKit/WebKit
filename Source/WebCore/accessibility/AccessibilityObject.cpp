@@ -2735,6 +2735,20 @@ bool AccessibilityObject::supportsChecked() const
     }
 }
 
+bool AccessibilityObject::supportsRowCountChange() const
+{
+    switch (roleValue()) {
+    case AccessibilityRole::Tree:
+    case AccessibilityRole::TreeGrid:
+    case AccessibilityRole::Grid:
+    case AccessibilityRole::Table:
+    case AccessibilityRole::Browser:
+        return true;
+    default:
+        return false;
+    }
+}
+
 AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
 {
     // If this is a real checkbox or radio button, AccessibilityRenderObject will handle.
