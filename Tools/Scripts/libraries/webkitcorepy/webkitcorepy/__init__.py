@@ -33,7 +33,7 @@ from webkitcorepy.version import Version
 from webkitcorepy.string_utils import BytesIO, StringIO, UnicodeIO, unicode
 from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDuplicate
 
-version = Version(0, 2, 6)
+version = Version(0, 2, 7)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

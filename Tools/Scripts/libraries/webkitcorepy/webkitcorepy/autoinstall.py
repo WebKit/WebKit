@@ -214,7 +214,7 @@ class Package(object):
             install_location = os.path.dirname(self.location)
             shutil.rmtree(self.location, ignore_errors=True)
 
-            log.warning('Installing {}...'.format(archive))
+            log.warning('Downloading {}...'.format(archive))
             archive.download()
 
             temp_location = os.path.join(tempfile.gettempdir(), self.name)
