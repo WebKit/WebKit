@@ -2193,6 +2193,9 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 
 webkit.org/b/215506 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events-onerror.html [ Pass Failure ]
 
+# <rdar://problem/65269589> [ Mac and iOS ] media/vp9.html is failing consistently.
+media/vp9.html [ Failure ]
+
 webkit.org/b/215515 imported/w3c/web-platform-tests/user-timing/measure_navigation_timing.html [ Pass Failure ]
 
 webkit.org/b/215576 media/modern-media-controls/volume-up-support/volume-up-support.html [ Pass Timeout ]

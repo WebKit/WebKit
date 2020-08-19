@@ -1010,9 +1010,6 @@ media/media-fragments/TC0034.html [ Pass Crash ]
 # <rdar://problem/62472844> [ Mac wk1 ] fast/dom/Window/window-open-self-disallow-close.html is flaky crashing and timing out.
 fast/dom/Window/window-open-self-disallow-close.html [ Pass Crash Timeout ]
 
-# <rdar://problem/65269589> [ Mac wk1 and iOS ] media/vp9.html is failing consistently.
-media/vp9.html [ Failure ]
-
 # rdar://66866579 ([ Layout Tests ] REGRESSION: [ MacOS wk1 release ] compositing/animation/matrix-animation.html is a flaky failure)
 compositing/animation/matrix-animation.html [ Pass ImageOnlyFailure ]
 
