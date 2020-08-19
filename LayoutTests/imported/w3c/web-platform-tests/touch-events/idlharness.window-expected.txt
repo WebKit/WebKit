@@ -26,100 +26,100 @@ PASS Element includes ParentNode: member names are unique
 PASS Element includes NonDocumentTypeChildNode: member names are unique 
 PASS Element includes ChildNode: member names are unique 
 PASS Element includes Slottable: member names are unique 
-FAIL Touch interface: existence and properties of interface object assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface object length assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface object name assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute identifier assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute target assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute screenX assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute screenY assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute clientX assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute clientY assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute pageX assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute pageY assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute radiusX assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute radiusY assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute rotationAngle assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute force assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute altitudeAngle assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute azimuthAngle assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch interface: attribute touchType assert_own_property: self does not have own property "Touch" expected property "Touch" missing
-FAIL Touch must be primary interface of new Touch({identifier: 1, target: document}) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Stringification of new Touch({identifier: 1, target: document}) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "identifier" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "target" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "screenX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "screenY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "clientX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "clientY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "pageX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "pageY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "radiusX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "radiusY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "rotationAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "force" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "altitudeAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "azimuthAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "touchType" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: Touch"
-FAIL TouchList interface: existence and properties of interface object assert_own_property: self does not have own property "TouchList" expected property "TouchList" missing
-FAIL TouchList interface object length assert_own_property: self does not have own property "TouchList" expected property "TouchList" missing
-FAIL TouchList interface object name assert_own_property: self does not have own property "TouchList" expected property "TouchList" missing
-FAIL TouchList interface: existence and properties of interface prototype object assert_own_property: self does not have own property "TouchList" expected property "TouchList" missing
-FAIL TouchList interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "TouchList" expected property "TouchList" missing
-FAIL TouchList interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "TouchList" expected property "TouchList" missing
-FAIL TouchList interface: attribute length assert_own_property: self does not have own property "TouchList" expected property "TouchList" missing
-FAIL TouchList interface: operation item(unsigned long) assert_own_property: self does not have own property "TouchList" expected property "TouchList" missing
-FAIL TouchEvent interface: existence and properties of interface object assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface object length assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface object name assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface: attribute touches assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface: attribute targetTouches assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface: attribute changedTouches assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface: attribute altKey assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface: attribute metaKey assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface: attribute ctrlKey assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent interface: attribute shiftKey assert_own_property: self does not have own property "TouchEvent" expected property "TouchEvent" missing
-FAIL TouchEvent must be primary interface of new TouchEvent("name") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TouchEvent"
-FAIL Stringification of new TouchEvent("name") assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TouchEvent"
-FAIL TouchEvent interface: new TouchEvent("name") must inherit property "touches" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TouchEvent"
-FAIL TouchEvent interface: new TouchEvent("name") must inherit property "targetTouches" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TouchEvent"
-FAIL TouchEvent interface: new TouchEvent("name") must inherit property "changedTouches" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TouchEvent"
-FAIL TouchEvent interface: new TouchEvent("name") must inherit property "altKey" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TouchEvent"
-FAIL TouchEvent interface: new TouchEvent("name") must inherit property "metaKey" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TouchEvent"
-FAIL TouchEvent interface: new TouchEvent("name") must inherit property "ctrlKey" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TouchEvent"
-FAIL TouchEvent interface: new TouchEvent("name") must inherit property "shiftKey" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TouchEvent"
-FAIL HTMLElement interface: attribute ontouchstart assert_true: The prototype object must have a property "ontouchstart" expected true got false
-FAIL HTMLElement interface: attribute ontouchend assert_true: The prototype object must have a property "ontouchend" expected true got false
-FAIL HTMLElement interface: attribute ontouchmove assert_true: The prototype object must have a property "ontouchmove" expected true got false
-FAIL HTMLElement interface: attribute ontouchcancel assert_true: The prototype object must have a property "ontouchcancel" expected true got false
-FAIL Window interface: attribute ontouchstart assert_own_property: The global object must have a property "ontouchstart" expected property "ontouchstart" missing
-FAIL Window interface: attribute ontouchend assert_own_property: The global object must have a property "ontouchend" expected property "ontouchend" missing
-FAIL Window interface: attribute ontouchmove assert_own_property: The global object must have a property "ontouchmove" expected property "ontouchmove" missing
-FAIL Window interface: attribute ontouchcancel assert_own_property: The global object must have a property "ontouchcancel" expected property "ontouchcancel" missing
-FAIL GlobalEventHandlers interface: window must inherit property "ontouchstart" with the proper type assert_inherits: property "ontouchstart" not found in prototype chain
-FAIL GlobalEventHandlers interface: window must inherit property "ontouchend" with the proper type assert_inherits: property "ontouchend" not found in prototype chain
-FAIL GlobalEventHandlers interface: window must inherit property "ontouchmove" with the proper type assert_inherits: property "ontouchmove" not found in prototype chain
-FAIL GlobalEventHandlers interface: window must inherit property "ontouchcancel" with the proper type assert_inherits: property "ontouchcancel" not found in prototype chain
-FAIL GlobalEventHandlers interface: document must inherit property "ontouchstart" with the proper type assert_inherits: property "ontouchstart" not found in prototype chain
-FAIL GlobalEventHandlers interface: document must inherit property "ontouchend" with the proper type assert_inherits: property "ontouchend" not found in prototype chain
-FAIL GlobalEventHandlers interface: document must inherit property "ontouchmove" with the proper type assert_inherits: property "ontouchmove" not found in prototype chain
-FAIL GlobalEventHandlers interface: document must inherit property "ontouchcancel" with the proper type assert_inherits: property "ontouchcancel" not found in prototype chain
-FAIL GlobalEventHandlers interface: document.body must inherit property "ontouchstart" with the proper type assert_inherits: property "ontouchstart" not found in prototype chain
-FAIL GlobalEventHandlers interface: document.body must inherit property "ontouchend" with the proper type assert_inherits: property "ontouchend" not found in prototype chain
-FAIL GlobalEventHandlers interface: document.body must inherit property "ontouchmove" with the proper type assert_inherits: property "ontouchmove" not found in prototype chain
-FAIL GlobalEventHandlers interface: document.body must inherit property "ontouchcancel" with the proper type assert_inherits: property "ontouchcancel" not found in prototype chain
-FAIL Document interface: attribute ontouchstart assert_true: The prototype object must have a property "ontouchstart" expected true got false
-FAIL Document interface: attribute ontouchend assert_true: The prototype object must have a property "ontouchend" expected true got false
-FAIL Document interface: attribute ontouchmove assert_true: The prototype object must have a property "ontouchmove" expected true got false
-FAIL Document interface: attribute ontouchcancel assert_true: The prototype object must have a property "ontouchcancel" expected true got false
-FAIL Document interface: document must inherit property "ontouchstart" with the proper type assert_inherits: property "ontouchstart" not found in prototype chain
-FAIL Document interface: document must inherit property "ontouchend" with the proper type assert_inherits: property "ontouchend" not found in prototype chain
-FAIL Document interface: document must inherit property "ontouchmove" with the proper type assert_inherits: property "ontouchmove" not found in prototype chain
-FAIL Document interface: document must inherit property "ontouchcancel" with the proper type assert_inherits: property "ontouchcancel" not found in prototype chain
+PASS Touch interface: existence and properties of interface object 
+FAIL Touch interface object length assert_equals: wrong value for Touch.length expected 1 but got 0
+PASS Touch interface object name 
+PASS Touch interface: existence and properties of interface prototype object 
+PASS Touch interface: existence and properties of interface prototype object's "constructor" property 
+PASS Touch interface: existence and properties of interface prototype object's @@unscopables property 
+PASS Touch interface: attribute identifier 
+PASS Touch interface: attribute target 
+PASS Touch interface: attribute screenX 
+PASS Touch interface: attribute screenY 
+PASS Touch interface: attribute clientX 
+PASS Touch interface: attribute clientY 
+PASS Touch interface: attribute pageX 
+PASS Touch interface: attribute pageY 
+FAIL Touch interface: attribute radiusX assert_true: The prototype object must have a property "radiusX" expected true got false
+FAIL Touch interface: attribute radiusY assert_true: The prototype object must have a property "radiusY" expected true got false
+FAIL Touch interface: attribute rotationAngle assert_true: The prototype object must have a property "rotationAngle" expected true got false
+FAIL Touch interface: attribute force assert_true: The prototype object must have a property "force" expected true got false
+FAIL Touch interface: attribute altitudeAngle assert_true: The prototype object must have a property "altitudeAngle" expected true got false
+FAIL Touch interface: attribute azimuthAngle assert_true: The prototype object must have a property "azimuthAngle" expected true got false
+FAIL Touch interface: attribute touchType assert_true: The prototype object must have a property "touchType" expected true got false
+FAIL Touch must be primary interface of new Touch({identifier: 1, target: document}) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Stringification of new Touch({identifier: 1, target: document}) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "identifier" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "target" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "screenX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "screenY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "clientX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "clientY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "pageX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "pageY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "radiusX" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "radiusY" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "rotationAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "force" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "altitudeAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "azimuthAngle" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Touch interface: new Touch({identifier: 1, target: document}) must inherit property "touchType" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+PASS TouchList interface: existence and properties of interface object 
+PASS TouchList interface object length 
+PASS TouchList interface object name 
+PASS TouchList interface: existence and properties of interface prototype object 
+PASS TouchList interface: existence and properties of interface prototype object's "constructor" property 
+PASS TouchList interface: existence and properties of interface prototype object's @@unscopables property 
+PASS TouchList interface: attribute length 
+PASS TouchList interface: operation item(unsigned long) 
+PASS TouchEvent interface: existence and properties of interface object 
+FAIL TouchEvent interface object length assert_equals: wrong value for TouchEvent.length expected 1 but got 0
+PASS TouchEvent interface object name 
+PASS TouchEvent interface: existence and properties of interface prototype object 
+PASS TouchEvent interface: existence and properties of interface prototype object's "constructor" property 
+PASS TouchEvent interface: existence and properties of interface prototype object's @@unscopables property 
+PASS TouchEvent interface: attribute touches 
+PASS TouchEvent interface: attribute targetTouches 
+PASS TouchEvent interface: attribute changedTouches 
+PASS TouchEvent interface: attribute altKey 
+PASS TouchEvent interface: attribute metaKey 
+PASS TouchEvent interface: attribute ctrlKey 
+PASS TouchEvent interface: attribute shiftKey 
+FAIL TouchEvent must be primary interface of new TouchEvent("name") assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL Stringification of new TouchEvent("name") assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL TouchEvent interface: new TouchEvent("name") must inherit property "touches" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL TouchEvent interface: new TouchEvent("name") must inherit property "targetTouches" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL TouchEvent interface: new TouchEvent("name") must inherit property "changedTouches" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL TouchEvent interface: new TouchEvent("name") must inherit property "altKey" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL TouchEvent interface: new TouchEvent("name") must inherit property "metaKey" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL TouchEvent interface: new TouchEvent("name") must inherit property "ctrlKey" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL TouchEvent interface: new TouchEvent("name") must inherit property "shiftKey" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Illegal constructor"
+FAIL HTMLElement interface: attribute ontouchstart assert_true: property should be enumerable expected true got false
+FAIL HTMLElement interface: attribute ontouchend assert_true: property should be enumerable expected true got false
+FAIL HTMLElement interface: attribute ontouchmove assert_true: property should be enumerable expected true got false
+FAIL HTMLElement interface: attribute ontouchcancel assert_true: property should be enumerable expected true got false
+FAIL Window interface: attribute ontouchstart assert_true: property should be enumerable expected true got false
+FAIL Window interface: attribute ontouchend assert_true: property should be enumerable expected true got false
+FAIL Window interface: attribute ontouchmove assert_true: property should be enumerable expected true got false
+FAIL Window interface: attribute ontouchcancel assert_true: property should be enumerable expected true got false
+FAIL GlobalEventHandlers interface: window must inherit property "ontouchstart" with the proper type assert_inherits: property "ontouchstart" found on object expected in prototype chain
+FAIL GlobalEventHandlers interface: window must inherit property "ontouchend" with the proper type assert_inherits: property "ontouchend" found on object expected in prototype chain
+FAIL GlobalEventHandlers interface: window must inherit property "ontouchmove" with the proper type assert_inherits: property "ontouchmove" found on object expected in prototype chain
+FAIL GlobalEventHandlers interface: window must inherit property "ontouchcancel" with the proper type assert_inherits: property "ontouchcancel" found on object expected in prototype chain
+PASS GlobalEventHandlers interface: document must inherit property "ontouchstart" with the proper type 
+PASS GlobalEventHandlers interface: document must inherit property "ontouchend" with the proper type 
+PASS GlobalEventHandlers interface: document must inherit property "ontouchmove" with the proper type 
+PASS GlobalEventHandlers interface: document must inherit property "ontouchcancel" with the proper type 
+PASS GlobalEventHandlers interface: document.body must inherit property "ontouchstart" with the proper type 
+PASS GlobalEventHandlers interface: document.body must inherit property "ontouchend" with the proper type 
+PASS GlobalEventHandlers interface: document.body must inherit property "ontouchmove" with the proper type 
+PASS GlobalEventHandlers interface: document.body must inherit property "ontouchcancel" with the proper type 
+FAIL Document interface: attribute ontouchstart assert_true: property should be enumerable expected true got false
+FAIL Document interface: attribute ontouchend assert_true: property should be enumerable expected true got false
+FAIL Document interface: attribute ontouchmove assert_true: property should be enumerable expected true got false
+FAIL Document interface: attribute ontouchcancel assert_true: property should be enumerable expected true got false
+PASS Document interface: document must inherit property "ontouchstart" with the proper type 
+PASS Document interface: document must inherit property "ontouchend" with the proper type 
+PASS Document interface: document must inherit property "ontouchmove" with the proper type 
+PASS Document interface: document must inherit property "ontouchcancel" with the proper type 
 

@@ -1,3 +1,18 @@
+2020-08-19  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Gardening and rebaseline touch tests
+
+        Unreviewed test gardening.
+
+        Move some WPE-specific baselines here as it is only tested there.
+
+        Also rebaseline after r265749 updated some constructor rules.
+
+        * web-platform-tests/touch-events/historical-expected.txt:
+        * web-platform-tests/touch-events/idlharness.window-expected.txt:
+        * web-platform-tests/touch-events/touch-retargeting-expected.txt:
+        * web-platform-tests/touch-events/touch-touchevent-constructor-expected.txt:
+
 2020-08-18  Sergio Villar Senin  <svillar@igalia.com>
 
         <button> should support display:inline-grid/grid/inline-flex/flex correctly
