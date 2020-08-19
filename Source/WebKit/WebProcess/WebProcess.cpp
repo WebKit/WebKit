@@ -1958,7 +1958,6 @@ void WebProcess::enableVP9Decoder()
     m_vp9DecoderEnabled = true;
 
 #if PLATFORM(COCOA)
-    WebCore::registerWebKitVP9Decoder();
     WebCore::registerSupplementalVP9Decoder();
 #endif
 }
@@ -1969,7 +1968,9 @@ void WebProcess::enableVP9SWDecoder()
         return;
 
     m_vp9SWDecoderEnabled = true;
-    LibWebRTCProvider::registerWebKitVP9Decoder();
+#if PLATFORM(COCOA)
+    WebCore::registerWebKitVP9Decoder();
+#endif
 }
 
 } // namespace WebKit
