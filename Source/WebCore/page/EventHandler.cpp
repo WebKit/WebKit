@@ -2761,7 +2761,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
     if (page && !page->focusController().setFocusedElement(element.get(), m_frame))
         return false;
 
-    if (m_mouseDownDelegatedFocus)
+    if (element && m_mouseDownDelegatedFocus)
         element->revealFocusedElement(SelectionRestorationMode::SetDefault);
 
     return true;
