@@ -1584,7 +1584,7 @@ ExceptionOr<void> Node::setTextContent(const String& text)
         if (text.isEmpty())
             container.replaceAllChildren(nullptr);
         else
-            container.replaceAllChildren(document().createTextNode(text));
+            container.replaceAllChildrenWithNewText(text);
         return { };
     }
     case DOCUMENT_NODE:

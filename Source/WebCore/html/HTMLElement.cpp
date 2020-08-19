@@ -542,7 +542,7 @@ ExceptionOr<void> HTMLElement::setInnerText(const String& text)
         if (text.isEmpty())
             replaceAllChildren(nullptr);
         else
-            replaceAllChildren(document().createTextNode(text));
+            replaceAllChildrenWithNewText(text);
         return { };
     }
 
@@ -552,19 +552,19 @@ ExceptionOr<void> HTMLElement::setInnerText(const String& text)
     auto* r = renderer();
     if ((r && r->style().preserveNewline()) || (isConnected() && isTextControlInnerTextElement())) {
         if (!text.contains('\r')) {
-            replaceAllChildren(document().createTextNode(text));
+            replaceAllChildrenWithNewText(text);
             return { };
         }
         String textWithConsistentLineBreaks = text;
         textWithConsistentLineBreaks.replace("\r\n", "\n");
         textWithConsistentLineBreaks.replace('\r', '\n');
-        replaceAllChildren(document().createTextNode(textWithConsistentLineBreaks));
+        replaceAllChildrenWithNewText(textWithConsistentLineBreaks);
         return { };
     }
 
     // Add text nodes and <br> elements.
     auto fragment = textToFragment(document(), text);
-    // FIXME: This should use replaceAllChildren() once it accepts DocumentFragments as input.
+    // FIXME: This should use a variant of replaceAllChildrenWithNewText() which accepts DocumentFragments as input.
     // It's safe to dispatch events on the new fragment since author scripts have no access to it yet.
     ScriptDisallowedScope::EventAllowedScope allowedScope(fragment.get());
     return replaceChildrenWithFragment(*this, WTFMove(fragment));

@@ -630,14 +630,9 @@ void ContainerNode::replaceAllChildren(std::nullptr_t)
 }
 
 // https://dom.spec.whatwg.org/#concept-node-replace-all
-void ContainerNode::replaceAllChildren(Ref<Node>&& node)
+void ContainerNode::replaceAllChildrenWithNewText(const String& text)
 {
-    // This function assumes the input node is not a DocumentFragment and is parentless to decrease complexity.
-    // This function must be called on a new node that has not yet been exposed to script due to the use of DeferChildrenChanged::Yes.
-    ASSERT(!is<DocumentFragment>(node));
-    ASSERT(!node->parentNode());
-    RELEASE_ASSERT(!node->wrapper() && node->refCount() == 1);
-
+    auto node = document().createTextNode(text);
     if (!hasChildNodes()) {
         // appendChildWithoutPreInsertionValidityCheck() can only throw when node has a parent and we already asserted it doesn't.
         auto result = appendChildWithoutPreInsertionValidityCheck(node);

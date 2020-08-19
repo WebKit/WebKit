@@ -1,3 +1,21 @@
+2020-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename replaceAllChildren to replaceAllChildrenWithNewText
+        https://bugs.webkit.org/show_bug.cgi?id=215634
+
+        Reviewed by Darin Adler.
+
+        Renamed ContainerNode::replaceAllChildren to replaceAllChildrenWithNewText and changed
+        the type of Argument from Ref<Node>&& to const String&.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceAllChildrenWithNewText):
+        * dom/ContainerNode.h:
+        * dom/Node.cpp:
+        (WebCore::Node::setTextContent):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setInnerText):
+
 2020-08-18  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/mac/aria-expanded-notifications.html in isolated tree mode.
