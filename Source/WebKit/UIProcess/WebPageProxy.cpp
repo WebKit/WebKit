@@ -4098,7 +4098,7 @@ void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& p
 
     ProcessThrottler::ActivityVariant activity;
 #if PLATFORM(IOS_FAMILY)
-    if (pageClient().isApplicationVisible())
+    if (pageClient().canTakeForegroundAssertions())
         activity = m_process->throttler().foregroundActivity("WebPageProxy::runJavaScriptInFrameInScriptWorld"_s);
     else
 #endif

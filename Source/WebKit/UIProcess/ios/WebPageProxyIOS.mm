@@ -1550,7 +1550,9 @@ bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
     if (isViewVisible())
         return false;
 
-    return pageClient().isApplicationVisible();
+    bool canTakeForegroundAssertions = pageClient().canTakeForegroundAssertions();
+    RELEASE_LOG_IF_ALLOWED(Process, "WebPageProxy::shouldForceForegroundPriorityForClientNavigation() returns %d based on PageClient::canTakeForegroundAssertions()", canTakeForegroundAssertions);
+    return canTakeForegroundAssertions;
 }
 
 void WebPageProxy::textInputContextsInRect(FloatRect rect, CompletionHandler<void(const Vector<ElementContext>&)>&& completionHandler)
