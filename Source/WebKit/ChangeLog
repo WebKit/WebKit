@@ -1,3 +1,17 @@
+2020-08-19  Youenn Fablet  <youenn@apple.com>
+
+        WebSocketChannel::didClose should correctly compute whether a closing handshake was received
+        https://bugs.webkit.org/show_bug.cgi?id=215644
+
+        Reviewed by Darin Adler.
+
+        Covered by LayoutTests/http/tests/websocket/tests/hybi/close-code-and-reason.html with NSURLSession code path enabled.
+
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::didClose):
+        As noted by Jiten Mehta, absence of closing handshake from the server is notified by WebSocketChannel::CloseEventCodeAbnormalClosure.
+        Update check accordingly.
+
 2020-08-18  Alex Christensen  <achristensen@webkit.org>
 
         WKWebViews using fastServerTrustEvaluationEnabled should only allow legacy TLS for main resource loads
