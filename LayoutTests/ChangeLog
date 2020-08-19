@@ -1,3 +1,43 @@
+2020-08-19  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r265881. rdar://problem/67423220
+
+    REGRESSION(r265092): delegatesFocus causes WebKit to crash
+    https://bugs.webkit.org/show_bug.cgi?id=215622
+    
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    The bug was caused by a missing nullptr check. Added it.
+    
+    Test: fast/shadow-dom/delegates-focus-unsuccessfully-by-activation.html
+    
+    * page/EventHandler.cpp:
+    (WebCore::EventHandler::dispatchMouseEvent): Added a nullptr check.
+    
+    LayoutTests:
+    
+    Added a regression test.
+    
+    * fast/shadow-dom/delegates-focus-unsuccessfully-by-activation-expected.txt: Added.
+    * fast/shadow-dom/delegates-focus-unsuccessfully-by-activation.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265881 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+            REGRESSION(r265092): delegatesFocus causes WebKit to crash
+            https://bugs.webkit.org/show_bug.cgi?id=215622
+
+            Reviewed by Youenn Fablet.
+
+            Added a regression test.
+
+            * fast/shadow-dom/delegates-focus-unsuccessfully-by-activation-expected.txt: Added.
+            * fast/shadow-dom/delegates-focus-unsuccessfully-by-activation.html: Added.
+
 2020-07-31  Alex Christensen  <achristensen@webkit.org>
 
         Use more inclusive terminology in Tools
