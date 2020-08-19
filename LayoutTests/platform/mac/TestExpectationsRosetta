@@ -13,11 +13,6 @@
 [ BigSur+ ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.selfintersect.1.html [ Failure ]
 [ BigSur+ ] imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.arc.shape.3.html [ Failure ]
 
-# rdar://67289434 ([ Rosetta Layout Tests ] REGRESSION (r265701): [ BigSur ] 3 webaudio/the-audio-api/the-audioparam-interface tests are a constant failure)
-[ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner-connections.html [ Failure ]
-[ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-panner.html [ Failure ]
-[ BigSur+ ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-automation-basic.html [ Failure ]
-
 # rdar://67353771 ([run-webkit-tests] Rosetta specific test expectations)
 [ BigSur+ ] tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html [ Skip ]
 

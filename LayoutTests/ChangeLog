@@ -1,3 +1,13 @@
+2020-08-19  Chris Dumez  <cdumez@apple.com>
+
+        Mark 3 webaudio WPT tests as flaky instead of consistently failing.
+
+        Those tests are for WebAudio automation, which we do not support. The values being printed
+        on failure sometimes differ.
+
+        * TestExpectations:
+        * platform/mac/TestExpectationsRosetta:
+
 2020-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r265092): delegatesFocus causes WebKit to crash
