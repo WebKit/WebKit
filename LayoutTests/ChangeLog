@@ -1,3 +1,12 @@
+2020-08-19  Hector Lopez  <hector_i_lopez@apple.com>
+
+       [ macOS ] accessibility/mac/select-element-selection-with-optgroups.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215649
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-19  Karl Rackler  <rackler@apple.com>
 
         rdar://problem/65269589 [ Mac and iOS ] media/vp9.html is failing consistently.
