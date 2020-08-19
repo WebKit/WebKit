@@ -1,3 +1,15 @@
+2020-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r265092): delegatesFocus causes WebKit to crash
+        https://bugs.webkit.org/show_bug.cgi?id=215622
+
+        Reviewed by Youenn Fablet.
+
+        Added a regression test.
+
+        * fast/shadow-dom/delegates-focus-unsuccessfully-by-activation-expected.txt: Added.
+        * fast/shadow-dom/delegates-focus-unsuccessfully-by-activation.html: Added.
+
 2020-08-19  Hector Lopez  <hector_i_lopez@apple.com>
 
        [ macOS ] accessibility/mac/select-element-selection-with-optgroups.html is a flaky failure

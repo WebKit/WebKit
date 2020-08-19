@@ -1,3 +1,17 @@
+2020-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r265092): delegatesFocus causes WebKit to crash
+        https://bugs.webkit.org/show_bug.cgi?id=215622
+
+        Reviewed by Youenn Fablet.
+
+        The bug was caused by a missing nullptr check. Added it.
+
+        Test: fast/shadow-dom/delegates-focus-unsuccessfully-by-activation.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent): Added a nullptr check.
+
 2020-08-19  Aditya Keerthi  <akeerthi@apple.com>
 
         Remove use of ControlSize in ThemeMac
