@@ -66,3 +66,4 @@ webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-002.html [ Pass ]
 webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-004.html [ Pass ]
 
 media/picture-in-picture [ Pass ]
+media/remove-video-element-in-pip-from-document.html [ Pass ]

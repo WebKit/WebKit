@@ -1,3 +1,16 @@
+2020-08-19  Peng Liu  <peng.liu6@apple.com>
+
+        A PiP window is closed when the video element is removed from DOM
+        https://bugs.webkit.org/show_bug.cgi?id=215594
+
+        Reviewed by Eric Carlson.
+
+        * TestExpectations:
+        * media/remove-video-element-in-pip-from-document-expected.txt: Added.
+        * media/remove-video-element-in-pip-from-document.html: Added.
+        * platform/ipad/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-19  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk1 ] svg/custom/object-sizing-no-width-height.xhtml is a flaky failure

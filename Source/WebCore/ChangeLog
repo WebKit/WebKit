@@ -1,3 +1,22 @@
+2020-08-19  Peng Liu  <peng.liu6@apple.com>
+
+        A PiP window is closed when the video element is removed from DOM
+        https://bugs.webkit.org/show_bug.cgi?id=215594
+
+        Reviewed by Eric Carlson.
+
+        Test: media/remove-video-element-in-pip-from-document.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pauseAfterDetachedTask):
+        When a video is playing in the picture-in-picture mode, do not pause it or exit the
+        picture-in-picture mode when detaching the video element from the DOM.
+        (WebCore::HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated):
+        Always return true when the video is playing in the picture-in-picture mode.
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::willBeDestroyed):
+        Don't hide the player when destroying the renderer of an inline video.
+
 2020-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Restore a 10_15_* user-agent string when requesting desktop site

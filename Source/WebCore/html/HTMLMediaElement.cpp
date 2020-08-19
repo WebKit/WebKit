@@ -835,9 +835,9 @@ void HTMLMediaElement::pauseAfterDetachedTask()
     if (m_inActiveDocument)
         return;
 
-    if (m_networkState > NETWORK_EMPTY)
+    if (m_videoFullscreenMode != VideoFullscreenModePictureInPicture && m_networkState > NETWORK_EMPTY)
         pause();
-    if (m_videoFullscreenMode != VideoFullscreenModeNone)
+    if (m_videoFullscreenMode == VideoFullscreenModeStandard)
         exitFullscreen();
 
     if (!m_player)
@@ -4926,6 +4926,12 @@ void HTMLMediaElement::mediaPlayerSizeChanged()
 
 bool HTMLMediaElement::mediaPlayerRenderingCanBeAccelerated()
 {
+    // This function must return "true" when the video is playing in the
+    // picture-in-picture window. Otherwise, the MediaPlayerPrivate* may
+    // destroy the video layer.
+    if (m_videoFullscreenMode == VideoFullscreenModePictureInPicture)
+        return true;
+
     auto* renderer = this->renderer();
     return is<RenderVideo>(renderer)
         && downcast<RenderVideo>(*renderer).view().compositor().canAccelerateVideoRendering(downcast<RenderVideo>(*renderer));

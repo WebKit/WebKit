@@ -228,6 +228,8 @@ webkit.org/b/202617 imported/w3c/web-platform-tests/picture-in-picture [ Skip ]
 # PiP API tests are only relevant on mac and iPad
 media/picture-in-picture [ Skip ]
 
+media/remove-video-element-in-pip-from-document.html [ Skip ]
+
 # Shared Workers are unsupported
 imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/basic-shared-worker.https.html [ Skip ]

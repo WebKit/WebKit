@@ -513,6 +513,8 @@ media/fullscreen-api-enabled-media-with-presentation-mode.html [ Pass ]
 webkit.org/b/173199 media/navigate-with-pip-should-not-crash.html [ Pass Failure ]
 media/pip-video-going-into-fullscreen.html [ Pass ]
 media/picture-in-picture [ Pass ]
+media/remove-video-element-in-pip-from-document.html [ Pass ]
+
 
 # RTL Scrollbars are enabled on Sierra WebKit2.
 webkit.org/b/179455 fast/scrolling/rtl-scrollbars.html [ Pass ImageOnlyFailure ]

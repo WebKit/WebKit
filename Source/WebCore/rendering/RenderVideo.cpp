@@ -65,8 +65,15 @@ RenderVideo::~RenderVideo()
 void RenderVideo::willBeDestroyed()
 {
     visibleInViewportStateChanged();
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    auto player = videoElement().player();
+    if (player && videoElement().webkitPresentationMode() != HTMLVideoElement::VideoPresentationMode::PictureInPicture)
+        player->setVisible(false);
+#else
     if (auto player = videoElement().player())
         player->setVisible(false);
+#endif
 
     RenderMedia::willBeDestroyed();
 }

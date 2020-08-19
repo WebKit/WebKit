@@ -1,0 +1,11 @@
+Test that removing a video element from the DOM while the video is in the picture-in-picture mode does not close the PiP window.
+
+RUN(internals.settings.setAllowsPictureInPictureMediaPlayback(true))
+RUN(internals.setMockVideoPresentationModeEnabled(true))
+EVENT(canplaythrough)
+EVENT(enterpictureinpicture)
+EXPECTED (pipWindow.width > '0') OK
+EXPECTED (pipWindow.height > '0') OK
+The video element has been removed from DOM.
+END OF TEST
+
