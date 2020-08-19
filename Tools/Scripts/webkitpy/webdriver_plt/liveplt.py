@@ -1,4 +1,3 @@
-import webkitpy.thirdparty.autoinstalled.selenium
 from pltresults import PLTResults
 from selenium import webdriver
 from time import sleep

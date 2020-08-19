@@ -39,7 +39,6 @@ class LinuxChromeDriver(LinuxBrowserDriver):
         super(LinuxChromeDriver, self).launch_url(url, options, browser_build_path, browser_path)
 
     def launch_driver(self, url, options, browser_build_path):
-        import webkitpy.thirdparty.autoinstalled.selenium
         from selenium import webdriver
         from selenium.webdriver.chrome.options import Options
         options = Options()

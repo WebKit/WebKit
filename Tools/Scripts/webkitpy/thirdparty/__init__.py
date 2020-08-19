@@ -104,8 +104,6 @@ class AutoinstallImportHook(object):
             self._install_keyring()
         elif '.twisted_15_5_0' in fullname:
             self._install_twisted_15_5_0()
-        elif '.selenium' in fullname:
-            self._install_selenium()
         elif '.chromedriver' in fullname:
             self.install_chromedriver()
         elif '.geckodriver' in fullname:
@@ -258,24 +256,6 @@ class AutoinstallImportHook(object):
             if int(version.split('.')[i]) < int(minimum.split('.')[i]):
                 return False
         return True
-
-    def _install_selenium(self):
-        self._ensure_autoinstalled_dir_is_in_sys_path()
-
-        minimum_version = '3.5.0'
-        if os.path.isfile(os.path.join(_AUTOINSTALLED_DIR, 'selenium', '__init__.py')):
-            import selenium.webdriver
-            if AutoinstallImportHook.greater_than_equal_to_version(minimum_version, selenium.webdriver.__version__):
-                return
-
-        try:
-            url, url_subpath = self.get_latest_pypi_url('selenium')
-        except URLError:
-            # URL for installing the minimum required version.
-            url = 'https://files.pythonhosted.org/packages/ac/d7/1928416439d066c60f26c87a8d1b78a8edd64c7d05a0aa917fa97a8ee02d/selenium-3.5.0.tar.gz'
-            url_subpath = 'selenium-{}/selenium'.format(minimum_version)
-            sys.stderr.write('\nFailed to find latest selenium, falling back to minimum {} version\n'.format(minimum_version))
-        self._install(url=url, url_subpath=url_subpath)
 
     def install_chromedriver(self):
         filename_postfix = get_driver_filename().chrome

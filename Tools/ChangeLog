@@ -1,3 +1,31 @@
+2020-08-19  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use webkitcorepy's auto installer for selenium
+        https://bugs.webkit.org/show_bug.cgi?id=215648
+        <rdar://problem/67405967>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/__init__.py:
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_chrome_driver.py:
+        (LinuxChromeDriver.launch_driver): Implicitly use webkitcorepy's auto-installer.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_firefox_driver.py:
+        (LinuxFirefoxDriver.launch_driver): Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeDriver.launch_driver): Ditto.
+        (OSXChromeCanaryDriver.launch_driver): Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py:
+        (OSXFirefoxDriver.launch_driver): Ditto.
+        (OSXFirefoxNightlyDriver.launch_driver): Ditto.
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_driver): Ditto.
+        * Scripts/webkitpy/benchmark_runner/webdriver_benchmark_runner.py:
+        (WebDriverBenchmarkRunner._run_one_test): Ditto.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Remove selenium.
+        (AutoinstallImportHook._install_selenium): Deleted.
+        * Scripts/webkitpy/webdriver_plt/liveplt.py: Implicitly use webkitcorepy's auto-installer.
+
 2020-08-19  Alex Christensen  <achristensen@webkit.org>
 
         [Catalina/iOS 13] TestWebKitAPI.TLSVersion.LegacySubresources is failing
