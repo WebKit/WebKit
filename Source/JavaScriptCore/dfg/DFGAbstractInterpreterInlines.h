@@ -2301,7 +2301,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             case Array::ArrayStorage:
             case Array::SlowPutArrayStorage:
                 if (foldGetByValOnConstantProperty(m_graph.child(node, 0), m_graph.child(node, 1))) {
-                    if (!node->arrayMode().isInBounds())
+                    if (node->arrayMode().isEffectfulOutOfBounds())
                         didFoldClobberWorld();
                     didFold = true;
                 }

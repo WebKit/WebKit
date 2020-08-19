@@ -1,3 +1,14 @@
+2020-08-19  Saam Barati  <sbarati@apple.com>
+
+        REGRESSION (r265775): DFG ASSERTION FAILED: AI-clobberize disagreement; AI says FoldedClobber while clobberize says (Direct:[], Super:[])
+        https://bugs.webkit.org/show_bug.cgi?id=215639
+        <rdar://problem/67376432>
+
+        Reviewed by Robin Morisset.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2020-08-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         B3 IntRange is incorrect for negative masks
