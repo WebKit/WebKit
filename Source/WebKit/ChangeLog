@@ -1,3 +1,55 @@
+2020-08-19  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r265835. rdar://problem/67364266
+
+    WKWebViews using fastServerTrustEvaluationEnabled should only allow legacy TLS for main resource loads
+    https://bugs.webkit.org/show_bug.cgi?id=215626
+    <rdar://problem/67268892>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2020-08-18
+    Reviewed by Darin Adler.
+    
+    Source/WebKit:
+    
+    We have introduced public API webView:authenticationChallenge:shouldAllowDeprecatedTLS: in WKNavigationDelegate to allow
+    applications to choose whether to allow TLS 1.0 or 1.1 connections.  We don't want to break this API or break existing third party
+    apps that load pages that load third party subresources that use TLS 1.0 or 1.1.
+    
+    However, we do want Safari, which uses fastServerTrustEvaluationEnabled SPI, to silently fail subresource loads that use TLS 1.0 or 1.1.
+    This matches the current behavior of Chrome and Firefox, which was not implemented in those other browsers when we decided to ask about subresources.
+    
+    Covered by an API test.
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (WebKit::NetworkSessionCocoa::continueDidReceiveChallenge):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265835 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-18  Alex Christensen  <achristensen@webkit.org>
+
+            WKWebViews using fastServerTrustEvaluationEnabled should only allow legacy TLS for main resource loads
+            https://bugs.webkit.org/show_bug.cgi?id=215626
+            <rdar://problem/67268892>
+
+            Reviewed by Darin Adler.
+
+            We have introduced public API webView:authenticationChallenge:shouldAllowDeprecatedTLS: in WKNavigationDelegate to allow
+            applications to choose whether to allow TLS 1.0 or 1.1 connections.  We don't want to break this API or break existing third party
+            apps that load pages that load third party subresources that use TLS 1.0 or 1.1.
+
+            However, we do want Safari, which uses fastServerTrustEvaluationEnabled SPI, to silently fail subresource loads that use TLS 1.0 or 1.1.
+            This matches the current behavior of Chrome and Firefox, which was not implemented in those other browsers when we decided to ask about subresources.
+
+            Covered by an API test.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::NetworkSessionCocoa::continueDidReceiveChallenge):
+
 2020-08-17  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r265774. rdar://problem/67284328
