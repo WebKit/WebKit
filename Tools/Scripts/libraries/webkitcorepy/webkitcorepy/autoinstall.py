@@ -191,7 +191,7 @@ class Package(object):
         manifest = AutoInstall.manifest.get(self.name)
         if not manifest:
             return False
-        if manifest.get('index') != AutoInstall.index:
+        if AutoInstall.overwrite_foreign_packages and manifest.get('index') != AutoInstall.index:
             return False
         if not manifest.get('version'):
             return False
@@ -304,6 +304,10 @@ class AutoInstall(object):
     version = Version(sys.version_info[0], sys.version_info[1], sys.version_info[2])
     packages = {}
     manifest = {}
+
+    # When sharing an install location, projects may wish to overwrite packages on disk
+    # originating from a different index.
+    overwrite_foreign_packages = False
 
     @classmethod
     def _request(cls, url):
