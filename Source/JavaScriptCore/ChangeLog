@@ -1,3 +1,22 @@
+2020-08-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        B3 IntRange is incorrect for negative masks
+        https://bugs.webkit.org/show_bug.cgi?id=215536
+        <rdar://problem/67130430>
+
+        Reviewed by Michael Saboff and Robin Morisset.
+
+        In the B3 ReduceStrength phase, we compute rangeForMask as (0, mask).  This is correct for
+        positive values, but incorrect when negative. To fix it, we use `(INT_MIN & mask, INT_MAX & mask)`
+        as the range for negative masks.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.h:
+        * b3/testb3_1.cpp:
+        (run):
+        * b3/testb3_5.cpp:
+        (testCheckSubBitAnd):
+
 2020-08-18  Saam Barati  <sbarati@apple.com>
 
         Update byte offsets in JSString.h comment
