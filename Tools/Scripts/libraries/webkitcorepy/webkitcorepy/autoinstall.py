@@ -38,8 +38,9 @@ from xml.dom import minidom
 
 if sys.version_info > (3, 0):
     from urllib.request import urlopen
+    from urllib.error import URLError
 else:
-    from urllib2 import urlopen
+    from urllib2 import urlopen, URLError
 
 
 class Package(object):
@@ -384,15 +385,33 @@ class AutoInstall(object):
             cls.enabled = True
 
     @classmethod
-    def set_index(cls, index, check=True):
-        if check:
+    def set_index(cls, index, check=True, fatal=False):
+        if not check:
+            cls.index = index
+            return cls.index
+
+        def error(message):
+            if fatal:
+                raise ValueError(message)
+
+            sys.stderr.write('{}\n'.format(message))
+            sys.stderr.write('Falling back to current index, {}\n\n'.format(cls.index))
+
+        response = None
+        try:
             response = AutoInstall._request('https://{}/simple/pip/'.format(index))
-            try:
-                if response.code != 200:
-                    raise ValueError('Failed to set AutoInstall index to {}, received {} response when searching for pip'.format(index, response.code))
-            finally:
+            if response.code != 200:
+                error('Failed to set AutoInstall index to {}, received {} response when searching for simple/pip'.format(index, response.code))
+            else:
+                cls.index = index
+        except URLError:
+            error('Failed to set AutoInstall index to {}, no response from the server'.format(index))
+        finally:
+            if response:
                 response.close()
-        cls.index = index
+
+        return cls.index
+
 
     @classmethod
     def set_timeout(cls, timeout):

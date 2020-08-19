@@ -1,5 +1,17 @@
 2020-08-19  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitcorepy] Failure to set index should not be fatal
+        https://bugs.webkit.org/show_bug.cgi?id=215653
+        <rdar://problem/67410416>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (AutoInstall.set_index): By default, log an error instead of raising an exception if an index is unreachable.
+
+2020-08-19  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitpy] Adopt webkitcorepy's OutputCapture
         https://bugs.webkit.org/show_bug.cgi?id=215628
         <rdar://problem/67353710>
