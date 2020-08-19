@@ -34,14 +34,15 @@
 ] interface AudioBuffer {
     [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] constructor(AudioBufferOptions options);
     readonly attribute unsigned long length; // in sample-frames
-    readonly attribute unrestricted float duration; // in seconds
-    readonly attribute unrestricted float sampleRate; // in sample-frames per second
-
-    attribute unrestricted float gain; // linear gain (default 1.0)
+    readonly attribute double duration; // in seconds
+    readonly attribute float sampleRate; // in sample-frames per second
+    readonly attribute unsigned long numberOfChannels;
 
     // Channel access
-    readonly attribute unsigned long numberOfChannels;
     [MayThrowException] Float32Array getChannelData(unsigned long channelIndex);
     [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] void copyFromChannel(Float32Array destination, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
     [MayThrowException, EnabledBySetting=ModernUnprefixedWebAudio] void copyToChannel(Float32Array source, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
+
+    // FIXME: This is not part of the specification.
+    attribute unrestricted float gain; // linear gain (default 1.0)
 };

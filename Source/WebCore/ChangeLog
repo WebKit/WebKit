@@ -1,3 +1,19 @@
+2020-08-18  Chris Dumez  <cdumez@apple.com>
+
+        AudioBuffer.duration should use double precision
+        https://bugs.webkit.org/show_bug.cgi?id=215632
+
+        Reviewed by Darin Adler.
+
+        AudioBuffer.duration should use double precision:
+        - https://www.w3.org/TR/webaudio/#AudioBuffer
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioBuffer.h:
+        (WebCore::AudioBuffer::duration const):
+        * Modules/webaudio/AudioBuffer.idl:
+
 2020-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename replaceAllChildren to replaceAllChildrenWithNewText
