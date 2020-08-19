@@ -1,3 +1,18 @@
+2020-08-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Restore a 10_15_* user-agent string when requesting desktop site
+        https://bugs.webkit.org/show_bug.cgi?id=215657
+        <rdar://problem/67376157>
+
+        Reviewed by Tim Horton.
+
+        Reporting a major version of `11_0` causes numerous compatibility issues on websites that attempt to parse major
+        and minor versions from the user agent string. This partially reverts r263970, and replaces the string with
+        `10_15_6`, which matches the UA string of the latest shipped macOS version.
+
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::standardUserAgentWithApplicationName):
+
 2020-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r265092): delegatesFocus causes WebKit to crash
