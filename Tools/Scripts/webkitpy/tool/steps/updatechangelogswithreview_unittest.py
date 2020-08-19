@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,30 +27,33 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
+
+from webkitcorepy import OutputCapture
 
 
 class UpdateChangeLogsWithReviewerTest(unittest.TestCase):
     def test_guess_reviewer_from_bug(self):
-        capture = OutputCapture()
         step = UpdateChangeLogsWithReviewer(MockTool(), MockOptions())
-        expected_logs = "No reviewed patches on bug 50001, cannot infer reviewer.\n"
-        capture.assert_outputs(self, step._guess_reviewer_from_bug, [50001], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            step._guess_reviewer_from_bug(50001)
+        self.assertEqual(captured.root.log.getvalue(), 'No reviewed patches on bug 50001, cannot infer reviewer.\n')
 
     def test_guess_reviewer_from_multipatch_bug(self):
-        capture = OutputCapture()
         step = UpdateChangeLogsWithReviewer(MockTool(), MockOptions())
-        expected_logs = "Guessing \"Reviewer2\" as reviewer from attachment 10001 on bug 50000.\n"
-        capture.assert_outputs(self, step._guess_reviewer_from_bug, [50000], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            step._guess_reviewer_from_bug(50000)
+        self.assertEqual(captured.root.log.getvalue(), 'Guessing "Reviewer2" as reviewer from attachment 10001 on bug 50000.\n')
 
     def test_empty_state(self):
-        capture = OutputCapture()
         options = MockOptions()
         options.reviewer = 'MOCK reviewer'
         options.git_commit = 'MOCK git commit'
         step = UpdateChangeLogsWithReviewer(MockTool(), options)
-        capture.assert_outputs(self, step.run, [{}])
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(captured.root.log.getvalue(), '')

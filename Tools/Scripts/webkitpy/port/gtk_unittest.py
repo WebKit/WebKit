@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,19 +27,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import sys
 import unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.port.config import clear_cached_configuration
 from webkitpy.port.gtk import GtkPort
 from webkitpy.port.pulseaudio_sanitizer_mock import PulseAudioSanitizerMock
 from webkitpy.port import port_testcase
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
+
+from webkitcorepy import OutputCapture
 
 
 class GtkPortTest(port_testcase.PortTestCase):
@@ -72,8 +75,12 @@ class GtkPortTest(port_testcase.PortTestCase):
         port._filesystem = MockFileSystem({
             "/mock-build/bin/MiniBrowser": ""
         })
-        expected_logs = "MOCK run_command: ['/mock-build/bin/MiniBrowser', 'file://test.html'], cwd=/mock-checkout\n"
-        OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            port.show_results_html_file('test.html')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "MOCK run_command: ['/mock-build/bin/MiniBrowser', 'file://test.html'], cwd=/mock-checkout\n",
+        )
 
     def test_default_timeout_ms(self):
         self.assertEqual(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 15000)

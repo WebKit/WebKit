@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import unittest
 
@@ -40,8 +42,9 @@ from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem import FileSystem  # FIXME: This should not be needed.
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
+
+from webkitcorepy import OutputCapture
 
 
 _changelog1entry1 = u"""2010-03-25  Fr\u00e9d\u00e9ric Wang  <fred.wang@free.fr>
@@ -446,5 +449,9 @@ class CheckoutTest(unittest.TestCase):
         mock_patch = Mock()
         mock_patch.contents = lambda: "foo"
         mock_patch.reviewer = lambda: None
-        expected_logs = "MOCK run_command: ['svn-apply', '--force'], cwd=/mock-checkout, input=foo\n"
-        OutputCapture().assert_outputs(self, checkout.apply_patch, [mock_patch], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            checkout.apply_patch(mock_patch)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "MOCK run_command: ['svn-apply', '--force'], cwd=/mock-checkout, input=foo\n",
+        )

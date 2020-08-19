@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -32,9 +33,10 @@ import unittest
 from webkitpy.common.checkout import changelog_unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.preparechangelog import PrepareChangeLog
+
+from webkitcorepy import OutputCapture
 
 
 class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
@@ -116,7 +118,6 @@ class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
             self.assertEquals(actual_output, end_file)
 
     def test_ensure_bug_url(self):
-        capture = OutputCapture()
         step = PrepareChangeLog(MockTool(), MockOptions())
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
         changelog_path = "ChangeLog"
@@ -127,7 +128,10 @@ class PrepareChangeLogTest(changelog_unittest.ChangeLogTest):
         }
         step._tool.filesystem = MockFileSystem()
         step._tool.filesystem.write_text_file(changelog_path, changelog_contents)
-        capture.assert_outputs(self, step._ensure_bug_url, [state])
+
+        with OutputCapture():
+            step._ensure_bug_url(state)
+
         actual_contents = step._tool.filesystem.read_text_file(changelog_path)
         expected_message = "Example title\n        http://example.com/1234"
         expected_contents = changelog_contents.replace("Need a short description (OOPS!).\n        Need the bug URL (OOPS!).", expected_message)

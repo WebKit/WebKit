@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,21 +27,27 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.suggestreviewers import SuggestReviewers
+
+from webkitcorepy import OutputCapture
 
 
 class SuggestReviewersTest(unittest.TestCase):
     def test_disabled(self):
         step = SuggestReviewers(MockTool(), MockOptions(suggest_reviewers=False))
-        OutputCapture().assert_outputs(self, step.run, [{}])
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_basic(self):
         capture = OutputCapture()
         step = SuggestReviewers(MockTool(), MockOptions(suggest_reviewers=True, git_commit=None))
-        expected_stdout = "The following reviewers have recently modified files in your patch:\nFoo Bar\n"
-        expected_logs = "Would you like to CC them?\n"
-        capture.assert_outputs(self, step.run, [{"bug_id": "123"}], expected_stdout=expected_stdout, expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run(dict(bug_id='123'))
+        self.assertEqual(captured.stdout.getvalue(), 'The following reviewers have recently modified files in your patch:\nFoo Bar\n')
+        self.assertEqual(captured.root.log.getvalue(), 'Would you like to CC them?\n')

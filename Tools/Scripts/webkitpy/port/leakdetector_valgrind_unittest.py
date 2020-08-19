@@ -23,13 +23,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
-from webkitcorepy import string_utils
+from webkitcorepy import string_utils, OutputCapture
 
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.port.leakdetector_valgrind import LeakDetectorValgrind
 
 
@@ -823,7 +823,9 @@ class LeakDetectorValgrindTest(unittest.TestCase):
 
         leakdetector_valgrind = LeakDetectorValgrind(MockExecutive2(run_command_fn=mock_run_cppfilt_command), MockFileSystem(files), '/tmp/layout-test-results/')
 
-        OutputCapture().assert_outputs(self, leakdetector_valgrind.parse_and_print_leaks_detail, [files], expected_logs=make_mock_valgrind_results())
+        with OutputCapture(level=logging.INFO) as captured:
+            leakdetector_valgrind.parse_and_print_leaks_detail(files)
+        self.assertEqual(captured.root.log.getvalue(), make_mock_valgrind_results())
 
     def test_parse_and_print_leaks_detail_incomplete(self):
         mock_incomplete_valgrind_output = make_mock_incomplete_valgrind_output('DumpRenderTree', 28531, 'e8c7d7b83be411e390c9d43d7e01ba08')
@@ -831,14 +833,18 @@ class LeakDetectorValgrindTest(unittest.TestCase):
         files['/tmp/layout-test-results/drt-28531-e8c7d7b83be411e390c9d43d7e01ba08-leaks.xml'] = mock_incomplete_valgrind_output
         leakdetector_valgrind = LeakDetectorValgrind(MockExecutive2(), MockFileSystem(files), '/tmp/layout-test-results/')
 
-        OutputCapture().assert_outputs(self, leakdetector_valgrind.parse_and_print_leaks_detail, [files], expected_logs=make_mock_valgrind_results_incomplete())
+        with OutputCapture(level=logging.INFO) as captured:
+            leakdetector_valgrind.parse_and_print_leaks_detail(files)
+        self.assertEqual(captured.root.log.getvalue(), make_mock_valgrind_results_incomplete())
 
     def test_parse_and_print_leaks_detail_empty(self):
         files = {}
         files['/tmp/Logs/layout-test-results/drt-28532-ebc9a6c63be411e399d4d43d7e01ba08-leaks.xml'] = ""
         leakdetector_valgrind = LeakDetectorValgrind(MockExecutive2(), MockFileSystem(files), '/tmp/layout-test-results/')
 
-        OutputCapture().assert_outputs(self, leakdetector_valgrind.parse_and_print_leaks_detail, [files], expected_logs=make_mock_valgrind_results_empty())
+        with OutputCapture(level=logging.INFO) as captured:
+            leakdetector_valgrind.parse_and_print_leaks_detail(files)
+        self.assertEqual(captured.root.log.getvalue(), make_mock_valgrind_results_empty())
 
     def test_parse_and_print_leaks_detail_misformatted(self):
         self.maxDiff = None
@@ -847,4 +853,6 @@ class LeakDetectorValgrindTest(unittest.TestCase):
         files['/tmp/layout-test-results/drt-28533-fa6d0cd63be411e39c72d43d7e01ba08-leaks.xml'] = misformatted_mock_valgrind_output
         leakdetector_valgrind = LeakDetectorValgrind(MockExecutive2(), MockFileSystem(files), '/tmp/layout-test-results/')
 
-        OutputCapture().assert_outputs(self, leakdetector_valgrind.parse_and_print_leaks_detail, [files], expected_logs=make_mock_valgrind_results_misformatted())
+        with OutputCapture(level=logging.INFO) as captured:
+            leakdetector_valgrind.parse_and_print_leaks_detail(files)
+        self.assertEqual(captured.root.log.getvalue(), make_mock_valgrind_results_misformatted())

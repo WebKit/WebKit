@@ -29,7 +29,6 @@
 import sys
 import unittest
 
-from webkitpy.common.system import outputcapture
 from webkitpy.common.system import stack_utils
 
 

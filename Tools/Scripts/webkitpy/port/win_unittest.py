@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,10 +27,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitcorepy import Version
+import logging
+
+from webkitcorepy import Version, OutputCapture
 
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version_name_map import PUBLIC_TABLE, VersionNameMap
 from webkitpy.port import port_testcase
@@ -46,14 +48,13 @@ class WinPortTest(port_testcase.PortTestCase):
     def test_show_results_html_file(self):
         port = self.make_port()
         port._executive = MockExecutive(should_log=True)
-        capture = OutputCapture()
-        capture.capture_output()
-        port.show_results_html_file('test.html')
-        _, _, logs = capture.restore_output()
+        with OutputCapture(level=logging.INFO) as captured:
+            port.show_results_html_file('test.html')
+
         # We can't know for sure what path will be produced by cygpath, but we can assert about
         # everything else.
-        self.assertTrue(logs.startswith("MOCK run_command: ['Tools/Scripts/run-safari', '--release', '"))
-        self.assertTrue(logs.endswith("test.html'], cwd=/mock-checkout\n"))
+        self.assertTrue(captured.root.log.getvalue().startswith("MOCK run_command: ['Tools/Scripts/run-safari', '--release', '"))
+        self.assertTrue(captured.root.log.getvalue().endswith("test.html'], cwd=/mock-checkout\n"))
 
     def _assert_search_path(self, expected_search_paths, version, use_webkit2=False):
         port = self.make_port(port_name='win', os_version=version, options=MockOptions(webkit_test_runner=use_webkit2))

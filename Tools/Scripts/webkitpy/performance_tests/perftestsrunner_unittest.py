@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,14 +30,16 @@
 """Unit tests for run_perf_tests."""
 
 import json
+import logging
 import unittest
 
 from webkitcorepy import StringIO
 
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.port.test import TestPort
 from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
+
+from webkitcorepy import OutputCapture
 
 
 class MainTest(unittest.TestCase):
@@ -210,11 +213,12 @@ class MainTest(unittest.TestCase):
 
         MockFileUploader.reset()
         MockFileUploader.upload_single_text_file_return_value = StringIO('Some error')
-        output = OutputCapture()
-        output.capture_output()
-        self.assertFalse(runner._upload_json('https://some.host', 'some.json', '/some/path', MockFileUploader))
-        _, _, logs = output.restore_output()
-        self.assertEqual(logs, 'Uploaded JSON to https://some.host/some/path but got a bad response:\nSome error\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self.assertFalse(runner._upload_json('https://some.host', 'some.json', '/some/path', MockFileUploader))
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Uploaded JSON to https://some.host/some/path but got a bad response:\nSome error\n',
+        )
 
         # Throwing an exception upload_single_text_file shouldn't blow up _upload_json
         MockFileUploader.reset()
@@ -229,9 +233,10 @@ class MainTest(unittest.TestCase):
 
         MockFileUploader.reset()
         MockFileUploader.upload_single_text_file_return_value = StringIO('{"status": "SomethingHasFailed", "failureStored": false}')
-        output = OutputCapture()
-        output.capture_output()
-        self.assertFalse(runner._upload_json('https://some.host', 'some.json', '/some/path', MockFileUploader))
-        _, _, logs = output.restore_output()
+        with OutputCapture(level=logging.INFO) as captured:
+            self.assertFalse(runner._upload_json('https://some.host', 'some.json', '/some/path', MockFileUploader))
         serialized_json = json.dumps({'status': 'SomethingHasFailed', 'failureStored': False}, indent=4)
-        self.assertEqual(logs, 'Uploaded JSON to https://some.host/some/path but got an error:\n%s\n' % serialized_json)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Uploaded JSON to https://some.host/some/path but got an error:\n{}\n'.format(serialized_json),
+        )

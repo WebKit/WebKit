@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,11 +29,12 @@ import webkitpy.style.checker as checker
 
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture, OutputCaptureScope
 from webkitpy.common.system.logtesting import LogTesting
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.filereader import TextFileReader
 from webkitpy.style.main import change_directory
+
+from webkitcorepy import OutputCapture
 
 
 class ChangeDirectoryTest(unittest.TestCase):
@@ -116,11 +118,12 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
     def test_no_linter_errors(self):
         host = self._generate_testing_host()
 
-        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
-        with scope:
+        with OutputCapture(level=logging.ERROR) as captured:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.do_association_check('/mock-checkout', host)
-        self.assertEqual(scope.captured_output, ('', '', ''))
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_linter_duplicate_line(self):
         files = {
@@ -128,14 +131,23 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
-        with scope:
+        with OutputCapture(level=logging.ERROR) as captured:
+            file_reader = self._generate_file_reader(host.filesystem)
+            file_reader.do_association_check('/mock-checkout', host)
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), '')
+
+        with OutputCapture(level=logging.ERROR) as captured:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations', line_numbers=[1, 2, 3])
             file_reader.do_association_check('/mock-checkout', host)
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
-            scope.captured_output,
-            ('', '', '/mock-checkout/LayoutTests/TestExpectations:3:  Duplicate or ambiguous entry lines LayoutTests/TestExpectations:2 and LayoutTests/TestExpectations:3.  [test/expectations] [5]\n'))
+            captured.root.log.getvalue(),
+            '/mock-checkout/LayoutTests/TestExpectations:3:  Duplicate or ambiguous entry lines LayoutTests/TestExpectations:2 and LayoutTests/TestExpectations:3.  [test/expectations] [5]\n',
+        )
 
     def test_linter_duplicate_line_no_edit(self):
         files = {
@@ -143,12 +155,13 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
-        with scope:
+        with OutputCapture(level=logging.ERROR) as captured:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.process_paths(['/mock-checkout/LayoutTests/platform/ios/TestExpectations'])
             file_reader.do_association_check('/mock-checkout', host)
-        self.assertEqual(scope.captured_output, ('', '', ''))
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_linter_duplicate_line_edit_in_file(self):
         files = {
@@ -156,12 +169,13 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
-        with scope:
+        with OutputCapture(level=logging.ERROR) as captured:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations', line_numbers=[1])
             file_reader.do_association_check('/mock-checkout', host)
-        self.assertEqual(scope.captured_output, ('', '', ''))
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_linter_duplicate_line_only_deletes(self):
         files = {
@@ -169,12 +183,13 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
                 '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
-        with scope:
+        with OutputCapture(level=logging.ERROR) as captured:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations')
             file_reader.do_association_check('/mock-checkout', host)
-        self.assertEqual(scope.captured_output, ('', '', ''))
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_linter_added_file_with_error(self):
         files = {
@@ -182,12 +197,16 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
-        with scope:
+        with OutputCapture(level=logging.ERROR) as captured:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations', line_numbers=[1, 2, 3])
             file_reader.do_association_check('/mock-checkout', host)
-        self.assertEqual(scope.captured_output, ('', '', '/mock-checkout/LayoutTests/TestExpectations:3:  Duplicate or ambiguous entry lines LayoutTests/TestExpectations:2 and LayoutTests/TestExpectations:3.  [test/expectations] [5]\n'))
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            '/mock-checkout/LayoutTests/TestExpectations:3:  Duplicate or ambiguous entry lines LayoutTests/TestExpectations:2 and LayoutTests/TestExpectations:3.  [test/expectations] [5]\n',
+        )
 
     def test_linter_deleted_file(self):
         files = {
@@ -195,14 +214,16 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/deleted-test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
-        with scope:
+        with OutputCapture(level=logging.ERROR) as captured:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.delete_file('/mock-checkout/LayoutTests/css1/deleted-test.html')
             file_reader.do_association_check('/mock-checkout', host)
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
-            scope.captured_output,
-            ('', '', '/mock-checkout/LayoutTests/TestExpectations:2:  Path does not exist.  [test/expectations] [5]\n'))
+            captured.root.log.getvalue(),
+            '/mock-checkout/LayoutTests/TestExpectations:2:  Path does not exist.  [test/expectations] [5]\n',
+        )
 
     def test_linter_deleted_file_no_edit(self):
         files = {
@@ -210,9 +231,10 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/deleted-test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
-        with scope:
+        with OutputCapture(level=logging.ERROR) as captured:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.delete_file('/mock-checkout/LayoutTests/css1/other-deleted-test.html')
             file_reader.do_association_check('/mock-checkout', host)
-        self.assertEqual(scope.captured_output, ('', '', ''))
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), '')

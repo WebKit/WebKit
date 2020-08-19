@@ -31,7 +31,6 @@ import json
 import sys
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.port import builders
 from webkitpy.thirdparty.mock import Mock
@@ -39,6 +38,8 @@ from webkitpy.tool.mocktool import MockTool
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.host_mock import MockHost
 from webkitpy.tool.servers.gardeningserver import *
+
+from webkitcorepy import OutputCapture
 
 
 class TestPortFactory(object):
@@ -89,7 +90,10 @@ class GardeningServerTest(unittest.TestCase):
         handler = TestGardeningHTTPRequestHandler(server or MockServer())
         handler.path = path
         handler.body = body
-        OutputCapture().assert_outputs(self, handler.do_POST, expected_stderr=expected_stderr, expected_stdout=expected_stdout)
+        with OutputCapture() as captured:
+            handler.do_POST()
+        self.assertEqual(captured.stdout, expected_stdout)
+        self.assertEqual(captured.stderr, expected_stderr)
 
     def disabled_test_revert(self):
         expected_stderr = "MOCK run_command: ['echo', 'revert', '--force-clean', '--non-interactive', '2314', 'MOCK revert reason'], cwd=/mock-checkout\n"

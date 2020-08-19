@@ -1,5 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,11 +27,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *
 from webkitpy.tool.mocktool import MockTool
+
+from webkitcorepy import OutputCapture
 
 
 class TestQueue(AbstractPatchQueue):
@@ -90,10 +91,15 @@ class PatchProcessingQueueTest(CommandsTest):
         queue._options = Mock()
         queue._options.port = None
         patch = queue._tool.bugs.fetch_attachment(10001)
-        expected_logs = """MOCK add_attachment_to_bug: bug_id=50000, description=Archive of layout-test-results for mac-highsierra filename=layout-test-results.zip mimetype=None
+
+        with OutputCapture(level=logging.INFO) as captured:
+            queue._upload_results_archive_for_patch(patch, Mock())
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            """MOCK add_attachment_to_bug: bug_id=50000, description=Archive of layout-test-results for mac-highsierra filename=layout-test-results.zip mimetype=None
 -- Begin comment --
 The attached test failures were seen while running run-webkit-tests on the mock-queue.
 Port: mac-highsierra  Platform: MockPlatform 1.0
 -- End comment --
-"""
-        OutputCapture().assert_outputs(self, queue._upload_results_archive_for_patch, [patch, Mock()], expected_logs=expected_logs)
+""",
+        )

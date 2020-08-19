@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -33,13 +34,13 @@ import unittest
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system import executive_mock
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.host_mock import MockHost
-
 from webkitpy.port import Port
 from webkitpy.port.test import add_unit_tests_to_mock_filesystem, TestPort
+
+from webkitcorepy import OutputCapture
 
 
 def cmp(a, b):
@@ -67,15 +68,13 @@ class PortTest(unittest.TestCase):
 
     def test_pretty_patch_os_error(self):
         port = self.make_port(executive=executive_mock.MockExecutive2(exception=OSError))
-        oc = OutputCapture()
-        oc.capture_output()
-        self.assertEqual(port.pretty_patch.pretty_patch_text("patch.txt"),
-                         port.pretty_patch.pretty_patch_error_html)
+        with OutputCapture():
+            self.assertEqual(port.pretty_patch.pretty_patch_text("patch.txt"),
+                             port.pretty_patch.pretty_patch_error_html)
 
-        # This tests repeated calls to make sure we cache the result.
-        self.assertEqual(port.pretty_patch.pretty_patch_text("patch.txt"),
-                         port.pretty_patch.pretty_patch_error_html)
-        oc.restore_output()
+            # This tests repeated calls to make sure we cache the result.
+            self.assertEqual(port.pretty_patch.pretty_patch_text("patch.txt"),
+                             port.pretty_patch.pretty_patch_error_html)
 
     def test_pretty_patch_script_error(self):
         # FIXME: This is some ugly white-box test hacking ...
@@ -330,20 +329,16 @@ class PortTest(unittest.TestCase):
     def test_check_httpd_success(self):
         port = self.make_port(executive=MockExecutive2())
         port._path_to_apache = lambda: '/usr/sbin/httpd'
-        capture = OutputCapture()
-        capture.capture_output()
-        self.assertTrue(port.check_httpd())
-        _, _, logs = capture.restore_output()
-        self.assertEqual('', logs)
+        with OutputCapture() as captured:
+            self.assertTrue(port.check_httpd())
+        self.assertEqual('', captured.root.log.getvalue())
 
     def test_httpd_returns_error_code(self):
         port = self.make_port(executive=MockExecutive2(exit_code=1))
         port._path_to_apache = lambda: '/usr/sbin/httpd'
-        capture = OutputCapture()
-        capture.capture_output()
-        self.assertFalse(port.check_httpd())
-        _, _, logs = capture.restore_output()
-        self.assertEqual('httpd seems broken. Cannot run http tests.\n', logs)
+        with OutputCapture() as captured:
+            self.assertFalse(port.check_httpd())
+        self.assertEqual('httpd seems broken. Cannot run http tests.\n', captured.root.log.getvalue())
 
     def test_test_exists(self):
         port = self.make_port(with_tests=True)

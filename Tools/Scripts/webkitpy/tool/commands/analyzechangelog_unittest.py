@@ -1,4 +1,5 @@
-# Cpyright (c) 2011 Google Inc. All rights reserved.
+# Copyright (c) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -31,11 +32,12 @@ import sys
 from webkitpy.common.config.contributionareas import ContributionAreas
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.commands.analyzechangelog import AnalyzeChangeLog
 from webkitpy.tool.commands.analyzechangelog import ChangeLogAnalyzer
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.multicommandtool import Command
+
+from webkitcorepy import OutputCapture
 
 
 class AnalyzeChangeLogTest(CommandsTest):
@@ -57,13 +59,9 @@ class AnalyzeChangeLogTest(CommandsTest):
         filesystem = MockFileSystem()
         test_json = {'array.json': [1, 2, 3, {'key': 'value'}], 'dictionary.json': {'somekey': 'somevalue', 'array': [4, 5]}}
 
-        capture = OutputCapture()
-        capture.capture_output()
-
-        AnalyzeChangeLog._generate_jsons(filesystem, test_json, 'bar')
-        self.assertEqual(set(filesystem.files.keys()), set(['bar/array.json', 'bar/dictionary.json']))
-
-        capture.restore_output()
+        with OutputCapture():
+            AnalyzeChangeLog._generate_jsons(filesystem, test_json, 'bar')
+            self.assertEqual(set(filesystem.files.keys()), {'bar/array.json', 'bar/dictionary.json'})
 
         self.assertEqual(json.loads(filesystem.files['bar/array.json']), test_json['array.json'])
         self.assertEqual(json.loads(filesystem.files['bar/dictionary.json']), test_json['dictionary.json'])
@@ -140,19 +138,17 @@ class ChangeLogAnalyzerTest(CommandsTest):
         (WebCore::AudioBus::loadPlatformResource):
 """
 
-        capture = OutputCapture()
-        capture.capture_output()
-
-        analyzer = ChangeLogAnalyzer(host, ['mock-checkout/foo/ChangeLog'])
-        analyzer.analyze()
-
-        capture.restore_output()
+        with OutputCapture():
+            analyzer = ChangeLogAnalyzer(host, ['mock-checkout/foo/ChangeLog'])
+            analyzer.analyze()
 
         self.assertEqual(analyzer.summary(),
             {'reviewed': 2, 'unreviewed': 1, 'contributors': 6, 'contributors_with_reviews': 2, 'contributors_without_reviews': 4})
 
-        self.assertEqual(set(analyzer.contributors_statistics().keys()),
-            set(['Sam Weinig', u'Mark Rowe', u'Kevin Ollivier', 'Martin Robinson', u'Philippe Normand', u'Zan Dobersek']))
+        self.assertEqual(
+            set(analyzer.contributors_statistics().keys()),
+            {'Sam Weinig', u'Mark Rowe', u'Kevin Ollivier', 'Martin Robinson', u'Philippe Normand', u'Zan Dobersek'},
+        )
 
         self.assertEqual(analyzer.contributors_statistics()['Sam Weinig'],
             {'reviews': {'files': {u'foo/platform/mac/WebCoreNSStringExtras.mm': 1, u'foo/platform/network/cf/SocketStreamHandleCFNet.cpp': 1},

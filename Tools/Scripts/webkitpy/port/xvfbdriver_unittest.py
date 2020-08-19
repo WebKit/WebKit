@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Zan Dobersek <zandobersek@gmail.com>
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -31,12 +32,13 @@ import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.port import Port
 from webkitpy.port.server_process_mock import MockServerProcess
 from webkitpy.port.xvfbdriver import XvfbDriver
 from webkitpy.tool.mocktool import MockOptions
+
+from webkitcorepy import OutputCapture
 
 _log = logging.getLogger(__name__)
 
@@ -65,7 +67,10 @@ class XvfbDriverTest(unittest.TestCase):
         driver._xvfb_process = None
 
     def assertDriverStartSuccessful(self, driver, expected_logs, expected_display, pixel_tests=False):
-        OutputCapture().assert_outputs(self, driver.start, [pixel_tests, []], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            driver.start(pixel_tests, [])
+        self.assertEqual(captured.root.log.getvalue(), expected_logs)
+
         self.assertTrue(driver._server_process.started)
         self.assertEqual(driver._server_process.env['DISPLAY'], expected_display)
         self.assertEqual(driver._server_process.env['GDK_BACKEND'], 'x11')
@@ -92,7 +97,8 @@ class XvfbDriverTest(unittest.TestCase):
 
         driver._xvfb_process = FakeXvfbProcess()
 
-        expected_logs = "MOCK kill_process pid: 1234\n"
-        OutputCapture().assert_outputs(self, driver.stop, [], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            driver.stop()
+        self.assertEqual(captured.root.log.getvalue(), "MOCK kill_process pid: 1234\n")
 
         self.assertIsNone(driver._xvfb_process)

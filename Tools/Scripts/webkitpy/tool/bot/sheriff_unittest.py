@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,13 +27,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
 from webkitpy.common.net.buildbot import Builder
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.sheriff import Sheriff
 from webkitpy.tool.mocktool import MockTool
+
+from webkitcorepy import OutputCapture
 
 
 class MockSheriffBot(object):
@@ -65,7 +68,12 @@ class SheriffTest(unittest.TestCase):
             sheriff.post_blame_comment_on_bug(commit_info, builders, ["mock-test-1"])
             sheriff.post_blame_comment_on_bug(commit_info, builders, ["mock-test-1", "mock-test-2"])
 
-        expected_logs = u"""MOCK bug comment: bug_id=1234, cc=['watcher@example.com'], see_also=None
+        with OutputCapture(level=logging.INFO) as captured:
+            run()
+
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            u"""MOCK bug comment: bug_id=1234, cc=['watcher@example.com'], see_also=None
 --- Begin comment ---
 https://trac.webkit.org/changeset/4321 might have broken Foo and Bar
 --- End comment ---
@@ -85,5 +93,5 @@ mock-test-1
 mock-test-2
 --- End comment ---
 
-"""
-        OutputCapture().assert_outputs(self, run, expected_logs=expected_logs)
+""",
+        )

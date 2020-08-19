@@ -1,4 +1,5 @@
 # Copyright (c) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,15 +27,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.irc_command import *
 from webkitpy.tool.mocktool import MockTool
 from webkitpy.common.net.web_mock import MockWeb
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+
+from webkitcorepy import OutputCapture
 
 
 class IRCCommandTest(unittest.TestCase):
@@ -86,8 +89,12 @@ class IRCCommandTest(unittest.TestCase):
         revert = Revert()
         tool = MockTool()
         tool.executive = MockExecutive(should_log=True)
-        expected_logs = "MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout\n"
-        OutputCapture().assert_outputs(self, revert._update_working_copy, [tool], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            revert._update_working_copy(tool)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout\n",
+        )
 
     def test_revert(self):
         revert = Revert()

@@ -34,8 +34,9 @@ import sys
 
 
 from webkitpy.common import webkitunittest
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.watchlist.watchlistparser import WatchListParser
+
+from webkitcorepy import OutputCapture
 
 
 class WatchListParserTest(webkitunittest.TestCase):
@@ -45,14 +46,21 @@ class WatchListParserTest(webkitunittest.TestCase):
 
     def test_bad_section(self):
         watch_list = ('{"FOO": {}}')
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='Unknown section "FOO" in watch list.\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Unknown section "FOO" in watch list.\n',
+        )
 
     def test_section_typo(self):
         watch_list = ('{"DEFINTIONS": {}}')
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='Unknown section "DEFINTIONS" in watch list.'
-                                       + '\n\nPerhaps it should be DEFINITIONS.\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Unknown section "DEFINTIONS" in watch list.\n\nPerhaps it should be DEFINITIONS.\n',
+        )
 
     def test_bad_definition(self):
         watch_list = (
@@ -64,8 +72,9 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='Invalid character "|" in definition "WatchList1|A".\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(captured.root.log.getvalue(), 'Invalid character "|" in definition "WatchList1|A".\n')
 
     def test_bad_filename_regex(self):
         watch_list = (
@@ -81,11 +90,13 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
         if sys.version_info > (3, 0):
             expected_log = 'The regex "*" is invalid due to "nothing to repeat at position 0".\n'
         else:
             expected_log = 'The regex "*" is invalid due to "nothing to repeat".\n'
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list], expected_logs=expected_log)
+        self.assertEqual(captured.root.log.getvalue(), expected_log)
 
     def test_bad_more_regex(self):
         watch_list = (
@@ -101,11 +112,13 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
         if sys.version_info > (3, 0):
             expected_log = 'The regex "*" is invalid due to "nothing to repeat at position 0".\n'
         else:
             expected_log = 'The regex "*" is invalid due to "nothing to repeat".\n'
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list], expected_logs=expected_log)
+        self.assertEqual(captured.root.log.getvalue(), expected_log)
 
     def test_bad_match_type(self):
         watch_list = (
@@ -121,8 +134,12 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='Unknown pattern type "nothing_matches_this" in definition "WatchList1".\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Unknown pattern type "nothing_matches_this" in definition "WatchList1".\n',
+        )
 
     def test_match_type_typo(self):
         watch_list = (
@@ -138,9 +155,12 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='Unknown pattern type "iflename" in definition "WatchList1".'
-                                       + '\n\nPerhaps it should be filename.\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Unknown pattern type "iflename" in definition "WatchList1".\n\nPerhaps it should be filename.\n',
+        )
 
     def test_empty_definition(self):
         watch_list = (
@@ -154,8 +174,12 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='The definition "WatchList1" has no patterns, so it should be deleted.\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'The definition "WatchList1" has no patterns, so it should be deleted.\n',
+        )
 
     def test_empty_cc_rule(self):
         watch_list = (
@@ -170,9 +194,13 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='A rule for definition "WatchList1" is empty, so it should be deleted.\n'
-                                       + 'The following definitions are not used and should be removed: WatchList1\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'A rule for definition "WatchList1" is empty, so it should be deleted.\nThe following definitions are not '
+            'used and should be removed: WatchList1\n',
+        )
 
     def test_cc_rule_with_invalid_email(self):
         watch_list = (
@@ -187,9 +215,13 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='The email alias levin+bad+email@chromium.org which is'
-                                       + ' in the watchlist is not listed as a contributor in contributors.json\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'The email alias levin+bad+email@chromium.org which is in the watchlist is not listed as a contributor in '
+            'contributors.json\n',
+        )
 
     def test_cc_rule_with_secondary_email(self):
         # FIXME: We should provide a mock of CommitterList so that we can test this on fake data.
@@ -205,8 +237,9 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(captured.root.log.getvalue(), '')
 
     def test_empty_message_rule(self):
         watch_list = (
@@ -222,9 +255,13 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='A rule for definition "WatchList1" is empty, so it should be deleted.\n'
-                                       + 'The following definitions are not used and should be removed: WatchList1\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'A rule for definition "WatchList1" is empty, so it should be deleted.\nThe following definitions are not '
+            'used and should be removed: WatchList1\n',
+        )
 
     def test_unused_defintion(self):
         watch_list = (
@@ -236,8 +273,12 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='The following definitions are not used and should be removed: WatchList1\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'The following definitions are not used and should be removed: WatchList1\n',
+        )
 
     def test_cc_rule_with_undefined_defintion(self):
         watch_list = (
@@ -247,8 +288,12 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='In section "CC_RULES", the following definitions are not used and should be removed: WatchList1\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'In section "CC_RULES", the following definitions are not used and should be removed: WatchList1\n',
+        )
 
     def test_message_rule_with_undefined_defintion(self):
         watch_list = (
@@ -258,8 +303,12 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='In section "MESSAGE_RULES", the following definitions are not used and should be removed: WatchList1\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'In section "MESSAGE_RULES", the following definitions are not used and should be removed: WatchList1\n',
+        )
 
     def test_cc_rule_with_undefined_defintion_with_suggestion(self):
         watch_list = (
@@ -277,9 +326,13 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='In section "CC_RULES", the following definitions are not used and should be removed: WatchList'
-                                       + '\n\nPerhaps it should be WatchList1.\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'In section "CC_RULES", the following definitions are not used and should be removed: '
+            'WatchList\n\nPerhaps it should be WatchList1.\n',
+        )
 
     def test_cc_rule_with_complex_logic(self):
         watch_list = (
@@ -303,8 +356,15 @@ class WatchListParserTest(webkitunittest.TestCase):
             '     },'
             '}')
 
-        OutputCapture().assert_outputs(self, self._watch_list_parser.parse, args=[watch_list],
-                                       expected_logs='In section "CC_RULES", the following definitions are not used and should be removed: WatchListUndefined\n\n' +
-                                       'Perhaps it should be WatchList3 or WatchList2 or WatchList1.\n' +
-                                       'In section "MESSAGE_RULES", the following definitions are not used and should be removed: WatchListUndefined\n\n' +
-                                       'Perhaps it should be WatchList3 or WatchList2 or WatchList1.\n')
+        with OutputCapture(level=logging.INFO) as captured:
+            self._watch_list_parser.parse(watch_list)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            '''In section "CC_RULES", the following definitions are not used and should be removed: WatchListUndefined
+
+Perhaps it should be WatchList3 or WatchList2 or WatchList1.
+In section "MESSAGE_RULES", the following definitions are not used and should be removed: WatchListUndefined
+
+Perhaps it should be WatchList3 or WatchList2 or WatchList1.
+''',
+        )

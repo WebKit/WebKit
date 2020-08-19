@@ -1,4 +1,5 @@
 # Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,13 +27,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import sys
 import unittest
 
 from optparse import make_option
-
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.multicommandtool import MultiCommandTool, Command, TryAgain
+
+from webkitcorepy import OutputCapture
 
 
 class TrivialCommand(Command):
@@ -87,8 +89,14 @@ class CommandTest(unittest.TestCase):
     def test_required_arguments(self):
         TrivialCommand.argument_names = "ARG1 ARG2 [ARG3]"
         two_required_arguments = TrivialCommand()
-        expected_logs = "2 arguments required, 1 argument provided.  Provided: 'foo'  Required: ARG1 ARG2\nSee 'trivial-tool help trivial' for usage.\n"
-        exit_code = OutputCapture().assert_outputs(self, two_required_arguments.check_arguments_and_execute, [None, ["foo"], TrivialTool()], expected_logs=expected_logs)
+
+        with OutputCapture(level=logging.INFO) as captured:
+            exit_code = two_required_arguments.check_arguments_and_execute(None, ["foo"], TrivialTool())
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "2 arguments required, 1 argument provided.  Provided: 'foo'  Required: ARG1 ARG2\nSee 'trivial-tool help trivial' for usage.\n",
+        )
+
         self.assertEqual(exit_code, 1)
         TrivialCommand.argument_names = None
 
@@ -129,7 +137,10 @@ class MultiCommandToolTest(unittest.TestCase):
         self.assertEqual(tool.command_by_name("bar"), None)
 
     def _assert_tool_main_outputs(self, tool, main_args, expected_stdout, expected_stderr="", expected_exit_code=0):
-        exit_code = OutputCapture().assert_outputs(self, tool.main, [main_args], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        with OutputCapture() as captured:
+            exit_code = tool.main(main_args)
+        self.assertEqual(captured.stdout.getvalue(), expected_stdout)
+        self.assertEqual(captured.stderr.getvalue(), expected_stderr)
         self.assertEqual(exit_code, expected_exit_code)
 
     def test_retry(self):

@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Balazs Ankes (bank@inf.u-szeged.hu) University of Szeged
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -27,7 +28,8 @@ from webkitpy.tool.steps.addsvnmimetypeforpng import AddSvnMimetypeForPng
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.common.system.outputcapture import OutputCapture
+
+from webkitcorepy import OutputCapture
 
 
 class MockSCMDetector(object):
@@ -41,7 +43,6 @@ class MockSCMDetector(object):
 
 class AddSvnMimetypeForPngTest(unittest.TestCase):
     def test_run(self):
-        capture = OutputCapture()
         options = MockOptions(git_commit='MOCK git commit')
 
         files = {'/Users/mock/.subversion/config': 'enable-auto-props = yes\n*.png = svn:mime-type=image/png'}
@@ -53,6 +54,7 @@ class AddSvnMimetypeForPngTest(unittest.TestCase):
             "changed_files": ["test.png", "test.txt"],
         }
         try:
-            capture.assert_outputs(self, step.run, [state])
+            with OutputCapture():
+                step.run(state)
         except SystemExit as e:
             self.assertEqual(e.code, 1)

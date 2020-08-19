@@ -33,7 +33,6 @@ import unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.port.config import clear_cached_configuration
 from webkitpy.port.wpe import WPEPort
 from webkitpy.port.pulseaudio_sanitizer_mock import PulseAudioSanitizerMock

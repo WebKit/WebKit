@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Google, Inc.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -28,8 +29,9 @@ from webkitcorepy import StringIO
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import Executive
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.test.main import Tester, _Loader
+
+from webkitcorepy import OutputCapture
 
 
 STUBS_CLASS = __name__ + ".TestStubs"
@@ -63,16 +65,12 @@ class TesterTest(unittest.TestCase):
 
         tester.printer.stream = errors
         tester.finder.find_names = lambda args, run_all: []
-        oc = OutputCapture()
-        try:
-            oc.capture_output()
+        with OutputCapture(level=logging.INFO) as captured:
             self.assertFalse(tester.run())
-        finally:
-            _, _, logs = oc.restore_output()
-            root_logger.handlers = root_handlers
+        root_logger.handlers = root_handlers
 
         self.assertIn('No tests to run', errors.getvalue())
-        self.assertIn('No tests to run', logs)
+        self.assertIn('No tests to run', captured.root.log.getvalue())
 
     def _find_test_names(self, args):
         tester = Tester()

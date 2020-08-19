@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,12 +27,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitcorepy import Version
+import logging
+
+from webkitcorepy import Version, OutputCapture
 
 from webkitpy.port.mac import MacPort
 from webkitpy.port import darwin_testcase
 from webkitpy.port import port_testcase
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, ScriptError
 from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
@@ -93,8 +94,12 @@ class MacTest(darwin_testcase.DarwinTest):
         port = self.make_port()
         # Delay setting a should_log executive to avoid logging from MacPort.__init__.
         port._executive = MockExecutive(should_log=True)
-        expected_logs = "MOCK popen: ['Tools/Scripts/run-safari', '--release', '--no-saved-state', '-NSOpen', 'test.html'], cwd=/mock-checkout\n"
-        OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            port.show_results_html_file('test.html')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "MOCK popen: ['Tools/Scripts/run-safari', '--release', '--no-saved-state', '-NSOpen', 'test.html'], cwd=/mock-checkout\n"
+        )
 
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())
@@ -106,14 +111,22 @@ class MacTest(darwin_testcase.DarwinTest):
 
         bytes_for_drt = 200 * 1024 * 1024
         port.host.platform.total_bytes_memory = lambda: bytes_for_drt
-        expected_logs = "This machine could support 2 child processes, but only has enough memory for 1.\n"
-        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            child_processes = port.default_child_processes()
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "This machine could support 2 child processes, but only has enough memory for 1.\n"
+        )
         self.assertEqual(child_processes, 1)
 
         # Make sure that we always use one process, even if we don't have the memory for it.
         port.host.platform.total_bytes_memory = lambda: bytes_for_drt - 1
-        expected_logs = "This machine could support 2 child processes, but only has enough memory for 1.\n"
-        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            child_processes = port.default_child_processes()
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "This machine could support 2 child processes, but only has enough memory for 1.\n"
+        )
         self.assertEqual(child_processes, 1)
 
     def test_32bit(self):
@@ -171,8 +184,12 @@ class MacTest(darwin_testcase.DarwinTest):
 
         port = self.make_port()
         port._executive = MockExecutive2(run_command_fn=throwing_run_command)
-        expected_stdout = "['xcrun', '--sdk', 'macosx', '-find', 'test']\n"
-        OutputCapture().assert_outputs(self, port.xcrun_find, args=['test', 'falling'], expected_stdout=expected_stdout)
+        with OutputCapture() as captured:
+            port.xcrun_find('test', 'falling')
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "['xcrun', '--sdk', 'macosx', '-find', 'test']\n"
+        )
 
     def test_layout_test_searchpath_with_apple_additions(self):
         with port_testcase.bind_mock_apple_additions():

@@ -1,4 +1,5 @@
 # Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,10 +33,11 @@ import unittest
 from webkitcorepy import unicode
 
 from webkitpy.common.host import Host
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 from webkitpy.w3c.test_converter import _W3CTestConverter
+
+from webkitcorepy import OutputCapture
 
 DUMMY_FILENAME = 'dummy.html'
 DUMMY_PATH = 'dummy/testharness/path'
@@ -83,14 +85,10 @@ CONTENT OF TEST
 """
         converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
 
-        oc = OutputCapture()
-        oc.capture_output()
-        try:
+        with OutputCapture():
             converter.feed(test_html)
             converter.close()
             converted = converter.output()
-        finally:
-            oc.restore_output()
 
         self.verify_no_conversion_happened(converted, test_html)
 
@@ -135,14 +133,10 @@ CONTENT OF TEST
         converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME, None)
         test_content = self.generate_test_content_properties_and_values(converter.prefixed_properties, converter.prefixed_property_values, 1, test_html)
 
-        oc = OutputCapture()
-        oc.capture_output()
-        try:
+        with OutputCapture():
             converter.feed(test_content[2])
             converter.close()
             converted = converter.output()
-        finally:
-            oc.restore_output()
 
         self.verify_conversion_happened(converted)
         self.verify_test_harness_paths(converter, converted[2], fake_dir_path, 1, 1)
@@ -172,15 +166,11 @@ CONTENT OF TEST
         fake_dir_path = self.fake_dir_path('harnessandprops')
         converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME, None)
 
-        oc = OutputCapture()
-        oc.capture_output()
-        try:
+        with OutputCapture():
             test_content = self.generate_test_content_properties_and_values(converter.prefixed_properties, converter.prefixed_property_values, 2, test_html)
             converter.feed(test_content[2])
             converter.close()
             converted = converter.output()
-        finally:
-            oc.restore_output()
 
         self.verify_conversion_happened(converted)
         self.verify_test_harness_paths(converter, converted[2], fake_dir_path, 1, 1)
@@ -199,14 +189,10 @@ CONTENT OF TEST
         fake_dir_path = self.fake_dir_path('testharnesspaths')
         converter = _W3CTestConverter(fake_dir_path, DUMMY_FILENAME, None)
 
-        oc = OutputCapture()
-        oc.capture_output()
-        try:
+        with OutputCapture():
             converter.feed(test_html)
             converter.close()
             converted = converter.output()
-        finally:
-            oc.restore_output()
 
         self.verify_conversion_happened(converted)
         self.verify_test_harness_paths(converter, converted[2], fake_dir_path, 2, 1)
@@ -279,14 +265,10 @@ CONTENT OF TEST
         converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, None)
         test_content = self.generate_test_content_properties_and_values(converter.prefixed_properties, converter.prefixed_property_values, 20, test_html)
 
-        oc = OutputCapture()
-        oc.capture_output()
-        try:
+        with OutputCapture():
             converter.feed(test_content[2])
             converter.close()
             converted = converter.output()
-        finally:
-            oc.restore_output()
 
         self.verify_conversion_happened(converted)
         self.verify_prefixed_properties(converted, test_content[0])
@@ -311,14 +293,10 @@ CONTENT OF TEST
                                        'elements': ['script', 'style', 'img', 'link', 'video']}
         converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, test_reference_support_info)
 
-        oc = OutputCapture()
-        oc.capture_output()
-        try:
+        with OutputCapture():
             converter.feed(test_html)
             converter.close()
             converted = converter.output()
-        finally:
-            oc.restore_output()
 
         self.verify_conversion_happened(converted)
         self.verify_reference_relative_paths(converted, test_reference_support_info)
@@ -362,14 +340,10 @@ CONTENT OF TEST
         test_reference_support_info = {'reference_relpath': '../', 'files': ['../support/yyy.png', '../support/yy.png', '../../another/directory/x.png']}
         converter = _W3CTestConverter(DUMMY_PATH, DUMMY_FILENAME, test_reference_support_info)
 
-        oc = OutputCapture()
-        oc.capture_output()
-        try:
+        with OutputCapture():
             converter.feed(test_html)
             converter.close()
             converted = converter.output()
-        finally:
-            oc.restore_output()
 
         self.verify_conversion_happened(converted)
 

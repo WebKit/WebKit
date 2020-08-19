@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,18 +27,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.commit import Commit
 
+from webkitcorepy import OutputCapture
+
 
 class CommitTest(unittest.TestCase):
     def _test_check_test_expectations(self, filename):
-        capture = OutputCapture()
         options = MockOptions()
         options.git_commit = ""
         options.non_interactive = True
@@ -50,19 +52,25 @@ class CommitTest(unittest.TestCase):
         }
 
         tool.executive = MockExecutive(should_log=True, should_throw_when_run=False)
-        expected_logs = "Committed r49824: <https://trac.webkit.org/changeset/49824>\n"
-        capture.assert_outputs(self, step.run, [state], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run(state)
+        self.assertEqual(captured.root.log.getvalue(), 'Committed r49824: <https://trac.webkit.org/changeset/49824>\n')
 
         state = {
             "changed_files": ["platform/chromium/" + filename],
         }
-        expected_logs = """MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--diff-files', 'platform/chromium/%s'], cwd=/mock-checkout
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run(state)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            '''MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--diff-files', 'platform/chromium/{}'], cwd=/mock-checkout
 Committed r49824: <https://trac.webkit.org/changeset/49824>
-""" % filename
-        capture.assert_outputs(self, step.run, [state], expected_logs=expected_logs)
+'''.format(filename),
+        )
 
-        tool.executive = MockExecutive(should_log=True, should_throw_when_run=set(["platform/chromium/" + filename]))
-        self.assertRaises(ScriptError, capture.assert_outputs, self, step.run, [state])
+        tool.executive = MockExecutive(should_log=True, should_throw_when_run={"platform/chromium/" + filename})
+        with self.assertRaises(ScriptError), OutputCapture():
+            step.run(state)
 
     def test_check_test_expectations(self):
         self._test_check_test_expectations('TestExpectations')

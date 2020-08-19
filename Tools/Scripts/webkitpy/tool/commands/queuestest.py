@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,14 +27,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
 from webkitpy.common.net.bugzilla import Attachment
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 from webkitpy.tool.mocktool import MockTool
+
+from webkitcorepy import OutputCapture
 
 
 class MockQueueEngine(object):
@@ -57,13 +60,16 @@ class QueuesTest(unittest.TestCase):
         if expected_logs and func_name in expected_logs:
             logs = expected_logs[func_name]
 
-        OutputCapture().assert_outputs(self,
-                func,
-                args=args,
-                expected_stdout=expected_stdout.get(func_name, ""),
-                expected_stderr=expected_stderr.get(func_name, ""),
-                expected_exception=exception,
-                expected_logs=logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            if exception:
+                with self.assertRaises(exception):
+                    func(*args)
+            else:
+                func(*args)
+
+        self.assertEqual(captured.stdout.getvalue(), expected_stdout.get(func_name, ''))
+        self.assertEqual(captured.stderr.getvalue(), expected_stderr.get(func_name, ''))
+        self.assertEqual(captured.root.log.getvalue(), logs or '')
 
     def _default_begin_work_queue_logs(self, name):
         checkout_dir = '/mock-checkout'

@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,16 +27,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.port.driver import DriverOutput
 from webkitpy.port.test import TestPort
 from webkitpy.performance_tests.perftest import PerfTest
 from webkitpy.performance_tests.perftest import PerfTestMetric
 from webkitpy.performance_tests.perftest import PerfTestFactory
 from webkitpy.performance_tests.perftest import SingleProcessPerfTest
+
+from webkitcorepy import OutputCapture
 
 
 class MockPort(TestPort):
@@ -98,16 +101,13 @@ class TestPerfTest(unittest.TestCase):
         output = DriverOutput("""
 :Time -> [1080, 1120, 1095, 1101, 1104] ms
 """, image=None, image_hash=None, audio=None)
-        output_capture = OutputCapture()
-        output_capture.capture_output()
-        try:
+        with OutputCapture(level=logging.INFO) as captured:
             test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
             self._assert_results_are_correct(test, output)
-        finally:
-            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
-        self.assertEqual(actual_stdout, '')
-        self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, """RESULT some-test: Time= 1100.0 ms
+
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), """RESULT some-test: Time= 1100.0 ms
 median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
 """)
 
@@ -116,16 +116,13 @@ median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
 main frame - has 1 onunload handler(s)
 :Time -> [1080, 1120, 1095, 1101, 1104] ms
 """, image=None, image_hash=None, audio=None)
-        output_capture = OutputCapture()
-        output_capture.capture_output()
-        try:
+        with OutputCapture(level=logging.INFO) as captured:
             test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
             self._assert_results_are_correct(test, output)
-        finally:
-            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
-        self.assertEqual(actual_stdout, '')
-        self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, """RESULT some-test: Time= 1100.0 ms
+
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), """RESULT some-test: Time= 1100.0 ms
 median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
 """)
 
@@ -142,32 +139,26 @@ Jan 22 14:09:24  WebKitTestRunner[1296] <Error>: CGContextFillRects: invalid con
             def name(self):
                 return "mac-sierra"
 
-        output_capture = OutputCapture()
-        output_capture.capture_output()
-        try:
+        with OutputCapture(level=logging.INFO) as captured:
             test = PerfTest(MockPortWithSierraName(), 'some-test', '/path/some-dir/some-test')
             self._assert_results_are_correct(test, output)
-        finally:
-            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
-        self.assertEqual(actual_stdout, '')
-        self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, """RESULT some-test: Time= 1100.0 ms
+
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), """RESULT some-test: Time= 1100.0 ms
 median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
 """)
 
     def _assert_failed_on_line(self, output_text, expected_log):
         output = DriverOutput(output_text, image=None, image_hash=None, audio=None)
-        output_capture = OutputCapture()
-        output_capture.capture_output()
-        try:
+        with OutputCapture(level=logging.INFO) as captured:
             test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
             test.run_single = lambda driver, path, time_out_ms: output
             self.assertFalse(test._run_with_driver(None, None))
-        finally:
-            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
-        self.assertEqual(actual_stdout, '')
-        self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, expected_log)
+
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), expected_log)
 
     def test_parse_output_with_running_five_times(self):
         self._assert_failed_on_line("""
@@ -213,14 +204,10 @@ Dojo - div ~ div:Time -> [6673, 6675, 6714, 6848, 6902] ms
 
 :Time -> [1080, 1120, 1095, 1101, 1104] ms
 """, image=None, image_hash=None, audio=None)
-        output_capture = OutputCapture()
-        output_capture.capture_output()
-        try:
+        with OutputCapture(level=logging.INFO) as captured:
             test = PerfTest(MockPort(), 'some-dir/some-test', '/path/some-dir/some-test')
             test.run_single = lambda driver, path, time_out_ms: output
             self.assertTrue(test.run(10))
-        finally:
-            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
         subtests = test._metrics
         self.assertEqual(list(map(lambda test: test['name'], subtests)), ['some test', 'some other test = else',
@@ -244,9 +231,9 @@ Dojo - div ~ div:Time -> [6673, 6675, 6714, 6848, 6902] ms
         self.assertEqual(main_metrics[0].path(), ['some-dir', 'some-test'])
         self.assertEqual(main_metrics[0].flattened_iteration_values(), [1080, 1120, 1095, 1101, 1104] * 4)
 
-        self.assertEqual(actual_stdout, '')
-        self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, """DESCRIPTION: this is a test description.
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), """DESCRIPTION: this is a test description.
 RESULT some-dir: some-test: Time= 1100.0 ms
 median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
 """)
@@ -258,14 +245,10 @@ EmberJS-TodoMVC:Time:Total -> [1462, 1473, 1490, 1465, 1458] ms
 EmberJS-TodoMVC/a:Time -> [1, 2, 3, 4, 5] ms
 BackboneJS-TodoMVC:Time -> [862, 855, 855, 849, 854] ms
 """, image=None, image_hash=None, audio=None)
-        output_capture = OutputCapture()
-        output_capture.capture_output()
-        try:
+        with OutputCapture(level=logging.INFO) as captured:
             test = PerfTest(MockPort(), 'some-dir/some-test', '/path/some-dir/some-test')
             test.run_single = lambda driver, path, time_out_ms: output
             self.assertTrue(test.run(10))
-        finally:
-            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
         subtests = test._metrics
         self.assertEqual(list(map(lambda test: test['name'], subtests)), [None, 'EmberJS-TodoMVC', 'EmberJS-TodoMVC/a', 'BackboneJS-TodoMVC'])
@@ -294,9 +277,9 @@ BackboneJS-TodoMVC:Time -> [862, 855, 855, 849, 854] ms
         self.assertEqual(some_test_metrics[0].path(), ['some-dir', 'some-test', 'BackboneJS-TodoMVC'])
         self.assertEqual(some_test_metrics[0].flattened_iteration_values(), [862, 855, 855, 849, 854] * 4)
 
-        self.assertEqual(actual_stdout, '')
-        self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, """RESULT some-dir: some-test: Time= 2324.6 ms
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(captured.root.log.getvalue(), """RESULT some-dir: some-test: Time= 2324.6 ms
 median= 2324.0 ms, stdev= 12.1326007105 ms, min= 2312.0 ms, max= 2345.0 ms
 """)
 

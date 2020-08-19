@@ -1,5 +1,5 @@
 # Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
-# Copyright (C) 2015 Apple Inc. All Rights Reserved.
+# Copyright (C) 2015, 2020 Apple Inc. All Rights Reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,11 +26,13 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+import logging
 import os
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.w3c.test_parser import TestParser
+
+from webkitcorepy import OutputCapture
 
 
 options = {'all': False, 'no_overwrite': False}
@@ -61,14 +63,10 @@ class TestParserTest(unittest.TestCase):
 <link rel="match" href="orange-box-ref.xht" />
 </head>
 """
-        oc = OutputCapture()
-        oc.capture_output()
-        try:
+        with OutputCapture(level=logging.INFO) as captured:
             test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
             parser = TestParser(options, os.path.join(test_path, 'somefile.html'))
             test_info = parser.analyze_test(test_contents=test_html)
-        finally:
-            _, _, logs = oc.restore_output()
 
         self.assertNotEqual(test_info, None, 'did not find a test')
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
@@ -77,7 +75,10 @@ class TestParserTest(unittest.TestCase):
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
-        self.assertEqual(logs, 'Multiple references are not supported. Importing the first ref defined in somefile.html\n')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Multiple references are not supported. Importing the first ref defined in somefile.html\n',
+        )
 
     def test_analyze_test_reftest_match_and_mismatch(self):
         test_html = """<head>
@@ -86,15 +87,10 @@ class TestParserTest(unittest.TestCase):
 <link rel="mismatch" href="orange-box-notref.xht" />
 </head>
 """
-        oc = OutputCapture()
-        oc.capture_output()
-
-        try:
+        with OutputCapture(level=logging.INFO) as captured:
             test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
             parser = TestParser(options, os.path.join(test_path, 'somefile.html'))
             test_info = parser.analyze_test(test_contents=test_html)
-        finally:
-            _, _, logs = oc.restore_output()
 
         self.assertNotEqual(test_info, None, 'did not find a test')
         self.assertTrue('test' in test_info.keys(), 'did not find a test file')
@@ -103,7 +99,10 @@ class TestParserTest(unittest.TestCase):
         self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
         self.assertFalse('jstest' in test_info.keys(), 'test should not have been analyzed as a jstest')
 
-        self.assertEqual(logs, 'Multiple references are not supported. Importing the first ref defined in somefile.html\n')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Multiple references are not supported. Importing the first ref defined in somefile.html\n',
+        )
 
     def test_analyze_test_reftest_with_ref_support_Files(self):
         """ Tests analyze_test() using a reftest that has refers to a reference file outside of the tests directory and the reference file has paths to other support files """

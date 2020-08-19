@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,11 +25,12 @@ from webkitcorepy import Version
 from webkitpy.port.ios_simulator import IOSSimulatorPort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.port.config import clear_cached_configuration
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.xcode.device_type import DeviceType
+
+from webkitcorepy import OutputCapture
 
 
 class IOSSimulatorTest(ios_testcase.IOSTest):
@@ -88,8 +89,12 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
 
         port = self.make_port()
         port._executive = MockExecutive2(run_command_fn=throwing_run_command)
-        expected_stdout = "['xcrun', '--sdk', 'iphonesimulator', '-find', 'test']\n"
-        OutputCapture().assert_outputs(self, port.xcrun_find, args=['test', 'falling'], expected_stdout=expected_stdout)
+        with OutputCapture() as captured:
+            port.xcrun_find('test', 'falling')
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "['xcrun', '--sdk', 'iphonesimulator', '-find', 'test']\n",
+        )
 
     def test_layout_test_searchpath_with_apple_additions(self):
         with port_testcase.bind_mock_apple_additions():

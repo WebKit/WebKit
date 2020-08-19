@@ -1,4 +1,5 @@
 # Copyright (c) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,16 +27,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
 from webkitpy.common.config.committers import Committer
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.mocktool import MockTool
+
+from webkitcorepy import OutputCapture
 
 
 # Creating fake CommitInfos is a pain, so we use a mock one here.
@@ -69,7 +72,12 @@ class FlakyTestReporterTest(unittest.TestCase):
 
     def test_create_bug_for_flaky_test(self):
         reporter = FlakyTestReporter(MockTool(), 'dummy-queue')
-        expected_logs = """MOCK create_bug
+
+        with OutputCapture(level=logging.INFO) as captured:
+            reporter._create_bug_for_flaky_test('foo/bar.html', ['test@test.com'], 'FLAKE_MESSAGE')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            """MOCK create_bug
 bug_title: Flaky Test: foo/bar.html
 bug_description: This is an automatically generated bug from the dummy-queue.
 foo/bar.html has been flaky on the dummy-queue.
@@ -88,8 +96,8 @@ If you would like to track this test fix with another bug, please close this bug
 component: Tools / Tests
 cc: test@test.com
 blocked: 50856
-"""
-        OutputCapture().assert_outputs(self, reporter._create_bug_for_flaky_test, ['foo/bar.html', ['test@test.com'], 'FLAKE_MESSAGE'], expected_logs=expected_logs)
+""",
+        )
 
     def test_follow_duplicate_chain(self):
         tool = MockTool()
@@ -103,7 +111,22 @@ blocked: 50856
         reporter = FlakyTestReporter(tool, 'dummy-queue')
         reporter._lookup_bug_for_flaky_test = lambda bug_id: None
         patch = tool.bugs.fetch_attachment(10000)
-        expected_logs = """Bug does not already exist for foo/bar.html, creating.
+
+        test_results = [self._mock_test_result('foo/bar.html')]
+
+        class MockZipFile(object):
+            def read(self, path):
+                return ""
+
+            def namelist(self):
+                return ['foo/bar-diffs.txt']
+
+        with OutputCapture(level=logging.INFO) as captured:
+            reporter.report_flaky_tests(patch, test_results, MockZipFile())
+
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            """Bug does not already exist for foo/bar.html, creating.
 MOCK create_bug
 bug_title: Flaky Test: foo/bar.html
 bug_description: This is an automatically generated bug from the dummy-queue.
@@ -133,17 +156,8 @@ foo/bar.html bug 60001 (author: abarth@webkit.org)
 The dummy-queue is continuing to process your patch.
 --- End comment ---
 
-"""
-        test_results = [self._mock_test_result('foo/bar.html')]
-
-        class MockZipFile(object):
-            def read(self, path):
-                return ""
-
-            def namelist(self):
-                return ['foo/bar-diffs.txt']
-
-        OutputCapture().assert_outputs(self, reporter.report_flaky_tests, [patch, test_results, MockZipFile()], expected_logs=expected_logs)
+""",
+        )
 
     def test_optional_author_string(self):
         reporter = FlakyTestReporter(MockTool(), 'dummy-queue')

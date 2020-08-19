@@ -1,4 +1,5 @@
 # Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,9 +32,10 @@ import unittest
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.w3c.test_downloader import TestDownloader
 from webkitpy.w3c.test_importer import parse_args, TestImporter
+
+from webkitcorepy import OutputCapture
 
 FAKE_SOURCE_DIR = '/tests/csswg'
 FAKE_TEST_PATH = 'css-fake-1'
@@ -108,12 +110,8 @@ class TestImporterTest(unittest.TestCase):
 
         importer = TestImporter(host, FAKE_TEST_PATH, self._parse_options(['-n', '-d', 'w3c', '-s', FAKE_SOURCE_DIR]))
 
-        oc = OutputCapture()
-        oc.capture_output()
-        try:
+        with OutputCapture():
             importer.do_import()
-        finally:
-            oc.restore_output()
 
     def test_import_dir_with_no_tests(self):
         FAKE_FILES.update(FAKE_REPOSITORIES)
@@ -123,12 +121,8 @@ class TestImporterTest(unittest.TestCase):
         host.filesystem = MockFileSystem(files=FAKE_FILES)
 
         importer = TestImporter(host, FAKE_TEST_PATH, self._parse_options(['-n', '-d', 'w3c', '-s', FAKE_SOURCE_DIR]))
-        oc = OutputCapture()
-        oc.capture_output()
-        try:
+        with OutputCapture():
             importer.do_import()
-        finally:
-            oc.restore_output()
 
     def test_import_dir_with_empty_init_py(self):
         FAKE_FILES = {

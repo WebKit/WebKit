@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017, 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,14 +27,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.config.ports import DeprecatedPort
 from webkitpy.tool.mocktool import MockOptions, MockTool
-
 from webkitpy.tool import steps
+
+from webkitcorepy import OutputCapture
 
 
 class StepsTest(unittest.TestCase):
@@ -70,8 +71,9 @@ class StepsTest(unittest.TestCase):
         tool = MockTool()
         options = self._step_options()
         options.update = True
-        expected_logs = "Updating working directory\n"
-        OutputCapture().assert_outputs(self, self._run_step, [steps.Update, tool, options], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            self._run_step(steps.Update, tool, options)
+        self.assertEqual(captured.root.log.getvalue(), 'Updating working directory\n')
 
     def test_prompt_for_bug_or_title_step(self):
         tool = MockTool()
@@ -90,7 +92,9 @@ class StepsTest(unittest.TestCase):
 
     def _assert_step_output_with_bug(self, step, bug_id, expected_logs, options=None):
         state = {'bug_id': bug_id}
-        OutputCapture().assert_outputs(self, self._run_step, [step, MockTool(), options, state], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            self._run_step(step, MockTool(), options, state)
+        self.assertEqual(captured.root.log.getvalue(), expected_logs)
 
     def _assert_post_diff_output_for_bug(self, step, bug_id, expected_logs):
         self._assert_step_output_with_bug(step, bug_id, expected_logs, self._post_diff_options())
@@ -118,7 +122,11 @@ class StepsTest(unittest.TestCase):
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.RunTests(tool, mock_options)
-        expected_logs = """Running Python unit tests
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            '''Running Python unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
@@ -126,8 +134,8 @@ Running JavaScriptCore tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast'], cwd=/mock-checkout
 Running run-webkit-tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--release', '--quiet'], cwd=/mock-checkout
-"""
-        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+''',
+        )
 
     def test_runtests_debug_args(self):
         mock_options = self._step_options()
@@ -138,7 +146,11 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--release', '--q
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.RunTests(tool, mock_options)
-        expected_logs = """Running Python unit tests
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            '''Running Python unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
@@ -146,8 +158,8 @@ Running JavaScriptCore tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast'], cwd=/mock-checkout
 Running run-webkit-tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--debug', '--quiet'], cwd=/mock-checkout
-"""
-        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+''',
+        )
 
     def test_runtests_jsc(self):
         mock_options = self._step_options()
@@ -159,9 +171,12 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--debug', '--qui
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.RunTests(tool, mock_options)
-        expected_logs = """MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--release', '--json-output=/tmp/jsc_test_results.json'], cwd=/mock-checkout
-"""
-        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--release', '--json-output=/tmp/jsc_test_results.json'], cwd=/mock-checkout\n",
+        )
 
     def test_runtests_jsc_debug(self):
         mock_options = self._step_options()
@@ -172,9 +187,12 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--debug', '--qui
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.RunTests(tool, mock_options)
-        expected_logs = """MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--debug', '--json-output=/tmp/jsc_test_results.json'], cwd=/mock-checkout
-"""
-        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests', '--no-fail-fast', '--debug', '--json-output=/tmp/jsc_test_results.json'], cwd=/mock-checkout\n",
+        )
 
     def test_build_jsc_debug(self):
         mock_options = self._step_options()
@@ -187,10 +205,14 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--debug', '--qui
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.Build(tool, mock_options)
-        expected_logs = """Building WebKit
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            '''Building WebKit
 MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--debug', 'ARCHS=True'], cwd=/mock-checkout, env={'MOCK_ENVIRON_COPY': '1', 'TERM': 'dumb'}
-"""
-        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+''',
+        )
 
     def test_build_jsc(self):
         mock_options = self._step_options()
@@ -203,10 +225,14 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--debug', 'ARCHS=True']
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.Build(tool, mock_options)
-        expected_logs = """Building WebKit
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            '''Building WebKit
 MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--release', 'ARCHS=True'], cwd=/mock-checkout, env={'MOCK_ENVIRON_COPY': '1', 'TERM': 'dumb'}
-"""
-        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+''',
+        )
 
     def test_patch_relevant(self):
         self.maxDiff = None
@@ -216,9 +242,12 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--release', 'ARCHS=True
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.CheckPatchRelevance(tool, mock_options)
-        expected_logs = """Checking relevance of patch
-"""
-        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Checking relevance of patch\n',
+        )
 
     def test_patch_relevant_jsc(self):
         self.maxDiff = None
@@ -229,9 +258,12 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--release', 'ARCHS=True
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.CheckPatchRelevance(tool, mock_options)
-        expected_logs = """Checking relevance of patch
-"""
-        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Checking relevance of patch\n',
+        )
 
     def test_patch_not_relevant_jsc(self):
         self.maxDiff = None
@@ -242,8 +274,10 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--release', 'ARCHS=True
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         tool._deprecated_port = DeprecatedPort()
         step = steps.CheckPatchRelevance(tool, mock_options)
-        expected_logs = """Checking relevance of patch
-This patch does not have relevant changes.
-"""
-        with self.assertRaises(ScriptError):
-            OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
+
+        with self.assertRaises(ScriptError), OutputCapture(level=logging.INFO) as captured:
+            step.run({})
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Checking relevance of patch\n',
+        )

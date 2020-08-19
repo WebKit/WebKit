@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -30,10 +31,11 @@ import unittest
 
 from webkitpy.common.net.buildbot import Builder
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.port.test import TestPort
 from webkitpy.tool.commands.perfalizer import PerfalizerTask
 from webkitpy.tool.mocktool import MockTool
+
+from webkitcorepy import OutputCapture
 
 
 class PerfalizerTaskTest(unittest.TestCase):
@@ -63,15 +65,11 @@ class PerfalizerTaskTest(unittest.TestCase):
         perfalizer.run_webkit_patch = run_webkit_patch
         perfalizer._run_perf_test = run_perf_test
 
-        capture = OutputCapture()
-        capture.capture_output()
-
-        if commands_to_fail:
-            self.assertFalse(perfalizer.run())
-        else:
-            self.assertTrue(perfalizer.run())
-
-        capture.restore_output()
+        with OutputCapture():
+            if commands_to_fail:
+                self.assertFalse(perfalizer.run())
+            else:
+                self.assertTrue(perfalizer.run())
 
         return logs
 

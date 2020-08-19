@@ -32,9 +32,9 @@ import json
 import sys
 import unittest
 
-from webkitcorepy import StringIO
+from webkitcorepy import StringIO, OutputCapture
 
-from webkitpy.common.system import outputcapture, path
+from webkitpy.common.system import path
 from webkitpy.common.system.crashlogs_unittest import make_mock_crash_report_darwin
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.host import Host
@@ -101,13 +101,10 @@ def logging_run(extra_args=None, port_obj=None, tests_included=False, host=None,
 def run_and_capture(port_obj, options, parsed_args, shared_port=True):
     if shared_port:
         port_obj.host.port_factory.get = lambda *args, **kwargs: port_obj
-    oc = outputcapture.OutputCapture()
-    try:
-        oc.capture_output()
+    with OutputCapture():
         logging_stream = StringIO()
         run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
-    finally:
-        oc.restore_output()
+
     return (run_details, logging_stream)
 
 
@@ -137,13 +134,9 @@ def get_test_results(args, host=None):
     host = host or MockHost()
     port_obj = host.port_factory.get(port_name=options.platform, options=options)
 
-    oc = outputcapture.OutputCapture()
-    oc.capture_output()
-    logging_stream = StringIO()
-    try:
+    with OutputCapture():
+        logging_stream = StringIO()
         run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
-    finally:
-        oc.restore_output()
 
     all_results = []
     if run_details.initial_results:
@@ -965,13 +958,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/ipad/test3.html', '')
         host.filesystem.write_text_file('/MOCK output of child process/ImageDiff', '')
 
-        oc = outputcapture.OutputCapture()
-        try:
-            oc.capture_output()
+        with OutputCapture() as captured:
             logging = StringIO()
             run_webkit_tests.run(port, run_webkit_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
-        finally:
-            output, err, _ = oc.restore_output()
 
         for line in logging.getvalue():
             if str(DeviceType.from_string('iPhone SE')) in line:
@@ -989,17 +978,13 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/ios/test2.html', '')
         host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/ipad/test3.html', '')
 
-        oc = outputcapture.OutputCapture()
-        try:
-            oc.capture_output()
+        with OutputCapture() as captured:
             logging = StringIO()
             run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args([])[0], [], logging_stream=logging)
-        finally:
-            output, _, _ = oc.restore_output()
 
         current_type = None
         by_type = {}
-        for line in output.splitlines():
+        for line in captured.stdout.getvalue().splitlines():
             if not line or 'skip' in line:
                 continue
             if 'Tests to run' in line:
@@ -1023,13 +1008,9 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/iphone/test4.html', '')
         host.filesystem.write_text_file('/MOCK output of child process/ImageDiff', '')
 
-        oc = outputcapture.OutputCapture()
-        try:
-            oc.capture_output()
+        with OutputCapture():
             logging = StringIO()
             run_webkit_tests.run(port, run_webkit_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
-        finally:
-            output, err, _ = oc.restore_output()
 
         for line in logging.getvalue():
             if str(DeviceType.from_string('iPad (5th generation)')) in line:
@@ -1044,17 +1025,13 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/ipad/test3.html', '')
         host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/iphone/test4.html', '')
 
-        oc = outputcapture.OutputCapture()
-        try:
-            oc.capture_output()
+        with OutputCapture() as captured:
             logging = StringIO()
             run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args([])[0], [], logging_stream=logging)
-        finally:
-            output, _, _ = oc.restore_output()
 
         current_type = None
         by_type = {}
-        for line in output.splitlines():
+        for line in captured.stdout.getvalue().splitlines():
             if not line or 'skip' in line:
                 continue
             if 'Tests to run' in line:

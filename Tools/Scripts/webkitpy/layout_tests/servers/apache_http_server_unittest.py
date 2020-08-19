@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -30,10 +31,11 @@ import sys
 import unittest
 
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.host_mock import MockHost
 from webkitpy.port import test
 from webkitpy.layout_tests.servers.apache_http_server import LayoutTestApacheHttpd
+
+from webkitcorepy import OutputCapture
 
 
 class TestLayoutTestApacheHttpd(unittest.TestCase):
@@ -60,11 +62,8 @@ class TestLayoutTestApacheHttpd(unittest.TestCase):
 
         self.assertEqual(server.ports_to_forward(), [8000, 8080, 8443])
 
-        oc = OutputCapture()
-        try:
-            oc.capture_output()
+        with OutputCapture():
             server.start()
             server.stop()
-        finally:
-            _, _, logs = oc.restore_output()
+
         self.assertTrue(host.filesystem.exists("/mock/output_dir/httpd.conf"))

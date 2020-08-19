@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,16 +27,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.closebugforlanddiff import CloseBugForLandDiff
+
+from webkitcorepy import OutputCapture
 
 
 class CloseBugForLandDiffTest(unittest.TestCase):
     def test_empty_state(self):
-        capture = OutputCapture()
         step = CloseBugForLandDiff(MockTool(), MockOptions())
-        expected_logs = "Committed r49824: <https://trac.webkit.org/changeset/49824>\nNo bug id provided.\n"
-        capture.assert_outputs(self, step.run, [{"commit_text": "Mock commit text"}], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run(dict(commit_text='Mock commit text'))
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'Committed r49824: <https://trac.webkit.org/changeset/49824>\nNo bug id provided.\n'
+        )

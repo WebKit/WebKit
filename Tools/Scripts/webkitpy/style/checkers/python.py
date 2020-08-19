@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019, 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -29,9 +29,10 @@ import sys
 from webkitcorepy import StringIO
 
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.system.outputcapture import OutputCaptureScope
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.thirdparty.autoinstalled import pycodestyle
+
+from webkitcorepy import OutputCapture
 
 class PythonChecker(object):
     """Processes text lines for checking style."""
@@ -108,7 +109,7 @@ class Pylinter(object):
 
     def run(self, argv):
         output = _FilteredStringIO(self.FALSE_POSITIVES)
-        with OutputCaptureScope():
+        with OutputCapture():
             from webkitpy.thirdparty.autoinstalled.pylint import lint
             from webkitpy.thirdparty.autoinstalled.pylint.reporters.text import ParseableTextReporter
             lint.Run(['--rcfile', self._pylintrc] + argv, reporter=ParseableTextReporter(output=output), exit=False)

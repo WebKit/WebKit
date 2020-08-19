@@ -26,14 +26,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.download import *
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.common.checkout.checkout_mock import MockCheckout
+
+from webkitcorepy import OutputCapture
 
 
 class AbstractRevertPrepCommandTest(unittest.TestCase):
@@ -41,17 +43,18 @@ class AbstractRevertPrepCommandTest(unittest.TestCase):
         command = AbstractRevertPrepCommand()
         tool = MockTool()
         command.bind_to_tool(tool)
-        output = OutputCapture()
 
-        expected_logs = "Preparing revert for bug 50000.\n"
-        commit_info = output.assert_outputs(self, command._commit_info, [1234], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            commit_info = command._commit_info(1234)
+        self.assertEqual(captured.root.log.getvalue(), 'Preparing revert for bug 50000.\n')
         self.assertTrue(commit_info)
 
         mock_commit_info = Mock()
         mock_commit_info.bug_id = lambda: None
         tool._checkout.commit_info_for_revision = lambda revision: mock_commit_info
-        expected_logs = "Unable to parse bug number from diff.\n"
-        commit_info = output.assert_outputs(self, command._commit_info, [1234], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            commit_info = command._commit_info(1234)
+        self.assertEqual(captured.root.log.getvalue(), 'Unable to parse bug number from diff.\n')
         self.assertEqual(commit_info, mock_commit_info)
 
     def test_prepare_state(self):

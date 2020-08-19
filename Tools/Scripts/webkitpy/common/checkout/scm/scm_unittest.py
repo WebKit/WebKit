@@ -1,5 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
-# Copyright (C) 2009, 2016 Apple Inc. All rights reserved.
+# Copyright (C) 2009, 2016, 2020 Apple Inc. All rights reserved.
 # Copyright (C) 2011 Daniel Bates (dbates@intudata.com). All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@ import atexit
 import base64
 import codecs
 import getpass
+import logging
 import os
 import os.path
 import re
@@ -52,12 +53,13 @@ from webkitpy.common.config.committers import Committer  # FIXME: This should no
 from webkitpy.common.net.bugzilla import Attachment  # FIXME: This should not be needed
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.checkout.scm.git import Git, AmbiguousCommitError
 from webkitpy.common.checkout.scm.detection import detect_scm_system
 from webkitpy.common.checkout.scm.scm import CheckoutNeedsUpdate, commit_error_handler, AuthenticationError
 from webkitpy.common.checkout.scm.svn import SVN
+
+from webkitcorepy import OutputCapture
 
 
 # We cache the mock SVN repo so that we don't create it again for each call to an SVNTest or GitTest test_ method.
@@ -1717,13 +1719,16 @@ class GitTestWithMock(unittest.TestCase):
 
     def test_create_patch(self):
         scm = self.make_scm(logging_executive=True)
-        expected_stderr = """\
-MOCK run_command: ['git', 'merge-base', 'MOCKVALUE', 'HEAD'], cwd=%(checkout)s
+        with OutputCapture(level=logging.INFO) as captured:
+            scm.create_patch()
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            '''MOCK run_command: ['git', 'merge-base', 'MOCKVALUE', 'HEAD'], cwd={checkout}s
 MOCK run_command: ['git', 'diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames', '', 'MOCK output of child process', '--'], cwd=%(checkout)s
-MOCK run_command: ['git', 'rev-parse', '--show-toplevel'], cwd=%(checkout)s
+MOCK run_command: ['git', 'rev-parse', '--show-toplevel'], cwd={checkout}s
 MOCK run_command: ['git', 'log', '-1', '--grep=git-svn-id:', '--date=iso', './MOCK output of child process/MOCK output of child process'], cwd=%(checkout)s
-""" % {'checkout': scm.checkout_root}
-        OutputCapture().assert_outputs(self, scm.create_patch, expected_logs=expected_stderr)
+'''.format(checkout=scm.checkout_root),
+        )
 
     def test_push_local_commits_to_server_with_username_and_password(self):
         self.assertEqual(self.make_scm().push_local_commits_to_server(username='dbates@webkit.org', password='blah'), "MOCK output of child process")

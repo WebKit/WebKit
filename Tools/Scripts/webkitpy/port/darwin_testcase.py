@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,15 +20,17 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import time
 
 from webkitpy.port import port_testcase
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2, MockProcess, ScriptError
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version_name_map import VersionNameMap
+
+from webkitcorepy import OutputCapture
 
 
 class DarwinTest(port_testcase.PortTestCase):
@@ -50,18 +52,20 @@ class DarwinTest(port_testcase.PortTestCase):
         port = self.make_port()
         # Delay setting a should_log executive to avoid logging from MacPort.__init__.
         port._executive = MockExecutive(should_log=True)
-        expected_logs = "MOCK popen: ['Tools/Scripts/run-safari', '--release', '--no-saved-state', '-NSOpen', 'test.html'], cwd=/mock-checkout\n"
-        OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            port.show_results_html_file('test.html')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "MOCK popen: ['Tools/Scripts/run-safari', '--release', '--no-saved-state', '-NSOpen', 'test.html'], cwd=/mock-checkout\n",
+        )
 
     def test_helper_starts(self):
         host = MockSystemHost(MockExecutive())
         port = self.make_port(host)
-        oc = OutputCapture()
-        oc.capture_output()
-        host.executive._proc = MockProcess('ready\n')
-        port.start_helper()
-        port.stop_helper()
-        oc.restore_output()
+        with OutputCapture():
+            host.executive._proc = MockProcess('ready\n')
+            port.start_helper()
+            port.stop_helper()
 
         # make sure trying to stop the helper twice is safe.
         port.stop_helper()
@@ -69,11 +73,9 @@ class DarwinTest(port_testcase.PortTestCase):
     def test_helper_fails_to_start(self):
         host = MockSystemHost(MockExecutive())
         port = self.make_port(host)
-        oc = OutputCapture()
-        oc.capture_output()
-        port.start_helper()
-        port.stop_helper()
-        oc.restore_output()
+        with OutputCapture():
+            port.start_helper()
+            port.stop_helper()
 
     def test_helper_fails_to_stop(self):
         host = MockSystemHost(MockExecutive())
@@ -84,11 +86,9 @@ class DarwinTest(port_testcase.PortTestCase):
         host.executive._proc.wait = bad_waiter
 
         port = self.make_port(host)
-        oc = OutputCapture()
-        oc.capture_output()
-        port.start_helper()
-        port.stop_helper()
-        oc.restore_output()
+        with OutputCapture():
+            port.start_helper()
+            port.stop_helper()
 
     def test_crashlog_path(self):
         port = self.make_port()
@@ -107,10 +107,14 @@ class DarwinTest(port_testcase.PortTestCase):
         port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin-temp.txt'] = 'Temporary tailspin output file'
         port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin.txt'] = 'Symbolocated tailspin file'
         port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
-        expected_stdout = """['/usr/bin/sudo', '-n', '/usr/bin/tailspin', 'save', '-n', '/__im_tmp/tmp_0_/test-42-tailspin-temp.txt']
+        with OutputCapture() as captured:
+            port.sample_process('test', 42)
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            """['/usr/bin/sudo', '-n', '/usr/bin/tailspin', 'save', '-n', '/__im_tmp/tmp_0_/test-42-tailspin-temp.txt']
 ['/usr/sbin/spindump', '-i', '/__im_tmp/tmp_0_/test-42-tailspin-temp.txt', '-file', '/__im_tmp/tmp_0_/test-42-tailspin.txt', '-noBulkSymbolication']
-"""
-        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
+""",
+        )
         self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-tailspin.txt'], 'Symbolocated tailspin file')
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin-temp.txt'])
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin.txt'])
@@ -126,8 +130,12 @@ class DarwinTest(port_testcase.PortTestCase):
         port = self.make_port()
         port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'] = 'Sample file'
         port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
-        expected_stdout = "['/usr/bin/sample', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-sample.txt']\n"
-        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
+        with OutputCapture() as captured:
+            port.sample_process('test', 42)
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "['/usr/bin/sample', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-sample.txt']\n",
+        )
         self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-sample.txt'], 'Sample file')
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'])
 
@@ -139,7 +147,9 @@ class DarwinTest(port_testcase.PortTestCase):
 
         port = self.make_port()
         port.host.executive = MockExecutive2(run_command_fn=throwing_run_command)
-        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42])
+        with OutputCapture() as captured:
+            port.sample_process('test', 42)
+        self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_get_crash_log(self):
         port = self.make_port(port_name=self.port_name)

@@ -28,8 +28,9 @@
 
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.user import User
+
+from webkitcorepy import OutputCapture
 
 
 class UserTest(unittest.TestCase):
@@ -58,13 +59,16 @@ class UserTest(unittest.TestCase):
         def run_prompt_test(inputs, expected_result, can_choose_multiple=False):
             def mock_raw_input(message):
                 return inputs.pop(0)
-            output_capture = OutputCapture()
-            actual_result = output_capture.assert_outputs(
-                self,
-                User.prompt_with_multiple_lists,
-                args=["title", ["subtitle1", "subtitle2"], [["foo", "bar"], ["foobar", "barbaz", "foobaz"]]],
-                kwargs={"can_choose_multiple": can_choose_multiple, "raw_input": mock_raw_input},
-                expected_stdout="title\n\nsubtitle1\n 1. foo\n 2. bar\n\nsubtitle2\n 3. foobar\n 4. barbaz\n 5. foobaz\n")
+            with OutputCapture() as captured:
+                actual_result = User.prompt_with_multiple_lists(
+                    'title', ['subtitle1', 'subtitle2'], [['foo', 'bar'], ['foobar', 'barbaz', 'foobaz']],
+                    can_choose_multiple=can_choose_multiple,
+                    raw_input=mock_raw_input,
+                )
+            self.assertEqual(
+                captured.stdout.getvalue(),
+                'title\n\nsubtitle1\n 1. foo\n 2. bar\n\nsubtitle2\n 3. foobar\n 4. barbaz\n 5. foobaz\n',
+            )
             self.assertEqual(actual_result, expected_result)
             self.assertEqual(len(inputs), 0)
 
@@ -88,13 +92,16 @@ class UserTest(unittest.TestCase):
         def run_prompt_test(inputs, expected_result, can_choose_multiple=False):
             def mock_raw_input(message):
                 return inputs.pop(0)
-            output_capture = OutputCapture()
-            actual_result = output_capture.assert_outputs(
-                self,
-                User.prompt_with_list,
-                args=["title", ["foo", "bar"]],
-                kwargs={"can_choose_multiple": can_choose_multiple, "raw_input": mock_raw_input},
-                expected_stdout="title\n 1. foo\n 2. bar\n")
+            with OutputCapture() as captured:
+                actual_result = User.prompt_with_list(
+                    'title', ['foo', 'bar'],
+                    can_choose_multiple=can_choose_multiple,
+                    raw_input=mock_raw_input
+                )
+            self.assertEqual(
+                captured.stdout.getvalue(),
+                'title\n 1. foo\n 2. bar\n'
+            )
             self.assertEqual(actual_result, expected_result)
             self.assertEqual(len(inputs), 0)
 
@@ -131,12 +138,17 @@ class UserTest(unittest.TestCase):
             self.assertEqual(expected[1], result)
 
     def test_warn_if_application_is_xcode(self):
-        output = OutputCapture()
         user = User()
-        output.assert_outputs(self, user._warn_if_application_is_xcode, ["TextMate"])
-        output.assert_outputs(self, user._warn_if_application_is_xcode, ["/Applications/TextMate.app"])
-        output.assert_outputs(self, user._warn_if_application_is_xcode, ["XCode"])  # case sensitive matching
+        with OutputCapture() as captured:
+            user._warn_if_application_is_xcode('TextMate')
+            user._warn_if_application_is_xcode('/Applications/TextMate.app')
+            user._warn_if_application_is_xcode('XCode')
+        self.assertEqual(captured.stdout.getvalue(), '')
 
-        xcode_warning = "Instead of using Xcode.app, consider using EDITOR=\"xed --wait\".\n"
-        output.assert_outputs(self, user._warn_if_application_is_xcode, ["Xcode"], expected_stdout=xcode_warning)
-        output.assert_outputs(self, user._warn_if_application_is_xcode, ["/Developer/Applications/Xcode.app"], expected_stdout=xcode_warning)
+        with OutputCapture() as captured:
+            user._warn_if_application_is_xcode('Xcode')
+            user._warn_if_application_is_xcode('/Developer/Applications/Xcode.app')
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Instead of using Xcode.app, consider using EDITOR=\"xed --wait\".\n' * 2,
+        )

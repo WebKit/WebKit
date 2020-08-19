@@ -1,5 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
-# Copyright (C) 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2009, 2020 Apple Inc. All rights reserved.
 # Copyright (C) 2011 Daniel Bates (dbates@intudata.com). All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
 from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.executive_mock import MockExecutive
-from webkitpy.common.system.outputcapture import OutputCapture
+
+from webkitcorepy import OutputCapture
 
 
 class SCMDetectorTest(unittest.TestCase):
@@ -42,10 +44,14 @@ class SCMDetectorTest(unittest.TestCase):
         executive = MockExecutive(should_log=True)
         detector = SCMDetector(filesystem, executive)
 
-        expected_logs = """\
-MOCK run_command: ['svn', 'info'], cwd=/
+        with OutputCapture(level=logging.INFO) as captured:
+            scm = detector.detect_scm_system('/')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            '''MOCK run_command: ['svn', 'info'], cwd=/
 MOCK run_command: ['git', 'rev-parse', '--is-inside-work-tree'], cwd=/
-"""
-        scm = OutputCapture().assert_outputs(self, detector.detect_scm_system, ["/"], expected_logs=expected_logs)
+''',
+        )
+
         self.assertIsNone(scm)
         # FIXME: This should make a synthetic tree and test SVN and Git detection in that tree.

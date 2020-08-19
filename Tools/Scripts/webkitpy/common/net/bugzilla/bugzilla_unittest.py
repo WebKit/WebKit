@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,15 +28,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import datetime
+import logging
 import unittest
 
-from webkitcorepy import StringIO
+from webkitcorepy import StringIO, OutputCapture
 
 from webkitpy.common.config import urls
 from webkitpy.common.config.committers import Reviewer, Committer, Contributor, CommitterList
 from webkitpy.common.net.web_mock import MockBrowser
 from webkitpy.common.net.bugzilla.bugzilla import Bugzilla, BugzillaQueries, CommitQueueFlag, EditUsersParser
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 from webkitpy.thirdparty.mock import Mock
 
@@ -251,8 +252,9 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
         bugzilla = Bugzilla()
         bugzilla.browser = MockBrowser()
         bugzilla.authenticate = lambda: None
-        expected_logs = "Adding ['adam@example.com'] to the CC list for bug 42\n"
-        OutputCapture().assert_outputs(self, bugzilla.add_cc_to_bug, [42, ["adam@example.com"]], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            bugzilla.add_cc_to_bug(42, ['adam@example.com'])
+        self.assertEqual(captured.root.log.getvalue(), "Adding ['adam@example.com'] to the CC list for bug 42\n")
 
     def _mock_control_item(self, name):
         mock_item = Mock()
@@ -272,10 +274,9 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
 
         mock_find_control = self._mock_find_control(item_names, selected_index)
         bugzilla.browser.find_control = mock_find_control
-        expected_logs = "Re-opening bug 42\n['comment']\n"
-        if extra_logs:
-            expected_logs += extra_logs
-        OutputCapture().assert_outputs(self, bugzilla.reopen_bug, [42, ["comment"]], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            bugzilla.reopen_bug(42, ['comment'])
+        self.assertEqual(captured.root.log.getvalue(), "Re-opening bug 42\n['comment']\n" + (extra_logs or ''))
 
     def test_reopen_bug(self):
         self._assert_reopen(item_names=["REOPENED", "RESOLVED", "CLOSED"], selected_index=1)
@@ -310,12 +311,8 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
 
         def assert_commit_queue_flag(commit_flag, expected, username=None):
             bugzilla.username = username
-            capture = OutputCapture()
-            capture.capture_output()
-            try:
+            with OutputCapture():
                 self.assertEqual(bugzilla._commit_queue_flag(commit_flag), expected)
-            finally:
-                capture.restore_output()
 
         assert_commit_queue_flag(commit_flag=CommitQueueFlag.mark_for_nothing, expected='X', username='unknown@webkit.org')
         assert_commit_queue_flag(commit_flag=CommitQueueFlag.mark_for_commit_queue, expected='?', username='unknown@webkit.org')

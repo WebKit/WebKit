@@ -1,4 +1,5 @@
 # Copyright (c) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,14 +27,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.host_mock import MockHost
 
 from .layouttestresultsreader import LayoutTestResultsReader
+
+from webkitcorepy import OutputCapture
 
 
 class LayoutTestResultsReaderTest(unittest.TestCase):
@@ -91,8 +94,9 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         patch = host.bugs.fetch_attachment(10001)
         host.filesystem = MockFileSystem()
         # Should fail because the results_directory does not exist.
-        expected_logs = "/mock-results does not exist, not archiving.\n"
-        archive = OutputCapture().assert_outputs(self, reader.archive, [patch], expected_logs=expected_logs)
+        with OutputCapture(level=logging.INFO) as captured:
+            archive = reader.archive(patch)
+        self.assertEqual(captured.root.log.getvalue(), '/mock-results does not exist, not archiving.\n')
         self.assertIsNone(archive)
 
         host.filesystem.maybe_make_directory(results_directory)

@@ -24,8 +24,9 @@ import logging
 import unittest
 
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.test.finder import Finder
+
+from webkitcorepy import OutputCapture
 
 
 class FinderTest(unittest.TestCase):
@@ -105,22 +106,14 @@ class FinderTest(unittest.TestCase):
         self.check_names(['bar/'], ['bar.baz_unittest'])
 
         # This should log an error, since it's outside the trees.
-        oc = OutputCapture()
-        oc.set_log_level(logging.ERROR)
-        oc.capture_output()
-        try:
+        with OutputCapture(level=logging.ERROR) as captured:
             self.check_names(['/tmp/another_unittest.py'], [])
-        finally:
-            _, _, logs = oc.restore_output()
-            self.assertIn('another_unittest.py', logs)
+        self.assertIn('another_unittest.py', captured.root.log.getvalue())
 
         # Paths that don't exist are errors.
-        oc.capture_output()
-        try:
+        with OutputCapture(level=logging.INFO) as captured:
             self.check_names(['/foo/bar/notexist_unittest.py'], [])
-        finally:
-            _, _, logs = oc.restore_output()
-            self.assertIn('notexist_unittest.py', logs)
+        self.assertIn('notexist_unittest.py', captured.root.log.getvalue())
 
         # Names that don't exist are caught later, at load time.
         self.check_names(['bar.notexist_unittest'], ['bar.notexist_unittest'])

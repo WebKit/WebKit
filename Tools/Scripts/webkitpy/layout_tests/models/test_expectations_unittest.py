@@ -32,11 +32,12 @@ import unittest
 from collections import OrderedDict
 
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.system.outputcapture import OutputCapture
 
 from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.layout_tests.models.test_expectations import *
 from webkitpy.layout_tests.models.test_configuration import *
+
+from webkitcorepy import OutputCapture
 
 
 class Base(unittest.TestCase):
@@ -196,13 +197,9 @@ class MiscTests(Base):
             self.assertEqual(str(e), warnings)
 
     def test_parse_warnings_are_logged_if_not_in_lint_mode(self):
-        oc = OutputCapture()
-        try:
-            oc.capture_output()
+        with OutputCapture() as captured:
             self.parse_exp('-- this should be a syntax error', is_lint_mode=False)
-        finally:
-            _, _, logs = oc.restore_output()
-            self.assertNotEquals(logs, '')
+        self.assertNotEquals(captured.root.log.getvalue(), '')
 
     def test_error_on_different_platform(self):
         # parse_exp uses a Windows port. Assert errors on Mac show up in lint mode.
@@ -330,13 +327,14 @@ class SkippedTests(Base):
         expectations_dict = OrderedDict()
         expectations_dict['expectations'] = ''
         port.expectations_dict = lambda **kwargs: expectations_dict
-        port.skipped_layout_tests = lambda tests, **kwargs: set(['foo/bar/baz.html'])
-        capture = OutputCapture()
-        capture.capture_output()
-        exp = TestExpectations(port)
-        exp.parse_all_expectations()
-        _, _, logs = capture.restore_output()
-        self.assertEqual('The following test foo/bar/baz.html from the Skipped list doesn\'t exist\n', logs)
+        port.skipped_layout_tests = lambda tests, **kwargs: {'foo/bar/baz.html'}
+        with OutputCapture() as captured:
+            exp = TestExpectations(port)
+            exp.parse_all_expectations()
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            'The following test foo/bar/baz.html from the Skipped list doesn\'t exist\n',
+        )
 
 
 class ExpectationSyntaxTests(Base):

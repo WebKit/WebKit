@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017, 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -24,13 +24,14 @@ import time
 
 from webkitcorepy import Version
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.executive_mock import MockExecutive2, ScriptError
 from webkitpy.port.config import clear_cached_configuration
 from webkitpy.port.ios_device import IOSDevicePort
 from webkitpy.port import ios_testcase
 from webkitpy.port import port_testcase
 from webkitpy.xcode.device_type import DeviceType
+
+from webkitcorepy import OutputCapture
 
 
 class IOSDeviceTest(ios_testcase.IOSTest):
@@ -55,10 +56,16 @@ class IOSDeviceTest(ios_testcase.IOSTest):
         port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin-temp.txt'] = 'Temporary tailspin output file'
         port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin.txt'] = 'Symbolocated tailspin file'
         port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
-        expected_stdout = """['/usr/bin/tailspin', 'save', '-n', '/__im_tmp/tmp_0_/test-42-tailspin-temp.txt']
+
+        with OutputCapture() as captured:
+            port.sample_process('test', 42)
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            """['/usr/bin/tailspin', 'save', '-n', '/__im_tmp/tmp_0_/test-42-tailspin-temp.txt']
 ['/usr/sbin/spindump', '-i', '/__im_tmp/tmp_0_/test-42-tailspin-temp.txt', '-file', '/__im_tmp/tmp_0_/test-42-tailspin.txt', '-noBulkSymbolication']
-"""
-        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
+""",
+        )
+
         self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-tailspin.txt'], 'Symbolocated tailspin file')
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin-temp.txt'])
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-tailspin.txt'])
@@ -73,8 +80,14 @@ class IOSDeviceTest(ios_testcase.IOSTest):
         port = self.make_port()
         port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'] = 'Sample file'
         port.host.executive = MockExecutive2(run_command_fn=logging_run_command)
-        expected_stdout = "['/usr/bin/sample', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-sample.txt']\n"
-        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42], expected_stdout=expected_stdout)
+
+        with OutputCapture() as captured:
+            port.sample_process('test', 42)
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "['/usr/bin/sample', 42, 10, 10, '-file', '/__im_tmp/tmp_0_/test-42-sample.txt']\n",
+        )
+
         self.assertEqual(port.host.filesystem.files['/mock-build/layout-test-results/test-42-sample.txt'], 'Sample file')
         self.assertIsNone(port.host.filesystem.files['/__im_tmp/tmp_0_/test-42-sample.txt'])
 
@@ -86,7 +99,10 @@ class IOSDeviceTest(ios_testcase.IOSTest):
 
         port = self.make_port()
         port.host.executive = MockExecutive2(run_command_fn=throwing_run_command)
-        OutputCapture().assert_outputs(self, port.sample_process, args=['test', 42])
+
+        with OutputCapture() as captured:
+            port.sample_process('test', 42)
+        self.assertEqual(captured.stdout.getvalue(), '')
 
     def test_get_crash_log(self):
         port = self.make_port(port_name=self.port_name)

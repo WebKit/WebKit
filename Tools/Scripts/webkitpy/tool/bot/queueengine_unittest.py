@@ -1,4 +1,5 @@
 # Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,6 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import datetime
+import logging
 import os
 import shutil
 import tempfile
@@ -34,8 +36,9 @@ import threading
 import unittest
 
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate, TerminateQueue
+
+from webkitcorepy import OutputCapture
 
 
 class LoggingDelegate(QueueEngineDelegate):
@@ -144,8 +147,10 @@ class QueueEngineTest(unittest.TestCase):
             engine = QueueEngine("test-queue", delegate, threading.Event())
         if not termination_message:
             termination_message = "Delegate terminated queue."
-        expected_logs = "%s\n" % termination_message
-        OutputCapture().assert_outputs(self, engine.run, expected_logs=expected_logs)
+
+        with OutputCapture(level=logging.INFO) as captured:
+            engine.run()
+        self.assertEqual(captured.root.log.getvalue(), '{}\n'.format(termination_message))
 
     def _test_terminating_queue(self, exception, termination_message):
         work_item_index = LoggingDelegate.expected_callbacks.index('process_work_item')

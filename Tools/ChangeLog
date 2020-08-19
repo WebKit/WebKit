@@ -1,5 +1,88 @@
 2020-08-19  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitpy] Adopt webkitcorepy's OutputCapture
+        https://bugs.webkit.org/show_bug.cgi?id=215628
+        <rdar://problem/67353710>
+
+        Reviewed by Dewei Zhu.
+
+        Remove webkitpy's OutputCapture in favor of webkitcorepy's. The refactor retains the orginal
+        functionality of the old OutputCapture, but deletes some now unused code.
+
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/detection_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        * Scripts/webkitpy/common/net/ewsserver_unittest.py:
+        * Scripts/webkitpy/common/net/irc/ircproxy_unittest.py:
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        * Scripts/webkitpy/common/system/outputcapture.py: Removed.
+        * Scripts/webkitpy/common/system/outputcapture_unittest.py: Removed.
+        * Scripts/webkitpy/common/system/stack_utils_unittest.py:
+        * Scripts/webkitpy/common/system/user_unittest.py:
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server_unittest.py:
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        * Scripts/webkitpy/port/base_unittest.py:
+        * Scripts/webkitpy/port/config_unittest.py:
+        * Scripts/webkitpy/port/darwin_testcase.py:
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        * Scripts/webkitpy/port/leakdetector_unittest.py:
+        * Scripts/webkitpy/port/leakdetector_valgrind_unittest.py:
+        * Scripts/webkitpy/port/mac_unittest.py:
+        * Scripts/webkitpy/port/port_testcase.py:
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        * Scripts/webkitpy/port/watch_simulator_unittest.py:
+        * Scripts/webkitpy/port/westondriver_unittest.py:
+        * Scripts/webkitpy/port/win_unittest.py:
+        * Scripts/webkitpy/port/wpe_unittest.py:
+        * Scripts/webkitpy/port/xvfbdriver_unittest.py:
+        * Scripts/webkitpy/style/checkers/python.py:
+        * Scripts/webkitpy/style/main_unittest.py:
+        * Scripts/webkitpy/test/finder_unittest.py:
+        * Scripts/webkitpy/test/main_unittest.py:
+        * Scripts/webkitpy/test/printer.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        * Scripts/webkitpy/tool/bot/sheriff_unittest.py:
+        * Scripts/webkitpy/tool/commands/analyzechangelog_unittest.py:
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/perfalizer_unittest.py:
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        * Scripts/webkitpy/tool/steps/addsvnmimetypeforpng_unittest.py:
+        * Scripts/webkitpy/tool/steps/applywatchlist_unittest.py:
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        * Scripts/webkitpy/tool/steps/commit_unittest.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py:
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/suggestreviewers_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittest.py:
+        * Scripts/webkitpy/tool/steps/validatechangelogs_unittest.py:
+        * Scripts/webkitpy/w3c/test_converter_unittest.py:
+        * Scripts/webkitpy/w3c/test_importer_unittest.py:
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+
+2020-08-19  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitcorepy] Don't overwrite foreign packages by default
         https://bugs.webkit.org/show_bug.cgi?id=215654
         <rdar://problem/67411393>

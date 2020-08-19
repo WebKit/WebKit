@@ -1,4 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,9 +27,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.system.outputcapture import OutputCapture
+import logging
+
 from webkitpy.common.webkitunittest import TestCase
 from webkitpy.tool.mocktool import MockOptions, MockTool
+
+from webkitcorepy import OutputCapture
 
 
 class CommandsTest(TestCase):
@@ -49,4 +53,9 @@ class CommandsTest(TestCase):
         options.quiet = True
         options.reviewer = 'MOCK reviewer'
         command.bind_to_tool(tool)
-        OutputCapture().assert_outputs(self, command.execute, [options, args, tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr, expected_exception=expected_exception, expected_logs=expected_logs)
+
+        with OutputCapture(level=logging.INFO) as captured:
+            command.execute(options, args, tool)
+        self.assertEqual(captured.stdout.getvalue(), expected_stdout or '')
+        self.assertEqual(captured.stderr.getvalue(), expected_stderr or '')
+        self.assertEqual(captured.root.log.getvalue(), expected_logs or '')

@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,27 +27,32 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import unittest
 
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.applywatchlist import ApplyWatchList
+
+from webkitcorepy import OutputCapture
 
 
 class ApplyWatchListTest(unittest.TestCase):
     def test_apply_watch_list_local(self):
-        capture = OutputCapture()
         step = ApplyWatchList(MockTool(log_executive=True), MockOptions())
         state = {
             'bug_id': '50001',
             'diff': 'The diff',
         }
-        expected_logs = """MockWatchList: determine_cc_and_messages
+        with OutputCapture(level=logging.INFO) as captured:
+            step.run(state)
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            '''MockWatchList: determine_cc_and_messages
 MOCK bug comment: bug_id=50001, cc=['levin@chromium.org'], see_also=None
 --- Begin comment ---
 Message2.
 --- End comment ---
 
 Result of watchlist: cc "levin@chromium.org" messages "Message2."
-"""
-        capture.assert_outputs(self, step.run, [state], expected_logs=expected_logs)
+''',
+        )

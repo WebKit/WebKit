@@ -35,7 +35,6 @@ from webkitpy.port.factory import PortFactory
 from webkitpy.port import server_process
 from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.common.system.outputcapture import OutputCapture
 
 
 class TrivialMockPort(object):

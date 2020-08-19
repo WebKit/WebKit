@@ -1,5 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017, 2020 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -32,7 +32,6 @@ from webkitpy.common.host import Host
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.net.jsctestresults import JSCTestResults
 from webkitpy.common.net.layouttestresults import LayoutTestResults
-from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.port.factory import PortFactory
@@ -41,6 +40,8 @@ from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.queues import PatchProcessingQueue
 from webkitpy.tool.commands.queuestest import QueuesTest
 from webkitpy.tool.mocktool import MockTool, MockOptions
+
+from webkitcorepy import OutputCapture
 
 
 # Needed to define port_name, used in AbstractEarlyWarningSystem.__init__
@@ -61,7 +62,11 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         ews.bind_to_tool(MockTool())
         ews.host = MockHost()
         ews._options = MockOptions(port=None, confirm=False)
-        OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_logs=self._default_begin_work_queue_logs(ews.name))
+
+        with OutputCapture(level=logging.INFO) as captured:
+            ews.begin_work_queue()
+        self.assertEqual(captured.root.log.getvalue(), self._default_begin_work_queue_logs(ews.name))
+
         task = Mock()
         task.results_from_patch_test_run = results
         patch = ews._tool.bugs.fetch_attachment(10000)
