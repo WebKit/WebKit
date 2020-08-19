@@ -66,7 +66,7 @@ function regExpExec(regexp, str)
 
     var exec = regexp.exec;
     var builtinExec = @regExpBuiltinExec;
-    if (exec !== builtinExec && typeof exec === "function") {
+    if (exec !== builtinExec && @isCallable(exec)) {
         var result = exec.@call(regexp, str);
         if (result !== null && !@isObject(result))
             @throwTypeError("The result of a RegExp exec must be null or an object");
@@ -285,7 +285,7 @@ function replace(strArg, replace)
 
     var str = @toString(strArg);
     var stringLength = str.length;
-    var functionalReplace = typeof replace === 'function';
+    var functionalReplace = @isCallable(replace);
 
     if (!functionalReplace)
         replace = @toString(replace);

@@ -137,6 +137,7 @@ using J_JITOperation_GJI = EncodedJSValue(JIT_OPERATION *)(JSGlobalObject*, Enco
 using V_JITOperation_GSsiJJC = void(JIT_OPERATION *)(JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue, uintptr_t);
 using C_JITOperation_TT = uintptr_t(JIT_OPERATION *)(StringImpl*, StringImpl*);
 using C_JITOperation_B_GJssJss = uintptr_t(JIT_OPERATION *)(JSGlobalObject*, JSString*, JSString*);
+using S_JITOperation_GC = size_t(JIT_OPERATION *)(JSGlobalObject*, JSCell*);
 using S_JITOperation_GJJ = size_t(JIT_OPERATION *)(JSGlobalObject*, EncodedJSValue, EncodedJSValue);
 using V_JITOperation_GJJJ = void(JIT_OPERATION *)(JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 using J_JITOperation_GSsiJJ = EncodedJSValue(JIT_OPERATION *)(JSGlobalObject*, StructureStubInfo*, EncodedJSValue, EncodedJSValue);

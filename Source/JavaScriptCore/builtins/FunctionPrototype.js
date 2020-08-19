@@ -47,7 +47,7 @@ function symbolHasInstance(value)
 {
     "use strict";
 
-    if (typeof this !== "function")
+    if (!@isCallable(this))
         return false;
 
     if (@isBoundFunction(this))
@@ -62,7 +62,7 @@ function bind(thisValue)
     "use strict";
 
     var target = this;
-    if (typeof target !== "function")
+    if (!@isCallable(target))
         @throwTypeError("|this| is not a function inside Function.prototype.bind");
 
     var argumentCount = @argumentCount();

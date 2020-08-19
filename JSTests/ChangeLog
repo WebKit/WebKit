@@ -1,3 +1,13 @@
+2020-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Introduce OpIsCallable bytecode and intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=215572
+
+        Reviewed by Ross Kirsling and Saam Barati.
+
+        * stress/type-of-functions-and-objects.js:
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2020-08-17  Saam Barati  <sbarati@apple.com>
 
         Have an OOB+SaneChain Array::Speculation

@@ -28,7 +28,7 @@ function apply(target, thisArgument, argumentsList)
 {
     "use strict";
 
-    if (typeof target !== "function")
+    if (!@isCallable(target))
         @throwTypeError("Reflect.apply requires the first argument be a function");
 
     if (!@isObject(argumentsList))

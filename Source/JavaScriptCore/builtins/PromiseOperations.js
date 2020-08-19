@@ -58,10 +58,10 @@ function newPromiseCapabilitySlow(constructor)
         promiseCapability.@reject = reject;
     });
 
-    if (typeof promiseCapability.@resolve !== "function")
+    if (!@isCallable(promiseCapability.@resolve))
         @throwTypeError("executor did not take a resolve function");
 
-    if (typeof promiseCapability.@reject !== "function")
+    if (!@isCallable(promiseCapability.@reject))
         @throwTypeError("executor did not take a reject function");
 
     promiseCapability.@promise = promise;
@@ -165,7 +165,7 @@ function resolvePromise(promise, resolution)
         return;
     }
 
-    if (typeof then !== 'function')
+    if (!@isCallable(then))
         return @fulfillPromise(promise, resolution);
 
     @enqueueJob(@promiseResolveThenableJob, resolution, then, @createResolvingFunctions(promise));
@@ -295,7 +295,7 @@ function resolveWithoutPromise(resolution, onFulfilled, onRejected)
         return;
     }
 
-    if (typeof then !== 'function') {
+    if (!@isCallable(then)) {
         @fulfillWithoutPromise(resolution, onFulfilled, onRejected);
         return;
     }

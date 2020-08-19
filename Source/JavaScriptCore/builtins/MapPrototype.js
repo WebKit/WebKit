@@ -30,7 +30,7 @@ function forEach(callback /*, thisArg */)
     if (!@isMap(this))
         @throwTypeError("Map operation called on non-Map object");
 
-    if (typeof callback !== 'function')
+    if (!@isCallable(callback))
         @throwTypeError("Map.prototype.forEach callback must be a function");
 
     var thisArg = @argument(1);

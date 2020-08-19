@@ -811,10 +811,17 @@ SLOW_PATH_DECL(slow_path_typeof_is_object)
     RETURN(jsBoolean(jsTypeofIsObject(globalObject, GET_C(bytecode.m_operand).jsValue())));
 }
 
-SLOW_PATH_DECL(slow_path_is_function)
+SLOW_PATH_DECL(slow_path_typeof_is_function)
 {
     BEGIN();
-    auto bytecode = pc->as<OpIsFunction>();
+    auto bytecode = pc->as<OpTypeofIsFunction>();
+    RETURN(jsBoolean(jsTypeofIsFunction(globalObject, GET_C(bytecode.m_operand).jsValue())));
+}
+
+SLOW_PATH_DECL(slow_path_is_callable)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpIsCallable>();
     RETURN(jsBoolean(GET_C(bytecode.m_operand).jsValue().isCallable(vm)));
 }
 

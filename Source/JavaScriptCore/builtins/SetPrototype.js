@@ -30,7 +30,7 @@ function forEach(callback /*, thisArg */)
     if (!@isSet(this))
         @throwTypeError("Set operation called on non-Set object");
 
-    if (typeof callback !== 'function')
+    if (!@isCallable(callback))
         @throwTypeError("Set.prototype.forEach callback must be a function");
 
     var thisArg = @argument(1);

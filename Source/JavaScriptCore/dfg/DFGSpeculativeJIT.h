@@ -1406,7 +1406,7 @@ public:
     void compileStringReplace(Node*);
     void compileIsObject(Node*);
     void compileTypeOfIsObject(Node*);
-    void compileIsFunction(Node*);
+    void compileIsCallable(Node*, S_JITOperation_GC);
     void compileIsConstructor(Node*);
     void compileTypeOf(Node*);
     void compileCheckIsConstant(Node*);

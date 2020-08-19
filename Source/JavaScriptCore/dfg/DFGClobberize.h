@@ -596,10 +596,15 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         read(MiscFields);
         def(HeapLocation(TypeOfIsObjectLoc, MiscFields, node->child1()), LazyNode(node));
         return;
-        
-    case IsFunction:
+
+    case TypeOfIsFunction:
         read(MiscFields);
-        def(HeapLocation(IsFunctionLoc, MiscFields, node->child1()), LazyNode(node));
+        def(HeapLocation(TypeOfIsFunctionLoc, MiscFields, node->child1()), LazyNode(node));
+        return;
+        
+    case IsCallable:
+        read(MiscFields);
+        def(HeapLocation(IsCallableLoc, MiscFields, node->child1()), LazyNode(node));
         return;
 
     case IsConstructor:

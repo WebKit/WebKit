@@ -44,7 +44,7 @@ function from(items /*, mapFn, thisArg */)
     var thisArg;
 
     if (mapFn !== @undefined) {
-        if (typeof mapFn !== "function")
+        if (!@isCallable(mapFn))
             @throwTypeError("Array.from requires that the second argument, when provided, be a function");
 
         thisArg = @argument(2);
@@ -54,7 +54,7 @@ function from(items /*, mapFn, thisArg */)
 
     var iteratorMethod = items.@@iterator;
     if (!@isUndefinedOrNull(iteratorMethod)) {
-        if (typeof iteratorMethod !== "function")
+        if (!@isCallable(iteratorMethod))
             @throwTypeError("Array.from requires that the property of the first argument, items[Symbol.iterator], when exists, be a function");
 
         var result = this !== @Array && @isConstructor(this) ? new this() : [];

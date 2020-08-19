@@ -9549,7 +9549,7 @@ void SpeculativeJIT::compileTypeOfIsObject(Node* node)
     unblessedBooleanResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileIsFunction(Node* node)
+void SpeculativeJIT::compileIsCallable(Node* node, S_JITOperation_GC slowPathOperation)
 {
     JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
     
@@ -9578,7 +9578,7 @@ void SpeculativeJIT::compileIsFunction(Node* node)
     
     addSlowPathGenerator(
         slowPathCall(
-            slowPath, this, operationObjectIsFunction, resultGPR, globalObject,
+            slowPath, this, slowPathOperation, resultGPR, globalObject,
             valueRegs.payloadGPR()));
     
     done.link(&m_jit);

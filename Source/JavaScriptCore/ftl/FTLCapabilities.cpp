@@ -259,13 +259,14 @@ inline CapabilityLevel canCompile(Node* node)
     case IsEmpty:
     case TypeOfIsUndefined:
     case TypeOfIsObject:
+    case TypeOfIsFunction:
     case IsUndefinedOrNull:
     case IsBoolean:
     case IsNumber:
     case IsBigInt:
     case NumberIsInteger:
     case IsObject:
-    case IsFunction:
+    case IsCallable:
     case IsConstructor:
     case IsTypedArrayView:
     case CheckTypeInfoFlags:

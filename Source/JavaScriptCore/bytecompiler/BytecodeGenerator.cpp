@@ -1720,7 +1720,7 @@ bool BytecodeGenerator::emitEqualityOpImpl(RegisterID* dst, RegisterID* src1, Re
             }
             if (value == "function") {
                 rewind();
-                OpIsFunction::emit(this, dst, op.m_value);
+                OpTypeofIsFunction::emit(this, dst, op.m_value);
                 return true;
             }
         }
@@ -4409,6 +4409,12 @@ RegisterID* BytecodeGenerator::emitIsCellWithType(RegisterID* dst, RegisterID* s
 RegisterID* BytecodeGenerator::emitIsObject(RegisterID* dst, RegisterID* src)
 {
     OpIsObject::emit(this, dst, src);
+    return dst;
+}
+
+RegisterID* BytecodeGenerator::emitIsCallable(RegisterID* dst, RegisterID* src)
+{
+    OpIsCallable::emit(this, dst, src);
     return dst;
 }
 

@@ -49,10 +49,10 @@ function then(onFulfilled, onRejected)
         promise = promiseOrCapability.@promise;
     }
 
-    if (typeof onFulfilled !== "function")
+    if (!@isCallable(onFulfilled))
         onFulfilled = function (argument) { return argument; };
 
-    if (typeof onRejected !== "function")
+    if (!@isCallable(onRejected))
         onRejected = function (argument) { throw argument; };
 
     var reaction = @newPromiseReaction(promiseOrCapability, onFulfilled, onRejected);
@@ -86,7 +86,7 @@ function finally(onFinally)
     var thenFinally;
     var catchFinally;
 
-    if (typeof onFinally !== "function") {
+    if (!@isCallable(onFinally)) {
         thenFinally = onFinally;
         catchFinally = onFinally;
     } else {
@@ -104,7 +104,7 @@ function getThenFinally(onFinally, constructor)
 
     return (value) =>
     {
-        @assert(typeof onFinally === "function");
+        @assert(@isCallable(onFinally));
         var result = onFinally();
 
         @assert(@isConstructor(constructor));
@@ -124,7 +124,7 @@ function getCatchFinally(onFinally, constructor)
 
     return (reason) =>
     {
-        @assert(typeof onFinally === "function");
+        @assert(@isCallable(onFinally));
         var result = onFinally();
 
         @assert(@isConstructor(constructor));

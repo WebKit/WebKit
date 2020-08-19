@@ -1370,6 +1370,9 @@ private:
         case TypeOfIsObject:
             compileTypeOfIsObject();
             break;
+        case TypeOfIsFunction:
+            compileIsCallable(operationTypeOfIsFunction);
+            break;
         case IsUndefinedOrNull:
             compileIsUndefinedOrNull();
             break;
@@ -1430,8 +1433,8 @@ private:
         case IsObject:
             compileIsObject();
             break;
-        case IsFunction:
-            compileIsFunction();
+        case IsCallable:
+            compileIsCallable(operationObjectIsCallable);
             break;
         case IsConstructor:
             compileIsConstructor();
@@ -11746,7 +11749,7 @@ private:
         setBoolean(result);
     }
     
-    void compileIsFunction()
+    void compileIsCallable(S_JITOperation_GC slowPathOperation)
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         
@@ -11779,7 +11782,7 @@ private:
         LValue slowResultValue = lazySlowPath(
             [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                 return createLazyCallGenerator(vm,
-                    operationObjectIsFunction, locations[0].directGPR(),
+                    slowPathOperation, locations[0].directGPR(),
                     CCallHelpers::TrustedImmPtr(globalObject), locations[1].directGPR());
             }, value);
         ValueFromBlock slowResult = m_out.anchor(m_out.notNull(slowResultValue));

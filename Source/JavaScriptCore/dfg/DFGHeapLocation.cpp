@@ -66,8 +66,12 @@ void printInternal(PrintStream& out, LocationKind kind)
         out.print("TypeOfIsObjectLoc");
         return;
 
-    case IsFunctionLoc:
-        out.print("IsFunctionLoc");
+    case TypeOfIsFunctionLoc:
+        out.print("TypeOfIsFunctionLoc");
+        return;
+
+    case IsCallableLoc:
+        out.print("IsCallableLoc");
         return;
         
     case IsConstructorLoc:

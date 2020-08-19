@@ -3669,6 +3669,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case TypeOfIsFunction: {
+        compileIsCallable(node, operationTypeOfIsFunction);
+        break;
+    }
+
     case IsUndefinedOrNull: {
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value, TagWord);
@@ -3721,8 +3726,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case IsFunction: {
-        compileIsFunction(node);
+    case IsCallable: {
+        compileIsCallable(node, operationObjectIsCallable);
         break;
     }
 

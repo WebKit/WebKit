@@ -74,7 +74,7 @@ function every(callback /*, thisArg */)
     var length = @typedArrayLength(this);
     var thisArg = @argument(1);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("TypedArray.prototype.every callback must be a function");
 
     for (var i = 0; i < length; i++) {
@@ -108,7 +108,7 @@ function find(callback /* [, thisArg] */)
     var length = @typedArrayLength(this);
     var thisArg = @argument(1);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("TypedArray.prototype.find callback must be a function");
 
     for (var i = 0; i < length; i++) {
@@ -125,7 +125,7 @@ function findIndex(callback /* [, thisArg] */)
     var length = @typedArrayLength(this);
     var thisArg = @argument(1);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("TypedArray.prototype.findIndex callback must be a function");
 
     for (var i = 0; i < length; i++) {
@@ -141,7 +141,7 @@ function forEach(callback /* [, thisArg] */)
     var length = @typedArrayLength(this);
     var thisArg = @argument(1);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("TypedArray.prototype.forEach callback must be a function");
 
     for (var i = 0; i < length; i++)
@@ -155,7 +155,7 @@ function some(callback /* [, thisArg] */)
     var length = @typedArrayLength(this);
     var thisArg = @argument(1);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("TypedArray.prototype.some callback must be a function");
 
     for (var i = 0; i < length; i++) {
@@ -223,7 +223,7 @@ function sort(comparator)
     if (length < 2)
         return;
 
-    if (typeof comparator == "function")
+    if (@isCallable(comparator))
         mergeSort(this, length, comparator);
     else
         @typedArraySort(this);
@@ -255,7 +255,7 @@ function reduce(callback /* [, initialValue] */)
 
     var length = @typedArrayLength(this);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("TypedArray.prototype.reduce callback must be a function");
 
     var argumentCount = @argumentCount();
@@ -281,7 +281,7 @@ function reduceRight(callback /* [, initialValue] */)
 
     var length = @typedArrayLength(this);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("TypedArray.prototype.reduceRight callback must be a function");
 
     var argumentCount = @argumentCount();
@@ -307,7 +307,7 @@ function map(callback /*, thisArg */)
 
     var length = @typedArrayLength(this);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("TypedArray.prototype.map callback must be a function");
 
     var thisArg = @argument(1);
@@ -341,7 +341,7 @@ function filter(callback /*, thisArg */)
 
     var length = @typedArrayLength(this);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("TypedArray.prototype.filter callback must be a function");
 
     var thisArg = @argument(1);

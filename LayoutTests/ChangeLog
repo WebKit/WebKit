@@ -1,3 +1,17 @@
+2020-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Introduce OpIsCallable bytecode and intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=215572
+
+        Reviewed by Ross Kirsling and Saam Barati.
+
+        * js/dom/document-all-is-callable-builtins-expected.txt: Added.
+        * js/dom/document-all-is-callable-builtins.html: Added.
+        * js/dom/document-all-typeof-is-function-fold-expected.txt: Added.
+        * js/dom/document-all-typeof-is-function-fold.html: Added.
+        * js/dom/script-tests/document-all-is-callable-builtins.js: Added.
+        * js/dom/script-tests/document-all-typeof-is-function-fold.js: Added.
+
 2020-08-19  Peng Liu  <peng.liu6@apple.com>
 
         A PiP window is closed when the video element is removed from DOM

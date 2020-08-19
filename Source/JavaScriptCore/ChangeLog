@@ -1,3 +1,148 @@
+2020-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Introduce OpIsCallable bytecode and intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=215572
+
+        Reviewed by Ross Kirsling and Saam Barati.
+
+        This patch:
+
+        1. Aligns slow_path_is_function with DFG/FTL implementations by introducing
+           jsTypeofIsFunction() helper. This fixes `typeof document.all === "function"`
+           to return `false` instead of `true`.
+
+        2. Renames is_function bytecode op to typeof_is_function, aligning it with
+           typeof_is_undefined and typeof_is_object. New name offers better semantics
+           and clearly communicates the op should be avoided when implementing new
+           features because of `typeof` behavior with [[IsHTMLDDA]] objects [1].
+
+        3. Adds is_callable bytecode op and utilizes it in built-ins via intrinsic,
+           removing `typeof callback === "function"` checks. This prevents [[IsHTMLDDA]]
+           objects from being considered non-callable [2].
+
+           To preserve the fast path for JSFunctionType,
+           createFunctionThatMasqueradesAsUndefined() is relocated to InternalFunction.
+
+        `typeof` microbenchmarks are neutral.
+
+        [1]: https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-typeof
+        [2]: https://tc39.es/ecma262/#sec-array.prototype.map (step 3)
+
+        * builtins/ArrayConstructor.js:
+        * builtins/ArrayPrototype.js:
+        (reduce):
+        (reduceRight):
+        (every):
+        (forEach):
+        (filter):
+        (map):
+        (some):
+        (find):
+        (findIndex):
+        (sort):
+        (flatMap):
+        * builtins/FunctionPrototype.js:
+        (overriddenName.string_appeared_here.symbolHasInstance):
+        (bind):
+        * builtins/MapPrototype.js:
+        (forEach):
+        * builtins/PromiseConstructor.js:
+        (all):
+        (allSettled):
+        (any):
+        (race):
+        (nakedConstructor.Promise):
+        (nakedConstructor.InternalPromise):
+        * builtins/PromiseOperations.js:
+        (globalPrivate.newPromiseCapabilitySlow):
+        (globalPrivate.resolvePromise):
+        (globalPrivate.resolveWithoutPromise):
+        * builtins/PromisePrototype.js:
+        (finally):
+        (globalPrivate.getThenFinally):
+        (globalPrivate.getCatchFinally):
+        * builtins/ReflectObject.js:
+        (apply):
+        * builtins/RegExpPrototype.js:
+        (globalPrivate.regExpExec):
+        (overriddenName.string_appeared_here.replace):
+        * builtins/SetPrototype.js:
+        (forEach):
+        * builtins/TypedArrayConstructor.js:
+        * builtins/TypedArrayPrototype.js:
+        (every):
+        (find):
+        (findIndex):
+        (forEach):
+        (some):
+        (sort):
+        (reduce):
+        (reduceRight):
+        (map):
+        (filter):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        (JSC::computeDefsForBytecodeIndexImpl):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOpImpl):
+        (JSC::BytecodeGenerator::emitIsCallable):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIsCallable):
+        (JSC::DFG::SpeculativeJIT::compileIsFunction): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsCallable):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsFunction): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JITOperations.h:
+        * jsc.cpp:
+        (functionMakeMasquerader):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/CommonSlowPaths.h:
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::createFunctionThatMasqueradesAsUndefined):
+        * runtime/InternalFunction.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::createFunctionThatMasqueradesAsUndefined): Deleted.
+        * runtime/JSFunction.h:
+        * runtime/Operations.h:
+        (JSC::jsTypeofIsFunction):
+
 2020-08-19  Saam Barati  <sbarati@apple.com>
 
         REGRESSION (r265775): DFG ASSERTION FAILED: AI-clobberize disagreement; AI says FoldedClobber while clobberize says (Direct:[], Super:[])

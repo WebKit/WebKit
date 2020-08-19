@@ -31,7 +31,7 @@ function reduce(callback /*, initialValue */)
     var array = @toObject(this, "Array.prototype.reduce requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("Array.prototype.reduce callback must be a function");
 
     var argumentCount = @argumentCount();
@@ -64,7 +64,7 @@ function reduceRight(callback /*, initialValue */)
     var array = @toObject(this, "Array.prototype.reduceRight requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("Array.prototype.reduceRight callback must be a function");
 
     var argumentCount = @argumentCount();
@@ -97,7 +97,7 @@ function every(callback /*, thisArg */)
     var array = @toObject(this, "Array.prototype.every requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("Array.prototype.every callback must be a function");
     
     var thisArg = @argument(1);
@@ -119,7 +119,7 @@ function forEach(callback /*, thisArg */)
     var array = @toObject(this, "Array.prototype.forEach requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("Array.prototype.forEach callback must be a function");
     
     var thisArg = @argument(1);
@@ -137,7 +137,7 @@ function filter(callback /*, thisArg */)
     var array = @toObject(this, "Array.prototype.filter requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("Array.prototype.filter callback must be a function");
     
     var thisArg = @argument(1);
@@ -163,7 +163,7 @@ function map(callback /*, thisArg */)
     var array = @toObject(this, "Array.prototype.map requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("Array.prototype.map callback must be a function");
     
     var thisArg = @argument(1);
@@ -185,7 +185,7 @@ function some(callback /*, thisArg */)
     var array = @toObject(this, "Array.prototype.some requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("Array.prototype.some callback must be a function");
     
     var thisArg = @argument(1);
@@ -242,7 +242,7 @@ function find(callback /*, thisArg */)
     var array = @toObject(this, "Array.prototype.find requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("Array.prototype.find callback must be a function");
     
     var thisArg = @argument(1);
@@ -261,7 +261,7 @@ function findIndex(callback /*, thisArg */)
     var array = @toObject(this, "Array.prototype.findIndex requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("Array.prototype.findIndex callback must be a function");
     
     var thisArg = @argument(1);
@@ -520,7 +520,7 @@ function sort(comparator)
     }
 
     var sortFunction;
-    if (typeof comparator == "function")
+    if (@isCallable(comparator))
         sortFunction = comparatorSort;
     else if (comparator === @undefined)
         sortFunction = stringSort;
@@ -717,7 +717,7 @@ function flatMap(callback)
     var array = @toObject(this, "Array.prototype.flatMap requires that |this| not be null or undefined");
     var length = @toLength(array.length);
 
-    if (typeof callback !== "function")
+    if (!@isCallable(callback))
         @throwTypeError("Array.prototype.flatMap callback must be a function");
 
     var thisArg = @argument(1);

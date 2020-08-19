@@ -214,7 +214,8 @@ void JIT_OPERATION operationWeakSetAdd(VM*, JSCell*, JSCell*, int32_t) WTF_INTER
 void JIT_OPERATION operationWeakMapSet(VM*, JSCell*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;
 double JIT_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
 size_t JIT_OPERATION operationTypeOfIsObject(JSGlobalObject*, JSCell*) WTF_INTERNAL;
-size_t JIT_OPERATION operationObjectIsFunction(JSGlobalObject*, JSCell*) WTF_INTERNAL;
+size_t JIT_OPERATION operationTypeOfIsFunction(JSGlobalObject*, JSCell*) WTF_INTERNAL;
+size_t JIT_OPERATION operationObjectIsCallable(JSGlobalObject*, JSCell*) WTF_INTERNAL;
 size_t JIT_OPERATION operationIsConstructor(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationTypeOfObject(JSGlobalObject*, JSCell*) WTF_INTERNAL;
 char* JIT_OPERATION operationAllocateSimplePropertyStorageWithInitialCapacity(VM*) WTF_INTERNAL;

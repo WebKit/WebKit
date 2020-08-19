@@ -36,6 +36,19 @@ JSValue jsTypeStringForValue(VM&, JSGlobalObject*, JSValue);
 bool jsTypeofIsObject(JSGlobalObject*, JSValue);
 size_t normalizePrototypeChain(JSGlobalObject*, JSCell*, bool& sawPolyProto);
 
+ALWAYS_INLINE bool jsTypeofIsFunction(JSGlobalObject* globalObject, JSValue value)
+{
+    VM& vm = globalObject->vm();
+    if (value.isObject()) {
+        JSObject* object = asObject(value);
+        if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+            return false;
+        if (object->isCallable(vm))
+            return true;
+    }
+    return false;
+}
+
 ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1, JSString* s2)
 {
     VM& vm = getVM(globalObject);

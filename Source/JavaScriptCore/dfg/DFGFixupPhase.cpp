@@ -2729,11 +2729,12 @@ private:
         case IsEmpty:
         case TypeOfIsUndefined:
         case TypeOfIsObject:
+        case TypeOfIsFunction:
         case IsUndefinedOrNull:
         case IsBoolean:
         case IsNumber:
         case IsBigInt:
-        case IsFunction:
+        case IsCallable:
         case IsConstructor:
         case CreateDirectArguments:
         case Jump:

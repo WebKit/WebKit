@@ -1,3 +1,15 @@
+2020-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Introduce OpIsCallable bytecode and intrinsic
+        https://bugs.webkit.org/show_bug.cgi?id=215572
+
+        Reviewed by Ross Kirsling and Saam Barati.
+
+        No new tests, no behavior change.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::openDatabase const):
+
 2020-08-19  Peng Liu  <peng.liu6@apple.com>
 
         A PiP window is closed when the video element is removed from DOM

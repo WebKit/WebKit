@@ -72,6 +72,7 @@ function test() {
     testValue(Map, "function");
     testValue(Date, "function");
     testValue(Map.prototype, "object");
+    testValue(makeMasquerader(), "other");
     
     if (!errors.length)
         return;

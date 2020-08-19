@@ -151,6 +151,16 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
     return baseClass;
 }
 
+InternalFunction* InternalFunction::createFunctionThatMasqueradesAsUndefined(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction)
+{
+    Structure* structure = Structure::create(vm, globalObject, globalObject->objectPrototype(), TypeInfo(InternalFunctionType, InternalFunction::StructureFlags | MasqueradesAsUndefined), InternalFunction::info());
+    globalObject->masqueradesAsUndefinedWatchpoint()->fireAll(globalObject->vm(), "Allocated masquerading object");
+    InternalFunction* function = new (NotNull, allocateCell<InternalFunction>(vm.heap)) InternalFunction(vm, structure, nativeFunction);
+    function->finishCreation(vm, name, NameAdditionMode::WithoutStructureTransition);
+    function->putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(length), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+    return function;
+}
+
 // https://tc39.es/ecma262/#sec-getfunctionrealm
 JSGlobalObject* getFunctionRealm(VM& vm, JSObject* object)
 {
