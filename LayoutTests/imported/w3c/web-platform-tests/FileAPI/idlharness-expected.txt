@@ -16,8 +16,8 @@ PASS Blob interface: attribute size
 PASS Blob interface: attribute type 
 PASS Blob interface: operation slice(optional long long, optional long long, optional DOMString) 
 FAIL Blob interface: operation stream() assert_own_property: interface prototype object missing non-static operation expected property "stream" missing
-FAIL Blob interface: operation text() assert_own_property: interface prototype object missing non-static operation expected property "text" missing
-FAIL Blob interface: operation arrayBuffer() assert_own_property: interface prototype object missing non-static operation expected property "arrayBuffer" missing
+PASS Blob interface: operation text() 
+PASS Blob interface: operation arrayBuffer() 
 PASS Blob must be primary interface of new Blob(["TEST"]) 
 PASS Stringification of new Blob(["TEST"]) 
 PASS Blob interface: new Blob(["TEST"]) must inherit property "size" with the proper type 
@@ -25,8 +25,8 @@ PASS Blob interface: new Blob(["TEST"]) must inherit property "type" with the pr
 PASS Blob interface: new Blob(["TEST"]) must inherit property "slice(optional long long, optional long long, optional DOMString)" with the proper type 
 PASS Blob interface: calling slice(optional long long, optional long long, optional DOMString) on new Blob(["TEST"]) with too few arguments must throw TypeError 
 FAIL Blob interface: new Blob(["TEST"]) must inherit property "stream()" with the proper type assert_inherits: property "stream" not found in prototype chain
-FAIL Blob interface: new Blob(["TEST"]) must inherit property "text()" with the proper type assert_inherits: property "text" not found in prototype chain
-FAIL Blob interface: new Blob(["TEST"]) must inherit property "arrayBuffer()" with the proper type assert_inherits: property "arrayBuffer" not found in prototype chain
+PASS Blob interface: new Blob(["TEST"]) must inherit property "text()" with the proper type 
+PASS Blob interface: new Blob(["TEST"]) must inherit property "arrayBuffer()" with the proper type 
 PASS File interface: existence and properties of interface object 
 PASS File interface object length 
 PASS File interface object name 
@@ -44,8 +44,8 @@ PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit propert
 PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "slice(optional long long, optional long long, optional DOMString)" with the proper type 
 PASS Blob interface: calling slice(optional long long, optional long long, optional DOMString) on new File(["myFileBits"], "myFileName") with too few arguments must throw TypeError 
 FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "stream()" with the proper type assert_inherits: property "stream" not found in prototype chain
-FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "text()" with the proper type assert_inherits: property "text" not found in prototype chain
-FAIL Blob interface: new File(["myFileBits"], "myFileName") must inherit property "arrayBuffer()" with the proper type assert_inherits: property "arrayBuffer" not found in prototype chain
+PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "text()" with the proper type 
+PASS Blob interface: new File(["myFileBits"], "myFileName") must inherit property "arrayBuffer()" with the proper type 
 PASS FileList interface: existence and properties of interface object 
 PASS FileList interface object length 
 PASS FileList interface object name 

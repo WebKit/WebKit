@@ -42,8 +42,7 @@ typedef (BufferSource or Blob or USVString) BlobPart;
 
     Blob slice(optional long long start = 0, optional long long end = 0x7FFFFFFFFFFFFFFF, optional DOMString contentType = "");
 
-    // FIXME: Implement:
-    // readonly attribute boolean isClosed;
-    // void close();
-
+    // [NewObject] ReadableStream stream();
+    [NewObject, CallWith=ScriptExecutionContext] Promise<USVString> text();
+    [NewObject, CallWith=ScriptExecutionContext] Promise<ArrayBuffer> arrayBuffer();
 };

@@ -1,3 +1,3 @@
 
-FAIL Blobs stay alive after their records are deleted. record.a0.text is not a function. (In 'record.a0.text()', 'record.a0.text' is undefined)
+PASS Blobs stay alive after their records are deleted. 
 

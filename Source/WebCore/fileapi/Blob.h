@@ -32,6 +32,7 @@
 #pragma once
 
 #include "BlobPropertyBag.h"
+#include "FileReaderLoader.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptWrappable.h"
 #include <wtf/IsoMalloc.h>
@@ -47,6 +48,8 @@ class ArrayBuffer;
 namespace WebCore {
 
 class Blob;
+class BlobLoader;
+class DeferredPromise;
 class ScriptExecutionContext;
 class SharedBuffer;
 
@@ -106,6 +109,9 @@ public:
         return adoptRef(*new Blob(m_internalURL, start, end, contentType));
     }
 
+    void text(ScriptExecutionContext&, Ref<DeferredPromise>&&);
+    void arrayBuffer(ScriptExecutionContext&, Ref<DeferredPromise>&&);
+
 protected:
     WEBCORE_EXPORT Blob();
     Blob(Vector<BlobPartVariant>&&, const BlobPropertyBag&);
@@ -125,6 +131,8 @@ protected:
     Blob(const URL& srcURL, long long start, long long end, const String& contentType);
 
 private:
+    void loadBlob(ScriptExecutionContext&, FileReaderLoader::ReadType, CompletionHandler<void(std::unique_ptr<BlobLoader>)>&&);
+
     // This is an internal URL referring to the blob data associated with this object. It serves
     // as an identifier for this blob. The internal URL is never used to source the blob's content
     // into an HTML or for FileRead'ing, public blob URLs must be used for those purposes.
@@ -133,6 +141,7 @@ private:
     String m_type;
 
     mutable Optional<unsigned long long> m_size;
+    HashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
 };
 
 } // namespace WebCore

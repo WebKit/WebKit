@@ -66,14 +66,19 @@ void NetworkSendQueue::enqueue(WebCore::Blob& blob)
         enqueue(JSC::ArrayBuffer::create(0U, 1), 0, 0);
         return;
     }
-    m_queue.append(makeUniqueRef<BlobLoader>(m_document.get(), blob, [this] {
+    auto blobLoader = makeUniqueRef<BlobLoader>([this](BlobLoader&) {
         processMessages();
-    }));
+    });
+    auto* blobLoaderPtr = &blobLoader.get();
+    m_queue.append(WTFMove(blobLoader));
+    blobLoaderPtr->start(blob, m_document.get(), FileReaderLoader::ReadAsArrayBuffer);
 }
 
 void NetworkSendQueue::clear()
 {
-    m_queue.clear();
+    // Do not call m_queue.clear() here since destroying a BlobLoader will cause its completion
+    // handler to get called, which will call processMessages() to iterate over m_queue.
+    std::exchange(m_queue, { });
 }
 
 void NetworkSendQueue::processMessages()
@@ -91,7 +96,7 @@ void NetworkSendQueue::processMessages()
                 return;
             }
 
-            if (const auto& result = loader->result()) {
+            if (const auto& result = loader->arrayBufferResult()) {
                 m_writeRawData(static_cast<const char*>(result->data()), result->byteLength());
                 return;
             }

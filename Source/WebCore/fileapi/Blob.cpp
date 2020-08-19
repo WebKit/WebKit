@@ -32,9 +32,11 @@
 #include "Blob.h"
 
 #include "BlobBuilder.h"
+#include "BlobLoader.h"
 #include "BlobPart.h"
 #include "BlobURL.h"
 #include "File.h"
+#include "JSDOMPromiseDeferred.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include "ThreadableBlobRegistry.h"
@@ -153,6 +155,9 @@ Blob::Blob(const URL& srcURL, long long start, long long end, const String& type
 
 Blob::~Blob()
 {
+    while (!m_blobLoaders.isEmpty())
+        (*m_blobLoaders.begin())->cancel();
+
     ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
 }
 
@@ -184,6 +189,43 @@ String Blob::normalizedContentType(const String& contentType)
     if (!isValidContentType(contentType))
         return emptyString();
     return contentType.convertToASCIILowercase();
+}
+
+void Blob::loadBlob(ScriptExecutionContext& context, FileReaderLoader::ReadType readType, CompletionHandler<void(std::unique_ptr<BlobLoader>)>&& completionHandler)
+{
+    auto blobLoader = makeUnique<BlobLoader>([this, completionHandler = WTFMove(completionHandler)](BlobLoader& blobLoader) mutable {
+        completionHandler(m_blobLoaders.take(&blobLoader));
+    });
+    auto* blobLoaderPtr = blobLoader.get();
+    m_blobLoaders.add(WTFMove(blobLoader));
+    blobLoaderPtr->start(*this, &context, readType);
+}
+
+void Blob::text(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
+{
+    loadBlob(context, FileReaderLoader::ReadAsText, [promise = WTFMove(promise)](std::unique_ptr<BlobLoader> blobLoader) mutable {
+        if (auto optionalErrorCode = blobLoader->errorCode()) {
+            promise->reject(Exception { *optionalErrorCode });
+            return;
+        }
+        promise->resolve<IDLDOMString>(blobLoader->stringResult());
+    });
+}
+
+void Blob::arrayBuffer(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
+{
+    loadBlob(context, FileReaderLoader::ReadAsArrayBuffer, [promise = WTFMove(promise)](std::unique_ptr<BlobLoader> blobLoader) mutable {
+        if (auto optionalErrorCode = blobLoader->errorCode()) {
+            promise->reject(Exception { *optionalErrorCode });
+            return;
+        }
+        auto arrayBuffer = blobLoader->arrayBufferResult();
+        if (!arrayBuffer) {
+            promise->reject(Exception { InvalidStateError });
+            return;
+        }
+        promise->resolve<IDLArrayBuffer>(*arrayBuffer);
+    });
 }
 
 #if ASSERT_ENABLED

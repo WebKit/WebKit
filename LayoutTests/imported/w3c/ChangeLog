@@ -1,5 +1,19 @@
 2020-08-19  Chris Dumez  <cdumez@apple.com>
 
+        Blob is missing text() & arrayBuffer() operations
+        https://bugs.webkit.org/show_bug.cgi?id=215663
+
+        Reviewed by Geoff Garen.
+
+        * web-platform-tests/FileAPI/blob/Blob-array-buffer.any-expected.txt:
+        * web-platform-tests/FileAPI/blob/Blob-array-buffer.any.worker-expected.txt:
+        * web-platform-tests/FileAPI/blob/Blob-text.any-expected.txt:
+        * web-platform-tests/FileAPI/blob/Blob-text.any.worker-expected.txt:
+        * web-platform-tests/FileAPI/idlharness-expected.txt:
+        * web-platform-tests/FileAPI/idlharness.worker-expected.txt:
+
+2020-08-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline imported/w3c/web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform.html
 
         * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform-expected.txt:

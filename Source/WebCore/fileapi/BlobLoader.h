@@ -40,12 +40,16 @@ namespace WebCore {
 class BlobLoader final : public FileReaderLoaderClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BlobLoader(Document*, Blob&, Function<void()>&&);
+    explicit BlobLoader(CompletionHandler<void(BlobLoader&)>&&);
     ~BlobLoader();
 
-    bool isLoading() const { return !!m_loader; }
-    const RefPtr<JSC::ArrayBuffer>& result() const { return m_buffer; }
-    Optional<ExceptionCode> errorCode() const { return m_errorCode; }
+    void start(Blob&, ScriptExecutionContext*, FileReaderLoader::ReadType);
+
+    void cancel();
+    bool isLoading() const { return m_loader && m_completionHandler; }
+    String stringResult() const { return m_loader ? m_loader->stringResult() : String(); }
+    RefPtr<JSC::ArrayBuffer> arrayBufferResult() const { return m_loader ? m_loader->arrayBufferResult() : nullptr; }
+    Optional<ExceptionCode> errorCode() const { return m_loader ? m_loader->errorCode() : WTF::nullopt; }
 
 private:
     void didStartLoading() final { }
@@ -56,41 +60,44 @@ private:
     void complete();
 
     std::unique_ptr<FileReaderLoader> m_loader;
-    RefPtr<JSC::ArrayBuffer> m_buffer;
-    Optional<ExceptionCode> m_errorCode;
-    Function<void()> m_completionHandler;
+    CompletionHandler<void(BlobLoader&)> m_completionHandler;
 };
 
-inline BlobLoader::BlobLoader(WebCore::Document* document, Blob& blob, Function<void()>&& completionHandler)
-    : m_loader(makeUnique<FileReaderLoader>(FileReaderLoader::ReadAsArrayBuffer, this))
-    , m_completionHandler(WTFMove(completionHandler))
+inline BlobLoader::BlobLoader(CompletionHandler<void(BlobLoader&)>&& completionHandler)
+    : m_completionHandler(WTFMove(completionHandler))
 {
-    m_loader->start(document, blob);
 }
 
 inline BlobLoader::~BlobLoader()
 {
+    if (isLoading())
+        cancel();
+}
+
+inline void BlobLoader::cancel()
+{
     if (m_loader)
         m_loader->cancel();
-    // FIXME: Call m_completionHandler to migrate it from a Function to a CompletionHandler.
+
+    if (m_completionHandler)
+        m_completionHandler(*this);
+}
+
+inline void BlobLoader::start(Blob& blob, ScriptExecutionContext* context, FileReaderLoader::ReadType readType)
+{
+    ASSERT(!m_loader);
+    m_loader = makeUnique<FileReaderLoader>(readType, this);
+    m_loader->start(context, blob);
 }
 
 inline void BlobLoader::didFinishLoading()
 {
-    m_buffer = m_loader->arrayBufferResult();
-    complete();
+    m_completionHandler(*this);
 }
 
-inline void BlobLoader::didFail(ExceptionCode errorCode)
+inline void BlobLoader::didFail(ExceptionCode)
 {
-    m_errorCode = errorCode;
-    complete();
-}
-
-inline void BlobLoader::complete()
-{
-    m_loader = nullptr;
-    m_completionHandler();
+    m_completionHandler(*this);
 }
 
 } // namespace WebCore
