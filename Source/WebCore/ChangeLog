@@ -1,3 +1,18 @@
+2020-08-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        <button> should support display:inline-grid/grid/inline-flex/flex correctly
+        https://bugs.webkit.org/show_bug.cgi?id=209656
+
+        Reviewed by Javier Fernandez.
+
+        Button elements with display type (inline-) flex or grid should be laid out as their
+        display type states and not as buttons. That's mentioned in the HTML spec here
+        https://html.spec.whatwg.org/multipage/rendering.html#button-layout.
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::createElementRenderer): let HTMLFormControlElement create
+        a renderer instead of using a RenderButton whenever display is (inline-)grid/flex.
+
 2020-08-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebXR] Make "in parallel" code run really in parallel

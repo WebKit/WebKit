@@ -14,6 +14,6 @@
 3
 4
 
-FAIL inline-grid assert_equals: clientWidth expected 26 but got 19
-FAIL grid assert_equals: clientWidth expected 26 but got 19
+PASS inline-grid 
+PASS grid 
 

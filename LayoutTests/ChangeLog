@@ -1,3 +1,17 @@
+2020-08-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        <button> should support display:inline-grid/grid/inline-flex/flex correctly
+        https://bugs.webkit.org/show_bug.cgi?id=209656
+
+        Reviewed by Javier Fernandez.
+
+        * platform/gtk/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/flex-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/grid-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/flex-expected.txt: Removed.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/grid-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/flex-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/grid-expected.txt: Removed.
+
 2020-08-19  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Skip more tests using plugins after r265753.

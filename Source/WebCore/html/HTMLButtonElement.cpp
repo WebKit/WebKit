@@ -60,8 +60,12 @@ void HTMLButtonElement::setType(const AtomString& type)
     setAttributeWithoutSynchronization(typeAttr, type);
 }
 
-RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
+RenderPtr<RenderElement> HTMLButtonElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& position)
 {
+    // https://html.spec.whatwg.org/multipage/rendering.html#button-layout
+    DisplayType display = style.display();
+    if (display == DisplayType::InlineGrid || display == DisplayType::Grid || display == DisplayType::InlineFlex || display == DisplayType::Flex)
+        return HTMLFormControlElement::createElementRenderer(WTFMove(style), position);
     return createRenderer<RenderButton>(*this, WTFMove(style));
 }
 

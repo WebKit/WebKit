@@ -1,3 +1,15 @@
+2020-08-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        <button> should support display:inline-grid/grid/inline-flex/flex correctly
+        https://bugs.webkit.org/show_bug.cgi?id=209656
+
+        Reviewed by Javier Fernandez.
+
+        Replaced FAIL expectation by PASS one. Both tests should pass now with no failures.
+
+        * web-platform-tests/html/rendering/widgets/button-layout/flex-expected.txt:
+        * web-platform-tests/html/rendering/widgets/button-layout/grid-expected.txt:
+
 2020-08-18  Chris Dumez  <cdumez@apple.com>
 
         AudioBuffer.duration should use double precision

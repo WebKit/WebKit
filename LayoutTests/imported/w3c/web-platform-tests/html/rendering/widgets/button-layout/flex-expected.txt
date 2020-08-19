@@ -20,6 +20,6 @@ abc
 
 PASS inline-flex 
 PASS flex 
-FAIL align-items:flex-start should work assert_equals: expected 84 but got 74
-FAIL align-items:stretch should work assert_equals: expected 13 but got 33
+PASS align-items:flex-start should work 
+PASS align-items:stretch should work 
 
