@@ -1,3 +1,11 @@
+2020-08-19  Alex Christensen  <achristensen@webkit.org>
+
+        [Catalina/iOS 13] TestWebKitAPI.TLSVersion.LegacySubresources is failing
+        https://bugs.webkit.org/show_bug.cgi?id=215640
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        This tests behavior using CFNetwork functionality which is only available to Big Sur, iOS 14, and updated versions of Catalina.
+
 2020-08-18  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Rosetta specific test expectations

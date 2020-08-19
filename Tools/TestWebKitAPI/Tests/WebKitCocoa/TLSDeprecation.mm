@@ -460,6 +460,8 @@ TEST(TLSVersion, BackForwardHasOnlySecureContent)
     EXPECT_FALSE([webView hasOnlySecureContent]);
 }
 
+#if HAVE(TLS_VERSION_DURING_CHALLENGE)
+
 TEST(TLSVersion, LegacySubresources)
 {
     HTTPServer legacyServer({
@@ -496,6 +498,8 @@ TEST(TLSVersion, LegacySubresources)
     EXPECT_EQ(legacyServer.totalRequests(), 1u);
     EXPECT_EQ(modernServer.totalRequests(), 2u);
 }
+
+#endif // HAVE(TLS_VERSION_DURING_CHALLENGE)
 
 #endif // HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
 
