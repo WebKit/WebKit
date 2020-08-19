@@ -29,72 +29,36 @@
   }, "getEntriesByName values are case sensitive");
 
   async_test(function (t) {
-    let observerCalled = false;
-    const observer = new PerformanceObserver(
+    // Test type/buffered case sensitivity.
+    observer = new PerformanceObserver(
       t.step_func(function (entryList, obs) {
-        observerCalled = true;
+        assert_unreached("Observer(type) should not be called.");
       })
     );
     observer.observe({type: "Mark"});
     observer.observe({type: "Measure"});
     observer.observe({type: "MARK"});
     observer.observe({type: "MEASURE"});
-    self.performance.mark("mark1");
-    self.performance.measure("measure1");
-    t.step_timeout(function() {
-      assert_false(observerCalled, "Observer should not be called.");
-      t.done();
-    }, 1000);
-}  , "observe() and case sensitivity for types.");
-
-  async_test(function (t) {
-    let observerCalled = false;
-    const observer = new PerformanceObserver(
-      t.step_func(function (entryList, obs) {
-        observerCalled = true;
-      })
-    );
     observer.observe({type: "Mark", buffered: true});
     observer.observe({type: "Measure", buffered: true});
     observer.observe({type: "MARK", buffered: true});
     observer.observe({type: "MEASURE", buffered: true});
     self.performance.mark("mark1");
     self.performance.measure("measure1");
-    t.step_timeout(function() {
-      assert_false(observerCalled, "Observer should not be called.");
-      t.done();
-    }, 1000);
-  }, "observe() and case sensitivity for types with buffered=true.");
 
-  async_test(function (t) {
-    let observerCalled = false;
-    const observer = new PerformanceObserver(
+    // Test entryTypes case sensitivity.
+    observer = new PerformanceObserver(
       t.step_func(function (entryList, obs) {
-        observerCalled = true;
+        assert_unreached("Observer(entryTypes) should not be called.");
       })
     );
     observer.observe({entryTypes: ["Mark", "Measure"]});
-    self.performance.mark("mark1");
-    self.performance.measure("measure1");
-    t.step_timeout(function() {
-      assert_false(observerCalled, "Observer should not be called.");
-      t.done();
-    }, 1000);
-  }, "observe() and case sensitivity for entryTypes.");
-
-  async_test(function (t) {
-    let observerCalled = false;
-    const observer = new PerformanceObserver(
-      t.step_func(function (entryList, obs) {
-        observerCalled = true;
-      })
-    );
     observer.observe({entryTypes: ["MARK", "MEASURE"]});
     self.performance.mark("mark1");
     self.performance.measure("measure1");
+
     t.step_timeout(function() {
-      assert_false(observerCalled, "Observer should not be called.");
       t.done();
     }, 1000);
-  }, "observe() and case sensitivity for entryTypes 2.");
 
+  }, "observe() and case sensitivity for types/entryTypes and buffered.");

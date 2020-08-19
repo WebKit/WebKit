@@ -1,8 +1,5 @@
 
 PASS getEntriesByType values are case sensitive 
 PASS getEntriesByName values are case sensitive 
-PASS observe() and case sensitivity for types. 
-PASS observe() and case sensitivity for types with buffered=true. 
-PASS observe() and case sensitivity for entryTypes. 
-PASS observe() and case sensitivity for entryTypes 2. 
+PASS observe() and case sensitivity for types/entryTypes and buffered. 
 
