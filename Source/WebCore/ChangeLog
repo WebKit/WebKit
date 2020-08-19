@@ -1,5 +1,19 @@
 2020-08-17  Sergio Villar Senin  <svillar@igalia.com>
 
+        [css-flexbox] min-height:auto not updated after an image loads when the image has a specified height and width.
+        https://bugs.webkit.org/show_bug.cgi?id=210475
+
+        Reviewed by Javier Fernandez.
+
+        The flex layout algorithm needs the item's intrinsic size even if it has a specified size, that's
+        why the flex item size should be recomputed in the event of changes in its intrinsic size.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::setNeedsLayoutIfNeededAfterIntrinsicSizeChange): set the needs layout flag
+        also for replaced elements which happen to be flex items.
+
+2020-08-17  Sergio Villar Senin  <svillar@igalia.com>
+
         [css-flexbox] Apply aspect ratios when computing flex-basis
         https://bugs.webkit.org/show_bug.cgi?id=215570
 
