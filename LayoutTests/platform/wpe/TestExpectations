@@ -907,7 +907,7 @@ webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSessio
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_no_mode.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_non_immersive_no_gesture.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrDevice_requestSession_optionalFeatures.https.html [ Pass ]
-webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Pass ]
+webkit.org/b/209859 webkit.org/b/215637 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Pass Failure ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_features_deviceSupport.https.html [ Pass ]
 webkit.org/b/209859 imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_callback_calls.https.html [ Pass ]

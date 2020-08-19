@@ -4,7 +4,6 @@ Test: ../../resources/webgl_test_files/conformance/context/methods.html
 [ 1: PASS ] All WebGL methods found.
 [ 2: FAIL ] Also found the following extra methods:
 [ 3: FAIL ] makeXRCompatible
-[ 4: FAIL ] releaseShaderCompiler
-[ 5: PASS ] successfullyParsed is true
-[ FAIL ] 3 failures reported
+[ 4: PASS ] successfullyParsed is true
+[ FAIL ] 2 failures reported
 

@@ -1,3 +1,23 @@
+2020-08-18  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/webgl/1.0.3/conformance/context/methods-expected.txt:
+        Rebaselined after r265711.
+
+2020-08-18  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2020-08-18  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS iOS ] fast/text/emoji-gender* text expectations change
