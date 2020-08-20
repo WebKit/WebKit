@@ -1,5 +1,29 @@
 2020-08-20  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitcorepy] Add subprocess_utils.run
+        https://bugs.webkit.org/show_bug.cgi?id=215702
+        <rdar://problem/67487751>
+
+        Reviewed by Dewei Zhu.
+
+        Python 3's subprocess.run API is much better than the multiple subprocess APIs that Python 2 provides. Rather than
+        requiring new scripts and libraries to be fully Python 3, we should provide a Python 2 API identical to subprocess.run.
+
+        * Scripts/libraries/webkitcorepy/README.md: Document usage of subprocess_utils.run.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Export subprocess_utils, bump minor version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/subprocess_utils.py: Added.
+        (run): Declare Python 2 version of Python 3's subprocess.run API.
+        (TimeoutExpired): Ditto.
+        (CompletedProcess): Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/subprocess_utils_unittest.py: Added.
+        (SubprocessUtils):
+        (SubprocessUtils.test_run):
+        (SubprocessUtils.test_run_exit):
+        (SubprocessUtils.test_run_timeout):
+        (SubprocessUtils.test_run_timeout_context):
+
+2020-08-20  Jonathan Bedard  <jbedard@apple.com>
+
         [webkitcorepy] Move Timeout to webkitcorepy (Part 1)
         https://bugs.webkit.org/show_bug.cgi?id=215584
         <rdar://problem/67270713>

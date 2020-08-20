@@ -67,3 +67,12 @@ from webkitcorepy import Timeout
 with Timeout(5, handler=RuntimeError('Exceeded 5 second timeout')):
     time.sleep(4)
 ```
+
+subprocess.run replacement:
+```
+import sys
+
+from webkitcorepy import run
+
+result = run([sys.executable, '-c', 'print("message")'], capture_output=True, encoding='utf-8')
+```
