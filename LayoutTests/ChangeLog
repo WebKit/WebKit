@@ -1,3 +1,12 @@
+2020-08-20  Karl Rackler  <rackler@apple.com>
+
+        Four separate reported tests failures: rdar://6453565 rdar://65848157 rdar://66660924 rdar://6684253
+        Tests failing on Rosetta as well as AS - adding test expectations for Rosetta
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectationsRosetta:
+
 2020-08-20  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk2 Debug ] fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html is a flaky timeout
