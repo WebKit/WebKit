@@ -49,6 +49,8 @@ JSCell* JIT_OPERATION operationCallObjectConstructor(JSGlobalObject*, EncodedJSV
 JSCell* JIT_OPERATION operationToObject(JSGlobalObject*, EncodedJSValue encodedTarget, UniquedStringImpl*) WTF_INTERNAL;
 JSArray* JIT_OPERATION operationObjectKeys(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 JSArray* JIT_OPERATION operationObjectKeysObject(JSGlobalObject*, JSObject*) WTF_INTERNAL;
+JSArray* JIT_OPERATION operationObjectGetOwnPropertyNames(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
+JSArray* JIT_OPERATION operationObjectGetOwnPropertyNamesObject(JSGlobalObject*, JSObject*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationObjectCreate(JSGlobalObject*, EncodedJSValue) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationObjectCreateObject(JSGlobalObject*, JSObject*) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationCreateThis(JSGlobalObject*, JSObject* constructor, uint32_t inlineCapacity) WTF_INTERNAL;

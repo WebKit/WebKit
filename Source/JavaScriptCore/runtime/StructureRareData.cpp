@@ -76,9 +76,11 @@ void StructureRareData::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_previous);
     visitor.appendUnbarriered(thisObject->objectToStringValue());
     visitor.append(thisObject->m_cachedPropertyNameEnumerator);
-    auto* cachedOwnKeys = thisObject->m_cachedOwnKeys.unvalidatedGet();
-    if (cachedOwnKeys != cachedOwnKeysSentinel())
-        visitor.appendUnbarriered(cachedOwnKeys);
+    for (unsigned index = 0; index < numberOfCachedPropertyNames; ++index) {
+        auto* cached = thisObject->m_cachedPropertyNames[index].unvalidatedGet();
+        if (cached != cachedPropertyNamesSentinel())
+            visitor.appendUnbarriered(cached);
+    }
 }
 
 // ----------- Object.prototype.toString() helper watchpoint classes -----------

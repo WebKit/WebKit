@@ -37,6 +37,11 @@ class JSPropertyNameEnumerator;
 class Structure;
 class ObjectToStringAdaptiveInferredPropertyValueWatchpoint;
 class ObjectToStringAdaptiveStructureWatchpoint;
+enum class CachedPropertyNamesKind : uint8_t {
+    Keys = 0,
+    GetOwnPropertyNames,
+};
+static constexpr unsigned numberOfCachedPropertyNames = 2;
 
 class StructureRareData final : public JSCell {
 public:
@@ -74,21 +79,21 @@ public:
     JSPropertyNameEnumerator* cachedPropertyNameEnumerator() const;
     void setCachedPropertyNameEnumerator(VM&, JSPropertyNameEnumerator*);
 
-    JSImmutableButterfly* cachedOwnKeys() const;
-    JSImmutableButterfly* cachedOwnKeysIgnoringSentinel() const;
-    JSImmutableButterfly* cachedOwnKeysConcurrently() const;
-    void setCachedOwnKeys(VM&, JSImmutableButterfly*);
+    JSImmutableButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
+    JSImmutableButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
+    JSImmutableButterfly* cachedPropertyNamesConcurrently(CachedPropertyNamesKind) const;
+    void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSImmutableButterfly*);
 
     Box<InlineWatchpointSet> copySharedPolyProtoWatchpoint() const { return m_polyProtoWatchpoint; }
     const Box<InlineWatchpointSet>& sharedPolyProtoWatchpoint() const { return m_polyProtoWatchpoint; }
     void setSharedPolyProtoWatchpoint(Box<InlineWatchpointSet>&& sharedPolyProtoWatchpoint) { m_polyProtoWatchpoint = WTFMove(sharedPolyProtoWatchpoint); }
     bool hasSharedPolyProtoWatchpoint() const { return static_cast<bool>(m_polyProtoWatchpoint); }
 
-    static JSImmutableButterfly* cachedOwnKeysSentinel() { return bitwise_cast<JSImmutableButterfly*>(static_cast<uintptr_t>(1)); }
+    static JSImmutableButterfly* cachedPropertyNamesSentinel() { return bitwise_cast<JSImmutableButterfly*>(static_cast<uintptr_t>(1)); }
 
-    static ptrdiff_t offsetOfCachedOwnKeys()
+    static ptrdiff_t offsetOfCachedPropertyNames(CachedPropertyNamesKind kind)
     {
-        return OBJECT_OFFSETOF(StructureRareData, m_cachedOwnKeys);
+        return OBJECT_OFFSETOF(StructureRareData, m_cachedPropertyNames) + sizeof(WriteBarrier<JSImmutableButterfly>) * static_cast<unsigned>(kind);
     }
 
     DECLARE_EXPORT_INFO;
@@ -109,7 +114,7 @@ private:
     // FIXME: We should have some story for clearing these property names caches in GC.
     // https://bugs.webkit.org/show_bug.cgi?id=192659
     WriteBarrier<JSPropertyNameEnumerator> m_cachedPropertyNameEnumerator;
-    WriteBarrier<JSImmutableButterfly> m_cachedOwnKeys;
+    WriteBarrier<JSImmutableButterfly> m_cachedPropertyNames[numberOfCachedPropertyNames] { };
 
     typedef HashMap<PropertyOffset, RefPtr<WatchpointSet>, WTF::IntHash<PropertyOffset>, WTF::UnsignedWithZeroKeyHashTraits<PropertyOffset>> PropertyWatchpointMap;
     std::unique_ptr<PropertyWatchpointMap> m_replacementWatchpointSets;

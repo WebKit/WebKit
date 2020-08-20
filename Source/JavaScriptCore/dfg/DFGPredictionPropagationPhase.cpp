@@ -1111,7 +1111,8 @@ private:
         case NewArrayWithSize:
         case CreateRest:
         case NewArrayBuffer:
-        case ObjectKeys: {
+        case ObjectKeys:
+        case ObjectGetOwnPropertyNames: {
             setPrediction(SpecArray);
             break;
         }

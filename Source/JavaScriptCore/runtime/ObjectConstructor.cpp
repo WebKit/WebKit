@@ -62,7 +62,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
   setPrototypeOf            objectConstructorSetPrototypeOf             DontEnum|Function 2
   getOwnPropertyDescriptor  objectConstructorGetOwnPropertyDescriptor   DontEnum|Function 2
   getOwnPropertyDescriptors objectConstructorGetOwnPropertyDescriptors  DontEnum|Function 1
-  getOwnPropertyNames       objectConstructorGetOwnPropertyNames        DontEnum|Function 1
+  getOwnPropertyNames       objectConstructorGetOwnPropertyNames        DontEnum|Function 1 ObjectGetOwnPropertyNamesIntrinsic
   getOwnPropertySymbols     objectConstructorGetOwnPropertySymbols      DontEnum|Function 1
   keys                      objectConstructorKeys                       DontEnum|Function 1 ObjectKeysIntrinsic
   defineProperty            objectConstructorDefineProperty             DontEnum|Function 3
@@ -235,14 +235,13 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyDescriptors(JSGlobal
     RELEASE_AND_RETURN(scope, JSValue::encode(objectConstructorGetOwnPropertyDescriptors(globalObject, object)));
 }
 
-// FIXME: Use the enumeration cache.
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = callFrame->argument(0).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Include)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Include, CachedPropertyNamesKind::GetOwnPropertyNames)));
 }
 
 // FIXME: Use the enumeration cache.
@@ -252,7 +251,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertySymbols(JSGlobalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = callFrame->argument(0).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, object, PropertyNameMode::Symbols, DontEnumPropertiesMode::Include)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, object, PropertyNameMode::Symbols, DontEnumPropertiesMode::Include, WTF::nullopt)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorKeys(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -261,7 +260,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(JSGlobalObject* globalObject,
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* object = callFrame->argument(0).toObject(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude)));
+    RELEASE_AND_RETURN(scope, JSValue::encode(ownPropertyKeys(globalObject, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude, CachedPropertyNamesKind::Keys)));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorAssign(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -886,16 +885,15 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIs(JSGlobalObject* globalObject, C
     return JSValue::encode(jsBoolean(sameValue(globalObject, callFrame->argument(0), callFrame->argument(1))));
 }
 
-JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, PropertyNameMode propertyNameMode, DontEnumPropertiesMode dontEnumPropertiesMode)
+JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, PropertyNameMode propertyNameMode, DontEnumPropertiesMode dontEnumPropertiesMode, Optional<CachedPropertyNamesKind> kind)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool isObjectKeys = propertyNameMode == PropertyNameMode::Strings && dontEnumPropertiesMode == DontEnumPropertiesMode::Exclude;
-    // We attempt to look up own property keys cache in Object.keys case.
-    if (isObjectKeys) {
+    // We attempt to look up own property keys cache in Object.keys / Object.getOwnPropertyNames cases.
+    if (kind) {
         if (LIKELY(!globalObject->isHavingABadTime())) {
-            if (auto* immutableButterfly = object->structure(vm)->cachedOwnKeys()) {
+            if (auto* immutableButterfly = object->structure(vm)->cachedPropertyNames(kind.value())) {
                 Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(immutableButterfly->indexingMode());
                 return JSArray::createWithButterfly(vm, nullptr, arrayStructure, immutableButterfly->toButterfly());
             }
@@ -910,11 +908,11 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
         ASSERT(propertyNameMode == PropertyNameMode::Strings || propertyNameMode == PropertyNameMode::Symbols);
         if (properties.size() < MIN_SPARSE_ARRAY_INDEX) {
             if (LIKELY(!globalObject->isHavingABadTime())) {
-                if (isObjectKeys) {
+                if (kind) {
                     Structure* structure = object->structure(vm);
-                    if (structure->canCacheOwnKeys()) {
-                        auto* cachedButterfly = structure->cachedOwnKeysIgnoringSentinel();
-                        if (cachedButterfly == StructureRareData::cachedOwnKeysSentinel()) {
+                    if (structure->canCacheOwnPropertyNames()) {
+                        auto* cachedButterfly = structure->cachedPropertyNamesIgnoringSentinel(kind.value());
+                        if (cachedButterfly == StructureRareData::cachedPropertyNamesSentinel()) {
                             size_t numProperties = properties.size();
                             auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, numProperties);
                             for (size_t i = 0; i < numProperties; i++) {
@@ -923,13 +921,13 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
                                 newButterfly->setIndex(vm, i, jsOwnedString(vm, identifier.string()));
                             }
 
-                            structure->setCachedOwnKeys(vm, newButterfly);
+                            structure->setCachedPropertyNames(vm, kind.value(), newButterfly);
                             Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(newButterfly->indexingMode());
                             return JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly());
                         }
 
                         if (cachedButterfly == nullptr)
-                            structure->setCachedOwnKeys(vm, StructureRareData::cachedOwnKeysSentinel());
+                            structure->setCachedPropertyNames(vm, kind.value(), StructureRareData::cachedPropertyNamesSentinel());
                     }
                 }
 
@@ -1009,6 +1007,28 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
     }
 
     return keys;
+}
+
+JSObject* constructObjectFromPropertyDescriptorSlow(JSGlobalObject* globalObject, const PropertyDescriptor& descriptor)
+{
+    VM& vm = getVM(globalObject);
+
+    JSObject* result = constructEmptyObject(globalObject);
+
+    if (descriptor.value())
+        result->putDirect(vm, vm.propertyNames->value, descriptor.value());
+    if (descriptor.writablePresent())
+        result->putDirect(vm, vm.propertyNames->writable, jsBoolean(descriptor.writable()));
+    if (descriptor.getterPresent())
+        result->putDirect(vm, vm.propertyNames->get, descriptor.getter());
+    if (descriptor.setterPresent())
+        result->putDirect(vm, vm.propertyNames->set, descriptor.setter());
+    if (descriptor.enumerablePresent())
+        result->putDirect(vm, vm.propertyNames->enumerable, jsBoolean(descriptor.enumerable()));
+    if (descriptor.configurablePresent())
+        result->putDirect(vm, vm.propertyNames->configurable, jsBoolean(descriptor.configurable()));
+
+    return result;
 }
 
 } // namespace JSC

@@ -522,10 +522,10 @@ public:
     bool canCachePropertyNameEnumerator(VM&) const;
     bool canAccessPropertiesQuicklyForEnumeration() const;
 
-    void setCachedOwnKeys(VM&, JSImmutableButterfly*);
-    JSImmutableButterfly* cachedOwnKeys() const;
-    JSImmutableButterfly* cachedOwnKeysIgnoringSentinel() const;
-    bool canCacheOwnKeys() const;
+    JSImmutableButterfly* cachedPropertyNames(CachedPropertyNamesKind) const;
+    JSImmutableButterfly* cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind) const;
+    void setCachedPropertyNames(VM&, CachedPropertyNamesKind, JSImmutableButterfly*);
+    bool canCacheOwnPropertyNames() const;
 
     void getPropertyNamesFromStructure(VM&, PropertyNameArray&, EnumerationMode);
 

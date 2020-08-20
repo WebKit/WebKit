@@ -222,6 +222,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CallNumberConstructor:
     case ObjectCreate:
     case ObjectKeys:
+    case ObjectGetOwnPropertyNames:
     case MakeRope:
     case NewArrayWithSize:
     case TryGetById:

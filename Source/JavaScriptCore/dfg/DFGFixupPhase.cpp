@@ -1931,6 +1931,7 @@ private:
             break;
         }
 
+        case ObjectGetOwnPropertyNames:
         case ObjectKeys: {
             if (node->child1()->shouldSpeculateObject()) {
                 watchHavingABadTime(node);

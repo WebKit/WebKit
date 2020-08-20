@@ -242,26 +242,26 @@ inline bool Structure::transitivelyTransitionedFrom(Structure* structureToFind)
     return false;
 }
 
-inline void Structure::setCachedOwnKeys(VM& vm, JSImmutableButterfly* ownKeys)
+inline void Structure::setCachedPropertyNames(VM& vm, CachedPropertyNamesKind kind, JSImmutableButterfly* cached)
 {
-    ensureRareData(vm)->setCachedOwnKeys(vm, ownKeys);
+    ensureRareData(vm)->setCachedPropertyNames(vm, kind, cached);
 }
 
-inline JSImmutableButterfly* Structure::cachedOwnKeys() const
-{
-    if (!hasRareData())
-        return nullptr;
-    return rareData()->cachedOwnKeys();
-}
-
-inline JSImmutableButterfly* Structure::cachedOwnKeysIgnoringSentinel() const
+inline JSImmutableButterfly* Structure::cachedPropertyNames(CachedPropertyNamesKind kind) const
 {
     if (!hasRareData())
         return nullptr;
-    return rareData()->cachedOwnKeysIgnoringSentinel();
+    return rareData()->cachedPropertyNames(kind);
 }
 
-inline bool Structure::canCacheOwnKeys() const
+inline JSImmutableButterfly* Structure::cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const
+{
+    if (!hasRareData())
+        return nullptr;
+    return rareData()->cachedPropertyNamesIgnoringSentinel(kind);
+}
+
+inline bool Structure::canCacheOwnPropertyNames() const
 {
     if (isDictionary())
         return false;

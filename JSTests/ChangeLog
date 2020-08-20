@@ -1,3 +1,48 @@
+2020-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add Object.getOwnPropertyNames caching as it is done for Object.keys, and accelerate Object.getOwnPropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=215666
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/get-own-property-descriptor.js: Added.
+        (object.get test):
+        (object.set test):
+        * stress/get-own-property-names-bad-time.js: Added.
+        (shouldBe):
+        (test):
+        * stress/get-own-property-names-dfg.js: Added.
+        (shouldBe):
+        (test):
+        * stress/keys-bad-time.js: Added.
+        (shouldBe):
+        (test):
+        * stress/keys-dfg.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-get-own-property-names-cached-zero.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-get-own-property-names-changed-attribute.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-get-own-property-names-changed-index.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-get-own-property-names-changed.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-get-own-property-names-indexed-non-cache.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-get-own-property-names-overrides-get-property-names.js: Added.
+        (shouldBe):
+        (test):
+        (noInline):
+        * stress/object-keys-cache.js: Added.
+        (shouldBe):
+        (symbol):
+
 2020-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Introduce OpIsCallable bytecode and intrinsic

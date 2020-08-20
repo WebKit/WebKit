@@ -62,38 +62,38 @@ inline void StructureRareData::setCachedPropertyNameEnumerator(VM& vm, JSPropert
     m_cachedPropertyNameEnumerator.set(vm, this, enumerator);
 }
 
-inline JSImmutableButterfly* StructureRareData::cachedOwnKeys() const
+inline JSImmutableButterfly* StructureRareData::cachedPropertyNames(CachedPropertyNamesKind kind) const
 {
     ASSERT(!isCompilationThread());
-    auto* butterfly = m_cachedOwnKeys.unvalidatedGet();
-    if (butterfly == cachedOwnKeysSentinel())
+    auto* butterfly = m_cachedPropertyNames[static_cast<unsigned>(kind)].unvalidatedGet();
+    if (butterfly == cachedPropertyNamesSentinel())
         return nullptr;
     return butterfly;
 }
 
-inline JSImmutableButterfly* StructureRareData::cachedOwnKeysIgnoringSentinel() const
+inline JSImmutableButterfly* StructureRareData::cachedPropertyNamesIgnoringSentinel(CachedPropertyNamesKind kind) const
 {
     ASSERT(!isCompilationThread());
-    return m_cachedOwnKeys.unvalidatedGet();
+    return m_cachedPropertyNames[static_cast<unsigned>(kind)].unvalidatedGet();
 }
 
-inline JSImmutableButterfly* StructureRareData::cachedOwnKeysConcurrently() const
+inline JSImmutableButterfly* StructureRareData::cachedPropertyNamesConcurrently(CachedPropertyNamesKind kind) const
 {
-    auto* butterfly = m_cachedOwnKeys.unvalidatedGet();
-    if (butterfly == cachedOwnKeysSentinel())
+    auto* butterfly = m_cachedPropertyNames[static_cast<unsigned>(kind)].unvalidatedGet();
+    if (butterfly == cachedPropertyNamesSentinel())
         return nullptr;
     return butterfly;
 }
 
-inline void StructureRareData::setCachedOwnKeys(VM& vm, JSImmutableButterfly* butterfly)
+inline void StructureRareData::setCachedPropertyNames(VM& vm, CachedPropertyNamesKind kind, JSImmutableButterfly* butterfly)
 {
-    if (butterfly == cachedOwnKeysSentinel()) {
-        m_cachedOwnKeys.setWithoutWriteBarrier(butterfly);
+    if (butterfly == cachedPropertyNamesSentinel()) {
+        m_cachedPropertyNames[static_cast<unsigned>(kind)].setWithoutWriteBarrier(butterfly);
         return;
     }
 
     WTF::storeStoreFence();
-    m_cachedOwnKeys.set(vm, this, butterfly);
+    m_cachedPropertyNames[static_cast<unsigned>(kind)].set(vm, this, butterfly);
 }
 
 } // namespace JSC

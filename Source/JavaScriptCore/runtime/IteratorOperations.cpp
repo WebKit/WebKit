@@ -127,8 +127,8 @@ void iteratorClose(JSGlobalObject* globalObject, IterationRecord iterationRecord
     }
 }
 
-static const PropertyOffset valuePropertyOffset = 0;
-static const PropertyOffset donePropertyOffset = 1;
+static constexpr PropertyOffset valuePropertyOffset = 0;
+static constexpr PropertyOffset donePropertyOffset = 1;
 
 Structure* createIteratorResultObjectStructure(VM& vm, JSGlobalObject& globalObject)
 {

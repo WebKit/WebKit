@@ -1,3 +1,102 @@
+2020-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add Object.getOwnPropertyNames caching as it is done for Object.keys, and accelerate Object.getOwnPropertyDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=215666
+
+        Reviewed by Saam Barati.
+
+        Object.getOwnPropertyNames is immutable for Structure if structure meets some conditions. And we have optimization for Object.keys.
+        This patch wires existing caching mechanism for Object.keys to Object.getOwnPropertyNames so that Object.getOwnPropertyNames has
+        full support of caching & inlined code in DFG / FTL.
+
+        We also pre-bake structure for the result of Object.getOwnPropertyDescriptor so that we do not need to perform hash table lookup every
+        time we create an object for Object.getOwnPropertyDescriptor. This makes Object.getOwnPropertyDescriptor 2x faster from the microbenchmark.
+
+        The above two optimization makes Speedometer2/Inferno-TodoMVC 7% faster, and it also optimizes Speedometer2/EmberJS-Debug by 5%.
+        In total, we can get 0.7 - 1.0% progression in Speedometer2.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectKeysOrObjectGetOwnPropertyNames):
+        (JSC::DFG::SpeculativeJIT::compileObjectKeys): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectKeysOrObjectGetOwnPropertyNames):
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectKeys): Deleted.
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/IteratorOperations.cpp:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::dataPropertyDescriptorObjectStructure const):
+        (JSC::JSGlobalObject::accessorPropertyDescriptorObjectStructure const):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncOwnKeys):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorGetOwnPropertySymbols):
+        (JSC::objectConstructorKeys):
+        (JSC::ownPropertyKeys):
+        (JSC::constructObjectFromPropertyDescriptorSlow):
+        * runtime/ObjectConstructor.h:
+        (JSC::createDataPropertyDescriptorObjectStructure):
+        (JSC::createAccessorPropertyDescriptorObjectStructure):
+        (JSC::constructObjectFromPropertyDescriptor):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectOwnKeys):
+        * runtime/Structure.cpp:
+        (JSC::Structure::canCachePropertyNameEnumerator const):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::setCachedPropertyNames):
+        (JSC::Structure::cachedPropertyNames const):
+        (JSC::Structure::cachedPropertyNamesIgnoringSentinel const):
+        (JSC::Structure::canCacheOwnPropertyNames const):
+        (JSC::Structure::setCachedOwnKeys): Deleted.
+        (JSC::Structure::cachedOwnKeys const): Deleted.
+        (JSC::Structure::cachedOwnKeysIgnoringSentinel const): Deleted.
+        (JSC::Structure::canCacheOwnKeys const): Deleted.
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::visitChildren):
+        * runtime/StructureRareData.h:
+        * runtime/StructureRareDataInlines.h:
+        (JSC::StructureRareData::cachedPropertyNames const):
+        (JSC::StructureRareData::cachedPropertyNamesIgnoringSentinel const):
+        (JSC::StructureRareData::cachedPropertyNamesConcurrently const):
+        (JSC::StructureRareData::setCachedPropertyNames):
+        (JSC::StructureRareData::cachedOwnKeys const): Deleted.
+        (JSC::StructureRareData::cachedOwnKeysIgnoringSentinel const): Deleted.
+        (JSC::StructureRareData::cachedOwnKeysConcurrently const): Deleted.
+        (JSC::StructureRareData::setCachedOwnKeys): Deleted.
+
 2020-08-19  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Introduce OpIsCallable bytecode and intrinsic

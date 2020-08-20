@@ -89,26 +89,73 @@ inline JSObject* constructObject(JSGlobalObject* globalObject, JSValue arg)
     return arg.toObject(globalObject);
 }
 
+JS_EXPORT_PRIVATE JSObject* constructObjectFromPropertyDescriptorSlow(JSGlobalObject*, const PropertyDescriptor&);
+
+static constexpr PropertyOffset dataPropertyDescriptorValuePropertyOffset = 0;
+static constexpr PropertyOffset dataPropertyDescriptorWritablePropertyOffset = 1;
+static constexpr PropertyOffset dataPropertyDescriptorEnumerablePropertyOffset = 2;
+static constexpr PropertyOffset dataPropertyDescriptorConfigurablePropertyOffset = 3;
+
+static constexpr PropertyOffset accessorPropertyDescriptorGetPropertyOffset = 0;
+static constexpr PropertyOffset accessorPropertyDescriptorSetPropertyOffset = 1;
+static constexpr PropertyOffset accessorPropertyDescriptorEnumerablePropertyOffset = 2;
+static constexpr PropertyOffset accessorPropertyDescriptorConfigurablePropertyOffset = 3;
+
+inline Structure* createDataPropertyDescriptorObjectStructure(VM& vm, JSGlobalObject& globalObject)
+{
+    Structure* structure = vm.structureCache.emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity());
+    PropertyOffset offset;
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->value, 0, offset);
+    RELEASE_ASSERT(offset == dataPropertyDescriptorValuePropertyOffset);
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->writable, 0, offset);
+    RELEASE_ASSERT(offset == dataPropertyDescriptorWritablePropertyOffset);
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->enumerable, 0, offset);
+    RELEASE_ASSERT(offset == dataPropertyDescriptorEnumerablePropertyOffset);
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->configurable, 0, offset);
+    RELEASE_ASSERT(offset == dataPropertyDescriptorConfigurablePropertyOffset);
+    return structure;
+}
+
+inline Structure* createAccessorPropertyDescriptorObjectStructure(VM& vm, JSGlobalObject& globalObject)
+{
+    Structure* structure = vm.structureCache.emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity());
+    PropertyOffset offset;
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->get, 0, offset);
+    RELEASE_ASSERT(offset == accessorPropertyDescriptorGetPropertyOffset);
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->set, 0, offset);
+    RELEASE_ASSERT(offset == accessorPropertyDescriptorSetPropertyOffset);
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->enumerable, 0, offset);
+    RELEASE_ASSERT(offset == accessorPropertyDescriptorEnumerablePropertyOffset);
+    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->configurable, 0, offset);
+    RELEASE_ASSERT(offset == accessorPropertyDescriptorConfigurablePropertyOffset);
+    return structure;
+}
+
 // https://tc39.es/ecma262/#sec-frompropertydescriptor
 inline JSObject* constructObjectFromPropertyDescriptor(JSGlobalObject* globalObject, const PropertyDescriptor& descriptor)
 {
     VM& vm = getVM(globalObject);
-    JSObject* result = constructEmptyObject(globalObject);
 
-    if (descriptor.value())
-        result->putDirect(vm, vm.propertyNames->value, descriptor.value());
-    if (descriptor.writablePresent())
-        result->putDirect(vm, vm.propertyNames->writable, jsBoolean(descriptor.writable()));
-    if (descriptor.getterPresent())
-        result->putDirect(vm, vm.propertyNames->get, descriptor.getter());
-    if (descriptor.setterPresent())
-        result->putDirect(vm, vm.propertyNames->set, descriptor.setter());
-    if (descriptor.enumerablePresent())
-        result->putDirect(vm, vm.propertyNames->enumerable, jsBoolean(descriptor.enumerable()));
-    if (descriptor.configurablePresent())
-        result->putDirect(vm, vm.propertyNames->configurable, jsBoolean(descriptor.configurable()));
+    if (descriptor.enumerablePresent() && descriptor.configurablePresent()) {
+        if (descriptor.value() && descriptor.writablePresent()) {
+            JSObject* result = constructEmptyObject(vm, globalObject->dataPropertyDescriptorObjectStructure());
+            result->putDirect(vm, dataPropertyDescriptorValuePropertyOffset, descriptor.value());
+            result->putDirect(vm, dataPropertyDescriptorWritablePropertyOffset, jsBoolean(descriptor.writable()));
+            result->putDirect(vm, dataPropertyDescriptorEnumerablePropertyOffset, jsBoolean(descriptor.enumerable()));
+            result->putDirect(vm, dataPropertyDescriptorConfigurablePropertyOffset, jsBoolean(descriptor.configurable()));
+            return result;
+        }
 
-    return result;
+        if (descriptor.getterPresent() && descriptor.setterPresent()) {
+            JSObject* result = constructEmptyObject(vm, globalObject->accessorPropertyDescriptorObjectStructure());
+            result->putDirect(vm, accessorPropertyDescriptorGetPropertyOffset, descriptor.getter());
+            result->putDirect(vm, accessorPropertyDescriptorSetPropertyOffset, descriptor.setter());
+            result->putDirect(vm, accessorPropertyDescriptorEnumerablePropertyOffset, jsBoolean(descriptor.enumerable()));
+            result->putDirect(vm, accessorPropertyDescriptorConfigurablePropertyOffset, jsBoolean(descriptor.configurable()));
+            return result;
+        }
+    }
+    return constructObjectFromPropertyDescriptorSlow(globalObject, descriptor);
 }
 
 
@@ -116,7 +163,7 @@ JS_EXPORT_PRIVATE JSObject* objectConstructorFreeze(JSGlobalObject*, JSObject*);
 JS_EXPORT_PRIVATE JSObject* objectConstructorSeal(JSGlobalObject*, JSObject*);
 JSValue objectConstructorGetOwnPropertyDescriptor(JSGlobalObject*, JSObject*, const Identifier&);
 JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject*, JSObject*);
-JSArray* ownPropertyKeys(JSGlobalObject*, JSObject*, PropertyNameMode, DontEnumPropertiesMode);
+JSArray* ownPropertyKeys(JSGlobalObject*, JSObject*, PropertyNameMode, DontEnumPropertiesMode, Optional<CachedPropertyNamesKind>);
 bool toPropertyDescriptor(JSGlobalObject*, JSValue, PropertyDescriptor&);
 
 EncodedJSValue JSC_HOST_CALL objectConstructorIs(JSGlobalObject*, CallFrame*);
