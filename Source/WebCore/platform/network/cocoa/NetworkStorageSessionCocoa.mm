@@ -172,7 +172,7 @@ CookieStorageObserver& NetworkStorageSession::cookieStorageObserver() const
     return *m_cookieStorageObserver;
 }
 
-CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier)
+CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier, Optional<HTTPCookieAcceptPolicy> cookieAcceptPolicy)
 {
     const void* sessionPropertyKeys[] = { _kCFURLStorageSessionIsPrivate };
     const void* sessionPropertyValues[] = { kCFBooleanTrue };
@@ -200,8 +200,14 @@ CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier)
     if (!cookieStorage)
         return nullptr;
 
+    NSHTTPCookieAcceptPolicy nsCookieAcceptPolicy;
+    if (cookieAcceptPolicy)
+        nsCookieAcceptPolicy = toNSHTTPCookieAcceptPolicy(*cookieAcceptPolicy);
+    else
+        nsCookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
+
     // FIXME: Use _CFHTTPCookieStorageGetDefault when USE(CFNETWORK) is defined in WebKit for consistency.
-    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy]);
+    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), nsCookieAcceptPolicy);
 
     return storageSession.leakRef();
 }
