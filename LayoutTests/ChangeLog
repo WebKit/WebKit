@@ -1,3 +1,19 @@
+2020-08-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update baselines after r265851.
+
+        * platform/gtk/fast/layers/video-layer-expected.txt:
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/media-controls-clone-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        * platform/gtk/media/video-display-toggle-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.txt:
+        * platform/gtk/media/video-playing-and-pause-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+
 2020-08-19  Simon Fraser  <simon.fraser@apple.com>
 
         Fix possible crash when webAnimationsCSSIntegrationEnabled is false

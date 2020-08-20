@@ -21,10 +21,10 @@ layer at (65,212) size 225x45
       RenderText {#text} at (0,11) size 96x22
         text run at (0,11) width 96: "0:00 / 0:06"
     RenderFlexibleBox {DIV} at (241,0) size 46x45
-      RenderButton {BUTTON} at (0,0) size 45x45
-    RenderButton {BUTTON} at (289,0) size 46x45
+      RenderFlexibleBox {BUTTON} at (0,0) size 45x45
+    RenderFlexibleBox {BUTTON} at (289,0) size 46x45
 layer at (78,212) size 45x45
-  RenderButton {BUTTON} at (13,0) size 46x45
+  RenderFlexibleBox {BUTTON} at (13,0) size 46x45
 layer at (57,309) size 240x180
   RenderVideo {VIDEO} at (45,297) size 240x180
 layer at (57,309) size 240x180
@@ -40,7 +40,7 @@ layer at (65,437) size 225x45
       RenderText {#text} at (0,11) size 96x22
         text run at (0,11) width 96: "0:00 / 0:06"
     RenderFlexibleBox {DIV} at (241,0) size 46x45
-      RenderButton {BUTTON} at (0,0) size 45x45
-    RenderButton {BUTTON} at (289,0) size 46x45
+      RenderFlexibleBox {BUTTON} at (0,0) size 45x45
+    RenderFlexibleBox {BUTTON} at (289,0) size 46x45
 layer at (78,437) size 45x45
-  RenderButton {BUTTON} at (13,0) size 46x45
+  RenderFlexibleBox {BUTTON} at (13,0) size 46x45

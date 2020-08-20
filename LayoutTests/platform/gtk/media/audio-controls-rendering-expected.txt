@@ -27,9 +27,9 @@ layer at (8,42) size 300x30
       RenderText {#text} at (0,7) size 62x15
         text run at (0,7) width 62: "0:00 / 0:07"
     RenderFlexibleBox {DIV} at (261,0) size 30x30
-      RenderButton {BUTTON} at (0,0) size 30x30
+      RenderFlexibleBox {BUTTON} at (0,0) size 30x30
 layer at (17,42) size 30x30
-  RenderButton {BUTTON} at (9,0) size 30x30
+  RenderFlexibleBox {BUTTON} at (9,0) size 30x30
 layer at (8,90) size 320x30
   RenderFlexibleBox {DIV} at (0,0) size 320x30
     RenderBlock {DIV} at (0,0) size 320x30
@@ -43,9 +43,9 @@ layer at (8,90) size 320x30
       RenderText {#text} at (0,7) size 62x15
         text run at (0,7) width 62: "0:00 / 0:07"
     RenderFlexibleBox {DIV} at (281,0) size 30x30
-      RenderButton {BUTTON} at (0,0) size 30x30
+      RenderFlexibleBox {BUTTON} at (0,0) size 30x30
 layer at (17,90) size 30x30
-  RenderButton {BUTTON} at (9,0) size 30x30
+  RenderFlexibleBox {BUTTON} at (9,0) size 30x30
 layer at (8,138) size 320x100
   RenderMedia {AUDIO} at (8,138) size 320x100 [bgcolor=#0000FF]
 layer at (8,138) size 320x100
@@ -61,6 +61,6 @@ layer at (8,208) size 320x30
       RenderText {#text} at (0,7) size 62x15
         text run at (0,7) width 62: "0:00 / 0:07"
     RenderFlexibleBox {DIV} at (281,0) size 30x30
-      RenderButton {BUTTON} at (0,0) size 30x30
+      RenderFlexibleBox {BUTTON} at (0,0) size 30x30
 layer at (17,208) size 30x30
-  RenderButton {BUTTON} at (9,0) size 30x30
+  RenderFlexibleBox {BUTTON} at (9,0) size 30x30
