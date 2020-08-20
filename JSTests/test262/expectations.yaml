@@ -2089,24 +2089,6 @@ test/language/expressions/class/class-name-ident-static-escaped.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/class/class-name-ident-static.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/expressions/class/elements/syntax/valid/grammar-special-prototype-async-gen-meth-valid.js:
-  default: "SyntaxError: Cannot declare an async generator method named 'prototype'."
-  strict mode: "SyntaxError: Cannot declare an async generator method named 'prototype'."
-test/language/expressions/class/elements/syntax/valid/grammar-special-prototype-async-meth-valid.js:
-  default: "SyntaxError: Cannot declare an async method named 'prototype'."
-  strict mode: "SyntaxError: Cannot declare an async method named 'prototype'."
-test/language/expressions/class/elements/syntax/valid/grammar-special-prototype-gen-meth-valid.js:
-  default: "SyntaxError: Cannot declare a generator function named 'prototype'."
-  strict mode: "SyntaxError: Cannot declare a generator function named 'prototype'."
-test/language/expressions/class/elements/syntax/valid/grammar-static-ctor-async-gen-meth-valid.js:
-  default: "SyntaxError: Cannot declare an async generator method named 'constructor'."
-  strict mode: "SyntaxError: Cannot declare an async generator method named 'constructor'."
-test/language/expressions/class/elements/syntax/valid/grammar-static-ctor-async-meth-valid.js:
-  default: "SyntaxError: Cannot declare an async method named 'constructor'."
-  strict mode: "SyntaxError: Cannot declare an async method named 'constructor'."
-test/language/expressions/class/elements/syntax/valid/grammar-static-ctor-gen-meth-valid.js:
-  default: "SyntaxError: Cannot declare a generator function named 'constructor'."
-  strict mode: "SyntaxError: Cannot declare a generator function named 'constructor'."
 test/language/expressions/class/ident-name-method-def-break-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
@@ -2999,24 +2981,6 @@ test/language/statements/class/class-name-ident-static-escaped.js:
   default: 'Test262: This statement should not be evaluated.'
 test/language/statements/class/class-name-ident-static.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/statements/class/elements/syntax/valid/grammar-special-prototype-async-gen-meth-valid.js:
-  default: "SyntaxError: Cannot declare an async generator method named 'prototype'."
-  strict mode: "SyntaxError: Cannot declare an async generator method named 'prototype'."
-test/language/statements/class/elements/syntax/valid/grammar-special-prototype-async-meth-valid.js:
-  default: "SyntaxError: Cannot declare an async method named 'prototype'."
-  strict mode: "SyntaxError: Cannot declare an async method named 'prototype'."
-test/language/statements/class/elements/syntax/valid/grammar-special-prototype-gen-meth-valid.js:
-  default: "SyntaxError: Cannot declare a generator function named 'prototype'."
-  strict mode: "SyntaxError: Cannot declare a generator function named 'prototype'."
-test/language/statements/class/elements/syntax/valid/grammar-static-ctor-async-gen-meth-valid.js:
-  default: "SyntaxError: Cannot declare an async generator method named 'constructor'."
-  strict mode: "SyntaxError: Cannot declare an async generator method named 'constructor'."
-test/language/statements/class/elements/syntax/valid/grammar-static-ctor-async-meth-valid.js:
-  default: "SyntaxError: Cannot declare an async method named 'constructor'."
-  strict mode: "SyntaxError: Cannot declare an async method named 'constructor'."
-test/language/statements/class/elements/syntax/valid/grammar-static-ctor-gen-meth-valid.js:
-  default: "SyntaxError: Cannot declare a generator function named 'constructor'."
-  strict mode: "SyntaxError: Cannot declare a generator function named 'constructor'."
 test/language/statements/class/ident-name-method-def-break-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"

@@ -3016,11 +3016,8 @@ parseMethod:
         } else {
             ParserFunctionInfo<TreeBuilder> methodInfo;
             bool isConstructor = tag == ClassElementTag::Instance && *ident == propertyNames.constructor;
-            if (isAsyncMethodParseMode(parseMode) || isAsyncGeneratorMethodParseMode(parseMode) || isGeneratorMethodParseMode(parseMode)) {
-                isConstructor = false;
-                semanticFailIfTrue(*ident == m_vm.propertyNames->prototype, "Cannot declare ", stringArticleForFunctionMode(parseMode), stringForFunctionMode(parseMode), " named 'prototype'");
-                semanticFailIfTrue(*ident == m_vm.propertyNames->constructor, "Cannot declare ", stringArticleForFunctionMode(parseMode), stringForFunctionMode(parseMode), " named 'constructor'");
-            }
+            semanticFailIfTrue(isConstructor && parseMode != SourceParseMode::MethodMode,
+                "Cannot declare ", stringArticleForFunctionMode(parseMode), stringForFunctionMode(parseMode), " named 'constructor'");
 
             methodInfo.name = isConstructor ? info.className : ident;
             failIfFalse((parseFunctionInfo(context, FunctionNameRequirements::Unnamed, parseMode, false, isConstructor ? constructorKind : ConstructorKind::None, SuperBinding::Needed, methodStart, methodInfo, FunctionDefinitionType::Method)), "Cannot parse this method");
@@ -3032,7 +3029,6 @@ parseMethod:
                 continue;
             }
 
-            // FIXME: Syntax error when super() is called
             semanticFailIfTrue(tag == ClassElementTag::Static && methodInfo.name && *methodInfo.name == propertyNames.prototype,
                 "Cannot declare a static method named 'prototype'");
 
