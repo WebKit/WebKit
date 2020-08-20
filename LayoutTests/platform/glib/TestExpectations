@@ -457,19 +457,6 @@ webkit.org/b/213921 fast/visual-viewport/scroll-event-fired-during-scroll-alone.
 webkit.org/b/215638 http/tests/websocket/tests/hybi/invalid-continuation.html [ Failure ]
 webkit.org/b/215638 http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html [ Timeout ]
 
-webkit.org/b/215679 http/tests/websocket/tests/hybi/broken-utf8.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/close-code-and-reason.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/compressed-control-frame.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/fragmented-control-frame.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/interleaved-fragments.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/invalid-encode-length.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/invalid-masked-frames-from-server.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/long-control-frame.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/reserved-bits.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/reserved-opcodes.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/too-long-payload.html [ Failure ]
-webkit.org/b/215679 http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
