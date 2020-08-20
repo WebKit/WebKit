@@ -1,3 +1,13 @@
+2020-08-20  Karl Rackler  <rackler@apple.com>
+
+        rdar://67367072 REGRESSION (r265805): [ Catalina / iOS ] 24 w3c/web-platform-tests/webaudio/ tests are a constant failure)
+        Adding test expectations for[ Catalina / iOS ]
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-08-19  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r265812. rdar://problem/67364273
