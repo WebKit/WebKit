@@ -133,8 +133,8 @@ class TestFactory(Factory):
 
 
 class JSCBuildFactory(Factory):
-    def __init__(self, platform, configuration='release', architectures=None, remotes=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
+    def __init__(self, platform, configuration='release', architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
         self.addStep(KillOldProcesses())
         self.addStep(CompileJSC())
 
@@ -146,6 +146,15 @@ class JSCBuildAndTestsFactory(Factory):
         self.addStep(CompileJSC(skipUpload=True))
         if runTests.lower() == 'true':
             self.addStep(RunJavaScriptCoreTests())
+
+
+class JSCTestsFactory(Factory):
+    def __init__(self, platform, configuration='release', architectures=None, remotes=None, additionalArguments=None, **kwargs):
+        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(DownloadBuiltProduct())
+        self.addStep(ExtractBuiltProduct())
+        self.addStep(KillOldProcesses())
+        self.addStep(RunJavaScriptCoreTests())
 
 
 class APITestsFactory(TestFactory):

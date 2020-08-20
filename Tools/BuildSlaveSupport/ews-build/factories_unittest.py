@@ -458,3 +458,97 @@ class TestLayoutTestsFactory(TestCase):
             _BuildStepFactory(steps.RunWebKitTests),
             _BuildStepFactory(steps.SetBuildSummary),
         ])
+
+
+class TestJSCBuildFactory(TestCase):
+    def test_jsc_mipsel_factory(self):
+        factory = factories.JSCBuildFactory(platform='jsc', configuration='release', architectures=["mipsel"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='jsc', configuration='release', architectures=["mipsel"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileJSC),
+        ])
+
+    def test_jsc_armv7_factory(self):
+        factory = factories.JSCBuildFactory(platform='jsc', configuration='release', architectures=["armv7"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='jsc', configuration='release', architectures=["armv7"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileJSC),
+        ])
+
+
+class TestJSCBuildAndTestsFactory(TestCase):
+    def test_jsc_mipsel_factory(self):
+        factory = factories.JSCBuildFactory(platform='jsc', configuration='release', architectures=["mipsel"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='jsc', configuration='release', architectures=["mipsel"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileJSC),
+        ])
+
+    def test_jsc_armv7_factory(self):
+        factory = factories.JSCBuildFactory(platform='jsc', configuration='release', architectures=["armv7"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='jsc', configuration='release', architectures=["armv7"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.CompileJSC),
+        ])
+
+
+class TestJSCTestsFactory(TestCase):
+    def test_jsc_mipsel_factory(self):
+        factory = factories.JSCTestsFactory(platform='jsc', configuration='release', architectures=["mipsel"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='jsc', configuration='release', architectures=["mipsel"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.DownloadBuiltProduct),
+            _BuildStepFactory(steps.ExtractBuiltProduct),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.RunJavaScriptCoreTests),
+        ])
+
+    def test_jsc_armv7_factory(self):
+        factory = factories.JSCTestsFactory(platform='jsc', configuration='release', architectures=["armv7"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='jsc', configuration='release', architectures=["armv7"], buildOnly=False, triggers=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.CheckPatchRelevance),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.DownloadBuiltProduct),
+            _BuildStepFactory(steps.ExtractBuiltProduct),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.RunJavaScriptCoreTests),
+        ])

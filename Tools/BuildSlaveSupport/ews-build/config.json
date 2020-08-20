@@ -531,19 +531,20 @@
     },
     {
       "name": "JSC-MIPSEL-32bits-Build-EWS",
-      "shortname": "jsc-build-mips",
+      "shortname": "jsc-mips",
       "icon": "buildOnly",
       "factory": "JSCBuildFactory",
       "platform": "jsc-only",
       "configuration": "release",
       "architectures": ["mipsel"],
+      "triggers": ["jsc-tests-mipsel-tests-ews"],
       "workernames": ["igalia-jsc32-mipsel-ews-03"]
     },
 	{
-      "name": "JSC-MIPSEL-32bits-EWS",
-      "shortname": "jsc-mips",
+      "name": "JSC-MIPSEL-32bits-Tests-EWS",
+      "shortname": "jsc-mips-tests",
       "icon": "buildAndTest",
-      "factory": "JSCBuildAndTestsFactory",
+      "factory": "JSCTestsFactory",
       "platform": "jsc-only",
       "configuration": "release",
       "architectures": ["mipsel"],
@@ -659,7 +660,7 @@
       "port": 5555,
       "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
                        "JSC-ARMv7-32bits-Build-EWS", "JSC-ARMv7-32bits-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS",
-                       "JSC-MIPSEL-32bits-EWS", "JSC-Tests-EWS",
+                       "JSC-Tests-EWS",
                        "macOS-Apple-Silicon-Big-Sur-Release-Build-EWS", "macOS-Mojave-Debug-Build-EWS", "macOS-Mojave-Release-Build-EWS",
                        "Services-EWS", "Style-EWS",
                        "tvOS-13-Build-EWS", "tvOS-13-Simulator-Build-EWS", "watchOS-6-Build-EWS", "watchOS-6-Simulator-Build-EWS",
@@ -726,6 +727,13 @@
       "port": 5558,
       "builderNames": [
         "GTK-WK2-Tests-EWS"
+      ]
+    },
+    {
+      "type": "Triggerable",
+      "name": "jsc-tests-mipsel-tests-ews",
+      "builderNames": [
+        "JSC-MIPSEL-32bits-Tests-EWS"
       ]
     }
   ]

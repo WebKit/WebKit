@@ -1,3 +1,33 @@
+2020-08-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [ews] Split JSC MIPS queue into separate builder and tester queue
+        https://bugs.webkit.org/show_bug.cgi?id=212009
+
+        Reviewed by Aakash Jain.
+
+        Currently there are two EWS JSC MIPS configured, one that runs as
+        buildAndTest and another one that runs as buildOnly.
+
+        This patch changes the buildAndTest bot to test, and makes the
+        bot fetch the binary product produced by the buildOnly bot.
+
+        * BuildSlaveSupport/ews-build/config.json:
+        * BuildSlaveSupport/ews-build/factories.py:
+        (JSCTestsFactory):
+        (JSCTestsFactory.__init__):
+        * BuildSlaveSupport/ews-build/factories_unittest.py:
+        (TestLayoutTestsFactory.test_gtk_factory):
+        (TestJSCBuildFactory):
+        (TestJSCBuildFactory.test_jsc_mipsel_factory):
+        (TestJSCBuildFactory.test_jsc_armv7_factory):
+        (TestJSCBuildAndTestsFactory):
+        (TestJSCBuildAndTestsFactory.test_jsc_mipsel_factory):
+        (TestJSCBuildAndTestsFactory.test_jsc_armv7_factory):
+        (TestJSCTestsFactory):
+        (TestJSCTestsFactory.test_jsc_mipsel_factory):
+        (TestJSCTestsFactory.test_jsc_armv7_factory):
+        * BuildSlaveSupport/ews-build/loadConfig.py:
+
 2020-08-20  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add subprocess_utils.run
