@@ -1,3 +1,20 @@
+2020-08-19  Brady Eidson  <beidson@apple.com>
+
+        Improperly linearized PDFs show up as blank gray on Big Sur.
+        rdar://problem/67117968 and https://bugs.webkit.org/show_bug.cgi?id=215683
+
+        Reviewed by Darin Adler.
+
+        Will add a new test once an in-house expert helps us construct an example PDF that
+        we will have the legal right to commit.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::threadEntry): When PDFKit indicates a PDFDocument is *improperly* linearized
+          (as opposed to not linearized at all), we failed to appopriately notify the main thread that
+          it needs to start handling the PDF.
+          Failure to create a PDFDocument is equivalent to receiving the "nonlinearized sentinel", so
+          adding that call fixes this issue.
+
 2020-08-19  Simon Fraser  <simon.fraser@apple.com>
 
         Fix possible crash when webAnimationsCSSIntegrationEnabled is false

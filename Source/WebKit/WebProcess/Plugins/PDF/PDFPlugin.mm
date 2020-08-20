@@ -873,8 +873,11 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
 
     // [PDFDocument initWithProvider:] will return nil in cases where the PDF is non-linearized.
     // In those cases we'll just keep buffering the entire PDF on the main thread.
-    if (!m_backgroundThreadDocument)
+    if (!m_backgroundThreadDocument) {
+        LOG(IncrementalPDF, "Background thread [PDFDocument initWithProvider:] returned nil. PDF is not linearized. Reverting to main thread.");
+        receivedNonLinearizedPDFSentinel();
         return;
+    }
 
     if (!m_incrementalPDFLoadingEnabled) {
         m_backgroundThreadDocument = nil;
