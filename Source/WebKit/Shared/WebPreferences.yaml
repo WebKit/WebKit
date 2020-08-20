@@ -1842,6 +1842,15 @@ InputTypeWeekEnabled:
   category: internal
   condition: ENABLE(INPUT_TYPE_WEEK)
 
+DateTimeInputsEditableComponentsEnabled:
+  type: bool
+  defaultValue: DEFAULT_DATE_TIME_INPUTS_EDITABLE_COMPONENTS_ENABLED
+  humanReadableName: "Date/Time inputs have editable components"
+  humanReadableDescription: "Enable multiple editable components in date/time inputs"
+  category: internal
+  webcoreName: dateTimeInputsEditableComponentsEnabled
+  condition: ENABLE(DATE_AND_TIME_INPUT_TYPES)
+
 DataListElementEnabled:
   type: bool
   defaultValue: DEFAULT_DATALIST_ELEMENT_ENABLED

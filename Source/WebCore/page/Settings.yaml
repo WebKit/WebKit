@@ -977,6 +977,10 @@ inputTypeWeekEnabled:
   initial: false
   conditional: INPUT_TYPE_WEEK
 
+dateTimeInputsEditableComponentsEnabled:
+  initial: false
+  conditional: DATE_AND_TIME_INPUT_TYPES
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

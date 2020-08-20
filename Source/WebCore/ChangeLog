@@ -1,3 +1,16 @@
+2020-08-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        Add runtime setting for editable components in date/time inputs
+        https://bugs.webkit.org/show_bug.cgi?id=215705
+
+        Reviewed by Wenson Hsieh.
+
+        This setting controls the ability to edit individual components of date
+        and time input types. For example, <input type=date> will have three
+        editable components - year, month, and day.
+
+        * page/Settings.yaml:
+
 2020-08-20  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest.open should use USVString

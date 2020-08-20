@@ -1,3 +1,16 @@
+2020-08-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        Add runtime setting for editable components in date/time inputs
+        https://bugs.webkit.org/show_bug.cgi?id=215705
+
+        Reviewed by Wenson Hsieh.
+
+        Added DateTimeInputsEditableComponentsEnabled as a runtime setting. This
+        setting is enabled by default on macOS.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+
 2020-08-20  Chris Dumez  <cdumez@apple.com>
 
         Sandbox violation when calling [NSHTTPCookieStorage sharedHTTPCookieStorage] from the WebProcess
