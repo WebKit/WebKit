@@ -1,3 +1,33 @@
+2020-08-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Use jsTypeofIsObject() in DFG AI and operationTypeOfIsObject()
+        https://bugs.webkit.org/show_bug.cgi?id=144457
+
+        Reviewed by Saam Barati.
+
+        This patch:
+
+        1. Refactors jsTypeofIsObject(), leveraging fast path of isCallable(),
+           moves it to the header, and utilizes it in DFG AI and
+           operationTypeOfIsObject() to eliminate code duplication.
+
+        2. Splits jsTypeofIsFunction() into 2 methods to accomodate
+           operationTypeOfIsFunction() calling it with JSObject* argument.
+
+        3. Removes orphaned slow_path_is_object declaration.
+
+        No behavior change, `typeof` microbenchmarks are neutral.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.h:
+        * runtime/Operations.cpp:
+        (JSC::jsTypeofIsObject): Deleted.
+        * runtime/Operations.h:
+        (JSC::jsTypeofIsObject):
+        (JSC::jsTypeofIsFunction):
+
 2020-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add Object.getOwnPropertyNames caching as it is done for Object.keys, and accelerate Object.getOwnPropertyDescriptor

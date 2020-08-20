@@ -33,19 +33,39 @@ namespace JSC {
 NEVER_INLINE JSValue jsAddSlowCase(JSGlobalObject*, JSValue, JSValue);
 JSValue jsTypeStringForValue(JSGlobalObject*, JSValue);
 JSValue jsTypeStringForValue(VM&, JSGlobalObject*, JSValue);
-bool jsTypeofIsObject(JSGlobalObject*, JSValue);
 size_t normalizePrototypeChain(JSGlobalObject*, JSCell*, bool& sawPolyProto);
+
+ALWAYS_INLINE bool jsTypeofIsObject(JSGlobalObject* globalObject, JSObject* object)
+{
+    VM& vm = globalObject->vm();
+    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+        return false;
+    if (object->isCallable(vm))
+        return false;
+    return true;
+}
+
+ALWAYS_INLINE bool jsTypeofIsObject(JSGlobalObject* globalObject, JSValue value)
+{
+    if (value.isObject())
+        return jsTypeofIsObject(globalObject, asObject(value));
+    return value.isNull();
+}
+
+ALWAYS_INLINE bool jsTypeofIsFunction(JSGlobalObject* globalObject, JSObject* object)
+{
+    VM& vm = globalObject->vm();
+    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+        return false;
+    if (object->isCallable(vm))
+        return true;
+    return false;
+}
 
 ALWAYS_INLINE bool jsTypeofIsFunction(JSGlobalObject* globalObject, JSValue value)
 {
-    VM& vm = globalObject->vm();
-    if (value.isObject()) {
-        JSObject* object = asObject(value);
-        if (object->structure(vm)->masqueradesAsUndefined(globalObject))
-            return false;
-        if (object->isCallable(vm))
-            return true;
-    }
+    if (value.isObject())
+        return jsTypeofIsFunction(globalObject, asObject(value));
     return false;
 }
 

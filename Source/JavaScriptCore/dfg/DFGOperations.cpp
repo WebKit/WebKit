@@ -2130,13 +2130,7 @@ size_t JIT_OPERATION operationTypeOfIsObject(JSGlobalObject* globalObject, JSCel
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    ASSERT(jsDynamicCast<JSObject*>(vm, object));
-    
-    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
-        return false;
-    if (object->isCallable(vm))
-        return false;
-    return true;
+    return jsTypeofIsObject(globalObject, asObject(object));
 }
 
 size_t JIT_OPERATION operationTypeOfIsFunction(JSGlobalObject* globalObject, JSCell* object)
@@ -2145,9 +2139,7 @@ size_t JIT_OPERATION operationTypeOfIsFunction(JSGlobalObject* globalObject, JSC
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    ASSERT(jsDynamicCast<JSObject*>(vm, object));
-
-    return jsTypeofIsFunction(globalObject, object);
+    return jsTypeofIsFunction(globalObject, asObject(object));
 }
 
 size_t JIT_OPERATION operationObjectIsCallable(JSGlobalObject* globalObject, JSCell* object)
