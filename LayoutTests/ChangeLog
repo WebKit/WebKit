@@ -1,3 +1,19 @@
+2020-08-20  Youenn Fablet  <youenn@apple.com>
+
+        Add a WebSocket test checking close with 1000
+        https://bugs.webkit.org/show_bug.cgi?id=215694
+
+        Reviewed by Alex Christensen.
+
+        http/tests/websocket/tests/hybi/client-close.html is not running consistently between Firefox, Chrome, WebKit legacy WebSocket and WebKit NSURLSession WebSocket.
+        Add another test that uses an explicit close code that runs consistently between Firefox, Chrome and WebKit legacy WebSocket.
+
+        * http/tests/websocket/tests/hybi/client-close-2-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/client-close-2.html: Added.
+        * http/tests/websocket/tests/hybi/client-close-2_wsh.py: Added.
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+
 2020-08-20  Karl Rackler  <rackler@apple.com>
 
         Test failing on Rosetta as well as AS - adding test expectation for Rosetta

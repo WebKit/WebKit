@@ -1,0 +1,12 @@
+WebSocket: Test client-initiated close with 1000.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+Connected
+Closed
+PASS receivedMessage is undefined.
+PASS closeEvent.reason is "close_frame[:2]='\\x88\\x82'"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
