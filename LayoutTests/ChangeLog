@@ -1,3 +1,44 @@
+2020-08-20  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r265932. rdar://problem/67485356
+
+    Fix possible crash when webAnimationsCSSIntegrationEnabled is false
+    https://bugs.webkit.org/show_bug.cgi?id=215668
+    <rdar://problem/67402003>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebKit:
+    
+    When webAnimationsCSSIntegrationEnabled is false, GraphicsLayerCA::setupAnimation() doesn't
+    set a timing function on the animation, causing a null de-ref when the animation is being encoded.
+    Fix the encoder to handle null timing functions.
+    
+    Test: animations/legacy-encoding-timing-function.html
+    
+    * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+    (WebKit::PlatformCAAnimationRemote::Properties::encode const):
+    (WebKit::PlatformCAAnimationRemote::Properties::decode):
+    
+    LayoutTests:
+    
+    * animations/legacy-encoding-timing-function-expected.txt: Added.
+    * animations/legacy-encoding-timing-function.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265932 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+            Fix possible crash when webAnimationsCSSIntegrationEnabled is false
+            https://bugs.webkit.org/show_bug.cgi?id=215668
+            <rdar://problem/67402003>
+
+            Reviewed by Dean Jackson.
+
+            * animations/legacy-encoding-timing-function-expected.txt: Added.
+            * animations/legacy-encoding-timing-function.html: Added.
+
 2020-08-19  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r265881. rdar://problem/67423220
