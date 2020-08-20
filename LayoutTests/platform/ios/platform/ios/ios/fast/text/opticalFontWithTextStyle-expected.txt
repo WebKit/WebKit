@@ -22,8 +22,8 @@ layer at (0,0) size 800x683
         RenderText {#text} at (0,1) size 183x47
           text run at (0,1) width 183: "T4 / Title4"
       RenderBlock {DIV} at (0,290) size 784x24
-        RenderText {#text} at (0,1) size 703x22
-          text run at (0,1) width 703: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
+        RenderText {#text} at (0,1) size 702x22
+          text run at (0,1) width 702: "Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"
       RenderBlock {DIV} at (0,329) size 784x26
         RenderText {#text} at (0,2) size 732x22
           text run at (0,2) width 732: "Tall Body Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ornare ornare mi"

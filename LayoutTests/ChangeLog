@@ -1,5 +1,15 @@
 2020-08-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [iOS] Update fast/text/opticalFontWithTextStyle.html for iOS 14
+        https://bugs.webkit.org/show_bug.cgi?id=215667
+        <rdar://problem/67103788>
+
+        Unreviewed test gardening.
+
+        * platform/ios/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt:
+
+2020-08-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Update fast/selectors/lang-dynamic.html after r265487
         https://bugs.webkit.org/show_bug.cgi?id=215665
         <rdar://problem/67083106>
