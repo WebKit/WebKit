@@ -74,6 +74,8 @@
 #include "PlatformMediaSessionManager.h"
 #include "ScriptController.h"
 #include "ScriptProcessorNode.h"
+#include "StereoPannerNode.h"
+#include "StereoPannerOptions.h"
 #include "WaveShaperNode.h"
 #include "WebKitAudioListener.h"
 #include <JavaScriptCore/ScriptCallStack.h>
@@ -618,6 +620,14 @@ ExceptionOr<Ref<ConstantSourceNode>> BaseAudioContext::createConstantSource()
     
     ASSERT(isMainThread());
     return ConstantSourceNode::create(*this);
+}
+
+ExceptionOr<Ref<StereoPannerNode>> BaseAudioContext::createStereoPanner()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    
+    ASSERT(isMainThread());
+    return StereoPannerNode::create(*this);
 }
 
 void BaseAudioContext::notifyNodeFinishedProcessing(AudioNode* node)

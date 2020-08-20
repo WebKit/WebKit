@@ -440,6 +440,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/PeriodicWaveConstraints.idl \
     $(WebCore)/Modules/webaudio/PeriodicWaveOptions.idl \
     $(WebCore)/Modules/webaudio/ScriptProcessorNode.idl \
+    $(WebCore)/Modules/webaudio/StereoPannerNode.idl \
+	$(WebCore)/Modules/webaudio/StereoPannerOptions.idl \
     $(WebCore)/Modules/webaudio/WaveShaperNode.idl \
     $(WebCore)/Modules/webaudio/WaveShaperOptions.idl \
     $(WebCore)/Modules/webaudio/WebKitAudioBufferSourceNode.idl \

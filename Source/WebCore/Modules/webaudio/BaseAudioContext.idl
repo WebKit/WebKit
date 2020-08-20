@@ -65,6 +65,7 @@
     [MayThrowException] OscillatorNode createOscillator();
     [MayThrowException] PeriodicWave createPeriodicWave(sequence<float> real, sequence<float> imag, optional PeriodicWaveOptions options);
     [MayThrowException] ConstantSourceNode createConstantSource();
+    [MayThrowException] StereoPannerNode createStereoPanner();
 
     // Channel splitting and merging
     [MayThrowException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs = 6);

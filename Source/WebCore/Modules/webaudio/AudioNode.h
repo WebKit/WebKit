@@ -90,6 +90,7 @@ public:
         NodeTypeWaveShaper,
         NodeTypeBasicInspector,
         NodeTypeConstant,
+        NodeTypeStereo,
         NodeTypeEnd
     };
 

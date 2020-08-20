@@ -70,6 +70,7 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
         MAKE_STATIC_STRING_IMPL("NodeTypeWaveShaper"),
         MAKE_STATIC_STRING_IMPL("NodeTypeBasicInspector"),
         MAKE_STATIC_STRING_IMPL("NodeTypeConstant"),
+        MAKE_STATIC_STRING_IMPL("NodeTypeStereo"),
         MAKE_STATIC_STRING_IMPL("NodeTypeEnd"),
     };
     static_assert(static_cast<size_t>(AudioNode::NodeTypeUnknown) == 0, "AudioNode::NodeTypeUnknown is not 0 as expected");
@@ -92,7 +93,8 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
     static_assert(static_cast<size_t>(AudioNode::NodeTypeWaveShaper) == 17, "AudioNode::NodeTypeWaveShaper is not 17 as expected");
     static_assert(static_cast<size_t>(AudioNode::NodeTypeBasicInspector) == 18, "AudioNode::NodeTypeBasicInspector is not 18 as expected");
     static_assert(static_cast<size_t>(AudioNode::NodeTypeConstant) == 19, "AudioNode::NodeTypeEnd is not 19 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeEnd) == 20, "AudioNode::NodeTypeConstant is not 20 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeStereo) == 20, "AudioNode::NodeTypeStereo is not 20 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeEnd) == 21, "AudioNode::NodeTypeConstant is not 21 as expected");
 
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     

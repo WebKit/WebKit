@@ -1,9 +1,19 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "mono-test" promise_test: Unhandled rejection with value: object "TypeError: this.context.createStereoPanner is not a function. (In 'this.context.createStereoPanner()', 'this.context.createStereoPanner' is undefined)"
-FAIL Executing "stereo-test" promise_test: Unhandled rejection with value: object "TypeError: this.context.createStereoPanner is not a function. (In 'this.context.createStereoPanner()', 'this.context.createStereoPanner' is undefined)"
+PASS Executing "mono-test" 
+PASS Executing "stereo-test" 
 PASS Audit report 
 PASS > [mono-test]  
+PASS   Mono: Number of impulses found is equal to 100. 
+PASS   Mono: Number of impulse at the wrong offset is equal to 0. 
+PASS   Mono: Left channel error magnitude is less than or equal to 9.8015e-8. 
+PASS   Mono: Right channel error magnitude is less than or equal to 9.8015e-8. 
+PASS < [mono-test] All assertions passed. (total 4 assertions) 
 PASS > [stereo-test]  
+PASS   Stereo: Number of impulses found is equal to 100. 
+PASS   Stereo: Number of impulse at the wrong offset is equal to 0. 
+PASS   Stereo: Left channel error magnitude is less than or equal to 9.8015e-8. 
+PASS   Stereo: Right channel error magnitude is less than or equal to 9.8015e-8. 
+PASS < [stereo-test] All assertions passed. (total 4 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

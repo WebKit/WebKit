@@ -80,6 +80,7 @@ class PannerNode;
 class PeriodicWave;
 class ScriptProcessorNode;
 class SecurityOrigin;
+class StereoPannerNode;
 class WaveShaperNode;
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -162,6 +163,7 @@ public:
     ExceptionOr<Ref<OscillatorNode>> createOscillator();
     ExceptionOr<Ref<PeriodicWave>> createPeriodicWave(Vector<float>&& real, Vector<float>&& imaginary, const PeriodicWaveConstraints& = { });
     ExceptionOr<Ref<ConstantSourceNode>> createConstantSource();
+    ExceptionOr<Ref<StereoPannerNode>> createStereoPanner();
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
     void notifyNodeFinishedProcessing(AudioNode*);

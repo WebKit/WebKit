@@ -352,6 +352,8 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-constantsourcenode-interface/constant-source-output.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering.html [ Pass Failure ]
 
 webkit.org/b/176929 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Pass Failure ]
 

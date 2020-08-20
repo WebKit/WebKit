@@ -1892,6 +1892,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisVoice.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisVoice.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStaticRange.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStaticRange.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStereoPannerNode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStereoPannerNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStereoPannerOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStereoPannerOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorage.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSStorageErrorCallback.cpp

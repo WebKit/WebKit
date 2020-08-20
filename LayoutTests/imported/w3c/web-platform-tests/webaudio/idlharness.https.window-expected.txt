@@ -38,7 +38,7 @@ PASS BaseAudioContext interface: operation createOscillator()
 PASS BaseAudioContext interface: operation createPanner() 
 PASS BaseAudioContext interface: operation createPeriodicWave(sequence<float>, sequence<float>, optional PeriodicWaveConstraints) 
 PASS BaseAudioContext interface: operation createScriptProcessor(optional unsigned long, optional unsigned long, optional unsigned long) 
-FAIL BaseAudioContext interface: operation createStereoPanner() assert_own_property: interface prototype object missing non-static operation expected property "createStereoPanner" missing
+PASS BaseAudioContext interface: operation createStereoPanner() 
 PASS BaseAudioContext interface: operation createWaveShaper() 
 PASS BaseAudioContext interface: operation decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) 
 PASS AudioContext interface: existence and properties of interface object 
@@ -102,7 +102,7 @@ PASS BaseAudioContext interface: context must inherit property "createPeriodicWa
 PASS BaseAudioContext interface: calling createPeriodicWave(sequence<float>, sequence<float>, optional PeriodicWaveConstraints) on context with too few arguments must throw TypeError 
 PASS BaseAudioContext interface: context must inherit property "createScriptProcessor(optional unsigned long, optional unsigned long, optional unsigned long)" with the proper type 
 PASS BaseAudioContext interface: calling createScriptProcessor(optional unsigned long, optional unsigned long, optional unsigned long) on context with too few arguments must throw TypeError 
-FAIL BaseAudioContext interface: context must inherit property "createStereoPanner()" with the proper type assert_inherits: property "createStereoPanner" not found in prototype chain
+PASS BaseAudioContext interface: context must inherit property "createStereoPanner()" with the proper type 
 PASS BaseAudioContext interface: context must inherit property "createWaveShaper()" with the proper type 
 PASS BaseAudioContext interface: context must inherit property "decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?)" with the proper type 
 PASS BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on context with too few arguments must throw TypeError 
@@ -155,7 +155,7 @@ PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must
 PASS BaseAudioContext interface: calling createPeriodicWave(sequence<float>, sequence<float>, optional PeriodicWaveConstraints) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createScriptProcessor(optional unsigned long, optional unsigned long, optional unsigned long)" with the proper type 
 PASS BaseAudioContext interface: calling createScriptProcessor(optional unsigned long, optional unsigned long, optional unsigned long) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError 
-FAIL BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createStereoPanner()" with the proper type assert_inherits: property "createStereoPanner" not found in prototype chain
+PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createStereoPanner()" with the proper type 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createWaveShaper()" with the proper type 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?)" with the proper type 
 PASS BaseAudioContext interface: calling decodeAudioData(ArrayBuffer, optional DecodeSuccessCallback?, optional DecodeErrorCallback?) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError 
@@ -1010,39 +1010,39 @@ PASS AudioNode interface: context.createScriptProcessor() must inherit property 
 PASS AudioNode interface: context.createScriptProcessor() must inherit property "channelCount" with the proper type 
 PASS AudioNode interface: context.createScriptProcessor() must inherit property "channelCountMode" with the proper type 
 PASS AudioNode interface: context.createScriptProcessor() must inherit property "channelInterpretation" with the proper type 
-FAIL StereoPannerNode interface: existence and properties of interface object assert_own_property: self does not have own property "StereoPannerNode" expected property "StereoPannerNode" missing
-FAIL StereoPannerNode interface object length assert_own_property: self does not have own property "StereoPannerNode" expected property "StereoPannerNode" missing
-FAIL StereoPannerNode interface object name assert_own_property: self does not have own property "StereoPannerNode" expected property "StereoPannerNode" missing
-FAIL StereoPannerNode interface: existence and properties of interface prototype object assert_own_property: self does not have own property "StereoPannerNode" expected property "StereoPannerNode" missing
-FAIL StereoPannerNode interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "StereoPannerNode" expected property "StereoPannerNode" missing
-FAIL StereoPannerNode interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "StereoPannerNode" expected property "StereoPannerNode" missing
-FAIL StereoPannerNode interface: attribute pan assert_own_property: self does not have own property "StereoPannerNode" expected property "StereoPannerNode" missing
-FAIL StereoPannerNode must be primary interface of new StereoPannerNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL Stringification of new StereoPannerNode(context) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL StereoPannerNode interface: new StereoPannerNode(context) must inherit property "pan" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: calling connect(AudioParam, optional unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: calling disconnect(unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(AudioNode)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: calling disconnect(AudioNode) on new StereoPannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(AudioParam)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: calling disconnect(AudioParam) on new StereoPannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: calling disconnect(AudioParam, unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "context" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "numberOfInputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "numberOfOutputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "channelCount" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
-FAIL AudioNode interface: new StereoPannerNode(context) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: StereoPannerNode"
+PASS StereoPannerNode interface: existence and properties of interface object 
+PASS StereoPannerNode interface object length 
+PASS StereoPannerNode interface object name 
+PASS StereoPannerNode interface: existence and properties of interface prototype object 
+PASS StereoPannerNode interface: existence and properties of interface prototype object's "constructor" property 
+PASS StereoPannerNode interface: existence and properties of interface prototype object's @@unscopables property 
+PASS StereoPannerNode interface: attribute pan 
+PASS StereoPannerNode must be primary interface of new StereoPannerNode(context) 
+PASS Stringification of new StereoPannerNode(context) 
+PASS StereoPannerNode interface: new StereoPannerNode(context) must inherit property "pan" with the proper type 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioParam, optional unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect()" with the proper type 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(AudioNode)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode) on new StereoPannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(AudioParam)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam) on new StereoPannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam, unsigned long) on new StereoPannerNode(context) with too few arguments must throw TypeError 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "context" with the proper type 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "numberOfInputs" with the proper type 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "numberOfOutputs" with the proper type 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "channelCount" with the proper type 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "channelCountMode" with the proper type 
+PASS AudioNode interface: new StereoPannerNode(context) must inherit property "channelInterpretation" with the proper type 
 PASS WaveShaperNode interface: existence and properties of interface object 
 PASS WaveShaperNode interface object length 
 PASS WaveShaperNode interface object name 

@@ -233,6 +233,7 @@ Modules/webaudio/PannerNode.cpp
 Modules/webaudio/PeriodicWave.cpp
 Modules/webaudio/RealtimeAnalyser.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
+Modules/webaudio/StereoPannerNode.cpp
 Modules/webaudio/WaveShaperDSPKernel.cpp
 Modules/webaudio/WaveShaperNode.cpp
 Modules/webaudio/WaveShaperProcessor.cpp
@@ -1808,6 +1809,7 @@ platform/audio/ReverbConvolver.cpp
 platform/audio/ReverbConvolverStage.cpp
 platform/audio/ReverbInputBuffer.cpp
 platform/audio/SincResampler.cpp
+platform/audio/StereoPanner.cpp
 platform/audio/UpSampler.cpp
 platform/audio/VectorMath.cpp
 platform/audio/ZeroPole.cpp
@@ -3459,6 +3461,8 @@ JSSpeechSynthesis.cpp
 JSSpeechSynthesisEvent.cpp
 JSSpeechSynthesisUtterance.cpp
 JSSpeechSynthesisVoice.cpp
+JSStereoPannerNode.cpp
+JSStereoPannerOptions.cpp
 JSStaticRange.cpp
 JSStorage.cpp
 JSStorageErrorCallback.cpp

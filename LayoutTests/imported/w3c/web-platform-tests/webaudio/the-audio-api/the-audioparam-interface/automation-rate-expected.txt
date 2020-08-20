@@ -8,7 +8,7 @@ PASS Executing "DynamicsCompressorNode"
 PASS Executing "GainNode" 
 PASS Executing "OscillatorNode" 
 PASS Executing "PannerNode" 
-FAIL Executing "StereoPannerNode" promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new window[test.nodeName](context)')"
+PASS Executing "StereoPannerNode" 
 PASS Executing "AudioListener" 
 PASS Audit report 
 PASS > [AudioBufferSourceNode]  
@@ -87,6 +87,10 @@ PASS   Set PannerNode.orientationZ.automationRate to "k-rate" did not throw an e
 PASS   PannerNode.orientationZ.automationRate is equal to k-rate. 
 FAIL < [PannerNode] 6 out of 18 assertions were failed. assert_true: expected true got false
 PASS > [StereoPannerNode]  
+FAIL X Default StereoPannerNode.pan.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Set StereoPannerNode.pan.automationRate to "k-rate" did not throw an exception. 
+PASS   StereoPannerNode.pan.automationRate is equal to k-rate. 
+FAIL < [StereoPannerNode] 1 out of 3 assertions were failed. assert_true: expected true got false
 PASS > [AudioListener]  
 FAIL X Default AudioListener.positionX.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
 PASS   Set AudioListener.positionX.automationRate to "k-rate" did not throw an exception. 
@@ -116,5 +120,5 @@ FAIL X Default AudioListener.upZ.automationRate is not equal to a-rate. Got unde
 PASS   Set AudioListener.upZ.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.upZ.automationRate is equal to k-rate. 
 FAIL < [AudioListener] 9 out of 27 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 9 out of 10 tasks were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 10 out of 10 tasks were failed. assert_true: expected true got false
 

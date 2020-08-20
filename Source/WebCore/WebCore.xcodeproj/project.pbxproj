@@ -5094,6 +5094,8 @@
 		E7C8E13B24E2FE7E0027A27F /* ConstantSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E7C8E13824E2FE650027A27F /* ConstantSourceNode.h */; };
 		E7CF84A924C6461C00B06B90 /* OfflineAudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7CF84A524C635F400B06B90 /* OfflineAudioContextOptions.h */; };
 		E7E0357224D4E196008DFEFB /* AnalyserOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7E0357124D4E191008DFEFB /* AnalyserOptions.h */; };
+		E7FBE7C224EB2FB000A18E62 /* StereoPannerNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FBE7C124EB2FAB00A18E62 /* StereoPannerNode.h */; };
+		E7FBE7C324EB2FB600A18E62 /* StereoPannerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E7FBE7C024EB2FAB00A18E62 /* StereoPannerOptions.h */; };
 		EBE5B226245A26EF003A5A88 /* SQLiteStatementAutoResetScope.h in Headers */ = {isa = PBXBuildFile; fileRef = EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBF5121A1696496C0056BD25 /* JSTypeConversions.cpp */; };
 		EBF5121D1696496C0056BD25 /* JSTypeConversions.h in Headers */ = {isa = PBXBuildFile; fileRef = EBF5121B1696496C0056BD25 /* JSTypeConversions.h */; };
@@ -15960,6 +15962,13 @@
 		E7E0355924D346DF008DFEFB /* AudioBufferOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioBufferOptions.idl; sourceTree = "<group>"; };
 		E7E0356F24D4E190008DFEFB /* AnalyserOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalyserOptions.idl; sourceTree = "<group>"; };
 		E7E0357124D4E191008DFEFB /* AnalyserOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyserOptions.h; sourceTree = "<group>"; };
+		E7FBE7BC24EB2FA900A18E62 /* StereoPannerNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StereoPannerNode.cpp; sourceTree = "<group>"; };
+		E7FBE7BE24EB2FAA00A18E62 /* StereoPannerOptions.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StereoPannerOptions.idl; sourceTree = "<group>"; };
+		E7FBE7BF24EB2FAA00A18E62 /* StereoPannerNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StereoPannerNode.idl; sourceTree = "<group>"; };
+		E7FBE7C024EB2FAB00A18E62 /* StereoPannerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StereoPannerOptions.h; sourceTree = "<group>"; };
+		E7FBE7C124EB2FAB00A18E62 /* StereoPannerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StereoPannerNode.h; sourceTree = "<group>"; };
+		E7FBE7C424EC36F300A18E62 /* StereoPanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StereoPanner.h; sourceTree = "<group>"; };
+		E7FBE7C524EC36F300A18E62 /* StereoPanner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StereoPanner.cpp; sourceTree = "<group>"; };
 		EB081CD81696084400553730 /* TypeConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeConversions.h; sourceTree = "<group>"; };
 		EB081CD91696084400553730 /* TypeConversions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TypeConversions.idl; sourceTree = "<group>"; };
 		EBE5B224245A26EE003A5A88 /* SQLiteStatementAutoResetScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteStatementAutoResetScope.h; sourceTree = "<group>"; };
@@ -29723,6 +29732,11 @@
 				FD315FEB12B0267600C1A359 /* ScriptProcessorNode.cpp */,
 				FD315FEC12B0267600C1A359 /* ScriptProcessorNode.h */,
 				FD315FED12B0267600C1A359 /* ScriptProcessorNode.idl */,
+				E7FBE7BC24EB2FA900A18E62 /* StereoPannerNode.cpp */,
+				E7FBE7C124EB2FAB00A18E62 /* StereoPannerNode.h */,
+				E7FBE7BF24EB2FAA00A18E62 /* StereoPannerNode.idl */,
+				E7FBE7C024EB2FAB00A18E62 /* StereoPannerOptions.h */,
+				E7FBE7BE24EB2FAA00A18E62 /* StereoPannerOptions.idl */,
 				FD7F298A13D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp */,
 				FD7F298B13D4C0CB00AD9535 /* WaveShaperDSPKernel.h */,
 				FD7F298C13D4C0CB00AD9535 /* WaveShaperNode.cpp */,
@@ -29837,6 +29851,8 @@
 				FD31607712B026F700C1A359 /* ReverbInputBuffer.h */,
 				FD00D7A214A3F61900734011 /* SincResampler.cpp */,
 				FD00D7A314A3F61900734011 /* SincResampler.h */,
+				E7FBE7C524EC36F300A18E62 /* StereoPanner.cpp */,
+				E7FBE7C424EC36F300A18E62 /* StereoPanner.h */,
 				FD1762DD176686D900D836A8 /* UpSampler.cpp */,
 				FD1762DE176686D900D836A8 /* UpSampler.h */,
 				FD31607812B026F700C1A359 /* VectorMath.cpp */,
@@ -33593,6 +33609,8 @@
 				F433E9031DBBDBA200EF0D14 /* StaticPasteboard.h in Headers */,
 				F44EBBD91DB5D21400277334 /* StaticRange.h in Headers */,
 				A5AFB350115151A700B045CB /* StepRange.h in Headers */,
+				E7FBE7C224EB2FB000A18E62 /* StereoPannerNode.h in Headers */,
+				E7FBE7C324EB2FB600A18E62 /* StereoPannerOptions.h in Headers */,
 				1AC2D845171734A100652FC0 /* Storage.h in Headers */,
 				51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */,
 				51E0BABB0DA5547100A9E417 /* StorageEvent.h in Headers */,

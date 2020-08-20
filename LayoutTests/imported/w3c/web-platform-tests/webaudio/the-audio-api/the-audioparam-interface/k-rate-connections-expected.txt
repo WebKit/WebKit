@@ -1,7 +1,7 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
 PASS Executing "Gain" 
-FAIL Executing "StereoPanner" promise_test: Unhandled rejection with value: object "TypeError: undefined is not a constructor (evaluating 'new window[nodeName](context)')"
+PASS Executing "StereoPanner" 
 PASS Audit report 
 PASS > [Gain] k-rate GainNode.gain 
 PASS   gain[0:128] contains only the constant 2. 
@@ -14,5 +14,62 @@ PASS   gain[768:896] contains only the constant 2.
 PASS   gain[896:1024] contains only the constant 2. 
 PASS < [Gain] All assertions passed. (total 8 assertions) 
 PASS > [StereoPanner] k-rate StereoPannerNode.pan 
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
+FAIL X pan[0:128]: Expected 0.5 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.500766396522522
+	[2]	0.5015316009521484
+	[3]	0.5022956728935242
+	[4]	0.5030585527420044
+	...and 123 more errors. assert_true: expected true got false
+FAIL X pan[128:256]: Expected 0.5879377722740173 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.588539719581604
+	[2]	0.5891402363777161
+	[3]	0.5897394418716431
+	[4]	0.5903372168540955
+	...and 123 more errors. assert_true: expected true got false
+FAIL X pan[256:384]: Expected 0.6532814502716064 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.653695821762085
+	[2]	0.6541085839271545
+	[3]	0.65451979637146
+	[4]	0.654929518699646
+	...and 123 more errors. assert_true: expected true got false
+FAIL X pan[384:512]: Expected 0.6935199499130249 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.6937307119369507
+	[2]	0.6939398646354675
+	[3]	0.6941474080085754
+	[4]	0.6943533420562744
+	...and 123 more errors. assert_true: expected true got false
+FAIL X pan[512:640]: Expected 0.7071067690849304 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.7071059346199036
+	[2]	0.707103431224823
+	[3]	0.7070993185043335
+	[4]	0.7070934772491455
+	...and 123 more errors. assert_true: expected true got false
+FAIL X pan[640:768]: Expected 0.6935199499130249 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.6933075189590454
+	[2]	0.6930934190750122
+	[3]	0.6928777694702148
+	[4]	0.6926604509353638
+	...and 123 more errors. assert_true: expected true got false
+FAIL X pan[768:896]: Expected 0.6532814502716064 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.6528656482696533
+	[2]	0.6524482369422913
+	[3]	0.652029275894165
+	[4]	0.6516088247299194
+	...and 123 more errors. assert_true: expected true got false
+FAIL X pan[896:1024]: Expected 0.5879377722740173 for all values but found 127 unexpected values: 
+	Index	Actual
+	[1]	0.5873345136642456
+	[2]	0.5867298245429993
+	[3]	0.5861237049102783
+	[4]	0.5855162739753723
+	...and 123 more errors. assert_true: expected true got false
+FAIL < [StereoPanner] 8 out of 8 assertions were failed. assert_true: expected true got false
+FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
 

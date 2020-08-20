@@ -1,3 +1,56 @@
+2020-08-20  Clark Wang  <clark_wang@apple.com>
+
+        Introduce StereoPannerNode Interface
+        https://bugs.webkit.org/show_bug.cgi?id=215518
+
+        Reviewed by Darin Adler.
+
+        Added StereoPannerNode according to spec: https://www.w3.org/TR/webaudio/#stereopannernode.
+        Used Chromium implementation for guidance: https://source.chromium.org/chromium/chromium/src/
+        +/master:third_party/blink/renderer/modules/webaudio/stereo_panner_node.cc.
+        Added in StereoPannerOptions and StereoPanner files as well. The latter used Chromium
+        implementation for guidance: https://source.chromium.org/chromium/chromium/src/+
+        /master:third_party/blink/renderer/platform/audio/stereo_panner.cc
+
+        Re-baselined existing tests. Some now fail due to missing automation rate.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::convertEnumerationToString):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createStereoPanner):
+        * Modules/webaudio/BaseAudioContext.h:
+        * Modules/webaudio/BaseAudioContext.idl:
+        * Modules/webaudio/StereoPannerNode.cpp: Added.
+        (WebCore::StereoPannerNode::create):
+        (WebCore::StereoPannerNode::StereoPannerNode):
+        (WebCore::StereoPannerNode::~StereoPannerNode):
+        (WebCore::StereoPannerNode::process):
+        (WebCore::StereoPannerNode::initialize):
+        (WebCore::StereoPannerNode::uninitialize):
+        (WebCore::StereoPannerNode::listener):
+        (WebCore::StereoPannerNode::setChannelCount):
+        (WebCore::StereoPannerNode::setChannelCountMode):
+        * Modules/webaudio/StereoPannerNode.h: Added.
+        * Modules/webaudio/StereoPannerNode.idl: Added.
+        * Modules/webaudio/StereoPannerOptions.h: Added.
+        * Modules/webaudio/StereoPannerOptions.idl: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * platform/audio/StereoPanner.cpp: Added.
+        (WebCore::StereoPanner::create):
+        (WebCore::StereoPanner::StereoPanner):
+        (WebCore::StereoPanner::panWithSampleAccurateValues):
+        (WebCore::StereoPanner::panToTargetValue):
+        * platform/audio/StereoPanner.h: Added.
+        (WebCore::StereoPanner::~StereoPanner):
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+
 2020-08-20  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, reverting r265850.

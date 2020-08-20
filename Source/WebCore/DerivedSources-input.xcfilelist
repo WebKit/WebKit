@@ -359,6 +359,8 @@ $(PROJECT_DIR)/Modules/webaudio/PeriodicWave.idl
 $(PROJECT_DIR)/Modules/webaudio/PeriodicWaveConstraints.idl
 $(PROJECT_DIR)/Modules/webaudio/PeriodicWaveOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/ScriptProcessorNode.idl
+$(PROJECT_DIR)/Modules/webaudio/StereoPannerNode.idl
+$(PROJECT_DIR)/Modules/webaudio/StereoPannerOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/WaveShaperNode.idl
 $(PROJECT_DIR)/Modules/webaudio/WaveShaperOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/WebKitAudioBufferSourceNode.idl

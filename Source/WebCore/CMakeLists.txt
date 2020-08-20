@@ -507,6 +507,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/PeriodicWave.idl
     Modules/webaudio/PeriodicWaveConstraints.idl
     Modules/webaudio/PeriodicWaveOptions.idl
+    Modules/webaudio/StereoPannerNode.idl
+    Modules/webaudio/StereoPannerOptions.idl
     Modules/webaudio/ScriptProcessorNode.idl
     Modules/webaudio/WaveShaperNode.idl
     Modules/webaudio/WaveShaperOptions.idl
