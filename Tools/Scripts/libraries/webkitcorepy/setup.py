@@ -48,7 +48,12 @@ setup(
     author='Jonathan Bedard',
     author_email='jbedard@apple.com',
     license='Modified BSD',
-    packages=['webkitcorepy'],
+    packages=[
+        'webkitcorepy',
+        'webkitcorepy.mocks',
+        'webkitcorepy.tests',
+        'webkitcorepy.tests.mocks',
+    ],
     install_requires=[
         'mock',
         'requests',

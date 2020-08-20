@@ -1,3 +1,15 @@
+2020-08-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Fix pip package
+        https://bugs.webkit.org/show_bug.cgi?id=215717
+        <rdar://problem/67512294>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/MANIFEST.in: Add cacert.pem.
+        * Scripts/libraries/webkitcorepy/setup.py: Include submodules.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Version bump.
+
 2020-08-20  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] Handle bugs with unicode characters in title in ews emails
