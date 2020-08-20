@@ -1,3 +1,9 @@
+2020-08-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Move WPE baseline for collection-iterators.html test to GLIB.
+
+        * platform/glib/fast/dom/collection-iterators-expected.txt: Renamed from LayoutTests/platform/wpe/fast/dom/collection-iterators-expected.txt.
+
 2020-08-20  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r265856) [GTK][WPE] hybi websockets tests failing
