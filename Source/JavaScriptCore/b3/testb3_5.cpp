@@ -1125,6 +1125,38 @@ void testCheckSub()
     CHECK(invoke<double>(*code, -2147483647, 42) == -2147483689.0);
 }
 
+void testCheckSubBitAnd()
+{
+    Procedure proc;
+    if (proc.optLevel() < 1)
+        return;
+    BasicBlock* root = proc.addBlock();
+    Value* zero = root->appendNew<Const32Value>(proc, Origin(), 0);
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* truncatedArg1 = root->appendNew<Value>(proc, Trunc, Origin(), arg1);
+    Value* minusTwo = root->appendNew<Const32Value>(proc, Origin(), -2);
+    Value* bitAnd = root->appendNew<Value>(proc, BitAnd, Origin(), truncatedArg1, minusTwo);
+    CheckValue* checkSub = root->appendNew<CheckValue>(proc, CheckSub, Origin(), zero, bitAnd);
+    checkSub->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams&) {
+        AllowMacroScratchRegisterUsage allowScratch(jit);
+        jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
+        jit.emitFunctionEpilogue();
+        jit.ret();
+    });
+    root->appendNewControlValue(proc, Return, Origin(), checkSub);
+
+    auto code = compileProc(proc);
+
+    CHECK_EQ(invoke<int>(*code, 1), 0);
+    CHECK_EQ(invoke<int>(*code, 2), -2);
+    CHECK_EQ(invoke<int>(*code, 3), -2);
+    CHECK_EQ(invoke<int>(*code, -1), 2);
+    CHECK_EQ(invoke<int>(*code, -2), 2);
+    CHECK_EQ(invoke<int>(*code, -3), 4);
+    CHECK_EQ(invoke<int>(*code, INT_MAX), -(INT_MAX - 1));
+    CHECK_EQ(invoke<int>(*code, INT_MIN), 42);
+}
+
 NEVER_INLINE double doubleSub(double a, double b)
 {
     return a - b;

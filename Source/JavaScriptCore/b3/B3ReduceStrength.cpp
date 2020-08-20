@@ -123,6 +123,8 @@ public:
     {
         if (!(mask + 1))
             return top<T>();
+        if (mask < 0)
+            return IntRange(INT_MIN & mask, mask & INT_MAX);
         return IntRange(0, mask);
     }
 
