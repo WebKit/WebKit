@@ -1,3 +1,21 @@
+2020-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix possible crash when webAnimationsCSSIntegrationEnabled is false
+        https://bugs.webkit.org/show_bug.cgi?id=215668
+        <rdar://problem/67402003>
+
+        Reviewed by Dean Jackson.
+
+        When webAnimationsCSSIntegrationEnabled is false, GraphicsLayerCA::setupAnimation() doesn't
+        set a timing function on the animation, causing a null de-ref when the animation is being encoded.
+        Fix the encoder to handle null timing functions.
+
+        Test: animations/legacy-encoding-timing-function.html
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::Properties::encode const):
+        (WebKit::PlatformCAAnimationRemote::Properties::decode):
+
 2020-08-19  Alex Christensen  <achristensen@webkit.org>
 
         Fix null pointer crashes in network process after r265835
