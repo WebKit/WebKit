@@ -1,3 +1,22 @@
+2020-08-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        IPC message can't be decoded due to uninitialized NavigationActionData member variables with the latest MSVC
+        https://bugs.webkit.org/show_bug.cgi?id=215662
+
+        Reviewed by Darin Adler.
+
+        WinCairo WebKit2 is crashing in AuxiliaryProcess::didReceiveInvalidMessage
+        if it is compiled by the latest MSVC (Visual Studio 2019 16.7) with optimizer (/O2).
+
+        LockHistory is a bool based enum type. NavigationActionData
+        doesn't initialize the member variable of it. IPC::Encoder
+        converts a LockHistory value to the underlying type bool. The
+        uninitialized value is converted 0 or 1 in GCC, Clang and old
+        MSVC. However, the latest MSVC doesn't convert and IPC::Decoder
+        detects an invalid enum value.
+
+        * Shared/NavigationActionData.h: Added initializes for userGestureTokenIdentifier, lockHistory and lockBackForwardList.
+
 2020-08-19  Brady Eidson  <beidson@apple.com>
 
         Improperly linearized PDFs show up as blank gray on Big Sur.

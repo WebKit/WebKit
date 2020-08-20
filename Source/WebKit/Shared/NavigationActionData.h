@@ -47,7 +47,7 @@ struct NavigationActionData {
     OptionSet<WebEvent::Modifier> modifiers;
     WebMouseEvent::Button mouseButton { WebMouseEvent::NoButton };
     WebMouseEvent::SyntheticClickType syntheticClickType { WebMouseEvent::NoTap };
-    uint64_t userGestureTokenIdentifier;
+    uint64_t userGestureTokenIdentifier { 0 };
     bool canHandleRequest { false };
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     WTF::String downloadAttribute;
@@ -59,8 +59,8 @@ struct NavigationActionData {
     WebCore::SecurityOriginData requesterOrigin;
     Optional<WebCore::BackForwardItemIdentifier> targetBackForwardItemIdentifier;
     Optional<WebCore::BackForwardItemIdentifier> sourceBackForwardItemIdentifier;
-    WebCore::LockHistory lockHistory;
-    WebCore::LockBackForwardList lockBackForwardList;
+    WebCore::LockHistory lockHistory { WebCore::LockHistory::No };
+    WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
     WTF::String clientRedirectSourceForHistory;
     Optional<WebCore::AdClickAttribution> adClickAttribution;
 };
