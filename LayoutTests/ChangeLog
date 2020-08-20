@@ -1,3 +1,11 @@
+2020-08-19  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening websocket failures
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-08-19  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS wk2 Release ] http/tests/security/contentSecurityPolicy/worker-redirect-allowed.html is a flaky timeout
