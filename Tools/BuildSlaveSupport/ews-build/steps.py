@@ -1481,7 +1481,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
             else:
                 logs = self.filter_logs_containing_error(logs)
 
-            email_subject = 'Build failure for Patch {}: {}'.format(patch_id, bug_title)
+            email_subject = u'Build failure for Patch {}: {}'.format(patch_id, bug_title)
             email_text = 'EWS has detected build failure on {}'.format(builder_name)
             email_text += ' while testing <a href="{}">Patch {}</a>'.format(Bugzilla.patch_url(patch_id), patch_id)
             email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
@@ -1506,7 +1506,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
             else:
                 logs = self.filter_logs_containing_error(logs)
 
-            email_subject = 'Build failure on trunk on {}'.format(builder_name)
+            email_subject = u'Build failure on trunk on {}'.format(builder_name)
             email_text = 'Failed to build WebKit without patch in {}\n\nBuilder: {}\n\nWorker: {}'.format(build_url, builder_name, worker_name)
             if logs:
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
@@ -2024,7 +2024,7 @@ class ReRunWebKitTests(RunWebKitTests):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
-            email_subject = 'Flaky test: {}'.format(test_name)
+            email_subject = u'Flaky test: {}'.format(test_name)
             email_text = 'Test {} flaked in {}\n\nBuilder: {}'.format(test_name, build_url, builder_name)
             email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text)
@@ -2123,7 +2123,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
-            email_subject = 'Flaky test: {}'.format(test_name)
+            email_subject = u'Flaky test: {}'.format(test_name)
             email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text)
         except Exception as e:
@@ -2136,7 +2136,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             history_url = '{}?suite=layout-tests&test={}'.format(RESULTS_DB_URL, test_name)
 
-            email_subject = 'Pre-existing test failure: {}'.format(test_name)
+            email_subject = u'Pre-existing test failure: {}'.format(test_name)
             email_text = 'Test {} failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
             send_email_to_bot_watchers(email_subject, email_text)
         except Exception as e:
@@ -2157,7 +2157,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
                 test_names_string += '\n- {} (<a href="{}">test history</a>)'.format(test_name, history_url)
 
             pluralSuffix = 's' if len(test_names) > 1 else ''
-            email_subject = 'Layout test failure for Patch {}: {} '.format(patch_id, bug_title)
+            email_subject = u'Layout test failure for Patch {}: {} '.format(patch_id, bug_title)
             email_text = 'EWS has detected layout test failure{} on {}'.format(pluralSuffix, builder_name)
             email_text += ' while testing <a href="{}">Patch {}</a>'.format(Bugzilla.patch_url(patch_id), patch_id)
             email_text += ' for <a href="{}">Bug {}</a>.'.format(Bugzilla.bug_url(bug_id), bug_id)
