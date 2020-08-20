@@ -8,42 +8,53 @@ description: >
 includes: [nativeFunctionMatcher.js]
 ---*/
 
-if (!NATIVE_FUNCTION_RE.test('function(){[native code]}')) {
-  $ERROR('expected string to pass: "function(){[native code]}"');
-}
+[
+  'function(){[native code]}',
+  'function(){ [native code] }',
+  'function ( ) { [ native code ] }',
+  'function a(){ [native code] }',
+  'function a(){ /* } */ [native code] }',
+  `function a() {
+    // test
+    [native code]
+    /* test */
+  }`,
+  'function(a, b = function() { []; }) { [native code] }',
+  'function [Symbol.xyz]() { [native code] }',
+  'function [x[y][z[d]()]]() { [native code] }',
+  'function ["]"] () { [native code] }',
+  'function [\']\'] () { [native code] }',
+  '/* test */ function() { [native code] }',
+  'function() { [native code] } /* test */',
+  'function() { [native code] } // test',
+].forEach((s) => {
+  try {
+    validateNativeFunctionSource(s);
+  } catch (unused) {
+    $ERROR(`${JSON.stringify(s)} should pass`);
+  }
+});
 
-if (!NATIVE_FUNCTION_RE.test('function(){ [native code] }')) {
-  $ERROR('expected string to pass: "function(){ [native code] }"');
-}
-
-if (!NATIVE_FUNCTION_RE.test('function ( ) { [ native code ] }')) {
-  $ERROR('expected string to pass: "function ( ) { [ native code ] }"');
-}
-
-if (!NATIVE_FUNCTION_RE.test('function a(){ [native code] }')) {
-  $ERROR('expected string to pass: "function a(){ [native code] }"');
-}
-
-if (!NATIVE_FUNCTION_RE.test('function a(){ /* } */ [native code] }')) {
-  $ERROR('expected string to pass: "function a(){ /* } */ [native code] }"');
-}
-
-if (NATIVE_FUNCTION_RE.test('')) {
-  $ERROR('expected string to fail: ""');
-}
-
-if (NATIVE_FUNCTION_RE.test('native code')) {
-  $ERROR('expected string to fail: "native code"');
-}
-
-if (NATIVE_FUNCTION_RE.test('function(){}')) {
-  $ERROR('expected string to fail: "function(){}"');
-}
-
-if (NATIVE_FUNCTION_RE.test('function(){ "native code" }')) {
-  $ERROR('expected string to fail: "function(){ "native code" }"');
-}
-
-if (NATIVE_FUNCTION_RE.test('function(){ [] native code }')) {
-  $ERROR('expected string to fail: "function(){ [] native code }"');
-}
+[
+  'native code',
+  'function() {}',
+  'function(){ "native code" }',
+  'function(){ [] native code }',
+  'function()) { [native code] }',
+  'function(() { [native code] }',
+  'function []] () { [native code] }',
+  'function [[] () { [native code] }',
+  'function ["]] () { [native code] }',
+  'function [\']] () { [native code] }',
+  'function() { [native code] /* }',
+  '// function() { [native code] }',
+].forEach((s) => {
+  let fail = false;
+  try {
+    validateNativeFunctionSource(s);
+    fail = true;
+  } catch (unused) {}
+  if (fail) {
+    $ERROR(`${JSON.stringify(s)} should fail`);
+  }
+});

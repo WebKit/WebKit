@@ -1,3 +1,16 @@
+2020-08-20  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Update test262 to commit e0a65ee75ef8
+        https://bugs.webkit.org/show_bug.cgi?id=215708
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        * test262/harness/*: Updated.
+        * test262/latest-changes-summary.txt:
+        * test262/test/*: Updated.
+        * test262/test262-Revision.txt:
+
 2020-08-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add Object.getOwnPropertyNames caching as it is done for Object.keys, and accelerate Object.getOwnPropertyDescriptor

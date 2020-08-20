@@ -8,452 +8,283 @@ defines: [WellKnownIntrinsicObjects]
 
 const WellKnownIntrinsicObjects = [
   {
-    intrinsicName: "%Array%",
-    globalNameOrSource: "Array"
+    name: '%AggregateError%',
+    source: 'AggregateError',
   },
   {
-    intrinsicName: "%ArrayBuffer%",
-    globalNameOrSource: "ArrayBuffer"
+    name: '%Array%',
+    source: 'Array',
   },
   {
-    intrinsicName: "%ArrayBufferPrototype%",
-    globalNameOrSource: "ArrayBuffer.prototype"
+    name: '%ArrayBuffer%',
+    source: 'ArrayBuffer',
   },
   {
-    intrinsicName: "%ArrayIteratorPrototype%",
-    globalNameOrSource: "Object.getPrototypeOf([][Symbol.iterator]())"
+    name: '%ArrayIteratorPrototype%',
+    source: 'Object.getPrototypeOf([][Symbol.iterator]())',
   },
   {
-    intrinsicName: "%ArrayPrototype%",
-    globalNameOrSource: "Array.prototype"
+    name: '%AsyncFromSyncIteratorPrototype%',
+    source: 'undefined',
   },
   {
-    intrinsicName: "%ArrayProto_entries%",
-    globalNameOrSource: "Array.prototype.entries"
+    name: '%AsyncFunction%',
+    source: '(async function() {}).constructor',
   },
   {
-    intrinsicName: "%ArrayProto_forEach%",
-    globalNameOrSource: "Array.prototype.forEach"
+    name: '%AsyncGeneratorFunction%',
+    source: 'Object.getPrototypeOf(async function * () {})',
   },
   {
-    intrinsicName: "%ArrayProto_keys%",
-    globalNameOrSource: "Array.prototype.keys"
+    name: '%AsyncIteratorPrototype%',
+    source: '((async function * () {})())[Symbol.asyncIterator]()',
   },
   {
-    intrinsicName: "%ArrayProto_values%",
-    globalNameOrSource: "Array.prototype.values"
+    name: '%Atomics%',
+    source: 'Atomics',
   },
   {
-    intrinsicName: "%AsyncFromSyncIteratorPrototype%",
-    globalNameOrSource: "undefined"
+    name: '%BigInt%',
+    source: 'BigInt',
   },
   {
-    intrinsicName: "%AsyncFunction%",
-    globalNameOrSource: "(async function() {}).constructor"
+    name: '%BigInt64Array%',
+    source: 'BigInt64Array',
   },
   {
-    intrinsicName: "%AsyncFunctionPrototype%",
-    globalNameOrSource: "(async function() {}).constructor.prototype"
+    name: '%BigUint64Array%',
+    source: 'BigUint64Array',
   },
   {
-    intrinsicName: "%AsyncGenerator%",
-    globalNameOrSource: "Object.getPrototypeOf((async function * () {})())"
+    name: '%Boolean%',
+    source: 'Boolean',
   },
   {
-    intrinsicName: "%AsyncGeneratorFunction%",
-    globalNameOrSource: "Object.getPrototypeOf(async function * () {})"
+    name: '%DataView%',
+    source: 'DataView',
   },
   {
-    intrinsicName: "%AsyncGeneratorPrototype%",
-    globalNameOrSource: "Object.getPrototypeOf(async function * () {}).prototype"
+    name: '%Date%',
+    source: 'Date',
   },
   {
-    intrinsicName: "%AsyncIteratorPrototype%",
-    globalNameOrSource: "((async function * () {})())[Symbol.asyncIterator]()"
+    name: '%decodeURI%',
+    source: 'decodeURI',
   },
   {
-    intrinsicName: "%Atomics%",
-    globalNameOrSource: "Atomics"
+    name: '%decodeURIComponent%',
+    source: 'decodeURIComponent',
   },
   {
-    intrinsicName: "%Boolean%",
-    globalNameOrSource: "Boolean"
+    name: '%encodeURI%',
+    source: 'encodeURI',
   },
   {
-    intrinsicName: "%BooleanPrototype%",
-    globalNameOrSource: "Boolean.prototype"
+    name: '%encodeURIComponent%',
+    source: 'encodeURIComponent',
   },
   {
-    intrinsicName: "%DataView%",
-    globalNameOrSource: "DataView"
+    name: '%Error%',
+    source: 'Error',
   },
   {
-    intrinsicName: "%DataViewPrototype%",
-    globalNameOrSource: "DataView.prototype"
+    name: '%eval%',
+    source: 'eval',
   },
   {
-    intrinsicName: "%Date%",
-    globalNameOrSource: "Date"
+    name: '%EvalError%',
+    source: 'EvalError',
   },
   {
-    intrinsicName: "%DatePrototype%",
-    globalNameOrSource: "Date.prototype"
+    name: '%FinalizationRegistry%',
+    source: 'FinalizationRegistry',
   },
   {
-    intrinsicName: "%decodeURI%",
-    globalNameOrSource: "decodeURI"
+    name: '%Float32Array%',
+    source: 'Float32Array',
   },
   {
-    intrinsicName: "%decodeURIComponent%",
-    globalNameOrSource: "decodeURIComponent"
+    name: '%Float64Array%',
+    source: 'Float64Array',
   },
   {
-    intrinsicName: "%encodeURI%",
-    globalNameOrSource: "encodeURI"
+    name: '%ForInIteratorPrototype%',
+    source: '',
   },
   {
-    intrinsicName: "%encodeURIComponent%",
-    globalNameOrSource: "encodeURIComponent"
+    name: '%Function%',
+    source: 'Function',
   },
   {
-    intrinsicName: "%Error%",
-    globalNameOrSource: "Error"
+    name: '%GeneratorFunction%',
+    source: 'Object.getPrototypeOf(function * () {})',
   },
   {
-    intrinsicName: "%ErrorPrototype%",
-    globalNameOrSource: "Error.prototype"
+    name: '%Int8Array%',
+    source: 'Int8Array',
   },
   {
-    intrinsicName: "%eval%",
-    globalNameOrSource: "eval"
+    name: '%Int16Array%',
+    source: 'Int16Array',
   },
   {
-    intrinsicName: "%EvalError%",
-    globalNameOrSource: "EvalError"
+    name: '%Int32Array%',
+    source: 'Int32Array',
   },
   {
-    intrinsicName: "%EvalErrorPrototype%",
-    globalNameOrSource: "EvalError.prototype"
+    name: '%isFinite%',
+    source: 'isFinite',
   },
   {
-    intrinsicName: "%Float32Array%",
-    globalNameOrSource: "Float32Array"
+    name: '%isNaN%',
+    source: 'isNaN',
   },
   {
-    intrinsicName: "%Float32ArrayPrototype%",
-    globalNameOrSource: "Float32Array.prototype"
+    name: '%IteratorPrototype%',
+    source: 'Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]()))',
   },
   {
-    intrinsicName: "%Float64Array%",
-    globalNameOrSource: "Float64Array"
+    name: '%JSON%',
+    source: 'JSON',
   },
   {
-    intrinsicName: "%Float64ArrayPrototype%",
-    globalNameOrSource: "Float64Array.prototype"
+    name: '%Map%',
+    source: 'Map',
   },
   {
-    intrinsicName: "%Function%",
-    globalNameOrSource: "Function"
+    name: '%MapIteratorPrototype%',
+    source: 'Object.getPrototypeOf(new Map()[Symbol.iterator]())',
   },
   {
-    intrinsicName: "%FunctionPrototype%",
-    globalNameOrSource: "Function.prototype"
+    name: '%Math%',
+    source: 'Math',
   },
   {
-    intrinsicName: "%Generator%",
-    globalNameOrSource: "Object.getPrototypeOf((function * () {})())"
+    name: '%Number%',
+    source: 'Number',
   },
   {
-    intrinsicName: "%GeneratorFunction%",
-    globalNameOrSource: "Object.getPrototypeOf(function * () {})"
+    name: '%Object%',
+    source: 'Object',
   },
   {
-    intrinsicName: "%GeneratorPrototype%",
-    globalNameOrSource: "Object.getPrototypeOf(function * () {}).prototype"
+    name: '%parseFloat%',
+    source: 'parseFloat',
   },
   {
-    intrinsicName: "%Int8Array%",
-    globalNameOrSource: "Int8Array"
+    name: '%parseInt%',
+    source: 'parseInt',
   },
   {
-    intrinsicName: "%Int8ArrayPrototype%",
-    globalNameOrSource: "Int8Array.prototype"
+    name: '%Promise%',
+    source: 'Promise',
   },
   {
-    intrinsicName: "%Int16Array%",
-    globalNameOrSource: "Int16Array"
+    name: '%Proxy%',
+    source: 'Proxy',
   },
   {
-    intrinsicName: "%Int16ArrayPrototype%",
-    globalNameOrSource: "Int16Array.prototype"
+    name: '%RangeError%',
+    source: 'RangeError',
   },
   {
-    intrinsicName: "%Int32Array%",
-    globalNameOrSource: "Int32Array"
+    name: '%ReferenceError%',
+    source: 'ReferenceError',
   },
   {
-    intrinsicName: "%Int32ArrayPrototype%",
-    globalNameOrSource: "Int32Array.prototype"
+    name: '%Reflect%',
+    source: 'Reflect',
   },
   {
-    intrinsicName: "%isFinite%",
-    globalNameOrSource: "isFinite"
+    name: '%RegExp%',
+    source: 'RegExp',
   },
   {
-    intrinsicName: "%isNaN%",
-    globalNameOrSource: "isNaN"
+    name: '%RegExpStringIteratorPrototype%',
+    source: 'RegExp.prototype[Symbol.matchAll]("")',
   },
   {
-    intrinsicName: "%IteratorPrototype%",
-    globalNameOrSource: "Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]()))"
+    name: '%Set%',
+    source: 'Set',
   },
   {
-    intrinsicName: "%JSON%",
-    globalNameOrSource: "JSON"
+    name: '%SetIteratorPrototype%',
+    source: 'Object.getPrototypeOf(new Set()[Symbol.iterator]())',
   },
   {
-    intrinsicName: "%JSONParse%",
-    globalNameOrSource: "JSON.parse"
+    name: '%SharedArrayBuffer%',
+    source: 'SharedArrayBuffer',
   },
   {
-    intrinsicName: "%Map%",
-    globalNameOrSource: "Map"
+    name: '%String%',
+    source: 'String',
   },
   {
-    intrinsicName: "%MapIteratorPrototype%",
-    globalNameOrSource: "Object.getPrototypeOf(new Map()[Symbol.iterator]())"
+    name: '%StringIteratorPrototype%',
+    source: 'Object.getPrototypeOf(new String()[Symbol.iterator]())',
   },
   {
-    intrinsicName: "%MapPrototype%",
-    globalNameOrSource: "Map.prototype"
+    name: '%Symbol%',
+    source: 'Symbol',
   },
   {
-    intrinsicName: "%Math%",
-    globalNameOrSource: "Math"
+    name: '%SyntaxError%',
+    source: 'SyntaxError',
   },
   {
-    intrinsicName: "%Number%",
-    globalNameOrSource: "Number"
+    name: '%ThrowTypeError%',
+    source: '(function() { "use strict"; return Object.getOwnPropertyDescriptor(arguments, "callee").get })()',
   },
   {
-    intrinsicName: "%NumberPrototype%",
-    globalNameOrSource: "Number.prototype"
+    name: '%TypedArray%',
+    source: 'Object.getPrototypeOf(Uint8Array)',
   },
   {
-    intrinsicName: "%Object%",
-    globalNameOrSource: "Object"
+    name: '%TypeError%',
+    source: 'TypeError',
   },
   {
-    intrinsicName: "%ObjectPrototype%",
-    globalNameOrSource: "Object.prototype"
+    name: '%Uint8Array%',
+    source: 'Uint8Array',
   },
   {
-    intrinsicName: "%ObjProto_toString%",
-    globalNameOrSource: "Object.prototype.toString"
+    name: '%Uint8ClampedArray%',
+    source: 'Uint8ClampedArray',
   },
   {
-    intrinsicName: "%ObjProto_valueOf%",
-    globalNameOrSource: "Object.prototype.valueOf"
+    name: '%Uint16Array%',
+    source: 'Uint16Array',
   },
   {
-    intrinsicName: "%parseFloat%",
-    globalNameOrSource: "parseFloat"
+    name: '%Uint32Array%',
+    source: 'Uint32Array',
   },
   {
-    intrinsicName: "%parseInt%",
-    globalNameOrSource: "parseInt"
+    name: '%URIError%',
+    source: 'URIError',
   },
   {
-    intrinsicName: "%Promise%",
-    globalNameOrSource: "Promise"
+    name: '%WeakMap%',
+    source: 'WeakMap',
   },
   {
-    intrinsicName: "%PromisePrototype%",
-    globalNameOrSource: "Promise.prototype"
+    name: '%WeakRef%',
+    source: 'WeakRef',
   },
   {
-    intrinsicName: "%PromiseProto_then%",
-    globalNameOrSource: "Promise.prototype.then"
+    name: '%WeakSet%',
+    source: 'WeakSet',
   },
-  {
-    intrinsicName: "%Promise_all%",
-    globalNameOrSource: "Promise.all"
-  },
-  {
-    intrinsicName: "%Promise_reject%",
-    globalNameOrSource: "Promise.reject"
-  },
-  {
-    intrinsicName: "%Promise_resolve%",
-    globalNameOrSource: "Promise.resolve"
-  },
-  {
-    intrinsicName: "%Proxy%",
-    globalNameOrSource: "Proxy"
-  },
-  {
-    intrinsicName: "%RangeError%",
-    globalNameOrSource: "RangeError"
-  },
-  {
-    intrinsicName: "%RangeErrorPrototype%",
-    globalNameOrSource: "RangeError.prototype"
-  },
-  {
-    intrinsicName: "%ReferenceError%",
-    globalNameOrSource: "ReferenceError"
-  },
-  {
-    intrinsicName: "%ReferenceErrorPrototype%",
-    globalNameOrSource: "ReferenceError.prototype"
-  },
-  {
-    intrinsicName: "%Reflect%",
-    globalNameOrSource: "Reflect"
-  },
-  {
-    intrinsicName: "%RegExp%",
-    globalNameOrSource: "RegExp"
-  },
-  {
-    intrinsicName: "%RegExpPrototype%",
-    globalNameOrSource: "RegExp.prototype"
-  },
-  {
-    intrinsicName: "%Set%",
-    globalNameOrSource: "Set"
-  },
-  {
-    intrinsicName: "%SetIteratorPrototype%",
-    globalNameOrSource: "Object.getPrototypeOf(new Set()[Symbol.iterator]())"
-  },
-  {
-    intrinsicName: "%SetPrototype%",
-    globalNameOrSource: "Set.prototype"
-  },
-  {
-    intrinsicName: "%SharedArrayBuffer%",
-    globalNameOrSource: "SharedArrayBuffer"
-  },
-  {
-    intrinsicName: "%SharedArrayBufferPrototype%",
-    globalNameOrSource: "SharedArrayBuffer.prototype"
-  },
-  {
-    intrinsicName: "%String%",
-    globalNameOrSource: "String"
-  },
-  {
-    intrinsicName: "%StringIteratorPrototype%",
-    globalNameOrSource: "Object.getPrototypeOf(new String()[Symbol.iterator]())"
-  },
-  {
-    intrinsicName: "%StringPrototype%",
-    globalNameOrSource: "String.prototype"
-  },
-  {
-    intrinsicName: "%Symbol%",
-    globalNameOrSource: "Symbol"
-  },
-  {
-    intrinsicName: "%SymbolPrototype%",
-    globalNameOrSource: "Symbol.prototype"
-  },
-  {
-    intrinsicName: "%SyntaxError%",
-    globalNameOrSource: "SyntaxError"
-  },
-  {
-    intrinsicName: "%SyntaxErrorPrototype%",
-    globalNameOrSource: "SyntaxError.prototype"
-  },
-  {
-    intrinsicName: "%ThrowTypeError%",
-    globalNameOrSource: "(function() { 'use strict'; return Object.getOwnPropertyDescriptor(arguments, 'callee').get })()"
-  },
-  {
-    intrinsicName: "%TypedArray%",
-    globalNameOrSource: "Object.getPrototypeOf(Uint8Array)"
-  },
-  {
-    intrinsicName: "%TypedArrayPrototype%",
-    globalNameOrSource: "Object.getPrototypeOf(Uint8Array).prototype"
-  },
-  {
-    intrinsicName: "%TypeError%",
-    globalNameOrSource: "TypeError"
-  },
-  {
-    intrinsicName: "%TypeErrorPrototype%",
-    globalNameOrSource: "TypeError.prototype"
-  },
-  {
-    intrinsicName: "%Uint8Array%",
-    globalNameOrSource: "Uint8Array"
-  },
-  {
-    intrinsicName: "%Uint8ArrayPrototype%",
-    globalNameOrSource: "Uint8Array.prototype"
-  },
-  {
-    intrinsicName: "%Uint8ClampedArray%",
-    globalNameOrSource: "Uint8ClampedArray"
-  },
-  {
-    intrinsicName: "%Uint8ClampedArrayPrototype%",
-    globalNameOrSource: "Uint8ClampedArray.prototype"
-  },
-  {
-    intrinsicName: "%Uint16Array%",
-    globalNameOrSource: "Uint16Array"
-  },
-  {
-    intrinsicName: "%Uint16ArrayPrototype%",
-    globalNameOrSource: "Uint16Array.prototype"
-  },
-  {
-    intrinsicName: "%Uint32Array%",
-    globalNameOrSource: "Uint32Array"
-  },
-  {
-    intrinsicName: "%Uint32ArrayPrototype%",
-    globalNameOrSource: "Uint32Array.prototype"
-  },
-  {
-    intrinsicName: "%URIError%",
-    globalNameOrSource: "URIError"
-  },
-  {
-    intrinsicName: "%URIErrorPrototype%",
-    globalNameOrSource: "URIError.prototype"
-  },
-  {
-    intrinsicName: "%WeakMap%",
-    globalNameOrSource: "WeakMap"
-  },
-  {
-    intrinsicName: "%WeakMapPrototype%",
-    globalNameOrSource: "WeakMap.prototype"
-  },
-  {
-    intrinsicName: "%WeakSet%",
-    globalNameOrSource: "WeakSet"
-  },
-  {
-    intrinsicName: "%WeakSetPrototype%",
-    globalNameOrSource: "WeakSet.prototype"
-  }
 ];
 
-
-WellKnownIntrinsicObjects.forEach(wkio => {
+WellKnownIntrinsicObjects.forEach((wkio) => {
   var actual;
 
   try {
-    actual = new Function("return " + wkio.globalNameOrSource)();
+    actual = new Function("return " + wkio.source)();
   } catch (exception) {
     // Nothing to do here.
   }
 
-  wkio.reference = actual;
+  wkio.value = actual;
 });
