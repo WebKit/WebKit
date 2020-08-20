@@ -1,0 +1,5 @@
+ALERT: Created a socket to 'ws://127.0.0.1:8880/websocket/tests/hybi/slow-reply'; readyState 0.
+ALERT: Terminating network process.
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/slow-reply' failed: WebSocket network error: Network process crashed.
+ALERT: Received error:[object Event]
+

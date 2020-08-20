@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/handshake-error' failed: The server did not accept the WebSocket handshake.
 Handshake error test
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

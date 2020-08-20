@@ -1,13 +1,13 @@
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
-CONSOLE MESSAGE: Server ignored WebSocket handshake
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?1.11' failed: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?11.0' failed: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?01.00' failed: Server ignored WebSocket handshake
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?000.99' failed: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?0.00' failed: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?-11.9' failed: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?0x1.0x00' failed: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?%C3%AF%C2%A3%C2%BF.1' failed: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?' failed: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?1.1%C3%AF%C2%A3%C2%BF' failed: The server did not accept the WebSocket handshake.
 Test http version parsing and validation. HTTP version 1.1 and above should be accepted for WebSockets.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

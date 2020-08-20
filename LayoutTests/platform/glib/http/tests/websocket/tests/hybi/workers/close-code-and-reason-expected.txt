@@ -1,6 +1,7 @@
-CONSOLE MESSAGE: Received invalid WebSocket response from the server
-CONSOLE MESSAGE: Received invalid WebSocket response from the server
-CONSOLE MESSAGE: Received invalid WebSocket response from the server
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/echo' failed: WebSocket is closed before the connection is established.
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/close-code-and-reason' failed: Received invalid WebSocket response from the server
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/close-code-and-reason' failed: Received invalid WebSocket response from the server
+CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/close-code-and-reason' failed: Received invalid WebSocket response from the server
 Test CloseEvent code and reason property in Worker.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

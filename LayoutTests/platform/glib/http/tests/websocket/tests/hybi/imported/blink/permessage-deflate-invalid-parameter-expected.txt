@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: Invalid parameter 'x-foo' in permessage-deflate extension header
-CONSOLE MESSAGE: Invalid value of parameter 'client_max_window_bits' in permessage-deflate extension header
-CONSOLE MESSAGE: Invalid value of parameter 'client_max_window_bits' in permessage-deflate extension header
-CONSOLE MESSAGE: Invalid value of parameter 'client_no_context_takeover' in permessage-deflate extension header
-CONSOLE MESSAGE: Invalid parameter 'x-foo' in permessage-deflate extension header
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter?x-foo' failed: Invalid parameter 'x-foo' in permessage-deflate extension header
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter?client_max_window_bits=7' failed: Invalid value of parameter 'client_max_window_bits' in permessage-deflate extension header
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter?client_max_window_bits=16' failed: Invalid value of parameter 'client_max_window_bits' in permessage-deflate extension header
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter?client_no_context_takeover=foo' failed: Invalid value of parameter 'client_no_context_takeover' in permessage-deflate extension header
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter?client_max_window_bits=8;%20client_no_context_takeover;%20x-foo' failed: Invalid parameter 'x-foo' in permessage-deflate extension header
 Test whether WebSocket rejects invalid permessage-deflate parameters.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

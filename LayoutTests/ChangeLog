@@ -1,3 +1,53 @@
+2020-08-20  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Rebaseline websocket tests after r265592
+
+        Unreviewed test gardening.
+
+        * platform/glib/http/tests/websocket/connection-refusal-in-frame-resource-load-statistics-expected.txt: Renamed from LayoutTests/platform/wpe/http/tests/websocket/connection-refusal-in-frame-resource-load-statistics-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/broken-utf8-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/close-before-open-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/close-code-and-reason-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/close-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/closed-port-delay-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/compressed-control-frame-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/fragmented-control-frame-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-error-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-maxlength-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-more-extensions-header-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/interleaved-fragments-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/invalid-encode-length-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/invalid-masked-frames-from-server-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/long-control-frame-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/long-invalid-header-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/network-process-crash-error-expected.txt: Added.
+        * platform/glib/http/tests/websocket/tests/hybi/reserved-bits-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/reserved-opcodes-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/too-long-payload-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/websocket-event-target-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/workers/close-code-and-reason-expected.txt:
+        * platform/gtk/http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe-expected.txt:
+        * platform/gtk/http/tests/security/mixedContent/websocket/insecure-websocket-in-main-frame-expected.txt:
+        * platform/gtk/http/tests/websocket/connection-refusal-in-frame-resource-load-statistics-expected.txt: Removed.
+
 2020-08-20  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-createHTMLDocument-parse-error-external-classic.html is a flaky failure

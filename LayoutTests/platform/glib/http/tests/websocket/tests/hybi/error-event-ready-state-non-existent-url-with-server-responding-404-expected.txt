@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8000/websocket/tests/hybi/resources/status-404-without-body.php' failed: The server did not accept the WebSocket handshake.
 Test that readyState is CLOSED within onerror event
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

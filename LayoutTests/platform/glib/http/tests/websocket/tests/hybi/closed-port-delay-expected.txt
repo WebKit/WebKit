@@ -1,6 +1,6 @@
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
-CONSOLE MESSAGE: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8181/' failed: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:1234/' failed: The server did not accept the WebSocket handshake.
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:3001/' failed: The server did not accept the WebSocket handshake.
 Tests that WebSocket close report is delayed to mitigate port scanning attacks.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
