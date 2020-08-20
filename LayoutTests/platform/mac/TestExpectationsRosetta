@@ -36,3 +36,6 @@
 
 # rdar://64535650 (BlitFramebuffer sRGB webgl tests crashing/failing)
 [ BigSur+ ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Failure ]
+
+# webkit.org/b/207150 [ BigSur+ wk2 ]
+[ BigSur+ ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html [ Pass Failure ]
