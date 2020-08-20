@@ -1,4 +1,4 @@
 
 PASS percent encode characters 
-FAIL lone surrogate assert_equals: expected "%26%2365533%3B" but got "%26%2355357%3B"
+PASS lone surrogate 
 

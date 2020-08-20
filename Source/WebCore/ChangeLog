@@ -1,3 +1,18 @@
+2020-08-20  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest.open should use USVString
+        https://bugs.webkit.org/show_bug.cgi?id=215704
+
+        Reviewed by Chris Dumez.
+
+        XMLHttpRequest.open should use USVString as mentioned in the FIXMEs and the spec [1].
+
+        Test: imported/w3c/web-platform-tests/xhr/open-url-encoding.html
+
+        [1] https://xhr.spec.whatwg.org/#ref-for-dom-xmlhttprequest-open
+
+        * xml/XMLHttpRequest.idl:
+
 2020-08-20  Clark Wang  <clark_wang@apple.com>
 
         Introduce StereoPannerNode Interface

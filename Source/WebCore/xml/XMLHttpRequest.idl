@@ -61,8 +61,8 @@ enum XMLHttpRequestResponseType {
     readonly attribute unsigned short readyState;
 
     // request
-    [MayThrowException] void open(ByteString method, DOMString url); // FIXME: url should be a USVString.
-    [MayThrowException] void open(ByteString method, DOMString url, boolean async, optional DOMString? user = null, optional DOMString? password = null); // FIXME: url/user/password should all be a USVStrings.
+    [MayThrowException] void open(ByteString method, USVString url);
+    [MayThrowException] void open(ByteString method, USVString url, boolean async, optional USVString? user = null, optional USVString? password = null);
     [MayThrowException] void setRequestHeader(ByteString header, ByteString value);
     attribute unsigned long timeout;
     attribute boolean withCredentials;
