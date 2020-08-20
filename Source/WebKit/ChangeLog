@@ -1,3 +1,16 @@
+2020-08-20  Youenn Fablet  <youenn@apple.com>
+
+        WebSocketTask::close should correctly compute reason byte size in UTF-8
+        https://bugs.webkit.org/show_bug.cgi?id=215645
+
+        Reviewed by Darin Adler.
+
+        Covered by http/tests/websocket/tests/hybi/close.html with NSURLSession code path enabled.
+
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::close):
+        Instead of calling sizeInBytes, we should just get the utf8 CString and gets its size directly.
+
 2020-08-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         IPC message can't be decoded due to uninitialized NavigationActionData member variables with the latest MSVC

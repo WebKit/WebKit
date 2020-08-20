@@ -137,7 +137,8 @@ void WebSocketTask::close(int32_t code, const String& reason)
     // FIXME: Should NSURLSession provide a way to call cancelWithCloseCode without any specific code.
     if (code == WebCore::WebSocketChannel::CloseEventCodeNotSpecified)
         code = 1005;
-    auto nsData = adoptNS([[NSData alloc] initWithBytes:reason.utf8().data() length:reason.sizeInBytes()]);
+    auto utf8 = reason.utf8();
+    auto nsData = adoptNS([[NSData alloc] initWithBytes:utf8.data() length:utf8.length()]);
     [m_task cancelWithCloseCode:(NSURLSessionWebSocketCloseCode)code reason:nsData.get()];
 }
 
