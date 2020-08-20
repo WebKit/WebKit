@@ -222,7 +222,7 @@ PASS AudioParam interface: existence and properties of interface prototype objec
 PASS AudioParam interface: existence and properties of interface prototype object's "constructor" property 
 PASS AudioParam interface: existence and properties of interface prototype object's @@unscopables property 
 PASS AudioParam interface: attribute value 
-FAIL AudioParam interface: attribute automationRate assert_true: The prototype object must have a property "automationRate" expected true got false
+PASS AudioParam interface: attribute automationRate 
 PASS AudioParam interface: attribute defaultValue 
 PASS AudioParam interface: attribute minValue 
 PASS AudioParam interface: attribute maxValue 
@@ -236,7 +236,7 @@ FAIL AudioParam interface: operation cancelAndHoldAtTime(double) assert_own_prop
 PASS AudioParam must be primary interface of new AudioBufferSourceNode(context).playbackRate 
 PASS Stringification of new AudioBufferSourceNode(context).playbackRate 
 PASS AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "value" with the proper type 
-FAIL AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "automationRate" with the proper type assert_inherits: property "automationRate" not found in prototype chain
+PASS AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "automationRate" with the proper type 
 PASS AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "defaultValue" with the proper type 
 PASS AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "minValue" with the proper type 
 PASS AudioParam interface: new AudioBufferSourceNode(context).playbackRate must inherit property "maxValue" with the proper type 

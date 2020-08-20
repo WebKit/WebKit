@@ -89,14 +89,12 @@ ExceptionOr<Ref<PannerNode>> PannerNode::create(BaseAudioContext& context, const
 PannerNode::PannerNode(BaseAudioContext& context, const PannerOptions& options)
     : PannerNodeBase(context)
     , m_panningModel(options.panningModel)
-    , m_distanceGain(AudioParam::create(context, "distanceGain", 1.0, 0.0, 1.0))
-    , m_coneGain(AudioParam::create(context, "coneGain", 1.0, 0.0, 1.0))
-    , m_positionX(AudioParam::create(context, "positionX"_s, options.positionX, -FLT_MAX, FLT_MAX))
-    , m_positionY(AudioParam::create(context, "positionY"_s, options.positionY, -FLT_MAX, FLT_MAX))
-    , m_positionZ(AudioParam::create(context, "positionZ"_s, options.positionZ, -FLT_MAX, FLT_MAX))
-    , m_orientationX(AudioParam::create(context, "orientationX"_s, options.orientationX, -FLT_MAX, FLT_MAX))
-    , m_orientationY(AudioParam::create(context, "orientationY"_s, options.orientationY, -FLT_MAX, FLT_MAX))
-    , m_orientationZ(AudioParam::create(context, "orientationZ"_s, options.orientationZ, -FLT_MAX, FLT_MAX))
+    , m_positionX(AudioParam::create(context, "positionX"_s, options.positionX, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_positionY(AudioParam::create(context, "positionY"_s, options.positionY, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_positionZ(AudioParam::create(context, "positionZ"_s, options.positionZ, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_orientationX(AudioParam::create(context, "orientationX"_s, options.orientationX, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_orientationY(AudioParam::create(context, "orientationY"_s, options.orientationY, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_orientationZ(AudioParam::create(context, "orientationZ"_s, options.orientationZ, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
     // Load the HRTF database asynchronously so we don't block the Javascript thread while creating the HRTF database.
     , m_hrtfDatabaseLoader(HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(context.sampleRate()))
 {
@@ -386,13 +384,9 @@ float PannerNode::distanceConeGain()
 
     double listenerDistance = sourcePosition.distanceTo(listenerPosition);
     double distanceGain = m_distanceEffect.gain(listenerDistance);
-    
-    m_distanceGain->setValue(static_cast<float>(distanceGain));
 
     // FIXME: could optimize by caching coneGain
     double coneGain = m_coneEffect.gain(sourcePosition, orientation(), listenerPosition);
-    
-    m_coneGain->setValue(static_cast<float>(coneGain));
 
     return float(distanceGain * coneGain);
 }

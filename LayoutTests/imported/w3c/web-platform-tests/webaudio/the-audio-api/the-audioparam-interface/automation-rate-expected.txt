@@ -12,113 +12,113 @@ PASS Executing "StereoPannerNode"
 PASS Executing "AudioListener" 
 PASS Audit report 
 PASS > [AudioBufferSourceNode]  
-FAIL X Default AudioBufferSourceNode.detune.automationRate is not equal to k-rate. Got undefined. assert_true: expected true got false
-FAIL X Set AudioBufferSourceNode.detune.automationRate to "a-rate" did not throw an exception. assert_true: expected true got false
-FAIL X Default AudioBufferSourceNode.playbackRate.automationRate is not equal to k-rate. Got undefined. assert_true: expected true got false
-FAIL X Set AudioBufferSourceNode.playbackRate.automationRate to "a-rate" did not throw an exception. assert_true: expected true got false
-FAIL < [AudioBufferSourceNode] 4 out of 4 assertions were failed. assert_true: expected true got false
+PASS   Default AudioBufferSourceNode.detune.automationRate is equal to k-rate. 
+PASS   Set AudioBufferSourceNode.detune.automationRate to "a-rate" threw InvalidStateError: "automationRate cannot be changed for this node". 
+PASS   Default AudioBufferSourceNode.playbackRate.automationRate is equal to k-rate. 
+PASS   Set AudioBufferSourceNode.playbackRate.automationRate to "a-rate" threw InvalidStateError: "automationRate cannot be changed for this node". 
+PASS < [AudioBufferSourceNode] All assertions passed. (total 4 assertions) 
 PASS > [BiquadFilterNode]  
-FAIL X Default BiquadFilterNode.frequency.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default BiquadFilterNode.frequency.automationRate is equal to a-rate. 
 PASS   Set BiquadFilterNode.frequency.automationRate to "k-rate" did not throw an exception. 
 PASS   BiquadFilterNode.frequency.automationRate is equal to k-rate. 
-FAIL X Default BiquadFilterNode.detune.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default BiquadFilterNode.detune.automationRate is equal to a-rate. 
 PASS   Set BiquadFilterNode.detune.automationRate to "k-rate" did not throw an exception. 
 PASS   BiquadFilterNode.detune.automationRate is equal to k-rate. 
-FAIL X Default BiquadFilterNode.Q.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default BiquadFilterNode.Q.automationRate is equal to a-rate. 
 PASS   Set BiquadFilterNode.Q.automationRate to "k-rate" did not throw an exception. 
 PASS   BiquadFilterNode.Q.automationRate is equal to k-rate. 
-FAIL X Default BiquadFilterNode.gain.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default BiquadFilterNode.gain.automationRate is equal to a-rate. 
 PASS   Set BiquadFilterNode.gain.automationRate to "k-rate" did not throw an exception. 
 PASS   BiquadFilterNode.gain.automationRate is equal to k-rate. 
-FAIL < [BiquadFilterNode] 4 out of 12 assertions were failed. assert_true: expected true got false
+PASS < [BiquadFilterNode] All assertions passed. (total 12 assertions) 
 PASS > [ConstantSourceNode]  
-FAIL X Default ConstantSourceNode.offset.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default ConstantSourceNode.offset.automationRate is equal to a-rate. 
 PASS   Set ConstantSourceNode.offset.automationRate to "k-rate" did not throw an exception. 
 PASS   ConstantSourceNode.offset.automationRate is equal to k-rate. 
-FAIL < [ConstantSourceNode] 1 out of 3 assertions were failed. assert_true: expected true got false
+PASS < [ConstantSourceNode] All assertions passed. (total 3 assertions) 
 PASS > [DelayNode]  
-FAIL X Default DelayNode.delayTime.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default DelayNode.delayTime.automationRate is equal to a-rate. 
 PASS   Set DelayNode.delayTime.automationRate to "k-rate" did not throw an exception. 
 PASS   DelayNode.delayTime.automationRate is equal to k-rate. 
-FAIL < [DelayNode] 1 out of 3 assertions were failed. assert_true: expected true got false
+PASS < [DelayNode] All assertions passed. (total 3 assertions) 
 PASS > [DynamicsCompressorNode]  
-FAIL X Default DynamicsCompressorNode.threshold.automationRate is not equal to k-rate. Got undefined. assert_true: expected true got false
-FAIL X Set DynamicsCompressorNode.threshold.automationRate to "a-rate" did not throw an exception. assert_true: expected true got false
-FAIL X Default DynamicsCompressorNode.knee.automationRate is not equal to k-rate. Got undefined. assert_true: expected true got false
-FAIL X Set DynamicsCompressorNode.knee.automationRate to "a-rate" did not throw an exception. assert_true: expected true got false
-FAIL X Default DynamicsCompressorNode.ratio.automationRate is not equal to k-rate. Got undefined. assert_true: expected true got false
-FAIL X Set DynamicsCompressorNode.ratio.automationRate to "a-rate" did not throw an exception. assert_true: expected true got false
-FAIL X Default DynamicsCompressorNode.attack.automationRate is not equal to k-rate. Got undefined. assert_true: expected true got false
-FAIL X Set DynamicsCompressorNode.attack.automationRate to "a-rate" did not throw an exception. assert_true: expected true got false
-FAIL X Default DynamicsCompressorNode.release.automationRate is not equal to k-rate. Got undefined. assert_true: expected true got false
-FAIL X Set DynamicsCompressorNode.release.automationRate to "a-rate" did not throw an exception. assert_true: expected true got false
-FAIL < [DynamicsCompressorNode] 10 out of 10 assertions were failed. assert_true: expected true got false
+PASS   Default DynamicsCompressorNode.threshold.automationRate is equal to k-rate. 
+PASS   Set DynamicsCompressorNode.threshold.automationRate to "a-rate" threw InvalidStateError: "automationRate cannot be changed for this node". 
+PASS   Default DynamicsCompressorNode.knee.automationRate is equal to k-rate. 
+PASS   Set DynamicsCompressorNode.knee.automationRate to "a-rate" threw InvalidStateError: "automationRate cannot be changed for this node". 
+PASS   Default DynamicsCompressorNode.ratio.automationRate is equal to k-rate. 
+PASS   Set DynamicsCompressorNode.ratio.automationRate to "a-rate" threw InvalidStateError: "automationRate cannot be changed for this node". 
+PASS   Default DynamicsCompressorNode.attack.automationRate is equal to k-rate. 
+PASS   Set DynamicsCompressorNode.attack.automationRate to "a-rate" threw InvalidStateError: "automationRate cannot be changed for this node". 
+PASS   Default DynamicsCompressorNode.release.automationRate is equal to k-rate. 
+PASS   Set DynamicsCompressorNode.release.automationRate to "a-rate" threw InvalidStateError: "automationRate cannot be changed for this node". 
+PASS < [DynamicsCompressorNode] All assertions passed. (total 10 assertions) 
 PASS > [GainNode]  
-FAIL X Default GainNode.gain.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default GainNode.gain.automationRate is equal to a-rate. 
 PASS   Set GainNode.gain.automationRate to "k-rate" did not throw an exception. 
 PASS   GainNode.gain.automationRate is equal to k-rate. 
-FAIL < [GainNode] 1 out of 3 assertions were failed. assert_true: expected true got false
+PASS < [GainNode] All assertions passed. (total 3 assertions) 
 PASS > [OscillatorNode]  
-FAIL X Default OscillatorNode.frequency.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default OscillatorNode.frequency.automationRate is equal to a-rate. 
 PASS   Set OscillatorNode.frequency.automationRate to "k-rate" did not throw an exception. 
 PASS   OscillatorNode.frequency.automationRate is equal to k-rate. 
-FAIL X Default OscillatorNode.detune.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default OscillatorNode.detune.automationRate is equal to a-rate. 
 PASS   Set OscillatorNode.detune.automationRate to "k-rate" did not throw an exception. 
 PASS   OscillatorNode.detune.automationRate is equal to k-rate. 
-FAIL < [OscillatorNode] 2 out of 6 assertions were failed. assert_true: expected true got false
+PASS < [OscillatorNode] All assertions passed. (total 6 assertions) 
 PASS > [PannerNode]  
-FAIL X Default PannerNode.positionX.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default PannerNode.positionX.automationRate is equal to a-rate. 
 PASS   Set PannerNode.positionX.automationRate to "k-rate" did not throw an exception. 
 PASS   PannerNode.positionX.automationRate is equal to k-rate. 
-FAIL X Default PannerNode.positionY.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default PannerNode.positionY.automationRate is equal to a-rate. 
 PASS   Set PannerNode.positionY.automationRate to "k-rate" did not throw an exception. 
 PASS   PannerNode.positionY.automationRate is equal to k-rate. 
-FAIL X Default PannerNode.positionZ.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default PannerNode.positionZ.automationRate is equal to a-rate. 
 PASS   Set PannerNode.positionZ.automationRate to "k-rate" did not throw an exception. 
 PASS   PannerNode.positionZ.automationRate is equal to k-rate. 
-FAIL X Default PannerNode.orientationX.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default PannerNode.orientationX.automationRate is equal to a-rate. 
 PASS   Set PannerNode.orientationX.automationRate to "k-rate" did not throw an exception. 
 PASS   PannerNode.orientationX.automationRate is equal to k-rate. 
-FAIL X Default PannerNode.orientationY.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default PannerNode.orientationY.automationRate is equal to a-rate. 
 PASS   Set PannerNode.orientationY.automationRate to "k-rate" did not throw an exception. 
 PASS   PannerNode.orientationY.automationRate is equal to k-rate. 
-FAIL X Default PannerNode.orientationZ.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default PannerNode.orientationZ.automationRate is equal to a-rate. 
 PASS   Set PannerNode.orientationZ.automationRate to "k-rate" did not throw an exception. 
 PASS   PannerNode.orientationZ.automationRate is equal to k-rate. 
-FAIL < [PannerNode] 6 out of 18 assertions were failed. assert_true: expected true got false
+PASS < [PannerNode] All assertions passed. (total 18 assertions) 
 PASS > [StereoPannerNode]  
-FAIL X Default StereoPannerNode.pan.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default StereoPannerNode.pan.automationRate is equal to a-rate. 
 PASS   Set StereoPannerNode.pan.automationRate to "k-rate" did not throw an exception. 
 PASS   StereoPannerNode.pan.automationRate is equal to k-rate. 
-FAIL < [StereoPannerNode] 1 out of 3 assertions were failed. assert_true: expected true got false
+PASS < [StereoPannerNode] All assertions passed. (total 3 assertions) 
 PASS > [AudioListener]  
-FAIL X Default AudioListener.positionX.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default AudioListener.positionX.automationRate is equal to a-rate. 
 PASS   Set AudioListener.positionX.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.positionX.automationRate is equal to k-rate. 
-FAIL X Default AudioListener.positionY.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default AudioListener.positionY.automationRate is equal to a-rate. 
 PASS   Set AudioListener.positionY.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.positionY.automationRate is equal to k-rate. 
-FAIL X Default AudioListener.positionZ.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default AudioListener.positionZ.automationRate is equal to a-rate. 
 PASS   Set AudioListener.positionZ.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.positionZ.automationRate is equal to k-rate. 
-FAIL X Default AudioListener.forwardX.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default AudioListener.forwardX.automationRate is equal to a-rate. 
 PASS   Set AudioListener.forwardX.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.forwardX.automationRate is equal to k-rate. 
-FAIL X Default AudioListener.forwardY.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default AudioListener.forwardY.automationRate is equal to a-rate. 
 PASS   Set AudioListener.forwardY.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.forwardY.automationRate is equal to k-rate. 
-FAIL X Default AudioListener.forwardZ.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default AudioListener.forwardZ.automationRate is equal to a-rate. 
 PASS   Set AudioListener.forwardZ.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.forwardZ.automationRate is equal to k-rate. 
-FAIL X Default AudioListener.upX.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default AudioListener.upX.automationRate is equal to a-rate. 
 PASS   Set AudioListener.upX.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.upX.automationRate is equal to k-rate. 
-FAIL X Default AudioListener.upY.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default AudioListener.upY.automationRate is equal to a-rate. 
 PASS   Set AudioListener.upY.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.upY.automationRate is equal to k-rate. 
-FAIL X Default AudioListener.upZ.automationRate is not equal to a-rate. Got undefined. assert_true: expected true got false
+PASS   Default AudioListener.upZ.automationRate is equal to a-rate. 
 PASS   Set AudioListener.upZ.automationRate to "k-rate" did not throw an exception. 
 PASS   AudioListener.upZ.automationRate is equal to k-rate. 
-FAIL < [AudioListener] 9 out of 27 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 10 out of 10 tasks were failed. assert_true: expected true got false
+PASS < [AudioListener] All assertions passed. (total 27 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 10 tasks ran successfully. 
 

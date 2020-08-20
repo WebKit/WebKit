@@ -14,7 +14,7 @@ PASS   Test 1: srcTest.frequency.automationRate = 'k-rate' did not throw an exce
 PASS   Test 1: modFreq.offset.setValueAtTime(100, 0) did not throw an exception. 
 PASS   Test 1: modFreq.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
 PASS   Test 1: modFreq.connect(srcTest.frequency) did not throw an exception. 
-PASS   k-rate frequency with input equals [0,0.07845915853977203,0.1587369441986084,0.24024122953414917,0.3222914934158325,0.404119074344635,0.48486924171447754,0.5636047124862671,0.6393131017684937,0.7109143733978271,0.777274489402771,0.8372192978858948,0.8895531892776489,0.9330809116363525,0.966631293296814,0.9890860319137573...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   k-rate frequency with input equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [Test 1] All assertions passed. (total 8 assertions) 
 PASS > [Test 2] k-rate detune input 
 PASS   Test 2: srcRef.detune.automationRate = 'k-rate' did not throw an exception. 
@@ -24,7 +24,7 @@ PASS   Test 2: srcTest.detune.automationRate = 'k-rate' did not throw an excepti
 PASS   Test 2: modDetune.offset.setValueAtTime(0, 0) did not throw an exception. 
 PASS   Test 2: modDetune.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
 PASS   Test 2: modDetune.connect(srcTest.detune) did not throw an exception. 
-PASS   k-rate detune with input equals [0,0.3387378752231598,0.637904942035675,0.8616946935653687,0.982982873916626,0.9866902828216553,0.8717451691627502,0.6513899564743042,0.35175538063049316,0.00884389877319336,-0.3357403874397278,-0.6398173570632935,-0.865809440612793,-0.9854339361190796,-0.9833213090896606,-0.8590874671936035...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   k-rate detune with input equals [0,0.3387378752231598,0.6374238729476929,0.8607419729232788,0.9822871685028076,0.9876880645751953,0.8763062953948975,0.6613117456436157,0.3681243062019348,0.03141050040721893,-0.3090170621871948,-0.6129071116447449,-0.8443278074264526,-0.9759165644645691,-0.9921145439147949,-0.8910062313079834...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [Test 2] All assertions passed. (total 8 assertions) 
 PASS > [Test 3] k-rate frequency input with a-rate detune 
 PASS   Test 3: srcRef.frequency.automationRate = 'k-rate' did not throw an exception. 
@@ -38,7 +38,7 @@ PASS   Test 3: srcTest.detune.linearRampToValueAtTime(-2000, 0.078125) did not t
 PASS   Test 3: modFreq.offset.setValueAtTime(100, 0) did not throw an exception. 
 PASS   Test 3: modFreq.offset.linearRampToValueAtTime(2000, 0.078125) did not throw an exception. 
 PASS   Test 3: modFreq.connect(srcTest.frequency) did not throw an exception. 
-PASS   k-rate frequency input with a-rate detune equals [0,0.07845915853977203,0.15859293937683105,0.2398085594177246,0.3214321434497833,0.40271008014678955,0.48281240463256836,0.5608369708061218,0.6358171105384827,0.7067304849624634,0.7725116014480591,0.8320654630661011,0.8842850923538208,0.9280704259872437,0.9623513221740723,0.9861104488372803...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   k-rate frequency input with a-rate detune equals [0,0.07845915853977203,0.15629452466964722,0.23303230106830597,0.3082095980644226,0.38137686252593994,0.452100932598114,0.5199676156044006,0.5845836400985718,0.6455783843994141,0.7026070952415466,0.7553509473800659,0.8035199642181396,0.8468540906906128,0.8851238489151001,0.9181316494941711...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [Test 3] All assertions passed. (total 12 assertions) 
 PASS > [Test 4] a-rate frequency with k-rate detune input 
 PASS   Test 4: srcRef.frequency.setValueAtTime(100, 0) did not throw an exception. 
@@ -52,7 +52,7 @@ PASS   Test 4: srcTest.frequency.linearRampToValueAtTime(2000, 0.078125) did not
 PASS   Test 4: modDetune.offset.setValueAtTime(0, 0) did not throw an exception. 
 PASS   Test 4: modDetune.offset.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
 PASS   Test 4: modDetune.connect(srcTest.detune) did not throw an exception. 
-PASS   k-rate detune input with a-rate frequency equals [0,0.07845915853977203,0.15859293937683105,0.2398085594177246,0.3214321434497833,0.40271008014678955,0.48281240463256836,0.5608369708061218,0.6358171105384827,0.7067304849624634,0.7725116014480591,0.8320654630661011,0.8842850923538208,0.9280704259872437,0.9623513221740723,0.9861104488372803...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   k-rate detune input with a-rate frequency equals [0,0.07845915853977203,0.1587369441986084,0.24024122953414917,0.3222914934158325,0.404119074344635,0.48486924171447754,0.5636047124862671,0.6393131017684937,0.7109143733978271,0.777274489402771,0.8372192978858948,0.8895531892776489,0.9330809116363525,0.966631293296814,0.9890860319137573...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [Test 4] All assertions passed. (total 12 assertions) 
 PASS > [Test 5] k-rate inputs for frequency and detune 
 PASS   Test 5: srcRef.frequency.automationRate = 'k-rate' did not throw an exception. 
@@ -69,7 +69,7 @@ PASS   Test 5: modDetune.offset.setValueAtTime(0, 0) did not throw an exception.
 PASS   Test 5: modDetune.offset.linearRampToValueAtTime(-2000, 0.078125) did not throw an exception. 
 PASS   Test 5: modFreq.connect(srcTest.frequency) did not throw an exception. 
 PASS   Test 5: modDetune.connect(srcTest.detune) did not throw an exception. 
-PASS   k-rate inputs for both frequency and detune equals [0,0.07845915853977203,0.15859293937683105,0.2398085594177246,0.3214321434497833,0.40271008014678955,0.48281240463256836,0.5608369708061218,0.6358171105384827,0.7067304849624634,0.7725116014480591,0.8320654630661011,0.8842850923538208,0.9280704259872437,0.9623513221740723,0.9861104488372803...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS   k-rate inputs for both frequency and detune equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [Test 5] All assertions passed. (total 15 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 

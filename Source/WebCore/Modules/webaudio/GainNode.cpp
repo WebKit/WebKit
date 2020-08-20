@@ -58,7 +58,7 @@ ExceptionOr<Ref<GainNode>> GainNode::create(BaseAudioContext& context, const Gai
 GainNode::GainNode(BaseAudioContext& context)
     : AudioNode(context)
     , m_sampleAccurateGainValues(AudioNode::ProcessingSizeInFrames) // FIXME: can probably share temp buffer in context
-    , m_gain(AudioParam::create(context, "gain"_s, 1.0, -FLT_MAX, FLT_MAX))
+    , m_gain(AudioParam::create(context, "gain"_s, 1.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
 {
     setNodeType(NodeTypeGain);
 
@@ -82,7 +82,7 @@ void GainNode::process(size_t framesToProcess)
     else {
         AudioBus* inputBus = input(0)->bus();
 
-        if (gain().hasSampleAccurateValues()) {
+        if (gain().hasSampleAccurateValues() && gain().automationRate() == AutomationRate::ARate) {
             // Apply sample-accurate gain scaling for precise envelopes, grain windows, etc.
             ASSERT(framesToProcess <= m_sampleAccurateGainValues.size());
             if (framesToProcess <= m_sampleAccurateGainValues.size()) {
@@ -92,12 +92,13 @@ void GainNode::process(size_t framesToProcess)
             }
         } else {
             // Apply the gain with de-zippering into the output bus.
-            if (!m_lastGain && m_lastGain == m_gain->value()) {
+            float gain = this->gain().hasSampleAccurateValues() ? this->gain().finalValue() : this->gain().value();
+            if (!m_lastGain && m_lastGain == gain) {
                 // If the gain is 0 (and we've converged on dezippering), just zero the bus and set
                 // the silence hint.
                 outputBus->zero();
             } else
-                outputBus->copyWithGainFrom(*inputBus, &m_lastGain, gain().value());
+                outputBus->copyWithGainFrom(*inputBus, &m_lastGain, gain);
         }
     }
 }

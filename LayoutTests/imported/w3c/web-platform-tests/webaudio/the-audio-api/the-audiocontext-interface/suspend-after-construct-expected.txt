@@ -1,5 +1,5 @@
 
-FAIL State change counting assert_less_than_equal: ctx 1 state change count. expected a number less than or equal to 1 but got 2
+PASS State change counting 
 PASS Iteration 1 
 PASS Iteration 2 
 PASS Iteration 3 

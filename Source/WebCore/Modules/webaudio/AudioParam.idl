@@ -28,11 +28,18 @@
 
 [
     Conditional=WEB_AUDIO,
+    ImplementedAs=AutomationRate
+] enum AutomationRate {
+    "a-rate",
+    "k-rate"
+};
+
+[
+    Conditional=WEB_AUDIO,
 ] interface AudioParam {
     attribute float value;
 
-    // FIXME: add support for this.
-    // attribute AutomationRate automationRate;
+    attribute AutomationRate automationRate;
 
     readonly attribute float defaultValue;
     readonly attribute float minValue;

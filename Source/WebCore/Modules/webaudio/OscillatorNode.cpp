@@ -78,8 +78,8 @@ ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& contex
 
 OscillatorNode::OscillatorNode(BaseAudioContext& context, const OscillatorOptions& options)
     : AudioScheduledSourceNode(context)
-    , m_frequency(AudioParam::create(context, "frequency"_s, options.frequency, -context.sampleRate() / 2, context.sampleRate() / 2))
-    , m_detune(AudioParam::create(context, "detune"_s, options.detune, -153600, 153600))
+    , m_frequency(AudioParam::create(context, "frequency"_s, options.frequency, -context.sampleRate() / 2, context.sampleRate() / 2, AutomationRate::ARate))
+    , m_detune(AudioParam::create(context, "detune"_s, options.detune, -153600, 153600, AutomationRate::ARate))
 {
     setNodeType(NodeTypeOscillator);
     
@@ -151,7 +151,7 @@ bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProce
 
     float finalScale = m_periodicWave->rateScale();
 
-    if (m_frequency->hasSampleAccurateValues()) {
+    if (m_frequency->hasSampleAccurateValues() && m_frequency->automationRate() == AutomationRate::ARate) {
         hasSampleAccurateValues = true;
         hasFrequencyChanges = true;
 
@@ -159,13 +159,11 @@ bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProce
         // They will be converted to phase increments below.
         m_frequency->calculateSampleAccurateValues(phaseIncrements, framesToProcess);
     } else {
-        // Handle ordinary parameter smoothing/de-zippering if there are no scheduled changes.
-        m_frequency->smooth();
-        float frequency = m_frequency->smoothedValue();
+        float frequency = m_frequency->finalValue();
         finalScale *= frequency;
     }
 
-    if (m_detune->hasSampleAccurateValues()) {
+    if (m_detune->hasSampleAccurateValues() && m_detune->automationRate() == AutomationRate::ARate) {
         hasSampleAccurateValues = true;
 
         // Get the sample-accurate detune values.
@@ -183,9 +181,7 @@ bool OscillatorNode::calculateSampleAccuratePhaseIncrements(size_t framesToProce
             vmul(detuneValues, 1, phaseIncrements, 1, phaseIncrements, 1, framesToProcess);
         }
     } else {
-        // Handle ordinary parameter smoothing/de-zippering if there are no scheduled changes.
-        m_detune->smooth();
-        float detune = m_detune->smoothedValue();
+        float detune = m_detune->finalValue();
         float detuneScale = powf(2, detune / 1200);
         finalScale *= detuneScale;
     }

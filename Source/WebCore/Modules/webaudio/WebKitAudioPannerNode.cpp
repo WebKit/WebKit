@@ -63,9 +63,6 @@ WebKitAudioPannerNode::WebKitAudioPannerNode(WebKitAudioContext& context)
     addInput(makeUnique<AudioNodeInput>(this));
     addOutput(makeUnique<AudioNodeOutput>(this, 2));
 
-    m_distanceGain = AudioParam::create(context, "distanceGain", 1.0, 0.0, 1.0);
-    m_coneGain = AudioParam::create(context, "coneGain", 1.0, 0.0, 1.0);
-
     m_position = FloatPoint3D(0, 0, 0);
     m_orientation = FloatPoint3D(1, 0, 0);
     m_velocity = FloatPoint3D(0, 0, 0);
@@ -315,12 +312,8 @@ float WebKitAudioPannerNode::distanceConeGain()
     double listenerDistance = sourcePosition.distanceTo(listenerPosition);
     double distanceGain = m_distanceEffect.gain(listenerDistance);
 
-    m_distanceGain->setValue(static_cast<float>(distanceGain));
-
     // FIXME: could optimize by caching coneGain
     double coneGain = m_coneEffect.gain(sourcePosition, m_orientation, listenerPosition);
-
-    m_coneGain->setValue(static_cast<float>(coneGain));
 
     return float(distanceGain * coneGain);
 }

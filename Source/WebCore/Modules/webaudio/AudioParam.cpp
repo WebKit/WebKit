@@ -41,13 +41,15 @@ namespace WebCore {
 const double AudioParam::DefaultSmoothingConstant = 0.05;
 const double AudioParam::SnapThreshold = 0.001;
 
-AudioParam::AudioParam(BaseAudioContext& context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units)
+AudioParam::AudioParam(BaseAudioContext& context, const String& name, double defaultValue, double minValue, double maxValue, AutomationRate automationRate, AutomationRateMode automationRateMode, unsigned units)
     : AudioSummingJunction(context)
     , m_name(name)
     , m_value(defaultValue)
     , m_defaultValue(defaultValue)
     , m_minValue(minValue)
     , m_maxValue(maxValue)
+    , m_automationRate(automationRate)
+    , m_automationRateMode(automationRateMode)
     , m_units(units)
     , m_smoothedValue(defaultValue)
     , m_smoothingConstant(DefaultSmoothingConstant)
@@ -81,6 +83,15 @@ void AudioParam::setValue(float value)
     // Don't ASSERT, since this can happen if somebody writes bad JS.
     if (!std::isnan(value) && !std::isinf(value))
         m_value = value;
+}
+
+ExceptionOr<void> AudioParam::setAutomationRate(AutomationRate automationRate)
+{
+    if (m_automationRateMode == AutomationRateMode::Fixed)
+        return Exception { InvalidStateError, "automationRate cannot be changed for this node" };
+
+    m_automationRate = automationRate;
+    return { };
 }
 
 float AudioParam::smoothedValue()
@@ -200,7 +211,7 @@ void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfV
     if (!isSafe)
         return;
 
-    calculateFinalValues(values, numberOfValues, true);
+    calculateFinalValues(values, numberOfValues, automationRate() == AutomationRate::ARate);
 }
 
 void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bool sampleAccurate)

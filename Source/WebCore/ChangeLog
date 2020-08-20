@@ -1,3 +1,58 @@
+2020-08-20  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam.automationRate attribute is missing
+        https://bugs.webkit.org/show_bug.cgi?id=215710
+
+        Reviewed by Darin Adler.
+
+        Add initial support for AudioParam.automationRate:
+        - https://www.w3.org/TR/webaudio/#dom-audioparam-automationrate
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        * Modules/webaudio/AudioListener.cpp:
+        (WebCore::AudioListener::AudioListener):
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::AudioParam):
+        (WebCore::AudioParam::setAutomationRate):
+        (WebCore::AudioParam::calculateSampleAccurateValues):
+        * Modules/webaudio/AudioParam.h:
+        * Modules/webaudio/AudioParam.idl:
+        * Modules/webaudio/BiquadDSPKernel.cpp:
+        (WebCore::BiquadDSPKernel::updateCoefficientsIfNecessary):
+        * Modules/webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::BiquadProcessor):
+        * Modules/webaudio/ConstantSourceNode.cpp:
+        (WebCore::ConstantSourceNode::ConstantSourceNode):
+        (WebCore::ConstantSourceNode::process):
+        * Modules/webaudio/DelayDSPKernel.cpp:
+        (WebCore::DelayDSPKernel::process):
+        * Modules/webaudio/DelayProcessor.cpp:
+        (WebCore::DelayProcessor::DelayProcessor):
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        * Modules/webaudio/GainNode.cpp:
+        (WebCore::GainNode::GainNode):
+        (WebCore::GainNode::process):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::OscillatorNode):
+        (WebCore::OscillatorNode::calculateSampleAccuratePhaseIncrements):
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::PannerNode):
+        (WebCore::PannerNode::distanceConeGain):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/StereoPannerNode.cpp:
+        (WebCore::StereoPannerNode::StereoPannerNode):
+        (WebCore::StereoPannerNode::process):
+        * Modules/webaudio/WebKitAudioBufferSourceNode.h:
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::WebKitAudioPannerNode):
+        (WebCore::WebKitAudioPannerNode::distanceConeGain):
+        * Modules/webaudio/WebKitAudioPannerNode.h:
+        * Modules/webaudio/WebKitDynamicsCompressorNode.h:
+
 2020-08-20  Kenneth Russell  <kbr@chromium.org>
 
         [WebGL2] Pass context-lost-restored.html test

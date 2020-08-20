@@ -42,7 +42,7 @@ public:
 private:
     explicit WebKitDynamicsCompressorNode(WebKitAudioContext& context)
         : DynamicsCompressorNode(context)
-        , m_legacyReduction(AudioParam::create(context, "reduction"_s, 0, -20, 0))
+        , m_legacyReduction(AudioParam::create(context, "reduction"_s, 0, -20, 0, AutomationRate::KRate))
     {
         initializeDefaultNodeOptions(2, ChannelCountMode::ClampedMax, ChannelInterpretation::Speakers);
     }

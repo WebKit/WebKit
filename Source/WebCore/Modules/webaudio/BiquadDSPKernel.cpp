@@ -49,7 +49,11 @@ void BiquadDSPKernel::updateCoefficientsIfNecessary(bool useSmoothing, bool forc
         double gain;
         double detune; // in Cents
 
-        if (biquadProcessor()->hasSampleAccurateValues()) {
+        bool shouldUseARate = biquadProcessor()->parameter1().automationRate() == AutomationRate::ARate
+            || biquadProcessor()->parameter2().automationRate() == AutomationRate::ARate
+            || biquadProcessor()->parameter3().automationRate() == AutomationRate::ARate
+            || biquadProcessor()->parameter4().automationRate() == AutomationRate::ARate;
+        if (biquadProcessor()->hasSampleAccurateValues() && shouldUseARate) {
             value1 = biquadProcessor()->parameter1().finalValue();
             value2 = biquadProcessor()->parameter2().finalValue();
             gain = biquadProcessor()->parameter3().finalValue();

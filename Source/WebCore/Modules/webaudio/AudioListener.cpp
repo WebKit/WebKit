@@ -39,15 +39,15 @@
 namespace WebCore {
 
 AudioListener::AudioListener(BaseAudioContext& context)
-    : m_positionX(AudioParam::create(context, "positionX", 0.0, -FLT_MAX, FLT_MAX))
-    , m_positionY(AudioParam::create(context, "positionY", 0.0, -FLT_MAX, FLT_MAX))
-    , m_positionZ(AudioParam::create(context, "positionZ", 0.0, -FLT_MAX, FLT_MAX))
-    , m_forwardX(AudioParam::create(context, "forwardX", 0.0, -FLT_MAX, FLT_MAX))
-    , m_forwardY(AudioParam::create(context, "forwardY", 0.0, -FLT_MAX, FLT_MAX))
-    , m_forwardZ(AudioParam::create(context, "forwardZ", -1.0, -FLT_MAX, FLT_MAX))
-    , m_upX(AudioParam::create(context, "upX", 0.0, -FLT_MAX, FLT_MAX))
-    , m_upY(AudioParam::create(context, "upY", 1.0, -FLT_MAX, FLT_MAX))
-    , m_upZ(AudioParam::create(context, "upZ", 0.0, -FLT_MAX, FLT_MAX))
+    : m_positionX(AudioParam::create(context, "positionX", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_positionY(AudioParam::create(context, "positionY", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_positionZ(AudioParam::create(context, "positionZ", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_forwardX(AudioParam::create(context, "forwardX", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_forwardY(AudioParam::create(context, "forwardY", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_forwardZ(AudioParam::create(context, "forwardZ", -1.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_upX(AudioParam::create(context, "upX", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_upY(AudioParam::create(context, "upY", 1.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
+    , m_upZ(AudioParam::create(context, "upZ", 0.0, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
 {
 }
 

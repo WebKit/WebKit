@@ -42,6 +42,9 @@ namespace WebCore {
 
 class AudioNodeOutput;
 
+enum class AutomationRate : bool { ARate, KRate };
+enum class AutomationRateMode : bool { Fixed, Variable };
+
 class AudioParam final
     : public AudioSummingJunction
     , public RefCounted<AudioParam>
@@ -53,9 +56,9 @@ public:
     static const double DefaultSmoothingConstant;
     static const double SnapThreshold;
 
-    static Ref<AudioParam> create(BaseAudioContext& context, const String& name, double defaultValue, double minValue, double maxValue, unsigned units = 0)
+    static Ref<AudioParam> create(BaseAudioContext& context, const String& name, double defaultValue, double minValue, double maxValue, AutomationRate automationRate, AutomationRateMode automationRateMode = AutomationRateMode::Variable, unsigned units = 0)
     {
-        return adoptRef(*new AudioParam(context, name, defaultValue, minValue, maxValue, units));
+        return adoptRef(*new AudioParam(context, name, defaultValue, minValue, maxValue, automationRate, automationRateMode, units));
     }
 
     // AudioSummingJunction
@@ -65,6 +68,9 @@ public:
     // Intrinsic value.
     float value();
     void setValue(float);
+
+    AutomationRate automationRate() const { return m_automationRate; }
+    ExceptionOr<void> setAutomationRate(AutomationRate);
 
     // Final value for k-rate parameters, otherwise use calculateSampleAccurateValues() for a-rate.
     // Must be called in the audio thread.
@@ -109,7 +115,7 @@ public:
     void disconnect(AudioNodeOutput*);
 
 protected:
-    AudioParam(BaseAudioContext&, const String&, double defaultValue, double minValue, double maxValue, unsigned units = 0);
+    AudioParam(BaseAudioContext&, const String&, double defaultValue, double minValue, double maxValue, AutomationRate, AutomationRateMode, unsigned units = 0);
 
 private:
     // sampleAccurate corresponds to a-rate (audio rate) vs. k-rate in the Web Audio specification.
@@ -128,6 +134,8 @@ private:
     double m_defaultValue;
     double m_minValue;
     double m_maxValue;
+    AutomationRate m_automationRate;
+    AutomationRateMode m_automationRateMode;
     unsigned m_units;
 
     // Smoothing (de-zippering)

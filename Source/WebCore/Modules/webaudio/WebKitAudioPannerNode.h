@@ -115,10 +115,6 @@ public:
     void getAzimuthElevation(double* outAzimuth, double* outElevation);
     float dopplerRate() final;
 
-    // Accessors for dynamically calculated gain values.
-    AudioParam* distanceGain() { return m_distanceGain.get(); }
-    AudioParam* coneGain() { return m_coneGain.get(); }
-
     double tailTime() const override { return m_panner ? m_panner->tailTime() : 0; }
     double latencyTime() const override { return m_panner ? m_panner->latencyTime() : 0; }
 
@@ -140,8 +136,6 @@ private:
     FloatPoint3D m_velocity;
 
     // Gain
-    RefPtr<AudioParam> m_distanceGain;
-    RefPtr<AudioParam> m_coneGain;
     DistanceEffect m_distanceEffect;
     ConeEffect m_coneEffect;
     float m_lastGain;

@@ -53,7 +53,7 @@ ExceptionOr<Ref<StereoPannerNode>> StereoPannerNode::create(BaseAudioContext& co
 
 StereoPannerNode::StereoPannerNode(BaseAudioContext& context, float pan)
     : AudioNode(context)
-    , m_pan(AudioParam::create(context, "pan"_s, pan, -1, 1))
+    , m_pan(AudioParam::create(context, "pan"_s, pan, -1, 1, AutomationRate::ARate))
 {
     setNodeType(NodeTypeStereo);
     
@@ -82,17 +82,18 @@ void StereoPannerNode::process(size_t framesToProcess)
         destination->zero();
         return;
     }
-        
-    // FIXME: Fix once automation-rate is introduced. Some tests are failing because this
-    // is called for both a-rate and k-rate, but should only be called on a-rate.
-    if (m_pan->hasSampleAccurateValues()) {
+
+    if (m_pan->hasSampleAccurateValues() && m_pan->automationRate() == AutomationRate::ARate) {
         float* panValues = m_sampleAccurateValues.data();
         m_pan->calculateSampleAccurateValues(panValues, framesToProcess);
         StereoPanner::panWithSampleAccurateValues(source, destination, panValues, framesToProcess);
         return;
     }
     
-    float panValue = m_pan->value();
+    // The pan value is not sample-accurate or not a-rate. In this case, we have
+    // a fixed pan value for the render and just need to incorporate any inputs to
+    // the value, if any.
+    float panValue = m_pan->hasSampleAccurateValues() ? m_pan->finalValue() : m_pan->value();
     StereoPanner::panToTargetValue(source, destination, panValue, framesToProcess);
 }
 

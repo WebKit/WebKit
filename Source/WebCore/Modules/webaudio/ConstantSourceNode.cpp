@@ -54,7 +54,7 @@ ExceptionOr<Ref<ConstantSourceNode>> ConstantSourceNode::create(BaseAudioContext
 
 ConstantSourceNode::ConstantSourceNode(BaseAudioContext& context, float offset)
     : AudioScheduledSourceNode(context)
-    , m_offset(AudioParam::create(context, "offset"_s, offset, -FLT_MAX, FLT_MAX))
+    , m_offset(AudioParam::create(context, "offset"_s, offset, -FLT_MAX, FLT_MAX, AutomationRate::ARate))
 {
     setNodeType(NodeTypeConstant);
     addOutput(makeUnique<AudioNodeOutput>(this, 1));
@@ -85,10 +85,7 @@ void ConstantSourceNode::process(size_t framesToProcess)
     }
     
     bool isSampleAccurate = m_offset->hasSampleAccurateValues();
-    
-    // FIXME: Fix once automation-rate is introduced. Some tests are failing because this
-    // is called for both a-rate and k-rate, but only should be called on a-rate.
-    if (isSampleAccurate) {
+    if (isSampleAccurate && m_offset->automationRate() == AutomationRate::ARate) {
         float* offsets = m_sampleAccurateValues.data();
         m_offset->calculateSampleAccurateValues(offsets, framesToProcess);
         if (nonSilentFramesToProcess > 0) {
