@@ -127,7 +127,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
 #define ENABLE_IF_REQUESTED(type, variable, nameLiteral, canEnable) \
     if (equalIgnoringASCIICase(name, nameLiteral)) { \
         if (!variable) { \
-            variable = (canEnable) ? makeUnique<type>(*this) : nullptr; \
+            variable = (canEnable) ? adoptRef(new type(*this)) : nullptr; \
             if (variable != nullptr) \
                 InspectorInstrumentation::didEnableExtension(*this, name); \
         } \
@@ -143,7 +143,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
                 m_extShaderTextureLOD = nullptr;
             else {
                 m_context->getExtensions().ensureEnabled("GL_EXT_shader_texture_lod"_s);
-                m_extShaderTextureLOD = makeUnique<EXTShaderTextureLOD>(*this);
+                m_extShaderTextureLOD = adoptRef(new EXTShaderTextureLOD(*this));
                 InspectorInstrumentation::didEnableExtension(*this, name);
             }
         }
@@ -171,7 +171,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
                 m_webglDrawBuffers = nullptr;
             else {
                 m_context->getExtensions().ensureEnabled("GL_EXT_draw_buffers"_s);
-                m_webglDrawBuffers = makeUnique<WebGLDrawBuffers>(*this);
+                m_webglDrawBuffers = adoptRef(new WebGLDrawBuffers(*this));
                 InspectorInstrumentation::didEnableExtension(*this, name);
             }
         }
@@ -183,7 +183,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
                 m_angleInstancedArrays = nullptr;
             else {
                 m_context->getExtensions().ensureEnabled("GL_ANGLE_instanced_arrays"_s);
-                m_angleInstancedArrays = makeUnique<ANGLEInstancedArrays>(*this);
+                m_angleInstancedArrays = adoptRef(new ANGLEInstancedArrays(*this));
                 InspectorInstrumentation::didEnableExtension(*this, name);
             }
         }

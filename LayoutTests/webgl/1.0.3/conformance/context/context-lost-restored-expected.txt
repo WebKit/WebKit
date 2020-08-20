@@ -1,57 +1,5 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../resources/webgl_test_files/conformance/context/context-lost-restored.html
-[ 1: PASS ] gl.isContextLost() is false
-[ 2: PASS ] gl.getError() is gl.NO_ERROR
-[ 3: PASS ] shouldBe 255,10,20
-[ 4: PASS ] gl.getError() is gl.NO_ERROR
-[ 5: PASS ] gl.isContextLost() is true
-[ 6: PASS ] gl.getError() is gl.CONTEXT_LOST_WEBGL
-[ 7: PASS ] gl.getError() is gl.NO_ERROR
-[ 8: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.blendFunc(gl.TEXTURE_2D, gl.TEXTURE_CUBE_MAP)
-[ 9: PASS ] contextLostEventFired is false
-[ 10: PASS ] contextLostEventFired is false
-[ 11: PASS ] gl.isContextLost() is true
-[ 12: PASS ] gl.getError() is gl.NO_ERROR
-[ 13: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: WEBGL_lose_context.restoreContext()
-[ 14: PASS ] gl.isContextLost() is false
-[ 15: PASS ] gl.getError() is gl.NO_ERROR
-[ 16: PASS ] shouldBe 255,10,20
-[ 17: PASS ] gl.getError() is gl.NO_ERROR
-[ 18: PASS ] gl.isContextLost() is true
-[ 19: PASS ] gl.getError() is gl.CONTEXT_LOST_WEBGL
-[ 20: PASS ] gl.getError() is gl.NO_ERROR
-[ 21: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.blendFunc(gl.TEXTURE_2D, gl.TEXTURE_CUBE_MAP)
-[ 22: PASS ] contextLostEventFired is false
-[ 23: PASS ] contextLostEventFired is false
-[ 24: PASS ] gl.isContextLost() is true
-[ 25: PASS ] gl.getError() is gl.NO_ERROR
-[ 26: PASS ] getError was expected value: NO_ERROR : after evaluating: WEBGL_lose_context.restoreContext()
-[ 27: PASS ] gl.isContextLost() is true
-[ 28: PASS ] gl.getError() is gl.NO_ERROR
-[ 29: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.blendFunc(gl.TEXTURE_2D, gl.TEXTURE_CUBE_MAP)
-[ 30: PASS ] contextRestoredEventFired is false
-[ 31: PASS ] gl.isContextLost() is false
-[ 32: PASS ] gl.getError() is gl.NO_ERROR
-[ 33: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.bindTexture(gl.TEXTURE_2D, texture)
-[ 34: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.useProgram(program)
-[ 35: PASS ] getError was expected value: INVALID_OPERATION : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, bufferObjects[0])
-[ 36: PASS ] shouldBe 255,10,20
-[ 37: PASS ] gl.getError() is gl.NO_ERROR
-[ 38: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindTexture(gl.TEXTURE_2D, texture)
-[ 39: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.useProgram(program)
-[ 40: PASS ] getError was expected value: NO_ERROR : after evaluating: gl.bindBuffer(gl.ARRAY_BUFFER, bufferObjects[0])
-[ 41: PASS ] getError was expected value: INVALID_ENUM : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.FLOAT, null)
-[ 42: PASS ] newExtension != null is true
-[ 43: FAIL ] newExtension.webglTestProperty === undefined should be true. Was false.
-[ 44: FAIL ] getError expected: NO_ERROR. Was INVALID_ENUM : after evaluating: gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.FLOAT, null)
-[ 45: FAIL ] OES_vertex_array_object.createVertexArrayOES() should be null. Was [object WebGLVertexArrayObjectOES].
-[ 46: PASS ] newExtension != null is true
-[ 47: FAIL ] newExtension.webglTestProperty === undefined should be true. Was false.
-[ 48: PASS ] OES_vertex_array_object.createVertexArrayOES() != null is true
-[ 49: FAIL ] old_OES_vertex_array_object.createVertexArrayOES() == null should be true. Was false.
-[ 50: PASS ] newExtension != null is true
-[ 51: PASS ] newExtension.webglTestProperty === true is true
-[ 52: PASS ] successfullyParsed is true
-[ FAIL ] 5 failures reported
+[ PASS ] All tests passed
 

@@ -1,3 +1,70 @@
+2020-08-20  Kenneth Russell  <kbr@chromium.org>
+
+        [WebGL2] Pass context-lost-restored.html test
+        https://bugs.webkit.org/show_bug.cgi?id=215599
+
+        Reviewed by Dean Jackson.
+
+        Support losing extensions, and restoring them via
+        WEBGL_lose_context.
+
+        Necessarily changed WebGLExtensions to be RefCounted rather than
+        managed via unique_ptr. Multiple instances of the same
+        WebGLExtension subclass can now be vended from a WebGL rendering
+        context, and WebGLExtensions can now outlive their rendering
+        context - they do not ref their context.
+
+        Extensions now hold a weak pointer to their
+        WebGLRenderingContextBase rather than a C++ reference. When an
+        extension's parent context is lost, that pointer is nulled out.
+        Extensions are forcibly lost upon WebGL context destruction.
+
+        WebGL extensions' IDLs still use
+        GenerateIsReachable=ImplWebGLRenderingContext, so that if the
+        context is still alive, the JavaScript wrappers for the extension
+        objects will be preserved. (If the extension is lost, the bindings
+        will fetch nullptr for the context, which won't be in the opaque
+        root set, so the JavaScript wrapper won't be artificially kept
+        alive.)
+
+        Covered by existing WebGL conformance tests.
+
+        * html/canvas/ANGLEInstancedArrays.cpp:
+        (WebCore::ANGLEInstancedArrays::drawArraysInstancedANGLE):
+        (WebCore::ANGLEInstancedArrays::drawElementsInstancedANGLE):
+        (WebCore::ANGLEInstancedArrays::vertexAttribDivisorANGLE):
+        * html/canvas/OESVertexArrayObject.cpp:
+        (WebCore::OESVertexArrayObject::createVertexArrayOES):
+        (WebCore::OESVertexArrayObject::deleteVertexArrayOES):
+        (WebCore::OESVertexArrayObject::isVertexArrayOES):
+        (WebCore::OESVertexArrayObject::bindVertexArrayOES):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getExtension):
+        * html/canvas/WebGLDebugShaders.cpp:
+        (WebCore::WebGLDebugShaders::getTranslatedShaderSource):
+        * html/canvas/WebGLDrawBuffers.cpp:
+        (WebCore::WebGLDrawBuffers::drawBuffersWEBGL):
+        * html/canvas/WebGLExtension.cpp:
+        (WebCore::WebGLExtension::WebGLExtension):
+        (WebCore::WebGLExtension::loseParentContext):
+        * html/canvas/WebGLExtension.h:
+        (WebCore::WebGLExtension::context):
+        (WebCore::WebGLExtension::isLost):
+        (WebCore::WebGLExtension::ref): Deleted.
+        (WebCore::WebGLExtension::deref): Deleted.
+        * html/canvas/WebGLLoseContext.cpp:
+        (WebCore::WebGLLoseContext::loseContext):
+        (WebCore::WebGLLoseContext::restoreContext):
+        (WebCore::WebGLLoseContext::loseParentContext):
+        * html/canvas/WebGLLoseContext.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::~WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::loseContextImpl):
+        (WebCore::WebGLRenderingContextBase::loseExtensions):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2020-08-20  Aditya Keerthi  <akeerthi@apple.com>
 
         Add runtime setting for editable components in date/time inputs

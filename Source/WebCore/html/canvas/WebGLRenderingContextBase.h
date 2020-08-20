@@ -515,6 +515,7 @@ protected:
     WebGLTexture::TextureExtensionFlag textureExtensionFlags() const;
 
     bool enableSupportedExtension(ASCIILiteral extensionNameLiteral);
+    void loseExtensions(LostContextMode);
 
     virtual void uncacheDeletedBuffer(const WTF::AbstractLocker&, WebGLBuffer*);
 
@@ -657,33 +658,33 @@ protected:
 
     // Enabled extension objects.
     // FIXME: Move some of these to WebGLRenderingContext, the ones not needed for WebGL2
-    std::unique_ptr<EXTFragDepth> m_extFragDepth;
-    std::unique_ptr<EXTBlendMinMax> m_extBlendMinMax;
-    std::unique_ptr<EXTsRGB> m_extsRGB;
-    std::unique_ptr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
-    std::unique_ptr<EXTShaderTextureLOD> m_extShaderTextureLOD;
-    std::unique_ptr<OESTextureFloat> m_oesTextureFloat;
-    std::unique_ptr<OESTextureFloatLinear> m_oesTextureFloatLinear;
-    std::unique_ptr<OESTextureHalfFloat> m_oesTextureHalfFloat;
-    std::unique_ptr<OESTextureHalfFloatLinear> m_oesTextureHalfFloatLinear;
-    std::unique_ptr<OESStandardDerivatives> m_oesStandardDerivatives;
-    std::unique_ptr<OESVertexArrayObject> m_oesVertexArrayObject;
-    std::unique_ptr<OESElementIndexUint> m_oesElementIndexUint;
-    std::unique_ptr<WebGLLoseContext> m_webglLoseContext;
-    std::unique_ptr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
-    std::unique_ptr<WebGLDebugShaders> m_webglDebugShaders;
-    std::unique_ptr<WebGLCompressedTextureASTC> m_webglCompressedTextureASTC;
-    std::unique_ptr<WebGLCompressedTextureATC> m_webglCompressedTextureATC;
-    std::unique_ptr<WebGLCompressedTextureETC> m_webglCompressedTextureETC;
-    std::unique_ptr<WebGLCompressedTextureETC1> m_webglCompressedTextureETC1;
-    std::unique_ptr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;
-    std::unique_ptr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
-    std::unique_ptr<WebGLDepthTexture> m_webglDepthTexture;
-    std::unique_ptr<WebGLDrawBuffers> m_webglDrawBuffers;
-    std::unique_ptr<ANGLEInstancedArrays> m_angleInstancedArrays;
-    std::unique_ptr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
-    std::unique_ptr<WebGLColorBufferFloat> m_webglColorBufferFloat;
-    std::unique_ptr<EXTColorBufferFloat> m_extColorBufferFloat;
+    RefPtr<EXTFragDepth> m_extFragDepth;
+    RefPtr<EXTBlendMinMax> m_extBlendMinMax;
+    RefPtr<EXTsRGB> m_extsRGB;
+    RefPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
+    RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;
+    RefPtr<OESTextureFloat> m_oesTextureFloat;
+    RefPtr<OESTextureFloatLinear> m_oesTextureFloatLinear;
+    RefPtr<OESTextureHalfFloat> m_oesTextureHalfFloat;
+    RefPtr<OESTextureHalfFloatLinear> m_oesTextureHalfFloatLinear;
+    RefPtr<OESStandardDerivatives> m_oesStandardDerivatives;
+    RefPtr<OESVertexArrayObject> m_oesVertexArrayObject;
+    RefPtr<OESElementIndexUint> m_oesElementIndexUint;
+    RefPtr<WebGLLoseContext> m_webglLoseContext;
+    RefPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
+    RefPtr<WebGLDebugShaders> m_webglDebugShaders;
+    RefPtr<WebGLCompressedTextureASTC> m_webglCompressedTextureASTC;
+    RefPtr<WebGLCompressedTextureATC> m_webglCompressedTextureATC;
+    RefPtr<WebGLCompressedTextureETC> m_webglCompressedTextureETC;
+    RefPtr<WebGLCompressedTextureETC1> m_webglCompressedTextureETC1;
+    RefPtr<WebGLCompressedTexturePVRTC> m_webglCompressedTexturePVRTC;
+    RefPtr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
+    RefPtr<WebGLDepthTexture> m_webglDepthTexture;
+    RefPtr<WebGLDrawBuffers> m_webglDrawBuffers;
+    RefPtr<ANGLEInstancedArrays> m_angleInstancedArrays;
+    RefPtr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
+    RefPtr<WebGLColorBufferFloat> m_webglColorBufferFloat;
+    RefPtr<EXTColorBufferFloat> m_extColorBufferFloat;
 
     bool m_areWebGL2TexImageSourceFormatsAndTypesAdded { false };
     bool m_areOESTextureFloatFormatsAndTypesAdded { false };

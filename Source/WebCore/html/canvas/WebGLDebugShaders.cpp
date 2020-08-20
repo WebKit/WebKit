@@ -50,11 +50,11 @@ WebGLExtension::ExtensionName WebGLDebugShaders::getName() const
 
 String WebGLDebugShaders::getTranslatedShaderSource(WebGLShader& shader)
 {
-    if (m_context.isContextLost())
+    if (!m_context || m_context->isContextLost())
         return String();
-    if (!m_context.validateWebGLObject("getTranslatedShaderSource", &shader))
+    if (!m_context->validateWebGLObject("getTranslatedShaderSource", &shader))
         return emptyString();
-    return m_context.graphicsContextGL()->getExtensions().getTranslatedShaderSourceANGLE(shader.object());
+    return m_context->graphicsContextGL()->getExtensions().getTranslatedShaderSourceANGLE(shader.object());
 }
 
 } // namespace WebCore

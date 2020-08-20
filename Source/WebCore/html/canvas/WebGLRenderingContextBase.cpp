@@ -1028,6 +1028,7 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
 
     if (!m_isPendingPolicyResolution) {
         detachAndRemoveAllObjects();
+        loseExtensions(LostContextMode::RealLostContext);
         destroyGraphicsContextGL();
         m_contextGroup->removeContext(*this);
     }
@@ -6093,6 +6094,7 @@ void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostC
     }
 
     detachAndRemoveAllObjects();
+    loseExtensions(mode);
 
     // There is no direct way to clear errors from a GL implementation and
     // looping until getError() becomes NO_ERROR might cause an infinite loop if
@@ -7745,6 +7747,44 @@ bool WebGLRenderingContextBase::enableSupportedExtension(ASCIILiteral extensionN
         return false;
     extensions.ensureEnabled(extensionName);
     return true;
+}
+
+void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
+{
+#define LOSE_EXTENSION(variable) \
+    if (variable) { \
+        variable->loseParentContext(mode); \
+        if (variable->isLost()) \
+            (void) variable.releaseNonNull(); \
+    }
+
+    LOSE_EXTENSION(m_extFragDepth);
+    LOSE_EXTENSION(m_extBlendMinMax);
+    LOSE_EXTENSION(m_extsRGB);
+    LOSE_EXTENSION(m_extTextureFilterAnisotropic);
+    LOSE_EXTENSION(m_extShaderTextureLOD);
+    LOSE_EXTENSION(m_oesTextureFloat);
+    LOSE_EXTENSION(m_oesTextureFloatLinear);
+    LOSE_EXTENSION(m_oesTextureHalfFloat);
+    LOSE_EXTENSION(m_oesTextureHalfFloatLinear);
+    LOSE_EXTENSION(m_oesStandardDerivatives);
+    LOSE_EXTENSION(m_oesVertexArrayObject);
+    LOSE_EXTENSION(m_oesElementIndexUint);
+    LOSE_EXTENSION(m_webglLoseContext);
+    LOSE_EXTENSION(m_webglDebugRendererInfo);
+    LOSE_EXTENSION(m_webglDebugShaders);
+    LOSE_EXTENSION(m_webglCompressedTextureASTC);
+    LOSE_EXTENSION(m_webglCompressedTextureATC);
+    LOSE_EXTENSION(m_webglCompressedTextureETC);
+    LOSE_EXTENSION(m_webglCompressedTextureETC1);
+    LOSE_EXTENSION(m_webglCompressedTexturePVRTC);
+    LOSE_EXTENSION(m_webglCompressedTextureS3TC);
+    LOSE_EXTENSION(m_webglDepthTexture);
+    LOSE_EXTENSION(m_webglDrawBuffers);
+    LOSE_EXTENSION(m_angleInstancedArrays);
+    LOSE_EXTENSION(m_extColorBufferHalfFloat);
+    LOSE_EXTENSION(m_webglColorBufferFloat);
+    LOSE_EXTENSION(m_extColorBufferFloat);
 }
 
 void WebGLRenderingContextBase::activityStateDidChange(OptionSet<ActivityState::Flag> oldActivityState, OptionSet<ActivityState::Flag> newActivityState)
