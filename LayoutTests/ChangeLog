@@ -1,3 +1,12 @@
+2020-08-20  Karl Rackler  <rackler@apple.com>
+
+        rdar://66661355 ([ASi Layout Tests] 3 compositing tests failing with 0.01% diffs)
+        Tests failing on Rosetta as well as AS - adding test expectations
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectationsRosetta:
+
 2020-08-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Move WPE baseline for collection-iterators.html test to GLIB.
