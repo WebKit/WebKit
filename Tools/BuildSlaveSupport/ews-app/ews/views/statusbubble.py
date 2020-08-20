@@ -45,7 +45,7 @@ class StatusBubble(View):
     # Note: This list is sorted in the order of which bubbles appear in bugzilla.
     ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-debug', 'mac-AS', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'wincairo', 'win',
                   'ios-wk2', 'mac-wk1', 'mac-wk2', 'mac-debug-wk1', 'api-ios', 'api-mac', 'api-gtk',
-                  'bindings', 'jsc', 'jsc-armv7', 'jsc-mips', 'jsc-i386', 'webkitperl', 'webkitpy', 'services']
+                  'bindings', 'jsc', 'jsc-armv7', 'jsc-mips', 'jsc-mips-tests', 'jsc-i386', 'webkitperl', 'webkitpy', 'services']
     # FIXME: Auto-generate the queue's trigger relationship
     QUEUE_TRIGGERS = {
         'api-ios': 'ios-sim',
@@ -55,6 +55,7 @@ class StatusBubble(View):
         'mac-wk2': 'mac',
         'mac-debug-wk1': 'mac-debug',
         'api-gtk': 'gtk',
+        'jsc-mips-tests': 'jsc-mips',
     }
 
     STEPS_TO_HIDE = ['^Archived built product$', '^Uploaded built product$', '^Transferred archive to S3$',
