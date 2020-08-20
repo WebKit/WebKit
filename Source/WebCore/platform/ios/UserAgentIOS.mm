@@ -83,7 +83,7 @@ String standardUserAgentWithApplicationName(const String& applicationName, const
 {
     if (type == UserAgentType::Desktop) {
         String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
-        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0) AppleWebKit/605.1.15 (KHTML, like Gecko)", appNameSuffix);
+        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko)", appNameSuffix);
     }
 
     // FIXME: Is this needed any more? Mac doesn't have this check,
