@@ -1,3 +1,39 @@
+2020-08-20  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Move Timeout to webkitcorepy (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=215584
+        <rdar://problem/67270713>
+
+        Reviewed by Darin Adler and Dewei Zhu.
+
+        The Timeout class is a generally useful Python utility, it should not live inside webkitpy.
+
+        * Scripts/libraries/webkitcorepy/README.md: Document Timeout object.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Expose Timeout object API, increment version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/time_.py:
+        (_MetaTime.__enter__): Replace timeout.py's ORIGINAL_SLEEP variable to speed up testing.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/timeout_unittest.py: Added.
+        (TimeoutTests): Added.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/timeout.py: Added.
+        (Timeout): Class representing a stackable Timeout context.
+        (Timeout.Data): Class containing information about a specific deadline.
+        (Timeout.Exception): Exception belonging to the Timeout object.
+        (Timeout.DisableAlarm): For some block of code, disable Timeout alarms. This is useful because many APIs (such as
+        subprocess.run) define their own timeouts which do better cleanup than an interrupt would.
+        (Timeout.default_handler): Default Timeout handler which raises an exception.
+        (Timeout.current): Return the current Timeout.Data class, if one exists.
+        (Timeout.deadline): Return the closest deadline, if one exists.
+        (Timeout.difference): Return the number of seconds between the current time and the closest deadline.
+        (Timeout.check): Check if we have surpassed the closest deadline., raise an exception if we have.
+        (Timeout.bind): Create a signal based on the closest deadline.
+        (Timeout.sleep): Override the sleep function because if we ever request a sleep that is greater than the closest deadline,
+        we should imiediately trigger the timeout logic without waiting for the timeout to actually expire.
+        (Timeout.__init__): Create a Timeout context, 1 second by default.
+        (Timeout.__enter__):
+        (Timeout.__exit__):
+        * Scripts/webkitpy/common/timeout_context.py:
+        (Timeout): Moved to webkitcorepy.
+
 2020-08-19  Kate Cheney  <katherine_cheney@apple.com>
 
         Third party domains are not stored in the case of back/forward navigations

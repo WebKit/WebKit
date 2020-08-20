@@ -32,8 +32,9 @@ log.addHandler(NullHandler())
 from webkitcorepy.version import Version
 from webkitcorepy.string_utils import BytesIO, StringIO, UnicodeIO, unicode
 from webkitcorepy.output_capture import LoggerCapture, OutputCapture, OutputDuplicate
+from webkitcorepy.timeout import Timeout
 
-version = Version(0, 2, 9)
+version = Version(0, 2, 10)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

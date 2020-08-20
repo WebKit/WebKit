@@ -54,6 +54,7 @@ class _MetaTime(type):
             patch('time.time', new=lambda: self.stack[-1]),
             patch('time.sleep', new=sleep_func),
             patch('datetime.datetime', new=FakeDateTime),
+            patch('webkitcorepy.timeout.ORIGINAL_SLEEP', new=sleep_func),
         ])
 
         for patch in self.patches[-1]:

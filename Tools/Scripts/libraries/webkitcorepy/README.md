@@ -57,3 +57,13 @@ with capturer:
     print('data\n')
 assert capturer.stdout.getvalue() == 'data\n'
 ```
+
+Timeout context:
+```
+import time
+
+from webkitcorepy import Timeout
+
+with Timeout(5, handler=RuntimeError('Exceeded 5 second timeout')):
+    time.sleep(4)
+```
