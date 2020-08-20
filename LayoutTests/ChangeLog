@@ -1,3 +1,13 @@
+2020-08-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update fast/selectors/lang-dynamic.html after r265487
+        https://bugs.webkit.org/show_bug.cgi?id=215665
+        <rdar://problem/67083106>
+
+        Unreviewed test gardening.
+
+        * fast/selectors/lang-dynamic-expected.html:
+
 2020-08-19  Karl Rackler  <rackler@apple.com>
 
         rdar://65269589 ([ macOS and iOS ] media/vp9.html is failing consistently.)
