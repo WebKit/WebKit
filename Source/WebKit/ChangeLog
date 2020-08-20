@@ -1,3 +1,17 @@
+2020-08-20  James Savage  <james.savage@apple.com>
+
+        Could not find module 'WebKit' for target 'armv7-apple-ios'
+        <https://bugs.webkit.org/show_bug.cgi?id=215190>
+        <rdar://problem/65642049>
+
+        Reviewed by Brady Eidson.
+
+        The config changes here got added to the wrong config file. They need to
+        be for the overlay, not its tests.
+
+        * SwiftOverlay/Configurations/WebKitSwiftOverlay.xcconfig:
+        * SwiftOverlay/Configurations/WebKitSwiftOverlayTests.xcconfig:
+
 2020-08-20  Aditya Keerthi  <akeerthi@apple.com>
 
         Add runtime setting for editable components in date/time inputs
