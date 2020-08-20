@@ -1550,7 +1550,7 @@ void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWra
     if (negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes
         && fastServerTrustEvaluationEnabled()
         && !networkDataTask->isTopLevelNavigation())
-        return completionHandler(AuthenticationChallengeDisposition::Cancel, { });
+        return challengeCompletionHandler(AuthenticationChallengeDisposition::Cancel, { });
 
     networkDataTask->didReceiveChallenge(WTFMove(authenticationChallenge), negotiatedLegacyTLS, WTFMove(challengeCompletionHandler));
 }
