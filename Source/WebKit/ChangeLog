@@ -1,3 +1,15 @@
+2020-08-19  Alex Christensen  <achristensen@webkit.org>
+
+        Fix null pointer crashes in network process after r265835
+       ​https://bugs.webkit.org/show_bug.cgi?id=215626
+        <rdar://problem/67268892>
+
+        Call the correct CompletionHandler.  completionHandler has already been moved from at this point.
+        This crash was being hit in the test, but the test recovered from it.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::continueDidReceiveChallenge):
+
 2020-08-19  Kate Cheney  <katherine_cheney@apple.com>
 
         Third party domains are not stored in the case of back/forward navigations
