@@ -41,7 +41,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/WorkQueue.h>
 
 namespace JSC {
 class JSGlobalObject;
@@ -124,8 +123,6 @@ private:
     WeakPtr<PlatformXR::Device> m_activeImmersiveDevice;
     WeakHashSet<PlatformXR::Device> m_immersiveDevices;
     WeakPtr<PlatformXR::Device> m_inlineXRDevice;
-
-    Ref<WorkQueue> m_workQueue;
 };
 
 } // namespace WebCore

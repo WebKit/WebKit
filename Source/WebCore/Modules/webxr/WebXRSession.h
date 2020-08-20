@@ -44,7 +44,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -122,8 +121,6 @@ private:
     unsigned m_nextCallbackId { 1 };
     Vector<Ref<XRFrameRequestCallback>> m_callbacks;
     Vector<Ref<XRFrameRequestCallback>> m_runningCallbacks;
-
-    Ref<WorkQueue> m_workQueue;
 
     Timer m_animationTimer;
     MonotonicTime m_lastAnimationFrameTimestamp;

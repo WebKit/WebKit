@@ -1,3 +1,15 @@
+2020-08-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, reverting r265850.
+
+        Tests crash on debug builds
+
+        Reverted changeset:
+
+        "[WebXR] Make "in parallel" code run really in parallel"
+        https://bugs.webkit.org/show_bug.cgi?id=215642
+        https://trac.webkit.org/changeset/265850
+
 2020-08-20  Chris Dumez  <cdumez@apple.com>
 
         Sandbox violation when calling [NSHTTPCookieStorage sharedHTTPCookieStorage] from the WebProcess
