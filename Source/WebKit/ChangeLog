@@ -1,3 +1,7 @@
+2020-08-19  Alan Coon  <alancoon@apple.com>
+
+        Revert r265835. rdar://problem/67364266
+
 2020-08-19  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r265835. rdar://problem/67364266
