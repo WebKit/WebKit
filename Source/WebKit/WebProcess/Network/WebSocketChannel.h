@@ -78,6 +78,7 @@ private:
     void derefThreadableWebSocketChannel() final { deref(); }
 
     void notifySendFrame(WebCore::WebSocketFrame::OpCode, const char* data, size_t length);
+    void logErrorMessage(const String&);
 
     // Message receivers
     void didConnect(String&& subprotocol, String&& extensions);
@@ -100,6 +101,7 @@ private:
     WeakPtr<WebCore::Document> m_document;
     WebSocketIdentifier m_identifier;
     WeakPtr<WebCore::WebSocketChannelClient> m_client;
+    URL m_url;
     String m_subprotocol;
     String m_extensions;
     size_t m_bufferedAmount { 0 };

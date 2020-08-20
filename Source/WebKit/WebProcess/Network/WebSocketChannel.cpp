@@ -117,7 +117,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
         m_client->didUpgradeURL();
 
     m_inspector.didCreateWebSocket(m_document.get(), url);
-
+    m_url = request->url();
     MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier });
     return ConnectStatus::OK;
 }
@@ -209,6 +209,7 @@ void WebSocketChannel::close(int code, const String& reason)
 
 void WebSocketChannel::fail(const String& reason)
 {
+    logErrorMessage(reason);
     if (m_client)
         m_client->didReceiveMessageError();
 
@@ -329,6 +330,19 @@ void WebSocketChannel::didClose(unsigned short code, String&& reason)
     m_client->didClose(m_bufferedAmount, (m_isClosing || receivedClosingHandshake) ? WebCore::WebSocketChannelClient::ClosingHandshakeComplete : WebCore::WebSocketChannelClient::ClosingHandshakeIncomplete, code, reason);
 }
 
+void WebSocketChannel::logErrorMessage(const String& errorMessage)
+{
+    if (!m_document)
+        return;
+
+    String consoleMessage;
+    if (!m_url.isNull())
+        consoleMessage = makeString("WebSocket connection to '", m_url.string(), "' failed: ", errorMessage);
+    else
+        consoleMessage = makeString("WebSocket connection failed: ", errorMessage);
+    m_document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, consoleMessage);
+}
+
 void WebSocketChannel::didReceiveMessageError(String&& errorMessage)
 {
     if (!m_client)
@@ -341,9 +355,7 @@ void WebSocketChannel::didReceiveMessageError(String&& errorMessage)
         return;
     }
 
-    if (m_document)
-        m_document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, errorMessage);
-
+    logErrorMessage(errorMessage);
     m_client->didReceiveMessageError();
 }
 
