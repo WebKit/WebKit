@@ -1272,3 +1272,5 @@ webkit.org/b/215606 webgpu/whlsl/do-while-loop-break.html [ Pass Failure ]
 
 webkit.org/b/215611 [ Debug ] fast/scrolling/mac/scrollbars/overflow-overlay-scrollbar-hovered.html [ Pass Timeout ]
 
+# rdar://65269589 ([ macOS and iOS ] media/vp9.html is failing consistently.)
+media/vp9.html [ Pass ]
