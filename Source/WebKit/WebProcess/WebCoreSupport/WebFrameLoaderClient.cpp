@@ -158,6 +158,15 @@ void WebFrameLoaderClient::didLoadFromRegistrableDomain(RegistrableDomain&& doma
     webPage->didLoadFromRegistrableDomain(WTFMove(domain));
 }
 
+Vector<RegistrableDomain> WebFrameLoaderClient::loadedSubresourceDomains() const
+{
+    auto* webPage = m_frame->page();
+    if (!webPage)
+        return { };
+
+    return copyToVector(webPage->loadedSubresourceDomains());
+}
+
 #endif
 
 bool WebFrameLoaderClient::hasHTMLView() const

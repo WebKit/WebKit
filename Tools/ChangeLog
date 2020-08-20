@@ -1,3 +1,51 @@
+2020-08-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Third party domains are not stored in the case of back/forward navigations
+        https://bugs.webkit.org/show_bug.cgi?id=215595
+        <rdar://problem/66642893>
+
+        Reviewed by Chris Dumez.
+
+        API test coverage, including a new scheme handler to load third party
+        domains. Also this patch changes the function name from
+        loadedThirdPartyDomains to loadedSubresourceDomains based on the
+        conversation from https://bugs.webkit.org/show_bug.cgi?id=215595.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (-[ResourceLoadStatisticsSchemeHandler webView:startURLSchemeTask:]):
+        (-[ResourceLoadStatisticsSchemeHandler webView:stopURLSchemeTask:]):
+        (TEST):
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::loadedSubresourceDomains):
+        (WTR::TestRunner::callDidReceiveLoadedSubresourceDomainsCallback):
+        (WTR::TestRunner::loadedThirdPartyDomains): Deleted.
+        (WTR::TestRunner::callDidReceiveLoadedThirdPartyDomainsCallback): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::LoadedSubresourceDomainsCallbackContext::LoadedSubresourceDomainsCallbackContext):
+        (WTR::loadedSubresourceDomainsCallback):
+        (WTR::TestController::loadedSubresourceDomains):
+        (WTR::TestController::clearLoadedSubresourceDomains):
+        (WTR::LoadedThirdPartyDomainsCallbackContext::LoadedThirdPartyDomainsCallbackContext): Deleted.
+        (WTR::loadedThirdPartyDomainsCallback): Deleted.
+        (WTR::TestController::loadedThirdPartyDomains): Deleted.
+        (WTR::TestController::clearLoadedThirdPartyDomains): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveLoadedSubresourceDomains):
+        (WTR::TestInvocation::didReceiveLoadedThirdPartyDomains): Deleted.
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::loadedSubresourceDomains):
+        (WTR::TestController::clearLoadedSubresourceDomains):
+        (WTR::TestController::loadedThirdPartyDomains): Deleted.
+        (WTR::TestController::clearLoadedThirdPartyDomains): Deleted.
+
 2020-08-19  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Failure to set index should not be fatal

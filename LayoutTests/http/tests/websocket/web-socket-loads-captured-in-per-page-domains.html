@@ -12,10 +12,10 @@
     if (window.testRunner)
         testRunner.setAllowsAnySSLCertificate(true);
 
-    function askForLoadedThirdPartyDomains() {
-        testRunner.loadedThirdPartyDomains(function (arrayOfDomains) {
+    function askForLoadedSubresourceDomains() {
+        testRunner.loadedSubresourceDomains(function (arrayOfDomains) {
             if (arrayOfDomains.length == 0) {
-                askForLoadedThirdPartyDomains();
+                askForLoadedSubresourceDomains();
                 return;
             }
             if (arrayOfDomains.includes("localhost"))
@@ -28,7 +28,7 @@
 
     function runTest() {
         new WebSocket('ws://localhost:8880/websocket/tests/hybi/simple');
-        setTimeout(askForLoadedThirdPartyDomains, 0);
+        setTimeout(askForLoadedSubresourceDomains, 0);
     }
 </script>
 <script src="../resources/js-test-post.js"></script>

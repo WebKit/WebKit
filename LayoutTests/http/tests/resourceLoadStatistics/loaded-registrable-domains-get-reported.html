@@ -8,10 +8,10 @@
         description("Tests that a iframe gets reported as a loaded third party domain.");
         jsTestIsAsync = true;
 
-        function askForLoadedThirdPartyDomains() {
-            testRunner.loadedThirdPartyDomains(function (arrayOfDomains) {
+        function askForLoadedSubresourceDomains() {
+            testRunner.loadedSubresourceDomains(function (arrayOfDomains) {
                 if (arrayOfDomains.length == 0) {
-                    askForLoadedThirdPartyDomains();
+                    askForLoadedSubresourceDomains();
                     return;
                 }
                 if (arrayOfDomains.includes("localhost"))
@@ -24,7 +24,7 @@
     </script>
 </head>
 <body>
-<iframe onload="setTimeout('askForLoadedThirdPartyDomains()', 0)" src="http://localhost:8000/resourceLoadStatistics/resources/basic-iframe.html">
+<iframe onload="setTimeout('askForLoadedSubresourceDomains()', 0)" src="http://localhost:8000/resourceLoadStatistics/resources/basic-iframe.html">
 </iframe>
 </body>
 </html>

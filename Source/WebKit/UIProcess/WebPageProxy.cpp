@@ -10187,14 +10187,14 @@ void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void WebPageProxy::loadedThirdPartyDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&& completionHandler)
+void WebPageProxy::getLoadedSubresourceDomains(CompletionHandler<void(Vector<RegistrableDomain>&&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPage::LoadedThirdPartyDomains(), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::GetLoadedSubresourceDomains(), WTFMove(completionHandler));
 }
 
-void WebPageProxy::clearLoadedThirdPartyDomains()
+void WebPageProxy::clearLoadedSubresourceDomains()
 {
-    send(Messages::WebPage::ClearLoadedThirdPartyDomains());
+    send(Messages::WebPage::ClearLoadedSubresourceDomains());
 }
 #endif
 

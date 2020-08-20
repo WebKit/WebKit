@@ -1640,3 +1640,102 @@ TEST(ResourceLoadStatistics, StoreSuspension)
 
     [sharedProcessPool _sendNetworkProcessDidResume];
 }
+
+@interface ResourceLoadStatisticsSchemeHandler : NSObject <WKURLSchemeHandler>
+@end
+
+@implementation ResourceLoadStatisticsSchemeHandler
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+    NSString *response = nil;
+    if ([task.request.URL.path isEqualToString:@"/fp-load-one"])
+        response = @"<body><iframe src='resource-load-statistics://example1.com/tp-load'></iframe></body>";
+    if ([task.request.URL.path isEqualToString:@"/fp-load-two"])
+        response = @"<body><iframe src='resource-load-statistics://example2.com/tp-load'></iframe></body>";
+    else if ([task.request.URL.path isEqualToString:@"/tp-load"])
+        response = @"<body></body>";
+
+    [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:response.length textEncodingName:nil] autorelease]];
+    [task didReceiveData:[response dataUsingEncoding:NSUTF8StringEncoding]];
+    [task didFinish];
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
+{
+}
+
+@end
+
+TEST(ResourceLoadStatistics, BackForwardPerPageData)
+{
+    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+
+    auto schemeHandler = adoptNS([[ResourceLoadStatisticsSchemeHandler alloc] init]);
+    WKWebViewConfiguration *configuration = [[[WKWebViewConfiguration alloc] init] autorelease];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"resource-load-statistics"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    static bool doneFlag = false;
+    [dataStore _loadedSubresourceDomainsFor:webView.get() completionHandler:^(NSArray<NSString *> *domains) {
+        EXPECT_EQ(static_cast<int>([domains count]), 0);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Seed the page with a third party.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"resource-load-statistics://fp1/fp-load-one"]]];
+    [delegate waitForDidFinishNavigation];
+
+    doneFlag = false;
+    [dataStore _loadedSubresourceDomainsFor:webView.get() completionHandler:^(NSArray<NSString *> *domains) {
+        EXPECT_EQ(static_cast<int>([domains count]), 1);
+        EXPECT_WK_STREQ([domains objectAtIndex:0], @"example1.com");
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Navigate somewhere else and load a different third party.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"resource-load-statistics://fp2/fp-load-two"]]];
+    [delegate waitForDidFinishNavigation];
+
+    doneFlag = false;
+    [dataStore _loadedSubresourceDomainsFor:webView.get() completionHandler:^(NSArray<NSString *> *domains) {
+        EXPECT_EQ(static_cast<int>([domains count]), 1);
+        EXPECT_WK_STREQ([domains objectAtIndex:0], @"example2.com");
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Go back, check for the cached third party example1.com.
+    [webView goBack];
+    [delegate waitForDidFinishNavigation];
+
+    doneFlag = false;
+    [dataStore _loadedSubresourceDomainsFor:webView.get() completionHandler:^(NSArray<NSString *> *domains) {
+        EXPECT_EQ(static_cast<int>([domains count]), 1);
+        EXPECT_WK_STREQ([domains objectAtIndex:0], @"example1.com");
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    // Go forward, check for the cached third party example2.com.
+    [webView goForward];
+    [delegate waitForDidFinishNavigation];
+
+    doneFlag = false;
+    [dataStore _loadedSubresourceDomainsFor:webView.get() completionHandler:^(NSArray<NSString *> *domains) {
+        EXPECT_EQ(static_cast<int>([domains count]), 1);
+        EXPECT_WK_STREQ([domains objectAtIndex:0], @"example2.com");
+        doneFlag = true;
+    }];
+    
+    TestWebKitAPI::Util::run(&doneFlag);
+}

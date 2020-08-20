@@ -68,6 +68,9 @@ private:
 #endif
     bool m_needsDeviceOrPageScaleChanged { false };
     bool m_needsUpdateContentsSize { false };
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    Vector<RegistrableDomain> m_loadedSubresourceDomains;
+#endif
 };
 
 } // namespace WebCore

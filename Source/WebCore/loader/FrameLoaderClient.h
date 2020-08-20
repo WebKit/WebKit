@@ -34,6 +34,7 @@
 #include "LayoutMilestone.h"
 #include "LinkIcon.h"
 #include "PageIdentifier.h"
+#include "RegistrableDomain.h"
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/WallTime.h>
@@ -374,6 +375,7 @@ public:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     virtual bool hasFrameSpecificStorageAccess() { return false; }
     virtual void didLoadFromRegistrableDomain(RegistrableDomain&&) { }
+    virtual Vector<RegistrableDomain> loadedSubresourceDomains() const { return { }; }
 #endif
 
     virtual AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const { return AllowsContentJavaScript::Yes; }

@@ -2974,10 +2974,10 @@ WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef)
 #endif
 }
 
-void WKPageLoadedThirdPartyDomains(WKPageRef page, WKPageLoadedThirdPartyDomainsFunction callback, void* callbackContext)
+void WKPageLoadedSubresourceDomains(WKPageRef page, WKPageLoadedSubresourceDomainsFunction callback, void* callbackContext)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    toImpl(page)->loadedThirdPartyDomains([callbackContext, callback](Vector<RegistrableDomain>&& domains) {
+    toImpl(page)->getLoadedSubresourceDomains([callbackContext, callback](Vector<RegistrableDomain>&& domains) {
         Vector<RefPtr<API::Object>> apiDomains = WTF::map(domains, [](auto& domain) {
             return RefPtr<API::Object>(API::String::create(WTFMove(domain.string())));
         });
@@ -2989,10 +2989,10 @@ void WKPageLoadedThirdPartyDomains(WKPageRef page, WKPageLoadedThirdPartyDomains
 #endif
 }
 
-void WKPageClearLoadedThirdPartyDomains(WKPageRef page)
+void WKPageClearLoadedSubresourceDomains(WKPageRef page)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    toImpl(page)->clearLoadedThirdPartyDomains();
+    toImpl(page)->clearLoadedSubresourceDomains();
 #else
     UNUSED_PARAM(page);
 #endif

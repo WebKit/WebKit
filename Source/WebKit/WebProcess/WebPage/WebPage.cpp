@@ -5960,7 +5960,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    clearLoadedThirdPartyDomains();
+    clearLoadedSubresourceDomains();
 #endif
     
     // If previous URL is invalid, then it's not a real page that's being navigated away from.
@@ -6830,17 +6830,17 @@ void WebPage::wasLoadedWithDataTransferFromPrevalentResource()
 void WebPage::didLoadFromRegistrableDomain(RegistrableDomain&& targetDomain)
 {
     if (targetDomain != RegistrableDomain(mainWebFrame().url()))
-        m_loadedThirdPartyDomains.add(targetDomain);
+        m_loadedSubresourceDomains.add(targetDomain);
 }
 
-void WebPage::loadedThirdPartyDomains(CompletionHandler<void(Vector<RegistrableDomain>)>&& completionHandler)
+void WebPage::getLoadedSubresourceDomains(CompletionHandler<void(Vector<RegistrableDomain>)>&& completionHandler)
 {
-    completionHandler(copyToVector(m_loadedThirdPartyDomains));
+    completionHandler(copyToVector(m_loadedSubresourceDomains));
 }
 
-void WebPage::clearLoadedThirdPartyDomains()
+void WebPage::clearLoadedSubresourceDomains()
 {
-    m_loadedThirdPartyDomains.clear();
+    m_loadedSubresourceDomains.clear();
 }
 
 #endif

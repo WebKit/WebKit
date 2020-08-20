@@ -272,8 +272,8 @@ public:
     void statisticsResetToConsistentState();
 
     void getAllStorageAccessEntries();
-    void loadedThirdPartyDomains();
-    void clearLoadedThirdPartyDomains();
+    void loadedSubresourceDomains();
+    void clearLoadedSubresourceDomains();
     void clearAppBoundSession();
     void reinitializeAppBoundDomains();
     void updateBundleIdentifierInNetworkProcess(const String& bundleIdentifier);

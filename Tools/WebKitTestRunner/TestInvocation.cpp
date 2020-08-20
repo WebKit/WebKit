@@ -822,8 +822,8 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
     }
 #endif
     
-    if (WKStringIsEqualToUTF8CString(messageName, "LoadedThirdPartyDomains")) {
-        TestController::singleton().loadedThirdPartyDomains();
+    if (WKStringIsEqualToUTF8CString(messageName, "LoadedSubresourceDomains")) {
+        TestController::singleton().loadedSubresourceDomains();
         return;
     }
 
@@ -2069,9 +2069,9 @@ void TestInvocation::didReceiveAllStorageAccessEntries(Vector<String>&& domains)
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), messageBody.get());
 }
 
-void TestInvocation::didReceiveLoadedThirdPartyDomains(Vector<String>&& domains)
+void TestInvocation::didReceiveLoadedSubresourceDomains(Vector<String>&& domains)
 {
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidReceiveLoadedThirdPartyDomains"));
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidReceiveLoadedSubresourceDomains"));
     
     WKRetainPtr<WKMutableArrayRef> messageBody = adoptWK(WKMutableArrayCreate());
     for (auto& domain : domains)

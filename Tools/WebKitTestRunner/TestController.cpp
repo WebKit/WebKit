@@ -1161,7 +1161,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setAllowsAnySSLCertificate(true);
 
     statisticsResetToConsistentState();
-    clearLoadedThirdPartyDomains();
+    clearLoadedSubresourceDomains();
     clearAppBoundSession();
     clearAdClickAttribution();
 
@@ -3237,8 +3237,8 @@ void TestController::getAllStorageAccessEntries()
     runUntil(context.done, noTimeout);
 }
 
-struct LoadedThirdPartyDomainsCallbackContext {
-    explicit LoadedThirdPartyDomainsCallbackContext(TestController& controller)
+struct LoadedSubresourceDomainsCallbackContext {
+    explicit LoadedSubresourceDomainsCallbackContext(TestController& controller)
         : testController(controller)
     {
     }
@@ -3248,9 +3248,9 @@ struct LoadedThirdPartyDomainsCallbackContext {
     Vector<String> result;
 };
 
-static void loadedThirdPartyDomainsCallback(WKArrayRef domains, void* userData)
+static void loadedSubresourceDomainsCallback(WKArrayRef domains, void* userData)
 {
-    auto* context = static_cast<LoadedThirdPartyDomainsCallbackContext*>(userData);
+    auto* context = static_cast<LoadedSubresourceDomainsCallbackContext*>(userData);
     context->done = true;
 
     if (domains) {
@@ -3263,17 +3263,17 @@ static void loadedThirdPartyDomainsCallback(WKArrayRef domains, void* userData)
     context->testController.notifyDone();
 }
 
-void TestController::loadedThirdPartyDomains()
+void TestController::loadedSubresourceDomains()
 {
-    LoadedThirdPartyDomainsCallbackContext context(*this);
-    WKPageLoadedThirdPartyDomains(m_mainWebView->page(), loadedThirdPartyDomainsCallback, &context);
+    LoadedSubresourceDomainsCallbackContext context(*this);
+    WKPageLoadedSubresourceDomains(m_mainWebView->page(), loadedSubresourceDomainsCallback, &context);
     runUntil(context.done, noTimeout);
-    m_currentInvocation->didReceiveLoadedThirdPartyDomains(WTFMove(context.result));
+    m_currentInvocation->didReceiveLoadedSubresourceDomains(WTFMove(context.result));
 }
 
-void TestController::clearLoadedThirdPartyDomains()
+void TestController::clearLoadedSubresourceDomains()
 {
-    WKPageClearLoadedThirdPartyDomains(m_mainWebView->page());
+    WKPageClearLoadedSubresourceDomains(m_mainWebView->page());
 }
 
 #endif // !PLATFORM(COCOA)

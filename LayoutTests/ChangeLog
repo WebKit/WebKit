@@ -1,3 +1,16 @@
+2020-08-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Third party domains are not stored in the case of back/forward navigations
+        https://bugs.webkit.org/show_bug.cgi?id=215595
+        <rdar://problem/66642893>
+
+        Reviewed by Chris Dumez.
+
+        Updated layout tests to use the new function name.
+
+        * http/tests/resourceLoadStatistics/loaded-registrable-domains-get-reported.html:
+        * http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html:
+
 2020-08-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Update fast/text/opticalFontWithTextStyle.html for iOS 14

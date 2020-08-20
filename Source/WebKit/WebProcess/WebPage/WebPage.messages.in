@@ -584,8 +584,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     WasLoadedWithDataTransferFromPrevalentResource()
-    ClearLoadedThirdPartyDomains()
-    LoadedThirdPartyDomains() -> (Vector<WebCore::RegistrableDomain> domains) Async
+    ClearLoadedSubresourceDomains()
+    GetLoadedSubresourceDomains() -> (Vector<WebCore::RegistrableDomain> domains) Async
 #endif
 
 #if USE(SYSTEM_PREVIEW)

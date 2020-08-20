@@ -350,7 +350,7 @@ interface TestRunner {
     void statisticsSetToSameSiteStrictCookies(DOMString hostName, object callback);
     void statisticsSetFirstPartyHostCNAMEDomain(DOMString firstPartyURLString, DOMString cnameURLString, object callback);
     void statisticsSetThirdPartyCNAMEDomain(DOMString cnameURLString, object callback);
-    void loadedThirdPartyDomains(object callback);
+    void loadedSubresourceDomains(object callback);
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(object callback);

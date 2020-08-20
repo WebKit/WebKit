@@ -352,24 +352,24 @@ void TestController::getAllStorageAccessEntries()
     }];
 }
 
-void TestController::loadedThirdPartyDomains()
+void TestController::loadedSubresourceDomains()
 {
     auto* parentView = mainWebView();
     if (!parentView)
         return;
     
-    [globalWebViewConfiguration.websiteDataStore _loadedThirdPartyDomainsFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *domains) {
-        m_currentInvocation->didReceiveLoadedThirdPartyDomains(makeVector<String>(domains));
+    [globalWebViewConfiguration.websiteDataStore _loadedSubresourceDomainsFor:parentView->platformView() completionHandler:^(NSArray<NSString *> *domains) {
+        m_currentInvocation->didReceiveLoadedSubresourceDomains(makeVector<String>(domains));
     }];
 }
 
-void TestController::clearLoadedThirdPartyDomains()
+void TestController::clearLoadedSubresourceDomains()
 {
     auto* parentView = mainWebView();
     if (!parentView)
         return;
 
-    [globalWebViewConfiguration.websiteDataStore _clearLoadedThirdPartyDomainsFor:parentView->platformView()];
+    [globalWebViewConfiguration.websiteDataStore _clearLoadedSubresourceDomainsFor:parentView->platformView()];
 }
 
 void TestController::injectUserScript(WKStringRef script)

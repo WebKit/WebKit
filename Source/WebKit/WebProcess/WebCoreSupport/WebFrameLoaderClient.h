@@ -61,6 +61,7 @@ public:
     };
     void setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&&);
     void didLoadFromRegistrableDomain(WebCore::RegistrableDomain&&) final;
+    Vector<WebCore::RegistrableDomain> loadedSubresourceDomains() const final;
 #endif
 
     WebCore::AllowsContentJavaScript allowsContentJavaScriptFromMostRecentNavigation() const final;

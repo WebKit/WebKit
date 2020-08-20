@@ -460,8 +460,8 @@ public:
     void statisticsCallDidSetThirdPartyCNAMEDomainCallback();
     void statisticsResetToConsistentState(JSValueRef completionHandler);
     void statisticsCallDidResetToConsistentStateCallback();
-    void loadedThirdPartyDomains(JSValueRef callback);
-    void callDidReceiveLoadedThirdPartyDomainsCallback(Vector<String>&& domains);
+    void loadedSubresourceDomains(JSValueRef callback);
+    void callDidReceiveLoadedSubresourceDomainsCallback(Vector<String>&& domains);
 
     // Injected bundle form client.
     void installTextDidChangeInTextFieldCallback(JSValueRef callback);

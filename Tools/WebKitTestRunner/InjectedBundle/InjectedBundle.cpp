@@ -437,7 +437,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
     
-    if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveLoadedThirdPartyDomains")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidReceiveLoadedSubresourceDomains")) {
         ASSERT(messageBody);
         ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
 
@@ -451,7 +451,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
                 domains.uncheckedAppend(toWTFString(static_cast<WKStringRef>(item)));
         }
 
-        m_testRunner->callDidReceiveLoadedThirdPartyDomainsCallback(WTFMove(domains));
+        m_testRunner->callDidReceiveLoadedSubresourceDomainsCallback(WTFMove(domains));
         return;
     }
 

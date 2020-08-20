@@ -761,7 +761,7 @@ enum {
     StatisticsDidSetFirstPartyHostCNAMEDomainCallbackID,
     StatisticsDidSetThirdPartyCNAMEDomainCallbackID,
     AllStorageAccessEntriesCallbackID,
-    LoadedThirdPartyDomainsCallbackID,
+    LoadedSubresourceDomainsCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
     TextDidChangeInTextFieldCallbackID,
@@ -2508,15 +2508,15 @@ void TestRunner::callDidReceiveAllStorageAccessEntriesCallback(Vector<String>& d
     callTestRunnerCallback(AllStorageAccessEntriesCallbackID, 1, &result);
 }
 
-void TestRunner::loadedThirdPartyDomains(JSValueRef callback)
+void TestRunner::loadedSubresourceDomains(JSValueRef callback)
 {
-    cacheTestRunnerCallback(LoadedThirdPartyDomainsCallbackID, callback);
+    cacheTestRunnerCallback(LoadedSubresourceDomainsCallbackID, callback);
     
-    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("LoadedThirdPartyDomains"));
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("LoadedSubresourceDomains"));
     WKBundlePostMessage(InjectedBundle::singleton().bundle(), messageName.get(), nullptr);
 }
 
-void TestRunner::callDidReceiveLoadedThirdPartyDomainsCallback(Vector<String>&& domains)
+void TestRunner::callDidReceiveLoadedSubresourceDomainsCallback(Vector<String>&& domains)
 {
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
@@ -2537,7 +2537,7 @@ void TestRunner::callDidReceiveLoadedThirdPartyDomainsCallback(Vector<String>&& 
     
     JSValueRef result = JSValueMakeFromJSONString(context, adopt(JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data())).get());
 
-    callTestRunnerCallback(LoadedThirdPartyDomainsCallbackID, 1, &result);
+    callTestRunnerCallback(LoadedSubresourceDomainsCallbackID, 1, &result);
 }
 
 void TestRunner::addMockMediaDevice(JSStringRef persistentId, JSStringRef label, const char* type)

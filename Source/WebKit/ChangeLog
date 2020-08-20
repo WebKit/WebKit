@@ -1,3 +1,52 @@
+2020-08-19  Kate Cheney  <katherine_cheney@apple.com>
+
+        Third party domains are not stored in the case of back/forward navigations
+        https://bugs.webkit.org/show_bug.cgi?id=215595
+        <rdar://problem/66642893>
+
+        Reviewed by Chris Dumez.
+
+        This patch adds the ability to retrieve loaded third party domains from the page
+        synchronously to be stored in the CachedPage in the case of a
+        back/forward navigation. 
+
+        It also changes the functions loadedThirdPartyDomains and
+        getLoadedThirdPartyDomains to loadedSubresourceDomains and
+        getLoadedSubresourceDomains respectively based on the conversation from
+        https://bugs.webkit.org/show_bug.cgi?id=215595.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadedSubresourceDomains):
+        (WKPageClearLoadedSubresourceDomains):
+        (WKPageLoadedThirdPartyDomains): Deleted.
+        (WKPageClearLoadedThirdPartyDomains): Deleted.
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _loadedSubresourceDomainsFor:completionHandler:]):
+        (-[WKWebsiteDataStore _clearLoadedSubresourceDomainsFor:]):
+        (-[WKWebsiteDataStore _loadedThirdPartyDomainsFor:completionHandler:]): Deleted.
+        (-[WKWebsiteDataStore _clearLoadedThirdPartyDomainsFor:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getLoadedSubresourceDomains):
+        (WebKit::WebPageProxy::clearLoadedSubresourceDomains):
+        (WebKit::WebPageProxy::loadedThirdPartyDomains): Deleted.
+        (WebKit::WebPageProxy::clearLoadedThirdPartyDomains): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::loadedSubresourceDomains const):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::didLoadFromRegistrableDomain):
+        (WebKit::WebPage::getLoadedSubresourceDomains):
+        (WebKit::WebPage::clearLoadedSubresourceDomains):
+        (WebKit::WebPage::loadedThirdPartyDomains): Deleted.
+        (WebKit::WebPage::clearLoadedThirdPartyDomains): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::loadedSubresourceDomains const):
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-08-19  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r261407): Sharing rich links from Twitter/Netflix via Messages is unreliable
