@@ -510,7 +510,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(BufferPlaybackMode playbac
         // at a sub-sample position since it will degrade the quality.
         // When aligned to the sample-frame the playback will be identical to the PCM data stored in the buffer.
         // Since playbackRate == 1 is very common, it's worth considering quality.
-        if (totalPitchRate() < 0)
+        if (playbackRate().value() < 0)
             m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, buffer()->sampleRate()) - 1;
         else
             m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset, buffer()->sampleRate());
@@ -530,10 +530,10 @@ double AudioBufferSourceNode::totalPitchRate()
     // Normally it's not an issue because buffers are loaded at the AudioContext's sample-rate, but we can handle it in any case.
     double sampleRateFactor = 1.0;
     if (buffer())
-        sampleRateFactor = buffer()->sampleRate() / sampleRate();
+        sampleRateFactor = buffer()->sampleRate() / static_cast<double>(sampleRate());
     
-    double basePitchRate = playbackRate().value();
-    double detune = pow(2, m_detune->value() / 1200);
+    double basePitchRate = playbackRate().finalValue();
+    double detune = pow(2, m_detune->finalValue() / 1200);
 
     double totalRate = dopplerRate * sampleRateFactor * basePitchRate * detune;
 

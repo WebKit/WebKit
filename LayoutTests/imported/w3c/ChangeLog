@@ -1,5 +1,16 @@
 2020-08-20  Chris Dumez  <cdumez@apple.com>
 
+        AudioBufferSourceNode should use "final" values for playbackRate and detune
+        https://bugs.webkit.org/show_bug.cgi?id=215669
+
+        Reviewed by Eric Carlson.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-audiobuffersource-connections-expected.txt:
+
+2020-08-20  Chris Dumez  <cdumez@apple.com>
+
         AudioParam.automationRate attribute is missing
         https://bugs.webkit.org/show_bug.cgi?id=215710
 
