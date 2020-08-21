@@ -1,3 +1,18 @@
+2020-08-21  Rob Buis  <rbuis@igalia.com>
+
+        Merge two DOMURL constructors
+        https://bugs.webkit.org/show_bug.cgi?id=215734
+
+        Reviewed by Darin Adler.
+
+        Merge two DOMURL constructors to make it match the relevant WebIDL:
+        https://url.spec.whatwg.org/#dom-url-url-url-base-base
+
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::create):
+        * html/DOMURL.h:
+        * html/DOMURL.idl:
+
 2020-08-21  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Fix USE_ANGLE=0 build after "WebGLLayer clobbers TEXTURE_2D binding on iOS"

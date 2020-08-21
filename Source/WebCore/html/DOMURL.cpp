@@ -57,21 +57,12 @@ ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const URL& base)
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const String& base)
 {
-    return create(url, URL { URL { }, base });
+    return create(url, base.isNull() ? aboutBlankURL() : URL { URL { }, base });
 }
 
 ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url, const DOMURL& base)
 {
     return create(url, base.href());
-}
-
-ExceptionOr<Ref<DOMURL>> DOMURL::create(const String& url)
-{
-    URL baseURL { aboutBlankURL() };
-    URL completeURL { baseURL, url };
-    if (!completeURL.isValid())
-        return Exception { TypeError };
-    return adoptRef(*new DOMURL(WTFMove(completeURL), WTFMove(baseURL)));
 }
 
 DOMURL::~DOMURL()
