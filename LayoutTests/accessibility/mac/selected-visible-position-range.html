@@ -18,41 +18,56 @@
 <script>
     description("This tests getting and setting the selected VisiblePosition range.");
 
-    function checkCurrentSelection(accessibleObject, selection)
-    {
-        waitFor(() => {
-            selectedRange = accessibleObject.selectedTextMarkerRange();
-            selectedString = accessibleObject.stringForTextMarkerRange(selectedRange);
-            return selectedString == selection;
-        });
-        debug("PASS current selection is '" + selection + "'");
-    }
-
     if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
         // Select the last paragraph using DOM API.
         selectTextInNode("p2");
 
         // Get current selection range via accessibility API.
         var content = accessibilityController.accessibleElementById("content");
-        checkCurrentSelection(content, "Last paragraph.");
+        setTimeout(async function() {
+            var selectedRange = null;
+            var selectedString = "";
+            var selectedIndex = -1;
 
-        // Set the selection to the first paragraph via accessibility API.
-        var lastParagraphRange = content.selectedTextMarkerRange();
-        var lastParagraphStart = content.startTextMarkerForTextMarkerRange(lastParagraphRange);
-        var firstParagraphStart = content.previousParagraphStartTextMarkerForTextMarker(lastParagraphStart);
-        var firstParagraphRange = content.textMarkerRangeForMarkers(firstParagraphStart, lastParagraphStart);
-        content.setSelectedVisibleTextRange(firstParagraphRange);
-        checkCurrentSelection(content, "First paragraph.\n\n");
+            await waitFor(() => {
+                selectedRange = content.selectedTextMarkerRange();
+                selectedString = content.stringForTextMarkerRange(selectedRange);
+                return selectedString == "Last paragraph.";
+            });
+            debug("PASS current selection is '" + selectedString + "'");
 
-        // Set the selection range to a collapsed range at the start position of the last paragraph.
-        var nullRange = content.textMarkerRangeForMarkers(lastParagraphStart, lastParagraphStart);
-        content.setSelectedVisibleTextRange(nullRange);
-        checkCurrentSelection(content, "");
+            // Set the selection to the first paragraph via accessibility API.
+            var end = content.startTextMarkerForTextMarkerRange(selectedRange);
+            var start = content.previousParagraphStartTextMarkerForTextMarker(end);
+            var range = content.textMarkerRangeForMarkers(start, end);
+            content.setSelectedVisibleTextRange(range);
 
-        // Set the selection range to a collapsed range at the start position of the first paragraph.
-        nullRange = content.textMarkerRangeForMarkers(firstParagraphStart, firstParagraphStart);
-        content.setSelectedVisibleTextRange(nullRange);
-        checkCurrentSelection(content, "");
+            await waitFor(() => {
+                selectedRange = content.selectedTextMarkerRange();
+                selectedString = content.stringForTextMarkerRange(selectedRange);
+                return selectedString == "First paragraph.\n\n";
+            });
+            debug("PASS current selection is '" + selectedString + "'");
+
+            // Set the selection range to a collapsed range at the second character of the last paragraph.
+            end = content.nextTextMarker(end);
+            range = content.textMarkerRangeForMarkers(end, end);
+            content.setSelectedVisibleTextRange(range);
+
+            var index = -1;
+            await waitFor(() => {
+                selectedRange = content.selectedTextMarkerRange();
+                selectedString = content.stringForTextMarkerRange(selectedRange);
+                index = content.indexForTextMarker(content.startTextMarkerForTextMarkerRange(selectedRange));
+                return selectedString == "" && index == 19;
+            });
+            debug("PASS current selection is '" + selectedString + "'");
+            debug("PASS current selection index is " + index);
+
+            finishJSTest();
+        }, 0);
     }
 </script>
 <script src="../../resources/js-test-post.js"></script>

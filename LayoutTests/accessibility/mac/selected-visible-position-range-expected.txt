@@ -12,7 +12,7 @@ PASS current selection is 'First paragraph.
 
 '
 PASS current selection is ''
-PASS current selection is ''
+PASS current selection index is 19
 PASS successfullyParsed is true
 
 TEST COMPLETE

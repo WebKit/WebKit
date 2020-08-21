@@ -2199,10 +2199,10 @@ bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const 
     
     return false;
 }
-    
+
 void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePositionRange& range) const
 {
-    if (range.start.isNull() || range.end.isNull())
+    if (range.isNull())
         return;
 
     // In WebKit1, when the top web area sets the selection to be an input element in an iframe, the caret will disappear.

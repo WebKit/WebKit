@@ -1,3 +1,24 @@
+2020-08-21  Andres Gonzalez  <andresg_22@apple.com>
+
+        Range::contains does not work correctly when the common ancestor node is a Document.
+        https://bugs.webkit.org/show_bug.cgi?id=215714
+
+        Reviewed by Darin Adler.
+
+        Test: accessibility/mac/selected-visible-position-range.html.
+
+        For a Range with a Document object as common ancestor, Range::contains(otherRange)
+        would return false for any given other range in the same document. This
+        causes problems in VoiceOver navigation and Braille functionality in
+        the MacOS Mail.app.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange const):
+        Use SimpleRange::isNull instead of repeating its implementation.
+        * dom/Range.cpp:
+        (WebCore::Range::contains const): Compare the Documents of the ranges'
+        common ancesstor nodes instead of their ownerDocuments.
+
 2020-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Debug crashes in backdrop filter tests

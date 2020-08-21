@@ -1163,7 +1163,7 @@ void Range::formatForDebugger(char* buffer, unsigned length) const
 
 bool Range::contains(const Range& other) const
 {
-    if (commonAncestorContainer()->ownerDocument() != other.commonAncestorContainer()->ownerDocument())
+    if (commonAncestorContainer()->document() != other.commonAncestorContainer()->document())
         return false;
 
     auto startToStart = compareBoundaryPoints(Range::START_TO_START, other);
