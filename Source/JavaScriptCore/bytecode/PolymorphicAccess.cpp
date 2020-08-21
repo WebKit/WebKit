@@ -125,6 +125,19 @@ auto AccessGenerationState::preserveLiveRegistersToStackForCall(const RegisterSe
     };
 }
 
+auto AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions() -> SpillState
+{
+    RegisterSet liveRegisters = allocator->usedRegisters();
+    liveRegisters.exclude(calleeSaveRegisters());
+
+    constexpr unsigned extraStackPadding = 0;
+    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters, extraStackPadding);
+    return SpillState {
+        WTFMove(liveRegisters),
+        numberOfStackBytesUsedForRegisterPreservation
+    };
+}
+
 void AccessGenerationState::restoreLiveRegistersFromStackForCallWithThrownException(const SpillState& spillState)
 {
     // Even if we're a getter, we don't want to ignore the result value like we normally do

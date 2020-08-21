@@ -513,7 +513,6 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case DeleteNonConfigurable:
     case DeleteMiss:
     case Load:
-    case Replace:
     case Miss:
     case GetGetter:
     case IntrinsicGetter:
@@ -544,6 +543,9 @@ bool AccessCase::doesCalls(VM& vm, Vector<JSCell*>* cellsToMarkIfDoesCalls) cons
     case IndexedTypedArrayFloat64Load:
     case IndexedStringLoad:
         doesCalls = false;
+        break;
+    case Replace:
+        doesCalls = viaProxy();
         break;
     }
 
@@ -578,6 +580,9 @@ bool AccessCase::canReplace(const AccessCase& other) const
     // A->canReplace(B) == B->canReplace(A).
 
     if (m_identifier != other.m_identifier)
+        return false;
+
+    if (viaProxy() != other.viaProxy())
         return false;
 
     auto checkPolyProtoAndStructure = [&] {
@@ -1775,6 +1780,27 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 CCallHelpers::Address(
                     scratchGPR, offsetInButterfly(m_offset) * sizeof(JSValue)));
         }
+
+        if (viaProxy()) {
+            CCallHelpers::JumpList skipBarrier;
+            skipBarrier.append(jit.branchIfNotCell(valueRegs));
+            if (!isInlineOffset(m_offset))
+                jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
+            skipBarrier.append(jit.barrierBranch(vm, scratchGPR, scratchGPR));
+
+            jit.loadPtr(CCallHelpers::Address(baseGPR, JSProxy::targetOffset()), scratchGPR);
+            auto spillState = state.preserveLiveRegistersToStackForCallWithoutExceptions();
+            jit.setupArguments<decltype(operationWriteBarrierSlowPath)>(CCallHelpers::TrustedImmPtr(&vm), scratchGPR);
+            jit.prepareCallOperation(vm);
+            auto operationCall = jit.call(OperationPtrTag);
+            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+                linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(operationWriteBarrierSlowPath));
+            });
+            state.restoreLiveRegistersFromStackForCall(spillState);
+
+            skipBarrier.link(&jit);
+        }
+
         state.succeed();
         return;
     }

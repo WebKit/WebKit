@@ -1,3 +1,23 @@
+2020-08-20  Saam Barati  <sbarati@apple.com>
+
+        Replace IC on Proxy must write barrier Proxy's target
+        https://bugs.webkit.org/show_bug.cgi?id=215720
+
+        Reviewed by Yusuke Suzuki.
+
+        The put_by_id opcode in the baseline and the DFG/FTl will emit a writeBarrier
+        after the operation is complete. But it does this to the base object. In the
+        case of an IC with the base as a Proxy, we're not actually storing to the Proxy, but
+        instead, the Proxy's target. This patch makes it so our IC code writeBarriers
+        the Proxy's target. This fixed a crash when running Speedometer2.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::canReplace const):
+        (JSC::AccessCase::generateImpl):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions):
+        * bytecode/PolymorphicAccess.h:
+
 2020-08-20  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Invalid early errors for class methods named "constructor" and "prototype"
