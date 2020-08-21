@@ -1,3 +1,9 @@
+2020-08-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations: Remove lines for removed tests.
+
 2020-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Debug crashes in backdrop filter tests
