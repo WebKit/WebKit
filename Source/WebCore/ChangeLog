@@ -1,3 +1,59 @@
+2020-08-21  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r265953. rdar://problem/67560218
+
+    Sandbox violation when calling [NSHTTPCookieStorage sharedHTTPCookieStorage] from the WebProcess
+    https://bugs.webkit.org/show_bug.cgi?id=215701
+    <rdar://problem/67069826>
+    
+    Reviewed by Geoffrey Garen.
+    
+    The sandbox does not allow calling [NSHTTPCookieStorage sharedHTTPCookieStorage] from the WebProcess.
+    createPrivateStorageSession() was calling [NSHTTPCookieStorage sharedHTTPCookieStorage] to retrieve
+    the cookieAcceptPolicy and createPrivateStorageSession() is used by the cookie cache in the WebProcess.
+    To address the issue, we now allow the caller of createPrivateStorageSession() to provide the
+    cookieAcceptPolicy and we have the cookie cache retrieve the cookieAcceptPolicy from the
+    NetworkProcessConnection.
+    
+    Source/WebCore:
+    
+    * platform/network/NetworkStorageSession.h:
+    * platform/network/cf/NetworkStorageSessionCFNetWin.cpp:
+    (WebCore::createPrivateStorageSession):
+    * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+    (WebCore::createPrivateStorageSession):
+    
+    Source/WebKit:
+    
+    * WebProcess/Network/NetworkProcessConnection.h:
+    (WebKit::NetworkProcessConnection::cookieAcceptPolicy const):
+    * WebProcess/WebPage/Cocoa/WebCookieCacheCocoa.mm:
+    (WebKit::WebCookieCache::inMemoryStorageSession):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265953 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-20  Chris Dumez  <cdumez@apple.com>
+
+            Sandbox violation when calling [NSHTTPCookieStorage sharedHTTPCookieStorage] from the WebProcess
+            https://bugs.webkit.org/show_bug.cgi?id=215701
+            <rdar://problem/67069826>
+
+            Reviewed by Geoffrey Garen.
+
+            The sandbox does not allow calling [NSHTTPCookieStorage sharedHTTPCookieStorage] from the WebProcess.
+            createPrivateStorageSession() was calling [NSHTTPCookieStorage sharedHTTPCookieStorage] to retrieve
+            the cookieAcceptPolicy and createPrivateStorageSession() is used by the cookie cache in the WebProcess.
+            To address the issue, we now allow the caller of createPrivateStorageSession() to provide the
+            cookieAcceptPolicy and we have the cookie cache retrieve the cookieAcceptPolicy from the
+            NetworkProcessConnection.
+
+            * platform/network/NetworkStorageSession.h:
+            * platform/network/cf/NetworkStorageSessionCFNetWin.cpp:
+            (WebCore::createPrivateStorageSession):
+            * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+            (WebCore::createPrivateStorageSession):
+
 2020-08-19  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/67370822

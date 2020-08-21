@@ -83,6 +83,7 @@ public:
     Optional<audit_token_t> networkProcessAuditToken() const { return m_networkProcessAuditToken; }
 #endif
 
+    WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy() const { return m_cookieAcceptPolicy; }
     bool cookiesEnabled() const;
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)

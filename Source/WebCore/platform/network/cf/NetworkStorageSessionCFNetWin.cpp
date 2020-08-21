@@ -62,7 +62,24 @@ DECLARE_CF_TYPE_TRAIT(CFHTTPCookie);
 
 namespace WebCore {
 
-CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier)
+static CFHTTPCookieStorageAcceptPolicy toCFHTTPCookieStorageAcceptPolicy(HTTPCookieAcceptPolicy policy)
+{
+    switch (policy) {
+    case HTTPCookieAcceptPolicy::AlwaysAccept:
+        return CFHTTPCookieStorageAcceptPolicyAlways;
+    case HTTPCookieAcceptPolicy::Never:
+        return CFHTTPCookieStorageAcceptPolicyNever;
+    case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
+        return CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain;
+    case HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
+        return CFHTTPCookieStorageAcceptPolicyExclusivelyFromMainDocumentDomain;
+    }
+    ASSERT_NOT_REACHED();
+
+    return CFHTTPCookieStorageAcceptPolicyAlways;
+}
+
+CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier, Optional<HTTPCookieAcceptPolicy> cookieAcceptPolicy)
 {
     const void* sessionPropertyKeys[] = { _kCFURLStorageSessionIsPrivate };
     const void* sessionPropertyValues[] = { kCFBooleanTrue };
@@ -78,9 +95,16 @@ CFURLStorageSessionRef createPrivateStorageSession(CFStringRef identifier)
     CFRelease(defaultCache);
     CFRelease(cache);
     
+    CFHTTPCookieStorageAcceptPolicy cfCookieAcceptPolicy;
+    if (cookieAcceptPolicy)
+        cfCookieAcceptPolicy = toCFHTTPCookieStorageAcceptPolicy(*cookieAcceptPolicy);
+    else {
+        CFHTTPCookieStorageRef defaultCookieStorage = _CFHTTPCookieStorageGetDefault(kCFAllocatorDefault);
+        cfCookieAcceptPolicy = CFHTTPCookieStorageGetCookieAcceptPolicy(defaultCookieStorage);
+    }
+
     CFHTTPCookieStorageRef cookieStorage = _CFURLStorageSessionCopyCookieStorage(kCFAllocatorDefault, storageSession);
-    CFHTTPCookieStorageRef defaultCookieStorage = _CFHTTPCookieStorageGetDefault(kCFAllocatorDefault);
-    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage, CFHTTPCookieStorageGetCookieAcceptPolicy(defaultCookieStorage));
+    CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage, cfCookieAcceptPolicy);
     CFRelease(cookieStorage);
     
     return storageSession;

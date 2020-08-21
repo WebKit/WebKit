@@ -30,6 +30,7 @@
 #import <WebCore/Cookie.h>
 #import <WebCore/CookieStorageObserver.h>
 #import <WebCore/HTTPCookieAcceptPolicy.h>
+#import <WebCore/HTTPCookieAcceptPolicyCocoa.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
@@ -77,22 +78,6 @@ void HTTPCookieStore::stopObservingChangesToDefaultUIProcessCookieStore()
 void HTTPCookieStore::deleteCookiesInDefaultUIProcessCookieStore()
 {
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] removeCookiesSinceDate:[NSDate distantPast]];
-}
-
-static NSHTTPCookieAcceptPolicy toNSHTTPCookieAcceptPolicy(WebCore::HTTPCookieAcceptPolicy policy)
-{
-    switch (policy) {
-    case WebCore::HTTPCookieAcceptPolicy::AlwaysAccept:
-        return NSHTTPCookieAcceptPolicyAlways;
-    case WebCore::HTTPCookieAcceptPolicy::Never:
-        return NSHTTPCookieAcceptPolicyNever;
-    case WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
-        return NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
-    case WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
-        return (NSHTTPCookieAcceptPolicy)NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain;
-    }
-    ASSERT_NOT_REACHED();
-    return NSHTTPCookieAcceptPolicyAlways;
 }
 
 void HTTPCookieStore::setHTTPCookieAcceptPolicyInDefaultUIProcessCookieStore(WebCore::HTTPCookieAcceptPolicy policy)

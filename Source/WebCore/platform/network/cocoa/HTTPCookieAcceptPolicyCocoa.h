@@ -33,17 +33,33 @@ inline HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAcceptPolicy 
 {
     switch (static_cast<NSUInteger>(policy)) {
     case NSHTTPCookieAcceptPolicyAlways:
-        return WebCore::HTTPCookieAcceptPolicy::AlwaysAccept;
+        return HTTPCookieAcceptPolicy::AlwaysAccept;
     case NSHTTPCookieAcceptPolicyNever:
-        return WebCore::HTTPCookieAcceptPolicy::Never;
+        return HTTPCookieAcceptPolicy::Never;
     case NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
-        return WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
+        return HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain;
     case NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain:
-        return WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
+        return HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain;
     }
 
     ASSERT_NOT_REACHED();
-    return WebCore::HTTPCookieAcceptPolicy::Never;
+    return HTTPCookieAcceptPolicy::Never;
+}
+
+inline NSHTTPCookieAcceptPolicy toNSHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
+{
+    switch (policy) {
+    case HTTPCookieAcceptPolicy::AlwaysAccept:
+        return NSHTTPCookieAcceptPolicyAlways;
+    case HTTPCookieAcceptPolicy::Never:
+        return NSHTTPCookieAcceptPolicyNever;
+    case HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain:
+        return NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+    case HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain:
+        return (NSHTTPCookieAcceptPolicy)NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain;
+    }
+    ASSERT_NOT_REACHED();
+    return NSHTTPCookieAcceptPolicyAlways;
 }
 
 }
