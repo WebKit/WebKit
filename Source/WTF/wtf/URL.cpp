@@ -843,7 +843,12 @@ bool protocolIsInHTTPFamily(const String& url)
 
 const URL& blankURL()
 {
-    static NeverDestroyed<URL> staticBlankURL(URL(), "about:blank");
+    static NeverDestroyed<URL> staticBlankURL;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        static constexpr const char* aboutBlank = "about:blank";
+        staticBlankURL.get() = URL(URL(), StringImpl::createStaticStringImpl(aboutBlank, strlen(aboutBlank)));
+    });
     return staticBlankURL;
 }
 
