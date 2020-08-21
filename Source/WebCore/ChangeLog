@@ -1,3 +1,29 @@
+2020-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Debug crashes in backdrop filter tests
+        https://bugs.webkit.org/show_bug.cgi?id=215209
+
+        Reviewed by Adrian Perez de Castro.
+
+        This only happens in WKTR because RenderLayerCompositor::flushPendingLayerChanges() is called from
+        RenderLayerCompositor::layerTreeAsText(), so the coordinator doesn't know layers are being flushed and we don't
+        return early from notifyFlushRequired(). We don't really need to have a coordinator associated to the backdrop
+        layer, we just need to attach the layer to the coordinator to ensure it's updated.
+
+        * platform/graphics/nicosia/NicosiaAnimation.cpp:
+        (Nicosia::Animation::applyInternal): Handle AnimatedPropertyWebkitBackdropFilter.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer): Detach also the backdrop layer.
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly): Attach the backdrop layer to the
+        coordinator if there's one.
+        (WebCore::CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers): Do not call this for the
+        backdrop layer.
+        (WebCore::CoordinatedGraphicsLayer::invalidateCoordinator): Set coordinator to nullptr.
+        (WebCore::CoordinatedGraphicsLayer::setCoordinatorIncludingSubLayersIfNeeded): Set the coordinator and attach
+        the layer. Also attach the backdrop layer.
+        (WebCore::CoordinatedGraphicsLayer::setCoordinator): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+
 2020-08-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r263729): Carousel freezes on "fourth page"/fourth click on right arrow on netflix.com

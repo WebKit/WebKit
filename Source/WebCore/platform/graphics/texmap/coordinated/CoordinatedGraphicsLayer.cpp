@@ -160,6 +160,8 @@ CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
 {
     if (m_coordinator) {
         purgeBackingStores();
+        if (m_backdropLayer)
+            m_coordinator->detachLayer(m_backdropLayer.get());
         m_coordinator->detachLayer(this);
     }
     ASSERT(!m_nicosia.imageBacking);
@@ -941,7 +943,8 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
                             m_backdropLayer->setAnchorPoint(FloatPoint3D());
                             m_backdropLayer->setMasksToBounds(true);
                             m_backdropLayer->setName("backdrop");
-                            m_backdropLayer->setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
+                            if (m_coordinator)
+                                m_coordinator->attachLayer(m_backdropLayer.get());
                         }
                         m_backdropLayer->setContentsVisible(m_contentsVisible);
                         m_backdropLayer->setFilters(m_backdropFilters);
@@ -1010,9 +1013,6 @@ void CoordinatedGraphicsLayer::syncPendingStateChangesIncludingSubLayers()
 
     if (maskLayer())
         downcast<CoordinatedGraphicsLayer>(*maskLayer()).syncPendingStateChangesIncludingSubLayers();
-
-    if (m_backdropLayer)
-        m_backdropLayer->syncPendingStateChangesIncludingSubLayers();
 
     for (auto& child : children())
         downcast<CoordinatedGraphicsLayer>(child.get()).syncPendingStateChangesIncludingSubLayers();
@@ -1194,9 +1194,9 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
     notifyFlushRequired();
 }
 
-void CoordinatedGraphicsLayer::setCoordinator(CoordinatedGraphicsLayerClient* coordinator)
+void CoordinatedGraphicsLayer::invalidateCoordinator()
 {
-    m_coordinator = coordinator;
+    m_coordinator = nullptr;
 }
 
 void CoordinatedGraphicsLayer::setCoordinatorIncludingSubLayersIfNeeded(CoordinatedGraphicsLayerClient* coordinator)
@@ -1221,9 +1221,14 @@ void CoordinatedGraphicsLayer::setCoordinatorIncludingSubLayersIfNeeded(Coordina
     // We need to update here the layer changeMask so the scene gets all the current values.
     m_nicosia.delta.value = UINT_MAX;
 
-    coordinator->attachLayer(this);
+    m_coordinator = coordinator;
+    m_coordinator->attachLayer(this);
+
+    if (m_backdropLayer)
+        m_coordinator->attachLayer(m_backdropLayer.get());
+
     for (auto& child : children())
-        downcast<CoordinatedGraphicsLayer>(child.get()).setCoordinatorIncludingSubLayersIfNeeded(coordinator);
+        downcast<CoordinatedGraphicsLayer>(child.get()).setCoordinatorIncludingSubLayersIfNeeded(m_coordinator);
 }
 
 const RefPtr<Nicosia::CompositionLayer>& CoordinatedGraphicsLayer::compositionLayer() const

@@ -1,3 +1,14 @@
+2020-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Debug crashes in backdrop filter tests
+        https://bugs.webkit.org/show_bug.cgi?id=215209
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove expectations for tests that are now passing.
+
+        * platform/glib/TestExpectations:
+
 2020-08-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Mark several WebGL tests as failure after r265975.

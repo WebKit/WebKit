@@ -1,3 +1,18 @@
+2020-08-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Debug crashes in backdrop filter tests
+        https://bugs.webkit.org/show_bug.cgi?id=215209
+
+        Reviewed by Adrian Perez de Castro.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::~CompositingCoordinator): Use invalidateCoordinator() instead of setCoordinator()
+        that has been removed.
+        (WebKit::CompositingCoordinator::createGraphicsLayer): Use setCoordinatorIncludingSubLayersIfNeeded() instead of
+        attaching the layer directly.
+        (WebKit::CompositingCoordinator::attachLayer): Do not call setCoordinator(), the caller is expected to set the
+        coordinator.
+
 2020-08-20  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Web pages are not responding correctly to changes in "Reduce motion" setting

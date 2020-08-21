@@ -127,7 +127,7 @@ public:
 
     IntRect transformedVisibleRect();
 
-    void setCoordinator(CoordinatedGraphicsLayerClient*);
+    void invalidateCoordinator();
     void setCoordinatorIncludingSubLayersIfNeeded(CoordinatedGraphicsLayerClient*);
 
     void setNeedsVisibleRectAdjustment();
