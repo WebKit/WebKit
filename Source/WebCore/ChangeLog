@@ -1,3 +1,45 @@
+2020-08-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r263729): Carousel freezes on "fourth page"/fourth click on right arrow on netflix.com
+        https://bugs.webkit.org/show_bug.cgi?id=215655
+        <rdar://problem/65845979>
+
+        Reviewed by Dean Jackson.
+
+        On netflix.com, when clicking on the left and right arrows in each movie or TV show carousel, the page attempts
+        to animate to the next page of the carousel using a CSS transform transition. The logic applies `transform` and
+        `transition` CSS properties to a container `div`, and adds a `transitionend` event listener which the page
+        expects to be invoked when the animation is complete. While waiting for this `transitionend` event, the script
+        also sets a boolean flag that prevents the carousel from being advanced to any other page. However, after the
+        changes in r263729, the carousel gets into a state where `transition` and `transform` styles are set, but the
+        animation never begins, and thus, no subsequent `transitionend` event is observed. This causes the page to
+        believe that the carousel is indefinitely animating, so it never unsets the boolean flag, which results in the
+        carousel being permanently stuck.
+
+        This occurs because we now have logic in `AnimationTimeline::updateCSSTransitionsForElementAndProperty` that
+        moves the `CSSTransition` from the element's map of running transitions to the map of completed transitions in
+        the case where the corresponding `WebAnimation` is already in `Finished` state. However, consider the case where
+        there is no matching backing animation (i.e. `matchingBackingAnimation` is `nullptr`); for instance, this can
+        happen if the transition CSS property is set to none in the middle of the `transitionend` event, as demonstrated
+        in the new layout test. Before the change, we would've removed the `CSSTransition` from the map of running
+        transitions and canceled it, but now, we instead move it to the map of completed transitions, where it remains
+        until the next CSS transition update is triggered (which would potentially be indefinitely long!).
+
+        On netflix.com, this next CSS transition update happens the page attempts to advance the carousel. Since the old
+        `CSSTransition` is still in the "completed" transitions map, we end up returning `true` when checking
+        `propertyInStyleMatchesValueForTransitionInMap`, and consequently never attempt to create a new `CSSTransition`
+        and add it to the map of running transitions in step 1 of the algorithm. As described above, this causes the
+        carousel to get stuck in a bad state.
+
+        To fix this, we simply revert to pre-r263729 behavior in the case where the matching backing animation was
+        already removed, and allow step 3 of the algorithm to cancel the running animation and remove it altogether
+        instead of moving it into the element's completed transitions map.
+
+        Test: animations/animation-followed-by-two-transitions.html
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::updateCSSTransitionsForElementAndProperty):
+
 2020-08-20  Chris Dumez  <cdumez@apple.com>
 
         AudioBufferSourceNode should use "final" values for playbackRate and detune
