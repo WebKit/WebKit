@@ -230,7 +230,7 @@ class TestRunner(object):
                 common.parse_output_lines(fd, sys.stdout.write)
                 status = self._waitpid(pid)
                 os.close(fd)
-            except RuntimeError:
+            except Timeout.Exception:
                 self._kill_process(pid)
                 os.close(fd)
                 sys.stdout.write("**TIMEOUT** %s\n" % subtest)

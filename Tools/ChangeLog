@@ -1,3 +1,16 @@
+2020-08-21  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Update checked exception after r265942
+        https://bugs.webkit.org/show_bug.cgi?id=215738
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Avoid aborting the full script on a timeout due to unchecked
+        exception.
+
+        * glib/api_test_runner.py:
+        (TestRunner._run_google_test): Use exception from new timeout module.
+
 2020-08-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [EWS] Add more workers to GTK-WK2-Tests-EWS queue
