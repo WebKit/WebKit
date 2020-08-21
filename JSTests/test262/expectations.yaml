@@ -768,12 +768,6 @@ test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
 test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
   default: 'Test262Error: Expected a ReferenceError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a ReferenceError but got a ReferenceError'
-test/built-ins/Function/prototype/bind/instance-length-exceeds-int32.js:
-  default: 'Test262Error: Expected SameValue(«0», «2147483648») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «2147483648») to be true'
-test/built-ins/Function/prototype/bind/instance-length-tointeger.js:
-  default: 'Test262Error: Expected SameValue(«0», «Infinity») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«0», «Infinity») to be true'
 test/built-ins/Function/prototype/length.js:
   default: 'Test262Error: descriptor should be configurable'
   strict mode: 'Test262Error: descriptor should be configurable'

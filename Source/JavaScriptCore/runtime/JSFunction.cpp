@@ -121,9 +121,8 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable*, int length, const Str
     ASSERT(methodTable(vm)->getConstructData == &JSFunction::getConstructData);
     ASSERT(methodTable(vm)->getCallData == &JSFunction::getCallData);
 
-    // Some NativeExecutable functions, like JSBoundFunction, decide to lazily allocate their name string / length.
-    if (this->inherits<JSBoundFunction>(vm))
-        return;
+    // JSBoundFunction instances use finishCreation(VM&) overload and lazily allocate their name string / length.
+    ASSERT(!this->inherits<JSBoundFunction>(vm));
 
     if (!name.isNull())
         putDirect(vm, vm.propertyNames->name, jsString(vm, name), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
@@ -770,7 +769,7 @@ void JSFunction::reifyLength(VM& vm)
     FunctionRareData* rareData = this->ensureRareData(vm);
 
     ASSERT(!hasReifiedLength());
-    unsigned length = 0;
+    double length = 0;
     if (this->inherits<JSBoundFunction>(vm))
         length = jsCast<JSBoundFunction*>(this)->length(vm);
     else {

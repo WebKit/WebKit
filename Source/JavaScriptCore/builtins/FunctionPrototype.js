@@ -77,7 +77,7 @@ function bind(thisValue)
     if (@hasOwnLengthProperty(target)) {
         var lengthValue = target.length;
         if (typeof lengthValue === "number") {
-            lengthValue = lengthValue | 0;
+            lengthValue = @toInteger(lengthValue);
             // Note that we only care about positive lengthValues, however, this comparision
             // against numBoundArgs suffices to prove we're not a negative number.
             if (lengthValue > numBoundArgs)

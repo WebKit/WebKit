@@ -48,7 +48,7 @@ public:
         return vm.boundFunctionSpace<mode>();
     }
 
-    static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, int, JSString* nameMayBeNull);
+    static JSBoundFunction* create(VM&, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, double length, JSString* nameMayBeNull);
     
     static bool customHasInstance(JSObject*, JSGlobalObject*, JSValue);
 
@@ -66,7 +66,7 @@ public:
         return m_nameMayBeNull->tryGetValue(allocationAllowed);
     }
 
-    int32_t length(VM&) { return m_length; }
+    double length(VM&) { return m_length; }
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -81,16 +81,16 @@ public:
     DECLARE_INFO;
 
 private:
-    JSBoundFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* nameMayBeNull, int length);
+    JSBoundFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, JSObject* targetFunction, JSValue boundThis, JSImmutableButterfly* boundArgs, JSString* nameMayBeNull, double length);
 
-    void finishCreation(VM&, NativeExecutable*, int length);
+    void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<JSObject> m_targetFunction;
     WriteBarrier<Unknown> m_boundThis;
     WriteBarrier<JSImmutableButterfly> m_boundArgs;
     WriteBarrier<JSString> m_nameMayBeNull;
-    int m_length;
+    double m_length;
 };
 
 EncodedJSValue JSC_HOST_CALL boundFunctionCall(JSGlobalObject*, CallFrame*);
