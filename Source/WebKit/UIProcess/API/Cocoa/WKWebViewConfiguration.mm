@@ -193,9 +193,15 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if !PLATFORM(WATCHOS)
     _allowsPictureInPictureMediaPlayback = YES;
 #endif
+
+#if PLATFORM(MACCATALYST)
+    _allowsInlineMediaPlayback = YES;
+#else
     _allowsInlineMediaPlayback = WebKit::currentUserInterfaceIdiomIsPad();
+#endif
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
+
     _mediaDataLoadsAutomatically = NO;
 #if !PLATFORM(WATCHOS)
     if (WebKit::linkedOnOrAfter(WebKit::SDKVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
