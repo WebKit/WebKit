@@ -633,12 +633,6 @@ test/built-ins/ArrayBuffer/prototype/slice/species.js:
 test/built-ins/ArrayIteratorPrototype/next/detach-typedarray-in-progress.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all (Testing with Float64Array.)'
-test/built-ins/AsyncFunction/AsyncFunctionPrototype-is-not-callable.js:
-  default: 'Test262Error: length'
-  strict mode: 'Test262Error: length'
-test/built-ins/AsyncGeneratorFunction/prototype/not-callable.js:
-  default: 'Test262Error: length'
-  strict mode: 'Test262Error: length'
 test/built-ins/DataView/custom-proto-access-detaches-buffer.js:
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
@@ -768,9 +762,6 @@ test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
 test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
   default: 'Test262Error: Expected a ReferenceError but got a ReferenceError'
   strict mode: 'Test262Error: Expected a ReferenceError but got a ReferenceError'
-test/built-ins/Function/prototype/length.js:
-  default: 'Test262Error: descriptor should be configurable'
-  strict mode: 'Test262Error: descriptor should be configurable'
 test/built-ins/Function/prototype/toString/AsyncFunction.js:
   default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
   strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
@@ -906,9 +897,6 @@ test/built-ins/Function/prototype/toString/setter-object.js:
 test/built-ins/Function/prototype/toString/unicode.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }" (function \u0061(\u{62}, \u0063) { \u0062 = \u{00063}; return b; })'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function a(\\u{62}, \\u0063) { \\u0062 = \\u{00063}; return b; }" (function \u0061(\u{62}, \u0063) { \u0062 = \u{00063}; return b; })'
-test/built-ins/GeneratorFunction/prototype/not-callable.js:
-  default: 'Test262Error: length'
-  strict mode: 'Test262Error: length'
 test/built-ins/Object/assign/strings-and-symbol-order-proxy.js:
   default: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '
   strict mode: 'Test262Error: Expected [foo, 0, Symbol()] and [Symbol(), foo, 0] to have the same contents. '

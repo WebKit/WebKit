@@ -34,7 +34,7 @@ const ClassInfo FunctionPrototype::s_info = { "Function", &Base::s_info, nullptr
 
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(JSGlobalObject*, CallFrame*);
 
-// ECMA 15.3.4
+// https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object
 static EncodedJSValue JSC_HOST_CALL callFunctionPrototype(JSGlobalObject*, CallFrame*)
 {
     return JSValue::encode(jsUndefined());
@@ -48,7 +48,8 @@ FunctionPrototype::FunctionPrototype(VM& vm, Structure* structure)
 void FunctionPrototype::finishCreation(VM& vm, const String& name)
 {
     Base::finishCreation(vm, name, NameAdditionMode::WithoutStructureTransition);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+    ASSERT(inherits(vm, info()));
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 void FunctionPrototype::addFunctionProperties(VM& vm, JSGlobalObject* globalObject, JSFunction** callFunction, JSFunction** applyFunction, JSFunction** hasInstanceSymbolFunction)

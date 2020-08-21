@@ -1,5 +1,31 @@
 2020-08-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Align "length" properties of function prototypes with the spec
+        https://bugs.webkit.org/show_bug.cgi?id=215716
+
+        Reviewed by Ross Kirsling.
+
+        This change defines Function.prototype.length [1] as [[Configurable]] and
+        removes "length" properties from other (async/generator) function prototypes 
+        that are ordinary non-callable objects [2], aligning JSC with V8 and SpiderMonkey.
+
+        Also, adds inherits() ASSERT in FunctionPrototype::finishCreation()
+        to match (most of) the other built-ins.
+
+        [1]: https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object
+        [2]: https://tc39.es/ecma262/#sec-async-function-prototype-properties
+
+        * runtime/AsyncFunctionPrototype.cpp:
+        (JSC::AsyncFunctionPrototype::finishCreation):
+        * runtime/AsyncGeneratorFunctionPrototype.cpp:
+        (JSC::AsyncGeneratorFunctionPrototype::finishCreation):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::finishCreation):
+        * runtime/GeneratorFunctionPrototype.cpp:
+        (JSC::GeneratorFunctionPrototype::finishCreation):
+
+2020-08-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Define Intl[Symbol.toStringTag]
         https://bugs.webkit.org/show_bug.cgi?id=215715
 

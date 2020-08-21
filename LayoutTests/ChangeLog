@@ -1,3 +1,13 @@
+2020-08-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Align "length" properties of function prototypes with the spec
+        https://bugs.webkit.org/show_bug.cgi?id=215716
+
+        Reviewed by Ross Kirsling.
+
+        * js/kde/prototype_length-expected.txt:
+        * js/kde/script-tests/prototype_length.js:
+
 2020-08-21  Andres Gonzalez  <andresg_22@apple.com>
 
         Range::contains(const Range&) should compare the Documents to which the Ranges belong, not the ownerDocuments.
