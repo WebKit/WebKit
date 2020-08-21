@@ -1021,8 +1021,10 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 - (void)URLSession:(NSURLSession *)session webSocketTask:(NSURLSessionWebSocketTask *)task didCloseWithCode:(NSURLSessionWebSocketCloseCode)closeCode reason:(NSData *)reason
 {
     if (auto* webSocketTask = [self existingWebSocketTask:task]) {
-        auto reason = adoptNS([[NSString alloc] initWithData:[task closeReason] encoding:NSUTF8StringEncoding]);
-        webSocketTask->didClose(closeCode, reason.get());
+        ASSERT([reason isEqualToData:task.closeReason]);
+        ASSERT(closeCode == [task closeCode]);
+        auto closeReason = adoptNS([[NSString alloc] initWithData:reason encoding:NSUTF8StringEncoding]);
+        webSocketTask->didClose(closeCode, closeReason.get());
     }
 }
 #endif

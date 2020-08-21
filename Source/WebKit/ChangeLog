@@ -1,3 +1,16 @@
+2020-08-21  Jiten Mehta  <jmehta@apple.com>
+
+        Use closeReason provided in didCloseWithCode delegate for the NSURLSessionWebSocket code path
+        https://bugs.webkit.org/show_bug.cgi?id=215519
+
+        Reviewed by Youenn Fablet.
+
+        Covered by existing protocol tests with NSURLSession code path enabled.
+        http/tests/websocket/tests/hybi/workers/close-code-and-reason.html
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:webSocketTask:didCloseWithCode:reason:]):
+
 2020-08-21  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r257667): 1.9x more CPU time in IPC::SharedBufferDataReference decoding during Netflix playback
