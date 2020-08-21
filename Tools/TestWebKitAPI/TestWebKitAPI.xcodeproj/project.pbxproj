@@ -933,6 +933,7 @@
 		C15CBB3023F1FF1A00300CC7 /* BacklightLevelNotification.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */; };
 		C15CBB3F23FB177A00300CC7 /* PreferenceChanges.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */; };
 		C1692DCA23D10DAE006E88F7 /* Battery.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1692DC923D10DAE006E88F7 /* Battery.mm */; };
+		C1F4840724EDDB400053ECB8 /* AccessibilityReduceMotion.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1F4840624EDDB400053ECB8 /* AccessibilityReduceMotion.mm */; };
 		C1F7B7392449083F00124557 /* AGXCompilerService.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1F7B7382449083F00124557 /* AGXCompilerService.mm */; };
 		C1FF9EDB244644F000839AE4 /* WebFilter.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1FF9EDA244644F000839AE4 /* WebFilter.mm */; };
 		C20F88A72295B96700D610FA /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C20F88A62295B96700D610FA /* CoreText.framework */; };
@@ -2607,6 +2608,7 @@
 		C15CBB3E23FB177A00300CC7 /* PreferenceChanges.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PreferenceChanges.mm; sourceTree = "<group>"; };
 		C1692DC923D10DAE006E88F7 /* Battery.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Battery.mm; sourceTree = "<group>"; };
 		C1D8EE212028E8E3008EB141 /* WebProcessTerminate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessTerminate.mm; sourceTree = "<group>"; };
+		C1F4840624EDDB400053ECB8 /* AccessibilityReduceMotion.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityReduceMotion.mm; sourceTree = "<group>"; };
 		C1F7B7382449083F00124557 /* AGXCompilerService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AGXCompilerService.mm; sourceTree = "<group>"; };
 		C1FF9EDA244644F000839AE4 /* WebFilter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFilter.mm; sourceTree = "<group>"; };
 		C20F88A62295B96700D610FA /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -3084,6 +3086,7 @@
 		0F139E741A423A4600F590F5 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				C1F4840624EDDB400053ECB8 /* AccessibilityReduceMotion.mm */,
 				E3F8AB91241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm */,
 				C1F7B7382449083F00124557 /* AGXCompilerService.mm */,
 				C15CBB2F23F1FF1A00300CC7 /* BacklightLevelNotification.mm */,
@@ -4865,9 +4868,9 @@
 				7C83DED21D0A590C00FEBCF3 /* HashMap.cpp in Sources */,
 				7C83DED41D0A590C00FEBCF3 /* HashSet.cpp in Sources */,
 				7C8BFF7123C0107A00C009B3 /* HexNumber.cpp in Sources */,
+				33976D8324DC479B00812304 /* IndexSparseSet.cpp in Sources */,
 				7C83DEE01D0A590C00FEBCF3 /* IntegerToStringConversion.cpp in Sources */,
 				53FCDE6B229EFFB900598ECF /* IsoHeap.cpp in Sources */,
-				33976D8324DC479B00812304 /* IndexSparseSet.cpp in Sources */,
 				7CEB62AB223609DE0069CBB0 /* IteratorRange.cpp in Sources */,
 				7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */,
 				531C1D8E1DF8EF72006E979F /* LEBDecoder.cpp in Sources */,
@@ -4954,6 +4957,7 @@
 				57C6244E2346BCFA00383FE7 /* _WKWebAuthenticationPanel.mm in Sources */,
 				7CCE7EE41A411AE600447C4C /* AboutBlankLoad.cpp in Sources */,
 				7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */,
+				C1F4840724EDDB400053ECB8 /* AccessibilityReduceMotion.mm in Sources */,
 				E3F8AB92241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm in Sources */,
 				2E205BA41F527746005952DD /* AccessibilityTestsIOS.mm in Sources */,
 				9BD5111C1FE8E11600D2B630 /* AccessingPastedImage.mm in Sources */,

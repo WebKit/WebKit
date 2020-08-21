@@ -149,6 +149,9 @@ AXClientType _AXGetClientForCurrentRequestUntrusted(void);
 void _AXSetClientIdentificationOverride(AXClientType);
 #endif // HAVE(AX_CLIENT_TYPE)
 
+extern CFStringRef kAXInterfaceReduceMotionKey;
+extern CFStringRef kAXInterfaceReduceMotionStatusDidChangeNotification;
+
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)

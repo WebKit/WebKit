@@ -1,3 +1,22 @@
+2020-08-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Web pages are not responding correctly to changes in "Reduce motion" setting
+        https://bugs.webkit.org/show_bug.cgi?id=215664
+
+        Reviewed by Darin Adler.
+
+        This happens because there is a race between the preference change and notification being received in the WebContent
+        process. This race is usually won by the notification, which then reads the wrong preference value when being handled.
+        This bug was introduced when access to the preference daemon was closed in the WebContent process, and preferences
+        were updated from the UI process. This patch addresses this issue by re-posting the notification when the preference
+        value is updated in the WebContent process.
+
+        API test: WebKit.AccessibilityReduceMotion
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::reduceMotionPreferenceKey):
+        (WebKit::dispatchSimulatedNotificationsForPreferenceChange):
+
 2020-08-20  James Savage  <james.savage@apple.com>
 
         Could not find module 'WebKit' for target 'armv7-apple-ios'
