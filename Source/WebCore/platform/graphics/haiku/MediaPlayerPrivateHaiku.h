@@ -34,7 +34,6 @@ class BDataIO;
 class BMediaFile;
 class BMediaTrack;
 class BSoundPlayer;
-class BUrlRequest;
 struct media_raw_audio_format;
 
 namespace WebCore {
@@ -42,9 +41,9 @@ namespace WebCore {
 class MediaPlayerFactoryHaiku;
 
 class MediaPlayerPrivate : public MediaPlayerPrivateInterface,
-	public CanMakeWeakPtr<MediaPlayerPrivate> {
+    public CanMakeWeakPtr<MediaPlayerPrivate> {
     public:
-		friend class MediaPlayerFactoryHaiku;
+        friend class MediaPlayerFactoryHaiku;
 
         static void registerMediaEngine(MediaEngineRegistrar);
 
@@ -92,7 +91,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface,
         void paint(GraphicsContext&, const FloatRect&) override;
 
     private:
-        
+
         void IdentifyTracks(const String& url);
 
         static void playCallback(void*, void*, size_t,
@@ -108,7 +107,7 @@ class MediaPlayerPrivate : public MediaPlayerPrivateInterface,
         BMediaTrack* m_videoTrack;
         BSoundPlayer* m_soundPlayer;
         BBitmap* m_frameBuffer;
-		BLocker m_mediaLock;
+        BLocker m_mediaLock;
 
         MediaPlayer* m_player;
         MediaPlayer::NetworkState m_networkState;
