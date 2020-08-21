@@ -23,7 +23,7 @@ FAIL X Stitched sine-wave buffers at sample rate 43800 does not equal [0,0.06264
 	Max RelError of 1.4034869002506184e+4 at index of 2205.
 	[2205]	-6.3076853752136230e-2	-4.4939756662643049e-6	6.3072359776469966e-2	1.4034869002506184e+4	3.8985999999999999e-3
  assert_true: expected true got false
-FAIL X SNR (15.733324711731411 dB) is not greater than or equal to 65.737. Got 15.733324711731411. assert_true: expected true got false
+FAIL X SNR (15.733324719588142 dB) is not greater than or equal to 65.737. Got 15.733324719588142. assert_true: expected true got false
 FAIL < [buffer-stitching-2] 2 out of 3 assertions were failed. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
 

@@ -1,5 +1,21 @@
 2020-08-20  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline flaky webaudio tests.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/buffer-resampling-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-buffer-stitching-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-delay-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-rolloff-clamping-expected.txt:
+
+2020-08-20  Chris Dumez  <cdumez@apple.com>
+
         AudioBufferSourceNode should use "final" values for playbackRate and detune
         https://bugs.webkit.org/show_bug.cgi?id=215669
 
