@@ -1620,12 +1620,6 @@ test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js:
 test/intl402/Intl/getCanonicalLocales/unicode-ext-key-with-digit.js:
   default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/Intl/toStringTag/toString.js:
-  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl]») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Intl]») to be true'
-test/intl402/Intl/toStringTag/toStringTag.js:
-  default: 'Test262Error: obj should have an own property Symbol(Symbol.toStringTag)'
-  strict mode: 'Test262Error: obj should have an own property Symbol(Symbol.toStringTag)'
 test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js:
   default: 'Test262Error: Expected SameValue(«ru-Armn-SU», «ru-Armn-AM») to be true'
   strict mode: 'Test262Error: Expected SameValue(«ru-Armn-SU», «ru-Armn-AM») to be true'

@@ -140,7 +140,7 @@ struct MatcherResult {
     size_t extensionIndex { 0 };
 };
 
-const ClassInfo IntlObject::s_info = { "Object", &Base::s_info, &intlObjectTable, nullptr, CREATE_METHOD_TABLE(IntlObject) };
+const ClassInfo IntlObject::s_info = { "Intl", &Base::s_info, &intlObjectTable, nullptr, CREATE_METHOD_TABLE(IntlObject) };
 
 void UFieldPositionIteratorDeleter::operator()(UFieldPositionIterator* iterator) const
 {
@@ -163,6 +163,8 @@ IntlObject* IntlObject::create(VM& vm, JSGlobalObject* globalObject, Structure* 
 void IntlObject::finishCreation(VM& vm, JSGlobalObject*)
 {
     Base::finishCreation(vm);
+    ASSERT(inherits(vm, info()));
+    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 #if HAVE(ICU_U_LOCALE_DISPLAY_NAMES)
     if (Options::useIntlDisplayNames())
         putDirectWithoutTransition(vm, vm.propertyNames->DisplayNames, createDisplayNamesConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));

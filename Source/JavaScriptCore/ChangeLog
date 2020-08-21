@@ -1,5 +1,21 @@
 2020-08-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Define Intl[Symbol.toStringTag]
+        https://bugs.webkit.org/show_bug.cgi?id=215715
+
+        Reviewed by Ross Kirsling.
+
+        This patch utilizes JSC_TO_STRING_TAG_WITHOUT_TRANSITION() to define Symbol.toStringTag
+        on Intl namespace object, implementing the recent spec change [1] and aligning JSC with V8.
+        Also, adds inherits() ASSERT to match (most of) the other built-ins.
+
+        [1]: https://github.com/tc39/ecma402/pull/487
+
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::finishCreation):
+
+2020-08-21  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Function.prototype.bind should not clamp "length" to int32
         https://bugs.webkit.org/show_bug.cgi?id=215733
 

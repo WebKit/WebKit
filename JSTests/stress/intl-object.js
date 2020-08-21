@@ -24,7 +24,7 @@ function shouldThrow(func, errorType) {
 // The Intl object is a single ordinary object.
 shouldBe(Intl instanceof Object, true);
 shouldBe(typeof Intl, 'object');
-shouldBe(Object.prototype.toString.call(Intl), '[object Object]');
+shouldBe(Object.prototype.toString.call(Intl), '[object Intl]');
 
 // The value of the [[Prototype]] internal slot of the Intl object is the intrinsic object %ObjectPrototype%.
 shouldBe(Object.getPrototypeOf(Intl), Object.prototype);
