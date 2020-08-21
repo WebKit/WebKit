@@ -1,3 +1,16 @@
+2020-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Color/ExtendedColor lldb data provider
+        https://bugs.webkit.org/show_bug.cgi?id=215735
+
+        Reviewed by Darin Adler.
+
+        Fix the data provider for Color after Color and ExtendedColor internals changed.
+
+        * lldb/lldb_webkit.py:
+        (WebCoreColorProvider._to_string_extended):
+        (WebCoreColorProvider.to_string):
+
 2020-08-21  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Update checked exception after r265942
