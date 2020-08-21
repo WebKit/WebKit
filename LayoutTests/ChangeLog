@@ -1,3 +1,9 @@
+2020-08-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Mark several WebGL tests as failure after r265975.
+
+        * platform/glib/TestExpectations:
+
 2020-08-20  Hector Lopez  <hector_i_lopez@apple.com>
 
         REGRESSION(r156546): 18 media tests broken
