@@ -82,6 +82,9 @@ bool ScrollingCoordinatorMac::handleWheelEvent(FrameView&, const PlatformWheelEv
         return false;
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingCoordinatorMac::handleWheelEvent - sending event to scrolling thread");
+    
+    // FIXME: Over on the scrolling thread, we'll hit-test the layers and possibly send the event to a node
+    // which we've already discounted on the main thread. This needs to target a specific node.
 
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     ScrollingThread::dispatch([threadedScrollingTree, wheelEvent] {
