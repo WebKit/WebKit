@@ -1,3 +1,32 @@
+2020-08-20  Karl Rackler  <rackler@apple.com>
+
+        Unreviewed test gardening.  Revert unnecessary baseline.
+
+        * web-platform-tests/webaudio/idlharness.https.window-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/processing-model/cycle-without-delay-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/processing-model/feedback-delay-time-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/ctor-analyser-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analysernode-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffer-interface/ctor-audiobuffer-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-basic-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-channels-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/ctor-audiobuffersource-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-getFrequencyResponse-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/ctor-biquadfilter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-1-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-2-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-response-4-chan-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolver-setBuffer-already-has-value-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/ctor-convolver-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/ctor-delay-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-dynamicscompressornode-interface/ctor-dynamicscompressor-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/ctor-gain-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiodestinationnode-interface/ctor-mediastreamaudiodestination-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-mediastreamaudiosourcenode-interface/mediastreamaudiosourcenode-ctor-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform-expected.txt:
+
 2020-08-19  Russell Epstein  <repstein@apple.com>
 
         Apply patch. rdar://problem/67364254

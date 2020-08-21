@@ -7,14 +7,14 @@ FAIL Executing "release" promise_test: Unhandled rejection with value: object "T
 FAIL Executing "threshold" promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'refNode[paramName]')"
 PASS Audit report 
 PASS > [attack] Dynamics compressor attack 
-FAIL X attack: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "Illegal constructor". assert_true: expected true got false
+FAIL X attack: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')". assert_true: expected true got false
 PASS > [knee] Dynamics compressor knee 
-FAIL X knee: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "Illegal constructor". assert_true: expected true got false
+FAIL X knee: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')". assert_true: expected true got false
 PASS > [ratio] Dynamics compressor ratio 
-FAIL X ratio: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "Illegal constructor". assert_true: expected true got false
+FAIL X ratio: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')". assert_true: expected true got false
 PASS > [release] Dynamics compressor release 
-FAIL X release: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "Illegal constructor". assert_true: expected true got false
+FAIL X release: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')". assert_true: expected true got false
 PASS > [threshold] Dynamics compressor threshold 
-FAIL X threshold: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "Illegal constructor". assert_true: expected true got false
+FAIL X threshold: refNode = new DynamicsCompressorNode(context) incorrectly threw TypeError: "function is not a constructor (evaluating 'new DynamicsCompressorNode(context)')". assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 5 out of 5 tasks were failed. assert_true: expected true got false
 
