@@ -1,3 +1,23 @@
+2020-08-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Fix USE_ANGLE=0 build after "WebGLLayer clobbers TEXTURE_2D binding on iOS"
+        https://bugs.webkit.org/show_bug.cgi?id=211758
+
+        Reviewed by Kenneth Russell.
+
+        No new tests, build fix.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getUniformIndices): Mark parameters unused
+        when USE_ANGLE=0
+        * platform/graphics/cocoa/WebGLLayer.mm: Define scoped binding restorer
+        only for USE_ANGLE=1, since it's not used otherwise and it is implemented
+        in terms of ANGLE gl::... API.
+        * platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp:
+        Include Logging.h to make RELEASE_LOG(WebGL, ...) work.
+        Presumably this file is not compiled with USE_ANGLE=1 or
+        the unified build mechanism hides the error.
+
 2020-08-21  Andres Gonzalez  <andresg_22@apple.com>
 
         Range::contains does not work correctly when the common ancestor node is a Document.

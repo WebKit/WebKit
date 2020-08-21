@@ -57,6 +57,7 @@
 #import <ANGLE/gl2ext_angle.h>
 #endif
 
+#if USE(ANGLE)
 namespace {
     class ScopedRestoreTextureBinding {
         WTF_MAKE_NONCOPYABLE(ScopedRestoreTextureBinding);
@@ -77,6 +78,7 @@ namespace {
         GLint m_bindingValue { 0 };
     };
 }
+#endif
 
 @implementation WebGLLayer {
     float _devicePixelRatio;

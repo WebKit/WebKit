@@ -2470,6 +2470,8 @@ Optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgra
     return m_context->getUniformIndices(program.object(), names);
 #else
     LOG(WebGL, "[[ NOT IMPLEMENTED ]] getUniformIndices()");
+    UNUSED_PARAM(program);
+    UNUSED_PARAM(names);
     return WTF::nullopt;
 #endif
 }
