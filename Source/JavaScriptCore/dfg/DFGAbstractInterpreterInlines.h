@@ -1477,7 +1477,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     : child.value().isUndefined()));
                 break;
             case TypeOfIsObject:
-                setConstant(node, jsBoolean(jsTypeofIsObject(m_codeBlock->globalObjectFor(node->origin.semantic), child.value())));
+                if (child.value().isObject()) {
+                    JSObject* object = asObject(child.value());
+                    if (object->type() == JSFunctionType)
+                        setConstant(node, jsBoolean(false));
+                    else if (!(object->inlineTypeFlags() & OverridesGetCallData))
+                        setConstant(node, jsBoolean(!child.value().asCell()->structure(m_vm)->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))));
+                    else {
+                        // FIXME: This could just call getCallData.
+                        // https://bugs.webkit.org/show_bug.cgi?id=144457
+                        constantWasSet = false;
+                    }
+                } else
+                    setConstant(node, jsBoolean(child.value().isNull()));
                 break;
             case TypeOfIsFunction:
                 setConstant(node, jsBoolean(jsTypeofIsFunction(m_codeBlock->globalObjectFor(node->origin.semantic), child.value())));

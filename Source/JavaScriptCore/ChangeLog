@@ -1,3 +1,18 @@
+2020-08-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r265965.
+        https://bugs.webkit.org/show_bug.cgi?id=215744
+
+        getCallData can be called from DFG concurrent compiler, but it
+        is not safe in DOM PluginObject
+
+        Reverted changeset:
+
+        "Use jsTypeofIsObject() in DFG AI and
+        operationTypeOfIsObject()"
+        https://bugs.webkit.org/show_bug.cgi?id=144457
+        https://trac.webkit.org/changeset/265965
+
 2020-08-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Align "length" properties of function prototypes with the spec
