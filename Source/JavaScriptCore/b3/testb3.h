@@ -802,6 +802,7 @@ void testCheckAddRemoveCheckWithZExt32(int32_t);
 void testCheckSubImm();
 void testCheckSubBadImm();
 void testCheckSub();
+void testCheckSubBitAnd();
 double doubleSub(double, double);
 void testCheckSub64();
 void testCheckSubFold(int, int);
