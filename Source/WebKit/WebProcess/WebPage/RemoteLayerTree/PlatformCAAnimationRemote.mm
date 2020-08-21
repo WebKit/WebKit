@@ -223,7 +223,11 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
 
     encoder << fillMode;
     encoder << valueFunction;
-    encodeTimingFunction(encoder, timingFunction.get());
+    
+    bool hasTimingFunction = !!timingFunction;
+    encoder << hasTimingFunction;
+    if (hasTimingFunction)
+        encodeTimingFunction(encoder, timingFunction.get());
 
     encoder << autoReverses;
     encoder << removedOnCompletion;
@@ -269,10 +273,16 @@ Optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Prope
     if (!decoder.decode(properties.valueFunction))
         return WTF::nullopt;
 
-    if (auto timingFunction = decodeTimingFunction(decoder))
-        properties.timingFunction = WTFMove(*timingFunction);
-    else
+    bool hasTimingFunction;
+    if (!decoder.decode(hasTimingFunction))
         return WTF::nullopt;
+
+    if (hasTimingFunction) {
+        if (auto timingFunction = decodeTimingFunction(decoder))
+            properties.timingFunction = WTFMove(*timingFunction);
+        else
+            return WTF::nullopt;
+    }
 
     if (!decoder.decode(properties.autoReverses))
         return WTF::nullopt;
