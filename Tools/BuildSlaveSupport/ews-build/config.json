@@ -58,6 +58,18 @@
       "platform": "gtk"
     },
     {
+      "name": "igalia7-gtk-wk2-ews",
+      "platform": "gtk"
+    },
+    {
+      "name": "igalia8-gtk-wk2-ews",
+      "platform": "gtk"
+    },
+    {
+      "name": "igalia9-gtk-wk2-ews",
+      "platform": "gtk"
+    },
+    {
       "name": "aperez-gtk-ews",
       "platform": "gtk"
     },
@@ -354,7 +366,7 @@
       "platform": "gtk",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews"]
+      "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews", "igalia7-gtk-wk2-ews", "igalia8-gtk-wk2-ews", "igalia9-gtk-wk2-ews"]
     },
     {
       "name": "iOS-13-Build-EWS",

@@ -1,3 +1,12 @@
+2020-08-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [EWS] Add more workers to GTK-WK2-Tests-EWS queue
+        https://bugs.webkit.org/show_bug.cgi?id=215408
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2020-08-20  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Web pages are not responding correctly to changes in "Reduce motion" setting
