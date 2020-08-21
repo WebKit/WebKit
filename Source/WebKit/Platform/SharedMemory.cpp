@@ -41,14 +41,9 @@ RefPtr<SharedMemory> SharedMemory::copyBuffer(const SharedBuffer& buffer)
     if (!sharedMemory)
         return nullptr;
 
-    char* const sharedMemoryPtr = reinterpret_cast<char*>(sharedMemory->data());
-    size_t position = 0;
-    while (buffer.size() > position) {
-        auto data = buffer.getSomeData(position);
-        auto result = memcpy(sharedMemoryPtr + position, data.data(), data.size());
-        ASSERT_UNUSED(result, result == sharedMemoryPtr + position);
-        position += data.size();
-    }
+    auto sharedMemoryPtr = static_cast<char*>(sharedMemory->data());
+    for (auto& segmentEntry : buffer)
+        memcpy(sharedMemoryPtr + segmentEntry.beginPosition, segmentEntry.segment->data(), segmentEntry.segment->size());
 
     return sharedMemory;
 }

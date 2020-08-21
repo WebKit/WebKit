@@ -1,3 +1,25 @@
+2020-08-21  Andy Estes  <aestes@apple.com>
+
+        IPC::encodeSharedBuffer combines SharedBuffer data segments when copying to SharedMemory
+        https://bugs.webkit.org/show_bug.cgi?id=215737
+        <rdar://problem/67568099>
+
+        Reviewed by Darin Adler.
+
+        IPC::encodeSharedBuffer called SharedBuffer::data() when copying data into SharedMemory,
+        requiring the SharedBuffer to combine its data segments. This can be avoided by using
+        SharedMemory::copyBuffer() instead.
+
+        * Platform/SharedMemory.cpp:
+        (WebKit::SharedMemory::copyBuffer): Modernized to use auto and range-based for loops.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeSharedBuffer): Used SharedMemory::copyBuffer() to create a copy of the buffer in
+        a new SharedMemory. Calling this function does not combine the buffer's data segments.
+
+        * Platform/SharedMemory.h: Added a FIXME for how SharedMemory's factory functions could be
+        improved.
+
 2020-08-21  Jiten Mehta  <jmehta@apple.com>
 
         Use closeReason provided in didCloseWithCode delegate for the NSURLSessionWebSocket code path

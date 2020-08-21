@@ -114,8 +114,8 @@ public:
         uint64_t dataSize { 0 };
     };
 
+    // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
     static RefPtr<SharedMemory> allocate(size_t);
-    static RefPtr<SharedMemory> create(void*, size_t, Protection);
     static RefPtr<SharedMemory> copyBuffer(const WebCore::SharedBuffer&);
     static RefPtr<SharedMemory> map(const Handle&, Protection);
 #if USE(UNIX_DOMAIN_SOCKETS)

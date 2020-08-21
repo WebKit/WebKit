@@ -140,8 +140,7 @@ static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(element.segment->data()), element.segment->size(), 1);
 #else
     SharedMemory::Handle handle;
-    auto sharedMemoryBuffer = SharedMemory::allocate(bufferSize);
-    memcpy(sharedMemoryBuffer->data(), buffer->data(), bufferSize);
+    auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
     sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
     encoder << SharedMemory::IPCHandle { WTFMove(handle), bufferSize };
 #endif
