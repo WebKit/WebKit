@@ -27,14 +27,13 @@
 #include "WebPasteboardProxy.h"
 
 #include "Clipboard.h"
-#include "SharedBufferDataReference.h"
+#include "SharedBufferCopy.h"
 #include "WebFrameProxy.h"
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <WebCore/PasteboardItemInfo.h>
 #include <WebCore/PlatformPasteboard.h>
 #include <WebCore/SelectionData.h>
-#include <WebCore/SharedBuffer.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/SetForScope.h>
 
@@ -56,7 +55,7 @@ void WebPasteboardProxy::readFilePaths(const String& pasteboardName, CompletionH
     Clipboard::get(pasteboardName).readFilePaths(WTFMove(completionHandler));
 }
 
-void WebPasteboardProxy::readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(IPC::SharedBufferDataReference&&)>&& completionHandler)
+void WebPasteboardProxy::readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(IPC::SharedBufferCopy&&)>&& completionHandler)
 {
     Clipboard::get(pasteboardName).readBuffer(pasteboardType.utf8().data(), WTFMove(completionHandler));
 }
@@ -91,7 +90,7 @@ void WebPasteboardProxy::didDestroyFrame(WebFrameProxy* frame)
 void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(IPC::Connection&, const String& pasteboardName, const String& origin, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     auto& clipboard = Clipboard::get(pasteboardName);
-    clipboard.readBuffer(PasteboardCustomData::gtkType(), [&clipboard, origin, completionHandler = WTFMove(completionHandler)](IPC::SharedBufferDataReference&& buffer) mutable {
+    clipboard.readBuffer(PasteboardCustomData::gtkType(), [&clipboard, origin, completionHandler = WTFMove(completionHandler)](IPC::SharedBufferCopy&& buffer) mutable {
         ListHashSet<String> domTypes;
         if (auto dataBuffer = buffer.buffer()) {
             auto customData = PasteboardCustomData::fromSharedBuffer(*dataBuffer);

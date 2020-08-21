@@ -26,11 +26,11 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
 messages -> RemoteCDMInstanceSessionProxy NotRefCounted {
-    RequestLicense(WebCore::CDMInstanceSession::LicenseType type, AtomString initDataType, IPC::SharedBufferDataReference initData) -> (IPC::SharedBufferDataReference message, String sessionId, bool needsIndividualization, bool succeeded) Async
-    UpdateLicense(String sessionId, WebCore::CDMInstanceSession::LicenseType type, IPC::SharedBufferDataReference response) -> (bool sessionWasClosed, Optional<WebCore::CDMInstanceSession::KeyStatusVector> changedKeys, Optional<double> changedExpiration, Optional<WebCore::CDMInstanceSession::Message> message, bool succeeded) Async
+    RequestLicense(WebCore::CDMInstanceSession::LicenseType type, AtomString initDataType, IPC::SharedBufferCopy initData) -> (IPC::SharedBufferCopy message, String sessionId, bool needsIndividualization, bool succeeded) Async
+    UpdateLicense(String sessionId, WebCore::CDMInstanceSession::LicenseType type, IPC::SharedBufferCopy response) -> (bool sessionWasClosed, Optional<WebCore::CDMInstanceSession::KeyStatusVector> changedKeys, Optional<double> changedExpiration, Optional<WebCore::CDMInstanceSession::Message> message, bool succeeded) Async
     LoadSession(WebCore::CDMInstanceSession::LicenseType type, String sessionId, String origin) -> (Optional<WebCore::CDMInstanceSession::KeyStatusVector> changedKeys, Optional<double> changedExpiration, Optional<WebCore::CDMInstanceSession::Message> message, bool succeeded, enum:uint8_t WebCore::CDMInstanceSession::SessionLoadFailure loadFailure) Async
     CloseSession(String sessionId) -> () Async
-    RemoveSessionData(String sessionId, WebCore::CDMInstanceSession::LicenseType type) -> (WebCore::CDMInstanceSession::KeyStatusVector changedKeys, Optional<IPC::SharedBufferDataReference> message, bool succeeded) Async
+    RemoveSessionData(String sessionId, WebCore::CDMInstanceSession::LicenseType type) -> (WebCore::CDMInstanceSession::KeyStatusVector changedKeys, Optional<IPC::SharedBufferCopy> message, bool succeeded) Async
     StoreRecordOfKeyUsage(String sessionId)
     DisplayIDChanged(uint32_t displayID)
 }

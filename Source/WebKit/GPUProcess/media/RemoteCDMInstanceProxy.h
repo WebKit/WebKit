@@ -42,7 +42,7 @@ struct CDMKeySystemConfiguration;
 }
 
 namespace IPC {
-class SharedBufferDataReference;
+class SharedBufferCopy;
 }
 
 namespace WebKit {
@@ -72,7 +72,7 @@ private:
 
     // Messages
     void initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration&, AllowDistinctiveIdentifiers, AllowPersistentState, CompletionHandler<void(SuccessValue)>&&);
-    void setServerCertificate(IPC::SharedBufferDataReference&&, CompletionHandler<void(SuccessValue)>&&);
+    void setServerCertificate(IPC::SharedBufferCopy&&, CompletionHandler<void(SuccessValue)>&&);
     void setStorageDirectory(const String&);
     void createSession(CompletionHandler<void(const RemoteCDMInstanceSessionIdentifier&)>&&);
 

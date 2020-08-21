@@ -26,13 +26,11 @@
 #include "config.h"
 #include "WebLoaderStrategy.h"
 
-#include "DataReference.h"
 #include "HangDetectionDisabler.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoadParameters.h"
-#include "SharedBufferDataReference.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"

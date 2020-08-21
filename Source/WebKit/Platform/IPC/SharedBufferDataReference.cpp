@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
+#include "config.h"
+#include "SharedBufferDataReference.h"
 
-messages -> RemoteCDMInstanceProxy NotRefCounted {
-    CreateSession() -> (WebKit::RemoteCDMInstanceSessionIdentifier id) Synchronous
-    InitializeWithConfiguration(struct WebCore::CDMKeySystemConfiguration configuration, enum:bool WebCore::CDMInstance::AllowDistinctiveIdentifiers distinctiveIdentifiersAllowed, enum:bool WebCore::CDMInstance::AllowPersistentState persistentStateAllowed) -> (enum:bool WebCore::CDMInstance::SuccessValue success) Async
-    SetServerCertificate(IPC::SharedBufferCopy certificate) -> (enum:bool WebCore::CDMInstance::SuccessValue success) Async
-    SetStorageDirectory(String directory)
+#include "Encoder.h"
+
+namespace IPC {
+
+void SharedBufferDataReference::encode(Encoder& encoder) const
+{
+    if (m_data.isEmpty()) {
+        SharedBufferCopy::encode(encoder);
+        return;
+    }
+
+    ASSERT(!buffer());
+    encoder << m_data;
 }
 
-#endif
+} // namespace IPC

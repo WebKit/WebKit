@@ -28,9 +28,9 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "DataReference.h"
 #include "RemoteLegacyCDMFactory.h"
 #include "RemoteLegacyCDMSessionProxyMessages.h"
+#include "SharedBufferCopy.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>
@@ -39,14 +39,14 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static RefPtr<ArrayBuffer> convertToArrayBuffer(IPC::SharedBufferDataReference&& buffer)
+static RefPtr<ArrayBuffer> convertToArrayBuffer(IPC::SharedBufferCopy&& buffer)
 {
     if (buffer.buffer())
         return ArrayBuffer::create(buffer.data(), buffer.size());
     return nullptr;
 }
 
-static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferDataReference&& buffer)
+static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferCopy&& buffer)
 {
     auto arrayBuffer = convertToArrayBuffer(WTFMove(buffer));
     if (!arrayBuffer)
@@ -57,15 +57,7 @@ static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferDataReference&& b
 }
 
 template <typename T>
-static Optional<IPC::SharedBufferDataReference> convertToOptionalDataReference(T array)
-{
-    if (!array)
-        return WTF::nullopt;
-    return { SharedBuffer::create(array->data(), array->byteLength()) };
-}
-
-template <typename T>
-static IPC::SharedBufferDataReference convertToDataReference(T array)
+static IPC::SharedBufferCopy convertToSharedBufferCopy(T array)
 {
     if (!array)
         return { };
@@ -88,8 +80,8 @@ RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mime
     if (!m_factory || !initData)
         return nullptr;
 
-    auto ipcInitData = convertToDataReference(initData);
-    Optional<IPC::SharedBufferDataReference> ipcNextMessage;
+    auto ipcInitData = convertToSharedBufferCopy(initData);
+    Optional<IPC::SharedBufferCopy> ipcNextMessage;
     m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest(mimeType, ipcInitData), Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest::Reply(ipcNextMessage, destinationURL, errorCode, systemCode), m_identifier);
 
     if (!ipcNextMessage)
@@ -112,9 +104,9 @@ bool RemoteLegacyCDMSession::update(Uint8Array* keyData, RefPtr<Uint8Array>& nex
     if (!m_factory || !keyData)
         return false;
 
-    auto ipcKeyData = convertToDataReference(WTFMove(keyData));
+    auto ipcKeyData = convertToSharedBufferCopy(WTFMove(keyData));
     bool succeeded { false };
-    Optional<IPC::SharedBufferDataReference> ipcNextMessage;
+    Optional<IPC::SharedBufferCopy> ipcNextMessage;
     m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::Update(ipcKeyData), Messages::RemoteLegacyCDMSessionProxy::Update::Reply(succeeded, ipcNextMessage, errorCode, systemCode), m_identifier);
 
     if (ipcNextMessage)
@@ -132,7 +124,7 @@ RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(const String& keyI
     if (foundInCache != m_cachedKeyCache.end())
         return foundInCache->value;
 
-    Optional<IPC::SharedBufferDataReference> ipcKey;
+    Optional<IPC::SharedBufferCopy> ipcKey;
     m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::CachedKeyForKeyID(keyId), Messages::RemoteLegacyCDMSessionProxy::CachedKeyForKeyID::Reply(ipcKey), m_identifier);
 
     if (!ipcKey)
@@ -143,7 +135,7 @@ RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(const String& keyI
     return ipcKeyBuffer;
 }
 
-void RemoteLegacyCDMSession::sendMessage(Optional<IPC::SharedBufferDataReference>&& message, const String& destinationURL)
+void RemoteLegacyCDMSession::sendMessage(Optional<IPC::SharedBufferCopy>&& message, const String& destinationURL)
 {
     if (!m_client)
         return;

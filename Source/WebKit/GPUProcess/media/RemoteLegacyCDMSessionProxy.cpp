@@ -31,7 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteLegacyCDMFactoryProxy.h"
 #include "RemoteLegacyCDMSessionMessages.h"
-#include "SharedBufferDataReference.h"
+#include "SharedBufferCopy.h"
 #include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
@@ -52,7 +52,7 @@ RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(WeakPtr<RemoteLegacyCDM
 
 RemoteLegacyCDMSessionProxy::~RemoteLegacyCDMSessionProxy() = default;
 
-static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferDataReference&& buffer)
+static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferCopy&& buffer)
 {
     if (!buffer.buffer())
         return nullptr;
@@ -63,14 +63,14 @@ static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferDataReference&& b
 }
 
 template <typename T>
-static Optional<IPC::SharedBufferDataReference> convertToOptionalDataReference(T array)
+static Optional<IPC::SharedBufferCopy> convertToOptionalDataReference(T array)
 {
     if (!array)
         return WTF::nullopt;
     return { SharedBuffer::create((const char*)array->data(), array->byteLength()) };
 }
 
-void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, IPC::SharedBufferDataReference&& initData, GenerateKeyCallback&& completion)
+void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, IPC::SharedBufferCopy&& initData, GenerateKeyCallback&& completion)
 {
     auto initDataArray = convertToUint8Array(WTFMove(initData));
     if (!initDataArray) {
@@ -94,7 +94,7 @@ void RemoteLegacyCDMSessionProxy::releaseKeys()
     m_session->releaseKeys();
 }
 
-void RemoteLegacyCDMSessionProxy::update(IPC::SharedBufferDataReference&& update, UpdateCallback&& completion)
+void RemoteLegacyCDMSessionProxy::update(IPC::SharedBufferCopy&& update, UpdateCallback&& completion)
 {
     auto updateArray = convertToUint8Array(WTFMove(update));
     if (!updateArray) {

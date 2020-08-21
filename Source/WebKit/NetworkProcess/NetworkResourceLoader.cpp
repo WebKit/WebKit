@@ -26,7 +26,6 @@
 #include "config.h"
 #include "NetworkResourceLoader.h"
 
-#include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "NetworkCache.h"
@@ -1051,7 +1050,7 @@ void NetworkResourceLoader::bufferingTimerFired()
     if (m_bufferedData->isEmpty())
         return;
 
-    send(Messages::WebResourceLoader::DidReceiveSharedBuffer({ *m_bufferedData }, m_bufferedDataEncodedDataLength));
+    send(Messages::WebResourceLoader::DidReceiveData({ *m_bufferedData }, m_bufferedDataEncodedDataLength));
 
     m_bufferedData = SharedBuffer::create();
     m_bufferedDataEncodedDataLength = 0;
@@ -1061,7 +1060,7 @@ void NetworkResourceLoader::sendBuffer(SharedBuffer& buffer, size_t encodedDataL
 {
     ASSERT(!isSynchronous());
 
-    send(Messages::WebResourceLoader::DidReceiveSharedBuffer({ buffer }, encodedDataLength));
+    send(Messages::WebResourceLoader::DidReceiveData({ buffer }, encodedDataLength));
 }
 
 void NetworkResourceLoader::tryStoreAsCacheEntry()

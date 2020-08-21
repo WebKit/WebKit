@@ -30,7 +30,7 @@
 
 #include "RemoteCDMInstanceConfiguration.h"
 #include "RemoteCDMInstanceSessionProxy.h"
-#include "SharedBufferDataReference.h"
+#include "SharedBufferCopy.h"
 #include <WebCore/CDMInstance.h>
 
 namespace WebKit {
@@ -59,7 +59,7 @@ void RemoteCDMInstanceProxy::initializeWithConfiguration(const WebCore::CDMKeySy
     m_instance->initializeWithConfiguration(configuration, allowDistinctiveIdentifiers, allowPersistentState, WTFMove(completion));
 }
 
-void RemoteCDMInstanceProxy::setServerCertificate(IPC::SharedBufferDataReference&& certificate, CompletionHandler<void(SuccessValue)>&& completion)
+void RemoteCDMInstanceProxy::setServerCertificate(IPC::SharedBufferCopy&& certificate, CompletionHandler<void(SuccessValue)>&& completion)
 {
     if (!certificate.buffer()) {
         completion(CDMInstance::Failed);

@@ -539,7 +539,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferDataReference data)
+    RegisterAttachmentIdentifierFromData(String identifier, String contentType, String preferredFileName, IPC::SharedBufferCopy data)
     RegisterAttachmentIdentifierFromFilePath(String identifier, String contentType, String filePath)
     RegisterAttachmentIdentifier(String identifier)
     RegisterAttachmentsFromSerializedData(Vector<WebCore::SerializedAttachmentData> data)

@@ -41,7 +41,7 @@ class SharedBuffer;
 }
 
 namespace IPC {
-class SharedBufferDataReference;
+class SharedBufferCopy;
 }
 
 namespace WebKit {
@@ -78,12 +78,12 @@ private:
     String mediaKeysStorageDirectory() const final;
 
     // Messages
-    using GenerateKeyCallback = CompletionHandler<void(Optional<IPC::SharedBufferDataReference>&&, const String&, unsigned short, uint32_t)>;
-    void generateKeyRequest(const String& mimeType, IPC::SharedBufferDataReference&& initData, GenerateKeyCallback&&);
+    using GenerateKeyCallback = CompletionHandler<void(Optional<IPC::SharedBufferCopy>&&, const String&, unsigned short, uint32_t)>;
+    void generateKeyRequest(const String& mimeType, IPC::SharedBufferCopy&& initData, GenerateKeyCallback&&);
     void releaseKeys();
-    using UpdateCallback = CompletionHandler<void(bool, Optional<IPC::SharedBufferDataReference>&&, unsigned short, uint32_t)>;
-    void update(IPC::SharedBufferDataReference&& update, UpdateCallback&&);
-    using CachedKeyForKeyIDCallback = CompletionHandler<void(Optional<IPC::SharedBufferDataReference>&&)>;
+    using UpdateCallback = CompletionHandler<void(bool, Optional<IPC::SharedBufferCopy>&&, unsigned short, uint32_t)>;
+    void update(IPC::SharedBufferCopy&& update, UpdateCallback&&);
+    using CachedKeyForKeyIDCallback = CompletionHandler<void(Optional<IPC::SharedBufferCopy>&&)>;
     void cachedKeyForKeyID(String keyId, CachedKeyForKeyIDCallback&&);
 
     WeakPtr<RemoteLegacyCDMFactoryProxy> m_factory;

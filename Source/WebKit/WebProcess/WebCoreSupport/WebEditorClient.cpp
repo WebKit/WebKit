@@ -27,7 +27,7 @@
 #include "WebEditorClient.h"
 
 #include "EditorState.h"
-#include "SharedBufferDataReference.h"
+#include "SharedBufferCopy.h"
 #include "UndoOrRedo.h"
 #include "WKBundlePageEditorClient.h"
 #include "WebCoreArgumentCoders.h"

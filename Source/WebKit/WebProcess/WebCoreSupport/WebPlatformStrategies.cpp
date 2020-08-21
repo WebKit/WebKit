@@ -34,7 +34,7 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkResourceLoadParameters.h"
 #include "PluginInfoStore.h"
-#include "SharedBufferDataReference.h"
+#include "SharedBufferCopy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebFrame.h"
@@ -319,7 +319,7 @@ Vector<String> WebPlatformStrategies::readFilePathsFromClipboard(const String& p
 RefPtr<SharedBuffer> WebPlatformStrategies::readBufferFromClipboard(const String& pasteboardName, const String& pasteboardType)
 {
 
-    IPC::SharedBufferDataReference data;
+    IPC::SharedBufferCopy data;
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadBuffer(pasteboardName, pasteboardType), Messages::WebPasteboardProxy::ReadBuffer::Reply(data), 0);
     return data.buffer();
 }

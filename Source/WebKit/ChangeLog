@@ -1,3 +1,125 @@
+2020-08-21  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r257667): 1.9x more CPU time in IPC::SharedBufferDataReference decoding during Netflix playback
+        https://bugs.webkit.org/show_bug.cgi?id=215232
+        <rdar://problem/66637920>
+
+        Reviewed by Geoff Garen.
+
+        Prior to r257667, an IPC message defined a IPC::SharedBufferDataReference argument to allow
+        its sender to easily encode SharedBuffer data as a DataReference. SharedBufferDataReference
+        cost the same to encode as a DataReference -- both copied data into the Encoder -- but did
+        so by iterating over the SharedBuffer's data segments rather than combining them into a
+        contiguous allocation. The message argument was received as a decoded IPC::DataReference,
+        which stores a pointer into the IPC::Decoder's buffer rather than making a copy.
+
+        In r257667, IPC::SharedBufferDataReference switched its encoder to use IPC::ArgumentCoder's
+        SharedBuffer specialization, which works by allocating a SharedMemory buffer, copying
+        SharedBuffer data into it, creating a SharedMemory::IPCHandle from it, and encoding the
+        handle. It makes only one copy like the old encoder did, but pays the added cost of
+        combining SharedBuffer data segments prior to copying by needlessly calling
+        SharedBuffer::data() (this should be fixed independently).
+
+        Since this serialization could no longer be decoded by DataReference's decoder,
+        SharedBufferDataReference implemented a decoder, also in terms of ArgumentCoder's SharedBuffer
+        specialization. It works by mapping a SharedMemory buffer from a decoded
+        SharedMemory::IPCHandle and copying that buffer into a new SharedBuffer. This copy is a cost
+        that the old decoder did not incur, but in some cases the message receiver would have made
+        such a copy anyway and can instead just ref the decoded SharedBuffer. In other cases though,
+        the receiver either made no copies or couldn't use the decoded SharedBuffer to avoid making
+        its own copy so creating the SharedBuffer was pure added cost.
+
+        There are additional costs from allocating, mapping, and deleting shared memory and Mach
+        send rights, but they are offset by savings due to smaller Encoder and Decoder buffers. The
+        additional SharedBuffer combining and copying is not offset elsewhere, and on net makes
+        sending and receiving IPC::SharedBufferDataReferences use up to 2x more CPU time when
+        playing a video on netflix.com in Safari.
+
+        Resolve this slowdown by reverting the argument encoding changes made to
+        IPC::SharedBufferDataReference in r257667. For compatibility with code added after r257667,
+        the current IPC::SharedBufferDataReference was copied to IPC::SharedBufferCopy and retains
+        the behavior of copying into a SharedBuffer when decoded. IPC::SharedBufferDataReference now
+        has the pre-r257667 behavior of decoding to an IPC::DataReference. Messages added after
+        r257667 whose receivers were designed to handle a SharedBuffer were changed to use
+        IPC::SharedBufferCopy, and all other receivers of messages with IPC::SharedBufferDataReference
+        arguments were changed to handle an IPC::DataReference.
+
+        * GPUProcess/media/RemoteCDMInstanceProxy.cpp:
+        * GPUProcess/media/RemoteCDMInstanceProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceProxy.messages.in:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in:
+        * GPUProcess/media/RemoteCDMProxy.cpp:
+        * GPUProcess/media/RemoteCDMProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.cpp:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMSessionProxy.messages.in:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::platformRegisterAttachment):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::registerAttachmentIdentifierFromData):
+        (WebKit::WebPageProxy::platformRegisterAttachment):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * UIProcess/gtk/WebPasteboardProxyGtk.cpp:
+        * WebProcess/GPU/media/RemoteCDMInstance.cpp:
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.cpp:
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.h:
+        * WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in:
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.cpp:
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.h:
+        * WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp: Replaced
+        IPC::SharedBufferDataReference with IPC::SharedBufferCopy.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.h:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.messages.in:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp: Removed the DidReceiveSharedBuffer
+        message and reverted the DidReceiveData message back to taking an
+        IPC::SharedBufferDataReference.
+
+        * Platform/IPC/Encoder.h: Made Encoder::reserve(size_t) public so
+        SharedBufferCopy::encode(Encoder&) can call it.
+
+        * Platform/IPC/HandleMessage.h: Restored the CodingType specialization that decodes
+        SharedBufferDataReference arguments as DataReferences.
+
+        * Platform/IPC/SharedBufferCopy.cpp:
+        * Platform/IPC/SharedBufferCopy.h: Copied from SharedBufferDataReference.h. Implemented the
+        interface and decoding behavior that SharedBufferDataReference had between r257667 and this
+        change.
+
+        * Platform/IPC/SharedBufferDataReference.cpp: 
+        * Platform/IPC/SharedBufferDataReference.h: Reverted to the pre-r257667 interface and
+        decoding behvior.
+
+        * Scripts/webkit/messages.py: Removed an unneeded special case.
+
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj: Added SharedBuffer{Copy,DataReference}.cpp.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dataCallback):
+        (WebKit::WebPageProxy::finishedLoadingIcon):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h: Used `const IPC::DataReference&` in message receiver
+        signatures for SharedBufferDataReference arguments.
+
+        * UIProcess/WebURLSchemeTask.cpp:
+        * WebProcess/GPU/media/RemoteAudioBusData.h:
+        * WebProcess/GPU/media/RemoteCDM.cpp:
+        * WebProcess/Network/WebLoaderStrategy.cpp: Removed unused includes.
+
 2020-08-20  Peng Liu  <peng.liu6@apple.com>
 
         Mac Catalyst Apps require "playsinline" attribute to support playing videos in the inline mode

@@ -28,7 +28,6 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "ServiceWorkerFetchTaskMessages.h"
@@ -85,7 +84,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
         return;
     }
 
-    m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveSharedBuffer { buffer.get(), static_cast<int64_t>(buffer->size()) }, m_fetchIdentifier);
+    m_connection->send(Messages::ServiceWorkerFetchTask::DidReceiveData { buffer.get(), static_cast<int64_t>(buffer->size()) }, m_fetchIdentifier);
 }
 
 void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&& formData)

@@ -31,7 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteCDMFactoryProxy.h"
 #include "RemoteCDMInstanceSessionMessages.h"
-#include "SharedBufferDataReference.h"
+#include "SharedBufferCopy.h"
 
 namespace WebKit {
 
@@ -56,7 +56,7 @@ RemoteCDMInstanceSessionProxy::~RemoteCDMInstanceSessionProxy()
 {
 }
 
-void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, AtomString initDataType, IPC::SharedBufferDataReference&& initData, LicenseCallback&& completion)
+void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, AtomString initDataType, IPC::SharedBufferCopy&& initData, LicenseCallback&& completion)
 {
     if (!initData.buffer()) {
         completion({ }, emptyString(), false, false);
@@ -74,7 +74,7 @@ void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, AtomString 
     });
 }
 
-void RemoteCDMInstanceSessionProxy::updateLicense(String sessionId, LicenseType type, IPC::SharedBufferDataReference&& response, LicenseUpdateCallback&& completion)
+void RemoteCDMInstanceSessionProxy::updateLicense(String sessionId, LicenseType type, IPC::SharedBufferCopy&& response, LicenseUpdateCallback&& completion)
 {
     if (!response.buffer()) {
         completion(true, { }, WTF::nullopt, WTF::nullopt, false);
@@ -115,9 +115,9 @@ void RemoteCDMInstanceSessionProxy::closeSession(const String& sessionId, CloseS
 void RemoteCDMInstanceSessionProxy::removeSessionData(const String& sessionId, LicenseType type, RemoveSessionDataCallback&& completion)
 {
     m_session->removeSessionData(sessionId, type, [completion = WTFMove(completion)] (CDMInstanceSession::KeyStatusVector&& keyStatuses, Optional<Ref<SharedBuffer>>&& expiredSessionsData, CDMInstanceSession::SuccessValue succeeded) mutable {
-        Optional<IPC::SharedBufferDataReference> expiredSessionDataReference;
+        Optional<IPC::SharedBufferCopy> expiredSessionDataReference;
         if (expiredSessionsData)
-            expiredSessionDataReference = IPC::SharedBufferDataReference(WTFMove(*expiredSessionsData));
+            expiredSessionDataReference = IPC::SharedBufferCopy(WTFMove(*expiredSessionsData));
         completion(WTFMove(keyStatuses), WTFMove(expiredSessionDataReference), succeeded == CDMInstanceSession::Succeeded);
     });
 }

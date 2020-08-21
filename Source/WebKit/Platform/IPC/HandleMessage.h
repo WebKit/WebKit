@@ -96,6 +96,12 @@ struct CodingType {
     typedef std::remove_const_t<std::remove_reference_t<T>> Type;
 };
 
+class DataReference;
+class SharedBufferDataReference;
+template<> struct CodingType<const SharedBufferDataReference&> {
+    using Type = DataReference;
+};
+
 template<typename... Ts>
 struct CodingType<std::tuple<Ts...>> {
     typedef std::tuple<typename CodingType<Ts>::Type...> Type;

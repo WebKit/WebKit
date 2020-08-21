@@ -576,7 +576,6 @@ def headers_for_type(type):
     header_infos_and_types = class_template_headers(type)
 
     special_cases = {
-        'IPC::SharedBufferDataReference': ['"SharedBufferDataReference.h"', '"DataReference.h"'],
         'MachSendRight': ['<wtf/MachSendRight.h>'],
         'JSC::MessageLevel': ['<JavaScriptCore/ConsoleTypes.h>'],
         'JSC::MessageSource': ['<JavaScriptCore/ConsoleTypes.h>'],

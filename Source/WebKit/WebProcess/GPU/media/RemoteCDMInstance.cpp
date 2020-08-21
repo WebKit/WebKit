@@ -32,7 +32,7 @@
 #include "RemoteCDMInstanceProxyMessages.h"
 #include "RemoteCDMInstanceSession.h"
 #include "RemoteCDMInstanceSessionIdentifier.h"
-#include "SharedBufferDataReference.h"
+#include "SharedBufferCopy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/CDMKeySystemConfiguration.h>

@@ -140,6 +140,8 @@ Platform/IPC/Decoder.cpp @no-unify
 Platform/IPC/Encoder.cpp @no-unify
 Platform/IPC/MessageReceiverMap.cpp @no-unify
 Platform/IPC/MessageSender.cpp @no-unify
+Platform/IPC/SharedBufferCopy.cpp @no-unify
+Platform/IPC/SharedBufferDataReference.cpp @no-unify
 Platform/IPC/StringReference.cpp @no-unify
 
 PluginProcess/PluginControllerProxy.cpp @no-unify

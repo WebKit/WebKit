@@ -36,7 +36,7 @@
 #include <wtf/RefPtr.h>
 
 namespace IPC {
-class SharedBufferDataReference;
+class DataReference;
 class FormDataReference;
 }
 
@@ -83,8 +83,7 @@ private:
     void willSendRequest(WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&&);
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent);
     void didReceiveResponse(const WebCore::ResourceResponse&, bool needsContinueDidReceiveResponseMessage);
-    void didReceiveData(IPC::DataReference&&, int64_t encodedDataLength);
-    void didReceiveSharedBuffer(IPC::SharedBufferDataReference&&, int64_t encodedDataLength);
+    void didReceiveData(const IPC::DataReference&, int64_t encodedDataLength);
     void didFinishResourceLoad(const WebCore::NetworkLoadMetrics&);
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didFailServiceWorkerLoad(const WebCore::ResourceError&);
@@ -92,9 +91,6 @@ private:
     void didBlockAuthenticationChallenge();
 
     void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(const WebCore::ResourceResponse&);
-
-    void deferReceivingSharedBuffer(IPC::SharedBufferDataReference&&, int64_t encodedDataLength);
-    void processReceivedData(const char*, size_t length, int64_t encodedDataLength);
 
 #if ENABLE(SHAREABLE_RESOURCE)
     void didReceiveResource(const ShareableResource::Handle&);

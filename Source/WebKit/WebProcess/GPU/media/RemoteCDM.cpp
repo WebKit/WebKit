@@ -28,13 +28,11 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
-#include "DataReference.h"
 #include "GPUProcessConnection.h"
 #include "RemoteCDMInstance.h"
 #include "RemoteCDMInstanceConfiguration.h"
 #include "RemoteCDMInstanceIdentifier.h"
 #include "RemoteCDMProxyMessages.h"
-#include "SharedBufferDataReference.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/CDMKeySystemConfiguration.h>

@@ -43,10 +43,6 @@ struct CDMKeySystemConfiguration;
 struct CDMRestrictions;
 }
 
-namespace IPC {
-class SharedBufferDataReference;
-}
-
 namespace WebKit {
 
 class RemoteCDMInstanceProxy;

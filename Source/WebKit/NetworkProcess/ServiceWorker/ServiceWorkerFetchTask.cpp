@@ -29,7 +29,6 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "Connection.h"
-#include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "NetworkProcess.h"
@@ -157,15 +156,6 @@ void ServiceWorkerFetchTask::didReceiveData(const IPC::DataReference& data, int6
 
     ASSERT(!m_timeoutTimer.isActive());
     sendToClient(Messages::WebResourceLoader::DidReceiveData { data, encodedDataLength });
-}
-
-void ServiceWorkerFetchTask::didReceiveSharedBuffer(const IPC::SharedBufferDataReference& data, int64_t encodedDataLength)
-{
-    if (m_isDone)
-        return;
-
-    ASSERT(!m_timeoutTimer.isActive());
-    sendToClient(Messages::WebResourceLoader::DidReceiveSharedBuffer { data, encodedDataLength });
 }
 
 void ServiceWorkerFetchTask::didReceiveFormData(const IPC::FormDataReference& formData)

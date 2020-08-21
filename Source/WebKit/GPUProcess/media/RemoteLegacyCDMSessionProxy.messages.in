@@ -24,10 +24,10 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 messages -> RemoteLegacyCDMSessionProxy NotRefCounted {
-    GenerateKeyRequest(String mimeType, IPC::SharedBufferDataReference initData) -> (Optional<IPC::SharedBufferDataReference> nextMessage, String destinationURL, unsigned short errorCode, uint32_t systemCode) Synchronous
+    GenerateKeyRequest(String mimeType, IPC::SharedBufferCopy initData) -> (Optional<IPC::SharedBufferCopy> nextMessage, String destinationURL, unsigned short errorCode, uint32_t systemCode) Synchronous
     ReleaseKeys()
-    Update(IPC::SharedBufferDataReference update) -> (bool succeeded, Optional<IPC::SharedBufferDataReference> nextMessage, unsigned short errorCode, uint32_t systemCode) Synchronous
-    CachedKeyForKeyID(String keyId) -> (Optional<IPC::SharedBufferDataReference> key) Synchronous
+    Update(IPC::SharedBufferCopy update) -> (bool succeeded, Optional<IPC::SharedBufferCopy> nextMessage, unsigned short errorCode, uint32_t systemCode) Synchronous
+    CachedKeyForKeyID(String keyId) -> (Optional<IPC::SharedBufferCopy> key) Synchronous
 }
 
 #endif

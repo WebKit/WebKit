@@ -33,7 +33,7 @@
 #include <WebCore/CDMInstanceSession.h>
 
 namespace IPC {
-class SharedBufferDataReference;
+class SharedBufferCopy;
 }
 
 namespace WebKit {
@@ -54,7 +54,7 @@ private:
 
     // Messages
     void updateKeyStatuses(KeyStatusVector&&);
-    void sendMessage(WebCore::CDMMessageType, IPC::SharedBufferDataReference&&);
+    void sendMessage(WebCore::CDMMessageType, IPC::SharedBufferCopy&&);
     void sessionIdChanged(const String&);
 
     void setClient(WeakPtr<WebCore::CDMInstanceSessionClient>&& client) final { m_client = WTFMove(client); }

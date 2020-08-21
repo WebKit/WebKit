@@ -30,7 +30,7 @@
 
 #include "GPUProcessConnection.h"
 #include "RemoteCDMInstanceSessionProxyMessages.h"
-#include "SharedBufferDataReference.h"
+#include "SharedBufferCopy.h"
 #include <WebCore/SharedBuffer.h>
 
 namespace WebKit {
@@ -55,7 +55,7 @@ void RemoteCDMInstanceSession::requestLicense(LicenseType type, const AtomString
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RequestLicense(type, initDataType, WTFMove(initData)), [callback = WTFMove(callback)] (IPC::SharedBufferDataReference&& message, const String& sessionId, bool needsIndividualization, bool succeeded) mutable {
+    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RequestLicense(type, initDataType, WTFMove(initData)), [callback = WTFMove(callback)] (IPC::SharedBufferCopy&& message, const String& sessionId, bool needsIndividualization, bool succeeded) mutable {
         if (!message.buffer()) {
             callback(SharedBuffer::create(), emptyString(), false, Failed);
             return;
@@ -107,7 +107,7 @@ void RemoteCDMInstanceSession::removeSessionData(const String& sessionId, Licens
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RemoveSessionData(sessionId, type), [callback = WTFMove(callback)] (KeyStatusVector&& changedKeys, Optional<IPC::SharedBufferDataReference>&& message, bool succeeded) mutable {
+    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RemoveSessionData(sessionId, type), [callback = WTFMove(callback)] (KeyStatusVector&& changedKeys, Optional<IPC::SharedBufferCopy>&& message, bool succeeded) mutable {
         Optional<Ref<SharedBuffer>> realMessage = WTF::nullopt;
         if (message && message.value().buffer())
             realMessage = message.value().buffer().releaseNonNull();
@@ -129,7 +129,7 @@ void RemoteCDMInstanceSession::updateKeyStatuses(KeyStatusVector&& keyStatuses)
         m_client->updateKeyStatuses(WTFMove(keyStatuses));
 }
 
-void RemoteCDMInstanceSession::sendMessage(WebCore::CDMMessageType type, IPC::SharedBufferDataReference&& message)
+void RemoteCDMInstanceSession::sendMessage(WebCore::CDMMessageType type, IPC::SharedBufferCopy&& message)
 {
     if (m_client && message.buffer())
         m_client->sendMessage(type, message.buffer().releaseNonNull());

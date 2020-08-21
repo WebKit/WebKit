@@ -27,8 +27,6 @@
 #include "WebURLSchemeTask.h"
 
 #include "APIFrameInfo.h"
-#include "DataReference.h"
-#include "SharedBufferDataReference.h"
 #include "URLSchemeTaskParameters.h"
 #include "WebErrors.h"
 #include "WebPageMessages.h"

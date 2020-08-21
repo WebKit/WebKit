@@ -27,8 +27,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "DataReference.h"
-#include "SharedBufferDataReference.h"
 #include "SharedMemory.h"
 #include <WebCore/AudioIOCallback.h>
 #include <WebCore/SharedBuffer.h>

@@ -23,32 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Encodes a SharedBuffer or DataReference that is received as a DataReference to the decoded data.
+// Encodes a SharedBuffer that is received as a copy of the decoded data in a new SharedBuffer.
+// To avoid copying from the Decoder, use SharedBufferDataReference to receive a DataReference instead.
 
 #pragma once
 
-#include "DataReference.h"
-#include "SharedBufferCopy.h"
+#include <WebCore/SharedBuffer.h>
 
 namespace IPC {
 
+class Decoder;
 class Encoder;
 
-class SharedBufferDataReference : private SharedBufferCopy {
+class SharedBufferCopy {
 public:
-    SharedBufferDataReference() = default;
-    using SharedBufferCopy::SharedBufferCopy;
+    SharedBufferCopy() = default;
 
-    SharedBufferDataReference(DataReference data)
-        : m_data(WTFMove(data)) { }
-    SharedBufferDataReference(const uint8_t* data, size_t size)
-        : m_data(data, size) { }
+    SharedBufferCopy(RefPtr<WebCore::SharedBuffer>&& buffer)
+        : m_buffer(WTFMove(buffer)) { }
+    SharedBufferCopy(Ref<WebCore::SharedBuffer>&& buffer)
+        : m_buffer(WTFMove(buffer)) { }
+    SharedBufferCopy(const WebCore::SharedBuffer& buffer)
+        : m_buffer(WebCore::SharedBuffer::create())
+    {
+        m_buffer->append(buffer);
+    }
+
+    RefPtr<WebCore::SharedBuffer>& buffer() { return m_buffer; }
+    const RefPtr<WebCore::SharedBuffer>& buffer() const { return m_buffer; }
+
+    const char* data() const { return m_buffer ? m_buffer->data() : nullptr; }
+    size_t size() const { return m_buffer ? m_buffer->size() : 0; }
+    bool isEmpty() const { return m_buffer ? m_buffer->isEmpty() : true; }
 
     void encode(Encoder&) const;
-    // Use IPC::DataReference to decode.
+    static WARN_UNUSED_RETURN Optional<SharedBufferCopy> decode(Decoder&);
 
 private:
-    DataReference m_data;
+    RefPtr<WebCore::SharedBuffer> m_buffer;
 };
 
 } // namespace IPC

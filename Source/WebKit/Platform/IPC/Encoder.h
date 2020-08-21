@@ -95,12 +95,11 @@ public:
 
     void addAttachment(Attachment&&);
     Vector<Attachment> releaseAttachments();
+    void reserve(size_t);
 
     static const bool isIPCEncoder = true;
 
 private:
-    void reserve(size_t);
-
     uint8_t* grow(size_t alignment, size_t);
 
     template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>

@@ -35,7 +35,7 @@
 #include <wtf/WeakHashSet.h>
 
 namespace IPC {
-class SharedBufferDataReference;
+class SharedBufferCopy;
 }
 
 namespace WebCore {
@@ -126,7 +126,7 @@ private:
     void getTypes(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
     void readText(const String& pasteboardName, CompletionHandler<void(String&&)>&&);
     void readFilePaths(const String& pasteboardName, CompletionHandler<void(Vector<String>&&)>&&);
-    void readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(IPC::SharedBufferDataReference&&)>&&);
+    void readBuffer(const String& pasteboardName, const String& pasteboardType, CompletionHandler<void(IPC::SharedBufferCopy&&)>&&);
     void writeToClipboard(const String& pasteboardName, WebCore::SelectionData&&);
     void clearClipboard(const String& pasteboardName);
 
