@@ -1132,3 +1132,6 @@ webkit.org/b/215593 webaudio/oscillator-square.html [ Pass Failure ]
 webkit.org/b/215608 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/transaction_bubble-and-capture.htm [ Pass Timeout ]
 
 webkit.org/b/215658 svg/custom/object-sizing-no-width-height.xhtml [ Pass Failure ]
+
+webkit.org/b/122021 media/track/track-cue-rendering-mode-changed.html [ Pass Failure ]
+
