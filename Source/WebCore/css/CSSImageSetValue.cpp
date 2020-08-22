@@ -63,7 +63,7 @@ void CSSImageSetValue::fillImageSet()
     }
 
     // Sort the images so that they are stored in order from lowest resolution to highest.
-    std::sort(m_imagesInSet.begin(), m_imagesInSet.end(), CSSImageSetValue::compareByScaleFactor);
+    std::stable_sort(m_imagesInSet.begin(), m_imagesInSet.end(), CSSImageSetValue::compareByScaleFactor);
 }
 
 ImageWithScale CSSImageSetValue::bestImageForScaleFactor()

@@ -182,9 +182,8 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& nam
     return entries;
 }
 
-bool Performance::appendBufferedEntriesByType(const String& entryType, Vector<RefPtr<PerformanceEntry>>& entries) const
+void Performance::appendBufferedEntriesByType(const String& entryType, Vector<RefPtr<PerformanceEntry>>& entries) const
 {
-    auto oldEntriesSize = entries.size();
     if (entryType == "resource")
         entries.appendVector(m_resourceTimingBuffer);
 
@@ -194,8 +193,6 @@ bool Performance::appendBufferedEntriesByType(const String& entryType, Vector<Re
         if (entryType.isNull() || entryType == "measure")
             entries.appendVector(m_userTiming->getMeasures());
     }
-
-    return entries.size() > oldEntriesSize;
 }
 
 void Performance::clearResourceTimings()

@@ -1,3 +1,28 @@
+2020-08-18  Darin Adler  <darin@apple.com>
+
+        Make some small improvements involving sorting
+        https://bugs.webkit.org/show_bug.cgi?id=215617
+
+        Reviewed by Anders Carlsson.
+
+        * contentextensions/DFA.cpp:
+        (WebCore::ContentExtensions::printTransitions): Fixed "incomming" spelling error.
+
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::fillImageSet): Use std::stable_sort instead of std::sort
+        because there is no guarantee that each image has different resolution and we want
+        repeatable behavior when they are the same.
+
+        * page/Performance.cpp:
+        (WebCore::Performance::appendBufferedEntriesByType const): Removed the return
+        value since we don't need it any more.
+        * page/Performance.h: Updated for above.
+
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::observe): Use std::stable_sort only on the new
+        entries and then use std::inplace_merge. It's wasteful to re-sort the entire
+        array when adding entries. A little less elegant, but more efficient.
+
 2020-08-17  Darin Adler  <darin@apple.com>
 
         Create documentOrder function, start refactoring to use it instead of Range::compare functions

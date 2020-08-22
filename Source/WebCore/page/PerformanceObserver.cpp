@@ -86,8 +86,13 @@ ExceptionOr<void> PerformanceObserver::observe(Init&& init)
             return { };
         if (init.buffered) {
             isBuffered = true;
-            if (m_performance->appendBufferedEntriesByType(*init.type, m_entriesToDeliver))
-                std::stable_sort(m_entriesToDeliver.begin(), m_entriesToDeliver.end(), PerformanceEntry::startTimeCompareLessThan);
+            auto oldSize = m_entriesToDeliver.size();
+            m_performance->appendBufferedEntriesByType(*init.type, m_entriesToDeliver);
+            auto begin = m_entriesToDeliver.begin();
+            auto oldEnd = begin + oldSize;
+            auto end = m_entriesToDeliver.end();
+            std::stable_sort(oldEnd, end, PerformanceEntry::startTimeCompareLessThan);
+            std::inplace_merge(begin, oldEnd, end, PerformanceEntry::startTimeCompareLessThan);
         }
         m_typeFilter.add(filter);
     }

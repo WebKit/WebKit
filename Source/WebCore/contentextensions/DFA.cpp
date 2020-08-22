@@ -113,14 +113,14 @@ static void printTransitions(const DFA& dfa, unsigned sourceNodeId)
     for (const auto& transitionPerTarget : transitionsPerTarget) {
         dataLogF("        %d -> %d [label=\"", sourceNodeId, transitionPerTarget.key);
 
-        Vector<uint16_t> incommingCharacters = transitionPerTarget.value;
-        std::sort(incommingCharacters.begin(), incommingCharacters.end());
+        Vector<uint16_t> incomingCharacters = transitionPerTarget.value;
+        std::sort(incomingCharacters.begin(), incomingCharacters.end());
 
-        char rangeStart = incommingCharacters.first();
+        char rangeStart = incomingCharacters.first();
         char rangeEnd = rangeStart;
         bool first = true;
-        for (unsigned sortedTransitionIndex = 1; sortedTransitionIndex < incommingCharacters.size(); ++sortedTransitionIndex) {
-            char nextChar = incommingCharacters[sortedTransitionIndex];
+        for (unsigned sortedTransitionIndex = 1; sortedTransitionIndex < incomingCharacters.size(); ++sortedTransitionIndex) {
+            char nextChar = incomingCharacters[sortedTransitionIndex];
             if (nextChar == rangeEnd+1) {
                 rangeEnd = nextChar;
                 continue;
