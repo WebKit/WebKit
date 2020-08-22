@@ -1387,18 +1387,6 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/ThrowTypeError/extensible.js:
-  default: 'Test262Error: Expected SameValue(«true», «false») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'
-test/built-ins/ThrowTypeError/frozen.js:
-  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
-test/built-ins/ThrowTypeError/length.js:
-  default: 'Test262Error: Expected obj[length] to have configurable:false.'
-  strict mode: 'Test262Error: Expected obj[length] to have configurable:false.'
-test/built-ins/ThrowTypeError/name.js:
-  default: 'Test262Error: obj should have an own property name'
-  strict mode: 'Test262Error: obj should have an own property name'
 test/built-ins/ThrowTypeError/unique-per-realm-non-simple.js:
   default: 'Test262Error: callee.get Expected SameValue(«function () {'
 test/built-ins/TypedArray/prototype/fill/fill-values-conversion-once.js:
