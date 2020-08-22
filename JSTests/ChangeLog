@@ -1,5 +1,26 @@
 2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [ECMA-402] Implement unified Intl.NumberFormat
+        https://bugs.webkit.org/show_bug.cgi?id=209774
+
+        Reviewed by Ross Kirsling and Darin Adler.
+
+        All test262 failures are due to old ICU version. Once ICU is updated, they will go away.
+
+        * stress/intl-numberformat-unified-ja.js: Added.
+        (shouldBe):
+        (vm.icuVersion):
+        * stress/intl-numberformat-unified.js: Added.
+        (shouldBe):
+        (vm.icuVersion):
+        * stress/intl-numberformat.js:
+        (testNumberFormat):
+        (shouldBe.testNumberFormat.Intl.NumberFormat):
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Enable Intl.DisplayNames
         https://bugs.webkit.org/show_bug.cgi?id=215749
 

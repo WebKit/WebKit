@@ -28,6 +28,7 @@
 
 #include "JSObject.h"
 #include <unicode/ureldatefmt.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
@@ -71,12 +72,8 @@ private:
 
     enum class Style : uint8_t { Long, Short, Narrow };
 
-    struct URelativeDateTimeFormatterDeleter {
-        void operator()(URelativeDateTimeFormatter*) const;
-    };
-    struct UNumberFormatDeleter {
-        void operator()(UNumberFormat*) const;
-    };
+    using URelativeDateTimeFormatterDeleter = ICUDeleter<ureldatefmt_close>;
+    using UNumberFormatDeleter = ICUDeleter<unum_close>;
 
     static ASCIILiteral styleString(Style);
 

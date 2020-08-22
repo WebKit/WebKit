@@ -28,11 +28,28 @@
 
 #include "JSObject.h"
 #include <unicode/unum.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
+
+#if !defined(HAVE_ICU_U_NUMBER_FORMATTER)
+// UNUM_COMPACT_FIELD and UNUM_MEASURE_UNIT_FIELD are available after ICU 64.
+#if U_ICU_VERSION_MAJOR_NUM >= 64
+#define HAVE_ICU_U_NUMBER_FORMATTER 1
+#endif
+#endif
+
+#if HAVE(ICU_U_NUMBER_FORMATTER)
+#include <unicode/unumberformatter.h>
+#endif
 
 namespace JSC {
 
+class IntlFieldIterator;
 class JSBoundFunction;
 enum class RelevantExtensionKey : uint8_t;
+
+enum class IntlRoundingType : uint8_t { FractionDigits, SignificantDigits, CompactRounding };
+enum class IntlNotation : uint8_t { Standard, Scientific, Engineering, Compact };
+template<typename IntlType> void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
 
 class IntlNumberFormat final : public JSNonFinalObject {
 public:
@@ -65,7 +82,14 @@ public:
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
     void setBoundFormat(VM&, JSBoundFunction*);
 
-    static void formatToPartsInternal(JSGlobalObject*, double, const String& formatted, UFieldPositionIterator*, JSArray*, JSString* unit = nullptr);
+    enum class Style : uint8_t { Decimal, Percent, Currency, Unit };
+
+    static void formatToPartsInternal(JSGlobalObject*, Style, double, const String& formatted, IntlFieldIterator&, JSArray*, JSString* unit = nullptr);
+
+    template<typename IntlType>
+    friend void setNumberFormatDigitOptions(JSGlobalObject*, IntlType*, JSObject*, unsigned minimumFractionDigitsDefault, unsigned maximumFractionDigitsDefault, IntlNotation);
+
+    static ASCIILiteral notationString(IntlNotation);
 
 private:
     IntlNumberFormat(VM&, Structure*);
@@ -74,22 +98,33 @@ private:
 
     static Vector<String> localeData(const String&, RelevantExtensionKey);
 
-    enum class Style : uint8_t { Decimal, Percent, Currency };
-    enum class CurrencyDisplay : uint8_t { Code, Symbol, Name };
-
-    struct UNumberFormatDeleter {
-        void operator()(UNumberFormat*) const;
-    };
+    enum class CurrencyDisplay : uint8_t { Code, Symbol, NarrowSymbol, Name };
+    enum class CurrencySign : uint8_t { Standard, Accounting };
+    enum class UnitDisplay : uint8_t { Short, Narrow, Long };
+    enum class CompactDisplay : uint8_t { Short, Long };
+    enum class SignDisplay : uint8_t { Auto, Never, Always, ExceptZero };
 
     static ASCIILiteral styleString(Style);
     static ASCIILiteral currencyDisplayString(CurrencyDisplay);
+    static ASCIILiteral currencySignString(CurrencySign);
+    static ASCIILiteral unitDisplayString(UnitDisplay);
+    static ASCIILiteral compactDisplayString(CompactDisplay);
+    static ASCIILiteral signDisplayString(SignDisplay);
 
     WriteBarrier<JSBoundFunction> m_boundFormat;
-    std::unique_ptr<UNumberFormat, UNumberFormatDeleter> m_numberFormat;
+#if HAVE(ICU_U_NUMBER_FORMATTER)
+    using UNumberFormatterDeleter = ICUDeleter<unumf_close>;
+    using UFormattedNumberDeleter = ICUDeleter<unumf_closeResult>;
+    std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter> m_numberFormatter;
+#else
+    using UNumberFormatDeleter = ICUDeleter<unum_close>;
+    std::unique_ptr<UNumberFormat, ICUDeleter<unum_close>> m_numberFormat;
+#endif
 
     String m_locale;
     String m_numberingSystem;
     String m_currency;
+    String m_unit;
     unsigned m_minimumIntegerDigits { 1 };
     unsigned m_minimumFractionDigits { 0 };
     unsigned m_maximumFractionDigits { 3 };
@@ -97,7 +132,13 @@ private:
     unsigned m_maximumSignificantDigits { 0 };
     Style m_style { Style::Decimal };
     CurrencyDisplay m_currencyDisplay;
+    CurrencySign m_currencySign;
+    UnitDisplay m_unitDisplay;
+    CompactDisplay m_compactDisplay;
+    IntlNotation m_notation { IntlNotation::Standard };
+    SignDisplay m_signDisplay;
     bool m_useGrouping { true };
+    IntlRoundingType m_roundingType { IntlRoundingType::FractionDigits };
 };
 
 } // namespace JSC

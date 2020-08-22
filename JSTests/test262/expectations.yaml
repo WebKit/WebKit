@@ -1662,6 +1662,111 @@ test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely
 test/intl402/NumberFormat/dft-currency-mnfd-range-check-mxfd.js:
   default: 'RangeError: maximumFractionDigits is out of range'
   strict mode: 'RangeError: maximumFractionDigits is out of range'
+test/intl402/NumberFormat/prototype/format/engineering-scientific-de-DE.js:
+  default: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
+test/intl402/NumberFormat/prototype/format/engineering-scientific-en-US.js:
+  default: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
+test/intl402/NumberFormat/prototype/format/engineering-scientific-ja-JP.js:
+  default: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
+test/intl402/NumberFormat/prototype/format/engineering-scientific-ko-KR.js:
+  default: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
+test/intl402/NumberFormat/prototype/format/engineering-scientific-zh-TW.js:
+  default: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-currency-de-DE.js:
+  default: 'Test262Error: Expected SameValue(«-0,00 $», «0,00 $») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-0,00 $», «0,00 $») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-currency-en-US.js:
+  default: 'Test262Error: Expected SameValue(«($0.00)», «$0.00») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«($0.00)», «$0.00») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-currency-ja-JP.js:
+  default: 'Test262Error: Expected SameValue(«($0.00)», «$0.00») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«($0.00)», «$0.00») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-currency-ko-KR.js:
+  default: 'Test262Error: Expected SameValue(«(US$0.00)», «US$0.00») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«(US$0.00)», «US$0.00») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-currency-zh-TW.js:
+  default: 'Test262Error: Expected SameValue(«(US$0.00)», «US$0.00») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«(US$0.00)», «US$0.00») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-de-DE.js:
+  default: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-en-US.js:
+  default: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-ja-JP.js:
+  default: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-ko-KR.js:
+  default: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-rounding.js:
+  default: 'Test262Error: Expected SameValue(«+0», «0») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«+0», «0») to be true'
+test/intl402/NumberFormat/prototype/format/signDisplay-zh-TW.js:
+  default: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
+  strict mode: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
+test/intl402/NumberFormat/prototype/format/unit-ja-JP.js:
+  default: 'Test262Error: Expected SameValue(«時速-987キロメートル», «時速 -987 キロメートル») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«時速-987キロメートル», «時速 -987 キロメートル») to be true'
+test/intl402/NumberFormat/prototype/format/unit-zh-TW.js:
+  default: 'Test262Error: Expected SameValue(«-987公里/小時», «-987 公里/小時») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«-987公里/小時», «-987 公里/小時») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/engineering-scientific-de-DE.js:
+  default: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
+  strict mode: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/engineering-scientific-en-US.js:
+  default: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
+  strict mode: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/engineering-scientific-ja-JP.js:
+  default: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
+  strict mode: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/engineering-scientific-ko-KR.js:
+  default: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
+  strict mode: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/engineering-scientific-zh-TW.js:
+  default: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
+  strict mode: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-de-DE.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«6», «5») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«6», «5») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-en-US.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-ja-JP.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-ko-KR.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-zh-TW.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-de-DE.js:
+  default: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
+  strict mode: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-en-US.js:
+  default: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
+  strict mode: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-ja-JP.js:
+  default: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
+  strict mode: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-ko-KR.js:
+  default: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
+  strict mode: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/signDisplay-zh-TW.js:
+  default: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
+  strict mode: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/unit-ja-JP.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«4», «6») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«4», «6») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«3», «4») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«3», «4») to be true'
 test/intl402/RelativeTimeFormat/constructor/constructor/locales-valid.js:
   default: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'

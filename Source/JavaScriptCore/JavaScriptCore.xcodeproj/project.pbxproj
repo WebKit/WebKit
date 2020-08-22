@@ -1792,6 +1792,7 @@
 		E3201C1E1F8E824C0076A032 /* ScriptFetchParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E322E5A31DA64439006E7709 /* DFGSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E322E5A11DA64435006E7709 /* DFGSnippetParams.h */; };
 		E322E5A71DA644A8006E7709 /* FTLSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E322E5A51DA644A4006E7709 /* FTLSnippetParams.h */; };
+		E323116924A1DC3500693DA5 /* IntlNumberFormatInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E323116824A1DC2F00693DA5 /* IntlNumberFormatInlines.h */; };
 		E325956421FDA2C9008EDC9C /* RegExpGlobalDataInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E325956321FDA2C8008EDC9C /* RegExpGlobalDataInlines.h */; };
 		E325A36022211590007349A1 /* StringPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E325A35F2221158A007349A1 /* StringPrototypeInlines.h */; };
 		E3282BBB1FE930AF00EDAF71 /* YarrErrorCode.h in Headers */ = {isa = PBXBuildFile; fileRef = E3282BBA1FE930A400EDAF71 /* YarrErrorCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4960,6 +4961,7 @@
 		E322E5A11DA64435006E7709 /* DFGSnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGSnippetParams.h; path = dfg/DFGSnippetParams.h; sourceTree = "<group>"; };
 		E322E5A41DA644A4006E7709 /* FTLSnippetParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLSnippetParams.cpp; path = ftl/FTLSnippetParams.cpp; sourceTree = "<group>"; };
 		E322E5A51DA644A4006E7709 /* FTLSnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLSnippetParams.h; path = ftl/FTLSnippetParams.h; sourceTree = "<group>"; };
+		E323116824A1DC2F00693DA5 /* IntlNumberFormatInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlNumberFormatInlines.h; sourceTree = "<group>"; };
 		E325956321FDA2C8008EDC9C /* RegExpGlobalDataInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpGlobalDataInlines.h; sourceTree = "<group>"; };
 		E325A35F2221158A007349A1 /* StringPrototypeInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringPrototypeInlines.h; sourceTree = "<group>"; };
 		E326C4961ECBEF5700A9A905 /* ClassInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClassInfo.cpp; sourceTree = "<group>"; };
@@ -7304,6 +7306,7 @@
 				A1D792F71B43864B004516F5 /* IntlNumberFormat.h */,
 				A1D792F81B43864B004516F5 /* IntlNumberFormatConstructor.cpp */,
 				A1D792F91B43864B004516F5 /* IntlNumberFormatConstructor.h */,
+				E323116824A1DC2F00693DA5 /* IntlNumberFormatInlines.h */,
 				A1D792FA1B43864B004516F5 /* IntlNumberFormatPrototype.cpp */,
 				A1D792FB1B43864B004516F5 /* IntlNumberFormatPrototype.h */,
 				A12BBFF31B044A9800664B69 /* IntlObject.cpp */,
@@ -9796,6 +9799,7 @@
 				A1D792FD1B43864B004516F5 /* IntlNumberFormat.h in Headers */,
 				A1D792FF1B43864B004516F5 /* IntlNumberFormatConstructor.h in Headers */,
 				A125846E1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h in Headers */,
+				E323116924A1DC3500693DA5 /* IntlNumberFormatInlines.h in Headers */,
 				A1D793011B43864B004516F5 /* IntlNumberFormatPrototype.h in Headers */,
 				A125846F1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h in Headers */,
 				A12BBFF21B044A8B00664B69 /* IntlObject.h in Headers */,

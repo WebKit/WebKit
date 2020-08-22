@@ -28,7 +28,6 @@ skip:
     - Intl.DateTimeFormat-formatRange
     - Intl.DateTimeFormat-fractionalSecondDigits
     - Intl.ListFormat
-    - Intl.NumberFormat-unified
     - Intl.Segmenter
   paths:
     - test/built-ins/DataView/prototype/getBigInt64

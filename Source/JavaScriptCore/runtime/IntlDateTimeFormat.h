@@ -27,6 +27,7 @@
 
 #include "JSObject.h"
 #include <unicode/udat.h>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
 
@@ -81,9 +82,7 @@ private:
     enum class Second : uint8_t { None, TwoDigit, Numeric };
     enum class TimeZoneName : uint8_t { None, Short, Long };
 
-    struct UDateFormatDeleter {
-        void operator()(UDateFormat*) const;
-    };
+    using UDateFormatDeleter = ICUDeleter<udat_close>;
 
     void setFormatsFromPattern(const StringView&);
     static ASCIILiteral weekdayString(Weekday);

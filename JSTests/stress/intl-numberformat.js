@@ -49,12 +49,15 @@ function testNumberFormat(numberFormat, possibleDifferences) {
             style: "decimal",
             currency: undefined,
             currencyDisplay: undefined,
+            currencySign: undefined,
             minimumIntegerDigits: 1,
             minimumFractionDigits: 0,
             maximumFractionDigits: 3,
             minimumSignificantDigits: undefined,
             maximumSignificantDigits: undefined,
-            useGrouping: true
+            useGrouping: true,
+            notation: "standard",
+            signDisplay: "auto"
         };
         Object.assign(defaultOptions, difference);
         return JSON.stringify(defaultOptions);
@@ -124,11 +127,11 @@ shouldThrow(() => Intl.NumberFormat('en', {style: 'Decimal'}), RangeError);
 shouldThrow(() => Intl.NumberFormat('en', { get style() { throw new Error(); } }), Error);
 
 // The option currency is processed correctly.
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'UsD'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'CLF'}), [{locale: 'en', style: 'currency', currency: 'CLF', currencyDisplay: 'symbol', minimumFractionDigits: 4, maximumFractionDigits: 4}]), true);
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'cLf'}), [{locale: 'en', style: 'currency', currency: 'CLF', currencyDisplay: 'symbol', minimumFractionDigits: 4, maximumFractionDigits: 4}]), true);
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'XXX'}), [{locale: 'en', style: 'currency', currency: 'XXX', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', currencySign: 'standard', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'UsD'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', currencySign: 'standard', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'CLF'}), [{locale: 'en', style: 'currency', currency: 'CLF', currencyDisplay: 'symbol', currencySign: 'standard', minimumFractionDigits: 4, maximumFractionDigits: 4}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'cLf'}), [{locale: 'en', style: 'currency', currency: 'CLF', currencyDisplay: 'symbol', currencySign: 'standard', minimumFractionDigits: 4, maximumFractionDigits: 4}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'XXX'}), [{locale: 'en', style: 'currency', currency: 'XXX', currencyDisplay: 'symbol', currencySign: 'standard', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
 shouldThrow(() => Intl.NumberFormat('en', {style: 'currency', currency: 'US$'}), RangeError);
 shouldThrow(() => Intl.NumberFormat('en', {style: 'currency', currency: 'US'}), RangeError);
 shouldThrow(() => Intl.NumberFormat('en', {style: 'currency', currency: 'US Dollar'}), RangeError);
@@ -136,9 +139,9 @@ shouldThrow(() => Intl.NumberFormat('en', {style: 'currency', get currency() { t
 shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'decimal', currency: 'USD'}), [{locale: 'en', style: 'decimal'}]), true);
 
 // The option currencyDisplay is processed correctly.
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'code', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'symbol'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'name', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'code'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'code', currencySign: 'standard', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'symbol'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'symbol', currencySign: 'standard', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'name'}), [{locale: 'en', style: 'currency', currency: 'USD', currencyDisplay: 'name', currencySign: 'standard', minimumFractionDigits: 2, maximumFractionDigits: 2}]), true);
 shouldThrow(() => Intl.NumberFormat('en', {style: 'currency', currency: 'USD', currencyDisplay: 'Code'}), RangeError);
 shouldThrow(() => Intl.NumberFormat('en', {style: 'currency', currency: 'USD', get currencyDisplay() { throw new Error(); }}), Error);
 shouldBe(testNumberFormat(Intl.NumberFormat('en', {style: 'decimal', currencyDisplay: 'code'}), [{locale: 'en', style: 'decimal'}]), true);
@@ -172,12 +175,12 @@ shouldThrow(() => Intl.NumberFormat('en', {maximumFractionDigits: -1}), RangeErr
 shouldThrow(() => Intl.NumberFormat('en', {maximumFractionDigits: 21}), RangeError);
 
 // The option minimumSignificantDigits is processed correctly.
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {minimumSignificantDigits: 6}), [{locale: 'en', minimumSignificantDigits: 6, maximumSignificantDigits: 21}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {minimumSignificantDigits: 6}), [{locale: 'en', minimumFractionDigits: undefined, maximumFractionDigits: undefined, minimumSignificantDigits: 6, maximumSignificantDigits: 21}]), true);
 shouldThrow(() => Intl.NumberFormat('en', {minimumSignificantDigits: 0}), RangeError);
 shouldThrow(() => Intl.NumberFormat('en', {minimumSignificantDigits: 22}), RangeError);
 
 // The option maximumSignificantDigits is processed correctly.
-shouldBe(testNumberFormat(Intl.NumberFormat('en', {maximumSignificantDigits: 6}), [{locale: 'en', minimumSignificantDigits: 1, maximumSignificantDigits: 6}]), true);
+shouldBe(testNumberFormat(Intl.NumberFormat('en', {maximumSignificantDigits: 6}), [{locale: 'en', minimumFractionDigits: undefined, maximumFractionDigits: undefined, minimumSignificantDigits: 1, maximumSignificantDigits: 6}]), true);
 shouldThrow(() => Intl.NumberFormat('en', {minimumSignificantDigits: 7, maximumSignificantDigits: 6}), RangeError);
 shouldThrow(() => Intl.NumberFormat('en', {maximumSignificantDigits: 0}), RangeError);
 shouldThrow(() => Intl.NumberFormat('en', {maximumSignificantDigits: 22}), RangeError);
@@ -435,7 +438,7 @@ shouldThrow(() => Intl.NumberFormat.prototype.resolvedOptions.call(5), TypeError
 {
     let options = defaultNFormat.resolvedOptions();
     delete options.locale; 
-    shouldBe(JSON.stringify(options), '{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":true}');
+    shouldBe(JSON.stringify(options), '{"numberingSystem":"latn","style":"decimal","minimumIntegerDigits":1,"minimumFractionDigits":0,"maximumFractionDigits":3,"useGrouping":true,"notation":"standard","signDisplay":"auto"}');
 }
 
 // Legacy compatibility with ECMA-402 1.0

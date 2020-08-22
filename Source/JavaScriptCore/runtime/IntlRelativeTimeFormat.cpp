@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IntlRelativeTimeFormat.h"
 
-#include "IntlNumberFormat.h"
+#include "IntlNumberFormatInlines.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
@@ -37,18 +37,6 @@ namespace JSC {
 const ClassInfo IntlRelativeTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlRelativeTimeFormat) };
 
 namespace IntlRelativeTimeFormatInternal {
-}
-
-void IntlRelativeTimeFormat::URelativeDateTimeFormatterDeleter::operator()(URelativeDateTimeFormatter* relativeDateTimeFormatter) const
-{
-    if (relativeDateTimeFormatter)
-        ureldatefmt_close(relativeDateTimeFormatter);
-}
-
-void IntlRelativeTimeFormat::UNumberFormatDeleter::operator()(UNumberFormat* numberFormat) const
-{
-    if (numberFormat)
-        unum_close(numberFormat);
 }
 
 IntlRelativeTimeFormat* IntlRelativeTimeFormat::create(VM& vm, Structure* structure)
@@ -305,7 +293,8 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
             RETURN_IF_EXCEPTION(scope, { });
         }
 
-        IntlNumberFormat::formatToPartsInternal(globalObject, absValue, formattedNumber, iterator.get(), parts, jsString(vm, singularUnit(unit).toString()));
+        IntlFieldIterator fieldIterator(*iterator.get());
+        IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Decimal, absValue, formattedNumber, fieldIterator, parts, jsString(vm, singularUnit(unit).toString()));
         RETURN_IF_EXCEPTION(scope, { });
     }
 

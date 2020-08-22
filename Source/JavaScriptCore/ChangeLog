@@ -1,3 +1,67 @@
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [ECMA-402] Implement unified Intl.NumberFormat
+        https://bugs.webkit.org/show_bug.cgi?id=209774
+
+        Reviewed by Ross Kirsling and Darin Adler.
+
+        This patch implements updated Intl.NumberFormat. This update was proposed in [1], and integrated into ECMA-402 spec.
+        This patch adds support for missing features in the previous Intl.NumberFormat implementation. Adding "unit", "unitDisplay",
+        "signDisplay", "notation", and "currencySign". Then Intl.NumberFormat can now handle "unit" etc.
+
+        To support new features, we need to use UNumberFormatter which is available after ICU 64 (while it is offered in ICU 62, some
+        critical part are added in 64 too). So, we keep the old UNumberFormat based implementation which is used for [60, 64) since WebKit
+        currently supports ICU 60. Old implementation does not support new things. If ICU is 64 or later, Intl.NumberFormat starts using
+        UNumberFormatter, and implements all the specified features.
+
+        [1]: https://github.com/tc39/proposal-unified-intl-numberformat
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::UCollatorDeleter::operator() const): Deleted.
+        * runtime/IntlCollator.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::UDateFormatDeleter::operator() const): Deleted.
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::computeCurrencyDigits):
+        (JSC::sanctionedSimpleUnitIdentifier):
+        (JSC::WellFormedUnit::WellFormedUnit):
+        (JSC::wellFormedUnitIdentifier):
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::IntlNumberFormat::format const):
+        (JSC::IntlNumberFormat::styleString):
+        (JSC::IntlNumberFormat::currencyDisplayString):
+        (JSC::IntlNumberFormat::notationString):
+        (JSC::IntlNumberFormat::currencySignString):
+        (JSC::IntlNumberFormat::unitDisplayString):
+        (JSC::IntlNumberFormat::compactDisplayString):
+        (JSC::IntlNumberFormat::signDisplayString):
+        (JSC::IntlNumberFormat::resolvedOptions const):
+        (JSC::partTypeString):
+        (JSC::IntlNumberFormat::formatToPartsInternal):
+        (JSC::IntlNumberFormat::formatToParts const):
+        (JSC::IntlNumberFormat::UNumberFormatDeleter::operator() const): Deleted.
+        * runtime/IntlNumberFormat.h:
+        * runtime/IntlNumberFormatInlines.h: Added.
+        (JSC::setNumberFormatDigitOptions):
+        (JSC::IntlFieldIterator::IntlFieldIterator):
+        (JSC::IntlFieldIterator::next):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::initializePluralRules):
+        (JSC::IntlPluralRules::resolvedOptions const):
+        (JSC::IntlPluralRules::UPluralRulesDeleter::operator() const): Deleted.
+        (JSC::IntlPluralRules::UNumberFormatDeleter::operator() const): Deleted.
+        (JSC::UEnumerationDeleter::operator() const): Deleted.
+        * runtime/IntlPluralRules.h:
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::formatToParts const):
+        (JSC::IntlRelativeTimeFormat::URelativeDateTimeFormatterDeleter::operator() const): Deleted.
+        (JSC::IntlRelativeTimeFormat::UNumberFormatDeleter::operator() const): Deleted.
+        * runtime/IntlRelativeTimeFormat.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::functionICUVersion):
+
 2020-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Console object's @@toStringTag should be "console" instead of "Console"

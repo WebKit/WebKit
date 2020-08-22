@@ -46,12 +46,6 @@ const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, nullptr,
 namespace IntlDateTimeFormatInternal {
 }
 
-void IntlDateTimeFormat::UDateFormatDeleter::operator()(UDateFormat* dateFormat) const
-{
-    if (dateFormat)
-        udat_close(dateFormat);
-}
-
 IntlDateTimeFormat* IntlDateTimeFormat::create(VM& vm, Structure* structure)
 {
     IntlDateTimeFormat* format = new (NotNull, allocateCell<IntlDateTimeFormat>(vm.heap)) IntlDateTimeFormat(vm, structure);

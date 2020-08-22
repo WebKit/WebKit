@@ -32,7 +32,6 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
-#include <unicode/ucol.h>
 
 namespace JSC {
 
@@ -40,12 +39,6 @@ const ClassInfo IntlCollator::s_info = { "Object", &Base::s_info, nullptr, nullp
 
 namespace IntlCollatorInternal {
 constexpr bool verbose = false;
-}
-
-void IntlCollator::UCollatorDeleter::operator()(UCollator* collator) const
-{
-    if (collator)
-        ucol_close(collator);
 }
 
 IntlCollator* IntlCollator::create(VM& vm, Structure* structure)
