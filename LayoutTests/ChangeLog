@@ -1,3 +1,108 @@
+2020-08-22  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Import css-content tests.
+        https://bugs.webkit.org/show_bug.cgi?id=215751
+
+        Reviewed by Antti Koivisto.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-content/META.yml: Added.
+        * web-platform-tests/css/css-content/attr-case-insensitive-expected.html: Added.
+        * web-platform-tests/css/css-content/attr-case-insensitive.html: Added.
+        * web-platform-tests/css/css-content/computed-value-expected.txt: Added.
+        * web-platform-tests/css/css-content/computed-value.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-alt-expected.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-alt.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-display-contents-expected.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-display-contents.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-display-none-expected.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-display-none.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-dynamic-expected.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-dynamic.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-expected.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-image-alt-expected.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-image-alt.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-on-replaced-element.tentative-expected.html: Added.
+        * web-platform-tests/css/css-content/element-replacement-on-replaced-element.tentative.html: Added.
+        * web-platform-tests/css/css-content/element-replacement.html: Added.
+        * web-platform-tests/css/css-content/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-content/inheritance.html: Added.
+        * web-platform-tests/css/css-content/pseudo-element-inline-box-expected.html: Added.
+        * web-platform-tests/css/css-content/pseudo-element-inline-box.html: Added.
+        * web-platform-tests/css/css-content/quotes-001-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-001.html: Added.
+        * web-platform-tests/css/css-content/quotes-002-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-002.html: Added.
+        * web-platform-tests/css/css-content/quotes-003-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-003.html: Added.
+        * web-platform-tests/css/css-content/quotes-004-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-004.html: Added.
+        * web-platform-tests/css/css-content/quotes-005-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-005.html: Added.
+        * web-platform-tests/css/css-content/quotes-006-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-006.html: Added.
+        * web-platform-tests/css/css-content/quotes-007-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-007.html: Added.
+        * web-platform-tests/css/css-content/quotes-008-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-008.html: Added.
+        * web-platform-tests/css/css-content/quotes-009-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-009.html: Added.
+        * web-platform-tests/css/css-content/quotes-010-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-010.html: Added.
+        * web-platform-tests/css/css-content/quotes-011-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-011.html: Added.
+        * web-platform-tests/css/css-content/quotes-012-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-012.html: Added.
+        * web-platform-tests/css/css-content/quotes-013-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-013.html: Added.
+        * web-platform-tests/css/css-content/quotes-014-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-014.html: Added.
+        * web-platform-tests/css/css-content/quotes-015-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-015.html: Added.
+        * web-platform-tests/css/css-content/quotes-016-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-016.html: Added.
+        * web-platform-tests/css/css-content/quotes-017-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-017.html: Added.
+        * web-platform-tests/css/css-content/quotes-018-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-018.html: Added.
+        * web-platform-tests/css/css-content/quotes-019-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-019.html: Added.
+        * web-platform-tests/css/css-content/quotes-020-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-020.html: Added.
+        * web-platform-tests/css/css-content/quotes-021-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-021.html: Added.
+        * web-platform-tests/css/css-content/quotes-022-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-022.html: Added.
+        * web-platform-tests/css/css-content/quotes-023-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-023.html: Added.
+        * web-platform-tests/css/css-content/quotes-024-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-024.html: Added.
+        * web-platform-tests/css/css-content/quotes-025-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-025.html: Added.
+        * web-platform-tests/css/css-content/quotes-026-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-026.html: Added.
+        * web-platform-tests/css/css-content/quotes-027-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-027.html: Added.
+        * web-platform-tests/css/css-content/quotes-028-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-028.html: Added.
+        * web-platform-tests/css/css-content/quotes-029-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-029.html: Added.
+        * web-platform-tests/css/css-content/quotes-030-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-030.html: Added.
+        * web-platform-tests/css/css-content/quotes-031-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-031.html: Added.
+        * web-platform-tests/css/css-content/quotes-032-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-032.html: Added.
+        * web-platform-tests/css/css-content/quotes-033-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-033.html: Added.
+        * web-platform-tests/css/css-content/quotes-034-expected.html: Added.
+        * web-platform-tests/css/css-content/quotes-034.html: Added.
+        * web-platform-tests/css/css-content/resources/rect.svg: Added.
+        * web-platform-tests/css/css-content/resources/w3c-import.log: Added.
+        * web-platform-tests/css/css-content/w3c-import.log: Added.
+
+        * TestExpectations:
+
 2020-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Console object's @@toStringTag should be "console" instead of "Console"

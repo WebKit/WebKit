@@ -87,6 +87,7 @@
     "web-platform-tests/css/css-backgrounds": "import", 
     "web-platform-tests/css/css-cascade": "import", 
     "web-platform-tests/css/css-color": "import", 
+    "web-platform-tests/css/css-content": "import", 
     "web-platform-tests/css/css-display": "import", 
     "web-platform-tests/css/css-easing": "import", 
     "web-platform-tests/css/css-flexbox": "import", 

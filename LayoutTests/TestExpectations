@@ -2016,6 +2016,27 @@ imported/w3c/web-platform-tests/css/css-color/lch-007.html [ Skip ]
 # Initial failures on the import of css-color
 imported/w3c/web-platform-tests/css/css-color/t31-color-text-a.xht [ ImageOnlyFailure ]
 
+# Initial failures on the import of css-content
+
+imported/w3c/web-platform-tests/css/css-content/element-replacement-on-replaced-element.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-006.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-012.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-013.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-014.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-017.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-018.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-019.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-020.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-021.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-022.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-023.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-content/quotes-033.html [ ImageOnlyFailure ]
+
 # Need to re-import canvas tests
 webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgb-1.html [ Failure ]
 webkit.org/b/193042 imported/w3c/canvas/2d.fillStyle.parse.invalid.rgb-2.html [ Failure ]
