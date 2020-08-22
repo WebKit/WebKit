@@ -426,7 +426,7 @@ bool String::percentage(int& result) const
     return true;
 }
 
-Vector<UChar> String::charactersWithNullTermination() const
+Vector<UChar> String::charactersWithoutNullTermination() const
 {
     Vector<UChar> result;
 
@@ -441,10 +441,15 @@ Vector<UChar> String::charactersWithNullTermination() const
             const UChar* characters16 = m_impl->characters16();
             result.append(characters16, m_impl->length());
         }
-
-        result.append(0);
     }
 
+    return result;
+}
+
+Vector<UChar> String::charactersWithNullTermination() const
+{
+    auto result = charactersWithoutNullTermination();
+    result.append(0);
     return result;
 }
 

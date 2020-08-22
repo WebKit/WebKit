@@ -86,6 +86,12 @@
 #include "IntlPluralRulesPrototype.h"
 #include "IntlRelativeTimeFormat.h"
 #include "IntlRelativeTimeFormatPrototype.h"
+#include "IntlSegmentIterator.h"
+#include "IntlSegmentIteratorPrototype.h"
+#include "IntlSegmenter.h"
+#include "IntlSegmenterPrototype.h"
+#include "IntlSegments.h"
+#include "IntlSegmentsPrototype.h"
 #include "IteratorPrototype.h"
 #include "JSAPIWrapperObject.h"
 #include "JSArrayBuffer.h"
@@ -1023,6 +1029,24 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             IntlRelativeTimeFormatPrototype* relativeTimeFormatPrototype = IntlRelativeTimeFormatPrototype::create(init.vm, IntlRelativeTimeFormatPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlRelativeTimeFormat::createStructure(init.vm, globalObject, relativeTimeFormatPrototype));
         });
+    m_segmentIteratorStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            IntlSegmentIteratorPrototype* segmentIteratorPrototype = IntlSegmentIteratorPrototype::create(init.vm, IntlSegmentIteratorPrototype::createStructure(init.vm, globalObject, globalObject->iteratorPrototype()));
+            init.set(IntlSegmentIterator::createStructure(init.vm, globalObject, segmentIteratorPrototype));
+        });
+    m_segmenterStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            IntlSegmenterPrototype* segmenterPrototype = IntlSegmenterPrototype::create(init.vm, IntlSegmenterPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+            init.set(IntlSegmenter::createStructure(init.vm, globalObject, segmenterPrototype));
+        });
+    m_segmentsStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            IntlSegmentsPrototype* segmentsPrototype = IntlSegmentsPrototype::create(init.vm, globalObject, IntlSegmentsPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+            init.set(IntlSegments::createStructure(init.vm, globalObject, segmentsPrototype));
+        });
     m_defaultCollator.initLater(
         [] (const Initializer<IntlCollator>& init) {
             JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
@@ -1857,6 +1881,9 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_localeStructure.visit(visitor);
     thisObject->m_pluralRulesStructure.visit(visitor);
     thisObject->m_relativeTimeFormatStructure.visit(visitor);
+    thisObject->m_segmentIteratorStructure.visit(visitor);
+    thisObject->m_segmenterStructure.visit(visitor);
+    thisObject->m_segmentsStructure.visit(visitor);
 
     visitor.append(thisObject->m_nullGetterFunction);
     visitor.append(thisObject->m_nullSetterFunction);

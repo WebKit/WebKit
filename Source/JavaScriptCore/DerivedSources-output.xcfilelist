@@ -37,6 +37,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlPluralRulesConstructor.l
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlPluralRulesPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlRelativeTimeFormatConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlRelativeTimeFormatPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlSegmentIteratorPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlSegmenterConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlSegmenterPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlSegmentsPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSCBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSDataViewPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSGlobalObject.lut.h

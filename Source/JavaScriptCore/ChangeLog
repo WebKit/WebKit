@@ -1,5 +1,100 @@
 2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add Intl.Segmenter
+        https://bugs.webkit.org/show_bug.cgi?id=213638
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements Intl.Segmenter[1]. Intl.Segmenter offers access to ICU break iterator feature, which can break strings into grapheme cluster / words / sentences.
+
+        [1]: https://github.com/tc39/proposal-intl-segmenter
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlObject.cpp:
+        (JSC::createSegmenterConstructor):
+        (JSC::IntlObject::finishCreation):
+        (JSC::intlSegmenterAvailableLocales):
+        * runtime/IntlObject.h:
+        * runtime/IntlSegmentIterator.cpp: Added.
+        (JSC::IntlSegmentIterator::create):
+        (JSC::IntlSegmentIterator::createStructure):
+        (JSC::IntlSegmentIterator::IntlSegmentIterator):
+        (JSC::IntlSegmentIterator::finishCreation):
+        (JSC::IntlSegmentIterator::visitChildren):
+        (JSC::IntlSegmentIterator::next):
+        * runtime/IntlSegmentIterator.h: Added.
+        * runtime/IntlSegmentIteratorPrototype.cpp: Added.
+        (JSC::IntlSegmentIteratorPrototype::create):
+        (JSC::IntlSegmentIteratorPrototype::createStructure):
+        (JSC::IntlSegmentIteratorPrototype::IntlSegmentIteratorPrototype):
+        (JSC::IntlSegmentIteratorPrototype::finishCreation):
+        (JSC::IntlSegmentIteratorPrototypeFuncNext):
+        * runtime/IntlSegmentIteratorPrototype.h: Added.
+        * runtime/IntlSegmenter.cpp: Added.
+        (JSC::IntlSegmenter::create):
+        (JSC::IntlSegmenter::createStructure):
+        (JSC::IntlSegmenter::IntlSegmenter):
+        (JSC::IntlSegmenter::finishCreation):
+        (JSC::IntlSegmenter::initializeSegmenter):
+        (JSC::IntlSegmenter::segment const):
+        (JSC::IntlSegmenter::resolvedOptions const):
+        (JSC::IntlSegmenter::granularityString):
+        (JSC::IntlSegmenter::createSegmentDataObject):
+        * runtime/IntlSegmenter.h: Added.
+        * runtime/IntlSegmenterConstructor.cpp: Added.
+        (JSC::IntlSegmenterConstructor::create):
+        (JSC::IntlSegmenterConstructor::createStructure):
+        (JSC::IntlSegmenterConstructor::IntlSegmenterConstructor):
+        (JSC::IntlSegmenterConstructor::finishCreation):
+        (JSC::constructIntlSegmenter):
+        (JSC::callIntlSegmenter):
+        (JSC::IntlSegmenterConstructorSupportedLocalesOf):
+        * runtime/IntlSegmenterConstructor.h: Added.
+        * runtime/IntlSegmenterPrototype.cpp: Added.
+        (JSC::IntlSegmenterPrototype::create):
+        (JSC::IntlSegmenterPrototype::createStructure):
+        (JSC::IntlSegmenterPrototype::IntlSegmenterPrototype):
+        (JSC::IntlSegmenterPrototype::finishCreation):
+        (JSC::IntlSegmenterPrototypeFuncSegment):
+        (JSC::IntlSegmenterPrototypeFuncResolvedOptions):
+        * runtime/IntlSegmenterPrototype.h: Added.
+        * runtime/IntlSegments.cpp: Added.
+        (JSC::IntlSegments::create):
+        (JSC::IntlSegments::createStructure):
+        (JSC::IntlSegments::IntlSegments):
+        (JSC::IntlSegments::finishCreation):
+        (JSC::IntlSegments::containing):
+        (JSC::IntlSegments::createSegmentIterator):
+        (JSC::IntlSegments::visitChildren):
+        * runtime/IntlSegments.h: Added.
+        * runtime/IntlSegmentsPrototype.cpp: Added.
+        (JSC::IntlSegmentsPrototype::create):
+        (JSC::IntlSegmentsPrototype::createStructure):
+        (JSC::IntlSegmentsPrototype::IntlSegmentsPrototype):
+        (JSC::IntlSegmentsPrototype::finishCreation):
+        (JSC::IntlSegmentsPrototypeFuncContaining):
+        (JSC::IntlSegmentsPrototypeFuncIterator):
+        * runtime/IntlSegmentsPrototype.h: Added.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::segmentIteratorStructure):
+        (JSC::JSGlobalObject::segmenterStructure):
+        (JSC::JSGlobalObject::segmentsStructure):
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [ECMA-402] Implement unified Intl.NumberFormat
         https://bugs.webkit.org/show_bug.cgi?id=209774
 

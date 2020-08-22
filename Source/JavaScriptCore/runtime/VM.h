@@ -131,6 +131,9 @@ class IntlLocale;
 class IntlNumberFormat;
 class IntlPluralRules;
 class IntlRelativeTimeFormat;
+class IntlSegmentIterator;
+class IntlSegmenter;
+class IntlSegments;
 class JSAPIGlobalObject;
 class JSAPIWrapperGlobalObject;
 class JSAPIWrapperObject;
@@ -408,6 +411,9 @@ public:
     std::unique_ptr<IsoHeapCellType> intlNumberFormatHeapCellType;
     std::unique_ptr<IsoHeapCellType> intlPluralRulesHeapCellType;
     std::unique_ptr<IsoHeapCellType> intlRelativeTimeFormatHeapCellType;
+    std::unique_ptr<IsoHeapCellType> intlSegmentIteratorHeapCellType;
+    std::unique_ptr<IsoHeapCellType> intlSegmenterHeapCellType;
+    std::unique_ptr<IsoHeapCellType> intlSegmentsHeapCellType;
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<IsoHeapCellType> webAssemblyCodeBlockHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyFunctionHeapCellType;
@@ -567,6 +573,9 @@ public:
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlNumberFormatSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlPluralRulesSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlRelativeTimeFormatSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmentIteratorSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmenterSpace)
+    DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(intlSegmentsSpace)
 #if ENABLE(WEBASSEMBLY)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(jsToWasmICCalleeSpace)
     DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER(webAssemblyCodeBlockSpace)

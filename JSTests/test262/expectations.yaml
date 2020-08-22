@@ -1770,6 +1770,9 @@ test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js:
 test/intl402/RelativeTimeFormat/constructor/constructor/locales-valid.js:
   default: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
+test/intl402/Segmenter/constructor/constructor/locales-valid.js:
+  default: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/language-tags-invalid.js:
   default: 'Test262Error: Invalid language tag no-nyn was not rejected. Expected a RangeError to be thrown but no exception was thrown at all (Testing with Collator.)'
   strict mode: 'Test262Error: Invalid language tag no-nyn was not rejected. Expected a RangeError to be thrown but no exception was thrown at all (Testing with Collator.)'

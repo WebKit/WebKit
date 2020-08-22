@@ -81,6 +81,7 @@ private:
 String defaultLocale(JSGlobalObject*);
 const HashSet<String>& intlAvailableLocales();
 const HashSet<String>& intlCollatorAvailableLocales();
+const HashSet<String>& intlSegmenterAvailableLocales();
 inline const HashSet<String>& intlDateTimeFormatAvailableLocales() { return intlAvailableLocales(); }
 inline const HashSet<String>& intlDisplayNamesAvailableLocales() { return intlAvailableLocales(); }
 inline const HashSet<String>& intlNumberFormatAvailableLocales() { return intlAvailableLocales(); }

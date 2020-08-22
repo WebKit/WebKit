@@ -147,6 +147,10 @@ $(PROJECT_DIR)/runtime/IntlPluralRulesConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlPluralRulesPrototype.cpp
 $(PROJECT_DIR)/runtime/IntlRelativeTimeFormatConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlRelativeTimeFormatPrototype.cpp
+$(PROJECT_DIR)/runtime/IntlSegmentIteratorPrototype.cpp
+$(PROJECT_DIR)/runtime/IntlSegmenterConstructor.cpp
+$(PROJECT_DIR)/runtime/IntlSegmenterPrototype.cpp
+$(PROJECT_DIR)/runtime/IntlSegmentsPrototype.cpp
 $(PROJECT_DIR)/runtime/JSDataViewPrototype.cpp
 $(PROJECT_DIR)/runtime/JSGlobalObject.cpp
 $(PROJECT_DIR)/runtime/JSInternalPromiseConstructor.cpp

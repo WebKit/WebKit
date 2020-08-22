@@ -202,6 +202,7 @@ public:
     size_t reverseFind(const String& string, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(string.impl(), start) : notFound; }
 
     WTF_EXPORT_PRIVATE Vector<UChar> charactersWithNullTermination() const;
+    WTF_EXPORT_PRIVATE Vector<UChar> charactersWithoutNullTermination() const;
 
     WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned) const;
 

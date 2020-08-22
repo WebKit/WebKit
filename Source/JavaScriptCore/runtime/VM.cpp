@@ -72,6 +72,9 @@
 #include "IntlNumberFormat.h"
 #include "IntlPluralRules.h"
 #include "IntlRelativeTimeFormat.h"
+#include "IntlSegmentIterator.h"
+#include "IntlSegmenter.h"
+#include "IntlSegments.h"
 #include "IsoHeapCellType.h"
 #include "IsoInlinedHeapCellType.h"
 #include "JITCode.h"
@@ -314,6 +317,9 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , intlNumberFormatHeapCellType(IsoHeapCellType::create<IntlNumberFormat>())
     , intlPluralRulesHeapCellType(IsoHeapCellType::create<IntlPluralRules>())
     , intlRelativeTimeFormatHeapCellType(IsoHeapCellType::create<IntlRelativeTimeFormat>())
+    , intlSegmentIteratorHeapCellType(IsoHeapCellType::create<IntlSegmentIterator>())
+    , intlSegmenterHeapCellType(IsoHeapCellType::create<IntlSegmenter>())
+    , intlSegmentsHeapCellType(IsoHeapCellType::create<IntlSegments>())
 #if ENABLE(WEBASSEMBLY)
     , webAssemblyCodeBlockHeapCellType(IsoHeapCellType::create<JSWebAssemblyCodeBlock>())
     , webAssemblyFunctionHeapCellType(IsoHeapCellType::create<WebAssemblyFunction>())
@@ -1543,6 +1549,9 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlLocaleSpace, intlLocaleHeapCellType.
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlNumberFormatSpace, intlNumberFormatHeapCellType.get(), IntlNumberFormat)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlPluralRulesSpace, intlPluralRulesHeapCellType.get(), IntlPluralRules)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlRelativeTimeFormatSpace, intlRelativeTimeFormatHeapCellType.get(), IntlRelativeTimeFormat)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlSegmentIteratorSpace, intlSegmentIteratorHeapCellType.get(), IntlSegmentIterator)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlSegmenterSpace, intlSegmenterHeapCellType.get(), IntlSegmenter)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(intlSegmentsSpace, intlSegmentsHeapCellType.get(), IntlSegments)
 #if ENABLE(WEBASSEMBLY)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(jsToWasmICCalleeSpace, cellHeapCellType.get(), JSToWasmICCallee)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCodeBlockSpace, webAssemblyCodeBlockHeapCellType.get(), JSWebAssemblyCodeBlock) // Hash:0x9ad995cd

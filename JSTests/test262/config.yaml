@@ -6,6 +6,7 @@ flags:
   FinalizationRegistry: useWeakRefs
   class-fields-public: usePublicClassFields
   class-fields-private: usePrivateClassFields
+  Intl.Segmenter: useIntlSegmenter
 skip:
   features:
     - SharedArrayBuffer
@@ -28,7 +29,6 @@ skip:
     - Intl.DateTimeFormat-formatRange
     - Intl.DateTimeFormat-fractionalSecondDigits
     - Intl.ListFormat
-    - Intl.Segmenter
   paths:
     - test/built-ins/DataView/prototype/getBigInt64
     - test/built-ins/DataView/prototype/getBigUint64

@@ -832,6 +832,13 @@ runtime/IntlPluralRulesPrototype.cpp
 runtime/IntlRelativeTimeFormat.cpp
 runtime/IntlRelativeTimeFormatConstructor.cpp
 runtime/IntlRelativeTimeFormatPrototype.cpp
+runtime/IntlSegmentIterator.cpp
+runtime/IntlSegmentIteratorPrototype.cpp
+runtime/IntlSegmenter.cpp
+runtime/IntlSegmenterConstructor.cpp
+runtime/IntlSegmenterPrototype.cpp
+runtime/IntlSegments.cpp
+runtime/IntlSegmentsPrototype.cpp
 runtime/IteratorOperations.cpp
 runtime/IteratorPrototype.cpp
 runtime/JSArray.cpp

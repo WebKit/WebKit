@@ -1784,6 +1784,18 @@
 		DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */; };
 		DEA7E2451BBC677F00D78440 /* JSTypedArrayViewPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E307178324C7827100DF0644 /* IntlRelativeTimeFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A3BF885024480BE1001B9F35 /* IntlRelativeTimeFormat.h */; };
+		E307178424C7827700DF0644 /* IntlRelativeTimeFormatConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A3BF884E24480BE0001B9F35 /* IntlRelativeTimeFormatConstructor.h */; };
+		E307178524C7827900DF0644 /* IntlRelativeTimeFormatPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A3BF884C24480BDF001B9F35 /* IntlRelativeTimeFormatPrototype.h */; };
+		E307178624C7827C00DF0644 /* IntlSegmenterConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E307177D24C7824600DF0644 /* IntlSegmenterConstructor.h */; };
+		E307178724C7827E00DF0644 /* IntlSegmenter.h in Headers */ = {isa = PBXBuildFile; fileRef = E307178124C7824700DF0644 /* IntlSegmenter.h */; };
+		E307178824C7828100DF0644 /* IntlSegmenterPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E307177F24C7824700DF0644 /* IntlSegmenterPrototype.h */; };
+		E307178924C7828600DF0644 /* IntlPluralRulesPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D5FB18D20744AE8005DDF64 /* IntlPluralRulesPrototype.h */; };
+		E307178A24C7828C00DF0644 /* IntlPluralRulesConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D5FB19020744BF1005DDF64 /* IntlPluralRulesConstructor.h */; };
+		E307178B24C7828F00DF0644 /* IntlPluralRules.h in Headers */ = {isa = PBXBuildFile; fileRef = 7D5FB19220744BF2005DDF64 /* IntlPluralRules.h */; };
+		E307178C24C7829800DF0644 /* IntlLocalePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AFF930245A3CFC00C9BA3B /* IntlLocalePrototype.h */; };
+		E307178D24C7829A00DF0644 /* IntlLocaleConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AFF92C245A3CFA00C9BA3B /* IntlLocaleConstructor.h */; };
+		E307178E24C7829D00DF0644 /* IntlLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AFF92B245A3CF900C9BA3B /* IntlLocale.h */; };
 		E31179AA2288386100514B2C /* SymbolTableOrScopeDepth.h in Headers */ = {isa = PBXBuildFile; fileRef = E31179A92288385D00514B2C /* SymbolTableOrScopeDepth.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31618131EC5FE170006A218 /* DOMAnnotation.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618101EC5FE080006A218 /* DOMAnnotation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E31618151EC5FE270006A218 /* DOMAttributeGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E31618121EC5FE080006A218 /* DOMAttributeGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1874,6 +1886,10 @@
 		E3D3515F241B89D7008DC16E /* MarkedJSValueRefArray.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D3515D241B89CE008DC16E /* MarkedJSValueRefArray.h */; };
 		E3D877741E65C0A000BE945A /* BytecodeDumper.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D877721E65C08900BE945A /* BytecodeDumper.h */; };
 		E3EE137621FBD43500D83C4B /* ErrorType.h in Headers */ = {isa = PBXBuildFile; fileRef = E3EE137421FBD43400D83C4B /* ErrorType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3F2193724C7882F003AE453 /* IntlSegmentIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F2193124C78829003AE453 /* IntlSegmentIterator.h */; };
+		E3F2193824C78831003AE453 /* IntlSegmentIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F2192F24C78829003AE453 /* IntlSegmentIteratorPrototype.h */; };
+		E3F2193924C78834003AE453 /* IntlSegments.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F2193324C7882A003AE453 /* IntlSegments.h */; };
+		E3F2193A24C78836003AE453 /* IntlSegmentsPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F2193624C7882B003AE453 /* IntlSegmentsPrototype.h */; };
 		E3F23A7F1ECF13EE00978D99 /* SnippetSlowPathCalls.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7E1ECF13E500978D99 /* SnippetSlowPathCalls.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A801ECF13F500978D99 /* SnippetReg.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7D1ECF13E500978D99 /* SnippetReg.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A811ECF13FA00978D99 /* SnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7C1ECF13E500978D99 /* SnippetParams.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4951,6 +4967,12 @@
 		E18E3A570DF9278C00D90B34 /* VM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = VM.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		E3060128228F978100FAABDF /* UnlinkedMetadataTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnlinkedMetadataTable.cpp; sourceTree = "<group>"; };
 		E30677971B8BC6F5003F87F0 /* ModuleLoader.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = ModuleLoader.js; sourceTree = "<group>"; };
+		E307177D24C7824600DF0644 /* IntlSegmenterConstructor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmenterConstructor.h; sourceTree = "<group>"; };
+		E307177E24C7824600DF0644 /* IntlSegmenterPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegmenterPrototype.cpp; sourceTree = "<group>"; };
+		E307177F24C7824700DF0644 /* IntlSegmenterPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmenterPrototype.h; sourceTree = "<group>"; };
+		E307178024C7824700DF0644 /* IntlSegmenter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegmenter.cpp; sourceTree = "<group>"; };
+		E307178124C7824700DF0644 /* IntlSegmenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmenter.h; sourceTree = "<group>"; };
+		E307178224C7824700DF0644 /* IntlSegmenterConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegmenterConstructor.cpp; sourceTree = "<group>"; };
 		E31179A92288385D00514B2C /* SymbolTableOrScopeDepth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SymbolTableOrScopeDepth.h; sourceTree = "<group>"; };
 		E31618101EC5FE080006A218 /* DOMAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAnnotation.h; sourceTree = "<group>"; };
 		E31618111EC5FE080006A218 /* DOMAttributeGetterSetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMAttributeGetterSetter.cpp; sourceTree = "<group>"; };
@@ -5100,6 +5122,14 @@
 		E3D877721E65C08900BE945A /* BytecodeDumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeDumper.h; sourceTree = "<group>"; };
 		E3EE137421FBD43400D83C4B /* ErrorType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorType.h; sourceTree = "<group>"; };
 		E3EE137521FBD43400D83C4B /* ErrorType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorType.cpp; sourceTree = "<group>"; };
+		E3F2192F24C78829003AE453 /* IntlSegmentIteratorPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmentIteratorPrototype.h; sourceTree = "<group>"; };
+		E3F2193024C78829003AE453 /* IntlSegmentIterator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegmentIterator.cpp; sourceTree = "<group>"; };
+		E3F2193124C78829003AE453 /* IntlSegmentIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmentIterator.h; sourceTree = "<group>"; };
+		E3F2193224C7882A003AE453 /* IntlSegmentsPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegmentsPrototype.cpp; sourceTree = "<group>"; };
+		E3F2193324C7882A003AE453 /* IntlSegments.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegments.h; sourceTree = "<group>"; };
+		E3F2193424C7882A003AE453 /* IntlSegments.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegments.cpp; sourceTree = "<group>"; };
+		E3F2193524C7882A003AE453 /* IntlSegmentIteratorPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegmentIteratorPrototype.cpp; sourceTree = "<group>"; };
+		E3F2193624C7882B003AE453 /* IntlSegmentsPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmentsPrototype.h; sourceTree = "<group>"; };
 		E3F23A7B1ECF13E500978D99 /* Snippet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Snippet.h; sourceTree = "<group>"; };
 		E3F23A7C1ECF13E500978D99 /* SnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetParams.h; sourceTree = "<group>"; };
 		E3F23A7D1ECF13E500978D99 /* SnippetReg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetReg.h; sourceTree = "<group>"; };
@@ -7324,6 +7354,20 @@
 				A3BF884E24480BE0001B9F35 /* IntlRelativeTimeFormatConstructor.h */,
 				A3BF884B24480BDE001B9F35 /* IntlRelativeTimeFormatPrototype.cpp */,
 				A3BF884C24480BDF001B9F35 /* IntlRelativeTimeFormatPrototype.h */,
+				E307178024C7824700DF0644 /* IntlSegmenter.cpp */,
+				E307178124C7824700DF0644 /* IntlSegmenter.h */,
+				E307178224C7824700DF0644 /* IntlSegmenterConstructor.cpp */,
+				E307177D24C7824600DF0644 /* IntlSegmenterConstructor.h */,
+				E307177E24C7824600DF0644 /* IntlSegmenterPrototype.cpp */,
+				E307177F24C7824700DF0644 /* IntlSegmenterPrototype.h */,
+				E3F2193024C78829003AE453 /* IntlSegmentIterator.cpp */,
+				E3F2193124C78829003AE453 /* IntlSegmentIterator.h */,
+				E3F2193524C7882A003AE453 /* IntlSegmentIteratorPrototype.cpp */,
+				E3F2192F24C78829003AE453 /* IntlSegmentIteratorPrototype.h */,
+				E3F2193424C7882A003AE453 /* IntlSegments.cpp */,
+				E3F2193324C7882A003AE453 /* IntlSegments.h */,
+				E3F2193224C7882A003AE453 /* IntlSegmentsPrototype.cpp */,
+				E3F2193624C7882B003AE453 /* IntlSegmentsPrototype.h */,
 				0F275F2C1ECE079600620D47 /* Intrinsic.cpp */,
 				86BF642A148DB2B5004DE36A /* Intrinsic.h */,
 				8B9F6D551D5912FA001C739F /* IterationKind.h */,
@@ -9796,6 +9840,9 @@
 				E365F33A24AA623900C991B2 /* IntlDisplayNamesConstructor.lut.h in Headers */,
 				E353C12124AA4CB7003FBDF3 /* IntlDisplayNamesPrototype.h in Headers */,
 				E365F33B24AA623B00C991B2 /* IntlDisplayNamesPrototype.lut.h in Headers */,
+				E307178E24C7829D00DF0644 /* IntlLocale.h in Headers */,
+				E307178D24C7829A00DF0644 /* IntlLocaleConstructor.h in Headers */,
+				E307178C24C7829800DF0644 /* IntlLocalePrototype.h in Headers */,
 				A1D792FD1B43864B004516F5 /* IntlNumberFormat.h in Headers */,
 				A1D792FF1B43864B004516F5 /* IntlNumberFormatConstructor.h in Headers */,
 				A125846E1B45A36000CC7F6C /* IntlNumberFormatConstructor.lut.h in Headers */,
@@ -9804,6 +9851,19 @@
 				A125846F1B45A36000CC7F6C /* IntlNumberFormatPrototype.lut.h in Headers */,
 				A12BBFF21B044A8B00664B69 /* IntlObject.h in Headers */,
 				708EBE241CE8F35800453146 /* IntlObjectInlines.h in Headers */,
+				E307178B24C7828F00DF0644 /* IntlPluralRules.h in Headers */,
+				E307178A24C7828C00DF0644 /* IntlPluralRulesConstructor.h in Headers */,
+				E307178924C7828600DF0644 /* IntlPluralRulesPrototype.h in Headers */,
+				E307178324C7827100DF0644 /* IntlRelativeTimeFormat.h in Headers */,
+				E307178424C7827700DF0644 /* IntlRelativeTimeFormatConstructor.h in Headers */,
+				E307178524C7827900DF0644 /* IntlRelativeTimeFormatPrototype.h in Headers */,
+				E307178724C7827E00DF0644 /* IntlSegmenter.h in Headers */,
+				E307178624C7827C00DF0644 /* IntlSegmenterConstructor.h in Headers */,
+				E307178824C7828100DF0644 /* IntlSegmenterPrototype.h in Headers */,
+				E3F2193724C7882F003AE453 /* IntlSegmentIterator.h in Headers */,
+				E3F2193824C78831003AE453 /* IntlSegmentIteratorPrototype.h in Headers */,
+				E3F2193924C78834003AE453 /* IntlSegments.h in Headers */,
+				E3F2193A24C78836003AE453 /* IntlSegmentsPrototype.h in Headers */,
 				860BD801148EA6F200112B2F /* Intrinsic.h in Headers */,
 				534E03541E53BD2900213F64 /* IntrinsicGetterAccessCase.h in Headers */,
 				0FDCE1321FB11DA4006F3901 /* IsoAlignedMemoryAllocator.h in Headers */,

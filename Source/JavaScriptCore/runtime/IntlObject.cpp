@@ -48,8 +48,12 @@
 #include "IntlPluralRulesPrototype.h"
 #include "IntlRelativeTimeFormatConstructor.h"
 #include "IntlRelativeTimeFormatPrototype.h"
+#include "IntlSegmenter.h"
+#include "IntlSegmenterConstructor.h"
+#include "IntlSegmenterPrototype.h"
 #include "JSCInlines.h"
 #include "Options.h"
+#include <unicode/ubrk.h>
 #include <unicode/ucol.h>
 #include <unicode/ufieldpositer.h>
 #include <unicode/uloc.h>
@@ -116,6 +120,13 @@ static JSValue createRelativeTimeFormatConstructor(VM& vm, JSObject* object)
     return IntlRelativeTimeFormatConstructor::create(vm, IntlRelativeTimeFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlRelativeTimeFormatPrototype*>(globalObject->relativeTimeFormatStructure()->storedPrototypeObject()));
 }
 
+static JSValue createSegmenterConstructor(VM& vm, JSObject* object)
+{
+    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    JSGlobalObject* globalObject = intlObject->globalObject(vm);
+    return IntlSegmenterConstructor::create(vm, IntlSegmenterConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlSegmenterPrototype*>(globalObject->segmenterStructure()->storedPrototypeObject()));
+}
+
 }
 
 #include "IntlObject.lut.h"
@@ -170,6 +181,8 @@ void IntlObject::finishCreation(VM& vm, JSGlobalObject*)
 #else
     UNUSED_PARAM(createDisplayNamesConstructor);
 #endif
+    if (Options::useIntlSegmenter())
+        putDirectWithoutTransition(vm, vm.propertyNames->Segmenter, createSegmenterConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -275,6 +288,27 @@ const HashSet<String>& intlCollatorAvailableLocales()
                 continue;
             availableLocales->add(locale);
             addScriptlessLocaleIfNeeded(availableLocales.get(), locale);
+        }
+    });
+    return availableLocales;
+}
+
+const HashSet<String>& intlSegmenterAvailableLocales()
+{
+    static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
+    HashSet<String>& availableLocales = cachedAvailableLocales.get();
+
+    static std::once_flag initializeOnce;
+    std::call_once(initializeOnce, [&] {
+        ASSERT(availableLocales.isEmpty());
+        constexpr bool isImmortal = true;
+        int32_t count = ubrk_countAvailable();
+        for (int32_t i = 0; i < count; ++i) {
+            String locale = languageTagForLocaleID(ubrk_getAvailable(i), isImmortal);
+            if (locale.isEmpty())
+                continue;
+            availableLocales.add(locale);
+            addScriptlessLocaleIfNeeded(availableLocales, locale);
         }
     });
     return availableLocales;

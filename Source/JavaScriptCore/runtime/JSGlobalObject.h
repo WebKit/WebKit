@@ -302,6 +302,9 @@ public:
     LazyProperty<JSGlobalObject, Structure> m_numberFormatStructure;
     LazyProperty<JSGlobalObject, Structure> m_pluralRulesStructure;
     LazyProperty<JSGlobalObject, Structure> m_relativeTimeFormatStructure;
+    LazyProperty<JSGlobalObject, Structure> m_segmentIteratorStructure;
+    LazyProperty<JSGlobalObject, Structure> m_segmenterStructure;
+    LazyProperty<JSGlobalObject, Structure> m_segmentsStructure;
 
     WriteBarrier<NullGetterFunction> m_nullGetterFunction;
     WriteBarrier<NullSetterFunction> m_nullSetterFunction;
@@ -809,6 +812,9 @@ public:
     Structure* localeStructure() { return m_localeStructure.get(this); }
     Structure* pluralRulesStructure() { return m_pluralRulesStructure.get(this); }
     Structure* relativeTimeFormatStructure() { return m_relativeTimeFormatStructure.get(this); }
+    Structure* segmentIteratorStructure() { return m_segmentIteratorStructure.get(this); }
+    Structure* segmenterStructure() { return m_segmenterStructure.get(this); }
+    Structure* segmentsStructure() { return m_segmentsStructure.get(this); }
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;
