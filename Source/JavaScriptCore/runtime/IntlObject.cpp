@@ -166,8 +166,7 @@ void IntlObject::finishCreation(VM& vm, JSGlobalObject*)
     ASSERT(inherits(vm, info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 #if HAVE(ICU_U_LOCALE_DISPLAY_NAMES)
-    if (Options::useIntlDisplayNames())
-        putDirectWithoutTransition(vm, vm.propertyNames->DisplayNames, createDisplayNamesConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, vm.propertyNames->DisplayNames, createDisplayNamesConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
 #else
     UNUSED_PARAM(createDisplayNamesConstructor);
 #endif

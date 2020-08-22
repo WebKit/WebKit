@@ -1,5 +1,4 @@
 //@ skip if ["arm", "mips"].include?($architecture)
-//@ runDefault("--useIntlDisplayNames=1")
 function shouldBe(actual, expected) {
     if (actual !== expected)
         throw new Error('bad value: ' + actual);

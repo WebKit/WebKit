@@ -6,7 +6,6 @@ flags:
   FinalizationRegistry: useWeakRefs
   class-fields-public: usePublicClassFields
   class-fields-private: usePrivateClassFields
-  Intl.DisplayNames: useIntlDisplayNames
 skip:
   features:
     - SharedArrayBuffer

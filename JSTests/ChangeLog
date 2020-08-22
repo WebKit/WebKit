@@ -1,3 +1,15 @@
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Enable Intl.DisplayNames
+        https://bugs.webkit.org/show_bug.cgi?id=215749
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-displaynames.js:
+        * stress/intl-parse-unicode-subtags.js:
+        * stress/intl-suppored-locales-of.js:
+        * test262/config.yaml:
+
 2020-08-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Align "length" properties of function prototypes with the spec
