@@ -3095,6 +3095,11 @@ static EncodedJSValue JSC_HOST_CALL functionICUVersion(JSGlobalObject*, CallFram
     return JSValue::encode(jsNumber(WTF::ICU::majorVersion()));
 }
 
+static EncodedJSValue JSC_HOST_CALL functionICUHeaderVersion(JSGlobalObject*, CallFrame*)
+{
+    return JSValue::encode(jsNumber(U_ICU_VERSION_MAJOR_NUM));
+}
+
 static EncodedJSValue JSC_HOST_CALL functionAssertEnabled(JSGlobalObject*, CallFrame*)
 {
     return JSValue::encode(jsBoolean(ASSERT_ENABLED));
@@ -3253,6 +3258,7 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "setUserPreferredLanguages", functionSetUserPreferredLanguages, 1);
     addFunction(vm, "icuVersion", functionICUVersion, 0);
+    addFunction(vm, "icuHeaderVersion", functionICUHeaderVersion, 0);
 
     addFunction(vm, "assertEnabled", functionAssertEnabled, 0);
 

@@ -1,3 +1,15 @@
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, workaround for old ICU headers in macOS Catalina bots
+        https://bugs.webkit.org/show_bug.cgi?id=209774
+
+        EWS and Catalina bots are inconsistent in terms of ICU header versions.
+        This patch adds a workaround which checks ICU header version too at runtime.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::functionICUHeaderVersion):
+        (JSC::JSDollarVM::finishCreation):
+
 2020-08-22  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         The [[ThrowTypeError]] function object must not be extensible

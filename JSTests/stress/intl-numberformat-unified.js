@@ -3,7 +3,7 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual);
 }
 
-if ($vm.icuVersion() >= 64) {
+if ($vm.icuVersion() >= 64 && $vm.icuHeaderVersion() >= 64) {
     shouldBe((299792458).toLocaleString("en-US", {
         style: "unit",
         unit: "meter-per-second",
