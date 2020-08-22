@@ -93,6 +93,7 @@
     macro(constructor) \
     macro(count) \
     macro(counters) \
+    macro(dateStyle) \
     macro(day) \
     macro(defineProperty) \
     macro(deref) \
@@ -197,6 +198,7 @@
     macro(test) \
     macro(then) \
     macro(time) \
+    macro(timeStyle) \
     macro(timeZone) \
     macro(timeZoneName) \
     macro(toExponential) \

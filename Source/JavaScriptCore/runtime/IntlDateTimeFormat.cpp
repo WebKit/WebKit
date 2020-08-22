@@ -268,6 +268,14 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
     if (!second.isUndefined())
         needDefaults = false;
 
+    JSValue dateStyle = options->get(globalObject, vm.propertyNames->dateStyle);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    JSValue timeStyle = options->get(globalObject, vm.propertyNames->timeStyle);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    if (!dateStyle.isUndefined() || !timeStyle.isUndefined())
+        needDefaults = false;
+
     // 7. If needDefaults is true and defaults is either "date" or "all", then
     // Defaults is always "date".
     if (needDefaults) {
@@ -588,7 +596,6 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             skeletonBuilder.append('H');
         break;
     case Hour::None:
-        m_hourCycle = String();
         break;
     }
 
@@ -634,42 +641,134 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     intlStringOption(globalObject, options, vm.propertyNames->formatMatcher, { "basic", "best fit" }, "formatMatcher must be either \"basic\" or \"best fit\"", "best fit");
     RETURN_IF_EXCEPTION(scope, void());
 
-    // Always use ICU date format generator, rather than our own pattern list and matcher.
-    UErrorCode status = U_ZERO_ERROR;
-    UDateTimePatternGenerator* generator = udatpg_open(dataLocaleWithExtensions.data(), &status);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
-        return;
-    }
+    m_dateStyle = intlOption<DateTimeStyle>(globalObject, options, vm.propertyNames->dateStyle, { { "full"_s, DateTimeStyle::Full }, { "long"_s, DateTimeStyle::Long }, { "medium"_s, DateTimeStyle::Medium }, { "short"_s, DateTimeStyle::Short } }, "dateStyle must be \"full\", \"long\", \"medium\", or \"short\""_s, DateTimeStyle::None);
+    RETURN_IF_EXCEPTION(scope, void());
 
-    String skeleton = skeletonBuilder.toString();
-    StringView skeletonView(skeleton);
+    m_timeStyle = intlOption<DateTimeStyle>(globalObject, options, vm.propertyNames->timeStyle, { { "full"_s, DateTimeStyle::Full }, { "long"_s, DateTimeStyle::Long }, { "medium"_s, DateTimeStyle::Medium }, { "short"_s, DateTimeStyle::Short } }, "timeStyle must be \"full\", \"long\", \"medium\", or \"short\""_s, DateTimeStyle::None);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    bool canIncludeHour = true;
     Vector<UChar, 32> patternBuffer;
-    status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator, skeletonView.upconvertedCharacters().get(), skeletonView.length(), UDATPG_MATCH_HOUR_FIELD_LENGTH, patternBuffer);
-    udatpg_close(generator);
-    if (U_FAILURE(status)) {
-        throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
-        return;
+    if (m_dateStyle != DateTimeStyle::None || m_timeStyle != DateTimeStyle::None) {
+        // 30. For each row in Table 1, except the header row, do
+        //     i. Let prop be the name given in the Property column of the row.
+        //     ii. Let p be opt.[[<prop>]].
+        //     iii. If p is not undefined, then
+        //         1. Throw a TypeError exception.
+        if (weekday != Weekday::None || era != Era::None || year != Year::None || month != Month::None || day != Day::None || hour != Hour::None || minute != Minute::None || second != Second::None || timeZoneName != TimeZoneName::None) {
+            throwTypeError(globalObject, scope, "dateStyle and timeStyle may not be used with other DateTimeFormat options"_s);
+            return;
+        }
+
+        // If timeStyle is not specified, m_hourCycle does not matter. Let's skip enforcing step.
+        if (m_timeStyle == DateTimeStyle::None) {
+            canIncludeHour = false;
+            m_hourCycle = String();
+        }
+
+        auto parseUDateFormatStyle = [](DateTimeStyle style) {
+            switch (style) {
+            case DateTimeStyle::Full:
+                return UDAT_FULL;
+            case DateTimeStyle::Long:
+                return UDAT_LONG;
+            case DateTimeStyle::Medium:
+                return UDAT_MEDIUM;
+            case DateTimeStyle::Short:
+                return UDAT_SHORT;
+            case DateTimeStyle::None:
+                return UDAT_NONE;
+            }
+            return UDAT_NONE;
+        };
+
+        // We cannot use this UDateFormat directly yet because we need to enforce specified hourCycle.
+        // First, we create UDateFormat via dateStyle and timeStyle. And then convert it to pattern string.
+        // After updating this pattern string with m_hourCycle, we create a final UDateFormat with the updated pattern string.
+        UErrorCode status = U_ZERO_ERROR;
+        StringView timeZoneView(m_timeZone);
+        auto dateFormatFromStyle = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(parseUDateFormatStyle(m_timeStyle), parseUDateFormatStyle(m_dateStyle), dataLocaleWithExtensions.data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), nullptr, -1, &status));
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
+            return;
+        }
+        constexpr bool localized = false; // Aligned with how ICU SimpleDateTimeFormat::format works. We do not need to translate this to localized pattern.
+        status = callBufferProducingFunction(udat_toPattern, dateFormatFromStyle.get(), localized, patternBuffer);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
+            return;
+        }
+    } else {
+        // If hour is not specified, m_hourCycle does not matter. Let's skip enforcing step.
+        if (hour == Hour::None) {
+            canIncludeHour = false;
+            m_hourCycle = String();
+        }
+
+        // Always use ICU date format generator, rather than our own pattern list and matcher.
+        UErrorCode status = U_ZERO_ERROR;
+        auto* generator = udatpg_open(dataLocaleWithExtensions.data(), &status);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
+            return;
+        }
+
+        String skeleton = skeletonBuilder.toString();
+        StringView skeletonView(skeleton);
+        status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator, skeletonView.upconvertedCharacters().get(), skeletonView.length(), UDATPG_MATCH_HOUR_FIELD_LENGTH, patternBuffer);
+        udatpg_close(generator);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
+            return;
+        }
     }
 
-    // Enforce our hourCycle, replacing hour characters in pattern.
-    if (!m_hourCycle.isNull()) {
-        UChar hour = 'H';
-        if (m_hourCycle == "h11")
-            hour = 'K';
-        else if (m_hourCycle == "h12")
-            hour = 'h';
-        else if (m_hourCycle == "h24")
-            hour = 'k';
-
-        bool isEscaped = false;
+    // Enforce our hourCycle, replacing hour characters in pattern. ICU can pick format which does not agree with specified hourCycle.
+    // This step modifies generated pattern to use specified hourCycle, and it is specified in 1.1.1 InitializeDateTimeFormat step 33.
+    // FIXME: We should cache `hourCycleDefault` value obtained by generating "jjmm" pattern from UDateTimePatternGenerator.
+    // https://bugs.webkit.org/show_bug.cgi?id=213459
+    if (canIncludeHour) {
         bool hasHour = false;
-        for (auto& c : patternBuffer) {
-            if (c == '\'')
-                isEscaped = !isEscaped;
-            else if (!isEscaped && (c == 'h' || c == 'H' || c == 'k' || c == 'K')) {
-                c = hour;
-                hasHour = true;
+        if (!m_hourCycle.isNull() || !isHour12Undefined) {
+            UChar hourFromHourCycle = 'H'; // H23
+            if (m_hourCycle == "h11")
+                hourFromHourCycle = 'K';
+            else if (m_hourCycle == "h12")
+                hourFromHourCycle = 'h';
+            else if (m_hourCycle == "h24")
+                hourFromHourCycle = 'k';
+
+            bool isEscaped = false;
+            for (auto& c : patternBuffer) {
+                if (c == '\'')
+                    isEscaped = !isEscaped;
+                else if (!isEscaped && (c == 'h' || c == 'H' || c == 'k' || c == 'K')) {
+                    switch (c) {
+                    case 'K':
+                    case 'H': {
+                        if (isHour12Undefined)
+                            c = hourFromHourCycle;
+                        else if (hour12 == TriState::True)
+                            c = 'K';
+                        else
+                            c = 'H';
+                        break;
+                    }
+                    case 'h':
+                    case 'k': {
+                        if (isHour12Undefined)
+                            c = hourFromHourCycle;
+                        else if (hour12 == TriState::True)
+                            c = 'h';
+                        else
+                            c = 'k';
+                        break;
+                    }
+                    default:
+                        ASSERT_NOT_REACHED();
+                    }
+                    hasHour = true;
+                }
             }
         }
         if (!hasHour)
@@ -681,7 +780,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     dataLogLnIf(IntlDateTimeFormatInternal::verbose, "locale:(", m_locale, "),dataLocale:(", dataLocaleWithExtensions, "),pattern:(", pattern, ")");
 
-    status = U_ZERO_ERROR;
+    UErrorCode status = U_ZERO_ERROR;
     StringView timeZoneView(m_timeZone);
     m_dateFormat = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(UDAT_PATTERN, UDAT_PATTERN, dataLocaleWithExtensions.data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), pattern.upconvertedCharacters(), pattern.length(), &status));
     if (U_FAILURE(status)) {
@@ -840,6 +939,25 @@ ASCIILiteral IntlDateTimeFormat::timeZoneNameString(TimeZoneName timeZoneName)
     return ASCIILiteral::null();
 }
 
+ASCIILiteral IntlDateTimeFormat::formatStyleString(DateTimeStyle style)
+{
+    switch (style) {
+    case DateTimeStyle::Full:
+        return "full"_s;
+    case DateTimeStyle::Long:
+        return "long"_s;
+    case DateTimeStyle::Medium:
+        return "medium"_s;
+    case DateTimeStyle::Short:
+        return "short"_s;
+    case DateTimeStyle::None:
+        ASSERT_NOT_REACHED();
+        return ASCIILiteral::null();
+    }
+    ASSERT_NOT_REACHED();
+    return ASCIILiteral::null();
+}
+
 // https://tc39.es/ecma402/#sec-intl.datetimeformat.prototype.resolvedoptions
 JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) const
 {
@@ -882,6 +1000,12 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) cons
 
     if (m_timeZoneName != TimeZoneName::None)
         options->putDirect(vm, vm.propertyNames->timeZoneName, jsNontrivialString(vm, timeZoneNameString(m_timeZoneName)));
+
+    if (m_dateStyle != DateTimeStyle::None)
+        options->putDirect(vm, vm.propertyNames->dateStyle, jsNontrivialString(vm, formatStyleString(m_dateStyle)));
+
+    if (m_timeStyle != DateTimeStyle::None)
+        options->putDirect(vm, vm.propertyNames->timeStyle, jsNontrivialString(vm, formatStyleString(m_timeStyle)));
 
     return options;
 }

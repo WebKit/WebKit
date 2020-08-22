@@ -1,5 +1,35 @@
 2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [ECMA-402] Intl.DateTimeFormat dateStyle/timeStyle missing in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=209776
+
+        Reviewed by Darin Adler and Ross Kirsling.
+
+        This patch implements Intl.DateTimeFormat dateStyle and timeStyle options. When it is specified,
+        we query the best date-time format with these options to ICU instead of configuring each date-time
+        formats.
+
+        Since ECMA402 requires enforcement of hourCycle specified from the option, even if ICU ignores that.
+        So, after getting the appropriate pattern from ICU, we modify this pattern and re-create UDateFormat
+        from the modified pattern.
+
+        * builtins/DatePrototype.js:
+        (toLocaleString.toDateTimeOptionsAnyAll):
+        (toLocaleString):
+        (toLocaleDateString.toDateTimeOptionsDateDate):
+        (toLocaleDateString):
+        (toLocaleTimeString.toDateTimeOptionsTimeTime):
+        (toLocaleTimeString):
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::toDateTimeOptionsAnyDate):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::formatStyleString):
+        (JSC::IntlDateTimeFormat::resolvedOptions const):
+        * runtime/IntlDateTimeFormat.h:
+
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [ECMA-402] Implement Intl.DateTimeFormat.prototype.formatRange
         https://bugs.webkit.org/show_bug.cgi?id=209778
 

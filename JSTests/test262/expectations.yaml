@@ -1569,6 +1569,9 @@ test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
+test/intl402/DateTimeFormat/prototype/format/timedatestyle-en.js:
+  default: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
+  strict mode: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
 test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
   default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
   strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'

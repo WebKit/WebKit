@@ -51,6 +51,13 @@ function toLocaleString(/* locales, options */)
             options.second === @undefined
         );
 
+        if (options) {
+            var dateStyle = options.dateStyle;
+            var timeStyle = options.timeStyle;
+            if (dateStyle !== @undefined || timeStyle !== @undefined)
+                needsDefaults = false;
+        }
+
         // Only create descendant if it will have own properties.
         if (needsDefaults) {
             options = @Object.@create(options);
@@ -103,6 +110,15 @@ function toLocaleDateString(/* locales, options */)
             options.day === @undefined
         );
 
+        if (options) {
+            var dateStyle = options.dateStyle;
+            var timeStyle = options.timeStyle;
+            if (timeStyle !== @undefined)
+                @throwTypeError("timeStyle cannot be specified");
+            if (dateStyle !== @undefined)
+                needsDefaults = false;
+        }
+
         // Only create descendant if it will have own properties.
         if (needsDefaults) {
             options = @Object.@create(options);
@@ -149,6 +165,15 @@ function toLocaleTimeString(/* locales, options */)
             options.minute === @undefined &&
             options.second === @undefined
         );
+
+        if (options) {
+            var dateStyle = options.dateStyle;
+            var timeStyle = options.timeStyle;
+            if (dateStyle !== @undefined)
+                @throwTypeError("dateStyle cannot be specified");
+            if (timeStyle !== @undefined)
+                needsDefaults = false;
+        }
 
         // Only create descendant if it will have own properties.
         if (needsDefaults) {

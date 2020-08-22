@@ -85,6 +85,7 @@ private:
     enum class Minute : uint8_t { None, TwoDigit, Numeric };
     enum class Second : uint8_t { None, TwoDigit, Numeric };
     enum class TimeZoneName : uint8_t { None, Short, Long };
+    enum class DateTimeStyle : uint8_t { None, Full, Long, Medium, Short };
 
     void setFormatsFromPattern(const StringView&);
     static ASCIILiteral weekdayString(Weekday);
@@ -96,6 +97,7 @@ private:
     static ASCIILiteral minuteString(Minute);
     static ASCIILiteral secondString(Second);
     static ASCIILiteral timeZoneNameString(TimeZoneName);
+    static ASCIILiteral formatStyleString(DateTimeStyle);
 
     using UDateFormatDeleter = ICUDeleter<udat_close>;
     using UDateIntervalFormatDeleter = ICUDeleter<udtitvfmt_close>;
@@ -119,6 +121,8 @@ private:
     Minute m_minute { Minute::None };
     Second m_second { Second::None };
     TimeZoneName m_timeZoneName { TimeZoneName::None };
+    DateTimeStyle m_dateStyle { DateTimeStyle::None };
+    DateTimeStyle m_timeStyle { DateTimeStyle::None };
 };
 
 } // namespace JSC
