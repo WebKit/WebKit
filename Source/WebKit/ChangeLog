@@ -1,3 +1,42 @@
+2020-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Unable to copy text from the function browser panel in Numbers
+        https://bugs.webkit.org/show_bug.cgi?id=215740
+        <rdar://problem/65189303>
+
+        Reviewed by Darin Adler.
+
+        On some versions of Xcode, using Interface Builder to set up WKWebViews causes the WKWebView to contain two
+        WKFlippedViews as subviews; one of these is created and added in the normal initialization path of the web view
+        underneath WebViewImpl's constructor, and the other is created and added underneath the superclass (NSView's)
+        `-initWithCoder:` implementation.
+
+        This causes issues when hit-testing WKWebView using the `-hitTest:` method, which is expected to return the
+        WKWebView itself instead of the inner WKFlippedView. The logic that tries to implement this behavior is in
+        `WebViewImpl::hitTest`, which calls into WKWebView's `-hitTest:` method and returns the WKWebView if the hit-
+        tested view ended up being equal to the `m_layerHostingView`. Since we end up with two layer hosting views (only
+        one of which is the real `m_layerHostingView`), we fail the check and end up returning the other WKFlippedView.
+        In the context of this bug, this erroneous hit-test causes AppKit to ask if the WKFlippedView can become the
+        first responder upon mousedown (which it cannot), and so the window's first responder remains the same (instead
+        of changing to WKWebView).
+
+        To fix this, adjust the constructor of WebViewImpl to avoid making an extra layer hosting view in the case where
+        decoding the WKWebView already initialized and placed the layer hosting view, and just use the existing one
+        instead.
+
+        Test: WKWebView.HitTestAfterInitializingFromCoder
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKFlippedView initWithFrame:]):
+        (-[WKFlippedView initWithCoder:]):
+        (-[WKFlippedView _commonInitialize]):
+
+        Override both designated initialization codepaths so that we call the `-_commonInitialize` helper, which sets
+        the autoresizing mask. This was previously called immediately after creating the WKFlippedView in the
+        constructor of WebViewImpl.
+
+        (WebKit::WebViewImpl::WebViewImpl):
+
 2020-08-21  Andy Estes  <aestes@apple.com>
 
         IPC::encodeSharedBuffer combines SharedBuffer data segments when copying to SharedMemory

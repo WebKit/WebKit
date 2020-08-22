@@ -414,6 +414,25 @@ static void* keyValueObservingContext = &keyValueObservingContext;
 
 @implementation WKFlippedView
 
+- (instancetype)initWithFrame:(NSRect)frame
+{
+    if (self = [super initWithFrame:frame])
+        [self _commonInitialize];
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    if (self = [super initWithCoder:coder])
+        [self _commonInitialize];
+    return self;
+}
+
+- (void)_commonInitialize
+{
+    [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+}
+
 - (BOOL)isFlipped
 {
     return YES;
@@ -1377,11 +1396,21 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
 
     [view addTrackingArea:m_primaryTrackingArea.get()];
 
-    // Create an NSView that will host our layer tree.
-    m_layerHostingView = adoptNS([[WKFlippedView alloc] initWithFrame:[m_view bounds]]);
-    [m_layerHostingView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    for (NSView *subview in view.subviews) {
+        if ([subview isKindOfClass:WKFlippedView.class]) {
+            // A layer hosting view may have already been created and added to the view hierarchy
+            // in the process of initializing the WKWebView from an NSCoder.
+            m_layerHostingView = (WKFlippedView *)subview;
+            [m_layerHostingView setFrame:[m_view bounds]];
+            break;
+        }
+    }
 
-    [view addSubview:m_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
+    if (!m_layerHostingView) {
+        // Create an NSView that will host our layer tree.
+        m_layerHostingView = adoptNS([[WKFlippedView alloc] initWithFrame:[m_view bounds]]);
+        [view addSubview:m_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
+    }
 
     // Create a root layer that will back the NSView.
     RetainPtr<CALayer> layer = adoptNS([[CALayer alloc] init]);

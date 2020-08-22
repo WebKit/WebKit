@@ -1,3 +1,17 @@
+2020-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Unable to copy text from the function browser panel in Numbers
+        https://bugs.webkit.org/show_bug.cgi?id=215740
+        <rdar://problem/65189303>
+
+        Reviewed by Darin Adler.
+
+        Add a new API test that serializes a WKWebView, then deserializes it, and then verifies that calling `-hitTest:`
+        on the deserialized `WKWebView` grabs the `WKWebView` itself rather than the `WKFlippedView` underneath it.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/WKWebViewCoders.mm: Added.
+
 2020-08-21  Jonathan Bedard  <jbedard@apple.com>
 
         Regression (r265942): Layout-tests are hanging on iOS EWS
