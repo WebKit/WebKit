@@ -1,3 +1,20 @@
+2020-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Console object's @@toStringTag should be "console" instead of "Console"
+        https://bugs.webkit.org/show_bug.cgi?id=215750
+
+        Reviewed by Ross Kirsling.
+
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+        * fast/loader/window-properties-restored-from-page-cache-expected.txt:
+        * http/tests/security/cross-frame-access-put-expected.txt:
+        * inspector/debugger/pause-for-internal-scripts-expected.txt:
+        * inspector/debugger/stepping/stepping-internal-scripts-expected.txt:
+        * js/console-expected.txt:
+        * js/console.html:
+        * platform/gtk/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/mac-wk2/fast/dom/Window/window-lookup-precedence-expected.txt:
+
 2020-08-20  Darin Adler  <darin@apple.com>
 
         Move node geometry functions from Range to RenderObject

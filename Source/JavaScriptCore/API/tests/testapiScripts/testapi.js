@@ -267,7 +267,7 @@ shouldThrow("EvilExceptionObject*5");
 EvilExceptionObject.toStringExplicit = function f() { return f(); }
 shouldThrow("String(EvilExceptionObject)");
 
-shouldBe("console", "[object Console]");
+shouldBe("console", "[object console]");
 shouldBe("typeof console.log", "function");
 
 shouldBe("EmptyObject", "[object CallbackObject]");

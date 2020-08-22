@@ -18,7 +18,7 @@ CONSOLE MESSAGE: Viewport
 CONSOLE MESSAGE: Viewport
 CONSOLE MESSAGE: Viewport
 PASS typeof console is "object"
-PASS console.toString() is "[object Console]"
+PASS console.toString() is "[object console]"
 PASS console is console
 PASS Object.getPrototypeOf(console) is not Object.getPrototypeOf({})
 PASS consoleDescriptor.configurable is true

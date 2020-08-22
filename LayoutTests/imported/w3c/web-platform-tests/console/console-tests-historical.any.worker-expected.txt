@@ -1,0 +1,5 @@
+
+PASS 'timeline' function should not exist on the console object 
+PASS 'timelineEnd' function should not exist on the console object 
+PASS 'markTimeline' function should not exist on the console object 
+

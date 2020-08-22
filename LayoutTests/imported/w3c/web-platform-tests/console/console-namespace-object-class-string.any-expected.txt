@@ -1,0 +1,6 @@
+
+PASS @@toStringTag exists on the namespace object with the appropriate descriptor 
+PASS Object.prototype.toString applied to the namespace object 
+PASS Object.prototype.toString applied after modifying the namespace object's @@toStringTag 
+PASS Object.prototype.toString applied after deleting @@toStringTag 
+

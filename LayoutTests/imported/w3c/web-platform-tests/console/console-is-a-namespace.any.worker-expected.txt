@@ -1,0 +1,6 @@
+
+PASS console exists on the global object 
+PASS console has the right property descriptors 
+PASS Console (uppercase, as if it were an interface) must not exist 
+PASS The prototype chain must be correct 
+

@@ -1014,7 +1014,7 @@ static void testObjectiveCAPIMain()
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
         JSValue *result = [context evaluateScript:@"String(console)"];
-        checkResult(@"String(console)", [result isEqualToObject:@"[object Console]"]);
+        checkResult(@"String(console)", [result isEqualToObject:@"[object console]"]);
         result = [context evaluateScript:@"typeof console.log"];
         checkResult(@"typeof console.log", [result isEqualToObject:@"function"]);
     }

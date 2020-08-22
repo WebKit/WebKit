@@ -88,7 +88,7 @@ ALERT: PASS: window.XPathEvaluator should be 'function XPathEvaluator() {    [na
 ALERT: PASS: window.XPathResult should be 'function XPathResult() {    [native code]}' and is.
 ALERT: PASS: window.clientInformation should be '[object Navigator]' and is.
 ALERT: PASS: window.closed should be 'false' and is.
-ALERT: PASS: window.console should be '[object Console]' and is.
+ALERT: PASS: window.console should be '[object console]' and is.
 ALERT: PASS: window.crypto should be '[object Crypto]' and is.
 ALERT: PASS: window.defaultStatus should be '' and is.
 ALERT: PASS: window.defaultstatus should be '' and is.

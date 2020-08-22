@@ -1,3 +1,46 @@
+2020-08-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Console object's @@toStringTag should be "console" instead of "Console"
+        https://bugs.webkit.org/show_bug.cgi?id=215750
+
+        Reviewed by Ross Kirsling.
+
+        Import ToT wpt/console tests including @@toStringTag tests.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/console/META.yml: Added.
+        * web-platform-tests/console/console-is-a-namespace.any-expected.txt: Added.
+        * web-platform-tests/console/console-is-a-namespace.any.html: Added.
+        * web-platform-tests/console/console-is-a-namespace.any.js: Added.
+        (test):
+        * web-platform-tests/console/console-is-a-namespace.any.worker-expected.txt: Added.
+        * web-platform-tests/console/console-is-a-namespace.any.worker.html: Added.
+        * web-platform-tests/console/console-label-conversion.any-expected.txt: Added.
+        * web-platform-tests/console/console-label-conversion.any.html: Added.
+        * web-platform-tests/console/console-label-conversion.any.js: Added.
+        (const.method.of.methods.test):
+        * web-platform-tests/console/console-label-conversion.any.worker-expected.txt: Added.
+        * web-platform-tests/console/console-label-conversion.any.worker.html: Added.
+        * web-platform-tests/console/console-namespace-object-class-string.any-expected.txt: Added.
+        * web-platform-tests/console/console-namespace-object-class-string.any.html: Added.
+        * web-platform-tests/console/console-namespace-object-class-string.any.js: Added.
+        (test):
+        (test.t.t.add_cleanup):
+        * web-platform-tests/console/console-namespace-object-class-string.any.worker-expected.txt: Added.
+        * web-platform-tests/console/console-namespace-object-class-string.any.worker.html: Added.
+        * web-platform-tests/console/console-tests-historical.any-expected.txt: Added.
+        * web-platform-tests/console/console-tests-historical.any.html: Added.
+        * web-platform-tests/console/console-tests-historical.any.js: Added.
+        (test):
+        * web-platform-tests/console/console-tests-historical.any.worker-expected.txt: Added.
+        * web-platform-tests/console/console-tests-historical.any.worker.html: Added.
+        * web-platform-tests/console/idlharness.any-expected.txt: Added.
+        * web-platform-tests/console/idlharness.any.html: Added.
+        * web-platform-tests/console/idlharness.any.js: Added.
+        * web-platform-tests/console/idlharness.any.worker-expected.txt: Added.
+        * web-platform-tests/console/idlharness.any.worker.html: Added.
+        * web-platform-tests/console/w3c-import.log: Added.
+
 2020-08-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline flaky webaudio tests.

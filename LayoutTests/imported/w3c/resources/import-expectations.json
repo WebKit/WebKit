@@ -61,7 +61,7 @@
     "web-platform-tests/clipboard-apis": "import", 
     "web-platform-tests/common": "import", 
     "web-platform-tests/compat": "skip", 
-    "web-platform-tests/console": "skip", 
+    "web-platform-tests/console": "import", 
     "web-platform-tests/content-security-policy": "import", 
     "web-platform-tests/cookies": "skip", 
     "web-platform-tests/cookies/resources": "import", 

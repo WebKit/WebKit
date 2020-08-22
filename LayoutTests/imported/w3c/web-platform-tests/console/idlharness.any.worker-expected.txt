@@ -1,0 +1,23 @@
+
+PASS idl_test setup 
+PASS idl_test validation 
+PASS console namespace: operation assert(optional boolean, any...) 
+PASS console namespace: operation clear() 
+PASS console namespace: operation debug(any...) 
+PASS console namespace: operation error(any...) 
+PASS console namespace: operation info(any...) 
+PASS console namespace: operation log(any...) 
+PASS console namespace: operation table(optional any, optional sequence<DOMString>) 
+PASS console namespace: operation trace(any...) 
+PASS console namespace: operation warn(any...) 
+PASS console namespace: operation dir(optional any, optional object?) 
+PASS console namespace: operation dirxml(any...) 
+PASS console namespace: operation count(optional DOMString) 
+PASS console namespace: operation countReset(optional DOMString) 
+PASS console namespace: operation group(any...) 
+PASS console namespace: operation groupCollapsed(any...) 
+PASS console namespace: operation groupEnd() 
+PASS console namespace: operation time(optional DOMString) 
+PASS console namespace: operation timeLog(optional DOMString, any...) 
+PASS console namespace: operation timeEnd(optional DOMString) 
+
