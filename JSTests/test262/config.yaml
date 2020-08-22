@@ -26,7 +26,6 @@ skip:
     - top-level-await
     - Intl.DateTimeFormat-datetimestyle
     - Intl.DateTimeFormat-dayPeriod
-    - Intl.DateTimeFormat-formatRange
     - Intl.DateTimeFormat-fractionalSecondDigits
     - Intl.ListFormat
   paths:
@@ -76,6 +75,10 @@ skip:
     - test/built-ins/TypedArrayConstructors/internals/OwnPropertyKeys/BigInt
     - test/built-ins/TypedArrayConstructors/internals/Set/BigInt
     - test/built-ins/TypedArrayConstructors/of/BigInt
+
+    # requires ICU APIs implementation
+    # https://bugs.webkit.org/show_bug.cgi?id=213822
+    - test/intl402/DateTimeFormat/prototype/formatRangeToParts
   files:
     # https://bugs.webkit.org/show_bug.cgi?id=186749
     - test/built-ins/RegExp/property-escapes/character-class.js

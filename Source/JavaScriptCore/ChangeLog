@@ -1,5 +1,28 @@
 2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [ECMA-402] Implement Intl.DateTimeFormat.prototype.formatRange
+        https://bugs.webkit.org/show_bug.cgi?id=209778
+
+        Reviewed by Ross Kirsling.
+
+        This patch adds Intl.DateTimeFormat#formatRange. It takes two dates, and
+        generates formatted text which represents interval between these two dates.
+        We skip the implementation of Intl.DateTimeFormat#formatRangeToParts since
+        ICU udtitvfmt_formatToResult API is not getting stable state yet. We retrieve
+        pattern from UDateFormat, get skeleton from that pattern, and construct
+        UDateIntervalFormat from this skeleton.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::createDateIntervalFormatIfNecessary):
+        (JSC::IntlDateTimeFormat::formatRange):
+        (JSC::IntlDateTimeFormat::UDateFormatDeleter::operator() const): Deleted.
+        * runtime/IntlDateTimeFormat.h:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototypeFuncFormatRange):
+
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add Intl.Segmenter
         https://bugs.webkit.org/show_bug.cgi?id=213638
 

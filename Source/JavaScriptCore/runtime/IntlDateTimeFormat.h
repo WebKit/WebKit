@@ -27,6 +27,7 @@
 
 #include "JSObject.h"
 #include <unicode/udat.h>
+#include <unicode/udateintervalformat.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
@@ -60,6 +61,7 @@ public:
     void initializeDateTimeFormat(JSGlobalObject*, JSValue locales, JSValue options);
     JSValue format(JSGlobalObject*, double value) const;
     JSValue formatToParts(JSGlobalObject*, double value) const;
+    JSValue formatRange(JSGlobalObject*, double startDate, double endDate);
     JSObject* resolvedOptions(JSGlobalObject*) const;
 
     JSBoundFunction* boundFormat() const { return m_boundFormat.get(); }
@@ -72,6 +74,8 @@ private:
 
     static Vector<String> localeData(const String&, RelevantExtensionKey);
 
+    UDateIntervalFormat* createDateIntervalFormatIfNecessary(JSGlobalObject*);
+
     enum class Weekday : uint8_t { None, Narrow, Short, Long };
     enum class Era : uint8_t { None, Narrow, Short, Long };
     enum class Year : uint8_t { None, TwoDigit, Numeric };
@@ -81,8 +85,6 @@ private:
     enum class Minute : uint8_t { None, TwoDigit, Numeric };
     enum class Second : uint8_t { None, TwoDigit, Numeric };
     enum class TimeZoneName : uint8_t { None, Short, Long };
-
-    using UDateFormatDeleter = ICUDeleter<udat_close>;
 
     void setFormatsFromPattern(const StringView&);
     static ASCIILiteral weekdayString(Weekday);
@@ -95,10 +97,15 @@ private:
     static ASCIILiteral secondString(Second);
     static ASCIILiteral timeZoneNameString(TimeZoneName);
 
+    using UDateFormatDeleter = ICUDeleter<udat_close>;
+    using UDateIntervalFormatDeleter = ICUDeleter<udtitvfmt_close>;
+
     WriteBarrier<JSBoundFunction> m_boundFormat;
     std::unique_ptr<UDateFormat, UDateFormatDeleter> m_dateFormat;
+    std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter> m_dateIntervalFormat;
 
     String m_locale;
+    String m_dataLocale;
     String m_calendar;
     String m_numberingSystem;
     String m_timeZone;

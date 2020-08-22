@@ -44,6 +44,7 @@ static const double minECMAScriptTime = -8.64E15;
 const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
 
 namespace IntlDateTimeFormatInternal {
+static constexpr bool verbose = false;
 }
 
 IntlDateTimeFormat* IntlDateTimeFormat::create(VM& vm, Structure* structure)
@@ -467,7 +468,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     m_hourCycle = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Hc)];
     m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
-    CString dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-ca-", m_calendar, "-nu-", m_numberingSystem).utf8();
+    m_dataLocale = resolved.dataLocale;
+    CString dataLocaleWithExtensions = makeString(m_dataLocale, "-u-ca-", m_calendar, "-nu-", m_numberingSystem).utf8();
 
     JSValue tzValue = options->get(globalObject, vm.propertyNames->timeZone);
     RETURN_IF_EXCEPTION(scope, void());
@@ -676,6 +678,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
 
     StringView pattern(patternBuffer.data(), patternBuffer.size());
     setFormatsFromPattern(pattern);
+
+    dataLogLnIf(IntlDateTimeFormatInternal::verbose, "locale:(", m_locale, "),dataLocale:(", dataLocaleWithExtensions, "),pattern:(", pattern, ")");
 
     status = U_ZERO_ERROR;
     StringView timeZoneView(m_timeZone);
@@ -1023,6 +1027,82 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
 
 
     return parts;
+}
+
+UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSGlobalObject* globalObject)
+{
+    ASSERT(m_dateFormat);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (m_dateIntervalFormat)
+        return m_dateIntervalFormat.get();
+
+    Vector<UChar, 32> pattern;
+    {
+        auto status = callBufferProducingFunction(udat_toPattern, m_dateFormat.get(), false, pattern);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "failed to initialize DateIntervalFormat"_s);
+            return nullptr;
+        }
+    }
+
+    Vector<UChar, 32> skeleton;
+    {
+        auto status = callBufferProducingFunction(udatpg_getSkeleton, nullptr, pattern.data(), pattern.size(), skeleton);
+        if (U_FAILURE(status)) {
+            throwTypeError(globalObject, scope, "failed to initialize DateIntervalFormat"_s);
+            return nullptr;
+        }
+    }
+
+    dataLogLnIf(IntlDateTimeFormatInternal::verbose, "interval format pattern:(", String(pattern), "),skeleton:(", String(skeleton), ")");
+
+    // While the pattern is including right HourCycle patterns, UDateIntervalFormat does not follow.
+    // We need to enforce HourCycle by setting "hc" extension if it is specified.
+    StringBuilder localeBuilder;
+    localeBuilder.append(m_dataLocale, "-u-ca-", m_calendar, "-nu-", m_numberingSystem);
+    if (!m_hourCycle.isNull())
+        localeBuilder.append("-hc-", m_hourCycle);
+    CString dataLocaleWithExtensions = localeBuilder.toString().utf8();
+
+    UErrorCode status = U_ZERO_ERROR;
+    StringView timeZoneView(m_timeZone);
+    m_dateIntervalFormat = std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(udtitvfmt_open(dataLocaleWithExtensions.data(), skeleton.data(), skeleton.size(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), &status));
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "failed to initialize DateIntervalFormat"_s);
+        return nullptr;
+    }
+    return m_dateIntervalFormat.get();
+}
+
+JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double startDate, double endDate)
+{
+    ASSERT(m_dateFormat);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // http://tc39.es/proposal-intl-DateTimeFormat-formatRange/#sec-partitiondatetimerangepattern
+    startDate = timeClip(startDate);
+    endDate = timeClip(endDate);
+    if (std::isnan(startDate) || std::isnan(endDate)) {
+        throwRangeError(globalObject, scope, "Passed date is out of range"_s);
+        return { };
+    }
+
+    auto* dateIntervalFormat = createDateIntervalFormatIfNecessary(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    Vector<UChar, 32> buffer;
+    auto status = callBufferProducingFunction(udtitvfmt_format, dateIntervalFormat, startDate, endDate, buffer, nullptr);
+    if (U_FAILURE(status)) {
+        throwTypeError(globalObject, scope, "Failed to format date interval"_s);
+        return { };
+    }
+
+    return jsString(vm, String(buffer));
 }
 
 } // namespace JSC
