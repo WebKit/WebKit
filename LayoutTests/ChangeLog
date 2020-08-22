@@ -1,3 +1,16 @@
+2020-08-20  Darin Adler  <darin@apple.com>
+
+        Move node geometry functions from Range to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=215677
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/dom/Range/scale-page-bounding-client-rect.html: Fix this test that accidentally
+        depended on getting rects for an empty range (the contents of a div element with no
+        text inside it) to instead get rects for a non-empty element (the div element, not
+        just its contents). Test now works correctly, but results don't need to change.
+        * fast/dom/Range/scale-page-client-rects.html: Ditto.
+
 2020-08-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Align "length" properties of function prototypes with the spec

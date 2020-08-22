@@ -8,13 +8,13 @@ function testRects()
     testRunner.dumpAsText();
 
     var range = document.createRange();
-    range.selectNodeContents(document.getElementById('div'));
+    range.selectNode(document.getElementById('div'));
     var rectList = range.getClientRects();
     var rect = rectList[0];
    
     window.internals.setPageScaleFactor(2, 0, 0);
     var scaledRange = document.createRange();
-    scaledRange.selectNodeContents(document.getElementById('div'));
+    scaledRange.selectNode(document.getElementById('div'));
     var scaledRectList = scaledRange.getClientRects();
     var scaledRect = scaledRectList[0];
 

@@ -1,3 +1,78 @@
+2020-08-20  Darin Adler  <darin@apple.com>
+
+        Move node geometry functions from Range to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=215677
+
+        Reviewed by Zalan Bujtas.
+
+        Moved functions that return quads and rectangles out of Range into RenderObject.
+        We could find another home for them, but for now they make sense as static member
+        functions there since RenderObject has the non-static member functions that they
+        call on multiple nodes. Mostly did not change the design of these functions much,
+        and was careful not to change behavior at all. But did change a few things:
+
+        - Got rid of the functions that return a single unioned rectangle.
+          Instead callers call unionRect at each call site.
+        - Changed the "use selection height" boolean to a BoundingRectBehavior flag.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::boundsForRects): Call unionRect(RenderObject::absoluteTextRects) instead
+        of Range::absoluteBoundingBox.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::updateRenderedRectsForMarker): Instead of passing "true", pass
+        "RenderObject::BoundingRectBehavior::UseSelectionHeight".
+
+        * dom/Range.cpp:
+        (WebCore::Range::absoluteBoundingBox const): Deleted.
+        (WebCore::Range::absoluteRectsForRangeInText const): Deleted.
+        (WebCore::Range::absoluteTextRects const): Deleted.
+        (WebCore::Range::getClientRects const): Call RenderObject::clientBorderAndTextRects.
+        (WebCore::Range::getBoundingClientRect const): Call
+        unionRect(RenderObject::clientBorderAndTextRects).
+        (WebCore::Range::borderAndTextRects const): Deleted.
+        (WebCore::Range::boundingRect const): Deleted.
+        (WebCore::Range::absoluteBoundingRect const): Deleted.
+        * dom/Range.h: Updated for above.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::IntersectingNodeIterator::IntersectingNodeIterator): Fix bug affecting
+        empty ranges by calling enforceEndInvariant.
+        (WebCore::IntersectingNodeIterator::advance): Refactor to call enforceEndInvariant.
+        (WebCore::IntersectingNodeIterator::advanceSkippingChildren): Ditto.
+        (WebCore::IntersectingNodeIterator::enforceEndInvariant): Added.
+        * dom/SimpleRange.h: Added enforceEndInvariant.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::getClippedVisibleTextRectangles const): Instead of
+        passing a useSelectionHeight boolean, pass BoundingRectBehavior.
+
+        * page/TextIndicator.cpp:
+        (WebCore::absoluteBoundingRectForRange): Call
+        unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects).
+        (WebCore::initializeIndicator): Call RenderObject::absoluteTextRects.
+
+        * platform/graphics/GeometryUtilities.cpp:
+        (WebCore::unionRectIgnoringZeroRects): Added.
+        * platform/graphics/GeometryUtilities.h: Updated for above.
+
+        * rendering/RenderLineBreak.h: Marked a lot of functions final.
+        Added a default value for the absoluteQuads out argument.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addPDFURLRect): Tweaked code style a bit.
+        (WebCore::RenderObject::absoluteTextQuads): Replaced boolean useSelectionHeight
+        argument with a BoundingRectBehavior argument. Also added a downcast so the
+        call to RenderLineBreak::absoluteQuads is a non-virtual function call.
+        (WebCore::absoluteRectsForRangeInText): Added.
+        (WebCore::RenderObject::absoluteTextRects): Replaced boolean useSelectionHeight
+        argument with a BoundingRectBehavior argument.
+        (WebCore::nodeBefore): Added.
+        (WebCore::borderAndTextRects): Added.
+        (WebCore::RenderObject::absoluteBorderAndTextRects): Added.
+        (WebCore::RenderObject::clientBorderAndTextRects): Added.
+        * rendering/RenderObject.h: Updated for above.
+
 2020-08-18  Darin Adler  <darin@apple.com>
 
         Make some small improvements involving sorting

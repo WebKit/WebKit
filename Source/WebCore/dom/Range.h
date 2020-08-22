@@ -24,20 +24,14 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "IntRect.h"
 #include "RangeBoundaryPoint.h"
-#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
 class DOMRect;
 class DOMRectList;
 class DocumentFragment;
-class FloatQuad;
 class NodeWithIndex;
-class RenderText;
-class SelectionRect;
 class Text;
 class VisiblePosition;
 
@@ -95,20 +89,6 @@ public:
 
     WEBCORE_EXPORT Node* firstNode() const;
 
-    enum class BoundingRectBehavior : uint8_t {
-        RespectClipping = 1 << 0,
-        UseVisibleBounds = 1 << 1,
-        IgnoreTinyRects = 1 << 2,
-        IgnoreEmptyTextSelections = 1 << 3, // Do not return empty text rectangles, which is required for Element.getClientRect() conformance.
-    };
-
-    // Not transform-friendly
-    WEBCORE_EXPORT void absoluteTextRects(Vector<IntRect>&, bool useSelectionHeight = false, OptionSet<BoundingRectBehavior> = { }) const;
-    WEBCORE_EXPORT IntRect absoluteBoundingBox(OptionSet<BoundingRectBehavior> = { }) const;
-
-    // Transform-friendly
-    WEBCORE_EXPORT FloatRect absoluteBoundingRect(OptionSet<BoundingRectBehavior> = { }) const;
-
     void nodeChildrenChanged(ContainerNode&);
     void nodeChildrenWillBeRemoved(ContainerNode&);
     void nodeWillBeRemoved(Node&);
@@ -143,12 +123,6 @@ private:
     void setDocument(Document&);
     ExceptionOr<Node*> checkNodeWOffset(Node&, unsigned offset) const;
     ExceptionOr<RefPtr<DocumentFragment>> processContents(ActionType);
-
-    enum class CoordinateSpace { Absolute, Client };
-    Vector<FloatRect> borderAndTextRects(CoordinateSpace, OptionSet<BoundingRectBehavior> = { }) const;
-    FloatRect boundingRect(CoordinateSpace, OptionSet<BoundingRectBehavior> = { }) const;
-
-    Vector<FloatRect> absoluteRectsForRangeInText(Node*, RenderText&, bool useSelectionHeight, bool& isFixed, OptionSet<BoundingRectBehavior>) const;
 
     Node* pastLastNode() const;
 

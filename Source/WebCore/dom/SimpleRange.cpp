@@ -147,22 +147,25 @@ IntersectingNodeIterator::IntersectingNodeIterator(const SimpleRange& range)
     : m_node(firstIntersectingNode(range))
     , m_pastLastNode(nodePastLastIntersectingNode(range))
 {
+    enforceEndInvariant();
 }
 
 void IntersectingNodeIterator::advance()
 {
     ASSERT(m_node);
     m_node = NodeTraversal::next(*m_node);
-    if (m_node == m_pastLastNode || !m_node) {
-        m_node = nullptr;
-        m_pastLastNode = nullptr;
-    }
+    enforceEndInvariant();
 }
 
 void IntersectingNodeIterator::advanceSkippingChildren()
 {
     ASSERT(m_node);
     m_node = m_node->contains(m_pastLastNode.get()) ? nullptr : NodeTraversal::nextSkippingChildren(*m_node);
+    enforceEndInvariant();
+}
+
+void IntersectingNodeIterator::enforceEndInvariant()
+{
     if (m_node == m_pastLastNode || !m_node) {
         m_node = nullptr;
         m_pastLastNode = nullptr;

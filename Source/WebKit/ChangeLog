@@ -1,3 +1,22 @@
+2020-08-19  Darin Adler  <darin@apple.com>
+
+        Move node geometry functions from Range to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=215677
+
+        Reviewed by Zalan Bujtas.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::boundingRectInWindowCoordinates const):
+        Call unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects).
+        (WebKit::InjectedBundleRangeHandle::renderedImage): Call
+        unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects).
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestEvasionRectsAboveSelection): Call
+        unionRect(RenderObject::absoluteTextRects).
+        (WebKit::WebPage::requestDocumentEditingContext): Call
+        unionRect(RenderObject::absoluteTextRects).
+
 2020-08-17  Darin Adler  <darin@apple.com>
 
         Create documentOrder function, start refactoring to use it instead of Range::compare functions

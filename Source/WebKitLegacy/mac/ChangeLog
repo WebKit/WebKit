@@ -1,3 +1,13 @@
+2020-08-19  Darin Adler  <darin@apple.com>
+
+        Move node geometry functions from Range to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=215677
+
+        Reviewed by Zalan Bujtas.
+
+        * DOM/DOM.mm:
+        (-[DOMRange boundingBox]): Call unionRect(RenderObject::absoluteTextRects).
+
 2020-08-17  Darin Adler  <darin@apple.com>
 
         Create documentOrder function, start refactoring to use it instead of Range::compare functions

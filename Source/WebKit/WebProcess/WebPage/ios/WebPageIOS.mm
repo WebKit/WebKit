@@ -1906,7 +1906,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
 
     FloatRect selectionBoundsInRootViewCoordinates;
     if (selection.isRange())
-        selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(createLiveRange(*selectedRange)->absoluteBoundingBox());
+        selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(unionRect(RenderObject::absoluteTextRects(*selectedRange)));
     else
         selectionBoundsInRootViewCoordinates = frameView->contentsToRootView(frame.selection().absoluteCaretBounds());
 
@@ -4264,9 +4264,8 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         const int stride = 1;
         while (!iterator.atEnd()) {
             if (!iterator.text().isEmpty()) {
-                auto currentRange = createLiveRange(iterator.range());
-                auto absoluteBoundingBox = currentRange->absoluteBoundingBox(Range::BoundingRectBehavior::IgnoreEmptyTextSelections);
-                rects.append({ currentRange->ownerDocument().view()->contentsToRootView(absoluteBoundingBox), { offsetSoFar++, stride } });
+                auto absoluteBoundingBox = unionRect(RenderObject::absoluteTextRects(iterator.range(), RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections));
+                rects.append({ iterator.range().start.container->document().view()->contentsToRootView(absoluteBoundingBox), { offsetSoFar++, stride } });
             }
             iterator.advance(stride);
         }

@@ -46,6 +46,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
+#include "GeometryUtilities.h"
 #include "HTMLAreaElement.h"
 #include "HTMLAudioElement.h"
 #include "HTMLDetailsElement.h"
@@ -2119,9 +2120,8 @@ static IntRect boundsForRects(const LayoutRect& rect1, const LayoutRect& rect2, 
     ourRect.unite(rect2);
 
     // If the rectangle spans lines and contains multiple text characters, use the range's bounding box intead.
-    if (rect1.maxY() != rect2.maxY()) {
-        LayoutRect boundingBox = createLiveRange(dataRange)->absoluteBoundingBox();
-        if (characterCount(dataRange) > 1 && !boundingBox.isEmpty())
+    if (rect1.maxY() != rect2.maxY() && characterCount(dataRange) > 1) {
+        if (auto boundingBox = unionRect(RenderObject::absoluteTextRects(dataRange)); !boundingBox.isEmpty())
             ourRect = boundingBox;
     }
 
