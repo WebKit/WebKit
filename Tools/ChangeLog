@@ -1,3 +1,15 @@
+2020-08-22  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, reverting r266012.
+
+        Fix API tests after r266020
+
+        Reverted changeset:
+
+        "[GLIB] Update checked exception after r265942"
+        https://bugs.webkit.org/show_bug.cgi?id=215738
+        https://trac.webkit.org/changeset/266012
+
 2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, add slackId to my contributors.json entry
