@@ -1,3 +1,12 @@
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, add slackId to my contributors.json entry
+
+        Slack allows multiple users having the same name. How to identify one user in slack is using Slack member ID.
+        Try setting a slackId and leverage it via WKR / WebKitBot.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2020-08-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Unable to copy text from the function browser panel in Numbers
