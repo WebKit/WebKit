@@ -1,3 +1,18 @@
+2020-08-17  Darin Adler  <darin@apple.com>
+
+        Create documentOrder function, start refactoring to use it instead of Range::compare functions
+        https://bugs.webkit.org/show_bug.cgi?id=215551
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange rangeByExpandingToWordBoundaryByCharacters:inDirection:]):
+        Use makeDeprecatedLegacyPosition instead of Range::start/endPosition.
+        This was the only place in the WebKit framework still using
+        Range::start/endPosition and over time we would like to move from
+        makeDeprecatedLegacyPosition to makeContainerOffsetPosition, so it's good
+        to have it be explicit here rather than hidden inside the Range class.
+
 2020-08-22  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Compilation warnings with clang/gcc 10

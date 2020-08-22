@@ -1,3 +1,14 @@
+2020-08-17  Darin Adler  <darin@apple.com>
+
+        Create documentOrder function, start refactoring to use it instead of Range::compare functions
+        https://bugs.webkit.org/show_bug.cgi?id=215551
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[DOMRange startPosition]): Rewrote to not use Range::startPosition.
+        (-[DOMRange endPosition]): Rewrote to not use Range::endPosition.
+
 2020-08-13  Tim Horton  <timothy_horton@apple.com>
 
         macCatalyst: Granting location permission doesn't allow geolocation access

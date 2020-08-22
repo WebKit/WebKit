@@ -25,16 +25,14 @@
 
 #pragma once
 
-#include "Node.h"
-#include "Position.h"
+#include "BoundaryPoint.h"
+#include "CharacterData.h"
 
 namespace WebCore {
 
 class RangeBoundaryPoint {
 public:
     explicit RangeBoundaryPoint(Node* container);
-
-    Position toPosition() const;
 
     Node* container() const;
     unsigned offset() const;
@@ -60,6 +58,8 @@ private:
     RefPtr<Node> m_childBeforeBoundary;
 };
 
+BoundaryPoint makeBoundaryPoint(const RangeBoundaryPoint&);
+
 inline RangeBoundaryPoint::RangeBoundaryPoint(Node* container)
     : m_containerNode(container)
 {
@@ -83,12 +83,6 @@ inline void RangeBoundaryPoint::ensureOffsetIsValid() const
 
     ASSERT(m_childBeforeBoundary);
     m_offsetInContainer = m_childBeforeBoundary->computeNodeIndex() + 1;
-}
-
-inline Position RangeBoundaryPoint::toPosition() const
-{
-    ensureOffsetIsValid();
-    return createLegacyEditingPosition(m_containerNode.get(), m_offsetInContainer.value());
 }
 
 inline unsigned RangeBoundaryPoint::offset() const
@@ -183,6 +177,11 @@ inline bool operator==(const RangeBoundaryPoint& a, const RangeBoundaryPoint& b)
             return false;
     }
     return true;
+}
+
+inline BoundaryPoint makeBoundaryPoint(const RangeBoundaryPoint& point)
+{
+    return { *point.container(), point.offset() };
 }
 
 } // namespace WebCore

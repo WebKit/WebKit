@@ -338,7 +338,7 @@ class Document
     , public Supplementable<Document>
     , public Logger::Observer
     , public CanvasObserver {
-    WTF_MAKE_ISO_ALLOCATED(Document);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(Document, WEBCORE_EXPORT);
 public:
     static Ref<Document> create(const URL&);
     static Ref<Document> createNonRenderedPlaceholder(Frame&, const URL&);
@@ -1593,7 +1593,7 @@ public:
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
-    Document(Frame*, const URL&, DocumentClassFlags = DefaultDocumentClass, unsigned constructionFlags = 0);
+    WEBCORE_EXPORT Document(Frame*, const URL&, DocumentClassFlags = DefaultDocumentClass, unsigned constructionFlags = 0);
 
     void clearXMLVersion() { m_xmlVersion = String(); }
 

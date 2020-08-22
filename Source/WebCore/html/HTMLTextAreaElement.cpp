@@ -103,6 +103,11 @@ Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagNam
     return textArea;
 }
 
+Ref<HTMLTextAreaElement> HTMLTextAreaElement::create(Document& document)
+{
+    return create(textareaTag, document, nullptr);
+}
+
 void HTMLTextAreaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
     root.appendChild(TextControlInnerTextElement::create(document()));

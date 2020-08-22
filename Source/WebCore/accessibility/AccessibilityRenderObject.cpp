@@ -1613,17 +1613,16 @@ VisibleSelection AccessibilityRenderObject::selection() const
 PlainTextRange AccessibilityRenderObject::selectedTextRange() const
 {
     ASSERT(isTextControl());
-    
+
     if (isPasswordField())
         return PlainTextRange();
-    
-    AccessibilityRole ariaRole = ariaRoleAttribute();
-    // Use the text control native range if it's a native object and it has no ARIA role (or has a text based ARIA role).
-    if (isNativeTextControl() && (ariaRole == AccessibilityRole::Unknown || isARIATextControl())) {
-        HTMLTextFormControlElement& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
+
+    // Use the text control native range if it's a native object.
+    if (isNativeTextControl()) {
+        auto& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
         return PlainTextRange(textControl.selectionStart(), textControl.selectionEnd() - textControl.selectionStart());
     }
-    
+
     return documentBasedSelectedTextRange();
 }
 

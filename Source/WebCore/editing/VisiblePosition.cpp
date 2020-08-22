@@ -766,7 +766,7 @@ bool isLastVisiblePositionInNode(const VisiblePosition &visiblePosition, const N
 
 bool areVisiblePositionsInSameTreeScope(const VisiblePosition& a, const VisiblePosition& b)
 {
-    return areNodesConnectedInSameTreeScope(a.deepEquivalent().anchorNode(), b.deepEquivalent().anchorNode());
+    return connectedInSameTreeScope(a.deepEquivalent().anchorNode(), b.deepEquivalent().anchorNode());
 }
 
 bool VisiblePosition::equals(const VisiblePosition& other) const

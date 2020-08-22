@@ -30,7 +30,7 @@ namespace WebCore {
 class HTMLBodyElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLBodyElement);
 public:
-    static Ref<HTMLBodyElement> create(Document&);
+    WEBCORE_EXPORT static Ref<HTMLBodyElement> create(Document&);
     static Ref<HTMLBodyElement> create(const QualifiedName&, Document&);
     virtual ~HTMLBodyElement();
 

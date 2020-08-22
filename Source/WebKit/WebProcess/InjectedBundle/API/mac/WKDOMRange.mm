@@ -134,7 +134,8 @@
 
 - (WKDOMRange *)rangeByExpandingToWordBoundaryByCharacters:(NSUInteger)characters inDirection:(WKDOMRangeDirection)direction
 {
-    auto newRange = rangeExpandedByCharactersInDirectionAtWordBoundary(direction == WKDOMRangeDirectionForward ?  _impl->endPosition() : _impl->startPosition(), characters, direction == WKDOMRangeDirectionForward ? WebCore::SelectionDirection::Forward : WebCore::SelectionDirection::Backward);
+    auto range = makeSimpleRange(*_impl);
+    auto newRange = rangeExpandedByCharactersInDirectionAtWordBoundary(makeDeprecatedLegacyPosition(direction == WKDOMRangeDirectionForward ? range.end : range.start), characters, direction == WKDOMRangeDirectionForward ? WebCore::SelectionDirection::Forward : WebCore::SelectionDirection::Backward);
     return [[[WKDOMRange alloc] _initWithImpl:createLiveRange(newRange).get()] autorelease];
 }
 

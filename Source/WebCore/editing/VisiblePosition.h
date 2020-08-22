@@ -54,7 +54,8 @@ public:
     VisiblePosition() : m_affinity(VP_DEFAULT_AFFINITY) { }
     WEBCORE_EXPORT VisiblePosition(const Position&, EAffinity = VP_DEFAULT_AFFINITY);
 
-    void clear() { m_deepPosition.clear(); }
+    // FIXME: Why doesn't this reset m_affinity?
+    void clear() { m_deepPosition = { }; }
 
     bool isNull() const { return m_deepPosition.isNull(); }
     bool isNotNull() const { return m_deepPosition.isNotNull(); }
@@ -119,6 +120,8 @@ private:
 
 bool operator==(const VisiblePosition&, const VisiblePosition&);
 bool operator!=(const VisiblePosition&, const VisiblePosition&);
+
+PartialOrdering documentOrder(const VisiblePosition&, const VisiblePosition&);
 bool operator<(const VisiblePosition&, const VisiblePosition&);
 bool operator>(const VisiblePosition&, const VisiblePosition&);
 bool operator<=(const VisiblePosition&, const VisiblePosition&);
@@ -147,7 +150,7 @@ WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange&
 
 // inlines
 
-// FIXME: This shouldn't ignore affinity.
+// FIXME: Is it correct and helpful for this to be ignoring affinity?
 inline bool operator==(const VisiblePosition& a, const VisiblePosition& b)
 {
     return a.deepEquivalent() == b.deepEquivalent();

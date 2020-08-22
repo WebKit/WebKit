@@ -208,7 +208,7 @@ int Position::computeOffsetInContainerNode() const
     case PositionIsAfterChildren:
         return m_anchorNode->length();
     case PositionIsOffsetInAnchor:
-        return minOffsetForNode(m_anchorNode.get(), m_offset);
+        return m_offset;
     case PositionIsBeforeAnchor:
         return m_anchorNode->computeNodeIndex();
     case PositionIsAfterAnchor:
@@ -355,11 +355,11 @@ Position Position::previous(PositionMoveType moveType) const
         //      Going from 1 to 0 is correct.
         switch (moveType) {
         case CodePoint:
-            return createLegacyEditingPosition(node, offset - 1);
+            return makeDeprecatedLegacyPosition(node, offset - 1);
         case Character:
-            return createLegacyEditingPosition(node, uncheckedPreviousOffset(node, offset));
+            return makeDeprecatedLegacyPosition(node, uncheckedPreviousOffset(node, offset));
         case BackwardDeletion:
-            return createLegacyEditingPosition(node, uncheckedPreviousOffsetForBackwardDeletion(node, offset));
+            return makeDeprecatedLegacyPosition(node, uncheckedPreviousOffsetForBackwardDeletion(node, offset));
         }
     }
 
@@ -374,7 +374,7 @@ Position Position::previous(PositionMoveType moveType) const
     if (previousSibling && positionBeforeOrAfterNodeIsCandidate(*previousSibling))
         return positionAfterNode(previousSibling);
 
-    return createLegacyEditingPosition(parent, node->computeNodeIndex());
+    return makeDeprecatedLegacyPosition(parent, node->computeNodeIndex());
 }
 
 Position Position::next(PositionMoveType moveType) const
@@ -408,7 +408,7 @@ Position Position::next(PositionMoveType moveType) const
         //      Going forward one character at a time is correct.
         //   2) The new offset is a bogus offset like (<br>, 1), and there is no child.
         //      Going from 0 to 1 is correct.
-        return createLegacyEditingPosition(node, (moveType == Character) ? uncheckedNextOffset(node, offset) : offset + 1);
+        return makeDeprecatedLegacyPosition(node, (moveType == Character) ? uncheckedNextOffset(node, offset) : offset + 1);
     }
 
     ContainerNode* parent = node->parentNode();
@@ -422,7 +422,7 @@ Position Position::next(PositionMoveType moveType) const
     if (nextSibling && positionBeforeOrAfterNodeIsCandidate(*nextSibling))
         return positionBeforeNode(nextSibling);
 
-    return createLegacyEditingPosition(parent, node->computeNodeIndex() + 1);
+    return makeDeprecatedLegacyPosition(parent, node->computeNodeIndex() + 1);
 }
 
 int Position::uncheckedPreviousOffset(const Node* n, unsigned current)
@@ -674,7 +674,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
     // iterate backward from there, looking for a qualified position
     Node* boundary = enclosingVisualBoundary(startNode);
     // FIXME: PositionIterator should respect Before and After positions.
-    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? createLegacyEditingPosition(m_anchorNode.get(), caretMaxOffset(*m_anchorNode)) : *this;
+    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? makeDeprecatedLegacyPosition(m_anchorNode.get(), caretMaxOffset(*m_anchorNode)) : *this;
     PositionIterator currentPosition = lastVisible;
     bool startEditable = startNode->hasEditableStyle();
     Node* lastNode = startNode;
@@ -740,7 +740,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
                 // render tree which can have a different length due to case transformation.
                 // Until we resolve that, disable this so we can run the layout tests!
                 //ASSERT(currentOffset >= renderer->caretMaxOffset());
-                return createLegacyEditingPosition(&currentNode, renderer->caretMaxOffset());
+                return makeDeprecatedLegacyPosition(&currentNode, renderer->caretMaxOffset());
             }
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
@@ -776,7 +776,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
     // iterate forward from there, looking for a qualified position
     Node* boundary = enclosingVisualBoundary(startNode);
     // FIXME: PositionIterator should respect Before and After positions.
-    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? createLegacyEditingPosition(m_anchorNode.get(), caretMaxOffset(*m_anchorNode)) : *this;
+    PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? makeDeprecatedLegacyPosition(m_anchorNode.get(), caretMaxOffset(*m_anchorNode)) : *this;
     PositionIterator currentPosition = lastVisible;
     bool startEditable = startNode->hasEditableStyle();
     Node* lastNode = startNode;
@@ -843,7 +843,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
 
             if (&currentNode != startNode) {
                 ASSERT(currentPosition.atStartOfNode());
-                return createLegacyEditingPosition(&currentNode, textRenderer.caretMinOffset());
+                return makeDeprecatedLegacyPosition(&currentNode, textRenderer.caretMinOffset());
             }
 
             unsigned textOffset = currentPosition.offsetInLeafNode();
@@ -1560,15 +1560,12 @@ TextStream& operator<<(TextStream& stream, const Position& position)
     return stream;
 }
 
-RefPtr<Node> commonShadowIncludingAncestor(const Position& a, const Position& b)
+RefPtr<Node> commonInclusiveAncestor(const Position& a, const Position& b)
 {
-    auto* commonScope = commonTreeScope(a.containerNode(), b.containerNode());
-    if (!commonScope)
+    auto nodeA = a.containerNode();
+    auto nodeB = b.containerNode();
+    if (!nodeA || !nodeB)
         return nullptr;
-    auto* nodeA = commonScope->ancestorNodeInThisScope(a.containerNode());
-    ASSERT(nodeA);
-    auto* nodeB = commonScope->ancestorNodeInThisScope(b.containerNode());
-    ASSERT(nodeB);
     return commonInclusiveAncestor(*nodeA, *nodeB);
 }
 
@@ -1594,10 +1591,14 @@ Position positionInParentAfterNode(Node* node)
     return Position(ancestor, node->computeNodeIndex() + 1, Position::PositionIsOffsetInAnchor);
 }
 
-// FIXME: Rename to use make for the prefix verb instead of create.
-Position createLegacyEditingPosition(const BoundaryPoint& point)
+Position makeContainerOffsetPosition(const BoundaryPoint& point)
 {
-    return createLegacyEditingPosition(point.container.ptr(), point.offset);
+    return makeContainerOffsetPosition(point.container.ptr(), point.offset);
+}
+
+Position makeDeprecatedLegacyPosition(const BoundaryPoint& point)
+{
+    return makeDeprecatedLegacyPosition(point.container.ptr(), point.offset);
 }
 
 Optional<BoundaryPoint> makeBoundaryPoint(const Position& position)
@@ -1605,6 +1606,29 @@ Optional<BoundaryPoint> makeBoundaryPoint(const Position& position)
     if (position.isNull())
         return WTF::nullopt;
     return BoundaryPoint { *position.containerNode(), static_cast<unsigned>(position.computeOffsetInContainerNode()) };
+}
+
+PartialOrdering documentOrder(const Position& a, const Position& b)
+{
+    if (a.isNull() || b.isNull())
+        return a.isNull() && b.isNull() ? PartialOrdering::equivalent : PartialOrdering::unordered;
+
+    auto aContainer = a.containerNode();
+    auto bContainer = b.containerNode();
+
+    if (!aContainer || !bContainer) {
+        if (!commonInclusiveAncestor(*a.anchorNode(), *b.anchorNode()))
+            return PartialOrdering::unordered;
+        if (!aContainer && !bContainer && a.anchorType() == b.anchorType())
+            return PartialOrdering::equivalent;
+        if (bContainer)
+            return a.anchorType() == Position::PositionIsBeforeAnchor ? PartialOrdering::less : PartialOrdering::greater;
+        return b.anchorType() == Position::PositionIsBeforeAnchor ? PartialOrdering::greater : PartialOrdering::less;
+    }
+
+    // FIXME: Avoid computing node offset for cases where we don't need to.
+
+    return documentOrder(*makeBoundaryPoint(a), *makeBoundaryPoint(b));
 }
 
 } // namespace WebCore

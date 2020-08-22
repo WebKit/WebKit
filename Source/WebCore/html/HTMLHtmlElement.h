@@ -30,7 +30,7 @@ namespace WebCore {
 class HTMLHtmlElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLHtmlElement);
 public:
-    static Ref<HTMLHtmlElement> create(Document&);
+    WEBCORE_EXPORT static Ref<HTMLHtmlElement> create(Document&);
     static Ref<HTMLHtmlElement> create(const QualifiedName&, Document&);
 
     void insertedByParser();

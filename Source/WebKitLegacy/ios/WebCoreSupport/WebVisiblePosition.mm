@@ -455,14 +455,14 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 
 - (WebVisiblePosition *)startPosition
 {
-    Range *range = core(self);
-    return [WebVisiblePosition _wrapVisiblePosition:VisiblePosition(range->startPosition())];
+    auto& range = *core(self);
+    return [WebVisiblePosition _wrapVisiblePosition:makeDeprecatedLegacyPosition(&range.startContainer(), range.startOffset())];
 }
 
 - (WebVisiblePosition *)endPosition
 {
-    Range *range = core(self);
-    return [WebVisiblePosition _wrapVisiblePosition:VisiblePosition(range->endPosition())];
+    auto& range = *core(self);
+    return [WebVisiblePosition _wrapVisiblePosition:makeDeprecatedLegacyPosition(&range.endContainer(), range.endOffset())];
 }
 
 - (DOMRange *)enclosingWordRange

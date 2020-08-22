@@ -1,3 +1,15 @@
+2020-08-17  Darin Adler  <darin@apple.com>
+
+        Create documentOrder function, start refactoring to use it instead of Range::compare functions
+        https://bugs.webkit.org/show_bug.cgi?id=215551
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added DocumentOrder.cpp.
+        * TestWebKitAPI/Tests/WebCore/DocumentOrder.cpp: Added.
+        Relatively thorough test of three different documentOrder functions.
+        Could still use even more test cases involving different types of shadow trees.
+
 2020-08-22  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Compilation warnings with clang/gcc 10

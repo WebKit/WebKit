@@ -66,6 +66,45 @@ Optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node)
     return BoundaryPoint { *parent, node.computeNodeIndex() + 1 };
 }
 
+// FIXME: Create BoundaryPoint.cpp and move this there.
+static bool isOffsetBeforeChild(ContainerNode& container, unsigned offset, Node& child)
+{
+    if (!offset)
+        return true;
+    unsigned currentOffset = 0;
+    for (auto currentChild = container.firstChild(); currentChild && currentChild != &child; currentChild = currentChild->nextSibling()) {
+        if (offset <= ++currentOffset)
+            return true;
+    }
+    return false;
+}
+
+// FIXME: Create BoundaryPoint.cpp and move this there.
+PartialOrdering documentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
+{
+    if (a.offset == b.offset)
+        return documentOrder(a.container, b.container);
+
+    if (a.container.ptr() == b.container.ptr())
+        return a.offset < b.offset ? PartialOrdering::less : PartialOrdering::greater;
+
+    for (auto ancestor = b.container.ptr(); ancestor; ) {
+        auto nextAncestor = ancestor->parentOrShadowHostNode();
+        if (nextAncestor == a.container.ptr())
+            return isOffsetBeforeChild(*nextAncestor, a.offset, *ancestor) ? PartialOrdering::less : PartialOrdering::greater;
+        ancestor = nextAncestor;
+    }
+
+    for (auto ancestor = a.container.ptr(); ancestor; ) {
+        auto nextAncestor = ancestor->parentOrShadowHostNode();
+        if (nextAncestor == b.container.ptr())
+            return isOffsetBeforeChild(*nextAncestor, b.offset, *ancestor) ? PartialOrdering::greater : PartialOrdering::less;
+        ancestor = nextAncestor;
+    }
+
+    return documentOrder(a.container, b.container);
+}
+
 Optional<SimpleRange> makeRangeSelectingNode(Node& node)
 {
     auto parent = node.parentNode();

@@ -805,6 +805,7 @@
 		937A6C8A24357C1700C3A6B0 /* KillWebProcessWithOpenConnection-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 937A6C8824357BF300C3A6B0 /* KillWebProcessWithOpenConnection-1.html */; };
 		937A6C8B24357C1700C3A6B0 /* KillWebProcessWithOpenConnection-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 937A6C8924357BF300C3A6B0 /* KillWebProcessWithOpenConnection-2.html */; };
 		937B569E23CD23DB002AE640 /* IDBObjectStoreInfoUpgrade.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93BCBC8123CC6EF500CA2221 /* IDBObjectStoreInfoUpgrade.sqlite3 */; };
+		93915A1724DB66C70019FF43 /* DocumentOrder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93915A1624DB66C70019FF43 /* DocumentOrder.cpp */; };
 		9399BA0423711140008392BF /* IndexedDBInPageCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9399BA01237110AE008392BF /* IndexedDBInPageCache.mm */; };
 		9399BA052371114F008392BF /* IndexedDBInPageCache.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9399BA02237110BF008392BF /* IndexedDBInPageCache.html */; };
 		9399BA062371114F008392BF /* IndexedDBNotInPageCache.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9399BA03237110BF008392BF /* IndexedDBNotInPageCache.html */; };
@@ -2116,7 +2117,6 @@
 		574F55D0204D471C002948C6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		5751B289249D5B9900664C2A /* web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html"; sourceTree = "<group>"; };
 		57537EE724BEA0190048DBA5 /* web-authentication-get-assertion-nfc-pin-disconnect.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-nfc-pin-disconnect.html"; sourceTree = "<group>"; };
-		5758597D23A2527A00C74572 /* CtapPinTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CtapPinTest.h; sourceTree = "<group>"; };
 		5758597E23A2527A00C74572 /* CtapPinTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CtapPinTest.cpp; sourceTree = "<group>"; };
 		5758598323C3C36200C74572 /* web-authentication-make-credential-hid-pin-get-retries-error.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-pin-get-retries-error.html"; sourceTree = "<group>"; };
 		57599E201F07191700A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBStructuredCloneBackwardCompatibility.mm; sourceTree = "<group>"; };
@@ -2381,6 +2381,7 @@
 		936F727F1CD7D9D00068A0FB /* large-video-with-audio.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "large-video-with-audio.mp4"; sourceTree = "<group>"; };
 		937A6C8824357BF300C3A6B0 /* KillWebProcessWithOpenConnection-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "KillWebProcessWithOpenConnection-1.html"; sourceTree = "<group>"; };
 		937A6C8924357BF300C3A6B0 /* KillWebProcessWithOpenConnection-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "KillWebProcessWithOpenConnection-2.html"; sourceTree = "<group>"; };
+		93915A1624DB66C70019FF43 /* DocumentOrder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentOrder.cpp; sourceTree = "<group>"; };
 		9399BA01237110AE008392BF /* IndexedDBInPageCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBInPageCache.mm; sourceTree = "<group>"; };
 		9399BA02237110BF008392BF /* IndexedDBInPageCache.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IndexedDBInPageCache.html; sourceTree = "<group>"; };
 		9399BA03237110BF008392BF /* IndexedDBNotInPageCache.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IndexedDBNotInPageCache.html; sourceTree = "<group>"; };
@@ -3440,12 +3441,12 @@
 				44CF31FB24993F66009CB6CB /* ContextMenuAction.cpp */,
 				CD5451E919E41F9D0016936F /* CSSParser.cpp */,
 				5758597E23A2527A00C74572 /* CtapPinTest.cpp */,
-				5758597D23A2527A00C74572 /* CtapPinTest.h */,
 				572B403321769A88000AD43E /* CtapRequestTest.cpp */,
 				572B404321781B42000AD43E /* CtapResponseTest.cpp */,
 				260BA5781B1D2E7B004FA07C /* DFACombiner.cpp */,
 				260BA57A1B1D2EE2004FA07C /* DFAHelpers.h */,
 				26F6E1EF1ADC749B00DE696B /* DFAMinimizer.cpp */,
+				93915A1624DB66C70019FF43 /* DocumentOrder.cpp */,
 				3151180F1DB1ADD500176304 /* ExtendedColorTests.cpp */,
 				579651E6216BFD53006EBFE5 /* FidoHidMessageTest.cpp */,
 				572B40352176A029000AD43E /* FidoTestData.h */,
@@ -5066,6 +5067,7 @@
 				73BD731823A846500020F450 /* DisplayName.mm in Sources */,
 				518EE51B20A78D0000E024F3 /* DoAfterNextPresentationUpdateAfterCrash.mm in Sources */,
 				2D7FD19322419087007887F1 /* DocumentEditingContext.mm in Sources */,
+				93915A1724DB66C70019FF43 /* DocumentOrder.cpp in Sources */,
 				7CCE7EEB1A411AE600447C4C /* DocumentStartUserScriptAlertCrash.cpp in Sources */,
 				7CCE7EBB1A411A7E00447C4C /* DOMHTMLTableCellCellAbove.mm in Sources */,
 				2D51A0C71C8BF00C00765C45 /* DOMHTMLVideoElementWrapper.mm in Sources */,

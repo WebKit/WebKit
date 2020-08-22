@@ -2294,7 +2294,7 @@ void HTMLConverter::_adjustTrailingNewline()
 
 Node* HTMLConverterCaches::cacheAncestorsOfStartToBeConverted(const Position& start, const Position& end)
 {
-    auto commonAncestor = commonShadowIncludingAncestor(start, end);
+    auto commonAncestor = commonInclusiveAncestor(start, end);
     Node* ancestor = start.containerNode();
 
     while (ancestor) {

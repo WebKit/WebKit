@@ -859,9 +859,10 @@ static void replaceRanges(Page& page, const Vector<FindReplacementRange>& ranges
             return false;
 
         if (firstFrame == secondFrame) {
-            // comparePositions is used here instead of Node::compareDocumentPosition because some editing roots may exist inside shadow roots.
-            return comparePositions({ firstNode.get(), Position::PositionIsBeforeChildren }, { secondNode.get(), Position::PositionIsBeforeChildren }) > 0;
+            // Use documentOrder instead of Node::compareDocumentPosition because some editing roots are inside shadow roots.
+            return is_gt(documentOrder(*firstNode, *secondNode));
         }
+
         return frameToTraversalIndexMap.get(firstFrame) > frameToTraversalIndexMap.get(secondFrame);
     });
 

@@ -336,15 +336,13 @@ void DOMSelection::addRange(Range& range)
     Ref<Frame> protector(*frame);
 
     auto& selection = frame->selection();
-    if (selection.isNone()) {
+    auto selectedRange = selection.selection().toNormalizedRange();
+    if (!selectedRange || selectedRange->start.container->containingShadowRoot()) {
         selection.setSelection(makeSimpleRange(range));
         return;
     }
 
-    auto normalizedRange = createLiveRange(selection.selection().toNormalizedRange());
-    if (!normalizedRange)
-        return;
-
+    auto normalizedRange = createLiveRange(selectedRange);
     auto result = range.compareBoundaryPoints(Range::START_TO_START, *normalizedRange);
     if (!result.hasException() && result.releaseReturnValue() == -1) {
         // We don't support discontiguous selection. We don't do anything if the two ranges don't intersect.
@@ -353,7 +351,7 @@ void DOMSelection::addRange(Range& range)
             result = range.compareBoundaryPoints(Range::END_TO_END, *normalizedRange);
             if (!result.hasException() && result.releaseReturnValue() == -1) {
                 // The ranges intersect.
-                selection.moveTo(range.startPosition(), normalizedRange->endPosition(), DOWNSTREAM);
+                selection.moveTo(makeDeprecatedLegacyPosition(&range.startContainer(), range.startOffset()), makeDeprecatedLegacyPosition(&normalizedRange->endContainer(), normalizedRange->endOffset()), DOWNSTREAM);
             } else {
                 // The new range contains the original range.
                 selection.setSelection(makeSimpleRange(range));
@@ -369,7 +367,7 @@ void DOMSelection::addRange(Range& range)
                 selection.setSelection(makeSimpleRange(*normalizedRange));
             } else {
                 // The ranges intersect.
-                selection.moveTo(normalizedRange->startPosition(), range.endPosition(), DOWNSTREAM);
+                selection.moveTo(makeDeprecatedLegacyPosition(&normalizedRange->startContainer(), normalizedRange->startOffset()), makeDeprecatedLegacyPosition(&range.endContainer(), range.endOffset()), DOWNSTREAM);
             }
         }
     }
@@ -404,7 +402,7 @@ bool DOMSelection::containsNode(Node& node, bool allowPartial) const
 
     Ref<Node> protectedNode(node);
     auto selectedRange = selection.selection().toNormalizedRange();
-    if (!selectedRange)
+    if (!selectedRange || selectedRange->start.container->containingShadowRoot())
         return false;
 
     ContainerNode* parentNode = node.parentNode();

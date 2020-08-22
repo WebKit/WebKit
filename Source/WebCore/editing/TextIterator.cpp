@@ -1563,7 +1563,7 @@ void WordAwareIterator::advance()
         }
 
         if (m_buffer.isEmpty()) {
-            // Start gobbling chunks until we get to a suitable stopping point
+            // Start gobbling chunks until we get to a suitable stopping point.
             append(m_buffer, m_previousText.text());
             m_previousText.reset();
         }
@@ -2090,10 +2090,10 @@ inline bool SearchBuffer::isWordEndMatch(size_t start, size_t length) const
     ASSERT(length);
     ASSERT(m_options.contains(AtWordEnds));
 
-    int endWord;
     // Start searching at the end of matched search, so that multiple word matches succeed.
+    int endWord;
     findEndWordBoundary(StringView(m_buffer.data(), m_buffer.size()), start + length - 1, &endWord);
-    return static_cast<size_t>(endWord) == (start + length);
+    return static_cast<size_t>(endWord) == start + length;
 }
 
 inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
@@ -2333,14 +2333,12 @@ size_t SearchBuffer::length() const
 
 uint64_t characterCount(const SimpleRange& range, TextIteratorBehavior behavior)
 {
-    auto comparisonResult = Range::compareBoundaryPoints(&range.startContainer(), range.startOffset(), &range.endContainer(), range.endOffset());
-    if (comparisonResult.hasException())
-        return 0;
-
-    auto adjustedRange(range);
-    if (comparisonResult.releaseReturnValue() > 0)
+    auto adjustedRange = range;
+    auto ordering = documentOrder(range.start, range.end);
+    if (is_gt(ordering))
         std::swap(adjustedRange.start, adjustedRange.end);
-
+    else if (!is_lt(ordering))
+        return 0;
     uint64_t length = 0;
     for (TextIterator it(adjustedRange, behavior); !it.atEnd(); it.advance())
         length += it.text().length();

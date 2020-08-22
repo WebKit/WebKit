@@ -1968,7 +1968,8 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     [self _replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:NO];
 }
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
+
 // Determines whether whitespace needs to be added around aString to preserve proper spacing and
 // punctuation when it's inserted into the receiver's text over charRange. Returns by reference
 // in beforeString and afterString any whitespace that should be added, unless either or both are
@@ -1981,30 +1982,25 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (afterString)
         *afterString = nil;
         
-    // inspect destination
-    WebCore::Node *startContainer = core([rangeToReplace startContainer]);
-    WebCore::Node *endContainer = core([rangeToReplace endContainer]);
-
-    WebCore::Position startPos(startContainer, [rangeToReplace startOffset], WebCore::Position::PositionIsOffsetInAnchor);
-    WebCore::Position endPos(endContainer, [rangeToReplace endOffset], WebCore::Position::PositionIsOffsetInAnchor);
-
-    WebCore::VisiblePosition startVisiblePos = WebCore::VisiblePosition(startPos, WebCore::VP_DEFAULT_AFFINITY);
-    WebCore::VisiblePosition endVisiblePos = WebCore::VisiblePosition(endPos, WebCore::VP_DEFAULT_AFFINITY);
-    
-    // this check also ensures startContainer, startPos, endContainer, and endPos are non-null
-    if (startVisiblePos.isNull() || endVisiblePos.isNull())
+    auto range = makeSimpleRange(core(rangeToReplace));
+    if (!range)
         return;
 
-    bool addLeadingSpace = startPos.leadingWhitespacePosition(WebCore::VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
-    if (addLeadingSpace)
-        if (UChar previousChar = startVisiblePos.previous().characterAfter())
-            addLeadingSpace = !WebCore::isCharacterSmartReplaceExempt(previousChar, true);
+    auto start = WebCore::VisiblePosition { makeContainerOffsetPosition(range->start) };
+    auto end = WebCore::VisiblePosition { makeContainerOffsetPosition(range->end) };
+
+    bool addLeadingSpace = start.deepEquivalent().leadingWhitespacePosition(WebCore::VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(start);
+    if (addLeadingSpace) {
+        if (UChar previousCharacter = start.previous().characterAfter())
+            addLeadingSpace = !WebCore::isCharacterSmartReplaceExempt(previousCharacter, true);
+    }
     
-    bool addTrailingSpace = endPos.trailingWhitespacePosition(WebCore::VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
-    if (addTrailingSpace)
-        if (UChar thisChar = endVisiblePos.characterAfter())
-            addTrailingSpace = !WebCore::isCharacterSmartReplaceExempt(thisChar, false);
-    
+    bool addTrailingSpace = end.deepEquivalent().trailingWhitespacePosition(WebCore::VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(end);
+    if (addTrailingSpace) {
+        if (UChar followingCharacter = end.characterAfter())
+            addTrailingSpace = !WebCore::isCharacterSmartReplaceExempt(followingCharacter, false);
+    }
+
     // inspect source
     bool hasWhitespaceAtStart = false;
     bool hasWhitespaceAtEnd = false;
@@ -2019,14 +2015,15 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
             hasWhitespaceAtEnd = YES;
         }
     }
-    
+
     // issue the verdict
     if (beforeString && addLeadingSpace && !hasWhitespaceAtStart)
         *beforeString = @" ";
     if (afterString && addTrailingSpace && !hasWhitespaceAtEnd)
         *afterString = @" ";
 }
-#endif // !PLATFORM(IOS_FAMILY)
+
+#endif // PLATFORM(MAC)
 
 - (NSMutableDictionary *)_cacheabilityDictionary
 {

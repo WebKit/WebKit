@@ -1,3 +1,130 @@
+2020-08-17  Darin Adler  <darin@apple.com>
+
+        Create documentOrder function, start refactoring to use it instead of Range::compare functions
+        https://bugs.webkit.org/show_bug.cgi?id=215551
+
+        Reviewed by Chris Dumez.
+
+        * WebCore.xcodeproj/project.pbxproj: Make TextControlInnerElements.h Private so
+        we can use it from unit tests.
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::text const): Tweak code slightly.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::selectedTextRange const): Always use the native
+        text control's idea of the selected text range. There is no need to use the
+        document-based range with any of these native text controls. The check before would
+        almost always return true, except for unusual cases, particularly combo box, which
+        returns false for isARIATextControl. We may want to change isARIATextControl to
+        return true for combo box, but it's not necessary for this fix. Without this change,
+        a test involving a combo box was failing because changes caused
+        documentBasedSelectedTextRange to no longer accidentally do the right thing.
+
+        * dom/BoundaryPoint.h: Added != and documentOrder.
+
+        * dom/Document.h: Export allocation function and constructor  so we can allocate
+        in a unit test.
+
+        * dom/Node.cpp:
+        (WebCore::connectedInSameTreeScope): Renamed from areNodesConnectedInSameTreeScope.
+        (WebCore::Node::compareDocumentPosition): Updated for name change above.
+        (WebCore::depth): Changed to take a const& and to walk acrosss shadow host boundaries,
+        so this can be used in algorithms that are intended to work on the combined tree.
+        Has no effect when called on nodes that are not in a shadow tree.
+        (WebCore::commonInclusiveAncestorAndChildren): Refactored so this can be used by
+        callers that need to know the distinct ancestor children as well as the common
+        ancestor. Also revised it to work across shadow tree boundaries.
+        (WebCore::commonInclusiveAncestor): Updated to call commonInclusiveAncestorAndChildren.
+        (WebCore::isSiblingSubsequent): Added.
+        (WebCore::documentOrder): Added. Implemented using commonInclusiveAncestorAndChildren and
+        isSiblingSubsequent.
+        * dom/Node.h: Updated for above. Also added PartialOrdering class, a compatible
+        subset of C++20's std::partial_ordering, for return value for documentOrder.
+
+        * dom/Position.cpp:
+        (WebCore::Position::computeOffsetInContainerNode const): Removed clamping the
+        result to the length of the container node; not needed.
+        (WebCore::Position::previous const): Updated for name change.
+        (WebCore::Position::next const): Updated for name change.
+        (WebCore::Position::upstream const): Updated for name change.
+        (WebCore::Position::downstream const): Updated for name change.
+        (WebCore::commonInclusiveAncestor): Renamed from commonShadowIncludingAncestor
+        since this is now the same as the commonInclusiveAncestor that takes two nodes;
+        they now both take shadow trees into account.
+        (WebCore::makeContainerOffsetPosition): Added. Clearer way to construct
+        positions from containers and offsets. An alternative to makeDeprecatedLegacyPosition
+        for cases where we don't need the deprecated legacy behavior.
+        (WebCore::makeDeprecatedLegacyPosition): Renamed from createLegacyEditingPosition.
+        Adding the word "deprecated" to be clearer that this is not just "legacy" but also
+        something we are trying to get rid of. Changing from "create" to "make" because
+        this does not allocate memory on the heap.
+        (WebCore::documentOrder): Added. Still to do: more optimized implementation when
+        we can compare two positions without computing node offsets.
+
+        * dom/Position.h: Updated for above.
+        (WebCore::minOffsetForNode): Deleted.
+
+        * dom/RadioButtonGroups.cpp:
+        (WebCore::RadioButtonGroup::members const): Use documentOrder instead of
+        documentOrderComparator.
+
+        * dom/Range.cpp:
+        (WebCore::areRangesEqual): Rewrote to not use Position.
+        (WebCore::rangesOverlap): Updated for name change.
+        (WebCore::Range::expand): Rewrote to not use Range::start/endPosition.
+        (WebCore::operator<<): Deleted.
+
+        * dom/Range.h: Removed now-unused Range::start/endPosition, documentOrderComparator,
+        and TextStream operators.
+
+        * dom/RangeBoundaryPoint.h: Removed now-unused RangeBoundaryPoint::toPosition.
+        Added makeBoundaryPoint function to convert RangeBoundaryPoint into BoundaryPoint.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::isOffsetBeforeChild): Added. For use by documentOrder.
+        (WebCore::documentOrder): Added.
+
+        * editing/TextIterator.cpp:
+        (WebCore::characterCount): Use documentOrder instead of
+        Range::compareBoundaryPoints.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::areVisiblePositionsInSameTreeScope): Updated for name change.
+
+        * editing/VisiblePosition.h: Use assignment insteed of calling clear,
+        to possibly prepare to get rid of Position::clear in the future.
+        Added a documentORder function that takes two visible positions.
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverterCaches::cacheAncestorsOfStartToBeConverted): Use
+        commonInclusiveAncestor instead of commonShadowIncludingAncestor.
+        * editing/markup.cpp:
+        (WebCore::serializePreservingVisualAppearanceInternal): Ditto.
+
+        * html/HTMLBodyElement.h: Export create function so it can used in unit tests.
+        * html/HTMLDivElement.h: Ditto.
+        * html/HTMLHtmlElement.h: Ditto.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::create): Added so it can be used in unit tests.
+        * html/HTMLTextAreaElement.h: Ditto. Also export the innerTextElement function
+        so it can be used in unit tests.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::addRange): Use makeDeprecatedLegacyPosition directly
+        rather than using Range::start/endPosition. This was the only place in WebCore
+        still using Range::start/endPosition and over time we would like to move from
+        makeDeprecatedLegacyPosition to makeContainerOffsetPosition, so it's good to
+        have it be explicit here rather than hidden inside the Range class.
+        (WebCore::DOMSelection::containsNode const): Added a check of containingShadowRoot.
+        This preserves the old behavior. Before, constructing the range resulted in
+        a collapsed range when the shadow tree was involved. This is a more direct way
+        to achieve the same result.
+
+        * page/Page.cpp:
+        (WebCore::replaceRanges): Use documentOrder instead of comparePositions.
+        Eventually we will delete comparePositions.
+
 2020-08-22  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Compilation warnings with clang/gcc 10

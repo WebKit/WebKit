@@ -93,9 +93,6 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> surroundContents(Node&);
     WEBCORE_EXPORT ExceptionOr<void> setStartBefore(Node&);
 
-    Position startPosition() const { return m_start.toPosition(); }
-    Position endPosition() const { return m_end.toPosition(); }
-
     WEBCORE_EXPORT Node* firstNode() const;
 
     enum class BoundingRectBehavior : uint8_t {
@@ -170,16 +167,6 @@ WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(const RefPtr<Range>&);
 
 WEBCORE_EXPORT Ref<Range> createLiveRange(const SimpleRange&);
 WEBCORE_EXPORT RefPtr<Range> createLiveRange(const Optional<SimpleRange>&);
-
-bool documentOrderComparator(const Node*, const Node*);
-
-WTF::TextStream& operator<<(WTF::TextStream&, const RangeBoundaryPoint&);
-WTF::TextStream& operator<<(WTF::TextStream&, const Range&);
-
-inline bool documentOrderComparator(const Node* a, const Node* b)
-{
-    return Range::compareBoundaryPoints(const_cast<Node*>(a), 0, const_cast<Node*>(b), 0).releaseReturnValue() < 0;
-}
 
 } // namespace WebCore
 

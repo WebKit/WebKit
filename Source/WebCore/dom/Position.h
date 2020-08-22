@@ -201,7 +201,7 @@ private:
     // For creating legacy editing positions: (Anchor type will be determined from editingIgnoresContent(node))
     enum class LegacyEditingPositionFlag { On };
     WEBCORE_EXPORT Position(Node* anchorNode, unsigned offset, LegacyEditingPositionFlag);
-    friend Position createLegacyEditingPosition(Node*, unsigned offset);
+    friend Position makeDeprecatedLegacyPosition(Node*, unsigned offset);
 
     WEBCORE_EXPORT int offsetForPositionAfterAnchor() const;
     
@@ -221,14 +221,18 @@ private:
 
 bool operator==(const Position&, const Position&);
 bool operator!=(const Position&, const Position&);
+
+WEBCORE_EXPORT PartialOrdering documentOrder(const Position&, const Position&);
 bool operator<(const Position&, const Position&);
 bool operator>(const Position&, const Position&);
 bool operator>=(const Position&, const Position&);
 bool operator<=(const Position&, const Position&);
 
-// FIXME: Consider renaming this to "make" instead of "create" since we normally use "create" for functions that allocate heap objects.
-Position createLegacyEditingPosition(Node*, unsigned offset);
-WEBCORE_EXPORT Position createLegacyEditingPosition(const BoundaryPoint&);
+Position makeContainerOffsetPosition(Node*, unsigned offset);
+WEBCORE_EXPORT Position makeContainerOffsetPosition(const BoundaryPoint&);
+
+Position makeDeprecatedLegacyPosition(Node*, unsigned offset);
+WEBCORE_EXPORT Position makeDeprecatedLegacyPosition(const BoundaryPoint&);
 
 WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPoint(const Position&);
 
@@ -243,10 +247,9 @@ Position positionAfterNode(Node* anchorNode);
 Position firstPositionInNode(Node* anchorNode);
 Position lastPositionInNode(Node* anchorNode);
 
-int minOffsetForNode(Node* anchorNode, unsigned offset);
 bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode);
 
-RefPtr<Node> commonShadowIncludingAncestor(const Position&, const Position&);
+RefPtr<Node> commonInclusiveAncestor(const Position&, const Position&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Position&);
 
@@ -259,15 +262,21 @@ Optional<SimpleRange> makeSimpleRange(const PositionRange&);
 
 // inlines
 
-inline Position createLegacyEditingPosition(Node* node, unsigned offset)
+inline Position makeContainerOffsetPosition(Node* node, unsigned offset)
+{
+    return { node, offset, Position::PositionIsOffsetInAnchor };
+}
+
+inline Position makeDeprecatedLegacyPosition(Node* node, unsigned offset)
 {
     return { node, offset, Position::LegacyEditingPositionFlag::On };
 }
 
+// FIXME: Positions at the same document location with different anchoring will return false; that's unlike <= and >=.
+// FIXME: This ignores differences in m_isLegacyEditingPosition in a subtle way.
+// FIXME: For legacy editing positions, <div><img></div> [div, 0] != [img, 0] even though most of editing code will treat them as identical.
 inline bool operator==(const Position& a, const Position& b)
 {
-    // FIXME: In <div><img></div> [div, 0] != [img, 0] even though most of the
-    // editing code will treat them as identical.
     return a.anchorNode() == b.anchorNode() && a.deprecatedEditingOffset() == b.deprecatedEditingOffset() && a.anchorType() == b.anchorType();
 }
 
@@ -328,17 +337,6 @@ inline Position lastPositionInNode(Node* anchorNode)
     return Position(anchorNode, Position::PositionIsAfterChildren);
 }
 
-inline int minOffsetForNode(Node* anchorNode, unsigned offset)
-{
-    if (is<CharacterData>(*anchorNode))
-        return std::min(offset, downcast<CharacterData>(*anchorNode).length());
-
-    unsigned newOffset = 0;
-    for (Node* node = anchorNode->firstChild(); node && newOffset < offset; node = node->nextSibling())
-        newOffset++;
-    return newOffset;
-}
-
 inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode)
 {
     if (is<CharacterData>(*anchorNode))
@@ -348,6 +346,18 @@ inline bool offsetIsBeforeLastNodeOffset(unsigned offset, Node* anchorNode)
     for (Node* node = anchorNode->firstChild(); node && currentOffset < offset; node = node->nextSibling())
         currentOffset++;
     return offset < currentOffset;
+}
+
+// FIXME: Delete this after changing all callers to use the makeDeprecatedLegacyPosition name.
+inline Position createLegacyEditingPosition(Node* node, unsigned offset)
+{
+    return makeDeprecatedLegacyPosition(node, offset);
+}
+
+// FIXME: Delete this after changing all callers to use the makeDeprecatedLegacyPosition name.
+inline Position createLegacyEditingPosition(const BoundaryPoint& point)
+{
+    return makeDeprecatedLegacyPosition(point);
 }
 
 } // namespace WebCore

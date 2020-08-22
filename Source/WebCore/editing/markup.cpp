@@ -842,7 +842,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
     if (!comparePositions(start, end))
         return emptyString();
 
-    RefPtr<Node> commonAncestor = commonShadowIncludingAncestor(start, end);
+    auto commonAncestor = commonInclusiveAncestor(start, end);
     if (!commonAncestor)
         return emptyString();
 

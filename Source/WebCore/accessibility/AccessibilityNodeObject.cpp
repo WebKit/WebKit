@@ -1940,17 +1940,15 @@ String AccessibilityNodeObject::text() const
     if (!isTextControl())
         return String();
 
-    Node* node = this->node();
-    if (!node)
+    auto node = this->node();
+    if (!is<Element>(node))
         return String();
 
-    if (isNativeTextControl() && is<HTMLTextFormControlElement>(*node))
-        return downcast<HTMLTextFormControlElement>(*node).value();
+    auto& element = downcast<Element>(*node);
+    if (isNativeTextControl() && is<HTMLTextFormControlElement>(element))
+        return downcast<HTMLTextFormControlElement>(element).value();
 
-    if (!node->isElementNode())
-        return String();
-
-    return downcast<Element>(node)->innerText();
+    return element.innerText();
 }
 
 String AccessibilityNodeObject::stringValue() const

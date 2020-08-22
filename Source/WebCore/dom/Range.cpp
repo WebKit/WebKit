@@ -1188,7 +1188,7 @@ bool areRangesEqual(const Range* a, const Range* b)
         return true;
     if (!a || !b)
         return false;
-    return a->startPosition() == b->startPosition() && a->endPosition() == b->endPosition();
+    return &a->startContainer() == &b->startContainer() && a->startOffset() == b->startOffset() && &a->endContainer() == &b->endContainer() && a->endOffset() == b->endOffset();
 }
 
 bool rangesOverlap(const Range* a, const Range* b)
@@ -1199,7 +1199,7 @@ bool rangesOverlap(const Range* a, const Range* b)
     if (a == b)
         return true;
 
-    if (!areNodesConnectedInSameTreeScope(a->commonAncestorContainer(), b->commonAncestorContainer()))
+    if (!connectedInSameTreeScope(a->commonAncestorContainer(), b->commonAncestorContainer()))
         return false;
 
     short startToStart = a->compareBoundaryPoints(Range::START_TO_START, *b).releaseReturnValue();
@@ -1387,8 +1387,8 @@ void Range::textNodeSplit(Text& oldNode)
 
 ExceptionOr<void> Range::expand(const String& unit)
 {
-    VisiblePosition start { startPosition() };
-    VisiblePosition end { endPosition() };
+    auto start = VisiblePosition { makeDeprecatedLegacyPosition(&startContainer(), startOffset()) };
+    auto end = VisiblePosition { makeDeprecatedLegacyPosition(&endContainer(), endOffset()) };
     if (unit == "word") {
         start = startOfWord(start);
         end = endOfWord(end);
@@ -1542,16 +1542,6 @@ RefPtr<Range> createLiveRange(const Optional<SimpleRange>& range)
     if (!range)
         return nullptr;
     return createLiveRange(*range);
-}
-
-WTF::TextStream& operator<<(WTF::TextStream& ts, const RangeBoundaryPoint& r)
-{
-    return ts << r.toPosition();
-}
-    
-WTF::TextStream& operator<<(WTF::TextStream& ts, const Range& r)
-{
-    return ts << "Range: " << "start: " << r.startPosition() << " end: " << r.endPosition();
 }
 
 } // namespace WebCore

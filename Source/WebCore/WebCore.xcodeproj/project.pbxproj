@@ -405,7 +405,7 @@
 		141DC053164834B900371E5A /* LayoutRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 141DC04D164834B900371E5A /* LayoutRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141DC054164834B900371E5A /* LayoutSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 141DC04E164834B900371E5A /* LayoutSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142011B70A003133008303F9 /* JSCSSStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 142011B50A003133008303F9 /* JSCSSStyleDeclaration.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		142B97CA13138943008BEF4B /* TextControlInnerElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 142B97C813138943008BEF4B /* TextControlInnerElements.h */; };
+		142B97CA13138943008BEF4B /* TextControlInnerElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 142B97C813138943008BEF4B /* TextControlInnerElements.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1432E8470C51493800B1500F /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1432E8460C51493800B1500F /* GCController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14476AA815DC4BB100305DB2 /* WritingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 14476AA715DC4BB100305DB2 /* WritingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1449E24A107D4A8400B5793F /* JSCallbackData.h */; };

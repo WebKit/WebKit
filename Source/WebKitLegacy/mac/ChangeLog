@@ -1,3 +1,17 @@
+2020-08-17  Darin Adler  <darin@apple.com>
+
+        Create documentOrder function, start refactoring to use it instead of Range::compare functions
+        https://bugs.webkit.org/show_bug.cgi?id=215551
+
+        Reviewed by Chris Dumez.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _smartInsertForString:replacingRange:beforeString:afterString:]):
+        Rewrite to use makeSimpleRange and makeContainerOffsetPosition. Simplifies
+        the null checks. Would love to remove the function but at this time it's
+        still used by Apple's Mail app (albeit in a peculiar way, always passing a
+        constant string).
+
 2020-08-17  David Kilzer  <ddkilzer@apple.com>
 
         Clean up DragApplicationFlags after switch to OptionSet<>

@@ -670,7 +670,30 @@ private:
     std::unique_ptr<NodeRareData, NodeRareDataDeleter> m_rareData;
 };
 
+bool connectedInSameTreeScope(const Node*, const Node*);
 WEBCORE_EXPORT RefPtr<Node> commonInclusiveAncestor(Node&, Node&);
+
+// Designed to be used the same way as C++20 std::partial_ordering class.
+// FIXME: Consider putting this in a separate header.
+// FIXME: Once we can require C++20, replace with std::partial_ordering.
+class PartialOrdering {
+public:
+    static const PartialOrdering less;
+    static const PartialOrdering equivalent;
+    static const PartialOrdering greater;
+    static const PartialOrdering unordered;
+
+    friend constexpr bool is_eq(PartialOrdering);
+    friend constexpr bool is_lt(PartialOrdering);
+    friend constexpr bool is_gt(PartialOrdering);
+
+private:
+    enum class Type : uint8_t { Less, Equivalent, Greater, Unordered };
+    constexpr PartialOrdering(Type type) : m_type { type } { }
+    Type m_type;
+};
+
+WEBCORE_EXPORT PartialOrdering documentOrder(const Node&, const Node&);
 
 #if ASSERT_ENABLED
 
@@ -785,7 +808,25 @@ inline void Node::setTreeScopeRecursively(TreeScope& newTreeScope)
         moveTreeToNewScope(*this, *m_treeScope, newTreeScope);
 }
 
-bool areNodesConnectedInSameTreeScope(const Node*, const Node*);
+inline constexpr PartialOrdering PartialOrdering::less(Type::Less);
+inline constexpr PartialOrdering PartialOrdering::equivalent(Type::Equivalent);
+inline constexpr PartialOrdering PartialOrdering::greater(Type::Greater);
+inline constexpr PartialOrdering PartialOrdering::unordered(Type::Unordered);
+
+constexpr bool is_eq(PartialOrdering ordering)
+{
+    return ordering.m_type == PartialOrdering::Type::Equivalent;
+}
+
+constexpr bool is_lt(PartialOrdering ordering)
+{
+    return ordering.m_type == PartialOrdering::Type::Less;
+}
+
+constexpr bool is_gt(PartialOrdering ordering)
+{
+    return ordering.m_type == PartialOrdering::Type::Greater;
+}
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Node&);
 

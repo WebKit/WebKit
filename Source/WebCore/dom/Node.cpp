@@ -32,9 +32,6 @@
 #include "CommonVM.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ContainerNodeAlgorithms.h"
-#if PLATFORM(IOS_FAMILY)
-#include "ContentChangeObserver.h"
-#endif
 #include "ContextMenuController.h"
 #include "DOMWindow.h"
 #include "DataTransfer.h"
@@ -86,6 +83,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
+
+#if PLATFORM(IOS_FAMILY)
+#include "ContentChangeObserver.h"
+#endif
 
 namespace WebCore {
 
@@ -1621,14 +1622,13 @@ static inline unsigned short compareDetachedElementsPosition(Node& firstNode, No
     return Node::DOCUMENT_POSITION_DISCONNECTED | Node::DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | direction;
 }
 
-bool areNodesConnectedInSameTreeScope(const Node* a, const Node* b)
+bool connectedInSameTreeScope(const Node* a, const Node* b)
 {
-    if (!a || !b)
-        return false;
     // Note that we avoid comparing Attr nodes here, since they return false from isConnected() all the time (which seems like a bug).
-    return a->isConnected() == b->isConnected() && &a->treeScope() == &b->treeScope();
+    return a && b && a->isConnected() == b->isConnected() && &a->treeScope() == &b->treeScope();
 }
 
+// FIXME: Refactor this so it calls documentOrdering, except for any exotic inefficient things that are needed only here.
 unsigned short Node::compareDocumentPosition(Node& otherNode)
 {
     if (&otherNode == this)
@@ -1674,7 +1674,7 @@ unsigned short Node::compareDocumentPosition(Node& otherNode)
 
     // If one node is in the document and the other is not, we must be disconnected.
     // If the nodes have different owning documents, they must be disconnected.
-    if (!areNodesConnectedInSameTreeScope(start1, start2))
+    if (!connectedInSameTreeScope(start1, start2))
         return compareDetachedElementsPosition(*this, otherNode);
 
     // We need to find a common ancestor container, and then compare the indices of the two immediate children.
@@ -2623,32 +2623,74 @@ void* Node::opaqueRootSlow() const
     return const_cast<void*>(static_cast<const void*>(node));
 }
 
-static size_t depth(Node& node)
+static size_t depth(const Node& node)
 {
     size_t depth = 0;
     auto ancestor = &node;
-    while ((ancestor = ancestor->parentNode()))
+    while ((ancestor = ancestor->parentOrShadowHostNode()))
         ++depth;
     return depth;
 }
 
-RefPtr<Node> commonInclusiveAncestor(Node& a, Node& b)
+struct AncestorAndChildren {
+    const Node* commonAncestor;
+    const Node* distinctAncestorA;
+    const Node* distinctAncestorB;
+};
+static AncestorAndChildren commonInclusiveAncestorAndChildren(const Node& a, const Node& b)
 {
     // This first check isn't needed for correctness, but it is cheap and likely to be
     // common enough to be worth optimizing so we don't have to walk to the root.
     if (&a == &b)
-        return &a;
+        return { &a, nullptr, nullptr };
     auto [depthA, depthB] = std::make_tuple(depth(a), depth(b));
-    auto [x, y, difference] = depthA > depthB
+    auto [x, y, difference] = depthA >= depthB
         ? std::make_tuple(&a, &b, depthA - depthB)
         : std::make_tuple(&b, &a, depthB - depthA);
-    for (decltype(difference) i = 0; i < difference; ++i)
-        x = x->parentNode();
-    while (x != y) {
-        x = x->parentNode();
-        y = y->parentNode();
+    decltype(x) distinctAncestorA = nullptr;
+    for (decltype(difference) i = 0; i < difference; ++i) {
+        distinctAncestorA = x;
+        x = x->parentOrShadowHostNode();
     }
-    return x;
+    decltype(y) distinctAncestorB = nullptr;
+    while (x != y) {
+        distinctAncestorA = x;
+        distinctAncestorB = y;
+        x = x->parentOrShadowHostNode();
+        y = y->parentOrShadowHostNode();
+    }
+    if (depthA < depthB)
+        std::swap(distinctAncestorA, distinctAncestorB);
+    return { x, distinctAncestorA, distinctAncestorB };
+}
+
+RefPtr<Node> commonInclusiveAncestor(Node& a, Node& b)
+{
+    return const_cast<Node*>(commonInclusiveAncestorAndChildren(a, b).commonAncestor);
+}
+
+static bool isSiblingSubsequent(const Node& siblingA, const Node& siblingB)
+{
+    ASSERT(&siblingA != &siblingB);
+    for (auto sibling = &siblingA; sibling; sibling = sibling->nextSibling()) {
+        if (sibling == &siblingB)
+            return true;
+    }
+    return false;
+}
+
+PartialOrdering documentOrder(const Node& a, const Node& b)
+{
+    if (&a == &b)
+        return PartialOrdering::equivalent;
+    auto result = commonInclusiveAncestorAndChildren(a, b);
+    if (!result.commonAncestor)
+        return PartialOrdering::unordered;
+    if (!result.distinctAncestorA)
+        return PartialOrdering::less;
+    if (!result.distinctAncestorB)
+        return PartialOrdering::greater;
+    return isSiblingSubsequent(*result.distinctAncestorA, *result.distinctAncestorB) ? PartialOrdering::less : PartialOrdering::greater;
 }
 
 TextStream& operator<<(TextStream& ts, const Node& node)
