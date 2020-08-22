@@ -1,3 +1,13 @@
+2020-08-22  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Compilation warnings with clang/gcc 10
+        https://bugs.webkit.org/show_bug.cgi?id=215699
+
+        Reviewed by Darin Adler.
+
+        * Source/cmake/WebKitCompilerFlags.cmake: Disable tautological-compare and
+        misleading-indentation warnings triggering false-positive when building JSC.
+
 2020-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Remove support for NPAPI plugins

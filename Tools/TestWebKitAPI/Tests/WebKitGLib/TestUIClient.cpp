@@ -81,7 +81,6 @@ public:
 
         WindowProperties(cairo_rectangle_int_t* geometry, bool toolbarVisible, bool statusbarVisible, bool scrollbarsVisible, bool menubarVisible, bool locationbarVisible, bool resizable, bool fullscreen)
             : m_isNull(false)
-            , m_geometry(*geometry)
             , m_toolbarVisible(toolbarVisible)
             , m_statusbarVisible(statusbarVisible)
             , m_scrollbarsVisible(scrollbarsVisible)
@@ -90,6 +89,9 @@ public:
             , m_resizable(resizable)
             , m_fullscreen(fullscreen)
         {
+#if PLATFORM(GTK)
+            m_geometry = *geometry;
+#endif
         }
 
         bool isNull() const { return m_isNull; }
@@ -114,8 +116,9 @@ public:
     private:
         bool m_isNull;
 
+#if PLATFORM(GTK)
         cairo_rectangle_int_t m_geometry;
-
+#endif
         bool m_toolbarVisible;
         bool m_statusbarVisible;
         bool m_scrollbarsVisible;

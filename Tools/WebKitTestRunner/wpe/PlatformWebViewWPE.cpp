@@ -63,7 +63,7 @@ void PlatformWebView::focus()
 
 WKRect PlatformWebView::windowFrame()
 {
-    return WKRect { 0, 0, 1, 1 };
+    return { { 0, 0 }, { 1, 1 } };
 }
 
 void PlatformWebView::setWindowFrame(WKRect, WebViewSizingMode)

@@ -104,6 +104,8 @@ if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-exceptions)
         WEBKIT_APPEND_GLOBAL_CXX_FLAGS(-fno-rtti)
 
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-tautological-compare)
+
         if (WIN32)
             WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-mno-ms-bitfields)
             WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-unknown-pragmas)
@@ -124,6 +126,7 @@ if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Qunused-arguments
                                          -Wno-maybe-uninitialized
                                          -Wno-parentheses-equality
+                                         -Wno-misleading-indentation
                                          -Wno-psabi)
 
     WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-noexcept-type)

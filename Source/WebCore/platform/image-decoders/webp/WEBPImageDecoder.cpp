@@ -210,7 +210,7 @@ void WEBPImageDecoder::decodeFrame(size_t frameIndex, WebPDemuxer* demuxer)
             buffer.setDecodingStatus(DecodingStatus::Partial);
             break;
         }
-        // Fallthrough.
+        FALLTHROUGH;
     default:
         setFailed();
     }

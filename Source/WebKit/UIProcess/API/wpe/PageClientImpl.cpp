@@ -242,7 +242,7 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& touchEvent, b
         pointerEvent.state = 0;
         pointerEvent.modifiers &= ~wpe_input_pointer_modifier_button1;
         break;
-    case wpe_input_pointer_event_type_null:
+    case wpe_input_touch_event_type_null:
         ASSERT_NOT_REACHED();
         return;
     }

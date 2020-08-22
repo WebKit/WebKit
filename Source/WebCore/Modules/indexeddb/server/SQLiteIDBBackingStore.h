@@ -51,7 +51,7 @@ enum class IsSchemaUpgraded : bool { No, Yes };
 class IDBSerializationContext;
 class SQLiteIDBCursor;
 
-class SQLiteIDBBackingStore : public IDBBackingStore {
+class SQLiteIDBBackingStore final : public IDBBackingStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SQLiteIDBBackingStore(PAL::SessionID, const IDBDatabaseIdentifier&, const String& databaseRootDirectory);

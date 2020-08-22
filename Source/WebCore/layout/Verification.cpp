@@ -189,7 +189,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
         auto& displayRun = displayRuns[runIndex];
         auto* inlineBox = inlineBoxes[inlineBoxIndex];
         auto* inlineTextBox = is<InlineTextBox>(inlineBox) ? downcast<InlineTextBox>(inlineBox) : nullptr;
-        bool matchingRuns = inlineTextBox ? checkForMatchingTextRuns(displayRun, *inlineTextBox) : matchingRuns = checkForMatchingNonTextRuns(displayRun, *inlineBox);
+        bool matchingRuns = inlineTextBox ? checkForMatchingTextRuns(displayRun, *inlineTextBox) : checkForMatchingNonTextRuns(displayRun, *inlineBox);
 
         if (!matchingRuns) {
             

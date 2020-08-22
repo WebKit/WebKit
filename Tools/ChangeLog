@@ -1,3 +1,16 @@
+2020-08-22  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Compilation warnings with clang/gcc 10
+        https://bugs.webkit.org/show_bug.cgi?id=215699
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp: Wrap m_geometry private field in GTK
+        ifdefs, this is not used in WPE.
+        * WebKitTestRunner/wpe/PlatformWebViewWPE.cpp:
+        (WTR::PlatformWebView::windowFrame): Return rect built with explicit initializers.
+        * wpe/backends/WindowViewBackend.cpp: Supply additional touch client callbacks, mandated by the interface.
+
 2020-08-22  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, reverting r266012.

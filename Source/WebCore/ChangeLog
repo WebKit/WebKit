@@ -1,3 +1,23 @@
+2020-08-22  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Compilation warnings with clang/gcc 10
+        https://bugs.webkit.org/show_bug.cgi?id=215699
+
+        Reviewed by Darin Adler.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h: Mark class as final because its destructor is marked as such.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseDirectory const): Deleted.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::sessionID const): Deleted.
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseRootDirectoryIsolatedCopy const): Deleted.
+        * dom/messageports/MessagePortChannelProviderImpl.h: Ditto.
+        * layout/Verification.cpp:
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded): Remove spurious
+        matchingRuns assignment. I have no idea how this was supposed to work?
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode): Use FALLTHROUGH macro.
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::decodeFrame): Ditto.
+
 2020-08-21  Simon Fraser  <simon.fraser@apple.com>
 
         Add some FIXMEs in the EventHandler wheel event handling code for all the things that are wrong
