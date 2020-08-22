@@ -4231,37 +4231,16 @@ private:
             return;
         }
 
-        if (node->op() == SameValue) {
-            if (node->child1()->shouldSpeculateObject()) {
-                fixEdge<ObjectUse>(node->child1());
-                node->setOpAndDefaultFlags(CompareStrictEq);
-                return;
-            }
-            if (node->child2()->shouldSpeculateObject()) {
-                fixEdge<ObjectUse>(node->child2());
-                node->setOpAndDefaultFlags(CompareStrictEq);
-                return;
-            }
-        } else {
-            WatchpointSet* masqueradesAsUndefinedWatchpoint = m_graph.globalObjectFor(node->origin.semantic)->masqueradesAsUndefinedWatchpoint();
-            if (masqueradesAsUndefinedWatchpoint->isStillValid()) {
-                if (node->child1()->shouldSpeculateObject()) {
-                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
-                    fixEdge<ObjectUse>(node->child1());
-                    return;
-                }
-                if (node->child2()->shouldSpeculateObject()) {
-                    m_graph.watchpoints().addLazily(masqueradesAsUndefinedWatchpoint);
-                    fixEdge<ObjectUse>(node->child2());
-                    return;
-                }
-            } else if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
-                fixEdge<ObjectUse>(node->child1());
-                fixEdge<ObjectUse>(node->child2());
-                return;
-            }
+        if (node->child1()->shouldSpeculateObject()) {
+            fixEdge<ObjectUse>(node->child1());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
         }
-
+        if (node->child2()->shouldSpeculateObject()) {
+            fixEdge<ObjectUse>(node->child2());
+            node->setOpAndDefaultFlags(CompareStrictEq);
+            return;
+        }
         if (node->child1()->shouldSpeculateSymbol()) {
             fixEdge<SymbolUse>(node->child1());
             node->setOpAndDefaultFlags(CompareStrictEq);
