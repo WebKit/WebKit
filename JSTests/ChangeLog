@@ -1,5 +1,13 @@
 2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, Catalina test262 bot is using older SDK than actual Catalina's one
+
+        We should update the bot. For now, skipping these tests.
+
+        * test262/config.yaml:
+
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [ECMA-402] Implement Intl.DateTimeFormat.prototype.formatRange
         https://bugs.webkit.org/show_bug.cgi?id=209778
 
