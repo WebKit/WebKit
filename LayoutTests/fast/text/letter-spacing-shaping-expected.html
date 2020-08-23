@@ -5,7 +5,11 @@
 </head>
 <body>
 This test makes sure that letter-spacing is applied after text shaping.
-The test passes if the two characters below have some space between them.
+The test passes if this is the only thing you see on the page.
+<div style="position: relative">
 <div style="font: 48px 'PingFang TC'; letter-spacing: 24px;"><span>情</span><span>升</span></div>
+<div style="position: absolute; background: white; width: 48px; height: 68px; top: 0px; left: 0px;"></div>
+<div style="position: absolute; background: white; width: 48px; height: 68px; top: 0px; left: 72px;"></div>
+</div>
 </body>
 </html>

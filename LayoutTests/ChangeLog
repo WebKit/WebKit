@@ -1,3 +1,13 @@
+2020-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/text/letter-spacing-shaping.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=215711
+
+        Unreviewed test gardening.
+
+        * fast/text/letter-spacing-shaping-expected.html:
+        * fast/text/letter-spacing-shaping.html:
+
 2020-08-22  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Import css-content tests.
