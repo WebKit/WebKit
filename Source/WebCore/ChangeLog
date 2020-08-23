@@ -1,3 +1,67 @@
+2020-08-22  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] adjustBaselineAndLineHeight should take the parent inline box.
+        https://bugs.webkit.org/show_bug.cgi?id=214406
+
+        Reviewed by Antti Koivisto.
+
+        This is in prepartion for supporting nested lineboxes required by certain vertical alignment values.
+
+        <div>text content</div> <- This content requires only one inline box, the root linebox.
+        <div>nested <span><span style="vertical-align: text-top">text</span> </span>content</div> <- the content [text] is vertically
+        aligned with the top of the _parent element_'s font and not the root inline box.
+
+        1. Let's rename the LineBoxBuilder to InlineBox. We'll have a bunch of these.
+        2. Pass in the parent inline to adjustBaselineAndLineHeight (currently there's only one inline box per line, the root inline box).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineHeightConstraints const):
+        * layout/inlineformatting/InlineLineBox.h: Renamed from Source/WebCore/layout/inlineformatting/InlineLineBoxBuilder.h.
+        (WebCore::Layout::LineBox::Baseline::height const):
+        (WebCore::Layout::LineBox::logicalRect const):
+        (WebCore::Layout::LineBox::scrollableOverflow const):
+        (WebCore::Layout::LineBox::logicalLeft const):
+        (WebCore::Layout::LineBox::logicalRight const):
+        (WebCore::Layout::LineBox::logicalTop const):
+        (WebCore::Layout::LineBox::logicalBottom const):
+        (WebCore::Layout::LineBox::logicalWidth const):
+        (WebCore::Layout::LineBox::logicalHeight const):
+        (WebCore::Layout::LineBox::resetDescent):
+        (WebCore::Layout::LineBox::setLogicalHeight):
+        (WebCore::Layout::LineBox::setLogicalWidth):
+        (WebCore::Layout::LineBox::setScrollableOverflow):
+        (WebCore::Layout::LineBox::moveHorizontally):
+        (WebCore::Layout::LineBox::expandHorizontally):
+        (WebCore::Layout::LineBox::shrinkHorizontally):
+        (WebCore::Layout::LineBox::expandVertically):
+        (WebCore::Layout::LineBox::shrinkVertically):
+        (WebCore::Layout::LineBox::isConsideredEmpty const):
+        (WebCore::Layout::LineBox::setIsConsideredEmpty):
+        (WebCore::Layout::LineBox::setIsConsideredNonEmpty):
+        (WebCore::Layout::LineBox::LineBox):
+        (WebCore::Layout::LineBox::setLogicalHeightIfGreater):
+        (WebCore::Layout::LineBox::baseline const):
+        (WebCore::Layout::LineBox::setBaselineOffsetIfGreater):
+        (WebCore::Layout::LineBox::setAscentIfGreater):
+        (WebCore::Layout::LineBox::setDescentIfGreater):
+        (WebCore::Layout::LineBox::baselineOffset const):
+        (WebCore::Layout::LineBox::resetBaseline):
+        (WebCore::Layout::LineBox::Baseline::Baseline):
+        (WebCore::Layout::LineBox::Baseline::setAscent):
+        (WebCore::Layout::LineBox::Baseline::setDescent):
+        (WebCore::Layout::LineBox::Baseline::reset):
+        (WebCore::Layout::LineBox::Baseline::ascent const):
+        (WebCore::Layout::LineBox::Baseline::descent const):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::adjustBaselineAndLineHeight):
+        (WebCore::Layout::LineBuilder::halfLeadingMetrics):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::lineBox const):
+        * layout/inlineformatting/LineLayoutContext.h:
+
 2020-08-20  Darin Adler  <darin@apple.com>
 
         Move node geometry functions from Range to RenderObject

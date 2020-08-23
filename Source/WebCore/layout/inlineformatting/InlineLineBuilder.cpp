@@ -91,8 +91,8 @@ void LineBuilder::initialize(const Constraints& constraints)
         m_initialStrut = { };
 
     auto lineRect = Display::InlineRect { constraints.logicalTopLeft, 0_lu, initialLineHeight };
-    auto baseline = LineBoxBuilder::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
-    m_lineBox = LineBoxBuilder { lineRect, baseline, initialBaselineOffset };
+    auto baseline = LineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
+    m_lineBox = LineBox { lineRect, baseline, initialBaselineOffset };
     m_lineLogicalWidth = constraints.availableLogicalWidth;
     m_hasIntrusiveFloat = constraints.lineIsConstrainedByFloat;
 
@@ -111,45 +111,44 @@ void LineBuilder::resetContent()
 LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWithInlineContent)
 {
     // 1. Remove trimmable trailing content.
-    // 2. Join text runs together when possible [foo][ ][bar] -> [foo bar].
-    // 3. Align merged runs both vertically and horizontally.
+    // 2. Align merged runs both vertically and horizontally.
     removeTrailingTrimmableContent();
     visuallyCollapsePreWrapOverflowContent();
-    auto hangingContent = collectHangingContent(isLastLineWithInlineContent);
+    if (m_isIntrinsicSizing)
+        return WTFMove(m_runs);
 
-    if (!m_isIntrinsicSizing) {
-        unsigned inlineContainerNestingLevel = 0;
-        auto hasSeenTextOrLineBreak = false;
-        for (auto& run : m_runs) {
-            run.setLogicalHeight(runContentHeight(run));
-            inlineContainerNestingLevel = run.isContainerStart() ? inlineContainerNestingLevel + 1 : run.isContainerEnd() ? inlineContainerNestingLevel - 1 : inlineContainerNestingLevel;
-            auto runIsTextOrLineBreak = run.isText() || run.isLineBreak();
-            if (runIsTextOrLineBreak) {
-                // For text content we set the baseline either through the initial strut (set by the formatting context root) or
-                // through the inline container (start). Normally the text content itself does not stretch the line.
-                if (hasSeenTextOrLineBreak)
-                    continue;
-                hasSeenTextOrLineBreak = true;
-                if (!m_initialStrut)
-                    continue;
-                if (inlineContainerNestingLevel)
-                    continue;
-            }
-            auto& usedBaseline = runIsTextOrLineBreak ? *m_initialStrut : m_lineBox.baseline();
-            adjustBaselineAndLineHeight(run, usedBaseline);
+    auto hangingContent = collectHangingContent(isLastLineWithInlineContent);
+    unsigned inlineContainerNestingLevel = 0;
+    auto hasSeenTextOrLineBreak = false;
+    for (auto& run : m_runs) {
+        run.setLogicalHeight(runContentHeight(run));
+        inlineContainerNestingLevel = run.isContainerStart() ? inlineContainerNestingLevel + 1 : run.isContainerEnd() ? inlineContainerNestingLevel - 1 : inlineContainerNestingLevel;
+        auto runIsTextOrLineBreak = run.isText() || run.isLineBreak();
+        if (runIsTextOrLineBreak) {
+            // For text content we set the baseline either through the initial strut (set by the formatting context root) or
+            // through the inline container (start). Normally the text content itself does not stretch the line.
+            if (hasSeenTextOrLineBreak)
+                continue;
+            hasSeenTextOrLineBreak = true;
+            if (!m_initialStrut)
+                continue;
+            if (inlineContainerNestingLevel)
+                continue;
         }
-        if (isVisuallyEmpty()) {
-            m_lineBox.resetBaseline();
-            m_lineBox.setLogicalHeight({ });
-        }
-        // Remove descent when all content is baseline aligned but none of them have descent.
-        if (formattingContext().quirks().lineDescentNeedsCollapsing(m_runs)) {
-            m_lineBox.shrinkVertically(m_lineBox.baseline().descent());
-            m_lineBox.resetDescent();
-        }
-        alignContentVertically();
-        alignHorizontally(hangingContent, isLastLineWithInlineContent);
+        auto& usedBaseline = runIsTextOrLineBreak ? *m_initialStrut : m_lineBox.baseline();
+        adjustBaselineAndLineHeight(run, m_lineBox, usedBaseline);
     }
+    if (isVisuallyEmpty()) {
+        m_lineBox.resetBaseline();
+        m_lineBox.setLogicalHeight({ });
+    }
+    // Remove descent when all content is baseline aligned but none of them have descent.
+    if (formattingContext().quirks().lineDescentNeedsCollapsing(m_runs)) {
+        m_lineBox.shrinkVertically(m_lineBox.baseline().descent());
+        m_lineBox.resetDescent();
+    }
+    alignContentVertically();
+    alignHorizontally(hangingContent, isLastLineWithInlineContent);
     return WTFMove(m_runs);
 }
 
@@ -569,7 +568,7 @@ void LineBuilder::appendLineBreak(const InlineItem& inlineItem)
     m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), contentLogicalWidth() });
 }
 
-void LineBuilder::adjustBaselineAndLineHeight(const Run& run, const LineBoxBuilder::Baseline& usedBaseline)
+void LineBuilder::adjustBaselineAndLineHeight(const Run& run, LineBox& /*parentInlineBox*/, const LineBox::Baseline& usedBaseline)
 {
     if (run.isText() || run.isLineBreak()) {
         m_lineBox.setAscentIfGreater(usedBaseline.ascent());
@@ -703,7 +702,7 @@ bool LineBuilder::isVisuallyNonEmpty(const Run& run) const
     return false;
 }
 
-LineBoxBuilder::Baseline LineBuilder::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)
+LineBox::Baseline LineBuilder::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)
 {
     auto ascent = fontMetrics.ascent();
     auto descent = fontMetrics.descent();

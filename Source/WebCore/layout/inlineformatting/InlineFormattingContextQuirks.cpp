@@ -83,12 +83,12 @@ LineBuilder::Constraints::HeightAndBaseline InlineFormattingContext::Quirks::lin
     auto lineHeight = formattingRoot.style().lineHeight();
     if (lineHeight.isPercentOrCalculated()) {
         auto initialBaselineOffset = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), 0_lu).ascent();
-        return { initialBaselineOffset, initialBaselineOffset, LineBoxBuilder::Baseline { strutBaselineOffset, strutHeight - strutBaselineOffset } };
+        return { initialBaselineOffset, initialBaselineOffset, LineBox::Baseline { strutBaselineOffset, strutHeight - strutBaselineOffset } };
     }
     // FIXME: The only reason why we use intValue() here is to match current inline tree (integral)behavior.
     InlineLayoutUnit initialLineHeight = lineHeight.intValue();
     auto initialBaselineOffset = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), initialLineHeight).ascent();
-    return { initialLineHeight, initialBaselineOffset, LineBoxBuilder::Baseline { strutBaselineOffset, strutHeight - strutBaselineOffset } };
+    return { initialLineHeight, initialBaselineOffset, LineBox::Baseline { strutBaselineOffset, strutHeight - strutBaselineOffset } };
 }
 
 }

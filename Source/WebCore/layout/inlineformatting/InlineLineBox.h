@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Layout {
 
-class LineBoxBuilder {
+class LineBox {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct Baseline {
@@ -58,8 +58,8 @@ public:
         InlineLayoutUnit m_descent { 0 };
     };
 
-    LineBoxBuilder(const Display::InlineRect&, const Baseline&, InlineLayoutUnit baselineOffset);
-    LineBoxBuilder() = default;
+    LineBox(const Display::InlineRect&, const Baseline&, InlineLayoutUnit baselineOffset);
+    LineBox() = default;
 
     const Display::InlineRect& logicalRect() const { return m_rect; }
     const Display::InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
@@ -133,7 +133,7 @@ private:
     bool m_isConsideredEmpty { true };
 };
 
-inline LineBoxBuilder::LineBoxBuilder(const Display::InlineRect& rect, const Baseline& baseline, InlineLayoutUnit baselineOffset)
+inline LineBox::LineBox(const Display::InlineRect& rect, const Baseline& baseline, InlineLayoutUnit baselineOffset)
     : m_rect(rect)
     , m_baseline(baseline)
     , m_baselineOffset(baselineOffset)
@@ -144,20 +144,20 @@ inline LineBoxBuilder::LineBoxBuilder(const Display::InlineRect& rect, const Bas
 #endif
 }
 
-inline void LineBoxBuilder::setLogicalHeightIfGreater(InlineLayoutUnit logicalHeight)
+inline void LineBox::setLogicalHeightIfGreater(InlineLayoutUnit logicalHeight)
 {
     if (logicalHeight <= m_rect.height())
         return;
     m_rect.setHeight(logicalHeight);
 }
 
-inline const LineBoxBuilder::Baseline& LineBoxBuilder::baseline() const
+inline const LineBox::Baseline& LineBox::baseline() const
 {
     ASSERT(m_hasValidBaseline);
     return m_baseline;
 }
 
-inline void LineBoxBuilder::setBaselineOffsetIfGreater(InlineLayoutUnit baselineOffset)
+inline void LineBox::setBaselineOffsetIfGreater(InlineLayoutUnit baselineOffset)
 {
 #if ASSERT_ENABLED
     m_hasValidBaselineOffset = true;
@@ -165,7 +165,7 @@ inline void LineBoxBuilder::setBaselineOffsetIfGreater(InlineLayoutUnit baseline
     m_baselineOffset = std::max(baselineOffset, m_baselineOffset);
 }
 
-inline void LineBoxBuilder::setAscentIfGreater(InlineLayoutUnit ascent)
+inline void LineBox::setAscentIfGreater(InlineLayoutUnit ascent)
 {
     if (ascent < m_baseline.ascent())
         return;
@@ -173,20 +173,20 @@ inline void LineBoxBuilder::setAscentIfGreater(InlineLayoutUnit ascent)
     m_baseline.setAscent(ascent);
 }
 
-inline void LineBoxBuilder::setDescentIfGreater(InlineLayoutUnit descent)
+inline void LineBox::setDescentIfGreater(InlineLayoutUnit descent)
 {
     if (descent < m_baseline.descent())
         return;
     m_baseline.setDescent(descent);
 }
 
-inline InlineLayoutUnit LineBoxBuilder::baselineOffset() const
+inline InlineLayoutUnit LineBox::baselineOffset() const
 {
     ASSERT(m_hasValidBaselineOffset);
     return m_baselineOffset;
 }
 
-inline void LineBoxBuilder::resetBaseline()
+inline void LineBox::resetBaseline()
 {
 #if ASSERT_ENABLED
     m_hasValidBaselineOffset = true;
@@ -195,7 +195,7 @@ inline void LineBoxBuilder::resetBaseline()
     m_baseline.reset();
 }
 
-inline LineBoxBuilder::Baseline::Baseline(InlineLayoutUnit ascent, InlineLayoutUnit descent)
+inline LineBox::Baseline::Baseline(InlineLayoutUnit ascent, InlineLayoutUnit descent)
     : m_ascent(ascent)
     , m_descent(descent)
 {
@@ -205,7 +205,7 @@ inline LineBoxBuilder::Baseline::Baseline(InlineLayoutUnit ascent, InlineLayoutU
 #endif
 }
 
-inline void LineBoxBuilder::Baseline::setAscent(InlineLayoutUnit ascent)
+inline void LineBox::Baseline::setAscent(InlineLayoutUnit ascent)
 {
 #if ASSERT_ENABLED
     m_hasValidAscent = true;
@@ -213,7 +213,7 @@ inline void LineBoxBuilder::Baseline::setAscent(InlineLayoutUnit ascent)
     m_ascent = ascent;
 }
 
-inline void LineBoxBuilder::Baseline::setDescent(InlineLayoutUnit descent)
+inline void LineBox::Baseline::setDescent(InlineLayoutUnit descent)
 {
 #if ASSERT_ENABLED
     m_hasValidDescent = true;
@@ -221,7 +221,7 @@ inline void LineBoxBuilder::Baseline::setDescent(InlineLayoutUnit descent)
     m_descent = descent;
 }
 
-inline void LineBoxBuilder::Baseline::reset()
+inline void LineBox::Baseline::reset()
 {
 #if ASSERT_ENABLED
     m_hasValidAscent = true;
@@ -231,13 +231,13 @@ inline void LineBoxBuilder::Baseline::reset()
     m_descent = 0_lu;
 }
 
-inline InlineLayoutUnit LineBoxBuilder::Baseline::ascent() const
+inline InlineLayoutUnit LineBox::Baseline::ascent() const
 {
     ASSERT(m_hasValidAscent);
     return m_ascent;
 }
 
-inline InlineLayoutUnit LineBoxBuilder::Baseline::descent() const
+inline InlineLayoutUnit LineBox::Baseline::descent() const
 {
     ASSERT(m_hasValidDescent);
     return m_descent;

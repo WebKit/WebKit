@@ -54,7 +54,7 @@ public:
         using FloatList = Vector<Float>;
         FloatList floats;
         const LineBuilder::RunList runList;
-        const LineBoxBuilder lineBox;
+        const LineBox lineBox;
     };
     struct InlineItemRange {
         bool isEmpty() const { return start == end; }
