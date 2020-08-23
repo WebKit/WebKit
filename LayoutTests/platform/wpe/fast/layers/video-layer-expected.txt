@@ -25,7 +25,7 @@ layer at (64,226) size 290x30
         RenderBlock {DIV} at (0,-5) size 87x14
     RenderFlexibleBox {DIV} at (219,0) size 30x30
 layer at (73,226) size 30x30
-  RenderButton {BUTTON} at (9,0) size 30x30
+  RenderFlexibleBox {BUTTON} at (9,0) size 30x30
 layer at (106,234) size 14x14
   RenderBlock {DIV} at (-7,0) size 14x14 [color=#FFFFFF] [bgcolor=#FFFFFF]
 layer at (201,226) size 74x30
@@ -33,6 +33,6 @@ layer at (201,226) size 74x30
     RenderText {#text} at (0,7) size 74x15
       text run at (0,7) width 74: "00:00 / 00:00"
 layer at (283,226) size 30x30
-  RenderButton {BUTTON} at (0,0) size 30x30 [color=#808080]
+  RenderFlexibleBox {BUTTON} at (0,0) size 30x30 [color=#808080]
 layer at (315,226) size 30x30
-  RenderButton {BUTTON} at (251,0) size 30x30 [color=#808080]
+  RenderFlexibleBox {BUTTON} at (251,0) size 30x30 [color=#808080]

@@ -1,3 +1,13 @@
+2020-08-22  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Rebaseline test after r265851
+
+        Updated the Render element name.
+
+        Unreviewed test gardening.
+
+        * platform/wpe/fast/layers/video-layer-expected.txt:
+
 2020-08-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make fast/text/letter-spacing-shaping.html more robust
