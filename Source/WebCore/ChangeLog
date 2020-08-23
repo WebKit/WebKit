@@ -1,3 +1,17 @@
+2020-08-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move all line height and baseline adjustment logic to LineBuilder::adjustBaselineAndLineHeight
+        https://bugs.webkit.org/show_bug.cgi?id=214474
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/layoutformattingcontext/inline-text-outside-of-inline-container-simple.html
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::adjustBaselineAndLineHeight):
+        * layout/inlineformatting/InlineLineBuilder.h:
+
 2020-08-22  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] adjustBaselineAndLineHeight should take the parent inline box.

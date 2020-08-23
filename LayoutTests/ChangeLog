@@ -1,3 +1,13 @@
+2020-08-23  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move all line height and baseline adjustment logic to LineBuilder::adjustBaselineAndLineHeight
+        https://bugs.webkit.org/show_bug.cgi?id=214474
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/inline-text-outside-of-inline-container-simple-expected.html: Added.
+        * fast/layoutformattingcontext/inline-text-outside-of-inline-container-simple.html: Added.
+
 2020-08-22  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Rebaseline test after r265851
