@@ -41,9 +41,8 @@
 
     [CEReactions] attribute [TreatNullAs=EmptyString] DOMString cssFloat;
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    DOMString? getPropertyShorthand(optional DOMString propertyName = "undefined");
-    boolean isPropertyImplicit(optional DOMString propertyName = "undefined");
+    DOMString? getPropertyShorthand(optional DOMString propertyName);
+    boolean isPropertyImplicit(optional DOMString propertyName);
 
     // Use named getters/setters for all support CSS property names. The spec says
     // these should be normal attributes, but there are too many combinations with

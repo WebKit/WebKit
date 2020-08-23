@@ -1,3 +1,16 @@
+2020-08-23  Rob Buis  <rbuis@igalia.com>
+
+        Do not use undefined default param in CSSStyleDeclaration.idl
+        https://bugs.webkit.org/show_bug.cgi?id=215753
+
+        Reviewed by Darin Adler.
+
+        Do not use undefined default parameter value in CSSStyleDeclaration.idl, instead use no explicit default
+        parameter at all. This means a zero length String will be used, which will be more efficient when using
+        the cssPropertyID helper method, as well as less error-prone.
+
+        * css/CSSStyleDeclaration.idl:
+
 2020-08-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move all line height and baseline adjustment logic to LineBuilder::adjustBaselineAndLineHeight
