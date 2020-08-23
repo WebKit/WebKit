@@ -1,3 +1,15 @@
+2020-08-23  Lauro Moura  <lmoura@igalia.com>
+
+        Avoid timeout when http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=215759
+
+        Reviewed by Darin Adler.
+
+        * http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html:
+        Finish the test if the test fails because the close callback is
+        called.
+        * platform/glib/TestExpectations: Update expectation.
+
 2020-08-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move all line height and baseline adjustment logic to LineBuilder::adjustBaselineAndLineHeight

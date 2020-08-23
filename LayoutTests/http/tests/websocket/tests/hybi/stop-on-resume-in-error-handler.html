@@ -45,6 +45,7 @@ function loaded() {
     }
     ws.onclose = function(ev) {
         testFailed("Close event should not have fired.");
+        finishJSTest();
     }
 
     setTimeout(function() {
