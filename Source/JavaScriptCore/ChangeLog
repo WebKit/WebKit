@@ -1,3 +1,13 @@
+2020-08-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, wrong merge resolution between r266031 and r263837
+        https://bugs.webkit.org/show_bug.cgi?id=209774
+
+        r263837 is landed after r266031 is configured. OSS buildbots didn't catch this since they are using old ICU headers.
+
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+
 2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, assertion was opposite

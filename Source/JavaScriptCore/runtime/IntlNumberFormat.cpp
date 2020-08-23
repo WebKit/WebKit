@@ -372,6 +372,9 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     m_signDisplay = intlOption<SignDisplay>(globalObject, options, Identifier::fromString(vm, "signDisplay"), { { "auto"_s, SignDisplay::Auto }, { "never"_s, SignDisplay::Never }, { "always"_s, SignDisplay::Always }, { "exceptZero"_s, SignDisplay::ExceptZero } }, "signDisplay must be either \"auto\", \"never\", \"always\", or \"exceptZero\""_s, SignDisplay::Auto);
     RETURN_IF_EXCEPTION(scope, void());
 
+    CString dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-nu-", m_numberingSystem).utf8();
+    dataLogLnIf(IntlNumberFormatInternal::verbose, "dataLocaleWithExtensions:(", dataLocaleWithExtensions , ")");
+
     // Options are obtained. Configure formatter here.
 
 #if HAVE(ICU_U_NUMBER_FORMATTER)
@@ -521,11 +524,10 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         skeletonBuilder.appendLiteral(" group-off");
 
     String skeleton = skeletonBuilder.toString();
-    dataLogLnIf(IntlNumberFormatInternal::verbose, m_locale);
     dataLogLnIf(IntlNumberFormatInternal::verbose, skeleton);
     StringView skeletonView(skeleton);
     UErrorCode status = U_ZERO_ERROR;
-    m_numberFormatter = std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>(unumf_openForSkeletonAndLocale(skeletonView.upconvertedCharacters().get(), skeletonView.length(), m_locale.utf8().data(), &status));
+    m_numberFormatter = std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>(unumf_openForSkeletonAndLocale(skeletonView.upconvertedCharacters().get(), skeletonView.length(), dataLocaleWithExtensions.data(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "Failed to initialize NumberFormat"_s);
         return;
@@ -586,9 +588,6 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         throwTypeError(globalObject, scope, "Failed to initialize NumberFormat since used feature is not supported in the linked ICU version"_s);
         return;
     }
-
-    CString dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-nu-", m_numberingSystem).utf8();
-    dataLogLnIf(IntlNumberFormatInternal::verbose, "dataLocaleWithExtensions:(", dataLocaleWithExtensions , ")");
 
     UErrorCode status = U_ZERO_ERROR;
     m_numberFormat = std::unique_ptr<UNumberFormat, UNumberFormatDeleter>(unum_open(style, nullptr, 0, dataLocaleWithExtensions.data(), nullptr, &status));
