@@ -1,5 +1,75 @@
 2020-08-23  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC][IFC] Introduce the root inline box
+        https://bugs.webkit.org/show_bug.cgi?id=214733
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for having a dedicated line box for each line with inline boxes inside.
+        At this point we only use the root inline box to proxy the baseline handling. 
+        See https://www.w3.org/TR/css-inline-3/#model
+
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::InlineBox::Baseline::height const):
+        (WebCore::Layout::LineBox::LineBox):
+        (WebCore::Layout::LineBox::InlineBox::InlineBox):
+        (WebCore::Layout::LineBox::setLogicalHeightIfGreater):
+        (WebCore::Layout::LineBox::baseline const):
+        (WebCore::Layout::LineBox::setBaselineOffsetIfGreater):
+        (WebCore::Layout::LineBox::setAscentIfGreater):
+        (WebCore::Layout::LineBox::setDescentIfGreater):
+        (WebCore::Layout::LineBox::baselineOffset const):
+        (WebCore::Layout::LineBox::resetBaseline):
+        (WebCore::Layout::LineBox::InlineBox::Baseline::Baseline):
+        (WebCore::Layout::LineBox::InlineBox::Baseline::setAscent):
+        (WebCore::Layout::LineBox::InlineBox::Baseline::setDescent):
+        (WebCore::Layout::LineBox::InlineBox::Baseline::reset):
+        (WebCore::Layout::LineBox::InlineBox::Baseline::ascent const):
+        (WebCore::Layout::LineBox::InlineBox::Baseline::descent const):
+        (WebCore::Layout::InlineBox::Baseline::height const): Deleted.
+        (WebCore::Layout::InlineBox::logicalRect const): Deleted.
+        (WebCore::Layout::InlineBox::scrollableOverflow const): Deleted.
+        (WebCore::Layout::InlineBox::logicalLeft const): Deleted.
+        (WebCore::Layout::InlineBox::logicalRight const): Deleted.
+        (WebCore::Layout::InlineBox::logicalTop const): Deleted.
+        (WebCore::Layout::InlineBox::logicalBottom const): Deleted.
+        (WebCore::Layout::InlineBox::logicalWidth const): Deleted.
+        (WebCore::Layout::InlineBox::logicalHeight const): Deleted.
+        (WebCore::Layout::InlineBox::resetDescent): Deleted.
+        (WebCore::Layout::InlineBox::setLogicalHeight): Deleted.
+        (WebCore::Layout::InlineBox::setLogicalWidth): Deleted.
+        (WebCore::Layout::InlineBox::setScrollableOverflow): Deleted.
+        (WebCore::Layout::InlineBox::moveHorizontally): Deleted.
+        (WebCore::Layout::InlineBox::expandHorizontally): Deleted.
+        (WebCore::Layout::InlineBox::shrinkHorizontally): Deleted.
+        (WebCore::Layout::InlineBox::expandVertically): Deleted.
+        (WebCore::Layout::InlineBox::shrinkVertically): Deleted.
+        (WebCore::Layout::InlineBox::isConsideredEmpty const): Deleted.
+        (WebCore::Layout::InlineBox::setIsConsideredEmpty): Deleted.
+        (WebCore::Layout::InlineBox::setIsConsideredNonEmpty): Deleted.
+        (WebCore::Layout::InlineBox::InlineBox): Deleted.
+        (WebCore::Layout::InlineBox::setLogicalHeightIfGreater): Deleted.
+        (WebCore::Layout::InlineBox::baseline const): Deleted.
+        (WebCore::Layout::InlineBox::setBaselineOffsetIfGreater): Deleted.
+        (WebCore::Layout::InlineBox::setAscentIfGreater): Deleted.
+        (WebCore::Layout::InlineBox::setDescentIfGreater): Deleted.
+        (WebCore::Layout::InlineBox::baselineOffset const): Deleted.
+        (WebCore::Layout::InlineBox::resetBaseline): Deleted.
+        (WebCore::Layout::InlineBox::Baseline::Baseline): Deleted.
+        (WebCore::Layout::InlineBox::Baseline::setAscent): Deleted.
+        (WebCore::Layout::InlineBox::Baseline::setDescent): Deleted.
+        (WebCore::Layout::InlineBox::Baseline::reset): Deleted.
+        (WebCore::Layout::InlineBox::Baseline::ascent const): Deleted.
+        (WebCore::Layout::InlineBox::Baseline::descent const): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::halfLeadingMetrics):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::lineBox const):
+        * layout/inlineformatting/LineLayoutContext.h:
+
+2020-08-23  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Display::LineBox does not need ascent/descent geometry
         https://bugs.webkit.org/show_bug.cgi?id=214720
 

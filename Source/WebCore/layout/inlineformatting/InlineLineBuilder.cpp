@@ -91,7 +91,7 @@ void LineBuilder::initialize(const Constraints& constraints)
         m_initialStrut = { };
 
     auto lineRect = Display::InlineRect { constraints.logicalTopLeft, 0_lu, initialLineHeight };
-    auto baseline = LineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
+    auto baseline = LineBox::InlineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
     m_lineBox = LineBox { lineRect, baseline, initialBaselineOffset };
     m_lineLogicalWidth = constraints.availableLogicalWidth;
     m_hasIntrusiveFloat = constraints.lineIsConstrainedByFloat;
@@ -705,7 +705,7 @@ bool LineBuilder::isVisuallyNonEmpty(const Run& run) const
     return false;
 }
 
-LineBox::Baseline LineBuilder::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)
+LineBox::InlineBox::Baseline LineBuilder::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)
 {
     auto ascent = fontMetrics.ascent();
     auto descent = fontMetrics.descent();
