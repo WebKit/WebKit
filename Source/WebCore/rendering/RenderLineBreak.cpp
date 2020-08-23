@@ -189,10 +189,10 @@ IntRect RenderLineBreak::boundingBoxForRenderTreeDump() const
     bool inQuirksMode = !document().inNoQuirksMode();
     if (inQuirksMode && !isWBR() && box->useLineBreakBoxRenderTreeDumpQuirk()) {
         if (!box->isHorizontal()) {
-            auto baseline = style().isFlippedBlocksWritingMode() ? rect.x() + box->baselineOffset() : rect.maxX() - box->baselineOffset();
+            auto baseline = style().isFlippedBlocksWritingMode() ? rect.x() + box->baseline() : rect.maxX() - box->baseline();
             return enclosingIntRect(FloatRect(FloatPoint(baseline, rect.y()), FloatSize(0, rect.height())));
         }
-        auto baseline = rect.y() + box->baselineOffset();
+        auto baseline = rect.y() + box->baseline();
         return enclosingIntRect(FloatRect(FloatPoint(rect.x(), baseline), FloatSize(rect.width(), 0)));
     }
 

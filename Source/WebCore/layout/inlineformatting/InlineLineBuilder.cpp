@@ -153,7 +153,7 @@ void LineBuilder::alignContentVertically()
             } else if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
                 // Spec makes us generate at least one line -even if it is empty.
-                auto inlineBlockBaselineOffset = formattingState.displayInlineContent()->lineBoxes.last().baselineOffset();
+                auto inlineBlockBaseline = formattingState.displayInlineContent()->lineBoxes.last().baseline();
                 // The inline-block's baseline offset is relative to its content box. Let's convert it relative to the margin box.
                 //           _______________ <- margin box
                 //          |
@@ -167,7 +167,7 @@ void LineBuilder::alignContentVertically()
                 //     -----|-|-|---------- <- baseline
                 //
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                auto baselineOffsetFromMarginBox = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + inlineBlockBaselineOffset;
+                auto baselineOffsetFromMarginBox = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
                 logicalTop = baselineOffset() - baselineOffsetFromMarginBox;
             } else {
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
@@ -617,14 +617,10 @@ void LineBuilder::adjustBaselineAndLineHeight()
                 if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                     // Inline-blocks with inline content always have baselines.
                     auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
-                    // Spec makes us generate at least one line -even if it is empty.
+                    // There has to be at least one line -even if it is empty.
                     auto& lastLineBox = formattingState.displayInlineContent()->lineBoxes.last();
-                    auto inlineBlockBaseline = lastLineBox.baseline();
                     auto beforeHeight = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
-
-                    m_lineBox.setAscentIfGreater(inlineBlockBaseline.ascent());
-                    m_lineBox.setDescentIfGreater(inlineBlockBaseline.descent());
-                    m_lineBox.setBaselineOffsetIfGreater(beforeHeight + lastLineBox.baselineOffset());
+                    m_lineBox.setBaselineOffsetIfGreater(beforeHeight + lastLineBox.baseline());
                     m_lineBox.setLogicalHeightIfGreater(marginBoxHeight);
                 } else {
                     // Non inline-block boxes sit on the baseline (including their bottom margin).

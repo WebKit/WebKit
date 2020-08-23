@@ -52,7 +52,7 @@ public:
 
     FloatRect rect() const;
 
-    float baselineOffset() const { return lineBox().baselineOffset(); }
+    float baseline() const { return lineBox().baseline(); }
 
     bool isLeftToRightDirection() const { return true; }
     bool isHorizontal() const { return true; }

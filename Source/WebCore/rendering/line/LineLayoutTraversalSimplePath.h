@@ -40,7 +40,7 @@ public:
 
     FloatRect rect() const { return (*m_iterator).rect(); }
 
-    float baselineOffset() const { return (*m_iterator).baselineOffset(); }
+    float baseline() const { return (*m_iterator).baseline(); }
 
     bool isLeftToRightDirection() const { return true; }
     bool isHorizontal() const { return true; }

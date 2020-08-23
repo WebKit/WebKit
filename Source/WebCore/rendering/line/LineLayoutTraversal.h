@@ -57,7 +57,7 @@ public:
 
     FloatRect rect() const;
 
-    float baselineOffset() const;
+    float baseline() const;
 
     bool isLeftToRightDirection() const;
     bool isHorizontal() const;
@@ -163,10 +163,10 @@ inline FloatRect Box::rect() const
     });
 }
 
-inline float Box::baselineOffset() const
+inline float Box::baseline() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.baselineOffset();
+        return path.baseline();
     });
 }
 

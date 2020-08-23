@@ -46,7 +46,7 @@ public:
     bool isHorizontal() const { return m_inlineBox->isHorizontal(); }
     bool dirOverride() const { return m_inlineBox->dirOverride(); }
     bool isLineBreak() const { return m_inlineBox->isLineBreak(); }
-    float baselineOffset() const { return m_inlineBox->baselinePosition(AlphabeticBaseline); }
+    float baseline() const { return m_inlineBox->baselinePosition(AlphabeticBaseline); }
 
     bool useLineBreakBoxRenderTreeDumpQuirk() const
     {

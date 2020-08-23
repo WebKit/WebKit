@@ -35,19 +35,7 @@ namespace Display {
 class LineBox {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    struct Baseline {
-        Baseline(InlineLayoutUnit ascent, InlineLayoutUnit descent);
-
-        InlineLayoutUnit height() const { return ascent() + descent(); }
-        InlineLayoutUnit ascent() const { return m_ascent; }
-        InlineLayoutUnit descent() const { return m_descent; }
-
-    private:
-        InlineLayoutUnit m_ascent { 0 };
-        InlineLayoutUnit m_descent { 0 };
-    };
-
-    LineBox(const InlineRect&, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, const Baseline&, InlineLayoutUnit baselineOffset);
+    LineBox(const InlineRect&, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, InlineLayoutUnit baseline);
 
     const InlineRect& rect() const { return m_rect; }
     const InlineRect& scrollableOverflow() const { return m_scrollableOverflow; }
@@ -63,44 +51,20 @@ public:
 
     void moveVertically(InlineLayoutUnit);
 
-    const Baseline& baseline() const { return m_baseline; }
-    // Baseline offset from line top. Note that offset does not necessarily equal to ascent.
-    //
-    // -------------------        line top         ------------------- (top align)
-    //             ^                                              ^
-    //             |                                  ^           |
-    //   ^         | baseline offset                  |           | baseline offset
-    //   |         |                                  |           |
-    //   | ascent  |                                  | ascent    |
-    //   |         |                                  v           v
-    //   v         v                               ------------------- baseline
-    //   ----------------- baseline                   ^
-    //   ^                                            | descent
-    //   | descent                                    v
-    //   v
-    // -------------------       line bottom       -------------------
-    InlineLayoutUnit baselineOffset() const { return m_baselineOffset; }
+    InlineLayoutUnit baseline() const { return m_baseline; }
 
 private:
     InlineRect m_rect;
     InlineRect m_scrollableOverflow;
     InlineRect m_inkOverflow;
-    Baseline m_baseline;
-    InlineLayoutUnit m_baselineOffset { 0 };
+    InlineLayoutUnit m_baseline { 0 };
 };
 
-inline LineBox::LineBox(const InlineRect& rect, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, const Baseline& baseline, InlineLayoutUnit baselineOffset)
+inline LineBox::LineBox(const InlineRect& rect, const InlineRect& scrollableOverflow, const InlineRect& inkOverflow, InlineLayoutUnit baseline)
     : m_rect(rect)
     , m_scrollableOverflow(scrollableOverflow)
     , m_inkOverflow(inkOverflow)
     , m_baseline(baseline)
-    , m_baselineOffset(baselineOffset)
-{
-}
-
-inline LineBox::Baseline::Baseline(InlineLayoutUnit ascent, InlineLayoutUnit descent)
-    : m_ascent(ascent)
-    , m_descent(descent)
 {
 }
 

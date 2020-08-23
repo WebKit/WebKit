@@ -58,7 +58,7 @@ public:
         float expansion() const;
         ExpansionBehavior expansionBehavior() const;
         int baselinePosition() const;
-        int baselineOffset() const { return m_iterator.resolver().m_baseline; }
+        int baseline() const { return m_iterator.resolver().m_baseline; }
         StringView text() const;
         String textWithHyphen() const;
         const RenderObject& renderer() const;

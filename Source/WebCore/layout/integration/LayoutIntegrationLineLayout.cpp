@@ -173,7 +173,7 @@ LayoutUnit LineLayout::firstLineBaseline() const
     }
 
     auto& firstLineBox = inlineContent->lineBoxes.first();
-    return Layout::toLayoutUnit(firstLineBox.top() + firstLineBox.baselineOffset());
+    return Layout::toLayoutUnit(firstLineBox.top() + firstLineBox.baseline());
 }
 
 LayoutUnit LineLayout::lastLineBaseline() const
@@ -185,7 +185,7 @@ LayoutUnit LineLayout::lastLineBaseline() const
     }
 
     auto& lastLineBox = inlineContent->lineBoxes.last();
-    return Layout::toLayoutUnit(lastLineBox.top() + lastLineBox.baselineOffset());
+    return Layout::toLayoutUnit(lastLineBox.top() + lastLineBox.baseline());
 }
 
 void LineLayout::collectOverflow(RenderBlockFlow& flow)
@@ -294,7 +294,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         }
 
         auto& lineBox = inlineContent.lineBoxForRun(run);
-        auto baselineOffset = paintOffset.y() + lineBox.top() + lineBox.baselineOffset();
+        auto baselineOffset = paintOffset.y() + lineBox.top() + lineBox.baseline();
         auto expansion = run.expansion();
 
         String textWithHyphen;
