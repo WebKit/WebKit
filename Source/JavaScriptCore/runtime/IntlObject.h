@@ -118,6 +118,7 @@ bool isUnicodeScriptSubtag(StringView);
 bool isUnicodeRegionSubtag(StringView);
 bool isUnicodeVariantSubtag(StringView);
 bool isUnicodeLanguageId(StringView);
+bool isStructurallyValidLanguageTag(StringView);
 
 bool isWellFormedCurrencyCode(StringView);
 

@@ -69,9 +69,9 @@ shouldBe(
         ? '["en-Latn-US-1abc-foobar-variant-a-aa-aaa-u-kn-x-reserved"]'
         : '["en-Latn-US-variant-foobar-1abc-a-aa-aaa-u-kn-true-x-reserved"]'
 );
-shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf('no-bok')), '["nb"]');
-shouldBe(JSON.stringify(Intl.RelativeTimeFormat.supportedLocalesOf('x-some-thing')), '[]');
 
+shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('no-bok'), RangeError);
+shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('x-some-thing'), RangeError);
 shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf(Object.create(null, { length: { get() { throw new Error(); } } })), Error);
 shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf(Object.create(null, { length: { value: 1 }, 0: { get() { throw new Error(); } } })), Error);
 shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf([{ toString() { throw new Error(); } }]), Error);
@@ -87,6 +87,12 @@ shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('en-x'), RangeError
 shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('en-*'), RangeError);
 shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('en-'), RangeError);
 shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('en--US'), RangeError);
+shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('i-klingon'), RangeError); // grandfathered tag is not accepted by IsStructurallyValidLanguageTag
+shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('x-en-US-12345'), RangeError);
+shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('x-12345-12345-en-US'), RangeError);
+shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('x-en-US-12345-12345'), RangeError);
+shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('x-en-u-foo'), RangeError);
+shouldThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf('x-en-u-foo-u-bar'), RangeError);
 
 const validLanguageTags = [
     'de', // ISO 639 language code
@@ -98,16 +104,10 @@ const validLanguageTags = [
     'cmn-hans-cn', // + ISO 3166-1 country code
     'es-419', // + UN M.49 region code
     'es-419-u-nu-latn-cu-bob', // + Unicode locale extension sequence
-    'i-klingon', // grandfathered tag
     'cmn-hans-cn-t-ca-u-ca-x-t-u', // singleton subtags can also be used as private use subtags
     'enochian-enochian', // language and variant subtags may be the same
     'de-gregory-u-ca-gregory', // variant and extension subtags may be the same
     'aa-a-foo-x-a-foo-bar', // variant subtags can also be used as private use subtags
-    'x-en-US-12345', // anything goes in private use tags
-    'x-12345-12345-en-US',
-    'x-en-US-12345-12345',
-    'x-en-u-foo',
-    'x-en-u-foo-u-bar'
 ];
 for (let validLanguageTag of validLanguageTags)
     shouldNotThrow(() => Intl.RelativeTimeFormat.supportedLocalesOf(validLanguageTag));

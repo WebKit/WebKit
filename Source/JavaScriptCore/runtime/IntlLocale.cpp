@@ -68,7 +68,7 @@ void IntlLocale::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 class LocaleIDBuilder final {
 public:
-    bool initialize(const CString&);
+    bool initialize(const String&);
     CString toCanonical();
 
     void overrideLanguageScriptRegion(StringView language, StringView script, StringView region);
@@ -78,9 +78,12 @@ private:
     Vector<char, 32> m_buffer;
 };
 
-bool LocaleIDBuilder::initialize(const CString& tag)
+bool LocaleIDBuilder::initialize(const String& tag)
 {
-    m_buffer = localeIDBufferForLanguageTag(tag);
+    if (!isStructurallyValidLanguageTag(tag))
+        return false;
+    ASSERT(tag.isAllASCII());
+    m_buffer = localeIDBufferForLanguageTag(tag.ascii());
     return m_buffer.size();
 }
 
@@ -216,7 +219,7 @@ void IntlLocale::initializeLocale(JSGlobalObject* globalObject, const String& ta
     }
 
     LocaleIDBuilder localeID;
-    if (!localeID.initialize(tag.utf8())) {
+    if (!localeID.initialize(tag)) {
         throwRangeError(globalObject, scope, "invalid language tag"_s);
         return;
     }

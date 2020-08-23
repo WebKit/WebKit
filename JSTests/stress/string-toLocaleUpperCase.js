@@ -30,8 +30,6 @@ shouldThrow(() => String.prototype.toLocaleUpperCase.call(undefined), TypeError)
 shouldBe('a'.toLocaleUpperCase(9), 'A');
 // Handles array-like objects with holes.
 shouldBe('i'.toLocaleUpperCase({ length: 4, 1: 'az', 3: 'en' }), '\u0130');
-// Doesn't throw, but ignores private tags.
-shouldBe('a'.toLocaleUpperCase('x-some-thing'), 'A');
 // Throws on problems with length, get, or toString.
 shouldThrow(() => 'a'.toLocaleUpperCase(Object.create(null, { length: { get() { throw new Error() } } })), Error);
 shouldThrow(() => 'a'.toLocaleUpperCase(Object.create(null, { length: { value: 1 }, 0: { get() { throw new Error() } } })), Error);
@@ -49,6 +47,14 @@ shouldThrow(() => 'a'.toLocaleUpperCase('en-x'), RangeError);
 shouldThrow(() => 'a'.toLocaleUpperCase('en-*'), RangeError);
 shouldThrow(() => 'a'.toLocaleUpperCase('en-'), RangeError);
 shouldThrow(() => 'a'.toLocaleUpperCase('en--US'), RangeError);
+shouldThrow(() => 'A'.toLocaleUpperCase('no-bok'), RangeError);
+shouldThrow(() => 'A'.toLocaleUpperCase('x-some-thing'), RangeError);
+shouldThrow(() => 'A'.toLocaleUpperCase('i-klingon'), RangeError); // grandfathered tag is not accepted by IsStructurallyValidLanguageTag
+shouldThrow(() => 'A'.toLocaleUpperCase('x-en-US-12345'), RangeError);
+shouldThrow(() => 'A'.toLocaleUpperCase('x-12345-12345-en-US'), RangeError);
+shouldThrow(() => 'A'.toLocaleUpperCase('x-en-US-12345-12345'), RangeError);
+shouldThrow(() => 'A'.toLocaleUpperCase('x-en-u-foo'), RangeError);
+shouldThrow(() => 'A'.toLocaleUpperCase('x-en-u-foo-u-bar'), RangeError);
 
 // Check ascii and accents.
 shouldBe('AbCdEfGhIjKlMnOpQRStuvWXyZ0123456789'.toLocaleUpperCase(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');

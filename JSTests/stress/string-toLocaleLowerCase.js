@@ -30,8 +30,6 @@ shouldThrow(() => String.prototype.toLocaleLowerCase.call(undefined), TypeError)
 shouldBe('A'.toLocaleLowerCase(9), 'a');
 // Handles array-like objects with holes.
 shouldBe('\u0130'.toLocaleLowerCase({ length: 4, 1: 'az', 3: 'en' }), 'i');
-// Doesn't throw, but ignores private tags.
-shouldBe('A'.toLocaleLowerCase('x-some-thing'), 'a');
 // Throws on problems with length, get, or toString.
 shouldThrow(() => 'A'.toLocaleLowerCase(Object.create(null, { length: { get() { throw new Error() } } })), Error);
 shouldThrow(() => 'A'.toLocaleLowerCase(Object.create(null, { length: { value: 1 }, 0: { get() { throw new Error() } } })), Error);
@@ -49,6 +47,14 @@ shouldThrow(() => 'A'.toLocaleLowerCase('en-x'), RangeError);
 shouldThrow(() => 'A'.toLocaleLowerCase('en-*'), RangeError);
 shouldThrow(() => 'A'.toLocaleLowerCase('en-'), RangeError);
 shouldThrow(() => 'A'.toLocaleLowerCase('en--US'), RangeError);
+shouldThrow(() => 'A'.toLocaleLowerCase('no-bok'), RangeError);
+shouldThrow(() => 'A'.toLocaleLowerCase('x-some-thing'), RangeError);
+shouldThrow(() => 'A'.toLocaleLowerCase('i-klingon'), RangeError); // grandfathered tag is not accepted by IsStructurallyValidLanguageTag
+shouldThrow(() => 'A'.toLocaleLowerCase('x-en-US-12345'), RangeError);
+shouldThrow(() => 'A'.toLocaleLowerCase('x-12345-12345-en-US'), RangeError);
+shouldThrow(() => 'A'.toLocaleLowerCase('x-en-US-12345-12345'), RangeError);
+shouldThrow(() => 'A'.toLocaleLowerCase('x-en-u-foo'), RangeError);
+shouldThrow(() => 'A'.toLocaleLowerCase('x-en-u-foo-u-bar'), RangeError);
 
 // Check ascii and accents.
 shouldBe('AbCdEfGhIjKlMnOpQRStuvWXyZ0123456789'.toLocaleLowerCase(), 'abcdefghijklmnopqrstuvwxyz0123456789');

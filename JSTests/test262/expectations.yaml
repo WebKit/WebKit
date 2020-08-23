@@ -1551,15 +1551,15 @@ test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
 test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
   default: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
   strict mode: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
+test/intl402/DateTimeFormat/prototype/format/timedatestyle-en.js:
+  default: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
+  strict mode: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
 test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
   default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
-test/intl402/DateTimeFormat/prototype/format/timedatestyle-en.js:
-  default: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
-  strict mode: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
 test/intl402/Intl/getCanonicalLocales/canonicalized-tags.js:
   default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
   strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
@@ -1572,9 +1572,6 @@ test/intl402/Intl/getCanonicalLocales/complex-region-subtag-replacement.js:
 test/intl402/Intl/getCanonicalLocales/grandfathered.js:
   default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
   strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
-test/intl402/Intl/getCanonicalLocales/invalid-tags.js:
-  default: 'Test262Error: Language tag: no-nyn Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Language tag: no-nyn Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
@@ -1587,9 +1584,6 @@ test/intl402/Intl/getCanonicalLocales/preferred-variant.js:
 test/intl402/Intl/getCanonicalLocales/transformed-ext-canonical.js:
   default: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
   strict mode: 'Test262Error: Expected SameValue(«sl-t-sl-rozaj-biske-1994», «sl-t-sl-1994-biske-rozaj») to be true'
-test/intl402/Intl/getCanonicalLocales/transformed-ext-invalid.js:
-  default: 'Test262Error: en-t-root Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: en-t-root Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-region.js:
   default: 'Test262Error: Expected SameValue(«und-u-rg-no23», «und-u-rg-no50») to be true'
   strict mode: 'Test262Error: Expected SameValue(«und-u-rg-no23», «und-u-rg-no50») to be true'
@@ -1600,20 +1594,14 @@ test/intl402/Intl/getCanonicalLocales/unicode-ext-canonicalize-yes-to-true.js:
   default: 'Test262Error: Expected SameValue(«und-u-kb-true», «und-u-kb») to be true'
   strict mode: 'Test262Error: Expected SameValue(«und-u-kb-true», «und-u-kb») to be true'
 test/intl402/Intl/getCanonicalLocales/unicode-ext-key-with-digit.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'Test262Error: Expected SameValue(«en-u-0c-yes», «en-u-0c») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«en-u-0c-yes», «en-u-0c») to be true'
 test/intl402/Locale/constructor-apply-options-canonicalizes-twice.js:
   default: 'Test262Error: Expected SameValue(«ru-Armn-SU», «ru-Armn-AM») to be true'
   strict mode: 'Test262Error: Expected SameValue(«ru-Armn-SU», «ru-Armn-AM») to be true'
 test/intl402/Locale/constructor-non-iana-canon.js:
   default: 'Test262Error: new Intl.Locale("mo").maximize().toString() returns "ro-Latn-RO" Expected SameValue(«ro», «ro-Latn-RO») to be true'
   strict mode: 'Test262Error: new Intl.Locale("mo").maximize().toString() returns "ro-Latn-RO" Expected SameValue(«ro», «ro-Latn-RO») to be true'
-test/intl402/Locale/constructor-options-language-valid-undefined.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/Locale/constructor-options-language-valid.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/Locale/constructor-options-numeric-undefined.js:
   default: 'Test262Error: new Intl.Locale("en-u-kn-true", {numeric: undefined}).toString() returns "en-u-kn" Expected SameValue(«en-u-kn-true», «en-u-kn») to be true'
   strict mode: 'Test262Error: new Intl.Locale("en-u-kn-true", {numeric: undefined}).toString() returns "en-u-kn" Expected SameValue(«en-u-kn-true», «en-u-kn») to be true'
@@ -1623,30 +1611,15 @@ test/intl402/Locale/constructor-options-numeric-valid.js:
 test/intl402/Locale/constructor-options-region-valid.js:
   default: "Test262Error: new Intl.Locale('en', {region: \"554\"}).toString() returns \"en-NZ\" Expected SameValue(«en-554», «en-NZ») to be true"
   strict mode: "Test262Error: new Intl.Locale('en', {region: \"554\"}).toString() returns \"en-NZ\" Expected SameValue(«en-554», «en-NZ») to be true"
-test/intl402/Locale/constructor-parse-twice.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/Locale/constructor-tag.js:
   default: 'Test262Error: new Intl.Locale("sl-ROZAJ-BISKE-1994").toString() returns "sl-1994-biske-rozaj" Expected SameValue(«sl-rozaj-biske-1994», «sl-1994-biske-rozaj») to be true'
   strict mode: 'Test262Error: new Intl.Locale("sl-ROZAJ-BISKE-1994").toString() returns "sl-1994-biske-rozaj" Expected SameValue(«sl-rozaj-biske-1994», «sl-1994-biske-rozaj») to be true'
-test/intl402/Locale/extensions-grandfathered.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/Locale/extensions-private.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/Locale/getters-grandfathered.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/Locale/getters.js:
   default: 'Test262Error: Expected SameValue(«de-Latn-DE-u-ca-gregory-co-phonebk-hc-h23-kf-true-kn-false-nu-latn», «de-Latn-DE-u-ca-gregory-co-phonebk-hc-h23-kf-kn-false-nu-latn») to be true'
   strict mode: 'Test262Error: Expected SameValue(«de-Latn-DE-u-ca-gregory-co-phonebk-hc-h23-kf-true-kn-false-nu-latn», «de-Latn-DE-u-ca-gregory-co-phonebk-hc-h23-kf-kn-false-nu-latn») to be true'
-test/intl402/Locale/invalid-tag-throws.js:
-  default: 'Test262Error: no-nyn is an invalid tag value Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: no-nyn is an invalid tag value Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/Locale/likely-subtags-grandfathered.js:
-  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«cmn», «zh») to be true'
 test/intl402/Locale/likely-subtags.js:
   default: 'Test262Error: "en-u-co".maximize() should be "en-Latn-US-u-co" Expected SameValue(«en-Latn-US-u-co-yes», «en-Latn-US-u-co») to be true'
   strict mode: 'Test262Error: "en-u-co".maximize() should be "en-Latn-US-u-co" Expected SameValue(«en-Latn-US-u-co-yes», «en-Latn-US-u-co») to be true'
@@ -1656,120 +1629,6 @@ test/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely
 test/intl402/NumberFormat/dft-currency-mnfd-range-check-mxfd.js:
   default: 'RangeError: maximumFractionDigits is out of range'
   strict mode: 'RangeError: maximumFractionDigits is out of range'
-test/intl402/NumberFormat/prototype/format/engineering-scientific-de-DE.js:
-  default: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
-test/intl402/NumberFormat/prototype/format/engineering-scientific-en-US.js:
-  default: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
-test/intl402/NumberFormat/prototype/format/engineering-scientific-ja-JP.js:
-  default: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
-test/intl402/NumberFormat/prototype/format/engineering-scientific-ko-KR.js:
-  default: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
-test/intl402/NumberFormat/prototype/format/engineering-scientific-zh-TW.js:
-  default: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-∞E0», «-∞») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-currency-de-DE.js:
-  default: 'Test262Error: Expected SameValue(«-0,00 $», «0,00 $») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-0,00 $», «0,00 $») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-currency-en-US.js:
-  default: 'Test262Error: Expected SameValue(«($0.00)», «$0.00») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«($0.00)», «$0.00») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-currency-ja-JP.js:
-  default: 'Test262Error: Expected SameValue(«($0.00)», «$0.00») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«($0.00)», «$0.00») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-currency-ko-KR.js:
-  default: 'Test262Error: Expected SameValue(«(US$0.00)», «US$0.00») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«(US$0.00)», «US$0.00») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-currency-zh-TW.js:
-  default: 'Test262Error: Expected SameValue(«(US$0.00)», «US$0.00») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«(US$0.00)», «US$0.00») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-de-DE.js:
-  default: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-en-US.js:
-  default: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-ja-JP.js:
-  default: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-ko-KR.js:
-  default: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-rounding.js:
-  default: 'Test262Error: Expected SameValue(«+0», «0») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«+0», «0») to be true'
-test/intl402/NumberFormat/prototype/format/signDisplay-zh-TW.js:
-  default: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
-  strict mode: 'Test262Error: -0.0001 (exceptZero) Expected SameValue(«-0», «0») to be true'
-test/intl402/NumberFormat/prototype/format/unit-ja-JP.js:
-  default: 'Test262Error: Expected SameValue(«時速-987キロメートル», «時速 -987 キロメートル») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«時速-987キロメートル», «時速 -987 キロメートル») to be true'
-test/intl402/NumberFormat/prototype/format/unit-zh-TW.js:
-  default: 'Test262Error: Expected SameValue(«-987公里/小時», «-987 公里/小時») to be true'
-  strict mode: 'Test262Error: Expected SameValue(«-987公里/小時», «-987 公里/小時») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/engineering-scientific-de-DE.js:
-  default: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
-  strict mode: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/engineering-scientific-en-US.js:
-  default: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
-  strict mode: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/engineering-scientific-ja-JP.js:
-  default: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
-  strict mode: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/engineering-scientific-ko-KR.js:
-  default: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
-  strict mode: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/engineering-scientific-zh-TW.js:
-  default: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
-  strict mode: 'Test262Error: -Infinity - engineering: length Expected SameValue(«4», «2») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-de-DE.js:
-  default: 'Test262Error: undefined: length Expected SameValue(«6», «5») to be true'
-  strict mode: 'Test262Error: undefined: length Expected SameValue(«6», «5») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-en-US.js:
-  default: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
-  strict mode: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-ja-JP.js:
-  default: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
-  strict mode: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-ko-KR.js:
-  default: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
-  strict mode: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-currency-zh-TW.js:
-  default: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
-  strict mode: 'Test262Error: undefined: length Expected SameValue(«6», «4») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-de-DE.js:
-  default: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-en-US.js:
-  default: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-ja-JP.js:
-  default: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-ko-KR.js:
-  default: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/signDisplay-zh-TW.js:
-  default: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
-  strict mode: 'Test262Error: -0.0001 (exceptZero): length Expected SameValue(«2», «1») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/unit-ja-JP.js:
-  default: 'Test262Error: undefined: length Expected SameValue(«4», «6») to be true'
-  strict mode: 'Test262Error: undefined: length Expected SameValue(«4», «6») to be true'
-test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js:
-  default: 'Test262Error: undefined: length Expected SameValue(«3», «4») to be true'
-  strict mode: 'Test262Error: undefined: length Expected SameValue(«3», «4») to be true'
-test/intl402/RelativeTimeFormat/constructor/constructor/locales-valid.js:
-  default: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/Segmenter/constructor/constructor/locales-valid.js:
-  default: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: Grandfathered Expected a RangeError to be thrown but no exception was thrown at all'
-test/intl402/language-tags-invalid.js:
-  default: 'Test262Error: Invalid language tag no-nyn was not rejected. Expected a RangeError to be thrown but no exception was thrown at all (Testing with Collator.)'
-  strict mode: 'Test262Error: Invalid language tag no-nyn was not rejected. Expected a RangeError to be thrown but no exception was thrown at all (Testing with Collator.)'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-arguments.js:
   default: 'Test262Error: Expected obj[0] to have enumerable:false.'
 test/language/arguments-object/mapped/nonconfigurable-nonenumerable-nonwritable-descriptors-set-by-param.js:

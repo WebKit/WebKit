@@ -1,5 +1,46 @@
 2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Implement Intl Language Tag Parser
+        https://bugs.webkit.org/show_bug.cgi?id=215058
+
+        Reviewed by Ross Kirsling and Darin Adler.
+
+        This patch adds LanguageTagParser which performs isStructurallyValidLanguageTag[1] validation precisely.
+        The spec strictly defines acceptable format as language-tag and this is not the same to ICU's one and this
+        is even tested in test262. We should have LanguageTagParser to validate the input.
+
+        [1]: https://tc39.es/ecma402/#sec-isstructurallyvalidlanguagetag
+
+        * runtime/IntlLocale.cpp:
+        (JSC::LocaleIDBuilder::initialize):
+        (JSC::IntlLocale::initializeLocale):
+        * runtime/IntlObject.cpp:
+        (JSC::canonicalizeLocaleList):
+        (JSC::parseVariantCode):
+        (JSC::convertToUnicodeSingletonIndex):
+        (JSC::isUnicodeExtensionAttribute):
+        (JSC::isUnicodeExtensionKey):
+        (JSC::isUnicodeExtensionTypeComponent):
+        (JSC::isUnicodePUExtensionValue):
+        (JSC::isUnicodeOtherExtensionValue):
+        (JSC::isUnicodeTKey):
+        (JSC::isUnicodeTValueComponent):
+        (JSC::LanguageTagParser::LanguageTagParser):
+        (JSC::LanguageTagParser::isEOS):
+        (JSC::LanguageTagParser::next):
+        (JSC::LanguageTagParser::parseUnicodeLocaleId):
+        (JSC::LanguageTagParser::parseUnicodeLanguageId):
+        (JSC::LanguageTagParser::parseUnicodeExtensionAfterPrefix):
+        (JSC::LanguageTagParser::parseTransformedExtensionAfterPrefix):
+        (JSC::LanguageTagParser::parseOtherExtensionAfterPrefix):
+        (JSC::LanguageTagParser::parsePUExtensionAfterPrefix):
+        (JSC::LanguageTagParser::parseExtensionsAndPUExtensions):
+        (JSC::isStructurallyValidLanguageTag):
+        (JSC::isUnicodeLanguageId):
+        * runtime/IntlObject.h:
+
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, workaround for old ICU headers in macOS Catalina bots
         https://bugs.webkit.org/show_bug.cgi?id=209774
 

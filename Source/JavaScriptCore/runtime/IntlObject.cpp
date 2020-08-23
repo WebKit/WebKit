@@ -426,7 +426,6 @@ bool isUnicodeLocaleIdentifierType(StringView string)
     return true;
 }
 
-// https://tc39.es/ecma402/#sec-isstructurallyvalidlanguagetag
 // https://tc39.es/ecma402/#sec-canonicalizeunicodelocaleid
 static String canonicalizeLanguageTag(const CString& tag)
 {
@@ -487,37 +486,34 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
                 return { };
             }
 
-            Expected<CString, UTF8ConversionError> rawTag;
+            String tag;
             if (kValue.inherits<IntlLocale>(vm))
-                rawTag = jsCast<IntlLocale*>(kValue)->toString().tryGetUtf8();
+                tag = jsCast<IntlLocale*>(kValue)->toString();
             else {
-                JSString* tag = kValue.toString(globalObject);
+                JSString* string = kValue.toString(globalObject);
                 RETURN_IF_EXCEPTION(scope, Vector<String>());
 
-                auto tagValue = tag->value(globalObject);
+                tag = string->value(globalObject);
                 RETURN_IF_EXCEPTION(scope, Vector<String>());
-
-                rawTag = tagValue.tryGetUtf8();
-            }
-            if (!rawTag) {
-                if (rawTag.error() == UTF8ConversionError::OutOfMemory)
-                    throwOutOfMemoryError(globalObject, scope);
-                return { };
             }
 
-            String canonicalizedTag = canonicalizeLanguageTag(rawTag.value());
-            if (canonicalizedTag.isNull()) {
-                String errorMessage = tryMakeString("invalid language tag: ", rawTag->data());
-                if (UNLIKELY(!errorMessage)) {
-                    throwException(globalObject, scope, createOutOfMemoryError(globalObject));
-                    return { };
+            if (isStructurallyValidLanguageTag(tag)) {
+                ASSERT(tag.isAllASCII());
+                String canonicalizedTag = canonicalizeLanguageTag(tag.ascii());
+                if (!canonicalizedTag.isNull()) {
+                    if (seenSet.add(canonicalizedTag).isNewEntry)
+                        seen.append(canonicalizedTag);
+                    continue;
                 }
-                throwException(globalObject, scope, createRangeError(globalObject, errorMessage));
-                return { };
             }
 
-            if (seenSet.add(canonicalizedTag).isNewEntry)
-                seen.append(canonicalizedTag);
+            String errorMessage = tryMakeString("invalid language tag: ", tag);
+            if (UNLIKELY(!errorMessage)) {
+                throwException(globalObject, scope, createOutOfMemoryError(globalObject));
+                return { };
+            }
+            throwException(globalObject, scope, createRangeError(globalObject, errorMessage));
+            return { };
         }
     }
 
@@ -875,39 +871,398 @@ bool isUnicodeVariantSubtag(StringView string)
     return length == 4 && isASCIIDigit(string[0]) && string.substring(1).isAllSpecialCharacters<isASCIIAlphanumeric>();
 }
 
+using VariantCode = uint64_t;
+static VariantCode parseVariantCode(StringView string)
+{
+    ASSERT(isUnicodeVariantSubtag(string));
+    ASSERT(string.isAllASCII());
+    ASSERT(string.length() <= 8);
+    ASSERT(string.length() >= 1);
+    struct Code {
+        LChar characters[8] { };
+    };
+    static_assert(std::is_unsigned_v<LChar>);
+    static_assert(sizeof(VariantCode) == sizeof(Code));
+    Code code { };
+    for (unsigned index = 0; index < string.length(); ++index)
+        code.characters[index] = string[index];
+    VariantCode result = bitwise_cast<VariantCode>(code);
+    ASSERT(!result); // Not possible since some characters exist.
+    ASSERT(result != static_cast<VariantCode>(-1)); // Not possible since all characters are ASCII (not Latin-1).
+    return result;
+}
+
+static unsigned convertToUnicodeSingletonIndex(UChar singleton)
+{
+    ASSERT(isASCIIAlphanumeric(singleton));
+    singleton = toASCIILower(singleton);
+    // 0 - 9 => numeric
+    // 10 - 35 => alpha
+    if (isASCIIDigit(singleton))
+        return singleton - '0';
+    return (singleton - 'a') + 10;
+}
+static constexpr unsigned numberOfUnicodeSingletons = 10 + 26; // Digits + Alphabets.
+
+static bool isUnicodeExtensionAttribute(StringView string)
+{
+    auto length = string.length();
+    return length >= 3 && length <= 8 && string.isAllSpecialCharacters<isASCIIAlphanumeric>();
+}
+
+static bool isUnicodeExtensionKey(StringView string)
+{
+    return string.length() == 2 && isASCIIAlphanumeric(string[0]) && isASCIIAlpha(string[1]);
+}
+
+static bool isUnicodeExtensionTypeComponent(StringView string)
+{
+    auto length = string.length();
+    return length >= 3 && length <= 8 && string.isAllSpecialCharacters<isASCIIAlphanumeric>();
+}
+
+static bool isUnicodePUExtensionValue(StringView string)
+{
+    auto length = string.length();
+    return length >= 1 && length <= 8 && string.isAllSpecialCharacters<isASCIIAlphanumeric>();
+}
+
+static bool isUnicodeOtherExtensionValue(StringView string)
+{
+    auto length = string.length();
+    return length >= 2 && length <= 8 && string.isAllSpecialCharacters<isASCIIAlphanumeric>();
+}
+
+static bool isUnicodeTKey(StringView string)
+{
+    return string.length() == 2 && isASCIIAlpha(string[0]) && isASCIIDigit(string[1]);
+}
+
+static bool isUnicodeTValueComponent(StringView string)
+{
+    auto length = string.length();
+    return length >= 3 && length <= 8 && string.isAllSpecialCharacters<isASCIIAlphanumeric>();
+}
+
+// The IsStructurallyValidLanguageTag abstract operation verifies that the locale argument (which must be a String value)
+//
+//     represents a well-formed "Unicode BCP 47 locale identifier" as specified in Unicode Technical Standard 35 section 3.2,
+//     does not include duplicate variant subtags, and
+//     does not include duplicate singleton subtags.
+//
+//  The abstract operation returns true if locale can be generated from the EBNF grammar in section 3.2 of the Unicode Technical Standard 35,
+//  starting with unicode_locale_id, and does not contain duplicate variant or singleton subtags (other than as a private use subtag).
+//  It returns false otherwise. Terminal value characters in the grammar are interpreted as the Unicode equivalents of the ASCII octet values given.
+//
+// https://unicode.org/reports/tr35/#Unicode_locale_identifier
+class LanguageTagParser {
+public:
+    LanguageTagParser(StringView tag)
+        : m_range(tag.splitAllowingEmptyEntries('-'))
+        , m_cursor(m_range.begin())
+    {
+        ASSERT(m_cursor != m_range.end());
+        m_current = *m_cursor;
+    }
+
+    bool parseUnicodeLocaleId();
+    bool parseUnicodeLanguageId();
+
+    bool isEOS()
+    {
+        return m_cursor == m_range.end();
+    }
+
+    bool next()
+    {
+        if (isEOS())
+            return false;
+
+        ++m_cursor;
+        if (isEOS()) {
+            m_current = StringView();
+            return false;
+        }
+        m_current = *m_cursor;
+        return true;
+    }
+
+private:
+    bool parseExtensionsAndPUExtensions();
+
+    bool parseUnicodeExtensionAfterPrefix();
+    bool parseTransformedExtensionAfterPrefix();
+    bool parseOtherExtensionAfterPrefix();
+    bool parsePUExtensionAfterPrefix();
+
+    StringView::SplitResult m_range;
+    StringView::SplitResult::Iterator m_cursor;
+    StringView m_current;
+};
+
+bool LanguageTagParser::parseUnicodeLocaleId()
+{
+    // unicode_locale_id    = unicode_language_id
+    //                        extensions*
+    //                        pu_extensions? ;
+    ASSERT(!isEOS());
+    if (!parseUnicodeLanguageId())
+        return false;
+    if (isEOS())
+        return true;
+    if (!parseExtensionsAndPUExtensions())
+        return false;
+    return true;
+}
+
+bool LanguageTagParser::parseUnicodeLanguageId()
+{
+    // unicode_language_id  = unicode_language_subtag (sep unicode_script_subtag)? (sep unicode_region_subtag)? (sep unicode_variant_subtag)* ;
+    ASSERT(!isEOS());
+    if (!isUnicodeLanguageSubtag(m_current))
+        return false;
+    if (!next())
+        return true;
+
+    if (isUnicodeScriptSubtag(m_current)) {
+        if (!next())
+            return true;
+    }
+
+    if (isUnicodeRegionSubtag(m_current)) {
+        if (!next())
+            return true;
+    }
+
+    HashSet<VariantCode> variantCodes;
+    while (true) {
+        if (!isUnicodeVariantSubtag(m_current))
+            return true;
+        // https://tc39.es/ecma402/#sec-isstructurallyvalidlanguagetag
+        // does not include duplicate variant subtags
+        if (!variantCodes.add(parseVariantCode(m_current)).isNewEntry)
+            return false;
+        if (!next())
+            return true;
+    }
+}
+
+bool LanguageTagParser::parseUnicodeExtensionAfterPrefix()
+{
+    // ((sep keyword)+ | (sep attribute)+ (sep keyword)*) ;
+    //
+    // keyword = key (sep type)? ;
+    // key = alphanum alpha ;
+    // type = alphanum{3,8} (sep alphanum{3,8})* ;
+    // attribute = alphanum{3,8} ;
+    ASSERT(!isEOS());
+    bool isAttributeOrKeyword = false;
+    if (isUnicodeExtensionAttribute(m_current)) {
+        isAttributeOrKeyword = true;
+        while (true) {
+            if (!isUnicodeExtensionAttribute(m_current))
+                break;
+            if (!next())
+                return true;
+        }
+    }
+
+    if (isUnicodeExtensionKey(m_current)) {
+        isAttributeOrKeyword = true;
+        while (true) {
+            if (!isUnicodeExtensionKey(m_current))
+                break;
+            if (!next())
+                return true;
+            while (true) {
+                if (!isUnicodeExtensionTypeComponent(m_current))
+                    break;
+                if (!next())
+                    return true;
+            }
+        }
+    }
+
+    if (!isAttributeOrKeyword)
+        return false;
+    return true;
+}
+
+bool LanguageTagParser::parseTransformedExtensionAfterPrefix()
+{
+    // ((sep tlang (sep tfield)*) | (sep tfield)+) ;
+    //
+    // tlang = unicode_language_subtag (sep unicode_script_subtag)? (sep unicode_region_subtag)? (sep unicode_variant_subtag)* ;
+    // tfield = tkey tvalue;
+    // tkey = alpha digit ;
+    // tvalue = (sep alphanum{3,8})+ ;
+    ASSERT(!isEOS());
+    bool found = false;
+    if (isUnicodeLanguageSubtag(m_current)) {
+        found = true;
+        if (!parseUnicodeLanguageId())
+            return false;
+        if (isEOS())
+            return true;
+    }
+
+    if (isUnicodeTKey(m_current)) {
+        found = true;
+        while (true) {
+            if (!isUnicodeTKey(m_current))
+                break;
+            if (!next())
+                return false;
+            if (!isUnicodeTValueComponent(m_current))
+                return false;
+            if (!next())
+                return true;
+            while (true) {
+                if (!isUnicodeTValueComponent(m_current))
+                    break;
+                if (!next())
+                    return true;
+            }
+        }
+    }
+
+    return found;
+}
+
+bool LanguageTagParser::parseOtherExtensionAfterPrefix()
+{
+    // (sep alphanum{2,8})+ ;
+    ASSERT(!isEOS());
+    if (!isUnicodeOtherExtensionValue(m_current))
+        return false;
+    if (!next())
+        return true;
+
+    while (true) {
+        if (!isUnicodeOtherExtensionValue(m_current))
+            return true;
+        if (!next())
+            return true;
+    }
+}
+
+bool LanguageTagParser::parsePUExtensionAfterPrefix()
+{
+    // (sep alphanum{1,8})+ ;
+    ASSERT(!isEOS());
+    if (!isUnicodePUExtensionValue(m_current))
+        return false;
+    if (!next())
+        return true;
+
+    while (true) {
+        if (!isUnicodePUExtensionValue(m_current))
+            return true;
+        if (!next())
+            return true;
+    }
+}
+
+bool LanguageTagParser::parseExtensionsAndPUExtensions()
+{
+    // unicode_locale_id    = unicode_language_id
+    //                        extensions*
+    //                        pu_extensions? ;
+    //
+    // extensions = unicode_locale_extensions
+    //            | transformed_extensions
+    //            | other_extensions ;
+    //
+    // pu_extensions = sep [xX] (sep alphanum{1,8})+ ;
+    ASSERT(!isEOS());
+    Bitmap<numberOfUnicodeSingletons> singletonsSet { };
+    while (true) {
+        if (m_current.length() != 1)
+            return true;
+        UChar prefixCode = m_current[0];
+        if (!isASCIIAlphanumeric(prefixCode))
+            return true;
+
+        // https://tc39.es/ecma402/#sec-isstructurallyvalidlanguagetag
+        // does not include duplicate singleton subtags.
+        //
+        // https://unicode.org/reports/tr35/#Unicode_locale_identifier
+        // As is often the case, the complete syntactic constraints are not easily captured by ABNF,
+        // so there is a further condition: There cannot be more than one extension with the same singleton (-a-, …, -t-, -u-, …).
+        // Note that the private use extension (-x-) must come after all other extensions.
+        if (singletonsSet.get(convertToUnicodeSingletonIndex(prefixCode)))
+            return false;
+        singletonsSet.set(convertToUnicodeSingletonIndex(prefixCode), true);
+
+        switch (prefixCode) {
+        case 'u':
+        case 'U': {
+            // unicode_locale_extensions = sep [uU] ((sep keyword)+ | (sep attribute)+ (sep keyword)*) ;
+            if (!next())
+                return false;
+            if (!parseUnicodeExtensionAfterPrefix())
+                return false;
+            if (isEOS())
+                return true;
+            break; // Next extension.
+        }
+        case 't':
+        case 'T': {
+            // transformed_extensions = sep [tT] ((sep tlang (sep tfield)*) | (sep tfield)+) ;
+            if (!next())
+                return false;
+            if (!parseTransformedExtensionAfterPrefix())
+                return false;
+            if (isEOS())
+                return true;
+            break; // Next extension.
+        }
+        case 'x':
+        case 'X': {
+            // pu_extensions = sep [xX] (sep alphanum{1,8})+ ;
+            if (!next())
+                return false;
+            if (!parsePUExtensionAfterPrefix())
+                return false;
+            return true; // If pu_extensions appear, no extensions can follow after that. This must be the end of unicode_locale_id.
+        }
+        default: {
+            // other_extensions = sep [alphanum-[tTuUxX]] (sep alphanum{2,8})+ ;
+            if (!next())
+                return false;
+            if (!parseOtherExtensionAfterPrefix())
+                return false;
+            if (isEOS())
+                return true;
+            break; // Next extension.
+        }
+        }
+    }
+}
+
+// https://tc39.es/ecma402/#sec-isstructurallyvalidlanguagetag
+bool isStructurallyValidLanguageTag(StringView string)
+{
+    LanguageTagParser parser(string);
+    if (!parser.parseUnicodeLocaleId())
+        return false;
+    if (!parser.isEOS())
+        return false;
+    return true;
+}
+
 // unicode_language_id, but intersection of BCP47 and UTS35.
 // unicode_language_id =
 //     | unicode_language_subtag (sep unicode_script_subtag)? (sep unicode_region_subtag)? (sep unicode_variant_subtag)* ;
 // https://github.com/tc39/proposal-intl-displaynames/issues/79
 bool isUnicodeLanguageId(StringView string)
 {
-    Vector<StringView, 4> subtags;
-    for (auto subtag : string.splitAllowingEmptyEntries('-'))
-        subtags.append(subtag);
-
-    ASSERT(subtags.size() >= 1);
-    unsigned cursor = 0;
-    if (!isUnicodeLanguageSubtag(subtags[cursor]))
+    LanguageTagParser parser(string);
+    if (!parser.parseUnicodeLanguageId())
         return false;
-    ++cursor;
-
-    if (cursor == subtags.size())
-        return true;
-    if (isUnicodeScriptSubtag(subtags[cursor]))
-        ++cursor;
-
-    if (cursor == subtags.size())
-        return true;
-    if (isUnicodeRegionSubtag(subtags[cursor]))
-        ++cursor;
-
-    while (true) {
-        if (cursor == subtags.size())
-            return true;
-        if (!isUnicodeVariantSubtag(subtags[cursor]))
-            return false;
-        ++cursor;
-    }
+    if (!parser.isEOS())
+        return false;
+    return true;
 }
 
 bool isWellFormedCurrencyCode(StringView currency)

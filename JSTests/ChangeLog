@@ -1,5 +1,26 @@
 2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Implement Intl Language Tag Parser
+        https://bugs.webkit.org/show_bug.cgi?id=215058
+
+        Reviewed by Ross Kirsling and Darin Adler.
+
+        * stress/intl-collator.js:
+        * stress/intl-datetimeformat.js:
+        * stress/intl-language-tag.js: Added.
+        (shouldThrow):
+        (shouldNotThrow):
+        * stress/intl-locale.js:
+        * stress/intl-numberformat.js:
+        * stress/intl-object.js:
+        * stress/intl-pluralrules.js:
+        * stress/intl-relativetimeformat.js:
+        * stress/string-toLocaleLowerCase.js:
+        * stress/string-toLocaleUpperCase.js:
+        * test262/expectations.yaml:
+
+2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Unreviewed, workaround for old ICU headers in macOS Catalina bots
         https://bugs.webkit.org/show_bug.cgi?id=209774
 
