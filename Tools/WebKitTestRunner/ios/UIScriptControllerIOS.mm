@@ -793,9 +793,9 @@ JSObjectRef UIScriptControllerIOS::textSelectionCaretRect() const
 static void clipSelectionViewRectToContentView(CGRect& rect, UIView *contentView)
 {
     rect = CGRectIntersection(contentView.bounds, rect);
-    // The content view (a WKContentView in WebKit) is expected to implement the optional UITextInputPrivate method -_selectionClipRect.
+    // The content view (a WKContentView in WebKit) is expected to implement the optional text input method -_selectionClipRect.
     ASSERT([contentView respondsToSelector:@selector(_selectionClipRect)]);
-    auto selectionClipRect = [(UIView <UITextInputPrivate> *)contentView _selectionClipRect];
+    auto selectionClipRect = [(UIView <UITextInputInternal> *)contentView _selectionClipRect];
     if (!CGRectIsNull(selectionClipRect))
         rect = CGRectIntersection(selectionClipRect, rect);
 }

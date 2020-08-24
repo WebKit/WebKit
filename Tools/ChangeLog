@@ -1,3 +1,12 @@
+2020-08-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal iOS 13.4 build
+
+        See Source/WebKit/ChangeLog.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::clipSelectionViewRectToContentView):
+
 2020-08-24  Aakash Jain  <aakash_jain@apple.com>
 
         [ews] enable email notifications to patch authors for build or layout test failures on their patch

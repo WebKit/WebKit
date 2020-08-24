@@ -487,7 +487,6 @@ typedef enum {
 - (void)modifierFlagsDidChangeFrom:(UIKeyModifierFlags)oldFlags to:(UIKeyModifierFlags)newFlags;
 #endif
 @property (nonatomic) UITextGranularity selectionGranularity;
-@property (nonatomic, readonly) CGRect _selectionClipRect;
 @required
 - (BOOL)hasContent;
 - (BOOL)hasSelection;
@@ -1373,6 +1372,11 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic, assign) NSString *password;
 @end
 #endif
+
+@protocol UITextInputInternal <UITextInputPrivate>
+@optional
+@property (nonatomic, readonly) CGRect _selectionClipRect;
+@end
 
 @interface UIDevice ()
 @property (nonatomic, setter=_setBacklightLevel:) float _backlightLevel;

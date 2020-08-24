@@ -1,3 +1,17 @@
+2020-08-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal iOS 13.4 build
+
+        The -_selectionClipRect SPI method isn't declared in any private headers on iOS 13.4 and prior. This isn't a
+        problem when building with a non-internal SDK since the SPI is declared in the `!USE(APPLE_INTERNAL_SDK)`
+        section in `UIKitSPI.h`, but on internal builds of iOS 13.4, this declaration is absent from both the internal
+        SDK and `UIKitSPI.h`.
+
+        To fix the build, simply declare it in the IPI section — once we stop supporting iOS 13.4 as a build target,
+        this can be moved back into the non-internal section only.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2020-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Implement Request/Response consuming as FormData
