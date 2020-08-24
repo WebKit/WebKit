@@ -134,6 +134,7 @@ RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
 #endif
 }
 
+#if !HAVE(HSTS_STORAGE)
 static void filterPreloadHSTSEntry(const void* key, const void* value, void* context)
 {
     RELEASE_ASSERT(context);
@@ -152,27 +153,53 @@ static void filterPreloadHSTSEntry(const void* key, const void* value, void* con
     if (CFDictionaryGetValue(val, _kCFNetworkHSTSPreloaded) != kCFBooleanTrue)
         hostnames->add((CFStringRef)key);
 }
+#endif
 
-void NetworkProcess::getHostNamesWithHSTSCache(WebCore::NetworkStorageSession& session, HashSet<String>& hostNames)
+HashSet<String> NetworkProcess::hostNamesWithHSTSCache(PAL::SessionID sessionID) const
 {
-    if (auto HSTSPolicies = adoptCF(_CFNetworkCopyHSTSPolicies(session.platformSession())))
-        CFDictionaryApplyFunction(HSTSPolicies.get(), filterPreloadHSTSEntry, &hostNames);
-}
-
-void NetworkProcess::deleteHSTSCacheForHostNames(WebCore::NetworkStorageSession& session, const Vector<String>& hostNames)
-{
-    for (auto& hostName : hostNames) {
-        auto url = URL({ }, makeString("https://", hostName));
-        _CFNetworkResetHSTS(url.createCFURL().get(), session.platformSession());
+    HashSet<String> hostNames;
+#if HAVE(HSTS_STORAGE)
+    if (auto* networkSession = static_cast<NetworkSessionCocoa*>(this->networkSession(sessionID))) {
+        for (NSString *host in networkSession->hstsStorage().nonPreloadedHosts)
+            hostNames.add(host);
     }
+#else
+    if (auto* session = storageSession(sessionID)) {
+        if (auto HSTSPolicies = adoptCF(_CFNetworkCopyHSTSPolicies(session->platformSession())))
+            CFDictionaryApplyFunction(HSTSPolicies.get(), filterPreloadHSTSEntry, &hostNames);
+    }
+#endif
+    return hostNames;
 }
 
-void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, WallTime modifiedSince)
+void NetworkProcess::deleteHSTSCacheForHostNames(PAL::SessionID sessionID, const Vector<String>& hostNames)
+{
+#if HAVE(HSTS_STORAGE)
+    if (auto* networkSession = static_cast<NetworkSessionCocoa*>(this->networkSession(sessionID))) {
+        for (auto& hostName : hostNames)
+            [networkSession->hstsStorage() resetHSTSForHost:hostName];
+    }
+#else
+    if (auto* session = storageSession(sessionID)) {
+        for (auto& hostName : hostNames) {
+            auto url = URL({ }, makeString("https://", hostName));
+            _CFNetworkResetHSTS(url.createCFURL().get(), session->platformSession());
+        }
+    }
+#endif
+}
+
+void NetworkProcess::clearHSTSCache(PAL::SessionID sessionID, WallTime modifiedSince)
 {
     NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
-
-    _CFNetworkResetHSTSHostsSinceDate(session.platformSession(), (__bridge CFDateRef)date);
+#if HAVE(HSTS_STORAGE)
+    if (auto* networkSession = static_cast<NetworkSessionCocoa*>(this->networkSession(sessionID)))
+        [networkSession->hstsStorage() resetHSTSHostsSinceDate:date];
+#else
+    if (auto* session = storageSession(sessionID))
+        _CFNetworkResetHSTSHostsSinceDate(session->platformSession(), (__bridge CFDateRef)date);
+#endif
 }
 
 void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)

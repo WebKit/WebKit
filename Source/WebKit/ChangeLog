@@ -1,3 +1,65 @@
+2020-08-24  Alex Christensen  <achristensen@webkit.org>
+
+        Make _WKWebsiteDataStoreConfiguration SPI for HSTS storage to replace _WKProcessPoolConfiguration.hstsStorageDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=213048
+
+        Reviewed by Youenn Fablet.
+
+        This uses CFNetwork SPI introduced in rdar://problem/50109631 to allow HSTS storage per NSURLSession.
+        To be complete, I also deprecated our UI process HSTS state removal attempt SPIs, WKContextResetHSTSHosts and
+        WKContextResetHSTSHostsAddedAfterDate, which had their last use removed in rdar://problem/64220838.
+
+        I manually verified that this new SPI puts HSTS data in the specified location, and I also verified that HSTS
+        state querying and removal works with the new CFNetwork SPI as it did with the old one.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::fetchWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::hostNamesWithHSTSCache const):
+        (WebKit::NetworkProcess::deleteHSTSCacheForHostNames):
+        (WebKit::NetworkProcess::clearHSTSCache):
+        (WebKit::NetworkProcess::getHostNamesWithHSTSCache): Deleted.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::hstsStorage const):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::hostNamesWithHSTSCache const):
+        (WebKit::NetworkProcess::deleteHSTSCacheForHostNames):
+        (WebKit::NetworkProcess::clearHSTSCache):
+        (WebKit::NetworkProcess::getHostNamesWithHSTSCache): Deleted.
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextResetHSTSHosts):
+        (WKContextResetHSTSHostsAddedAfterDate):
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration hstsStorageDirectory]):
+        (-[_WKWebsiteDataStoreConfiguration setHSTSStorageDirectory:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::privateBrowsingSession): Deleted.
+        (WebKit::WebProcessPool::resetHSTSHosts): Deleted.
+        (WebKit::WebProcessPool::resetHSTSHostsAddedAfterDate): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::resolvedHSTSStorageDirectory const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+
 2020-08-24  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Show picker for date and datetime-local input types

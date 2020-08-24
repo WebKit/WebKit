@@ -194,9 +194,9 @@ public:
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
 #endif
 #if PLATFORM(COCOA) || USE(SOUP)
-    void getHostNamesWithHSTSCache(WebCore::NetworkStorageSession&, HashSet<String>&);
-    void deleteHSTSCacheForHostNames(WebCore::NetworkStorageSession&, const Vector<String>&);
-    void clearHSTSCache(WebCore::NetworkStorageSession&, WallTime modifiedSince);
+    HashSet<String> hostNamesWithHSTSCache(PAL::SessionID) const;
+    void deleteHSTSCacheForHostNames(PAL::SessionID, const Vector<String>&);
+    void clearHSTSCache(PAL::SessionID, WallTime modifiedSince);
 #endif
 
     void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler&&, const WebCore::ResourceResponse&);

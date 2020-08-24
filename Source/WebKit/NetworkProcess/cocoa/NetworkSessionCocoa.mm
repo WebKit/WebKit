@@ -68,6 +68,10 @@
 
 #import "DeviceManagementSoftLink.h"
 
+// FIXME: Remove this soft link once rdar://problem/50109631 is in a build and bots are updated.
+SOFT_LINK_FRAMEWORK(CFNetwork)
+SOFT_LINK_CLASS_OPTIONAL(CFNetwork, _NSHSTSStorage)
+
 using namespace WebKit;
 
 CFStringRef const WebKit2HTTPProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPProxy");
@@ -1097,6 +1101,17 @@ NSURLCredential *NetworkSessionCocoa::successfulClientCertificateForHost(const S
     return m_successfulClientCertificates.get(key).get();
 }
 
+_NSHSTSStorage *NetworkSessionCocoa::hstsStorage() const
+{
+#if HAVE(HSTS_STORAGE)
+    NSURLSessionConfiguration *configuration = m_sessionWithCredentialStorage.session.get().configuration;
+    // FIXME: Remove this respondsToSelector check once rdar://problem/50109631 is in a build and bots are updated.
+    if ([configuration respondsToSelector:@selector(_hstsStorage)])
+        return m_sessionWithCredentialStorage.session.get().configuration._hstsStorage;
+#endif
+    return nil;
+}
+
 const String& NetworkSessionCocoa::boundInterfaceIdentifier() const
 {
     return m_boundInterfaceIdentifier;
@@ -1199,6 +1214,15 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 #endif
 
     NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID);
+
+#if HAVE(HSTS_STORAGE)
+    if (!!parameters.hstsStorageDirectory && !m_sessionID.isEphemeral()) {
+        SandboxExtension::consumePermanently(parameters.hstsStorageDirectoryExtensionHandle);
+        // FIXME: Remove this respondsToSelector check once rdar://problem/50109631 is in a build and bots are updated.
+        if ([configuration respondsToSelector:@selector(_hstsStorage)])
+            configuration._hstsStorage = [[alloc_NSHSTSStorageInstance() initPersistentStoreWithURL:[NSURL fileURLWithPath:parameters.hstsStorageDirectory isDirectory:YES]] autorelease];
+    }
+#endif
 
 #if HAVE(APP_SSO) || PLATFORM(MACCATALYST)
     configuration._preventsAppSSO = true;

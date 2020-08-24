@@ -1553,10 +1553,8 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
     }
 
 #if PLATFORM(COCOA) || USE(SOUP)
-    if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = storageSession(sessionID))
-            getHostNamesWithHSTSCache(*networkStorageSession, callbackAggregator->m_websiteData.hostNamesWithHSTSCache);
-    }
+    if (websiteDataTypes.contains(WebsiteDataType::HSTSCache))
+        callbackAggregator->m_websiteData.hostNamesWithHSTSCache = hostNamesWithHSTSCache(sessionID);
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
@@ -1615,10 +1613,8 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
 void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, CallbackID callbackID)
 {
 #if PLATFORM(COCOA) || USE(SOUP)
-    if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = storageSession(sessionID))
-            clearHSTSCache(*networkStorageSession, modifiedSince);
-    }
+    if (websiteDataTypes.contains(WebsiteDataType::HSTSCache))
+        clearHSTSCache(sessionID, modifiedSince);
 #endif
 
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
@@ -1720,10 +1716,8 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 
 #if PLATFORM(COCOA) || USE(SOUP)
-    if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = storageSession(sessionID))
-            deleteHSTSCacheForHostNames(*networkStorageSession, HSTSCacheHostNames);
-    }
+    if (websiteDataTypes.contains(WebsiteDataType::HSTSCache))
+        deleteHSTSCacheForHostNames(sessionID, HSTSCacheHostNames);
 #endif
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
@@ -1891,15 +1885,13 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
     Vector<String> hostnamesWithHSTSToDelete;
 #if PLATFORM(COCOA) || USE(SOUP)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = storageSession(sessionID)) {
-            getHostNamesWithHSTSCache(*networkStorageSession, hostNamesWithHSTSCache);
-            hostnamesWithHSTSToDelete = filterForRegistrableDomains(domainsToDeleteAllNonCookieWebsiteDataFor, hostNamesWithHSTSCache);
+        hostNamesWithHSTSCache = this->hostNamesWithHSTSCache(sessionID);
+        hostnamesWithHSTSToDelete = filterForRegistrableDomains(domainsToDeleteAllNonCookieWebsiteDataFor, hostNamesWithHSTSCache);
 
-            for (const auto& host : hostnamesWithHSTSToDelete)
-                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(host));
+        for (const auto& host : hostnamesWithHSTSToDelete)
+            callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(host));
 
-            deleteHSTSCacheForHostNames(*networkStorageSession, hostnamesWithHSTSToDelete);
-        }
+        deleteHSTSCacheForHostNames(sessionID, hostnamesWithHSTSToDelete);
     }
 #endif
 
@@ -2082,18 +2074,16 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
         });
     }));
     
-    auto& websiteDataStore = callbackAggregator->m_websiteData;
+    auto& websiteData = callbackAggregator->m_websiteData;
     
     if (websiteDataTypes.contains(WebsiteDataType::Cookies)) {
         if (auto* networkStorageSession = storageSession(sessionID))
-            networkStorageSession->getHostnamesWithCookies(websiteDataStore.hostNamesWithCookies);
+            networkStorageSession->getHostnamesWithCookies(websiteData.hostNamesWithCookies);
     }
     
 #if PLATFORM(COCOA) || USE(SOUP)
-    if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
-        if (auto* networkStorageSession = storageSession(sessionID))
-            getHostNamesWithHSTSCache(*networkStorageSession, websiteDataStore.hostNamesWithHSTSCache);
-    }
+    if (websiteDataTypes.contains(WebsiteDataType::HSTSCache))
+        websiteData.hostNamesWithHSTSCache = hostNamesWithHSTSCache(sessionID);
 #endif
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
