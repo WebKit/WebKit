@@ -1,3 +1,12 @@
+2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
+
+        Regression (r266028): platform/ios/ios/fast/coordinates/range-client-rects.html
+        https://bugs.webkit.org/show_bug.cgi?id=215772
+
+        Unreviewwed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2020-08-24  Youenn Fablet  <youenn@apple.com>
 
         Add a test showing the difference of behavior when closing a WebSocket connection between legacy WebSocket and NSURLSession WebSocket code paths
