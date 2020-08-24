@@ -1490,7 +1490,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 email_text += u'\n\nError lines:\n\n<code>{}</code>'.format(logs)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
-            send_email_to_patch_author(patch_author, email_subject, email_text)
+            send_email_to_patch_author(patch_author, email_subject, email_text, patch_id)
         except Exception as e:
             print('Error in sending email for new build failure: {}'.format(e))
 
@@ -2027,7 +2027,7 @@ class ReRunWebKitTests(RunWebKitTests):
             email_subject = u'Flaky test: {}'.format(test_name)
             email_text = 'Test {} flaked in {}\n\nBuilder: {}'.format(test_name, build_url, builder_name)
             email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
-            send_email_to_bot_watchers(email_subject, email_text)
+            send_email_to_bot_watchers(email_subject, email_text, 'flaky-{}'.format(test_name))
         except Exception as e:
             # Catching all exceptions here to ensure that failure to send email doesn't impact the build
             print('Error in sending email for flaky failures: {}'.format(e))
@@ -2125,7 +2125,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
 
             email_subject = u'Flaky test: {}'.format(test_name)
             email_text = 'Flaky test: {}\n\nBuild: {}\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
-            send_email_to_bot_watchers(email_subject, email_text)
+            send_email_to_bot_watchers(email_subject, email_text, 'flaky-{}'.format(test_name))
         except Exception as e:
             print('Error in sending email for flaky failure: {}'.format(e))
 
@@ -2138,7 +2138,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
 
             email_subject = u'Pre-existing test failure: {}'.format(test_name)
             email_text = 'Test {} failed on clean tree run in {}.\n\nBuilder: {}\n\nWorker: {}\n\nHistory: {}'.format(test_name, build_url, builder_name, worker_name, history_url)
-            send_email_to_bot_watchers(email_subject, email_text)
+            send_email_to_bot_watchers(email_subject, email_text, 'preexisting-{}'.format(test_name))
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
 
@@ -2164,7 +2164,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
             email_text += '\n\nLayout test failure{}:\n{}'.format(pluralSuffix, test_names_string)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
-            send_email_to_patch_author(patch_author, email_subject, email_text)
+            send_email_to_patch_author(patch_author, email_subject, email_text, patch_id)
         except Exception as e:
             print('Error in sending email for new layout test failures: {}'.format(e))
 

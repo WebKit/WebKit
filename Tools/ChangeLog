@@ -1,3 +1,21 @@
+2020-08-24  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] set references header in email so as to group similar emails together
+        https://bugs.webkit.org/show_bug.cgi?id=215777
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/send_email.py:
+        (send_email): Add support for setting references header.
+        (send_email_to_patch_author):
+        (send_email_to_bot_watchers):
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure): Set references header appropriately.
+        (ReRunWebKitTests.send_email_for_flaky_failure): Ditto.
+        (AnalyzeLayoutTestsResults.send_email_for_flaky_failure): Ditto.
+        (AnalyzeLayoutTestsResults.send_email_for_pre_existing_failure): Ditto.
+        (AnalyzeLayoutTestsResults.send_email_for_new_test_failures): Ditto.
+
 2020-08-24  Jonathan Bedard  <jbedard@apple.com>
 
         [resultsdbpy] Fix pip package
