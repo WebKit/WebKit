@@ -37,6 +37,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DateTimeChooser.h"
+#include "DateTimeChooserParameters.h"
 #include "Document.h"
 #include "Editor.h"
 #include "EventNames.h"

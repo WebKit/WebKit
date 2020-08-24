@@ -28,43 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DateTimeChooser_h
-#define DateTimeChooser_h
+#pragma once
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-#include "IntRect.h"
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-struct DateTimeChooserParameters {
-    AtomString type;
-    IntRect anchorRectInRootView;
-    // Locale name for which the chooser should be localized. This
-    // might be an invalid name because it comes from HTML lang
-    // attributes.
-    AtomString locale;
-    String currentValue;
-    Vector<String> suggestionValues;
-    Vector<String> localizedSuggestionValues;
-    Vector<String> suggestionLabels;
-    double minimum;
-    double maximum;
-    double step;
-    double stepBase;
-    bool required;
-    bool isAnchorElementRTL;
-};
+struct DateTimeChooserParameters;
 
-// For pickers like color pickers and date pickers.
-class DateTimeChooser : public RefCounted<DateTimeChooser> {
+class DateTimeChooser : public CanMakeWeakPtr<DateTimeChooser> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~DateTimeChooser() = default;
 
     virtual void endChooser() = 0;
+    virtual void showChooser(const DateTimeChooserParameters&) = 0;
 };
 
 } // namespace WebCore
 #endif
-#endif // DateTimeChooser_h

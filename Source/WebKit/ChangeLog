@@ -1,3 +1,77 @@
+2020-08-24  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Show picker for date and datetime-local input types
+        https://bugs.webkit.org/show_bug.cgi?id=214946
+
+        Reviewed by Darin Adler and Wenson Hsieh.
+
+        Created WKDateTimePicker as a wrapper around NSDatePicker. The picker is
+        displayed in its own NSWindow, ensuring the view is always above the page.
+        WebPageProxy and WKDateTimePicker communicate through WebDateTimePickerMac,
+        in order for the picker to be initialized with the correct initial, minimum,
+        and maximum date, and so that the chosen date can be sent back to the
+        WebProcess.
+
+        Added IPC messages to enable communication between the UIProcess and the
+        WebProcess necessary for showing and hiding the picker.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebDateTimePicker.cpp: Added.
+        (WebKit::WebDateTimePicker::WebDateTimePicker):
+        (WebKit::WebDateTimePicker::~WebDateTimePicker):
+        (WebKit::WebDateTimePicker::endPicker):
+        * UIProcess/WebDateTimePicker.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showDateTimePicker):
+        (WebKit::WebPageProxy::endDateTimePicker):
+        (WebKit::WebPageProxy::didChooseDate):
+        (WebKit::WebPageProxy::didEndDateTimePicker):
+        (WebKit::WebPageProxy::closeOverlayedViews):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createDateTimePicker):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::createDateTimePicker):
+        * UIProcess/mac/WebDateTimePickerMac.h: Added.
+        * UIProcess/mac/WebDateTimePickerMac.mm: Added.
+        (WebKit::WebDateTimePickerMac::create):
+        (WebKit::WebDateTimePickerMac::~WebDateTimePickerMac):
+        (WebKit::WebDateTimePickerMac::WebDateTimePickerMac):
+        (WebKit::WebDateTimePickerMac::endPicker):
+        (WebKit::WebDateTimePickerMac::showDateTimePicker):
+        (WebKit::WebDateTimePickerMac::didChooseDate):
+        (-[WKDateTimePickerWindow initWithContentRect:styleMask:backing:defer:]):
+        (-[WKDateTimePickerWindow canBecomeKeyWindow]):
+        (-[WKDateTimePickerWindow hasKeyAppearance]):
+        (-[WKDateTimePickerWindow shadowOptions]):
+        (-[WKDateTimePicker initWithParams:inView:]):
+        (-[WKDateTimePicker showPicker:]):
+        (-[WKDateTimePicker invalidate]):
+        (-[WKDateTimePicker didChooseDate:]):
+        (-[WKDateTimePicker dateFormatStringForType:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createDateTimeChooser):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebDateTimeChooser.cpp: Added.
+        (WebKit::WebDateTimeChooser::WebDateTimeChooser):
+        (WebKit::WebDateTimeChooser::didChooseDate):
+        (WebKit::WebDateTimeChooser::didEndChooser):
+        (WebKit::WebDateTimeChooser::endChooser):
+        (WebKit::WebDateTimeChooser::showChooser):
+        * WebProcess/WebCoreSupport/WebDateTimeChooser.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActiveDateTimeChooser):
+        (WebKit::WebPage::didChooseDate):
+        (WebKit::WebPage::didEndDateTimePicker):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2020-08-24  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late August 2020 edition

@@ -1,0 +1,5 @@
+
+1. Is showing date picker? true
+2. Is showing date picker? false
+
+This test verifies that a date picker is presented when clicking on a datetime-local input.

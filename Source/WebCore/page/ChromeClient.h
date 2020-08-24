@@ -289,6 +289,10 @@ public:
     virtual bool canShowDataListSuggestionLabels() const = 0;
 #endif
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    virtual std::unique_ptr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) = 0;
+#endif
+
     virtual void runOpenPanel(Frame&, FileChooser&) = 0;
     virtual void showShareSheet(ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&& callback) { callback(false); }
     

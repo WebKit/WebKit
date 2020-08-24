@@ -49,18 +49,20 @@ private:
     void detach() override;
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior) override;
     void handleDOMActivateEvent(Event&) override;
+    void elementDidBlur() final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) override;
     void handleKeypressEvent(KeyboardEvent&) override;
     void handleKeyupEvent(KeyboardEvent&) override;
     bool accessKeyAction(bool sendMouseEvents) override;
     bool isMouseFocusable() const override;
+    bool isPresentingAttachedView() const final;
     void attributeChanged(const QualifiedName&) override;
 
     // DateTimeChooserClient functions:
-    void didChooseValue(const String&) final;
+    void didChooseValue(StringView) final;
     void didEndChooser() final;
 
-    RefPtr<DateTimeChooser> m_dateTimeChooser;
+    std::unique_ptr<DateTimeChooser> m_dateTimeChooser;
 };
 
 } // namespace WebCore

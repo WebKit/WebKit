@@ -1,3 +1,54 @@
+2020-08-24  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Show picker for date and datetime-local input types
+        https://bugs.webkit.org/show_bug.cgi?id=214946
+
+        Reviewed by Darin Adler and Wenson Hsieh.
+
+        Date and datetime-local input types require a calendar picker to be presented when activated.
+        Consequently, BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent was modified to
+        create a DateTimeChooser and display a calendar upon activation. This object is destroyed
+        when the element is blurred, hiding the calendar.
+
+        There is currently no picker UI for month, week, and time input types. As a result, 
+        handleDOMActivateEvent is a no-op on those input types.
+
+        Wrote an encoder and decoder for DateTimeChooserParameters, so that the picker can be
+        created with the correct values.
+
+        Tests: fast/forms/date/date-show-hide-picker.html
+               fast/forms/datetimelocal/datetimelocal-show-hide-picker.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::elementDidBlur):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::isPresentingAttachedView const):
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::didChooseValue):
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        * html/HTMLInputElement.cpp:
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::handleDOMActivateEvent):
+        * html/MonthInputType.h:
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::handleDOMActivateEvent):
+        * html/TimeInputType.h:
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::handleDOMActivateEvent):
+        * html/WeekInputType.h:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::createDateTimeChooser):
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createDateTimeChooser):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/DateTimeChooser.h:
+        * platform/DateTimeChooserClient.h:
+        * platform/DateTimeChooserParameters.h: Added.
+        (WebCore::DateTimeChooserParameters::encode const):
+        (WebCore::DateTimeChooserParameters::decode):
+
 2020-08-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Rename LineBox::baseline to alignment baseline

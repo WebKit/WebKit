@@ -61,6 +61,10 @@
 #include "DataListSuggestionPicker.h"
 #endif
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+#include "DateTimeChooser.h"
+#endif
+
 #if PLATFORM(MAC) && ENABLE(GRAPHICS_CONTEXT_GL)
 #include "GraphicsContextGLOpenGLManager.h"
 #endif
@@ -438,6 +442,21 @@ std::unique_ptr<DataListSuggestionPicker> Chrome::createDataListSuggestionPicker
 {
     notifyPopupOpeningObservers();
     return m_client.createDataListSuggestionPicker(client);
+}
+
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+
+std::unique_ptr<DateTimeChooser> Chrome::createDateTimeChooser(DateTimeChooserClient& client)
+{
+#if PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(client);
+    return nullptr;
+#else
+    notifyPopupOpeningObservers();
+    return m_client.createDateTimeChooser(client);
+#endif
 }
 
 #endif

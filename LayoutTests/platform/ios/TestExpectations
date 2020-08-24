@@ -3472,6 +3472,10 @@ webkit.org/b/214498 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Pas
 
 fast/text/selection-is-prevent-defaulted.html [ Failure ]
 
+# FIXME: These tests require UIScriptControllerIOS additions to know when a date/time picker is presented
+fast/forms/date/date-show-hide-picker.html [ Skip ]
+fast/forms/datetimelocal/datetimelocal-show-hide-picker.html [ Skip ]
+
 # <rdar://problem/59636115> REGRESSION: [ iOS & macOS ] two imported/w3c/web-platform-tests/WebCryptoAPI are failing
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.https.worker.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https.html [ Failure ]

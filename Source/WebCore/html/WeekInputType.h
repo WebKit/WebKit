@@ -47,6 +47,7 @@ private:
     Optional<DateComponents> parseToDateComponents(const StringView&) const override;
     Optional<DateComponents> setMillisecondToDateComponents(double) const override;
     bool isWeekField() const override;
+    void handleDOMActivateEvent(Event&) override;
 };
 
 } // namespace WebCore

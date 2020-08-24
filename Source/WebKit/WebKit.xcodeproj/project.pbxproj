@@ -1835,6 +1835,9 @@
 		E4E864931B16750700C82F40 /* VersionChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = E4E8648E1B1673FB00C82F40 /* VersionChecks.h */; };
 		E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */; };
 		E548EBD121015F0E00BE3C32 /* WKFormColorPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E548EBCF21015F0E00BE3C32 /* WKFormColorPicker.h */; };
+		E55CD1F524CF747D0042DB9C /* WebDateTimeChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CD1F324CF747D0042DB9C /* WebDateTimeChooser.h */; };
+		E55CD20024D08D8F0042DB9C /* WebDateTimePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CD1FC24D0880B0042DB9C /* WebDateTimePicker.h */; };
+		E55CD20324D09F1F0042DB9C /* WebDateTimePickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E55CD20124D09F1F0042DB9C /* WebDateTimePickerMac.h */; };
 		E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */ = {isa = PBXBuildFile; fileRef = E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */; };
 		E568B92220A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */; };
 		E5BEF6822130C48000F31111 /* WebDataListSuggestionsDropdownIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BEF6802130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.h */; };
@@ -5365,6 +5368,12 @@
 		E548EBCF21015F0E00BE3C32 /* WKFormColorPicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFormColorPicker.h; path = ios/forms/WKFormColorPicker.h; sourceTree = "<group>"; };
 		E548EBD021015F0E00BE3C32 /* WKFormColorPicker.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFormColorPicker.mm; path = ios/forms/WKFormColorPicker.mm; sourceTree = "<group>"; };
 		E54A14CE20FCFB7B007E13D8 /* WebDataListSuggestionsDropdown.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDataListSuggestionsDropdown.cpp; sourceTree = "<group>"; };
+		E55CD1F324CF747D0042DB9C /* WebDateTimeChooser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDateTimeChooser.h; sourceTree = "<group>"; };
+		E55CD1F424CF747D0042DB9C /* WebDateTimeChooser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDateTimeChooser.cpp; sourceTree = "<group>"; };
+		E55CD1FC24D0880B0042DB9C /* WebDateTimePicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDateTimePicker.h; sourceTree = "<group>"; };
+		E55CD1FD24D0880B0042DB9C /* WebDateTimePicker.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebDateTimePicker.cpp; sourceTree = "<group>"; };
+		E55CD20124D09F1F0042DB9C /* WebDateTimePickerMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDateTimePickerMac.h; sourceTree = "<group>"; };
+		E55CD20224D09F1F0042DB9C /* WebDateTimePickerMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDateTimePickerMac.mm; sourceTree = "<group>"; };
 		E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionsDropdown.h; sourceTree = "<group>"; };
 		E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebDataListSuggestionsDropdownMac.h; sourceTree = "<group>"; };
 		E568B92120A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = WebDataListSuggestionsDropdownMac.mm; sourceTree = "<group>"; };
@@ -8836,6 +8845,8 @@
 				BC032D6210F4378D0058C15A /* WebContextMenuClient.h */,
 				E52CF55120A35C3A00DADA27 /* WebDataListSuggestionPicker.cpp */,
 				E52CF55020A35C3A00DADA27 /* WebDataListSuggestionPicker.h */,
+				E55CD1F424CF747D0042DB9C /* WebDateTimeChooser.cpp */,
+				E55CD1F324CF747D0042DB9C /* WebDateTimeChooser.h */,
 				CD19A2691A13E820008D650E /* WebDiagnosticLoggingClient.cpp */,
 				CD19A26A1A13E821008D650E /* WebDiagnosticLoggingClient.h */,
 				BC111A56112F4FBB00337BAB /* WebDragClient.cpp */,
@@ -9052,6 +9063,8 @@
 				33AA1065131F060000D4A575 /* WebCookieManagerProxyClient.h */,
 				E54A14CE20FCFB7B007E13D8 /* WebDataListSuggestionsDropdown.cpp */,
 				E568B91E20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h */,
+				E55CD1FD24D0880B0042DB9C /* WebDateTimePicker.cpp */,
+				E55CD1FC24D0880B0042DB9C /* WebDateTimePicker.h */,
 				BCA0EF9E12332642007D3CFB /* WebEditCommandProxy.cpp */,
 				BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */,
 				BCE4694F1214E6CB000B98EB /* WebFormClient.cpp */,
@@ -9846,6 +9859,8 @@
 				F6D632BA133D181B00743D77 /* WebCookieManagerProxyMac.mm */,
 				E568B92020A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h */,
 				E568B92120A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.mm */,
+				E55CD20124D09F1F0042DB9C /* WebDateTimePickerMac.h */,
+				E55CD20224D09F1F0042DB9C /* WebDateTimePickerMac.mm */,
 				BC857E8512B71EBB00EDEB2E /* WebPageProxyMac.mm */,
 				BC5750951268F3C6006F0F12 /* WebPopupMenuProxyMac.h */,
 				BC5750961268F3C6006F0F12 /* WebPopupMenuProxyMac.mm */,
@@ -11281,6 +11296,9 @@
 				E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */,
 				E5BEF6822130C48000F31111 /* WebDataListSuggestionsDropdownIOS.h in Headers */,
 				E568B92220A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h in Headers */,
+				E55CD1F524CF747D0042DB9C /* WebDateTimeChooser.h in Headers */,
+				E55CD20024D08D8F0042DB9C /* WebDateTimePicker.h in Headers */,
+				E55CD20324D09F1F0042DB9C /* WebDateTimePickerMac.h in Headers */,
 				46B0524722668D8500265B97 /* WebDeviceOrientationAndMotionAccessController.h in Headers */,
 				E39628DD23960CC600658ECD /* WebDeviceOrientationUpdateProvider.h in Headers */,
 				E3866B0A2399A2D900F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h in Headers */,

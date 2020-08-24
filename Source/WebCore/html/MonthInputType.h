@@ -51,6 +51,7 @@ private:
     Optional<DateComponents> parseToDateComponents(const StringView&) const override;
     Optional<DateComponents> setMillisecondToDateComponents(double) const override;
     bool isMonthField() const override;
+    void handleDOMActivateEvent(Event&) override;
 };
 
 } // namespace WebCore

@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DateTimeChooserClient_h
-#define DateTimeChooserClient_h
+#pragma once
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+
 namespace WebCore {
 
 class DateTimeChooserClient {
@@ -39,11 +39,11 @@ public:
     virtual ~DateTimeChooserClient() = default;
 
     // Called when user picked a value.
-    virtual void didChooseValue(const String&) = 0;
+    virtual void didChooseValue(StringView) = 0;
     // Called when chooser has ended.
     virtual void didEndChooser() = 0;
 };
 
 } // namespace WebCore
-#endif
-#endif // DateTimeChooserClient_h
+
+#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

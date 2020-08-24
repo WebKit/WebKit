@@ -82,6 +82,10 @@ bool WeekInputType::isWeekField() const
     return true;
 }
 
+void WeekInputType::handleDOMActivateEvent(Event&)
+{
+}
+
 } // namespace WebCore
 
 #endif

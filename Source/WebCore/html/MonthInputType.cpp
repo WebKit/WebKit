@@ -129,6 +129,10 @@ bool MonthInputType::isMonthField() const
     return true;
 }
 
+void MonthInputType::handleDOMActivateEvent(Event&)
+{
+}
+
 } // namespace WebCore
 
 #endif

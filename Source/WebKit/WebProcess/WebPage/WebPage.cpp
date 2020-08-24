@@ -80,6 +80,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebDataListSuggestionPicker.h"
 #include "WebDatabaseProvider.h"
+#include "WebDateTimeChooser.h"
 #include "WebDiagnosticLoggingClient.h"
 #include "WebDocumentLoader.h"
 #include "WebDragClient.h"
@@ -4204,6 +4205,27 @@ void WebPage::didCloseSuggestions()
 {
     if (auto picker = std::exchange(m_activeDataListSuggestionPicker, nullptr))
         picker->didCloseSuggestions();
+}
+
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+
+void WebPage::setActiveDateTimeChooser(WebDateTimeChooser& dateTimeChooser)
+{
+    m_activeDateTimeChooser = makeWeakPtr(&dateTimeChooser);
+}
+
+void WebPage::didChooseDate(const String& date)
+{
+    if (m_activeDateTimeChooser)
+        m_activeDateTimeChooser->didChooseDate(date);
+}
+
+void WebPage::didEndDateTimePicker()
+{
+    if (auto chooser = std::exchange(m_activeDateTimeChooser, nullptr))
+        chooser->didEndChooser();
 }
 
 #endif

@@ -30,6 +30,7 @@
 #include "ShareableBitmap.h"
 #include "WebColorPicker.h"
 #include "WebDataListSuggestionsDropdown.h"
+#include "WebDateTimePicker.h"
 #include "WebPopupMenuProxy.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/AlternativeTextClient.h>
@@ -156,6 +157,10 @@ class WebColorPicker;
 
 #if ENABLE(DATALIST_ELEMENT)
 class WebDataListSuggestionsDropdown;
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+class WebDateTimePicker;
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -336,6 +341,10 @@ public:
 
 #if ENABLE(DATALIST_ELEMENT)
     virtual RefPtr<WebDataListSuggestionsDropdown> createDataListSuggestionsDropdown(WebPageProxy&) = 0;
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    virtual RefPtr<WebDateTimePicker> createDateTimePicker(WebPageProxy&) = 0;
 #endif
 
 #if PLATFORM(COCOA)

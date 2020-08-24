@@ -29,6 +29,8 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
+#include "Chrome.h"
+#include "DateTimeChooserParameters.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "Page.h"
@@ -57,6 +59,22 @@ void BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent(Event&)
     DateTimeChooserParameters parameters;
     if (!element()->setupDateTimeChooserParameters(parameters))
         return;
+
+    if (auto chrome = this->chrome()) {
+        m_dateTimeChooser = chrome->createDateTimeChooser(*this);
+        if (m_dateTimeChooser)
+            m_dateTimeChooser->showChooser(parameters);
+    }
+}
+
+void BaseChooserOnlyDateAndTimeInputType::elementDidBlur()
+{
+    closeDateTimeChooser();
+}
+
+bool BaseChooserOnlyDateAndTimeInputType::isPresentingAttachedView() const
+{
+    return !!m_dateTimeChooser;
 }
 
 void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()
@@ -96,10 +114,10 @@ void BaseChooserOnlyDateAndTimeInputType::detach()
     closeDateTimeChooser();
 }
 
-void BaseChooserOnlyDateAndTimeInputType::didChooseValue(const String& value)
+void BaseChooserOnlyDateAndTimeInputType::didChooseValue(StringView value)
 {
     ASSERT(element());
-    element()->setValue(value, DispatchInputAndChangeEvent);
+    element()->setValue(value.toString(), DispatchInputAndChangeEvent);
 }
 
 void BaseChooserOnlyDateAndTimeInputType::didEndChooser()

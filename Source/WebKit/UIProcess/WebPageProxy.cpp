@@ -294,6 +294,10 @@
 #include "DefaultWebBrowserChecks.h"
 #endif
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+#include "WebDateTimePicker.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -6175,6 +6179,43 @@ void WebPageProxy::didSelectOption(const String& selectedOption)
 
 #endif
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+
+void WebPageProxy::showDateTimePicker(WebCore::DateTimeChooserParameters&& params)
+{
+    if (!m_dateTimePicker)
+        m_dateTimePicker = pageClient().createDateTimePicker(*this);
+
+    m_dateTimePicker->showDateTimePicker(WTFMove(params));
+}
+
+void WebPageProxy::endDateTimePicker()
+{
+    if (!m_dateTimePicker)
+        return;
+
+    m_dateTimePicker->endPicker();
+}
+
+void WebPageProxy::didChooseDate(StringView date)
+{
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::DidChooseDate(date.toString()));
+}
+
+void WebPageProxy::didEndDateTimePicker()
+{
+    m_dateTimePicker = nullptr;
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::DidEndDateTimePicker());
+}
+
+#endif
+
 WebInspectorProxy* WebPageProxy::inspector() const
 {
     if (isClosed())
@@ -9360,6 +9401,10 @@ void WebPageProxy::closeOverlayedViews()
 
 #if ENABLE(INPUT_TYPE_COLOR)
     endColorPicker();
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    endDateTimePicker();
 #endif
 }
 

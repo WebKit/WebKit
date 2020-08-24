@@ -1000,8 +1000,8 @@
 		37C738EB1EDBD384003F2B0B /* PerformanceMeasure.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738EA1EDBD381003F2B0B /* PerformanceMeasure.h */; };
 		37C738ED1EDBD5BC003F2B0B /* SVGUnknownElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738EC1EDBD5B7003F2B0B /* SVGUnknownElement.h */; };
 		37C738EF1EDBD71B003F2B0B /* MathMLUnknownElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738EE1EDBD718003F2B0B /* MathMLUnknownElement.h */; };
-		37C738F31EDBDE8A003F2B0B /* DateTimeChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738F11EDBDE87003F2B0B /* DateTimeChooser.h */; };
-		37C738F41EDBDE8D003F2B0B /* DateTimeChooserClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738F21EDBDE87003F2B0B /* DateTimeChooserClient.h */; };
+		37C738F31EDBDE8A003F2B0B /* DateTimeChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738F11EDBDE87003F2B0B /* DateTimeChooser.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		37C738F41EDBDE8D003F2B0B /* DateTimeChooserClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738F21EDBDE87003F2B0B /* DateTimeChooserClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37D456FD1A9A50D8003330A1 /* LocalizableStrings.pm in Copy Scripts */ = {isa = PBXBuildFile; fileRef = 37D456FB1A9A50B6003330A1 /* LocalizableStrings.pm */; };
 		37E3524D12450C6600BAF5D9 /* InputType.h in Headers */ = {isa = PBXBuildFile; fileRef = 37E3524C12450C6600BAF5D9 /* InputType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37F567CE165358F400DDE92B /* PopupOpeningObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3772B09516535856000A49CA /* PopupOpeningObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5080,6 +5080,7 @@
 		E58B45BA20AD07DD00991025 /* DataListButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E58B45B820AD07DD00991025 /* DataListButtonElement.h */; };
 		E59DD4B821098287003C8B47 /* ListButtonArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E59DD4B721098285003C8B47 /* ListButtonArrow.png */; };
 		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E5C59A9A24D0E1AA003B86E1 /* DateTimeChooserParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E5C59A9924D0E1AA003B86E1 /* DateTimeChooserParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E71467B324ABAEF200FB2F50 /* AudioNodeOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B124ABAEF100FB2F50 /* AudioNodeOptions.h */; };
 		E71467B624ABAF1D00FB2F50 /* PannerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E71467B524ABAF1D00FB2F50 /* PannerOptions.h */; };
 		E755E89224C7434B009F7C23 /* PeriodicWaveConstraints.h in Headers */ = {isa = PBXBuildFile; fileRef = E755E88F24C7434B009F7C23 /* PeriodicWaveConstraints.h */; };
@@ -15924,6 +15925,7 @@
 		E58B45B820AD07DD00991025 /* DataListButtonElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataListButtonElement.h; sourceTree = "<group>"; };
 		E59DD4B721098285003C8B47 /* ListButtonArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ListButtonArrow.png; sourceTree = "<group>"; };
 		E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthFunctions.h; sourceTree = "<group>"; };
+		E5C59A9924D0E1AA003B86E1 /* DateTimeChooserParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTimeChooserParameters.h; sourceTree = "<group>"; };
 		E71467B124ABAEF100FB2F50 /* AudioNodeOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioNodeOptions.h; sourceTree = "<group>"; };
 		E71467B424ABAF0B00FB2F50 /* AudioNodeOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioNodeOptions.idl; sourceTree = "<group>"; };
 		E71467B524ABAF1D00FB2F50 /* PannerOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PannerOptions.h; sourceTree = "<group>"; };
@@ -26690,6 +26692,7 @@
 				A5732B09136A161D005C8D7C /* DateComponents.h */,
 				37C738F11EDBDE87003F2B0B /* DateTimeChooser.h */,
 				37C738F21EDBDE87003F2B0B /* DateTimeChooserClient.h */,
+				E5C59A9924D0E1AA003B86E1 /* DateTimeChooserParameters.h */,
 				45FEA5CD156DDE8C00654101 /* Decimal.cpp */,
 				45FEA5CE156DDE8C00654101 /* Decimal.h */,
 				CD83D35A211110820076E11C /* DeferrableTask.h */,
@@ -30749,6 +30752,7 @@
 				F55B3DB61251F12D003EF269 /* DateInputType.h in Headers */,
 				37C738F31EDBDE8A003F2B0B /* DateTimeChooser.h in Headers */,
 				37C738F41EDBDE8D003F2B0B /* DateTimeChooserClient.h in Headers */,
+				E5C59A9A24D0E1AA003B86E1 /* DateTimeChooserParameters.h in Headers */,
 				453EB637159C570400001BB7 /* DateTimeFormat.h in Headers */,
 				F55B3DBA1251F12D003EF269 /* DateTimeLocalInputType.h in Headers */,
 				0F6A12BE1A00923700C6DE72 /* DebugPageOverlays.h in Headers */,

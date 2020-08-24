@@ -250,6 +250,7 @@ struct BackForwardItemIdentifier;
 struct CompositionHighlight;
 struct ContentRuleListResults;
 struct DataListSuggestionInformation;
+struct DateTimeChooserParameters;
 struct DictionaryPopupInfo;
 struct DragItem;
 struct ElementContext;
@@ -416,6 +417,10 @@ typedef GenericCallback<const FocusedElementInformation&> FocusedElementInformat
 #if PLATFORM(COCOA)
 using DrawToPDFCallback = GenericCallback<const IPC::DataReference&>;
 typedef GenericCallback<bool, bool, String, double, double, uint64_t> NowPlayingInfoCallback;
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+class WebDateTimePicker;
 #endif
 
 using SpellDocumentTag = int64_t;
@@ -1647,6 +1652,11 @@ public:
     void didCloseSuggestions();
 #endif
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    void didChooseDate(StringView);
+    void didEndDateTimePicker();
+#endif
+
     void updateCurrentModifierState();
 
 #if HAVE(PENCILKIT)
@@ -1999,6 +2009,11 @@ private:
     void showDataListSuggestions(WebCore::DataListSuggestionInformation&&);
     void handleKeydownInDataList(const String&);
     void endDataListSuggestions();
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    void showDateTimePicker(WebCore::DateTimeChooserParameters&&);
+    void endDateTimePicker();
 #endif
 
     void closeOverlayedViews();
@@ -2600,6 +2615,9 @@ private:
 #endif
 #if ENABLE(DATALIST_ELEMENT)
     RefPtr<WebDataListSuggestionsDropdown> m_dataListSuggestionsDropdown;
+#endif
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    RefPtr<WebDateTimePicker> m_dateTimePicker;
 #endif
 #if PLATFORM(COCOA)
     RefPtr<WebCore::ValidationBubble> m_validationBubble;

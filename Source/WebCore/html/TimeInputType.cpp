@@ -104,6 +104,10 @@ bool TimeInputType::isTimeField() const
     return true;
 }
 
+void TimeInputType::handleDOMActivateEvent(Event&)
+{
+}
+
 } // namespace WebCore
 
 #endif

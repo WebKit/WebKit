@@ -97,6 +97,15 @@ void UIScriptControllerMac::simulateAccessibilitySettingsChangeNotification(JSVa
     }).get()];
 }
 
+bool UIScriptControllerMac::isShowingDateTimePicker() const
+{
+    for (NSWindow *childWindow in webView().window.childWindows) {
+        if ([childWindow isKindOfClass:NSClassFromString(@"WKDateTimePickerWindow")])
+            return true;
+    }
+    return false;
+}
+
 bool UIScriptControllerMac::isShowingDataListSuggestions() const
 {
     return dataListSuggestionsTableView();

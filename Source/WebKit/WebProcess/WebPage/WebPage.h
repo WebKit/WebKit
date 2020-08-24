@@ -249,6 +249,7 @@ class WebColorChooser;
 class WebContextMenu;
 class WebContextMenuItemData;
 class WebDataListSuggestionPicker;
+class WebDateTimeChooser;
 class WebDocumentLoader;
 class WebEvent;
 class PlaybackSessionManager;
@@ -436,6 +437,12 @@ public:
     void setActiveDataListSuggestionPicker(WebDataListSuggestionPicker&);
     void didSelectDataListOption(const String&);
     void didCloseSuggestions();
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    void setActiveDateTimeChooser(WebDateTimeChooser&);
+    void didChooseDate(const String&);
+    void didEndDateTimePicker();
 #endif
 
     WebOpenPanelResultListener* activeOpenPanelResultListener() const { return m_activeOpenPanelResultListener.get(); }
@@ -1908,6 +1915,10 @@ private:
 
 #if ENABLE(DATALIST_ELEMENT)
     WeakPtr<WebDataListSuggestionPicker> m_activeDataListSuggestionPicker;
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    WeakPtr<WebDateTimeChooser> m_activeDateTimeChooser;
 #endif
 
     RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;

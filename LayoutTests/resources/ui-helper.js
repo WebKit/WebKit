@@ -847,6 +847,15 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static isShowingDateTimePicker()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(uiController.isShowingDateTimePicker);
+            })()`, result => resolve(result === "true"));
+        });
+    }
+
     static zoomScale()
     {
         return new Promise(resolve => {
