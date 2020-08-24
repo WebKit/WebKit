@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-void JSHTMLCanvasElement::visitAdditionalChildren(SlotVisitor& visitor)
+void JSHTMLCanvasElement::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(static_cast<CanvasBase*>(&wrapped()));
 }

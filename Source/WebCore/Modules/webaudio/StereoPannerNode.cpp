@@ -30,6 +30,9 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioBus.h"
+#include "AudioNodeInput.h"
+#include "AudioNodeOutput.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 

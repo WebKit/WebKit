@@ -28,6 +28,7 @@
 
 #include "CharacterData.h"
 #include "NodeTraversal.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 

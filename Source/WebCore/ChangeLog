@@ -1,3 +1,20 @@
+2020-08-24  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late August 2020 edition
+        https://bugs.webkit.org/show_bug.cgi?id=215768
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * Modules/webaudio/StereoPannerNode.cpp: Add missing headers AudioNodeInput.h,
+        AudioNodeOutput.h, and wtf/IsoMallocInlines.h.
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::visitAdditionalChildren):
+        Add JSC:: namespace to SlotVisitor parameter type.
+        * dom/SimpleRange.cpp: Add missing ShadowRoot.h header.
+        * history/CachedPage.cpp: Add missing FrameLoaderClient.h header.
+
 2020-08-24  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Use the term 'baseline' to indicate alignment baseline
