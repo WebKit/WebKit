@@ -178,13 +178,6 @@ WI.loaded = function()
             WI._selectedTabIndexSetting.value = sourcesIndex;
     }
 
-    // FIXME: <https://webkit.org/b/205827> Web Inspector: remove legacy code for replacing the Canvas Tab with the Graphics Tab
-    let canvasIndex = WI._openTabsSetting.value.indexOf("canvas");
-    if (canvasIndex >= 0) {
-        WI._openTabsSetting.value.splice(canvasIndex, 1, WI.GraphicsTabContentView.Type);
-        WI._openTabsSetting.save();
-    }
-
     // State.
     WI.printStylesEnabled = false;
     WI.setZoomFactor(WI.settings.zoomFactor.value);
