@@ -1,3 +1,19 @@
+2020-08-24  Justin Uberti  <justin@uberti.name>
+
+        RTCRtpSynchronizationSource.rtpTimestamp is not present
+        https://bugs.webkit.org/show_bug.cgi?id=215722
+
+        Reviewed by Youenn Fablet.
+
+        Updated expected results in LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https-expected.txt.
+
+        * Modules/mediastream/RTCRtpContributingSource.idl:
+        * Modules/mediastream/RTCRtpContributingSource.idl:
+        * Modules/mediastream/RTCRtpSynchronizationSource.idl:
+        Minor modification to ensure JSRTCRtpSynchronizationSource.cpp gets regenerated.
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp:
+        (WebCore::fillRTCRtpContributingSource):
+
 2020-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Programmatic selection of text in a text field causes the highlight overlay to spill out

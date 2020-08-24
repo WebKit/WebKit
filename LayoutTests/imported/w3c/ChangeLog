@@ -1,3 +1,14 @@
+2020-08-24  Justin Uberti  <justin@uberti.name>
+
+        RTCRtpSynchronizationSource.rtpTimestamp is not present
+        https://bugs.webkit.org/show_bug.cgi?id=215722
+
+        Reviewed by Youenn Fablet.
+
+        Updated expectations file to indicate that tests checking for .rtpTimestamp now pass.
+
+        * LayoutTests/imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https-expected.txt:
+
 2020-08-22  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Import css-content tests.
