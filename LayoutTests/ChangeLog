@@ -1,3 +1,20 @@
+2020-08-24  Youenn Fablet  <youenn@apple.com>
+
+        Add a test showing the difference of behavior when closing a WebSocket connection between legacy WebSocket and NSURLSession WebSocket code paths
+        https://bugs.webkit.org/show_bug.cgi?id=215766
+
+        Reviewed by Alex Christensen.
+
+        Add a test showing the difference of behavior at connection close time in python websocket script.
+        This behavior was previously covered in http/tests/websocket/tests/hybi/close-on-* tests.
+        The test is written so that Chrome, Firefox and NSURLSession WebSocket code path generate all PASS.
+        Legacy WebSocket code path generates one FAIL.
+
+        * http/tests/websocket/tests/hybi/close-and-exceptions_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/close-and-server-script-exception-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/close-and-server-script-exception.html: Added.
+        * http/tests/websocket/tests/hybi/resources/close-and-server-script-exception-iframe.html: Added.
+
 2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS wk2 ] http/tests/websocket/tests/hybi/client-close-2.html is a flaky failure
