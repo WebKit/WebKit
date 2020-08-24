@@ -1,1 +1,3 @@
 include README.md
+recursive-include resultsdbpy/view/static *
+recursive-include resultsdbpy/view/templates *

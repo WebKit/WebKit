@@ -50,7 +50,14 @@ setup(
     author='Jonathan Bedard',
     author_email='jbedard@apple.com',
     license='Modified BSD',
-    packages=['resultsdbpy'],
+    packages=[
+        'resultsdbpy',
+        'resultsdbpy.controller',
+        'resultsdbpy.example',
+        'resultsdbpy.flask_support',
+        'resultsdbpy.model',
+        'resultsdbpy.view',
+    ],
     install_requires=[
         'cassandra-driver',
         'fakeredis',
