@@ -1,5 +1,34 @@
 2020-08-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: rename `ScriptDebugServer` subclasses/methods
+        https://bugs.webkit.org/show_bug.cgi?id=215363
+        <rdar://problem/67310441>
+
+        Reviewed by Brian Burg.
+
+        r266074 merged `Inspector::ScriptDebugServer` into `JSC::Debugger`. All subclasses and
+        functions should be renamed to match this change.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * inspector/InspectorEnvironment.h:
+        * inspector/JSGlobalObjectDebugger.h: Renamed from Source/JavaScriptCore/inspector/JSGlobalObjectScriptDebugServer.h.
+        * inspector/JSGlobalObjectDebugger.cpp: Renamed from Source/JavaScriptCore/inspector/JSGlobalObjectScriptDebugServer.cpp.
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        * inspector/agents/InspectorAuditAgent.h:
+        * inspector/agents/InspectorAuditAgent.cpp:
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.cpp:
+        * inspector/remote/RemoteInspectionTarget.cpp:
+        * inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm:
+
+2020-08-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: allow event breakpoints to be configured
         https://bugs.webkit.org/show_bug.cgi?id=215362
         <rdar://problem/66932921>

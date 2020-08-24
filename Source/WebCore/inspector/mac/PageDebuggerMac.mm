@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "PageScriptDebugServer.h"
+#import "PageDebugger.h"
 
 #if PLATFORM(MAC)
 
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-bool PageScriptDebugServer::platformShouldContinueRunningEventLoopWhilePaused()
+bool PageDebugger::platformShouldContinueRunningEventLoopWhilePaused()
 {
     // Be very careful before removing this code. It has been tried multiple times, always ending up
     // breaking inspection of WebKitLegacy (in MiniBrowser, in 3rd party apps, or sometimes both).

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WorkerScriptDebugServer.h"
+#include "WorkerDebugger.h"
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <wtf/Forward.h>
@@ -65,7 +65,7 @@ public:
     Inspector::InspectorEvaluateHandler evaluateHandler() const override;
     void frontendInitialized() override { }
     WTF::Stopwatch& executionStopwatch() const final { return m_executionStopwatch; }
-    WorkerScriptDebugServer& scriptDebugServer() override { return m_scriptDebugServer; }
+    WorkerDebugger& debugger() override { return m_debugger; }
     JSC::VM& vm() override;
 
 private:
@@ -79,7 +79,7 @@ private:
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Ref<WTF::Stopwatch> m_executionStopwatch;
-    WorkerScriptDebugServer m_scriptDebugServer;
+    WorkerDebugger m_debugger;
     Inspector::AgentRegistry m_agents;
     WorkerGlobalScope& m_workerGlobalScope;
     std::unique_ptr<Inspector::FrontendChannel> m_forwardingChannel;

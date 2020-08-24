@@ -63,7 +63,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_executionStopwatch(Stopwatch::create())
-    , m_scriptDebugServer(workerGlobalScope)
+    , m_debugger(workerGlobalScope)
     , m_workerGlobalScope(workerGlobalScope)
 {
     ASSERT(workerGlobalScope.isContextThread());

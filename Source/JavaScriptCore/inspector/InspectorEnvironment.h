@@ -52,7 +52,7 @@ public:
     virtual InspectorEvaluateHandler evaluateHandler() const = 0;
     virtual void frontendInitialized() = 0;
     virtual WTF::Stopwatch& executionStopwatch() const = 0;
-    virtual JSC::Debugger& scriptDebugServer() = 0;
+    virtual JSC::Debugger& debugger() = 0;
     virtual JSC::VM& vm() = 0;
 };
 

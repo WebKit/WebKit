@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "PageScriptDebugServer.h"
+#include "PageDebugger.h"
 
 #include "CommonVM.h"
 #include "Document.h"
@@ -53,20 +53,20 @@ namespace WebCore {
 using namespace JSC;
 using namespace Inspector;
 
-PageScriptDebugServer::PageScriptDebugServer(Page& page)
+PageDebugger::PageDebugger(Page& page)
     : Debugger(WebCore::commonVM())
     , m_page(page)
 {
 }
 
-void PageScriptDebugServer::attachDebugger()
+void PageDebugger::attachDebugger()
 {
     JSC::Debugger::attachDebugger();
 
     m_page.setDebugger(this);
 }
 
-void PageScriptDebugServer::detachDebugger(bool isBeingDestroyed)
+void PageDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
 
@@ -75,27 +75,27 @@ void PageScriptDebugServer::detachDebugger(bool isBeingDestroyed)
         recompileAllJSFunctions();
 }
 
-void PageScriptDebugServer::recompileAllJSFunctions()
+void PageDebugger::recompileAllJSFunctions()
 {
     JSLockHolder lock(vm());
     Debugger::recompileAllJSFunctions();
 }
 
-void PageScriptDebugServer::didPause(JSGlobalObject* globalObject)
+void PageDebugger::didPause(JSGlobalObject* globalObject)
 {
     JSC::Debugger::didPause(globalObject);
 
     setJavaScriptPaused(m_page.group(), true);
 }
 
-void PageScriptDebugServer::didContinue(JSGlobalObject* globalObject)
+void PageDebugger::didContinue(JSGlobalObject* globalObject)
 {
     JSC::Debugger::didContinue(globalObject);
 
     setJavaScriptPaused(m_page.group(), false);
 }
 
-void PageScriptDebugServer::runEventLoopWhilePaused()
+void PageDebugger::runEventLoopWhilePaused()
 {
     JSC::Debugger::runEventLoopWhilePaused();
 
@@ -119,7 +119,7 @@ void PageScriptDebugServer::runEventLoopWhilePaused()
     runEventLoopWhilePausedInternal();
 }
 
-void PageScriptDebugServer::runEventLoopWhilePausedInternal()
+void PageDebugger::runEventLoopWhilePausedInternal()
 {
     TimerBase::fireTimersInNestedEventLoop();
 
@@ -133,19 +133,19 @@ void PageScriptDebugServer::runEventLoopWhilePausedInternal()
     m_page.decrementNestedRunLoopCount();
 }
 
-bool PageScriptDebugServer::isContentScript(JSGlobalObject* state) const
+bool PageDebugger::isContentScript(JSGlobalObject* state) const
 {
     return &currentWorld(*state) != &mainThreadNormalWorld() || JSC::Debugger::isContentScript(state);
 }
 
-void PageScriptDebugServer::reportException(JSGlobalObject* state, JSC::Exception* exception) const
+void PageDebugger::reportException(JSGlobalObject* state, JSC::Exception* exception) const
 {
     JSC::Debugger::reportException(state, exception);
 
     WebCore::reportException(state, exception);
 }
 
-void PageScriptDebugServer::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)
+void PageDebugger::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)
 {
     for (auto& page : pageGroup.pages()) {
         for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
@@ -160,7 +160,7 @@ void PageScriptDebugServer::setJavaScriptPaused(const PageGroup& pageGroup, bool
     }
 }
 
-void PageScriptDebugServer::setJavaScriptPaused(Frame& frame, bool paused)
+void PageDebugger::setJavaScriptPaused(Frame& frame, bool paused)
 {
     if (!frame.script().canExecuteScripts(NotAboutToExecuteScript))
         return;
@@ -187,7 +187,7 @@ void PageScriptDebugServer::setJavaScriptPaused(Frame& frame, bool paused)
 }
 
 #if !PLATFORM(MAC)
-bool PageScriptDebugServer::platformShouldContinueRunningEventLoopWhilePaused()
+bool PageDebugger::platformShouldContinueRunningEventLoopWhilePaused()
 {
     return RunLoop::cycle() != RunLoop::CycleResult::Stop;
 }

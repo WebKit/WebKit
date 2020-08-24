@@ -94,7 +94,7 @@ private:
     void setControlFlowProfilerEnabledState(bool);
 
     InjectedScriptManager& m_injectedScriptManager;
-    JSC::Debugger& m_scriptDebugServer;
+    JSC::Debugger& m_debugger;
     JSC::VM& m_vm;
     bool m_enabled {false};
     bool m_isTypeProfilingEnabled {false};

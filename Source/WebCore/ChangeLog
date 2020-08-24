@@ -1,3 +1,30 @@
+2020-08-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: rename `ScriptDebugServer` subclasses/methods
+        https://bugs.webkit.org/show_bug.cgi?id=215363
+        <rdar://problem/67310441>
+
+        Reviewed by Brian Burg.
+
+        r266074 merged `Inspector::ScriptDebugServer` into `JSC::Debugger`. All subclasses and
+        functions should be renamed to match this change.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        * inspector/PageDebugger.h: Renamed from Source/WebCore/inspector/PageScriptDebugServer.h.
+        * inspector/PageDebugger.cpp: Renamed from Source/WebCore/inspector/PageScriptDebugServer.cpp.
+        * inspector/mac/PageDebuggerMac.mm: Renamed from Source/WebCore/inspector/mac/PageScriptDebugServerMac.mm.
+        * inspector/WorkerDebugger.h: Renamed from Source/WebCore/inspector/WorkerScriptDebugServer.h.
+        * inspector/WorkerDebugger.cpp: Renamed from Source/WebCore/inspector/WorkerScriptDebugServer.cpp.
+        * inspector/WorkerInspectorController.h:
+        * inspector/WorkerInspectorController.cpp:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+
 2020-08-24  Sihui Liu  <sihui_liu@apple.com>
 
         Text manipulation should not manipulate nodes out of paragraph range

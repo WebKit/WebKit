@@ -1365,12 +1365,12 @@ inspector/InspectorShaderProgram.cpp
 inspector/InspectorStyleSheet.cpp
 inspector/InstrumentingAgents.cpp
 inspector/NetworkResourcesData.cpp
-inspector/PageScriptDebugServer.cpp
+inspector/PageDebugger.cpp
 inspector/TimelineRecordFactory.cpp
 inspector/WebInjectedScriptHost.cpp
 inspector/WebInjectedScriptManager.cpp
 inspector/WorkerInspectorController.cpp
-inspector/WorkerScriptDebugServer.cpp
+inspector/WorkerDebugger.cpp
 inspector/agents/InspectorAnimationAgent.cpp
 inspector/agents/InspectorApplicationCacheAgent.cpp
 inspector/agents/InspectorCPUProfilerAgent.cpp

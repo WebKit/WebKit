@@ -43,7 +43,7 @@ InspectorAuditAgent::InspectorAuditAgent(AgentContext& context)
     : InspectorAgentBase("Audit"_s)
     , m_backendDispatcher(AuditBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_scriptDebugServer(context.environment.scriptDebugServer())
+    , m_debugger(context.environment.debugger())
 {
 }
 
@@ -105,15 +105,15 @@ void InspectorAuditAgent::run(ErrorString& errorString, const String& test, cons
 
     Optional<int> savedResultIndex;
 
-    auto previousPauseOnExceptionsState = m_scriptDebugServer.pauseOnExceptionsState();
+    auto previousPauseOnExceptionsState = m_debugger.pauseOnExceptionsState();
 
-    m_scriptDebugServer.setPauseOnExceptionsState(Debugger::DontPauseOnExceptions);
+    m_debugger.setPauseOnExceptionsState(Debugger::DontPauseOnExceptions);
     muteConsole();
 
     injectedScript.execute(errorString, functionString.toString(), WTFMove(options), result, wasThrown, savedResultIndex);
 
     unmuteConsole();
-    m_scriptDebugServer.setPauseOnExceptionsState(previousPauseOnExceptionsState);
+    m_debugger.setPauseOnExceptionsState(previousPauseOnExceptionsState);
 }
 
 void InspectorAuditAgent::teardown(ErrorString& errorString)

@@ -74,7 +74,7 @@ protected:
 private:
     RefPtr<AuditBackendDispatcher> m_backendDispatcher;
     InjectedScriptManager& m_injectedScriptManager;
-    JSC::Debugger& m_scriptDebugServer;
+    JSC::Debugger& m_debugger;
 
     JSC::Strong<JSC::JSObject> m_injectedWebInspectorAuditValue;
 };

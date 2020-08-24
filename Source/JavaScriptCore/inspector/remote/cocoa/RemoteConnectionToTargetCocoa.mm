@@ -28,7 +28,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#import "JSGlobalObjectScriptDebugServer.h"
+#import "JSGlobalObjectDebugger.h"
 #import "RemoteAutomationTarget.h"
 #import "RemoteInspectionTarget.h"
 #import "RemoteInspector.h"
@@ -88,7 +88,7 @@ static void RemoteTargetInitializeGlobalQueue()
 
         // Add to the default run loop mode for default handling, and the JSContext remote inspector run loop mode when paused.
         CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, kCFRunLoopDefaultMode);
-        auto mode = JSGlobalObjectScriptDebugServer::runLoopMode();
+        auto mode = JSGlobalObjectDebugger::runLoopMode();
         if (mode != DefaultRunLoopMode)
             CFRunLoopAddSource(CFRunLoopGetMain(), rwiRunLoopSource, mode);
     });
@@ -261,7 +261,7 @@ void RemoteConnectionToTarget::setupRunLoop()
     m_runLoopSource = adoptCF(CFRunLoopSourceCreate(kCFAllocatorDefault, 1, &runLoopSourceContext));
 
     CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
-    auto mode = JSGlobalObjectScriptDebugServer::runLoopMode();
+    auto mode = JSGlobalObjectDebugger::runLoopMode();
     if (mode != DefaultRunLoopMode)
         CFRunLoopAddSource(m_runLoop.get(), m_runLoopSource.get(), mode);
 }
@@ -272,7 +272,7 @@ void RemoteConnectionToTarget::teardownRunLoop()
         return;
 
     CFRunLoopRemoveSource(m_runLoop.get(), m_runLoopSource.get(), kCFRunLoopDefaultMode);
-    auto mode = JSGlobalObjectScriptDebugServer::runLoopMode();
+    auto mode = JSGlobalObjectDebugger::runLoopMode();
     if (mode != DefaultRunLoopMode)
         CFRunLoopRemoveSource(m_runLoop.get(), m_runLoopSource.get(), mode);
 

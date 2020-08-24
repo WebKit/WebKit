@@ -161,7 +161,7 @@ html/shadow/ImageControlsRootElement.cpp
 html/shadow/YouTubeEmbedShadowElement.cpp
 html/shadow/mac/ImageControlsButtonElementMac.cpp
 html/shadow/mac/ImageControlsRootElementMac.cpp
-inspector/mac/PageScriptDebugServerMac.mm
+inspector/mac/PageDebuggerMac.mm
 loader/archive/cf/LegacyWebArchive.cpp
 loader/archive/cf/LegacyWebArchiveMac.mm
 loader/cocoa/DiskCacheMonitorCocoa.mm

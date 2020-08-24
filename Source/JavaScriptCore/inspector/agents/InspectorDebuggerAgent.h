@@ -148,7 +148,7 @@ protected:
     InjectedScriptManager& injectedScriptManager() const { return m_injectedScriptManager; }
     virtual InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) = 0;
 
-    JSC::Debugger& scriptDebugServer() { return m_scriptDebugServer; }
+    JSC::Debugger& debugger() { return m_debugger; }
 
     virtual void muteConsole() = 0;
     virtual void unmuteConsole() = 0;
@@ -225,7 +225,7 @@ private:
     std::unique_ptr<DebuggerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<DebuggerBackendDispatcher> m_backendDispatcher;
 
-    JSC::Debugger& m_scriptDebugServer;
+    JSC::Debugger& m_debugger;
     InjectedScriptManager& m_injectedScriptManager;
     HashMap<JSC::SourceID, JSC::Debugger::Script> m_scripts;
 

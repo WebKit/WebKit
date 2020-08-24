@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JSGlobalObjectScriptDebugServer.h"
+#include "JSGlobalObjectDebugger.h"
 
 #include "JSGlobalObject.h"
 #include "JSLock.h"
@@ -34,20 +34,20 @@ namespace Inspector {
 
 using namespace JSC;
 
-JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer(JSGlobalObject& globalObject)
+JSGlobalObjectDebugger::JSGlobalObjectDebugger(JSGlobalObject& globalObject)
     : Debugger(globalObject.vm())
     , m_globalObject(globalObject)
 {
 }
 
-void JSGlobalObjectScriptDebugServer::attachDebugger()
+void JSGlobalObjectDebugger::attachDebugger()
 {
     JSC::Debugger::attachDebugger();
 
     attach(&m_globalObject);
 }
 
-void JSGlobalObjectScriptDebugServer::detachDebugger(bool isBeingDestroyed)
+void JSGlobalObjectDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
 
@@ -56,7 +56,7 @@ void JSGlobalObjectScriptDebugServer::detachDebugger(bool isBeingDestroyed)
         recompileAllJSFunctions();
 }
 
-void JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused()
+void JSGlobalObjectDebugger::runEventLoopWhilePaused()
 {
     JSC::Debugger::runEventLoopWhilePaused();
 
@@ -64,12 +64,12 @@ void JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused()
     JSC::JSLock::DropAllLocks dropAllLocks(&m_globalObject.vm());
 
     while (!doneProcessingDebuggerEvents()) {
-        if (RunLoop::cycle(JSGlobalObjectScriptDebugServer::runLoopMode()) == RunLoop::CycleResult::Stop)
+        if (RunLoop::cycle(JSGlobalObjectDebugger::runLoopMode()) == RunLoop::CycleResult::Stop)
             break;
     }
 }
 
-RunLoopMode JSGlobalObjectScriptDebugServer::runLoopMode()
+RunLoopMode JSGlobalObjectDebugger::runLoopMode()
 {
 #if USE(CF) && !PLATFORM(WATCHOS)
     // Run the RunLoop in a custom run loop mode to prevent default observers

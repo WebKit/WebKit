@@ -44,8 +44,8 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindow.h"
+#include "PageDebugger.h"
 #include "PageHeapAgent.h"
-#include "PageScriptDebugServer.h"
 #include "RenderView.h"
 #include "ScriptState.h"
 #include "TimelineRecordFactory.h"
@@ -187,7 +187,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
 
     m_instrumentingAgents.setTrackingTimelineAgent(this);
 
-    m_environment.scriptDebugServer().addObserver(*this);
+    m_environment.debugger().addObserver(*this);
 
     m_tracking = true;
 
@@ -195,7 +195,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
 
 #if PLATFORM(COCOA)
     m_frameStartObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::InspectorFrameBegin), [this]() {
-        if (!m_tracking || m_environment.scriptDebugServer().isPaused())
+        if (!m_tracking || m_environment.debugger().isPaused())
             return;
 
         if (!m_runLoopNestingLevel)
@@ -204,7 +204,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
     });
 
     m_frameStopObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::InspectorFrameEnd), [this]() {
-        if (!m_tracking || m_environment.scriptDebugServer().isPaused())
+        if (!m_tracking || m_environment.debugger().isPaused())
             return;
 
         ASSERT(m_runLoopNestingLevel > 0);
@@ -241,7 +241,7 @@ void InspectorTimelineAgent::internalStop()
 
     m_instrumentingAgents.setTrackingTimelineAgent(nullptr);
 
-    m_environment.scriptDebugServer().removeObserver(*this, true);
+    m_environment.debugger().removeObserver(*this, true);
 
 #if PLATFORM(COCOA)
     m_frameStartObserver = nullptr;

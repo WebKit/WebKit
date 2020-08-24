@@ -30,7 +30,7 @@
  */
 
 #include "config.h"
-#include "WorkerScriptDebugServer.h"
+#include "WorkerDebugger.h"
 
 #include "JSDOMExceptionHandling.h"
 #include "Timer.h"
@@ -43,20 +43,20 @@ namespace WebCore {
 
 using namespace Inspector;
 
-WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerGlobalScope& context)
+WorkerDebugger::WorkerDebugger(WorkerGlobalScope& context)
     : Debugger(context.script()->vm())
     , m_workerGlobalScope(context)
 {
 }
 
-void WorkerScriptDebugServer::attachDebugger()
+void WorkerDebugger::attachDebugger()
 {
     JSC::Debugger::attachDebugger();
 
     m_workerGlobalScope.script()->attachDebugger(this);
 }
 
-void WorkerScriptDebugServer::detachDebugger(bool isBeingDestroyed)
+void WorkerDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
 
@@ -66,13 +66,13 @@ void WorkerScriptDebugServer::detachDebugger(bool isBeingDestroyed)
         recompileAllJSFunctions();
 }
 
-void WorkerScriptDebugServer::recompileAllJSFunctions()
+void WorkerDebugger::recompileAllJSFunctions()
 {
     JSC::JSLockHolder lock(vm());
     JSC::Debugger::recompileAllJSFunctions();
 }
 
-void WorkerScriptDebugServer::runEventLoopWhilePaused()
+void WorkerDebugger::runEventLoopWhilePaused()
 {
     JSC::Debugger::runEventLoopWhilePaused();
 
@@ -84,7 +84,7 @@ void WorkerScriptDebugServer::runEventLoopWhilePaused()
     } while (result != MessageQueueTerminated && !doneProcessingDebuggerEvents());
 }
 
-void WorkerScriptDebugServer::reportException(JSC::JSGlobalObject* exec, JSC::Exception* exception) const
+void WorkerDebugger::reportException(JSC::JSGlobalObject* exec, JSC::Exception* exception) const
 {
     JSC::Debugger::reportException(exec, exception);
 

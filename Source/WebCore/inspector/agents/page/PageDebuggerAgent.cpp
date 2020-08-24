@@ -40,7 +40,7 @@
 #include "InstrumentingAgents.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
-#include "PageScriptDebugServer.h"
+#include "PageDebugger.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"
 #include "UserGestureEmulationScope.h"

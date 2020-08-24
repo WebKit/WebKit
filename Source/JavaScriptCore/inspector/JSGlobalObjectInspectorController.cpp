@@ -62,7 +62,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     : m_globalObject(globalObject)
     , m_injectedScriptManager(makeUnique<InjectedScriptManager>(*this, InjectedScriptHost::create()))
     , m_executionStopwatch(Stopwatch::create())
-    , m_scriptDebugServer(globalObject)
+    , m_debugger(globalObject)
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
 {
@@ -247,9 +247,9 @@ Stopwatch& JSGlobalObjectInspectorController::executionStopwatch() const
     return m_executionStopwatch;
 }
 
-JSGlobalObjectScriptDebugServer& JSGlobalObjectInspectorController::scriptDebugServer()
+JSGlobalObjectDebugger& JSGlobalObjectInspectorController::debugger()
 {
-    return m_scriptDebugServer;
+    return m_debugger;
 }
 
 VM& JSGlobalObjectInspectorController::vm()

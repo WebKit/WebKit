@@ -29,7 +29,7 @@
 #include "ConsoleMessage.h"
 #include "InjectedScriptManager.h"
 #include "InspectorConsoleAgent.h"
-#include "JSGlobalObjectScriptDebugServer.h"
+#include "JSGlobalObjectDebugger.h"
 #include "ScriptCallStackFactory.h"
 
 namespace Inspector {
@@ -51,7 +51,7 @@ InjectedScript JSGlobalObjectDebuggerAgent::injectedScriptForEval(ErrorString& e
         return InjectedScript();
     }
 
-    JSGlobalObject& globalObject = static_cast<JSGlobalObjectScriptDebugServer&>(scriptDebugServer()).globalObject();
+    JSGlobalObject& globalObject = static_cast<JSGlobalObjectDebugger&>(debugger()).globalObject();
     return injectedScriptManager().injectedScriptFor(&globalObject);
 }
 

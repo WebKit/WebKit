@@ -685,7 +685,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/InspectorInstrumentationWebKit.h
     inspector/InspectorOverlay.h
     inspector/InspectorWebAgentBase.h
-    inspector/PageScriptDebugServer.h
+    inspector/PageDebugger.h
 
     inspector/agents/InspectorPageAgent.h
 

@@ -37,12 +37,12 @@ namespace WebCore {
 
 class WorkerGlobalScope;
 
-class WorkerScriptDebugServer final : public JSC::Debugger {
-    WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
+class WorkerDebugger final : public JSC::Debugger {
+    WTF_MAKE_NONCOPYABLE(WorkerDebugger);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkerScriptDebugServer(WorkerGlobalScope&);
-    ~WorkerScriptDebugServer() override = default;
+    WorkerDebugger(WorkerGlobalScope&);
+    ~WorkerDebugger() override = default;
 
 
 private:

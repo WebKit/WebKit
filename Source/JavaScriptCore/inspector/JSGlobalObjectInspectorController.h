@@ -28,7 +28,7 @@
 #include "InspectorAgentRegistry.h"
 #include "InspectorEnvironment.h"
 #include "InspectorFrontendRouter.h"
-#include "JSGlobalObjectScriptDebugServer.h"
+#include "JSGlobalObjectDebugger.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
@@ -89,7 +89,7 @@ public:
     InspectorEvaluateHandler evaluateHandler() const final;
     void frontendInitialized() final;
     WTF::Stopwatch& executionStopwatch() const final;
-    JSGlobalObjectScriptDebugServer& scriptDebugServer() final;
+    JSGlobalObjectDebugger& debugger() final;
     JSC::VM& vm() final;
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
@@ -114,7 +114,7 @@ private:
     std::unique_ptr<InjectedScriptManager> m_injectedScriptManager;
     std::unique_ptr<JSGlobalObjectConsoleClient> m_consoleClient;
     Ref<WTF::Stopwatch> m_executionStopwatch;
-    JSGlobalObjectScriptDebugServer m_scriptDebugServer;
+    JSGlobalObjectDebugger m_debugger;
 
     AgentRegistry m_agents;
     InspectorConsoleAgent* m_consoleAgent { nullptr };

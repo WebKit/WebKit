@@ -28,7 +28,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "JSGlobalObjectScriptDebugServer.h"
+#include "JSGlobalObjectDebugger.h"
 #include "RemoteInspector.h"
 #include <wtf/RunLoop.h>
 
@@ -59,7 +59,7 @@ void RemoteInspectionTarget::pauseWaitingForAutomaticInspection()
     ASSERT(automaticInspectionAllowed());
 
     while (RemoteInspector::singleton().waitingForAutomaticInspection(targetIdentifier())) {
-        if (RunLoop::cycle(JSGlobalObjectScriptDebugServer::runLoopMode()) == RunLoop::CycleResult::Stop)
+        if (RunLoop::cycle(JSGlobalObjectDebugger::runLoopMode()) == RunLoop::CycleResult::Stop)
             break;
     }
 }

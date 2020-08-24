@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
- * Copyright (c) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +25,29 @@
 
 #pragma once
 
-#include <JavaScriptCore/Debugger.h>
+#include "Debugger.h"
+#include <wtf/RunLoop.h>
 
-namespace WebCore {
+namespace Inspector {
 
-class Frame;
-class Page;
-class PageGroup;
-
-class PageScriptDebugServer final : public JSC::Debugger {
-    WTF_MAKE_NONCOPYABLE(PageScriptDebugServer);
+class JSGlobalObjectDebugger final : public JSC::Debugger {
+    WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebugger);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageScriptDebugServer(Page&);
-    ~PageScriptDebugServer() override = default;
+    JSGlobalObjectDebugger(JSC::JSGlobalObject&);
+    ~JSGlobalObjectDebugger() final { }
 
-    void recompileAllJSFunctions() override;
+    JSC::JSGlobalObject& globalObject() const { return m_globalObject; }
+
+    static RunLoopMode runLoopMode();
 
 private:
     // JSC::Debugger
     void attachDebugger() final;
     void detachDebugger(bool isBeingDestroyed) final;
-    void didPause(JSC::JSGlobalObject*) final;
-    void didContinue(JSC::JSGlobalObject*) final;
     void runEventLoopWhilePaused() final;
-    bool isContentScript(JSC::JSGlobalObject*) const final;
-    void reportException(JSC::JSGlobalObject*, JSC::Exception*) const final;
 
-    void runEventLoopWhilePausedInternal();
-
-    void setJavaScriptPaused(const PageGroup&, bool paused);
-    void setJavaScriptPaused(Frame&, bool paused);
-
-    bool platformShouldContinueRunningEventLoopWhilePaused();
-
-    Page& m_page;
+    JSC::JSGlobalObject& m_globalObject;
 };
 
-} // namespace WebCore
+} // namespace Inspector
