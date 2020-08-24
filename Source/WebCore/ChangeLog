@@ -1,3 +1,30 @@
+2020-08-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Rename LineBox::baseline to alignment baseline
+        https://bugs.webkit.org/show_bug.cgi?id=214784
+
+        Reviewed by Antti Koivisto.
+
+        See https://www.w3.org/TR/css-inline-3/#alignment-baseline
+        Use the spec term. This helps to tell the dominant and the alignment baselines apart during line building. 
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::LineBox):
+        (WebCore::Layout::LineBox::setAlignmentBaselineIfGreater):
+        (WebCore::Layout::LineBox::setAscentIfGreater):
+        (WebCore::Layout::LineBox::alignmentBaseline const):
+        (WebCore::Layout::LineBox::resetAlignmentBaseline):
+        (WebCore::Layout::LineBox::setBaselineIfGreater): Deleted.
+        (WebCore::Layout::LineBox::baseline const): Deleted.
+        (WebCore::Layout::LineBox::resetBaseline): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::adjustBaselineAndLineHeight):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::baseline const):
+
 2020-08-24  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, late August 2020 edition

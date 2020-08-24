@@ -120,7 +120,7 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
     auto hangingContent = collectHangingContent(isLastLineWithInlineContent);
     adjustBaselineAndLineHeight();
     if (isVisuallyEmpty()) {
-        m_lineBox.resetBaseline();
+        m_lineBox.resetAlignmentBaseline();
         m_lineBox.setLogicalHeight({ });
     }
     // Remove descent when all content is baseline aligned but none of them have descent.
@@ -620,7 +620,7 @@ void LineBuilder::adjustBaselineAndLineHeight()
                     // There has to be at least one line -even if it is empty.
                     auto& lastLineBox = formattingState.displayInlineContent()->lineBoxes.last();
                     auto beforeHeight = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
-                    m_lineBox.setBaselineIfGreater(beforeHeight + lastLineBox.baseline());
+                    m_lineBox.setAlignmentBaselineIfGreater(beforeHeight + lastLineBox.baseline());
                     m_lineBox.setLogicalHeightIfGreater(marginBoxHeight);
                 } else {
                     // Non inline-block boxes sit on the baseline (including their bottom margin).
@@ -639,7 +639,7 @@ void LineBuilder::adjustBaselineAndLineHeight()
                 auto lineLogicalHeight = m_lineBox.logicalHeight();
                 if (marginBoxHeight > lineLogicalHeight) {
                     m_lineBox.setLogicalHeightIfGreater(marginBoxHeight);
-                    m_lineBox.setBaselineIfGreater(m_lineBox.baseline() + (marginBoxHeight - lineLogicalHeight));
+                    m_lineBox.setAlignmentBaselineIfGreater(m_lineBox.alignmentBaseline() + (marginBoxHeight - lineLogicalHeight));
                 }
                 break;
             }

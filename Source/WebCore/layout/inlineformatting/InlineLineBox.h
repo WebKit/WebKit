@@ -50,7 +50,7 @@ public:
         AscentAndDescent ascentAndDescent;
     };
 
-    LineBox(const Display::InlineRect&, const AscentAndDescent&, InlineLayoutUnit baseline);
+    LineBox(const Display::InlineRect&, const AscentAndDescent&, InlineLayoutUnit alignmentBaseline);
     LineBox() = default;
 
     const Display::InlineRect& logicalRect() const { return m_rect; }
@@ -64,12 +64,12 @@ public:
     InlineLayoutUnit logicalWidth() const { return m_rect.width(); }
     InlineLayoutUnit logicalHeight() const { return m_rect.height(); }
 
-    // Baseline from line logical top. Note that the baseline does not necessarily equal to ascent.
+    // Aligment baseline from line logical top.
     //
     // -------------------    line logical top     ------------------- (top align)
     //             ^                                              ^
     //             |                                  ^           |
-    //   ^         | baseline                         |           | baseline
+    //   ^         | alignment baseline               |           | alignment baseline
     //   |         |                                  |           |
     //   | ascent  |                                  | ascent    |
     //   |         |                                  v           v
@@ -79,14 +79,14 @@ public:
     //   | descent                                    v
     //   v
     // -------------------    line logical bottom  -------------------
-    InlineLayoutUnit baseline() const;
+    InlineLayoutUnit alignmentBaseline() const;
     const AscentAndDescent& ascentAndDescent() const { return m_rootInlineBox.ascentAndDescent; }
 
-    void setBaselineIfGreater(InlineLayoutUnit);
+    void setAlignmentBaselineIfGreater(InlineLayoutUnit);
     void setAscentIfGreater(InlineLayoutUnit);
     void setDescentIfGreater(InlineLayoutUnit);
 
-    void resetBaseline();
+    void resetAlignmentBaseline();
     void resetDescent() { m_rootInlineBox.ascentAndDescent.descent = { }; }
 
     void setLogicalHeight(InlineLayoutUnit logicalHeight) { m_rect.setHeight(logicalHeight); }
@@ -116,22 +116,22 @@ public:
 
 private:
 #if ASSERT_ENABLED
-    bool m_hasValidBaseline { false };
+    bool m_hasValidAlignmentBaseline { false };
 #endif
     Display::InlineRect m_rect;
     Display::InlineRect m_scrollableOverflow;
-    InlineLayoutUnit m_baseline { 0 };
+    InlineLayoutUnit m_alignmentBaseline { 0 };
     bool m_isConsideredEmpty { true };
     InlineBox m_rootInlineBox;
 };
 
-inline LineBox::LineBox(const Display::InlineRect& rect, const AscentAndDescent& ascentAndDescent, InlineLayoutUnit baseline)
+inline LineBox::LineBox(const Display::InlineRect& rect, const AscentAndDescent& ascentAndDescent, InlineLayoutUnit alignmentBaseline)
     : m_rect(rect)
-    , m_baseline(baseline)
+    , m_alignmentBaseline(alignmentBaseline)
     , m_rootInlineBox(ascentAndDescent)
 {
 #if ASSERT_ENABLED
-    m_hasValidBaseline = true;
+    m_hasValidAlignmentBaseline = true;
 #endif
 }
 
@@ -147,19 +147,19 @@ inline void LineBox::setLogicalHeightIfGreater(InlineLayoutUnit logicalHeight)
     m_rect.setHeight(logicalHeight);
 }
 
-inline void LineBox::setBaselineIfGreater(InlineLayoutUnit baseline)
+inline void LineBox::setAlignmentBaselineIfGreater(InlineLayoutUnit alignmentBaseline)
 {
 #if ASSERT_ENABLED
-    m_hasValidBaseline = true;
+    m_hasValidAlignmentBaseline = true;
 #endif
-    m_baseline = std::max(baseline, m_baseline);
+    m_alignmentBaseline = std::max(alignmentBaseline, m_alignmentBaseline);
 }
 
 inline void LineBox::setAscentIfGreater(InlineLayoutUnit ascent)
 {
     if (ascent < m_rootInlineBox.ascentAndDescent.ascent)
         return;
-    setBaselineIfGreater(ascent);
+    setAlignmentBaselineIfGreater(ascent);
     m_rootInlineBox.ascentAndDescent.ascent = ascent;
 }
 
@@ -170,18 +170,18 @@ inline void LineBox::setDescentIfGreater(InlineLayoutUnit descent)
     m_rootInlineBox.ascentAndDescent.descent = descent;
 }
 
-inline InlineLayoutUnit LineBox::baseline() const
+inline InlineLayoutUnit LineBox::alignmentBaseline() const
 {
-    ASSERT(m_hasValidBaseline);
-    return m_baseline;
+    ASSERT(m_hasValidAlignmentBaseline);
+    return m_alignmentBaseline;
 }
 
-inline void LineBox::resetBaseline()
+inline void LineBox::resetAlignmentBaseline()
 {
 #if ASSERT_ENABLED
-    m_hasValidBaseline = true;
+    m_hasValidAlignmentBaseline = true;
 #endif
-    m_baseline = 0_lu;
+    m_alignmentBaseline = 0_lu;
     m_rootInlineBox.ascentAndDescent.descent = { };
     m_rootInlineBox.ascentAndDescent.ascent = { };
 }

@@ -162,7 +162,7 @@ private:
 
     InlineLayoutUnit contentLogicalWidth() const { return m_lineBox.logicalWidth(); }
     InlineLayoutUnit contentLogicalRight() const { return m_lineBox.logicalRight(); }
-    InlineLayoutUnit baseline() const { return m_lineBox.baseline(); }
+    InlineLayoutUnit baseline() const { return m_lineBox.alignmentBaseline(); }
 
     struct InlineRunDetails {
         InlineLayoutUnit logicalWidth { 0 };
