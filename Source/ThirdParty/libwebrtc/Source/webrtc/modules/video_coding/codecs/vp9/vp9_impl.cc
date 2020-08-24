@@ -1670,6 +1670,15 @@ int VP9DecoderImpl::InitDecode(const VideoCodec* inst, int number_of_cores) {
       return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
     }
   }
+
+  vpx_codec_err_t status =
+    vpx_codec_control(decoder_, VP9D_SET_LOOP_FILTER_OPT, 1);
+  if (status != VPX_CODEC_OK) {
+    RTC_LOG(LS_ERROR) << "Failed to enable VP9D_SET_LOOP_FILTER_OPT. "
+                      << vpx_codec_error(decoder_);
+    return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
+  }
+
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
