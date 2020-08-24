@@ -1,5 +1,14 @@
 2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
 
+        [ iOS wk2 Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-fetch-error-external-module.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215783
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
+
        [ macOS wk1 ] fast/overflow/horizontal-scroll-after-back.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=215778
 
