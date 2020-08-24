@@ -24,6 +24,10 @@
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
+#if USE(GTK4) && PLATFORM(X11)
+#include <gdk/x11/gdkx.h>
+#endif
+
 namespace WebCore {
 
 static IntPoint gtkWindowGetOrigin(GtkWidget* window)
@@ -185,6 +189,22 @@ GdkDragAction dragOperationToSingleGdkDragAction(OptionSet<DragOperation> coreAc
     if (coreAction.contains(DragOperation::Link))
         return GDK_ACTION_LINK;
     return static_cast<GdkDragAction>(0);
+}
+
+void monitorWorkArea(GdkMonitor* monitor, GdkRectangle* area)
+{
+#if USE(GTK4)
+#if PLATFORM(X11)
+    if (GDK_IS_X11_MONITOR(monitor)) {
+        gdk_x11_monitor_get_workarea(monitor, area);
+        return;
+    }
+#endif
+
+    gdk_monitor_get_geometry(monitor, area);
+#else
+    gdk_monitor_get_workarea(monitor, area);
+#endif
 }
 
 } // namespace WebCore

@@ -33,6 +33,7 @@
 
 #include "FloatRect.h"
 #include "FrameView.h"
+#include "GtkUtilities.h"
 #include "HostWindow.h"
 #include "NotImplemented.h"
 #include "Widget.h"
@@ -206,7 +207,7 @@ FloatRect screenAvailableRect(Widget*)
         return { };
 
     GdkRectangle workArea;
-    gdk_monitor_get_workarea(monitor.get(), &workArea);
+    monitorWorkArea(monitor.get(), &workArea);
 
     return FloatRect(workArea.x, workArea.y, workArea.width, workArea.height);
 }

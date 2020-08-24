@@ -1,3 +1,28 @@
+2020-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK4 build
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:
+        (webkitAuthenticationDialogInitialize):
+        * UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:
+        (webkitScriptDialogImplConstructed):
+        (webkit_script_dialog_impl_class_init):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseEvent):
+        (webkit_web_view_base_class_init):
+        * UIProcess/API/gtk/WebKitWebViewDialog.cpp:
+        (webkitWebViewDialogConstructed):
+        (webkitWebViewDialogSetChild):
+        * UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:
+        (webkit_inspector_window_init):
+        * UIProcess/gtk/WebDataListSuggestionsDropdownGtk.cpp:
+        (WebKit::WebDataListSuggestionsDropdownGtk::show):
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::bindAccessibilityTree):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+
 2020-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Programmatic selection of text in a text field causes the highlight overlay to spill out

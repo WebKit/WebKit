@@ -107,7 +107,7 @@ platform/gtk/CursorGtk.cpp
 platform/gtk/DragDataGtk.cpp
 platform/gtk/DragImageGtk.cpp
 platform/gtk/GRefPtrGtk.cpp
-platform/gtk/GtkUtilities.cpp
+platform/gtk/GtkUtilities.cpp @no-unify
 platform/gtk/LocalizedStringsGtk.cpp
 platform/gtk/PasteboardGtk.cpp
 platform/gtk/PlatformKeyboardEventGtk.cpp

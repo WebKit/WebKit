@@ -1,3 +1,10 @@
+2020-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK4 build
+
+        * MiniBrowser/gtk/BrowserSearchBox.c:
+        * MiniBrowser/gtk/BrowserWindow.c:
+
 2020-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Programmatic selection of text in a text field causes the highlight overlay to spill out

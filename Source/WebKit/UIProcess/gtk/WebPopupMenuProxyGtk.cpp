@@ -320,7 +320,7 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
     auto* monitor = gdk_display_get_monitor_at_window(display, gtk_widget_get_window(m_webView));
 #endif
     GdkRectangle area;
-    gdk_monitor_get_workarea(monitor, &area);
+    monitorWorkArea(monitor, &area);
     int width = std::min(rect.width(), area.width);
     size_t itemCount = std::min<size_t>(items.size(), (area.height / 3) / itemHeight);
 

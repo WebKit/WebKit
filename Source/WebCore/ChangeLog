@@ -1,3 +1,14 @@
+2020-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK4 build
+
+        * SourcesGTK.txt:
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::monitorWorkArea):
+        * platform/gtk/GtkUtilities.h:
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenAvailableRect):
+
 2020-08-24  Rob Buis  <rbuis@igalia.com>
 
         Make window.find not default the search string to undefined

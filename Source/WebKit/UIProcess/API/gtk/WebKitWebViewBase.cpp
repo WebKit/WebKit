@@ -1735,7 +1735,6 @@ static gboolean webkitWebViewBaseEvent(GtkWidget* widget, GdkEvent* event)
         webkitWebViewBaseGestureController(WEBKIT_WEB_VIEW_BASE(widget)).handleEvent(event);
     return GDK_EVENT_PROPAGATE;
 }
-#endif
 
 static AtkObject* webkitWebViewBaseGetAccessible(GtkWidget* widget)
 {
@@ -1753,6 +1752,7 @@ static AtkObject* webkitWebViewBaseGetAccessible(GtkWidget* widget)
 
     return priv->accessible.get();
 }
+#endif
 
 #if USE(GTK4)
 static void toplevelWindowIsActiveChanged(GtkWindow* window, GParamSpec*, WebKitWebViewBase* webViewBase)
@@ -2003,8 +2003,8 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->query_tooltip = webkitWebViewBaseQueryTooltip;
 #if !USE(GTK4)
     widgetClass->event = webkitWebViewBaseEvent;
-#endif
     widgetClass->get_accessible = webkitWebViewBaseGetAccessible;
+#endif
 #if USE(GTK4)
     widgetClass->root = webkitWebViewBaseRoot;
     widgetClass->unroot = webkitWebViewBaseUnroot;

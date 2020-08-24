@@ -989,7 +989,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     GtkWidget *groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 #if GTK_CHECK_VERSION(3, 98, 5)
-    gtk_widget_add_css_class(groupBox, GTK_STYLE_CLASS_LINKED);
+    gtk_widget_add_css_class(groupBox, "linked");
 #else
     gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
 #endif
@@ -1006,7 +1006,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 #if GTK_CHECK_VERSION(3, 98, 5)
-    gtk_widget_add_css_class(groupBox, GTK_STYLE_CLASS_LINKED);
+    gtk_widget_add_css_class(groupBox, "linked");
 #else
     gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
 #endif
@@ -1022,7 +1022,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 #if GTK_CHECK_VERSION(3, 98, 5)
-    gtk_widget_add_css_class(groupBox, GTK_STYLE_CLASS_LINKED);
+    gtk_widget_add_css_class(groupBox, "linked");
 #else
     gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
 #endif
@@ -1037,7 +1037,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 #if GTK_CHECK_VERSION(3, 98, 5)
-    gtk_widget_add_css_class(groupBox, GTK_STYLE_CLASS_LINKED);
+    gtk_widget_add_css_class(groupBox, "linked");
 #else
     gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
 #endif
@@ -1053,7 +1053,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 #if GTK_CHECK_VERSION(3, 98, 5)
-    gtk_widget_add_css_class(groupBox, GTK_STYLE_CLASS_LINKED);
+    gtk_widget_add_css_class(groupBox, "linked");
 #else
     gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
 #endif
@@ -1068,7 +1068,7 @@ static void browserWindowSetupEditorToolbar(BrowserWindow *window)
 
     groupBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 #if GTK_CHECK_VERSION(3, 98, 5)
-    gtk_widget_add_css_class(groupBox, GTK_STYLE_CLASS_LINKED);
+    gtk_widget_add_css_class(groupBox, "linked");
 #else
     gtk_style_context_add_class(gtk_widget_get_style_context(groupBox), GTK_STYLE_CLASS_LINKED);
 #endif
@@ -1239,7 +1239,7 @@ static void browser_window_init(BrowserWindow *window)
 
     GtkWidget *navigationBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 #if GTK_CHECK_VERSION(3, 98, 5)
-    gtk_widget_add_css_class(navigationBox, GTK_STYLE_CLASS_LINKED);
+    gtk_widget_add_css_class(navigationBox, "linked");
 #else
     gtk_style_context_add_class(gtk_widget_get_style_context(navigationBox), GTK_STYLE_CLASS_LINKED);
 #endif
