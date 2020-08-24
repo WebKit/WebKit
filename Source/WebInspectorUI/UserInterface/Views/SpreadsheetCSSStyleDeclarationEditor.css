@@ -47,8 +47,8 @@
     outline: none;
 }
 
-body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .name:not(.editing),
-body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .name:not(:hover, .editing) {
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .name:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .name:not(:hover, .editing) {
     color: var(--syntax-highlight-boolean-color);
 }
 
@@ -56,8 +56,8 @@ body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.dis
     white-space: pre-wrap;
 }
 
-body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing),
-body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) {
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) {
     color: var(--text-color);
 }
 
@@ -104,6 +104,13 @@ body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.dis
 
 .spreadsheet-style-declaration-editor .property.disabled {
     color: var(--syntax-highlight-comment-color);
+}
+
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .name:not(.editing),
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .value-container > .value:not(.editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .name:not(:hover, .editing),
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .value-container > .value:not(:hover, .editing) {
+    color: var(--text-color-secondary);
 }
 
 .spreadsheet-style-declaration-editor > .property:matches(.invalid-name, .other-vendor, .overridden):not(.disabled) > .content > *:not(.name, .value-container),
@@ -184,13 +191,13 @@ body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-decla
     color: hsl(0, 0%, 50%) !important;
 }
 
-body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing) .token-link,
-body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) .token-link {
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing) .token-link,
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) .token-link {
     color: var(--syntax-highlight-link-color);
 }
 
-body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing) .token-string,
-body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) .token-string {
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing) .token-string,
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) .token-string {
     color: var(--syntax-highlight-string-color);
 }
 
@@ -233,8 +240,8 @@ body.meta-key-pressed .spreadsheet-css-declaration:not(.locked) > .spreadsheet-s
     -webkit-text-stroke-width: 0 !important;
 }
 
-body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing) .token-comment,
-body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) .token-comment {
+body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing) .token-comment,
+body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) .token-comment {
     color: var(--syntax-highlight-comment-color);
 }
 

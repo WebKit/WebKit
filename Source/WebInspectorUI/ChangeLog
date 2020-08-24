@@ -1,3 +1,25 @@
+2020-08-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: Styles: grey out properties that aren't used/apply
+        https://bugs.webkit.org/show_bug.cgi?id=215680
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .name:not(.editing), body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .name:not(:hover, .editing)): Added.
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing), body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing)): Added.
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .name:not(.editing), body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .value-container > .value:not(.editing), body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .name:not(:hover, .editing), body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled):is(.invalid-name, .invalid-value, .other-vendor, .overridden) > .content > .value-container > .value:not(:hover, .editing)): Added.
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing) .token-link, body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) .token-link): Added.
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing) .token-string, body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) .token-string): Added.
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(.editing) .token-comment, body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled, .invalid-name, .invalid-value, .other-vendor, .overridden) > .content .value:not(:hover, .editing) .token-comment): Added.
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .name:not(.editing), body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .name:not(:hover, .editing)): Deleted.
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing), body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing)): Deleted.
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing) .token-link, body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) .token-link): Deleted.
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing) .token-string, body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) .token-string): Deleted.
+        (body:not(.meta-key-pressed) .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(.editing) .token-comment, body.meta-key-pressed .spreadsheet-style-declaration-editor > .property:not(.disabled) > .content .value:not(:hover, .editing) .token-comment): Deleted.
+        Add additional `:not`s to existing rules to ensure that they don't conflict with a new rule
+        that changes the color of the `.name`/`.value` to grey when the property is not applied/used.
+
 2020-08-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Assertion Failed: Appended a string with newlines. This breaks the source map.
