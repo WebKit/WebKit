@@ -1,3 +1,17 @@
+2020-08-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, ignore RangeErrors when ICU is too old
+
+        Since ICU version is different (very sad), some of tests can throw an error.
+
+        * stress/intl-language-tag.js:
+        (let.shouldThrow):
+        (let.shouldNotThrow):
+        (suppressErrors):
+        (vm.icuVersion):
+        (shouldThrow): Deleted.
+        (shouldNotThrow): Deleted.
+
 2020-08-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Implement Intl Language Tag Parser

@@ -31,11 +31,17 @@ shouldThrow(() => Intl.getCanonicalLocales("en-US-a"), RangeError);
 shouldThrow(() => Intl.getCanonicalLocales("en-US-a-xxxxxxxxxxxxxxxxxxx"), RangeError);
 shouldThrow(() => Intl.getCanonicalLocales("en-US-a-ok-ok-$"), RangeError);
 shouldNotThrow(() => Intl.getCanonicalLocales("en-US-a-ok-ok"));
-shouldNotThrow(() => Intl.getCanonicalLocales("en-US-0-ok1"));
+if ($vm.icuVersion() < 64)
+    shouldThrow(() => Intl.getCanonicalLocales("en-US-0-ok1"), RangeError);
+else
+    shouldNotThrow(() => Intl.getCanonicalLocales("en-US-0-ok1"));
 shouldThrow(() => Intl.getCanonicalLocales("en-US-0"), RangeError);
 shouldThrow(() => Intl.getCanonicalLocales("en-US-0-xxxxxxxxxxxxxxxxxxx"), RangeError);
 shouldThrow(() => Intl.getCanonicalLocales("en-US-0-ok-ok-$"), RangeError);
-shouldNotThrow(() => Intl.getCanonicalLocales("en-US-0-ok-ok"));
+if ($vm.icuVersion() < 64)
+    shouldThrow(() => Intl.getCanonicalLocales("en-US-0-ok-ok"), RangeError);
+else
+    shouldNotThrow(() => Intl.getCanonicalLocales("en-US-0-ok-ok"));
 shouldNotThrow(() => Intl.getCanonicalLocales("de"));
 shouldNotThrow(() => Intl.getCanonicalLocales("fr"));
 shouldNotThrow(() => Intl.getCanonicalLocales("ja"));
