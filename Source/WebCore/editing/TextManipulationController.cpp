@@ -829,8 +829,20 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         nodesToRemove.remove(*node);
 
     HashSet<Ref<Node>> reusedOriginalNodes;
-    Vector<NodeEntry> lastTopDownPath;
     Vector<NodeInsertion> insertions;
+    auto startTopDownPath = getPath(commonAncestor.get(), firstContentNode.get());
+    while (!startTopDownPath.isEmpty()) {
+        auto lastNode = startTopDownPath.last();
+        ASSERT(is<ContainerNode>(lastNode.get()));
+        if (!downcast<ContainerNode>(lastNode.get()).hasOneChild())
+            break;
+        nodesToRemove.add(startTopDownPath.takeLast());
+    }
+    auto lastTopDownPath = startTopDownPath.map([&](auto node) -> NodeEntry {
+        reusedOriginalNodes.add(node.copyRef());
+        return { node, node };
+    });
+
     for (size_t index = 0; index < replacementTokens.size(); ++index) {
         auto& replacementToken = replacementTokens[index];
         auto it = tokenExchangeMap.find(replacementToken.identifier);

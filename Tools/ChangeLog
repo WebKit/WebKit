@@ -1,3 +1,13 @@
+2020-08-24  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulationshould not manipulate nodes out of paragraph range
+        https://bugs.webkit.org/show_bug.cgi?id=215406
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2020-08-24  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Show picker for date and datetime-local input types

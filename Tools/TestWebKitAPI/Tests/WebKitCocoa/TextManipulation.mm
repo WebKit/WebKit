@@ -3131,6 +3131,54 @@ TEST(TextManipulation, CompleteTextManipulationShouldReplaceContentIgnoredByEdit
     EXPECT_WK_STREQ("<div role=\"img\">Images<a>Link</a><img src=\"hello.png\"><img src=\"webkit.png\"></div>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+TEST(TextManipulation, CompleteTextManipulationShouldOnlyChangeNodesInParagraphRange)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<head>"
+            "<style>"
+                "span { white-space:pre; }"
+            "</style>"
+        "</head>"
+        "<body>"
+            "<span>zero &#10;<b>two four</b></span>"
+            "one"
+            "<i>three</i>"
+        "</body>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 2UL);
+    EXPECT_EQ(items[0].tokens.count, 2UL);
+    EXPECT_WK_STREQ("zero", items[0].tokens[0].content);
+    EXPECT_WK_STREQ(" \n", items[0].tokens[1].content);
+    EXPECT_EQ(items[1].tokens.count, 3UL);
+    EXPECT_WK_STREQ("two four", items[1].tokens[0].content);
+    EXPECT_WK_STREQ("one", items[1].tokens[1].content);
+    EXPECT_WK_STREQ("three", items[1].tokens[2].content);
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[(_WKTextManipulationItem *)createItem(items[1].identifier, {
+        { items[1].tokens[1].identifier, @"one" },
+        { items[1].tokens[0].identifier, @"two" },
+        { items[1].tokens[2].identifier, @"three" },
+        { items[1].tokens[0].identifier, @"four" }
+    }).get()] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ("<span>zero \n</span>one<span><b>two</b></span><i>three</i><span><b>four</b></span>",
+        [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
+}
+
 TEST(TextManipulation, TextManipulationTokenDebugDescription)
 {
     auto token = adoptNS([[_WKTextManipulationToken alloc] init]);
