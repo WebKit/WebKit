@@ -2209,3 +2209,6 @@ webkit.org/b/215614 media/modern-media-controls/macos-inline-media-controls/maco
 webkit.org/b/215649 accessibility/mac/select-element-selection-with-optgroups.html [ Pass Failure ]
 
 webkit.org/b/215723 fast/repaint/list-item-equal-style-change-no-repaint.html [ Pass Failure ]
+
+webkit.org/b/189672 [ Release ] webgl/2.0.0/conformance2/textures/canvas/tex-2d-rg32f-rg-float.html [ Pass Failure ]
+

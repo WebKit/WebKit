@@ -1,3 +1,12 @@
+2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
+
+        WebGL conformance: Failures and Timeouts in suite 2.0.0/conformance2
+        https://bugs.webkit.org/show_bug.cgi?id=189672
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-24  Youenn Fablet  <youenn@apple.com>
 
         http/tests/websocket/tests/hybi/close-on-* tests are not interoperable
