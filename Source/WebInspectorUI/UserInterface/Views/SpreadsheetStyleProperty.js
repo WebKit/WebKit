@@ -463,7 +463,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         const maxValueLength = 150;
         let tokens = WI.tokenizeCSSValue(value);
 
-        if (this._property.enabled)
+        if (this._property.enabled && !this._property.overridden && this._property.valid && !this._property.hasOtherVendorNameOrKeyword())
             tokens = this._replaceSpecialTokens(tokens);
 
         tokens = tokens.map((token) => {

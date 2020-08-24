@@ -1,5 +1,15 @@
 2020-08-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Elements: Styles: don't show swatches for properties that aren't used/apply
+        https://bugs.webkit.org/show_bug.cgi?id=215681
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._renderValue):
+
+2020-08-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: Styles: don't show non-inherited properties
         https://bugs.webkit.org/show_bug.cgi?id=215682
 
