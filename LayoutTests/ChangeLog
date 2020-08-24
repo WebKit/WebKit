@@ -1,3 +1,18 @@
+2020-08-24  Youenn Fablet  <youenn@apple.com>
+
+        Cocoa WebSocketTask should expose WebSocket server extensions
+        https://bugs.webkit.org/show_bug.cgi?id=215696
+
+        Reviewed by Darin Adler.
+
+        Make the tests agnostic of using the legacy or standard deflate extension.
+        If using the standard deflate extensions, do not expect subparameters (this matches Chrome, Firefox and NSURLSession code path).
+
+        * http/tests/websocket/tests/hybi/deflate-frame-parameter-expected.txt:
+        * http/tests/websocket/tests/hybi/deflate-frame-parameter.html:
+        * http/tests/websocket/tests/hybi/extensions-expected.txt:
+        * http/tests/websocket/tests/hybi/extensions.html:
+
 2020-08-24  Rob Buis  <rbuis@igalia.com>
 
         Make window.find not default the search string to undefined

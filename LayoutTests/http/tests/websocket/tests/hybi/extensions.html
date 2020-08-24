@@ -19,10 +19,12 @@ shouldBeEqualToString("ws.extensions", "");
 debug("Check if the value is read only:");
 shouldBeEqualToString("ws.extensions = 'foo'; ws.extensions", "");
 
+let hasDeflateExtension;
 ws.onopen = function(event)
 {
     debug("Check the value after the connection is established:");
-    shouldBeEqualToString("ws.extensions", "x-webkit-deflate-frame");
+    hasDeflateExtension = ws.extensions === "x-webkit-deflate-frame" || ws.extensions === "permessage-deflate"
+    shouldBeTrue("hasDeflateExtension");
     finishJSTest();
 };
 

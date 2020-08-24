@@ -3,23 +3,19 @@ Test WebSocket deflate-frame extension.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 Testing query: "max_window_bits=8"
-PASS ws.extensions.search('x-webkit-deflate-frame') != -1 is true
-PASS ws.extensions.search('max_window_bits=8') != -1 is true
+PASS testResult is true
 PASS event.data is firstMessage
 PASS event.data is secondMessage
 onclose() was called.
 PASS closeEvent.wasClean is true
 Testing query: "no_context_takeover"
-PASS ws.extensions.search('x-webkit-deflate-frame') != -1 is true
-PASS ws.extensions.search('no_context_takeover') != -1 is true
+PASS testResult is true
 PASS event.data is firstMessage
 PASS event.data is secondMessage
 onclose() was called.
 PASS closeEvent.wasClean is true
 Testing query: "max_window_bits=8&no_context_takeover"
-PASS ws.extensions.search('x-webkit-deflate-frame') != -1 is true
-PASS ws.extensions.search('max_window_bits=8') != -1 is true
-PASS ws.extensions.search('no_context_takeover') != -1 is true
+PASS testResult is true
 PASS event.data is firstMessage
 PASS event.data is secondMessage
 onclose() was called.

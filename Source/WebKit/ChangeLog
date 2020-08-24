@@ -1,3 +1,15 @@
+2020-08-24  Youenn Fablet  <youenn@apple.com>
+
+        Cocoa WebSocketTask should expose WebSocket server extensions
+        https://bugs.webkit.org/show_bug.cgi?id=215696
+
+        Reviewed by Darin Adler.
+
+        Send back to WebProcess the value of server WebSocket extensions.
+
+        * NetworkProcess/cocoa/WebSocketTaskCocoa.mm:
+        (WebKit::WebSocketTask::didConnect):
+
 2020-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK4 build

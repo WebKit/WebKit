@@ -7,7 +7,7 @@ PASS ws.extensions is ""
 Check if the value is read only:
 PASS ws.extensions = 'foo'; ws.extensions is ""
 Check the value after the connection is established:
-PASS ws.extensions is "x-webkit-deflate-frame"
+PASS hasDeflateExtension is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

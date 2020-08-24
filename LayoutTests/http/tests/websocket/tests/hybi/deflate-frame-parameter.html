@@ -38,6 +38,7 @@ for (var i = 0; i < 16; ++i) {
     secondMessage += 'a';
 }
 
+let testResult;
 function doTest(queryIndex)
 {
     var query = queries[queryIndex];
@@ -49,10 +50,15 @@ function doTest(queryIndex)
 
     ws.onopen = function(event)
     {
-        shouldBeTrue("ws.extensions.search('x-webkit-deflate-frame') != -1");
-        parameters = query.split('&');
-        for (var i = 0; i < parameters.length; ++i)
-            shouldBeTrue("ws.extensions.search('" + parameters[i] + "') != -1");
+        const isUsingLegacyExtension = ws.extensions.search('x-webkit-deflate-frame') != -1;
+        if (isUsingLegacyExtension) {
+            testResult = true;
+            parameters = query.split('&');
+            for (var i = 0; i < parameters.length; ++i)
+                testResult = testResult && (ws.extensions.search(parameters[i]) != -1);
+        } else
+            testResult = ws.extensions.search('permessage-deflate') != -1;
+        shouldBeTrue('testResult');
         ws.send(firstMessage);
     };
 
