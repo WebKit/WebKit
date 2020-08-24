@@ -5,11 +5,16 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 
+var passed = true;
+
 function fail(s) {
-    document.body.innerHTML = "FAIL: " + s;
+    document.body.innerHTML += "FAIL: " + s + "<br>";
+    passed = false;
 }
 
 function runTest() {
+    if (window.find()) fail('found: find with no parameters');
+    if (window.find('')) fail('found: empty string');
     if (window.find('nonsense')) fail('found: nonsense');
     if (window.find('nonsense', true)) fail('found: nonsense');
     if (window.find('nonsense', false)) fail('found: nonsense');
@@ -34,7 +39,7 @@ function runTest() {
     if (!window.find('for', true, false, true)) fail('not found: for');
     if (window.find('FOR', true, false, true)) fail('found: FOR');
 
-    document.body.innerHTML = "This is a test for window.find(). SUCCESS!";
+    if (passed) document.body.innerHTML = "This is a test for window.find(). SUCCESS!";
 }
 
 </script>

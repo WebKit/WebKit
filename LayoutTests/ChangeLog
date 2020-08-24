@@ -1,3 +1,16 @@
+2020-08-24  Rob Buis  <rbuis@igalia.com>
+
+        Make window.find not default the search string to undefined
+        https://bugs.webkit.org/show_bug.cgi?id=215757
+
+        Reviewed by Darin Adler.
+
+        Add tests to verify window.find() does not use "undefined"
+        as text string. This also fixes the logic of the test to
+        not always output PASS at the end.
+
+        * fast/text/window-find.html:
+
 2020-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Programmatic selection of text in a text field causes the highlight overlay to spill out

@@ -1,3 +1,18 @@
+2020-08-24  Rob Buis  <rbuis@igalia.com>
+
+        Make window.find not default the search string to undefined
+        https://bugs.webkit.org/show_bug.cgi?id=215757
+
+        Reviewed by Darin Adler.
+
+        Make window.find not default the search string to undefined, instead
+        use the null string. Before this change window.find() would find a
+        hit in a page containing the text string "undefined".
+
+        Test: fast/text/window-find.html
+
+        * page/DOMWindow.idl:
+
 2020-08-24  Justin Uberti  <justin@uberti.name>
 
         RTCRtpSynchronizationSource.rtpTimestamp is not present
