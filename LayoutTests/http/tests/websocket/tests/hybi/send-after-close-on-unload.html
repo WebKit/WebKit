@@ -31,7 +31,7 @@ ws.onmessage = function(evt)
 };
 ws.onclose = function()
 {
-    shouldBe("closedSocket", '"socket1"');
+    shouldBe("closedSocket", '"socket1: receive next message"');
     shouldBe("document.childWebSocket.readyState", "3");
     finishJSTest();
 };

@@ -1,3 +1,28 @@
+2020-08-24  Youenn Fablet  <youenn@apple.com>
+
+        http/tests/websocket/tests/hybi/close-on-* tests are not interoperable
+        https://bugs.webkit.org/show_bug.cgi?id=215692
+
+        Reviewed by Darin Adler.
+
+        Before the patch, tests were not passing in Chrome, Firefox and NSURLSession WebSocket code path.
+        This was due to the fact the web socket script is using try/finally and the closure of the connection is not raising an exception
+        while it is for Chrome, Firefox and NSURLSession WebSocket code path.
+        Change the WebSocket server script to more reliably send the socket message at closing time of the connection.
+
+        * http/tests/websocket/tests/hybi/close-on-navigate-new-location-expected.txt:
+        * http/tests/websocket/tests/hybi/close-on-navigate-new-location.html:
+        * http/tests/websocket/tests/hybi/close-on-unload-and-force-gc-expected.txt:
+        * http/tests/websocket/tests/hybi/close-on-unload-and-force-gc.html:
+        * http/tests/websocket/tests/hybi/close-on-unload-expected.txt:
+        * http/tests/websocket/tests/hybi/close-on-unload-reference-in-parent-expected.txt:
+        * http/tests/websocket/tests/hybi/close-on-unload-reference-in-parent.html:
+        * http/tests/websocket/tests/hybi/close-on-unload.html:
+        * http/tests/websocket/tests/hybi/close-on-unload_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/send-after-close-on-unload-expected.txt:
+        * http/tests/websocket/tests/hybi/send-after-close-on-unload.html:
+
 2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
         [ macOS wk1 Debug ] inspector/animation/nameChanged.html is a flaky crash
         https://bugs.webkit.org/show_bug.cgi?id=215767
