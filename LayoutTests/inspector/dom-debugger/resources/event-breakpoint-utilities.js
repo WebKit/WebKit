@@ -1,14 +1,199 @@
 TestPage.registerInitializer(() => {
     InspectorTest.EventBreakpoint = {};
 
+    InspectorTest.EventBreakpoint.addBreakpointOptionsTestCases = function(suite, type, eventName) {
+        async function triggerBreakpoint() {
+            InspectorTest.log("Triggering breakpoint...");
+            return Promise.all([
+                InspectorTest.awaitEvent("TestPage-" + eventName),
+                InspectorTest.evaluateInPage(`trigger_${eventName}()`),
+            ]);
+        }
+
+        suite.addTestCase({
+            name: suite.name + ".Options.Condition",
+            description: "Check that the debugger will not pause unless the breakpoint has a truthy breakpoint condition.",
+            async test() {
+                let pauseCount = 0;
+
+                let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    ++pauseCount;
+                    WI.debuggerManager.resume();
+                });
+
+                let breakpoint = await InspectorTest.EventBreakpoint.createBreakpoint(type, {eventName});
+
+                InspectorTest.newline();
+
+                InspectorTest.log("Setting condition to 'false'...");
+                breakpoint.condition = "false";
+
+                for (let i = 1; i <= 4; ++i) {
+                    if (i === 3) {
+                        InspectorTest.newline();
+
+                        InspectorTest.log("Setting condition to 'true'...");
+                        breakpoint.condition = "true";
+                    }
+
+                    InspectorTest.newline();
+
+                    await triggerBreakpoint();
+
+                    if (i <= 2)
+                        InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+                    else
+                        InspectorTest.expectEqual(pauseCount, i - 2, "Should pause.");
+                }
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+
+        suite.addTestCase({
+            name: suite.name + ".Options.IgnoreCount",
+            description: "Check that the debugger will not pause unless the breakpoint is hit at least as many times as it's `ignoreCount`.",
+            async test() {
+                let pauseCount = 0;
+
+                let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    ++pauseCount;
+                    WI.debuggerManager.resume();
+                });
+
+                let breakpoint = await InspectorTest.EventBreakpoint.createBreakpoint(type, {eventName});
+
+                InspectorTest.newline();
+
+                InspectorTest.log("Setting ignoreCount to '2'...");
+                breakpoint.ignoreCount = 2;
+
+                for (let i = 1; i <=4; ++i) {
+                    InspectorTest.newline();
+
+                    await triggerBreakpoint();
+
+                    if (i <= 2)
+                        InspectorTest.expectEqual(pauseCount, 0, "Should not pause.");
+                    else
+                        InspectorTest.expectEqual(pauseCount, i - 2, "Should pause.");
+                }
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+
+        suite.addTestCase({
+            name: suite.name + ".Options.Action.Log",
+            description: "Check that log breakpoint actions execute when the breakpoint is hit.",
+            async test() {
+                let pauseCount = 0;
+
+                let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    ++pauseCount;
+                    WI.debuggerManager.resume();
+                });
+
+                let breakpoint = await InspectorTest.EventBreakpoint.createBreakpoint(type, {eventName});
+
+                InspectorTest.newline();
+
+                InspectorTest.log("Adding log action...");
+                let action = breakpoint.createAction(WI.BreakpointAction.Type.Log, {data: "BREAKPOINT ACTION LOG 1"});
+
+                for (let i = 1; i <= 4; ++i) {
+                    if (i > 1) {
+                        InspectorTest.newline();
+
+                        InspectorTest.log("Editing log action...");
+                        action.data = `BREAKPOINT ACTION LOG ${i}`;
+
+                        if (i === 3) {
+                            InspectorTest.log("Enabling auto-continue...");
+                            breakpoint.autoContinue = true;
+                        }
+                    }
+
+                    InspectorTest.newline();
+
+                    let [messageAddedEvent] = await Promise.all([
+                        WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                        triggerBreakpoint(),
+                    ]);
+
+                    InspectorTest.expectEqual(messageAddedEvent.data.message.messageText, action.data, "Should execute breakpoint action.");
+
+                    if (i <= 2)
+                        InspectorTest.expectEqual(pauseCount, i, "Should pause.");
+                    else
+                        InspectorTest.expectEqual(pauseCount, 2, "Should not pause.");
+                }
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+
+        suite.addTestCase({
+            name: suite.name + ".Options.Actions.Evaluate",
+            description: "Check that evaluate breakpoint actions execute when the breakpoint is hit.",
+            async test() {
+                let pauseCount = 0;
+
+                let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    ++pauseCount;
+                    WI.debuggerManager.resume();
+                });
+
+                let breakpoint = await InspectorTest.EventBreakpoint.createBreakpoint(type, {eventName});
+
+                InspectorTest.newline();
+
+                InspectorTest.log("Adding evaluate action...");
+                let action = breakpoint.createAction(WI.BreakpointAction.Type.Evaluate, {data: "window.BREAKPOINT_ACTION_EVALUATE = 1;"});
+
+                for (let i = 1; i <= 4; ++i) {
+                    if (i > 1) {
+                        InspectorTest.newline();
+
+                        InspectorTest.log("Editing evaluate action...");
+                        action.data = `window.BREAKPOINT_ACTION_EVALUATE = ${i};`;
+
+                        if (i === 3) {
+                            InspectorTest.log("Enabling auto-continue...");
+                            breakpoint.autoContinue = true;
+                        }
+                    }
+
+                    InspectorTest.newline();
+
+                    await triggerBreakpoint();
+
+                    let breakpointActionEvaluateResult = await InspectorTest.evaluateInPage(`window.BREAKPOINT_ACTION_EVALUATE`);
+                    InspectorTest.expectEqual(breakpointActionEvaluateResult, i, "Should execute breakpoint action.");
+
+                    if (i <= 2)
+                        InspectorTest.expectEqual(pauseCount, i, "Should pause.");
+                    else
+                        InspectorTest.expectEqual(pauseCount, 2, "Should not pause.");
+                }
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            },
+            teardown: InspectorTest.EventBreakpoint.teardown,
+        });
+    };
+
     InspectorTest.EventBreakpoint.teardown = function(resolve, reject) {
-        WI.domDebuggerManager.removeEventBreakpoint(WI.domDebuggerManager.allAnimationFramesBreakpoint);
-        WI.domDebuggerManager.removeEventBreakpoint(WI.domDebuggerManager.allIntervalsBreakpoint);
-        WI.domDebuggerManager.removeEventBreakpoint(WI.domDebuggerManager.allListenersBreakpoint);
-        WI.domDebuggerManager.removeEventBreakpoint(WI.domDebuggerManager.allTimeoutsBreakpoint);
+        WI.domDebuggerManager.allAnimationFramesBreakpoint?.remove();
+        WI.domDebuggerManager.allIntervalsBreakpoint?.remove();
+        WI.domDebuggerManager.allListenersBreakpoint?.remove();
+        WI.domDebuggerManager.allTimeoutsBreakpoint?.remove();
 
         for (let breakpoint of WI.domDebuggerManager.listenerBreakpoints)
-            WI.domDebuggerManager.removeEventBreakpoint(breakpoint);
+            breakpoint.remove();
 
         resolve();
     };
@@ -42,8 +227,11 @@ TestPage.registerInitializer(() => {
         });
     };
 
-    InspectorTest.EventBreakpoint.createBreakpoint = function(type, eventName) {
-        InspectorTest.log(`Creating "${eventName}" Event Breakpoint...`);
+    InspectorTest.EventBreakpoint.createBreakpoint = function(type, {eventName} = {}) {
+        if (type !== WI.EventBreakpoint.Type.Listener)
+            eventName = null;
+
+        InspectorTest.log(`Creating "${eventName || type}" Event Breakpoint...`);
         return InspectorTest.EventBreakpoint.addBreakpoint(new WI.EventBreakpoint(type, {eventName}));
     };
 
@@ -74,7 +262,7 @@ TestPage.registerInitializer(() => {
                 resolve(breakpoint);
             });
 
-            WI.domDebuggerManager.removeEventBreakpoint(breakpoint);
+            breakpoint.remove();
         });
     };
 

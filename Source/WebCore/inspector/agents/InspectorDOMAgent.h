@@ -32,6 +32,7 @@
 #include "EventTarget.h"
 #include "InspectorWebAgentBase.h"
 #include "Timer.h"
+#include <JavaScriptCore/Breakpoint.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/HashMap.h>
@@ -125,7 +126,7 @@ public:
 #endif
     void getEventListenersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
     void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled) override;
-    void setBreakpointForEventListener(ErrorString&, int eventListenerId) override;
+    void setBreakpointForEventListener(ErrorString&, int eventListenerId, const JSON::Object* options) final;
     void removeBreakpointForEventListener(ErrorString&, int eventListenerId) override;
     void getAccessibilityPropertiesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties) override;
     void performSearch(ErrorString&, const String& query, const JSON::Array* nodeIds, const bool* caseSensitive, String* searchId, int* resultCount) override;
@@ -205,7 +206,7 @@ public:
     Element* assertElement(ErrorString&, int nodeId);
     Document* assertDocument(ErrorString&, int nodeId);
 
-    bool hasBreakpointForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
+    RefPtr<JSC::Breakpoint> breakpointForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     int idForEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
 
 private:
@@ -231,7 +232,7 @@ private:
     Ref<JSON::ArrayOf<String>> buildArrayForElementAttributes(Element*);
     Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&, NodeToIdMap* nodesMap);
-    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, EventTarget&, const AtomString& eventType, bool disabled, bool hasBreakpoint);
+    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, EventTarget&, const AtomString& eventType, bool disabled, const RefPtr<JSC::Breakpoint>&);
     RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
     void processAccessibilityChildren(AXCoreObject&, JSON::ArrayOf<int>&);
     
@@ -290,7 +291,7 @@ private:
         AtomString eventType;
         bool useCapture { false };
         bool disabled { false };
-        bool hasBreakpoint { false };
+        RefPtr<JSC::Breakpoint> breakpoint;
 
         InspectorEventListener() { }
 

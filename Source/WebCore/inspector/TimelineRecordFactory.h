@@ -31,14 +31,11 @@
  
 #pragma once
 
+#include <JavaScriptCore/DebuggerPrimitives.h>
 #include <wtf/Forward.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
-
-namespace Inspector {
-struct ScriptBreakpointAction;
-}
 
 namespace WebCore {
 
@@ -51,7 +48,7 @@ public:
 
     static Ref<JSON::Object> createFunctionCallData(const String& scriptName, int scriptLine, int scriptColumn);
     static Ref<JSON::Object> createConsoleProfileData(const String& title);
-    static Ref<JSON::Object> createProbeSampleData(const Inspector::ScriptBreakpointAction&, unsigned sampleId);
+    static Ref<JSON::Object> createProbeSampleData(JSC::BreakpointActionID, unsigned sampleId);
     static Ref<JSON::Object> createEventDispatchData(const Event&);
     static Ref<JSON::Object> createGenericTimerData(int timerId);
     static Ref<JSON::Object> createTimerInstallData(int timerId, Seconds timeout, bool singleShot);

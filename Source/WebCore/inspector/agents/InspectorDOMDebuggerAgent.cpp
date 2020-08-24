@@ -76,10 +76,11 @@ void InspectorDOMDebuggerAgent::disable()
     m_instrumentingAgents.setEnabledDOMDebuggerAgent(nullptr);
 
     m_listenerBreakpoints.clear();
+    m_pauseOnAllIntervalsBreakpoint = nullptr;
+    m_pauseOnAllListenersBreakpoint = nullptr;
+    m_pauseOnAllTimeoutsBreakpoint = nullptr;
+
     m_urlBreakpoints.clear();
-    m_pauseOnAllIntervalsEnabled = false;
-    m_pauseOnAllListenersEnabled = false;
-    m_pauseOnAllTimeoutsEnabled = false;
     m_pauseOnAllURLsEnabled = false;
 }
 
@@ -111,7 +112,22 @@ void InspectorDOMDebuggerAgent::discardAgent()
     m_debuggerAgent = nullptr;
 }
 
-void InspectorDOMDebuggerAgent::setEventBreakpoint(ErrorString& errorString, const String& breakpointTypeString, const String* eventName)
+void InspectorDOMDebuggerAgent::mainFrameNavigated()
+{
+    for (auto& breakpoint : m_listenerBreakpoints.values())
+        breakpoint->resetHitCount();
+
+    if (m_pauseOnAllIntervalsBreakpoint)
+        m_pauseOnAllIntervalsBreakpoint->resetHitCount();
+
+    if (m_pauseOnAllListenersBreakpoint)
+        m_pauseOnAllListenersBreakpoint->resetHitCount();
+
+    if (m_pauseOnAllTimeoutsBreakpoint)
+        m_pauseOnAllTimeoutsBreakpoint->resetHitCount();
+}
+
+void InspectorDOMDebuggerAgent::setEventBreakpoint(ErrorString& errorString, const String& breakpointTypeString, const String* eventName, const JSON::Object* optionsPayload)
 {
     if (breakpointTypeString.isEmpty()) {
         errorString = "breakpointType is empty"_s;
@@ -124,9 +140,13 @@ void InspectorDOMDebuggerAgent::setEventBreakpoint(ErrorString& errorString, con
         return;
     }
 
+    auto breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, optionsPayload);
+    if (!breakpoint)
+        return;
+
     if (eventName && !eventName->isEmpty()) {
         if (breakpointType.value() == Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener) {
-            if (!m_listenerBreakpoints.add(*eventName))
+            if (!m_listenerBreakpoints.add(*eventName, breakpoint.releaseNonNull()))
                 errorString = "Breakpoint with eventName already exists"_s;
             return;
         }
@@ -137,25 +157,28 @@ void InspectorDOMDebuggerAgent::setEventBreakpoint(ErrorString& errorString, con
 
     switch (breakpointType.value()) {
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
-        setAnimationFrameBreakpoint(errorString, true);
+        setAnimationFrameBreakpoint(errorString, WTFMove(breakpoint));
         break;
 
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::Interval:
-        if (m_pauseOnAllIntervalsEnabled)
+        if (!m_pauseOnAllIntervalsBreakpoint)
+            m_pauseOnAllIntervalsBreakpoint = WTFMove(breakpoint);
+        else
             errorString = "Breakpoint for Interval already exists"_s;
-        m_pauseOnAllIntervalsEnabled = true;
         break;
 
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener:
-        if (m_pauseOnAllListenersEnabled)
+        if (!m_pauseOnAllListenersBreakpoint)
+            m_pauseOnAllListenersBreakpoint = WTFMove(breakpoint);
+        else
             errorString = "Breakpoint for Listener already exists"_s;
-        m_pauseOnAllListenersEnabled = true;
         break;
 
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::Timeout:
-        if (m_pauseOnAllTimeoutsEnabled)
+        if (!m_pauseOnAllTimeoutsBreakpoint)
+            m_pauseOnAllTimeoutsBreakpoint = WTFMove(breakpoint);
+        else
             errorString = "Breakpoint for Timeout already exists"_s;
-        m_pauseOnAllTimeoutsEnabled = true;
         break;
     }
 }
@@ -186,51 +209,57 @@ void InspectorDOMDebuggerAgent::removeEventBreakpoint(ErrorString& errorString, 
 
     switch (breakpointType.value()) {
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
-        setAnimationFrameBreakpoint(errorString, false);
+        setAnimationFrameBreakpoint(errorString, nullptr);
         break;
 
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::Interval:
-        if (!m_pauseOnAllIntervalsEnabled)
+        if (!m_pauseOnAllIntervalsBreakpoint)
             errorString = "Breakpoint for Intervals missing"_s;
-        m_pauseOnAllIntervalsEnabled = false;
+        m_pauseOnAllIntervalsBreakpoint = nullptr;
         break;
 
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener:
-        if (!m_pauseOnAllListenersEnabled)
+        if (!m_pauseOnAllListenersBreakpoint)
             errorString = "Breakpoint for Listeners missing"_s;
-        m_pauseOnAllListenersEnabled = false;
+        m_pauseOnAllListenersBreakpoint = nullptr;
         break;
 
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::Timeout:
-        if (!m_pauseOnAllTimeoutsEnabled)
+        if (!m_pauseOnAllTimeoutsBreakpoint)
             errorString = "Breakpoint for Timeouts missing"_s;
-        m_pauseOnAllTimeoutsEnabled = false;
+        m_pauseOnAllTimeoutsBreakpoint = nullptr;
         break;
     }
 }
 
 void InspectorDOMDebuggerAgent::willHandleEvent(Event& event, const RegisteredEventListener& registeredEventListener)
 {
-    if (!m_debuggerAgent->breakpointsActive())
-        return;
-
     auto state = event.target()->scriptExecutionContext()->execState();
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
     if (injectedScript.hasNoValue())
         return;
 
+    // Set Web Inspector console command line `$event` getter.
     {
         JSC::JSLockHolder lock(state);
 
         injectedScript.setEventValue(toJS(state, deprecatedGlobalObjectForPrototype(state), event));
     }
 
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
     auto* domAgent = m_instrumentingAgents.persistentDOMAgent();
 
-    bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_pauseOnAllListenersEnabled || m_listenerBreakpoints.contains(event.type());
-    if (!shouldPause && domAgent)
-        shouldPause = domAgent->hasBreakpointForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
-    if (!shouldPause)
+    auto breakpoint = m_pauseOnAllListenersBreakpoint;
+    if (!breakpoint) {
+        auto it = m_listenerBreakpoints.find(event.type());
+        if (it != m_listenerBreakpoints.end())
+            breakpoint = it->value.copyRef();
+    }
+    if (!breakpoint && domAgent)
+        breakpoint = domAgent->breakpointForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+    if (!breakpoint)
         return;
 
     Ref<JSON::Object> eventData = JSON::Object::create();
@@ -241,12 +270,37 @@ void InspectorDOMDebuggerAgent::willHandleEvent(Event& event, const RegisteredEv
             eventData->setInteger("eventListenerId"_s, eventListenerId);
     }
 
-    m_debuggerAgent->schedulePauseOnNextStatement(Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTFMove(eventData));
+    m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTFMove(eventData));
 }
 
-void InspectorDOMDebuggerAgent::didHandleEvent()
+void InspectorDOMDebuggerAgent::didHandleEvent(Event& event, const RegisteredEventListener& registeredEventListener)
 {
-    m_injectedScriptManager.clearEventValue();
+    auto state = event.target()->scriptExecutionContext()->execState();
+    auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
+    if (injectedScript.hasNoValue())
+        return;
+
+    // Clear Web Inspector console command line `$event` getter.
+    {
+        JSC::JSLockHolder lock(state);
+
+        injectedScript.clearEventValue();
+    }
+
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
+    auto breakpoint = m_pauseOnAllListenersBreakpoint;
+    if (!breakpoint)
+        breakpoint = m_listenerBreakpoints.get(event.type());
+    if (!breakpoint) {
+        if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent())
+            breakpoint = domAgent->breakpointForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+    }
+    if (!breakpoint)
+        return;
+
+    m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
 void InspectorDOMDebuggerAgent::willFireTimer(bool oneShot)
@@ -254,12 +308,24 @@ void InspectorDOMDebuggerAgent::willFireTimer(bool oneShot)
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
-    bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || (oneShot ? m_pauseOnAllTimeoutsEnabled : m_pauseOnAllIntervalsEnabled);
-    if (!shouldPause)
+    auto breakpoint = oneShot ? m_pauseOnAllTimeoutsBreakpoint : m_pauseOnAllIntervalsBreakpoint;
+    if (!breakpoint)
         return;
 
     auto breakReason = oneShot ? Inspector::DebuggerFrontendDispatcher::Reason::Timeout : Inspector::DebuggerFrontendDispatcher::Reason::Interval;
-    m_debuggerAgent->schedulePauseOnNextStatement(breakReason, nullptr);
+    m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, breakReason);
+}
+
+void InspectorDOMDebuggerAgent::didFireTimer(bool oneShot)
+{
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
+    auto breakpoint = oneShot ? m_pauseOnAllTimeoutsBreakpoint : m_pauseOnAllIntervalsBreakpoint;
+    if (!breakpoint)
+        return;
+
+    m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
 void InspectorDOMDebuggerAgent::setURLBreakpoint(ErrorString& errorString, const String& url, const bool* optionalIsRegex)

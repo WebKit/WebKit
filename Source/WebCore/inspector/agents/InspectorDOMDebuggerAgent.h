@@ -32,10 +32,13 @@
 #pragma once
 
 #include "InspectorWebAgentBase.h"
+#include <JavaScriptCore/Breakpoint.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorDebuggerAgent.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -64,7 +67,7 @@ public:
     // DOMDebuggerBackendDispatcherHandler
     void setURLBreakpoint(ErrorString&, const String& url, const bool* optionalIsRegex) final;
     void removeURLBreakpoint(ErrorString&, const String& url) final;
-    void setEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName) final;
+    void setEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName, const JSON::Object* options) final;
     void removeEventBreakpoint(ErrorString&, const String& breakpointType, const String* eventName) final;
 
     // InspectorDebuggerAgent::Listener
@@ -72,18 +75,20 @@ public:
     void debuggerWasDisabled() override;
 
     // InspectorInstrumentation
+    virtual void mainFrameNavigated();
     void willSendXMLHttpRequest(const String& url);
     void willFetch(const String& url);
     void willHandleEvent(Event&, const RegisteredEventListener&);
-    void didHandleEvent();
+    void didHandleEvent(Event&, const RegisteredEventListener&);
     void willFireTimer(bool oneShot);
+    void didFireTimer(bool oneShot);
 
 protected:
     InspectorDOMDebuggerAgent(WebAgentContext&, Inspector::InspectorDebuggerAgent*);
     virtual void enable();
     virtual void disable();
 
-    virtual void setAnimationFrameBreakpoint(ErrorString&, bool enabled) = 0;
+    virtual void setAnimationFrameBreakpoint(ErrorString&, RefPtr<JSC::Breakpoint>&&) = 0;
 
     Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
 
@@ -94,14 +99,13 @@ private:
     RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
 
-    HashSet<String> m_listenerBreakpoints;
+    HashMap<String, Ref<JSC::Breakpoint>> m_listenerBreakpoints;
+    RefPtr<JSC::Breakpoint> m_pauseOnAllIntervalsBreakpoint;
+    RefPtr<JSC::Breakpoint> m_pauseOnAllListenersBreakpoint;
+    RefPtr<JSC::Breakpoint> m_pauseOnAllTimeoutsBreakpoint;
 
     enum class URLBreakpointType { RegularExpression, Text };
     HashMap<String, URLBreakpointType> m_urlBreakpoints;
-
-    bool m_pauseOnAllIntervalsEnabled { false };
-    bool m_pauseOnAllListenersEnabled { false };
-    bool m_pauseOnAllTimeoutsEnabled { false };
     bool m_pauseOnAllURLsEnabled { false };
 };
 

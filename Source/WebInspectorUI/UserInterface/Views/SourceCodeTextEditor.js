@@ -66,10 +66,11 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         this.element.classList.add("source-code");
 
         if (this._supportsDebugging) {
-            WI.Breakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._breakpointStatusDidChange, this);
-            WI.Breakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this._breakpointStatusDidChange, this);
-            WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ResolvedStateDidChange, this._breakpointStatusDidChange, this);
-            WI.Breakpoint.addEventListener(WI.Breakpoint.Event.LocationDidChange, this._updateBreakpointLocation, this);
+            WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this._breakpointStatusDidChange, this);
+            WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this._breakpointStatusDidChange, this);
+
+            WI.JavaScriptBreakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, this._breakpointStatusDidChange, this);
+            WI.JavaScriptBreakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.LocationDidChange, this._updateBreakpointLocation, this);
 
             WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._targetAdded, this);
             WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
@@ -167,7 +168,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     close()
     {
         if (this._supportsDebugging) {
-            WI.Breakpoint.removeEventListener(null, null, this);
+            WI.JavaScriptBreakpoint.removeEventListener(null, null, this);
             WI.debuggerManager.removeEventListener(null, null, this);
             WI.targetManager.removeEventListener(null, null, this);
 
@@ -1305,7 +1306,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         var editorLineInfo = {lineNumber, columnNumber};
         var unformattedLineInfo = this._unformattedLineInfoForEditorLineInfo(editorLineInfo);
         var sourceCodeLocation = this._sourceCode.createSourceCodeLocation(unformattedLineInfo.lineNumber, unformattedLineInfo.columnNumber);
-        var breakpoint = new WI.Breakpoint(sourceCodeLocation);
+        var breakpoint = new WI.JavaScriptBreakpoint(sourceCodeLocation);
 
         var lineInfo = this._editorLineInfoForSourceCodeLocation(breakpoint.sourceCodeLocation);
         this._addBreakpointWithEditorLineInfo(breakpoint, lineInfo);

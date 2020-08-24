@@ -15,7 +15,7 @@ function test()
         // 0 based indices.
         let testInfo = {line: 3, column: 4};
         let location = scriptObject.createSourceCodeLocation(testInfo.line, testInfo.column);
-        let breakpoint = new WI.Breakpoint(location);
+        let breakpoint = new WI.JavaScriptBreakpoint(location);
         WI.debuggerManager.addBreakpoint(breakpoint);
         InspectorTest.evaluateInPage("startABC()");
     }

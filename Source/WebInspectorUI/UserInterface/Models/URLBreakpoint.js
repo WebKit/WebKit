@@ -23,26 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.URLBreakpoint = class URLBreakpoint extends WI.Object
+WI.URLBreakpoint = class URLBreakpoint extends WI.Breakpoint
 {
     constructor(type, url, {disabled} = {})
     {
         console.assert(Object.values(WI.URLBreakpoint.Type).includes(type), type);
         console.assert(typeof url === "string", url);
 
-        super();
+        super({disabled});
 
         this._type = type;
         this._url = url;
-        this._disabled = disabled || false;
     }
 
     // Static
 
-    static deserialize(serializedInfo)
+    static fromJSON(json)
     {
-        return new WI.URLBreakpoint(serializedInfo.type, serializedInfo.url, {
-            disabled: !!serializedInfo.disabled,
+        return new WI.URLBreakpoint(json.type, json.url, {
+            disabled: json.disabled,
         });
     }
 
@@ -51,19 +50,16 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Object
     get type() { return this._type; }
     get url() { return this._url; }
 
-    get disabled()
+    get special()
     {
-        return this._disabled;
+        return this === WI.domDebuggerManager.allRequestsBreakpoint || super.special;
     }
 
-    set disabled(disabled)
+    remove()
     {
-        if (this._disabled === disabled)
-            return;
+        super.remove();
 
-        this._disabled = disabled;
-
-        this.dispatchEventToListeners(WI.URLBreakpoint.Event.DisabledStateChanged);
+        WI.domDebuggerManager.removeURLBreakpoint(this);
     }
 
     saveIdentityToCookie(cookie)
@@ -74,20 +70,13 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Object
 
     toJSON(key)
     {
-        let json = {
-            type: this._type,
-            url: this._url,
-        };
-        if (this._disabled)
-            json.disabled = true;
+        let json = super.toJSON(key);
+        json.type = this._type;
+        json.url = this._url;
         if (key === WI.ObjectStore.toJSONSymbol)
             json[WI.objectStores.urlBreakpoints.keyPath] = this._type + ":" + this._url;
         return json;
     }
-};
-
-WI.URLBreakpoint.Event = {
-    DisabledStateChanged: "url-breakpoint-disabled-state-changed",
 };
 
 WI.URLBreakpoint.Type = {

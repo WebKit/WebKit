@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.breakpoint.url .subtitle {
+.item.breakpoint.url .subtitle {
     font-family: Menlo, monospace;
 }
 
-.breakpoint.url:not(.breakpoint-paused-icon) .icon {
+.item.breakpoint.url:not(.paused) .icon {
     content: url(../Images/TypeIcons.svg#URLBreakpoint-light);
 }
 
 @media (prefers-color-scheme: dark) {
-    .breakpoint.url:not(.breakpoint-paused-icon) .icon {
+    .item.breakpoint.url:not(.paused) .icon {
         content: url(../Images/TypeIcons.svg#URLBreakpoint-dark);
     }
 }

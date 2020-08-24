@@ -93,7 +93,7 @@ WI.ContentView = class ContentView extends WI.View
                 return new WI.MediaTimelineView(representedObject, extraArguments);
         }
 
-        if (representedObject instanceof WI.Breakpoint || representedObject instanceof WI.IssueMessage) {
+        if (representedObject instanceof WI.JavaScriptBreakpoint || representedObject instanceof WI.IssueMessage) {
             if (representedObject.sourceCodeLocation)
                 return WI.ContentView.createFromRepresentedObject(representedObject.sourceCodeLocation.displaySourceCode, extraArguments);
         }
@@ -234,7 +234,7 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.Frame)
             return representedObject.mainResource;
 
-        if (representedObject instanceof WI.Breakpoint || representedObject instanceof WI.IssueMessage) {
+        if (representedObject instanceof WI.JavaScriptBreakpoint || representedObject instanceof WI.IssueMessage) {
             if (representedObject.sourceCodeLocation)
                 return representedObject.sourceCodeLocation.displaySourceCode;
         }
@@ -279,7 +279,7 @@ WI.ContentView = class ContentView extends WI.View
             return true;
         if (representedObject instanceof WI.Timeline)
             return true;
-        if (representedObject instanceof WI.Breakpoint || representedObject instanceof WI.IssueMessage)
+        if (representedObject instanceof WI.JavaScriptBreakpoint || representedObject instanceof WI.IssueMessage)
             return representedObject.sourceCodeLocation;
         if (representedObject instanceof WI.LocalResourceOverride)
             return true;

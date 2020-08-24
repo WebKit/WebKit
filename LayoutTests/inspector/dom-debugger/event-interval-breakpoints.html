@@ -9,20 +9,20 @@
 let intervalID = NaN;
 
 function handleWindow_setInterval() {
-    TestPage.dispatchEventToFrontend("TestPage-setInterval");
-
     repeatClearInterval();
+
+    TestPage.dispatchEventToFrontend("TestPage-setInterval");
 }
 
 function handleRepeat() {
 }
 
 function trigger_setInterval() {
-    intervalID = setInterval(handleWindow_setInterval, 100);
+    intervalID = setInterval(handleWindow_setInterval, 10);
 }
 
 function repeatSetInterval() {
-    intervalID = setInterval(handleRepeat, 100);
+    intervalID = setInterval(handleRepeat, 10);
 }
 
 function repeatClearInterval() {
@@ -33,7 +33,7 @@ function repeatClearInterval() {
 function test() {
     const eventName = "setInterval";
 
-    let suite = InspectorTest.createAsyncSuite("DOMDebugger.Event.Timer");
+    let suite = InspectorTest.createAsyncSuite("DOMDebugger.Event.Interval");
 
     suite.addTestCase({
         name: `DOMDebugger.Event.Interval.AddBreakpoint`,
@@ -61,7 +61,7 @@ function test() {
                 resolve();
             });
 
-            InspectorTest.EventBreakpoint.addBreakpoint(WI.domDebuggerManager.allIntervalsBreakpoint)
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Interval)
             .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
             .catch(reject);
         },
@@ -74,7 +74,7 @@ function test() {
         test(resolve, reject) {
             InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Interval, eventName, "Should not pause for disabled breakpoint.");
 
-            InspectorTest.EventBreakpoint.addBreakpoint(WI.domDebuggerManager.allIntervalsBreakpoint)
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Interval)
             .then(InspectorTest.EventBreakpoint.disableBreakpoint)
             .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
             .catch(reject);
@@ -88,7 +88,7 @@ function test() {
         test(resolve, reject) {
             InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Interval, eventName, "Should not pause for removed breakpoint.");
 
-            InspectorTest.EventBreakpoint.addBreakpoint(WI.domDebuggerManager.allIntervalsBreakpoint)
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Interval)
             .then(InspectorTest.EventBreakpoint.removeBreakpoint)
             .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
             .catch(reject);
@@ -102,7 +102,7 @@ function test() {
         test(resolve, reject) {
             InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Interval, eventName, "Should not pause for removed disabled breakpoint.");
 
-            InspectorTest.EventBreakpoint.addBreakpoint(WI.domDebuggerManager.allIntervalsBreakpoint)
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Interval)
             .then(InspectorTest.EventBreakpoint.disableBreakpoint)
             .then(InspectorTest.EventBreakpoint.removeBreakpoint)
             .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
@@ -134,7 +134,7 @@ function test() {
                 }
             });
 
-            InspectorTest.EventBreakpoint.addBreakpoint(WI.domDebuggerManager.allIntervalsBreakpoint)
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Interval)
             .then(() => {
                 InspectorTest.log("Firing \"setInterval\" on window...");
                 return InspectorTest.evaluateInPage(`repeatSetInterval()`);
@@ -144,11 +144,13 @@ function test() {
         teardown: InspectorTest.EventBreakpoint.teardown,
     });
 
+    InspectorTest.EventBreakpoint.addBreakpointOptionsTestCases(suite, WI.EventBreakpoint.Type.Interval, eventName);
+
     suite.runTestCasesAndFinish();
 }
 </script>
 </head>
 <body onload="runTest()">
-    <p>Tests for Event Timer breakpoints.</p>
+    <p>Tests for Event Interval breakpoints.</p>
 </body>
 </html>

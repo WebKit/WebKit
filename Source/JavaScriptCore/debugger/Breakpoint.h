@@ -26,54 +26,83 @@
 #pragma once
 
 #include "DebuggerPrimitives.h"
-#include <wtf/DoublyLinkedList.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
 
-struct Breakpoint : public DoublyLinkedListNode<Breakpoint> {
-    Breakpoint()
-    {
-    }
+class Debugger;
+class JSGlobalObject;
 
-    Breakpoint(SourceID sourceID, unsigned line, unsigned column, const String& condition, bool autoContinue, unsigned ignoreCount)
-        : sourceID(sourceID)
-        , line(line)
-        , column(column)
-        , condition(condition)
-        , autoContinue(autoContinue)
-        , ignoreCount(ignoreCount)
-    {
-    }
+class Breakpoint : public RefCounted<Breakpoint> {
+    WTF_MAKE_NONCOPYABLE(Breakpoint);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    struct Action {
+        enum class Type : uint8_t {
+            Log,
+            Evaluate,
+            Sound,
+            Probe,
+        };
 
-    BreakpointID id { noBreakpointID };
-    SourceID sourceID { noSourceID };
-    unsigned line { 0 };
-    unsigned column { 0 };
-    String condition;
-    bool autoContinue { false };
-    unsigned ignoreCount { 0 };
-    unsigned hitCount { 0 };
-    bool resolved { false };
+        Action(Type);
+
+        Type type;
+        String data;
+        BreakpointActionID id { noBreakpointActionID };
+    };
+
+    using ActionsVector = Vector<Action>;
+
+    static Ref<Breakpoint> create(BreakpointID, const String& condition = nullString(), ActionsVector&& = { }, bool autoContinue = false, size_t ignoreCount = 0);
+
+    BreakpointID id() const { return m_id; }
+
+    SourceID sourceID() const { return m_sourceID; }
+    unsigned lineNumber() const { return m_lineNumber; }
+    unsigned columnNumber() const { return m_columnNumber; }
+
+    const String& condition() const { return m_condition; }
+    const ActionsVector& actions() const { return m_actions; }
+    bool isAutoContinue() const { return m_autoContinue; }
+
+    void resetHitCount() { m_hitCount = 0; }
+
+    // Associates this breakpoint with a position in a specific source code.
+    bool link(SourceID, unsigned lineNumber, unsigned columnNumber);
+    bool isLinked() const { return m_sourceID != noSourceID; }
+
+    // Adjust the previously associated position to the next pause opportunity.
+    bool resolve(unsigned lineNumber, unsigned columnNumber);
+    bool isResolved() const { return m_resolved; }
+
+    bool shouldPause(Debugger&, JSGlobalObject*);
 
 private:
-    Breakpoint* m_prev;
-    Breakpoint* m_next;
+    Breakpoint(BreakpointID, String condition = nullString(), ActionsVector&& = { }, bool autoContinue = false, size_t ignoreCount = 0);
 
-    friend class WTF::DoublyLinkedListNode<Breakpoint>;
+    BreakpointID m_id { noBreakpointID };
+
+    SourceID m_sourceID { noSourceID };
+
+    // FIXME: <https://webkit.org/b/162771> Web Inspector: Adopt TextPosition in Inspector to avoid oneBasedInt/zeroBasedInt ambiguity
+    unsigned m_lineNumber { 0 };
+    unsigned m_columnNumber { 0 };
+
+    bool m_resolved { false };
+
+    String m_condition;
+    ActionsVector m_actions;
+    bool m_autoContinue { false };
+    size_t m_ignoreCount { 0 };
+    size_t m_hitCount { 0 };
 };
 
-class BreakpointsList : public DoublyLinkedList<Breakpoint>,
-    public RefCounted<BreakpointsList> {
-public:
-    ~BreakpointsList()
-    {
-        Breakpoint* breakpoint;
-        while ((breakpoint = removeHead()))
-            delete breakpoint;
-        ASSERT(isEmpty());
-    }
-};
+using BreakpointsVector = Vector<Ref<JSC::Breakpoint>>;
 
 } // namespace JSC

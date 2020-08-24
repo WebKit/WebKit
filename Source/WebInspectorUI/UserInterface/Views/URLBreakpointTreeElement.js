@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.GeneralTreeElement
+WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.BreakpointTreeElement
 {
-    constructor(breakpoint, {className, title} = {})
+    constructor(breakpoint, {classNames, title} = {})
     {
         console.assert(breakpoint instanceof WI.URLBreakpoint);
 
-        let classNames = ["breakpoint", "url"];
-        if (className)
-            classNames.push(className);
+        if (!Array.isArray(classNames))
+            classNames = [];
+        classNames.push("url");
 
         let subtitle;
         if (!title) {
@@ -42,115 +42,6 @@ WI.URLBreakpointTreeElement = class URLBreakpointTreeElement extends WI.GeneralT
                 subtitle = "/" + breakpoint.url + "/";
         }
 
-        super(classNames, title, subtitle, breakpoint);
-
-        this.status = WI.ImageUtilities.useSVGSymbol("Images/Breakpoint.svg");
-        this.status.className = WI.BreakpointTreeElement.StatusImageElementStyleClassName;
-
-        this.tooltipHandledSeparately = true;
-    }
-
-    // Protected
-
-    onattach()
-    {
-        super.onattach();
-
-        this.representedObject.addEventListener(WI.URLBreakpoint.Event.DisabledStateChanged, this._updateStatus, this);
-        WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.BreakpointsEnabledDidChange, this._updateStatus, this);
-
-        this._boundStatusImageElementClicked = this._statusImageElementClicked.bind(this);
-        this._boundStatusImageElementFocused = this._statusImageElementFocused.bind(this);
-        this._boundStatusImageElementMouseDown = this._statusImageElementMouseDown.bind(this);
-
-        this.status.addEventListener("click", this._boundStatusImageElementClicked);
-        this.status.addEventListener("focus", this._boundStatusImageElementFocused);
-        this.status.addEventListener("mousedown", this._boundStatusImageElementMouseDown);
-
-        this._updateStatus();
-    }
-
-    ondetach()
-    {
-        super.ondetach();
-
-        this.representedObject.removeEventListener(null, null, this);
-        WI.debuggerManager.removeEventListener(null, null, this);
-
-        this.status.removeEventListener("click", this._boundStatusImageElementClicked);
-        this.status.removeEventListener("focus", this._boundStatusImageElementFocused);
-        this.status.removeEventListener("mousedown", this._boundStatusImageElementMouseDown);
-
-        this._boundStatusImageElementClicked = null;
-        this._boundStatusImageElementFocused = null;
-        this._boundStatusImageElementMouseDown = null;
-    }
-
-    ondelete()
-    {
-        // We set this flag so that TreeOutlines that will remove this
-        // BreakpointTreeElement will know whether it was deleted from
-        // within the TreeOutline or from outside it (e.g. TextEditor).
-        this.__deletedViaDeleteKeyboardShortcut = true;
-
-        WI.domDebuggerManager.removeURLBreakpoint(this.representedObject);
-
-        return true;
-    }
-
-    onenter()
-    {
-        this._toggleBreakpoint();
-        return true;
-    }
-
-    onspace()
-    {
-        this._toggleBreakpoint();
-        return true;
-    }
-
-    populateContextMenu(contextMenu, event)
-    {
-        let breakpoint = this.representedObject;
-        let label = breakpoint.disabled ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint");
-        contextMenu.appendItem(label, this._toggleBreakpoint.bind(this));
-
-        contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
-            WI.domDebuggerManager.removeURLBreakpoint(breakpoint);
-        });
-    }
-
-    // Private
-
-    _statusImageElementClicked(event)
-    {
-        this._toggleBreakpoint();
-    }
-
-    _statusImageElementFocused(event)
-    {
-        // Prevent tree outline focus.
-        event.stopPropagation();
-    }
-
-    _statusImageElementMouseDown(event)
-    {
-        // Prevent tree element selection.
-        event.stopPropagation();
-    }
-
-    _toggleBreakpoint()
-    {
-        this.representedObject.disabled = !this.representedObject.disabled;
-    }
-
-    _updateStatus()
-    {
-        if (!this.status)
-            return;
-
-        this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageDisabledStyleClassName, this.representedObject.disabled);
-        this.status.classList.toggle(WI.BreakpointTreeElement.StatusImageResolvedStyleClassName, WI.debuggerManager.breakpointsEnabled);
+        super(breakpoint, {classNames, title, subtitle});
     }
 };

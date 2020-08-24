@@ -34,9 +34,10 @@
 
 #include "InspectorWebAgentBase.h"
 #include "LayoutRect.h"
+#include <JavaScriptCore/Debugger.h>
+#include <JavaScriptCore/DebuggerPrimitives.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
-#include <JavaScriptCore/ScriptDebugListener.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Vector.h>
 
@@ -81,7 +82,7 @@ enum class TimelineRecordType {
     ObserverCallback,
 };
 
-class InspectorTimelineAgent final : public InspectorAgentBase , public Inspector::TimelineBackendDispatcherHandler , public Inspector::ScriptDebugListener {
+class InspectorTimelineAgent final : public InspectorAgentBase , public Inspector::TimelineBackendDispatcherHandler , public JSC::Debugger::Observer {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -100,16 +101,8 @@ public:
     void setAutoCaptureEnabled(ErrorString&, bool) override;
     void setInstruments(ErrorString&, const JSON::Array&) override;
 
-    // ScriptDebugListener
-    void didParseSource(JSC::SourceID, const Script&) override { }
-    void failedToParseSource(const String&, const String&, int, int, const String&) override { }
-    void willRunMicrotask() override { }
-    void didRunMicrotask() override { }
-    void didPause(JSC::JSGlobalObject*, JSC::JSValue, JSC::JSValue) override { }
-    void didContinue() override { }
-    void breakpointActionLog(JSC::JSGlobalObject*, const String&) override { }
-    void breakpointActionSound(int) override { }
-    void breakpointActionProbe(JSC::JSGlobalObject*, const Inspector::ScriptBreakpointAction&, unsigned batchId, unsigned sampleId, JSC::JSValue result) override;
+    // JSC::Debugger::Observer
+    void breakpointActionProbe(JSC::JSGlobalObject*, JSC::BreakpointActionID, unsigned batchId, unsigned sampleId, JSC::JSValue result) final;
 
     // InspectorInstrumentation
     void didInstallTimer(int timerId, Seconds timeout, bool singleShot, Frame*);

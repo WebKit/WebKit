@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <JavaScriptCore/ScriptDebugServer.h>
+#include <JavaScriptCore/Debugger.h>
 
 namespace WebCore {
 
@@ -34,7 +34,7 @@ class Frame;
 class Page;
 class PageGroup;
 
-class PageScriptDebugServer final : public Inspector::ScriptDebugServer {
+class PageScriptDebugServer final : public JSC::Debugger {
     WTF_MAKE_NONCOPYABLE(PageScriptDebugServer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -44,14 +44,14 @@ public:
     void recompileAllJSFunctions() override;
 
 private:
-    void attachDebugger() override;
-    void detachDebugger(bool isBeingDestroyed) override;
-
-    void didPause(JSC::JSGlobalObject*) override;
-    void didContinue(JSC::JSGlobalObject*) override;
-    void runEventLoopWhilePaused() override;
-    bool isContentScript(JSC::JSGlobalObject*) const override;
-    void reportException(JSC::JSGlobalObject*, JSC::Exception*) const override;
+    // JSC::Debugger
+    void attachDebugger() final;
+    void detachDebugger(bool isBeingDestroyed) final;
+    void didPause(JSC::JSGlobalObject*) final;
+    void didContinue(JSC::JSGlobalObject*) final;
+    void runEventLoopWhilePaused() final;
+    bool isContentScript(JSC::JSGlobalObject*) const final;
+    void reportException(JSC::JSGlobalObject*, JSC::Exception*) const final;
 
     void runEventLoopWhilePausedInternal();
 

@@ -94,7 +94,8 @@ void PageDOMDebuggerAgent::disable()
     m_instrumentingAgents.setEnabledPageDOMDebuggerAgent(nullptr);
 
     m_domBreakpoints.clear();
-    m_pauseOnAllAnimationFramesEnabled = false;
+
+    m_pauseOnAllAnimationFramesBreakpoint = nullptr;
 
     InspectorDOMDebuggerAgent::disable();
 }
@@ -150,6 +151,14 @@ void PageDOMDebuggerAgent::removeDOMBreakpoint(ErrorString& errorString, int nod
         for (Node* child = InspectorDOMAgent::innerFirstChild(node); child; child = InspectorDOMAgent::innerNextSibling(child))
             updateSubtreeBreakpoints(child, rootBit, false);
     }
+}
+
+void PageDOMDebuggerAgent::mainFrameNavigated()
+{
+    InspectorDOMDebuggerAgent::mainFrameNavigated();
+
+    if (m_pauseOnAllAnimationFramesBreakpoint)
+        m_pauseOnAllAnimationFramesBreakpoint->resetHitCount();
 }
 
 void PageDOMDebuggerAgent::frameDocumentUpdated(Frame& frame)
@@ -252,11 +261,23 @@ void PageDOMDebuggerAgent::willFireAnimationFrame()
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
-    bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_pauseOnAllAnimationFramesEnabled;
-    if (!shouldPause)
+    auto breakpoint = m_pauseOnAllAnimationFramesBreakpoint;
+    if (!breakpoint)
         return;
 
-    m_debuggerAgent->schedulePauseOnNextStatement(Inspector::DebuggerFrontendDispatcher::Reason::AnimationFrame, nullptr);
+    m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::AnimationFrame);
+}
+
+void PageDOMDebuggerAgent::didFireAnimationFrame()
+{
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
+    auto breakpoint = m_pauseOnAllAnimationFramesBreakpoint;
+    if (!breakpoint)
+        return;
+
+    m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
 void PageDOMDebuggerAgent::willInvalidateStyleAttr(Element& element)
@@ -271,12 +292,14 @@ void PageDOMDebuggerAgent::willInvalidateStyleAttr(Element& element)
     }
 }
 
-void PageDOMDebuggerAgent::setAnimationFrameBreakpoint(ErrorString& errorString, bool enabled)
+void PageDOMDebuggerAgent::setAnimationFrameBreakpoint(ErrorString& errorString, RefPtr<JSC::Breakpoint>&& breakpoint)
 {
-    if (m_pauseOnAllAnimationFramesEnabled == enabled)
-        errorString = m_pauseOnAllAnimationFramesEnabled ? "Breakpoint for AnimationFrame already exists"_s : "Breakpoint for AnimationFrame missing"_s;
+    if (!m_pauseOnAllAnimationFramesBreakpoint == !breakpoint) {
+        errorString = m_pauseOnAllAnimationFramesBreakpoint ? "Breakpoint for AnimationFrame already exists"_s : "Breakpoint for AnimationFrame missing"_s;
+        return;
+    }
 
-    m_pauseOnAllAnimationFramesEnabled = enabled;
+    m_pauseOnAllAnimationFramesBreakpoint = WTFMove(breakpoint);
 }
 
 void PageDOMDebuggerAgent::descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, JSON::Object& description)

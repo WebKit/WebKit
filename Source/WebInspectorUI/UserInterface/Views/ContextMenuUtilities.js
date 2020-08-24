@@ -118,7 +118,7 @@ WI.appendContextMenuItemsForSourceCode = function(contextMenu, sourceCodeOrLocat
             });
         } else {
             contextMenu.appendItem(WI.UIString("Add Breakpoint"), () => {
-                WI.debuggerManager.addBreakpoint(new WI.Breakpoint(location));
+                WI.debuggerManager.addBreakpoint(new WI.JavaScriptBreakpoint(location));
             });
         }
     }

@@ -107,6 +107,14 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
         this._updateStatus();
     }
 
+    populateContextMenu(contextMenu, event)
+    {
+        if (this._callFrame.sourceCodeLocation)
+            WI.appendContextMenuItemsForSourceCode(contextMenu, this._callFrame.sourceCodeLocation);
+
+        super.populateContextMenu(contextMenu, event);
+    }
+
     // Private
 
     _updateStatus()

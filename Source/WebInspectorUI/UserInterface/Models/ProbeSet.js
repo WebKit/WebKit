@@ -42,7 +42,7 @@ WI.ProbeSet = class ProbeSet extends WI.Object
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceChanged, this);
         WI.Probe.addEventListener(WI.Probe.Event.SampleAdded, this._sampleCollected, this);
-        WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ResolvedStateDidChange, this._breakpointResolvedStateDidChange, this);
+        WI.JavaScriptBreakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, this._breakpointResolvedStateDidChange, this);
     }
 
     // Public
@@ -68,7 +68,7 @@ WI.ProbeSet = class ProbeSet extends WI.Object
 
     createProbe(expression)
     {
-        this.breakpoint.createAction(WI.BreakpointAction.Type.Probe, null, expression);
+        this.breakpoint.createAction(WI.BreakpointAction.Type.Probe, {data: expression});
     }
 
     addProbe(probe)
@@ -101,7 +101,7 @@ WI.ProbeSet = class ProbeSet extends WI.Object
 
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceChanged, this);
         WI.Probe.removeEventListener(WI.Probe.Event.SampleAdded, this._sampleCollected, this);
-        WI.Breakpoint.removeEventListener(WI.Breakpoint.Event.ResolvedStateDidChange, this._breakpointResolvedStateDidChange, this);
+        WI.JavaScriptBreakpoint.removeEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, this._breakpointResolvedStateDidChange, this);
     }
 
     // Private

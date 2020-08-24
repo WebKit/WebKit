@@ -23,36 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.breakpoint.event.breakpoint-for-animation-frame:not(.breakpoint-paused-icon) .icon {
+.item.breakpoint.event.animation-frame:not(.paused) .icon {
     content: url(../Images/TypeIcons.svg#EventBreakpointAnimationFrame-light);
 }
 
-.breakpoint.event.breakpoint-for-interval:not(.breakpoint-paused-icon) .icon {
+.item.breakpoint.event.interval:not(.paused) .icon {
     content: url(../Images/TypeIcons.svg#EventBreakpointInterval-light);
 }
 
-.breakpoint.event.breakpoint-for-listener:not(.breakpoint-paused-icon) .icon {
+.item.breakpoint.event.listener:not(.paused) .icon {
     content: url(../Images/TypeIcons.svg#EventBreakpointListener-light);
 }
 
-.breakpoint.event.breakpoint-for-timeout:not(.breakpoint-paused-icon) .icon {
+.item.breakpoint.event.timeout:not(.paused) .icon {
     content: url(../Images/TypeIcons.svg#EventBreakpointTimeout-light);
 }
 
 @media(prefers-color-scheme: dark) {
-    .breakpoint.event.breakpoint-for-animation-frame:not(.breakpoint-paused-icon) .icon {
+    .item.breakpoint.event.animation-frame:not(.paused) .icon {
         content: url(../Images/TypeIcons.svg#EventBreakpointAnimationFrame-dark);
     }
-    
-    .breakpoint.event.breakpoint-for-interval:not(.breakpoint-paused-icon) .icon {
+
+    .item.breakpoint.event.interval:not(.paused) .icon {
         content: url(../Images/TypeIcons.svg#EventBreakpointInterval-dark);
     }
-    
-    .breakpoint.event.breakpoint-for-listener:not(.breakpoint-paused-icon) .icon {
+
+    .item.breakpoint.event.listener:not(.paused) .icon {
         content: url(../Images/TypeIcons.svg#EventBreakpointListener-dark);
     }
-    
-    .breakpoint.event.breakpoint-for-timeout:not(.breakpoint-paused-icon) .icon {
+
+    .item.breakpoint.event.timeout:not(.paused) .icon {
         content: url(../Images/TypeIcons.svg#EventBreakpointTimeout-dark);
-    }   
+    }
 }

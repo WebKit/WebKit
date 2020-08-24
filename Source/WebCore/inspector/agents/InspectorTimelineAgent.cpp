@@ -51,9 +51,9 @@
 #include "TimelineRecordFactory.h"
 #include "WebConsoleAgent.h"
 #include "WebDebuggerAgent.h"
+#include <JavaScriptCore/Breakpoint.h>
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/InspectorScriptProfilerAgent.h>
-#include <JavaScriptCore/ScriptBreakpoint.h>
 #include <wtf/Stopwatch.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -187,7 +187,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
 
     m_instrumentingAgents.setTrackingTimelineAgent(this);
 
-    m_environment.scriptDebugServer().addListener(this);
+    m_environment.scriptDebugServer().addObserver(*this);
 
     m_tracking = true;
 
@@ -241,7 +241,7 @@ void InspectorTimelineAgent::internalStop()
 
     m_instrumentingAgents.setTrackingTimelineAgent(nullptr);
 
-    m_environment.scriptDebugServer().removeListener(this, true);
+    m_environment.scriptDebugServer().removeObserver(*this, true);
 
 #if PLATFORM(COCOA)
     m_frameStartObserver = nullptr;
@@ -669,11 +669,9 @@ void InspectorTimelineAgent::didFireObserverCallback()
     didCompleteCurrentRecord(TimelineRecordType::ObserverCallback);
 }
 
-// ScriptDebugListener
-
-void InspectorTimelineAgent::breakpointActionProbe(JSC::JSGlobalObject* lexicalGlobalObject, const Inspector::ScriptBreakpointAction& action, unsigned /*batchId*/, unsigned sampleId, JSC::JSValue)
+void InspectorTimelineAgent::breakpointActionProbe(JSC::JSGlobalObject* lexicalGlobalObject, JSC::BreakpointActionID actionID, unsigned /*batchId*/, unsigned sampleId, JSC::JSValue)
 {
-    appendRecord(TimelineRecordFactory::createProbeSampleData(action, sampleId), TimelineRecordType::ProbeSample, false, frameFromExecState(lexicalGlobalObject));
+    appendRecord(TimelineRecordFactory::createProbeSampleData(actionID, sampleId), TimelineRecordType::ProbeSample, false, frameFromExecState(lexicalGlobalObject));
 }
 
 static Inspector::Protocol::Timeline::EventType toProtocol(TimelineRecordType type)

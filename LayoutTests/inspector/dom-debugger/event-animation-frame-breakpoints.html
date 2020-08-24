@@ -45,7 +45,7 @@ function test() {
                 resolve();
             });
 
-            InspectorTest.EventBreakpoint.addBreakpoint(WI.domDebuggerManager.allAnimationFramesBreakpoint)
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.AnimationFrame)
             .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
             .catch(reject);
         },
@@ -58,7 +58,7 @@ function test() {
         test(resolve, reject) {
             InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.AnimationFrame, eventName, "Should not pause for disabled breakpoint.");
 
-            InspectorTest.EventBreakpoint.addBreakpoint(WI.domDebuggerManager.allAnimationFramesBreakpoint)
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.AnimationFrame)
             .then(InspectorTest.EventBreakpoint.disableBreakpoint)
             .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
             .catch(reject);
@@ -72,7 +72,7 @@ function test() {
         test(resolve, reject) {
             InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.AnimationFrame, eventName, "Should not pause for removed breakpoint.");
 
-            InspectorTest.EventBreakpoint.addBreakpoint(WI.domDebuggerManager.allAnimationFramesBreakpoint)
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.AnimationFrame)
             .then(InspectorTest.EventBreakpoint.removeBreakpoint)
             .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
             .catch(reject);
@@ -86,7 +86,7 @@ function test() {
         test(resolve, reject) {
             InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.AnimationFrame, eventName, "Should not pause for removed disabled breakpoint.");
 
-            InspectorTest.EventBreakpoint.addBreakpoint(WI.domDebuggerManager.allAnimationFramesBreakpoint)
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.AnimationFrame)
             .then(InspectorTest.EventBreakpoint.disableBreakpoint)
             .then(InspectorTest.EventBreakpoint.removeBreakpoint)
             .then(InspectorTest.EventBreakpoint.awaitEvent("window", eventName))
@@ -94,6 +94,8 @@ function test() {
         },
         teardown: InspectorTest.EventBreakpoint.teardown,
     });
+
+    InspectorTest.EventBreakpoint.addBreakpointOptionsTestCases(suite, WI.EventBreakpoint.Type.AnimationFrame, eventName);
 
     suite.runTestCasesAndFinish();
 }

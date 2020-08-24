@@ -39,7 +39,8 @@
             "description": "Sets breakpoint on particular event of given type.",
             "parameters": [
                 { "name": "breakpointType", "$ref": "EventBreakpointType" },
-                { "name": "eventName", "type": "string", "optional": true, "description": "The name of the specific event to stop on." }
+                { "name": "eventName", "type": "string", "optional": true, "description": "The name of the specific event to stop on." },
+                { "name": "options", "$ref": "Debugger.BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
             ]
         },
         {

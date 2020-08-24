@@ -24,11 +24,11 @@ function test()
                     return;
 
                 let location = scriptObject.createSourceCodeLocation(4, 0);
-                let breakpoint = new WI.Breakpoint(location);
+                let breakpoint = new WI.JavaScriptBreakpoint(location);
                 breakpoint.autoContinue = true;
 
                 function addLogAction(data) {
-                    breakpoint.createAction(WI.BreakpointAction.Type.Log, breakpoint.actions.lastValue, data);
+                    breakpoint.createAction(WI.BreakpointAction.Type.Log, {data});
                 }
 
                 addLogAction("`${a}`");

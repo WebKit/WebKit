@@ -32,11 +32,14 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
+namespace JSC {
+class Debugger;
+}
+
 namespace Inspector {
 
 class InjectedScript;
 class InjectedScriptManager;
-class ScriptDebugServer;
 typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorAuditAgent : public InspectorAgentBase, public AuditBackendDispatcherHandler {
@@ -71,7 +74,7 @@ protected:
 private:
     RefPtr<AuditBackendDispatcher> m_backendDispatcher;
     InjectedScriptManager& m_injectedScriptManager;
-    ScriptDebugServer& m_scriptDebugServer;
+    JSC::Debugger& m_scriptDebugServer;
 
     JSC::Strong<JSC::JSObject> m_injectedWebInspectorAuditValue;
 };

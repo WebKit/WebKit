@@ -38,7 +38,7 @@ function test()
         var testInfo = testInfoList[currentTestIndex];
         
         var location = currentScripts[testInfo.scriptIndex].createSourceCodeLocation(testInfo.line, testInfo.column);
-        var breakpoint = new WI.Breakpoint(location);
+        var breakpoint = new WI.JavaScriptBreakpoint(location);
 
         WI.debuggerManager.addBreakpoint(breakpoint);
 

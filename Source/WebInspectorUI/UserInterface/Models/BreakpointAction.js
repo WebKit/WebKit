@@ -27,8 +27,9 @@ WI.BreakpointAction = class BreakpointAction
 {
     constructor(breakpoint, type, data)
     {
-        console.assert(breakpoint instanceof WI.Breakpoint);
-        console.assert(Object.values(WI.BreakpointAction.Type).includes(type));
+        console.assert(breakpoint instanceof WI.Breakpoint, breakpoint);
+        console.assert(Object.values(WI.BreakpointAction.Type).includes(type), type);
+        console.assert(!data || typeof data === "string", data);
 
         this._breakpoint = breakpoint;
         this._type = type;

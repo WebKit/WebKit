@@ -51,8 +51,8 @@ public:
     // DebuggerBackendDispatcherHandler
     void evaluateOnCallFrame(ErrorString&, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) override;
 
-    // ScriptDebugListener
-    void breakpointActionLog(JSC::JSGlobalObject*, const String&) override;
+    // JSC::Debugger::Observer
+    void breakpointActionLog(JSC::JSGlobalObject*, const String& data) final;
 
     // InspectorInstrumentation
     void didClearWindowObjectInWorld(Frame&, DOMWrapperWorld&);
@@ -67,7 +67,7 @@ private:
     void enable() override;
     void disable(bool isBeingDestroyed) override;
 
-    String sourceMapURLForScript(const Script&) override;
+    String sourceMapURLForScript(const JSC::Debugger::Script&) override;
 
     void muteConsole() override;
     void unmuteConsole() override;

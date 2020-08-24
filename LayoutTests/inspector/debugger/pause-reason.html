@@ -16,7 +16,7 @@ function test()
         if (!/pause-reasons\.js$/.test(script.url))
             continue;
         let sourceCodeLocation = script.createSourceCodeLocation(3, 0);
-        let breakpoint = new WI.Breakpoint(sourceCodeLocation);
+        let breakpoint = new WI.JavaScriptBreakpoint(sourceCodeLocation);
         WI.debuggerManager.addBreakpoint(breakpoint);
         break;
     }

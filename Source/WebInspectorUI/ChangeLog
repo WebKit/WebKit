@@ -1,5 +1,371 @@
 2020-08-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: allow event breakpoints to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=215362
+        <rdar://problem/66932921>
+
+        Reviewed by Brian Burg.
+
+        This allows developers to do things like:
+         - only pause when `window.event.type` is a certain value
+         - ignore the first N pauses
+         - evaluate JavaScript whenever an event listener is invoked without pausing
+
+        * UserInterface/Models/Breakpoint.js:
+        (WI.Breakpoint):
+        (WI.Breakpoint.prototype.toJSON):
+        (WI.Breakpoint.prototype.get special): Added.
+        (WI.Breakpoint.prototype.get removable): Added.
+        (WI.Breakpoint.prototype.get editable): Added.
+        (WI.Breakpoint.prototype.set condition):
+        (WI.Breakpoint.prototype.get ignoreCount):
+        (WI.Breakpoint.prototype.set ignoreCount):
+        (WI.Breakpoint.prototype.get autoContinue):
+        (WI.Breakpoint.prototype.set autoContinue):
+        (WI.Breakpoint.prototype.get actions):
+        (WI.Breakpoint.prototype.get probeActions):
+        (WI.Breakpoint.prototype.cycleToNextMode):
+        (WI.Breakpoint.prototype.createAction):
+        (WI.Breakpoint.prototype.recreateAction):
+        (WI.Breakpoint.prototype.removeAction):
+        (WI.Breakpoint.prototype.clearActions):
+        (WI.Breakpoint.prototype.remove): Added.
+        (WI.Breakpoint.prototype.optionsToProtocol): Added.
+        (WI.Breakpoint.prototype.breakpointActionDidChange):
+        (WI.Breakpoint.fromJSON): Deleted.
+        (WI.Breakpoint.prototype.get sourceCodeLocation): Deleted.
+        (WI.Breakpoint.prototype.get contentIdentifier): Deleted.
+        (WI.Breakpoint.prototype.get scriptIdentifier): Deleted.
+        (WI.Breakpoint.prototype.get target): Deleted.
+        (WI.Breakpoint.prototype.get identifier): Deleted.
+        (WI.Breakpoint.prototype.set identifier): Deleted.
+        (WI.Breakpoint.prototype.get resolved): Deleted.
+        (WI.Breakpoint.prototype.set resolved): Deleted.
+        (WI.Breakpoint.prototype.saveIdentityToCookie): Deleted.
+        (WI.Breakpoint.prototype._isSpecial): Deleted.
+        (WI.Breakpoint.prototype._sourceCodeLocationLocationChanged): Deleted.
+        (WI.Breakpoint.prototype._sourceCodeLocationDisplayLocationChanged): Deleted.
+        * UserInterface/Models/DOMBreakpoint.js:
+        (WI.DOMBreakpoint):
+        (WI.DOMBreakpoint.fromJSON): Added.
+        (WI.DOMBreakpoint.prototype.remove): Added.
+        (WI.DOMBreakpoint.prototype.toJSON):
+        (WI.DOMBreakpoint.deserialize): Deleted.
+        (WI.DOMBreakpoint.prototype.get disabled): Deleted.
+        (WI.DOMBreakpoint.prototype.set disabled): Deleted.
+        * UserInterface/Models/EventBreakpoint.js:
+        (WI.EventBreakpoint):
+        (WI.EventBreakpoint.fromJSON): Added.
+        (WI.EventBreakpoint.prototype.get special): Added.
+        (WI.EventBreakpoint.prototype.get editable): Added.
+        (WI.EventBreakpoint.prototype.remove): Added.
+        (WI.EventBreakpoint.prototype.saveIdentityToCookie):
+        (WI.EventBreakpoint.prototype.toJSON):
+        (WI.EventBreakpoint.deserialize): Deleted.
+        (WI.EventBreakpoint.prototype.get disabled): Deleted.
+        (WI.EventBreakpoint.prototype.set disabled): Deleted.
+        * UserInterface/Models/JavaScriptBreakpoint.js: Copied from UserInterface/Models/Breakpoint.js.
+        (WI.JavaScriptBreakpoint):
+        (WI.JavaScriptBreakpoint.fromJSON):
+        (WI.JavaScriptBreakpoint.prototype.toJSON):
+        (WI.JavaScriptBreakpoint.prototype.get sourceCodeLocation):
+        (WI.JavaScriptBreakpoint.prototype.get contentIdentifier):
+        (WI.JavaScriptBreakpoint.prototype.get scriptIdentifier):
+        (WI.JavaScriptBreakpoint.prototype.get target):
+        (WI.JavaScriptBreakpoint.prototype.get special): Added.
+        (WI.JavaScriptBreakpoint.prototype.get removable): Added.
+        (WI.JavaScriptBreakpoint.prototype.get editable): Added.
+        (WI.JavaScriptBreakpoint.prototype.get identifier):
+        (WI.JavaScriptBreakpoint.prototype.set identifier):
+        (WI.JavaScriptBreakpoint.prototype.get resolved):
+        (WI.JavaScriptBreakpoint.prototype.set resolved):
+        (WI.JavaScriptBreakpoint.prototype.remove): Added.
+        (WI.JavaScriptBreakpoint.prototype.saveIdentityToCookie):
+        (WI.JavaScriptBreakpoint.prototype._isSpecial):
+        (WI.JavaScriptBreakpoint.prototype._sourceCodeLocationLocationChanged):
+        (WI.JavaScriptBreakpoint.prototype._sourceCodeLocationDisplayLocationChanged):
+        * UserInterface/Models/URLBreakpoint.js:
+        (WI.URLBreakpoint):
+        (WI.URLBreakpoint.fromJSON): Added.
+        (WI.URLBreakpoint.prototype.get special): Added.
+        (WI.URLBreakpoint.prototype.remove): Added.
+        (WI.URLBreakpoint.prototype.toJSON):
+        (WI.URLBreakpoint.deserialize): Deleted.
+        (WI.URLBreakpoint.prototype.get disabled): Deleted.
+        (WI.URLBreakpoint.prototype.set disabled): Deleted.
+        Rename `WI.Breakpoint` to `WI.JavaScriptBreakpoint` and use `WI.Breakpoint` as a new common
+        base class for all breakpoint types, allowing more logic to be shared (e.g. disabled state).
+        Additionally, breakpoints are now able to
+         - determine whether or not they're
+            - special
+            - removable
+            - editable (i.e. configurable)
+         - remove themselves
+        without the caller needing to know what manager to consult with.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager):
+        (WI.DOMManager.supportsEventListenerBreakpointConfiguration): Added.
+        (WI.DOMManager.prototype.setBreakpointForEventListener):
+        (WI.DOMManager.prototype.removeBreakpointForEventListener):
+        (WI.DOMManager.prototype._setEventBreakpoint): Added.
+        (WI.DOMManager.prototype._removeEventBreakpoint): Added.
+        (WI.DOMManager.prototype._handleEventBreakpointEditablePropertyChanged): Added.
+        (WI.DOMManager.prototype._handleEventBreakpointActionsChanged): Added.
+        (WI.DOMManager.prototype._updateEventBreakpoint): Deleted.
+        Keep track of configuration changes for specific listener breakpoints.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager):
+        (WI.DOMDebuggerManager.prototype.initializeTarget):
+        (WI.DOMDebuggerManager.prototype.addDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype.addEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.addURLBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeURLBreakpoint):
+        (WI.DOMDebuggerManager.prototype._commandArgumentsForEventBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._setEventBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._removeEventBreakpoint): Added.
+        (WI.DOMDebuggerManager.prototype._handleEventBreakpointDisabledStateChanged): Added.
+        (WI.DOMDebuggerManager.prototype._handleEventBreakpointEditablePropertyChanged): Added.
+        (WI.DOMDebuggerManager.prototype._handleEventBreakpointActionsChanged): Added.
+        (WI.DOMDebuggerManager.prototype.isBreakpointSpecial): Deleted.
+        (WI.DOMDebuggerManager.prototype._updateEventBreakpoint): Deleted.
+        Keep track of configuration changes for special event breakpoints.
+        Store special event breakpoints inside `WI.objectStores.eventBreakpoints`.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+        (WI.DebuggerManager.prototype.addBreakpoint):
+        (WI.DebuggerManager.prototype.removeBreakpoint):
+        (WI.DebuggerManager.prototype.addProbesForBreakpoint): Added.
+        (WI.DebuggerManager.prototype.removeProbesForBreakpoint): Added.
+        (WI.DebuggerManager.prototype.updateProbesForBreakpoint): Added.
+        (WI.DebuggerManager.prototype._setBreakpoint):
+        (WI.DebuggerManager.prototype._breakpointEditablePropertyDidChange):
+        (WI.DebuggerManager.prototype._handleBreakpointActionsDidChange):
+        (WI.DebuggerManager.prototype.isBreakpointRemovable): Deleted.
+        (WI.DebuggerManager.prototype.isBreakpointSpecial): Deleted.
+        (WI.DebuggerManager.prototype.isBreakpointEditable): Deleted.
+        (WI.DebuggerManager.prototype._debuggerBreakpointActionType): Deleted.
+        (WI.DebuggerManager.prototype._debuggerBreakpointOptions): Deleted.
+        (WI.DebuggerManager.prototype._addProbesForBreakpoint): Deleted.
+        (WI.DebuggerManager.prototype._removeProbesForBreakpoint): Deleted.
+        (WI.DebuggerManager.prototype._updateProbesForBreakpoint): Deleted.
+        Replace `WI.Breakpoint` with `WI.JavaScriptBreakpoint`.
+        Probes now support `WI.EventBreakpoint` in addition to `WI.JavaScriptBreakpoint`.
+
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WI.BreakpointPopoverController.prototype.appendContextMenuItems):
+        (WI.BreakpointPopoverController.prototype._createPopoverContent):
+        Allow any breakpoint instead of only `WI.JavaScriptBreakpoint`.
+        Drive-by: the existing `ignoreCount` value wasn't being used to populate the `<input>`.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.ondelete):
+        (WI.BreakpointTreeElement.prototype.get listenerSet): Added.
+        (WI.BreakpointTreeElement.prototype.updateStatus): Added.
+        (WI.BreakpointTreeElement.prototype.updateTitles): Added.
+        (WI.BreakpointTreeElement.prototype.get breakpoint): Deleted.
+        (WI.BreakpointTreeElement.prototype.get filterableData): Deleted.
+        (WI.BreakpointTreeElement.prototype._updateTitles): Deleted.
+        (WI.BreakpointTreeElement.prototype._updateStatus): Deleted.
+        (WI.BreakpointTreeElement.prototype._breakpointLocationDidChange): Deleted.
+        * UserInterface/Views/BreakpointTreeElement.css:
+        (.item.breakpoint .status > .status-image):
+        (.item.breakpoint.paused .icon): Added.
+        (@media (prefers-color-scheme: dark) .item.breakpoint.paused .icon): Added.
+        (.item.breakpoint .status > .status-image.resolved): Deleted.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.breakpoint.selected .status > .status-image.resolved): Deleted.
+        (.item.breakpoint .subtitle.formatted-location): Deleted.
+        (.breakpoint-debugger-statement-icon .icon): Deleted.
+        (.breakpoint-exception-icon .icon): Deleted.
+        (.breakpoint-assertion-icon .icon): Deleted.
+        (.breakpoint-microtask-icon .icon): Deleted.
+        (.breakpoint-paused-icon .icon): Deleted.
+        (.breakpoint-generic-line-icon .icon): Deleted.
+        (.breakpoint-generic-line-icon .icon > span): Deleted.
+        (.data-updated.breakpoint-generic-line-icon .icon > span): Deleted.
+        (@media (prefers-color-scheme: dark) .breakpoint-debugger-statement-icon .icon): Deleted.
+        (@media (prefers-color-scheme: dark) .breakpoint-exception-icon .icon): Deleted.
+        (@media (prefers-color-scheme: dark) .breakpoint-assertion-icon .icon): Deleted.
+        (@media (prefers-color-scheme: dark) .breakpoint-microtask-icon .icon): Deleted.
+        (@media (prefers-color-scheme: dark) .breakpoint-paused-icon .icon): Deleted.
+        (@media (prefers-color-scheme: dark) .breakpoint-generic-line-icon .icon): Deleted.
+        * UserInterface/Views/DOMBreakpointTreeElement.js:
+        (WI.DOMBreakpointTreeElement):
+        (WI.DOMBreakpointTreeElement.prototype.onattach): Deleted.
+        (WI.DOMBreakpointTreeElement.prototype.ondetach): Deleted.
+        (WI.DOMBreakpointTreeElement.prototype.ondelete): Deleted.
+        (WI.DOMBreakpointTreeElement.prototype.onenter): Deleted.
+        (WI.DOMBreakpointTreeElement.prototype.onspace): Deleted.
+        (WI.DOMBreakpointTreeElement.prototype.populateContextMenu): Deleted.
+        (WI.DOMBreakpointTreeElement.prototype._statusImageElementClicked): Deleted.
+        (WI.DOMBreakpointTreeElement.prototype._statusImageElementFocused): Deleted.
+        (WI.DOMBreakpointTreeElement.prototype._statusImageElementMouseDown): Deleted.
+        (WI.DOMBreakpointTreeElement.prototype._toggleBreakpoint): Deleted.
+        (WI.DOMBreakpointTreeElement.prototype._updateStatus): Deleted.
+        * UserInterface/Views/DOMBreakpointTreeElement.css:
+        (.item.breakpoint.dom.subtree-modified:not(.paused) .icon): Added.
+        (.item.breakpoint.dom.attribute-modified:not(.paused) .icon): Added.
+        (.item.breakpoint.dom.node-removed:not(.paused) .icon): Added.
+        (@media (prefers-color-scheme: dark) .item.breakpoint.dom.subtree-modified:not(.paused) .icon): Added.
+        (@media (prefers-color-scheme: dark) .item.breakpoint.dom.attribute-modified:not(.paused) .icon): Added.
+        (@media (prefers-color-scheme: dark) .item.breakpoint.dom.node-removed:not(.paused) .icon): Added.
+        (.breakpoint.dom.breakpoint-for-subtree-modified:not(.breakpoint-paused-icon) .icon): Deleted.
+        (.breakpoint.dom.breakpoint-for-attribute-modified:not(.breakpoint-paused-icon) .icon): Deleted.
+        (.breakpoint.dom.breakpoint-for-node-removed:not(.breakpoint-paused-icon) .icon): Deleted.
+        (@media (prefers-color-scheme: dark) .breakpoint.dom.breakpoint-for-subtree-modified:not(.breakpoint-paused-icon) .icon): Deleted.
+        (@media (prefers-color-scheme: dark) .breakpoint.dom.breakpoint-for-attribute-modified:not(.breakpoint-paused-icon) .icon): Deleted.
+        (@media (prefers-color-scheme: dark) .breakpoint.dom.breakpoint-for-node-removed:not(.breakpoint-paused-icon) .icon): Deleted.
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        (WI.EventBreakpointTreeElement):
+        (WI.EventBreakpointTreeElement.prototype.onattach): Deleted.
+        (WI.EventBreakpointTreeElement.prototype.ondetach): Deleted.
+        (WI.EventBreakpointTreeElement.prototype.ondelete): Deleted.
+        (WI.EventBreakpointTreeElement.prototype.onenter): Deleted.
+        (WI.EventBreakpointTreeElement.prototype.onspace): Deleted.
+        (WI.EventBreakpointTreeElement.prototype.populateContextMenu): Deleted.
+        (WI.EventBreakpointTreeElement.prototype._statusImageElementClicked): Deleted.
+        (WI.EventBreakpointTreeElement.prototype._statusImageElementFocused): Deleted.
+        (WI.EventBreakpointTreeElement.prototype._statusImageElementMouseDown): Deleted.
+        (WI.EventBreakpointTreeElement.prototype._toggleBreakpoint): Deleted.
+        (WI.EventBreakpointTreeElement.prototype._updateStatus): Deleted.
+        * UserInterface/Views/EventBreakpointTreeElement.css:
+        (.item.breakpoint.event.animation-frame:not(.paused) .icon): Added.
+        (.item.breakpoint.event.interval:not(.paused) .icon): Added.
+        (.item.breakpoint.event.listener:not(.paused) .icon): Added.
+        (.item.breakpoint.event.timeout:not(.paused) .icon): Added.
+        (@media(prefers-color-scheme: dark) .item.breakpoint.event.animation-frame:not(.paused) .icon): Added.
+        (@media(prefers-color-scheme: dark) .item.breakpoint.event.interval:not(.paused) .icon): Added.
+        (@media(prefers-color-scheme: dark) .item.breakpoint.event.listener:not(.paused) .icon): Added.
+        (@media(prefers-color-scheme: dark) .item.breakpoint.event.timeout:not(.paused) .icon): Added.
+        (.breakpoint.event.breakpoint-for-animation-frame:not(.breakpoint-paused-icon) .icon): Deleted.
+        (.breakpoint.event.breakpoint-for-interval:not(.breakpoint-paused-icon) .icon): Deleted.
+        (.breakpoint.event.breakpoint-for-listener:not(.breakpoint-paused-icon) .icon): Deleted.
+        (.breakpoint.event.breakpoint-for-timeout:not(.breakpoint-paused-icon) .icon): Deleted.
+        (@media(prefers-color-scheme: dark) .breakpoint.event.breakpoint-for-animation-frame:not(.breakpoint-paused-icon) .icon): Deleted.
+        (@media(prefers-color-scheme: dark) .breakpoint.event.breakpoint-for-interval:not(.breakpoint-paused-icon) .icon): Deleted.
+        (@media(prefers-color-scheme: dark) .breakpoint.event.breakpoint-for-listener:not(.breakpoint-paused-icon) .icon): Deleted.
+        (@media(prefers-color-scheme: dark) .breakpoint.event.breakpoint-for-timeout:not(.breakpoint-paused-icon) .icon): Deleted.
+        * UserInterface/Views/JavaScriptBreakpointTreeElement.js: Copied from Source/WebInspectorUI/UserInterface/Views/BreakpointTreeElement.js.
+        (WI.JavaScriptBreakpointTreeElement):
+        (WI.JavaScriptBreakpointTreeElement.prototype.get filterableData):
+        (WI.JavaScriptBreakpointTreeElement.prototype.updateStatus): Added.
+        (WI.JavaScriptBreakpointTreeElement.prototype.updateTitles): Added.
+        (WI.JavaScriptBreakpointTreeElement.prototype._breakpointLocationDidChange):
+        * UserInterface/Views/JavaScriptBreakpointTreeElement.css: Copied from Source/WebInspectorUI/UserInterface/Views/BreakpointTreeElement.css.
+        (.item.breakpoint.javascript .status > .status-image): Added.
+        (.item.breakpoint.javascript .status > .status-image.resolved): Added.
+        (body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.breakpoint.javascript.selected .status > .status-image.resolved): Added.
+        (.item.breakpoint.javascript .subtitle.formatted-location): Added.
+        (.item.breakpoint.javascript.line .icon): Added.
+        (.item.breakpoint.javascript.line .icon > span): Added.
+        (.data-updated.item.breakpoint.javascript.line .icon > span): Added.
+        (.item.breakpoint.javascript.debugger-statement .icon): Added.
+        (.item.breakpoint.javascript.exception .icon): Added.
+        (.item.breakpoint.javascript.assertion .icon): Added.
+        (.item.breakpoint.javascript.microtask .icon): Added.
+        (@media (prefers-color-scheme: dark) .item.breakpoint.javascript.line .icon): Added.
+        (@media (prefers-color-scheme: dark) .item.breakpoint.javascript.debugger-statement .icon): Added.
+        (@media (prefers-color-scheme: dark) .item.breakpoint.javascript.exception .icon): Added.
+        (@media (prefers-color-scheme: dark) .item.breakpoint.javascript.assertion .icon): Added.
+        (@media (prefers-color-scheme: dark) .item.breakpoint.javascript.microtask .icon): Added.
+        * UserInterface/Views/URLBreakpointTreeElement.js:
+        (WI.URLBreakpointTreeElement):
+        (WI.URLBreakpointTreeElement.prototype.onattach): Deleted.
+        (WI.URLBreakpointTreeElement.prototype.ondetach): Deleted.
+        (WI.URLBreakpointTreeElement.prototype.ondelete): Deleted.
+        (WI.URLBreakpointTreeElement.prototype.onenter): Deleted.
+        (WI.URLBreakpointTreeElement.prototype.onspace): Deleted.
+        (WI.URLBreakpointTreeElement.prototype.populateContextMenu): Deleted.
+        (WI.URLBreakpointTreeElement.prototype._statusImageElementClicked): Deleted.
+        (WI.URLBreakpointTreeElement.prototype._statusImageElementFocused): Deleted.
+        (WI.URLBreakpointTreeElement.prototype._statusImageElementMouseDown): Deleted.
+        (WI.URLBreakpointTreeElement.prototype._toggleBreakpoint): Deleted.
+        (WI.URLBreakpointTreeElement.prototype._updateStatus): Deleted.
+        * UserInterface/Views/URLBreakpointTreeElement.css:
+        (.item.breakpoint.url .subtitle): Added.
+        (.item.breakpoint.url:not(.paused) .icon): Added.
+        (@media (prefers-color-scheme: dark) .item.breakpoint.url:not(.paused) .icon): Added.
+        (.breakpoint.url .subtitle): Deleted.
+        (.breakpoint.url:not(.breakpoint-paused-icon) .icon): Deleted.
+        (@media (prefers-color-scheme: dark) .breakpoint.url:not(.breakpoint-paused-icon) .icon): Deleted.
+        Rename `WI.BreakpointTreeElement` to `WI.JavaScriptBreakpointTreeElement` and use
+        `WI.BreakpointTreeElement` as a new common base class for all breakpoint tree elements,
+        allowing more logic and styles to be shared (e.g. disabled state).
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype.closed):
+        (WI.SourcesNavigationSidebarPanel.prototype._insertDebuggerTreeElement):
+        (WI.SourcesNavigationSidebarPanel.prototype._compareJavaScriptBreakpointTreeElements): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpoint):
+        (WI.SourcesNavigationSidebarPanel.prototype._removeAllBreakpoints):
+        (WI.SourcesNavigationSidebarPanel.prototype._breakpointsBeneathTreeElement):
+        (WI.SourcesNavigationSidebarPanel.prototype._addIssue):
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTreeSelectionDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateBreakpointContextMenu.addToggleForSpecialEventBreakpoint):
+        (WI.SourcesNavigationSidebarPanel.prototype._populateCreateBreakpointContextMenu):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerObjectDisplayLocationDidChange):
+        (WI.SourcesNavigationSidebarPanel.prototype._compareBreakpointTreeElements): Deleted.
+
+        * UserInterface/Models/ProbeSet.js:
+        (WI.ProbeSet):
+        (WI.ProbeSet.prototype.createProbe):
+        (WI.ProbeSet.prototype.willRemove):
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype._processRecord):
+        * UserInterface/Views/ProbeSetDetailsSection.js:
+        (WI.ProbeSetDetailsSection):
+        * UserInterface/Views/ProbeDetailsSidebarPanel.js:
+        (WI.ProbeDetailsSidebarPanel.prototype.inspect):
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor):
+        (WI.SourceCodeTextEditor.prototype.close):
+        (WI.SourceCodeTextEditor.prototype.textEditorBreakpointAdded):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype.get supplementalRepresentedObjects):
+        (WI.TextResourceContentView.prototype._probeSetsChanged):
+        Probes now support `WI.EventBreakpoint` in addition to `WI.JavaScriptBreakpoint`.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        (WI.ContentView.resolvedRepresentedObjectForRepresentedObject):
+        (WI.ContentView.isViewable):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForSourceCode):
+        Replace `WI.Breakpoint` with `WI.JavaScriptBreakpoint`.
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView):
+        Replace `WI.DOMBreakpoint` with `WI.Breakpoint`.
+
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WI.EventListenerSectionGroup):
+        * UserInterface/Views/EventListenerSectionGroup.css:
+        (.event-listener-section > .content input[type="checkbox"] + .go-to-arrow): Added.
+        (.event-listener-section > .content input[type="checkbox"]:not(:checked) + .go-to-arrow): Added.
+        Add a go-to arrow next to the Breakpoint checkbox that reveals the `WI.EventBreakpoint` in
+        the Sources Tab.
+
+        * UserInterface/Views/BreakpointActionView.js:
+        (WI.BreakpointActionView.prototype._appendActionButtonClicked):
+        Drive-by: minor code cleanup.
+
+        * UserInterface/Views/CallFrameTreeElement.js:
+        (WI.CallFrameTreeElement.prototype.populateContextMenu):
+        Drive-by: include source code location context menu items.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
+2020-08-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: remove "extra domains" concept now that domains can be added based on the debuggable type
         https://bugs.webkit.org/show_bug.cgi?id=201150
         <rdar://problem/56545911>

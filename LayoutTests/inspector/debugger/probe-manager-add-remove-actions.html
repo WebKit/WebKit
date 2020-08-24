@@ -33,14 +33,14 @@ function test()
 
             var location = scriptObject.createSourceCodeLocation(4, 0);
             // Create the breakpoint and its actions before sending anything to the backend.
-            var breakpoint = new WI.Breakpoint(location);
+            var breakpoint = new WI.JavaScriptBreakpoint(location);
             breakpoint.autoContinue = true;
             for (var i of [0, 1])
-                breakpoint.createAction(WI.BreakpointAction.Type.Probe, null, "a");
+                breakpoint.createAction(WI.BreakpointAction.Type.Probe, {data: "a"});
 
             WI.debuggerManager.addBreakpoint(breakpoint);
 
-            breakpoint.addEventListener(WI.Breakpoint.Event.ResolvedStateDidChange, function() {
+            breakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, function() {
                 InspectorTest.expectThat(breakpoint.resolved, "Breakpoint should be resolved.");
             });
 

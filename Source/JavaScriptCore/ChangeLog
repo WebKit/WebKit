@@ -1,5 +1,174 @@
 2020-08-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: allow event breakpoints to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=215362
+        <rdar://problem/66932921>
+
+        Reviewed by Brian Burg.
+
+        This allows developers to do things like:
+         - only pause when `window.event.type` is a certain value
+         - ignore the first N pauses
+         - evaluate JavaScript whenever an event listener is invoked without pausing
+
+        * inspector/protocol/DOM.json:
+        Add an `options` paramater to `DOM.setBreakpointForEventListener` to allow configuration.
+
+        * inspector/protocol/DOMDebugger.json:
+        Add an `options` paramater to `DOMDebugger.setEventBreakpoint` to allow configuration.
+
+        * debugger/Breakpoint.h:
+        (JSC::Breakpoint::id const): Added.
+        (JSC::Breakpoint::sourceID const): Added.
+        (JSC::Breakpoint::lineNumber const): Added.
+        (JSC::Breakpoint::columnNumber const): Added.
+        (JSC::Breakpoint::condition const): Added.
+        (JSC::Breakpoint::actions const): Added.
+        (JSC::Breakpoint::isAutoContinue const): Added.
+        (JSC::Breakpoint::resetHitCount): Added.
+        (JSC::Breakpoint::isLinked const): Added.
+        (JSC::Breakpoint::isResolved const): Added.
+        (JSC::BreakpointsList::~BreakpointsList): Deleted.
+        * debugger/Breakpoint.cpp: Added.
+        (JSC::Breakpoint::Action::Action): Added.
+        (JSC::Breakpoint::create): Added.
+        (JSC::Breakpoint::Breakpoint): Added.
+        (JSC::Breakpoint::link): Added.
+        (JSC::Breakpoint::resolve): Added.
+        (JSC::Breakpoint::shouldPause): Added.
+        Unify `JSC::Breakpoint` and `Inspector::ScriptBreakpoint`.
+
+        * debugger/DebuggerPrimitives.h:
+        * debugger/Debugger.h:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::addObserver): Added.
+        (JSC::Debugger::removeObserver): Added.
+        (JSC::Debugger::canDispatchFunctionToObservers const): Added.
+        (JSC::Debugger::dispatchFunctionToObservers): Added.
+        (JSC::Debugger::sourceParsed): Added.
+        (JSC::Debugger::toggleBreakpoint):
+        (JSC::Debugger::applyBreakpoints):
+        (JSC::Debugger::resolveBreakpoint):
+        (JSC::Debugger::setBreakpoint):
+        (JSC::Debugger::removeBreakpoint):
+        (JSC::Debugger::didHitBreakpoint): Added.
+        (JSC::Debugger::clearBreakpoints):
+        (JSC::Debugger::evaluateBreakpointCondition): Added.
+        (JSC::Debugger::evaluateBreakpointActions): Added.
+        (JSC::Debugger::schedulePauseAtNextOpportunity): Added.
+        (JSC::Debugger::cancelPauseAtNextOpportunity): Added.
+        (JSC::Debugger::schedulePauseForSpecialBreakpoint): Added.
+        (JSC::Debugger::cancelPauseForSpecialBreakpoint): Added.
+        (JSC::Debugger::continueProgram):
+        (JSC::Debugger::stepNextExpression):
+        (JSC::Debugger::stepIntoStatement):
+        (JSC::Debugger::stepOverStatement):
+        (JSC::Debugger::stepOutOfFunction):
+        (JSC::Debugger::pauseIfNeeded):
+        (JSC::Debugger::handlePause): Added.
+        (JSC::Debugger::exceptionOrCaughtValue): Added.
+        (JSC::Debugger::atExpression):
+        (JSC::Debugger::clearNextPauseState):
+        (JSC::Debugger::willRunMicrotask): Added.
+        (JSC::Debugger::didRunMicrotask): Added.
+        (JSC::Debugger::hasBreakpoint): Deleted.
+        (JSC::Debugger::setPauseOnNextStatement): Deleted.
+        Unify `JSC::Debugger` and `Inspector::ScriptDebugServer` to simplify breakpoint logic.
+        Introduce the concept of a "special breakpoint", which is essentially a `JSC::Breakpoint`
+        that is expected to pause at the next opportunity but isn't tied to a particular location.
+        As an example, whenever an event breakpoint is hit, instead of just pausing at the next
+        opportunity, the newly managed `JSC::Breakpoint` is used as a "special breakpoint", allowing
+        for it's configuration (ie.g. condition, ignore count, actions, auto-continue) to be used.
+
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::objectGroupForBreakpointAction):
+        (Inspector::breakpointActionTypeForString): Added.
+        (Inspector::parseBreakpointOptions): Added.
+        (Inspector::InspectorDebuggerAgent::ProtocolBreakpoint::fromPayload): Added.
+        (Inspector::InspectorDebuggerAgent::ProtocolBreakpoint::ProtocolBreakpoint): Added.
+        (Inspector::InspectorDebuggerAgent::ProtocolBreakpoint::createDebuggerBreakpoint const): Added.
+        (Inspector::InspectorDebuggerAgent::ProtocolBreakpoint::matchesScriptURL const): Added.
+        (Inspector::InspectorDebuggerAgent::debuggerBreakpointFromPayload): Added.
+        (Inspector::InspectorDebuggerAgent::enable):
+        (Inspector::InspectorDebuggerAgent::disable):
+        (Inspector::InspectorDebuggerAgent::buildBreakpointPauseReason):
+        (Inspector::InspectorDebuggerAgent::handleConsoleAssert):
+        (Inspector::InspectorDebuggerAgent::didScheduleAsyncCall):
+        (Inspector::buildDebuggerLocation):
+        (Inspector::InspectorDebuggerAgent::setBreakpointByUrl):
+        (Inspector::InspectorDebuggerAgent::setBreakpoint):
+        (Inspector::InspectorDebuggerAgent::didSetBreakpoint):
+        (Inspector::InspectorDebuggerAgent::resolveBreakpoint):
+        (Inspector::InspectorDebuggerAgent::removeBreakpoint):
+        (Inspector::InspectorDebuggerAgent::continueToLocation):
+        (Inspector::InspectorDebuggerAgent::schedulePauseAtNextOpportunity): Added.
+        (Inspector::InspectorDebuggerAgent::cancelPauseAtNextOpportunity): Added.
+        (Inspector::InspectorDebuggerAgent::schedulePauseForSpecialBreakpoint): Added.
+        (Inspector::InspectorDebuggerAgent::cancelPauseForSpecialBreakpoint): Added.
+        (Inspector::InspectorDebuggerAgent::pause):
+        (Inspector::InspectorDebuggerAgent::resume):
+        (Inspector::InspectorDebuggerAgent::didBecomeIdle):
+        (Inspector::InspectorDebuggerAgent::sourceMapURLForScript):
+        (Inspector::InspectorDebuggerAgent::didParseSource):
+        (Inspector::InspectorDebuggerAgent::willRunMicrotask):
+        (Inspector::InspectorDebuggerAgent::didRunMicrotask):
+        (Inspector::InspectorDebuggerAgent::didPause):
+        (Inspector::InspectorDebuggerAgent::breakpointActionSound):
+        (Inspector::InspectorDebuggerAgent::breakpointActionProbe):
+        (Inspector::InspectorDebuggerAgent::clearInspectorBreakpointState):
+        (Inspector::InspectorDebuggerAgent::clearDebuggerBreakpointState):
+        (Inspector::matches): Deleted.
+        (Inspector::buildObjectForBreakpointCookie): Deleted.
+        (Inspector::InspectorDebuggerAgent::breakpointActionsFromProtocol): Deleted.
+        (Inspector::InspectorDebuggerAgent::schedulePauseOnNextStatement): Deleted.
+        (Inspector::InspectorDebuggerAgent::cancelPauseOnNextStatement): Deleted.
+        Create a private `ProtocolBreakpoint` class that holds the data sent by the frontend. This
+        is necessary because breakpoints in the frontend have a potentially one-to-many relationship
+        with breakpoints in the backend, as the same script can be loaded many times on a page. Each
+        of those scripts is independent, however, and can execute differently, meaning that the same
+        breakpoint for each script also needs a different state (e.g. ignore count). As such, the
+        `ProtocolBreakpoint` is effectively a template that is actualized whenever a new script is
+        parsed that matches the URL of the `ProtocolBreakpoint` to create a `JSC::Breakpoint` that
+        is used by the `JSC::Debugger`. `ProtocolBreakpoint` also parses breakpoint configurations.
+
+        * inspector/InspectorEnvironment.h:
+        * inspector/JSGlobalObjectScriptDebugServer.h:
+        * inspector/JSGlobalObjectScriptDebugServer.cpp:
+        (Inspector::JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer):
+        (Inspector::JSGlobalObjectScriptDebugServer::attachDebugger):
+        (Inspector::JSGlobalObjectScriptDebugServer::detachDebugger):
+        (Inspector::JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused):
+        * inspector/agents/InspectorAuditAgent.h:
+        * inspector/agents/InspectorAuditAgent.cpp:
+        (Inspector::InspectorAuditAgent::run):
+        * inspector/agents/InspectorRuntimeAgent.h:
+        * inspector/agents/InspectorRuntimeAgent.cpp:
+        (Inspector::setPauseOnExceptionsState):
+        (Inspector::InspectorRuntimeAgent::evaluate):
+        (Inspector::InspectorRuntimeAgent::callFunctionOn):
+        (Inspector::InspectorRuntimeAgent::getPreview):
+        (Inspector::InspectorRuntimeAgent::getProperties):
+        (Inspector::InspectorRuntimeAgent::getDisplayableProperties):
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        * inspector/agents/JSGlobalObjectDebuggerAgent.h:
+        Replace `Inspector::ScriptDebugServer` with `JSC::Debugger`.
+
+        * runtime/JSMicrotask.cpp:
+        (JSC::JSMicrotask::run):
+        Drive-by: r248894 mistakenly omitted the call to notify the debugger that the microtask ran.
+
+        * inspector/ScriptBreakpoint.h: Removed.
+        * inspector/ScriptDebugListener.h: Removed.
+        * inspector/ScriptDebugServer.h: Removed.
+        * inspector/ScriptDebugServer.cpp: Removed.
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+
+2020-08-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: remove "extra domains" concept now that domains can be added based on the debuggable type
         https://bugs.webkit.org/show_bug.cgi?id=201150
         <rdar://problem/56545911>

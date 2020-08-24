@@ -38,8 +38,8 @@ public:
     JSGlobalObjectDebuggerAgent(JSAgentContext&, InspectorConsoleAgent*);
     ~JSGlobalObjectDebuggerAgent() final;
 
-    // ScriptDebugListener
-    void breakpointActionLog(JSC::JSGlobalObject*, const String&) final;
+    // JSC::Debugger::Observer
+    void breakpointActionLog(JSC::JSGlobalObject*, const String& data) final;
 
 private:
     InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) final;

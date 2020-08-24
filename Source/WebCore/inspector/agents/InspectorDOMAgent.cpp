@@ -112,6 +112,7 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/InspectorDebuggerAgent.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/Function.h>
@@ -931,13 +932,13 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
     auto addListener = [&] (RegisteredEventListener& listener, const EventListenerInfo& info) {
         int identifier = 0;
         bool disabled = false;
-        bool hasBreakpoint = false;
+        RefPtr<JSC::Breakpoint> breakpoint;
 
         for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
             if (inspectorEventListener.matches(*info.eventTarget, info.eventType, listener.callback(), listener.useCapture())) {
                 identifier = inspectorEventListener.identifier;
                 disabled = inspectorEventListener.disabled;
-                hasBreakpoint = inspectorEventListener.hasBreakpoint;
+                breakpoint = inspectorEventListener.breakpoint;
                 break;
             }
         }
@@ -947,12 +948,12 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
 
             identifier = inspectorEventListener.identifier;
             disabled = inspectorEventListener.disabled;
-            hasBreakpoint = inspectorEventListener.hasBreakpoint;
+            breakpoint = inspectorEventListener.breakpoint;
 
             m_eventListenerEntries.add(identifier, inspectorEventListener);
         }
 
-        listenersArray->addItem(buildObjectForEventListener(listener, identifier, *info.eventTarget, info.eventType, disabled, hasBreakpoint));
+        listenersArray->addItem(buildObjectForEventListener(listener, identifier, *info.eventTarget, info.eventType, disabled, breakpoint));
     };
 
     // Get Capturing Listeners (in this order)
@@ -988,7 +989,7 @@ void InspectorDOMAgent::setEventListenerDisabled(ErrorString& errorString, int e
     it->value.disabled = disabled;
 }
 
-void InspectorDOMAgent::setBreakpointForEventListener(ErrorString& errorString, int eventListenerId)
+void InspectorDOMAgent::setBreakpointForEventListener(ErrorString& errorString, int eventListenerId, const JSON::Object* optionsPayload)
 {
     auto it = m_eventListenerEntries.find(eventListenerId);
     if (it == m_eventListenerEntries.end()) {
@@ -996,7 +997,12 @@ void InspectorDOMAgent::setBreakpointForEventListener(ErrorString& errorString, 
         return;
     }
 
-    it->value.hasBreakpoint = true;
+    if (it->value.breakpoint) {
+        errorString = "Breakpoint for given eventListenerId already exists"_s;
+        return;
+    }
+
+    it->value.breakpoint = InspectorDebuggerAgent::debuggerBreakpointFromPayload(errorString, optionsPayload);
 }
 
 void InspectorDOMAgent::removeBreakpointForEventListener(ErrorString& errorString, int eventListenerId)
@@ -1007,7 +1013,10 @@ void InspectorDOMAgent::removeBreakpointForEventListener(ErrorString& errorStrin
         return;
     }
 
-    it->value.hasBreakpoint = false;
+    if (!it->value.breakpoint)
+        errorString = "Breakpoint for given eventListenerId missing"_s;
+
+    it->value.breakpoint = nullptr;
 }
 
 void InspectorDOMAgent::getAccessibilityPropertiesForNode(ErrorString& errorString, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties)
@@ -1751,7 +1760,7 @@ RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> InspectorDOMAgent::buildAr
     return pseudoElements;
 }
 
-Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, int identifier, EventTarget& eventTarget, const AtomString& eventType, bool disabled, bool hasBreakpoint)
+Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, int identifier, EventTarget& eventTarget, const AtomString& eventType, bool disabled, const RefPtr<JSC::Breakpoint>& breakpoint)
 {
     Ref<EventListener> eventListener = registeredEventListener.callback();
 
@@ -1839,8 +1848,8 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
         value->setOnce(true);
     if (disabled)
         value->setDisabled(disabled);
-    if (hasBreakpoint)
-        value->setHasBreakpoint(hasBreakpoint);
+    if (breakpoint)
+        value->setHasBreakpoint(breakpoint);
     return value;
 }
 
@@ -2548,13 +2557,13 @@ void InspectorDOMAgent::eventDidResetAfterDispatch(const Event& event)
     m_dispatchedEvents.remove(&event);
 }
 
-bool InspectorDOMAgent::hasBreakpointForEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
+RefPtr<JSC::Breakpoint> InspectorDOMAgent::breakpointForEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
 {
     for (auto& inspectorEventListener : m_eventListenerEntries.values()) {
         if (inspectorEventListener.matches(target, eventType, listener, capture))
-            return inspectorEventListener.hasBreakpoint;
+            return inspectorEventListener.breakpoint;
     }
-    return false;
+    return nullptr;
 }
 
 int InspectorDOMAgent::idForEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)

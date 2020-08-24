@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.DOMBreakpoint = class DOMBreakpoint extends WI.Object
+WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
 {
     constructor(domNodeOrInfo, type, {disabled} = {})
     {
         console.assert(domNodeOrInfo instanceof WI.DOMNode || typeof domNodeOrInfo === "object", domNodeOrInfo);
         console.assert(Object.values(WI.DOMBreakpoint.Type).includes(type), type);
 
-        super();
+        super({disabled});
 
         if (domNodeOrInfo instanceof WI.DOMNode) {
             this._domNodeIdentifier = domNodeOrInfo.id;
@@ -44,15 +44,14 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Object
         }
 
         this._type = type;
-        this._disabled = disabled || false;
     }
 
     // Static
 
-    static deserialize(serializedInfo)
+    static fromJSON(json)
     {
-        return new WI.DOMBreakpoint(serializedInfo, serializedInfo.type, {
-            disabled: !!serializedInfo.disabled,
+        return new WI.DOMBreakpoint(json, json.type, {
+            disabled: json.disabled,
         });
     }
 
@@ -61,21 +60,6 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Object
     get type() { return this._type; }
     get url() { return this._url; }
     get path() { return this._path; }
-
-    get disabled()
-    {
-        return this._disabled;
-    }
-
-    set disabled(disabled)
-    {
-        if (this._disabled === disabled)
-            return;
-
-        this._disabled = disabled;
-
-        this.dispatchEventToListeners(WI.DOMBreakpoint.Event.DisabledStateChanged);
-    }
 
     get domNodeIdentifier()
     {
@@ -96,6 +80,13 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Object
         this.dispatchEventToListeners(WI.DOMBreakpoint.Event.DOMNodeChanged, data);
     }
 
+    remove()
+    {
+        super.remove();
+
+        WI.domDebuggerManager.removeDOMBreakpoint(this);
+    }
+
     saveIdentityToCookie(cookie)
     {
         cookie["dom-breakpoint-url"] = this._url;
@@ -105,13 +96,10 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Object
 
     toJSON(key)
     {
-        let json = {
-            url: this._url,
-            path: this._path,
-            type: this._type,
-        };
-        if (this._disabled)
-            json.disabled = true;
+        let json = super.toJSON(key);
+        json.url = this._url;
+        json.path = this._path;
+        json.type = this._type;
         if (key === WI.ObjectStore.toJSONSymbol)
             json[WI.objectStores.domBreakpoints.keyPath] = this._url + ":" + this._path + ":" + this._type;
         return json;
@@ -126,5 +114,4 @@ WI.DOMBreakpoint.Type = {
 
 WI.DOMBreakpoint.Event = {
     DOMNodeChanged: "dom-breakpoint-dom-node-changed",
-    DisabledStateChanged: "dom-breakpoint-disabled-state-changed",
 };

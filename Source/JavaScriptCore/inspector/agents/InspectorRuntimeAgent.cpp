@@ -34,12 +34,12 @@
 
 #include "Completion.h"
 #include "ControlFlowProfiler.h"
+#include "Debugger.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
 #include "JSLock.h"
 #include "ParserError.h"
-#include "ScriptDebugServer.h"
 #include "SourceCode.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
@@ -73,7 +73,7 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 {
 }
 
-static ScriptDebugServer::PauseOnExceptionsState setPauseOnExceptionsState(ScriptDebugServer& scriptDebugServer, ScriptDebugServer::PauseOnExceptionsState newState)
+static JSC::Debugger::PauseOnExceptionsState setPauseOnExceptionsState(JSC::Debugger& scriptDebugServer, JSC::Debugger::PauseOnExceptionsState newState)
 {
     auto presentState = scriptDebugServer.pauseOnExceptionsState();
     if (presentState != newState)
@@ -123,9 +123,9 @@ void InspectorRuntimeAgent::evaluate(ErrorString& errorString, const String& exp
     if (injectedScript.hasNoValue())
         return;
 
-    ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = ScriptDebugServer::DontPauseOnExceptions;
+    auto previousPauseOnExceptionsState = JSC::Debugger::DontPauseOnExceptions;
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
-        previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
+        previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, JSC::Debugger::DontPauseOnExceptions);
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         muteConsole();
 
@@ -165,9 +165,9 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const Strin
     if (optionalArguments)
         arguments = optionalArguments->toJSONString();
 
-    ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = ScriptDebugServer::DontPauseOnExceptions;
+    auto previousPauseOnExceptionsState = JSC::Debugger::DontPauseOnExceptions;
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
-        previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
+        previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, JSC::Debugger::DontPauseOnExceptions);
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         muteConsole();
 
@@ -187,7 +187,7 @@ void InspectorRuntimeAgent::getPreview(ErrorString& errorString, const String& o
         return;
     }
 
-    ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
+    auto previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, JSC::Debugger::DontPauseOnExceptions);
     muteConsole();
 
     injectedScript.getPreview(errorString, objectId, preview);
@@ -216,7 +216,7 @@ void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String
         return;
     }
 
-    ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
+    auto previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, JSC::Debugger::DontPauseOnExceptions);
     muteConsole();
 
     injectedScript.getProperties(errorString, objectId, asBool(ownProperties), start, count, asBool(generatePreview), properties);
@@ -249,7 +249,7 @@ void InspectorRuntimeAgent::getDisplayableProperties(ErrorString& errorString, c
         return;
     }
 
-    ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
+    auto previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, JSC::Debugger::DontPauseOnExceptions);
     muteConsole();
 
     injectedScript.getDisplayableProperties(errorString, objectId, start, count, asBool(generatePreview), properties);

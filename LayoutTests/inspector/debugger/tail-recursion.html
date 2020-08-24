@@ -24,7 +24,7 @@ function test()
         var testInfos = [{line : 3, column : 8}, {line : 4, column : 8}];
         for (let testInfo of testInfos) {
             let location = scriptObject.createSourceCodeLocation(testInfo.line, testInfo.column);
-            let breakpoint = new WI.Breakpoint(location);
+            let breakpoint = new WI.JavaScriptBreakpoint(location);
             WI.debuggerManager.addBreakpoint(breakpoint);
         }
         InspectorTest.evaluateInPage("startRecurse()");

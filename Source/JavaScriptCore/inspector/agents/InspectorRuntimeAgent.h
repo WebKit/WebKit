@@ -37,6 +37,7 @@
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
+class Debugger;
 class VM;
 }
 
@@ -44,7 +45,6 @@ namespace Inspector {
 
 class InjectedScript;
 class InjectedScriptManager;
-class ScriptDebugServer;
 typedef String ErrorString;
 
 class JS_EXPORT_PRIVATE InspectorRuntimeAgent : public InspectorAgentBase, public RuntimeBackendDispatcherHandler {
@@ -94,7 +94,7 @@ private:
     void setControlFlowProfilerEnabledState(bool);
 
     InjectedScriptManager& m_injectedScriptManager;
-    ScriptDebugServer& m_scriptDebugServer;
+    JSC::Debugger& m_scriptDebugServer;
     JSC::VM& m_vm;
     bool m_enabled {false};
     bool m_isTypeProfilingEnabled {false};

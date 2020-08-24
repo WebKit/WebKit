@@ -1,3 +1,46 @@
+2020-08-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow event breakpoints to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=215362
+        <rdar://problem/66932921>
+
+        Reviewed by Brian Burg.
+
+        * inspector/dom-debugger/resources/event-breakpoint-utilities.js:
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.addBreakpointOptionsTestCases): Added.
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.async teardown):
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.createBreakpoint):
+        (TestPage.registerInitializer.InspectorTest.EventBreakpoint.removeBreakpoint):
+        * inspector/dom/breakpoint-for-event-listener.html:
+        * inspector/dom/breakpoint-for-event-listener-expected.txt:
+        * inspector/dom-debugger/event-animation-frame-breakpoints.html:
+        * inspector/dom-debugger/event-animation-frame-breakpoints-expected.txt:
+        * inspector/dom-debugger/event-interval-breakpoints.html:
+        * inspector/dom-debugger/event-interval-breakpoints-expected.txt:
+        * inspector/dom-debugger/event-listener-breakpoints.html:
+        * inspector/dom-debugger/event-listener-breakpoints-expected.txt:
+        * inspector/dom-debugger/event-timeout-breakpoints.html:
+        * inspector/dom-debugger/event-timeout-breakpoints-expected.txt:
+        Add tests for new event breakpoint configuration options.
+
+        * http/tests/inspector/debugger/debugger-test.js:
+        (TestPage.registerInitializer.InspectorTest.startTracingBreakpoints):
+        * http/tests/inspector/resources/probe-test.js:
+        (TestPage.registerInitializer.ProtocolTest.Probe.installTracingListeners):
+        * inspector/debugger/breakpoint-action-eval.html:
+        * inspector/debugger/breakpoint-action-log.html:
+        * inspector/debugger/breakpoint-columns.html:
+        * inspector/debugger/breakpoint-scope.html:
+        * inspector/debugger/debugger-stack-overflow.html:
+        * inspector/debugger/pause-reason.html:
+        * inspector/debugger/probe-manager-add-remove-actions.html:
+        * inspector/debugger/stepping/stepping-through-autoContinue-breakpoint.html:
+        * inspector/debugger/tail-deleted-frames-this-value.html:
+        * inspector/debugger/tail-recursion.html:
+        * inspector/worker/debugger-pause.html:
+        * inspector/worker/debugger-shared-breakpoint.html:
+        Update existing breakpoint tests to use new model objects.
+
 2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
 
         Regression (r266028): platform/ios/ios/fast/coordinates/range-client-rects.html

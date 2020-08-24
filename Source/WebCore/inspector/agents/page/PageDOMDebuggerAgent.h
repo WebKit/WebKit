@@ -26,6 +26,8 @@
 #pragma once
 
 #include "InspectorDOMDebuggerAgent.h"
+#include <JavaScriptCore/Breakpoint.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -47,6 +49,7 @@ public:
     void removeDOMBreakpoint(ErrorString&, int nodeId, const String& type) override;
 
     // InspectorInstrumentation
+    void mainFrameNavigated() final;
     void frameDocumentUpdated(Frame&);
     void willInsertDOMNode(Node& parent);
     void didInsertDOMNode(Node&);
@@ -55,12 +58,13 @@ public:
     void willModifyDOMAttr(Element&);
     void willInvalidateStyleAttr(Element&);
     void willFireAnimationFrame();
+    void didFireAnimationFrame();
 
 private:
     void enable() override;
     void disable() override;
 
-    void setAnimationFrameBreakpoint(ErrorString&, bool enabled) override;
+    void setAnimationFrameBreakpoint(ErrorString&, RefPtr<JSC::Breakpoint>&&) override;
 
     void descriptionForDOMEvent(Node&, int breakpointType, bool insertion, JSON::Object& description);
     void updateSubtreeBreakpoints(Node*, uint32_t rootMask, bool set);
@@ -68,7 +72,8 @@ private:
     bool hasBreakpoint(Node*, int type);
 
     HashMap<Node*, uint32_t> m_domBreakpoints;
-    bool m_pauseOnAllAnimationFramesEnabled { false };
+
+    RefPtr<JSC::Breakpoint> m_pauseOnAllAnimationFramesBreakpoint;
 };
 
 } // namespace WebCore

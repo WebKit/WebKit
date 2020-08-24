@@ -1393,9 +1393,6 @@
 		A3FF9BC72234749100B1A9AB /* YarrFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = A3FF9BC52234746600B1A9AB /* YarrFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */; };
 		A503FA1E188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA18188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h */; };
-		A503FA21188EFF6800110F14 /* ScriptBreakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA1F188EFF6800110F14 /* ScriptBreakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A503FA22188EFF6800110F14 /* ScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA20188EFF6800110F14 /* ScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A503FA26188EFFFD00110F14 /* ScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA24188EFFFD00110F14 /* ScriptDebugServer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A503FA2A188F105900110F14 /* JSGlobalObjectScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA28188F105900110F14 /* JSGlobalObjectScriptDebugServer.h */; };
 		A5098B041C16AA0200087797 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5098B031C16AA0200087797 /* Security.framework */; };
 		A50E4B6218809DD50068A46D /* InspectorRuntimeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A50E4B5E18809DD50068A46D /* InspectorRuntimeAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4252,6 +4249,7 @@
 		918E15BD2447B22600447A56 /* AggregateErrorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AggregateErrorPrototype.h; sourceTree = "<group>"; };
 		918E15BE2447B22700447A56 /* AggregateErrorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AggregateErrorPrototype.cpp; sourceTree = "<group>"; };
 		918E15BF2447B22700447A56 /* AggregateErrorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AggregateErrorConstructor.h; sourceTree = "<group>"; };
+		91D1578C24E0BE35001F4CED /* Breakpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Breakpoint.cpp; sourceTree = "<group>"; };
 		93052C320FB792190048FDC3 /* ParserArena.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParserArena.cpp; sourceTree = "<group>"; };
 		93052C330FB792190048FDC3 /* ParserArena.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserArena.h; sourceTree = "<group>"; };
 		930DAD030FB1EB1A0082D205 /* NodeConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeConstructors.h; sourceTree = "<group>"; };
@@ -4390,10 +4388,6 @@
 		A503FA16188E0FB000110F14 /* JSJavaScriptCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSJavaScriptCallFrame.h; sourceTree = "<group>"; };
 		A503FA17188E0FB000110F14 /* JSJavaScriptCallFramePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptCallFramePrototype.cpp; sourceTree = "<group>"; };
 		A503FA18188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSJavaScriptCallFramePrototype.h; sourceTree = "<group>"; };
-		A503FA1F188EFF6800110F14 /* ScriptBreakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptBreakpoint.h; sourceTree = "<group>"; };
-		A503FA20188EFF6800110F14 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
-		A503FA23188EFFFD00110F14 /* ScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptDebugServer.cpp; sourceTree = "<group>"; };
-		A503FA24188EFFFD00110F14 /* ScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugServer.h; sourceTree = "<group>"; };
 		A503FA27188F105900110F14 /* JSGlobalObjectScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectScriptDebugServer.cpp; sourceTree = "<group>"; };
 		A503FA28188F105900110F14 /* JSGlobalObjectScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectScriptDebugServer.h; sourceTree = "<group>"; };
 		A5098B031C16AA0200087797 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
@@ -6549,6 +6543,7 @@
 		1480DB9A0DDC2231003CFDF2 /* debugger */ = {
 			isa = PBXGroup;
 			children = (
+				91D1578C24E0BE35001F4CED /* Breakpoint.cpp */,
 				FEA0861E182B7A0400F6D851 /* Breakpoint.h */,
 				F692A8580255597D01FF60F7 /* Debugger.cpp */,
 				F692A8590255597D01FF60F7 /* Debugger.h */,
@@ -8709,16 +8704,12 @@
 				A5AB49DB1BEC8079007020FB /* PerGlobalObjectWrapperWorld.h */,
 				A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */,
 				A5FD0066189AFE9C00633231 /* ScriptArguments.h */,
-				A503FA1F188EFF6800110F14 /* ScriptBreakpoint.h */,
 				A5FD0069189B00A900633231 /* ScriptCallFrame.cpp */,
 				A5FD006A189B00A900633231 /* ScriptCallFrame.h */,
 				A5FD006B189B00A900633231 /* ScriptCallStack.cpp */,
 				A5FD006C189B00AA00633231 /* ScriptCallStack.h */,
 				A5FD007B189B0B4C00633231 /* ScriptCallStackFactory.cpp */,
 				A5FD007C189B0B4C00633231 /* ScriptCallStackFactory.h */,
-				A503FA20188EFF6800110F14 /* ScriptDebugListener.h */,
-				A503FA23188EFFFD00110F14 /* ScriptDebugServer.cpp */,
-				A503FA24188EFFFD00110F14 /* ScriptDebugServer.h */,
 			);
 			path = inspector;
 			sourceTree = "<group>";
@@ -10327,12 +10318,9 @@
 				0F24E55217EE274900ABB217 /* ScratchRegisterAllocator.h in Headers */,
 				33111B8B2397256500AA34CE /* Scribble.h in Headers */,
 				A5FD0068189AFE9C00633231 /* ScriptArguments.h in Headers */,
-				A503FA21188EFF6800110F14 /* ScriptBreakpoint.h in Headers */,
 				A5FD006E189B00AA00633231 /* ScriptCallFrame.h in Headers */,
 				A5FD0070189B00AA00633231 /* ScriptCallStack.h in Headers */,
 				A5FD007E189B0B4C00633231 /* ScriptCallStackFactory.h in Headers */,
-				A503FA22188EFF6800110F14 /* ScriptDebugListener.h in Headers */,
-				A503FA26188EFFFD00110F14 /* ScriptDebugServer.h in Headers */,
 				147341CE1DC02D7900AA29BA /* ScriptExecutable.h in Headers */,
 				CEAE7D7B889B477BA93ABA6C /* ScriptFetcher.h in Headers */,
 				E3201C1E1F8E824C0076A032 /* ScriptFetchParameters.h in Headers */,

@@ -94,7 +94,7 @@ function test()
         test(resolve, reject) {
             InspectorTest.assert(workerTarget1.mainResource instanceof WI.Script);
             let location = workerTarget1.mainResource.createSourceCodeLocation(8, 0);
-            breakpoint = new WI.Breakpoint(location);
+            breakpoint = new WI.JavaScriptBreakpoint(location);
             WI.debuggerManager.addBreakpoint(breakpoint);
 
             InspectorTest.evaluateInPage(`triggerWorkerBreakpointPauses()`);

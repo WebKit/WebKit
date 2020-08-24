@@ -115,7 +115,7 @@ WI.BreakpointActionView = class BreakpointActionView extends WI.Object
 
     _appendActionButtonClicked(event)
     {
-        var newAction = this._action.breakpoint.createAction(this._action.type, this._action);
+        var newAction = this._action.breakpoint.createAction(this._action.type, {precedingAction: this._action});
         this._delegate.breakpointActionViewAppendActionView(this, newAction);
     }
 

@@ -31,30 +31,27 @@
 
 #pragma once
 
-#include <JavaScriptCore/ScriptDebugServer.h>
+#include <JavaScriptCore/Debugger.h>
 
 namespace WebCore {
 
 class WorkerGlobalScope;
 
-class WorkerScriptDebugServer final : public Inspector::ScriptDebugServer {
+class WorkerScriptDebugServer final : public JSC::Debugger {
     WTF_MAKE_NONCOPYABLE(WorkerScriptDebugServer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WorkerScriptDebugServer(WorkerGlobalScope&);
     ~WorkerScriptDebugServer() override = default;
 
-    void recompileAllJSFunctions() override;
 
 private:
-    void attachDebugger() override;
-    void detachDebugger(bool isBeingDestroyed) override;
-
-    void didPause(JSC::JSGlobalObject*) override { }
-    void didContinue(JSC::JSGlobalObject*) override { }
-    void runEventLoopWhilePaused() override;
-    bool isContentScript(JSC::JSGlobalObject*) const override { return false; }
-    void reportException(JSC::JSGlobalObject*, JSC::Exception*) const override;
+    // JSC::Debugger
+    void attachDebugger() final;
+    void detachDebugger(bool isBeingDestroyed) final;
+    void recompileAllJSFunctions() final;
+    void runEventLoopWhilePaused() final;
+    void reportException(JSC::JSGlobalObject*, JSC::Exception*) const final;
 
     WorkerGlobalScope& m_workerGlobalScope;
 };

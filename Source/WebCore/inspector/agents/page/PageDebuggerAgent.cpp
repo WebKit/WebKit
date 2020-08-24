@@ -90,7 +90,7 @@ void PageDebuggerAgent::disable(bool isBeingDestroyed)
     WebDebuggerAgent::disable(isBeingDestroyed);
 }
 
-String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
+String PageDebuggerAgent::sourceMapURLForScript(const JSC::Debugger::Script& script)
 {
     static NeverDestroyed<String> sourceMapHTTPHeader(MAKE_STATIC_STRING_IMPL("SourceMap"));
     static NeverDestroyed<String> sourceMapHTTPHeaderDeprecated(MAKE_STATIC_STRING_IMPL("X-SourceMap"));

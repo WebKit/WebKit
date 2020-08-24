@@ -284,6 +284,8 @@ void DOMTimer::fired()
     // wait unit the end of this function to delete DOMTimer.
     Ref<DOMTimer> protectedThis(*this);
 
+    bool oneShot = !repeatInterval();
+
     ASSERT(scriptExecutionContext());
     ScriptExecutionContext& context = *scriptExecutionContext();
 
@@ -291,7 +293,7 @@ void DOMTimer::fired()
     if (is<Document>(context)) {
         auto& document = downcast<Document>(context);
         if (auto* holdingTank = document.domTimerHoldingTankIfExists(); holdingTank && holdingTank->contains(*this)) {
-            if (!repeatInterval())
+            if (oneShot)
                 startOneShot(0_s);
             return;
         }
@@ -309,7 +311,7 @@ void DOMTimer::fired()
     // Only the first execution of a multi-shot timer should get an affirmative user gesture indicator.
     m_userGestureTokenToForward = nullptr;
 
-    InspectorInstrumentation::willFireTimer(context, m_timeoutId, !repeatInterval());
+    InspectorInstrumentation::willFireTimer(context, m_timeoutId, oneShot);
 
     // Simple case for non-one-shot timers.
     if (isActive()) {
@@ -320,7 +322,7 @@ void DOMTimer::fired()
 
         m_action->execute(context);
 
-        InspectorInstrumentation::didFireTimer(context);
+        InspectorInstrumentation::didFireTimer(context, m_timeoutId, oneShot);
 
         updateThrottlingStateIfNecessary(fireState);
         return;
@@ -338,7 +340,7 @@ void DOMTimer::fired()
 #endif
     m_action->execute(context);
 
-    InspectorInstrumentation::didFireTimer(context);
+    InspectorInstrumentation::didFireTimer(context, m_timeoutId, oneShot);
 
     // Check if we should throttle nested single-shot timers.
     if (nestedTimers) {

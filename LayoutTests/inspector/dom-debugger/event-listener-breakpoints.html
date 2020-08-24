@@ -58,7 +58,7 @@ function test() {
                     resolve();
                 });
 
-                InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, eventName)
+                InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName})
                 .then(InspectorTest.EventBreakpoint.awaitEvent("body", eventName))
                 .catch(reject);
             },
@@ -71,7 +71,7 @@ function test() {
             test(resolve, reject) {
                 InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Listener, eventName, "Should not pause for disabled breakpoint.");
 
-                InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, eventName)
+                InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName})
                 .then(InspectorTest.EventBreakpoint.disableBreakpoint)
                 .then(InspectorTest.EventBreakpoint.awaitEvent("body", eventName))
                 .catch(reject);
@@ -85,7 +85,7 @@ function test() {
             test(resolve, reject) {
                 InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Listener, eventName, "Should not pause for removed breakpoint.");
 
-                InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, eventName)
+                InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName})
                 .then(InspectorTest.EventBreakpoint.removeBreakpoint)
                 .then(InspectorTest.EventBreakpoint.awaitEvent("body", eventName))
                 .catch(reject);
@@ -99,7 +99,7 @@ function test() {
             test(resolve, reject) {
                 InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Listener, eventName, "Should not pause for removed disabled breakpoint.");
 
-                InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, eventName)
+                InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName})
                 .then(InspectorTest.EventBreakpoint.disableBreakpoint)
                 .then(InspectorTest.EventBreakpoint.removeBreakpoint)
                 .then(InspectorTest.EventBreakpoint.awaitEvent("body", eventName))
@@ -128,7 +128,7 @@ function test() {
                 .catch(reject);
             });
 
-            InspectorTest.EventBreakpoint.addBreakpoint(WI.domDebuggerManager.allListenersBreakpoint)
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener)
             .then(() => {
                 InspectorTest.log("Firing \"click\" on body...");
                 return InspectorTest.evaluateInPage(`trigger_click()`);
@@ -173,7 +173,7 @@ function test() {
                 resolve();
             });
 
-            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, "click")
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click"})
             .then(() => {
                 InspectorTest.log("Firing \"click\" on div#x...");
                 return InspectorTest.evaluateInPage(`clickX()`);
@@ -211,7 +211,7 @@ function test() {
                 .then(resolve, reject);
             });
 
-            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, "click")
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "click"})
             .then(() => {
                 InspectorTest.log("Firing \"click\" on div#x...");
                 return InspectorTest.evaluateInPage(`clickX()`);
@@ -220,6 +220,8 @@ function test() {
         },
         teardown: InspectorTest.EventBreakpoint.teardown,
     });
+
+    InspectorTest.EventBreakpoint.addBreakpointOptionsTestCases(suite, WI.EventBreakpoint.Type.Listener, "click");
 
     suite.runTestCasesAndFinish();
 }

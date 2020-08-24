@@ -63,7 +63,7 @@ function test()
         description: "Worker should pause on breakpoint.",
         test(resolve, reject) {
             let location = workerTarget.mainResource.createSourceCodeLocation(8, 0);
-            let breakpoint = new WI.Breakpoint(location);
+            let breakpoint = new WI.JavaScriptBreakpoint(location);
             WI.debuggerManager.addBreakpoint(breakpoint);
             InspectorTest.evaluateInPage(`worker.postMessage("triggerBreakpoint")`);
             WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {

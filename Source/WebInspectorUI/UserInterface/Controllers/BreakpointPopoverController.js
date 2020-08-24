@@ -40,60 +40,59 @@ WI.BreakpointPopoverController = class BreakpointPopoverController extends WI.Ob
     {
         console.assert(document.body.contains(breakpointDisplayElement), "Breakpoint popover display element must be in the DOM.");
 
-        const editBreakpoint = () => {
-            console.assert(!this._popover, "Breakpoint popover already exists.");
-            if (this._popover)
-                return;
+        if (breakpoint.editable) {
+            contextMenu.appendItem(WI.UIString("Edit Breakpoint\u2026"), () => {
+                console.assert(!this._popover, "Breakpoint popover already exists.");
+                if (this._popover)
+                    return;
 
-            this._createPopoverContent(breakpoint);
-            this._popover = new WI.Popover(this);
-            this._popover.content = this._popoverContentElement;
+                this._createPopoverContent(breakpoint);
+                this._popover = new WI.Popover(this);
+                this._popover.content = this._popoverContentElement;
 
-            let bounds = WI.Rect.rectFromClientRect(breakpointDisplayElement.getBoundingClientRect());
-            bounds.origin.x -= 1; // Move the anchor left one pixel so it looks more centered.
-            this._popover.present(bounds.pad(2), [WI.RectEdge.MAX_Y]);
-        };
+                let bounds = WI.Rect.rectFromClientRect(breakpointDisplayElement.getBoundingClientRect());
+                bounds.origin.x -= 1; // Move the anchor left one pixel so it looks more centered.
+                this._popover.present(bounds.pad(2), [WI.RectEdge.MAX_Y]);
+            });
+        }
 
-        const removeBreakpoint = () => {
-            WI.debuggerManager.removeBreakpoint(breakpoint);
-        };
+        if (!breakpoint.disabled) {
+            contextMenu.appendItem(WI.UIString("Disable Breakpoint"), () => {
+                breakpoint.disabled = !breakpoint.disabled;
+            });
 
-        const toggleBreakpoint = () => {
-            breakpoint.disabled = !breakpoint.disabled;
-        };
+            if (breakpoint.editable && breakpoint.autoContinue) {
+                contextMenu.appendItem(WI.UIString("Cancel Automatic Continue"), () => {
+                    breakpoint.autoContinue = !breakpoint.autoContinue;
+                });
+            }
+        } else {
+            contextMenu.appendItem(WI.UIString("Enable Breakpoint"), () => {
+                breakpoint.disabled = !breakpoint.disabled;
+            });
+        }
 
-        const toggleAutoContinue = () => {
-            breakpoint.autoContinue = !breakpoint.autoContinue;
-        };
+        if (breakpoint.editable && !breakpoint.autoContinue && !breakpoint.disabled && breakpoint.actions.length) {
+            contextMenu.appendItem(WI.UIString("Set to Automatically Continue"), () => {
+                breakpoint.autoContinue = !breakpoint.autoContinue;
+            });
+        }
 
-        const revealOriginalSourceCodeLocation = () => {
-            const options = {
-                ignoreNetworkTab: true,
-                ignoreSearchTab: true,
-            };
-            WI.showOriginalOrFormattedSourceCodeLocation(breakpoint.sourceCodeLocation, options);
-        };
+        if (breakpoint.removable) {
+            contextMenu.appendItem(WI.UIString("Delete Breakpoint"), () => {
+                breakpoint.remove();
+            });
+        }
 
-        if (WI.debuggerManager.isBreakpointEditable(breakpoint))
-            contextMenu.appendItem(WI.UIString("Edit Breakpoint\u2026"), editBreakpoint);
-
-        if (breakpoint.autoContinue && !breakpoint.disabled) {
-            contextMenu.appendItem(WI.UIString("Disable Breakpoint"), toggleBreakpoint);
-            contextMenu.appendItem(WI.UIString("Cancel Automatic Continue"), toggleAutoContinue);
-        } else if (!breakpoint.disabled)
-            contextMenu.appendItem(WI.UIString("Disable Breakpoint"), toggleBreakpoint);
-        else
-            contextMenu.appendItem(WI.UIString("Enable Breakpoint"), toggleBreakpoint);
-
-        if (!breakpoint.autoContinue && !breakpoint.disabled && breakpoint.actions.length)
-            contextMenu.appendItem(WI.UIString("Set to Automatically Continue"), toggleAutoContinue);
-
-        if (WI.debuggerManager.isBreakpointRemovable(breakpoint))
-            contextMenu.appendItem(WI.UIString("Delete Breakpoint"), removeBreakpoint);
-
-        if (breakpoint._sourceCodeLocation.hasMappedLocation()) {
+        if (breakpoint instanceof WI.JavaScriptBreakpoint && breakpoint.sourceCodeLocation.hasMappedLocation()) {
             contextMenu.appendSeparator();
-            contextMenu.appendItem(WI.UIString("Reveal in Original Resource"), revealOriginalSourceCodeLocation);
+            contextMenu.appendItem(WI.UIString("Reveal in Original Resource"), () => {
+                const options = {
+                    ignoreNetworkTab: true,
+                    ignoreSearchTab: true,
+                };
+                WI.showOriginalOrFormattedSourceCodeLocation(breakpoint.sourceCodeLocation, options);
+            });
         }
     }
 
@@ -124,7 +123,22 @@ WI.BreakpointPopoverController = class BreakpointPopoverController extends WI.Ob
         let checkboxLabel = document.createElement("label");
         checkboxLabel.className = "toggle";
         checkboxLabel.appendChild(checkboxElement);
-        checkboxLabel.append(this._breakpoint.sourceCodeLocation.displayLocationString());
+        if (this._breakpoint instanceof WI.JavaScriptBreakpoint)
+            checkboxLabel.append(this._breakpoint.sourceCodeLocation.displayLocationString());
+        else if (this._breakpoint instanceof WI.EventBreakpoint) {
+            let displayName;
+            if (breakpoint === WI.domDebuggerManager.allAnimationFramesBreakpoint)
+                displayName = WI.UIString("All Animation Frames");
+            else if (breakpoint === WI.domDebuggerManager.allIntervalsBreakpoint)
+                displayName = WI.UIString("All Intervals");
+            else if (breakpoint === WI.domDebuggerManager.allListenersBreakpoint)
+                displayName = WI.UIString("All Events");
+            else if (breakpoint === WI.domDebuggerManager.allTimeoutsBreakpoint)
+                displayName = WI.UIString("All Timeouts");
+            else
+                displayName = breakpoint.eventName;
+            checkboxLabel.appendChild(document.createTextNode(displayName));
+        }
 
         let table = document.createElement("table");
 
@@ -176,7 +190,7 @@ WI.BreakpointPopoverController = class BreakpointPopoverController extends WI.Ob
         this._ignoreCountInput.id = "edit-breakpoint-popover-ignore";
         this._ignoreCountInput.type = "number";
         this._ignoreCountInput.min = 0;
-        this._ignoreCountInput.value = 0;
+        this._ignoreCountInput.value = breakpoint.ignoreCount;
         this._ignoreCountInput.addEventListener("change", this._popoverIgnoreInputChanged.bind(this));
 
         ignoreCountLabel.setAttribute("for", this._ignoreCountInput.id);

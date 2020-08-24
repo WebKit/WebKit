@@ -23,28 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.breakpoint.dom.breakpoint-for-subtree-modified:not(.breakpoint-paused-icon) .icon {
+.item.breakpoint.dom.subtree-modified:not(.paused) .icon {
     content: url(../Images/TypeIcons.svg#DOMBreakpointSubtreeModified-light);
 }
 
-.breakpoint.dom.breakpoint-for-attribute-modified:not(.breakpoint-paused-icon) .icon {
+.item.breakpoint.dom.attribute-modified:not(.paused) .icon {
     content: url(../Images/TypeIcons.svg#DOMBreakpointAttributeModified-light);
 }
 
-.breakpoint.dom.breakpoint-for-node-removed:not(.breakpoint-paused-icon) .icon {
+.item.breakpoint.dom.node-removed:not(.paused) .icon {
     content: url(../Images/TypeIcons.svg#DOMBreakpointNodeRemoved-light);
 }
 
 @media (prefers-color-scheme: dark) {
-    .breakpoint.dom.breakpoint-for-subtree-modified:not(.breakpoint-paused-icon) .icon {
+    .item.breakpoint.dom.subtree-modified:not(.paused) .icon {
         content: url(../Images/TypeIcons.svg#DOMBreakpointSubtreeModified-dark);
     }
 
-    .breakpoint.dom.breakpoint-for-attribute-modified:not(.breakpoint-paused-icon) .icon {
+    .item.breakpoint.dom.attribute-modified:not(.paused) .icon {
         content: url(../Images/TypeIcons.svg#DOMBreakpointAttributeModified-dark);
     }
 
-    .breakpoint.dom.breakpoint-for-node-removed:not(.breakpoint-paused-icon) .icon {
+    .item.breakpoint.dom.node-removed:not(.paused) .icon {
         content: url(../Images/TypeIcons.svg#DOMBreakpointNodeRemoved-dark);
     }
 }

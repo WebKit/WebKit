@@ -54,18 +54,22 @@ using namespace JSC;
 using namespace Inspector;
 
 PageScriptDebugServer::PageScriptDebugServer(Page& page)
-    : ScriptDebugServer(WebCore::commonVM())
+    : Debugger(WebCore::commonVM())
     , m_page(page)
 {
 }
 
 void PageScriptDebugServer::attachDebugger()
 {
+    JSC::Debugger::attachDebugger();
+
     m_page.setDebugger(this);
 }
 
 void PageScriptDebugServer::detachDebugger(bool isBeingDestroyed)
 {
+    JSC::Debugger::detachDebugger(isBeingDestroyed);
+
     m_page.setDebugger(nullptr);
     if (!isBeingDestroyed)
         recompileAllJSFunctions();
@@ -77,18 +81,24 @@ void PageScriptDebugServer::recompileAllJSFunctions()
     Debugger::recompileAllJSFunctions();
 }
 
-void PageScriptDebugServer::didPause(JSGlobalObject*)
+void PageScriptDebugServer::didPause(JSGlobalObject* globalObject)
 {
+    JSC::Debugger::didPause(globalObject);
+
     setJavaScriptPaused(m_page.group(), true);
 }
 
-void PageScriptDebugServer::didContinue(JSGlobalObject*)
+void PageScriptDebugServer::didContinue(JSGlobalObject* globalObject)
 {
+    JSC::Debugger::didContinue(globalObject);
+
     setJavaScriptPaused(m_page.group(), false);
 }
 
 void PageScriptDebugServer::runEventLoopWhilePaused()
 {
+    JSC::Debugger::runEventLoopWhilePaused();
+
 #if PLATFORM(IOS_FAMILY)
     // On iOS, running an EventLoop causes us to run a nested WebRunLoop.
     // Since the WebThread is autoreleased at the end of run loop iterations
@@ -115,7 +125,7 @@ void PageScriptDebugServer::runEventLoopWhilePausedInternal()
 
     m_page.incrementNestedRunLoopCount();
 
-    while (!m_doneProcessingDebuggerEvents) {
+    while (!doneProcessingDebuggerEvents()) {
         if (!platformShouldContinueRunningEventLoopWhilePaused())
             break;
     }
@@ -125,11 +135,13 @@ void PageScriptDebugServer::runEventLoopWhilePausedInternal()
 
 bool PageScriptDebugServer::isContentScript(JSGlobalObject* state) const
 {
-    return &currentWorld(*state) != &mainThreadNormalWorld();
+    return &currentWorld(*state) != &mainThreadNormalWorld() || JSC::Debugger::isContentScript(state);
 }
 
 void PageScriptDebugServer::reportException(JSGlobalObject* state, JSC::Exception* exception) const
 {
+    JSC::Debugger::reportException(state, exception);
+
     WebCore::reportException(state, exception);
 }
 

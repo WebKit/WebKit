@@ -418,13 +418,13 @@ void InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents& instrume
         domDebuggerAgent->willHandleEvent(event, listener);
 }
 
-void InspectorInstrumentation::didHandleEventImpl(InstrumentingAgents& instrumentingAgents)
+void InspectorInstrumentation::didHandleEventImpl(InstrumentingAgents& instrumentingAgents, Event& event, const RegisteredEventListener& listener)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
         webDebuggerAgent->didDispatchAsyncCall();
 
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->didHandleEvent();
+        domDebuggerAgent->didHandleEvent(event, listener);
 }
 
 void InspectorInstrumentation::didDispatchEventImpl(InstrumentingAgents& instrumentingAgents, const Event& event)
@@ -473,10 +473,12 @@ void InspectorInstrumentation::willFireTimerImpl(InstrumentingAgents& instrument
         timelineAgent->willFireTimer(timerId, frameForScriptExecutionContext(context));
 }
 
-void InspectorInstrumentation::didFireTimerImpl(InstrumentingAgents& instrumentingAgents)
+void InspectorInstrumentation::didFireTimerImpl(InstrumentingAgents& instrumentingAgents, int /* timerId */, bool oneShot)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
         webDebuggerAgent->didDispatchAsyncCall();
+    if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
+        domDebuggerAgent->didFireTimer(oneShot);
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->didFireTimer();
 }
@@ -715,6 +717,9 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
 
         if (auto* pageDebuggerAgent = instrumentingAgents.enabledPageDebuggerAgent())
             pageDebuggerAgent->mainFrameNavigated();
+
+        if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
+            domDebuggerAgent->mainFrameNavigated();
 
         if (auto* enabledPageHeapAgent = instrumentingAgents.enabledPageHeapAgent())
             enabledPageHeapAgent->mainFrameNavigated();
@@ -1262,6 +1267,8 @@ void InspectorInstrumentation::didFireAnimationFrameImpl(InstrumentingAgents& in
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
         webDebuggerAgent->didDispatchAsyncCall();
+    if (auto* pageDOMDebuggerAgent = instrumentingAgents.enabledPageDOMDebuggerAgent())
+        pageDOMDebuggerAgent->didFireAnimationFrame();
     if (auto* timelineAgent = instrumentingAgents.trackingTimelineAgent())
         timelineAgent->didFireAnimationFrame();
 }

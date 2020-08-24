@@ -34,15 +34,6 @@
 
     fill: var(--breakpoint-color);
     stroke: hsla(0, 0%, 10%, 0.3);
-    filter: grayscale();
-}
-
-.item.breakpoint .status > .status-image.resolved {
-    filter: none;
-}
-
-body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.breakpoint.selected .status > .status-image.resolved {
-    stroke: var(--selected-foreground-color);
 }
 
 .item.breakpoint .status > .status-image.auto-continue::after {
@@ -59,80 +50,12 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
     fill: var(--breakpoint-color-disabled);
 }
 
-.item.breakpoint .subtitle.formatted-location {
-    font-style: italic;
-}
-
-.breakpoint-debugger-statement-icon .icon {
-    content: url(../Images/TypeIcons.svg#DebuggerStatement-light);
-}
-
-.breakpoint-exception-icon .icon {
-    content: url(../Images/TypeIcons.svg#Exception-light);
-}
-
-.breakpoint-assertion-icon .icon {
-    content: url(../Images/TypeIcons.svg#Assertion-light);
-}
-
-.breakpoint-microtask-icon .icon {
-    content: url(../Images/TypeIcons.svg#Microtask-light);
-}
-
-.breakpoint-paused-icon .icon {
+.item.breakpoint.paused .icon {
     content: url(../Images/TypeIcons.svg#PausedBreakpoint-light);
 }
 
-/* When animating a layer on top of a tree element's icon, move the main
-icon to the icon element's background so animations are layered on top. */
-.breakpoint-generic-line-icon .icon {
-    background-image: url(../Images/TypeIcons.svg#ResultLine-light);
-    content: '';
-}
-
-.breakpoint-generic-line-icon .icon > span {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-
-    border-radius: 50%;
-    transform: scale(0);
-    transition: none;
-    background-color: hsl(216, 30%, 42%);
-}
-
-.data-updated.breakpoint-generic-line-icon .icon > span {
-    border-radius: 0;
-    transform: scale(0.85);
-    transition: all .4s ease-out;
-    background-color: hsla(216, 30%, 42%, 0.1);
-}
-
 @media (prefers-color-scheme: dark) {
-    .breakpoint-debugger-statement-icon .icon {
-        content: url(../Images/TypeIcons.svg#DebuggerStatement-dark);
-    }
-    
-    .breakpoint-exception-icon .icon {
-        content: url(../Images/TypeIcons.svg#Exception-dark);
-    }
-
-    .breakpoint-assertion-icon .icon {
-        content: url(../Images/TypeIcons.svg#Assertion-dark);
-    }
-
-    .breakpoint-microtask-icon .icon {
-        content: url(../Images/TypeIcons.svg#Microtask-dark);
-    }
-
-    .breakpoint-paused-icon .icon {
+    .item.breakpoint.paused .icon {
         content: url(../Images/TypeIcons.svg#PausedBreakpoint-dark);
     }
-
-    .breakpoint-generic-line-icon .icon {
-        background-image: url(../Images/TypeIcons.svg#ResultLine-dark);
-    }
-    
 }

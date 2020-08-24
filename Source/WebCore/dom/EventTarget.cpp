@@ -330,7 +330,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
 
         InspectorInstrumentation::willHandleEvent(context, event, *registeredListener);
         registeredListener->callback().handleEvent(context, event);
-        InspectorInstrumentation::didHandleEvent(context);
+        InspectorInstrumentation::didHandleEvent(context, event, *registeredListener);
 
         if (registeredListener->isPassive())
             event.setInPassiveListener(false);

@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include "ScriptDebugServer.h"
+#include "Debugger.h"
 #include <wtf/RunLoop.h>
 
 namespace Inspector {
 
-class JSGlobalObjectScriptDebugServer final : public ScriptDebugServer {
+class JSGlobalObjectScriptDebugServer final : public JSC::Debugger {
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectScriptDebugServer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -42,18 +42,10 @@ public:
     static RunLoopMode runLoopMode();
 
 private:
+    // JSC::Debugger
     void attachDebugger() final;
     void detachDebugger(bool isBeingDestroyed) final;
-
-    void didPause(JSC::JSGlobalObject*) final { }
-    void didContinue(JSC::JSGlobalObject*) final { }
     void runEventLoopWhilePaused() final;
-    bool isContentScript(JSC::JSGlobalObject*) const final { return false; }
-
-    // NOTE: Currently all exceptions are reported at the API boundary through reportAPIException.
-    // Until a time comes where an exception can be caused outside of the API (e.g. setTimeout
-    // or some other async operation in a pure JSContext) we can ignore exceptions reported here.
-    void reportException(JSC::JSGlobalObject*, JSC::Exception*) const final { }
 
     JSC::JSGlobalObject& m_globalObject;
 };

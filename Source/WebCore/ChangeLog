@@ -1,3 +1,108 @@
+2020-08-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: allow event breakpoints to be configured
+        https://bugs.webkit.org/show_bug.cgi?id=215362
+        <rdar://problem/66932921>
+
+        Reviewed by Brian Burg.
+
+        This allows developers to do things like:
+         - only pause when `window.event.type` is a certain value
+         - ignore the first N pauses
+         - evaluate JavaScript whenever an event listener is invoked without pausing
+
+        Tests: inspector/dom/breakpoint-for-event-listener.html
+               inspector/dom-debugger/event-animation-frame-breakpoints.html
+               inspector/dom-debugger/event-interval-breakpoints.html
+               inspector/dom-debugger/event-listener-breakpoints.html
+               inspector/dom-debugger/event-timeout-breakpoints.html
+
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::setBreakpointForEventListener):
+        (WebCore::InspectorDOMAgent::removeBreakpointForEventListener):
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        (WebCore::InspectorDOMAgent::breakpointForEventListener):
+        (WebCore::InspectorDOMAgent::hasBreakpointForEventListener): Deleted.
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::disable):
+        (WebCore::InspectorDOMDebuggerAgent::mainFrameNavigated):
+        (WebCore::InspectorDOMDebuggerAgent::setEventBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeEventBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::willHandleEvent):
+        (WebCore::InspectorDOMDebuggerAgent::didHandleEvent):
+        (WebCore::InspectorDOMDebuggerAgent::willFireTimer):
+        (WebCore::InspectorDOMDebuggerAgent::didFireTimer):
+        * inspector/agents/page/PageDOMDebuggerAgent.h:
+        * inspector/agents/page/PageDOMDebuggerAgent.cpp:
+        (WebCore::PageDOMDebuggerAgent::disable):
+        (WebCore::PageDOMDebuggerAgent::mainFrameNavigated):
+        (WebCore::PageDOMDebuggerAgent::willFireAnimationFrame):
+        (WebCore::PageDOMDebuggerAgent::didFireAnimationFrame):
+        (WebCore::PageDOMDebuggerAgent::setAnimationFrameBreakpoint):
+        * inspector/agents/worker/WorkerDOMDebuggerAgent.h:
+        * inspector/agents/worker/WorkerDOMDebuggerAgent.cpp:
+        (WebCore::WorkerDOMDebuggerAgent::setAnimationFrameBreakpoint):
+        Keep a `JSC::Breakpoint` for each event breakpoint instead of a simple `bool`, allowing for
+        configuration when the breakpoint is first set. When any of these breakpoints are hit, pass
+        it to the `JSC::Debugger` as a "special breakpoint", which behaves the same as "pause ASAP"
+        but also supports a condition, an ignore count, actions, and auto-continue. Reset the hit
+        count for any of these "special breakpoints" that persist across Web Inspector sessions
+        when the main frame navigates.
+
+        * inspector/PageScriptDebugServer.h:
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::PageScriptDebugServer):
+        (WebCore::PageScriptDebugServer::attachDebugger):
+        (WebCore::PageScriptDebugServer::detachDebugger):
+        (WebCore::PageScriptDebugServer::didPause):
+        (WebCore::PageScriptDebugServer::didContinue):
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePaused):
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePausedInternal):
+        (WebCore::PageScriptDebugServer::isContentScript const):
+        (WebCore::PageScriptDebugServer::reportException const):
+        * inspector/WorkerScriptDebugServer.h:
+        * inspector/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::WorkerScriptDebugServer):
+        (WebCore::WorkerScriptDebugServer::attachDebugger):
+        (WebCore::WorkerScriptDebugServer::detachDebugger):
+        (WebCore::WorkerScriptDebugServer::runEventLoopWhilePaused):
+        (WebCore::WorkerScriptDebugServer::reportException const):
+        * inspector/agents/page/PageDebuggerAgent.h:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::sourceMapURLForScript):
+        Replace `Inspector::ScriptDebugServer` with `JSC::Debugger`.
+
+        * inspector/TimelineRecordFactory.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createProbeSampleData):
+        * inspector/agents/InspectorTimelineAgent.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::internalStart):
+        (WebCore::InspectorTimelineAgent::internalStop):
+        (WebCore::InspectorTimelineAgent::breakpointActionProbe):
+        Replace `Inspector::ScriptBreakpoint` with `JSC::Breakpoint`.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didHandleEvent):
+        (WebCore::InspectorInstrumentation::didFireTimer):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didHandleEventImpl):
+        (WebCore::InspectorInstrumentation::didFireTimerImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::didFireAnimationFrameImpl):
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::innerInvokeEventListeners):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::fired):
+        When notifying Web Inspector that activity did occur, include all information previously
+        included when notifying Web Inspector that that activity was about to occur so that Web
+        Inspector can know whether a pause for the "special breakpoint" for that activity is still
+        scheduled and if so cancel it.
+
 2020-08-24  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Show picker for date and datetime-local input types

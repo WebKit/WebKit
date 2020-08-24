@@ -689,12 +689,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/InspectorTarget.h
     inspector/PerGlobalObjectWrapperWorld.h
     inspector/ScriptArguments.h
-    inspector/ScriptBreakpoint.h
     inspector/ScriptCallFrame.h
     inspector/ScriptCallStack.h
     inspector/ScriptCallStackFactory.h
-    inspector/ScriptDebugListener.h
-    inspector/ScriptDebugServer.h
 
     inspector/agents/InspectorAgent.h
     inspector/agents/InspectorAuditAgent.h

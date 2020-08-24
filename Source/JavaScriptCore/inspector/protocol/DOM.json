@@ -316,7 +316,8 @@
             "description": "Set a breakpoint on the given event listener.",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "eventListenerId", "$ref": "EventListenerId" }
+                { "name": "eventListenerId", "$ref": "EventListenerId" },
+                { "name": "options", "$ref": "Debugger.BreakpointOptions", "optional": true, "description": "Options to apply to this breakpoint to modify its behavior." }
             ]
         },
         {

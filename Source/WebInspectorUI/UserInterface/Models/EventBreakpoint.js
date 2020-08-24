@@ -23,28 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.EventBreakpoint = class EventBreakpoint extends WI.Object
+WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
 {
-    constructor(type, {eventName, eventListener, disabled} = {})
+    constructor(type, {eventName, eventListener, disabled, actions, condition, ignoreCount, autoContinue} = {})
     {
-        super();
+        // COMPATIBILITY (iOS 13): DOMDebugger.EventBreakpointTypes.Timer was removed.
+        if (type === "timer") {
+            switch (eventName) {
+            case "setInterval":
+                type = WI.EventBreakpoint.Type.Interval;
+                break;
+
+            case "setTimeout":
+                type = WI.EventBreakpoint.Type.Timeout;
+                break;
+            }
+        }
 
         console.assert(Object.values(WI.EventBreakpoint.Type).includes(type), type);
+        console.assert(!eventName || type === WI.EventBreakpoint.Type.Listener, eventName);
+        console.assert(!eventListener || type === WI.EventBreakpoint.Type.Listener, eventListener);
+
+        super({disabled, condition, actions, ignoreCount, autoContinue});
 
         this._type = type;
         this._eventName = eventName || null;
         this._eventListener = eventListener || null;
-        this._disabled = disabled || false;
     }
 
     // Static
 
-    static deserialize(serializedInfo)
+    static fromJSON(json)
     {
-        return new WI.EventBreakpoint(serializedInfo.type, {
-            eventName: serializedInfo.eventName,
-            disabled: !!serializedInfo.disabled,
+        let breakpoint = new WI.EventBreakpoint(json.type, {
+            eventName: json.eventName,
+            disabled: json.disabled,
+            condition: json.condition,
+            ignoreCount: json.ignoreCount,
+            autoContinue: json.autoContinue,
         });
+        breakpoint._actions = json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON, breakpoint)) || [];
+        return breakpoint;
     }
 
     // Public
@@ -53,19 +72,34 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Object
     get eventName() { return this._eventName; }
     get eventListener() { return this._eventListener; }
 
-    get disabled()
+    get special()
     {
-        return this._disabled;
+        switch (this) {
+        case WI.domDebuggerManager.allAnimationFramesBreakpoint:
+        case WI.domDebuggerManager.allIntervalsBreakpoint:
+        case WI.domDebuggerManager.allListenersBreakpoint:
+        case WI.domDebuggerManager.allTimeoutsBreakpoint:
+            return true;
+        }
+
+        return super.special;
     }
 
-    set disabled(disabled)
+    get editable()
     {
-        if (this._disabled === disabled)
-            return;
+        // COMPATIBILITY (iOS 14): DOM.setBreakpointForEventListener did not have an "options" parameter yet.
+        // COMPATIBILITY (iOS 14): DOMDebugger.setEventBreakpoint did not have an "options" parameter yet.
+        return (this._eventListener ? InspectorBackend.hasCommand("DOM.setBreakpointForEventListener", "options") : InspectorBackend.hasCommand("DOMDebugger.setEventBreakpoint", "options")) || super.editable;
+    }
 
-        this._disabled = disabled;
+    remove()
+    {
+        super.remove();
 
-        this.dispatchEventToListeners(WI.EventBreakpoint.Event.DisabledStateChanged);
+        if (this._eventListener)
+            WI.domManager.removeBreakpointForEventListener(this._eventListener);
+        else
+            WI.domDebuggerManager.removeEventBreakpoint(this);
     }
 
     saveIdentityToCookie(cookie)
@@ -75,19 +109,14 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Object
             cookie["event-breakpoint-event-name"] = this._eventName;
         if (this._eventListener)
             cookie["event-breakpoint-event-listener"] = this._eventListener.eventListenerId;
-        if (this._disabled)
-            cookie["event-breakpoint-disabled"] = this._disabled;
     }
 
     toJSON(key)
     {
-        let json = {
-            type: this._type,
-        };
+        let json = super.toJSON(key);
+        json.type = this._type;
         if (this._eventName)
             json.eventName = this._eventName;
-        if (this._disabled)
-            json.disabled = true;
         if (key === WI.ObjectStore.toJSONSymbol)
             json[WI.objectStores.eventBreakpoints.keyPath] = this._type + (this._eventName ? ":" + this._eventName : "");
         return json;
@@ -99,11 +128,4 @@ WI.EventBreakpoint.Type = {
     Interval: "interval",
     Listener: "listener",
     Timeout: "timeout",
-
-    // COMPATIBILITY (iOS 13): DOMDebugger.EventBreakpointTypes.Timer was removed.
-    Timer: "timer",
-};
-
-WI.EventBreakpoint.Event = {
-    DisabledStateChanged: "event-breakpoint-disabled-state-changed",
 };

@@ -13,37 +13,37 @@ InspectorTest.startTracingBreakpoints = function()
         InspectorTest.log("Breakpoint was removed.");
     });
 
-    WI.Breakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, function(event) {
+    WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.DisabledStateDidChange, function(event) {
         var breakpoint = event.target;
-        console.assert(breakpoint instanceof WI.Breakpoint, "Unexpected object type!");
+        console.assert(breakpoint instanceof WI.JavaScriptBreakpoint, "Unexpected object type!");
 
         InspectorTest.log("Breakpoint disabled state changed: " + breakpoint.disabled);
     });
 
-    WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ResolvedStateDidChange, function(event) {
+    WI.JavaScriptBreakpoint.addEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, function(event) {
         var breakpoint = event.target;
-        console.assert(breakpoint instanceof WI.Breakpoint, "Unexpected object type!");
+        console.assert(breakpoint instanceof WI.JavaScriptBreakpoint, "Unexpected object type!");
 
         InspectorTest.log("Breakpoint resolved state changed: " + breakpoint.resolved);
     });
 
-    WI.Breakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, function(event) {
+    WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, function(event) {
         var breakpoint = event.target;
-        console.assert(breakpoint instanceof WI.Breakpoint, "Unexpected object type!");
+        console.assert(breakpoint instanceof WI.JavaScriptBreakpoint, "Unexpected object type!");
 
         InspectorTest.log("Breakpoint autocontinue state changed: " + breakpoint.autoContinue);
     });
 
-    WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ConditionDidChange, function(event) {
+    WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.ConditionDidChange, function(event) {
         var breakpoint = event.target;
-        console.assert(breakpoint instanceof WI.Breakpoint, "Unexpected object type!");
+        console.assert(breakpoint instanceof WI.JavaScriptBreakpoint, "Unexpected object type!");
 
         InspectorTest.log("Breakpoint condition changed: " + breakpoint.condition);
     });
 
-    WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ActionsDidChange, function(event) {
+    WI.JavaScriptBreakpoint.addEventListener(WI.Breakpoint.Event.ActionsDidChange, function(event) {
         var breakpoint = event.target;
-        console.assert(breakpoint instanceof WI.Breakpoint, "Unexpected object type!");
+        console.assert(breakpoint instanceof WI.JavaScriptBreakpoint, "Unexpected object type!");
 
         InspectorTest.log("Breakpoint actions changed. New count: " + breakpoint.actions.length);
     });

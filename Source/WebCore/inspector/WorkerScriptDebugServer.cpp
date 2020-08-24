@@ -44,18 +44,22 @@ namespace WebCore {
 using namespace Inspector;
 
 WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerGlobalScope& context)
-    : ScriptDebugServer(context.script()->vm())
+    : Debugger(context.script()->vm())
     , m_workerGlobalScope(context)
 {
 }
 
 void WorkerScriptDebugServer::attachDebugger()
 {
+    JSC::Debugger::attachDebugger();
+
     m_workerGlobalScope.script()->attachDebugger(this);
 }
 
 void WorkerScriptDebugServer::detachDebugger(bool isBeingDestroyed)
 {
+    JSC::Debugger::detachDebugger(isBeingDestroyed);
+
     if (m_workerGlobalScope.script())
         m_workerGlobalScope.script()->detachDebugger(this);
     if (!isBeingDestroyed)
@@ -70,16 +74,20 @@ void WorkerScriptDebugServer::recompileAllJSFunctions()
 
 void WorkerScriptDebugServer::runEventLoopWhilePaused()
 {
+    JSC::Debugger::runEventLoopWhilePaused();
+
     TimerBase::fireTimersInNestedEventLoop();
 
     MessageQueueWaitResult result;
     do {
         result = m_workerGlobalScope.thread().runLoop().runInDebuggerMode(m_workerGlobalScope);
-    } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
+    } while (result != MessageQueueTerminated && !doneProcessingDebuggerEvents());
 }
 
 void WorkerScriptDebugServer::reportException(JSC::JSGlobalObject* exec, JSC::Exception* exception) const
 {
+    JSC::Debugger::reportException(exec, exception);
+
     WebCore::reportException(exec, exception);
 }
 

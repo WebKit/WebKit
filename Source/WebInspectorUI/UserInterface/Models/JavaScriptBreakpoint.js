@@ -1,0 +1,195 @@
+/*
+ * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
+{
+    constructor(sourceCodeLocation, {contentIdentifier, disabled, condition, actions, ignoreCount, autoContinue} = {})
+    {
+        console.assert(sourceCodeLocation instanceof WI.SourceCodeLocation);
+        console.assert(!contentIdentifier || typeof contentIdentifier === "string");
+
+        super({disabled, condition, actions, ignoreCount, autoContinue});
+
+        this._id = null;
+        this._sourceCodeLocation = sourceCodeLocation;
+
+        let sourceCode = this._sourceCodeLocation.sourceCode;
+        if (sourceCode) {
+            this._contentIdentifier = sourceCode.contentIdentifier;
+            console.assert(!contentIdentifier || contentIdentifier === this._contentIdentifier, "The content identifier from the source code should match the given value.");
+        } else
+            this._contentIdentifier = contentIdentifier || null;
+        console.assert(this._contentIdentifier || this._isSpecial(), "There should always be a content identifier for a breakpoint.");
+
+        this._scriptIdentifier = sourceCode instanceof WI.Script ? sourceCode.id : null;
+        this._target = sourceCode instanceof WI.Script ? sourceCode.target : null;
+        this._resolved = false;
+
+        this._sourceCodeLocation.addEventListener(WI.SourceCodeLocation.Event.LocationChanged, this._sourceCodeLocationLocationChanged, this);
+        this._sourceCodeLocation.addEventListener(WI.SourceCodeLocation.Event.DisplayLocationChanged, this._sourceCodeLocationDisplayLocationChanged, this);
+    }
+
+    // Import / Export
+
+    static fromJSON(json)
+    {
+        const sourceCode = null;
+        let breakpoint = new WI.JavaScriptBreakpoint(new WI.SourceCodeLocation(sourceCode, json.lineNumber || 0, json.columnNumber || 0), {
+            // The 'url' fallback is for transitioning from older frontends and should be removed.
+            contentIdentifier: json.contentIdentifier || json.url,
+            disabled: json.disabled,
+            condition: json.condition,
+            ignoreCount: json.ignoreCount,
+            autoContinue: json.autoContinue,
+        });
+        breakpoint._actions = json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON, breakpoint)) || [];
+        return breakpoint;
+    }
+
+    toJSON(key)
+    {
+        // The id, scriptIdentifier, target, and resolved state are tied to the current session, so don't include them for serialization.
+        let json = super.toJSON(key);
+        json.contentIdentifier = this._contentIdentifier;
+        json.lineNumber = this._sourceCodeLocation.lineNumber;
+        json.columnNumber = this._sourceCodeLocation.columnNumber;
+        if (key === WI.ObjectStore.toJSONSymbol)
+            json[WI.objectStores.breakpoints.keyPath] = this._contentIdentifier + ":" + this._sourceCodeLocation.lineNumber + ":" + this._sourceCodeLocation.columnNumber;
+        return json;
+    }
+
+    // Public
+
+    get sourceCodeLocation() { return this._sourceCodeLocation; }
+    get contentIdentifier() { return this._contentIdentifier; }
+    get scriptIdentifier() { return this._scriptIdentifier; }
+    get target() { return this._target; }
+
+    get special()
+    {
+        switch (this) {
+        case WI.debuggerManager.debuggerStatementsBreakpoint:
+        case WI.debuggerManager.allExceptionsBreakpoint:
+        case WI.debuggerManager.uncaughtExceptionsBreakpoint:
+        case WI.debuggerManager.assertionFailuresBreakpoint:
+        case WI.debuggerManager.allMicrotasksBreakpoint:
+            return true;
+        }
+
+        return super.special;
+    }
+
+    get removable()
+    {
+        switch (this) {
+        case WI.debuggerManager.debuggerStatementsBreakpoint:
+        case WI.debuggerManager.allExceptionsBreakpoint:
+        case WI.debuggerManager.uncaughtExceptionsBreakpoint:
+            return false;
+        }
+
+        return super.removable;
+    }
+
+    get editable()
+    {
+        switch (this) {
+        case WI.debuggerManager.debuggerStatementsBreakpoint:
+        case WI.debuggerManager.allExceptionsBreakpoint:
+        case WI.debuggerManager.uncaughtExceptionsBreakpoint:
+        case WI.debuggerManager.assertionFailuresBreakpoint:
+        case WI.debuggerManager.allMicrotasksBreakpoint:
+            return false;
+        }
+
+        return super.editable;
+    }
+
+    get identifier()
+    {
+        return this._id;
+    }
+
+    set identifier(id)
+    {
+        this._id = id || null;
+    }
+
+    get resolved()
+    {
+        return this._resolved;
+    }
+
+    set resolved(resolved)
+    {
+        if (this._resolved === resolved)
+            return;
+
+        console.assert(!resolved || this._sourceCodeLocation.sourceCode || this._isSpecial(), "Breakpoints must have a SourceCode to be resolved.", this);
+
+        this._resolved = resolved || false;
+
+        this.dispatchEventToListeners(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange);
+    }
+
+    remove()
+    {
+        super.remove();
+
+        WI.debuggerManager.removeBreakpoint(this);
+    }
+
+    saveIdentityToCookie(cookie)
+    {
+        cookie["javascript-breakpoint-content-identifier"] = this._contentIdentifier;
+        cookie["javascript-breakpoint-line-number"] = this._sourceCodeLocation.lineNumber;
+        cookie["javascript-breakpoint-column-number"] = this._sourceCodeLocation.columnNumber;
+    }
+
+    // Private
+
+    _isSpecial()
+    {
+        return this._sourceCodeLocation.isEqual(new WI.SourceCodeLocation(null, Infinity, Infinity));
+    }
+
+    _sourceCodeLocationLocationChanged(event)
+    {
+        this.dispatchEventToListeners(WI.JavaScriptBreakpoint.Event.LocationDidChange, event.data);
+    }
+
+    _sourceCodeLocationDisplayLocationChanged(event)
+    {
+        this.dispatchEventToListeners(WI.JavaScriptBreakpoint.Event.DisplayLocationDidChange, event.data);
+    }
+};
+
+WI.JavaScriptBreakpoint.TypeIdentifier = "javascript-breakpoint";
+
+WI.JavaScriptBreakpoint.Event = {
+    ResolvedStateDidChange: "javascript-breakpoint-resolved-state-did-change",
+    LocationDidChange: "javascript-breakpoint-location-did-change",
+    DisplayLocationDidChange: "javascript-breakpoint-display-location-did-change",
+};

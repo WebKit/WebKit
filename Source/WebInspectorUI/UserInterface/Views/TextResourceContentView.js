@@ -98,7 +98,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
     get supplementalRepresentedObjects()
     {
         let objects = WI.debuggerManager.probeSets.filter(function(probeSet) {
-            return this._resource.contentIdentifier === probeSet.breakpoint.contentIdentifier;
+            return !(probeSet.breakpoint instanceof WI.JavaScriptBreakpoint) || this._resource.contentIdentifier === probeSet.breakpoint.contentIdentifier;
         }, this);
 
         // If the SourceCodeTextEditor has an executionLineNumber, we can assume
@@ -319,7 +319,7 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
     _probeSetsChanged(event)
     {
         var breakpoint = event.data.probeSet.breakpoint;
-        if (breakpoint.sourceCodeLocation.sourceCode === this.resource)
+        if (!(breakpoint instanceof WI.JavaScriptBreakpoint) || breakpoint.sourceCodeLocation.sourceCode === this.resource)
             this.dispatchEventToListeners(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange);
     }
 

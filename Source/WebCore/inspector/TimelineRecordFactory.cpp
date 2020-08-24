@@ -36,7 +36,6 @@
 #include "FloatQuad.h"
 #include "JSExecState.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
-#include <JavaScriptCore/ScriptBreakpoint.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 
@@ -73,10 +72,10 @@ Ref<JSON::Object> TimelineRecordFactory::createConsoleProfileData(const String& 
     return data;
 }
 
-Ref<JSON::Object> TimelineRecordFactory::createProbeSampleData(const ScriptBreakpointAction& action, unsigned sampleId)
+Ref<JSON::Object> TimelineRecordFactory::createProbeSampleData(JSC::BreakpointActionID actionID, unsigned sampleId)
 {
     Ref<JSON::Object> data = JSON::Object::create();
-    data->setInteger("probeId"_s, action.identifier);
+    data->setInteger("probeId"_s, actionID);
     data->setInteger("sampleId"_s, sampleId);
     return data;
 }

@@ -32,12 +32,16 @@
 
 #include "AsyncStackTrace.h"
 #include "ContentSearchUtilities.h"
+#include "Debugger.h"
+#include "DebuggerScope.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
+#include "JSJavaScriptCallFrame.h"
+#include "JavaScriptCallFrame.h"
 #include "RegularExpression.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
-#include "ScriptDebugServer.h"
+#include <wtf/Function.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/text/WTFString.h>
@@ -50,14 +54,164 @@ const char* const InspectorDebuggerAgent::backtraceObjectGroup = "backtrace";
 // according to the breakpoint action identifier assigned by the frontend. A breakpoint may
 // have several object groups, and objects from several backend breakpoint action instances may
 // create objects in the same group.
-static String objectGroupForBreakpointAction(const ScriptBreakpointAction& action)
+static String objectGroupForBreakpointAction(JSC::BreakpointActionID id)
 {
-    return makeString("breakpoint-action-", action.identifier);
+    return makeString("breakpoint-action-", id);
 }
 
 static bool isWebKitInjectedScript(const String& sourceURL)
 {
     return sourceURL.startsWith("__InjectedScript_") && sourceURL.endsWith(".js");
+}
+
+static Optional<JSC::Breakpoint::Action::Type> breakpointActionTypeForString(ErrorString& errorString, const String& typeString)
+{
+    auto type = Inspector::Protocol::InspectorHelpers::parseEnumValueFromString<Inspector::Protocol::Debugger::BreakpointAction::Type>(typeString);
+    if (!type) {
+        errorString = makeString("Unknown breakpoint action type: "_s, typeString);
+        return WTF::nullopt;
+    }
+
+    switch (*type) {
+    case Inspector::Protocol::Debugger::BreakpointAction::Type::Log:
+        return JSC::Breakpoint::Action::Type::Log;
+
+    case Inspector::Protocol::Debugger::BreakpointAction::Type::Evaluate:
+        return JSC::Breakpoint::Action::Type::Evaluate;
+
+    case Inspector::Protocol::Debugger::BreakpointAction::Type::Sound:
+        return JSC::Breakpoint::Action::Type::Sound;
+
+    case Inspector::Protocol::Debugger::BreakpointAction::Type::Probe:
+        return JSC::Breakpoint::Action::Type::Probe;
+    }
+
+    ASSERT_NOT_REACHED();
+    return WTF::nullopt;
+}
+
+template <typename T>
+static T parseBreakpointOptions(ErrorString& errorString, const JSON::Object* optionsPayload, Function<T(const String&, JSC::Breakpoint::ActionsVector&&, bool, size_t)> callback)
+{
+    String condition;
+    JSC::Breakpoint::ActionsVector actions;
+    bool autoContinue = false;
+    size_t ignoreCount = 0;
+
+    if (optionsPayload) {
+        optionsPayload->getString("condition"_s, condition);
+
+        RefPtr<JSON::Array> actionsPayload;
+        optionsPayload->getArray("actions"_s, actionsPayload);
+        if (auto count = actionsPayload ? actionsPayload->length() : 0) {
+            actions.reserveCapacity(count);
+
+            for (unsigned i = 0; i < count; ++i) {
+                RefPtr<JSON::Object> actionObject;
+                if (!actionsPayload->get(i)->asObject(actionObject)) {
+                    errorString = "Unexpected non-object item in given actions"_s;
+                    return { };
+                }
+
+                String actionTypeString;
+                if (!actionObject->getString("type"_s, actionTypeString)) {
+                    errorString = "Missing type for item in given actions"_s;
+                    return { };
+                }
+
+                auto actionType = breakpointActionTypeForString(errorString, actionTypeString);
+                if (!actionType)
+                    return { };
+
+                JSC::Breakpoint::Action action(*actionType);
+
+                actionObject->getString("data"_s, action.data);
+
+                // Specifying an identifier is optional. They are used to correlate probe samples
+                // in the frontend across multiple backend probe actions and segregate object groups.
+                actionObject->getInteger("id"_s, action.id);
+
+                actions.append(WTFMove(action));
+            }
+        }
+
+        optionsPayload->getBoolean("autoContinue"_s, autoContinue);
+        optionsPayload->getInteger("ignoreCount"_s, ignoreCount);
+    }
+
+    return callback(condition, WTFMove(actions), autoContinue, ignoreCount);
+}
+
+Optional<InspectorDebuggerAgent::ProtocolBreakpoint> InspectorDebuggerAgent::ProtocolBreakpoint::fromPayload(ErrorString& errorString, JSC::SourceID sourceID, unsigned lineNumber, unsigned columnNumber, const JSON::Object* optionsPayload)
+{
+    return parseBreakpointOptions<Optional<ProtocolBreakpoint>>(errorString, optionsPayload, [&] (const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount) -> Optional<ProtocolBreakpoint> {
+        return ProtocolBreakpoint(sourceID, lineNumber, columnNumber, condition, WTFMove(actions), autoContinue, ignoreCount);
+    });
+}
+
+Optional<InspectorDebuggerAgent::ProtocolBreakpoint> InspectorDebuggerAgent::ProtocolBreakpoint::fromPayload(ErrorString& errorString, const String& url, bool isRegex, unsigned lineNumber, unsigned columnNumber, const JSON::Object* optionsPayload)
+{
+    return parseBreakpointOptions<Optional<ProtocolBreakpoint>>(errorString, optionsPayload, [&] (const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount) -> Optional<ProtocolBreakpoint> {
+        return ProtocolBreakpoint(url, isRegex, lineNumber, columnNumber, condition, WTFMove(actions), autoContinue, ignoreCount);
+    });
+}
+
+InspectorDebuggerAgent::ProtocolBreakpoint::ProtocolBreakpoint() = default;
+
+InspectorDebuggerAgent::ProtocolBreakpoint::ProtocolBreakpoint(JSC::SourceID sourceID, unsigned lineNumber, unsigned columnNumber, const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount)
+    : m_id(makeString(sourceID, ':', lineNumber, ':', columnNumber))
+#if ASSERT_ENABLED
+    , m_sourceID(sourceID)
+#endif
+    , m_lineNumber(lineNumber)
+    , m_columnNumber(columnNumber)
+    , m_condition(condition)
+    , m_actions(WTFMove(actions))
+    , m_autoContinue(autoContinue)
+    , m_ignoreCount(ignoreCount)
+{
+}
+
+InspectorDebuggerAgent::ProtocolBreakpoint::ProtocolBreakpoint(const String& url, bool isRegex, unsigned lineNumber, unsigned columnNumber, const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount)
+    : m_id(makeString(isRegex ? "/" : "", url, isRegex ? "/" : "", ':', lineNumber, ':', columnNumber))
+    , m_url(url)
+    , m_isRegex(isRegex)
+    , m_lineNumber(lineNumber)
+    , m_columnNumber(columnNumber)
+    , m_condition(condition)
+    , m_actions(WTFMove(actions))
+    , m_autoContinue(autoContinue)
+    , m_ignoreCount(ignoreCount)
+{
+}
+
+Ref<JSC::Breakpoint> InspectorDebuggerAgent::ProtocolBreakpoint::createDebuggerBreakpoint(JSC::BreakpointID debuggerBreakpointID, JSC::SourceID sourceID) const
+{
+    ASSERT(debuggerBreakpointID != JSC::noBreakpointID);
+    ASSERT(sourceID != JSC::noSourceID);
+    ASSERT(sourceID == m_sourceID || m_sourceID == JSC::noSourceID);
+
+    auto debuggerBreakpoint = JSC::Breakpoint::create(debuggerBreakpointID, m_condition, copyToVector(m_actions), m_autoContinue, m_ignoreCount);
+    debuggerBreakpoint->link(sourceID, m_lineNumber, m_columnNumber);
+    return debuggerBreakpoint;
+}
+
+bool InspectorDebuggerAgent::ProtocolBreakpoint::matchesScriptURL(const String& scriptURL) const
+{
+    ASSERT(m_sourceID == JSC::noSourceID);
+
+    if (m_isRegex) {
+        JSC::Yarr::RegularExpression regex(m_url);
+        return regex.match(scriptURL) != -1;
+    }
+    return m_url == scriptURL;
+}
+
+RefPtr<JSC::Breakpoint> InspectorDebuggerAgent::debuggerBreakpointFromPayload(ErrorString& errorString, const JSON::Object* optionsPayload)
+{
+    return parseBreakpointOptions<RefPtr<JSC::Breakpoint>>(errorString, optionsPayload, [] (const String& condition, JSC::Breakpoint::ActionsVector&& actions, bool autoContinue, size_t ignoreCount) {
+        return JSC::Breakpoint::create(JSC::noBreakpointID, condition, WTFMove(actions), autoContinue, ignoreCount);
+    });
 }
 
 InspectorDebuggerAgent::InspectorDebuggerAgent(AgentContext& context)
@@ -87,7 +241,7 @@ void InspectorDebuggerAgent::enable()
 {
     m_enabled = true;
 
-    m_scriptDebugServer.addListener(this);
+    m_scriptDebugServer.addObserver(*this);
 
     for (auto* listener : copyToVector(m_listeners))
         listener->debuggerWasEnabled();
@@ -108,14 +262,12 @@ void InspectorDebuggerAgent::disable(bool isBeingDestroyed)
     for (auto* listener : copyToVector(m_listeners))
         listener->debuggerWasDisabled();
 
-    m_scriptDebugServer.removeListener(this, isBeingDestroyed);
+    m_scriptDebugServer.removeObserver(*this, isBeingDestroyed);
 
     clearInspectorBreakpointState();
 
     if (!isBeingDestroyed)
         m_scriptDebugServer.deactivateBreakpoints();
-
-    ASSERT(m_javaScriptBreakpoints.isEmpty());
 
     clearAsyncStackTraceData();
 
@@ -206,17 +358,22 @@ static RefPtr<JSON::Object> buildCSPViolationPauseReason(const String& directive
     return reason->openAccessors();
 }
 
-RefPtr<JSON::Object> InspectorDebuggerAgent::buildBreakpointPauseReason(JSC::BreakpointID debuggerBreakpointIdentifier)
+RefPtr<JSON::Object> InspectorDebuggerAgent::buildBreakpointPauseReason(JSC::BreakpointID debuggerBreakpointID)
 {
-    ASSERT(debuggerBreakpointIdentifier != JSC::noBreakpointID);
-    auto it = m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier.find(debuggerBreakpointIdentifier);
-    if (it == m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier.end())
-        return nullptr;
+    ASSERT(debuggerBreakpointID != JSC::noBreakpointID);
 
-    auto reason = Protocol::Debugger::BreakpointPauseReason::create()
-        .setBreakpointId(it->value)
-        .release();
-    return reason->openAccessors();
+    for (auto& [protocolBreakpointID, debuggerBreakpoints] : m_debuggerBreakpointsForProtocolBreakpointID) {
+        for (auto& debuggerBreakpoint : debuggerBreakpoints) {
+            if (debuggerBreakpoint->id() == debuggerBreakpointID) {
+                auto reason = Protocol::Debugger::BreakpointPauseReason::create()
+                    .setBreakpointId(protocolBreakpointID)
+                    .release();
+                return reason->openAccessors();
+            }
+        }
+    }
+
+    return nullptr;
 }
 
 RefPtr<JSON::Object> InspectorDebuggerAgent::buildExceptionPauseReason(JSC::JSValue exception, const InjectedScript& injectedScript)
@@ -234,7 +391,7 @@ RefPtr<JSON::Object> InspectorDebuggerAgent::buildExceptionPauseReason(JSC::JSVa
 
 void InspectorDebuggerAgent::handleConsoleAssert(const String& message)
 {
-    if (!m_scriptDebugServer.breakpointsActive())
+    if (!breakpointsActive())
         return;
 
     if (m_pauseOnAssertionFailures)
@@ -251,7 +408,7 @@ void InspectorDebuggerAgent::didScheduleAsyncCall(JSC::JSGlobalObject* globalObj
     if (!m_asyncStackTraceDepth)
         return;
 
-    if (!m_scriptDebugServer.breakpointsActive())
+    if (!breakpointsActive())
         return;
 
     Ref<ScriptCallStack> callStack = createScriptCallStack(globalObject, m_asyncStackTraceDepth);
@@ -333,107 +490,15 @@ void InspectorDebuggerAgent::didDispatchAsyncCall()
         m_pendingAsyncCalls.remove(identifier);
 }
 
-static Ref<JSON::Object> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, RefPtr<JSON::Array>& actions, bool isRegex, bool autoContinue, unsigned ignoreCount)
+static RefPtr<Protocol::Debugger::Location> buildDebuggerLocation(const JSC::Breakpoint& debuggerBreakpoint)
 {
-    Ref<JSON::Object> breakpointObject = JSON::Object::create();
-    breakpointObject->setString("url"_s, url);
-    breakpointObject->setInteger("lineNumber"_s, lineNumber);
-    breakpointObject->setInteger("columnNumber"_s, columnNumber);
-    breakpointObject->setString("condition"_s, condition);
-    breakpointObject->setBoolean("isRegex"_s, isRegex);
-    breakpointObject->setBoolean("autoContinue"_s, autoContinue);
-    breakpointObject->setInteger("ignoreCount"_s, ignoreCount);
-
-    if (actions)
-        breakpointObject->setArray("actions"_s, actions);
-
-    return breakpointObject;
-}
-
-static bool matches(const String& url, const String& pattern, bool isRegex)
-{
-    if (isRegex) {
-        JSC::Yarr::RegularExpression regex(pattern);
-        return regex.match(url) != -1;
-    }
-    return url == pattern;
-}
-
-static bool breakpointActionTypeForString(const String& typeString, ScriptBreakpointActionType* output)
-{
-    if (typeString == Protocol::InspectorHelpers::getEnumConstantValue(Protocol::Debugger::BreakpointAction::Type::Log)) {
-        *output = ScriptBreakpointActionTypeLog;
-        return true;
-    }
-    if (typeString == Protocol::InspectorHelpers::getEnumConstantValue(Protocol::Debugger::BreakpointAction::Type::Evaluate)) {
-        *output = ScriptBreakpointActionTypeEvaluate;
-        return true;
-    }
-    if (typeString == Protocol::InspectorHelpers::getEnumConstantValue(Protocol::Debugger::BreakpointAction::Type::Sound)) {
-        *output = ScriptBreakpointActionTypeSound;
-        return true;
-    }
-    if (typeString == Protocol::InspectorHelpers::getEnumConstantValue(Protocol::Debugger::BreakpointAction::Type::Probe)) {
-        *output = ScriptBreakpointActionTypeProbe;
-        return true;
-    }
-
-    return false;
-}
-
-bool InspectorDebuggerAgent::breakpointActionsFromProtocol(ErrorString& errorString, RefPtr<JSON::Array>& actions, BreakpointActions* result)
-{
-    if (!actions)
-        return true;
-
-    unsigned actionsLength = actions->length();
-    if (!actionsLength)
-        return true;
-
-    result->reserveCapacity(actionsLength);
-    for (unsigned i = 0; i < actionsLength; ++i) {
-        RefPtr<JSON::Value> value = actions->get(i);
-        RefPtr<JSON::Object> object;
-        if (!value->asObject(object)) {
-            errorString = "Unexpected non-object item in given actions"_s;
-            return false;
-        }
-
-        String typeString;
-        if (!object->getString("type"_s, typeString)) {
-            errorString = "Missing type for item in given actions"_s;
-            return false;
-        }
-
-        ScriptBreakpointActionType type;
-        if (!breakpointActionTypeForString(typeString, &type)) {
-            errorString = "Non-string type for item in given actions"_s;
-            return false;
-        }
-
-        // Specifying an identifier is optional. They are used to correlate probe samples
-        // in the frontend across multiple backend probe actions and segregate object groups.
-        int identifier = 0;
-        object->getInteger("id"_s, identifier);
-
-        String data;
-        object->getString("data"_s, data);
-
-        result->append(ScriptBreakpointAction(type, identifier, data));
-    }
-
-    return true;
-}
-
-static RefPtr<Protocol::Debugger::Location> buildDebuggerLocation(const JSC::Breakpoint& breakpoint)
-{
-    ASSERT(breakpoint.resolved);
+    ASSERT(debuggerBreakpoint.isResolved());
 
     auto location = Protocol::Debugger::Location::create()
-        .setScriptId(String::number(breakpoint.sourceID))
-        .setLineNumber(breakpoint.line)
+        .setScriptId(String::number(debuggerBreakpoint.sourceID()))
+        .setLineNumber(debuggerBreakpoint.lineNumber())
         .release();
-    location->setColumnNumber(breakpoint.column);
+    location->setColumnNumber(debuggerBreakpoint.columnNumber());
 
     return location;
 }
@@ -459,88 +524,53 @@ static bool parseLocation(ErrorString& errorString, const JSON::Object& location
     return true;
 }
 
-void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const JSON::Object* options, Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<JSON::ArrayOf<Protocol::Debugger::Location>>& locations)
+void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString& errorString, int lineNumber, const String* optionalURL, const String* optionalURLRegex, const int* optionalColumnNumber, const JSON::Object* optionsPayload, Protocol::Debugger::BreakpointId* outBreakpointId, RefPtr<JSON::ArrayOf<Protocol::Debugger::Location>>& outLocations)
 {
-    locations = JSON::ArrayOf<Protocol::Debugger::Location>::create();
     if (!optionalURL == !optionalURLRegex) {
         errorString = "Either url or urlRegex must be specified"_s;
         return;
     }
 
-    String url = optionalURL ? *optionalURL : *optionalURLRegex;
-    int columnNumber = optionalColumnNumber ? *optionalColumnNumber : 0;
-    bool isRegex = optionalURLRegex;
+    auto protocolBreakpoint = ProtocolBreakpoint::fromPayload(errorString, optionalURL ? *optionalURL : *optionalURLRegex, !!optionalURLRegex, lineNumber, optionalColumnNumber ? *optionalColumnNumber : 0, optionsPayload);
+    if (!protocolBreakpoint)
+        return;
 
-    String breakpointIdentifier = makeString(isRegex ? "/" : "", url, isRegex ? "/:" : ":", lineNumber, ':', columnNumber);
-    if (m_javaScriptBreakpoints.contains(breakpointIdentifier)) {
+    if (m_protocolBreakpointForProtocolBreakpointID.contains(protocolBreakpoint->id())) {
         errorString = "Breakpoint for given location already exists."_s;
         return;
     }
 
-    String condition = emptyString();
-    bool autoContinue = false;
-    unsigned ignoreCount = 0;
-    RefPtr<JSON::Array> actions;
-    if (options) {
-        options->getString("condition"_s, condition);
-        options->getBoolean("autoContinue"_s, autoContinue);
-        options->getArray("actions"_s, actions);
-        options->getInteger("ignoreCount"_s, ignoreCount);
-    }
+    m_protocolBreakpointForProtocolBreakpointID.set(protocolBreakpoint->id(), *protocolBreakpoint);
 
-    BreakpointActions breakpointActions;
-    if (!breakpointActionsFromProtocol(errorString, actions, &breakpointActions))
-        return;
+    outLocations = JSON::ArrayOf<Protocol::Debugger::Location>::create();
 
-    m_javaScriptBreakpoints.set(breakpointIdentifier, buildObjectForBreakpointCookie(url, lineNumber, columnNumber, condition, actions, isRegex, autoContinue, ignoreCount));
-
-    for (auto& entry : m_scripts) {
-        Script& script = entry.value;
+    for (auto& [sourceID, script] : m_scripts) {
         String scriptURLForBreakpoints = !script.sourceURL.isEmpty() ? script.sourceURL : script.url;
-        if (!matches(scriptURLForBreakpoints, url, isRegex))
+        if (!protocolBreakpoint->matchesScriptURL(scriptURLForBreakpoints))
             continue;
 
-        JSC::SourceID sourceID = entry.key;
-        JSC::Breakpoint breakpoint(sourceID, lineNumber, columnNumber, condition, autoContinue, ignoreCount);
-        resolveBreakpoint(script, breakpoint);
-        if (!breakpoint.resolved)
+        auto debuggerBreakpoint = protocolBreakpoint->createDebuggerBreakpoint(m_nextDebuggerBreakpointID++, sourceID);
+
+        if (!resolveBreakpoint(script, debuggerBreakpoint))
             continue;
 
-        bool existing;
-        setBreakpoint(breakpoint, existing);
-        if (existing)
+        if (!setBreakpoint(debuggerBreakpoint))
             continue;
 
-        ScriptBreakpoint scriptBreakpoint(breakpoint.line, breakpoint.column, condition, breakpointActions, autoContinue, ignoreCount);
-        didSetBreakpoint(breakpoint, breakpointIdentifier, scriptBreakpoint);
+        didSetBreakpoint(*protocolBreakpoint, debuggerBreakpoint);
 
-        locations->addItem(buildDebuggerLocation(breakpoint));
+        outLocations->addItem(buildDebuggerLocation(debuggerBreakpoint));
     }
 
-    *outBreakpointIdentifier = breakpointIdentifier;
+    *outBreakpointId = protocolBreakpoint->id();
 }
 
-void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const JSON::Object& location, const JSON::Object* options, Protocol::Debugger::BreakpointId* outBreakpointIdentifier, RefPtr<Protocol::Debugger::Location>& actualLocation)
+void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const JSON::Object& location, const JSON::Object* optionsPayload, Protocol::Debugger::BreakpointId* outBreakpointId, RefPtr<Protocol::Debugger::Location>& outActualLocation)
 {
     JSC::SourceID sourceID;
     unsigned lineNumber;
     unsigned columnNumber;
     if (!parseLocation(errorString, location, sourceID, lineNumber, columnNumber))
-        return;
-
-    String condition = emptyString();
-    bool autoContinue = false;
-    unsigned ignoreCount = 0;
-    RefPtr<JSON::Array> actions;
-    if (options) {
-        options->getString("condition"_s, condition);
-        options->getBoolean("autoContinue"_s, autoContinue);
-        options->getArray("actions"_s, actions);
-        options->getInteger("ignoreCount"_s, ignoreCount);
-    }
-
-    BreakpointActions breakpointActions;
-    if (!breakpointActionsFromProtocol(errorString, actions, &breakpointActions))
         return;
 
     auto scriptIterator = m_scripts.find(sourceID);
@@ -549,70 +579,65 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString& errorString, const JSON:
         return;
     }
 
-    Script& script = scriptIterator->value;
-    JSC::Breakpoint breakpoint(sourceID, lineNumber, columnNumber, condition, autoContinue, ignoreCount);
-    resolveBreakpoint(script, breakpoint);
-    if (!breakpoint.resolved) {
+    auto protocolBreakpoint = ProtocolBreakpoint::fromPayload(errorString, sourceID, lineNumber, columnNumber, optionsPayload);
+    if (!protocolBreakpoint)
+        return;
+
+    // Don't save `protocolBreakpoint` in `m_protocolBreakpointForProtocolBreakpointID` because it
+    // was set specifically for the given `sourceID`, which is unique, meaning that it will never
+    // be used inside `InspectorDebuggerAgent::didParseSource`.
+
+    auto debuggerBreakpoint = protocolBreakpoint->createDebuggerBreakpoint(m_nextDebuggerBreakpointID++, sourceID);
+
+    if (!resolveBreakpoint(scriptIterator->value, debuggerBreakpoint)) {
         errorString = "Could not resolve breakpoint"_s;
         return;
     }
 
-    bool existing;
-    setBreakpoint(breakpoint, existing);
-    if (existing) {
+    if (!setBreakpoint(debuggerBreakpoint)) {
         errorString = "Breakpoint for given location already exists"_s;
         return;
     }
 
-    String breakpointIdentifier = makeString(sourceID, ':', breakpoint.line, ':', breakpoint.column);
-    ScriptBreakpoint scriptBreakpoint(breakpoint.line, breakpoint.column, condition, breakpointActions, autoContinue, ignoreCount);
-    didSetBreakpoint(breakpoint, breakpointIdentifier, scriptBreakpoint);
+    didSetBreakpoint(*protocolBreakpoint, debuggerBreakpoint);
 
-    actualLocation = buildDebuggerLocation(breakpoint);
-    *outBreakpointIdentifier = breakpointIdentifier;
+    outActualLocation = buildDebuggerLocation(debuggerBreakpoint);
+    *outBreakpointId = protocolBreakpoint->id();
 }
 
-void InspectorDebuggerAgent::didSetBreakpoint(const JSC::Breakpoint& breakpoint, const String& breakpointIdentifier, const ScriptBreakpoint& scriptBreakpoint)
+void InspectorDebuggerAgent::didSetBreakpoint(ProtocolBreakpoint& protocolBreakpoint, JSC::Breakpoint& debuggerBreakpoint)
 {
-    JSC::BreakpointID id = breakpoint.id;
-    m_scriptDebugServer.setBreakpointActions(id, scriptBreakpoint);
+    auto& debuggerBreakpoints = m_debuggerBreakpointsForProtocolBreakpointID.ensure(protocolBreakpoint.id(), [] {
+        return JSC::BreakpointsVector();
+    }).iterator->value;
 
-    auto debugServerBreakpointIDsIterator = m_breakpointIdentifierToDebugServerBreakpointIDs.find(breakpointIdentifier);
-    if (debugServerBreakpointIDsIterator == m_breakpointIdentifierToDebugServerBreakpointIDs.end())
-        debugServerBreakpointIDsIterator = m_breakpointIdentifierToDebugServerBreakpointIDs.set(breakpointIdentifier, Vector<JSC::BreakpointID>()).iterator;
-    debugServerBreakpointIDsIterator->value.append(id);
-
-    m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier.set(id, breakpointIdentifier);
+    debuggerBreakpoints.append(debuggerBreakpoint);
 }
 
-void InspectorDebuggerAgent::resolveBreakpoint(const Script& script, JSC::Breakpoint& breakpoint)
+bool InspectorDebuggerAgent::resolveBreakpoint(const JSC::Debugger::Script& script, JSC::Breakpoint& debuggerBreakpoint)
 {
-    if (breakpoint.line < static_cast<unsigned>(script.startLine) || static_cast<unsigned>(script.endLine) < breakpoint.line)
-        return;
+    if (debuggerBreakpoint.lineNumber() < static_cast<unsigned>(script.startLine) || static_cast<unsigned>(script.endLine) < debuggerBreakpoint.lineNumber())
+        return false;
 
-    m_scriptDebugServer.resolveBreakpoint(breakpoint, script.sourceProvider.get());
+    return m_scriptDebugServer.resolveBreakpoint(debuggerBreakpoint, script.sourceProvider.get());
 }
 
-void InspectorDebuggerAgent::setBreakpoint(JSC::Breakpoint& breakpoint, bool& existing)
+bool InspectorDebuggerAgent::setBreakpoint(JSC::Breakpoint& debuggerBreakpoint)
 {
     JSC::JSLockHolder locker(m_scriptDebugServer.vm());
-    m_scriptDebugServer.setBreakpoint(breakpoint, existing);
+    return m_scriptDebugServer.setBreakpoint(debuggerBreakpoint);
 }
 
-void InspectorDebuggerAgent::removeBreakpoint(ErrorString&, const String& breakpointIdentifier)
+void InspectorDebuggerAgent::removeBreakpoint(ErrorString&, const Inspector::Protocol::Debugger::BreakpointId& protocolBreakpointID)
 {
-    m_javaScriptBreakpoints.remove(breakpointIdentifier);
+    m_protocolBreakpointForProtocolBreakpointID.remove(protocolBreakpointID);
 
-    for (JSC::BreakpointID breakpointID : m_breakpointIdentifierToDebugServerBreakpointIDs.take(breakpointIdentifier)) {
-        m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier.remove(breakpointID);
-
-        const BreakpointActions& breakpointActions = m_scriptDebugServer.getActionsForBreakpoint(breakpointID);
-        for (auto& action : breakpointActions)
-            m_injectedScriptManager.releaseObjectGroup(objectGroupForBreakpointAction(action));
+    for (auto& debuggerBreakpoint : m_debuggerBreakpointsForProtocolBreakpointID.take(protocolBreakpointID)) {
+        for (const auto& action : debuggerBreakpoint->actions())
+            m_injectedScriptManager.releaseObjectGroup(objectGroupForBreakpointAction(action.id));
 
         JSC::JSLockHolder locker(m_scriptDebugServer.vm());
-        m_scriptDebugServer.removeBreakpointActions(breakpointID);
-        m_scriptDebugServer.removeBreakpoint(breakpointID);
+        m_scriptDebugServer.removeBreakpoint(debuggerBreakpoint);
     }
 }
 
@@ -633,9 +658,9 @@ void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const 
     if (!assertPaused(errorString))
         return;
 
-    if (m_continueToLocationBreakpointID != JSC::noBreakpointID) {
-        m_scriptDebugServer.removeBreakpoint(m_continueToLocationBreakpointID);
-        m_continueToLocationBreakpointID = JSC::noBreakpointID;
+    if (m_continueToLocationDebuggerBreakpoint) {
+        m_scriptDebugServer.removeBreakpoint(*m_continueToLocationDebuggerBreakpoint);
+        m_continueToLocationDebuggerBreakpoint = nullptr;
     }
 
     JSC::SourceID sourceID;
@@ -652,22 +677,23 @@ void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const 
         return;
     }
 
-    String condition;
-    bool autoContinue = false;
-    unsigned ignoreCount = 0;
-    JSC::Breakpoint breakpoint(sourceID, lineNumber, columnNumber, condition, autoContinue, ignoreCount);
-    Script& script = scriptIterator->value;
-    resolveBreakpoint(script, breakpoint);
-    if (!breakpoint.resolved) {
+    auto protocolBreakpoint = ProtocolBreakpoint::fromPayload(errorString, sourceID, lineNumber, columnNumber);
+    if (!protocolBreakpoint)
+        return;
+
+    // Don't save `protocolBreakpoint` in `m_protocolBreakpointForProtocolBreakpointID` because it
+    // is a temporary breakpoint that will be removed as soon as `location` is reached.
+
+    auto debuggerBreakpoint = protocolBreakpoint->createDebuggerBreakpoint(m_nextDebuggerBreakpointID++, sourceID);
+
+    if (!resolveBreakpoint(scriptIterator->value, debuggerBreakpoint)) {
         m_scriptDebugServer.continueProgram();
         m_frontendDispatcher->resumed();
         errorString = "Could not resolve breakpoint"_s;
         return;
     }
 
-    bool existing;
-    setBreakpoint(breakpoint, existing);
-    if (existing) {
+    if (!setBreakpoint(debuggerBreakpoint)) {
         // There is an existing breakpoint at this location. Instead of
         // acting like a series of steps, just resume and we will either
         // hit this new breakpoint or not.
@@ -676,7 +702,7 @@ void InspectorDebuggerAgent::continueToLocation(ErrorString& errorString, const 
         return;
     }
 
-    m_continueToLocationBreakpointID = breakpoint.id;
+    m_continueToLocationDebuggerBreakpoint = WTFMove(debuggerBreakpoint);
 
     // Treat this as a series of steps until reaching the new breakpoint.
     // So don't issue a resumed event unless we exit the VM without pausing.
@@ -719,7 +745,7 @@ void InspectorDebuggerAgent::getFunctionDetails(ErrorString& errorString, const 
     injectedScript.getFunctionDetails(errorString, functionId, details);
 }
 
-void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data)
+void InspectorDebuggerAgent::schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data)
 {
     if (m_javaScriptPauseScheduled)
         return;
@@ -729,10 +755,10 @@ void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerFrontendDispat
     updatePauseReasonAndData(reason, WTFMove(data));
 
     JSC::JSLockHolder locker(m_scriptDebugServer.vm());
-    m_scriptDebugServer.setPauseOnNextStatement(true);
+    m_scriptDebugServer.schedulePauseAtNextOpportunity();
 }
 
-void InspectorDebuggerAgent::cancelPauseOnNextStatement()
+void InspectorDebuggerAgent::cancelPauseAtNextOpportunity()
 {
     if (!m_javaScriptPauseScheduled)
         return;
@@ -740,13 +766,33 @@ void InspectorDebuggerAgent::cancelPauseOnNextStatement()
     m_javaScriptPauseScheduled = false;
 
     clearPauseDetails();
-    m_scriptDebugServer.setPauseOnNextStatement(false);
+    m_scriptDebugServer.cancelPauseAtNextOpportunity();
     m_enablePauseWhenIdle = false;
+}
+
+bool InspectorDebuggerAgent::schedulePauseForSpecialBreakpoint(JSC::Breakpoint& breakpoint, DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data)
+{
+    JSC::JSLockHolder locker(m_scriptDebugServer.vm());
+
+    if (!m_scriptDebugServer.schedulePauseForSpecialBreakpoint(breakpoint))
+        return false;
+
+    updatePauseReasonAndData(reason, WTFMove(data));
+    return true;
+}
+
+bool InspectorDebuggerAgent::cancelPauseForSpecialBreakpoint(JSC::Breakpoint& breakpoint)
+{
+    if (!m_scriptDebugServer.cancelPauseForSpecialBreakpoint(breakpoint))
+        return false;
+
+    clearPauseDetails();
+    return true;
 }
 
 void InspectorDebuggerAgent::pause(ErrorString&)
 {
-    schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason::PauseOnNextStatement, nullptr);
+    schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason::PauseOnNextStatement);
 }
 
 void InspectorDebuggerAgent::resume(ErrorString& errorString)
@@ -756,7 +802,7 @@ void InspectorDebuggerAgent::resume(ErrorString& errorString)
         return;
     }
 
-    cancelPauseOnNextStatement();
+    cancelPauseAtNextOpportunity();
     m_scriptDebugServer.continueProgram();
     m_conditionToDispatchResumed = ShouldDispatchResumed::WhenContinued;
 }
@@ -822,7 +868,7 @@ void InspectorDebuggerAgent::didBecomeIdle()
     m_registeredIdleCallback = false;
 
     if (m_conditionToDispatchResumed == ShouldDispatchResumed::WhenIdle) {
-        cancelPauseOnNextStatement();
+        cancelPauseAtNextOpportunity();
         m_scriptDebugServer.continueProgram();
         m_frontendDispatcher->resumed();
     }
@@ -958,7 +1004,7 @@ Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> InspectorDebuggerAgent::curren
     return injectedScript.wrapCallFrames(m_currentCallStack.get());
 }
 
-String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)
+String InspectorDebuggerAgent::sourceMapURLForScript(const JSC::Debugger::Script& script)
 {
     return script.sourceMappingURL;
 }
@@ -978,7 +1024,7 @@ void InspectorDebuggerAgent::setPauseForInternalScripts(ErrorString&, bool shoul
     }
 }
 
-void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script& script)
+void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const JSC::Debugger::Script& script)
 {
     String scriptIDStr = String::number(sourceID);
     bool hasSourceURL = !script.sourceURL.isEmpty();
@@ -1004,44 +1050,21 @@ void InspectorDebuggerAgent::didParseSource(JSC::SourceID sourceID, const Script
     if (scriptURLForBreakpoints.isEmpty())
         return;
 
-    for (auto& entry : m_javaScriptBreakpoints) {
-        RefPtr<JSON::Object> breakpointObject = entry.value;
-
-        bool isRegex;
-        String url;
-        breakpointObject->getBoolean("isRegex"_s, isRegex);
-        breakpointObject->getString("url"_s, url);
-        if (!matches(scriptURLForBreakpoints, url, isRegex))
+    for (auto& protocolBreakpoint : m_protocolBreakpointForProtocolBreakpointID.values()) {
+        if (!protocolBreakpoint.matchesScriptURL(scriptURLForBreakpoints))
             continue;
 
-        ScriptBreakpoint scriptBreakpoint;
-        breakpointObject->getInteger("lineNumber"_s, scriptBreakpoint.lineNumber);
-        breakpointObject->getInteger("columnNumber"_s, scriptBreakpoint.columnNumber);
-        breakpointObject->getString("condition"_s, scriptBreakpoint.condition);
-        breakpointObject->getBoolean("autoContinue"_s, scriptBreakpoint.autoContinue);
-        breakpointObject->getInteger("ignoreCount"_s, scriptBreakpoint.ignoreCount);
-        ErrorString errorString;
-        RefPtr<JSON::Array> actions;
-        breakpointObject->getArray("actions"_s, actions);
-        if (!breakpointActionsFromProtocol(errorString, actions, &scriptBreakpoint.actions)) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
+        auto debuggerBreakpoint = protocolBreakpoint.createDebuggerBreakpoint(m_nextDebuggerBreakpointID++, sourceID);
 
-        JSC::Breakpoint breakpoint(sourceID, scriptBreakpoint.lineNumber, scriptBreakpoint.columnNumber, scriptBreakpoint.condition, scriptBreakpoint.autoContinue, scriptBreakpoint.ignoreCount);
-        resolveBreakpoint(script, breakpoint);
-        if (!breakpoint.resolved)
+        if (!resolveBreakpoint(script, debuggerBreakpoint))
             continue;
 
-        bool existing;
-        setBreakpoint(breakpoint, existing);
-        if (existing)
+        if (!setBreakpoint(debuggerBreakpoint))
             continue;
 
-        String breakpointIdentifier = entry.key;
-        didSetBreakpoint(breakpoint, breakpointIdentifier, scriptBreakpoint);
+        didSetBreakpoint(protocolBreakpoint, debuggerBreakpoint);
 
-        m_frontendDispatcher->breakpointResolved(breakpointIdentifier, buildDebuggerLocation(breakpoint));
+        m_frontendDispatcher->breakpointResolved(protocolBreakpoint.id(), buildDebuggerLocation(debuggerBreakpoint));
     }
 }
 
@@ -1052,36 +1075,38 @@ void InspectorDebuggerAgent::failedToParseSource(const String& url, const String
 
 void InspectorDebuggerAgent::willRunMicrotask()
 {
-    if (!m_scriptDebugServer.breakpointsActive())
+    if (!breakpointsActive())
         return;
 
     if (m_pauseOnMicrotasks)
-        schedulePauseOnNextStatement(DebuggerFrontendDispatcher::Reason::Microtask, nullptr);
+        schedulePauseAtNextOpportunity(DebuggerFrontendDispatcher::Reason::Microtask);
 }
 
 void InspectorDebuggerAgent::didRunMicrotask()
 {
-    if (!m_scriptDebugServer.breakpointsActive())
+    if (!breakpointsActive())
         return;
 
     if (m_pauseOnMicrotasks)
-        cancelPauseOnNextStatement();
+        cancelPauseAtNextOpportunity();
 }
 
-void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::JSValue callFrames, JSC::JSValue exceptionOrCaughtValue)
+void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::DebuggerCallFrame& debuggerCallFrame, JSC::JSValue exceptionOrCaughtValue)
 {
     ASSERT(!m_pausedGlobalObject);
     m_pausedGlobalObject = globalObject;
-    m_currentCallStack = { globalObject->vm(), callFrames };
 
-    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
+    auto* debuggerGlobalObject = debuggerCallFrame.scope()->globalObject();
+    m_currentCallStack = { m_pausedGlobalObject->vm(), toJS(debuggerGlobalObject, debuggerGlobalObject, JavaScriptCallFrame::create(debuggerCallFrame).ptr()) };
+
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(m_pausedGlobalObject);
 
     // If a high level pause pause reason is not already set, try to infer a reason from the debugger.
     if (m_pauseReason == DebuggerFrontendDispatcher::Reason::Other) {
         switch (m_scriptDebugServer.reasonForPause()) {
         case JSC::Debugger::PausedForBreakpoint: {
             auto debuggerBreakpointId = m_scriptDebugServer.pausingBreakpointID();
-            if (debuggerBreakpointId != m_continueToLocationBreakpointID)
+            if (!m_continueToLocationDebuggerBreakpoint || debuggerBreakpointId != m_continueToLocationDebuggerBreakpoint->id())
                 updatePauseReasonAndData(DebuggerFrontendDispatcher::Reason::Breakpoint, buildBreakpointPauseReason(debuggerBreakpointId));
             break;
         }
@@ -1119,7 +1144,7 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::JS
 
         RefPtr<JSON::Object> data;
         if (auto debuggerBreakpointId = m_scriptDebugServer.pausingBreakpointID()) {
-            ASSERT(debuggerBreakpointId != m_continueToLocationBreakpointID);
+            ASSERT(!m_continueToLocationDebuggerBreakpoint || debuggerBreakpointId != m_continueToLocationDebuggerBreakpoint->id());
             data = JSON::Object::create();
             data->setString("originalReason"_s, Protocol::InspectorHelpers::getEnumConstantValue(DebuggerFrontendDispatcher::Reason::Breakpoint));
             data->setValue("originalData"_s, buildBreakpointPauseReason(debuggerBreakpointId));
@@ -1151,9 +1176,9 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::JS
 
     m_javaScriptPauseScheduled = false;
 
-    if (m_continueToLocationBreakpointID != JSC::noBreakpointID) {
-        m_scriptDebugServer.removeBreakpoint(m_continueToLocationBreakpointID);
-        m_continueToLocationBreakpointID = JSC::noBreakpointID;
+    if (m_continueToLocationDebuggerBreakpoint) {
+        m_scriptDebugServer.removeBreakpoint(*m_continueToLocationDebuggerBreakpoint);
+        m_continueToLocationDebuggerBreakpoint = nullptr;
     }
 
     auto& stopwatch = m_injectedScriptManager.inspectorEnvironment().executionStopwatch();
@@ -1163,17 +1188,17 @@ void InspectorDebuggerAgent::didPause(JSC::JSGlobalObject* globalObject, JSC::JS
     }
 }
 
-void InspectorDebuggerAgent::breakpointActionSound(int breakpointActionIdentifier)
+void InspectorDebuggerAgent::breakpointActionSound(JSC::BreakpointActionID id)
 {
-    m_frontendDispatcher->playBreakpointActionSound(breakpointActionIdentifier);
+    m_frontendDispatcher->playBreakpointActionSound(id);
 }
 
-void InspectorDebuggerAgent::breakpointActionProbe(JSC::JSGlobalObject* globalObject, const ScriptBreakpointAction& action, unsigned batchId, unsigned sampleId, JSC::JSValue sample)
+void InspectorDebuggerAgent::breakpointActionProbe(JSC::JSGlobalObject* globalObject, JSC::BreakpointActionID actionID, unsigned batchId, unsigned sampleId, JSC::JSValue sample)
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptFor(globalObject);
-    auto payload = injectedScript.wrapObject(sample, objectGroupForBreakpointAction(action), true);
+    auto payload = injectedScript.wrapObject(sample, objectGroupForBreakpointAction(actionID), true);
     auto result = Protocol::Debugger::ProbeSample::create()
-        .setProbeId(action.identifier)
+        .setProbeId(actionID)
         .setBatchId(batchId)
         .setSampleId(sampleId)
         .setTimestamp(m_injectedScriptManager.inspectorEnvironment().executionStopwatch().elapsedTime().seconds())
@@ -1209,10 +1234,15 @@ void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason rea
 void InspectorDebuggerAgent::clearInspectorBreakpointState()
 {
     ErrorString ignored;
-    for (const String& identifier : copyToVector(m_breakpointIdentifierToDebugServerBreakpointIDs.keys()))
-        removeBreakpoint(ignored, identifier);
+    for (auto& protocolBreakpointID : copyToVector(m_debuggerBreakpointsForProtocolBreakpointID.keys()))
+        removeBreakpoint(ignored, protocolBreakpointID);
 
-    m_javaScriptBreakpoints.clear();
+    m_protocolBreakpointForProtocolBreakpointID.clear();
+
+    if (m_continueToLocationDebuggerBreakpoint) {
+        m_scriptDebugServer.removeBreakpoint(*m_continueToLocationDebuggerBreakpoint);
+        m_continueToLocationDebuggerBreakpoint = nullptr;
+    }
 
     clearDebuggerBreakpointState();
 }
@@ -1221,7 +1251,6 @@ void InspectorDebuggerAgent::clearDebuggerBreakpointState()
 {
     {
         JSC::JSLockHolder holder(m_scriptDebugServer.vm());
-        m_scriptDebugServer.clearBreakpointActions();
         m_scriptDebugServer.clearBreakpoints();
         m_scriptDebugServer.clearBlackbox();
     }
@@ -1229,9 +1258,10 @@ void InspectorDebuggerAgent::clearDebuggerBreakpointState()
     m_pausedGlobalObject = nullptr;
     m_currentCallStack = { };
     m_scripts.clear();
-    m_breakpointIdentifierToDebugServerBreakpointIDs.clear();
-    m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier.clear();
-    m_continueToLocationBreakpointID = JSC::noBreakpointID;
+    m_protocolBreakpointForProtocolBreakpointID.clear();
+    m_debuggerBreakpointsForProtocolBreakpointID.clear();
+    m_nextDebuggerBreakpointID = JSC::noBreakpointID + 1;
+    m_continueToLocationDebuggerBreakpoint = nullptr;
     clearPauseDetails();
     m_javaScriptPauseScheduled = false;
     m_hasExceptionValue = false;

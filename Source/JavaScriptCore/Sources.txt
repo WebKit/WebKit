@@ -300,6 +300,7 @@ bytecompiler/BytecodeGenerator.cpp
 bytecompiler/NodesCodegen.cpp
 bytecompiler/ProfileTypeBytecodeFlag.cpp
 
+debugger/Breakpoint.cpp
 debugger/Debugger.cpp
 debugger/DebuggerCallFrame.cpp
 debugger/DebuggerLocation.cpp
@@ -593,7 +594,6 @@ inspector/ScriptArguments.cpp
 inspector/ScriptCallFrame.cpp
 inspector/ScriptCallStack.cpp
 inspector/ScriptCallStackFactory.cpp
-inspector/ScriptDebugServer.cpp
 
 // Derived Sources
 inspector/InspectorBackendDispatchers.cpp

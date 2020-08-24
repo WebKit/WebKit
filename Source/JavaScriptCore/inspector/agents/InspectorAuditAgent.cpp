@@ -26,10 +26,10 @@
 #include "config.h"
 #include "InspectorAuditAgent.h"
 
+#include "Debugger.h"
 #include "InjectedScript.h"
 #include "JSLock.h"
 #include "ObjectConstructor.h"
-#include "ScriptDebugServer.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
@@ -105,9 +105,9 @@ void InspectorAuditAgent::run(ErrorString& errorString, const String& test, cons
 
     Optional<int> savedResultIndex;
 
-    ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = m_scriptDebugServer.pauseOnExceptionsState();
+    auto previousPauseOnExceptionsState = m_scriptDebugServer.pauseOnExceptionsState();
 
-    m_scriptDebugServer.setPauseOnExceptionsState(ScriptDebugServer::DontPauseOnExceptions);
+    m_scriptDebugServer.setPauseOnExceptionsState(Debugger::DontPauseOnExceptions);
     muteConsole();
 
     injectedScript.execute(errorString, functionString.toString(), WTFMove(options), result, wasThrown, savedResultIndex);

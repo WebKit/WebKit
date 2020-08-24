@@ -47,7 +47,7 @@ void WorkerDOMDebuggerAgent::removeDOMBreakpoint(ErrorString& errorString, int /
     errorString = "Not supported"_s;
 }
 
-void WorkerDOMDebuggerAgent::setAnimationFrameBreakpoint(ErrorString& errorString, bool /* enabled */)
+void WorkerDOMDebuggerAgent::setAnimationFrameBreakpoint(ErrorString& errorString, RefPtr<JSC::Breakpoint>&&)
 {
     errorString = "Not supported"_s;
 }

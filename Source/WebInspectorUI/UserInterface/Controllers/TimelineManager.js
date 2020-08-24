@@ -954,10 +954,14 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             }
             break;
 
-        case InspectorBackend.Enum.Timeline.EventType.ProbeSample:
+        case InspectorBackend.Enum.Timeline.EventType.ProbeSample: {
+            let probe = WI.debuggerManager.probeForIdentifier(recordPayload.data.probeId);
+            if (probe.breakpoint instanceof WI.JavaScriptBreakpoint)
+                sourceCodeLocation = probe.breakpoint.sourceCodeLocation;
+
             // Pass the startTime as the endTime since this record type has no duration.
-            sourceCodeLocation = WI.debuggerManager.probeForIdentifier(recordPayload.data.probeId).breakpoint.sourceCodeLocation;
             return new WI.ScriptTimelineRecord(WI.ScriptTimelineRecord.EventType.ProbeSampleRecorded, startTime, startTime, callFrames, sourceCodeLocation, recordPayload.data.probeId);
+        }
 
         case InspectorBackend.Enum.Timeline.EventType.TimerInstall:
             console.assert(isNaN(endTime));

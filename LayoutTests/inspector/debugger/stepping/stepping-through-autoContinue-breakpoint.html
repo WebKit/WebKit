@@ -24,9 +24,9 @@ function test()
             // Set autoContinue breakpoint.
             let script = WI.networkManager.mainFrame.mainResource.scripts[0];
             var location = script.createSourceCodeLocation(8, 0);
-            var breakpoint = new WI.Breakpoint(location);
+            var breakpoint = new WI.JavaScriptBreakpoint(location);
             breakpoint.autoContinue = true;
-            breakpoint.createAction(WI.BreakpointAction.Type.Evaluate, null, "alert(1.5);");
+            breakpoint.createAction(WI.BreakpointAction.Type.Evaluate, {data: "alert(1.5);"});
             WI.debuggerManager.addBreakpoint(breakpoint);
 
             // Step through the breakpoint.

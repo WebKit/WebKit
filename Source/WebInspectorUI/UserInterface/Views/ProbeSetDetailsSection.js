@@ -30,6 +30,20 @@ WI.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WI.DetailsSecti
     {
         console.assert(probeSet instanceof WI.ProbeSet, "Invalid ProbeSet argument:", probeSet);
 
+        let title = "";
+        if (probeSet.breakpoint instanceof WI.EventBreakpoint) {
+            if (probeSet.breakpoint === WI.domDebuggerManager.allAnimationFramesBreakpoint)
+                title = WI.UIString("All Animation Frames");
+            else if (probeSet.breakpoint === WI.domDebuggerManager.allIntervalsBreakpoint)
+                title = WI.UIString("All Intervals");
+            else if (probeSet.breakpoint === WI.domDebuggerManager.allListenersBreakpoint)
+                title = WI.UIString("All Events");
+            else if (probeSet.breakpoint === WI.domDebuggerManager.allTimeoutsBreakpoint)
+                title = WI.UIString("All Timeouts");
+            else
+                title = probeSet.breakpoint.eventName;
+        }
+
         var optionsElement = document.createElement("div");
         var dataGrid = new WI.ProbeSetDataGrid(probeSet);
 
@@ -38,7 +52,7 @@ WI.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WI.DetailsSecti
 
         var probeSectionGroup = new WI.DetailsSectionGroup([singletonRow]);
 
-        super("probe", "", [probeSectionGroup], optionsElement);
+        super("probe", title, [probeSectionGroup], optionsElement);
 
         this.element.classList.add("probe-set");
 
@@ -65,10 +79,12 @@ WI.ProbeSetDetailsSection = class ProbeSetDetailsSection extends WI.DetailsSecti
         this._listenerSet.register(this._probeSet, WI.ProbeSet.Event.SampleAdded, this._probeSetSamplesChanged);
         this._listenerSet.register(this._probeSet, WI.ProbeSet.Event.SamplesCleared, this._probeSetSamplesChanged);
 
-        // Update the source link when the breakpoint's resolved state changes,
-        // so that it can become a live location link when possible.
-        this._updateLinkElement();
-        this._listenerSet.register(this._probeSet.breakpoint, WI.Breakpoint.Event.ResolvedStateDidChange, this._updateLinkElement);
+        if (this._probeSet.breakpoint instanceof WI.JavaScriptBreakpoint) {
+            // Update the source link when the breakpoint's resolved state changes,
+            // so that it can become a live location link when possible.
+            this._updateLinkElement();
+            this._listenerSet.register(this._probeSet.breakpoint, WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, this._updateLinkElement);
+        }
 
         this._listenerSet.install();
     }

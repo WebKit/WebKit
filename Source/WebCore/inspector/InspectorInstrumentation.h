@@ -171,14 +171,14 @@ public:
     static void willDispatchEvent(Document&, const Event&);
     static void didDispatchEvent(Document&, const Event&);
     static void willHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
-    static void didHandleEvent(ScriptExecutionContext&);
+    static void didHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     static void willDispatchEventOnWindow(Frame*, const Event&, DOMWindow&);
     static void didDispatchEventOnWindow(Frame*, const Event&);
     static void eventDidResetAfterDispatch(const Event&);
     static void willEvaluateScript(Frame&, const String& url, int lineNumber, int columnNumber);
     static void didEvaluateScript(Frame&);
     static void willFireTimer(ScriptExecutionContext&, int timerId, bool oneShot);
-    static void didFireTimer(ScriptExecutionContext&);
+    static void didFireTimer(ScriptExecutionContext&, int timerId, bool oneShot);
     static void didInvalidateLayout(Frame&);
     static void willLayout(Frame&);
     static void didLayout(Frame&, RenderObject&);
@@ -394,7 +394,7 @@ private:
     static bool isEventListenerDisabledImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static void willDispatchEventImpl(InstrumentingAgents&, Document&, const Event&);
     static void willHandleEventImpl(InstrumentingAgents&, Event&, const RegisteredEventListener&);
-    static void didHandleEventImpl(InstrumentingAgents&);
+    static void didHandleEventImpl(InstrumentingAgents&, Event&, const RegisteredEventListener&);
     static void didDispatchEventImpl(InstrumentingAgents&, const Event&);
     static void willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, DOMWindow&);
     static void didDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&);
@@ -402,7 +402,7 @@ private:
     static void willEvaluateScriptImpl(InstrumentingAgents&, Frame&, const String& url, int lineNumber, int columnNumber);
     static void didEvaluateScriptImpl(InstrumentingAgents&, Frame&);
     static void willFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot, ScriptExecutionContext&);
-    static void didFireTimerImpl(InstrumentingAgents&);
+    static void didFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot);
     static void didInvalidateLayoutImpl(InstrumentingAgents&, Frame&);
     static void willLayoutImpl(InstrumentingAgents&, Frame&);
     static void didLayoutImpl(InstrumentingAgents&, RenderObject&);
@@ -892,11 +892,11 @@ inline void InspectorInstrumentation::willHandleEvent(ScriptExecutionContext& co
         return willHandleEventImpl(*instrumentingAgents, event, listener);
 }
 
-inline void InspectorInstrumentation::didHandleEvent(ScriptExecutionContext& context)
+inline void InspectorInstrumentation::didHandleEvent(ScriptExecutionContext& context, Event& event, const RegisteredEventListener& listener)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        return didHandleEventImpl(*instrumentingAgents);
+        return didHandleEventImpl(*instrumentingAgents, event, listener);
 }
 
 inline void InspectorInstrumentation::willDispatchEventOnWindow(Frame* frame, const Event& event, DOMWindow& window)
@@ -946,11 +946,11 @@ inline void InspectorInstrumentation::willFireTimer(ScriptExecutionContext& cont
         willFireTimerImpl(*instrumentingAgents, timerId, oneShot, context);
 }
 
-inline void InspectorInstrumentation::didFireTimer(ScriptExecutionContext& context)
+inline void InspectorInstrumentation::didFireTimer(ScriptExecutionContext& context, int timerId, bool oneShot)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* instrumentingAgents = instrumentingAgentsForContext(context))
-        didFireTimerImpl(*instrumentingAgents);
+        didFireTimerImpl(*instrumentingAgents, timerId, oneShot);
 }
 
 inline void InspectorInstrumentation::didInvalidateLayout(Frame& frame)

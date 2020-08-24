@@ -35,18 +35,22 @@ namespace Inspector {
 using namespace JSC;
 
 JSGlobalObjectScriptDebugServer::JSGlobalObjectScriptDebugServer(JSGlobalObject& globalObject)
-    : ScriptDebugServer(globalObject.vm())
+    : Debugger(globalObject.vm())
     , m_globalObject(globalObject)
 {
 }
 
 void JSGlobalObjectScriptDebugServer::attachDebugger()
 {
+    JSC::Debugger::attachDebugger();
+
     attach(&m_globalObject);
 }
 
 void JSGlobalObjectScriptDebugServer::detachDebugger(bool isBeingDestroyed)
 {
+    JSC::Debugger::detachDebugger(isBeingDestroyed);
+
     detach(&m_globalObject, isBeingDestroyed ? Debugger::GlobalObjectIsDestructing : Debugger::TerminatingDebuggingSession);
     if (!isBeingDestroyed)
         recompileAllJSFunctions();
@@ -54,10 +58,12 @@ void JSGlobalObjectScriptDebugServer::detachDebugger(bool isBeingDestroyed)
 
 void JSGlobalObjectScriptDebugServer::runEventLoopWhilePaused()
 {
+    JSC::Debugger::runEventLoopWhilePaused();
+
     // Drop all locks so another thread can work in the VM while we are nested.
     JSC::JSLock::DropAllLocks dropAllLocks(&m_globalObject.vm());
 
-    while (!m_doneProcessingDebuggerEvents) {
+    while (!doneProcessingDebuggerEvents()) {
         if (RunLoop::cycle(JSGlobalObjectScriptDebugServer::runLoopMode()) == RunLoop::CycleResult::Stop)
             break;
     }
