@@ -1,3 +1,11 @@
+2020-08-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/css1/text_properties/letter_spacing-expected.txt:
+        * platform/wincairo/fast/text/emphasis-expected.txt:
+
 2020-08-23  Lauro Moura  <lmoura@igalia.com>
 
         Avoid timeout when http/tests/websocket/tests/hybi/stop-on-resume-in-error-handler.html fails
