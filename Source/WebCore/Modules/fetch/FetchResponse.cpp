@@ -273,7 +273,7 @@ const ResourceResponse& FetchResponse::filteredResponse() const
 void FetchResponse::BodyLoader::didSucceed()
 {
     ASSERT(m_response.hasPendingActivity());
-    m_response.m_body->loadingSucceeded();
+    m_response.m_body->loadingSucceeded(m_response.contentType());
 
     if (m_response.m_readableStreamSource) {
         if (m_response.body().consumer().hasData())

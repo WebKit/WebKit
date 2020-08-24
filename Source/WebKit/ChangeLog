@@ -1,5 +1,18 @@
 2020-08-24  Alex Christensen  <achristensen@webkit.org>
 
+        Implement Request/Response consuming as FormData
+        https://bugs.webkit.org/show_bug.cgi?id=215671
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish):
+        Add a fast path that allows non-blob FormData responses from service workers to not hang.
+        This part is covered by this layout test:
+        imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-custom-response.https.html
+
+2020-08-24  Alex Christensen  <achristensen@webkit.org>
+
         Make _WKWebsiteDataStoreConfiguration SPI for HSTS storage to replace _WKProcessPoolConfiguration.hstsStorageDirectory
         https://bugs.webkit.org/show_bug.cgi?id=213048
 

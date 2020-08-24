@@ -70,6 +70,8 @@ public:
     ResourceError loadingError() const;
     Optional<Exception> loadingException() const;
 
+    const String& contentType() const { return m_contentType; }
+
 protected:
     const FetchBody& body() const { return *m_body; }
     FetchBody& body() { return *m_body; }

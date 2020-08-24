@@ -844,9 +844,10 @@ String String::make16BitFrom8BitSource(const LChar* source, size_t length)
     return result;
 }
 
-String String::fromUTF8(const LChar* stringStart, size_t length)
+template<bool replaceInvalidSequences>
+String fromUTF8Impl(const LChar* stringStart, size_t length)
 {
-    if (length > MaxLength)
+    if (length > StringImplShape::MaxLength)
         CRASH();
 
     if (!stringStart)
@@ -863,12 +864,23 @@ String String::fromUTF8(const LChar* stringStart, size_t length)
  
     UChar* bufferCurrent = bufferStart;
     const char* stringCurrent = reinterpret_cast<const char*>(stringStart);
-    if (!convertUTF8ToUTF16(stringCurrent, reinterpret_cast<const char *>(stringStart + length), &bufferCurrent, bufferCurrent + buffer.size()))
+    constexpr auto function = replaceInvalidSequences ? convertUTF8ToUTF16ReplacingInvalidSequences : convertUTF8ToUTF16;
+    if (!function(stringCurrent, reinterpret_cast<const char*>(stringStart + length), &bufferCurrent, bufferCurrent + buffer.size(), nullptr))
         return String();
 
     unsigned utf16Length = bufferCurrent - bufferStart;
-    ASSERT_WITH_SECURITY_IMPLICATION(utf16Length < length);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(utf16Length <= length);
     return StringImpl::create(bufferStart, utf16Length);
+}
+
+String String::fromUTF8(const LChar* stringStart, size_t length)
+{
+    return fromUTF8Impl<false>(stringStart, length);
+}
+
+String String::fromUTF8ReplacingInvalidSequences(const LChar* characters, size_t length)
+{
+    return fromUTF8Impl<true>(characters, length);
 }
 
 String String::fromUTF8(const LChar* string)

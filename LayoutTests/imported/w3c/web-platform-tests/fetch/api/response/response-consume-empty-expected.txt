@@ -11,6 +11,6 @@ PASS Consume empty text response body as arrayBuffer
 PASS Consume empty blob response body as text 
 PASS Consume empty text response body as text 
 PASS Consume empty URLSearchParams response body as text 
-FAIL Consume empty FormData response body as text promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Consume empty FormData response body as text assert_equals: Resolved value should be empty expected 0 but got 44
 PASS Consume empty ArrayBuffer response body as text 
 

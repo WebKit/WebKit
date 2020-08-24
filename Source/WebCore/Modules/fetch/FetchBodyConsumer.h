@@ -42,7 +42,7 @@ class ReadableStream;
 
 class FetchBodyConsumer {
 public:
-    enum class Type { None, ArrayBuffer, Blob, JSON, Text };
+    enum class Type { None, ArrayBuffer, Blob, JSON, Text, FormData };
 
     explicit FetchBodyConsumer(Type type) : m_type(type) { }
 
@@ -63,11 +63,11 @@ public:
     void clean();
 
     void extract(ReadableStream&, ReadableStreamToSharedBufferSink::Callback&&);
-    void resolve(Ref<DeferredPromise>&&, ReadableStream*);
-    void resolveWithData(Ref<DeferredPromise>&&, const unsigned char*, unsigned);
+    void resolve(Ref<DeferredPromise>&&, const String& contentType, ReadableStream*);
+    void resolveWithData(Ref<DeferredPromise>&&, const String& contentType, const unsigned char*, unsigned);
 
     void loadingFailed(const Exception&);
-    void loadingSucceeded();
+    void loadingSucceeded(const String& contentType);
 
     void setConsumePromise(Ref<DeferredPromise>&&);
     void setSource(Ref<FetchBodySource>&&);

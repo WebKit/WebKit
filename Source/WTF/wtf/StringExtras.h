@@ -43,3 +43,19 @@ inline char* strnstr(const char* buffer, const char* target, size_t bufferLength
 }
 
 #endif
+
+#if !HAVE(MEMMEM)
+
+inline const void* memmem(const void* haystack, size_t haystackLength, const void* needle, size_t needleLength)
+{
+    const char* pointer = static_cast<const char*>(haystack);
+    while (haystackLength >= needleLength) {
+        if (!memcmp(pointer, needle, needleLength))
+            return pointer;
+        pointer++;
+        haystackLength--;
+    }
+    return nullptr;
+}
+
+#endif

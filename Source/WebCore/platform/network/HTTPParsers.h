@@ -76,6 +76,7 @@ bool isValidLanguageHeaderValue(const String&);
 WEBCORE_EXPORT bool isValidUserAgentHeaderValue(const String&);
 #endif
 bool isValidHTTPToken(const String&);
+bool isValidHTTPToken(StringView);
 Optional<WallTime> parseHTTPDate(const String&);
 String filenameFromHTTPContentDisposition(const String&);
 String extractMIMETypeFromMediaType(const String&);

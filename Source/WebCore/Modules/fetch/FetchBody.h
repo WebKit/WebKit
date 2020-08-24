@@ -60,7 +60,7 @@ public:
     WEBCORE_EXPORT static Optional<FetchBody> fromFormData(FormData&);
 
     void loadingFailed(const Exception&);
-    void loadingSucceeded();
+    void loadingSucceeded(const String& contentType);
 
     RefPtr<FormData> bodyAsFormData() const;
 
@@ -99,10 +99,11 @@ private:
 
     void consume(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
-    void consumeArrayBuffer(Ref<DeferredPromise>&&);
-    void consumeArrayBufferView(Ref<DeferredPromise>&&);
-    void consumeText(Ref<DeferredPromise>&&, const String&);
+    void consumeArrayBuffer(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void consumeArrayBufferView(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void consumeText(FetchBodyOwner&, Ref<DeferredPromise>&&, const String&);
     void consumeBlob(FetchBodyOwner&, Ref<DeferredPromise>&&);
+    void consumeFormData(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
     bool isArrayBuffer() const { return WTF::holds_alternative<Ref<const ArrayBuffer>>(m_data); }
     bool isArrayBufferView() const { return WTF::holds_alternative<Ref<const ArrayBufferView>>(m_data); }

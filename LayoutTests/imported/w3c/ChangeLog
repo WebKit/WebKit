@@ -1,3 +1,27 @@
+2020-08-24  Alex Christensen  <achristensen@webkit.org>
+
+        Implement Request/Response consuming as FormData
+        https://bugs.webkit.org/show_bug.cgi?id=215671
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/fetch/api/abort/general.any-expected.txt:
+        * web-platform-tests/fetch/api/abort/general.any.worker-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume-empty-expected.txt:
+        This remaining failing test now fails similarly in all browsers.
+        * web-platform-tests/fetch/api/request/request-consume-expected.txt:
+        * web-platform-tests/fetch/api/request/request-init-002-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty-expected.txt:
+        This remaining failing test now fails similarly in all browsers.
+        * web-platform-tests/fetch/api/response/response-consume-expected.txt:
+        * web-platform-tests/fetch/api/response/response-error-from-stream-expected.txt:
+        This change makes the formData failures in this file look like all the other failures in this file,
+        which should be fixed together in a separate patch.
+        * web-platform-tests/fetch/api/response/response-init-002-expected.txt:
+        * web-platform-tests/url/urlencoded-parser.any-expected.txt:
+        * web-platform-tests/url/urlencoded-parser.any.worker-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-custom-response.https-expected.txt:
+
 2020-08-24  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Support quotes:auto and fix quotes serialization.

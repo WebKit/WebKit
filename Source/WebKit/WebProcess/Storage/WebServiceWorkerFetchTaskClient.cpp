@@ -89,6 +89,12 @@ void WebServiceWorkerFetchTaskClient::didReceiveData(Ref<SharedBuffer>&& buffer)
 
 void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&& formData)
 {
+    if (auto sharedBuffer = formData->asSharedBuffer()) {
+        didReceiveData(sharedBuffer.releaseNonNull());
+        didFinish();
+        return;
+    }
+
     if (!m_connection)
         return;
 

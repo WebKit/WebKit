@@ -1,5 +1,28 @@
 2020-08-24  Alex Christensen  <achristensen@webkit.org>
 
+        Implement Request/Response consuming as FormData
+        https://bugs.webkit.org/show_bug.cgi?id=215671
+
+        Reviewed by Darin Adler.
+
+        In order to be compatible with other browsers, we need a verson of String::fromUTF8 that
+        uses U8_NEXT_OR_FFFD instead of U8_NEXT, but changing that across the board will break other things.
+        Leave everything else as it is, use templates and constexpr to not add any branches, but add
+        String::fromUTF8ReplacingInvalidSequences to allow me to make our FormData consuming compatible with other browsers.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::fromUTF8Helper):
+        (WTF::String::fromUTF8):
+        (WTF::String::fromUTF8ReplacingInvalidSequences):
+        * wtf/text/WTFString.h:
+        * wtf/unicode/UTF8Conversion.cpp:
+        (WTF::Unicode::convertUTF8ToUTF16Impl):
+        (WTF::Unicode::convertUTF8ToUTF16):
+        (WTF::Unicode::convertUTF8ToUTF16ReplacingInvalidSequences):
+        * wtf/unicode/UTF8Conversion.h:
+
+2020-08-24  Alex Christensen  <achristensen@webkit.org>
+
         Make _WKWebsiteDataStoreConfiguration SPI for HSTS storage to replace _WKProcessPoolConfiguration.hstsStorageDirectory
         https://bugs.webkit.org/show_bug.cgi?id=213048
 
