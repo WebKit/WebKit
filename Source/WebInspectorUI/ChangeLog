@@ -1,5 +1,15 @@
 2020-08-24  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Elements: Styles: don't show non-inherited properties
+        https://bugs.webkit.org/show_bug.cgi?id=215682
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get propertiesToRender):
+
+2020-08-24  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: Styles: grey out properties that aren't used/apply
         https://bugs.webkit.org/show_bug.cgi?id=215680
 

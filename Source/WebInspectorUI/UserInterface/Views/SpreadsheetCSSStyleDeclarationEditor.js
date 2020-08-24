@@ -230,6 +230,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         else
             properties = this._style.properties;
 
+        if (this._style.inherited)
+            properties = properties.filter((property) => property.inherited);
+
         if (this._sortPropertiesByName)
             properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));
 
