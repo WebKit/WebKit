@@ -80,7 +80,7 @@
 
 - (NSRect)_candidateRect
 {
-    return _page->editorState().postLayoutData().focusedElementRect;
+    return _page->editorState().postLayoutData().selectionBoundingRect;
 }
 
 - (void)viewDidChangeEffectiveAppearance

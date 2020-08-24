@@ -312,16 +312,16 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
     postLayoutData.insideFixedPosition = startNodeIsInsideFixedPosition || endNodeIsInsideFixedPosition;
     if (!selection.isNone()) {
         if (m_focusedElement && m_focusedElement->renderer()) {
+            // FIXME: The caret color style should be computed using the selection caret's container
+            // rather than the focused element. This causes caret colors in editable children to be
+            // ignored in favor of the editing host's caret color.
             auto& renderer = *m_focusedElement->renderer();
-            postLayoutData.focusedElementRect = rootViewInteractionBoundsForElement(*m_focusedElement);
             postLayoutData.caretColor = CaretBase::computeCaretColor(renderer.style(), renderer.element());
         }
-        if (result.isContentEditable) {
-            if (auto editableRootOrFormControl = makeRefPtr(selection.rootEditableElement())) {
-                if (is<HTMLTextFormControlElement>(editableRootOrFormControl->shadowHost()))
-                    editableRootOrFormControl = editableRootOrFormControl->shadowHost();
-                postLayoutData.editableRootIsTransparentOrFullyClipped = isTransparentOrFullyClipped(*editableRootOrFormControl);
-            }
+
+        if (auto editableRootOrFormControl = makeRefPtr(enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement())) {
+            postLayoutData.selectionClipRect = rootViewInteractionBoundsForElement(*editableRootOrFormControl);
+            postLayoutData.editableRootIsTransparentOrFullyClipped = result.isContentEditable && isTransparentOrFullyClipped(*editableRootOrFormControl);
         }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);
         postLayoutData.selectionStartIsAtParagraphBoundary = atBoundaryOfGranularity(selection.visibleStart(), TextGranularity::ParagraphGranularity, SelectionDirection::Backward);

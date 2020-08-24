@@ -1,3 +1,76 @@
+2020-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Programmatic selection of text in a text field causes the highlight overlay to spill out
+        https://bugs.webkit.org/show_bug.cgi?id=215647
+        <rdar://problem/67404979>
+
+        Reviewed by Darin Adler.
+
+        UIKit consults the SPI method `-_selectionClipRect` on WKContentView to determine the maximum bounds in which it
+        is allowed to show text selection UI (i.e. the text caret view, selection highlight views, and selection
+        grabbers). Normally, when contentEditable elements and editable text form controls are focused, we plumb the
+        bounds of the focused element to the UI process via `focusedElementRect` in editor state's post layout data.
+        However, in this case, the selection is inside a readonly text field that is *not* focused; this causes us to
+        return `CGRectNull` from `-_selectionClipRect`, which means that UIKit selection UI is not clipped at all and
+        instead overflows the bounds of the input element.
+
+        To fix this, rearrange some logic in `WebPage::getPlatformEditorState` in `WebPageIOS.mm` such that we compute
+        and send the selection clipping rect if the selection is inside a text form control, even if it is not the
+        focused element. In doing this, we also rename some confusingly-named members in `EditorState::PostLayoutData`
+        (see below for more detail).
+
+        Test: editing/selection/ios/select-all-in-readonly-input-does-not-overflow.html
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Add a declaration for `-_selectionClipRect`.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        (WebKit::operator<<):
+        * Shared/EditorState.h:
+
+        Split the existing rect member `focusedElementRect` into two: `selectionClipRect` on iOS, and
+        `selectionBoundingRect` on macOS. Previously, `focusedElementRect` was set to the focused element's bounding
+        rect on iOS (as expected), but on macOS, we set to the bounds of the ranged or caret selection; we proceed to
+        use this rect to mean the bounds of the selection anyways in macOS-specific code, so it makes more sense to just
+        move this into the macOS-specific section.
+
+        Additionally, after the below change in WebPageIOS, `focusedElementRect` is no longer specific to the focused
+        element, so rename it instead to `selectionClipRect` instead. In `WKContentViewInteraction.mm`, this rect is
+        effectively only used in two ways: as the selection clip rect for UIKit, and to determine if the selection would
+        be completely clipped anyways (in which case we suppress UIKit text interactions), so `selectionClipRect` is a
+        name that is suitable for both purposes.
+
+        * UIProcess/API/mac/WKWebViewTestingMac.mm:
+        (-[WKWebView _candidateRect]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+
+        Rename `focusedElementRect` to `selectionBoundingRect` on macOS.
+
+        (WebKit::WebViewImpl::handleRequestedCandidates):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+
+        Rename `focusedElementRect` to `selectionClipRect` on iOS.
+
+        (WebKit::WKSelectionDrawingInfo::WKSelectionDrawingInfo):
+        (-[WKContentView _selectionClipRect]):
+
+        Change this to not require a focused element when returning the selection clip rect, and instead return the
+        editor state's selection clip rect as long as it is not empty.
+
+        (-[WKContentView _updateSelectionAssistantSuppressionState]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+
+        Refactor this code to compute and send selectionClipRect as long as the selection is inside a form control or
+        editing host (not just when there is a focused element). Also leave a drive-by FIXME about using the focused
+        element (instead of the selection container node) when computing the caret color.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getPlatformEditorState const):
+
 2020-08-19  Darin Adler  <darin@apple.com>
 
         Move node geometry functions from Range to RenderObject

@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+input, button {
+    font-size: 16px;
+    width: 120px;
+    box-sizing: border-box;
+}
+</style>
+</head>
+<body>
+<div>
+    <input readonly value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sed laoreet erat. In hac habitasse platea dictumst. Vestibulum tristique, lacus sed pellentesque vehicula, purus quam interdum sapien, pharetra molestie ante nibh ut velit. Vivamus eu lacus est. Proin at arcu vel urna iaculis commodo. Sed tristique nisl nec tortor molestie aliquet.">
+    <button>Select</button>
+</div>
+</body>
+<script>
+description("This test verifies that selection views are clipped to the bounds of a readonly input. To manually run the test, tap the 'Select' button, and then tap the input.");
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    input = document.querySelector("input");
+    button = document.querySelector("button");
+    button.addEventListener("click", () => {
+        input.select();
+    });
+
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateElement(button);
+    await UIHelper.activateElement(input);
+    selectionRects = await UIHelper.waitForSelectionToAppear();
+
+    shouldBe("selectionRects.length", "1");
+    shouldBeGreaterThanOrEqual("input.getBoundingClientRect().width", "selectionRects[0].width");
+
+    input.remove();
+    button.remove();
+    finishJSTest();
+});
+</script>
+</html>

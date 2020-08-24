@@ -173,7 +173,7 @@ private:
     int m_minLength { -1 };
 };
 
-HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
+WEBCORE_EXPORT HTMLTextFormControlElement* enclosingTextFormControl(const Position&);
 
 } // namespace WebCore
 

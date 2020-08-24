@@ -165,11 +165,10 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
     auto quads = RenderObject::absoluteTextQuads(*selectedRange);
     if (!quads.isEmpty())
-        postLayoutData.focusedElementRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
-    else {
+        postLayoutData.selectionBoundingRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
+    else if (selection.isCaret()) {
         // Quads will be empty at the start of a paragraph.
-        if (selection.isCaret())
-            postLayoutData.focusedElementRect = frame.view()->contentsToWindow(frame.selection().absoluteCaretBounds());
+        postLayoutData.selectionBoundingRect = frame.view()->contentsToWindow(frame.selection().absoluteCaretBounds());
     }
 }
 

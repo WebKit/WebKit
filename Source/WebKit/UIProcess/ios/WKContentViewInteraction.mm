@@ -215,7 +215,7 @@ WKSelectionDrawingInfo::WKSelectionDrawingInfo(const EditorState& editorState)
     auto& postLayoutData = editorState.postLayoutData();
     caretRect = postLayoutData.caretRectAtEnd;
     selectionRects = postLayoutData.selectionRects;
-    selectionClipRect = postLayoutData.focusedElementRect;
+    selectionClipRect = postLayoutData.selectionClipRect;
 }
 
 inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawingInfo& b)
@@ -2056,13 +2056,13 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (CGRect)_selectionClipRect
 {
-    if (!self._hasFocusedElement)
-        return CGRectNull;
-
     if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
         return _focusedElementInformation.interactionRect;
 
-    return _page->editorState().postLayoutData().focusedElementRect;
+    if (!_page->editorState().postLayoutData().selectionClipRect.isEmpty())
+        return _page->editorState().postLayoutData().selectionClipRect;
+
+    return CGRectNull;
 }
 
 static BOOL isBuiltInScrollViewGestureRecognizer(UIGestureRecognizer *recognizer)
@@ -6586,7 +6586,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
             editableRootIsTransparentOrFullyClipped = YES;
 
         if (self._hasFocusedElement) {
-            auto elementArea = postLayoutData.focusedElementRect.area<RecordOverflow>();
+            auto elementArea = postLayoutData.selectionClipRect.area<RecordOverflow>();
             if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
                 focusedElementIsTooSmall = YES;
         }

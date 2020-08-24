@@ -1,3 +1,15 @@
+2020-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Programmatic selection of text in a text field causes the highlight overlay to spill out
+        https://bugs.webkit.org/show_bug.cgi?id=215647
+        <rdar://problem/67404979>
+
+        Reviewed by Darin Adler.
+
+        See WebKit ChangeLog for more detail.
+
+        * html/HTMLTextFormControlElement.h: Export a helper function.
+
 2020-08-23  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Introduce the root inline box

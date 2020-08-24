@@ -3381,7 +3381,7 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
 
 #if HAVE(TOUCH_BAR)
     NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
-    WebCore::IntRect offsetSelectionRect = postLayoutData.focusedElementRect;
+    WebCore::IntRect offsetSelectionRect = postLayoutData.selectionBoundingRect;
     offsetSelectionRect.move(0, offsetSelectionRect.height());
 
     [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest rect:offsetSelectionRect view:m_view.getAutoreleased() completionHandler:nil];

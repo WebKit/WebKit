@@ -487,6 +487,7 @@ typedef enum {
 - (void)modifierFlagsDidChangeFrom:(UIKeyModifierFlags)oldFlags to:(UIKeyModifierFlags)newFlags;
 #endif
 @property (nonatomic) UITextGranularity selectionGranularity;
+@property (nonatomic, readonly) CGRect _selectionClipRect;
 @required
 - (BOOL)hasContent;
 - (BOOL)hasSelection;

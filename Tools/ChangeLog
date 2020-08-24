@@ -1,3 +1,22 @@
+2020-08-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Programmatic selection of text in a text field causes the highlight overlay to spill out
+        https://bugs.webkit.org/show_bug.cgi?id=215647
+        <rdar://problem/67404979>
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::clipSelectionViewRectToContentView):
+
+        Add a helper function to clip UIKit selection UI rects (for carets, selection grabbers, and ranged selection
+        highlights) to the content view's (WKContentView's) bounds, as well as the selection clip rect if it is nonnull.
+
+        (WTR::UIScriptControllerIOS::selectionStartGrabberViewRect const):
+        (WTR::UIScriptControllerIOS::selectionEndGrabberViewRect const):
+        (WTR::UIScriptControllerIOS::selectionCaretViewRect const):
+        (WTR::UIScriptControllerIOS::selectionRangeViewRects const):
+
 2020-08-17  Darin Adler  <darin@apple.com>
 
         Create documentOrder function, start refactoring to use it instead of Range::compare functions

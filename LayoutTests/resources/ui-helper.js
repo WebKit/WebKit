@@ -1243,8 +1243,9 @@ window.UIHelper = class UIHelper {
 
     static async waitForSelectionToAppear() {
         while (true) {
-            if ((await this.getUISelectionViewRects()).length > 0)
-                break;
+            let selectionRects = await this.getUISelectionViewRects();
+            if (selectionRects.length > 0)
+                return selectionRects;
         }
     }
 
