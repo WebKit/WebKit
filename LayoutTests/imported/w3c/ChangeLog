@@ -1,3 +1,13 @@
+2020-08-24  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Support quotes:auto and fix quotes serialization.
+        https://bugs.webkit.org/show_bug.cgi?id=215646
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/css-content/inheritance-expected.txt: Annotate progression.
+        * web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Ditto.
+
 2020-08-24  Justin Uberti  <justin@uberti.name>
 
         RTCRtpSynchronizationSource.rtpTimestamp is not present

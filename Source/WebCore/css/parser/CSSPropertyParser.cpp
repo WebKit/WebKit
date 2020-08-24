@@ -555,7 +555,8 @@ static RefPtr<CSSValue> consumePage(CSSParserTokenRange& range)
 
 static RefPtr<CSSValue> consumeQuotes(CSSParserTokenRange& range)
 {
-    if (range.peek().id() == CSSValueNone)
+    auto id = range.peek().id();
+    if (id == CSSValueNone || id == CSSValueAuto)
         return consumeIdent(range);
     RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
     while (!range.atEnd()) {

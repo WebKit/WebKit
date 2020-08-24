@@ -42,6 +42,8 @@ public:
     const String& openQuote(unsigned index) const;
     const String& closeQuote(unsigned index) const;
 
+    unsigned size() const { return m_quoteCount; }
+
 private:
     explicit QuotesData(const Vector<std::pair<String, String>>& quotes);
 

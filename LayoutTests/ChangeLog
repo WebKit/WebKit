@@ -1,3 +1,14 @@
+2020-08-24  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Support quotes:auto and fix quotes serialization.
+        https://bugs.webkit.org/show_bug.cgi?id=215646
+
+        Reviewed by Darin Adler.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Annotate progression.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Ditto.
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-expected.txt: Ditto.
+
 2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
 
        [ macOS wk2 Release ] http/tests/workers/service/basic-install-event-waitUntil-reject.html is a flaky timeout

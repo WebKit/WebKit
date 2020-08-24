@@ -59,6 +59,7 @@
 #include "FontTaggedSettings.h"
 #include "NodeRenderStyle.h"
 #include "Pair.h"
+#include "QuotesData.h"
 #include "Rect.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
@@ -470,6 +471,21 @@ static Ref<CSSValueList> borderRadiusCornerValues(const LengthSize& radius, cons
     auto list = CSSValueList::createSpaceSeparated();
     list->append(percentageOrZoomAdjustedValue(radius.width, style));
     list->append(percentageOrZoomAdjustedValue(radius.height, style));
+    return list;
+}
+
+static Ref<CSSValue> valueForQuotes(const QuotesData* quotes)
+{
+    if (!quotes)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+    unsigned size = quotes->size();
+    if (!size)
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
+    auto list = CSSValueList::createSpaceSeparated();
+    for (unsigned i = 0; i < size; ++i) {
+        list->append(CSSValuePool::singleton().createValue(quotes->openQuote(i), CSSUnitType::CSS_STRING));
+        list->append(CSSValuePool::singleton().createValue(quotes->closeQuote(i), CSSUnitType::CSS_STRING));
+    }
     return list;
 }
 
@@ -3780,6 +3796,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyStrokeMiterlimit:
             return CSSPrimitiveValue::create(style.strokeMiterLimit(), CSSUnitType::CSS_NUMBER);
 
+        case CSSPropertyQuotes:
+            return valueForQuotes(style.quotes());
+
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
         case CSSPropertyAll:
         case CSSPropertyAnimation:
@@ -3832,7 +3851,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
         /* Other unimplemented properties */
         case CSSPropertyPage: // for @page
-        case CSSPropertyQuotes: // FIXME: needs implementation
         case CSSPropertySize: // for @page
             break;
 
