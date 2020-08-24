@@ -42,6 +42,8 @@ WI.AnimationManager = class AnimationManager
 
     activateExtraDomain(domain)
     {
+        // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
+
         console.assert(domain === "Animation");
 
         for (let target of WI.targets)

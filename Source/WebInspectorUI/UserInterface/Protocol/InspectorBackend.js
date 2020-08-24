@@ -41,6 +41,7 @@ InspectorBackendClass = class InspectorBackendClass
         this._defaultTracer = new WI.LoggingProtocolTracer;
         this._activeTracers = [this._defaultTracer];
 
+        // FIXME: <https://webkit.org/b/213632> Web Inspector: release unused backend domains/events/commands once the debuggable type is known
         this._supportedDomainsForTargetType = new Multimap;
         this._supportedCommandParameters = new Map;
         this._supportedEventParameters = new Map;
@@ -326,6 +327,7 @@ InspectorBackend.Domain = class InspectorBackendDomain
 
         this._dispatcher = null;
 
+        // FIXME: <https://webkit.org/b/213632> Web Inspector: release unused backend domains/events/commands once the debuggable type is known
         this._supportedCommandsForTargetType = new Multimap;
         this._supportedEventsForTargetType = new Multimap;
     }

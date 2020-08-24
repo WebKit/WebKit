@@ -217,7 +217,7 @@ WI.Notification = {
     GlobalModifierKeysDidChange: "global-modifiers-did-change",
     PageArchiveStarted: "page-archive-started",
     PageArchiveEnded: "page-archive-ended",
-    ExtraDomainsActivated: "extra-domains-activated",
+    ExtraDomainsActivated: "extra-domains-activated", // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
     VisibilityStateDidChange: "visibility-state-did-change",
     TransitionPageTarget: "transition-page-target",
 };

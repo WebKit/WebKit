@@ -102,28 +102,4 @@ void InspectorAgent::evaluateForTestInFrontend(const String& script)
         m_pendingEvaluateTestCommands.append(script);
 }
 
-#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-void InspectorAgent::activateExtraDomain(const String& domainName)
-{
-    if (!m_enabled)
-        return;
-
-    auto domainNames = JSON::ArrayOf<String>::create();
-    domainNames->addItem(domainName);
-    m_frontendDispatcher->activateExtraDomains(WTFMove(domainNames));
-}
-
-void InspectorAgent::activateExtraDomains(const Vector<String>& extraDomains)
-{
-    if (extraDomains.isEmpty())
-        return;
-
-    auto domainNames = JSON::ArrayOf<String>::create();
-    for (const auto& domainName : extraDomains)
-        domainNames->addItem(domainName);
-
-    m_frontendDispatcher->activateExtraDomains(WTFMove(domainNames));
-}
-#endif
-
 } // namespace Inspector

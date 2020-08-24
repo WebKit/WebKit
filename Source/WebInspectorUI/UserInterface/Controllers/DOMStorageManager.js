@@ -42,6 +42,8 @@ WI.DOMStorageManager = class DOMStorageManager extends WI.Object
 
     activateExtraDomain(domain)
     {
+        // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
+
         console.assert(domain === "DOMStorage");
 
         for (let target of WI.targets)

@@ -52,7 +52,9 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         // FIXME: Provide dedicated UI to toggle Network Interception globally?
         this._interceptionEnabled = true;
 
+        // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
         WI.notifications.addEventListener(WI.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
+
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
 
         if (NetworkManager.supportsLocalResourceOverrides()) {
@@ -1447,6 +1449,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     _extraDomainsActivated(event)
     {
+        // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
+
         let target = WI.assumingMainTarget();
         if (target.hasDomain("Page") && event.data.domains.includes("Page"))
             target.PageAgent.getResourceTree(this._processMainFrameResourceTreePayload.bind(this));

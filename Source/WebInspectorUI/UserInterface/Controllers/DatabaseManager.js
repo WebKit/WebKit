@@ -42,6 +42,8 @@ WI.DatabaseManager = class DatabaseManager extends WI.Object
 
     activateExtraDomain(domain)
     {
+        // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
+
         console.assert(domain === "Database");
 
         for (let target of WI.targets)

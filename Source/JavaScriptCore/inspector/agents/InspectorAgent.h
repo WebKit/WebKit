@@ -63,11 +63,6 @@ public:
 
     void evaluateForTestInFrontend(const String& script);
 
-#if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    void activateExtraDomain(const String&);
-    void activateExtraDomains(const Vector<String>&);
-#endif
-
 private:
     InspectorEnvironment& m_environment;
     std::unique_ptr<InspectorFrontendDispatcher> m_frontendDispatcher;

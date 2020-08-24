@@ -44,7 +44,7 @@ public:
 
     virtual const FrontendRouter& frontendRouter() const = 0;
     virtual BackendDispatcher& backendDispatcher() = 0;
-    virtual void appendExtraAgent(std::unique_ptr<InspectorAgentBase>) = 0;
+    virtual void registerAlternateAgent(std::unique_ptr<InspectorAgentBase>) = 0;
 
     bool connected() const { return frontendRouter().hasFrontends(); }
 };

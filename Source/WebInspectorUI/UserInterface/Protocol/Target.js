@@ -121,6 +121,8 @@ WI.Target = class Target extends WI.Object
 
     activateExtraDomain(domainName)
     {
+        // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
+
         this._agents[domainName] = InspectorBackend._makeAgent(domainName, this);
     }
 

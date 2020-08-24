@@ -41,6 +41,8 @@ WI.ApplicationCacheManager = class ApplicationCacheManager extends WI.Object
 
     activateExtraDomain(domain)
     {
+        // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
+
         console.assert(domain === "ApplicationCache");
 
         for (let target of WI.targets)

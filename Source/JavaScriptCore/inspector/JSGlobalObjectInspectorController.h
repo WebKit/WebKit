@@ -98,7 +98,7 @@ public:
 
     const FrontendRouter& frontendRouter() const final { return m_frontendRouter.get(); }
     BackendDispatcher& backendDispatcher() final { return m_backendDispatcher.get(); }
-    void appendExtraAgent(std::unique_ptr<InspectorAgentBase>) final;
+    void registerAlternateAgent(std::unique_ptr<InspectorAgentBase>) final;
 #endif
 
 private:

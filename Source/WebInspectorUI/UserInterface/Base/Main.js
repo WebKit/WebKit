@@ -789,6 +789,7 @@ WI.createNewTabWithType = function(tabType, options = {})
         WI.tabBrowser.showTabForContentView(tabContentView, options);
 };
 
+// COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
 WI.activateExtraDomains = function(domains)
 {
     WI.notifications.dispatchEventToListeners(WI.Notification.ExtraDomainsActivated, {domains});

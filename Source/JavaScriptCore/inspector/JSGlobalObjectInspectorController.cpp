@@ -115,9 +115,6 @@ void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel& fronten
     m_agents.didCreateFrontendAndBackend(nullptr, nullptr);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    if (m_globalObject.inspectorDebuggable().type() == Inspector::RemoteControllableTarget::Type::JavaScript)
-        ensureInspectorAgent().activateExtraDomains(m_agents.extraDomains());
-
     if (m_augmentingClient)
         m_augmentingClient->inspectorConnected();
 #endif
@@ -261,17 +258,12 @@ VM& JSGlobalObjectInspectorController::vm()
 }
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-void JSGlobalObjectInspectorController::appendExtraAgent(std::unique_ptr<InspectorAgentBase> agent)
+void JSGlobalObjectInspectorController::registerAlternateAgent(std::unique_ptr<InspectorAgentBase> agent)
 {
-    String domainName = agent->domainName();
-
     // FIXME: change this to notify agents which frontend has connected (by id).
     agent->didCreateFrontendAndBackend(nullptr, nullptr);
 
-    m_agents.appendExtraAgent(WTFMove(agent));
-
-    if (m_globalObject.inspectorDebuggable().type() == Inspector::RemoteControllableTarget::Type::JavaScript)
-        ensureInspectorAgent().activateExtraDomain(domainName);
+    m_agents.append(WTFMove(agent));
 }
 #endif
 

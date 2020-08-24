@@ -1,3 +1,43 @@
+2020-08-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: remove "extra domains" concept now that domains can be added based on the debuggable type
+        https://bugs.webkit.org/show_bug.cgi?id=201150
+        <rdar://problem/56545911>
+
+        Reviewed by Brian Burg.
+
+        * inspector/scripts/codegen/objc_generator_templates.py:
+        * inspector/augmentable/AugmentableInspectorController.h:
+
+        * inspector/JSGlobalObjectInspectorController.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+        (Inspector::JSGlobalObjectInspectorController::registerAlternateAgent): Added.
+        (Inspector::JSGlobalObjectInspectorController::appendExtraAgent): Deleted.
+
+        * inspector/InspectorAgentRegistry.h:
+        * inspector/InspectorAgentRegistry.cpp:
+        (Inspector::AgentRegistry::appendExtraAgent): Deleted.
+
+        * inspector/protocol/Inspector.json:
+        * inspector/agents/InspectorAgent.h:
+        * inspector/agents/InspectorAgent.cpp:
+        (Inspector::InspectorAgent::activateExtraDomain): Deleted.
+        (Inspector::InspectorAgent::activateExtraDomains): Deleted.
+
+        * inspector/scripts/tests/expected/command-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/expected/domain-debuggableTypes.json-result:
+        * inspector/scripts/tests/expected/domain-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/expected/domain-targetTypes.json-result:
+        * inspector/scripts/tests/expected/domains-with-varying-command-sizes.json-result:
+        * inspector/scripts/tests/expected/enum-values.json-result:
+        * inspector/scripts/tests/expected/event-targetType-matching-domain-debuggableType.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        Rebase protocol tests.
+
 2020-08-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, wrong merge resolution between r266031 and r263837

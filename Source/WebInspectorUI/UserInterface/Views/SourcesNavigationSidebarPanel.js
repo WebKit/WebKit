@@ -345,6 +345,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetAdded, this._handleTargetAdded, this);
         WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
 
+        // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
         WI.notifications.addEventListener(WI.Notification.ExtraDomainsActivated, this._handleExtraDomainsActivated, this);
 
         if (WI.SourcesNavigationSidebarPanel.shouldPlaceResourcesAtTopLevel()) {
@@ -2621,6 +2622,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleExtraDomainsActivated()
     {
+        // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
+
         if (WI.SourcesNavigationSidebarPanel.shouldPlaceResourcesAtTopLevel())
             this._resourcesTreeOutline.disclosureButtons = true;
     }

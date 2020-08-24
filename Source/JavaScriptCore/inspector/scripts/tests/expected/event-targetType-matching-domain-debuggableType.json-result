@@ -697,7 +697,7 @@ using namespace Inspector;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorDomainBackendDispatcher>(handler);
     auto alternateAgent = makeUnique<AlternateDispatchableAgent<DomainBackendDispatcher, AlternateDomainBackendDispatcher>>("Domain"_s, *_controller, WTFMove(alternateDispatcher));
-    _controller->appendExtraAgent(WTFMove(alternateAgent));
+    _controller->registerAlternateAgent(WTFMove(alternateAgent));
 }
 
 - (id<TestProtocolDomainDomainHandler>)domainHandler

@@ -1211,7 +1211,7 @@ using namespace Inspector;
 
     auto alternateDispatcher = makeUnique<ObjCInspectorDatabaseBackendDispatcher>(handler);
     auto alternateAgent = makeUnique<AlternateDispatchableAgent<DatabaseBackendDispatcher, AlternateDatabaseBackendDispatcher>>("Database"_s, *_controller, WTFMove(alternateDispatcher));
-    _controller->appendExtraAgent(WTFMove(alternateAgent));
+    _controller->registerAlternateAgent(WTFMove(alternateAgent));
 }
 
 - (id<TestProtocolDatabaseDomainHandler>)databaseHandler

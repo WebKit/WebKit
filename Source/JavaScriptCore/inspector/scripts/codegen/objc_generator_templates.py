@@ -146,7 +146,7 @@ ${invocation}
 
     auto alternateDispatcher = makeUnique<ObjCInspector${domainName}BackendDispatcher>(handler);
     auto alternateAgent = makeUnique<AlternateDispatchableAgent<${domainName}BackendDispatcher, Alternate${domainName}BackendDispatcher>>("${domainName}"_s, *_controller, WTFMove(alternateDispatcher));
-    _controller->appendExtraAgent(WTFMove(alternateAgent));
+    _controller->registerAlternateAgent(WTFMove(alternateAgent));
 }
 
 - (id<${objcPrefix}${domainName}DomainHandler>)${variableNamePrefix}Handler
