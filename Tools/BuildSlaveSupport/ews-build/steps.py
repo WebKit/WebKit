@@ -1419,6 +1419,8 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
         self.build.results = FAILURE
         patch_id = self.getProperty('patch_id', '')
         message = 'Patch {} does not build'.format(patch_id)
+        self.send_email_for_new_build_failure()
+
         self.descriptionDone = message
         if self.getProperty('buildername', '').lower() == 'commit-queue':
             self.setProperty('bugzilla_comment_text', message)
@@ -2071,6 +2073,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
         if len(new_failures) > self.NUM_FAILURES_TO_DISPLAY:
             message += ' ...'
         self.descriptionDone = message
+        self.send_email_for_new_test_failures(new_failures)
 
         if self.getProperty('buildername', '').lower() == 'commit-queue':
             self.setProperty('bugzilla_comment_text', message)

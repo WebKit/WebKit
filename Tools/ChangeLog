@@ -1,5 +1,16 @@
 2020-08-24  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews] enable email notifications to patch authors for build or layout test failures on their patch
+        https://bugs.webkit.org/show_bug.cgi?id=215776
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeCompileWebKitResults.analyzeResults): Send email notification to patch authors for build failure due to their patch.
+        (AnalyzeLayoutTestsResults.report_failure): Send email notification to patch authors for layout test failure.
+
+2020-08-24  Aakash Jain  <aakash_jain@apple.com>
+
         [ews] set references header in email so as to group similar emails together
         https://bugs.webkit.org/show_bug.cgi?id=215777
 
