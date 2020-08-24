@@ -111,6 +111,12 @@ RewriteRule ^images/(.*)$ /old/images/$1 [NC,L]
 # Pixar USD support. Change to model/vnd.usdz+zip once WebKit support is in the wild.
 AddType model/vnd.pixar.usd usdz
 
+# Disable XML-RPC
+<Files xmlrpc.php>
+Order Allow,Deny
+Deny from all
+</Files>
+
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
 RewriteEngine On

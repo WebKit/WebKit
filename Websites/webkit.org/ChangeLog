@@ -1,3 +1,12 @@
+2020-08-24  Jon Davis  <jond@apple.com>
+
+        Disable unused RPC services
+        https://bugs.webkit.org/show_bug.cgi?id=215779
+
+        Reviewed by Alexey Proskuryakov.
+
+        * .htaccess:
+
 2020-08-18  Darin Adler  <darin@apple.com>
 
         * languages.md: Fixed "Movaje" typo.
