@@ -1,3 +1,12 @@
+2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
+
+       [ macOS wk2 Release ] http/tests/workers/service/basic-install-event-waitUntil-reject.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=214997
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: allow event breakpoints to be configured

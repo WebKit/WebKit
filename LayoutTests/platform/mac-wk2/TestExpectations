@@ -1276,3 +1276,6 @@ webkit.org/b/215611 [ Debug ] fast/scrolling/mac/scrollbars/overflow-overlay-scr
 [ BigSur+ ] media/vp9.html [ Pass ]
 
 webkit.org/b/215700 [ Debug ] fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html [ Pass Failure Timeout ]
+
+webkit.org/b/214997 [ Release ] http/tests/workers/service/basic-install-event-waitUntil-reject.html [ Pass Timeout ]
+
