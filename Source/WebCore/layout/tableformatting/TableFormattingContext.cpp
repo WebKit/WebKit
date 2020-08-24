@@ -104,9 +104,9 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
             break;
         }
         case VerticalAlign::Baseline: {
-            auto rowBaselineOffset = LayoutUnit { rowList[cell->startRow()].baselineOffset() };
-            auto cellBaselineOffset = LayoutUnit { cell->baselineOffset() };
-            intrinsicPaddingTop = std::max(0_lu, rowBaselineOffset - cellBaselineOffset - cellDisplayBox.borderTop());
+            auto rowBaseline = LayoutUnit { rowList[cell->startRow()].baseline() };
+            auto cellBaseline = LayoutUnit { cell->baseline() };
+            intrinsicPaddingTop = std::max(0_lu, rowBaseline - cellBaseline - cellDisplayBox.borderTop());
             intrinsicPaddingBottom = std::max(0_lu, availableVerticalSpace - cellDisplayBox.verticalMarginBorderAndPadding() - intrinsicPaddingTop - cellDisplayBox.contentBoxHeight());
             break;
         }
@@ -214,11 +214,11 @@ void TableFormattingContext::setUsedGeometryForRows(LayoutUnit availableHorizont
             if (slot.hasRowSpan())
                 continue;
             auto& cell = slot.cell();
-            rowBaselines[rowIndex] = std::max(rowBaselines[rowIndex], cell.baselineOffset());
+            rowBaselines[rowIndex] = std::max(rowBaselines[rowIndex], cell.baseline());
         }
     }
     for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex)
-        rows[rowIndex].setBaselineOffset(rowBaselines[rowIndex]);
+        rows[rowIndex].setBaseline(rowBaselines[rowIndex]);
 }
 
 void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFlowContent& constraints)
@@ -490,7 +490,7 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
             // The minimum height of a row (without spanning-related height distribution) is defined as the height of an hypothetical
             // linebox containing the cells originating in the row.
             auto& cell = slot.cell();
-            cell.setBaselineOffset(geometry().usedBaselineForCell(cell.box()));
+            cell.setBaseline(geometry().usedBaselineForCell(cell.box()));
         }
     }
 

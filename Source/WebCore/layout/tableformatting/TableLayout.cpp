@@ -281,8 +281,8 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
             auto& cellBox = cell.box();
             auto height = formattingContext().geometryForBox(cellBox).height();
             if (cellBox.style().verticalAlign() == VerticalAlign::Baseline) {
-                maximumColumnAscent = std::max(maximumColumnAscent, cell.baselineOffset());
-                maximumColumnDescent = std::max(maximumColumnDescent, height - cell.baselineOffset());
+                maximumColumnAscent = std::max(maximumColumnAscent, cell.baseline());
+                maximumColumnDescent = std::max(maximumColumnDescent, height - cell.baseline());
                 rowHeight[rowIndex] = std::max(rowHeight[rowIndex], LayoutUnit { maximumColumnAscent + maximumColumnDescent });
             } else
                 rowHeight[rowIndex] = std::max(rowHeight[rowIndex], height);

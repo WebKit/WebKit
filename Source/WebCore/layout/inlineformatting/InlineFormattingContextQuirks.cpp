@@ -76,19 +76,19 @@ LineBuilder::Constraints::HeightAndBaseline InlineFormattingContext::Quirks::lin
     // computedLineHeight takes font-size into account when line-height is not set.
     // Strut is the imaginary box that we put on every line. It sets the initial vertical constraints for each new line.
     InlineLayoutUnit strutHeight = formattingRoot.style().computedLineHeight();
-    auto strutBaselineOffset = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), strutHeight).ascent();
+    auto strutBaseline = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), strutHeight).ascent;
     if (layoutState().inNoQuirksMode())
-        return { strutHeight, strutBaselineOffset, { } };
+        return { strutHeight, strutBaseline, { } };
 
     auto lineHeight = formattingRoot.style().lineHeight();
     if (lineHeight.isPercentOrCalculated()) {
-        auto initialBaselineOffset = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), 0_lu).ascent();
-        return { initialBaselineOffset, initialBaselineOffset, LineBox::InlineBox::Baseline { strutBaselineOffset, strutHeight - strutBaselineOffset } };
+        auto initialBaseline = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), 0_lu).ascent;
+        return { initialBaseline, initialBaseline, AscentAndDescent { strutBaseline, strutHeight - strutBaseline } };
     }
     // FIXME: The only reason why we use intValue() here is to match current inline tree (integral)behavior.
     InlineLayoutUnit initialLineHeight = lineHeight.intValue();
-    auto initialBaselineOffset = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), initialLineHeight).ascent();
-    return { initialLineHeight, initialBaselineOffset, LineBox::InlineBox::Baseline { strutBaselineOffset, strutHeight - strutBaselineOffset } };
+    auto initialBaseline = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), initialLineHeight).ascent;
+    return { initialLineHeight, initialBaseline, AscentAndDescent { strutBaseline, strutHeight - strutBaseline } };
 }
 
 }

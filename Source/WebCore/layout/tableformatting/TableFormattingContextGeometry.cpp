@@ -154,7 +154,7 @@ InlineLayoutUnit TableFormattingContext::Geometry::usedBaselineForCell(const Con
                 return displayInlineContent->lineBoxes[0].baseline();
         }
         if (cellDescendant.establishesTableFormattingContext())
-            return layoutState().establishedTableFormattingState(cellDescendant).tableGrid().rows().list()[0].baselineOffset();
+            return layoutState().establishedTableFormattingState(cellDescendant).tableGrid().rows().list()[0].baseline();
     }
     return formattingContext().geometryForBox(cellBox).contentBoxBottom();
 }

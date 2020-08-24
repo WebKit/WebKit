@@ -120,15 +120,15 @@ public:
         void setLogicalHeight(LayoutUnit logicalHeight) { m_logicalHeight = logicalHeight; }
         LayoutUnit logicalHeight() const { return m_logicalHeight; }
 
-        void setBaselineOffset(InlineLayoutUnit baselineOffset) { m_baselineOffset = baselineOffset; }
-        InlineLayoutUnit baselineOffset() const { return m_baselineOffset; }
+        void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
+        InlineLayoutUnit baseline() const { return m_baseline; }
 
         const ContainerBox& box() const { return *m_layoutBox.get(); }
 
     private:
         LayoutUnit m_logicalTop;
         LayoutUnit m_logicalHeight;
-        InlineLayoutUnit m_baselineOffset;
+        InlineLayoutUnit m_baseline;
         WeakPtr<const ContainerBox> m_layoutBox;
     };
 
@@ -164,8 +164,8 @@ public:
         SlotPosition position() const { return m_position; }
         CellSpan span() const { return m_span; }
 
-        void setBaselineOffset(InlineLayoutUnit baselineOffset) { m_baselineOffset = baselineOffset; }
-        InlineLayoutUnit baselineOffset() const { return m_baselineOffset; }
+        void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
+        InlineLayoutUnit baseline() const { return m_baseline; }
 
         bool isFixedWidth() const;
 
@@ -175,7 +175,7 @@ public:
         WeakPtr<const ContainerBox> m_layoutBox;
         SlotPosition m_position;
         CellSpan m_span;
-        InlineLayoutUnit m_baselineOffset { 0 };
+        InlineLayoutUnit m_baseline { 0 };
     };
 
     class Slot {

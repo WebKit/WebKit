@@ -569,7 +569,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
         ASSERT_NOT_REACHED();
     }
     // FIXME: This is where the logical to physical translate should happen.
-    inlineContent.lineBoxes.append({ lineBox.logicalRect(), lineBox.scrollableOverflow(), lineInkOverflow, lineBox.baselineOffset() });
+    inlineContent.lineBoxes.append({ lineBox.logicalRect(), lineBox.scrollableOverflow(), lineInkOverflow, lineBox.baseline() });
 }
 
 void InlineFormattingContext::invalidateFormattingState(const InvalidationState&)

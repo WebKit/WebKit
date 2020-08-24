@@ -1,3 +1,66 @@
+2020-08-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Use the term 'baseline' to indicate alignment baseline
+        https://bugs.webkit.org/show_bug.cgi?id=214779
+
+        Reviewed by Antti Koivisto.
+
+        This patch is in preparation for decoupling the line box and the root inline box geometry.
+        Inline boxes have ascent/descent pairs, while line boxes have inline boxes and a baseline. 
+
+        * layout/displaytree/DisplayPainter.cpp:
+        (WebCore::Display::paintInlineContent):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineHeightConstraints const):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::AscentAndDescent::height const):
+        (WebCore::Layout::LineBox::ascentAndDescent const):
+        (WebCore::Layout::LineBox::LineBox):
+        (WebCore::Layout::LineBox::InlineBox::InlineBox):
+        (WebCore::Layout::LineBox::setBaselineIfGreater):
+        (WebCore::Layout::LineBox::setAscentIfGreater):
+        (WebCore::Layout::LineBox::setDescentIfGreater):
+        (WebCore::Layout::LineBox::baseline const):
+        (WebCore::Layout::LineBox::resetBaseline):
+        (WebCore::Layout::LineBox::InlineBox::Baseline::height const): Deleted.
+        (WebCore::Layout::LineBox::setBaselineOffsetIfGreater): Deleted.
+        (WebCore::Layout::LineBox::baselineOffset const): Deleted.
+        (WebCore::Layout::LineBox::InlineBox::Baseline::Baseline): Deleted.
+        (WebCore::Layout::LineBox::InlineBox::Baseline::setAscent): Deleted.
+        (WebCore::Layout::LineBox::InlineBox::Baseline::setDescent): Deleted.
+        (WebCore::Layout::LineBox::InlineBox::Baseline::reset): Deleted.
+        (WebCore::Layout::LineBox::InlineBox::Baseline::ascent const): Deleted.
+        (WebCore::Layout::LineBox::InlineBox::Baseline::descent const): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::alignContentVertically):
+        (WebCore::Layout::LineBuilder::adjustBaselineAndLineHeight):
+        (WebCore::Layout::LineBuilder::halfLeadingMetrics):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::baseline const):
+        (WebCore::Layout::LineBuilder::baselineOffset const): Deleted.
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::paint):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForRows):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraSpace):
+        * layout/tableformatting/TableFormattingContextGeometry.cpp:
+        (WebCore::Layout::TableFormattingContext::Geometry::usedBaselineForCell):
+        * layout/tableformatting/TableGrid.h:
+        (WebCore::Layout::TableGrid::Row::setBaseline):
+        (WebCore::Layout::TableGrid::Row::baseline const):
+        (WebCore::Layout::TableGrid::Cell::setBaseline):
+        (WebCore::Layout::TableGrid::Cell::baseline const):
+        (WebCore::Layout::TableGrid::Row::setBaselineOffset): Deleted.
+        (WebCore::Layout::TableGrid::Row::baselineOffset const): Deleted.
+        (WebCore::Layout::TableGrid::Cell::setBaselineOffset): Deleted.
+        (WebCore::Layout::TableGrid::Cell::baselineOffset const): Deleted.
+        * layout/tableformatting/TableLayout.cpp:
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedVerticalSpace):
+
 2020-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK4 build

@@ -82,17 +82,17 @@ void LineBuilder::initialize(const Constraints& constraints)
     ASSERT(m_isIntrinsicSizing || constraints.heightAndBaseline);
 
     InlineLayoutUnit initialLineHeight = 0;
-    InlineLayoutUnit initialBaselineOffset = 0;
+    InlineLayoutUnit initialBaseline = 0;
     if (constraints.heightAndBaseline) {
         m_initialStrut = constraints.heightAndBaseline->strut;
         initialLineHeight = constraints.heightAndBaseline->height;
-        initialBaselineOffset = constraints.heightAndBaseline->baselineOffset;
+        initialBaseline = constraints.heightAndBaseline->baseline;
     } else
         m_initialStrut = { };
 
     auto lineRect = Display::InlineRect { constraints.logicalTopLeft, 0_lu, initialLineHeight };
-    auto baseline = LineBox::InlineBox::Baseline { initialBaselineOffset, initialLineHeight - initialBaselineOffset };
-    m_lineBox = LineBox { lineRect, baseline, initialBaselineOffset };
+    auto ascentAndDescent = AscentAndDescent { initialBaseline, initialLineHeight - initialBaseline };
+    m_lineBox = LineBox { lineRect, ascentAndDescent, initialBaseline };
     m_lineLogicalWidth = constraints.availableLogicalWidth;
     m_hasIntrusiveFloat = constraints.lineIsConstrainedByFloat;
 
@@ -125,7 +125,7 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
     }
     // Remove descent when all content is baseline aligned but none of them have descent.
     if (formattingContext().quirks().lineDescentNeedsCollapsing(m_runs)) {
-        m_lineBox.shrinkVertically(m_lineBox.baseline().descent());
+        m_lineBox.shrinkVertically(m_lineBox.ascentAndDescent().descent);
         m_lineBox.resetDescent();
     }
     alignContentVertically();
@@ -146,10 +146,10 @@ void LineBuilder::alignContentVertically()
         switch (verticalAlign) {
         case VerticalAlign::Baseline:
             if (run.isLineBreak() || run.isText())
-                logicalTop = baselineOffset() - ascent;
+                logicalTop = baseline() - ascent;
             else if (run.isContainerStart()) {
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                logicalTop = baselineOffset() - ascent - boxGeometry.borderTop() - boxGeometry.paddingTop().valueOr(0);
+                logicalTop = baseline() - ascent - boxGeometry.borderTop() - boxGeometry.paddingTop().valueOr(0);
             } else if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
                 auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
                 // Spec makes us generate at least one line -even if it is empty.
@@ -167,11 +167,11 @@ void LineBuilder::alignContentVertically()
                 //     -----|-|-|---------- <- baseline
                 //
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                auto baselineOffsetFromMarginBox = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
-                logicalTop = baselineOffset() - baselineOffsetFromMarginBox;
+                auto baselineFromMarginBox = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
+                logicalTop = baseline() - baselineFromMarginBox;
             } else {
                 auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                logicalTop = baselineOffset() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu) + run.logicalRect().height() + boxGeometry.marginAfter());
+                logicalTop = baseline() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu) + run.logicalRect().height() + boxGeometry.marginAfter());
             }
             break;
         case VerticalAlign::Top:
@@ -577,8 +577,8 @@ void LineBuilder::adjustBaselineAndLineHeight()
             hasSeenDirectTextOrLineBreak = true;
             // We are in quirks mode where the font-metrics might change the line line height/baseline and this is the first text content on the line
             // outside of an inline container.
-            m_lineBox.setAscentIfGreater(m_initialStrut->ascent());
-            m_lineBox.setDescentIfGreater(m_initialStrut->descent());
+            m_lineBox.setAscentIfGreater(m_initialStrut->ascent);
+            m_lineBox.setDescentIfGreater(m_initialStrut->descent);
             m_lineBox.setLogicalHeightIfGreater(m_initialStrut->height());
             continue;
         }
@@ -591,11 +591,11 @@ void LineBuilder::adjustBaselineAndLineHeight()
             if (style.verticalAlign() == VerticalAlign::Baseline) {
                 auto halfLeading = halfLeadingMetrics(fontMetrics, style.computedLineHeight());
                 // Both halfleading ascent and descent could be negative (tall font vs. small line-height value)
-                if (halfLeading.descent() > 0)
-                    m_lineBox.setDescentIfGreater(halfLeading.descent());
-                if (halfLeading.ascent() > 0)
-                    m_lineBox.setAscentIfGreater(halfLeading.ascent());
-                m_lineBox.setLogicalHeightIfGreater(m_lineBox.baseline().height());
+                if (halfLeading.descent > 0)
+                    m_lineBox.setDescentIfGreater(halfLeading.descent);
+                if (halfLeading.ascent > 0)
+                    m_lineBox.setAscentIfGreater(halfLeading.ascent);
+                m_lineBox.setLogicalHeightIfGreater(m_lineBox.ascentAndDescent().height());
             } else
                 m_lineBox.setLogicalHeightIfGreater(fontMetrics.height());
             continue;
@@ -620,13 +620,13 @@ void LineBuilder::adjustBaselineAndLineHeight()
                     // There has to be at least one line -even if it is empty.
                     auto& lastLineBox = formattingState.displayInlineContent()->lineBoxes.last();
                     auto beforeHeight = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
-                    m_lineBox.setBaselineOffsetIfGreater(beforeHeight + lastLineBox.baseline());
+                    m_lineBox.setBaselineIfGreater(beforeHeight + lastLineBox.baseline());
                     m_lineBox.setLogicalHeightIfGreater(marginBoxHeight);
                 } else {
                     // Non inline-block boxes sit on the baseline (including their bottom margin).
                     m_lineBox.setAscentIfGreater(marginBoxHeight);
                     // Ignore negative descent (yes, negative descent is a thing).
-                    m_lineBox.setLogicalHeightIfGreater(marginBoxHeight + std::max<InlineLayoutUnit>(0, m_lineBox.baseline().descent()));
+                    m_lineBox.setLogicalHeightIfGreater(marginBoxHeight + std::max<InlineLayoutUnit>(0, m_lineBox.ascentAndDescent().descent));
                 }
                 break;
             }
@@ -639,7 +639,7 @@ void LineBuilder::adjustBaselineAndLineHeight()
                 auto lineLogicalHeight = m_lineBox.logicalHeight();
                 if (marginBoxHeight > lineLogicalHeight) {
                     m_lineBox.setLogicalHeightIfGreater(marginBoxHeight);
-                    m_lineBox.setBaselineOffsetIfGreater(m_lineBox.baselineOffset() + (marginBoxHeight - lineLogicalHeight));
+                    m_lineBox.setBaselineIfGreater(m_lineBox.baseline() + (marginBoxHeight - lineLogicalHeight));
                 }
                 break;
             }
@@ -705,7 +705,7 @@ bool LineBuilder::isVisuallyNonEmpty(const Run& run) const
     return false;
 }
 
-LineBox::InlineBox::Baseline LineBuilder::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)
+AscentAndDescent LineBuilder::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)
 {
     auto ascent = fontMetrics.ascent();
     auto descent = fontMetrics.descent();

@@ -49,8 +49,8 @@ public:
         bool lineIsConstrainedByFloat { false };
         struct HeightAndBaseline {
             InlineLayoutUnit height { 0 };
-            InlineLayoutUnit baselineOffset { 0 };
-            Optional<LineBox::InlineBox::Baseline> strut;
+            InlineLayoutUnit baseline { 0 };
+            Optional<AscentAndDescent> strut;
         };
         Optional<HeightAndBaseline> heightAndBaseline;
     };
@@ -148,7 +148,7 @@ public:
     enum class IsLastLineWithInlineContent { No, Yes };
     RunList close(IsLastLineWithInlineContent = IsLastLineWithInlineContent::No);
 
-    static LineBox::InlineBox::Baseline halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
+    static AscentAndDescent halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
 
 private:
     InlineLayoutUnit logicalTop() const { return m_lineBox.logicalTop(); }
@@ -162,7 +162,7 @@ private:
 
     InlineLayoutUnit contentLogicalWidth() const { return m_lineBox.logicalWidth(); }
     InlineLayoutUnit contentLogicalRight() const { return m_lineBox.logicalRight(); }
-    InlineLayoutUnit baselineOffset() const { return m_lineBox.baselineOffset(); }
+    InlineLayoutUnit baseline() const { return m_lineBox.baseline(); }
 
     struct InlineRunDetails {
         InlineLayoutUnit logicalWidth { 0 };
@@ -219,7 +219,7 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
-    Optional<LineBox::InlineBox::Baseline> m_initialStrut;
+    Optional<AscentAndDescent> m_initialStrut;
     InlineLayoutUnit m_lineLogicalWidth { 0 };
     Optional<TextAlignMode> m_horizontalAlignment;
     bool m_isIntrinsicSizing { false };
