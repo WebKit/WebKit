@@ -2977,11 +2977,10 @@ parseMethod:
         }
 
         TreeProperty property;
-        const bool alwaysStrictInsideClass = true;
         if (isGetter || isSetter) {
             type = static_cast<PropertyNode::Type>(type & ~PropertyNode::Constant);
             type = static_cast<PropertyNode::Type>(type | (isGetter ? PropertyNode::Getter : PropertyNode::Setter));
-            property = parseGetterSetter(context, alwaysStrictInsideClass, type, methodStart, ConstructorKind::None, tag);
+            property = parseGetterSetter(context, type, methodStart, ConstructorKind::None, tag);
             failIfFalse(property, "Cannot parse this method");
         } else if (Options::usePublicClassFields() && !match(OPENPAREN) && tag == ClassElementTag::Instance && parseMode == SourceParseMode::MethodMode) {
             ASSERT(!isGetter && !isSetter);
@@ -3010,9 +3009,9 @@ parseMethod:
             failIfFalse(autoSemiColon(), "Expected a ';' following a class field");
             auto inferName = initializer ? InferName::Allowed : InferName::Disallowed;
             if (computedPropertyName)
-                property = context.createProperty(ident, computedPropertyName, initializer, type, PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::NotNeeded, tag);
+                property = context.createProperty(ident, computedPropertyName, initializer, type, PropertyNode::Unknown, SuperBinding::NotNeeded, tag);
             else
-                property = context.createProperty(ident, initializer, type, PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::NotNeeded, inferName, tag);
+                property = context.createProperty(ident, initializer, type, PropertyNode::Unknown, SuperBinding::NotNeeded, inferName, tag);
         } else {
             ParserFunctionInfo<TreeBuilder> methodInfo;
             bool isConstructor = tag == ClassElementTag::Instance && *ident == propertyNames.constructor;
@@ -3033,9 +3032,9 @@ parseMethod:
                 "Cannot declare a static method named 'prototype'");
 
             if (computedPropertyName) {
-                property = context.createProperty(computedPropertyName, method, type, PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::Needed, tag);
+                property = context.createProperty(computedPropertyName, method, type, PropertyNode::Unknown, SuperBinding::Needed, tag);
             } else {
-                property = context.createProperty(methodInfo.name, method, type, PropertyNode::Unknown, alwaysStrictInsideClass, SuperBinding::Needed, InferName::Allowed, tag);
+                property = context.createProperty(methodInfo.name, method, type, PropertyNode::Unknown, SuperBinding::Needed, InferName::Allowed, tag);
             }
         }
 
@@ -4104,7 +4103,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseBinaryExpres
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeBuilder& context, bool complete)
+template <class TreeBuilder> TreeProperty Parser<LexerType>::parseProperty(TreeBuilder& context)
 {
     SourceParseMode parseMode = SourceParseMode::MethodMode;
     bool wasIdent = false;
@@ -4145,7 +4144,7 @@ namedProperty:
         unsigned getterOrSetterStartOffset = tokenStart();
         JSToken identToken = m_token;
 
-        if (complete || (wasIdent && !isGeneratorMethodParseMode(parseMode)  && (*ident == m_vm.propertyNames->get || *ident == m_vm.propertyNames->set)))
+        if (wasIdent && !isGeneratorMethodParseMode(parseMode) && (*ident == m_vm.propertyNames->get || *ident == m_vm.propertyNames->set))
             nextExpectIdentifier(LexerFlags::IgnoreReservedWords);
         else
             nextExpectIdentifier(TreeBuilder::DontBuildKeywords | LexerFlags::IgnoreReservedWords);
@@ -4156,13 +4155,13 @@ namedProperty:
             failIfFalse(node, "Cannot parse expression for property declaration");
             context.setEndOffset(node, m_lexer->currentOffset());
             InferName inferName = ident && *ident == m_vm.propertyNames->underscoreProto ? InferName::Disallowed : InferName::Allowed;
-            return context.createProperty(ident, node, PropertyNode::Constant, PropertyNode::Unknown, complete, SuperBinding::NotNeeded, inferName, ClassElementTag::No);
+            return context.createProperty(ident, node, PropertyNode::Constant, PropertyNode::Unknown, SuperBinding::NotNeeded, inferName, ClassElementTag::No);
         }
 
         if (match(OPENPAREN)) {
             auto method = parsePropertyMethod(context, ident, parseMode);
             propagateError();
-            return context.createProperty(ident, method, PropertyNode::Constant, PropertyNode::KnownDirect, complete, SuperBinding::Needed, InferName::Allowed, ClassElementTag::No);
+            return context.createProperty(ident, method, PropertyNode::Constant, PropertyNode::KnownDirect, SuperBinding::Needed, InferName::Allowed, ClassElementTag::No);
         }
         failIfTrue(parseMode != SourceParseMode::MethodMode, "Expected a parenthesis for argument list");
 
@@ -4176,7 +4175,7 @@ namedProperty:
             if (currentScope()->isArrowFunction())
                 currentScope()->setInnerArrowFunctionUsesEval();
             TreeExpression node = context.createResolve(location, *ident, start, lastTokenEndPosition());
-            return context.createProperty(ident, node, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Shorthand), PropertyNode::KnownDirect, complete, SuperBinding::NotNeeded, InferName::Allowed, ClassElementTag::No);
+            return context.createProperty(ident, node, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Shorthand), PropertyNode::KnownDirect, SuperBinding::NotNeeded, InferName::Allowed, ClassElementTag::No);
         }
 
         if (match(EQUAL)) // CoverInitializedName is exclusive to BindingPattern and AssignmentPattern
@@ -4189,7 +4188,7 @@ namedProperty:
             type = PropertyNode::Setter;
         else
             failWithMessage("Expected a ':' following the property name '", ident->impl(), "'");
-        return parseGetterSetter(context, complete, type, getterOrSetterStartOffset, ConstructorKind::None, ClassElementTag::No);
+        return parseGetterSetter(context, type, getterOrSetterStartOffset, ConstructorKind::None, ClassElementTag::No);
     }
     case DOUBLE:
     case INTEGER: {
@@ -4200,7 +4199,7 @@ namedProperty:
             const Identifier& ident = m_parserArena.identifierArena().makeNumericIdentifier(const_cast<VM&>(m_vm), propertyName);
             auto method = parsePropertyMethod(context, &ident, parseMode);
             propagateError();
-            return context.createProperty(&ident, method, PropertyNode::Constant, PropertyNode::Unknown, complete, SuperBinding::Needed, InferName::Allowed, ClassElementTag::No);
+            return context.createProperty(&ident, method, PropertyNode::Constant, PropertyNode::Unknown, SuperBinding::Needed, InferName::Allowed, ClassElementTag::No);
         }
         failIfTrue(parseMode != SourceParseMode::MethodMode, "Expected a parenthesis for argument list");
 
@@ -4208,7 +4207,7 @@ namedProperty:
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node, "Cannot parse expression for property declaration");
         context.setEndOffset(node, m_lexer->currentOffset());
-        return context.createProperty(const_cast<VM&>(m_vm), m_parserArena, propertyName, node, PropertyNode::Constant, PropertyNode::Unknown, complete, SuperBinding::NotNeeded, ClassElementTag::No);
+        return context.createProperty(const_cast<VM&>(m_vm), m_parserArena, propertyName, node, PropertyNode::Constant, PropertyNode::Unknown, SuperBinding::NotNeeded, ClassElementTag::No);
     }
     case BIGINT: {
         const Identifier* ident = &m_parserArena.identifierArena().makeBigIntDecimalIdentifier(const_cast<VM&>(m_vm), *m_token.m_data.bigIntString, m_token.m_data.radix);
@@ -4217,7 +4216,7 @@ namedProperty:
         if (match(OPENPAREN)) {
             auto method = parsePropertyMethod(context, ident, parseMode);
             propagateError();
-            return context.createProperty(ident, method, PropertyNode::Constant, PropertyNode::Unknown, complete, SuperBinding::Needed, InferName::Allowed, ClassElementTag::No);
+            return context.createProperty(ident, method, PropertyNode::Constant, PropertyNode::Unknown, SuperBinding::Needed, InferName::Allowed, ClassElementTag::No);
         }
         failIfTrue(parseMode != SourceParseMode::MethodMode, "Expected a parenthesis for argument list");
 
@@ -4225,7 +4224,7 @@ namedProperty:
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node, "Cannot parse expression for property declaration");
         context.setEndOffset(node, m_lexer->currentOffset());
-        return context.createProperty(ident, node, PropertyNode::Constant, PropertyNode::Unknown, complete, SuperBinding::NotNeeded, InferName::Allowed, ClassElementTag::No);
+        return context.createProperty(ident, node, PropertyNode::Constant, PropertyNode::Unknown, SuperBinding::NotNeeded, InferName::Allowed, ClassElementTag::No);
     }
     case OPENBRACKET: {
         next();
@@ -4236,7 +4235,7 @@ namedProperty:
         if (match(OPENPAREN)) {
             auto method = parsePropertyMethod(context, &m_vm.propertyNames->nullIdentifier, parseMode);
             propagateError();
-            return context.createProperty(propertyName, method, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Computed), PropertyNode::KnownDirect, complete, SuperBinding::Needed, ClassElementTag::No);
+            return context.createProperty(propertyName, method, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Computed), PropertyNode::KnownDirect, SuperBinding::Needed, ClassElementTag::No);
         }
         failIfTrue(parseMode != SourceParseMode::MethodMode, "Expected a parenthesis for argument list");
 
@@ -4244,7 +4243,7 @@ namedProperty:
         TreeExpression node = parseAssignmentExpression(context);
         failIfFalse(node, "Cannot parse expression for property declaration");
         context.setEndOffset(node, m_lexer->currentOffset());
-        return context.createProperty(propertyName, node, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Computed), PropertyNode::Unknown, complete, SuperBinding::NotNeeded, ClassElementTag::No);
+        return context.createProperty(propertyName, node, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Computed), PropertyNode::Unknown, SuperBinding::NotNeeded, ClassElementTag::No);
     }
     case DOTDOTDOT: {
         auto spreadLocation = m_token.m_location;
@@ -4254,7 +4253,7 @@ namedProperty:
         TreeExpression elem = parseAssignmentExpressionOrPropagateErrorClass(context);
         failIfFalse(elem, "Cannot parse subject of a spread operation");
         auto node = context.createObjectSpreadExpression(spreadLocation, elem, start, divot, m_lastTokenEndPosition);
-        return context.createProperty(node, PropertyNode::Spread, PropertyNode::Unknown, complete, SuperBinding::NotNeeded, ClassElementTag::No);
+        return context.createProperty(node, PropertyNode::Spread, PropertyNode::Unknown, SuperBinding::NotNeeded, ClassElementTag::No);
     }
     default:
         failIfFalse(m_token.m_type & KeywordTokenFlag, "Expected a property name");
@@ -4276,7 +4275,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePropertyMeth
 }
 
 template <typename LexerType>
-template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(TreeBuilder& context, bool strict, PropertyNode::Type type, unsigned getterOrSetterStartOffset,
+template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(TreeBuilder& context, PropertyNode::Type type, unsigned getterOrSetterStartOffset,
     ConstructorKind constructorKind, ClassElementTag tag)
 {
     const Identifier* stringPropertyName = nullptr;
@@ -4316,22 +4315,12 @@ template <class TreeBuilder> TreeProperty Parser<LexerType>::parseGetterSetter(T
     }
 
     if (stringPropertyName)
-        return context.createGetterOrSetterProperty(location, type, strict, stringPropertyName, info, tag);
+        return context.createGetterOrSetterProperty(location, type, stringPropertyName, info, tag);
 
     if (computedPropertyName)
-        return context.createGetterOrSetterProperty(location, static_cast<PropertyNode::Type>(type | PropertyNode::Computed), strict, computedPropertyName, info, tag);
+        return context.createGetterOrSetterProperty(location, static_cast<PropertyNode::Type>(type | PropertyNode::Computed), computedPropertyName, info, tag);
 
-    return context.createGetterOrSetterProperty(const_cast<VM&>(m_vm), m_parserArena, location, type, strict, numericPropertyName, info, tag);
-}
-
-template <typename LexerType>
-template <class TreeBuilder> bool Parser<LexerType>::shouldCheckPropertyForUnderscoreProtoDuplicate(TreeBuilder& context, const TreeProperty& property)
-{
-    if (!context.getName(property))
-        return false;
-
-    // A Constant property that is not a Computed or Shorthand Constant property.
-    return context.getType(property) == PropertyNode::Constant;
+    return context.createGetterOrSetterProperty(const_cast<VM&>(m_vm), m_parserArena, location, type, numericPropertyName, info, tag);
 }
 
 template <typename LexerType>
@@ -4377,12 +4366,10 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
         return context.createObjectLiteral(location);
     }
     
-    TreeProperty property = parseProperty(context, true);
+    TreeProperty property = parseProperty(context);
     failIfFalse(property, "Cannot parse object literal property");
 
-    bool seenUnderscoreProto = false;
-    if (shouldCheckPropertyForUnderscoreProtoDuplicate(context, property))
-        seenUnderscoreProto = *context.getName(property) == m_vm.propertyNames->underscoreProto;
+    bool seenProtoSetter = context.isUnderscoreProtoSetter(property);
 
     TreePropertyList propertyList = context.createPropertyList(location, property);
     TreePropertyList tail = propertyList;
@@ -4391,13 +4378,12 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseObjectLitera
         if (match(CLOSEBRACE))
             break;
         JSTokenLocation propertyLocation(tokenLocation());
-        property = parseProperty(context, true);
+        property = parseProperty(context);
         failIfFalse(property, "Cannot parse object literal property");
-        if (shouldCheckPropertyForUnderscoreProtoDuplicate(context, property)) {
-            if (*context.getName(property) == m_vm.propertyNames->underscoreProto) {
-                semanticFailIfTrue(seenUnderscoreProto, "Attempted to redefine __proto__ property");
-                seenUnderscoreProto = true;
-            }
+        if (context.isUnderscoreProtoSetter(property)) {
+            // https://tc39.es/ecma262/#sec-__proto__-property-names-in-object-initializers
+            semanticFailIfTrue(seenProtoSetter, "Attempted to redefine __proto__ property");
+            seenProtoSetter = true;
         }
         tail = context.createPropertyList(propertyLocation, property, tail);
     }

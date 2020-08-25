@@ -1,3 +1,53 @@
+2020-08-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Invalid early error for object literal method named "__proto__"
+        https://bugs.webkit.org/show_bug.cgi?id=215760
+
+        Reviewed by Ross Kirsling.
+
+        According to Annex B [1], `{ __proto__: null, __proto__() {} }` is a valid object literal as the second
+        `__proto__` wasn't obtained from `PropertyDefinition : PropertyName : AssignmentExpression` production.
+        Currently, JSC throws an early SyntaxError, unlike V8 and SpiderMonkey.
+
+        Since a method needs `super` binding, the most straightforward fix would be adding SuperBinding field
+        to SyntaxChecker::Property and exposing it via an accessor. However, given that Property is a very
+        common structure, this approach would noticeably increase memory pressure during parsing.
+
+        Instead, this patch reworks SyntaxChecker::Property to accept `isUnderscoreProtoSetter` parameter,
+        removing optional `name` field, its accessor, and shouldCheckPropertyForUnderscoreProtoDuplicate(),
+        which reduces sizeof(SyntaxChecker::Property) by a factor of 8: from 16 to 2 bytes.
+        Also, this change avoids two extra makeNumericIdentifier() calls, speeding up numeric keys parsing.
+
+        This approach is feasible because "__proto__" is the only identifier-based early error for object
+        literals [2], with no such errors being added in upcoming stage 2-4 proposals.
+
+        Additionally, this patch removes `strict` / `complete` bool parameter from {parse,create}Property()
+        signatures as a) it was always `true`, b) is now unused, and c) strict mode can be checked via scope.
+
+        [1]: https://tc39.es/ecma262/#sec-__proto__-property-names-in-object-initializers
+        [2]: https://tc39.es/ecma262/#sec-object-initializer-static-semantics-early-errors
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createProperty):
+        (JSC::ASTBuilder::isUnderscoreProtoSetter const):
+        (JSC::ASTBuilder::getName const): Deleted.
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parseObjectLiteral):
+        (JSC::Parser<LexerType>::shouldCheckPropertyForUnderscoreProtoDuplicate): Deleted.
+        * parser/Parser.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::SyntaxChecker):
+        (JSC::SyntaxChecker::Property::Property):
+        (JSC::SyntaxChecker::Property::operator!):
+        (JSC::SyntaxChecker::createProperty):
+        (JSC::SyntaxChecker::createGetterOrSetterProperty):
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2020-08-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add concurrency-aware version of isCallable / isConstructor to make it usable in DFG compiler

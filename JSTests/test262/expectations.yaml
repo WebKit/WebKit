@@ -2382,9 +2382,6 @@ test/language/expressions/new/ctorExpr-isCtor-after-args-eval-fn-wrapup.js:
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 'Test262Error: production including Arguments Expected a TypeError but got a TypeError'
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a TypeError'
-test/language/expressions/object/__proto__-permitted-dup.js:
-  default: 'SyntaxError: Attempted to redefine __proto__ property.'
-  strict mode: 'SyntaxError: Attempted to redefine __proto__ property.'
 test/language/expressions/object/covered-ident-name-prop-name-literal-break-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'bre\\u0061k'"

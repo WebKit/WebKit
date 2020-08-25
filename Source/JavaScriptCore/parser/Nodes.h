@@ -746,6 +746,11 @@ namespace JSC {
         void setIsOverriddenByDuplicate() { m_isOverriddenByDuplicate = true; }
         PutType putType() const { return static_cast<PutType>(m_putType); }
 
+        ALWAYS_INLINE static bool isUnderscoreProtoSetter(VM& vm, const Identifier* name, Type type, bool needsSuperBinding)
+        {
+            return name && *name == vm.propertyNames->underscoreProto && type == Type::Constant && !needsSuperBinding;
+        }
+
     private:
         friend class PropertyListNode;
         const Identifier* m_name;

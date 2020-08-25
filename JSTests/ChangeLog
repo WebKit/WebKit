@@ -1,3 +1,12 @@
+2020-08-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Invalid early error for object literal method named "__proto__"
+        https://bugs.webkit.org/show_bug.cgi?id=215760
+
+        Reviewed by Ross Kirsling.
+
+        * test262/expectations.yaml: Mark 2 test cases as passing.
+
 2020-08-25  Paulo Matos  <pmatos@igalia.com>
 
         Skip failing tests on MIPS for later investigation
