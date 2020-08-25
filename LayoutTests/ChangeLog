@@ -1,3 +1,15 @@
+2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS ] Tests expectations changed as test passing but expected to fail
+        https://bugs.webkit.org/show_bug.cgi?id=215786
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2020-08-24  Karl Rackler  <rackler@apple.com>
 
         rdar://67706887 (REGRESSION (r264950): [ iOS 13 WK2 ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html is a constant failure)

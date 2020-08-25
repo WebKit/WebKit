@@ -1330,7 +1330,6 @@ svg/W3C-SVG-1.1/text-intro-02-b.svg [ Failure ]
 svg/W3C-SVG-1.1/text-intro-03-b.svg [ Failure ]
 svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
 svg/custom/acid3-test-77.html [ Failure ]
-svg/custom/svg-fonts-fallback.xhtml [ Failure ]
 fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure  ]
 
 # <rdar://problem/30493910> REGRESSION: LayoutTest fast/writing-mode/broken-ideograph-small-caps.html failing
@@ -1854,8 +1853,6 @@ webkit.org/b/209446 [ Debug ] imported/w3c/web-platform-tests/navigation-timing/
 
 webkit.org/b/209619 [ Catalina ] compositing/clipping/border-radius-async-overflow-stacking.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/209740 webgl/2.0.0/conformance2/rendering/framebuffer-completeness-unaffected.html [ Failure ]
-
 webkit.org/b/209908 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout ]
 
 webkit.org/b/210046 [ Release ] storage/indexeddb/value-cursor-cycle.html [ Pass Failure ]
@@ -1955,9 +1952,6 @@ editing/selection/select-bidi-run.html [ Pass Timeout ]
 # <rdar://problem/60873976> [ Mac Guard Malloc ] imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.worker.html is flaky crashing.
 imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_AES-CBC.https.any.worker.html [ Pass Crash ]
 
-# <rdar://problem/60780398> REGRESSION: (258729?) imported/w3c/web-platform-tests/websockets/opening-handshake/003.html is failing.
-imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
-
 # In-App Browser Privacy requires functions that are currently in WebKitAdditions.
 http/tests/in-app-browser-privacy/ [ Skip ]
 
@@ -1982,19 +1976,6 @@ imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-com
 
 # <rdar://problem/62860846> REGRESSION [ Mac Debug ] accessibility/roles-exposed.html is flaky timing out.
 [ Debug ] accessibility/roles-exposed.html [ Pass Timeout ]
-
-# <rdar://problem/66346141> [ Mac ] fast/forms/hidpi-textfield-background-bleeding.html is failing
-# <rdar://problem/66295552> [ Mac ] fast/forms/hidpi-textfield-background-bleeding.html is failing
-fast/forms/hidpi-textfield-background-bleeding.html [ ImageOnlyFailure ]
-
-# <rdar://problem/64947666> fast/images/image-controls-basic.html is a constant failure
-fast/images/image-controls-basic.html [ Failure ]
-
-# <rdar://problem/66399069> [ Mac ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html is failing
-imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html [ ImageOnlyFailure ]
-
-# <rdar://problem/66351394> [ Mac ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html is failing
-imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
 
 # rdar://66910555 ([ Layout Tests ] REGRESSION (r264345): [ macOS ] 2 media-source/mediasource-changetype-play are a flaky failure)
 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
@@ -2212,3 +2193,6 @@ webkit.org/b/215723 fast/repaint/list-item-equal-style-change-no-repaint.html [ 
 
 webkit.org/b/189672 [ Release ] webgl/2.0.0/conformance2/textures/canvas/tex-2d-rg32f-rg-float.html [ Pass Failure ]
 
+webkit.org/b/215786 imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.html [ Pass ]
+
+webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Pass ]

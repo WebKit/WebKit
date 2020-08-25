@@ -819,7 +819,6 @@ imported/w3c/web-platform-tests/web-share/share-url-encoding-manual.https.html [
 imported/w3c/web-platform-tests/web-share/share-url-noscheme-manual.https.html [ Skip ]
 imported/w3c/web-platform-tests/web-share/share-url-pathonly-manual.https.html [ Skip ]
 imported/w3c/web-platform-tests/web-share/share-url-relative-manual.https.html [ Skip ]
-imported/w3c/web-platform-tests/web-share/share-sharePromise-internal-slot.https.html [ Timeout ]
 
 webkit.org/b/189598 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Pass Failure ]
 
