@@ -1691,17 +1691,16 @@ void Internals::setMediaCaptureRequiresSecureConnection(bool enabled)
         page->settings().setMediaCaptureRequiresSecureConnection(enabled);
 }
 
-static std::unique_ptr<MediaRecorderPrivate> createRecorderMockSource(MediaStreamPrivate& stream)
+static ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> createRecorderMockSource(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions&)
 {
-    return std::unique_ptr<MediaRecorderPrivateMock>(new MediaRecorderPrivateMock(stream));
+    return std::unique_ptr<MediaRecorderPrivate>(new MediaRecorderPrivateMock(stream));
 }
 
 void Internals::setCustomPrivateRecorderCreator()
 {
     WebCore::MediaRecorder::setCustomPrivateRecorderCreator(createRecorderMockSource);
 }
-
-#endif
+#endif // ENABLE(MEDIA_STREAM)
 
 ExceptionOr<Ref<DOMRect>> Internals::absoluteCaretBounds()
 {
