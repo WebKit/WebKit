@@ -1,3 +1,11 @@
+2020-08-24  Karl Rackler  <rackler@apple.com>
+
+        rdar://67706887 (REGRESSION (r264950): [ iOS 13 WK2 ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html is a constant failure)
+
+        Unreviewed test gardening.
+
+        * platform/ios-13/TestExpectations:
+
 2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ iOS wk2 Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-fetch-error-external-module.html is a flaky failure
