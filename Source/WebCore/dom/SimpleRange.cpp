@@ -81,13 +81,22 @@ static bool isOffsetBeforeChild(ContainerNode& container, unsigned offset, Node&
 }
 
 // FIXME: Create BoundaryPoint.cpp and move this there.
+// FIXME: Once we move to C++20, replace with the C++20 <=> operator.
+// FIXME: This could return std::strong_ordering if we had that, or the equivalent.
+static PartialOrdering order(unsigned a, unsigned b)
+{
+    if (a < b)
+        return PartialOrdering::less;
+    if (a > b)
+        return PartialOrdering::greater;
+    return PartialOrdering::equivalent;
+}
+
+// FIXME: Create BoundaryPoint.cpp and move this there.
 PartialOrdering documentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
 {
-    if (a.offset == b.offset)
-        return documentOrder(a.container, b.container);
-
     if (a.container.ptr() == b.container.ptr())
-        return a.offset < b.offset ? PartialOrdering::less : PartialOrdering::greater;
+        return order(a.offset, b.offset);
 
     for (auto ancestor = b.container.ptr(); ancestor; ) {
         auto nextAncestor = ancestor->parentOrShadowHostNode();
@@ -144,8 +153,26 @@ static RefPtr<Node> nodePastLastIntersectingNode(const SimpleRange& range)
     return NodeTraversal::nextSkippingChildren(range.end.container);
 }
 
+static RefPtr<Node> firstIntersectingNodeWithDeprecatedZeroOffsetStartQuirk(const SimpleRange& range)
+{
+    if (range.start.container->isCharacterDataNode())
+        return range.start.container.ptr();
+    if (auto child = range.start.container->traverseToChildAt(range.start.offset))
+        return child;
+    if (!range.start.offset)
+        return range.start.container.ptr();
+    return NodeTraversal::nextSkippingChildren(range.start.container);
+}
+
 IntersectingNodeIterator::IntersectingNodeIterator(const SimpleRange& range)
     : m_node(firstIntersectingNode(range))
+    , m_pastLastNode(nodePastLastIntersectingNode(range))
+{
+    enforceEndInvariant();
+}
+
+IntersectingNodeIterator::IntersectingNodeIterator(const SimpleRange& range, QuirkFlag)
+    : m_node(firstIntersectingNodeWithDeprecatedZeroOffsetStartQuirk(range))
     , m_pastLastNode(nodePastLastIntersectingNode(range))
 {
     enforceEndInvariant();

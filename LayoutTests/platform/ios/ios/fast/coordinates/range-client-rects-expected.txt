@@ -1,45 +1,14 @@
 This tests Range.getBoundingClientRects and getClientRects positions when unscaled, scaled, and panned.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-PASS range.getClientRects().length is 2
+
 unscaled
-PASS clientRect.left is 0
-PASS clientRect.right is 1500
-PASS clientRect.top is 0
-PASS clientRect.bottom is 1500
-PASS clientRect.width is 1500
-PASS clientRect.height is 1500
-PASS clientRect.left is 0
-PASS clientRect.right is 1500
-PASS clientRect.top is 0
-PASS clientRect.bottom is 1500
-PASS clientRect.width is 1500
-PASS clientRect.height is 1500
-PASS clientRect.left is 100
-PASS clientRect.right is 200
-PASS clientRect.top is 100
-PASS clientRect.bottom is 200
-PASS clientRect.width is 100
-PASS clientRect.height is 100
+PASS rectString(getSelection().getRangeAt(0).getBoundingClientRect()) is "(0,0 1500x1500)"
+PASS rectStrings(getSelection().getRangeAt(0).getClientRects()) is "(100,100 100x100) (0,0 1500x1500)"
 
 scaled and panned
-PASS clientRect.left is -10
-PASS clientRect.right is 1490
-PASS clientRect.top is -10
-PASS clientRect.bottom is 1490
-PASS clientRect.width is 1500
-PASS clientRect.height is 1500
-PASS clientRect.left is -10
-PASS clientRect.right is 1490
-PASS clientRect.top is -10
-PASS clientRect.bottom is 1490
-PASS clientRect.width is 1500
-PASS clientRect.height is 1500
-PASS clientRect.left is 90
-PASS clientRect.right is 190
-PASS clientRect.top is 90
-PASS clientRect.bottom is 190
-PASS clientRect.width is 100
-PASS clientRect.height is 100
+PASS rectString(getSelection().getRangeAt(0).getBoundingClientRect()) is "(-10,-10 1500x1500)"
+PASS rectStrings(getSelection().getRangeAt(0).getClientRects()) is "(90,90 100x100) (-10,-10 1500x1500)"
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

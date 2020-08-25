@@ -1,3 +1,25 @@
+2020-08-25  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r266028): platform/ios/ios/fast/coordinates/range-client-rects.html
+        https://bugs.webkit.org/show_bug.cgi?id=215772
+
+        Reviewed by Anders Carlsson.
+
+        * platform/ios-wk2/TestExpectations: Removed failure expectation.
+
+        * platform/ios/ios/fast/coordinates/element-client-rects-expected.txt:
+        * platform/ios/ios/fast/coordinates/element-client-rects.html:
+        * platform/ios/ios/fast/coordinates/range-client-rects-expected.txt:
+        * platform/ios/ios/fast/coordinates/range-client-rects.html:
+        Changed tests so it's easier to read their results by putting rectangles and
+        rectangle lists into strings instead of comparing one value per line.
+
+        * platform/ios/ios/fast/coordinates/resources/helpers.js:
+        (rectString): Added.
+        (rectStrings): Added.
+        (setExpectedClientRectValues): Deleted.
+        (verifyClientRect): Deleted.
+
 2020-08-25  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS wk2 Debug ] http/tests/websocket/construct-in-detached-frame.html is a flaky crash

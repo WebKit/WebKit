@@ -1358,11 +1358,13 @@ ExceptionOr<void> Range::expand(const String& unit)
 
 Ref<DOMRectList> Range::getClientRects() const
 {
+    startContainer().document().updateLayout();
     return DOMRectList::create(RenderObject::clientBorderAndTextRects(makeSimpleRange(*this)));
 }
 
 Ref<DOMRect> Range::getBoundingClientRect() const
 {
+    startContainer().document().updateLayout();
     return DOMRect::create(unionRectIgnoringZeroRects(RenderObject::clientBorderAndTextRects(makeSimpleRange(*this))));
 }
 

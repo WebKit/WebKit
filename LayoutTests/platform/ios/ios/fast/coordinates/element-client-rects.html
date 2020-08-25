@@ -20,17 +20,19 @@ const panY = 10;
 
 var box = document.getElementById('box');
 
+debug('');
 debug('unscaled');
-setExpectedClientRectValues(100, 200, 100, 200, 100, 100);
-verifyClientRect(box.getBoundingClientRect());
-verifyClientRect(box.getClientRects()[0]);
+shouldBeEqualToString("rectString(document.getElementById('box').getBoundingClientRect())", "(100,100 100x100)");
+shouldBeEqualToString("rectStrings(document.getElementById('box').getClientRects())", "(100,100 100x100)");
 
 debug('');
 debug('scaled and panned');
 setInitialScaleAndPanBy(scale, panX, panY);
-setExpectedClientRectValues(100-panX, 200-panX, 100-panY, 200-panY, 100, 100);
-verifyClientRect(box.getBoundingClientRect());
-verifyClientRect(box.getClientRects()[0]);
+var rect = "(" + (100-panX) + "," + (100-panY) + " 100x100)";
+shouldBeEqualToString("rectString(document.getElementById('box').getBoundingClientRect())", rect);
+shouldBeEqualToString("rectStrings(document.getElementById('box').getClientRects())", rect);
+
+debug('');
 
 var successfullyParsed = true;
 endTest();

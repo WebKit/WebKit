@@ -68,6 +68,9 @@ bool operator==(const SimpleRange&, const SimpleRange&);
 class IntersectingNodeRange;
 IntersectingNodeRange intersectingNodes(const SimpleRange&);
 
+class IntersectingNodeRangeWithQuirk;
+IntersectingNodeRangeWithQuirk intersectingNodesWithDeprecatedZeroOffsetStartQuirk(const SimpleRange&);
+
 struct OffsetRange {
     unsigned start { 0 };
     unsigned end { 0 };
@@ -77,6 +80,9 @@ OffsetRange characterDataOffsetRange(const SimpleRange&, const Node&);
 class IntersectingNodeIterator : public std::iterator<std::forward_iterator_tag, Node> {
 public:
     IntersectingNodeIterator(const SimpleRange&);
+
+    enum QuirkFlag { DeprecatedZeroOffsetStartQuirk };
+    IntersectingNodeIterator(const SimpleRange&, QuirkFlag);
 
     Node& operator*() const { return *m_node; }
     Node* operator->() const { ASSERT(m_node); return m_node.get(); }
@@ -107,12 +113,33 @@ private:
     SimpleRange m_range;
 };
 
+class IntersectingNodeRangeWithQuirk {
+public:
+    IntersectingNodeRangeWithQuirk(const SimpleRange&);
+
+    IntersectingNodeIterator begin() const { return { m_range, IntersectingNodeIterator::DeprecatedZeroOffsetStartQuirk }; }
+    static constexpr std::nullptr_t end() { return nullptr; }
+
+private:
+    SimpleRange m_range;
+};
+
 inline IntersectingNodeRange::IntersectingNodeRange(const SimpleRange& range)
     : m_range(range)
 {
 }
 
+inline IntersectingNodeRangeWithQuirk::IntersectingNodeRangeWithQuirk(const SimpleRange& range)
+    : m_range(range)
+{
+}
+
 inline IntersectingNodeRange intersectingNodes(const SimpleRange& range)
+{
+    return { range };
+}
+
+inline IntersectingNodeRangeWithQuirk intersectingNodesWithDeprecatedZeroOffsetStartQuirk(const SimpleRange& range)
 {
     return { range };
 }

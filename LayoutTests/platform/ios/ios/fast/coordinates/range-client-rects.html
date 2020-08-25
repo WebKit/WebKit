@@ -31,24 +31,21 @@ setDisplayOnDescriptionAndConsole('none');
 // positioned absolutely inside it. The first client rect of the
 // Range is the box.
 document.execCommand("SelectAll");
-var range = window.getSelection().getRangeAt(0);
-shouldBe('range.getClientRects().length', '2');
 
+debug('');
 debug('unscaled');
-setExpectedClientRectValues(0, 1500, 0, 1500, 1500, 1500);
-verifyClientRect(range.getBoundingClientRect());
-verifyClientRect(range.getClientRects()[1]);
-setExpectedClientRectValues(100, 200, 100, 200, 100, 100);
-verifyClientRect(range.getClientRects()[0]);
+shouldBeEqualToString("rectString(getSelection().getRangeAt(0).getBoundingClientRect())", "(0,0 1500x1500)");
+shouldBeEqualToString("rectStrings(getSelection().getRangeAt(0).getClientRects())", "(100,100 100x100) (0,0 1500x1500)");
 
 debug('');
 debug('scaled and panned');
 setInitialScaleAndPanBy(scale, panX, panY);
-setExpectedClientRectValues(0-panX, 1500-panX, 0-panY, 1500-panY, 1500, 1500);
-verifyClientRect(range.getBoundingClientRect());
-verifyClientRect(range.getClientRects()[1]);
-setExpectedClientRectValues(100-panX, 200-panX, 100-panY, 200-panY, 100, 100);
-verifyClientRect(range.getClientRects()[0]);
+var firstRect = "(" + (0-panX) + "," + (0-panX) + " 1500x1500)";
+var secondRect = "(" + (100-panX) + "," + (100-panX) + " 100x100)";
+shouldBeEqualToString("rectString(getSelection().getRangeAt(0).getBoundingClientRect())", firstRect);
+shouldBeEqualToString("rectStrings(getSelection().getRangeAt(0).getClientRects())", secondRect + " " + firstRect);
+
+debug('');
 
 setDisplayOnDescriptionAndConsole('block');
 

@@ -1863,8 +1863,6 @@ webkit.org/b/215706 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scr
 
 webkit.org/b/215773 http/tests/websocket/tests/hybi/client-close-2.html [ Pass Failure ]
 
-webkit.org/b/215772 platform/ios/ios/fast/coordinates/range-client-rects.html [ Failure ]
-
 webkit.org/b/215783 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/before-prepare-iframe-fetch-error-external-module.html [ Pass Failure ]
 
 webkit.org/b/209461 imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html [ Failure ]

@@ -1980,7 +1980,7 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
     bool useVisibleBounds = behavior.contains(RenderObject::BoundingRectBehavior::UseVisibleBounds);
 
     HashSet<Element*> selectedElementsSet;
-    for (auto& node : intersectingNodes(range)) {
+    for (auto& node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {
         if (is<Element>(node))
             selectedElementsSet.add(&downcast<Element>(node));
     }
@@ -1998,7 +1998,7 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
         RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls
     };
 
-    for (auto& node : intersectingNodes(range)) {
+    for (auto& node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {
         if (is<Element>(node) && selectedElementsSet.contains(&downcast<Element>(node)) && (useVisibleBounds || !node.parentElement() || !selectedElementsSet.contains(node.parentElement()))) {
             if (auto renderer = downcast<Element>(node).renderBoxModelObject()) {
                 if (useVisibleBounds) {
@@ -2104,7 +2104,7 @@ auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> Se
     Vector<SelectionRect> newRects;
     bool hasFlippedWritingMode = range.start.container->renderer() && range.start.container->renderer()->style().isFlippedBlocksWritingMode();
     bool containsDifferentWritingModes = false;
-    for (auto& node : intersectingNodes(range)) {
+    for (auto& node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {
         auto renderer = node.renderer();
         // Only ask leaf render objects for their line box rects.
         if (renderer && !renderer->firstChildSlow() && renderer->style().userSelect() != UserSelect::None) {

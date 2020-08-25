@@ -19,25 +19,21 @@ function verifyCoordinates(o) {
 
 // To verify client rect positions.
 
-var expectedLeft, expectedRight, expectedTop, expectedBottom, expectedWidth, expectedHeight;
-function setExpectedClientRectValues(left, right, top, bottom, width, height) {
-    expectedLeft = left;
-    expectedRight = right;
-    expectedTop = top;
-    expectedBottom = bottom;
-    expectedWidth = width;
-    expectedHeight = width;
+function rectString(rect)
+{
+    return "(" + rect.x + "," + rect.y + " " + rect.width + "x" + rect.height + ")";
 }
 
-var clientRect;
-function verifyClientRect(o) {
-    clientRect = o;
-    shouldBe('clientRect.left', expectedLeft.toString());
-    shouldBe('clientRect.right', expectedRight.toString());
-    shouldBe('clientRect.top', expectedTop.toString());
-    shouldBe('clientRect.bottom', expectedBottom.toString());
-    shouldBe('clientRect.width', expectedWidth.toString());
-    shouldBe('clientRect.height', expectedHeight.toString());
+function rectStrings(rectList)
+{
+    var text = "";
+    var i;
+    for (i = 0; i < rectList.length; i++) {
+        if (i != 0)
+            text += " ";
+        text += rectString(rectList[i]);
+    }
+    return text;
 }
 
 // To verify page scroll offsets.

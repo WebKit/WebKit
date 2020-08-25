@@ -1,3 +1,35 @@
+2020-08-25  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r266028): platform/ios/ios/fast/coordinates/range-client-rects.html
+        https://bugs.webkit.org/show_bug.cgi?id=215772
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Range.cpp:
+        (WebCore::Range::getClientRects const): Call updateLayout since it's not safe
+        to start working with the render tree without updating it first. Not required
+        to fix this bug, but an obvious omission. Ideally should make a test to show
+        this is needed.
+        (WebCore::Range::getBoundingClientRect const): Ditto.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::order): Added.
+        (WebCore::documentOrder): Removed bogus special case. Test case proving this is
+        wrong is coming in the next documentOrder-related patch. Not needed to fix this
+        bug, but seems dangerous to leave this in the tree the way it was.
+        (WebCore::firstIntersectingNodeWithDeprecatedZeroOffsetStartQuirk): Added.
+        (WebCore::IntersectingNodeIterator::IntersectingNodeIterator): Added.
+
+        * dom/SimpleRange.h: Added intersectingNodesWithDeprecatedZeroOffsetStartQuirk.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::borderAndTextRects): Use intersectingNodesWithDeprecatedZeroOffsetStartQuirk
+        because this needs to get the set of nodes in a way that works for our incorrectly
+        formed selection ranges and includes the first element even when the range technically
+        starts inside that element. We need to fix those, but that's a big project that affects
+        a lot of editing code. For now, restoring the old quirk is expedient.
+        (WebCore::RenderObject::collectSelectionRectsInternal): Ditto.
+
 2020-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Update audio arbitration manager when audio transport changes
