@@ -2196,3 +2196,6 @@ webkit.org/b/189672 [ Release ] webgl/2.0.0/conformance2/textures/canvas/tex-2d-
 webkit.org/b/215786 imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.html [ Pass ]
 
 webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001.html [ Pass ]
+
+#<rdar://65571152> [ macOS Debug ] webaudio/webaudio-gc.html is a flaky crash
+[ Debug ] webaudio/webaudio-gc.html [ Pass Crash ]

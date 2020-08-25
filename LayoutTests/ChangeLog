@@ -1,3 +1,12 @@
+2020-08-25  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS Debug ] webaudio/webaudio-gc.html is a flaky crash.
+        <rdar://problem/65571152>
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fonts lie about being monospaced
