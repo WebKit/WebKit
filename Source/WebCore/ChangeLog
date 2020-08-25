@@ -1,3 +1,31 @@
+2020-08-25  Youenn Fablet  <youenn@apple.com>
+
+        Generated bindings for derived dictionaries are not regenerated when the base dictionary changes
+        https://bugs.webkit.org/show_bug.cgi?id=181714
+
+        Reviewed by Darin Adler.
+
+        Add dictionary file dependencies to SupplementalDependencies.dep.
+        We add the base dictionary IDL file as a dependency to the JS cpp file of the derived dictionary.
+        We do so if we detect that a dictionary is deriving from another and both dictionaries are in their own IDL file.
+
+        Covered by updated binding tests.
+
+        * bindings/scripts/preprocess-idls.pl:
+        (updateDictionaryDependencies):
+        * bindings/scripts/test/SupplementalDependencies.dep: Added.
+        * bindings/scripts/test/TestDerivedDictionary2.idl: Added.
+        * bindings/scripts/test/TestInheritedDictionary2.idl: Added.
+        * bindings/scripts/test/JS/JSTestDerivedDictionary2.cpp: Added.
+        (WebCore::convertDictionary<TestDerivedDictionary2>):
+        (WebCore::convertDictionaryToJS):
+        (WebCore::convertDictionary<TestDerivedDictionary2::Dictionary>):
+        * bindings/scripts/test/JS/JSTestDerivedDictionary2.h: Added.
+        * bindings/scripts/test/JS/JSTestInheritedDictionary2.cpp: Added.
+        (WebCore::convertDictionary<TestInheritedDictionary2>):
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/JS/JSTestInheritedDictionary2.h: Added.
+
 2020-08-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Fonts lie about being monospaced

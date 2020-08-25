@@ -87,6 +87,7 @@ close($fh) or die;
 my %interfaceNameToIdlFile;
 my %idlFileToInterfaceName;
 my %supplementalDependencies;
+my %dictionaryDependencies;
 my %supplementals;
 my $windowConstructorsCode = "";
 my $workerGlobalScopeConstructorsCode = "";
@@ -134,6 +135,8 @@ foreach my $idlFile (sort keys %idlFileHash) {
     }
 
     $supplementals{$fullPath} = [];
+
+    updateDictionaryDependencies($idlFileContents, $idlFile);
 
     # Skip if the IDL file does not contain an interface, a callback interface or an exception.
     # The IDL may contain a dictionary.
@@ -238,7 +241,7 @@ foreach my $idlFile (sort keys %supplementals) {
 WriteFileIfChanged($supplementalDependencyFile, $dependencies);
 
 if ($supplementalMakefileDeps) {
-    my $makefileDeps = "";
+    my $makefileDeps = "# Supplemental dependencies\n";
     foreach my $idlFile (sort keys %supplementals) {
         my $basename = $idlFileToInterfaceName{$idlFile};
 
@@ -250,6 +253,11 @@ if ($supplementalMakefileDeps) {
         foreach my $dependency (@dependencies) {
             $makefileDeps .= "${dependency}:\n";
         }
+    }
+
+    $makefileDeps .= "# Dictionaries dependencies\n";
+    foreach my $derivedDictionary (sort keys %dictionaryDependencies) {
+        $makefileDeps .= "JS${derivedDictionary}.cpp: $dictionaryDependencies{$derivedDictionary}\n";
     }
 
     WriteFileIfChanged($supplementalMakefileDeps, $makefileDeps);
@@ -445,4 +453,19 @@ sub shouldExposeInterface
     my $extendedAttributes = shift;
 
     return !$extendedAttributes->{"NoInterfaceObject"};
+}
+
+sub updateDictionaryDependencies
+{
+    my $fileContents = shift;
+    my $idlFile = shift;
+
+    my $dictionaryName = fileparse(basename($idlFile), ".idl");
+
+    my @baseDictionaries = ();
+    while ($fileContents =~ /\s*dictionary\s+(\w+)\s+:\s+(\w+)\s*/mg) {
+        next if !$interfaceNameToIdlFile{$2} || (grep { $_ eq $2 } @baseDictionaries);
+        push(@baseDictionaries, $2);
+    }
+    $dictionaryDependencies{$dictionaryName} = (join(".idl ", @baseDictionaries) . ".idl") if @baseDictionaries;
 }

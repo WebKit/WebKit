@@ -1,3 +1,19 @@
+2020-08-25  Youenn Fablet  <youenn@apple.com>
+
+        Generated bindings for derived dictionaries are not regenerated when the base dictionary changes
+        https://bugs.webkit.org/show_bug.cgi?id=181714
+
+        Reviewed by Darin Adler.
+
+        Add regression testing coverage for the generation of the makefile dependency file.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_supplemental_dependency):
+        (BindingsTests.detect_changes):
+        (BindingsTests):
+        (BindingsTests.detect_file_changes):
+        (BindingsTests.main):
+
 2020-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Fix TLSVersion.DefaultBehavior on Mojave

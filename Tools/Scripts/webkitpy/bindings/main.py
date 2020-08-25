@@ -72,7 +72,7 @@ class BindingsTests:
             exit_code = e.exit_code
         return exit_code
 
-    def generate_supplemental_dependency(self, input_directory, supplemental_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, testglobalscope_constructors_file):
+    def generate_supplemental_dependency(self, input_directory, supplemental_dependency_file, supplemental_makefile_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, testglobalscope_constructors_file):
         idl_files_list = tempfile.mkstemp()
         for input_file in os.listdir(input_directory):
             (name, extension) = os.path.splitext(input_file)
@@ -88,6 +88,7 @@ class BindingsTests:
                '--testGlobalContextName', 'TestGlobalObject',
                '--defines', '',
                '--supplementalDependencyFile', supplemental_dependency_file,
+               '--supplementalMakefileDeps', supplemental_makefile_dependency_file,
                '--windowConstructorsFile', window_constructors_file,
                '--workerGlobalScopeConstructorsFile', workerglobalscope_constructors_file,
                '--dedicatedWorkerGlobalScopeConstructorsFile', dedicatedworkerglobalscope_constructors_file,
@@ -109,29 +110,35 @@ class BindingsTests:
 
     def detect_changes(self, generator, work_directory, reference_directory):
         changes_found = False
-        for output_file in os.listdir(work_directory):
-            cmd = ['diff',
-                   '-u',
-                   '-N',
-                   os.path.join(reference_directory, output_file),
-                   os.path.join(work_directory, output_file)]
-
-            exit_code = 0
-            try:
-                output = self.executive.run_command(cmd)
-            except ScriptError as e:
-                output = e.output
-                exit_code = e.exit_code
-
-            if exit_code or output:
-                print('FAIL: (%s) %s' % (generator, output_file))
-                print(output)
+        for filename in os.listdir(work_directory):
+            if self.detect_file_changes(generator, work_directory, reference_directory, filename):
                 changes_found = True
-                if self.json_file_name:
-                    self.failures.append("(%s) %s" % (generator, output_file))
-            elif self.verbose:
-                print('PASS: (%s) %s' % (generator, output_file))
-            sys.stdout.flush()
+        return changes_found
+
+    def detect_file_changes(self, generator, work_directory, reference_directory, filename):
+        changes_found = False
+        cmd = ['diff',
+               '-u',
+               '-N',
+               os.path.join(reference_directory, filename),
+               os.path.join(work_directory, filename)]
+
+        exit_code = 0
+        try:
+            output = self.executive.run_command(cmd)
+        except ScriptError as e:
+            output = e.output
+            exit_code = e.exit_code
+
+        if exit_code or output:
+            print('FAIL: (%s) %s' % (generator, filename))
+            print(output)
+            changes_found = True
+            if self.json_file_name:
+                self.failures.append("(%s) %s" % (generator, filename))
+        elif self.verbose:
+            print('PASS: (%s) %s' % (generator, filename))
+        sys.stdout.flush()
         return changes_found
 
     def test_matches_patterns(self, test):
@@ -182,9 +189,13 @@ class BindingsTests:
 
         all_tests_passed = True
 
+        supplemental_dependency_filename = 'SupplementalDependencies.txt'
+        supplemental_makefile_dependency_filename = 'SupplementalDependencies.dep'
+
         work_directory = tempfile.mkdtemp()
         input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
-        supplemental_dependency_file = os.path.join(work_directory, 'supplemental_dependency.tmp')
+        supplemental_dependency_file = os.path.join(work_directory, supplemental_dependency_filename)
+        supplemental_makefile_dependency_file = os.path.join(work_directory if not self.reset_results else input_directory, supplemental_makefile_dependency_filename)
         window_constructors_file = os.path.join(work_directory, 'DOMWindowConstructors.idl')
         workerglobalscope_constructors_file = os.path.join(work_directory, 'WorkerGlobalScopeConstructors.idl')
         dedicatedworkerglobalscope_constructors_file = os.path.join(work_directory, 'DedicatedWorkerGlobalScopeConstructors.idl')
@@ -192,10 +203,15 @@ class BindingsTests:
         workletglobalscope_constructors_file = os.path.join(work_directory, 'WorkletGlobalScopeConstructors.idl')
         paintworkletglobalscope_constructors_file = os.path.join(work_directory, 'PaintWorkletGlobalScopeConstructors.idl')
         testglobalscope_constructors_file = os.path.join(work_directory, 'BindingTestGlobalConstructors.idl')
-        if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, testglobalscope_constructors_file):
+
+        if self.generate_supplemental_dependency(input_directory, supplemental_dependency_file, supplemental_makefile_dependency_file, window_constructors_file, workerglobalscope_constructors_file, dedicatedworkerglobalscope_constructors_file, serviceworkerglobalscope_constructors_file, workletglobalscope_constructors_file, paintworkletglobalscope_constructors_file, testglobalscope_constructors_file):
             print('Failed to generate a supplemental dependency file.')
             shutil.rmtree(work_directory)
             return -1
+
+        if not self.reset_results:
+            if self.detect_file_changes('dependencies', work_directory, input_directory, supplemental_makefile_dependency_filename):
+                all_tests_passed = False
 
         for generator in self.generators:
             input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
