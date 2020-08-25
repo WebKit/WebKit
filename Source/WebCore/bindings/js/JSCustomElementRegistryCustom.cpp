@@ -169,7 +169,8 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
     addToGlobalObjectWithPrivateName(adoptedCallback);
     addToGlobalObjectWithPrivateName(attributeChangedCallback);
 
-    registry.addElementDefinition(WTFMove(elementInterface));
+    if (auto promise = registry.addElementDefinition(WTFMove(elementInterface)))
+        promise->resolveWithJSValue(constructor);
 
     return jsUndefined();
 }
@@ -190,8 +191,8 @@ static JSValue whenDefinedPromise(JSGlobalObject& lexicalGlobalObject, CallFrame
         return jsUndefined();
     }
 
-    if (registry.findInterface(localName)) {
-        DeferredPromise::create(globalObject, promise)->resolve();
+    if (auto* elementInterface = registry.findInterface(localName)) {
+        DeferredPromise::create(globalObject, promise)->resolveWithJSValue(elementInterface->constructor());
         return &promise;
     }
 

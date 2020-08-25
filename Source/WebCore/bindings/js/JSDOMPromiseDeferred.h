@@ -70,6 +70,18 @@ public:
         resolve(*lexicalGlobalObject, toJS<IDLType>(*lexicalGlobalObject, *globalObject(), std::forward<typename IDLType::ParameterType>(value)));
     }
 
+    void resolveWithJSValue(JSC::JSValue resolution)
+    {
+        if (shouldIgnoreRequestToFulfill())
+            return;
+
+        ASSERT(deferred());
+        ASSERT(globalObject());
+        JSC::JSGlobalObject* lexicalGlobalObject = globalObject();
+        JSC::JSLockHolder locker(lexicalGlobalObject);
+        resolve(*lexicalGlobalObject, resolution);
+    }
+
     void resolve()
     {
         if (shouldIgnoreRequestToFulfill())

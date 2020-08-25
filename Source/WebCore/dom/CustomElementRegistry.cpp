@@ -66,7 +66,7 @@ static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCust
     }
 }
 
-void CustomElementRegistry::addElementDefinition(Ref<JSCustomElementInterface>&& elementInterface)
+RefPtr<DeferredPromise> CustomElementRegistry::addElementDefinition(Ref<JSCustomElementInterface>&& elementInterface)
 {
     AtomString localName = elementInterface->name().localName();
     ASSERT(!m_nameMap.contains(localName));
@@ -77,7 +77,8 @@ void CustomElementRegistry::addElementDefinition(Ref<JSCustomElementInterface>&&
         enqueueUpgradeInShadowIncludingTreeOrder(*document, elementInterface.get());
 
     if (auto promise = m_promiseMap.take(localName))
-        promise.value()->resolve();
+        return WTFMove(*promise);
+    return nullptr;
 }
 
 JSCustomElementInterface* CustomElementRegistry::findInterface(const Element& element) const

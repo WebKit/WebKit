@@ -53,7 +53,7 @@ public:
     static Ref<CustomElementRegistry> create(DOMWindow&, ScriptExecutionContext*);
     ~CustomElementRegistry();
 
-    void addElementDefinition(Ref<JSCustomElementInterface>&&);
+    RefPtr<DeferredPromise> addElementDefinition(Ref<JSCustomElementInterface>&&);
 
     bool& elementDefinitionIsRunning() { return m_elementDefinitionIsRunning; }
 

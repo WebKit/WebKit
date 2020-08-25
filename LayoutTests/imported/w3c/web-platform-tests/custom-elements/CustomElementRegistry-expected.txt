@@ -43,4 +43,6 @@ PASS customElements.whenDefined must return a rejected promise when the given na
 PASS customElements.whenDefined must return a resolved promise when the registry contains the entry with the given name 
 PASS customElements.whenDefined must return a new resolved promise each time invoked when the registry contains the entry with the given name 
 PASS A promise returned by customElements.whenDefined must be resolved by "define" 
+PASS A promise returned by customElements.whenDefined must be resolved with the defined class 
+PASS A promise returned by customElements.whenDefined must be resolved with the defined class once such class is defined 
 
