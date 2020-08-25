@@ -17,7 +17,7 @@
         function runTest()
         {
             document.getElementById("target").addEventListener("click", () => {
-                navigator.share({ title: "Example Page", url: "url", text: "text" }).then((result) => {
+                navigator.share({ title: "Example Page", url: "http://webkit.org", text: "text" }).then((result) => {
                     write("PASS: Share sheet invoked.");
                     testRunner.notifyDone();
                 });    

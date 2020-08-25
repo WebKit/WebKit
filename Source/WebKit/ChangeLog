@@ -1,3 +1,15 @@
+2020-08-25  Tim Horton  <timothy_horton@apple.com>
+
+        Web Share API can share non-HTTP(S) URLs
+        https://bugs.webkit.org/show_bug.cgi?id=215823
+        <rdar://problem/62083130>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showShareSheet):
+        Ensure that only HTTP family or data: URLs are shared.
+
 2020-08-25  Megan Gardner  <megan_gardner@apple.com>
 
         Trying to lookup when WebView is in a popover causes process to hang. Fix for Legacy WebView.

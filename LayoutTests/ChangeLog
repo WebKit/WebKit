@@ -1,3 +1,19 @@
+2020-08-25  Tim Horton  <timothy_horton@apple.com>
+
+        Web Share API can share non-HTTP(S) URLs
+        https://bugs.webkit.org/show_bug.cgi?id=215823
+        <rdar://problem/62083130>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/web-share/share-disallows-file-urls-expected.txt: Added.
+        * fast/web-share/share-disallows-file-urls.html: Added.
+        * fast/web-share/share-transient-activation-expired.html:
+        * fast/web-share/share-transient-activation.html:
+        * fast/web-share/share.html:
+        Add a test that ensures that sharing a non-HTTP-family URL fails,
+        and fix the existing tests to share HTTP-family URLs.
+
 2020-08-25  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] The layout test animations/steps-transform-rendering-updates.html is failing
