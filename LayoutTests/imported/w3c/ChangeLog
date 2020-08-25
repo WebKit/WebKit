@@ -1,5 +1,14 @@
 2020-08-24  Alex Christensen  <achristensen@webkit.org>
 
+        Update iOS layout test results after r266087
+        https://bugs.webkit.org/show_bug.cgi?id=215671
+
+        * web-platform-tests/fetch/content-encoding/bad-gzip-body.any.worker-expected.txt:
+        Apparently there's a newly passing test here, too.
+        I wonder why macOS isn't affected by this change.
+
+2020-08-24  Alex Christensen  <achristensen@webkit.org>
+
         Implement Request/Response consuming as FormData
         https://bugs.webkit.org/show_bug.cgi?id=215671
 
