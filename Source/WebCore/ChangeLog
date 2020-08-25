@@ -1,3 +1,28 @@
+2020-08-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] The initial alignment baseline is always set by the strut
+        https://bugs.webkit.org/show_bug.cgi?id=214785
+
+        Reviewed by Antti Koivisto.
+
+        Let's just use the strut ascent as the initial alignment baseline.
+
+        * layout/FormattingContext.h:
+        (WebCore::Layout::FormattingContext::root const):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::initialLineHeight const):
+        (WebCore::Layout::InlineFormattingContext::Quirks::lineHeightConstraints const): Deleted.
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::LineBox):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::root const):
+        * layout/inlineformatting/InlineLineBuilder.h:
+
 2020-08-25  Darin Adler  <darin@apple.com>
 
         REGRESSION (r266028): platform/ios/ios/fast/coordinates/range-client-rects.html

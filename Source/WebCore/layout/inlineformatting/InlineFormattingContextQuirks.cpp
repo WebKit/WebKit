@@ -28,9 +28,6 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "InlineLineBuilder.h"
-#include "LayoutState.h"
-
 namespace WebCore {
 namespace Layout {
 
@@ -71,24 +68,13 @@ bool InlineFormattingContext::Quirks::lineDescentNeedsCollapsing(const LineBuild
     return true;
 }
 
-LineBuilder::Constraints::HeightAndBaseline InlineFormattingContext::Quirks::lineHeightConstraints(const ContainerBox& formattingRoot) const
+InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight(const ContainerBox& formattingRoot) const
 {
-    // computedLineHeight takes font-size into account when line-height is not set.
-    // Strut is the imaginary box that we put on every line. It sets the initial vertical constraints for each new line.
-    InlineLayoutUnit strutHeight = formattingRoot.style().computedLineHeight();
-    auto strutBaseline = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), strutHeight).ascent;
-    if (layoutState().inNoQuirksMode())
-        return { strutHeight, strutBaseline, { } };
-
-    auto lineHeight = formattingRoot.style().lineHeight();
-    if (lineHeight.isPercentOrCalculated()) {
-        auto initialBaseline = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), 0_lu).ascent;
-        return { initialBaseline, initialBaseline, AscentAndDescent { strutBaseline, strutHeight - strutBaseline } };
-    }
-    // FIXME: The only reason why we use intValue() here is to match current inline tree (integral)behavior.
-    InlineLayoutUnit initialLineHeight = lineHeight.intValue();
-    auto initialBaseline = LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), initialLineHeight).ascent;
-    return { initialLineHeight, initialBaseline, AscentAndDescent { strutBaseline, strutHeight - strutBaseline } };
+    InlineLayoutUnit computedLineHeight = formattingRoot.style().computedLineHeight();
+    // Negative lineHeight value means the line-height is not set
+    if (layoutState().inNoQuirksMode() || !formattingRoot.style().lineHeight().isNegative())
+        return computedLineHeight;
+    return LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), computedLineHeight).height();
 }
 
 }

@@ -50,7 +50,7 @@ public:
         AscentAndDescent ascentAndDescent;
     };
 
-    LineBox(const Display::InlineRect&, const AscentAndDescent&, InlineLayoutUnit alignmentBaseline);
+    LineBox(const Display::InlineRect&, const AscentAndDescent&);
     LineBox() = default;
 
     const Display::InlineRect& logicalRect() const { return m_rect; }
@@ -125,9 +125,9 @@ private:
     InlineBox m_rootInlineBox;
 };
 
-inline LineBox::LineBox(const Display::InlineRect& rect, const AscentAndDescent& ascentAndDescent, InlineLayoutUnit alignmentBaseline)
+inline LineBox::LineBox(const Display::InlineRect& rect, const AscentAndDescent& ascentAndDescent)
     : m_rect(rect)
-    , m_alignmentBaseline(alignmentBaseline)
+    , m_alignmentBaseline(ascentAndDescent.ascent)
     , m_rootInlineBox(ascentAndDescent)
 {
 #if ASSERT_ENABLED

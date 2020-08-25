@@ -107,11 +107,11 @@ public:
         TableNeedsAccessToTableWrapper
     };
     const Display::Box& geometryForBox(const Box&, Optional<EscapeReason> = WTF::nullopt) const;
+    const ContainerBox& root() const { return *m_root; }
 
 protected:
     using LayoutQueue = Vector<const Box*>;
 
-    const ContainerBox& root() const { return *m_root; }
     LayoutState& layoutState() const;
     const FormattingState& formattingState() const { return m_formattingState; }
     FormattingState& formattingState() { return m_formattingState; }

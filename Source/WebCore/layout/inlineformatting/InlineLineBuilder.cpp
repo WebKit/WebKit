@@ -79,22 +79,16 @@ LineBuilder::~LineBuilder()
 
 void LineBuilder::initialize(const Constraints& constraints)
 {
-    ASSERT(m_isIntrinsicSizing || constraints.heightAndBaseline);
-
-    InlineLayoutUnit initialLineHeight = 0;
-    InlineLayoutUnit initialBaseline = 0;
-    if (constraints.heightAndBaseline) {
-        m_initialStrut = constraints.heightAndBaseline->strut;
-        initialLineHeight = constraints.heightAndBaseline->height;
-        initialBaseline = constraints.heightAndBaseline->baseline;
-    } else
-        m_initialStrut = { };
-
-    auto lineRect = Display::InlineRect { constraints.logicalTopLeft, 0_lu, initialLineHeight };
-    auto ascentAndDescent = AscentAndDescent { initialBaseline, initialLineHeight - initialBaseline };
-    m_lineBox = LineBox { lineRect, ascentAndDescent, initialBaseline };
     m_lineLogicalWidth = constraints.availableLogicalWidth;
     m_hasIntrusiveFloat = constraints.lineIsConstrainedByFloat;
+    auto initialLineHeight = constraints.lineHeight;
+    auto lineRect = Display::InlineRect { constraints.logicalTopLeft, 0_lu, initialLineHeight };
+    auto ascentAndDescent = LineBuilder::halfLeadingMetrics(root().style().fontMetrics(), initialLineHeight);
+    m_lineBox = LineBox { lineRect, ascentAndDescent };
+    if (!layoutState().inNoQuirksMode())
+        m_initialStrut = AscentAndDescent { ascentAndDescent.ascent, initialLineHeight - ascentAndDescent.ascent };
+    else
+        m_initialStrut = { };
 
     resetContent();
 }
@@ -725,6 +719,11 @@ LayoutState& LineBuilder::layoutState() const
 const InlineFormattingContext& LineBuilder::formattingContext() const
 {
     return m_inlineFormattingContext;
+}
+
+const ContainerBox& LineBuilder::root() const
+{
+    return formattingContext().root();
 }
 
 LineBuilder::TrimmableTrailingContent::TrimmableTrailingContent(RunList& runs)

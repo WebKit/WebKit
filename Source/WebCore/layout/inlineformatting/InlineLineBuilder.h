@@ -46,13 +46,8 @@ public:
     struct Constraints {
         InlineLayoutPoint logicalTopLeft;
         InlineLayoutUnit availableLogicalWidth { 0 };
+        InlineLayoutUnit lineHeight { 0 };
         bool lineIsConstrainedByFloat { false };
-        struct HeightAndBaseline {
-            InlineLayoutUnit height { 0 };
-            InlineLayoutUnit baseline { 0 };
-            Optional<AscentAndDescent> strut;
-        };
-        Optional<HeightAndBaseline> heightAndBaseline;
     };
 
     enum class IntrinsicSizing { No, Yes };
@@ -192,6 +187,7 @@ private:
 
     LayoutState& layoutState() const;
     const InlineFormattingContext& formattingContext() const;
+    const ContainerBox& root() const;
 
     struct TrimmableTrailingContent {
         TrimmableTrailingContent(RunList&);
