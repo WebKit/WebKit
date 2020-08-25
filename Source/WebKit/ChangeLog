@@ -1,3 +1,30 @@
+2020-08-24  Brady Eidson  <beidson@apple.com>
+
+        CrashTracer: com.apple.WebKit.WebContent at com.apple.WebKit: WebKit::PDFPlugin::createScrollbar
+        <rdar://problem/67473335> and https://bugs.webkit.org/show_bug.cgi?id=215787
+
+        Reviewed by Tim Horton.
+
+        To quote Tim from r264945:
+        No new tests; timing is such that I can't reproduce without inserting
+        intentional delays into the main thread hops, which is further than
+        I'm willing to go for a test.
+
+        This is a speculative fix due to the aforementioned reproducibility issue.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::receivedNonLinearizedPDFSentinel): Check on the main thread whenever this is called,
+          instead of when deciding to dispatch to the main thread.
+        (WebKit::PDFPlugin::threadEntry): We can't do this check on the background thread when considering the dispatch
+          to the main thread, as the flag might've changed by then. Let's *just* check it on the main thread.
+        (WebKit::PDFPlugin::adoptBackgroundThreadDocument): We can't do the check on the background thread when 
+        (WebKit::PDFPlugin::updateScrollbars): This is where the crash itself is. All of the Obj-C code in here is
+          safe to do after destroy(), up until the very end when we get into pluginView() derefencing.
+          So it seems prudent to add another check here.
+        (WebKit::PDFPlugin::documentDataDidFinishLoading): In addition to receivedNonLinearizedPDFSentinel and
+          adoptBackgroundThreadDocument, this is the final of the (3) calls that end up calling installPDFDocument,
+          so for added coverage it seems like a prudent place to add the check.
+
 2020-08-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal iOS 13.4 build
