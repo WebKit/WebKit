@@ -1,5 +1,6 @@
+//@ skip if $architecture == "mips" # Due to ICU version. MIPS maintainer can look into the results and update.
 //@ runDefault("--useIntlSegmenter=1")
-//@ skip if $architecture == "mips" # Due to ICU version. MIPS maintainer can look into the resutls and update.
+
 
 function shouldBe(actual, expected) {
     if (actual !== expected)
