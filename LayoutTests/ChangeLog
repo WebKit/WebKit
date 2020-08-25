@@ -1,3 +1,12 @@
+2020-08-25  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS wk2 Debug ] http/tests/websocket/construct-in-detached-frame.html is a flaky crash
+        <rdar://problem/61278051> 
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: corrected to skip
+
 2020-08-25  Darin Adler  <darin@apple.com>
 
         REGRESSION (r266028): platform/ios/ios/fast/coordinates/range-client-rects.html

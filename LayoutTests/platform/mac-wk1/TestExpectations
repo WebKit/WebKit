@@ -1140,6 +1140,6 @@ webkit.org/b/215767 [ Debug ] inspector/animation/nameChanged.html [ Pass Crash 
 webkit.org/b/215778 fast/overflow/horizontal-scroll-after-back.html [ Pass Timeout ]
 
 #<rdar://61278051> [ macOS wk2 Debug ] http/tests/websocket/construct-in-detached-frame.html is a flaky crash
-[ Debug ] http/tests/websocket/construct-in-detached-frame.html [ Pass Crash ]
+[ Debug ] http/tests/websocket/construct-in-detached-frame.html [ Skip ]
 
 
