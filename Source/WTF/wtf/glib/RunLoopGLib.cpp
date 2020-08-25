@@ -33,7 +33,12 @@
 
 namespace WTF {
 
-static GSourceFuncs runLoopSourceFunctions = {
+typedef struct {
+    GSource source;
+    RunLoop* runLoop;
+} RunLoopSource;
+
+GSourceFuncs RunLoop::s_runLoopSourceFunctions = {
     nullptr, // prepare
     nullptr, // check
     // dispatch
@@ -42,7 +47,11 @@ static GSourceFuncs runLoopSourceFunctions = {
         if (g_source_get_ready_time(source) == -1)
             return G_SOURCE_CONTINUE;
         g_source_set_ready_time(source, -1);
-        return callback(userData);
+        auto& runLoopSource = *reinterpret_cast<RunLoopSource*>(source);
+        runLoopSource.runLoop->notify(RunLoop::Event::WillDispatch);
+        auto returnValue = callback(userData);
+        runLoopSource.runLoop->notify(RunLoop::Event::DidDispatch);
+        return returnValue;
     },
     nullptr, // finalize
     nullptr, // closure_callback
@@ -60,7 +69,9 @@ RunLoop::RunLoop()
     ASSERT(innermostLoop);
     m_mainLoops.append(innermostLoop);
 
-    m_source = adoptGRef(g_source_new(&runLoopSourceFunctions, sizeof(GSource)));
+    m_source = adoptGRef(g_source_new(&RunLoop::s_runLoopSourceFunctions, sizeof(RunLoopSource)));
+    auto& runLoopSource = *reinterpret_cast<RunLoopSource*>(m_source.get());
+    runLoopSource.runLoop = this;
     g_source_set_priority(m_source.get(), RunLoopSourcePriority::RunLoopDispatcher);
     g_source_set_name(m_source.get(), "[WebKit] RunLoop work");
     g_source_set_can_recurse(m_source.get(), TRUE);
@@ -129,10 +140,29 @@ RunLoop::CycleResult RunLoop::cycle(RunLoopMode)
     return CycleResult::Continue;
 }
 
+void RunLoop::observe(const RunLoop::Observer& observer)
+{
+    ASSERT(!m_observers.contains(observer));
+    m_observers.add(observer);
+}
+
+void RunLoop::notify(RunLoop::Event event)
+{
+    if (m_observers.computesEmpty())
+        return;
+
+    m_observers.forEach([event](auto& observer) {
+        observer(event);
+    });
+}
+
 RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     : m_runLoop(runLoop)
-    , m_source(adoptGRef(g_source_new(&runLoopSourceFunctions, sizeof(GSource))))
+    , m_source(adoptGRef(g_source_new(&RunLoop::s_runLoopSourceFunctions, sizeof(GSource))))
 {
+    auto& runLoopSource = *reinterpret_cast<RunLoopSource*>(m_source.get());
+    runLoopSource.runLoop = m_runLoop.ptr();
+
     g_source_set_priority(m_source.get(), RunLoopSourcePriority::RunLoopTimer);
     g_source_set_name(m_source.get(), "[WebKit] RunLoop::Timer work");
     g_source_set_callback(m_source.get(), [](gpointer userData) -> gboolean {

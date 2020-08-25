@@ -1,3 +1,20 @@
+2020-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement rendering frames timeline panel for GTK+ port
+        https://bugs.webkit.org/show_bug.cgi?id=150392
+        <rdar://problem/23200510>
+
+        Reviewed by Brian Burg.
+
+        Add API to observe RunLoop events for GLib event loop implementation.
+
+        * wtf/RunLoop.h:
+        * wtf/glib/RunLoopGLib.cpp:
+        (WTF::RunLoop::RunLoop): Use RunLoopSource struct and initialize the RunLoop.
+        (WTF::RunLoop::observe): Add the given observer to the set.
+        (WTF::RunLoop::notify): Notife observers of the given event.
+        (WTF::RunLoop::TimerBase::TimerBase): Use RunLoopSource struct and initialize the RunLoop.
+
 2020-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Implement Request/Response consuming as FormData

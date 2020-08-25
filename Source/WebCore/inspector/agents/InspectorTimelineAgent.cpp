@@ -226,6 +226,21 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
     pushCurrentRecord(JSON::Object::create(), TimelineRecordType::RenderingFrame, false, nullptr);
 
     m_runLoopNestingLevel = 1;
+#elif USE(GLIB_EVENT_LOOP)
+    m_runLoopObserver = makeUnique<RunLoop::Observer>([this](RunLoop::Event event) {
+        if (!m_tracking || m_environment.scriptDebugServer().isPaused())
+            return;
+
+        switch (event) {
+        case RunLoop::Event::WillDispatch:
+            pushCurrentRecord(JSON::Object::create(), TimelineRecordType::RenderingFrame, false, nullptr);
+            break;
+        case RunLoop::Event::DidDispatch:
+            didCompleteCurrentRecord(TimelineRecordType::RenderingFrame);
+            break;
+        }
+    });
+    RunLoop::current().observe(*m_runLoopObserver);
 #endif
 
     m_frontendDispatcher->recordingStarted(timestamp());
@@ -247,11 +262,13 @@ void InspectorTimelineAgent::internalStop()
     m_frameStartObserver = nullptr;
     m_frameStopObserver = nullptr;
     m_runLoopNestingLevel = 0;
+#elif USE(GLIB_EVENT_LOOP)
+    m_runLoopObserver = nullptr;
+#endif
 
     // Complete all pending records to prevent discarding events that are currently in progress.
     while (!m_recordStack.isEmpty())
         didCompleteCurrentRecord(m_recordStack.last().type);
-#endif
 
     m_recordStack.clear();
 

@@ -39,6 +39,7 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/JSONValues.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -216,8 +217,10 @@ private:
 #if PLATFORM(COCOA)
     std::unique_ptr<WebCore::RunLoopObserver> m_frameStartObserver;
     std::unique_ptr<WebCore::RunLoopObserver> m_frameStopObserver;
-#endif
     int m_runLoopNestingLevel { 0 };
+#elif USE(GLIB_EVENT_LOOP)
+    std::unique_ptr<RunLoop::Observer> m_runLoopObserver;
+#endif
     bool m_startedComposite { false };
 };
 
