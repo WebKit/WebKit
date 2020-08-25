@@ -416,6 +416,28 @@ template <> void derefGPtr<GstStreamCollection>(GstStreamCollection* ptr)
         gst_object_unref(ptr);
 }
 
+template <>
+GRefPtr<GstClock> adoptGRef(GstClock* ptr)
+{
+    return GRefPtr<GstClock>(ptr, GRefPtrAdopt);
+}
+
+template <>
+GstClock* refGPtr<GstClock>(GstClock* ptr)
+{
+    if (ptr)
+        gst_object_ref(GST_OBJECT_CAST(ptr));
+
+    return ptr;
+}
+
+template <>
+void derefGPtr<GstClock>(GstClock* ptr)
+{
+    if (ptr)
+        gst_object_unref(ptr);
+}
+
 template <> GRefPtr<WebKitVideoSink> adoptGRef(WebKitVideoSink* ptr)
 {
     ASSERT(!ptr || !g_object_is_floating(ptr));

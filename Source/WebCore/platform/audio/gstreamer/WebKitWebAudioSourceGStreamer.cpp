@@ -349,8 +349,15 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffersAndR
         channelBufferList.uncheckedAppend(WTFMove(buffer));
     }
 
+    auto clock = adoptGRef(gst_element_get_clock(GST_ELEMENT_CAST(src)));
+    auto clockTime = gst_clock_get_time(clock.get());
+    auto outputTimestamp = AudioIOPosition {
+        Seconds::fromNanoseconds(timestamp),
+        MonotonicTime::fromRawSeconds(static_cast<double>((g_get_monotonic_time() + GST_TIME_AS_USECONDS(clockTime)) / 1000000.0))
+    };
+
     // FIXME: Add support for local/live audio input.
-    priv->provider->render(nullptr, priv->bus, priv->framesToPull, { });
+    priv->provider->render(nullptr, priv->bus, priv->framesToPull, outputTimestamp);
 
     return makeOptional(channelBufferList);
 }
