@@ -237,12 +237,21 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
     auto newObject = AXIsolatedObject::create(axObject, m_treeID, parentID);
     newObject->m_childrenIDs = axObject.childrenIDs();
 
-    {
-        LockHolder locker { m_changeLogLock };
-        // Remove the old object and set the new one to be updated on the AX thread.
-        m_pendingNodeRemovals.append(axID);
-        m_pendingAppends.append(NodeChange(newObject, axObject.wrapper()));
-    }
+    LockHolder locker { m_changeLogLock };
+    // Remove the old object and set the new one to be updated on the AX thread.
+    m_pendingNodeRemovals.append(axID);
+    m_pendingAppends.append(NodeChange(newObject, axObject.wrapper()));
+}
+
+void AXIsolatedTree::updateNodeCheckedState(const AXCoreObject& axObject)
+{
+    AXTRACE("AXIsolatedTree::updateNodeCheckedState");
+    ASSERT(isMainThread());
+
+    AXPropertyMap propertyMap;
+    propertyMap.set(AXPropertyName::IsChecked, axObject.isChecked());
+    LockHolder locker { m_changeLogLock };
+    m_pendingPropertyChanges.append({ axObject.objectID(), propertyMap });
 }
 
 void AXIsolatedTree::updateSubtree(AXCoreObject& axObject)
@@ -473,6 +482,14 @@ void AXIsolatedTree::applyPendingChanges()
             object->setChildrenIDs(WTFMove(update.second));
     }
     m_pendingChildrenUpdates.clear();
+
+    for (auto& change : m_pendingPropertyChanges) {
+        if (auto object = nodeForID(change.axID)) {
+            for (auto& property : change.properties)
+                object->setProperty(property.key, WTFMove(property.value));
+        }
+    }
+    m_pendingPropertyChanges.clear();
 }
 
 } // namespace WebCore

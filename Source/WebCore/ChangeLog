@@ -1,3 +1,46 @@
+2020-08-25  Andres Gonzalez  <andresg_22@apple.com>
+
+        Crash in WebCore::AccessibilityRenderObject::textUnderElement in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=215790
+
+        Reviewed by Darin Adler.
+
+        This crash is happening in isolated tree mode because AXIsolatedObject::initializeAttributeData
+        is caching all properties of the object on a checked state changed notification.
+        In some cases like the web page in the bug report, not all properties
+        can be computed in the notification handler. In particular AccessibilityRenderObject::textUnderElement
+        does the following checks:
+
+            // Renders referenced by accessibility objects could get destroyed, if TextIterator ends up triggering
+            // style update/layout here. See also AXObjectCache::deferTextChangedIfNeeded().
+            ASSERT_WITH_SECURITY_IMPLICATION(!nodeDocument->childNeedsStyleRecalc());
+            ASSERT_WITH_SECURITY_IMPLICATION(!nodeDocument->view()->layoutContext().isInRenderTreeLayout());
+
+        This patch addresses this problem by only updating the checked state
+        property of the isolated object, instead of all properties, in the
+        checked state change notification.
+        This is also a performance enhancement since only the property that
+        changed is re-calculated. The same approach will be used for other properties.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::updateIsolatedTree): Checked state changed notifications
+        trigger an update of the corresponding isolated object's chekced state
+        instead of the creation of a new object and re-calculation of all cached properties.
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::setProperty): Removed ASSERT since it is now
+        called in applyPendingChanges on the secondary thread.
+        * accessibility/isolatedtree/AXIsolatedObject.h: Moved the AXPropertyName
+        enumeration, the AttributeValueVariant and attribute map declarations
+        out of this header into AXIsolatedTree.h in order to be able to use them
+        in both classes.
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateNode): Removed unnecessary scope operator.
+        (WebCore::AXIsolatedTree::updateNodeCheckedState): Added.
+        (WebCore::AXIsolatedTree::applyPendingChanges): Added updating the pending
+        properties on the secondary thread.
+        * accessibility/isolatedtree/AXIsolatedTree.h: Moved to this header the declarations
+        that are now shared by AXIsolatedObject and AXIsolatedTree.
+
 2020-08-25  Youenn Fablet  <youenn@apple.com>
 
         Refresh ReadableStream.pipeTo implementation up to spec

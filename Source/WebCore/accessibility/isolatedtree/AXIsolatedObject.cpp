@@ -450,10 +450,8 @@ void AXIsolatedObject::setObjectVectorProperty(AXPropertyName propertyName, cons
     setProperty(propertyName, childIDs);
 }
 
-void AXIsolatedObject::setProperty(AXPropertyName propertyName, AttributeValueVariant&& value, bool shouldRemove)
+void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueVariant&& value, bool shouldRemove)
 {
-    ASSERT(isMainThread());
-
     if (shouldRemove)
         m_attributeMap.remove(propertyName);
     else
