@@ -1,3 +1,18 @@
+2020-08-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE][Qt] Fix qt-wpe-minibrowser on Debian10
+        https://bugs.webkit.org/show_bug.cgi?id=215730
+
+        Reviewed by Philippe Normand.
+
+        QWheelEvent position is not available on Qt < 5.14. Use posF instead in that case.
+        Tested with Qt 5.11
+
+        No new tests, is a build fix.
+
+        * UIProcess/API/wpe/qt/WPEQtViewBackend.cpp:
+        (WPEQtViewBackend::dispatchWheelEvent):
+
 2020-08-25  Jer Noble  <jer.noble@apple.com>
 
         [Mac] REGRESSION(r262322): Focusable elements are focused when exiting from video fullscreen mode.

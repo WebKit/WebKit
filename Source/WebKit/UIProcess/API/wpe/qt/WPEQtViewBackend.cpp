@@ -24,6 +24,7 @@
 #include "WPEQtView.h"
 #include <QGuiApplication>
 #include <QOpenGLFunctions>
+#include <QtGlobal>
 
 static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC imageTargetTexture2DOES;
 
@@ -297,18 +298,24 @@ void WPEQtViewBackend::dispatchMouseReleaseEvent(QMouseEvent* event)
     wpe_view_backend_dispatch_pointer_event(backend(), &wpeEvent);
 }
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#define QWHEEL_POSITION position()
+#else
+#define QWHEEL_POSITION posF()
+#endif
+
 void WPEQtViewBackend::dispatchWheelEvent(QWheelEvent* event)
 {
     QPoint delta = event->angleDelta();
     QPoint numDegrees = delta / 8;
     struct wpe_input_axis_2d_event wpeEvent;
-    if (delta.y() == event->position().y())
+    if (delta.y() == event->QWHEEL_POSITION.y())
         wpeEvent.x_axis = numDegrees.x();
     else
         wpeEvent.y_axis = numDegrees.y();
     wpeEvent.base.type = static_cast<wpe_input_axis_event_type>(wpe_input_axis_event_type_mask_2d | wpe_input_axis_event_type_motion_smooth);
-    wpeEvent.base.x = event->position().x();
-    wpeEvent.base.y = event->position().y();
+    wpeEvent.base.x = event->QWHEEL_POSITION.x();
+    wpeEvent.base.y = event->QWHEEL_POSITION.y();
     wpe_view_backend_dispatch_axis_event(backend(), &wpeEvent.base);
 }
 

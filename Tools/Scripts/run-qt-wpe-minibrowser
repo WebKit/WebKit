@@ -50,7 +50,14 @@ runInFlatpakIfAvailable(@command);
 checkFrameworks();
 
 if (!inFlatpakSandbox()) {
-    $libPath = "$productDir/lib/qml" if $productDir;
+    if ($productDir) {
+        for my $qmlsubdir ("lib/qml", "lib/qt5/qml") {
+            if (-d "$productDir/$qmlsubdir") {
+                $libPath = "$productDir/$qmlsubdir";
+                last;
+            }
+        }
+    }
     $ENV{"QML2_IMPORT_PATH"} = "$libPath" if $libPath;
 }
 

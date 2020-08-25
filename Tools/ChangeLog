@@ -1,3 +1,14 @@
+2020-08-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE][Qt] Fix qt-wpe-minibrowser on Debian10
+        https://bugs.webkit.org/show_bug.cgi?id=215730
+
+        Reviewed by Philippe Normand.
+
+        When not running in flatpak the path to the qml directory is different.
+
+        * Scripts/run-qt-wpe-minibrowser:
+
 2020-08-25  Devin Rousso  <drousso@apple.com>
 
         REGRESSION(r265601): invalid blame URL copied when `include_revision` is `false`
