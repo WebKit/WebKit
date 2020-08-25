@@ -1,3 +1,55 @@
+2020-08-24  Keith Miller  <keith_miller@apple.com>
+
+        Update test262 (mid Aug 2020 edition)
+        https://bugs.webkit.org/show_bug.cgi?id=215784
+
+        Rubber-stamped by Saam Barati and Yusuke Suzuki.
+
+        * test262/expectations.yaml:
+        * test262/latest-changes-summary.txt:
+        * test262/test/built-ins/String/prototype/split/limit-touint32-error.js: Added.
+        (ExpectedError):
+        (ExpectedError.prototype.toString):
+        (nonStringableSeparator.Symbol.toPrimitive):
+        (nonStringableSeparator.toString):
+        (nonStringableSeparator.valueOf):
+        (nonNumberableLimit.Symbol.toPrimitive):
+        * test262/test/built-ins/String/prototype/split/separator-tostring-error.js: Added.
+        (ExpectedError):
+        (ExpectedError.prototype.toString):
+        (nonStringableSeparator.toString):
+        * test262/test/built-ins/String/prototype/split/separator-undef-limit-zero.js:
+        * test262/test/built-ins/String/prototype/split/this-value-tostring-error.js: Added.
+        (ExpectedError):
+        (ExpectedError.prototype.toString):
+        (nonStringableReceiver.toString):
+        (splitter.Symbol.split):
+        (catch):
+        (nonStringableSeparator.Symbol.toPrimitive):
+        (nonStringableSeparator.toString):
+        (nonStringableSeparator.valueOf):
+        * test262/test/language/module-code/export-default-asyncfunction-declaration-binding-exists.js: Added.
+        (A):
+        (export.default.async A):
+        * test262/test/language/module-code/export-default-asyncfunction-declaration-binding.js: Added.
+        (export.default.async A):
+        * test262/test/language/module-code/export-default-asyncgenerator-declaration-binding-exists.js: Added.
+        (AG):
+        (export.default.async AG):
+        * test262/test/language/module-code/export-default-asyncgenerator-declaration-binding.js: Added.
+        (export.default.async AG):
+        * test262/test/language/module-code/export-default-function-declaration-binding-exists.js: Added.
+        (F):
+        (export.default.F):
+        * test262/test/language/module-code/export-default-function-declaration-binding.js: Added.
+        (export.default.F):
+        * test262/test/language/module-code/export-default-generator-declaration-binding-exists.js: Added.
+        (G):
+        (export.default.G):
+        * test262/test/language/module-code/export-default-generator-declaration-binding.js: Added.
+        (export.default.G):
+        * test262/test262-Revision.txt:
+
 2020-08-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, ignore RangeErrors when ICU is too old

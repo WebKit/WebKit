@@ -17,7 +17,7 @@ info: |
   1. Let number be ? ToNumber(argument).
   2. If number is NaN, +0, -0, +∞, or -∞, return +0.
   3. Let int be the Number value that is the same sign as number and whose magnitude is floor(abs(number)).
-  4. Let int32bit be int modulo 232.
+  4. Let int32bit be int modulo 2**32.
   5. Return int32bit.
 ---*/
 

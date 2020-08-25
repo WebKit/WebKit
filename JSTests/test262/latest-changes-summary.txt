@@ -39,6 +39,10 @@ A test/built-ins/Function/prototype/length.js
 M test/built-ins/Function/prototype/toString/built-in-function-object.js
 D test/built-ins/Function/prototype/toString/well-known-intrinsic-object-functions.js
 A test/built-ins/GeneratorFunction/prototype/not-callable.js
+A test/built-ins/String/prototype/split/limit-touint32-error.js
+A test/built-ins/String/prototype/split/separator-tostring-error.js
+M test/built-ins/String/prototype/split/separator-undef-limit-zero.js
+A test/built-ins/String/prototype/split/this-value-tostring-error.js
 M test/harness/nativeFunctionMatcher.js
 M test/intl402/Intl/builtin.js
 D test/intl402/Intl/proto.js
@@ -165,6 +169,14 @@ A test/language/identifiers/part-zwj-zwnj-escaped.js
 A test/language/identifiers/start-zwj-escaped.js
 A test/language/identifiers/start-zwnj-escaped.js
 A test/language/literals/string/legacy-non-octal-escape-sequence-9-strict.js
+A test/language/module-code/export-default-asyncfunction-declaration-binding-exists.js
+A test/language/module-code/export-default-asyncfunction-declaration-binding.js
+A test/language/module-code/export-default-asyncgenerator-declaration-binding-exists.js
+A test/language/module-code/export-default-asyncgenerator-declaration-binding.js
+A test/language/module-code/export-default-function-declaration-binding-exists.js
+A test/language/module-code/export-default-function-declaration-binding.js
+A test/language/module-code/export-default-generator-declaration-binding-exists.js
+A test/language/module-code/export-default-generator-declaration-binding.js
 A test/language/statements/async-generator/dstr/ary-init-iter-get-err-array-prototype.js
 A test/language/statements/async-generator/dstr/ary-ptrn-elem-id-iter-val-array-prototype.js
 A test/language/statements/async-generator/dstr/ary-ptrn-rest-id-direct.js

@@ -2882,6 +2882,8 @@ test/language/module-code/eval-rqstd-order.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/eval-self-once.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
+test/language/module-code/export-default-asyncgenerator-declaration-binding.js:
+  module: "SyntaxError: Exported binding 'starDefault' needs to refer to a top-level declared variable."
 test/language/module-code/export-star-as-dflt.js:
   module: "SyntaxError: Unexpected identifier 'as'. Expected 'from' before exported module name."
 test/language/module-code/instn-once.js:
