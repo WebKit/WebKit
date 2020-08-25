@@ -1,3 +1,24 @@
+2020-08-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Assert failure under RunLoop::RunLoop
+        https://bugs.webkit.org/show_bug.cgi?id=215812
+
+        Reviewed by Brent Fulgham.
+
+        The assert 'ASSERT(::IsWindow(m_runLoopMessageWindow))' under RunLoop::RunLoop will fail if the JSC API JSGlobalContextCreate*()
+        is being called by a client before WTF::initializeMainThread() has been called. The assertion fails because the method
+        RunLoop::registerRunLoopMessageWindowClass() has not been called yet, since it is only called when initializing the main thread.
+        This patch addresses this issue by making sure the window class has been registered before being referenced in RunLoop::RunLoopl
+        The method call is also removed from the main thread initialization, since the window class is only used in RunLoop::RunLoop,
+        making it sufficient to only be registered there. Also change the debug assert to a release assert, so we can catch similar
+        issues in release builds.
+
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform):
+        * wtf/win/RunLoopWin.cpp:
+        (WTF::RunLoop::registerRunLoopMessageWindowClass):
+        (WTF::RunLoop::RunLoop):
+
 2020-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement rendering frames timeline panel for GTK+ port
