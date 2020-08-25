@@ -33,6 +33,7 @@
 #include "ApplicationCacheHost.h"
 #include "Archive.h"
 #include "ArchiveResourceCollection.h"
+#include "CSSFontSelector.h"
 #include "CachedPage.h"
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
@@ -312,6 +313,9 @@ void DocumentLoader::stopLoading()
 
     // Always cancel multipart loaders
     cancelAll(m_multipartSubresourceLoaders);
+
+    if (auto* document = m_frame->document())
+        document->fontSelector().suspendFontLoadingTimer();
 
     // Appcache uses ResourceHandle directly, DocumentLoader doesn't count these loads.
     m_applicationCacheHost->stopLoadingInFrame(*m_frame);

@@ -1,3 +1,23 @@
+2020-08-25  Brady Eidson  <beidson@apple.com>
+
+        Font loads quickly followed by navigations may fail indefinitely
+        <rdar://problem/65560550> and https://bugs.webkit.org/show_bug.cgi?id=215435
+
+        Reviewed by Myles C. Maxfield.
+
+        1) The page has some content that has “font-family: WebFont” but there are no @font-face blocks on the page
+        2) In script, after the page has loaded, add an @font-face rule to the page with “font-family: WebFont” and some valid font URL
+        3) Synchronously, within the same turn of the run loop, trigger a synchronous layout of the element (using offsetWidth or something). This will add the font to the 0-delay time work list.
+        4) Synchronously, within the same turn of the run loop, navigate to a second page that doesn’t use the web font. 
+        5) The second page waits some small-but-positive amount of time. This will cause the 0-delay timer to fire, but because the page is in the middle of navigating, the font load should fail.
+        6) The second page adds the same @font-face rule to itself using script. This should pull the same (failed) CachedResource object out of the memory cache.
+        7) Use the CSS Font Loading API to wait for the font load to complete
+        8) Make sure that the font is used on the second page (as a reference test). Today, the second page’s font load will fail because it pulled the failed font out of the memory cache. The test makes sure the second page’s font load succeeds.
+
+        * fast/loader/font-load-timer-expected.html: Added.
+        * fast/loader/font-load-timer.html: Added.
+        * fast/loader/resources/font-load-timer-navigation-destination.html: Added.
+
 2020-08-25  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS Mojave wk1 ] fast/layers/hidpi-transform-on-child-content-is-mispositioned.html is a flaky failure

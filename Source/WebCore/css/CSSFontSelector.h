@@ -25,12 +25,13 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "CSSFontFace.h"
 #include "CSSFontFaceSet.h"
 #include "CachedResourceHandle.h"
 #include "Font.h"
 #include "FontSelector.h"
-#include "SuspendableTimer.h"
+#include "Timer.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -47,7 +48,7 @@ class CachedFont;
 class Document;
 class StyleRuleFontFace;
 
-class CSSFontSelector final : public FontSelector, public CSSFontFaceSetClient, public CanMakeWeakPtr<CSSFontSelector> {
+class CSSFontSelector final : public FontSelector, public CSSFontFaceSetClient, public CanMakeWeakPtr<CSSFontSelector>, public ActiveDOMObject {
 public:
     static Ref<CSSFontSelector> create(Document& document)
     {
@@ -80,6 +81,7 @@ public:
     Document* document() const { return m_document.get(); }
 
     void beginLoadingFontSoon(CachedFont&);
+    void suspendFontLoadingTimer();
 
     FontFaceSet* fontFaceSetIfExists();
     FontFaceSet& fontFaceSet();
@@ -96,7 +98,13 @@ private:
 
     void fontModified() final;
 
-    void beginLoadTimerFired();
+    void fontLoadingTimerFired();
+
+    // ActiveDOMObject
+    void stop() final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
+    const char* activeDOMObjectName() const final { return "CSSFontSelector"_s; }
 
     struct PendingFontFaceRule {
         StyleRuleFontFace& styleRuleFontFace;
@@ -112,7 +120,9 @@ private:
     Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;
     HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
     HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;
-    SuspendableTimer m_beginLoadingTimer;
+
+    Timer m_fontLoadingTimer;
+    bool m_fontLoadingTimerIsSuspended { false };
 
     unsigned m_uniqueId;
     unsigned m_version;

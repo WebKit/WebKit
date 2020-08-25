@@ -1,3 +1,68 @@
+2020-08-25  Brady Eidson  <beidson@apple.com>
+
+        Font loads quickly followed by navigations may fail indefinitely
+        <rdar://problem/65560550> and https://bugs.webkit.org/show_bug.cgi?id=215435
+
+        Reviewed by Myles C. Maxfield.
+
+        Second take at this.
+        
+        Myles took the first swipe at this, but a conflict with SuspendableTimer caused issues
+        in the form of layout test asserts with
+        http/tests/security/navigate-when-restoring-cached-page.html 
+        
+        His original ChangeLog entry:
+        
+        Font loads are coalesced using a zero-delay timer. However, that zero-delay timer
+        can fire while the page is in the middle of a navigation, which will cause the font
+        loads to fail. Then, the second page can request those same fonts, which are marked
+        as failed, and as such will never actually load/use the desired web font.
+
+        This patch just stops the zero-delay timer during navigations, and resumes it
+        when resuming the document. This means:
+
+        1. The second page in the above story will not see that the font has failed, or
+        even started, and will then re-request the font and load it successfully
+        2. If the user goes "back" to the previous page, the zero-delay timer is restarted,
+        the CachedFont realizes it's already succeeded, and the previous page is rendered
+        as expected.
+        
+        Test: fast/loader/font-load-timer.html
+
+        ---
+        
+        Now the explanation of the failure it caused:
+        The font loading timer was a SuspendableTimer, which is an ActiveDOMObject.
+        
+        An ActiveDOMObject was used to make sure the delayed font loads play well with the 
+        page cache, which is still necessary.
+        
+        But we also still need to suspend the timer manually when "stopLoading()" is called,
+        which doesn't play well with ActiveDOMObject's automatic suspend/resume.
+        
+        My solution:
+        - Make the timer "just a normal timer"
+        - Make CSSFontSelector itself the ActiveDOMObject
+        - Let DocumentLoader explicitly pause the font load timer
+        - Rely on ActiveDOMObject to resume the timer
+        
+        These keep the bug fixed and resolve the layout test ASSERT seen with
+        http/tests/security/navigate-when-restoring-cached-page.html 
+        
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::clearDocument):
+        (WebCore::CSSFontSelector::beginLoadingFontSoon):
+        (WebCore::CSSFontSelector::suspendFontLoadingTimer):
+        (WebCore::CSSFontSelector::fontLoadingTimerFired):
+        (WebCore::CSSFontSelector::stop):
+        (WebCore::CSSFontSelector::suspend):
+        (WebCore::CSSFontSelector::resume):
+        (WebCore::CSSFontSelector::beginLoadTimerFired): Deleted.
+        * css/CSSFontSelector.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading):
+
 2020-08-25  Peng Liu  <peng.liu6@apple.com>
 
         When using airplay with Youtube, the Youtube tab becomes completely empty and is unresponsive for an extended period of time if we switch the tab
