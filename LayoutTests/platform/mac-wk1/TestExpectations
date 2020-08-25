@@ -1142,4 +1142,5 @@ webkit.org/b/215778 fast/overflow/horizontal-scroll-after-back.html [ Pass Timeo
 #<rdar://61278051> [ macOS wk2 Debug ] http/tests/websocket/construct-in-detached-frame.html is a flaky crash
 [ Debug ] http/tests/websocket/construct-in-detached-frame.html [ Skip ]
 
+webkit.org/b/215819 [ Mojave ] fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Pass Failure ]
 
