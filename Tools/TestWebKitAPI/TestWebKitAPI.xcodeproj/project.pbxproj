@@ -1008,6 +1008,7 @@
 		CDA3159D1ED5643F009F60D3 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CDA3159C1ED5643F009F60D3 /* IOKit.framework */; };
 		CDA4438E21F7A47700379489 /* ProcessSuspendMediaBuffering.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA4438D21F7A47700379489 /* ProcessSuspendMediaBuffering.mm */; };
 		CDA93DAD22F4F11E00490A69 /* FullscreenTouchSecheuristicTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA93DAC22F4EC2200490A69 /* FullscreenTouchSecheuristicTests.cpp */; };
+		CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDB213BC24EF522800FDE301 /* FullscreenFocus.mm */; };
 		CDB4115A1E0B00DB00EAD352 /* video-with-muted-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CDB411591E09DA8E00EAD352 /* video-with-muted-audio.html */; };
 		CDB5DFFF213610FA00D3E189 /* now-playing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CDB5DFFE21360ED800D3E189 /* now-playing.html */; };
 		CDBFCC451A9FF45300A7B691 /* FullscreenZoomInitialFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDBFCC431A9FF44800A7B691 /* FullscreenZoomInitialFrame.mm */; };
@@ -2696,6 +2697,7 @@
 		CDA3159C1ED5643F009F60D3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		CDA4438D21F7A47700379489 /* ProcessSuspendMediaBuffering.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessSuspendMediaBuffering.mm; sourceTree = "<group>"; };
 		CDA93DAC22F4EC2200490A69 /* FullscreenTouchSecheuristicTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FullscreenTouchSecheuristicTests.cpp; sourceTree = "<group>"; };
+		CDB213BC24EF522800FDE301 /* FullscreenFocus.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FullscreenFocus.mm; sourceTree = "<group>"; };
 		CDB411591E09DA8E00EAD352 /* video-with-muted-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "video-with-muted-audio.html"; sourceTree = "<group>"; };
 		CDB5DFFE21360ED800D3E189 /* now-playing.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "now-playing.html"; sourceTree = "<group>"; };
 		CDBFCC421A9FF44800A7B691 /* FullscreenZoomInitialFrame.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenZoomInitialFrame.html; sourceTree = "<group>"; };
@@ -4401,6 +4403,7 @@
 				F456AB1B213EDBA300CB2CEF /* FontManagerTests.mm */,
 				1A7E8B33181208DE00AEB74A /* FragmentNavigation.mm */,
 				CDBFCC431A9FF44800A7B691 /* FullscreenZoomInitialFrame.mm */,
+				CDB213BC24EF522800FDE301 /* FullscreenFocus.mm */,
 				51EB125824C68589000CB030 /* HIDGamepads.mm */,
 				9B4F8FA3159D52B1002D9F94 /* HTMLCollectionNamedItem.mm */,
 				9B26FC6B159D061000CC3765 /* HTMLFormCollectionNamedItem.mm */,
@@ -5051,6 +5054,7 @@
 				46A911592108E6780078D40D /* CustomUserAgent.mm in Sources */,
 				751B05D61F8EAC410028A09E /* DatabaseTrackerTest.mm in Sources */,
 				2DC4CF771D2D9DD800ECCC94 /* DataDetection.mm in Sources */,
+				CDB213BD24EF522800FDE301 /* FullscreenFocus.mm in Sources */,
 				44077BB123144B5000179E2D /* DataDetectorsTestIOS.mm in Sources */,
 				9BAD7F3E22690F2000F8DA66 /* DeallocWebViewInEventListener.mm in Sources */,
 				518EE51D20A78D3600E024F3 /* DecidePolicyForNavigationAction.mm in Sources */,

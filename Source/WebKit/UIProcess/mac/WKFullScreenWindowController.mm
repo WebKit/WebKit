@@ -344,9 +344,9 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     NSWindow* window = self.window;
     NSWindowCollectionBehavior behavior = [window collectionBehavior];
     [window setCollectionBehavior:(behavior | NSWindowCollectionBehaviorCanJoinAllSpaces)];
+    [window makeFirstResponder:_webView];
     [window makeKeyAndOrderFront:self];
     [window setCollectionBehavior:behavior];
-    [window makeFirstResponder:_webView];
 
     _page->setSuppressVisibilityUpdates(false);
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

@@ -1,3 +1,17 @@
+2020-08-25  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] REGRESSION(r262322): Focusable elements are focused when exiting from video fullscreen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=215660
+        <rdar://problem/65263150>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/FullscreenFocus.mm: Added.
+        (-[FullscreenFocusUIDelegate _webViewDidEnterFullscreen:]):
+        (-[FullscreenFocusUIDelegate _webViewDidExitFullscreen:]):
+        (TestWebKitAPI::TEST):
+
 2020-08-25  Youenn Fablet  <youenn@apple.com>
 
         Refresh ReadableStream.pipeTo implementation up to spec

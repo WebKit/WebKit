@@ -1,3 +1,21 @@
+2020-08-25  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] REGRESSION(r262322): Focusable elements are focused when exiting from video fullscreen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=215660
+        <rdar://problem/65263150>
+
+        Reviewed by Darin Adler.
+
+        API Test: Fullscreen.Focus.
+
+        The default behavior of NSWindow is to change its -keyViewSelectionDirection to NSSelectingNext when activating
+        and changing the firstResponder. This causes WKWebView to change it's focus in response to becoming first responder.
+        The cheap fix is to ensure WKWebView is already the firstResponder when the window is activated. Then NSWindow won't
+        try to change the firstResponder in response to activation.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+
 2020-08-25  Alex Christensen  <achristensen@webkit.org>
 
         Clean up deprecated and unused SPI to set HSTS storage on ProcessPoolConfiguration
