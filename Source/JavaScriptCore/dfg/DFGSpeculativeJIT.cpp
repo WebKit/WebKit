@@ -1901,7 +1901,7 @@ void SpeculativeJIT::noticeOSRBirth(Node* node)
 
 void SpeculativeJIT::compileMovHint(Node* node)
 {
-    ASSERT(node->containsMovHint() && node->op() != ZombieHint);
+    ASSERT(node->containsMovHint());
     
     Node* child = node->child1().node();
     noticeOSRBirth(child);

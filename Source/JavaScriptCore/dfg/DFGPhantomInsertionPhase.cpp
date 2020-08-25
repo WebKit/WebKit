@@ -105,10 +105,6 @@ private:
                 m_values.operand(node->unlinkedOperand()) = node->child1().node();
                 break;
                 
-            case ZombieHint:
-                m_values.operand(node->unlinkedOperand()) = nullptr;
-                break;
-
             case GetLocal:
             case SetArgumentDefinitely:
             case SetArgumentMaybe:

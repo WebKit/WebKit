@@ -383,7 +383,6 @@ dfg/DFGLoopPreHeaderCreationPhase.cpp
 dfg/DFGMayExit.cpp
 dfg/DFGMinifiedGraph.cpp
 dfg/DFGMinifiedNode.cpp
-dfg/DFGMovHintRemovalPhase.cpp
 dfg/DFGMultiGetByOffsetData.cpp
 dfg/DFGNode.cpp
 dfg/DFGNodeAbstractValuePair.cpp

@@ -267,11 +267,6 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
         break;
     }
 
-    case ZombieHint: {
-        m_availability.m_locals.operand(node->unlinkedOperand()).setNodeUnavailable();
-        break;
-    }
-
     case InitializeEntrypointArguments: {
         unsigned entrypointIndex = node->entrypointIndex();
         const Vector<FlushFormat>& argumentFormats = m_graph.m_argumentFormats[entrypointIndex];

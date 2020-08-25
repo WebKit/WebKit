@@ -1,3 +1,61 @@
+2020-08-24  Keith Miller  <keith_miller@apple.com>
+
+        Remove MovHintRemoval phase
+        https://bugs.webkit.org/show_bug.cgi?id=215785
+
+        Reviewed by Saam Barati.
+
+        The MovHintRemoval phase doesn't play nicely with our OSR
+        Availability. Specifically, it needs to do a tricky dance where it
+        marks all the live ranges of the ZombieHints as not
+        exitOK. There's also an issue because we treated unused locals as
+        kill in this block, which is wrong for SSA when a MovHint is
+        used in another block. Since removing MovHintRemoval isn't a
+        performance regression, we are removing it rather than fixing bugs
+        related to it. Relatedly, since the only place we produce
+        ZombieHints is MovHintRemoval this patch also removes that node
+        type.
+
+        * Sources.txt:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGMovHintRemovalPhase.cpp: Removed.
+        * dfg/DFGMovHintRemovalPhase.h: Removed.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::containsMovHint):
+        (JSC::DFG::Node::hasUnlinkedOperand):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGPhantomInsertionPhase.cpp:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * runtime/OptionsList.h:
+
 2020-08-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: rename `ScriptDebugServer` subclasses/methods

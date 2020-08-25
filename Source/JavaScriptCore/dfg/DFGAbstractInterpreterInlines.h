@@ -4334,7 +4334,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case SuperSamplerEnd:
     case CheckTierUpAndOSREnter:
     case LoopHint:
-    case ZombieHint:
     case ExitOK:
     case FilterCallLinkStatus:
     case FilterGetByStatus:

@@ -70,7 +70,6 @@ bool doesGC(Graph& graph, Node* node)
     case SetLocal:
     case MovHint:
     case InitializeEntrypointArguments:
-    case ZombieHint:
     case ExitOK:
     case Phantom:
     case Upsilon:

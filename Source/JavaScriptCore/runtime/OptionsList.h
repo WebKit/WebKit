@@ -240,7 +240,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Unsigned, frequentCallThreshold, 2, Normal, nullptr) \
     v(Double, minimumCallToKnownRate, 0.51, Normal, nullptr) \
     v(Bool, createPreHeaders, true, Normal, nullptr) \
-    v(Bool, useMovHintRemoval, true, Normal, nullptr) \
     v(Bool, usePutStackSinking, true, Normal, nullptr) \
     v(Bool, useObjectAllocationSinking, true, Normal, nullptr) \
     v(Bool, useValueRepElimination, true, Normal, nullptr) \

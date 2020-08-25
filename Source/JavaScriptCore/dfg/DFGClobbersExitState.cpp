@@ -41,7 +41,6 @@ bool clobbersExitState(Graph& graph, Node* node)
     switch (node->op()) {
     case InitializeEntrypointArguments:
     case MovHint:
-    case ZombieHint:
     case PutHint:
     case KillStack:
         return true;
