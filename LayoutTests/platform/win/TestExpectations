@@ -4549,3 +4549,5 @@ webkit.org/b/215636  fast/text/emoji-gender-fe0f-7.html [ ImageOnlyFailure ]
 webkit.org/b/215636  fast/text/emoji-gender-fe0f-8.html [ ImageOnlyFailure ]
 webkit.org/b/215636  fast/text/emoji-gender-fe0f-9.html [ ImageOnlyFailure ]
 webkit.org/b/215636  fast/text/emoji-gender.html [ ImageOnlyFailure ]
+
+webkit.org/b/215827 animations/steps-transform-rendering-updates.html [ Failure ]
