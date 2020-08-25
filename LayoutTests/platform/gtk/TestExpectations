@@ -1189,6 +1189,9 @@ webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.h
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-border-image.html [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.tentative.html [ ImageOnlyFailure ]
 
+webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.html [ ImageOnlyFailure ]
+webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-025.html [ ImageOnlyFailure ]
+webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.

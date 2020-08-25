@@ -1,3 +1,10 @@
+2020-08-24  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Reintroduce several WPT css-content failing tests removed in r266094.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2020-08-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS Big Sur] svg/W3C-I18N/tspan-direction-rtl.svg is failing
