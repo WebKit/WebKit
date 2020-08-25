@@ -51,6 +51,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeErrorArgumentsCalleeAndCaller(JS
 EncodedJSValue JSC_HOST_CALL globalFuncMakeTypeError(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(JSGlobalObject*, CallFrame*);
+EncodedJSValue JSC_HOST_CALL globalFuncSetPrototypeDirect(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL globalFuncHostPromiseRejectionTracker(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL globalFuncBuiltinLog(JSGlobalObject*, CallFrame*);
 EncodedJSValue JSC_HOST_CALL globalFuncBuiltinDescribe(JSGlobalObject*, CallFrame*);

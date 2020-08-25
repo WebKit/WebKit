@@ -812,6 +812,7 @@ namespace JSC {
         RegisterID* emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* property);
         RegisterID* emitGetByVal(RegisterID* dst, RegisterID* base, RegisterID* thisValue, RegisterID* property);
         RegisterID* emitGetPrototypeOf(RegisterID* dst, RegisterID* value);
+        RegisterID* emitDirectSetPrototypeOf(RegisterID* dst, RegisterID* base, RegisterID* prototype, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value);
         RegisterID* emitPutByVal(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value);
         RegisterID* emitDirectGetByVal(RegisterID* dst, RegisterID* base, RegisterID* property);

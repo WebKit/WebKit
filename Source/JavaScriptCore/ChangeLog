@@ -1,3 +1,38 @@
+2020-08-25  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Implementation of the class "extends" clause incorrectly uses __proto__ for setting prototypes
+        https://bugs.webkit.org/show_bug.cgi?id=205848
+
+        Reviewed by Keith Miller.
+
+        To prevent `class extends` from breaking if Object.prototype.__proto__ is overridden
+        or removed, this patch replaces OpPutById bytecodes in ClassExprNode::emitBytecode()
+        with JSObject::setPrototypeDirect() invocations via OpCall.
+
+        Since the spec sets [[Prototype]] values directly [1], we are safe to skip method
+        table lookups and cycle checks.
+
+        Although this approach adds 4 `mov` ops to emitted bytecode for `class extends` creation,
+        increasing instruction count to 35, I prefer it over introducing a slow path only op.
+        To avoid emitting 2 extra `mov` ops, globalFuncSetPrototypeDirect() uses thisRegister().
+
+        Aligns JSC with V8 and SpiderMonkey. Derived class creation microbenchmark is neutral.
+
+        [1]: https://tc39.es/ecma262/#sec-createbuiltinfunction (step 7)
+
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpConstants): Fix typo.
+        * bytecode/LinkTimeConstant.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitSetPrototypeOf):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/Nodes.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+
 2020-08-24  Keith Miller  <keith_miller@apple.com>
 
         DFG should always run CFG Simplification after Constant Folding.

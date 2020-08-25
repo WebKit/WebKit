@@ -2692,6 +2692,18 @@ RegisterID* BytecodeGenerator::emitGetPrototypeOf(RegisterID* dst, RegisterID* v
     return dst;
 }
 
+RegisterID* BytecodeGenerator::emitDirectSetPrototypeOf(RegisterID* dst, RegisterID* base, RegisterID* prototype, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+{
+    RefPtr<RegisterID> setPrototypeDirect = moveLinkTimeConstant(nullptr, LinkTimeConstant::setPrototypeDirect);
+
+    CallArguments args(*this, nullptr, 1);
+    move(args.thisRegister(), base);
+    move(args.argumentRegister(0), prototype);
+
+    emitCall(newTemporary(), setPrototypeDirect.get(), NoExpectedFunction, args, divot, divotStart, divotEnd, DebuggableCall::No);
+    return dst;
+}
+
 RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
     OpPutByVal::emit(this, base, property, value, ecmaMode());

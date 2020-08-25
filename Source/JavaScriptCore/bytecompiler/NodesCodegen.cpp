@@ -4908,9 +4908,9 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         generator.emitThrowTypeError("The value of the superclass's prototype property is not an object or null."_s);
         generator.emitLabel(protoParentIsObjectOrNullLabel.get());
 
-        generator.emitDirectPutById(constructor.get(), generator.propertyNames().underscoreProto, superclass.get(), PropertyNode::Unknown);
+        generator.emitDirectSetPrototypeOf(tempRegister.get(), constructor.get(), superclass.get(), divot(), divotStart(), divotEnd());
         generator.emitLabel(superclassIsNullLabel.get());
-        generator.emitDirectPutById(prototype.get(), generator.propertyNames().underscoreProto, protoParent.get(), PropertyNode::Unknown);
+        generator.emitDirectSetPrototypeOf(tempRegister.get(), prototype.get(), protoParent.get(), divot(), divotStart(), divotEnd());
     }
 
     if (needsHomeObject)

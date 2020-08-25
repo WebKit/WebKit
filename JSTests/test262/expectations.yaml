@@ -2155,9 +2155,6 @@ test/language/expressions/class/ident-name-method-def-while-escaped.js:
 test/language/expressions/class/ident-name-method-def-with-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
-test/language/expressions/class/poisoned-underscore-proto.js:
-  default: 'Test262Error: should not be called'
-  strict mode: 'Test262Error: should not be called'
 test/language/expressions/compound-assignment/S11.13.2_A5.10_T1.js:
   default: "ReferenceError: Can't find variable: x"
 test/language/expressions/compound-assignment/S11.13.2_A5.10_T2.js:
@@ -3049,9 +3046,6 @@ test/language/statements/class/ident-name-method-def-while-escaped.js:
 test/language/statements/class/ident-name-method-def-with-escaped.js:
   default: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
   strict mode: "SyntaxError: Unexpected escaped characters in keyword token: 'w\\u0069th'"
-test/language/statements/class/poisoned-underscore-proto.js:
-  default: 'Test262Error: should not be called'
-  strict mode: 'Test262Error: should not be called'
 test/language/statements/class/subclass/builtin-objects/ArrayBuffer/regular-subclassing.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'

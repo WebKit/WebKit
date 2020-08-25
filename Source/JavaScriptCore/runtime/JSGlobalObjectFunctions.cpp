@@ -730,6 +730,19 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(JSGlobalObject* globalObject,
     return JSValue::encode(jsUndefined());
 }
 
+EncodedJSValue JSC_HOST_CALL globalFuncSetPrototypeDirect(JSGlobalObject* globalObject, CallFrame* callFrame)
+{
+    VM& vm = globalObject->vm();
+
+    JSValue value = callFrame->uncheckedArgument(0);
+    ASSERT(value.isObject() || value.isNull());
+
+    JSObject* object = asObject(callFrame->thisValue());
+    object->setPrototypeDirect(vm, value);
+
+    return { };
+}
+
 EncodedJSValue JSC_HOST_CALL globalFuncHostPromiseRejectionTracker(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = globalObject->vm();

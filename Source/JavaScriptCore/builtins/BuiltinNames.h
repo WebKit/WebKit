@@ -138,6 +138,7 @@ namespace JSC {
     macro(setBucketHead) \
     macro(setBucketNext) \
     macro(setBucketKey) \
+    macro(setPrototypeDirect) \
     macro(regExpBuiltinExec) \
     macro(regExpMatchFast) \
     macro(regExpProtoFlagsGetter) \

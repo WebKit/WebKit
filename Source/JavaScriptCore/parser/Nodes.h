@@ -2323,7 +2323,7 @@ namespace JSC {
         Type m_type;
     };
 
-    class ClassExprNode final : public ExpressionNode, public VariableEnvironmentNode {
+    class ClassExprNode final : public ExpressionNode, public ThrowableExpressionData, public VariableEnvironmentNode {
         JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED(ClassExprNode);
     public:
         ClassExprNode(const JSTokenLocation&, const Identifier&, const SourceCode& classSource,
