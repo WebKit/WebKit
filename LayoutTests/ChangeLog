@@ -1,3 +1,19 @@
+2020-08-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Updated hybi baselines after r266057.
+
+        * platform/glib/http/tests/websocket/tests/hybi/close-and-server-script-exception-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/websocket/tests/hybi/close-on-unload-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/deflate-frame-parameter-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/extensions-expected.txt:
+        * platform/gtk/http/tests/websocket/tests/hybi/close-on-navigate-new-location-expected.txt: Removed.
+        * platform/gtk/http/tests/websocket/tests/hybi/close-on-unload-and-force-gc-expected.txt: Removed.
+        * platform/gtk/http/tests/websocket/tests/hybi/close-on-unload-reference-in-parent-expected.txt: Removed.
+        * platform/gtk/http/tests/websocket/tests/hybi/send-after-close-on-unload-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/close-on-navigate-new-location-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/close-on-unload-and-force-gc-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/close-on-unload-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/close-on-unload-reference-in-parent-expected.txt: Removed.
+
 2020-08-24  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Reintroduce several WPT css-content failing tests removed in r266094.
