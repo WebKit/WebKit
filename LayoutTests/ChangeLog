@@ -1,5 +1,14 @@
 2020-08-25  Hector Lopez  <hector_i_lopez@apple.com>
 
+         macOS Debug ] webaudio/webaudio-gc.html is a flaky crash.
+        <rdar://problem/65571152>
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: correction
+
+2020-08-25  Hector Lopez  <hector_i_lopez@apple.com>
+
         [ macOS wk2 Debug ] http/tests/websocket/construct-in-detached-frame.html is a flaky crash
         <rdar://problem/61278051> 
 
