@@ -1,3 +1,22 @@
+2020-08-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: breakpoint condition should be evaluated before the ignore count
+        https://bugs.webkit.org/show_bug.cgi?id=215364
+        <rdar://problem/67310703>
+
+        Reviewed by Joseph Pecoraro.
+
+        Previously, when pausing, `JSC::Breakpoint` would check that it's `ignoreCount` before it
+        would even attempt to evaluate it's `condition`. This meant that a `JSC::Breakpoint` with
+        a `condition` of `foo === 42` and an `ignoreCount` of `3` would ignore the first three
+        pauses and then only pause if `foo === 42`. This is likely contrary to the expectation of
+        most users (especially since the `condition` input is before the `ignoreCount` input in
+        the Web Inspector frontend UI) in that they would probably expect to ignore the first
+        three pauses if `foo === 42`.
+
+        * debugger/Breakpoint.cpp:
+        (JSC::Breakpoint::shouldPause):
+
 2020-08-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Invalid early error for object literal method named "__proto__"

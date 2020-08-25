@@ -75,10 +75,10 @@ bool Breakpoint::resolve(unsigned lineNumber, unsigned columnNumber)
 
 bool Breakpoint::shouldPause(Debugger& debugger, JSGlobalObject* globalObject)
 {
-    if (++m_hitCount <= m_ignoreCount)
+    if (!debugger.evaluateBreakpointCondition(*this, globalObject))
         return false;
 
-    return debugger.evaluateBreakpointCondition(*this, globalObject);
+    return ++m_hitCount > m_ignoreCount;
 }
 
 } // namespace JSC
