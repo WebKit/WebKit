@@ -1,3 +1,12 @@
+2020-08-25  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ macOS Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb32f-rgb-float.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215817
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-25  Youenn Fablet  <youenn@apple.com>
 
         Refresh ReadableStream.pipeTo implementation up to spec

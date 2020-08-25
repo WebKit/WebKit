@@ -2202,3 +2202,6 @@ webkit.org/b/191627 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-
 
 webkit.org/b/215814 [ Debug ] inspector/console/queryInstances.html [ Pass Failure ]
 
+webkit.org/b/215817 [ Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb32f-rgb-float.html [ Pass Failure ]
+
+
