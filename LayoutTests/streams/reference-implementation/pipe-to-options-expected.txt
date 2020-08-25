@@ -1,5 +1,0 @@
-
-FAIL Piping with no options and a destination error |this| is not a Promise
-FAIL Piping with { preventCancel: false } and a destination error |this| is not a Promise
-FAIL Piping with { preventCancel: true } and a destination error |this| is not a Promise
-

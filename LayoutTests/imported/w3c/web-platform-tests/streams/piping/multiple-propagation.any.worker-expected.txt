@@ -1,13 +1,13 @@
 
-Harness Error (FAIL), message = Unhandled rejection: writableStreamDefaultWriterRelease
+Harness Error (FAIL), message = Unhandled rejection: error1!
 
-FAIL Piping from an errored readable stream to an erroring writable stream |this| is not a Promise
-FAIL Piping from an errored readable stream to an errored writable stream promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Piping from an errored readable stream to an erroring writable stream; preventAbort = true |this| is not a Promise
-FAIL Piping from an errored readable stream to an errored writable stream; preventAbort = true promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Piping from an errored readable stream to a closing writable stream |this| is not a Promise
-FAIL Piping from an errored readable stream to a closed writable stream promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Piping from a closed readable stream to an erroring writable stream |this| is not a Promise
-FAIL Piping from a closed readable stream to an errored writable stream promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Piping from a closed readable stream to a closed writable stream |this| is not a Promise
+PASS Piping from an errored readable stream to an erroring writable stream 
+PASS Piping from an errored readable stream to an errored writable stream 
+PASS Piping from an errored readable stream to an erroring writable stream; preventAbort = true 
+PASS Piping from an errored readable stream to an errored writable stream; preventAbort = true 
+PASS Piping from an errored readable stream to a closing writable stream 
+PASS Piping from an errored readable stream to a closed writable stream 
+PASS Piping from a closed readable stream to an erroring writable stream 
+PASS Piping from a closed readable stream to an errored writable stream 
+PASS Piping from a closed readable stream to a closed writable stream 
 

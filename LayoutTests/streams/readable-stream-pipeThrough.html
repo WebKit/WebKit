@@ -64,19 +64,4 @@ test(function() {
     };
     assert_throws(error, function() { ReadableStream.prototype.pipeThrough.call(thisValue2, wrongInput2, options); });
 }, 'ReadableStream.prototype.pipeThrough should throw when called getters are throwing');
-
-test(function() {
-    var count = 0;
-    var thisValue = {
-        pipeTo: function() {
-            ++count;
-        }
-    };
-
-    ReadableStream.prototype.pipeThrough.call(thisValue, { readable: { }, writable: { } });
-    ReadableStream.prototype.pipeThrough.call(thisValue, { readable: { } }, { });
-    ReadableStream.prototype.pipeThrough.call(thisValue, { writable: { } }, { });
-
-    assert_equals(count, 3);
-}, 'ReadableStream.prototype.pipeThrough should work with missing parameters');
 </script>

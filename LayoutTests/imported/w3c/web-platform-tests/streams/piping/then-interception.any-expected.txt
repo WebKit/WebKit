@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: undefined is not a function
 
-Harness Error (FAIL), message = Unhandled rejection: undefined is not a function
-
-TIMEOUT piping should not be observable Test timed out
-NOTRUN tee should not be observable 
+PASS piping should not be observable 
+PASS tee should not be observable 
 

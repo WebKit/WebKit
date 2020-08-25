@@ -1,3 +1,50 @@
+2020-08-25  Youenn Fablet  <youenn@apple.com>
+
+        Refresh ReadableStream.pipeTo implementation up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=215415
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-by-pipe.any-expected.txt:
+        * web-platform-tests/fetch/api/response/response-stream-disturbed-by-pipe.any.worker-expected.txt:
+        * web-platform-tests/streams/idlharness.any-expected.txt:
+        * web-platform-tests/streams/idlharness.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/abort.any-expected.txt:
+        * web-platform-tests/streams/piping/abort.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-backward-expected.txt: Removed.
+        * web-platform-tests/streams/piping/close-propagation-backward.any-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-backward.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward-expected.txt: Removed.
+        * web-platform-tests/streams/piping/close-propagation-forward.any-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-backward-expected.txt: Removed.
+        * web-platform-tests/streams/piping/error-propagation-backward.any-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-backward.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-forward-expected.txt: Removed.
+        * web-platform-tests/streams/piping/error-propagation-forward.any-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-forward.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/flow-control-expected.txt: Removed.
+        * web-platform-tests/streams/piping/flow-control.any-expected.txt:
+        * web-platform-tests/streams/piping/flow-control.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/general-expected.txt: Removed.
+        * web-platform-tests/streams/piping/general.any-expected.txt:
+        * web-platform-tests/streams/piping/general.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/multiple-propagation-expected.txt: Removed.
+        * web-platform-tests/streams/piping/multiple-propagation.any-expected.txt:
+        * web-platform-tests/streams/piping/multiple-propagation.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through-expected.txt: Removed.
+        * web-platform-tests/streams/piping/pipe-through.any-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/then-interception.any-expected.txt:
+        * web-platform-tests/streams/piping/then-interception.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/throwing-options.any-expected.txt:
+        * web-platform-tests/streams/piping/throwing-options.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/transform-streams-expected.txt: Removed.
+        * web-platform-tests/streams/readable-streams/patched-global.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/patched-global.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/reentrant-strategies.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/reentrant-strategies.any.worker-expected.txt:
+
 2020-08-24  Alex Christensen  <achristensen@webkit.org>
 
         Update iOS layout test results after r266087

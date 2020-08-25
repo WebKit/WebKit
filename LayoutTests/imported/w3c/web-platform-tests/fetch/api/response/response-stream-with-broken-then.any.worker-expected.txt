@@ -1,10 +1,8 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Attempt to inject {done: false, value: bye} via Object.prototype.then. 
 PASS Attempt to inject value: undefined via Object.prototype.then. 
 PASS Attempt to inject undefined via Object.prototype.then. 
 PASS Attempt to inject 8.2 via Object.prototype.then. 
 PASS intercepting arraybuffer to text conversion via Object.prototype.then should not be possible 
-FAIL intercepting arraybuffer to body readable stream conversion via Object.prototype.then should not be possible promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
+PASS intercepting arraybuffer to body readable stream conversion via Object.prototype.then should not be possible 
 

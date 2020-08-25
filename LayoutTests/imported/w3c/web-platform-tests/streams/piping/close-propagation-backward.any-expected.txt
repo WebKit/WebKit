@@ -1,18 +1,18 @@
 
-FAIL Closing must be propagated backward: starts closed; preventCancel omitted; fulfilled cancel promise |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel omitted; rejected cancel promise |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = undefined (falsy); fulfilled cancel promise |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = null (falsy); fulfilled cancel promise |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = false (falsy); fulfilled cancel promise |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = 0 (falsy); fulfilled cancel promise |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = -0 (falsy); fulfilled cancel promise |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = NaN (falsy); fulfilled cancel promise |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel =  (falsy); fulfilled cancel promise |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = true (truthy) |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = a (truthy) |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = 1 (truthy) |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = Symbol() (truthy) |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = [object Object] (truthy) |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = true, preventAbort = true |this| is not a Promise
-FAIL Closing must be propagated backward: starts closed; preventCancel = true, preventAbort = true, preventClose = true |this| is not a Promise
+PASS Closing must be propagated backward: starts closed; preventCancel omitted; fulfilled cancel promise 
+PASS Closing must be propagated backward: starts closed; preventCancel omitted; rejected cancel promise 
+PASS Closing must be propagated backward: starts closed; preventCancel = undefined (falsy); fulfilled cancel promise 
+PASS Closing must be propagated backward: starts closed; preventCancel = null (falsy); fulfilled cancel promise 
+PASS Closing must be propagated backward: starts closed; preventCancel = false (falsy); fulfilled cancel promise 
+PASS Closing must be propagated backward: starts closed; preventCancel = 0 (falsy); fulfilled cancel promise 
+PASS Closing must be propagated backward: starts closed; preventCancel = -0 (falsy); fulfilled cancel promise 
+PASS Closing must be propagated backward: starts closed; preventCancel = NaN (falsy); fulfilled cancel promise 
+PASS Closing must be propagated backward: starts closed; preventCancel =  (falsy); fulfilled cancel promise 
+PASS Closing must be propagated backward: starts closed; preventCancel = true (truthy) 
+PASS Closing must be propagated backward: starts closed; preventCancel = a (truthy) 
+PASS Closing must be propagated backward: starts closed; preventCancel = 1 (truthy) 
+PASS Closing must be propagated backward: starts closed; preventCancel = Symbol() (truthy) 
+PASS Closing must be propagated backward: starts closed; preventCancel = [object Object] (truthy) 
+PASS Closing must be propagated backward: starts closed; preventCancel = true, preventAbort = true 
+PASS Closing must be propagated backward: starts closed; preventCancel = true, preventAbort = true, preventClose = true 
 

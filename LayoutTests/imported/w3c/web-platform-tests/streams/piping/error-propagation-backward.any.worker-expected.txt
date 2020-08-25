@@ -1,37 +1,39 @@
 
-FAIL Errors must be propagated backward: starts errored; preventCancel omitted; fulfilled cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; fulfilled cancel promise promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; rejected cancel promise promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = undefined (falsy); fulfilled cancel promise promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = null (falsy); fulfilled cancel promise promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = false (falsy); fulfilled cancel promise promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = 0 (falsy); fulfilled cancel promise promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = -0 (falsy); fulfilled cancel promise promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = NaN (falsy); fulfilled cancel promise promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel =  (falsy); fulfilled cancel promise promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = true (truthy) promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = a (truthy) promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = 1 (truthy) promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = Symbol() (truthy) promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = [object Object] (truthy) promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write, preventCancel = true; preventAbort = true promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored before piping due to write; preventCancel = true, preventAbort = true, preventClose = true promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Errors must be propagated backward: becomes errored during piping due to write; preventCancel omitted; fulfilled cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored during piping due to write; preventCancel omitted; rejected cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored during piping due to write; preventCancel = true |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored during piping due to write, but async; preventCancel = false; fulfilled cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored during piping due to write, but async; preventCancel = false; rejected cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored during piping due to write, but async; preventCancel = true |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored after piping; preventCancel omitted; fulfilled cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored after piping; preventCancel omitted; rejected cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored after piping; preventCancel = true |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored after piping due to last write; source is closed; preventCancel omitted (but cancel is never called) |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored after piping due to last write; source is closed; preventCancel = true |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored after piping; dest never desires chunks; preventCancel = false; fulfilled cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored after piping; dest never desires chunks; preventCancel = false; rejected cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored after piping; dest never desires chunks; preventCancel = true |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored before piping via abort; preventCancel omitted; fulfilled cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored before piping via abort; preventCancel omitted; rejected cancel promise |this| is not a Promise
-FAIL Errors must be propagated backward: becomes errored before piping via abort; preventCancel = true |this| is not a Promise
-FAIL Errors must be propagated backward: erroring via the controller errors once pending write completes |this| is not a Promise
+Harness Error (FAIL), message = Unhandled rejection: releasing lock of reader whose stream is still in readable state
+
+PASS Errors must be propagated backward: starts errored; preventCancel omitted; fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel omitted; rejected cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = undefined (falsy); fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = null (falsy); fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = false (falsy); fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = 0 (falsy); fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = -0 (falsy); fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = NaN (falsy); fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel =  (falsy); fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = true (truthy) 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = a (truthy) 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = 1 (truthy) 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = Symbol() (truthy) 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = [object Object] (truthy) 
+PASS Errors must be propagated backward: becomes errored before piping due to write, preventCancel = true; preventAbort = true 
+PASS Errors must be propagated backward: becomes errored before piping due to write; preventCancel = true, preventAbort = true, preventClose = true 
+PASS Errors must be propagated backward: becomes errored during piping due to write; preventCancel omitted; fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored during piping due to write; preventCancel omitted; rejected cancel promise 
+PASS Errors must be propagated backward: becomes errored during piping due to write; preventCancel = true 
+PASS Errors must be propagated backward: becomes errored during piping due to write, but async; preventCancel = false; fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored during piping due to write, but async; preventCancel = false; rejected cancel promise 
+PASS Errors must be propagated backward: becomes errored during piping due to write, but async; preventCancel = true 
+PASS Errors must be propagated backward: becomes errored after piping; preventCancel omitted; fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored after piping; preventCancel omitted; rejected cancel promise 
+PASS Errors must be propagated backward: becomes errored after piping; preventCancel = true 
+PASS Errors must be propagated backward: becomes errored after piping due to last write; source is closed; preventCancel omitted (but cancel is never called) 
+PASS Errors must be propagated backward: becomes errored after piping due to last write; source is closed; preventCancel = true 
+PASS Errors must be propagated backward: becomes errored after piping; dest never desires chunks; preventCancel = false; fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored after piping; dest never desires chunks; preventCancel = false; rejected cancel promise 
+PASS Errors must be propagated backward: becomes errored after piping; dest never desires chunks; preventCancel = true 
+PASS Errors must be propagated backward: becomes errored before piping via abort; preventCancel omitted; fulfilled cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping via abort; preventCancel omitted; rejected cancel promise 
+PASS Errors must be propagated backward: becomes errored before piping via abort; preventCancel = true 
+PASS Errors must be propagated backward: erroring via the controller errors once pending write completes 
 

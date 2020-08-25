@@ -25,7 +25,9 @@
 
 [
     CustomIsReachable,
-    Exposed=(Window,Worker)
+    Exposed=(Window,Worker),
+    PrivateIdentifier,
+    PublicIdentifier
 ] interface AbortSignal : EventTarget {
     readonly attribute boolean aborted;
 

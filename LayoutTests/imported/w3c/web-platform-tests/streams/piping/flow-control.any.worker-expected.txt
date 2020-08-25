@@ -1,9 +1,9 @@
 
-Harness Error (FAIL), message = Unhandled rejection: writableStreamDefaultWriterRelease
+Harness Error (FAIL), message = Unhandled rejection: releasing lock of reader whose stream is still in readable state
 
-FAIL Piping from a non-empty ReadableStream into a WritableStream that does not desire chunks |this| is not a Promise
-FAIL Piping from a non-empty ReadableStream into a WritableStream that does not desire chunks, but then does |this| is not a Promise
-FAIL Piping from an empty ReadableStream into a WritableStream that does not desire chunks, but then the readable stream becomes non-empty and the writable stream starts desiring chunks promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
-FAIL Piping from a ReadableStream to a WritableStream that desires more chunks before finishing with previous ones |this| is not a Promise
-FAIL Piping to a WritableStream that does not consume the writes fast enough exerts backpressure on the ReadableStream promise_test: Unhandled rejection with value: object "TypeError: |this| is not a Promise"
+PASS Piping from a non-empty ReadableStream into a WritableStream that does not desire chunks 
+PASS Piping from a non-empty ReadableStream into a WritableStream that does not desire chunks, but then does 
+PASS Piping from an empty ReadableStream into a WritableStream that does not desire chunks, but then the readable stream becomes non-empty and the writable stream starts desiring chunks 
+PASS Piping from a ReadableStream to a WritableStream that desires more chunks before finishing with previous ones 
+PASS Piping to a WritableStream that does not consume the writes fast enough exerts backpressure on the ReadableStream 
 

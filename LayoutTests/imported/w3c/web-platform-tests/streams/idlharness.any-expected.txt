@@ -24,7 +24,7 @@ PASS ReadableStream interface: calling getReader(optional ReadableStreamGetReade
 PASS ReadableStream interface: new ReadableStream() must inherit property "pipeThrough(ReadableWritablePair, optional StreamPipeOptions)" with the proper type 
 PASS ReadableStream interface: calling pipeThrough(ReadableWritablePair, optional StreamPipeOptions) on new ReadableStream() with too few arguments must throw TypeError 
 PASS ReadableStream interface: new ReadableStream() must inherit property "pipeTo(WritableStream, optional StreamPipeOptions)" with the proper type 
-FAIL ReadableStream interface: calling pipeTo(WritableStream, optional StreamPipeOptions) on new ReadableStream() with too few arguments must throw TypeError assert_unreached: Throws "TypeError: undefined is not an object" instead of rejecting promise Reached unreachable code
+PASS ReadableStream interface: calling pipeTo(WritableStream, optional StreamPipeOptions) on new ReadableStream() with too few arguments must throw TypeError 
 PASS ReadableStream interface: new ReadableStream() must inherit property "tee()" with the proper type 
 FAIL ReadableStreamDefaultReader interface: existence and properties of interface object assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing
 FAIL ReadableStreamDefaultReader interface object length assert_own_property: self does not have own property "ReadableStreamDefaultReader" expected property "ReadableStreamDefaultReader" missing

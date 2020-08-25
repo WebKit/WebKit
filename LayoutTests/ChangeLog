@@ -1,3 +1,25 @@
+2020-08-25  Youenn Fablet  <youenn@apple.com>
+
+        Refresh ReadableStream.pipeTo implementation up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=215415
+
+        Reviewed by Alex Christensen.
+
+        Re-enable piping tests.
+        Remove obsolete tests.
+
+        * TestExpectations:
+        * streams/readable-stream-pipeThrough-expected.txt:
+        * streams/readable-stream-pipeThrough.html:
+        Update according new API.
+        * streams/reference-implementation/pipe-to-expected.txt: Removed.
+        * streams/reference-implementation/pipe-to.html: Removed.
+        * streams/reference-implementation/pipe-through-expected.txt: Removed.
+        * streams/reference-implementation/pipe-through.html: Removed.
+        * streams/reference-implementation/pipe-to-options-expected.txt: Removed.
+        * streams/reference-implementation/pipe-to-options.html: Removed.
+        * streams/reference-implementation/readable-stream-templated-expected:
+
 2020-08-25  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS Debug ] inspector/console/queryInstances.html is a flaky failure

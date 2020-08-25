@@ -1,3 +1,17 @@
+2020-08-25  Youenn Fablet  <youenn@apple.com>
+
+        Refresh ReadableStream.pipeTo implementation up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=215415
+
+        Reviewed by Alex Christensen.
+
+        Put console log in stderr as this makes some tests flaky otherwise.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (shouldDumpJSConsoleLogInStdErr):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::shouldDumpJSConsoleLogInStdErr):
+
 2020-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Update audio arbitration manager when audio transport changes

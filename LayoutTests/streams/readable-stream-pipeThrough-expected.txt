@@ -2,5 +2,4 @@
 PASS ReadableStream.prototype.pipeThrough should throw when "this" has no pipeTo method 
 PASS ReadableStream.prototype.pipeThrough should throw when passed argument is not an object 
 PASS ReadableStream.prototype.pipeThrough should throw when called getters are throwing 
-PASS ReadableStream.prototype.pipeThrough should work with missing parameters 
 

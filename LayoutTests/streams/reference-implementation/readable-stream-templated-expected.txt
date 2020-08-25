@@ -10,28 +10,28 @@ FAIL ReadableStream (errored via call in start): piping to a WritableStream in t
 PASS Running templatedRSErrored with ReadableStream (errored via returning a rejected promise in start) 
 FAIL ReadableStream (errored via returning a rejected promise in start): piping to a WritableStream in the writable state should abort the writable stream assert_equals: expected (string) "writable" but got (undefined) undefined
 PASS Running templatedRSErroredAsyncOnly with ReadableStream (errored via returning a rejected promise in start) reader 
-FAIL ReadableStream (errored via returning a rejected promise in start) reader: piping with no options |this| is not a Promise
-FAIL ReadableStream (errored via returning a rejected promise in start) reader: piping with { preventAbort: false } |this| is not a Promise
-FAIL ReadableStream (errored via returning a rejected promise in start) reader: piping with { preventAbort: true } |this| is not a Promise
+FAIL ReadableStream (errored via returning a rejected promise in start) reader: piping with no options undefined is not an object (evaluating 'ws.closed.catch')
+FAIL ReadableStream (errored via returning a rejected promise in start) reader: piping with { preventAbort: false } undefined is not an object (evaluating 'ws.closed.catch')
+FAIL ReadableStream (errored via returning a rejected promise in start) reader: piping with { preventAbort: true } assert_equals: destination should remain writable expected (string) "writable" but got (undefined) undefined
 PASS Running templatedRSTwoChunksClosed with ReadableStream (two chunks enqueued, then closed) 
-FAIL ReadableStream (two chunks enqueued, then closed): piping with no options and no destination errors |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: false } and no destination errors |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and no destination errors |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: false } and a destination with that errors synchronously |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and a destination with that errors synchronously |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and a destination that errors on the last chunk |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued, then closed): piping with no options and no destination errors assert_equals: destination should be closed expected (string) "closed" but got (undefined) undefined
+FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: false } and no destination errors assert_equals: destination should be closed expected (string) "closed" but got (undefined) undefined
+FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and no destination errors assert_equals: destination should be writable expected (string) "writable" but got (undefined) undefined
+PASS ReadableStream (two chunks enqueued, then closed): piping with { preventClose: false } and a destination with that errors synchronously 
+PASS ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and a destination with that errors synchronously 
+FAIL ReadableStream (two chunks enqueued, then closed): piping with { preventClose: true } and a destination that errors on the last chunk assert_unreached: pipeTo promise should not fulfill Reached unreachable code
 PASS Running templatedRSTwoChunksClosed with ReadableStream (two chunks enqueued async, then closed) 
-FAIL ReadableStream (two chunks enqueued async, then closed): piping with no options and no destination errors |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: false } and no destination errors |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and no destination errors |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: false } and a destination with that errors synchronously |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and a destination with that errors synchronously |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and a destination that errors on the last chunk |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued async, then closed): piping with no options and no destination errors assert_equals: destination should be closed expected (string) "closed" but got (undefined) undefined
+FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: false } and no destination errors assert_equals: destination should be closed expected (string) "closed" but got (undefined) undefined
+FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and no destination errors assert_equals: destination should be writable expected (string) "writable" but got (undefined) undefined
+PASS ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: false } and a destination with that errors synchronously 
+PASS ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and a destination with that errors synchronously 
+FAIL ReadableStream (two chunks enqueued async, then closed): piping with { preventClose: true } and a destination that errors on the last chunk assert_unreached: pipeTo promise should not fulfill Reached unreachable code
 PASS Running templatedRSTwoChunksClosed with ReadableStream (two chunks enqueued via pull, then closed) 
-FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with no options and no destination errors |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: false } and no destination errors |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and no destination errors |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: false } and a destination with that errors synchronously |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and a destination with that errors synchronously |this| is not a Promise
-FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and a destination that errors on the last chunk |this| is not a Promise
+FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with no options and no destination errors assert_equals: destination should be closed expected (string) "closed" but got (undefined) undefined
+FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: false } and no destination errors assert_equals: destination should be closed expected (string) "closed" but got (undefined) undefined
+FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and no destination errors assert_equals: destination should be writable expected (string) "writable" but got (undefined) undefined
+PASS ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: false } and a destination with that errors synchronously 
+PASS ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and a destination with that errors synchronously 
+FAIL ReadableStream (two chunks enqueued via pull, then closed): piping with { preventClose: true } and a destination that errors on the last chunk assert_unreached: pipeTo promise should not fulfill Reached unreachable code
 

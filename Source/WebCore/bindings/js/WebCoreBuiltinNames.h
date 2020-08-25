@@ -40,6 +40,7 @@ namespace WebCore {
 #endif
 
 #define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
+    macro(AbortSignal) \
     macro(Animation) \
     macro(AnimationEffect) \
     macro(AnimationPlaybackEvent) \
@@ -423,6 +424,7 @@ namespace WebCore {
     macro(webkitOfflineAudioContext) \
     macro(webkitOscillatorNode) \
     macro(window) \
+    macro(writableStreamAPIEnabled) \
     macro(writeAlgorithm) \
     macro(writing) \
     macro(writer) \

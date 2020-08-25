@@ -1,3 +1,35 @@
+2020-08-25  Youenn Fablet  <youenn@apple.com>
+
+        Refresh ReadableStream.pipeTo implementation up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=215415
+
+        Reviewed by Alex Christensen.
+
+        Update pipeTo implementation as per specification.
+        Keep the old implementation if WritableStream is not enabled. 
+
+        Covered by existing tests.
+
+        * Modules/streams/ReadableStream.js:
+        (pipeThrough):
+        * Modules/streams/ReadableStreamInternals.js:
+        (acquireReadableStreamDefaultReader):
+        (readableStreamPipeToWritableStream):
+        (pipeToLoop):
+        (pipeToErrorsMustBePropagatedForward):
+        (pipeToErrorsMustBePropagatedBackward):
+        (pipeToClosingMustBePropagatedForward):
+        (pipeToClosingMustBePropagatedBackward):
+        (pipeToShutdownWithAction):
+        (pipeToShutdown):
+        * Modules/streams/WritableStream.js:
+        (initializeWritableStream):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::isWritableStreamAPIEnabled):
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/AbortSignal.idl:
+
 2020-08-25  Rob Buis  <rbuis@igalia.com>
 
         Add setting for lazy iframe loading

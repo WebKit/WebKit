@@ -1,4 +1,0 @@
-
-FAIL Piping through a duck-typed pass-through transform stream works |this| is not a Promise
-FAIL Piping through an identity transform stream will close the destination when the source closes Can't find variable: TransformStream
-
