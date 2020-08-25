@@ -1,3 +1,33 @@
+2020-08-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fonts lie about being monospaced
+        https://bugs.webkit.org/show_bug.cgi?id=162546
+        <rdar://problem/28494654>
+
+        Reviewed by Darin Adler.
+
+        When a font reports itself to be monospace, we use this as a
+        signal that we can perform width computations by assuming all
+        characters have the same width as the space character. However,
+        some fonts erroneously claim to be monospaced. We can't know
+        this ahead of time without measuring a bunch of characters at
+        font load time, which would be too slow, so even though the
+        optimization would be nice there is no practical way to do it
+        correctly. Firefox and Chrome both do not use this signal, so
+        therefore they both correctly render these fonts. We should
+        ignore this bit in the font as well. Also, CJK fonts generally
+        do not have this bit set (because they usually have at least
+        one character which is not fullwidth) so this isn't a concern
+        there.
+
+        Our Page Load Test shows this is not a performance regression.
+
+        Tests: fast/text/font-erroneous-monospace.html
+               fast/text/font-monospaced-lie.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache const):
+
 2020-08-25  Youenn Fablet  <youenn@apple.com>
 
         Add support for MediaRecorder bitrate options

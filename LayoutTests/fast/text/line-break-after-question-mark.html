@@ -20,7 +20,10 @@ function allowsBreakBefore(i)
 
 var unallowedBreaks = [0x21, 0x22, 0x27, 0x29, 0x2c, 0x2e, 0x2f, 0x3a, 0x3b, 0x3f, 0x5d, 0x7d];
 
-for (var i = 33; i < 128; ++i)
+for (var i = 0x21; i < 0x27; ++i)
+    shouldBe("allowsBreakBefore(" + i + ")", unallowedBreaks.indexOf(i) >= 0 ? "false" : "true");
+// Ahem doesn't support U+0027
+for (var i = 0x28; i < 0x7F; ++i)
     shouldBe("allowsBreakBefore(" + i + ")", unallowedBreaks.indexOf(i) >= 0 ? "false" : "true");
 
 document.body.removeChild(div);

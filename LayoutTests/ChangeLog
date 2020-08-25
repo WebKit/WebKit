@@ -1,3 +1,22 @@
+2020-08-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Fonts lie about being monospaced
+        https://bugs.webkit.org/show_bug.cgi?id=162546
+        <rdar://problem/28494654>
+
+        Reviewed by Darin Adler.
+
+        Add two tests for fonts which claim to be monospaced but actually aren't.
+
+        * fast/text/font-erroneous-monospace-expected.html: Added.
+        * fast/text/font-erroneous-monospace.html: Added.
+        * fast/text/font-monospaced-lie-expected.txt: Added.
+        * fast/text/font-monospaced-lie.html: Added.
+        * fast/text/line-break-after-question-mark-expected.txt:
+        * fast/text/line-break-after-question-mark.html:
+        * fast/text/resources/Ahem-fixed-pitch.ttf: Added.
+        * fast/text/resources/AhemErroneousMonospace.ttf: Added.
+
 2020-08-25  Youenn Fablet  <youenn@apple.com>
 
         Add support for MediaRecorder bitrate options
