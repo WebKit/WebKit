@@ -228,7 +228,7 @@ void InspectorTimelineAgent::internalStart(const int* maxCallStackDepth)
     m_runLoopNestingLevel = 1;
 #elif USE(GLIB_EVENT_LOOP)
     m_runLoopObserver = makeUnique<RunLoop::Observer>([this](RunLoop::Event event) {
-        if (!m_tracking || m_environment.scriptDebugServer().isPaused())
+        if (!m_tracking || m_environment.debugger().isPaused())
             return;
 
         switch (event) {

@@ -1,3 +1,10 @@
+2020-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK/WPE build after r266103
+
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::internalStart):
+
 2020-08-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement rendering frames timeline panel for GTK+ port
