@@ -144,9 +144,11 @@ namespace TestWebKitAPI {
 const uint16_t tls1_1 = 0x0302;
 static NSString *defaultsKey = @"WebKitEnableLegacyTLS";
 
+#if HAVE(NETWORK_FRAMEWORK)
+
 TEST(TLSVersion, DefaultBehavior)
 {
-    TCPServer server(TCPServer::Protocol::HTTPS, TCPServer::respondWithOK, tls1_1);
+    HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::HttpsWithLegacyTLS);
     auto delegate = adoptNS([TestNavigationDelegate new]);
     auto webView = adoptNS([WKWebView new]);
     [webView setNavigationDelegate:delegate.get()];
@@ -157,6 +159,8 @@ TEST(TLSVersion, DefaultBehavior)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]]];
     [delegate waitForDidFinishNavigation];
 }
+
+#endif // HAVE(NETWORK_FRAMEWORK)
 
 #if HAVE(TLS_VERSION_DURING_CHALLENGE)
 

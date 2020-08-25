@@ -1,3 +1,21 @@
+2020-08-24  Alex Christensen  <achristensen@webkit.org>
+
+        Make TLSVersion.DefaultBehavior more robust
+        https://bugs.webkit.org/show_bug.cgi?id=215791
+
+        Reviewed by Darin Adler.
+
+        After r265573 sometimes it would assert, which is not a problem because it was failing the first connection
+        then succeeding the second connection as intended and as happens in the real internet.
+        Use HTTPServer which accepts a variable number of connections to keep the test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        (TestWebKitAPI::HTTPServer::respondWithChallengeThenOK):
+        (TestWebKitAPI::HTTPServer::respondWithOK):
+
 2020-08-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal iOS 13.4 build
