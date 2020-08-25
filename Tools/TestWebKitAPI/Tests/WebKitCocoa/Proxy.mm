@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if HAVE(SSL)
-
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TCPServer.h"
@@ -39,6 +37,8 @@
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringConcatenateNumbers.h>
+
+#if HAVE(SSL)
 
 @interface ProxyDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
 - (NSString *)waitForAlert;
@@ -183,8 +183,6 @@ TEST(WebKit, SecureProxyConnection)
 
 #endif // HAVE(SSL)
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 namespace TestWebKitAPI {
 
 TEST(WebKit, RelaxThirdPartyCookieBlocking)
@@ -274,5 +272,3 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // HAVE(NETWORK_FRAMEWORK)

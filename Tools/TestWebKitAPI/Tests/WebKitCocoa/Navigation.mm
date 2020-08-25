@@ -121,7 +121,6 @@ TEST(WKNavigation, HTTPBody)
     TestWebKitAPI::Util::run(&done);
 }
 
-#if HAVE(NETWORK_FRAMEWORK)
 TEST(WKNavigation, UserAgentAndAccept)
 {
     using namespace TestWebKitAPI;
@@ -140,7 +139,6 @@ TEST(WKNavigation, UserAgentAndAccept)
     [webView loadRequest:server.request()];
     TestWebKitAPI::Util::run(&done);
 }
-#endif
 
 @interface FrameNavigationDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForNavigations:(size_t)count;
@@ -716,8 +714,6 @@ TEST(WKNavigation, ListItemAddedRemoved)
 
 #endif // PLATFORM(MAC)
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 @interface LoadingObserver : NSObject
 @property (nonatomic, readonly) size_t changesObserved;
 @end
@@ -776,5 +772,3 @@ TEST(WKNavigation, FrameBackLoading)
     [webView removeObserver:observer forKeyPath:@"loading"];
 
 }
-
-#endif // HAVE(NETWORK_FRAMEWORK)

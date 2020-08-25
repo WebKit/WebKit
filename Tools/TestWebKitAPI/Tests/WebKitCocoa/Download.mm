@@ -1160,8 +1160,6 @@ TEST(_WKDownload, ResumedDownloadCanHandleAuthenticationChallenge)
     Util::run(&isDone);
 }
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 template<size_t length>
 String longString(LChar c)
 {
@@ -1286,8 +1284,6 @@ TEST(_WKDownload, Resume)
             EXPECT_EQ(static_cast<const char*>(fileContents.bytes)[i], 'b');
     }
 }
-
-#endif // HAVE(NETWORK_FRAMEWORK)
 
 @interface DownloadTestSchemeDelegate : NSObject <WKNavigationDelegate>
 @end

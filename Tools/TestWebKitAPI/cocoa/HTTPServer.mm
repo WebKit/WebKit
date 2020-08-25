@@ -26,8 +26,6 @@
 #import "config.h"
 #import "HTTPServer.h"
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 #import "Utilities.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
@@ -410,5 +408,3 @@ void H2::Connection::receive(CompletionHandler<void(Frame&&)>&& completionHandle
 }
 
 } // namespace TestWebKitAPI
-
-#endif // HAVE(NETWORK_FRAMEWORK)

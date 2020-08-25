@@ -45,7 +45,6 @@
 #import <WebKit/WebCoreThread.h>
 #endif
 
-#if HAVE(TLS_PROTOCOL_VERSION_T) || HAVE(NETWORK_FRAMEWORK)
 @interface TLSObserver : NSObject
 - (void)waitUntilNegotiatedLegacyTLSChanged;
 @end
@@ -68,7 +67,6 @@
 }
 
 @end
-#endif
 
 @interface TLSNavigationDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForDidFinishNavigation;
@@ -144,7 +142,7 @@ namespace TestWebKitAPI {
 const uint16_t tls1_1 = 0x0302;
 static NSString *defaultsKey = @"WebKitEnableLegacyTLS";
 
-#if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
+#if HAVE(TLS_PROTOCOL_VERSION_T)
 
 TEST(TLSVersion, DefaultBehavior)
 {
@@ -160,7 +158,7 @@ TEST(TLSVersion, DefaultBehavior)
     [delegate waitForDidFinishNavigation];
 }
 
-#endif // HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
+#endif // HAVE(TLS_PROTOCOL_VERSION_T)
 
 #if HAVE(TLS_VERSION_DURING_CHALLENGE)
 
@@ -269,7 +267,7 @@ TEST(TLSVersion, Preconnect)
 
 #endif // HAVE(TLS_VERSION_DURING_CHALLENGE)
 
-#if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
+#if HAVE(TLS_PROTOCOL_VERSION_T)
 
 static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webViewWithNavigationDelegate()
 {
@@ -505,7 +503,7 @@ TEST(TLSVersion, LegacySubresources)
 
 #endif // HAVE(TLS_VERSION_DURING_CHALLENGE)
 
-#endif // HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
+#endif // HAVE(TLS_PROTOCOL_VERSION_T)
 
 }
 

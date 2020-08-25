@@ -47,8 +47,6 @@ TEST(WebKit, NetworkProcessEntitlements)
     EXPECT_FALSE([pool _networkProcessHasEntitlementForTesting:@"test failure case"]);
 }
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 TEST(WebKit, HTTPReferer)
 {
     auto checkReferer = [] (NSURL *baseURL, const char* expectedReferer) {
@@ -80,5 +78,3 @@ TEST(WebKit, HTTPReferer)
     checkReferer([NSURL URLWithString:longHost], nullptr);
     checkReferer([NSURL URLWithString:shorterHost], shorterHost.UTF8String);
 }
-
-#endif

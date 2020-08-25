@@ -25,14 +25,11 @@
 
 #pragma once
 
-#import <wtf/RetainPtr.h>
-
-#if HAVE(NETWORK_FRAMEWORK)
-
 #import <Network/Network.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
@@ -167,8 +164,6 @@ private:
 } // namespace H2
 
 } // namespace TestWebKitAPI
-
-#endif // HAVE(NETWORK_FRAMEWORK)
 
 RetainPtr<SecIdentityRef> testIdentity();
 RetainPtr<SecIdentityRef> testIdentity2();

@@ -1,3 +1,32 @@
+2020-08-25  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unneeded HAVE(NETWORK_FRAMEWORK) macro
+        https://bugs.webkit.org/show_bug.cgi?id=215824
+
+        Reviewed by Darin Adler.
+
+        This used to be needed for High Sierra support, which was before Network.framework was introduced.
+        Now, we can assume it is available on all Cocoa platforms.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/MediaLoading.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Preconnect.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadDelegate.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewEvaluateJavaScript.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        * TestWebKitAPI/cocoa/HTTPServer.h:
+        * TestWebKitAPI/cocoa/HTTPServer.mm:
+        * TestWebKitAPI/config.h:
+
 2020-08-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE][Qt] Fix qt-wpe-minibrowser on Debian10

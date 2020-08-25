@@ -359,7 +359,7 @@ TEST(WebKit, EvaluateJavaScriptInAttachments)
 }
 
 // FIXME: Re-enable this test for iOS once webkit.org/b/207874 is resolved
-#if HAVE(NETWORK_FRAMEWORK) && !PLATFORM(IOS)
+#if !PLATFORM(IOS)
 TEST(WebKit, AllowsContentJavaScript)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);

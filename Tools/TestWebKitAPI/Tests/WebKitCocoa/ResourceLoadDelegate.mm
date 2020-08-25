@@ -107,8 +107,6 @@ TEST(ResourceLoadDelegate, Basic)
     EXPECT_WK_STREQ(requestLoaded.get().URL.absoluteString, requestFromDelegate.get().URL.absoluteString);
 }
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 TEST(ResourceLoadDelegate, BeaconAndSyncXHR)
 {
     TestWebKitAPI::HTTPServer server({
@@ -420,5 +418,3 @@ TEST(ResourceLoadDelegate, Challenge)
     TestWebKitAPI::Util::run(&receivedErrorNotification);
     EXPECT_TRUE(receivedChallengeNotificiation);
 }
-
-#endif // HAVE(NETWORK_FRAMEWORK)

@@ -25,8 +25,6 @@
 
 #import "config.h"
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -234,5 +232,3 @@ TEST(Preconnect, H2PingFromWebCoreNSURLSession)
 #endif // HAVE(PRECONNECT_PING)
 
 }
-
-#endif

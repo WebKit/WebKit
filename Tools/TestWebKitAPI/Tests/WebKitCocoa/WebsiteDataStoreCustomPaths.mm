@@ -675,8 +675,6 @@ TEST(WebKit, NetworkCacheDirectory)
     EXPECT_FALSE(error);
 }
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 TEST(WebKit, ApplicationCacheDirectories)
 {
     TestWebKitAPI::HTTPServer server({
@@ -777,8 +775,6 @@ TEST(WebKit, DISABLED_AlternativeService)
 }
 
 #endif // HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-
-#endif // HAVE(NETWORK_FRAMEWORK)
 
 TEST(WebKit, MediaCache)
 {

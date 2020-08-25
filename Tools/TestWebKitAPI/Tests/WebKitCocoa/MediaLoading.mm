@@ -30,7 +30,7 @@
 #import "TestWKWebView.h"
 #import <wtf/text/StringConcatenateNumbers.h>
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(NETWORK_FRAMEWORK)
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 namespace TestWebKitAPI {
 
@@ -118,4 +118,4 @@ TEST(MediaLoading, UserAgentStringHLS)
 
 }
 
-#endif
+#endif // ENABLE(VIDEO) && USE(AVFOUNDATION)

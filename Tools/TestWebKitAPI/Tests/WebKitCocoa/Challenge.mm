@@ -318,8 +318,6 @@ static RetainPtr<NSURLCredential> persistentCredential;
 
 @end
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 TEST(Challenge, BasicProposedCredential)
 {
     using namespace TestWebKitAPI;
@@ -344,8 +342,6 @@ TEST(Challenge, BasicProposedCredential)
     // Clear persistent credentials created by this test.
     [[webView configuration].processPool _clearPermanentCredentialsForProtectionSpace:protectionSpace];
 }
-
-#endif // HAVE(NETWORK_FRAMEWORK)
 
 #if HAVE(SSL)
 static void verifyCertificateAndPublicKey(SecTrustRef trust)
@@ -521,7 +517,7 @@ TEST(WebKit, FastServerTrust)
 }
 
 // FIXME: Find out why these tests time out on Mojave.
-#if HAVE(NETWORK_FRAMEWORK) && (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500)
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 
 static HTTPServer clientCertServer()
 {
@@ -631,7 +627,7 @@ TEST(MultipleClientCertificateConnections, NonPersistentDataStore)
     EXPECT_EQ(countClientCertChallenges(methods), 1u);
 }
 
-#endif // HAVE(NETWORK_FRAMEWORK)
+#endif // !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 
 } // namespace TestWebKitAPI
 

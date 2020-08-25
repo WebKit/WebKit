@@ -123,12 +123,6 @@
 #endif
 
 // FIXME: Move this to PlatformHave.h.
-// FIXME: Seems like this should be on for watchOS and tvOS too.
-#if PLATFORM(MAC) || PLATFORM(IOS)
-#define HAVE_NETWORK_FRAMEWORK 1
-#endif
-
-// FIXME: Move this to PlatformHave.h.
 #if PLATFORM(COCOA) && !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500)
 #define HAVE_TLS_PROTOCOL_VERSION_T 1
 #endif

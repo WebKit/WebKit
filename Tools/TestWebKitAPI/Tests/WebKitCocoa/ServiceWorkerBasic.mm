@@ -52,10 +52,7 @@
 #import <wtf/text/WTFString.h>
 
 static bool done;
-
-#if HAVE(NETWORK_FRAMEWORK)
 static bool didFinishNavigation;
-#endif
 
 static String expectedMessage;
 static String retrievedString;
@@ -1577,8 +1574,6 @@ TEST(ServiceWorkers, ParallelProcessLaunch)
     waitUntilServiceWorkerProcessCount(processPool, 2);
 }
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 static size_t launchServiceWorkerProcess(bool useSeparateServiceWorkerProcess, bool loadAboutBlankBeforePage)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -1640,8 +1635,6 @@ TEST(ServiceWorkers, LoadAboutBlankBeforeNavigatingThroughServiceWorker)
     EXPECT_EQ(1u, launchServiceWorkerProcess(!useSeparateServiceWorkerProcess, firstLoadAboutBlank));
     EXPECT_EQ(2u, launchServiceWorkerProcess(useSeparateServiceWorkerProcess, firstLoadAboutBlank));
 }
-
-#endif // HAVE(NETWORK_FRAMEWORK)
 
 void waitUntilServiceWorkerProcessForegroundActivityState(WKWebView *page, bool shouldHaveActivity)
 {
@@ -1737,9 +1730,6 @@ TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcesses)
     testSuspendServiceWorkerProcessBasedOnClientProcesses(useSeparateServiceWorkerProcess);
 }
 
-
-#if HAVE(NETWORK_FRAMEWORK)
-
 TEST(ServiceWorkers, ThrottleCrash)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -1803,8 +1793,6 @@ TEST(ServiceWorkers, ThrottleCrash)
     didFinishNavigation = false;
     TestWebKitAPI::Util::run(&didFinishNavigation);
 }
-
-#endif // HAVE(NETWORK_FRAMEWORK)
 
 TEST(ServiceWorkers, LoadData)
 {
@@ -2114,7 +2102,7 @@ TEST(ServiceWorkers, ContentRuleList)
     TestWebKitAPI::Util::run(&doneRemoving);
 }
 
-#if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
+#if HAVE(TLS_PROTOCOL_VERSION_T)
 
 static bool isTestServerTrust(SecTrustRef trust)
 {
@@ -2296,4 +2284,4 @@ TEST(ServiceWorkers, ChangeOfServerCertificate)
     }
 }
 
-#endif // HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
+#endif // HAVE(TLS_PROTOCOL_VERSION_T)

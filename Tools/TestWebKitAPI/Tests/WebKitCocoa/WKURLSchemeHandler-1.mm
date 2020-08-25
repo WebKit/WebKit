@@ -831,8 +831,6 @@ TEST(URLSchemeHandler, CORS)
     EXPECT_FALSE(corsfailure);
 }
 
-#if HAVE(NETWORK_FRAMEWORK)
-
 TEST(URLSchemeHandler, DisableCORS)
 {
     TestWebKitAPI::HTTPServer server({
@@ -1205,8 +1203,6 @@ TEST(URLSchemeHandler, LoadsSubresources)
         EXPECT_FALSE(loadedImage);
     }
 }
-
-#endif // HAVE(NETWORK_FRAMEWORK)
 
 @interface FrameSchemeHandler : NSObject <WKURLSchemeHandler>
 - (void)waitForAllRequests;
