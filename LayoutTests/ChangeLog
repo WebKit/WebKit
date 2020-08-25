@@ -7,6 +7,15 @@
 
         * platform/mac-bigsur/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Removed property svn:keywords.
 
+2020-08-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [macOS Big Sur] svg/W3C-I18N/tspan-direction-rtl.svg is failing
+        <rdar://problem/66861801>
+
+        Unreviewed test gardening.
+
+        * platform/mac-bigsur/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Removed property svn:keywords.
+
 2020-08-24  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ macOS ] Tests expectations changed as test passing but expected to fail
