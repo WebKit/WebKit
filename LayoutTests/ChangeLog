@@ -1,3 +1,11 @@
+2020-08-25  Karl Rackler  <rackler@apple.com>
+
+        rdar://67764580 REGRESSION: [ BigSur ] 20 fast/ and tables/ tests are a constant failure
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-25  Tim Horton  <timothy_horton@apple.com>
 
         Web Share API can share non-HTTP(S) URLs

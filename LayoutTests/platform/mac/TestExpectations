@@ -2204,4 +2204,26 @@ webkit.org/b/215814 [ Debug ] inspector/console/queryInstances.html [ Pass Failu
 
 webkit.org/b/215817 [ Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rectangle/tex-2d-rgb32f-rgb-float.html [ Pass Failure ]
 
+# rdar://67764580 REGRESSION: [ BigSur ] 20 fast/ and tables/ tests are a constant failure
+[ BigSur+ ] fast/block/margin-collapse/103.html [ Failure ]
+[ BigSur+ ] fast/css/continuationCrash.html [ Failure ]
+[ BigSur+ ] fast/css/text-overflow-input.html [ Failure ]
+[ BigSur+ ] fast/forms/button-positioned.html [ Failure ]
+[ BigSur+ ] fast/forms/button-sizes.html [ Failure ]
+[ BigSur+ ] fast/forms/button-table-styles.html [ Failure ]
+[ BigSur+ ] fast/forms/input-button-sizes.html [ Failure ]
+[ BigSur+ ] fast/forms/input-disabled-color.html [ Failure ]
+[ BigSur+ ] fast/forms/input-readonly-dimmed.html [ Failure ]
+[ BigSur+ ] fast/forms/input-text-word-wrap.html [ Failure ]
+[ BigSur+ ] fast/forms/listbox-bidi-align.html [ Failure ]
+[ BigSur+ ] fast/forms/plaintext-mode-2.html [ Failure ]
+[ BigSur+ ] fast/forms/select-change-popup-to-listbox.html [ Failure ]
+[ BigSur+ ] fast/forms/select-selected.html [ Failure ]
+[ BigSur+ ] fast/forms/select/optgroup-rendering.html [ Failure ]
+[ BigSur+ ] fast/parser/document-write-option.html [ Failure ]
+[ BigSur+ ] fast/text/international/pop-up-button-text-alignment-and-direction.html [ Failure ]
+[ BigSur+ ] tables/mozilla/bugs/bug2479-3.html [ Failure ]
+[ BigSur+ ] tables/mozilla/bugs/bug33855.html [ Failure ]
+[ BigSur+ ] tables/mozilla_expected_failures/bugs/bug2479-5.html [ Failure ]
+
 
