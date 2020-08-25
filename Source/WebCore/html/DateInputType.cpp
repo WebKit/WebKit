@@ -32,6 +32,7 @@
 #if ENABLE(INPUT_TYPE_DATE)
 #include "DateInputType.h"
 
+#include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -56,9 +57,9 @@ const AtomString& DateInputType::formControlType() const
     return InputTypeNames::date();
 }
 
-DateComponents::Type DateInputType::dateType() const
+DateComponentsType DateInputType::dateType() const
 {
-    return DateComponents::Date;
+    return DateComponentsType::Date;
 }
 
 StepRange DateInputType::createStepRange(AnyStepHandling anyStepHandling) const

@@ -32,6 +32,7 @@
 #if ENABLE(INPUT_TYPE_WEEK)
 #include "WeekInputType.h"
 
+#include "DateComponents.h"
 #include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -52,9 +53,9 @@ const AtomString& WeekInputType::formControlType() const
     return InputTypeNames::week();
 }
 
-DateComponents::Type WeekInputType::dateType() const
+DateComponentsType WeekInputType::dateType() const
 {
-    return DateComponents::Week;
+    return DateComponentsType::Week;
 }
 
 StepRange WeekInputType::createStepRange(AnyStepHandling anyStepHandling) const

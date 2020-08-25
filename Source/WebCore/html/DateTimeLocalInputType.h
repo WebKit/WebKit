@@ -42,7 +42,7 @@ public:
 
 private:
     const AtomString& formControlType() const final;
-    DateComponents::Type dateType() const final;
+    DateComponentsType dateType() const final;
     double valueAsDate() const final;
     ExceptionOr<void> setValueAsDate(double) const final;
     StepRange createStepRange(AnyStepHandling) const final;

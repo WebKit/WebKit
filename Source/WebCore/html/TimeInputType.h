@@ -42,7 +42,7 @@ public:
 
 private:
     const AtomString& formControlType() const override;
-    DateComponents::Type dateType() const override;
+    DateComponentsType dateType() const override;
     Decimal defaultValueForStepUp() const override;
     StepRange createStepRange(AnyStepHandling) const override;
     Optional<DateComponents> parseToDateComponents(const StringView&) const override;

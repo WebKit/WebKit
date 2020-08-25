@@ -32,6 +32,7 @@
 #if ENABLE(INPUT_TYPE_TIME)
 #include "TimeInputType.h"
 
+#include "DateComponents.h"
 #include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -59,9 +60,9 @@ const AtomString& TimeInputType::formControlType() const
     return InputTypeNames::time();
 }
 
-DateComponents::Type TimeInputType::dateType() const
+DateComponentsType TimeInputType::dateType() const
 {
-    return DateComponents::Time;
+    return DateComponentsType::Time;
 }
 
 Decimal TimeInputType::defaultValueForStepUp() const

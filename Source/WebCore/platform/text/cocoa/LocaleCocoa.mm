@@ -31,6 +31,7 @@
 #import "config.h"
 #import "LocaleCocoa.h"
 
+#import "DateComponents.h"
 #import "LocalizedStrings.h"
 #import <Foundation/NSDateFormatter.h>
 #import <Foundation/NSLocale.h>
@@ -106,11 +107,11 @@ RetainPtr<NSDateFormatter> LocaleCocoa::shortDateFormatter()
 String LocaleCocoa::formatDateTime(const DateComponents& dateComponents, FormatType)
 {
     double msec = dateComponents.millisecondsSinceEpoch();
-    DateComponents::Type type = dateComponents.type();
+    DateComponentsType type = dateComponents.type();
 
     // "week" type not supported.
-    ASSERT(type != DateComponents::Invalid);
-    if (type == DateComponents::Week)
+    ASSERT(type != DateComponentsType::Invalid);
+    if (type == DateComponentsType::Week)
         return String();
 
     // Incoming msec value is milliseconds since 1970-01-01 00:00:00 UTC. The 1970 epoch.

@@ -34,6 +34,7 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
+#include "DateComponents.h"
 #include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -133,13 +134,11 @@ String BaseDateAndTimeInputType::serializeWithComponents(const DateComponents& d
 {
     ASSERT(element());
     Decimal step;
-    if (!element()->getAllowedValueStep(&step))
+    if (!element()->getAllowedValueStep(&step) || step.remainder(msecPerMinute).isZero())
         return date.toString();
-    if (step.remainder(msecPerMinute).isZero())
-        return date.toString(DateComponents::None);
     if (step.remainder(msecPerSecond).isZero())
-        return date.toString(DateComponents::Second);
-    return date.toString(DateComponents::Millisecond);
+        return date.toString(SecondFormat::Second);
+    return date.toString(SecondFormat::Millisecond);
 }
 
 String BaseDateAndTimeInputType::serializeWithMilliseconds(double value) const

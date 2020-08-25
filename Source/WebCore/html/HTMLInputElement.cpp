@@ -36,6 +36,7 @@
 #include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DateComponents.h"
 #include "DateTimeChooser.h"
 #include "DateTimeChooserParameters.h"
 #include "Document.h"
@@ -1676,7 +1677,7 @@ bool HTMLInputElement::isSteppable() const
     return m_inputType->isSteppable();
 }
 
-DateComponents::Type HTMLInputElement::dateType() const
+DateComponentsType HTMLInputElement::dateType() const
 {
     return m_inputType->dateType();
 }

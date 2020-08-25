@@ -33,6 +33,7 @@
 
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
 
+#include "DateComponents.h"
 #include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -53,9 +54,9 @@ const AtomString& DateTimeLocalInputType::formControlType() const
     return InputTypeNames::datetimelocal();
 }
 
-DateComponents::Type DateTimeLocalInputType::dateType() const
+DateComponentsType DateTimeLocalInputType::dateType() const
 {
-    return DateComponents::DateTimeLocal;
+    return DateComponentsType::DateTimeLocal;
 }
 
 double DateTimeLocalInputType::valueAsDate() const

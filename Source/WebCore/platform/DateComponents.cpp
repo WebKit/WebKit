@@ -398,7 +398,7 @@ template<typename CharacterType> bool DateComponents::parseMonth(StringParsingBu
         return false;
 
     m_month = *month;
-    m_type = Month;
+    m_type = DateComponentsType::Month;
     return true;
 }
 
@@ -418,7 +418,7 @@ template<typename CharacterType> bool DateComponents::parseDate(StringParsingBuf
         return false;
 
     m_monthDay = *day;
-    m_type = Date;
+    m_type = DateComponentsType::Date;
     return true;
 }
 
@@ -440,7 +440,7 @@ template<typename CharacterType> bool DateComponents::parseWeek(StringParsingBuf
         return false;
 
     m_week = *week;
-    m_type = Week;
+    m_type = DateComponentsType::Week;
     return true;
 }
 
@@ -500,7 +500,7 @@ template<typename CharacterType> bool DateComponents::parseTime(StringParsingBuf
     m_minute = *minute;
     m_second = second.valueOr(0);
     m_millisecond = millisecond.valueOr(0);
-    m_type = Time;
+    m_type = DateComponentsType::Time;
     return true;
 }
 
@@ -518,7 +518,7 @@ template<typename CharacterType> bool DateComponents::parseDateTimeLocal(StringP
     if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, m_hour, m_minute, m_second, m_millisecond))
         return false;
 
-    m_type = DateTimeLocal;
+    m_type = DateComponentsType::DateTimeLocal;
     return true;
 }
 
@@ -600,20 +600,20 @@ bool DateComponents::setMillisecondsSinceEpochForDateInternal(double ms)
 
 bool DateComponents::setMillisecondsSinceEpochForDate(double ms)
 {
-    m_type = Invalid;
+    m_type = DateComponentsType::Invalid;
     if (!std::isfinite(ms))
         return false;
     if (!setMillisecondsSinceEpochForDateInternal(round(ms)))
         return false;
     if (!withinHTMLDateLimits(m_year, m_month, m_monthDay))
         return false;
-    m_type = Date;
+    m_type = DateComponentsType::Date;
     return true;
 }
 
 bool DateComponents::setMillisecondsSinceEpochForDateTimeLocal(double ms)
 {
-    m_type = Invalid;
+    m_type = DateComponentsType::Invalid;
     if (!std::isfinite(ms))
         return false;
     ms = round(ms);
@@ -622,30 +622,30 @@ bool DateComponents::setMillisecondsSinceEpochForDateTimeLocal(double ms)
         return false;
     if (!withinHTMLDateLimits(m_year, m_month, m_monthDay, m_hour, m_minute, m_second, m_millisecond))
         return false;
-    m_type = DateTimeLocal;
+    m_type = DateComponentsType::DateTimeLocal;
     return true;
 }
 
 bool DateComponents::setMillisecondsSinceEpochForMonth(double ms)
 {
-    m_type = Invalid;
+    m_type = DateComponentsType::Invalid;
     if (!std::isfinite(ms))
         return false;
     if (!setMillisecondsSinceEpochForDateInternal(round(ms)))
         return false;
     if (!withinHTMLDateLimits(m_year, m_month))
         return false;
-    m_type = Month;
+    m_type = DateComponentsType::Month;
     return true;
 }
 
 bool DateComponents::setMillisecondsSinceMidnight(double ms)
 {
-    m_type = Invalid;
+    m_type = DateComponentsType::Invalid;
     if (!std::isfinite(ms))
         return false;
     setMillisecondsSinceMidnightInternal(positiveFmod(round(ms), msPerDay));
-    m_type = Time;
+    m_type = DateComponentsType::Time;
     return true;
 }
 
@@ -664,7 +664,7 @@ bool DateComponents::setMonthsSinceEpoch(double months)
         return false;
     m_year = year;
     m_month = month;
-    m_type = Month;
+    m_type = DateComponentsType::Month;
     return true;
 }
 
@@ -680,7 +680,7 @@ static int offsetTo1stWeekStart(int year)
 
 bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
 {
-    m_type = Invalid;
+    m_type = DateComponentsType::Invalid;
     if (!std::isfinite(ms))
         return false;
     ms = round(ms);
@@ -706,30 +706,30 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
         if (m_year > maximumYear || (m_year == maximumYear && m_week > maximumWeekInMaximumYear))
             return false;
     }
-    m_type = Week;
+    m_type = DateComponentsType::Week;
     return true;
 }
 
 double DateComponents::millisecondsSinceEpochForTime() const
 {
-    ASSERT(m_type == Time || m_type == DateTimeLocal);
+    ASSERT(m_type == DateComponentsType::Time || m_type == DateComponentsType::DateTimeLocal);
     return ((m_hour * minutesPerHour + m_minute) * secondsPerMinute + m_second) * msPerSecond + m_millisecond;
 }
 
 double DateComponents::millisecondsSinceEpoch() const
 {
     switch (m_type) {
-    case Date:
+    case DateComponentsType::Date:
         return dateToDaysFrom1970(m_year, m_month, m_monthDay) * msPerDay;
-    case DateTimeLocal:
+    case DateComponentsType::DateTimeLocal:
         return dateToDaysFrom1970(m_year, m_month, m_monthDay) * msPerDay + millisecondsSinceEpochForTime();
-    case Month:
+    case DateComponentsType::Month:
         return dateToDaysFrom1970(m_year, m_month, 1) * msPerDay;
-    case Time:
+    case DateComponentsType::Time:
         return millisecondsSinceEpochForTime();
-    case Week:
+    case DateComponentsType::Week:
         return (dateToDaysFrom1970(m_year, 0, 1) + offsetTo1stWeekStart(m_year) + (m_week - 1) * 7) * msPerDay;
-    case Invalid:
+    case DateComponentsType::Invalid:
         break;
     }
     ASSERT_NOT_REACHED();
@@ -738,18 +738,18 @@ double DateComponents::millisecondsSinceEpoch() const
 
 double DateComponents::monthsSinceEpoch() const
 {
-    ASSERT(m_type == Month);
+    ASSERT(m_type == DateComponentsType::Month);
     return (m_year - 1970) * 12 + m_month;
 }
 
 String DateComponents::toStringForTime(SecondFormat format) const
 {
-    ASSERT(m_type == DateTimeLocal || m_type == Time);
+    ASSERT(m_type == DateComponentsType::DateTimeLocal || m_type == DateComponentsType::Time);
     SecondFormat effectiveFormat = format;
     if (m_millisecond)
-        effectiveFormat = Millisecond;
-    else if (format == None && m_second)
-        effectiveFormat = Second;
+        effectiveFormat = SecondFormat::Millisecond;
+    else if (format == SecondFormat::None && m_second)
+        effectiveFormat = SecondFormat::Second;
 
     switch (effectiveFormat) {
     default:
@@ -757,11 +757,11 @@ String DateComponents::toStringForTime(SecondFormat format) const
 #if !ASSERT_ENABLED
         FALLTHROUGH; // To None.
 #endif
-    case None:
+    case SecondFormat::None:
         return makeString(pad('0', 2, m_hour), ':', pad('0', 2, m_minute));
-    case Second:
+    case SecondFormat::Second:
         return makeString(pad('0', 2, m_hour), ':', pad('0', 2, m_minute), ':', pad('0', 2, m_second));
-    case Millisecond:
+    case SecondFormat::Millisecond:
         return makeString(pad('0', 2, m_hour), ':', pad('0', 2, m_minute), ':', pad('0', 2, m_second), '.', pad('0', 3, m_millisecond));
     }
 }
@@ -769,17 +769,17 @@ String DateComponents::toStringForTime(SecondFormat format) const
 String DateComponents::toString(SecondFormat format) const
 {
     switch (m_type) {
-    case Date:
+    case DateComponentsType::Date:
         return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1), '-', pad('0', 2, m_monthDay));
-    case DateTimeLocal:
+    case DateComponentsType::DateTimeLocal:
         return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1), '-', pad('0', 2, m_monthDay), 'T', toStringForTime(format));
-    case Month:
+    case DateComponentsType::Month:
         return makeString(pad('0', 4, m_year), '-', pad('0', 2, m_month + 1));
-    case Time:
+    case DateComponentsType::Time:
         return toStringForTime(format);
-    case Week:
+    case DateComponentsType::Week:
         return makeString(pad('0', 4, m_year), "-W", pad('0', 2, m_week));
-    case Invalid:
+    case DateComponentsType::Invalid:
         break;
     }
     ASSERT_NOT_REACHED();

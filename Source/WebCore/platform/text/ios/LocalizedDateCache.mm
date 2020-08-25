@@ -26,6 +26,7 @@
 #import "config.h"
 #import "LocalizedDateCache.h"
 
+#import "DateComponents.h"
 #import "FontCascade.h"
 #import <CoreFoundation/CFNotificationCenter.h>
 #import <math.h>
@@ -69,7 +70,7 @@ void LocalizedDateCache::localeChanged()
     m_formatterMap.clear();
 }
 
-NSDateFormatter *LocalizedDateCache::formatterForDateType(DateComponents::Type type)
+NSDateFormatter *LocalizedDateCache::formatterForDateType(DateComponentsType type)
 {
     int key = static_cast<int>(type);
     if (m_formatterMap.contains(key))
@@ -80,7 +81,7 @@ NSDateFormatter *LocalizedDateCache::formatterForDateType(DateComponents::Type t
     return dateFormatter;
 }
 
-float LocalizedDateCache::maximumWidthForDateType(DateComponents::Type type, const FontCascade& font, const MeasureTextClient& measurer)
+float LocalizedDateCache::maximumWidthForDateType(DateComponentsType type, const FontCascade& font, const MeasureTextClient& measurer)
 {
     int key = static_cast<int>(type);
     if (m_font == font) {
@@ -96,36 +97,36 @@ float LocalizedDateCache::maximumWidthForDateType(DateComponents::Type type, con
     return calculatedMaximum;
 }
 
-NSDateFormatter *LocalizedDateCache::createFormatterForType(DateComponents::Type type)
+NSDateFormatter *LocalizedDateCache::createFormatterForType(DateComponentsType type)
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     NSLocale *currentLocale = [NSLocale currentLocale];
     [dateFormatter setLocale:currentLocale];
 
     switch (type) {
-    case DateComponents::Invalid:
+    case DateComponentsType::Invalid:
         ASSERT_NOT_REACHED();
         break;
-    case DateComponents::Date:
+    case DateComponentsType::Date:
         [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         [dateFormatter setTimeStyle:NSDateFormatterNoStyle];
         [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
         break;
-    case DateComponents::DateTimeLocal:
+    case DateComponentsType::DateTimeLocal:
         [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
         [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
         break;
-    case DateComponents::Month:
+    case DateComponentsType::Month:
         [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"MMMMyyyy" options:0 locale:currentLocale]];
         break;
-    case DateComponents::Time:
+    case DateComponentsType::Time:
         [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
         [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
         [dateFormatter setDateStyle:NSDateFormatterNoStyle];
         break;
-    case DateComponents::Week:
+    case DateComponentsType::Week:
         ASSERT_NOT_REACHED();
         break;
     }
@@ -135,7 +136,7 @@ NSDateFormatter *LocalizedDateCache::createFormatterForType(DateComponents::Type
 
 // NOTE: This does not check for the widest day of the week.
 // We assume no formatter option shows that information.
-float LocalizedDateCache::calculateMaximumWidth(DateComponents::Type type, const MeasureTextClient& measurer)
+float LocalizedDateCache::calculateMaximumWidth(DateComponentsType type, const MeasureTextClient& measurer)
 {
     float maximumWidth = 0;
 
@@ -160,9 +161,9 @@ float LocalizedDateCache::calculateMaximumWidth(DateComponents::Type type, const
 
     // For each month (in the Gregorian Calendar), format a date and measure its length.
     NSUInteger totalMonthsToTest = 1;
-    if (type == DateComponents::Date
-        || type == DateComponents::DateTimeLocal
-        || type == DateComponents::Month)
+    if (type == DateComponentsType::Date
+        || type == DateComponentsType::DateTimeLocal
+        || type == DateComponentsType::Month)
         totalMonthsToTest = numberOfGregorianMonths;
     for (NSUInteger i = 0; i < totalMonthsToTest; ++i) {
         [components.get() setMonth:(i + 1)];

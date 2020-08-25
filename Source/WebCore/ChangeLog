@@ -1,3 +1,68 @@
+2020-08-25  Rob Buis  <rbuis@igalia.com>
+
+        Use more enum classes in DateComponents
+        https://bugs.webkit.org/show_bug.cgi?id=215544
+
+        Reviewed by Sam Weinig.
+
+        Make Type and SecondFormat enum classes since this is more readable
+        and allows us to have less includes in header files.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::serializeWithComponents const):
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::dateType const):
+        * html/DateInputType.h:
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::dateType const):
+        * html/DateTimeLocalInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::dateType const):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::dateType const):
+        * html/InputType.h:
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::dateType const):
+        * html/MonthInputType.h:
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::dateType const):
+        * html/TimeInputType.h:
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::dateType const):
+        * html/WeekInputType.h:
+        * platform/DateComponents.cpp:
+        (WebCore::DateComponents::parseMonth):
+        (WebCore::DateComponents::parseDate):
+        (WebCore::DateComponents::parseWeek):
+        (WebCore::DateComponents::parseTime):
+        (WebCore::DateComponents::parseDateTimeLocal):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForDate):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForDateTimeLocal):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForMonth):
+        (WebCore::DateComponents::setMillisecondsSinceMidnight):
+        (WebCore::DateComponents::setMonthsSinceEpoch):
+        (WebCore::DateComponents::setMillisecondsSinceEpochForWeek):
+        (WebCore::DateComponents::millisecondsSinceEpochForTime const):
+        (WebCore::DateComponents::millisecondsSinceEpoch const):
+        (WebCore::DateComponents::monthsSinceEpoch const):
+        (WebCore::DateComponents::toStringForTime const):
+        (WebCore::DateComponents::toString const):
+        * platform/DateComponents.h:
+        (WebCore::DateComponents::DateComponents):
+        (WebCore::DateComponents::type const):
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::Locale::formatDateTime):
+        * platform/text/PlatformLocale.h:
+        * platform/text/cocoa/LocaleCocoa.mm:
+        (WebCore::LocaleCocoa::formatDateTime):
+        * platform/text/ios/LocalizedDateCache.h:
+        * platform/text/ios/LocalizedDateCache.mm:
+        (WebCore::LocalizedDateCache::formatterForDateType):
+        (WebCore::LocalizedDateCache::maximumWidthForDateType):
+        (WebCore::LocalizedDateCache::createFormatterForType):
+        (WebCore::LocalizedDateCache::calculateMaximumWidth):
+
 2020-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Initialize HSTS storage directory from network session initialization

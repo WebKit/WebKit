@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "DateComponents.h"
 #include "FileChooser.h"
 #include "HTMLTextFormControlElement.h"
 #include <memory>
@@ -53,6 +52,7 @@ struct InputElementClickState {
 };
 
 enum class AnyStepHandling : bool;
+enum class DateComponentsType : uint8_t;
 
 class HTMLInputElement : public HTMLTextFormControlElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLInputElement);
@@ -130,7 +130,7 @@ public:
     WEBCORE_EXPORT bool isTimeField() const;
     WEBCORE_EXPORT bool isWeekField() const;
 
-    DateComponents::Type dateType() const;
+    DateComponentsType dateType() const;
 
     HTMLElement* containerElement() const;
     

@@ -32,6 +32,7 @@
 #if ENABLE(INPUT_TYPE_MONTH)
 #include "MonthInputType.h"
 
+#include "DateComponents.h"
 #include "Decimal.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -55,9 +56,9 @@ const AtomString& MonthInputType::formControlType() const
     return InputTypeNames::month();
 }
 
-DateComponents::Type MonthInputType::dateType() const
+DateComponentsType MonthInputType::dateType() const
 {
-    return DateComponents::Month;
+    return DateComponentsType::Month;
 }
 
 double MonthInputType::valueAsDate() const

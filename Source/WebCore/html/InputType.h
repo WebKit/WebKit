@@ -40,10 +40,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(IOS_FAMILY)
-#include "DateComponents.h"
-#endif
-
 namespace WebCore {
 
 class BeforeTextInsertedEvent;
@@ -67,6 +63,7 @@ class TouchEvent;
 struct InputElementClickState;
 
 enum class AnyStepHandling : bool;
+enum class DateComponentsType : uint8_t;
 
 // An InputType object represents the type-specific part of an HTMLInputElement.
 // Do not expose instances of InputType and classes derived from it to classes
@@ -305,7 +302,7 @@ public:
     virtual bool receiveDroppedFiles(const DragData&);
 #endif
 
-    virtual DateComponents::Type dateType() const;
+    virtual DateComponentsType dateType() const;
 
     virtual String displayString() const;
 

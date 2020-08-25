@@ -26,11 +26,12 @@
 #ifndef PlatformLocale_h
 #define PlatformLocale_h
 
-#include "DateComponents.h"
 #include <wtf/Language.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class DateComponents;
 
 #if PLATFORM(IOS_FAMILY)
 class FontCascade;

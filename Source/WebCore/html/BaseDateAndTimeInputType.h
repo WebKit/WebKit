@@ -33,10 +33,11 @@
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
-#include "DateComponents.h"
 #include "InputType.h"
 
 namespace WebCore {
+
+class DateComponents;
 
 // A super class of date, datetime, datetime-local, month, time, and week types.
 class BaseDateAndTimeInputType : public InputType {

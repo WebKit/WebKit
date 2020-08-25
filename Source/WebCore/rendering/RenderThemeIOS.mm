@@ -612,8 +612,8 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
         return;
 
     // Don't adjust for unsupported date input types.
-    DateComponents::Type dateType = inputElement.dateType();
-    if (dateType == DateComponents::Invalid || dateType == DateComponents::Week)
+    DateComponentsType dateType = inputElement.dateType();
+    if (dateType == DateComponentsType::Invalid || dateType == DateComponentsType::Week)
         return;
 
     // Enforce the width and set the box-sizing to content-box to not conflict with the padding.
