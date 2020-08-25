@@ -1,3 +1,17 @@
+2020-08-25  Peng Liu  <peng.liu6@apple.com>
+
+        When using airplay with Youtube, the Youtube tab becomes completely empty and is unresponsive for an extended period of time if we switch the tab
+        https://bugs.webkit.org/show_bug.cgi?id=215821
+
+        Reviewed by Eric Carlson.
+
+        We should ignore the request to paint the current video frame when we are using airplay.
+        It is not necessary to do so, and -[AVAssetImageGenerator copyCGImageAtTime:actualTime:error:]
+        will block the web process for a long time if the video is airplaying.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext):
+
 2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Resolve with the class used to define the Custom Element
