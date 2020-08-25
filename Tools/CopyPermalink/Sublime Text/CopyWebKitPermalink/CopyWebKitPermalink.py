@@ -187,11 +187,11 @@ class CopyWebKitPermalinkCommand(sublime_plugin.TextCommand):
 
     @staticmethod
     def permalink_for_path(path, line_number, revision_info, annotate_blame):
-        revision = '?rev=' + str(revision_info['revision']) if 'revision' in revision_info else ''
+        revision = '&rev=' + str(revision_info['revision']) if 'revision' in revision_info else ''
         line_number = '#L' + str(line_number) if line_number else ''
         branch = revision_info.get('branch', 'trunk')
         annotate_blame = '&annotate=blame' if annotate_blame else ''
-        return 'https://trac.webkit.org/browser/{}/{}{}{}{}'.format(branch, path, revision, annotate_blame, line_number)
+        return 'https://trac.webkit.org/browser/{}/{}?{}{}{}'.format(branch, path, revision, annotate_blame, line_number)
 
     @staticmethod
     def is_svn_directory(directory):
