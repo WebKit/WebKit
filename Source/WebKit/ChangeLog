@@ -1,3 +1,22 @@
+2020-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Initialize HSTS storage directory from network session initialization
+        https://bugs.webkit.org/show_bug.cgi?id=215802
+
+        Reviewed by Alex Christensen.
+
+        Instead of network process initialization, since it's not actually a global setting.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess): Remove code to initialize HSTS storage.
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::NetworkSessionSoup): Call SoupNetworkSession::setHSTSPersistentStorage() if the
+        path is not mpety.
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed): Remove the ode to set the HSTS storage directory as process pool configuration.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess): Initialize hstsStorageDirectory in default network session parameters.
+
 2020-08-24  Brady Eidson  <beidson@apple.com>
 
         CrashTracer: com.apple.WebKit.WebContent at com.apple.WebKit: WebKit::PDFPlugin::createScrollbar

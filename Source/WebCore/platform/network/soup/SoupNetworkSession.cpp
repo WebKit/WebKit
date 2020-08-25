@@ -58,12 +58,6 @@ static SoupNetworkProxySettings& proxySettings()
     return settings.get();
 }
 
-static CString& hstsStorageDirectory()
-{
-    static NeverDestroyed<CString> directory;
-    return directory.get();
-}
-
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 inline static void soupLogPrinter(SoupLogger*, SoupLoggerLogLevel, char direction, const char* data, gpointer)
 {
@@ -132,6 +126,9 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
         SOUP_SESSION_TIMEOUT, 0,
         SOUP_SESSION_IDLE_TIMEOUT, 0,
         SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_CONTENT_SNIFFER,
+#if SOUP_CHECK_VERSION(2, 67, 1)
+        SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_HSTS_ENFORCER,
+#endif
 #if SOUP_CHECK_VERSION(2, 67, 90)
         SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_WEBSOCKET_EXTENSION_MANAGER,
 #endif
@@ -149,7 +146,6 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
     if (proxySettings().mode != SoupNetworkProxySettings::Mode::Default)
         setupProxy();
     setupLogger();
-    setupHSTSEnforcer();
 }
 
 SoupNetworkSession::~SoupNetworkSession() = default;
@@ -178,40 +174,32 @@ SoupCookieJar* SoupNetworkSession::cookieJar() const
     return SOUP_COOKIE_JAR(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_COOKIE_JAR));
 }
 
-void SoupNetworkSession::setHSTSPersistentStorage(const CString& directory)
+void SoupNetworkSession::setHSTSPersistentStorage(const String& directory)
 {
-    hstsStorageDirectory() = directory;
-}
+    if (m_sessionID.isEphemeral())
+        return;
 
-void SoupNetworkSession::setupHSTSEnforcer()
-{
 #if SOUP_CHECK_VERSION(2, 67, 1)
-    if (soup_session_has_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER))
-        soup_session_remove_feature_by_type(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER);
-
-    GRefPtr<SoupHSTSEnforcer> enforcer;
-    if (m_sessionID.isEphemeral() || hstsStorageDirectory().isNull())
-        enforcer = adoptGRef(soup_hsts_enforcer_new());
-    else {
-        if (FileSystem::makeAllDirectories(hstsStorageDirectory().data())) {
-            CString storagePath = FileSystem::fileSystemRepresentation(hstsStorageDirectory().data());
-            GUniquePtr<char> dbFilename(g_build_filename(storagePath.data(), "hsts-storage.sqlite", nullptr));
-            enforcer = adoptGRef(soup_hsts_enforcer_db_new(dbFilename.get()));
-        } else {
-            RELEASE_LOG_ERROR(Network, "Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", hstsStorageDirectory().data());
-            enforcer = adoptGRef(soup_hsts_enforcer_new());
-        }
+    if (!FileSystem::makeAllDirectories(directory)) {
+        RELEASE_LOG_ERROR(Network, "Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", directory.utf8().data());
+        return;
     }
+
+    CString storagePath = FileSystem::fileSystemRepresentation(directory);
+    GUniquePtr<char> dbFilename(g_build_filename(storagePath.data(), "hsts-storage.sqlite", nullptr));
+    GRefPtr<SoupHSTSEnforcer> enforcer = adoptGRef(soup_hsts_enforcer_db_new(dbFilename.get()));
+    soup_session_remove_feature_by_type(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER);
     soup_session_add_feature(m_soupSession.get(), SOUP_SESSION_FEATURE(enforcer.get()));
+#else
+    UNUSED_PARAM(directory);
 #endif
 }
 
 void SoupNetworkSession::getHostNamesWithHSTSCache(HashSet<String>& hostNames)
 {
 #if SOUP_CHECK_VERSION(2, 67, 91)
-    SoupHSTSEnforcer* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
-    if (!enforcer)
-        return;
+    auto* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
+    ASSERT(enforcer);
 
     GUniquePtr<GList> domains(soup_hsts_enforcer_get_domains(enforcer, FALSE));
     for (GList* iter = domains.get(); iter; iter = iter->next) {
@@ -226,9 +214,8 @@ void SoupNetworkSession::getHostNamesWithHSTSCache(HashSet<String>& hostNames)
 void SoupNetworkSession::deleteHSTSCacheForHostNames(const Vector<String>& hostNames)
 {
 #if SOUP_CHECK_VERSION(2, 67, 1)
-    SoupHSTSEnforcer* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
-    if (!enforcer)
-        return;
+    auto* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
+    ASSERT(enforcer);
 
     for (const auto& hostName : hostNames) {
         GUniquePtr<SoupHSTSPolicy> policy(soup_hsts_policy_new(hostName.utf8().data(), SOUP_HSTS_POLICY_MAX_AGE_PAST, FALSE));
@@ -242,9 +229,8 @@ void SoupNetworkSession::deleteHSTSCacheForHostNames(const Vector<String>& hostN
 void SoupNetworkSession::clearHSTSCache(WallTime modifiedSince)
 {
 #if SOUP_CHECK_VERSION(2, 67, 91)
-    SoupHSTSEnforcer* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
-    if (!enforcer)
-        return;
+    auto* enforcer = SOUP_HSTS_ENFORCER(soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_HSTS_ENFORCER));
+    ASSERT(enforcer);
 
     GUniquePtr<GList> policies(soup_hsts_enforcer_get_policies(enforcer, FALSE));
     for (GList* iter = policies.get(); iter != nullptr; iter = iter->next) {

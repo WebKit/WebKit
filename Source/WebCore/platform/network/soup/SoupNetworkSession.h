@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SoupNetworkSession_h
-#define SoupNetworkSession_h
+#pragma once
 
 #include <gio/gio.h>
 #include <glib-object.h>
@@ -57,8 +56,7 @@ public:
     void setCookieJar(SoupCookieJar*);
     SoupCookieJar* cookieJar() const;
 
-    static void setHSTSPersistentStorage(const CString& hstsStorageDirectory);
-    void setupHSTSEnforcer();
+    void setHSTSPersistentStorage(const String& hstsStorageDirectory);
 
     static void clearOldSoupCache(const String& cacheDirectory);
 
@@ -84,5 +82,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

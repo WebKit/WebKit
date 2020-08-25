@@ -55,6 +55,9 @@ NetworkSessionSoup::NetworkSessionSoup(NetworkProcess& networkProcess, NetworkSe
     storageSession->setCookieObserverHandler([this] {
         this->networkProcess().supplement<WebCookieManager>()->notifyCookiesDidChange(m_sessionID);
     });
+
+    if (!parameters.hstsStorageDirectory.isEmpty())
+        m_networkSession->setHSTSPersistentStorage(parameters.hstsStorageDirectory);
 }
 
 NetworkSessionSoup::~NetworkSessionSoup()

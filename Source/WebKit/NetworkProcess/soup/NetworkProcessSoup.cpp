@@ -138,12 +138,6 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
         userPreferredLanguagesChanged(parameters.languages);
 
     setIgnoreTLSErrors(parameters.ignoreTLSErrors);
-
-    if (!parameters.hstsStorageDirectory.isEmpty())
-        SoupNetworkSession::setHSTSPersistentStorage(parameters.hstsStorageDirectory.utf8());
-    forEachNetworkSession([](const auto& session) {
-        static_cast<const NetworkSessionSoup&>(session).soupNetworkSession().setupHSTSEnforcer();
-    });
 }
 
 std::unique_ptr<WebCore::NetworkStorageSession> NetworkProcess::platformCreateDefaultStorageSession() const

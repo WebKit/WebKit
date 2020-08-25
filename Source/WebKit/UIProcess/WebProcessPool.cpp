@@ -651,6 +651,12 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
             parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectory = networkCacheDirectory;
             SandboxExtension::createHandle(networkCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectoryExtensionHandle);
         }
+
+        const auto& hstsStorageDirectory = withWebsiteDataStore->resolvedHSTSStorageDirectory();
+        if (!hstsStorageDirectory.isNull()) {
+            parameters.defaultDataStoreParameters.networkSessionParameters.hstsStorageDirectory = hstsStorageDirectory;
+            SandboxExtension::createHandle(hstsStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.defaultDataStoreParameters.networkSessionParameters.hstsStorageDirectoryExtensionHandle);
+        }
     } else if (m_websiteDataStore) {
         enableResourceLoadStatistics = m_websiteDataStore->resourceLoadStatisticsEnabled();
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -678,6 +684,12 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         if (!networkCacheDirectory.isNull()) {
             parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectory = networkCacheDirectory;
             SandboxExtension::createHandle(networkCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.defaultDataStoreParameters.networkSessionParameters.networkCacheDirectoryExtensionHandle);
+        }
+
+        const auto& hstsStorageDirectory = m_websiteDataStore->resolvedHSTSStorageDirectory();
+        if (!hstsStorageDirectory.isNull()) {
+            parameters.defaultDataStoreParameters.networkSessionParameters.hstsStorageDirectory = hstsStorageDirectory;
+            SandboxExtension::createHandle(hstsStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.defaultDataStoreParameters.networkSessionParameters.hstsStorageDirectoryExtensionHandle);
         }
     } else {
         if (WebsiteDataStore::defaultDataStoreExists())

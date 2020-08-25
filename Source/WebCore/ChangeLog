@@ -1,3 +1,25 @@
+2020-08-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Initialize HSTS storage directory from network session initialization
+        https://bugs.webkit.org/show_bug.cgi?id=215802
+
+        Reviewed by Alex Christensen.
+
+        Stop handling HSTS persistent storage as a global setting. SoupNetworkSession::setHSTSPersistentStorage() is no
+        longer static and it does what setupHSTSEnforcer() did but simplified. The session is now always created with a
+        memory enforcer that is only replaced by a persistent one when setHSTSPersistentStorage() is called on
+        non-ephemeral sessions.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession):
+        (WebCore::SoupNetworkSession::setHSTSPersistentStorage):
+        (WebCore::SoupNetworkSession::getHostNamesWithHSTSCache):
+        (WebCore::SoupNetworkSession::deleteHSTSCacheForHostNames):
+        (WebCore::SoupNetworkSession::clearHSTSCache):
+        (WebCore::hstsStorageDirectory): Deleted.
+        (WebCore::SoupNetworkSession::setupHSTSEnforcer): Deleted.
+        * platform/network/soup/SoupNetworkSession.h:
+
 2020-08-25  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, follow-up to r266109
