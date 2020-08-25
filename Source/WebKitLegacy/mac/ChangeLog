@@ -1,3 +1,19 @@
+2020-08-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Trying to lookup when WebView is in a popover causes process to hang. Fix for Legacy WebView.
+        https://bugs.webkit.org/show_bug.cgi?id=215792
+
+        Reviewed by Tim Horton.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=214773 also needed in legacy WebView.
+        The Lookup framework does not populate the menus that it vends with the option to 'lookup'
+        words that are selected in popovers. WebKit should follow the pattern and not put the
+        item in the menu as Lookup is not able to handle this situation. Also if Lookup is disabled
+        via defaults, we should not show it in the menu.
+
+        * WebView/WebHTMLView.mm:
+        (customMenuFromDefaultItems):
+
 2020-08-24  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Show picker for date and datetime-local input types

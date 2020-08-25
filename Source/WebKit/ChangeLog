@@ -1,3 +1,15 @@
+2020-08-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Trying to lookup when WebView is in a popover causes process to hang. Fix for Legacy WebView.
+        https://bugs.webkit.org/show_bug.cgi?id=215792
+
+        Reviewed by Tim Horton.
+
+        Update code based on Darin's suggestion for mirror fix in legacy webkit.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+
 2020-08-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE][Qt] Fix qt-wpe-minibrowser on Debian10
