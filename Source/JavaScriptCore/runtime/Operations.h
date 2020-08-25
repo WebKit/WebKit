@@ -31,22 +31,32 @@ namespace JSC {
 #define InvalidPrototypeChain (std::numeric_limits<size_t>::max())
 
 NEVER_INLINE JSValue jsAddSlowCase(JSGlobalObject*, JSValue, JSValue);
-JSValue jsTypeStringForValue(JSGlobalObject*, JSValue);
-JSValue jsTypeStringForValue(VM&, JSGlobalObject*, JSValue);
+JSString* jsTypeStringForValueWithConcurrency(VM&, JSGlobalObject*, JSValue, Concurrency);
 bool jsTypeofIsObject(JSGlobalObject*, JSValue);
 size_t normalizePrototypeChain(JSGlobalObject*, JSCell*, bool& sawPolyProto);
 
-ALWAYS_INLINE bool jsTypeofIsFunction(JSGlobalObject* globalObject, JSValue value)
+template<Concurrency concurrency>
+ALWAYS_INLINE TriState jsTypeofIsFunctionWithConcurrency(JSGlobalObject* globalObject, JSValue value)
 {
     VM& vm = globalObject->vm();
-    if (value.isObject()) {
-        JSObject* object = asObject(value);
-        if (object->structure(vm)->masqueradesAsUndefined(globalObject))
-            return false;
-        if (object->isCallable(vm))
-            return true;
-    }
-    return false;
+    if (!value.isObject())
+        return TriState::False;
+    JSObject* object = asObject(value);
+    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
+        return TriState::False;
+    return object->isCallableWithConcurrency<concurrency>(vm);
+}
+
+inline JSString* jsTypeStringForValue(JSGlobalObject* globalObject, JSValue value)
+{
+    return jsTypeStringForValueWithConcurrency(getVM(globalObject), globalObject, value, Concurrency::MainThread);
+}
+
+ALWAYS_INLINE bool jsTypeofIsFunction(JSGlobalObject* globalObject, JSValue value)
+{
+    auto result = jsTypeofIsFunctionWithConcurrency<Concurrency::MainThread>(globalObject, value);
+    ASSERT(result != TriState::Indeterminate);
+    return result == TriState::True;
 }
 
 ALWAYS_INLINE JSString* jsString(JSGlobalObject* globalObject, const String& u1, JSString* s2)

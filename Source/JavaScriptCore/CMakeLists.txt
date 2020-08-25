@@ -818,6 +818,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/CommonIdentifiers.h
     runtime/CompilationResult.h
     runtime/Completion.h
+    runtime/Concurrency.h
     runtime/ConcurrentJSLock.h
     runtime/ConfigFile.h
     runtime/ConsoleClient.h

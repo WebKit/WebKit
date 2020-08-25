@@ -47,6 +47,7 @@ void InternalFunction::finishCreation(VM& vm, const String& name, NameAdditionMo
 {
     Base::finishCreation(vm);
     ASSERT(jsDynamicCast<InternalFunction*>(vm, this));
+    // JSCell::{getCallData,getConstructData} relies on the following conditions.
     ASSERT(methodTable(vm)->getCallData == InternalFunction::info()->methodTable.getCallData);
     ASSERT(methodTable(vm)->getConstructData == InternalFunction::info()->methodTable.getConstructData);
     ASSERT(type() == InternalFunctionType || type() == NullSetterFunctionType);
@@ -86,6 +87,7 @@ const String InternalFunction::displayName(VM& vm)
 
 CallData InternalFunction::getCallData(JSCell* cell)
 {
+    // Keep this function OK for invocation from concurrent compilers.
     auto* function = jsCast<InternalFunction*>(cell);
     ASSERT(function->m_functionForCall);
 
@@ -97,6 +99,7 @@ CallData InternalFunction::getCallData(JSCell* cell)
 
 CallData InternalFunction::getConstructData(JSCell* cell)
 {
+    // Keep this function OK for invocation from concurrent compilers.
     CallData constructData;
     auto* function = jsCast<InternalFunction*>(cell);
     if (function->m_functionForConstruct != callHostFunctionAsConstructor) {

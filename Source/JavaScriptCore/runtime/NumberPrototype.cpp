@@ -104,7 +104,7 @@ static ALWAYS_INLINE bool toThisNumber(VM& vm, JSValue thisValue, double& x)
 
 static ALWAYS_INLINE EncodedJSValue throwVMToThisNumberError(JSGlobalObject* globalObject, ThrowScope& scope, JSValue thisValue)
 {
-    auto typeString = asString(jsTypeStringForValue(globalObject->vm(), globalObject, thisValue))->value(globalObject);
+    auto typeString = jsTypeStringForValue(globalObject, thisValue)->value(globalObject);
     scope.assertNoException();
     return throwVMTypeError(globalObject, scope, WTF::makeString("thisNumberValue called on incompatible ", typeString));
 }

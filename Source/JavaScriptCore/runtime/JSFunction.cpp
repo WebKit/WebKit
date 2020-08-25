@@ -109,6 +109,7 @@ void JSFunction::finishCreation(VM& vm)
     Base::finishCreation(vm);
     ASSERT(jsDynamicCast<JSFunction*>(vm, this));
     ASSERT(type() == JSFunctionType);
+    // JSCell::{getCallData,getConstructData} relies on the following conditions.
     ASSERT(methodTable(vm)->getConstructData == &JSFunction::getConstructData);
     ASSERT(methodTable(vm)->getCallData == &JSFunction::getCallData);
 }
@@ -118,6 +119,7 @@ void JSFunction::finishCreation(VM& vm, NativeExecutable*, int length, const Str
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     ASSERT(type() == JSFunctionType);
+    // JSCell::{getCallData,getConstructData} relies on the following conditions.
     ASSERT(methodTable(vm)->getConstructData == &JSFunction::getConstructData);
     ASSERT(methodTable(vm)->getCallData == &JSFunction::getCallData);
 
@@ -258,6 +260,7 @@ void JSFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 CallData JSFunction::getCallData(JSCell* cell)
 {
+    // Keep this function OK for invocation from concurrent compilers.
     CallData callData;
 
     JSFunction* thisObject = jsCast<JSFunction*>(cell);
@@ -682,6 +685,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, JSGlobalObject* globalObjec
 // ECMA 13.2.2 [[Construct]]
 CallData JSFunction::getConstructData(JSCell* cell)
 {
+    // Keep this function OK for invocation from concurrent compilers.
     CallData constructData;
 
     JSFunction* thisObject = jsCast<JSFunction*>(cell);

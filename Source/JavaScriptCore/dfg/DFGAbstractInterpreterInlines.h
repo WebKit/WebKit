@@ -1491,9 +1491,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 } else
                     setConstant(node, jsBoolean(child.value().isNull()));
                 break;
-            case TypeOfIsFunction:
-                setConstant(node, jsBoolean(jsTypeofIsFunction(m_codeBlock->globalObjectFor(node->origin.semantic), child.value())));
+            case TypeOfIsFunction: {
+                TriState result = jsTypeofIsFunctionWithConcurrency<Concurrency::ConcurrentThread>(m_codeBlock->globalObjectFor(node->origin.semantic), child.value());
+                if (result != TriState::Indeterminate)
+                    setConstant(node, jsBoolean(result == TriState::True));
+                else
+                    constantWasSet = false;
                 break;
+            }
             case IsUndefinedOrNull:
                 setConstant(node, jsBoolean(child.value().isUndefinedOrNull()));
                 break;
@@ -1512,12 +1517,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             case IsObject:
                 setConstant(node, jsBoolean(child.value().isObject()));
                 break;
-            case IsCallable:
-                setConstant(node, jsBoolean(child.value().isCallable(m_vm)));
+            case IsCallable: {
+                TriState result = child.value().isCallableWithConcurrency<Concurrency::ConcurrentThread>(m_vm);
+                if (result != TriState::Indeterminate)
+                    setConstant(node, jsBoolean(result == TriState::True));
+                else
+                    constantWasSet = false;
                 break;
-            case IsConstructor:
-                setConstant(node, jsBoolean(child.value().isConstructor(m_vm)));
+            }
+            case IsConstructor: {
+                TriState result = child.value().isConstructorWithConcurrency<Concurrency::ConcurrentThread>(m_vm);
+                if (result != TriState::Indeterminate)
+                    setConstant(node, jsBoolean(result == TriState::True));
+                else
+                    constantWasSet = false;
                 break;
+            }
             case IsEmpty:
                 setConstant(node, jsBoolean(child.value().isEmpty()));
                 break;
@@ -1782,9 +1797,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         JSValue child = forNode(node->child1()).value();
         AbstractValue& abstractChild = forNode(node->child1());
         if (child) {
-            JSValue typeString = jsTypeStringForValue(m_vm, m_codeBlock->globalObjectFor(node->origin.semantic), child);
-            setConstant(node, *m_graph.freeze(typeString));
-            break;
+            if (JSString* typeString = jsTypeStringForValueWithConcurrency(m_vm, m_codeBlock->globalObjectFor(node->origin.semantic), child, Concurrency::ConcurrentThread)) {
+                setConstant(node, *m_graph.freeze(typeString));
+                break;
+            }
         }
         
         if (isFullNumberSpeculation(abstractChild.m_type)) {

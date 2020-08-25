@@ -1,3 +1,48 @@
+2020-08-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add concurrency-aware version of isCallable / isConstructor to make it usable in DFG compiler
+        https://bugs.webkit.org/show_bug.cgi?id=215746
+
+        Reviewed by Saam Barati.
+
+        This patch adds isCallableWithConcurrency and isConstructorWithConcurrency to JSCell, JSValue etc.
+        This can work even if it is called from concurrent compiler threads. We also add jsTypeStringForValueWithConcurrency
+        and jsTypeofIsFunctionWithConcurrency which are using the above WithConcurrency functionalities.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * runtime/Concurrency.h: Added.
+        (WTF::printInternal):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        (JSC::InternalFunction::getCallData):
+        (JSC::InternalFunction::getConstructData):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::isCallableWithConcurrency const):
+        (JSC::JSValue::isConstructorWithConcurrency const):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::isCallableWithConcurrency):
+        (JSC::JSCell::isConstructorWithConcurrency):
+        (JSC::JSCell::isCallable):
+        (JSC::JSCell::isConstructor):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        (JSC::JSFunction::getCallData):
+        (JSC::JSFunction::getConstructData):
+        * runtime/NumberPrototype.cpp:
+        (JSC::throwVMToThisNumberError):
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValueWithConcurrency):
+        (JSC::jsTypeStringForValue): Deleted.
+        * runtime/Operations.h:
+        (JSC::jsTypeofIsFunctionWithConcurrency):
+        (JSC::jsTypeStringForValue):
+        (JSC::jsTypeofIsFunction):
+
 2020-08-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Implementation of the class "extends" clause incorrectly uses __proto__ for setting prototypes

@@ -241,18 +241,53 @@ inline bool JSCell::isProxy() const
     return m_type == ImpureProxyType || m_type == PureForwardingProxyType || m_type == ProxyObjectType;
 }
 
-ALWAYS_INLINE bool JSCell::isCallable(VM& vm)
+// FIXME: Consider making getCallData concurrency-safe once NPAPI support is removed.
+// https://bugs.webkit.org/show_bug.cgi?id=215801
+template<Concurrency concurrency>
+ALWAYS_INLINE TriState JSCell::isCallableWithConcurrency(VM& vm)
 {
+    if (!isObject())
+        return TriState::False;
     if (type() == JSFunctionType)
-        return true;
-    if (inlineTypeFlags() & OverridesGetCallData)
-        return methodTable(vm)->getCallData(this).type != CallData::Type::None;
-    return false;
+        return TriState::True;
+    if (inlineTypeFlags() & OverridesGetCallData) {
+        if constexpr (concurrency == Concurrency::MainThread)
+            return (methodTable(vm)->getCallData(this).type != CallData::Type::None) ? TriState::True : TriState::False;
+        // We know that InternalFunction::getCallData is concurrency aware. Plus, derived classes of InternalFunction never
+        // override getCallData (this is ensured by ASSERT in InternalFunction).
+        if (type() == InternalFunctionType)
+            return (methodTable(vm)->getCallData(this).type != CallData::Type::None) ? TriState::True : TriState::False;
+        return TriState::Indeterminate;
+    }
+    return TriState::False;
 }
 
-inline bool JSCell::isConstructor(VM& vm)
+template<Concurrency concurrency>
+inline TriState JSCell::isConstructorWithConcurrency(VM& vm)
 {
-    return methodTable(vm)->getConstructData(this).type != CallData::Type::None;
+    if (!isObject())
+        return TriState::False;
+    if constexpr (concurrency == Concurrency::MainThread)
+        return (methodTable(vm)->getConstructData(this).type != CallData::Type::None) ? TriState::True : TriState::False;
+    // We know that both getConstructData of both types are concurrency aware. Plus, derived classes of JSFunction and InternalFunction
+    // never override getConstructData (this is ensured by ASSERT in JSFunction and InternalFunction).
+    if (type() == JSFunctionType || type() == InternalFunctionType)
+        return (methodTable(vm)->getConstructData(this).type != CallData::Type::None) ? TriState::True : TriState::False;
+    return TriState::Indeterminate;
+}
+
+ALWAYS_INLINE bool JSCell::isCallable(VM& vm)
+{
+    auto result = isCallableWithConcurrency<Concurrency::MainThread>(vm);
+    ASSERT(result != TriState::Indeterminate);
+    return result == TriState::True;
+}
+
+ALWAYS_INLINE bool JSCell::isConstructor(VM& vm)
+{
+    auto result = isConstructorWithConcurrency<Concurrency::MainThread>(vm);
+    ASSERT(result != TriState::Indeterminate);
+    return result == TriState::True;
 }
 
 inline bool JSCell::isAPIValueWrapper() const

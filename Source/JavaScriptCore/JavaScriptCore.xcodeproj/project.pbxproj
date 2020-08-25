@@ -1848,6 +1848,7 @@
 		E365F33B24AA623B00C991B2 /* IntlDisplayNamesPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E365F33824AA621100C991B2 /* IntlDisplayNamesPrototype.lut.h */; };
 		E36B767022F8D61900D09818 /* WasmOMGForOSREntryPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = E36B766F22F8D61100D09818 /* WasmOMGForOSREntryPlan.h */; };
 		E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E36CC9462086314F0051FFD6 /* WasmCreationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E36EDCE524F0975700E60DA2 /* Concurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = E36EDCE424F0975700E60DA2 /* Concurrency.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E383500A2390D93B0036316D /* WasmGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = E38350092390D9370036316D /* WasmGlobal.h */; };
 		E3850B15226ED641009ABF9C /* DFGMinifiedIDInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */; };
@@ -5047,6 +5048,7 @@
 		E36B766E22F8D61100D09818 /* WasmOMGForOSREntryPlan.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmOMGForOSREntryPlan.cpp; sourceTree = "<group>"; };
 		E36B766F22F8D61100D09818 /* WasmOMGForOSREntryPlan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmOMGForOSREntryPlan.h; sourceTree = "<group>"; };
 		E36CC9462086314F0051FFD6 /* WasmCreationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmCreationMode.h; sourceTree = "<group>"; };
+		E36EDCE424F0975700E60DA2 /* Concurrency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Concurrency.h; sourceTree = "<group>"; };
 		E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleAnalyzer.cpp; sourceTree = "<group>"; };
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
 		E37CFB2D22F27C57009A7B38 /* WasmCompilationMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCompilationMode.cpp; sourceTree = "<group>"; };
@@ -7155,6 +7157,7 @@
 				A7E5A3A61797432D00E893C0 /* CompilationResult.h */,
 				969A09220ED1E09C00F1F681 /* Completion.cpp */,
 				F5BB2BC5030F772101FCFE1D /* Completion.h */,
+				E36EDCE424F0975700E60DA2 /* Concurrency.h */,
 				0FDB2CE9174896C7007B3C1B /* ConcurrentJSLock.h */,
 				658824B01E5CFDF400FB7359 /* ConfigFile.cpp */,
 				658824AE1E5CFDB000FB7359 /* ConfigFile.h */,
@@ -9316,6 +9319,7 @@
 				0FD2FD9420B52BDE00F09441 /* CompleteSubspaceInlines.h in Headers */,
 				BC18C3F40E16F5CD00B34460 /* Completion.h in Headers */,
 				0F6FC751196110A800E1D02D /* ComplexGetStatus.h in Headers */,
+				E36EDCE524F0975700E60DA2 /* Concurrency.h in Headers */,
 				0FDB2CEA174896C7007B3C1B /* ConcurrentJSLock.h in Headers */,
 				BC18C3F50E16F5CD00B34460 /* config.h in Headers */,
 				658824AF1E5CFDB000FB7359 /* ConfigFile.h in Headers */,

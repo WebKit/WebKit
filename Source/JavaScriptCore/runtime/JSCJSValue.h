@@ -22,6 +22,7 @@
 
 #pragma once
 
+#include "Concurrency.h"
 #include "ECMAMode.h"
 #include "JSExportMacros.h"
 #include "PureNaN.h"
@@ -233,7 +234,9 @@ public:
     // Querying the type.
     bool isEmpty() const;
     bool isCallable(VM&) const;
+    template<Concurrency> TriState isCallableWithConcurrency(VM&) const;
     bool isConstructor(VM&) const;
+    template<Concurrency> TriState isConstructorWithConcurrency(VM&) const;
     bool isUndefined() const;
     bool isNull() const;
     bool isUndefinedOrNull() const;

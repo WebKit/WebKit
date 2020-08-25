@@ -920,9 +920,25 @@ inline bool JSValue::isCallable(VM& vm) const
     return isCell() && asCell()->isCallable(vm);
 }
 
+template<Concurrency concurrency>
+inline TriState JSValue::isCallableWithConcurrency(VM& vm) const
+{
+    if (!isCell())
+        return TriState::False;
+    return asCell()->isCallableWithConcurrency<concurrency>(vm);
+}
+
 inline bool JSValue::isConstructor(VM& vm) const
 {
     return isCell() && asCell()->isConstructor(vm);
+}
+
+template<Concurrency concurrency>
+inline TriState JSValue::isConstructorWithConcurrency(VM& vm) const
+{
+    if (!isCell())
+        return TriState::False;
+    return asCell()->isConstructorWithConcurrency<concurrency>(vm);
 }
 
 // this method is here to be after the inline declaration of JSCell::inherits

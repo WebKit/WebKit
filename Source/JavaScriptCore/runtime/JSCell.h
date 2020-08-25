@@ -109,6 +109,8 @@ public:
     bool isProxy() const;
     bool isCallable(VM&);
     bool isConstructor(VM&);
+    template<Concurrency> TriState isCallableWithConcurrency(VM&);
+    template<Concurrency> TriState isConstructorWithConcurrency(VM&);
     bool inherits(VM&, const ClassInfo*) const;
     template<typename Target> bool inherits(VM&) const;
     bool isAPIValueWrapper() const;
