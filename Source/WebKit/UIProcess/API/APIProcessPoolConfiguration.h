@@ -131,9 +131,6 @@ public:
     const WTF::String& customWebContentServiceBundleIdentifier() const { return m_customWebContentServiceBundleIdentifier; }
     void setCustomWebContentServiceBundleIdentifier(const WTF::String& customWebContentServiceBundleIdentifier) { m_customWebContentServiceBundleIdentifier = customWebContentServiceBundleIdentifier; }
 
-    const WTF::String& hstsStorageDirectory() const { return m_hstsStorageDirectory; }
-    void setHSTSStorageDirectory(WTF::String&& directory) { m_hstsStorageDirectory = WTFMove(directory); }
-
 #if PLATFORM(GTK) && !USE(GTK4)
     bool useSystemAppearanceForScrollbars() const { return m_useSystemAppearanceForScrollbars; }
     void setUseSystemAppearanceForScrollbars(bool useSystemAppearanceForScrollbars) { m_useSystemAppearanceForScrollbars = useSystemAppearanceForScrollbars; }
@@ -176,7 +173,6 @@ private:
     bool m_shouldConfigureJSCForTesting { false };
     bool m_isJITEnabled { true };
     bool m_usesSingleWebProcess { false };
-    WTF::String m_hstsStorageDirectory;
 #if PLATFORM(GTK) && !USE(GTK4)
     bool m_useSystemAppearanceForScrollbars { false };
 #endif

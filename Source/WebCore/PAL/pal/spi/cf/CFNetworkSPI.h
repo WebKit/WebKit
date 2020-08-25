@@ -392,10 +392,6 @@ void _CFURLRequestCreateArchiveList(CFAllocatorRef, CFURLRequestRef, CFIndex* ve
 CFMutableURLRequestRef _CFURLRequestCreateFromArchiveList(CFAllocatorRef, CFIndex version, CFTypeRef* objects, CFIndex objectCount, CFDictionaryRef protocolProperties);
 void CFURLRequestSetProxySettings(CFMutableURLRequestRef, CFDictionaryRef);
 
-#if HAVE(HSTS_STORAGE_PATH)
-void _CFNetworkSetHSTSStoragePath(CFStringRef);
-#endif
-
 CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxy;
 CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyHost;
 CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyPort;

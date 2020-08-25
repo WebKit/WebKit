@@ -1,3 +1,30 @@
+2020-08-25  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up deprecated and unused SPI to set HSTS storage on ProcessPoolConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=215788
+
+        Reviewed by Chris Dumez.
+
+        After rdar://problem/65047971 this is no longer needed because the replacement on WebsiteDataStoreConfiguration has been adopted.
+        The selector on _WKProcessPoolConfiguration had already been deprecated, and is left for now to allow easier debugging with OSes that use it still.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration setHSTSStorageDirectory:]):
+        (-[_WKProcessPoolConfiguration hstsStorageDirectory]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2020-08-25  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Update audio arbitration manager when audio transport changes

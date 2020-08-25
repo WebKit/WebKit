@@ -74,8 +74,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     encoder << shouldEnableITPDatabase;
     encoder << enableAdClickAttributionDebugMode;
-    encoder << hstsStorageDirectory;
-    encoder << hstsStorageDirectoryExtensionHandle;
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -165,12 +163,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
 
     if (!decoder.decode(result.enableAdClickAttributionDebugMode))
-        return false;
-
-    if (!decoder.decode(result.hstsStorageDirectory))
-        return false;
-
-    if (!decoder.decode(result.hstsStorageDirectoryExtensionHandle))
         return false;
 
     return true;

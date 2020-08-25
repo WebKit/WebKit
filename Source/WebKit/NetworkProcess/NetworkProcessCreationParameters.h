@@ -93,8 +93,6 @@ struct NetworkProcessCreationParameters {
 #endif
     bool shouldEnableITPDatabase { false };
     bool enableAdClickAttributionDebugMode { false };
-    String hstsStorageDirectory;
-    SandboxExtension::Handle hstsStorageDirectoryExtensionHandle;
 };
 
 } // namespace WebKit

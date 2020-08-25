@@ -74,13 +74,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     WebCore::setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
     setApplicationSDKVersion(parameters.uiProcessSDKVersion);
 
-#if HAVE(HSTS_STORAGE_PATH)
-    if (!parameters.hstsStorageDirectory.isNull()) {
-        SandboxExtension::consumePermanently(parameters.hstsStorageDirectoryExtensionHandle);
-        _CFNetworkSetHSTSStoragePath(parameters.hstsStorageDirectory.createCFString().get());
-    }
-#endif
-
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
