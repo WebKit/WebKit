@@ -705,13 +705,14 @@ void PDFPlugin::receivedNonLinearizedPDFSentinel()
 {
     m_incrementalPDFLoadingEnabled = false;
 
+    if (m_hasBeenDestroyed)
+        return;
+
     if (!isMainThread()) {
 #if !LOG_DISABLED
         pdfLog("Disabling incremental PDF loading on background thread");
 #endif
         callOnMainThread([this, protectedThis = makeRef(*this)] {
-            if (m_hasBeenDestroyed)
-                return;
             receivedNonLinearizedPDFSentinel();
         });
         return;
@@ -887,8 +888,6 @@ void PDFPlugin::threadEntry(Ref<PDFPlugin>&& protectedPlugin)
     [m_backgroundThreadDocument preloadDataOfPagesInRange:NSMakeRange(0, 1) onQueue:firstPageQueue->dispatchQueue() completion:[&firstPageSemaphore, this] (NSIndexSet *) mutable {
         if (m_incrementalPDFLoadingEnabled) {
             callOnMainThread([this] {
-                if (m_hasBeenDestroyed)
-                    return;
                 adoptBackgroundThreadDocument();
             });
         } else
@@ -983,6 +982,9 @@ void PDFPlugin::getResourceBytesAtPosition(size_t count, off_t position, Complet
 
 void PDFPlugin::adoptBackgroundThreadDocument()
 {
+    if (m_hasBeenDestroyed)
+        return;
+
     ASSERT(!m_pdfDocument);
     ASSERT(m_backgroundThreadDocument);
     ASSERT(isMainThread());
@@ -1216,6 +1218,9 @@ PluginInfo PDFPlugin::pluginInfo()
 
 void PDFPlugin::updateScrollbars()
 {
+    if (m_hasBeenDestroyed)
+        return;
+
     bool hadScrollbars = m_horizontalScrollbar || m_verticalScrollbar;
 
     if (m_horizontalScrollbar) {
@@ -1524,6 +1529,9 @@ void PDFPlugin::convertPostScriptDataIfNeeded()
 
 void PDFPlugin::documentDataDidFinishLoading()
 {
+    if (m_hasBeenDestroyed)
+        return;
+
     addArchiveResource();
 
     m_documentFinishedLoading = true;
