@@ -1,3 +1,15 @@
+2020-08-25  Rob Buis  <rbuis@igalia.com>
+
+        Add setting for lazy iframe loading
+        https://bugs.webkit.org/show_bug.cgi?id=215566
+
+        Reviewed by Youenn Fablet.
+
+        Add setting for lazy iframe loading, disabling it until
+        this feature is implemented.
+
+        * page/Settings.yaml:
+
 2020-08-25  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] The initial alignment baseline is always set by the strut

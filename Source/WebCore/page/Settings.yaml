@@ -346,6 +346,8 @@ forceUpdateScrollbarsOnMainThreadForPerformanceTesting:
   initial: false
 notificationsEnabled:
   initial: true
+lazyIframeLoadingEnabled:
+  initial: false
 
 # Some apps needs isLoadingInAPISense to account for active subresource loaders.
 needsIsLoadingInAPISenseQuirk:

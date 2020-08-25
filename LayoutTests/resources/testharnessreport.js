@@ -30,6 +30,8 @@ if (self.testRunner) {
             Object.defineProperty(self, "OfflineAudioContext", Object.getOwnPropertyDescriptor(self, "webkitOfflineAudioContext"));
         if (window.webkitAudioPannerNode && !window.PannerNode)
             Object.defineProperty(self, "PannerNode", Object.getOwnPropertyDescriptor(self, "webkitAudioPannerNode"));
+        if (self.internals)
+            internals.settings.setLazyIframeLoadingEnabled(location.pathname.indexOf('iframe-loading-lazy') !== -1);
     }
 
     if (testRunner.setStatisticsShouldDowngradeReferrer) 
