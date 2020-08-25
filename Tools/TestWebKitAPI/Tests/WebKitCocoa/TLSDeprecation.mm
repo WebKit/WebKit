@@ -144,7 +144,7 @@ namespace TestWebKitAPI {
 const uint16_t tls1_1 = 0x0302;
 static NSString *defaultsKey = @"WebKitEnableLegacyTLS";
 
-#if HAVE(NETWORK_FRAMEWORK)
+#if HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
 
 TEST(TLSVersion, DefaultBehavior)
 {
@@ -160,7 +160,7 @@ TEST(TLSVersion, DefaultBehavior)
     [delegate waitForDidFinishNavigation];
 }
 
-#endif // HAVE(NETWORK_FRAMEWORK)
+#endif // HAVE(NETWORK_FRAMEWORK) && HAVE(TLS_PROTOCOL_VERSION_T)
 
 #if HAVE(TLS_VERSION_DURING_CHALLENGE)
 
