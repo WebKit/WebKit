@@ -1,3 +1,12 @@
+2020-08-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix read-after-free introduced in r266087
+        https://bugs.webkit.org/show_bug.cgi?id=215671
+
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::packageFormData):
+        Keep the CString in scope while we are using it.
+
 2020-08-25  Andres Gonzalez  <andresg_22@apple.com>
 
         Crash in WebCore::AccessibilityRenderObject::textUnderElement in isolated tree mode.

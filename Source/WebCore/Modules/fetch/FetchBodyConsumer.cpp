@@ -187,19 +187,19 @@ static RefPtr<DOMFormData> packageFormData(const String& contentType, const char
     auto mimeType = parseMIMEType(contentType);
     if (auto multipartBoundary = parseMultipartBoundary(mimeType)) {
         String boundaryWithDashes = makeString("--", *multipartBoundary);
-        const char* boundary = boundaryWithDashes.utf8().data();
-        size_t boundaryLength = strlen(boundary);
+        CString boundary = boundaryWithDashes.utf8();
+        size_t boundaryLength = boundary.length();
 
-        const char* currentBoundary = static_cast<const char*>(memmem(data, length, boundary, boundaryLength));
+        const char* currentBoundary = static_cast<const char*>(memmem(data, length, boundary.data(), boundaryLength));
         if (!currentBoundary)
             return nullptr;
-        const char* nextBoundary = static_cast<const char*>(memmem(currentBoundary + boundaryLength, length - (currentBoundary + boundaryLength - data), boundary, boundaryLength));
+        const char* nextBoundary = static_cast<const char*>(memmem(currentBoundary + boundaryLength, length - (currentBoundary + boundaryLength - data), boundary.data(), boundaryLength));
         if (!nextBoundary)
             return nullptr;
         while (nextBoundary) {
             parseMultipartPart(currentBoundary + boundaryLength, nextBoundary - currentBoundary - boundaryLength - strlen("\r\n"), form.get());
             currentBoundary = nextBoundary;
-            nextBoundary = static_cast<const char*>(memmem(nextBoundary + boundaryLength, length - (nextBoundary + boundaryLength - data), boundary, boundaryLength));
+            nextBoundary = static_cast<const char*>(memmem(nextBoundary + boundaryLength, length - (nextBoundary + boundaryLength - data), boundary.data(), boundaryLength));
         }
     } else if (mimeType && equalIgnoringASCIICase(mimeType->type, "application") && equalIgnoringASCIICase(mimeType->subtype, "x-www-form-urlencoded")) {
         auto dataString = String::fromUTF8(data, length);
