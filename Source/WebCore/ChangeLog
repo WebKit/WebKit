@@ -1,5 +1,13 @@
 2020-08-25  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, follow-up to r266109
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webKitWebAudioSrcAllocateBuffersAndRenderAudio): The element clock can be null so we need
+        to check it before attempting to use it.
+
+2020-08-25  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer][WebAudio] Fill in output timestamps
         https://bugs.webkit.org/show_bug.cgi?id=215703
 
