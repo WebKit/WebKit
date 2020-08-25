@@ -49,9 +49,6 @@ public:
     
     bool run()
     {
-        // FIXME: We should make this work in SSA. https://bugs.webkit.org/show_bug.cgi?id=148260
-        DFG_ASSERT(m_graph, nullptr, m_graph.m_form != SSA);
-        
         const bool extremeLogging = false;
 
         bool outerChanged = false;

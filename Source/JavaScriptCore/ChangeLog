@@ -1,5 +1,30 @@
 2020-08-24  Keith Miller  <keith_miller@apple.com>
 
+        DFG should always run CFG Simplification after Constant Folding.
+        https://bugs.webkit.org/show_bug.cgi?id=215286
+
+        Reviewed by Robin Morisset.
+
+        We didn't do this originally because LICM, many years ago, was
+        unsound if the CFG didn't have exactly the right shape around
+        loops. This is no longer true so we don't have to worry about
+        changing the CFG anymore. While, this doesn't appear to be a
+        speedup on JetStream 2 CFG, probably because we'd eventually
+        simplify the graph in B3, CFG Simplification is very cheap and
+        make other DFG optimizations easier in the future.
+
+        Also, remove unecessary validation rule that no exitOKs can come
+        before any Phi nodes in DFG. This isn't required and fails after
+        merging two basic blocks where the latter block has a Phi.
+
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGValidate.cpp:
+
+2020-08-24  Keith Miller  <keith_miller@apple.com>
+
         Remove MovHintRemoval phase
         https://bugs.webkit.org/show_bug.cgi?id=215785
 
