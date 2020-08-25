@@ -1,3 +1,7 @@
+2020-08-25  Russell Epstein  <repstein@apple.com>
+
+        Revert r265115. rdar://problem/67759082
+
 2020-08-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Remove support for NPAPI plugins

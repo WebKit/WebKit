@@ -127,11 +127,6 @@ void RemoteCDMInstanceSessionProxy::storeRecordOfKeyUsage(const String& sessionI
     m_session->storeRecordOfKeyUsage(sessionId);
 }
 
-void RemoteCDMInstanceSessionProxy::displayIDChanged(PlatformDisplayID displayID)
-{
-    m_session->displayChanged(displayID);
-}
-
 void RemoteCDMInstanceSessionProxy::updateKeyStatuses(KeyStatusVector&& keyStatuses)
 {
     if (!m_cdm)

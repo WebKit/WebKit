@@ -72,7 +72,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
 #include <wtf/ObjectIdentifier.h>
-#include <wtf/Observer.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
@@ -1172,9 +1171,6 @@ public:
     WEBCORE_EXPORT void removeMediaCanStartListener(MediaCanStartListener&);
     MediaCanStartListener* takeAnyMediaCanStartListener();
 
-    using DisplayChangedObserver = WTF::Observer<void(PlatformDisplayID)>;
-    void addDisplayChangedObserver(const DisplayChangedObserver&);
-
 #if ENABLE(FULLSCREEN_API)
     FullscreenManager& fullscreenManager() { return m_fullscreenManager; }
     const FullscreenManager& fullscreenManager() const { return m_fullscreenManager; }
@@ -1848,7 +1844,6 @@ private:
     RenderPtr<RenderView> m_renderView;
 
     WeakHashSet<MediaCanStartListener> m_mediaCanStartListeners;
-    WeakHashSet<DisplayChangedObserver> m_displayChangedObservers;
 
 #if ENABLE(FULLSCREEN_API)
     UniqueRef<FullscreenManager> m_fullscreenManager;
