@@ -623,6 +623,8 @@ public:
     double privatePlayerVolume(const HTMLMediaElement&);
 #endif
 
+    ExceptionOr<void> setIsPlayingToBluetoothOverride(Optional<bool>);
+
     bool isSelectPopupVisible(HTMLSelectElement&);
 
     ExceptionOr<String> captionsStyleSheetOverride();

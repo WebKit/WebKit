@@ -4936,6 +4936,17 @@ double Internals::privatePlayerVolume(const HTMLMediaElement&)
 
 #endif
 
+ExceptionOr<void> Internals::setIsPlayingToBluetoothOverride(Optional<bool> isPlaying)
+{
+#if ENABLE(ROUTING_ARBITRATION)
+    AudioSession::sharedSession().setIsPlayingToBluetoothOverride(isPlaying);
+    return { };
+#else
+    UNUSED_PARAM(isPlaying);
+    return Exception { NotSupportedError };
+#endif
+}
+
 void Internals::reportBacktrace()
 {
     WTFReportBacktrace();

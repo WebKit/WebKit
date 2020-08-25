@@ -163,6 +163,19 @@ String AudioSession::routingContextUID() const
 
 #endif // !PLATFORM(COCOA)
 
+#if !PLATFORM(MAC)
+void AudioSession::audioOutputDeviceChanged()
+{
+    notImplemented();
+}
+
+void AudioSession::setIsPlayingToBluetoothOverride(Optional<bool>)
+{
+    notImplemented();
+}
+#endif // !PLATFORM(COCOA)
+
+
 String convertEnumerationToString(RouteSharingPolicy enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {

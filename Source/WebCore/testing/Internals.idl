@@ -651,6 +651,8 @@ enum ContentSizeCategory {
     [Conditional=VIDEO] DOMString elementBufferingPolicy(HTMLMediaElement media);
     [Conditional=VIDEO] double privatePlayerVolume(HTMLMediaElement media);
 
+    [MayThrowException] void setIsPlayingToBluetoothOverride(optional boolean? isPlaying = null);
+
     [Conditional=LEGACY_ENCRYPTED_MEDIA] void initializeMockCDM();
     [Conditional=ENCRYPTED_MEDIA] MockCDMFactory registerMockCDM();
     void enableMockMediaCapabilities();

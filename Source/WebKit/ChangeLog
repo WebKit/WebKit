@@ -1,3 +1,21 @@
+2020-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Update audio arbitration manager when audio transport changes
+        https://bugs.webkit.org/show_bug.cgi?id=215781
+        <rdar://problem/65920613>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _audioRoutingArbitrationUpdateTime]):
+
+        * UIProcess/Media/AudioSessionRoutingArbitratorProxy.h:
+        (WebKit::AudioSessionRoutingArbitratorProxy::arbitrationUpdateTime const):
+
+        * UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm:
+        (WebKit::AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory):
+
 2020-08-25  Youenn Fablet  <youenn@apple.com>
 
         Add support for MediaRecorder bitrate options

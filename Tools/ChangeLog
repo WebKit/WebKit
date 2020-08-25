@@ -1,3 +1,16 @@
+2020-08-25  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Update audio arbitration manager when audio transport changes
+        https://bugs.webkit.org/show_bug.cgi?id=215781
+        <rdar://problem/65920613>
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AudioRoutingArbitration.mm:
+        (AudioRoutingArbitration::statusShouldBecomeEqualTo): Add message string to help
+        debugging when the test fails.
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/video-with-audio.html:
+
 2020-08-25  Youenn Fablet  <youenn@apple.com>
 
         Generated bindings for derived dictionaries are not regenerated when the base dictionary changes
