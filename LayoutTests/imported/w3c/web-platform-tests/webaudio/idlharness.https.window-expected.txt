@@ -33,7 +33,7 @@ PASS BaseAudioContext interface: operation createConvolver()
 PASS BaseAudioContext interface: operation createDelay(optional double) 
 PASS BaseAudioContext interface: operation createDynamicsCompressor() 
 PASS BaseAudioContext interface: operation createGain() 
-FAIL BaseAudioContext interface: operation createIIRFilter(sequence<double>, sequence<double>) assert_own_property: interface prototype object missing non-static operation expected property "createIIRFilter" missing
+PASS BaseAudioContext interface: operation createIIRFilter(sequence<double>, sequence<double>) 
 PASS BaseAudioContext interface: operation createOscillator() 
 PASS BaseAudioContext interface: operation createPanner() 
 PASS BaseAudioContext interface: operation createPeriodicWave(sequence<float>, sequence<float>, optional PeriodicWaveConstraints) 
@@ -94,8 +94,8 @@ PASS BaseAudioContext interface: context must inherit property "createDelay(opti
 PASS BaseAudioContext interface: calling createDelay(optional double) on context with too few arguments must throw TypeError 
 PASS BaseAudioContext interface: context must inherit property "createDynamicsCompressor()" with the proper type 
 PASS BaseAudioContext interface: context must inherit property "createGain()" with the proper type 
-FAIL BaseAudioContext interface: context must inherit property "createIIRFilter(sequence<double>, sequence<double>)" with the proper type assert_inherits: property "createIIRFilter" not found in prototype chain
-FAIL BaseAudioContext interface: calling createIIRFilter(sequence<double>, sequence<double>) on context with too few arguments must throw TypeError assert_inherits: property "createIIRFilter" not found in prototype chain
+PASS BaseAudioContext interface: context must inherit property "createIIRFilter(sequence<double>, sequence<double>)" with the proper type 
+PASS BaseAudioContext interface: calling createIIRFilter(sequence<double>, sequence<double>) on context with too few arguments must throw TypeError 
 PASS BaseAudioContext interface: context must inherit property "createOscillator()" with the proper type 
 PASS BaseAudioContext interface: context must inherit property "createPanner()" with the proper type 
 PASS BaseAudioContext interface: context must inherit property "createPeriodicWave(sequence<float>, sequence<float>, optional PeriodicWaveConstraints)" with the proper type 
@@ -147,8 +147,8 @@ PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must
 PASS BaseAudioContext interface: calling createDelay(optional double) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createDynamicsCompressor()" with the proper type 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createGain()" with the proper type 
-FAIL BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createIIRFilter(sequence<double>, sequence<double>)" with the proper type assert_inherits: property "createIIRFilter" not found in prototype chain
-FAIL BaseAudioContext interface: calling createIIRFilter(sequence<double>, sequence<double>) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError assert_inherits: property "createIIRFilter" not found in prototype chain
+PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createIIRFilter(sequence<double>, sequence<double>)" with the proper type 
+PASS BaseAudioContext interface: calling createIIRFilter(sequence<double>, sequence<double>) on new OfflineAudioContext(1, 1, sample_rate) with too few arguments must throw TypeError 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createOscillator()" with the proper type 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createPanner()" with the proper type 
 PASS BaseAudioContext interface: new OfflineAudioContext(1, 1, sample_rate) must inherit property "createPeriodicWave(sequence<float>, sequence<float>, optional PeriodicWaveConstraints)" with the proper type 
@@ -744,40 +744,40 @@ PASS AudioNode interface: new GainNode(context) must inherit property "numberOfO
 PASS AudioNode interface: new GainNode(context) must inherit property "channelCount" with the proper type 
 PASS AudioNode interface: new GainNode(context) must inherit property "channelCountMode" with the proper type 
 PASS AudioNode interface: new GainNode(context) must inherit property "channelInterpretation" with the proper type 
-FAIL IIRFilterNode interface: existence and properties of interface object assert_own_property: self does not have own property "IIRFilterNode" expected property "IIRFilterNode" missing
-FAIL IIRFilterNode interface object length assert_own_property: self does not have own property "IIRFilterNode" expected property "IIRFilterNode" missing
-FAIL IIRFilterNode interface object name assert_own_property: self does not have own property "IIRFilterNode" expected property "IIRFilterNode" missing
-FAIL IIRFilterNode interface: existence and properties of interface prototype object assert_own_property: self does not have own property "IIRFilterNode" expected property "IIRFilterNode" missing
-FAIL IIRFilterNode interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "IIRFilterNode" expected property "IIRFilterNode" missing
-FAIL IIRFilterNode interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "IIRFilterNode" expected property "IIRFilterNode" missing
-FAIL IIRFilterNode interface: operation getFrequencyResponse(Float32Array, Float32Array, Float32Array) assert_own_property: self does not have own property "IIRFilterNode" expected property "IIRFilterNode" missing
-FAIL IIRFilterNode must be primary interface of new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL Stringification of new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL IIRFilterNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "getFrequencyResponse(Float32Array, Float32Array, Float32Array)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL IIRFilterNode interface: calling getFrequencyResponse(Float32Array, Float32Array, Float32Array) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: calling connect(AudioParam, optional unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: calling disconnect(unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(AudioNode)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: calling disconnect(AudioNode) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(AudioParam)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: calling disconnect(AudioParam) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: calling disconnect(AudioParam, unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "context" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "numberOfInputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "numberOfOutputs" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "channelCount" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "channelCountMode" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
-FAIL AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "channelInterpretation" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: IIRFilterNode"
+PASS IIRFilterNode interface: existence and properties of interface object 
+PASS IIRFilterNode interface object length 
+PASS IIRFilterNode interface object name 
+PASS IIRFilterNode interface: existence and properties of interface prototype object 
+PASS IIRFilterNode interface: existence and properties of interface prototype object's "constructor" property 
+PASS IIRFilterNode interface: existence and properties of interface prototype object's @@unscopables property 
+PASS IIRFilterNode interface: operation getFrequencyResponse(Float32Array, Float32Array, Float32Array) 
+PASS IIRFilterNode must be primary interface of new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) 
+PASS Stringification of new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) 
+PASS IIRFilterNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "getFrequencyResponse(Float32Array, Float32Array, Float32Array)" with the proper type 
+PASS IIRFilterNode interface: calling getFrequencyResponse(Float32Array, Float32Array, Float32Array) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "connect(AudioNode, optional unsigned long, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioNode, optional unsigned long, optional unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "connect(AudioParam, optional unsigned long)" with the proper type 
+PASS AudioNode interface: calling connect(AudioParam, optional unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect()" with the proper type 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(AudioNode)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(AudioNode, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(AudioNode, unsigned long, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioNode, unsigned long, unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(AudioParam)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "disconnect(AudioParam, unsigned long)" with the proper type 
+PASS AudioNode interface: calling disconnect(AudioParam, unsigned long) on new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) with too few arguments must throw TypeError 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "context" with the proper type 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "numberOfInputs" with the proper type 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "numberOfOutputs" with the proper type 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "channelCount" with the proper type 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "channelCountMode" with the proper type 
+PASS AudioNode interface: new IIRFilterNode(context, {feedforward: [1], feedback: [1]}) must inherit property "channelInterpretation" with the proper type 
 PASS MediaElementAudioSourceNode interface: existence and properties of interface object 
 PASS MediaElementAudioSourceNode interface object length 
 PASS MediaElementAudioSourceNode interface object name 

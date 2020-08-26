@@ -60,6 +60,8 @@
 #include "GenericEventQueue.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
+#include "IIRFilterNode.h"
+#include "IIRFilterOptions.h"
 #include "JSAudioBuffer.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Logging.h"
@@ -628,6 +630,17 @@ ExceptionOr<Ref<StereoPannerNode>> BaseAudioContext::createStereoPanner()
     
     ASSERT(isMainThread());
     return StereoPannerNode::create(*this);
+}
+
+ExceptionOr<Ref<IIRFilterNode>> BaseAudioContext::createIIRFilter(ScriptExecutionContext& scriptExecutionContext, Vector<double>&& feedforward, Vector<double>&& feedback)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    ASSERT(isMainThread());
+    IIRFilterOptions options;
+    options.feedforward = WTFMove(feedforward);
+    options.feedback = WTFMove(feedback);
+    return IIRFilterNode::create(scriptExecutionContext, *this, WTFMove(options));
 }
 
 void BaseAudioContext::notifyNodeFinishedProcessing(AudioNode* node)

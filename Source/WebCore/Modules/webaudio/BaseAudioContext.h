@@ -70,6 +70,7 @@ class Document;
 class DynamicsCompressorNode;
 class GainNode;
 class HTMLMediaElement;
+class IIRFilterNode;
 class MainThreadGenericEventQueue;
 class MediaElementAudioSourceNode;
 class MediaStream;
@@ -78,6 +79,7 @@ class MediaStreamAudioSourceNode;
 class OscillatorNode;
 class PannerNode;
 class PeriodicWave;
+class ScriptExecutionContext;
 class ScriptProcessorNode;
 class SecurityOrigin;
 class StereoPannerNode;
@@ -164,6 +166,7 @@ public:
     ExceptionOr<Ref<PeriodicWave>> createPeriodicWave(Vector<float>&& real, Vector<float>&& imaginary, const PeriodicWaveConstraints& = { });
     ExceptionOr<Ref<ConstantSourceNode>> createConstantSource();
     ExceptionOr<Ref<StereoPannerNode>> createStereoPanner();
+    ExceptionOr<Ref<IIRFilterNode>> createIIRFilter(ScriptExecutionContext&, Vector<double>&& feedforward, Vector<double>&& feedback);
 
     // When a source node has no more processing to do (has finished playing), then it tells the context to dereference it.
     void notifyNodeFinishedProcessing(AudioNode*);

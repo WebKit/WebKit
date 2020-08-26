@@ -1,3 +1,64 @@
+2020-08-26  Chris Dumez  <cdumez@apple.com>
+
+        IIRFilterNode interface is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=215810
+
+        Reviewed by Darin Adler.
+
+        Add support for IIRFilterNode interface:
+        - https://www.w3.org/TR/webaudio/#iirfilternode
+
+        The implementation is based on Chromium's.
+
+        No new tests, rebaselined existing tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::convertEnumerationToString):
+        (WebCore::AudioNode::disableOutputsIfNecessary):
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::createIIRFilter):
+        * Modules/webaudio/BaseAudioContext.h:
+        * Modules/webaudio/BaseAudioContext.idl:
+        * Modules/webaudio/IIRDSPKernel.cpp: Added.
+        (WebCore::IIRDSPKernel::IIRDSPKernel):
+        (WebCore::IIRDSPKernel::getFrequencyResponse):
+        (WebCore::IIRDSPKernel::process):
+        (WebCore::IIRDSPKernel::reset):
+        * Modules/webaudio/IIRDSPKernel.h: Added.
+        * Modules/webaudio/IIRFilterNode.cpp: Added.
+        (WebCore::isFilterStable):
+        (WebCore::IIRFilterNode::create):
+        (WebCore::IIRFilterNode::IIRFilterNode):
+        (WebCore::IIRFilterNode::getFrequencyResponse):
+        * Modules/webaudio/IIRFilterNode.h: Added.
+        * Modules/webaudio/IIRFilterNode.idl: Added.
+        * Modules/webaudio/IIRFilterOptions.h: Added.
+        * Modules/webaudio/IIRFilterOptions.idl: Added.
+        * Modules/webaudio/IIRProcessor.cpp: Added.
+        (WebCore::IIRProcessor::IIRProcessor):
+        (WebCore::IIRProcessor::~IIRProcessor):
+        (WebCore::IIRProcessor::createKernel):
+        (WebCore::IIRProcessor::process):
+        (WebCore::IIRProcessor::getFrequencyResponse):
+        * Modules/webaudio/IIRProcessor.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * platform/audio/IIRFilter.cpp: Added.
+        (WebCore::evaluatePolynomial):
+        (WebCore::IIRFilter::IIRFilter):
+        (WebCore::IIRFilter::reset):
+        (WebCore::IIRFilter::process):
+        (WebCore::IIRFilter::getFrequencyResponse):
+        (WebCore::IIRFilter::tailTime):
+        * platform/audio/IIRFilter.h: Added.
+        * platform/graphics/ImageUtilities.h:
+
 2020-08-26  Alex Christensen  <achristensen@webkit.org>
 
         Use endings from FilePropertyBag when constructing Blob data from the File

@@ -221,6 +221,9 @@ Modules/webaudio/DelayNode.cpp
 Modules/webaudio/DelayProcessor.cpp
 Modules/webaudio/DynamicsCompressorNode.cpp
 Modules/webaudio/GainNode.cpp
+Modules/webaudio/IIRDSPKernel.cpp
+Modules/webaudio/IIRFilterNode.cpp
+Modules/webaudio/IIRProcessor.cpp
 Modules/webaudio/MediaElementAudioSourceNode.cpp
 Modules/webaudio/MediaStreamAudioDestinationNode.cpp
 Modules/webaudio/MediaStreamAudioSource.cpp
@@ -1799,6 +1802,7 @@ platform/audio/HRTFDatabaseLoader.cpp
 platform/audio/HRTFElevation.cpp
 platform/audio/HRTFKernel.cpp
 platform/audio/HRTFPanner.cpp
+platform/audio/IIRFilter.cpp
 platform/audio/MultiChannelResampler.cpp
 platform/audio/Panner.cpp
 platform/audio/PlatformMediaSession.cpp
@@ -3035,6 +3039,8 @@ JSIDBVersionChangeEvent.cpp
 JSIdleDeadline.cpp
 JSIdleRequestCallback.cpp
 JSIdleRequestOptions.cpp
+JSIIRFilterNode.cpp
+JSIIRFilterOptions.cpp
 JSImageBitmap.cpp
 JSImageBitmapOptions.cpp
 JSImageBitmapRenderingContext.cpp

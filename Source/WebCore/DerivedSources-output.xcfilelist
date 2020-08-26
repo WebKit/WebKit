@@ -984,6 +984,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransactionMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBTransactionMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBVersionChangeEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIDBVersionChangeEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterNode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterNode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIIRFilterOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleDeadline.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleDeadline.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIdleRequestCallback.cpp

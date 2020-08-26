@@ -420,6 +420,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/DynamicsCompressorOptions.idl \
     $(WebCore)/Modules/webaudio/GainNode.idl \
     $(WebCore)/Modules/webaudio/GainOptions.idl \
+    $(WebCore)/Modules/webaudio/IIRFilterNode.idl \
+    $(WebCore)/Modules/webaudio/IIRFilterOptions.idl \
     $(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
     $(WebCore)/Modules/webaudio/MediaElementAudioSourceOptions.idl \
     $(WebCore)/Modules/webaudio/MediaStreamAudioDestinationNode.idl \

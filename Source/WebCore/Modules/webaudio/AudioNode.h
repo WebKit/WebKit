@@ -91,6 +91,7 @@ public:
         NodeTypeBasicInspector,
         NodeTypeConstant,
         NodeTypeStereo,
+        NodeTypeIIRFilter,
         NodeTypeEnd
     };
 

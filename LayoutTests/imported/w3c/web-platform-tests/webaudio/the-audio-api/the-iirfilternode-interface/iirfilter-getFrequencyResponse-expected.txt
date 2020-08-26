@@ -1,12 +1,22 @@
 
 PASS # AUDIT TASK RUNNER STARTED. 
-FAIL Executing "1-pole IIR" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter([1], [1, -0.9])', 'context.createIIRFilter' is undefined)"
-FAIL Executing "compare IIR and biquad" promise_test: Unhandled rejection with value: object "TypeError: context.createIIRFilter is not a function. (In 'context.createIIRFilter(
-            [coef.b0, coef.b1, coef.b2], [1, coef.a1, coef.a2])', 'context.createIIRFilter' is undefined)"
-FAIL Executing "getFrequencyResponse" promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: IIRFilterNode"
+PASS Executing "1-pole IIR" 
+PASS Executing "compare IIR and biquad" 
+PASS Executing "getFrequencyResponse" 
 PASS Audit report 
 PASS > [1-pole IIR]  
+PASS   1-pole IIR Magnitude Response equals [10,9.995561599731445,9.982281684875488,9.96026611328125,9.929688453674316,9.890785217285156,9.843852043151855,9.789238929748535,9.727341651916504,9.658592224121094,9.583455085754395,9.502418518066406,9.415983200073242,9.32465934753418,9.228958129882812,9.12938404083252...] with an element-wise tolerance of {"absoluteThreshold":0.0000028611,"relativeThreshold":0}. 
+PASS   1-pole IIR Phase Response equals [0,-0.02826550230383873,-0.05647812411189079,-0.08458554744720459,-0.11253655701875687,-0.1402815729379654,-0.16777309775352478,-0.1949661672115326,-0.2218186855316162,-0.2482917755842209,-0.27434995770454407,-0.29996123909950256,-0.3250974416732788,-0.3497338891029358,-0.3738497197628021,-0.3974274694919586...] with an element-wise tolerance of {"absoluteThreshold":1.7882e-7,"relativeThreshold":0}. 
+PASS < [1-pole IIR] All assertions passed. (total 2 assertions) 
 PASS > [compare IIR and biquad]  
+PASS   IIR Magnitude Response equals [1,1.0028345584869385,1.0113478899002075,1.025554895401001,1.0454282760620117,1.070805311203003,1.10122549533844,1.1356719732284546,1.1721950769424438,1.2074543237686157,1.2363563776016235,1.2522097826004028,1.247962236404419,1.218644618988037,1.1639058589935303,1.0886648893356323...] with an element-wise tolerance of {"absoluteThreshold":0.000027419,"relativeThreshold":0}. 
+PASS   IIR Phase Response equals [0,-0.061315324157476425,-0.12391137331724167,-0.1891222447156906,-0.2583869397640228,-0.3332937955856323,-0.4156070649623871,-0.5072502493858337,-0.6102025508880615,-0.7262400388717651,-0.8564491868019104,-1.0005061626434326,-1.155927300453186,-1.3177809715270996,-1.4793895483016968,-1.6339597702026367...] with an element-wise tolerance of {"absoluteThreshold":0.000027657,"relativeThreshold":0}. 
+PASS < [compare IIR and biquad] All assertions passed. (total 2 assertions) 
 PASS > [getFrequencyResponse] Test out-of-bounds frequency values 
+PASS   Magnitude response at frequency -1 is NaN. 
+PASS   Magnitude response at frequency 24001 is NaN. 
+PASS   Phase response at frequency -1 is NaN. 
+PASS   Phase response at frequency 24001 is NaN. 
+PASS < [getFrequencyResponse] All assertions passed. (total 4 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
 

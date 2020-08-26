@@ -488,6 +488,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/DynamicsCompressorOptions.idl
     Modules/webaudio/GainNode.idl
     Modules/webaudio/GainOptions.idl
+    Modules/webaudio/IIRFilterNode.idl
+    Modules/webaudio/IIRFilterOptions.idl
     Modules/webaudio/MediaElementAudioSourceNode.idl
     Modules/webaudio/MediaElementAudioSourceOptions.idl
     Modules/webaudio/MediaStreamAudioDestinationNode.idl

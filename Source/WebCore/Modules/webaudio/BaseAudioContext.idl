@@ -66,6 +66,7 @@
     [MayThrowException] PeriodicWave createPeriodicWave(sequence<float> real, sequence<float> imag, optional PeriodicWaveOptions options);
     [MayThrowException] ConstantSourceNode createConstantSource();
     [MayThrowException] StereoPannerNode createStereoPanner();
+    [MayThrowException, CallWith=ScriptExecutionContext] IIRFilterNode createIIRFilter(sequence<double> feedforward, sequence<double> feedback);
 
     // Channel splitting and merging
     [MayThrowException] ChannelSplitterNode createChannelSplitter(optional unsigned long numberOfOutputs = 6);

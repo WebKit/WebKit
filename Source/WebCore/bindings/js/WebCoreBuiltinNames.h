@@ -144,6 +144,7 @@ namespace WebCore {
     macro(IDBRequest) \
     macro(IDBTransaction) \
     macro(IDBVersionChangeEvent) \
+    macro(IIRFilterNode) \
     macro(ImageBitmap) \
     macro(ImageBitmapRenderingContext) \
     macro(IdleDeadline) \

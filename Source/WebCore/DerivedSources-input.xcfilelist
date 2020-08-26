@@ -339,6 +339,8 @@ $(PROJECT_DIR)/Modules/webaudio/DynamicsCompressorNode.idl
 $(PROJECT_DIR)/Modules/webaudio/DynamicsCompressorOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/GainNode.idl
 $(PROJECT_DIR)/Modules/webaudio/GainOptions.idl
+$(PROJECT_DIR)/Modules/webaudio/IIRFilterNode.idl
+$(PROJECT_DIR)/Modules/webaudio/IIRFilterOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/MediaElementAudioSourceNode.idl
 $(PROJECT_DIR)/Modules/webaudio/MediaElementAudioSourceOptions.idl
 $(PROJECT_DIR)/Modules/webaudio/MediaStreamAudioDestinationNode.idl

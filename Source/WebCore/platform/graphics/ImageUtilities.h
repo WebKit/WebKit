@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+#include <wtf/WorkQueue.h>
+
 namespace WebCore {
 
 WEBCORE_EXPORT WorkQueue& sharedImageTranscodingQueue();

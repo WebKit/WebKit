@@ -94,7 +94,8 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
     static_assert(static_cast<size_t>(AudioNode::NodeTypeBasicInspector) == 18, "AudioNode::NodeTypeBasicInspector is not 18 as expected");
     static_assert(static_cast<size_t>(AudioNode::NodeTypeConstant) == 19, "AudioNode::NodeTypeEnd is not 19 as expected");
     static_assert(static_cast<size_t>(AudioNode::NodeTypeStereo) == 20, "AudioNode::NodeTypeStereo is not 20 as expected");
-    static_assert(static_cast<size_t>(AudioNode::NodeTypeEnd) == 21, "AudioNode::NodeTypeConstant is not 21 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeIIRFilter) == 21, "AudioNode::NodeTypeIIRFilter is not 21 as expected");
+    static_assert(static_cast<size_t>(AudioNode::NodeTypeEnd) == 22, "AudioNode::NodeTypeConstant is not 22 as expected");
 
     ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
     
@@ -553,7 +554,7 @@ void AudioNode::disableOutputsIfNecessary()
         // longer any active connections.
         // Also, WaveShaperNode may produce non-silence even when it no longer has any output. For this reason, we cannot
         // disable it either.
-        if (nodeType() != NodeTypeConvolver && nodeType() != NodeTypeDelay && nodeType() != NodeTypeWaveShaper) {
+        if (nodeType() != NodeTypeConvolver && nodeType() != NodeTypeDelay && nodeType() != NodeTypeWaveShaper && nodeType() != NodeTypeIIRFilter) {
             m_isDisabled = true;
             for (auto& output : m_outputs)
                 output->disable();
