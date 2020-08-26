@@ -309,12 +309,7 @@ enum class AXPropertyName : uint16_t {
 
 typedef std::pair<AXID, AXID> AccessibilityIsolatedTreeMathMultiscriptPair;
 
-struct AccessibilityIsolatedTreeText {
-    String text;
-    AccessibilityTextSource textSource;
-};
-
-using AXPropertyValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, float, uint64_t, Color, URL, LayoutRect, FloatRect, AXID, IntPoint, OptionSet<SpeakAs>, std::pair<unsigned, unsigned>, Vector<AccessibilityIsolatedTreeText>, Vector<AXID>, Vector<AccessibilityIsolatedTreeMathMultiscriptPair>, Vector<String>, Path>;
+using AXPropertyValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, float, uint64_t, Color, URL, LayoutRect, FloatRect, AXID, IntPoint, OptionSet<SpeakAs>, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path>;
 typedef HashMap<AXPropertyName, AXPropertyValueVariant, WTF::IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>> AXPropertyMap;
 
 struct AXPropertyChange {

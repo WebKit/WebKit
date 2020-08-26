@@ -328,12 +328,10 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& object, bool isRoot
 
     Vector<AccessibilityText> texts;
     object.accessibilityText(texts);
-    Vector<AccessibilityIsolatedTreeText> isolatedTexts;
+    Vector<AccessibilityText> isolatedTexts;
     isolatedTexts.reserveCapacity(texts.size());
-    for (auto text : texts) {
-        AccessibilityIsolatedTreeText isolatedText;
-        isolatedText.text = text.text;
-        isolatedText.textSource = text.textSource;
+    for (const auto& text : texts) {
+        AccessibilityText isolatedText(text.text.isolatedCopy(), text.textSource);
         isolatedTexts.uncheckedAppend(isolatedText);
     }
     setProperty(AXPropertyName::AccessibilityText, isolatedTexts);
@@ -524,11 +522,7 @@ AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsign
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
 {
-    auto isolatedTexts = vectorAttributeValue<AccessibilityIsolatedTreeText>(AXPropertyName::AccessibilityText);
-    for (const auto& isolatedText : isolatedTexts) {
-        AccessibilityText text(isolatedText.text, isolatedText.textSource);
-        texts.append(text);
-    }
+    texts = vectorAttributeValue<AccessibilityText>(AXPropertyName::AccessibilityText);
 }
 
 void AXIsolatedObject::classList(Vector<String>& list) const

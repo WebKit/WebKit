@@ -1,3 +1,26 @@
+2020-08-26  Andres Gonzalez  <andresg_22@apple.com>
+
+        When caching the AccessibilityText property in AXIsolatedObject, the Strings need to be isolatedCopied.
+        https://bugs.webkit.org/show_bug.cgi?id=215834
+
+        Reviewed by Chris Fleizach.
+
+        The initialization of the AccessibilityText property in AXIsolatedObject::initializeAttributeData
+        wasn't isolatedCopying the Strings contained in the AccessibilityText structure.
+        Instead it was copying the String into a different structure. This patch
+        straightlines the caching of the AccessibilityText property by isolatedCopying
+        the original Strings. This simplifies the retrieval of this property
+        since there is no conversion to make in the AXIsolatedObject::accessibilityText
+        method.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData): isolatedCopies the
+        String in AccessibilityText.
+        (WebCore::AXIsolatedObject::accessibilityText const): No conversion
+        needed to retrieve the property.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        Removed the AccessibilityIsolatedTreeText structure since it is not needed.
+
 2020-08-26  Youenn Fablet  <youenn@apple.com>
 
         enumerateDevices should expose audiooutput devices that are tied to an audio input device
