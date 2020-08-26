@@ -1,3 +1,11 @@
+2020-08-26  Paulo Matos  <pmatos@igalia.com>
+
+        Skip stress/array-species-create-should-handle-masquerader.js on MIPS
+
+        Unreviewed Gardening.
+
+        * stress/array-species-create-should-handle-masquerader.js:
+
 2020-08-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] FTL should use m_origin instead of m_node->origin since m_node can be nullptr
