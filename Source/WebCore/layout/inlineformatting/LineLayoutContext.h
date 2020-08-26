@@ -39,33 +39,30 @@ class LineLayoutContext {
 public:
     LineLayoutContext(const InlineFormattingContext&, const ContainerBox& formattingContextRoot, const InlineItems&);
 
-    struct LineContent {
-        struct PartialContent {
-            bool trailingContentHasHyphen { false };
-            unsigned overflowContentLength { 0 };
-        };
-        Optional<unsigned> trailingInlineItemIndex;
-        Optional<PartialContent> partialContent;
-        struct Float {
-            enum class Intrusive { No, Yes };
-            Intrusive isIntrusive { Intrusive::Yes };
-            const InlineItem* item { nullptr };
-        };
-        using FloatList = Vector<Float>;
-        FloatList floats;
-        const LineBuilder::RunList runList;
-        const LineBox lineBox;
-    };
     struct InlineItemRange {
         bool isEmpty() const { return start == end; }
         size_t size() const { return end - start; }
         size_t start { 0 };
         size_t end { 0 };
     };
-    LineContent layoutLine(LineBuilder&, const InlineItemRange, Optional<unsigned> partialLeadingContentLength);
+    struct LineContent {
+        struct PartialContent {
+            bool trailingContentHasHyphen { false };
+            unsigned overflowContentLength { 0 };
+        };
+        Optional<PartialContent> partialContent;
+        InlineItemRange inlineItems;
+        struct Float {
+            bool isIntrusive { true };
+            const InlineItem* item { nullptr };
+        };
+        using FloatList = Vector<Float>;
+        FloatList floats;
+    };
+    LineContent layoutInlineContent(LineBuilder&, const InlineItemRange&, Optional<unsigned> partialLeadingContentLength);
 
 private:
-    void nextContentForLine(LineCandidate&, unsigned inlineItemIndex, const InlineItemRange layoutRange, Optional<unsigned> overflowLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight);
+    void nextContentForLine(LineCandidate&, unsigned inlineItemIndex, const InlineItemRange& layoutRange, Optional<unsigned> overflowLength, InlineLayoutUnit availableLineWidth, InlineLayoutUnit currentLogicalRight);
     struct Result {
         LineBreaker::IsEndOfLine isEndOfLine { LineBreaker::IsEndOfLine::No };
         struct CommittedContentCount {
@@ -80,7 +77,7 @@ private:
     Result handleFloatsAndInlineContent(LineBreaker&, LineBuilder&, const InlineItemRange& layoutRange, const LineCandidate&);
     size_t rebuildLine(LineBuilder&, const InlineItemRange& layoutRange);
     void commitPartialContent(LineBuilder&, const LineBreaker::RunList&, const LineBreaker::Result::PartialTrailingContent&);
-    LineContent close(LineBuilder&, const InlineItemRange layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
+    LineContent close(LineBuilder&, const InlineItemRange& layoutRange, unsigned committedInlineItemCount, Optional<LineContent::PartialContent>);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
 

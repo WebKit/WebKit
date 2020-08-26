@@ -1,3 +1,35 @@
+2020-08-25  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not move the runs out of the LineBuilder while closing the line
+        https://bugs.webkit.org/show_bug.cgi?id=214790
+
+        Reviewed by Antti Koivisto.
+
+        Closing the line should not mean that the LineBuilder does not have the line runs anymore.
+        This is in preparation for moving alignment code from LineBuilder to LineBox. 
+        (This patch also refactors InlineFormattingContext::lineLayout to make it less verbose.)
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::append):
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::runs const):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::layoutInlineContent):
+        (WebCore::Layout::LineLayoutContext::close):
+        (WebCore::Layout::LineLayoutContext::nextContentForLine):
+        (WebCore::Layout::LineLayoutContext::commitFloats):
+        (WebCore::Layout::LineLayoutContext::layoutLine): Deleted.
+        * layout/inlineformatting/LineLayoutContext.h:
+        (WebCore::Layout::LineLayoutContext::InlineItemRange::isEmpty const):
+        (WebCore::Layout::LineLayoutContext::InlineItemRange::size const):
+
 2020-08-25  Tim Horton  <timothy_horton@apple.com>
 
         Web Share API can share non-HTTP(S) URLs

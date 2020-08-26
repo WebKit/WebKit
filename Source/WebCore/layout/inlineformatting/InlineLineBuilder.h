@@ -55,9 +55,13 @@ public:
     ~LineBuilder();
 
     void initialize(const Constraints&);
+
+    enum class IsLastLineWithInlineContent { No, Yes };
+    void close(IsLastLineWithInlineContent);
+
     void append(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendPartialTrailingTextItem(const InlineTextItem&, InlineLayoutUnit logicalWidth, bool needsHypen);
-    void resetContent();
+    void clear();
     bool isVisuallyEmpty() const { return m_lineBox.isConsideredEmpty(); }
     bool hasIntrusiveFloat() const { return m_hasIntrusiveFloat; }
     InlineLayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
@@ -140,8 +144,7 @@ public:
         unsigned m_expansionOpportunityCount { 0 };
     };
     using RunList = Vector<Run, 10>;
-    enum class IsLastLineWithInlineContent { No, Yes };
-    RunList close(IsLastLineWithInlineContent = IsLastLineWithInlineContent::No);
+    const RunList& runs() const { return m_runs; }
 
     static AscentAndDescent halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
 
@@ -223,6 +226,9 @@ private:
     LineBox m_lineBox;
     Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent;
     bool m_shouldIgnoreTrailingLetterSpacing { false };
+#if ASSERT_ENABLED
+    bool m_isClosed { false };
+#endif
 };
 
 inline void LineBuilder::TrimmableTrailingContent::reset()

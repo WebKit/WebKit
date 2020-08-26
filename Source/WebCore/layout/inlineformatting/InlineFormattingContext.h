@@ -88,7 +88,7 @@ private:
 
     void collectInlineContentIfNeeded();
     LineBuilder::Constraints constraintsForLine(const HorizontalConstraints&, InlineLayoutUnit lineLogicalTop);
-    void setDisplayBoxesForLine(const LineLayoutContext::LineContent&, const HorizontalConstraints&);
+    void setDisplayBoxesForLine(const LineBuilder&, const LineLayoutContext::LineContent&, const HorizontalConstraints&);
     void invalidateFormattingState(const InvalidationState&);
 
     const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }

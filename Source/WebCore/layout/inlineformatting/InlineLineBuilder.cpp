@@ -89,11 +89,13 @@ void LineBuilder::initialize(const Constraints& constraints)
         m_initialStrut = AscentAndDescent { ascentAndDescent.ascent, initialLineHeight - ascentAndDescent.ascent };
     else
         m_initialStrut = { };
-
-    resetContent();
+    clear();
+#if ASSERT_ENABLED
+    m_isClosed = false;
+#endif
 }
 
-void LineBuilder::resetContent()
+void LineBuilder::clear()
 {
     m_lineBox.setLogicalWidth({ });
     m_lineBox.setIsConsideredEmpty();
@@ -102,14 +104,17 @@ void LineBuilder::resetContent()
     m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent = { };
 }
 
-LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWithInlineContent)
+void LineBuilder::close(IsLastLineWithInlineContent isLastLineWithInlineContent)
 {
+#if ASSERT_ENABLED
+    m_isClosed = true;
+#endif
     // 1. Remove trimmable trailing content.
     // 2. Align merged runs both vertically and horizontally.
     removeTrailingTrimmableContent();
     visuallyCollapsePreWrapOverflowContent();
     if (m_isIntrinsicSizing)
-        return WTFMove(m_runs);
+        return;
 
     auto hangingContent = collectHangingContent(isLastLineWithInlineContent);
     adjustBaselineAndLineHeight();
@@ -124,7 +129,6 @@ LineBuilder::RunList LineBuilder::close(IsLastLineWithInlineContent isLastLineWi
     }
     alignContentVertically();
     alignHorizontally(hangingContent, isLastLineWithInlineContent);
-    return WTFMove(m_runs);
 }
 
 void LineBuilder::alignContentVertically()
@@ -403,6 +407,7 @@ void LineBuilder::moveLogicalRight(InlineLayoutUnit delta)
 
 void LineBuilder::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
 {
+    ASSERT(!m_isClosed);
     appendWith(inlineItem, { logicalWidth, false });
 }
 

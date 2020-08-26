@@ -131,56 +131,53 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
 }
 
-void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineLayoutContext::InlineItemRange layoutRange, const ConstraintsForInFlowContent& constraints)
+void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineLayoutContext::InlineItemRange needsLayoutRange, const ConstraintsForInFlowContent& constraints)
 {
     auto lineLogicalTop = constraints.vertical.logicalTop;
-    struct PreviousLineEnd {
-        unsigned runIndex;
+    struct PreviousLine {
+        LineLayoutContext::InlineItemRange range;
         Optional<unsigned> overflowContentLength;
     };
-    Optional<PreviousLineEnd> previousLineEnd;
-    auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::IntrinsicSizing::No };
+    Optional<PreviousLine> previousLine;
+    auto line = LineBuilder { *this, root().style().textAlign(), LineBuilder::IntrinsicSizing::No };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
 
-    while (!layoutRange.isEmpty()) {
-        lineBuilder.initialize(constraintsForLine(constraints.horizontal, lineLogicalTop));
-        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, layoutRange, previousLineEnd ? previousLineEnd->overflowContentLength : WTF::nullopt);
-        setDisplayBoxesForLine(lineContent, constraints.horizontal);
+    while (!needsLayoutRange.isEmpty()) {
+        line.initialize(constraintsForLine(constraints.horizontal, lineLogicalTop));
+        // Turn previous line's overflow content length into the next line's leading content partial length.
+        // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
+        auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : WTF::nullopt;
+        auto lineContent = lineLayoutContext.layoutInlineContent(line, needsLayoutRange, partialLeadingContentLength);
+        setDisplayBoxesForLine(line, lineContent, constraints.horizontal);
 
-        if (lineContent.trailingInlineItemIndex) {
-            lineLogicalTop = lineContent.lineBox.logicalBottom();
+        auto lineContentRange = lineContent.inlineItems;
+        if (!lineContentRange.isEmpty()) {
+            ASSERT(needsLayoutRange.start < lineContentRange.end);
+            lineLogicalTop = line.lineBox().logicalBottom();
             // When the trailing content is partial, we need to reuse the last InlineTextItem.
-            auto trailingRunIndex = *lineContent.trailingInlineItemIndex;
-            if (lineContent.partialContent) {
+            auto lastInlineItemNeedsPartialLayout = lineContent.partialContent.hasValue();
+            if (lastInlineItemNeedsPartialLayout) {
                 ASSERT(lineContent.partialContent->overflowContentLength);
-                // Turn previous line's overflow content length into the next line's leading content partial length.
-                // "sp<->litcontent" -> overflow length: 10 -> leading partial content length: 10.
-                auto isNewInlineContent = !previousLineEnd
-                    || trailingRunIndex > previousLineEnd->runIndex
-                    || (previousLineEnd->overflowContentLength && *previousLineEnd->overflowContentLength > lineContent.partialContent->overflowContentLength);
-                if (isNewInlineContent) {
-                    // Strart the next line with the same, partial trailing InlineTextItem.
-                    previousLineEnd = PreviousLineEnd { trailingRunIndex, lineContent.partialContent->overflowContentLength };
-                    layoutRange.start = previousLineEnd->runIndex;
-                } else {
+                auto lineLayoutHasAdvanced = !previousLine
+                    || lineContentRange.end > previousLine->range.end
+                    || (previousLine->overflowContentLength && *previousLine->overflowContentLength > lineContent.partialContent->overflowContentLength);
+                if (!lineLayoutHasAdvanced) {
                     ASSERT_NOT_REACHED();
                     // Move over to the next run if we are stuck on this partial content (when the overflow content length remains the same).
-                    // We certainly lose some content, but we would be busy looping anyway.
-                    previousLineEnd = PreviousLineEnd { trailingRunIndex, { } };
-                    layoutRange.start = previousLineEnd->runIndex + 1;
+                    // We certainly lose some content, but we would be busy looping otherwise.
+                    lastInlineItemNeedsPartialLayout = false;
                 }
-            } else {
-                previousLineEnd = PreviousLineEnd { trailingRunIndex, { } };
-                layoutRange.start = previousLineEnd->runIndex + 1;
             }
+            needsLayoutRange.start = lastInlineItemNeedsPartialLayout ? lineContentRange.end - 1 : lineContentRange.end;
+            previousLine = PreviousLine { lineContentRange, lineContent.partialContent ? makeOptional(lineContent.partialContent->overflowContentLength) : WTF::nullopt };
             continue;
         }
         // Floats prevented us placing any content on the line.
-        ASSERT(lineContent.runList.isEmpty());
-        ASSERT(lineBuilder.hasIntrusiveFloat());
+        ASSERT(line.runs().isEmpty());
+        ASSERT(line.hasIntrusiveFloat());
         // Move the next line below the intrusive float.
         auto floatingContext = FloatingContext { root(), *this, formattingState().floatingState() };
-        auto floatConstraints = floatingContext.constraints(lineLogicalTop, toLayoutUnit(lineContent.lineBox.logicalBottom()));
+        auto floatConstraints = floatingContext.constraints(lineLogicalTop, toLayoutUnit(line.lineBox().logicalBottom()));
         ASSERT(floatConstraints.left || floatConstraints.right);
         static auto inifitePoint = PointInContextRoot::max();
         // In case of left and right constraints, we need to pick the one that's closer to the current line.
@@ -251,16 +248,16 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
 {
     auto& inlineItems = formattingState().inlineItems();
     auto maximumLineWidth = InlineLayoutUnit { };
-    auto lineBuilder = LineBuilder { *this, root().style().textAlign(), LineBuilder::IntrinsicSizing::Yes };
+    auto line = LineBuilder { *this, root().style().textAlign(), LineBuilder::IntrinsicSizing::Yes };
     auto lineLayoutContext = LineLayoutContext { *this, root(), inlineItems };
     auto layoutRange = LineLayoutContext::InlineItemRange { 0 , inlineItems.size() };
     while (!layoutRange.isEmpty()) {
         // Only the horiztonal available width is constrained when computing intrinsic width.
-        lineBuilder.initialize(LineBuilder::Constraints { { }, availableWidth, { }, false });
-        auto lineContent = lineLayoutContext.layoutLine(lineBuilder, layoutRange, { });
-        layoutRange.start = *lineContent.trailingInlineItemIndex + 1;
+        line.initialize(LineBuilder::Constraints { { }, availableWidth, { }, false });
+        auto lineContent = lineLayoutContext.layoutInlineContent(line, layoutRange, { });
+        layoutRange.start = lineContent.inlineItems.end;
         // FIXME: Use line logical left and right to take floats into account.
-        maximumLineWidth = std::max(maximumLineWidth, lineContent.lineBox.logicalWidth());
+        maximumLineWidth = std::max(maximumLineWidth, line.lineBox().logicalWidth());
     }
     return maximumLineWidth;
 }
@@ -464,10 +461,10 @@ LineBuilder::Constraints InlineFormattingContext::constraintsForLine(const Horiz
     return LineBuilder::Constraints { { lineLogicalLeft, lineLogicalTop }, lineLogicalRight - lineLogicalLeft, initialLineHeight, lineIsConstrainedByFloat };
 }
 
-void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
+void InlineFormattingContext::setDisplayBoxesForLine(const LineBuilder& line, const LineLayoutContext::LineContent& lineContent, const HorizontalConstraints& horizontalConstraints)
 {
     auto& formattingState = this->formattingState();
-    auto& lineBox = lineContent.lineBox;
+    auto& lineBox = line.lineBox();
 
     if (!lineContent.floats.isEmpty()) {
         auto floatingContext = FloatingContext { root(), *this, formattingState.floatingState() };
@@ -476,7 +473,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
             auto& floatBox = floatCandidate.item->layoutBox();
             auto& displayBox = formattingState.displayBox(floatBox);
             // Set static position first.
-            auto verticalStaticPosition = floatCandidate.isIntrusive == LineLayoutContext::LineContent::Float::Intrusive::Yes ? lineBox.logicalTop() : lineBox.logicalBottom();
+            auto verticalStaticPosition = floatCandidate.isIntrusive ? lineBox.logicalTop() : lineBox.logicalBottom();
             displayBox.setTopLeft({ lineBox.logicalLeft(), verticalStaticPosition });
             // Float it.
             displayBox.setTopLeft(floatingContext.positionForFloat(floatBox, horizontalConstraints));
@@ -494,7 +491,7 @@ void InlineFormattingContext::setDisplayBoxesForLine(const LineLayoutContext::Li
     auto lineIndex = inlineContent.lineBoxes.size();
     auto lineInkOverflow = lineBox.scrollableOverflow();
     // Compute box final geometry.
-    auto& lineRuns = lineContent.runList;
+    auto& lineRuns = line.runs();
     for (unsigned index = 0; index < lineRuns.size(); ++index) {
         auto& lineRun = lineRuns.at(index);
         auto& logicalRect = lineRun.logicalRect();
