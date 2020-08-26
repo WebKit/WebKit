@@ -67,12 +67,17 @@ rm -f "${TMPCHECKPACKAGES}"
 if [[ -z "${TOINSTALL}" ]]; then
     echo "All required dependencies are already installed"
 else
-    AUTOINSTALL=""
-    [[ ${#} -gt 0 ]] && [[ "${1}" == "--autoinstall" ]] && AUTOINSTALL="-y" && export DEBIAN_FRONTEND="noninteractive"
-    SUDO=""
-    [[ ${UID} -ne 0 ]] && SUDO="sudo --preserve-env=DEBIAN_FRONTEND"
-
     echo "Need to install the following extra packages: ${TOINSTALL}"
+    [[ ${#} -gt 0 ]] && [[ "${1}" == "--printonly" ]] && exit 0
+    SUDO=""
+    [[ ${UID} -ne 0 ]] && SUDO="sudo"
+    AUTOINSTALL=""
+    if [[ ${#} -gt 0 ]] && [[ "${1}" == "--autoinstall" ]]; then
+        AUTOINSTALL="-y"
+        export DEBIAN_FRONTEND="noninteractive"
+        [[ ${UID} -ne 0 ]] && SUDO="sudo --preserve-env=DEBIAN_FRONTEND"
+        ${SUDO} apt-get update
+    fi
     set -x
     ${SUDO} apt-get install --no-install-recommends ${AUTOINSTALL} ${TOINSTALL}
 fi
