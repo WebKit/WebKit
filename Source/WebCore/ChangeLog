@@ -1,3 +1,17 @@
+2020-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Avoid unnecessarily copying a Vector in WebCore::transformsForValue
+        https://bugs.webkit.org/show_bug.cgi?id=215858
+
+        Reviewed by Tim Horton.
+
+        Avoid copying the `Vector` of `TransformOperation`s in this helper function by directly appending newly created
+        transform operations to the given `TransformOperations`. This does, however, mean that we need to clear these
+        items in the case where conversion fails and we return false.
+
+        * css/TransformFunctions.cpp:
+        (WebCore::transformsForValue):
+
 2020-08-26  Dean Jackson  <dino@apple.com>
 
         Flickering on sedona.dev
