@@ -143,6 +143,7 @@ namespace JSC {
   NumberFormat          createNumberFormatConstructor                DontEnum|PropertyCallback
   PluralRules           createPluralRulesConstructor                 DontEnum|PropertyCallback
   RelativeTimeFormat    createRelativeTimeFormatConstructor          DontEnum|PropertyCallback
+  Segmenter             createSegmenterConstructor                   DontEnum|PropertyCallback
 @end
 */
 
@@ -182,8 +183,6 @@ void IntlObject::finishCreation(VM& vm, JSGlobalObject*)
 #else
     UNUSED_PARAM(createDisplayNamesConstructor);
 #endif
-    if (Options::useIntlSegmenter())
-        putDirectWithoutTransition(vm, vm.propertyNames->Segmenter, createSegmenterConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

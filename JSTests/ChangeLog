@@ -1,5 +1,15 @@
 2020-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Enable Intl.Segmenter
+        https://bugs.webkit.org/show_bug.cgi?id=215854
+
+        Reviewed by Ross Kirsling.
+
+        * stress/intl-segmenter.js:
+        * test262/config.yaml:
+
+2020-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add ASCII comparison fast path for IntlCollator
         https://bugs.webkit.org/show_bug.cgi?id=215798
 
