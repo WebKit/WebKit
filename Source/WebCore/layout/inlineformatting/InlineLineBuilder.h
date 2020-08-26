@@ -35,13 +35,11 @@
 namespace WebCore {
 namespace Layout {
 
-struct HangingContent;
 class InlineFormattingContext;
 class InlineSoftLineBreakItem;
+class LineContentAligner;
 
 class LineBuilder {
-    struct ContinuousContent;
-
 public:
     struct Constraints {
         InlineLayoutPoint logicalTopLeft;
@@ -64,7 +62,7 @@ public:
     void clear();
     bool isVisuallyEmpty() const { return m_lineBox.isConsideredEmpty(); }
     bool hasIntrusiveFloat() const { return m_hasIntrusiveFloat; }
-    InlineLayoutUnit availableWidth() const { return logicalWidth() - contentLogicalWidth(); }
+    InlineLayoutUnit availableWidth() const { return m_lineLogicalWidth - contentLogicalWidth(); }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
@@ -92,6 +90,7 @@ public:
 
     private:
         friend class LineBuilder;
+        friend class LineContentAligner;
 
         Run(const InlineTextItem&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth, bool needsHypen);
         Run(const InlineSoftLineBreakItem&, InlineLayoutUnit logicalLeft);
@@ -149,18 +148,8 @@ public:
     static AscentAndDescent halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
 
 private:
-    InlineLayoutUnit logicalTop() const { return m_lineBox.logicalTop(); }
-    InlineLayoutUnit logicalBottom() const { return m_lineBox.logicalBottom(); }
-
-    InlineLayoutUnit logicalLeft() const { return m_lineBox.logicalLeft(); }
-    InlineLayoutUnit logicalRight() const { return logicalLeft() + logicalWidth(); }
-
-    InlineLayoutUnit logicalWidth() const { return m_lineLogicalWidth; }
-    InlineLayoutUnit logicalHeight() const { return m_lineBox.logicalHeight(); }
-
     InlineLayoutUnit contentLogicalWidth() const { return m_lineBox.logicalWidth(); }
     InlineLayoutUnit contentLogicalRight() const { return m_lineBox.logicalRight(); }
-    InlineLayoutUnit baseline() const { return m_lineBox.alignmentBaseline(); }
 
     struct InlineRunDetails {
         InlineLayoutUnit logicalWidth { 0 };
@@ -177,20 +166,10 @@ private:
 
     void removeTrailingTrimmableContent();
     void visuallyCollapsePreWrapOverflowContent();
-    HangingContent collectHangingContent(IsLastLineWithInlineContent);
-    void alignHorizontally(const HangingContent&, IsLastLineWithInlineContent);
-    void alignContentVertically();
-
-    void adjustBaselineAndLineHeight();
-    InlineLayoutUnit runContentHeight(const Run&) const;
-
-    void justifyRuns(InlineLayoutUnit availableWidth);
 
     bool isVisuallyNonEmpty(const Run&) const;
 
-    LayoutState& layoutState() const;
     const InlineFormattingContext& formattingContext() const;
-    const ContainerBox& root() const;
 
     struct TrimmableTrailingContent {
         TrimmableTrailingContent(RunList&);
@@ -218,7 +197,6 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
-    Optional<AscentAndDescent> m_initialStrut;
     InlineLayoutUnit m_lineLogicalWidth { 0 };
     Optional<TextAlignMode> m_horizontalAlignment;
     bool m_isIntrinsicSizing { false };

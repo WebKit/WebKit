@@ -1,3 +1,49 @@
+2020-08-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move inline run alignment logic to a dedicated class
+        https://bugs.webkit.org/show_bug.cgi?id=214527
+        <rdar://problem/66115796>
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for moving line alignment logic to LineBox (LineBuilder will not going to be responsible for aligning runs on the line).
+
+        * layout/FormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineContentAligner::formattingContext const):
+        (WebCore::Layout::LineContentAligner::layoutState const):
+        (WebCore::Layout::LineContentAligner::LineContentAligner):
+        (WebCore::Layout::LineContentAligner::alignHorizontally):
+        (WebCore::Layout::LineContentAligner::alignVertically):
+        (WebCore::Layout::LineContentAligner::justifyRuns):
+        (WebCore::Layout::LineContentAligner::adjustBaselineAndLineHeight):
+        (WebCore::Layout::LineContentAligner::collectHangingContent const):
+        (WebCore::Layout::LineContentAligner::runContentHeight const):
+        (WebCore::Layout::LineBuilder::LineBuilder):
+        (WebCore::Layout::LineBuilder::~LineBuilder):
+        (WebCore::Layout::LineBuilder::initialize):
+        (WebCore::Layout::LineBuilder::clear):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::alignContentVertically): Deleted.
+        (WebCore::Layout::LineBuilder::justifyRuns): Deleted.
+        (WebCore::Layout::LineBuilder::alignHorizontally): Deleted.
+        (WebCore::Layout::LineBuilder::collectHangingContent): Deleted.
+        (WebCore::Layout::LineBuilder::adjustBaselineAndLineHeight): Deleted.
+        (WebCore::Layout::LineBuilder::runContentHeight const): Deleted.
+        (WebCore::Layout::LineBuilder::layoutState const): Deleted.
+        (WebCore::Layout::LineBuilder::root const): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::availableWidth const):
+        (WebCore::Layout::LineBuilder::contentLogicalRight const):
+        (WebCore::Layout::LineBuilder::logicalTop const): Deleted.
+        (WebCore::Layout::LineBuilder::logicalBottom const): Deleted.
+        (WebCore::Layout::LineBuilder::logicalLeft const): Deleted.
+        (WebCore::Layout::LineBuilder::logicalRight const): Deleted.
+        (WebCore::Layout::LineBuilder::logicalWidth const): Deleted.
+        (WebCore::Layout::LineBuilder::logicalHeight const): Deleted.
+        (WebCore::Layout::LineBuilder::baseline const): Deleted.
+
 2020-08-26  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r265908): Crash under Blob::arrayBuffer() / Blob::text() in stress GC
