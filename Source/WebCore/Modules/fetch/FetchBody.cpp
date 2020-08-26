@@ -35,6 +35,7 @@
 #include "FetchHeaders.h"
 #include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"
+#include "JSDOMFormData.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamSource.h"
 #include <JavaScriptCore/ArrayBufferView.h>
@@ -130,9 +131,10 @@ void FetchBody::text(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
     consume(owner, WTFMove(promise));
 }
 
-void FetchBody::formData(FetchBodyOwner&, Ref<DeferredPromise>&& promise)
+void FetchBody::formData(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    promise.get().reject(NotSupportedError);
+    m_consumer.setType(FetchBodyConsumer::Type::FormData);
+    consume(owner, WTFMove(promise));
 }
 
 void FetchBody::consumeOnceLoadingFinished(FetchBodyConsumer::Type type, Ref<DeferredPromise>&& promise, const String& contentType)
@@ -146,19 +148,19 @@ void FetchBody::consumeOnceLoadingFinished(FetchBodyConsumer::Type type, Ref<Def
 void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
     if (isArrayBuffer()) {
-        consumeArrayBuffer(WTFMove(promise));
+        consumeArrayBuffer(owner, WTFMove(promise));
         return;
     }
     if (isArrayBufferView()) {
-        consumeArrayBufferView(WTFMove(promise));
+        consumeArrayBufferView(owner, WTFMove(promise));
         return;
     }
     if (isText()) {
-        consumeText(WTFMove(promise), textBody());
+        consumeText(owner, WTFMove(promise), textBody());
         return;
     }
     if (isURLSearchParams()) {
-        consumeText(WTFMove(promise), urlSearchParamsBody().toString());
+        consumeText(owner, WTFMove(promise), urlSearchParamsBody().toString());
         return;
     }
     if (isBlob()) {
@@ -166,12 +168,11 @@ void FetchBody::consume(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
         return;
     }
     if (isFormData()) {
-        // FIXME: Support consuming FormData.
-        promise->reject(NotSupportedError);
+        consumeFormData(owner, WTFMove(promise));
         return;
     }
 
-    m_consumer.resolve(WTFMove(promise), m_readableStream.get());
+    m_consumer.resolve(WTFMove(promise), owner.contentType(), m_readableStream.get());
 }
 
 void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
@@ -205,22 +206,22 @@ void FetchBody::consumeAsStream(FetchBodyOwner& owner, FetchBodySource& source)
         source.close();
 }
 
-void FetchBody::consumeArrayBuffer(Ref<DeferredPromise>&& promise)
+void FetchBody::consumeArrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    m_consumer.resolveWithData(WTFMove(promise), static_cast<const uint8_t*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
+    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), static_cast<const uint8_t*>(arrayBufferBody().data()), arrayBufferBody().byteLength());
     m_data = nullptr;
 }
 
-void FetchBody::consumeArrayBufferView(Ref<DeferredPromise>&& promise)
+void FetchBody::consumeArrayBufferView(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
-    m_consumer.resolveWithData(WTFMove(promise), static_cast<const uint8_t*>(arrayBufferViewBody().baseAddress()), arrayBufferViewBody().byteLength());
+    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), static_cast<const uint8_t*>(arrayBufferViewBody().baseAddress()), arrayBufferViewBody().byteLength());
     m_data = nullptr;
 }
 
-void FetchBody::consumeText(Ref<DeferredPromise>&& promise, const String& text)
+void FetchBody::consumeText(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise, const String& text)
 {
     auto data = UTF8Encoding().encode(text, UnencodableHandling::Entities);
-    m_consumer.resolveWithData(WTFMove(promise), data.data(), data.size());
+    m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), data.data(), data.size());
     m_data = nullptr;
 }
 
@@ -231,14 +232,26 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
     m_data = nullptr;
 }
 
+void FetchBody::consumeFormData(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
+{
+    if (auto sharedBuffer = formDataBody().asSharedBuffer()) {
+        m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), sharedBuffer->dataAsUInt8Ptr(), sharedBuffer->size());
+        m_data = nullptr;
+    } else {
+        // FIXME: If the form data contains blobs, load them like we do other blobs.
+        // That will fix the last WPT test in response-consume.html.
+        promise->reject(NotSupportedError);
+    }
+}
+
 void FetchBody::loadingFailed(const Exception& exception)
 {
     m_consumer.loadingFailed(exception);
 }
 
-void FetchBody::loadingSucceeded()
+void FetchBody::loadingSucceeded(const String& contentType)
 {
-    m_consumer.loadingSucceeded();
+    m_consumer.loadingSucceeded(contentType);
 }
 
 RefPtr<FormData> FetchBody::bodyAsFormData() const

@@ -2773,7 +2773,7 @@ Optional<String> URLParser::formURLDecode(StringView input)
     if (utf8.isNull())
         return WTF::nullopt;
     auto percentDecoded = percentDecode(reinterpret_cast<const LChar*>(utf8.data()), utf8.length());
-    return String::fromUTF8(percentDecoded.data(), percentDecoded.size());
+    return String::fromUTF8ReplacingInvalidSequences(percentDecoded.data(), percentDecoded.size());
 }
 
 // https://url.spec.whatwg.org/#concept-urlencoded-parser

@@ -23,7 +23,7 @@ PASS Consume DataView request's body as text
 PASS Consume DataView request's body as blob 
 PASS Consume DataView request's body as arrayBuffer 
 PASS Consume DataView request's body as JSON 
-FAIL Consume FormData request's body as FormData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS Consume FormData request's body as FormData 
 PASS Consume blob response's body as blob 
 PASS Consume blob response's body as text 
 PASS Consume blob response's body as json 

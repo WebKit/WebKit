@@ -3,58 +3,40 @@ PASS Consume response's body: from text to text
 PASS Consume response's body: from text to blob 
 PASS Consume response's body: from text to arrayBuffer 
 PASS Consume response's body: from text to json 
-FAIL Consume response's body: from text with correct multipart type to formData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from text with correct multipart type to formData with BOM promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from text without correct multipart type to formData (error case) promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Consume response's body: from text with correct urlencoded type to formData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from text without correct urlencoded type to formData (error case) promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Consume response's body: from text with correct multipart type to formData 
+PASS Consume response's body: from text with correct multipart type to formData with BOM 
+PASS Consume response's body: from text without correct multipart type to formData (error case) 
+PASS Consume response's body: from text with correct urlencoded type to formData 
+PASS Consume response's body: from text without correct urlencoded type to formData (error case) 
 PASS Consume response's body: from blob to blob 
 PASS Consume response's body: from blob to text 
 PASS Consume response's body: from blob to arrayBuffer 
 PASS Consume response's body: from blob to json 
-FAIL Consume response's body: from blob with correct multipart type to formData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from blob without correct multipart type to formData (error case) promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Consume response's body: from blob with correct urlencoded type to formData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from blob without correct urlencoded type to formData (error case) promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Consume response's body: from FormData to formData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from FormData without correct type to formData (error case) promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Consume response's body: from FormData to blob promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from FormData to text promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from FormData to arrayBuffer promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from URLSearchParams to formData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from URLSearchParams without correct type to formData (error case) promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Consume response's body: from URLSearchParams to blob assert_equals: Blob body type should be computed from the response Content-Type expected "application/x-www-form-urlencoded;charset=utf-8" but got "application/x-www-form-urlencoded"
+PASS Consume response's body: from blob with correct multipart type to formData 
+PASS Consume response's body: from blob without correct multipart type to formData (error case) 
+PASS Consume response's body: from blob with correct urlencoded type to formData 
+PASS Consume response's body: from blob without correct urlencoded type to formData (error case) 
+PASS Consume response's body: from FormData to formData 
+PASS Consume response's body: from FormData without correct type to formData (error case) 
+PASS Consume response's body: from FormData to blob 
+PASS Consume response's body: from FormData to text 
+PASS Consume response's body: from FormData to arrayBuffer 
+PASS Consume response's body: from URLSearchParams to formData 
+PASS Consume response's body: from URLSearchParams without correct type to formData (error case) 
+PASS Consume response's body: from URLSearchParams to blob 
 PASS Consume response's body: from URLSearchParams to text 
 PASS Consume response's body: from URLSearchParams to arrayBuffer 
 PASS Consume response's body: from stream to blob 
 PASS Consume response's body: from stream to text 
 PASS Consume response's body: from stream to arrayBuffer 
 PASS Consume response's body: from stream to json 
-FAIL Consume response's body: from stream with correct multipart type to formData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from stream without correct multipart type to formData (error case) promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Consume response's body: from stream with correct urlencoded type to formData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Consume response's body: from stream without correct urlencoded type to formData (error case) promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Consume response's body: from stream with correct multipart type to formData 
+PASS Consume response's body: from stream without correct multipart type to formData (error case) 
+PASS Consume response's body: from stream with correct urlencoded type to formData 
+PASS Consume response's body: from stream without correct urlencoded type to formData (error case) 
 PASS Consume response's body: from fetch to blob 
 PASS Consume response's body: from fetch to text 
 PASS Consume response's body: from fetch to arrayBuffer 
-FAIL Consume response's body: from fetch without correct type to formData (error case) promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Consume response's body: from fetch without correct type to formData (error case) 
 FAIL Consume response's body: from multipart form data blob to formData promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

@@ -184,16 +184,20 @@ bool isValidLanguageHeaderValue(const String& value)
 }
 
 // See RFC 7230, Section 3.2.6.
-bool isValidHTTPToken(const String& value)
+bool isValidHTTPToken(StringView value)
 {
     if (value.isEmpty())
         return false;
-    auto valueStringView = StringView(value);
-    for (UChar c : valueStringView.codeUnits()) {
+    for (UChar c : value.codeUnits()) {
         if (!RFC7230::isTokenCharacter(c))
             return false;
     }
     return true;
+}
+
+bool isValidHTTPToken(const String& value)
+{
+    return isValidHTTPToken(StringView(value));
 }
 
 #if USE(GLIB)

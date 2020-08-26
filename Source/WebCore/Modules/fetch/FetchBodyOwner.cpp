@@ -270,7 +270,7 @@ void FetchBodyOwner::blobLoadingSucceeded()
         m_readableStreamSource = nullptr;
     }
 
-    m_body->loadingSucceeded();
+    m_body->loadingSucceeded(contentType());
     finishBlobLoading();
 }
 

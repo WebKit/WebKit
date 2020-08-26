@@ -45,6 +45,7 @@ enum ConversionResult {
 // at the end of the source, which will instead cause a SourceExhausted error.
 
 WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16(const char* sourceStart, const char* sourceEnd, UChar** targetStart, UChar* targetEnd, bool* isSourceAllASCII = nullptr);
+WTF_EXPORT_PRIVATE bool convertUTF8ToUTF16ReplacingInvalidSequences(const char* sourceStart, const char* sourceEnd, UChar** targetStart, UChar* targetEnd, bool* isSourceAllASCII = nullptr);
 WTF_EXPORT_PRIVATE bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char** targetStart, char* targetEnd);
 WTF_EXPORT_PRIVATE ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sourceEnd, char** targetStart, char* targetEnd, bool strict = true);
 
