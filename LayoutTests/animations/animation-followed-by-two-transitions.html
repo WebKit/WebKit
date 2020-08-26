@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../resources/js-test.js"></script>
+    <script src="../resources/ui-helper.js"></script>
+    <style>
+        #target {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            height: 100px;
+            width: 100px;
+            background: green;
+            animation: fadeIn 30ms;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .transition {
+            transition: transform 60ms;
+            transform: translateX(200%);
+        }
+
+        .no-transition {
+            transition: none;
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div id="target"></div>
+    <script>
+        jsTestIsAsync = true;
+        target = document.getElementById("target");
+
+        description("The test passes if the animationend event is followed by two transitionend events.");
+
+        target.addEventListener("transitionend", async () => {
+            testPassed("Observed first 'transitionend' event. Starting second transition...");
+            target.classList.replace("transition", "no-transition");
+
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+
+            target.classList.replace("no-transition", "transition");
+            target.addEventListener("transitionend", () => {
+                testPassed("Observed second 'transitionend' event.");
+                finishJSTest();
+            });
+        }, { once: true });
+
+        target.addEventListener("animationend", () => {
+            testPassed("Observed 'animationend' event. Starting first transition...");
+            target.classList.add("transition");
+        });
+    </script>
+</body>
+</html>

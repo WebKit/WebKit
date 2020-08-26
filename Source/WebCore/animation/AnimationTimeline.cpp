@@ -387,7 +387,7 @@ void AnimationTimeline::updateCSSTransitionsForElementAndProperty(Element& eleme
 
     // A CSS Transition might have completed since the last time animations were updated so we must
     // update the running and completed transitions membership in that case.
-    if (is<CSSTransition>(animation) && element.hasRunningTransitionsForProperty(property) && animation->playState() == WebAnimation::PlayState::Finished) {
+    if (is<CSSTransition>(animation) && matchingBackingAnimation && element.hasRunningTransitionsForProperty(property) && animation->playState() == WebAnimation::PlayState::Finished) {
         element.ensureCompletedTransitionsByProperty().set(property, element.ensureRunningTransitionsByProperty().take(property));
         animation = nullptr;
     }
