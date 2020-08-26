@@ -47,6 +47,7 @@ public:
     // https://html.spec.whatwg.org/multipage/dnd.html#drag-data-store-mode
     enum class StoreMode { Invalid, ReadWrite, Readonly, Protected };
 
+    static Ref<DataTransfer> create();
     static Ref<DataTransfer> createForCopyAndPaste(const Document&, StoreMode, std::unique_ptr<Pasteboard>&&);
     static Ref<DataTransfer> createForInputEvent(const String& plainText, const String& htmlText);
 
@@ -114,7 +115,7 @@ public:
 
 private:
     enum class Type { CopyAndPaste, DragAndDropData, DragAndDropFiles, InputEvent };
-    DataTransfer(StoreMode, std::unique_ptr<Pasteboard>, Type = Type::CopyAndPaste);
+    DataTransfer(StoreMode, std::unique_ptr<Pasteboard>, Type = Type::CopyAndPaste, String&& effectAllowed = "uninitialized"_s);
 
 #if ENABLE(DRAG_SUPPORT)
     bool forDrag() const { return m_type == Type::DragAndDropData || m_type == Type::DragAndDropFiles; }

@@ -1,3 +1,19 @@
+2020-08-26  Alex Christensen  <achristensen@webkit.org>
+
+        Implement DataTransfer constructor and multipart form filename encoding as other browsers do
+        https://bugs.webkit.org/show_bug.cgi?id=215837
+
+        Reviewed by Youenn Fablet.
+
+        Covered by newly passing WPT tests that Chrome and Firefox both pass.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::create):
+        * dom/DataTransfer.h:
+        * dom/DataTransfer.idl:
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::addFilenameToMultiPartHeader):
+
 2020-08-26  Chris Dumez  <cdumez@apple.com>
 
         IIRFilterNode interface is not supported

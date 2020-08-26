@@ -1,3 +1,13 @@
+2020-08-26  Alex Christensen  <achristensen@webkit.org>
+
+        Implement DataTransfer constructor and multipart form filename encoding as other browsers do
+        https://bugs.webkit.org/show_bug.cgi?id=215837
+
+        Reviewed by Youenn Fablet.
+
+        * fast/dom/dom-constructors-expected.txt:
+        * fast/dom/dom-constructors.html:
+
 2020-08-26  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r265908): Crash under Blob::arrayBuffer() / Blob::text() in stress GC

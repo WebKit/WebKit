@@ -175,10 +175,8 @@ void addBoundaryToMultiPartHeader(Vector<char>& buffer, const CString& boundary,
 
 void addFilenameToMultiPartHeader(Vector<char>& buffer, const TextEncoding& encoding, const String& filename)
 {
-    // FIXME: This loses data irreversibly if the filename includes characters you can't encode
-    // in the website's character set.
     append(buffer, "; filename=\"");
-    appendQuoted(buffer, encoding.encode(filename, UnencodableHandling::QuestionMarks));
+    appendQuoted(buffer, encoding.encode(filename, UnencodableHandling::Entities));
     append(buffer, '"');
 }
 

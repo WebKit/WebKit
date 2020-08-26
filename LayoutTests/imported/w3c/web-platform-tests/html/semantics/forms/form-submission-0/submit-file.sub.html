@@ -4,7 +4,7 @@
 <script src="/resources/testharnessreport.js"></script>
 <body>
 <iframe id=testframe name=testframe></iframe>
-<form id=testform method=post action="//{{domains[www1]}}:{{location[port]}}/html/semantics/forms/form-submission-0/resources/file-submission.py" target=testframe enctype="multipart/form-data">
+<form id=testform method=post action="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/forms/form-submission-0/resources/file-submission.py" target=testframe enctype="multipart/form-data">
 <input name=testinput id=testinput type=file>
 </form>
 <script>

@@ -29,6 +29,8 @@
 [
     SkipVTableValidation,
 ] interface DataTransfer {
+    constructor();
+
     attribute DOMString dropEffect;
     attribute DOMString effectAllowed;
 

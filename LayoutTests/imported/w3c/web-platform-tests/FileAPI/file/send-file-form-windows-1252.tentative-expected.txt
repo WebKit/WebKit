@@ -1,8 +1,8 @@
 
-FAIL Upload file-for-upload-in-form.txt (ASCII) in windows-1252 form promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
-FAIL Upload file-for-upload-in-form-.txt (x-user-defined) in windows-1252 form promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
-FAIL Upload file-for-upload-in-form-â˜ºðŸ˜‚.txt (windows-1252) in windows-1252 form promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
-FAIL Upload file-for-upload-in-form-★星★.txt (JIS X 0201 and JIS X 0208) in windows-1252 form promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
-FAIL Upload file-for-upload-in-form-☺😂.txt (Unicode) in windows-1252 form promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
-FAIL Upload file-for-upload-in-form-ABC~‾¥≈¤･・•∙·☼★星🌟星★☼·∙•・･¤≈¥‾~XYZ.txt (Unicode) in windows-1252 form promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+PASS Upload file-for-upload-in-form.txt (ASCII) in windows-1252 form 
+PASS Upload file-for-upload-in-form-.txt (x-user-defined) in windows-1252 form 
+PASS Upload file-for-upload-in-form-â˜ºðŸ˜‚.txt (windows-1252) in windows-1252 form 
+PASS Upload file-for-upload-in-form-★星★.txt (JIS X 0201 and JIS X 0208) in windows-1252 form 
+PASS Upload file-for-upload-in-form-☺😂.txt (Unicode) in windows-1252 form 
+PASS Upload file-for-upload-in-form-ABC~‾¥≈¤･・•∙·☼★星🌟星★☼·∙•・･¤≈¥‾~XYZ.txt (Unicode) in windows-1252 form 
 

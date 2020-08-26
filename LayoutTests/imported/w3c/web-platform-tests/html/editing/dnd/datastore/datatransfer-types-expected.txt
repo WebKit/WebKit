@@ -1,6 +1,6 @@
 
-FAIL type's state on DataTransfer creation Illegal constructor
-FAIL Relationship between types and items Illegal constructor
-FAIL type's identity Illegal constructor
-FAIL Verify type is a read-only attribute Illegal constructor
+FAIL type's state on DataTransfer creation assert_equals: types must return the same object when the data store item list has not changed expected [] but got []
+FAIL Relationship between types and items assert_equals: expected ["text/plain"] but got ["text/plain"]
+FAIL type's identity assert_equals: expected ["text/plain"] but got ["text/plain"]
+FAIL Verify type is a read-only attribute assert_equals: expected [] but got []
 

@@ -1,3 +1,28 @@
+2020-08-26  Alex Christensen  <achristensen@webkit.org>
+
+        Implement DataTransfer constructor and multipart form filename encoding as other browsers do
+        https://bugs.webkit.org/show_bug.cgi?id=215837
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/FileAPI/file/send-file-form-expected.txt:
+        * web-platform-tests/FileAPI/file/send-file-form-iso-2022-jp.tentative-expected.txt:
+        * web-platform-tests/FileAPI/file/send-file-form-utf-8-expected.txt:
+        * web-platform-tests/FileAPI/file/send-file-form-windows-1252.tentative-expected.txt:
+        * web-platform-tests/FileAPI/file/send-file-form-x-user-defined.tentative-expected.txt:
+        * web-platform-tests/html/editing/dnd/datastore/datatransfer-constructor-001-expected.txt:
+        * web-platform-tests/html/editing/dnd/datastore/datatransfer-types-expected.txt:
+        This test still fails because of bindings issues.  DataTransfer.types should apparently return
+        a cached JSValue that is updated whenever the contents change, which I don't think our bindings
+        generator can handle right now, so these tests are now failing in a different way.
+        I think that's fine because I think most uses of DataTransfer.types will just be checking the contents,
+        not whether its === to a stored reference like these tests do.  We should fix this later.
+        * web-platform-tests/html/semantics/forms/form-submission-0/submit-file.sub-expected.txt:
+        * web-platform-tests/html/semantics/forms/form-submission-0/submit-file.sub.html:
+        Updated to successfully submit the form to a listening server in our test infrastructure,
+        so that we see PASS like we do now on wpt.live
+        * web-platform-tests/service-workers/service-worker/data-transfer-files.https-expected.txt:
+
 2020-08-26  Chris Dumez  <cdumez@apple.com>
 
         IIRFilterNode interface is not supported
