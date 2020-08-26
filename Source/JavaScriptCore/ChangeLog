@@ -1,3 +1,162 @@
+2020-08-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] FTL should use m_origin instead of m_node->origin since m_node can be nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=215833
+
+        Reviewed by Mark Lam.
+
+        While we are using m_node->origin, m_node can be nullptr (at the entry of the FTL function).
+        m_origin is always pointing appropriate origin. We should use it instead.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileToObjectOrCallObjectConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueMul):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStrCat):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithClz32):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueDiv):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueMod):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAbs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithUnary):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValuePow):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithRandom):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithRound):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithFloor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithCeil):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithTrunc):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithSqrt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithFRound):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIncOrDec):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueNegate):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitNot):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitAnd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitOr):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitXor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitRShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueBitLShift):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByValWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByValWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsIsLockFree):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDefineDataProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDefineAccessorProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetPrototypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutAccessorById):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutGetterSetterById):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutAccessorByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDeleteById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDeleteByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArraySlice):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayIndexOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPop):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePushWithScope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewFunction):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateDirectArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateScopedArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateClonedArguments):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateArgumentsButterfly):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateRest):
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectKeysOrObjectGetOwnPropertyNames):
+        (JSC::FTL::DFG::LowerDFGToB3::compileObjectCreate):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewSymbol):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreatePromise):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateInternalFieldObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayBuffer):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToNumber):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToNumeric):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallNumberConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToStringOrCallStringConstructorOrStringValueOf):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToPrimitive):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToPropertyKey):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringCharAt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringFromCharCode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetGlobalThis):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetArgument):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSameValue):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileVarargsLength):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoadVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSwitch):
+        (JSC::FTL::DFG::LowerDFGToB3::compileThrow):
+        (JSC::FTL::DFG::LowerDFGToB3::compileThrowStaticError):
+        (JSC::FTL::DFG::LowerDFGToB3::mapHashString):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapHash):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMapBucket):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapSet):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTypeOfIsObject):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsCallable):
+        (JSC::FTL::DFG::LowerDFGToB3::compileIsConstructor):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasOwnProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileParseInt):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOfCustom):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasIndexedProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasGenericProperty):
+        (JSC::FTL::DFG::LowerDFGToB3::compileHasStructurePropertyImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetDirectPname):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetPropertyEnumerator):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToIndexString):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckTraps):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetFunctionName):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringReplace):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLogShadowChickenTail):
+        (JSC::FTL::DFG::LowerDFGToB3::getArgumentsLength):
+        (JSC::FTL::DFG::LowerDFGToB3::getCurrentCallee):
+        (JSC::FTL::DFG::LowerDFGToB3::getArgumentsStart):
+        (JSC::FTL::DFG::LowerDFGToB3::compare):
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringSlice):
+        (JSC::FTL::DFG::LowerDFGToB3::compileToLowerCase):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNumberToStringWithRadix):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNumberToStringWithValidRadixConstant):
+        (JSC::FTL::DFG::LowerDFGToB3::compileResolveScopeForHoistingFuncDeclInEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileResolveScope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetDynamicVar):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutDynamicVar):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOM):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        (JSC::FTL::DFG::LowerDFGToB3::compileLoopHint):
+        (JSC::FTL::DFG::LowerDFGToB3::genericJSValueCompare):
+        (JSC::FTL::DFG::LowerDFGToB3::stringsEqual):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::boolify):
+        (JSC::FTL::DFG::LowerDFGToB3::equalNullOrUndefined):
+        (JSC::FTL::DFG::LowerDFGToB3::contiguousPutByValOutOfBounds):
+        (JSC::FTL::DFG::LowerDFGToB3::switchStringSlow):
+        (JSC::FTL::DFG::LowerDFGToB3::buildTypeOf):
+        (JSC::FTL::DFG::LowerDFGToB3::lazySlowPath):
+        (JSC::FTL::DFG::LowerDFGToB3::masqueradesAsUndefinedWatchpointIsStillValid):
+        (JSC::FTL::DFG::LowerDFGToB3::codeOriginDescriptionOfCallSite const):
+        (JSC::FTL::DFG::LowerDFGToB3::callCheck):
+        (JSC::FTL::DFG::LowerDFGToB3::appendOSRExit):
+        * jsc.cpp:
+        (runJSC):
+        * runtime/OptionsList.h:
+
 2020-08-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: breakpoint condition should be evaluated before the ignore count

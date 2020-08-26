@@ -1,3 +1,13 @@
+2020-08-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] FTL should use m_origin instead of m_node->origin since m_node can be nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=215833
+
+        Reviewed by Mark Lam.
+
+        * stress/ftl-entry-osr-exit-has-nullptr-node.js: Added.
+        (foo):
+
 2020-08-25  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Invalid early error for object literal method named "__proto__"

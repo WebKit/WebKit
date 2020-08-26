@@ -395,6 +395,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(Unsigned, fireOSRExitFuzzAtStatic, 0, Normal, nullptr) \
     v(Unsigned, fireOSRExitFuzzAt, 0, Normal, nullptr) \
     v(Unsigned, fireOSRExitFuzzAtOrAfter, 0, Normal, nullptr) \
+    v(Bool, verboseOSRExitFuzz, true, Normal, nullptr) \
     \
     v(Unsigned, seedOfVMRandomForFuzzer, 0, Normal, "0 means not fuzzing this; use a cryptographically random seed") \
     v(Bool, useRandomizingFuzzerAgent, false, Normal, nullptr) \
