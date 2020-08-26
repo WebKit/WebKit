@@ -15,33 +15,33 @@ PASS Input LF with endings 'transparent'
 PASS Input LF with endings 'native' 
 PASS Input CR with endings unspecified 
 PASS Input CR with endings 'transparent' 
-FAIL Input CR with endings 'native' assert_equals: Newlines should match the platform with endings "native" expected "\n" but got "\r"
+PASS Input CR with endings 'native' 
 PASS Input CRLF with endings unspecified 
 PASS Input CRLF with endings 'transparent' 
-FAIL Input CRLF with endings 'native' assert_equals: Newlines should match the platform with endings "native" expected "\n" but got "\r\n"
+PASS Input CRLF with endings 'native' 
 PASS Input CRCR with endings unspecified 
 PASS Input CRCR with endings 'transparent' 
-FAIL Input CRCR with endings 'native' assert_equals: Newlines should match the platform with endings "native" expected "\n\n" but got "\r\r"
+PASS Input CRCR with endings 'native' 
 PASS Input LFCR with endings unspecified 
 PASS Input LFCR with endings 'transparent' 
-FAIL Input LFCR with endings 'native' assert_equals: Newlines should match the platform with endings "native" expected "\n\n" but got "\n\r"
+PASS Input LFCR with endings 'native' 
 PASS Input LFLF with endings unspecified 
 PASS Input LFLF with endings 'transparent' 
 PASS Input LFLF with endings 'native' 
 PASS Input CRCRLF with endings unspecified 
 PASS Input CRCRLF with endings 'transparent' 
-FAIL Input CRCRLF with endings 'native' assert_equals: Newlines should match the platform with endings "native" expected "\n\n" but got "\r\r\n"
+PASS Input CRCRLF with endings 'native' 
 PASS Input CRLFLF with endings unspecified 
 PASS Input CRLFLF with endings 'transparent' 
-FAIL Input CRLFLF with endings 'native' assert_equals: Newlines should match the platform with endings "native" expected "\n\n" but got "\r\n\n"
+PASS Input CRLFLF with endings 'native' 
 PASS Input CRLFCR with endings unspecified 
 PASS Input CRLFCR with endings 'transparent' 
-FAIL Input CRLFCR with endings 'native' assert_equals: Newlines should match the platform with endings "native" expected "\n\n" but got "\r\n\r\n"
+PASS Input CRLFCR with endings 'native' 
 PASS Input CRLFCRLF with endings unspecified 
 PASS Input CRLFCRLF with endings 'transparent' 
-FAIL Input CRLFCRLF with endings 'native' assert_equals: Newlines should match the platform with endings "native" expected "\n\n" but got "\r\n\r\n"
+PASS Input CRLFCRLF with endings 'native' 
 PASS Input LFCRLFCR with endings unspecified 
 PASS Input LFCRLFCR with endings 'transparent' 
-FAIL Input LFCRLFCR with endings 'native' assert_equals: Newlines should match the platform with endings "native" expected "\n\n\n" but got "\n\r\n\r"
-FAIL CR/LF in adjacent input strings assert_equals: CR/LF in adjacent strings should be converted to two platform newlines expected "\n\n" but got "\r\n"
+PASS Input LFCRLFCR with endings 'native' 
+PASS CR/LF in adjacent input strings 
 

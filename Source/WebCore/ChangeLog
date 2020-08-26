@@ -1,3 +1,19 @@
+2020-08-26  Alex Christensen  <achristensen@webkit.org>
+
+        Use endings from FilePropertyBag when constructing Blob data from the File
+        https://bugs.webkit.org/show_bug.cgi?id=215857
+
+        Reviewed by Darin Adler.
+
+        We had an unnecessary conversion function that converted one of the two properties of BlobPropertyBag (endings was missing).
+        Since FilePropertyBag inherits from BlobPropertyBag, just use the original FilePropertyBag to get both properties.
+
+        Covered by newly-passing WPT tests that Chrome and Firefox both pass.
+
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        (WebCore::convertPropertyBag): Deleted.
+
 2020-08-26  Youenn Fablet  <youenn@apple.com>
 
         Abort pipeTo based on AbortSignal

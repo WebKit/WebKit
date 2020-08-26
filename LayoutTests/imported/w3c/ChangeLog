@@ -1,3 +1,12 @@
+2020-08-26  Alex Christensen  <achristensen@webkit.org>
+
+        Use endings from FilePropertyBag when constructing Blob data from the File
+        https://bugs.webkit.org/show_bug.cgi?id=215857
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/FileAPI/file/File-constructor-endings-expected.txt:
+
 2020-08-26  Youenn Fablet  <youenn@apple.com>
 
         Abort pipeTo based on AbortSignal

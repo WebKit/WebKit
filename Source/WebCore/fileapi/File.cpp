@@ -76,15 +76,8 @@ File::File(DeserializationContructor, ScriptExecutionContext* context, const Str
 {
 }
 
-static BlobPropertyBag convertPropertyBag(const File::PropertyBag& initialBag)
-{
-    BlobPropertyBag bag;
-    bag.type = initialBag.type;
-    return bag;
-}
-
 File::File(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
-    : Blob(context, WTFMove(blobPartVariants), convertPropertyBag(propertyBag))
+    : Blob(context, WTFMove(blobPartVariants), propertyBag)
     , m_name(filename)
     , m_lastModifiedDateOverride(propertyBag.lastModified.valueOr(WallTime::now().secondsSinceEpoch().milliseconds()))
 {
