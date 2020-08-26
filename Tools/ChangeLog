@@ -1,3 +1,37 @@
+2020-08-26  Jonathan Bedard  <jbedard@apple.com>
+
+       [webkitcorepy] Standard Popen mocking API
+        https://bugs.webkit.org/show_bug.cgi?id=215712
+        <rdar://problem/67501911>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/README.md: Add mocks.Subprocess documentation.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/__init__.py:  Export Subprocess, ProcessCompletion.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/popen.py: Added.
+        (Popen): Mock Popen object (for both Python 2 and 3). This object extracts a ProcessCompletion object from the
+        mocked Subprocess stack and behaives according to the content of that object.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/subprocess.py: Added.
+        (PopenBase): Base class to share code between Python 2 and 3 constructor.
+        (Popen): Mock Popen object (for both Python 2 and 3). This object extracts a ProcessCompletion object from the
+        mocked Subprocess stack and behaives according to the content of that object.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/subprocess.py: Added.
+        (ProcessCompletion): Class which captures the result of a mock Popen call.
+        (Subprocess):
+        (Subprocess.CommandRoute): Object which routes a set of subprocess arguments to a specific ProcessCompletion or callback which
+        generates a ProcessCompletion.
+        (Subprocess.completion_generator_for): Given a file, search through the mocked Subprocess stack to find the
+        first completion for the provided file.
+        (Subprocess.completion_for): Extract file name from arguments, find the completion generator, and call
+        it with the provieded arguments, working directory and stdin.
+        (Subprocess.__init__):
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/mocks/subprocess_unittest.py: Added.
+        (MockSubprocess):
+        (MockCheckOutput):
+        (MockCheckCall):
+        (MockRun):
+
 2020-08-26  Eric Carlson  <eric.carlson@apple.com>
 
         TestWebKitAPI.AudioRoutingArbitration.Deletion is a constant failure

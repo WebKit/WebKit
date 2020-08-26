@@ -76,3 +76,35 @@ from webkitcorepy import run
 
 result = run([sys.executable, '-c', 'print("message")'], capture_output=True, encoding='utf-8')
 ```
+
+Mocking of subprocess commands:
+```
+from webkitcorepy import mocks, run
+
+with mocks.Subprocess(
+    'ls', completion=mocks.ProcessCompletion(returncode=0, stdout='file1.txt\nfile2.txt\n'),
+):
+    result = run(['ls'], capture_output=True, encoding='utf-8')
+    assert result.returncode == 0
+    assert result.stdout == 'file1.txt\nfile2.txt\n'
+```
+The mocking system for subprocess also supports other subprocess APIs based on Popen:
+```
+with mocks.Subprocess(
+    'ls', completion=mocks.ProcessCompletion(returncode=0, stdout='file1.txt\nfile2.txt\n'),
+):
+    assert subprocess.check_output(['ls']) == b'file1.txt\nfile2.txt\n'
+    assert subprocess.check_call(['ls']) == 0
+```
+For writing integration tests, the mocking system for subprocess supports mocking multiple process calls at the same time:
+```
+with mocks.Subprocess(
+    mocks.Subprocess.CommandRoute('command-a', 'argument', completion=mocks.ProcessCompletion(returncode=0)),
+    mocks.Subprocess.CommandRoute('command-b', completion=mocks.ProcessCompletion(returncode=-1)),
+):
+    result = run(['command-a', 'argument'])
+    assert result.returncode == 0
+
+    result = run(['command-b'])
+    assert result.returncode == -1
+```
