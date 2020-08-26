@@ -1,3 +1,26 @@
+2020-08-26  Dean Jackson  <dino@apple.com>
+
+        Flickering on sedona.dev
+        https://bugs.webkit.org/show_bug.cgi?id=215141
+
+        Reviewed by Darin Adler.
+
+        Test: fast/canvas/webgl/compositing-without-drawing.html
+
+        Our logic to determine if a canvas needs to be "repainted"
+        was over-zealous for WebGL. We were marking any context
+        that called draw commands as dirty, but they could in fact
+        be rendering to an offscreen texture/framebuffer. Then, when
+        it came time to composite, we'd happily swap buffers and
+        show something that had never been rendered to.
+
+        The fix is simply to ignore any of the dirtying notifications
+        when we are not bound to the default (canvas) framebuffer.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::markContextChangedAndNotifyCanvasObserver): Only
+        mark if we're rendering to the default framebuffer.
+
 2020-08-26  Alex Christensen  <achristensen@webkit.org>
 
         Implement DataTransfer constructor and multipart form filename encoding as other browsers do

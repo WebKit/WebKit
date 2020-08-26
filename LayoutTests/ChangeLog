@@ -1,3 +1,16 @@
+2020-08-26  Dean Jackson  <dino@apple.com>
+
+        Flickering on sedona.dev
+        https://bugs.webkit.org/show_bug.cgi?id=215141
+
+        Reviewed by Darin Adler.
+
+        Test that serves an animation frame that touches
+        WebGL, but not in a way that requires a recomposite.
+
+        * fast/canvas/webgl/compositing-without-drawing-expected.html: Added.
+        * fast/canvas/webgl/compositing-without-drawing.html: Added.
+
 2020-08-26  Alex Christensen  <achristensen@webkit.org>
 
         Implement DataTransfer constructor and multipart form filename encoding as other browsers do
