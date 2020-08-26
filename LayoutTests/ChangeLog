@@ -1,3 +1,19 @@
+2020-08-26  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/67812567
+
+    2020-08-26  Tim Horton  <timothy_horton@apple.com>
+
+            Web Share API Level 2 functions even when its experimental feature flag is disabled
+            https://bugs.webkit.org/show_bug.cgi?id=215831
+            <rdar://problem/67760687>
+
+            * fast/web-share/canShare-with-files-feature-disabled-expected.txt: Added.
+            * fast/web-share/canShare-with-files-feature-disabled.html: Added.
+            * fast/web-share/share-with-files-feature-disabled-expected.txt: Added.
+            * fast/web-share/share-with-files-feature-disabled.html: Added.
+            Add some tests that ensure that disabling the feature actually works.
+
 2020-08-20  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r265932. rdar://problem/67485356

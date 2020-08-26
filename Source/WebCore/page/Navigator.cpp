@@ -115,24 +115,22 @@ bool Navigator::canShare(ScriptExecutionContext& context, const ShareData& data)
     auto* frame = this->frame();
     if (!frame || !frame->page())
         return false;
-    if (data.title.isNull() && data.url.isNull() && data.text.isNull()) {
-        if (!data.files.isEmpty()) {
-#if ENABLE(FILE_SHARE)
-            return true;
-#else
-            return false;
-#endif
-        }
-        return false;
-    }
-
+ 
+    bool hasShareableTitleOrText = !data.title.isNull() || !data.text.isNull();
+    bool hasShareableURL = false;
     Optional<URL> url;
     if (!data.url.isNull()) {
         url = context.completeURL(data.url);
-        if (!url->isValid())
-            return false;
+        if (url->isValid())
+            hasShareableURL = true;
     }
-    return true;
+#if ENABLE(FILE_SHARE)
+    bool hasShareableFiles = RuntimeEnabledFeatures::sharedFeatures().webShareFileAPIEnabled() && !data.files.isEmpty();
+#else
+    bool hasShareableFiles = false;
+#endif
+  
+    return hasShareableTitleOrText || hasShareableURL || hasShareableFiles;
 }
 
 void Navigator::share(ScriptExecutionContext& context, const ShareData& data, Ref<DeferredPromise>&& promise)
@@ -159,7 +157,7 @@ void Navigator::share(ScriptExecutionContext& context, const ShareData& data, Re
         { },
     };
 #if ENABLE(FILE_SHARE)
-    if (!data.files.isEmpty()) {
+    if (RuntimeEnabledFeatures::sharedFeatures().webShareFileAPIEnabled() && !data.files.isEmpty()) {
         if (m_loader)
             m_loader->cancel();
         

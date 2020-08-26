@@ -1,0 +1,43 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true experimental:WebShareFileAPIEnabled=false ] -->
+<html>
+<head>
+<meta name="viewport" content="initial-scale=5, width=device-width">
+<script src="../../resources/ui-helper.js"></script>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function runTest()
+    {
+        document.getElementById("target").addEventListener("click", () => {
+            const textFile = new File(['This is a text file'], 'TextFile.txt', { type: 'text/plain' });
+            navigator.share({ files: [ textFile ] })
+            .then(() => {
+                output.innerText = "FAIL: Allowed to share file with Web Share Level 2 disabled.";
+                testRunner.notifyDone();
+            })
+            .catch((error) => {
+                output.innerText = "PASS: Not allowed to share file with Web Share Level 2 disabled: " + error;
+                testRunner.notifyDone();
+            });
+        });
+
+        UIHelper.activateAt(50, 50);
+    }
+</script>
+<style>
+    #target {
+        height: 100px;
+        width: 100px;
+        background-color: silver;
+    }
+</style>
+</head>
+<body onload="runTest()">
+<pre id="output"></pre>
+<button id="target">
+</button>
+</body>
+</html>
