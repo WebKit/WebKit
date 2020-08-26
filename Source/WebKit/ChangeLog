@@ -1,3 +1,60 @@
+2020-08-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r265996. rdar://problem/67707045
+
+    [macOS] Web pages are not responding correctly to changes in "Reduce motion" setting
+    https://bugs.webkit.org/show_bug.cgi?id=215664
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore/PAL:
+    
+    Declare "Reduce motion" preference key, as well as notification sent when the "Reduce motion" setting is changed.
+    
+    * pal/spi/mac/HIServicesSPI.h:
+    
+    Source/WebKit:
+    
+    This happens because there is a race between the preference change and notification being received in the WebContent
+    process. This race is usually won by the notification, which then reads the wrong preference value when being handled.
+    This bug was introduced when access to the preference daemon was closed in the WebContent process, and preferences
+    were updated from the UI process. This patch addresses this issue by re-posting the notification when the preference
+    value is updated in the WebContent process.
+    
+    API test: WebKit.AccessibilityReduceMotion
+    
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::reduceMotionPreferenceKey):
+    (WebKit::dispatchSimulatedNotificationsForPreferenceChange):
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKit/AccessibilityReduceMotion.mm: Added.
+    (TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@265996 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-20  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Web pages are not responding correctly to changes in "Reduce motion" setting
+            https://bugs.webkit.org/show_bug.cgi?id=215664
+
+            Reviewed by Darin Adler.
+
+            This happens because there is a race between the preference change and notification being received in the WebContent
+            process. This race is usually won by the notification, which then reads the wrong preference value when being handled.
+            This bug was introduced when access to the preference daemon was closed in the WebContent process, and preferences
+            were updated from the UI process. This patch addresses this issue by re-posting the notification when the preference
+            value is updated in the WebContent process.
+
+            API test: WebKit.AccessibilityReduceMotion
+
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::reduceMotionPreferenceKey):
+            (WebKit::dispatchSimulatedNotificationsForPreferenceChange):
+
 2020-08-21  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r265953. rdar://problem/67560218

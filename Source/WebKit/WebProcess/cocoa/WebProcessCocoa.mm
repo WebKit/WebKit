@@ -126,6 +126,7 @@
 #import "WebSwitchingGPUClient.h"
 #import <WebCore/GraphicsContextGLOpenGLManager.h>
 #import <WebCore/ScrollbarThemeMac.h>
+#import <pal/spi/mac/HIServicesSPI.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #endif
 
@@ -941,6 +942,12 @@ static const WTF::String& userHighlightColorPreferenceKey()
     static NeverDestroyed<WTF::String> userHighlightColorPreferenceKey(MAKE_STATIC_STRING_IMPL("AppleHighlightColor"));
     return userHighlightColorPreferenceKey;
 }
+
+static const WTF::String& reduceMotionPreferenceKey()
+{
+    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("reduceMotion"));
+    return key;
+}
 #endif
 
 static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
@@ -951,15 +958,17 @@ static void dispatchSimulatedNotificationsForPreferenceChange(const String& key)
     // of the system, we must re-post the notification in the Web Content process after updating the default.
     
     if (key == userAccentColorPreferenceKey()) {
-        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+        auto notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter postNotificationName:@"kCUINotificationAquaColorVariantChanged" object:nil];
         [notificationCenter postNotificationName:@"NSSystemColorsWillChangeNotification" object:nil];
         [notificationCenter postNotificationName:NSSystemColorsDidChangeNotification object:nil];
-    }
-    if (key == userHighlightColorPreferenceKey()) {
-        NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    } else if (key == userHighlightColorPreferenceKey()) {
+        auto notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter postNotificationName:@"NSSystemColorsWillChangeNotification" object:nil];
         [notificationCenter postNotificationName:NSSystemColorsDidChangeNotification object:nil];
+    } else if (key == reduceMotionPreferenceKey()) {
+        auto notificationCenter = CFNotificationCenterGetDistributedCenter();
+        CFNotificationCenterPostNotification(notificationCenter, kAXInterfaceReduceMotionStatusDidChangeNotification, nullptr, nullptr, true);
     }
 #endif
 }
