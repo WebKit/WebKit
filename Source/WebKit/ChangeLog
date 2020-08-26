@@ -1,3 +1,14 @@
+2020-08-26  Youenn Fablet  <youenn@apple.com>
+
+        Enable WritableStream by default
+        https://bugs.webkit.org/show_bug.cgi?id=149842
+
+        Reviewed by Alex Christensen.
+
+        Implementation is now ready and is up to date with the latest specification.
+
+        * Shared/WebPreferences.yaml:
+
 2020-08-26  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r265908): Crash under Blob::arrayBuffer() / Blob::text() in stress GC

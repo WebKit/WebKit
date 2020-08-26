@@ -2163,7 +2163,7 @@ WebXREnabled:
 
 WritableStreamAPIEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "WritableStream API"
   humanReadableDescription: "Enable Writable Stream API"
   category: experimental
