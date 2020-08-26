@@ -1,3 +1,24 @@
+2020-08-26  Jer Noble  <jer.noble@apple.com>
+
+        [Mac,EME] Netflix.com shows HDCP error for all streams
+        https://bugs.webkit.org/show_bug.cgi?id=215825
+
+        Reviewed by Eric Carlson.
+
+        New API added to AVContentKeySession hits a sandbox restriction when run in the WebContent process, and the default
+        behavior when an error checking HDCP status is to report that the output is restricted, regardless of the displays
+        actual capabilities. To work around this behavior for now, pass in an empty displayID array, rather than the actual
+        displayID. This causes AVFoundation to do a "lowest common level of support" rather than a specific display check.
+        The upside is that this call no longer requires a connection to the WindowServer. The downside is that the
+        AVContentKeyRequest will report that its output is restricted if any non-HDCP compliant display is attached.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses const):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::keyRequestHasInsufficientProtectionForDisplayID const):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateProtectionStatusForDisplayID):
+
 2020-08-26  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Set available column space before grid items prelayout
