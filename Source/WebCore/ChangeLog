@@ -1,5 +1,32 @@
 2020-08-25  Zalan Bujtas  <zalan@apple.com>
 
+        Facebook post with lots of comments has cut off scrollbar, and can't scroll fully to the bottom (sticky)
+        https://bugs.webkit.org/show_bug.cgi?id=215719
+        <rdar://problem/66411757>
+
+        Reviewed by Simon Fraser.
+
+        While computing the scrollable overflow for inflow positioned (or transformed) renderers, we need to take their paint geometry into
+        account so that scrolling matches their final positions.
+        e.g.
+
+        <div style="width: 100px; height: 100px;"></div>
+        <div style="position: relative; top: -20; width: 50px; height: 50px;"></div>
+
+        While the inflow positioned block box is placed right below the previous sibling div, visually they overlap each other.
+        If these boxes happen to be in a scrollable container, the scrolling should be driven by the overlapping state (paint geometry) and not
+        by the layout geometry (where the 2 boxes are placed vertically after each other).
+
+        While stickily positioned boxes are also considered inflow positioned, their initial inflow layout positions contribute to the scrollable overflow
+        as they are not stationary boxes.
+
+        Test: fast/css/scrollable-overflow-with-sticky-positioning.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::layoutOverflowRectForPropagation const):
+
+2020-08-25  Zalan Bujtas  <zalan@apple.com>
+
         [LFC][IFC] Do not move the runs out of the LineBuilder while closing the line
         https://bugs.webkit.org/show_bug.cgi?id=214790
 

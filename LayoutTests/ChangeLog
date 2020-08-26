@@ -1,3 +1,14 @@
+2020-08-25  Zalan Bujtas  <zalan@apple.com>
+
+        Facebook post with lots of comments has cut off scrollbar, and can't scroll fully to the bottom (sticky)
+        https://bugs.webkit.org/show_bug.cgi?id=215719
+        <rdar://problem/66411757>
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/scrollable-overflow-with-sticky-positioning-expected.html: Added.
+        * fast/css/scrollable-overflow-with-sticky-positioning.html: Added.
+
 2020-08-25  Karl Rackler  <rackler@apple.com>
 
         rdar://67764580 REGRESSION: [ BigSur ] 20 fast/ and tables/ tests are a constant failure
