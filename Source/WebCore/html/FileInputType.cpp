@@ -176,7 +176,8 @@ bool FileInputType::appendFormData(DOMFormData& formData, bool multipart) const
     // If no filename at all is entered, return successful but empty.
     // Null would be more logical, but Netscape posts an empty file. Argh.
     if (fileList->isEmpty()) {
-        formData.append(name, File::create(emptyString()));
+        auto* document = element() ? &element()->document() : nullptr;
+        formData.append(name, File::create(document, emptyString()));
         return true;
     }
 
@@ -422,9 +423,10 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
     if (m_directoryFileListCreator)
         m_directoryFileListCreator->cancel();
 
+    auto* document = element() ? &element()->document() : nullptr;
     if (!allowsDirectories()) {
-        auto files = paths.map([](auto& fileInfo) {
-            return File::create(fileInfo.path, fileInfo.replacementPath, fileInfo.displayName);
+        auto files = paths.map([document](auto& fileInfo) {
+            return File::create(document, fileInfo.path, fileInfo.replacementPath, fileInfo.displayName);
         });
         didCreateFileList(FileList::create(WTFMove(files)), icon);
         return;
@@ -436,7 +438,7 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
             return;
         didCreateFileList(WTFMove(fileList), WTFMove(icon));
     });
-    m_directoryFileListCreator->start(paths);
+    m_directoryFileListCreator->start(document, paths);
 }
 
 void FileInputType::filesChosen(const Vector<String>& paths, const Vector<String>& replacementPaths)

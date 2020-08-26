@@ -75,7 +75,7 @@ public:
     void setAsLoading() { m_isLoading = true; }
 
 private:
-    Ref<Blob> takeAsBlob();
+    Ref<Blob> takeAsBlob(ScriptExecutionContext*);
     void resetConsumePromise();
 
     Type m_type;

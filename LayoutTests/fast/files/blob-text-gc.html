@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Make sure the Blob.text() promise gets resolved even if the Blob object is not kept alive by JS.");
+jsTestIsAsync = true;
+
+let promisesResolved = 0;
+const testCount = 100;
+
+function test(i)
+{
+    new Blob(["foo", "bar", i]).text().then((_text) => {
+        text = _text;
+        shouldBeEqualToString("text", "foobar" + i);
+        promisesResolved++;
+        if (promisesResolved == testCount)
+            finishJSTest();
+    });
+    gc();
+}
+
+for (let i = 0; i < testCount; i++)
+    test(i); 
+
+</script>
+</body>
+</html>

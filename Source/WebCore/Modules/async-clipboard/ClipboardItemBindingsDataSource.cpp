@@ -107,7 +107,7 @@ void ClipboardItemBindingsDataSource::getType(const String& type, Ref<DeferredPr
         String string;
         result.getString(itemPromise->globalObject(), string);
         if (!string.isNull()) {
-            promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(string, type));
+            promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(promise->scriptExecutionContext(), string, type));
             return;
         }
 

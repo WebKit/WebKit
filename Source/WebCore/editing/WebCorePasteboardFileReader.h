@@ -30,14 +30,20 @@
 namespace WebCore {
 
 class File;
+class ScriptExecutionContext;
 
 struct WebCorePasteboardFileReader final : PasteboardFileReader {
-    WebCorePasteboardFileReader() = default;
+    explicit WebCorePasteboardFileReader(ScriptExecutionContext* context)
+        : context(context)
+    {
+    }
+
     ~WebCorePasteboardFileReader();
 
     void readFilename(const String&) final;
     void readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&&) final;
 
+    RefPtr<ScriptExecutionContext> context;
     Vector<Ref<File>> files;
 };
 

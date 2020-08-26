@@ -41,9 +41,9 @@ FileSystemFileEntry::FileSystemFileEntry(ScriptExecutionContext& context, DOMFil
 {
 }
 
-void FileSystemFileEntry::file(Ref<FileCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
+void FileSystemFileEntry::file(ScriptExecutionContext& context, Ref<FileCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
-    filesystem().getFile(*this, [this, pendingActivity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) mutable {
+    filesystem().getFile(context, *this, [this, pendingActivity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) mutable {
         auto* document = this->document();
         if (!document)
             return;

@@ -33,8 +33,10 @@
 
 namespace WebCore {
 
-struct FileChooserFileInfo;
+class Document;
 class FileList;
+
+struct FileChooserFileInfo;
 
 class DirectoryFileListCreator : public ThreadSafeRefCounted<DirectoryFileListCreator> {
 public:
@@ -47,7 +49,7 @@ public:
 
     ~DirectoryFileListCreator();
 
-    void start(const Vector<FileChooserFileInfo>&);
+    void start(Document*, const Vector<FileChooserFileInfo>&);
     void cancel();
 
 private:

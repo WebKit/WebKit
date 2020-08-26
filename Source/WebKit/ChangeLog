@@ -1,3 +1,14 @@
+2020-08-26  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r265908): Crash under Blob::arrayBuffer() / Blob::text() in stress GC
+        https://bugs.webkit.org/show_bug.cgi?id=215832
+        <rdar://problem/67741677>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::setFilesForInputFileUpload):
+
 2020-08-26  Youenn Fablet  <youenn@apple.com>
 
         enumerateDevices should expose audiooutput devices that are tied to an audio input device

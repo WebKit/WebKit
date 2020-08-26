@@ -268,11 +268,11 @@ void DataTransfer::setDataFromItemList(const String& type, const String& data)
         m_pasteboard->writeString(type, sanitizedData);
 }
 
-void DataTransfer::updateFileList()
+void DataTransfer::updateFileList(ScriptExecutionContext* context)
 {
     ASSERT(canWriteData());
 
-    m_fileList->m_files = filesFromPasteboardAndItemList();
+    m_fileList->m_files = filesFromPasteboardAndItemList(context);
 }
 
 void DataTransfer::didAddFileToItemList()
@@ -286,10 +286,10 @@ void DataTransfer::didAddFileToItemList()
     m_fileList->append(*newItem->file());
 }
 
-DataTransferItemList& DataTransfer::items()
+DataTransferItemList& DataTransfer::items(Document& document)
 {
     if (!m_itemList)
-        m_itemList = makeUnique<DataTransferItemList>(*this);
+        m_itemList = makeUnique<DataTransferItemList>(document, *this);
     return *m_itemList;
 }
 
@@ -343,12 +343,12 @@ Vector<String> DataTransfer::types(AddFilesType addFilesType) const
     return safeTypes;
 }
 
-Vector<Ref<File>> DataTransfer::filesFromPasteboardAndItemList() const
+Vector<Ref<File>> DataTransfer::filesFromPasteboardAndItemList(ScriptExecutionContext* context) const
 {
     bool addedFilesFromPasteboard = false;
     Vector<Ref<File>> files;
     if ((!forDrag() || forFileDrag()) && m_pasteboard->fileContentState() != Pasteboard::FileContentState::NoFileOrImageData) {
-        WebCorePasteboardFileReader reader;
+        WebCorePasteboardFileReader reader(context);
         m_pasteboard->read(reader);
         files = WTFMove(reader.files);
         addedFilesFromPasteboard = !files.isEmpty();
@@ -368,7 +368,7 @@ Vector<Ref<File>> DataTransfer::filesFromPasteboardAndItemList() const
     return files;
 }
 
-FileList& DataTransfer::files() const
+FileList& DataTransfer::files(Document* document) const
 {
     if (!canReadData()) {
         if (m_fileList)
@@ -379,9 +379,14 @@ FileList& DataTransfer::files() const
     }
 
     if (!m_fileList)
-        m_fileList = FileList::create(filesFromPasteboardAndItemList());
+        m_fileList = FileList::create(filesFromPasteboardAndItemList(document));
 
     return *m_fileList;
+}
+
+FileList& DataTransfer::files(Document& document) const
+{
+    return files(&document);
 }
 
 struct PasteboardFileTypeReader final : PasteboardFileReader {

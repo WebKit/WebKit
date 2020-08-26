@@ -478,7 +478,7 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
         ASSERT_UNUSED(context, context.isDocument());
         ASSERT(peer);
 
-        peer->send(Blob::deserialize(url, type, size, { }));
+        peer->send(Blob::deserialize(&context, url, type, size, { }));
     });
 
     Ref<Bridge> protectedThis(*this);

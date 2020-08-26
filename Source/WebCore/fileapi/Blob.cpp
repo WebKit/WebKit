@@ -74,21 +74,24 @@ URLRegistry& BlobURLRegistry::registry()
     return instance;
 }
 
-Blob::Blob(UninitializedContructor, URL&& url, String&& type)
-    : m_internalURL(WTFMove(url))
+Blob::Blob(UninitializedContructor, ScriptExecutionContext* context, URL&& url, String&& type)
+    : ActiveDOMObject(context)
+    , m_internalURL(WTFMove(url))
     , m_type(WTFMove(type))
 {
 }
 
-Blob::Blob()
-    : m_size(0)
+Blob::Blob(ScriptExecutionContext* context)
+    : ActiveDOMObject(context)
+    , m_size(0)
 {
     m_internalURL = BlobURL::createInternalURL();
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { },  { });
 }
 
-Blob::Blob(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
-    : m_internalURL(BlobURL::createInternalURL())
+Blob::Blob(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
+    : ActiveDOMObject(&context)
+    , m_internalURL(BlobURL::createInternalURL())
     , m_type(normalizedContentType(propertyBag.type))
 {
     BlobBuilder builder(propertyBag.endings);
@@ -103,8 +106,9 @@ Blob::Blob(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& pr
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, builder.finalize(), m_type);
 }
 
-Blob::Blob(const SharedBuffer& buffer, const String& contentType)
-    : m_type(contentType)
+Blob::Blob(ScriptExecutionContext* context, const SharedBuffer& buffer, const String& contentType)
+    : ActiveDOMObject(context)
+    , m_type(contentType)
     , m_size(buffer.size())
 {
     Vector<uint8_t> data;
@@ -116,8 +120,9 @@ Blob::Blob(const SharedBuffer& buffer, const String& contentType)
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
 }
 
-Blob::Blob(Vector<uint8_t>&& data, const String& contentType)
-    : m_type(contentType)
+Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
+    : ActiveDOMObject(context)
+    , m_type(contentType)
     , m_size(data.size())
 {
     Vector<BlobPart> blobParts;
@@ -126,16 +131,18 @@ Blob::Blob(Vector<uint8_t>&& data, const String& contentType)
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
 }
 
-Blob::Blob(ReferencingExistingBlobConstructor, const Blob& blob)
-    : m_internalURL(BlobURL::createInternalURL())
+Blob::Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext* context, const Blob& blob)
+    : ActiveDOMObject(context)
+    , m_internalURL(BlobURL::createInternalURL())
     , m_type(blob.type())
     , m_size(blob.size())
 {
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
 }
 
-Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, Optional<unsigned long long> size, const String& fileBackedPath)
-    : m_type(normalizedContentType(type))
+Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL& srcURL, const String& type, Optional<unsigned long long> size, const String& fileBackedPath)
+    : ActiveDOMObject(context)
+    , m_type(normalizedContentType(type))
     , m_size(size)
 {
     m_internalURL = BlobURL::createInternalURL();
@@ -145,8 +152,9 @@ Blob::Blob(DeserializationContructor, const URL& srcURL, const String& type, Opt
         ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
 }
 
-Blob::Blob(const URL& srcURL, long long start, long long end, const String& type)
-    : m_type(normalizedContentType(type))
+Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, long long end, const String& type)
+    : ActiveDOMObject(context)
+    , m_type(normalizedContentType(type))
     // m_size is not necessarily equal to end - start so we do not initialize it here.
 {
     m_internalURL = BlobURL::createInternalURL();
@@ -193,7 +201,7 @@ String Blob::normalizedContentType(const String& contentType)
 
 void Blob::loadBlob(ScriptExecutionContext& context, FileReaderLoader::ReadType readType, CompletionHandler<void(std::unique_ptr<BlobLoader>)>&& completionHandler)
 {
-    auto blobLoader = makeUnique<BlobLoader>([this, completionHandler = WTFMove(completionHandler)](BlobLoader& blobLoader) mutable {
+    auto blobLoader = makeUnique<BlobLoader>([this, pendingActivity = makePendingActivity(*this), completionHandler = WTFMove(completionHandler)](BlobLoader& blobLoader) mutable {
         completionHandler(m_blobLoaders.take(&blobLoader));
     });
     auto* blobLoaderPtr = blobLoader.get();
@@ -260,6 +268,11 @@ bool Blob::isNormalizedContentType(const CString& contentType)
 URLRegistry& Blob::registry() const
 {
     return BlobURLRegistry::registry();
+}
+
+const char* Blob::activeDOMObjectName() const
+{
+    return "Blob";
 }
 
 

@@ -217,7 +217,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
     }
 
     if (type == "image/png"_s) {
-        ClipboardImageReader imageReader { type };
+        ClipboardImageReader imageReader { frame->document(), type };
         activePasteboard().read(imageReader, itemIndex);
         auto imageBlob = imageReader.takeResult();
         if (updateSessionValidity() == SessionIsValid::Yes && imageBlob)
@@ -252,7 +252,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         return;
     }
 
-    promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(resultAsString, type));
+    promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(frame->document(), resultAsString, type));
 }
 
 Clipboard::SessionIsValid Clipboard::updateSessionValidity()

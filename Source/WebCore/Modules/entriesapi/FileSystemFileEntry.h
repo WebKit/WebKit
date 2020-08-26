@@ -40,7 +40,7 @@ public:
         return adoptRef(*new FileSystemFileEntry(context, filesystem, virtualPath));
     }
 
-    void file(Ref<FileCallback>&&, RefPtr<ErrorCallback>&& = nullptr);
+    void file(ScriptExecutionContext&, Ref<FileCallback>&&, RefPtr<ErrorCallback>&& = nullptr);
 
 private:
     bool isFile() const final { return true; }

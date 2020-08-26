@@ -33,7 +33,6 @@
     EnabledAtRuntime=DataTransferItems,
     JSGenerateToNativeObject,
     JSGenerateToJSObject,
-    ImplementationLacksVTable,
 ] interface DataTransferItemList {
     readonly attribute long length;
     getter DataTransferItem item(unsigned long index);

@@ -1,3 +1,135 @@
+2020-08-26  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r265908): Crash under Blob::arrayBuffer() / Blob::text() in stress GC
+        https://bugs.webkit.org/show_bug.cgi?id=215832
+        <rdar://problem/67741677>
+
+        Reviewed by Ryosuke Niwa.
+
+        r265908 added support for Blob::arrayBuffer() / Blob::text() which are asynchronous operations
+        returning promises. The crash is due to the fact that the Blob's JS wrapper may get garbage
+        collected before the promise is settled.
+
+        To address the issue, this patch makes Blob an ActiveDOMObject and creates an
+        ActiveDOMObject::pendingActivity whenever there is a pending promise so that the JS wrapper
+        does not get garbage collected too early.
+
+        Test: fast/files/blob-text-gc.html
+
+        * Modules/async-clipboard/Clipboard.cpp:
+        (WebCore::Clipboard::getType):
+        * Modules/async-clipboard/ClipboardImageReader.h:
+        (WebCore::ClipboardImageReader::ClipboardImageReader):
+        * Modules/async-clipboard/ClipboardItem.cpp:
+        (WebCore::ClipboardItem::blobFromString):
+        * Modules/async-clipboard/ClipboardItem.h:
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        (WebCore::ClipboardItemBindingsDataSource::getType):
+        * Modules/async-clipboard/ios/ClipboardImageReaderIOS.mm:
+        (WebCore::ClipboardImageReader::readBuffer):
+        * Modules/async-clipboard/mac/ClipboardImageReaderMac.mm:
+        (WebCore::ClipboardImageReader::readBuffer):
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::getFile):
+        * Modules/entriesapi/DOMFileSystem.h:
+        * Modules/entriesapi/FileSystemFileEntry.cpp:
+        (WebCore::FileSystemFileEntry::file):
+        * Modules/entriesapi/FileSystemFileEntry.h:
+        * Modules/entriesapi/FileSystemFileEntry.idl:
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::fromFormData):
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::blobFromData):
+        (WebCore::packageFormData):
+        (WebCore::resolveWithTypeAndData):
+        (WebCore::FetchBodyConsumer::resolve):
+        (WebCore::FetchBodyConsumer::takeAsBlob):
+        * Modules/fetch/FetchBodyConsumer.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::blob):
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::stopRecording):
+        (WebCore::MediaRecorder::requestData):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::didReceiveRawData):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveBinaryData):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readFile):
+        (WebCore::CloneDeserializer::readTerminal):
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::updateFileList):
+        (WebCore::DataTransfer::items):
+        (WebCore::DataTransfer::filesFromPasteboardAndItemList const):
+        (WebCore::DataTransfer::files const):
+        * dom/DataTransfer.h:
+        * dom/DataTransfer.idl:
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::DataTransferItemList):
+        (WebCore::DataTransferItemList::remove):
+        (WebCore::DataTransferItemList::clear):
+        (WebCore::DataTransferItemList::ensureItems const):
+        (WebCore::DataTransferItemList::document const):
+        * dom/DataTransferItemList.h:
+        * dom/DataTransferItemList.idl:
+        * editing/WebCorePasteboardFileReader.cpp:
+        (WebCore::WebCorePasteboardFileReader::readFilename):
+        (WebCore::WebCorePasteboardFileReader::readBuffer):
+        * editing/WebCorePasteboardFileReader.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragmentForImageAttachment):
+        (WebCore::replaceRichContentWithAttachments):
+        (WebCore::createFragmentAndAddResources):
+        (WebCore::sanitizeMarkupWithArchive):
+        (WebCore::WebContentReader::readImage):
+        (WebCore::attachmentForFilePath):
+        (WebCore::attachmentForData):
+        * editing/markup.cpp:
+        (WebCore::restoreAttachmentElementsInFragment):
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        (WebCore::Blob::loadBlob):
+        (WebCore::Blob::activeDOMObjectName const):
+        * fileapi/Blob.h:
+        (WebCore::Blob::create):
+        (WebCore::Blob::deserialize):
+        (WebCore::Blob::slice const):
+        * fileapi/Blob.idl:
+        * fileapi/File.cpp:
+        (WebCore::File::createWithRelativePath):
+        (WebCore::File::create):
+        (WebCore::File::File):
+        (WebCore::File::activeDOMObjectName const):
+        * fileapi/File.h:
+        * fileapi/File.idl:
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::createFileEntry):
+        * html/DirectoryFileListCreator.cpp:
+        (WebCore::FileInformation::isolatedCopy const):
+        (WebCore::appendDirectoryFiles):
+        (WebCore::gatherFileInformation):
+        (WebCore::toFileList):
+        (WebCore::DirectoryFileListCreator::start):
+        * html/DirectoryFileListCreator.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::appendFormData const):
+        (WebCore::FileInputType::filesChosen):
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::updateEnclosingImageWithData):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toBlob):
+        * testing/Internals.cpp:
+        (WebCore::Internals::createFile):
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::createOpaqueWithBlobBodyResponse):
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createResponseBlob):
+
 2020-08-26  Andres Gonzalez  <andresg_22@apple.com>
 
         When caching the AccessibilityText property in AXIsolatedObject, the Strings need to be isolatedCopied.

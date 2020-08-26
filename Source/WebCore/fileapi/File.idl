@@ -31,7 +31,7 @@ typedef (BufferSource or Blob or USVString) BlobPart;
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface File : Blob {
-    constructor(sequence<BlobPart> fileBits, USVString fileName, optional FilePropertyBag options);
+    [CallWith=ScriptExecutionContext] constructor(sequence<BlobPart> fileBits, USVString fileName, optional FilePropertyBag options);
 
     readonly attribute DOMString name;
     readonly attribute long long lastModified;
