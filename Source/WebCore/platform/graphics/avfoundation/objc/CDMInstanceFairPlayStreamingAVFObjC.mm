@@ -1340,15 +1340,21 @@ static auto requestStatusToCDMStatus(AVContentKeyRequestStatus status)
     }
 }
 
-CDMInstanceSession::KeyStatusVector CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses() const
+CDMInstanceSession::KeyStatusVector CDMInstanceSessionFairPlayStreamingAVFObjC::keyStatuses(Optional<PlatformDisplayID> displayID) const
 {
     KeyStatusVector keyStatuses;
+
+    if (!displayID && m_client)
+        displayID = m_client->displayID();
 
     for (auto& request : m_requests) {
         for (auto& oneRequest : request.requests) {
             auto keyIDs = keyIDsForRequest(oneRequest.get());
             auto status = requestStatusToCDMStatus(oneRequest.get().status);
             if (m_outputObscured || oneRequest.get().error.code == SecurityLevelError)
+                status = CDMKeyStatus::OutputRestricted;
+
+            if (displayID && keyRequestHasInsufficientProtectionForDisplayID(oneRequest.get(), *displayID))
                 status = CDMKeyStatus::OutputRestricted;
 
             for (auto& keyID : keyIDs)
@@ -1379,21 +1385,35 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::externalProtectionStatusDidChan
     updateProtectionStatusForDisplayID(m_client->displayID());
 }
 
+bool CDMInstanceSessionFairPlayStreamingAVFObjC::keyRequestHasInsufficientProtectionForDisplayID(AVContentKeyRequest *request, PlatformDisplayID displayID) const
+{
+    // willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays will always return "YES" prior to
+    // receiving a response.
+    if (request.status != AVContentKeyRequestStatusReceivedResponse && request.status != AVContentKeyRequestStatusRenewed) {
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "request has insufficient status ", (int)request.status);
+        return false;
+    }
+
+    // FIXME: AVFoundation requires a connection to the WindowServer in order to query the HDCP status of individual
+    // displays. Passing in an empty NSArray will cause AVFoundation to fall back to a "minimum supported HDCP level"
+    // across all displays. Replace the below with explicit APIs to query the per-display HDCP status in the UIProcess
+    // and to query the HDCP level required by each AVContentKeyRequest, and do the comparison between the two in the
+    // WebProcess.
+    UNUSED_PARAM(displayID);
+    if ([request respondsToSelector:@selector(willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:)]) {
+        auto obscured = [request willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:@[ ]];
+        ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "request willOutputBeObscured...forDisplays:[ nil ] = ", obscured ? "true" : "false");
+        return obscured;
+    }
+    return false;
+};
+
+
 void CDMInstanceSessionFairPlayStreamingAVFObjC::updateProtectionStatusForDisplayID(PlatformDisplayID displayID)
 {
-    if (m_requests.isEmpty())
+    if (m_requests.isEmpty() || !m_client)
         return;
-
-    auto keyRequestHasInsufficientProtectionForDisplayID = [displayID] (auto& request) -> bool {
-        if ([request respondsToSelector:@selector(willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:)])
-            return [request willOutputBeObscuredDueToInsufficientExternalProtectionForDisplays:@[ @(displayID) ]];
-        return false;
-    };
-
-    bool outputWillBeObscured = WTF::anyOf(m_requests, [&](Request& request) {
-        return WTF::anyOf(request.requests, keyRequestHasInsufficientProtectionForDisplayID);
-    });
-    outputObscuredDueToInsufficientExternalProtectionChanged(outputWillBeObscured);
+    m_client->updateKeyStatuses(keyStatuses(displayID));
 }
 
 bool CDMInstanceSessionFairPlayStreamingAVFObjC::ensureSessionOrGroup()

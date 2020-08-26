@@ -190,9 +190,11 @@ private:
     bool ensureSessionOrGroup();
     bool isLicenseTypeSupported(LicenseType) const;
 
-    KeyStatusVector keyStatuses() const;
+    KeyStatusVector keyStatuses(Optional<PlatformDisplayID> = WTF::nullopt) const;
     void nextRequest();
     AVContentKeyRequest* lastKeyRequest() const;
+
+    bool keyRequestHasInsufficientProtectionForDisplayID(AVContentKeyRequest *, PlatformDisplayID) const;
 
 #if !RELEASE_LOG_DISABLED
     WTF::Logger* loggerPtr() const { return m_logger.get(); };
