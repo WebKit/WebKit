@@ -1,3 +1,9 @@
+2020-08-26  Karl Rackler  <rackler@apple.com>
+
+        Unreviewed, rebaseline constant css-cascade test failure
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+
 2020-08-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline flaky webaudio WPT tests.
