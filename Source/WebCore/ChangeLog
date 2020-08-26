@@ -1,3 +1,25 @@
+2020-08-25  Tim Horton  <timothy_horton@apple.com>
+
+        Web Share API Level 2 functions even when its experimental feature flag is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=215831
+        <rdar://problem/67760687>
+
+        Reviewed by Darin Adler.
+
+        Tests: fast/web-share/canShare-with-files-feature-disabled.html
+               fast/web-share/share-with-files-feature-disabled.html
+
+        We had a feature flag for Web Share API Level 2, but it isn't actually
+        consulted anywhere in the implementation.
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::canShare):
+        Rewrite canShare to be a bit more readable, and also to consult the Level 2 feature flag.
+
+        (WebCore::Navigator::share):
+        Since canShare (per the spec) will return true if we have files and other content,
+        even if files are not shareable, check the feature flag again before loading the files.
+
 2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         HashMap<Ref<T>>::take should return RefPtr<T>

@@ -1,3 +1,17 @@
+2020-08-25  Tim Horton  <timothy_horton@apple.com>
+
+        Web Share API Level 2 functions even when its experimental feature flag is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=215831
+        <rdar://problem/67760687>
+
+        Reviewed by Darin Adler.
+
+        * fast/web-share/canShare-with-files-feature-disabled-expected.txt: Added.
+        * fast/web-share/canShare-with-files-feature-disabled.html: Added.
+        * fast/web-share/share-with-files-feature-disabled-expected.txt: Added.
+        * fast/web-share/share-with-files-feature-disabled.html: Added.
+        Add some tests that ensure that disabling the feature actually works.
+
 2020-08-25  Zalan Bujtas  <zalan@apple.com>
 
         Facebook post with lots of comments has cut off scrollbar, and can't scroll fully to the bottom (sticky)
