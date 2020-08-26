@@ -1,3 +1,13 @@
+2020-08-26  Youenn Fablet  <youenn@apple.com>
+
+        pipeThrough should check for readableStream type
+        https://bugs.webkit.org/show_bug.cgi?id=215497
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/streams/piping/pipe-through.any-expected.txt:
+        * web-platform-tests/streams/piping/pipe-through.any.worker-expected.txt:
+
 2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Resolve with the class used to define the Custom Element

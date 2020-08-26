@@ -6,69 +6,27 @@ PASS Piping through a transform errored on the writable end does not cause an un
 PASS pipeThrough should not call pipeTo on this 
 PASS pipeThrough should not call pipeTo on the ReadableStream prototype 
 PASS pipeThrough should brand-check this and not allow 'null' 
-FAIL pipeThrough should brand-check readable and not allow 'null' assert_throws_js: pipeThrough should brand-check readable function "() => rs.pipeThrough({
-        get writable() {
-          writableGetterCalled = true;
-          return new WritableStream();
-        },
-        readable
-      })" did not throw
+PASS pipeThrough should brand-check readable and not allow 'null' 
 PASS pipeThrough should brand-check this and not allow 'undefined' 
-FAIL pipeThrough should brand-check readable and not allow 'undefined' assert_throws_js: pipeThrough should brand-check readable function "() => rs.pipeThrough({
-        get writable() {
-          writableGetterCalled = true;
-          return new WritableStream();
-        },
-        readable
-      })" did not throw
+PASS pipeThrough should brand-check readable and not allow 'undefined' 
 PASS pipeThrough should brand-check this and not allow '0' 
-FAIL pipeThrough should brand-check readable and not allow '0' assert_throws_js: pipeThrough should brand-check readable function "() => rs.pipeThrough({
-        get writable() {
-          writableGetterCalled = true;
-          return new WritableStream();
-        },
-        readable
-      })" did not throw
+PASS pipeThrough should brand-check readable and not allow '0' 
 PASS pipeThrough should brand-check this and not allow 'NaN' 
-FAIL pipeThrough should brand-check readable and not allow 'NaN' assert_throws_js: pipeThrough should brand-check readable function "() => rs.pipeThrough({
-        get writable() {
-          writableGetterCalled = true;
-          return new WritableStream();
-        },
-        readable
-      })" did not throw
+PASS pipeThrough should brand-check readable and not allow 'NaN' 
 PASS pipeThrough should brand-check this and not allow 'true' 
-FAIL pipeThrough should brand-check readable and not allow 'true' assert_throws_js: pipeThrough should brand-check readable function "() => rs.pipeThrough({
-        get writable() {
-          writableGetterCalled = true;
-          return new WritableStream();
-        },
-        readable
-      })" did not throw
+PASS pipeThrough should brand-check readable and not allow 'true' 
 PASS pipeThrough should brand-check this and not allow 'ReadableStream' 
-FAIL pipeThrough should brand-check readable and not allow 'ReadableStream' assert_throws_js: pipeThrough should brand-check readable function "() => rs.pipeThrough({
-        get writable() {
-          writableGetterCalled = true;
-          return new WritableStream();
-        },
-        readable
-      })" did not throw
+PASS pipeThrough should brand-check readable and not allow 'ReadableStream' 
 PASS pipeThrough should brand-check this and not allow '[object ReadableStream]' 
-FAIL pipeThrough should brand-check readable and not allow '[object ReadableStream]' assert_throws_js: pipeThrough should brand-check readable function "() => rs.pipeThrough({
-        get writable() {
-          writableGetterCalled = true;
-          return new WritableStream();
-        },
-        readable
-      })" did not throw
-FAIL pipeThrough should brand-check writable and not allow 'null' assert_true: readable should have been accessed expected true got false
-FAIL pipeThrough should brand-check writable and not allow 'undefined' assert_true: readable should have been accessed expected true got false
-FAIL pipeThrough should brand-check writable and not allow '0' assert_true: readable should have been accessed expected true got false
-FAIL pipeThrough should brand-check writable and not allow 'NaN' assert_true: readable should have been accessed expected true got false
-FAIL pipeThrough should brand-check writable and not allow 'true' assert_true: readable should have been accessed expected true got false
-FAIL pipeThrough should brand-check writable and not allow 'WritableStream' assert_true: readable should have been accessed expected true got false
-FAIL pipeThrough should brand-check writable and not allow '[object WritableStream]' assert_true: readable should have been accessed expected true got false
-FAIL pipeThrough should rethrow errors from accessing readable or writable assert_throws_exactly: pipeThrough should rethrow the error thrown by the readable getter function "() => ReadableStream.prototype.pipeThrough.call(rs, throwingReadable, {})" threw object "TypeError: writable should be WritableStream" but we expected it to throw object "custom"
+PASS pipeThrough should brand-check readable and not allow '[object ReadableStream]' 
+PASS pipeThrough should brand-check writable and not allow 'null' 
+PASS pipeThrough should brand-check writable and not allow 'undefined' 
+PASS pipeThrough should brand-check writable and not allow '0' 
+PASS pipeThrough should brand-check writable and not allow 'NaN' 
+PASS pipeThrough should brand-check writable and not allow 'true' 
+PASS pipeThrough should brand-check writable and not allow 'WritableStream' 
+PASS pipeThrough should brand-check writable and not allow '[object WritableStream]' 
+PASS pipeThrough should rethrow errors from accessing readable or writable 
 PASS invalid values of signal should throw; specifically 'null' 
 PASS invalid values of signal should throw; specifically '0' 
 PASS invalid values of signal should throw; specifically 'NaN' 

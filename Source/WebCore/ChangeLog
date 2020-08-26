@@ -1,3 +1,15 @@
+2020-08-26  Youenn Fablet  <youenn@apple.com>
+
+        pipeThrough should check for readableStream type
+        https://bugs.webkit.org/show_bug.cgi?id=215497
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased tests.
+
+        * Modules/streams/ReadableStream.js:
+        (pipeThrough):
+
 2020-08-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Move FreeType port's Font::platformWidthForGlyph and Font::platformBoundsForGlyph for Cairo port (WinCairo port)

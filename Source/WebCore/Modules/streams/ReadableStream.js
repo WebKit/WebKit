@@ -117,14 +117,18 @@ function pipeThrough(streams, options)
 
     if (@writableStreamAPIEnabled()) {
         if (!@isReadableStream(this))
-            throw @makeThisTypeError("ReadableStream", "getReader");
+            throw @makeThisTypeError("ReadableStream", "pipeThrough");
 
         if (@isReadableStreamLocked(this))
             throw @makeTypeError("ReadableStream is locked");
 
         const transforms = streams;
-        const writable = transforms["writable"];
 
+        const readable = transforms["readable"];
+        if (!@isReadableStream(readable))
+            throw @makeTypeError("readable should be ReadableStream");
+
+        const writable = transforms["writable"];
         if (!@isWritableStream(writable))
             throw @makeTypeError("writable should be WritableStream");
 
@@ -147,7 +151,7 @@ function pipeThrough(streams, options)
 
         @readableStreamPipeToWritableStream(this, writable, preventClose, preventAbort, preventCancel, signal);
 
-        return transforms["readable"];
+        return readable;
     }
 
     const writable = streams.writable;
