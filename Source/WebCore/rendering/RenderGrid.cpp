@@ -230,6 +230,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         LayoutUnit availableSpaceForColumns = availableLogicalWidth();
         placeItemsOnGrid(m_trackSizingAlgorithm, availableSpaceForColumns);
 
+        m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
         performGridItemsPreLayout(m_trackSizingAlgorithm);
 
         // 1- First, the track sizing algorithm is used to resolve the sizes of the

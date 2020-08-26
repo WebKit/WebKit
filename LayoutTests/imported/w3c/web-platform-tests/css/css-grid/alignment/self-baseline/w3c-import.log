@@ -30,6 +30,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-007-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-008-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-changes-grid-area-size-002-expected.xht

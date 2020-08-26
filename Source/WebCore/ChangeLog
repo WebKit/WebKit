@@ -1,3 +1,28 @@
+2020-08-26  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Set available column space before grid items prelayout
+        https://bugs.webkit.org/show_bug.cgi?id=199648
+
+        Reviewed by Javier Fernandez.
+
+        Before running the grid track sizing algorithm, there is a prelayout
+        step which takes care of the baseline alignment of the items.
+        In order to do that, we estimate the size of the grid area, since we
+        have not calculated the final size yet.
+
+        The problem was that, when calculating this estimate, the available
+        column space had not been set yet. So if a column had a percentage track
+        sizing function, it would be treated as auto and the estimated size
+        would be wrong.
+
+        This patch sets the available column space so that we can resolve
+        percentage track sizing functions and get a more correct estimate.
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-008.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+
 2020-08-26  Andres Gonzalez  <andresg_22@apple.com>
 
         Code cleanup and consistent naming in AXIsolatedTree classes, no change in behavior.

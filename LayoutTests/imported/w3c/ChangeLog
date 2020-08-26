@@ -1,3 +1,16 @@
+2020-08-26  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Set available column space before grid items prelayout
+        https://bugs.webkit.org/show_bug.cgi?id=199648
+
+        Reviewed by Javier Fernandez.
+
+        Import WPT test.
+
+        * web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-008-expected.html: Added.
+        * web-platform-tests/css/css-grid/alignment/self-baseline/grid-self-baseline-008.html: Added.
+        * web-platform-tests/css/css-grid/alignment/self-baseline/w3c-import.log:
+
 2020-08-26  Youenn Fablet  <youenn@apple.com>
 
         enumerateDevices should expose audiooutput devices that are tied to an audio input device
