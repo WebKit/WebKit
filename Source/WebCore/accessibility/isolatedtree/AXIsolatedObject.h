@@ -112,7 +112,7 @@ private:
 
     void fillChildrenVectorForProperty(AXPropertyName, AccessibilityChildrenVector&) const;
     void setMathscripts(AXPropertyName, AXCoreObject&);
-    void insertMathPairs(Vector<AccessibilityIsolatedTreeMathMultiscriptPair>&, AccessibilityMathMultiscriptPairs&);
+    void insertMathPairs(Vector<std::pair<AXID, AXID>>&, AccessibilityMathMultiscriptPairs&);
     template<typename U> void performFunctionOnMainThread(U&&);
 
     // Attribute retrieval overrides.
@@ -650,7 +650,7 @@ private:
     AXID m_id { InvalidAXID };
     Vector<AXID> m_childrenIDs;
     Vector<RefPtr<AXCoreObject>> m_children;
-    AXPropertyMap m_attributeMap;
+    AXPropertyMap m_propertyMap;
 
 #if PLATFORM(COCOA)
     RetainPtr<NSView> m_platformWidget;

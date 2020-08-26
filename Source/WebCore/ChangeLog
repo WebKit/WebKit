@@ -1,3 +1,43 @@
+2020-08-26  Andres Gonzalez  <andresg_22@apple.com>
+
+        Code cleanup and consistent naming in AXIsolatedTree classes, no change in behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=215850
+
+        Reviewed by Chris Fleizach.
+
+        - Renamed AXIsolatedObject::m_attributeMap to m_propertyMap for naming
+        conssistency.
+        - typedef -> using
+        - Removed AXPropertyName::None, not used.
+        - Replaced AccessibilityIsolatedTreeMathMultiscriptPair alias with its
+        definition, shorter, clearer, and can be used for other property of the
+        same type.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::setMathscripts):
+        (WebCore::AXIsolatedObject::setProperty):
+        (WebCore::AXIsolatedObject::insertMathPairs):
+        (WebCore::AXIsolatedObject::mathPrescripts):
+        (WebCore::AXIsolatedObject::mathPostscripts):
+        (WebCore::AXIsolatedObject::intPointAttributeValue const):
+        (WebCore::AXIsolatedObject::objectAttributeValue const):
+        (WebCore::AXIsolatedObject::rectAttributeValue const):
+        (WebCore::AXIsolatedObject::vectorAttributeValue const):
+        (WebCore::AXIsolatedObject::optionSetAttributeValue const):
+        (WebCore::AXIsolatedObject::pairAttributeValue const):
+        (WebCore::AXIsolatedObject::uint64AttributeValue const):
+        (WebCore::AXIsolatedObject::urlAttributeValue const):
+        (WebCore::AXIsolatedObject::pathAttributeValue const):
+        (WebCore::AXIsolatedObject::colorAttributeValue const):
+        (WebCore::AXIsolatedObject::floatAttributeValue const):
+        (WebCore::AXIsolatedObject::doubleAttributeValue const):
+        (WebCore::AXIsolatedObject::unsignedAttributeValue const):
+        (WebCore::AXIsolatedObject::boolAttributeValue const):
+        (WebCore::AXIsolatedObject::stringAttributeValue const):
+        (WebCore::AXIsolatedObject::intAttributeValue const):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+
 2020-08-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move inline run alignment logic to a dedicated class

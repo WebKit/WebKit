@@ -43,10 +43,9 @@ class AXIsolatedObject;
 class AXObjectCache;
 class Page;
 
-typedef unsigned AXIsolatedTreeID;
+using AXIsolatedTreeID = unsigned;
 
 enum class AXPropertyName : uint16_t {
-    None = 0,
     ARIAControlsElements,
     ARIADetailsElements,
     DropEffects,
@@ -79,7 +78,7 @@ enum class AXPropertyName : uint16_t {
     CanSetTextRangeAttributes,
     CanSetValueAttribute,
     CanvasHasFallbackContent,
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
     CaretBrowsingEnabled,
 #endif
     Cells,
@@ -307,10 +306,8 @@ enum class AXPropertyName : uint16_t {
     WebArea,
 };
 
-typedef std::pair<AXID, AXID> AccessibilityIsolatedTreeMathMultiscriptPair;
-
 using AXPropertyValueVariant = Variant<std::nullptr_t, String, bool, int, unsigned, double, float, uint64_t, Color, URL, LayoutRect, FloatRect, AXID, IntPoint, OptionSet<SpeakAs>, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path>;
-typedef HashMap<AXPropertyName, AXPropertyValueVariant, WTF::IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>> AXPropertyMap;
+using AXPropertyMap = HashMap<AXPropertyName, AXPropertyValueVariant, WTF::IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 struct AXPropertyChange {
     AXID axID { InvalidAXID }; // ID of the object whose properties changed.
