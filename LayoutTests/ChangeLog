@@ -1,3 +1,12 @@
+2020-08-26  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Emit baseline after r266129.
+
+        Also mark two tests as time out flaky after r266118.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/streams/pipe-to-expected.txt: Added.
+
 2020-08-25  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Update test expectations. Update baselines after r266118.
