@@ -1,3 +1,16 @@
+2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HashMap<Ref<T>>::take should return RefPtr<T>
+        https://bugs.webkit.org/show_bug.cgi?id=215830
+
+        Reviewed by Darin Adler.
+
+        Updated the hash traits for Ref<T> to make HashMap<Ref<T>> and HashSet<Ref<T>>
+        return RefPtr<T> instad of Optional<Ref<T>>.
+
+        * wtf/HashTraits.h:
+        (WTF::RefHashTraits::take):
+
 2020-08-25  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Assert failure under RunLoop::RunLoop

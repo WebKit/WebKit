@@ -105,7 +105,7 @@ void WebURLSchemeHandler::stopTask(WebPageProxy& page, uint64_t taskIdentifier)
 void WebURLSchemeHandler::taskCompleted(WebURLSchemeTask& task)
 {
     auto takenTask = m_tasks.take(task.identifier());
-    ASSERT_UNUSED(takenTask, takenTask->ptr() == &task);
+    ASSERT_UNUSED(takenTask, takenTask == &task);
     removeTaskFromPageMap(task.pageProxyID(), task.identifier());
 
     platformTaskCompleted(task);

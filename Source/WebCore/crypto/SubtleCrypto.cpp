@@ -509,10 +509,8 @@ static bool isSupportedExportKey(CryptoAlgorithmIdentifier identifier)
 
 RefPtr<DeferredPromise> getPromise(DeferredPromise* index, WeakPtr<SubtleCrypto> subtleCryptoWeakPointer)
 {
-    if (subtleCryptoWeakPointer) {
-        if (auto promise = subtleCryptoWeakPointer->m_pendingPromises.take(index))
-            return WTFMove(promise.value());
-    }
+    if (subtleCryptoWeakPointer)
+        return subtleCryptoWeakPointer->m_pendingPromises.take(index);
     return nullptr;
 }
 

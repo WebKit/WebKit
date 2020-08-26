@@ -835,9 +835,8 @@ void WebAutomationSession::willClosePage(const WebPageProxy& page)
 
 #if ENABLE(WEBDRIVER_ACTIONS_API)
     // Then tell the input dispatcher to cancel so timers are stopped, and let it go out of scope.
-    Optional<Ref<SimulatedInputDispatcher>> inputDispatcher = m_inputDispatchersByPage.take(page.identifier());
-    if (inputDispatcher.hasValue())
-        inputDispatcher.value()->cancel();
+    if (auto inputDispatcher = m_inputDispatchersByPage.take(page.identifier()))
+        inputDispatcher->cancel();
 #endif
 }
 

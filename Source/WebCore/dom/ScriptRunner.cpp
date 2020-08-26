@@ -96,10 +96,8 @@ void ScriptRunner::notifyFinished(PendingScript& pendingScript)
 {
     if (pendingScript.element().willExecuteInOrder())
         ASSERT(!m_scriptsToExecuteInOrder.isEmpty());
-    else {
-        ASSERT(m_pendingAsyncScripts.contains(pendingScript));
-        m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(pendingScript)->ptr());
-    }
+    else
+        m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(pendingScript).releaseNonNull());
     pendingScript.clearClient();
 
     if (!m_document.hasActiveParserYieldToken())

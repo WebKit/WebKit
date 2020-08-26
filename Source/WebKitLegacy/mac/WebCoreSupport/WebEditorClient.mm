@@ -1221,12 +1221,11 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult a
 
 void WebEditorClient::didCheckSucceed(TextCheckingRequestIdentifier identifier, NSArray *results)
 {
-    auto requestOptional = m_requestsInFlight.take(identifier);
-    ASSERT(requestOptional);
-    if (!requestOptional)
+    auto request = m_requestsInFlight.take(identifier);
+    ASSERT(request);
+    if (!request)
         return;
-    
-    auto request = WTFMove(requestOptional.value());
+
     ASSERT(identifier == request->data().identifier().value());
     request->didSucceed(core(results, request->data().checkingTypes()));
 }

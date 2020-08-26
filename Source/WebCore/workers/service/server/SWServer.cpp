@@ -781,7 +781,7 @@ void SWServer::workerContextTerminated(SWServerWorker& worker)
     // At this point if no registrations are referencing the worker then it will be destroyed,
     // removing itself from the m_workersByID map.
     auto result = m_runningOrTerminatingWorkers.take(worker.identifier());
-    ASSERT_UNUSED(result, result && result->ptr() == &worker);
+    ASSERT_UNUSED(result, result == &worker);
 
     worker.setState(SWServerWorker::State::NotRunning);
 

@@ -150,7 +150,7 @@ void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinatio
 {
     auto destination = m_audioDestinations.take(id);
     if (destination)
-        destination.value()->scheduleGracefulShutdownIfNeeded();
+        destination->scheduleGracefulShutdownIfNeeded();
     completionHandler();
 }
 

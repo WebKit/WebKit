@@ -66,10 +66,10 @@ RefPtr<NetworkResourceLoader> NetworkResourceLoadMap::take(ResourceLoadIdentifie
     if (!loader)
         return nullptr;
 
-    if ((*loader)->originalRequest().hasUpload())
+    if (loader->originalRequest().hasUpload())
         setHasUpload(WTF::anyOf(m_loaders.values(), [](auto& loader) { return loader->originalRequest().hasUpload(); }));
 
-    return WTFMove(*loader);
+    return loader;
 }
 
 NetworkResourceLoader* NetworkResourceLoadMap::get(ResourceLoadIdentifier identifier) const

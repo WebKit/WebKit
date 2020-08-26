@@ -227,7 +227,7 @@ void PageOverlayController::uninstallPageOverlay(PageOverlay& overlay, PageOverl
     overlay.setPage(nullptr);
 
     if (auto optionalLayer = m_overlayGraphicsLayers.take(&overlay))
-        optionalLayer.value()->removeFromParent();
+        optionalLayer->removeFromParent();
 
     bool removed = m_pageOverlays.removeFirst(&overlay);
     ASSERT_UNUSED(removed, removed);

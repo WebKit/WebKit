@@ -1,3 +1,15 @@
+2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HashMap<Ref<T>>::take should return RefPtr<T>
+        https://bugs.webkit.org/show_bug.cgi?id=215830
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::TEST):
+
 2020-08-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Add a script for generating MiniBrowser bundles (follow-up fix)

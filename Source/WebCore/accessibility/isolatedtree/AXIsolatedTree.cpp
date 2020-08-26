@@ -121,8 +121,7 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
     ASSERT(isMainThread());
     LockHolder locker(s_cacheLock);
 
-    if (auto optionalTree = treePageCache().take(pageID)) {
-        auto& tree { *optionalTree };
+    if (auto tree = treePageCache().take(pageID)) {
         tree->clear();
         treeIDCache().remove(tree->treeID());
     }

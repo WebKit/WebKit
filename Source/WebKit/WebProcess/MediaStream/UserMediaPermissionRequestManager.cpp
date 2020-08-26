@@ -125,7 +125,7 @@ void UserMediaPermissionRequestManager::userMediaAccessWasGranted(uint64_t reque
         return;
     }
 
-    request.value()->allow(WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalt), WTFMove(completionHandler));
+    request->allow(WTFMove(audioDevice), WTFMove(videoDevice), WTFMove(deviceIdentifierHashSalt), WTFMove(completionHandler));
 }
 
 void UserMediaPermissionRequestManager::userMediaAccessWasDenied(uint64_t requestID, UserMediaRequest::MediaAccessDenialReason reason, String&& invalidConstraint)
@@ -134,7 +134,7 @@ void UserMediaPermissionRequestManager::userMediaAccessWasDenied(uint64_t reques
     if (!request)
         return;
 
-    request.value()->deny(reason, WTFMove(invalidConstraint));
+    request->deny(reason, WTFMove(invalidConstraint));
 }
 
 void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document, CompletionHandler<void(const Vector<CaptureDevice>&, const String&)>&& completionHandler)

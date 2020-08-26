@@ -946,7 +946,7 @@ TEST(WTF_HashMap, Ref_Value)
         
         auto aOut = map.take(1);
         ASSERT_TRUE(static_cast<bool>(aOut));
-        ASSERT_EQ(&a, aOut.value().ptr());
+        ASSERT_EQ(&a, aOut.get());
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());

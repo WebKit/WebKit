@@ -222,7 +222,7 @@ void ServiceWorkerThreadProxy::cancelFetch(SWServerConnectionIdentifier connecti
     if (m_ongoingFetchTasks.isEmpty())
         thread().stopFetchEventMonitoring();
 
-    postTaskForModeToWorkerGlobalScope([client = WTFMove(client.value())] (ScriptExecutionContext&) {
+    postTaskForModeToWorkerGlobalScope([client = client.releaseNonNull()] (ScriptExecutionContext&) {
         client->cancel();
     }, WorkerRunLoop::defaultMode());
 }

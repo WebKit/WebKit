@@ -76,9 +76,7 @@ RefPtr<DeferredPromise> CustomElementRegistry::addElementDefinition(Ref<JSCustom
     if (auto* document = m_window.document())
         enqueueUpgradeInShadowIncludingTreeOrder(*document, elementInterface.get());
 
-    if (auto promise = m_promiseMap.take(localName))
-        return WTFMove(*promise);
-    return nullptr;
+    return m_promiseMap.take(localName);
 }
 
 JSCustomElementInterface* CustomElementRegistry::findInterface(const Element& element) const

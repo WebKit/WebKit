@@ -1,3 +1,31 @@
+2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HashMap<Ref<T>>::take should return RefPtr<T>
+        https://bugs.webkit.org/show_bug.cgi?id=215830
+
+        Reviewed by Darin Adler.
+
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        (WebCore::IDBClient::IDBConnectionProxy::didGetAllDatabaseNamesAndVersions):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::removeTreeForPageID):
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::getPromise):
+        * dom/CustomElementRegistry.cpp:
+        (WebCore::CustomElementRegistry::addElementDefinition):
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::notifyFinished):
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::didRemoveDOMNode):
+        * page/PageOverlayController.cpp:
+        (WebCore::PageOverlayController::uninstallPageOverlay):
+        * workers/service/ServiceWorkerClients.cpp:
+        (WebCore::ServiceWorkerClients::claim):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::cancelFetch):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::workerContextTerminated):
+
 2020-08-25  Zalan Bujtas  <zalan@apple.com>
 
         Facebook post with lots of comments has cut off scrollbar, and can't scroll fully to the bottom (sticky)

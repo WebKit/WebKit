@@ -528,12 +528,9 @@ void IDBConnectionProxy::didGetAllDatabaseNamesAndVersions(const IDBResourceIden
     RefPtr<IDBDatabaseNameAndVersionRequest> request;
     {
         Locker<Lock> locker(m_databaseInfoMapLock);
-        auto takenRequest = m_databaseInfoCallbacks.take(requestIdentifier);
-
-        if (!takenRequest)
+        request = m_databaseInfoCallbacks.take(requestIdentifier);
+        if (!request)
             return;
-
-        request = WTFMove(*takenRequest);
     }
 
     request->performCallbackOnOriginThread(*request, &IDBDatabaseNameAndVersionRequest::complete, WTFMove(databases));
