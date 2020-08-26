@@ -332,6 +332,7 @@ namespace WebCore {
     macro(isSecureContext) \
     macro(localStreams) \
     macro(location) \
+    macro(makeDOMException) \
     macro(makeGetterTypeError) \
     macro(makeThisTypeError) \
     macro(matchingElementInFlatTree) \
@@ -423,6 +424,7 @@ namespace WebCore {
     macro(webkitIndexedDB) \
     macro(webkitOfflineAudioContext) \
     macro(webkitOscillatorNode) \
+    macro(whenSignalAborted) \
     macro(window) \
     macro(writableStreamAPIEnabled) \
     macro(writeAlgorithm) \

@@ -7576,6 +7576,8 @@
 		4186BD46214072B60001826F /* RTCRtpTransceiverBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCRtpTransceiverBackend.h; sourceTree = "<group>"; };
 		4186BD4B2140A8050001826F /* LibWebRTCRtpTransceiverBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCRtpTransceiverBackend.h; path = libwebrtc/LibWebRTCRtpTransceiverBackend.h; sourceTree = "<group>"; };
 		4186BD4D2140B9E80001826F /* LibWebRTCRtpTransceiverBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCRtpTransceiverBackend.cpp; path = libwebrtc/LibWebRTCRtpTransceiverBackend.cpp; sourceTree = "<group>"; };
+		418807DF24E4558300DDAF94 /* AbortAlgorithm.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AbortAlgorithm.idl; sourceTree = "<group>"; };
+		418807E124E458C300DDAF94 /* AbortAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbortAlgorithm.h; sourceTree = "<group>"; };
 		41885B9111B6FDA6003383BB /* FormSubmission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormSubmission.h; sourceTree = "<group>"; };
 		41885B9211B6FDA6003383BB /* FormSubmission.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormSubmission.cpp; sourceTree = "<group>"; };
 		418938AF2429F9AB007FDC41 /* RetrieveRecordsOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RetrieveRecordsOptions.h; sourceTree = "<group>"; };
@@ -28946,6 +28948,8 @@
 				CE2616A4187E65C1007955F3 /* ios */,
 				2D5036661BCDDDC400E20BB3 /* mac */,
 				51ECC3E42005831F00483EAE /* messageports */,
+				418807E124E458C300DDAF94 /* AbortAlgorithm.h */,
+				418807DF24E4558300DDAF94 /* AbortAlgorithm.idl */,
 				7CD0E2B61F80A4820016A4CE /* AbortController.cpp */,
 				7CD0E2B51F80A4820016A4CE /* AbortController.h */,
 				7CD0E2B71F80A4820016A4CE /* AbortController.idl */,

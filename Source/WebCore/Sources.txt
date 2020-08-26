@@ -2616,6 +2616,7 @@ WebCoreJSBuiltins.cpp
 // FIXME: We should probably move these into ${DerivedSources}/bindings/js/ so they get bundled with the custom bindings.
 
 JSANGLEInstancedArrays.cpp
+JSAbortAlgorithm.cpp
 JSAbortController.cpp
 JSAbortSignal.cpp
 JSAbstractWorker.cpp

@@ -672,6 +672,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/typedom/TypedOMCSSUnitValue.idl \
     $(WebCore)/css/typedom/TypedOMCSSUnparsedValue.idl \
     $(WebCore)/css/WebKitCSSMatrix.idl \
+    $(WebCore)/dom/AbortAlgorithm.idl \
     $(WebCore)/dom/AbortController.idl \
     $(WebCore)/dom/AbortSignal.idl \
     $(WebCore)/dom/AnimationEvent.idl \

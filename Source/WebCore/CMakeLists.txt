@@ -721,6 +721,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     css/WebKitCSSMatrix.idl
 
+    dom/AbortAlgorithm.idl
     dom/AbortController.idl
     dom/AbortSignal.idl
     dom/AnimationEvent.idl

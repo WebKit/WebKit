@@ -156,13 +156,47 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
 
     @putByIdDirectPrivate(source, "disturbed", true);
 
+    pipeState.finalized = false;
     pipeState.shuttingDown = false;
     pipeState.promiseCapability = @newPromiseCapability(@Promise);
     pipeState.pendingReadPromiseCapability = @newPromiseCapability(@Promise);
     pipeState.pendingReadPromiseCapability.@resolve.@call();
     pipeState.pendingWritePromise = @Promise.@resolve();
 
-    // FIXME: Support signal.
+    if (signal !== @undefined) {
+        const algorithm = () => {
+            if (pipeState.finalized)
+                return;
+
+            const error = @makeDOMException("AbortError", "abort pipeTo from signal");
+
+            @pipeToShutdownWithAction(pipeState, () => {
+                const shouldAbortDestination = !pipeState.preventAbort && @getByIdDirectPrivate(pipeState.destination, "state") === "writable";
+                const promiseDestination = shouldAbortDestination ? @writableStreamAbort(pipeState.destination, error) : @Promise.@resolve();
+
+                const shouldAbortSource = !pipeState.preventCancel && @getByIdDirectPrivate(pipeState.source, "state") === @streamReadable;
+                const promiseSource = shouldAbortSource ? @readableStreamCancel(pipeState.source, error) : @Promise.@resolve();
+
+                let promiseCapability = @newPromiseCapability(@Promise);
+                let shouldWait = true;
+                let handleResolvedPromise = () => {
+                    if (shouldWait) {
+                        shouldWait = false;
+                        return;
+                    }
+                    promiseCapability.@resolve.@call();
+                }
+                let handleRejectedPromise = (e) => {
+                    promiseCapability.@reject.@call(@undefined, e);
+                }
+                promiseDestination.@then(handleResolvedPromise, handleRejectedPromise);
+                promiseSource.@then(handleResolvedPromise, handleRejectedPromise);
+                return promiseCapability.@promise;
+            }, error);
+        };
+        if (@whenSignalAborted(signal, algorithm))
+            return pipeState.promiseCapability.@promise;
+    }
 
     @pipeToErrorsMustBePropagatedForward(pipeState);
     @pipeToErrorsMustBePropagatedBackward(pipeState);
@@ -343,7 +377,8 @@ function pipeToFinalize(pipeState)
     @writableStreamDefaultWriterRelease(pipeState.writer);
     @readableStreamReaderGenericRelease(pipeState.reader);
 
-    // FIXME: Implement signal support.
+    // Instead of removing the abort algorithm as per spec, we make it a no-op which is equivalent.
+    pipeState.finalized = true;
 
     if (arguments.length > 1)
         pipeState.promiseCapability.@reject.@call(@undefined, arguments[1]);

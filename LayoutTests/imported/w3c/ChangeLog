@@ -1,3 +1,19 @@
+2020-08-26  Youenn Fablet  <youenn@apple.com>
+
+        Abort pipeTo based on AbortSignal
+        https://bugs.webkit.org/show_bug.cgi?id=215448
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/streams/piping/abort.any-expected.txt:
+        * web-platform-tests/streams/piping/abort.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward.any-expected.txt:
+        * web-platform-tests/streams/piping/close-propagation-forward.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-forward.any-expected.txt:
+        * web-platform-tests/streams/piping/error-propagation-forward.any.worker-expected.txt:
+        * web-platform-tests/streams/piping/flow-control.any-expected.txt:
+        * web-platform-tests/streams/piping/flow-control.any.worker-expected.txt:
+
 2020-08-26  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Set available column space before grid items prelayout

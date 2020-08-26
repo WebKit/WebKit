@@ -33,6 +33,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/InternalSettingsGenerated.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/InternalSettingsGenerated.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSANGLEInstancedArrays.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSANGLEInstancedArrays.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbortAlgorithm.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbortAlgorithm.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbortController.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbortController.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbortSignal.cpp

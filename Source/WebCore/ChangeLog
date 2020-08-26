@@ -1,3 +1,33 @@
+2020-08-26  Youenn Fablet  <youenn@apple.com>
+
+        Abort pipeTo based on AbortSignal
+        https://bugs.webkit.org/show_bug.cgi?id=215448
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamPipeToWritableStream):
+        (pipeToFinalize):
+        * Modules/streams/WritableStream.js:
+        (initializeWritableStream):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::makeDOMExceptionForBuiltins):
+        (WebCore::whenSignalAborted):
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/AbortAlgorithm.h: Copied from Source/WebCore/dom/AbortSignal.idl.
+        * dom/AbortAlgorithm.idl: Copied from Source/WebCore/dom/AbortSignal.idl.
+        * dom/AbortSignal.cpp:
+        (WebCore::AbortSignal::whenSignalAborted):
+        * dom/AbortSignal.h:
+        * dom/AbortSignal.idl:
+
 2020-08-26  Jer Noble  <jer.noble@apple.com>
 
         [Mac,EME] Netflix.com shows HDCP error for all streams

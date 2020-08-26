@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    CustomIsReachable,
-    Exposed=(Window,Worker),
-    PrivateIdentifier,
-    PublicIdentifier
-] interface AbortSignal : EventTarget {
-    [ PrivateIdentifier ] static void whenSignalAborted(AbortSignal object, AbortAlgorithm algorithm);
+#pragma once
 
-    readonly attribute boolean aborted;
-    attribute EventHandler onabort;
+#include "ActiveDOMCallback.h"
+#include "CallbackResult.h"
+#include <wtf/ThreadSafeRefCounted.h>
+
+namespace WebCore {
+
+class AbortAlgorithm : public ThreadSafeRefCounted<AbortAlgorithm>, public ActiveDOMCallback {
+public:
+    using ActiveDOMCallback::ActiveDOMCallback;
+
+    virtual CallbackResult<void> handleEvent() = 0;
 };
+
+} // namespace WebCore
+

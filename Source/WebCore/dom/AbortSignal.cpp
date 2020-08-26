@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AbortSignal.h"
 
+#include "AbortAlgorithm.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ScriptExecutionContext.h"
@@ -82,6 +83,18 @@ void AbortSignal::follow(AbortSignal& signal)
             return;
         weakThis->abort();
     });
+}
+
+bool AbortSignal::whenSignalAborted(AbortSignal& signal, Ref<AbortAlgorithm>&& algorithm)
+{
+    if (signal.aborted()) {
+        algorithm->handleEvent();
+        return true;
+    }
+    signal.addAlgorithm([algorithm = WTFMove(algorithm)]() mutable {
+        algorithm->handleEvent();
+    });
+    return false;
 }
 
 }
