@@ -25,7 +25,6 @@ skip:
     - regexp-match-indices
     - top-level-await
     - Intl.DateTimeFormat-dayPeriod
-    - Intl.DateTimeFormat-fractionalSecondDigits
     - Intl.ListFormat
   paths:
     - test/built-ins/DataView/prototype/getBigInt64

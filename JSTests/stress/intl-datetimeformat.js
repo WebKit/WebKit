@@ -660,3 +660,85 @@ shouldBe(Intl.DateTimeFormat('zh-u-ca-chinese', { era: 'short', year: 'numeric' 
 shouldBe(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric', calendar: 'chinese' }).format(0), '1969己酉年');
 shouldBe(JSON.stringify(Intl.DateTimeFormat('zh-u-ca-chinese', { era: 'short', year: 'numeric' }).formatToParts(0)), parts);
 shouldBe(JSON.stringify(Intl.DateTimeFormat('zh', { era: 'short', year: 'numeric', calendar: 'chinese' }).formatToParts(0)), parts);
+
+{
+    let t = new Date("2019-05-20T07:00:23.123");
+    {
+        let dtf = new Intl.DateTimeFormat("en", {hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 3});
+        shouldBe(dtf.format(t), `7:00:23.123 AM`);
+        let expected = [
+            {type: "hour", value: "7"},
+            {type: "literal", value: ":"},
+            {type: "minute", value: "00"},
+            {type: "literal", value: ":"},
+            {type: "second", value: "23"},
+            {type: "literal", value: "."},
+            {type: "fractionalSecond", value: "123"},
+            {type: "literal", value: " "},
+            {type: "dayPeriod", value: "AM"}
+        ];
+        let actual = dtf.formatToParts(t);
+        shouldBe(actual.length, expected.length);
+        for (let index = 0; index < expected.length; ++index) {
+            shouldBe(actual[index].type, expected[index].type);
+            shouldBe(actual[index].value, expected[index].value);
+        }
+    }
+    {
+        let dtf = new Intl.DateTimeFormat("en", {hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 2});
+        shouldBe(dtf.format(t), `7:00:23.12 AM`);
+    }
+    {
+        let dtf = new Intl.DateTimeFormat("en", {hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 1});
+        shouldBe(dtf.format(t), `7:00:23.1 AM`);
+        shouldBe(JSON.stringify(dtf.resolvedOptions()), `{"locale":"en","calendar":"gregory","numberingSystem":"latn","timeZone":"America/Los_Angeles","hourCycle":"h12","hour12":true,"hour":"numeric","minute":"2-digit","second":"2-digit","fractionalSecondDigits":1}`);
+    }
+    shouldThrow(() => {
+        new Intl.DateTimeFormat("en", {hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 0});
+    }, RangeError);
+    shouldThrow(() => {
+        new Intl.DateTimeFormat("en", {hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 4});
+    }, RangeError);
+}
+{
+    const expected = [
+      "second",
+      "fractionalSecondDigits",
+      "localeMatcher",
+      "second",
+      "fractionalSecondDigits",
+      "timeZoneName",
+      "formatMatcher",
+    ];
+
+    const actual = [];
+
+    const options = {
+      get second() {
+        actual.push("second");
+        return "numeric";
+      },
+      get fractionalSecondDigits() {
+        actual.push("fractionalSecondDigits");
+        return undefined;
+      },
+      get localeMatcher() {
+        actual.push("localeMatcher");
+        return undefined;
+      },
+      get timeZoneName() {
+        actual.push("timeZoneName");
+        return undefined;
+      },
+      get formatMatcher() {
+        actual.push("formatMatcher");
+        return undefined;
+      },
+    };
+
+    new Intl.DateTimeFormat("en", options);
+    shouldBe(JSON.stringify(actual), JSON.stringify(expected));
+}
+{
+    shouldBe(new Date(0).toLocaleTimeString('zh-Hans-CN', { timeZone: 'UTC', numberingSystem: 'hanidec', hour: "numeric", minute: "numeric", second: "numeric", fractionalSecondDigits: 2 }), "上午一二:〇〇:〇〇.〇〇");
+}

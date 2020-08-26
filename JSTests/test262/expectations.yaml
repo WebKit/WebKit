@@ -1551,12 +1551,18 @@ test/built-ins/TypedArrayConstructors/of/new-instance-using-custom-ctor.js:
 test/intl402/Collator/missing-unicode-ext-value-defaults-to-true.js:
   default: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
   strict mode: "Test262Error: \"kn-true\" is returned in locale, but shouldn't be. Expected SameValue(«7», «-1») to be true"
+test/intl402/DateTimeFormat/constructor-options-order-fractionalSecondDigits.js:
+  default: 'Test262Error: Expected [second, fractionalSecondDigits, localeMatcher, second, fractionalSecondDigits, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. '
+  strict mode: 'Test262Error: Expected [second, fractionalSecondDigits, localeMatcher, second, fractionalSecondDigits, timeZoneName, formatMatcher] and [second, fractionalSecondDigits, localeMatcher, second, timeZoneName, fractionalSecondDigits, formatMatcher] to have the same contents. '
 test/intl402/DateTimeFormat/prototype/format/timedatestyle-en.js:
   default: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
   strict mode: 'Test262Error: Result for full with {} Expected SameValue(«14:12:47 PM Coordinated Universal Time», «14:12:47 Coordinated Universal Time») to be true'
 test/intl402/DateTimeFormat/prototype/formatRange/en-US.js:
   default: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1/3/2019 – 1/5/2019», «1/3/2019 – 1/5/2019») to be true'
+test/intl402/DateTimeFormat/prototype/formatRange/fractionalSecondDigits.js:
+  default: 'Test262Error: no fractionalSecondDigits Expected SameValue(«02:03 – 02:13», «02:03 – 02:13») to be true'
+  strict mode: 'Test262Error: no fractionalSecondDigits Expected SameValue(«02:03 – 02:13», «02:03 – 02:13») to be true'
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'

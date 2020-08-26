@@ -120,6 +120,7 @@ private:
     Hour m_hour { Hour::None };
     Minute m_minute { Minute::None };
     Second m_second { Second::None };
+    uint8_t m_fractionalSecondDigits { 0 };
     TimeZoneName m_timeZoneName { TimeZoneName::None };
     DateTimeStyle m_dateStyle { DateTimeStyle::None };
     DateTimeStyle m_timeStyle { DateTimeStyle::None };

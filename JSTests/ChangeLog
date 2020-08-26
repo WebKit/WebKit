@@ -1,3 +1,22 @@
+2020-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement Intl.DateTimeFormat fractionalSecondDigits
+        https://bugs.webkit.org/show_bug.cgi?id=215840
+
+        Reviewed by Ross Kirsling.
+
+        Test262 is showing wrong ordering of option property accesses compared to the latest PR.
+        Later, we should update Test262.
+
+        * stress/intl-datetimeformat.js:
+        (const.options.get second):
+        (const.options.get fractionalSecondDigits):
+        (const.options.get localeMatcher):
+        (const.options.get timeZoneName):
+        (const.options.get formatMatcher):
+        * test262/config.yaml:
+        * test262/expectations.yaml:
+
 2020-08-26  Paulo Matos  <pmatos@igalia.com>
 
         Skip stress/array-species-create-should-handle-masquerader.js on MIPS

@@ -248,7 +248,7 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
     // 6. If required is "time" or "any",
     // Always "any".
 
-    // a. For each of the property names "hour", "minute", "second":
+    // a. For each of the property names "hour", "minute", "second", "fractionalSecondDigits":
     // i. Let prop be the property name.
     // ii. Let value be Get(options, prop).
     // iii. ReturnIfAbrupt(value).
@@ -266,6 +266,11 @@ static JSObject* toDateTimeOptionsAnyDate(JSGlobalObject* globalObject, JSValue 
     JSValue second = options->get(globalObject, vm.propertyNames->second);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (!second.isUndefined())
+        needDefaults = false;
+
+    JSValue fractionalSecondDigits = options->get(globalObject, vm.propertyNames->fractionalSecondDigits);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    if (!fractionalSecondDigits.isUndefined())
         needDefaults = false;
 
     JSValue dateStyle = options->get(globalObject, vm.propertyNames->dateStyle);
@@ -401,6 +406,9 @@ void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
                 m_timeZoneName = TimeZoneName::Short;
             else if (count == 4)
                 m_timeZoneName = TimeZoneName::Long;
+            break;
+        case 'S':
+            m_fractionalSecondDigits = count;
             break;
         }
     }
@@ -625,6 +633,11 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         break;
     }
 
+    unsigned fractionalSecondDigits = intlNumberOption(globalObject, options, vm.propertyNames->fractionalSecondDigits, 1, 3, 0);
+    RETURN_IF_EXCEPTION(scope, void());
+    for (unsigned i = 0; i < fractionalSecondDigits; ++i)
+        skeletonBuilder.append('S');
+
     TimeZoneName timeZoneName = intlOption<TimeZoneName>(globalObject, options, vm.propertyNames->timeZoneName, { { "short"_s, TimeZoneName::Short }, { "long"_s, TimeZoneName::Long } }, "timeZoneName must be \"short\" or \"long\""_s, TimeZoneName::None);
     RETURN_IF_EXCEPTION(scope, void());
     switch (timeZoneName) {
@@ -655,7 +668,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         //     ii. Let p be opt.[[<prop>]].
         //     iii. If p is not undefined, then
         //         1. Throw a TypeError exception.
-        if (weekday != Weekday::None || era != Era::None || year != Year::None || month != Month::None || day != Day::None || hour != Hour::None || minute != Minute::None || second != Second::None || timeZoneName != TimeZoneName::None) {
+        if (weekday != Weekday::None || era != Era::None || year != Year::None || month != Month::None || day != Day::None || hour != Hour::None || minute != Minute::None || second != Second::None || fractionalSecondDigits != 0 || timeZoneName != TimeZoneName::None) {
             throwTypeError(globalObject, scope, "dateStyle and timeStyle may not be used with other DateTimeFormat options"_s);
             return;
         }
@@ -998,6 +1011,9 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) cons
     if (m_second != Second::None)
         options->putDirect(vm, vm.propertyNames->second, jsNontrivialString(vm, secondString(m_second)));
 
+    if (m_fractionalSecondDigits)
+        options->putDirect(vm, vm.propertyNames->fractionalSecondDigits, jsNumber(m_fractionalSecondDigits));
+
     if (m_timeZoneName != TimeZoneName::None)
         options->putDirect(vm, vm.propertyNames->timeZoneName, jsNontrivialString(vm, timeZoneNameString(m_timeZoneName)));
 
@@ -1052,8 +1068,9 @@ static ASCIILiteral partTypeString(UDateFormatField field)
     case UDAT_MINUTE_FIELD:
         return "minute"_s;
     case UDAT_SECOND_FIELD:
-    case UDAT_FRACTIONAL_SECOND_FIELD:
         return "second"_s;
+    case UDAT_FRACTIONAL_SECOND_FIELD:
+        return "fractionalSecond"_s;
     case UDAT_DAY_OF_WEEK_FIELD:
     case UDAT_DOW_LOCAL_FIELD:
     case UDAT_STANDALONE_DAY_FIELD:

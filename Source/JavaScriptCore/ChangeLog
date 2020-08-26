@@ -1,3 +1,31 @@
+2020-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Implement Intl.DateTimeFormat fractionalSecondDigits
+        https://bugs.webkit.org/show_bug.cgi?id=215840
+
+        Reviewed by Ross Kirsling.
+
+        This patch implements fractionalSecondDigits option for Intl.DateTimeFormat. If it is
+        specified, milliseconds in N digits are represented in the formatted output.
+        This extension is about to be merged into the spec[1]. SpiderMonkey and V8 support it,
+        and V8 shipped it without flags.
+
+        [1]: https://github.com/tc39/ecma402/pull/347
+
+        * builtins/DatePrototype.js:
+        (toLocaleString.toDateTimeOptionsAnyAll):
+        (toLocaleString):
+        (toLocaleTimeString.toDateTimeOptionsTimeTime):
+        (toLocaleTimeString):
+        * runtime/CommonIdentifiers.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::toDateTimeOptionsAnyDate):
+        (JSC::IntlDateTimeFormat::setFormatsFromPattern):
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        (JSC::IntlDateTimeFormat::resolvedOptions const):
+        (JSC::partTypeString):
+        * runtime/IntlDateTimeFormat.h:
+
 2020-08-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] FTL should use m_origin instead of m_node->origin since m_node can be nullptr

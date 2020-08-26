@@ -48,7 +48,8 @@ function toLocaleString(/* locales, options */)
             options.day === @undefined &&
             options.hour === @undefined &&
             options.minute === @undefined &&
-            options.second === @undefined
+            options.second === @undefined &&
+            options.fractionalSecondDigits === @undefined
         );
 
         if (options) {
@@ -163,7 +164,8 @@ function toLocaleTimeString(/* locales, options */)
         var needsDefaults = !options || (
             options.hour === @undefined &&
             options.minute === @undefined &&
-            options.second === @undefined
+            options.second === @undefined &&
+            options.fractionalSecondDigits === @undefined
         );
 
         if (options) {

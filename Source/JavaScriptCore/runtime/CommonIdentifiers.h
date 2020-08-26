@@ -116,6 +116,7 @@
     macro(formatMatcher) \
     macro(formatToParts) \
     macro(forward) \
+    macro(fractionalSecondDigits) \
     macro(from) \
     macro(fromCharCode) \
     macro(get) \
