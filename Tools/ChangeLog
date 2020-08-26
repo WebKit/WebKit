@@ -1,3 +1,18 @@
+2020-08-26  Diego Pino Garcia  <dpino@igalia.com>
+
+        [ews] Split JSC ARMv7 queue into separate builder and tester queue
+        https://bugs.webkit.org/show_bug.cgi?id=215728
+
+        Reviewed by Aakash Jain.
+
+        This new bubble runs jscore-tests for JSC ARMv7 32-bit.  The former
+        'jsc-armv7' bubble now reports about successful binary builds for the
+        same architecture.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble):
+        * BuildSlaveSupport/ews-build/config.json:
+
 2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         HashMap<Ref<T>>::take should return RefPtr<T>

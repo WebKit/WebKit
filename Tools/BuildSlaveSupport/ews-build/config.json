@@ -555,7 +555,7 @@
 	{
       "name": "JSC-MIPSEL-32bits-Tests-EWS",
       "shortname": "jsc-mips-tests",
-      "icon": "buildAndTest",
+      "icon": "testOnly",
       "factory": "JSCTestsFactory",
       "platform": "jsc-only",
       "configuration": "release",
@@ -565,19 +565,20 @@
     },
     {
       "name": "JSC-ARMv7-32bits-Build-EWS",
-      "shortname": "jsc-build-armv7",
+      "shortname": "jsc-armv7",
       "icon": "buildOnly",
       "factory": "JSCBuildFactory",
       "platform": "jsc-only",
       "configuration": "release",
       "architectures": ["armv7"],
+      "triggers": ["jsc-tests-armv7-tests-ews"],
       "workernames": ["igalia-jsc32-armv7-ews-03"]
     },
     {
-      "name": "JSC-ARMv7-32bits-EWS",
-      "shortname": "jsc-armv7",
-      "icon": "buildAndTest",
-      "factory": "JSCBuildAndTestsFactory",
+      "name": "JSC-ARMv7-32bits-Tests-EWS",
+      "shortname": "jsc-armv7-tests",
+      "icon": "testOnly",
+      "factory": "JSCTestsFactory",
       "platform": "jsc-only",
       "configuration": "release",
       "architectures": ["armv7"],
@@ -671,8 +672,7 @@
       "name": "try",
       "port": 5555,
       "builderNames": ["Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-13-Build-EWS", "iOS-13-Simulator-Build-EWS",
-                       "JSC-ARMv7-32bits-Build-EWS", "JSC-ARMv7-32bits-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS",
-                       "JSC-Tests-EWS",
+                       "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
                        "macOS-Apple-Silicon-Big-Sur-Release-Build-EWS", "macOS-Mojave-Debug-Build-EWS", "macOS-Mojave-Release-Build-EWS",
                        "Services-EWS", "Style-EWS",
                        "tvOS-13-Build-EWS", "tvOS-13-Simulator-Build-EWS", "watchOS-6-Build-EWS", "watchOS-6-Simulator-Build-EWS",
@@ -746,6 +746,13 @@
       "name": "jsc-tests-mipsel-tests-ews",
       "builderNames": [
         "JSC-MIPSEL-32bits-Tests-EWS"
+      ]
+    },
+    {
+      "type": "Triggerable",
+      "name": "jsc-tests-armv7-tests-ews",
+      "builderNames": [
+        "JSC-ARMv7-32bits-Tests-EWS"
       ]
     }
   ]
