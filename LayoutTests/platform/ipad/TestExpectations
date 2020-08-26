@@ -10,6 +10,7 @@ fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Skip ]
 
 # The select picker input view is not displayed on iPad.
 fast/forms/ios/no-stale-checked-items-in-select-picker.html
+fast/forms/ios/disabled-options-in-multi-select-picker.html
 
 # These tests are designed for iPhone and crash on iPad
 media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]

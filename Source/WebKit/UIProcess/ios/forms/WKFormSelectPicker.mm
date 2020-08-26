@@ -279,13 +279,14 @@ static const float GroupOptionTextColorAlpha = 0.5;
     auto& item = [_view focusedSelectElementOptions][rowIndex];
 
     // FIXME: Remove this workaround once <rdar://problem/18745253> is fixed.
-    // Group rows should not be checkable, but we are getting this delegate for
-    // those rows. As a workaround, if we get this delegate for a group row, reset
-    // the styles for the content view so it still appears unselected.
-    if (item.isGroup) {
+    // Group rows and disabled rows should not be checkable, but we are getting
+    // this delegate for those rows. As a workaround, if we get this delegate
+    // for a group or disabled row, reset the styles for the content view so it
+    // still appears unselected.
+    if (item.isGroup || item.disabled) {
         UIPickerContentView *view = (UIPickerContentView *)[self viewForRow:rowIndex forComponent:columnIndex];
         [view setChecked:NO];
-        [[view titleLabel] setTextColor:[UIColor colorWithWhite:0.0 alpha:GroupOptionTextColorAlpha]];
+        [[view titleLabel] setTextColor:[UIColor colorWithWhite:0.0 alpha:item.isGroup ? GroupOptionTextColorAlpha : DisabledOptionAlpha]];
         return;
     }
 

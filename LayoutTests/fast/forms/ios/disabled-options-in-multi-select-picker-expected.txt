@@ -1,0 +1,28 @@
+This test verifies that disabled options cannot be selected in the multi-select picker on iPhones.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test select multiple
+
+PASS selected is true
+PASS selected is false
+PASS selected is true
+PASS selected is false
+
+Test select with optgroup
+
+PASS selected is true
+PASS selectElement.value is "1"
+PASS selected is false
+PASS selectElement.value is "1"
+PASS selected is false
+PASS selectElement.value is "1"
+PASS selected is true
+PASS selectElement.value is "3"
+PASS selected is false
+PASS selectElement.value is "3"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

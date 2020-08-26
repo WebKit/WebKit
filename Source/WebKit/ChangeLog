@@ -1,3 +1,27 @@
+2020-08-26  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Disabled options in the multi-select picker should not be selectable
+        https://bugs.webkit.org/show_bug.cgi?id=201458
+        <rdar://problem/55018179>
+
+        Reviewed by Wenson Hsieh.
+
+        WKMultipleSelectPicker is displayed when a <select multiple> or a
+        <select> with an <optgroup> is activated. Due to <rdar://problem/18745253>,
+        group rows and disabled rows were selectable in the picker. r175266 added a
+        workaround for this issue, preventing group rows from being selectable.
+        However, the workaround did not account for disabled rows, which means that
+        it is possible to select disabled options in the multi-select picker.
+
+        To fix this behavior, the same fix that was applied to group rows is now
+        applied to disabled rows. `pickerView:row:column:checked:` resets the style
+        for the associated view if `item.disabled` is true.
+
+        Test: fast/forms/ios/disabled-options-in-multi-select-picker.html
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKMultipleSelectPicker pickerView:row:column:checked:]):
+
 2020-08-26  Youenn Fablet  <youenn@apple.com>
 
         Enable WritableStream by default
