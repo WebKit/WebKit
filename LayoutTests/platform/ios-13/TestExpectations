@@ -12,4 +12,4 @@ http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-3p-cname.html 
 http/tests/resourceLoadStatistics/cname-cloaking-top-no-cname-sub-no-cname.html [ Skip ]
 
 # rdar://67706887 (REGRESSION (r264950): [ iOS 13 WK2 ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html is a constant failure)
-imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Pass Failure Crash ]
