@@ -2727,7 +2727,6 @@ webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure Pass ]
 
 webkit.org/b/117582 fast/flexbox/clear-overflow-before-scroll-update.html [ Failure ]
-webkit.org/b/169007 imported/w3c/web-platform-tests/css/css-flexbox/flex-item-contains-strict.html [ Failure ]
 
 webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure Pass ]
 webkit.org/b/118220 http/tests/cache/partitioned-cache-iframe.html [ Failure Pass ]

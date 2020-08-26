@@ -1,3 +1,18 @@
+2020-08-26  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE][GTK] Gardening and rebaseline
+
+        Unreviewed test gardening.
+
+        Moving some GTK-specific baselines to GLIB and removing some uneeded
+        baselines (failure should be expected)
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.txt: Copied from LayoutTests/platform/glib/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.txt.
+        * platform/gtk/streams/pipe-to-expected.txt: Removed.
+        * platform/wpe/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.txt: Renamed from LayoutTests/platform/glib/fast/sub-pixel/selection/selection-rect-in-sub-pixel-table-expected.txt.
+
 2020-08-26  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Disabled options in the multi-select picker should not be selectable
