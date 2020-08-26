@@ -29,6 +29,7 @@
 #include "BuiltinNames.h"
 #include "IntlObject.h"
 #include "JSObject.h"
+#include <unicode/ucol.h>
 
 namespace JSC {
 
@@ -114,6 +115,33 @@ ResultType intlOption(JSGlobalObject* globalObject, JSValue options, PropertyNam
     }
 
     return fallback;
+}
+
+
+ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(UChar character)
+{
+    return isASCII(character) && ducetWeights[character];
+}
+
+template<typename CharacterType1, typename CharacterType2>
+inline UCollationResult compareASCIIWithUCADUCET(const CharacterType1* characters1, unsigned length1, const CharacterType2* characters2, unsigned length2)
+{
+    unsigned commonLength = std::min(length1, length2);
+    for (unsigned position = 0; position < commonLength; ++position) {
+        auto lhs = characters1[position];
+        auto rhs = characters2[position];
+        ASSERT(canUseASCIIUCADUCETComparison(lhs));
+        ASSERT(canUseASCIIUCADUCETComparison(rhs));
+        uint8_t leftWeight = ducetWeights[lhs];
+        uint8_t rightWeight = ducetWeights[rhs];
+        if (leftWeight == rightWeight)
+            continue;
+        return leftWeight > rightWeight ? UCOL_GREATER : UCOL_LESS;
+    }
+
+    if (length1 == length2)
+        return UCOL_EQUAL;
+    return length1 > length2 ? UCOL_GREATER : UCOL_LESS;
 }
 
 } // namespace JSC

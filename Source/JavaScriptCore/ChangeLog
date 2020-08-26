@@ -1,5 +1,49 @@
 2020-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add ASCII comparison fast path for IntlCollator
+        https://bugs.webkit.org/show_bug.cgi?id=215798
+
+        Reviewed by Darin Adler, Ross Kirsling, and Saam Barati.
+
+        The idea behind this change is the following: ICU Collator's comparison is too slow. We should have fast path for ASCII strings when we know this equals to ICU Collator's result.
+        The problem is that even for ASCII strings, collation is super complicated!
+
+            1. Unicode defines Unicode Collation Algorithm (UCA). To perform collation, it uses collation element tables which defines weights on various levels per code point. UCA also offers
+               the Default Unicode Collation Element Table (DUCET). This UCA with DUCET is used when using ICU Root Collator.
+            2. UCA collation consists of rules, which defines how collation works. And ICU locales define customized collations by adding special rules to that.
+            3. UCA behaves differently by using different options.
+
+        Based on that, our observation is that some of major locales are not defining additional rules in (2). This means that they behaves the same to UCA with DUCET.
+        This patch implements a simplified version of comparison which generates the same results for ASCII strings (excluding control characters) to UCA with DUCET. This fast path can be usable only when the following conditions are met.
+
+            1. The collator does not have additional rules to ICU Root Colator.
+            2. The collator is using default options.
+
+        These checks are very important since there are a lot of edge-case locales. For example,
+
+            1. th (Thai language) ignores punctuations (even including ASCII punctuations) by default. This is defined as ignore-punctuations option is enabled by default, so without (2)'s check, th comparison becomes wrong.
+            2. There are contraction concept (multiple letters behave as a single letter). "ch" letters are ordered interestingly in Czech language. So even in ASCII, Czech shows very interesting collation behavior.
+
+        So we cannot safely take this fast path without carefully querying the information to ICU.
+
+        This shows 37% improvement in JetStream2/cdjs in en-US environment.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        (JSC::IntlCollator::compareStrings const):
+        (JSC::canDoASCIIUCADUCETComparisonWithUCollator):
+        (JSC::IntlCollator::updateCanDoASCIIUCADUCETComparison const):
+        (JSC::IntlCollator::checkICULocaleInvariants):
+        * runtime/IntlCollator.h:
+        * runtime/IntlObject.cpp:
+        (JSC::intlCollatorAvailableLocales):
+        * runtime/IntlObject.h:
+        * runtime/IntlObjectInlines.h:
+        (JSC::canUseASCIIUCADUCETComparison):
+        (JSC::compareASCIIWithUCADUCET):
+
+2020-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Implement Intl.DateTimeFormat fractionalSecondDigits
         https://bugs.webkit.org/show_bug.cgi?id=215840
 

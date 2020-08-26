@@ -1,5 +1,17 @@
 2020-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add ASCII comparison fast path for IntlCollator
+        https://bugs.webkit.org/show_bug.cgi?id=215798
+
+        Reviewed by Darin Adler, Ross Kirsling, and Saam Barati.
+
+        * stress/string-locale-compare-uca-ducet.js: Added.
+        (shouldBe):
+        * stress/string-localeCompare.js:
+        (data.sort):
+
+2020-08-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Implement Intl.DateTimeFormat fractionalSecondDigits
         https://bugs.webkit.org/show_bug.cgi?id=215840
 

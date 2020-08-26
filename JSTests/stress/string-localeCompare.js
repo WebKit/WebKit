@@ -92,3 +92,114 @@ shouldBe('๑'.localeCompare('๒', 'en', { numeric: true }), -1);
 shouldBe('๒'.localeCompare('๑๐', 'en', { numeric: true }), -1);
 shouldBe('๐๑'.localeCompare('๑', 'en', { numeric: true }), 0);
 
+// th ignores punctuation by default.
+shouldBe('AA'.localeCompare('A-A', 'th'), 0);
+shouldBe('\u0000'.localeCompare('@', 'th'), 0);
+shouldBe('AA'.localeCompare('A-A', 'en'), 1);
+shouldBe('\u0000'.localeCompare('@', 'en'), -1);
+
+shouldBe('i'.localeCompare('x', 'ee'), 1);
+shouldBe('I'.localeCompare('x', 'ee'), 1);
+shouldBe('I'.localeCompare('X', 'ee'), 1);
+shouldBe('I'.localeCompare('x', 'ee'), 1);
+shouldBe('i'.localeCompare('x', 'en'), -1);
+shouldBe('I'.localeCompare('x', 'en'), -1);
+shouldBe('I'.localeCompare('X', 'en'), -1);
+shouldBe('I'.localeCompare('x', 'en'), -1);
+
+shouldBe('B'.localeCompare('a', 'en'), 1);
+shouldBe('b'.localeCompare('a', 'en'), 1);
+shouldBe('b'.localeCompare('A', 'en'), 1);
+shouldBe('B'.localeCompare('A', 'en'), 1);
+
+shouldBe('B'.localeCompare('c', 'en'), -1);
+shouldBe('b'.localeCompare('c', 'en'), -1);
+shouldBe('b'.localeCompare('C', 'en'), -1);
+shouldBe('B'.localeCompare('C', 'en'), -1);
+
+shouldBe('\u0000'.localeCompare('\u007f', 'en'), 0);
+
+shouldBe('ch'.localeCompare('ca', 'cs-CZ'), 1);
+shouldBe('ch'.localeCompare('ci', 'cs-CZ'), 1);
+shouldBe('ch'.localeCompare('da', 'cs-CZ'), 1);
+shouldBe('ch'.localeCompare('h', 'cs-CZ'), 1);
+shouldBe('ch'.localeCompare('i', 'cs-CZ'), -1);
+shouldBe('cb'.localeCompare('ca', 'cs-CZ'), 1);
+shouldBe('cb'.localeCompare('ci', 'cs-CZ'), -1);
+shouldBe('cb'.localeCompare('da', 'cs-CZ'), -1);
+shouldBe('ch'.localeCompare('ca', 'en'), 1);
+shouldBe('ch'.localeCompare('ci', 'en'), -1);
+shouldBe('ch'.localeCompare('da', 'en'), -1);
+shouldBe('ch'.localeCompare('h', 'en'), -1);
+shouldBe('ch'.localeCompare('i', 'en'), -1);
+shouldBe('cb'.localeCompare('ca', 'en'), 1);
+shouldBe('cb'.localeCompare('ci', 'en'), -1);
+shouldBe('cb'.localeCompare('da', 'en'), -1);
+
+shouldBe('ch'.localeCompare('ca', 'cs-CZ'), 1);
+shouldBe('ch'.localeCompare('ci', 'cs-CZ'), 1);
+shouldBe('ch'.localeCompare('da', 'cs-CZ'), 1);
+shouldBe('ch'.localeCompare('h', 'cs-CZ'), 1);
+shouldBe('ch'.localeCompare('i', 'cs-CZ'), -1);
+shouldBe('cb'.localeCompare('ca', 'cs-CZ'), 1);
+shouldBe('cb'.localeCompare('ci', 'cs-CZ'), -1);
+shouldBe('cb'.localeCompare('da', 'cs-CZ'), -1);
+shouldBe('ch'.localeCompare('ca', 'en'), 1);
+shouldBe('ch'.localeCompare('ci', 'en'), -1);
+shouldBe('ch'.localeCompare('da', 'en'), -1);
+shouldBe('ch'.localeCompare('h', 'en'), -1);
+shouldBe('ch'.localeCompare('i', 'en'), -1);
+shouldBe('cb'.localeCompare('ca', 'en'), 1);
+shouldBe('cb'.localeCompare('ci', 'en'), -1);
+shouldBe('cb'.localeCompare('da', 'en'), -1);
+
+shouldBe('i'.localeCompare('X', 'az'), 1);
+shouldBe('I'.localeCompare('i', 'az'), -1);
+shouldBe('l'.localeCompare('q', 'az'), 1);
+shouldBe('i'.localeCompare('X', 'en'), -1);
+shouldBe('I'.localeCompare('i', 'en'), 1);
+shouldBe('l'.localeCompare('q', 'en'), -1);
+
+shouldBe('B'.localeCompare('E', 'haw'), 1);
+shouldBe('B'.localeCompare('E', 'en'), -1);
+
+shouldBe('J'.localeCompare('Y', 'lt'), 1);
+shouldBe('J'.localeCompare('Y', 'en'), -1);
+
+shouldBe('I'.localeCompare('i', 'tr'), -1);
+shouldBe('I'.localeCompare('i', 'en'), 1);
+
+shouldBe('T'.localeCompare('Z', 'et'), 1);
+shouldBe('T'.localeCompare('Z', 'en'), -1);
+
+shouldBe('J'.localeCompare('Y', 'lv'), 1);
+shouldBe('J'.localeCompare('Y', 'en'), -1);
+
+shouldBe('aa'.localeCompare('a', 'en'), 1);
+shouldBe('aa'.localeCompare('a ', 'en'), 1);
+shouldBe('aa'.localeCompare('b', 'en'), -1);
+shouldBe('aba'.localeCompare('aa', 'en'), 1);
+shouldBe('aba'.localeCompare('aaa', 'en'), 1);
+shouldBe('aba'.localeCompare('aaaa', 'en'), 1);
+
+shouldBe("a\u0000b".localeCompare("ab\u0000", 'en'), 0);
+shouldBe("bb".localeCompare("bb\u0000a", 'en'), -1);
+shouldBe("bb".localeCompare("bb\u0000c", 'en'), -1);
+shouldBe("bb".localeCompare("bba", 'en'), -1);
+shouldBe("\u0000\u0000\u0000".localeCompare("\u0000", 'en'), 0);
+
+var data = [
+    "de luge",
+    "de Luge",
+    "de\u002Dluge",
+    "de\u002DLuge",
+    "de\u2010luge",
+    "de\u2010Luge",
+    "death",
+    "deluge",
+    "deLuge",
+    "demark",
+];
+var result = JSON.stringify(data);
+data.sort(function (a, b) { return a.localeCompare(b, 'en'); });
+shouldBe(JSON.stringify(data), result);

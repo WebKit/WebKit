@@ -64,10 +64,25 @@ public:
     JSBoundFunction* boundCompare() const { return m_boundCompare.get(); }
     void setBoundCompare(VM&, JSBoundFunction*);
 
+    bool canDoASCIIUCADUCETComparison() const
+    {
+        if (m_canDoASCIIUCADUCETComparison == TriState::Indeterminate)
+            updateCanDoASCIIUCADUCETComparison();
+        return m_canDoASCIIUCADUCETComparison == TriState::True;
+    }
+
+#if ASSERT_ENABLED
+    static void checkICULocaleInvariants(const HashSet<String>&);
+#else
+    static inline void checkICULocaleInvariants(const HashSet<String>&) { }
+#endif
+
 private:
     IntlCollator(VM&, Structure*);
     void finishCreation(VM&);
     static void visitChildren(JSCell*, SlotVisitor&);
+
+    bool updateCanDoASCIIUCADUCETComparison() const;
 
     static Vector<String> sortLocaleData(const String&, RelevantExtensionKey);
     static Vector<String> searchLocaleData(const String&, RelevantExtensionKey);
@@ -90,6 +105,7 @@ private:
     Usage m_usage;
     Sensitivity m_sensitivity;
     CaseFirst m_caseFirst;
+    mutable TriState m_canDoASCIIUCADUCETComparison { TriState::Indeterminate };
     bool m_numeric;
     bool m_ignorePunctuation;
 };

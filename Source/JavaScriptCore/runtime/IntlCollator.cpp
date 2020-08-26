@@ -32,6 +32,7 @@
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include <wtf/HexNumber.h>
 
 namespace JSC {
 
@@ -264,6 +265,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
         break;
     }
 
+    // Keep in sync with canDoASCIIUCADUCETComparisonSlow about used attributes.
     ucol_setAttribute(m_collator.get(), UCOL_STRENGTH, strength, &status);
     ucol_setAttribute(m_collator.get(), UCOL_CASE_LEVEL, caseLevel, &status);
     ucol_setAttribute(m_collator.get(), UCOL_CASE_FIRST, caseFirst, &status);
@@ -288,24 +290,23 @@ JSValue IntlCollator::compareStrings(JSGlobalObject* globalObject, StringView x,
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     UErrorCode status = U_ZERO_ERROR;
-    UCollationResult result = UCOL_EQUAL;
-    if (x.is8Bit() && y.is8Bit() && x.isAllASCII() && y.isAllASCII())
-        result = ucol_strcollUTF8(m_collator.get(), bitwise_cast<const char*>(x.characters8()), x.length(), bitwise_cast<const char*>(y.characters8()), y.length(), &status);
-    else {
-        auto getCharacters = [&] (const StringView& view, Vector<UChar>& buffer) -> const UChar* {
-            if (!view.is8Bit())
-                return view.characters16();
-            buffer.resize(view.length());
-            StringImpl::copyCharacters(buffer.data(), view.characters8(), view.length());
-            return buffer.data();
-        };
+    UCollationResult result = ([&]() -> UCollationResult {
+        if (x.isAllSpecialCharacters<canUseASCIIUCADUCETComparison>() && y.isAllSpecialCharacters<canUseASCIIUCADUCETComparison>()) {
+            if (canDoASCIIUCADUCETComparison()) {
+                if (x.is8Bit() && y.is8Bit())
+                    return compareASCIIWithUCADUCET(x.characters8(), x.length(), y.characters8(), y.length());
+                if (x.is8Bit())
+                    return compareASCIIWithUCADUCET(x.characters8(), x.length(), y.characters16(), y.length());
+                if (y.is8Bit())
+                    return compareASCIIWithUCADUCET(x.characters16(), x.length(), y.characters8(), y.length());
+                return compareASCIIWithUCADUCET(x.characters16(), x.length(), y.characters16(), y.length());
+            }
 
-        Vector<UChar> xBuffer;
-        Vector<UChar> yBuffer;
-        const UChar* xCharacters = getCharacters(x, xBuffer);
-        const UChar* yCharacters = getCharacters(y, yBuffer);
-        result = ucol_strcoll(m_collator.get(), xCharacters, x.length(), yCharacters, y.length());
-    }
+            if (x.is8Bit() && y.is8Bit())
+                return ucol_strcollUTF8(m_collator.get(), bitwise_cast<const char*>(x.characters8()), x.length(), bitwise_cast<const char*>(y.characters8()), y.length(), &status);
+        }
+        return ucol_strcoll(m_collator.get(), x.upconvertedCharacters(), x.length(), y.upconvertedCharacters(), y.length());
+    }());
     if (U_FAILURE(status))
         return throwException(globalObject, scope, createError(globalObject, "Failed to compare strings."_s));
     return jsNumber(result);
@@ -372,5 +373,152 @@ void IntlCollator::setBoundCompare(VM& vm, JSBoundFunction* format)
 {
     m_boundCompare.set(vm, this, format);
 }
+
+static bool canDoASCIIUCADUCETComparisonWithUCollator(UCollator& collator)
+{
+    // Attributes are default ones unless we set. So, non-configured attributes are default ones.
+    static constexpr std::pair<UColAttribute, UColAttributeValue> attributes[] = {
+        { UCOL_FRENCH_COLLATION, UCOL_OFF },
+        { UCOL_ALTERNATE_HANDLING, UCOL_NON_IGNORABLE },
+        { UCOL_STRENGTH, UCOL_TERTIARY },
+        { UCOL_CASE_LEVEL, UCOL_OFF },
+        { UCOL_CASE_FIRST, UCOL_OFF },
+        { UCOL_NUMERIC_COLLATION, UCOL_OFF },
+        // We do not check UCOL_NORMALIZATION_MODE status since FCD normalization does nothing for ASCII strings.
+    };
+
+    for (auto& pair : attributes) {
+        UErrorCode status = U_ZERO_ERROR;
+        auto result = ucol_getAttribute(&collator, pair.first, &status);
+        ASSERT(U_SUCCESS(status));
+        if (result != pair.second)
+            return false;
+    }
+
+    // Check existence of tailoring rules. If they do not exist, collation algorithm is UCA DUCET.
+    int32_t length = 0;
+    ucol_getRules(&collator, &length);
+    return !length;
+}
+
+bool IntlCollator::updateCanDoASCIIUCADUCETComparison() const
+{
+    // ICU uses the CLDR root collation order as a default starting point for ordering. (The CLDR root collation is based on the UCA DUCET.)
+    // And customizes this root collation via rules.
+    // The root collation is UCA DUCET and it is code-point comparison if the characters are all ASCII.
+    // http://www.unicode.org/reports/tr10/
+    ASSERT(m_collator);
+    auto checkASCIIUCADUCETComparisonCompatibility = [&] {
+        if (m_usage != Usage::Sort)
+            return false;
+        if (m_collation != "default"_s)
+            return false;
+        if (m_sensitivity != Sensitivity::Variant)
+            return false;
+        if (m_caseFirst != CaseFirst::False)
+            return false;
+        if (m_numeric)
+            return false;
+        if (m_ignorePunctuation)
+            return false;
+        return canDoASCIIUCADUCETComparisonWithUCollator(*m_collator);
+    };
+    bool result = checkASCIIUCADUCETComparisonCompatibility();
+    m_canDoASCIIUCADUCETComparison = triState(result);
+    return result;
+}
+
+#if ASSERT_ENABLED
+void IntlCollator::checkICULocaleInvariants(const HashSet<String>& locales)
+{
+    for (auto& locale : locales) {
+        auto checkASCIIOrderingWithDUCET = [](const String& locale, UCollator& collator) {
+            bool allAreGood = true;
+            for (unsigned x = 0; x < 128; ++x) {
+                for (unsigned y = 0; y < 128; ++y) {
+                    if (canUseASCIIUCADUCETComparison(x) && canUseASCIIUCADUCETComparison(y)) {
+                        UErrorCode status = U_ZERO_ERROR;
+                        UChar xstring[] = { static_cast<UChar>(x), 0 };
+                        UChar ystring[] = { static_cast<UChar>(y), 0 };
+                        auto resultICU = ucol_strcoll(&collator, xstring, 1, ystring, 1);
+                        ASSERT(U_SUCCESS(status));
+                        auto resultJSC = compareASCIIWithUCADUCET(xstring, 1, ystring, 1);
+                        if (resultICU != resultJSC) {
+                            dataLogLn("BAD ", locale, " ", makeString(hex(x)), "(", StringView(xstring, 1), ") <=> ", makeString(hex(y)), "(", StringView(ystring, 1), ") ICU:(", static_cast<int32_t>(resultICU), "),JSC:(", static_cast<int32_t>(resultJSC), ")");
+                            allAreGood = false;
+                        }
+                    }
+                }
+            }
+            return allAreGood;
+        };
+
+        UErrorCode status = U_ZERO_ERROR;
+        auto collator = std::unique_ptr<UCollator, ICUDeleter<ucol_close>>(ucol_open(locale.ascii().data(), &status));
+
+        ASSERT(U_SUCCESS(status));
+        ucol_setAttribute(collator.get(), UCOL_STRENGTH, UCOL_TERTIARY, &status);
+        ASSERT(U_SUCCESS(status));
+        ucol_setAttribute(collator.get(), UCOL_CASE_LEVEL, UCOL_OFF, &status);
+        ASSERT(U_SUCCESS(status));
+        ucol_setAttribute(collator.get(), UCOL_CASE_FIRST, UCOL_OFF, &status);
+        ASSERT(U_SUCCESS(status));
+        ucol_setAttribute(collator.get(), UCOL_NUMERIC_COLLATION, UCOL_OFF, &status);
+        ASSERT(U_SUCCESS(status));
+        ucol_setAttribute(collator.get(), UCOL_ALTERNATE_HANDLING, UCOL_DEFAULT, &status);
+        ASSERT(U_SUCCESS(status));
+        ucol_setAttribute(collator.get(), UCOL_NORMALIZATION_MODE, UCOL_ON, &status);
+        ASSERT(U_SUCCESS(status));
+
+        if (!canDoASCIIUCADUCETComparisonWithUCollator(*collator))
+            continue;
+
+        // This should not have reorder.
+        int32_t length = ucol_getReorderCodes(collator.get(), nullptr, 0, &status);
+        ASSERT(U_SUCCESS(status));
+        ASSERT(!length);
+
+        // Contractions and Expansions are defined as a rule. If there is no tailoring rule, then they should be UCA DUCET's default.
+
+        auto ensureNotIncludingASCII = [&](USet& set) {
+            Vector<UChar, 32> buffer;
+            for (int32_t index = 0, count = uset_getItemCount(&set); index < count; ++index) {
+                // start and end are inclusive.
+                UChar32 start = 0;
+                UChar32 end = 0;
+                auto status = callBufferProducingFunction(uset_getItem, &set, index, &start, &end, buffer);
+                ASSERT(U_SUCCESS(status));
+                if (buffer.isEmpty()) {
+                    if (isASCII(start)) {
+                        dataLogLn("BAD ", locale, " including ASCII tailored characters");
+                        CRASH();
+                    }
+                } else {
+                    if (StringView(buffer.data(), buffer.size()).isAllASCII()) {
+                        dataLogLn("BAD ", locale, " ", String(buffer.data(), buffer.size()), " including ASCII tailored characters");
+                        CRASH();
+                    }
+                }
+            }
+        };
+
+        auto contractions = std::unique_ptr<USet, ICUDeleter<uset_close>>(uset_openEmpty());
+        auto expansions = std::unique_ptr<USet, ICUDeleter<uset_close>>(uset_openEmpty());
+        ucol_getContractionsAndExpansions(collator.get(), contractions.get(), expansions.get(), true, &status);
+        ASSERT(U_SUCCESS(status));
+
+        ensureNotIncludingASCII(*contractions);
+        ensureNotIncludingASCII(*expansions);
+
+        // This locale should not have tailoring.
+        auto tailored = std::unique_ptr<USet, ICUDeleter<uset_close>>(ucol_getTailoredSet(collator.get(), &status));
+        ensureNotIncludingASCII(*tailored);
+
+        dataLogLnIf(IntlCollatorInternal::verbose, "LOCALE ", locale);
+
+        ASSERT(checkASCIIOrderingWithDUCET(locale, *collator));
+    }
+}
+#endif
 
 } // namespace JSC

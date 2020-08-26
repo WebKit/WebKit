@@ -31,6 +31,7 @@
 
 #include "Error.h"
 #include "FunctionPrototype.h"
+#include "IntlCollator.h"
 #include "IntlCollatorConstructor.h"
 #include "IntlCollatorPrototype.h"
 #include "IntlDateTimeFormatConstructor.h"
@@ -273,6 +274,64 @@ const HashSet<String>& intlAvailableLocales()
     return availableLocales;
 }
 
+// This table is total ordering indexes for ASCII characters in UCA DUCET.
+// It is generated from CLDR common/uca/allkeys_DUCET.txt.
+//
+// Rough overview of UCA is the followings.
+// https://unicode.org/reports/tr10/#Main_Algorithm
+//
+//     1. Normalize each input string.
+//
+//     2. Produce an array of collation elements for each string.
+//
+//         There are 3 (or 4) levels. And each character has 4 weights. We concatenate them into one sequence called collation elements.
+//         For example, "c" has `[.0706.0020.0002]`. And "ca◌́b" becomes `[.0706.0020.0002], [.06D9.0020.0002], [.0000.0021.0002], [.06EE.0020.0002]`
+//         We need to consider variable weighting (https://unicode.org/reports/tr10/#Variable_Weighting), but if it is Non-ignorable, we can just use
+//         the collation elements defined in the table.
+//
+//     3. Produce a sort key for each string from the arrays of collation elements.
+//
+//         Generate sort key from collation elements. From lower levels to higher levels, we collect weights. But 0000 weight is skipped.
+//         Between levels, we insert 0000 weight if the boundary.
+//
+//             string: "ca◌́b"
+//             collation elements: `[.0706.0020.0002], [.06D9.0020.0002], [.0000.0021.0002], [.06EE.0020.0002]`
+//             sort key: `0706 06D9 06EE 0000 0020 0020 0021 0020 0000 0002 0002 0002 0002`
+//                                        ^                        ^
+//                                        level boundary           level boundary
+//
+//     4. Compare the two sort keys with a binary comparison operation.
+//
+// Key observations are the followings.
+//
+//     1. If an input is an ASCII string, UCA step-1 normalization does nothing.
+//     2. If an input is an ASCII string, non-starters (https://unicode.org/reports/tr10/#UTS10-D33) does not exist. So no special handling in UCA step-2 is required.
+//     3. If an input is an ASCII string, no multiple character collation elements exist. So no special handling in UCA step-2 is required. For example, "L·" is not ASCII.
+//     4. UCA step-3 handles 0000 weighted characters specially. And ASCII contains these characters. But 0000 elements are used only for rare control characters.
+//        We can ignore this special handling if ASCII strings do not include control characters.
+//     5. Except 0000 cases, all characters' level-1 weights are different. And level-2 weights are always 0020, which is lower than any level-1 weights.
+//        This means that binary comparison in UCA step-4 do not need to check level 2~ weights.
+//
+//  Based on the above observation, our fast path handles ASCII strings excluding control characters. The following weight is recomputed weights from level-1 weights.
+const uint8_t ducetWeights[128] = {
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 2, 3, 4, 5, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    6, 12, 16, 28, 38, 29, 27, 15,
+    17, 18, 24, 32, 9, 8, 14, 25,
+    39, 40, 41, 42, 43, 44, 45, 46,
+    47, 48, 11, 10, 33, 34, 35, 13,
+    23, 50, 52, 54, 56, 58, 60, 62,
+    64, 66, 68, 70, 72, 74, 76, 78,
+    80, 82, 84, 86, 88, 90, 92, 94,
+    96, 98, 100, 19, 26, 20, 31, 7,
+    30, 49, 51, 53, 55, 57, 59, 61,
+    63, 65, 67, 69, 71, 73, 75, 77,
+    79, 81, 83, 85, 87, 89, 91, 93,
+    95, 97, 99, 21, 36, 22, 37, 0,
+};
+
 const HashSet<String>& intlCollatorAvailableLocales()
 {
     static LazyNeverDestroyed<HashSet<String>> availableLocales;
@@ -289,6 +348,7 @@ const HashSet<String>& intlCollatorAvailableLocales()
             availableLocales->add(locale);
             addScriptlessLocaleIfNeeded(availableLocales.get(), locale);
         }
+        IntlCollator::checkICULocaleInvariants(availableLocales.get());
     });
     return availableLocales;
 }
