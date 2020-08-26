@@ -34,7 +34,7 @@
                 if (originInfo[device.deviceId] != device.kind)
                     testFailed(`: duplicate device IDs for ${device.kind} and ${originInfo[device.deviceId]} in ${origin}/${self.origin}`);
 
-                if (Object.keys(originInfo).length > 4)
+                if (Object.keys(originInfo).length > 6)
                     testFailed(`: more then four unique device IDs in ${origin}/${self.origin}`);
             }
 

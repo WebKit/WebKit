@@ -691,6 +691,15 @@ CaptureDeviceManager& CoreAudioCaptureSourceFactory::audioCaptureDeviceManager()
 #endif
 }
 
+const Vector<CaptureDevice>& CoreAudioCaptureSourceFactory::speakerDevices() const
+{
+#if PLATFORM(MAC)
+    return CoreAudioCaptureDeviceManager::singleton().speakerDevices();
+#else
+    return AVAudioSessionCaptureDeviceManager::singleton().speakerDevices();
+#endif
+}
+
 void CoreAudioCaptureSourceFactory::devicesChanged(const Vector<CaptureDevice>& devices)
 {
     CoreAudioSharedUnit::unit().devicesChanged(devices);

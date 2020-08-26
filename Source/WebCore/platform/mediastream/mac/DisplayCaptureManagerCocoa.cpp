@@ -105,6 +105,7 @@ Optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentI
 
     case CaptureDevice::DeviceType::Camera:
     case CaptureDevice::DeviceType::Microphone:
+    case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Unknown:
         ASSERT_NOT_REACHED();
         break;

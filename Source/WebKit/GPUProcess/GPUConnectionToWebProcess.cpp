@@ -123,6 +123,7 @@ private:
     {
         switch (type) {
         case CaptureDevice::DeviceType::Unknown:
+        case CaptureDevice::DeviceType::Speaker:
             return false;
         case CaptureDevice::DeviceType::Microphone:
             return m_process.allowsAudioCapture();

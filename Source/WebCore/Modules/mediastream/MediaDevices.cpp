@@ -37,10 +37,12 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaDeviceInfo.h"
 #include "MediaTrackSupportedConstraints.h"
 #include "RealtimeMediaSourceSettings.h"
+#include "Settings.h"
 #include "UserGestureIndicator.h"
 #include "UserMediaController.h"
 #include "UserMediaRequest.h"
@@ -55,6 +57,7 @@ inline MediaDevices::MediaDevices(Document& document)
     : ActiveDOMObject(document)
     , m_scheduledEventTimer(*this, &MediaDevices::scheduledEventTimerFired)
     , m_eventNames(eventNames())
+    , m_idHashSalt(createCanonicalUUIDString())
 {
     suspendIfNeeded();
 
@@ -165,6 +168,30 @@ static inline bool checkMicrophoneAccess(const Document& document)
     return isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Microphone, document, LogFeaturePolicyFailure::No);
 }
 
+static inline bool checkSpeakerAccess(const Document& document)
+{
+    return document.frame()
+        && document.frame()->settings().exposeSpeakersEnabled()
+        && isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::SpeakerSelection, document, LogFeaturePolicyFailure::No);
+}
+
+static inline MediaDeviceInfo::Kind toMediaDeviceInfoKind(CaptureDevice::DeviceType type)
+{
+    switch (type) {
+    case CaptureDevice::DeviceType::Microphone:
+        return MediaDeviceInfo::Kind::Audioinput;
+    case CaptureDevice::DeviceType::Speaker:
+        return MediaDeviceInfo::Kind::Audiooutput;
+    case CaptureDevice::DeviceType::Camera:
+    case CaptureDevice::DeviceType::Screen:
+    case CaptureDevice::DeviceType::Window:
+        return MediaDeviceInfo::Kind::Videoinput;
+    case CaptureDevice::DeviceType::Unknown:
+        ASSERT_NOT_REACHED();
+    }
+    return MediaDeviceInfo::Kind::Audioinput;
+}
+
 void MediaDevices::refreshDevices(const Vector<CaptureDevice>& newDevices)
 {
     auto* document = this->document();
@@ -173,6 +200,7 @@ void MediaDevices::refreshDevices(const Vector<CaptureDevice>& newDevices)
 
     bool canAccessCamera = checkCameraAccess(*document);
     bool canAccessMicrophone = checkMicrophoneAccess(*document);
+    bool canAccessSpeaker = checkSpeakerAccess(*document);
 
     Vector<Ref<MediaDeviceInfo>> devices;
     for (auto& newDevice : newDevices) {
@@ -180,8 +208,10 @@ void MediaDevices::refreshDevices(const Vector<CaptureDevice>& newDevices)
             continue;
         if (!canAccessCamera && newDevice.type() == CaptureDevice::DeviceType::Camera)
             continue;
+        if (!canAccessSpeaker && newDevice.type() == CaptureDevice::DeviceType::Speaker)
+            continue;
 
-        auto deviceKind = newDevice.type() == CaptureDevice::DeviceType::Microphone ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
+        auto deviceKind = toMediaDeviceInfoKind(newDevice.type());
         auto index = m_devices.findMatching([deviceKind, &newDevice](auto& oldDevice) {
             return oldDevice->deviceId() == newDevice.persistentId() && oldDevice->kind() == deviceKind;
         });
@@ -190,7 +220,8 @@ void MediaDevices::refreshDevices(const Vector<CaptureDevice>& newDevices)
             continue;
         }
 
-        devices.append(MediaDeviceInfo::create(newDevice.label(), newDevice.persistentId(), newDevice.groupId(), deviceKind));
+        auto groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(newDevice.groupId(), m_idHashSalt);
+        devices.append(MediaDeviceInfo::create(newDevice.label(), newDevice.persistentId(), WTFMove(groupId), deviceKind));
     }
     m_devices = WTFMove(devices);
 }

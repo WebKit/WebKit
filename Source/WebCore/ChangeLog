@@ -1,5 +1,84 @@
 2020-08-26  Youenn Fablet  <youenn@apple.com>
 
+        enumerateDevices should expose audiooutput devices that are tied to an audio input device
+        https://bugs.webkit.org/show_bug.cgi?id=215806
+
+        Reviewed by Eric Carlson.
+
+        Add support for a speaker selection feature policy, as per https://w3c.github.io/mediacapture-output/#permissions-policy-integration.
+        Add support for speaker mock devices and for listing speakers on MacOS in CoreAudioCaptureDeviceManager.
+        Add support for groupId to group microphones and speakers for both mock audio manager and CoreAudioCaptureDeviceManager.
+        For mock speakers, we add two audiooutput devices that are related to a microphone and one audiooutput that is not related to any microphone.
+
+        Test: fast/mediastream/enumerate-speaker.html
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::MediaDevices):
+        (WebCore::checkSpeakerAccess):
+        (WebCore::toMediaDeviceInfoKind):
+        (WebCore::MediaDevices::refreshDevices):
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::sourceCaptureState):
+        (WebCore::MediaStreamTrack::updateToPageMutedState):
+        * html/FeaturePolicy.cpp:
+        (WebCore::policyTypeName):
+        (WebCore::FeaturePolicy::parse):
+        (WebCore::FeaturePolicy::allows const):
+        * html/FeaturePolicy.h:
+        * page/Settings.yaml:
+        * platform/mediastream/CaptureDevice.h:
+        (WebCore::CaptureDevice::label const):
+        (WebCore::CaptureDevice::setGroupId):
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::getMediaStreamDevices):
+        * platform/mediastream/RealtimeMediaSourceFactory.h:
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        (WebCore::GStreamerAudioCaptureSourceFactory::speakerDevices const):
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h:
+        * platform/mediastream/mac/CoreAudioCaptureDevice.cpp:
+        (WebCore::CoreAudioCaptureDevice::create):
+        (WebCore::CoreAudioCaptureDevice::CoreAudioCaptureDevice):
+        (WebCore::CoreAudioCaptureDevice::relatedAudioDeviceIDs):
+        * platform/mediastream/mac/CoreAudioCaptureDevice.h:
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::CoreAudioCaptureDeviceManager::captureDevices):
+        (WebCore::deviceHasOutputStreams):
+        (WebCore::getDefaultCaptureInputDevice):
+        (WebCore::hasDevice):
+        (WebCore::CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices):
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSourceFactory::speakerDevices const):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp:
+        (WebCore::DisplayCaptureManagerCocoa::captureDeviceWithPersistentID):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp:
+        (WebCore::DisplayCaptureSourceCocoa::create):
+        * platform/mock/MockMediaDevice.h:
+        (WebCore::MockSpeakerProperties::encode const):
+        (WebCore::MockSpeakerProperties::decode):
+        (WebCore::MockMediaDevice::isSpeaker const):
+        (WebCore::MockMediaDevice::captureDevice const):
+        (WebCore::MockMediaDevice::type const):
+        (WebCore::MockMediaDevice::speakerProperties const):
+        (WebCore::MockMediaDevice::encode const):
+        (WebCore::MockMediaDevice::decode):
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::defaultDevices):
+        (WebCore::deviceListForDevice):
+        (WebCore::toCaptureDevice):
+        (WebCore::createMockDevice):
+        (WebCore::MockRealtimeMediaSourceCenter::setDevices):
+        (WebCore::MockRealtimeMediaSourceCenter::addDevice):
+        (WebCore::MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID):
+        (WebCore::MockRealtimeMediaSourceCenter::microphoneDevices):
+        (WebCore::MockRealtimeMediaSourceCenter::speakerDevices):
+        (WebCore::MockRealtimeMediaSourceCenter::videoDevices):
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+
+2020-08-26  Youenn Fablet  <youenn@apple.com>
+
         pipeThrough should check for readableStream type
         https://bugs.webkit.org/show_bug.cgi?id=215497
 

@@ -1,5 +1,30 @@
 CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
 CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
 CONSOLE MESSAGE: Not allowed to call enumerateDevices.
-      
-PASS: "allow" attribute respected in all iframes
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Not allowed to call enumerateDevices.
+CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute ''.
+CONSOLE MESSAGE: Not allowed to call enumerateDevices.
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'microphone'.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: Feature policy 'Microphone' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'camera'.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+CONSOLE MESSAGE: Feature policy 'Camera' check failed for iframe with origin 'http://localhost:8000' and allow attribute 'microphone;speaker-selection'.
+CONSOLE MESSAGE: Not allowed to call getUserMedia.
+         
+
+PASS Wait for frames to be loaded 
+PASS none 
+PASS microphone 
+PASS camera 
+PASS camera+microphone 
+PASS microphone+speakerselection 
+PASS camera+microphone+speakerselection 
+PASS same-origin 
+

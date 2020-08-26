@@ -1,3 +1,19 @@
+2020-08-26  Youenn Fablet  <youenn@apple.com>
+
+        enumerateDevices should expose audiooutput devices that are tied to an audio input device
+        https://bugs.webkit.org/show_bug.cgi?id=215806
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/enumerate-speaker-expected.txt: Added.
+        * fast/mediastream/enumerate-speaker.html: Added.
+        * fast/mediastream/get-user-media-device-id.html:
+        * http/tests/media/media-stream/enumerate-devices-source-id.html:
+        * http/tests/media/media-stream/enumerate-devices-iframe-allow-attribute-expected.txt:
+        * http/tests/media/media-stream/enumerate-devices-iframe-allow-attribute.html:
+        Rewrite test to use testharness and ensure order of the iframe tests so that console messages are ordered.
+        * http/tests/media/media-stream/resources/enumerate-devices-iframe.html:
+
 2020-08-26  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Emit baseline after r266129.

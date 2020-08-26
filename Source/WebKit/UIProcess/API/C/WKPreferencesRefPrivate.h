@@ -540,6 +540,10 @@ WK_EXPORT void WKPreferencesSetMediaPreloadingEnabled(WKPreferencesRef, bool fla
 WK_EXPORT bool WKPreferencesGetMediaPreloadingEnabled(WKPreferencesRef);
 
 // Defaults to false
+WK_EXPORT void WKPreferencesSetExposeSpeakersEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetExposeSpeakersEnabled(WKPreferencesRef);
+
+// Defaults to false
 WK_EXPORT void WKPreferencesSetWebAuthenticationEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetWebAuthenticationEnabled(WKPreferencesRef);
 

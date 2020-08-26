@@ -41,6 +41,7 @@ public:
     enum class Type {
         Camera,
         Microphone,
+        SpeakerSelection,
         DisplayCapture,
         SyncXHR,
         Fullscreen,
@@ -59,6 +60,7 @@ public:
 private:
     AllowRule m_cameraRule;
     AllowRule m_microphoneRule;
+    AllowRule m_speakerSelectionRule;
     AllowRule m_displayCaptureRule;
     AllowRule m_syncXHRRule;
     AllowRule m_fullscreenRule;

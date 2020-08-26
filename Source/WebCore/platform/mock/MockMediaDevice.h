@@ -55,6 +55,33 @@ struct MockMicrophoneProperties {
     int defaultSampleRate { 44100 };
 };
 
+struct MockSpeakerProperties {
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << relatedMicrophoneId << static_cast<int32_t>(defaultSampleRate);
+    }
+
+    template <class Decoder>
+    static Optional<MockSpeakerProperties> decode(Decoder& decoder)
+    {
+        Optional<int32_t> defaultSampleRate;
+        decoder >> defaultSampleRate;
+        if (!defaultSampleRate)
+            return WTF::nullopt;
+
+        Optional<String> relatedMicrophoneId;
+        decoder >> relatedMicrophoneId;
+        if (!relatedMicrophoneId)
+            return WTF::nullopt;
+
+        return MockSpeakerProperties { WTFMove(*relatedMicrophoneId), *defaultSampleRate };
+    }
+
+    String relatedMicrophoneId;
+    int defaultSampleRate { 44100 };
+};
+
 // FIXME: Add support for other properties.
 struct MockCameraProperties {
     template<class Encoder>
@@ -134,18 +161,39 @@ struct MockDisplayProperties {
 
 struct MockMediaDevice {
     bool isMicrophone() const { return WTF::holds_alternative<MockMicrophoneProperties>(properties); }
+    bool isSpeaker() const { return WTF::holds_alternative<MockSpeakerProperties>(properties); }
     bool isCamera() const { return WTF::holds_alternative<MockCameraProperties>(properties); }
     bool isDisplay() const { return WTF::holds_alternative<MockDisplayProperties>(properties); }
+
+    CaptureDevice captureDevice() const
+    {
+        if (isMicrophone())
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Microphone, label, persistentId };
+        if (isSpeaker())
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Speaker, label, speakerProperties()->relatedMicrophoneId };
+        if (isCamera())
+            return CaptureDevice { persistentId, CaptureDevice::DeviceType::Camera, label, persistentId };
+
+        ASSERT(isDisplay());
+        return CaptureDevice { persistentId, CaptureDevice::DeviceType::Screen, label, persistentId };
+    }
 
     CaptureDevice::DeviceType type() const
     {
         if (isMicrophone())
             return CaptureDevice::DeviceType::Microphone;
+        if (isSpeaker())
+            return CaptureDevice::DeviceType::Speaker;
         if (isCamera())
             return CaptureDevice::DeviceType::Camera;
 
         ASSERT(isDisplay());
         return WTF::get<MockDisplayProperties>(properties).type;
+    }
+
+    const MockSpeakerProperties* speakerProperties() const
+    {
+        return isSpeaker() ? &WTF::get<MockSpeakerProperties>(properties) : nullptr;
     }
 
     template<class Encoder>
@@ -156,11 +204,14 @@ struct MockMediaDevice {
         switchOn(properties, [&](const MockMicrophoneProperties& properties) {
             encoder << (uint8_t)1;
             encoder << properties;
-        }, [&](const MockCameraProperties& properties) {
+        }, [&](const MockSpeakerProperties& properties) {
             encoder << (uint8_t)2;
             encoder << properties;
-        }, [&](const MockDisplayProperties& properties) {
+        }, [&](const MockCameraProperties& properties) {
             encoder << (uint8_t)3;
+            encoder << properties;
+        }, [&](const MockDisplayProperties& properties) {
+            encoder << (uint8_t)4;
             encoder << properties;
         });
     }
@@ -197,8 +248,10 @@ struct MockMediaDevice {
         case 1:
             return decodeMockMediaDevice<MockMicrophoneProperties>(decoder, WTFMove(*persistentId), WTFMove(*label));
         case 2:
-            return decodeMockMediaDevice<MockCameraProperties>(decoder, WTFMove(*persistentId), WTFMove(*label));
+            return decodeMockMediaDevice<MockSpeakerProperties>(decoder, WTFMove(*persistentId), WTFMove(*label));
         case 3:
+            return decodeMockMediaDevice<MockCameraProperties>(decoder, WTFMove(*persistentId), WTFMove(*label));
+        case 4:
             return decodeMockMediaDevice<MockDisplayProperties>(decoder, WTFMove(*persistentId), WTFMove(*label));
         }
         return WTF::nullopt;
@@ -206,7 +259,7 @@ struct MockMediaDevice {
 
     String persistentId;
     String label;
-    Variant<MockMicrophoneProperties, MockCameraProperties, MockDisplayProperties> properties;
+    Variant<MockMicrophoneProperties, MockSpeakerProperties, MockCameraProperties, MockDisplayProperties> properties;
 };
 
 } // namespace WebCore

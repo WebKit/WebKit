@@ -85,7 +85,7 @@
             if (device.kind === "audioinput") {
                 const stream = await navigator.mediaDevices.getUserMedia({audio: {deviceId: device.deviceId}});
                 assert_equals(stream.getAudioTracks()[0].getSettings().deviceId, device.deviceId, "Matching audio device id");
-            } else {
+            } else if (device.kind === "videoinput") {
                 const stream = await navigator.mediaDevices.getUserMedia({video: {deviceId: device.deviceId}});
                 assert_equals(stream.getVideoTracks()[0].getSettings().deviceId, device.deviceId, "Matching video device id");
             }

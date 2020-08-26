@@ -3,7 +3,7 @@ When prompted, accept to share your video stream.
 
 PASS A device can be opened twice and have the same device ID 
 PASS A device can be opened twice with different resolutions requested 
-FAIL groupId is correctly reported by getSettings() for all input devices assert_equals: expected (string) "" but got (undefined) undefined
+FAIL groupId is correctly reported by getSettings() for all input devices assert_true: device groupId expected true got false
 PASS deviceId is reported by getSettings() for getUserMedia() audio tracks 
 FAIL groupId is reported by getSettings() for getUserMedia() audio tracks assert_equals: groupId should exist and it should be a string. expected "string" but got "undefined"
 PASS sampleRate is reported by getSettings() for getUserMedia() audio tracks 

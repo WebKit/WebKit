@@ -47,6 +47,7 @@ public:
     Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
     Optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(const String&);
+    const Vector<CaptureDevice>& speakerDevices() const { return m_speakerDevices; }
 
 private:
     CoreAudioCaptureDeviceManager() = default;
@@ -57,7 +58,8 @@ private:
     enum class NotifyIfDevicesHaveChanged { Notify, DoNotNotify };
     void refreshAudioCaptureDevices(NotifyIfDevicesHaveChanged);
 
-    Vector<CaptureDevice> m_devices;
+    Vector<CaptureDevice> m_captureDevices;
+    Vector<CaptureDevice> m_speakerDevices;
     Vector<CoreAudioCaptureDevice> m_coreAudioCaptureDevices;
 };
 

@@ -127,6 +127,7 @@ private:
     bool m_listeningForDeviceChanges { false };
 
     Vector<Ref<MediaDeviceInfo>> m_devices;
+    String m_idHashSalt;
 
     OptionSet<GestureAllowedRequest> m_requestTypesForCurrentGesture;
     WeakPtr<UserGestureToken> m_currentGestureToken;

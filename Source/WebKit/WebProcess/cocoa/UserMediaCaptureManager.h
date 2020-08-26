@@ -70,9 +70,11 @@ private:
     private:
         WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*) final;
         WebCore::CaptureDeviceManager& audioCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
+        const Vector<WebCore::CaptureDevice>& speakerDevices() const final { return m_speakerDevices; }
 
         UserMediaCaptureManager& m_manager;
         bool m_shouldCaptureInGPUProcess { false };
+        Vector<WebCore::CaptureDevice> m_speakerDevices;
     };
     class VideoFactory : public WebCore::VideoCaptureFactory {
     public:

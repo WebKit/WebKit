@@ -37,16 +37,17 @@ namespace WebCore {
 
 class CoreAudioCaptureDevice : public CaptureDevice {
 public:
-
-    static Optional<CoreAudioCaptureDevice> create(uint32_t);
+    static Optional<CoreAudioCaptureDevice> create(uint32_t, DeviceType, const String& groupID);
     virtual ~CoreAudioCaptureDevice() = default;
 
     uint32_t deviceID() const { return m_deviceID; }
     RetainPtr<CMClockRef> deviceClock();
     bool isAlive();
 
+    static Vector<AudioDeviceID> relatedAudioDeviceIDs(AudioDeviceID);
+
 private:
-    CoreAudioCaptureDevice(uint32_t, const String& persistentID, const String& label);
+    CoreAudioCaptureDevice(uint32_t, const String& persistentID, DeviceType, const String& label, const String& groupID);
 
     uint32_t m_deviceID { 0 };
     RetainPtr<CMClockRef> m_deviceClock;

@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CaptureDevice {
 public:
-    enum class DeviceType { Unknown, Microphone, Camera, Screen, Window };
+    enum class DeviceType { Unknown, Microphone, Speaker, Camera, Screen, Window };
 
     CaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString())
         : m_persistentId(persistentId)
@@ -49,12 +49,13 @@ public:
     {
         static NeverDestroyed<String> airPods(MAKE_STATIC_STRING_IMPL("AirPods"));
 
-        if (m_type == DeviceType::Microphone && m_label.contains(airPods))
+        if ((m_type == DeviceType::Microphone || m_type == DeviceType::Speaker) && m_label.contains(airPods))
             return airPods;
 
         return m_label;
     }
 
+    void setGroupId(const String& groupId) { m_groupId = groupId; }
     const String& groupId() const { return m_groupId; }
 
     DeviceType type() const { return m_type; }
@@ -127,6 +128,7 @@ template<> struct EnumTraits<WebCore::CaptureDevice::DeviceType> {
         WebCore::CaptureDevice::DeviceType,
         WebCore::CaptureDevice::DeviceType::Unknown,
         WebCore::CaptureDevice::DeviceType::Microphone,
+        WebCore::CaptureDevice::DeviceType::Speaker,
         WebCore::CaptureDevice::DeviceType::Camera,
         WebCore::CaptureDevice::DeviceType::Screen,
         WebCore::CaptureDevice::DeviceType::Window

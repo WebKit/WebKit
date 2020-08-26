@@ -1,3 +1,15 @@
+2020-08-26  Youenn Fablet  <youenn@apple.com>
+
+        enumerateDevices should expose audiooutput devices that are tied to an audio input device
+        https://bugs.webkit.org/show_bug.cgi?id=215806
+
+        Reviewed by Eric Carlson.
+
+        Enable experimental flag.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2020-08-26  Diego Pino Garcia  <dpino@igalia.com>
 
         [ews] Split JSC ARMv7 queue into separate builder and tester queue

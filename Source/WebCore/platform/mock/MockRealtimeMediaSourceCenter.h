@@ -52,7 +52,8 @@ public:
     void setMockVideoCaptureEnabled(bool isEnabled) { m_isMockVideoCaptureEnabled = isEnabled; }
     void setMockDisplayCaptureEnabled(bool isEnabled) { m_isMockDisplayCaptureEnabled = isEnabled; }
 
-    static Vector<CaptureDevice>& audioDevices();
+    static Vector<CaptureDevice>& microphoneDevices();
+    static Vector<CaptureDevice>& speakerDevices();
     static Vector<CaptureDevice>& videoDevices();
     static Vector<CaptureDevice>& displayDevices();
 
@@ -73,7 +74,7 @@ private:
 
     class MockAudioCaptureDeviceManager final : public CaptureDeviceManager {
     private:
-        const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::audioDevices(); }
+        const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSourceCenter::microphoneDevices(); }
         Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSourceCenter::captureDeviceWithPersistentID(type, id); }
     };
     class MockVideoCaptureDeviceManager final : public CaptureDeviceManager {

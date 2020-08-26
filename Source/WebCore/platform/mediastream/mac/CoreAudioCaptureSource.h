@@ -123,6 +123,7 @@ private:
     }
 
     CaptureDeviceManager& audioCaptureDeviceManager() final;
+    const Vector<CaptureDevice>& speakerDevices() const final;
 };
 
 } // namespace WebCore

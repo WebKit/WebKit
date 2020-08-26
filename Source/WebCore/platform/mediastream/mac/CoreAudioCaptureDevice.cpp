@@ -65,20 +65,36 @@ static bool getDeviceInfo(uint32_t deviceID, String& persistentID, String& label
     return true;
 }
 
-Optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceID)
+Optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceID, DeviceType type, const String& groupID)
 {
+    ASSERT(type == CaptureDevice::DeviceType::Microphone || type == CaptureDevice::DeviceType::Speaker);
     String persistentID;
     String label;
     if (!getDeviceInfo(deviceID, persistentID, label))
         return WTF::nullopt;
 
-    return CoreAudioCaptureDevice(deviceID, persistentID, label);
+    return CoreAudioCaptureDevice(deviceID, persistentID, type, label, groupID.isNull() ? persistentID : groupID);
 }
 
-CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, const String& persistentID, const String& label)
-    : CaptureDevice(persistentID, CaptureDevice::DeviceType::Microphone, label)
+CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, const String& persistentID, DeviceType deviceType, const String& label, const String& groupID)
+    : CaptureDevice(persistentID, deviceType, label, groupID)
     , m_deviceID(deviceID)
 {
+}
+
+Vector<AudioDeviceID> CoreAudioCaptureDevice::relatedAudioDeviceIDs(AudioDeviceID deviceID)
+{
+    UInt32 size = 0;
+    AudioObjectPropertyAddress property = { kAudioDevicePropertyRelatedDevices, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
+    OSStatus error = AudioObjectGetPropertyDataSize(deviceID, &property, 0, 0, &size);
+    if (error || !size)
+        return { };
+
+    Vector<AudioDeviceID> devices(size / sizeof(AudioDeviceID));
+    error = AudioObjectGetPropertyData(deviceID, &property, 0, nullptr, &size, devices.data());
+    if (error)
+        return { };
+    return devices;
 }
 
 RetainPtr<CMClockRef> CoreAudioCaptureDevice::deviceClock()

@@ -429,6 +429,7 @@ MediaProducer::MediaStateFlags sourceCaptureState(RealtimeMediaSource& source)
         if (source.isProducingData())
             return MediaProducer::HasActiveDisplayCaptureDevice;
         break;
+    case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Unknown:
         ASSERT_NOT_REACHED();
     }
@@ -503,6 +504,7 @@ void MediaStreamTrack::updateToPageMutedState()
     case CaptureDevice::DeviceType::Window:
         m_private->setMuted(page->mutedState() & MediaProducer::ScreenCaptureIsMuted);
         break;
+    case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Unknown:
         ASSERT_NOT_REACHED();
         break;

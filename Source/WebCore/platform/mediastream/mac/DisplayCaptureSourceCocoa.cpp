@@ -67,6 +67,7 @@ CaptureSourceOrError DisplayCaptureSourceCocoa::create(const CaptureDevice& devi
     case CaptureDevice::DeviceType::Window:
         return create(WindowDisplayCapturerMac::create(device.persistentId()), device, constraints);
     case CaptureDevice::DeviceType::Microphone:
+    case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Camera:
     case CaptureDevice::DeviceType::Unknown:
         ASSERT_NOT_REACHED();

@@ -119,6 +119,10 @@ Vector<CaptureDevice> RealtimeMediaSourceCenter::getMediaStreamDevices()
         if (device.enabled())
             result.append(device);
     }
+    for (auto& device : audioCaptureFactory().speakerDevices()) {
+        if (device.enabled())
+            result.append(device);
+    }
     for (auto& device : videoCaptureFactory().videoCaptureDeviceManager().captureDevices()) {
         if (device.enabled())
             result.append(device);

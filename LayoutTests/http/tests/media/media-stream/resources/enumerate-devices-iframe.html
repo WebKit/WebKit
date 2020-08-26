@@ -1,14 +1,47 @@
 <script>
-    async function enumerate(event)
+    async function checkDeviceKind(kind)
     {
-        let devices = await navigator.mediaDevices.enumerateDevices();
-        let visible = devices.map(device => device.kind.indexOf('video') == 0 ? 'camera' : 'microphone').sort();
-        visible = visible.join('+');
-        parent.postMessage(`${event.data}:${visible}`, '*');
-        result.innerHTML = visible;
+        try {
+            let devices = await navigator.mediaDevices.enumerateDevices();
+            for (let device of devices) {
+                if (device.kind === kind)
+                    return true;
+            }
+        } catch (e) {
+        }
+        return false;
     }
 
-    window.addEventListener("message", (id) => enumerate(id));
+    async function checkSpeakerSelection()
+    {
+        // Speakers are currently only exposed after getUserMedia.
+        try {
+            await navigator.mediaDevices.getUserMedia({ audio : true });
+        } catch (e) {
+        }
+        try {
+            await navigator.mediaDevices.getUserMedia({ video : true });
+        } catch (e) {
+        }
+        return checkDeviceKind('audiooutput');
+    }
+
+    async function enumerate()
+    {
+        let visible = [];
+        if (await checkDeviceKind('videoinput'))
+            visible.push('camera');
+        if (await checkDeviceKind('audioinput'))
+            visible.push('microphone');
+        if (await checkSpeakerSelection())
+            visible.push('speakerselection');
+ 
+        visible = visible.join('+');
+        parent.postMessage(visible, '*');
+        result.innerHTML = 'result: "' + visible + '"';
+    }
+
+    window.addEventListener("message", enumerate);
 </script>
 
 <div id='result'></div>

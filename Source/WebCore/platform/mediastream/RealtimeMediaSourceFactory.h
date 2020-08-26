@@ -60,6 +60,7 @@ public:
     virtual ~AudioCaptureFactory() = default;
     virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
     virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
+    virtual const Vector<CaptureDevice>& speakerDevices() const = 0;
 
 protected:
     AudioCaptureFactory() = default;
