@@ -1,3 +1,26 @@
+2020-08-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Move FreeType port's Font::platformWidthForGlyph and Font::platformBoundsForGlyph for Cairo port (WinCairo port)
+        https://bugs.webkit.org/show_bug.cgi?id=215838
+
+        Reviewed by Carlos Garcia Campos.
+
+        WinCairo was using GDI API to implement
+        Font::platformWidthForGlyph and Font::platformBoundsForGlyph. This
+        is a problem for Cairo DirectWrite font backend (Bug 215259).
+        FreeType port has platform independent implementations which are
+        using Cairo API. Use them for WinCairo.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::platformBoundsForGlyph const): Moved from SimpleFontDataFreeType.cpp.
+        (WebCore::Font::platformWidthForGlyph const): Ditto.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformBoundsForGlyph const): Moved to FontCairo.cpp.
+        (WebCore::Font::platformWidthForGlyph const): Ditto.
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::Font::platformBoundsForGlyph const): Deleted.
+        (WebCore::Font::platformWidthForGlyph const): Deleted.
+
 2020-08-25  Tim Horton  <timothy_horton@apple.com>
 
         Web Share API Level 2 functions even when its experimental feature flag is disabled

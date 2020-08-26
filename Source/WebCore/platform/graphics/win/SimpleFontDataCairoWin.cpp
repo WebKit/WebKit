@@ -95,49 +95,4 @@ void Font::platformInit()
     RestoreDC(dc, -1);
 }
 
-FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
-{
-    if (m_platformData.useGDI())
-        return boundsForGDIGlyph(glyph);
-
-    HWndDC dc(0);
-    SaveDC(dc);
-    auto scaledFont = m_platformData.scaledFont();
-    cairo_win32_scaled_font_select_font(scaledFont, dc);
-
-    GLYPHMETRICS gdiMetrics;
-    static const MAT2 identity = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } };
-    GetGlyphOutline(dc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity);
-
-    cairo_win32_scaled_font_done_font(scaledFont);
-    RestoreDC(dc, -1);
-    return FloatRect(gdiMetrics.gmptGlyphOrigin.x, -gdiMetrics.gmptGlyphOrigin.y,
-        gdiMetrics.gmBlackBoxX + m_syntheticBoldOffset, gdiMetrics.gmBlackBoxY);
-}
-    
-float Font::platformWidthForGlyph(Glyph glyph) const
-{
-    if (m_platformData.useGDI())
-       return widthForGDIGlyph(glyph);
-
-    if (!m_platformData.size())
-        return 0;
-
-    HWndDC dc(0);
-    SaveDC(dc);
-
-    cairo_scaled_font_t* scaledFont = m_platformData.scaledFont();
-    cairo_win32_scaled_font_select_font(scaledFont, dc);
-
-    int width;
-    GetCharWidthI(dc, glyph, 1, 0, &width);
-
-    cairo_win32_scaled_font_done_font(scaledFont);
-
-    RestoreDC(dc, -1);
-
-    const double metricsMultiplier = cairo_win32_scaled_font_get_metrics_factor(scaledFont) * m_platformData.size();
-    return width * metricsMultiplier;
-}
-
 }
