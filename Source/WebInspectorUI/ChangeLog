@@ -1,3 +1,13 @@
+2020-08-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r266074): cannot edit JavaScript breakpoints
+        https://bugs.webkit.org/show_bug.cgi?id=215860
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/JavaScriptBreakpoint.js:
+        (WI.JavaScriptBreakpoint.prototype.get editable):
+
 2020-08-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: remove legacy code for replacing the Resources Tab and Debugger Tab with the Sources Tab

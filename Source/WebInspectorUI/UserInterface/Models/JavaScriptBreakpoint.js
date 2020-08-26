@@ -124,7 +124,7 @@ WI.JavaScriptBreakpoint = class JavaScriptBreakpoint extends WI.Breakpoint
             return false;
         }
 
-        return super.editable;
+        return true;
     }
 
     get identifier()
