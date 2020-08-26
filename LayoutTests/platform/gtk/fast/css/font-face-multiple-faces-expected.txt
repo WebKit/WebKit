@@ -179,9 +179,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (4,373) size 776x18 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 80x16
           text run at (1,1) width 80: "AHEM "
-        RenderInline {B} at (0,0) size 64x16
-          RenderText {#text} at (81,1) size 64x16
-            text run at (81,1) width 64: "AHEM"
+        RenderInline {B} at (0,0) size 68x16
+          RenderText {#text} at (81,1) size 68x16
+            text run at (81,1) width 68: "AHEM"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,407) size 784x18
         RenderText {#text} at (0,0) size 334x17

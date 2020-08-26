@@ -10,7 +10,7 @@ layer at (0,0) size 785x600
         RenderBlock {div} at (18,61) size 701x15
           RenderText {#text} at (0,0) size 567x14
             text run at (0,0) width 567: "error on line 5 at column 7: Opening and ending tag mismatch: rect line 0 and svg"
-            text run at (567,0) width 0: " "
+            text run at (566,0) width 1: " "
         RenderBlock {h3} at (18,94) size 701x23
           RenderText {#text} at (0,0) size 427x21
             text run at (0,0) width 427: "Below is a rendering of the page up to the first error."
