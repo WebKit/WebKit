@@ -1,3 +1,17 @@
+2020-08-26  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline flaky webaudio WPT tests.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-stereo-panner-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-delaynode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-gainnode-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-iirfilternode-interface/ctor-iirfilter-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/automation-changes-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-pannernode-interface/panner-equalpower-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-scriptprocessornode-interface/simple-input-output-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-stereopanner-interface/no-dezippering-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-waveshapernode-interface/waveshaper-copy-curve-expected.txt:
+
 2020-08-26  Alex Christensen  <achristensen@webkit.org>
 
         Implement DataTransfer constructor and multipart form filename encoding as other browsers do

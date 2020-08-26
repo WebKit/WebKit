@@ -51,7 +51,7 @@ PASS   node = new IIRFilterNode(, {"feedback":[1,0.5]}) threw TypeError: "Member
 PASS   node = new IIRFilterNode(c, {"feedforward":[1,0.5]}) threw TypeError: "Member IIRFilterOptions.feedback is required and must be an instance of sequence". 
 PASS < [constructor options] All assertions passed. (total 2 assertions) 
 PASS > [functionality]  
-PASS   Output of filter using new IIRFilter(...) is identical to the array [0,0.057564035058021545,0.14371919631958008,0.21500663459300995,0.29277658462524414,0.36597779393196106,0.43976423144340515,0.5111927390098572,0.5813755989074707,0.649405837059021,0.7153944969177246,0.7789545655250549,0.8399595022201538,0.898164689540863,0.9533984065055847,1.0054666996002197...]. 
+PASS   Output of filter using new IIRFilter(...) is identical to the array [0,0.06264829635620117,0.15637467801570892,0.23382455110549927,0.31818681955337524,0.3973837196826935,0.47697713971138,0.5537176728248596,0.6287721991539001,0.701111912727356,0.7708194255828857,0.8374375104904175,0.9007961750030518,0.9606006741523743,1.0166391134262085,1.068679690361023...]. 
 PASS < [functionality] All assertions passed. (total 1 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 6 tasks ran successfully. 
 
