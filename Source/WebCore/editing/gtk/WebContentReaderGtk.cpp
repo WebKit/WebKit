@@ -75,7 +75,7 @@ bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type,
 {
     ASSERT(frame.document());
     auto& document = *frame.document();
-    addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, Blob::create(buffer.get(), type)), preferredPresentationSize));
+    addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, Blob::create(&document, buffer.get(), type)), preferredPresentationSize));
 
     return fragment;
 }

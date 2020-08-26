@@ -836,7 +836,7 @@ void WebAutomationSessionProxy::setFilesForInputFileUpload(WebCore::PageIdentifi
         }
     }
     for (const auto& path : filenames)
-        fileObjects.append(WebCore::File::create(path));
+        fileObjects.append(WebCore::File::create(&inputElement.document(), path));
     inputElement.setFiles(WebCore::FileList::create(WTFMove(fileObjects)));
 
     completionHandler(WTF::nullopt);

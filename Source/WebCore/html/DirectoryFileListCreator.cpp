@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DirectoryFileListCreator.h"
 
+#include "Document.h"
 #include "FileChooser.h"
 #include "FileList.h"
 #include <wtf/CrossThreadCopier.h>
@@ -39,8 +40,20 @@ DirectoryFileListCreator::~DirectoryFileListCreator()
     ASSERT(!m_completionHandler);
 }
 
-static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<Ref<File>>& fileObjects)
+struct FileInformation {
+    String path;
+    String relativePath;
+    String displayName;
+
+    FileInformation isolatedCopy() const
+    {
+        return FileInformation { path.isolatedCopy(), relativePath.isolatedCopy(), displayName.isolatedCopy() };
+    }
+};
+
+static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<FileInformation>& files)
 {
+    ASSERT(!isMainThread());
     for (auto& childPath : FileSystem::listDirectory(directory, "*")) {
         auto metadata = FileSystem::fileMetadata(childPath);
         if (!metadata)
@@ -51,20 +64,34 @@ static void appendDirectoryFiles(const String& directory, const String& relative
 
         String childRelativePath = relativePath + "/" + FileSystem::pathGetFileName(childPath);
         if (metadata.value().type == FileMetadata::Type::Directory)
-            appendDirectoryFiles(childPath, childRelativePath, fileObjects);
+            appendDirectoryFiles(childPath, childRelativePath, files);
         else if (metadata.value().type == FileMetadata::Type::File)
-            fileObjects.append(File::createWithRelativePath(childPath, childRelativePath));
+            files.append(FileInformation { childPath, childRelativePath, { } });
     }
 }
 
-static Ref<FileList> createFileList(const Vector<FileChooserFileInfo>& paths)
+static Vector<FileInformation> gatherFileInformation(const Vector<FileChooserFileInfo>& paths)
 {
-    Vector<Ref<File>> fileObjects;
+    ASSERT(!isMainThread());
+    Vector<FileInformation> files;
     for (auto& info : paths) {
         if (FileSystem::fileIsDirectory(info.path, FileSystem::ShouldFollowSymbolicLinks::No))
-            appendDirectoryFiles(info.path, FileSystem::pathGetFileName(info.path), fileObjects);
+            appendDirectoryFiles(info.path, FileSystem::pathGetFileName(info.path), files);
         else
-            fileObjects.append(File::create(info.path, { }, info.displayName));
+            files.append(FileInformation { info.path, { }, info.displayName });
+    }
+    return files;
+}
+
+static Ref<FileList> toFileList(Document* document, const Vector<FileInformation>& files)
+{
+    ASSERT(isMainThread());
+    Vector<Ref<File>> fileObjects;
+    for (auto& file : files) {
+        if (file.relativePath.isNull())
+            fileObjects.append(File::create(document, file.path, { }, file.displayName));
+        else
+            fileObjects.append(File::createWithRelativePath(document, file.path, file.relativePath));
     }
     return FileList::create(WTFMove(fileObjects));
 }
@@ -75,13 +102,14 @@ DirectoryFileListCreator::DirectoryFileListCreator(CompletionHandler&& completio
 {
 }
 
-void DirectoryFileListCreator::start(const Vector<FileChooserFileInfo>& paths)
+void DirectoryFileListCreator::start(Document* document, const Vector<FileChooserFileInfo>& paths)
 {
     // Resolve directories on a background thread to avoid blocking the main thread.
-    m_workQueue->dispatch([this, protectedThis = makeRef(*this), paths = crossThreadCopy(paths)]() mutable {
-        callOnMainThread([this, protectedThis = WTFMove(protectedThis), fileList = createFileList(paths)]() mutable {
+    m_workQueue->dispatch([this, protectedThis = makeRef(*this), document = makeRefPtr(document), paths = crossThreadCopy(paths)]() mutable {
+        auto files = gatherFileInformation(paths);
+        callOnMainThread([this, protectedThis = WTFMove(protectedThis), document = WTFMove(document), files = crossThreadCopy(files)]() mutable {
             if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
-                completionHandler(WTFMove(fileList));
+                completionHandler(toFileList(document.get(), files));
         });
     });
 }

@@ -77,7 +77,7 @@ ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
     });
 }
 
-Optional<FetchBody> FetchBody::fromFormData(FormData& formData)
+Optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context, FormData& formData)
 {
     ASSERT(!formData.isEmpty());
 
@@ -90,7 +90,7 @@ Optional<FetchBody> FetchBody::fromFormData(FormData& formData)
     auto url = formData.asBlobURL();
     if (!url.isNull()) {
         // FIXME: Properly set mime type and size of the blob.
-        Ref<const Blob> blob = Blob::deserialize(url, { }, { }, { });
+        Ref<const Blob> blob = Blob::deserialize(&context, url, { }, { }, { });
         return FetchBody { WTFMove(blob) };
     }
 

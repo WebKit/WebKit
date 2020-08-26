@@ -182,7 +182,7 @@ ExceptionOr<void> MediaRecorder::stopRecording()
         queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, buffer = WTFMove(buffer), mimeType]() mutable {
             if (!m_isActive)
                 return;
-            dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(buffer.releaseNonNull(), mimeType) : Blob::create()));
+            dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(scriptExecutionContext(), buffer.releaseNonNull(), mimeType) : Blob::create(scriptExecutionContext())));
 
             if (!m_isActive)
                 return;
@@ -204,7 +204,7 @@ ExceptionOr<void> MediaRecorder::requestData()
             if (!m_isActive)
                 return;
 
-            dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(buffer.releaseNonNull(), mimeType) : Blob::create()));
+            dispatchEvent(BlobEvent::create(eventNames().dataavailableEvent, Event::CanBubble::No, Event::IsCancelable::No, buffer ? Blob::create(scriptExecutionContext(), buffer.releaseNonNull(), mimeType) : Blob::create(scriptExecutionContext())));
 
             if (m_timeSlice)
                 m_timeSliceTimer.startOneShot(Seconds::fromMilliseconds(*m_timeSlice));

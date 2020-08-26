@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebCorePasteboardFileReader.h"
 
+#include "Document.h"
 #include "File.h"
 #include "SharedBuffer.h"
 
@@ -35,12 +36,12 @@ WebCorePasteboardFileReader::~WebCorePasteboardFileReader() = default;
 
 void WebCorePasteboardFileReader::readFilename(const String& filename)
 {
-    files.append(File::create(filename));
+    files.append(File::create(context.get(), filename));
 }
 
 void WebCorePasteboardFileReader::readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&& buffer)
 {
-    files.append(File::create(Blob::create(buffer.get(), type), filename));
+    files.append(File::create(context.get(), Blob::create(context.get(), buffer.get(), type), filename));
 }
 
 }

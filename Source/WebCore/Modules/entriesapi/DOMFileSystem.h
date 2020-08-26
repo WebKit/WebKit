@@ -63,7 +63,7 @@ public:
     void getEntry(ScriptExecutionContext&, FileSystemDirectoryEntry&, const String& virtualPath, const FileSystemDirectoryEntry::Flags&, GetEntryCallback&&);
 
     using GetFileCallback = WTF::Function<void(ExceptionOr<Ref<File>>&&)>;
-    void getFile(FileSystemFileEntry&, GetFileCallback&&);
+    void getFile(ScriptExecutionContext&, FileSystemFileEntry&, GetFileCallback&&);
 
 private:
     explicit DOMFileSystem(Ref<File>&&);

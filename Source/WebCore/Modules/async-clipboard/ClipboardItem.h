@@ -41,6 +41,7 @@ class DeferredPromise;
 class DOMPromise;
 class Navigator;
 class PasteboardCustomData;
+class ScriptExecutionContext;
 struct PasteboardItemInfo;
 
 class ClipboardItem : public RefCounted<ClipboardItem> {
@@ -55,7 +56,7 @@ public:
 
     static Ref<ClipboardItem> create(Vector<KeyValuePair<String, RefPtr<DOMPromise>>>&&, const Options&);
     static Ref<ClipboardItem> create(Clipboard&, const PasteboardItemInfo&);
-    static Ref<Blob> blobFromString(const String& stringData, const String& type);
+    static Ref<Blob> blobFromString(ScriptExecutionContext*, const String& stringData, const String& type);
 
     Vector<String> types() const;
     void getType(const String&, Ref<DeferredPromise>&&);

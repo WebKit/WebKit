@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "ContextDestructionObserver.h"
 #include "DataTransfer.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
@@ -44,11 +45,11 @@ namespace WebCore {
 class DataTransferItem;
 class File;
 
-class DataTransferItemList final : public ScriptWrappable, public CanMakeWeakPtr<DataTransferItemList> {
+class DataTransferItemList final : public ScriptWrappable, public ContextDestructionObserver, public CanMakeWeakPtr<DataTransferItemList> {
     WTF_MAKE_NONCOPYABLE(DataTransferItemList);
     WTF_MAKE_ISO_ALLOCATED(DataTransferItemList);
 public:
-    DataTransferItemList(DataTransfer&);
+    DataTransferItemList(Document&, DataTransfer&);
     ~DataTransferItemList();
 
     // DataTransfer owns DataTransferItemList, and DataTransfer is kept alive as long as DataTransferItemList is alive.
@@ -75,6 +76,7 @@ public:
 
 private:
     Vector<Ref<DataTransferItem>>& ensureItems() const;
+    Document* document() const;
 
     DataTransfer& m_dataTransfer;
     mutable Optional<Vector<Ref<DataTransferItem>>> m_items;

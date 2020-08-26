@@ -2296,7 +2296,7 @@ private:
         if (m_isJSIDBSerializationGlobalObject)
             return true;
 
-        file = File::deserialize(filePath, URL(URL(), url->string()), type->string(), name->string(), optionalLastModified);
+        file = File::deserialize(scriptExecutionContextFromExecState(m_lexicalGlobalObject), filePath, URL(URL(), url->string()), type->string(), name->string(), optionalLastModified);
         return true;
     }
 
@@ -3225,7 +3225,7 @@ private:
                 return JSValue();
             if (m_isJSIDBSerializationGlobalObject)
                 return jsNull();
-            return getJSValue(Blob::deserialize(URL(URL(), url->string()), type->string(), size, blobFilePathForBlobURL(url->string())).get());
+            return getJSValue(Blob::deserialize(scriptExecutionContextFromExecState(m_lexicalGlobalObject), URL(URL(), url->string()), type->string(), size, blobFilePathForBlobURL(url->string())).get());
         }
         case StringTag: {
             CachedStringRef cachedString;

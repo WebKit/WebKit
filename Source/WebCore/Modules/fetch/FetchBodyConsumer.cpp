@@ -38,11 +38,11 @@
 
 namespace WebCore {
 
-static inline Ref<Blob> blobFromData(const unsigned char* data, unsigned length, const String& contentType)
+static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, const unsigned char* data, unsigned length, const String& contentType)
 {
     Vector<uint8_t> value(length);
     memcpy(value.data(), data, length);
-    return Blob::create(WTFMove(value), Blob::normalizedContentType(contentType));
+    return Blob::create(context, WTFMove(value), Blob::normalizedContentType(contentType));
 }
 
 // https://mimesniff.spec.whatwg.org/#http-quoted-string-token-code-point
@@ -126,9 +126,9 @@ static Optional<MimeType> parseMIMEType(const String& contentType)
 }
 
 // https://fetch.spec.whatwg.org/#concept-body-package-data
-static RefPtr<DOMFormData> packageFormData(const String& contentType, const char* data, size_t length)
+static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext* context, const String& contentType, const char* data, size_t length)
 {
-    auto parseMultipartPart = [] (const char* part, size_t partLength, DOMFormData& form) -> bool {
+    auto parseMultipartPart = [context] (const char* part, size_t partLength, DOMFormData& form) -> bool {
         const char* headerEnd = static_cast<const char*>(memmem(part, partLength, "\r\n\r\n", 4));
         if (!headerEnd)
             return false;
@@ -167,7 +167,7 @@ static RefPtr<DOMFormData> packageFormData(const String& contentType, const char
                 contentType = stripLeadingAndTrailingHTTPSpaces(header.substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength));
             }
 
-            form.append(name, File::create(Blob::create(SharedBuffer::create(bodyBegin, bodyLength).get(), Blob::normalizedContentType(contentType)).get(), filename).get(), filename);
+            form.append(name, File::create(context, Blob::create(context, SharedBuffer::create(bodyBegin, bodyLength).get(), Blob::normalizedContentType(contentType)).get(), filename).get(), filename);
         }
         return true;
     };
@@ -213,13 +213,15 @@ static RefPtr<DOMFormData> packageFormData(const String& contentType, const char
 
 static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyConsumer::Type type, const String& contentType, const unsigned char* data, unsigned length)
 {
+    auto* context = promise->scriptExecutionContext();
+
     switch (type) {
     case FetchBodyConsumer::Type::ArrayBuffer:
         fulfillPromiseWithArrayBuffer(WTFMove(promise), data, length);
         return;
     case FetchBodyConsumer::Type::Blob:
-        promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([&data, &length, &contentType](auto&) {
-            return blobFromData(data, length, contentType);
+        promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([&data, &length, &contentType, context](auto&) {
+            return blobFromData(context, data, length, contentType);
         });
         return;
     case FetchBodyConsumer::Type::JSON:
@@ -229,7 +231,7 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
         promise->resolve<IDLDOMString>(TextResourceDecoder::textFromUTF8(data, length));
         return;
     case FetchBodyConsumer::Type::FormData:
-        if (auto formData = packageFormData(contentType, reinterpret_cast<const char*>(data), length))
+        if (auto formData = packageFormData(context, contentType, reinterpret_cast<const char*>(data), length))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
             promise->reject(TypeError);
@@ -286,14 +288,16 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
         return;
     }
 
+    auto* context = promise->scriptExecutionContext();
+
     ASSERT(m_type != Type::None);
     switch (m_type) {
     case Type::ArrayBuffer:
         fulfillPromiseWithArrayBuffer(WTFMove(promise), takeAsArrayBuffer().get());
         return;
     case Type::Blob:
-        promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([this](auto&) {
-            return takeAsBlob();
+        promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([this, context](auto&) {
+            return takeAsBlob(context);
         });
         return;
     case Type::JSON:
@@ -304,7 +308,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
         return;
     case FetchBodyConsumer::Type::FormData: {
         auto buffer = takeData();
-        if (auto formData = packageFormData(contentType, buffer ? buffer->data() : nullptr, buffer ? buffer->size() : 0))
+        if (auto formData = packageFormData(context, contentType, buffer ? buffer->data() : nullptr, buffer ? buffer->size() : 0))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
             promise->reject(TypeError);
@@ -349,13 +353,13 @@ RefPtr<JSC::ArrayBuffer> FetchBodyConsumer::takeAsArrayBuffer()
     return arrayBuffer;
 }
 
-Ref<Blob> FetchBodyConsumer::takeAsBlob()
+Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context)
 {
     if (!m_buffer)
-        return Blob::create(Vector<uint8_t>(), Blob::normalizedContentType(m_contentType));
+        return Blob::create(context, Vector<uint8_t>(), Blob::normalizedContentType(m_contentType));
 
     // FIXME: We should try to move m_buffer to Blob without doing extra copy.
-    return blobFromData(reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size(), m_contentType);
+    return blobFromData(context, reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size(), m_contentType);
 }
 
 String FetchBodyConsumer::takeAsText()

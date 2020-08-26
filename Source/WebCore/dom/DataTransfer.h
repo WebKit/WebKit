@@ -39,6 +39,7 @@ class Element;
 class FileList;
 class File;
 class Pasteboard;
+class ScriptExecutionContext;
 enum class WebContentReadingPolicy : bool;
 
 class DataTransfer : public RefCounted<DataTransfer> {
@@ -57,11 +58,12 @@ public:
     String effectAllowed() const;
     void setEffectAllowed(const String&);
 
-    DataTransferItemList& items();
+    DataTransferItemList& items(Document&);
     Vector<String> types() const;
     Vector<String> typesForItemList() const;
 
-    FileList& files() const;
+    FileList& files(Document*) const;
+    FileList& files(Document&) const;
 
     void clearData(const String& type = String());
 
@@ -108,7 +110,7 @@ public:
 #endif
 
     void didAddFileToItemList();
-    void updateFileList();
+    void updateFileList(ScriptExecutionContext*);
 
 private:
     enum class Type { CopyAndPaste, DragAndDropData, DragAndDropFiles, InputEvent };
@@ -127,7 +129,7 @@ private:
 
     enum class AddFilesType { No, Yes };
     Vector<String> types(AddFilesType) const;
-    Vector<Ref<File>> filesFromPasteboardAndItemList() const;
+    Vector<Ref<File>> filesFromPasteboardAndItemList(ScriptExecutionContext*) const;
 
     String m_originIdentifier;
     StoreMode m_storeMode;
