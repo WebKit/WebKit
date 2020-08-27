@@ -64,6 +64,11 @@ public:
         return m_epoch == s_none;
     }
     
+    explicit operator bool() const
+    {
+        return !!*this;
+    }
+    
     Epoch next() const
     {
         Epoch result;

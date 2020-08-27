@@ -275,4 +275,8 @@ static inline BasicBlock* blockForBytecodeIndex(Vector<BasicBlock*>& linkingTarg
 
 } } // namespace JSC::DFG
 
+namespace WTF {
+void printInternal(PrintStream&, JSC::DFG::BasicBlock*);
+}
+
 #endif // ENABLE(DFG_JIT)

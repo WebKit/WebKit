@@ -115,16 +115,16 @@ void SSACalculator::dump(PrintStream& out) const
         out.print(comma);
         m_variables[i].dumpVerbose(out);
     }
-    out.print("], Defs: [");
+    out.print("], \nDefs: [");
     comma = CommaPrinter();
     for (Def* def : const_cast<SSACalculator*>(this)->m_defs)
         out.print(comma, *def);
-    out.print("], Phis: [");
+    out.print("], \nPhis: [");
     comma = CommaPrinter();
     for (Def* def : const_cast<SSACalculator*>(this)->m_phis)
         out.print(comma, *def);
-    out.print("], Block data: [");
-    comma = CommaPrinter();
+    out.print("], \nBlock data: [");
+    comma = CommaPrinter(",\n");
     for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
         BasicBlock* block = m_graph.block(blockIndex);
         if (!block)

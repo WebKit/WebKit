@@ -1722,6 +1722,9 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
     BytecodeIndex oldIndex = m_currentIndex;
     m_currentIndex = BytecodeIndex(0);
 
+    // We don't want to exit here since we could do things like arity fixup which complicates OSR exit availability.
+    m_exitOK = false;
+
     switch (kind) {
     case InlineCallFrame::GetterCall:
     case InlineCallFrame::SetterCall: {

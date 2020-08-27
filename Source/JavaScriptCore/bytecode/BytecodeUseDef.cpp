@@ -100,9 +100,9 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
     case op_unreachable:
     case op_super_sampler_begin:
     case op_super_sampler_end:
+    case op_get_scope:
         return;
 
-    USES(OpGetScope, dst)
     USES(OpToThis, srcDst)
     USES(OpCheckTdz, targetVirtualRegister)
     USES(OpIdentityWithProfile, srcDst)

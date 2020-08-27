@@ -1,5 +1,90 @@
 2020-08-27  Keith Miller  <keith_miller@apple.com>
 
+        OSR availability validation should run for any node with exitOK
+        https://bugs.webkit.org/show_bug.cgi?id=215672
+
+        Reviewed by Saam Barati.
+
+        Currently we only validate OSR exit availability if a node would
+        say `mayExit(graph, node) != DoesNotExit` and the node is marked
+        as exitOK. However, it would be perfectly valid to insert a node
+        that exits anywhere we have a node marked exitOK. So with this
+        patch we now validate all places where it would ever be possible
+        to OSR exit.
+
+        Relaxing our criteria revealed a number of bugs however. Which I
+        will describe below in, IMO, increasing complexity/subtly.
+
+        First, we currently don't mark arity fixup during inlining as not
+        exitOK. However, since our arity code says its code origin is
+        OpEnter, we assume arity fixup has already happened.
+
+        Second, OpGetScope, should not mark its first argument as used
+        since it's not actually used. This is problematic because we could
+        have a loop where OpGetScope is the first bytecode, namely when
+        doing tail recursive inlining. If we were in that position, there
+        could be a local that was used at a merge point at the loop
+        backedge that had two MovHint defs from both predecessors. In DFG
+        IR this would look like:
+
+        BB#1:
+        @1: MovHint(Undefined, loc1)
+        ...
+        Jump(#2)
+
+        BB#2:
+        ... // loc1 is live here in bytecode
+        @2: MovHint(@scopeObject, loc1)
+        @3: SetLocal(@scopeObject, loc1)
+        Branch(#3, #4) // #4 is the successor of the tail call loop
+
+        BB#3:
+        @4 MovHint(Undefined, loc1)
+        ...
+        Jump(#2)
+
+        When we do CPS conversion the MovHints at @1 and @4 will be seen
+        as different variables (there's no GetLocal). Then, after, during
+        SSA conversion we won't insert a phi connecting them, making the
+        argument to OpGetScope, in this case loc1, unrecoverable there are
+        conflicting nodes and the value isn't saved on the stack.
+
+        There were also issues with MovHintRemoval Phase but rather than
+        fix them we opted to just remove the phase as it didn't show any
+        performance impact. I'll describe the issues I found below for
+        completeness, however.
+
+        Third, MovHint removal phase had a bug where it would not mark
+        sections where a zombied MovHint has yet to be killed as not
+        exitOK. So in theory another phase could come along and insert an
+        exiting node there.
+
+        Fourth, MovHint removal phase had a second bug where a MovHint
+        that was not killed in the current block would be zombied, which
+        is wrong for SSA. It's wrong because the MovHinted value could
+        still be live for OSR exit in a successor block.
+
+        Lastly, this patch adds some new verbose options as well as the ability to
+        dump a DFG::BasicBlock without dereferencing it.
+
+        * bytecode/BytecodeUseDef.cpp:
+        (JSC::computeUsesForBytecodeIndexImpl):
+        * dfg/DFGBasicBlock.cpp:
+        (WTF::printInternal):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::propagatePhis):
+        * dfg/DFGEpoch.h:
+        (JSC::DFG::Epoch::operator bool const):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        * dfg/DFGSSACalculator.cpp:
+        (JSC::DFG::SSACalculator::dump const):
+
+2020-08-27  Keith Miller  <keith_miller@apple.com>
+
         JSClassRef should work with JS class syntax.
         https://bugs.webkit.org/show_bug.cgi?id=215047
 

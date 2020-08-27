@@ -134,8 +134,7 @@ public:
                 
                 for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                     Node* node = block->at(nodeIndex);
-                    // FIXME: The mayExit status of a node doesn't seem like it should mean we don't need to have everything available.
-                    if (mayExit(m_graph, node) != DoesNotExit && node->origin.exitOK) {
+                    if (node->origin.exitOK) {
                         // If we're allowed to exit here, the heap must be in a state
                         // where exiting wouldn't crash. These particular fields are
                         // required for correctness because we use them during OSR exit
@@ -143,7 +142,8 @@ public:
                         // to be dead.
 
                         CodeOrigin exitOrigin = node->origin.forExit;
-                        AvailabilityMap& availabilityMap = calculator.m_availability;
+                        // FIXME: availabilityMap seems like it should be able to be a reference to the calculator's map. https://bugs.webkit.org/show_bug.cgi?id=215675
+                        AvailabilityMap availabilityMap = calculator.m_availability;
                         availabilityMap.pruneByLiveness(m_graph, exitOrigin);
 
                         for (auto heapPair : availabilityMap.m_heap) {

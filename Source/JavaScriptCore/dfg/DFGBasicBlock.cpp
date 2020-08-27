@@ -150,5 +150,14 @@ BasicBlock::SSAData::~SSAData() { }
 
 } } // namespace JSC::DFG
 
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::DFG::BasicBlock* block)
+{
+    out.print(*block);
+}
+
+}
+
 #endif // ENABLE(DFG_JIT)
 
