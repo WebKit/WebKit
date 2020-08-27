@@ -1,3 +1,17 @@
+2020-08-26  Saam Barati  <sbarati@apple.com>
+
+        Make isIndex use MAX_ARRAY_INDEX
+        https://bugs.webkit.org/show_bug.cgi?id=215872
+
+        Reviewed by Darin Adler.
+
+        It's already written in such a way where it relies on what MAX_ARRAY_INDEX
+        is defined as. But instead of MAX_ARRAY_INDEX, the function was hardcoding
+        MAX_ARRAY_INDEX + 1.
+
+        * runtime/Identifier.h:
+        (JSC::isIndex):
+
 2020-08-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Use unsigned type for `length` of JSFunction

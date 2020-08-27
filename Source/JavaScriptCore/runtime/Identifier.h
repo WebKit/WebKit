@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "ArrayConventions.h"
 #include "PrivateName.h"
 #include "VM.h"
 #include <wtf/Optional.h>
@@ -33,7 +34,7 @@ class CallFrame;
 
 ALWAYS_INLINE bool isIndex(uint32_t index)
 {
-    return index != 0xFFFFFFFFU;
+    return index <= MAX_ARRAY_INDEX;
 }
 
 template <typename CharType>
