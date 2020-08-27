@@ -79,12 +79,21 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(JSGlobalObject* glob
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* constructor = callFrame->jsCallee();
+    JSValue callee = callFrame->jsCallee();
+    T* constructor = jsCast<T*>(callFrame->jsCallee());
     JSContextRef ctx = toRef(globalObject);
     JSObjectRef constructorRef = toRef(constructor);
 
-    JSObjectCallAsConstructorCallback callback = jsCast<T*>(constructor)->constructCallback();
+    JSObjectCallAsConstructorCallback callback = constructor->constructCallback();
     if (callback) {
+        JSValue prototype;
+        JSValue newTarget = callFrame->newTarget();
+        // If we are doing a derived class construction get the .prototype property off the new target first so we behave closer to normal JS.
+        if (newTarget != constructor) {
+            prototype = newTarget.get(globalObject, vm.propertyNames->prototype);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
         size_t argumentCount = callFrame->argumentCount();
         Vector<JSValueRef, 16> arguments;
         arguments.reserveInitialCapacity(argumentCount);
@@ -97,6 +106,7 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(JSGlobalObject* glob
             JSLock::DropAllLocks dropAllLocks(globalObject);
             result = callback(ctx, constructorRef, argumentCount, arguments.data(), &exception);
         }
+
         if (exception) {
             throwException(globalObject, scope, toJS(globalObject, exception));
             return JSValue::encode(jsUndefined());
@@ -104,10 +114,19 @@ EncodedJSValue JSC_HOST_CALL APICallbackFunction::construct(JSGlobalObject* glob
         // result must be a valid JSValue.
         if (!result)
             return throwVMTypeError(globalObject, scope);
-        return JSValue::encode(toJS(result));
+
+        JSObject* newObject = toJS(result);
+        // This won't trigger proxy traps on newObject's prototype handler but that's probably desirable here anyway.
+        if (newTarget != constructor && newObject->getPrototypeDirect(vm) == constructor->get(globalObject, vm.propertyNames->prototype)) {
+            RETURN_IF_EXCEPTION(scope, { });
+            newObject->setPrototype(vm, globalObject, prototype);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        return JSValue::encode(newObject);
     }
     
-    return JSValue::encode(toJS(JSObjectMake(ctx, jsCast<JSCallbackConstructor*>(constructor)->classRef(), nullptr)));
+    return JSValue::encode(toJS(JSObjectMake(ctx, jsCast<JSCallbackConstructor*>(callee)->classRef(), nullptr)));
 }
 
 } // namespace JSC

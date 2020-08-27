@@ -29,6 +29,7 @@
 #include "JSGlobalObjectInlines.h"
 #include "MarkedJSValueRefArray.h"
 #include <JavaScriptCore/JSContextRefPrivate.h>
+#include <JavaScriptCore/JSObjectRefPrivate.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <wtf/DataLog.h>
 #include <wtf/Expected.h>
@@ -47,6 +48,11 @@ public:
 
     APIString(const char* string)
         : m_string(JSStringCreateWithUTF8CString(string))
+    {
+    }
+
+    APIString(const String& string)
+        : APIString(string.utf8().data())
     {
     }
 
@@ -143,6 +149,8 @@ public:
     void promiseEarlyHandledRejections();
     void topCallFrameAccess();
     void markedJSValueArrayAndGC();
+    void classDefinitionWithJSSubclass();
+    void proxyReturnedWithJSSubclassing();
 
     int failed() const { return m_failed; }
 
@@ -161,6 +169,8 @@ private:
     ScriptResult callFunction(const char* functionSource, ArgumentTypes... arguments);
     template<typename... ArgumentTypes>
     bool functionReturnsTrue(const char* functionSource, ArgumentTypes... arguments);
+
+    bool scriptResultIs(ScriptResult, JSValueRef);
 
     // Ways to make sets of interesting things.
     APIVector<JSObjectRef> interestingObjects();
@@ -236,6 +246,13 @@ bool TestAPI::functionReturnsTrue(const char* functionSource, ArgumentTypes... a
     if (!result)
         return false;
     return JSValueIsStrictEqual(context, trueValue, result.value());
+}
+
+bool TestAPI::scriptResultIs(ScriptResult result, JSValueRef value)
+{
+    if (!result)
+        return false;
+    return JSValueIsStrictEqual(context, result.value(), value);
 }
 
 template<typename... Strings>
@@ -621,22 +638,18 @@ void TestAPI::topCallFrameAccess()
 
 void TestAPI::markedJSValueArrayAndGC()
 {
-    auto testMarkedJSValueArray = [&](unsigned count) {
+    auto testMarkedJSValueArray = [&] (unsigned count) {
         auto* globalObject = toJS(context);
         JSC::JSLockHolder locker(globalObject->vm());
         JSC::MarkedJSValueRefArray values(context, count);
         for (unsigned index = 0; index < count; ++index) {
-            String target = makeString("Prefix", index);
-            auto holder = OpaqueJSString::tryCreate(target);
-            JSValueRef string = JSValueMakeString(context, holder.get());
+            JSValueRef string = JSValueMakeString(context, APIString(makeString("Prefix", index)));
             values[index] = string;
         }
         JSSynchronousGarbageCollectForDebugging(context);
         bool ok = true;
         for (unsigned index = 0; index < count; ++index) {
-            String target = makeString("Prefix", index);
-            auto holder = OpaqueJSString::tryCreate(target);
-            JSValueRef string = JSValueMakeString(context, holder.get());
+            JSValueRef string = JSValueMakeString(context, APIString(makeString("Prefix", index)));
             if (!JSValueIsStrictEqual(context, values[index], string))
                 ok = false;
         }
@@ -644,6 +657,52 @@ void TestAPI::markedJSValueArrayAndGC()
     };
     testMarkedJSValueArray(4);
     testMarkedJSValueArray(1000);
+}
+
+void TestAPI::classDefinitionWithJSSubclass()
+{
+    const static JSClassDefinition definition = kJSClassDefinitionEmpty;
+    static JSClassRef jsClass = JSClassCreate(&definition);
+
+    auto constructor = [] (JSContextRef ctx, JSObjectRef, size_t, const JSValueRef*, JSValueRef*) -> JSObjectRef {
+        return JSObjectMake(ctx, jsClass, nullptr);
+    };
+
+    JSObjectRef Superclass = JSObjectMakeConstructor(context, jsClass, constructor);
+
+    ScriptResult result = callFunction("(function (Superclass) { class Subclass extends Superclass { method() { return 'value'; } }; return new Subclass(); })", Superclass);
+    check(!!result, "creating a subclass should not throw.");
+    check(JSValueIsObject(context, result.value()), "result of construction should have been an object.");
+    JSObjectRef subclass = const_cast<JSObjectRef>(result.value());
+
+    check(JSObjectHasProperty(context, subclass, APIString("method")), "subclass should have derived classes functions.");
+    check(functionReturnsTrue("(function (subclass, Superclass) { return subclass instanceof Superclass; })", subclass, Superclass), "JS subclass should instanceof the Superclass");
+
+    JSClassRelease(jsClass);
+}
+
+void TestAPI::proxyReturnedWithJSSubclassing()
+{
+    const static JSClassDefinition definition = kJSClassDefinitionEmpty;
+    static JSClassRef jsClass = JSClassCreate(&definition);
+    static TestAPI& test = *this;
+
+    auto constructor = [] (JSContextRef ctx, JSObjectRef, size_t, const JSValueRef*, JSValueRef*) -> JSObjectRef {
+        ScriptResult result = test.callFunction("(function (object) { return new Proxy(object, { getPrototypeOf: () => { globalThis.triggeredProxy = true; return object.__proto__; }}); })", JSObjectMake(ctx, jsClass, nullptr));
+        test.check(!!result, "creating a proxy should not throw");
+        test.check(JSValueIsObject(ctx, result.value()), "result of proxy creation should have been an object.");
+        return const_cast<JSObjectRef>(result.value());
+    };
+
+    JSObjectRef Superclass = JSObjectMakeConstructor(context, jsClass, constructor);
+
+    ScriptResult result = callFunction("(function (Superclass) { class Subclass extends Superclass { method() { return 'value'; } }; return new Subclass(); })", Superclass);
+    check(!!result, "creating a subclass should not throw.");
+    check(JSValueIsObject(context, result.value()), "result of construction should have been an object.");
+    JSObjectRef subclass = const_cast<JSObjectRef>(result.value());
+
+    check(scriptResultIs(evaluateScript("globalThis.triggeredProxy"), JSValueMakeUndefined(context)), "creating a subclass should not have triggered the proxy");
+    check(functionReturnsTrue("(function (subclass, Superclass) { return subclass.__proto__ == Superclass.prototype; })", subclass, Superclass), "proxy's prototype should match Superclass.prototype");
 }
 
 void configureJSCForTesting()
@@ -686,6 +745,8 @@ int testCAPIViaCpp(const char* filter)
     RUN(promiseUnhandledRejectionFromUnhandledRejectionCallback());
     RUN(promiseEarlyHandledRejections());
     RUN(markedJSValueArrayAndGC());
+    RUN(classDefinitionWithJSSubclass());
+    RUN(proxyReturnedWithJSSubclassing());
 
     if (tasks.isEmpty()) {
         dataLogLn("Filtered all tests: ERROR");

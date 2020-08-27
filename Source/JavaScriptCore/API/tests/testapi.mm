@@ -2859,7 +2859,8 @@ void testObjectiveCAPI(const char* filter)
     RUN(promiseCreateRejected());
     RUN(parallelPromiseResolveTest());
 
-    testObjectiveCAPIMain();
+    if (!filter)
+        testObjectiveCAPIMain();
 }
 
 #else

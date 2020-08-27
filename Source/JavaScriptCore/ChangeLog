@@ -1,3 +1,30 @@
+2020-08-27  Keith Miller  <keith_miller@apple.com>
+
+        JSClassRef should work with JS class syntax.
+        https://bugs.webkit.org/show_bug.cgi?id=215047
+
+        Reviewed by Darin Adler.
+
+        This is done by checking if value returned by the
+        callAsConstructor parameter to JSObjectMakeConstructor returns an
+        object allocated as the jsClass parameter. When that happens we
+        replace the prototype of the returned object with the prototype of
+        the new.target. Ideally we would have passed the derived classes
+        constructor from the beginning of our support for JS subclassing
+        but at this point that's probably not compatible with too many
+        applications.
+
+        * API/APICallbackFunction.h:
+        (JSC::APICallbackFunction::construct):
+        * API/JSObjectRef.h:
+        * API/tests/testapi.cpp:
+        (APIString::APIString):
+        (TestAPI::markedJSValueArrayAndGC):
+        (TestAPI::classDefinitionWithJSSubclass):
+        (testCAPIViaCpp):
+        * API/tests/testapi.mm:
+        (testObjectiveCAPI):
+
 2020-08-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Use jsTypeofIsObject() in DFG AI and operationTypeOfIsObject()

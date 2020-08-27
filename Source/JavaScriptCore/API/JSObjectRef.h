@@ -339,6 +339,8 @@ JSStaticValue StaticValueArray[] = {
 Standard JavaScript practice calls for storing function objects in prototypes, so they can be shared. The default JSClass created by JSClassCreate follows this idiom, instantiating objects with a shared, automatically generating prototype containing the class's function objects. The kJSClassAttributeNoAutomaticPrototype attribute specifies that a JSClass should not automatically generate such a prototype. The resulting JSClass instantiates objects with the default object prototype, and gives each instance object its own copy of the class's function objects.
 
 A NULL callback specifies that the default object callback should substitute, except in the case of hasProperty, where it specifies that getProperty should substitute.
+
+It is not possible to use JS subclassing with objects created from a class definition that sets callAsConstructor by default. Subclassing is supported via the JSObjectMakeConstructor function, however.
 */
 typedef struct {
     int                                 version; /* current (and only) version is 0 */
@@ -426,7 +428,7 @@ JS_EXPORT JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStrin
 @param jsClass A JSClass that is the class your constructor will assign to the objects its constructs. jsClass will be used to set the constructor's .prototype property, and to evaluate 'instanceof' expressions. Pass NULL to use the default object class.
 @param callAsConstructor A JSObjectCallAsConstructorCallback to invoke when your constructor is used in a 'new' expression. Pass NULL to use the default object constructor.
 @result A JSObject that is a constructor. The object's prototype will be the default object prototype.
-@discussion The default object constructor takes no arguments and constructs an object of class jsClass with no private data.
+@discussion The default object constructor takes no arguments and constructs an object of class jsClass with no private data. If the constructor is inherited via JS subclassing and the value returned from callAsConstructor was created with jsClass, then the returned object will have it's prototype overridden to the derived class's prototype.
 */
 JS_EXPORT JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObjectCallAsConstructorCallback callAsConstructor);
 
