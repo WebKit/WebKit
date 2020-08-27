@@ -1,3 +1,22 @@
+2020-08-27  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam does not need to store its values as double
+        https://bugs.webkit.org/show_bug.cgi?id=215903
+
+        Reviewed by Darin Adler.
+
+        AudioParam does not need to store its values as double. float precision is sufficient for
+        Web Audio values and we end up casting these values to float anyway.
+
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::AudioParam):
+        (WebCore::AudioParam::value):
+        (WebCore::AudioParam::smoothedValue):
+        (WebCore::AudioParam::smooth):
+        (WebCore::AudioParam::calculateFinalValues):
+        (WebCore::AudioParam::calculateTimelineValues):
+        * Modules/webaudio/AudioParam.h:
+
 2020-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling on select element doesn't work after scrolling the page

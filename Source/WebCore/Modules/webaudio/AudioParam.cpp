@@ -41,7 +41,7 @@ namespace WebCore {
 const double AudioParam::DefaultSmoothingConstant = 0.05;
 const double AudioParam::SnapThreshold = 0.001;
 
-AudioParam::AudioParam(BaseAudioContext& context, const String& name, double defaultValue, double minValue, double maxValue, AutomationRate automationRate, AutomationRateMode automationRateMode, unsigned units)
+AudioParam::AudioParam(BaseAudioContext& context, const String& name, float defaultValue, float minValue, float maxValue, AutomationRate automationRate, AutomationRateMode automationRateMode)
     : AudioSummingJunction(context)
     , m_name(name)
     , m_value(defaultValue)
@@ -50,7 +50,6 @@ AudioParam::AudioParam(BaseAudioContext& context, const String& name, double def
     , m_maxValue(maxValue)
     , m_automationRate(automationRate)
     , m_automationRateMode(automationRateMode)
-    , m_units(units)
     , m_smoothedValue(defaultValue)
     , m_smoothingConstant(DefaultSmoothingConstant)
 #if !RELEASE_LOG_DISABLED
@@ -58,7 +57,7 @@ AudioParam::AudioParam(BaseAudioContext& context, const String& name, double def
     , m_logIdentifier(context.nextAudioParameterLogIdentifier())
 #endif
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "name = ", m_name, ", value = ", m_value, ", default = ", m_defaultValue, ", min = ", m_minValue, ", max = ", m_maxValue, ", units = ", m_units);
+    ALWAYS_LOG(LOGIDENTIFIER, "name = ", m_name, ", value = ", m_value, ", default = ", m_defaultValue, ", min = ", m_minValue, ", max = ", m_maxValue);
 }
 
 float AudioParam::value()
@@ -66,13 +65,13 @@ float AudioParam::value()
     // Update value for timeline.
     if (context().isAudioThread()) {
         bool hasValue;
-        float timelineValue = m_timeline.valueForContextTime(context(), narrowPrecisionToFloat(m_value), hasValue);
+        float timelineValue = m_timeline.valueForContextTime(context(), m_value, hasValue);
 
         if (hasValue)
             m_value = timelineValue;
     }
 
-    return narrowPrecisionToFloat(m_value);
+    return m_value;
 }
 
 void AudioParam::setValue(float value)
@@ -96,7 +95,7 @@ ExceptionOr<void> AudioParam::setAutomationRate(AutomationRate automationRate)
 
 float AudioParam::smoothedValue()
 {
-    return narrowPrecisionToFloat(m_smoothedValue);
+    return m_smoothedValue;
 }
 
 bool AudioParam::smooth()
@@ -104,7 +103,7 @@ bool AudioParam::smooth()
     // If values have been explicitly scheduled on the timeline, then use the exact value.
     // Smoothing effectively is performed by the timeline.
     bool useTimelineValue = false;
-    m_value = m_timeline.valueForContextTime(context(), narrowPrecisionToFloat(m_value), useTimelineValue);
+    m_value = m_timeline.valueForContextTime(context(), m_value, useTimelineValue);
 
     if (m_smoothedValue == m_value) {
         // Smoothed value has already approached and snapped to value.
@@ -229,12 +228,12 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
     } else {
         // Calculate control-rate (k-rate) intrinsic value.
         bool hasValue;
-        float timelineValue = m_timeline.valueForContextTime(context(), narrowPrecisionToFloat(m_value), hasValue);
+        float timelineValue = m_timeline.valueForContextTime(context(), m_value, hasValue);
 
         if (hasValue)
             m_value = timelineValue;
 
-        values[0] = narrowPrecisionToFloat(m_value);
+        values[0] = m_value;
     }
 
     // Now sum all of the audio-rate connections together (unity-gain summing junction).
@@ -263,7 +262,7 @@ void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
 
     // Note we're running control rate at the sample-rate.
     // Pass in the current value as default value.
-    m_value = m_timeline.valuesForTimeRange(startTime, endTime, narrowPrecisionToFloat(m_value), values, numberOfValues, sampleRate, sampleRate);
+    m_value = m_timeline.valuesForTimeRange(startTime, endTime, m_value, values, numberOfValues, sampleRate, sampleRate);
 }
 
 void AudioParam::connect(AudioNodeOutput* output)
