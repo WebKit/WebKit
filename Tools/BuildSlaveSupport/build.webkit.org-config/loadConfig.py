@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from buildbot.buildslave import BuildSlave
-from buildbot.scheduler import AnyBranchScheduler, Triggerable
+from buildbot.scheduler import AnyBranchScheduler, Triggerable, Nightly
 from buildbot.schedulers.forcesched import FixedParameter, ForceScheduler, StringParameter, BooleanParameter
 from buildbot.schedulers.filter import ChangeFilter
 from buildbot.process import buildstep, factory, properties

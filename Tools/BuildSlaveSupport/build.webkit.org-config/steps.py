@@ -310,6 +310,18 @@ class GenerateJSCBundle(shell.ShellCommand):
     descriptionDone = ["generated jsc bundle"]
     haltOnFailure = False
 
+
+class GenerateMiniBrowserBundle(shell.ShellCommand):
+    command = ["./Tools/Scripts/generate-bundle", "--builder-name", WithProperties("%(buildername)s"),
+               "--bundle=MiniBrowser", WithProperties("--platform=%(fullPlatform)s"),
+               WithProperties("--%(configuration)s"), WithProperties("--revision=%(got_revision)s"),
+               "--remote-config-file", "../../remote-minibrowser-bundle-upload-config.json"]
+    name = "generate-minibrowser-bundle"
+    description = ["generating minibrowser bundle"]
+    descriptionDone = ["generated minibrowser bundle"]
+    haltOnFailure = False
+
+
 class ExtractBuiltProduct(shell.ShellCommand):
     command = ["python", "./Tools/BuildSlaveSupport/built-product-archive",
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "extract"]

@@ -1,3 +1,36 @@
+2020-08-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Add bots for generating nightly bundle packages
+        https://bugs.webkit.org/show_bug.cgi?id=215623
+
+        Reviewed by Aakash Jain.
+
+        This adds a new type of bots for GTK and WPE that runs nightly (once per day).
+        The goal of this bots its to build WebKit for a specific distribution (Ubuntu LTS and LTS-1)
+        and generate a bundle with the result of the build. The bundles are then uploaded to a
+        server for consumption on other CIs like WPT.
+
+        The MiniBrowser bundle targets a specific distribution, so each one of this new bots has to
+        run the generate-minibrowser-bundle step. However, the JSC bundle is distro-agnostic because
+        for JSC is possible to bundle all the system libraries (similar to a static build).
+        That means that we only need to run the step generate-jsc-bundle in one of the bots.
+        This step for generating the JSC bundle was previously executed in the bot
+        'GTK Linux 64-bit Release (Build)'. This patch moves it to one of this new added bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/factories.py:
+        (BuildFactory):
+        (BuildFactory.__init__):
+        (TestFactory):
+        (TestFactory.__init__):
+        (BuildAndGenerateMiniBrowserBundleFactory):
+        (BuildAndGenerateMiniBrowserJSCBundleFactory):
+        * BuildSlaveSupport/build.webkit.org-config/loadConfig.py:
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (GenerateJSCBundle):
+        (GenerateMiniBrowserBundle):
+        * BuildSlaveSupport/build.webkit.org-config/steps_unittest.py:
+
 2020-08-26  Jonathan Bedard  <jbedard@apple.com>
 
        [webkitcorepy] Standard Popen mocking API

@@ -88,6 +88,8 @@
                     { "name": "gtk-linux-bot-13", "platform": "gtk" },
                     { "name": "gtk-linux-bot-14", "platform": "gtk" },
                     { "name": "gtk-linux-bot-15", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-16", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-17", "platform": "gtk" },
 
                     { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
                     { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
@@ -100,7 +102,9 @@
                     { "name": "wpe-linux-bot-3", "platform": "wpe" },
                     { "name": "wpe-linux-bot-4", "platform": "wpe" },
                     { "name": "wpe-linux-bot-5", "platform": "wpe" },
-                    { "name": "wpe-linux-bot-6", "platform": "wpe" }
+                    { "name": "wpe-linux-bot-6", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-7", "platform": "wpe" },
+                    { "name": "wpe-linux-bot-8", "platform": "wpe" }
                   ],
 
     "builders":   [
@@ -288,7 +292,7 @@
                       "slavenames": ["bot545"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release (Build)", "type": "BuildAndGenerateJSCBundle", "builddir": "gtk-linux-64-release",
+                      "name": "GTK Linux 64-bit Release (Build)", "type": "Build", "builddir": "gtk-linux-64-release",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js", "gtk-linux-64-release-tests-webdriver",
                                    "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests"],
@@ -353,6 +357,18 @@
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "additionalArguments": ["--no-experimental-features", "--no-media-source"],
                       "slavenames": ["gtk-linux-slave-11"]
+                    },
+                    {
+                      "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "type": "BuildAndGenerateMiniBrowserBundle", "builddir": "gtk-linux-64-packaging-nigthly-ubuntu1804",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-bubblewrap-sandbox"],
+                      "slavenames": ["gtk-linux-bot-16"]
+                    },
+                    {
+                      "name": "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "type": "BuildAndGenerateMiniBrowserJSCBundle", "builddir": "gtk-linux-64-packaging-nigthly-ubuntu2004",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-bubblewrap-sandbox"],
+                      "slavenames": ["gtk-linux-bot-17"]
                     },
                     {
                       "name": "WinCairo 64-bit WKL Release (Build)", "type": "Build", "builddir": "wincairo-wkl-release",
@@ -447,6 +463,18 @@
                       "name": "WPE Linux 64-bit Debug (Tests JS)", "type": "TestJS", "builddir": "wpe-linux-64-debug-tests-js",
                       "platform": "wpe", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["wpe-linux-bot-6"]
+                    },
+                    {
+                      "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "type": "BuildAndGenerateMiniBrowserBundle", "builddir": "wpe-linux-64-packaging-nigthly-ubuntu1804",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-bubblewrap-sandbox", "--cmakeargs=-DENABLE_WPE_QT_API=OFF"],
+                      "slavenames": ["wpe-linux-bot-7"]
+                    },
+                    {
+                      "name": "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004", "type": "BuildAndGenerateMiniBrowserBundle", "builddir": "wpe-linux-64-packaging-nigthly-ubuntu2004",
+                      "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
+                      "additionalArguments": ["--no-bubblewrap-sandbox", "--cmakeargs=-DENABLE_WPE_QT_API=OFF"],
+                      "slavenames": ["wpe-linux-bot-8"]
                     }
                   ],
 
@@ -599,6 +627,11 @@
                     },
                     { "type": "Triggerable", "name": "wpe-linux-64-debug-tests-js",
                       "builderNames": ["WPE Linux 64-bit Debug (Tests JS)"]
+                    },
+                    { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "trunk_filter",
+                      "branch": "trunk", "hour": 22, "minute": 0,
+                      "builderNames": ["GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "GTK-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004",
+                                       "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu1804", "WPE-Linux-64bit-Release-Packaging-Nightly-Ubuntu2004"]
                     }
                   ]
 }

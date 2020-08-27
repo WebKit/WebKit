@@ -47,6 +47,7 @@ class Factory(factory.BuildFactory):
 
 class BuildFactory(Factory):
     ShouldRunJSCBundleStep = False
+    ShouldRunMiniBrowserBundleStep = False
 
     def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, SVNMirror=None, device_model=None):
         Factory.__init__(self, platform, configuration, architectures, True, additionalArguments, SVNMirror, device_model)
@@ -56,14 +57,17 @@ class BuildFactory(Factory):
         else:
             self.addStep(CompileWebKit())
 
+        if self.ShouldRunJSCBundleStep:
+            self.addStep(GenerateJSCBundle())
+        if self.ShouldRunMiniBrowserBundleStep:
+            self.addStep(GenerateMiniBrowserBundle())
+
         if triggers:
             self.addStep(ArchiveBuiltProduct())
             self.addStep(UploadBuiltProduct())
             if platform.startswith('mac') or platform.startswith('ios-simulator') or platform.startswith('tvos-simulator') or platform.startswith('watchos-simulator'):
                 self.addStep(ArchiveMinifiedBuiltProduct())
                 self.addStep(UploadMinifiedBuiltProduct())
-            if self.ShouldRunJSCBundleStep:
-                self.addStep(GenerateJSCBundle())
             self.addStep(TransferToS3())
             self.addStep(trigger.Trigger(schedulerNames=triggers))
 
@@ -71,7 +75,6 @@ class BuildFactory(Factory):
 class TestFactory(Factory):
     JSCTestClass = RunJavaScriptCoreTests
     LayoutTestClass = RunWebKitTests
-    ShouldRunJSCBundleStep = False
 
     def getProduct(self):
         self.addStep(DownloadBuiltProduct())
@@ -112,8 +115,6 @@ class TestFactory(Factory):
             self.addStep(ArchiveTestResults())
             self.addStep(UploadTestResults())
             self.addStep(ExtractTestResults())
-        if self.ShouldRunJSCBundleStep:
-            self.addStep(GenerateJSCBundle())
         if platform == "gtk":
             self.addStep(RunGtkAPITests())
             if additionalArguments and "--display-server=wayland" in additionalArguments:
@@ -179,8 +180,13 @@ class BuildAndGenerateJSCBundleFactory(BuildFactory):
     ShouldRunJSCBundleStep = True
 
 
-class BuildAndNonLayoutTestAndGenerateJSCBundleFactory(BuildAndNonLayoutTestFactory):
+class BuildAndGenerateMiniBrowserBundleFactory(BuildFactory):
+    ShouldRunMiniBrowserBundleStep = True
+
+
+class BuildAndGenerateMiniBrowserJSCBundleFactory(BuildFactory):
     ShouldRunJSCBundleStep = True
+    ShouldRunMiniBrowserBundleStep = True
 
 
 class TestJSCFactory(Factory):
