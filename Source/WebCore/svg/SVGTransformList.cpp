@@ -65,9 +65,10 @@ AffineTransform SVGTransformList::concatenate() const
 template<typename CharacterType> bool SVGTransformList::parseGeneric(StringParsingBuffer<CharacterType>& buffer)
 {
     bool delimParsed = false;
+    skipOptionalSVGSpaces(buffer);
+
     while (buffer.hasCharactersRemaining()) {
         delimParsed = false;
-        skipOptionalSVGSpaces(buffer);
         
         auto parsedTransformType = SVGTransformable::parseTransformType(buffer);
         if (!parsedTransformType)

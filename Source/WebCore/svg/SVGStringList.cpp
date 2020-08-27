@@ -40,6 +40,8 @@ bool SVGStringList::parse(StringView data, UChar delimiter)
     };
 
     return readCharactersForParsing(data, [&](auto buffer) {
+        skipOptionalSVGSpaces(buffer);
+
         while (buffer.hasCharactersRemaining()) {
             auto start = buffer.position();
             

@@ -1,0 +1,29 @@
+This test verifies the leading and the trailing spaces are ignored when parising the attributes of an SVG list properties
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check SVGNumberList parsing
+PASS feColorMatrixElement.values.baseVal.length is 20
+PASS SVGListToString(feColorMatrixElement.values.baseVal) is "[0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 1 0]"
+
+Check SVGLengthList parsing
+PASS textElement.x.baseVal.length is 10
+PASS SVGListToString(textElement.x.baseVal) is "[10 20 30 40 50 60 70 80 90 100]"
+
+Check SVGPointList parsing
+PASS polylineElement.points.length is 4
+PASS SVGListToString(polylineElement.points) is "[0,0 100,0 100,100 0,100]"
+
+Check SVStringList parsing
+PASS textElement.systemLanguage.length is 10
+PASS SVGListToString(textElement.systemLanguage) is "[1 2 3 4 5 6 7 8 9 10]"
+
+Check SVTransformList parsing
+PASS textElement.transform.baseVal.length is 2
+PASS SVGListToString(textElement.transform.baseVal) is "[scale(2, 2) translate(10, 10)]"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -36,6 +36,8 @@ bool SVGLengthList::parse(StringView value)
     clearItems();
 
     return readCharactersForParsing(value, [&](auto buffer) {
+        skipOptionalSVGSpaces(buffer);
+
         while (buffer.hasCharactersRemaining()) {
             auto start = buffer.position();
 

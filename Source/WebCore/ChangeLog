@@ -1,3 +1,35 @@
+2020-08-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Leading white spaces should be ignored when parsing an SVG list property
+        https://bugs.webkit.org/show_bug.cgi?id=215602
+
+        Reviewed by Sam Weinig.
+
+        The SVG2.0 specs state that the CSS value definition syntax must be used
+        to define the syntax of the SVG attributes. The CSS syntax states that
+        leading and trailing spaces should be ignored when parsing the primitive
+        data types of all the SVG lists.
+
+        This has been inconsistency between WebKit and other browsers and within
+        WebKit itself. Parsing the attribute string of an SVGTransformList skips
+        the leading white spaces while the rest of the lists do not do that.
+
+        All the parsing methods should skip the leading white spaces before looping 
+        to parse individual items. The last step of the loop is to skip the trailing
+        spaces and the delimiter which we do already.
+
+        Tests: svg/custom/feColorMatrix-values-leading-spaces.html
+               svg/dom/svg-list-properties-parser-leading-trailing-spaces.html
+
+        * svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::parse):
+        * svg/SVGNumberList.cpp:
+        (WebCore::SVGNumberList::parse):
+        * svg/SVGStringList.cpp:
+        (WebCore::SVGStringList::parse):
+        * svg/SVGTransformList.cpp:
+        (WebCore::SVGTransformList::parseGeneric):
+
 2020-08-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Avoid unnecessarily copying a Vector in WebCore::transformsForValue

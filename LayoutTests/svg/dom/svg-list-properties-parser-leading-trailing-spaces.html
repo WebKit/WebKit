@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+SVGNumber.prototype.toString = function() {
+    return this.value.toString();
+}
+
+SVGLength.prototype.toString = function() {
+    return this.valueAsString;
+}
+
+SVGPoint.prototype.toString = function() {
+    return this.x + "," + this.y;
+}
+
+SVGTransform.prototype.toString = function() {
+    switch (this.type) {
+    case SVGTransform.SVG_TRANSFORM_TRANSLATE:
+        return "translate(" + this.matrix.e + ", " + this.matrix.f + ")";
+    case SVGTransform.SVG_TRANSFORM_SCALE:
+        return "scale(" + this.matrix.a + ", " + this.matrix.d + ")";
+    }
+    return "";
+}
+
+function SVGListToString(list) {
+    var s = "";
+
+    for (var i = 0; i < list.length; ++i) {
+        if (s.length)
+            s += " ";
+        s += list[i].toString();
+    }
+
+    return "[" + s + "]";
+}
+
+description("This test verifies the leading and the trailing spaces are ignored when parising the attributes of an SVG list properties");
+
+var feColorMatrixElement = document.createElementNS("http://www.w3.org/2000/svg", "feColorMatrix");
+feColorMatrixElement.setAttribute("values", " 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 1 0 ");
+
+debug("");
+debug("Check SVGNumberList parsing");
+shouldBe("feColorMatrixElement.values.baseVal.length", "20");
+shouldBeEqualToString("SVGListToString(feColorMatrixElement.values.baseVal)", "[0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 1 0]");
+
+var textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+textElement.setAttribute("x", " \t\n10 20 30 40 50 60 70 80 90 100\t\n ");
+
+debug("");
+debug("Check SVGLengthList parsing");
+shouldBe("textElement.x.baseVal.length", "10");
+shouldBeEqualToString("SVGListToString(textElement.x.baseVal)", "[10 20 30 40 50 60 70 80 90 100]");
+
+var polylineElement = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+polylineElement.setAttribute("points", " \t\n0 0 100 0 100 100 0 100\t\n ");
+
+debug("");
+debug("Check SVGPointList parsing");
+shouldBe("polylineElement.points.length", "4");
+shouldBeEqualToString("SVGListToString(polylineElement.points)", "[0,0 100,0 100,100 0,100]");
+
+textElement.setAttribute("systemLanguage", " \t\n1 2 3 4 5 6 7 8 9 10\t\n ");
+
+debug("");
+debug("Check SVStringList parsing");
+shouldBe("textElement.systemLanguage.length", "10");
+shouldBeEqualToString("SVGListToString(textElement.systemLanguage)", "[1 2 3 4 5 6 7 8 9 10]");
+
+textElement.setAttribute('transform', ' \t\nscale(2, 2) translate(10 10)\t\n ');
+
+debug("");
+debug("Check SVTransformList parsing");
+shouldBe("textElement.transform.baseVal.length", "2");
+shouldBeEqualToString("SVGListToString(textElement.transform.baseVal)", "[scale(2, 2) translate(10, 10)]");
+ 
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

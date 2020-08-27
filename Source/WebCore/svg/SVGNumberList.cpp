@@ -36,8 +36,8 @@ bool SVGNumberList::parse(StringView value)
     clearItems();
 
     return readCharactersForParsing(value, [&](auto buffer) {
-        // The spec (section 4.1) strangely doesn't allow leading whitespace.
-        // We might choose to violate that intentionally.
+        skipOptionalSVGSpaces(buffer);
+
         while (buffer.hasCharactersRemaining()) {
             auto number = parseNumber(buffer);
             if (!number)
