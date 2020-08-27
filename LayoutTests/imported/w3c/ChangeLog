@@ -1,3 +1,14 @@
+2020-08-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r266200.
+
+        Broke test for macOS
+
+        Reverted changeset:
+
+        "Unreviewed, rebaseline constant css-cascade test failure"
+        https://trac.webkit.org/changeset/266200
+
 2020-08-26  Karl Rackler  <rackler@apple.com>
 
         Unreviewed, rebaseline constant css-cascade test failure

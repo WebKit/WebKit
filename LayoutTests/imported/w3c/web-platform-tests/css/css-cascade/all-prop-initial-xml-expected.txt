@@ -358,11 +358,9 @@ PASS -webkit-mask-repeat
 PASS -webkit-mask-size 
 PASS -webkit-mask-source-type 
 PASS -webkit-nbsp-mode 
-PASS -webkit-overflow-scrolling 
 PASS -webkit-print-color-adjust 
 PASS -webkit-rtl-ordering 
 PASS -webkit-ruby-position 
-PASS -webkit-tap-highlight-color 
 PASS -webkit-text-combine 
 PASS -webkit-text-emphasis-color 
 PASS -webkit-text-emphasis-position 
@@ -374,7 +372,6 @@ PASS -webkit-text-size-adjust
 PASS -webkit-text-stroke-color 
 PASS -webkit-text-stroke-width 
 PASS -webkit-text-zoom 
-PASS -webkit-touch-callout 
 PASS -webkit-transform-style 
 PASS -webkit-user-drag 
 PASS -webkit-user-modify 
