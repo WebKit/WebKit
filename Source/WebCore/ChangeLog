@@ -1,3 +1,18 @@
+2020-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Include the run loop source name in frame rendering timeline
+        https://bugs.webkit.org/show_bug.cgi?id=215847
+
+        Reviewed by Adrian Perez de Castro.
+
+        Include the given name in rendering frame record data.
+
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createRenderingFrameData):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::internalStart):
+
 2020-08-27  Chris Dumez  <cdumez@apple.com>
 
         Drop unnecessary BufferPlaybackMode enum from AudioBufferSourceNode

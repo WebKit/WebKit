@@ -46,6 +46,7 @@ class TimelineRecordFactory {
 public:
     static Ref<JSON::Object> createGenericRecord(double startTime, int maxCallStackDepth);
 
+    static Ref<JSON::Object> createRenderingFrameData(const String& name);
     static Ref<JSON::Object> createFunctionCallData(const String& scriptName, int scriptLine, int scriptColumn);
     static Ref<JSON::Object> createConsoleProfileData(const String& title);
     static Ref<JSON::Object> createProbeSampleData(JSC::BreakpointActionID, unsigned sampleId);

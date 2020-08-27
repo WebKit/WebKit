@@ -99,7 +99,7 @@ public:
 #if USE(GLIB_EVENT_LOOP)
     WTF_EXPORT_PRIVATE GMainContext* mainContext() const { return m_mainContext.get(); }
     enum class Event { WillDispatch, DidDispatch };
-    using Observer = WTF::Observer<void(Event)>;
+    using Observer = WTF::Observer<void(Event, const String&)>;
     WTF_EXPORT_PRIVATE void observe(const Observer&);
 #endif
 
@@ -226,7 +226,7 @@ private:
     RetainPtr<CFRunLoopRef> m_runLoop;
     RetainPtr<CFRunLoopSourceRef> m_runLoopSource;
 #elif USE(GLIB_EVENT_LOOP)
-    void notify(Event);
+    void notify(Event, const char*);
 
     static GSourceFuncs s_runLoopSourceFunctions;
     GRefPtr<GMainContext> m_mainContext;

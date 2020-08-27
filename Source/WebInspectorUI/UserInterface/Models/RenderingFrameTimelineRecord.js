@@ -25,10 +25,11 @@
 
 WI.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord extends WI.TimelineRecord
 {
-    constructor(startTime, endTime)
+    constructor(startTime, endTime, name)
     {
         super(WI.TimelineRecord.Type.RenderingFrame, startTime, endTime);
 
+        this._name = name || "";
         this._durationByTaskType = new Map;
         this._frameIndex = -1;
     }
@@ -100,6 +101,11 @@ WI.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord extends WI.
     get frameNumber()
     {
         return this._frameIndex + 1;
+    }
+
+    get name()
+    {
+        return this._name;
     }
 
     setupFrameIndex()

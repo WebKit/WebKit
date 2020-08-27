@@ -854,7 +854,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             if (!recordPayload.children || !recordPayload.children.length)
                 return null;
 
-            return new WI.RenderingFrameTimelineRecord(startTime, endTime);
+            return new WI.RenderingFrameTimelineRecord(startTime, endTime, recordPayload.data.name);
 
         case InspectorBackend.Enum.Timeline.EventType.EvaluateScript:
             if (!sourceCodeLocation) {

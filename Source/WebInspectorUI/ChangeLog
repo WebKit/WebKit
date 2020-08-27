@@ -1,3 +1,21 @@
+2020-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Include the run loop source name in frame rendering timeline
+        https://bugs.webkit.org/show_bug.cgi?id=215847
+
+        Reviewed by Adrian Perez de Castro.
+
+        Show the frame name if present in timeline panel.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype._processRecord):
+        * UserInterface/Models/RenderingFrameTimelineRecord.js:
+        (WI.RenderingFrameTimelineRecord):
+        (WI.RenderingFrameTimelineRecord.prototype.get name):
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.displayNameForRecord):
+
 2020-08-26  Brian Burg  <bburg@apple.com>
 
         Web Inspector: button for Inspector^2 doesn't work without setting default for DeveloperExtrasEnabled
