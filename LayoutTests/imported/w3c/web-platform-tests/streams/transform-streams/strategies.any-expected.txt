@@ -7,6 +7,6 @@ FAIL default readable strategy should be equivalent to { highWaterMark: 0 } asse
 PASS a RangeError should be thrown for an invalid highWaterMark 
 PASS writableStrategy highWaterMark should be converted to a number 
 PASS readableStrategy highWaterMark should be converted to a number 
-FAIL a bad readableStrategy size function should cause writer.write() to reject on an identity transform promise_rejects_js: write should reject function "function () { throw e }" threw undefined with type "undefined", not an object
+PASS a bad readableStrategy size function should cause writer.write() to reject on an identity transform 
 PASS a bad readableStrategy size function should error the stream on enqueue even when transformer.transform() catches the exception 
 

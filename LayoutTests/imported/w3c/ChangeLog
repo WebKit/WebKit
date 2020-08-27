@@ -1,5 +1,19 @@
 2020-08-27  Youenn Fablet  <youenn@apple.com>
 
+        Fix propagation of errors in TransformStream
+        https://bugs.webkit.org/show_bug.cgi?id=215888
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/streams/transform-streams/backpressure.any-expected.txt:
+        * web-platform-tests/streams/transform-streams/errors.any-expected.txt:
+        * web-platform-tests/streams/transform-streams/errors.any.worker-expected.txt:
+        * web-platform-tests/streams/transform-streams/strategies.any-expected.txt:
+        * web-platform-tests/streams/transform-streams/strategies.any.worker-expected.txt:
+        * web-platform-tests/streams/transform-streams/terminate.any-expected.txt:
+
+2020-08-27  Youenn Fablet  <youenn@apple.com>
+
         Add support for TransformStream
         https://bugs.webkit.org/show_bug.cgi?id=215607
 

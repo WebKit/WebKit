@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: the stream has been terminated
 
 FAIL controller.terminate() should error pipeTo() assert_array_equals: transform() should have seen no chunks lengths differ, expected array [] length 0, got ["transform", 0] length 2
 PASS controller.terminate() should prevent remaining chunks from being processed 

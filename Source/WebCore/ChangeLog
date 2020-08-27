@@ -1,3 +1,18 @@
+2020-08-27  Youenn Fablet  <youenn@apple.com>
+
+        Fix propagation of errors in TransformStream
+        https://bugs.webkit.org/show_bug.cgi?id=215888
+
+        Reviewed by Alex Christensen.
+
+        We were not passing the right values to the reject function of the promise capability.
+        Covered by rebased tests.
+
+        * Modules/streams/TransformStreamInternals.js:
+        (transformStreamDefaultControllerPerformTransform):
+        (transformStreamDefaultSinkWriteAlgorithm):
+        (transformStreamDefaultSinkCloseAlgorithm):
+
 2020-08-27  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r263506): timing of CSS Animation on https://animate.style is incorrect

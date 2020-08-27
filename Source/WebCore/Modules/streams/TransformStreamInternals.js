@@ -199,12 +199,16 @@ function transformStreamDefaultControllerPerformTransform(controller, chunk)
 {
     "use strict";
 
+    const promiseCapability = @newPromiseCapability(@Promise);
+
     const transformPromise = @getByIdDirectPrivate(controller, "transformAlgorithm").@call(@undefined, chunk);
-    return transformPromise.@then(() => {
+    transformPromise.@then(() => {
+        promiseCapability.@resolve();
     }, (r) => {
         @transformStreamError(@getByIdDirectPrivate(controller, "stream"), r);
-        throw r;
+        promiseCapability.@reject.@call(@undefined, r);
     });
+    return promiseCapability.@promise;
 }
 
 function transformStreamDefaultControllerTerminate(controller)
@@ -240,7 +244,7 @@ function transformStreamDefaultSinkWriteAlgorithm(stream, chunk)
         backpressureChangePromise.@promise.@then(() => {
             const state = @getByIdDirectPrivate(writable, "state");
             if (state === "erroring") {
-                promiseCapability.@reject(@undefined, @getByIdDirectPrivate(writable, "storedError"));
+                promiseCapability.@reject.@call(@undefined, @getByIdDirectPrivate(writable, "storedError"));
                 return;
             }
 
@@ -248,10 +252,10 @@ function transformStreamDefaultSinkWriteAlgorithm(stream, chunk)
             @transformStreamDefaultControllerPerformTransform(controller, chunk).@then(() => {
                 promiseCapability.@resolve();
             }, (e) => {
-                promiseCapability.@reject(@undefined, e);
+                promiseCapability.@reject.@call(@undefined, e);
             });
         }, (e) => {
-            promiseCapability.@reject(@undefined, e);
+            promiseCapability.@reject.@call(@undefined, e);
         });
 
         return promiseCapability.@promise;
@@ -282,7 +286,7 @@ function transformStreamDefaultSinkCloseAlgorithm(stream)
     const promiseCapability = @newPromiseCapability(@Promise);
     flushPromise.@then(() => {
         if (@getByIdDirectPrivate(readable, "state") === @streamErrored) {
-            promiseCapability.@reject(@getByIdDirectPrivate(readable, "storedError"));
+            promiseCapability.@reject.@call(@undefined, @getByIdDirectPrivate(readable, "storedError"));
             return;
         }
 
@@ -292,7 +296,7 @@ function transformStreamDefaultSinkCloseAlgorithm(stream)
         promiseCapability.@resolve();
     }, (r) => {
         @transformStreamError(@getByIdDirectPrivate(controller, "stream"), r);
-        promiseCapability.@reject(@getByIdDirectPrivate(readable, "storedError"));
+        promiseCapability.@reject.@call(@undefined, @getByIdDirectPrivate(readable, "storedError"));
     });
     return promiseCapability.@promise;
 }
