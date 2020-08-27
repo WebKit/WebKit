@@ -1281,3 +1281,5 @@ webkit.org/b/214997 [ Release ] http/tests/workers/service/basic-install-event-w
 webkit.org/b/215808 [ Debug ] media/controls/forced-tracks-only.html [ Pass Timeout ]
 
 webkit.org/b/215809 [ Debug ] media/W3C/video/events/event_order_canplay_canplaythrough.html [ Pass Timeout ]
+
+webkit.org/b/215875 [ Debug ] fast/layoutformattingcontext/line-heigt-when-text-is-inside-inline-container.html [ Skip ]

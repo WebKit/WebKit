@@ -1,3 +1,12 @@
+2020-08-26  Hector Lopez  <hector_i_lopez@apple.com>
+
+        REGRESSION: ASSERT NOT REACHED: WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree
+        https://bugs.webkit.org/show_bug.cgi?id=215875
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2020-08-26  Andres Gonzalez  <andresg_22@apple.com>
 
         Buttons with aria-haspopup attribute are not exposed to accessibility clients as form controls.
