@@ -1,3 +1,19 @@
+2020-08-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] setLength in Array#push could get very large length
+        https://bugs.webkit.org/show_bug.cgi?id=215897
+        <rdar://problem/67859149>
+
+        Reviewed by Keith Miller.
+
+        Array#push can get length larger than UINT32_MAX. And in this case, we should throw a RangeError.
+        Before r266215, it was using putLength which throws an error. But it was replaced with setLength,
+        and JSC::setLength assumes that it never gets a length greater than UINT32_MAX by asserting. We
+        should fix it so that Array#push should thrown an error correctly.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::setLength):
+
 2020-08-27  Saam Barati  <sbarati@apple.com>
 
         GetByVal constant folding over a Double OutOfBoundsSaneChain array with no BytecodeUsesAsOther should constant fold to PNaN, not undefined

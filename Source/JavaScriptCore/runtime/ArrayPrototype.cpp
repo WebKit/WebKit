@@ -162,14 +162,20 @@ static ALWAYS_INLINE JSValue getProperty(JSGlobalObject* globalObject, JSObject*
 
 static ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj, uint64_t value)
 {
+    auto scope = DECLARE_THROW_SCOPE(vm);
     static constexpr bool throwException = true;
     if (LIKELY(isJSArray(obj))) {
-        ASSERT(static_cast<uint32_t>(value) == value);
+        if (UNLIKELY(value > UINT32_MAX)) {
+            throwRangeError(globalObject, scope, "Invalid array length"_s);
+            return;
+        }
+        scope.release();
         jsCast<JSArray*>(obj)->setLength(globalObject, static_cast<uint32_t>(value), throwException);
-    } else {
-        PutPropertySlot slot(obj, throwException);
-        obj->methodTable(vm)->put(obj, globalObject, vm.propertyNames->length, jsNumber(value), slot);
+        return;
     }
+    scope.release();
+    PutPropertySlot slot(obj, throwException);
+    obj->methodTable(vm)->put(obj, globalObject, vm.propertyNames->length, jsNumber(value), slot);
 }
 
 namespace ArrayPrototypeInternal {

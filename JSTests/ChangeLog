@@ -1,3 +1,15 @@
+2020-08-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] setLength in Array#push could get very large length
+        https://bugs.webkit.org/show_bug.cgi?id=215897
+        <rdar://problem/67859149>
+
+        Reviewed by Keith Miller.
+
+        * stress/array-push-more-than-max-size.js: Added.
+        (shouldBe):
+        (shouldThrow):
+
 2020-08-27  Saam Barati  <sbarati@apple.com>
 
         GetByVal constant folding over a Double OutOfBoundsSaneChain array with no BytecodeUsesAsOther should constant fold to PNaN, not undefined
