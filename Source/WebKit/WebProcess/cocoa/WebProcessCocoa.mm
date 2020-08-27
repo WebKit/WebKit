@@ -1016,14 +1016,9 @@ void WebProcess::setScreenProperties(const ScreenProperties& properties)
 #if PLATFORM(MAC)
 void WebProcess::updatePageScreenProperties()
 {
-#if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
-    // If AVPlayer.videoRangeOverride support is present, there's no need to override HDR mode
-    // at the MediaToolbox level, as the MediaToolbox override functionality is both duplicative
-    // and process global.
-    if (PAL::isAVFoundationFrameworkAvailable() && [PAL::getAVPlayerClass() instancesRespondToSelector:@selector(setVideoRangeOverride:)])
-        return;
-#endif
-
+#if !HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
+    // Only override HDR support at the MediaToolbox level if AVPlayer.videoRangeOverride support is
+    // not present, as the MediaToolbox override functionality is both duplicative and process global.
     if (hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer)) {
         setShouldOverrideScreenSupportsHighDynamicRange(false, false);
         return;
@@ -1033,6 +1028,7 @@ void WebProcess::updatePageScreenProperties()
         return screenSupportsHighDynamicRange(page->mainFrameView());
     });
     setShouldOverrideScreenSupportsHighDynamicRange(true, allPagesAreOnHDRScreens);
+#endif
 }
 #endif
 
