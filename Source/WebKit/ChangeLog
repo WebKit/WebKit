@@ -1,3 +1,9 @@
+2020-08-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, add missing double quote in r266216.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-08-27  Kate Cheney  <katherine_cheney@apple.com>
 
         syntax error in "DELETE FROM StorageAccessUnderTopFrameDomains"
