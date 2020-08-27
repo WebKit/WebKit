@@ -1,3 +1,16 @@
+2020-08-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Stop logging sandbox violations of com.apple.CoreDisplay.Notification
+        https://bugs.webkit.org/show_bug.cgi?id=215869
+
+        Reviewed by Darin Adler.
+
+        On macOS, stop logging mach-lookup sandbox violations of com.apple.CoreDisplay.Notification for performance reasons.
+
+        No new tests, since there is no change in behavior. The service was already being denied in the sandbox.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-08-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Resource Load Statistics data summary does not report data which is held up in the web content process.
