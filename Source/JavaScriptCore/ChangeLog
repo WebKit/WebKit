@@ -1,3 +1,33 @@
+2020-08-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Merge putLength() into setLength()
+        https://bugs.webkit.org/show_bug.cgi?id=211279
+
+        Reviewed by Darin Adler and Saam Barati.
+
+        This patch:
+
+        1. Replaces all putLength() call sites with setLength(), saving two JSValue
+           instantiations in arrayProtoFuncPop() and two in arrayProtoFuncShift().
+
+        2. Merges putLength() into setLength(), removing superfluous put() call for
+           JSArray. Also, performs put() in strict mode to preserve the original
+           error messages, like ones in ProxyObject::performPut().
+
+        3. Inlines performPop(), which avoided an extra index check and Identifier
+           creation, as it was on the slow path anyway (note JSArray::pop() call).
+
+        This change advances provided setLength()-heavy microbenchmark by ~40%,
+        while existing Array tests are neutral.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::setLength):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::putLength): Deleted.
+
 2020-08-26  Saam Barati  <sbarati@apple.com>
 
         Make isIndex use MAX_ARRAY_INDEX

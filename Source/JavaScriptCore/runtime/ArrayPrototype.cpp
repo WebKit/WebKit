@@ -160,27 +160,16 @@ static ALWAYS_INLINE JSValue getProperty(JSGlobalObject* globalObject, JSObject*
     RELEASE_AND_RETURN(scope, slot.getValue(globalObject, index));
 }
 
-static ALWAYS_INLINE void putLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj, JSValue value)
-{
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    PutPropertySlot slot(obj);
-    bool success = obj->methodTable(vm)->put(obj, globalObject, vm.propertyNames->length, value, slot);
-    RETURN_IF_EXCEPTION(scope, void());
-    if (UNLIKELY(!success))
-        throwTypeError(globalObject, scope, ReadonlyPropertyWriteError);
-}
-
 static ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObject* obj, uint64_t value)
 {
-    auto scope = DECLARE_THROW_SCOPE(vm);
     static constexpr bool throwException = true;
-    if (isJSArray(obj)) {
+    if (LIKELY(isJSArray(obj))) {
         ASSERT(static_cast<uint32_t>(value) == value);
         jsCast<JSArray*>(obj)->setLength(globalObject, static_cast<uint32_t>(value), throwException);
-        RETURN_IF_EXCEPTION(scope, void());
+    } else {
+        PutPropertySlot slot(obj, throwException);
+        obj->methodTable(vm)->put(obj, globalObject, vm.propertyNames->length, jsNumber(value), slot);
     }
-    scope.release();
-    putLength(globalObject, vm, obj, jsNumber(value));
 }
 
 namespace ArrayPrototypeInternal {
@@ -876,28 +865,24 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(JSGlobalObject* globalObject, Cal
 
     if (length == 0) {
         scope.release();
-        putLength(globalObject, vm, thisObj, jsNumber(length));
+        setLength(globalObject, vm, thisObj, length);
         return JSValue::encode(jsUndefined());
     }
 
-    auto performPop = [&] (auto index, JSValue indexValue) {
-        JSValue result = thisObj->get(globalObject, index);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        bool success = thisObj->deleteProperty(globalObject, index);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (UNLIKELY(!success)) {
-            throwTypeError(globalObject, scope, UnableToDeletePropertyError);
-            return encodedJSValue();
-        }
-        scope.release();
-        putLength(globalObject, vm, thisObj, indexValue);
-        return JSValue::encode(result);
-    };
-
     static_assert(MAX_ARRAY_INDEX + 1 > MAX_ARRAY_INDEX);
-    if (LIKELY(length <= MAX_ARRAY_INDEX + 1))
-        return performPop(static_cast<uint32_t>(length - 1), jsNumber(static_cast<uint32_t>(length - 1)));
-    return performPop(Identifier::from(vm, length - 1), jsNumber(length - 1));
+    uint64_t index = length - 1;
+    JSValue result = thisObj->get(globalObject, index);
+    RETURN_IF_EXCEPTION(scope, { });
+    bool success = thisObj->deleteProperty(globalObject, index);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (UNLIKELY(!success)) {
+        throwTypeError(globalObject, scope, UnableToDeletePropertyError);
+        return { };
+    }
+
+    scope.release();
+    setLength(globalObject, vm, thisObj, index);
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -935,10 +920,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(JSGlobalObject* globalObject, Ca
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
     
-    JSValue newLength(static_cast<int64_t>(length) + static_cast<int64_t>(callFrame->argumentCount()));
+    uint64_t newLength = length + argCount;
     scope.release();
-    putLength(globalObject, vm, thisObj, newLength);
-    return JSValue::encode(newLength);
+    setLength(globalObject, vm, thisObj, newLength);
+    return JSValue::encode(jsNumber(newLength));
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(JSGlobalObject* globalObject, CallFrame* callFrame)
@@ -1057,7 +1042,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(JSGlobalObject* globalObject, C
 
     if (length == 0) {
         scope.release();
-        putLength(globalObject, vm, thisObj, jsNumber(length));
+        setLength(globalObject, vm, thisObj, length);
         return JSValue::encode(jsUndefined());
     }
 
@@ -1066,7 +1051,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(JSGlobalObject* globalObject, C
     shift<JSArray::ShiftCountForShift>(globalObject, thisObj, 0, 1, 0, length);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
-    putLength(globalObject, vm, thisObj, jsNumber(length - 1));
+    setLength(globalObject, vm, thisObj, length - 1);
     return JSValue::encode(result);
 }
 
@@ -1263,10 +1248,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(JSGlobalObject* globalObject,
         thisObj->putByIndexInline(globalObject, k, callFrame->uncheckedArgument(k), true);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
-    JSValue result = jsNumber(length + nrArgs);
+    uint64_t newLength = length + nrArgs;
     scope.release();
-    putLength(globalObject, vm, thisObj, result);
-    return JSValue::encode(result);
+    setLength(globalObject, vm, thisObj, newLength);
+    return JSValue::encode(jsNumber(newLength));
 }
 
 enum class IndexOfDirection { Forward, Backward };
