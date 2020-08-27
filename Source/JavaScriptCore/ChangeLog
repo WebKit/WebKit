@@ -1,3 +1,21 @@
+2020-08-27  Keith Miller  <keith_miller@apple.com>
+
+        structureOrNull should take VM instead of getting it from the marked block
+        https://bugs.webkit.org/show_bug.cgi?id=215899
+
+        Reviewed by Yusuke Suzuki.
+
+        It's slightly faster use an existing VM over recomputing the address. It probably doesn't
+        happen to matter here for performance but it's good hygiene.
+
+        * API/tests/JSWrapperMapTests.mm:
+        (+[JSWrapperMapTests testStructureIdentity]):
+        * jit/JITOperations.cpp:
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::structureOrNull const):
+        (JSC::JSValue::structureOrUndefined const): Deleted.
+
 2020-08-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use auxiliary memory for JSBigInt storage
