@@ -1,3 +1,14 @@
+2020-08-26  Chris Dumez  <cdumez@apple.com>
+
+        Update DynamicsCompressorNode::process() to use AudioParam::finalValue()
+        https://bugs.webkit.org/show_bug.cgi?id=215874
+
+        Reviewed by Darin Adler.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections-expected.txt:
+
 2020-08-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, reverting r266200.

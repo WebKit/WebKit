@@ -86,11 +86,11 @@ void DynamicsCompressorNode::process(size_t framesToProcess)
     AudioBus* outputBus = output(0)->bus();
     ASSERT(outputBus);
 
-    float threshold = m_threshold->value();
-    float knee = m_knee->value();
-    float ratio = m_ratio->value();
-    float attack = m_attack->value();
-    float release = m_release->value();
+    float threshold = m_threshold->finalValue();
+    float knee = m_knee->finalValue();
+    float ratio = m_ratio->finalValue();
+    float attack = m_attack->finalValue();
+    float release = m_release->finalValue();
 
     m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamThreshold, threshold);
     m_dynamicsCompressor->setParameterValue(DynamicsCompressor::ParamKnee, knee);
