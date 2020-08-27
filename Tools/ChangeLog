@@ -1,5 +1,19 @@
 2020-08-27  Aakash Jain  <aakash_jain@apple.com>
 
+        Ensure that email notifications are not sent for obsolete and r- patches
+        https://bugs.webkit.org/show_bug.cgi?id=215867
+
+        Reviewed by Jonathan Bedard.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (BugzillaMixin.should_send_email): Method to check if patch is obsolete/r-.
+        (AnalyzeCompileWebKitResults): Inherit from BugzillaMixin.
+        (AnalyzeCompileWebKitResults.send_email_for_new_build_failure): Check for patch state before sending email.
+        (AnalyzeLayoutTestsResults): Ditto.
+        (AnalyzeLayoutTestsResults.send_email_for_new_test_failures): Ditto.
+
+2020-08-27  Aakash Jain  <aakash_jain@apple.com>
+
         Send ews email notifications to myself
         https://bugs.webkit.org/show_bug.cgi?id=215815
 

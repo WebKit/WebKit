@@ -529,6 +529,27 @@ class BugzillaMixin(object):
             return 1
         return 0
 
+    def should_send_email(self, patch_id):
+        patch_json = self.get_patch_json(patch_id)
+        if not patch_json:
+            self._addToLog('stdio', 'Unable to fetch patch {}'.format(patch_id))
+            return True
+
+        obsolete = patch_json.get('is_obsolete')
+        if obsolete == 1:
+            self._addToLog('stdio', 'Skipping email since patch {} is obsolete'.format(patch_id))
+            return False
+
+        review_denied = False
+        for flag in patch_json.get('flags', []):
+            if flag.get('name') == 'review' and flag.get('status') == '-':
+                review_denied = True
+
+        if review_denied:
+            self._addToLog('stdio', 'Skipping email since patch {} is marked r-'.format(patch_id))
+            return False
+        return True
+
     def get_bugzilla_api_key(self):
         try:
             passwords = json.load(open('passwords.json'))
@@ -1387,7 +1408,7 @@ class CompileWebKitWithoutPatch(CompileWebKit):
         return shell.Compile.evaluateCommand(self, cmd)
 
 
-class AnalyzeCompileWebKitResults(buildstep.BuildStep):
+class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin):
     name = 'analyze-compile-webkit-results'
     description = ['analyze-compile-webkit-results']
     descriptionDone = ['analyze-compile-webkit-results']
@@ -1469,11 +1490,13 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
 
     def send_email_for_new_build_failure(self):
         try:
+            patch_id = self.getProperty('patch_id', '')
+            if not self.should_send_email(patch_id):
+                return
             builder_name = self.getProperty('buildername', '')
             bug_id = self.getProperty('bug_id', '')
             bug_title = self.getProperty('bug_title', '')
             worker_name = self.getProperty('workername', '')
-            patch_id = self.getProperty('patch_id', '')
             patch_author = self.getProperty('patch_author', '')
             platform = self.getProperty('platform', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
@@ -1492,6 +1515,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep):
                 logs = logs.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
                 email_text += u'\n\nError lines:\n\n<code>{}</code>'.format(logs)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
+            self._addToLog('stdio', 'Sending email notification to {}'.format(patch_author))
             send_email_to_patch_author(patch_author, email_subject, email_text, patch_id)
         except Exception as e:
             print('Error in sending email for new build failure: {}'.format(e))
@@ -2058,7 +2082,7 @@ class RunWebKitTestsWithoutPatch(RunWebKitTests):
         self._parseRunWebKitTestsOutput(logText)
 
 
-class AnalyzeLayoutTestsResults(buildstep.BuildStep):
+class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin):
     name = 'analyze-layout-tests-results'
     description = ['analyze-layout-test-results']
     descriptionDone = ['analyze-layout-tests-results']
@@ -2147,11 +2171,13 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
 
     def send_email_for_new_test_failures(self, test_names):
         try:
+            patch_id = self.getProperty('patch_id', '')
+            if not self.should_send_email(patch_id):
+                return
             builder_name = self.getProperty('buildername', '')
             bug_id = self.getProperty('bug_id', '')
             bug_title = self.getProperty('bug_title', '')
             worker_name = self.getProperty('workername', '')
-            patch_id = self.getProperty('patch_id', '')
             patch_author = self.getProperty('patch_author', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             test_names_string = ''
@@ -2167,6 +2193,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep):
             email_text += '\n\nFull details are available at: {}\n\nPatch author: {}'.format(build_url, patch_author)
             email_text += '\n\nLayout test failure{}:\n{}'.format(pluralSuffix, test_names_string)
             email_text += '\n\nTo unsubscrible from these notifications or to provide any feedback please email aakash_jain@apple.com'
+            self._addToLog('stdio', 'Sending email notification to {}'.format(patch_author))
             send_email_to_patch_author(patch_author, email_subject, email_text, patch_id)
         except Exception as e:
             print('Error in sending email for new layout test failures: {}'.format(e))
