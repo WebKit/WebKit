@@ -51,6 +51,7 @@ WEBCORE_EXPORT
     RetainPtr<AVTouchBarMediaSelectionOption> _currentAudioTouchBarMediaSelectionOption;
     RetainPtr<NSArray<AVTouchBarMediaSelectionOption *>> _legibleTouchBarMediaSelectionOptions;
     RetainPtr<AVTouchBarMediaSelectionOption> _currentLegibleTouchBarMediaSelectionOption;
+    BOOL _playing;
     float _rate;
     BOOL _canTogglePlayback;
 
