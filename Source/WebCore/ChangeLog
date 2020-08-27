@@ -1,3 +1,20 @@
+2020-08-27  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r264790): IndexedDB may abort transactions of in-memory databases
+        https://bugs.webkit.org/show_bug.cgi?id=215855
+        <rdar://problem/67418574>
+
+        Reviewed by Youenn Fablet.
+
+        We don't abort transactions on in-memory database before process suspension because they don't hold database 
+        file lock. Before r264790, only ephemeral session would use in-memory databases, so we only checked session. Now
+        persistent session also uses in-memory databases for third-party storage, so we need to add another check.
+
+        API test: IndexedDB.SuspendImminentlyForThirdPartyDatabases
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::stopDatabaseActivitiesOnMainThread):
+
 2020-08-27  Youenn Fablet  <youenn@apple.com>
 
         Fix propagation of errors in TransformStream

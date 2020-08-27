@@ -1,3 +1,15 @@
+2020-08-27  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (r264790): IndexedDB may abort transactions of in-memory databases
+        https://bugs.webkit.org/show_bug.cgi?id=215855
+        <rdar://problem/67418574>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBSuspendImminently.mm:
+        (postResult):
+        (catch):
+
 2020-08-27  Youenn Fablet  <youenn@apple.com>
 
         Add support for TransformStream
