@@ -471,10 +471,10 @@ ExceptionOr<void> AudioBufferSourceNode::startLater(double when, double grainOff
     else if (buffer())
         grainDuration = buffer()->duration() - grainOffset;
 
-    return startPlaying(Partial, when, grainOffset, grainDuration);
+    return startPlaying(when, grainOffset, grainDuration);
 }
 
-ExceptionOr<void> AudioBufferSourceNode::startPlaying(BufferPlaybackMode playbackMode, double when, double grainOffset, double grainDuration)
+ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainOffset, double grainDuration)
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "when = ", when, ", offset = ", grainOffset, ", duration = ", grainDuration);
@@ -493,7 +493,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(BufferPlaybackMode playbac
     if (!std::isfinite(grainDuration) || (grainDuration < 0))
         return Exception { RangeError, "duration value should be positive"_s };
 
-    m_isGrain = playbackMode == Partial;
+    m_isGrain = true;
     m_grainOffset = grainOffset;
     m_grainDuration = grainDuration;
     m_startTime = when;

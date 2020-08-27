@@ -99,12 +99,7 @@ private:
     virtual double legacyGainValue() const { return 1.0; }
     virtual bool shouldThrowOnAttemptToOverwriteBuffer() const { return true; }
 
-    enum BufferPlaybackMode {
-        Entire,
-        Partial
-    };
-
-    ExceptionOr<void> startPlaying(BufferPlaybackMode, double when, double grainOffset, double grainDuration);
+    ExceptionOr<void> startPlaying(double when, double grainOffset, double grainDuration);
 
     // Returns true on success.
     bool renderFromBuffer(AudioBus*, unsigned destinationFrameOffset, size_t numberOfFrames, double startFrameOffset);
