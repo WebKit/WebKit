@@ -85,7 +85,7 @@ JSFunction* JSFunction::create(VM& vm, FunctionExecutable* executable, JSScope* 
     return result;
 }
 
-JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor, const DOMJIT::Signature* signature)
+JSFunction* JSFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeFunction nativeFunction, Intrinsic intrinsic, NativeFunction nativeConstructor, const DOMJIT::Signature* signature)
 {
     NativeExecutable* executable = vm.getHostFunction(nativeFunction, intrinsic, nativeConstructor, signature, name);
     Structure* structure = globalObject->hostFunctionStructure();
@@ -114,7 +114,7 @@ void JSFunction::finishCreation(VM& vm)
     ASSERT(methodTable(vm)->getCallData == &JSFunction::getCallData);
 }
 
-void JSFunction::finishCreation(VM& vm, NativeExecutable*, int length, const String& name)
+void JSFunction::finishCreation(VM& vm, NativeExecutable*, unsigned length, const String& name)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));

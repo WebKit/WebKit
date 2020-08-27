@@ -46,7 +46,7 @@ void JSNativeStdFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 }
 
-void JSNativeStdFunction::finishCreation(VM& vm, NativeExecutable* executable, int length, const String& name)
+void JSNativeStdFunction::finishCreation(VM& vm, NativeExecutable* executable, unsigned length, const String& name)
 {
     Base::finishCreation(vm, executable, length, name);
     ASSERT(inherits(vm, info()));
@@ -59,7 +59,7 @@ static EncodedJSValue JSC_HOST_CALL runStdFunction(JSGlobalObject* globalObject,
     return function->function()(globalObject, callFrame);
 }
 
-JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalObject, int length, const String& name, NativeStdFunction&& nativeStdFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
+JSNativeStdFunction* JSNativeStdFunction::create(VM& vm, JSGlobalObject* globalObject, unsigned length, const String& name, NativeStdFunction&& nativeStdFunction, Intrinsic intrinsic, NativeFunction nativeConstructor)
 {
     NativeExecutable* executable = vm.getHostFunction(runStdFunction, intrinsic, nativeConstructor, nullptr, name);
     Structure* structure = globalObject->nativeStdFunctionStructure();

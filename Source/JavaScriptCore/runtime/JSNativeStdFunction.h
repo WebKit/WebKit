@@ -52,7 +52,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static JSNativeStdFunction* create(VM&, JSGlobalObject*, int length, const String& name, NativeStdFunction&&, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
+    JS_EXPORT_PRIVATE static JSNativeStdFunction* create(VM&, JSGlobalObject*, unsigned length, const String& name, NativeStdFunction&&, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
@@ -64,7 +64,7 @@ public:
 
 private:
     JSNativeStdFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, NativeStdFunction&&);
-    void finishCreation(VM&, NativeExecutable*, int length, const String& name);
+    void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name);
     static void visitChildren(JSCell*, SlotVisitor&);
 
     NativeStdFunction m_function;
