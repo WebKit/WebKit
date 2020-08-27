@@ -1,3 +1,20 @@
+2020-08-27  Saam Barati  <sbarati@apple.com>
+
+        GetByVal constant folding over a Double OutOfBoundsSaneChain array with no BytecodeUsesAsOther should constant fold to PNaN, not undefined
+        https://bugs.webkit.org/show_bug.cgi?id=215894
+        <rdar://problem/67669696>
+
+        Reviewed by Michael Saboff and Keith Miller.
+
+        GetByVals of the form { OutOfBoundsSaneChain, Double } where there are no
+        BytecodeUsesAsOther return PNaN for holes and OOB accesses, not jsUndefined().
+        The constant folding for this though was folding to jsUndefined(). I forgot
+        to update that code to constant fold to PNaN when I wrote the OutOfBoundsSaneChain
+        implementation.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2020-08-27  Keith Miller  <keith_miller@apple.com>
 
         structureOrNull should take VM instead of getting it from the marked block
