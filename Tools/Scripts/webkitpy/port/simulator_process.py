@@ -104,7 +104,7 @@ class SimulatorProcess(ServerProcess):
         self._system_pid = self._pid
 
         # FIXME <rdar://problem/57032042>: This timeout should be 15 seconds
-        with Timeout(30, RuntimeError('Timed out waiting for pid {} to connect at port {}'.format(self._pid, self._target_host.listening_port()))):
+        with Timeout(30, handler=RuntimeError('Timed out waiting for pid {} to connect at port {}'.format(self._pid, self._target_host.listening_port())), patch=False):
             stdin = None
             stdout = None
             stderr = None

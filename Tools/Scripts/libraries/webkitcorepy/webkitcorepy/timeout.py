@@ -169,7 +169,7 @@ class Timeout(object):
             self._patch = None
 
     def __enter__(self):
-        with self.DisableAlarm():
+        with self.DisableAlarm(patch=self._patch):
             self.data = self.Data(time.time() + self._timeout, self._handler)
             bisect.insort(self._process_to_timeout_map[os.getpid()], self.data)
 
@@ -181,7 +181,7 @@ class Timeout(object):
         if self._patch:
             self._patch.__exit__(*args, **kwargs)
 
-        with self.DisableAlarm():
+        with self.DisableAlarm(patch=self._patch):
             if not self._process_to_timeout_map[os.getpid()]:
                 raise RuntimeError('No timeout registered')
             self._process_to_timeout_map[os.getpid()].remove(self.data)

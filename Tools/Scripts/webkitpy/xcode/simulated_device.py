@@ -640,7 +640,7 @@ class SimulatedDevice(object):
 
         output = None
 
-        with Timeout(timeout, RuntimeError(u'Timed out waiting for process to open {} on {}'.format(bundle_id, self.udid))):
+        with Timeout(timeout, handler=RuntimeError(u'Timed out waiting for process to open {} on {}'.format(bundle_id, self.udid)), patch=False):
             while True:
                 output = self.executive.run_command(
                     ['xcrun', 'simctl', 'launch', self.udid, bundle_id] + args,

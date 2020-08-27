@@ -1,3 +1,25 @@
+2020-08-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Move Timeout to webkitcorepy (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=215584
+        <rdar://problem/67270713>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/timeout.py:
+        (Timeout.__enter__): Forward patch flag to disable context.
+        (Timeout.__exit__): Ditto.
+        * Scripts/webkitpy/common/timeout_context.py: Replace with webkitcorepy's Timeout object.
+        (Timeout): Deleted.
+        * Scripts/webkitpy/common/timeout_context_unittest.py: Removed.
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess._start): Opt-out of patching time.sleep().
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.launch_app): Opt-out of patching time.sleep().
+        * glib/api_test_runner.py:
+        (TestRunner._run_google_test): Use specific Timeout exception.
+
 2020-08-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] Add bots for generating nightly bundle packages

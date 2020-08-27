@@ -30,7 +30,7 @@ sys.path.insert(0, os.path.join(top_level_directory, "Tools", "glib"))
 import common
 from webkitpy.common.host import Host
 from webkitpy.common.test_expectations import TestExpectations
-from webkitpy.common.timeout_context import Timeout
+from webkitcorepy import Timeout
 
 if os.name == 'posix' and sys.version_info[0] < 3:
     try:
@@ -230,7 +230,7 @@ class TestRunner(object):
                 common.parse_output_lines(fd, sys.stdout.write)
                 status = self._waitpid(pid)
                 os.close(fd)
-            except RuntimeError:
+            except Timeout.Exception:
                 self._kill_process(pid)
                 os.close(fd)
                 sys.stdout.write("**TIMEOUT** %s\n" % subtest)
