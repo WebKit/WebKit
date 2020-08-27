@@ -1,3 +1,15 @@
+2020-08-26  Brian Burg  <bburg@apple.com>
+        Web Inspector: button for Inspector^2 doesn't work without setting default for DeveloperExtrasEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=215828
+
+        Reviewed by Devin Rousso.
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::inspectInspector):
+        Explicitly set DeveloperExtrasEnabled for the Inspector
+        web view so that the Inspect context menu appears and
+        so the [2] button works as expected.
+
 2020-08-26  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineBuilder should not align the runs

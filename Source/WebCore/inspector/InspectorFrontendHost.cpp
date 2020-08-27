@@ -546,8 +546,10 @@ void InspectorFrontendHost::beep()
 
 void InspectorFrontendHost::inspectInspector()
 {
-    if (m_frontendPage)
+    if (m_frontendPage) {
+        m_frontendPage->settings().setDeveloperExtrasEnabled(true);
         m_frontendPage->inspectorController().show();
+    }
 }
 
 bool InspectorFrontendHost::isBeingInspected()

@@ -36,3 +36,23 @@ body.focus-debug *:focus {
 .tab-bar > .navigation-bar .inspect-inspector {
     width: 1em !important;
 }
+
+/* These rules are adapted from TabBar.css and are expected to match. */
+body.window-inactive .tab-bar > .navigation-bar .item.button.text-only {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.4);
+}
+.tab-bar > .navigation-bar .item.button.text-only {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.6);
+}
+
+.tab-bar > .navigation-bar .item.button.text-only:not(.selected):hover {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.7);
+}
+
+.tab-bar > .navigation-bar .item.button.text-only:not(.disabled).selected {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.8);
+}
+
+body.window-inactive .tab-bar > .navigation-bar .item.button.text-only:not(.disabled).selected > {
+    color: hsla(0, 0%, var(--foreground-lightness), 0.5);
+}

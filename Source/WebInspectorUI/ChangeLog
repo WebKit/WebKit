@@ -1,3 +1,22 @@
+2020-08-26  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: button for Inspector^2 doesn't work without setting default for DeveloperExtrasEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=215828
+
+        Reviewed by Devin Rousso.
+
+        Drive-by: because the Inspector^2 button is text-only and has no
+        .name element, the '2' button does not become dimmed when the
+        window is inactive, unlike every other item in the tab bar.
+        Fix this by coloring the text-only button similar to tab labels.
+
+        * UserInterface/Debug/Bootstrap.css:
+        (body.window-inactive .tab-bar > .navigation-bar .item.button.text-only):
+        (.tab-bar > .navigation-bar .item.button.text-only):
+        (.tab-bar > .navigation-bar .item.button.text-only:not(.selected):hover):
+        (.tab-bar > .navigation-bar .item.button.text-only:not(.disabled).selected):
+        (body.window-inactive .tab-bar > .navigation-bar .item.button.text-only:not(.disabled).selected >):
+
 2020-08-26  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r266074): cannot edit JavaScript breakpoints
