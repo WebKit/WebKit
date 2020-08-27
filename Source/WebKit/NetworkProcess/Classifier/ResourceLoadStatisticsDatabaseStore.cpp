@@ -668,7 +668,6 @@ void ResourceLoadStatisticsDatabaseStore::destroyStatements()
     m_updateGrandfatheredStatement = nullptr;
     m_updateIsScheduledForAllButCookieDataRemovalStatement = nullptr;
     m_isGrandfatheredStatement = nullptr;
-    m_findExpiredUserInteractionStatement = nullptr;
     m_topFrameLinkDecorationsFromExistsStatement = nullptr;
     m_topFrameLoadedThirdPartyScriptsExistsStatement = nullptr;
     m_countPrevalentResourcesStatement = nullptr;
@@ -2436,51 +2435,6 @@ Vector<ResourceLoadStatisticsDatabaseStore::DomainData> ResourceLoadStatisticsDa
     return results;
 }
 
-Vector<unsigned> ResourceLoadStatisticsDatabaseStore::findExpiredUserInteractions() const
-{
-    ASSERT(!RunLoop::isMain());
-
-    Vector<unsigned> results;
-    Optional<Seconds> expirationDateTime = statisticsExpirationTime();
-    if (!expirationDateTime)
-        return results;
-    
-    auto scopedStatement = this->scopedStatement(m_findExpiredUserInteractionStatement, findExpiredUserInteractionQuery, "findExpiredUserInteractions"_s);
-    if (!scopedStatement
-        || scopedStatement->bindDouble(1, expirationDateTime.value().value()) != SQLITE_OK)
-        return results;
-
-    while (scopedStatement->step() == SQLITE_ROW)
-        results.append(scopedStatement->getColumnInt(0));
-
-    return results;
-}
-
-void ResourceLoadStatisticsDatabaseStore::clearExpiredUserInteractions()
-{
-    ASSERT(!RunLoop::isMain());
-
-    auto expiredRecords = findExpiredUserInteractions();
-    if (expiredRecords.isEmpty())
-        return;
-
-    auto expiredRecordIDs = buildList(WTF::IteratorRange<Vector<unsigned>::iterator>(expiredRecords.begin(), expiredRecords.end()));
-
-    SQLiteStatement clearExpiredInteraction(m_database, makeString("UPDATE ObservedDomains SET mostRecentUserInteractionTime = 0, hadUserInteraction = 1 WHERE domainID IN (", expiredRecordIDs, ")"));
-    if (clearExpiredInteraction.prepare() != SQLITE_OK)
-        return;
-
-    SQLiteStatement removeStorageAccess(m_database, makeString("DELETE FROM StorageAccessUnderTopFrameDomains ", expiredRecordIDs, ")"));
-    if (removeStorageAccess.prepare() != SQLITE_OK)
-        return;
-
-    if (clearExpiredInteraction.step() != SQLITE_DONE
-        || removeStorageAccess.step() != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::clearExpiredUserInteractions statement(s) failed to step, error message: %{private}s", this, m_database.lastErrorMsg());
-        ASSERT_NOT_REACHED();
-    }
-}
-
 void ResourceLoadStatisticsDatabaseStore::clearGrandfathering(Vector<unsigned>&& domainIDsToClear)
 {
     ASSERT(!RunLoop::isMain());
@@ -2572,8 +2526,6 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsDatabas
 
     if (shouldClearGrandfathering)
         clearEndOfGrandfatheringTimeStamp();
-
-    clearExpiredUserInteractions();
 
     auto now = WallTime::now();
     auto oldestUserInteraction = now;
@@ -2996,19 +2948,6 @@ void ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters()
     }
 
     m_leastRecentOperatingDate = OperatingDate(getLeastRecentOperatingDateStatement.getColumnInt(0), getLeastRecentOperatingDateStatement.getColumnInt(1), getLeastRecentOperatingDateStatement.getColumnInt(2));
-}
-
-Optional<Seconds> ResourceLoadStatisticsDatabaseStore::statisticsExpirationTime() const
-{
-    ASSERT(!RunLoop::isMain());
-
-    if (this->parameters().timeToLiveUserInteraction)
-        return WallTime::now().secondsSinceEpoch() - this->parameters().timeToLiveUserInteraction.value();
-
-    if (m_operatingDatesSize >= operatingDatesWindowLong)
-        return m_leastRecentOperatingDate.secondsSinceEpoch();
-
-    return WTF::nullopt;
 }
 
 void ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary()
