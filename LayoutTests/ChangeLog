@@ -1,5 +1,131 @@
 2020-08-27  Youenn Fablet  <youenn@apple.com>
 
+        Remove console logs from expected.txt files for some WebSocket tests
+        https://bugs.webkit.org/show_bug.cgi?id=215848
+
+        Reviewed by Alex Christensen.
+
+        Some WebSocket tests show platform specific console log messages.
+        By removing them, we can keep one expected.txt file for all platforms.
+
+        * http/tests/websocket/connection-refusal-in-frame-resource-load-statistics-expected.txt:
+        * http/tests/websocket/connection-refusal-in-frame-resource-load-statistics.html:
+        * http/tests/websocket/tests/hybi/bad-handshake-crash-expected.txt:
+        * http/tests/websocket/tests/hybi/bad-handshake-crash.html:
+        * http/tests/websocket/tests/hybi/broken-utf8-expected.txt:
+        * http/tests/websocket/tests/hybi/broken-utf8.html:
+        * http/tests/websocket/tests/hybi/close-code-and-reason-expected.txt:
+        * http/tests/websocket/tests/hybi/close-code-and-reason.html:
+        * http/tests/websocket/tests/hybi/closed-port-delay-expected.txt:
+        * http/tests/websocket/tests/hybi/closed-port-delay.html:
+        * http/tests/websocket/tests/hybi/compressed-control-frame-expected.txt:
+        * http/tests/websocket/tests/hybi/compressed-control-frame.html:
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade-expected.txt:
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade-worker-expected.txt:
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade-worker.html:
+        * http/tests/websocket/tests/hybi/contentextensions/upgrade.html:
+        * http/tests/websocket/tests/hybi/deflate-frame-comp-bit-onoff.html:
+        * http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter-expected.txt:
+        * http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter.html:
+        * http/tests/websocket/tests/hybi/deflate-frame-set-bfinal.html:
+        * http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404-expected.txt:
+        * http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404.html:
+        * http/tests/websocket/tests/hybi/fragmented-control-frame-expected.txt:
+        * http/tests/websocket/tests/hybi/fragmented-control-frame.html:
+        * http/tests/websocket/tests/hybi/handshake-error-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-error.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-maxlength-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-maxlength.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-extensions-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-extensions-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-cr-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-cr.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null.html:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header.html:
+        * http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1-expected.txt:
+        * http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1.html:
+        * http/tests/websocket/tests/hybi/interleaved-fragments-expected.txt:
+        * http/tests/websocket/tests/hybi/interleaved-fragments.html:
+        * http/tests/websocket/tests/hybi/invalid-continuation-expected.txt:
+        * http/tests/websocket/tests/hybi/invalid-continuation.html:
+        * http/tests/websocket/tests/hybi/invalid-encode-length-expected.txt:
+        * http/tests/websocket/tests/hybi/invalid-encode-length.html:
+        * http/tests/websocket/tests/hybi/invalid-masked-frames-from-server-expected.txt:
+        * http/tests/websocket/tests/hybi/invalid-masked-frames-from-server.html:
+        * http/tests/websocket/tests/hybi/invalid-subprotocol-characters-expected.txt:
+        * http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html:
+        * http/tests/websocket/tests/hybi/long-control-frame-expected.txt:
+        * http/tests/websocket/tests/hybi/long-control-frame.html:
+        * http/tests/websocket/tests/hybi/long-invalid-header-expected.txt:
+        * http/tests/websocket/tests/hybi/long-invalid-header.html:
+        * http/tests/websocket/tests/hybi/network-process-crash-error-expected.txt:
+        * http/tests/websocket/tests/hybi/network-process-crash-error.html:
+        * http/tests/websocket/tests/hybi/reserved-bits-expected.txt:
+        * http/tests/websocket/tests/hybi/reserved-bits.html:
+        * http/tests/websocket/tests/hybi/reserved-opcodes-expected.txt:
+        * http/tests/websocket/tests/hybi/reserved-opcodes.html:
+        * http/tests/websocket/tests/hybi/too-long-payload-expected.txt:
+        * http/tests/websocket/tests/hybi/too-long-payload.html:
+        * http/tests/websocket/tests/hybi/workers/close-code-and-reason-expected.txt:
+        * http/tests/websocket/tests/hybi/workers/close-code-and-reason.html:
+        * platform/glib/http/tests/websocket/connection-refusal-in-frame-resource-load-statistics-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/broken-utf8-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/closed-port-delay-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/compressed-control-frame-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/fragmented-control-frame-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-error-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-maxlength-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-more-extensions-header-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-cr-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header-expected.txt: Removed.
+        * platform/glib/http/tests/websocket/tests/hybi/interleaved-fragments-expected.txt: Removed.
+
+2020-08-27  Youenn Fablet  <youenn@apple.com>
+
         Add support for TransformStream
         https://bugs.webkit.org/show_bug.cgi?id=215607
 

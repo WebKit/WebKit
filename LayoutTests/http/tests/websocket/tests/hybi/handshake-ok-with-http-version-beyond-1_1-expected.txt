@@ -1,11 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?01.00' failed: Invalid HTTP version string: HTTP/01.00
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?000.99' failed: Invalid HTTP version string: HTTP/000.99
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?0.00' failed: Invalid HTTP version string: HTTP/0.00
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?-11.9' failed: Invalid HTTP version string: HTTP/-11.9
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?0x1.0x00' failed: Invalid HTTP version string: HTTP/0x1.0x00
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?%C3%AF%C2%A3%C2%BF.1' failed: Invalid HTTP version string: HTTP/%C3%AF%C2%A3%C2%BF.1
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?' failed: Invalid HTTP version string: HTTP/
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1?1.1%C3%AF%C2%A3%C2%BF' failed: Invalid HTTP version string: HTTP/1.1%C3%AF%C2%A3%C2%BF
 Test http version parsing and validation. HTTP version 1.1 and above should be accepted for WebSockets.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

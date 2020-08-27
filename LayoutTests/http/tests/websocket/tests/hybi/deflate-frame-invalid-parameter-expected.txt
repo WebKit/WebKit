@@ -1,8 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/deflate-frame-invalid-parameter?x-foo' failed: Received unexpected deflate-frame parameter
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/deflate-frame-invalid-parameter?max_window_bits=7' failed: Received invalid max_window_bits parameter
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/deflate-frame-invalid-parameter?max_window_bits=16' failed: Received invalid max_window_bits parameter
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/deflate-frame-invalid-parameter?no_context_takeover=foo' failed: Received invalid no_context_takeover parameter
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/deflate-frame-invalid-parameter?max_window_bits=8;%20no_context_takeover;%20x-foo' failed: Received unexpected deflate-frame parameter
 Test whether WebSocket rejects invalid deflate-frame parameters.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

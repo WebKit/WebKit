@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. Connection refused
-CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. Connection refused
-CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. Connection refused
 Tests that WebSocket close report is delayed to mitigate port scanning attacks.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

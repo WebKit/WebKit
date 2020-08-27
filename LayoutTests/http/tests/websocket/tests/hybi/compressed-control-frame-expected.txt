@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/compressed-control-frame' failed: Received unexpected compressed frame
 Test whether a compressed control frame is rejected
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

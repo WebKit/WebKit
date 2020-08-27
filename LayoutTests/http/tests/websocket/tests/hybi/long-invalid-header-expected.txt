@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/long-invalid-header' failed: Unexpected CR in header name at pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp…
 Make sure WebSocket gives errors on long invalid upgrade header.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

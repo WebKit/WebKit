@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/bad-handshake-crash' failed: Unexpected start character in header name
 Make sure WebSocket doesn't crash with bad handshake message.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

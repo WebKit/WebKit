@@ -1,4 +1,11 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<div id="log"></div>
 <script>
+
+function doLog(msg)
+{
+    log.innerHTML += msg + '<br>';
+}
 
 if (window.testRunner) {
     testRunner.waitUntilDone();
@@ -6,7 +13,7 @@ if (window.testRunner) {
 }
 
 function endTest() {
-    console.log("new url: " + ws.url);
+    doLog("new url: " + ws.url);
     if (window.testRunner)
         testRunner.notifyDone();
 }
@@ -14,23 +21,23 @@ function endTest() {
 var ws = new WebSocket("ws://127.0.0.1/websocket/tests/hybi/simple");
 
 ws.onopen = function() { 
-    console.log("onopen");
+    doLog("onopen");
     ws.send("sent"); 
 }
 ws.onmessage = function(message) { 
-    console.log("onmessage " + message.data);
+    doLog("onmessage " + message.data);
 }
 ws.onclose = function() {
-    console.log("onclose");
+    doLog("onclose");
     endTest();
 }
 ws.onerror = function(ev) { 
-    console.log("onerror"); 
+    doLog("onerror"); 
     endTest(); 
 }
 
 setTimeout(function() { 
-    console.log("timeout");
+    doLog("timeout");
     endTest();
 }, 3000);
 

@@ -1,4 +1,11 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<div id="log"></div>
 <script>
+
+function doLog(msg)
+{
+    log.innerHTML += msg + '<br>';
+}
 
 if (window.testRunner) {
     testRunner.waitUntilDone();
@@ -18,7 +25,7 @@ var worker = new Worker("resources/upgrade-worker.js");
 worker.onmessage = function (event)
 {
     var message = event.data;
-    console.log(message);
+    doLog(message);
     if (startsWith(message, "PASS") || startsWith(message, "FAIL"))
 		endTest();
 };

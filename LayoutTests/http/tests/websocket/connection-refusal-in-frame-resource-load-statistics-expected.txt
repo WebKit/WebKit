@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. Connection refused
 Construct a cross-site WebSocket in a frame with server-side refusal. The test passes if Resource Load Statistics logs it properly.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
