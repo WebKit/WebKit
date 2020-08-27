@@ -1,3 +1,22 @@
+2020-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling on select element doesn't work after scrolling the page
+        https://bugs.webkit.org/show_bug.cgi?id=215900
+        <rdar://problem/67766032>
+
+        Reviewed by Tim Horton.
+        
+        The scrolling thread could use a node that was latched some time ago; we need to
+        check the freshness of the latched node before using it.
+
+        Test: fast/scrolling/latching/latching-stuck-to-main-page.html
+
+        * page/scrolling/ScrollingTreeLatchingController.cpp:
+        (WebCore::ScrollingTreeLatchingController::receivedWheelEvent):
+        (WebCore::ScrollingTreeLatchingController::latchedNodeForEvent const):
+        (WebCore::ScrollingTreeLatchingController::latchedNodeIsRelevant const):
+        * page/scrolling/ScrollingTreeLatchingController.h:
+
 2020-08-27  Chris Dumez  <cdumez@apple.com>
 
         Fix AudioParam.linearRampToValueAtTime() formula to match specification
