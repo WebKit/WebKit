@@ -870,14 +870,19 @@ void NetworkConnectionToWebProcess::logUserInteraction(const RegistrableDomain& 
     }
 }
 
-void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics)
+void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* networkSession = this->networkSession()) {
-        if (networkSession->sessionID().isEphemeral())
+        if (networkSession->sessionID().isEphemeral()) {
+            completionHandler();
             return;
-        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(statistics));
+        }
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics()) {
+            resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(statistics), WTFMove(completionHandler));
+            return;
+        }
     }
+    completionHandler();
 }
 
 void NetworkConnectionToWebProcess::hasStorageAccess(const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, CompletionHandler<void(bool)>&& completionHandler)

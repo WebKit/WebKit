@@ -353,20 +353,22 @@ void WebResourceLoadStatisticsStore::statisticsDatabaseHasAllTables(CompletionHa
     });
 }
 
-void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics)
+void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     // It is safe to move the origins to the background queue without isolated copy here because this is an r-value
     // coming from IPC. ResourceLoadStatistics only contains strings which are safe to move to other threads as long
     // as nobody on this thread holds a reference to those strings.
-    postTask([this, protectedThis = makeRef(*this), statistics = WTFMove(statistics)]() mutable {
-        if (!m_statisticsStore)
+    postTask([this, protectedThis = makeRef(*this), statistics = WTFMove(statistics), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!m_statisticsStore) {
+            postTaskReply(WTFMove(completionHandler));
             return;
+        }
 
         ASSERT(suspendedState != State::Suspended);
         m_statisticsStore->mergeStatistics(WTFMove(statistics));
-
+        postTaskReply(WTFMove(completionHandler));
         // We can cancel any pending request to process statistics since we're doing it synchronously below.
         m_statisticsStore->cancelPendingStatisticsProcessingRequest();
 
@@ -1444,7 +1446,7 @@ void WebResourceLoadStatisticsStore::aggregatedThirdPartyData(CompletionHandler<
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable  {
+    postTask([this, completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_statisticsStore) {
             postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler({ });

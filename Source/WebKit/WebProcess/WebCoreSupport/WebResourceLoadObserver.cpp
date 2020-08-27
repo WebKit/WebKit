@@ -63,14 +63,14 @@ static bool is3xxRedirect(const ResourceResponse& response)
 
 WebResourceLoadObserver::WebResourceLoadObserver(ResourceLoadStatistics::IsEphemeral isEphemeral)
     : m_isEphemeral(isEphemeral)
-    , m_notificationTimer(*this, &WebResourceLoadObserver::updateCentralStatisticsStore)
+    , m_notificationTimer([this] { updateCentralStatisticsStore([] { }); })
 {
 }
 
 WebResourceLoadObserver::~WebResourceLoadObserver()
 {
     if (hasStatistics())
-        updateCentralStatisticsStore();
+        updateCentralStatisticsStore([] { });
 }
 
 void WebResourceLoadObserver::requestStorageAccessUnderOpener(const RegistrableDomain& domainInNeedOfStorageAccess, WebPage& openerPage, Document& openerDocument)
@@ -109,11 +109,12 @@ void WebResourceLoadObserver::scheduleNotificationIfNeeded()
         m_notificationTimer.startOneShot(minimumNotificationInterval);
 }
 
-void WebResourceLoadObserver::updateCentralStatisticsStore()
+void WebResourceLoadObserver::updateCentralStatisticsStore(CompletionHandler<void()>&& completionHandler)
 {
     m_notificationTimer.stop();
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(takeStatistics()), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(takeStatistics()), WTFMove(completionHandler));
 }
+
 
 String WebResourceLoadObserver::statisticsForURL(const URL& url)
 {

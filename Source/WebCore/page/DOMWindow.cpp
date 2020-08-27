@@ -1048,7 +1048,7 @@ void DOMWindow::close()
     if (!frame->loader().shouldClose())
         return;
 
-    ResourceLoadObserver::shared().updateCentralStatisticsStore();
+    ResourceLoadObserver::shared().updateCentralStatisticsStore([] { });
 
     page->setIsClosing();
     page->chrome().closeWindowSoon();

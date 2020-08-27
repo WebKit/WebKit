@@ -304,7 +304,7 @@ bool WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef)
     if (!WebCore::ResourceLoadObserver::shared().hasStatistics())
         return false;
 
-    WebCore::ResourceLoadObserver::shared().updateCentralStatisticsStore();
+    WebCore::ResourceLoadObserver::shared().updateCentralStatisticsStore([] { });
     return true;
 }
 

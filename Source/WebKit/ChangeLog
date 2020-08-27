@@ -1,3 +1,51 @@
+2020-08-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Resource Load Statistics data summary does not report data which is held up in the web content process.
+        https://bugs.webkit.org/show_bug.cgi?id=215822
+        <rdar://problem/66682044>
+
+        Reviewed by Chris Dumez.
+
+        No new tests, this fixes a timing bug that is flaky to reproduce, so I
+        was unable to write a test case. Non-regressed behavior is confirmed
+        with existing API testing.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        Most of the time, the completion handler will be an empty function,
+        but we should handle it in the network process so we fix the
+        case where we wait to send the full data summary until the update has
+        finished.
+
+        (WebKit::WebResourceLoadStatisticsStore::aggregatedThirdPartyData):
+        Delete extra space.
+
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::sendResourceLoadStatisticsDataImmediately):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getResourceLoadStatisticsDataSummary):
+        Don't ask the network process for data until any lingering data
+        in the web content process has been sent first.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleResourceLoadStatisticsNotifyObserver):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+        (WebKit::WebResourceLoadObserver::WebResourceLoadObserver):
+        (WebKit::WebResourceLoadObserver::~WebResourceLoadObserver):
+        (WebKit::WebResourceLoadObserver::updateCentralStatisticsStore):
+        * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::flushResourceLoadStatistics):
+        (WebKit::WebProcess::sendResourceLoadStatisticsDataImmediately):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2020-08-26  Andres Gonzalez  <andresg_22@apple.com>
 
         Buttons with aria-haspopup attribute are not exposed to accessibility clients as form controls.

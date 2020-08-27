@@ -2408,6 +2408,14 @@ void WebProcessPool::seedResourceLoadStatisticsForTesting(const RegistrableDomai
     for (auto& process : processes())
         process->sendWithAsyncReply(Messages::WebProcess::SeedResourceLoadStatisticsForTesting(firstPartyDomain, thirdPartyDomain, shouldScheduleNotification), [callbackAggregator] { });
 }
+
+void WebProcessPool::sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    for (auto& process : processes())
+        process->sendWithAsyncReply(Messages::WebProcess::SendResourceLoadStatisticsDataImmediately(), [callbackAggregator] { });
+}
 #endif
 
 WebProcessWithAudibleMediaToken WebProcessPool::webProcessWithAudibleMediaToken() const

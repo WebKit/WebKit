@@ -1,3 +1,21 @@
+2020-08-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Resource Load Statistics data summary does not report data which is held up in the web content process.
+        https://bugs.webkit.org/show_bug.cgi?id=215822
+        <rdar://problem/66682044>
+
+        Reviewed by Chris Dumez.
+
+        Send empty lambda when calling updateCentralStatisticsStore() because
+        in these cases we don't care about timing.
+
+        * loader/ResourceLoadObserver.h:
+        (WebCore::ResourceLoadObserver::updateCentralStatisticsStore):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::close):
+        * testing/Internals.cpp:
+        (WebCore::Internals::notifyResourceLoadObserver):
+
 2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make it possible to create a WeakPtr to Node and use it store assigned nodes in SlotAssignment

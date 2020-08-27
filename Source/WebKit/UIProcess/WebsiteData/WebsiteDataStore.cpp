@@ -1562,8 +1562,10 @@ void WebsiteDataStore::getResourceLoadStatisticsDataSummary(CompletionHandler<vo
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
 
     for (auto& processPool : ensureProcessPools()) {
-        processPool->ensureNetworkProcess(this).getResourceLoadStatisticsDataSummary(m_sessionID, [callbackAggregator, processPool](Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&& data) {
-            callbackAggregator->addResult(WTFMove(data));
+        processPool->sendResourceLoadStatisticsDataImmediately([this, protectedThis = makeRef(*this), processPool, callbackAggregator] {
+            processPool->ensureNetworkProcess(this).getResourceLoadStatisticsDataSummary(m_sessionID, [callbackAggregator, processPool](Vector<WebResourceLoadStatisticsStore::ThirdPartyData>&& data) {
+                callbackAggregator->addResult(WTFMove(data));
+            });
         });
     }
 }

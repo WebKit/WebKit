@@ -475,6 +475,7 @@ private:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
     void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&&);
+    void sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&&);
 #endif
 
     void platformInitializeProcess(const AuxiliaryProcessInitializationParameters&);
