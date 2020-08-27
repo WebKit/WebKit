@@ -1,3 +1,15 @@
+2020-08-27  Antti Koivisto  <antti@apple.com>
+
+        Animation are invalidating too much
+        https://bugs.webkit.org/show_bug.cgi?id=215849
+
+        Reviewed by Antoine Quint.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::invalidateElement):
+
+        Changes due to animations can't affect sibling elements so we can use internal invalidation.
+
 2020-08-27  Youenn Fablet  <youenn@apple.com>
 
         Add support for TransformStream
