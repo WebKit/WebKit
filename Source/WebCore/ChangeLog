@@ -1,3 +1,37 @@
+2020-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Occasional crashes when restoring replaced text under Editor::changeBackToReplacedString
+        https://bugs.webkit.org/show_bug.cgi?id=215892
+        <rdar://problem/67731156>
+
+        Reviewed by Tim Horton.
+
+        While reverting the replaced string in `Editor::changeBackToReplacedString`, it's possible for text replacement
+        (`Editor::replaceSelectionWithText`) to cause the text checking paragraph range to become orphaned (if for no
+        reason other than the fact that arbitrary script can run in between). If this happens, then our attempts to
+        expand the checking range to paragraph boundaries underneath `TextCheckingParagraph::paragraphRange` will result
+        in a null dereference, since the boundary points computed underneath the `expandToParagraphBoundary` helper will
+        be `nullopt`.
+
+        Mitigate this (and any other potentially similar crashes) by making `expandToParagraphBoundary` robust in the
+        case where expanding to the start and end fails, and just fall back to returning the original text checking
+        range instead.
+
+        Test: editing/mac/input/change-back-to-replaced-string.html
+
+        * editing/Editor.h:
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::expandToParagraphBoundary):
+
+        See above for more details.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::changeBackToReplacedString):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+        Add a simple internal testing hook to change the currently selected text back to the given replaced string.
+
 2020-08-27  Antti Koivisto  <antti@apple.com>
 
         :host() pseudo-selector reported as :host in CSSStyleRule

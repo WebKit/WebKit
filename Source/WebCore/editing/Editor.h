@@ -336,7 +336,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     NO_RETURN_DUE_TO_ASSERT
 #endif
-    void changeBackToReplacedString(const String& replacedString);
+    WEBCORE_EXPORT void changeBackToReplacedString(const String& replacedString);
 
 #if !PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT void advanceToNextMisspelling(bool startBeforeSelection = false);

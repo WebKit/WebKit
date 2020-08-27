@@ -1,3 +1,16 @@
+2020-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Occasional crashes when restoring replaced text under Editor::changeBackToReplacedString
+        https://bugs.webkit.org/show_bug.cgi?id=215892
+        <rdar://problem/67731156>
+
+        Reviewed by Tim Horton.
+
+        Add a layout test to exercise the crash.
+
+        * editing/mac/input/change-back-to-replaced-string-expected.txt: Added.
+        * editing/mac/input/change-back-to-replaced-string.html: Added.
+
 2020-08-27  Antti Koivisto  <antti@apple.com>
 
         :host() pseudo-selector reported as :host in CSSStyleRule

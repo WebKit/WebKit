@@ -437,6 +437,7 @@ enum ContentSizeCategory {
 
     void handleAcceptedCandidate(DOMString candidate, unsigned long location, unsigned long length);
     void changeSelectionListType();
+    void changeBackToReplacedString(DOMString replacedString);
 
     boolean isOverwriteModeEnabled();
     void toggleOverwriteModeEnabled();
