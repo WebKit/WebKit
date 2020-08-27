@@ -1,3 +1,20 @@
+2020-08-27  Antti Koivisto  <antti@apple.com>
+
+        :host() pseudo-selector reported as :host in CSSStyleRule
+        https://bugs.webkit.org/show_bug.cgi?id=207567
+        <rdar://problem/59365547>
+
+        Reviewed by Simon Fraser.
+
+        Test case by jlo@logrocket.com
+
+        Test: fast/shadow-dom/css-scoping-host-serialization.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText const):
+
+        Serialize the function form of :host.
+
 2020-08-27  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r264790): IndexedDB may abort transactions of in-memory databases

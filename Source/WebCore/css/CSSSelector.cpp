@@ -669,6 +669,11 @@ String CSSSelector::selectorText(const String& rightSide) const
                 break;
             case CSSSelector::PseudoClassHost:
                 builder.appendLiteral(":host");
+                if (auto* selectorList = cs->selectorList()) {
+                    builder.append('(');
+                    selectorList->buildSelectorsText(builder);
+                    builder.append(')');
+                }
                 break;
             case CSSSelector::PseudoClassDefined:
                 builder.appendLiteral(":defined");

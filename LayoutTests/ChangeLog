@@ -1,3 +1,14 @@
+2020-08-27  Antti Koivisto  <antti@apple.com>
+
+        :host() pseudo-selector reported as :host in CSSStyleRule
+        https://bugs.webkit.org/show_bug.cgi?id=207567
+        <rdar://problem/59365547>
+
+        Reviewed by Simon Fraser.
+
+        * fast/shadow-dom/css-scoping-host-serialization-expected.txt: Added.
+        * fast/shadow-dom/css-scoping-host-serialization.html: Added.
+
 2020-08-27  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r263506): timing of CSS Animation on https://animate.style is incorrect
