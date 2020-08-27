@@ -74,7 +74,7 @@ webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [
 
 webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
 
-webkit.org/b/98363 accessibility/canvas-fallback-content-2.html [ Failure ]
+webkit.org/b/98363 [ Release ] accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/98372 accessibility/onclick-handlers.html [ Failure ]
 webkit.org/b/98377 accessibility/textarea-insertion-point-line-number.html [ Failure ]
 webkit.org/b/98380 accessibility/th-as-title-ui.html [ Failure ]
@@ -84,6 +84,10 @@ webkit.org/b/209102 accessibility/accessibility-node-memory-management.html [ Fa
 
 webkit.org/b/215405 accessibility/roles-computedRoleString.html [ Failure ]
 webkit.org/b/215405 [ Release ] accessibility/roles-exposed.html [ Failure ]
+webkit.org/b/215405 [ Debug ] accessibility/canvas-accessibilitynodeobject.html [ Crash ]
+webkit.org/b/215405 [ Debug ] accessibility/canvas-fallback-content-2.html [ Crash ]
+webkit.org/b/215405 [ Debug ] accessibility/canvas-fallback-content.html [ Crash ]
+
 webkit.org/b/207711 [ Debug ] accessibility/roles-exposed.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

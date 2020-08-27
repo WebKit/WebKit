@@ -1,3 +1,11 @@
+2020-08-26  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening some accessibility debug crashes
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+
 2020-08-26  Hector Lopez  <hector_i_lopez@apple.com>
 
         REGRESSION: ASSERT NOT REACHED: WebCore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree
