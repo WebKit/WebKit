@@ -1,3 +1,14 @@
+2020-08-26  Andres Gonzalez  <andresg_22@apple.com>
+
+        Buttons with aria-haspopup attribute are not exposed to accessibility clients as form controls.
+        https://bugs.webkit.org/show_bug.cgi?id=215866
+
+        Reviewed by Chris Fleizach.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick): isARIAControl false implies
+        isARIAInput false, thus removed the || isARIAInput call.
+
 2020-08-26  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Disabled options in the multi-select picker should not be selectable

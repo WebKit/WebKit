@@ -45,10 +45,22 @@
 <br>
 <!-- Inputs. -->
 <input type="submit" value="Submit">
-<input type="submit" value="Submit">
-<input type="submit" value="Submit">
-<input type="submit" value="Submit">
-<input type="submit" value="Submit">
+<div role="checkbox">Role checkbox</div>
+<div role="radio">Role radio</div>
+<div role="searchbox">Role searchbox</div>
+<div role="switch">Role switch</div>
+<br>
+
+<!-- Form controls. -->
+<button>Button</button>
+<div role="button">Role button</div>
+<div role="combobox">Role combobox</div>
+<div role="slider">Role slider</div>
+<div role="textbox">Role textbox</div>
+<!-- The following two are popup buttons and are also form controls. -->
+<button aria-haspopup="menu">Button with aria-haspopup</button>
+<div role="button" aria-haspopup="menu">Role button with aria-haspopup</div>
+
 </div>
 
 <p id="description"></p>
@@ -77,24 +89,27 @@
         // Inputs.
         var inputCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXButtonSearchKey", "", false);
         shouldBe("inputCount", "5");
-        
+
+        // Form controls include inputs, so the count should be the sum of inputs and controls.
+        var controlCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXControlSearchKey", "", false);
+        shouldBe("controlCount", "12");
+
         // Headings.
         var headingCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
         shouldBe("headingCount", "6");
-        
+
         // Onscreen
         var onscreenCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", false);
         shouldBe("onscreenCount", "6");
-        
+
         // Offscreen
         var offscreenCount = containerElement.uiElementCountForSearchPredicate(startElement, true, "AXHeadingSearchKey", "", true);
         shouldBe("offscreenCount", "4");
-        
+
         // Hide superfluous text.
         document.getElementById("container").style.display = "none";
     }
 </script>
-
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

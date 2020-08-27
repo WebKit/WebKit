@@ -275,7 +275,6 @@ public:
     int layoutCount() const override { return 0; }
     double estimatedLoadingProgress() const override { return 0; }
     WEBCORE_EXPORT static bool isARIAControl(AccessibilityRole);
-    WEBCORE_EXPORT static bool isARIAInput(AccessibilityRole);
 
     bool supportsARIAOwns() const override { return false; }
     bool isActiveDescendantOfFocusedContainer() const override;
@@ -773,6 +772,7 @@ protected:
     bool isOnScreen() const override;
     bool dispatchTouchEvent();
 
+    static bool isARIAInput(AccessibilityRole);
     void ariaElementsFromAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
     void ariaElementsReferencedByAttribute(AccessibilityChildrenVector&, const QualifiedName&) const;
 

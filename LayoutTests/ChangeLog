@@ -1,3 +1,17 @@
+2020-08-26  Andres Gonzalez  <andresg_22@apple.com>
+
+        Buttons with aria-haspopup attribute are not exposed to accessibility clients as form controls.
+        https://bugs.webkit.org/show_bug.cgi?id=215866
+
+        Reviewed by Chris Fleizach.
+
+        Expanded this test to include the case of buttons with aria-haspopup and
+        several other elements with ARIA roles that need to be retrieved when
+        clients search for input fields or form controls.
+
+        * accessibility/mac/search-predicate-element-count-expected.txt:
+        * accessibility/mac/search-predicate-element-count.html:
+
 2020-08-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Leading white spaces should be ignored when parsing an SVG list property
