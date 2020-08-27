@@ -70,17 +70,17 @@ size_t timeToSampleFrame(double time, double sampleRate, SampleFrameRounding rou
     // The oversampling factor MUST be a power of two so as not to introduce
     // additional round-off in computing the oversample frame number.
     constexpr double oversampleFactor = 1024;
-    double frame = round(time * sampleRate * oversampleFactor) / oversampleFactor;
+    double frame = std::round(time * sampleRate * oversampleFactor) / oversampleFactor;
 
     switch (rounding) {
     case SampleFrameRounding::Nearest:
-        frame = round(frame);
+        frame = std::round(frame);
         break;
     case SampleFrameRounding::Down:
-        frame = floor(frame);
+        frame = std::floor(frame);
         break;
     case SampleFrameRounding::Up:
-        frame = ceil(frame);
+        frame = std::ceil(frame);
         break;
     }
 

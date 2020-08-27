@@ -79,7 +79,7 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, Aud
 
     // Round up if the start time isn't on a frame boundary so we don't start too early.
     size_t startFrame = AudioUtilities::timeToSampleFrame(m_startTime, sampleRate, AudioUtilities::SampleFrameRounding::Up);
-    size_t endFrame =  0;
+    size_t endFrame = 0;
     if (m_endTime != UnknownTime) {
         // The end frame is the end time rounded up because it is an exclusive upper
         // bound of the end time. We also need to take care to handle huge end

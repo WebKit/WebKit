@@ -1,3 +1,12 @@
+2020-08-27  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address review comments for r266221 that I missed before landing.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::updateSchedulingInfo):
+        * platform/audio/AudioUtilities.cpp:
+        (WebCore::AudioUtilities::timeToSampleFrame):
+
 2020-08-27  Antti Koivisto  <antti@apple.com>
 
         Step animations invalidate style on every rendering update whether or not they need to
