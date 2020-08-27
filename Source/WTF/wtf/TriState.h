@@ -38,7 +38,17 @@ inline TriState triState(bool boolean)
     return static_cast<TriState>(boolean);
 }
 
+inline TriState invert(TriState triState)
+{
+    if (triState == TriState::True)
+        return TriState::False;
+    if (triState == TriState::False)
+        return TriState::True;
+    return TriState::Indeterminate;
+}
+
 }
 
 using WTF::TriState;
 using WTF::triState;
+using WTF::invert;

@@ -113,25 +113,6 @@ JSString* jsTypeStringForValueWithConcurrency(VM& vm, JSGlobalObject* globalObje
     return vm.smallStrings.objectString();
 }
 
-bool jsTypeofIsObject(JSGlobalObject* globalObject, JSValue v)
-{
-    VM& vm = globalObject->vm();
-    if (!v.isCell())
-        return v.isNull();
-
-    JSType type = v.asCell()->type();
-    if (type == StringType || type == SymbolType || type == HeapBigIntType)
-        return false;
-    if (type >= ObjectType) {
-        if (asObject(v)->structure(vm)->masqueradesAsUndefined(globalObject))
-            return false;
-        JSObject* object = asObject(v);
-        if (object->isCallable(vm))
-            return false;
-    }
-    return true;
-}
-
 size_t normalizePrototypeChain(JSGlobalObject* globalObject, JSCell* base, bool& sawPolyProto)
 {
     VM& vm = globalObject->vm();

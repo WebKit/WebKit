@@ -2132,11 +2132,7 @@ size_t JIT_OPERATION operationTypeOfIsObject(JSGlobalObject* globalObject, JSCel
 
     ASSERT(jsDynamicCast<JSObject*>(vm, object));
     
-    if (object->structure(vm)->masqueradesAsUndefined(globalObject))
-        return false;
-    if (object->isCallable(vm))
-        return false;
-    return true;
+    return jsTypeofIsObject(globalObject, object);
 }
 
 size_t JIT_OPERATION operationTypeOfIsFunction(JSGlobalObject* globalObject, JSCell* object)

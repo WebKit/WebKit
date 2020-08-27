@@ -1,3 +1,13 @@
+2020-08-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Use jsTypeofIsObject() in DFG AI and operationTypeOfIsObject()
+        https://bugs.webkit.org/show_bug.cgi?id=144457
+
+        Reviewed by Saam Barati.
+
+        * wtf/TriState.h:
+        (WTF::invert):
+
 2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         HashMap<Ref<T>>::take should return RefPtr<T>

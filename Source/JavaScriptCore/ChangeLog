@@ -1,5 +1,30 @@
 2020-08-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Use jsTypeofIsObject() in DFG AI and operationTypeOfIsObject()
+        https://bugs.webkit.org/show_bug.cgi?id=144457
+
+        Reviewed by Saam Barati.
+
+        This patch refactors jsTypeofIsObject(), leveraging fast path of isCallable(),
+        moves it to the header, and utilizes it in operationTypeOfIsObject() & DFG AI
+        (minding concurrency) to eliminate code duplication.
+
+        Also, removes orphaned slow_path_is_object declaration.
+
+        No behavior change, `typeof` microbenchmarks are neutral.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGOperations.cpp:
+        * runtime/CommonSlowPaths.h:
+        * runtime/Operations.cpp:
+        (JSC::jsTypeofIsObject): Deleted.
+        * runtime/Operations.h:
+        (JSC::jsTypeofIsObjectWithConcurrency):
+        (JSC::jsTypeofIsObject):
+
+2020-08-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Merge putLength() into setLength()
         https://bugs.webkit.org/show_bug.cgi?id=211279
 

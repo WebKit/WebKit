@@ -1476,21 +1476,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     ? child.value().asCell()->structure(m_vm)->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))
                     : child.value().isUndefined()));
                 break;
-            case TypeOfIsObject:
-                if (child.value().isObject()) {
-                    JSObject* object = asObject(child.value());
-                    if (object->type() == JSFunctionType)
-                        setConstant(node, jsBoolean(false));
-                    else if (!(object->inlineTypeFlags() & OverridesGetCallData))
-                        setConstant(node, jsBoolean(!child.value().asCell()->structure(m_vm)->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node->origin.semantic))));
-                    else {
-                        // FIXME: This could just call getCallData.
-                        // https://bugs.webkit.org/show_bug.cgi?id=144457
-                        constantWasSet = false;
-                    }
-                } else
-                    setConstant(node, jsBoolean(child.value().isNull()));
+            case TypeOfIsObject: {
+                TriState result = jsTypeofIsObjectWithConcurrency<Concurrency::ConcurrentThread>(m_codeBlock->globalObjectFor(node->origin.semantic), child.value());
+                if (result != TriState::Indeterminate)
+                    setConstant(node, jsBoolean(result == TriState::True));
+                else
+                    constantWasSet = false;
                 break;
+            }
             case TypeOfIsFunction: {
                 TriState result = jsTypeofIsFunctionWithConcurrency<Concurrency::ConcurrentThread>(m_codeBlock->globalObjectFor(node->origin.semantic), child.value());
                 if (result != TriState::Indeterminate)

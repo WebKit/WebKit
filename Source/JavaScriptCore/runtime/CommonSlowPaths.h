@@ -253,7 +253,6 @@ SLOW_PATH_HIDDEN_DECL(slow_path_bitxor);
 SLOW_PATH_HIDDEN_DECL(slow_path_typeof);
 SLOW_PATH_HIDDEN_DECL(slow_path_typeof_is_object);
 SLOW_PATH_HIDDEN_DECL(slow_path_typeof_is_function);
-SLOW_PATH_HIDDEN_DECL(slow_path_is_object);
 SLOW_PATH_HIDDEN_DECL(slow_path_is_callable);
 SLOW_PATH_HIDDEN_DECL(slow_path_is_constructor);
 SLOW_PATH_HIDDEN_DECL(slow_path_in_by_id);
