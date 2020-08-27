@@ -59,9 +59,6 @@ public:
     ContainerNode* scrollableContainer() const { return m_scrollableContainer.get(); }
     void setScrollableContainer(ContainerNode*);
 
-    bool startedGestureAtScrollLimit() const { return m_startedGestureAtScrollLimit; }
-    void setStartedGestureAtScrollLimit(bool startedAtLimit) { m_startedGestureAtScrollLimit = startedAtLimit; }
-
 private:
     WeakPtr<Element> m_wheelEventElement;
     WeakPtr<Element> m_previousWheelScrolledElement;
@@ -70,7 +67,6 @@ private:
     Frame* m_frame { nullptr };
 
     bool m_widgetIsLatched { false };
-    bool m_startedGestureAtScrollLimit { false };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollLatchingState&);

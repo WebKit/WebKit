@@ -993,7 +993,6 @@ void EventHandler::determineWheelEventTarget(const PlatformWheelEvent& wheelEven
             bool startingAtScrollLimit = scrolledToEdgeInDominantDirection(*scrollableContainer, *scrollableArea.get(), wheelEvent.deltaX(), wheelEvent.deltaY());
             if (!startingAtScrollLimit) {
                 ScrollLatchingState latchingState;
-                latchingState.setStartedGestureAtScrollLimit(false);
                 latchingState.setWheelEventElement(wheelEventTarget.get());
                 latchingState.setFrame(&m_frame);
                 latchingState.setScrollableContainer(scrollableContainer.get());
@@ -1076,24 +1075,21 @@ bool EventHandler::processWheelEventForScrolling(const PlatformWheelEvent& wheel
         LOG_WITH_STREAM(ScrollLatching, stream << "  latching state " << *latchingState);
 
         // WebKit2 code path
-        if (!frameHasPlatformWidget(m_frame) && !latchingState->startedGestureAtScrollLimit() && scrollableContainer == latchingState->scrollableContainer() && scrollableArea && view != scrollableArea) {
+        if (!frameHasPlatformWidget(m_frame) && scrollableContainer == latchingState->scrollableContainer() && scrollableArea && view != scrollableArea) {
             // If we did not start at the scroll limit, do not pass the event on to be handled by enclosing scrollable regions.
             LOG_WITH_STREAM(Scrolling, stream << "EventHandler " << this << " processWheelEventForScrolling - latched to " << scrollableArea.get() << " and not propagating");
             return true;
         }
 
-        if (!latchingState->startedGestureAtScrollLimit()) {
-            // FIXME: This set 'view' to a FrameView that is not this EventHandler's FrameView, which then gets scrolled from here, which is wrong.
-            view = frameViewForLatchingState(m_frame, *latchingState);
-        }
-
+        // FIXME: This set 'view' to a FrameView that is not this EventHandler's FrameView, which then gets scrolled from here, which is wrong.
+        view = frameViewForLatchingState(m_frame, *latchingState);
         ASSERT(view);
 
         bool didHandleWheelEvent = view->wheelEvent(wheelEvent);
         if (scrollableContainer == latchingState->scrollableContainer()) {
             // If we are just starting a scroll event, and have nowhere left to scroll, allow
             // the enclosing frame to handle the scroll.
-            didHandleWheelEvent = !latchingState->startedGestureAtScrollLimit();
+            didHandleWheelEvent = true;
         }
 
         // If the platform widget is handling the event, we always want to return false.
@@ -1119,7 +1115,7 @@ bool EventHandler::platformCompletePlatformWidgetWheelEvent(const PlatformWheelE
         return false;
 
     if (wheelEvent.useLatchedEventElement() && latchingState->scrollableContainer() && scrollableContainer == latchingState->scrollableContainer())
-        return !latchingState->startedGestureAtScrollLimit();
+        return true;
 
     return false;
 }

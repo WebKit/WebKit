@@ -73,7 +73,6 @@ TextStream& operator<<(TextStream& ts, const ScrollLatchingState& state)
     multilineStream.dumpProperty("previousElement", state.previousWheelScrolledElement());
     multilineStream.dumpProperty("scrollable container", state.scrollableContainer());
     multilineStream.dumpProperty("widgetIsLatched", state.widgetIsLatched());
-    multilineStream.dumpProperty("started at limit", state.startedGestureAtScrollLimit());
 
     ts << "ScrollLatchingState " << multilineStream.release();
 
