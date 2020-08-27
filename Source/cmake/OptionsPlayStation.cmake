@@ -1,5 +1,7 @@
 set(PORT PlayStation)
 
+include(CheckSymbolExists)
+
 string(APPEND CMAKE_C_FLAGS_RELEASE " -g")
 string(APPEND CMAKE_CXX_FLAGS_RELEASE " -g")
 set(CMAKE_CONFIGURATION_TYPES "Debug" "Release")
@@ -285,3 +287,8 @@ function(PLAYSTATION_COPY_SHARED_LIBRARIES target_name)
     endforeach ()
     add_custom_target(${target_name} ALL DEPENDS ${dst_shared_libs})
 endfunction()
+
+check_symbol_exists(memmem string.h HAVE_MEMMEM)
+if (HAVE_MEMMEM)
+    add_definitions(-DHAVE_MEMMEM=1)
+endif ()

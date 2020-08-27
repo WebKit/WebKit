@@ -308,6 +308,9 @@
 
 #if !OS(WINDOWS)
 #define HAVE_STACK_BOUNDS_FOR_NEW_THREAD 1
+#endif
+
+#if !OS(WINDOWS) && !PLATFORM(PLAYSTATION)
 #define HAVE_MEMMEM 1
 #endif
 
