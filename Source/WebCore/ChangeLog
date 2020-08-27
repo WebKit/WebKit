@@ -1,3 +1,23 @@
+2020-08-27  Simon Fraser  <simon.fraser@apple.com>
+
+        ScrollLatchingState::previousWheelScrolledElement() is unused
+        https://bugs.webkit.org/show_bug.cgi?id=215881
+
+        Reviewed by Zalan Bujtas.
+
+        Scroll latching's previousWheelScrolledElement() was unused. It was never set since
+        we never end up with a null wheelEventElement. This functionality has been retained
+        from ancient code with little understanding of its utility.
+
+        * page/EventHandler.cpp:
+        (WebCore::handleWheelEventInAppropriateEnclosingBox):
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        * page/scrolling/ScrollLatchingState.cpp:
+        (WebCore::ScrollLatchingState::clear):
+        (WebCore::operator<<):
+        (WebCore::ScrollLatchingState::setPreviousWheelScrolledElement): Deleted.
+        * page/scrolling/ScrollLatchingState.h:
+
 2020-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Occasional crashes when restoring replaced text under Editor::changeBackToReplacedString

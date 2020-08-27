@@ -53,15 +53,11 @@ public:
     bool widgetIsLatched() const { return m_widgetIsLatched; }
     void setWidgetIsLatched(bool isOverWidget);
 
-    Element* previousWheelScrolledElement() const { return m_previousWheelScrolledElement.get(); }
-    void setPreviousWheelScrolledElement(Element*);
-    
     ContainerNode* scrollableContainer() const { return m_scrollableContainer.get(); }
     void setScrollableContainer(ContainerNode*);
 
 private:
     WeakPtr<Element> m_wheelEventElement;
-    WeakPtr<Element> m_previousWheelScrolledElement;
     WeakPtr<ContainerNode> m_scrollableContainer;
 
     Frame* m_frame { nullptr };

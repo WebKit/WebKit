@@ -41,7 +41,6 @@ void ScrollLatchingState::clear()
     m_frame = nullptr;
     m_scrollableContainer = nullptr;
     m_widgetIsLatched = false;
-    m_previousWheelScrolledElement = nullptr;
 }
 
 void ScrollLatchingState::setWheelEventElement(Element* element)
@@ -52,11 +51,6 @@ void ScrollLatchingState::setWheelEventElement(Element* element)
 void ScrollLatchingState::setWidgetIsLatched(bool isOverWidget)
 {
     m_widgetIsLatched = isOverWidget;
-}
-
-void ScrollLatchingState::setPreviousWheelScrolledElement(Element* element)
-{
-    m_previousWheelScrolledElement = makeWeakPtr(element);
 }
 
 void ScrollLatchingState::setScrollableContainer(ContainerNode* container)
@@ -70,7 +64,6 @@ TextStream& operator<<(TextStream& ts, const ScrollLatchingState& state)
     multilineStream.setIndent(ts.indent() + 2);
 
     multilineStream.dumpProperty("element", state.wheelEventElement());
-    multilineStream.dumpProperty("previousElement", state.previousWheelScrolledElement());
     multilineStream.dumpProperty("scrollable container", state.scrollableContainer());
     multilineStream.dumpProperty("widgetIsLatched", state.widgetIsLatched());
 

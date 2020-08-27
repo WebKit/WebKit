@@ -315,7 +315,7 @@ static bool didScrollInScrollableArea(ScrollableArea& scrollableArea, const Whee
     return didHandleWheelEvent;
 }
 
-static bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent& wheelEvent, RefPtr<Element>& stopElement, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity)
+static bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent& wheelEvent, const FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity)
 {
     bool shouldHandleEvent = wheelEvent.deltaX() || wheelEvent.deltaY();
 #if ENABLE(WHEEL_EVENT_LATCHING)
@@ -350,14 +350,9 @@ static bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const Whe
             } else
                 scrollingWasHandled = didScrollInScrollableArea(*boxLayer, wheelEvent);
 
-            if (scrollingWasHandled) {
-                stopElement = currentEnclosingBox->element();
+            if (scrollingWasHandled)
                 return true;
-            }
         }
-
-        if (stopElement.get() && stopElement.get() == currentEnclosingBox->element())
-            return true;
 
         currentEnclosingBox = currentEnclosingBox->containingBlock();
         if (!currentEnclosingBox || currentEnclosingBox->isRenderView())
@@ -2993,24 +2988,15 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         filteredPlatformDelta.setHeight(platformWheelEvent->deltaY());
     }
 
-    RefPtr<Element> stopElement;
 #if ENABLE(WHEEL_EVENT_LATCHING)
-    ScrollLatchingState* latchedState = m_frame.page() ? m_frame.page()->latchingState() : nullptr;
-    stopElement = latchedState ? latchedState->previousWheelScrolledElement() : nullptr;
-
     if (m_frame.page() && m_frame.page()->wheelEventDeltaFilter()->isFilteringDeltas()) {
         filteredPlatformDelta = m_frame.page()->wheelEventDeltaFilter()->filteredDelta();
         filteredVelocity = m_frame.page()->wheelEventDeltaFilter()->filteredVelocity();
     }
 #endif
 
-    if (handleWheelEventInAppropriateEnclosingBox(startNode, wheelEvent, stopElement, filteredPlatformDelta, filteredVelocity))
+    if (handleWheelEventInAppropriateEnclosingBox(startNode, wheelEvent, filteredPlatformDelta, filteredVelocity))
         wheelEvent.setDefaultHandled();
-
-#if ENABLE(WHEEL_EVENT_LATCHING)
-    if (latchedState && !latchedState->wheelEventElement())
-        latchedState->setPreviousWheelScrolledElement(stopElement.get());
-#endif
 }
 
 #if ENABLE(CONTEXT_MENU_EVENT)
