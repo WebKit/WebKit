@@ -472,6 +472,13 @@ void TestRunner::setWritableStreamAPIEnabled(bool enabled)
     WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), key.get(), enabled);
 }
 
+void TestRunner::setTransformStreamAPIEnabled(bool enabled)
+{
+    WKRetainPtr<WKStringRef> key = adoptWK(WKStringCreateWithUTF8CString("WebKitTransformStreamAPIEnabled"));
+    auto& injectedBundle = InjectedBundle::singleton();
+    WKBundleOverrideBoolPreferenceForTestRunner(injectedBundle.bundle(), injectedBundle.pageGroup(), key.get(), enabled);
+}
+
 void TestRunner::setReadableByteStreamAPIEnabled(bool enabled)
 {
     WKRetainPtr<WKStringRef> key = adoptWK(WKStringCreateWithUTF8CString("WebKitReadableByteStreamAPIEnabled"));

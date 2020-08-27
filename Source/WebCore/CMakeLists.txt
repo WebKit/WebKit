@@ -443,6 +443,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/streams/ReadableStreamDefaultReader.idl
     Modules/streams/ReadableStreamSink.idl
     Modules/streams/ReadableStreamSource.idl
+    Modules/streams/TransformStream.idl
+    Modules/streams/TransformStreamDefaultController.idl
     Modules/streams/WritableStream.idl
     Modules/streams/WritableStreamDefaultController.idl
     Modules/streams/WritableStreamDefaultWriter.idl
@@ -1943,6 +1945,9 @@ set(WebCore_BUILTINS_SOURCES
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamInternals.js
     ${WEBCORE_DIR}/Modules/streams/ReadableStreamDefaultReader.js
     ${WEBCORE_DIR}/Modules/streams/StreamInternals.js
+    ${WEBCORE_DIR}/Modules/streams/TransformStream.js
+    ${WEBCORE_DIR}/Modules/streams/TransformStreamDefaultController.js
+    ${WEBCORE_DIR}/Modules/streams/TransformStreamInternals.js
     ${WEBCORE_DIR}/Modules/streams/WritableStream.js
     ${WEBCORE_DIR}/Modules/streams/WritableStreamDefaultController.js
     ${WEBCORE_DIR}/Modules/streams/WritableStreamDefaultWriter.js

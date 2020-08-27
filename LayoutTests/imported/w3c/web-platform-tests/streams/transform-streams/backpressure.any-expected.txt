@@ -1,16 +1,17 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 
-FAIL backpressure allows no transforms with a default identity transform and no reader Can't find variable: TransformStream
-FAIL backpressure only allows one transform() with a identity transform with a readable HWM of 1 and no reader Can't find variable: TransformStream
-FAIL transform() should keep being called as long as there is no backpressure Can't find variable: TransformStream
-FAIL writes should resolve as soon as transform completes Can't find variable: TransformStream
-FAIL calling pull() before the first write() with backpressure should work Can't find variable: TransformStream
-FAIL transform() should be able to read the chunk it just enqueued Can't find variable: TransformStream
-FAIL blocking transform() should cause backpressure Can't find variable: TransformStream
-FAIL writer.closed should resolve after readable is canceled during start Can't find variable: TransformStream
-FAIL writer.closed should resolve after readable is canceled with backpressure Can't find variable: TransformStream
-FAIL writer.closed should resolve after readable is canceled with no backpressure Can't find variable: TransformStream
-FAIL cancelling the readable should cause a pending write to resolve Can't find variable: TransformStream
-FAIL cancelling the readable side of a TransformStream should abort an empty pipe Can't find variable: TransformStream
-FAIL cancelling the readable side of a TransformStream should abort an empty pipe after startup Can't find variable: TransformStream
-FAIL cancelling the readable side of a TransformStream should abort a full pipe Can't find variable: TransformStream
+FAIL backpressure allows no transforms with a default identity transform and no reader assert_array_equals: transform should not be called lengths differ, expected array [] length 0, got ["transform", "a"] length 2
+PASS backpressure only allows one transform() with a identity transform with a readable HWM of 1 and no reader 
+PASS transform() should keep being called as long as there is no backpressure 
+PASS writes should resolve as soon as transform completes 
+PASS calling pull() before the first write() with backpressure should work 
+PASS transform() should be able to read the chunk it just enqueued 
+PASS blocking transform() should cause backpressure 
+PASS writer.closed should resolve after readable is canceled during start 
+PASS writer.closed should resolve after readable is canceled with backpressure 
+PASS writer.closed should resolve after readable is canceled with no backpressure 
+PASS cancelling the readable should cause a pending write to resolve 
+PASS cancelling the readable side of a TransformStream should abort an empty pipe 
+PASS cancelling the readable side of a TransformStream should abort an empty pipe after startup 
+PASS cancelling the readable side of a TransformStream should abort a full pipe 
 

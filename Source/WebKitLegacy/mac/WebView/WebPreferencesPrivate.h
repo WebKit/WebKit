@@ -574,6 +574,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)setWritableStreamAPIEnabled:(BOOL)flag;
 - (BOOL)writableStreamAPIEnabled;
 
+- (void)setTransformStreamAPIEnabled:(BOOL)flag;
+- (BOOL)transformStreamAPIEnabled;
+
 - (void)setDownloadAttributeEnabled:(BOOL)flag;
 - (BOOL)downloadAttributeEnabled;
 

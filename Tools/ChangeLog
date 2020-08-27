@@ -1,3 +1,19 @@
+2020-08-27  Youenn Fablet  <youenn@apple.com>
+
+        Add support for TransformStream
+        https://bugs.webkit.org/show_bug.cgi?id=215607
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWritableStreamAPIEnabled):
+        (WTR::TestRunner::setTransformStreamAPIEnabled):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2020-08-26  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Move Timeout to webkitcorepy (Part 2)

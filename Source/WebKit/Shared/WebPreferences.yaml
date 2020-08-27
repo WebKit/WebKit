@@ -2169,6 +2169,14 @@ WritableStreamAPIEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+TransformStreamAPIEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "TransformStream API"
+  humanReadableDescription: "Enable Transform Stream API"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+
 # Deprecated
 
 ICECandidateFilteringEnabled:

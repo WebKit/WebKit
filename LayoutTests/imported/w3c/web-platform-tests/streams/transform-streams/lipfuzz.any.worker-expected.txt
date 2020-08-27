@@ -1,22 +1,22 @@
 
-FAIL testing "" (length 1) Can't find variable: TransformStream
-FAIL testing "" (length 0) Can't find variable: TransformStream
-FAIL testing "{{in1}}" (length 1) Can't find variable: TransformStream
-FAIL testing "z{{in1}}" (length 1) Can't find variable: TransformStream
-FAIL testing "{{in1}}q" (length 1) Can't find variable: TransformStream
-FAIL testing "{{in1}}{{in1}" (length 1) Can't find variable: TransformStream
-FAIL testing "{{in1}}{{in1},}" (length 2) Can't find variable: TransformStream
-FAIL testing "{{in1,}}" (length 2) Can't find variable: TransformStream
-FAIL testing "{{,in1}}" (length 2) Can't find variable: TransformStream
-FAIL testing "{,{in1}}" (length 2) Can't find variable: TransformStream
-FAIL testing "{{,in1}" (length 2) Can't find variable: TransformStream
-FAIL testing "{" (length 1) Can't find variable: TransformStream
-FAIL testing "{," (length 2) Can't find variable: TransformStream
-FAIL testing "{,{,i,n,1,},}" (length 7) Can't find variable: TransformStream
-FAIL testing "{{in1}}{{in2}}{{in1}}" (length 1) Can't find variable: TransformStream
-FAIL testing "{{wrong}}" (length 1) Can't find variable: TransformStream
-FAIL testing "{{wron,g}}" (length 2) Can't find variable: TransformStream
-FAIL testing "{{quine}}" (length 1) Can't find variable: TransformStream
-FAIL testing "{{bogusPartial}}" (length 1) Can't find variable: TransformStream
-FAIL testing "{{bogusPartial}}}" (length 1) Can't find variable: TransformStream
+PASS testing "" (length 1) 
+PASS testing "" (length 0) 
+PASS testing "{{in1}}" (length 1) 
+PASS testing "z{{in1}}" (length 1) 
+PASS testing "{{in1}}q" (length 1) 
+PASS testing "{{in1}}{{in1}" (length 1) 
+PASS testing "{{in1}}{{in1},}" (length 2) 
+PASS testing "{{in1,}}" (length 2) 
+PASS testing "{{,in1}}" (length 2) 
+PASS testing "{,{in1}}" (length 2) 
+PASS testing "{{,in1}" (length 2) 
+PASS testing "{" (length 1) 
+PASS testing "{," (length 2) 
+PASS testing "{,{,i,n,1,},}" (length 7) 
+PASS testing "{{in1}}{{in2}}{{in1}}" (length 1) 
+PASS testing "{{wrong}}" (length 1) 
+PASS testing "{{wron,g}}" (length 2) 
+PASS testing "{{quine}}" (length 1) 
+PASS testing "{{bogusPartial}}" (length 1) 
+PASS testing "{{bogusPartial}}}" (length 1) 
 

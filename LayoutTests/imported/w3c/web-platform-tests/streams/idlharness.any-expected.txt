@@ -173,36 +173,38 @@ PASS WritableStreamDefaultController must be primary interface of self.writableS
 PASS Stringification of self.writableStreamDefaultController 
 PASS WritableStreamDefaultController interface: self.writableStreamDefaultController must inherit property "error(optional any)" with the proper type 
 PASS WritableStreamDefaultController interface: calling error(optional any) on self.writableStreamDefaultController with too few arguments must throw TypeError 
-FAIL TransformStream interface: existence and properties of interface object assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing
-FAIL TransformStream interface object length assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing
-FAIL TransformStream interface object name assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing
-FAIL TransformStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing
-FAIL TransformStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing
-FAIL TransformStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing
-FAIL TransformStream interface: attribute readable assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing
-FAIL TransformStream interface: attribute writable assert_own_property: self does not have own property "TransformStream" expected property "TransformStream" missing
-FAIL TransformStream must be primary interface of new TransformStream() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TransformStream"
-FAIL Stringification of new TransformStream() assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TransformStream"
-FAIL TransformStream interface: new TransformStream() must inherit property "readable" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TransformStream"
-FAIL TransformStream interface: new TransformStream() must inherit property "writable" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: TransformStream"
-FAIL TransformStreamDefaultController interface: existence and properties of interface object assert_own_property: self does not have own property "TransformStreamDefaultController" expected property "TransformStreamDefaultController" missing
-FAIL TransformStreamDefaultController interface object length assert_own_property: self does not have own property "TransformStreamDefaultController" expected property "TransformStreamDefaultController" missing
-FAIL TransformStreamDefaultController interface object name assert_own_property: self does not have own property "TransformStreamDefaultController" expected property "TransformStreamDefaultController" missing
-FAIL TransformStreamDefaultController interface: existence and properties of interface prototype object assert_own_property: self does not have own property "TransformStreamDefaultController" expected property "TransformStreamDefaultController" missing
-FAIL TransformStreamDefaultController interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "TransformStreamDefaultController" expected property "TransformStreamDefaultController" missing
-FAIL TransformStreamDefaultController interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "TransformStreamDefaultController" expected property "TransformStreamDefaultController" missing
-FAIL TransformStreamDefaultController interface: attribute desiredSize assert_own_property: self does not have own property "TransformStreamDefaultController" expected property "TransformStreamDefaultController" missing
-FAIL TransformStreamDefaultController interface: operation enqueue(optional any) assert_own_property: self does not have own property "TransformStreamDefaultController" expected property "TransformStreamDefaultController" missing
-FAIL TransformStreamDefaultController interface: operation error(optional any) assert_own_property: self does not have own property "TransformStreamDefaultController" expected property "TransformStreamDefaultController" missing
-FAIL TransformStreamDefaultController interface: operation terminate() assert_own_property: self does not have own property "TransformStreamDefaultController" expected property "TransformStreamDefaultController" missing
-FAIL TransformStreamDefaultController must be primary interface of self.transformStreamDefaultController assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of self.transformStreamDefaultController assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL TransformStreamDefaultController interface: self.transformStreamDefaultController must inherit property "desiredSize" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL TransformStreamDefaultController interface: self.transformStreamDefaultController must inherit property "enqueue(optional any)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL TransformStreamDefaultController interface: calling enqueue(optional any) on self.transformStreamDefaultController with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL TransformStreamDefaultController interface: self.transformStreamDefaultController must inherit property "error(optional any)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL TransformStreamDefaultController interface: calling error(optional any) on self.transformStreamDefaultController with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL TransformStreamDefaultController interface: self.transformStreamDefaultController must inherit property "terminate()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS TransformStream interface: existence and properties of interface object 
+PASS TransformStream interface object length 
+PASS TransformStream interface object name 
+PASS TransformStream interface: existence and properties of interface prototype object 
+PASS TransformStream interface: existence and properties of interface prototype object's "constructor" property 
+PASS TransformStream interface: existence and properties of interface prototype object's @@unscopables property 
+PASS TransformStream interface: attribute readable 
+FAIL TransformStream interface: attribute writable assert_equals: getter must have the name 'get writable' expected "get writable" but got "writable"
+PASS TransformStream must be primary interface of new TransformStream() 
+PASS Stringification of new TransformStream() 
+PASS TransformStream interface: new TransformStream() must inherit property "readable" with the proper type 
+PASS TransformStream interface: new TransformStream() must inherit property "writable" with the proper type 
+FAIL TransformStreamDefaultController interface: existence and properties of interface object assert_throws_js: interface object didn't throw TypeError when called as a constructor function "function () {
+                new interface_object();
+            }" did not throw
+PASS TransformStreamDefaultController interface object length 
+PASS TransformStreamDefaultController interface object name 
+PASS TransformStreamDefaultController interface: existence and properties of interface prototype object 
+PASS TransformStreamDefaultController interface: existence and properties of interface prototype object's "constructor" property 
+PASS TransformStreamDefaultController interface: existence and properties of interface prototype object's @@unscopables property 
+PASS TransformStreamDefaultController interface: attribute desiredSize 
+FAIL TransformStreamDefaultController interface: operation enqueue(optional any) assert_equals: property has wrong .length expected 0 but got 1
+FAIL TransformStreamDefaultController interface: operation error(optional any) assert_equals: property has wrong .length expected 0 but got 1
+PASS TransformStreamDefaultController interface: operation terminate() 
+PASS TransformStreamDefaultController must be primary interface of self.transformStreamDefaultController 
+PASS Stringification of self.transformStreamDefaultController 
+PASS TransformStreamDefaultController interface: self.transformStreamDefaultController must inherit property "desiredSize" with the proper type 
+PASS TransformStreamDefaultController interface: self.transformStreamDefaultController must inherit property "enqueue(optional any)" with the proper type 
+PASS TransformStreamDefaultController interface: calling enqueue(optional any) on self.transformStreamDefaultController with too few arguments must throw TypeError 
+PASS TransformStreamDefaultController interface: self.transformStreamDefaultController must inherit property "error(optional any)" with the proper type 
+PASS TransformStreamDefaultController interface: calling error(optional any) on self.transformStreamDefaultController with too few arguments must throw TypeError 
+PASS TransformStreamDefaultController interface: self.transformStreamDefaultController must inherit property "terminate()" with the proper type 
 PASS ByteLengthQueuingStrategy interface: existence and properties of interface object 
 FAIL ByteLengthQueuingStrategy interface object length assert_equals: wrong value for ByteLengthQueuingStrategy.length expected 1 but got 0
 PASS ByteLengthQueuingStrategy interface object name 

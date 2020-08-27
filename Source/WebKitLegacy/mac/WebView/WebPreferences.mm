@@ -655,6 +655,7 @@ public:
 
         @NO, WebKitReadableByteStreamAPIEnabledPreferenceKey,
         @NO, WebKitWritableStreamAPIEnabledPreferenceKey,
+        @NO, WebKitTransformStreamAPIEnabledPreferenceKey,
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
         @NO, WebKitDownloadAttributeEnabledPreferenceKey,
@@ -3170,6 +3171,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setWritableStreamAPIEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitWritableStreamAPIEnabledPreferenceKey];
+}
+
+- (BOOL)transformStreamAPIEnabled
+{
+    return [self _boolValueForKey:WebKitTransformStreamAPIEnabledPreferenceKey];
+}
+
+- (void)setTransformStreamAPIEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitTransformStreamAPIEnabledPreferenceKey];
 }
 
 - (BOOL)downloadAttributeEnabled

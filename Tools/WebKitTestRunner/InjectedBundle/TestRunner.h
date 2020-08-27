@@ -106,6 +106,7 @@ public:
     void setWebGL2Enabled(bool);
     void setWritableStreamAPIEnabled(bool);
     void setReadableByteStreamAPIEnabled(bool);
+    void setTransformStreamAPIEnabled(bool);
 
     void setAllowUniversalAccessFromFileURLs(bool);
     void setAllowFileAccessFromFileURLs(bool);

@@ -292,6 +292,8 @@ public:
     bool readableByteStreamAPIEnabled() const { return m_isReadableByteStreamAPIEnabled; }
     void setWritableStreamAPIEnabled(bool isEnabled) { m_isWritableStreamAPIEnabled = isEnabled; }
     bool writableStreamAPIEnabled() const { return m_isWritableStreamAPIEnabled; }
+    void setTransformStreamAPIEnabled(bool isEnabled) { m_isTransformStreamAPIEnabled = isEnabled; }
+    bool transformStreamAPIEnabled() const { return m_isTransformStreamAPIEnabled; }
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     void setDownloadAttributeEnabled(bool isEnabled) { m_isDownloadAttributeEnabled = isEnabled; }
@@ -511,6 +513,7 @@ private:
 
     bool m_isReadableByteStreamAPIEnabled { false };
     bool m_isWritableStreamAPIEnabled { false };
+    bool m_isTransformStreamAPIEnabled { false };
 
 #if ENABLE(WEBGL2)
     bool m_isWebGL2Enabled { false };

@@ -614,6 +614,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 
     m_testRunner->setWritableStreamAPIEnabled(true);
     m_testRunner->setReadableByteStreamAPIEnabled(true);
+    m_testRunner->setTransformStreamAPIEnabled(true);
 
     m_testRunner->setEncryptedMediaAPIEnabled(true);
     m_testRunner->setPictureInPictureAPIEnabled(true);

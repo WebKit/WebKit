@@ -823,6 +823,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setCacheAPIEnabled:NO];
     [preferences setReadableByteStreamAPIEnabled:YES];
     [preferences setWritableStreamAPIEnabled:YES];
+    [preferences setTransformStreamAPIEnabled:YES];
     preferences.encryptedMediaAPIEnabled = YES;
     [preferences setAccessibilityObjectModelEnabled:YES];
     [preferences setAriaReflectionEnabled:YES];

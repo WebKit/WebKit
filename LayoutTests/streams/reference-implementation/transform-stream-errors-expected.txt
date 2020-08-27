@@ -1,4 +1,4 @@
 
-FAIL TransformStream errors thrown in transform put the writable and readable in an errored state Can't find variable: TransformStream
-FAIL TransformStream errors thrown in flush put the writable and readable in an errored state Can't find variable: TransformStream
+FAIL TransformStream errors thrown in transform put the writable and readable in an errored state assert_equals: writable starts in writable expected (string) "writable" but got (undefined) undefined
+FAIL TransformStream errors thrown in flush put the writable and readable in an errored state undefined is not an object (evaluating 'ts.writable.closed.then')
 

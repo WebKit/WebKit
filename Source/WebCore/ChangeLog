@@ -1,3 +1,61 @@
+2020-08-27  Youenn Fablet  <youenn@apple.com>
+
+        Add support for TransformStream
+        https://bugs.webkit.org/show_bug.cgi?id=215607
+
+        Reviewed by Alex Christensen.
+
+        Add initial implementation as JS built-ins as per spec.
+        Covered by rebased tests.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Headers.cmake:
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamDefaultControllerShouldCallPull):
+        (readableStreamDefaultControllerCallPullIfNeeded):
+        * Modules/streams/TransformStream.idl: Added.
+        * Modules/streams/TransformStream.js: Added.
+        (initializeTransformStream):
+        (getter.readable):
+        (writable):
+        * Modules/streams/TransformStreamDefaultController.idl: Added.
+        * Modules/streams/TransformStreamDefaultController.js: Added.
+        (initializeTransformStreamDefaultController):
+        (getter.desiredSize):
+        (enqueue):
+        (error):
+        (terminate):
+        * Modules/streams/TransformStreamInternals.js: Added.
+        (isTransformStream):
+        (isTransformStreamDefaultController):
+        (initializeTransformStream):
+        (transformStreamError):
+        (transformStreamErrorWritableAndUnblockWrite):
+        (transformStreamSetBackpressure):
+        (setUpTransformStreamDefaultController):
+        (setUpTransformStreamDefaultControllerFromTransformer):
+        (transformStreamDefaultControllerClearAlgorithms):
+        (transformStreamDefaultControllerEnqueue):
+        (transformStreamDefaultControllerError):
+        (transformStreamDefaultControllerPerformTransform):
+        (transformStreamDefaultSinkWriteAlgorithm):
+        (transformStreamDefaultSinkAbortAlgorithm):
+        (transformStreamDefaultSinkCloseAlgorithm):
+        (transformStreamDefaultSourcePullAlgorithm):
+        * Modules/streams/WritableStream.js:
+        (initializeWritableStream):
+        * Modules/streams/WritableStreamInternals.js:
+        (createWritableStream):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setTransformStreamAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::transformStreamAPIEnabled const):
+
 2020-08-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Include the run loop source name in frame rendering timeline

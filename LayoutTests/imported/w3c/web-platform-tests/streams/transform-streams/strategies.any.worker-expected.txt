@@ -1,14 +1,12 @@
 
-FAIL writableStrategy highWaterMark should work Can't find variable: TransformStream
-FAIL readableStrategy highWaterMark should work Can't find variable: TransformStream
-FAIL writable should have the correct size() function Can't find variable: TransformStream
-FAIL default writable strategy should be equivalent to { highWaterMark: 1 } Can't find variable: TransformStream
-FAIL default readable strategy should be equivalent to { highWaterMark: 0 } Can't find variable: TransformStream
-FAIL a RangeError should be thrown for an invalid highWaterMark assert_throws_js: should throw RangeError for negative writableHighWaterMark function "() => new TransformStream(undefined, { highWaterMark: -1 })" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function RangeError() {
-    [native code]
-}" ("RangeError")
-FAIL writableStrategy highWaterMark should be converted to a number Can't find variable: TransformStream
-FAIL readableStrategy highWaterMark should be converted to a number Can't find variable: TransformStream
-FAIL a bad readableStrategy size function should cause writer.write() to reject on an identity transform Can't find variable: TransformStream
-FAIL a bad readableStrategy size function should error the stream on enqueue even when transformer.transform() catches the exception Can't find variable: TransformStream
+PASS writableStrategy highWaterMark should work 
+PASS readableStrategy highWaterMark should work 
+PASS writable should have the correct size() function 
+PASS default writable strategy should be equivalent to { highWaterMark: 1 } 
+FAIL default readable strategy should be equivalent to { highWaterMark: 0 } assert_equals: desiredSize should be 0 expected 0 but got 1
+PASS a RangeError should be thrown for an invalid highWaterMark 
+PASS writableStrategy highWaterMark should be converted to a number 
+PASS readableStrategy highWaterMark should be converted to a number 
+FAIL a bad readableStrategy size function should cause writer.write() to reject on an identity transform promise_rejects_js: write should reject function "function () { throw e }" threw undefined with type "undefined", not an object
+PASS a bad readableStrategy size function should error the stream on enqueue even when transformer.transform() catches the exception 
 

@@ -237,6 +237,8 @@ namespace WebCore {
     macro(StylePropertyMapReadOnly) \
     macro(StylePropertyMap) \
     macro(TextTrackCue) \
+    macro(TransformStream) \
+    macro(TransformStreamDefaultController) \
     macro(UndoItem) \
     macro(UndoManager) \
     macro(VisualViewport) \
@@ -285,6 +287,7 @@ namespace WebCore {
     macro(backingMap) \
     macro(backingSet) \
     macro(backpressure) \
+    macro(backpressureChangePromise) \
     macro(blur) \
     macro(body) \
     macro(byobRequest) \
@@ -317,12 +320,14 @@ namespace WebCore {
     macro(fetchRequest) \
     macro(fillFromJS) \
     macro(finishConsumingStream) \
+    macro(flushAlgorithm) \
     macro(focus) \
     macro(frames) \
     macro(getTracks) \
     macro(getUserMedia) \
     macro(gpu) \
     macro(header) \
+    macro(highWaterMark) \
     macro(href) \
     macro(inFlightCloseRequest) \
     macro(inFlightWriteRequest) \
@@ -369,6 +374,7 @@ namespace WebCore {
     macro(queuedCreateOffer) \
     macro(queuedSetLocalDescription) \
     macro(queuedSetRemoteDescription) \
+    macro(readable) \
     macro(readIntoRequests) \
     macro(readRequests) \
     macro(readableByteStreamAPIEnabled) \
@@ -386,6 +392,7 @@ namespace WebCore {
     macro(setBodyFromInputRequest) \
     macro(setStatus) \
     macro(showModalDialog) \
+    macro(size) \
     macro(start) \
     macro(startConsumingStream) \
     macro(started) \
@@ -406,6 +413,7 @@ namespace WebCore {
     macro(structuredCloneArrayBufferView) \
     macro(timeline) \
     macro(top) \
+    macro(transformAlgorithm) \
     macro(underlyingByteSource) \
     macro(underlyingSink) \
     macro(underlyingSource) \
@@ -427,6 +435,7 @@ namespace WebCore {
     macro(webkitOscillatorNode) \
     macro(whenSignalAborted) \
     macro(window) \
+    macro(writable) \
     macro(writableStreamAPIEnabled) \
     macro(writeAlgorithm) \
     macro(writing) \

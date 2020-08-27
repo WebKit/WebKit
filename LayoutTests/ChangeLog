@@ -1,3 +1,17 @@
+2020-08-27  Youenn Fablet  <youenn@apple.com>
+
+        Add support for TransformStream
+        https://bugs.webkit.org/show_bug.cgi?id=215607
+
+        Reviewed by Alex Christensen.
+
+        Rebased tests now that TransformStream is defined.
+
+        * streams/reference-implementation/pipe-through-expected.txt:
+        * streams/reference-implementation/pipe-to-expected.txt:
+        * streams/reference-implementation/transform-stream-errors-expected.txt:
+        * streams/reference-implementation/transform-stream-expected.txt:
+
 2020-08-26  Chris Dumez  <cdumez@apple.com>
 
         Add support for sub-sample accurate start for AudioBufferSourceNode

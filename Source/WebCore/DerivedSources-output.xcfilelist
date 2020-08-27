@@ -1964,6 +1964,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrackEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTrackEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransferFunction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransferFunction.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransformStream.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransformStream.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransformStreamDefaultController.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransformStreamDefaultController.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransitionEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTransitionEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTreeWalker.cpp
@@ -2363,6 +2367,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/SupplementalDependencies.txt
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/Touch.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TouchEvent.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TouchList.idl
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TransformStreamBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TransformStreamDefaultControllerBuiltins.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/TransformStreamInternalsBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentScripts.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentScriptsData.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/UserAgentStyleSheets.h

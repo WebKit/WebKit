@@ -1,3 +1,19 @@
+2020-08-27  Youenn Fablet  <youenn@apple.com>
+
+        Add support for TransformStream
+        https://bugs.webkit.org/show_bug.cgi?id=215607
+
+        Reviewed by Alex Christensen.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences transformStreamAPIEnabled]):
+        (-[WebPreferences setTransformStreamAPIEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         HashMap<Ref<T>>::take should return RefPtr<T>

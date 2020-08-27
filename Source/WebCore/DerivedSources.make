@@ -376,6 +376,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/streams/ReadableStreamDefaultReader.idl \
     $(WebCore)/Modules/streams/ReadableStreamSink.idl \
     $(WebCore)/Modules/streams/ReadableStreamSource.idl \
+    $(WebCore)/Modules/streams/TransformStream.idl \
+    $(WebCore)/Modules/streams/TransformStreamDefaultController.idl \
     $(WebCore)/Modules/streams/WritableStream.idl \
     $(WebCore)/Modules/streams/WritableStreamDefaultController.idl \
     $(WebCore)/Modules/streams/WritableStreamDefaultWriter.idl \
@@ -1771,6 +1773,9 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/streams/ReadableStreamBYOBReader.js \
     $(WebCore)/Modules/streams/ReadableStreamDefaultReader.js \
     $(WebCore)/Modules/streams/StreamInternals.js \
+    $(WebCore)/Modules/streams/TransformStream.js \
+    $(WebCore)/Modules/streams/TransformStreamDefaultController.js \
+    $(WebCore)/Modules/streams/TransformStreamInternals.js \
     $(WebCore)/Modules/streams/WritableStream.js \
     $(WebCore)/Modules/streams/WritableStreamDefaultController.js \
     $(WebCore)/Modules/streams/WritableStreamDefaultWriter.js \

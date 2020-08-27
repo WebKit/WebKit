@@ -45,6 +45,33 @@ function acquireWritableStreamDefaultWriter(stream)
     return new @WritableStreamDefaultWriter(stream);
 }
 
+function createWritableStream(startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, writableHighWaterMark, writableSizeAlgorithm)
+{
+    if (arguments.length < 5)
+        writableHighWaterMark = 1;
+    if (arguments.length < 6)
+        writableSizeAlgorithm = () => { return 1; };
+
+    let underlyingSink = { startAlgorithm: startAlgorithm, writeAlgorithm: writeAlgorithm, closeAlgorithm: closeAlgorithm, abortAlgorithm: abortAlgorithm};
+    @putByIdDirectPrivate(underlyingSink, "WritableStream", true);
+    return new @WritableStream(underlyingSink, { sizeAlgorithm: writableSizeAlgorithm, highWaterMark: writableHighWaterMark });
+}
+
+function privateInitializeWritableStream(stream, underlyingSink)
+{
+    @putByIdDirectPrivate(stream, "state", "writable");
+    @putByIdDirectPrivate(stream, "storedError", @undefined);
+    @putByIdDirectPrivate(stream, "writer", @undefined);
+    @putByIdDirectPrivate(stream, "controller", @undefined);
+    @putByIdDirectPrivate(stream, "inFlightWriteRequest", @undefined);
+    @putByIdDirectPrivate(stream, "closeRequest", @undefined);
+    @putByIdDirectPrivate(stream, "inFlightCloseRequest", @undefined);
+    @putByIdDirectPrivate(stream, "pendingAbortRequest", @undefined);
+    @putByIdDirectPrivate(stream, "writeRequests", []);
+    @putByIdDirectPrivate(stream, "backpressure", false);
+    @putByIdDirectPrivate(stream, "underlyingSink", underlyingSink);
+}
+
 function isWritableStreamLocked(stream)
 {
     return @getByIdDirectPrivate(stream, "writer") !== @undefined;

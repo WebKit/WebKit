@@ -571,10 +571,26 @@ function readableStreamError(stream, error)
     @markPromiseAsHandled(promise);
 }
 
+function readableStreamDefaultControllerShouldCallPull(controller)
+{
+    const stream = @getByIdDirectPrivate(controller, "controlledReadableStream");
+
+    if (!@readableStreamDefaultControllerCanCloseOrEnqueue(controller))
+        return false;
+    if (!@getByIdDirectPrivate(controller, "started"))
+        return false;
+    if ((!@isReadableStreamLocked(stream) || !@getByIdDirectPrivate(@getByIdDirectPrivate(stream, "reader"), "readRequests").length) && @readableStreamDefaultControllerGetDesiredSize(controller) <= 0)
+        return false;
+    const desiredSize = @readableStreamDefaultControllerGetDesiredSize(controller);
+    @assert(desiredSize !== null);
+    return desiredSize > 0;
+}
+
 function readableStreamDefaultControllerCallPullIfNeeded(controller)
 {
     "use strict";
 
+    // FIXME: use @readableStreamDefaultControllerShouldCallPull
     const stream = @getByIdDirectPrivate(controller, "controlledReadableStream");
 
     if (!@readableStreamDefaultControllerCanCloseOrEnqueue(controller))

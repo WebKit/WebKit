@@ -200,6 +200,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setReadableByteStreamAPIEnabled(enabled);
     if (preference == "WebKitWritableStreamAPIEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setWritableStreamAPIEnabled(enabled);
+    if (preference == "WebKitTransformStreamAPIEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setTransformStreamAPIEnabled(enabled);
 
     if (preference == "WebKitInteractiveFormValidationEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setInteractiveFormValidationEnabled(enabled);

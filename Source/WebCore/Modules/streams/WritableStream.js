@@ -37,6 +37,16 @@ function initializeWritableStream(underlyingSink, strategy)
     if (!@isObject(underlyingSink))
         @throwTypeError("WritableStream constructor takes an object as first argument");
 
+    // CreateWriteStream code path.
+    if (@getByIdDirectPrivate(underlyingSink, "WritableStream")) {
+        @privateInitializeWritableStream(this, underlyingSink);
+
+        const controller = new @WritableStreamDefaultController();
+
+        @setUpWritableStreamDefaultController(this, controller, underlyingSink.startAlgorithm, underlyingSink.writeAlgorithm, underlyingSink.closeAlgorithm, underlyingSink.abortAlgorithm, strategy.highWaterMark, strategy.sizeAlgorithm);
+        return this;
+    }
+
     if ("type" in underlyingSink)
         @throwRangeError("Invalid type is specified");
 
@@ -65,20 +75,8 @@ function initializeWritableStream(underlyingSink, strategy)
             @throwTypeError("underlyingSink.abort should be a function");
     }
 
-    // Initialize Writable Stream
-    @putByIdDirectPrivate(this, "state", "writable");
-    @putByIdDirectPrivate(this, "storedError", @undefined);
-    @putByIdDirectPrivate(this, "writer", @undefined);
-    @putByIdDirectPrivate(this, "controller", @undefined);
-    @putByIdDirectPrivate(this, "inFlightWriteRequest", @undefined);
-    @putByIdDirectPrivate(this, "closeRequest", @undefined);
-    @putByIdDirectPrivate(this, "inFlightCloseRequest", @undefined);
-    @putByIdDirectPrivate(this, "pendingAbortRequest", @undefined);
-    @putByIdDirectPrivate(this, "writeRequests", []);
-    @putByIdDirectPrivate(this, "backpressure", false);
-    @putByIdDirectPrivate(this, "underlyingSink", underlyingSink);
-
-    @setUpWritableStreamDefaultControllerFromUnderlyingSink(this, underlyingSink, underlyingSinkDict, highWaterMark, sizeAlgorithm)
+    @privateInitializeWritableStream(this, underlyingSink);
+    @setUpWritableStreamDefaultControllerFromUnderlyingSink(this, underlyingSink, underlyingSinkDict, highWaterMark, sizeAlgorithm);
 
     return this;
 }

@@ -2,23 +2,21 @@
 FAIL pipeTo should stop after getting preventAbort throws promise_rejects_js: pipeTo should reject function "function () { throw e }" threw object "TypeError: options.signal must be AbortSignal" ("TypeError") expected instance of function "function Error() {
     [native code]
 }" ("Error")
-FAIL pipeThrough should stop after getting preventAbort throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
+FAIL pipeThrough should stop after getting preventAbort throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "TypeError: options.signal must be AbortSignal" ("TypeError") expected instance of function "function Error() {
     [native code]
 }" ("Error")
 FAIL pipeTo should stop after getting preventCancel throws promise_rejects_js: pipeTo should reject function "function () { throw e }" threw object "TypeError: options.signal must be AbortSignal" ("TypeError") expected instance of function "function Error() {
     [native code]
 }" ("Error")
-FAIL pipeThrough should stop after getting preventCancel throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
+FAIL pipeThrough should stop after getting preventCancel throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "TypeError: options.signal must be AbortSignal" ("TypeError") expected instance of function "function Error() {
     [native code]
 }" ("Error")
 FAIL pipeTo should stop after getting preventClose throws promise_rejects_js: pipeTo should reject function "function () { throw e }" threw object "TypeError: options.signal must be AbortSignal" ("TypeError") expected instance of function "function Error() {
     [native code]
 }" ("Error")
-FAIL pipeThrough should stop after getting preventClose throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
+FAIL pipeThrough should stop after getting preventClose throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "TypeError: options.signal must be AbortSignal" ("TypeError") expected instance of function "function Error() {
     [native code]
 }" ("Error")
 FAIL pipeTo should stop after getting signal throws signal
-FAIL pipeThrough should stop after getting signal throws assert_throws_js: pipeThrough should throw function "() => new ReadableStream().pipeThrough(new TransformStream(), options)" threw object "ReferenceError: Can't find variable: TransformStream" ("ReferenceError") expected instance of function "function Error() {
-    [native code]
-}" ("Error")
+FAIL pipeThrough should stop after getting signal throws assert_array_equals: options should be touched in the right order lengths differ, expected array ["preventAbort", "preventCancel", "preventClose", "signal"] length 4, got ["signal"] length 1
 
