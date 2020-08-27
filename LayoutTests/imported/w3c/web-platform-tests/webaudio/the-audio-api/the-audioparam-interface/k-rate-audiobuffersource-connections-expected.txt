@@ -14,20 +14,8 @@ PASS   playbackRate: mod.offset.linearRampToValueAtTime(1, 0.25) did not throw a
 PASS   playbackRate: mod.connect(tstNode[playbackRate]) did not throw an exception. 
 PASS   Expected k-rate playbackRate AudioParam with input is not constantly 0 (contains 1491 different values). 
 PASS   Actual k-rate playbackRate AudioParam with input is not constantly 0 (contains 1491 different values). 
-FAIL X k-rate playbackRate AudioParam with input does not equal [0,0.0005000000237487257,0.0010000000474974513,0.001500000013038516,0.0020000000949949026,0.0024999999441206455,0.003000000026077032,0.0035000001080334187,0.004000000189989805,0.0044999998062849045,0.004999999888241291,0.005499999970197678,0.006000000052154064,0.006500000134110451,0.007000000216066837,0.007499999832361937...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[396]	2.1144001185894012e-1	2.1143999695777893e-1	1.4901161193847656e-8	7.0474656679186259e-8	0.0000000000000000e+0
-	[401]	2.1442000567913055e-1	2.1441999077796936e-1	1.4901161193847656e-8	6.9495204900357086e-8	0.0000000000000000e+0
-	[412]	2.2097600996494293e-1	2.2097599506378174e-1	1.4901161193847656e-8	6.7433393340062290e-8	0.0000000000000000e+0
-	[420]	2.2574400901794434e-1	2.2574399411678314e-1	1.4901161193847656e-8	6.6009114670571945e-8	0.0000000000000000e+0
-	[421]	2.2634001076221466e-1	2.2633999586105347e-1	1.4901161193847656e-8	6.5835298516994066e-8	0.0000000000000000e+0
-	...and 203 more errors.
-	Max AbsError of 5.9604644775390625e-8 at index of 851.
-	[851]	5.0287604331970215e-1	5.0287598371505737e-1	5.9604644775390625e-8	1.1852752309834739e-7	0.0000000000000000e+0
-	Max RelError of 1.1852752309834739e-7 at index of 851.
-	[851]	5.0287604331970215e-1	5.0287598371505737e-1	5.9604644775390625e-8	1.1852752309834739e-7	0.0000000000000000e+0
- assert_true: expected true got false
-FAIL < [playbackRate] 1 out of 11 assertions were failed. assert_true: expected true got false
+PASS   k-rate playbackRate AudioParam with input equals [0,0.0005000000237487257,0.0010000000474974513,0.001500000013038516,0.0020000000949949026,0.0024999999441206455,0.003000000026077032,0.0035000001080334187,0.004000000189989805,0.0044999998062849045,0.004999999888241291,0.005499999970197678,0.006000000052154064,0.006500000134110451,0.007000000216066837,0.007499999832361937...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [playbackRate] All assertions passed. (total 11 assertions) 
 PASS > [detune] AudioBufferSource detune 
 PASS   detune: refNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception. 
 PASS   detune: tstNode = new AudioBufferSourceNode(context, {"buffer":{}}) did not throw an exception. 
@@ -41,5 +29,5 @@ PASS   Expected k-rate detune AudioParam with input is not constantly 0 (contain
 PASS   Actual k-rate detune AudioParam with input is not constantly 0 (contains 1961 different values). 
 PASS   k-rate detune AudioParam with input equals [0,0.0002500000118743628,0.0005000000237487257,0.000750000006519258,0.0010000000474974513,0.0012499999720603228,0.001500000013038516,0.0017500000540167093,0.0020000000949949026,0.0022499999031424522,0.0024999999441206455,0.002749999985098839,0.003000000026077032,0.0032500000670552254,0.0035000001080334187,0.003750000149011612...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
 PASS < [detune] All assertions passed. (total 11 assertions) 
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

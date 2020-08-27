@@ -223,7 +223,6 @@ float AudioParamTimeline::valuesForTimeRangeImpl(Seconds startTime, Seconds endT
         auto time2 = nextEvent ? nextEvent->time() : endTime + 1_s;
 
         auto deltaTime = time2 - time1;
-        float k = deltaTime > 0_s ? 1 / deltaTime.value() : 0.;
         auto sampleFrameTimeIncr = Seconds { 1 / sampleRate };
 
         auto fillToTime = std::min(endTime, time2);
@@ -235,8 +234,12 @@ float AudioParamTimeline::valuesForTimeRangeImpl(Seconds startTime, Seconds endT
         // First handle linear and exponential ramps which require looking ahead to the next event.
         if (nextEventType == ParamEvent::LinearRampToValue) {
             for (; writeIndex < fillToFrame; ++writeIndex) {
-                float x = (currentTime - time1).value() * k;
-                value = (1 - x) * value1 + x * value2;
+                // Since deltaTime is a double, 1/deltaTime can easily overflow a float. Thus, if deltaTime
+                // is close enough to zero (less than float min), treat it as zero.
+                float k = deltaTime.value() <= std::numeric_limits<float>::min() ? 0 : 1 / deltaTime.value();
+                float x = static_cast<float>((currentTime - time1).value()) * k;
+                float valueDelta = value2 - value1;
+                value = value1 + valueDelta * x;
                 values[writeIndex] = value;
                 currentTime += sampleFrameTimeIncr;
             }

@@ -1,3 +1,21 @@
+2020-08-27  Chris Dumez  <cdumez@apple.com>
+
+        Fix AudioParam.linearRampToValueAtTime() formula to match specification
+        https://bugs.webkit.org/show_bug.cgi?id=215904
+
+        Reviewed by Darin Adler.
+
+        Fix AudioParam.linearRampToValueAtTime() formula to match specification:
+        - https://www.w3.org/TR/webaudio/#dom-audioparam-linearramptovalueattime
+
+        We were using a different formula to compute the value and this was causing us
+        to fail some web platform tests.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+
 2020-08-27  Joonghun Park  <jh718.park@samsung.com>
 
         Implement @supports selector().

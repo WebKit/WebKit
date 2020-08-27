@@ -59,19 +59,7 @@ PASS   threshold: mod = new ConstantSourceNode(context, {offset: 0}) did not thr
 PASS   threshold: mod.offset.setValueAtTime(0, 0) did not throw an exception. 
 PASS   threshold: mod.offset.linearRampToValueAtTime(100, 0.25) did not throw an exception. 
 PASS   threshold: mod.connect(tstNode[threshold]) did not throw an exception. 
-FAIL X k-rate threshold AudioParam with input does not equal [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}.
-	Index	Actual			Expected		AbsError		RelError		Test threshold
-	[512]	2.5821279268711805e-3	2.5818899739533663e-3	2.3795291781425476e-7	9.2162299793861248e-5	0.0000000000000000e+0
-	[513]	3.0495987739413977e-3	3.0491708312183619e-3	4.2794272303581238e-7	1.4034724412761702e-4	0.0000000000000000e+0
-	[514]	3.5930690355598927e-3	3.5924615804105997e-3	6.0745514929294586e-7	1.6909162024316400e-4	0.0000000000000000e+0
-	[515]	3.7539361510425806e-3	3.7532504647970200e-3	6.8568624556064606e-7	1.8269131037001784e-4	0.0000000000000000e+0
-	[516]	4.4603729620575905e-3	4.4594961218535900e-3	8.7684020400047302e-7	1.9662315652738236e-4	0.0000000000000000e+0
-	...and 11482 more errors.
-	Max AbsError of 1.6735866665840149e-5 at index of 1323.
-	[1323]	2.1656326949596405e-2	2.1673062816262245e-2	1.6735866665840149e-5	7.7219665756159291e-4	0.0000000000000000e+0
-	Max RelError of 6.6227941484679545e-3 at index of 9997.
-	[9997]	-3.4486583899706602e-6	-3.4716504160314798e-6	2.2992026060819626e-8	6.6227941484679545e-3	0.0000000000000000e+0
- assert_true: expected true got false
-FAIL < [threshold] 1 out of 9 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 5 tasks were failed. assert_true: expected true got false
+PASS   k-rate threshold AudioParam with input equals [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0...] with an element-wise tolerance of {"absoluteThreshold":0,"relativeThreshold":0}. 
+PASS < [threshold] All assertions passed. (total 9 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 5 tasks ran successfully. 
 
