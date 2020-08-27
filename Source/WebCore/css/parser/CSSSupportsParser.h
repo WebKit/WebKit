@@ -57,7 +57,10 @@ private:
 
     SupportsResult consumeCondition(CSSParserTokenRange);
     SupportsResult consumeNegation(CSSParserTokenRange);
-    SupportsResult consumeDeclarationConditionOrGeneralEnclosed(CSSParserTokenRange&);
+    SupportsResult consumeSupportsFeatureOrGeneralEnclosed(CSSParserTokenRange&);
+    // https://drafts.csswg.org/css-conditional-4/#typedef-supports-selector-fn
+    // <supports-seletor-fn> = selector( <complex-selector> );
+    SupportsResult consumeSupportsSelectorFunction(CSSParserTokenRange&);
 
     SupportsResult consumeConditionInParenthesis(CSSParserTokenRange&, CSSParserTokenType);
 

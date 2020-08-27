@@ -1451,3 +1451,7 @@ from-font
 // dynamic-range
 standard
 high
+
+// @supports selector()
+// https://drafts.csswg.org/css-conditional-4/#typedef-supports-selector-fn
+selector

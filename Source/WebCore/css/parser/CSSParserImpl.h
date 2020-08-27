@@ -93,6 +93,7 @@ public:
     static Vector<double> parseKeyframeKeyList(const String&);
 
     bool supportsDeclaration(CSSParserTokenRange&);
+    const CSSParserContext& context() const { return m_context; }
 
     static void parseDeclarationListForInspector(const String&, const CSSParserContext&, CSSParserObserver&);
     static void parseStyleSheetForInspector(const String&, const CSSParserContext&, StyleSheetContents*, CSSParserObserver&);

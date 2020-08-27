@@ -1,3 +1,23 @@
+2020-08-27  Joonghun Park  <jh718.park@samsung.com>
+
+        Implement @supports selector().
+        https://bugs.webkit.org/show_bug.cgi?id=199237
+
+        Reviewed by Antti Koivisto.
+
+        This feature allows authors to test if the browser supports the tested selector syntax.
+        The corresponding spec is https://drafts.csswg.org/css-conditional-4/#at-supports-ext.
+
+        And unknown -webkit- pseudo elements are not supported according to the spec,
+        https://drafts.csswg.org/css-conditional-4/#support-definition-ext.
+
+        * css3/conditional/w3c/at-supports-040-expected.html: Added.
+        * css3/conditional/w3c/at-supports-040.html: Added.
+        * css3/conditional/w3c/at-supports-041-expected.html: Added.
+        * css3/conditional/w3c/at-supports-041.html: Added.
+        * css3/conditional/w3c/at-supports-042-expected.html: Added.
+        * css3/conditional/w3c/at-supports-042.html: Added.
+
 2020-08-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Occasional crashes when restoring replaced text under Editor::changeBackToReplacedString

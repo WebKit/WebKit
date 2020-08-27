@@ -46,6 +46,8 @@ public:
 
     CSSSelectorList consumeComplexSelectorList(CSSParserTokenRange&);
 
+    static bool supportsComplexSelector(CSSParserTokenRange, const CSSParserContext&);
+
 private:
     CSSSelectorList consumeCompoundSelectorList(CSSParserTokenRange&);
 
@@ -71,6 +73,7 @@ private:
     const AtomString& determineNamespace(const AtomString& prefix);
     void prependTypeSelectorIfNeeded(const AtomString& namespacePrefix, const AtomString& elementName, CSSParserSelector&);
     static std::unique_ptr<CSSParserSelector> splitCompoundAtImplicitShadowCrossingCombinator(std::unique_ptr<CSSParserSelector> compoundSelector, const CSSParserContext&);
+    static bool containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector);
 
     class DisallowPseudoElementsScope;
 
@@ -133,6 +136,23 @@ CSSSelectorList CSSSelectorParser::consumeComplexSelectorList(CSSParserTokenRang
     if (m_failedParsing)
         return { };
     return CSSSelectorList { WTFMove(selectorList) };
+}
+
+bool CSSSelectorParser::supportsComplexSelector(CSSParserTokenRange range, const CSSParserContext& context)
+{
+    range.consumeWhitespace();
+    CSSSelectorParser parser(context, nullptr);
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=215635
+    // Unknown css selector combinator is not addressed correctly in |CSSSelectorParser::consumeComplexSelector|.
+    auto parserSelector = parser.consumeComplexSelector(range);
+    if (parser.m_failedParsing || !range.atEnd() || !parserSelector)
+        return false;
+
+    auto complexSelector = parserSelector->releaseSelector();
+    ASSERT(complexSelector);
+
+    return !containsUnknownWebKitPseudoElements(*complexSelector);
 }
 
 CSSSelectorList CSSSelectorParser::consumeCompoundSelectorList(CSSParserTokenRange& range)
@@ -950,6 +970,16 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::splitCompoundAtImplicitSha
 
     secondCompound->appendTagHistory(CSSSelector::ShadowDescendant, WTFMove(compoundSelector));
     return secondCompound;
+}
+
+bool CSSSelectorParser::containsUnknownWebKitPseudoElements(const CSSSelector& complexSelector)
+{
+    for (auto current = &complexSelector; current; current = current->tagHistory()) {
+        if (current->match() == CSSSelector::PseudoElement && current->pseudoElementType() == CSSSelector::PseudoElementWebKitCustom)
+            return true;
+    }
+
+    return false;
 }
 
 } // namespace WebCore
