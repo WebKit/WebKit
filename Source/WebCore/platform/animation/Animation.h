@@ -127,6 +127,7 @@ public:
     TransitionProperty property() const { return m_property; }
     const String& unknownProperty() const { return m_unknownProperty; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
+    TimingFunction* defaultTimingFunctionForKeyframes() const { return m_defaultTimingFunctionForKeyframes.get(); }
 
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
     void setDirection(AnimationDirection d) { m_direction = d; m_directionSet = true; }
@@ -144,6 +145,7 @@ public:
     void setProperty(TransitionProperty t) { m_property = t; m_propertySet = true; }
     void setUnknownProperty(const String& property) { m_unknownProperty = property; }
     void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTFMove(function); m_timingFunctionSet = true; }
+    void setDefaultTimingFunctionForKeyframes(RefPtr<TimingFunction>&& function) { m_defaultTimingFunctionForKeyframes = WTFMove(function); }
 
     void setIsNoneAnimation(bool n) { m_isNone = n; }
 
@@ -173,6 +175,7 @@ private:
     double m_duration;
     double m_playbackRate { 1 };
     RefPtr<TimingFunction> m_timingFunction;
+    RefPtr<TimingFunction> m_defaultTimingFunctionForKeyframes;
 
     Style::ScopeOrdinal m_nameStyleScopeOrdinal { Style::ScopeOrdinal::Element };
 

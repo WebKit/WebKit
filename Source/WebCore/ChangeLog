@@ -1,3 +1,45 @@
+2020-08-27  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r263506): timing of CSS Animation on https://animate.style is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=215807
+        <rdar://problem/66770136>
+
+        Reviewed by Simon Fraser.
+
+        Test: webanimations/accelerated-css-animation-with-easing.html
+
+        In r263506, we added a way for accelerated animations to adhere to both a timing function set on the
+        animation, affecting the timing of the entire animation, as well as a timing function set on individual
+        keyframes, affecting the timing of the animation in a given interval. Alas, this change broke handling
+        of timing functions with implicit animation-timing-function on keyframes.
+
+        That code change assumed that the Animation object ultimately passed to GraphicsLayerCA::setupAnimation()
+        would return the animation-wide timing function through Animation::timingFunction(). This was correct for
+        JS-originated animations, but not for CSS Animations, since that value was set based on the computed CSS
+        property animation-timing-function for the target element. However, that CSS property does not specify
+        the animation-wide timing function, but rather the default timing function to use for keyframes should
+        they fail to specify an explicit timing function.
+
+        To fix this, first, we ensure that the animation-wide timing function is set on the Animation object,
+        changing KeyframeEffect::backingAnimationForCompositedRenderer() to always generate an Animation object
+        based on the effect, divorcing itself from the Animation object created through CSS.
+
+        Then, we add a new member to Animation to specify the default timing function for keyframes, allowing
+        GraphicsLayerCA to use it to determine the timing function when building keyframes.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::backingAnimationForCompositedRenderer const): Always generate an Animation
+        object based on the effect's properties, also setting the new defaultTimingFunctionForKeyframes in the
+        case of a CSS Animation object.
+        * platform/animation/Animation.h:
+        (WebCore::Animation::defaultTimingFunctionForKeyframes const):
+        (WebCore::Animation::setDefaultTimingFunctionForKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::animationHasStepsTimingFunction): Use the optional defaultTimingFunctionForKeyframes to determine
+        whether a keyframe uses a steps timing function.
+        (WebCore::GraphicsLayerCA::timingFunctionForAnimationValue): Use the optional defaultTimingFunctionForKeyframes
+        to determine the timing function for a keyframe.
+
 2020-08-27  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r258215): Title preview movie isn't displayed at www.thismmalife.com

@@ -279,12 +279,14 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
 {
     if (is<StepsTimingFunction>(anim->timingFunction()))
         return true;
-    
+
+    bool hasStepsDefaultTimingFunctionForKeyframes = is<StepsTimingFunction>(anim->defaultTimingFunctionForKeyframes());
     for (unsigned i = 0; i < valueList.size(); ++i) {
         if (const TimingFunction* timingFunction = valueList.at(i).timingFunction()) {
             if (is<StepsTimingFunction>(timingFunction))
                 return true;
-        }
+        } else if (hasStepsDefaultTimingFunctionForKeyframes)
+            return true;
     }
 
     return false;
@@ -3338,6 +3340,8 @@ const TimingFunction& GraphicsLayerCA::timingFunctionForAnimationValue(const Ani
     if (RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled()) {
         if (animValue.timingFunction())
             return *animValue.timingFunction();
+        else if (anim.defaultTimingFunctionForKeyframes())
+            return *anim.defaultTimingFunctionForKeyframes();
         return LinearTimingFunction::sharedLinearTimingFunction();
     }
 

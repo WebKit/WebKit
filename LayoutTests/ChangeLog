@@ -1,3 +1,17 @@
+2020-08-27  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r263506): timing of CSS Animation on https://animate.style is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=215807
+        <rdar://problem/66770136>
+
+        Reviewed by Simon Fraser.
+
+        Add a new test that checks that a CSS Animation with implicit and explicit animation-timing-function
+        values behave the same when running accelerated.
+
+        * webanimations/accelerated-css-animation-with-easing-expected.html: Added.
+        * webanimations/accelerated-css-animation-with-easing.html: Added.
+
 2020-08-27  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r258215): Title preview movie isn't displayed at www.thismmalife.com
