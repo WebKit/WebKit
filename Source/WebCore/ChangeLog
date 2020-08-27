@@ -1,5 +1,40 @@
 2020-08-26  Chris Dumez  <cdumez@apple.com>
 
+        Add support for sub-sample accurate start for AudioBufferSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=215868
+
+        Reviewed by Darin Adler.
+
+        Implement sub-sample accurate start for AudioBufferSourceNode.
+        Previously, if the start time was between sample boundaries, we would
+        start the output at the frame before the start time. This is actually
+        incorrect because we haven't actually started yet. We should start
+        the output at the next boundary, and interpolating the value based on
+        the true start time and the sample boundary.
+
+        This is based on the following Chromium changes:
+        - https://chromium-review.googlesource.com/c/chromium/src/+/1212270
+        - https://chromium-review.googlesource.com/c/chromium/src/+/1446869
+
+        No new tests, rebaselined existing test.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::process):
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::updateSchedulingInfo):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/ConstantSourceNode.cpp:
+        (WebCore::ConstantSourceNode::process):
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::process):
+        * platform/audio/AudioUtilities.cpp:
+        (WebCore::AudioUtilities::timeToSampleFrame):
+        * platform/audio/AudioUtilities.h:
+
+2020-08-26  Chris Dumez  <cdumez@apple.com>
+
         Update DynamicsCompressorNode::process() to use AudioParam::finalValue()
         https://bugs.webkit.org/show_bug.cgi?id=215874
 

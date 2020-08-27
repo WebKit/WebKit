@@ -127,7 +127,8 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
 
     size_t quantumFrameOffset = 0;
     size_t bufferFramesToProcess = 0;
-    updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, bufferFramesToProcess);
+    double startFrameOffset = 0;
+    updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, bufferFramesToProcess, startFrameOffset);
 
     if (!bufferFramesToProcess) {
         outputBus.zero();
@@ -138,7 +139,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         m_destinationChannels[i] = outputBus.channel(i)->mutableData();
 
     // Render by reading directly from the buffer.
-    if (!renderFromBuffer(&outputBus, quantumFrameOffset, bufferFramesToProcess)) {
+    if (!renderFromBuffer(&outputBus, quantumFrameOffset, bufferFramesToProcess, startFrameOffset)) {
         outputBus.zero();
         return;
     }
@@ -168,7 +169,7 @@ bool AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping(AudioBus*, unsign
     return false;
 }
 
-bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destinationFrameOffset, size_t numberOfFrames)
+bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destinationFrameOffset, size_t numberOfFrames, double startFrameOffset)
 {
     ASSERT(context().isAudioThread());
 
@@ -251,6 +252,11 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 
     // Get local copy.
     double virtualReadIndex = m_virtualReadIndex;
+
+    // Adjust the read index by the startFrameOffset (compensated by the pitch rate) because
+    // we always start output on a frame boundary with interpolation if necessary.
+    if (startFrameOffset < 0 && pitchRate)
+        virtualReadIndex += std::abs(startFrameOffset * pitchRate);
 
     bool needsInterpolation = virtualReadIndex != floor(virtualReadIndex)
         || virtualDeltaFrames != floor(virtualDeltaFrames)

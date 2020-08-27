@@ -14,13 +14,13 @@ FAIL X output[0:27]: Expected 0 for all values but found 28 unexpected values:
 	[2]	5
 	[3]	5
 	...and 24 more errors. assert_true: expected true got false
-FAIL X output[28:]: Expected 5 for all values but found 27 unexpected values: 
+FAIL X output[28:]: Expected 5 for all values but found 28 unexpected values: 
 	Index	Actual
+	[72]	0
 	[73]	0
 	[74]	0
 	[75]	0
-	[76]	0
-	...and 23 more errors. assert_true: expected true got false
+	...and 24 more errors. assert_true: expected true got false
 FAIL < [subsample start with playback rate 0] 2 out of 2 assertions were failed. assert_true: expected true got false
 FAIL # AUDIT TASK RUNNER FINISHED: 1 out of 2 tasks were failed. assert_true: expected true got false
 

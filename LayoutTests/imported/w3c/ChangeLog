@@ -1,5 +1,17 @@
 2020-08-26  Chris Dumez  <cdumez@apple.com>
 
+        Add support for sub-sample accurate start for AudioBufferSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=215868
+
+        Reviewed by Darin Adler.
+
+        Rebaseline existing WPT tests now that more checks are passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/audiobuffersource-playbackrate-zero-expected.txt:
+        * web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/sub-sample-scheduling-expected.txt:
+
+2020-08-26  Chris Dumez  <cdumez@apple.com>
+
         Update DynamicsCompressorNode::process() to use AudioParam::finalValue()
         https://bugs.webkit.org/show_bug.cgi?id=215874
 

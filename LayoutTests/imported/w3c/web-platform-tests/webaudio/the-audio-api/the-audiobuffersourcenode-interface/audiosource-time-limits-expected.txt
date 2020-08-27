@@ -4,16 +4,10 @@ PASS Executing "buffersource: huge stop time"
 PASS Executing "oscillator: huge stop time" 
 PASS Audit report 
 PASS > [buffersource: huge stop time]  
-FAIL X Output from AudioBufferSource.stop(1e+300): Expected 1 for all values but found 1000 unexpected values: 
-	Index	Actual
-	[0]	0
-	[1]	0
-	[2]	0
-	[3]	0
-	...and 996 more errors. assert_true: expected true got false
-FAIL < [buffersource: huge stop time] 1 out of 1 assertions were failed. assert_true: expected true got false
+PASS   Output from AudioBufferSource.stop(1e+300) contains only the constant 1. 
+PASS < [buffersource: huge stop time] All assertions passed. (total 1 assertions) 
 PASS > [oscillator: huge stop time]  
-FAIL X Peak amplitude from oscillator.stop(1e+300) is not greater than 0. Got 0. assert_true: expected true got false
-FAIL < [oscillator: huge stop time] 1 out of 1 assertions were failed. assert_true: expected true got false
-FAIL # AUDIT TASK RUNNER FINISHED: 2 out of 2 tasks were failed. assert_true: expected true got false
+PASS   Peak amplitude from oscillator.stop(1e+300) is greater than 0. 
+PASS < [oscillator: huge stop time] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully. 
 

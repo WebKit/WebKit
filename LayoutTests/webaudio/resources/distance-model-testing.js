@@ -1,10 +1,11 @@
-var sampleRate = 44100.0;
+// Use a power of two to eliminate any round-off when converting frames to time.
+let sampleRate = 32768;
 
 // How many panner nodes to create for the test.
 var nodesToCreate = 100;
 
-// Time step when each panner node starts.
-var timeStep = 0.001;
+// Time step when each panner node starts.  Make sure it starts on a frame boundary.
+let timeStep = Math.floor(0.001 * sampleRate) / sampleRate;
 
 // Make sure we render long enough to get all of our nodes.
 var renderLengthSeconds = timeStep * (nodesToCreate + 1);

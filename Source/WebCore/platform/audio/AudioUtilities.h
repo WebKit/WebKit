@@ -38,8 +38,15 @@ float decibelsToLinear(float);
 // discreteTimeConstantForSampleRate() will return the discrete time-constant for the specific sampleRate.
 double discreteTimeConstantForSampleRate(double timeConstant, double sampleRate);
 
+// How to do rounding when converting time to sample frame.
+enum class SampleFrameRounding {
+    Nearest,
+    Down,
+    Up
+};
+
 // Convert the time to a sample frame at the given sample rate.
-size_t timeToSampleFrame(double time, double sampleRate);
+size_t timeToSampleFrame(double time, double sampleRate, SampleFrameRounding = SampleFrameRounding::Nearest);
 } // AudioUtilites
 
 } // WebCore

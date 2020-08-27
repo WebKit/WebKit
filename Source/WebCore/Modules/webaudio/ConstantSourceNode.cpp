@@ -77,7 +77,8 @@ void ConstantSourceNode::process(size_t framesToProcess)
     
     size_t quantumFrameOffset = 0;
     size_t nonSilentFramesToProcess = 0;
-    updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, nonSilentFramesToProcess);
+    double startFrameOffset = 0;
+    updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, nonSilentFramesToProcess, startFrameOffset);
     
     if (!nonSilentFramesToProcess) {
         outputBus.zero();

@@ -1,9 +1,10 @@
-var sampleRate = 44100.0;
+// Use a power of two to eliminate any round-off when converting frames to time.
+let sampleRate = 32768;
 
 var numberOfChannels = 1;
 
-// Time step when each panner node starts.
-var timeStep = 0.001;
+// Time step when each panner node starts.  Make sure it starts on a frame boundary.
+let timeStep = Math.floor(0.001 * sampleRate) / sampleRate;
 
 // Length of the impulse signal.
 var pulseLengthFrames = Math.round(timeStep * sampleRate);

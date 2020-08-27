@@ -58,10 +58,11 @@ AudioScheduledSourceNode::AudioScheduledSourceNode(BaseAudioContext& context)
     m_pendingActivity = makePendingActivity(*this);
 }
 
-void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, AudioBus& outputBus, size_t& quantumFrameOffset, size_t& nonSilentFramesToProcess)
+void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, AudioBus& outputBus, size_t& quantumFrameOffset, size_t& nonSilentFramesToProcess, double& startFrameOffset)
 {
     nonSilentFramesToProcess = 0;
     quantumFrameOffset = 0;
+    startFrameOffset = 0;
 
     ASSERT(quantumFrameSize == AudioNode::ProcessingSizeInFrames);
     if (quantumFrameSize != AudioNode::ProcessingSizeInFrames)
@@ -75,8 +76,16 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, Aud
     // endFrame              : End frame for this source.
     size_t quantumStartFrame = context().currentSampleFrame();
     size_t quantumEndFrame = quantumStartFrame + quantumFrameSize;
-    size_t startFrame = AudioUtilities::timeToSampleFrame(m_startTime, sampleRate);
-    size_t endFrame = m_endTime == UnknownTime ? 0 : AudioUtilities::timeToSampleFrame(m_endTime, sampleRate);
+
+    // Round up if the start time isn't on a frame boundary so we don't start too early.
+    size_t startFrame = AudioUtilities::timeToSampleFrame(m_startTime, sampleRate, AudioUtilities::SampleFrameRounding::Up);
+    size_t endFrame =  0;
+    if (m_endTime != UnknownTime) {
+        // The end frame is the end time rounded up because it is an exclusive upper
+        // bound of the end time. We also need to take care to handle huge end
+        // times and clamp the corresponding frame to the largest size_t value.
+        endFrame = AudioUtilities::timeToSampleFrame(m_endTime, sampleRate, AudioUtilities::SampleFrameRounding::Up);
+    }
 
     // If we know the end time and it's already passed, then don't bother doing any more rendering this cycle.
     if (m_endTime != UnknownTime && endFrame <= quantumStartFrame)
@@ -92,6 +101,9 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, Aud
     if (m_playbackState == SCHEDULED_STATE) {
         // Increment the active source count only if we're transitioning from SCHEDULED_STATE to PLAYING_STATE.
         m_playbackState = PLAYING_STATE;
+        // NOTE: startFrameOffset is usually negative, but may not be because of
+        // the rounding that may happen in computing |startFrame| above.
+        startFrameOffset = m_startTime * sampleRate - startFrame;
         context().incrementActiveSourceCount();
     }
 
@@ -119,9 +131,11 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, Aud
         size_t zeroStartFrame = endFrame - quantumStartFrame;
         size_t framesToZero = quantumFrameSize - zeroStartFrame;
 
-        bool isSafe = zeroStartFrame < quantumFrameSize && framesToZero <= quantumFrameSize && zeroStartFrame + framesToZero <= quantumFrameSize;
-        ASSERT(isSafe);
+        ASSERT(zeroStartFrame < quantumFrameSize);
+        ASSERT(framesToZero <= quantumFrameSize);
+        ASSERT(zeroStartFrame + framesToZero <= quantumFrameSize);
 
+        bool isSafe = zeroStartFrame < quantumFrameSize && framesToZero <= quantumFrameSize && zeroStartFrame + framesToZero <= quantumFrameSize;
         if (isSafe) {
             if (framesToZero > nonSilentFramesToProcess)
                 nonSilentFramesToProcess = 0;

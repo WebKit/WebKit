@@ -1,3 +1,17 @@
+2020-08-26  Chris Dumez  <cdumez@apple.com>
+
+        Add support for sub-sample accurate start for AudioBufferSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=215868
+
+        Reviewed by Darin Adler.
+
+        Update existing layout tests to reflect behavior change.
+
+        * platform/mac/webaudio/audiobuffersource-playbackrate-expected.wav:
+        * webaudio/gain-expected.wav:
+        * webaudio/resources/distance-model-testing.js:
+        * webaudio/resources/panner-model-testing.js:
+
 2020-08-26  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Gardening some accessibility debug crashes
