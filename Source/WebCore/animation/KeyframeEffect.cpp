@@ -1495,7 +1495,7 @@ TimingFunction* KeyframeEffect::timingFunctionForKeyframeAtIndex(size_t index) c
 
 void KeyframeEffect::updateAcceleratedActions()
 {
-    if (m_acceleratedPropertiesState == AcceleratedProperties::None)
+    if (m_acceleratedPropertiesState == AcceleratedProperties::None || m_someKeyframesUseStepsTimingFunction || is<StepsTimingFunction>(timingFunction()))
         return;
 
     auto computedTiming = getComputedTiming();

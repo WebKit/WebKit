@@ -1,3 +1,13 @@
+2020-08-27  Antti Koivisto  <antti@apple.com>
+
+        Step animations invalidate style on every rendering update whether or not they need to
+        https://bugs.webkit.org/show_bug.cgi?id=215229
+        <rdar://problem/66636153>
+
+        Reviewed by Antoine Quint.
+
+        * animations/steps-transform-rendering-updates-expected.txt:
+
 2020-08-27  Youenn Fablet  <youenn@apple.com>
 
         Remove console logs from expected.txt files for some WebSocket tests

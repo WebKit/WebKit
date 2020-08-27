@@ -1,3 +1,19 @@
+2020-08-27  Antti Koivisto  <antti@apple.com>
+
+        Step animations invalidate style on every rendering update whether or not they need to
+        https://bugs.webkit.org/show_bug.cgi?id=215229
+        <rdar://problem/66636153>
+
+        Reviewed by Antoine Quint.
+
+        Step timing functions with transforms try and fail to start accelerated which causes them to repeatedly schedule unnecessary rendering updates.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::updateAcceleratedActions):
+
+        Step timing functions are never accelerated so don't bother trying to start them in accelerated state.
+        This is similar to treatmeant of unaccelerated properties.
+
 2020-08-27  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Move LineBox out of LineBuilder
