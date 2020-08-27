@@ -1,3 +1,15 @@
+2020-08-27  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r258215): Title preview movie isn't displayed at www.thismmalife.com
+        https://bugs.webkit.org/show_bug.cgi?id=215774
+        <rdar://problem/67707957>
+
+        Reviewed by Eric Carlson.
+
+        * media/content/video-as-img.mp4: Added.
+        * media/video-as-img-output-pts-expected.txt: Added.
+        * media/video-as-img-output-pts.html: Added.
+
 2020-08-27  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Skip some tests causing the suite to hang up
