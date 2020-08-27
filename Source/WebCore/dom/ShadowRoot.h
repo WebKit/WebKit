@@ -99,7 +99,7 @@ public:
     void hostChildElementDidChange(const Element&);
     void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue);
 
-    const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&);
+    const Vector<WeakPtr<Node>>* assignedNodesForSlot(const HTMLSlotElement&);
 
     void moveShadowRootToNewParentScope(TreeScope&, Document&);
     void moveShadowRootToNewDocument(Document&);

@@ -226,7 +226,7 @@ inline Node* firstChildInComposedTreeIgnoringUserAgentShadow(Node& node)
         return shadowRoot->firstChild();
     if (is<HTMLSlotElement>(node)) {
         if (auto* assignedNodes = downcast<HTMLSlotElement>(node).assignedNodes())
-            return assignedNodes->at(0);
+            return assignedNodes->at(0).get();
     }
     return node.firstChild();
 }
@@ -239,7 +239,7 @@ inline Node* nextSiblingInComposedTreeIgnoringUserAgentShadow(Node& node)
         auto nodeIndex = assignedNodes->find(&node);
         ASSERT(nodeIndex != notFound);
         if (assignedNodes->size() > nodeIndex + 1)
-            return assignedNodes->at(nodeIndex + 1);
+            return assignedNodes->at(nodeIndex + 1).get();
         return nullptr;
     }
     return node.nextSibling();

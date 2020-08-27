@@ -1,3 +1,40 @@
+2020-08-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make it possible to create a WeakPtr to Node and use it store assigned nodes in SlotAssignment
+        https://bugs.webkit.org/show_bug.cgi?id=215673
+        <rdar://problem/67440818>
+
+        Reviewed by Darin Adler.
+
+        This patch makes Node inherit from CanMakeWeakPtr<Node> and uses it in SlotAssignment's assignedNodes
+        and related member variables and functions.
+
+        No new tests since there should be no behavioral difference.
+
+        * dom/ComposedTreeIterator.cpp:
+        (WebCore::ComposedTreeIterator::traverseNextInShadowTree):
+        (WebCore::ComposedTreeIterator::advanceInSlot):
+        * dom/ComposedTreeIterator.h:
+        (WebCore::firstChildInComposedTreeIgnoringUserAgentShadow):
+        (WebCore::nextSiblingInComposedTreeIgnoringUserAgentShadow):
+        * dom/ContainerNode.h:
+        * dom/Node.h:
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::assignedNodesForSlot):
+        * dom/ShadowRoot.h:
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::assignedNodesForSlot):
+        (WebCore::SlotAssignment::assignToSlot):
+        * dom/SlotAssignment.h:
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::assignedNodes const):
+        (WebCore::flattenAssignedNodes):
+        (WebCore:: const): Deleted.
+        * html/HTMLSlotElement.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusNavigationScope::firstNodeInScope const):
+        (WebCore::FocusNavigationScope::lastNodeInScope const):
+
 2020-08-26  Andres Gonzalez  <andresg_22@apple.com>
 
         Buttons with aria-haspopup attribute are not exposed to accessibility clients as form controls.

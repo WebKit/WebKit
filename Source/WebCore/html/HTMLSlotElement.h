@@ -35,7 +35,7 @@ class HTMLSlotElement final : public HTMLElement {
 public:
     static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);
 
-    const Vector<Node*>* assignedNodes() const;
+    const Vector<WeakPtr<Node>>* assignedNodes() const;
     struct AssignedNodesOptions {
         bool flatten;
     };

@@ -60,7 +60,7 @@ public:
     void didChangeSlot(const AtomString&, ShadowRoot&);
     void enqueueSlotChangeEvent(const AtomString&, ShadowRoot&);
 
-    const Vector<Node*>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&);
+    const Vector<WeakPtr<Node>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&);
 
     virtual void hostChildElementDidChange(const Element&, ShadowRoot&);
 
@@ -78,7 +78,7 @@ private:
         WeakPtr<HTMLSlotElement> oldElement;
         unsigned elementCount { 0 };
         bool seenFirstElement { false };
-        Vector<Node*> assignedNodes;
+        Vector<WeakPtr<Node>> assignedNodes;
     };
 
     bool hasAssignedNodes(ShadowRoot&, Slot&);

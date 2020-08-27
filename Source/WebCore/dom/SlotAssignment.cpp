@@ -311,7 +311,7 @@ void SlotAssignment::hostChildElementDidChange(const Element& childElement, Shad
     didChangeSlot(childElement.attributeWithoutSynchronization(slotAttr), shadowRoot);
 }
 
-const Vector<Node*>* SlotAssignment::assignedNodesForSlot(const HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
+const Vector<WeakPtr<Node>>* SlotAssignment::assignedNodesForSlot(const HTMLSlotElement& slotElement, ShadowRoot& shadowRoot)
 {
     ASSERT(slotElement.containingShadowRoot() == &shadowRoot);
     const AtomString& slotName = slotNameFromAttributeValue(slotElement.attributeWithoutSynchronization(nameAttr));
@@ -400,14 +400,14 @@ void SlotAssignment::assignToSlot(Node& child, const AtomString& slotName)
     if (slotName == defaultSlotName()) {
         auto defaultSlotEntry = m_slots.find(defaultSlotName());
         if (defaultSlotEntry != m_slots.end())
-            defaultSlotEntry->value->assignedNodes.append(&child);
+            defaultSlotEntry->value->assignedNodes.append(makeWeakPtr(child));
         return;
     }
 
     auto addResult = m_slots.ensure(slotName, [] {
         return makeUnique<Slot>();
     });
-    addResult.iterator->value->assignedNodes.append(&child);
+    addResult.iterator->value->assignedNodes.append(makeWeakPtr(child));
 }
 
 }

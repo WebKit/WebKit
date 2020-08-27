@@ -37,6 +37,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/URLHash.h>
+#include <wtf/WeakPtr.h>
 
 // This needs to be here because Document.h also depends on it.
 #define DUMP_NODE_STATISTICS 0
@@ -69,7 +70,7 @@ class TouchEvent;
 
 using NodeOrString = Variant<RefPtr<Node>, String>;
 
-class Node : public EventTarget {
+class Node : public CanMakeWeakPtr<Node>, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(Node);
 
     friend class Document;

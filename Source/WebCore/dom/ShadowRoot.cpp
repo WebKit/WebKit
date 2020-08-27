@@ -253,7 +253,7 @@ void ShadowRoot::slotFallbackDidChange(HTMLSlotElement& slot)
     return m_slotAssignment->slotFallbackDidChange(slot, *this);
 }
 
-const Vector<Node*>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slot)
+const Vector<WeakPtr<Node>>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slot)
 {
     if (!m_slotAssignment)
         return nullptr;

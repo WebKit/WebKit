@@ -180,7 +180,7 @@ Node* FocusNavigationScope::firstNodeInScope() const
         auto* assigneNodes = m_slotElement->assignedNodes();
         if (m_slotKind == SlotKind::Assigned) {
             ASSERT(assigneNodes);
-            return assigneNodes->first();
+            return assigneNodes->first().get();
         }
         ASSERT(m_slotKind == SlotKind::Fallback);
         return m_slotElement->firstChild();
@@ -195,7 +195,7 @@ Node* FocusNavigationScope::lastNodeInScope() const
         auto* assigneNodes = m_slotElement->assignedNodes();
         if (m_slotKind == SlotKind::Assigned) {
             ASSERT(assigneNodes);
-            return assigneNodes->last();
+            return assigneNodes->last().get();
         }
         ASSERT(m_slotKind == SlotKind::Fallback);
         return m_slotElement->lastChild();
