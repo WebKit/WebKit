@@ -332,22 +332,7 @@ LineLayoutContext::LineContent LineLayoutContext::close(LineBuilder& line, const
     auto trailingInlineItemIndex = layoutRange.start + numberOfCommittedItems - 1;
     auto lineRange = InlineItemRange { layoutRange.start, trailingInlineItemIndex + 1 };
     ASSERT(lineRange.end <= layoutRange.end);
-
-    auto isLastLineWithInlineContent = [&] {
-        if (lineRange.end == layoutRange.end)
-            return LineBuilder::IsLastLineWithInlineContent::Yes;
-        if (partialContent)
-            return LineBuilder::IsLastLineWithInlineContent::No;
-        // Omit floats to see if this is the last line with inline content.
-        for (auto i = layoutRange.end; i--;) {
-            if (!m_inlineItems[i].isFloat())
-                return i == trailingInlineItemIndex ? LineBuilder::IsLastLineWithInlineContent::Yes : LineBuilder::IsLastLineWithInlineContent::No;
-        }
-        // There has to be at least one non-float item.
-        ASSERT_NOT_REACHED();
-        return LineBuilder::IsLastLineWithInlineContent::No;
-    }();
-    line.close(isLastLineWithInlineContent);
+    line.close();
     // Adjust hyphenated line count.
     m_successiveHyphenatedLineCount = partialContent && partialContent->trailingContentHasHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
     return LineContent { partialContent, lineRange, WTFMove(m_floats) };

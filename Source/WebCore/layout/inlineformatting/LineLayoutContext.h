@@ -51,7 +51,7 @@ public:
             unsigned overflowContentLength { 0 };
         };
         Optional<PartialContent> partialContent;
-        InlineItemRange inlineItems;
+        InlineItemRange inlineItemRange;
         struct Float {
             bool isIntrusive { true };
             const InlineItem* item { nullptr };

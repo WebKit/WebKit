@@ -1,3 +1,59 @@
+2020-08-26  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineBuilder should not align the runs
+        https://bugs.webkit.org/show_bug.cgi?id=215016
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for moving alignment logic over to the LineBox.
+        LineBuilder is responsible for adding content to the line, but the final alignment will be done by the LineBox.
+        This works well with preferred width computation, where we use the LineBuilder to compute line width but we
+        don't really need to construct a LineBox (and no alignment is needed).
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::HangingContent::width const):
+        (WebCore::Layout::HangingContent::isConditional const):
+        (WebCore::Layout::HangingContent::setIsConditional):
+        (WebCore::Layout::HangingContent::expand):
+        (WebCore::Layout::HangingContent::reset):
+        (WebCore::Layout::LineContentAligner::formattingContext const):
+        (WebCore::Layout::LineContentAligner::layoutState const):
+        (WebCore::Layout::LineContentAligner::LineContentAligner):
+        (WebCore::Layout::LineContentAligner::alignHorizontally):
+        (WebCore::Layout::LineContentAligner::alignVertically):
+        (WebCore::Layout::LineContentAligner::justifyRuns):
+        (WebCore::Layout::LineContentAligner::adjustBaselineAndLineHeight):
+        (WebCore::Layout::LineContentAligner::collectHangingContent const):
+        (WebCore::Layout::LineContentAligner::runContentHeight const):
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::LineBuilder):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::removeTrailingTrimmableContent):
+        (WebCore::Layout::LineBuilder::isVisuallyNonEmpty const):
+        (WebCore::Layout::HangingContent::width const): Deleted.
+        (WebCore::Layout::HangingContent::isConditional const): Deleted.
+        (WebCore::Layout::HangingContent::setIsConditional): Deleted.
+        (WebCore::Layout::HangingContent::expand): Deleted.
+        (): Deleted.
+        (WebCore::Layout::HangingContent::reset): Deleted.
+        (WebCore::Layout::LineContentAligner::formattingContext const): Deleted.
+        (WebCore::Layout::LineContentAligner::layoutState const): Deleted.
+        (WebCore::Layout::LineContentAligner::LineContentAligner): Deleted.
+        (WebCore::Layout::LineContentAligner::alignHorizontally): Deleted.
+        (WebCore::Layout::LineContentAligner::alignVertically): Deleted.
+        (WebCore::Layout::LineContentAligner::justifyRuns): Deleted.
+        (WebCore::Layout::LineContentAligner::adjustBaselineAndLineHeight): Deleted.
+        (WebCore::Layout::LineContentAligner::collectHangingContent const): Deleted.
+        (WebCore::Layout::LineContentAligner::runContentHeight const): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::lineBox):
+        (WebCore::Layout::LineBuilder::runs):
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::close):
+        * layout/inlineformatting/LineLayoutContext.h:
+
 2020-08-26  Chris Dumez  <cdumez@apple.com>
 
         Add support for sub-sample accurate start for AudioBufferSourceNode

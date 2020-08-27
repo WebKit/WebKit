@@ -48,14 +48,11 @@ public:
         bool lineIsConstrainedByFloat { false };
     };
 
-    enum class IntrinsicSizing { No, Yes };
-    LineBuilder(const InlineFormattingContext&, Optional<TextAlignMode>, IntrinsicSizing);
+    LineBuilder(const InlineFormattingContext&);
     ~LineBuilder();
 
     void initialize(const Constraints&);
-
-    enum class IsLastLineWithInlineContent { No, Yes };
-    void close(IsLastLineWithInlineContent);
+    void close();
 
     void append(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendPartialTrailingTextItem(const InlineTextItem&, InlineLayoutUnit logicalWidth, bool needsHypen);
@@ -68,6 +65,7 @@ public:
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
     const LineBox& lineBox() const { return m_lineBox; }
+    LineBox& lineBox() { return m_lineBox; }
     void moveLogicalLeft(InlineLayoutUnit);
     void moveLogicalRight(InlineLayoutUnit);
     void setHasIntrusiveFloat() { m_hasIntrusiveFloat = true; }
@@ -144,6 +142,7 @@ public:
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }
+    RunList& runs() { return m_runs; }
 
     static AscentAndDescent halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
 
@@ -198,8 +197,6 @@ private:
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
     InlineLayoutUnit m_lineLogicalWidth { 0 };
-    Optional<TextAlignMode> m_horizontalAlignment;
-    bool m_isIntrinsicSizing { false };
     bool m_hasIntrusiveFloat { false };
     LineBox m_lineBox;
     Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent;

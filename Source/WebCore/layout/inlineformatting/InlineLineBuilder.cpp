@@ -43,337 +43,9 @@ static inline bool isWhitespacePreserved(const RenderStyle& style)
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
 }
 
-struct HangingContent {
-public:
-    void reset();
-
-    InlineLayoutUnit width() const { return m_width; }
-    bool isConditional() const { return m_isConditional; }
-
-    void setIsConditional() { m_isConditional = true; }
-    void expand(InlineLayoutUnit width) { m_width += width; }
-
-private:
-    bool m_isConditional { false };
-    InlineLayoutUnit m_width { 0 };
-};
-
-void HangingContent::reset()
-{
-    m_isConditional = false;
-    m_width =  0;
-}
-
-class LineContentAligner {
-public:
-    LineContentAligner(const InlineFormattingContext&, LineBox&, LineBuilder::RunList&, InlineLayoutUnit availableWidth);
-
-    void alignHorizontally(TextAlignMode, LineBuilder::IsLastLineWithInlineContent);
-    void alignVertically();
-    void adjustBaselineAndLineHeight();
-
-private:
-    void justifyRuns(InlineLayoutUnit availableWidth);
-    HangingContent collectHangingContent(LineBuilder::IsLastLineWithInlineContent) const;
-    InlineLayoutUnit runContentHeight(const LineBuilder::Run&) const;
-
-    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    LayoutState& layoutState() const { return formattingContext().layoutState(); }
-
-    const InlineFormattingContext& m_inlineFormattingContext;
-    LineBox& m_lineBox;
-    LineBuilder::RunList& m_runs;
-    InlineLayoutUnit m_availableWidth;
-};
-
-LineContentAligner::LineContentAligner(const InlineFormattingContext& inlineFormattingContext, LineBox& lineBox, LineBuilder::RunList& runs, InlineLayoutUnit availableWidth)
-    : m_inlineFormattingContext(inlineFormattingContext)
-    , m_lineBox(lineBox)
-    , m_runs(runs)
-    , m_availableWidth(availableWidth)
-{
-}
-
-void LineContentAligner::alignHorizontally(TextAlignMode horizontalAlignment, LineBuilder::IsLastLineWithInlineContent isLastLine)
-{
-    auto hangingContent = collectHangingContent(isLastLine);
-    auto availableWidth = m_availableWidth + hangingContent.width();
-    if (m_runs.isEmpty() || availableWidth <= 0)
-        return;
-
-    if (horizontalAlignment == TextAlignMode::Justify) {
-        justifyRuns(availableWidth);
-        return;
-    }
-
-    auto adjustmentForAlignment = [&] (auto availableWidth) -> Optional<InlineLayoutUnit> {
-        switch (horizontalAlignment) {
-        case TextAlignMode::Left:
-        case TextAlignMode::WebKitLeft:
-        case TextAlignMode::Start:
-            return { };
-        case TextAlignMode::Right:
-        case TextAlignMode::WebKitRight:
-        case TextAlignMode::End:
-            return std::max<InlineLayoutUnit>(availableWidth, 0);
-        case TextAlignMode::Center:
-        case TextAlignMode::WebKitCenter:
-            return std::max<InlineLayoutUnit>(availableWidth / 2, 0);
-        case TextAlignMode::Justify:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-        ASSERT_NOT_REACHED();
-        return { };
-    };
-
-    auto adjustment = adjustmentForAlignment(availableWidth);
-    if (!adjustment)
-        return;
-    // Horizontal alignment means that we not only adjust the runs but also make sure
-    // that the line box is aligned as well
-    // e.g. <div style="text-align: center; width: 100px;">centered text</div> : the line box will also be centered
-    // as opposed to start at 0px all the way to [centered text] run's right edge.
-    m_lineBox.moveHorizontally(*adjustment);
-    for (auto& run : m_runs)
-        run.moveHorizontally(*adjustment);
-}
-
-void LineContentAligner::alignVertically()
-{
-    auto scrollableOverflowRect = m_lineBox.logicalRect();
-    for (auto& run : m_runs) {
-        auto logicalTop = InlineLayoutUnit { };
-        auto& layoutBox = run.layoutBox();
-        auto verticalAlign = layoutBox.style().verticalAlign();
-        auto ascent = layoutBox.style().fontMetrics().ascent();
-
-        switch (verticalAlign) {
-        case VerticalAlign::Baseline:
-            if (run.isLineBreak() || run.isText())
-                logicalTop = m_lineBox.alignmentBaseline() - ascent;
-            else if (run.isContainerStart()) {
-                auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                logicalTop = m_lineBox.alignmentBaseline() - ascent - boxGeometry.borderTop() - boxGeometry.paddingTop().valueOr(0);
-            } else if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
-                // Spec makes us generate at least one line -even if it is empty.
-                auto inlineBlockBaseline = formattingState.displayInlineContent()->lineBoxes.last().baseline();
-                // The inline-block's baseline offset is relative to its content box. Let's convert it relative to the margin box.
-                //           _______________ <- margin box
-                //          |
-                //          |  ____________  <- border box
-                //          | |
-                //          | |  _________  <- content box
-                //          | | |   ^
-                //          | | |   |  <- baseline offset
-                //          | | |   |
-                //     text | | |   v text
-                //     -----|-|-|---------- <- baseline
-                //
-                auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                auto baselineFromMarginBox = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + inlineBlockBaseline;
-                logicalTop = m_lineBox.alignmentBaseline() - baselineFromMarginBox;
-            } else {
-                auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-                logicalTop = m_lineBox.alignmentBaseline() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu) + run.logicalRect().height() + boxGeometry.marginAfter());
-            }
-            break;
-        case VerticalAlign::Top:
-            logicalTop = 0_lu;
-            break;
-        case VerticalAlign::Bottom:
-            logicalTop = m_lineBox.logicalBottom() - run.logicalRect().height();
-            break;
-        default:
-            ASSERT_NOT_IMPLEMENTED_YET();
-            break;
-        }
-        run.adjustLogicalTop(logicalTop);
-        // Adjust scrollable overflow if the run overflows the line.
-        scrollableOverflowRect.expandVerticallyToContain(run.logicalRect());
-        // Convert runs from relative to the line top/left to the formatting root's border box top/left.
-        run.moveVertically(m_lineBox.logicalTop());
-        run.moveHorizontally(m_lineBox.logicalLeft());
-    }
-    m_lineBox.setScrollableOverflow(scrollableOverflowRect);
-}
-
-void LineContentAligner::justifyRuns(InlineLayoutUnit availableWidth)
-{
-    ASSERT(availableWidth > 0);
-    // Collect the expansion opportunity numbers and find the last run with content.
-    auto expansionOpportunityCount = 0;
-    LineBuilder::Run* lastRunWithContent = nullptr;
-    for (auto& run : m_runs) {
-        expansionOpportunityCount += run.expansionOpportunityCount();
-        if (run.isText() || run.isBox())
-            lastRunWithContent = &run;
-    }
-    // Need to fix up the last run's trailing expansion.
-    if (lastRunWithContent && lastRunWithContent->hasExpansionOpportunity()) {
-        // Turn off the trailing bits first and add the forbid trailing expansion.
-        auto leftExpansion = lastRunWithContent->expansionBehavior() & LeftExpansionMask;
-        lastRunWithContent->setExpansionBehavior(leftExpansion | ForbidRightExpansion);
-    }
-    // Nothing to distribute?
-    if (!expansionOpportunityCount)
-        return;
-    // Distribute the extra space.
-    auto expansionToDistribute = availableWidth / expansionOpportunityCount;
-    InlineLayoutUnit accumulatedExpansion = 0;
-    for (auto& run : m_runs) {
-        // Expand and moves runs by the accumulated expansion.
-        if (!run.hasExpansionOpportunity()) {
-            run.moveHorizontally(accumulatedExpansion);
-            continue;
-        }
-        ASSERT(run.expansionOpportunityCount());
-        auto computedExpansion = expansionToDistribute * run.expansionOpportunityCount();
-        run.setComputedHorizontalExpansion(computedExpansion);
-        run.moveHorizontally(accumulatedExpansion);
-        accumulatedExpansion += computedExpansion;
-    }
-}
-
-void LineContentAligner::adjustBaselineAndLineHeight()
-{
-    unsigned inlineContainerNestingLevel = 0;
-    auto hasSeenDirectTextOrLineBreak = false;
-    for (auto& run : m_runs) {
-        auto& layoutBox = run.layoutBox();
-        auto& style = layoutBox.style();
-
-        run.setLogicalHeight(runContentHeight(run));
-
-        if (run.isText() || run.isLineBreak()) {
-            if (inlineContainerNestingLevel) {
-                // We've already adjusted the line height/baseline through the parent inline container. 
-                continue;
-            }
-            if (hasSeenDirectTextOrLineBreak) {
-                // e.g div>first text</div> or <div><span>nested<span>first direct text</div>.
-                continue;
-            }
-            hasSeenDirectTextOrLineBreak = true;
-            continue;
-        }
-
-        if (run.isContainerStart()) {
-            ++inlineContainerNestingLevel;
-            // Inline containers stretch the line by their font size.
-            // Vertical margins, paddings and borders don't contribute to the line height.
-            auto& fontMetrics = style.fontMetrics();
-            if (style.verticalAlign() == VerticalAlign::Baseline) {
-                auto halfLeading = LineBuilder::halfLeadingMetrics(fontMetrics, style.computedLineHeight());
-                // Both halfleading ascent and descent could be negative (tall font vs. small line-height value)
-                if (halfLeading.descent > 0)
-                    m_lineBox.setDescentIfGreater(halfLeading.descent);
-                if (halfLeading.ascent > 0)
-                    m_lineBox.setAscentIfGreater(halfLeading.ascent);
-                m_lineBox.setLogicalHeightIfGreater(m_lineBox.ascentAndDescent().height());
-            } else
-                m_lineBox.setLogicalHeightIfGreater(fontMetrics.height());
-            continue;
-        }
-
-        if (run.isContainerEnd()) {
-            // The line's baseline and height have already been adjusted at ContainerStart.
-            ASSERT(inlineContainerNestingLevel);
-            --inlineContainerNestingLevel;
-            continue;
-        }
-
-        if (run.isBox()) {
-            auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-            auto marginBoxHeight = boxGeometry.marginBoxHeight();
-
-            switch (style.verticalAlign()) {
-            case VerticalAlign::Baseline: {
-                if (layoutBox.isInlineBlockBox() && layoutBox.establishesInlineFormattingContext()) {
-                    // Inline-blocks with inline content always have baselines.
-                    auto& formattingState = layoutState().establishedInlineFormattingState(downcast<ContainerBox>(layoutBox));
-                    // There has to be at least one line -even if it is empty.
-                    auto& lastLineBox = formattingState.displayInlineContent()->lineBoxes.last();
-                    auto beforeHeight = boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
-                    m_lineBox.setAlignmentBaselineIfGreater(beforeHeight + lastLineBox.baseline());
-                    m_lineBox.setLogicalHeightIfGreater(marginBoxHeight);
-                } else {
-                    // Non inline-block boxes sit on the baseline (including their bottom margin).
-                    m_lineBox.setAscentIfGreater(marginBoxHeight);
-                    // Ignore negative descent (yes, negative descent is a thing).
-                    m_lineBox.setLogicalHeightIfGreater(marginBoxHeight + std::max<InlineLayoutUnit>(0, m_lineBox.ascentAndDescent().descent));
-                }
-                break;
-            }
-            case VerticalAlign::Top:
-                // Top align content never changes the baseline, it only pushes the bottom of the line further down.
-                m_lineBox.setLogicalHeightIfGreater(marginBoxHeight);
-                break;
-            case VerticalAlign::Bottom: {
-                // Bottom aligned, tall content pushes the baseline further down from the line top.
-                auto lineLogicalHeight = m_lineBox.logicalHeight();
-                if (marginBoxHeight > lineLogicalHeight) {
-                    m_lineBox.setLogicalHeightIfGreater(marginBoxHeight);
-                    m_lineBox.setAlignmentBaselineIfGreater(m_lineBox.alignmentBaseline() + (marginBoxHeight - lineLogicalHeight));
-                }
-                break;
-            }
-            default:
-                ASSERT_NOT_IMPLEMENTED_YET();
-                break;
-            }
-            continue;
-        }
-    }
-}
-
-HangingContent LineContentAligner::collectHangingContent(LineBuilder::IsLastLineWithInlineContent isLastLineWithInlineContent) const
-{
-    auto hangingContent = HangingContent { };
-    if (isLastLineWithInlineContent == LineBuilder::IsLastLineWithInlineContent::Yes)
-        hangingContent.setIsConditional();
-    for (auto& run : WTF::makeReversedRange(m_runs)) {
-        if (run.isContainerStart() || run.isContainerEnd())
-            continue;
-        if (run.isLineBreak()) {
-            hangingContent.setIsConditional();
-            continue;
-        }
-        if (!run.hasTrailingWhitespace())
-            break;
-        // Check if we have a preserved or hung whitespace.
-        if (run.style().whiteSpace() != WhiteSpace::PreWrap)
-            break;
-        // This is either a normal or conditionally hanging trailing whitespace.
-        hangingContent.expand(run.trailingWhitespaceWidth());
-    }
-    return hangingContent;
-}
-
-InlineLayoutUnit LineContentAligner::runContentHeight(const LineBuilder::Run& run) const
-{
-    auto& fontMetrics = run.style().fontMetrics();
-    if (run.isText() || run.isLineBreak())
-        return fontMetrics.height();
-
-    if (run.isContainerStart() || run.isContainerEnd())
-        return fontMetrics.height();
-
-    auto& layoutBox = run.layoutBox();
-    auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-    if (layoutBox.isReplacedBox() || layoutBox.isFloatingPositioned())
-        return boxGeometry.contentBoxHeight();
-
-    // Non-replaced inline box (e.g. inline-block). It looks a bit misleading but their margin box is considered the content height here.
-    return boxGeometry.marginBoxHeight();
-}
-
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, Optional<TextAlignMode> horizontalAlignment, IntrinsicSizing intrinsicSizing)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_trimmableTrailingContent(m_runs)
-    , m_horizontalAlignment(horizontalAlignment)
-    , m_isIntrinsicSizing(intrinsicSizing == IntrinsicSizing::Yes)
     , m_shouldIgnoreTrailingLetterSpacing(RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled())
 {
 }
@@ -405,7 +77,7 @@ void LineBuilder::clear()
     m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent = { };
 }
 
-void LineBuilder::close(IsLastLineWithInlineContent isLastLine)
+void LineBuilder::close()
 {
 #if ASSERT_ENABLED
     m_isClosed = true;
@@ -414,34 +86,6 @@ void LineBuilder::close(IsLastLineWithInlineContent isLastLine)
     // 2. Align merged runs both vertically and horizontally.
     removeTrailingTrimmableContent();
     visuallyCollapsePreWrapOverflowContent();
-    if (m_isIntrinsicSizing)
-        return;
-
-    auto contentAligner = LineContentAligner { formattingContext(), m_lineBox, m_runs, availableWidth() };
-    contentAligner.adjustBaselineAndLineHeight();
-    if (isVisuallyEmpty()) {
-        m_lineBox.resetAlignmentBaseline();
-        m_lineBox.setLogicalHeight({ });
-    }
-    // Remove descent when all content is baseline aligned but none of them have descent.
-    if (formattingContext().quirks().lineDescentNeedsCollapsing(m_runs)) {
-        m_lineBox.shrinkVertically(m_lineBox.ascentAndDescent().descent);
-        m_lineBox.resetDescent();
-    }
-    contentAligner.alignVertically();
-
-    auto computedHorizontalAlignment = [&] {
-        ASSERT(m_horizontalAlignment);
-        if (m_horizontalAlignment != TextAlignMode::Justify)
-            return *m_horizontalAlignment;
-        // Text is justified according to the method specified by the text-justify property,
-        // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
-        // the last line before a forced break or the end of the block is start-aligned.
-        if (m_runs.last().isLineBreak() || isLastLine == LineBuilder::IsLastLineWithInlineContent::Yes)
-            return TextAlignMode::Start;
-        return TextAlignMode::Justify;
-    };
-    contentAligner.alignHorizontally(computedHorizontalAlignment(), isLastLine);
 }
 
 void LineBuilder::removeTrailingTrimmableContent()
@@ -452,10 +96,10 @@ void LineBuilder::removeTrailingTrimmableContent()
     // Complex line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
     if (RuntimeEnabledFeatures::sharedFeatures().layoutFormattingContextIntegrationEnabled()) {
         auto isTextAlignRight = [&] {
-            ASSERT(m_horizontalAlignment);
-            return m_horizontalAlignment == TextAlignMode::Right
-                || m_horizontalAlignment == TextAlignMode::WebKitRight
-                || m_horizontalAlignment == TextAlignMode::End;
+            auto textAlign = formattingContext().root().style().textAlign();
+            return textAlign == TextAlignMode::Right
+                || textAlign == TextAlignMode::WebKitRight
+                || textAlign == TextAlignMode::End;
             }();
 
         if (m_runs.last().isLineBreak() && availableWidth() >= 0 && !isTextAlignRight) {
@@ -703,11 +347,7 @@ bool LineBuilder::isVisuallyNonEmpty(const Run& run) const
         if (run.layoutBox().isReplacedBox())
             return true;
         ASSERT(run.layoutBox().isInlineBlockBox() || run.layoutBox().isInlineTableBox());
-        if (!run.logicalWidth())
-            return false;
-        if (m_isIntrinsicSizing || formattingContext().geometryForBox(run.layoutBox()).height())
-            return true;
-        return false;
+        return run.logicalWidth();
     }
 
     ASSERT_NOT_REACHED();
@@ -894,7 +534,7 @@ void LineBuilder::Run::setExpansionBehavior(ExpansionBehavior expansionBehavior)
     m_expansion.behavior = expansionBehavior;
 }
 
-inline ExpansionBehavior LineBuilder::Run::expansionBehavior() const
+ExpansionBehavior LineBuilder::Run::expansionBehavior() const
 {
     ASSERT(isText());
     return m_expansion.behavior;
