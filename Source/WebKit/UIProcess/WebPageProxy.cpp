@@ -5932,6 +5932,7 @@ void WebPageProxy::runOpenPanel(FrameIdentifier frameID, FrameInfoData&& frameIn
 
 void WebPageProxy::showShareSheet(const ShareDataWithParsedURL& shareData, CompletionHandler<void(bool)>&& completionHandler)
 {
+    MESSAGE_CHECK(m_process, shareData.files.isEmpty() || m_preferences->webShareFileAPIEnabled());
     pageClient().showShareSheet(shareData, WTFMove(completionHandler));
 }
     
