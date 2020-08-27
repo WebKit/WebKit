@@ -1,3 +1,13 @@
+2020-08-27  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Skip some tests causing the suite to hang up
+
+        Unreviewed test gardening.
+
+        These two tests were making the entire suite to hang after r266221.
+
+        * platform/glib/TestExpectations:
+
 2020-08-27  Antti Koivisto  <antti@apple.com>
 
         Step animations invalidate style on every rendering update whether or not they need to
