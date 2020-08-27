@@ -54,24 +54,19 @@ LineBuilder::~LineBuilder()
 {
 }
 
-void LineBuilder::initialize(const Constraints& constraints)
+void LineBuilder::open(InlineLayoutUnit availableWidth)
 {
-    m_lineLogicalWidth = constraints.availableLogicalWidth;
-    m_hasIntrusiveFloat = constraints.lineIsConstrainedByFloat;
-    auto initialLineHeight = constraints.lineHeight;
-    auto lineRect = Display::InlineRect { constraints.logicalTopLeft, 0_lu, initialLineHeight };
-    auto ascentAndDescent = LineBuilder::halfLeadingMetrics(formattingContext().root().style().fontMetrics(), initialLineHeight);
-    m_lineBox = LineBox { lineRect, ascentAndDescent };
-    clear();
+    m_lineLogicalWidth = availableWidth;
+    clearContent();
 #if ASSERT_ENABLED
     m_isClosed = false;
 #endif
 }
 
-void LineBuilder::clear()
+void LineBuilder::clearContent()
 {
-    m_lineBox.setLogicalWidth({ });
-    m_lineBox.setIsConsideredEmpty();
+    m_contentLogicalWidth = { };
+    m_isVisuallyEmpty = true;
     m_runs.clear();
     m_trimmableTrailingContent.reset();
     m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent = { };
@@ -82,8 +77,6 @@ void LineBuilder::close()
 #if ASSERT_ENABLED
     m_isClosed = true;
 #endif
-    // 1. Remove trimmable trailing content.
-    // 2. Align merged runs both vertically and horizontally.
     removeTrailingTrimmableContent();
     visuallyCollapsePreWrapOverflowContent();
 }
@@ -108,21 +101,20 @@ void LineBuilder::removeTrailingTrimmableContent()
         }
     }
 
-    m_lineBox.shrinkHorizontally(m_trimmableTrailingContent.remove());
+    m_contentLogicalWidth -= m_trimmableTrailingContent.remove();
     // If we removed the first visible run on the line, we need to re-check the visibility status.
     if (m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent) {
         // Just because the line was visually empty before the removed content, it does not necessarily mean it is still visually empty.
         // <span>  </span><span style="padding-left: 10px"></span>  <- non-empty
         auto lineIsVisuallyEmpty = [&] {
             for (auto& run : m_runs) {
-                if (isVisuallyNonEmpty(run))
+                if (isRunVisuallyNonEmpty(run))
                     return false;
             }
             return true;
         };
         // We could only go from visually non empty -> to visually empty. Trimmed runs should never make the line visible.
-        if (lineIsVisuallyEmpty())
-            m_lineBox.setIsConsideredEmpty();
+        m_isVisuallyEmpty = lineIsVisuallyEmpty();
         m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent = { };
     }
 }
@@ -163,7 +155,7 @@ void LineBuilder::visuallyCollapsePreWrapOverflowContent()
         if (overflowWidth <= 0)
             break;
     }
-    m_lineBox.shrinkHorizontally(trimmedContentWidth);
+    m_contentLogicalWidth -= trimmedContentWidth;
 }
 
 void LineBuilder::moveLogicalLeft(InlineLayoutUnit delta)
@@ -171,7 +163,7 @@ void LineBuilder::moveLogicalLeft(InlineLayoutUnit delta)
     if (!delta)
         return;
     ASSERT(delta > 0);
-    m_lineBox.moveHorizontally(delta);
+    m_lineLogicalLeft += delta;
     m_lineLogicalWidth -= delta;
 }
 
@@ -210,14 +202,14 @@ void LineBuilder::appendWith(const InlineItem& inlineItem, const InlineRunDetail
         ASSERT_NOT_REACHED();
 
     // Check if this freshly appended content makes the line visually non-empty.
-    if (m_lineBox.isConsideredEmpty() && !m_runs.isEmpty() && isVisuallyNonEmpty(m_runs.last()))
-        m_lineBox.setIsConsideredNonEmpty();
+    if (m_isVisuallyEmpty && !m_runs.isEmpty() && isRunVisuallyNonEmpty(m_runs.last()))
+        m_isVisuallyEmpty = false;
 }
 
 void LineBuilder::appendNonBreakableSpace(const InlineItem& inlineItem, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
 {
     m_runs.append({ inlineItem, logicalLeft, logicalWidth });
-    m_lineBox.expandHorizontally(logicalWidth);
+    m_contentLogicalWidth += logicalWidth;
 }
 
 void LineBuilder::appendInlineContainerStart(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth)
@@ -232,7 +224,7 @@ void LineBuilder::appendInlineContainerEnd(const InlineItem& inlineItem, InlineL
     auto removeTrailingLetterSpacing = [&] {
         if (!m_trimmableTrailingContent.isTrailingRunPartiallyTrimmable())
             return;
-        m_lineBox.shrinkHorizontally(m_trimmableTrailingContent.removePartiallyTrimmableContent());
+        m_contentLogicalWidth -= m_trimmableTrailingContent.removePartiallyTrimmableContent();
     };
     // Prevent trailing letter-spacing from spilling out of the inline container.
     // https://drafts.csswg.org/css-text-3/#letter-spacing-property See example 21.
@@ -281,9 +273,7 @@ void LineBuilder::appendTextContent(const InlineTextItem& inlineTextItem, Inline
     }
     if (inlineTextItemNeedsNewRun)
         m_runs.append({ inlineTextItem, contentLogicalWidth(), logicalWidth, needsHyphen });
-
-    m_lineBox.expandHorizontally(logicalWidth);
-
+    m_contentLogicalWidth += logicalWidth;
     // Set the trailing trimmable content.
     if (inlineTextItem.isWhitespace() && !TextUtil::shouldPreserveTrailingWhitespace(inlineTextItem.style())) {
         m_trimmableTrailingContent.addFullyTrimmableContent(m_runs.size() - 1, logicalWidth);
@@ -304,7 +294,7 @@ void LineBuilder::appendNonReplacedInlineBox(const InlineItem& inlineItem, Inlin
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
     auto horizontalMargin = boxGeometry.horizontalMargin();
     m_runs.append({ inlineItem, contentLogicalWidth() + horizontalMargin.start, logicalWidth });
-    m_lineBox.expandHorizontally(logicalWidth + horizontalMargin.start + horizontalMargin.end);
+    m_contentLogicalWidth += logicalWidth + horizontalMargin.start + horizontalMargin.end;
     m_trimmableTrailingContent.reset();
 }
 
@@ -324,7 +314,7 @@ void LineBuilder::appendLineBreak(const InlineItem& inlineItem)
     m_runs.append({ downcast<InlineSoftLineBreakItem>(inlineItem), contentLogicalWidth() });
 }
 
-bool LineBuilder::isVisuallyNonEmpty(const Run& run) const
+bool LineBuilder::isRunVisuallyNonEmpty(const Run& run) const
 {
     if (run.isText())
         return true;
@@ -352,18 +342,6 @@ bool LineBuilder::isVisuallyNonEmpty(const Run& run) const
 
     ASSERT_NOT_REACHED();
     return false;
-}
-
-AscentAndDescent LineBuilder::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)
-{
-    auto ascent = fontMetrics.ascent();
-    auto descent = fontMetrics.descent();
-    // 10.8.1 Leading and half-leading
-    auto halfLeading = (lineLogicalHeight - (ascent + descent)) / 2;
-    // Inline tree height is all integer based.
-    auto adjustedAscent = std::max<InlineLayoutUnit>(floorf(ascent + halfLeading), 0);
-    auto adjustedDescent = std::max<InlineLayoutUnit>(ceilf(descent + halfLeading), 0);
-    return { adjustedAscent, adjustedDescent };
 }
 
 const InlineFormattingContext& LineBuilder::formattingContext() const

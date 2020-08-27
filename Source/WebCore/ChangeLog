@@ -1,3 +1,56 @@
+2020-08-27  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Move LineBox out of LineBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=215048
+
+        Reviewed by Antti Koivisto.
+
+        Since none of the LineBox related operations (content alignment, line sizing etc) is done during line building,
+        we don't really need to construct a LineBox until after we finished placing all the runs on the current line.
+        It enables us to decouple the LineBuilder and the LineBox.
+        Let the LineBuilder place the runs and compute horizontal geometry, while LineBox takes care of the final alignment of those runs. 
+
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::LineContentAligner::adjustBaselineAndLineHeight):
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        (WebCore::Layout::InlineFormattingContext::computedIntrinsicWidthForConstraint const):
+        (WebCore::Layout::InlineFormattingContext::constraintsForLine):
+        (WebCore::Layout::InlineFormattingContext::setDisplayBoxesForLine):
+        * layout/inlineformatting/InlineFormattingContext.h:
+        * layout/inlineformatting/InlineFormattingContextQuirks.cpp:
+        (WebCore::Layout::InlineFormattingContext::Quirks::initialLineHeight const):
+        * layout/inlineformatting/InlineLineBox.h:
+        (WebCore::Layout::LineBox::halfLeadingMetrics):
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::open):
+        (WebCore::Layout::LineBuilder::clearContent):
+        (WebCore::Layout::LineBuilder::close):
+        (WebCore::Layout::LineBuilder::removeTrailingTrimmableContent):
+        (WebCore::Layout::LineBuilder::visuallyCollapsePreWrapOverflowContent):
+        (WebCore::Layout::LineBuilder::moveLogicalLeft):
+        (WebCore::Layout::LineBuilder::appendWith):
+        (WebCore::Layout::LineBuilder::appendNonBreakableSpace):
+        (WebCore::Layout::LineBuilder::appendInlineContainerEnd):
+        (WebCore::Layout::LineBuilder::appendTextContent):
+        (WebCore::Layout::LineBuilder::appendNonReplacedInlineBox):
+        (WebCore::Layout::LineBuilder::isRunVisuallyNonEmpty const):
+        (WebCore::Layout::LineBuilder::initialize): Deleted.
+        (WebCore::Layout::LineBuilder::clear): Deleted.
+        (WebCore::Layout::LineBuilder::isVisuallyNonEmpty const): Deleted.
+        (WebCore::Layout::LineBuilder::halfLeadingMetrics): Deleted.
+        * layout/inlineformatting/InlineLineBuilder.h:
+        (WebCore::Layout::LineBuilder::setHasIntrusiveFloat):
+        (WebCore::Layout::LineBuilder::hasIntrusiveFloat const):
+        (WebCore::Layout::LineBuilder::isVisuallyEmpty const):
+        (WebCore::Layout::LineBuilder::contentLogicalWidth const):
+        (WebCore::Layout::LineBuilder::contentLogicalRight const):
+        (WebCore::Layout::LineBuilder::lineBox const): Deleted.
+        (WebCore::Layout::LineBuilder::lineBox): Deleted.
+        * layout/inlineformatting/LineLayoutContext.cpp:
+        (WebCore::Layout::LineLayoutContext::layoutInlineContent):
+        (WebCore::Layout::LineLayoutContext::commitFloats):
+        (WebCore::Layout::LineLayoutContext::rebuildLine):
+
 2020-08-27  Antti Koivisto  <antti@apple.com>
 
         Animation are invalidating too much

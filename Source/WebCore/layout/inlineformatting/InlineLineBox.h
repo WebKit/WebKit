@@ -114,6 +114,8 @@ public:
     void setIsConsideredEmpty() { m_isConsideredEmpty = true; }
     void setIsConsideredNonEmpty() { m_isConsideredEmpty = false; }
 
+    static AscentAndDescent halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
+
 private:
 #if ASSERT_ENABLED
     bool m_hasValidAlignmentBaseline { false };
@@ -184,6 +186,18 @@ inline void LineBox::resetAlignmentBaseline()
     m_alignmentBaseline = 0_lu;
     m_rootInlineBox.ascentAndDescent.descent = { };
     m_rootInlineBox.ascentAndDescent.ascent = { };
+}
+
+inline AscentAndDescent LineBox::halfLeadingMetrics(const FontMetrics& fontMetrics, InlineLayoutUnit lineLogicalHeight)
+{
+    auto ascent = fontMetrics.ascent();
+    auto descent = fontMetrics.descent();
+    // 10.8.1 Leading and half-leading
+    auto halfLeading = (lineLogicalHeight - (ascent + descent)) / 2;
+    // Inline tree height is all integer based.
+    auto adjustedAscent = std::max<InlineLayoutUnit>(floorf(ascent + halfLeading), 0);
+    auto adjustedDescent = std::max<InlineLayoutUnit>(ceilf(descent + halfLeading), 0);
+    return { adjustedAscent, adjustedDescent };
 }
 
 }

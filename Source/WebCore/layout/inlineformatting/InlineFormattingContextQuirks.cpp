@@ -74,7 +74,7 @@ InlineLayoutUnit InlineFormattingContext::Quirks::initialLineHeight(const Contai
     // Negative lineHeight value means the line-height is not set
     if (layoutState().inNoQuirksMode() || !formattingRoot.style().lineHeight().isNegative())
         return computedLineHeight;
-    return LineBuilder::halfLeadingMetrics(formattingRoot.style().fontMetrics(), computedLineHeight).height();
+    return LineBox::halfLeadingMetrics(formattingRoot.style().fontMetrics(), computedLineHeight).height();
 }
 
 }

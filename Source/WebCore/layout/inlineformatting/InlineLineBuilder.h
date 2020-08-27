@@ -41,34 +41,29 @@ class LineContentAligner;
 
 class LineBuilder {
 public:
-    struct Constraints {
-        InlineLayoutPoint logicalTopLeft;
-        InlineLayoutUnit availableLogicalWidth { 0 };
-        InlineLayoutUnit lineHeight { 0 };
-        bool lineIsConstrainedByFloat { false };
-    };
-
     LineBuilder(const InlineFormattingContext&);
     ~LineBuilder();
 
-    void initialize(const Constraints&);
+    void open(InlineLayoutUnit availableLogicalWidth);
     void close();
+    void clearContent();
+
+    void setHasIntrusiveFloat(bool hasIntrusiveFloat) { m_hasIntrusiveFloat = hasIntrusiveFloat; }
+    bool hasIntrusiveFloat() const { return m_hasIntrusiveFloat; }
 
     void append(const InlineItem&, InlineLayoutUnit logicalWidth);
     void appendPartialTrailingTextItem(const InlineTextItem&, InlineLayoutUnit logicalWidth, bool needsHypen);
-    void clear();
-    bool isVisuallyEmpty() const { return m_lineBox.isConsideredEmpty(); }
-    bool hasIntrusiveFloat() const { return m_hasIntrusiveFloat; }
+
+    bool isVisuallyEmpty() const { return m_isVisuallyEmpty; }
+
     InlineLayoutUnit availableWidth() const { return m_lineLogicalWidth - contentLogicalWidth(); }
+    InlineLayoutUnit contentLogicalWidth() const { return m_contentLogicalWidth; }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
-    const LineBox& lineBox() const { return m_lineBox; }
-    LineBox& lineBox() { return m_lineBox; }
     void moveLogicalLeft(InlineLayoutUnit);
     void moveLogicalRight(InlineLayoutUnit);
-    void setHasIntrusiveFloat() { m_hasIntrusiveFloat = true; }
 
     struct Run {
         bool isText() const { return m_type == InlineItem::Type::Text; }
@@ -144,11 +139,8 @@ public:
     const RunList& runs() const { return m_runs; }
     RunList& runs() { return m_runs; }
 
-    static AscentAndDescent halfLeadingMetrics(const FontMetrics&, InlineLayoutUnit lineLogicalHeight);
-
 private:
-    InlineLayoutUnit contentLogicalWidth() const { return m_lineBox.logicalWidth(); }
-    InlineLayoutUnit contentLogicalRight() const { return m_lineBox.logicalRight(); }
+    InlineLayoutUnit contentLogicalRight() const { return m_lineLogicalLeft + m_contentLogicalWidth; }
 
     struct InlineRunDetails {
         InlineLayoutUnit logicalWidth { 0 };
@@ -166,8 +158,7 @@ private:
     void removeTrailingTrimmableContent();
     void visuallyCollapsePreWrapOverflowContent();
 
-    bool isVisuallyNonEmpty(const Run&) const;
-
+    bool isRunVisuallyNonEmpty(const Run&) const;
     const InlineFormattingContext& formattingContext() const;
 
     struct TrimmableTrailingContent {
@@ -196,9 +187,11 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     RunList m_runs;
     TrimmableTrailingContent m_trimmableTrailingContent;
+    InlineLayoutUnit m_lineLogicalLeft { 0 };
     InlineLayoutUnit m_lineLogicalWidth { 0 };
+    InlineLayoutUnit m_contentLogicalWidth { 0 };
     bool m_hasIntrusiveFloat { false };
-    LineBox m_lineBox;
+    bool m_isVisuallyEmpty { true };
     Optional<bool> m_lineIsVisuallyEmptyBeforeTrimmableTrailingContent;
     bool m_shouldIgnoreTrailingLetterSpacing { false };
 #if ASSERT_ENABLED

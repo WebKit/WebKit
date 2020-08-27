@@ -300,7 +300,7 @@ LineLayoutContext::LineContent LineLayoutContext::layoutInlineContent(LineBuilde
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
         // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-        nextContentForLine(lineCandidate, currentItemIndex, layoutRange, partialLeadingContentLength, line.availableWidth() + line.trimmableTrailingWidth(), line.lineBox().logicalWidth());
+        nextContentForLine(lineCandidate, currentItemIndex, layoutRange, partialLeadingContentLength, line.availableWidth() + line.trimmableTrailingWidth(), line.contentLogicalWidth());
         // Now check if we can put this content on the current line.
         auto result = handleFloatsAndInlineContent(lineBreaker, line, layoutRange, lineCandidate);
         committedInlineItemCount = result.committedCount.isRevert ? result.committedCount.value : committedInlineItemCount + result.committedCount.value;
@@ -405,8 +405,7 @@ void LineLayoutContext::commitFloats(LineBuilder& line, const LineCandidate& lin
                 rightIntrusiveFloatsWidth += floatCandidate.logicalWidth;
         }
     }
-    if (hasIntrusiveFloat)
-        line.setHasIntrusiveFloat();
+    line.setHasIntrusiveFloat(hasIntrusiveFloat);
     if (leftIntrusiveFloatsWidth || rightIntrusiveFloatsWidth) {
         if (leftIntrusiveFloatsWidth)
             line.moveLogicalLeft(leftIntrusiveFloatsWidth);
@@ -505,7 +504,7 @@ void LineLayoutContext::commitPartialContent(LineBuilder& line, const LineBreake
 size_t LineLayoutContext::rebuildLine(LineBuilder& line, const InlineItemRange& layoutRange)
 {
     // Clear the line and start appending the inline items closing with the last wrap opportunity run.
-    line.clear();
+    line.clearContent();
     auto currentItemIndex = layoutRange.start;
     auto logicalRight = InlineLayoutUnit { };
     if (m_partialLeadingTextItem) {
