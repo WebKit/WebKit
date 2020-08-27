@@ -63,6 +63,7 @@ def main():
     tester = Tester()
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts'), 'webkitpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitcorepy'), 'webkitcorepy')
+    tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitscmpy'), 'webkitscmpy')
 
     # There is no WebKit2 on Windows, so we don't need to run WebKit2 unittests on it.
     if not (sys.platform.startswith('win') or sys.platform == 'cygwin'):

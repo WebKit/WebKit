@@ -1,3 +1,22 @@
+2020-08-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Initial commit
+        https://bugs.webkit.org/show_bug.cgi?id=215864
+        <rdar://problem/67827063>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy: Added.
+        * Scripts/libraries/webkitscmpy/MANIFEST.in: Added.
+        * Scripts/libraries/webkitscmpy/README.md: Added.
+        * Scripts/libraries/webkitscmpy/setup.py: Added.
+        (readme):
+        * Scripts/libraries/webkitscmpy/webkitscmpy: Added.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Added.
+        (_maybe_add_webkitcorepy_path):
+        * Scripts/webkitpy/test/main.py:
+        (main): Add webkitscmpy to test-webkitpy.
+
 2020-08-27  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r264790): IndexedDB may abort transactions of in-memory databases
