@@ -337,7 +337,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , variableSizedCellSpace("Variable Sized JSCell", heap, cellHeapCellType.get(), fastMallocAllocator.get()) // Hash:0xbcd769cc
     , destructibleObjectSpace("JSDestructibleObject", heap, destructibleObjectHeapCellType.get(), fastMallocAllocator.get()) // Hash:0x4f5ed7a9
     , arraySpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSArray)
-    , bigIntSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), JSBigInt)
+    , bigIntSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSBigInt)
     , calleeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), JSCallee)
     , clonedArgumentsSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ClonedArguments)
     , customGetterSetterSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), CustomGetterSetter)

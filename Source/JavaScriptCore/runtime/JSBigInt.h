@@ -50,8 +50,7 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis;
     friend class CachedBigInt;
 
-    static constexpr bool needsDestruction = true;
-    static void destroy(JSCell*);
+    static void visitChildren(JSCell*, SlotVisitor&);
 
     template<typename CellType, SubspaceAccess>
     static IsoSubspace* subspaceFor(VM& vm)
@@ -576,7 +575,7 @@ private:
 
     const unsigned m_length;
     bool m_sign { false };
-    CagedUniquePtr<Gigacage::Primitive, Digit> m_data;
+    CagedBarrierPtr<Gigacage::Primitive, Digit> m_data;
 };
 
 inline JSBigInt* asHeapBigInt(JSValue value)

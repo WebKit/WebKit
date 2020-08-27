@@ -1,3 +1,21 @@
+2020-08-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use auxiliary memory for JSBigInt storage
+        https://bugs.webkit.org/show_bug.cgi?id=215876
+
+        Reviewed by Mark Lam.
+
+        This makes JSBigInt non-destructible cell. And it makes allocating JSBigInt from JIT easy.
+
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::JSBigInt):
+        (JSC::JSBigInt::visitChildren):
+        (JSC::JSBigInt::createWithLength):
+        (JSC::JSBigInt::destroy): Deleted.
+        * runtime/JSBigInt.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2020-08-27  Keith Miller  <keith_miller@apple.com>
 
         OSR availability validation should run for any node with exitOK

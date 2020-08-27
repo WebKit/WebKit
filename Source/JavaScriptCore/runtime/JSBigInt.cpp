@@ -63,12 +63,16 @@ const ClassInfo JSBigInt::s_info = { "BigInt", nullptr, nullptr, nullptr, CREATE
 JSBigInt::JSBigInt(VM& vm, Structure* structure, Digit* data, unsigned length)
     : Base(vm, structure)
     , m_length(length)
-    , m_data(data, length)
+    , m_data(vm, this, data, length)
 { }
 
-void JSBigInt::destroy(JSCell* thisCell)
+void JSBigInt::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    static_cast<JSBigInt*>(thisCell)->~JSBigInt();
+    auto* thisObject = jsCast<JSBigInt*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    if (auto* data = thisObject->m_data.getUnsafe())
+        visitor.markAuxiliary(data);
 }
 
 void JSBigInt::initialize(InitializationType initType)
@@ -108,7 +112,7 @@ inline JSBigInt* JSBigInt::createWithLength(JSGlobalObject* nullOrGlobalObjectFo
     }
 
     ASSERT(length <= maxLength);
-    void* data = Gigacage::tryMalloc(Gigacage::Primitive, length * sizeof(Digit));
+    void* data = vm.primitiveGigacageAuxiliarySpace.allocateNonVirtual(vm, length * sizeof(Digit), nullptr, AllocationFailureMode::ReturnNull);
     if (UNLIKELY(!data)) {
         if (nullOrGlobalObjectForOOM) {
             auto scope = DECLARE_THROW_SCOPE(vm);
