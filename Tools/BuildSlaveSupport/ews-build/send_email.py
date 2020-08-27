@@ -71,6 +71,7 @@ def send_email(to_emails, subject, text, reference=''):
 def send_email_to_patch_author(author_email, subject, text, reference=''):
     if not author_email:
         return
+    send_email(['aakash_jain@apple.com'], subject, text, reference)
     if author_email in get_email_ids('EMAIL_IDS_TO_UNSUBSCRIBE'):
         print('email {} is in unsubscribe list, skipping email'.format(author_email))
         return
