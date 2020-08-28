@@ -1,6 +1,6 @@
 CONSOLE MESSAGE: Unhandled Promise Rejection: error1: error1 message
 
-FAIL backpressure allows no transforms with a default identity transform and no reader assert_array_equals: transform should not be called lengths differ, expected array [] length 0, got ["transform", "a"] length 2
+PASS backpressure allows no transforms with a default identity transform and no reader 
 PASS backpressure only allows one transform() with a identity transform with a readable HWM of 1 and no reader 
 PASS transform() should keep being called as long as there is no backpressure 
 PASS writes should resolve as soon as transform completes 

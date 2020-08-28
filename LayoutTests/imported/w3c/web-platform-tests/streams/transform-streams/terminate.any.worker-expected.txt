@@ -1,5 +1,7 @@
 
-FAIL controller.terminate() should error pipeTo() assert_array_equals: transform() should have seen no chunks lengths differ, expected array [] length 0, got ["transform", 0] length 2
+Harness Error (FAIL), message = Unhandled rejection: the stream has been terminated
+
+PASS controller.terminate() should error pipeTo() 
 PASS controller.terminate() should prevent remaining chunks from being processed 
 PASS controller.enqueue() should throw after controller.terminate() 
 PASS controller.error() after controller.terminate() with queued chunk should error the readable 

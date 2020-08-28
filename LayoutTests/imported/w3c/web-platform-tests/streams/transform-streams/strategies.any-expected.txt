@@ -3,7 +3,7 @@ PASS writableStrategy highWaterMark should work
 PASS readableStrategy highWaterMark should work 
 PASS writable should have the correct size() function 
 PASS default writable strategy should be equivalent to { highWaterMark: 1 } 
-FAIL default readable strategy should be equivalent to { highWaterMark: 0 } assert_equals: desiredSize should be 0 expected 0 but got 1
+PASS default readable strategy should be equivalent to { highWaterMark: 0 } 
 PASS a RangeError should be thrown for an invalid highWaterMark 
 PASS writableStrategy highWaterMark should be converted to a number 
 PASS readableStrategy highWaterMark should be converted to a number 

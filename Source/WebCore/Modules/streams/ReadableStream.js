@@ -51,7 +51,7 @@ function initializeReadableStream(underlyingSource, strategy)
     if (@getByIdDirectPrivate(underlyingSource, "pull") !== @undefined) {
         const size = @getByIdDirectPrivate(strategy, "size");
         const highWaterMark = @getByIdDirectPrivate(strategy, "highWaterMark");
-        @setupReadableStreamDefaultController(this, underlyingSource, size, highWaterMark ? highWaterMark : 1, @getByIdDirectPrivate(underlyingSource, "start"), @getByIdDirectPrivate(underlyingSource, "pull"), @getByIdDirectPrivate(underlyingSource, "cancel"));
+        @setupReadableStreamDefaultController(this, underlyingSource, size, highWaterMark !== @undefined ? highWaterMark : 1, @getByIdDirectPrivate(underlyingSource, "start"), @getByIdDirectPrivate(underlyingSource, "pull"), @getByIdDirectPrivate(underlyingSource, "cancel"));
         return this;
     }
 

@@ -5,7 +5,7 @@ PASS error() inside size() should work
 PASS desiredSize inside size() should work 
 PASS readable cancel() inside size() should work 
 PASS pipeTo() inside size() should work 
-FAIL read() inside of size() should work assert_false: expected false got true
+PASS read() inside of size() should work 
 PASS writer.write() inside size() should work 
 PASS synchronous writer.write() inside size() should work 
 PASS writer.close() inside size() should work 

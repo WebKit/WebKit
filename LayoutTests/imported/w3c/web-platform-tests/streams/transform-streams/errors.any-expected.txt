@@ -17,6 +17,6 @@ PASS controller.error() should do nothing after readable.cancel()
 PASS controller.error() should do nothing after writable.abort() has completed 
 PASS controller.error() should do nothing after a transformer method has thrown an exception 
 PASS erroring during write with backpressure should result in the write failing 
-FAIL a write() that was waiting for backpressure should reject if the writable is aborted assert_unreached: Should have rejected: read() should reject Reached unreachable code
+PASS a write() that was waiting for backpressure should reject if the writable is aborted 
 PASS the readable should be errored with the reason passed to the writable abort() method 
 
