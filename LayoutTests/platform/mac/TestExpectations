@@ -2226,10 +2226,20 @@ webkit.org/b/215817 [ Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rec
 [ BigSur+ ] tables/mozilla/bugs/bug33855.html [ Failure ]
 [ BigSur+ ] tables/mozilla_expected_failures/bugs/bug2479-5.html [ Failure ]
 
+# <rdar://problem/66346141> [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html is failing
 # <rdar://66295552> [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html
 [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html [ ImageOnlyFailure ]
 
 # <rdar://64947666> [ BigSur+ ] fast/images/image-controls-basic.html 
 [ BigSur+ ] fast/images/image-controls-basic.html [ Failure ]
+
+# <rdar://problem/60780398> REGRESSION: (258729?) imported/w3c/web-platform-tests/websockets/opening-handshake/003.html is failing.
+[ BigSur+ ] imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
+
+# <rdar://problem/66399069> [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html is failing
+[ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html [ ImageOnlyFailure ]
+
+# <rdar://problem/66351394> [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html is failing
+[ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
 
 
