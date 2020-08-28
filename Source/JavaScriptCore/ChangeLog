@@ -1,3 +1,55 @@
+2020-08-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        __proto__ in object literal should perform [[SetPrototypeOf]] directly
+        https://bugs.webkit.org/show_bug.cgi?id=215769
+
+        Reviewed by Ross Kirsling.
+
+        To fix __proto__ usage in object literals if Object.prototype.__proto__ is overridden
+        or removed, this patch sets the [[Prototype]] directly, aligning JSC with V8 and
+        SpiderMonkey. We are safe to skip method table lookups and cycle checks, as the
+        spec [1] calls [[SetPrototypeOf]] on newly created (unreferenced) ordinary objects.
+
+        This change removes PropertyNode::PutType because its only purpose was to accomodate
+        __proto__ in object literals. Since emitPutConstantProperty() handles static public
+        class fields, which don't need `super` binding, PropertyNode::isUnderscoreProtoSetter()
+        is extended to reject class properties.
+
+        This patch speeds up creating object literals with __proto__ by 25%.
+
+        [1]: https://tc39.es/ecma262/#sec-__proto__-property-names-in-object-initializers (step 7.a)
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        (JSC::BytecodeGenerator::emitDirectSetPrototypeOf):
+        1. Remove unused `dst` parameter to align with other `put` methods.
+        2. Remove `divot*` parameters as it's cumbersome to pass them through,
+           and globalFuncSetPrototypeDirect() never throws anyway.
+
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByIdDirect):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_putByIdDirectPrivate):
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createProperty):
+        (JSC::ASTBuilder::isUnderscoreProtoSetter const):
+        * parser/NodeConstructors.h:
+        (JSC::PropertyNode::PropertyNode):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createProperty):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncSetPrototypeDirect):
+        1. Ignore a prototype value of incorrect type as per spec [1],
+           which is unobservable for call sites in ClassExprNode::emitBytecode().
+        2. Assert that JSObject::setPrototypeDirect() doesn't throw.
+
 2020-08-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] setLength in Array#push could get very large length

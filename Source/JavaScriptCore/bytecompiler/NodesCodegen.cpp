@@ -747,6 +747,12 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
     // Private fields are handled in the synthetic instanceFieldInitializer function, not here.
     ASSERT(!(node.type() & PropertyNode::Private));
 
+    if (PropertyNode::isUnderscoreProtoSetter(generator.vm(), node)) {
+        RefPtr<RegisterID> prototype = generator.emitNode(node.m_assign);
+        generator.emitDirectSetPrototypeOf(newObj, prototype.get());
+        return;
+    }
+
     bool shouldSetFunctionName = generator.shouldSetFunctionName(node.m_assign);
 
     RefPtr<RegisterID> propertyName;
@@ -777,7 +783,7 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
         ASSERT(!propertyName);
         Optional<uint32_t> optionalIndex = parseIndex(*identifier);
         if (!optionalIndex) {
-            generator.emitDirectPutById(newObj, *identifier, value.get(), node.putType());
+            generator.emitDirectPutById(newObj, *identifier, value.get());
             return;
         }
 
@@ -1394,7 +1400,7 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByIdDirect(BytecodeGenerato
 
     ASSERT(!node->m_next);
 
-    return generator.move(dst, generator.emitDirectPutById(base.get(), ident, value.get(), PropertyNode::KnownDirect));
+    return generator.move(dst, generator.emitDirectPutById(base.get(), ident, value.get()));
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByIdDirectPrivate(BytecodeGenerator& generator, RegisterID* dst)
@@ -1410,7 +1416,7 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByIdDirectPrivate(BytecodeG
 
     ASSERT(!node->m_next);
 
-    return generator.move(dst, generator.emitDirectPutById(base.get(), generator.parserArena().identifierArena().makeIdentifier(generator.vm(), symbol), value.get(), PropertyNode::KnownDirect));
+    return generator.move(dst, generator.emitDirectPutById(base.get(), generator.parserArena().identifierArena().makeIdentifier(generator.vm(), symbol), value.get()));
 }
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByValDirect(BytecodeGenerator& generator, RegisterID* dst)
@@ -4908,9 +4914,9 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         generator.emitThrowTypeError("The value of the superclass's prototype property is not an object or null."_s);
         generator.emitLabel(protoParentIsObjectOrNullLabel.get());
 
-        generator.emitDirectSetPrototypeOf(tempRegister.get(), constructor.get(), superclass.get(), divot(), divotStart(), divotEnd());
+        generator.emitDirectSetPrototypeOf(constructor.get(), superclass.get());
         generator.emitLabel(superclassIsNullLabel.get());
-        generator.emitDirectSetPrototypeOf(tempRegister.get(), prototype.get(), protoParent.get(), divot(), divotStart(), divotEnd());
+        generator.emitDirectSetPrototypeOf(prototype.get(), protoParent.get());
     }
 
     if (needsHomeObject)
@@ -4935,7 +4941,7 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
             // https://bugs.webkit.org/show_bug.cgi?id=196867
             emitPutHomeObject(generator, instanceFieldInitializer.get(), prototype.get());
 
-            generator.emitDirectPutById(constructor.get(), generator.propertyNames().builtinNames().instanceFieldInitializerPrivateName(), instanceFieldInitializer.get(), PropertyNode::Unknown);
+            generator.emitDirectPutById(constructor.get(), generator.propertyNames().builtinNames().instanceFieldInitializerPrivateName(), instanceFieldInitializer.get());
         }
     }
 

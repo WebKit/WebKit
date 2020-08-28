@@ -214,23 +214,25 @@ public:
 
     int createArgumentsList(const JSTokenLocation&, int) { return ArgumentsListResult; }
     int createArgumentsList(const JSTokenLocation&, int, int) { return ArgumentsListResult; }
-    Property createProperty(const Identifier* name, int, PropertyNode::Type type, PropertyNode::PutType, SuperBinding superBinding, InferName, ClassElementTag)
+    Property createProperty(const Identifier* name, int, PropertyNode::Type type, SuperBinding superBinding, InferName, ClassElementTag tag)
     {
-        return Property(type, PropertyNode::isUnderscoreProtoSetter(m_vm, name, type, superBinding == SuperBinding::Needed));
+        bool needsSuperBinding = superBinding == SuperBinding::Needed;
+        bool isClassProperty = tag != ClassElementTag::No;
+        return Property(type, PropertyNode::isUnderscoreProtoSetter(m_vm, name, type, needsSuperBinding, isClassProperty));
     }
-    Property createProperty(int, PropertyNode::Type type, PropertyNode::PutType, SuperBinding, ClassElementTag)
-    {
-        return Property(type);
-    }
-    Property createProperty(VM&, ParserArena&, double, int, PropertyNode::Type type, PropertyNode::PutType, SuperBinding, ClassElementTag)
+    Property createProperty(int, PropertyNode::Type type, SuperBinding, ClassElementTag)
     {
         return Property(type);
     }
-    Property createProperty(int, int, PropertyNode::Type type, PropertyNode::PutType, SuperBinding, ClassElementTag)
+    Property createProperty(VM&, ParserArena&, double, int, PropertyNode::Type type, SuperBinding, ClassElementTag)
     {
         return Property(type);
     }
-    Property createProperty(const Identifier*, int, int, PropertyNode::Type type, PropertyNode::PutType, SuperBinding, ClassElementTag)
+    Property createProperty(int, int, PropertyNode::Type type, SuperBinding, ClassElementTag)
+    {
+        return Property(type);
+    }
+    Property createProperty(const Identifier*, int, int, PropertyNode::Type type, SuperBinding, ClassElementTag)
     {
         return Property(type);
     }
