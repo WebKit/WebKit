@@ -1,3 +1,12 @@
+2020-08-28  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Gardening some failures.
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/biquad-automation-expected.txt:
+
 2020-08-28  Hector Lopez  <hector_i_lopez@apple.com>
 
         [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html
