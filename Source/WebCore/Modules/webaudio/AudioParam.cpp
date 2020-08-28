@@ -80,6 +80,23 @@ void AudioParam::setValue(float value)
     m_value = std::clamp(value, minValue(), maxValue());
 }
 
+float AudioParam::valueForBindings() const
+{
+    ASSERT(isMainThread());
+    return m_value;
+}
+
+ExceptionOr<void> AudioParam::setValueForBindings(float value)
+{
+    ASSERT(isMainThread());
+
+    setValue(value);
+    auto result = setValueAtTime(m_value, context().currentTime());
+    if (result.hasException())
+        return result.releaseException();
+    return { };
+}
+
 ExceptionOr<void> AudioParam::setAutomationRate(AutomationRate automationRate)
 {
     if (m_automationRateMode == AutomationRateMode::Fixed)

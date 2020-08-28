@@ -37,7 +37,7 @@
 [
     Conditional=WEB_AUDIO,
 ] interface AudioParam {
-    attribute float value;
+    [ImplementedAs=valueForBindings] attribute float value;
 
     attribute AutomationRate automationRate;
 

@@ -69,6 +69,9 @@ public:
     float value();
     void setValue(float);
 
+    float valueForBindings() const;
+    ExceptionOr<void> setValueForBindings(float);
+
     AutomationRate automationRate() const { return m_automationRate; }
     ExceptionOr<void> setAutomationRate(AutomationRate);
 

@@ -1,3 +1,21 @@
+2020-08-28  Chris Dumez  <cdumez@apple.com>
+
+        AudioParam.value setter should call setValueAtTime(value, now)
+        https://bugs.webkit.org/show_bug.cgi?id=215946
+
+        Reviewed by Eric Carlson.
+
+        AudioParam.value setter should call setValueAtTime(value, now), as per:
+        - https://www.w3.org/TR/webaudio/#dom-audioparam-value
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::valueForBindings const):
+        (WebCore::AudioParam::setValueForBindings):
+        * Modules/webaudio/AudioParam.h:
+        * Modules/webaudio/AudioParam.idl:
+
 2020-08-27  Simon Fraser  <simon.fraser@apple.com>
 
         Vertical scrolling gets stuck when a horizontal scroller is under the mouse (google search results)
