@@ -45,7 +45,7 @@ class WaveDiff(object):
         params1 = waveFile1.getparams()
         params2 = waveFile2.getparams()
 
-        self._diff = ''
+        self._diff = []
 
         self._filesAreIdentical = not sum(map(self._diffParam, params1, params2, self._paramNames))
         self._filesAreIdenticalWithinTolerance = self._filesAreIdentical
@@ -72,19 +72,19 @@ class WaveDiff(object):
         self._filesAreIdenticalWithinTolerance = not len(list(filter(lambda x: x > self._tolerance, results)))
 
         if differingSampleCount:
-            self._diff += '\n'
-            self._diff += 'Total differing samples: %d\n' % differingSampleCount
-            self._diff += 'Percentage of differing samples: %0.3f%%\n' % (100 * float(differingSampleCount) / max(frameCount1, frameCount2))
-            self._diff += 'Cumulative sample difference: %d\n' % cumulativeSampleDiff
-            self._diff += 'Average sample difference: %f\n' % (float(cumulativeSampleDiff) / differingSampleCount)
+            self._diff.append('')
+            self._diff.append('Total differing samples: %d' % differingSampleCount)
+            self._diff.append('Percentage of differing samples: %0.3f%%' % (100 * float(differingSampleCount) / max(frameCount1, frameCount2)))
+            self._diff.append('Cumulative sample difference: %d' % cumulativeSampleDiff)
+            self._diff.append('Average sample difference: %f' % (float(cumulativeSampleDiff) / differingSampleCount))
 
     def _diffParam(self, param1, param2, paramName):
         if param1 == param2:
             return False
-        self._diff += paramName + '\n'
-        self._diff += '< %s\n' % str(param1)
-        self._diff += '---\n'
-        self._diff += '> %s\n' % str(param2)
+        self._diff.append(paramName)
+        self._diff.append('< %s' % str(param1))
+        self._diff.append('---')
+        self._diff.append('> %s' % str(param2))
         return True
 
     @staticmethod
@@ -95,10 +95,10 @@ class WaveDiff(object):
 
     def _diffSample(self, data1, data2, i):
         if (data1 != data2):
-            self._diff += 'Sample #%d\n' % i
-            self._diff += '< %d\n' % data1
-            self._diff += '---\n'
-            self._diff += '> %d\n' % data2
+            self._diff.append('Sample #%d' % i)
+            self._diff.append('< %d' % data1)
+            self._diff.append('---')
+            self._diff.append('> %d' % data2)
         return abs(data1 - data2)
 
     def filesAreIdentical(self):
@@ -108,4 +108,4 @@ class WaveDiff(object):
         return self._filesAreIdenticalWithinTolerance
 
     def diffText(self):
-        return self._diff
+        return '\n'.join(self._diff)

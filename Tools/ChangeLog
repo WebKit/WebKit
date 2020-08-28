@@ -1,3 +1,27 @@
+2020-08-27  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r266221) Layout tests step hanging due to slow WaveDiff comparison
+        https://bugs.webkit.org/show_bug.cgi?id=215886
+
+        Reviewed by Darin Adler.
+
+        After r266221, a couple of webaudio tests generated WAV files with a
+        small difference in a large number of samples. This caused the
+        WaveDiff comparison to take too long.
+
+        While it works fine for small diffs, this ends up creating repeatedly
+        large strings for each concatenation, bringing the comparisons to a
+        halt.
+
+        Instead of relying on string concatenation, use a list to collect then
+        and only concat when actually retrieving the full string.
+
+        * Scripts/webkitpy/common/wavediff.py:
+        (WaveDiff.__init__):
+        (WaveDiff._diffParam):
+        (WaveDiff._diffSample):
+        (WaveDiff.diffText):
+
 2020-08-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [webkitpy] repository svn version is incorrect when working on a branch
