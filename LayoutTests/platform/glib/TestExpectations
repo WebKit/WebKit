@@ -624,6 +624,8 @@ webkit.org/b/208287 http/tests/eventsource/eventsource-page-cache-connected.html
 
 webkit.org/b/212818 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Failure Timeout Pass ]
 
+webkit.org/b/215912 http/tests/websocket/tests/hybi/handshake-fail-by-no-cr.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebSocket-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

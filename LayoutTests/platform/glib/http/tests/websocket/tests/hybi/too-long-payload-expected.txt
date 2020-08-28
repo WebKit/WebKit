@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://127.0.0.1:8880/websocket/tests/hybi/too-long-payload' failed: Received extremely large WebSocket data from the server
 Tests whether WebSocket correctly aborts the connection when it receives a frame with too long payload.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

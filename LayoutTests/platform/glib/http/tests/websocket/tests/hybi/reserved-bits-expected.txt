@@ -1,8 +1,3 @@
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/reserved-bits?compressed=false&bitNumber=1' failed: Received invalid WebSocket response from the server
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/reserved-bits?compressed=false&bitNumber=2' failed: Received invalid WebSocket response from the server
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/reserved-bits?compressed=false&bitNumber=3' failed: Received invalid WebSocket response from the server
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/reserved-bits?compressed=true&bitNumber=2' failed: Received invalid WebSocket response from the server
-CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8880/websocket/tests/hybi/reserved-bits?compressed=true&bitNumber=3' failed: Received invalid WebSocket response from the server
 Test whether WebSocket rejects frames whose reserved bit is on.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
