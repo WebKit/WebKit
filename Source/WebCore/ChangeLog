@@ -1,3 +1,15 @@
+2020-08-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove adopted node from TextManipulationController
+        https://bugs.webkit.org/show_bug.cgi?id=215914
+
+        Reviewed by Wenson Hsieh.
+
+        Remove Node from TextManipulationController when it gets adopted to a new document.
+
+        * dom/Node.cpp:
+        (WebCore::Node::moveNodeToNewDocument):
+
 2020-08-28  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r263506): scale transform transitions won't overshoot
