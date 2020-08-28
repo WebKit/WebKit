@@ -1628,7 +1628,7 @@ bool connectedInSameTreeScope(const Node* a, const Node* b)
     return a && b && a->isConnected() == b->isConnected() && &a->treeScope() == &b->treeScope();
 }
 
-// FIXME: Refactor this so it calls documentOrdering, except for any exotic inefficient things that are needed only here.
+// FIXME: Refactor this so it calls documentOrder, except for any exotic inefficient things that are needed only here.
 unsigned short Node::compareDocumentPosition(Node& otherNode)
 {
     if (&otherNode == this)
@@ -2627,11 +2627,11 @@ void* Node::opaqueRootSlow() const
     return const_cast<void*>(static_cast<const void*>(node));
 }
 
-static size_t depth(const Node& node)
+static size_t depthInComposedTree(const Node& node)
 {
     size_t depth = 0;
     auto ancestor = &node;
-    while ((ancestor = ancestor->parentOrShadowHostNode()))
+    while ((ancestor = ancestor->parentInComposedTree()))
         ++depth;
     return depth;
 }
@@ -2641,33 +2641,39 @@ struct AncestorAndChildren {
     const Node* distinctAncestorA;
     const Node* distinctAncestorB;
 };
+
+// FIXME: This function's name is not explicit about the fact that it's the common inclusive ancestor in the composed tree.
 static AncestorAndChildren commonInclusiveAncestorAndChildren(const Node& a, const Node& b)
 {
-    // This first check isn't needed for correctness, but it is cheap and likely to be
+    // This check isn't needed for correctness, but it is cheap and likely to be
     // common enough to be worth optimizing so we don't have to walk to the root.
     if (&a == &b)
         return { &a, nullptr, nullptr };
-    auto [depthA, depthB] = std::make_tuple(depth(a), depth(b));
+    // FIXME: Could optimize cases where nodes are both in the same shadow tree.
+    // FIXME: Could optimize cases where nodes are in different documents to quickly return false.
+    // FIXME: Could optimize cases where one node is connected and the other is not to quickly return false.
+    auto [depthA, depthB] = std::make_tuple(depthInComposedTree(a), depthInComposedTree(b));
     auto [x, y, difference] = depthA >= depthB
         ? std::make_tuple(&a, &b, depthA - depthB)
         : std::make_tuple(&b, &a, depthB - depthA);
     decltype(x) distinctAncestorA = nullptr;
     for (decltype(difference) i = 0; i < difference; ++i) {
         distinctAncestorA = x;
-        x = x->parentOrShadowHostNode();
+        x = x->parentInComposedTree();
     }
     decltype(y) distinctAncestorB = nullptr;
     while (x != y) {
         distinctAncestorA = x;
         distinctAncestorB = y;
-        x = x->parentOrShadowHostNode();
-        y = y->parentOrShadowHostNode();
+        x = x->parentInComposedTree();
+        y = y->parentInComposedTree();
     }
     if (depthA < depthB)
         std::swap(distinctAncestorA, distinctAncestorB);
     return { x, distinctAncestorA, distinctAncestorB };
 }
 
+// FIXME: This function's name is not explicit about the fact that it's the common inclusive ancestor in the composed tree.
 RefPtr<Node> commonInclusiveAncestor(Node& a, Node& b)
 {
     return const_cast<Node*>(commonInclusiveAncestorAndChildren(a, b).commonAncestor);
@@ -2675,6 +2681,8 @@ RefPtr<Node> commonInclusiveAncestor(Node& a, Node& b)
 
 static bool isSiblingSubsequent(const Node& siblingA, const Node& siblingB)
 {
+    ASSERT(siblingA.parentNode());
+    ASSERT(siblingA.parentNode() == siblingB.parentNode());
     ASSERT(&siblingA != &siblingB);
     for (auto sibling = &siblingA; sibling; sibling = sibling->nextSibling()) {
         if (sibling == &siblingB)
@@ -2694,6 +2702,16 @@ PartialOrdering documentOrder(const Node& a, const Node& b)
         return PartialOrdering::less;
     if (!result.distinctAncestorB)
         return PartialOrdering::greater;
+    bool isShadowRootA = result.distinctAncestorA->isShadowRoot();
+    bool isShadowRootB = result.distinctAncestorB->isShadowRoot();
+    if (isShadowRootA || isShadowRootB) {
+        if (!isShadowRootB)
+            return PartialOrdering::less;
+        if (!isShadowRootA)
+            return PartialOrdering::greater;
+        ASSERT_NOT_REACHED();
+        return PartialOrdering::unordered;
+    }
     return isSiblingSubsequent(*result.distinctAncestorA, *result.distinctAncestorB) ? PartialOrdering::less : PartialOrdering::greater;
 }
 

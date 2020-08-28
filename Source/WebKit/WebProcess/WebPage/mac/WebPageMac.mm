@@ -877,7 +877,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         if (!actionContext)
             continue;
 
-        auto view = actionContext->range.start.container->document().view();
+        auto view = actionContext->range.start.document().view();
         if (!view)
             continue;
 

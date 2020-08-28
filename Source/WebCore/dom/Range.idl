@@ -25,9 +25,9 @@
     [CallWith=Document] constructor();
 
     readonly attribute Node startContainer;
-    readonly attribute long startOffset; // FIXME: Should be unsigned long.
+    readonly attribute unsigned long startOffset;
     readonly attribute Node endContainer;
-    readonly attribute long endOffset; // FIXME: Should be unsigned long.
+    readonly attribute unsigned long endOffset;
     readonly attribute boolean collapsed;
     readonly attribute Node commonAncestorContainer;
 
@@ -45,7 +45,7 @@
     const unsigned short START_TO_END = 1;
     const unsigned short END_TO_END = 2;
     const unsigned short END_TO_START = 3;
-    [MayThrowException, ImplementedAs=compareBoundaryPointsForBindings] short compareBoundaryPoints(unsigned short how, Range sourceRange);
+    [MayThrowException] short compareBoundaryPoints(unsigned short how, Range sourceRange);
 
     [CEReactions, MayThrowException] void deleteContents();
     [CEReactions, MayThrowException, NewObject] DocumentFragment extractContents();
@@ -59,7 +59,7 @@
     [MayThrowException] boolean isPointInRange(Node node, unsigned long offset);
     [MayThrowException] short comparePoint(Node node, unsigned long offset);
 
-    [MayThrowException] boolean intersectsNode(Node node);
+    boolean intersectsNode(Node node);
 
     stringifier;
 
@@ -70,10 +70,11 @@
     // Extensions from DOMParsing and Serialization specification (https://w3c.github.io/DOM-Parsing/#extensions-to-the-range-interface).
     [CEReactions, MayThrowException, NewObject] DocumentFragment createContextualFragment(DOMString fragment);
 
-    // Non standard.
-    [MayThrowException] void expand(optional DOMString unit = "");
+    // Non-standard extension.
+    // FIXME: We should eventually drop this since no other browser supports it.
+    [MayThrowException] void expand(optional DOMString unit);
 
-    // FIXME: We should likely drop this since no other browser supports it.
+    // FIXME: We should likely drop this since we added it for Firefox interoperability, but now no other browser supports it.
     [MayThrowException] short compareNode(Node node);
     const unsigned short NODE_BEFORE = 0;
     const unsigned short NODE_AFTER = 1;

@@ -65,6 +65,20 @@ WEBCORE_EXPORT RefPtr<Node> commonInclusiveAncestor(const SimpleRange&);
 
 bool operator==(const SimpleRange&, const SimpleRange&);
 
+WEBCORE_EXPORT bool isPointInRange(const SimpleRange&, const BoundaryPoint&);
+bool isPointInRange(const SimpleRange&, const Optional<BoundaryPoint>&);
+
+WEBCORE_EXPORT bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange);
+WEBCORE_EXPORT bool intersects(const SimpleRange&, const SimpleRange&);
+WEBCORE_EXPORT SimpleRange unionRange(const SimpleRange&, const SimpleRange&);
+
+WEBCORE_EXPORT bool contains(const SimpleRange&, const Node&);
+WEBCORE_EXPORT bool intersects(const SimpleRange&, const Node&);
+
+// Returns equivalent if point is in range.
+WEBCORE_EXPORT PartialOrdering documentOrder(const SimpleRange&, const BoundaryPoint&);
+WEBCORE_EXPORT PartialOrdering documentOrder(const BoundaryPoint&, const SimpleRange&);
+
 class IntersectingNodeRange;
 IntersectingNodeRange intersectingNodes(const SimpleRange&);
 

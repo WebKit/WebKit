@@ -44,6 +44,7 @@
 #include <WebCore/Range.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/SimpleRange.h>
+#include <WebCore/TextIterator.h>
 #include <WebCore/VisibleSelection.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -97,23 +98,32 @@ Range& InjectedBundleRangeHandle::coreRange() const
 
 Ref<InjectedBundleNodeHandle> InjectedBundleRangeHandle::document()
 {
-    return InjectedBundleNodeHandle::getOrCreate(m_range->ownerDocument());
+    return InjectedBundleNodeHandle::getOrCreate(m_range->startContainer().document());
 }
 
 WebCore::IntRect InjectedBundleRangeHandle::boundingRectInWindowCoordinates() const
 {
-    Frame* frame = m_range->ownerDocument().frame();
-    return frame->view()->contentsToWindow(enclosingIntRect(unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects(makeSimpleRange(m_range)))));
+    auto range = makeSimpleRange(m_range);
+    auto frame = range.start.document().frame();
+    if (!frame)
+        return { };
+    auto view = frame->view();
+    if (!view)
+        return { };
+    return view->contentsToWindow(enclosingIntRect(unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects(range))));
 }
 
 RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions options)
 {
-    Document& ownerDocument = m_range->ownerDocument();
-    Frame* frame = ownerDocument.frame();
+    auto range = makeSimpleRange(m_range);
+
+    auto document = makeRef(range.start.document());
+
+    auto frame = makeRefPtr(document->frame());
     if (!frame)
         return nullptr;
 
-    FrameView* frameView = frame->view();
+    auto frameView = frame->view();
     if (!frameView)
         return nullptr;
 
@@ -121,13 +131,11 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
     LocalDefaultSystemAppearance localAppearance(frameView->useDarkAppearance());
 #endif
 
-    Ref<Frame> protector(*frame);
-
     VisibleSelection oldSelection = frame->selection().selection();
-    frame->selection().setSelection(makeSimpleRange(m_range));
+    frame->selection().setSelection(range);
 
     float scaleFactor = (options & SnapshotOptionsExcludeDeviceScaleFactor) ? 1 : frame->page()->deviceScaleFactor();
-    IntRect paintRect = enclosingIntRect(unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects(makeSimpleRange(m_range))));
+    IntRect paintRect = enclosingIntRect(unionRectIgnoringZeroRects(RenderObject::absoluteBorderAndTextRects(range)));
     IntSize backingStoreSize = paintRect.size();
     backingStoreSize.scale(scaleFactor);
 
@@ -155,7 +163,7 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
         paintBehavior.add(PaintBehavior::ForceWhiteText);
 
     frameView->setPaintBehavior(paintBehavior);
-    ownerDocument.updateLayout();
+    document->updateLayout();
 
     frameView->paint(*graphicsContext, paintRect);
     frameView->setPaintBehavior(oldPaintBehavior);
@@ -167,7 +175,9 @@ RefPtr<WebImage> InjectedBundleRangeHandle::renderedImage(SnapshotOptions option
 
 String InjectedBundleRangeHandle::text() const
 {
-    return m_range->text();
+    auto range = makeSimpleRange(m_range);
+    range.start.document().updateLayout();
+    return plainText(range);
 }
 
 RefPtr<InjectedBundleRangeHandle> createHandle(const Optional<WebCore::SimpleRange>& range)

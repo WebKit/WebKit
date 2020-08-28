@@ -4200,7 +4200,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
 
     auto selectionRange = selection.toNormalizedRange();
     auto rangeOfInterest = *makeSimpleRange(rangeOfInterestStart, rangeOfInterestEnd);
-    if (selectionRange && rangesOverlap(createLiveRange(rangeOfInterest).ptr(), createLiveRange(*selectionRange).ptr())) {
+    if (selectionRange && intersects(rangeOfInterest, *selectionRange)) {
         startOfRangeOfInterestInSelection = std::max(rangeOfInterestStart, selectionStart);
         endOfRangeOfInterestInSelection = std::min(rangeOfInterestEnd, selectionEnd);
     } else {
@@ -4265,7 +4265,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     context.contextBefore = makeString(contextBeforeStart, startOfRangeOfInterestInSelection);
     context.selectedText = makeString(startOfRangeOfInterestInSelection, endOfRangeOfInterestInSelection);
     context.contextAfter = makeString(endOfRangeOfInterestInSelection, contextAfterEnd);
-    if (compositionRange && rangesOverlap(createLiveRange(rangeOfInterest).ptr(), createLiveRange(*compositionRange).ptr())) {
+    if (compositionRange && intersects(rangeOfInterest, *compositionRange)) {
         VisiblePosition compositionStart(createLegacyEditingPosition(compositionRange->start));
         VisiblePosition compositionEnd(createLegacyEditingPosition(compositionRange->end));
         context.markedText = makeString(compositionStart, compositionEnd);
@@ -4281,7 +4281,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         while (!iterator.atEnd()) {
             if (!iterator.text().isEmpty()) {
                 auto absoluteBoundingBox = unionRect(RenderObject::absoluteTextRects(iterator.range(), RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections));
-                rects.append({ iterator.range().start.container->document().view()->contentsToRootView(absoluteBoundingBox), { offsetSoFar++, stride } });
+                rects.append({ iterator.range().start.document().view()->contentsToRootView(absoluteBoundingBox), { offsetSoFar++, stride } });
             }
             iterator.advance(stride);
         }

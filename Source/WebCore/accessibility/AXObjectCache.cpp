@@ -2036,6 +2036,8 @@ static bool isReplacedNodeOrBR(Node* node)
 
 static bool characterOffsetsInOrder(const CharacterOffset& characterOffset1, const CharacterOffset& characterOffset2)
 {
+    // FIXME: Should just be able to call documentOrder without accessibility-specific logic. Not clear why we need CharacterOffset instead of Position or BoundaryPoint.
+
     if (characterOffset1.isNull() || characterOffset2.isNull())
         return false;
     
@@ -2048,16 +2050,12 @@ static bool characterOffsetsInOrder(const CharacterOffset& characterOffset1, con
         node1 = node1->traverseToChildAt(characterOffset1.offset);
     if (!node2->isCharacterDataNode() && !isReplacedNodeOrBR(node2) && node2->hasChildNodes())
         node2 = node2->traverseToChildAt(characterOffset2.offset);
-    
     if (!node1 || !node2)
         return false;
     
     auto range1 = AXObjectCache::rangeForNodeContents(*node1);
     auto range2 = AXObjectCache::rangeForNodeContents(*node2);
-    auto result = createLiveRange(range1)->compareBoundaryPoints(Range::START_TO_START, createLiveRange(range2));
-    if (result.hasException())
-        return true;
-    return result.releaseReturnValue() <= 0;
+    return is_lteq(documentOrder(range1.start, range2.start));
 }
 
 static Node* resetNodeAndOffsetForReplacedNode(Node& replacedNode, int& offset, int characterCount)

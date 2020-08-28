@@ -693,6 +693,12 @@ private:
     constexpr PartialOrdering(Type type) : m_type { type } { }
     Type m_type;
 };
+constexpr bool is_eq(PartialOrdering);
+constexpr bool is_lt(PartialOrdering);
+constexpr bool is_gt(PartialOrdering);
+constexpr bool is_neq(PartialOrdering);
+constexpr bool is_lteq(PartialOrdering);
+constexpr bool is_gteq(PartialOrdering);
 
 WEBCORE_EXPORT PartialOrdering documentOrder(const Node&, const Node&);
 
@@ -827,6 +833,21 @@ constexpr bool is_lt(PartialOrdering ordering)
 constexpr bool is_gt(PartialOrdering ordering)
 {
     return ordering.m_type == PartialOrdering::Type::Greater;
+}
+
+constexpr bool is_neq(PartialOrdering ordering)
+{
+    return is_lt(ordering) || is_gt(ordering);
+}
+
+constexpr bool is_lteq(PartialOrdering ordering)
+{
+    return is_lt(ordering) || is_eq(ordering);
+}
+
+constexpr bool is_gteq(PartialOrdering ordering)
+{
+    return is_gt(ordering) || is_eq(ordering);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Node&);

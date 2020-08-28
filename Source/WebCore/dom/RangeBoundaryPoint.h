@@ -32,43 +32,39 @@ namespace WebCore {
 
 class RangeBoundaryPoint {
 public:
-    explicit RangeBoundaryPoint(Node* container);
+    explicit RangeBoundaryPoint(Node& container);
 
-    Node* container() const;
+    Node& container() const;
     unsigned offset() const;
     Node* childBefore() const;
-
-    void clear();
 
     void set(Ref<Node>&& container, unsigned offset, Node* childBefore);
     void setOffset(unsigned);
 
-    void setToBeforeChild(Node&);
-    void setToAfterChild(Node&);
-    void setToStartOfNode(Ref<Node>&&);
-    void setToEndOfNode(Ref<Node>&&);
+    void setToBeforeNode(Node&);
+    void setToAfterNode(Node&);
+    void setToBeforeContents(Ref<Node>&&);
+    void setToAfterContents(Ref<Node>&&);
 
     void childBeforeWillBeRemoved();
     void invalidateOffset() const;
-    void ensureOffsetIsValid() const;
 
 private:
-    RefPtr<Node> m_containerNode;
+    Ref<Node> m_container;
     mutable Optional<unsigned> m_offsetInContainer { 0 };
     RefPtr<Node> m_childBeforeBoundary;
 };
 
 BoundaryPoint makeBoundaryPoint(const RangeBoundaryPoint&);
 
-inline RangeBoundaryPoint::RangeBoundaryPoint(Node* container)
-    : m_containerNode(container)
+inline RangeBoundaryPoint::RangeBoundaryPoint(Node& container)
+    : m_container(container)
 {
-    ASSERT(m_containerNode);
 }
 
-inline Node* RangeBoundaryPoint::container() const
+inline Node& RangeBoundaryPoint::container() const
 {
-    return m_containerNode.get();
+    return m_container;
 }
 
 inline Node* RangeBoundaryPoint::childBefore() const
@@ -76,77 +72,63 @@ inline Node* RangeBoundaryPoint::childBefore() const
     return m_childBeforeBoundary.get();
 }
 
-inline void RangeBoundaryPoint::ensureOffsetIsValid() const
-{
-    if (m_offsetInContainer)
-        return;
-
-    ASSERT(m_childBeforeBoundary);
-    m_offsetInContainer = m_childBeforeBoundary->computeNodeIndex() + 1;
-}
-
 inline unsigned RangeBoundaryPoint::offset() const
 {
-    ensureOffsetIsValid();
-    return m_offsetInContainer.value();
-}
-
-inline void RangeBoundaryPoint::clear()
-{
-    m_containerNode = nullptr;
-    m_offsetInContainer = 0;
-    m_childBeforeBoundary = nullptr;
+    if (!m_offsetInContainer) {
+        ASSERT(m_childBeforeBoundary);
+        m_offsetInContainer = m_childBeforeBoundary->computeNodeIndex() + 1;
+    }
+    return *m_offsetInContainer;
 }
 
 inline void RangeBoundaryPoint::set(Ref<Node>&& container, unsigned offset, Node* childBefore)
 {
     ASSERT(childBefore == (offset ? container->traverseToChildAt(offset - 1) : 0));
-    m_containerNode = WTFMove(container);
+    m_container = WTFMove(container);
     m_offsetInContainer = offset;
     m_childBeforeBoundary = childBefore;
 }
 
 inline void RangeBoundaryPoint::setOffset(unsigned offset)
 {
-    ASSERT(m_containerNode);
-    ASSERT(m_containerNode->isCharacterDataNode());
+    ASSERT(m_container->isCharacterDataNode());
     ASSERT(m_offsetInContainer);
     ASSERT(!m_childBeforeBoundary);
     m_offsetInContainer = offset;
 }
 
-inline void RangeBoundaryPoint::setToBeforeChild(Node& child)
+inline void RangeBoundaryPoint::setToBeforeNode(Node& child)
 {
     ASSERT(child.parentNode());
     m_childBeforeBoundary = child.previousSibling();
-    m_containerNode = child.parentNode();
-    m_offsetInContainer = m_childBeforeBoundary ? WTF::nullopt : Optional<unsigned>(0);
+    m_container = *child.parentNode();
+    m_offsetInContainer = m_childBeforeBoundary ? WTF::nullopt : makeOptional(0U);
 }
 
-inline void RangeBoundaryPoint::setToAfterChild(Node& child)
+inline void RangeBoundaryPoint::setToAfterNode(Node& child)
 {
     ASSERT(child.parentNode());
     m_childBeforeBoundary = &child;
-    m_containerNode = child.parentNode();
-    m_offsetInContainer = m_childBeforeBoundary ? WTF::nullopt : Optional<unsigned>(0);
+    m_container = *child.parentNode();
+    m_offsetInContainer = m_childBeforeBoundary ? WTF::nullopt : makeOptional(0U);
 }
 
-inline void RangeBoundaryPoint::setToStartOfNode(Ref<Node>&& container)
+inline void RangeBoundaryPoint::setToBeforeContents(Ref<Node>&& container)
 {
-    m_containerNode = WTFMove(container);
+    m_container = WTFMove(container);
     m_offsetInContainer = 0;
     m_childBeforeBoundary = nullptr;
 }
 
-inline void RangeBoundaryPoint::setToEndOfNode(Ref<Node>&& container)
+inline void RangeBoundaryPoint::setToAfterContents(Ref<Node>&& container)
 {
-    m_containerNode = WTFMove(container);
-    if (is<CharacterData>(*m_containerNode)) {
-        m_offsetInContainer = downcast<CharacterData>(*m_containerNode).length();
+    m_container = WTFMove(container);
+    if (is<CharacterData>(m_container)) {
+        m_offsetInContainer = downcast<CharacterData>(m_container.get()).length();
         m_childBeforeBoundary = nullptr;
     } else {
-        m_childBeforeBoundary = m_containerNode->lastChild();
-        m_offsetInContainer = m_childBeforeBoundary ? WTF::nullopt : Optional<unsigned>(0);
+        m_childBeforeBoundary = m_container->lastChild();
+        m_offsetInContainer = m_childBeforeBoundary ? WTF::nullopt : makeOptional(0U);
     }
 }
 
@@ -167,21 +149,16 @@ inline void RangeBoundaryPoint::invalidateOffset() const
 
 inline bool operator==(const RangeBoundaryPoint& a, const RangeBoundaryPoint& b)
 {
-    if (a.container() != b.container())
+    if (&a.container() != &b.container())
         return false;
-    if (a.childBefore() || b.childBefore()) {
-        if (a.childBefore() != b.childBefore())
-            return false;
-    } else {
-        if (a.offset() != b.offset())
-            return false;
-    }
-    return true;
+    if (a.childBefore() || b.childBefore())
+        return a.childBefore() == b.childBefore();
+    return a.offset() == b.offset();
 }
 
 inline BoundaryPoint makeBoundaryPoint(const RangeBoundaryPoint& point)
 {
-    return { *point.container(), point.offset() };
+    return { point.container(), point.offset() };
 }
 
 } // namespace WebCore

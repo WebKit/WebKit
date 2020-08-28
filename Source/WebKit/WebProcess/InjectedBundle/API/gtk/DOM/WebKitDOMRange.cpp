@@ -25,6 +25,7 @@
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
 #include <WebCore/JSExecState.h>
+#include <WebCore/TextIterator.h>
 #include "WebKitDOMDocumentFragmentPrivate.h"
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMPrivate.h"
@@ -355,9 +356,7 @@ gshort webkit_dom_range_compare_boundary_points(WebKitDOMRange* self, gushort ho
     g_return_val_if_fail(WEBKIT_DOM_IS_RANGE(self), 0);
     g_return_val_if_fail(WEBKIT_DOM_IS_RANGE(sourceRange), 0);
     g_return_val_if_fail(!error || !*error, 0);
-    WebCore::Range* item = WebKit::core(self);
-    WebCore::Range* convertedSourceRange = WebKit::core(sourceRange);
-    auto result = item->compareBoundaryPointsForBindings(how, *convertedSourceRange);
+    auto result = WebKit::core(self)->compareBoundaryPoints(how, *WebKit::core(sourceRange));
     if (result.hasException()) {
         auto description = WebCore::DOMException::description(result.releaseException().code());
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
@@ -508,15 +507,7 @@ gboolean webkit_dom_range_intersects_node(WebKitDOMRange* self, WebKitDOMNode* r
     g_return_val_if_fail(WEBKIT_DOM_IS_RANGE(self), FALSE);
     g_return_val_if_fail(WEBKIT_DOM_IS_NODE(refNode), FALSE);
     g_return_val_if_fail(!error || !*error, FALSE);
-    WebCore::Range* item = WebKit::core(self);
-    WebCore::Node* convertedRefNode = WebKit::core(refNode);
-    auto result = item->intersectsNode(*convertedRefNode);
-    if (result.hasException()) {
-        auto description = WebCore::DOMException::description(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
-        return false;
-    }
-    return result.releaseReturnValue();
+    return WebKit::core(self)->intersectsNode(*WebKit::core(refNode));
 }
 
 gshort webkit_dom_range_compare_point(WebKitDOMRange* self, WebKitDOMNode* refNode, glong offset, GError** error)
@@ -632,9 +623,9 @@ gchar* webkit_dom_range_get_text(WebKitDOMRange* self)
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_RANGE(self), 0);
-    WebCore::Range* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->text());
-    return result;
+    auto range = makeSimpleRange(*WebKit::core(self));
+    range.start.document().updateLayout();
+    return convertToUTF8String(plainText(range));
 }
 
 G_GNUC_END_IGNORE_DEPRECATIONS;

@@ -72,6 +72,9 @@ static bool isOffsetBeforeChild(ContainerNode& container, unsigned offset, Node&
 {
     if (!offset)
         return true;
+    // If the container is not the parent, the child is part of a shadow tree, which we sort between offset 0 and offset 1.
+    if (child.parentNode() != &container)
+        return false;
     unsigned currentOffset = 0;
     for (auto currentChild = container.firstChild(); currentChild && currentChild != &child; currentChild = currentChild->nextSibling()) {
         if (offset <= ++currentOffset)
@@ -99,14 +102,14 @@ PartialOrdering documentOrder(const BoundaryPoint& a, const BoundaryPoint& b)
         return order(a.offset, b.offset);
 
     for (auto ancestor = b.container.ptr(); ancestor; ) {
-        auto nextAncestor = ancestor->parentOrShadowHostNode();
+        auto nextAncestor = ancestor->parentInComposedTree();
         if (nextAncestor == a.container.ptr())
             return isOffsetBeforeChild(*nextAncestor, a.offset, *ancestor) ? PartialOrdering::less : PartialOrdering::greater;
         ancestor = nextAncestor;
     }
 
     for (auto ancestor = a.container.ptr(); ancestor; ) {
-        auto nextAncestor = ancestor->parentOrShadowHostNode();
+        auto nextAncestor = ancestor->parentInComposedTree();
         if (nextAncestor == b.container.ptr())
             return isOffsetBeforeChild(*nextAncestor, b.offset, *ancestor) ? PartialOrdering::greater : PartialOrdering::less;
         ancestor = nextAncestor;
@@ -203,6 +206,70 @@ void IntersectingNodeIterator::enforceEndInvariant()
 RefPtr<Node> commonInclusiveAncestor(const SimpleRange& range)
 {
     return commonInclusiveAncestor(range.start.container, range.end.container);
+}
+
+bool isPointInRange(const SimpleRange& range, const BoundaryPoint& point)
+{
+    return is_lteq(documentOrder(range.start, point)) && is_lteq(documentOrder(point, range.end));
+}
+
+bool isPointInRange(const SimpleRange& range, const Optional<BoundaryPoint>& point)
+{
+    return point && isPointInRange(range, *point);
+}
+
+PartialOrdering documentOrder(const SimpleRange& range, const BoundaryPoint& point)
+{
+    if (auto order = documentOrder(range.start, point); !is_lt(order))
+        return order;
+    if (auto order = documentOrder(range.end, point); !is_gt(order))
+        return order;
+    return PartialOrdering::equivalent;
+}
+
+PartialOrdering documentOrder(const BoundaryPoint& point, const SimpleRange& range)
+{
+    if (auto order = documentOrder(point, range.start); !is_gt(order))
+        return order;
+    if (auto order = documentOrder(point, range.end); !is_lt(order))
+        return order;
+    return PartialOrdering::equivalent;
+}
+
+bool contains(const SimpleRange& outerRange, const SimpleRange& innerRange)
+{
+    return is_lteq(documentOrder(outerRange.start, innerRange.start)) && is_gteq(documentOrder(outerRange.end, innerRange.end));
+}
+
+bool intersects(const SimpleRange& a, const SimpleRange& b)
+{
+    return is_lteq(documentOrder(a.start, b.end)) && is_lteq(documentOrder(b.start, a.end));
+}
+
+SimpleRange unionRange(const SimpleRange& a, const SimpleRange& b)
+{
+    auto& start = is_lteq(documentOrder(a.start, b.start)) ? a : b;
+    auto& end = is_lteq(documentOrder(a.end, b.end)) ? b : a;
+    return { start.start, end.end };
+}
+
+bool contains(const SimpleRange& range, const Node& node)
+{
+    // FIXME: Consider a more efficient algorithm that avoids always computing the node index.
+    // FIXME: Does this const_cast point to a design problem?
+    auto nodeRange = makeRangeSelectingNode(const_cast<Node&>(node));
+    return nodeRange && contains(range, *nodeRange);
+}
+
+bool intersects(const SimpleRange& range, const Node& node)
+{
+    // FIXME: Consider a more efficient algorithm that avoids always computing the node index.
+    // FIXME: Does this const_cast point to a design problem?
+    auto nodeRange = makeRangeSelectingNode(const_cast<Node&>(node));
+    if (!nodeRange)
+        return node.contains(range.start.container.ptr());
+    return is_lt(documentOrder(nodeRange->start, range.end)) && is_lt(documentOrder(range.start, nodeRange->end));
+
 }
 
 }

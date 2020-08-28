@@ -155,25 +155,8 @@ bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection&
     if (!coreObject || !coreObject->isAccessibilityRenderObject())
         return false;
 
-    if (selection.isNone())
-        return false;
-
-    auto range = selection.toNormalizedRange();
-    if (!range)
-        return false;
-
-    // We want to check that both the selection intersects the node
-    // AND that the selection is not just "touching" one of the
-    // boundaries for the selected node. We want to check whether the
-    // node is actually inside the region, at least partially.
-    auto& node = *coreObject->node();
-    auto* lastDescendant = node.lastDescendant();
-    unsigned lastOffset = lastDescendant->length();
-    auto intersectsResult = createLiveRange(*range)->intersectsNode(node);
-    return !intersectsResult.hasException()
-        && intersectsResult.releaseReturnValue()
-        && (range->end.container.ptr() != &node || range->end.offset)
-        && (range->start.container.ptr() != lastDescendant || range->start.offset != lastOffset);
+    auto range = selection.firstRange();
+    return range && intersects(*range, *coreObject->node());
 }
 
 AXCoreObject* objectFocusedAndCaretOffsetUnignored(AXCoreObject* referenceObject, int& offset)

@@ -455,7 +455,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Frame& frame)
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(const SimpleRange& range)
 {
-    auto& document = range.start.container->document();
+    auto& document = range.start.document();
     auto* frame = document.frame();
     if (!frame)
         return nullptr;

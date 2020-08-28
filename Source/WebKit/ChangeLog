@@ -1,3 +1,35 @@
+2020-08-28  Darin Adler  <darin@apple.com>
+
+        Remove almost all the remaining uses of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=215755
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.cpp:
+        (webkit_dom_range_compare_boundary_points): Update for rename of
+        compareBoundaryPointsForBindings.
+        (webkit_dom_range_intersects_node): Removed exception handling.
+        (webkit_dom_range_get_text): Use plainText.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange initWithDocument:]): Tightened up into a one-liner.
+        (-[WKDOMRange text]): Use plainText.
+        (-[WKDOMRange textRects]): Stopped using Range::ownerDocument.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::document): Stopped using
+        Range::ownerDocument.
+        (WebKit::InjectedBundleRangeHandle::boundingRectInWindowCoordinates const):
+        Ditto.
+        (WebKit::InjectedBundleRangeHandle::renderedImage): Ditto.
+        (WebKit::InjectedBundleRangeHandle::text const): Use plainText.
+
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::getPlatformEditorState const): Use contains.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext): Use intersects.
+
 2020-08-28  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r266187): ARGUMENT BAD: WebIconUtilities.mm(138) : RetainPtr<UIImage> WebKit::iconForFile(NSURL *) file, [file isFileURL]

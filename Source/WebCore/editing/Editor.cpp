@@ -3550,10 +3550,8 @@ Optional<SimpleRange> Editor::rangeOfString(const String& target, const Optional
 static bool isFrameInRange(Frame& frame, const SimpleRange& range)
 {
     for (auto* ownerElement = frame.ownerElement(); ownerElement; ownerElement = ownerElement->document().ownerElement()) {
-        if (&ownerElement->document() == &range.start.document()) {
-            auto result = createLiveRange(range)->intersectsNode(*ownerElement);
-            return !result.hasException() && result.releaseReturnValue();
-        }
+        if (&ownerElement->document() == &range.start.document())
+            return intersects(range, *ownerElement);
     }
     return false;
 }
@@ -3703,18 +3701,16 @@ void Editor::scanSelectionForTelephoneNumbers()
 
     auto& selection = m_document.selection();
     if (selection.isRange()) {
-        if (auto selectedRange = selection.selection().firstRange()) {
-            // Extend the range a few characters in each direction to detect incompletely selected phone numbers.
-            constexpr unsigned charactersToExtend = 15;
-            auto selectedLiveRange = createLiveRange(*selectedRange);
-            for (auto& range : scanForTelephoneNumbers(extendSelection(*selectedRange, charactersToExtend))) {
-                // FIXME: Why do we do this unconditionally and the code below this only when it overlaps the selection?
-                addMarker(range, DocumentMarker::TelephoneNumber);
+        auto selectedRange = *selection.selection().firstRange();
+        // Extend the range a few characters in each direction to detect incompletely selected phone numbers.
+        constexpr unsigned charactersToExtend = 15;
+        for (auto& range : scanForTelephoneNumbers(extendSelection(selectedRange, charactersToExtend))) {
+            // FIXME: Why do we do this unconditionally instead of when only when it overlaps the selection?
+            addMarker(range, DocumentMarker::TelephoneNumber);
 
-                // Only consider ranges with a detected telephone number if they overlap with the actual selection range.
-                if (rangesOverlap(createLiveRange(range).ptr(), selectedLiveRange.ptr()))
-                    m_detectedTelephoneNumberRanges.append(range);
-            }
+            // Only consider ranges with a detected telephone number if they overlap with the selection.
+            if (intersects(range, selectedRange))
+                m_detectedTelephoneNumberRanges.append(range);
         }
     }
 

@@ -33,6 +33,7 @@
 #import <WebCore/JSExecState.h>
 #import <WebCore/Range.h>
 #import <WebCore/SimpleRange.h>
+#import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebScriptObjectPrivate.h>
@@ -92,7 +93,9 @@
 - (NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->text();
+    auto range = makeSimpleRange(*IMPL);
+    range.start.document().updateLayout();
+    return plainText(range);
 }
 
 - (void)setStart:(DOMNode *)refNode offset:(int)offset
@@ -170,7 +173,7 @@
     WebCore::JSMainThreadNullState state;
     if (!sourceRange)
         raiseTypeErrorException();
-    return raiseOnDOMError(IMPL->compareBoundaryPointsForBindings(how, *core(sourceRange)));
+    return raiseOnDOMError(IMPL->compareBoundaryPoints(how, *core(sourceRange)));
 }
 
 - (void)deleteContents
@@ -244,7 +247,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    return raiseOnDOMError(IMPL->intersectsNode(*core(refNode)));
+    return IMPL->intersectsNode(*core(refNode));
 }
 
 - (short)comparePoint:(DOMNode *)refNode offset:(int)offset

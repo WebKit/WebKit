@@ -554,18 +554,12 @@ void FrameSelection::respondToNodeModification(Node& node, bool baseRemoved, boo
         else
             m_selection.setWithoutValidation(m_selection.end(), m_selection.start());
     } else if (isRange()) {
-        if (auto range = m_selection.firstRange()) {
-            auto compareNodeResult = createLiveRange(*range)->compareNode(node);
-            if (!compareNodeResult.hasException()) {
-                auto compareResult = compareNodeResult.releaseReturnValue();
-                if (compareResult == Range::NODE_BEFORE_AND_AFTER || compareResult == Range::NODE_INSIDE) {
-                    // If we did nothing here, when this node's renderer was destroyed, the rect that it
-                    // occupied would be invalidated, but, selection gaps that change as a result of
-                    // the removal wouldn't be invalidated.
-                    // FIXME: Don't do so much unnecessary invalidation.
-                    clearRenderTreeSelection = true;
-                }
-            }
+        if (auto range = m_selection.firstRange(); range && intersects(*range, node)) {
+            // If we did nothing here, when this node's renderer was destroyed, the rect that it
+            // occupied would be invalidated, but, selection gaps that change as a result of
+            // the removal wouldn't be invalidated.
+            // FIXME: Don't do so much unnecessary invalidation.
+            clearRenderTreeSelection = true;
         }
     }
 
@@ -2034,7 +2028,7 @@ bool FrameSelection::setSelectedRange(const Optional<SimpleRange>& range, EAffin
     if (!range)
         return false;
 
-    if (&range->start.container->document() != &range->end.container->document())
+    if (&range->start.document() != &range->end.document())
         return false;
 
     VisibleSelection newSelection(*range, affinity);

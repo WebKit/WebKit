@@ -2161,27 +2161,45 @@ unsigned Internals::lengthFromRange(Element& scope, const Range& range)
     return clampTo<unsigned>(characterRange(makeBoundaryPointBeforeNodeContents(scope), makeSimpleRange(range)).length);
 }
 
-String Internals::rangeAsText(const Range& range)
+String Internals::rangeAsText(const Range& liveRange)
 {
-    return range.text();
+    auto range = makeSimpleRange(liveRange);
+    range.start.document().updateLayout();
+    return plainText(range);
 }
 
-String Internals::rangeAsTextUsingBackwardsTextIterator(const Range& range)
+// FIXME: Move this to StringConcatenate.h.
+static String join(Vector<String>&& strings)
 {
-    String result;
-    for (SimplifiedBackwardsTextIterator backwardsIterator(makeSimpleRange(range)); !backwardsIterator.atEnd(); backwardsIterator.advance())
-        result.insert(backwardsIterator.text().toString(), 0);
-    return result;
+    StringBuilder result;
+    for (auto& string : strings)
+        result.append(WTFMove(string));
+    return result.toString();
 }
 
-Ref<Range> Internals::subrange(Range& range, unsigned rangeLocation, unsigned rangeLength)
+String Internals::rangeAsTextUsingBackwardsTextIterator(const Range& liveRange)
 {
-    return createLiveRange(resolveCharacterRange(makeSimpleRange(range), { rangeLocation, rangeLength }));
+    auto range = makeSimpleRange(liveRange);
+    range.start.document().updateLayout();
+    Vector<String> strings;
+    for (SimplifiedBackwardsTextIterator backwardsIterator(range); !backwardsIterator.atEnd(); backwardsIterator.advance())
+        strings.append(backwardsIterator.text().toString());
+    strings.reverse();
+    return join(WTFMove(strings));
 }
 
-RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& range, const String& text, unsigned targetOffset)
+Ref<Range> Internals::subrange(Range& liveRange, unsigned rangeLocation, unsigned rangeLength)
 {
-    return createLiveRange(findClosestPlainText(makeSimpleRange(range), text, { }, targetOffset));
+    auto range = makeSimpleRange(liveRange);
+    range.start.document().updateLayout();
+    return createLiveRange(resolveCharacterRange(range, { rangeLocation, rangeLength }));
+}
+
+RefPtr<Range> Internals::rangeOfStringNearLocation(const Range& liveRange, const String& text, unsigned targetOffset)
+{
+    auto range = makeSimpleRange(liveRange);
+    range.start.document().updateLayout();
+    return createLiveRange(findClosestPlainText(range, text, { }, targetOffset));
 }
 
 #if !PLATFORM(MAC)

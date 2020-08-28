@@ -79,40 +79,18 @@ bool isAtomicNode(const Node* node)
     return node && (!node->hasChildNodes() || editingIgnoresContent(*node));
 }
 
-// Compare two positions, taking into account the possibility that one or both
-// could be inside a shadow tree. Only works for non-null values.
+// FIXME: Change callers to use documentOrder and delete this.
 int comparePositions(const Position& a, const Position& b)
 {
-    TreeScope* commonScope = commonTreeScope(a.containerNode(), b.containerNode());
-
-    if (!commonScope)
-        return 0;
-
-    Node* nodeA = commonScope->ancestorNodeInThisScope(a.containerNode());
-    ASSERT(nodeA);
-    bool hasDescendentA = nodeA != a.containerNode();
-    int offsetA = hasDescendentA ? 0 : a.computeOffsetInContainerNode();
-
-    Node* nodeB = commonScope->ancestorNodeInThisScope(b.containerNode());
-    ASSERT(nodeB);
-    bool hasDescendentB = nodeB != b.containerNode();
-    int offsetB = hasDescendentB ? 0 : b.computeOffsetInContainerNode();
-
-    int bias = 0;
-    if (nodeA == nodeB) {
-        if (hasDescendentA)
-            bias = -1;
-        else if (hasDescendentB)
-            bias = 1;
-    }
-
-    auto comparisonResult = Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB);
-    if (comparisonResult.hasException())
-        return bias;
-    auto result = comparisonResult.releaseReturnValue();
-    return result ? result : bias;
+    auto ordering = documentOrder(a, b);
+    if (is_lt(ordering))
+        return -1;
+    if (is_gt(ordering))
+        return 1;
+    return 0;
 }
 
+// FIXME: Change callers to use documentOrder and delete this.
 int comparePositions(const VisiblePosition& a, const VisiblePosition& b)
 {
     return comparePositions(a.deepEquivalent(), b.deepEquivalent());
@@ -1163,9 +1141,7 @@ static bool isVisiblyAdjacent(const Position& first, const Position& second)
 // Call this function to determine whether a node is visibly fit inside selectedRange
 bool isNodeVisiblyContainedWithin(Node& node, const SimpleRange& range)
 {
-    // If the node is inside the range, then it surely is contained within.
-    auto comparisonResult = createLiveRange(range)->compareNode(node);
-    if (!comparisonResult.hasException() && comparisonResult.releaseReturnValue() == Range::NODE_INSIDE)
+    if (contains(range, node))
         return true;
 
     auto startPosition = createLegacyEditingPosition(range.start);

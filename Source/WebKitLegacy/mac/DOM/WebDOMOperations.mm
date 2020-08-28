@@ -191,8 +191,8 @@ using namespace JSC;
 
 - (NSString *)markupString
 {
-    auto& range = *core(self);
-    return String { documentTypeString(range.ownerDocument()) + serializePreservingVisualAppearance(makeSimpleRange(range), nullptr, AnnotateForInterchange::Yes) };
+    auto range = makeSimpleRange(*core(self));
+    return String { documentTypeString(range.start.document()) + serializePreservingVisualAppearance(range, nullptr, AnnotateForInterchange::Yes) };
 }
 
 @end

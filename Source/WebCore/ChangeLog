@@ -1,3 +1,187 @@
+2020-08-28  Darin Adler  <darin@apple.com>
+
+        Remove almost all the remaining uses of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=215755
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::characterOffsetsInOrder): Use documentOrder.
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::misspellingRange const): Ditto.
+        (WebCore::rangeClosestToRange): Use characterCount. Also removed unnnecessary assertions
+        and special cases.
+        (WebCore::AccessibilityObject::rangeOfStringClosestToRangeInDirection const): Use documentOrder.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::documentBasedSelectedTextRange const): Use intersects.
+        Also use firstRange instead of toNormalizedRange.
+
+        * dom/Element.h: Export attachShadow so it can be used in unit tests.
+
+        * dom/Node.cpp:
+        (WebCore::depthInComposedTree): Renamed and changed to use parentInComposedTree
+        instead of parentOrShadowHostNode to handle cases involving assigned slots correctly.
+        (WebCore::commonInclusiveAncestorAndChildren): Ditto.
+        (WebCore::isSiblingSubsequent): Added assertions.
+        (WebCore::documentOrder): Add logic so shadow roots are ordered before the
+        other children of their hosts in cases that don't involve assigned slots.
+        Without this the results would be inconsistent based on the order of the
+        arguments passed to documentOrder.
+
+        * dom/Node.h: Added is_neq, is_lteq, and is_gteq for use with PartialOrdering,
+        matching the names and behavior from C++20.
+
+        * dom/Range.cpp: Removed unused CoordinateSpace.
+        (WebCore::Range::Range): Updated since RangeBoundaryPoint now uses references.
+        (WebCore::Range::updateDocument): Renamed from setDocument and changed so that
+        it maintains the invariants without requiring the caller pass any arguments.
+        Also updated for RangeBoundaryPoint anme changes.
+        (WebCore::Range::compareBoundaryPoints): Deleted.
+        (WebCore::checkForDifferentRootContainer): Deleted.
+        (WebCore::Range::setStart): Updated for checkNodeOffsetPair name change.
+        Removed too-complex code for moving between documents. Use documentOrder
+        instead of checkForDifferentRootContainer to check for start/end that have
+        incorrect order or no common ancestor. Use updateDocument.
+        (WebCore::Range::setEnd): Ditto.
+        (WebCore::Range::isPointInRange): Use isPointInRange that takes a SimpleRange.
+        Also updated for checkNodeOffsetPair name change.
+        (WebCore::Range::comparePoint const): Use documentOrder. Ditto.
+        (WebCore::Range::compareNode const): Use documentOrder.
+        (WebCore::top): Deleted.
+        (WebCore::Range::compareBoundaryPoints const): Deleted more overloads.
+        Kept only the one needed for bindings, and renamed it from
+        compareBoundaryPointsForBindings. Also fixed the implementatin to be simpler,
+        use documentOrder, and match the DOM specification more closely (without a
+        behavior change).
+        (WebCore::Range::boundaryPointsValid const): Deleted.
+        (WebCore::Range::intersectsNode const): Use intersects from SimpleRange.
+        Also don't raise exceptions.
+        (WebCore::lengthOfContentsInNode): Deleted. This gives the same result as
+        Node::length, but less efficiently.
+        (WebCore::Range::processContents): Updated since RangeBoundaryPoint now
+        uses references.
+        (WebCore::processContentsBetweenOffsets): Removed obsolete comment.
+        (WebCore::Range::toString const): Use intersectingNodes and
+        characterDataOffsetRange.
+        (WebCore::Range::text const): Deleted.
+        (WebCore::Range::detach): Moved to the header.
+        (WebCore::Range::checkNodeOffsetPair const): Rneamed from checkNodeWOffset.
+        (WebCore::Range::cloneRange): Use m_ownerDocument.
+        (WebCore::Range::setStartAfter): Tweaked coding style.
+        (WebCore::Range::setEndBefore): Ditto.
+        (WebCore::Range::setEndAfter): Ditto.
+        (WebCore::Range::selectNode): Ditto. Also removed unnecessary code to
+        call setDocument, since setStart takes care of that.
+        (WebCore::Range::selectNodeContents): Ditto.
+        (WebCore::Range::setStartBefore): Ditto.
+        (WebCore::Range::firstNode const): Deleted.
+        (WebCore::Range::pastLastNode const): Deleted.
+        (WebCore::Range::contains const): Deleted.
+        (WebCore::areRangesEqual): Deleted.
+        (WebCore::rangesOverlap): Deleted.
+        (WebCore::boundaryNodeChildrenChanged): Tweaked coding style and updated
+        since RangeBoundaryPoint uses a reference.
+        (WebCore::Range::nodeChildrenChanged): Use m_ownerDocument.
+        (WebCore::boundaryNodeChildrenWillBeRemoved): Removed unneeded code
+        to handle case where one of the children is the childBefore but the
+        node is not inside the container -- that case doesn't exist. Use
+        Node::contains.
+        (WebCore::Range::nodeChildrenWillBeRemoved): Use m_ownerDocument.
+        (WebCore::boundaryNodeWillBeRemoved): Simplify logic using
+        Range::contains.
+        (WebCore::Range::nodeWillBeRemoved): Use m_ownerDocument.
+        (WebCore::Range::parentlessNodeMovedToNewDocumentAffectsRange):
+        Updated since RangeBoundaryPoint uses a reference.
+        (WebCore::boundaryTextInserted): Ditto.
+        (WebCore::boundaryTextRemoved): Ditto.
+        (WebCore::boundaryTextNodesMerged): Ditto.
+        (WebCore::boundaryTextNodesSplit): Ditto.
+        (showTree): Removed call to boundaryPointsValid. That's checking something
+        the class already treats as an invariant, so it's obsolete code left from
+        long ago when we didn't have that implemented correctly.
+
+        * dom/Range.h: Reorganized the header to match the IDL file.
+        Removed ownerDocument, compareBoundaryPoints overloads other than the one
+        used from bindings, firstNode, pastLastNode, text, contains, areRangesEqual,
+        and rangesOverlap. Also updated since RangeBoundaryPoint::container is now
+        a reference. Moved detach function here to the header as an empty inline.
+
+        * dom/Range.idl: Changed start/endOffset to unsigned. Stopped using the
+        name compareBoundaryPointersForBindings. Updated intersectsNode to not
+        throw exceptions as called for in the DOM specification. Tweaked comments.
+
+        * dom/RangeBoundaryPoint.h: Changed constructor argument to a reference.
+        Renamed setToBeforeChild, setToAfterChild, setToStartOfNode, and setToEndOfNode
+        to setToBeforeNode, setToAfterNode, setToBeforeContents, setToAfterContents.
+        Merged ensureOffsetIsValid into the offset function. Changed m_containerNode
+        into a Ref<> and renamed it m_container. Removed clear.
+
+        * dom/SimpleRange.cpp:
+        (WebCore::isOffsetBeforeChild): Add logic so shadow roots are ordered after offset
+        0 but before offset 1 in their hosts in cases that don't involve assigned slots.
+        This is an arbitrary choice, but is consistent with how we order shadow roots before
+        other child nodes.
+        (WebCore::documentOrder): Use parentInComposedTree instead of parentOrShadowHostNode
+        to handle cases involving assigned slots correctly.
+        (WebCore::isPointInRange): Added.
+        (WebCore::documentOrder): Added.
+        (WebCore::contains): Added.
+        (WebCore::intersects): Added.
+        (WebCore::unionRange): Added.
+        * dom/SimpleRange.h: Updated for above.
+
+        * editing/Editing.cpp:
+        (WebCore::comparePositions): Use documentOrder.
+        (WebCore::isNodeVisiblyContainedWithin): Use contains.
+        * editing/Editor.cpp:
+        (WebCore::isFrameInRange): Use intersects.
+        (WebCore::Editor::scanSelectionForTelephoneNumbers): Use intersects.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::unionRanges): Moved to SimpleRange.cpp, where it's now
+        implemented using documentOrder.
+        (WebCore::executeDeleteToMark): Updated name to unionRange.
+        (WebCore::executeSelectToMark): Ditto.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::respondToNodeModification): Use intersects.
+
+        * editing/mac/DictionaryLookupLegacy.mm:
+        (WebCore::selectionContainsPosition): Use isPointInRange.
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::extend): Use makeRefPtr and Node::length
+        to streamline the implementation.
+        (WebCore::DOMSelection::getRangeAt): Use makeBoundaryPointBeforeNode
+        and remove unneeded null check that's already covered above.
+        (WebCore::DOMSelection::addRange): Use intersects and unionRange.
+        (WebCore::DOMSelection::containsNode const): Use intersects and contains.
+        (WebCore::DOMSelection::isValidForPosition const): Use boolean logic.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement const): Use contains.
+        (WebCore::DragController::insertDroppedImagePlaceholdersAtCaret): Use intersects.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent): Use contains.
+
+        * page/Page.cpp:
+        (WebCore::Page::findTextMatches): Use documentOrder.
+
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::findTelephoneNumberHighlightContainingSelectionHighlight):
+        Use contains.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::rangeAsText): Use plainText.
+        (WebCore::join): Added.
+        (WebCore::Internals::rangeAsTextUsingBackwardsTextIterator): Use a vector
+        that we reverse and join rather than inserting at the start of a string.
+        (WebCore::Internals::subrange): Added a call to updateLayout since text iterator
+        functions depend on the state of the render tree. Realized this was theoretically
+        needed because of Internals::rangeAsText.
+        (WebCore::Internals::rangeOfStringNearLocation): Ditto.
+
 2020-08-28  Chris Dumez  <cdumez@apple.com>
 
         AudioParam.value setter should call setValueAtTime(value, now)

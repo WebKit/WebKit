@@ -2741,8 +2741,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
     // will set a selection inside it, which will also set the focused element.
     if (element && m_frame.selection().isRange()) {
         if (auto range = m_frame.selection().selection().toNormalizedRange()) {
-            auto result = createLiveRange(*range)->compareNode(*element);
-            if (!result.hasException() && result.releaseReturnValue() == Range::NODE_INSIDE && element->isDescendantOf(m_frame.document()->focusedElement()))
+            if (contains(*range, *element) && element->isDescendantOf(m_frame.document()->focusedElement()))
                 return true;
         }
     }

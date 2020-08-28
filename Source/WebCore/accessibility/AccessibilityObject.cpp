@@ -297,26 +297,17 @@ Optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRange& s
     Vector<TextCheckingResult> misspellings;
     checkTextOfParagraph(*textChecker, stringValue(), TextCheckingType::Spelling, misspellings, frame->selection().selection());
 
-    // The returned misspellings are assumed to be ordered in the document
-    // logical order, which should be matched by Range::compareBoundaryPoints.
-    // So iterate forward or backwards depending on the desired search
-    // direction to find the closest misspelling in that direction.
+    // Find the first misspelling past the start.
     if (direction == AccessibilitySearchDirection::Next) {
-        for (const auto& misspelling : misspellings) {
+        for (auto& misspelling : misspellings) {
             auto misspellingRange = editor.rangeForTextCheckingResult(misspelling);
-            if (!misspellingRange)
-                continue;
-
-            if (createLiveRange(*misspellingRange)->compareBoundaryPoints(Range::END_TO_END, createLiveRange(start)).releaseReturnValue() > 0)
+            if (misspellingRange && is_gt(documentOrder(misspellingRange->end, start.end)))
                 return *misspellingRange;
         }
-    } else if (direction == AccessibilitySearchDirection::Previous) {
-        for (auto rit = misspellings.rbegin(); rit != misspellings.rend(); ++rit) {
-            auto misspellingRange = editor.rangeForTextCheckingResult(*rit);
-            if (!misspellingRange)
-                continue;
-
-            if (createLiveRange(*misspellingRange)->compareBoundaryPoints(Range::START_TO_START, createLiveRange(start)).releaseReturnValue() < 0)
+    } else {
+        for (auto& misspelling : makeReversedRange(misspellings)) {
+            auto misspellingRange = editor.rangeForTextCheckingResult(misspelling);
+            if (misspellingRange && is_lt(documentOrder(misspellingRange->start, start.start)))
                 return *misspellingRange;
         }
     }
@@ -565,28 +556,13 @@ void AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria* crite
 // range is expected to ACTUALLY be before. These are not checked for performance reasons.
 static Optional<SimpleRange> rangeClosestToRange(const SimpleRange& referenceRange, Optional<SimpleRange>&& afterRange, Optional<SimpleRange>&& beforeRange)
 {
-    // The treeScope for shadow nodes may not be the same scope as another element in a document.
-    // Comparisons may fail in that case, which are expected behavior and should not assert.
-
-    if (afterRange && (afterRange->start.container->compareDocumentPosition(referenceRange.end.container) & Node::DOCUMENT_POSITION_DISCONNECTED))
-        return WTF::nullopt;
-    ASSERT(!afterRange || createLiveRange(afterRange)->compareBoundaryPoints(Range::START_TO_START, createLiveRange(referenceRange)).releaseReturnValue() >= 0);
-
-    if (beforeRange && (beforeRange->end.container->compareDocumentPosition(referenceRange.start.container) & Node::DOCUMENT_POSITION_DISCONNECTED))
-        return WTF::nullopt;
-    ASSERT(!beforeRange || createLiveRange(beforeRange)->compareBoundaryPoints(Range::START_TO_START, createLiveRange(referenceRange)).releaseReturnValue() <= 0);
-
-    if (!afterRange && !beforeRange)
-        return WTF::nullopt;
     if (!beforeRange)
         return WTFMove(afterRange);
     if (!afterRange)
         return WTFMove(beforeRange);
-
-    auto positionsToAfterRange = Position::positionCountBetweenPositions(createLegacyEditingPosition(afterRange->start), createLegacyEditingPosition(referenceRange.end));
-    auto positionsToBeforeRange = Position::positionCountBetweenPositions(createLegacyEditingPosition(beforeRange->end), createLegacyEditingPosition(referenceRange.start));
-
-    return WTFMove(positionsToAfterRange < positionsToBeforeRange ? afterRange : beforeRange);
+    auto distanceBefore = characterCount({ beforeRange->end, referenceRange.start });
+    auto distanceAfter = characterCount({ afterRange->start, referenceRange.end });
+    return WTFMove(distanceBefore <= distanceAfter ? beforeRange : afterRange);
 }
 
 Optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirection(const SimpleRange& referenceRange, AccessibilitySearchDirection searchDirection, const Vector<String>& searchStrings) const
@@ -603,23 +579,16 @@ Optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirectio
     Optional<SimpleRange> closestStringRange;
     for (auto& searchString : searchStrings) {
         if (auto foundStringRange = frame->editor().rangeOfString(searchString, referenceRange, findOptions)) {
+            bool foundStringIsCloser;
             if (!closestStringRange)
-                closestStringRange = *foundStringRange;
+                foundStringIsCloser = true;
             else {
-                // If searching backward, use the trailing range edges to correctly determine which
-                // range is closest. Similarly, if searching forward, use the leading range edges.
-                auto& closestStringPosition = isBackwardSearch ? closestStringRange->end : closestStringRange->start;
-                auto& foundStringPosition = isBackwardSearch ? foundStringRange->end : foundStringRange->start;
-                
-                auto closestPositionOffset = closestStringPosition.offset;
-                auto searchPositionOffset = foundStringPosition.offset;
-                auto closestContainerNode = closestStringPosition.container.ptr();
-                auto searchContainerNode = foundStringPosition.container.ptr();
-                
-                auto result = Range::compareBoundaryPoints(closestContainerNode, closestPositionOffset, searchContainerNode, searchPositionOffset).releaseReturnValue();
-                if ((!isBackwardSearch && result > 0) || (isBackwardSearch && result < 0))
-                    closestStringRange = *foundStringRange;
+                foundStringIsCloser = isBackwardSearch
+                    ? is_gt(documentOrder(foundStringRange->end, closestStringRange->end))
+                    : is_lt(documentOrder(foundStringRange->start, closestStringRange->start));
             }
+            if (foundStringIsCloser)
+                closestStringRange = *foundStringRange;
         }
     }
     return closestStringRange;

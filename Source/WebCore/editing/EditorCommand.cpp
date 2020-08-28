@@ -228,13 +228,6 @@ static unsigned verticalScrollDistance(Frame& frame)
     return static_cast<unsigned>(Scrollbar::pageStep(height));
 }
 
-static SimpleRange unionRanges(const SimpleRange& a, const SimpleRange& b)
-{
-    auto& start = createLiveRange(a)->compareBoundaryPoints(Range::START_TO_START, createLiveRange(b)).releaseReturnValue() <= 0 ? a : b;
-    auto& end = createLiveRange(a)->compareBoundaryPoints(Range::END_TO_END, createLiveRange(b)).releaseReturnValue() <= 0 ? b : a;
-    return { start.start, end.end };
-}
-
 // Execute command functions
 
 static bool executeBackColor(Frame& frame, Event*, EditorCommandSource source, const String& value)
@@ -353,14 +346,16 @@ static bool executeDeleteToEndOfParagraph(Frame& frame, Event*, EditorCommandSou
 
 static bool executeDeleteToMark(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    auto mark = frame.editor().mark().toNormalizedRange();
+    auto& editor = frame.editor();
     auto& selection = frame.selection();
-    if (mark && frame.editor().selectedRange()) {
-        if (!selection.setSelectedRange(unionRanges(*mark, *frame.editor().selectedRange()), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes))
+    auto markRange = editor.mark().toNormalizedRange();
+    auto selectionRange = selection.selection().toNormalizedRange();
+    if (markRange && selectionRange) {
+        if (!selection.setSelectedRange(unionRange(*markRange, *selectionRange), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes))
             return false;
     }
-    frame.editor().performDelete();
-    frame.editor().setMark(selection.selection());
+    editor.performDelete();
+    editor.setMark(selection.selection());
     return true;
 }
 
@@ -1050,13 +1045,15 @@ static bool executeSelectSentence(Frame& frame, Event*, EditorCommandSource, con
 
 static bool executeSelectToMark(Frame& frame, Event*, EditorCommandSource, const String&)
 {
-    auto mark = frame.editor().mark().toNormalizedRange();
-    auto selection = frame.editor().selectedRange();
-    if (!mark || !selection) {
+    auto& editor = frame.editor();
+    auto& selection = frame.selection();
+    auto markRange = editor.mark().toNormalizedRange();
+    auto selectionRange = selection.selection().toNormalizedRange();
+    if (!markRange || !selectionRange) {
         PAL::systemBeep();
         return false;
     }
-    frame.selection().setSelectedRange(unionRanges(*mark, *selection), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+    selection.setSelectedRange(unionRange(*markRange, *selectionRange), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
     // FIXME: Why do we ignore the return value from setSelectedRange here?
     return true;
 }

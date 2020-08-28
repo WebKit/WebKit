@@ -1,3 +1,16 @@
+2020-08-28  Darin Adler  <darin@apple.com>
+
+        Remove almost all the remaining uses of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=215755
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebCore/DocumentOrder.cpp:
+        (TestWebKitAPI::TEST): Added test cases for node ordering involving non-user-agent
+        shadow tree. Added test case that showed the old "use node order if offsets are equal"
+        rule for boundary point ordering was wrong. Added tests for isPointInRange,
+        intersects, and contains functions.
+
 2020-08-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Vertical text's logical width calculation is stale from the previous height of the WKWebView

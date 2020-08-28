@@ -915,7 +915,7 @@ IntPoint AccessibilityRenderObject::linkClickPoint()
     if (auto range = elementRange()) {
         auto start = VisiblePosition { createLegacyEditingPosition(range->start) };
         auto end = nextVisiblePosition(start);
-        if (!end.isNull() && createLiveRange(range)->contains(end))
+        if (isPointInRange(*range, makeBoundaryPoint(end)))
             return { boundsForRange(*makeSimpleRange(start, end)).center() };
     }
     return AccessibilityObject::clickPoint();
@@ -1561,17 +1561,9 @@ PlainTextRange AccessibilityRenderObject::documentBasedSelectedTextRange() const
     if (!node)
         return PlainTextRange();
 
-    VisibleSelection visibleSelection = selection();
-    auto selectionRange = visibleSelection.toNormalizedRange();
-    if (!selectionRange)
-        return PlainTextRange();
-
-    // FIXME: The reason this does the correct thing when the selection is in the
-    // shadow tree of an input element is that we get an exception below, and we
-    // choose to interpret all exceptions as "does not intersect". Seems likely
-    // that does not handle all cases correctly.
-    auto intersectsResult = createLiveRange(*selectionRange)->intersectsNode(*node);
-    if (!intersectsResult.hasException() && !intersectsResult.releaseReturnValue())
+    auto visibleSelection = selection();
+    auto selectionRange = visibleSelection.firstRange();
+    if (!selectionRange || !intersects(*selectionRange, *node))
         return PlainTextRange();
 
     int start = indexForVisiblePosition(visibleSelection.start());
@@ -1656,10 +1648,10 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
         auto& node = *this->node();
         auto elementRange = this->elementRange();
         auto start = visiblePositionForIndexUsingCharacterIterator(node, range.start);
-        if (!createLiveRange(elementRange)->contains(start))
+        if (!isPointInRange(*elementRange, makeBoundaryPoint(start)))
             start = createLegacyEditingPosition(elementRange->start);
         auto end = visiblePositionForIndexUsingCharacterIterator(node, range.start + range.length);
-        if (!createLiveRange(elementRange)->contains(end))
+        if (!isPointInRange(*elementRange, makeBoundaryPoint(end)))
             end = createLegacyEditingPosition(elementRange->start);
         m_renderer->frame().selection().setSelection(VisibleSelection(start, end), FrameSelection::defaultSetSelectionOptions(UserTriggered));
     }
@@ -2216,7 +2208,7 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
 
         auto start = range.start;
         if (auto elementRange = this->elementRange()) {
-            if (!createLiveRange(elementRange)->contains(start))
+            if (!isPointInRange(*elementRange, makeBoundaryPoint(start)))
                 start = createLegacyEditingPosition(elementRange->start);
         }
 

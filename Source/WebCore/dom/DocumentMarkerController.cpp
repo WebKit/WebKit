@@ -649,7 +649,7 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(const 
 
 void addMarker(const SimpleRange& range, DocumentMarker::MarkerType type, const DocumentMarker::Data& data)
 {
-    range.start.container->document().markers().addMarker(range, type, data);
+    range.start.document().markers().addMarker(range, type, data);
 }
 
 void addMarker(Text& node, unsigned startOffset, unsigned length, DocumentMarker::MarkerType type, DocumentMarker::Data&& data)
@@ -659,7 +659,7 @@ void addMarker(Text& node, unsigned startOffset, unsigned length, DocumentMarker
 
 void removeMarkers(const SimpleRange& range, OptionSet<DocumentMarker::MarkerType> types, RemovePartiallyOverlappingMarker policy)
 {
-    range.start.container->document().markers().removeMarkers(range, types, policy);
+    range.start.document().markers().removeMarkers(range, types, policy);
 }
 
 SimpleRange makeSimpleRange(Node& node, const DocumentMarker& marker)

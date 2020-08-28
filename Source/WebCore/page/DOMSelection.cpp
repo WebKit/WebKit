@@ -27,7 +27,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "config.h"
 #include "DOMSelection.h"
 
@@ -284,15 +283,13 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
 
 ExceptionOr<void> DOMSelection::extend(Node& node, unsigned offset)
 {
-    auto* frame = this->frame();
+    auto frame = makeRefPtr(this->frame());
     if (!frame)
         return { };
-    if (offset > (node.isCharacterDataNode() ? caretMaxOffset(node) : node.countChildNodes()))
+    if (offset > node.length())
         return Exception { IndexSizeError };
     if (!isValidForPosition(&node))
         return { };
-
-    Ref<Frame> protector(*frame);
     frame->selection().setExtent(createLegacyEditingPosition(&node, offset), DOWNSTREAM);
     return { };
 }
@@ -301,22 +298,10 @@ ExceptionOr<Ref<Range>> DOMSelection::getRangeAt(unsigned index)
 {
     if (index >= rangeCount())
         return Exception { IndexSizeError };
-
-    // If you're hitting this, you've added broken multi-range selection support.
-    ASSERT(rangeCount() == 1);
-
-    auto* frame = this->frame();
-    if (auto* shadowAncestor = selectionShadowAncestor(*frame)) {
-        auto* container = shadowAncestor->parentNodeGuaranteedHostFree();
-        unsigned offset = shadowAncestor->computeNodeIndex();
-        return createLiveRange(makeSimpleRange(BoundaryPoint { *container, offset }));
-    }
-
-    auto firstRange = frame->selection().selection().firstRange();
-    ASSERT(firstRange);
-    if (!firstRange)
-        return Exception { IndexSizeError };
-    return createLiveRange(*firstRange);
+    auto& frame = *this->frame();
+    if (auto shadowAncestor = selectionShadowAncestor(frame))
+        return createLiveRange(makeSimpleRange(*makeBoundaryPointBeforeNode(*shadowAncestor)));
+    return createLiveRange(*frame.selection().selection().firstRange());
 }
 
 void DOMSelection::removeAllRanges()
@@ -327,50 +312,22 @@ void DOMSelection::removeAllRanges()
     frame->selection().clear();
 }
 
-void DOMSelection::addRange(Range& range)
+void DOMSelection::addRange(Range& liveRange)
 {
-    auto* frame = this->frame();
+    auto frame = makeRefPtr(this->frame());
     if (!frame)
         return;
 
-    Ref<Frame> protector(*frame);
-
+    auto range = makeSimpleRange(liveRange);
     auto& selection = frame->selection();
-    auto selectedRange = selection.selection().toNormalizedRange();
-    if (!selectedRange || selectedRange->start.container->containingShadowRoot()) {
-        selection.setSelection(makeSimpleRange(range));
+
+    if (auto selectedRange = selection.selection().toNormalizedRange()) {
+        if (!selectedRange->start.container->containingShadowRoot() && intersects(*selectedRange, range))
+            selection.setSelection(unionRange(*selectedRange, range));
         return;
     }
 
-    auto normalizedRange = createLiveRange(selectedRange);
-    auto result = range.compareBoundaryPoints(Range::START_TO_START, *normalizedRange);
-    if (!result.hasException() && result.releaseReturnValue() == -1) {
-        // We don't support discontiguous selection. We don't do anything if the two ranges don't intersect.
-        result = range.compareBoundaryPoints(Range::START_TO_END, *normalizedRange);
-        if (!result.hasException() && result.releaseReturnValue() > -1) {
-            result = range.compareBoundaryPoints(Range::END_TO_END, *normalizedRange);
-            if (!result.hasException() && result.releaseReturnValue() == -1) {
-                // The ranges intersect.
-                selection.moveTo(makeDeprecatedLegacyPosition(&range.startContainer(), range.startOffset()), makeDeprecatedLegacyPosition(&normalizedRange->endContainer(), normalizedRange->endOffset()), DOWNSTREAM);
-            } else {
-                // The new range contains the original range.
-                selection.setSelection(makeSimpleRange(range));
-            }
-        }
-    } else {
-        // We don't support discontiguous selection. We don't do anything if the two ranges don't intersect.
-        result = range.compareBoundaryPoints(Range::END_TO_START, *normalizedRange);
-        if (!result.hasException() && result.releaseReturnValue() < 1) {
-            result = range.compareBoundaryPoints(Range::END_TO_END, *normalizedRange);
-            if (!result.hasException() && result.releaseReturnValue() == -1) {
-                // The original range contains the new range.
-                selection.setSelection(makeSimpleRange(*normalizedRange));
-            } else {
-                // The ranges intersect.
-                selection.moveTo(makeDeprecatedLegacyPosition(&normalizedRange->startContainer(), normalizedRange->startOffset()), makeDeprecatedLegacyPosition(&range.endContainer(), range.endOffset()), DOWNSTREAM);
-            }
-        }
-    }
+    selection.setSelection(range);
 }
 
 void DOMSelection::deleteFromDocument()
@@ -392,45 +349,19 @@ void DOMSelection::deleteFromDocument()
 
 bool DOMSelection::containsNode(Node& node, bool allowPartial) const
 {
+    // FIXME: This behavior does not match what the selection API standard specifies.
+    if (node.isTextNode())
+        allowPartial = true;
+
     auto* frame = this->frame();
     if (!frame)
         return false;
 
-    auto& selection = frame->selection();
-    if (frame->document() != &node.document() || selection.isNone())
-        return false;
-
-    Ref<Node> protectedNode(node);
-    auto selectedRange = selection.selection().toNormalizedRange();
+    auto selectedRange = frame->selection().selection().firstRange();
     if (!selectedRange || selectedRange->start.container->containingShadowRoot())
         return false;
 
-    ContainerNode* parentNode = node.parentNode();
-    if (!parentNode || !parentNode->isConnected())
-        return false;
-    unsigned nodeIndex = node.computeNodeIndex();
-
-    auto startsResult = Range::compareBoundaryPoints(parentNode, nodeIndex, &selectedRange->startContainer(), selectedRange->startOffset());
-    if (startsResult.hasException())
-        return false;
-
-    auto endsResult = Range::compareBoundaryPoints(parentNode, nodeIndex + 1, &selectedRange->endContainer(), selectedRange->endOffset());
-    ASSERT(!endsResult.hasException());
-    bool isNodeFullySelected = !startsResult.hasException() && startsResult.releaseReturnValue() >= 0
-        && !endsResult.hasException() && endsResult.releaseReturnValue() <= 0;
-    if (isNodeFullySelected)
-        return true;
-
-    auto startEndResult = Range::compareBoundaryPoints(parentNode, nodeIndex, &selectedRange->endContainer(), selectedRange->endOffset());
-    ASSERT(!startEndResult.hasException());
-    auto endStartResult = Range::compareBoundaryPoints(parentNode, nodeIndex + 1, &selectedRange->startContainer(), selectedRange->startOffset());
-    ASSERT(!endStartResult.hasException());
-    bool isNodeFullyUnselected = (!startEndResult.hasException() && startEndResult.releaseReturnValue() > 0)
-        || (!endStartResult.hasException() && endStartResult.releaseReturnValue() < 0);
-    if (isNodeFullyUnselected)
-        return false;
-
-    return allowPartial || node.isTextNode();
+    return allowPartial ? intersects(*selectedRange, node) : contains(*selectedRange, node);
 }
 
 void DOMSelection::selectAllChildren(Node& node)
@@ -483,11 +414,7 @@ unsigned DOMSelection::shadowAdjustedOffset(const Position& position) const
 bool DOMSelection::isValidForPosition(Node* node) const
 {
     auto* frame = this->frame();
-    if (!frame)
-        return false;
-    if (!node)
-        return true;
-    return &node->document() == frame->document();
+    return frame && (!node || &node->document() == frame->document());
 }
 
 } // namespace WebCore

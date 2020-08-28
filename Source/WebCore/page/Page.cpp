@@ -730,19 +730,19 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
 
     if (frameWithSelection) {
         result.indexForSelection = NoMatchAfterUserSelection;
-        auto selectedRange = frameWithSelection->selection().selection().firstRange();
+        auto selectedRange = *frameWithSelection->selection().selection().firstRange();
         if (options.contains(Backwards)) {
             for (size_t i = result.ranges.size(); i > 0; --i) {
-                auto comparisonResult = createLiveRange(selectedRange)->compareBoundaryPoints(Range::END_TO_START, createLiveRange(result.ranges[i - 1]));
-                if (!comparisonResult.hasException() && comparisonResult.returnValue() > 0) {
+                // FIXME: Seems like this should be is_gteq to correctly handle the same string found twice in a row.
+                if (is_gt(documentOrder(selectedRange.start, result.ranges[i - 1].end))) {
                     result.indexForSelection = i - 1;
                     break;
                 }
             }
         } else {
             for (size_t i = 0, size = result.ranges.size(); i < size; ++i) {
-                auto comparisonResult = createLiveRange(selectedRange)->compareBoundaryPoints(Range::START_TO_END, createLiveRange(result.ranges[i]));
-                if (!comparisonResult.hasException() && comparisonResult.returnValue() < 0) {
+                // FIXME: Seems like this should be is_lteq to correctly handle the same string found twice in a row.
+                if (is_lt(documentOrder(selectedRange.end, result.ranges[i].start))) {
                     result.indexForSelection = i;
                     break;
                 }
@@ -763,11 +763,11 @@ Optional<SimpleRange> Page::rangeOfString(const String& target, const Optional<S
     if (target.isEmpty())
         return WTF::nullopt;
 
-    if (referenceRange && referenceRange->start.container->document().page() != this)
+    if (referenceRange && referenceRange->start.document().page() != this)
         return WTF::nullopt;
 
     CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
-    Frame* frame = referenceRange ? referenceRange->start.container->document().frame() : &mainFrame();
+    Frame* frame = referenceRange ? referenceRange->start.document().frame() : &mainFrame();
     Frame* startFrame = frame;
     do {
         if (auto resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : WTF::nullopt, options - WrapAround))

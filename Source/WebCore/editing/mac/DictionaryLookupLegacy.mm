@@ -68,11 +68,8 @@ static bool selectionContainsPosition(const VisiblePosition& position, const Vis
     if (!selection.isRange())
         return false;
 
-    auto selectedRange = selection.toNormalizedRange();
-    if (!selectedRange)
-        return false;
-
-    return createLiveRange(*selectedRange)->contains(position);
+    auto selectedRange = selection.firstRange();
+    return selectedRange && isPointInRange(*selectedRange, makeBoundaryPoint(position));
 }
 
 Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)

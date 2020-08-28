@@ -1,3 +1,24 @@
+2020-08-28  Darin Adler  <darin@apple.com>
+
+        Remove almost all the remaining uses of live ranges
+        https://bugs.webkit.org/show_bug.cgi?id=215755
+
+        Reviewed by Sam Weinig.
+
+        * DOM/DOMRange.mm:
+        (-[DOMRange text]): Use plainText.
+        (-[DOMRange compareBoundaryPoints:sourceRange:]): Update for rename of
+        compareBoundaryPointsForBindings.
+        (-[DOMRange intersectsNode:]): Removed raiseOnDOMError.
+
+        * DOM/DOMUIKitExtensions.mm:
+        (firstNodeAfter): Moved Range::firstNode here since it's the only remaining caller;
+        might need to keep legacy behavior depending on how this is used by UIKit.
+        (-[DOMRange firstNode]): Call firstNodeAfter.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMRange markupString]): Stop using Range::ownerDocument.
+
 2020-08-27  Devin Rousso  <drousso@apple.com>
 
         [iOS] provide a way to get previously inserted alternatives for the selected text

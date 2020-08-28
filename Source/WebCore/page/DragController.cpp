@@ -154,7 +154,7 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
             String title;
             String url = dragData.asURL(DragData::DoNotConvertFilenames, &title);
             if (!url.isEmpty()) {
-                auto& document = context.start.container->document();
+                auto& document = context.start.document();
                 auto anchor = HTMLAnchorElement::create(document);
                 anchor->setHref(url);
                 if (title.isEmpty()) {
@@ -774,17 +774,13 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
     state.type = sourceFrame->selection().contains(dragOrigin) ? DragSourceAction::Selection : OptionSet<DragSourceAction>({ });
     if (!startElement)
         return nullptr;
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (auto attachment = enclosingAttachmentElement(*startElement)) {
-        auto selection = sourceFrame->selection().selection();
+        auto& selection = sourceFrame->selection().selection();
         bool isSingleAttachmentSelection = selection.start() == Position(attachment.get(), Position::PositionIsBeforeAnchor) && selection.end() == Position(attachment.get(), Position::PositionIsAfterAnchor);
-        bool isAttachmentElementInCurrentSelection = false;
-        if (auto selectedRange = selection.toNormalizedRange()) {
-            auto compareResult = createLiveRange(*selectedRange)->compareNode(*attachment);
-            isAttachmentElementInCurrentSelection = !compareResult.hasException() && compareResult.releaseReturnValue() == Range::NODE_INSIDE;
-        }
-
-        if (!isAttachmentElementInCurrentSelection || isSingleAttachmentSelection) {
+        auto selectedRange = selection.firstRange();
+        if (isSingleAttachmentSelection || !selectedRange || !contains(*selectedRange, *attachment)) {
             state.type = DragSourceAction::Attachment;
             return attachment.get();
         }
@@ -1471,8 +1467,7 @@ void DragController::insertDroppedImagePlaceholdersAtCaret(const Vector<IntSize>
 
     Vector<Ref<HTMLImageElement>> placeholders;
     for (auto& placeholder : descendantsOfType<HTMLImageElement>(downcast<ContainerNode>(*container))) {
-        auto intersectsNode = createLiveRange(*insertedContentRange)->intersectsNode(placeholder);
-        if (!intersectsNode.hasException() && intersectsNode.returnValue())
+        if (intersects(*insertedContentRange, placeholder))
             placeholders.append(placeholder);
     }
 

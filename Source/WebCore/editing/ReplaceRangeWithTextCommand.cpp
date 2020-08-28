@@ -41,7 +41,7 @@
 namespace WebCore {
 
 ReplaceRangeWithTextCommand::ReplaceRangeWithTextCommand(const SimpleRange& rangeToBeReplaced, const String& text)
-    : CompositeEditCommand(rangeToBeReplaced.start.container->document(), EditAction::InsertReplacement)
+    : CompositeEditCommand(rangeToBeReplaced.start.document(), EditAction::InsertReplacement)
     , m_rangeToBeReplaced(rangeToBeReplaced)
     , m_text(text)
 {

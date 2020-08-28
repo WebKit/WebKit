@@ -1120,7 +1120,7 @@ static bool contextPreservesNewline(const SimpleRange& context)
 
 Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const String& text)
 {
-    auto& document = context.start.container->document();
+    auto& document = context.start.document();
     auto fragment = document.createDocumentFragment();
     
     if (text.isEmpty())
