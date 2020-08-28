@@ -274,7 +274,7 @@ class SVN(SCM, SVNRepository):
         return "svn"
 
     def svn_revision(self, path):
-        return self.value_from_svn_info(path, 'Revision')
+        return self.value_from_svn_info(path, 'Last Changed Rev')
 
     def svn_branch(self, path):
         relative_url = self.value_from_svn_info(path, 'Relative URL')[2:]

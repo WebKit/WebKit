@@ -1,3 +1,18 @@
+2020-08-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [webkitpy] repository svn version is incorrect when working on a branch
+        https://bugs.webkit.org/show_bug.cgi?id=215863
+
+        Reviewed by Jonathan Bedard.
+
+        When working on a SVN branch, the information pointed in the Revision field
+        doesn't reflect the last change on the branch, but the last change on trunk.
+        Instead of picking that changeset, pick the "Last Changed Rev" one that should
+        reflect the last change done in the current checkout (working directory).
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.svn_revision):
+
 2020-08-27  Devin Rousso  <drousso@apple.com>
 
         [iOS] provide a way to get previously inserted alternatives for the selected text
