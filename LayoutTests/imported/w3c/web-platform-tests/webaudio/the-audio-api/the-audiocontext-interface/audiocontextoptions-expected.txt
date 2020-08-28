@@ -30,8 +30,10 @@ PASS < [test-audiocontextoptions-latencyHint-double] All assertions passed. (tot
 PASS > [test-audiocontextoptions-sampleRate] Test creating contexts with non-default sampleRate values. 
 PASS   context = new AudioContext({sampleRate: 1}) threw SyntaxError: "sampleRate is not in range". 
 PASS   context = new AudioContext({sampleRate: 1000000}) threw SyntaxError: "sampleRate is not in range". 
+PASS   context = new AudioContext({sampleRate: -1}) threw SyntaxError: "sampleRate is not in range". 
+PASS   context = new AudioContext({sampleRate: 0}) threw SyntaxError: "sampleRate is not in range". 
 PASS   context = new AudioContext({sampleRate: 24000}) did not throw an exception. 
 PASS   sampleRate inrange is equal to 24000. 
-PASS < [test-audiocontextoptions-sampleRate] All assertions passed. (total 4 assertions) 
+PASS < [test-audiocontextoptions-sampleRate] All assertions passed. (total 6 assertions) 
 PASS # AUDIT TASK RUNNER FINISHED: 3 tasks ran successfully. 
 

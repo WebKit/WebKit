@@ -1,0 +1,33 @@
+
+PASS # AUDIT TASK RUNNER STARTED. 
+PASS Executing "create with factory method" 
+PASS Executing "different length with factory method" 
+PASS Executing "too small with factory method" 
+PASS Executing "create with constructor" 
+PASS Executing "different length with constructor" 
+PASS Executing "too small with constructor" 
+PASS Executing "output test" 
+PASS Audit report 
+PASS > [create with factory method]  
+PASS   context.createPeriodicWave(new Float32Array(4096), new Float32Array(4096)) did not throw an exception. 
+PASS < [create with factory method] All assertions passed. (total 1 assertions) 
+PASS > [different length with factory method]  
+PASS   context.createPeriodicWave(new Float32Array(512), new Float32Array(4)) threw IndexSizeError: "real and imag have different lengths". 
+PASS < [different length with factory method] All assertions passed. (total 1 assertions) 
+PASS > [too small with factory method]  
+PASS   context.createPeriodicWave(new Float32Array(1), new Float32Array(1)) threw IndexSizeError: "real's length cannot be less than 2". 
+PASS < [too small with factory method] All assertions passed. (total 1 assertions) 
+PASS > [create with constructor]  
+PASS   new PeriodicWave(context, { real : new Float32Array(4096), imag : new Float32Array(4096) }) did not throw an exception. 
+PASS < [create with constructor] All assertions passed. (total 1 assertions) 
+PASS > [different length with constructor]  
+PASS   new PeriodicWave(context, { real : new Float32Array(4096), imag : new Float32Array(4) }) threw IndexSizeError: "real and imag have different lengths". 
+PASS < [different length with constructor] All assertions passed. (total 1 assertions) 
+PASS > [too small with constructor]  
+PASS   new PeriodicWave(context, { real : new Float32Array(1), imag : new Float32Array(1) }) threw IndexSizeError: "real's length cannot be less than 2". 
+PASS < [too small with constructor] All assertions passed. (total 1 assertions) 
+PASS > [output test]  
+PASS   rendering PeriodicWave is identical to the array AudioBuffer. 
+PASS < [output test] All assertions passed. (total 1 assertions) 
+PASS # AUDIT TASK RUNNER FINISHED: 7 tasks ran successfully. 
+

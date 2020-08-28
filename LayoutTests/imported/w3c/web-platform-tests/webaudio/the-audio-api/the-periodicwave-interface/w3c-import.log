@@ -14,7 +14,4 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/ctor-oscillator.html
-/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-limiting.html
-/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/detune-overflow.html
-/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-oscillatornode-interface/osc-basic-waveform.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-periodicwave-interface/periodicWave.html
