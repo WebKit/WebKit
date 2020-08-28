@@ -2164,7 +2164,7 @@ WritableStreamAPIEnabled:
 
 TransformStreamAPIEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "TransformStream API"
   humanReadableDescription: "Enable Transform Stream API"
   category: experimental
