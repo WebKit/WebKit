@@ -44,7 +44,7 @@ public:
 
     void commitTreeStateIfNeeded() override;
 
-    bool handleWheelEvent(FrameView&, const PlatformWheelEvent&) override;
+    bool handleWheelEvent(FrameView&, const PlatformWheelEvent&, ScrollingNodeID) override;
 
 private:
     void scheduleTreeStateCommit() override;

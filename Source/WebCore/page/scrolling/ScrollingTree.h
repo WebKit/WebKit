@@ -212,6 +212,8 @@ public:
     WEBCORE_EXPORT void willProcessWheelEvent();
 
 protected:
+    WheelEventHandlingResult handleWheelEventWithNode(const PlatformWheelEvent&, ScrollingTreeNode*);
+
     FloatPoint mainFrameScrollPosition() const;
     void setMainFrameScrollPosition(FloatPoint);
 
@@ -232,6 +234,7 @@ private:
 
     WEBCORE_EXPORT virtual RefPtr<ScrollingTreeNode> scrollingNodeForPoint(FloatPoint);
     WEBCORE_EXPORT virtual OptionSet<EventListenerRegionType> eventListenerRegionTypesForPoint(FloatPoint) const;
+    
     virtual void receivedWheelEvent(const PlatformWheelEvent&) { }
     
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;

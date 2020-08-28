@@ -134,34 +134,39 @@ WheelEventHandlingResult ScrollingTree::handleWheelEvent(const PlatformWheelEven
 
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::handleWheelEvent found node " << (node ? node->scrollingNodeID() : 0) << " for point " << position);
 
-        while (node) {
-            if (is<ScrollingTreeScrollingNode>(*node)) {
-                auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
-                auto result = scrollingNode.handleWheelEvent(wheelEvent);
-
-                if (result.wasHandled) {
-                    m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent, m_allowLatching);
-                    m_gestureState.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent);
-                    return result;
-                }
-
-                if (result.needsMainThreadProcessing())
-                    return result;
-            }
-
-            if (is<ScrollingTreeOverflowScrollProxyNode>(*node)) {
-                if (auto relatedNode = nodeForID(downcast<ScrollingTreeOverflowScrollProxyNode>(*node).overflowScrollingNodeID())) {
-                    node = relatedNode;
-                    continue;
-                }
-            }
-
-            node = node->parent();
-        }
-        return WheelEventHandlingResult::unhandled();
+        return handleWheelEventWithNode(wheelEvent, node.get());
     }();
 
     return result;
+}
+
+WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformWheelEvent& wheelEvent, ScrollingTreeNode* node)
+{
+    while (node) {
+        if (is<ScrollingTreeScrollingNode>(*node)) {
+            auto& scrollingNode = downcast<ScrollingTreeScrollingNode>(*node);
+            auto result = scrollingNode.handleWheelEvent(wheelEvent);
+
+            if (result.wasHandled) {
+                m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent, m_allowLatching);
+                m_gestureState.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), wheelEvent);
+                return result;
+            }
+
+            if (result.needsMainThreadProcessing())
+                return result;
+        }
+
+        if (is<ScrollingTreeOverflowScrollProxyNode>(*node)) {
+            if (auto relatedNode = nodeForID(downcast<ScrollingTreeOverflowScrollProxyNode>(*node).overflowScrollingNodeID())) {
+                node = relatedNode;
+                continue;
+            }
+        }
+
+        node = node->parent();
+    }
+    return WheelEventHandlingResult::unhandled();
 }
 
 RefPtr<ScrollingTreeNode> ScrollingTree::scrollingNodeForPoint(FloatPoint)
