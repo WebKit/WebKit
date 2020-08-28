@@ -2229,3 +2229,7 @@ webkit.org/b/215817 [ Release ] webgl/2.0.0/conformance2/textures/canvas_sub_rec
 # <rdar://66295552> [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html
 [ BigSur+ ] fast/forms/hidpi-textfield-background-bleeding.html [ ImageOnlyFailure ]
 
+# <rdar://64947666> [ BigSur+ ] fast/images/image-controls-basic.html 
+[ BigSur+ ] fast/images/image-controls-basic.html [ Failure ]
+
+

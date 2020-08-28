@@ -1,3 +1,12 @@
+2020-08-28  Hector Lopez  <hector_i_lopez@apple.com>
+
+        [ BigSur+ ] fast/images/image-controls-basic.html
+        <rdar://64947666> 
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2020-08-28  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Enable Notifications support
