@@ -1,3 +1,24 @@
+2020-08-27  Frank Yang  <guowei_yang@apple.com>
+
+        CSS Filter invert() and opacity() Implementation Should Use Linear Transfer Function for Clarity and Simplicity
+        https://bugs.webkit.org/show_bug.cgi?id=215896
+
+        Simplify CSS filters, invert() and opacity() implementation by using "linear" transfer function, 
+        instead of using a more confusing transfer function, "table". For invert(), the transfer function 
+        is type="table" tableValues="[amount] (1 - [amount])", which is equivalent to a linear function
+        of slope 1 - 2 * [amount] and intercept [amount]; for opacity the transfer function is type="table" tableValues="0 [amount]"
+        which is equivalent to a linear transfer function of slope [amount] and intercept 0. This change will make the implementation 
+        clearer and simpler.
+
+        Reviewed by Myles C. Maxfield.
+
+        No new tests needed, using existing tests in css/filter-effects
+
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::build): Modified the implementation of invert() and opacity() so that they both use 
+             a linear component transfer function instead of a more confusing table transfer function.
+
+
 2020-08-27  Devin Rousso  <drousso@apple.com>
 
         [iOS] provide a way to get previously inserted alternatives for the selected text

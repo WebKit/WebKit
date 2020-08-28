@@ -221,11 +221,10 @@ bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operation
         case FilterOperation::INVERT: {
             auto& componentTransferOperation = downcast<BasicComponentTransferFilterOperation>(filterOperation);
             ComponentTransferFunction transferFunction;
-            transferFunction.type = FECOMPONENTTRANSFER_TYPE_TABLE;
-            Vector<float> transferParameters;
-            transferParameters.append(narrowPrecisionToFloat(componentTransferOperation.amount()));
-            transferParameters.append(narrowPrecisionToFloat(1 - componentTransferOperation.amount()));
-            transferFunction.tableValues = transferParameters;
+            transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+            float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
+            transferFunction.slope = 1 - 2 * amount;
+            transferFunction.intercept = amount;
 
             ComponentTransferFunction nullFunction;
             effect = FEComponentTransfer::create(*this, transferFunction, transferFunction, transferFunction, nullFunction);
@@ -237,11 +236,10 @@ bool CSSFilter::build(RenderElement& renderer, const FilterOperations& operation
         case FilterOperation::OPACITY: {
             auto& componentTransferOperation = downcast<BasicComponentTransferFilterOperation>(filterOperation);
             ComponentTransferFunction transferFunction;
-            transferFunction.type = FECOMPONENTTRANSFER_TYPE_TABLE;
-            Vector<float> transferParameters;
-            transferParameters.append(0);
-            transferParameters.append(narrowPrecisionToFloat(componentTransferOperation.amount()));
-            transferFunction.tableValues = transferParameters;
+            transferFunction.type = FECOMPONENTTRANSFER_TYPE_LINEAR;
+            float amount = narrowPrecisionToFloat(componentTransferOperation.amount());
+            transferFunction.slope = amount;
+            transferFunction.intercept = 0;
 
             ComponentTransferFunction nullFunction;
             effect = FEComponentTransfer::create(*this, nullFunction, nullFunction, nullFunction, transferFunction);
