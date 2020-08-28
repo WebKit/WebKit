@@ -1,3 +1,14 @@
+2020-08-28  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Fix iokit-get-properties sandbox violations
+        https://bugs.webkit.org/show_bug.cgi?id=215925
+
+        Reviewed by Darin Adler.
+
+        A few iokit properties needs to be added to the WebContent process' sandbox after observing these being in use.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2020-08-27  John Wilander  <wilander@apple.com>
 
         Remove the feature flag for capped cookies set in 3rd-party CNAME cloaked HTTP responses and add ITP debug logging
