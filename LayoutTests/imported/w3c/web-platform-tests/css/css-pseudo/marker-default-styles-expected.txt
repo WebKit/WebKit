@@ -1,18 +1,18 @@
 
 FAIL Computed value of 'unicode-bidi' for outside symbol assert_equals: expected "isolate" but got "normal"
-FAIL Computed value of 'font-variant-numeric' for outside symbol assert_equals: expected "tabular-nums" but got "normal"
+PASS Computed value of 'font-variant-numeric' for outside symbol 
 FAIL Computed value of 'unicode-bidi' for outside decimal assert_equals: expected "isolate" but got "normal"
-FAIL Computed value of 'font-variant-numeric' for outside decimal assert_equals: expected "tabular-nums" but got "normal"
+PASS Computed value of 'font-variant-numeric' for outside decimal 
 FAIL Computed value of 'unicode-bidi' for outside string assert_equals: expected "isolate" but got "normal"
-FAIL Computed value of 'font-variant-numeric' for outside string assert_equals: expected "tabular-nums" but got "normal"
+PASS Computed value of 'font-variant-numeric' for outside string 
 FAIL Computed value of 'unicode-bidi' for outside marker assert_equals: expected "isolate" but got "normal"
 PASS Computed value of 'font-variant-numeric' for outside marker 
 FAIL Computed value of 'unicode-bidi' for inside symbol assert_equals: expected "isolate" but got "normal"
-FAIL Computed value of 'font-variant-numeric' for inside symbol assert_equals: expected "tabular-nums" but got "normal"
+PASS Computed value of 'font-variant-numeric' for inside symbol 
 FAIL Computed value of 'unicode-bidi' for inside decimal assert_equals: expected "isolate" but got "normal"
-FAIL Computed value of 'font-variant-numeric' for inside decimal assert_equals: expected "tabular-nums" but got "normal"
+PASS Computed value of 'font-variant-numeric' for inside decimal 
 FAIL Computed value of 'unicode-bidi' for inside string assert_equals: expected "isolate" but got "normal"
-FAIL Computed value of 'font-variant-numeric' for inside string assert_equals: expected "tabular-nums" but got "normal"
+PASS Computed value of 'font-variant-numeric' for inside string 
 FAIL Computed value of 'unicode-bidi' for inside marker assert_equals: expected "isolate" but got "normal"
 PASS Computed value of 'font-variant-numeric' for inside marker 
 outside symbol

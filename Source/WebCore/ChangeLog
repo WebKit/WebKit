@@ -1,3 +1,19 @@
+2020-08-28  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Fix text-transform inheritance to ::marker
+        https://bugs.webkit.org/show_bug.cgi?id=214359
+
+        Reviewed by Darin Adler.
+
+        Per https://github.com/w3c/csswg-drafts/issues/4206, default ::marker
+        pseudoelement style to `text-transform: none` in the UA stylesheet to
+        avoid surprising effects from inheritance.
+
+        No tests added -- change is tested by existing WPTs.
+
+        * css/html.css:
+        (::marker):
+
 2020-08-28  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the system tracing from DisplayList::Replayer::replay()

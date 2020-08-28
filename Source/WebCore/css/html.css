@@ -302,6 +302,10 @@ li {
     text-align: -webkit-match-parent;
 }
 
+::marker {
+    text-transform: none;
+}
+
 ul ul, ol ul {
     list-style-type: circle;
 }
