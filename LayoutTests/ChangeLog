@@ -1,5 +1,14 @@
 2020-08-28  Hector Lopez  <hector_i_lopez@apple.com>
 
+        [ macOS iOS ] compositing/video/poster.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215929
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
+2020-08-28  Hector Lopez  <hector_i_lopez@apple.com>
+
         [ macOS wk1 ] svg/custom/object-sizing.xhtml is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=215926
 
