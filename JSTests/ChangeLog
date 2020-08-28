@@ -1,3 +1,41 @@
+2020-08-28  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r266254. rdar://problem/67949890
+
+    GetByVal constant folding over a Double OutOfBoundsSaneChain array with no BytecodeUsesAsOther should constant fold to PNaN, not undefined
+    https://bugs.webkit.org/show_bug.cgi?id=215894
+    <rdar://problem/67669696>
+    
+    Reviewed by Michael Saboff and Keith Miller.
+    
+    JSTests:
+    
+    * stress/oob-sane-chain-double-constant-fold-to-PNaN.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    GetByVals of the form { OutOfBoundsSaneChain, Double } where there are no
+    BytecodeUsesAsOther return PNaN for holes and OOB accesses, not jsUndefined().
+    The constant folding for this though was folding to jsUndefined(). I forgot
+    to update that code to constant fold to PNaN when I wrote the OutOfBoundsSaneChain
+    implementation.
+    
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@266254 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2020-08-27  Saam Barati  <sbarati@apple.com>
+
+            GetByVal constant folding over a Double OutOfBoundsSaneChain array with no BytecodeUsesAsOther should constant fold to PNaN, not undefined
+            https://bugs.webkit.org/show_bug.cgi?id=215894
+            <rdar://problem/67669696>
+
+            Reviewed by Michael Saboff and Keith Miller.
+
+            * stress/oob-sane-chain-double-constant-fold-to-PNaN.js: Added.
+
 2020-08-21  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Align "length" properties of function prototypes with the spec
