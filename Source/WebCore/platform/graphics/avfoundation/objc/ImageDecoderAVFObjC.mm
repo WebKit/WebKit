@@ -425,7 +425,7 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
         return false;
     }
 
-    auto presentationTime = PAL::toMediaTime(PAL::CMSampleBufferGetPresentationTimeStamp(sampleBuffer));
+    auto presentationTime = PAL::toMediaTime(PAL::CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer));
     auto iter = m_sampleData.presentationOrder().findSampleWithPresentationTime(presentationTime);
 
     if (m_imageRotationSession)
