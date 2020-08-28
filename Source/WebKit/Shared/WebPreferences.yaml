@@ -2082,13 +2082,6 @@ IsSameSiteStrictEnforcementEnabled:
   humanReadableDescription: "Enable SameSite strict enforcement to mitigate bounce tracking"
   category: experimental
 
-IsCNAMECloakingMitigationEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Enable CNAME cloaking mitigation"
-  humanReadableDescription: "Enable third-party CNAME cloaking mitigation"
-  category: experimental
-
 IsLoggedInAPIEnabled:
     type: bool
     defaultValue: false

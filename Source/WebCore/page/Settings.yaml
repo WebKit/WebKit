@@ -933,9 +933,6 @@ isFirstPartyWebsiteDataRemovalReproTestingEnabled:
 isSameSiteStrictEnforcementEnabled:
   initial: false
 
-isCNAMECloakingMitigationEnabled:
-  initial: false
-
 isLoggedInAPIEnabled:
   initial: false
 

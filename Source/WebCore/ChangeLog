@@ -1,3 +1,26 @@
+2020-08-27  John Wilander  <wilander@apple.com>
+
+        Remove the feature flag for capped cookies set in 3rd-party CNAME cloaked HTTP responses and add ITP debug logging
+        https://bugs.webkit.org/show_bug.cgi?id=215902
+        <rdar://problem/66699731>
+
+        Reviewed by Brent Fulgham.
+
+        This change removes the feature flag, effectively turning the feature on.
+        It also adds log output of cookie names that have been capped when ITP
+        Debug Mode is enabled.
+
+        WebCore::NetworkStorageSession now has a member flag for ITP debug logging.
+
+        No new tests. This feature already has tests.
+
+        * page/Settings.yaml:
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::setResourceLoadStatisticsDebugLoggingEnabled):
+        (WebCore::NetworkStorageSession::resourceLoadStatisticsDebugLoggingEnabled const):
+            New function to be able to conditionalize log output in the new feature.
+        * platform/network/NetworkStorageSession.h:
+
 2020-08-27  Frank Yang  <guowei_yang@apple.com>
 
         CSS Filter invert() and opacity() Implementation Should Use Linear Transfer Function for Clarity and Simplicity

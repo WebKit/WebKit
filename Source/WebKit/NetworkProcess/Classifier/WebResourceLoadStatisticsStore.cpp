@@ -302,6 +302,11 @@ void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool val
         return;
     }
 
+    if (m_networkSession) {
+        if (auto* storageSession = m_networkSession->networkStorageSession())
+            storageSession->setResourceLoadStatisticsDebugLoggingEnabled(value);
+    }
+
     postTask([this, value, completionHandler = WTFMove(completionHandler)]() mutable {
         if (m_statisticsStore)
             m_statisticsStore->setResourceLoadStatisticsDebugMode(value);

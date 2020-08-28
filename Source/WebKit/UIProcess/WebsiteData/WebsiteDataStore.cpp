@@ -2318,7 +2318,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         thirdPartyCookieBlockingMode(),
         WebCore::SameSiteStrictEnforcementEnabled::No,
-        WebCore::CNAMECloakingMitigationEnabled::No,
 #endif
         firstPartyWebsiteDataRemovalMode,
         WTFMove(standaloneApplicationDomain),

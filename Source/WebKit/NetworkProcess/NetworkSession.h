@@ -105,8 +105,6 @@ public:
     bool shouldDowngradeReferrer() const;
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode);
     void setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteStrictEnforcementEnabled);
-    void setCNAMECloakingMitigationEnabled(WebCore::CNAMECloakingMitigationEnabled value) { m_cnameCloakingMitigationEnabled = value; }
-    bool cnameCloakingMitigationEnabled() const { return m_cnameCloakingMitigationEnabled == WebCore::CNAMECloakingMitigationEnabled::Yes; }
     void setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain);
     Optional<WebCore::RegistrableDomain> firstPartyHostCNAMEDomain(const String& firstPartyHost);
     void setThirdPartyCNAMEDomainForTesting(WebCore::RegistrableDomain&& domain) { m_thirdPartyCNAMEDomainForTesting = WTFMove(domain); };
@@ -173,7 +171,6 @@ protected:
     WebCore::SameSiteStrictEnforcementEnabled m_sameSiteStrictEnforcementEnabled { WebCore::SameSiteStrictEnforcementEnabled::No };
     WebCore::FirstPartyWebsiteDataRemovalMode m_firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
     WebCore::RegistrableDomain m_standaloneApplicationDomain;
-    WebCore::CNAMECloakingMitigationEnabled m_cnameCloakingMitigationEnabled { WebCore::CNAMECloakingMitigationEnabled::No };
     HashMap<String, WebCore::RegistrableDomain> m_firstPartyHostCNAMEDomains;
     Optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;
 #endif
